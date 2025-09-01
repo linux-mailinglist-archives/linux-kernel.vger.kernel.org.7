@@ -1,160 +1,169 @@
-Return-Path: <linux-kernel+bounces-794914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA881B3EAB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:34:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEC6B3E8A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402BF2C32B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:28:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1DDF20094E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F3A32F755;
-	Mon,  1 Sep 2025 15:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77EA34DCD3;
+	Mon,  1 Sep 2025 15:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c6vAhX8a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EU9t5SyR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34C836933B
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BDE343D84;
+	Mon,  1 Sep 2025 15:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739668; cv=none; b=HZ9at7L9osdE7AN+VW4qAmjf5ZjoY/MzRMoDQ4xuYY2rMsjDknpmNegFv7POupYONaX8EpxFJaewSJanFTAxs+mIN0149pQDs2hU5TIVdqelXUZfh9Yeb22F/McjciQ+HH6NezWTzAMbEf6JVuTjnm+OzKYBEOA9wsnow5/oYg8=
+	t=1756739147; cv=none; b=enn0RPg84/Wbic90fiRcXtRRKqQ8CnP2WQ5aZSawIZvvk+VL7emweBqsIaY1Li794W0Qpo88vcieLE1Woja5wailZXm6cHsS/Obq/deowHdL3TTW1NtdCmWWuXu2PtyfbrNBcYyV7ghkXzo1NFjxUSM4E/wxCwPo6Q1aRHJf0YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739668; c=relaxed/simple;
-	bh=zya2jX1ju8PFLzjz5KOjevcN0aBNFGgRJKTCFWl9v0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PllwgPgE3++S6/7SR0x6kIsbRHGH8y0lgk1h22ast6vm+qm2N0sf2/ayku/2Oe8M7EDzbjhq/pywwNCdHbszI5UTMVfcpqkynxYNxN4I8rGseNVCYVSd1I05CUQAK572NFu+xZ66YBo6YLIfUxcycvzF33Ct/z0voyFbXZ/CVEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c6vAhX8a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756739665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wgq8t08BL7RNfQ5mX4qRFuahvfg5EKXwRMG9Zf68USY=;
-	b=c6vAhX8a3gV5lhZIsgpJLSJT9rENaMPBM4cl4/98ANX2molGSD3NqISsBhTAxCEMwSHMJ/
-	AOc59FFTVjt7t16THQ/eBo2haU0LTOrnN8wZLlughk2rULsXVfh5qJaGiZ3MvoFwgZGJyJ
-	Fl/cZP2n82WjubnIQX9NtoC5MCZ8dAU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-GxSXaOqMOKWCp_wVKjXAog-1; Mon,
- 01 Sep 2025 11:14:20 -0400
-X-MC-Unique: GxSXaOqMOKWCp_wVKjXAog-1
-X-Mimecast-MFC-AGG-ID: GxSXaOqMOKWCp_wVKjXAog_1756739656
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C598B1800366;
-	Mon,  1 Sep 2025 15:14:15 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.22.88.45])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0A0B1180044F;
-	Mon,  1 Sep 2025 15:14:00 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	iommu@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev,
-	Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com,
-	x86@kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v2 37/37] mm: remove nth_page()
-Date: Mon,  1 Sep 2025 17:03:58 +0200
-Message-ID: <20250901150359.867252-38-david@redhat.com>
-In-Reply-To: <20250901150359.867252-1-david@redhat.com>
-References: <20250901150359.867252-1-david@redhat.com>
+	s=arc-20240116; t=1756739147; c=relaxed/simple;
+	bh=U8W70OZNJEk2ByoRFaHr0YQMfrV16QmJRC0Udi6YZpA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=arDdVA6i8L7iZUcxqFI6uGGlPKbJ2SpgD1S2XUcCqLkc6og/8xS4qwBtbN6OCIJ23Y0HBkcjuEYrdPiosT4tbeFT7kxDPJ0aV5Xbo/w+wQDHxlp/oQTsc6WZFCdlYeWoEt0mSIDAvRJMyJPH7FyG1VxcvBHvk3LntwUEbnkRoms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EU9t5SyR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 90F92C4CEF0;
+	Mon,  1 Sep 2025 15:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
+	t=1756739146; bh=U8W70OZNJEk2ByoRFaHr0YQMfrV16QmJRC0Udi6YZpA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=EU9t5SyRtijMDBNoiNHM7WIAS3eCU+JPPYgX0viOUTqclerRloFUsjksfguVAcMS0
+	 oiRwguHZwy02ySercJX4LfUTbRqjcqFXoJLfPH0sgfcRTCa2gSLwRLETgiJgmzlaW1
+	 Z9gONL/z8IvILNULijvuahy3Nnb8oRz0PzcV0OoQ=
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDAECA1000;
+	Mon,  1 Sep 2025 15:05:46 +0000 (UTC)
+From: Richard Leitner <richard.leitner@linux.dev>
+Subject: [PATCH v7 00/10] Add strobe duration and hw strobe signal v4l2
+ ctrl & use it for ov9282
+Date: Mon, 01 Sep 2025 17:05:05 +0200
+Message-Id: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-B4-Tracking: v=1; b=H4sIACG2tWgC/33QzW7DIAwH8FeJOI8Km6/S095j2oEAWZDapoMUd
+ ary7qPpIVWU7fi37J8t30kOKYZMDs2dpFBijsO5Bv3WENfb81eg0ddMkKFknHE6FIN7pN3R5p7
+ mMQ1toNap1jPmjA+K1MlLCl28zerH5zOn8H2t+PgsktbmQN1wOsXx0BS1A0WTA/Jo7mMeh/QzX
+ 1Rg7v53eQHKKOu81BakEq19P8bz9bbzocxewRcDxLaB1QDhtcU9cIF+bfDFEGi2DV4NBCZdAG2
+ MxLUhFkMyvW2Iamhs0RgHrXZmbcjFUPCHIathtEJvtfBMybWhFkPXv28a6mFw0QHa0HWcvxrTN
+ P0CosbQ2DcCAAA=
+X-Change-ID: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-leds@vger.kernel.org, Richard Leitner <richard.leitner@linux.dev>, 
+ Hans Verkuil <hverkuil@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756739145; l=4404;
+ i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
+ bh=U8W70OZNJEk2ByoRFaHr0YQMfrV16QmJRC0Udi6YZpA=;
+ b=cFY2RjeOBc35o8mJpB+9WumdYAVBpOlkwynf/l3OIX/kLpuR+jjkG8LzOnMYrJ1i9VPJzs0aE
+ QEQXUdEqMMpDRMQJqsGibVpDcZkTF/5b9IA1/vboJk4v2HyXFLV3OcT
+X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
+ pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
+X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
+ with auth_id=350
 
-Now that all users are gone, let's remove it.
+This series adds two new v4l2 controls:
+- V4L2_CID_FLASH_DURATION: "Strobe duration": This control enables
+  setting a desired flash/strobe length/duration in µs.
+- V4L2_CID_FLASH_HW_STROBE_SIGNAL: "Hardware strobe signal": This
+  control enables the hardware strobe output signal of a v4l2 device.
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+As a first user of these new controls add basic flash/strobe support
+for ov9282 sensors using their "hardware strobe output". The duration
+calculation is only interpolated from various measurements, as no
+documentation was found.
+
+Further flash/strobe-related controls as well as a migration to v4l2-cci
+helpers for ov9282 will likely be implemented in future series.
+
+All register addresses/values are based on the OV9281 datasheet v1.53
+(january 2019). This series was tested using an ov9281 VisionComponents
+camera module.
+
+Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
 ---
- include/linux/mm.h                   | 2 --
- tools/testing/scatterlist/linux/mm.h | 1 -
- 2 files changed, 3 deletions(-)
+Changes in v7:
+- Improved v4l2 uAPI documentation (thanks Sakari)
+- Link to v6: https://lore.kernel.org/r/20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 2ca1eb2db63ec..b26ca8b2162d9 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -210,9 +210,7 @@ extern unsigned long sysctl_admin_reserve_kbytes;
- 
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- bool page_range_contiguous(const struct page *page, unsigned long nr_pages);
--#define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
- #else
--#define nth_page(page,n) ((page) + (n))
- static inline bool page_range_contiguous(const struct page *page,
- 		unsigned long nr_pages)
- {
-diff --git a/tools/testing/scatterlist/linux/mm.h b/tools/testing/scatterlist/linux/mm.h
-index 5bd9e6e806254..121ae78d6e885 100644
---- a/tools/testing/scatterlist/linux/mm.h
-+++ b/tools/testing/scatterlist/linux/mm.h
-@@ -51,7 +51,6 @@ static inline unsigned long page_to_phys(struct page *page)
- 
- #define page_to_pfn(page) ((unsigned long)(page) / PAGE_SIZE)
- #define pfn_to_page(pfn) (void *)((pfn) * PAGE_SIZE)
--#define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
- 
- #define __min(t1, t2, min1, min2, x, y) ({              \
- 	t1 min1 = (x);                                  \
+Changes in v6:
+- Fix "Alignment should match open parenthesis" by Media-CI bot in v4l2-flash-led-class.c
+- Fix "format string contains non-ascii character (µ)" by Media-CI bot in ov9282.c
+- Introduce new V4L2_CID_FLASH_HW_STROBE_SIGNAL control (as suggested by Sakari)
+- Implement V4L2_CID_FLASH_HW_STROBE_SIGNAL instead of
+  V4L2_CID_FLASH_LED_MODE in ov9282.c (as suggested by Sakari)
+- Drop "media: v4l2-flash: fix flash_timeout comment" as this was
+  applied (thanks Lee)
+- Link to v5: https://lore.kernel.org/r/20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev
+
+Changes in v5:
+- Improve try_ctrl for flash_duration by using DIV_ROUND_UP() and abs() (thanks Sakari)
+- Drop "leds: flash: Add support for flash/strobe duration" as this was applied upstream
+- Add "media: i2c: ov9282: dynamic flash_duration maximum" (thanks Sakari)
+- Link to v4: https://lore.kernel.org/r/20250507-ov9282-flash-strobe-v4-0-72b299c1b7c9@linux.dev
+
+Changes in v4:
+- Fix FLASH_DURATION implementation in v4l2-flash-led-class.c by adding a
+  missing brace and enum entry (thanks Sakari)
+- Fix format of multiline comment in ov9282.c (thanks Sakari)
+- Add missing NULL check in ov9282.c (thanks Sakari)
+- Adapt nr_of_controls_hint for v4l2 handler in ov9282.c (thanks Sakari)
+- Add patch for implementing try_ctrl for strobe_duration (thanks Sakari)
+- Link to v3: https://lore.kernel.org/r/20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev
+
+Changes in v3:
+- create separate patch for leds driver changes (thanks Lee)
+- Link to v2: https://lore.kernel.org/r/20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev
+
+Changes in v2:
+- remove not needed controls in struct ov9282 (thanks Dave)
+- Fix commit message of 3/3 regarding framerate get/set (thanks Dave)
+- Add V4L2_CID_FLASH_STROBE_SOURCE impementation to ov9282
+- Add new V4L2_CID_FLASH_DURATION control (as suggested by Laurent)
+- Use FLASH_DURATION instead of FLASH_TIMEOUT for ov9282
+- Link to v1: https://lore.kernel.org/r/20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev
+
+---
+Richard Leitner (10):
+      media: v4l: ctrls: add a control for flash/strobe duration
+      media: v4l2-flash: add support for flash/strobe duration
+      media: v4l: ctrls: add a control for enabling hw strobe signal
+      Documentation: uAPI: media: add V4L2_CID_FLASH_{DURATION,HW_STROBE_SIGNAL}
+      media: i2c: ov9282: add output enable register definitions
+      media: i2c: ov9282: add hardware strobe signal v4l2 control
+      media: i2c: ov9282: add strobe_duration v4l2 control
+      media: i2c: ov9282: add strobe_source v4l2 control
+      media: i2c: ov9282: implement try_ctrl for strobe_duration
+      media: i2c: ov9282: dynamic flash_duration maximum
+
+ .../userspace-api/media/v4l/ext-ctrls-flash.rst    |  29 ++++
+ drivers/media/i2c/ov9282.c                         | 168 ++++++++++++++++++++-
+ drivers/media/v4l2-core/v4l2-ctrls-defs.c          |   3 +
+ drivers/media/v4l2-core/v4l2-flash-led-class.c     |  25 +++
+ include/uapi/linux/v4l2-controls.h                 |   2 +
+ 5 files changed, 221 insertions(+), 6 deletions(-)
+---
+base-commit: d9946fe286439c2aeaa7953b8c316efe5b83d515
+change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+
+Best regards,
 -- 
-2.50.1
+Richard Leitner <richard.leitner@linux.dev>
+
 
 
