@@ -1,186 +1,162 @@
-Return-Path: <linux-kernel+bounces-794678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB86EB3E554
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 097F4B3E550
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81378441056
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F36103BE219
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C69A3314DE;
-	Mon,  1 Sep 2025 13:38:09 +0000 (UTC)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F6C33438B;
+	Mon,  1 Sep 2025 13:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="a0ciY1zx"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E566633437E;
-	Mon,  1 Sep 2025 13:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C9217A2E6
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756733888; cv=none; b=kH8aG1DtehBrAujJPTP/W5DvuGycH8KKqIOjRMhONH5fncJevyuWzAD8F1HSOhEbmUeEDO3fo1thXxOLxIY4mwgshE+ZzWI+JxFpvP6eTFWDZlCaAIhlzZGt8X2OQa15w7JJN/IqLI6AKyQpSDC+Qkwe+z/eR18j7VRlD+dGyP8=
+	t=1756733878; cv=none; b=s2tyNUT4IKeD4+CV8thTw6VvGXUk+svBNXUg+I1ZXmurh6Kd40iT0MeduOuwrVNMrdEre442AIVQrud6QPc62IplU2wz6iEbLW7ASfB3I4fNxOozZ8DvEjCIGW3/btW9Ub0S9gbiT4ZO7WodNf3K11iiBKxUY+5nk/yqZ5zRDK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756733888; c=relaxed/simple;
-	bh=dGnaVd/vCtxVDGI37N7sstZKzflVMS/aBlC/pClGFUw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=az+fluy6J2v+ZLL8uqTa07uPSk99SlIuaTwlTUfq1DJhLnd5165Ii30gK+Nstziq00mKxjDEzt4+FCQTsosUBNTygIv9NHAgIxHwLsWlZWXAmkft377uWmkdCOOZhgOxlXUaENPu0zEEs2GdvxvzpV0E2gT+Fn6JxcKg6e6F1p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-523264ecab8so1469328137.2;
-        Mon, 01 Sep 2025 06:38:04 -0700 (PDT)
+	s=arc-20240116; t=1756733878; c=relaxed/simple;
+	bh=hrOpoT0rQITjPUp/2qofb8QBO/j7OL9xreW+ARhc3Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=leiegrpxLW+gASOzm2ML+VysEOIcD83QKtgtfuI4wHMm3BFW4qdyV8UP8bFcdFY5U3dw1eVOeeJZK8EJVZ4uvR+SmKCt5ZmxisczQi0/79GCWFrkLerzMTrwgxqAxATyql+FTKWDOU6chJPl4RhC6iuuq4hrBg1Mxi0lYliJ+2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=a0ciY1zx; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b869d3560so17295295e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 06:37:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756733875; x=1757338675; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lJRnO5UD7YZuruV+flUIcQufYW0xYHWGkTcWe05GDI8=;
+        b=a0ciY1zxZvtt/WTRQrkpZ2xf5oXOMfOlTiwfvACLXSAGR/ypY3zqx2OYdr+Nkwuwoo
+         UYwd77JWurgCVqo7/h5Zcf8NPFVeEcYR5JSJdKp+VvDN8DpoyYcIvBWZlWsQLovDwv8a
+         BF55yth5Z5k/xCgRsQepkF9ETQq0dxOPrOspOqWAzPXMPST4F6Gu35FsBDMEUv1nT6Ta
+         /M6UN/k0I/ErkbtcOraMS9stzga5iFhvMDSP2vS0MC7tbqkkOoW5l4pzyJZUeLcIjxET
+         OmSxAcifWkmBtTHjG0Bsa5H/4MosmdOwe4GuTGxORDoesghEbcFY9xXzOOLfrpdxB0bO
+         EH5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756733883; x=1757338683;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vVSKG61eHXtgpE4qwB4RiosQwwYKbxYizn9dn5EmgCQ=;
-        b=A3ndalGpgKD95rFRs4Hqvpaz+p5TjUvT2edsGEVhAz7uf7M/MVZ+9QAlElAD9mBJmG
-         xo5ihDC5Rz810A/TOKQt49CuqlZor8/u9WEySrYIV4Aa2JMEAz/9AfOMYo6+6jXRg6fY
-         OcUFz5IOpe+djToCJq8EsJtZkvGkIFq1oiH1mdgeOByCrg7DpJ5Q7+8HVJHdPkCWeWna
-         txOHPaD1K4oaUEdJm5UIRJn+mzXV+krqeBscP28sY96fiLicLBM7Ne8SmwvUCo6HJl12
-         cqYnX3CYyFchthztJX/WJPivaV6N5JYxlCma6i1NBVAKLsDXCg+C6QWBIhcw4LqEMpIE
-         10nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEuoe+SXQub7pIaiYb0dq97NoUMVV+JEY2MeDtQ/WrADIWp+DintR00v/+sxvTD/H4yJMG+aOHTrM=@vger.kernel.org, AJvYcCWo7ua9SGkDb8LGNZGf88zz/0rLCmnHngV3I8F0EMb8a81PWpEEpl9Mvm9z1C8pMfG0neeU92BnnqEbpeszXDHmnBY=@vger.kernel.org, AJvYcCXjazIiJCvA7ZVOBvqCAJOfHeciWL6eUgvF12nXnvWtPG9fwSif0OaCxU+vVRXezBIsasNGXa/RkfHhPd7c@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+RYjiN3DbhZp7yacoNf79NLIH271Msu6hxwS8kBnIFQVoUBL/
-	YAXFyn4Eg6XCyIiQbeWi2kIbXCzpsm4WrcJQXagh57pn404Or/IYqzzHIdGorvZ4
-X-Gm-Gg: ASbGnctPgkwbIvV9zCw8r2jPTQUtwRs+51EMhjGEZ+ZUf2Om1bbdTGpU4h06cpTw2in
-	OsfGzrZn+QOLVF6YqFKfYXEApKnpvpvg4oS9rq0ReFcxeFrUbGugihg9YTKK9mwh5i02Jrcwc8Z
-	dfekj0TMXyYXhs5BQCI22FGdNXuqPEdl+IabGt5Bqv13CqU68UPR8H8Gx28YZCqfRFwK55X6tsR
-	Lvc/XFT4Pf+GXstgsMiOmTI3peqJC3dF0hhq7u41ZxkmC7DpyLE1r8isP61foABdajJCA2LpTn9
-	KXwm/YROtlTu9oQ5TlqSpZ/1INRhKK3i9cZ1qsazqiIqy/MOrv5eExXUQS/EiHbj2NFxHha7Qu4
-	23Ee/PIQrLMHZ+w0sfIvCWcIwqFBJEiJzCd/eFEDPCSSnC7DNBcQOQQKPeYOP
-X-Google-Smtp-Source: AGHT+IF7WBAAwNPGAo06eyYNEEfdl3c+Wh0YSG++CRmJbZjoCKN9VYQLhSxrZXEjVJziHu1qld2JrA==
-X-Received: by 2002:a05:6102:1607:b0:524:bee7:aeb7 with SMTP id ada2fe7eead31-52b19335fc0mr1922468137.3.1756733883340;
-        Mon, 01 Sep 2025 06:38:03 -0700 (PDT)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8943b7c369asm3701630241.2.2025.09.01.06.38.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 06:38:02 -0700 (PDT)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-529858dc690so953345137.0;
-        Mon, 01 Sep 2025 06:38:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5eE0Ir88WFmtKcjFUUBxeWi3OVT567yLpyiqV4GSSa0LeqmMSlJy6Q7qt6oAc74mCF0vl2tORlIKEOxZNgBgEOLM=@vger.kernel.org, AJvYcCXCMsLvaC1QE0jbBfkhBqHltjAmz1x2dU1s0G40CjkGeJOXqFI7zsBYTPpK8iIRFrTg2pg4m7UUSk4=@vger.kernel.org, AJvYcCXCS67l7Y/OJRTMCn8fr49vgjgdtdt2VOm50eSoUvBnQXMzmCO8baLS/hVMtNTcOTkOA+4YYL80saKkUBOE@vger.kernel.org
-X-Received: by 2002:a05:6102:1607:b0:524:bee7:aeb7 with SMTP id
- ada2fe7eead31-52b19335fc0mr1922454137.3.1756733882584; Mon, 01 Sep 2025
- 06:38:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756733875; x=1757338675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lJRnO5UD7YZuruV+flUIcQufYW0xYHWGkTcWe05GDI8=;
+        b=mpXkfkdFoMVz28Qq4PTpssys64bOZXxYsu9EoJN5Yf+Tmnd6FiQLSfzynIdFynm2Dq
+         uMgQd6YlMjavHpyyDV+EEzzI7iWk0lg/c5RXB8s0GMh2YMafftf5Dhk4Nwa21kS+66uR
+         ucwFjBDcCdfF/OtJ3HetqsQhyFeA/PvVhbLP3ELcrdyhiKN7URSQLfEXIGVulh53wa5o
+         NwelVBvFPe0EYrdSlRjI9g+bEG3RSqrHbUuaA3TuHrtkzIa9Mh9QvrrM/hgmUKO+zMqL
+         zHapFTcOtletM4TcaX5LrftggskdygJj1yqFVvWRsXVgP45WPT1tv6lDNqZV6NRuzBZ8
+         s7QA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1OAtzgS02SxTaV3c//r19oirsdCuYuQxnH7goIDRkmGqhosUgmsEMTP1QTcuQQxcVOyl+rAb4NcssCHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQrrFnZzBoD/c3opDot9ij6LGqFNNBeb/dUFpl8Quy5qPDNACJ
+	F3y52pcz/dO3N9GDG1TnMVCPalo+vKcgNR0CGOiKHG77xvdVypp1n6yMFbp37BApmNs=
+X-Gm-Gg: ASbGncsZSU9u94aLZB2SMJZoLB66dvuz7rvB+DxNLWvNxGtAAT8iO392XohWRzad/oP
+	vPAyBrlGWZoKpRIqMXIIy6uKBb0e0KTVJddpUW5WB9v6dSL2/jnWgdi+gfuunuQDVHFTeOmZ5gl
+	GsKy5xMX2Pje7yHUIgQLtMAL1S5vkQ4V3x9JFbhqxUQia5udcVlHwyTjkLt1ZGVld8OUZUAWRHG
+	fBrETxE8REpBNvsEwF6RkL6LzdyXjv6jd0q5L2wMWEqrNg6m8ysOPRVhRC/N4ICqX0ybIFzZVFw
+	+DlXlvEF9d5qocaSfdBinQtcmY0LlZ7kXlMCdt3ABSzjNAy+4yPMYXWzyzcZHSqOX57EXfCWBvd
+	2S3j0tMZuQEXlT47XRoToHr9GcVe3yiVdYbIATp0kYzidJgmxCa2KkQ==
+X-Google-Smtp-Source: AGHT+IFv2pHF60bsj9gEg82i475aoJnNBxx1riwOpUVOZgBEMlNs+m1YOElvTU1CshvLDpIwNvyw7w==
+X-Received: by 2002:a05:600c:c1c8:10b0:456:1156:e5f5 with SMTP id 5b1f17b1804b1-45b85e42eebmr47046545e9.31.1756733875227;
+        Mon, 01 Sep 2025 06:37:55 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33add504sm15216852f8f.30.2025.09.01.06.37.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 06:37:54 -0700 (PDT)
+Date: Mon, 1 Sep 2025 15:37:53 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	linux-hardening@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Chen Ridong <chenridong@huaweicloud.com>
+Subject: Re: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <wkkrw7rot7cunlojzyga5fgik7374xgj7aptr6afiljqesd6a7@rrmmuq3o4muy>
+References: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821141429.298324-1-biju.das.jz@bp.renesas.com> <20250821141429.298324-4-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250821141429.298324-4-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 1 Sep 2025 15:37:51 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWdy2YVxmXT2vPj+3OEJpqj+miTVjhCVuEYpXC8iHXPXA@mail.gmail.com>
-X-Gm-Features: Ac12FXwsw4oI7WF-9YCLIprWBQXgpKOJ90V9uxM-wiHV0s0WiriytN6thpDqjEs
-Message-ID: <CAMuHMdWdy2YVxmXT2vPj+3OEJpqj+miTVjhCVuEYpXC8iHXPXA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] can: rcar_canfd: Simplify nominal bit rate config
-To: Biju <biju.das.au@gmail.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ovh33ndv7ladsqzs"
+Content-Disposition: inline
+In-Reply-To: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
 
-Hi Biju,
 
-On Thu, 21 Aug 2025 at 16:14, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Introduce rcar_canfd_compute_nominal_bit_rate_cfg() for simplifying
-> nominal bit rate configuration by replacing function-like macros.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Split from patch#3 for computing nominal bit rate config separate.
->  * Updated rcar_canfd_compute_nominal_bit_rate_cfg() to handle
->    nominal bit rate configuration for both classical CAN and CANFD.
->  * Replaced RCANFD_NCFG_NBRP->RCANFD_NCFG_NBRP_MASK and used FIELD_PREP to
->    extract value.
+--ovh33ndv7ladsqzs
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
+ warnings
+MIME-Version: 1.0
 
-Thanks for your patch!
+On Sat, Aug 30, 2025 at 03:30:11PM +0200, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+> Based on the comments above, it seems that the original code was expecting
+> cgrp->ancestors[0] and cgrp_ancestor_storage to share the same addres in
+> memory.
 
-Your patch is correct, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fortunately, it doesn't matter what the address of cgrp_ancestor_storage
+is. The important effect is that cgroup_root::cgrp is followed by
+sufficient space to store a pointer (accessed via cgroup::ancestors[0]).
 
-Still a few suggestions for improvement below...
+> However when I take a look at the pahole output, I see that these two members
+> are actually misaligned by 56 bytes. See below:
 
-> --- a/drivers/net/can/rcar/rcar_canfd.c
-> +++ b/drivers/net/can/rcar/rcar_canfd.c
-> @@ -109,16 +109,7 @@
->  #define RCANFD_CFG_BRP_MASK            GENMASK(9, 0)
->
->  /* RSCFDnCFDCmNCFG - CAN FD only */
-> -#define RCANFD_NCFG_NTSEG2(gpriv, x) \
-> -       (((x) & ((gpriv)->info->nom_bittiming->tseg2_max - 1)) << (gpriv)->info->sh->ntseg2)
-> -
-> -#define RCANFD_NCFG_NTSEG1(gpriv, x) \
-> -       (((x) & ((gpriv)->info->nom_bittiming->tseg1_max - 1)) << (gpriv)->info->sh->ntseg1)
-> -
-> -#define RCANFD_NCFG_NSJW(gpriv, x) \
-> -       (((x) & ((gpriv)->info->nom_bittiming->sjw_max - 1)) << (gpriv)->info->sh->nsjw)
-> -
-> -#define RCANFD_NCFG_NBRP(x)            (((x) & 0x3ff) << 0)
-> +#define RCANFD_NCFG_NBRP_MASK          GENMASK(9, 0)
+So the root cgroup's ancestry may be saved inside the padding instead of
+the dedicated storage. I don't think it causes immediate issues but it'd
+be better not to write to these bytes. (Note that the layout depends on
+kernel config.) Thanks for the report Gustavo!
 
-I would drop the "_MASK" suffix.
 
-> @@ -1393,6 +1384,28 @@ static irqreturn_t rcar_canfd_channel_interrupt(int irq, void *dev_id)
->         return IRQ_HANDLED;
->  }
->
-> +static inline u32 rcar_canfd_compute_nominal_bit_rate_cfg(struct rcar_canfd_channel *priv,
-> +                                                         u16 tseg1, u16 brp, u16 sjw, u16 tseg2)
+> So, one solution for this is to use the TRAILING_OVERLAP() helper and
+> move these members at the end of `struct cgroup_root`. With this the
+> misalignment disappears (together with the 14722 warnings :) ), and now
+> both cgrp->ancestors[0] and cgrp_ancestor_storage share the same address
+> in memory. See below:
 
-Perhaps follow the order as used in struct can_bittiming{_const}?
-I.e. tseg1, tseg2, sjw, brp.
+I didn't know TRAILING_OVERLAP() but it sounds like the tool for such
+situations.
+Why do you move struct cgroup at the end of struct cgroup_root?
 
-> +{
-> +       struct rcar_canfd_global *gpriv = priv->gpriv;
-> +       const struct rcar_canfd_hw_info *info = gpriv->info;
-> +       u32 ntseg2, ntseg1, nsjw, nbrp;
-> +
-> +       if ((priv->can.ctrlmode & CAN_CTRLMODE_FD) || gpriv->info->shared_can_regs) {
-> +               ntseg2 = (tseg2 & (info->nom_bittiming->tseg2_max - 1)) << info->sh->ntseg2;
-> +               ntseg1 = (tseg1 & (info->nom_bittiming->tseg1_max - 1)) << info->sh->ntseg1;
-> +               nsjw = (sjw & (info->nom_bittiming->sjw_max - 1)) << info->sh->nsjw;
-> +               nbrp = FIELD_PREP(RCANFD_NCFG_NBRP_MASK, brp);
+(Actually, as I look at the macro's implementation, it should be
+--- a/include/linux/stddef.h
++++ b/include/linux/stddef.h
+@@ -110,7 +110,7 @@ enum {
+                struct {                                                        \
+                        unsigned char __offset_to_##FAM[offsetof(TYPE, FAM)];   \
+                        MEMBERS                                                 \
+-               };                                                              \
++               } __packed;                                                     \
+        }
 
-Perhaps use the order of the function parameters?
+ #endif
+in order to avoid similar issues, no?)
 
-> +       } else {
-> +               ntseg2 = FIELD_PREP(RCANFD_CFG_TSEG2_MASK, tseg2);
-> +               ntseg1 = FIELD_PREP(RCANFD_CFG_TSEG1_MASK, tseg1);
-> +               nsjw = FIELD_PREP(RCANFD_CFG_SJW_MASK, sjw);
-> +               nbrp = FIELD_PREP(RCANFD_CFG_BRP_MASK, brp);
+Thanks,
+Michal
 
-Likewise.
+--ovh33ndv7ladsqzs
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +       }
-> +
-> +       return (ntseg1 | nbrp | nsjw | ntseg2);
+-----BEGIN PGP SIGNATURE-----
 
-Likewise.
+iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaLWhqxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+Aiw5AD/WjNnIRij7kR4aDTHZCH7
+vzJ6lYELo8G6AfXsjqYtUbcA/2ayENeSaMr743JSAr9CRnOqwlPR9lH/vzAo6qt1
+c+UC
+=BQTW
+-----END PGP SIGNATURE-----
 
-> +}
-> +
->  static void rcar_canfd_set_bittiming(struct net_device *ndev)
->  {
->         u32 mask = RCANFD_FDCFG_TDCO | RCANFD_FDCFG_TDCE | RCANFD_FDCFG_TDCOC;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--ovh33ndv7ladsqzs--
 
