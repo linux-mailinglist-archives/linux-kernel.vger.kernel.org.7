@@ -1,204 +1,168 @@
-Return-Path: <linux-kernel+bounces-794220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EA6B3DE90
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:31:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90652B3DE95
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6593BB1F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A214188274C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC19155C82;
-	Mon,  1 Sep 2025 09:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B831D30DEBB;
+	Mon,  1 Sep 2025 09:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrQ86so5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="duhoG9Vf"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238712FB628;
-	Mon,  1 Sep 2025 09:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8D430DD29
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756718911; cv=none; b=EIEwQpykWvRBf7ChkH8SZ1uv3T5+4KdGtqY+3QRUsoIV1stMBoAa9exjTiwt5lk0W+zAGur44C4SNMDW7JM9td6KrQlPysPj6MSzAqBo4McCzvFN7c93otFkjzLnoeIBCjufzj2DoZMtTnHt/soU4kkORKCXVaJoLLSudkI1gNo=
+	t=1756718997; cv=none; b=SCQQxJh/3f6twFg9nAyvJ/3y2vXFxxCMIdLeQZ3BP8czHcEChs7AbtS0BWerIaZLdigB6IvH3tIRVvR8OyWCb9io2ntJViBehHCOq9DFCPbq9hElJkAroSZUUq7NCOm8g326qQO1spV5JzOh1X0GbytqrIA0+zebGUBBwBGgIlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756718911; c=relaxed/simple;
-	bh=shaElPSOObJfmkZY5LcTmt3dvO0ZWW/U6309J45jo38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bY05yh+d0jq3lkJc+FjC/9mubtO0sEpNIQpfj9eTrDCQDmz+ZGU5jPH2os2fkF+qcLW8wx3hxkBPcaM3/PpVToAhqtIjXUSOzmq1Ilhvc15l46Ia8j5EibhtAIkSqjGrAHWoUmS0B1+DPOCoIE+M9gKfFxB6XCZ6Mji1QGm/AwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrQ86so5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83F2C4CEF0;
-	Mon,  1 Sep 2025 09:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756718910;
-	bh=shaElPSOObJfmkZY5LcTmt3dvO0ZWW/U6309J45jo38=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DrQ86so5j2ATBrGJSrkZA1SwnOTQVXVGj0BfVcU29yQ7YLX6a/D/utPuco4g1UCbr
-	 qQdlP1U40hLWhipNtw9Vi1ncwBPsLcFqDCj9jOFw/orQTZBcDfSV06hbaci1d87WB+
-	 pG2N0ZlrXuNdqYjpC6B8eLSgbZD2SwMPLRdbNxAFalRawBRXpTIlH+abGRiRCm7Bn9
-	 cPQz7tx4829tpuYp0tz0YEW+ht80uFYUFYB7pHUbbbtBIP5Q0VBmGwFR4KR5gWUbCI
-	 /tg0gMy60kTEbc7fVgCKjBD8ick3A6xKmmAFGbqLqhstrsm/9rjlIBd1554mIoU3QU
-	 BK3zkVDcvrXvg==
-Message-ID: <aec3629c-27a0-49d9-9fcf-5922b0f9035f@kernel.org>
-Date: Mon, 1 Sep 2025 11:28:24 +0200
+	s=arc-20240116; t=1756718997; c=relaxed/simple;
+	bh=qZJxbmaqGWsy4atFe2P3rGVqkuLG6BlTXh6WeAcAyhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=n3dDnc34l+nTCX8AOQznmkcZDdycOTwVrvPxEuH7kcI6Jq2vdI4kqCMHECTuQughtaxcAUo2Wv4UenRcSWqQE/PoMDkiIutA+YJmWITtJBoEkXWgWwWpRlhS4339x885JgCZKBodLgEznBBpdKswsac2P5BKaAIXrZCA4SnYYfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=duhoG9Vf; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250901092952epoutp038b53c8205386eaf52abb52edf9559bed~hHp3LfCmo1906019060epoutp03l
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:29:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250901092952epoutp038b53c8205386eaf52abb52edf9559bed~hHp3LfCmo1906019060epoutp03l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756718992;
+	bh=74Q1v6jsTAK/snjr8Bol8mkXpMT6PrDDB7mwBUaLBDo=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=duhoG9Vfo9MZOdJwEUweOVti6TF5ssKEaXuBHMXGEot2BY0fWmc9P0IBHlRSrsThv
+	 tOpfjQieTm9YhADMDRenITqN/7yWck6ARrjqndgd8fQjNwztCOUxyzUKyQJx9D9emj
+	 vhEPYe+CdkbzK61hgNNRDZTZLN/WrKt0Lsvg300o=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250901092952epcas5p15f9c1d6b59500aeac07e20af90cad9f6~hHp20veHp1370913709epcas5p13;
+	Mon,  1 Sep 2025 09:29:52 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cFk9W4mCWz2SSKY; Mon,  1 Sep
+	2025 09:29:51 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1~hHp1a6Xqt2257322573epcas5p34;
+	Mon,  1 Sep 2025 09:29:50 +0000 (GMT)
+Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250901092949epsmtip23b4ed2198fb6b60b6d40969701766613~hHpz3yNss1644216442epsmtip2H;
+	Mon,  1 Sep 2025 09:29:49 +0000 (GMT)
+From: Shashank A P <shashank.ap@samsung.com>
+To: jack@suse.com, linux-kernel@vger.kernel.org
+Cc: shadakshar.i@samsung.com, thiagu.r@samsung.com, hy50.seo@samsung.com,
+	kwangwon.min@samsung.com, alim.akhtar@samsung.com, h10.kim@samsung.com,
+	kwmad.kim@samsung.com, selvarasu.g@samsung.com, Shashank A P
+	<shashank.ap@samsung.com>, stable@vger.kernel.org
+Subject: [PATCH] fs: quota: create dedicated workqueue for
+ quota_release_work
+Date: Mon,  1 Sep 2025 14:59:00 +0530
+Message-ID: <20250901092905.2115-1-shashank.ap@samsung.com>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s EC
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
- <20250831-thinkpad-t14s-ec-v1-1-6e06a07afe0f@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250831-thinkpad-t14s-ec-v1-1-6e06a07afe0f@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1
+References: <CGME20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1@epcas5p3.samsung.com>
 
-On 31/08/2025 23:28, Sebastian Reichel wrote:
-> Add binding for the EC found in the Thinkpad T14s Gen6 Snapdragon,
-> which is based on the Qualcomm X1 Elite. Some of the system LEDs
-> and extra keys are only accessible via the EC.
-> 
-> Signed-off-by: Sebastian Reichel <sre@kernel.org>
-> ---
->  .../bindings/platform/lenovo,thinkpad-t14s-ec.yaml | 49 ++++++++++++++++++++++
+There is a kernel panic due to WARN_ONCE when panic_on_warn is set.
 
-Please place it in embedded-controller. I moved there all ECs.
+This issue occurs when writeback is triggered due to sync call for an
+opened file(ie, writeback reason is WB_REASON_SYNC). When f2fs balance
+is needed at sync path, flush for quota_release_work is triggered.
+By default quota_release_work is queued to "events_unbound" queue which
+does not have WQ_MEM_RECLAIM flag. During f2fs balance "writeback"
+workqueue tries to flush quota_release_work causing kernel panic due to
+MEM_RECLAIM flag mismatch errors.
 
->  1 file changed, 49 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml b/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..bab20df2d9ede9a3cb0359944b26b3d18ff7d9b8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/platform/lenovo,thinkpad-t14s-ec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Lenovo Thinkpad T14s Embedded Controller.
+This patch creates dedicated workqueue with WQ_MEM_RECLAIM flag
+for work quota_release_work.
 
-Drop full stop, titles never have them.
+------------[ cut here ]------------
+WARNING: CPU: 4 PID: 14867 at kernel/workqueue.c:3721 check_flush_dependency+0x13c/0x148
+Call trace:
+ check_flush_dependency+0x13c/0x148
+ __flush_work+0xd0/0x398
+ flush_delayed_work+0x44/0x5c
+ dquot_writeback_dquots+0x54/0x318
+ f2fs_do_quota_sync+0xb8/0x1a8
+ f2fs_write_checkpoint+0x3cc/0x99c
+ f2fs_gc+0x190/0x750
+ f2fs_balance_fs+0x110/0x168
+ f2fs_write_single_data_page+0x474/0x7dc
+ f2fs_write_data_pages+0x7d0/0xd0c
+ do_writepages+0xe0/0x2f4
+ __writeback_single_inode+0x44/0x4ac
+ writeback_sb_inodes+0x30c/0x538
+ wb_writeback+0xf4/0x440
+ wb_workfn+0x128/0x5d4
+ process_scheduled_works+0x1c4/0x45c
+ worker_thread+0x32c/0x3e8
+ kthread+0x11c/0x1b0
+ ret_from_fork+0x10/0x20
+Kernel panic - not syncing: kernel: panic_on_warn set ...
 
-> +
-> +maintainers:
-> +  - Sebastian Reichel <sre@kernel.org>
-> +
-> +description:
-> +  The Qualcomm Snapdragon-based Lenovo Thinkpad T14s has an Embedded Controller
-> +  (EC) which handles things such as keyboard backlight, LEDs or non-standard keys.
+Fixes: ac6f420291b3 ("quota: flush quota_release_work upon quota writeback")
+CC: stable@vger.kernel.org
+Signed-off-by: Shashank A P <shashank.ap@samsung.com>
+---
+ fs/quota/dquot.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Please wrap at 80.
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index df4a9b348769..d0f83a0c42df 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -162,6 +162,9 @@ static struct quota_module_name module_names[] = INIT_QUOTA_MODULE_NAMES;
+ /* SLAB cache for dquot structures */
+ static struct kmem_cache *dquot_cachep;
+ 
++/* workqueue for work quota_release_work*/
++struct workqueue_struct *quota_unbound_wq;
++
+ void register_quota_format(struct quota_format_type *fmt)
+ {
+ 	spin_lock(&dq_list_lock);
+@@ -881,7 +884,7 @@ void dqput(struct dquot *dquot)
+ 	put_releasing_dquots(dquot);
+ 	atomic_dec(&dquot->dq_count);
+ 	spin_unlock(&dq_list_lock);
+-	queue_delayed_work(system_unbound_wq, &quota_release_work, 1);
++	queue_delayed_work(quota_unbound_wq, &quota_release_work, 1);
+ }
+ EXPORT_SYMBOL(dqput);
+ 
+@@ -3041,6 +3044,11 @@ static int __init dquot_init(void)
+ 
+ 	shrinker_register(dqcache_shrinker);
+ 
++	quota_unbound_wq = alloc_workqueue("quota_events_unbound",
++					   WQ_UNBOUND | WQ_MEM_RECLAIM, WQ_MAX_ACTIVE);
++	if (!quota_unbound_wq)
++		panic("Cannot create quota_unbound_wq\n");
++
+ 	return 0;
+ }
+ fs_initcall(dquot_init);
+-- 
+2.34.1
 
-> +  This binding describes the interface, on an I2C bus, to this EC.
-
-Drop, or just describe the hardware, not binding.
-
-> +
-> +properties:
-> +  compatible:
-> +    const: lenovo,thinkpad-t14s-ec
-> +
-> +  reg:
-> +    const: 0x28
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |+
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c1 {
-
-i2c
-
-> +        clock-frequency = <400000>;
-
-Drop
-
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        embedded-controller@28 {
-> +            compatible = "lenovo,thinkpad-t14s-ec";
-> +            reg = <0x28>;
-> +            interrupts-extended = <&tlmm 66 IRQ_TYPE_LEVEL_LOW>;
-> +        };
-> +    };
-> +...
-> 
-
-
-Best regards,
-Krzysztof
 
