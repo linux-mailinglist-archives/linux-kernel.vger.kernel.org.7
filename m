@@ -1,127 +1,158 @@
-Return-Path: <linux-kernel+bounces-794919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2810B3EAC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A40CB3EACC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967DF4856A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ECFF483F9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B3E356904;
-	Mon,  1 Sep 2025 15:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E671336998D;
+	Mon,  1 Sep 2025 15:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHSscyxU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hk4jVTqT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H/0JPw5a"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BC62FB625;
-	Mon,  1 Sep 2025 15:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD63369965;
+	Mon,  1 Sep 2025 15:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739838; cv=none; b=A/qhr+VQVBEhhcc9FTXrma/nuKUt/SsC8Oa/2m/DKGxkcn+TQBIIbmfTInQ33JWQ0wzarNn9H777EXcRf0YGV0Q6dPwu18chEv6e6IVQwuliQGwP77vQgmDvN5OXHHhKkbL9CIkdg5UgRMTHoS4CRglEYE6oos5mUgXpg4OMx2w=
+	t=1756739858; cv=none; b=BFRuyCtaUDtFQAfFK4t5VPmo/V5RsxjOzn1F4OYQxH9BR47ILVJYNlW1NdRR6g28l7GqTva6NIKcaFXCiG2MVYlahrVM/7Qj1UviZGCB0RpAPli0i5xoY3a5tGOtOXleRlM5TObV4K5LXK7JH9L1oiO0UbprRRWMtFbNTQ/OeDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739838; c=relaxed/simple;
-	bh=5weQGGRb22PrjCyP/g4zxlVoFtpKwJSJ+1zX1sG+Ceo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rMdK436whRxs/eRlRQXd4ZbALenInxJWtcorA+TeM/SgsNUuMaHkQkJFcID8EBLNSR4Y9J2QAL/Li4/kwa0vxfRvg67c6FQk+BVpr/jVK9fueaCCP1OnojL/DlWSrBY/yxdPsZi0tYbMYrHQJQHvifnjVAUS9/vxtDMlqfAwAUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHSscyxU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5DE0C4CEF4;
-	Mon,  1 Sep 2025 15:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756739837;
-	bh=5weQGGRb22PrjCyP/g4zxlVoFtpKwJSJ+1zX1sG+Ceo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fHSscyxUBqa2PrUEAJYH4gjbe394x6UINLLLJtU3No/ch07okasdYpPcLQVZ4fQdz
-	 QQVpadnQL9+K/Bpr7PRPb1lji/ueyUJo0Nz3wjlJnIDs6gj2K0bIoBRm5dUqa4DnzM
-	 DY2h8b80jorHneNn39SEcsZRb6GHqyX/EXJ0F/BwtNCV5dmP3SHyX9yn+TVbM49IPg
-	 gJX0lOPTuzPnXXKhNhXoblUzf/66Yb6hsnXIc36xlN9G/S8hlUTrrtuZhlzHc+/YLr
-	 6Fj48VcKspQFdxqqBYoze3u/d/wGFeYtGEBYBk9/cEEhhvcPXXMosbjDG8tSDIKFer
-	 oYp4KruBpNFcA==
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-315a7547f26so1830791fac.0;
-        Mon, 01 Sep 2025 08:17:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUXIHZ+dieROt+4aTrx1PcQHg7nlIYAk95nHDLmbgbllnv2cmG6mrjfHDF7dMKOFYn2e9VPb5z8RJLo@vger.kernel.org, AJvYcCVQNIvOWLC6VJy/BXPyCiYqIOIff9qvM1NtaWw/Fp/9VZ9UctTh8eZYMr7EXvWZj7EgyB+HphMNcxUsQkop@vger.kernel.org, AJvYcCVyd/p9aEv8bXqzH8DDjtnOHnnDgkBLAQrnaSMATHE8m93ZEpVDiiEtF6pYxJpV40tsFWwCe+yjX1kFbA==@vger.kernel.org, AJvYcCWbLVBPEqVfF5Fvncp2sAWSNlfd2X/1xg3EqRLpUzHFRdkCtmsFaaV5bBRZH1rCTVLJkAVfp5E37H0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCFGC8VefGHUYvWSPcvdPQw8F6nwwAI5NC+dgnHQDtKRQll5Ta
-	wejVDFDIrJHv2w8YOR4qbZwUa5tqskm50f5AKdAwMEZrRK2a8Uhi1XOWSctju/uJKFAt/0aSyeM
-	2ioVdTEQCuKCAbQvIwuGmM6xAYMTCaGA=
-X-Google-Smtp-Source: AGHT+IEqozTSDrtoR1W72zJmy9Z1LH1mlLFPdwzpw5V1Yv8IGBwtb8EBAZercDEFewoqAI3YKrAtdKI2Ii3KK+l5mg4=
-X-Received: by 2002:a05:6870:9b09:b0:30b:b123:b6c9 with SMTP id
- 586e51a60fabf-319630e13fbmr3523480fac.12.1756739836982; Mon, 01 Sep 2025
- 08:17:16 -0700 (PDT)
+	s=arc-20240116; t=1756739858; c=relaxed/simple;
+	bh=8PXIiPPRnl7IVycBL0AG952KtfLHOuy/NV6IGpvmmVE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=iZAK2woK+6R/y0Ds+WWMmCCFgtmbRnDKeOFCX37mNy1GfvYUqReONwcyIHWXbxNf+7AOKYqIqOf2ooyqGcqiQq+SQd+TZGxox4TDKMVmafO92gzYO2plO1lKmQfbm+BUwFrqia05JFsDtlA2hTQTlMnvoLtwIH3XAIPtRLL33MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hk4jVTqT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H/0JPw5a; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 144107A0248;
+	Mon,  1 Sep 2025 11:17:35 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 01 Sep 2025 11:17:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1756739854;
+	 x=1756826254; bh=jadb4EDVY+ByTvcBwpo9rDNcog0QvnUoF/PTU82u4wI=; b=
+	hk4jVTqTF1hT3FdNa7bVHa1IxsIwlxKwKcBCivc2Oh2Lb/a/Imvinb/zgmq0HDQp
+	MReVGygrrSp7AfrWj0cYcpN/hQ7n6aMLVnd11y7uFnPU3UdgDptJX7wBoBrBpOPd
+	BWq7whAf08v8jyIpR3gfIqGhiLF6oBuboacOyHm52roBD6di6t83+xRd8eIm8xKB
+	ZjP8fLMgc0FleWMReh9/EERxGH+0wBpGouIk5uDvtFFu11pZxB0JZQTmMnespLYS
+	zN3cZjiUrkPECw+TiEwKJuumRV5OzBqp/18AQhJwfnURuTr9ZfFPYZpKfi4UKUpU
+	FaC1m4VgVbI/B6sGiSwAgA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756739854; x=
+	1756826254; bh=jadb4EDVY+ByTvcBwpo9rDNcog0QvnUoF/PTU82u4wI=; b=H
+	/0JPw5abdgy6lyqpWiU2mJl6Z7icxgsFwG95dKDs0bgha0tU1+1PutnGH32SzFbF
+	7t6lIdFO0Rc1JZiBZ0m69hyyHdz1825ow9wfcVYjoI2XqwQitMQ1LUj2z8rDRq4k
+	iRBfe+5i6y9W67zV8/7c+H+j9+XQKf5pzs41OdKW5djvMuqzAAyxfoTuQp3fSRp1
+	cPsfK5gmGXwWX1FDk22CwqoGxxyQx//FoZ17R2q8ewQmjPf56/JBScubWTTqY9Sy
+	7KzNq0okT0pdKr7narNJ7cj0ua7oUOr5qvCs9ogPFuNmOi/aRjW8en3jR5zpeXBf
+	cElYjFmtZABxWhUAvQaxg==
+X-ME-Sender: <xms:Drm1aB5Kyr1trtDXSOrAgfg7JBHZcqRpBts9NQGJx7TpsFoF5JNe8g>
+    <xme:Drm1aO6eVi1plQuGwG6buxlIkur8R1s1zSb4MV18Ldb3NMUyx-2Sl7ux0qF9EIE52
+    Upu0Eao01lYoq3ooi0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduledvgeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtohhmpd
+    hrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegr
+    nhgurhgvrghssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepjhhsthhulhhtiiesgh
+    hoohhglhgvrdgtohhmpdhrtghpthhtoheplhhuthhosehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslh
+    hinhhuthhrohhnihigrdguvgdprhgtphhtthhopehthhhomhgrshdrfigvihhsshhstghh
+    uhhhsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepnhgrghgrrhgrthhhnhgrmh
+    drmhhuthhhuhhsrghmhiesohhrrggtlhgvrdgtohhm
+X-ME-Proxy: <xmx:Drm1aIBVcWOj3I1C-9_HdL69QPHsjQHCQTQWUOvyQ1NKIOMRJ0dkUQ>
+    <xmx:Drm1aBy1icM59I1WdgiT3ByfnZ_VjCeCWFSNjKwKXX74zpuCag33Rg>
+    <xmx:Drm1aGeMqWhy8L0r2JLPWpNgDqUAKOziFTS3-D-U4u5LLAek3RcwWw>
+    <xmx:Drm1aOvZs8Rt6pec5JxcCxeMRd3_qQHn678dXLjgRI2gCOUr066_OQ>
+    <xmx:Drm1aNomeLEjhm2nTkr-dYiO5on7w7YRZTnN6Nhzm0xlwtx0q7VHd_YY>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4975A700068; Mon,  1 Sep 2025 11:17:34 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901085748.36795-1-zhangzihuan@kylinos.cn> <20250901085748.36795-4-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250901085748.36795-4-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 1 Sep 2025 17:17:05 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hu48NrMr6Vkjn_UyHywJMx7F5N6yWf2LiXxykZF79EKA@mail.gmail.com>
-X-Gm-Features: Ac12FXy28aQLAZnDRwhZh3hbZ0aFKhCyHW17tDgFwo0nHMN5cP-adgYEeM5GYyY
-Message-ID: <CAJZ5v0hu48NrMr6Vkjn_UyHywJMx7F5N6yWf2LiXxykZF79EKA@mail.gmail.com>
-Subject: Re: [PATCH v3 03/12] cpufreq: intel_pstate: Use scope-based cleanup helper
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: AxKiywhTe-eg
+Date: Mon, 01 Sep 2025 17:17:13 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>
+Cc: "Andreas Larsson" <andreas@gaisler.com>,
+ "Andy Lutomirski" <luto@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Nagarathnam Muthusamy" <nagarathnam.muthusamy@oracle.com>,
+ "Nick Alcock" <nick.alcock@oracle.com>, "John Stultz" <jstultz@google.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+ sparclinux@vger.kernel.org
+Message-Id: <6390486f-ccc7-4f77-8126-1e0b3b67bc75@app.fastmail.com>
+In-Reply-To: 
+ <20250829124314-288d0445-a744-4022-93bf-7da255182411@linutronix.de>
+References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
+ <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
+ <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
+ <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
+ <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
+ <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
+ <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
+ <b7ab1bdca349208532804d0d5e5af56817cd25c6.camel@physik.fu-berlin.de>
+ <20250829124314-288d0445-a744-4022-93bf-7da255182411@linutronix.de>
+Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO library
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 1, 2025 at 10:58=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
-n> wrote:
+On Fri, Aug 29, 2025, at 12:52, Thomas Wei=C3=9Fschuh wrote:
+> On Fri, Aug 29, 2025 at 12:40:59PM +0200, John Paul Adrian Glaubitz wr=
+ote:
+>> On Fri, 2025-08-29 at 12:37 +0200, Thomas Wei=C3=9Fschuh wrote:
+>> > In the meantime I installed a full Debian, but the bug is still not
+>> > reproducible in QEMU.
+>>=20
+>> Please keep in mind that QEMU emulates sun4u (on UltraSPARC II) while
+>> Andreas was testing on sun4v (on Niagara 4). There might be differenc=
+es.
 >
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->  drivers/cpufreq/intel_pstate.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
-e.c
-> index f366d35c5840..4abc1ef2d2b0 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -1502,9 +1502,8 @@ static void __intel_pstate_update_max_freq(struct c=
-pufreq_policy *policy,
->
->  static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
->  {
-> -       struct cpufreq_policy *policy __free(put_cpufreq_policy);
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpuf=
-req_cpu_get(cpudata->cpu);
->
-> -       policy =3D cpufreq_cpu_get(cpudata->cpu);
->         if (!policy)
->                 return false;
+> I am aware. Unfortuntely I don't have anything else available.
+> If anybody could test this on real sun4u that would be great.
+> Or teach me how to use sun4v QEMU without it crashing on me.
+> In the past you offered access to a physical machine.
+> Does this offer still stand? Does it also run into the bug?
 
-The structure of the code is intentional here and there's no reason to
-change it.
+It should be enough to set the cpu to a different type. As far
+as I can tell, the three different cases are all determined by the
+MMU/CPU ID, not the platform type (sun4u/sun4v).
+
+As far as I can tell, the options are:
+
+- JPS1 (UltraSPARCIII, SPARC64 V) and later use modern 'stick' operations
+- UltraSparc IIe (Hummingbird) uses 'hbtick' without VDSO
+- All other plain V9 implementations use 'tick'
+
+To test all three cases, it should be enough to run qemu with e.g.
+"-cpu Sun-UltraSparc-IV", "-cpu TI-UltraSparc-IIe", and
+"-cpu TI-UltraSparc-II", respectively.
+
+       Arnd
 
