@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-794690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81744B3E5C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:43:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13886B3E5CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D24B18953D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:43:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22EEE7AE65E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA2433A01A;
-	Mon,  1 Sep 2025 13:42:36 +0000 (UTC)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8763933CEB7;
+	Mon,  1 Sep 2025 13:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqchslqc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB07335BD5;
-	Mon,  1 Sep 2025 13:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86C5335BDB;
+	Mon,  1 Sep 2025 13:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756734156; cv=none; b=mXb689yVacouj3g4CKlws0s76HWCIF0ual59eKZDtmNQJ1sZu5M/JFgTED5hIqZjNXEM36lT5xqOBUCfrvPpM6w/OTdUoyGExdtXWtyXebNt6uSju9Xw21qO8+IfCDGaAWYHcil7+w/4/55geZozGoTr/K9tu0WyImF8Y66XWZY=
+	t=1756734158; cv=none; b=FfPPixYknNtt8NZgp49Zh8xcVhbYiTrMiFozdEOMbXb+KnYDozGTRyvuOUa01nF57o12Y+GUA7ng5v2TZKFSdGhK/i+8BomVFj5BBdk4nL0O9S4C3kUH8vZV3MQJI/uoRced/iEN+cYovH14A7V7sZdwCR1a4ew7AySgzfc26ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756734156; c=relaxed/simple;
-	bh=RiR2llBXC0RIPKr7xaiaC53t2ZL4gXL/WiWADRkCq/Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vo4bsNVnQbnEWISdHSd4c/CN/F5Hvj6yHVxPr7KeVhJWNgDg/CnQVNhWH3z2rasnNX0WkWaXRn2YfTLZzNRQ3FyEVjQEYhHoccpYMfLwYN/1hqknfrl58lcdz+DpOrb1qUh+irdSPvQ/54YI+hzQCMgBVVhViL+yhtfKBqz6PPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-52a73cc9f97so751344137.3;
-        Mon, 01 Sep 2025 06:42:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756734153; x=1757338953;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vocq/+HcTHTmphWd6zOzklSWl3IX57j4LspmV5YVnH8=;
-        b=FtTEsw3jw2ythJ4Rgnr/WsaL9JUK8tJ99wxS5f8E9fguzxcRj3w4fGJ9ECBmEN33y/
-         u0+k+XbH/ozT3KLw1TVs8GI43LVbL9A+OY6t5EnhOQEGONzWhC1dIC1I2XcZTgTRcj01
-         tiSdLJy5eR+EoCBgbbmYqZfDJcYGoT4UeKzt8qRaliCdjJu5FhzSPdLsVHL6wf/I6tAr
-         ELFnD6yS4lFQMMo0aRmyF4o1M85bu3uzR0RJtvZGhfdkG9HwWLRsqlJjvnY1RJOTy/ru
-         eulDBQXLy/Gv9RdP5cMig7p3VpMnagrKPMgjtY/nF8JE7W/EC/8wMO4enEbpCeRHfIRh
-         fUaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFSCBWWpTO9btlKaaRLyZdi5WlOKAXO4JnzLyzsV3upynN7e1UAR1SEWJKHcHthFb9hdLogKikFC0=@vger.kernel.org, AJvYcCUfusu1F1CGwdrdOE+aNt6ErWPz8wwgFwTT5/e66KkiLlukNrM8URiLx6kcLmJthxkKroS3oMmoNNZLQ+/7ipBEEXI=@vger.kernel.org, AJvYcCVWARpHhl2yndQsRAkD10602VvQRo8d+Bia3m490/1jK0YcM97vTOeqRhOXaiqIedseKxPEc6G9cpknl0SY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWL57RbHlbjDUjnR9N5Q/5ClOrFO9eFcBoa4VJdpct9N/AiV5Q
-	g+82aIKJCjriiuJGVFdfz8hUCvLUb4EWGZoAHT7uaL0jUjiYZwZOKuMjr7eZ54R8
-X-Gm-Gg: ASbGnctVHjO83K50vW7EA9uCflmaijtTAzeLeCGJ0exUXl1u7s9caOLvpkU7kxrscrL
-	+waskpgXRBF+EP4g4nQFV77dEC/1DfNYlrOeRP/YIx/mW/A7eF3ZUUZgyikjYsxJU67DoV60Xjh
-	E0kG2D8KVMz50X1tkLJv63ymIA8l6F06+tINEXQ9UcmFaN/hFdGwn+rBcloyrYZB+ZjBU+3bxAo
-	BnO/ue1UaBDfqTZjJ8UGL3v7YAxMDFw1yOOtyx1KIqsoqbMlgUABd0GqIAZQtHNx5oP7xPbeWjR
-	+Q+mfrsn9GaxiUs5HfzR7SFbIau+yihU232rtVT6TgX1LdYkFlUhyvxTSCkF6HnyhfmJqIywyJQ
-	4dEfpjjIvw9FkCh5csGWWbXPolRGao+uZvTYtdpQ1oSC5NjeUkG+FGHqp8gzwYtlgRoSQQTs=
-X-Google-Smtp-Source: AGHT+IEbLs5kgSXJJUR9pdGBnxmcVEfqPOqKeIQWpSCeI0Zra1Jtu6uB0pm71eUifEmjjfyfZuKsAQ==
-X-Received: by 2002:a05:6102:5127:b0:4e6:d911:dd84 with SMTP id ada2fe7eead31-52b1b6f5b9dmr1905877137.22.1756734153073;
-        Mon, 01 Sep 2025 06:42:33 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8943b7c2c42sm3774794241.4.2025.09.01.06.42.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 06:42:32 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-890190c7912so855230241.2;
-        Mon, 01 Sep 2025 06:42:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUj9C2ZrjxqzbAFdWHdaQdFwPQP6mcF9g49XViA/IBmRY0DoID9FKZZfHFeyyCJ6+sveM8wCN1WaFzHEXt0@vger.kernel.org, AJvYcCV0VLGNiFao/5v+uYS02iiuy+ffX1444nDCe547yjr2fXJ8nSxE1j8g3fsS1/Athfw6KRLQnwKc8U4=@vger.kernel.org, AJvYcCWZVD+yoWsoqDZlN3p9OdfFZnQqHBKBflPu7FNr2DV9+jHWrFhg64F3pj0Vlh1pPCg646PVr6SbzG8Yn5k2smL3zN0=@vger.kernel.org
-X-Received: by 2002:a05:6102:5687:b0:523:95bb:b63a with SMTP id
- ada2fe7eead31-52b1b6fbbc8mr1571895137.21.1756734152397; Mon, 01 Sep 2025
- 06:42:32 -0700 (PDT)
+	s=arc-20240116; t=1756734158; c=relaxed/simple;
+	bh=stSa6AbVOyKjdWayNfoBi8bf/zGdedt720iK82+UpbU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TYimE423aXg9YznH+c52v48a8E0dlgKmY9IUOqnRmHIkz7Lb/jwuCZKgoKxLRLCB/XEc6Vr9tK92v12rvPBzz55h6JlU8cvn2hzxrzh9vl5W0ZBxsaYHfQgUfCqWK/eM1eDaJtzC8NQ/HtlnJD9iI/amho5yuy/If8g9y4UaNUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqchslqc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923C2C4CEF0;
+	Mon,  1 Sep 2025 13:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756734157;
+	bh=stSa6AbVOyKjdWayNfoBi8bf/zGdedt720iK82+UpbU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=bqchslqcFoOMQT0/h8q8vlwjU1ITL62660X9gRcekGYkdnHHOUX7rXHOeBUWREkQP
+	 +hsuCjqHVDdf3P0wNbFIYYWUk89cd2OOj3eM9cuZL/Drhor5e/IW+KeZNG/1Lwp+9U
+	 WrTVLMJaYOyv7CBKHuG38FkTHAU4yd1PoyD8MdTS12v8hyfov9zLbTSiQNrO3Okio0
+	 wWLqiTIo7+MEkhEA+UDM49jqlO5EegjvADcJNc/LUxeq3rL5DidsdDNJlg2iBNZ2T8
+	 ovz8GxLGPNAVtE3LKPSJwVpfsK+Ij5Xk/lGB7P1piGMbLKABN3NQQDoITRHkVEl9oY
+	 nN2tsEuYn9akg==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: cros-qcom-dts-watchers@chromium.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ quic_vbadigan@quicinc.com, quic_mrana@quicinc.com, 
+ quic_vpernami@quicinc.com, mmareddy@quicinc.com, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
+References: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v8 0/5] PCI: dwc: Add ECAM support with iATU
+ configuration
+Message-Id: <175673415116.10403.13836370686011733892.b4-ty@kernel.org>
+Date: Mon, 01 Sep 2025 19:12:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821141429.298324-1-biju.das.jz@bp.renesas.com> <20250821141429.298324-5-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250821141429.298324-5-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 1 Sep 2025 15:42:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUNZag2kf9Dq_sv++6DtU-2tWAgQa5vi36duBx77=a+KA@mail.gmail.com>
-X-Gm-Features: Ac12FXycAaiDbDiLCPFnnKNCCOpZihQqU0phzOqdDOsQ8ZbBu8u1JL5pNL2VgP8
-Message-ID: <CAMuHMdUNZag2kf9Dq_sv++6DtU-2tWAgQa5vi36duBx77=a+KA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] can: rcar_canfd: Simplify data bit rate config
-To: Biju <biju.das.au@gmail.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Biju,
 
-On Thu, 21 Aug 2025 at 16:14, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Introduce rcar_canfd_compute_data_bit_rate_cfg() for simplifying data bit
-> rate configuration by replacing function-like macros.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Split from patch#3 for computing data bit rate config separate.
->    separate.
->  * Replaced RCANFD_DCFG_DBRP->RCANFD_DCFG_DBRP_MASK and used FIELD_PREP to
->    extract value.
+On Thu, 28 Aug 2025 13:04:21 +0530, Krishna Chaitanya Chundru wrote:
+> The current implementation requires iATU for every configuration
+> space access which increases latency & cpu utilization.
+> 
+> Designware databook 5.20a, section 3.10.10.3 says about CFG Shift Feature,
+> which shifts/maps the BDF (bits [31:16] of the third header DWORD, which
+> would be matched against the Base and Limit addresses) of the incoming
+> CfgRd0/CfgWr0 down to bits[27:12]of the translated address.
+> 
+> [...]
 
-Thanks for your patch!
+Applied, thanks!
 
-For correctness:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[2/5] PCI: dwc: Add support for ELBI resource mapping
+      commit: d39e0103e38f9889271a77a837b6179b42d6730d
+[3/5] PCI: dwc: qcom: Switch to dwc ELBI resource mapping
+      commit: 6955a13b1349376a00ebca80d1a8e2960de3fb0f
+[4/5] PCI: dwc: Add ECAM support with iATU configuration
+      commit: 0c959f675ce0338f3bee2636437bce4d5713ea03
+[5/5] PCI: qcom: Add support for ECAM feature
+      commit: 0bba488d552dccda4b803fa4b5d4d5d3029d601d
 
-But I have the same comments as for "[PATCH v2 3/4] can: rcar_canfd:
-Simplify nominal bit rate config".
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Manivannan Sadhasivam <mani@kernel.org>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
