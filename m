@@ -1,104 +1,135 @@
-Return-Path: <linux-kernel+bounces-794046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF04B3DC17
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:16:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF95B3DC1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB0D3AFD2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580D81899789
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753F41E00A0;
-	Mon,  1 Sep 2025 08:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7F52356CE;
+	Mon,  1 Sep 2025 08:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lXRRBn96"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBp90KTV"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7722110E;
-	Mon,  1 Sep 2025 08:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663BA2110E;
+	Mon,  1 Sep 2025 08:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756714583; cv=none; b=Hfo2HW6nn5qgj2yVZb4yPx8a0zJwT59wLuOo3DxL0f6hB7n7baGEGubmmsccfYTxg5Ht/ahBMI0gPo8ZJa/1K+b1WiT7Y/ZZYFXFSznodC30m1TpTE1XQFQj2BPv2aJYchYCJH/QuxRq4TcD0NnbUBFREkb31nb9YEOtqYRb0Gw=
+	t=1756714699; cv=none; b=FY8XDx8c3HJmpnaCZDlJYIBOxXwGF88VKQSsEqOplCC75o3d1z7fjQAkOVdFLYWKvJODeW0Bfoi/t0kAUt3hr9afNd/X6VWjHnw38yAN5aUWhyXPK4wz5y7wX57htX62RyKXmgcKsiFAs2dhjQQMwTV1bSVY4g6ddhsYKEHUTOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756714583; c=relaxed/simple;
-	bh=ygrgvvQiBgPIQHANbXjqtT9el6txwpzllgaerc90Irk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIUhlXeL8qzR2ye/ju3HofDh/PtmqwFbqnnEYW9fICZ76KC4DR6DOZau+dthJarYWJiZKOWjVD9NOFpxmdvXQ5wshOuJIIyNdGRB8gPc8NOh9n4wOQ44V1ixMWEpUaCcRqlUqgnTb6nYxg4fodIBwvdFay4gPzRqDkspOmFLuxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lXRRBn96; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=h2PekiNlUUgCJoV7Y212hHfSi1OIUIfWL7b385Tt0H8=; b=lXRRBn966NcsIlmtwK41iXKYfQ
-	SHIrW8W+f5tfWl/YtPJkx9pjhCgPwUmNhkvQkQuqMxRw8wGIKp0frmOJHxJAmSr0bXiVR2KDHaiec
-	2hLepnpBF6FalhdAG9ITIn9lFS8N00nS9yDBpbIP/AwV14XbFgxwe1LosCVFsHxbvb5yKH/WOARLC
-	3Q/vMy9GLuy0g2nOZidA2djJ/zu/MYRzFuWhIxlFeqJUZwEII2pRWYRTlGpuzPOis9NG4d4uB5xV1
-	3zpHPJf+oErcyNojZVnKzYVcFQXt9pyYx8CIs65/rVsbi83n9wBe+bWGiTJ4RIUg4UBWR4wJCK/N0
-	6DVwt43Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uszi5-000000054QX-22WE;
-	Mon, 01 Sep 2025 08:16:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EA41A300342; Mon, 01 Sep 2025 10:16:16 +0200 (CEST)
-Date: Mon, 1 Sep 2025 10:16:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev,
+	s=arc-20240116; t=1756714699; c=relaxed/simple;
+	bh=n2mChHJOpuovt3EkOwskBKLM9hbBlkGgtvGxWx7OgZM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F0/cfQLtis2fB06brZzZq8Okqkvm/BmAjrUvtQvSNpJUe2STRWQuRH1e+KNpvgol9upwob0CGRCL/CY5d5FwZTV7PLQt/QT7hu1ROqA505tuOKV41oNCRftXLhSdT/9+IHILPP4T2CGXuL6QmbOLodVGgnIsTfpSq92ec6+kN3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBp90KTV; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-770530175a6so2397909b3a.3;
+        Mon, 01 Sep 2025 01:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756714698; x=1757319498; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fhO72zhYOJiaCs0Sw3nOH7x/q+Nik5NH+Mprbd215KE=;
+        b=eBp90KTVNT+b7sJbhfHoOGzh/vlSVIurwwOMkwxwkZf1dSkB5f4ULB3bGwGHP4awXY
+         8GsjqUtSFp+HHaN/YNEMicpQkNu/R0kjA7urwzHrh5gubjkhGNOGlgABEVjbdtyM5b4q
+         5cmY8XLD3TtunFaOPxn5XOtjvFQ7emV0Ki1bgPwa9UrTpue6rOvFTx9hx531Xky/rkeW
+         u8peCNe884pOVe4R7c+6mNR9FZMosiw/gMlwEOrucYFQPl/mTDTTzLSEjQoeBqsGIF8Z
+         +pmm++8uxdGmVtjrxcR6ltsaIFfEcKOSil3Po+zkzrhf4ziWELpehX6we17K35sWjiMP
+         1Rzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756714698; x=1757319498;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fhO72zhYOJiaCs0Sw3nOH7x/q+Nik5NH+Mprbd215KE=;
+        b=swBKuI96kwHq30qLnciIBBTibGDPPDH8JnuY188MNjy6WdEBn2T/3uJGshA5w4fOfP
+         OgOOEjuVbSZS3Ec7PBynCq8+9OpbBDE+JIo9l389Y8GhZDn5I0rpM9j6MDMtcOOSXIYr
+         i5ey0KSY4HoydetpEQd55lwxRXRT0RBgQYooGrNoEvTf/CXIKMClWstnF2o08sJq8mer
+         izecf5PU/gdgHFpPznP9/z7PvtcCS7bnoNdK+RoC3b8YVfsm3j2WuxTMWulQc1Yn46p/
+         nqMsOGDHAAebPoLLYzKhU5L9zZAD61vaH6c6Ggsy5bCCakDU/jGMzaeWjoZJR4oky0Sk
+         KIkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqiFl/Q/UkFI55MstSUh9JKLkz2mcjtJf8UCNNT5LvxL3qqaaXnbDggWlhMdrsFzQx+SE=@vger.kernel.org, AJvYcCVKGNR5AxgwE/e21cfADU+jcBvmn8b1/LDX7eNwfvH4jwPNRFrq05k/Y1wv2PuneKM9cFASJ2olrddITQD2@vger.kernel.org, AJvYcCXuLc6lxHdBmog1vOlmFGfEVMoKatsWP2EjOpNbVQo5MfJGs8lxOZbJRTqJjk8avos7b+p9iRVS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyylr7NdzVEu1gRuhi9Saslbm1LxVKeQbXZU8ixRRGRC6wfCJUY
+	/VFC0q5v/3ONmUgWkab2lU8voOxiEzezDhOuqAF/NRr689xe2aIi0Q5B
+X-Gm-Gg: ASbGncu3XdhXlP3ue2GWshbN6vAIr+AYmWWRUqbm79890sdOCylMXffrDZsZ2DK9xoN
+	qyk50UzMxtHgv0s9Fyp0kYoVZczkDM/Vv23GvY6+vtpoFT9HF8URT8aIFSKAMvodt+fOBviFPmI
+	PBcpoWqg5AaOqhT5UEQjSUv471l6EiKks9nQUvBQaVhwgzXs++5FoypeCtRsvhlBo/e288JNFEP
+	DA94g0LILVpB6LPHKHnLQBbbPBq3tiqDo5LYIDJWAeoNRQJJOQDBnMlegtbW6cfRjR7UbvQ8+y5
+	URycY75JXyX4NWm+kXmV3fDtO07RoeIbNRLp8c8BypX4HJaEPO8cW9B8ttnoNMfsVAR7mwvjI9P
+	QSLQcPHvIX/KE/uYXRek14UKRAtZb5I/hliLTtVki3DvT+X4MNWt6xnnBa1BBQHOH2oi9XQrRtM
+	UfNjqi8RueWk3Bam6nP9kfwRdZVMFkjP0ctXGOMycL+wnU6w==
+X-Google-Smtp-Source: AGHT+IFlIp5XtLRMTgGoktobYhmw4UEb9uqheDBPPdgtLTkETP+vGDUp6jU8cTUi1l23ljJmw1JTGg==
+X-Received: by 2002:a05:6a20:6a1b:b0:243:a7f1:ffd3 with SMTP id adf61e73a8af0-243d6f3a6e1mr9609890637.48.1756714697622;
+        Mon, 01 Sep 2025 01:18:17 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.116.239.35])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b4f8a0a2851sm868312a12.37.2025.09.01.01.18.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 01:18:17 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Longfang Liu <liulongfang@huawei.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] objtool/LoongArch: Fix fall through warning about
- efi_boot_kernel()
-Message-ID: <20250901081616.GA4067720@noisy.programming.kicks-ass.net>
-References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
- <20250901072156.31361-2-yangtiezhu@loongson.cn>
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] hisi_acc_vfio_pci: Fix reference leak in hisi_acc_vfio_debug_init
+Date: Mon,  1 Sep 2025 16:18:08 +0800
+Message-Id: <20250901081809.2286649-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901072156.31361-2-yangtiezhu@loongson.cn>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 01, 2025 at 03:21:54PM +0800, Tiezhu Yang wrote:
-> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
-> the following objtool warning:
-> 
->   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
->   falls through to next function __efistub_exit_boot_func()
-> 
-> This is because efi_boot_kernel() doesn't end with a return instruction
-> or an unconditional jump, then objtool has determined that the function
-> can fall through into the next function.
-> 
-> At the beginning, try to do something to make efi_boot_kernel() ends with
-> an unconditional jump instruction, but it is not a proper way.
-> 
-> After more analysis, one simple way is to ignore these EFISTUB functions
-> in validate_branch() of objtool since they are useless for stack unwinder.
-> 
+The debugfs_lookup() function returns a dentry with an increased reference
+count that must be released by calling dput().
 
-This is drivers/firmware/efi/libstub/loongarch.c:efi_boot_kernel(),
-right?
+Fixes: b398f91779b8 ("hisi_acc_vfio_pci: register debugfs for hisilicon migration driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Why not simply do something like:
-
-diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/firmware/efi/libstub/loongarch.c
-index 3782d0a187d1..082611a5f1f0 100644
---- a/drivers/firmware/efi/libstub/loongarch.c
-+++ b/drivers/firmware/efi/libstub/loongarch.c
-@@ -81,4 +81,5 @@ efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
+diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+index 2149f49aeec7..1710485cbbec 100644
+--- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
++++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+@@ -1611,8 +1611,10 @@ static void hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device *hisi_acc_vd
+ 	}
  
- 	real_kernel_entry(true, (unsigned long)cmdline_ptr,
- 			  (unsigned long)efi_system_table);
-+	BUG();
+ 	migf = kzalloc(sizeof(*migf), GFP_KERNEL);
+-	if (!migf)
++	if (!migf) {
++		dput(vfio_dev_migration);
+ 		return;
++	}
+ 	hisi_acc_vdev->debug_migf = migf;
+ 
+ 	vfio_hisi_acc = debugfs_create_dir("hisi_acc", vfio_dev_migration);
+@@ -1622,6 +1624,8 @@ static void hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device *hisi_acc_vd
+ 				    hisi_acc_vf_migf_read);
+ 	debugfs_create_devm_seqfile(dev, "cmd_state", vfio_hisi_acc,
+ 				    hisi_acc_vf_debug_cmd);
++
++	dput(vfio_dev_migration);
  }
+ 
+ static void hisi_acc_vf_debugfs_exit(struct hisi_acc_vf_core_device *hisi_acc_vdev)
+-- 
+2.35.1
+
 
