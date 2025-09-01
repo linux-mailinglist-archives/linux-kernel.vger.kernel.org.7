@@ -1,137 +1,139 @@
-Return-Path: <linux-kernel+bounces-794278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA83B3DF63
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:01:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8A1B3DF60
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 964977A35F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5516D3B3246
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE093101A2;
-	Mon,  1 Sep 2025 10:00:50 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D9430DEC4;
+	Mon,  1 Sep 2025 10:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvzZEtnf"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018A930E0E6;
-	Mon,  1 Sep 2025 10:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270630BBBB;
+	Mon,  1 Sep 2025 10:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756720849; cv=none; b=WTYti18zqprz+m5KU3aWtYdODgbbbWQrHBLsf88wVbj8k5cusAF7jelacncSJ4F/MOi5jBYDyUw3ZIMll+pFDzcMMOTec1/39v8iRzpzOsyJ3llVW/glluTn7I5ZylHoJOsRvz9p7q3QosOv9tBJxKm8a7A133KR1YxM/gaape4=
+	t=1756720842; cv=none; b=HEomKJJJJF61eqHIVrSEbVUQ2I+/f8sDzmsNLTjvfa/xu/ytKDMcP7T/op+aidqYhqhDynvB6bX+AVBc/byZv23WL0QcIPn7xPsm4HLYqBbI9a5jCb4naEOU/nPUgskk4Bm68npgCL7z1IwhsvmXCZSFOmzlQ2yd0lgrAtlMe+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756720849; c=relaxed/simple;
-	bh=4dQUBOKZIBBSZfLj6pRbUgdaT9e4PlLlqSBRVoezHWU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VOx7cpxZe8mW7nBBFooAk/FX4v1yyH5QjZ9lspB9lJoQsqGgy7tUvMIdXGCJi978VwQRF1YJWxkH8PAuVy1nLYQoUxsER6IePiqgvf7MduACR8Fof+CsUvolkACw7S90UCmsVlnKgcoktcQOILk2vyqOR8SWaCuhWUVxTEP6XWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.212.9])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2148c25b2;
-	Mon, 1 Sep 2025 18:00:38 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 3/3] arm64: dts: rockchip: update pinctrl names for Radxa E52C
-Date: Mon,  1 Sep 2025 18:00:27 +0800
-Message-Id: <20250901100027.164594-4-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250901100027.164594-1-amadeus@jmu.edu.cn>
-References: <20250901100027.164594-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1756720842; c=relaxed/simple;
+	bh=xdBpXog1GiRP0Q+r7/o6p9y3+5U7IVokkzzpPYFL7aM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyK0HS0G2SsgXwVEiamG9tyLPEeBIM+OO15hrwE+aK/lBQaAav+LhF19DqwY0O1+MiKQdMPxVexxL1aEY3l1gAyBQm/YwKQH+GYGpCC3KfIWe2woqgvLQqq8Xn3JOy024684bWNHlymI4D0JNfyPOXupS2jTeI7vb/hodkKmxE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvzZEtnf; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55f646b1db8so3785745e87.0;
+        Mon, 01 Sep 2025 03:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756720838; x=1757325638; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbZ25W8iCAPDZ+e84V/asPNaTiH1EdBFg9Cchs0HHvk=;
+        b=GvzZEtnfEK9ikObrXvTXVe5HLeSNzcyvSRkVswB953Tyb4FsZaGYgID/exRzr2UT1i
+         KqbILSDhnPewR7gyCdG2SkRkbAj/AHB2j98VOy60IPJy/ACyhnAmgnBErczaq2m5mN0c
+         Skqb2ir5yVLomTW4ZObgk6bHAtd1RG/gAGEhAz6LHDPnMgr6QIsakB7OqEHi1I2LENE+
+         59wmBM/d57j8+MmMCNUARAQlXPncHtWUJ9mVU6jiNv98b7q7bf0vPhSgGQiGdMn9S4vj
+         luuQCf94Y5L3EFF0Dqbj04v74Dx26X6ROdJ+ga5VGpA1pvPstsaOTzgXSL68KWRLkctT
+         +yIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756720838; x=1757325638;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cbZ25W8iCAPDZ+e84V/asPNaTiH1EdBFg9Cchs0HHvk=;
+        b=XMJQjBEoRqPfutGparL0hf5wkauZdLF7YuH71H5gA3ZwkUClqEHEwchzsPKgTndacU
+         kNuzwgu7O7u4c6X/jChK7N2b/0K3tYH6Apj6KkR+KHMHz4+cz4R3jBE7XqoWwgzoFE14
+         o6o9epFT1y44lWVQeiKS3fX2B80oeqIbOVzXCuE7y9qe5q6hKlyWvwRVJmJk9D0RTLhJ
+         inibd/P5ANQvhTaA1UtTH3RykAeX6oQhieSjb8NvA6Xe1QUGWidQokOnnfx/sYAvPaMH
+         5EZNZHtdw4pUcz9hEoMLGWOYU3nkbI0s+2OC169L6Jczpcfyy5JWrh49XCqLYORHaNqW
+         /u6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUr9yFYl7gviu3Y2ayV+l/DZ0W4XorNe7vld8NisZ4AHb/jg8UPzUvVyUIo9cdtxdUwpWqegw6I@vger.kernel.org, AJvYcCVvr3bnOIV2obg4/++eSi1fUDMovmaWW506kRryulx5PRgorFregNPjp3RQ8iGzPZnv2IokTHrZjvWTZmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1AtdPDy+iT1RYXCJ/2FsIl0OpoNdVD6cSzsKDH8GFWfBS5Qrf
+	xP1WqyfoTa+xCRRNQJ72HsrENaD9c4NPJ8nz7vLTNNsqAI7zvfkFKPGXzl2Yhv4Q
+X-Gm-Gg: ASbGnct5XmufOvk7UhKfn8Tf+eGXVCSFD2YS+ebN8xRuikGUW/Ox9Mb2pxB3sH5VdxL
+	sz/RKMrIirzWkBcMAcKrDvDjwbm1Sfg+BabELQF4J5TivUjz/vi7AErR/VcOAL6l3EFEQYqh0CE
+	MBqxNOdflLNYYeo7XYzwZNRfC2oeUxOHU54CeyIGvJbLcKCYGgwtgsVB7M6Lg96lf8kESFFlGaP
+	VYFSQnlh8wnSFpbmAZ/A40EEADX60Su2tqJAaRSQg2snGlsWgNPo2oZ1/znM/dzxjfKPh9q6nj2
+	4nUkN4a4lH0q79P3OmBY20uqUPc7DFPDwYCAv9TDmUflIDzhSuRox84gsVAlGIog/v4buEGuuDR
+	+63vUOyT13k29m95Kl99Vk7kfCFdx
+X-Google-Smtp-Source: AGHT+IEkJWQKPGB/V5gDesXHhU7t+HLT3boR3bVvrdNVX0y2aL9Wqfy8sEgiMLTdUoIHPa1mK7qSCQ==
+X-Received: by 2002:a05:6512:b97:b0:55f:4e18:c583 with SMTP id 2adb3069b0e04-55f7099a326mr2203573e87.56.1756720838021;
+        Mon, 01 Sep 2025 03:00:38 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f6ff236efsm1951003e87.1.2025.09.01.03.00.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 03:00:37 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
+Date: Mon, 1 Sep 2025 12:00:35 +0200
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+	Michal Hocko <mhocko@kernel.org>, Baoquan He <bhe@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] mm/vmalloc, mm/kasan: respect gfp mask in
+ kasan_populate_vmalloc()
+Message-ID: <aLVuw2UkYUcL_Oi0@pc638.lan>
+References: <20250831121058.92971-1-urezki@gmail.com>
+ <20250831122410.fa3dcddb4a11757ebb16b376@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9904b8b73803a2kunmfa64e5773746df
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGUpKVkNLHkhLHxgaGUoeTFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSVVCWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
-	tLWQY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250831122410.fa3dcddb4a11757ebb16b376@linux-foundation.org>
 
-Updated the pinctrl names of the user key and power LED according
-to the schematic. Also updated the nodenames of other pinctrls.
+On Sun, Aug 31, 2025 at 12:24:10PM -0700, Andrew Morton wrote:
+> On Sun, 31 Aug 2025 14:10:58 +0200 "Uladzislau Rezki (Sony)" <urezki@gmail.com> wrote:
+> 
+> > kasan_populate_vmalloc() and its helpers ignore the caller's gfp_mask
+> > and always allocate memory using the hardcoded GFP_KERNEL flag. This
+> > makes them inconsistent with vmalloc(), which was recently extended to
+> > support GFP_NOFS and GFP_NOIO allocations.
+> > 
+> > Page table allocations performed during shadow population also ignore
+> > the external gfp_mask. To preserve the intended semantics of GFP_NOFS
+> > and GFP_NOIO, wrap the apply_to_page_range() calls into the appropriate
+> > memalloc scope.
+> > 
+> > This patch:
+> >  - Extends kasan_populate_vmalloc() and helpers to take gfp_mask;
+> >  - Passes gfp_mask down to alloc_pages_bulk() and __get_free_page();
+> >  - Enforces GFP_NOFS/NOIO semantics with memalloc_*_save()/restore()
+> >    around apply_to_page_range();
+> >  - Updates vmalloc.c and percpu allocator call sites accordingly.
+> > 
+> > To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+> > Cc: <stable@vger.kernel.org>
+> > Fixes: 451769ebb7e7 ("mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc")
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> 
+> Why cc:stable?
+> 
+> To justify this we'll need a description of the userspace visible
+> effects of the bug please.  We should always provide this information
+> when fixing something.  Or when adding something.  Basically, all the
+> time ;)
+> 
+Yes, i am not aware about any report. I was thinking more about that
+"mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc" was incomplete and thus
+is a good candidate for stable.
 
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
----
- arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+We can drop it for the stable until there are some reports from people.
+If there are :)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-index 302a30e423ad..5d000b9e49a8 100644
---- a/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3582-radxa-e52c.dts
-@@ -42,7 +42,7 @@ button-0 {
- 	keys-1 {
- 		compatible = "gpio-keys";
- 		pinctrl-names = "default";
--		pinctrl-0 = <&btn_0>;
-+		pinctrl-0 = <&pwm15_ir_m1>;
- 
- 		button-1 {
- 			label = "User";
-@@ -55,7 +55,7 @@ button-1 {
- 	leds-0 {
- 		compatible = "gpio-leds";
- 		pinctrl-names = "default";
--		pinctrl-0 = <&led_0>;
-+		pinctrl-0 = <&power_led>;
- 
- 		led-0 {
- 			color = <LED_COLOR_ID_GREEN>;
-@@ -306,13 +306,13 @@ &pcie2x1l2 {
- 
- &pinctrl {
- 	keys {
--		btn_0: button-0 {
-+		pwm15_ir_m1: pwm15-ir-m1 {
- 			rockchip,pins = <4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
- 
- 	leds {
--		led_0: led-0 {
-+		power_led: power-led {
- 			rockchip,pins = <3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-@@ -328,19 +328,19 @@ pcie20x1_2_perstn_m0: pcie-2 {
- 	};
- 
- 	regulators {
--		vcc_5v0_pwren_h: regulator-5v0-1 {
-+		vcc_5v0_pwren_h: vcc-5v0-pwren-h {
- 			rockchip,pins = <4 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
- 
- 	rtc {
--		rtc_int_l: rtc-0 {
-+		rtc_int_l: rtc-int-l {
- 			rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
- 
- 	usb {
--		usb_otg_pwren_h: regulator-5v0-0 {
-+		usb_otg_pwren_h: usb-otg-pwren-h {
- 			rockchip,pins = <0 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
--- 
-2.25.1
+Thanks!
 
+--
+Uladzislau Rezki
 
