@@ -1,155 +1,231 @@
-Return-Path: <linux-kernel+bounces-795336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62173B3F045
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:02:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CFFB3EFD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121382C048A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:02:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B9467AB796
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAEA275AFA;
-	Mon,  1 Sep 2025 21:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AEA27467E;
+	Mon,  1 Sep 2025 20:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2EyEBgL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="SuoDHvXQ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A59623816D;
-	Mon,  1 Sep 2025 21:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C1327146D
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 20:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756760513; cv=none; b=KiDpKYw/cjV+qmt8dWYnO5mmvVZZRexmXvbveuBLaW3jddZN/5unpBhC2q8e/1lhTN4jAcbrnx88IXV9oHVpSkNHtEqAdEFlNzZi9oFSvoPRLeeaeQAVQeaTZqMwYqDyMC/4sBHrwNz8FEKGtKckO9GYflAcQ518925a7/0ouwU=
+	t=1756759831; cv=none; b=IX+Incuhxf+P+GHwShy9y9EPxQqX0W+LGyiqHNM2MQMM14JeuIjYsXIk75EFVRO0Ujyvz8s/11DCapTyujZRLm/QVsCbIeoLFpJbSgpzueI43TaV4KHLUdppcESzJa7ip83Qvj11XiRDfJJIaGPbhaVs39adK48G02y6hfj286w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756760513; c=relaxed/simple;
-	bh=6N/4T5zMknKadHJccmk9Zy/KfZIVY8DWPUQJ3bADBcg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nIkWzWV4rJy7FFugNIWZI5KVeMeAmKufNj8j83CffmncTFly4aGBWfRqFrHV3bX5bLT4ZMBtoYU+jTDHCIvtgxtpuhlPwmd9K2yWxjkAwdOt5UsT0wxsZigOWhRq9I5qtEWKVw5HA5K0FTsoioxOmkMlatWSdaHqfX8ruiuBK78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2EyEBgL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 07DB7C19421;
-	Mon,  1 Sep 2025 21:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756760513;
-	bh=6N/4T5zMknKadHJccmk9Zy/KfZIVY8DWPUQJ3bADBcg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=m2EyEBgLqDaOQSjqMdVk3yeQHpt6WciSigaPDPFkTIHdqob6QITKsie3P1nGguGdO
-	 OfsN5YYMaVLmUXWaSUZ3eIIsamZxy5KA79OdaxWWO++YHsBfzFF9+TPOpPPAw2CIl1
-	 DeWPNs8UYCZ0BlC6Vu6g78bjZ+yEI7zOp2jxEne4WgebRJ/j1fqsYj+CmSaBY/D/2C
-	 7jXtA2SfgoHQRgxvpwjn0f7AkDN5IQpK2uwylONqgIGVZRVRurX75o5A3uUW5DK9n3
-	 y6NKZQujyl6l5joQOjzgZVWzTKm+a64ee9mGz6j8w13iPd945ynZmNbtBKxza7hRYd
-	 y1nuNAnOYrfgQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC77CA1007;
-	Mon,  1 Sep 2025 21:01:52 +0000 (UTC)
-From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Mon, 01 Sep 2025 22:47:48 +0200
-Subject: [PATCH v3 7/7] arm64: dts: rockchip: add mipi csi-2 dphy nodes to
- rk3588
+	s=arc-20240116; t=1756759831; c=relaxed/simple;
+	bh=r3gId/u5LD1LKIELYHoNIdIwUxYyWCHrBFDvgyaA1xM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=i2cc1iFJgE7LJ5nF73z1I2sdSvjfTij9g3gKH8/gksPypdjG6uN46ckUJ/Yl2Uy0FhFOJsDD1GQ1gGeEblOdjdvo4U/4Dm/K8rr/3a8yCLQskGVO2DnGk7jpz5ROCSt9n6II8dqVI9x24it1Aa11vQ1YxO/lcj44aBo3NVBeQA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=SuoDHvXQ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b043a33b060so133006066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 13:50:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756759827; x=1757364627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h+HtzMm8aCoEYebuXFm6wKGd65XfE1qqAFatqE2tqt0=;
+        b=SuoDHvXQuuOwIyBl5RNvbKGcaWwA73psQR7EXfOGEPyVGn3IujNkAi9Azcu8IdGDEE
+         6sUn6DtNskwmB+3UlUVYmwuv/Et0atj65nTbVVlS1TcUGfOrEGuv37r9EdLNYwDE0cfM
+         QKU5O/pL8VCqG0D/KU9T0+aSctYkLtMhYfR8Pqvk3ru8pWzNbjS0VpKHfRjMtc5ss9p6
+         mD88P2026OOvHKRX8xNtuPQlzw2X3l3dJkert1jQMpkKAkbZJYYVz+pklvexBuziXHgO
+         VggIX36FAFYj+G/nBX6075A0n1JBGmeFiHrIVf/X4K4/MgWlNyqmtB2GafXHsr2jCGBN
+         9+8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756759827; x=1757364627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h+HtzMm8aCoEYebuXFm6wKGd65XfE1qqAFatqE2tqt0=;
+        b=WSk+D3cmPlxUc+FrrHp/rDoGoyiex3sjgoYgxddu9WYAxrwMWHvfGz7sonD9NBMx/d
+         4EzhJ68e46jD98qL0QIDjdmpFtnOKAWQblXeK8r9bFzCtl97JXcKP2oPNaSJl75RTf10
+         WoX6fLN94NEkReXpggfvm56UTQOIRk5LCZK4cdhdvBvV5zhpqoN9ZSr93u/iqydNBFTG
+         IMqnE4rEr3HJrakh8SMQWQdkt1Tg0VUr+05a64QC8c+OgwHpu/RK5bT+TpuxRY+CrWfm
+         d6hmuYVAHpgX8//JFDVefH8ackqxQeYYu11oxgRUtEapPKz8lGenaNzwWdoIb2BFlImV
+         ZHZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlz21EZw90zkh0YEKpotztImAWeG92Qc5VKDFyGPBTO2MrxVBtX+IV9Cx6VaNN6rXjcPk/8oFPl+2fQrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmryfHjybS722IUf2WQg6dFIVAgU9bq0c0tEyTxXYIgZW+M6Wj
+	mJmHKY9J3NfmdqIcNBC0PPBKL1cq1xwkNNhWR6hLu7iDDtbAY5tWJ6ih9swuD7umDo4=
+X-Gm-Gg: ASbGncvLB7y3kGUui+Cqwrufa/kGZwLeu3+ry20P1l0cbfZ0Hs2sPCIIJJhJn1eGd9F
+	tgNOR9qDw08qCDtTG0zoeOwRs8nV4K+2jarINRLc9eP9dog4k7moOVJmfsd6/4T6HIuMjbbM3ib
+	qrDxV08KGW1psavdTXBbdKXgRNMfLOwcA8fl21FOFH683VtZysIzSdmwQPNxxm8dcm3To2kbqjL
+	lf9JL0JQ5U8Gfmi55J9Qj8g5mgManAvLvbCIKGITGlkf0ve/ra0izUCdVzs1FkKb2bHgT9C3IV4
+	saNnDLeuFco8Rt2QQabUNBQKl+5ywSvD1GRaOn/tEi228q8F7Zqg+BerMDjG1KlMBugzzZAuj3U
+	vu+CbulTUAWAbaXuc/icz1N9KeL5eObesP3VedLiJGoD93ezRMygt6fYEK2GKYUI9D8IBb8lvoT
+	rdOZqicBcVO6rZ1BGKC4bm8w==
+X-Google-Smtp-Source: AGHT+IFm8ymM2lVjoF6wSC8TwGE2I+pinvEWrAbXATzLNjz68TsRuYVhbwX52a8lzV2r8vSv8pkRWA==
+X-Received: by 2002:a17:907:cd07:b0:b04:37b2:c1a5 with SMTP id a640c23a62f3a-b0437b2eb32mr399274666b.34.1756759827409;
+        Mon, 01 Sep 2025 13:50:27 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd9090sm937339066b.69.2025.09.01.13.50.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 13:50:27 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	axelrasmussen@google.com,
+	yuanchu@google.com,
+	willy@infradead.org,
+	hughd@google.com,
+	mhocko@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	vishal.moola@gmail.com,
+	linux@armlinux.org.uk,
+	James.Bottomley@HansenPartnership.com,
+	deller@gmx.de,
+	agordeev@linux.ibm.com,
+	gerald.schaefer@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	davem@davemloft.net,
+	andreas@gaisler.com,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	x86@kernel.org,
+	hpa@zytor.com,
+	chris@zankel.net,
+	jcmvbkbc@gmail.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	weixugc@google.com,
+	baolin.wang@linux.alibaba.com,
+	rientjes@google.com,
+	shakeel.butt@linux.dev,
+	max.kellermann@ionos.com,
+	thuth@redhat.com,
+	broonie@kernel.org,
+	osalvador@suse.de,
+	jfalempe@redhat.com,
+	mpe@ellerman.id.au,
+	nysal@linux.ibm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-parisc@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v6 00/12] mm: establish const-correctness for pointer parameters
+Date: Mon,  1 Sep 2025 22:50:09 +0200
+Message-ID: <20250901205021.3573313-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250616-rk3588-csi-dphy-v3-7-a5ccd5f1f438@collabora.com>
-References: <20250616-rk3588-csi-dphy-v3-0-a5ccd5f1f438@collabora.com>
-In-Reply-To: <20250616-rk3588-csi-dphy-v3-0-a5ccd5f1f438@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Diederik de Haas <didi.debian@cknow.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Collabora Kernel Team <kernel@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-phy@lists.infradead.org, 
- Michael Riesch <michael.riesch@collabora.com>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756759662; l=1931;
- i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=6HJuYpXttybyTSrCNqhc1jbMr3cQPoLfqzHZNqsOuiw=;
- b=McvJKQT7Br08M3TRS8UuRnrp3U7iZxUgI1O6Ym5fvVFYb8DPOOC7ruTNqjDKBlXnXRXmYEO7U
- x6hhasYYQPLA/WfT5QixZLRluPyl/iZyhzekZ4+vHruZ7iXZWWUvIqB
-X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
- pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
-X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
- with auth_id=371
-X-Original-From: Michael Riesch <michael.riesch@collabora.com>
-Reply-To: michael.riesch@collabora.com
+Content-Transfer-Encoding: 8bit
 
-From: Michael Riesch <michael.riesch@collabora.com>
+For improved const-correctness in the low-level memory-management
+subsystem, which provides a basis for further const-ification further
+up the call stack (e.g. filesystems).
 
-The Rockchip RK3588 features two MIPI CSI-2 DPHYs. Add the device
-tree nodes for them.
+This patch series splitted into smaller patches was initially posted
+as a single large patch:
 
-Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+ https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
+
+I started this work when I tried to constify the Ceph filesystem code,
+but found that to be impossible because many "mm" functions accept
+non-const pointer, even though they modify nothing.
+
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 33 +++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+v1 -> v2:
+- made several parameter values const (i.e. the pointer address, not
+  just the pointed-to memory), as suggested by Andrew Morton and
+  Yuanchu Xie
+- drop existing+obsolete "extern" keywords on lines modified by these
+  patches (suggested by Vishal Moola)
+- add missing parameter names on lines modified by these patches
+  (suggested by Vishal Moola)
+- more "const" pointers (e.g. the task_struct passed to
+  process_shares_mm())
+- add missing "const" to s390, fixing s390 build failure
+- moved the mmap_is_legacy() change in arch/s390/mm/mmap.c from 08/12
+  to 06/12 (suggested by Vishal Moola)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index 70f03e68ba55..eedf93247e9c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -621,6 +621,16 @@ php_grf: syscon@fd5b0000 {
- 		reg = <0x0 0xfd5b0000 0x0 0x1000>;
- 	};
- 
-+	csidphy0_grf: syscon@fd5b4000 {
-+		compatible = "rockchip,rk3588-csidphy-grf", "syscon";
-+		reg = <0x0 0xfd5b4000 0x0 0x1000>;
-+	};
-+
-+	csidphy1_grf: syscon@fd5b5000 {
-+		compatible = "rockchip,rk3588-csidphy-grf", "syscon";
-+		reg = <0x0 0xfd5b5000 0x0 0x1000>;
-+	};
-+
- 	pipe_phy0_grf: syscon@fd5bc000 {
- 		compatible = "rockchip,rk3588-pipe-phy-grf", "syscon";
- 		reg = <0x0 0xfd5bc000 0x0 0x100>;
-@@ -3052,6 +3062,29 @@ mipidcphy1: phy@fedb0000 {
- 			 <&cru SRST_S_MIPI_DCPHY1>;
- 		reset-names = "m_phy", "apb", "grf", "s_phy";
- 		#phy-cells = <1>;
-+	};
-+
-+	csi_dphy0: phy@fedc0000 {
-+		compatible = "rockchip,rk3588-csi-dphy";
-+		reg = <0x0 0xfedc0000 0x0 0x8000>;
-+		clocks = <&cru PCLK_CSIPHY0>;
-+		clock-names = "pclk";
-+		#phy-cells = <0>;
-+		resets = <&cru SRST_P_CSIPHY0>, <&cru SRST_CSIPHY0>;
-+		reset-names = "apb", "phy";
-+		rockchip,grf = <&csidphy0_grf>;
-+		status = "disabled";
-+	};
-+
-+	csi_dphy1: phy@fedc8000 {
-+		compatible = "rockchip,rk3588-csi-dphy";
-+		reg = <0x0 0xfedc8000 0x0 0x8000>;
-+		clocks = <&cru PCLK_CSIPHY1>;
-+		clock-names = "pclk";
-+		#phy-cells = <0>;
-+		resets = <&cru SRST_P_CSIPHY1>, <&cru SRST_CSIPHY1>;
-+		reset-names = "apb", "phy";
-+		rockchip,grf = <&csidphy1_grf>;
- 		status = "disabled";
- 	};
- 
+v2 -> v3:
+- remove garbage from 06/12
+- changed tags on subject line (suggested by Matthew Wilcox)
+
+v3 -> v4:
+- more verbose commit messages including a listing of function names
+  (suggested by David Hildenbrand and Lorenzo Stoakes)
+
+v4 -> v5:
+- back to shorter commit messages after an agreement between David
+  Hildenbrand and Lorenzo Stoakes was found
+
+v5 -> v6:
+- fix inconsistent constness of assert_fault_locked()
+- revert the const parameter value change from v2 (requested by
+  Lorenzo Stoakes)
+- revert the long cover letter, removing long explanations again
+  (requested by Lorenzo Stoakes)
+
+Max Kellermann (12):
+  mm: constify shmem related test functions for improved
+    const-correctness
+  mm: constify pagemap related test/getter functions
+  mm: constify zone related test/getter functions
+  fs: constify mapping related test functions for improved
+    const-correctness
+  mm: constify process_shares_mm() for improved const-correctness
+  mm, s390: constify mapping related test/getter functions
+  parisc: constify mmap_upper_limit() parameter
+  mm: constify arch_pick_mmap_layout() for improved const-correctness
+  mm: constify ptdesc_pmd_pts_count() and folio_get_private()
+  mm: constify various inline functions for improved const-correctness
+  mm: constify assert/test functions in mm.h
+  mm: constify highmem related functions for improved const-correctness
+
+ arch/arm/include/asm/highmem.h      |  6 +--
+ arch/parisc/include/asm/processor.h |  2 +-
+ arch/parisc/kernel/sys_parisc.c     |  2 +-
+ arch/s390/mm/mmap.c                 |  6 +--
+ arch/sparc/kernel/sys_sparc_64.c    |  2 +-
+ arch/x86/mm/mmap.c                  |  6 +--
+ arch/xtensa/include/asm/highmem.h   |  2 +-
+ include/linux/fs.h                  |  6 +--
+ include/linux/highmem-internal.h    | 36 +++++++++---------
+ include/linux/highmem.h             |  8 ++--
+ include/linux/mm.h                  | 56 +++++++++++++--------------
+ include/linux/mm_inline.h           | 25 ++++++------
+ include/linux/mm_types.h            |  4 +-
+ include/linux/mmzone.h              | 42 ++++++++++----------
+ include/linux/pagemap.h             | 59 +++++++++++++++--------------
+ include/linux/sched/mm.h            |  4 +-
+ include/linux/shmem_fs.h            |  4 +-
+ mm/highmem.c                        | 10 ++---
+ mm/oom_kill.c                       |  6 +--
+ mm/shmem.c                          |  6 +--
+ mm/util.c                           | 16 ++++----
+ 21 files changed, 155 insertions(+), 153 deletions(-)
 
 -- 
-2.39.5
-
+2.47.2
 
 
