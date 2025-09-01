@@ -1,109 +1,95 @@
-Return-Path: <linux-kernel+bounces-794265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93AD2B3DF39
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145EDB3DF52
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E344404A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:58:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A42C9188B28E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5173D30EF72;
-	Mon,  1 Sep 2025 09:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F74B30DEDA;
+	Mon,  1 Sep 2025 09:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gP2FA4PR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WSmy2zED"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C5330DEC4;
-	Mon,  1 Sep 2025 09:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794363081A9
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756720693; cv=none; b=tTIRdnYWs9PshjxpadjG+c7J53e2GbWWYmFm2Y1FRbNuyj48NII8BCQ40tFhyGkc3nb7BrDIrnrJKA4Jf2haU+l8jJ/flin6ZwH4SB8jG7HfL8Ktc4ZEmBR76I0DQ4gYy15LrPBGZZe4JTgqA0NKaNcxAltKUufmtwcQgnmsSyE=
+	t=1756720737; cv=none; b=eqULqCGpFWJ+4Gk+1R8el1/ETOtqfhaD8v7xgXwF5Cx7i8Sw8yHHtu/ktC35mpCVKFSByhUfJTVzmmk7SmBmoaK7m/EAIzrbDFo/OWWnQP8xSIMd8K1yyGrws8cXKHZa9JVdCfpkV8YH41VTRiHGgwHaWlxcqdG8F/scJ1Hk0e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756720693; c=relaxed/simple;
-	bh=uvweM5ey37QsTWQAdiyDuf3UROFBuPL82YmcUdYKnz8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fmcFsBRRuopgwW8g1AwFhF49kJNnGfD5dc9qwRr0tTNbHfI34VNBXqTjUMc5S7/d4ZMr55Nry4KZ7gJ+b+ydmdfIGDsL08K5eYANu3LODKCD2NoPVUl++kHVjCP//KD8KR9K6PTQewX8UVd57C7nGqNwiaUmLYQMqACr55fKRBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gP2FA4PR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46BFAC4CEF0;
-	Mon,  1 Sep 2025 09:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756720693;
-	bh=uvweM5ey37QsTWQAdiyDuf3UROFBuPL82YmcUdYKnz8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=gP2FA4PRHT5fFAIrxTN3DY5JqorBZbdpo6VlChuEtSJfh42HXw5EZWp8Ngms/xaZ7
-	 YYg4KRk+3o+NOQVoZH+CxZkkRxA49bI0NIDj0Cm8Dm9F62uBwZHptyG4N9nXh5YIIo
-	 EhUUsWeSrOD4UYcihjCf9Z6QJJTVEMG5IERpqSFErnD1Ljv7BHeTmyBm5WRSuUKATO
-	 alTRzL+wWx/f6QKNr/0z7SOVPMWCJo54yHyln07mMSUL05yttBoiyrLfp+fbXYBs3J
-	 jiBdXkytvDetOWkZ2g+067hLSSrHMhJuUYYL0j8q4oiK0HAgj4UuCDk3MqSzL658Y/
-	 75SNHejElV8CQ==
-Message-ID: <91a46a61-4a9c-452b-87ae-b8fb45a2e9f2@kernel.org>
-Date: Mon, 1 Sep 2025 10:58:09 +0100
+	s=arc-20240116; t=1756720737; c=relaxed/simple;
+	bh=QxYLehtcBAi69d1LkCeE7+C8BiDvA8vqNgIgSEupEwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kWJ7RwF/uHecZDIPeuCDTnvqTqKkDH+58CVIrTViXISZqHuSn8Bshxe4UVZ1V7minjXNI/TzEV8+3LP+3MKPi3rqA00n10VDVCxGmsDfY7z61709EEjw1ys901z4rwUUH9mzw3cKyGHWiPRcuoXWNw8hAjkYvojsvqL1PpK6vdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WSmy2zED; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a3c51a9e-f0cb-4d25-a841-117da0ff943c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756720733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fI6X1gDmQhfOpGtZzFYvtwz7XRWedoWtufSbGm0SwBE=;
+	b=WSmy2zEDWPbn5oFdmmVc3IDdc2eJhB/I9aZ1OYqW+aqA59vXbyQswdwNGNSq9ru7Ct8Evn
+	GXdQL+qnYtOSBejWu8Ijd0rsfetJxSOwQoKqG+vL8ffIQKwOlSsGDftO6J+gqWK3Lqj3Gc
+	A+FLEptHCF8FI8LenrRw1GMW8Bp1erc=
+Date: Mon, 1 Sep 2025 10:58:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/2] bpftool: Refactor config parsing and add CET
- symbol matching
-From: Quentin Monnet <qmo@kernel.org>
-To: chenyuan_fl@163.com, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org
-Cc: yonghong.song@linux.dev, olsajiri@gmail.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, chenyuan@kylinos.cn
-References: <20250829061107.23905-1-chenyuan_fl@163.com>
- <b245b389-e057-40d3-8e2a-7cce5c290c63@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <b245b389-e057-40d3-8e2a-7cce5c290c63@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH net-next v9 1/5] net: rnpgbe: Add build support for rnpgbe
+To: Yibo Dong <dong100@mucse.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+ gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+ danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
+ geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
+ lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com,
+ kees@kernel.org, gustavoars@kernel.org, rdunlap@infradead.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250828025547.568563-1-dong100@mucse.com>
+ <20250828025547.568563-2-dong100@mucse.com>
+ <dcfb395d-1582-4531-98e4-8e80add5dea9@lunn.ch>
+ <8AD0BD429DAFBD3B+20250901082052.GA49095@nic-Precision-5820-Tower>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <8AD0BD429DAFBD3B+20250901082052.GA49095@nic-Precision-5820-Tower>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-2025-09-01 10:32 UTC+0100 ~ Quentin Monnet <qmo@kernel.org>
-> 2025-08-29 07:11 UTC+0100 ~ chenyuan_fl@163.com
->> From: Yuan CHen <chenyuan@kylinos.cn>
->>
->> 1. **Refactor kernel config parsing**  
->>    - Moves duplicate config file handling from feature.c to common.c  
->>    - Keeps all existing functionality while enabling code reuse  
->>
->> 2. **Add CET-aware symbol matching**  
->>    - Adjusts kprobe hook detection for x86_64 CET (endbr32/64 prefixes)  
->>    - Matches symbols at both original and CET-adjusted addresses  
->>
->> Changed in PATCH v4:
->> * Refactor repeated code into a function.
->> * Add detection for the x86 architecture.
->>
->> Changed int PATH v5:
->> * Remove detection for the x86 architecture.
->>
->>  Changed in PATCH v6:
->> * Add new helper patch (1/2) to refactor kernel config reading
->> * Use the new read_kernel_config() in CET symbol matching (2/2) to check CONFIG_X86_KERNEL_IBT
->>
->> Changed in PATCH v7:
->> * Display actual kprobe attachment addresses instead of symbol addresses
+On 01/09/2025 09:20, Yibo Dong wrote:
+> On Thu, Aug 28, 2025 at 02:51:07PM +0200, Andrew Lunn wrote:
+>> On Thu, Aug 28, 2025 at 10:55:43AM +0800, Dong Yibo wrote:
 > 
-> Hi Yuan,
+> Hi, Andrew:
 > 
-> Is there any difference between v7 and v8 of your series? They seem
-> identical, from what I can see.
+>>> Add build options and doc for mucse.
+>>> Initialize pci device access for MUCSE devices.
+>>>
+>>> Signed-off-by: Dong Yibo <dong100@mucse.com>
+>>
+>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>>
+>>      Andrew
+>>
+> 
+> Should I add 'Reviewed-by: Andrew Lunn <andrew@lunn.ch>' to commit for
+> [PATCH 1/5] in the next version?
 
-
-From Yuan's reply (please let's stick to the ML :) )
-
-> The v7 and v8 patches are identical in code changes. The only update
-> in v8 is the addition of "Ack-by" tags in commit messages.
-
-OK thanks for confirming! No need to repost just to add the Ack tags
-next time, maintainers can pick them up automatically before applying to
-their tree.
-
-Thanks,
-Quentin
+The general rule is to carry over all the tags if there is no (big)
+changes to the code in the patch.
 
