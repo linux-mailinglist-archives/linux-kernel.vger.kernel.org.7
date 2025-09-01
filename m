@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-794496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFE0B3E29D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:24:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E55B3E2A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094851A82B8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:24:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E95443EF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C059530BF7B;
-	Mon,  1 Sep 2025 12:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMqtVR+p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FD231E0E9;
+	Mon,  1 Sep 2025 12:24:36 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2544226D4C1;
-	Mon,  1 Sep 2025 12:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952FD31197A;
+	Mon,  1 Sep 2025 12:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729451; cv=none; b=AiANzeNXqpWPuauRWygbACp01BZX6bKI/lG7oVsX731Ka9ytlg8AX7YiPOu2WQcxosYuOt/CelNCDsFIx1ns35+tUl//vsnF7NeLgpp91985j5C1cHcGsuHIdsU5fp9DpkcZoiaIUY4k1iicKHBe6I3xUBIWfcaVYozs7qHb5jE=
+	t=1756729476; cv=none; b=kd350lHke+/VXXB9oeunWvVGOo3RCbVC7yzDULSGnlFve/cqy+rBAMHJzEd8OvAR2VRQnGnNgNAG/vqCOhF/k0zjwkFuS1/4reY2to/4d1DUVEYlMBCIkiNn7dh8knS2TyXvpEfj1QeoL2k1C/ZixkzVWPQDsPGsOZY5b438y1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729451; c=relaxed/simple;
-	bh=1y1C3r+YYCBCldCQKr3GO6JKvPpDZX9+NRK0YMyqE/c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YzzTIj9c2uwwP0HOGiDRP2kUYidQlgxNGFw2x21Zx9GXgbPS+BldFKJhhoUsFpEfyJXiIxUiWZXoAsDsrU4mLpxS0TM2L+Okq5xApVBfezQ6R3vBCs/3SMXaU73ogbH+PvkBKLK8FtBytgH+/Jx4Vxz2fEszea+MJgQ3eLwW/nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMqtVR+p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EFEC4CEF0;
-	Mon,  1 Sep 2025 12:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756729450;
-	bh=1y1C3r+YYCBCldCQKr3GO6JKvPpDZX9+NRK0YMyqE/c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bMqtVR+pnPwQGrofgqUly/HRw5+is5i33ASvrU3eqrSUaY6VndIg6J/zUi2HTccUP
-	 Cs8Bp01Iobubz67QuN8CXqUXAs8ycsuVmHHl3FnGnT1c4ugIsE4YW7BFI2A2DXMHJZ
-	 r7LRwHFY9vG53RqA6aSDJ0HlafWV1ydatN5yQdY1edikeBePJa8qLwvK4Z8nTa0/Q5
-	 ntTTnaDB1gS9b6YpI8Nc5zg+KXI5ltrn3VKvNMFLvn4EtE2LHsKjWPD7HTX8lHZSPW
-	 CBcMn/nbXMnBhQuswnFHP7NAjbLe+hnU3AgPOxLUQVH2bjyah0xXSHUepJg75VxuNi
-	 REe1eNB40fadA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1ut3Zw-00000002F4D-0jUI;
-	Mon, 01 Sep 2025 12:24:08 +0000
-Date: Mon, 01 Sep 2025 13:24:07 +0100
-Message-ID: <863496e4yg.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Yingchao Deng <yingchao.deng@oss.qualcomm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	quic_yingdeng@quicinc.com,
-	jinlong.mao@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas
- <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] KVM: arm64: Fix NULL pointer access issue
-In-Reply-To: <450f11c2-6c11-4ffa-ae20-db4ea419a3ca@linaro.org>
-References: <20250901-etm_crash-v1-1-ce65e44c137c@oss.qualcomm.com>
-	<450f11c2-6c11-4ffa-ae20-db4ea419a3ca@linaro.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1756729476; c=relaxed/simple;
+	bh=JL/8WhJDqZDZcUhtLpsOa9CfO2TM/nTblKJLHTLB7kk=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=koEKVsRfUXGG+AaGpANhTGwUZZpZw7Hkx39+2eEZuPz5WBjbdhB28CI3LysS9EVKZ31PSSH+/k5VSUxNAfEK2CcopAPyuMk/aNf/7lPZr5soOUjQsV3yFp+NIJP4l3Lv93lM8A70E1d1RUDjqLp/Zx9ScWz8SC+hJjdtZ46BRQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cFp2r6LJ6z5B13Z;
+	Mon, 01 Sep 2025 20:24:20 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 581COCTM095944;
+	Mon, 1 Sep 2025 20:24:12 +0800 (+08)
+	(envelope-from wang.yaxin@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 1 Sep 2025 20:24:15 +0800 (CST)
+Date: Mon, 1 Sep 2025 20:24:15 +0800 (CST)
+X-Zmail-TransId: 2af968b5906fa09-a988e
+X-Mailer: Zmail v1.0
+Message-ID: <20250901202415061CsA3s6BAjQfijGxfZU_If@zte.com.cn>
+In-Reply-To: <202509012010265342J9_GMWSos_c0nszWwdsj@zte.com.cn>
+References: 202509012010265342J9_GMWSos_c0nszWwdsj@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: james.clark@linaro.org, yingchao.deng@oss.qualcomm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, quic_yingdeng@quicinc.com, jinlong.mao@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Mime-Version: 1.0
+From: <wang.yaxin@zte.com.cn>
+To: <fan.yu9@zte.com.cn>
+Cc: <akpm@linux-foundation.org>, <corbet@lwn.net>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eC1uZXh0XSB0b29scy9nZXRkZWxheXM6IGZpeCBmb3JtYXR0aW5nIGVycm9y?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 581COCTM095944
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Mon, 01 Sep 2025 20:24:20 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68B59074.003/4cFp2r6LJ6z5B13Z
 
-On Mon, 01 Sep 2025 11:36:11 +0100,
-James Clark <james.clark@linaro.org> wrote:
-> 
-> 
-> 
-> On 01/09/2025 11:01 am, Yingchao Deng wrote:
-> > When linux is booted in EL1, macro "host_data_ptr()" is a wrapper that
-> > resolves to "&per_cpu_ptr_nvhe_sym(kvm_host_data, cpu)",
-> > is_hyp_mode_available() return false during kvm_arm_init, the per-CPU base
-> > pointer __kvm_nvhe_kvm_arm_hyp_percpu_base[cpu] remains uninitialized.
-> > Consequently, any access via per_cpu_ptr_nvhe_sym(kvm_host_data, cpu)
-> > will result in a NULL pointer.
-> > 
-> > Add is_kvm_arm_initialised() condition check to ensure that kvm_arm_init
-> > completes all necessary initialization steps, including init_hyp_mode.
-> > 
-> > Fixes: 054b88391bbe2 ("KVM: arm64: Support trace filtering for guests")
-> > Signed-off-by: Yingchao Deng <yingchao.deng@oss.qualcomm.com>
-> > ---
-> > Add a check to prevent accessing uninitialized per-CPU data.
-> > ---
-> >   arch/arm64/kvm/debug.c | 7 ++++---
-> >   1 file changed, 4 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
-> > index 381382c19fe4741980c79b08bbdab6a1bcd825ad..add58056297293b4eb337028773b1b018ecc9d35 100644
-> > --- a/arch/arm64/kvm/debug.c
-> > +++ b/arch/arm64/kvm/debug.c
-> > @@ -233,7 +233,7 @@ void kvm_debug_handle_oslar(struct kvm_vcpu *vcpu, u64 val)
-> >   void kvm_enable_trbe(void)
-> >   {
-> >   	if (has_vhe() || is_protected_kvm_enabled() ||
-> > -	    WARN_ON_ONCE(preemptible()))
-> > +	    WARN_ON_ONCE(preemptible()) || !is_kvm_arm_initialised())
-> 
-> Hi Yingchao,
-> 
-> There shouldn't be a warning for this, at least for the case where
-> it's not initialized and never will be. If you're never going to run a
-> guest these functions can all skip, the same way for !has_vhe() etc.
+>From: Fan Yu <fan.yu9@zte.com.cn>
+>
+>Add a missing space in err() function call for consistency.
+>The change improves consistency with the codebase style
+>and enhances readability.
+>
+>Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+>---
+>tools/accounting/getdelays.c | 2 +-
+>1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/tools/accounting/getdelays.c b/tools/accounting/getdelays.c
+>index 21cb3c3d1331..0c721efafab9 100644
+>--- a/tools/accounting/getdelays.c
+>+++ b/tools/accounting/getdelays.c
+>@@ -570,7 +570,7 @@ int main(int argc, char *argv[])
+>task_context_switch_counts((struct taskstats *) NLA_DATA(na));
+>if (fd) {
+>if (write(fd, NLA_DATA(na), na->nla_len) < 0) {
+>- err(1,"write error\n");
+>+ err(1, "write error\n");
+>}
+>}
+>if (!loop)
 
-It's not a warning. It's a bona-fide crash:
+Reviewed-by: Wang Yaxin <wang.yaxin@zte.com.cn>
 
-void kvm_enable_trbe(void)
-{
-	if (has_vhe() || is_protected_kvm_enabled() ||
-	    WARN_ON_ONCE(preemptible()))
-		return;
-
-	host_data_set_flag(TRBE_ENABLED); <--- Explodes here
-}
-
-So the write of the flag has to be skipped if KVM is available, even
-if KVM is compiled in.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks
+Yaxin
 
