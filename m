@@ -1,130 +1,298 @@
-Return-Path: <linux-kernel+bounces-794766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DEAB3E6F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:24:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA45B3E700
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8B517F01C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:24:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C4F1A849A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F8631DDAE;
-	Mon,  1 Sep 2025 14:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97F7340D99;
+	Mon,  1 Sep 2025 14:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Taf3q1Md"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Y6gX0L/q"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E247C2EDD76
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736654; cv=none; b=H/lkCBxqBnkwmvZin580pyldQDDChfwKk4Wcax6Oyczf5l5BbXiG7OvTYkAbUN+x5SjR+TYYhnMZmanqoD8I3mg1oGJ9xevMg5dpw/s0ZoN6x36bQheiZiOB2poB0oG80tVa1/ED+gRrZampYyYNvi1gGgLOzYDBZ4Q4SBimRNE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736654; c=relaxed/simple;
-	bh=qAAqpIJ1sZ+WXhv9jSL+yNgDxW9OQV2lwq5CpKUVeRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P4kufR3z3cPP/TaFkcJQzMC2ALSRiHz1Palyfir9lNkJcsJujcDd7+CL18GeMXtHrIy8W7IMdV5XdLK6NftLrCflUQ++g7JfCPUDJIr45oG8x5I8XWN8iz9Q+GErgeiolg5ti06rkXGOy6NLeh/2AB/N53Rs6oEEzf31PLQ5kiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Taf3q1Md; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756736651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DIgXc9xeVr9BBWUbZa2zZn7PQsTxZuClMXuY+mTcrPY=;
-	b=Taf3q1Md13l9t/XFe03udI8KY30l3Kx+jd8BC8QX6jrdyLhIvBw7lZFDcYmgnov5RbWQ0x
-	fLjEcIlxIdFypVI+mGFtgh0LSJa65RfzLSA4ZpSv8X1eiDNz1myl4F3gzGiwl0AyMq5kGG
-	1f0EwqzdlO50y876YlgSg4SG92ShRIM=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-GhcSiRnuP7yhq_GsFyjMhA-1; Mon, 01 Sep 2025 10:24:10 -0400
-X-MC-Unique: GhcSiRnuP7yhq_GsFyjMhA-1
-X-Mimecast-MFC-AGG-ID: GhcSiRnuP7yhq_GsFyjMhA_1756736650
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-afe81959c3cso393823166b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 07:24:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756736650; x=1757341450;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DIgXc9xeVr9BBWUbZa2zZn7PQsTxZuClMXuY+mTcrPY=;
-        b=m665BWPN9F/TcpuaYrtVTGx/VeKrs0b4toNVr7hOAVOaj35ue84UYyr4dAxty97uwL
-         DfpLx5iHhwOr8WnvcsXXa5NafAzpf/ewEL7jo2JlzytICXJ+n9GFYjnC5XvjbCxunZ9K
-         2TSpj91Nz+AQD4CkfJsdCdhj7G7pkxJkBzyPe9GbxiISzwVDMYet4BINZubrk7R09ptt
-         vP5ybf47KrCFPHwD7vHvTPSOwTJI9nhjmlKTrJjaih5ZkJKBkUCFUJcSEgXELYVQUXMU
-         8KXs0gse1C7JsnrBVuA77P2Tw4k0QWDs4ruAi7zj5p/m87vYQ6Ibnw7j+QNTpFl4DNzI
-         FIKg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+1gimK4La9HGf9WHVtTRCRJ5AiU4EG9iLlr7R6dAbaAON/juYF59qPhLVAWmaqwhTwj7x7aovLP5fRxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeR5s+xRCsL96y79H1pzrawvqDGq9SuHSYk72mOLanoLUjJxI3
-	yQTbKpzVpMAm8H4nmC8FMJohrodyAvQaqHDfm0fO8CGoNHhaE74QteV9aIMEi5Gmvixi5lN1ezy
-	TjbgCfi/cD3tBli6wDy4UmSdBHHPBQjFtL/wygOooPtFLZzhkz8yRBLnGITRepT3qXxm6jOY3TG
-	lCdCozIOXmDx1Lgc/LL/cKpfaIuAIkoTjorV2rGYwk
-X-Gm-Gg: ASbGncu85QVEmnUvMhkguSxtXyUDoqw7tPgti+K5YdRLtCca2z3MWJLvaeG0GdRkb5b
-	snR6mNPAwLQRTJTQkSbvCVA0dmafxBacGBwPzGP70n37Cw8vx2yKTwtb5RJDcjh8YTET3s4bZPg
-	mOth44c0pwtwUqdMOjlCRurjlp4qOOw2SiIoSiwIrV9sEbFJGBRrA=
-X-Received: by 2002:a17:907:94c8:b0:aff:7:4f12 with SMTP id a640c23a62f3a-b01d8a2778dmr739983466b.5.1756736649578;
-        Mon, 01 Sep 2025 07:24:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGn4xY0HH8qCdFSyK5OTzgVVXjJ12ZvaUYluQIqf0B2o60S1nht1dzIxUJp1Vzx3IwFYsWYnxkzkFbv5Vovccg=
-X-Received: by 2002:a17:907:94c8:b0:aff:7:4f12 with SMTP id
- a640c23a62f3a-b01d8a2778dmr739980466b.5.1756736649117; Mon, 01 Sep 2025
- 07:24:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35942F49EE;
+	Mon,  1 Sep 2025 14:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756736707; cv=pass; b=D3mSN2o/py6DFxLfRofAp3cwkc6Ca3pyyD6IfA37tcM3e3BdyW4xwIKhIT1+bF81G1PCzk2JGMHyv6/t9PcOTyxy2s6M8IXQRbM3YjU72v/X1w2CETU2Ss066vITaDb8Tmii0oHWG5E77CZC8ghOJtyzejmCuDMBhw3Cb3GG+FI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756736707; c=relaxed/simple;
+	bh=vuDGbWqm/9R0IuGxg+X+dpyc5ApWMnq2yOclMM/FivU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ICRGpq9T7BC6zPqoTzJ8CLV0knOvssov9ot9HJCzGZmdtvF81awpozL75ILvCsMPF8wI8KVRYhLzfCz5EdJ7Ige5215FnyfVLWPiKNl0j6eU+cKgllc5eff8Uucmei0bo8/LpAuGPfp5CEsDhtxEwrH3/Hsci5h1unBtiSlOOYM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Y6gX0L/q; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756736683; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZOsYZVzca7zCva+XosLo++okG+IJSbfsTFLNqsKr6pi1sd5Jxa7YmrHniSOVewp2oMbh1hqD3+Pos1R+zxQnS5Dr4hUs6lHIYRe89PCxqBup5dn6bokSN8kW+oA2+BzJXwF9NmPdVORkb0395cJKjk9NQ04x4xnguJHXTBzQ6rg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756736683; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=W9FCfUG14h2oKCNBF9TsJGENC4lLTZfUyNoDD35vGNw=; 
+	b=BLS6zkLKnABRpdHAbXCwhOHDMZMab6Fq8fzxCSZr2dIY8L3YxtzD5Dqy4K4b4pFviAw0KGl4FsPhv8X0RKG8UBRUhsnTnDIOVyaVG95LoLV9OxjwmRtHhW8qpf5FSuw7hS+VVBeR76sEVYoQ/NtGLBGQWScAcwWlNAVoKptu94Y=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756736683;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=W9FCfUG14h2oKCNBF9TsJGENC4lLTZfUyNoDD35vGNw=;
+	b=Y6gX0L/qMhN+HAwqWwxOG9cYN7F1EMSbg4gbVdlOT0Mxk3ooSgm4/yvEp30LjNLH
+	PiZkZNQvidOXgLT/ge7LPNJkoJuekxsWIhsY38hVH+c5r8t3mDWHYB9JhDxzgioYBMo
+	wJQfX2PCI0S7GTQvRGu/aiyXhvPrZz34wTDoGf10=
+Received: by mx.zohomail.com with SMTPS id 1756736681642725.040873569627;
+	Mon, 1 Sep 2025 07:24:41 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1755018581.git.ipravdin.official@gmail.com> <96f305f622de233c28d4ed9f23583b4d6ab2d1ac.1755018581.git.ipravdin.official@gmail.com>
-In-Reply-To: <96f305f622de233c28d4ed9f23583b4d6ab2d1ac.1755018581.git.ipravdin.official@gmail.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Mon, 1 Sep 2025 16:23:55 +0200
-X-Gm-Features: Ac12FXx63Tybu7ddN4dNpy-VZp0KptTHLkvU7Nm5KFnqWm7q4-qPMwNWVhWSlzk
-Message-ID: <CAP4=nvRZ_SY_xdC6N8LkKUA=a-QP5gc5SMgBr4jod6+tu0TFeA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] rtla: fix -a overriding -t argument
-To: Ivan Pravdin <ipravdin.official@gmail.com>
-Cc: rostedt@goodmis.org, corbet@lwn.net, linux-trace-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v6 17/18] rust: block: add remote completion to `Request`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <877bymidos.fsf@t14s.mail-host-address-is-not-set>
+Date: Mon, 1 Sep 2025 11:24:24 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <532104CE-269D-4C38-A248-AF6417C4151F@collabora.com>
+References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
+ <20250822-rnull-up-v6-16-v6-17-ec65006e2f07@kernel.org>
+ <R-quyDdhLT8rgM7vBTBx_6hUbT6VXlKvJ0ueHYeoye0JcLGz6WqNuPJQGEn3yBbnokSWZaUWbsLlh-bVJQeSpQ==@protonmail.internalid>
+ <680BB9D0-3720-44EC-A25D-83806F635D8D@collabora.com>
+ <877bymidos.fsf@t14s.mail-host-address-is-not-set>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-=C3=BAt 12. 8. 2025 v 19:22 odes=C3=ADlatel Ivan Pravdin
-<ipravdin.official@gmail.com> napsal:
->
-> When running rtla as
->
->     `rtla <timerlat|osnoise> <top|hist> -t custom_file.txt -a 100`
->
-> -a options override trace output filename specified by -t option.
-> Running the command above will create <timerlat|osnoise>_trace.txt file
-> instead of custom_file.txt. Fix this by making sure that -a option does
-> not override trace output filename even if it's passed after trace
-> output filename is specified.
->
 
-Yes, this should not be overridden, it's a bug in both the old
-implementation and the new one using actions. Thank you for the fix.
 
-> Remove clear_terminal in timerlat top as it removes "Saving trace to <fil=
-ename>"
-> line from the terminal and is not used in other modes.
->
+> On 29 Aug 2025, at 08:12, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
+>=20
+>> Hi Andreas,
+>>=20
+>>> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>>>=20
+>>> Allow users of rust block device driver API to schedule completion =
+of
+>>> requests via `blk_mq_complete_request_remote`.
+>>>=20
+>>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>>> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>> ---
+>>> drivers/block/rnull/rnull.rs       |  9 +++++++++
+>>> rust/kernel/block/mq.rs            |  6 ++++++
+>>> rust/kernel/block/mq/operations.rs | 19 +++++++++++++++----
+>>> rust/kernel/block/mq/request.rs    | 17 +++++++++++++++++
+>>> 4 files changed, 47 insertions(+), 4 deletions(-)
+>>>=20
+>>> diff --git a/drivers/block/rnull/rnull.rs =
+b/drivers/block/rnull/rnull.rs
+>>> index 8255236bc550..a19c55717c4f 100644
+>>> --- a/drivers/block/rnull/rnull.rs
+>>> +++ b/drivers/block/rnull/rnull.rs
+>>> @@ -82,4 +82,13 @@ fn queue_rq(_queue_data: (), rq: =
+ARef<mq::Request<Self>>, _is_last: bool) -> Res
+>>>    }
+>>>=20
+>>>    fn commit_rqs(_queue_data: ()) {}
+>>> +
+>>> +    fn complete(rq: ARef<mq::Request<Self>>) {
+>>> +        mq::Request::end_ok(rq)
+>>> +            .map_err(|_e| kernel::error::code::EIO)
+>>> +            // We take no refcounts on the request, so we expect to =
+be able to
+>>> +            // end the request. The request reference must be =
+unique at this
+>>> +            // point, and so `end_ok` cannot fail.
+>>> +            .expect("Fatal error - expected to be able to end =
+request");
+>>> +    }
+>>> }
+>>> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
+>>> index 6e546f4f3d1c..c0ec06b84355 100644
+>>> --- a/rust/kernel/block/mq.rs
+>>> +++ b/rust/kernel/block/mq.rs
+>>> @@ -77,6 +77,12 @@
+>>> //!     }
+>>> //!
+>>> //!     fn commit_rqs(_queue_data: ()) {}
+>>> +//!
+>>> +//!     fn complete(rq: ARef<Request<Self>>) {
+>>> +//!         Request::end_ok(rq)
+>>> +//!             .map_err(|_e| kernel::error::code::EIO)
+>>> +//!             .expect("Fatal error - expected to be able to end =
+request");
+>>> +//!     }
+>>> //! }
+>>> //!
+>>> //! let tagset: Arc<TagSet<MyBlkDevice>> =3D
+>>> diff --git a/rust/kernel/block/mq/operations.rs =
+b/rust/kernel/block/mq/operations.rs
+>>> index 6fb256f55acc..0fece577de7c 100644
+>>> --- a/rust/kernel/block/mq/operations.rs
+>>> +++ b/rust/kernel/block/mq/operations.rs
+>>> @@ -42,6 +42,9 @@ fn queue_rq(
+>>>    /// Called by the kernel to indicate that queued requests should =
+be submitted.
+>>>    fn commit_rqs(queue_data: ForeignBorrowed<'_, Self::QueueData>);
+>>>=20
+>>> +    /// Called by the kernel when the request is completed.
+>>> +    fn complete(rq: ARef<Request<Self>>);
+>>> +
+>>>    /// Called by the kernel to poll the device for completed =
+requests. Only
+>>>    /// used for poll queues.
+>>>    fn poll() -> bool {
+>>> @@ -143,13 +146,21 @@ impl<T: Operations> OperationsVTable<T> {
+>>>        T::commit_rqs(queue_data)
+>>>    }
+>>>=20
+>>> -    /// This function is called by the C kernel. It is not =
+currently
+>>> -    /// implemented, and there is no way to exercise this code =
+path.
+>>> +    /// This function is called by the C kernel. A pointer to this =
+function is
+>>> +    /// installed in the `blk_mq_ops` vtable for the driver.
+>>>    ///
+>>>    /// # Safety
+>>>    ///
+>>> -    /// This function may only be called by blk-mq C =
+infrastructure.
+>>> -    unsafe extern "C" fn complete_callback(_rq: *mut =
+bindings::request) {}
+>>> +    /// This function may only be called by blk-mq C =
+infrastructure. `rq` must
+>>> +    /// point to a valid request that has been marked as completed. =
+The pointee
+>>> +    /// of `rq` must be valid for write for the duration of this =
+function.
+>>> +    unsafe extern "C" fn complete_callback(rq: *mut =
+bindings::request) {
+>>> +        // SAFETY: This function can only be dispatched through
+>>> +        // `Request::complete`. We leaked a refcount then which we =
+pick back up
+>>> +        // now.
+>>> +        let aref =3D unsafe { Request::aref_from_raw(rq) };
+>>> +        T::complete(aref);
+>>> +    }
+>>>=20
+>>>    /// This function is called by the C kernel. A pointer to this =
+function is
+>>>    /// installed in the `blk_mq_ops` vtable for the driver.
+>>> diff --git a/rust/kernel/block/mq/request.rs =
+b/rust/kernel/block/mq/request.rs
+>>> index 3848cfe63f77..f7f757f7459f 100644
+>>> --- a/rust/kernel/block/mq/request.rs
+>>> +++ b/rust/kernel/block/mq/request.rs
+>>> @@ -135,6 +135,23 @@ pub fn end_ok(this: ARef<Self>) -> Result<(), =
+ARef<Self>> {
+>>>        Ok(())
+>>>    }
+>>>=20
+>>> +    /// Complete the request by scheduling `Operations::complete` =
+for
+>>> +    /// execution.
+>>> +    ///
+>>> +    /// The function may be scheduled locally, via SoftIRQ or =
+remotely via IPMI.
+>>> +    /// See `blk_mq_complete_request_remote` in [`blk-mq.c`] for =
+details.
+>>> +    ///
+>>> +    /// [`blk-mq.c`]: srctree/block/blk-mq.c
+>>> +    pub fn complete(this: ARef<Self>) {
+>>> +        let ptr =3D =
+ARef::into_raw(this).cast::<bindings::request>().as_ptr();
+>>> +        // SAFETY: By type invariant, `self.0` is a valid `struct =
+request`
+>>> +        if !unsafe { bindings::blk_mq_complete_request_remote(ptr) =
+} {
+>>> +            // SAFETY: We released a refcount above that we can =
+reclaim here.
+>>> +            let this =3D unsafe { Request::aref_from_raw(ptr) };
+>>> +            T::complete(this);
+>>> +        }
+>>> +    }
+>>> +
+>>>    /// Return a pointer to the [`RequestDataWrapper`] stored in the =
+private area
+>>>    /// of the request structure.
+>>>    ///
+>>>=20
+>>> --
+>>> 2.47.2
+>>>=20
+>>>=20
+>>=20
+>> I had another look here. While I do trust your reasoning, perhaps we =
+should
+>> remove the call to expect()?
+>>=20
+>> If it is not called ever as you said, great, removing the expect() =
+will not
+>> change the code behavior. If it is, be it because of some minor =
+oversight or
+>> unexpected condition, we should produce some error output instead of =
+crashing
+>> the kernel. Maybe we should use a warn() here instead? Or maybe =
+dev/pr_err as
+>> applicable?
+>=20
+> I think for the example, I would like to keep the `expect`. For
+> demonstration purposes.
 
-This is not the correct fix for the issue. clear_terminal is needed in
-timerlat top (and osnoise top) to clear the terminal before the
-updated status is printed, the fix removes it without a replacement,
-breaking this behavior. Also, this is a different issue that appeared
-only when the actions patchset [1] was merged, and should go into a
-separate patch with a different Fixes tag.
+I think examples is definitely one place we don=E2=80=99t want to teach =
+people to
+use unwrap and expect because that will kill the system IIUC.
 
-[1] https://lore.kernel.org/linux-trace-kernel/20250626123405.1496931-1-tgl=
-ozar@redhat.com/T/#t
+>=20
+> We could do `warn!` instead for the rnull driver I guess. But the IO
+> queue that would hit this code would start to hang pretty fast, since =
+no
+> IO would complete. I don't think the kernel can recover from this =
+hang.
+>=20
 
-Tomas
+No I/O would complete for that device, but that doesn't mean that the =
+system is
+unusable IIUC, specially if other devices are available?
+
+>=20
+> Best regards,
+> Andreas Hindborg
+
+In any case, perhaps this is only my opinion and others may see this
+differently, so I won't complain if you want to keep it.
+
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
 
