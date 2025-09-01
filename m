@@ -1,90 +1,208 @@
-Return-Path: <linux-kernel+bounces-794374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD4CB3E0C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:00:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C6AB3E0D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE531895775
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496B5188DFC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768AC310640;
-	Mon,  1 Sep 2025 10:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6382E31062C;
+	Mon,  1 Sep 2025 11:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Wdj/akT7"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yh6KChN2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A9330FF3C;
-	Mon,  1 Sep 2025 10:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213BE126C1E
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724384; cv=none; b=FbhCEit9Yyr7+5ezwpHuuMZdoAN5AM8s9qFYbVRNrJHjkrE/jUaCUGY8W6mOA080qs/BRLPcoZB0QxpwcGykzRB2m79Ya+mbaQ0mSEv9AOyAvoaLeu1XrJNplxea29Q+HjxTO4oJ1VwRRj2R2hgMqYAwNifbTNWDRJi8T3cM2PQ=
+	t=1756724576; cv=none; b=djXO2WEIN9T1cBmK50ffoe1cDLf7IMtzO4lJqgwInZcHN/vzqye2y8rJ1zz0MA3v6IMUsR3TdWhRJC6HGj2DPFerLuytWd4QUfc1+xrpKlPIoxpjOlXqNDvNQ0kVkKDem/cr+w33sdPOqYPlOqzvzVnS+BmhNTNIu5AjuFVeE34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724384; c=relaxed/simple;
-	bh=zm2XsysSupnqJlQcXhyrbwN3sg8083PkRHkm7tRbhag=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IJB42Bx6j31AyEnz7XiRlnQseMIWoGFKxMNs3WE2mfw1YVJq0JwV3IWAp7eytSbdSSM9jLT7oCPNX03Mqu9oWMmn+ak/S38yixj940zxg1GIzY+ypDgBhuoTnKgwe9kEpZ5ciNMSyj8qoB3iZoZMNysvRHUKn+vKb3hEOsoWutw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Wdj/akT7; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=kJ1mUoG3fV3WXVXEgWYXPGDH6zt9YlBv5QtbpRwYCsY=; b=Wdj/akT7fKwJp5F02KcuG2r+k4
-	O0joSQsiYLQSZ7IJ3D+Vc++OH8Eoy15JN+21KfldeCJew+tuoYo53N7WqCGsBwUB+dw6pAO4huQ+N
-	/wSj/MhmHFHEbSOtE6G0twgQvUP3/jVV4CP1g9gxigcTG3yZFfjQz/YE5HmjMKI7f0U/WGSFC2E6t
-	4W85Ls3UhdsJuFsQuBqkCNrFpA06FCD3T2urfvQTxx/v8ZjQvOuNW5MK9KUqYRKVUYbE6pSOI5e0q
-	b4jQHAVSrZJ4D6U/Z5nALMW/pX3tFGeTYcTrz4rVrg+9by1pGN8EPD+Q73t7nABGXOQwGK7q6EmTy
-	EdAIrIJQ==;
-Received: from i53875a2d.versanet.de ([83.135.90.45] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1ut2G4-0001WA-0G; Mon, 01 Sep 2025 12:59:32 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	kernel@collabora.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: fix USB on RADXA ROCK 5T
-Date: Mon,  1 Sep 2025 12:59:28 +0200
-Message-ID: <175672432552.3612134.7877143457779148852.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250825-rock5t-usb-fix-v1-1-de71954a1bb5@collabora.com>
-References: <20250825-rock5t-usb-fix-v1-1-de71954a1bb5@collabora.com>
+	s=arc-20240116; t=1756724576; c=relaxed/simple;
+	bh=K5JNJcZ1sKhYtHtX25IaHS+Y5MJfXFqdBBhnB5pe2NY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MpiXjuLzM30i1HwXQgj+uu0modRhnZrqLyBQ0GvQ6s3fiAmhAQatmvl9SpC3XX0xJEVXcIfKWoHIxEPbeX5hAk0/oF2o+OQSl3oTGkhifwY3uiKXX71kUCzrfhrqBkODNPXcfeI8gJ3aymRbfG43eZo2RUt0KTga/FiLpvyWPpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yh6KChN2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756724573;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2pwINCj5IC9gGmlFKv2NCzdMq2RgfRkeGypury1Wan0=;
+	b=Yh6KChN27Y7S8/WXsvYN+tCfj1b9Nt0adXTkCTqSvD4vlfOy0BU7zoaGU/uWx4QX2Oxg/V
+	OeNQ6o+6zh2MC/KTcDy89hr7bhiyhMR9eWNFXKWZVFZSfCmDQ+9vaQVGd0R6I2XrWwXMmf
+	6hWcPOvef2xkzdg0AI7+/fDqPqYhbrw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-628-7PH9FrxzNYO_A7a1hhp6HA-1; Mon, 01 Sep 2025 07:02:52 -0400
+X-MC-Unique: 7PH9FrxzNYO_A7a1hhp6HA-1
+X-Mimecast-MFC-AGG-ID: 7PH9FrxzNYO_A7a1hhp6HA_1756724571
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b7a0d1a71so35211465e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:02:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756724571; x=1757329371;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2pwINCj5IC9gGmlFKv2NCzdMq2RgfRkeGypury1Wan0=;
+        b=RJBNT9AokP2kjMUJyKIu1f2qlWPFWUI6vaFLwORUD0EiamZCOw0LJBDlfBLqsypC8t
+         1U1P0nhTfJob3VQ0S2rf8YeVDt+aEmECsx+ynVjjZMDwbg6O1dcoYsC5Du7QDu2kfS5F
+         dMML4nUTpkxqAzz4voxIgy++VvUboOGcFzJOIuIEhEEOqxUrUr1nt8EJRbNHm8uUQBHp
+         +V9mnfrxuKfsuMd6lVMyz1zszRhnXyw85h3PIX5zbURsfi81pZoTNMgLdXbvYp6z3fTl
+         /fR5dL7+P/ZwiIxzYf1aUGa9gcUh/JpG4szs2Yfd/Vsc8YL4Af20POdDPFlLvpYzjCmI
+         0aHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdX+s6Y3fQRffCmNYT/hTQJbT9CW/1QczaenF++WIQq20ckZtzW2foxjx4aM6Qw7NRszibleiGbBuPt3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxiw+2EO3MqL2ovqnGamZpSe+I/gkS+jUJw1ZqJRBKSjXQcGeAn
+	zQQ9fuD8Q8yKmqGMhhar3ekafh4yUlZlQPwbadg9/igoDxRZbKJ/KsBdpUv+afmwRMv+I0WOqXS
+	e+A7u1LNFWoqmlmYQRn9o3oA606sw8IX6C+zTYha1zBsJd1C5V9jWc6TrEEpZHgfMGA==
+X-Gm-Gg: ASbGncsYub5nGZQyNe37vo07HG3Qxp+ZvE11sN4LjYFFf3zobOy0NXTIf2U3lGg+mJX
+	5i3a11ZWkxvTx46YPz0CW6Ik9jLfZgdCm4C/5S2M/AsfKOjlXZaKAq2WPPX6UkrrByvYn+zbhiq
+	ferLTgwmUmiYzIwTcKjl0Fr4jhZCOONoUtobpM8czjRY8l3VJOX4Sl5JdcQCxpB65U+NMzB194/
+	EHXPEQGCiMgkzSYse8yTkrC6B8YiZP78clzmvlB1Sj93+KzPsqQ5S+QsoYDc3CfKvWsF6i1XHb4
+	H42mpSGwoeBg2sY8B2JIVSsiH+ZZhYxxa19Zn8xrJQJjVq+BO/EeLOoB0RV3C1e0176YOq+ROXW
+	GZpuv0+oUv+7kyRq4IXsnooySuCp3ore4VFzhwqlV/HIZF/crNqpjj6CVNDej+pUNL6w=
+X-Received: by 2002:a5d:64cd:0:b0:3ce:16d3:7bd1 with SMTP id ffacd0b85a97d-3d1d9ac1cdamr5525195f8f.0.1756724570700;
+        Mon, 01 Sep 2025 04:02:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFj8ufgKZlVGX8CMmIcbweVvShoidDXf+HM4vFZF7g4psnQ9bVARH+arPZnVNgJxxWj4BMlvA==
+X-Received: by 2002:a5d:64cd:0:b0:3ce:16d3:7bd1 with SMTP id ffacd0b85a97d-3d1d9ac1cdamr5525149f8f.0.1756724570152;
+        Mon, 01 Sep 2025 04:02:50 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d729a96912sm3045340f8f.8.2025.09.01.04.02.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 04:02:49 -0700 (PDT)
+Message-ID: <d99496bf-6e67-4e64-97d5-6cfe563b8cbe@redhat.com>
+Date: Mon, 1 Sep 2025 13:02:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/12] mm: establish const-correctness for pointer
+ parameters
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org,
+ axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org,
+ hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
+ linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
+ agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
+ gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
+ davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com,
+ luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
+ jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
+ rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
+ broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
+ mpe@ellerman.id.au, nysal@linux.ibm.com,
+ linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+ linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, conduct@kernel.org
+References: <20250901091916.3002082-1-max.kellermann@ionos.com>
+ <f065d6ae-c7a7-4b43-9a7d-47b35adf944e@lucifer.local>
+ <CAKPOu+9smVnEyiRo=gibtpq7opF80s5XiX=B8+fxEBV7v3-Gyw@mail.gmail.com>
+ <76348dd5-3edf-46fc-a531-b577aad1c850@lucifer.local>
+ <CAKPOu+-cWED5_KF0BecqxVGKJFWZciJFENxxBSOA+-Ki_4i9zQ@mail.gmail.com>
+ <bfe1ae86-981a-4bd5-a96d-2879ef1b3af2@redhat.com>
+ <CAKPOu+_jpCE3MuRwKQ7bOhvtNW8XBgV-ZZVd3Qv6J+ULg4GJkw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <CAKPOu+_jpCE3MuRwKQ7bOhvtNW8XBgV-ZZVd3Qv6J+ULg4GJkw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-On Mon, 25 Aug 2025 09:27:08 +0200, Nicolas Frattaroli wrote:
-> The RADXA ROCK 5T board uses the same GPIO pin for controlling the USB
-> host port regulator. This control pin was mistakenly left out of the
-> ROCK 5T device tree.
+On 01.09.25 12:54, Max Kellermann wrote:
+> On Mon, Sep 1, 2025 at 12:43 PM David Hildenbrand <david@redhat.com> wrote:
+>> Max, I think this series here is valuable, and you can see that from the
+>> engagement from reviewers (this is a *good* thing, I sometimes wish I
+>> would get feedback that would help me improve my submissions).
+>>
+>> So if you don't want to follow-up on this series to polish the patch
+>> descriptions etc,, let me now and I (or someone else around here) can
+>> drag it over the finishing line.
 > 
-> 
+> Thanks David - I do want to finish this, if there is a constructive
+> path ahead. I know what you want, but I'm not so sure about the
+> others.
 
-Applied, thanks!
+I think we primarily want to briefly explain the what, the why, and why it is okay.
 
-[1/1] arm64: dts: rockchip: fix USB on RADXA ROCK 5T
-      commit: 63ddc0a75b3b071f04f4bc277b2510eb06d21648
+For getter/test functions the "why it is okay" it's trivial -- test function.
+Personally, I would not spell out the individual functions in that case, as
+long as they logically belong together (like "shmem test functions"
+describe what you did in that patch).
 
-Best regards,
+For anything beyond that people likely expect a different reasoning.
+
+For example the following change:
+
+-static inline void folio_migrate_refs(struct folio *new, struct folio *old)
++static inline void folio_migrate_refs(struct folio *const new,
++				      const struct folio *const old)
+
+Adds two "const" ways of doing things. As a reviewer, seeing something like that
+buried in a patch raises questionmarks.
+
 -- 
-Heiko Stuebner <heiko@sntech.de>
+Cheers
+
+David / dhildenb
+
 
