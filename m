@@ -1,95 +1,83 @@
-Return-Path: <linux-kernel+bounces-795273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA92CB3EF32
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4EC9B3EF37
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 678322C1185
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:10:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8C7480BC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC86262FFF;
-	Mon,  1 Sep 2025 20:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F9B25D202;
+	Mon,  1 Sep 2025 20:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rIKZscx3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLuG8zB+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EEC25A2B5;
-	Mon,  1 Sep 2025 20:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702D91EE7C6;
+	Mon,  1 Sep 2025 20:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756757404; cv=none; b=QJ05BFwELuVMjeo8y2GZs576g4yOyoPlGYO7lv2T6So9oyKj8CHB5mGgeYQq/hRa5kdouyK256R4TLWJ0WlFV1+5Qvwy+Fi4IXQm2blF2mvYkFkxSO0P2+mGppUKQJRCQDrnO8ZuIyiWAElmc/rV1INhn0LSEeCKfWNt/egpAZU=
+	t=1756757428; cv=none; b=YwzMCd0CN4wRgcsd0zU64ORdWLInLyDdwp9IHLf9/vnTamEE36JyQTjwE5mv3aSR+IwechqjuQ0w9bDGqPYJuNTONlZx0D4SIvLj+I/8wcyixc3Xshj6UDNQH1rWsqu7SA/R4sAuPwZd/EvZZelXrclsX2cS2IGHwrTb0Q00h6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756757404; c=relaxed/simple;
-	bh=ymT14rwWbD8Y2vD4GrUiNATLT7e39pPldzKr2MaM3EA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=FusIFF41G4b6W1RQYXYgFkafXqlqIKz02eJWzP+1MJgyDSegy3sxy4iHzIgiGE1dylNf7G7+gerMLqQhKPbOktBc+YIuYjrDFMzdVn98+KpY7Vp1VaGk+FuLMJdE/UTIrsDxyuZ4yf1hxZFQW4RT8HcLJKqJZGmAd9IYdr2Y29M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rIKZscx3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF833C4CEF5;
-	Mon,  1 Sep 2025 20:10:03 +0000 (UTC)
+	s=arc-20240116; t=1756757428; c=relaxed/simple;
+	bh=KC7znHm/JWj2lUNyyD/hNxr00ZjOsviTmeJPi/mJ7yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9AJilwPKll1HvOPwDVsJbTDpI4a82tIqNFQIwhH1sUAz08IabL3LnL9l7K30YL5NYBSHZ78jwCrgbkTv4FC6ZlZu2pZ7HqvmI1e68aRZfHsY71mSyZNnX4LLAIkKYdpU5CSiZ2y9UAc1ZPQJbHQWjknA9huRqOd7OQOrdyjCOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLuG8zB+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6B48C4CEF0;
+	Mon,  1 Sep 2025 20:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756757404;
-	bh=ymT14rwWbD8Y2vD4GrUiNATLT7e39pPldzKr2MaM3EA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rIKZscx3GMTqz0hvIRBMrpVaNBVhcn2KwKTIIZDC6YTBic12pl8ak2fwLtptUnqEP
-	 3Diq9+Dqokz5tJTFH9Lfk5pUS6j7QT5zJfFssUqtnThxaPPJmAVrZAfreDNA7v1lbZ
-	 LgY75M3xfl9tXj0xgbnjo7wzoFMijSqxL3n58ALktpGgitzvaZrSUmZkNHgIX58zln
-	 Tw9k8sqN1DEsJjm0v18E7F21Z80yFAXVB+J9XoB/HHwIsIUt6Nst9675ziE9KTyndz
-	 hp0u7v/VnyUtKRW0OTQPQINu0ZV78J/O2ydNDr0VYa1bF/2Ljm1A93vtoW57BrT0p9
-	 hf/lZXyQa4Tbw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF4B383BF4E;
-	Mon,  1 Sep 2025 20:10:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1756757428;
+	bh=KC7znHm/JWj2lUNyyD/hNxr00ZjOsviTmeJPi/mJ7yk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GLuG8zB+B/JpFd0k2fxHxl18Gg90ZA+2ntUJL9eFr5YjtbCq8wdWC0inzQ+8ca5KF
+	 9ZI59H5/yUaNhjuFBLYkyk+vk4NrwIqUTUd6DTaUD0tE9gDbF7fzo01Pjtv39d/Dfh
+	 cXHfwy4XloOyMWZ+DBRSLQZE5/eJLZkKMOsu7N5dHLk4WsUAxaqVHGtuX0V5IWhBVv
+	 EDsdR2ZH8pAh2+jpIPipwhdZyNIc4lZYgscilkw/2vtY2erX5+oifY9SxBknzdDAl4
+	 wxHNoKbbtfFSd3MIyoob3vP0JZbVBhPNVRVuBHtsCv7tgL6rMoBShtqBUgLcF+U8PB
+	 FAahBotHFN7AQ==
+Date: Mon, 1 Sep 2025 15:10:26 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-watchdog@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 1/4] dt-bindings: watchdog: samsung-wdt: Define cluster
+ constraints top-level
+Message-ID: <175675742654.261403.14863029084501002736.robh@kernel.org>
+References: <20250830-watchdog-s3c-cleanup-v1-0-837ae94a21b5@linaro.org>
+ <20250830-watchdog-s3c-cleanup-v1-1-837ae94a21b5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ethernet: qualcomm: QCOM_PPE should depend on
- ARCH_QCOM
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175675740974.3870710.18252773056077128098.git-patchwork-notify@kernel.org>
-Date: Mon, 01 Sep 2025 20:10:09 +0000
-References: 
- <eb7bd6e6ce27eb6d602a63184d9daa80127e32bd.1756466786.git.geert+renesas@glider.be>
-In-Reply-To: 
- <eb7bd6e6ce27eb6d602a63184d9daa80127e32bd.1756466786.git.geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: quic_luoj@quicinc.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250830-watchdog-s3c-cleanup-v1-1-837ae94a21b5@linaro.org>
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 29 Aug 2025 13:27:06 +0200 you wrote:
-> The Qualcomm Technologies, Inc. Packet Process Engine (PPE) is only
-> present on Qualcomm IPQ SoCs.  Hence add a dependency on ARCH_QCOM, to
-> prevent asking the user about this driver when configuring a kernel
-> without Qualcomm platform support,
+On Sat, 30 Aug 2025 12:18:57 +0200, Krzysztof Kozlowski wrote:
+> Properties should be always constrained in top-level part of the
+> bindings, so move the samsung,cluster-index constrain from if: block.
 > 
-> Fixes: 353a0f1d5b27606b ("net: ethernet: qualcomm: Add PPE driver for IPQ9574 SoC")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> [...]
 
-Here is the summary with links:
-  - net: ethernet: qualcomm: QCOM_PPE should depend on ARCH_QCOM
-    https://git.kernel.org/netdev/net-next/c/35dface61cfe
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
