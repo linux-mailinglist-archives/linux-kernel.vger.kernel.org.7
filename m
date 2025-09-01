@@ -1,148 +1,129 @@
-Return-Path: <linux-kernel+bounces-795345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C92B3F055
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:11:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFF0B3F068
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3629B4E06B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:11:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D15941A80774
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D53262FFF;
-	Mon,  1 Sep 2025 21:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E79521C16A;
+	Mon,  1 Sep 2025 21:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ottzyoSR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxhglIue"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0F8136347
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 21:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BA5B67F;
+	Mon,  1 Sep 2025 21:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756761095; cv=none; b=ZQQyqgTViQHaWz6pAUVqbj4Cu2Jq0Ejz1pNufvlsuQBM0OvR8PlM3HQrg381xV1Dfckv2W5aH9hY3/zHCXpcm7xHsRLbPJoAX8jsq2tlh/7bYzTeXoUdvjrYtpA8x7UnbSU+tPm5wXuIxZEiNFORkJnr4sk8q/Ofvo2wLpVi4ho=
+	t=1756761326; cv=none; b=G0o3GB8Bj6BtJsWrWo/s1BeF9v1og1bgbhAf3sfCd26DK+qGtgdLf9HTDMn7cD/defEpJo7Ep1t6uMpqZWcF6PvmsrNv5gRC9pzNgigYiAA0c6ctRSqJflDpX5v4FXMPS8nZdiHIwLrqsMdNJLvukHN/3BJ+EVxP/zjWIuoYeck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756761095; c=relaxed/simple;
-	bh=cO3eEDyjLZrEEcqQpTt97cAeIPZUXGBMByKvTkbGv1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JZAr5PttVsy8JsZIBBa6gRi/XlgPUfOEETxwDalWl5JZqB1e+0CIS+TC/FHgmSEUbVM4pM8/txhdc+RnPgJRZj14pla3ZQ2u+4Y05FkXgFfJfvE+9yhB6tm9+GV1+O6r5OZHzalZ9PuOCEl9rIAaN4WJB8i9PDM7+OwjPq9+/u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ottzyoSR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 765BFC4CEF0;
-	Mon,  1 Sep 2025 21:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756761094;
-	bh=cO3eEDyjLZrEEcqQpTt97cAeIPZUXGBMByKvTkbGv1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ottzyoSRlp09ZHXupZXhMMq2sBGe1BZ7A0047xWTAVzFJGrMv65+y5E8JJbBfArvO
-	 MiLj6wAL3hXqGtI6sEojXBL1IRalSq1LXVj+SbT26+KekjIImsDpFZc2Tsm8teQ4eu
-	 D5YzXCS3gajMFZ/qx+D+HzOF1jRZHpCGCm7y/D5YXiN0ZM1Tqv7h9WH7h9DBR4okFc
-	 Zar0e4s6jrHcp9QKGD4brdGLSKmnDS674s4b9AqnAtNTkkdYQtGa+4jbxPDudm5ciw
-	 EIWmTmf/2U0DImqN47bWnJ74F2iUlMKgVdocZ+RThdzs5K0r7HJYgj2PG8C35K3XVG
-	 LJuL6bkqnTsyQ==
-Date: Mon, 1 Sep 2025 23:11:31 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v11 8/8] timers: Exclude isolated cpus from timer
- migration
-Message-ID: <aLYMA8niL9Uxhu7G@pavilion.home>
-References: <20250808160142.103852-1-gmonaco@redhat.com>
- <20250808160142.103852-9-gmonaco@redhat.com>
- <aLWUkpKgFFVr_TEx@localhost.localdomain>
- <d001f1bc9a87e031cf4f8721d6843013c766c28a.camel@redhat.com>
+	s=arc-20240116; t=1756761326; c=relaxed/simple;
+	bh=8zUoEQvrtlfwOr9NXnt/0+aoO/B3EsanyptdA/qacNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A6Z95q80hsOGsyDV9WqE2o0HEtLhCvRGIvq9mNleXFA2DPm42qSCJhuSdLGsQnhenIaaQE82979cfdxAdXXd+3tijMRnY9PnMYod5//LVH1Ky0hvtff1+M+oVjo9C1cLU1auLk0rd9SCWa5CEHTrbcu7owmu8pDoGG1mjv4PnL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxhglIue; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b873a2092so19022155e9.1;
+        Mon, 01 Sep 2025 14:15:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756761323; x=1757366123; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SEiJAaXmFIGciLe42hjKncbNPOpoGkguWziBkuSpJJs=;
+        b=RxhglIue4c0aay9LoUK/IA033L2WbATghQ9Fk2XvVkx9XAJi1q4huznW8LPjALJlk4
+         qagnoTSh3Mbq1KjGh8W2LCOitrKpCZEFD0fdXKCT9xGB1t+L8La0cnQ4v1JKdHNeWfIa
+         DO2PupIRxOT7TkM2hxXNK1ycIFMnz6U0h2heg2yvBQ33IrDJl3bVJr4AT7JX6JWkbxDP
+         nNiDeU86n+vePLaKn8QL4C1sbzqmtJ+0ClEL4RoiUNuHOcw0hoFoHZg/CkAURDiqIfhn
+         dCxpLjoeLCxVTuY1+F+8PNGF83wRBb3Yg2kuC5sGdE5703nGZ0THessa+lh8c+MjzpLV
+         q9gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756761323; x=1757366123;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SEiJAaXmFIGciLe42hjKncbNPOpoGkguWziBkuSpJJs=;
+        b=Dp3xccuQw+tbeNjI1NYV/qpBxXa8FFBxREO9dqdvurVhTBJOQ6ppw1aOcTaDmrAvGs
+         wU/ROx2BgVqWetn14ALTsRwMMwEIgeQA3LzTHPHFo+SkMwFaRVclfnnoqXi8iS8TEo11
+         PwoABXwxjzmFYaGUSMiK9E1IWQu81HaKZePCMofJG+B6jx0+vzJj+J5pA6yrCGBZ6+Zr
+         nssrLDFqny5z76lvCt2q3erWAiCU68bv4WOkB2dcAYrUwiR1Az9AIZdYRn/zZDWJ5YP2
+         lZ+49XbJyDidDmufuvkPM4T1/yi5RapQoBjXTkXtYlcidTjThn2VpmZh6MRzIFKTM5Rd
+         j4Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrHkrjhjgwKeH+b6cqT8fEOTBJIlPOjUKEmySzlGOtJKk1uCHfs/YBmPb0ZPnDof3Ey92SRmTZgZNCzCU=@vger.kernel.org, AJvYcCWxLRjLNCjLV9ZZ1BZNzfWJk29l1/+FwCbGiW7kY4p3s22k3wncu1+pxol3YUO2CGz2di/4/mMr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVpAgtNBXlTwiy5sBz5Lr1VSoZlr3oZ2/j41MgVwCcYAErrAru
+	bXF70Pruoz84HvrYNT/kQ5XUWuln3zPXgKD7sot1GbC74n/4fJcSaM/U
+X-Gm-Gg: ASbGncuHJRUBCrc1xLfalobFcdLvJqA7sHw1wjuy2X28n9aWmXQgjnh6OVBawg2mOJ9
+	05u8PZUY0y1Lbyvr4RQI7jBbgxkzfx9VB9U8iVxABk3sLJEBBeSH40xG0VKTVvsxTVWEioEITDb
+	byIrvCd8c2eRpdZBhUpFlpmnTQ5hFT8xX/K9yRrR///cL5IV1O7JcOiT3T4qd+Kt+0nVGQyVByJ
+	/5gulnbxJf/sDdVfjwVOJMex7YrK9RPUEif+mkFdHdE3731ee4r78lDHKXDoXaQlM0hODOkylMH
+	ZEAMFe4zuWqiggzJIaHYm72Nx4XxgX6jgYE1cCNTYwWmYGc0NzIXVIEwpNflrPqND8KUAqtNipZ
+	H6xBrbkW5wy9AB8dupcDqrm1Gjmiz5gcKb3R+kD0rw0NbXrBVmVGappfbr3/OgE8rHvJRU7Cmqp
+	ol2ePMCm2vWA==
+X-Google-Smtp-Source: AGHT+IFzWGRag9fzC9zDs8pjFqgAO9+NbXGM7L6GV0YKnQ6dDbcYiEmW/cMGhlaH1cSXcAHPMa/qTA==
+X-Received: by 2002:a5d:5888:0:b0:3ca:ca52:adb8 with SMTP id ffacd0b85a97d-3d1dfcfb9a8mr7763445f8f.36.1756761322432;
+        Mon, 01 Sep 2025 14:15:22 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d53fda847dsm7717499f8f.0.2025.09.01.14.15.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 14:15:21 -0700 (PDT)
+Message-ID: <27e61dda-c76f-4c8a-bf08-6fa6761e638d@gmail.com>
+Date: Mon, 1 Sep 2025 22:15:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d001f1bc9a87e031cf4f8721d6843013c766c28a.camel@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 3/5] net: gso: restore ids of outer ip headers
+ correctly
+To: Richard Gobert <richardbgobert@gmail.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com,
+ tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org, dsahern@kernel.org,
+ ncardwell@google.com, kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
+ aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
+ willemdebruijn.kernel@gmail.com, alexander.duyck@gmail.com,
+ linux-kernel@vger.kernel.org, linux-net-drivers@amd.com
+References: <20250901113826.6508-1-richardbgobert@gmail.com>
+ <20250901113826.6508-4-richardbgobert@gmail.com>
+Content-Language: en-GB
+From: Edward Cree <ecree.xilinx@gmail.com>
+In-Reply-To: <20250901113826.6508-4-richardbgobert@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le Mon, Sep 01, 2025 at 03:48:15PM +0200, Gabriele Monaco a écrit :
-> On Mon, 2025-09-01 at 14:41 +0200, Frederic Weisbecker wrote:
-> > Le Fri, Aug 08, 2025 at 06:01:42PM +0200, Gabriele Monaco a écrit :
-> > >  /*
-> > >   * NOHZ can only be enabled after clocksource_done_booting().
-> > > Don't
-> > >   * bother trashing the cache in the tree before.
-> > >   */
-> > >  static int __init tmigr_late_init(void)
-> > >  {
-> > > -	return cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE,
-> > > "tmigr:online",
-> > > -				 tmigr_set_cpu_available,
-> > > tmigr_clear_cpu_available);
-> > > +	int cpu, ret;
-> > > +
-> > > +	ret = cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE,
-> > > "tmigr:online",
-> > > +				tmigr_set_cpu_available,
-> > > tmigr_clear_cpu_available);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +	/*
-> > > +	 * The tick CPU may not be marked as available in the
-> > > above call, this
-> > > +	 * can occur only at boot as hotplug handlers are not
-> > > called on the
-> > > +	 * tick CPU. Force it enabled here.
-> > > +	 */
-> > > +	for_each_possible_cpu(cpu) {
-> > > +		if (!tick_nohz_cpu_hotpluggable(cpu)) {
-> > > +			ret = smp_call_function_single(
-> > > +				cpu, tmigr_cpu_unisolate_force,
-> > > NULL, 1);
-> > > +			break;
-> > > +		}
-> > > +	}
-> > 
-> > Why not evaluate tick_nohz_cpu_hotpluggable() from
-> > tmigr_clear_cpu_available() instead of this force IPI?
+On 01/09/2025 12:38, Richard Gobert wrote:
+> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
+> be mangled. Outer IDs can always be mangled.
 > 
-> The idea is that this IPI runs once during late boot only for the tick
-> CPU, while the call to tick_nohz_cpu_hotpluggable() would be running at
-> every hotplug event if I move it to tmigr_clear_cpu_available.
-> In that scenario, it's guaranteed to return true (besides the very
-> first call).
+> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
+> both inner and outer IDs to be mangled.
 > 
-> I don't have a strong opinion against running that check every time
-> although it's needed only at boot time and remove this IPI, but in my
-> understanding that's one of the thing Thomas was finding confusing [1].
+> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
 > 
-> Am I missing anything here?
+> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+> ---
+> diff --git a/drivers/net/ethernet/sfc/ef100_tx.c b/drivers/net/ethernet/sfc/ef100_tx.c
+> index e6b6be549581..24971346df00 100644
+> --- a/drivers/net/ethernet/sfc/ef100_tx.c
+> +++ b/drivers/net/ethernet/sfc/ef100_tx.c
+> @@ -190,6 +190,7 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>  	bool gso_partial = skb_shinfo(skb)->gso_type & SKB_GSO_PARTIAL;
+>  	unsigned int len, ip_offset, tcp_offset, payload_segs;
+>  	u32 mangleid = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+> +	u32 mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+>  	unsigned int outer_ip_offset, outer_l4_offset;
+>  	u16 vlan_tci = skb_vlan_tag_get(skb);
+>  	u32 mss = skb_shinfo(skb)->gso_size;
 
-Right, Thomas didn't like it, but the organization of the code has changed
-a bit since then with the late initcall. If the best we can do to workaround
-the situation is to make the CPU unavailable regardless and then undo that
-right after with an IPI, then it's a good sign that we should just simplify
-and eventually check tick_nohz_cpu_hotpluggable() from tmigr_is_isolated().
-
-> > But if I understand correctly, this will be handled by cpuset, right?
-> 
-> Currently tick_nohz_cpu_hotpluggable() is called by
-> tmigr_should_isolate_cpu() and that is called by cpuset code, changing
-> cpuset would save that call but won't deal with the tick CPU not
-> enabled at boot time, unless I'm misunderstanding what Waiman implied.
-
-Good point!
-
-Thanks.
-
-> 
-> Thanks,
-> Gabriele
-> 
-> [1] - https://lore.kernel.org/lkml/875xgqqrel.ffs@tglx
-> 
-
--- 
-Frederic Weisbecker
-SUSE Labs
+Reverse xmas tree.
+With that fixed you can add my Reviewed-by: Edward Cree <ecree.xilinx@gmail.com> # for sfc
 
