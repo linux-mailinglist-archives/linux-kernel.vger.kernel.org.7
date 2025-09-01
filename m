@@ -1,140 +1,117 @@
-Return-Path: <linux-kernel+bounces-794876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C95BB3E912
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:13:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E027AB3E8DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411042C0895
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:10:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E10C17A9808
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA6535CED2;
-	Mon,  1 Sep 2025 15:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F4335FC3A;
+	Mon,  1 Sep 2025 15:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="IyVq172b"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NgkTCjTf"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED23D343D90
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A613469F6;
+	Mon,  1 Sep 2025 15:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739193; cv=none; b=YUX1SLNmhfVJgqsbO5jesMTDGC5A+dm4lRZixQksRmywMA61cW41qYSxznN110QoNNglOdbXAvEyfX1Us5wF/baBPleSVHjgrrPPYoLgHUwxYG5kaIZ0IkBdMxiKf1E8bvh34P7FgNe4hN5jr7YoxHY4E5KVuhMYURaNuZSDmUU=
+	t=1756739220; cv=none; b=j92MXAVTnn3iSYmGx5sXfXyQF1BLFWHGjDgU6vA90p2c9FJGz4VhhofY7H8GXUnZTN+bLXGmP/WF9k9ZOT0DykeUwLkJlndtW928zGKN4PxZKAcXd/hLaKM7Ss5EWmzkKhpfKACt/jbiwvwJHLPLvlxGztsrvJ9h8aQYQCLzeug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739193; c=relaxed/simple;
-	bh=RTksJ8/0/nMOSHK1v6hFgH7Xl8rur3P7qYdlo1+hL9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1+arlffir18A5JxRJTdLqFJZkmmlgmcCBGJLlR5l8KS31jkeQjYLR5h1ZOSZ+iaIxtD0sfid+KXPtDeRhmxIDIpZd3igVlO/RqPSJOSYFhBPtIVgxf9LokEGpgofxk5e/1vZBsZFR0ru000mYY0SuSk1/xcdwzgYueHAmCYKfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=IyVq172b; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b042cc3953cso128931666b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:06:30 -0700 (PDT)
+	s=arc-20240116; t=1756739220; c=relaxed/simple;
+	bh=kjh5m9ENcO9Hi86ewMxMejx4Tal5b62aJq3jkDb1rKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u2xP84alSaMtLtweBBbmKgYHHqKJ2rBXwaMee3xceG4sTUqt2gyCzlqvhs0gPbjijsgu31N7y+kb23fNXqBUvIWnKdpDPm7YftssmVWNxct3lPFetoNr7lmVLqnlB87Y0wblFloxCoM8w92MI1OpJul2Rx3TkpoKFg6/+LNhkzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NgkTCjTf; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0225483ca0so335916366b.2;
+        Mon, 01 Sep 2025 08:06:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756739189; x=1757343989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/bwNSdY68Wls82Q0k25WMNjJlHUk0r0pQNA4NzN+C5M=;
-        b=IyVq172bBaLcYBrl9lLB+7k/X6SfaztrXkqA6O0iqHoUsJ4lzBzbgcL9gvPUNB90wF
-         V98plQRUO8aCDpp1TxjvHB4sNQbfgVaU1r6A/qMFGeOAwt3007eIRCKb6cX8QhW3JTl3
-         /FMlQvPXhq074a/+q2pHf4fx0DL++gG4yrr5GeNqQvOsdLHbO21enQjAtsjibvnznilV
-         r3fSbXiowoecUTw+tHR9UJ8TSH88rZurYZBrNKjX5xezi1TPDwQbmPIWhgi3iYkqLkHz
-         iS/KNmAY4cfbOl7YDy7grDQCm8X9R8g9PgMFiSlE285UcKhVXiLstSkvjyjuTitCT+7f
-         7b2A==
+        d=gmail.com; s=20230601; t=1756739217; x=1757344017; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwLLHhAsjuOZ44ww25jflYPhn7E0Ibrm6VPCLuRVr1U=;
+        b=NgkTCjTfMNmEjxoff+sWy5bS3FF2u1NNFM9weHA9I8TiSyzXA4+LnC/c6imZeuwoWz
+         Q9UWOS+nqntvjuP+1F7Cq0s9IlEVRSNpD/qmbda0zSZNi5J8u/5pkLm4nZYkDGx4sw7V
+         EvPBa2Bd1MSplFHRp3ZX0ZgLpYqrse//y+U6mmqjq+1OqtdVxNMvu1g27Kxze22Q/Ivh
+         wNczassKpC5ZrR+l+gDX1WLhUKy3SmCm5bfvBrqdwehE0F9ZFR1a9VgvERraqcADxG6X
+         NXLREhK0fWZ9Wvox95TMmXTHb+RiU/f/X9QXiYqfi2eiwmakY9dV4y4/Qa/t2WwWEBdw
+         DQag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756739189; x=1757343989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/bwNSdY68Wls82Q0k25WMNjJlHUk0r0pQNA4NzN+C5M=;
-        b=vJn5nCp0idejF326hDEmnuI6tvTJ6jL3/mGTyhSQxkt8hea5VDMT9z67ORZRUUmumL
-         XuQw7UOLEkA7OpeYgzOyumbmhpLr7CZY/cQxg6kfmu6o2wQCVchlTx9AfXr6bwsDFS3s
-         yewbvePN3nmnxNYej0sDBmebyDXOPFhVqpy8887zJIYULxD8KrpL6pMpUh62p821FDGE
-         35QSrnm0hLEDMzpaL98HW81IEseUj4WJcIIkbky7zMQBrI/bHrLP5E8n3IUH7dueKf5+
-         VswhzocsGGdWMetu51fS7GCLDnT61UPIrmAyevI6wH1AiUN5MFCqh4XLyND92Xaq5XR+
-         MtOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfBww4axNtV2EzdSEeYJs0vYewucmVy2xVGfiUVwR+E1oRPI6taT6N2YdiRIqBA59tjk1Oj5zgaDFxdrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnHw7/KawhcTPyeR8butbRAkezmInhOJCpWOlcIYDOCk3E2v/K
-	C+/Zl8tompHzcoUEQ8iRSGJ55mC6c/C07E4BBpFcKwYFjYwuT37GTugbQjEO8KDfwXjoBFJieBj
-	dXT4kcDFvuKtwziOrGjtA4QCcM9bSfsAAZhCXGCPefw==
-X-Gm-Gg: ASbGncuupPe8eOGJCA7OLpIxdRFhs5kC0KLMilzSCwFd83ZvkqEpFC7mQzmCOfffTp4
-	CY3NACqALU9pRfYrZ0HGw50pcJoTCr6u7dz2LGNJmqwx2BBcSSAd8EP8B2l3LFoaaSWgRmBVyht
-	cl3UKsI6Qn3PtgsHN6C8pvOgiDgQ+WAyLdpEJgcLQeR+Ff5h9dTFS5qqV1izG5cXJcqNFwP3ANy
-	imhcFpVowB6wsjx4DrfEfDAFQFnHCvmsk+I5tQ9vLx9ZA==
-X-Google-Smtp-Source: AGHT+IG0FxeUic5SFzE3UNYIN3B9+gaajPRoU8Y0dXCHXgh8kVRRqajKZHy7y0TqbZFDzgzomSvfHMhYlurHNOihACs=
-X-Received: by 2002:a17:907:1b10:b0:afe:85d5:a318 with SMTP id
- a640c23a62f3a-b01d9755f83mr810176666b.36.1756739188996; Mon, 01 Sep 2025
- 08:06:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756739217; x=1757344017;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gwLLHhAsjuOZ44ww25jflYPhn7E0Ibrm6VPCLuRVr1U=;
+        b=pUKso4vdvu8wgtq3piS2zo2pS11pb7InYeY2DoSXqG3jTE5+5cc8nMJSdFRrcrMJ3g
+         KGfAImMNQXMeSNt1TSpIXdDCITvcOoFImhdQNVLGVHKYjUTp0Bh7xbH0Cwq2PA73VtQ9
+         EKzRMgfGHgp7sw9IYxQHYP8jpTqfgjAPYZUpGl/WscKAWaH4mg64vug3czUt+zAuutPl
+         BH3noF2vQakIBOfubqXdHeEYZnCtj+1V/+X9uFOGIDEnIxBTbTGbhehJue8Dbpboq92d
+         ZpOROIVaaT8wjQu7iHP1YCyPrHh0Sd1G3PYfBdkq9FuNhrnTW4FN6zpvoHu6RAP1AL3w
+         6Tgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUSUGTW6D155gTh9g5YQP6gxtrUTiWHzUoGxzaddGeScrC9i65nw9WIm9I5CjENtaVvIXgW90H7liuULg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkoCY7Vismsf0qXzgVsnC6tBF2YsLOViYovgG38DwuIYwJLRUE
+	DyTaoqWHmyTgYt0ikHTBZummXzjMxO7lwyXpeLUq0yec8WUQ3qcm9APb
+X-Gm-Gg: ASbGncu8qRxc3haSk/qxiaqjhuAHrutNptRLHdBodM2P+j5PA4RTrtLmDC0g3soxdAb
+	5Nnhv47cJlizGebfnyiDGsJdE2L2U4Pv2gki+fPG6mZydJLT+g1wCHOOGkSAjIhnhWTEeQ8VcbK
+	ZilRmXc5pYzguCs6Jz6pmWfJgSLeBioVGJaCUG6fJdeCJ7MHz6cukZqdUyLBnPec4sjAEkGtOod
+	zI6IvY52hRGU+8Qn73LtDAmUvtuTWwQNK0d7dhQvhYzuOzkmr/AHPW9NH8G6z/erv3hceSMaKkR
+	yGbfi8mW07B7qL8xeVrtyRkURE2K6tTlPsu0/Bw/BGYdqQcFZm81xNE65gCTE7zeL7xsM5TTWOc
+	FPOSVfVQwxrh+YcDfDSADxaK1Irg9uI0ccNwG+EXOWFBPY1uGRv4XNvFVqXjWA1Konr3itRUBN2
+	TrJKz7
+X-Google-Smtp-Source: AGHT+IGsvYS7IqWy79gnJFq5ZvsXSVjfLg83ejtTBYT+qACCxD4kQIoEYNiWs38owLy4Zu7DD51sIQ==
+X-Received: by 2002:a17:906:9f8b:b0:b04:470b:64b0 with SMTP id a640c23a62f3a-b04470b6747mr48069366b.30.1756739216561;
+        Mon, 01 Sep 2025 08:06:56 -0700 (PDT)
+Received: from XPS.. ([2a02:908:1b0:afe0:811a:e584:2f56:9910])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0413782b94sm454193066b.35.2025.09.01.08.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 08:06:55 -0700 (PDT)
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: [PATCH] thermal: hwmon: replace deprecated strcpy() with strscpy()
+Date: Mon,  1 Sep 2025 17:06:53 +0200
+Message-ID: <20250901150653.166978-1-osama.abdelkader@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901123028.3383461-1-max.kellermann@ionos.com>
- <20250901123028.3383461-9-max.kellermann@ionos.com> <2ad655ca-7003-4030-bb2d-1c4bcfda30cc@redhat.com>
-In-Reply-To: <2ad655ca-7003-4030-bb2d-1c4bcfda30cc@redhat.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 1 Sep 2025 17:06:18 +0200
-X-Gm-Features: Ac12FXwds-_H2NdWifPwev4VbqOwXfa3OcMVFnDeIo9bGQG09tjqsarnzZrb6S4
-Message-ID: <CAKPOu+-_bPwE4sCcb6n-nfi3nWy6L0gBAoHgRz3qwdUHByE_Lg@mail.gmail.com>
-Subject: Re: [PATCH v5 08/12] mm: constify arch_pick_mmap_layout() for
- improved const-correctness
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com, 
-	willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	vishal.moola@gmail.com, linux@armlinux.org.uk, 
-	James.Bottomley@hansenpartnership.com, deller@gmx.de, agordeev@linux.ibm.com, 
-	gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com, 
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net, 
-	andreas@gaisler.com, dave.hansen@linux.intel.com, luto@kernel.org, 
-	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, weixugc@google.com, 
-	baolin.wang@linux.alibaba.com, rientjes@google.com, shakeel.butt@linux.dev, 
-	thuth@redhat.com, broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, 
-	mpe@ellerman.id.au, nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 1, 2025 at 3:58=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
-> > index 2201da0afecc..0232d983b715 100644
-> > --- a/include/linux/sched/mm.h
-> > +++ b/include/linux/sched/mm.h
-> > @@ -178,7 +178,7 @@ static inline void mm_update_next_owner(struct mm_s=
-truct *mm)
-> >   #endif
-> >
-> >   extern void arch_pick_mmap_layout(struct mm_struct *mm,
-> > -                               struct rlimit *rlim_stack);
-> > +                               const struct rlimit *rlim_stack);
-> >
-> >   unsigned long
-> >   arch_get_unmapped_area(struct file *filp, unsigned long addr,
-> > @@ -211,7 +211,7 @@ generic_get_unmapped_area_topdown(struct file *filp=
-, unsigned long addr,
-> >                                 unsigned long flags, vm_flags_t vm_flag=
-s);
-> >   #else
-> >   static inline void arch_pick_mmap_layout(struct mm_struct *mm,
-> > -                                      struct rlimit *rlim_stack) {}
-> > +                                      const struct rlimit *rlim_stack)=
- {}
-> >   #endif
->
-> Should both these cases also use *const?
->
-> (for the latter we probably don't care either, but maybe just to be
-> consistent)
+strcpy() is deprecated; use strscpy() instead.
 
-Actually, it would *only* make sense on the latter, because the former
-is a prototype...
+Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+---
+ drivers/thermal/thermal_hwmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_hwmon.c
+index 0ecccd4d8556..64cc3ab949fe 100644
+--- a/drivers/thermal/thermal_hwmon.c
++++ b/drivers/thermal/thermal_hwmon.c
+@@ -96,7 +96,7 @@ thermal_hwmon_lookup_by_type(const struct thermal_zone_device *tz)
+ 
+ 	mutex_lock(&thermal_hwmon_list_lock);
+ 	list_for_each_entry(hwmon, &thermal_hwmon_list, node) {
+-		strcpy(type, tz->type);
++		strscpy(type, tz->type);
+ 		strreplace(type, '-', '_');
+ 		if (!strcmp(hwmon->type, type)) {
+ 			mutex_unlock(&thermal_hwmon_list_lock);
+-- 
+2.43.0
+
 
