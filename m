@@ -1,62 +1,68 @@
-Return-Path: <linux-kernel+bounces-793697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CF8B3D6E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:02:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690F5B3D6EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4261D3B8EEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:02:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3647317351E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B7A214A6A;
-	Mon,  1 Sep 2025 03:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YDaij8Iq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF782144C9;
+	Mon,  1 Sep 2025 03:03:25 +0000 (UTC)
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022109.outbound.protection.outlook.com [40.107.75.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843C14C6E;
-	Mon,  1 Sep 2025 03:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756695762; cv=none; b=aOAALp2bQVaqz10am6bYGSMwZUS68eEIq4e+KmhUuu9TzNOxYpNpmAH74fxgQEeTugtzgTRNapIW2X6E+ppY6IX54uFYl8VekPsEdlDVTIr0/TRsMRWYgiWLTbvCk0fNZ0mnv/VsCQyXpNwhyN3agOe5X9nsYhqwhlbykdoBU1M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756695762; c=relaxed/simple;
-	bh=/GeSo6aqW0iRvi5bNwvklAoIc1/5j86BFOko6iANmfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VU4/l+cx8QaAiw96QlWqprBqUfjoyJB/93wJh4HY3YgZzbC/oj1m7Rhr7qFVUt6LDis6bHMiArx2wsCr7MMDubR9TDrg15At+KlQvps/ewGcNnHudfpfTP1wJEQNqvQl3lQbd0riA/u3a//SqqGKLxxUC5XZ9s2xUGAe51/NLuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YDaij8Iq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57VMtFcE032543;
-	Mon, 1 Sep 2025 03:02:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5j5Ih0Zi5PFlfqoVw+xfTf+B8ZinewdU6wMNz8NtHnA=; b=YDaij8IqmY3taSUo
-	2szCabliXgumXKV6V0PP/1kKyC+8tFBls2zVkWsAXFA/syVI0tQGyVilsbHJPYDh
-	kHiJD/GjrKjfbbCcpG5ITD8iES9zGUaJ7UhuWolosh8e5Z6T2nGFT8PdKZ3gevJr
-	TEccwu0XG/U2CYDjIMf5wbfZGLz04OARNl3T+uXwm8RzIcfs3o7lOSKvsAdfWDbp
-	2b0+xJXVbRSQEik5p7seqnvFiLbAZGihJJTzWg1kuTm/DaoVnt0HjzesBFWcyS5L
-	LLXda6i+5hlgmQvySlvCE/iT7AQqltNP7KnoXPKnHbyv3suLwPnAcpdxMJYtboI8
-	wS+0cA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48usp7tyeg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Sep 2025 03:02:30 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58132TjZ027597
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Sep 2025 03:02:29 GMT
-Received: from [10.253.73.182] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Sun, 31 Aug
- 2025 20:02:26 -0700
-Message-ID: <1600b292-df57-4328-baa6-db6467e00096@quicinc.com>
-Date: Mon, 1 Sep 2025 11:02:24 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC08048CFC;
+	Mon,  1 Sep 2025 03:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.109
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756695804; cv=fail; b=htFCLrWf2aq2ZuiYOCFJj9OCetdjh8InbHjjl+L+IZufzfR8H1EpP935xzZt768iOHWvFrHGRe2sXHSJuiohJnZot988z5Xg2GFOwNfDG0Lcq8pNlAY+eC51odHNxdqkOlxjcjTCqTiCK2fINeA8i+ZNJaZxebiUvprSdkFhEms=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756695804; c=relaxed/simple;
+	bh=yMA/k5kh53syV7IYV1i77CYnyVTTD+OPAy5ArTcs/48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tXTh5dsH+kBobX08z/WD/bITe7f//X9r8y6G9uRLg+bVd/W8ilEPbpXYVKFk5KijBRvUh7iGliPQV+0fpbKMgJDL89vhV6f3kQY5YrLfCQNoALkW6tPCn/j3olB7JW6zHfuXKLsVk6u2Nf2BwSQniiKxqXsluzKMOfu909hax8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KBM2/Rqio3m6bnCjQ/jR/W+ozgIKYJ1F0BJmzkWaz/a7mop2FR7q0MbE3v/NWSTQB1B/STgRUN1cNOwQCi1mRt5aUl4NvJ4Ik/sXqxtHDqdfmQOo/2B9KMhh3AK9e2PqWukIbVITFbByMd+XeUVQjXv93oM+0VIdH3hHm0KmtEgW8UDMj1h6cKXgWODK4sPnT4N2ZrTE1c9MYk2AR8sAPkA/K3GNkid0MFahEHNfQp9bsxu+ckVJAbxB0tlmuLvrnVapksMDgkA4kHMepkMZLggUkde8Rdliu51KN0Y0ZmXNbCALbaasBwkfd1Pjaxpz0WGGjJc700bT/Yn/Accfkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uNXk3/QmwO7I6AI5U3skLfxWTt5kEggQOKwjBqwJjtI=;
+ b=sbi/cebho2RKuXAoeLIxdFSf+yANpfEGbueMc0tnHXbDRWIzrRp8XkV5TO7sPNOFNTjDhky0EPYDaq9GOlGTBOQwi3Dn85bd4diBJgQmDPK1MpR/pL2/ISbKY712gCqXBidQqoEOFjZoF9hO4rzs5n0ZIAKj2m7NNv4pb/9Cr+rtzAQJiSbboyGHLrmp9PaVHPoRLTYAhvGXZLyc70dQLR5gTOl8cF8asPTDgr8oNq/bzVmfnK2NzXFAThP6l/HYuI47t8FPZApDkUmx5TuTshXxBb2WyM/JnAX1DftEkhBCNyFVC2H3wrHhnMXKVnNFonWvrujVvRE2cHPummTaRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SG2PR02CA0053.apcprd02.prod.outlook.com (2603:1096:4:54::17) by
+ TY0PR06MB5233.apcprd06.prod.outlook.com (2603:1096:400:21b::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.21; Mon, 1 Sep 2025 03:03:17 +0000
+Received: from SG1PEPF000082E6.apcprd02.prod.outlook.com
+ (2603:1096:4:54:cafe::56) by SG2PR02CA0053.outlook.office365.com
+ (2603:1096:4:54::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.26 via Frontend Transport; Mon,
+ 1 Sep 2025 03:03:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E6.mail.protection.outlook.com (10.167.240.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.14 via Frontend Transport; Mon, 1 Sep 2025 03:03:14 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id C7A9941604E2;
+	Mon,  1 Sep 2025 11:03:10 +0800 (CST)
+Message-ID: <3d562be0-d3d9-492b-a894-f836a80caaec@cixtech.com>
+Date: Mon, 1 Sep 2025 11:03:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,145 +70,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/3] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Yijie Yang
-	<yijie.yang@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Yingying Tang <yintang@qti.qualcomm.com>,
-        <miaoqing.pan@oss.qualcomm.com>,
-        "stone Zhang (Stone)"
-	<stonez@qti.qualcomm.com>,
-        <zhichen@qti.qualcomm.com>
-References: <20250828-hamoa_initial-v8-0-c9d173072a5c@oss.qualcomm.com>
- <20250828-hamoa_initial-v8-3-c9d173072a5c@oss.qualcomm.com>
- <qgirqibqvsld7n2ac4cvuvtqknhqkq535jkxnxjjqvss5wpm36@i3mbp7qgqxju>
-From: Yingying Tang <quic_yintang@quicinc.com>
-In-Reply-To: <qgirqibqvsld7n2ac4cvuvtqknhqkq535jkxnxjjqvss5wpm36@i3mbp7qgqxju>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX+kMful3OwoQD
- VXRk73uZAcuyj/V0tRxJaG5qXwc9Nk/Y15l2rDrEy+5AnoCOW80R9nnQMbYOOqHfmaK4bj5gInf
- OI/C6p/XSa1lj6UZzPAGmoTEjpgwb4bVzUBckv9cUqrrlMnIn2oz6vQzbEeLSW0T+0oV7jgJ7/Q
- E9pu3M43CQZ8ISDriyREqx96F0bARgPGBP6QTE5cy4w5UL9VntOk+6oJzXEAzSL4pWizKsLUiNg
- kgb0EHTSClYyrNTWcPvM5wGexktV7wR6dc9R1gw/y5IEomnSURvwjWPQO/fFYTWgczAyRFY0M7F
- z7ndKiiI0bse6ZnaDm/xJ4JsCWypS48Pciokur9I49gMDKqqnMeAdFH97fN3bULOUSnkq5ZScB3
- 0YOV4//j
-X-Authority-Analysis: v=2.4 cv=e6wGSbp/ c=1 sm=1 tr=0 ts=68b50cc6 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=GvplJkfO0sNFHy_S6poA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 0yyMA9OkAVfLuqhvy5UvF9w4EwVHOXmY
-X-Proofpoint-ORIG-GUID: 0yyMA9OkAVfLuqhvy5UvF9w4EwVHOXmY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_01,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015 phishscore=0
- malwarescore=0 bulkscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300034
+Subject: Re: [PATCH v8 11/15] PCI: Add Cix Technology Vendor and Device ID
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mpillai@cadence.com, fugang.duan@cixtech.com,
+ guoyin.chen@cixtech.com, peter.chen@cixtech.com,
+ cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250819115239.4170604-1-hans.zhang@cixtech.com>
+ <20250819115239.4170604-12-hans.zhang@cixtech.com>
+ <y62iiqee7w3ogttzaboulkyea2b4srbta424adgjcrflx4c7or@uq6en5nyctl3>
+Content-Language: en-US
+From: Hans Zhang <hans.zhang@cixtech.com>
+In-Reply-To: <y62iiqee7w3ogttzaboulkyea2b4srbta424adgjcrflx4c7or@uq6en5nyctl3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E6:EE_|TY0PR06MB5233:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5307e7b4-1212-45c5-54b0-08dde9041826
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?THNqSWx6ZE9qODBlT2tKYlhNaG5vb1FBOVFheExLOURMYkRpZ3BqaXFBV3hI?=
+ =?utf-8?B?ZzliQnZDWFJrU3ZxcS9jVWt1RDliYnljSXA1cm1VWUp5bjVuNHpTcHB2M3FN?=
+ =?utf-8?B?WDNkZCtWY1ZqNnlFWGgzdXgyR0NhbERkdGZQTGQ0Vnl2WFY3MXZjc2lCNVNU?=
+ =?utf-8?B?NWk0bkpVVngrWkxQNEROUVdsSjlSREZZbmhGUzVjRVVia056R0F1VnJ4NWpB?=
+ =?utf-8?B?dUpramJRU05ySk9YR0cwRURhQ1FVcmZGMkMxbjQ5bkhDSXI5WXpERmdIbnZn?=
+ =?utf-8?B?T090UzA5M2lGT3hMaEVGSmhPa0lJcVZoNG1qb25kVGtHKzA5azNvTm01cGtK?=
+ =?utf-8?B?K2JmWjRrRTFBSndoOGFUVzlaSDg5Z2VLczZxRGtaSkF2TTcvcnkyZE1PWkxR?=
+ =?utf-8?B?OWZYUGdyRkhrQnBpcmxmZitNK05YMEZYRE8zbHFacGlUOFo2N0JZNDNLSWl3?=
+ =?utf-8?B?RnU1RVk3YjA5enlZV2tOUkxSaHg2Undvbk9BM1N3Z2VOejVwczNES092UGZW?=
+ =?utf-8?B?L2N2REZNUk5hZGRhUXV2QWZFekIxbC85U2R1Zm9JSkhKYXozdEJ6clk4ZzBX?=
+ =?utf-8?B?bHVyMG1WVXJkZ0ttd0EvRFpUZ2YvOU8zMmMwZWwvcjA4NHYyRzNxNVZDKzNL?=
+ =?utf-8?B?NGhabXNQb0EwZjFxNkRhMXgvN1Y4MGxIVTVsRzk1RmJsSzgrKzk4R2VtTCtU?=
+ =?utf-8?B?N2JTam1KTjBPMVlocFJSN3hYUmxKN1pwV3EyQW9oQUFQNVpEK1J0bDJBdytS?=
+ =?utf-8?B?K29XSU91SmpLV215RGlOdEpYVkNBamR4S2pqQmE1bmFXN1UzQXQxaVdGVU5T?=
+ =?utf-8?B?Y21mc3BKd2M4WDYwZXhTYW01c1M5YU03Tyt3bDFMY0I5VWdtbEMydXRWVGxw?=
+ =?utf-8?B?YmdpODBUemVodVZwUlhIT2U4dnV1THhRV0xzQjQ0WXkrL1cwTmJrQldWQmg2?=
+ =?utf-8?B?YmJsZ2hoeEdVbUc2bmI2ek11MXVlbU5JRWZuRHdTeWlQdTA0ekcrRE1mdmdP?=
+ =?utf-8?B?U0ZodmJ6aGt3dTFOeTdkT2tZakR2dTlmMThXYkkyY01zTWpNS2ZHTGdsRkdF?=
+ =?utf-8?B?a29wSXB2MEFyNDRya3RKZFdXN2VkN3RISTkwMUE1N0NFYTB0cHordnJpR0Rx?=
+ =?utf-8?B?YzV3STJtbGx6TGxHNEJkeXhIOFRqY25La3ZKSHk1WnIxMmxiQ3pSdGF0aTQ1?=
+ =?utf-8?B?NTk2R3lFdlVhMjlNcExCa1UwcGxJeHhORXI5NHY5dHNYbjJnWUFRaUZUUDdh?=
+ =?utf-8?B?RHJ1NWhSajYrWjFlN2lCU0c4b2p1SndLRG50VWxkUXRaYkFrV3VzaUVOM21m?=
+ =?utf-8?B?V3p1VklHQlRxMktiMGJXWmRtNEV6YWpaaVlHWHZQcWQrK1U2Y3dHNW1peW1G?=
+ =?utf-8?B?aUV3K2V6Wlc4K2dUZDJ2S1VMNlIxUFQ5aXM5YzVpNk9kZ0lKeEpWTGE5U3FS?=
+ =?utf-8?B?c09JZDg0VElqQlRsTUcwNFk4Qzk1RHo3T2pDWmFzc3ZsNm1seHFVSUsrQ2cy?=
+ =?utf-8?B?R3Z0MzM0enY5TXhldEdwMGJ1RmdDSEFkOHArZXZjdytlNC85V1I2NmMvb01o?=
+ =?utf-8?B?Sy9CeUpZVTN3R3ZEWXdoSWNTSFR5RWJLVXRrZ2NzT0xEWTVnVk9scnFpemJZ?=
+ =?utf-8?B?OVY2ZmtNbmhTYk1yYlFUQ0hoZ01aZlZzb3JuR0pzS3l6cUdHSEVxR2l3aVph?=
+ =?utf-8?B?eFRFT2E5MFYvelJqSStLZ0VPazFuSWNGVi96MHZPSnBROVd5Tm0zQkx2MjVJ?=
+ =?utf-8?B?YVR4bmhQVWdSV0FMQ3VHTHFuSSszNUZWYW5zZ3lJaVdsczdqM0EzUkpCdWxK?=
+ =?utf-8?B?RXlaakRldndzU1Bjb0NYS01pMitHWFQwbnNkMkF2Y3RLSGM3YzJjRnltaWRV?=
+ =?utf-8?B?WENxcUhRK0lIZFVHYjZEN0ZnMnJLNVY4cmRoQ2FlL2k5a3dHK3Y3S2Ixbi9G?=
+ =?utf-8?B?eHV6dmJPK0VRYmJqRHRWeTRTWnBvQTdKK0NpOXhZa2VxV21MUTlHV0pzNkRj?=
+ =?utf-8?B?YmRmRGhia0Flekk2VDBYRFN0c3A5Vi9rc29WWTV2YU9UQjg5ZXJKQ1Vibjgz?=
+ =?utf-8?Q?y+CzGE?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 03:03:14.9155
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5307e7b4-1212-45c5-54b0-08dde9041826
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E6.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5233
 
 
 
-On 8/28/2025 7:18 PM, Dmitry Baryshkov wrote:
-> On Thu, Aug 28, 2025 at 12:48:47PM +0800, Yijie Yang wrote:
->> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
->> the Hamoa IoT SoM and a carrier board. Together, they form a complete
->> embedded system capable of booting to UART.
+On 2025/8/30 21:21, Manivannan Sadhasivam wrote:
+> [Some people who received this message don't often get email from mani@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> EXTERNAL EMAIL
+> 
+> On Tue, Aug 19, 2025 at 07:52:35PM GMT, hans.zhang@cixtech.com wrote:
+>> From: Hans Zhang <hans.zhang@cixtech.com>
 >>
->> This change enables the following peripherals on the carrier board:
->> - UART
->> - On-board regulators
->> - USB Type-C mux
->> - Pinctrl
->> - Embedded USB (EUSB) repeaters
->> - NVMe
->> - pmic-glink
->> - USB DisplayPorts
->> - Bluetooth
->> - Graphic
->> - Audio
+>> Add Cixtech P1 (internal name sky1) as a vendor and device ID for PCI
+>> devices. This ID will be used by the CIX Sky1 PCIe host controller driver.
+> 
+> Nit: Use CIX everywhere.
+> 
+
+Dear Mani,
+
+Thank you very much for your reply.
+
+Will change.
+
+Best regards,
+Hans
+
+> - Mani
+> 
 >>
->> Written in collaboration with Quill Qi (Audio) <le.qi@oss.qualcomm.com>,
->> Jie Zhang (Graphics) <quic_jiezh@quicinc.com>, Shuai Zhang (Bluetooth)
->> <quic_shuaz@quicinc.com>, and Yongxing Mou (USB DisplayPorts)
->> <quic_yongmou@quicinc.com>.
->>
->> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+>> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
 >> ---
->>  arch/arm64/boot/dts/qcom/Makefile          |    1 +
->>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 1247 ++++++++++++++++++++++++++++
->>  2 files changed, 1248 insertions(+)
+>>   include/linux/pci_ids.h | 3 +++
+>>   1 file changed, 3 insertions(+)
 >>
+>> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+>> index 92ffc4373f6d..24b04d085920 100644
+>> --- a/include/linux/pci_ids.h
+>> +++ b/include/linux/pci_ids.h
+>> @@ -2631,6 +2631,9 @@
+>>
+>>   #define PCI_VENDOR_ID_CXL            0x1e98
+>>
+>> +#define PCI_VENDOR_ID_CIX            0x1f6c
+>> +#define PCI_DEVICE_ID_CIX_SKY1               0x0001
 >> +
->> +	wcd938x: audio-codec {
->> +		compatible = "qcom,wcd9385-codec";
->> +
->> +		pinctrl-0 = <&wcd_default>;
->> +		pinctrl-names = "default";
->> +
->> +		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
->> +
->> +		qcom,micbias1-microvolt = <1800000>;
->> +		qcom,micbias2-microvolt = <1800000>;
->> +		qcom,micbias3-microvolt = <1800000>;
->> +		qcom,micbias4-microvolt = <1800000>;
->> +		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000
->> +		500000 500000 500000 500000>;
+>>   #define PCI_VENDOR_ID_TEHUTI         0x1fc9
+>>   #define PCI_DEVICE_ID_TEHUTI_3009    0x3009
+>>   #define PCI_DEVICE_ID_TEHUTI_3010    0x3010
+>> --
+>> 2.49.0
+>>
 > 
-> Other platforms use a single line here. If you don't want to do it,
-> align data to start from the same column rather than restarting from the
-> column 1.
-> 
->> +		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
->> +		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
->> +		qcom,rx-device = <&wcd_rx>;
->> +		qcom,tx-device = <&wcd_tx>;
->> +
->> +		vdd-buck-supply = <&vreg_l15b_1p8>;
->> +		vdd-rxtx-supply = <&vreg_l15b_1p8>;
->> +		vdd-io-supply = <&vreg_l15b_1p8>;
->> +		vdd-mic-bias-supply = <&vreg_bob1>;
->> +
->> +		#sound-dai-cells = <1>;
->> +	};
->> +
->> +	wcn7850-pmu {
->> +		compatible = "qcom,wcn7850-pmu";
->> +
->> +		vdd-supply = <&vreg_wcn_0p95>;
->> +		vddio-supply = <&vreg_l15b_1p8>;
->> +		vddaon-supply = <&vreg_wcn_0p95>;
->> +		vdddig-supply = <&vreg_wcn_0p95>;
->> +		vddrfa1p2-supply = <&vreg_wcn_1p9>;
->> +		vddrfa1p8-supply = <&vreg_wcn_1p9>;
->> +
->> +		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
-> 
-> Okay, so how is WiFi controlled? Is there a GPIO? The DT should be
-> describing the hardware, not the UEFI behaviour.
-> 
-Hi Dmitry, as I described in previous mail, On hamoa platfrom whole wifi module's power supply and enable gpio are voted in UEFI.
-Hamoa is PC platform, so BIOS/UEFI behavior is compatible with Windows/ACPI architecture. UEFI is responsible for enabling power supply 
-for all devices which may be used in boot phase (such as WLAN may be used to boot from network).
-
-So we need not Wifi chip's power and control GPIO in kernel side, thanks 
->> +
->> +		pinctrl-0 = <&wcn_bt_en>;
->> +		pinctrl-names = "default";
->> +
-> 
-
+> --
+> மணிவண்ணன் சதாசிவம்
 
