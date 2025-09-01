@@ -1,294 +1,108 @@
-Return-Path: <linux-kernel+bounces-794021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE5DB3DB94
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:55:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30AEDB3DC3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B1957A8176
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:54:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBC4189CCD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302272EF640;
-	Mon,  1 Sep 2025 07:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF6D2F1FE4;
+	Mon,  1 Sep 2025 08:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2B3IJXuJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wj5HzEii";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0X/wqaGh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i/SKOqLZ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="y0DnCtgT"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272272D7DD1
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3362B9A4;
+	Mon,  1 Sep 2025 08:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756713327; cv=none; b=kMkiH0GSa7HeobfL1oi2M6LWH8jBDqNo0fX+0FyFtOtcJ0y4X9H7thyPJzfwKZ8FnbzSkghpvAIRFLoIxbiR8eKihxQcZaMDkNi56ecfsrwjNHfjPvf5w2NXJgfLaHZb8nNTfHScbImEWhHGfgjLnhfmqU0+4AA0qYzrTBhZdzE=
+	t=1756714933; cv=none; b=q1Mrwkae9aGCgfKBp5rN1Pr2MYj0+mDiWzXQLiccTJ3l976LrxFP20YiMXb0aRcowsPle89y/lCwpS7Q3jpa5iDC+fWWrUeFqjFa2/ra4JCd9+EcOk0Ku8IrhxAlDm+ZgODhis6D85pBvG4OajC67qYbd21clZa4vpX2St6M0aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756713327; c=relaxed/simple;
-	bh=+RwnFKQ/JrHTr2cxoixiySuD7hOGWpfkqGI2TMYj/Y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgeMGCgqmeQOePlyEpDQT9LiUMVRutxtt6m5eI212zQQPJoOFOAr+8l8B/NXmklwLMV+ETWNIzzGRZcqWqpqAP/hqX1Lw+p/I8dcw/GY4oV4lHzoX79dCw4iMcp23TfV8M3WsgAkBTtftj17s9v5n+Z0gGCh4JykUsUh6aYT8ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2B3IJXuJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wj5HzEii; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0X/wqaGh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i/SKOqLZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E30E71F38C;
-	Mon,  1 Sep 2025 07:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756713322; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ABUKxJp+T86WUFFcprlxI51x/AMcLR4PDlibw8xA7eQ=;
-	b=2B3IJXuJgm5hOwJ7KunnKUQSib6IoJB8hQHh9Ex7sJBm1wYtGID7+HGaycJXDWwj3IR/kL
-	iOX1zCxsCGLab7fSA2TCi31LdvYgEYEuOztRiQRn8P3fjiZAABS5HZwiTHlymeOZ3YmnfM
-	/OSnOeMbv/bCjFvOcB5XdDEpc7kiST4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756713322;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ABUKxJp+T86WUFFcprlxI51x/AMcLR4PDlibw8xA7eQ=;
-	b=wj5HzEiiOAevOulX+cypKt9urEvwH6D1wtVdj5xbGMHHsOebhh43SjeGG/0rWt+r0n27WX
-	qfZmC0Wp9rFC04DA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="0X/wqaGh";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="i/SKOqLZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756713320; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ABUKxJp+T86WUFFcprlxI51x/AMcLR4PDlibw8xA7eQ=;
-	b=0X/wqaGhXQhaijZzH9Pq3750OKimXjVVk5NlCXJtY3zWcYhepsVMDzn0R1Bm6k0VVed2/R
-	I2WakCP9T+fwiBTTe7O8K7faNxrg+fjTTlRJmAKqUufZ/BO6N2OOQHbWxYUksBITApC6jy
-	7dGBBYWhmUa+ao9po4aZqbJdt6sE1wk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756713320;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ABUKxJp+T86WUFFcprlxI51x/AMcLR4PDlibw8xA7eQ=;
-	b=i/SKOqLZFaLLAX0XrDMhyD+kjmgrhL+6+91dNaEDIhFu9hzUq9o3AgxuizKHtDk/jk7YMv
-	bqaIUBM4X2Zdt6Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEFFD136ED;
-	Mon,  1 Sep 2025 07:55:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GCCDMmhRtWixTwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 01 Sep 2025 07:55:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7378BA099B; Mon,  1 Sep 2025 09:55:20 +0200 (CEST)
-Date: Mon, 1 Sep 2025 09:55:20 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Ritesh Harjani <ritesh.list@gmail.com>, 
-	Keith Busch <kbusch@kernel.org>, Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org, hch@lst.de, 
-	martin.petersen@oracle.com, djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>, Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
-Message-ID: <pcmvk3tb3cre3dao2suskdxjrkk6q5z2olkgbkyqoaxujelokg@34hc5pudk3lt>
-References: <20250819164922.640964-1-kbusch@meta.com>
- <87a53ra3mb.fsf@gmail.com>
- <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq>
- <aKx485EMthHfBWef@kbusch-mbp>
- <87cy8ir835.fsf@gmail.com>
- <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
- <aK8tuTnuHbD8VOyo@kernel.org>
+	s=arc-20240116; t=1756714933; c=relaxed/simple;
+	bh=qwpLHmSDSRBz3d+41Ly2TQl1GKN0VFAgGYUhbc9azPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FqYRejVddirh3n+YkN3BwrSOo6nSrrrPZqROn5Plmbyfr4o8yLoZRGVFKembczf2X+2//c6aEEeiml/+rPcmhzYaHkDO+7B0h6UD+8ZjW60A51VsuOWdEltKWwSMUG7bp3pLKboTOb/PbWwuptK8YEun8OxGA9VK7GBmdVG/hdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=y0DnCtgT; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=2bH77HtHT7Beg9EeVABUioTwHj/sGnckukFuvimsMuE=; b=y0DnCtgTraEu/1KLDKeKP0SESH
+	YciHEY22ikNYrUoBiPLPnkkPKOrpH1pWkV1KILScvCkxES/veXNW2Z0hopsIkLgFsALpAxNOxkASi
+	ntkhY1Nqzj47SPUsNYwhoITS2CyK9q5tV4WVFNh2NPbRzz+cf4ZkF7+D9tVUq7sYoQRBLgPG7LM3f
+	M0Lg1trOAk6pdmLziV7c+yahSuilVIo7ogRqLS81haE2wIL5kR7tAKhIyOcEEmetBLQLJWRCBPnrr
+	1djHjlyrta6amuemlupQz+FjXcx+lO/cXPf/rjNY9x5kDIooavIVB/XWlaaEIEo0AG7tLpiOrH8Bd
+	18ozObkJfjOuz5LKHHRSH1GAdy8gJ15Uf066nIbUKcIwOBRAtBfZMpT44KRI6NEpt2rR/r7TWvRLa
+	+lMqhSiEGSC2+s3J+4vfI5waEmT8nPaldcTx9pl5YstdVc4ApxHoNqU0zZq4oDPvIaQj+oELhLHeI
+	/RrWgg8TN+pI3oe4ZGwNoDES;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1uszOE-001pw5-1P;
+	Mon, 01 Sep 2025 07:55:46 +0000
+Message-ID: <dfa557ed-eb34-4eaf-9e17-7cae221e74fd@samba.org>
+Date: Mon, 1 Sep 2025 09:55:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aK8tuTnuHbD8VOyo@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: E30E71F38C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,kernel.org,meta.com,vger.kernel.org,kernel.dk,davidwei.uk,lst.de,oracle.com,zeniv.linux.org.uk,suse.com,redhat.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/35] cifs: Fix SMB rmdir() and unlink() against Windows
+ SMB servers
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+ Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+ ronnie sahlberg <ronniesahlberg@gmail.com>, =?UTF-8?Q?Ralph_B=C3=B6hme?=
+ <slow@samba.org>
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250831123602.14037-1-pali@kernel.org>
+Content-Language: en-US
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <20250831123602.14037-1-pali@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Mike!
+Hi Pali,
 
-On Wed 27-08-25 12:09:29, Mike Snitzer wrote:
-> On Wed, Aug 27, 2025 at 05:20:53PM +0200, Jan Kara wrote:
-> > On Tue 26-08-25 10:29:58, Ritesh Harjani wrote:
-> > > Keith Busch <kbusch@kernel.org> writes:
-> > > 
-> > > > On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
-> > > >> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
-> > > >> > Keith Busch <kbusch@meta.com> writes:
-> > > >> > >
-> > > >> > >   - EXT4 falls back to buffered io for writes but not for reads.
-> > > >> > 
-> > > >> > ++linux-ext4 to get any historical context behind why the difference of
-> > > >> > behaviour in reads v/s writes for EXT4 DIO. 
-> > > >> 
-> > > >> Hum, how did you test? Because in the basic testing I did (with vanilla
-> > > >> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
-> > > >> falling back to buffered IO only if the underlying file itself does not
-> > > >> support any kind of direct IO.
-> > > >
-> > > > Simple test case (dio-offset-test.c) below.
-> > > >
-> > > > I also ran this on vanilla kernel and got these results:
-> > > >
-> > > >   # mkfs.ext4 /dev/vda
-> > > >   # mount /dev/vda /mnt/ext4/
-> > > >   # make dio-offset-test
-> > > >   # ./dio-offset-test /mnt/ext4/foobar
-> > > >   write: Success
-> > > >   read: Invalid argument
-> > > >
-> > > > I tracked the "write: Success" down to ext4's handling for the "special"
-> > > > -ENOTBLK error after ext4_want_directio_fallback() returns "true".
-> > > >
-> > > 
-> > > Right. Ext4 has fallback only for dio writes but not for DIO reads... 
-> > > 
-> > > buffered
-> > > static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
-> > > {
-> > > 	/* must be a directio to fall back to buffered */
-> > > 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
-> > > 		    (IOMAP_WRITE | IOMAP_DIRECT))
-> > > 		return false;
-> > > 
-> > >     ...
-> > > }
-> > > 
-> > > So basically the path is ext4_file_[read|write]_iter() -> iomap_dio_rw
-> > >     -> iomap_dio_bio_iter() -> return -EINVAL. i.e. from...
-> > > 
-> > > 
-> > > 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
-> > > 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-> > > 		return -EINVAL;
-> > > 
-> > > EXT4 then fallsback to buffered-io only for writes, but not for reads. 
-> > 
-> > Right. And the fallback for writes was actually inadvertedly "added" by
-> > commit bc264fea0f6f "iomap: support incremental iomap_iter advances". That
-> > changed the error handling logic. Previously if iomap_dio_bio_iter()
-> > returned EINVAL, it got propagated to userspace regardless of what
-> > ->iomap_end() returned. After this commit if ->iomap_end() returns error
-> > (which is ENOTBLK in ext4 case), it gets propagated to userspace instead of
-> > the error returned by iomap_dio_bio_iter().
-> > 
-> > Now both the old and new behavior make some sense so I won't argue that the
-> > new iomap_iter() behavior is wrong. But I think we should change ext4 back
-> > to the old behavior of failing unaligned dio writes instead of them falling
-> > back to buffered IO. I think something like the attached patch should do
-> > the trick - it makes unaligned dio writes fail again while writes to holes
-> > of indirect-block mapped files still correctly fall back to buffered IO.
-> > Once fstests run completes, I'll do a proper submission...
-> > 
-> > 
-> > 								Honza
-> > -- 
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
+> This patch series improves Linux rmdir() and unlink() syscalls called on
+> SMB mounts exported from Windows SMB servers which do not implement
+> POSIX semantics of the file and directory removal.
 > 
-> > From ce6da00a09647a03013c3f420c2e7ef7489c3de8 Mon Sep 17 00:00:00 2001
-> > From: Jan Kara <jack@suse.cz>
-> > Date: Wed, 27 Aug 2025 14:55:19 +0200
-> > Subject: [PATCH] ext4: Fail unaligned direct IO write with EINVAL
-> > 
-> > Commit bc264fea0f6f ("iomap: support incremental iomap_iter advances")
-> > changed the error handling logic in iomap_iter(). Previously any error
-> > from iomap_dio_bio_iter() got propagated to userspace, after this commit
-> > if ->iomap_end returns error, it gets propagated to userspace instead of
-> > an error from iomap_dio_bio_iter(). This results in unaligned writes to
-> > ext4 to silently fallback to buffered IO instead of erroring out.
-> > 
-> > Now returning ENOTBLK for DIO writes from ext4_iomap_end() seems
-> > unnecessary these days. It is enough to return ENOTBLK from
-> > ext4_iomap_begin() when we don't support DIO write for that particular
-> > file offset (due to hole).
+> This patch series should have no impact and no function change when
+> communicating with the POSIX SMB servers, as they should implement
+> proper rmdir and unlink logic.
+
+Please note that even servers implementing posix/unix extensions,
+may also have windows clients connected operating on the same files/directories.
+And in that case even posix clients will see the windows behaviour
+of DELETE_PENDING for set disposition or on rename
+NT_STATUS_ACCESS_DENIED or NT_STATUS_DIRECTORY_NOT_EMPTY.
+
+> When issuing remove path command against non-POSIX / Windows SMB server,
+> it let the directory entry which is being removed in the directory until
+> all users / clients close all handles / references to that path.
 > 
-> Any particular reason for ext4 still returning -ENOTBLK for unaligned
-> DIO?
-
-No, that is actually the bug I'm speaking about - ext4 should be returning
-EINVAL for unaligned DIO as other filesystems do but after recent iomap
-changes it started to return ENOTBLK.
-
-> In my experience XFS returns -EINVAL when failing unaligned DIO (but
-> maybe there are edge cases where that isn't always the case?)
+> POSIX requires from rmdir() and unlink() syscalls that after successful
+> call, the requested path / directory entry is released and allows to
+> create a new file or directory with that name. This is currently not
+> working against non-POSIX / Windows SMB servers.
 > 
-> Would be nice to have consistency across filesystems for what is
-> returned when failing unaligned DIO.
+> To workaround this problem fix and improve existing cifs silly rename
+> code and extend it also to SMB2 and SMB3 dialects when communicating
+> with Windows SMB servers. Silly rename is applied only when it is
+> necessary (when some other client has opened file or directory).
+> If no other client has the file / dir open then silly rename is not
+> used.
 
-Agreed although there are various corner cases like files which never
-support direct IO - e.g. with data journalling - and thus fallback to
-buffered IO happens before any alignment checks. 
+If I 'git grep -i silly fs/smb/client' there's no hit, can you
+please explain what code do you mean with silly rename?
 
-> The iomap code returns -ENOTBLK as "the magic error code to fall back
-> to buffered I/O".  But that seems only for page cache invalidation
-> failure, _not_ for unaligned DIO.
-> 
-> (Anyway, __iomap_dio_rw's WRITE handling can return -ENOTBLK if page
-> cache invalidation fails during DIO write. So it seems higher-level
-> code, like I've added to NFS/NFSD to check for unaligned DIO failure,
-> should check for both -EINVAL and -ENOTBLK).
-
-I think the idea here is that if page cache invalidation fails we want to
-fallback to buffered IO so that we don't cause cache coherency issues and
-that's why ENOTBLK is returned.
-
-> ps. ENOTBLK is actually much less easily confused with other random
-> uses of EINVAL (EINVAL use is generally way too overloaded, rendering
-> it a pretty unhelpful error).  But switching XFS to use ENOTBLK
-> instead of EINVAL seems like disruptive interface breakage (I suppose
-> same could be said for ext4 if it were to now return EINVAL for
-> unaligned DIO, but ext4 flip-flopping on how it handles unaligned DIO
-> prompted me to ask these questions now)
-
-Definitely. In this particular case EINVAL for unaligned DIO is there for
-ages and there likely is some userspace program somewhere that depends on
-it.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks!
+metze
 
