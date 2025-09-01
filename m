@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-794028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924C6B3DBAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:01:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A933B3DBD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6033B16FC57
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75645189B396
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5FE23B632;
-	Mon,  1 Sep 2025 08:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="bbjPmF5X"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2503D2EE26E;
+	Mon,  1 Sep 2025 08:03:30 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD592AD31
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DA61D8E01;
+	Mon,  1 Sep 2025 08:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756713692; cv=none; b=THoWBmqf8H/UGDV+JCEHcPdNlhUJy4U1ydS1hOvVGuAEDQWMpISdwmQvK+79rnbiRZbE6LLd5NstXvUi3FM+lBopTttwVblrASuBH2C17kTdpfoCMUNVCdMMWnchmxXAd3i29f2PYd1JwsNBYJ9KieOdumM3eb2vAJpWNK9v920=
+	t=1756713809; cv=none; b=LYry/4WyYzmb5YHkWWkOjlGzHKqzTLilAuKM/k63BiKfa8tmELQsw2SMLzKEX4I0Uc8s5uvkNDZuM01j0tJ9MZ4kikAeBw08qavXl9AebeWWH8BWPpsTIF8YWTX+y+TjSFLoXE7pWaE20d4yG7SBr5t9M/WvkwQagSIqKaC4Bok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756713692; c=relaxed/simple;
-	bh=ElVgYPiPhFnmapkjg+o9uJKTkd6XvGBVXP9+0Qz77V0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mr3zHIKSD68uEQya4mpWzARt9DyoK9oENkhjxHLZ2IEdC9no4uW+T2nQ8ZrlXLbO6ihBaZCq6Nox5BQPCdYwaiOc711l2eOjDK3+bwgsuUggZO92xS4emMKOD9kqiaToC4ajXzIgr4vian+1/1IR2rHs4W/fnkKt/x6fFupPAn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=bbjPmF5X; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae31caso776329666b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756713689; x=1757318489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ElVgYPiPhFnmapkjg+o9uJKTkd6XvGBVXP9+0Qz77V0=;
-        b=bbjPmF5XIaR4v+fHYWO0DGthTJMVGuNa2eBoxs6DSabY/0E9aySW/lThgGNaL7cck4
-         PNmRLJhYFuicsWHBwqzfv6CRdemwN5Yk8TmnIwjlDVfzQn6T9oKymARYj9uIQdBGQFDc
-         7wZNGhkKcJqojSpIsK5O23IhODMfxVlKGHP+1tABYu9MePscYFLLKCgZxbpkA0Ubbc1G
-         MbIoI0rsSdlSvgxZDbXtTTGexwx0t36AL2UpUZGNXyPpKncEahCAyWrQcCQWCmgykGiv
-         67InJFLdhs7On5xTeSCqy1ygb692SEzjPKfEXrqFlbzf7inKRjcdaXCnSm2zjnXDvl9Z
-         fXFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756713689; x=1757318489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ElVgYPiPhFnmapkjg+o9uJKTkd6XvGBVXP9+0Qz77V0=;
-        b=W7PgHOA1o+Ro1l/qgQOV+B2HZSLnHn2s6Qhq3zSVHp4oh/HPKi6jRRo/CcDbaj0xqb
-         sxm0E/wH2ApCvw+lLxcjGB1CrznAvWykk4QyFNz+aO6KmvVKGzKxOxR5OgmYFbXSZzE5
-         GV6BVrU2hUjsBuR9kXWJl/FyylLL+sq7BERqcNUl61b1RKTAXXCM8WNLZD7DimM7YM1V
-         oxK3mp1BqE45+YW6C5hO/VxxDYfw6nyYfpNnQqHzr+Asz2lcUzE2i+4oA94Wgo3GKhHs
-         rMs5GkRqD4+27OgfMg7KZVPWudiSJ3wB8tWxDnIPya/CbHPpw6h0Zd12q5zR/qksjOzd
-         qdmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXew+wJO+BbbUYWwhleuk33ItiPIFf45fvkpTonwfYUn3PGZd7nKLAjsJKnz0T8PjjyyVi/7WzCKs9rOCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgu4+3ENp14DpmuJkOQyrP8WCCFJH5BbxNKALb1uxS/eG87pnG
-	QGvUbsLy7CtUXceG+3v18gPqqm63aVuxn6/0fyaPhDa5ckX/SSsa12EflQb0pzw8XTRcw0L5Icv
-	4Yy0HHTlqJoB5WF7ga7et9gvVOs3UYEBUwQnwvWbUXw==
-X-Gm-Gg: ASbGnctoeu76z68evcHT45a8Ao+B86nOQwm5pdyggW9MGlo2F2I6Jbpip7S5OlYujHJ
-	Ia4k4tPwoshqHRq3X6f+/rC8zlPaA/yel5SfbCz29YbcOIzULPWr112Ok5mfjuz9FrLFVqtctnr
-	TyQGE2/ufNENkpo2m2Q/XEbDVi5cw5tfr3vDpNztqiJF3uxj3gcE10zJLSXLtr5VijXOZPbwXbI
-	TaCzhGjZo05mPEBtFwCTXbv+mgDxRfcjUk=
-X-Google-Smtp-Source: AGHT+IGbf2+rtrG5OsSWDupeVt2DyJOST/f2CR3y0EAEtEchftiG5U1wyRNP5BqRghvnVqjtrLUrmIVj5/y59HxwLBY=
-X-Received: by 2002:a17:907:86aa:b0:afe:caf7:6def with SMTP id
- a640c23a62f3a-b01d979a6camr770360566b.54.1756713688363; Mon, 01 Sep 2025
- 01:01:28 -0700 (PDT)
+	s=arc-20240116; t=1756713809; c=relaxed/simple;
+	bh=GUBFiAku52msslaqcKLxNTfXPNOXHZyDbXrJGiCnJlE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UM7npy2rszHJGJb/Mg8zEZSIPo7Z0Y7oJFpl/LeWkvo6OOrJJkiH4xp2uMgBDkGRycrZrk8sTxvmuEfQ7DHJfSyPMBZOsv5OL7wQ7InMKYZekSnCpzdtBWoRhBNaCuzW0ZfuOE02JtXTCYqI889zC4HbJLNluBGliiMXpAdO0R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFhFp6g8vzYQvP1;
+	Mon,  1 Sep 2025 16:03:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6DFC11A1BAC;
+	Mon,  1 Sep 2025 16:03:25 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDXIY5KU7VoWVIKBA--.61024S3;
+	Mon, 01 Sep 2025 16:03:25 +0800 (CST)
+Subject: Re: [PATCH RFC v3 07/15] md/raid1: convert to use
+ bio_submit_split_bioset()
+To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ hch@infradead.org, colyli@kernel.org, hare@suse.de, tieren@fnnas.com,
+ axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+ kmo@daterainc.com, satyat@google.com, ebiggers@google.com, neil@brown.name,
+ akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-8-yukuai1@huaweicloud.com>
+ <9b9b78cd-06aa-407d-a224-a5903752599f@kernel.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <4c823b51-f623-9a65-6d38-cfa874857eb2@huaweicloud.com>
+Date: Mon, 1 Sep 2025 16:03:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901061223.2939097-1-max.kellermann@ionos.com>
- <20250901061223.2939097-2-max.kellermann@ionos.com> <052aee05-4cfc-4fa2-8944-4c85676c95ed@lucifer.local>
-In-Reply-To: <052aee05-4cfc-4fa2-8944-4c85676c95ed@lucifer.local>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 1 Sep 2025 10:01:16 +0200
-X-Gm-Features: Ac12FXyLver_1AinPcvhgsFNWur1r_pRnDcdlhlX6jXPmQjj6RJlaLuNO2Kj3Wk
-Message-ID: <CAKPOu+-A6EoBnJhYkgX3Ktuivo2hpDZtbCKPfcmR_SNsvPQ02g@mail.gmail.com>
-Subject: Re: [PATCH v3 01/12] mm/shmem: add `const` to lots of pointer parameters
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
-	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <9b9b78cd-06aa-407d-a224-a5903752599f@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXIY5KU7VoWVIKBA--.61024S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4kZF47AFW7Cr48AFyfCrg_yoW8tr4xpr
+	Wjga1IgFZ8tFZ093ZFqa12vas5tFWUXr13Z3yxGa4DAFnrt39xKF1UW3yYga4UurW3uw17
+	G3WkCa9xu3yUuFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7sRRbyCPUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Sep 1, 2025 at 9:44=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Mon, Sep 01, 2025 at 08:12:12AM +0200, Max Kellermann wrote:
-> > For improved const-correctness.
->
-> This is not an acceptable commit message, you need to explain what you're=
- doing
-> here.
->
-> I'm thinking that review will be the same for each...
->
-> For instance, reference the fact you're starting with functions at the bo=
-ttom of
-> the call graph,
+Hi,
 
-My 00/12 already describes that adding "const" to mm addresses the
-lowest level so higher levels (outside the scope of this patch set)
-are able to constify their APIs.
+在 2025/09/01 14:43, Damien Le Moal 写道:
+> On 9/1/25 12:32 PM, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Unify bio split code, and prepare to fix disordered split IO.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> 
+> [...]
+> 
+>> @@ -1586,18 +1577,13 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>>   		max_sectors = min_t(int, max_sectors,
+>>   				    BIO_MAX_VECS * (PAGE_SIZE >> 9));
+>>   	if (max_sectors < bio_sectors(bio)) {
+>> -		struct bio *split = bio_split(bio, max_sectors,
+>> -					      GFP_NOIO, &conf->bio_split);
+>> -
+>> -		if (IS_ERR(split)) {
+>> -			error = PTR_ERR(split);
+>> +		bio = bio_submit_split_bioset(bio, max_sectors,
+>> +					      &conf->bio_split);
+>> +		if (!bio) {
+>> +			set_bit(R1BIO_Returned, &r1_bio->state);
+> 
+> Before it was "set_bit(R1BIO_Uptodate, &r1_bio->state);" that was done. Now it
+> is R1BIO_Returned that is set. The commit message does not mention this change
+> at all. Is this a bug fix ? If yes, that should be in a pre patch before the
+> conversion to using bio_submit_split_bioset().
 
-Other than that, there is exactly one dependency between the patches,
-and that is documented in the commit message of 06/12. The rest has no
-"bottom" or "top" that I could describe. All other patches are
-standalone.
+There should be no functional changes, before the change we:
 
-> and mention which functions you're changing.
+1) set bio->bi_status to split error value;
+2) set R1BIO_Uptodate;
+3) raid_end_bio_io() check R1BIO_Returned is not set, and call
+call_bio_endio();
+4) call_bio_endio() check R1BIO_Uptodate is already set, keep the
+bio->bi_status that is by split error;
 
-So you want to have a list of function names in the commit message?
-Maybe I'll write a Perl one-liner to extract that from the diff, but
-.... will that really be helpful? To me, it looks like noise in a
-patch set as trivial as this one.
+With this change:
+1) bio_submit_split_bioset() already fail the bio will split error;
+2) set R1BIO_Returned;
+3) raid_end_bio_io() check R1BIO_Returned is set and do nothing with the
+bio;
+
+And the same with raid10 in patch 8,9;
+
+Perhaps I'll emphasize there is no function changes and explain a bit.
+
+Thanks,
+Kuai
+> 
+>>   			goto err_handle;
+>>   		}
+>>   
+>> -		bio_chain(split, bio);
+>> -		trace_block_split(split, bio->bi_iter.bi_sector);
+>> -		submit_bio_noacct(bio);
+>> -		bio = split;
+>>   		r1_bio->master_bio = bio;
+>>   		r1_bio->sectors = max_sectors;
+>>   	}
+>> @@ -1687,8 +1673,6 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>>   		}
+>>   	}
+>>   
+>> -	bio->bi_status = errno_to_blk_status(error);
+>> -	set_bit(R1BIO_Uptodate, &r1_bio->state);
+>>   	raid_end_bio_io(r1_bio);
+>>   }
+> 
+> 
+
 
