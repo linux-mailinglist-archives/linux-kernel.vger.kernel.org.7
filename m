@@ -1,379 +1,364 @@
-Return-Path: <linux-kernel+bounces-795113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4940DB3ECF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D128B3ECE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8288817E7E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:06:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1BD16A176
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A28320A21;
-	Mon,  1 Sep 2025 17:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC3C2EC093;
+	Mon,  1 Sep 2025 17:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BKKTnubh"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t7f9YGTO"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C0730649C;
-	Mon,  1 Sep 2025 17:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746397; cv=fail; b=Mmj8nTtt6/Ldd0D+xL0BLiRcYanwgAOsP97l4EF4tgU/flBS8BFe+qoMY43Y9LTDmY1ihM1tvh9tzB0bmW/Bgn24toMeyvAUYDHukLYySsGHHPMr3U2BGD9qQrzzdzSHvzOig4aqgZuPhkuOHb6ClHTbFirpaNd+4CtLrqvveHw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746397; c=relaxed/simple;
-	bh=fQfw16+iDvMiTL90yO1Yn2b/QlRodwKiVGY0xDZAKQg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i/3Yjeq1a4zHShL4WAWcE10hhVBBvAxYDZhFBQY+cNFs2zLKQkeamYyRxtdrNqQH7O4uFOEGf3sZE2DFAfE8EvrCGd8wGVpF8jmKS0agctRSz+q94AkMdw0BDf28AK9TjXoUqDr11Z0qs6LB09bu0IhefSMDUUn9CBVILAvGBlE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BKKTnubh; arc=fail smtp.client-ip=40.107.94.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oNo+QFDDbokOuPJvwLfeG4Ly0IF4O4NKpOS5j6VmwG7ESPACotrQ8k1tXigNv3ke/koprAxSrAwDsM7h6Y1hrIonBZOttw2ArfxjTbs2CmTZgQhS95WHInYdzAYgrG9dx2Sxb9fePXojdXJyImhTBNfwclpI334L6P1JIccOBgmv9WVLUebGio6m+d8nndye+pTbWVKevkNAbTfE+4F3rmjdffkEBu90Dmu2RaN8PX6XCn8NIqZDEKcWzJ7ZesEfBVn6X9pp/bQ5eMJl2UqJdhF2A4AUb6zosVeISenp3EQpyQ6C4E4sk4JUzW8i3SColdd6hGuW6TO6tAErd0u9cQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QbxyyBoHNnb4eO8wQZ+PB9+1Ovqh1h6VgEkEX4e++SE=;
- b=ncd+Um1M+QRdUv8/iaY4DN5lX2SR7Qaod2pe9n136heiqrTE/6apW6vohuJCBKqXLygvxHdNWe4geT8a/NtlFlO3q106OowEzROZDWU1R7TOFg+fiHVbtK3sm/xglC4jdPXOHXCJ6XDfyTmCj8BUvF+uwT+H5NRan0XBTxcWJycU/aq3H1p9rdDzz30u/j2N/ONwCXLMzF1QeeONjQbbGU2AO2oIKAdX6Igv8JRyMYfbrRP9Wy9JkkaDcN0Z8OqAUaNW44XAJBFvyoEjWL4NxqMhETzbjVnW2yqqvqIxqZTQTR7K3Acpab0Pabvn9ntyyiIP89NDxxsZnitDF9jELA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QbxyyBoHNnb4eO8wQZ+PB9+1Ovqh1h6VgEkEX4e++SE=;
- b=BKKTnubhtAZ6AFi3GDpSfDDcZ3s125Pr93OfzT3z1/PLfKnlmaeRP1RDnoRpcw7yJDpFo535unOeK7GICSmi1mHaCiHl80gQS0S48VcVLZCmb8scYRqkqWSa5+3LWh7gwPV2iYQZszzAeT8rn2rl+69DgCXE0YdbdMPHZHlDxvs=
-Received: from PH1PEPF000132EA.NAMP220.PROD.OUTLOOK.COM (2603:10b6:518:1::2e)
- by IA1PR12MB6211.namprd12.prod.outlook.com (2603:10b6:208:3e5::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.28; Mon, 1 Sep
- 2025 17:06:29 +0000
-Received: from CO1PEPF000044F9.namprd21.prod.outlook.com
- (2a01:111:f403:c91d::4) by PH1PEPF000132EA.outlook.office365.com
- (2603:1036:903:47::3) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Mon,
- 1 Sep 2025 17:06:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044F9.mail.protection.outlook.com (10.167.241.199) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9115.0 via Frontend Transport; Mon, 1 Sep 2025 17:06:28 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 1 Sep
- 2025 12:06:27 -0500
-Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Mon, 1 Sep
- 2025 10:06:19 -0700
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, <x86@kernel.org>
-CC: Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>, "H.
- Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
-	<peterz@infradead.org>, "Xin Li (Intel)" <xin@zytor.com>, Pawan Gupta
-	<pawan.kumar.gupta@linux.intel.com>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Babu Moger
-	<babu.moger@amd.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: [RFC PATCH v5 4/4] Documentation/x86/topology: Detail CPUID leaves used for topology enumeration
-Date: Mon, 1 Sep 2025 17:04:18 +0000
-Message-ID: <20250901170418.4314-5-kprateek.nayak@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250901170418.4314-1-kprateek.nayak@amd.com>
-References: <20250901170418.4314-1-kprateek.nayak@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423CA2DF142
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 17:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756746316; cv=none; b=lyzVhxmyiYNVEtCvu4ft+i2ujP0J+zZFD/ohOBBxLzi0VMdVfBB+lBwNymQQEIEOeE/2UZ8woSrBukAlEll56uoHMzw6WDbJ83rzClsMuT/9MXDVdV00XrBU20OAHgUw1ujZu5287lTz2BLTQUWH2EBFZwT57a5MOvG6d0IqD4E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756746316; c=relaxed/simple;
+	bh=llCRiK3lXe/yiSxV/HR1Xc5Qrk4yyd3AIXRrlGnoLu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uQXsDMMIf9Rz9fsTdtkX5tbK27kM/Ie1enkRxoZuULea655UK0+AFpvQ2SafeeRgu8CDe/EvmP47lU3jsTnJnJthopZKvAGKlt2SwR8dsGltAldS/CVsyyhXsgC74SSxMli337fbno3DMEs37suVB3aZ53f88OUr/7HQX6OaihU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t7f9YGTO; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-248f08d31dcso374575ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 10:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756746313; x=1757351113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4QoLjwxK8LzjBpJjG48ipDPj+TT/xUD3SQc2FJAfA6g=;
+        b=t7f9YGTOM5AaN/iNfuXe/X5W8NtbsqO1qSCTlcC0VqSVg1rZ0sQkBFv5vFdhq0JzvB
+         6LKB1QDs19d8zaqingSCKVZvsmkIDO/x+plwNRGDcdJEcRE2dEpt8JLXjWExJ1LX+Kwl
+         4HkLgtcorc6gwmRG5JB5O0NenI5+301j0Y7vgZmuw7JrixTmDaXijtl5tDnmh+Yc7PYk
+         PMEjx7UqpXy4xFq3euiPd7CPWN5FTAVC24eyKZO7AJ0x0OffPNr5VuyRAIAG97s5Kg7w
+         6+zAq6I6pVigPZvhdtayxfGpb7jHzBC+hihzrI3sz1nwLwDaAvAZEs72OtXPjNd3PxLB
+         BUyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756746313; x=1757351113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4QoLjwxK8LzjBpJjG48ipDPj+TT/xUD3SQc2FJAfA6g=;
+        b=TnkiOUbelf3FK25cUVQQET2r/RhCiixLWx7EpZ4nPlsugc8CnnfXk+xMixnjSO3c3Z
+         fhLpLkF4i/IWZ5jA/lIf7W+HnV1iYkiuZybURo6l7wcWnVF7vK3WfFDU5u6xgTyi4nuV
+         ZTagEpQlYHuUE4pMltWCX97T2TAbxuUtHdoi4VTB0OrLrrxLm9Ly4x8ZrfMQ6sez0hba
+         dYg4VVOt0rjwE16odiMTi92sjuNZKBCpl36iJubgsHkt2kBt4aZquTxe7j60Akwyir5B
+         JlXmSB3vKSBQ+XG1ldKAnijV9OzwqEIOHxfBsdxhZSVG24IP7X6rQMh4SH2QeU/tth36
+         H4+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVlHd6YuNViFaulQdo1fIs+q8IA3QSZ9Kuqli+tLSrPfXJuKrjf+zLRPlFtRRi1wOYec/9jncnduKbvsEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA6Utu9665QmnKgXx1lw64e5MNacmRx/D58Zy1laikjIXpfTSA
+	EfocMnELdP2J2RgUUkj/OBie9ycgU+PI2Z1alA9COMl2EL2lTOPA72Hv2Fi+j+K3HB8sy0SEBaK
+	aHM2UBwLkGmr5JrEtzy21iQAvCNiv9CSJ77hjPzZ0
+X-Gm-Gg: ASbGnctQQ9zhdWhlf8D02co55PcExLk/NX330z5i6X1j9RxC6UvZtmZyup3qRPx7R+1
+	Ip/FITvnSIuBVwpQDwR4jB17/AkoTBTEJzEWVKRIW9luU5L3SpInvpljzc6jhuihwy6VCtOrV5o
+	5ons5IhEtCQqIiF2NLuzMVOi+C7eUBQ9FvPJAwCpbiWhs03FOQKIveqxRwSadWmebyqGkmKDcCJ
+	SwBgY76/wMX2w98U4VeW8B/WQ==
+X-Google-Smtp-Source: AGHT+IGxr2n1ICZCkOCSejEisAdttrmgKp3a/giGaeEq1JSBg/w2iNQL7nhul/1i1Mogs/tTZxLItOvyD2WkTxvPHbU=
+X-Received: by 2002:a17:902:b713:b0:248:aa0d:f826 with SMTP id
+ d9443c01a7336-2493e8fb30bmr4947575ad.6.1756746313082; Mon, 01 Sep 2025
+ 10:05:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
- (10.181.42.218)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F9:EE_|IA1PR12MB6211:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c1235a8-6e98-4e50-c0ad-08dde979e431
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?A1MCHn5vQlLJ3oZNRYgRc9ypw0f2VZDe0jzv5xQSWijxdpUjxccE5JK8nCTH?=
- =?us-ascii?Q?dz41fTxpn9L5ncwRkso4Hye93UOAVicB9FRMT6ELJ0R6nnZKwmgrzGppM17w?=
- =?us-ascii?Q?4LDSXookY8QpRNGyL9rbxO/SN1+zeAoeg9HcKSWi0ROlvdld/nNI92uoaj7c?=
- =?us-ascii?Q?+UoV6LtpXinyRc1aLx6JISbHytSjkP6KBXKAK2YdxmdcG9XLThbtvOynEZZR?=
- =?us-ascii?Q?0suzMGfkHl3uK5VfYlwlcqF5xwdAdK4EnhMeq5HZTXvCiaMiWWs0c0d7j9ek?=
- =?us-ascii?Q?1bGR2D2fSGTC4I76KQ5SJ6AlYXZwe5es22H3nHWYWBt0Js8+TUxHRkN6pYJX?=
- =?us-ascii?Q?BZpd4q4Mo7+gfN3I3+AFglCuqTANyYYCrRwbmFHn8zqQinOpLaBktXlxqPpz?=
- =?us-ascii?Q?oyZ82GADhqklZ774j8EB6hE2mU0Hi7kR/MIqLWn1D2h3nAbnR3cPZlrLxpNs?=
- =?us-ascii?Q?y70a+1W6dTNQ39vyZWkog0zIh1WspejWk6m2QJlddW945IVSRAOKNW90kVtV?=
- =?us-ascii?Q?OPuVtZM7wb1R9IIhYA13e5FEgY/WbWEx+7ELgGrnFzjR3Ws+wpqEu/MrSgpl?=
- =?us-ascii?Q?rX5MV4aEtsv+f4msC1MjaDXCuRcKbpvLon+RXXkeiXZaBTQkgVss+AUUb2YP?=
- =?us-ascii?Q?0dlzFMKTIx4dQUwS83Ua/eU88yxNngpkrdfYBw5MbJYt56vk3Sd7jutOvzQ4?=
- =?us-ascii?Q?0yz9E6pAenKQBvrXyyh94jOkgWw7FvAnxaqWfYFOdC24flf0kZA48Bgn+7r8?=
- =?us-ascii?Q?U7N5uqoJk+h/E+hNf9YXyQWpuCDw2/nmiWCrwf9IDtkmE2EpHVy/my2u9bgi?=
- =?us-ascii?Q?QONfsGWaDbeYbXJt0aJuBfAEIKOUwngCkDOTpe9SFhci9h7UZrazAAIy8pUD?=
- =?us-ascii?Q?x28PzOSnMoZrY+/DO6P8SfbO4g3C6sj3YhsrDySXLIuuxAyDCLbcJ9Zox8/2?=
- =?us-ascii?Q?bSOjahBexpTWYIZJ9tj+ZchkuugSyQqCJyNCoPBpFnY6yCTPVoqXT5rfEK1D?=
- =?us-ascii?Q?WwygXSAjn16iXuTnyxeGAdT1X7drhTkAUKpFA0tA8g0qWX+6LTIfaW1GWPUh?=
- =?us-ascii?Q?nRe3LwMhMv/84BaWORznVqKrbdWLBvAc31hCYy9iCcHfKrc6DQ28ZcqLbTNx?=
- =?us-ascii?Q?D3wq0QWVaPrhsnzQy7ssr8MMumBtKzjfIVzHypFE1mp9BlKH9WwQO4h6LTxd?=
- =?us-ascii?Q?ZAWcLC0unHpiLNBJPNMMkMcinenabbhViC0KFNiHjM737mt1bAT+hW7lraG3?=
- =?us-ascii?Q?PMxZIzbblVvBv3KIXYASLQEY3IDrXsxEXhwycx+pJRIAg7vK4tmJsYisMtfV?=
- =?us-ascii?Q?FcX7YQjrMQNowpCGZuL0eRawacG67IJ9PUFbDm5BMKuRHJV/LTj0nKjOiAaX?=
- =?us-ascii?Q?dHTtrJ/hQssqrI/BFJdXPgb/7kcKEtucxQs6lHJgR1wIpDbZDZquobIWs1Mn?=
- =?us-ascii?Q?szlg+rAPXCeMgtYMrLJ3eWcW+1utQrrpOLRxJcY8//2YhOMb6c4z9FSQ5Nx1?=
- =?us-ascii?Q?cyqYCz5tu1/GbEYJ3CbBADHPjO4I3bSAP+73?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 17:06:28.3915
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c1235a8-6e98-4e50-c0ad-08dde979e431
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F9.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6211
+References: <20250603203701.520541-1-blakejones@google.com>
+ <174915723301.3244853.343931856692302765.git-patchwork-notify@kernel.org>
+ <CAP-5=fWJQcmUOP7MuCA2ihKnDAHUCOBLkQFEkQES-1ZZTrgf8Q@mail.gmail.com>
+ <466d45ae-ce97-4256-9444-9f25f3328c51@linux.dev> <aLVR0-CUGgwHvFpF@google.com>
+In-Reply-To: <aLVR0-CUGgwHvFpF@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 1 Sep 2025 10:04:58 -0700
+X-Gm-Features: Ac12FXzgZcMksbwkyCOaS4g_EKgW3lTS0HlcliQGDdMfcvQaA-H39vJcWvqvrqI
+Message-ID: <CAP-5=fX8pw91DQCW0sva_U4A2UGXynNApOHcb3SVT8eRZ=DtyA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] libbpf: add support for printing BTF character
+ arrays as strings
+To: Namhyung Kim <namhyung@kernel.org>, song@kernel.org, 
+	Yonghong Song <yonghong.song@linux.dev>, jolsa@kernel.org, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Blake Jones <blakejones@google.com>, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, mykolal@fb.com, shuah@kernel.org, ihor.solodrai@linux.dev, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>, Howard Chu <howardchu95@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a new section describing the different CPUID leaves and fields used
-to parse topology on x86 systems.
+On Mon, Sep 1, 2025 at 12:57=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello,
+>
+> On Sun, Aug 31, 2025 at 09:17:34PM -0700, Yonghong Song wrote:
+> >
+> >
+> > On 8/29/25 10:19 PM, Ian Rogers wrote:
+> > > On Thu, Jun 5, 2025 at 2:00=E2=80=AFPM <patchwork-bot+netdevbpf@kerne=
+l.org> wrote:
+> > > > Hello:
+> > > >
+> > > > This series was applied to bpf/bpf-next.git (master)
+> > > > by Andrii Nakryiko <andrii@kernel.org>:
+> > > >
+> > > > On Tue,  3 Jun 2025 13:37:00 -0700 you wrote:
+> > > > > The BTF dumper code currently displays arrays of characters as ju=
+st that -
+> > > > > arrays, with each character formatted individually. Sometimes thi=
+s is what
+> > > > > makes sense, but it's nice to be able to treat that array as a st=
+ring.
+> > > > >
+> > > > > This change adds a special case to the btf_dump functionality to =
+allow
+> > > > > 0-terminated arrays of single-byte integer values to be printed a=
+s
+> > > > > character strings. Characters for which isprint() returns false a=
+re
+> > > > > printed as hex-escaped values. This is enabled when the new ".emi=
+t_strings"
+> > > > > is set to 1 in the btf_dump_type_data_opts structure.
+> > > > >
+> > > > > [...]
+> > > > Here is the summary with links:
+> > > >    - [v3,1/2] libbpf: add support for printing BTF character arrays=
+ as strings
+> > > >      https://git.kernel.org/bpf/bpf-next/c/87c9c79a02b4
+> > > >    - [v3,2/2] Tests for the ".emit_strings" functionality in the BT=
+F dumper.
+> > > >      https://git.kernel.org/bpf/bpf-next/c/a570f386f3d1
+> > > >
+> > > > You are awesome, thank you!
+> > > I believe this patch is responsible for segvs occurring in v6.17 in
+> > > various perf tests when the perf tests run in parallel. There's lots
+> >
+> > Could you share the command line to reproduce this failure?
+> > This will help debugging. Thanks!
+>
+> My reproducer is below:
+>
+> terminal 1: run perf trace in a loop.
+>
+>   $ while true; do sudo ./perf trace true; done
+>
+> terminal 2: run perf record in a loop until hit the segfault.
+>
+>   $ while true; do sudo ./perf record true || break; done
+>   ...
+>   perf: Segmentation fault
+>       #0 0x560b2db790e4 in dump_stack debug.c:366
+>       #1 0x560b2db7915a in sighandler_dump_stack debug.c:378
+>       #2 0x560b2d973b1b in sigsegv_handler builtin-record.c:722
+>       #3 0x7f975f249df0 in __restore_rt libc_sigaction.c:0
+>       #4 0x560b2dca1ee6 in snprintf_hex bpf-event.c:39
+>       #5 0x560b2dca2306 in synthesize_bpf_prog_name bpf-event.c:144
+>       #6 0x560b2dca2d92 in bpf_metadata_create bpf-event.c:401
+>       #7 0x560b2dca3838 in perf_event__synthesize_one_bpf_prog bpf-event.=
+c:673
+>       #8 0x560b2dca3dd5 in perf_event__synthesize_bpf_events bpf-event.c:=
+798
+>       #9 0x560b2d977ef5 in record__synthesize builtin-record.c:2131
+>       #10 0x560b2d9797c1 in __cmd_record builtin-record.c:2581
+>       #11 0x560b2d97db30 in cmd_record builtin-record.c:4376
+>       #12 0x560b2da0672e in run_builtin perf.c:349
+>       #13 0x560b2da069c6 in handle_internal_command perf.c:401
+>       #14 0x560b2da06b1f in run_argv perf.c:448
+>       #15 0x560b2da06e68 in main perf.c:555
+>       #16 0x7f975f233ca8 in __libc_start_call_main libc_start_call_main.h=
+:74
+>       #17 0x7f975f233d65 in __libc_start_main_alias_2 libc-start.c:128
+>       #18 0x560b2d959b11 in _start perf[4cb11]
+>
+>
+> I manually ran it with gdb to get some more hints.
+>
+>   Thread 1 "perf" received signal SIGSEGV, Segmentation fault.
+>   0x00005555558e8ee6 in snprintf_hex (buf=3D0x5555562c1d79 "", size=3D503=
+, data=3D0x40 <error: Cannot access memory at address 0x40>, len=3D8)
+>       at util/bpf-event.c:39
+>   39                    ret +=3D snprintf(buf + ret, size - ret, "%02x", =
+data[i]);
+>
+> The data is bpf_prog_info->prog_tags and it's called from
+> synthesize_bpf_prog_name().
+>
+>   (gdb) bt
+>   #0  0x00005555558e8ee6 in snprintf_hex (buf=3D0x5555562c1d79 "", size=
+=3D503, data=3D0x40 <error: Cannot access memory at address 0x40>,
+>       len=3D8) at util/bpf-event.c:39
+>   #1  0x00005555558e9306 in synthesize_bpf_prog_name (buf=3D0x5555562c1d7=
+0 "bpf_prog_", size=3D512, info=3D0x55555665e400, btf=3D0x5555562c5630,
+>       sub_id=3D0) at util/bpf-event.c:144
+>   #2  0x00005555558e9db5 in bpf_metadata_create (info=3D0x55555665e400) a=
+t util/bpf-event.c:403
+>   #3  0x00005555558ea85b in perf_event__synthesize_one_bpf_prog (session=
+=3D0x555556178510,
+>       process=3D0x5555555ba7ab <process_synthesized_event>, machine=3D0x5=
+55556178728, fd=3D25, event=3D0x5555561b73a0,
+>       opts=3D0x5555560d33a8 <record+328>) at util/bpf-event.c:674
+>   #4  0x00005555558eadf8 in perf_event__synthesize_bpf_events (session=3D=
+0x555556178510,
+>       process=3D0x5555555ba7ab <process_synthesized_event>, machine=3D0x5=
+55556178728, opts=3D0x5555560d33a8 <record+328>)
+>       at util/bpf-event.c:799
+>   #5  0x00005555555beef5 in record__synthesize (rec=3D0x5555560d3260 <rec=
+ord>, tail=3Dfalse) at builtin-record.c:2131
+>   #6  0x00005555555c07c1 in __cmd_record (rec=3D0x5555560d3260 <record>, =
+argc=3D1, argv=3D0x7fffffffe2e0) at builtin-record.c:2581
+>   #7  0x00005555555c4b30 in cmd_record (argc=3D1, argv=3D0x7fffffffe2e0) =
+at builtin-record.c:4376
+>   #8  0x000055555564d72e in run_builtin (p=3D0x5555560d63c0 <commands+288=
+>, argc=3D6, argv=3D0x7fffffffe2e0) at perf.c:349
+>   #9  0x000055555564d9c6 in handle_internal_command (argc=3D6, argv=3D0x7=
+fffffffe2e0) at perf.c:401
+>   #10 0x000055555564db1f in run_argv (argcp=3D0x7fffffffe0dc, argv=3D0x7f=
+ffffffe0d0) at perf.c:445
+>   #11 0x000055555564de68 in main (argc=3D6, argv=3D0x7fffffffe2e0) at per=
+f.c:553
+>
+> I seems bpf_prog_info is broken for some reason.
+>
+>   (gdb) up
+>   #1  0x00005555558e9306 in synthesize_bpf_prog_name (buf=3D0x5555563305b=
+0 "bpf_prog_", size=3D512, info=3D0x55555664e1d0, btf=3D0x55555637ad40,
+>       sub_id=3D0) at util/bpf-event.c:144
+>   144           name_len +=3D snprintf_hex(buf + name_len, size - name_le=
+n,
+>
+>   (gdb) p *info
+>   $1 =3D {type =3D 68, id =3D 80, tag =3D "\\\000\000\000\214\000\000", j=
+ited_prog_len =3D 152, xlated_prog_len =3D 164,
+>     jited_prog_insns =3D 824633721012, xlated_prog_insns =3D 118541097391=
+2, load_time =3D 1305670058276, created_by_uid =3D 352,
+>     nr_map_ids =3D 364, map_ids =3D 1975684956608, name =3D "\330\001\000=
+\000\350\001\000\000$\002\000\0004\002\000", ifindex =3D 576,
+>     gpl_compatible =3D 0, netns_dev =3D 2697239462496, netns_ino =3D 2834=
+678416000, nr_jited_ksyms =3D 756, nr_jited_func_lens =3D 768,
+>     jited_ksyms =3D 3418793968396, jited_func_lens =3D 3573412791092, btf=
+_id =3D 844, func_info_rec_size =3D 880, func_info =3D 3934190044028,
+>     nr_func_info =3D 928, nr_line_info =3D 952, line_info =3D 42949672969=
+88, jited_line_info =3D 4449586119680, nr_jited_line_info =3D 1060,
+>     line_info_rec_size =3D 1076, jited_line_info_rec_size =3D 1092, nr_pr=
+og_tags =3D 1108, prog_tags =3D 4861902980192,
+>     run_time_ns =3D 5085241279632, run_cnt =3D 5257039971512, recursion_m=
+isses =3D 5360119186644, verified_insns =3D 1264,
+>     attach_btf_obj_id =3D 1288, attach_btf_id =3D 1312}
 
-Suggested-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
----
-Changelog v4..v5:
+Thanks Namhyung!
 
-o Added a nte about the NODE_ID_MSR on AMD platforms.
----
- Documentation/arch/x86/topology.rst | 198 ++++++++++++++++++++++++++++
- 1 file changed, 198 insertions(+)
+So it looks like my "fix" was breaking the tools/perf build feature
+test for btf_dump_type_data_opts opts.emit_strings and that was
+avoiding this code.
 
-diff --git a/Documentation/arch/x86/topology.rst b/Documentation/arch/x86/topology.rst
-index c12837e61bda..4227eba65957 100644
---- a/Documentation/arch/x86/topology.rst
-+++ b/Documentation/arch/x86/topology.rst
-@@ -141,6 +141,204 @@ Thread-related topology information in the kernel:
- 
- 
- 
-+System topology enumeration
-+===========================
-+The topology on x86 systems can be discovered using a combination of vendor
-+specific CPUID leaves introduced specifically to enumerate the processor
-+topology and the cache hierarchy.
-+
-+The CPUID leaves in their preferred order of parsing for each x86 vendor is as
-+follows:
-+
-+1) AMD and Hygon
-+
-+   On AMD and Hygon platforms, the CPUID leaves that enumerate the processor
-+   topology are as follows:
-+
-+   1) CPUID leaf 0x80000026 [Extended CPU Topology] (Core::X86::Cpuid::ExCpuTopology)
-+
-+      The extended CPUID leaf 0x80000026 is the extension of the CPUID leaf 0xB
-+      and provides the topology information of Core, Complex, CCD(Die), and
-+      Socket in each level.
-+
-+      The support for the leaf is expected to be discovered by checking if the
-+      supported extended CPUID level is >= 0x80000026 and then checking if
-+      `LogProcAtThisLevel` in `EBX[15:0]` at a particular level (starting from
-+      0) is non-zero.
-+
-+      The `LevelType` in `ECX[15:8]` at the level provides the detail of the
-+      topology domain that the level describes - Core, Complex, CCD(Die), or
-+      the Socket.
-+
-+      The kernel uses the `CoreMaskWidth` from `EAX[4:0]` to discover the
-+      number of bits that need to be right shifted from the
-+      `ExtendedLocalApicId` in `EDX[31:0]` to get a unique Topology ID for
-+      the topology level. CPUs with the same Topology ID share the resources
-+      at that level.
-+
-+      CPUID leaf 0x80000026 also provides more information regarding the
-+      power and efficiency rankings, and about the core type on AMD
-+      processors with heterogeneous characteristics.
-+
-+      If CPUID leaf 0x80000026 is supported, further parsing is not required.
-+
-+
-+   2) CPUID leaf 0x0000000B [Extended Topology Enumeration] (Core::X86::Cpuid::ExtTopEnum)
-+
-+      The extended CPUID leaf 0x0000000B is the predecessor on the extended
-+      CPUID leaf 0x80000026 and only describes the core, and the socket domains
-+      of the processor topology.
-+
-+      The support for the leaf is expected to be discovered by checking if the
-+      supported CPUID level is >= 0xB and then checking if `EBX[31:0]` at a
-+      particular level (starting from 0) is non-zero.
-+
-+      The `LevelType` in `ECX[15:8]` at the level provides the detail of the
-+      topology domain that the level describes - Thread, or Processor (Socket).
-+
-+      The kernel uses the `CoreMaskWidth` from `EAX[4:0]` to discover the
-+      number of bits that need to be right shifted from the
-+      `ExtendedLocalApicId` in `EDX[31:0]` to get a unique Topology ID for
-+      that topology level. CPUs sharing the Topology ID share the resources
-+      at that level.
-+
-+      If CPUID leaf 0xB is supported, further parsing is not required.
-+
-+
-+   3) CPUID leaf 0x80000008 ECX [Size Identifiers] (Core::X86::Cpuid::SizeId)
-+
-+      If neither the CPUID leaf 0x80000026 or CPUID leaf 0xB is supported, the
-+      number of CPUs on the package is detected using the Size Identifier leaf
-+      0x80000008 ECX.
-+
-+      The support for the leaf is expected to be discovered by checking if the
-+      supported extended CPUID level is >= 0x80000008.
-+
-+      The shifts from the APIC ID for the Socket ID is calculated from the
-+      `ApicIdSize` field in `ECX[15:12]` if it is non-zero.
-+
-+      If `ApicIdSize` is reported to be zero, the shift is calculated as the
-+      order of the `number of threads` calculated from `NC` field in
-+      `ECX[7:0]` which describes the `number of threads - 1` on the package.
-+
-+      Unless Extended APIC ID is supported, the APIC ID used to find the
-+      Socket ID is from the `LocalApicId` field of CPUID leaf 0x00000001
-+      `EBX[31:24]`.
-+
-+      The topology parsing continues to detect if Extended APIC ID is
-+      supported or not.
-+
-+
-+   4) CPUID leaf 0x8000001E [Extended APIC ID, Core Identifiers, Node Identifiers]
-+      (Core::X86::Cpuid::{ExtApicId,CoreId,NodeId})
-+
-+      The support for Extended APIC ID can be detected by checking for the
-+      presence of `TopologyExtensions` in `ECX[22]` of CPUID leaf 0x80000001
-+      [Feature Identifiers] (Core::X86::Cpuid::FeatureExtIdEcx).
-+
-+      If Topology Extensions is supported, the APIC ID from `ExtendedApicId`
-+      from CPUID leaf 0x8000001E `EAX[31:0]` should be preferred over that from
-+      `LocalApicId` field of CPUID leaf 0x00000001 `EBX[31:24]` for topology
-+      enumeration.
-+
-+      On processors of Family 0x17 and above that do not support CPUID leaf
-+      0x80000026 or CPUID leaf 0xB, the shifts from the APIC ID for the Core
-+      ID is calculated using the order of `number of threads per core`
-+      calculated using the `ThreadsPerCore` field in `EBX[15:8]` which
-+      describes `number of threads per core - 1`.
-+
-+      On Processors of Family 0x15, the Core ID from `EBX[7:0]` is used as the
-+      `cu_id` (Compute Unit ID) to detect CPUs that share the compute units.
-+
-+
-+   All AMD and Hygon processors that support the `TopologyExtensions` feature
-+   stores the `NodeId` from the `ECX[7:0]` of CPUID leaf 0x8000001E
-+   (Core::X86::Cpuid::NodeId) as the per-CPU `node_id`. On older processors,
-+   the `node_id` was discovered using MSR_FAM10H_NODE_ID MSR (MSR
-+   0x0xc001_100c). The presence of the NODE_ID MSR was detected by checking
-+   `ECX[19]` of CPUID leaf 0x80000001 [Feature Identifiers]
-+   (Core::X86::Cpuid::FeatureExtIdEcx).
-+
-+
-+2) Intel
-+
-+   On Intel platforms, the CPUID leaves that enumerate the processor
-+   topology are as follows:
-+
-+   1) CPUID leaf 0x1F (V2 Extended Topology Enumeration Leaf)
-+
-+      The CPUID leaf 0x1F is the extension of the CPUID leaf 0xB and provides
-+      the topology information of Core, Module, Tile, Die, DieGrp, and Socket
-+      in each level.
-+
-+      The support for the leaf is expected to be discovered by checking if
-+      the supported CPUID level is >= 0x1F and then `EBX[31:0]` at a
-+      particular level (starting from 0) is non-zero.
-+
-+      The `Domain Type` in `ECX[15:8]` of the sub-leaf provides the detail of
-+      the topology domain that the level describes - Core, Module, Tile, Die,
-+      DieGrp, and Socket.
-+
-+      The kernel uses the value from `EAX[4:0]` to discover the number of
-+      bits that need to be right shifted from the `x2APIC ID` in `EDX[31:0]`
-+      to get a unique Topology ID for the topology level. CPUs with the same
-+      Topology ID share the resources at that level.
-+
-+      If CPUID leaf 0x1F is supported, further parsing is not required.
-+
-+
-+   2) CPUID leaf 0x0000000B (Extended Topology Enumeration Leaf)
-+
-+      The extended CPUID leaf 0x0000000B is the predecessor of the V2 Extended
-+      Topology Enumeration Leaf 0x1F and only describes the core, and the
-+      socket domains of the processor topology.
-+
-+      The support for the leaf is expected to be discovered by checking if the
-+      supported CPUID level is >= 0xB and then checking if `EBX[31:0]` at a
-+      particular level (starting from 0) is non-zero.
-+
-+      CPUID leaf 0x0000000B shares the same layout as CPUID leaf 0x1F and
-+      should be enumerated in a similar manner.
-+
-+      If CPUID leaf 0xB is supported, further parsing is not required.
-+
-+
-+   3) CPUID leaf 0x00000004 (Deterministic Cache Parameters Leaf)
-+
-+      On Intel processors that support neither CPUID leaf 0x1F, nor CPUID leaf
-+      0xB, the shifts for the SMT domains is calculated using the number of
-+      CPUs sharing the L1 cache.
-+
-+      Processors that feature Hyper-Threading is detected using `EDX[28]` of
-+      CPUID leaf 0x1 (Basic CPUID Information).
-+
-+      The order of `Maximum number of addressable IDs for logical processors
-+      sharing this cache` from `EAX[25:14]` of level-0 of CPUID 0x4 provides
-+      the shifts from the APIC ID required to compute the Core ID.
-+
-+      The APIC ID and Package information is computed using the data from
-+      CPUID leaf 0x1.
-+
-+
-+   4) CPUID leaf 0x00000001 (Basic CPUID Information)
-+
-+      The mask and shifts to derive the Physical Package (socket) ID is
-+      computed using the `Maximum number of addressable IDs for logical
-+      processors in this physical package` from `EBX[23:16]` of CPUID leaf
-+      0x1.
-+
-+     The APIC ID on the legacy platforms is derived from the `Initial APIC
-+     ID` field from `EBX[31:24]` of CPUID leaf 0x1.
-+
-+
-+3) Centaur and Zhaoxin
-+
-+   Similar to Intel, Centaur and Zhaoxin use a combination of CPUID leaf
-+   0x00000004 (Deterministic Cache Parameters Leaf) and CPUID leaf 0x00000001
-+   (Basic CPUID Information) to derive the topology information.
-+
-+
-+
- System topology examples
- ========================
- 
--- 
-2.34.1
+Having terminal 1 run perf trace is going to be loading/unloading a
+BPF program for system call augmentation. This must be creating the
+race condition that is causing perf record to segv when it is
+inspecting the bpf_prog_info.
 
+The cast in:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/tools/perf/util/bpf-event.c#n135
+```
+static int synthesize_bpf_prog_name(char *buf, int size,
+    struct bpf_prog_info *info,
+    struct btf *btf,
+    u32 sub_id)
+{
+u8 (*prog_tags)[BPF_TAG_SIZE] =3D (void *)(uintptr_t)(info->prog_tags);
+```
+looks concerning given the bad address comes from:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/tools/perf/util/bpf-event.c#n144
+```
+name_len +=3D snprintf_hex(buf + name_len, size - name_len,
+prog_tags[sub_id], BPF_TAG_SIZE);
+```
+Checking git blame this code has existed since 2019, commit
+7b612e291a5a ("perf tools: Synthesize PERF_RECORD_* for loaded BPF
+programs"):
+http://lkml.kernel.org/r/20190117161521.1341602-8-songliubraving@fb.com
+it was refactored in 2019 to a single memory allocation commit
+("a742258af131 perf bpf: Synthesize bpf events with
+bpf_program__get_prog_info_linear()")
+http://lkml.kernel.org/r/20190312053051.2690567-5-songliubraving@fb.com
+
+There seems like a potential race here:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/tools/perf/util/bpf-utils.c#n123
+```
+/* step 1: get array dimensions */
+err =3D bpf_obj_get_info_by_fd(fd, &info, &info_len);
+```
+and later:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/tools/perf/util/bpf-utils.c#n185
+```
+/* step 5: call syscall again to get required arrays */
+err =3D bpf_obj_get_info_by_fd(fd, &info_linear->info, &info_len);
+```
+There's a verification step that looks to cover issues with the race.
+I thought making those warnings fatal may help, but no:
+```
+--- a/tools/perf/util/bpf-utils.c
++++ b/tools/perf/util/bpf-utils.c
+@@ -202,14 +202,20 @@ get_bpf_prog_info_linear(int fd, __u64 arrays)
+                v1 =3D bpf_prog_info_read_offset_u32(&info, desc->count_off=
+set);
+                v2 =3D bpf_prog_info_read_offset_u32(&info_linear->info,
+                                                   desc->count_offset);
+-               if (v1 !=3D v2)
++               if (v1 !=3D v2) {
+                        pr_warning("%s: mismatch in element count\n", __fun=
+c__);
++                       free(info_linear);
++                       return ERR_PTR(-EFAULT);
++               }
+
+                v1 =3D bpf_prog_info_read_offset_u32(&info, desc->size_offs=
+et);
+                v2 =3D bpf_prog_info_read_offset_u32(&info_linear->info,
+                                                   desc->size_offset);
+-               if (v1 !=3D v2)
++               if (v1 !=3D v2) {
+                        pr_warning("%s: mismatch in rec size\n", __func__);
++                       free(info_linear);
++                       return ERR_PTR(-EFAULT);
++               }
+        }
+
+        /* step 7: update info_len and data_len */
+```
+
+Fwiw, the address of "data=3D0x40" in the stack trace makes it looks
+like an offset has been applied to NULL. 0x40 is 64 which corresponds
+with "name" info a bpf_prog_info by way of pahole:
+```
+struct bpf_prog_info {
+        __u32                      type;                 /*     0     4 */
+        /* --- cacheline 1 boundary (64 bytes) --- */
+...
+        char                       name[16];             /*    64    16 */
+```
+
+I feel we're relatively close to discovering a proper fix for the
+issue, if others could lend a hand as I'm not overly familiar with the
+BPF code. I'm wondering if the second bpf_obj_get_info_by_fd could be
+filling in offsets relative to NULL rather than returning an error,
+but this would be (I believe) a kernel issue :-(
+
+Thanks,
+Ian
 
