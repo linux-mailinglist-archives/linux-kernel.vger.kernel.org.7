@@ -1,358 +1,330 @@
-Return-Path: <linux-kernel+bounces-794815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC18B3E790
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:44:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2007B3E795
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:44:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A3F4468B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5823A1A83E1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAA234A30D;
-	Mon,  1 Sep 2025 14:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0904B340D99;
+	Mon,  1 Sep 2025 14:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubZ3qbo5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NULceRIE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D99A341AD6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7F4342C83;
 	Mon,  1 Sep 2025 14:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756737758; cv=none; b=FLyLtpwkT+8KjV+ZokDtFhjA81kb1JCuZ9kSUeJgtscoqV1SP53TLukWU9mSYPQ+D2Vhc7BlUxnWQsxuTw5z6G2AuNNdk7jwXAy24/eFDZxMua+25VPvAnrH+cj02WW3GA7zHvHqRYL20POUVgVr78+i/ihpFeHWusmubOAMY9E=
+	t=1756737758; cv=none; b=DwJlqoccGiicJccPwXr1GTduvF8Q1k5i2x3tE+NQ4pcKe+eOEe20fv6rqvbUMVVC1Gr4noEgXr0Ppd7K9QZezKOAUml9T1T0oV0KKPgzChqjq5cQkkOhY2v5jAyHSuJPGAL19ECenr32okFRSt8k3QoLyf4DYJ3EBv0FE2TU4oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756737758; c=relaxed/simple;
-	bh=ns7DJA82/e6Ob35Yqd44aeEBJ4lyhEECsaqn+k5IhSQ=;
+	bh=Cb16z1/0cG8uXX9y27PAi61cRM0Ept/VZmAGlenSmQY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J1gZKTAkApKLimveudrvux6TaOkgnQ0BOc5YZ4DFuPW+PQO3TOxb8ThQqE42WYzFDe8eGo61JDcGkTTPBn0cPHcDSNg3cqaZAPWlngcR7Zt6b3/vFR15e0DhYHsmA515P3RZ5i4JbVWRRNNNvgMdtkppqWvt+sPYOFDrYvPhLhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubZ3qbo5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E87C113D0;
+	 MIME-Version:Content-Type; b=ooX83Ld3DJZM2efKJAWPMvnKJfxI7g4VFOAZkfSIu1nfwJwHX7gvBoHIsCZ43EpvrVxQBeNcXdw0zILNFCNae59GKfd0kVOdXrJ2Uz+o+M8rSl+J2e8HwY3CbAMM6WZwHhFw9XDeQeh7T20Zn+MaMGJpN4r941N77mQGYHTOIoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NULceRIE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45BEC19421;
 	Mon,  1 Sep 2025 14:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756737757;
-	bh=ns7DJA82/e6Ob35Yqd44aeEBJ4lyhEECsaqn+k5IhSQ=;
+	bh=Cb16z1/0cG8uXX9y27PAi61cRM0Ept/VZmAGlenSmQY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ubZ3qbo5z5SP2vyUF9TCH9Q7+9EQOWnWjhsKFOX6T4PFczT2HOuFHIMAox3brRnlN
-	 gkFzi//l063OrM5v/M02Q1kaHXz8Pd5eDY0vA+H+k2d9PtpCPZ3+jOpIa41ueZtYBw
-	 YJSHoqoTXQVqqG/K4WRsbGBqH7hhDjMyhcD9SDooM0LBTER+66xED5fJzKCbYUeOLx
-	 NZLN6d6R8pZdhZvmjigL3/LBOvHrXu+avhcej7Si4LbMwBnjbHNHYtnV7bfFwzqPxq
-	 7J6Qz2FT6t5RwcdnrbZ6prH+6tP/Dx4/MOXuhjmpfFf+ZbmSl4a9JzY0+5zdsrYDyI
-	 0qRvUPQ2uU73g==
+	b=NULceRIE2ddUpVqust0BYHUM4Lpz7zKbgYK8/oqyt8XbRKI7iQb4bS+wQufb9W+Og
+	 /E/2JGHhMbMi0GtKM3sB3wrQrH5BqYFBuqZoew+Az/mC3jUDtx4aq9/JREftzncgfj
+	 dfZLuMZye2uUs/cHSKJsGVmNZXw9OgPRM0DbK74UT8QS0Z7bSJWlff78JLO+oGYSv/
+	 ykUmQ80Li2wi9kyl/YwJbM1J3BbChWTR716F4y9zL9BmiKusHClaXMwUPoT7Pkbmtn
+	 qoJpc0d50Unl1L2u0Mczq8qYMmR3zxlaQvK7seDNw0hd6UBjcHtdndZMsm9Wypr2YN
+	 ahRxA4s9zlLoA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ut5jv-00000003G40-3c5y;
+	id 1ut5jv-00000003G44-3jxE;
 	Mon, 01 Sep 2025 16:42:35 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Masahiro Yamada <mchehab+huawei@kernel.org>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Miguel Ojeda <mchehab+huawei@kernel.org>,
-	Nathan Chancellor <mchehab+huawei@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	linux-kbuild@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 14/15] docs: add support to build manpages from kerneldoc
-  output
-Date: Mon,  1 Sep 2025 16:42:30 +0200
-Message-ID: <ac7d1293de2ae907abdfbe30f10e974c2321503a.1756737440.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v3 15/15] tools: kernel-doc: add a see also section at man
+  pages
+Date: Mon,  1 Sep 2025 16:42:31 +0200
+Message-ID: <2c5ede8d8bf6ea87e82555eb072eb64c1cf7afab.1756737440.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1756737440.git.mchehab+huawei@kernel.org>
 References: <cover.1756737440.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Generating man files currently requires running a separate=0D
-script. The target also doesn't appear at the docs Makefile.=0D
-=0D
-Add support for mandocs at the Makefile, adding the build=0D
-logic inside sphinx-build-wrapper, updating documentation=0D
-and dropping the ancillary script.=0D
-=0D
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>=0D
----=0D
- Documentation/Makefile                 |  3 +-=0D
- Documentation/doc-guide/kernel-doc.rst | 29 ++++-----=0D
- Makefile                               |  2 +-=0D
- scripts/split-man.pl                   | 28 ---------=0D
- tools/docs/sphinx-build-wrapper        | 81 ++++++++++++++++++++++++--=0D
- 5 files changed, 95 insertions(+), 48 deletions(-)=0D
- delete mode 100755 scripts/split-man.pl=0D
-=0D
-diff --git a/Documentation/Makefile b/Documentation/Makefile=0D
-index 3e1cb44a5fbb..22e39e5ed07d 100644=0D
---- a/Documentation/Makefile=0D
-+++ b/Documentation/Makefile=0D
-@@ -53,7 +53,7 @@ ifeq ($(HAVE_SPHINX),0)=0D
- else # HAVE_SPHINX=0D
- =0D
- # Common documentation targets=0D
--infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:=0D
-+mandocs infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckd=
-ocs:=0D
- 	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
- 	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \=0D
- 		--sphinxdirs=3D"$(SPHINXDIRS)" --conf=3D$(SPHINX_CONF) \=0D
-@@ -104,6 +104,7 @@ dochelp:=0D
- 	@echo  '  htmldocs        - HTML'=0D
- 	@echo  '  texinfodocs     - Texinfo'=0D
- 	@echo  '  infodocs        - Info'=0D
-+	@echo  '  mandocs         - Man pages'=0D
- 	@echo  '  latexdocs       - LaTeX'=0D
- 	@echo  '  pdfdocs         - PDF'=0D
- 	@echo  '  epubdocs        - EPUB'=0D
-diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-gui=
-de/kernel-doc.rst=0D
-index af9697e60165..4370cc8fbcf5 100644=0D
---- a/Documentation/doc-guide/kernel-doc.rst=0D
-+++ b/Documentation/doc-guide/kernel-doc.rst=0D
-@@ -579,20 +579,23 @@ source.=0D
- How to use kernel-doc to generate man pages=0D
- -------------------------------------------=0D
- =0D
--If you just want to use kernel-doc to generate man pages you can do this=0D
--from the kernel git tree::=0D
-+To generate man pages for all files that contain kernel-doc markups, run::=
-=0D
- =0D
--  $ scripts/kernel-doc -man \=0D
--    $(git grep -l '/\*\*' -- :^Documentation :^tools) \=0D
--    | scripts/split-man.pl /tmp/man=0D
-+  $ make mandocs=0D
- =0D
--Some older versions of git do not support some of the variants of syntax f=
-or=0D
--path exclusion.  One of the following commands may work for those versions=
-::=0D
-+Or calling ``script-build-wrapper`` directly::=0D
- =0D
--  $ scripts/kernel-doc -man \=0D
--    $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \=0D
--    | scripts/split-man.pl /tmp/man=0D
-+  $ ./tools/docs/sphinx-build-wrapper mandocs=0D
- =0D
--  $ scripts/kernel-doc -man \=0D
--    $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools"=
-) \=0D
--    | scripts/split-man.pl /tmp/man=0D
-+The output will be at ``/man`` directory inside the output directory=0D
-+(by default: ``Documentation/output``).=0D
-+=0D
-+Optionally, it is possible to generate a partial set of man pages by=0D
-+using SPHINXDIRS:=0D
-+=0D
-+  $ make SPHINXDIRS=3Ddriver-api/media mandocs=0D
-+=0D
-+.. note::=0D
-+=0D
-+   When SPHINXDIRS=3D{subdir} is used, it will only generate man pages for=
-=0D
-+   the files explicitly inside a ``Documentation/{subdir}/.../*.rst`` file=
-.=0D
-diff --git a/Makefile b/Makefile=0D
-index 6bfe776bf3c5..9bd44afeda26 100644=0D
---- a/Makefile=0D
-+++ b/Makefile=0D
-@@ -1800,7 +1800,7 @@ $(help-board-dirs): help-%:=0D
- # Documentation targets=0D
- # ------------------------------------------------------------------------=
----=0D
- DOC_TARGETS :=3D xmldocs latexdocs pdfdocs htmldocs epubdocs cleandocs \=0D
--	       linkcheckdocs dochelp refcheckdocs texinfodocs infodocs=0D
-+	       linkcheckdocs dochelp refcheckdocs texinfodocs infodocs mandocs=0D
- PHONY +=3D $(DOC_TARGETS)=0D
- $(DOC_TARGETS):=0D
- 	$(Q)$(MAKE) $(build)=3DDocumentation $@=0D
-diff --git a/scripts/split-man.pl b/scripts/split-man.pl=0D
-deleted file mode 100755=0D
-index 96bd99dc977a..000000000000=0D
---- a/scripts/split-man.pl=0D
-+++ /dev/null=0D
-@@ -1,28 +0,0 @@=0D
--#!/usr/bin/env perl=0D
--# SPDX-License-Identifier: GPL-2.0=0D
--#=0D
--# Author: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>=0D
--#=0D
--# Produce manpages from kernel-doc.=0D
--# See Documentation/doc-guide/kernel-doc.rst for instructions=0D
--=0D
--if ($#ARGV < 0) {=0D
--   die "where do I put the results?\n";=0D
--}=0D
--=0D
--mkdir $ARGV[0],0777;=0D
--$state =3D 0;=0D
--while (<STDIN>) {=0D
--    if (/^\.TH \"[^\"]*\" 9 \"([^\"]*)\"/) {=0D
--	if ($state =3D=3D 1) { close OUT }=0D
--	$state =3D 1;=0D
--	$fn =3D "$ARGV[0]/$1.9";=0D
--	print STDERR "Creating $fn\n";=0D
--	open OUT, ">$fn" or die "can't open $fn: $!\n";=0D
--	print OUT $_;=0D
--    } elsif ($state !=3D 0) {=0D
--	print OUT $_;=0D
--    }=0D
--}=0D
--=0D
--close OUT;=0D
-diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrap=
-per=0D
-index c884022ad733..932b1b675274 100755=0D
---- a/tools/docs/sphinx-build-wrapper=0D
-+++ b/tools/docs/sphinx-build-wrapper=0D
-@@ -47,6 +47,7 @@ the newer version.=0D
- import argparse=0D
- import locale=0D
- import os=0D
-+import re=0D
- import shlex=0D
- import shutil=0D
- import subprocess=0D
-@@ -55,6 +56,7 @@ import sys=0D
- from concurrent import futures=0D
- =0D
- from lib.python_version import PythonVersion=0D
-+from glob import glob=0D
- =0D
- LIB_DIR =3D "../../scripts/lib"=0D
- SRC_DIR =3D os.path.dirname(os.path.realpath(__file__))=0D
-@@ -77,6 +79,7 @@ TARGETS =3D {=0D
-     "epubdocs":      { "builder": "epub",    "out_dir": "epub" },=0D
-     "texinfodocs":   { "builder": "texinfo", "out_dir": "texinfo" },=0D
-     "infodocs":      { "builder": "texinfo", "out_dir": "texinfo" },=0D
-+    "mandocs":       { "builder": "man",     "out_dir": "man" },=0D
-     "latexdocs":     { "builder": "latex",   "out_dir": "latex" },=0D
-     "pdfdocs":       { "builder": "latex",   "out_dir": "latex" },=0D
-     "xmldocs":       { "builder": "xml",     "out_dir": "xml" },=0D
-@@ -455,6 +458,71 @@ class SphinxBuilder:=0D
-             except subprocess.CalledProcessError as e:=0D
-                 sys.exit(f"Error generating info docs: {e}")=0D
- =0D
-+    def handle_man(self, kerneldoc, docs_dir, src_dir, output_dir):=0D
-+        """=0D
-+        Create man pages from kernel-doc output=0D
-+        """=0D
-+=0D
-+        re_kernel_doc =3D re.compile(r"^\.\.\s+kernel-doc::\s*(\S+)")=0D
-+        re_man =3D re.compile(r'^\.TH "[^"]*" (\d+) "([^"]*)"')=0D
-+=0D
-+        if docs_dir =3D=3D src_dir:=0D
-+            #=0D
-+            # Pick the entire set of kernel-doc markups from the entire tr=
-ee=0D
-+            #=0D
-+            kdoc_files =3D set([self.srctree])=0D
-+        else:=0D
-+            kdoc_files =3D set()=0D
-+=0D
-+            for fname in glob(os.path.join(src_dir, "**"), recursive=3DTru=
-e):=0D
-+                if os.path.isfile(fname) and fname.endswith(".rst"):=0D
-+                    with open(fname, "r", encoding=3D"utf-8") as in_fp:=0D
-+                        data =3D in_fp.read()=0D
-+=0D
-+                    for line in data.split("\n"):=0D
-+                        match =3D re_kernel_doc.match(line)=0D
-+                        if match:=0D
-+                            if os.path.isfile(match.group(1)):=0D
-+                                kdoc_files.add(match.group(1))=0D
-+=0D
-+        if not kdoc_files:=0D
-+                sys.exit(f"Directory {src_dir} doesn't contain kernel-doc =
-tags")=0D
-+=0D
-+        cmd =3D [ kerneldoc, "-m" ] + sorted(kdoc_files)=0D
-+        try:=0D
-+            if self.verbose:=0D
-+                print(" ".join(cmd))=0D
-+=0D
-+            result =3D subprocess.run(cmd, stdout=3Dsubprocess.PIPE, text=
-=3D True)=0D
-+=0D
-+            if result.returncode:=0D
-+                print(f"Warning: kernel-doc returned {result.returncode} w=
-arnings")=0D
-+=0D
-+        except (OSError, ValueError, subprocess.SubprocessError) as e:=0D
-+            sys.exit(f"Failed to create man pages for {src_dir}: {repr(e)}=
-")=0D
-+=0D
-+        fp =3D None=0D
-+        try:=0D
-+            for line in result.stdout.split("\n"):=0D
-+                match =3D re_man.match(line)=0D
-+                if not match:=0D
-+                    if fp:=0D
-+                        fp.write(line + '\n')=0D
-+                    continue=0D
-+=0D
-+                if fp:=0D
-+                    fp.close()=0D
-+=0D
-+                fname =3D f"{output_dir}/{match.group(2)}.{match.group(1)}=
-"=0D
-+=0D
-+                if self.verbose:=0D
-+                    print(f"Creating {fname}")=0D
-+                fp =3D open(fname, "w", encoding=3D"utf-8")=0D
-+                fp.write(line + '\n')=0D
-+        finally:=0D
-+            if fp:=0D
-+                fp.close()=0D
-+=0D
-     def cleandocs(self, builder):           # pylint: disable=3DW0613=0D
-         """Remove documentation output directory"""=0D
-         shutil.rmtree(self.builddir, ignore_errors=3DTrue)=0D
-@@ -483,7 +551,7 @@ class SphinxBuilder:=0D
-         # Other targets require sphinx-build, so check if it exists=0D
-         #=0D
-         sphinxbuild =3D shutil.which(self.sphinxbuild, path=3Dself.env["PA=
-TH"])=0D
--        if not sphinxbuild:=0D
-+        if not sphinxbuild and target !=3D "mandocs":=0D
-             sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")=0D
- =0D
-         if builder =3D=3D "latex":=0D
-@@ -572,10 +640,13 @@ class SphinxBuilder:=0D
-                 output_dir,=0D
-             ]=0D
- =0D
--            try:=0D
--                self.run_sphinx(sphinxbuild, build_args, env=3Dself.env)=0D
--            except (OSError, ValueError, subprocess.SubprocessError) as e:=
-=0D
--                sys.exit(f"Build failed: {repr(e)}")=0D
-+            if target =3D=3D "mandocs":=0D
-+                self.handle_man(kerneldoc, docs_dir, src_dir, output_dir)=
-=0D
-+            else:=0D
-+                try:=0D
-+                    self.run_sphinx(sphinxbuild, build_args, env=3Dself.en=
-v)=0D
-+                except (OSError, ValueError, subprocess.SubprocessError) a=
-s e:=0D
-+                    sys.exit(f"Build failed: {repr(e)}")=0D
- =0D
-             #=0D
-             # Ensure that each html/epub output will have needed static fi=
-les=0D
--- =0D
-2.51.0=0D
-=0D
+V2hpbGUgY3Jvc3MtcmVmZXJlbmNlcyBhcmUgY29tcGxleCwgYXMgcmVsYXRlZCBvbmVzIGNhbiB=
+i=0D
+ZSBvbgpkaWZmZXJlbnQgZmlsZXMsIHdlIGNhbiBhdCBsZWFzdCBjb3JyZWxhdGUgdGhlIG9uZXM=
+g=0D
+dGhhdCBiZWxvbmcKdG8gdGhlIHNhbWUgZmlsZSwgYWRkaW5nIGEgU0VFIEFMU08gc2VjdGlvbiB=
+m=0D
+b3IgdGhlbS4KClRoZSByZXN1bHQgaXMgbm90IGJhZC4gU2VlIGZvciBpbnN0YW5jZToKCgkkIHR=
+v=0D
+b2xzL2RvY3Mvc3BoaW54LWJ1aWxkLXdyYXBwZXIgLS1zcGhpbnhkaXJzIGRyaXZlci1hcGkvbWV=
+k=0D
+aWEgLS0gbWFuZG9jcwoJJCBtYW4gRG9jdW1lbnRhdGlvbi9vdXRwdXQvZHJpdmVyLWFwaS9tYW4=
+v=0D
+ZWRhY19wY2lfYWRkX2RldmljZS45CgoJZWRhY19wY2lfYWRkX2RldmljZSg5KSAgS2VybmVsIEh=
+h=0D
+Y2tlcidzIE1hbnVhbCAgZWRhY19wY2lfYWRkX2RldmljZSg5KQoKCU5BTUUKCSAgICAgICBlZGF=
+j=0D
+X3BjaV9hZGRfZGV2aWNlICAtIEluc2VydCB0aGUgJ2VkYWNfZGV2JyBzdHJ1Y3R1cmUgaW50byB=
+0=0D
+aGUKCSAgICAgICBlZGFjX3BjaSBnbG9iYWwgbGlzdCBhbmQgY3JlYXRlIHN5c2ZzIGVudHJpZXM=
+g=0D
+IGFzc29jaWF0ZWQgIHdpdGgKCSAgICAgICBlZGFjX3BjaSBzdHJ1Y3R1cmUuCgoJU1lOT1BTSVM=
+K=0D
+CSAgICAgICBpbnQgIGVkYWNfcGNpX2FkZF9kZXZpY2UgIChzdHJ1Y3QgIGVkYWNfcGNpX2N0bF9=
+p=0D
+bmZvICpwY2kgLCBpbnQKCSAgICAgICBlZGFjX2lkeCApOwoKCUFSR1VNRU5UUwoJICAgICAgIHB=
+j=0D
+aSAgICAgICAgIHBvaW50ZXIgdG8gdGhlIGVkYWNfZGV2aWNlIHN0cnVjdHVyZSB0byBiZSBhZGR=
+l=0D
+ZCB0bwoJICAgICAgICAgICAgICAgICAgIHRoZSBsaXN0CgoJICAgICAgIGVkYWNfaWR4ICAgIEE=
+g=0D
+dW5pcXVlIG51bWVyaWMgaWRlbnRpZmllciB0byBiZSBhc3NpZ25lZCB0byB0aGUKCglSRVRVUk4=
+K=0D
+CSAgICAgICAwIG9uIFN1Y2Nlc3MsIG9yIGFuIGVycm9yIGNvZGUgb24gZmFpbHVyZQoKCVNFRSB=
+B=0D
+TFNPCgkgICAgICAgZWRhY19wY2lfYWxsb2NfY3RsX2luZm8oOSksICAgICAgICAgIGVkYWNfcGN=
+p=0D
+X2ZyZWVfY3RsX2luZm8oOSksCgkgICAgICAgZWRhY19wY2lfYWxsb2NfaW5kZXgoOSksICBlZGF=
+j=0D
+X3BjaV9kZWxfZGV2aWNlKDkpLCBlZGFjX3BjaV9jcmXigJAKCSAgICAgICBhdGVfZ2VuZXJpY19=
+j=0D
+dGwoOSksICAgICAgICAgICAgZWRhY19wY2lfcmVsZWFzZV9nZW5lcmljX2N0bCg5KSwKCSAgICA=
+g=0D
+ICBlZGFjX3BjaV9jcmVhdGVfc3lzZnMoOSksIGVkYWNfcGNpX3JlbW92ZV9zeXNmcyg5KQoKCUF=
+1=0D
+Z3VzdCAyMDI1ICAgICAgICAgICAgICAgZWRhY19wY2lfYWRkX2RldmljZSAgIGVkYWNfcGNpX2F=
+k=0D
+ZF9kZXZpY2UoOSkKClNpZ25lZC1vZmYtYnk6IE1hdXJvIENhcnZhbGhvIENoZWhhYiA8bWNoZWh=
+h=0D
+YitodWF3ZWlAa2VybmVsLm9yZz4KLS0tCiBzY3JpcHRzL2xpYi9rZG9jL2tkb2NfZmlsZXMucHk=
+g=0D
+IHwgIDUgKy0KIHNjcmlwdHMvbGliL2tkb2Mva2RvY19vdXRwdXQucHkgfCA4NCArKysrKysrKys=
+r=0D
+KysrKysrKysrKysrKysrKysrKysrLS0KIDIgZmlsZXMgY2hhbmdlZCwgODMgaW5zZXJ0aW9ucyg=
+r=0D
+KSwgNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9zY3JpcHRzL2xpYi9rZG9jL2tkb2NfZml=
+s=0D
+ZXMucHkgYi9zY3JpcHRzL2xpYi9rZG9jL2tkb2NfZmlsZXMucHkKaW5kZXggOWUwOWI0NWIwMmZ=
+h=0D
+Li4wNjFjMDMzZjMyZGEgMTAwNjQ0Ci0tLSBhL3NjcmlwdHMvbGliL2tkb2Mva2RvY19maWxlcy5=
+w=0D
+eQorKysgYi9zY3JpcHRzL2xpYi9rZG9jL2tkb2NfZmlsZXMucHkKQEAgLTI3NSw3ICsyNzUsMTA=
+g=0D
+QEAgY2xhc3MgS2VybmVsRmlsZXMoKToKICAgICAgICAgICAgICAgICBzZWxmLmNvbmZpZy5sb2c=
+u=0D
+d2FybmluZygiTm8ga2VybmVsLWRvYyBmb3IgZmlsZSAlcyIsIGZuYW1lKQogICAgICAgICAgICA=
+g=0D
+ICAgIGNvbnRpbnVlCiAKLSAgICAgICAgICAgIGZvciBhcmcgaW4gc2VsZi5yZXN1bHRzW2ZuYW1=
+l=0D
+XToKKyAgICAgICAgICAgIHN5bWJvbHMgPSBzZWxmLnJlc3VsdHNbZm5hbWVdCisgICAgICAgICA=
+g=0D
+ICBzZWxmLm91dF9zdHlsZS5zZXRfc3ltYm9scyhzeW1ib2xzKQorCisgICAgICAgICAgICBmb3I=
+g=0D
+YXJnIGluIHN5bWJvbHM6CiAgICAgICAgICAgICAgICAgbSA9IHNlbGYub3V0X21zZyhmbmFtZSw=
+g=0D
+YXJnLm5hbWUsIGFyZykKIAogICAgICAgICAgICAgICAgIGlmIG0gaXMgTm9uZToKZGlmZiAtLWd=
+p=0D
+dCBhL3NjcmlwdHMvbGliL2tkb2Mva2RvY19vdXRwdXQucHkgYi9zY3JpcHRzL2xpYi9rZG9jL2t=
+k=0D
+b2Nfb3V0cHV0LnB5CmluZGV4IGVhODkxNDUzN2JhMC4uMWVjYTlhOTE4NTU4IDEwMDY0NAotLS0=
+g=0D
+YS9zY3JpcHRzL2xpYi9rZG9jL2tkb2Nfb3V0cHV0LnB5CisrKyBiL3NjcmlwdHMvbGliL2tkb2M=
+v=0D
+a2RvY19vdXRwdXQucHkKQEAgLTIxNSw2ICsyMTUsOSBAQCBjbGFzcyBPdXRwdXRGb3JtYXQ6CiA=
+K=0D
+ICAgICAjIFZpcnR1YWwgbWV0aG9kcyB0byBiZSBvdmVycmlkZGVuIGJ5IGluaGVyaXRlZCBjbGF=
+z=0D
+c2VzCiAgICAgIyBBdCB0aGUgYmFzZSBjbGFzcywgdGhvc2UgZG8gbm90aGluZy4KKyAgICBkZWY=
+g=0D
+c2V0X3N5bWJvbHMoc2VsZiwgc3ltYm9scyk6CisgICAgICAgICIiIkdldCBhIGxpc3Qgb2YgYWx=
+s=0D
+IHN5bWJvbHMgZnJvbSBrZXJuZWxfZG9jIiIiCisKICAgICBkZWYgb3V0X2RvYyhzZWxmLCBmbmF=
+t=0D
+ZSwgbmFtZSwgYXJncyk6CiAgICAgICAgICIiIk91dHB1dHMgYSBET0MgYmxvY2siIiIKIApAQCA=
+t=0D
+NTc3LDYgKzU4MCw3IEBAIGNsYXNzIE1hbkZvcm1hdChPdXRwdXRGb3JtYXQpOgogCiAgICAgICA=
+g=0D
+IHN1cGVyKCkuX19pbml0X18oKQogICAgICAgICBzZWxmLm1vZHVsZW5hbWUgPSBtb2R1bGVuYW1=
+l=0D
+CisgICAgICAgIHNlbGYuc3ltYm9scyA9IFtdCiAKICAgICAgICAgZHQgPSBOb25lCiAgICAgICA=
+g=0D
+IHRzdGFtcCA9IG9zLmVudmlyb24uZ2V0KCJLQlVJTERfQlVJTERfVElNRVNUQU1QIikKQEAgLTU=
+5=0D
+Myw2ICs1OTcsNjggQEAgY2xhc3MgTWFuRm9ybWF0KE91dHB1dEZvcm1hdCk6CiAKICAgICAgICA=
+g=0D
+c2VsZi5tYW5fZGF0ZSA9IGR0LnN0cmZ0aW1lKCIlQiAlWSIpCiAKKyAgICBkZWYgYXJnX25hbWU=
+o=0D
+c2VsZiwgYXJncywgbmFtZSk6CisgICAgICAgICIiIgorICAgICAgICBSZXR1cm4gdGhlIG5hbWU=
+g=0D
+dGhhdCB3aWxsIGJlIHVzZWQgZm9yIHRoZSBtYW4gcGFnZS4KKworICAgICAgICBBcyB3ZSBtYXk=
+g=0D
+aGF2ZSB0aGUgc2FtZSBuYW1lIG9uIGRpZmZlcmVudCBuYW1lc3BhY2VzLAorICAgICAgICBwcmV=
+w=0D
+ZW5kIHRoZSBkYXRhIHR5cGUgZm9yIGFsbCB0eXBlcyBleGNlcHQgZnVuY3Rpb25zIGFuZCB0eXB=
+l=0D
+ZGVmcy4KKworICAgICAgICBUaGUgZG9jIHNlY3Rpb24gaXMgc3BlY2lhbDogaXQgdXNlcyB0aGU=
+g=0D
+bW9kdWxlbmFtZS4KKyAgICAgICAgIiIiCisKKyAgICAgICAgZHR5cGUgPSBhcmdzLnR5cGUKKwo=
+r=0D
+ICAgICAgICBpZiBkdHlwZSA9PSAiZG9jIjoKKyAgICAgICAgICAgIHJldHVybiBzZWxmLm1vZHV=
+s=0D
+ZW5hbWUKKworICAgICAgICBpZiBkdHlwZSBpbiBbImZ1bmN0aW9uIiwgInR5cGVkZWYiXToKKyA=
+g=0D
+ICAgICAgICAgIHJldHVybiBuYW1lCisKKyAgICAgICAgcmV0dXJuIGYie2R0eXBlfSB7bmFtZX0=
+i=0D
+CisKKyAgICBkZWYgc2V0X3N5bWJvbHMoc2VsZiwgc3ltYm9scyk6CisgICAgICAgICIiIgorICA=
+g=0D
+ICAgICBHZXQgYSBsaXN0IG9mIGFsbCBzeW1ib2xzIGZyb20ga2VybmVsX2RvYy4KKworICAgICA=
+g=0D
+ICBNYW4gcGFnZXMgd2lsbCB1c2VzIGl0IHRvIGFkZCBhIFNFRSBBTFNPIHNlY3Rpb24gd2l0aCB=
+v=0D
+dGhlcgorICAgICAgICBzeW1ib2xzIGF0IHRoZSBzYW1lIGZpbGUuCisgICAgICAgICIiIgorICA=
+g=0D
+ICAgICBzZWxmLnN5bWJvbHMgPSBzeW1ib2xzCisKKyAgICBkZWYgb3V0X3RhaWwoc2VsZiwgZm5=
+h=0D
+bWUsIG5hbWUsIGFyZ3MpOgorICAgICAgICAiIiJBZGRzIGEgdGFpbCBmb3IgYWxsIG1hbiBwYWd=
+l=0D
+cyIiIgorCisgICAgICAgICMgU0VFIEFMU08gc2VjdGlvbgorICAgICAgICBpZiBsZW4oc2VsZi5=
+z=0D
+eW1ib2xzKSA+PSAyOgorICAgICAgICAgICAgY3VyX25hbWUgPSBzZWxmLmFyZ19uYW1lKGFyZ3M=
+s=0D
+IG5hbWUpCisKKyAgICAgICAgICAgIHNlbGYuZGF0YSArPSBmJy5TSCAiU0VFIEFMU08iJyArICJ=
+c=0D
+bi5QUFxuIgorICAgICAgICAgICAgcmVsYXRlZCA9IFtdCisgICAgICAgICAgICBmb3IgYXJnIGl=
+u=0D
+IHNlbGYuc3ltYm9sczoKKyAgICAgICAgICAgICAgICBvdXRfbmFtZSA9IHNlbGYuYXJnX25hbWU=
+o=0D
+YXJnLCBhcmcubmFtZSkKKworICAgICAgICAgICAgICAgIGlmIGN1cl9uYW1lID09IG91dF9uYW1=
+l=0D
+OgorICAgICAgICAgICAgICAgICAgICBjb250aW51ZQorCisgICAgICAgICAgICAgICAgcmVsYXR=
+l=0D
+ZC5hcHBlbmQoZiJcXGZCe291dF9uYW1lfVxcZlIoOSkiKQorCisgICAgICAgICAgICBzZWxmLmR=
+h=0D
+dGEgKz0gIixcbiIuam9pbihyZWxhdGVkKSArICJcbiIKKworICAgICAgICAjIFRPRE86IGRvZXM=
+g=0D
+aXQgbWFrZSBzZW5zZSB0byBhZGQgb3RoZXIgc2VjdGlvbnM/IE1heWJlCisgICAgICAgICMgUkV=
+Q=0D
+T1JUSU5HIElTU1VFUz8gTElDRU5TRT8KKworICAgIGRlZiBtc2coc2VsZiwgZm5hbWUsIG5hbWU=
+s=0D
+IGFyZ3MpOgorICAgICAgICAiIiIKKyAgICAgICAgSGFuZGxlcyBhIHNpbmdsZSBlbnRyeSBmcm9=
+t=0D
+IGtlcm5lbC1kb2MgcGFyc2VyLgorCisgICAgICAgIEFkZCBhIHRhaWwgYXQgdGhlIGVuZCBvZiB=
+t=0D
+YW4gcGFnZXMgb3V0cHV0LgorICAgICAgICAiIiIKKyAgICAgICAgc3VwZXIoKS5tc2coZm5hbWU=
+s=0D
+IG5hbWUsIGFyZ3MpCisgICAgICAgIHNlbGYub3V0X3RhaWwoZm5hbWUsIG5hbWUsIGFyZ3MpCis=
+K=0D
+KyAgICAgICAgcmV0dXJuIHNlbGYuZGF0YQorCiAgICAgZGVmIG91dHB1dF9oaWdobGlnaHQoc2V=
+s=0D
+ZiwgYmxvY2spOgogICAgICAgICAiIiIKICAgICAgICAgT3V0cHV0cyBhIEMgc3ltYm9sIHRoYXQ=
+g=0D
+bWF5IHJlcXVpcmUgYmVpbmcgaGlnaGxpZ2h0ZWQgd2l0aApAQCAtNjE4LDcgKzY4NCw5IEBAIGN=
+s=0D
+YXNzIE1hbkZvcm1hdChPdXRwdXRGb3JtYXQpOgogICAgICAgICBpZiBub3Qgc2VsZi5jaGVja19=
+k=0D
+b2MobmFtZSwgYXJncyk6CiAgICAgICAgICAgICByZXR1cm4KIAotICAgICAgICBzZWxmLmRhdGE=
+g=0D
+Kz0gZicuVEggIntzZWxmLm1vZHVsZW5hbWV9IiA5ICJ7c2VsZi5tb2R1bGVuYW1lfSIgIntzZWx=
+m=0D
+Lm1hbl9kYXRlfSIgIkFQSSBNYW51YWwiIExJTlVYJyArICJcbiIKKyAgICAgICAgb3V0X25hbWU=
+g=0D
+PSBzZWxmLmFyZ19uYW1lKGFyZ3MsIG5hbWUpCisKKyAgICAgICAgc2VsZi5kYXRhICs9IGYnLlR=
+I=0D
+ICJ7c2VsZi5tb2R1bGVuYW1lfSIgOSAie291dF9uYW1lfSIgIntzZWxmLm1hbl9kYXRlfSIgIkF=
+Q=0D
+SSBNYW51YWwiIExJTlVYJyArICJcbiIKIAogICAgICAgICBmb3Igc2VjdGlvbiwgdGV4dCBpbiB=
+h=0D
+cmdzLnNlY3Rpb25zLml0ZW1zKCk6CiAgICAgICAgICAgICBzZWxmLmRhdGEgKz0gZicuU0ggInt=
+z=0D
+ZWN0aW9ufSInICsgIlxuIgpAQCAtNjI3LDcgKzY5NSw5IEBAIGNsYXNzIE1hbkZvcm1hdChPdXR=
+w=0D
+dXRGb3JtYXQpOgogICAgIGRlZiBvdXRfZnVuY3Rpb24oc2VsZiwgZm5hbWUsIG5hbWUsIGFyZ3M=
+p=0D
+OgogICAgICAgICAiIiJvdXRwdXQgZnVuY3Rpb24gaW4gbWFuIiIiCiAKLSAgICAgICAgc2VsZi5=
+k=0D
+YXRhICs9IGYnLlRIICJ7bmFtZX0iIDkgIntuYW1lfSIgIntzZWxmLm1hbl9kYXRlfSIgIktlcm5=
+l=0D
+bCBIYWNrZXJcJ3MgTWFudWFsIiBMSU5VWCcgKyAiXG4iCisgICAgICAgIG91dF9uYW1lID0gc2V=
+s=0D
+Zi5hcmdfbmFtZShhcmdzLCBuYW1lKQorCisgICAgICAgIHNlbGYuZGF0YSArPSBmJy5USCAie25=
+h=0D
+bWV9IiA5ICJ7b3V0X25hbWV9IiAie3NlbGYubWFuX2RhdGV9IiAiS2VybmVsIEhhY2tlclwncyB=
+N=0D
+YW51YWwiIExJTlVYJyArICJcbiIKIAogICAgICAgICBzZWxmLmRhdGEgKz0gIi5TSCBOQU1FXG4=
+i=0D
+CiAgICAgICAgIHNlbGYuZGF0YSArPSBmIntuYW1lfSBcXC0ge2FyZ3NbJ3B1cnBvc2UnXX1cbiI=
+K=0D
+QEAgLTY3MSw3ICs3NDEsOSBAQCBjbGFzcyBNYW5Gb3JtYXQoT3V0cHV0Rm9ybWF0KToKICAgICA=
+g=0D
+ICAgICAgIHNlbGYub3V0cHV0X2hpZ2hsaWdodCh0ZXh0KQogCiAgICAgZGVmIG91dF9lbnVtKHN=
+l=0D
+bGYsIGZuYW1lLCBuYW1lLCBhcmdzKToKLSAgICAgICAgc2VsZi5kYXRhICs9IGYnLlRIICJ7c2V=
+s=0D
+Zi5tb2R1bGVuYW1lfSIgOSAiZW51bSB7bmFtZX0iICJ7c2VsZi5tYW5fZGF0ZX0iICJBUEkgTWF=
+u=0D
+dWFsIiBMSU5VWCcgKyAiXG4iCisgICAgICAgIG91dF9uYW1lID0gc2VsZi5hcmdfbmFtZShhcmd=
+z=0D
+LCBuYW1lKQorCisgICAgICAgIHNlbGYuZGF0YSArPSBmJy5USCAie3NlbGYubW9kdWxlbmFtZX0=
+i=0D
+IDkgIntvdXRfbmFtZX0iICJ7c2VsZi5tYW5fZGF0ZX0iICJBUEkgTWFudWFsIiBMSU5VWCcgKyA=
+i=0D
+XG4iCiAKICAgICAgICAgc2VsZi5kYXRhICs9ICIuU0ggTkFNRVxuIgogICAgICAgICBzZWxmLmR=
+h=0D
+dGEgKz0gZiJlbnVtIHtuYW1lfSBcXC0ge2FyZ3NbJ3B1cnBvc2UnXX1cbiIKQEAgLTcwMyw4ICs=
+3=0D
+NzUsOSBAQCBjbGFzcyBNYW5Gb3JtYXQoT3V0cHV0Rm9ybWF0KToKICAgICBkZWYgb3V0X3R5cGV=
+k=0D
+ZWYoc2VsZiwgZm5hbWUsIG5hbWUsIGFyZ3MpOgogICAgICAgICBtb2R1bGUgPSBzZWxmLm1vZHV=
+s=0D
+ZW5hbWUKICAgICAgICAgcHVycG9zZSA9IGFyZ3MuZ2V0KCdwdXJwb3NlJykKKyAgICAgICAgb3V=
+0=0D
+X25hbWUgPSBzZWxmLmFyZ19uYW1lKGFyZ3MsIG5hbWUpCiAKLSAgICAgICAgc2VsZi5kYXRhICs=
+9=0D
+IGYnLlRIICJ7bW9kdWxlfSIgOSAie25hbWV9IiAie3NlbGYubWFuX2RhdGV9IiAiQVBJIE1hbnV=
+h=0D
+bCIgTElOVVgnICsgIlxuIgorICAgICAgICBzZWxmLmRhdGEgKz0gZicuVEggInttb2R1bGV9IiA=
+5=0D
+ICJ7b3V0X25hbWV9IiAie3NlbGYubWFuX2RhdGV9IiAiQVBJIE1hbnVhbCIgTElOVVgnICsgIlx=
+u=0D
+IgogCiAgICAgICAgIHNlbGYuZGF0YSArPSAiLlNIIE5BTUVcbiIKICAgICAgICAgc2VsZi5kYXR=
+h=0D
+ICs9IGYidHlwZWRlZiB7bmFtZX0gXFwtIHtwdXJwb3NlfVxuIgpAQCAtNzE3LDggKzc5MCw5IEB=
+A=0D
+IGNsYXNzIE1hbkZvcm1hdChPdXRwdXRGb3JtYXQpOgogICAgICAgICBtb2R1bGUgPSBzZWxmLm1=
+v=0D
+ZHVsZW5hbWUKICAgICAgICAgcHVycG9zZSA9IGFyZ3MuZ2V0KCdwdXJwb3NlJykKICAgICAgICA=
+g=0D
+ZGVmaW5pdGlvbiA9IGFyZ3MuZ2V0KCdkZWZpbml0aW9uJykKKyAgICAgICAgb3V0X25hbWUgPSB=
+z=0D
+ZWxmLmFyZ19uYW1lKGFyZ3MsIG5hbWUpCiAKLSAgICAgICAgc2VsZi5kYXRhICs9IGYnLlRIICJ=
+7=0D
+bW9kdWxlfSIgOSAie2FyZ3MudHlwZX0ge25hbWV9IiAie3NlbGYubWFuX2RhdGV9IiAiQVBJIE1=
+h=0D
+bnVhbCIgTElOVVgnICsgIlxuIgorICAgICAgICBzZWxmLmRhdGEgKz0gZicuVEggInttb2R1bGV=
+9=0D
+IiA5ICJ7b3V0X25hbWV9IiAie3NlbGYubWFuX2RhdGV9IiAiQVBJIE1hbnVhbCIgTElOVVgnICs=
+g=0D
+IlxuIgogCiAgICAgICAgIHNlbGYuZGF0YSArPSAiLlNIIE5BTUVcbiIKICAgICAgICAgc2VsZi5=
+k=0D
+YXRhICs9IGYie2FyZ3MudHlwZX0ge25hbWV9IFxcLSB7cHVycG9zZX1cbiIKLS0gCjIuNTEuMAo=
+K=0D
 
