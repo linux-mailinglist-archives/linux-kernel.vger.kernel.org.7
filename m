@@ -1,424 +1,294 @@
-Return-Path: <linux-kernel+bounces-794020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CADAB3DB8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:55:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE5DB3DB94
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89F718977B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:55:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B1957A8176
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDB92EDD6C;
-	Mon,  1 Sep 2025 07:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302272EF640;
+	Mon,  1 Sep 2025 07:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RcCZblE2"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2B3IJXuJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wj5HzEii";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0X/wqaGh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i/SKOqLZ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593BB2EDD44
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272272D7DD1
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756713313; cv=none; b=mf0WcNWz19vQ6qbqAk0+L0XH4CXDberFyUQXZG3xIEOHjCcq6p6u1XnHs6JBQKhYDH4AziOCe7uHFC5T6CduT7sxG2LV84SZ81D78XFtDxx615rf8whyiZU5k/gE9Rx3oQYIbV6dyk2JYd6ZiRiaB/ACe/vwULiwanjq1kYBxsY=
+	t=1756713327; cv=none; b=kMkiH0GSa7HeobfL1oi2M6LWH8jBDqNo0fX+0FyFtOtcJ0y4X9H7thyPJzfwKZ8FnbzSkghpvAIRFLoIxbiR8eKihxQcZaMDkNi56ecfsrwjNHfjPvf5w2NXJgfLaHZb8nNTfHScbImEWhHGfgjLnhfmqU0+4AA0qYzrTBhZdzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756713313; c=relaxed/simple;
-	bh=AJzTL4SzscNaKqtDj3jsv9dhU+aMdreTTjcC8nGkKtg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qHBkK3KFrFpCONtbEQR0jwiPaL4cepIiv//+8fQyY3++XSe2nsKD/A7FtQmlNhJKD3oe03RoNokrQTmqMj8n4PXXkzifytfr3x+JIKUGF8malTZjrRSAP0abF6DAwBWWPqjpji3wuFrG/my13g2onhfRwBaOb0EpGkvZXp/T9O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RcCZblE2; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b8b1a104cso7836945e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 00:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756713309; x=1757318109; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nLCKDkQyHuW6IW57J4gCkDs2lnUgKFG1yRGou6EmSw0=;
-        b=RcCZblE25sqf03a/jGH1kutveHdHrPDveBcWPj7icRzj0Pjha2kMAMHpCVZ2s1lsZl
-         PzjMuElNNRRREZQqXpv+UsM9GQ3MK7uaF2u1GstC9XYq/JiuAke8lBCCWGGSW5wWGrGb
-         q1EZQvtubQe8EpcNyUlXbzh3ncK71CaCS1PZcyjYxWAsffG0oQnzMnpyey2jMAIMgqMM
-         QHUGsmtd/wJqcGLUiTjDs6mXGk4WklLp2j+511qeWenyUHPnwLcZ9PoHtK0AjDYt86j3
-         d4mYw0w8W/XxfGrCK0VTD/bnP5aduGBNWlKRDAlxJu7mlF760S3iaGgYUrLUzJaZmITH
-         zvrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756713309; x=1757318109;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nLCKDkQyHuW6IW57J4gCkDs2lnUgKFG1yRGou6EmSw0=;
-        b=VvixAnMHLm4JlQb8DaP83bj3zbGrWaJZuvvn/1cE6MGkFcQi7Dsnxo0f4deCiwJ7lS
-         oEB61AbngxmdI873+V7WS1Z16dXS2FmSMmbMAz8da/Tv8NJQVQFKPN0fxsgFAjnysHMY
-         Ogsh+urovUe5wanx+cxc/sS8zlLbqYq9K8llMxk5MeDM43LxMhnaQzEEvlA9KSTOpFic
-         Yc1q2gcGbBhBiryZ08A/77pnhN/aC0ghnyjAEhMrTgkWmw8uHdWbM6bc7bX3RV1jPuRK
-         59RSDenoMjdw1gBW4R6xW7IFck/UFGk27WVxr3jWQOZREnPcpyHal8DkxKJk/YQl2OnG
-         5RYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRhrO0VYgGEPdONzs6TB1azgVcjbaPx7e+VmZqCxy4xcDa51GTFXWMkmLA/GI8FF5SQp+ypr/BLfz5Muc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/oWUMrOjmBb6VG06PHJCx/8x1t0MpW5cvlPDWqofzUM0XnSRu
-	3sRIh0HxRFpCsGwA/AKL9EsFUH5H1j072QO73eKgbNUw/bAUhACbSHwkVaOZMwmPIzk=
-X-Gm-Gg: ASbGncsSDUVwKcs3zFeC37nBrm5gjW9dl8b03k9YAzbECTqbuPYUWS7Ffu9IDG7Vl/3
-	oY36U/BW8YNWKi9sdQ5n1R/vXVJ4xaIVNUb9m3r8lnKlpxgi1Ue4JXjzVj8YRdjDLylVIbSXxXJ
-	SgNTgTCtv5fGk7knkKMXY34PsG3rZ8MLqjEpvZhsBpzXgROodVTESn7g3tt5NB1NG8XPHtoMx5g
-	cLYY098Trp6ipsAM+h2YOD0JrtJVELlwJHqlPtX2JZEZyAGm4qmqN+fhVhRznmj334SpRk9mAuX
-	77j1y4tA9pZrMo8X7s/FXIuRS3wNhDIZsI6elAXUI+5SGmBG83U9390sPXHv5KHUF1c+vnOlB31
-	twA4nn3jMrbdf8VeblybWtcu5X+6qFIFhO0LoeAuEOHo=
-X-Google-Smtp-Source: AGHT+IE2ec9VMLsNdq7KeJy9kASdqCJnicqdiEO2+tbxChTPTjV4pAZYtoAEJaWJoj4zuANtPXk5aw==
-X-Received: by 2002:a05:600c:1f08:b0:456:13d8:d141 with SMTP id 5b1f17b1804b1-45b8557c845mr48090665e9.27.1756713309511;
-        Mon, 01 Sep 2025 00:55:09 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7c461edasm92280065e9.9.2025.09.01.00.55.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 00:55:09 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 01 Sep 2025 09:55:05 +0200
-Subject: [PATCH v2] media: iris: add VPU33 specific encoding buffer
- calculation
+	s=arc-20240116; t=1756713327; c=relaxed/simple;
+	bh=+RwnFKQ/JrHTr2cxoixiySuD7hOGWpfkqGI2TMYj/Y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgeMGCgqmeQOePlyEpDQT9LiUMVRutxtt6m5eI212zQQPJoOFOAr+8l8B/NXmklwLMV+ETWNIzzGRZcqWqpqAP/hqX1Lw+p/I8dcw/GY4oV4lHzoX79dCw4iMcp23TfV8M3WsgAkBTtftj17s9v5n+Z0gGCh4JykUsUh6aYT8ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2B3IJXuJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wj5HzEii; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0X/wqaGh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i/SKOqLZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E30E71F38C;
+	Mon,  1 Sep 2025 07:55:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756713322; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ABUKxJp+T86WUFFcprlxI51x/AMcLR4PDlibw8xA7eQ=;
+	b=2B3IJXuJgm5hOwJ7KunnKUQSib6IoJB8hQHh9Ex7sJBm1wYtGID7+HGaycJXDWwj3IR/kL
+	iOX1zCxsCGLab7fSA2TCi31LdvYgEYEuOztRiQRn8P3fjiZAABS5HZwiTHlymeOZ3YmnfM
+	/OSnOeMbv/bCjFvOcB5XdDEpc7kiST4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756713322;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ABUKxJp+T86WUFFcprlxI51x/AMcLR4PDlibw8xA7eQ=;
+	b=wj5HzEiiOAevOulX+cypKt9urEvwH6D1wtVdj5xbGMHHsOebhh43SjeGG/0rWt+r0n27WX
+	qfZmC0Wp9rFC04DA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="0X/wqaGh";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="i/SKOqLZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756713320; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ABUKxJp+T86WUFFcprlxI51x/AMcLR4PDlibw8xA7eQ=;
+	b=0X/wqaGhXQhaijZzH9Pq3750OKimXjVVk5NlCXJtY3zWcYhepsVMDzn0R1Bm6k0VVed2/R
+	I2WakCP9T+fwiBTTe7O8K7faNxrg+fjTTlRJmAKqUufZ/BO6N2OOQHbWxYUksBITApC6jy
+	7dGBBYWhmUa+ao9po4aZqbJdt6sE1wk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756713320;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ABUKxJp+T86WUFFcprlxI51x/AMcLR4PDlibw8xA7eQ=;
+	b=i/SKOqLZFaLLAX0XrDMhyD+kjmgrhL+6+91dNaEDIhFu9hzUq9o3AgxuizKHtDk/jk7YMv
+	bqaIUBM4X2Zdt6Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEFFD136ED;
+	Mon,  1 Sep 2025 07:55:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GCCDMmhRtWixTwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 01 Sep 2025 07:55:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7378BA099B; Mon,  1 Sep 2025 09:55:20 +0200 (CEST)
+Date: Mon, 1 Sep 2025 09:55:20 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mike Snitzer <snitzer@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Ritesh Harjani <ritesh.list@gmail.com>, 
+	Keith Busch <kbusch@kernel.org>, Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org, hch@lst.de, 
+	martin.petersen@oracle.com, djwong@kernel.org, linux-xfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>, Brian Foster <bfoster@redhat.com>
+Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
+Message-ID: <pcmvk3tb3cre3dao2suskdxjrkk6q5z2olkgbkyqoaxujelokg@34hc5pudk3lt>
+References: <20250819164922.640964-1-kbusch@meta.com>
+ <87a53ra3mb.fsf@gmail.com>
+ <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq>
+ <aKx485EMthHfBWef@kbusch-mbp>
+ <87cy8ir835.fsf@gmail.com>
+ <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
+ <aK8tuTnuHbD8VOyo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-topic-sm8x50-iris-encoder-v3-hevc-debug-v2-1-c65406bbdf68@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAFhRtWgC/5XNTQ6CMBCG4auYrh3TH5DqynsYFthOYRJtyRQbD
- OHuIjdw+X6L71lERibM4npYBGOhTCluoY8H4YYu9gjktxZa6lparWFKIznILzvXEogpA0aXPDI
- UAwMWBx4f7x6UVI0JlTUWjdjeRsZA8y7d260HylPizw4X9Vv/N4oCBWdj/EVWITTe3J4UO06nx
- L1o13X9AhXyp5zfAAAA
-X-Change-ID: 20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-10173f4838e3
-To: Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Dikshita Agarwal <quic_dikshita@quicinc.com>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13892;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=AJzTL4SzscNaKqtDj3jsv9dhU+aMdreTTjcC8nGkKtg=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBotVFcwEyhdCVXv3MX9LHkC4RazDatjHwf6ZiscoeW
- 2BetsLiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaLVRXAAKCRB33NvayMhJ0U62D/
- 4gE8St7BPZRc/nAVX5bpRgTJsXr96CaKrY8SUrDkKTrpzm9WF0q3rLLrvB2PXLX0o7ZgeceAWz1VW0
- Kwno3Ll6Nf7KRiEUVvfTEJK9QF/jhrOROfiPhlfH30CbjNq0YfpIW+3YuzjgRM6DNrsqjeHd6ctkuk
- ybPV6cqg8YFoc4rZGaGxxzPu9suRb7QlmOyIKIa5h0EmmzUNvhRQRP6S2HHL+wuHUGlNpcw+jiUO2N
- j2xgx8NM/CdM6B4x4m5UFl4ixxubIchoEPHsTVUP+U9Ts/j1F7U2zGOAZXnuV7ZwSOpJnAhy0BRaD4
- KhIvKohZ9oigk0W1j8LiT32UL4l+x5iuNNIlwY/tDS7AWy2A4gHvMR7u0Oe4q6vemL1YejBWCYejrb
- 3gvP5Bog0xSJV+92A28lT/I+T9Hd2uCLs3gH/hoBqxeVcvBQjGwgCb2dlghAcEbdvv9jyMm7JtrF+7
- 4HtvvEYjjNgg1MmY41Dhm4lOJ0/bAlc9NAXTPIdeUJtR3LEVu7QUqce6ZN8LgHlhXjLv/jEGbH0PaU
- tK8KFHk5x65ElHE3wldPaiGUUjuiKL2I79dwYsVWzuzRhCA1NbxPZMKBdYAB4fEgCngigAkQIC0Yky
- KxoWbIXPLNDALYGft0Ia/m4zYurgbjk2edWvu99mQbWE7k89Mn1a/qQreKhw==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK8tuTnuHbD8VOyo@kernel.org>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E30E71F38C
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,kernel.org,meta.com,vger.kernel.org,kernel.dk,davidwei.uk,lst.de,oracle.com,zeniv.linux.org.uk,suse.com,redhat.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -2.51
 
-The VPU33 found in the SM8650 Platform requires some slighly different
-buffer calculation for encoding to allow working with the latest
-firwware uploaded on linux-firmware at [1].
+Hi Mike!
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=ece445af91bbee49bf0d8b23c2b99b596ae6eac7
+On Wed 27-08-25 12:09:29, Mike Snitzer wrote:
+> On Wed, Aug 27, 2025 at 05:20:53PM +0200, Jan Kara wrote:
+> > On Tue 26-08-25 10:29:58, Ritesh Harjani wrote:
+> > > Keith Busch <kbusch@kernel.org> writes:
+> > > 
+> > > > On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
+> > > >> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
+> > > >> > Keith Busch <kbusch@meta.com> writes:
+> > > >> > >
+> > > >> > >   - EXT4 falls back to buffered io for writes but not for reads.
+> > > >> > 
+> > > >> > ++linux-ext4 to get any historical context behind why the difference of
+> > > >> > behaviour in reads v/s writes for EXT4 DIO. 
+> > > >> 
+> > > >> Hum, how did you test? Because in the basic testing I did (with vanilla
+> > > >> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
+> > > >> falling back to buffered IO only if the underlying file itself does not
+> > > >> support any kind of direct IO.
+> > > >
+> > > > Simple test case (dio-offset-test.c) below.
+> > > >
+> > > > I also ran this on vanilla kernel and got these results:
+> > > >
+> > > >   # mkfs.ext4 /dev/vda
+> > > >   # mount /dev/vda /mnt/ext4/
+> > > >   # make dio-offset-test
+> > > >   # ./dio-offset-test /mnt/ext4/foobar
+> > > >   write: Success
+> > > >   read: Invalid argument
+> > > >
+> > > > I tracked the "write: Success" down to ext4's handling for the "special"
+> > > > -ENOTBLK error after ext4_want_directio_fallback() returns "true".
+> > > >
+> > > 
+> > > Right. Ext4 has fallback only for dio writes but not for DIO reads... 
+> > > 
+> > > buffered
+> > > static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> > > {
+> > > 	/* must be a directio to fall back to buffered */
+> > > 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> > > 		    (IOMAP_WRITE | IOMAP_DIRECT))
+> > > 		return false;
+> > > 
+> > >     ...
+> > > }
+> > > 
+> > > So basically the path is ext4_file_[read|write]_iter() -> iomap_dio_rw
+> > >     -> iomap_dio_bio_iter() -> return -EINVAL. i.e. from...
+> > > 
+> > > 
+> > > 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+> > > 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+> > > 		return -EINVAL;
+> > > 
+> > > EXT4 then fallsback to buffered-io only for writes, but not for reads. 
+> > 
+> > Right. And the fallback for writes was actually inadvertedly "added" by
+> > commit bc264fea0f6f "iomap: support incremental iomap_iter advances". That
+> > changed the error handling logic. Previously if iomap_dio_bio_iter()
+> > returned EINVAL, it got propagated to userspace regardless of what
+> > ->iomap_end() returned. After this commit if ->iomap_end() returns error
+> > (which is ENOTBLK in ext4 case), it gets propagated to userspace instead of
+> > the error returned by iomap_dio_bio_iter().
+> > 
+> > Now both the old and new behavior make some sense so I won't argue that the
+> > new iomap_iter() behavior is wrong. But I think we should change ext4 back
+> > to the old behavior of failing unaligned dio writes instead of them falling
+> > back to buffered IO. I think something like the attached patch should do
+> > the trick - it makes unaligned dio writes fail again while writes to holes
+> > of indirect-block mapped files still correctly fall back to buffered IO.
+> > Once fstests run completes, I'll do a proper submission...
+> > 
+> > 
+> > 								Honza
+> > -- 
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+> 
+> > From ce6da00a09647a03013c3f420c2e7ef7489c3de8 Mon Sep 17 00:00:00 2001
+> > From: Jan Kara <jack@suse.cz>
+> > Date: Wed, 27 Aug 2025 14:55:19 +0200
+> > Subject: [PATCH] ext4: Fail unaligned direct IO write with EINVAL
+> > 
+> > Commit bc264fea0f6f ("iomap: support incremental iomap_iter advances")
+> > changed the error handling logic in iomap_iter(). Previously any error
+> > from iomap_dio_bio_iter() got propagated to userspace, after this commit
+> > if ->iomap_end returns error, it gets propagated to userspace instead of
+> > an error from iomap_dio_bio_iter(). This results in unaligned writes to
+> > ext4 to silently fallback to buffered IO instead of erroring out.
+> > 
+> > Now returning ENOTBLK for DIO writes from ext4_iomap_end() seems
+> > unnecessary these days. It is enough to return ENOTBLK from
+> > ext4_iomap_begin() when we don't support DIO write for that particular
+> > file offset (due to hole).
+> 
+> Any particular reason for ext4 still returning -ENOTBLK for unaligned
+> DIO?
 
-Suggested-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
-[2] https://lore.kernel.org/all/20250825-iris-video-encoder-v4-0-84aa2bc0a46b@quicinc.com/
----
-Changes in v2:
-- Removed calculation fix for hevc encoding, as it was added in common code
-- Link to v1: https://lore.kernel.org/r/20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-v1-1-633d904ff7d3@linaro.org
----
- drivers/media/platform/qcom/iris/iris_buffer.c     |   2 +-
- .../platform/qcom/iris/iris_hfi_gen1_command.c     |   2 +-
- .../platform/qcom/iris/iris_platform_common.h      |   2 +
- .../media/platform/qcom/iris/iris_platform_gen2.c  |   4 +
- .../platform/qcom/iris/iris_platform_sm8250.c      |   2 +
- drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 110 ++++++++++++++++++++-
- drivers/media/platform/qcom/iris/iris_vpu_buffer.h |   3 +-
- 7 files changed, 118 insertions(+), 7 deletions(-)
+No, that is actually the bug I'm speaking about - ext4 should be returning
+EINVAL for unaligned DIO as other filesystems do but after recent iomap
+changes it started to return ENOTBLK.
 
-diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
-index 8891a297d384b018b3cc8313ad6416db6317798b..c0900038e7defccf7de3cb60e17c71e36a0e8ead 100644
---- a/drivers/media/platform/qcom/iris/iris_buffer.c
-+++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-@@ -284,7 +284,7 @@ static void iris_fill_internal_buf_info(struct iris_inst *inst,
- {
- 	struct iris_buffers *buffers = &inst->buffers[buffer_type];
- 
--	buffers->size = iris_vpu_buf_size(inst, buffer_type);
-+	buffers->size = inst->core->iris_platform_data->get_vpu_buffer_size(inst, buffer_type);
- 	buffers->min_count = iris_vpu_buf_count(inst, buffer_type);
- }
- 
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-index 29cf392ca2566da286ea3e928ce4a22c2e970cc8..e1788c266bb1080921f17248fd5ee60156b3143d 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-@@ -911,7 +911,7 @@ static int iris_hfi_gen1_set_bufsize(struct iris_inst *inst, u32 plane)
- 
- 	if (iris_split_mode_enabled(inst)) {
- 		bufsz.type = HFI_BUFFER_OUTPUT;
--		bufsz.size = iris_vpu_buf_size(inst, BUF_DPB);
-+		bufsz.size = inst->core->iris_platform_data->get_vpu_buffer_size(inst, BUF_DPB);
- 
- 		ret = hfi_gen1_set_property(inst, ptype, &bufsz, sizeof(bufsz));
- 		if (ret)
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-index 96fa7b1bb592441e85664da408ea4ba42c9a15b5..7057c4cd1a9ebefa02c855014e5f19993da58e38 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-+++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-@@ -7,6 +7,7 @@
- #define __IRIS_PLATFORM_COMMON_H__
- 
- #include <linux/bits.h>
-+#include "iris_buffer.h"
- 
- struct iris_core;
- struct iris_inst;
-@@ -189,6 +190,7 @@ struct iris_platform_data {
- 	void (*init_hfi_command_ops)(struct iris_core *core);
- 	void (*init_hfi_response_ops)(struct iris_core *core);
- 	struct iris_inst *(*get_instance)(void);
-+	u32 (*get_vpu_buffer_size)(struct iris_inst *inst, enum iris_buffer_type buffer_type);
- 	const struct vpu_ops *vpu_ops;
- 	void (*set_preset_registers)(struct iris_core *core);
- 	const struct icc_info *icc_tbl;
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-index cf4b92f534b272a0a1ac2a0e7bb9316501374332..78a04e76de7c00703b84bd3c1c6e9a884ee7cebe 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-@@ -8,6 +8,7 @@
- #include "iris_hfi_gen2.h"
- #include "iris_hfi_gen2_defines.h"
- #include "iris_platform_common.h"
-+#include "iris_vpu_buffer.h"
- #include "iris_vpu_common.h"
- 
- #include "iris_platform_qcs8300.h"
-@@ -738,6 +739,7 @@ struct iris_platform_data sm8550_data = {
- 	.get_instance = iris_hfi_gen2_get_instance,
- 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
- 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu_buf_size,
- 	.vpu_ops = &iris_vpu3_ops,
- 	.set_preset_registers = iris_set_sm8550_preset_registers,
- 	.icc_tbl = sm8550_icc_table,
-@@ -827,6 +829,7 @@ struct iris_platform_data sm8650_data = {
- 	.get_instance = iris_hfi_gen2_get_instance,
- 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
- 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu33x_buf_size,
- 	.vpu_ops = &iris_vpu33_ops,
- 	.set_preset_registers = iris_set_sm8550_preset_registers,
- 	.icc_tbl = sm8550_icc_table,
-@@ -916,6 +919,7 @@ struct iris_platform_data qcs8300_data = {
- 	.get_instance = iris_hfi_gen2_get_instance,
- 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
- 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu_buf_size,
- 	.vpu_ops = &iris_vpu3_ops,
- 	.set_preset_registers = iris_set_sm8550_preset_registers,
- 	.icc_tbl = sm8550_icc_table,
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-index 978d0130d43b5f6febb65430a9bbe3932e8f24df..16486284f8acccf6a95a27f6003e885226e28f4d 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-@@ -9,6 +9,7 @@
- #include "iris_resources.h"
- #include "iris_hfi_gen1.h"
- #include "iris_hfi_gen1_defines.h"
-+#include "iris_vpu_buffer.h"
- #include "iris_vpu_common.h"
- 
- #define BITRATE_MIN		32000
-@@ -317,6 +318,7 @@ struct iris_platform_data sm8250_data = {
- 	.get_instance = iris_hfi_gen1_get_instance,
- 	.init_hfi_command_ops = &iris_hfi_gen1_command_ops_init,
- 	.init_hfi_response_ops = iris_hfi_gen1_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu_buf_size,
- 	.vpu_ops = &iris_vpu2_ops,
- 	.set_preset_registers = iris_set_sm8250_preset_registers,
- 	.icc_tbl = sm8250_icc_table,
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-index 34a9094201ccd11d30a776f284ede8248d8017a9..9cb7701722c3644ef4c369fa58490ac83258ea7e 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-@@ -867,6 +867,34 @@ u32 size_vpss_line_buf(u32 num_vpp_pipes_enc, u32 frame_height_coded,
- 		      (((((max_t(u32, (frame_width_coded),
- 				 (frame_height_coded)) + 3) >> 2) << 5) + 256) * 16)), 256);
- }
-+static inline
-+u32 size_vpss_line_buf_vpu33x(u32 num_vpp_pipes_enc, u32 frame_height_coded,
-+			      u32 frame_width_coded)
-+{
-+	u32 vpss_4tap_top = 0, vpss_4tap_left = 0, vpss_div2_top = 0;
-+	u32 vpss_div2_left = 0, vpss_top_lb = 0, vpss_left_lb = 0;
-+	u32 size_left = 0, size_top = 0;
-+
-+	vpss_4tap_top = (max_t(u32, frame_width_coded, frame_height_coded) * 2) + 3;
-+	vpss_4tap_top >>= 2;
-+	vpss_4tap_top <<= 4;
-+	vpss_4tap_top += 256;
-+	vpss_4tap_left = (((8192 + 3) >> 2) << 5) + 64;
-+	vpss_div2_top = max_t(u32, frame_width_coded, frame_height_coded) + 3;
-+	vpss_div2_top >>= 2;
-+	vpss_div2_top <<= 4;
-+	vpss_div2_top += 256;
-+	vpss_div2_left = (max_t(u32, frame_width_coded, frame_height_coded) * 2) + 3;
-+	vpss_div2_left >>= 2;
-+	vpss_div2_left <<= 5;
-+	vpss_div2_left += 64;
-+	vpss_top_lb = (frame_width_coded + 1) << 3;
-+	vpss_left_lb = (frame_height_coded << 3) * num_vpp_pipes_enc;
-+	size_left = (vpss_4tap_left + vpss_div2_left) * 2 * num_vpp_pipes_enc;
-+	size_top = (vpss_4tap_top + vpss_div2_top) * 2;
-+
-+	return ALIGN(size_left + size_top + vpss_top_lb + vpss_left_lb, DMA_ALIGNMENT);
-+}
- 
- static inline
- u32 size_top_line_buf_first_stg_sao(u32 frame_width_coded)
-@@ -977,8 +1005,8 @@ static u32 iris_vpu_enc_non_comv_size(struct iris_inst *inst)
- }
- 
- static inline
--u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
--			u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
-+u32 hfi_buffer_line_enc_base(u32 frame_width, u32 frame_height, bool is_ten_bit,
-+			     u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
- {
- 	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
- 	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
-@@ -1018,10 +1046,38 @@ u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
- 		line_buff_recon_pix_size +
- 		size_left_linebuff_ctrl_fe(frame_height_coded, num_vpp_pipes_enc) +
- 		size_line_buf_sde(frame_width_coded) +
--		size_vpss_line_buf(num_vpp_pipes_enc, frame_height_coded, frame_width_coded) +
- 		size_top_line_buf_first_stg_sao(frame_width_coded);
- }
- 
-+static inline
-+u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
-+			u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
-+{
-+	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
-+	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
-+	u32 frame_height_coded = height_in_lcus * (lcu_size);
-+	u32 frame_width_coded = width_in_lcus * (lcu_size);
-+
-+	return hfi_buffer_line_enc_base(frame_width, frame_height, is_ten_bit,
-+					num_vpp_pipes_enc, lcu_size, standard) +
-+		size_vpss_line_buf(num_vpp_pipes_enc, frame_height_coded, frame_width_coded);
-+}
-+
-+static inline
-+u32 hfi_buffer_line_enc_vpu33x(u32 frame_width, u32 frame_height, bool is_ten_bit,
-+			       u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
-+{
-+	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
-+	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
-+	u32 frame_height_coded = height_in_lcus * (lcu_size);
-+	u32 frame_width_coded = width_in_lcus * (lcu_size);
-+
-+	return hfi_buffer_line_enc_base(frame_width, frame_height, is_ten_bit,
-+					num_vpp_pipes_enc, lcu_size, standard) +
-+		size_vpss_line_buf_vpu33x(num_vpp_pipes_enc, frame_height_coded,
-+					  frame_width_coded);
-+}
-+
- static u32 iris_vpu_enc_line_size(struct iris_inst *inst)
- {
- 	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-@@ -1040,6 +1096,24 @@ static u32 iris_vpu_enc_line_size(struct iris_inst *inst)
- 				   lcu_size, HFI_CODEC_ENCODE_AVC);
- }
- 
-+static u32 iris_vpu33x_enc_line_size(struct iris_inst *inst)
-+{
-+	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-+	struct v4l2_format *f = inst->fmt_dst;
-+	u32 height = f->fmt.pix_mp.height;
-+	u32 width = f->fmt.pix_mp.width;
-+	u32 lcu_size = 16;
-+
-+	if (inst->codec == V4L2_PIX_FMT_HEVC) {
-+		lcu_size = 32;
-+		return hfi_buffer_line_enc_vpu33x(width, height, 0, num_vpp_pipes,
-+						  lcu_size, HFI_CODEC_ENCODE_HEVC);
-+	}
-+
-+	return hfi_buffer_line_enc_vpu33x(width, height, 0, num_vpp_pipes,
-+					  lcu_size, HFI_CODEC_ENCODE_AVC);
-+}
-+
- static inline
- u32 hfi_buffer_dpb_enc(u32 frame_width, u32 frame_height, bool is_ten_bit)
- {
-@@ -1387,7 +1461,7 @@ struct iris_vpu_buf_type_handle {
- 	u32 (*handle)(struct iris_inst *inst);
- };
- 
--int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
-+u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
- {
- 	const struct iris_vpu_buf_type_handle *buf_type_handle_arr = NULL;
- 	u32 size = 0, buf_type_handle_size = 0, i;
-@@ -1431,6 +1505,34 @@ int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
- 	return size;
- }
- 
-+u32 iris_vpu33x_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
-+{
-+	u32 size = 0, i;
-+
-+	static const struct iris_vpu_buf_type_handle enc_internal_buf_type_handle[] = {
-+		{BUF_BIN,         iris_vpu_enc_bin_size         },
-+		{BUF_COMV,        iris_vpu_enc_comv_size        },
-+		{BUF_NON_COMV,    iris_vpu_enc_non_comv_size    },
-+		{BUF_LINE,        iris_vpu33x_enc_line_size     },
-+		{BUF_ARP,         iris_vpu_enc_arp_size         },
-+		{BUF_VPSS,        iris_vpu_enc_vpss_size        },
-+		{BUF_SCRATCH_1,   iris_vpu_enc_scratch1_size    },
-+		{BUF_SCRATCH_2,   iris_vpu_enc_scratch2_size    },
-+	};
-+
-+	if (inst->domain == DECODER)
-+		return iris_vpu_buf_size(inst, buffer_type);
-+
-+	for (i = 0; i < ARRAY_SIZE(enc_internal_buf_type_handle); i++) {
-+		if (enc_internal_buf_type_handle[i].type == buffer_type) {
-+			size = enc_internal_buf_type_handle[i].handle(inst);
-+			break;
-+		}
-+	}
-+
-+	return size;
-+}
-+
- static u32 internal_buffer_count(struct iris_inst *inst,
- 				 enum iris_buffer_type buffer_type)
- {
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-index 94668c5b3d15fb6e10d0b5ed6ed704cadb5a6534..e4fd1fcf2dbf25e69d55599a8fd4ad775f9e6575 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-@@ -146,7 +146,8 @@ static inline u32 size_h264d_qp(u32 frame_width, u32 frame_height)
- 	return DIV_ROUND_UP(frame_width, 64) * DIV_ROUND_UP(frame_height, 64) * 128;
- }
- 
--int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
-+u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
-+u32 iris_vpu33x_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
- int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type);
- 
- #endif
+> In my experience XFS returns -EINVAL when failing unaligned DIO (but
+> maybe there are edge cases where that isn't always the case?)
+> 
+> Would be nice to have consistency across filesystems for what is
+> returned when failing unaligned DIO.
 
----
-base-commit: 58717ecfffd642c1e0950dee4a247dd6cdfeb31e
-change-id: 20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-10173f4838e3
+Agreed although there are various corner cases like files which never
+support direct IO - e.g. with data journalling - and thus fallback to
+buffered IO happens before any alignment checks. 
 
-Best regards,
+> The iomap code returns -ENOTBLK as "the magic error code to fall back
+> to buffered I/O".  But that seems only for page cache invalidation
+> failure, _not_ for unaligned DIO.
+> 
+> (Anyway, __iomap_dio_rw's WRITE handling can return -ENOTBLK if page
+> cache invalidation fails during DIO write. So it seems higher-level
+> code, like I've added to NFS/NFSD to check for unaligned DIO failure,
+> should check for both -EINVAL and -ENOTBLK).
+
+I think the idea here is that if page cache invalidation fails we want to
+fallback to buffered IO so that we don't cause cache coherency issues and
+that's why ENOTBLK is returned.
+
+> ps. ENOTBLK is actually much less easily confused with other random
+> uses of EINVAL (EINVAL use is generally way too overloaded, rendering
+> it a pretty unhelpful error).  But switching XFS to use ENOTBLK
+> instead of EINVAL seems like disruptive interface breakage (I suppose
+> same could be said for ext4 if it were to now return EINVAL for
+> unaligned DIO, but ext4 flip-flopping on how it handles unaligned DIO
+> prompted me to ask these questions now)
+
+Definitely. In this particular case EINVAL for unaligned DIO is there for
+ages and there likely is some userspace program somewhere that depends on
+it.
+
+								Honza
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
