@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-794162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4242AB3DDB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:11:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C707B3DDB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8560D1887286
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED88E189EDA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9067B30505F;
-	Mon,  1 Sep 2025 09:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E052A3054EF;
+	Mon,  1 Sep 2025 09:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s5KnLJy0"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iy5Aa7ME"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49579259C9C
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908AA304967
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756717858; cv=none; b=Sp6SwcDOythJQx1fDCHZU7uhW9alSRs4Vtr9zlH0YBGZ2gtanp1zPwnXzOt8SDxKPiYauQ2P1SS1NK6yF6N9vHySizDclIIMj1JMhLgpgxY4Sjb6huwTx23w1vzkisieagtI36pXusHUCTl8Voam7DsvFJeKJUe5kOsAKEcwa1w=
+	t=1756717861; cv=none; b=Pr7GYF3Q/EZC6QG8P/VTXTPhgPslMQ8Can/3dT4EydHISGSz9LrDomoXf0L3mtugNgXI5N8WGQZf8lApq7pL7RUor6GP8yQWALHXE9O89/Nq+mond//CgZ1OvIcsDmnxDQZaJMmiOM/q7veRNRS+XUjXD0EakWAGxyj2zE5Qxt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756717858; c=relaxed/simple;
-	bh=ACP8MZnAlAb5InMjYQgm922aUo2YjOy4WzsnXNakYg4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cJbX7g/F2EpQR79WE6umNx1U7KrUkbTTpBe357NHB9RM4nkyLmAsnGp7XWRPZ8/mfO/lqQsagIBexDPhwDPdN5MNs+geXkq9Ma3nvBbC2qEdY6UOBGzk/mYe46Iqudx5pLyCCdDRywpIkkbiiwDA8L9RnKjd/ReUarnshzihFFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s5KnLJy0; arc=none smtp.client-ip=209.85.128.74
+	s=arc-20240116; t=1756717861; c=relaxed/simple;
+	bh=32DTjO7qjxKOvL3amKcERtyKwvz65XaqH4dROuOpLPo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BsBuMawZGE346lCYyzd2JudZ3tTuzwJ065qiHBb803hW7QGuRyrmuZaMlY5St14nc874hnRy3ZY3XF2KwC3tSqk5DPayZwlKgetJAzgBYEA9lmJ4UQ3TDG6wqe4GtVYUKamv+P+VQTbgBnM/7IO7TAf32nnqCNQjihV/r4cnc8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iy5Aa7ME; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b7c01a6d3so22341755e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 02:10:57 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3d1114879a4so1215584f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 02:10:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756717856; x=1757322656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDxtfYjlB+z7OHUF4dwiWALUYeYYqi6hQFXH7mpSg+o=;
-        b=s5KnLJy04UCvVhswMejLhz5X0YNPTIf4bzPp0kXXppzQ6/bf9B0t1zvDW8h+w4bS8g
-         kepkVuRfX8VD2TclCx1hQmrpjUVHf/gUnQGQB03a/TOOxNR2yG+2bdrxNNTzdMPcfTLj
-         TAE8VNde+DirPI6O4eNJdTljSXu0uZvb6l+0DG/eNYXLDr06Ax3sQole2e7I+xRx19Kk
-         eOaj7tSv9AKTYZw7MpIxB0Kvcky6RzQPyOaWgMMaN39SlbrKsTA3KyOnw7uXXzKCGbdd
-         aWYoFA00Xz/zmfW6agWw0PDAaqc7bv3geT20iDWQA/meHUDmw6hfi9uiO65d9AjTvTIQ
-         69iw==
+        d=google.com; s=20230601; t=1756717857; x=1757322657; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4MO71ArN1mhEwmcVWMgSdyViUKfjpUyop6LWKe1mWCU=;
+        b=iy5Aa7MESAes87Q1xuWQB39Om5wJJHXSr/WA2u5CykYlE9f+WclyPt00ydxJpFFSX/
+         tBJrXLsH9fJAiKIm150c3JHSL2HuxR1nEW6d45GlZibOB5P/qnWLVqTyYtSaKmmMzGsk
+         LvytEMYvYZKw9Fp/2igREwFyCTaiqDPWxWhXld3aDW6fSsXnlsiU/aujxw4aJwWdFEtv
+         V6yQmT7J+aEwKT2P9liethgg9gAGJKOVrxV5PB6dxhISr64AloChi6PieCwJUaLNKKgL
+         Nkz0dtv8VcM4GvoZKN0vdaaK7x6psABR2dQ4i56IWbHPKxYSWy6dOyf5rY7ITpbYMsny
+         +X4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756717856; x=1757322656;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hDxtfYjlB+z7OHUF4dwiWALUYeYYqi6hQFXH7mpSg+o=;
-        b=E6Sva2U0e5uz+LKbdhh5jtGRlcZLGstUOwb6X7LicAxzo5bqQf1r3WfEbhVuhu/8QI
-         P1iTNApINtOt7TD39xINwzlAeY8ccQIHHKbNSS3aw0l9WsUzFgbjNVJp4xpqZZegoKDj
-         5AEBgGH4FPDowMjEtr61QTY+JgjS8fl5sT+EiY1uIcjRjEqD4ei0kJhGGipJC4MEXYYL
-         NXQsz/d6LAIfiVUW+tsAGZmWVDaIzwV+8G316cIcpHtl8t3AiAG5eLNqSIwdnm58w9H3
-         M93RzyOyrS35HJE3ZdRGib9PfJc63eJolO2cVGXJVIH2mZwn4ERuI04iMNVE5QPnJaGe
-         HM6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWrpLnt8pjpwrzjIUUYpRAxKw/NlV+WcbD2Hhh1EH3EeWFomGu0WvRZsRhOCNw1+tN+lh5dLTewZ/e/UR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/+dVrMRgOOgGj00H8ormSTt+JW/07jhb0WPEIz9EOUQnIx9y4
-	muA2PjSPBlFnJnZK+P+4vVQOULg6pFT1szS/KBT/22cBohZJPUZV9Nzp6L3pTlxQwF0iJ93XfxD
-	t9v6y7siiUg==
-X-Google-Smtp-Source: AGHT+IGOfALiy9m2ZadFM7Lqo/znox4/GCfzOHB+U0RHpZwPYSarW0J3a2cBE64h5xyOJH4bR9NboaXjLbqI
-X-Received: from wmbez7.prod.google.com ([2002:a05:600c:83c7:b0:459:10dd:2e55])
- (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3b9a:b0:45b:629b:dc1e
- with SMTP id 5b1f17b1804b1-45b88525cf2mr46556505e9.1.1756717855565; Mon, 01
- Sep 2025 02:10:55 -0700 (PDT)
-Date: Mon,  1 Sep 2025 09:10:48 +0000
+        d=1e100.net; s=20230601; t=1756717857; x=1757322657;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4MO71ArN1mhEwmcVWMgSdyViUKfjpUyop6LWKe1mWCU=;
+        b=cUkZleJgBpXzCpGS9sbBGSLr+RFJ+GqQxyUS2uvi2P2h6Ne/hHIYCZjpByOBR1/E9X
+         bA1+Q4mzRryWs+Enypih41mzc8r4q5/B9cuc+q9s9OR0OVNxyPfCxlJpWpSh58wvM5Zz
+         ya/Tldw/pNypDN5vTmbi8vZ30cM/3GiM93R8omWaLJfXbCGySqvJS4w7oi5PQgSngMwz
+         Jo6U54qbs1JXU4ZZ7H8L6AANsOSxvv96K7RvJp1gmYIDxsHH54il2eztFLEvkR1UPTt5
+         ZFlS7FkZja9YRxjaaLdMqNXsfy/4XIh0iaLToNphcypkua9dfZFvpwD3g2VhmxDg/bTy
+         8gdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVxopQYmiIpjGRN//TXRhLzhf8YY1V9eB1SJQlO/rEQCLe6knIZVTnDCtEjUn1w6kDvNKiVhDB2O9LOY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwXhbNzcRAv3njXLAz6FytQNM+S5GIZWeIJiJJyFANKEV/K8zN
+	jWAvEnXKiEbOxn+7TmwlOss8ecf4MyqcHRI8djPUV26EllgWIaB7k+uiXcsSI7JDgC79EJvieNG
+	CwP0INaSilg==
+X-Google-Smtp-Source: AGHT+IEjN14c7eBq9IeAZMawq9X7egcWbk2lkf6mfQDOhK7ZFvaXNjsL5u4jyo+cPT9JUe+5yBTQuBUbseKy
+X-Received: from wrf23.prod.google.com ([2002:a05:6000:43d7:b0:3d7:c499:56f])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:1ace:b0:3cd:9213:7e3e
+ with SMTP id ffacd0b85a97d-3d1e00dd3dbmr5497203f8f.43.1756717856829; Mon, 01
+ Sep 2025 02:10:56 -0700 (PDT)
+Date: Mon,  1 Sep 2025 09:10:49 +0000
+In-Reply-To: <20250901091050.1935505-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250901091050.1935505-1-abarnas@google.com>
 X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250901091050.1935505-1-abarnas@google.com>
-Subject: [PATCH 0/2] staging: media: atomisp: Style fixes for vmem.c
+Message-ID: <20250901091050.1935505-2-abarnas@google.com>
+Subject: [PATCH 1/2] staging: media: atomisp: Remove typedefs for basic types
+ in vmem.c
 From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
 To: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
 	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
@@ -83,16 +88,156 @@ Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Style fixes for pci/hive/isp/css/common/host/vmem.c. First patch
-triggers check issues in checkpatch.pl that are fixed in the second one.
+Cleared typedefs hiding unsigned long long type, to align with
+kernel coding style.
 
-Adrian Barna=C5=9B (2):
-  staging: media: atomisp: Remove typedefs for basic types in vmem.c
-  staging:media: atomisp: Whitespaces cleanup in vmem.c
+Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
+---
+ .../pci/hive_isp_css_common/host/vmem.c       | 42 +++++++++----------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
- .../pci/hive_isp_css_common/host/vmem.c       | 111 ++++++------------
- 1 file changed, 36 insertions(+), 75 deletions(-)
-
+diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vme=
+m.c b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
+index 722b684fbc37..fd640e100591 100644
+--- a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
++++ b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
+@@ -13,35 +13,33 @@
+ #endif
+ #include "assert_support.h"
+=20
+-typedef unsigned long long hive_uedge;
+-typedef hive_uedge *hive_wide;
+=20
+ /* Copied from SDK: sim_semantics.c */
+=20
+ /* subword bits move like this:         MSB[____xxxx____]LSB -> MSB[000000=
+00xxxx]LSB */
+-static inline hive_uedge
+-subword(hive_uedge w, unsigned int start, unsigned int end)
++static inline unsigned long long
++subword(unsigned long long w, unsigned int start, unsigned int end)
+ {
+ 	return (w & (((1ULL << (end - 1)) - 1) << 1 | 1)) >> start;
+ }
+=20
+ /* inverse subword bits move like this: MSB[xxxx____xxxx]LSB -> MSB[xxxx00=
+00xxxx]LSB */
+-static inline hive_uedge
+-inv_subword(hive_uedge w, unsigned int start, unsigned int end)
++static inline unsigned long long
++inv_subword(unsigned long long w, unsigned int start, unsigned int end)
+ {
+ 	return w & (~(((1ULL << (end - 1)) - 1) << 1 | 1) | ((1ULL << start) - 1)=
+);
+ }
+=20
+-#define uedge_bits (8 * sizeof(hive_uedge))
++#define uedge_bits (8 * sizeof(unsigned long long))
+ #define move_lower_bits(target, target_bit, src, src_bit) move_subword(tar=
+get, target_bit, src, 0, src_bit)
+ #define move_upper_bits(target, target_bit, src, src_bit) move_subword(tar=
+get, target_bit, src, src_bit, uedge_bits)
+ #define move_word(target, target_bit, src) move_subword(target, target_bit=
+, src, 0, uedge_bits)
+=20
+ static void
+ move_subword(
+-    hive_uedge *target,
++    unsigned long long *target,
+     unsigned int target_bit,
+-    hive_uedge src,
++    unsigned long long src,
+     unsigned int src_start,
+     unsigned int src_end)
+ {
+@@ -49,18 +47,18 @@ move_subword(
+ 	unsigned int start_bit  =3D target_bit % uedge_bits;
+ 	unsigned int subword_width =3D src_end - src_start;
+=20
+-	hive_uedge src_subword =3D subword(src, src_start, src_end);
++	unsigned long long src_subword =3D subword(src, src_start, src_end);
+=20
+ 	if (subword_width + start_bit > uedge_bits) { /* overlap */
+-		hive_uedge old_val1;
+-		hive_uedge old_val0 =3D inv_subword(target[start_elem], start_bit, uedge=
+_bits);
++		unsigned long long old_val1;
++		unsigned long long old_val0 =3D inv_subword(target[start_elem], start_bi=
+t, uedge_bits);
+=20
+ 		target[start_elem] =3D old_val0 | (src_subword << start_bit);
+ 		old_val1 =3D inv_subword(target[start_elem + 1], 0,
+ 				       subword_width + start_bit - uedge_bits);
+ 		target[start_elem + 1] =3D old_val1 | (src_subword >> (uedge_bits - star=
+t_bit));
+ 	} else {
+-		hive_uedge old_val =3D inv_subword(target[start_elem], start_bit,
++		unsigned long long old_val =3D inv_subword(target[start_elem], start_bit=
+,
+ 						 start_bit + subword_width);
+=20
+ 		target[start_elem] =3D old_val | (src_subword << start_bit);
+@@ -69,8 +67,8 @@ move_subword(
+=20
+ static void
+ hive_sim_wide_unpack(
+-    hive_wide vector,
+-    hive_wide elem,
++    unsigned long long *vector,
++    unsigned long long *elem,
+     hive_uint elem_bits,
+     hive_uint index)
+ {
+@@ -103,8 +101,8 @@ hive_sim_wide_unpack(
+=20
+ static void
+ hive_sim_wide_pack(
+-    hive_wide vector,
+-    hive_wide elem,
++    unsigned long long *vector,
++    unsigned long long *elem,
+     hive_uint elem_bits,
+     hive_uint index)
+ {
+@@ -136,7 +134,7 @@ static void load_vector(
+     const t_vmem_elem	*from)
+ {
+ 	unsigned int i;
+-	hive_uedge *data;
++	unsigned long long *data;
+ 	unsigned int size =3D sizeof(short) * ISP_NWAY;
+=20
+ 	VMEM_ARRAY(v, 2 * ISP_NWAY); /* Need 2 vectors to work around vmem hss bu=
+g */
+@@ -146,9 +144,9 @@ static void load_vector(
+ #else
+ 	hrt_master_port_load(ISP_BAMEM_BASE[ID] + (unsigned long)from, &v[0][0], =
+size);
+ #endif
+-	data =3D (hive_uedge *)v;
++	data =3D (unsigned long long *)v;
+ 	for (i =3D 0; i < ISP_NWAY; i++) {
+-		hive_uedge elem =3D 0;
++		unsigned long long elem =3D 0;
+=20
+ 		hive_sim_wide_unpack(data, &elem, ISP_VEC_ELEMBITS, i);
+ 		to[i] =3D elem;
+@@ -166,10 +164,10 @@ static void store_vector(
+=20
+ 	VMEM_ARRAY(v, 2 * ISP_NWAY); /* Need 2 vectors to work around vmem hss bu=
+g */
+ 	//load_vector (&v[1][0], &to[ISP_NWAY]); /* Fetch the next vector, since =
+it will be overwritten. */
+-	hive_uedge *data =3D (hive_uedge *)v;
++	unsigned long long *data =3D (unsigned long long *)v;
+=20
+ 	for (i =3D 0; i < ISP_NWAY; i++) {
+-		hive_sim_wide_pack(data, (hive_wide)&from[i], ISP_VEC_ELEMBITS, i);
++		hive_sim_wide_pack(data, (unsigned long long *)&from[i], ISP_VEC_ELEMBIT=
+S, i);
+ 	}
+ 	assert(ISP_BAMEM_BASE[ID] !=3D (hrt_address) - 1);
+ #if !defined(HRT_MEMORY_ACCESS)
 --=20
 2.51.0.318.gd7df087d1a-goog
 
