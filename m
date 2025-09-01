@@ -1,281 +1,108 @@
-Return-Path: <linux-kernel+bounces-794416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C2BB3E168
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:23:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7EEB3E175
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CADB1A81BC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A573A16BBB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA4531A052;
-	Mon,  1 Sep 2025 11:23:19 +0000 (UTC)
-Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F843319864;
+	Mon,  1 Sep 2025 11:26:05 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3B3235355;
-	Mon,  1 Sep 2025 11:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E83D1F3BBB;
+	Mon,  1 Sep 2025 11:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756725799; cv=none; b=Z6ILxu+l7/+0K1dUMLwZgJIJFeG3dentTRqHzx/1Xzj5yV2KdLnpUKpXZszKq5exp+4oQRcNHf/x6MTXNIzA3Ak0QfbhsaokzT19keiVA5mjTLDBBABbPE0juwQmXW/WziqIJNDkWMQYlithDfDKV9IbHlcCeJHyfK81J4PVv/k=
+	t=1756725964; cv=none; b=S6ygR32XUrGlkLqDYRETwISIJU7vLl6EZcQFRpR/TElXPgLM64db3pjJbMQYjwizSqUw9sgCZjsgNPsga3XUthC/enxrNzSEjgV1KNy4pGQNiEe2ZsUYWoNKH0JkNcvuXYeoZyD+m1CvC9PM/u0GryxdAiZbbNDDwMi4SUzoGIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756725799; c=relaxed/simple;
-	bh=2yrlKyqof5LDPIj0Vs/tEk/Nwq7r83V7ktLAyBXBrKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HyqOsVUh9aM/sSmQvqDi3iVV8acWR4kaex4+f8x0e/igf1En3qXQeWLYNJkx09OcI7+dAU5FnyBxuw0CzFPrfzdBWjUXa1A5j6wXIuW2TZX8feS5WfyiorbcMxgPsDZLX8pb6cM4lJqVxp2O4XDGHU0O5d/0dAu6UdaoYSDYfGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-From: Brett A C Sheffield <bacs@librecast.net>
-To: willemdebruijn.kernel@gmail.com
-Cc: bacs@librecast.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	gregkh@linuxfoundation.org,
-	horms@kernel.org,
-	kuba@kernel.org,
+	s=arc-20240116; t=1756725964; c=relaxed/simple;
+	bh=EPolO3DT4+VFpRvraRubn8ZTgBhrMgGZ0MjTW5il0Y4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lhA7+vNQzsbSdREVqL7Nj6aXQSnlSN2umXUOf7vHIzWaSDpS0JfvdZtc1i4gpF9FOHzfuSyzi8zWf1XxnqqstZr8vlOtlCeThHB0a8c7zv/3a0VbiJRfIcs3zA7bQ7hObYpQBr/9iC8LKXkD434mHXzs5mQGxe40FqJiCJGvyos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6ce5c020872611f0b29709d653e92f7d-20250901
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:ccbefb36-1908-4efa-8038-8dcbf0c576a2,IP:0,U
+	RL:0,TC:0,Content:44,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:44
+X-CID-META: VersionHash:6493067,CLOUDID:8e941fce5a6d8950d68825d0171b6643,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:4|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 6ce5c020872611f0b29709d653e92f7d-20250901
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 387754835; Mon, 01 Sep 2025 19:25:55 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id CF8AAE008FA5;
+	Mon,  1 Sep 2025 19:25:54 +0800 (CST)
+X-ns-mid: postfix-68B582C2-6736662
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 2762EE008FA4;
+	Mon,  1 Sep 2025 19:25:53 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: "Rafael J . wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: zhenglifeng <zhenglifeng1@huawei.com>,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	willemb@google.com
-Subject: [PATCH net-next v3] selftests: net: add test for ipv6 fragmentation
-Date: Mon,  1 Sep 2025 11:22:23 +0000
-Message-ID: <20250901112248.5218-1-bacs@librecast.net>
-X-Mailer: git-send-email 2.49.1
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1 0/3] cpufreq: drop redundant freq_table argument in helpers
+Date: Mon,  1 Sep 2025 19:25:48 +0800
+Message-Id: <20250901112551.35534-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-Add selftest for the IPv6 fragmentation regression which affected
-several stable kernels.
+This patchset updates the cpufreq core and drivers to fully adopt
+the new policy->freq_table approach introduced in commit
+e0b3165ba521 ("cpufreq: add 'freq_table' in struct cpufreq_policy").
 
-Commit a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to
-stable without some prerequisite commits.  This caused a regression when
-sending IPv6 UDP packets by preventing fragmentation and instead
-returning -1 (EMSGSIZE).
+Motivation:
+- The frequency table is per-policy, not per-CPU, so redundant
+  freq_table arguments in core helpers and drivers are no longer needed.
+- Removing the extra argument reduces confusion and potential mistakes.
 
-Add selftest to check for this issue by attempting to send a packet
-larger than the interface MTU. The packet will be fragmented on a
-working kernel, with sendmsg(2) correctly returning the expected number
-of bytes sent.  When the regression is present, sendmsg returns -1 and
-sets errno to EMSGSIZE.
+Patch details:
 
-Link: https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
-Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
----
-Thanks again Willem for the prompt review. I've incorporated your suggested
-changes into v3.
+1. cpufreq: core: drop redundant freq_table argument in helpers
+   - Remove freq_table parameters in core helper functions.
+   - All helper functions now use policy directly.
 
-v3 changes:
- - add usleep instead of busy polling on sendmsg
- - simplify error handling by using error() and leaving cleanup to O/S
- - use loopback interface - don't bother creating TAP
- - send to localhost (::1)
+2. cpufreq: drivers: remove redundant freq_table argument
+   - Update cpufreq drivers to match the new core API.
+   - Calls that previously passed a separate freq_table argument
+   - No behavior changes, only API consistency.
 
-v2 changes:
- - remove superfluous namespace calls - unshare(2) suffices
- - remove usleep(). Don't wait for the interface to be ready, just send, and
-   handle the (less likely) error case by retrying.
- - set destination address only once
- - document our use of the IPv6 link-local source address
- - send to port 9 (DISCARD) instead of 4242 (DONT PANIC)
- - ensure sockets are closed on failure paths
- - use KSFT exit codes for clarity
+Zihuan Zhang (3):
+  cpufreq: Drop redundant freq_table parameter
+  cpufreq: sh: drop redundant freq_table argument
+  cpufreq: virtual: drop redundant freq_table argument
 
-v2: https://lore.kernel.org/netdev/20250831102908.14655-1-bacs@librecast.net
-v1: https://lore.kernel.org/netdev/20250825092548.4436-3-bacs@librecast.net
+ drivers/cpufreq/cpufreq.c         |  2 +-
+ drivers/cpufreq/freq_table.c      | 14 ++++++--------
+ drivers/cpufreq/sh-cpufreq.c      |  2 +-
+ drivers/cpufreq/virtual-cpufreq.c |  2 +-
+ include/linux/cpufreq.h           |  7 +++----
+ 5 files changed, 12 insertions(+), 15 deletions(-)
 
- tools/testing/selftests/net/.gitignore        |   1 +
- tools/testing/selftests/net/Makefile          |   1 +
- .../selftests/net/ipv6_fragmentation.c        | 145 ++++++++++++++++++
- 3 files changed, 147 insertions(+)
- create mode 100644 tools/testing/selftests/net/ipv6_fragmentation.c
-
-diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
-index 47c293c2962f..3d4b4a53dfda 100644
---- a/tools/testing/selftests/net/.gitignore
-+++ b/tools/testing/selftests/net/.gitignore
-@@ -16,6 +16,7 @@ ip_local_port_range
- ipsec
- ipv6_flowlabel
- ipv6_flowlabel_mgr
-+ipv6_fragmentation
- log.txt
- msg_oob
- msg_zerocopy
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index eef0b8f8a7b0..276e0481d996 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -117,6 +117,7 @@ TEST_GEN_FILES += tfo
- TEST_PROGS += tfo_passive.sh
- TEST_PROGS += broadcast_pmtu.sh
- TEST_PROGS += ipv6_force_forwarding.sh
-+TEST_GEN_PROGS += ipv6_fragmentation
- TEST_PROGS += route_hint.sh
- 
- # YNL files, must be before "include ..lib.mk"
-diff --git a/tools/testing/selftests/net/ipv6_fragmentation.c b/tools/testing/selftests/net/ipv6_fragmentation.c
-new file mode 100644
-index 000000000000..be79a0340826
---- /dev/null
-+++ b/tools/testing/selftests/net/ipv6_fragmentation.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Author: Brett A C Sheffield <bacs@librecast.net>
-+ *
-+ * Kernel selftest for the IPv6 fragmentation regression which affected stable
-+ * kernels:
-+ *
-+ *   https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
-+ *
-+ * Commit: a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to stable
-+ * without some prerequisite commits.
-+ *
-+ * This caused a regression when sending IPv6 UDP packets by preventing
-+ * fragmentation and instead returning -1 (EMSGSIZE).
-+ *
-+ * This selftest demonstrates the issue by sending an IPv6 UDP packet to
-+ * localhost (::1) on the loopback interface from the autoconfigured link-local
-+ * address.
-+ *
-+ * sendmsg(2) returns bytes sent correctly on a working kernel, and returns -1
-+ * (EMSGSIZE) when the regression is present.
-+ *
-+ * The regression was not present in the mainline kernel, but add this test to
-+ * catch similar breakage in future.
-+ */
-+
-+#define _GNU_SOURCE
-+
-+#include <error.h>
-+#include <fcntl.h>
-+#include <linux/if_tun.h>
-+#include <net/if.h>
-+#include <netinet/in.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <unistd.h>
-+#include "../kselftest.h"
-+
-+#define MTU 1500
-+#define LARGER_THAN_MTU 8192
-+
-+/* bring up interface */
-+static int interface_up(int ctl, struct ifreq *ifr)
-+{
-+	if (ioctl(ctl, SIOCGIFFLAGS, ifr) == -1)
-+		error(KSFT_FAIL, errno, "ioctl SIOCGIFFLAGS");
-+	ifr->ifr_flags = ifr->ifr_flags | IFF_UP;
-+	return ioctl(ctl, SIOCSIFFLAGS, ifr);
-+}
-+
-+/* no need to wait for DAD in our namespace */
-+static int disable_dad(char *ifname)
-+{
-+	char sysvar[] = "/proc/sys/net/ipv6/conf/%s/accept_dad";
-+	char fname[IFNAMSIZ + sizeof(sysvar)];
-+	int fd;
-+
-+	snprintf(fname, sizeof(fname), sysvar, ifname);
-+	fd = open(fname, O_WRONLY);
-+	if (fd == -1)
-+		error(KSFT_FAIL, errno, "open accept_dad");
-+	if (write(fd, "0", 1) != 1)
-+		error(KSFT_FAIL, errno, "write accept_dad");
-+
-+	return close(fd);
-+}
-+
-+static int setup(void)
-+{
-+	struct ifreq ifr = {
-+		.ifr_name = "lo"
-+	};
-+	int fd = -1;
-+	int ctl;
-+
-+	/* we need to set MTU, so do this in a namespace to play nicely */
-+	if (unshare(CLONE_NEWNET) == -1)
-+		error(KSFT_FAIL, errno, "unshare");
-+
-+	ctl = socket(AF_LOCAL, SOCK_STREAM, 0);
-+	if (ctl == -1)
-+		error(KSFT_FAIL, errno, "socket");
-+
-+	/* ensure MTU is smaller than what we plan to send */
-+	ifr.ifr_mtu = MTU;
-+	if (ioctl(ctl, SIOCSIFMTU, &ifr) == -1)
-+		error(KSFT_FAIL, errno, "ioctl: set MTU");
-+
-+	disable_dad("lo");
-+	interface_up(ctl, &ifr);
-+
-+	close(ctl);
-+	return fd;
-+}
-+
-+int main(void)
-+{
-+	struct in6_addr addr = {
-+		.s6_addr[15] = 0x01, /* ::1 */
-+	};
-+	struct sockaddr_in6 sa = {
-+		.sin6_family = AF_INET6,
-+		.sin6_addr = addr,
-+		.sin6_port = 9      /* port 9/udp (DISCARD) */
-+	};
-+	char buf[LARGER_THAN_MTU] = {0};
-+	struct iovec iov = { .iov_base = buf, .iov_len = sizeof(buf)};
-+	struct msghdr msg = {
-+		.msg_iov = &iov,
-+		.msg_iovlen = 1,
-+		.msg_name = (struct sockaddr *)&sa,
-+		.msg_namelen = sizeof(sa),
-+	};
-+	ssize_t rc;
-+	int ns_fd;
-+	int err = KSFT_FAIL;
-+	int s;
-+
-+	printf("Testing IPv6 fragmentation\n");
-+	ns_fd = setup();
-+	s = socket(AF_INET6, SOCK_DGRAM, 0);
-+send_again:
-+	rc = sendmsg(s, &msg, 0);
-+	if (rc == -1) {
-+		/* if interface wasn't ready, try again */
-+		if (errno == EADDRNOTAVAIL) {
-+			usleep(1000);
-+			goto send_again;
-+		}
-+		printf("[FAIL] sendmsg: %s\n", strerror(errno));
-+	} else if (rc != LARGER_THAN_MTU) {
-+		printf("[FAIL] sendmsg() returned %zi, expected %i\n", rc, LARGER_THAN_MTU);
-+	}
-+	else {
-+		printf("[PASS] sendmsg() returned %zi\n", rc);
-+		err = KSFT_PASS;
-+	}
-+	close(s);
-+	close(ns_fd);
-+	return err;
-+}
-
-base-commit: 864ecc4a6dade82d3f70eab43dad0e277aa6fc78
--- 
-2.49.1
+--=20
+2.25.1
 
 
