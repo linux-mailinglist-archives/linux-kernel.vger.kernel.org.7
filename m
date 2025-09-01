@@ -1,139 +1,248 @@
-Return-Path: <linux-kernel+bounces-794602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD245B3E3CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:57:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61978B3E3CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A151C1780B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B208D1A83C34
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174A4334374;
-	Mon,  1 Sep 2025 12:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA44334369;
+	Mon,  1 Sep 2025 12:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Awce9pZ6"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ppn1hfB9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB62D3314B7
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281F724DCF9
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756731436; cv=none; b=hrDg28R4mHsqT2lc/CN3lfNG8dCIwoImmCwmOFXh/71ijrosgbY0LtKldwBmM6zxJtne+5xpvIxjGi6ZuGaTETm8hpLHblPYR/6dtTYGKdN5VdzBSECrElWzJwwmBUN7JNiMQD46XFeG+3nEo1HpM6dOjOpaP5zZMoAi1A9fuKk=
+	t=1756731557; cv=none; b=FAnk/08fqRKAZzCVtc373qUFn/PALLvFzHmE0lYZoLP6oEmRbd0HgVcTHDlQLCnoTawKR8U2T9YqJTmeYLbYKbts+gAJJQMPTaElzH/XFYcvNJiUp80y2quFiyzGOdNbWjiczr4WDiofn3hy0Nbo9EgchLP2w6bp1wXSecwfrvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756731436; c=relaxed/simple;
-	bh=LA2Cde+xwNLHGVNxK+nOoJLLEK4E0j9VLsGVDb7DoCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDDQk6CCCt8htTGXTnj4RqxtgSI2F3B55lQr5JOwE+neKw4TxCJ1vaBQFoC+g3e1NS7+3NsOXZGqSzwBAhp+VH3OzZC3lOA876AuxBRtoI+Y3BDWSbpq2/jIdmW8Kr+sCoGYwfpldUkg2690LPArpKbI4HLBzrc3w6f9aSd04fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Awce9pZ6; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3d17f24d42fso1671506f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756731433; x=1757336233; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6CcZZgmXTEgXi67UOd8flewdG478TxsuC7DDhDV9EhI=;
-        b=Awce9pZ6KKPpqfDStm6grTv6TraGZ2p8PretycNa9sV5G3eSgzJvqpCJcm8gV4EWSb
-         D5toCoTaOa8VA6BgR0rFcZ5O3B9qFcROxZaOdj7gG9KYPw20eidJ3E3WYqsKcXyAWMpW
-         7gM0nrHH0z+sVCJ3we8YL+x3i00B41E8hnVJ3c0R0J1Wh7vjKIh54G9yUl2s5C6rxy5f
-         raqPU5Rg0x95su+ppJz8/HXtucfzq7cfw1S/8URMIcgPgOgFgh8fH8txVPpIgPjKzY82
-         BgdVu6ALnGakh3TLcMPeozZ9SQg6/HpikTF1EP5P3UEMwUWbr6iqziC6DWj2tMd89Vv9
-         OfdA==
+	s=arc-20240116; t=1756731557; c=relaxed/simple;
+	bh=OFKsATxtQXJF2NlguXWfAwQleNtNPmWLQYOHwaIcSCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nq8Q3vhW9fB8KAkFtQOPORBsY9W2wRhSKedc5fIMkwyOlduiRSrWrpMS6nRlnR6nv0w2LPujWlJMgea+OwU8xOzbdgayZuDEqaaVqc0sgPQ9tdB5y2vaZBesvzBf00pH5zjW+GxOVafoMUCzR1i7RD59Xr/CuAJIrsQPnHT9NNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ppn1hfB9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756731555;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RoiIEnJ0ic7SzUloB3/lyFFbxaN9NLIbcmrNtiHaEk4=;
+	b=Ppn1hfB93PkbDR9CBtLtzac+na2muwt6xfTUpVJcOjCgPlCsOU+/LsiQ67LpFp2h+chrUM
+	S/Xe6J5uEd+IXuE90442t1rKPbckva9Dofta5lpFSAVC2xb4ZbPoIGxrssBJPdRyVU42L5
+	kODku+1KJpnHXQzfMm0bhRiFL01Wuus=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-17-bxh7vP_tNQSsgDBPgoUmzg-1; Mon, 01 Sep 2025 08:59:13 -0400
+X-MC-Unique: bxh7vP_tNQSsgDBPgoUmzg-1
+X-Mimecast-MFC-AGG-ID: bxh7vP_tNQSsgDBPgoUmzg_1756731551
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b87609538so17408305e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:59:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756731433; x=1757336233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6CcZZgmXTEgXi67UOd8flewdG478TxsuC7DDhDV9EhI=;
-        b=odFX01/jlJJHQpwl2gC+WGItuM+iIhffYDmxRrTHJbWmAhIuMZQHbj1mWFvfrA2Fc1
-         dl5TeIe0x0ADbrn0T+jOuQUk6zG24JtC7Ztq+MSJnH+IZD0HopAS4uMoxPXrXsnliIz1
-         564zAV5BpTSewNpP87038VZdbnTOGhrX8Rqm4Mz6bxCallr6GnKsvEa8H35whgWTICjE
-         NGhxPSIK3Cj6SSk7ozKuFr61cXqkazqYcODXdKOKCvCckwmnBBAyqpyP+WFAtGfxLrwZ
-         qOq2lizUX7dCG8evA8xdb5u/xsCXajee7nDOUWPw1Fadt0AHdjT0x3BoiNirtCXcIEsA
-         +GRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqJCjVmQEeJ3pKz2D9/4a0PU4AOmBUcUNMSQjSG2dHbPlsbkzT6BI6TXP0VN/LGPhOOgmQJXc/wNWo66g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw63420tbShoeQYWZG9H1R7mwnzau2JX4XWjucp/wN9HTaUOgST
-	gCtINSjsxNeCEZsg7PqSV5p28vlhC4Pf93zYfHUn2+ZFbYVIAwRzSXXR3Lqks0KRMPk=
-X-Gm-Gg: ASbGnctNwFVaicj0l6wZSWFQZTNEc9nP3h1FwSkd5WfBzXcZPa087mi6GAPAs4nzPK2
-	ilVW80AycsB0h5nIYrY/5YuhmdjnNLDS3Fe6NpYebbYQRtOXH0Hdt+8Dvuxpi7EEB4FSc3oqTOB
-	Ja+G2lvZ03r5IcGmEmBcHuBjVkDsXlb7W6KukAePyUr1CsrXgbSrPxjeharwUDOlHVYSrAAYj0H
-	dtaY7hJ6lya8JeGy+sEAzxQDg2znffaO72mjNv/QH+v9voVMnwltA2xo5fxq8t9vVVAUqrkMDLJ
-	V4kNw6EMT++N5zPk/BwnVjHwJUWLS78Dkf64ASyO6bIg8wHd4YjmQQ7G/BRz1u+W/hkOfvs7K8z
-	lSqJMO0dyYWsv8qwingUw7ZU5rwACWa6iw8JAEg==
-X-Google-Smtp-Source: AGHT+IFGr7/8/ZT9kzcrMvxG5Dy4K+Li2LIxqb9UOtAyrwkmZc8eBIyFR7BB1vat/tRDTqmJKwd0jQ==
-X-Received: by 2002:a05:6000:4013:b0:3b7:94a2:87e8 with SMTP id ffacd0b85a97d-3d1dcb75006mr6117687f8f.18.1756731432991;
-        Mon, 01 Sep 2025 05:57:12 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b87b38fcfsm51362895e9.0.2025.09.01.05.57.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 05:57:12 -0700 (PDT)
-Date: Mon, 1 Sep 2025 15:57:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
-Subject: Re: [PATCH v2] staging: iio: adc: ad7816: add mutex to serialize
- SPI/GPIO operations
-Message-ID: <aLWYJKSDjNajmAlh@stanley.mountain>
-References: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
- <aLV0LBxD0KIHPSmo@stanley.mountain>
- <aLWULUIcYEz3N-Rx@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1756731551; x=1757336351;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RoiIEnJ0ic7SzUloB3/lyFFbxaN9NLIbcmrNtiHaEk4=;
+        b=LQKFU7ywlZVotkJYHkiWXDe2tFvE/zfJK7LFbv2fPQP59pj9GA3WpsbBZvaJapjSmh
+         nc7AkVD6W9StFlpFFPTcMJfmOcYBF0ne92vxqEGsI+j+OYtE4i4PeYe4sX9s8zEgfqjl
+         xBDP4TlilNHwJQgCLNhvdocBIj0BLtlPJyM8XgkKH5aXjkmMPm14ThXkb0TPhQ9LQHoT
+         5B/WY0mNnofOlPQp9SQEDl9KIWFOAgEo48eC1RL9lYzS4J5zy1F+9m2EbmUYvcX1CFir
+         tkuH4f9SM0rb9fMOjP74XFJrGs4UfD+J5lA6ab0P5ADQ1g0LtkCKGxu9j6Y5r/dunBj1
+         mRJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQh7gLPvZtvNq6E9utz4p2Yg7NdzzOyOTRYkZlhyM/QyqSzN+fag6JyPEqa3MdhNRivJsPcENp4s0Nu1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywynh60QOco3WSMnOGhcjvitTIYT273a1vKbcrrFRGSGSKc3m2n
+	PHUCbxwXKG2AtT/zyS5FoVuWl5IydJQYstfaeesWcFoBvt2+isnIIpOQSYWRFzaJr5XUwJR97r/
+	pjkAOIdPNvMwk0m58MXzFOzArrC/Wh53rgkxXPb5+sPv4oRy5c22LkLXyoR8tLAHPWg==
+X-Gm-Gg: ASbGnctmf4dy0JPzxg3jdRtHWlfmUMjkA3WHppoEbVewtmST3rAdkNvJjr10+0Mk++J
+	BRIzW7B7IrspKqOf0nlwfEVBlL/r1vVTCTnO+SS+Sb5jYQNYeRZo5W6yM9+RHNICanTagn5Atim
+	BK0fZguZy8NnvK+u9FVdVWMmG2D74yfh+KUFDkWBMbAu6lfNFmBD1GXskS0t1WMyYKD6iSlnjas
+	jAd+4jZ+ZI71hMSpsA1bVWewK70uNlGb4b3wQ+QyuBjPpV5CdI2xSzwrejfEXIl3VjO5M/f2X1q
+	DfBa0BK/CqnDvUzeH1F0djPAFcWKyro2934K8MWQnJbGR53j2EHHBr7KlFuXaoO6PTnOPwqfGLD
+	jeHA=
+X-Received: by 2002:a05:6000:22c8:b0:3d4:d572:b8ea with SMTP id ffacd0b85a97d-3d4d582029dmr4076266f8f.34.1756731551292;
+        Mon, 01 Sep 2025 05:59:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwwiOlbgDAUXiL5u9+hhsxXPHF3nih+OFrmTVITUV0olcPvLjVNle5d7dLd+XfIou16DK1DA==
+X-Received: by 2002:a05:6000:22c8:b0:3d4:d572:b8ea with SMTP id ffacd0b85a97d-3d4d582029dmr4076243f8f.34.1756731550807;
+        Mon, 01 Sep 2025 05:59:10 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fc3fasm15108222f8f.5.2025.09.01.05.59.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 05:59:10 -0700 (PDT)
+Message-ID: <a43fea8c-4c62-422e-a3f0-7192ab51992a@redhat.com>
+Date: Mon, 1 Sep 2025 14:59:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLWULUIcYEz3N-Rx@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] drm/panic: Add kunit tests for drm_panic
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250821095228.648156-1-jfalempe@redhat.com>
+ <20250821095228.648156-3-jfalempe@redhat.com>
+ <20250827-wooden-kakapo-of-defense-0c4273@houat>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20250827-wooden-kakapo-of-defense-0c4273@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 01, 2025 at 03:40:13PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 01, 2025 at 01:23:40PM +0300, Dan Carpenter wrote:
-> > On Mon, Sep 01, 2025 at 10:24:45AM +0330, Mohammad Amin Hosseini wrote:
-> > > From: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
-> > > 
-> > > The ad7816 driver was accessing SPI and GPIO lines without
-> > > synchronization, which could lead to race conditions when accessed
-> > > concurrently from multiple contexts. This might result in corrupted
-> > > readings or inconsistent GPIO states.
-> > > 
-> > > Introduce an io_lock mutex in the driver structure to serialize:
-> > > - SPI transactions in ad7816_spi_read() and ad7816_spi_write()
-> > > - GPIO pin toggling sequences
-> > > - Updates to device state via sysfs store functions (mode, channel, oti)
-> > > 
-> > > The mutex ensures proper mutual exclusion and prevents race
-> > > conditions under concurrent access.
+On 27/08/2025 11:44, Maxime Ripard wrote:
+> Hi,
 > 
-> ...
+> On Thu, Aug 21, 2025 at 11:49:06AM +0200, Jocelyn Falempe wrote:
+>> Add kunit tests for drm_panic.
+>> They check that drawing the panic screen doesn't crash, but they
+>> don't check the correctness of the resulting image.
+>>
+>> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+>> ---
+>>   MAINTAINERS                            |   1 +
+>>   drivers/gpu/drm/drm_panic.c            |   4 +
+>>   drivers/gpu/drm/tests/drm_panic_test.c | 164 +++++++++++++++++++++++++
+>>   3 files changed, 169 insertions(+)
+>>   create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index cfa28b3470ab..285d1e27734f 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -8465,6 +8465,7 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>>   F:	drivers/gpu/drm/drm_draw.c
+>>   F:	drivers/gpu/drm/drm_draw_internal.h
+>>   F:	drivers/gpu/drm/drm_panic*.c
+>> +F:	drivers/gpu/drm/tests/drm_panic_test.c
+>>   F:	include/drm/drm_panic*
+>>   
+>>   DRM PANIC QR CODE
+>> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+>> index 1e06e3a18d09..d89812ff1935 100644
+>> --- a/drivers/gpu/drm/drm_panic.c
+>> +++ b/drivers/gpu/drm/drm_panic.c
+>> @@ -986,3 +986,7 @@ void drm_panic_exit(void)
+>>   {
+>>   	drm_panic_qr_exit();
+>>   }
+>> +
+>> +#ifdef CONFIG_DRM_KUNIT_TEST
+>> +#include "tests/drm_panic_test.c"
+>> +#endif
+>> diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tests/drm_panic_test.c
+>> new file mode 100644
+>> index 000000000000..46ff3e5e0e5d
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/tests/drm_panic_test.c
+>> @@ -0,0 +1,164 @@
+>> +// SPDX-License-Identifier: GPL-2.0 or MIT
+>> +/*
+>> + * Copyright (c) 2025 Red Hat.
+>> + * Author: Jocelyn Falempe <jfalempe@redhat.com>
+>> + *
+>> + * KUNIT tests for drm panic
+>> + */
+>> +
+>> +#include <drm/drm_fourcc.h>
+>> +#include <drm/drm_panic.h>
+>> +
+>> +#include <kunit/test.h>
+>> +
+>> +#include <linux/units.h>
+>> +#include <linux/vmalloc.h>
+>> +
+>> +struct drm_test_mode {
+>> +	const int width;
+>> +	const int height;
+>> +	const u32 format;
+>> +	void (*draw_screen)(struct drm_scanout_buffer *sb);
+>> +	const char *fname;
+>> +};
+>> +
+>> +/*
+>> + * Run all tests for the 3 panic screens: user, kmsg and qr_code
+>> + */
+>> +#define DRM_TEST_MODE_LIST(func) \
+>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_XRGB8888, func) \
+>> +	DRM_PANIC_TEST_MODE(300, 200, DRM_FORMAT_XRGB8888, func) \
+>> +	DRM_PANIC_TEST_MODE(1920, 1080, DRM_FORMAT_XRGB8888, func) \
+>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB565, func) \
+>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB888, func) \
+>> +
+>> +#define DRM_PANIC_TEST_MODE(w, h, f, name) { \
+>> +	.width = w, \
+>> +	.height = h, \
+>> +	.format = f, \
+>> +	.draw_screen = draw_panic_screen_##name, \
+>> +	.fname = #name, \
+>> +	}, \
+>> +
+>> +static const struct drm_test_mode drm_test_modes_cases[] = {
+>> +	DRM_TEST_MODE_LIST(user)
+>> +	DRM_TEST_MODE_LIST(kmsg)
+>> +	DRM_TEST_MODE_LIST(qr_code)
+>> +};
+>> +#undef DRM_PANIC_TEST_MODE
+>> +
+>> +static int drm_test_panic_init(struct kunit *test)
+>> +{
+>> +	struct drm_scanout_buffer *priv;
+>> +
+>> +	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
+>> +	KUNIT_ASSERT_NOT_NULL(test, priv);
+>> +
+>> +	test->priv = priv;
+>> +
+>> +	drm_panic_set_description("Kunit testing");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void drm_test_panic_screen_user_map(struct kunit *test)
+>> +{
+>> +	struct drm_scanout_buffer *sb = test->priv;
+>> +	const struct drm_test_mode *params = test->param_value;
+>> +	void *fb;
+>> +	int fb_size;
+>> +
+>> +	sb->format = drm_format_info(params->format);
+>> +	fb_size = params->width * params->height * sb->format->cpp[0];
+>> +
+>> +	fb = vmalloc(fb_size);
+>> +	KUNIT_ASSERT_NOT_NULL(test, fb);
+>> +
+>> +	iosys_map_set_vaddr(&sb->map[0], fb);
+>> +	sb->width = params->width;
+>> +	sb->height = params->height;
+>> +	sb->pitch[0] = params->width * sb->format->cpp[0];
+>> +
+>> +	params->draw_screen(sb);
+>> +	vfree(fb);
+>> +}
 > 
-> > > +	mutex_lock(&chip->io_lock);
-> > >  	chip->channel_id = data;
-> > > +	mutex_unlock(&chip->io_lock);
-> 
-> > > +	mutex_lock(&chip->io_lock);
-> > >  	chip->oti_data[chip->channel_id] = data;
-> > > +	mutex_unlock(&chip->io_lock);
-> 
-> > I'm not really knowledgeable to review the others, if they are
-> > required or how the locking is supposed to work.  But these aren't
-> > correct because we're only locking around the writers and not the
-> > readers so it could still race.
-> 
-> Readers are in spi_write(), or what do you imply by this comment?
-> I.o.w. I do not see the issue with the idea of locking and how it's
-> done (I haven't checked all of the details, though).
+> You need to document what you're testing, and what the expected result
+> is.
 
-Sorry, I meant we don't have locking in ad7816_show_oti(), for example.
+Sure, I will add some comments.
+I think I can also add a few checks, as this doesn't check the result at 
+all.
 
-regards,
-dan carpenter
+> 
+> Maxime
+
 
