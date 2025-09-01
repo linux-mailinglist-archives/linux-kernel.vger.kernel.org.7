@@ -1,97 +1,128 @@
-Return-Path: <linux-kernel+bounces-793950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F28B3DAD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A82DB3DA7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36B2189B902
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:09:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27231898678
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D8E25EF97;
-	Mon,  1 Sep 2025 07:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466AC20FAAB;
+	Mon,  1 Sep 2025 07:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cebitec.uni-bielefeld.de header.i=@cebitec.uni-bielefeld.de header.b="kJqwZrxD"
-Received: from smtp.CeBiTec.Uni-Bielefeld.DE (smtp.CeBiTec.Uni-Bielefeld.DE [129.70.160.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvYft1NT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84C117A2EB;
-	Mon,  1 Sep 2025 07:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.160.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A454B18EB0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756710564; cv=none; b=jYLqiCULfkWv2vYMwtMCRlerRi71/S+VRKLelufFrkCrfPAyKPMiyXPedwQbATRwzqqVnGMd3cNXTpIdriFsxoZvl/eTlXI+zA4z1JVYdEn544SmXDXm0cO8//uXpgAiHeH9mDwAgFP5aWomOxxARVXBVK+lAG1dQtS7kThIumQ=
+	t=1756710051; cv=none; b=qF47E58UVHWtMWxo3FYZ/bOWQxh6azYncyNMh39dsv7R3sY6/12dbF8YxP2vPoEMWpuo7bCab5UmjUp33SDR2lSPZtJslFAfwAN8r6wEMjwqgcVdMUuczumNP0Yr30fAeD/tqFzwwWc2riEuZgVD9Fm8xM79d4P6vY7OVpN9CLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756710564; c=relaxed/simple;
-	bh=MpMRn0jmorqks8fMq6ldSU/X2aqwsi6PRn2Ixb3HtBM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Sh9qRk4t+YTBoSaXE5Tt5ZlSjeCpZps+kuAJRotZ0DKYNHulWbxGQj+rZoDb35NpHzIGneQgeQ5qT2VJkDbGBrDbAl/j/zGmgssxwrIkfbNEnHAcwRf49wFZgnHT3neZSD44XG1EnhTie3BSGJBn+V7nXBUePYBS3yEVkFesGTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=CeBiTec.Uni-Bielefeld.DE; spf=pass smtp.mailfrom=cebitec.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=cebitec.uni-bielefeld.de header.i=@cebitec.uni-bielefeld.de header.b=kJqwZrxD; arc=none smtp.client-ip=129.70.160.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=CeBiTec.Uni-Bielefeld.DE
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cebitec.uni-bielefeld.de
-Received: from localhost (localhost.CeBiTec.Uni-Bielefeld.DE [127.0.0.1])
-	by smtp.CeBiTec.Uni-Bielefeld.DE (Postfix) with ESMTP id EF863B8D3E;
-	Mon,  1 Sep 2025 09:00:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-	cebitec.uni-bielefeld.de; h=content-type:content-type
-	:mime-version:user-agent:message-id:date:date:references
-	:in-reply-to:subject:subject:from:from:received:received; s=
-	20200306; t=1756710027; bh=MpMRn0jmorqks8fMq6ldSU/X2aqwsi6PRn2Ix
-	b3HtBM=; b=kJqwZrxD2sH35QeC55lSl9RJwG/BvbJQBfb9PNScwTPGunOV/QIkV
-	Y77OaZVmC3udnAXEW9dog8T5lY0GmsXMPti1Lcjj2gFTNpGRT/tIGBPufYPrUIYd
-	6hfP6s6NYjflZUMFQxVRPkh9NBvh/DvJvt3w6hF5fTeNSqGFkFpGCmrsVaC/thuI
-	DG9GUD+sfJOvCIJMWX4wssNzPo7hF1hL6oR+4F69T3l1Ww+7yhBYIZLgth92jnEq
-	MepXt8mlgZN76CDrAmmlo2u98Bx286CMKJhTLA9GObWA8oIPwVPP5KaI2h5X5qGM
-	Rj+MOypqiV1qUy98diroJJA9hi0yC9FVg==
-X-Virus-Scanned: amavisd-new at cebitec.uni-bielefeld.de
-Received: from smtp.CeBiTec.Uni-Bielefeld.DE ([127.0.0.1])
-	by localhost (smtp.cebitec.uni-bielefeld.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id FdUk0RIJygLE; Mon,  1 Sep 2025 09:00:27 +0200 (CEST)
-Received: from manam.CeBiTec.Uni-Bielefeld.DE (p50854244.dip0.t-ipconnect.de [80.133.66.68])
-	(Authenticated sender: ro)
-	by smtp.CeBiTec.Uni-Bielefeld.DE (Postfix) with ESMTPSA id 16F56B85F8;
-	Mon,  1 Sep 2025 09:00:27 +0200 (CEST)
-From: Rainer Orth <ro@CeBiTec.Uni-Bielefeld.DE>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
-  linux-kernel@vger.kernel.org,  sparclinux@vger.kernel.org,  Andreas
- Larsson <andreas@gaisler.com>,  Anthony Yznaga <anthony.yznaga@oracle.com>
-Subject: Re: [PATCH v2 1/1] sparc: fix accurate exception reporting in
- copy_{from,to}_user for M7
-In-Reply-To: <240f0f51687dcb146656a47932ec075b0821b605.camel@physik.fu-berlin.de>
-	(John Paul Adrian Glaubitz's message of "Mon, 01 Sep 2025 01:43:33
-	+0200")
-References: <aecb14d84b1af658a87a2b1ba3a49ac13d39560e.camel@physik.fu-berlin.de>
-	<20250828130456.2335-1-kernel@mkarcher.dialup.fu-berlin.de>
-	<240f0f51687dcb146656a47932ec075b0821b605.camel@physik.fu-berlin.de>
-Date: Mon, 01 Sep 2025 09:00:26 +0200
-Message-ID: <yddjz2i64j9.fsf@CeBiTec.Uni-Bielefeld.DE>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756710051; c=relaxed/simple;
+	bh=ZeFbSr4PbTwyBV2OZDCGcrnpJKQZAVSA0iWy33B9hkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MvT1M8Mj/CtDnEPC0+901hR3EwHT+mk22SDVuVxUZ5cSlCC+/jY3pCRvV1zDQ7upOfek3GdOkIgcMfNut43Uq66PawRtlzN0HQRf8zPXYv7tnvlY1cBMNZ71kRb2Xxpgmyr1syfokptHv0w+DOnhiM5LbfeSulq2vDJYYteOxP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvYft1NT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAD57C4CEF0;
+	Mon,  1 Sep 2025 07:00:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756710051;
+	bh=ZeFbSr4PbTwyBV2OZDCGcrnpJKQZAVSA0iWy33B9hkk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hvYft1NTetVSsSX4p5CXUeKpmkLpiMxaAl1TTkydFWd6PqU8Xx1OHJJipNZB9g/hU
+	 Q+sRzxY8fnQZMhwPyCihTGDq8ntIem3BjpvVz3NCFdlmwbhqQjDTOmU3um4Rkc2DuE
+	 EPrDo+cptEIOJ2PFpAb9Us/eQ7mwmujATMjjfzgCAP3zHBGkNaYE0ijcyE1MfktsR0
+	 TVwXkf1mK+aFAUopGFN0I+bjs83gtzJRHDY+Ffqc3I8cI+5ZuU2uqHvRh8VVyXYDby
+	 0+iaSjKuzNuUiWOazmYBLsb1G6uBInMMhtu3tteE59SicP/ceX3qoBADDbjW1I4xUt
+	 uBotJSPLxSEnA==
+Date: Mon, 1 Sep 2025 09:00:48 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: John Ripple <john.ripple@keysight.com>, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi86: break probe dependency loop
+Message-ID: <20250901-airborne-marten-of-serendipity-b55e21@houat>
+References: <20250820152407.2788495-1-john.ripple@keysight.com>
+ <20250820152407.2788495-2-john.ripple@keysight.com>
+ <CAD=FV=VfCWFViDE1a5-_KtH0Pfo2EnCJeo2k8MaWuRHhmMPMMA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="hoexycmw3smg4mip"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=VfCWFViDE1a5-_KtH0Pfo2EnCJeo2k8MaWuRHhmMPMMA@mail.gmail.com>
 
-Hi Adrian,
 
-> in the past, you reported stability issues with the Linux kernel when running
-> inside an LDOM on SPARC M7/M8. Could you verify whether the patch above fixes
-> these problems or whether at least they don't introduce regressions?
+--hoexycmw3smg4mip
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi86: break probe dependency loop
+MIME-Version: 1.0
 
-thanks for the heads-up.  Indeed the hangs persist even when the system
-is idle.  However, I've never built a Linux kernel before and have way
-too much on the plate to try now.  Besides, I don't have a reproducer
-for the issue, so even with a patch I'd have to wait for an extended
-period of time to see if the issue is gone, so I'll just wait until the
-patch lands in the Debian/sparc64 repo and see if it helps.
+On Fri, Aug 29, 2025 at 09:40:30AM -0700, Doug Anderson wrote:
+> Hi,
+>=20
+> On Wed, Aug 20, 2025 at 8:24=E2=80=AFAM John Ripple <john.ripple@keysight=
+=2Ecom> wrote:
+> >
+> > The commit c3b75d4734cb ("drm/bridge: sn65dsi86: Register and attach our
+> > DSI device at probe") was intended to prevent probe ordering issues and
+> > created the ti_sn_attach_host function.
+> >
+> > In practice, I found the following when using the nwl-dsi driver:
+> >  - ti_sn_bridge_probe happens and it adds the i2c bridge. Then
+> >    ti_sn_attach_host runs (in the ti_sn_bridge_probe function) and fail=
+s to
+> >    find the dsi host which then returns to ti_sn_bridge_probe and remov=
+es
+> >    the i2c bridge because of the failure.
+> >  - The nwl_dsi_probe then runs and adds dsi host to the host list and t=
+hen
+> >    looks for the i2c bridge, which is now gone, so it fails. This loop
+> >    continues for the entire boot sequence.
+>=20
+> Which i2c bridge are you talking about? You mean the one created by
+> i2c_add_adapter() in drm_dp_aux_register()? I guess I'm confused about
+> why the DSI probe routine would even be looking for that adapter.
+>=20
+> In any case, I don't _think_ your patch is valid. Specifically, if you
+> notice ti_sn_attach_host() can return "-EPROBE_DEFER". That's a valid
+> error code to return from a probe routine but I don't think it's a
+> valid error code to return from a bridge attach function, is it?
 
-	Rainer
+It's not documented anywhere though, so we'd need to document (and
+assess) if it's acceptable first.
 
--- 
------------------------------------------------------------------------------
-Rainer Orth, Center for Biotechnology, Bielefeld University
+We should also amend
+https://docs.kernel.org/gpu/drm-kms-helpers.html#special-care-with-mipi-dsi=
+-bridges
+
+Maxime
+
+--hoexycmw3smg4mip
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLVEoAAKCRAnX84Zoj2+
+dupqAX40hRyvkHZyIYywMCfPVV2IAYd6DnoXJ6H/p4qb5Xz2UwikqugDDzxJcmJ1
+qaDvsaUBf2sKrCfvVaAcGQ3ULwYe+Zs3Aa4WJtjToWES91VYZVPd2gULYsnDqmP2
+DNZQNQ6AtA==
+=1bEs
+-----END PGP SIGNATURE-----
+
+--hoexycmw3smg4mip--
 
