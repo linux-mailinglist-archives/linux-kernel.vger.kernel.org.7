@@ -1,129 +1,145 @@
-Return-Path: <linux-kernel+bounces-793641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823A5B3D660
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F10FAB3D662
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 541421745E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6793177AAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F251F582C;
-	Mon,  1 Sep 2025 01:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuzNmjA/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850971FBC92;
+	Mon,  1 Sep 2025 01:57:13 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014A719F12A;
-	Mon,  1 Sep 2025 01:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7413E45C0B;
+	Mon,  1 Sep 2025 01:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756691720; cv=none; b=hlmZnLcmps92pdHExKqyIj9iPuLSW9a8J9GnU99UdGe4qRAnD6yohh9ydla2S/0Qdby60w6L1n7f4HX9T6MhCcA0ZzYRVyZAk1jEFtkENeGpZvHZq4JxaPdE8aoj17Qfte375LET46oygfGVLSOfzR0+8Q3hI84nCrkimrobbEY=
+	t=1756691833; cv=none; b=LgI+TqGgqEqmBfish4uKGeHVyeDY6CTN6OHk3vbD6zvukBQk9CHsjcxoyFl7b9DGt3Alc0CXwoNgh1CC5CwiYxGxFyUBvnj6M3+ekvuB6L3nEQK1rk+Mo89HrYnLt82mRrDfUUGDxjdgHO31Oti0OamrBwawdc8pzRPCrkk4o+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756691720; c=relaxed/simple;
-	bh=y9uUD5rhZqWaFwFllOW9Bnz7ZPvxhH94nppg8HPo8WM=;
+	s=arc-20240116; t=1756691833; c=relaxed/simple;
+	bh=Y8X6jHFzG6UhbanWGXTOgiUAkuoHfNZviYrea/HQCec=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mizTcn5Cp1q/9Js4qPpdkn1HQfLK3CihGoNL0wJvwCL8IymI2OrIzLeE/GG42Rqfzbeal4LcrC6vI623NUb7X8SoyIt/pOGQmJa11FfqPhLLCMImDjsoSBkM4rYOIkyf89bfmH6U4s++tcErXYosQwFTGJGbB5xm/hpd/DEqCf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuzNmjA/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA76C4CEED;
-	Mon,  1 Sep 2025 01:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756691718;
-	bh=y9uUD5rhZqWaFwFllOW9Bnz7ZPvxhH94nppg8HPo8WM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JuzNmjA/vCoP7TafQO8Xv9Ns+jfihrA0K3Wh9SzcJbJdwMp77YZE+2O+80JPZ4fHr
-	 um7vfZfN1rXqBklwR8YjKwjvJ0I/UIereHZNhyMrRe/1irSBdEjO1ASVe+tgIHYsnJ
-	 tiz7Gk7tJP2CsAvBVjxHZNZOWo66lhjX3Mr1OMPAOxX08sVybRgj+OK6ytw66vL1BB
-	 8Sh1+Y5KfKQmrgTwe0pQZCJ1Adq75AUaYSrKxEUBUMH7IpfxAEdfPgwpTOHaAPbGkx
-	 yCCg70sCBFhfSO1HdxqD3Eh5nU8OozG0yxdo5cjmxkZqm33jIDsgEhKFxEy4HfjR6s
-	 2tzcg/78Vnrnw==
-Message-ID: <bfad9056-7ae7-4bd8-8600-a603ab8439ca@kernel.org>
-Date: Sun, 31 Aug 2025 18:55:16 -0700
+	 In-Reply-To:Content-Type; b=CO+qcOXyNzaQkSzx/vXefibe9dedFA8EAjIcw3Ez8sTbSOAlFUtzI5DZ1cwMIbcOYL3Eh1ZE64ca3KUrrd99aB3cCr4Or/IqpyjEJqwdMgp1C1jpajooS/AH9S3fGGwOM/ckXqv6pn1HJgzQRgdNOIjKojlePsjYMCT4Keakph0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFX780FrdzYQttW;
+	Mon,  1 Sep 2025 09:57:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 891C11A12D9;
+	Mon,  1 Sep 2025 09:57:06 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgCX4o5w_bRoAjztAw--.53901S3;
+	Mon, 01 Sep 2025 09:57:06 +0800 (CST)
+Message-ID: <0c6d1500-9ffd-5ce2-50f6-d8a908d7b21a@huaweicloud.com>
+Date: Mon, 1 Sep 2025 09:57:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arc: Fix __fls() const-foldability via
- __builtin_clzl()
-To: Kees Cook <kees@kernel.org>, Yury Norov <yury.norov@gmail.com>
-Cc: kernel test robot <lkp@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Vineet Gupta
- <vgupta@kernel.org>, linux-kernel@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-hardening@vger.kernel.org
-References: <20250831022352.it.055-kees@kernel.org>
-From: Vineet Gupta <vgupta@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250831022352.it.055-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 8/30/25 19:23, Kees Cook wrote:
-> While tracking down a problem where constant expressions used by
-> BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
-> initializer was convincing the compiler that it couldn't track the state
-> of the prior statically initialized value. Tracing this down found that
-> ffs() was used in the initializer macro, but since it wasn't marked with
-> __attribute__const__, the compiler had to assume the function might
-> change variable states as a side-effect (which is not true for ffs(),
-> which provides deterministic math results).
->
-> For arc architecture with CONFIG_ISA_ARCV2=y, the __fls() function
-> uses __builtin_arc_fls() which lacks GCC's const attribute, preventing
-> compile-time constant folding, and KUnit testing of ffs/fls fails on
-> arc[3]. A patch[2] to GCC to solve this has been sent.
->
-> Add a fix for this by handling compile-time constants with the standard
-> __builtin_clzl() builtin (which has const attribute) while preserving
-> the optimized arc-specific builtin for runtime cases. This has the added
-> benefit of skipping runtime calculation of compile-time constant values.
-> Even with the GCC bug fixed (which is about "attribute const") this is a
-> good change to avoid needless runtime costs, and should be done
-> regardless of the state of GCC's bug.
->
-> Build tested ARCH=arc allyesconfig with GCC arc-linux 15.2.0.
->
-> Link: https://github.com/KSPP/linux/issues/364 [1]
-> Link: https://gcc.gnu.org/pipermail/gcc-patches/2025-August/693273.html
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508031025.doWxtzzc-lkp@intel.com/ [3]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-
-Acked-by: Vineet Gupta <vgupta@kernel.org>
-
-Phew ! Thanks for taking time to track this down and also submitting the gcc
-fix, like a true open source Good Samaritan.
-Please let me know if you want me to take it via ARC tree, just be advised it
-will be delayed due to slow'ish development.
-
-Cheers,
--Vineet
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] md: prevent incoreect update of resync/recovery offset
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Li Nan <linan666@huaweicloud.com>
+Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250830090242.4067003-1-linan666@huaweicloud.com>
+ <2eadd8d3-7705-4000-982e-cafd222977c1@molgen.mpg.de>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <2eadd8d3-7705-4000-982e-cafd222977c1@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCX4o5w_bRoAjztAw--.53901S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw1DGw1DWw18ArWDXrWrZrb_yoW8CFy5pF
+	WkJFyYyrWY9rWxAw17Zw4UZFyrZa4xt34DGryUGa4DZ3ZFkwnIqFW2qFsYgFyqgr4Fkryj
+	q3s8JF95Za1rZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUvg4fUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
 
-> ---
->  v2: clarify commit log (we want this patch regardless of GCC being fixed)
->  v1: https://lore.kernel.org/lkml/20250826034354.work.684-kees@kernel.org/
-> ---
->  arch/arc/include/asm/bitops.h | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arc/include/asm/bitops.h b/arch/arc/include/asm/bitops.h
-> index 5340c2871392..df894235fdbc 100644
-> --- a/arch/arc/include/asm/bitops.h
-> +++ b/arch/arc/include/asm/bitops.h
-> @@ -133,6 +133,8 @@ static inline __attribute__ ((const)) int fls(unsigned int x)
->   */
->  static inline __attribute__ ((const)) unsigned long __fls(unsigned long x)
->  {
-> +	if (__builtin_constant_p(x))
-> +		return x ? BITS_PER_LONG - 1 - __builtin_clzl(x) : 0;
->  	/* FLS insn has exactly same semantics as the API */
->  	return	__builtin_arc_fls(x);
->  }
+
+在 2025/8/30 17:41, Paul Menzel 写道:
+> Dear Nan,
+> 
+> 
+> Thank you for your patch. I have some formal comments. In the 
+> summary/title: incor*r*ect.
+> 
+Thanks for your review, I will fix typo in v2.
+
+> Am 30.08.25 um 11:02 schrieb linan666@huaweicloud.com:
+>> From: Li Nan <linan122@huawei.com>
+>>
+>> In md_do_sync(), when md_sync_action returns ACTION_FROZEN, subsequent
+>> call to md_sync_position() will return MaxSector. This causes
+>> 'curr_resync' (and later 'recovery_offset') to be set to MaxSector too,
+>> which incorrectly signals that recovery/resync has completed even though
+>> disk data has not actually been updated.
+>>
+>> To fix this issue, skip updating any offset values when the sync acion
+> 
+> ac*t*ion
+> 
+>> is either FROZEN or IDLE.
+> 
+> Maybe state that the same holds true for IDLE?
+> 
+> Should these two cases be handled differently in `md_sync_position()`. Does 
+> it semantically make sense, that the default of MaxSector is returned?
+> 
+
+md_sync_position() return value decides whether sync_request is needed. The
+loop uses 'while (j < max_sectors)', when J is MaxSector there’s nothing
+to do. This seems reasonable.
+
+>> Fixes: 7d9f107a4e94 ("md: use new helpers in md_do_sync()")
+>> Signed-off-by: Li Nan <linan122@huawei.com>
+>> ---
+>>   drivers/md/md.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index e78f80d39271..6828a569e819 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -9397,6 +9397,9 @@ void md_do_sync(struct md_thread *thread)
+>>       }
+>>       action = md_sync_action(mddev);
+>> +    if (action == ACTION_FROZEN || action == ACTION_IDLE)
+>> +        goto skip;
+>> +
+>>       desc = md_sync_action_name(action);
+>>       mddev->last_sync_action = action;
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
+> .
+
+-- 
+Thanks,
+Nan
 
 
