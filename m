@@ -1,75 +1,167 @@
-Return-Path: <linux-kernel+bounces-795132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C1AB3ED31
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:11:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CA6B3ED3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6761A85736
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BFA3B4F6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251B4345753;
-	Mon,  1 Sep 2025 17:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40D2320A3A;
+	Mon,  1 Sep 2025 17:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N33Y/byO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUUI4mWI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB863451CC;
-	Mon,  1 Sep 2025 17:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C59A306492;
+	Mon,  1 Sep 2025 17:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746516; cv=none; b=DZz4xzqKLTKWB7NmpOdFlBBwLg/5bvwREoP96uIlbPHxK2lsHG05lDHZSGo8lEHbMPpo/4uCz8HA0jYkv39/tsNSGB4fk51j3+l7LLrUZ40VsqE2ctH/gIIVAHIOCE1ZhUuvym7SilEcOc/k/n6JRU64DCqTH9aIZi3iMEH/gVA=
+	t=1756746666; cv=none; b=gES8A/shU2vYcdYfO/Rf9Pz9ZNnDkwLZ5ad1gqqQbxGy5MYts+QIxvONSv+8Jf9HvrigzMnq28p6Qx0LZCL5HcaNykhOPxxtZaBdZReKDVkYkV4uD7flDadUFc6Esitbu1udCH7SkP7z1Hg9GNjTEF/aqSUd4ZR1RhAuOhMnHOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746516; c=relaxed/simple;
-	bh=UxkIIFKap9sAvvGQ8hTKOIfE/eeyxdYvnFXmy8j2qAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=StevVaN018IAy3vphzR87nHUX+Z1v5ZQnUSS53ZE6f3XWVXD5VejHSSNMPYoqNZlk8kK7HTTD5cz+TYRlW4eIzEtJz4aukL1mwbmyM3qNIB87JSg+RiESUm5KO7t6wM09t9BQtHYgqB/p0m6SIRPN36pqLox8Bqy4xeOozIhGoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N33Y/byO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D912C4CEF0;
-	Mon,  1 Sep 2025 17:08:35 +0000 (UTC)
+	s=arc-20240116; t=1756746666; c=relaxed/simple;
+	bh=4H0TvV5SATbPpUhZV/kpTrbxsbMRGPlfcGGMf566Pzg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=P5rMcy/J9vUgWL5tMKlq0/cHEbOU+JzIz23JsnhjLkcBPIgTRsnIJuqPDSA2KKh5JSxof9N6zpaPlnCExVBWw8fZTGnW9naloHZpUaEzua650R+vaE5LcbGqRROnr9ZO3uQLd4zY7eAPypjPH9sNYd2yemVIi18TA6zfyjRKGiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUUI4mWI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20273C4CEF0;
+	Mon,  1 Sep 2025 17:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756746516;
-	bh=UxkIIFKap9sAvvGQ8hTKOIfE/eeyxdYvnFXmy8j2qAI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=N33Y/byOWpwsRs43YhOi3Sxws2GaMUo8HT1N0W5XHsQ+mqDpcNSoXX7/HI1Yidfe+
-	 nsrB4CwoCqEMwQo53QnRkabAJF8wsB/Z8kmO9g51UNGO79LSmUN4rGPgt6AXIbaluu
-	 M8XXWIE04hv+ec3mHJnyCCfCZq7DDkQCih1/XiJfAAXOcHVFS514HpnfjRQQYX89CM
-	 SZCdrPnMWDni51N3HqyUeikgCEn1AbvIxa34kSsmjtGgVN5BzOPL1SSZrq03t69qA7
-	 wCFQVJBfQ6NkNmB0ZIRvmMr+rGvgOaKwO+4gYGrwaROKSXfYztnmAoLdfmVpJ7uzdn
-	 MLP31TsqnvAcA==
-Date: Mon, 1 Sep 2025 10:08:34 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Abhijit Gangurde <abhijit.gangurde@amd.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, brett.creeley@amd.com,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- corbet@lwn.net, leon@kernel.org, andrew+netdev@lunn.ch, sln@onemain.com,
- allen.hubbe@amd.com, nikhil.agarwal@amd.com, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/14] Introduce AMD Pensando RDMA driver
-Message-ID: <20250901100834.130dd527@kernel.org>
-In-Reply-To: <d829c4ee-f16c-6cfa-afdc-05f4b981ac02@amd.com>
-References: <20250814053900.1452408-1-abhijit.gangurde@amd.com>
-	<20250826155226.GB2134666@nvidia.com>
-	<d829c4ee-f16c-6cfa-afdc-05f4b981ac02@amd.com>
+	s=k20201202; t=1756746665;
+	bh=4H0TvV5SATbPpUhZV/kpTrbxsbMRGPlfcGGMf566Pzg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=TUUI4mWIbQYkLpKOkdoxxSUBAWTkDGIYzdhS0o8slwr8l2r1Piu0dUL/l4nBep+rG
+	 0yJmQw4jAg/OFnBDLBuTCbytHtcsfNnnUgNkZT3gLgEb3ShbgGVAKwQxkOyPSP18C8
+	 7llU/i7XIFhO9U0XbVOYJRMrxGrbX605fmK7MccA+FrMFzq540oBoLsId10kVkUbl0
+	 lAs6X6RqdrVdsl02+4MM4ddwO3muSKKRwdLGGmbbS8cho5TRe0jnQdsfS22uYIMObg
+	 eUQz4JMDeISgSUyU3IB3lnscaMdUMFfjTXMsM05sKQlT4UprJfC0pJ8VwXpakPhqL8
+	 FF3vY5xHeeBDA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <20250828124320.GB7333@nvidia.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250826162019.GD2130239@nvidia.com> <mafs0bjo0yffo.fsf@kernel.org>
+	<20250828124320.GB7333@nvidia.com>
+Date: Mon, 01 Sep 2025 19:10:53 +0200
+Message-ID: <mafs0h5xmw12a.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Mon, 1 Sep 2025 11:57:21 +0530 Abhijit Gangurde wrote:
-> Jakub, thank you for looking over the Ethernet side 
-> earlier(https://lore.kernel.org/linux-rdma/20250625144433.351c7be4@kernel.org/#t). 
-> Are you good with them being merged via the RDMA tree? For context, the 
-> ethernet patches are getting applied on net-next, and there are no 
-> further ethernet patches planned for this release.
+Hi Jason,
 
-Go ahead.
+On Thu, Aug 28 2025, Jason Gunthorpe wrote:
+
+> On Wed, Aug 27, 2025 at 05:03:55PM +0200, Pratyush Yadav wrote:
+>
+>> I think we need something a luo_xarray data structure that users like
+>> memfd (and later hugetlb and guest_memfd and maybe others) can build to
+>> make serialization easier. It will cover both contiguous arrays and
+>> arrays with some holes in them.
+>
+> I'm not sure xarray is the right way to go, it is very complex data
+> structure and building a kho variation of it seems like it is a huge
+> amount of work.
+>
+> I'd stick with simple kvalloc type approaches until we really run into
+> trouble.
+>
+> You can always map a sparse xarray into a kvalloc linear list by
+> including the xarray index in each entry.
+>
+> Especially for memfd where we don't actually expect any sparsity in
+> real uses cases there is no reason to invest a huge effort to optimize
+> for it..
+
+Full xarray is too complex, sure. But I think a simple sparse array with
+xarray-like properties (4-byte pointers, values using xa_mk_value()) is
+fairly simple to implement. More advanced features of xarray like
+multi-index entries can be added later if needed.
+
+In fact, I have a WIP version of such an array and have used it for
+memfd preservation, and it looks quite alright to me. You can find the
+code at [0]. It is roughly 300 lines of code. I still need to clean it
+up to make it post-able, but it does work.
+
+Building kvalloc on top of this becomes trivial.
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/commit/?h=kho-array&id=cf4c04c1e9ac854e3297018ad6dada17c54a59af
+
+>
+>> As I explained above, the versioning is already there. Beyond that, why
+>> do you think a raw C struct is better than FDT? It is just another way
+>> of expressing the same information. FDT is a bit more cumbersome to
+>> write and read, but comes at the benefit of more introspect-ability.
+>
+> Doesn't have the size limitations, is easier to work list, runs
+> faster.
+>
+>> >  luo_store_object(&memfd_luo_v0, sizeof(memfd_luo_v0), <.. identifier for this fd..>, /*version=*/0);
+>> >  luo_store_object(&memfd_luo_v1, sizeof(memfd_luo_v1), <.. identifier for this fd..>, /*version=*/1);
+>> 
+>> I think what you describe here is essentially how LUO works currently,
+>> just that the mechanisms are a bit different.
+>
+> The bit different is a very important bit though :)
+>
+> The versioning should be first class, not hidden away as some emergent
+> property of registering multiple serializers or something like that.
+
+That makes sense. How about some simple changes to the LUO interfaces to
+make the version more prominent:
+
+	int (*prepare)(struct liveupdate_file_handler *handler,
+		       struct file *file, u64 *data, char **compatible);
+
+This lets the subsystem fill in the compatible (AKA version) (string
+here, but you can make it an integer if you want) when it serialized its
+data.
+
+And on restore side, LUO can pass in the compatible:
+
+	int (*retrieve)(struct liveupdate_file_handler *handler,
+			u64 data, char *compatible, struct file **file);
+
+
+-- 
+Regards,
+Pratyush Yadav
 
