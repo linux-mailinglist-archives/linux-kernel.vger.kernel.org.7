@@ -1,95 +1,86 @@
-Return-Path: <linux-kernel+bounces-795296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C465B3EF83
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:23:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFC5B3EF89
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A371207491
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECED17A2CE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76CC27D77D;
-	Mon,  1 Sep 2025 20:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A168B26B75C;
+	Mon,  1 Sep 2025 20:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvH9qRFv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EW+IGoms"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0371627B4E4;
-	Mon,  1 Sep 2025 20:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC5A270EA3;
+	Mon,  1 Sep 2025 20:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756758015; cv=none; b=cwMbsEAfC5Tq675U+pNaTCgOjGKLN1rleAA2+bCydAow61aLCdFgfCxL5wYZyxlaarKXteiAfmdupB/HF7cY2cxrqaxfkhBzAi5j+1HsV1vYIkCQX66uN7F3q6Ee0dMJejHheaolCwQUYtoEM5Q7HV3selWVx2ccwr2rdZNtffs=
+	t=1756758095; cv=none; b=EVdJpjAEP3ZfhU8edEirdXsrNs7dL7lzM5q5Ol60ldmpxWVofoKtRZ0RHF4TGXfMFjWbJeXFKp4+Qk/7jyOkPlMMf5SNYldHoFK7iyyhdE89ogv3NSEY9ne4r8y3JIT2Fy++lQSUBSj/585m7K/jCBIHVHXAWsj1SfyljeQGl2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756758015; c=relaxed/simple;
-	bh=/wHKmb5x4dVF5LLmkd2vR6bUl0B5d3Y3KDThI8+gBEM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MfqltI9TvwRXy3PKON73TI0nczGAA30bHv5QjXTBc57ILsfyTjzF40qNjStXfGTHpTM5vT9bYyvPBU6SnHcsLwRZvAOJrIS9UqTjLkDL5gbkcfzCdgfhgMfafAaCPZDGHXSzFZgjpHuRALya4WIS3iaapH/QQrOQIrZlGQ0TwNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvH9qRFv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74026C4CEF8;
-	Mon,  1 Sep 2025 20:20:13 +0000 (UTC)
+	s=arc-20240116; t=1756758095; c=relaxed/simple;
+	bh=zupmcbT7MYzC+6+FlkMyuP3znHTEX3ZeQyS/vH9i+Gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bqC3yo1SE8NMyMICMmKkG75re+rZN5lWlIW6TFV5BFTY8RAuHGAa7HmfG18Ypljc/NnzKyMgIZBuaxt4KBV6qVmeqQYbZ06P/2wLwOu2LAod4t6PKaNmRBUx3g1KJ3/eYWq7gBvz48sOTBeChg0pzfZYK2on57gGoEpYyXIefjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EW+IGoms; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9C65C4CEF0;
+	Mon,  1 Sep 2025 20:21:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756758013;
-	bh=/wHKmb5x4dVF5LLmkd2vR6bUl0B5d3Y3KDThI8+gBEM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TvH9qRFvETPxVNMAuRj/0xEkXPg+k3OdaDqncr4D14qlHBgnqucaVSUyuOZCbEhoA
-	 EMAatoVfYDb+Rgwx+2XFzLnIKJWB2KQPuhTMoemnoXTenXAkZm1DnFr/kWg+WBzRqU
-	 jF0V4XzKbL8hjW4WhSe/aCnbs3uGGPMVaStKg3AVIRA2gAOPfbC18t6RBSDh1rTIuN
-	 lgXhf851oE/ZCD6NHAdHpvzPoEuHMNYngqTvfqXnEzPq2GG/+suZe2N688DcuWv73v
-	 IZVVS+1WAPimsLNvgrhUIARrFkEFF8S+o3l1PNT4pNStSJryHwjDkuDwlJcrerp9Iz
-	 uq1CLW7nYZK+w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E4B383BF4E;
-	Mon,  1 Sep 2025 20:20:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1756758094;
+	bh=zupmcbT7MYzC+6+FlkMyuP3znHTEX3ZeQyS/vH9i+Gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EW+IGomsJAUChff9Gfgx3X5WbTf2EUQ+5T88BsXsDAWjg3VLClfaczOTrC4ltqKYm
+	 1FcnaH9p0mlgM/q31XczwR0fdwMvgdHH8dXzkQLi+y2pu/o3wLP15oOZ7AQCMZ+TWu
+	 64XhQLtlPKeElWy9r3O8Ilc7seDm0rx6MVCQ4+gwTXp3dDb+tGkY3rJZZ14ALGCvK2
+	 030OxJ91/4dYE4PKW4ha0791/jnLi6GslFzimkfOEth2Gj0haXg6Q10XhSd3Ti+VtM
+	 Z/t5RP/S8BlpP4ETgG4+Xd074Xso3ZjIcuO2a50T9DK/un/sjJzR5stW00O6B9z+D6
+	 708z4g2CEN4kg==
+Date: Mon, 1 Sep 2025 15:21:33 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, linux-kernel@vger.kernel.org,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-samsung-soc@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: mtd samsung-s3c2410: Drop S3C2410
+ support
+Message-ID: <175675809322.277369.1491301346340311064.robh@kernel.org>
+References: <20250830-s3c-cleanup-nand-v1-0-05b99ef990fe@linaro.org>
+ <20250830-s3c-cleanup-nand-v1-2-05b99ef990fe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] selftests: net: fix spelling and grammar mistakes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175675801899.3872744.1239896650395115620.git-patchwork-notify@kernel.org>
-Date: Mon, 01 Sep 2025 20:20:18 +0000
-References: <20250828211100.51019-1-praveen.balakrishnan@magd.ox.ac.uk>
-In-Reply-To: <20250828211100.51019-1-praveen.balakrishnan@magd.ox.ac.uk>
-To: Praveen Balakrishnan <praveen.balakrishnan@magd.ox.ac.uk>
-Cc: aconole@redhat.com, echaudro@redhat.com, i.maximets@ovn.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, shuah@kernel.org, netdev@vger.kernel.org,
- dev@openvswitch.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250830-s3c-cleanup-nand-v1-2-05b99ef990fe@linaro.org>
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 28 Aug 2025 22:11:00 +0100 you wrote:
-> Fix several spelling and grammatical mistakes in output messages from
-> the net selftests to improve readability.
+On Sat, 30 Aug 2025 19:01:10 +0200, Krzysztof Kozlowski wrote:
+> Samsung S3C24xx family of SoCs was removed from the Linux kernel in the
+> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support"), in January
+> 2023.  There are no in-kernel users of its compatibles.
 > 
-> Only the message strings for the test output have been modified. No
-> changes to the functional logic of the tests have been made.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/mtd/samsung-s3c2410.txt    | 56 ----------------------
+>  1 file changed, 56 deletions(-)
 > 
-> Signed-off-by: Praveen Balakrishnan <praveen.balakrishnan@magd.ox.ac.uk>
-> 
-> [...]
 
-Here is the summary with links:
-  - selftests: net: fix spelling and grammar mistakes
-    https://git.kernel.org/netdev/net-next/c/c85ae0240ee9
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
