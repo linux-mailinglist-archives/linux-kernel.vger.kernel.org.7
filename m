@@ -1,258 +1,151 @@
-Return-Path: <linux-kernel+bounces-794786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1555FB3E734
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E327CB3E737
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0BA189328D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2981A85FD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BEF341676;
-	Mon,  1 Sep 2025 14:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B076A341AAA;
+	Mon,  1 Sep 2025 14:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lEZ+kvdO"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Dr4VYQ9d"
+Received: from fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.199.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3EE341641
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDB6342C96;
+	Mon,  1 Sep 2025 14:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.199.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756737000; cv=none; b=AKJpAgwY5vQMMnJhcu576HIcMR/A2lBEUNiBSKNkk+fEnZk/4KBNXqSELJvhwbP8wC93fBjZgJkXBbDHN20v+fjUfo+vqE2BMTa0gXckH15aMptN3XmkbYUdaMDYPHSmATrX0xv9CLv7lJMeGrAvQv8F99lacL2ts2f4qBxTrV8=
+	t=1756737007; cv=none; b=TqXEGL455FrBCkj7n6WUI2bMJ/bdNBpJBWiZHliw/N8nbIdPFUDI6TMFlti6MfCBV6PMjLHp0+NbOfMUxhYX0NQltcujcjZISO7YII5kvKKsB3B5d8H/t9lE6Vsi8YG9mTNhpwoUgltfN9s8rptIFirDuEvnKy88ZT2w2X9rk2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756737000; c=relaxed/simple;
-	bh=8k/cTAP1uGo7YkU154SU3zLypsg/dO9vH8JEnPRukQw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=PO8S0159hkfLhl2MmCSyu6xy48HLYqLnUe+IcVMKIGvBVcfzvNGSX90KMso8dyxuTv9vREcMerAZJjCfaSn5AAxw+dt3EGxK3eG2DUDuQj/Py6nAyJ4cj/hnHkX1ChtRchzyrxUzEUyGoS//tvcL6SHRz6Rg/kO3ApRxBJD8V/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lEZ+kvdO; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250901142951epoutp01260870b2108decbd3826ebf883d63ef7~hLvxpKmd41267012670epoutp01M
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:29:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250901142951epoutp01260870b2108decbd3826ebf883d63ef7~hLvxpKmd41267012670epoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756736991;
-	bh=2IVilufhTk8OxJwrv6/zlVYsrGN5/kHDHMnuC7CDzWc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=lEZ+kvdOgAgJi4Jw3RYYcX1BYw64Dh00cK7YI8yvONrG/6TnTVqR9fyPzn6WX5k7Q
-	 7TcB+flqvRXLj0KvWO+tm2WAqvxbOU7bD804SwRZoHV+ffVW1VFhp44wu5ouBy6OQ4
-	 +1LIIQ74X+ltEcB3moz9SMmZRmnic2NC1PNK8Xnk=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250901142950epcas5p13ea9f7cdf7c686e688e71ae08aa36acc~hLvwyJHrt2550625506epcas5p1T;
-	Mon,  1 Sep 2025 14:29:50 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cFrqd2hpgz6B9m5; Mon,  1 Sep
-	2025 14:29:49 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250901142948epcas5p3b6580da89ca826378481451bdafce798~hLvvQIxzi3166431664epcas5p3P;
-	Mon,  1 Sep 2025 14:29:48 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250901142947epsmtip2a81a5af8319bbbf7d82d50d5339d3232~hLvtvrwLf0150201502epsmtip23;
-	Mon,  1 Sep 2025 14:29:46 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Wim Van
- Sebroeck'" <wim@linux-watchdog.org>, "'Guenter Roeck'" <linux@roeck-us.net>,
-	"'Rob Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'"
-	<krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20250830-watchdog-s3c-cleanup-v1-4-837ae94a21b5@linaro.org>
-Subject: RE: [PATCH 4/4] dt-bindings: watchdog: samsung-wdt: Split if:then:
- and constrain more
-Date: Mon, 1 Sep 2025 19:59:45 +0530
-Message-ID: <31f501dc1b4c$dedf8fd0$9c9eaf70$@samsung.com>
+	s=arc-20240116; t=1756737007; c=relaxed/simple;
+	bh=0xcK1J5+hsUnCJvdm8xfBNDb1E5BCiku7ILTg1rUZC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EsN3ibQaVNv95eNKzX7uVIaApSMh7rpDKCZQ1tzi8iXTzO+uuVTnGZIoMGCzhWsmO4PERsmbPqe/YcFUrYfjxh8GPF/lF9IhoBfLm7EJKa2R+ZlcLFVC6xY4B1ddsjUF81vw07hf0vLWvTLgsO+WQmUs53HVdqAbxMvVv7E9eTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Dr4VYQ9d; arc=none smtp.client-ip=18.199.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1756737005; x=1788273005;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=AoelNy+fFiAsI/G6P79kebWdwgtGSe9WtMaZxZOBfQk=;
+  b=Dr4VYQ9daPb6aAJ1VPofghaH5JgQcg5vqgH9Cnna7vx9hqku3L0IcBKH
+   +n9GibT1e0FwJM9/6AEzS85fBlGAa4rLw8GZV9xOUw355qGo94rDfqTdV
+   XTvBJ++p0EDBFKK6x7f5zrc6AydPQqFpMFsXix0P2jhTwUVKgUHueZOhS
+   Ft78yOV1OB0DTLCu9y6cZ6lI4DkCeB/R7TzUXtPAYgypVsePRDZwUYPef
+   fMdtwX5c2vbJNdc2+DMD3PkG5l7se6pBupL+0a4z+6emVuDeMxnfD0yBy
+   usc30+A4U8UTTg8L4MPZKJhYsv4vnzPsSEvWNH2vCxio44Dfn/ku1enmI
+   w==;
+X-CSE-ConnectionGUID: 39Z989SVTZKj52biPXCDLA==
+X-CSE-MsgGUID: XJvmmOfCSa2eaac9pprUFw==
+X-IronPort-AV: E=Sophos;i="6.17,290,1747699200"; 
+   d="scan'208";a="1362825"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 14:29:54 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.224:14142]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.0.202:2525] with esmtp (Farcaster)
+ id afac050d-f855-48c7-8123-57b7c6b12256; Mon, 1 Sep 2025 14:29:54 +0000 (UTC)
+X-Farcaster-Flow-ID: afac050d-f855-48c7-8123-57b7c6b12256
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
+ Mon, 1 Sep 2025 14:29:53 +0000
+Received: from [192.168.30.195] (10.106.83.14) by
+ EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 1 Sep 2025 14:29:52 +0000
+Message-ID: <bb929cd5-7ac1-4159-8614-553e84176968@amazon.com>
+Date: Mon, 1 Sep 2025 15:29:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMq6vyl63rBWSdRs1NKiWzUsYqwtwJkufMiArpZRa2xt8VwUA==
-Content-Language: en-us
-X-CMS-MailID: 20250901142948epcas5p3b6580da89ca826378481451bdafce798
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250830101916epcas5p13a007b24285862d6ed0db1e2d8b738d6
-References: <20250830-watchdog-s3c-cleanup-v1-0-837ae94a21b5@linaro.org>
-	<CGME20250830101916epcas5p13a007b24285862d6ed0db1e2d8b738d6@epcas5p1.samsung.com>
-	<20250830-watchdog-s3c-cleanup-v1-4-837ae94a21b5@linaro.org>
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH v4 1/2] KVM: guest_memfd: add generic population via write
+To: David Hildenbrand <david@redhat.com>, "Kalyazin, Nikita"
+	<kalyazin@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"shuah@kernel.org" <shuah@kernel.org>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jthoughton@google.com" <jthoughton@google.com>, "Roy, Patrick"
+	<roypat@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>, "Manwaring,
+ Derek" <derekmn@amazon.com>, "Cali, Marco" <xmarcalx@amazon.co.uk>
+References: <20250828153049.3922-1-kalyazin@amazon.com>
+ <20250828153049.3922-2-kalyazin@amazon.com>
+ <d58425d4-8e4f-4b70-915f-322658e9878e@redhat.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <d58425d4-8e4f-4b70-915f-322658e9878e@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D009EUB002.ant.amazon.com (10.252.51.66) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
 
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> Sent: Saturday, August 30, 2025 3:49 PM
-> To: Wim Van Sebroeck <wim=40linux-watchdog.org>; Guenter Roeck
-> <linux=40roeck-us.net>; Rob Herring <robh=40kernel.org>; Krzysztof Kozlow=
-ski
-> <krzk+dt=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>; Alim Akhtar
-> <alim.akhtar=40samsung.com>
-> Cc: Krzysztof Kozlowski <krzk=40kernel.org>; linux-
-> watchdog=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-
-> samsung-soc=40vger.kernel.org; Krzysztof Kozlowski
-> <krzysztof.kozlowski=40linaro.org>
-> Subject: =5BPATCH 4/4=5D dt-bindings: watchdog: samsung-wdt: Split if:the=
-n: and
-> constrain more
->=20
-> Binding defined two if:then: blocks covering different conditions but not=
- fully
-> constraining the properties per each variant:
-> 1. =22if:=22 to require samsung,syscon-phandle, 2. =22if:=22 with =22else=
-:=22 to narrow
-> number of clocks and require or disallow
->    samsung,cluster-index.
->=20
-> This still did not cover following cases:
-> 1. Disallow samsung,syscon-phandle when not applicable, 2. Narrow
-> samsung,cluster-index to =5B0, 1=5D, for SoCs with only two
->    clusters.
->=20
-> Solving this in current format would lead to spaghetti code, so re-write =
-entire
-> =22if:then:=22 approach into mutually exclusive cases so each SoC appears=
- only in
-> one =22if:=22 block.  This allows to forbid samsung,syscon-phandle for S3=
-C6410,
-> and narrow samsung,cluster-index to =5B0, 1=5D.
->=20
-This looks much cleaner.=20
-On a side note, may be you can add an example of latest SoC binding=20
-for the documentation purpose as current example in this file is pretty old=
- and simple one.=20
-(I know one can always look into dtsi/dts for the example, but updating her=
-e won't harm)
+On 28/08/2025 21:01, David Hildenbrand wrote:
+> On 28.08.25 17:31, Kalyazin, Nikita wrote:
+>> write syscall populates guest_memfd with user-supplied data in a generic
+>> way, ie no vendor-specific preparation is performed.  This is supposed
+>> to be used in non-CoCo setups where guest memory is not
+>> hardware-encrypted.
+>>
+>> The following behaviour is implemented:
+>>   - only page-aligned count and offset are allowed
+>>   - if the memory is already allocated, the call will successfully
+>>     populate it
+>>   - if the memory is not allocated, the call will both allocate and
+>>     populate
+>>   - if the memory is already populated, the call will not repopulate it
+>>
+>> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+>> ---
+> 
+> Just nothing that checkpatch complains about
+> 
+> a) Usage of "unsigned" instead of "unsigned int"
 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> ---
-In anycase,
+Hi David,
 
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
->  .../devicetree/bindings/watchdog/samsung-wdt.yaml  =7C 70
-> ++++++++++++++++------
->  1 file changed, 52 insertions(+), 18 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-
-> wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-
-> wdt.yaml
-> index
-> 51e597ba7db2615da41f5d3b6dc4e70f6bb72bb6..41aee1655b0c22a6dce212a6
-> 3fa4849089253f09 100644
-> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> =40=40 -74,24 +74,7 =40=40 allOf:
->            contains:
->              enum:
->                - google,gs101-wdt
-> -              - samsung,exynos5250-wdt
-> -              - samsung,exynos5420-wdt
-> -              - samsung,exynos7-wdt
->                - samsung,exynos850-wdt
-> -              - samsung,exynos990-wdt
-> -              - samsung,exynosautov9-wdt
-> -              - samsung,exynosautov920-wdt
-> -    then:
-> -      required:
-> -        - samsung,syscon-phandle
-> -  - if:
-> -      properties:
-> -        compatible:
-> -          contains:
-> -            enum:
-> -              - google,gs101-wdt
-> -              - samsung,exynos850-wdt
-> -              - samsung,exynos990-wdt
->                - samsung,exynosautov9-wdt
->                - samsung,exynosautov920-wdt
->      then:
-> =40=40 -104,9 +87,41 =40=40 allOf:
->            items:
->              - const: watchdog
->              - const: watchdog_src
-> +        samsung,cluster-index:
-> +          enum: =5B0, 1=5D
->        required:
->          - samsung,cluster-index
-> -    else:
-> +        - samsung,syscon-phandle
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,exynos990-wdt
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Bus clock, used for register interface
-> +            - description: Source clock (driving watchdog counter)
-> +        clock-names:
-> +          items:
-> +            - const: watchdog
-> +            - const: watchdog_src
-> +      required:
-> +        - samsung,cluster-index
-> +        - samsung,syscon-phandle
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,exynos5250-wdt
-> +              - samsung,exynos5420-wdt
-> +              - samsung,exynos7-wdt
-> +    then:
->        properties:
->          clocks:
->            items:
-> =40=40 -115,6 +130,25 =40=40 allOf:
->            items:
->              - const: watchdog
->          samsung,cluster-index: false
-> +      required:
-> +        - samsung,syscon-phandle
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,s3c6410-wdt
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: Bus clock, which is also a source clock
-> +        clock-names:
-> +          items:
-> +            - const: watchdog
-> +        samsung,cluster-index: false
-> +        samsung,syscon-phandle: false
->=20
->  unevaluatedProperties: false
->=20
->=20
-> --
-> 2.48.1
+I copied the prototypes straight from the fs.h...  In any case, will fix 
+in the next version.
 
+> 
+> b) The From doesn't completely match the SOB: "Kalyazin, Nikita" vs
+> "Nikita Kalyazin"
+
+It's about .com vs .co.uk, I think.  Will have to use "From:" apparently.
+
+
+Thanks,
+Nikita
+
+> 
+> -- 
+> Cheers
+> 
+> David / dhildenb
+> 
 
 
