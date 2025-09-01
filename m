@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-795021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C405CB3EBEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:10:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE637B3EBEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C112015FF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCA52015D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7812F0C41;
-	Mon,  1 Sep 2025 16:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B11A30649A;
+	Mon,  1 Sep 2025 16:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eUXzeH4P"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gXTA5KjE"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C4F2EC0B6
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C164A2FB622
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742991; cv=none; b=URc35snlK7uOWB3AWA6/tOkOAcfKGuAygcFIj8+v6XJDGOlaIK4mwTyT6y7iOLeslK8vHHPC5cFG9ltLErCOYIVkw1FfuKS6oTNjQFi4JI/q/OruF9PM82fBLsCvwRGGlz4dQxqODmch3wy3otqYwRKM6mv2ukvUuUbzIVE60yA=
+	t=1756742994; cv=none; b=Qvw3V9OreEysb+mka9X7RsTYjJVO388/NSgxWNaPM7PnDRyj29yp2Ek0hA18vBgww1VoZQ8VZ2/qIqgb1rZs2rJ19COlMcRwukRJkm7zwVJbHX9i/OpdyDJO13O8/TxNgjhXl3jLrGWTDYueFEwzx/VuSOnELT+G/imNKeSlZRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742991; c=relaxed/simple;
-	bh=jpKHYGmCtueZ8D8VBUsMZT8ONSweBcCS83ya6hNTJpk=;
+	s=arc-20240116; t=1756742994; c=relaxed/simple;
+	bh=jOAHCUQOI95A6NhD1bdRc7Ks4QP6hIwvLd9f4ISXn+8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V4b5VqS7OpG+G9x0bKH1ufe1pSvFTcX+ga30rKlrmJC+JNoNiYdnZHNkfDGtJNXcnLJxE59+P5lMjLsoiWhf193vNDUqL9q81U3gLXk7lPaxX0+umSVNe4KV2bGTVCJ7O8MvLGMQ8trRLx5DtNpcQFp2+SfLvqBZjZIzXfjjves=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eUXzeH4P; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=tyjQ6OGzWXiSh0sAr5ZnHoggBkyyVi/RM083AOKdnoBW0xJ89pVxd1utPvHeEn7F0wk/cEiOKqd6GzmFJ95pX2gA8IjWYGLapgXqGZsjJyxLIOCIZZrZdqrtfFB3xQk0k9EPavkeY3vFRDaUiloiObsHQ9c4aN4SdVIsG+jmYQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gXTA5KjE; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756742987;
+	s=mimecast20190719; t=1756742991;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=U3TbFIMcvGAQ1Z4BqKhz2/agDzUx20cT3mtJIvL86Nc=;
-	b=eUXzeH4PXEeQSwBFXzVkpiIF9tdPVVaQbs9fLJmBXv8D6HIsn9fXMAY/ATgz2ec09G89oJ
-	mmd45LtZGzTQI4Y8C8fpR4q5W35GIjylMKFVbnjMPum86AyMDKH0i0Jb3VuowWioTZa+ZP
-	0KNCfw/wx/NQ0LcJD70EotPsUNwhhfw=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=vlmYPrJMvaurL156kfyVvz/kxSmkc+/T+EJ8CZ+U2zk=;
+	b=gXTA5KjE5Jxy/vqnORcKy3qCGatsS9dlgWT1SBJUIf26Ctn+ctfFWv478ogJ/fUrAKYEr5
+	MpqkKIBQSmN9tmPxT5Ev5ohZvucvxbpvpUi/9ES+I0MqXTxk57V2qj9anvxizxCsVL5vfR
+	LSM/nHygS5wfNWa0CFOL4w2a7/Cw5xM=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-551-mv_iNKzqMp68zJvy0sDPCg-1; Mon, 01 Sep 2025 12:09:46 -0400
-X-MC-Unique: mv_iNKzqMp68zJvy0sDPCg-1
-X-Mimecast-MFC-AGG-ID: mv_iNKzqMp68zJvy0sDPCg_1756742986
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7f2942a1aa1so1278244785a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 09:09:46 -0700 (PDT)
+ us-mta-621-EQO_dQyOPlSWfCoVRtXwNg-1; Mon, 01 Sep 2025 12:09:51 -0400
+X-MC-Unique: EQO_dQyOPlSWfCoVRtXwNg-1
+X-Mimecast-MFC-AGG-ID: EQO_dQyOPlSWfCoVRtXwNg_1756742990
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70de0bdb600so77132776d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 09:09:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756742985; x=1757347785;
+        d=1e100.net; s=20230601; t=1756742990; x=1757347790;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U3TbFIMcvGAQ1Z4BqKhz2/agDzUx20cT3mtJIvL86Nc=;
-        b=rgCKvevkCBDZeqodWvE7avC8oVANkwjyNMjAO87ySLgsfCHGJM7aaOrAktXr/DlHGP
-         MIcMVxsQncPTWk9JRr28YMuafWfvgndiQy9boUkXIewxqr50WyalmFPrBk+GvCAFOPKb
-         TWgZ8mO0QcOwSPukE1iQzDSTyswJ1pLF6uwB8dJhVkHsReSLP4WjLIxvv+fPI5Ror8z3
-         rIc7dkoc0VpqABVIU9/l0pnQ+rfbttXtkdOT2ze0uO+MgSf1vkf95NuMsAzgIXAEZsDP
-         DimLBZU5XUW4UKfG7RfN2a6/9LJf9M47UL+yLhGkpWbIGxZhZgDGGYDIyE6d3bZLvCJR
-         o7fg==
-X-Gm-Message-State: AOJu0YyGNcwdjXcRdnUvwZd8Eg4aDYzv4479oHgxxyy5D608KOfbyu6q
-	pb7VGtsWcfvjiWx6rjrKILm5gtC0JuOeKKQAACauC2oCPw/O2biDqDFEU/P1t7aNR0E5tT0jQv4
-	kMipLs0S1D1UoIvOvjHAOaeUhyI6I4Z2I/tFeJLQIR5NRMIEjGPqxK9fA3Kv6FgcFkUpZ8gekaT
-	eYAQmDXtKld5EZ9010Co1cbd0wxeMM+QWLinIvQ0UiyF4hVAIOQQ==
-X-Gm-Gg: ASbGnctGf0YzXwHaSSGhZbukBOzEbut/ANcskr9wqLRMmRvP3W5TCZ9n41MdpJ5h/lI
-	y5pBXlXerA+DBVrzymVI03rpWttCvfyfwGaTLuVcA/Gb3Yj8HeLeF/4dFxqEdR77bp0VHzCu5bi
-	YyVBtZydEjqilQnfs6rAvM6KuSrQ8+Ycc8FY01gd6WSKxAveDvmyipHj7JxsyJxRhfqVu39zNsm
-	ZzSjZaeg/7WEHOCX8rPO8DnKuZndiQIY4ou8c1T9V/IO9PBR8myszIw+4VxXpyM3ldSaLhr8D4p
-	DIdEgxtB0K7uh80d8LsUWa0QC2Ofx5WvIl0sJL+HjSUdTpkbyijlUArINfTQ/CT/r8HpBnTo3kR
-	AsZti49xyK69wggpfkoypymYyaZDPwsiUOz95vVZ8hchdoQ5ZPnVFiXjNjsu5SKIcBnw3
-X-Received: by 2002:a05:620a:45a3:b0:7fb:e684:bc0d with SMTP id af79cd13be357-7fed772f970mr655313285a.38.1756742984976;
-        Mon, 01 Sep 2025 09:09:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4rUO01RPiRDYjEO824d/2PmRfL+5SSdY+BjxsONhN7FDIfaGb+sktB53si5IfTFykSqNyLw==
-X-Received: by 2002:a05:620a:45a3:b0:7fb:e684:bc0d with SMTP id af79cd13be357-7fed772f970mr655305985a.38.1756742984156;
-        Mon, 01 Sep 2025 09:09:44 -0700 (PDT)
+        bh=vlmYPrJMvaurL156kfyVvz/kxSmkc+/T+EJ8CZ+U2zk=;
+        b=vSbGR2NCZ9I8F1SIh+tBL6C421roqx/wV+piC2fvpituvg95f+0RzOj8PqDzhZQp6k
+         ZPqUW2mH/DYy278gIy4wn1KOPcu0MF1H0VLQKWYsrMABKEgljLGm7Pv+BHvAzLwkzcZu
+         onKbAzxU4dbetszWRQ3M7ujD8Vw6T4Gd9wlDv4lFJxWJrVZn9yTDkZk27JSTnAU8gQkS
+         3ITkv0OSoVlKFH6deSJSNdNOhSnLudckjWwxUgzdOVLNTj12ZTO/JE80Sgm+fvBBczwp
+         c3nuBCDkj50jKEh2WiOynwD/mps+V69AUarvgD22YMFr3tarjLYRHe1Fr698XCO2G1iK
+         0eRg==
+X-Gm-Message-State: AOJu0YyMsIFCXX4Jj8l+hxExgwvX5vZFRUOp9nmrNCx0gPE5+o19WwAu
+	Fgyb5uB9yAE/S1ooNNQZb2X6VDwxyu6niAmPfKJxcokCeH7TAzSPLtTORHK3CFONps8BESjt8Sh
+	qpl6oFDD3FK/KlkD9PE0Va+3uGPlbcScWHmWF6IKjC/1G+f+sH8wzTo7hUUNkaNbrS9l5gbxsaM
+	CIdSHbwrVc/B9U0NT64CaApDdeq/H8AwCPYmSnKTARzFn+wCKpgA==
+X-Gm-Gg: ASbGncsVZrA/jYsOlt/+YRpVGwgQu8W5sLQz19DpVfgsiezR2tNZwxBTFuqWIXEMm+i
+	x31vxnO8ysvnAeliL/6H9/lvrlwR8+f/OYDmKPtHbhW5s/hw0YG0f1yj2GpTzv2sHqk7l4iirDC
+	FS1E4yXv9Xcq2EPyETvjhFKiQXfMs8fmYS2nVjVCVG3+9+N4EDxncFqKk3HRsU2fK9gKPLunUBM
+	sSpQqY2SDVcXTfpWCcIbR/60wmSRx+Xm+UJCOzb6WcUUjvZdjV7PUezCMUi4rTdm7z8tL2/vDWK
+	EySsUpVCzm/EoXnpQwlH8gQ8x/qHYCFh86dbRvGxKITfiY8D3HyziCfcQMx9KC4CF5QBnMOIIFZ
+	lXqNfY4YoLDX0fWPOczKAYtP8b6JT6zRsVB96cyG5kzP+Kl/xaYU7doKwonGM+sAKWmTI
+X-Received: by 2002:a05:6214:1c8e:b0:70d:9e0a:5ac0 with SMTP id 6a1803df08f44-70fac8dd487mr82341306d6.57.1756742989490;
+        Mon, 01 Sep 2025 09:09:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3atxEoR4Y3UwAcVItWfUxbMXJnqefXOjBiiJOc9QLCFCXra+INStGLPsCJ1tjig0u8r6LRA==
+X-Received: by 2002:a05:6214:1c8e:b0:70d:9e0a:5ac0 with SMTP id 6a1803df08f44-70fac8dd487mr82340626d6.57.1756742988809;
+        Mon, 01 Sep 2025 09:09:48 -0700 (PDT)
 Received: from [10.201.49.111] (nat-pool-mxp-t.redhat.com. [149.6.153.186])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b30b67f435sm64472141cf.29.2025.09.01.09.09.40
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70fb260d977sm42473206d6.20.2025.09.01.09.09.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 09:09:43 -0700 (PDT)
+        Mon, 01 Sep 2025 09:09:48 -0700 (PDT)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
@@ -103,9 +103,9 @@ Cc: dave.hansen@intel.com,
 	chao.gao@intel.com,
 	sagis@google.com,
 	farrah.chen@intel.com
-Subject: [PATCH 2/7] x86/sme: Use percpu boolean to control WBINVD during kexec
-Date: Mon,  1 Sep 2025 18:09:25 +0200
-Message-ID: <20250901160930.1785244-3-pbonzini@redhat.com>
+Subject: [PATCH 3/7] x86/virt/tdx: Mark memory cache state incoherent when making SEAMCALL
+Date: Mon,  1 Sep 2025 18:09:26 +0200
+Message-ID: <20250901160930.1785244-4-pbonzini@redhat.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250901160930.1785244-1-pbonzini@redhat.com>
 References: <20250901160930.1785244-1-pbonzini@redhat.com>
@@ -119,254 +119,118 @@ Content-Transfer-Encoding: 8bit
 
 From: Kai Huang <kai.huang@intel.com>
 
-TL;DR:
-
-Prepare to unify how TDX and SME do cache flushing during kexec by
-making a percpu boolean control whether to do the WBINVD.
-
--- Background --
-
-On SME platforms, dirty cacheline aliases with and without encryption
-bit can coexist, and the CPU can flush them back to memory in random
+On TDX platforms, dirty cacheline aliases with and without encryption
+bits can coexist, and the cpu can flush them back to memory in random
 order.  During kexec, the caches must be flushed before jumping to the
 new kernel otherwise the dirty cachelines could silently corrupt the
 memory used by the new kernel due to different encryption property.
 
-TDX also needs a cache flush during kexec for the same reason.  It would
-be good to have a generic way to flush the cache instead of scattering
-checks for each feature all around.
+A percpu boolean is used to mark whether the cache of a given CPU may be
+in an incoherent state, and the kexec performs WBINVD on the CPUs with
+that boolean turned on.
 
-When SME is enabled, the kernel basically encrypts all memory including
-the kernel itself and a simple memory write from the kernel could dirty
-cachelines.  Currently, the kernel uses WBINVD to flush the cache for
-SME during kexec in two places:
+For TDX, only the TDX module or the TDX guests can generate dirty
+cachelines of TDX private memory, i.e., they are only generated when the
+kernel does a SEAMCALL.
 
-1) the one in stop_this_cpu() for all remote CPUs when the kexec-ing CPU
-   stops them;
-2) the one in the relocate_kernel() where the kexec-ing CPU jumps to the
-   new kernel.
+Set that boolean when the kernel does SEAMCALL so that kexec can flush
+the cache correctly.
 
--- Solution --
+The kernel provides both the __seamcall*() assembly functions and the
+seamcall*() wrapper ones which additionally handle running out of
+entropy error in a loop.  Most of the SEAMCALLs are called using the
+seamcall*(), except TDH.VP.ENTER and TDH.PHYMEM.PAGE.RDMD which are
+called using __seamcall*() variant directly.
 
-Unlike SME, TDX can only dirty cachelines when it is used (i.e., when
-SEAMCALLs are performed).  Since there are no more SEAMCALLs after the
-aforementioned WBINVDs, leverage this for TDX.
+To cover the two special cases, add a new __seamcall_dirty_cache()
+helper which only sets the percpu boolean and calls the __seamcall*(),
+and change the special cases to use the new helper.  To cover all other
+SEAMCALLs, change seamcall*() to call the new helper.
 
-To unify the approach for SME and TDX, use a percpu boolean to indicate
-the cache may be in an incoherent state and needs flushing during kexec,
-and set the boolean for SME.  TDX can then leverage it.
+For the SEAMCALLs invoked via seamcall*(), they can be made from both
+task context and IRQ disabled context.  Given SEAMCALL is just a lengthy
+instruction (e.g., thousands of cycles) from kernel's point of view and
+preempt_{disable|enable}() is cheap compared to it, just unconditionally
+disable preemption during setting the boolean and making SEAMCALL.
 
-While SME could use a global flag (since it's enabled at early boot and
-enabled on all CPUs), the percpu flag fits TDX better:
-
-The percpu flag can be set when a CPU makes a SEAMCALL, and cleared when
-another WBINVD on the CPU obviates the need for a kexec-time WBINVD.
-Saving kexec-time WBINVD is valuable, because there is an existing
-race[*] where kexec could proceed while another CPU is active.  WBINVD
-could make this race worse, so it's worth skipping it when possible.
-
--- Side effect to SME --
-
-Today the first WBINVD in the stop_this_cpu() is performed when SME is
-*supported* by the platform, and the second WBINVD is done in
-relocate_kernel() when SME is *activated* by the kernel.  Make things
-simple by changing to do the second WBINVD when the platform supports
-SME.  This allows the kernel to simply turn on this percpu boolean when
-bringing up a CPU by checking whether the platform supports SME.
-
-No other functional change intended.
-
-[*] The aforementioned race:
-
-During kexec native_stop_other_cpus() is called to stop all remote CPUs
-before jumping to the new kernel.  native_stop_other_cpus() firstly
-sends normal REBOOT vector IPIs to stop remote CPUs and waits them to
-stop.  If that times out, it sends NMI to stop the CPUs that are still
-alive.  The race happens when native_stop_other_cpus() has to send NMIs
-and could potentially result in the system hang (for more information
-please see [1]).
-
-Link: https://lore.kernel.org/kvm/b963fcd60abe26c7ec5dc20b42f1a2ebbcc72397.1750934177.git.kai.huang@intel.com/ [1]
 Signed-off-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+Tested-by: Farrah Chen <farrah.chen@intel.com>
+Reviewed-by: Chao Gao <chao.gao@intel.com>
+Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/include/asm/kexec.h         |  4 ++--
- arch/x86/include/asm/processor.h     |  2 ++
- arch/x86/kernel/cpu/amd.c            | 17 +++++++++++++++++
- arch/x86/kernel/machine_kexec_64.c   | 14 ++++++++++----
- arch/x86/kernel/process.c            | 24 +++++++++++-------------
- arch/x86/kernel/relocate_kernel_64.S | 13 ++++++++++---
- 6 files changed, 52 insertions(+), 22 deletions(-)
+ arch/x86/include/asm/tdx.h  | 25 ++++++++++++++++++++++++-
+ arch/x86/virt/vmx/tdx/tdx.c |  4 ++--
+ 2 files changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index 12cebbcdb6c8..5cfb27f26583 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -17,8 +17,8 @@
+diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+index 57b46f05ff97..c178360c1fb1 100644
+--- a/arch/x86/include/asm/tdx.h
++++ b/arch/x86/include/asm/tdx.h
+@@ -102,10 +102,31 @@ u64 __seamcall_ret(u64 fn, struct tdx_module_args *args);
+ u64 __seamcall_saved_ret(u64 fn, struct tdx_module_args *args);
+ void tdx_init(void);
  
- #include <linux/bits.h>
- 
--#define RELOC_KERNEL_PRESERVE_CONTEXT		BIT(0)
--#define RELOC_KERNEL_HOST_MEM_ENC_ACTIVE	BIT(1)
-+#define RELOC_KERNEL_PRESERVE_CONTEXT	BIT(0)
-+#define RELOC_KERNEL_CACHE_INCOHERENT	BIT(1)
- 
- #endif
- 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index bde58f6510ac..a24c7805acdb 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -731,6 +731,8 @@ void __noreturn stop_this_cpu(void *dummy);
- void microcode_check(struct cpuinfo_x86 *prev_info);
- void store_cpu_caps(struct cpuinfo_x86 *info);
- 
-+DECLARE_PER_CPU(bool, cache_state_incoherent);
-+
- enum l1tf_mitigations {
- 	L1TF_MITIGATION_OFF,
- 	L1TF_MITIGATION_AUTO,
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index a6f88ca1a6b4..5398db4dedb4 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -545,6 +545,23 @@ static void early_detect_mem_encrypt(struct cpuinfo_x86 *c)
- {
- 	u64 msr;
- 
-+	/*
-+	 * Mark using WBINVD is needed during kexec on processors that
-+	 * support SME. This provides support for performing a successful
-+	 * kexec when going from SME inactive to SME active (or vice-versa).
-+	 *
-+	 * The cache must be cleared so that if there are entries with the
-+	 * same physical address, both with and without the encryption bit,
-+	 * they don't race each other when flushed and potentially end up
-+	 * with the wrong entry being committed to memory.
-+	 *
-+	 * Test the CPUID bit directly because with mem_encrypt=off the
-+	 * BSP will clear the X86_FEATURE_SME bit and the APs will not
-+	 * see it set after that.
-+	 */
-+	if (c->extended_cpuid_level >= 0x8000001f && (cpuid_eax(0x8000001f) & BIT(0)))
-+		__this_cpu_write(cache_state_incoherent, true);
-+
- 	/*
- 	 * BIOS support is required for SME and SEV.
- 	 *   For SME: If BIOS has enabled SME then adjust x86_phys_bits by
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index fdd04b5bb70e..34c303a92eaf 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -29,6 +29,7 @@
- #include <asm/set_memory.h>
- #include <asm/cpu.h>
- #include <asm/efi.h>
++#include <linux/preempt.h>
+ #include <asm/archrandom.h>
 +#include <asm/processor.h>
  
- #ifdef CONFIG_ACPI
- /*
-@@ -426,11 +427,11 @@ void __nocfi machine_kexec(struct kimage *image)
- 		relocate_kernel_flags |= RELOC_KERNEL_PRESERVE_CONTEXT;
+ typedef u64 (*sc_func_t)(u64 fn, struct tdx_module_args *args);
  
- 	/*
--	 * This must be done before load_segments() since if call depth tracking
--	 * is used then GS must be valid to make any function calls.
-+	 * This must be done before load_segments() since it resets
-+	 * GS to 0 and percpu data needs the correct GS to work.
- 	 */
--	if (cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT))
--		relocate_kernel_flags |= RELOC_KERNEL_HOST_MEM_ENC_ACTIVE;
-+	if (this_cpu_read(cache_state_incoherent))
-+		relocate_kernel_flags |= RELOC_KERNEL_CACHE_INCOHERENT;
- 
- 	/*
- 	 * The segment registers are funny things, they have both a
-@@ -441,6 +442,11 @@ void __nocfi machine_kexec(struct kimage *image)
- 	 *
- 	 * Take advantage of this here by force loading the segments,
- 	 * before the GDT is zapped with an invalid value.
-+	 *
-+	 * load_segments() resets GS to 0.  Don't make any function call
-+	 * after here since call depth tracking uses percpu variables to
-+	 * operate (relocate_kernel() is explicitly ignored by call depth
-+	 * tracking).
- 	 */
- 	load_segments();
- 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 1b7960cf6eb0..f2bbbeef5477 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -88,6 +88,16 @@ EXPORT_PER_CPU_SYMBOL(cpu_tss_rw);
- DEFINE_PER_CPU(bool, __tss_limit_invalid);
- EXPORT_PER_CPU_SYMBOL_GPL(__tss_limit_invalid);
- 
-+/*
-+ * The cache may be in an incoherent state and needs flushing during kexec.
-+ * E.g., on SME/TDX platforms, dirty cacheline aliases with and without
-+ * encryption bit(s) can coexist and the cache needs to be flushed before
-+ * booting to the new kernel to avoid the silent memory corruption due to
-+ * dirty cachelines with different encryption property being written back
-+ * to the memory.
-+ */
-+DEFINE_PER_CPU(bool, cache_state_incoherent);
++static __always_inline u64 __seamcall_dirty_cache(sc_func_t func, u64 fn,
++						  struct tdx_module_args *args)
++{
++	lockdep_assert_preemption_disabled();
 +
- /*
-  * this gets called so that we can store lazy state into memory and copy the
-  * current task into the new thread.
-@@ -827,19 +837,7 @@ void __noreturn stop_this_cpu(void *dummy)
- 	disable_local_APIC();
- 	mcheck_cpu_clear(c);
++	/*
++	 * SEAMCALLs are made to the TDX module and can generate dirty
++	 * cachelines of TDX private memory.  Mark cache state incoherent
++	 * so that the cache can be flushed during kexec.
++	 *
++	 * This needs to be done before actually making the SEAMCALL,
++	 * because kexec-ing CPU could send NMI to stop remote CPUs,
++	 * in which case even disabling IRQ won't help here.
++	 */
++	this_cpu_write(cache_state_incoherent, true);
++
++	return func(fn, args);
++}
++
+ static __always_inline u64 sc_retry(sc_func_t func, u64 fn,
+ 			   struct tdx_module_args *args)
+ {
+@@ -113,7 +134,9 @@ static __always_inline u64 sc_retry(sc_func_t func, u64 fn,
+ 	u64 ret;
  
--	/*
--	 * Use wbinvd on processors that support SME. This provides support
--	 * for performing a successful kexec when going from SME inactive
--	 * to SME active (or vice-versa). The cache must be cleared so that
--	 * if there are entries with the same physical address, both with and
--	 * without the encryption bit, they don't race each other when flushed
--	 * and potentially end up with the wrong entry being committed to
--	 * memory.
--	 *
--	 * Test the CPUID bit directly because the machine might've cleared
--	 * X86_FEATURE_SME due to cmdline options.
--	 */
--	if (c->extended_cpuid_level >= 0x8000001f && (cpuid_eax(0x8000001f) & BIT(0)))
-+	if (this_cpu_read(cache_state_incoherent))
- 		wbinvd();
+ 	do {
+-		ret = func(fn, args);
++		preempt_disable();
++		ret = __seamcall_dirty_cache(func, fn, args);
++		preempt_enable();
+ 	} while (ret == TDX_RND_NO_ENTROPY && --retry);
+ 
+ 	return ret;
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index 823850399bb7..2abf53ed59c8 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -1268,7 +1268,7 @@ static bool paddr_is_tdx_private(unsigned long phys)
+ 		return false;
+ 
+ 	/* Get page type from the TDX module */
+-	sret = __seamcall_ret(TDH_PHYMEM_PAGE_RDMD, &args);
++	sret = __seamcall_dirty_cache(__seamcall_ret, TDH_PHYMEM_PAGE_RDMD, &args);
  
  	/*
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 26e945f85d19..11e20bb13aca 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -198,14 +198,21 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	movq	%r9, %cr3
+ 	 * The SEAMCALL will not return success unless there is a
+@@ -1524,7 +1524,7 @@ noinstr __flatten u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args *ar
+ {
+ 	args->rcx = tdx_tdvpr_pa(td);
  
- 	/*
-+	 * If the memory cache is in incoherent state, e.g., due to
-+	 * memory encryption, do WBINVD to flush cache.
-+	 *
- 	 * If SME is active, there could be old encrypted cache line
- 	 * entries that will conflict with the now unencrypted memory
- 	 * used by kexec. Flush the caches before copying the kernel.
-+	 *
-+	 * Note SME sets this flag to true when the platform supports
-+	 * SME, so the WBINVD is performed even SME is not activated
-+	 * by the kernel.  But this has no harm.
- 	 */
--	testb	$RELOC_KERNEL_HOST_MEM_ENC_ACTIVE, %r11b
--	jz .Lsme_off
-+	testb	$RELOC_KERNEL_CACHE_INCOHERENT, %r11b
-+	jz .Lnowbinvd
- 	wbinvd
--.Lsme_off:
-+.Lnowbinvd:
- 
- 	call	swap_pages
+-	return __seamcall_saved_ret(TDH_VP_ENTER, args);
++	return __seamcall_dirty_cache(__seamcall_saved_ret, TDH_VP_ENTER, args);
+ }
+ EXPORT_SYMBOL_GPL(tdh_vp_enter);
  
 -- 
 2.51.0
