@@ -1,134 +1,207 @@
-Return-Path: <linux-kernel+bounces-794924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2249CB3EA90
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:32:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A33AB3EAD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AB0F7A6553
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65143BD17A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D513E1DF271;
-	Mon,  1 Sep 2025 15:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380A6345733;
+	Mon,  1 Sep 2025 15:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXFrVX3g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="EwDat4TZ"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C48334372;
-	Mon,  1 Sep 2025 15:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0BA341673
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756740049; cv=none; b=gB9e5r9QFibND6V1YzaPjllndm/o5hHQ5Tc7TPQvnGBGKuQ47U+tLGBguV8pE8UZ/nWdWLoI/YNpODPKYyT2tfdZkatTrNfuBWUzQQygai8pIf3+bogsfse6flXpPtIRHgxGbquvUe8DWMgECttG84mXehXQc0XsxsRrQU82jXg=
+	t=1756740096; cv=none; b=bEC6brco01W2kl/oBpAsF0DEXQP6Q9DRlLRcan397L/2WyNhC54E7sJhd0HFb+gfIwh9rToA5vAeHZ3znHg8wyfJvX7OC2Oaa5ii4golqQdTh9aacCw5BqI5lQe+vKGSDeE1/RjaovZl87tJwEMhNQ0ty8gWfngpz6CczHpolDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756740049; c=relaxed/simple;
-	bh=fYYU8NMNLyVlLnO0IlrsfJJzJO/BBopDiQds5sD+5IE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d286CR2tFb81j0b+iu4buvV22V8MXkw5ueBe4NseVqWjLkjaj8Yzaf6S+2S37aSAgEBZB1foaFs3s+E88VmSA/AZ1FoJdSiG0UpCSIsVrL1DZozVFf7jAoH+3xzqkxxUlN8RSSLd6I4dgMNW4c72MXY0nYWvqVvQZSC1xrhPiJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXFrVX3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87825C4CEF0;
-	Mon,  1 Sep 2025 15:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756740047;
-	bh=fYYU8NMNLyVlLnO0IlrsfJJzJO/BBopDiQds5sD+5IE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GXFrVX3gf/tcrem+lyBbwfdS6AHuCHPQF2/lq5E7UmoBLTnaPBMOwiLE5YhZPSyEq
-	 uswqR/b+n/8ZhYJ8bkJ6beLW/OMGHNouJc4fIWvPPJkRo3/CqZgdqgqYvJ03FZWxsM
-	 ceFhBIzOPJs8pR5VM4/eXOP772I+SNl8+B3F36xbiRjaVNV9/nNrQKRE7spJ6nMMCw
-	 nr0UJmyC2WonGC/h8bIngoF88Vlv1IU3XoEmFCYKIi1FmTs7/qD+H52yYZqABxiHri
-	 Zd+AbMrsQYN74WRR/haDxIMbZVs/Mwzy3ucow5Cxjv1pUS7gqW1zSAgtCtVwQOXmwk
-	 ZiAihGO1gGPVA==
-Received: by venus (Postfix, from userid 1000)
-	id 545A41801BA; Mon, 01 Sep 2025 17:20:45 +0200 (CEST)
-Date: Mon, 1 Sep 2025 17:20:45 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/3] platform: arm64: thinkpad-t14s-ec: new driver
-Message-ID: <wyv3ounark6jccvhj4vp5qxgmn4bleq6hsqinr4s6r32kld4xp@lhbmetuhydns>
-References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
- <20250831-thinkpad-t14s-ec-v1-2-6e06a07afe0f@collabora.com>
- <899b2e79-572d-44f3-8dff-0d301f254b1a@linaro.org>
+	s=arc-20240116; t=1756740096; c=relaxed/simple;
+	bh=EVek2rxFSRXhXY6zjCGZhybBfK8G7M63nnhdACvRNaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JZxSSc5OOAphXdNDMlrbZ1byrzILK0tbW7Ks5VyafW13/C8GBeWxiIqQa9vjNmtYZEWBGmr7koInKwF9cbVCPyjcww0FDrFLtVA8Atpy37sLOn43xHCybzAwAkTbcdOs6+DdjZTpxn4zffpwjhELScbn+2MYd7/4+xcVMWaal0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=EwDat4TZ; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
+	by cmsmtp with ESMTPS
+	id t4KAu31x0aPqLt6LYuSPu2; Mon, 01 Sep 2025 15:21:28 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id t6LWuDNZswYTkt6LWuaJyk; Mon, 01 Sep 2025 15:21:26 +0000
+X-Authority-Analysis: v=2.4 cv=fYCty1QF c=1 sm=1 tr=0 ts=68b5b9f6
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=XW3vq5T86JFyMsJaYQInbg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=_Wotqz80AAAA:8
+ a=Z7sMgLG1d7iyNP1Aco4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=buJP51TR1BpY-zbLSsyS:22 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8s/ah+yWbxfG21NH5fS2VXEAUrMs/sokRGYXM+3U9So=; b=EwDat4TZGw4GblTVMyrFSZwquU
+	8Bc2i0SOTme7ifISJtWwTkS0yZR9RPVBWoSgNJl6IN9p3fAfDiBm105kEc3Nr5tvt3mq3B8mV6VB2
+	l0MsAeIuglEcj8OYjwQkqZnj2WyBNNnSDrntReNuMRULUftR4aj1zAwZKxa4pQ+DBfhqENEUCsPWr
+	8K/Iak9QS80q4UMkoMXITxNck9U5d3LuGVtSkujxvTcuLOj9XK38ub/Ez7+eIgHdGWGFIaSZV63MC
+	YVyCpqDHTYJDhvQY3ho2yQVyXGL9GofY8MqTSCwU6d5gMpuihP2wOJuM4+6NForHjob5fijlVoJJf
+	FzGmyNBw==;
+Received: from d4b26982.static.ziggozakelijk.nl ([212.178.105.130]:33396 helo=[10.233.40.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1ut6LV-00000002pl8-2uiq;
+	Mon, 01 Sep 2025 10:21:25 -0500
+Message-ID: <d0c49dc9-c810-47d2-a3ce-d74196a39235@embeddedor.com>
+Date: Mon, 1 Sep 2025 17:21:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <899b2e79-572d-44f3-8dff-0d301f254b1a@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
+ warnings
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-hardening@vger.kernel.org, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>, Chen Ridong <chenridong@huaweicloud.com>
+References: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
+ <wkkrw7rot7cunlojzyga5fgik7374xgj7aptr6afiljqesd6a7@rrmmuq3o4muy>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <wkkrw7rot7cunlojzyga5fgik7374xgj7aptr6afiljqesd6a7@rrmmuq3o4muy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 212.178.105.130
+X-Source-L: No
+X-Exim-ID: 1ut6LV-00000002pl8-2uiq
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: d4b26982.static.ziggozakelijk.nl ([10.233.40.44]) [212.178.105.130]:33396
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFBo0Qj1VsFVmijsuHZ4t94nykdkaNQqh5/IV4P1+1JZbEnKrCm0COudCnOPFr6t2hHh0stvNiGxBUhm1uLiXIKGyOg7kwk+LjR6AJYXtenXEojKm/Wy
+ n0dn79mP/nlWOgCV3glfKX/iDqDIG4Py6X03dBYsftI6kZIHC2hyuGFRgbC87v1ahwLuyF0TUJqrvVU9I2PTVQ1QXNHU/VJDtrqLZn2JDJurFUt/g1djU6Xg
 
-Hello Bryan,
 
-On Mon, Sep 01, 2025 at 09:43:11AM +0100, Bryan O'Donoghue wrote:
-> On 31/08/2025 22:28, Sebastian Reichel wrote:
-> > Introduce EC driver for the ThinkPad T14s Gen6 Snapdragon, which
-> > is in theory compatible with ThinkPad ACPI. On Linux the system
-> > is booted with device tree, which is not supported by the ThinkPad
-> > ACPI driver. Also most of the hardware compatibility is handled
-> > via ACPI tables, which are obviously not used when booting via
-> > device tree. Thus adding DT compatibility to the existing driver
-> > is not worth it (almost no code sharing).
+
+On 9/1/25 15:37, Michal Koutný wrote:
+> On Sat, Aug 30, 2025 at 03:30:11PM +0200, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>> Based on the comments above, it seems that the original code was expecting
+>> cgrp->ancestors[0] and cgrp_ancestor_storage to share the same addres in
+>> memory.
 > 
-> What is the name of that driver, you should name it in your commit
-> log. Lenovo WMI ?
-
-The existing driver is known as "ThinkPad ACPI" and thus already
-referenced in the commit message. You can find it here:
-
-drivers/platform/x86/lenovo/thinkpad_acpi.c
-
-Feel free to suggest a specific wording that I can take over, which
-would have helped you to figure that out :)
-
-> [...]
-> > +	ret = __i2c_transfer(client->adapter, &request, 1);
-> > +	if (ret < 0)
-> > +		goto out;
+> Fortunately, it doesn't matter what the address of cgrp_ancestor_storage
+> is. The important effect is that cgroup_root::cgrp is followed by
+> sufficient space to store a pointer (accessed via cgroup::ancestors[0]).
 > 
-> I realise this is your coding style but suggest newline after these gotos.
-
-I will look into using that style in v2 throughout the file.
-
-> [...]
-> > +static int thinkpad_t14s_led_blink_set(struct led_classdev *led_cdev,
-> > +				       unsigned long *delay_on,
-> > +				       unsigned long *delay_off)
-> > +{
-> > +	struct thinkpad_t14s_ec_led_classdev *led = container_of(led_cdev,
-> > +			struct thinkpad_t14s_ec_led_classdev, led_classdev);
-> > +
-> > +	/* Can we choose the flash rate? */
-> > +	if (*delay_on == 0 && *delay_off == 0) {
-> > +		/* yes. set them to the hardware blink rate (1 Hz) */
-> > +		*delay_on = 500; /* ms */
-> > +		*delay_off = 500; /* ms */
-> > +	} else if ((*delay_on != 500) || (*delay_off != 500))
-> > +		return -EINVAL;
+>> However when I take a look at the pahole output, I see that these two members
+>> are actually misaligned by 56 bytes. See below:
 > 
-> Those 500s should probably be defines
-
-Ack.
-
-> Aside from those few nits, great to see someone take this on, glorious in
-> fact.
+> So the root cgroup's ancestry may be saved inside the padding instead of
+> the dedicated storage. I don't think it causes immediate issues but it'd
+> be better not to write to these bytes. (Note that the layout depends on
+> kernel config.) Thanks for the report Gustavo!
 > 
-> I don't have this particular hardware myself so I can't test but:
 > 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> So, one solution for this is to use the TRAILING_OVERLAP() helper and
+>> move these members at the end of `struct cgroup_root`. With this the
+>> misalignment disappears (together with the 14722 warnings :) ), and now
+>> both cgrp->ancestors[0] and cgrp_ancestor_storage share the same address
+>> in memory. See below:
+> 
+> I didn't know TRAILING_OVERLAP() but it sounds like the tool for such
+> situations.
 
-Thanks for the review.
+I recently introduced it. :)
 
-Greetings,
+> Why do you move struct cgroup at the end of struct cgroup_root?
 
--- Sebastian
+Because struct cgroup ends in a flexible-array member `ancestors`.
+This triggers the -Wflex-array-member-not-at-end warns about. So,
+while `ancestors` is indeed a flexible array, any instance of
+cgroup embedded in another struct should be placed at the end.
+
+However, if we change it to something like this (and of course
+updating any related code, accordingly):
+
+-       struct cgroup *ancestors[];
++       struct cgroup **ancestors;
+
+Then the flex in the middle issue goes away, and we can have
+struct cgroup embedded in another struct anywhere.
+
+The question is if this would be an acceptable solution?
+
+I'd probably prefer this to remain a flexible-array member,
+but I'd like to hear people's opinions and feedback. :)
+
+> 
+> (Actually, as I look at the macro's implementation, it should be
+> --- a/include/linux/stddef.h
+> +++ b/include/linux/stddef.h
+> @@ -110,7 +110,7 @@ enum {
+>                  struct {                                                        \
+>                          unsigned char __offset_to_##FAM[offsetof(TYPE, FAM)];   \
+>                          MEMBERS                                                 \
+> -               };                                                              \
+> +               } __packed;                                                     \
+>          }
+> 
+>   #endif
+> in order to avoid similar issues, no?)
+
+The way to do it is like this:
+
++       TRAILING_OVERLAP(struct cgroup, cgrp, ancestors,
++               /* must follow cgrp for cgrp->ancestors[0], see above */
++               struct cgroup *cgrp_ancestor_storage;
++       ) __packed;
+
+
+and this get us to the following:
+
+struct cgroup_root {
+...
+         /* --- cacheline 65 boundary (4160 bytes) was 56 bytes ago --- */
+         union {
+                 struct cgroup      cgrp __attribute__((__aligned__(1))); /*  4216  8192 */
+                 struct {
+                         unsigned char __offset_to_ancestors[5784]; /*  4216  5784 */
+                         /* --- cacheline 156 boundary (9984 bytes) was 16 bytes ago --- */
+                         struct cgroup * cgrp_ancestor_storage; /* 10000     8 */
+                 };                                       /*  4216  5792 */
+         } __attribute__((__aligned__(1)));               /*  4216  8192 */
+
+         /* size: 12408, cachelines: 194, members: 10 */
+         /* forced alignments: 2 */
+         /* last cacheline: 56 bytes */
+} __attribute__((__aligned__(8)));
+
+Notice the change in alignment in struct cgroup_root from
+4096 (page alignment) to 8 bytes alignment. In any case,
+the size (still) increases from 6400 to 12408 bytes.
+
+Thanks
+-Gustavo
 
