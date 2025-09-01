@@ -1,121 +1,207 @@
-Return-Path: <linux-kernel+bounces-795044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902FDB3EC3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:33:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBBEB3EC3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47D63B9744
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6368B208086
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E86C3064BF;
-	Mon,  1 Sep 2025 16:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A02C2EF66A;
+	Mon,  1 Sep 2025 16:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0Ql04zS"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HhIzjYA3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E0D2EC080;
-	Mon,  1 Sep 2025 16:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896FC2D593F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756744391; cv=none; b=FxDzqlgXH20PXUhKHTxOS73cOx1DJuIRKrslJNnA4QC+3BiGbF5cvhM/HwhE2YSWAHRftfIOQdMmQC403rR+3FEBHZMzsQ452/i3hqTY5aH/9iSfRZI8rlAMNPnGJ6osyI5I8YDh9gdlU3FKsKZqJSo45psBQetmrh+qHm/Q6GM=
+	t=1756744471; cv=none; b=byPzYI3/iATCpnhMfirNqx9ABNXdAY6/bcZUS/9ud6vxVoh1FpV9fHijg53+b6NoIWtc6cf1gv2g++SrZXRaaoAsPsVLHKch6EFsFGGWBSnzgOqKbffNCpzGoxUWhnZk+4Er2dyGpsRINR9CsW8tueIkfIPUREse3sqxGMlqyAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756744391; c=relaxed/simple;
-	bh=wBVV8lCyWpzak5Ahq0TyAHZqwjZBUNzGkG5CgU5NEkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hLQHKnKcx0E1n7o/QKgi2ZAy7j1n4WAui2RLQD//Kqe/nYKcN8QPzo5/WxQtE9QT2QZKEYQazqbp3ZRFcsAvIUsNRw4J+zFVs4UktHVljqNL39Cw60ah+4bl6Kq/GLkvNJDG9iEjam+X8lj/XvyGCgiLMeX0M9fxicrGnupKvQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h0Ql04zS; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f72452a8eso2219264e87.3;
-        Mon, 01 Sep 2025 09:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756744388; x=1757349188; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QvGFPcLRQG7NDdcutxPYCIPA441LFKGMfIhq/xAeHWw=;
-        b=h0Ql04zSGSubiWQspNo1Vv6iJbISjyVXHC5Ezic2B2CiXcpen+1hNCAQQWjC3JgYFC
-         GaOPhU/GfUv8lRmkGMPEWcwywngegfCpNm5GjKz0r14eeA+wXo4wx7qst3eMSAsFDRbt
-         zU8pQUikBF466bBnwSJiUStGgZ3jI9EwZWPISn5+cFWljsUqEQlgD5uoRQvtp6Ktbeuo
-         Cv0ZPm9SZToJ2NjX8JMml0CKCKEl95CQg8BPPMoiFKrKT0pyFHL9557wZ5Y+sx8wpNp6
-         stsACoFFMth7pOTUXg9M/5yLQE5lQ/B8Y1U9GLCaw4+lRjrPbCPDHMDkrED2lkFuUAl8
-         Lh6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756744388; x=1757349188;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QvGFPcLRQG7NDdcutxPYCIPA441LFKGMfIhq/xAeHWw=;
-        b=LD3BGSXxVSR9I9Vlux4Gp7rdML6FOTeQxhhB8gHXsYtcs4eiMokL/sbgc5oESkmrls
-         D619d7J3y5dCjcpZT4fvgFIbt/ME2rEz4XzTgNtn2rhQ28PRo96CNdmIx/4I0weFCCb6
-         n2XGCvxwo/qxlMYYhLV6PzirY52LhIRgugCWGeW1hQsk0BIWKYbH8qyvcBiFTa91Z3/1
-         9e/1Oe6d9hb8iPLzGJ5ZNcHyfKox2JKJqxuDkozUauQoTUMIgbQOGXgb0h3pH4ZPUzUr
-         JSY/ikxv0BasP4kt6hDHJ3PQwUrGJ7A/jtYW5oYzOfo70inOXo9ddKeKpKzJtNCgzkk+
-         Sb3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU2R3t1xP4AGP/avXf/lWoaCyKJxN+ROn1eYwluhpBuQlvZ5i7pEuxHCXlKD9nvcuz+g6sdTcU4kA==@vger.kernel.org, AJvYcCV0oqgxI70uCV4hBmKfGP9KCZET8ltW9wBsAqgQ5tyQYSkKAsyVMUMzW1FBzUgnR75pEMyjGT4gAo5lLiNF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymnlo/2wv5GOCllc0F9FZGaakFOFVaghoCsBDK/eKfht/dQ3HP
-	/3n2NEZrpyxqylOx6w///frm2tZBNMMrzVXoBqddcsw17Ds8ZAQexVUX
-X-Gm-Gg: ASbGncu2qxbC04sizlzDk/yLdWmKOFQ3urH4EJqR+GRSjfqa6q/PXAvgYiOiB9e3Dw6
-	U6cCTpnMWVbVXljCtOeh0GZbIfgTXfrEFCqiffyzx6rNneOY7uGPZQ83LYKu71bHJK6XA4pqWvx
-	2T5xcYsrDr8+6hD60fKitXh05qWzwTNP0vroOi7wLIXa/V9AZKbWiLF/I7Hb8M+obW/GhjbyH2A
-	Lceqt+32LJgGWuJjIvJQyCDtPJk66AjRdu9MYpr5GhzL6g5BxpgM/XoxqQcppyBFJU/72G73nEk
-	fOS9fDHSHfXommibAGsJAbWgrkWDdnyDwBGYs7i/Pj33Gn0aQScIychl7PNLmAIgNd/EA8tNAil
-	t/ChCSR/EOvDDwP6KAaWFtezbpaC2ZFcx9evhteAvew==
-X-Google-Smtp-Source: AGHT+IG3UXE73EbhUolTZUA009n6afCvf/c7qZpC2nZYu33/7lnWpLXjusYs+O+48Y7iJdz2RPqajQ==
-X-Received: by 2002:a05:651c:4183:b0:335:2d39:efe8 with SMTP id 38308e7fff4ca-336cb148b70mr21019411fa.44.1756744388011;
-        Mon, 01 Sep 2025 09:33:08 -0700 (PDT)
-Received: from NB-6746.corp.yadro.com ([88.201.206.176])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-336d0e78e82sm15291861fa.53.2025.09.01.09.33.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 09:33:07 -0700 (PDT)
-From: Artem Shimko <artyom.shimko@gmail.com>
-To: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>
-Cc: Artem Shimko <artyom.shimko@gmail.com>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] firmware: arm_scmi: add missing spinlock documentation
-Date: Mon,  1 Sep 2025 19:33:01 +0300
-Message-ID: <20250901163304.2504493-3-artyom.shimko@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250901163304.2504493-1-artyom.shimko@gmail.com>
-References: <y>
- <20250901163304.2504493-1-artyom.shimko@gmail.com>
+	s=arc-20240116; t=1756744471; c=relaxed/simple;
+	bh=aWny5m6Wqz1CRg5geT1nOdfOifoEJVrWBp+q4CMHEPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hgRJBCn1+J83ykCFlHVzTg0g5qq32/PUUDe1JvC0HwJvC1iW6/BXwXlHmFZv9lzBTae6IsgVYXI4mhbqevom+D/Y64rcokKDFfx/T/BBhALnDaa/QPVgf7KajedZACt/6s80ORn31qmPHGLpBno/oJA4eZSotNmh8Fdtysvnw3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HhIzjYA3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756744466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oU/qMtZcyC8i4LZR6Q/18FupAVEqnteAX6wqUkmR8s4=;
+	b=HhIzjYA3/TklirdbLRRp/tRzn9J0EG7H24WnlYxbak1yE6cUT+vhULbVRq8F/DDrlgBz3x
+	ChvOYaDKAb3hJYG1RwemCnRqGhShP1/Fv1h8GhpsGGrSSLkD4ZuDC1mi080iFglKjopR68
+	x65kOoU2M49v/4QW2VF6HNQ6PqdwY40=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-qWNZv9x-PcakHwb8E4-A1A-1; Mon,
+ 01 Sep 2025 12:34:23 -0400
+X-MC-Unique: qWNZv9x-PcakHwb8E4-A1A-1
+X-Mimecast-MFC-AGG-ID: qWNZv9x-PcakHwb8E4-A1A_1756744461
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F220619560B0;
+	Mon,  1 Sep 2025 16:34:20 +0000 (UTC)
+Received: from [10.44.32.239] (unknown [10.44.32.239])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 416BF19560AB;
+	Mon,  1 Sep 2025 16:34:16 +0000 (UTC)
+Message-ID: <e6cd77a7-bc18-4e0c-9536-5fb107ec4db4@redhat.com>
+Date: Mon, 1 Sep 2025 18:34:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 5/5] dpll: zl3073x: Implement devlink flash
+ callback
+To: Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
+ Petr Oros <poros@redhat.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>
+References: <20250813174408.1146717-1-ivecera@redhat.com>
+ <20250813174408.1146717-6-ivecera@redhat.com>
+ <20250818192943.342ad511@kernel.org>
+ <e7a5ee37-993a-4bba-b69e-6c8a7c942af8@redhat.com>
+ <20250829165638.3b50ea2a@kernel.org>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20250829165638.3b50ea2a@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Adds a missing comment for xfer_lock spinlock in struct scmi_xfers_info.
-The spinlock protects access to the xfer buffers and transfer allocation
-mechanism, preventing race conditions in concurrent access scenarios.
+Hi Kuba and Jiri,
 
-Signed-off-by: Artem Shimko <artyom.shimko@gmail.com>
----
- drivers/firmware/arm_scmi/driver.c | 1 +
- 1 file changed, 1 insertion(+)
+On 30. 08. 25 1:56 dop., Jakub Kicinski wrote:
+> On Fri, 29 Aug 2025 16:49:22 +0200 Ivan Vecera wrote:
+>>>> +		/* Leave flashing mode */
+>>>> +		zl3073x_flash_mode_leave(zldev, extack);
+>>>> +	}
+>>>> +
+>>>> +	/* Restart normal operation */
+>>>> +	rc = zl3073x_dev_start(zldev, true);
+>>>> +	if (rc)
+>>>> +		dev_warn(zldev->dev, "Failed to re-start normal operation\n");
+>>>
+>>> And also we can't really cleanly handle the failure case.
+>>>
+>>> This is why I was speculating about implementing the down/up portion
+>>> in the devlink core. Add a flag that the driver requires reload_down
+>>> to be called before the flashing operation, and reload_up after.
+>>> This way not only core handles some of the error handling, but also
+>>> it can mark the device as reload_failed if things go sideways, which
+>>> is a nicer way to surface this sort of permanent error state.
+>>
+>> This makes sense... The question is if this should reuse existing
+>> .reload_down and .reload_up callbacks let's say with new devlink action
+>> DEVLINK_RELOAD_ACTION_FW_UPDATE or rather introduce new callbacks
+>> .flash_update_down/_up() to avoid confusions.
+> 
+> Whatever makes sense for your driver, for now. I'm assuming both ops
+> are the same, otherwise you wouldn't be asking? It should be trivial
+> for someone add the extra ops later, and just hook them both up to the
+> same functions in existing drivers.
 
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index bd56a877fdfc..6828392152f4 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -76,6 +76,7 @@ static struct dentry *scmi_top_dentry;
-  */
- struct scmi_xfers_info {
- 	unsigned long *xfer_alloc_table;
-+	/* Protects access to the xfer buffers */
- 	spinlock_t xfer_lock;
- 	int max_msg;
- 	struct hlist_head free_xfers;
--- 
-2.43.0
+Things are a little bit complicated after further investigation...
+
+Some internal flashing backround first:
+The zl3073x HW needs an external program called "flash utility"
+to access an internal flash inside the chip. This utility provides
+flash API over I2C/SPI bus that is different from the FW API provided
+by the normal firmware. So to access the flash memory the driver has
+to stop the device's CPU, to load the utility into chip RAM and resume
+the CPU to execute the utility. At this point normal FW API is not
+accessible so the driver has to stop the normal operation (unregister
+DPLL devices, pins etc.). Then it updates flash using flash API and
+after flash operations it has to reset device's CPU to restart newly
+flashed firmware. Finally when normal FW is available it resumes
+the normal operation (re-register DPLL devices etc.).
+
+Current steps in this patch:
+1. Load given FW file and verify that utility is present
+2. Stop normal operations
+3. Stop CPU, download utility to device, resume CPU
+4. Flash components from the FW file
+5. Unconditionally reset device's CPU to load normal FW
+6. Resume normal operations
+
+I found 4 possible options how to handle:
+
+1. Introduce DEVLINK_RELOAD_ACTION_FW_UPDATE devlink action and reuse
+    .reload_down/up() callbacks and call them prior and after
+    .flash_update callback.
+
+At first glance, it looks the most elegant... The zl3073x driver stops
+during .reload_down() normal operation, then in .flash_update will
+switch the device to flash mode, performs flash update and finally
+during .reload_up() will resume normal operation.
+
+Issues:
+- a problematic case, when the given firmware file does not contain
+   utility... During .reload_down() this cannot be checked as the
+   firmware is not available during .reload_down() callback.
+- DEVLINK_RELOAD_ACTION_FW_UPDATE has to be placed in devlink UAPI
+   and but this reload action should be handled as internal one as
+   there should not be possible to initiate it from the userspace
+
+   e.g. devlink dev reload DEV action fw_update
+
+2. Add new .flash_down/up() or .flash_prepare/done() optional callbacks
+    that are called prior and after .flash_update if they are provided by
+    a driver.
+
+This looks also good and very similar to previous option. Could resolve
+the 1st issue as we can pass 'devlink_flash_update_params' to both
+new callbacks, so the driver can parse firmware file during
+.flash_down and check for utility presence.
+
+Issues:
+- the firmware has to be parsed twice - during .flash_down() and
+   .flash_update()
+   This could be resolved by extending devlink_flash_update_params
+   structure by 'void *priv' field that could be used by a driver
+   during flash operation.
+   It could be also useful to add flash_failed flag similar to
+   reload_failed that would record a status reported by .flash_up()
+   callback.
+
+3. Keep my original approach but without restarting normal operation
+    (re-register DPLL devices and pins). User has to use explicitly
+    devlink reload fw_activate to restart normal operation.
+
+This could be reasonable but introduces some kind of asymmetry because
+the driver stops normal operation during .flash_update() and left
+the device in intermediate state (devlink interface is working but
+DPLL devices and pins are not registered). Only upon explicit user
+request (fw_activate) would it restore normal mode (re-registration).
+
+4. Keep my original approach, fix the ignored error code reported by
+    Jakub and pass "re-start normal operation failure" via devlink
+    notification.
+
+ From my POV better than previous one as the driver will do its best to
+resume device state prior the flashing. Only corner case where the
+firmware is unresponsive after reset will cause that normal operation
+won't be resumed -> could be handled by health reporting?
+
+Thanks for opinions and advises.
+
+Ivan
 
 
