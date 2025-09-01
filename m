@@ -1,363 +1,434 @@
-Return-Path: <linux-kernel+bounces-794430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19365B3E19D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:31:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014D8B3E1A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F492170BB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733253A6E44
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69B93101CD;
-	Mon,  1 Sep 2025 11:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EC431A57A;
+	Mon,  1 Sep 2025 11:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b59B1LPS"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gXkvTvjl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D229630F558
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9B419C546;
+	Mon,  1 Sep 2025 11:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756726269; cv=none; b=TkER3sCn1wwN+vFWUmPqtssOmgz1hzq21/RKxmb6aej7mH3oRgBSo9cmg98H5pj3IwVoi85ZJX/0eAjhFsxJi9ETURmWzmQoXZWQ1h1rulhjxcfH+80qz248L3lzs/bcg0UareIcrgGrPywU+ZpHytsVlzSzwNSnRlHXHxLT4kA=
+	t=1756726385; cv=none; b=c8Fv4a0DnNGBGiZ8ea9/Dx15NdNdq8D86rVMfPQWLjPkKSolvLabhcnc8wglvP/dMVF8YNY8EDgXlBnVsEAYhxqkP5fX1efj2uRs9nX5ZSHjfRG4XeeMUVU0fnkwDdHzEwSIZcEcpzmudNU4Y8urs2E8JIjdXeZOLsge82pd5bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756726269; c=relaxed/simple;
-	bh=YU8V5hZHLLQyOv9IZ9CFbTgi+vD0/9ysa+TyP4ZHiVw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZA61zQ1NUZ5Yabz5lqhIjctO5zhBXPnabjTg/IUj7nUwF0VBX80NlajptfTw18m8eS3GMmmi5MMHByAlgqgfxIdZNyakkiSQFcdQY8nEHeyxWfHwgi0QuytD4tWzDIAFAHNk1dGUhaNCgqBGWlO4kwOWyYbAPh+PmuGa/ARiQj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b59B1LPS; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3c6abcfd142so1974387f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:31:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756726266; x=1757331066; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K16zoObnr76blHb266X2WZODOudqowFO2iBWcxnwPNY=;
-        b=b59B1LPSdzt3Au4HWB5kE7z9I2xQ4XLNBNar9701VPPxEpVkgu9WpPpEsgV6U3KQFS
-         tkmTbbPM/Ib1NJzXKsWniuOotBcgNyn7Kt5i9zbKO4A6abYaYXvkqTrh12uOBg0Gtor4
-         hKDH5AhuDq735Ft8OJlU9qho3TyHWWtTc4SSBNy+hYPjObLUuiGPojkvzXr0QRNoNSpj
-         oleZfb+dQPxE3tKkhOtHeC1IuZzh8LbvJ9C1uafGktzB7wUaz+sqtj//4Xr1VYT5fwm7
-         GLgBIRODVcR+iDDdCV3yY3L1rvhuG/enZzQOOMG/BFOtNYWEs5LrFkJJ0U+HDOfmmF7p
-         4PhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756726266; x=1757331066;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K16zoObnr76blHb266X2WZODOudqowFO2iBWcxnwPNY=;
-        b=pxTxtsmFtuTrwYtc9DUwCfh7hKKjo086bvjHtWcDAGirkMknJoDy9pt6bxa3TKslCu
-         +dpG4fY06AwLypM2bP8UgbTZCztP6u1MebfcnBbATLQHPhqjExBDrORVw0B/EJRZCeoh
-         k3DiEbAgar7YN3Drlc49HQEnInWXDok2k9fZpAhFW5EFtslPiAsKZ/BykL0IzsfXOrqt
-         Yj2+cBZTh6rfzCPEh4T2Dl8kKHg4C1l9rbPXjg7eqwIu2DGX4ZFvD7PGiUY1FV968RXt
-         BFD8grF5SIdP4CH681pW8Yc24zKr/3brgLo1XSmI0oqKQ8NseRF6cZfBzrpqqqIyjO7T
-         xxYA==
-X-Gm-Message-State: AOJu0YxhDhm9OlGuh8wt+/cTC3tOSzDmC1NehbWFXO//NGwlUYIiKtm7
-	tMH58r+QMAjG5JQP9Z9iwLWKD+/NOBb6ujEpsiJFggcLQscPE7MxDMk+
-X-Gm-Gg: ASbGnctvexwWoxRytDx0GJNeNBGgsZ0TiLWYAt6EXp2VYZ5ht9xYq+cz0Br+1etF/8M
-	mosZD5TDSg6Oehqc/CJ0u+bre/LC8Hpr8xlAQimvZmetVmGxaDtvFHjAdAwxs5GJ8pNGaIBQjal
-	XvYkwDcSgfHoBu7BxnI9TCFzn0+nHz4M2Kv3nwGfYTSahHwhZHlI/ZFkDQGHmjv8b2OqzZVsd+7
-	9EJ9ohoeervxPc6UVeoTWwX8idnI2YI+W1VjW6UJ6WVkQuRyYB5UlRu2Mq8FTqnXUCosSN7AO5R
-	8SQMOlx69OLKb9FPcyz5HNLQMeUDzEYE27aOnadEK3BJfsqboeslKnw/sr5VCzHWt3taBURM+bI
-	cM451oD7IUU3VPOB9F8YFGUvaCebsWA==
-X-Google-Smtp-Source: AGHT+IEiacFTg8eVwm3sI/IpZu2rD13HmN1ht8nbBpl44hc/T4KUs7+uYXoJk/2Q/+iyJlQJ2pnzKQ==
-X-Received: by 2002:a05:6000:2f86:b0:3b9:16a3:cf9b with SMTP id ffacd0b85a97d-3d1dd81c540mr6901980f8f.5.1756726265751;
-        Mon, 01 Sep 2025 04:31:05 -0700 (PDT)
-Received: from victus-lab ([193.205.81.5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d21a32dbc5sm10388269f8f.11.2025.09.01.04.31.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 04:31:05 -0700 (PDT)
-From: Yuri Andriaccio <yurand2000@gmail.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: [PATCH v3] sched/deadline: Remove fair-servers from real-time task's bandwidth accounting
-Date: Mon,  1 Sep 2025 13:31:03 +0200
-Message-ID: <20250901113103.601085-1-yurand2000@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756726385; c=relaxed/simple;
+	bh=GFnrP6JwvU09jDl6n07k3pybJKEpR6EemzyESBXXvLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=boOLqdEovnUQAw+FEEERxdl46pVXyd++xA0YzB0i7RwJlmuHvmBHaKnrioUn6wN7mp/uS2pu1P8cKHienKKuOyyi9B6MKFRwZBk4sLLYjfszOWE2q6KVEznBqD+CQfI+OGWHGCyE7y0fKrBx77i1ErlfIt3YoxnH+qvrsm/fYTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gXkvTvjl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 581B48Dn013576;
+	Mon, 1 Sep 2025 11:32:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	geyyxU/R0ar/l1jPxU6KhljisvuggeaV7RE374LO5z0=; b=gXkvTvjlBClqVIJT
+	dUSDX9ImM46wQVuIkbWQJ/bCv/o55bzmQ5AMa3PMdyVkPBfp8BlcGK3b0dslScv/
+	boxJCO89fJ9Qc/WAdePv+nUjmbjPTK3VFPD24n0/AaH4yvvxmp/adZSVvkc9EPBw
+	7BfjSkyNGBrtnCpgls4o0tRlv0+lNPaUtPzO8REPTo6dAYOJaMXm7ogjkuZYiwPb
+	I8GzLdFQ2LdRk5TxDv0rI/99HF+prgV8l5x4zcus8bD6h9ud1TWn04Xl7nobZeuk
+	+un/aKBoFg510r1FT/MzAQgsEbB/VDT4YDC742RdzagYaRNyfZO52NNJxEVGNsUZ
+	UTmLDw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8mmb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Sep 2025 11:32:58 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 581BWv2X028131
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Sep 2025 11:32:57 GMT
+Received: from [10.204.100.211] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
+ 2025 04:32:51 -0700
+Message-ID: <961c54b2-3335-5fe2-f149-9c89a91d030d@quicinc.com>
+Date: Mon, 1 Sep 2025 17:02:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
+ subsystem support
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Wasim Nazir
+	<wasim.nazir@oss.qualcomm.com>
+CC: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>, <kernel@oss.qualcomm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <netdev@vger.kernel.org>,
+        Viken Dadhaniya
+	<viken.dadhaniya@oss.qualcomm.com>,
+        Sushrut Shree Trivedi
+	<quic_sushruts@quicinc.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Mohd Ayaan Anwar
+	<quic_mohdayaa@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Monish Chunara <quic_mchunara@quicinc.com>,
+        Vishal Kumar Pal
+	<quic_vispal@quicinc.com>
+References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+ <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
+ <kycmxk3qag7uigoiitzcxcak22cewdv253fazgaidjcnzgzlkz@htrh22msxteq>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <kycmxk3qag7uigoiitzcxcak22cewdv253fazgaidjcnzgzlkz@htrh22msxteq>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cjNiJyjpakaQNwQXA5N5buEVyjiDk1wk
+X-Proofpoint-GUID: cjNiJyjpakaQNwQXA5N5buEVyjiDk1wk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfX7d0MmbWQ1giu
+ sGWK8GiHOsClDZdd9ZGC3vVIS8cVMX99vHwKM3bTqBLfmYWfOe1RDPwZsS+HrW7mlm24btQghpf
+ cy+Gk92kBlK8TzIg8oihPZw5FRVzfT/DGxEj8e56c0999S2nPa8eefFlunhUII2vmNLVKW1P8Ns
+ bzRm6owpP4o2pM1xwAEJ/+P+pXOjpCzTZTK+mbVRQwfmTYqJBX2nnICrNj9PcD2rkPAJT/C5VZt
+ XCxUfHZv7Azxah9pvzRFAIvWsw9xmJSEIlEdtuj2VqOuFsPhZbcXiCww8bpg+bBaVTls3+dGKu6
+ r20j5irblexX97TkXwnITNbthsUnQuNURQQNmuwCM4ljWBT0kI3qY72pB/R6wg6AJAAoDUtK74g
+ WL9NGfrM
+X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b5846a cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=iTsxKKdsydDJoPdPDDIA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-01_05,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1011 adultscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
 
-Fair-servers are currently used in place of the old RT_THROTTLING mechanism to
-prevent the starvation of SCHED_OTHER (and other lower priority) tasks when
-real-time FIFO/RR processes are trying to fully utilize the CPU. To allow the
-RT_THROTTLING mechanism, the maximum allocatable bandwidth for real-time tasks
-has been limited to 95% of the CPU-time.
 
-The RT_THROTTLING mechanism is now removed in favor of fair-servers, which are
-currently set to use, as expected, 5% of the CPU-time. Still, they share the
-same bandwidth that allows to run real-time tasks, and which is still set to 95%
-of the total CPU-time. This means that by removing the RT_THROTTLING mechanism,
-the bandwidth remaning for real-time SCHED_DEADLINE tasks and other dl-servers
-(FIFO/RR are not affected) is only 90%.
+On 8/27/2025 7:05 AM, Dmitry Baryshkov wrote:
+> On Tue, Aug 26, 2025 at 11:51:02PM +0530, Wasim Nazir wrote:
+>> Enhance the Qualcomm Lemans EVK board file to support essential
+>> peripherals and improve overall hardware capabilities, as
+>> outlined below:
+>>   - Enable GPI (Generic Peripheral Interface) DMA-0/1/2 and QUPv3-0/2
+>>     controllers to facilitate DMA and peripheral communication.
+>>   - Add support for PCIe-0/1, including required regulators and PHYs,
+>>     to enable high-speed external device connectivity.
+>>   - Integrate the TCA9534 I/O expander via I2C to provide 8 additional
+>>     GPIO lines for extended I/O functionality.
+>>   - Enable the USB0 controller in device mode to support USB peripheral
+>>     operations.
+>>   - Activate remoteproc subsystems for supported DSPs such as Audio DSP,
+>>     Compute DSP-0/1 and Generic DSP-0/1, along with their corresponding
+>>     firmware.
+>>   - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
+>>     and other consumers.
+>>   - Enable the QCA8081 2.5G Ethernet PHY on port-0 and expose the
+>>     Ethernet MAC address via nvmem for network configuration.
+>>     It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
+>>   - Add support for the Iris video decoder, including the required
+>>     firmware, to enable video decoding capabilities.
+>>   - Enable SD-card slot on SDHC.
+>>
+>> Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+>> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+>> Co-developed-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+>> Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+>> Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+>> Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+>> Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>> Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+>> Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+>> Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
+>> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+>> Co-developed-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+>> Signed-off-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/lemans-evk.dts | 387 ++++++++++++++++++++++++++++++++
+>>  1 file changed, 387 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/lemans-evk.dts b/arch/arm64/boot/dts/qcom/lemans-evk.dts
+>> index 9e415012140b..642b66c4ad1e 100644
+>> --- a/arch/arm64/boot/dts/qcom/lemans-evk.dts
+>> +++ b/arch/arm64/boot/dts/qcom/lemans-evk.dts
+>> @@ -16,7 +16,10 @@ / {
+>>  	compatible = "qcom,lemans-evk", "qcom,qcs9100", "qcom,sa8775p";
+>>  
+>>  	aliases {
+>> +		ethernet0 = &ethernet0;
+>> +		mmc1 = &sdhc;
+>>  		serial0 = &uart10;
+>> +		serial1 = &uart17;
+>>  	};
+>>  
+>>  	chosen {
+>> @@ -46,6 +49,30 @@ edp1_connector_in: endpoint {
+>>  			};
+>>  		};
+>>  	};
+>> +
+>> +	vmmc_sdc: regulator-vmmc-sdc {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vmmc_sdc";
+> 
+> Non-switchable, always enabled?
+> 
+>> +
+>> +		regulator-min-microvolt = <2950000>;
+>> +		regulator-max-microvolt = <2950000>;
+>> +	};
+>> +
+>> +	vreg_sdc: regulator-vreg-sdc {
+>> +		compatible = "regulator-gpio";
+>> +
+>> +		regulator-min-microvolt = <1800000>;
+>> +		regulator-max-microvolt = <2950000>;
+>> +		regulator-name = "vreg_sdc";
+>> +		regulator-type = "voltage";
+> 
+> This one also can not be disabled?
+> 
+>> +
+>> +		startup-delay-us = <100>;
+>> +
+>> +		gpios = <&expander1 7 GPIO_ACTIVE_HIGH>;
+>> +
+>> +		states = <1800000 0x1
+>> +			  2950000 0x0>;
+>> +	};
+>>  };
+>>  
+>>  &apps_rsc {
+>> @@ -277,6 +304,161 @@ vreg_l8e: ldo8 {
+>>  	};
+>>  };
+>>  
+>> +&ethernet0 {
+>> +	phy-handle = <&hsgmii_phy0>;
+>> +	phy-mode = "2500base-x";
+>> +
+>> +	pinctrl-0 = <&ethernet0_default>;
+>> +	pinctrl-names = "default";
+>> +
+>> +	snps,mtl-rx-config = <&mtl_rx_setup>;
+>> +	snps,mtl-tx-config = <&mtl_tx_setup>;
+>> +	snps,ps-speed = <1000>;
+>> +
+>> +	nvmem-cells = <&mac_addr0>;
+>> +	nvmem-cell-names = "mac-address";
+>> +
+>> +	status = "okay";
+>> +
+>> +	mdio {
+>> +		compatible = "snps,dwmac-mdio";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		hsgmii_phy0: ethernet-phy@1c {
+>> +			compatible = "ethernet-phy-id004d.d101";
+>> +			reg = <0x1c>;
+>> +			reset-gpios = <&pmm8654au_2_gpios 8 GPIO_ACTIVE_LOW>;
+>> +			reset-assert-us = <11000>;
+>> +			reset-deassert-us = <70000>;
+>> +		};
+>> +	};
+>> +
+>> +	mtl_rx_setup: rx-queues-config {
+>> +		snps,rx-queues-to-use = <4>;
+>> +		snps,rx-sched-sp;
+>> +
+>> +		queue0 {
+>> +			snps,dcb-algorithm;
+>> +			snps,map-to-dma-channel = <0x0>;
+>> +			snps,route-up;
+>> +			snps,priority = <0x1>;
+>> +		};
+>> +
+>> +		queue1 {
+>> +			snps,dcb-algorithm;
+>> +			snps,map-to-dma-channel = <0x1>;
+>> +			snps,route-ptp;
+>> +		};
+>> +
+>> +		queue2 {
+>> +			snps,avb-algorithm;
+>> +			snps,map-to-dma-channel = <0x2>;
+>> +			snps,route-avcp;
+>> +		};
+>> +
+>> +		queue3 {
+>> +			snps,avb-algorithm;
+>> +			snps,map-to-dma-channel = <0x3>;
+>> +			snps,priority = <0xc>;
+>> +		};
+>> +	};
+>> +
+>> +	mtl_tx_setup: tx-queues-config {
+>> +		snps,tx-queues-to-use = <4>;
+>> +
+>> +		queue0 {
+>> +			snps,dcb-algorithm;
+>> +		};
+>> +
+>> +		queue1 {
+>> +			snps,dcb-algorithm;
+>> +		};
+>> +
+>> +		queue2 {
+>> +			snps,avb-algorithm;
+>> +			snps,send_slope = <0x1000>;
+>> +			snps,idle_slope = <0x1000>;
+>> +			snps,high_credit = <0x3e800>;
+>> +			snps,low_credit = <0xffc18000>;
+>> +		};
+>> +
+>> +		queue3 {
+>> +			snps,avb-algorithm;
+>> +			snps,send_slope = <0x1000>;
+>> +			snps,idle_slope = <0x1000>;
+>> +			snps,high_credit = <0x3e800>;
+>> +			snps,low_credit = <0xffc18000>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&gpi_dma0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&gpi_dma1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&gpi_dma2 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&i2c18 {
+>> +	status = "okay";
+>> +
+>> +	expander0: pca953x@38 {
+>> +		compatible = "ti,tca9538";
+>> +		#gpio-cells = <2>;
+>> +		gpio-controller;
+>> +		reg = <0x38>;
+>> +	};
+>> +
+>> +	expander1: pca953x@39 {
+>> +		compatible = "ti,tca9538";
+>> +		#gpio-cells = <2>;
+>> +		gpio-controller;
+>> +		reg = <0x39>;
+>> +	};
+>> +
+>> +	expander2: pca953x@3a {
+>> +		compatible = "ti,tca9538";
+>> +		#gpio-cells = <2>;
+>> +		gpio-controller;
+>> +		reg = <0x3a>;
+>> +	};
+>> +
+>> +	expander3: pca953x@3b {
+>> +		compatible = "ti,tca9538";
+>> +		#gpio-cells = <2>;
+>> +		gpio-controller;
+>> +		reg = <0x3b>;
+>> +	};
+>> +
+>> +	eeprom@50 {
+>> +		compatible = "atmel,24c256";
+>> +		reg = <0x50>;
+>> +		pagesize = <64>;
+>> +
+>> +		nvmem-layout {
+>> +			compatible = "fixed-layout";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +
+>> +			mac_addr0: mac-addr@0 {
+>> +				reg = <0x0 0x6>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&iris {
+>> +	firmware-name = "qcom/vpu/vpu30_p4_s6.mbn";
+> 
+> Should it be just _s6.mbn or _s6_16mb.mbn?
 
-This patch reclaims the 5% lost CPU-time, which is definitely reserved for
-SCHED_OTHER tasks, but should not be accounted together with the other real-time
-tasks. More generally, the fair-servers' bandwidth must not be accounted with
-other real-time tasks.
+_s6_16mb.mbn
 
-Updates:
-- Make the fair-servers' bandwidth not be accounted into the total allocated
-  bandwidth for real-time tasks.
-- Remove the admission control test when allocating a fair-server.
-- Do not account for fair-servers in the GRUB's bandwidth reclaiming mechanism.
-- Limit the max bandwidth to (BW_UNIT - max_rt_bw) when changing the parameters
-  of a fair-server, preventing overcommitment.
-- Add dl_bw_fair, which computes the total allocated bandwidth of the
-  fair-servers in the given root-domain.
-- Update admission tests (in sched_dl_global_validate) when changing the
-  maximum allocatable bandwidth for real-time tasks, preventing overcommitment.
-- Update admission tests (in dl_bw_manage) when offlining a CPU.
-
-Since the fair-server's bandwidth can be changed through debugfs, it has not
-been enforced that a fair-server's bw must be always equal to (BW_UNIT -
-max_rt_bw), rather it must be less or equal to this value. This allows retaining
-the fair-servers' settings changed through the debugfs when chaning the
-max_rt_bw.
-
-This also means that in order to increase the maximum bandwidth for real-time
-tasks, the bw of fair-servers must be first decreased through debugfs otherwise
-admission tests will fail, and viceversa, to increase the bw of fair-servers,
-the bw of real-time tasks must be reduced beforehand.
-
-This v3 version removed capacity/frequency scaling for fair-servers, given
-commit fc975cfb3639 ("sched/deadline: Fix dl_server runtime calculation
-formula"), and fixes a bug which prevented offlining CPUs. It also addresses
-other comments mentioned in the v2 thread.
-
-v1: https://lore.kernel.org/all/20250721111131.309388-1-yurand2000@gmail.com/
-v2: https://lore.kernel.org/all/20250725164412.35912-1-yurand2000@gmail.com/
-
-Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
----
- kernel/sched/deadline.c | 84 ++++++++++++++---------------------------
- kernel/sched/sched.h    |  1 -
- kernel/sched/topology.c |  8 ----
- 3 files changed, 29 insertions(+), 64 deletions(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index f25301267e4..2329dfc6ab0 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -141,6 +141,24 @@ static inline int dl_bw_cpus(int i)
- 	return cpus;
- }
- 
-+static inline u64 dl_bw_fair(int i)
-+{
-+	struct root_domain *rd = cpu_rq(i)->rd;
-+	u64 fair_server_bw = 0;
-+
-+	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
-+			 "sched RCU must be held");
-+
-+	if (cpumask_subset(rd->span, cpu_active_mask))
-+		i = cpumask_first(rd->span);
-+
-+	for_each_cpu_and(i, rd->span, cpu_active_mask) {
-+		fair_server_bw += cpu_rq(i)->fair_server.dl_bw;
-+	}
-+
-+	return fair_server_bw;
-+}
-+
- static inline unsigned long __dl_bw_capacity(const struct cpumask *mask)
- {
- 	unsigned long cap = 0;
-@@ -1659,48 +1677,22 @@ void sched_init_dl_servers(void)
- 	}
- }
- 
--void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq)
--{
--	u64 new_bw = dl_se->dl_bw;
--	int cpu = cpu_of(rq);
--	struct dl_bw *dl_b;
--
--	dl_b = dl_bw_of(cpu_of(rq));
--	guard(raw_spinlock)(&dl_b->lock);
--
--	if (!dl_bw_cpus(cpu))
--		return;
--
--	__dl_add(dl_b, new_bw, dl_bw_cpus(cpu));
--}
--
- int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 period, bool init)
- {
--	u64 old_bw = init ? 0 : to_ratio(dl_se->dl_period, dl_se->dl_runtime);
- 	u64 new_bw = to_ratio(period, runtime);
- 	struct rq *rq = dl_se->rq;
- 	int cpu = cpu_of(rq);
- 	struct dl_bw *dl_b;
--	unsigned long cap;
--	int retval = 0;
--	int cpus;
- 
- 	dl_b = dl_bw_of(cpu);
- 	guard(raw_spinlock)(&dl_b->lock);
- 
--	cpus = dl_bw_cpus(cpu);
--	cap = dl_bw_capacity(cpu);
--
--	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-+	if (new_bw > BW_UNIT - dl_b->bw)
- 		return -EBUSY;
- 
- 	if (init) {
- 		__add_rq_bw(new_bw, &rq->dl);
--		__dl_add(dl_b, new_bw, cpus);
- 	} else {
--		__dl_sub(dl_b, dl_se->dl_bw, cpus);
--		__dl_add(dl_b, new_bw, cpus);
--
- 		dl_rq_change_utilization(rq, dl_se, new_bw);
- 	}
- 
-@@ -1714,7 +1706,7 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
- 	dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
- 	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
- 
--	return retval;
-+	return 0;
- }
- 
- /*
-@@ -2945,17 +2937,6 @@ void dl_clear_root_domain(struct root_domain *rd)
- 	rd->dl_bw.total_bw = 0;
- 	for_each_cpu(i, rd->span)
- 		cpu_rq(i)->dl.extra_bw = cpu_rq(i)->dl.max_bw;
--
--	/*
--	 * dl_servers are not tasks. Since dl_add_task_root_domain ignores
--	 * them, we need to account for them here explicitly.
--	 */
--	for_each_cpu(i, rd->span) {
--		struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
--
--		if (dl_server(dl_se) && cpu_active(i))
--			__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(i));
--	}
- }
- 
- void dl_clear_root_domain_cpu(int cpu)
-@@ -3139,9 +3120,10 @@ int sched_dl_global_validate(void)
- 	u64 period = global_rt_period();
- 	u64 new_bw = to_ratio(period, runtime);
- 	u64 cookie = ++dl_cookie;
-+	u64 fair_bw;
- 	struct dl_bw *dl_b;
--	int cpu, cpus, ret = 0;
--	unsigned long flags;
-+	int cpu, ret = 0;
-+	unsigned long cap, flags;
- 
- 	/*
- 	 * Here we want to check the bandwidth not being set to some
-@@ -3155,10 +3137,12 @@ int sched_dl_global_validate(void)
- 			goto next;
- 
- 		dl_b = dl_bw_of(cpu);
--		cpus = dl_bw_cpus(cpu);
-+		cap = dl_bw_capacity(cpu);
-+		fair_bw = dl_bw_fair(cpu);
- 
- 		raw_spin_lock_irqsave(&dl_b->lock, flags);
--		if (new_bw * cpus < dl_b->total_bw)
-+		if (cap_scale(new_bw, cap) < dl_b->total_bw ||
-+		    new_bw + fair_bw > BW_UNIT)
- 			ret = -EBUSY;
- 		raw_spin_unlock_irqrestore(&dl_b->lock, flags);
- 
-@@ -3444,7 +3428,6 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
- 	unsigned long flags, cap;
- 	struct dl_bw *dl_b;
- 	bool overflow = 0;
--	u64 fair_server_bw = 0;
- 
- 	rcu_read_lock_sched();
- 	dl_b = dl_bw_of(cpu);
-@@ -3476,28 +3459,19 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
- 		 */
- 		cap -= arch_scale_cpu_capacity(cpu);
- 
--		/*
--		 * cpu is going offline and NORMAL tasks will be moved away
--		 * from it. We can thus discount dl_server bandwidth
--		 * contribution as it won't need to be servicing tasks after
--		 * the cpu is off.
--		 */
--		if (cpu_rq(cpu)->fair_server.dl_server)
--			fair_server_bw = cpu_rq(cpu)->fair_server.dl_bw;
--
- 		/*
- 		 * Not much to check if no DEADLINE bandwidth is present.
- 		 * dl_servers we can discount, as tasks will be moved out the
- 		 * offlined CPUs anyway.
- 		 */
--		if (dl_b->total_bw - fair_server_bw > 0) {
-+		if (dl_b->total_bw > 0) {
- 			/*
- 			 * Leaving at least one CPU for DEADLINE tasks seems a
- 			 * wise thing to do. As said above, cpu is not offline
- 			 * yet, so account for that.
- 			 */
- 			if (dl_bw_cpus(cpu) - 1)
--				overflow = __dl_overflow(dl_b, cap, fair_server_bw, 0);
-+				overflow = __dl_overflow(dl_b, cap, 0, 0);
- 			else
- 				overflow = 1;
- 		}
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index be9745d104f..01afa7424f8 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -390,7 +390,6 @@ extern void sched_init_dl_servers(void);
- extern void dl_server_update_idle_time(struct rq *rq,
- 		    struct task_struct *p);
- extern void fair_server_init(struct rq *rq);
--extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
- extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
- 		    u64 runtime, u64 period, bool init);
- 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 977e133bb8a..4ea3365984a 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -500,14 +500,6 @@ void rq_attach_root(struct rq *rq, struct root_domain *rd)
- 	if (cpumask_test_cpu(rq->cpu, cpu_active_mask))
- 		set_rq_online(rq);
- 
--	/*
--	 * Because the rq is not a task, dl_add_task_root_domain() did not
--	 * move the fair server bw to the rd if it already started.
--	 * Add it now.
--	 */
--	if (rq->fair_server.dl_server)
--		__dl_server_attach_root(&rq->fair_server, rq);
--
- 	rq_unlock_irqrestore(rq, &rf);
- 
- 	if (old_rd)
-
-base-commit: 5c3b3264e5858813632031ba58bcd6e1eeb3b214
--- 
-2.51.0
-
+> 
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>>  &mdss0 {
+>>  	status = "okay";
+>>  };
+>> @@ -323,14 +505,196 @@ &mdss0_dp1_phy {
+>>  	status = "okay";
+>>  };
+>>  
+>> +&pcie0 {
+>> +	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>> +	wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
+> 
+> I think Mani has been asking lately to define these GPIOs inside the
+> port rather than in the host controller.
+> 
+>> +
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pcie0_default_state>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+> 
+> [...]
+> 
+>> @@ -356,6 +720,29 @@ &ufs_mem_phy {
+>>  	status = "okay";
+>>  };
+>>  
+>> +&usb_0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_0_dwc3 {
+>> +	dr_mode = "peripheral";
+> 
+> Is it actually peripheral-only?
+> 
+>> +};
+>> +
+> 
 
