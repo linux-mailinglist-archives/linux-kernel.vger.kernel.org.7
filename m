@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-794422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB9FB3E18A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:29:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A71B3E18C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D13166961
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:29:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 267657A6AD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDF231A07F;
-	Mon,  1 Sep 2025 11:28:54 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B3A31A56B;
+	Mon,  1 Sep 2025 11:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aiSlf2eT"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B06031A041;
-	Mon,  1 Sep 2025 11:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CCB267387
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756726134; cv=none; b=El8Dj9GT0wlhrTP1BIxkyj++HeocPTGHj7APHhnjbjhn0iBpxl0pI+nHdkQwIZbMHbJNDlN0SjvPXHQHCmauvmfVIdsaaLfafEiv7wdKb5p6OHRmCtRDtGyNMog0G9+JHRDkY3r/a/a6Xj2nq0gcshQl2tGGZfcfamJZ08a/dvc=
+	t=1756726188; cv=none; b=GB/8CPRtZUKgYznJvKNcd+/AldaWnblg8/1PbzwbD7UpXSYLrJH4p7zU5XUB85bevpNJZeRhTr1mPjabIDBf4FuE/2r0QkIgzpwkNuhY6xU8ypsWySHNRJKNfaKVdTnC7lrhKXPawMqXFRJhdD3KgtldFpxXs6tpBZztnQZ1ekk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756726134; c=relaxed/simple;
-	bh=rmV1Vk9JgSlx7RoGBA6BnI4BlWWKUxuRTbLf2TMQnFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JOncs3jOgcvI/W6ceiWzgeWXkgqcfrI4XnHTcmSVoyNtmDxK85BeilF513XNymj8j0UnrcN790pRLknqFiS3BqyW/9vO5id07/DtwztREsCndFpOopIsVvqb7EEK2qfFSmXA9SkQjZqo1h0CNA3zVPNjBwZwCRqXeF5hEuGTXbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0166C4CEF4;
-	Mon,  1 Sep 2025 11:28:50 +0000 (UTC)
-Date: Mon, 1 Sep 2025 12:28:48 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
-	arnd@arndb.de, will@kernel.org, peterz@infradead.org,
-	akpm@linux-foundation.org, mark.rutland@arm.com,
-	harisokn@amazon.com, cl@gentwo.org, ast@kernel.org,
-	memxor@gmail.com, zhenglifeng1@huawei.com,
-	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
-	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH v4 5/5] rqspinlock: use smp_cond_load_acquire_timewait()
-Message-ID: <aLWDcJiZWD7g8-4S@arm.com>
-References: <20250829080735.3598416-1-ankur.a.arora@oracle.com>
- <20250829080735.3598416-6-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1756726188; c=relaxed/simple;
+	bh=hwu2Kbbf5ntjzdSbAs6MMa0FLXiSeyDsJHXXkCApxlM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nK/yiD/HTaGf2K22RvvZSxFk9tYDTqB/qWJXg2h02ALlvg5JH18gCFTrV8akOTU2qZqnzPECdF5dZ0RQkLtYfDLoYaUsVhCQ8DVKSJB8/UUWHX+4z4ykaH/V/1jirTh5a1Gyg9c1DSfGSPLv5f6/tdik6p1qbYSh6zSzXlaG87s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aiSlf2eT; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b869d3572so4858155e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756726185; x=1757330985; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lek17aB1MdxVzJYdNsx3fQ/dyCaMBNbVMi2QTvU5Diw=;
+        b=aiSlf2eTEgYxLNQ3tWttvwPXhWiRd6GAD4c9viwUDXEXULthDcrC1sSChUiS23xa2X
+         mImWt11/M/3hO1m97mW2jBEOVz7KSc7RZFg7UFtSZGLEY5SYbUbsv4yggT2fMhQBj5U0
+         NbifMKc0sfNDp2D8J3des2mrpMDAnCgviHAwJqcms0CRT5mdIWstUWnXE+cT5Xkx0VO6
+         odo6hjBgXiht4wVIUanz+6YBQg/qKAe3sQfEMo97yluhGqrljJM7vShdJMM2MnPMTbqh
+         Fvw1fLhMdMmtFZpFn3pqbBcFrlGsEXVwZb+uvcLkGRN62xfzPr9S6G53G6DfR8mP00lS
+         x5RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756726185; x=1757330985;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lek17aB1MdxVzJYdNsx3fQ/dyCaMBNbVMi2QTvU5Diw=;
+        b=PAT765pQgmh9JgLLxzFXpFdv2GbyvncNsMgJtJkvLRs4Ixmi/li34y9FT/zdmRwRX2
+         vm1MQmWNxTbeTHEQ+gVMTGkfxqXVGnUWWkOG6lKUTSaZQDu2u0HSSzE5dGcgi8YvbVyD
+         4MCqHkZu3nWEYmbjRxb/GLCN6NqPPcxbOJSpx2FhfrqgqF6RbMXNPF77JNKv24yJV9RJ
+         0HSTdkGuBDg9CGqW0JgsS3WUbaqBvdNDGXDm+Tl1AiTcMKTcp/PjvSUm9eYoQGIkRo74
+         A+R1euvDlmfw0CjTe/5c3ELVzU5Y5uB4J4zMO0KCHpgL5MxwrExutKtLiZAyUqcdqu/i
+         8R/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWT7MuHproR1w/e48qkJuKzlCmx3lQrdjcms5e/dk6chFHB128QUUuz+KrKJ3sRHKc+ul8Ckn030e1dP+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLnK8J9RCny1J4g71HYY9a4kegYKeBRBHCpCkJ4RWSmhr58vOT
+	f4sA9B+kTZDRkSnuK7MRs1KaWtImFO4CH1aPCcbgIlTfB73xJQscHJLLbfSySSYuXCbNP/QHmv+
+	61lDsZuXoH5Ag3w==
+X-Google-Smtp-Source: AGHT+IF4u4k+AvvaTYncGek0o5I+2pA6zNg1judsWL0THNmQ7yIx18EN0m9On1TLUujNdBUHvq3Ytm4oIUWuoA==
+X-Received: from wmbes21.prod.google.com ([2002:a05:600c:8115:b0:458:bb2b:d73e])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4fcd:b0:459:e025:8c40 with SMTP id 5b1f17b1804b1-45b85533712mr68266195e9.10.1756726184881;
+ Mon, 01 Sep 2025 04:29:44 -0700 (PDT)
+Date: Mon, 01 Sep 2025 11:29:44 +0000
+In-Reply-To: <aLNQFmgS2IcDbPmd@levanger>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829080735.3598416-6-ankur.a.arora@oracle.com>
+Mime-Version: 1.0
+References: <20250827-master-v1-1-19f9f367219c@google.com> <20250829233824.GB1983886@ax162>
+ <aLNQFmgS2IcDbPmd@levanger>
+X-Mailer: aerc 0.20.1
+Message-ID: <DCHFGJXCAPAZ.3JG065Y5DZVLZ@google.com>
+Subject: Re: [PATCH] .gitignore: ignore temporary files from 'bear'
+From: Brendan Jackman <jackmanb@google.com>
+To: Nicolas Schier <nsc@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	<linux-kernel@vger.kernel.org>, Justin Stitt <justinstitt@google.com>, 
+	<llvm@lists.linux.dev>, <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 29, 2025 at 01:07:35AM -0700, Ankur Arora wrote:
-> diff --git a/arch/arm64/include/asm/rqspinlock.h b/arch/arm64/include/asm/rqspinlock.h
-> index a385603436e9..ce8feadeb9a9 100644
-> --- a/arch/arm64/include/asm/rqspinlock.h
-> +++ b/arch/arm64/include/asm/rqspinlock.h
-> @@ -3,6 +3,9 @@
->  #define _ASM_RQSPINLOCK_H
->  
->  #include <asm/barrier.h>
-> +
-> +#define res_smp_cond_load_acquire_waiting() arch_timer_evtstrm_available()
+On Sat Aug 30, 2025 at 7:25 PM UTC, Nicolas Schier wrote:
+> On Fri, Aug 29, 2025 at 04:38:24PM -0700, Nathan Chancellor wrote:
+>> Hi Brendan,
+>> 
+>> On Wed, Aug 27, 2025 at 08:59:43AM +0000, Brendan Jackman wrote:
+>> > Bear [0] is a tool for generating compile_commands.json. For Kbuild,
+>> > Bear is not useful, since Kbuild already generates the necessary info
+>> > and that can be converted to compile_commands.json by
+>> > gen_compile_commads.py.
+>> > 
+>> > However, for code in tools/, it's handy. For example, this command
+>> > updates compile_commands.json so that clangd code navigation will also
+>> > work for the VMA unit tests:
+>> > 
+>> > 	bear --append -- make -C tools/testing/vma -j
+>> > 
+>> > Bear generates some temporary files. These are usually deleted again
+>> > but having them show up ephemerally confuses tools that trigger
+>> > recompilation on source code changes. Ignore them in Git so that these
+>> > tools can tell they aren't source code.
+>> > 
+>> > [0]: https://github.com/rizsotto/Bear
+>> > 
+>> > Signed-off-by: Brendan Jackman <jackmanb@google.com>
+>> 
+>> We can likely take this via the Kbuild tree. I do wonder if this would
+>> be better in a tools/.gitignore file since bear is really only of use
+>> there but I am not sure it matters much.
+>
+> yeah, please consider using tools/.gitignore.  
 
-More on this below, I don't think we should define it.
+I don't believe that works here, because AFAIK clangd assumes a single
+compile_commands.json, so while we could git-ignore
+tools/compile_commands.json that wouldn't really serve the usecase I
+have here with 'bear --append'.
 
-> diff --git a/kernel/bpf/rqspinlock.c b/kernel/bpf/rqspinlock.c
-> index 5ab354d55d82..8de1395422e8 100644
-> --- a/kernel/bpf/rqspinlock.c
-> +++ b/kernel/bpf/rqspinlock.c
-> @@ -82,6 +82,7 @@ struct rqspinlock_timeout {
->  	u64 duration;
->  	u64 cur;
->  	u16 spin;
-> +	u8  wait;
->  };
->  
->  #define RES_TIMEOUT_VAL	2
-> @@ -241,26 +242,20 @@ static noinline int check_timeout(rqspinlock_t *lock, u32 mask,
->  }
->  
->  /*
-> - * Do not amortize with spins when res_smp_cond_load_acquire is defined,
-> - * as the macro does internal amortization for us.
-> + * Only amortize with spins when we don't have a waiting implementation.
->   */
-> -#ifndef res_smp_cond_load_acquire
->  #define RES_CHECK_TIMEOUT(ts, ret, mask)                              \
->  	({                                                            \
-> -		if (!(ts).spin++)                                     \
-> +		if ((ts).wait || !(ts).spin++)		      \
->  			(ret) = check_timeout((lock), (mask), &(ts)); \
->  		(ret);                                                \
->  	})
-> -#else
-> -#define RES_CHECK_TIMEOUT(ts, ret, mask)			      \
-> -	({ (ret) = check_timeout((lock), (mask), &(ts)); })
-> -#endif
+> Please have a look at
+> this thread about ignoring files from "external" tools:
+>
+> https://lore.kernel.org/lkml/CAHk-=wiJHMje8cpiTajqrLrM23wZK0SWetuK1Bd67c0OGM_BzQ@mail.gmail.com/
 
-IIUC, RES_CHECK_TIMEOUT in the current res_smp_cond_load_acquire() usage
-doesn't amortise the spins, as the comment suggests, but rather the
-calls to check_timeout(). This is fine, it matches the behaviour of
-smp_cond_load_relaxed_timewait() you introduced in the first patch. The
-only difference is the number of spins - 200 (matching poll_idle) vs 64K
-above. Does 200 work for the above?
+Hm, I would read the spirit of that thread as not being about things
+from 'external tools', rather Linus' objection seems to be that the
+_lifetime_ of the mbox files is unrelated to the kernel build. Well, to
+be honest the only coherent principle I can get from it is "don't break
+Linus' workflow". Which... yeah, is still a pretty valid concern.
 
->  /*
->   * Initialize the 'spin' member.
->   * Set spin member to 0 to trigger AA/ABBA checks immediately.
->   */
-> -#define RES_INIT_TIMEOUT(ts) ({ (ts).spin = 0; })
-> +#define RES_INIT_TIMEOUT(ts) ({ (ts).spin = 0; (ts).wait = res_smp_cond_load_acquire_waiting(); })
+> If using tools/.gitignore is not possible, I think the best way for
+> ignoring files that are not natively related to kernel build tools is to 
+> update the local ~/.config/git/ignore, as suggested in
+>
+> https://lore.kernel.org/lkml/CAK7LNAQas0cK7pgi72tYC3yU=ZkQxnr41YYW1mXd-sWiHtG+UA@mail.gmail.com/
 
-First of all, I don't really like the smp_cond_load_acquire_waiting(),
-that's an implementation detail of smp_cond_load_*_timewait() that
-shouldn't leak outside. But more importantly, RES_CHECK_TIMEOUT() is
-also used outside the smp_cond_load_acquire_timewait() condition. The
-(ts).wait check only makes sense when used together with the WFE
-waiting.
+Given this alternative, and given the fact that I'm ignoring a very
+generic suffix in *.tmp (if it was just *.events.json I'd say the
+practical risk has gotta be close to nil), I think we could just drop
+this unless anyone else pops up with evidence that 'bear' is important
+to lots of people or something.
 
-I would leave RES_CHECK_TIMEOUT() as is for the stand-alone cases and
-just use check_timeout() in the smp_cond_load_acquire_timewait()
-scenarios. I would also drop the res_smp_cond_load_acquire() macro since
-you now defined smp_cond_load_acquire_timewait() generically and can be
-used directly.
-
--- 
-Catalin
+Cheers,
+Brendan
 
