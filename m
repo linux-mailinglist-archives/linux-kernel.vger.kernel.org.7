@@ -1,103 +1,164 @@
-Return-Path: <linux-kernel+bounces-794837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41CBB3E7E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E820BB3E7E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADFE63BE1BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C5A1890A15
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33382341665;
-	Mon,  1 Sep 2025 14:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF847341AD7;
+	Mon,  1 Sep 2025 14:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="YZcn32pR"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U6I6+Ffd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678DE26FA6F;
-	Mon,  1 Sep 2025 14:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF3B34167B;
+	Mon,  1 Sep 2025 14:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738339; cv=none; b=phq+cIxzo/u/VdbBtof+z3IWOYwnOZV8DmW7G2ANO85lJkgbu+lns1X5TZsqlmCeIZIaDApP6lU5tsg5v1GIO9q4YOM16IAf2vIMdIEv3ou8tIZa28x1fmJzkxRNAdgf6opqS9Yl1kq6Kr783AAJs/HIvTyNMSXspQ3eQUMd1nw=
+	t=1756738271; cv=none; b=HDregFQB0keeXvhGfGKOFVMuda96wqaVHJrmjj31/uRxun6Mq+Igt0nR00PK2vb9CrMURiLp2SJocrFD8pFrdO4w3/QjxH+cjV84Ask4BQh9r1a+WJKZpPSIItz53sZ6IIIJuHkOL7tdZl8bIULdv8uk6YYv+0ohgfI8MC9g7QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738339; c=relaxed/simple;
-	bh=A3oQDNtC9t8GXyz1Onu5bXHPGEEu2KnjT/PlSY2LNfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bb2/g1GlEJ5cZeK8smJ6+dBSxlfcLCmAd18EGA7AQbpQBClUqYT/qu1TdJgHdthI8zwS2ukdVEAKDaIEMVccHg5ndto2YfrcHa5hgugDMuVtmZXsYBFyRAxylmi0tqnZ/0vllMm1o9lQjcMYmFecDN2y7GjP824vorH5xiTC3OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=YZcn32pR; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1756738334;
-	bh=A3oQDNtC9t8GXyz1Onu5bXHPGEEu2KnjT/PlSY2LNfQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YZcn32pRvgCPxUHhdbcid7QSZs4Y0AsQQQOBZ4giN4TxgRTjsm/pQQicMkxrkngsQ
-	 +r1+J3vWSQLG4DNXN6ftUKzlB3ZS6ViJCAmDaSBnBPDWtpoN9D3TVtkpbyJhjp9kWq
-	 UUZToBMPGAlr+kFkxdPyxQY9njO4xtPk+1BzzCwUwKTVlU5fwlhXvnbaPt66SbFf84
-	 bpXrwF2C8BM9DQy2F+kUynrTgkzaGjn4x2FNNd82oB38Cq9/Uly0g+iKlzqxdh6hA6
-	 6kOKLM/fH9fHPYAYVXYHyF5v7C9bGG0D+P4Ntpak4Q6F//oPAo0HJeT+iHUNhJA1Wh
-	 2nr6CXCZRD5fQ==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id DC5B160078;
-	Mon,  1 Sep 2025 14:51:16 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id 82082202310; Mon, 01 Sep 2025 14:50:57 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	"Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	wireguard@lists.zx2c4.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net 4/4] genetlink: fix typo in comment
-Date: Mon,  1 Sep 2025 14:50:23 +0000
-Message-ID: <20250901145034.525518-5-ast@fiberby.net>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250901145034.525518-1-ast@fiberby.net>
-References: <20250901145034.525518-1-ast@fiberby.net>
+	s=arc-20240116; t=1756738271; c=relaxed/simple;
+	bh=HMfcWtZH4GfvP8ZQjqKKGaNEwZCreXFhbBtPKK8hH3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hxDoqNUtfUJ1hIbSNnoJhB2s+NcAFV5XsLYMnzFn7koIYmJhwSLU4r8hxdKXRaDotOLL6pHUgqd7Q7/XNVDGK6MBmEZ+hPZcByFqZ49gN20saModee2S4JDuNv/NxGgxHdsm1n0xJHhf1OnV0fWiWaijT5tGjHylT+orHy523QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U6I6+Ffd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 581B4I7B013737;
+	Mon, 1 Sep 2025 14:50:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WylkCM7GEVrZp/hwxRtLeGV36zbXgc2z6PnvbtJ5bTc=; b=U6I6+Ffd9KhhFhgg
+	aX76Nih1gnjMMXNYR8+C5ZtuND0JQaKvRrFC8nD3LOhWhy3rKgpglfZjbSERqmvD
+	KcXyVJB1xFYCaVD0eANfRHpkAk9GTBI60MfiKnJlbW0/Yq4Frd8+sNenqHtM/jZH
+	4MxXPefptHLKNdPnThRaHGbchXg9aaJtUWuExdCdhjr2XNm1VSXPbjHZkFca1yHh
+	8kH+PVJvaMOj1+ZGqnRfUv4f+EaP0e7GIBVO41Q1udRu0HrK4zy0jWRA4+jZk2Ml
+	WVg5ZyAYHhwZkyMefBgxlqDuwyVGUMbMaOMRAlIkBLQKTkYRKVKgb3kbqnGyAwlV
+	tpqWlA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8n2ys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Sep 2025 14:50:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 581Eoawx020499
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Sep 2025 14:50:36 GMT
+Received: from [10.216.44.84] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
+ 2025 07:50:31 -0700
+Message-ID: <0fb24c50-1f4f-4dd8-a3c7-4c84fd0bb7c1@quicinc.com>
+Date: Mon, 1 Sep 2025 20:20:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 4/5] arm64: dts: qcom: sm8650: Enable MCQ support for
+ UFS controller
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Manivannan Sadhasivam
+	<mani@kernel.org>
+CC: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <James.Bottomley@hansenpartnership.com>,
+        <martin.petersen@oracle.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
+ <20250821112403.12078-5-quic_rdwivedi@quicinc.com>
+ <eeecc7a3-8ce3-4cfd-8d40-988736fc0c59@kernel.org>
+ <34aqaxgkykyhenrjfj3vrarin2c3uebgfaya7rxi7d5p5skhom@ie4gitcw36mr>
+ <ba227580-add8-4ea8-a973-c39083301e67@kernel.org>
+ <aonf4hobz6b3a75lwiblu44gxvae4hnp2mcnh5sqlyzo6k7hwe@a5toymspbkdy>
+ <b049c4be-f3c1-49e4-8737-c29c52185e60@kernel.org>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <b049c4be-f3c1-49e4-8737-c29c52185e60@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1Az8Emd4kY7JrAF6MIzkayett6GvseOy
+X-Proofpoint-GUID: 1Az8Emd4kY7JrAF6MIzkayett6GvseOy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfXzTCkh25E7X7T
+ VQcMM6bincj015S4W+/aheJUuVxgHnBwRv8M4N+1EY7U/ML7AwQGQUlXhOmFJzxOqqsiUTFC28G
+ sXRQ+cvXdvKFmV7unLCeXOZpMScuOYLpYuCF8K7VQ53WCmGEn+fnH2W4RjQbGFMb2uEiIUuBuIE
+ KRUWiyhFlDM7NhLNFAw0rqefJgStjpgF7KHKerVkaA850mihnr4mrIMbd0xDimuTkfIRYKQ3VCi
+ P/WnCcj1NQDd+lzLZu9F5pjOIpxvLpaYdybogeX0qdfNt2aZ2kIfLL9Bx1OOZAZMDGDFyd94m4F
+ 4tXSQfdflrtazmJCUzbWpcJrh2qkv28DRwkiEpXRZJiSaDaU4pDhaM6DB5NqcSJHClXqoRH0atX
+ J1xeTLJ+
+X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b5b2bd cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=WDwdR3GTf5Sq1hJQ3NcA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-01_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
 
-In this context "not that ..." should properly be "note that ...".
 
-Fixes: b8fd60c36a44 ("genetlink: allow families to use split ops directly")
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
----
- include/net/genetlink.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/net/genetlink.h b/include/net/genetlink.h
-index a03d567658328..7b84f2cef8b1f 100644
---- a/include/net/genetlink.h
-+++ b/include/net/genetlink.h
-@@ -62,7 +62,7 @@ struct genl_info;
-  * @small_ops: the small-struct operations supported by this family
-  * @n_small_ops: number of small-struct operations supported by this family
-  * @split_ops: the split do/dump form of operation definition
-- * @n_split_ops: number of entries in @split_ops, not that with split do/dump
-+ * @n_split_ops: number of entries in @split_ops, note that with split do/dump
-  *	ops the number of entries is not the same as number of commands
-  * @sock_priv_size: the size of per-socket private memory
-  * @sock_priv_init: the per-socket private memory initializer
--- 
-2.50.1
+On 9/1/2025 1:35 PM, Krzysztof Kozlowski wrote:
+> On 01/09/2025 06:15, Manivannan Sadhasivam wrote:
+>>>>>
+>>>>> I don't understand why you combine DTS patch into UFS patchset. This
+>>>>> creates impression of dependent work, which would be a trouble for merging.
+>>>>>
+>>>>
+>>>> What trouble? Even if the DTS depends on the driver/bindings change, can't it
+>>>> still go through a different tree for the same cycle? It happened previously as
+>>>
+>>> It all depends on sort of dependency.
+>>>
+>>>> well, unless the rule changed now.
+>>>
+>>> No, the point is that there is absolutely nothing relevant between the
+>>> DTS and drivers here. Combining unrelated patches, completely different
+>>> ones, targeting different subsystems into one patchset was always a
+>>> mistake. This makes only life of maintainers more difficult, for no gain.
+>>>
+>>
+>> Ok. Since patch 2 is just a refactoring, it should not be required for enabling
+>> MCQ. But it is not clear if that is the case.
+>>
+>> @Ram/Nitin: Please confirm if MCQ can be enabled without patch 2. If yes, then
+>> post the DTS separately, otherwise, you need to rewrite the commit message of
+>> patch 2 to state it explicitly.
+> 
+> Dependency of DTS on driver would be another issue and in any case must
+> be clearly documented, not implicit via patch order.
+
+Hi Krzysztof/Mani,
+
+We've verified that the driver and DTS function correctly when tested 
+independently. We Will submit separate patches for the driver and DTS.
+
+Regards,
+Nitin
+
+
+
+
+> 
+> Best regards,
+> Krzysztof
+> 
 
 
