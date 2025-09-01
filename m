@@ -1,125 +1,118 @@
-Return-Path: <linux-kernel+bounces-794373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB48B3E0C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:59:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B0DB3E0C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F174517F5FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:59:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35DFC4E2566
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBE130C629;
-	Mon,  1 Sep 2025 10:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80823311592;
+	Mon,  1 Sep 2025 10:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="WlxZXtP5"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RpaGy4XL"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5AA78F5D
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BF03074B0;
+	Mon,  1 Sep 2025 10:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724380; cv=none; b=i3yGKNOcKEsZLNaeu5HI/9G99t22PDXWE86B9rEN6Kv5yN59Xy8TXNqGgy5umEufoGWjNS/me3Pi9PZhe9qYPQjErOCU3bZFotmpegRmKwVllUFQSfoYVBtLREnGhe13OpKoX8syHN7qTfq1lE8lH7YMyywxRL00Aten2OkaHVM=
+	t=1756724386; cv=none; b=AYCfJWieIL1LjkZvmhUo7Djj6eSzBSBvbWlEwetWr33RS+3sVwPQHORAEKfbG+Mu0tmP/Ic/x+lJ/9npiFXKeGl3XwZPoQNKmAaLHXK2tjA3wMhPDgf9aM2mNRFxTQNtC719NPyoBoe64nUZ16PKhOdXtdoA3XnRFOh7zswh9ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724380; c=relaxed/simple;
-	bh=CL4PHcoykLMbZZNjSNvXFDOWdnWPySZb6ACVQlOfyvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a0fNw7iYOEUyaq3Mg5k5vxkrne+Kg0vgB3w4JhvwzfpStbOVMTc+yLJev6XelquAvDKTi8DBrK0hSepfWTVM9/YSMmiZXwnvGktcuwmX3Y2rdrBNwRg9FgDvyzou9Wm3hrnwsXbu/7ytLJALp5671hc0fHAjSlFBHwHH/jJkrOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=WlxZXtP5; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71d5fe46572so39523677b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 03:59:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1756724377; x=1757329177; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EJinoXYbXnzNjHDgh/TK+DIXPD7XvP744ic5UKGRCZE=;
-        b=WlxZXtP5uY2qZ806R+akPoWNFWQ6WJJoI4dqgdN1jmjgdmQXoyr73+RgZC7DsJxtvb
-         o/MvTjZV3ryD99JkNc7Sw1pgUNdaS1HkMU5PqQdDVJ4G0WX+yKCLwg7j1NTmAYEOBm/k
-         VnYgLUCOBUoNpj5//ysYOSifPWBv5r/npywM/sDPTDFsjucUgPtlPy04N9UkPSPE2Z3S
-         Eh/trc5japlI3S2f7xyriAPQ+iCsO4sAJYdZhr8N3yZffIF1BzUv6bi0t2fZ1808tuhl
-         IFJ9XvhSqWOPVFeJqLsXdBLMSHnZjGNYmayT9C7YqbG+GFjEtIVz0PS3jRUp0BYbLczV
-         AXlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756724377; x=1757329177;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EJinoXYbXnzNjHDgh/TK+DIXPD7XvP744ic5UKGRCZE=;
-        b=RNbnS+mmVYejU8rv+y8xplwJH2sMOF8H2VHuxYD4blAZre7C3Cs5cpgkSU4nvyeWjU
-         TAj8ihJ8iD00dVm9Lltq1AGHGsaks81mjX4JAph8BFl1zZ3ARVtrp2mlwhK0zY0qHo+L
-         sSl08rVv1TdOLjBfPQgieegrT89eUuFdkYtr6jhA95fTXk4282RnOt/h5S0fxfPjDTF8
-         yCkJ8xG3qmR9YkMQ/TKTV9U7VQE9T5Y9qg5TEVs+KoGth7zgcffAr9He0Xzhn9yg+2Qn
-         C02fAFsjnRnbnxoRPpXd4QQjauswZAmvySXJ32Nwn7tVGgXSFEiP9cpa+WCt1BJhLQm0
-         egtg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQKhdroZtckYq8zqg+dYQzpa1Afwwvo7o+CmGEa4+mkZYiHaKzSecEoWnxSpzZojFnmlIMLqCge7+W6tE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVOITeusvno4I01vRCBVBSMbEnSaZTNS32gPlsDtXErKZihPfG
-	QUlH2P+3GuuNSl8F2tVKT8Qc/yHLuPs56DtADmW/H6RrP00ZcmBsgvR7lyZFZCpR521R+isawMH
-	iEipx/To2znrew7yYttZ8+rrjj8Zrn9Pf8488vrhBKw==
-X-Gm-Gg: ASbGncssiCi0Nb6wffpVdJExr/+qQqxiGqMkoyHXoaUi84Z7+4tinqJc15J34E/gZFu
-	EEDYMJDk8VMS3XhynD1bqXY443eCu8Y1mnEww41hINv0G+5FtcbfJgFchI8/0gshB4iZ7NsT/wL
-	ea02y2qEw1Q6ipBTPxOtKsfVngFfyMViBCEduDNUDk13Y9u7pifpbn4Vbuv3BxHspdQz7VJt6rc
-	Sg6UEvhlL2fh+MmA609vBUwSrCeEZE/LThm0QY8qkP+FJ9zBA==
-X-Google-Smtp-Source: AGHT+IG3E5X8rSS4MCzpFL4c7/+B+nTiuZn7QkYnuaa8FdJ3F1U3keZEV+jrL6NCLwW8aPKh0SfR0DXjN6ikye0mpJc=
-X-Received: by 2002:a05:690c:338f:b0:71c:3e81:cca2 with SMTP id
- 00721157ae682-72276337a67mr91487627b3.1.1756724376904; Mon, 01 Sep 2025
- 03:59:36 -0700 (PDT)
+	s=arc-20240116; t=1756724386; c=relaxed/simple;
+	bh=lAx35WFmw7lEUlTWnVH6iTLTCvjL7HeXgxfmiuXIeEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hirtEzaTFJDvwsqRBes8IUdETuouB2ustgrAnGpAHteB21v0J8kYkZ78eprfyQL2xntAT58ZpQvUrMeyNWKK00OyyJmbQ+987WRite28N56TE1mHd4+qT26x+0tIzToKtgEKMOGvFM3xAqkAVgep3R4mABdmHqJpJP8mIy38mtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RpaGy4XL; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=b8jTxoxu6fM2YyVPoK/aAvaCJ5ksiaw3bZKSjKUEM/U=; b=RpaGy4XLA2c8YZbgeSDDso6S1v
+	Oq+FsFM7XHisXgM9rW4mmHd7SdV6y32fbWlLjPI0RAygFIsPgPoNluuqQZNVroLT/F2auR68tNQ4Y
+	tiFfd+Dvh6V+OKoRhvvhyTTOmD3Bv9hdYlxB496hP52VeyuFbv5NTQOkwlXef959spGX2yfhCzNfx
+	sb8GcCicl0XC1MJ5GHahwYid1616J5X2RvY35RwumHQsoDxueaks1SRe2oZJc/DtHriO5UQZP0xfz
+	DrphtNNohbV6b9/EXMt+SoT1VWC1fy+LCtWlVB60NP6CE/Eez7CjZ0pZWPSgxz+KN5AhY66C73Gux
+	zLLCRaVQ==;
+Received: from i53875a2d.versanet.de ([83.135.90.45] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ut2G3-0001WA-HP; Mon, 01 Sep 2025 12:59:31 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: dmitry.baryshkov@oss.qualcomm.com,
+	Andy Yan <andyshrk@163.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	hjc@rock-chips.com,
+	mripard@kernel.org,
+	naoki@radxa.com,
+	stephen@radxa.com,
+	cristian.ciocaltea@collabora.com,
+	neil.armstrong@linaro.org,
+	Laurent.pinchart@ideasonboard.com,
+	yubing.zhang@rock-chips.com,
+	krzk+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	robh@kernel.org,
+	sebastian.reichel@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: (subset) [PATCH v7 00/10] Add support for RK3588 DisplayPort Controller
+Date: Mon,  1 Sep 2025 12:59:27 +0200
+Message-ID: <175672432555.3612134.264758265580488174.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250822063959.692098-1-andyshrk@163.com>
+References: <20250822063959.692098-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827-vchiq-destage-v1-0-5052a0d81c42@ideasonboard.com>
- <20250827-vchiq-destage-v1-4-5052a0d81c42@ideasonboard.com> <731ead88-8dc9-4032-86f5-7a2dd5044b22@gmx.net>
-In-Reply-To: <731ead88-8dc9-4032-86f5-7a2dd5044b22@gmx.net>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 1 Sep 2025 11:59:22 +0100
-X-Gm-Features: Ac12FXx_JRISJwP0UMdGitDY4fzYmnwpQn6tyyu_Q6GUhjhAClChc8Uz64aD8Lo
-Message-ID: <CAPY8ntDz9duSU_TcqE5CPYYCmSTnvm=RgwG56qQ0xe07uzWFLA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] media: staging: Drop bcm2835-camera driver
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Jai Luthra <jai.luthra@ideasonboard.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Stefan
 
-On Wed, 27 Aug 2025 at 20:18, Stefan Wahren <wahrenst@gmx.net> wrote:
->
-> Hi Jai,
->
-> Am 27.08.25 um 08:24 schrieb Jai Luthra:
-> > The bcm2835-camera driver is replaced by the V4L2 bcm2835-unicam driver
-> > that is already upstream. So drop it from staging.
-> AFAIK the old Raspberry Pi Camera V1 isn't supported by V4L2
-> bcm2835-unicam.
+On Fri, 22 Aug 2025 14:39:44 +0800, Andy Yan wrote:
+> There are two DW DPTX based DisplayPort Controller on rk3588 which
+> are compliant with the DisplayPort Specification Version 1.4 with
+> the following features:
+> 
+> * DisplayPort 1.4a
+> * Main Link: 1/2/4 lanes
+> * Main Link Support 1.62Gbps, 2.7Gbps, 5.4Gbps and 8.1Gbps
+> * AUX channel 1Mbps
+> * Single Stream Transport(SST)
+> * Multistream Transport (MST)
+> * Type-C support (alternate mode)
+> * HDCP 2.2, HDCP 1.3
+> * Supports up to 8/10 bits per color component
+> * Supports RBG, YCbCr4:4:4, YCbCr4:2:2, YCbCr4:2:0
+> * Pixel clock up to 594MHz
+> * I2S, SPDIF audio interface
+> 
+> [...]
 
-The Pi v1 camera is Omnivision's OV5647.
-There is a driver in drivers/media/i2c/ov5647.c, and that is supported
-on the Pi via libcamera.
+Applied, thanks!
 
-It does look like we have a number of downstream patches to that
-driver that I ought to upstream - always something to do.
+[07/10] arm64: dts: rockchip: Add DP0 for rk3588
+        commit: 8c239f24341ab9ac75992a0a3c32bb8cddf48a20
+[08/10] arm64: dts: rockchip: Add DP1 for rk3588
+        commit: 445e4ac0d85821904b3f2bee410def4181987c4e
+[09/10] arm64: dts: rockchip: Enable DisplayPort for rk3588s Cool Pi 4B
+        commit: 1b242cafdfc4bc7d43ed9147cbffe5480632f661
+[10/10] arm64: dts: rockchip: Enable DP2HDMI for ROCK 5 ITX
+        commit: df02252f271b4fa50c7087a0e6f5a7d7ed2f1dcc
 
-  Dave
-
-> Personally i'm fine with this, but this must be clear in
-> the commit message.Did you already talked to distributions like Redhat &
-> OpenSuSE about this step?
-> > This also simplifies destaging of VCHIQ MMAL, by reducing the users of
-> > the MMAL API (this driver is one of them).
-> AFAIU this drops the only one user of VCHIQ MMAL. So please explain, why
-> we still need this API and how this should be tested?
->
-> Best regards
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
