@@ -1,259 +1,142 @@
-Return-Path: <linux-kernel+bounces-795091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26CDB3ECB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:53:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2393FB3ECAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443E3481057
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:53:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A611208085
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974A4320A1B;
-	Mon,  1 Sep 2025 16:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8BD30649C;
+	Mon,  1 Sep 2025 16:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgaSIIbJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="OnS2C3Km"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CA53128D6;
-	Mon,  1 Sep 2025 16:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13CD2E03F2;
+	Mon,  1 Sep 2025 16:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756745560; cv=none; b=biXLpKwGNL+8oSrbeIUIW9l/yeol8nz6uBKHzBBmycLPbjw8iy1Bp0ITAkaVi45Z/ii5UWz76qUz71vejdC3X6VMl3Jc9ErEtBRBluANuQB+KgnOcCeXSaX70WAtoIaRIvpp8Uz+f9o9/EOqW/lvSHsoEouveuMu/vZNnUz12wE=
+	t=1756745505; cv=none; b=tAcytLOhNPedWQGHXxxF8ko+gpW9xs/HNSSOfTmIVLET1CHb1rVkj35unoe0G+UquBWOYED1qHab96q7OjAZVUwM6AGJTKXKhhs/HmgQxCtqscjLXyfE2y6diUUN5LnLVdni4anBI2DZpyXQ2qlNqyfpx0Ze63KecJO7XMS9/bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756745560; c=relaxed/simple;
-	bh=BFnBbraOCacTgsat4VNzLx3wIcLl5nbM95+AHTdP3Hc=;
+	s=arc-20240116; t=1756745505; c=relaxed/simple;
+	bh=hnTOWpGvLfZLVV3CYuJL3VZOJGTbmj8kq1PdABYR5vw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mSfQQEdcwzsBVN0aAAJP/DBzAo2Sawr84uQtbH72w1shyA5U2pJAEbRY3Tv1pD9YGC0zOurWsyAGQKKEvmk9eNGT7+pC058O8zO4HUtuDCQrG+0Hs0A8kXFAOYROuTZUXAl517SeRM93CtN2sb0tE7IyRRVsEYjDMSVSZM7UCd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pgaSIIbJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2FDC4CEF1;
-	Mon,  1 Sep 2025 16:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756745560;
-	bh=BFnBbraOCacTgsat4VNzLx3wIcLl5nbM95+AHTdP3Hc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pgaSIIbJXnOTds5upAgyOGSLpTsayVHNwR2jip8DUB7QKUhF5AZiipmakyvV95EoX
-	 KHf/lSBet2gthLiaGRRONcSdZ/fCCqhHVAWlRhWKQcci8fJgxtY9tfRHUX528fWpNG
-	 TIOTOYot99i0iLe4bBhzPWIRYysPlMNB6lvAR3bZNeNC8Vw3PU/WnNXp7wKsUpvlu0
-	 6JyHT01IaMmNHKjxHu5XDMRqIcn73Drs/WJkcBWmyiePWS+KVljXOVdNmGFllByFMw
-	 BYWqj0OuvLTmvsEiCnSHVnBDu/4Ml7QMCd+hHDul5AAq/UtKWV83keQ67IWSWgh8Ao
-	 UJn4rM+3OZcCw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	qat-linux@intel.com,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 3/3] crypto: sha512 - Implement export_core() and import_core()
-Date: Mon,  1 Sep 2025 09:50:13 -0700
-Message-ID: <20250901165013.48649-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250901165013.48649-1-ebiggers@kernel.org>
-References: <20250901165013.48649-1-ebiggers@kernel.org>
+	 MIME-Version:Content-Type; b=VWczRaXp09iW5IIaTkFq92eqNN+eR6FuTB/ex+0pSg9hZrz6RvL9r0oheYtd7gWv03GakCUTkjBkJI8l83Rp7Fy8P60pNgkkInfdxGimfcvRYSfKGQlLapEXIkbG/d82gqi4WNezBqr1Zw4c2qGo1J56Ajfy+AZJboNt1Kru1R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=OnS2C3Km; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=hSLtiTIiCNJTyr3xi8Yb+ruteNAhZ9d/QH5koXbDAj8=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1756745480; v=1; x=1757177480;
+ b=OnS2C3KmkfoSYj+OhilW+A5Gqp/Rv6a9/KMmyt2D0o6uz+DCyEStf8R4sbhvF3I3jpg2gYML
+ J+v/GFM1eCyCAeFZiYm2qgrBcTM0AvucIncF12kXgtUQ9UMfeVHvTzWuYc/BJUiR/3xD+xiriIN
+ vcJYbZ6H6EdG6lMjN0gTyTm2kHHfwsUztAm80aKzsUdZg0kULB4fxqA//pgjaXkqBYP15kZ8x1H
+ 9Fk+pmLd+Mocx02p2jt5Ea2EHppZNQZXW0HovsB6cWZdT4d6GnJJw6xGdQtIcJBWFmxZqXmwTVD
+ U6dY2VdAytiEccUifZPpqaXYqlUENxExN8AEUfkL9uJ9Q==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id f57fd90c; Mon, 01 Sep 2025 18:51:20 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
+Date: Mon, 01 Sep 2025 18:51:19 +0200
+Message-ID: <3031049.e9J7NaK4W3@radijator>
+In-Reply-To: <aLW9O1rnhUqqh02r@smile.fi.intel.com>
+References:
+ <20250831-88pm886-gpadc-v2-0-759c1e14d95f@dujemihanovic.xyz>
+ <20250831-88pm886-gpadc-v2-2-759c1e14d95f@dujemihanovic.xyz>
+ <aLW9O1rnhUqqh02r@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Since commit 9d7a0ab1c753 ("crypto: ahash - Handle partial blocks in
-API"), the recently-added export_core() and import_core() methods in
-struct shash_alg have effectively become mandatory (even though it is
-not tested or enforced), since legacy drivers that need a fallback
-depend on them.  Make crypto/sha512.c compatible with these legacy
-drivers by adding export_core() and import_core() methods to it.
+On Monday, 1 September 2025 17:35:23 Central European Summer Time Andy Shev=
+chenko wrote:
+> On Sun, Aug 31, 2025 at 12:33:05PM +0200, Duje Mihanovi=C4=87 wrote:
+> > +static const struct regmap_config pm886_gpadc_regmap_config =3D {
+> > +	.reg_bits =3D 8,
+> > +	.val_bits =3D 8,
+> > +	.max_register =3D PM886_REG_GPADC_VBAT_SLP + 1,
+>=20
+> What is this + 1 register? Why is it not defined / documented?
 
-Reported-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-Reported-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Closes: https://lore.kernel.org/r/aLSnCc9Ws5L9y+8X@gcabiddu-mobl.ger.corp.intel.com
-Fixes: 4bc7f7b687a2 ("crypto: sha512 - Use same state format as legacy drivers")
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- crypto/sha512.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+It is the second field of the vbat_slp channel.
 
-diff --git a/crypto/sha512.c b/crypto/sha512.c
-index fb1c520978ef3..d320fe53913fa 100644
---- a/crypto/sha512.c
-+++ b/crypto/sha512.c
-@@ -48,10 +48,23 @@ static int __crypto_sha512_import(struct __sha512_ctx *ctx, const void *in)
- 	p += sizeof(*ctx);
- 	ctx->bytecount_lo += *p;
- 	return 0;
- }
- 
-+static int __crypto_sha512_export_core(const struct __sha512_ctx *ctx,
-+				       void *out)
-+{
-+	memcpy(out, ctx, offsetof(struct __sha512_ctx, buf));
-+	return 0;
-+}
-+
-+static int __crypto_sha512_import_core(struct __sha512_ctx *ctx, const void *in)
-+{
-+	memcpy(ctx, in, offsetof(struct __sha512_ctx, buf));
-+	return 0;
-+}
-+
- /* SHA-384 */
- 
- const u8 sha384_zero_message_hash[SHA384_DIGEST_SIZE] = {
- 	0x38, 0xb0, 0x60, 0xa7, 0x51, 0xac, 0x96, 0x38,
- 	0x4c, 0xd9, 0x32, 0x7e, 0xb1, 0xb1, 0xe3, 0x6a,
-@@ -98,10 +111,20 @@ static int crypto_sha384_export(struct shash_desc *desc, void *out)
- static int crypto_sha384_import(struct shash_desc *desc, const void *in)
- {
- 	return __crypto_sha512_import(&SHA384_CTX(desc)->ctx, in);
- }
- 
-+static int crypto_sha384_export_core(struct shash_desc *desc, void *out)
-+{
-+	return __crypto_sha512_export_core(&SHA384_CTX(desc)->ctx, out);
-+}
-+
-+static int crypto_sha384_import_core(struct shash_desc *desc, const void *in)
-+{
-+	return __crypto_sha512_import_core(&SHA384_CTX(desc)->ctx, in);
-+}
-+
- /* SHA-512 */
- 
- const u8 sha512_zero_message_hash[SHA512_DIGEST_SIZE] = {
- 	0xcf, 0x83, 0xe1, 0x35, 0x7e, 0xef, 0xb8, 0xbd,
- 	0xf1, 0x54, 0x28, 0x50, 0xd6, 0x6d, 0x80, 0x07,
-@@ -150,10 +173,20 @@ static int crypto_sha512_export(struct shash_desc *desc, void *out)
- static int crypto_sha512_import(struct shash_desc *desc, const void *in)
- {
- 	return __crypto_sha512_import(&SHA512_CTX(desc)->ctx, in);
- }
- 
-+static int crypto_sha512_export_core(struct shash_desc *desc, void *out)
-+{
-+	return __crypto_sha512_export_core(&SHA512_CTX(desc)->ctx, out);
-+}
-+
-+static int crypto_sha512_import_core(struct shash_desc *desc, const void *in)
-+{
-+	return __crypto_sha512_import_core(&SHA512_CTX(desc)->ctx, in);
-+}
-+
- /* HMAC-SHA384 */
- 
- #define HMAC_SHA384_KEY(tfm) ((struct hmac_sha384_key *)crypto_shash_ctx(tfm))
- #define HMAC_SHA384_CTX(desc) ((struct hmac_sha384_ctx *)shash_desc_ctx(desc))
- 
-@@ -202,10 +235,25 @@ static int crypto_hmac_sha384_import(struct shash_desc *desc, const void *in)
- 
- 	ctx->ctx.ostate = HMAC_SHA384_KEY(desc->tfm)->key.ostate;
- 	return __crypto_sha512_import(&ctx->ctx.sha_ctx, in);
- }
- 
-+static int crypto_hmac_sha384_export_core(struct shash_desc *desc, void *out)
-+{
-+	return __crypto_sha512_export_core(&HMAC_SHA384_CTX(desc)->ctx.sha_ctx,
-+					   out);
-+}
-+
-+static int crypto_hmac_sha384_import_core(struct shash_desc *desc,
-+					  const void *in)
-+{
-+	struct hmac_sha384_ctx *ctx = HMAC_SHA384_CTX(desc);
-+
-+	ctx->ctx.ostate = HMAC_SHA384_KEY(desc->tfm)->key.ostate;
-+	return __crypto_sha512_import_core(&ctx->ctx.sha_ctx, in);
-+}
-+
- /* HMAC-SHA512 */
- 
- #define HMAC_SHA512_KEY(tfm) ((struct hmac_sha512_key *)crypto_shash_ctx(tfm))
- #define HMAC_SHA512_CTX(desc) ((struct hmac_sha512_ctx *)shash_desc_ctx(desc))
- 
-@@ -254,10 +302,25 @@ static int crypto_hmac_sha512_import(struct shash_desc *desc, const void *in)
- 
- 	ctx->ctx.ostate = HMAC_SHA512_KEY(desc->tfm)->key.ostate;
- 	return __crypto_sha512_import(&ctx->ctx.sha_ctx, in);
- }
- 
-+static int crypto_hmac_sha512_export_core(struct shash_desc *desc, void *out)
-+{
-+	return __crypto_sha512_export_core(&HMAC_SHA512_CTX(desc)->ctx.sha_ctx,
-+					   out);
-+}
-+
-+static int crypto_hmac_sha512_import_core(struct shash_desc *desc,
-+					  const void *in)
-+{
-+	struct hmac_sha512_ctx *ctx = HMAC_SHA512_CTX(desc);
-+
-+	ctx->ctx.ostate = HMAC_SHA512_KEY(desc->tfm)->key.ostate;
-+	return __crypto_sha512_import_core(&ctx->ctx.sha_ctx, in);
-+}
-+
- /* Algorithm definitions */
- 
- static struct shash_alg algs[] = {
- 	{
- 		.base.cra_name		= "sha384",
-@@ -270,10 +333,12 @@ static struct shash_alg algs[] = {
- 		.update			= crypto_sha384_update,
- 		.final			= crypto_sha384_final,
- 		.digest			= crypto_sha384_digest,
- 		.export			= crypto_sha384_export,
- 		.import			= crypto_sha384_import,
-+		.export_core		= crypto_sha384_export_core,
-+		.import_core		= crypto_sha384_import_core,
- 		.descsize		= sizeof(struct sha384_ctx),
- 		.statesize		= SHA512_SHASH_STATE_SIZE,
- 	},
- 	{
- 		.base.cra_name		= "sha512",
-@@ -286,10 +351,12 @@ static struct shash_alg algs[] = {
- 		.update			= crypto_sha512_update,
- 		.final			= crypto_sha512_final,
- 		.digest			= crypto_sha512_digest,
- 		.export			= crypto_sha512_export,
- 		.import			= crypto_sha512_import,
-+		.export_core		= crypto_sha512_export_core,
-+		.import_core		= crypto_sha512_import_core,
- 		.descsize		= sizeof(struct sha512_ctx),
- 		.statesize		= SHA512_SHASH_STATE_SIZE,
- 	},
- 	{
- 		.base.cra_name		= "hmac(sha384)",
-@@ -304,10 +371,12 @@ static struct shash_alg algs[] = {
- 		.update			= crypto_hmac_sha384_update,
- 		.final			= crypto_hmac_sha384_final,
- 		.digest			= crypto_hmac_sha384_digest,
- 		.export			= crypto_hmac_sha384_export,
- 		.import			= crypto_hmac_sha384_import,
-+		.export_core		= crypto_hmac_sha384_export_core,
-+		.import_core		= crypto_hmac_sha384_import_core,
- 		.descsize		= sizeof(struct hmac_sha384_ctx),
- 		.statesize		= SHA512_SHASH_STATE_SIZE,
- 	},
- 	{
- 		.base.cra_name		= "hmac(sha512)",
-@@ -322,10 +391,12 @@ static struct shash_alg algs[] = {
- 		.update			= crypto_hmac_sha512_update,
- 		.final			= crypto_hmac_sha512_final,
- 		.digest			= crypto_hmac_sha512_digest,
- 		.export			= crypto_hmac_sha512_export,
- 		.import			= crypto_hmac_sha512_import,
-+		.export_core		= crypto_hmac_sha512_export_core,
-+		.import_core		= crypto_hmac_sha512_import_core,
- 		.descsize		= sizeof(struct hmac_sha512_ctx),
- 		.statesize		= SHA512_SHASH_STATE_SIZE,
- 	},
- };
- 
--- 
-2.50.1
+> > +static int
+> > +gpadc_get_resistance_ohm(struct iio_dev *iio, struct iio_chan_spec con=
+st
+> > *chan) +{
+> > +	struct pm886_gpadc *gpadc =3D iio_priv(iio);
+> > +	unsigned int raw_uv, raw_ua;
+> > +	int ret;
+> > +
+> > +	ret =3D gpadc_set_bias(gpadc, chan->channel, true);
+> > +	if (ret)
+> > +		goto err;
+> > +
+> > +	ret =3D gpadc_find_bias_current(iio, chan, &raw_uv, &raw_ua);
+> > +	if (ret)
+> > +		goto err;
+> > +
+> > +	ret =3D gpadc_set_bias(gpadc, chan->channel, false);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return DIV_ROUND_CLOSEST(raw_uv, raw_ua);
+> > +err:
+> > +	gpadc_set_bias(gpadc, chan->channel, false);
+>=20
+> You do the same in the other branch and checking there for an error. Why =
+this
+> one is so special?
+
+My rationale here was to not override the error from either the first
+gpadc_set_bias() call or the subsequent gpadc_find_bias_current() call.
+
+> > +		dev_dbg(&iio->dev, "chan: %d, raw: %d\n", chan->channel, *val);
+>=20
+> How is this useful? The userspace gets the same value. Do you expect prob=
+lems
+> on its way to the user space?
+
+That's a leftover from debugging v1, will drop.
+
+> > +	iio->dev.of_node =3D dev->parent->of_node;
+>=20
+> No, use device_set_node() with the respective parameters.
+>=20
+> But rather debug why firmware node (or OF in your case) is not propagated=
+ from
+> the parent device.
+
+I guess it is because the IIO device is registered as a child of the
+GPADC platform device, which does not have a node unlike the PMIC
+device (GPADC pdev's parent). It seems that the regulator cell
+registers its regulators directly under the PMIC dev, so maybe I should
+do the same here with the IIO dev?
+
+Regards,
+=2D-
+Duje
+
 
 
