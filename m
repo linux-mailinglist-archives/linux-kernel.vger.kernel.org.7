@@ -1,115 +1,194 @@
-Return-Path: <linux-kernel+bounces-795363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7D2B3F09F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:42:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81CFB3F0AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9436D1B209DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:42:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B11F1897E08
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A598B27CCF2;
-	Mon,  1 Sep 2025 21:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F4F27B358;
+	Mon,  1 Sep 2025 21:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfS3Ejv/"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjKElxbJ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775FD22FE18;
-	Mon,  1 Sep 2025 21:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FE52367C3;
+	Mon,  1 Sep 2025 21:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756762916; cv=none; b=Bfmlw8JcAaSskThMql2YXLx+DM1KTFmXwWQbtFtOqDzDTiQx66RJ+1MvDl8RTjfNnZ4J9THKyX9OVw4UBz4XPgqaglp9N0WfzFXF8TOWWZBd//M/NAugfWGOk6Gr7YZl6pct1h6lTQqsuPaKgbMD9HYnbY0rGy4yTEU01rDoWPE=
+	t=1756763225; cv=none; b=Izi3sESpLRNIoq7pD0gtnzPaEOFsw/4mZMyYoa/VV5MDoWP/XL8Sk/jvtBTV+0qFEvaWvGtZc9T4i3KlgulpcuJuJlUHMZVCHOQwlIm1XbFO4Hqg1YADrSUITDfSYcjRJ96gF79Rnxh0W6KM+oQ/iM2zDK3RhZTqOlwECMPRCs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756762916; c=relaxed/simple;
-	bh=lqAsxVN8esNlj7zuyk9BoJWQsdCAllz+VcYWaymWJpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Naxwj5czsQURfNI49YiCYpp8bBjVJJkd3pITwqU+lZxZTd1aObyAthc27YmU5TGwRyKqGKI4UC5FT9i6z4R14Wy1P7h2+1PJ0gjDj4XJ4ql5ks8ArXTy69N8Re7GmlRGEg6NU3shU+OWUFvLf9a5hGnXGjTfyH573zYCOw7WtdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfS3Ejv/; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1756763225; c=relaxed/simple;
+	bh=+NY02T3EKXc/p3Ldv7PZSvRzUT4MNdBvJAIeMcl80GM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HxI4oLiNPBa0NOj08S2xIsgAGgpMcb6+lC23vXLcArtFDGnapb1b5Lw5nwt7nVtAL8TAAVAIJhO4dsgM9RLXH7zyxHUXvurEvdw9TLMzfR3j0GKM/KmbNNe+3KwkFqQ2cFxlg8d8fqtwpWPz633msZaA0Sqq1XbqQGYpufQMtII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LjKElxbJ; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61cf8280f02so5096474a12.0;
-        Mon, 01 Sep 2025 14:41:54 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-248ff4403b9so33404385ad.0;
+        Mon, 01 Sep 2025 14:47:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756762913; x=1757367713; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bObIG6hbz8i815o0CAvkZBfrxIXvHs9F3PjwpTRGK7o=;
-        b=FfS3Ejv/OFXnsEJyg7+Wmr1SU1egd0Csku55p7D/Pdhebt/ai4HE1iFwSne8t3tPt4
-         2aCGInJZmhftCplPmzdBNNP3IKuLnwKQl3jF4YB6GkaIAFO69mMgWUBn6wX6fy0K0iid
-         r5NeoaMPGApectiCb7VRZ7Ry/GI2SwFyBWKGXn48/lGBUVK6G4UhC0yEuHymovaTK1eL
-         OymW44BgXlzxapq6N37KaQ7BmHncv87MgsA1L+JEZxlPXDO65NoPRtXV6XI1jcDXptZV
-         SqVrxyNESvl9vkA1nAFB5eqVqUQyi5MQYQpEh2/wKubsZbO9Fm+n+GZpsw4onj1nMI22
-         fhrw==
+        d=gmail.com; s=20230601; t=1756763223; x=1757368023; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OlsE2WeMOlyP3bzmlKQubQNSIzHK7RKjbs8UIIIjOHk=;
+        b=LjKElxbJStuoA5WmqRK1sFe9pID3nEASrzQdG60C5w//WMeIASC0qYXoYLqBApPmjJ
+         bnLTZH/fHxS7sfQi30CdS8UFYXAChjrRMf0DLt5NOVXIkL/OCNMEy+b+2zmnzMXD/+qU
+         qnzExx3RL0uEna66NMzDuMMZclBeSpjWiiUxd2nbiAGyASmcNOaAFx899CfA4pbDZn2/
+         WPAgfVKAMMxGy7d9hjagTjafxIGhwuA0Olp3jFkkI+tA1vlKIQub+PK+DSE9HP/d1BeS
+         R/z/ATeDNsgbTiKF5LprZ5ak6LB9CDlgH5z8gyYH87Jqu/+ZGCnHCamiB/9lSeI8cIU9
+         clDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756762913; x=1757367713;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bObIG6hbz8i815o0CAvkZBfrxIXvHs9F3PjwpTRGK7o=;
-        b=ICifNQSv+ZIZ95TH/ptNCUUQV5CM/n1RR+DH/1BGfB71e79KLBqSnGfrKAPC6ieTQy
-         ar+08ZluI7VU82O1DNSBL+iXsufUn32EXGac/ITR7TLY2U5denqvWaTotI7CFft1sfKv
-         k5bMH+WCRsbsIXdpkEvHTqtIYWg3U+slVzLzH3wxyyI2jdNpTpjBqIw+tTCgtKj/+OZg
-         UCN6bveYkSBgxF0229Lr6S0hgKfIeTAvpu0Jfo6EJEEw/aekUnMQePcRbxK4eOz38v0q
-         sGXXWGCUlShBlD6rqb/jlSHkmW14xkfSGW1uKAiTH+BSaXZNnYtqURLSS6b+dMETRD4T
-         6PHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUs7JoieQDn42ojmJ46hbNK406CfIFNCjawrocMe2ZP0pj6OaJOmqYgxSIxDmduYv0LFOIM73EXMacz+A==@vger.kernel.org, AJvYcCWF2Ryl8rDxvVMhJxhfebFH0ie8Tdu30pG/4C2NeYaqpLUVWoyEf5mLrbmGURuEXg+SnA8LB5fkccqfrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7x8w3MBnwqMghJ6VbseT6z6f20FnPGDBLFK6VdZxAGqDoen19
-	rCDp6HzDjUSnuaXkw8CFjevPoSxfaYbOZTzAYwxQki7oE0nP1+0lvlHU76TX6UgrDofRsNXEZMs
-	go5KXvBELoH0cbmhjHbnhWN1jRoCRDvQ=
-X-Gm-Gg: ASbGncu4qDaeWfpUjZuT7rY0i9jTzuDHD5xOQ53Nn7fgD3kkiDm+pdC3XA9UQ/ERZ8v
-	VIM9Ekg/NTDQJ9CPWtK7l/UW95TNU5iCRe8QLJH2nbENcSlK1nPz3fsGhVoYZoaqB779I2PN7TC
-	PoNOFYA9qvMHLXtWZSCxxEfF6qGU3zToCczPxg8ySAlgIF4kbHCPKedvBFk2o+mYSinMZyZmts1
-	WglUBVesc6sS3XxAa4=
-X-Google-Smtp-Source: AGHT+IFjZmaPKoPQcXDGfF/kV1IP9uFU1Wv2mkfLSbSa6IhmowhwufpcDeP30Fu2i1LBz23Ff2FFDH8N8TzSkKHWIco=
-X-Received: by 2002:a05:6402:3508:b0:61c:30cf:885a with SMTP id
- 4fb4d7f45d1cf-61d2686a2b1mr9013843a12.7.1756762912523; Mon, 01 Sep 2025
- 14:41:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756763223; x=1757368023;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OlsE2WeMOlyP3bzmlKQubQNSIzHK7RKjbs8UIIIjOHk=;
+        b=PPMvZf5CwYjaO3rjm500AXHHM3T1OyJ1wtZcS19P7uSdWBTY3oBs57/okiy6kQSsL2
+         6sGTtkCVmT/BSHTlAO/GhefsSNuBs4nWn0X5Xx/n1MET2m0LU8S+ag+wN1tdyq8Y9oaZ
+         SgGPdXzsaAvbc1UeYhn48X1MaYv5mUR3m6Jb03/jERQrxZuviSul+KJw1SaHnScNwRC9
+         UQqhI7Zn4PQhWSn3YIPjHKO2DU0dVykPiTo4b6d5jOh2f+KuJb7m2ZzGhzAUb41yJVTw
+         h2y37igcvuJIUheAilu8DXKqLzP8le2qMFjpCfgd2Z7nEqtAU52E2optKhpSN+R5oaBH
+         MHAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFYGKTWxoxqB8rKVeERILD0phTAX63n2Quityo2zPSVba7Cor2AKLpxR1/JUo1gupIKtpWWPK8@vger.kernel.org, AJvYcCXjMVA4rOcsrxR6uigLT3kt+5CvhciPXjl/mIA2gbVAgkm0HctNEUT8MwEBB5zMSATGM9pAoHxRyJs1kxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjl1PlNaduqDRuCafhkp2KoZeBsFvBk5MPgtXxAbRFpQPlV4ou
+	sAl/wLAeY1qASXghBS1amozO5X3YkuQOF1+lqcei3dNI0xPsfNTuOZHx
+X-Gm-Gg: ASbGncs1FdzyBfoKTHoI1KN4nSm9O98sW2Nj3fikm/TiEUd5hCKxT2jRvN/Hgzi0fop
+	4ToHUYhZEGgzuUESQDKXzdsT0Zqwqrj1HuvCKS193GzGMnvbHstj8Iys6ZyNsa8xHeSYmbglrJt
+	RJdsirt2HEvWh2zYnkjOhAQOqVuKF+yxPNIzxfxAQ0NoRNFVMTcyno/XiuGm/3XQwTp9MrDuFuJ
+	kglWEesttTmqrssHH5iWHkE0cpMBx7095wbG9xpgNue5JN4Fcddsoa/pfz/xGoaPbxWdeaCK8Mx
+	T+ypdAuyPnW4+eGLY7xzFHcSpiD0G4if9+55JerL0qTCwigX2aN0P9D5vgnTZlgc9ExVT9Tuw/F
+	I9IbctvSuBKxnHlF8nvDVrOxmDuSRWf4tDpBieczwB5a1lJQ=
+X-Google-Smtp-Source: AGHT+IGJ+VbL+KkwAJkiu3byzjAamHyXWU/kRNAZj/DaRKztP3TxkmdmFFWUola7Qz5AGr90A4KQ/Q==
+X-Received: by 2002:a17:902:f608:b0:24a:ad42:3559 with SMTP id d9443c01a7336-24aad4237ddmr89121605ad.56.1756763223308;
+        Mon, 01 Sep 2025 14:47:03 -0700 (PDT)
+Received: from [192.168.0.69] ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490373a3a9sm112563485ad.50.2025.09.01.14.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 14:47:02 -0700 (PDT)
+Message-ID: <7d71d5d3c708451372d2cd0580951997ccc4b883.camel@gmail.com>
+Subject: Re: [PATCH] net/tls: allow limiting maximum record size
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: chuck.lever@oracle.com, kernel-tls-handshake@lists.linux.dev, "David S .
+ Miller" <davem@davemloft.net>, donald.hunter@gmail.com,
+ edumazet@google.com, hare@kernel.org,  Jakub Kicinski	 <kuba@kernel.org>,
+ john.fastabend@gmail.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, Hannes Reinecke <hare@suse.de>
+Date: Tue, 02 Sep 2025 07:46:55 +1000
+In-Reply-To: <20250901164355.GM15473@horms.kernel.org>
+References: <20250901053618.103198-2-wilfred.opensource@gmail.com>
+	 <20250901164355.GM15473@horms.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728163752.9778-1-linmag7@gmail.com> <alpine.DEB.2.21.2507291750390.5060@angie.orcam.me.uk>
- <CA+=Fv5TJRpFJ=p1MLcORDaqnSG-0AUEtSUw3Kek0vPGKbQZT9g@mail.gmail.com>
-In-Reply-To: <CA+=Fv5TJRpFJ=p1MLcORDaqnSG-0AUEtSUw3Kek0vPGKbQZT9g@mail.gmail.com>
-From: Magnus Lindholm <linmag7@gmail.com>
-Date: Mon, 1 Sep 2025 23:41:41 +0200
-X-Gm-Features: Ac12FXwEn4h8KFioy4gm04oCGmHsT0V4q3Qz4SLvH-ToJAxH82DDnje25_EBIdc
-Message-ID: <CA+=Fv5QmqAFLyToOsCKzgWSdnMXGr7FjeW_fO5reTUgJJP27Sg@mail.gmail.com>
-Subject: Re: [PATCH 0/1] scsi: qla1280: Make 64-bit DMA addressing a Kconfig option
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, martin.petersen@oracle.com, 
-	James.Bottomley@hansenpartnership.com, hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Mon, 2025-09-01 at 17:44 +0100, Simon Horman wrote:
+>=20
+[snip]
+>=20
+> > diff --git a/Documentation/netlink/specs/handshake.yaml
+> > b/Documentation/netlink/specs/handshake.yaml
+> > index 95c3fade7a8d..0dbe5d0c8507 100644
+> > --- a/Documentation/netlink/specs/handshake.yaml
+> > +++ b/Documentation/netlink/specs/handshake.yaml
+> > @@ -87,6 +87,9 @@ attribute-sets:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 name: remote-auth
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type: u32
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 multi-attr: true
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 name: record-si=
+ze-limit
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type: u32
+>=20
+> nit: This indentation is not consistent with the existing spec.
+>=20
+> > =C2=A0
+> > =C2=A0operations:
+> > =C2=A0=C2=A0 list:
+>=20
+> And I believe you are missing the following hunk:
+>=20
+> @@ -126,6 +126,7 @@ operations:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+- status
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+- sockfd
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+- remote-auth
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - rec=
+ord-size-limit
+>=20
+> =C2=A0mcast-groups:
+> =C2=A0=C2=A0 list:
+>=20
+> ...
+Ah good catch thanks!
+>=20
+> > diff --git a/net/handshake/genl.c b/net/handshake/genl.c
+> > index f55d14d7b726..fb8962ae7131 100644
+> > --- a/net/handshake/genl.c
+> > +++ b/net/handshake/genl.c
+> > @@ -16,10 +16,11 @@ static const struct nla_policy
+> > handshake_accept_nl_policy[HANDSHAKE_A_ACCEPT_HAN
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0/* HANDSHAKE_CMD_DONE - do */
+> > -static const struct nla_policy
+> > handshake_done_nl_policy[HANDSHAKE_A_DONE_REMOTE_AUTH + 1] =3D {
+> > +static const struct nla_policy
+> > handshake_done_nl_policy[__HANDSHAKE_A_DONE_MAX] =3D {
+>=20
+> Although it's necessary to update this file in patches,
+> it is automatically generated using: make -C tools/net/ynl/
+>=20
+> Accordingly, although the meaning is the same, the line above should
+> be:
+>=20
+> static const struct nla_policy
+> handshake_done_nl_policy[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT + 1] =3D {
+>=20
+> > =C2=A0	[HANDSHAKE_A_DONE_STATUS] =3D { .type =3D NLA_U32, },
+> > =C2=A0	[HANDSHAKE_A_DONE_SOCKFD] =3D { .type =3D NLA_S32, },
+> > =C2=A0	[HANDSHAKE_A_DONE_REMOTE_AUTH] =3D { .type =3D NLA_U32, },
+> > +	[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT] =3D { .type =3D NLA_U32,
+> > },
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0/* Ops table for handshake */
+> > @@ -35,7 +36,7 @@ static const struct genl_split_ops
+> > handshake_nl_ops[] =3D {
+> > =C2=A0		.cmd		=3D HANDSHAKE_CMD_DONE,
+> > =C2=A0		.doit		=3D handshake_nl_done_doit,
+> > =C2=A0		.policy		=3D
+> > handshake_done_nl_policy,
+> > -		.maxattr	=3D HANDSHAKE_A_DONE_REMOTE_AUTH,
+> > +		.maxattr	=3D HANDSHAKE_A_DONE_MAX,
+>=20
+> And this one should be:
+>=20
+> 		.maxattr=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D
+> HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
+>=20
+> > =C2=A0		.flags		=3D GENL_CMD_CAP_DO,
+> > =C2=A0	},
+> > =C2=A0};
+Okay did not know I could "make -C tools/net/ynl/" to generate this.
+Will use that going forward. Thanks for the feedback!
 
-> >  If it turns out a generic issue with DAC handling in the Tsunami chipset,
-> > then a better approach would be a generic workaround for all potentially
-> > affected devices, but it does not appear we have existing infrastructure
-> > for that.  Just setting the global DMA mask would unnecessarily cripple
-> > 64-bit option cards as well, but it seems to me there might be something
-> > relevant in arch/mips/pci/fixup-sb1250.c; see `quirk_sb1250_pci_dac' and
-> > the comments above it.
+Regards,
+Wilfred
 
-I've been taking a closer look at the quirk_sb1250_pci_dac. It should indeed
-be possible to implement a similar workaround on Alpha. I believe that would
-require some fixes to the Alpha specific implementations in pci_iommu.c. For
-one thing, the implementation does not respect 'dev->bus_dma_limit' which
-is used in  the quirk_sb1250_pci_dac implementation.
-
-I've put together a patch, and I'm testing it right now, that implements a quirk
-similar to quirk_sb1250_pci_dac as well as makes stuff in pci_iommu.c take
-'dev->bus_dma_limit' into consideration on Alpha. If this approach makes
-sense I'll put out a new patch for review. Since this approach does not
-touch the qla1280 SCSI driver, I won't send it to the linux-scsi list.
-
-Regards
-
-Magnus
 
