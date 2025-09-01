@@ -1,521 +1,153 @@
-Return-Path: <linux-kernel+bounces-794114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8116B3DD06
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:51:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BF5B3DD0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC8717C671
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 235A23AF559
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADD22FB970;
-	Mon,  1 Sep 2025 08:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C25F2FE597;
+	Mon,  1 Sep 2025 08:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="AHtqrsSM";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="AHtqrsSM"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011030.outbound.protection.outlook.com [52.101.70.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cr5kX9Mu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VH2mh5ZY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uUYk3Hlb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="X4Drcld/"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614E61E3DF8
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.30
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756716660; cv=fail; b=ki1n4V9sszWrILObIFDqbYoZ6KJL5i+35oKX2qVCQ6RBY6/GPAaJHtNPryrAGJnzpCJG1xHM5A1TZFD6Hs4/n7PfUf2teChhhcEp87CfFbGAf0B3KT4XmVthjMJULKTCU1BzK28iYOn9sUp0XMD1SVsQ8aRZB0FeYt3wvrpIcWQ=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756716660; c=relaxed/simple;
-	bh=mz6gvbz8P7dX8DETRyEtaZO2Uu7SeZqTGeFbxBS1n4k=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WVlkdRLl9m3shQQZ/ys+UAhTPWlTQpJQ5BpTpGOzjnWOt/l+IMgkLSwHJb4B84FGFkVeHB0BsGGbW0zsq0zJTxZKdqHPt8B/ZpkwcsBARGtvAbvnET4hczU5j0RefQUZG7vMiOhXJe264yYF9/OKJ3GWSvSqrEkPxaKSSORuOGU=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=AHtqrsSM; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=AHtqrsSM; arc=fail smtp.client-ip=52.101.70.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=H5jkNoI0Shojwzm3guTZVd2Yar8S+yY+IAnJE1uBi4tYq1kpUdbfHeoIo2+jSh/UjWHq6aS8R1Ol6msYDZAnFD6AnidIIpZm6GJnVWwQm0e/uqaIH9bjP9VNdAVuhot2b0tJ8DaHhBYOmN3hkId7FRz6K4A943BOCLXkNPmfH6g7ueRQTRBThYWlk6K3FU3pXEB8syO/HzbOfdEb9D29BzDw5mvuptGcRWprn96WQijwUF1GYULyNfTxeD7Kl/JyE6OAlfeUOKnr/ldfqKHIkLEyV5bs16TUVuqZrsq/MaMVbhmtESO/hjDhpEjOAh/scQ1/Ac01DoecF7O4jN9BzA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KZgMrKxNkEsz/Lao0vRq8EciSn51eOVhyf9sLuv2Dpc=;
- b=q9RG9PQ47BwUgZ0LzKOEtaF1/S2PXUtTTrO9seKV0Ffs5Lj7WOl2M+JRBbQA5f5345Su2hvPy0iUZ67fbCudhSlj3Jwp3oc7jnnvy9/Z/0cAdsdWWAwOPLaU4aLBNjWychkKMaU8aq7NVtXPCG7w0Hw+3OTPjBvjkrG4e6FEh8PYOSGCY0rNC7Xdc+hbZbR/c0Cacd0O19WsgXuhg0veY7p8+cgZdRxBHYYewnIuepvXyBfEwbd/ttjW3kacGu+nHlNKassVK+J5z4L0+cObzRFe1qWHBuk1fOBeiSpf8mqHz8jC5zURLlUX+qRGeuSmZxPr7+mpyzawhYjQ5VuP4A==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=redhat.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KZgMrKxNkEsz/Lao0vRq8EciSn51eOVhyf9sLuv2Dpc=;
- b=AHtqrsSMFuiu0IT4eX9wa4hEzCR/mKL1/04YmqgtOprLWvsB/Kb0+GMSATyvvWAB2mwcRB2q7MwjCJYG+4efVwCkgePq8UrOFLOzpUlVKhef4qUzSmgFKUZjnfYVP5ZTBInrHnM6waLDKGA/5dtXf8+6yF4dgz0JQGnJiZ3FR6g=
-Received: from AS4P189CA0028.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:5db::18)
- by VE1PR08MB5631.eurprd08.prod.outlook.com (2603:10a6:800:1ab::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 1 Sep
- 2025 08:50:53 +0000
-Received: from AM2PEPF0001C709.eurprd05.prod.outlook.com
- (2603:10a6:20b:5db:cafe::bf) by AS4P189CA0028.outlook.office365.com
- (2603:10a6:20b:5db::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Mon,
- 1 Sep 2025 08:50:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM2PEPF0001C709.mail.protection.outlook.com (10.167.16.197) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.14
- via Frontend Transport; Mon, 1 Sep 2025 08:50:53 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wBjcJyTkAAGJpHGw61xuC4JgfswDCol6tnECc83/iQhdKJ8c8PVyIEztMSD0YrtFI8g28/ghILP8YklS5/pIvZR6ujePvsC9VN+1Ol12uy0K6vG9INW54I6TkUdDWCnBFv7aj89BP3S0aZx+lB4Xko1IwysWxEF3AOLo8d9v4Or8FmAAwIGmfyU181Y5OdbRLcO5+UJ6mdYiX5uqOVrzQj4zJt+c8u/msk8+5EcrvlrdKqj+hlk3oKN8Fw6LussGXlocPwotV7Gi5W8NqXixeVcfRkYOJPjHbD10b76PPN4MTrnGpg5sj9Ie9NiN+hOC22pH/jG6fvuE5I0P9rP9YA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KZgMrKxNkEsz/Lao0vRq8EciSn51eOVhyf9sLuv2Dpc=;
- b=nKkORJu0ZbWzOOxUDUyty23yMe4DgfyWxOm7/YAdYrG2yqKd870e4VNL3YYPfOyF+M3dlJg7ptubDZpHnz1wvud1Lu+9sJrwGgkZsf+W7pzY73u5FvZy1jbtG7mgse0IwUnUs5Blmnhr1tMhOZo1a0A29RK6zT/XGtpfxoz31/WY67iR55Kr4CjScso0V+Y7AhHOCW54ygQleBzqAUtWZuo1rpS5/5snWZYOEFZ0mJUzlwvunx0mofTe0hlJiziN4Pnd+iVpA7s0wxcB66BZoFcoyW2cpoKD1KRgiCn48QL+wFON4XetFP4N+g4yKbcTTWajbe5UwjAeO8FwQ8+fHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KZgMrKxNkEsz/Lao0vRq8EciSn51eOVhyf9sLuv2Dpc=;
- b=AHtqrsSMFuiu0IT4eX9wa4hEzCR/mKL1/04YmqgtOprLWvsB/Kb0+GMSATyvvWAB2mwcRB2q7MwjCJYG+4efVwCkgePq8UrOFLOzpUlVKhef4qUzSmgFKUZjnfYVP5ZTBInrHnM6waLDKGA/5dtXf8+6yF4dgz0JQGnJiZ3FR6g=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AS8PR08MB7111.eurprd08.prod.outlook.com (2603:10a6:20b:402::22)
- by AS8PR08MB8133.eurprd08.prod.outlook.com (2603:10a6:20b:54e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.26; Mon, 1 Sep
- 2025 08:50:13 +0000
-Received: from AS8PR08MB7111.eurprd08.prod.outlook.com
- ([fe80::4ea7:7e71:7dd3:3b45]) by AS8PR08MB7111.eurprd08.prod.outlook.com
- ([fe80::4ea7:7e71:7dd3:3b45%4]) with mapi id 15.20.9073.026; Mon, 1 Sep 2025
- 08:50:12 +0000
-Message-ID: <5ef6df9b-f4a7-43d1-9de7-19ad2d82bbff@arm.com>
-Date: Mon, 1 Sep 2025 14:20:07 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: Enable khugepaged to operate on non-writable VMAs
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- kas@kernel.org, willy@infradead.org, hughd@google.com
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, baohua@kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250901074817.73012-1-dev.jain@arm.com>
- <620f01b4-8a6c-4dac-bcdd-7c48f5cd87f2@redhat.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <620f01b4-8a6c-4dac-bcdd-7c48f5cd87f2@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0096.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:af::12) To AS8PR08MB7111.eurprd08.prod.outlook.com
- (2603:10a6:20b:402::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6881D21D3F5;
+	Mon,  1 Sep 2025 08:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756716678; cv=none; b=XYJvTbT/8wj/wsIJ7HyrZLVaNKKaqUv+eA1zHRWy3omT2boEQLzORpIN3SnhI51S82TbudR+YfJSypQD72ZYbnGRFah2gmD9rNHiO15zzXqBD02xi3E0cTmc/NsOG3+OVqp1NozPKt5FyM3PiLywZT9iMD5KmeBtaRUweCQYLvQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756716678; c=relaxed/simple;
+	bh=ry3aXsNJ+Saubz52UQSHyvp2HMlK3CnrNk/OMqxoz7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddKMVutYUPGLpgsdvZIeY0p+KawgJOURGHox7EXAirel0Hv1e2kFM1zHGjKP+G4EjcbHah/rpG1XJVcF+9vRejYTpzJw4gX9Cdtdyf/rCoVOoollHlLn28BkO0Te059RfeIA0pm3aEPeAEaMXzNukuHT7NvX4Q8Hje2eTnwxsZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cr5kX9Mu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VH2mh5ZY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uUYk3Hlb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=X4Drcld/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5FBBE2120D;
+	Mon,  1 Sep 2025 08:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756716665; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LcMxcalDsD5aaMOvrM77e7lUk4Tnk43fj8ZO7Jx72PM=;
+	b=cr5kX9MuZfd8njLj75CgBe0A6kB97hn1VjC9LJNH9vV1O8JO5smi5K9fdm1D9PtcMti3HS
+	aVEPzJLHKdHL7EYzcGjMdbRwG5INj/K9Q1C8wigH35tHLWW/Z1nyk1a8EwPVo7P3wdViW2
+	JLmjc3EDovfpQ/hlmfuwhvaDks6BcM0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756716665;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LcMxcalDsD5aaMOvrM77e7lUk4Tnk43fj8ZO7Jx72PM=;
+	b=VH2mh5ZY1wEN2STLC5mBc51nvWFJS1/7qe3f2nBsrLmFpR8wXx0FcRiBnNkG5jRprNnzgP
+	bAs215N6F/6DKrCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756716664; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LcMxcalDsD5aaMOvrM77e7lUk4Tnk43fj8ZO7Jx72PM=;
+	b=uUYk3HlbyS8gc8sLHWSptzdlpDOw29CmaEtFAzfBGsST3Eq5M5zt0IdhFxYAwEFYJC9RTc
+	0xSzJaZXId+lYDzmen9XtED4LguwIMU99RMpdwDsCbo/H6bpI4vgiwjOhzer7sjw8jk/wL
+	uK0tXjZPn74d40UXc0NmWiMKCah30AA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756716664;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LcMxcalDsD5aaMOvrM77e7lUk4Tnk43fj8ZO7Jx72PM=;
+	b=X4Drcld/+sJ+rYAL2y/CD8PkqUO37MbHCbnFCCRNgDblbGSylbV5UsNNpXXicwxsNxyxWg
+	KtThJ53xaKN8bjBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4B43C1378C;
+	Mon,  1 Sep 2025 08:51:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YMtXEnhetWisYgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 01 Sep 2025 08:51:04 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id F0807A099B; Mon,  1 Sep 2025 10:50:59 +0200 (CEST)
+Date: Mon, 1 Sep 2025 10:50:59 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] fs: revamp iput()
+Message-ID: <ox654jni32s6hlqqdney7trtmlp3c7i6vorebi4gizecou4wb6@o5tq3eax3xsz>
+References: <20250827-kraut-anekdote-35789fddbb0b@brauner>
+ <20250827162410.4110657-1-mjguzik@gmail.com>
+ <CAGudoHE5UmqcbZD1apLsc7G=YmUsDQ=-i=ZQHSD=4qAtsYa3yA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AS8PR08MB7111:EE_|AS8PR08MB8133:EE_|AM2PEPF0001C709:EE_|VE1PR08MB5631:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65ca9eaf-4210-4d8f-a48e-08dde934a8a3
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?bDVRbTZvSlpkaG5tbHhxSm1uZXhGbjVwMjA4WkhwT1BYUzgzWGoraEc1UlFD?=
- =?utf-8?B?ZTBwUWhzNWhjOWZMdHlYOTEzWC9zOTJnRmgzbzA1Sk10L2VyckhEanNxRmd4?=
- =?utf-8?B?TXAyVjF1d0lpTHBGQWRVOUp0T0hhWU1mSnlHZ0NyaVdIeTM0dEwrWEtBK3Ir?=
- =?utf-8?B?Zi80UUVtbndObnYzQlg4TEVNTyt1LzZQcEIvbjVkWDEyeEUxVW9MdDN6NUpB?=
- =?utf-8?B?SVpockhmbmdsNDFsV3VDOEZ2aFJWaWMxL3hKdnhDeFNVakI5d0s4L0w5L2No?=
- =?utf-8?B?UEUzMG1ZWEJiWnZTZ1pDYzk0SVdleTZiV2thTUVKWGxqTDJNZC9MNXVxMXgw?=
- =?utf-8?B?UGszZkZaQ1lHUkQrYm9hbmc1VTBuZVNrejF4bmFjU25lUlZYTEtWYktVekhh?=
- =?utf-8?B?VW9sRGpHakowYzhBZlJrWWRKWjZTY2VVUUFPa3Z0REx3THFoeDB2QXdJbndW?=
- =?utf-8?B?SzR1MHhqelNham1NSktMZk9SWTBqWFE4V3BMeEVDVE5qNWtnOXNNRGhiR21q?=
- =?utf-8?B?bk5sNkovbHc1L0VDdnAxWi9BakJuV2hOa1RtellzNzlOY3ZNcklVMlliTnBR?=
- =?utf-8?B?Tjlhc0pjblBPOXc0OUQ0RmIxK09FcGx2Q2pLZlRzSWFBWG5INUczQTJ0NHZW?=
- =?utf-8?B?YWI0MzJ3eFdTMjVQaFVteDZEZVlaTDJsMGN2dkVWWHBpY2QwZHBDbnk3MTVE?=
- =?utf-8?B?RjJvd1N0VTV2MHp5VDNJN3pBclN4Tm9kZTMwd2x2bkVza3RMejZSWno5SUdz?=
- =?utf-8?B?V2dEK01uZnc1K1hBeXJWcTI3ck40VUFDbnNEeVplbGN1RC85aHVqUzVNZCsv?=
- =?utf-8?B?UGZpNlRFZ0pSL1diQUplR3VsWHZuNlRXRVVOS0c4VStPUTJzR09hQ25kb1RL?=
- =?utf-8?B?cXo2LytaQlIzR0JNMWprTUhZWGhTdUYxWmhaeU5VM2o5aDlPcG85VmdMODd3?=
- =?utf-8?B?dGtHMFY0Yko4QkxOSDg5cnRMSkVFVXpRWDJBL29rRUVSQ2NTTkNsRTYxaEha?=
- =?utf-8?B?SlBWTnQ3NVJQQTRZaHI3cWl5eEk3QW56ZDR4cFFOVktacFJIdmk2eEFOdUc0?=
- =?utf-8?B?L2NXaitVQ2NORW5uejVBY1BLbitVczEyM05weGdPOUJUcTRRdUhDRlVpNndm?=
- =?utf-8?B?ck5ISFk3a0FxeFJDd0NZS0czRVl5Y050R1lLRnhFbEFkcVQ1ME51WHFyaUtR?=
- =?utf-8?B?UmIwWWxpaWhiOXBNVnlRVjB2Q3p0WG9mLzl0MTR3Zk1oUEh6NTVDaE13Y1NE?=
- =?utf-8?B?QW42VzNmMDBmVmd3cnQ2MUlEdzVReS95dTYvU3Z4R0VPWTFXeHJPSXFpTkZr?=
- =?utf-8?B?Q2xReGVhaXFXSHdmRWQ4a3NEZU10eUVoSVJuV3FsUFhvU0dHYVV6ZDRPMGhR?=
- =?utf-8?B?SS9IUllqNVNTQWJpbHpBeVVCSEpkNXRSRTdHZitJWGRyeVBReG12bFZlbDRP?=
- =?utf-8?B?eVpMaHViMW5GcG5qQkhOdWFWY1pZKzlYK1QvSUp2SnZUUjRESzhrelQxdXZa?=
- =?utf-8?B?b2dDZGVHL0FXUHNuc28rclpVZldvSnBDa3F0ejhZZHU1TFZHeDZNOHhDZGYx?=
- =?utf-8?B?aERmN0RrUVlZVzE0OUNEeHdET0RWRnhVK2szalRVN0RiSmV2UjVrSElRdFZt?=
- =?utf-8?B?WVFvV0N4YS9lNjNSZFpNWVN5L3UreHVMMjNRaGxtSngzRVBWTWp6S2J5UlNP?=
- =?utf-8?B?SGZZUUJSSDFjeThzRWh1bGNEbE95N2NieWhKRXBoMmNSaTVGZlR3K1JQc2k2?=
- =?utf-8?B?Wk16bjU1STRSQkdQdWVUZmVwSmZkZy92eGtOTm1lSWdRY3E4a0JLVVNrMGEx?=
- =?utf-8?B?VHFnaHJ4N21hcTdmbEZpaU9UR1RYNnhRMDdOSzliWmVSL096MWl6RFQwckIr?=
- =?utf-8?B?ZDhZTzdnZWczbW1Ed2NNUjVaSE9VNTRibHBMOWlkaWFscEhVV0tlWmd1QkY2?=
- =?utf-8?Q?GGPifec38PQ=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR08MB7111.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8133
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM2PEPF0001C709.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	9cdae7b4-f7b5-4941-6523-08dde9349049
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|35042699022|36860700013|82310400026|14060799003|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YmpBTWVvc1BoRkhoWFBSbENOekt4dWU2amR1OGsweUoxS1AyNGhVSENrekxZ?=
- =?utf-8?B?UFV1Wm5xaUpNV29mSll6QXdOSXBIMjgvUEZONnhoN0ZodzFuajIxU1d1Ty8x?=
- =?utf-8?B?cUkwS0hPUzV3V0pYd3ZJd21kSmJxb2pXTkxMaERaVjZyMHRReFdWR0pDd1Jj?=
- =?utf-8?B?bVNwUWROSCtPVzQycXpxZjJaU0ZqbDhSUGZjYmVEeE9UdHB6RWljQkUvajFZ?=
- =?utf-8?B?YVdoc2NtSzFEOEtIV2xOMkdJdlhGMGZtOE04MFArOU9XcDBvcFdWK29KQVRN?=
- =?utf-8?B?dU5uQzdsWFJrcEQ2eE43bTFIaGl6UDhtWGppMC9EZzRrK0o0RDNuZVVBb09U?=
- =?utf-8?B?MkQ4d0VwNGZ1Q01aWXhCc0xYb0xtYmtJQmJRYUxkelhCRm9KSUMrT2xadmZp?=
- =?utf-8?B?QmVMaVd1dUtnMzJCOWUwZ3pJbExrOUdhS0hPM1VzMDltMmlPSEt4Tk5PMnJH?=
- =?utf-8?B?NEFpVEZIVjlGNXhPRXRSaEdDUlpsUGE5R3F1dmdRT2ppc29EYVgvWGIwdS9v?=
- =?utf-8?B?L01ST2Mvc1dpbERCY3pNMXk0bWNaYVhndmwybDRNWi9pQ0xPU1lqdzAvanRq?=
- =?utf-8?B?QjJhbnFhamlZK0VhelBFbWNQK0dCTWE3TXp0NXU1QWtRVlBRZm1SZXFycE5s?=
- =?utf-8?B?c092VllHN3NZR3RVRGdxT2poTnpaZTkrbWo0LzVWR0dtRGdISnNMU3VjZlFu?=
- =?utf-8?B?dUE3YkxHQlMrZkVFWGJGSldrSEV0Q2VCb3p5WjFtc2NUMTl1UElieHg0QWN6?=
- =?utf-8?B?NDhuenlmeDMyVTFYTHk1eGpyNG04VFk4eFczTC85ZzZLcGJzaWZZRFVXYTVQ?=
- =?utf-8?B?Z212Wk55YXlOdEJyL2ltSzFubHZVMFBkMmhqbk4xZ2ZEc2lJK1BmYmdwTC9Q?=
- =?utf-8?B?RCtKVXQ2dHYwSXJtV3p2cVQ1SGt0SE40bTNoM1J6a24zU3VWMkMydjlGK1dt?=
- =?utf-8?B?alU5WkNEc2RaUU0wcFZvbVdrL01CcGs2RldGYVh0ZDdKRHdvNGdpcUhKNFhk?=
- =?utf-8?B?dFJUNEtmSHZnUE9FMTNZN3AxYWt2MWwzMDd2V2hxTXlNVDlkMk13RzJ5RlEy?=
- =?utf-8?B?TU5IbEE2N2ZnY0JmenBqT0tqYy9yTFk0ZHNTWERCZ01wUGxvWTlwU1U5eGlO?=
- =?utf-8?B?YUdJL1lHUWthY3JPZkdwTXl4cHNOK1dBODA2d043YW1ablVRS0dQZ241WXVi?=
- =?utf-8?B?QnBIZFB2Z1NWMjRFdmFaMU5hbmpuTERjaUpFb2xZVG82NEJYSXIwTitBS2lX?=
- =?utf-8?B?YjVWZXRuenVvay9Lc1M5UU1pbjBwQ01RbWJaUEVyM3k3N2dlSW56NUNLOHRG?=
- =?utf-8?B?VHh5Yit0TER5RXBvRnI2bGJJcE9UYUpNa014V2pERmxVNUxEWVM0N291bzhL?=
- =?utf-8?B?OGREMFJlb29kWURSeXkzQmdzRW1IanpsUE5xMnpIRTJyU1MwSlF2SytZbEY4?=
- =?utf-8?B?M203NXVvSXFXMC94NmZvRkxHVnNRcTJkMlQxWU9DbG9NWURoVzZOb3BFL1Z4?=
- =?utf-8?B?am1ZOGk2MVVHbzBPNFpQNHdLaEJPN25maG9jdWdOUkhwRGxtRVBnU3g1RUZS?=
- =?utf-8?B?U2kreENUVkRFNFJkWWFlY2NRK3E0TWpLL1ZBOGcyTEUrUFAzSFQyZS9rNFUy?=
- =?utf-8?B?Q0JaUzVQZDgrU25qYVdqSjZmYnJSeFoxemNPSzc1b3F0c2l6bXNaZEE5dW9O?=
- =?utf-8?B?U211eWt2d0pwSVZlRGRnd1JvdWlPcmlpL3JkbVR3YVpDSzZDQzBYSElGeVo0?=
- =?utf-8?B?NzU3S3R0V3BRM3ZmWFhLK0hMZGFGZ1M5dm9oeFJPeUxIUzhHTjYwNHdtRG94?=
- =?utf-8?B?VmFVaFdwSldZcWFOcEFnTkVrd3RDMkhLRWhGbmRIMjgwLzg5Mm4vaFVRMXZw?=
- =?utf-8?B?MlV4aUloWlg0VFBtbHU5S1hGYndYcGxjNFlzdmRySXlVMjBUamVRUjZUaGF2?=
- =?utf-8?B?ZWYzcVJDV0lGRktzcDhFVVlOd0gvNm9MVXBRam5UMHJjMXVPRUliWWUzR2J6?=
- =?utf-8?B?YU1xMVBWTXE3YmNScHlodk9rQ1VvenpqREtFWUlxbDlsbWZXd3pLbThxTnFq?=
- =?utf-8?B?OWFyRDNyL3FQTU10RGFQMmhIZWNKTnBPcXl3QT09?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(35042699022)(36860700013)(82310400026)(14060799003)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 08:50:53.1840
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65ca9eaf-4210-4d8f-a48e-08dde934a8a3
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM2PEPF0001C709.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5631
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHE5UmqcbZD1apLsc7G=YmUsDQ=-i=ZQHSD=4qAtsYa3yA@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
+On Sat 30-08-25 17:54:35, Mateusz Guzik wrote:
+> I'm writing a long response to this series, in the meantime I noticed
+> this bit landed in
+> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.18.inode.refcount.preliminaries&id=3cba19f6a00675fbc2af0987dfc90e216e6cfb74
+> but with some whitespace issues in comments -- they are indented with
+> spaces instead of tabs after the opening line.
 
-On 01/09/25 2:02 pm, David Hildenbrand wrote:
-> On 01.09.25 09:48, Dev Jain wrote:
->> Currently khugepaged does not collapse a region which does not have a
->> single writable page. This is wasteful since, apart from any 
->> non-writable
->> memory mapped by the application, there are a lot of non-writable VMAs
->> which will benefit from collapsing - the VMAs of the executable, those
->> of the glibc, vvar and vdso, which won't be unmapped during the lifetime
->> of the process, as opposed to other VMAs which maybe unmapped.
->
-> Are these anonymous folios? ("VMAs of the executable"), or is you 
-> description
-> misleading?
+Interesting. I didn't see an email about inclusion. Anyway, the change
+looks good to me so Christian, feel free to add:
 
-Oops. I dropped writable everywhere and failed to notice that the 
-callsites are
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-all for anon collapse. So I'll only mention vvar, vdso and other 
-non-writable
+							Honza
 
-VMAs in the description.
-
->
->> Therefore,
->> remove this restriction and allow khugepaged to collapse a VMA with
->> arbitrary protections.
->>
->> Along with this, currently MADV_COLLAPSE does not perform a collapse 
->> on a
->> non-writable VMA, and this restriction is nowhere to be found on the
->> manpage - the restriction itself sounds wrong to me since the user knows
->> the protection of the memory it has mapped, so collapsing read-only
->> memory via madvise() should be a choice of the user which shouldn't
->> be overriden by the kernel.
->>
->> I dug into the history of this and couldn't find any concrete reason of
->> the current behaviour - [1] is the v1 of the original khugepaged patch
->> which required all ptes to be writable. [2] is the v1 of the patch which
->> changed this behaviour to require at least one pte to be writable. The
->> closest thing I could find was: in response to [2], Kirill says in [3] -
->> "As a side effect it will effectively allow collapse in PROT_READ vmas,
->> right? I'm not convinced it's a good idea." (Although Kirill realizes in
->> [4] that this was not the intention of the patch).
->>
->> I can see performance improvements on mmtests run on an arm64 machine
->> comparing with 6.17-rc2. (I) denotes statistically significant 
->> improvement,
->> (R) denotes statistically significant regression (Please ignore the
->> numbers in the middle column):
->
-> I once dug into that myself as well as part of
->
-> commit 1bafe96e89f056cb6e25d47451fb16aee2c7c4d0
-> Author: David Hildenbrand <david@redhat.com>
-> Date:   Wed Apr 24 14:26:30 2024 +0200
->
->     mm/khugepaged: replace page_mapcount() check by 
-> folio_likely_mapped_shared()
->
-> where I noted:
->
->     Interestingly, khugepaged will only collapse an anonymous THP if 
-> at least
->     one PTE is writable.  After fork(), that means that something 
-> (usually a
->     page fault) populated at least a single exclusive anonymous THP in 
-> that
->     PMD range.
->     The problem I was concerned with (also documented in that patch) 
-> should no
-> longer apply ever since we changed how folio_maybe_mapped_shared() 
-> operates.
->
-> So yes, I don't see a good reason to fail on R/O PTEs
->
->>
->> +------------------------------------+----------------------------------------------------------+-----------------------+--------------------------+ 
->>
->> | mmtests/hackbench                  | process-pipes-1 
->> (seconds)                                |                 0.145 
->> |                   -0.06% |
->> |                                    | process-pipes-4 
->> (seconds)                                |                0.4335 
->> |                   -0.27% |
->> |                                    | process-pipes-7 
->> (seconds)                                |                 0.823 
->> |              (I) -12.13% |
->> |                                    | process-pipes-12 
->> (seconds)                               |    1.3538333333333334 
->> |               (I) -5.32% |
->> |                                    | process-pipes-21 
->> (seconds)                               |    1.8971666666666664 
->> |               (I) -2.87% |
->> |                                    | process-pipes-30 
->> (seconds)                               |    2.5023333333333335 
->> |               (I) -3.39% |
->> |                                    | process-pipes-48 
->> (seconds)                               |                3.4305 
->> |               (I) -5.65% |
->> |                                    | process-pipes-79 
->> (seconds)                               |     4.245833333333334 
->> |               (I) -6.74% |
->> |                                    | process-pipes-110 
->> (seconds)                              |     5.114833333333333 
->> |               (I) -6.26% |
->> |                                    | process-pipes-141 
->> (seconds)                              |                6.1885 
->> |               (I) -4.99% |
->> |                                    | process-pipes-172 
->> (seconds)                              |     7.231833333333334 
->> |               (I) -4.45% |
->> |                                    | process-pipes-203 
->> (seconds)                              |     8.393166666666668 
->> |               (I) -3.65% |
->> |                                    | process-pipes-234 
->> (seconds)                              |     9.487499999999999 
->> |               (I) -3.45% |
->> |                                    | process-pipes-256 
->> (seconds)                              |    10.316166666666666 
->> |               (I) -3.47% |
->> |                                    | process-sockets-1 
->> (seconds)                              |                 0.289 
->> |                    2.13% |
->> |                                    | process-sockets-4 
->> (seconds)                              |    0.7596666666666666 
->> |                    1.02% |
->> |                                    | process-sockets-7 
->> (seconds)                              |    1.1663333333333334 
->> |                   -0.26% |
->> |                                    | process-sockets-12 
->> (seconds)                             |    1.8641666666666665 
->> |                   -1.24% |
->> |                                    | process-sockets-21 
->> (seconds)                             |    3.0773333333333333 
->> |                    0.01% |
->> |                                    | process-sockets-30 
->> (seconds)                             |                4.2405 
->> |                   -0.15% |
->> |                                    | process-sockets-48 
->> (seconds)                             |     6.459666666666666 
->> |                    0.15% |
->> |                                    | process-sockets-79 
->> (seconds)                             |    10.156833333333333 
->> |                    1.45% |
->> |                                    | process-sockets-110 
->> (seconds)                            |    14.317833333333333 
->> |                   -1.64% |
->> |                                    | process-sockets-141 
->> (seconds)                            |               20.8735 
->> |               (I) -4.27% |
->> |                                    | process-sockets-172 
->> (seconds)                            |    26.205333333333332 
->> |                    0.30% |
->> |                                    | process-sockets-203 
->> (seconds)                            |    31.298000000000002 
->> |                   -1.71% |
->> |                                    | process-sockets-234 
->> (seconds)                            |    36.104000000000006 
->> |                   -1.94% |
->> |                                    | process-sockets-256 
->> (seconds)                            |     39.44016666666667 
->> |                   -0.71% |
->> |                                    | thread-pipes-1 
->> (seconds)                                 | 0.17550000000000002 
->> |                    0.66% |
->> |                                    | thread-pipes-4 
->> (seconds)                                 | 0.44716666666666666 
->> |                    1.66% |
->> |                                    | thread-pipes-7 
->> (seconds)                                 | 0.7345 
->> |                   -0.17% |
->> |                                    | thread-pipes-12 
->> (seconds)                                |     1.405833333333333 
->> |               (I) -4.12% |
->> |                                    | thread-pipes-21 
->> (seconds)                                |    2.0113333333333334 
->> |               (I) -2.13% |
->> |                                    | thread-pipes-30 
->> (seconds)                                |    2.6648333333333336 
->> |               (I) -3.78% |
->> |                                    | thread-pipes-48 
->> (seconds)                                |    3.6341666666666668 
->> |               (I) -5.77% |
->> |                                    | thread-pipes-79 
->> (seconds)                                |                4.4085 
->> |               (I) -5.31% |
->> |                                    | thread-pipes-110 
->> (seconds)                               |     5.374666666666666 
->> |               (I) -6.12% |
->> |                                    | thread-pipes-141 
->> (seconds)                               |     6.385666666666666 
->> |               (I) -4.00% |
->> |                                    | thread-pipes-172 
->> (seconds)                               |     7.403000000000001 
->> |               (I) -3.01% |
->> |                                    | thread-pipes-203 
->> (seconds)                               |     8.570333333333332 
->> |               (I) -2.62% |
->> |                                    | thread-pipes-234 
->> (seconds)                               |     9.719166666666666 
->> |               (I) -2.00% |
->> |                                    | thread-pipes-256 
->> (seconds)                               |    10.552833333333334 
->> |               (I) -2.30% |
->> |                                    | thread-sockets-1 
->> (seconds)                               |                0.3065 
->> |                (R) 2.39% |
->> +------------------------------------+----------------------------------------------------------+-----------------------+--------------------------+ 
->>
->>
->> +------------------------------------+----------------------------------------------------------+-----------------------+--------------------------+ 
->>
->> | mmtests/sysbench-mutex             | sysbenchmutex-1 
->> (usec)                                   |    194.38333333333333 
->> |                   -0.02% |
->> |                                    | sysbenchmutex-4 
->> (usec)                                   |               200.875 
->> |                   -0.02% |
->> |                                    | sysbenchmutex-7 
->> (usec)                                   |    201.23000000000002 
->> |                    0.00% |
->> |                                    | sysbenchmutex-12 
->> (usec)                                  |    201.77666666666664 
->> |                    0.12% |
->> |                                    | sysbenchmutex-21 
->> (usec)                                  |                203.03 
->> |                   -0.40% |
->> |                                    | sysbenchmutex-30 
->> (usec)                                  |               203.285 
->> |                    0.08% |
->> |                                    | sysbenchmutex-48 
->> (usec)                                  |    231.30000000000004 
->> |                    2.59% |
->> |                                    | sysbenchmutex-79 
->> (usec)                                  |               362.075 
->> |                   -0.80% |
->> |                                    | sysbenchmutex-110 
->> (usec)                                 |     516.8233333333334 
->> |                   -3.87% |
->> |                                    | sysbenchmutex-128 
->> (usec)                                 |     593.3533333333334 
->> |               (I) -4.46% |
->> +------------------------------------+----------------------------------------------------------+-----------------------+--------------------------+ 
->>
->>
->> No regressions were observed with mm-selftests.
->>
->> [1] 
->> https://lore.kernel.org/all/679861e2e81b32a0ae08.1264054854@v2.random/
->> [2] 
->> https://lore.kernel.org/all/1421999256-3881-1-git-send-email-ebru.akagunduz@gmail.com/
->> [3] https://lore.kernel.org/all/20150123113701.GB5975@node.dhcp.inet.fi/
->> [4] https://lore.kernel.org/all/20150123155802.GA7011@node.dhcp.inet.fi/
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->> Based on mm-new.
->>
->> Not very sure of the tracing parts which this patch changes. I have kept
->> the writable portion for the tracing to maintain backward compat, just
->> dropped it as a collapse condition.
->>
->>   include/trace/events/huge_memory.h |  2 +-
->>   mm/khugepaged.c                    | 11 +++--------
->>   2 files changed, 4 insertions(+), 9 deletions(-)
->>
->> diff --git a/include/trace/events/huge_memory.h 
->> b/include/trace/events/huge_memory.h
->> index 2305df6cb485..f2472c1c132a 100644
->> --- a/include/trace/events/huge_memory.h
->> +++ b/include/trace/events/huge_memory.h
->> @@ -19,7 +19,7 @@
->>       EM( SCAN_PTE_NON_PRESENT,    "pte_non_present")        \
->>       EM( SCAN_PTE_UFFD_WP,        "pte_uffd_wp")            \
->>       EM( SCAN_PTE_MAPPED_HUGEPAGE, "pte_mapped_hugepage")        \
->> -    EM( SCAN_PAGE_RO,        "no_writable_page")        \
->> +    EM( SCAN_PAGE_RO,        "no_writable_page") /* deprecated */    \
->>       EM( SCAN_LACK_REFERENCED_PAGE, "lack_referenced_page")        \
->>       EM( SCAN_PAGE_NULL,        "page_null")            \
->>       EM( SCAN_SCAN_ABORT,        "scan_aborted")            \
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 4ec324a4c1fe..5ef8482597a9 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -39,7 +39,7 @@ enum scan_result {
->>       SCAN_PTE_NON_PRESENT,
->>       SCAN_PTE_UFFD_WP,
->>       SCAN_PTE_MAPPED_HUGEPAGE,
->> -    SCAN_PAGE_RO,
->> +    SCAN_PAGE_RO,    /* deprecated */
->
-> Why can't we remove that completely.
->
->
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
