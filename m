@@ -1,106 +1,120 @@
-Return-Path: <linux-kernel+bounces-794587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CF6B3E392
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:45:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6BFB3E3A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8C04447A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:44:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625D5170B4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2171B322DD5;
-	Mon,  1 Sep 2025 12:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF838322DD4;
+	Mon,  1 Sep 2025 12:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkGDBqbw"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jXdQuO4T"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE0C33CE8F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A291257849;
+	Mon,  1 Sep 2025 12:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756730530; cv=none; b=RnlhHDd6VTa0O1PyEGjNz/bvcmCpRHmk4gwMKqySOOZLKnMaprt3KhAActczyQnMLaeIQYcvKI/SJcJ68xfqQvtVC+R2kzVG0TxTc7PjfTffzhj/0f64LJ5S6irIarOtDwlNRKuobfBgnMl8oq3IYVHnKVXkZ4HlTHl10Q9pywY=
+	t=1756730598; cv=none; b=nlm48f9BXh6XWxDStx3zmSP3Dj+Qaj2ErHptKBvm/xFcxZVmjiR3g8HMe0eQZWVoVLdEF4v2Ft8sEUXAH4qE5Qmu0x5El/l8wss3GPsYZqigehFx3KdkH0qYw2aNRXUic5W4+UORvKvWbpJiWYPadT0BES+jw0e2l2h5g6VNkQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756730530; c=relaxed/simple;
-	bh=gOY5Dw0yIneTkFl1rkItoGut8jnz7U2o1MHv+e5ti3A=;
+	s=arc-20240116; t=1756730598; c=relaxed/simple;
+	bh=JV3RmCj1JMN6vIPs9w1LUVvRoHj1GcIh6KrLOIR/RlU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQ5EBHBsaIg1J5HBzez4KwTq6WI8F36FRmFO6TexRrULEXjAwdFKU8fifSQEMjfMw7G/AzUYgL/v8Y5eaQ+raeySsSKLvp/rXCDCSXK981DMpxrA30lEieqoq9fziMnNVM3Q1cpcuhK1R/xIO7NveNneA0t0HfFks0qa80OmEF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkGDBqbw; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32810c57437so167390a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:42:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756730528; x=1757335328; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOY5Dw0yIneTkFl1rkItoGut8jnz7U2o1MHv+e5ti3A=;
-        b=fkGDBqbwbVx1jqYUUbvKxG2knvXhOppSurcXZL1FIvXkppVLUmKmLNZ6ZNpP+RUg4i
-         rhHp28hKESTfa4Cv4t/QwXJfzzblA04/fnZ5tYdq5EWoY1+Ck77gpYwGJ0wlI/RNt0J7
-         TBi7Vem42Xg+aWoj99j0tNx6GTap0iGAz8RfdwmTedMxEDharK7k4+2/lXBc1WexBEJP
-         YYFIx97AEDrtV/Qf2J+B8Dh0xQIkPCVt2GjnK5MgOD0MiH9wmSNXeAre+VL4fsZpg6p2
-         2CQ7u5g8Z93vgzC1hztwdAZ8GmaCZkH5gwVQTs2+hP/5BTpqHB4N0GpfXpA5r0qzHd9l
-         COQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756730528; x=1757335328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gOY5Dw0yIneTkFl1rkItoGut8jnz7U2o1MHv+e5ti3A=;
-        b=S5Famh2v+X2NC0KpbeBkcbr6e7H4mkqx/lxZesRt5cZiUMOrNqu4291F3SHKX82U9U
-         XHzmn7zvYVCI8whGGcHH/+wR0kGCpm2UL0+CuSRCKSAkccnsd9dAx5v/YSiF2KHhfsfr
-         8j1Gz3ocV2YplL7TlhWT2jbuo+SnWu151bh8Tiz7EJNpsYFmWx5Fld8UdmVB0m1RFkVg
-         utGBynaKO3QLyPIv5mxluRhazibqpOtpXfLlXU1yCgPNPkX2uCnupEp5lH4efI22fn34
-         cSB8KgypTDQeq1GZoydITyYhiA/CZAMdGLchwmSbpjtl6xlHuLTLGcBrilZV3jqKDtL9
-         NCdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgwui9GhhsDDS3MxQpX82HlyACCWp96oKYENhAdT/aE2aKvh56wPTp708nPQPTeael3lrX0feYINl9PIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Rf+Ph31bpZWSzILVNnirX48cqRQWirSfiUwQorQgJXxWLJIR
-	xw3O6L8SpCbzqJxg3da9bPVzJgzTna4grLD2uaD0MNu0izFcME1j6WEV
-X-Gm-Gg: ASbGncvU15XdWbGtnhBdnF5LHAJdXOPy5k1MXaj/LR8E7DZ3ohNQSUak6P7USQ265oM
-	IqaYs9pHA5j10SPbtZ++KWrW5uKnnJh/WDVuDxBUIDONOJiraeluocNbFejKWqKmEygmLdGN5pZ
-	tqWxzE2liMuES391q6mZD6Ul53KBTJn2GvXLhtnRU6P4VDkqcaIxTl31eswKsbrgEQDjC/F/fzj
-	f58qJXDGpuunBzIBrQX58+fvLAI0wcmyFzCMFql2Hoo55g7tI02fWoW7y1Lk39EDPCfG/Pjnz31
-	6BpoNjwnv+PunR/rQFnKFmYY/8QSrIhVApI53gk3gyXzxMwiTissd8iHJqAiJJOIuz9eRBBRYv9
-	cbZY1uekRhzhfddq9
-X-Google-Smtp-Source: AGHT+IHUn0SC6xICje1UUoFTPSuAjVvF3tBb8TKjXdcRcJR9Br1XsPEsEJrd5UjL8hvq4o4e6MFvaA==
-X-Received: by 2002:a17:90b:4c4a:b0:327:e781:3d37 with SMTP id 98e67ed59e1d1-327f5be1809mr8219063a91.6.1756730528211;
-        Mon, 01 Sep 2025 05:42:08 -0700 (PDT)
-Received: from fedora ([2400:4050:d860:9700:8e8a:52de:86af:cfe3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fce0c5dsm16686640a91.21.2025.09.01.05.42.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 05:42:07 -0700 (PDT)
-Date: Mon, 1 Sep 2025 21:42:00 +0900
-From: Masaharu Noguchi <nogunix@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	vaibhav.sr@gmail.com, mgreer@animalcreek.com, johan@kernel.org,
-	elder@kernel.org, greybus-dev@lists.linaro.org,
-	florian.fainelli@broadcom.com, rjui@broadcom.com,
-	sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	dave.stevenson@raspberrypi.com, laurent.pinchart@ideasonboard.com,
-	hverkuil@kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: greybus: audio_topology: avoid
- -Wformat-truncation
-Message-ID: <aLWUmF2fDUyerjps@fedora>
-References: <20250830173850.323897-1-nogunix@gmail.com>
- <20250830173850.323897-2-nogunix@gmail.com>
- <aLWEm2sQpmoNYLAC@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TC48KyguTpVE9nVVNZFHXwIoNDH8lkvgTB9j2sB/qT1hMbwOxalBY4kISceQgHT3nx/0t5ExKxfmRVjZ7kpWDdKmYUEQnTxnz/4dJG0mXihB//AdyA0pFPJpOP1mPOdEINWYB4xBaAEsxC+Nlhm7qTlMZfKgpmn2kTICK2yLLI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jXdQuO4T; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756730596; x=1788266596;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JV3RmCj1JMN6vIPs9w1LUVvRoHj1GcIh6KrLOIR/RlU=;
+  b=jXdQuO4T89qdaspNpy0KKe3sSbeg28/wTlP8sjFuSCYbjrIvsBCpKKXE
+   NZJ+DWtsMYQAmAjdvyJan2SrKRzf+u8dSQWXt+BEqwMW8SKHMgQtCiyuG
+   j4PTbE/FL3P5PIIxFWCThtrXl0b27/vBU4GSoKRhPm4LhjnH+vkQfoaVJ
+   lrPAxG7Su0MDM/v8D/Qa6PoQSpB4PnrIU3hZkAxP84vXPXJirm2Bm7DPR
+   xCb797AxUoBVrBJUsI0yv8XAZEzAB5KJOJh2f63Kuvy9wupYpCVmBHC31
+   kF0sxtWBr4DSonnTZtRq8KjCa5VI+ZYD8ozMqIk16CU6TofbZxwms4EYZ
+   Q==;
+X-CSE-ConnectionGUID: 3Vn31p95R1mtzhQ05BJgww==
+X-CSE-MsgGUID: kPMLKY2ETaimIhBb9JmNZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62821495"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62821495"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:43:16 -0700
+X-CSE-ConnectionGUID: BuhrxOKbQ9+4gTuoB5MZsg==
+X-CSE-MsgGUID: 6uN3xkOnSVOA2l5NeF2Alg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="170868578"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:43:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ut3sL-0000000APj6-1CGF;
+	Mon, 01 Sep 2025 15:43:09 +0300
+Date: Mon, 1 Sep 2025 15:43:08 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Karel Balej <balejk@matfyz.cz>,
+	David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
+Message-ID: <aLWU3AwC37jpV9W_@smile.fi.intel.com>
+References: <20250831-88pm886-gpadc-v2-0-759c1e14d95f@dujemihanovic.xyz>
+ <20250831-88pm886-gpadc-v2-2-759c1e14d95f@dujemihanovic.xyz>
+ <DCGUXTSZ8B9G.2S2Q2JXYMBSRY@matfyz.cz>
+ <5048048.31r3eYUQgx@radijator>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aLWEm2sQpmoNYLAC@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5048048.31r3eYUQgx@radijator>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Thanks for the detailed explanation. I understand your point regarding W=1 warnings and string truncation.
-Based on this, I will drop the previous patch and leave the code as is.
+On Sun, Aug 31, 2025 at 10:19:38PM +0200, Duje Mihanović wrote:
+> On Sunday, 31 August 2025 21:24:54 Central European Summer Time Karel Balej wrote:
+> > Duje Mihanović, 2025-08-31T12:33:05+02:00:
 
-Best regards,
-Masaharu Noguchi
+...
+
+> > > +	iio->dev.of_node = dev->parent->of_node;
+> > 
+> > Didn't you mean to drop this since Jonathan pointed out that it's done
+> > by the core?
+> 
+> Actually I have found that device tree consumers fail to get their IO
+> channels without this line, so I left it.
+
+because the passed device is not parent?
+
+In any case this line is problematic. Use device_set_node() instead with the
+proper dev_fwnode() parameter.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
