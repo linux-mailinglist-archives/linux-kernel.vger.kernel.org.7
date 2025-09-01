@@ -1,146 +1,262 @@
-Return-Path: <linux-kernel+bounces-795018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86152B3EBE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:08:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9B6B3EBFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8DE17FEAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:08:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D1B1A81A82
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0237D2E6CD9;
-	Mon,  1 Sep 2025 16:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908DC306492;
+	Mon,  1 Sep 2025 16:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kl0c3/a6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="geTNsA+1"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A65713E02A;
-	Mon,  1 Sep 2025 16:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084652EFDA0;
+	Mon,  1 Sep 2025 16:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742920; cv=none; b=E8n6Jpige6s7zS5ujl04sz1S2LMY5/YdQHSncQzSWcBmZHgtryCUDKXmYhBjjKTOiPdQvNmTDPW1lTuMH37u3ewl34eLF95XVZO2XP/FOjDbD0V4tQ6NynhVNzfVynhjsjom1NHdTGoMqPngEU/Ej2UHvpgzC4vpN8b+jS34uJA=
+	t=1756743042; cv=none; b=GGxhL/wjJg91zFX/BZoOJKi6M+3dNZADJNPRIvBeYisJQMZLWXTRU6kSFdwZuG9e9Hdgxyk14qPdHO+YD1ym9AMvRXit/mDO7pp8raSLu9uQeF5uk13cytRLPyDHUrcPmOCcscKSppHmbC1U0G1r4EqllS8PNnq6YzgG7CxgmIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742920; c=relaxed/simple;
-	bh=EqeoXDvX4Ec7OVi70BK9y0ZJUtPChN7RnVzhxWXW0xA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ceY6Rvi3ykPHvS5y48Hhz8OU7jRQBECgwLU3FwslfJ5RSp0EeRIJOW4SRfXyxuNpGnAvhsBww1DRMT4TC5BaCmZ1ZYUB0N5li3me3EjQxm1G93aDy8FvdBHu7vWBVgU0U8asbVq+cnzr9qPGx7hNConHKoHXF2y74wyA+9KLQrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kl0c3/a6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 581B4KB5015350;
-	Mon, 1 Sep 2025 16:08:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8NHbnWA+ivENT66Nk4iYanDhKZZcbI1nQw9qnGL0QzM=; b=Kl0c3/a6dcN8+wt+
-	E8q1c5TiWkCSDeMFZ8qEneTZ/4NLbs9FLHJzW8Jy5HhLAMcpb50sSy4kZobmTy0N
-	ut1q5qCN7pl7PPTO7fh8gaC5LpnxautUE/Qgdg7kXGa8r6VLrgo6AfpW3sWpfOXl
-	5HEveiY//dFDBAOBd0wFFLwX8P8e+hPNRZ/0FXiJ46lE5CH6f3EbzzDTSKRK4STc
-	V5tpr2kYiPQim5CkhHH4GTl81cQL6i3r1FHpTpSfOP8AfjTivg7iT5vyf5vFrwZO
-	mQDgHdMXRDTJz9pvIClNWM/VuPxCE03gRlg4KRDRT3M6IteCE2kxF4GWHeQ1unLy
-	D/sexA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utfkd63h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 01 Sep 2025 16:08:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 581G8XJb026669
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 1 Sep 2025 16:08:33 GMT
-Received: from [10.216.44.84] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
- 2025 09:08:28 -0700
-Message-ID: <1efa429d-7576-49da-a769-b1eba9345958@quicinc.com>
-Date: Mon, 1 Sep 2025 21:38:25 +0530
+	s=arc-20240116; t=1756743042; c=relaxed/simple;
+	bh=7K6o2zszYWNiRVKlGv3YzgED9jhr4TnD0NyMid5UR8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D0f5E+mp61PH+iHuyxowBKTmGVKJ69QbLytQLDk5Piqy+uJC52PF9HUVys4nFURCqDSlkc9UuDtWU93AQ+RYlkVPGy12vmzvWeAzx1wBxrTAvHvNJANXL464Nc+K9nJzzFMW4csxk7lq8N+HqIUrxZro/xKHHp50fGdIepjMnxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=geTNsA+1; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7f777836c94so403041685a.2;
+        Mon, 01 Sep 2025 09:10:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756743040; x=1757347840; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m2nodLcNRZplFTeJWN+CFsT+xl+niXAxoWKtGPtFk90=;
+        b=geTNsA+10NyqX6bcBqHQ5yir0QdTVqLvIXUkBZ4boXqGEV20kl24uiXJz5O5vrSGOk
+         7xiYnylswcX3neJf51JNiPA8j3qjyDZUHsP4/jStBU4cd15Aq4fCha327cg9V+dbR7Qv
+         kevXg1o8FVIJCq8UXjLzQ7XwpyxM1RXWgbHu2ty26ZJC1RGXvhYX9zMkwOo8+WXreL9N
+         lfPZGFelVv/R9FRZTkPChiUIwKs5fAzEREFgcAHxrJr2HZyNXnCURn6XqOKwtOEznwlu
+         X6qTYGRxkYNBG8e6NTrulYH1UFhJj/CDTsd+7IUfDP+7RHQi02KJfkovuGtZgWQyoBUi
+         On9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756743040; x=1757347840;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m2nodLcNRZplFTeJWN+CFsT+xl+niXAxoWKtGPtFk90=;
+        b=gM1J63UCMYwzV2xFtv734UCm8Wv4YQN38F4Zn2o7lt4c45B5eWVGRClx47q89wuz/u
+         hLsZNPFUg+whHEjibFouAALQwvcdvbMgLOGalm1espzCFVvlR03sLyxFdW6u7PPsK2y7
+         WKIYma3pamocqG8IN8hetb4S/yGSj8LeP1tKGL8Ssd3xCCofIA9vElhQeahoqPF8pi5Z
+         beKoWNr9bHSieVm5Sm4gyEStMiaW+oDBmr0WAT6Q0i6XzIZ4Y0zJpyjPvfbUCxZJLa09
+         VxZuCOusgLeZQJrihzqIkC+ykIlcjMOmjWAWknfeGy8QWnnOlFt5hMs622wwzPg83uJW
+         F1Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdb0XDcAP3y4ewmQqGTqbIu3lAmc3zz4aCNMV/h9y9h1EGFMto5bp9IJt5Y/6lg65lR9rxNNw4rVTd5HM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHCHVKG8CytYbCiLc/DrChrPWTkGd+eSu/gaRJLLXWSQzskEmI
+	U9yMNEWUUEZU1bJnDU3CPhonYkvzMJg3kWmMCRIUWT1gh3aWILmwl/nb
+X-Gm-Gg: ASbGncuaqiJ/XHVrHkOmD/gQq+swRPOekPlugf5KSMym7PqJeWfp8+thUnxGqc0NTCN
+	Cv1Gr2rl3nPRHxVYJeaV5lieq/JRWVn+nfeezoYqQzWv2mU9rL4eFgoptMiJWncCGwsYGXWk298
+	b8iKqbGV67pvkE6nG0eY6H3sQSTU9vJtWpjBq6RNQI1iDl3sxY2FU3m1wqCTuhNq/8Q60dimVh2
+	OD/P8dr6m6wCZvI4pU6pSLBysA3yce5ilKnZxNKfIjSUO6nTRbTs37QDG1+YhCO4inJPMooK9dl
+	HreK4N72b1AkN61InClrq24RLrgVe1sgoOYpohtwW4SaAdrY2gy73YhXm0XUAOT2/JZCcy+JeeJ
+	iik3v0B0TVkLYxpdt/Uo=
+X-Google-Smtp-Source: AGHT+IFPhlHihAARuGxCffUXp7rORQs4i4fLcxmCgsymcnF6anq3dMMvQwgBAKmCpT1c7kxCAEIHzg==
+X-Received: by 2002:a05:620a:1a16:b0:7e6:9961:fd27 with SMTP id af79cd13be357-7ff2b97c498mr1088378885a.65.1756743039576;
+        Mon, 01 Sep 2025 09:10:39 -0700 (PDT)
+Received: from localhost ([2a03:2880:20ff:2::])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc16341017sm683721285a.63.2025.09.01.09.10.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 09:10:38 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: alx@kernel.org
+Cc: linux-man@vger.kernel.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	hannes@cmpxchg.org,
+	baohua@kernel.org,
+	shakeel.butt@linux.dev,
+	ziy@nvidia.com,
+	laoar.shao@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH] PR_*ET_THP_DISABLE.2const: document addition of PR_THP_DISABLE_EXCEPT_ADVISED
+Date: Mon,  1 Sep 2025 17:09:03 +0100
+Message-ID: <20250901160903.2801339-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 3/5] scsi: ufs: core: Remove unused ufshcd_res_info
- structure
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Ram Kumar Dwivedi
-	<quic_rdwivedi@quicinc.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mani@kernel.org>,
-        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
- <20250821112403.12078-4-quic_rdwivedi@quicinc.com>
- <1ccecf69-0bd8-4156-945d-e5876b6dea01@kernel.org>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <1ccecf69-0bd8-4156-945d-e5876b6dea01@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=eaQ9f6EH c=1 sm=1 tr=0 ts=68b5c502 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=2ANJes_M-wHGjwGGIWkA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: baEnfMBlZR06je6vcouClH91UY1MjV6O
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MCBTYWx0ZWRfXz+Lr2ypsoGVA
- fvl6l4jVny94Npt2x20KpJaxFMPEfpZVdsvCugGNvymdT7q0VP5tFytfRt4BbyWal3xmdwUeE+H
- dzffcQb3kARYwbXUHm3ZFuDLQl7EiiA5wm1uXz95Pjv3YpJLe95iqcXrYhBT894N1E8+OJZB170
- DGYHXMhYb0WanT/hIS8+YUBeCdBD1zE1dStdubPTcsu/cFe/ny5XhU4lx+7Tafl+sgVHVRR0REb
- FWJNkrWPuG4XXMwYviDt96ZjBGlyXXieAtuUa9PXzwcPOFCB5vS75g9BNEJApKrS/GQooDFnegO
- 85PHvwOFJKfo5QxhKJLcJIf1kCKHI70yUMBnG0CLxxUQfkNOXuIPxwxWK4byUP2meeEPsL9nYD+
- ES0bBnx7
-X-Proofpoint-GUID: baEnfMBlZR06je6vcouClH91UY1MjV6O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_06,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 impostorscore=0 spamscore=0 malwarescore=0
- adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300040
+Content-Transfer-Encoding: 8bit
 
+PR_THP_DISABLE_EXCEPT_ADVISED extended PR_SET_THP_DISABLE to only provide
+THPs when advised. IOW, it allows individual processes to opt-out of THP =
+"always" into THP = "madvise", without affecting other workloads on the
+system. The series has been merged in [1].
 
+This patch documents the changes introduced due to the addition of
+PR_THP_DISABLE_EXCEPT_ADVISED flag:
+- PR_GET_THP_DISABLE returns a value whose bits indicate how THP-disable
+  is configured for the calling thread (with or without
+  PR_THP_DISABLE_EXCEPT_ADVISED).
+- PR_SET_THP_DISABLE now uses arg3 to specify whether to disable THP
+  completely for the process, or disable except madvise
+  (PR_THP_DISABLE_EXCEPT_ADVISED).
 
-On 8/21/2025 5:18 PM, Krzysztof Kozlowski wrote:
-> On 21/08/2025 13:24, Ram Kumar Dwivedi wrote:
->> From: Nitin Rawat <quic_nitirawa@quicinc.com>
->>
->> Remove the ufshcd_res_info structure and associated enum ufshcd_res
->> definitions from the UFS host controller header. These were previously
->> used for MCQ resource mapping but are no longer needed following recent
->> refactoring to use direct base addresses instead of multiple separate
->> resource regions
->>
->> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> 
-> Incomplete SoB chain.
-> 
-> But anyway this makes no sense as independent patch. First you remove
-> users of it making it redundant... and then you remove it? No.
+[1] https://lore.kernel.org/all/20250815135549.130506-1-usamaarif642@gmail.com/
 
-Hi Krzysztof,
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+---
+ man/man2/madvise.2                      |  4 +-
+ man/man2const/PR_GET_THP_DISABLE.2const | 18 ++++++---
+ man/man2const/PR_SET_THP_DISABLE.2const | 52 +++++++++++++++++++++----
+ 3 files changed, 61 insertions(+), 13 deletions(-)
 
-The driver changes are in the UFS Qualcomm platform driver, which uses 
-the definitions, while ufshcd.h is part of the UFS core driver. Hence 
-kept in 2 separate patch.
-
-Thanks,
-Nitin
-
-> 
-> Organize your patches in logical chunks.
-> 
-> Best regards,
-> Krzysztof
-> 
+diff --git a/man/man2/madvise.2 b/man/man2/madvise.2
+index 10cc21fa4..6a5290f67 100644
+--- a/man/man2/madvise.2
++++ b/man/man2/madvise.2
+@@ -373,7 +373,9 @@ nor can it be stack memory or backed by a DAX-enabled device
+ (unless the DAX device is hot-plugged as System RAM).
+ The process must also not have
+ .B PR_SET_THP_DISABLE
+-set (see
++set without the
++.B PR_THP_DISABLE_EXCEPT_ADVISED
++flag (see
+ .BR prctl (2)).
+ .IP
+ The
+diff --git a/man/man2const/PR_GET_THP_DISABLE.2const b/man/man2const/PR_GET_THP_DISABLE.2const
+index 38ff3b370..df239700f 100644
+--- a/man/man2const/PR_GET_THP_DISABLE.2const
++++ b/man/man2const/PR_GET_THP_DISABLE.2const
+@@ -6,7 +6,7 @@
+ .SH NAME
+ PR_GET_THP_DISABLE
+ \-
+-get the state of the "THP disable" flag for the calling thread
++get the state of the "THP disable" flags for the calling thread
+ .SH LIBRARY
+ Standard C library
+ .RI ( libc ,\~ \-lc )
+@@ -18,13 +18,21 @@ Standard C library
+ .B int prctl(PR_GET_THP_DISABLE, 0L, 0L, 0L, 0L);
+ .fi
+ .SH DESCRIPTION
+-Return the current setting of
+-the "THP disable" flag for the calling thread:
+-either 1, if the flag is set, or 0, if it is not.
++Returns a value whose bits indicate how THP-disable is configured
++for the calling thread.
++The returned value is interpreted as follows:
++.P
++.nf
++.B "Bits"
++.B " 1 0  Value  Description"
++ 0 0    0    No THP-disable behaviour specified.
++ 0 1    1    THP is entirely disabled for this process.
++ 1 1    3    THP-except-advised mode is set for this process.
++.fi
+ .SH RETURN VALUE
+ On success,
+ .BR PR_GET_THP_DISABLE ,
+-returns the boolean value described above.
++returns the value described above.
+ On error, \-1 is returned, and
+ .I errno
+ is set to indicate the error.
+diff --git a/man/man2const/PR_SET_THP_DISABLE.2const b/man/man2const/PR_SET_THP_DISABLE.2const
+index 564e005d4..9f0f17702 100644
+--- a/man/man2const/PR_SET_THP_DISABLE.2const
++++ b/man/man2const/PR_SET_THP_DISABLE.2const
+@@ -6,7 +6,7 @@
+ .SH NAME
+ PR_SET_THP_DISABLE
+ \-
+-set the state of the "THP disable" flag for the calling thread
++set the state of the "THP disable" flags for the calling thread
+ .SH LIBRARY
+ Standard C library
+ .RI ( libc ,\~ \-lc )
+@@ -15,24 +15,62 @@ Standard C library
+ .BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+ .B #include <sys/prctl.h>
+ .P
+-.BI "int prctl(PR_SET_THP_DISABLE, long " flag ", 0L, 0L, 0L);"
++.BI "int prctl(PR_SET_THP_DISABLE, long " thp_disable ", unsigned long " flags ", 0L, 0L);"
+ .fi
+ .SH DESCRIPTION
+-Set the state of the "THP disable" flag for the calling thread.
++Set the state of the "THP disable" flags for the calling thread.
+ If
+-.I flag
+-has a nonzero value, the flag is set, otherwise it is cleared.
++.I thp_disable
++has a nonzero value, the THP disable flag is set according to the value of
++.I flags,
++otherwise it is cleared.
+ .P
+-Setting this flag provides a method
++This
++.BR prctl (2)
++provides a method
+ for disabling transparent huge pages
+ for jobs where the code cannot be modified,
+ and using a malloc hook with
+ .BR madvise (2)
+ is not an option (i.e., statically allocated data).
+-The setting of the "THP disable" flag is inherited by a child created via
++The setting of the "THP disable" flags is inherited by a child created via
+ .BR fork (2)
+ and is preserved across
+ .BR execve (2).
++.P
++The behavior depends on the value of
++.IR flags:
++.TP
++.B 0
++The
++.BR prctl (2)
++call will disable THPs completely for the process,
++irrespective of global THP controls or
++.BR MADV_COLLAPSE .
++.TP
++.B PR_THP_DISABLE_EXCEPT_ADVISED
++The
++.BR prctl (2)
++call will disable THPs for the process except when the usage of THPs is
++advised.
++Consequently, THPs will only be used when:
++.RS
++.IP \[bu] 2
++Global THP controls are set to "always" or "madvise" and
++.BR madvise (...,
++.BR MADV_HUGEPAGE )
++or
++.BR madvise (...,
++.BR MADV_COLLAPSE )
++is used.
++.IP \[bu]
++Global THP controls are set to "never" and
++.BR madvise (...,
++.BR MADV_COLLAPSE )
++is used.
++This is the same behavior as if THPs would not be disabled on
++a process level.
++.RE
+ .SH RETURN VALUE
+ On success,
+ 0 is returned.
+-- 
+2.47.3
 
 
