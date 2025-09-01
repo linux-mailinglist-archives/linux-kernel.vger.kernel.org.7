@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-794331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AFFB3E019
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 906B4B3E01A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8641611A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EEE417EDFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110F730F557;
-	Mon,  1 Sep 2025 10:26:13 +0000 (UTC)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5FE30E0F1;
+	Mon,  1 Sep 2025 10:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PKSR8Pbq"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCEC3081A9;
-	Mon,  1 Sep 2025 10:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442DE2EE260
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756722372; cv=none; b=f5ADvKgqBKHnqJhkT/+EyYHRFoDh8vn7LLVxdPg0Vfd9uUMtXizQapv/zG1R8HChFnX2d+ITOTBFcWm1qoUwoayS+Vbed+ljFVPN6ekuFGRA54/JfHT/iep5mdIKpWAiQk/t1mk6E5tBiaE2k/3FtLKr5uEKfZ9fpmp9tMyE8pA=
+	t=1756722407; cv=none; b=WRv2YCPPQRCFuAJ9eFD9l+xp1IY9mlj80Z9OdCukPEkbjEXymZFfoeo976CmFifHUNliRUg5nR/u3kseHruTdTGU0y7nRdUAXXw8ZQyv2pPo9f8pISq1IQz20tqFOw9P8Sv7AHvg3Gpp/Bm2UtuVWBmTfmoU4H+vlS79ldhoyYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756722372; c=relaxed/simple;
-	bh=KlPMli+YTGrSmlreZkYduv5O2gGu89LeCVUbysiOvIA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUNxPYZ3bmJ9373iGnyalDUAzyGlpxc7NMh9xZMaOePKi483l7+nCVs0kE49gTdNm2JOR4P3x+8JnWfBnSSlBxNk6ZwIpC4Ii97GnRUttU8PrcX+Mcrh0WogKA+e9O7gxVZPeG/JFu4v24Tok7N9AHboqd+BHWvRZyw9hokAHck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-89018eb083eso1953481241.0;
-        Mon, 01 Sep 2025 03:26:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756722370; x=1757327170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mV3OsbhzOeODyoDYN/QMtyaaE2+Lj2OTOI314KxLNk8=;
-        b=dKkxlOuV9n18ykcgZLTatc82AT4oiXcdLDI3dUPe0Y14ctY6TvszFVGKFDNFJxjpon
-         FuHBzXxKZaUU+wi0R4baxRcchf61HA2PClaLBbiOzC6AyDpPISeL3rHCKAH3dZC+aMXz
-         Gx/wJB0/kzChG5wW6vD1yb/20KwyDKXHGROFxcPIEewf+NKrSCUYiVydT4XiFHQIJ63X
-         3qjOvSa6nCWwiq3RkEUf/RE+BsNZNr2vl7fISdKoIqbaPAZ9GNACFhlq9shTDwYUNwRw
-         /NScUzzYaYZKJdXIrMS02Noy074u6IZtV6a7/Z+doaC3dYhPvvgwNiS9A8Ky3Q0+eOzI
-         5kBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWK5jXQJahJ5u4eBkRHCyAuUqUQPfOfkHZKL9g+/so3VRS2Vu0A8mvbah0oQcpnIoQJs5WxDwkcjs5E0kz@vger.kernel.org, AJvYcCWn9T4rBtYzC+UwjNr5tKB0dgkrgW0eAPKV983kmAkI+Bg6rI3KGmI5jxDWYJe9QeJBGuefBfvYZGW28MTkxWSeG00=@vger.kernel.org, AJvYcCWvBbkXxu+AFMEr97Wa6zU4LvNJK1E8NlTpyOEbCg/5mFjkQThKK3H2j09uRCGiJVDK7pT0epIoqSZf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9GBLonHIek0bEKSqyb2mCvrIzJL8TCh+FcKch46KpUtcTEM1K
-	g/E8S7mp/WiPsnwHSW1uy7Qic+lsQk3nCzmSvvi4w0oAoYN16p+DkumTN/UsrXWK
-X-Gm-Gg: ASbGnctFeAj14hTyOEchi3wxuBy97UXF1dVHwyEzyhe+pqauGaLZKOarqUacU6139zG
-	Tm69nLI/Hr7dmPnUuC4ml3krhcrmXfPURCoS/SR9bl9EXoEpO31Hgtl51zXPYJKe18yyYxMgOTG
-	HDyNQ77M0xc5zMlyPuzr0OpihRb6Fkc1cIhL7cvs8H45sHHb0EV/tyf0/1o/+PuEAjXtmNf8weO
-	x5jukifbKC82c+JpFr3dDB0LmL7/x0hL4BtreBZLHmf6nKeyky1wfVEP7RoEmKqYHmP1aeSWqoG
-	+Uozkfdjt8bOVinK9d/2EMG2tXoP4jMlbQNYDv2tG+2O4EWQ6pRUF2L/MTDmeOV+BlTmEvquNKW
-	t9/nwBCDpbDFhFB/3rNJVE8RtRGwU908euQGRf5ywkJ285xnjTcBAJpa0mWbobH+GYdo6Q1Q=
-X-Google-Smtp-Source: AGHT+IFK9ysZbgAOGijhcpN7tzZT2x/hBm7dJTqAmEjvsgNx7fUJRbnQJsJaYMpZ9owW7E1znUIrxw==
-X-Received: by 2002:a05:6102:4691:b0:524:2917:61aa with SMTP id ada2fe7eead31-52b1c149c51mr2204347137.32.1756722369864;
-        Mon, 01 Sep 2025 03:26:09 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52af19158a6sm2916513137.9.2025.09.01.03.26.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 03:26:09 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-8943761ca20so2350119241.2;
-        Mon, 01 Sep 2025 03:26:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUf/JPCijqglL9bpUVFyvg4/MxAVc71BE/TiHxK6DgQNk1zm7SMf0bT1gn1P1N90mTuMiXr2ySxE5hi@vger.kernel.org, AJvYcCV9V3xBRsjQ8Te2pY6J3bpRr35lJXNIX0vyAkTWicitmZtTXOxG72DeMW+1WR/zZdqYBiOaMvX5qNhSrya34mL3O4Q=@vger.kernel.org, AJvYcCW3eM2C/nLs4KqRzQOpYaREbdqfZQQh8XG/lPhLiLu1aroYsx+W9tUrv3589ii0lt42l4/ovKemAuHCaYbP@vger.kernel.org
-X-Received: by 2002:a05:6102:b09:b0:527:8b63:78fb with SMTP id
- ada2fe7eead31-52b1c353160mr2103953137.34.1756722369370; Mon, 01 Sep 2025
- 03:26:09 -0700 (PDT)
+	s=arc-20240116; t=1756722407; c=relaxed/simple;
+	bh=qRbOhP2Hk3coT26m0WVj9EMJQnMmn/YhzGu5B64C9qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UVjaahFx0QE/ogY8zInLAcIaLpcRhQRDr8rC4QKR8bJHvi6RL/Tl6Pu20BVbJ9lchbmgUsDSlgG6XvvDpTgvGw5xbEH/JY+6tkkTBl59KchHonRfXxzcB84/fF4By0ytXsJZPETfQ0Myzz3BLYfcbQzmYTULtQ6DrI3mL88XAmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PKSR8Pbq; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=j1kKbV5d4unXat77+A/yhxjotz/ONZ6osi4fbj/byZk=; b=PKSR8Pbqps1Kv1zUiviWXXiah8
+	Avqfp8WKEK+RHcpQcu42jPkII2XkWQlIxj3vwx7xJ9ykXQedn/VzrcN3oz2WmsnbdBFhKQble2pA5
+	qgzQvFyymyg8bCgPPAudk3SYvrsrtsK8tjEnv2U5DWdnTdi0+eR2RuRPzlKRUK0xksXhrkjUdy/3D
+	XfO49hWYDv5FcX6sdnvf+i9ZivzY19x6X8+hw5/kYxWCcWOFt7QWtVmUnZIqufQ20ObuMOqnj5nhI
+	S5gslic6YL9OXKp2O2EwAkmdLnuhoemlnJUX3704t5ArLLcS9fjOkM7yV/UcVKqv7h94VBbEWWfOu
+	6BojnXVQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ut1kI-00000006cpp-3k6i;
+	Mon, 01 Sep 2025 10:26:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A63AD300342; Mon, 01 Sep 2025 12:26:42 +0200 (CEST)
+Date: Mon, 1 Sep 2025 12:26:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 01/33] sched/isolation: Remove housekeeping static key
+Message-ID: <20250901102642.GH4067720@noisy.programming.kicks-ass.net>
+References: <20250829154814.47015-1-frederic@kernel.org>
+ <20250829154814.47015-2-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831084958.431913-1-rongqianfeng@vivo.com>
- <20250831084958.431913-4-rongqianfeng@vivo.com> <CAMuHMdW59wJCKq8nQ-SZHXVsX2kSCF0zg_gTP2vi3ApwH_SXAg@mail.gmail.com>
- <89294a30-47a7-45bf-80f7-04ffcad378a7@vivo.com>
-In-Reply-To: <89294a30-47a7-45bf-80f7-04ffcad378a7@vivo.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 1 Sep 2025 12:25:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVDSmtpJ_4_Qj7RFukXqgFYo_9WUFKuKtc8DUQWGTNnew@mail.gmail.com>
-X-Gm-Features: Ac12FXxGKDI6SPNUdqsMSWhT3AIsUr6ZHt855FHGjJHCM8cZEvtahFsN0OGRRA0
-Message-ID: <CAMuHMdVDSmtpJ_4_Qj7RFukXqgFYo_9WUFKuKtc8DUQWGTNnew@mail.gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: renesas: Use int type to store negative
- error codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	"open list:PIN CONTROLLER - RENESAS" <linux-renesas-soc@vger.kernel.org>, 
-	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829154814.47015-2-frederic@kernel.org>
 
-Hi Qianfeng,
+On Fri, Aug 29, 2025 at 05:47:42PM +0200, Frederic Weisbecker wrote:
 
-On Mon, 1 Sept 2025 at 12:13, Qianfeng Rong <rongqianfeng@vivo.com> wrote:
-> =E5=9C=A8 2025/9/1 17:07, Geert Uytterhoeven =E5=86=99=E9=81=93:
-> > On Sun, 31 Aug 2025 at 10:50, Qianfeng Rong <rongqianfeng@vivo.com> wro=
-te:
-> >> Change the 'ret' variable in ma35_pinctrl_parse_functions() from unsig=
-ned
-> > sh_pfc_pinconf_group_set
->
-> Thank you for pointing out my mistake.
->
-> >> int to int, as it needs to store either negative error codes or zero
-> >> returned by sh_pfc_pinconf_set().
-> >>
-> >> No effect on runtime.
-> > Fortunately the issue was indeed harmless.
-> >
-> >> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> > Fixes: d0593c363f04ccc4 ("pinctrl: sh-pfc: Propagate errors on group co=
-nfig")
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > i.e. will queue in renesas-pinctrl for v6.18, with the above fixed.
->
-> Will do in the next version.
+> +static inline bool housekeeping_cpu(int cpu, enum hk_type type)
+> +{
+> +	if (housekeeping_flags & BIT(type))
+> +		return housekeeping_test_cpu(cpu, type);
+> +	else
+> +		return true;
+> +}
 
-There is no need to resend; I will fix this up while applying.
+That 'else' is superfluous.
 
-Gr{oetje,eeting}s,
+> -static inline bool housekeeping_cpu(int cpu, enum hk_type type)
+> -{
+> -#ifdef CONFIG_CPU_ISOLATION
+> -	if (static_branch_unlikely(&housekeeping_overridden))
+> -		return housekeeping_test_cpu(cpu, type);
+> -#endif
+> -	return true;
+> -}
+>  
+>  static inline bool cpu_is_isolated(int cpu)
+>  {
+> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> index a4cf17b1fab0..2a6fc6fc46fb 100644
+> --- a/kernel/sched/isolation.c
+> +++ b/kernel/sched/isolation.c
+> @@ -16,19 +16,13 @@ enum hk_flags {
+>  	HK_FLAG_KERNEL_NOISE	= BIT(HK_TYPE_KERNEL_NOISE),
+>  };
+>  
+> -DEFINE_STATIC_KEY_FALSE(housekeeping_overridden);
+> -EXPORT_SYMBOL_GPL(housekeeping_overridden);
+> -
+> -struct housekeeping {
+> -	cpumask_var_t cpumasks[HK_TYPE_MAX];
+> -	unsigned long flags;
+> -};
+> -
+> -static struct housekeeping housekeeping;
+> +static cpumask_var_t housekeeping_cpumasks[HK_TYPE_MAX];
+> +unsigned long housekeeping_flags;
+> +EXPORT_SYMBOL_GPL(housekeeping_flags);
 
-                        Geert
+I don't particularly like exporting variables much. It means modules can
+actually change the value and things like that.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+And while an exported static_key can be changed by modules, that's
+fixable.
 
