@@ -1,106 +1,90 @@
-Return-Path: <linux-kernel+bounces-793762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48410B3D7E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:47:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46882B3D7E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AFEB3BE33A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F4D3BE1E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E4C212545;
-	Mon,  1 Sep 2025 03:45:52 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7425D257435;
+	Mon,  1 Sep 2025 03:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="MoTmeKmF"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6A6153BE9;
-	Mon,  1 Sep 2025 03:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B70422332E;
+	Mon,  1 Sep 2025 03:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756698352; cv=none; b=Px7QQ5cJhZMvuXKn7qaAHC1Md5Jc61Clpt8C/2e6JBUIojm3IYUg89oZtInfkRbIel2VCx2lD9stFW5/lVjRBJUDkh6M9T+SXQjrdm8WtJ74Og1CrJ8SKND8J2XEhCAFXipbtPnXmsN9UN5zHVvs7bhDyMPyl1GkGu65TUpqEOc=
+	t=1756698358; cv=none; b=GW/lMnALSwJdDbzQMmXWnObwQsE29ogMNFkyBd5tnnJOzMRB0Mb0nXhh182vcx4BxYPX9LVmQ48nm/KH1asWJKhcHbAf5UbMEcx6DBLxx3Tp+BrSOonFLzatxqvK/G+ugeBYfm5wjTN0e90slujS5IGLa1gwKN/lvi9UGofdspg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756698352; c=relaxed/simple;
-	bh=sKgZOVb18ukU6gfr09NK//ApDL9iFlVCo9W1MECGjQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYahpyauH31GjqGE3NAgTro0AxZer32PkRquke1vT92C16TcErO9vRAqs/05U5HXFky8B8Dtd69yxjXtrFxlNIp44nNtBigG17YK3srTRTxW7e09NnJ7SiASJCsqAvk3ms7XpLqFmgukR5NyB4wzeAP/Ez4G3V5Juj0DUuWpCUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FAEBC4CEF0;
-	Mon,  1 Sep 2025 03:45:51 +0000 (UTC)
-Date: Mon, 1 Sep 2025 05:45:49 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Abel Vesa <abel.vesa@linaro.org>, Mahadevan <quic_mahap@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/9] dt-bindings: display/msm: dp-controller: fix
- fallback for SM6350
-Message-ID: <20250901-arboreal-gay-wolf-bcaaec@kuoka>
-References: <20250829-dp_mst_bindings-v7-0-2b268a43917b@oss.qualcomm.com>
- <20250829-dp_mst_bindings-v7-2-2b268a43917b@oss.qualcomm.com>
+	s=arc-20240116; t=1756698358; c=relaxed/simple;
+	bh=uxvZZwhTCY3iV99HKlWPirh8QVCrtS++UsYg4s6EO7U=;
+	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
+	 Content-Type:Message-ID:Date; b=SiBgwXgoVwxZPb8LcGVymNTxFYqJYggPh2eLSx60/ccrSfn8UAbE8ti1Ne2rO6LdkEb63kdUQwpmFdTYJo27/0gco+FG8UalucSMAF0g8LvQEz/1UzXFqK+YHiOt44RRc7G9/rfmXsFX3KbbgweKuQk1TiFk3775OpXzhvJ8qQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=MoTmeKmF; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5813jq8T3234442, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1756698352; bh=Gwx6aiI6fLG3iG62EUd1krG3XrOgOkEPGqhmGuLVd8o=;
+	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
+	 Content-Type:Message-ID:Date;
+	b=MoTmeKmF5wKQ5lpEaFbEvtwqjdz9rYcAP9RVK84ks8DPDd00HCBGNEc9EWXVmLv6g
+	 torGKFZ5pbquKUDJWy6D4D4oybi2SEnvJKGBJ+RhwhAZN5p54qo6MA+LdmN6SatK3D
+	 d9tEFIJ5O5wS7TL8dFSiTRHwhdgbfyB5fh1GcTHkOfbaDRhyxDqnommQ4wxFemifZI
+	 O/Vpo2WV2NK4IfgMuB00nfBCuF9RMW7qEIA/+qyBHOBcJLlaCT6ks7McSSjhwFlYwp
+	 0f1mHqo6BJbI6GQTSQ0Tx/5lC2CXgDYAEi5lqOETMddydk/e/XjejLaU4z0Xb/XSHM
+	 t79kF3/XdLtTw==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5813jq8T3234442
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 1 Sep 2025 11:45:52 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Mon, 1 Sep 2025 11:45:52 +0800
+Received: from [127.0.1.1] (172.21.69.94) by RTKEXHMBS06.realtek.com.tw
+ (10.21.1.56) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Mon, 1 Sep
+ 2025 11:45:51 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Ping-Ke Shih <pkshih@realtek.com>,
+        "open list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: Re: [PATCH rtw-next v2] wifi: rtw89: 8852bt: Remove redundant off_reverse variables
+In-Reply-To: <20250828094717.599527-1-liaoyuanhong@vivo.com>
+References: <20250828094717.599527-1-liaoyuanhong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250829-dp_mst_bindings-v7-2-2b268a43917b@oss.qualcomm.com>
+Content-Type: text/plain
+Message-ID: <ea6afec7-033b-4f81-9156-b1dbb6086765@RTKEXHMBS06.realtek.com.tw>
+Date: Mon, 1 Sep 2025 11:45:51 +0800
+X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56)
 
-On Fri, Aug 29, 2025 at 01:48:15AM +0300, Dmitry Baryshkov wrote:
-> The SM6350 doesn't have MST support, as such it is not compatible with
-> the SM8350 platform. Add new entry for SM6350 with fallback to SC7180
-> (which belongs to the same generation and also doesn't have MST
-> support).
+Liao Yuanhong <liaoyuanhong@vivo.com> wrote:
+
+> The variable off_reverse and its related code are completely redundant in
+> the function. Remove them to clean the code.
 > 
-> Fixes: 39086151593a ("dt-bindings: display: msm: dp-controller: document SM6350 compatible")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/display/msm/dp-controller.yaml     | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index aed3bafa67e3c24d2a876acd29660378b367603a..0f814aa6f51406fdbdd7386027f88dfbacb24392 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -31,13 +31,25 @@ properties:
->            - qcom,sm8650-dp
->        - items:
->            - enum:
-> -              - qcom,sar2130p-dp
->                - qcom,sm6350-dp
-> +          - const: qcom,sc7180-dp
-> +
-> +      # deprecated entry for compatibility with old DT
-> +      - items:
-> +          - enum:
-> +              - qcom,sm6350-dp
-> +          - const: qcom,sm8350-dp
-> +        deprecated: true
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 
-If it is only about bindings then there is little benefit in keeping
-this, just drop this case.  However you cannot drop it from DTS, so this
-is a bit pointless.
+1 patch(es) applied to rtw-next branch of rtw.git, thanks.
 
-Lack of MST support is not informative enough to claim it is not
-compatible with 8350. For example if it was working fine via fallback,
-then that statement is simply not correct.
+35ded83be0d4 wifi: rtw89: 8852bt: Remove redundant off_reverse variables
 
-And it HAD to work fine, because there is nothing binding to
-qcom,sm6350-dp.
-
-Best regards,
-Krzysztof
+---
+https://github.com/pkshih/rtw.git
 
 
