@@ -1,159 +1,198 @@
-Return-Path: <linux-kernel+bounces-793737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D14B3D781
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D90B3D785
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD482165B22
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:37:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89EF416FB2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C0021CC43;
-	Mon,  1 Sep 2025 03:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466F921A425;
+	Mon,  1 Sep 2025 03:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vnzxd3Zy"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gvea9hoR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374C821ABAC
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 03:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B78F52F99;
+	Mon,  1 Sep 2025 03:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756697764; cv=none; b=T2p/tG53GYvlqUZK36a8XN4tePJHvQVtLqsfMHciM2/fKMVHmIpV0/YPg8fKA4Wkq8ewO8ONI126UQx0UOQf4XNZgdPOB4By/BiLJ4FMImlytM3MC3yWz1dbI9S1EjAPKcO1tPPWZtXJbn1ZUkShzdQRgi3fnIDVBsvN4AwroLk=
+	t=1756697924; cv=none; b=rEtu2Kk/PqY6jZ+S1K2iMvDvvq+2bDESCViwQMxLr26rwQ/OLP95j2AD1y+093F0V5GrZkta8gn/LpyGQp7Q7hjZVHagzAzJSxk8egYWFZxg9cBQdn+ci1zhwBMwEIsYpWJSQ1o7u2/KF9t2e39e2NM4z0QIjSV8oi6NJasiudA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756697764; c=relaxed/simple;
-	bh=SLph87s8uTl1mRNhEJdvueXclNiF3X9Ct/qHq8xkbxc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=jKVtUN5HFZFt6F4odBJ40ZOGq5ZgnWKQFwpiPPPaiGCiW5bYy1C9lwFQc6YPiPToSQhZWjOLUri97UrKxoR+CZZnYzHBHoeEMi+CUlekCnBbyess6ErW1miKc5eUU2xSLL/mFgD/8pQe7qKNbnVNUpRspb8X5sNx2pGy8TkfCQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Vnzxd3Zy; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250901033555epoutp03c05881488fdffb3610e8b1ed60f4c2c4~hC00YLmAs2470624706epoutp03W
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 03:35:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250901033555epoutp03c05881488fdffb3610e8b1ed60f4c2c4~hC00YLmAs2470624706epoutp03W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756697755;
-	bh=SLph87s8uTl1mRNhEJdvueXclNiF3X9Ct/qHq8xkbxc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Vnzxd3Zyttevv+8cM067HoYIE3M7gBjG24JKRDbOxR923nuB014ryLPY2dqqmPkAk
-	 2MVePyYtmkBGNkRdl6pMNV4hbSaFL9Mq1vSp1Llhu6b0EUYx/zRyoUpV9re4VkL4G1
-	 USHmIhEgtX9C5ll3CgGqUQBl09sGHKQdJHvN0K1Q=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250901033554epcas5p3bf93e89b823f346c64490171a2f3a95a~hC0zLD_ZI2697626976epcas5p3E;
-	Mon,  1 Sep 2025 03:35:54 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cFZK473pJz2SSKY; Mon,  1 Sep
-	2025 03:35:52 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250901033552epcas5p10b35ebcca823a43b8d282064733414c4~hC0xcw4bL0189601896epcas5p1G;
-	Mon,  1 Sep 2025 03:35:52 +0000 (GMT)
-Received: from FDSFTE411 (unknown [107.122.81.184]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250901033547epsmtip2a6cc484678d50e13aa2c0a4577703238~hC0s-tZa92354723547epsmtip2B;
-	Mon,  1 Sep 2025 03:35:47 +0000 (GMT)
-From: "Ravi Patel" <ravi.patel@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Linus Walleij'"
-	<linus.walleij@linaro.org>
-Cc: <jesper.nilsson@axis.com>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<alim.akhtar@samsung.com>, <tomasz.figa@gmail.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
-	<ksk4725@coasia.com>, <kenkim@coasia.com>, <pjsin865@coasia.com>,
-	<gwk1013@coasia.com>, <hgkim05@coasia.com>, <mingyoungbo@coasia.com>,
-	<smn1196@coasia.com>, <shradha.t@samsung.com>, <inbaraj.e@samsung.com>,
-	<swathi.ks@samsung.com>, <hrishikesh.d@samsung.com>,
-	<dj76.yang@samsung.com>, <hypmean.kim@samsung.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-arm-kernel@axis.com>,
-	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <soc@lists.linux.dev>, "'Priyadarsini G'"
-	<priya.ganesh@samsung.com>
-In-Reply-To: <32dedafd-df52-48fe-a9b2-be96127bb9b7@kernel.org>
-Subject: RE: [PATCH v3 05/10] pinctrl: samsung: Add ARTPEC-8 SoC specific
- configuration
-Date: Mon, 1 Sep 2025 09:05:46 +0530
-Message-ID: <000101dc1af1$84438410$8cca8c30$@samsung.com>
+	s=arc-20240116; t=1756697924; c=relaxed/simple;
+	bh=z94Kx1KMl2l+lSfysX9sO+/WmciiB+Aa8LKZMyzvCSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZwarAra7eWqX1aujcev+3nCYaXjOWhMKyjHmYL++d35eZT3/xNy/j7rYaChOF4OaTnuYLKk8R5K26eRn3Na+oKuM0Fboj570Zj8fXQF+oe7lwm33D7MhYxqWuRPeXPaoDTJJgQrG9E7RVkJwUxEDLTXP3rg0hjXQgc8h8B8aoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gvea9hoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE58C4CEF0;
+	Mon,  1 Sep 2025 03:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756697924;
+	bh=z94Kx1KMl2l+lSfysX9sO+/WmciiB+Aa8LKZMyzvCSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gvea9hoR/KirqG2GrpXeGVyKjjHINDWK0gcowewvwpY7WG5mYgU1Gqv2ePe/I3frg
+	 FrJpijqWhlEex3Blp3aF+Grn1rjs/Y57OosSKedbGvHvPcr8v239laNqTqQmcs76fR
+	 9D9ZJXyg6zM+203Kuq8GYDB6vSyOCsNYg2XLwGrWFyPcFxoNhgZ6m4RrB+WyYwqUCi
+	 u5njEW/r7XfAo1ubHID2mPnBYBs2OhVaLlzjtqdYF3mznR2XLAj7x/i5ZS2GlAtcyC
+	 B6peF2aZay6AxCQeLyh/heqLMGeULb0zvJyxJMeAO7LxtwpJTxs3+QT+UiYqaOXOEm
+	 uBd52gWUWWcsA==
+Date: Mon, 1 Sep 2025 09:08:36 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Johan Hovold <johan@kernel.org>, stable+noautosel@kernel.org
+Subject: Re: [PATCH v3] PCI: qcom: Use pci_host_set_default_pcie_link_state()
+ API to enable ASPM for all platforms
+Message-ID: <3rsijaalogupaxilfr7rjrqrzqzxrk2sqnj2zeqhaideqwpani@w2ozjbxihkgq>
+References: <rxdibunhe34gpheegc674cqii4tv6eghh2qskk2uaige5szy3a@nuf6ho2vfbgn>
+ <20250827182258.GA891474@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ632k4xbrD7jhK5O/rHG9LFVDGhAHHo9j0ArVvYJACmL3/qQEjiZNhsv5Y8CA=
-Content-Language: en-in
-X-CMS-MailID: 20250901033552epcas5p10b35ebcca823a43b8d282064733414c4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250825120720epcas5p491e16bbfbdbcd751acbb0c0e55f9e2a2
-References: <CGME20250825120720epcas5p491e16bbfbdbcd751acbb0c0e55f9e2a2@epcas5p4.samsung.com>
-	<20250825114436.46882-1-ravi.patel@samsung.com>
-	<20250825114436.46882-6-ravi.patel@samsung.com>
-	<CACRpkdZwz8C=MRgo1tQrkQzNtKMLV+P-LK8XyRA3eSFW-cbFCg@mail.gmail.com>
-	<32dedafd-df52-48fe-a9b2-be96127bb9b7@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250827182258.GA891474@bhelgaas>
 
+On Wed, Aug 27, 2025 at 01:22:58PM GMT, Bjorn Helgaas wrote:
+> On Wed, Aug 27, 2025 at 10:43:26PM +0530, Manivannan Sadhasivam wrote:
+> > On Wed, Aug 27, 2025 at 10:47:39AM GMT, Bjorn Helgaas wrote:
+> > > On Mon, Aug 25, 2025 at 01:52:57PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > > 
+> > > > Commit 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms
+> > > > supporting 1.9.0 ops") allowed the Qcom controller driver to
+> > > > enable ASPM for all PCI devices enumerated at the time of the
+> > > > controller driver probe. It proved to be useful for devices
+> > > > already powered on by the bootloader, as it allowed devices to
+> > > > enter ASPM without user intervention.
+> > > > 
+> > > > However, it could not enable ASPM for the hotplug capable
+> > > > devices i.e., devices enumerated *after* the controller driver
+> > > > probe. This limitation mostly went unnoticed as the Qcom PCI
+> > > > controllers are not hotplug capable and also the bootloader has
+> > > > been enabling the PCI devices before Linux Kernel boots (mostly
+> > > > on the Qcom compute platforms which users use on a daily basis).
+> > > > 
+> > > > But with the advent of the commit b458ff7e8176 ("PCI/pwrctl:
+> > > > Ensure that pwrctl drivers are probed before PCI client
+> > > > drivers"), the pwrctrl driver started to block the PCI device
+> > > > enumeration until it had been probed.  Though, the intention of
+> > > > the commit was to avoid race between the pwrctrl driver and PCI
+> > > > client driver, it also meant that the pwrctrl controlled PCI
+> > > > devices may get probed after the controller driver and will no
+> > > > longer have ASPM enabled. So users started noticing high runtime
+> > > > power consumption with WLAN chipsets on Qcom compute platforms
+> > > > like Thinkpad X13s, and Thinkpad T14s, etc...
+> > > > 
+> > > > Obviously, it is the pwrctrl change that caused regression, but
+> > > > it ultimately uncovered a flaw in the ASPM enablement logic of
+> > > > the controller driver. So to address the actual issue, use the
+> > > > newly introduced pci_host_set_default_pcie_link_state() API,
+> > > > which allows the controller drivers to set the default ASPM
+> > > > state for *all* devices. This default state will be honored by
+> > > > the ASPM driver while enabling ASPM for all the devices.
+> > > 
+> > > So I guess this fixes a power consumption regression that became
+> > > visible with b458ff7e8176 ("PCI/pwrctl: Ensure that pwrctl drivers
+> > > are probed before PCI client drivers").  Arguably we should have a
+> > > Fixes: tag for that, and maybe even skip the tag for 9f4f3dfad8cf,
+> > > since if you have 9f4f3dfad8cf but not b458ff7e8176, it doesn't
+> > > sound like you would need to backport this change?
+> > 
+> > 9f4f3dfad8cf is the culprit which added a half baked solution for
+> > enabling ASPM and b458ff7e8176 made the issue more obvious since
+> > instead of requiring people to connect a device after boot, it
+> > allowed the device to enumerate after the probe of the controller
+> > driver, thereby making it more visible.
+> > 
+> > It would make sense to add a Fixes tag for b458ff7e8176 too, but
+> > 9f4f3dfad8cf should also be present IMO.
+> 
+> OK.  IIUC we would only land on 9f4f3dfad8cf for hot-plugged devices,
+> and you said these controllers don't support hotplug.  Backporting
+> something to fix a half-baked solution that doesn't cause an actual
+> problem is of marginal value, but we can keep the Fixes: 9f4f3dfad8cf.
+> 
 
+Just to add more: It is true that our controllers doesn't support hotplug, but
+with the addition of pwrctrl, the enumeration of the devices could be deferred
+for a while (until the pwrctrl driver gets probed and does its job even if the
+device was powered on by the bootloader), then we will trip over this issue. So
+we will need to backport it to 6.13 where commit b458ff7e8176 got introduced.
+But I added the noautosel tag since the backport requires manual work.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 29 August 2025 15:59
-> To: Linus Walleij <linus.walleij=40linaro.org>; Ravi Patel <ravi.patel=40=
-samsung.com>
-> Cc: jesper.nilsson=40axis.com; mturquette=40baylibre.com; sboyd=40kernel.=
-org; robh=40kernel.org; krzk+dt=40kernel.org; conor+dt=40kernel.org;
-> s.nawrocki=40samsung.com; cw00.choi=40samsung.com; alim.akhtar=40samsung.=
-com; tomasz.figa=40gmail.com; catalin.marinas=40arm.com;
-> will=40kernel.org; arnd=40arndb.de; ksk4725=40coasia.com; kenkim=40coasia=
-.com; pjsin865=40coasia.com; gwk1013=40coasia.com;
-> hgkim05=40coasia.com; mingyoungbo=40coasia.com; smn1196=40coasia.com; pan=
-kaj.dubey=40samsung.com; shradha.t=40samsung.com;
-> inbaraj.e=40samsung.com; swathi.ks=40samsung.com; hrishikesh.d=40samsung.=
-com; dj76.yang=40samsung.com; hypmean.kim=40samsung.com;
-> linux-kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; l=
-inux-samsung-soc=40vger.kernel.org; linux-arm-kernel=40axis.com;
-> linux-clk=40vger.kernel.org; devicetree=40vger.kernel.org; linux-gpio=40v=
-ger.kernel.org; soc=40lists.linux.dev; Priyadarsini G
-> <priya.ganesh=40samsung.com>
-> Subject: Re: =5BPATCH v3 05/10=5D pinctrl: samsung: Add ARTPEC-8 SoC spec=
-ific configuration
->=20
-> On 29/08/2025 12:11, Linus Walleij wrote:
-> > Hi Ravi / SeonGu,
-> >
-> > thanks for your patch=21
-> >
-> > On Mon, Aug 25, 2025 at 2:07=E2=80=AFPM=20Ravi=20Patel=20<ravi.patel=40=
-samsung.com>=20wrote:=0D=0A>=20>=0D=0A>=20>>=20From:=20SeonGu=20Kang=20<ksk=
-4725=40coasia.com>=0D=0A>=20>>=0D=0A>=20>>=20Add=20Axis=20ARTPEC-8=20SoC=20=
-specific=20configuration=20data=20to=20enable=20pinctrl.=0D=0A>=20>>=0D=0A>=
-=20>>=20Signed-off-by:=20SeonGu=20Kang=20<ksk4725=40coasia.com>=0D=0A>=20>>=
-=20Signed-off-by:=20Priyadarsini=20G=20<priya.ganesh=40samsung.com>=0D=0A>=
-=20>>=20Signed-off-by:=20Ravi=20Patel=20<ravi.patel=40samsung.com>=0D=0A>=
-=20>=0D=0A>=20>=20Please=20avoid=20CC=20to=20soc=40kernel.org=20on=20these=
-=20patches,=20they=20end=20up=20in=20the=0D=0A>=20>=20patchwork=20for=20imm=
-ediate=20merging=20for=20SoC:=0D=0A>=20>=20https://patchwork.kernel.org/pro=
-ject/linux-soc/patch/20250825114436.46882-6-ravi.patel=40samsung.com/=0D=0A=
->=20=0D=0A>=20Yeah,=20that's=20odd=20-=20most=20likely=20old=20CC-list.=20T=
-his=20could=20happen=20if=20using=0D=0A>=20b4=20but=20there=20is=20no=20b4=
-=20being=20used=20here,=20so=20why=20Cc-ing=20according=20to=20some=0D=0A>=
-=20old=20files?=0D=0A>=20=0D=0A>=20>=0D=0A>=20>=20I=20think=20this=20is=20n=
-ot=20you=20intention,=20the=20pinctrl=20portions=20will=20be=20merged=20by=
-=0D=0A>=20>=20Krzysztof=20who=20sends=20it=20to=20me=20once=20that=20part=
-=20is=20finished=20reviewing.=0D=0A>=20Version=20for=20review=20should=20no=
-t=20be=20merged=20via=20soc=40,=20so=20that's=20wrong=0D=0A>=20process=20in=
-=20any=20case.=20But=20you=20are=20right=20that=20I=20will=20be=20taking=20=
-everything,=0D=0A>=20thus=20soc=40=20is=20not=20involved=20at=20all.=0D=0A=
-=0D=0AOk,=20I=20will=20remove=20soc=40=20while=20sending=20next=20version.=
-=0D=0A=0D=0AThanks,=0D=0ARavi=0D=0A=0D=0A>=20=0D=0A>=20Best=20regards,=0D=
-=0A>=20Krzysztof=0D=0A=0D=0A
+> > > > Also with this change, ASPM is now enabled by default on all
+> > > > Qcom platforms as I haven't heard of any reported issues (apart
+> > > > from the unsupported L0s on some platorms, which is still
+> > > > handled separately).
+> > > 
+> > > If ASPM hasn't been enabled by default, how would you hear about
+> > > issues?  Is ASPM commonly enabled in some other way?
+> > 
+> > Mostly from the downstream drivers. They do enable ASPM by default
+> > and I haven't heard of any issues with that. So I assumed that would
+> > mean it will be safe for us to enable ASPM for all platforms in
+> > upstream as well.
+> > 
+> > > If you think the risk of ASPM issues is nil, I guess it's OK to do
+> > > at the same time.  From a maintenance perspective it might be nice
+> > > to separate that change so if there happened to be a regression,
+> > > we could identify and revert that part by itself if necessary.  It
+> > > looks like previously, ASPM was only enabled for one part:
+> > > 
+> > >   ops_2_7_0   # cfg_2_7_0 qcom,pcie-sdm845
+> > 
+> > No. Previously ASPM was enabled for ops_1_9_0 and ops_1_21_0 based
+> > platforms.
+> 
+> Oops, my mistake.  Traversing all the ops_ and cfg_ structs was a
+> little confusing.  For posterity, I guess the corrected matrix is that
+> ASPM was previously enabled for these:
+> 
+>   ops_1_9_0   # cfg_1_9_0 qcom,pcie-sc7280 qcom,pcie-sc8180x qcom,pcie-sdx55 qcom,pcie-sm8150 qcom,pcie-sm8250 qcom,pcie-sm8350 qcom,pcie-sm8450-pcie0 qcom,pcie-sm8450-pcie1 qcom,pcie-sm8550
+> 	      # cfg_1_34_0 qcom,pcie-sa8775p
+>   ops_1_21_0  # cfg_sc8280xp qcom,pcie-sa8540p qcom,pcie-sc8280xp qcom,pcie-x1e80100
+> 
+> And will now be enabled for these:
+> 
+>   ops_2_1_0   # cfg_2_1_0 qcom,pcie-apq8064 qcom,pcie-ipq8064 qcom,pcie-ipq8064-v2
+>   ops_1_0_0   # cfg_1_0_0 qcom,pcie-apq8084
+>   ops_2_3_2   # cfg_2_3_2 qcom,pcie-msm8996
+>   ops_2_4_0   # cfg_2_4_0 qcom,pcie-ipq4019 qcom,pcie-qcs404
+>   ops_2_3_3   # cfg_2_3_3 qcom,pcie-ipq8074
+>   ops_2_7_0   # cfg_2_7_0 qcom,pcie-sdm845
+>   ops_2_9_0   # cfg_2_9_0 qcom,pcie-ipq5018 qcom,pcie-ipq6018 qcom,pcie-ipq8074-gen3 qcom,pcie-ipq9574
+> 
+> > If you insist, I can do that by calling
+> > pci_host_set_default_pcie_link_state() from qcom_pcie_init_2_7_0()
+> > and later move it to qcom_pcie_host_init() in a separate patch.
+> 
+> I don't insist; that's why I said "if you think the risk of issues
+> is nil," since I didn't know that you had any experience with ASPM
+> being enabled on the others.  But it sounds like you do, so I'm ok
+> with this as-is.
+> 
+
+Ok. In any case, we need to sort out the discussion happening with the series
+from David [1] first. Currently, ASPM is broken on couple of Snapdragon laptops
+since v6.13 and I'd love to fix it asap.
+
+- Mani
+
+[1] https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
