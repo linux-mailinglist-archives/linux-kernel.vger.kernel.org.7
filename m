@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-794504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B90AB3E2C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16496B3E2C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3EC8189CB18
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:26:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B57D1A82FDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DF4322DDA;
-	Mon,  1 Sep 2025 12:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA4532143E;
+	Mon,  1 Sep 2025 12:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvarCv5S"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9UggVtP"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB55275B06
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD40831DD9A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729559; cv=none; b=eicLj25eFtXwVXNvPHlysCUhz99dgy6HSE49a3HDvM37vNthl43tPVfvToaNMBaCVzbIE3t6dFdazTeILd9k7dDxb7AGfleM4vFmj4Jdoz71AMUWopgvRiMmJA/4L4NgWb8ECU8NeD/FM2SPqMzroYp54dVWPeJ5t/0ezhkqEn4=
+	t=1756729560; cv=none; b=JeriBar9LsKio2q5khmDvE2/t1dTHxcgagpu0bgGGIlopc1CWp3hOpIaJUuMNHZzQ9OYhiLgPbYnIQTnCXllcUKagT7Medu/YXXgYQwZVrwtBziTeOv7EbcCuNV61TafMjWOJ106iNPjp1ejD2NL8YsC6pwIBkJz+cz5WH+nTIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729559; c=relaxed/simple;
-	bh=wux92M74JueNoRuqmQzbWUdNMliPKJ4X1MVVZafpMS4=;
+	s=arc-20240116; t=1756729560; c=relaxed/simple;
+	bh=CD/qBdhKGiVF4m6YjtdHR/qx2YHcGOL9PE1MTy/qwGw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pABo5/kkpn2BYd3JUPHA6JqDIUSQtj0a6qhe631zEgN0hzNLblKZm39kUf91IEiGBkrrjpEE5ef4SMEfvGVsFUY0SxYVZb8w2KulfFDQ3DINJ1/1qLAhES1spWChUXgPmgcwZ0HAjDAMLJgVOyEHpVvXO53Mh0ET+nmC7q1pZFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvarCv5S; arc=none smtp.client-ip=209.85.221.50
+	 MIME-Version:Content-Type; b=DRmCTiiNQi9/aG7ETecTFoGAvEbDCBZYiyGIzKRAAZ2L3YZ6VUcZsR3X4hqxK6rKbn9gVSTJCFFPVvd+/g69jf/Noz2LfdwBuutJws+jvsKdHRVkVJt01LAzRzs1PZmqLqFBai1Zvu+d7Rnc0fxRKC04RTeHcKBxwytynpJMEEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9UggVtP; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3d1bf79d7acso1235362f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:25:57 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b87a13242so14553275e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:25:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756729556; x=1757334356; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756729557; x=1757334357; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WjVPBUPwOKGL6YGdiWZkpNL6A/aCE0ct1/x7Rycnv+I=;
-        b=jvarCv5S7p4yqq6KM5f2NNEeV7XNN9L6yardfzBd6s8bXh+lld+N3SH1CTjc0XA1Ne
-         upt80sRb/GPZt8DCpkaUjTrRt05ErNVPB6HfBcNqHAuYriDSSCiwPGVkc8q1cAEYJaVI
-         mgkmTr9rXdD2jVYLWO7ZBddOORsSkaG0sLhkoqCQDpYDtbpOTvoij80/WS6lALs5/dZD
-         2qE7sRhFe/gmEYoJob4/8e/nGlDC1sp731lR9FKHCa9z6NYxGNQngcTN5XF+XLDuPhJu
-         yd3KlzCjENt2zP5JK0FG87Ia5rsGfl1v+RuQGywq6955mLxFjt1bFcijJ4Z9UUAcj5VX
-         OZdg==
+        bh=s6J822DCG0Tagx+YMQrYzj9nyMAeQiPi53HWBRRFDX8=;
+        b=g9UggVtPhDiG8dml7iPKJVxrfti54taMuMo0EcwCxYaBddcou5RzoGUBwzK87cEWjR
+         ecgVW+LKLKd+s23HfSX0tp961p2dZLQBGuh8ujaVr8MmMZXj5Xt7eEwt9k8SzjGTWUL2
+         vzPbj/Mbqo0FncBLr7sMx+VK061Ne6+Rn+RMzHCzOB9Qqgjn2+gcCatcHEzEc8W27s9+
+         jiZSz+IUK8YU/bpKKBuv4fpjlmpOL937H5a7FQ32YvLijJiPmg31DWRKvY9I5oXDNy8v
+         o27QJMdBfKD/hPQo9m61UHY/YFuomWITgWCt0MkD9NGLm1w1iHGlPJaywIRcqgjKuxk3
+         0p1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756729556; x=1757334356;
+        d=1e100.net; s=20230601; t=1756729557; x=1757334357;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WjVPBUPwOKGL6YGdiWZkpNL6A/aCE0ct1/x7Rycnv+I=;
-        b=Jme48n3Qsl8maRDviqvIdZRZbKWPQWBvLZoMmW4AyMDmvrVO2AzorVsaMsgB7xDsYq
-         RCDfM2GsTJwViRnLaFEUEK4/y21OTJmzWKqMHMgVgoqT2q2ZPbXIqfZWmF9MCR8wMgzz
-         qDFk14uXqLksuDJIJytAzYPj/vAYtrGq8EyHu6w2fZpdsiwHRGSMbNayAK7FolDAdiDn
-         ldANvZklo1NbQlDdd7IDlyUcd3M39rmStXW0MQme/pXtlZsH7A7twqaXZNnkRZXVXx1h
-         7ZMiq0zoUzIpStZ3twV8XedCACdi2DFSPktpQ3iOO0eG+BzLhXOzgSX8TPXkL3LVTfO4
-         BgMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjPVBTT6cf18FAs/5uFv35Lu9oL22jcLeKnc88yR6AmoXaSy0v2keP1TlkSPVwIRk9pIYA/aKE+wA49yY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww5maT409wib7/vqy/mr+LnZ5KLpcgJV8EyHrRf2iYtsle/l15
-	gnqah2p1Feh9vgRqanXgJpYFnCuT/+tj0xYwkMz1QzbgG5cMRp0gh8c4
-X-Gm-Gg: ASbGncvFR91EwzDZqr/37pa3EvuZNh46MQITYF41ACCc0Nm/ksPERbKokGT/uVCT2jy
-	Lm8c0BYUJm5sfXG+NlgKb8qlp1A1mmtOS8Cn8gV7oqU2/Yw+oCf8ZNV84tFDSqG1YjwK9pnwmLx
-	fpFp1NFGpyjnWvNdGbyLjvAXmpj01tsafnjwcwZKUVJo7c9rUBQABt4V2o+vMxFrjHqyAcrtNct
-	Ru8sVQzTEMcWHYBy9BnVAmwULCc3GNW+VgxYXCcHx/ZLNYh5R8nRorv6l2g2zXFbJM0gptVF0PL
-	21kCFJdCpB/vrLP0CuQoAGzypa5M5CgMBXoAVPlvYD33r9V5PlkV6a9+SMZ8t2ykNLH+kcc7KuO
-	gfevlY+TjLjUZ1bkNvw==
-X-Google-Smtp-Source: AGHT+IEUvRSZ0lOOSD/k4ytOsND9NTv0MfZ3fZ275SotM7VoNXHOU+gT25I3F0y7K+NXVrge/sRQ+g==
-X-Received: by 2002:a05:6000:2410:b0:3d8:e1de:7e4f with SMTP id ffacd0b85a97d-3d8e1edc849mr479954f8f.21.1756729555617;
-        Mon, 01 Sep 2025 05:25:55 -0700 (PDT)
+        bh=s6J822DCG0Tagx+YMQrYzj9nyMAeQiPi53HWBRRFDX8=;
+        b=IhukUmbNapPxsCz7FVdoLvBMkcP5tDMJuZPU6IGnnhgiTnMU3VWz9qceVQwFU9JPx0
+         ftBXnDk2OVm8KErDMiLrcnE6cgKHGdVrtxQ3PKfxVnZJACFuSL+HLvqMXOqTVVTunKDm
+         QpoTTlj276G2Wz4Tjb8YZHJzUwxYmLOT3g5X0oBnAf1ucEkevlC4o6Dga8sL7O1gj4BR
+         xIYO/TbdVL7NBUOrtFnwZhl93ixNKRp/q0Q7fldM8ucKdkLaTOuRXLkxSnqFGr5MOgtx
+         e+NZdT1L0dJieHc+Td+gIXTtDQ6MLpvLdKK/atowtkEACujfvdGqFHv1tK74ZaffGVsJ
+         yggw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcqApuW4GBFa03RwUPj/X1hyMOb8qhVgZ0ANCnIlkkWxmQQQQqUfpBuyTNLlhcs5u1Tr9JBU5hWCltkBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBXEyEst3QuYwEJf6NPsQ1oNfPlTM+FVWnNW4t6jGfN56PAukZ
+	BMQKUvAVDxrV/BVqfXrPvHGM4KfhfQiXF681+Dr6D9cjzKCL6ekb+sY1
+X-Gm-Gg: ASbGncuAGrp515mClff/1YvkMRydPdnlfko2HUW3qh6mTjW9A89cHdsppuhX0TiSDBQ
+	t+PA4QGr/BX9f0Rm0HluC7imxlMdl4i5ZSW03JkC3Xz5AAkw/JcBlSJfw/yVVHAcKw3i6dYP56w
+	1P08izz92wktGaxSLFb2bkoHyPiY5Ft+/Jk/nbHwL3xu9rZjffiWJoRhXY5Zb3WpPAhsfuXENu3
+	ti9WmXOE1wTmFTGycOPOgGRykfV8xzyf+/C4/Vssr5Hw4URa8gYFnQ4o9rg9Lki0JcF9fCrwZUZ
+	jb9ePJRXEd6JWT4J6ScFjIUyH033M4ZYvSALH2eDBDy3qmgYxO4wDeWjXN2gKcz366SYR5N2poQ
+	U6ScQI4K6PrsGxF2ts53TWWuYu1BX
+X-Google-Smtp-Source: AGHT+IFrYs0xdumtDpy/wbHYYgQBN8SFLjE3tN0WJJPP30ut3Q3K4yClWwur8tCR8k25h5oQDUgrRg==
+X-Received: by 2002:a05:600c:a41:b0:45b:627a:60cf with SMTP id 5b1f17b1804b1-45b8559b8edmr77708035e9.24.1756729557000;
+        Mon, 01 Sep 2025 05:25:57 -0700 (PDT)
 Received: from fedora ([94.73.32.0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b74950639sm207297055e9.17.2025.09.01.05.25.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b74950639sm207297055e9.17.2025.09.01.05.25.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 05:25:54 -0700 (PDT)
+        Mon, 01 Sep 2025 05:25:56 -0700 (PDT)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: louis.chauvet@bootlin.com
 Cc: hamohammed.sa@gmail.com,
@@ -90,9 +90,9 @@ Cc: hamohammed.sa@gmail.com,
 	linux-kernel@vger.kernel.org,
 	Mark Yacoub <markyacoub@google.com>,
 	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH v6 02/16] drm/vkms: Add and remove VKMS instances via configfs
-Date: Mon,  1 Sep 2025 14:25:27 +0200
-Message-ID: <20250901122541.9983-3-jose.exposito89@gmail.com>
+Subject: [PATCH v6 03/16] drm/vkms: Allow to configure multiple planes via configfs
+Date: Mon,  1 Sep 2025 14:25:28 +0200
+Message-ID: <20250901122541.9983-4-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250901122541.9983-1-jose.exposito89@gmail.com>
 References: <20250901122541.9983-1-jose.exposito89@gmail.com>
@@ -107,11 +107,8 @@ Content-Transfer-Encoding: 8bit
 
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 
-Allow to create, enable, disable and destroy VKMS instances using
-configfs.
-
-For the moment, it is not possible to add pipeline items, so trying to
-enable the device will fail printing an informative error to the log.
+Create a default subgroup at /config/vkms/planes to allow to create as
+many planes as required.
 
 Tested-by: Mark Yacoub <markyacoub@google.com>
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
@@ -119,308 +116,167 @@ Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 Co-developed-by: José Expósito <jose.exposito89@gmail.com>
 Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 ---
- Documentation/gpu/vkms.rst           |  32 +++++
- drivers/gpu/drm/vkms/Kconfig         |   1 +
- drivers/gpu/drm/vkms/Makefile        |   3 +-
- drivers/gpu/drm/vkms/vkms_configfs.c | 172 +++++++++++++++++++++++++++
- drivers/gpu/drm/vkms/vkms_configfs.h |   8 ++
- drivers/gpu/drm/vkms/vkms_drv.c      |   7 ++
- 6 files changed, 222 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
- create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
+ Documentation/gpu/vkms.rst           | 16 ++++-
+ drivers/gpu/drm/vkms/vkms_configfs.c | 88 ++++++++++++++++++++++++++++
+ 2 files changed, 103 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-index 8a8b1002931f..73521b9ff0c3 100644
+index 73521b9ff0c3..c0c892e4e27c 100644
 --- a/Documentation/gpu/vkms.rst
 +++ b/Documentation/gpu/vkms.rst
-@@ -51,6 +51,38 @@ To disable the driver, use ::
+@@ -71,6 +71,19 @@ By default, the instance is disabled::
+   cat /config/vkms/my-vkms/enabled
+   0
  
-   sudo modprobe -r vkms
++And directories are created for each configurable item of the display pipeline::
++
++  tree /config/vkms/my-vkms
++  ├── enabled
++  └── planes
++
++To add items to the display pipeline, create one or more directories under the
++available paths.
++
++Start by creating one or more planes::
++
++  sudo mkdir /config/vkms/my-vkms/planes/plane0
++
+ Once you are done configuring the VKMS instance, enable it::
  
-+Configuring With Configfs
-+=========================
-+
-+It is possible to create and configure multiple VKMS instances via configfs.
-+
-+Start by mounting configfs and loading VKMS::
-+
-+  sudo mount -t configfs none /config
-+  sudo modprobe vkms
-+
-+Once VKMS is loaded, ``/config/vkms`` is created automatically. Each directory
-+under ``/config/vkms`` represents a VKMS instance, create a new one::
-+
-+  sudo mkdir /config/vkms/my-vkms
-+
-+By default, the instance is disabled::
-+
-+  cat /config/vkms/my-vkms/enabled
-+  0
-+
-+Once you are done configuring the VKMS instance, enable it::
-+
-+  echo "1" | sudo tee /config/vkms/my-vkms/enabled
-+
-+Finally, you can remove the VKMS instance disabling it::
-+
-+  echo "0" | sudo tee /config/vkms/my-vkms/enabled
-+
-+And removing the top level directory::
-+
-+  sudo rmdir /config/vkms/my-vkms
-+
+   echo "1" | sudo tee /config/vkms/my-vkms/enabled
+@@ -79,8 +92,9 @@ Finally, you can remove the VKMS instance disabling it::
+ 
+   echo "0" | sudo tee /config/vkms/my-vkms/enabled
+ 
+-And removing the top level directory::
++And removing the top level directory and its subdirectories::
+ 
++  sudo rmdir /config/vkms/my-vkms/planes/*
+   sudo rmdir /config/vkms/my-vkms
+ 
  Testing With IGT
- ================
- 
-diff --git a/drivers/gpu/drm/vkms/Kconfig b/drivers/gpu/drm/vkms/Kconfig
-index 3c02f928ffe6..3977bbb99f7d 100644
---- a/drivers/gpu/drm/vkms/Kconfig
-+++ b/drivers/gpu/drm/vkms/Kconfig
-@@ -7,6 +7,7 @@ config DRM_VKMS
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_SHMEM_HELPER
- 	select CRC32
-+	select CONFIGFS_FS
- 	default n
- 	help
- 	  Virtual Kernel Mode-Setting (VKMS) is used for testing or for
-diff --git a/drivers/gpu/drm/vkms/Makefile b/drivers/gpu/drm/vkms/Makefile
-index d657865e573f..939991fc8233 100644
---- a/drivers/gpu/drm/vkms/Makefile
-+++ b/drivers/gpu/drm/vkms/Makefile
-@@ -8,7 +8,8 @@ vkms-y := \
- 	vkms_composer.o \
- 	vkms_writeback.o \
- 	vkms_connector.o \
--	vkms_config.o
-+	vkms_config.o \
-+	vkms_configfs.o
- 
- obj-$(CONFIG_DRM_VKMS) += vkms.o
- obj-$(CONFIG_DRM_VKMS_KUNIT_TEST) += tests/
 diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-new file mode 100644
-index 000000000000..ee186952971b
---- /dev/null
+index ee186952971b..a7c705e00e4c 100644
+--- a/drivers/gpu/drm/vkms/vkms_configfs.c
 +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -0,0 +1,172 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+#include <linux/cleanup.h>
-+#include <linux/configfs.h>
-+#include <linux/mutex.h>
-+#include <linux/slab.h>
-+
-+#include "vkms_drv.h"
-+#include "vkms_config.h"
-+#include "vkms_configfs.h"
-+
-+/* To avoid registering configfs more than once or unregistering on error */
-+static bool is_configfs_registered;
-+
+@@ -16,6 +16,7 @@ static bool is_configfs_registered;
+  *
+  * @group: Top level configuration group that represents a VKMS device.
+  * Initialized when a new directory is created under "/config/vkms/"
++ * @planes_group: Default subgroup of @group at "/config/vkms/planes"
+  * @lock: Lock used to project concurrent access to the configuration attributes
+  * @config: Protected by @lock. Configuration of the VKMS device
+  * @enabled: Protected by @lock. The device is created or destroyed when this
+@@ -23,16 +24,99 @@ static bool is_configfs_registered;
+  */
+ struct vkms_configfs_device {
+ 	struct config_group group;
++	struct config_group planes_group;
+ 
+ 	struct mutex lock;
+ 	struct vkms_config *config;
+ 	bool enabled;
+ };
+ 
 +/**
-+ * struct vkms_configfs_device - Configfs representation of a VKMS device
++ * struct vkms_configfs_plane - Configfs representation of a plane
 + *
-+ * @group: Top level configuration group that represents a VKMS device.
-+ * Initialized when a new directory is created under "/config/vkms/"
-+ * @lock: Lock used to project concurrent access to the configuration attributes
-+ * @config: Protected by @lock. Configuration of the VKMS device
-+ * @enabled: Protected by @lock. The device is created or destroyed when this
-+ * option changes
++ * @group: Top level configuration group that represents a plane.
++ * Initialized when a new directory is created under "/config/vkms/planes"
++ * @dev: The vkms_configfs_device this plane belongs to
++ * @config: Configuration of the VKMS plane
 + */
-+struct vkms_configfs_device {
++struct vkms_configfs_plane {
 +	struct config_group group;
-+
-+	struct mutex lock;
-+	struct vkms_config *config;
-+	bool enabled;
++	struct vkms_configfs_device *dev;
++	struct vkms_config_plane *config;
 +};
 +
-+#define device_item_to_vkms_configfs_device(item) \
-+	container_of(to_config_group((item)), struct vkms_configfs_device, \
-+		     group)
+ #define device_item_to_vkms_configfs_device(item) \
+ 	container_of(to_config_group((item)), struct vkms_configfs_device, \
+ 		     group)
+ 
++#define child_group_to_vkms_configfs_device(group) \
++	device_item_to_vkms_configfs_device((&(group)->cg_item)->ci_parent)
 +
-+static ssize_t device_enabled_show(struct config_item *item, char *page)
++#define plane_item_to_vkms_configfs_plane(item) \
++	container_of(to_config_group((item)), struct vkms_configfs_plane, group)
++
++static void plane_release(struct config_item *item)
 +{
-+	struct vkms_configfs_device *dev;
-+	bool enabled;
++	struct vkms_configfs_plane *plane;
++	struct mutex *lock;
 +
-+	dev = device_item_to_vkms_configfs_device(item);
++	plane = plane_item_to_vkms_configfs_plane(item);
++	lock = &plane->dev->lock;
 +
-+	scoped_guard(mutex, &dev->lock)
-+		enabled = dev->enabled;
-+
-+	return sprintf(page, "%d\n", enabled);
++	scoped_guard(mutex, lock) {
++		vkms_config_destroy_plane(plane->config);
++		kfree(plane);
++	}
 +}
 +
-+static ssize_t device_enabled_store(struct config_item *item, const char *page,
-+				    size_t count)
++static struct configfs_item_operations plane_item_operations = {
++	.release	= &plane_release,
++};
++
++static const struct config_item_type plane_item_type = {
++	.ct_item_ops	= &plane_item_operations,
++	.ct_owner	= THIS_MODULE,
++};
++
++static struct config_group *make_plane_group(struct config_group *group,
++					     const char *name)
 +{
 +	struct vkms_configfs_device *dev;
-+	bool enabled;
-+	int ret = 0;
++	struct vkms_configfs_plane *plane;
 +
-+	dev = device_item_to_vkms_configfs_device(item);
-+
-+	if (kstrtobool(page, &enabled))
-+		return -EINVAL;
++	dev = child_group_to_vkms_configfs_device(group);
 +
 +	scoped_guard(mutex, &dev->lock) {
-+		if (!dev->enabled && enabled) {
-+			if (!vkms_config_is_valid(dev->config))
-+				return -EINVAL;
++		if (dev->enabled)
++			return ERR_PTR(-EBUSY);
 +
-+			ret = vkms_create(dev->config);
-+			if (ret)
-+				return ret;
-+		} else if (dev->enabled && !enabled) {
-+			vkms_destroy(dev->config);
++		plane = kzalloc(sizeof(*plane), GFP_KERNEL);
++		if (!plane)
++			return ERR_PTR(-ENOMEM);
++
++		plane->dev = dev;
++
++		plane->config = vkms_config_create_plane(dev->config);
++		if (IS_ERR(plane->config)) {
++			kfree(plane);
++			return ERR_CAST(plane->config);
 +		}
 +
-+		dev->enabled = enabled;
++		config_group_init_type_name(&plane->group, name, &plane_item_type);
 +	}
 +
-+	return (ssize_t)count;
++	return &plane->group;
 +}
 +
-+CONFIGFS_ATTR(device_, enabled);
-+
-+static struct configfs_attribute *device_item_attrs[] = {
-+	&device_attr_enabled,
-+	NULL,
++static struct configfs_group_operations planes_group_operations = {
++	.make_group	= &make_plane_group,
 +};
 +
-+static void device_release(struct config_item *item)
-+{
-+	struct vkms_configfs_device *dev;
-+
-+	dev = device_item_to_vkms_configfs_device(item);
-+
-+	if (dev->enabled)
-+		vkms_destroy(dev->config);
-+
-+	mutex_destroy(&dev->lock);
-+	vkms_config_destroy(dev->config);
-+	kfree(dev);
-+}
-+
-+static struct configfs_item_operations device_item_operations = {
-+	.release	= &device_release,
-+};
-+
-+static const struct config_item_type device_item_type = {
-+	.ct_attrs	= device_item_attrs,
-+	.ct_item_ops	= &device_item_operations,
++static const struct config_item_type plane_group_type = {
++	.ct_group_ops	= &planes_group_operations,
 +	.ct_owner	= THIS_MODULE,
 +};
 +
-+static struct config_group *make_device_group(struct config_group *group,
-+					      const char *name)
-+{
-+	struct vkms_configfs_device *dev;
-+
-+	if (strcmp(name, DEFAULT_DEVICE_NAME) == 0)
-+		return ERR_PTR(-EINVAL);
-+
-+	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-+	if (!dev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	dev->config = vkms_config_create(name);
-+	if (IS_ERR(dev->config)) {
-+		kfree(dev);
-+		return ERR_CAST(dev->config);
-+	}
-+
-+	config_group_init_type_name(&dev->group, name, &device_item_type);
-+	mutex_init(&dev->lock);
-+
-+	return &dev->group;
-+}
-+
-+static struct configfs_group_operations device_group_ops = {
-+	.make_group = &make_device_group,
-+};
-+
-+static const struct config_item_type device_group_type = {
-+	.ct_group_ops	= &device_group_ops,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static struct configfs_subsystem vkms_subsys = {
-+	.su_group = {
-+		.cg_item = {
-+			.ci_name = "vkms",
-+			.ci_type = &device_group_type,
-+		},
-+	},
-+	.su_mutex = __MUTEX_INITIALIZER(vkms_subsys.su_mutex),
-+};
-+
-+int vkms_configfs_register(void)
-+{
-+	int ret;
-+
-+	if (is_configfs_registered)
-+		return 0;
-+
-+	config_group_init(&vkms_subsys.su_group);
-+	ret = configfs_register_subsystem(&vkms_subsys);
-+
-+	is_configfs_registered = ret == 0;
-+
-+	return ret;
-+}
-+
-+void vkms_configfs_unregister(void)
-+{
-+	if (is_configfs_registered)
-+		configfs_unregister_subsystem(&vkms_subsys);
-+}
-diff --git a/drivers/gpu/drm/vkms/vkms_configfs.h b/drivers/gpu/drm/vkms/vkms_configfs.h
-new file mode 100644
-index 000000000000..e9020b0043db
---- /dev/null
-+++ b/drivers/gpu/drm/vkms/vkms_configfs.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+#ifndef _VKMS_CONFIGFS_H_
-+#define _VKMS_CONFIGFS_H_
-+
-+int vkms_configfs_register(void);
-+void vkms_configfs_unregister(void);
-+
-+#endif /* _VKMS_CONFIGFS_H_ */
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index 78af37c7bd83..c1f23e6a4b07 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -28,6 +28,7 @@
- #include <drm/drm_vblank.h>
- 
- #include "vkms_config.h"
-+#include "vkms_configfs.h"
- #include "vkms_drv.h"
- 
- #define DRIVER_NAME	"vkms"
-@@ -214,6 +215,10 @@ static int __init vkms_init(void)
- 	int ret;
- 	struct vkms_config *config;
- 
-+	ret = vkms_configfs_register();
-+	if (ret)
-+		return ret;
-+
- 	config = vkms_config_default_create(enable_cursor, enable_writeback, enable_overlay);
- 	if (IS_ERR(config))
- 		return PTR_ERR(config);
-@@ -250,6 +255,8 @@ void vkms_destroy(struct vkms_config *config)
- 
- static void __exit vkms_exit(void)
+ static ssize_t device_enabled_show(struct config_item *item, char *page)
  {
-+	vkms_configfs_unregister();
+ 	struct vkms_configfs_device *dev;
+@@ -128,6 +212,10 @@ static struct config_group *make_device_group(struct config_group *group,
+ 	config_group_init_type_name(&dev->group, name, &device_item_type);
+ 	mutex_init(&dev->lock);
+ 
++	config_group_init_type_name(&dev->planes_group, "planes",
++				    &plane_group_type);
++	configfs_add_default_group(&dev->planes_group, &dev->group);
 +
- 	if (!default_config)
- 		return;
+ 	return &dev->group;
+ }
  
 -- 
 2.51.0
