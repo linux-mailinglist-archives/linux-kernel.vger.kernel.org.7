@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-794293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6641B3DFB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A33C1B3DFB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116483B04AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7BE3A4E3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA0931062C;
-	Mon,  1 Sep 2025 10:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="X7To+hju"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A48E31196B
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330753128A7;
+	Mon,  1 Sep 2025 10:05:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C05131064A;
+	Mon,  1 Sep 2025 10:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756721110; cv=none; b=M+eXdmLCQ9dLqpjbluI8X6I3JG5nOd4T4y1PHLJF1wjWqjsjZ1H0wFrRxZ+Z+YpMgLn6q0mfFv1b0hAe20ggvnlhHvUX5+vzQBZFklHlyzD2m3CnyKM1oquuAWa/c3M1IwOGApsKfkD20q6j67irzZt9mHlYvI82H+w2poa+jNQ=
+	t=1756721134; cv=none; b=dFZBAjgTB3GvUnUaJct3j5QbaLsjyq7HjqgT0wlRv4ipRhTd/h5+K5dJHMocYOGcwHs62/O3rcDU+31eoKgAFxt8611JT0s5SFZBKNacfzQZTFaic6iwwt6Zwb2j1H5miKsKbgOLZ1DPduJusJno8ehk0FeXG/t7jE1uv7x5IlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756721110; c=relaxed/simple;
-	bh=93jT9/ShH+uGR5IWGdBye1SHTwQemNaJlB1PuQcBg+g=;
+	s=arc-20240116; t=1756721134; c=relaxed/simple;
+	bh=oQSsQTwHNwgfyYL9/HLYEefiG4+0prMSQ0JERwW0k6c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oHO066baKvZPx4cqqEW65qxPn5SjDU2w50Idd3Uw18ikyh4RuIFJPRhR/mYN8KWXW+hf/3c2bpVRPyZnvPhb0D+zpp0EJHVY5aXgTVQUNJ4mBuSTINyIdJ1frKedo16zo3MJzSQcsE88fObu2u9qyVC/LyVFeLFWUtQu0/8sQC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=X7To+hju; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2CFAA3A2;
-	Mon,  1 Sep 2025 12:03:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756721039;
-	bh=93jT9/ShH+uGR5IWGdBye1SHTwQemNaJlB1PuQcBg+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X7To+hjucybukCA1gk60DljaFLBha4PVrKyKQjPRYvq2CkZhLj2qlsdMRSTMxAmsR
-	 BywC4A3vwzQyH0DPHaUbvP4FVa/aiFiGQWvnd8oQcGQoUlTJlSTPiB5EwzxKyOPjp/
-	 PhrWbi89XGH02Cxal3m2Nr/zJl6YObs2cGzy19Cg=
-Message-ID: <6fa1a8d5-149e-437d-aef0-587c49957197@ideasonboard.com>
-Date: Mon, 1 Sep 2025 13:05:02 +0300
+	 In-Reply-To:Content-Type; b=jt8sLNk1M0uj6Y0qPhsKOCpk7hCAuIt5RUDuxLVah4UYoFUcMER0H6B+LGMsBn21qQApKgmo8WYQPuNSIFOCtxuHNY2sAw805EP+Hi89AEr6HdVVLRqGfiuawfqybv1HJDoTJddVLrEBnRsyb6z3z99HWGW/nJQ3LvFLDYX3DKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A1C01A25;
+	Mon,  1 Sep 2025 03:05:22 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98A843F6A8;
+	Mon,  1 Sep 2025 03:05:25 -0700 (PDT)
+Message-ID: <91824224-6d70-43d9-98b9-930971cc53e7@arm.com>
+Date: Mon, 1 Sep 2025 11:05:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,136 +41,545 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/6] drm/bridge: cadence: cdns-mhdp8546-core: Set the
- mhdp connector earlier in atomic_enable()
-To: Harikrishna Shenoy <h-shenoy@ti.com>
-Cc: jonas@kwiboo.se, jernej.skrabec@gmail.com,
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, lyude@redhat.com, luca.ceresoli@bootlin.com,
- viro@zeniv.linux.org.uk, andy.yan@rock-chips.com, linux@treblig.org,
- javierm@redhat.com, linux-kernel@vger.kernel.org, devarsht@ti.com,
- j-choudhary@ti.com, u-kumar1@ti.com, s-jain1@ti.com,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, mripard@kernel.org, lumag@kernel.org,
- dianders@chromium.org, dri-devel@lists.freedesktop.org
-References: <20250811075904.1613519-1-h-shenoy@ti.com>
- <20250811075904.1613519-4-h-shenoy@ti.com>
+Subject: Re: [PATCH 22/33] arm_mpam: Register and enable IRQs
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-57-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250811075904.1613519-4-h-shenoy@ti.com>
+In-Reply-To: <20250822153048.2287-57-james.morse@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi James,
 
-On 11/08/2025 10:59, Harikrishna Shenoy wrote:
-> From: Jayesh Choudhary <j-choudhary@ti.com>
+On 8/22/25 16:30, James Morse wrote:
+> Register and enable error IRQs. All the MPAM error interrupts indicate a
+> software bug, e.g. out of range partid. If the error interrupt is ever
+> signalled, attempt to disable MPAM.
 > 
-> In case if we get errors in cdns_mhdp_link_up() or cdns_mhdp_reg_read()
-> in atomic_enable, we will go to cdns_mhdp_modeset_retry_fn() and will hit
-> NULL pointer while trying to access the mutex. We need the connector to
-> be set before that. Unlike in legacy !(DBANC) cases, we do not have
-> connector initialised in bridge_attach(). So set the mhdp->connector
-> in atomic_enable() earlier to avoid possible NULL pointer.
+> Only the irq handler accesses the ESR register, so no locking is needed.
+> The work to disable MPAM after an error needs to happen at process
+> context, use a threaded interrupt.
 > 
-> Fixes: c932ced6b585 ("drm/tidss: Update encoder/bridge chain connect model")
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> There is no support for percpu threaded interrupts, for now schedule
+> the work to be done from the irq handler.
+> 
+> Enabling the IRQs in the MSC may involve cross calling to a CPU that
+> can access the MSC.
+> 
+> Once the IRQ is requested, the mpam_disable() path can be called
+> asynchronously, which will walk structures sized by max_partid. Ensure
+> this size is fixed before the interrupt is requested.
+> 
+> CC: Rohit Mathew <rohit.mathew@arm.com>
+> Tested-by: Rohit Mathew <rohit.mathew@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
 > ---
->  .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 20 +++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
+> Changes since RFC:
+>  * Use guard marco when walking srcu list.
+>  * Use INTEN macro for enabling interrupts.
+>  * Move partid_max_published up earlier in mpam_enable_once().
+> ---
+>  drivers/resctrl/mpam_devices.c  | 311 +++++++++++++++++++++++++++++++-
+>  drivers/resctrl/mpam_internal.h |   9 +-
+>  2 files changed, 312 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> index c2ce3d6e5a88..b2f5a48cac2d 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> @@ -1759,12 +1759,21 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
->  	struct drm_bridge_state *new_state;
->  	const struct drm_display_mode *mode;
->  	u32 resp;
-> -	int ret;
-> +	int ret = 0;
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index 3516cbe8623e..210d64fad0b1 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -14,6 +14,9 @@
+>  #include <linux/device.h>
+>  #include <linux/errno.h>
+>  #include <linux/gfp.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdesc.h>
+>  #include <linux/list.h>
+>  #include <linux/lockdep.h>
+>  #include <linux/mutex.h>
+> @@ -62,6 +65,12 @@ static DEFINE_SPINLOCK(partid_max_lock);
+>   */
+>  static DECLARE_WORK(mpam_enable_work, &mpam_enable);
 >  
->  	dev_dbg(mhdp->dev, "bridge enable\n");
->  
->  	mutex_lock(&mhdp->link_mutex);
->  
-> +	mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
-> +								   bridge->encoder);
-> +	if (WARN_ON(!mhdp->connector))
-> +		goto out;
+> +/*
+> + * All mpam error interrupts indicate a software bug. On receipt, disable the
+> + * driver.
+> + */
+> +static DECLARE_WORK(mpam_broken_work, &mpam_disable);
 > +
-> +	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector);
-> +	if (WARN_ON(!conn_state))
-> +		goto out;
+>  /*
+>   * An MSC is a physical container for controls and monitors, each identified by
+>   * their RIS index. These share a base-address, interrupts and some MMIO
+> @@ -159,6 +168,24 @@ static u64 mpam_msc_read_idr(struct mpam_msc *msc)
+>  	return (idr_high << 32) | idr_low;
+>  }
+>  
+> +static void mpam_msc_zero_esr(struct mpam_msc *msc)
+> +{
+> +	__mpam_write_reg(msc, MPAMF_ESR, 0);
+> +	if (msc->has_extd_esr)
+> +		__mpam_write_reg(msc, MPAMF_ESR + 4, 0);
+> +}
+> +
+> +static u64 mpam_msc_read_esr(struct mpam_msc *msc)
+> +{
+> +	u64 esr_high = 0, esr_low;
+> +
+> +	esr_low = __mpam_read_reg(msc, MPAMF_ESR);
+> +	if (msc->has_extd_esr)
+> +		esr_high = __mpam_read_reg(msc, MPAMF_ESR + 4);
+> +
+> +	return (esr_high << 32) | esr_low;
+> +}
+> +
+>  static void __mpam_part_sel_raw(u32 partsel, struct mpam_msc *msc)
+>  {
+>  	lockdep_assert_held(&msc->part_sel_lock);
+> @@ -405,12 +432,12 @@ static void mpam_msc_destroy(struct mpam_msc *msc)
+>  
+>  	lockdep_assert_held(&mpam_list_lock);
+>  
+> -	list_del_rcu(&msc->glbl_list);
+> -	platform_set_drvdata(pdev, NULL);
+> -
+>  	list_for_each_entry_safe(ris, tmp, &msc->ris, msc_list)
+>  		mpam_ris_destroy(ris);
+>  
+> +	list_del_rcu(&msc->glbl_list);
+> +	platform_set_drvdata(pdev, NULL);
+> +
 
-You are just moving code here, but... Shouldn't these be errors? If I
-read this right, ret is 0 here, and thus if we hit either of those
-issues above, we'll return 0.
+Reordering can be done when introduced.
 
- Tomi
+>  	add_to_garbage(msc);
+>  	msc->garbage.pdev = pdev;
+>  }
+> @@ -828,6 +855,7 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>  		pmg_max = FIELD_GET(MPAMF_IDR_PMG_MAX, idr);
+>  		msc->partid_max = min(msc->partid_max, partid_max);
+>  		msc->pmg_max = min(msc->pmg_max, pmg_max);
+> +		msc->has_extd_esr = FIELD_GET(MPAMF_IDR_HAS_EXTD_ESR, idr);
+>  
+>  		ris = mpam_get_or_create_ris(msc, ris_idx);
+>  		if (IS_ERR(ris))
+> @@ -840,6 +868,9 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>  		mutex_unlock(&msc->part_sel_lock);
+>  	}
+>  
+> +	/* Clear any stale errors */
+> +	mpam_msc_zero_esr(msc);
+> +
+>  	spin_lock(&partid_max_lock);
+>  	mpam_partid_max = min(mpam_partid_max, msc->partid_max);
+>  	mpam_pmg_max = min(mpam_pmg_max, msc->pmg_max);
+> @@ -973,6 +1004,13 @@ static void mpam_reset_msc(struct mpam_msc *msc, bool online)
+>  	mpam_mon_sel_outer_unlock(msc);
+>  }
+>  
+> +static void _enable_percpu_irq(void *_irq)
+> +{
+> +	int *irq = _irq;
+> +
+> +	enable_percpu_irq(*irq, IRQ_TYPE_NONE);
+> +}
+> +
+>  static int mpam_cpu_online(unsigned int cpu)
+>  {
+>  	int idx;
+> @@ -983,6 +1021,9 @@ static int mpam_cpu_online(unsigned int cpu)
+>  		if (!cpumask_test_cpu(cpu, &msc->accessibility))
+>  			continue;
+>  
+> +		if (msc->reenable_error_ppi)
+> +			_enable_percpu_irq(&msc->reenable_error_ppi);
+> +
+>  		if (atomic_fetch_inc(&msc->online_refs) == 0)
+>  			mpam_reset_msc(msc, true);
+>  	}
+> @@ -1031,6 +1072,9 @@ static int mpam_cpu_offline(unsigned int cpu)
+>  		if (!cpumask_test_cpu(cpu, &msc->accessibility))
+>  			continue;
+>  
+> +		if (msc->reenable_error_ppi)
+> +			disable_percpu_irq(msc->reenable_error_ppi);
+> +
+>  		if (atomic_dec_and_test(&msc->online_refs))
+>  			mpam_reset_msc(msc, false);
+>  	}
+> @@ -1057,6 +1101,51 @@ static void mpam_register_cpuhp_callbacks(int (*online)(unsigned int online),
+>  	mutex_unlock(&mpam_cpuhp_state_lock);
+>  }
+>  
+> +static int __setup_ppi(struct mpam_msc *msc)
+> +{
+> +	int cpu;
+> +
+> +	msc->error_dev_id = alloc_percpu_gfp(struct mpam_msc *, GFP_KERNEL);
+
+Simpler to use alloc_percpu().
+
+> +	if (!msc->error_dev_id)
+> +		return -ENOMEM;
+> +
+> +	for_each_cpu(cpu, &msc->accessibility) {
+> +		struct mpam_msc *empty = *per_cpu_ptr(msc->error_dev_id, cpu);
+> +
+> +		if (empty) {
+> +			pr_err_once("%s shares PPI with %s!\n",
+> +				    dev_name(&msc->pdev->dev),
+> +				    dev_name(&empty->pdev->dev));
+> +			return -EBUSY;
+> +		}
+> +		*per_cpu_ptr(msc->error_dev_id, cpu) = msc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mpam_msc_setup_error_irq(struct mpam_msc *msc)
+> +{
+> +	int irq;
+> +
+> +	irq = platform_get_irq_byname_optional(msc->pdev, "error");
+> +	if (irq <= 0)
+> +		return 0;
+> +
+> +	/* Allocate and initialise the percpu device pointer for PPI */
+> +	if (irq_is_percpu(irq))
+> +		return __setup_ppi(msc);
+> +
+> +	/* sanity check: shared interrupts can be routed anywhere? */
+> +	if (!cpumask_equal(&msc->accessibility, cpu_possible_mask)) {
+> +		pr_err_once("msc:%u is a private resource with a shared error interrupt",
+> +			    msc->id);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int mpam_dt_count_msc(void)
+>  {
+>  	int count = 0;
+> @@ -1265,6 +1354,10 @@ static int mpam_msc_drv_probe(struct platform_device *pdev)
+>  			break;
+>  		}
+>  
+> +		err = mpam_msc_setup_error_irq(msc);
+> +		if (err)
+> +			break;
+> +
+>  		if (device_property_read_u32(&pdev->dev, "pcc-channel",
+>  					     &msc->pcc_subspace_id))
+>  			msc->iface = MPAM_IFACE_MMIO;
+> @@ -1547,11 +1640,171 @@ static void mpam_enable_merge_features(struct list_head *all_classes_list)
+>  	}
+>  }
+>  
+> +static char *mpam_errcode_names[16] = {
+> +	[0] = "No error",
+> +	[1] = "PARTID_SEL_Range",
+> +	[2] = "Req_PARTID_Range",
+> +	[3] = "MSMONCFG_ID_RANGE",
+> +	[4] = "Req_PMG_Range",
+> +	[5] = "Monitor_Range",
+> +	[6] = "intPARTID_Range",
+> +	[7] = "Unexpected_INTERNAL",
+> +	[8] = "Undefined_RIS_PART_SEL",
+> +	[9] = "RIS_No_Control",
+> +	[10] = "Undefined_RIS_MON_SEL",
+> +	[11] = "RIS_No_Monitor",
+> +	[12 ... 15] = "Reserved"
+> +};
+
+These names match the spec.
 
 > +
->  	if (mhdp->plugged && !mhdp->link_up) {
->  		ret = cdns_mhdp_link_up(mhdp);
->  		if (ret < 0)
-> @@ -1784,15 +1793,6 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
->  	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_CAR,
->  			    resp | CDNS_VIF_CLK_EN | CDNS_VIF_CLK_RSTN);
+> +static int mpam_enable_msc_ecr(void *_msc)
+> +{
+> +	struct mpam_msc *msc = _msc;
+> +
+> +	__mpam_write_reg(msc, MPAMF_ECR, MPAMF_ECR_INTEN);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mpam_disable_msc_ecr(void *_msc)
+> +{
+> +	struct mpam_msc *msc = _msc;
+> +
+> +	__mpam_write_reg(msc, MPAMF_ECR, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t __mpam_irq_handler(int irq, struct mpam_msc *msc)
+> +{
+> +	u64 reg;
+> +	u16 partid;
+> +	u8 errcode, pmg, ris;
+> +
+> +	if (WARN_ON_ONCE(!msc) ||
+> +	    WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(),
+> +					   &msc->accessibility)))
+> +		return IRQ_NONE;
+> +
+> +	reg = mpam_msc_read_esr(msc);
+> +
+> +	errcode = FIELD_GET(MPAMF_ESR_ERRCODE, reg);
+> +	if (!errcode)
+> +		return IRQ_NONE;
+> +
+> +	/* Clear level triggered irq */
+> +	mpam_msc_zero_esr(msc);
+> +
+> +	partid = FIELD_GET(MPAMF_ESR_PARTID_MON, reg);
+> +	pmg = FIELD_GET(MPAMF_ESR_PMG, reg);
+> +	ris = FIELD_GET(MPAMF_ESR_RIS, reg);
+> +
+> +	pr_err("error irq from msc:%u '%s', partid:%u, pmg: %u, ris: %u\n",
+> +	       msc->id, mpam_errcode_names[errcode], partid, pmg, ris);
+> +
+> +	if (irq_is_percpu(irq)) {
+> +		mpam_disable_msc_ecr(msc);
+> +		schedule_work(&mpam_broken_work);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	return IRQ_WAKE_THREAD;
+> +}
+> +
+> +static irqreturn_t mpam_ppi_handler(int irq, void *dev_id)
+> +{
+> +	struct mpam_msc *msc = *(struct mpam_msc **)dev_id;
+> +
+> +	return __mpam_irq_handler(irq, msc);
+> +}
+> +
+> +static irqreturn_t mpam_spi_handler(int irq, void *dev_id)
+> +{
+> +	struct mpam_msc *msc = dev_id;
+> +
+> +	return __mpam_irq_handler(irq, msc);
+> +}
+> +
+> +static irqreturn_t mpam_disable_thread(int irq, void *dev_id);
+> +
+> +static int mpam_register_irqs(void)
+> +{
+> +	int err, irq;
+> +	struct mpam_msc *msc;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	guard(srcu)(&mpam_srcu);
+> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
+> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
+> +		if (irq <= 0)
+> +			continue;
+> +
+> +		/* The MPAM spec says the interrupt can be SPI, PPI or LPI */
+> +		/* We anticipate sharing the interrupt with other MSCs */
+> +		if (irq_is_percpu(irq)) {
+> +			err = request_percpu_irq(irq, &mpam_ppi_handler,
+> +						 "mpam:msc:error",
+> +						 msc->error_dev_id);
+> +			if (err)
+> +				return err;
+> +
+> +			msc->reenable_error_ppi = irq;
+> +			smp_call_function_many(&msc->accessibility,
+> +					       &_enable_percpu_irq, &irq,
+> +					       true);
+> +		} else {
+> +			err = devm_request_threaded_irq(&msc->pdev->dev, irq,
+> +							&mpam_spi_handler,
+> +							&mpam_disable_thread,
+> +							IRQF_SHARED,
+> +							"mpam:msc:error", msc);
+> +			if (err)
+> +				return err;
+> +		}
+> +
+> +		msc->error_irq_requested = true;
+> +		mpam_touch_msc(msc, mpam_enable_msc_ecr, msc);
+> +		msc->error_irq_hw_enabled = true;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void mpam_unregister_irqs(void)
+> +{
+> +	int irq, idx;
+> +	struct mpam_msc *msc;
+> +
+> +	cpus_read_lock();
+> +	/* take the lock as free_irq() can sleep */
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
+> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
+> +		if (irq <= 0)
+> +			continue;
+> +
+> +		if (msc->error_irq_hw_enabled) {
+> +			mpam_touch_msc(msc, mpam_disable_msc_ecr, msc);
+> +			msc->error_irq_hw_enabled = false;
+> +		}
+> +
+> +		if (msc->error_irq_requested) {
+> +			if (irq_is_percpu(irq)) {
+> +				msc->reenable_error_ppi = 0;
+> +				free_percpu_irq(irq, msc->error_dev_id);
+> +			} else {
+> +				devm_free_irq(&msc->pdev->dev, irq, msc);
+> +			}
+> +			msc->error_irq_requested = false;
+> +		}
+> +	}
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +	cpus_read_unlock();
+> +}
+> +
+>  static void mpam_enable_once(void)
+>  {
+> -	mutex_lock(&mpam_list_lock);
+> -	mpam_enable_merge_features(&mpam_classes);
+> -	mutex_unlock(&mpam_list_lock);
+> +	int err;
 >  
-> -	mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
-> -								   bridge->encoder);
-> -	if (WARN_ON(!mhdp->connector))
-> -		goto out;
-> -
-> -	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector);
-> -	if (WARN_ON(!conn_state))
-> -		goto out;
-> -
->  	if (mhdp->hdcp_supported &&
->  	    mhdp->hw_state == MHDP_HW_READY &&
->  	    conn_state->content_protection ==
+>  	/*
+>  	 * Once the cpuhp callbacks have been changed, mpam_partid_max can no
+> @@ -1561,6 +1814,27 @@ static void mpam_enable_once(void)
+>  	partid_max_published = true;
+>  	spin_unlock(&partid_max_lock);
+>  
+> +	/*
+> +	 * If all the MSC have been probed, enabling the IRQs happens next.
+> +	 * That involves cross-calling to a CPU that can reach the MSC, and
+> +	 * the locks must be taken in this order:
+> +	 */
+> +	cpus_read_lock();
+> +	mutex_lock(&mpam_list_lock);
+> +	mpam_enable_merge_features(&mpam_classes);
+> +
+> +	err = mpam_register_irqs();
+> +	if (err)
+> +		pr_warn("Failed to register irqs: %d\n", err);
+> +
+> +	mutex_unlock(&mpam_list_lock);
+> +	cpus_read_unlock();
+> +
+> +	if (err) {
+> +		schedule_work(&mpam_broken_work);
+> +		return;
+> +	}
+> +
+>  	mpam_register_cpuhp_callbacks(mpam_cpu_online, mpam_cpu_offline);
+>  
+>  	printk(KERN_INFO "MPAM enabled with %u partid and %u pmg\n",
+> @@ -1615,16 +1889,39 @@ static void mpam_reset_class(struct mpam_class *class)
+>   * All of MPAMs errors indicate a software bug, restore any modified
+>   * controls to their reset values.
+>   */
+> -void mpam_disable(void)
+> +static irqreturn_t mpam_disable_thread(int irq, void *dev_id)
+>  {
+>  	int idx;
+>  	struct mpam_class *class;
+> +	struct mpam_msc *msc, *tmp;
+> +
+> +	mutex_lock(&mpam_cpuhp_state_lock);
+> +	if (mpam_cpuhp_state) {
+> +		cpuhp_remove_state(mpam_cpuhp_state);
+> +		mpam_cpuhp_state = 0;
+> +	}
+> +	mutex_unlock(&mpam_cpuhp_state_lock);
+> +
+> +	mpam_unregister_irqs();
+>  
+>  	idx = srcu_read_lock(&mpam_srcu);
+>  	list_for_each_entry_srcu(class, &mpam_classes, classes_list,
+>  				 srcu_read_lock_held(&mpam_srcu))
+>  		mpam_reset_class(class);
+>  	srcu_read_unlock(&mpam_srcu, idx);
+> +
+> +	mutex_lock(&mpam_list_lock);
+> +	list_for_each_entry_safe(msc, tmp, &mpam_all_msc, glbl_list)
+> +		mpam_msc_destroy(msc);
+> +	mutex_unlock(&mpam_list_lock);
+> +	mpam_free_garbage();
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +void mpam_disable(struct work_struct *ignored)
+> +{
+> +	mpam_disable_thread(0, NULL);
+>  }
+>  
+>  /*
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index b30fee2b7674..c9418c9cf9f2 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -44,6 +44,11 @@ struct mpam_msc {
+>  	struct pcc_mbox_chan	*pcc_chan;
+>  	u32			nrdy_usec;
+>  	cpumask_t		accessibility;
+> +	bool			has_extd_esr;
+> +
+> +	int				reenable_error_ppi;
+> +	struct mpam_msc * __percpu	*error_dev_id;
+> +
+>  	atomic_t		online_refs;
+>  
+>  	/*
+> @@ -52,6 +57,8 @@ struct mpam_msc {
+>  	 */
+>  	struct mutex		probe_lock;
+>  	bool			probed;
+> +	bool			error_irq_requested;
+> +	bool			error_irq_hw_enabled;
+>  	u16			partid_max;
+>  	u8			pmg_max;
+>  	unsigned long		ris_idxs[128 / BITS_PER_LONG];
+> @@ -281,7 +288,7 @@ extern u8 mpam_pmg_max;
+>  
+>  /* Scheduled work callback to enable mpam once all MSC have been probed */
+>  void mpam_enable(struct work_struct *work);
+> -void mpam_disable(void);
+> +void mpam_disable(struct work_struct *work);
+>  
+>  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+>  				   cpumask_t *affinity);
+
+Thanks,
+
+Ben
 
 
