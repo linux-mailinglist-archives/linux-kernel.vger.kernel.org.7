@@ -1,125 +1,98 @@
-Return-Path: <linux-kernel+bounces-793887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED18B3D9AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:15:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E02B3DA19
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175B23AB589
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB173B2ADE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57500253B4C;
-	Mon,  1 Sep 2025 06:13:48 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D3C25A2C8;
+	Mon,  1 Sep 2025 06:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jk6JOGWb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105EE243387;
-	Mon,  1 Sep 2025 06:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1645D21D3F5;
+	Mon,  1 Sep 2025 06:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756707227; cv=none; b=JS1p7TvFYo8mK7ql1f8MLSchLpEDP6igJNLM+enHLl6s1loRRGcIJHwYIBFBtb2vNCAgJ0Fb0HiKDwfsz3XCkUkORWVjmCPrcfoBo44qhCDUTjTAD7a3WP0GcrZC7mq7Vusb1IPvLTEwG9R93z4n4bH2BxjtfGrcI440pbpWDxQ=
+	t=1756708823; cv=none; b=YgCgwj/D0dOc8Qu2TdKqSGps1nX0SNiqp6NLBZVWC+iMy5gmfKKMgXVNZ1SShjndpP7+SmpkgghEsyezXnGhnEE0+7NSE5zAPWUGjZDWs/CPX9H7M8nLa6ef3DK7XEA7+t7aXzUtvUG3rb+k23yt4H9ZmXrEMcHgZeWdfxNF5ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756707227; c=relaxed/simple;
-	bh=iWksOuz81IN6BV5iTCJjwMYDhRNOajjO5thlNpVHR2o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bt9bR6+H/JWvZLFZRVw16oFGr/AZTFlKygdo4Vv4WzHLrUf/mFpt4rV+t7wLLETaoEzGSFGXpH4JhWIDsa0hLy0KqfmKP1lEuaXKBoNZ88WSVtJKaE9btRUr/tVWsHusIbs4H9eNo5NR4JUGwmm5psExRT8q6oAUoaMXyVGSsLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cFdkh3qbpz13NGc;
-	Mon,  1 Sep 2025 14:09:48 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0A972180064;
-	Mon,  1 Sep 2025 14:13:37 +0800 (CST)
-Received: from huawei.com (10.50.159.234) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 1 Sep
- 2025 14:13:35 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <kuniyu@google.com>,
-	<wangliang74@huawei.com>, <kay.sievers@vrfy.org>, <gregkh@suse.de>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net] net: atm: fix memory leak in atm_register_sysfs when device_register fail
-Date: Mon, 1 Sep 2025 14:35:37 +0800
-Message-ID: <20250901063537.1472221-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756708823; c=relaxed/simple;
+	bh=RXDj7xK0ck/gx9buYEpnUyuWq5E4nYhKUE+rPIgPH3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SDK5lMQK6BcR9p+tuEvpYgVPInufGTcluGdqjwrtnKEGlmMy3AmQ1rzF5Q4Z+vj6smcUwR1XXZJJxesVbk2JBskhdvYlUt88CLhnIb4OdgYxK0pruT21hZ02N3Buo8wbhRqJOMCB+gbKWXAr2Oucgr1B+MQRMwql0sevvkzbH4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jk6JOGWb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9322BC4CEF0;
+	Mon,  1 Sep 2025 06:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756708822;
+	bh=RXDj7xK0ck/gx9buYEpnUyuWq5E4nYhKUE+rPIgPH3k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Jk6JOGWbk7AXGPMMwGsumxHUONuqTrN7ZTmLB/5OhbnNES2j3RCGW5Xjv+7C+BvLf
+	 hTRusQhAMr//AWBAEjeIziWkW+LTMEFZgsweJeD85R5owtaxVn7Ydl6InnNIau0HLw
+	 Yn8lm4GS/p3wPBuBS3QwtxRCsR7jX2h3084v0zepZI4DaPmZu8eoQOvzQOcRGeWnf9
+	 mW8bgwAOXQsutnPIRaYUSOhmcuI6M2zGhUhq+9EJXVq9C6ruCiB6jrb1h+0t1OA2qZ
+	 tm3Hys2FzG6p3JOeiWZtzN8YWW4Q7+XGNOPisV4eoUGw9UuJESAfl1ZNMFFOG63mG6
+	 dMKAll7I4KFPQ==
+Message-ID: <aa6b1a62-787e-4365-aca5-d03c6b94545f@kernel.org>
+Date: Mon, 1 Sep 2025 15:37:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 06/15] md/raid0: convert raid0_handle_discard() to
+ use bio_submit_split_bioset()
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
+ hare@suse.de, tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org,
+ josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com, satyat@google.com,
+ ebiggers@google.com, neil@brown.name, akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-7-yukuai1@huaweicloud.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250901033220.42982-7-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When device_register() return error in atm_register_sysfs(), which can be
-triggered by kzalloc fail in device_private_init() or other reasons,
-kmemleak reports the following memory leaks:
+On 9/1/25 12:32 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Unify bio split code, and prepare to fix disordered split IO
 
-unreferenced object 0xffff88810182fb80 (size 8):
-  comm "insmod", pid 504, jiffies 4294852464
-  hex dump (first 8 bytes):
-    61 64 75 6d 6d 79 30 00                          adummy0.
-  backtrace (crc 14dfadaf):
-    __kmalloc_node_track_caller_noprof+0x335/0x450
-    kvasprintf+0xb3/0x130
-    kobject_set_name_vargs+0x45/0x120
-    dev_set_name+0xa9/0xe0
-    atm_register_sysfs+0xf3/0x220
-    atm_dev_register+0x40b/0x780
-    0xffffffffa000b089
-    do_one_initcall+0x89/0x300
-    do_init_module+0x27b/0x7d0
-    load_module+0x54cd/0x5ff0
-    init_module_from_file+0xe4/0x150
-    idempotent_init_module+0x32c/0x610
-    __x64_sys_finit_module+0xbd/0x120
-    do_syscall_64+0xa8/0x270
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Missing the period at the end of the above sentence.
 
-When device_create_file() return error in atm_register_sysfs(), the same
-issue also can be triggered.
+> 
+> Noted commit 319ff40a5427 ("md/raid0: Fix performance regression for large
+> sequential writes") already fix disordered split IO by converting bio to
+> underlying disks before submit_bio_noacct(), with the respect
+> md_submit_bio() already split by sectors, and raid0_make_request() will
+> split at most once for unaligned IO. This is a bit hacky and we'll convert
+> this to solution in general later.
 
-Function put_device() should be called to release kobj->name memory and
-other device resource, instead of kfree().
+I do not see how this is relevant to this patch. The patch is a simple
+straightforward conversion of hard-coded BIO split to using
+bio_submit_split_bioset(). So I would just say that.
 
-Fixes: 1fa5ae857bb1 ("driver core: get rid of struct device's bus_id string array")
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
- net/atm/resources.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-diff --git a/net/atm/resources.c b/net/atm/resources.c
-index b19d851e1f44..7c6fdedbcf4e 100644
---- a/net/atm/resources.c
-+++ b/net/atm/resources.c
-@@ -112,7 +112,9 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
- 
- 	if (atm_proc_dev_register(dev) < 0) {
- 		pr_err("atm_proc_dev_register failed for dev %s\n", type);
--		goto out_fail;
-+		mutex_unlock(&atm_dev_mutex);
-+		kfree(dev);
-+		return NULL;
- 	}
- 
- 	if (atm_register_sysfs(dev, parent) < 0) {
-@@ -128,7 +130,7 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
- 	return dev;
- 
- out_fail:
--	kfree(dev);
-+	put_device(&dev->class_dev);
- 	dev = NULL;
- 	goto out;
- }
+With the above addressed, this looks OK to me.
+
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+
 -- 
-2.34.1
-
+Damien Le Moal
+Western Digital Research
 
