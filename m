@@ -1,187 +1,258 @@
-Return-Path: <linux-kernel+bounces-794785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FBB8B3E730
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1555FB3E734
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73681636AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0BA189328D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3121341661;
-	Mon,  1 Sep 2025 14:29:35 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BEF341676;
+	Mon,  1 Sep 2025 14:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lEZ+kvdO"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EE12F49EE;
-	Mon,  1 Sep 2025 14:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3EE341641
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736975; cv=none; b=CRgnOiEwBL0Mdis7mU7QOx5h1+fP3HAtLkEZuKjEVrlQeq8A4dKRao9Qo/RZDz5+qfGnPpIu3SqbgtbvWPYVh1hSrTNHLo/SphN+YT7yZsbSz2OhZewbOhpEaSffNptA6N+58o24TbALjsEs0cNomOma0AJRqePBfuY/BLr2GZE=
+	t=1756737000; cv=none; b=AKJpAgwY5vQMMnJhcu576HIcMR/A2lBEUNiBSKNkk+fEnZk/4KBNXqSELJvhwbP8wC93fBjZgJkXBbDHN20v+fjUfo+vqE2BMTa0gXckH15aMptN3XmkbYUdaMDYPHSmATrX0xv9CLv7lJMeGrAvQv8F99lacL2ts2f4qBxTrV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736975; c=relaxed/simple;
-	bh=rIc9PaP5Dn/UnXTwF/5gEzVX6ZfvAdPwwxjS/weWLp8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VWOSxcS1VtPElXn11VAhj5LEsiFpZH5CSkYVPvSzgVS8VB81mr0RVVPVYNDr9exTBCZ7kg92VFPbdvN/VJ7U/Ku1GaFt4n5ZopW5yNl0n3T50XLUQMTwWlgmXYmO/gbwSJuUq6sjA+EWJRwpvT72gbc07JJet02NIbWouj+fCHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6188b5b113eso5645641a12.0;
-        Mon, 01 Sep 2025 07:29:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756736971; x=1757341771;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NplgeWcNTOnynvORO+lXqHJFAtHGQ9bpXO8+3KZyIv8=;
-        b=PBMpjxC9zUgiC11DCKHDVqyACQGANG0BS6ltiBwPMml1R0aDSCONVRdV3rShdbNAk6
-         rTRk+Xkk0evHM+zvOMatwPrHbdfDgMe+74L+MR4oK8bvQDum+PbvDpc6BKNfYvyEf2HE
-         b3fjHFoJLvRv/gude2IUkAOChYS9aha3vJxlNGx4TrhvsrvivVhUSsv3nGu3KbdiySmI
-         NsEImrehrU4Q3h8BqN3Jv71Z7/Tn5fOAJLt+h8Uf5ODu+9d0TKZrgHcg64UNpy7+2TGS
-         /sKSpyygZSHJx/FCOwIEjL1BWMLSt9C0myDE5rkNmDEj018s/2kZBHWC9e/IwcutoPxU
-         oJSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzrFe8sNYlCkvg1pSzXI+VZoalutriNwCTR8ES8wC0GEqOUCDIcfhMDcxGEJLwnOL95Av9k6XA@vger.kernel.org, AJvYcCWDqNd8nPE9EYNfNhI73qcqPvVtFx6Vy2HRd5KeTDB3vOkltimCI3gIKFELnSyKAsmoZsd6qIMZIqr3lYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC68O7MZxR/bKwnDC6FX6QpIve90WOavl0XNClNUX9NuWKifSA
-	m9LFX5keSdpuarzeAZT4UguuErVVuEzJyzXnvxeN1MIYTzK42J1u72P3OHmEmg==
-X-Gm-Gg: ASbGncveC9GsZBG+leGty5HZbZp+xh6++WSlJXgCNQDRqYAhYi+oiCtNi0EGwFM0O9e
-	/ZubNyPjMU30mhi8EpToQ+kGwiknZ/cfQQDAV9t8jXe6LU+a9r2UeC0zPyXfcVLgGxWun941NWg
-	TnVS7HnBNHHU3lSkBrujzTlu8kwXWE1FyCsOdvht47YFHJBPvs/qhyjLypULbLYzRAe1XplB5aS
-	T+TTaLKlD7rCmobcJYCaKfuiyC4kZlJzpWGYbA8XfqKuXeJ12oI12CX7ycEF4Yy/cI7EZwdZB6d
-	47BOAf7OpS4RiYxUi7nW8pLBp9whFnPM4S9F1OvEC3c+EjeZTAJrMe0wK5GYDYsZHpNbz+D+5Z8
-	npcGXuKGO9h7fdt+MgoeJI+/E
-X-Google-Smtp-Source: AGHT+IGBIGQeIkdga89sLFjwwgHh8OYnMDrUbIJGCO8aVa3tpGY6JBZWq8dWt/C4qF/ldn1mbHERwg==
-X-Received: by 2002:a05:6402:210c:b0:61e:a5c8:e830 with SMTP id 4fb4d7f45d1cf-61ea5c8e868mr1893659a12.1.1756736971012;
-        Mon, 01 Sep 2025 07:29:31 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:73::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7a8fsm7275979a12.3.2025.09.01.07.29.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 07:29:30 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 01 Sep 2025 07:29:13 -0700
-Subject: [PATCH net] netpoll: fix incorrect refcount handling causing
- incorrect cleanup
+	s=arc-20240116; t=1756737000; c=relaxed/simple;
+	bh=8k/cTAP1uGo7YkU154SU3zLypsg/dO9vH8JEnPRukQw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=PO8S0159hkfLhl2MmCSyu6xy48HLYqLnUe+IcVMKIGvBVcfzvNGSX90KMso8dyxuTv9vREcMerAZJjCfaSn5AAxw+dt3EGxK3eG2DUDuQj/Py6nAyJ4cj/hnHkX1ChtRchzyrxUzEUyGoS//tvcL6SHRz6Rg/kO3ApRxBJD8V/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lEZ+kvdO; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250901142951epoutp01260870b2108decbd3826ebf883d63ef7~hLvxpKmd41267012670epoutp01M
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:29:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250901142951epoutp01260870b2108decbd3826ebf883d63ef7~hLvxpKmd41267012670epoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756736991;
+	bh=2IVilufhTk8OxJwrv6/zlVYsrGN5/kHDHMnuC7CDzWc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=lEZ+kvdOgAgJi4Jw3RYYcX1BYw64Dh00cK7YI8yvONrG/6TnTVqR9fyPzn6WX5k7Q
+	 7TcB+flqvRXLj0KvWO+tm2WAqvxbOU7bD804SwRZoHV+ffVW1VFhp44wu5ouBy6OQ4
+	 +1LIIQ74X+ltEcB3moz9SMmZRmnic2NC1PNK8Xnk=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250901142950epcas5p13ea9f7cdf7c686e688e71ae08aa36acc~hLvwyJHrt2550625506epcas5p1T;
+	Mon,  1 Sep 2025 14:29:50 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cFrqd2hpgz6B9m5; Mon,  1 Sep
+	2025 14:29:49 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250901142948epcas5p3b6580da89ca826378481451bdafce798~hLvvQIxzi3166431664epcas5p3P;
+	Mon,  1 Sep 2025 14:29:48 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250901142947epsmtip2a81a5af8319bbbf7d82d50d5339d3232~hLvtvrwLf0150201502epsmtip23;
+	Mon,  1 Sep 2025 14:29:46 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Wim Van
+ Sebroeck'" <wim@linux-watchdog.org>, "'Guenter Roeck'" <linux@roeck-us.net>,
+	"'Rob Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'"
+	<krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
+Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+	<linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20250830-watchdog-s3c-cleanup-v1-4-837ae94a21b5@linaro.org>
+Subject: RE: [PATCH 4/4] dt-bindings: watchdog: samsung-wdt: Split if:then:
+ and constrain more
+Date: Mon, 1 Sep 2025 19:59:45 +0530
+Message-ID: <31f501dc1b4c$dedf8fd0$9c9eaf70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMq6vyl63rBWSdRs1NKiWzUsYqwtwJkufMiArpZRa2xt8VwUA==
+Content-Language: en-us
+X-CMS-MailID: 20250901142948epcas5p3b6580da89ca826378481451bdafce798
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-netpoll_memleak-v1-1-34a181977dfc@debian.org>
-X-B4-Tracking: v=1; b=H4sIALmttWgC/x3MUQrCMBAFwKss77uBbVBKcxURqclTF9O0JEWE0
- rsLzgFmR2M1NgTZUfmxZktBkL4TxNdUnnSWEARe/VlH7V3hti4532bOmdPbjZo0ne5xGHxEJ1g
- rH/b9jxcUbrgexw+Et+TnZgAAAA==
-X-Change-ID: 20250901-netpoll_memleak-90d0d4bc772c
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- david decotigny <decot@googlers.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, stable@vger.kernel.org, jv@jvosburgh.net, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3035; i=leitao@debian.org;
- h=from:subject:message-id; bh=rIc9PaP5Dn/UnXTwF/5gEzVX6ZfvAdPwwxjS/weWLp8=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBota3J1vyCtlP6LNUk+o4zFSY8qigmfKO1Spm1y
- ZSjNgJviTmJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaLWtyQAKCRA1o5Of/Hh3
- bUnuEACgCkzBAIx2/Shph1NfT03nw5u5yMoAbMncpCQr+7K3gZgqPGwuvZ66Y7sqJ1etfm+J6P7
- Cm5uE9Hk56rVF8nxbzUmwAfMf7dOy1BCP8r735LTGAA72a/A4OaGeh2t7NhACOLuMn4mIGLcHez
- wQW8PZkipq5Q0C1kG0sj020pYP8fj05Dbu+em0RdtwkS8ESyFa8KxZQ7NbQ3seXQ1RarNETNRRh
- MCcDzMfnRCt8GkJFvOgKZJxKo37oi76tO0c57vLdddAqRmHDgdoU9FtLf0zUWPPJr5GcmS0t0FS
- hfvYDo/N3M6RsJLyw2tNKhwo1l20sFKqM6vdXw1L7pfSiMWUXhgZQjnKuUDkfr+nvD/lIb1gyoh
- 350dkh+1tpqF7mIGgfDgJYlh+k5ycY1oFBz+iCWxva7dUt/aLIXkO9zRwGzIPAj9OcB5SwE/5va
- tdfj4+jfE0mdSs7SirfYt6x7euS2RAqSpgfQxzEdH8E6UY2QqfBqy5QrNU5AUkijl7+hP/tXUVR
- ZayjxIuF8yYxrkiGjAZwxy3OC9jyM1i0F0GryXGLhsDTreZHP8VQ7z0Q8RRCXjC6LJ3OKPav/cO
- NvwalU6F2i//tsE41EBYZmt30ivZ+aibPwJZuUh/i67t6Fan/jtdUW/W9gD+bNsZrt3AAnKGpfW
- B/vWc5Yc91SLMPg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250830101916epcas5p13a007b24285862d6ed0db1e2d8b738d6
+References: <20250830-watchdog-s3c-cleanup-v1-0-837ae94a21b5@linaro.org>
+	<CGME20250830101916epcas5p13a007b24285862d6ed0db1e2d8b738d6@epcas5p1.samsung.com>
+	<20250830-watchdog-s3c-cleanup-v1-4-837ae94a21b5@linaro.org>
 
-commit efa95b01da18 ("netpoll: fix use after free") incorrectly
-ignored the refcount and prematurely set dev->npinfo to NULL during
-netpoll cleanup, leading to improper behavior and memory leaks.
 
-Scenario causing lack of proper cleanup:
 
-1) A netpoll is associated with a NIC (e.g., eth0) and netdev->npinfo is
-   allocated, and refcnt = 1
-   - Keep in mind that npinfo is shared among all netpoll instances. In
-     this case, there is just one.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> Sent: Saturday, August 30, 2025 3:49 PM
+> To: Wim Van Sebroeck <wim=40linux-watchdog.org>; Guenter Roeck
+> <linux=40roeck-us.net>; Rob Herring <robh=40kernel.org>; Krzysztof Kozlow=
+ski
+> <krzk+dt=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>; Alim Akhtar
+> <alim.akhtar=40samsung.com>
+> Cc: Krzysztof Kozlowski <krzk=40kernel.org>; linux-
+> watchdog=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-
+> samsung-soc=40vger.kernel.org; Krzysztof Kozlowski
+> <krzysztof.kozlowski=40linaro.org>
+> Subject: =5BPATCH 4/4=5D dt-bindings: watchdog: samsung-wdt: Split if:the=
+n: and
+> constrain more
+>=20
+> Binding defined two if:then: blocks covering different conditions but not=
+ fully
+> constraining the properties per each variant:
+> 1. =22if:=22 to require samsung,syscon-phandle, 2. =22if:=22 with =22else=
+:=22 to narrow
+> number of clocks and require or disallow
+>    samsung,cluster-index.
+>=20
+> This still did not cover following cases:
+> 1. Disallow samsung,syscon-phandle when not applicable, 2. Narrow
+> samsung,cluster-index to =5B0, 1=5D, for SoCs with only two
+>    clusters.
+>=20
+> Solving this in current format would lead to spaghetti code, so re-write =
+entire
+> =22if:then:=22 approach into mutually exclusive cases so each SoC appears=
+ only in
+> one =22if:=22 block.  This allows to forbid samsung,syscon-phandle for S3=
+C6410,
+> and narrow samsung,cluster-index to =5B0, 1=5D.
+>=20
+This looks much cleaner.=20
+On a side note, may be you can add an example of latest SoC binding=20
+for the documentation purpose as current example in this file is pretty old=
+ and simple one.=20
+(I know one can always look into dtsi/dts for the example, but updating her=
+e won't harm)
 
-2) Another netpoll is also associated with the same NIC and
-   npinfo->refcnt += 1.
-   - Now dev->npinfo->refcnt = 2;
-   - There is just one npinfo associated to the netdev.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> ---
+In anycase,
 
-3) When the first netpolls goes to clean up:
-   - The first cleanup succeeds and clears np->dev->npinfo, ignoring
-     refcnt.
-     - It basically calls `RCU_INIT_POINTER(np->dev->npinfo, NULL);`
-   - Set dev->npinfo = NULL, without proper cleanup
-   - No ->ndo_netpoll_cleanup() is either called
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
-4) Now the second target tries to clean up
-   - The second cleanup fails because np->dev->npinfo is already NULL.
-     * In this case, ops->ndo_netpoll_cleanup() was never called, and
-       the skb pool is not cleaned as well (for the second netpoll
-       instance)
-  - This leaks npinfo and skbpool skbs, which is clearly reported by
-    kmemleak.
+>  .../devicetree/bindings/watchdog/samsung-wdt.yaml  =7C 70
+> ++++++++++++++++------
+>  1 file changed, 52 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-
+> wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-
+> wdt.yaml
+> index
+> 51e597ba7db2615da41f5d3b6dc4e70f6bb72bb6..41aee1655b0c22a6dce212a6
+> 3fa4849089253f09 100644
+> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+> =40=40 -74,24 +74,7 =40=40 allOf:
+>            contains:
+>              enum:
+>                - google,gs101-wdt
+> -              - samsung,exynos5250-wdt
+> -              - samsung,exynos5420-wdt
+> -              - samsung,exynos7-wdt
+>                - samsung,exynos850-wdt
+> -              - samsung,exynos990-wdt
+> -              - samsung,exynosautov9-wdt
+> -              - samsung,exynosautov920-wdt
+> -    then:
+> -      required:
+> -        - samsung,syscon-phandle
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          contains:
+> -            enum:
+> -              - google,gs101-wdt
+> -              - samsung,exynos850-wdt
+> -              - samsung,exynos990-wdt
+>                - samsung,exynosautov9-wdt
+>                - samsung,exynosautov920-wdt
+>      then:
+> =40=40 -104,9 +87,41 =40=40 allOf:
+>            items:
+>              - const: watchdog
+>              - const: watchdog_src
+> +        samsung,cluster-index:
+> +          enum: =5B0, 1=5D
+>        required:
+>          - samsung,cluster-index
+> -    else:
+> +        - samsung,syscon-phandle
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos990-wdt
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Bus clock, used for register interface
+> +            - description: Source clock (driving watchdog counter)
+> +        clock-names:
+> +          items:
+> +            - const: watchdog
+> +            - const: watchdog_src
+> +      required:
+> +        - samsung,cluster-index
+> +        - samsung,syscon-phandle
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos5250-wdt
+> +              - samsung,exynos5420-wdt
+> +              - samsung,exynos7-wdt
+> +    then:
+>        properties:
+>          clocks:
+>            items:
+> =40=40 -115,6 +130,25 =40=40 allOf:
+>            items:
+>              - const: watchdog
+>          samsung,cluster-index: false
+> +      required:
+> +        - samsung,syscon-phandle
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,s3c6410-wdt
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: Bus clock, which is also a source clock
+> +        clock-names:
+> +          items:
+> +            - const: watchdog
+> +        samsung,cluster-index: false
+> +        samsung,syscon-phandle: false
+>=20
+>  unevaluatedProperties: false
+>=20
+>=20
+> --
+> 2.48.1
 
-Revert commit efa95b01da18 ("netpoll: fix use after free") and adds
-clarifying comments emphasizing that npinfo cleanup should only happen
-once the refcount reaches zero, ensuring stable and correct netpoll
-behavior.
-
-Cc: stable@vger.kernel.org
-Cc: jv@jvosburgh.net
-Fixes: efa95b01da18 ("netpoll: fix use after free")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-I have a selftest that shows the memory leak when kmemleak is enabled
-and I will be submitting to net-next.
-
-Also, giving I am reverting commit efa95b01da18 ("netpoll: fix use
-after free"), which was supposed to fix a problem on bonding, I am
-copying Jay.
----
- net/core/netpoll.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/net/core/netpoll.c b/net/core/netpoll.c
-index 5f65b62346d4e..19676cd379640 100644
---- a/net/core/netpoll.c
-+++ b/net/core/netpoll.c
-@@ -815,6 +815,10 @@ static void __netpoll_cleanup(struct netpoll *np)
- 	if (!npinfo)
- 		return;
- 
-+	/* At this point, there is a single npinfo instance per netdevice, and
-+	 * its refcnt tracks how many netpoll structures are linked to it. We
-+	 * only perform npinfo cleanup when the refcnt decrements to zero.
-+	 */
- 	if (refcount_dec_and_test(&npinfo->refcnt)) {
- 		const struct net_device_ops *ops;
- 
-@@ -824,8 +828,7 @@ static void __netpoll_cleanup(struct netpoll *np)
- 
- 		RCU_INIT_POINTER(np->dev->npinfo, NULL);
- 		call_rcu(&npinfo->rcu, rcu_cleanup_netpoll_info);
--	} else
--		RCU_INIT_POINTER(np->dev->npinfo, NULL);
-+	}
- 
- 	skb_pool_flush(np);
- }
-
----
-base-commit: 864ecc4a6dade82d3f70eab43dad0e277aa6fc78
-change-id: 20250901-netpoll_memleak-90d0d4bc772c
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
 
 
