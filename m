@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-794495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95244B3E29C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFE0B3E29D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E676A189FE87
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094851A82B8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEBC3002C0;
-	Mon,  1 Sep 2025 12:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C059530BF7B;
+	Mon,  1 Sep 2025 12:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dSR281yj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMqtVR+p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F07242D9F;
-	Mon,  1 Sep 2025 12:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2544226D4C1;
+	Mon,  1 Sep 2025 12:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729424; cv=none; b=dUpHZ9V9CGUCeRxEfGckkJxfTq/zHHLKiQlNBiw9MmwZExSwFN88Xhk2JmsvXXTxZJPDdBtLwBFUVYXRG77ukDnCUpuo36ciBV2psQFnWcjvSy1H17VbH8thUFhQQoYolJLSw3xv7M/SdJiilnou0UlYaguZ9Qp8MsI78fZaBv8=
+	t=1756729451; cv=none; b=AiANzeNXqpWPuauRWygbACp01BZX6bKI/lG7oVsX731Ka9ytlg8AX7YiPOu2WQcxosYuOt/CelNCDsFIx1ns35+tUl//vsnF7NeLgpp91985j5C1cHcGsuHIdsU5fp9DpkcZoiaIUY4k1iicKHBe6I3xUBIWfcaVYozs7qHb5jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729424; c=relaxed/simple;
-	bh=yFvygwLcFHD/6voobz7w19DKMbhyHW4ucdxxudzbGrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mVgU4NhRJ4GF0jZBT2Xa+qu1YPK04fT78QXO7W9QplAicya/7Dg+xyay/n63TZ5tGyD5mztDwJuogpOBeTHL0gNvzKEpZwffORusJcftjQb9tJ9HIYLkU/w+gCp48JjQCTuo4vrcGl8Ymmxi/n3wHYz33yRPh9TipW+1Wi2V9hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dSR281yj; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756729423; x=1788265423;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=yFvygwLcFHD/6voobz7w19DKMbhyHW4ucdxxudzbGrY=;
-  b=dSR281yjGwO9IIMuvSP+oWG7fYX9yM4aLi6t4vvfXENCjgoyOPZeFYnD
-   pGLkyz3gaHDkL3lnWG/RLnNvjtdg05NVVKdxfPj48j66fjW1NVAWBQjia
-   oUCzg+DDmv4+vWit6Wj49SLXeJvHBMg0V6gBlqJcEk3rHwmIIK2F0aXZm
-   Eoh6bnNLY6frCbjq0WRBA8vWiQg01FhWluWtDeSfVW5YYrgGs5Gil6u56
-   miMJkoOCiTFN7AXk+LaTJefpcqcMk4shWR/qWZTdLyQBJpBK3HR/nGP/7
-   eVuK3uo2Jr+oUvGbs72bHxQ8fJAgz3MWloNtLTdXh0rKjqviggye66BVW
-   A==;
-X-CSE-ConnectionGUID: tLPU6ULVScatcTUen7zwXA==
-X-CSE-MsgGUID: g27bHPWvRU+T6SkVq7Koiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="58015136"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="58015136"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:23:43 -0700
-X-CSE-ConnectionGUID: 9/SLPQv+SsK1HHL9nQ0C4A==
-X-CSE-MsgGUID: okCmQ48NTMaIcDN+xu+6HA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="170565473"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:23:40 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ut3ZR-0000000APUw-0Sga;
-	Mon, 01 Sep 2025 15:23:37 +0300
-Date: Mon, 1 Sep 2025 15:23:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH 2/2] staging:media: atomisp: Whitespaces cleanup in vmem.c
-Message-ID: <aLWQSAX1ZKg6IiTb@smile.fi.intel.com>
-References: <20250901091050.1935505-1-abarnas@google.com>
- <20250901091050.1935505-3-abarnas@google.com>
+	s=arc-20240116; t=1756729451; c=relaxed/simple;
+	bh=1y1C3r+YYCBCldCQKr3GO6JKvPpDZX9+NRK0YMyqE/c=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YzzTIj9c2uwwP0HOGiDRP2kUYidQlgxNGFw2x21Zx9GXgbPS+BldFKJhhoUsFpEfyJXiIxUiWZXoAsDsrU4mLpxS0TM2L+Okq5xApVBfezQ6R3vBCs/3SMXaU73ogbH+PvkBKLK8FtBytgH+/Jx4Vxz2fEszea+MJgQ3eLwW/nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMqtVR+p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EFEC4CEF0;
+	Mon,  1 Sep 2025 12:24:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756729450;
+	bh=1y1C3r+YYCBCldCQKr3GO6JKvPpDZX9+NRK0YMyqE/c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bMqtVR+pnPwQGrofgqUly/HRw5+is5i33ASvrU3eqrSUaY6VndIg6J/zUi2HTccUP
+	 Cs8Bp01Iobubz67QuN8CXqUXAs8ycsuVmHHl3FnGnT1c4ugIsE4YW7BFI2A2DXMHJZ
+	 r7LRwHFY9vG53RqA6aSDJ0HlafWV1ydatN5yQdY1edikeBePJa8qLwvK4Z8nTa0/Q5
+	 ntTTnaDB1gS9b6YpI8Nc5zg+KXI5ltrn3VKvNMFLvn4EtE2LHsKjWPD7HTX8lHZSPW
+	 CBcMn/nbXMnBhQuswnFHP7NAjbLe+hnU3AgPOxLUQVH2bjyah0xXSHUepJg75VxuNi
+	 REe1eNB40fadA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1ut3Zw-00000002F4D-0jUI;
+	Mon, 01 Sep 2025 12:24:08 +0000
+Date: Mon, 01 Sep 2025 13:24:07 +0100
+Message-ID: <863496e4yg.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Yingchao Deng <yingchao.deng@oss.qualcomm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	quic_yingdeng@quicinc.com,
+	jinlong.mao@oss.qualcomm.com,
+	tingwei.zhang@oss.qualcomm.com,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas
+ <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] KVM: arm64: Fix NULL pointer access issue
+In-Reply-To: <450f11c2-6c11-4ffa-ae20-db4ea419a3ca@linaro.org>
+References: <20250901-etm_crash-v1-1-ce65e44c137c@oss.qualcomm.com>
+	<450f11c2-6c11-4ffa-ae20-db4ea419a3ca@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250901091050.1935505-3-abarnas@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: james.clark@linaro.org, yingchao.deng@oss.qualcomm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, quic_yingdeng@quicinc.com, jinlong.mao@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Sep 01, 2025 at 09:10:50AM +0000, Adrian Barnaś wrote:
-> Whitespaces cleanup to conform with kernel style and improve readability.
+On Mon, 01 Sep 2025 11:36:11 +0100,
+James Clark <james.clark@linaro.org> wrote:
+> 
+> 
+> 
+> On 01/09/2025 11:01 am, Yingchao Deng wrote:
+> > When linux is booted in EL1, macro "host_data_ptr()" is a wrapper that
+> > resolves to "&per_cpu_ptr_nvhe_sym(kvm_host_data, cpu)",
+> > is_hyp_mode_available() return false during kvm_arm_init, the per-CPU base
+> > pointer __kvm_nvhe_kvm_arm_hyp_percpu_base[cpu] remains uninitialized.
+> > Consequently, any access via per_cpu_ptr_nvhe_sym(kvm_host_data, cpu)
+> > will result in a NULL pointer.
+> > 
+> > Add is_kvm_arm_initialised() condition check to ensure that kvm_arm_init
+> > completes all necessary initialization steps, including init_hyp_mode.
+> > 
+> > Fixes: 054b88391bbe2 ("KVM: arm64: Support trace filtering for guests")
+> > Signed-off-by: Yingchao Deng <yingchao.deng@oss.qualcomm.com>
+> > ---
+> > Add a check to prevent accessing uninitialized per-CPU data.
+> > ---
+> >   arch/arm64/kvm/debug.c | 7 ++++---
+> >   1 file changed, 4 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
+> > index 381382c19fe4741980c79b08bbdab6a1bcd825ad..add58056297293b4eb337028773b1b018ecc9d35 100644
+> > --- a/arch/arm64/kvm/debug.c
+> > +++ b/arch/arm64/kvm/debug.c
+> > @@ -233,7 +233,7 @@ void kvm_debug_handle_oslar(struct kvm_vcpu *vcpu, u64 val)
+> >   void kvm_enable_trbe(void)
+> >   {
+> >   	if (has_vhe() || is_protected_kvm_enabled() ||
+> > -	    WARN_ON_ONCE(preemptible()))
+> > +	    WARN_ON_ONCE(preemptible()) || !is_kvm_arm_initialised())
+> 
+> Hi Yingchao,
+> 
+> There shouldn't be a warning for this, at least for the case where
+> it's not initialized and never will be. If you're never going to run a
+> guest these functions can all skip, the same way for !has_vhe() etc.
 
-Strange...
+It's not a warning. It's a bona-fide crash:
 
-...
+void kvm_enable_trbe(void)
+{
+	if (has_vhe() || is_protected_kvm_enabled() ||
+	    WARN_ON_ONCE(preemptible()))
+		return;
 
->  /* subword bits move like this:         MSB[____xxxx____]LSB -> MSB[00000000xxxx]LSB */
-> -static inline unsigned long long
-> -subword(unsigned long long w, unsigned int start, unsigned int end)
-> +static inline unsigned long long subword(unsigned long long w, unsigned int start,
-> +					 unsigned int end)
->  {
->  	return (w & (((1ULL << (end - 1)) - 1) << 1 | 1)) >> start;
->  }
->  
->  /* inverse subword bits move like this: MSB[xxxx____xxxx]LSB -> MSB[xxxx0000xxxx]LSB */
-> -static inline unsigned long long
-> -inv_subword(unsigned long long w, unsigned int start, unsigned int end)
-> +static inline unsigned long long inv_subword(unsigned long long w, unsigned int start,
-> +					     unsigned int end)
->  {
->  	return w & (~(((1ULL << (end - 1)) - 1) << 1 | 1) | ((1ULL << start) - 1));
->  }
+	host_data_set_flag(TRBE_ENABLED); <--- Explodes here
+}
 
-These two were just "fixed according to the kernel coding style" and here
-again. This is odd.
+So the write of the flag has to be skipped if KVM is available, even
+if KVM is compiled in.
 
-Note, the style after the first patch is okay. I dunno what's wrong with it.
-
-...
-
-> -void isp_vmem_load(
-> -    const isp_ID_t		ID,
-> -    const t_vmem_elem	*from,
-> -    t_vmem_elem		*to,
-> -    unsigned int elems) /* In t_vmem_elem */
-> +void isp_vmem_load(const isp_ID_t ID, const t_vmem_elem *from, t_vmem_elem *to,
-> +		   unsigned int elems) /* In t_vmem_elem */
-
-Please, (re)move trailing comments somewhere else.
+	M.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Without deviation from the norm, progress is not possible.
 
