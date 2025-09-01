@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-794565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56FE1B3E365
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D93BFB3E369
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58142031AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F172220469D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91363337692;
-	Mon,  1 Sep 2025 12:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8327338F31;
+	Mon,  1 Sep 2025 12:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LUst9Pjl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lI0ji8jV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86ACB326D74;
-	Mon,  1 Sep 2025 12:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1898B326D74;
+	Mon,  1 Sep 2025 12:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756730110; cv=none; b=lyOBYiUMd78qWWFQ8b8igsxWjLQIbevpMj8HnVBHB8xjGCCLLQOJ8MONmGav9JLeaNqnQnM8pMTb4dE835WIGjq3BrOHFmBPymPktZnWphD9tm9xKr/peJRUsNanv1J9lkT9c61pjXMMH9I/suZiCVNNFPLqLoAtWR+GX7o5p4E=
+	t=1756730123; cv=none; b=QqAKpa6P9wwQGjpSRAjlDWfsWVUMwCyqBd6L8uCph080Pn/C6aCZKeoAhlhXJVzWew8+ZyOiDMEO5ttu7SbE3MB2sqCpREPY9UQ0uFH5mXEEi48imDga6hgB1tMD/INPY4fbcxX8mDYi5zjV8y5kJhdh9l1VbO/josiPHrRXRSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756730110; c=relaxed/simple;
-	bh=rGr7Bo1vXWwjrmge9Wg/+zFRIYmWBsmAkZO4GZCgaQU=;
+	s=arc-20240116; t=1756730123; c=relaxed/simple;
+	bh=ujiWbkguC4G/QKN1jDXb1VaBVSfBowmGk5Q6gUDa2go=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=reB40ZOPH5wylg14Ix9w/r6nDO3c3JU8sysszdPBEkcl0eM/i17bEQ5oekaTr8IMxsq1z+dUkzsjqe/0WOpzOr9DwSs6B7Lbh8BSmqToEuLWPby+/g4R1tj6HbpqNm2ehDTIhDx6RzwTIpQFkLQVtEAgFz2qfUZ5qIx1KVebj2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LUst9Pjl; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756730108; x=1788266108;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=rGr7Bo1vXWwjrmge9Wg/+zFRIYmWBsmAkZO4GZCgaQU=;
-  b=LUst9Pjl4S3GSatj4ui3pJ7DN5qgj9SZ4ZLEBYPk2++n4wN3UOnUpAeA
-   suulgekhmFSkvpqn7CLLUNxA7dqXmU5oMbSX7+oRCMN/ES+x2MpRlOC5f
-   KvcfblUrjFGYS2G89YSmrymgFT2bVLfUxsPgKxVoZIFEyYsAPRZbk/YLw
-   aInwBsxcVd0Oc1N/eHw5LyYMoS3NQZVUae0KCe0+wtx3t5SxlD9Wm4Vm7
-   8fMar6BjrPmM1FzP3VDmalpYEk5P8OtfAaH9QAZO4ndVcJ5P7I4EIsX8r
-   vrFjndRFprnkkctgh8sLuP9M9Qm1JbKlnpExA+Q1ZSnp5/9OP6EyCi18I
-   A==;
-X-CSE-ConnectionGUID: wjYAcG+ZTcumTZh4BpciHQ==
-X-CSE-MsgGUID: XDzyZPKYRXmDRuPtTS5m/Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62820819"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62820819"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:35:08 -0700
-X-CSE-ConnectionGUID: LenhrOEsRM219DWntpmz9w==
-X-CSE-MsgGUID: IaHq/rL4Smaq9EvD+l+KTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="201934761"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:35:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ut3kU-0000000APcx-01Qi;
-	Mon, 01 Sep 2025 15:35:02 +0300
-Date: Mon, 1 Sep 2025 15:35:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH 1/2] staging: media: atomisp: Remove typedefs for basic
- types in vmem.c
-Message-ID: <aLWS9QsvmzZW4Bak@smile.fi.intel.com>
-References: <20250901091050.1935505-1-abarnas@google.com>
- <20250901091050.1935505-2-abarnas@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSeMjiX6IwbCGaJvim+ygCtkdlePkIlfn0yt18AOJD9Xfy0NMjPUk1xLS/5nbx28kez6wJtTlEXGbyxmvUKNQ0LU9Xhi3be2aIB0IOhdULolGnH6QVKUD68LIrMwIqOA8naQHsfvgfBkKf35j7k0u1CqM+/iv2E+3KKFNmBmEuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lI0ji8jV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9B9C4CEF0;
+	Mon,  1 Sep 2025 12:35:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756730122;
+	bh=ujiWbkguC4G/QKN1jDXb1VaBVSfBowmGk5Q6gUDa2go=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lI0ji8jVEa80XtdzuXetPyNrshQ7VD6Tx2WlVck6VtTQi6wMVbilyjaRZjUIaKPsW
+	 ELm26o33N0GyfMCzqaP6RT9KJaYtC0c2QHI8ihjEWvva1yAKTBb/6yIGehbtRtAx/4
+	 JiqZ+/Vh+GB1KuLiNdQ6sgt9cbev+40Jvjtge63Z0H7GrczYSrZb4hsS8dXNU2QmE8
+	 i9qrU8wYZoQ8QQ+KBgJJ5ObuLgogoz7GDFCbhS9ODJVgKmj3Y7bELHT9NQeSpVWbAF
+	 Pu8BG7FYEH+HR1nmlA6Ux9AsaHkNd86nPzAEUv7XQp/bpvifznwNRN8sk0JxaknO62
+	 jQDBROeFu/Nmg==
+Date: Mon, 1 Sep 2025 13:35:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Anders Roxell <anders.roxell@linaro.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Longbin Li <looong.bin@gmail.com>,
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: Re: [PATCH] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
+ cond_[startup|shutdown]_parent()
+Message-ID: <5c07c5bc-1b02-4b18-89b6-da13c16d62ab@sirena.org.uk>
+References: <20250827062911.203106-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8+qB4jhtfVp3Vnqv"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250901091050.1935505-2-abarnas@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Mon, Sep 01, 2025 at 09:10:49AM +0000, Adrian Barnaś wrote:
-> Cleared typedefs hiding unsigned long long type, to align with
-> kernel coding style.
-
-...
-
-> -static inline hive_uedge
-> -subword(hive_uedge w, unsigned int start, unsigned int end)
-> +static inline unsigned long long
-> +subword(unsigned long long w, unsigned int start, unsigned int end)
->  {
->  	return (w & (((1ULL << (end - 1)) - 1) << 1 | 1)) >> start;
->  }
->  
->  /* inverse subword bits move like this: MSB[xxxx____xxxx]LSB -> MSB[xxxx0000xxxx]LSB */
-> -static inline hive_uedge
-> -inv_subword(hive_uedge w, unsigned int start, unsigned int end)
-> +static inline unsigned long long
-> +inv_subword(unsigned long long w, unsigned int start, unsigned int end)
->  {
->  	return w & (~(((1ULL << (end - 1)) - 1) << 1 | 1) | ((1ULL << start) - 1));
->  }
-
-Also consider to simplify the above (in a separate change).
-
-static inline unsigned long long
-subword(unsigned long long w, unsigned int start, unsigned int end)
-{
-	return (w & GENMASK_ULL(end, 0)) >> start;
-}
-
-static inline unsigned long long
-inv_subword(unsigned long long w, unsigned int start, unsigned int end)
-{
-	return w & (~GENMASK_ULL(end, 0) | GENMASK_ULL(start, 0));
-}
-
-...if I'm not mistaken, so double check all these.
-
-At least in my case the end == 64 is not allowed while it seems the original
-code allows it to be equal to the end == 63 case. Needs testing anyway...
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20250827062911.203106-1-inochiama@gmail.com>
+X-Cookie: Are we on STRIKE yet?
 
 
+--8+qB4jhtfVp3Vnqv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 27, 2025 at 02:29:07PM +0800, Inochi Amaoto wrote:
+> For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
+> the newly added callback irq_startup() and irq_shutdown() for
+> pci_msi[x]_templete will not unmask/mask the interrupt when startup/
+> shutdown the interrupt. This will prevent the interrupt from being
+> enabled/disabled normally.
+>=20
+> Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
+> cond_[startup|shutdown]_parent(). So the interrupt can be normally
+> unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+This is causing multiple platforms to fail to boot in -next, it'd be
+great if we could get it merged to fix them.
+
+--8+qB4jhtfVp3Vnqv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi1kwQACgkQJNaLcl1U
+h9AISwf+OqBpOBQXDTFYrn1WyG1exWW9S2S+zzlJHVp7cStWQBX/cZiL3QHTtZOU
+rhSYvXHTcLKTfuIy1iKZhXwfX+IxOdKp51EYdq15jxBiz6l4ocANxNsu9N2tyzvs
+R8IHJE+Yn6krq/ZZcnhAPTNDQfodpXpi4gp4oWnFulNFh47afuH7u3NOaXQ25NLz
+RXZX1rzYozrwpcTxQuLj/XdfktCZ4nFQrH86Q5oOyZuMd2QY96Z3Za4il7pzDn1D
+M0mnzgJH61OT3MYUcVa9lP/wr24sXapWOT3bGJMHTHxpvrJxOojbv8pg20lUMxoV
+lftu3Lacxg/nDD1xoNFZ+cZQ6uqdgA==
+=qbns
+-----END PGP SIGNATURE-----
+
+--8+qB4jhtfVp3Vnqv--
 
