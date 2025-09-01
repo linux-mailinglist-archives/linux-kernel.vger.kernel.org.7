@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-793983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAD5B3DB26
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:34:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F39B3DB29
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13479189BE6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36AF189B9F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB16A272E5E;
-	Mon,  1 Sep 2025 07:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D049926E709;
+	Mon,  1 Sep 2025 07:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="t5K/FdXe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d9pH8I4e"
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNBOWLT8"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FF326C39F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 07:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E953126B75C;
+	Mon,  1 Sep 2025 07:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756712027; cv=none; b=VeZ4qdVQZmaYKrsq6XxmkBBMS6XsDIRqeaS6heP+VjIC/eX5UBVIZKVfe4SEKiJpu/r1uzYkvVmM9pYQL17Jq4dGR0vZ9OlLL5cB6rjut1w0QndKQsxBVHzVbRPKVr3RULaFUkHyvjaxmy3R96FWUKW1ZKJ+iSvVR6ly2QatCbs=
+	t=1756712163; cv=none; b=koNcW/jVkXCu8AVeULyIuhYKn06hXoVylpT+4vdR39aE04dXatzMAcgqAZDeyWiJejrdSna3XF1Ax6tuNZ2HgH0iMLtafE1MOdnHWedAefcT6+k548V5wSpU/gisgukzX7Ve/TsfkCmgiTcS4Z5pEOT/kAtF3OHAHwV5cmpB98U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756712027; c=relaxed/simple;
-	bh=lvFxhKXCcw+AoQxQLdV7pkmoY5luQSrtl9cwHURPrOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kes1MR/Xks1+VqY4yeARvXjVwmC2qF8/PbD4fwiY6a13f2NSNHxK6lHR4ASLsoDTWi38drcqFMc+D2r1zAu8i7ysDvUOOx050//S1cV+cwzTCK9RjpZTW+E4s8ZYA94Prr8bVvVicJJzpfyYIsOMjdB4eiX8GjgX7L4r9T1k8uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=t5K/FdXe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d9pH8I4e; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id DB6E41380899;
-	Mon,  1 Sep 2025 03:33:43 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 01 Sep 2025 03:33:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1756712023; x=
-	1756719223; bh=kipqqFjvNo4Y7cKqBGTxkuUKZhPOTVfUMxxW+rU6c9A=; b=t
-	5K/FdXewrZ/2RM0ILP5bn/BSgfkppqHgUi3igvqnqeGA5aDPWPJsC/LdoVYaofkA
-	sJ32mSKBRiJa8wEp8Pm6HwjCR7WJHIdCBFafpeUeZTDqwvs0XLoFm8Nx+WcTIR73
-	HWg1Ct9+WQLc9Xf2uN4BqQOzmfuZx7XjslJnxWo/znyIhanaxEaDyc1JyasghSJU
-	tOHiZjv30PsIGYfqjBDfObB0Xf686lH4t6T1jB89tlhNril0TX+vZBW950L/RIRJ
-	tViNZSvTBph5SioKh8trP+mT2glGwhsuWv+0lIJqNdQsdnxMgQJ7g/brwLNKXg2A
-	imc/wCaOCJtzOJNa9Dx3w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756712023; x=1756719223; bh=kipqqFjvNo4Y7cKqBGTxkuUKZhPOTVfUMxx
-	W+rU6c9A=; b=d9pH8I4eJlpTVAKsPhcxy3QKdiHStJQ7QJdlktmIl4Kzsif8Inp
-	PIWU8XuJavqBtq1c+/CvuAUaIvfLjsdVguBAmOYirGLEyn1ueUWf7w99pi/b+WTN
-	54JMBGOmGUBB9NgsFYsEmlEK5QHz0JxsQOvVWkPFfIhtjks2OBa4cpF23fD3pRjy
-	eOgg41MipZwrC9fRhUsr2k//nypy+asK58+6tNYD6aTOHhSlUS+MwkBi+FtlBFRE
-	DpVFdqBdWqftW4ifDvUe9AjtFGAgr69HFNWQskc+iF5f8oqSkCu+gl1V/dmk8Rum
-	/O1oQLXSkDHaOYDssQ6j9e3nVAEVq3tTPDA==
-X-ME-Sender: <xms:V0y1aBr5HiwXCvRLQUdKYZUC84eaB_o-kdsUG2icLXzarDBxSvBTGg>
-    <xme:V0y1aKkmys6-VIv-rPjYo7HZNXEeXy5W-jnSzSW_8mjrOrCPoeMZkMXEXPKUDOdhE
-    fX4kt0KgHUqBNu8SaY>
-X-ME-Received: <xmr:V0y1aHKBDaeXz67Axu793x2bRGZSUbTJYEscAPZ-71awhVphpMEZ-xhJZg-0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduleduheeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeef
-    vddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrgidrkhgvlhhlvghrmhgrnh
-    hnsehiohhnohhsrdgtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgu
-    rghtihhonhdrohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtghomhdprh
-    gtphhtthhopegrgigvlhhrrghsmhhushhsvghnsehgohhoghhlvgdrtghomhdprhgtphht
-    thhopeihuhgrnhgthhhusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllhihse
-    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohephhhughhhugesghhoohhglhgvrdgt
-    ohhmpdhrtghpthhtohepmhhhohgtkhhosehsuhhsvgdrtghomhdprhgtphhtthhopehlih
-    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:V0y1aEuB8tB740d972UnXCn45IlKHzD42mDAtCYsahDqJ9tLrBW_fw>
-    <xmx:V0y1aLJRG_CNTVDYmXinLvFryldEDJCWT6y7yCMnquXYmM1Te1Z9-g>
-    <xmx:V0y1aPH1gHI2QNDi1NhCPg2FjwKx8asUSsXJ8pN60onRx4q0OOgobA>
-    <xmx:V0y1aPRbDGazDrF3jETq-sSMS-9GHWFnRkBwkSwLzvw2MQY1OVH1Ig>
-    <xmx:V0y1aMr7Kb1WDmz7LMq0yZ1qG7t19mc6H_PSdsnscLmn-4dWYOatGyWi>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 1 Sep 2025 03:33:42 -0400 (EDT)
-Date: Mon, 1 Sep 2025 08:33:39 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com, 
-	yuanchu@google.com, willy@infradead.org, hughd@google.com, mhocko@suse.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
-	vishal.moola@gmail.com
-Subject: Re: [PATCH v2 01/12] mm/shmem: add `const` to lots of pointer
- parameters
-Message-ID: <day257vhz3o7hepucfz5itjvdtp2k36hkqdg7hckqleb4jxyku@rs4rs3zhl4hn>
-References: <20250831093918.2815332-1-max.kellermann@ionos.com>
- <20250831093918.2815332-2-max.kellermann@ionos.com>
+	s=arc-20240116; t=1756712163; c=relaxed/simple;
+	bh=J6zMRZ4XqHFK/EhlYEXT71zKq4ZAuK6GL79gKLwQatU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CGZEKk34xDbJxHeC6DqnDCjwtt/0x86lyBOBNC1khBj3mKANUf4lfQ75rFQ0WFYhCiW0b5yN0GL6ifJA5VzVDblxLeSRx4ZQA5Ge3+LLCWglC4XUkM2tDF1jmQxGETuRK9RH+JbJ3+c8ueR8KAJiyhMcmpPqXLIFZRHngdlqI7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YNBOWLT8; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-24a1270e0deso11396465ad.1;
+        Mon, 01 Sep 2025 00:36:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756712161; x=1757316961; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L0ePC0WzColXkaFbBrk+Z/IecQrL5Wt4AmBIdBx+2Qg=;
+        b=YNBOWLT8lalvRn+ngX1hTmgu/u1VmDOHHmK2RkK7NZL1TmMKIAa4ucN+yesWbhaz7d
+         uuc066giEtpTKX1+40ulMdSocwCKoYRsTzbIlSeUFfm3gM/t/kmGFHaVsI373tHwo2gd
+         iuXb6IrllrAhtcF5Xh+2tLbPO9QMUhkQRTZd+FtZRYWzdBO6jAzC31K6F0Ep8ZCPyFqb
+         PurUKveedrTWX8lO8xdFil7wD2ww838tmWSb6IgEISJ1ho9ozTBYDGbTDxtp7OlimPey
+         oyDOgM8ECcdwXiTI31VERXf/7PjQ1hYwi6lMRYjtbspsyzd5ueJRKG+wTj0uxsy3ZoL6
+         u8Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756712161; x=1757316961;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L0ePC0WzColXkaFbBrk+Z/IecQrL5Wt4AmBIdBx+2Qg=;
+        b=w6gfZ5Ke50pfmC9jyGm4ANSgD03IXNwUXK7QiyU5oH1CHFsrULTRd6Gfd1+FN2ygmg
+         xXUyYpynTT19xhHu+MMFEGsYg/xSFJpnP8CG1/6tJ+OFGJs6ohCBE6npBVFppSqrKadu
+         u1Gg7XsYhg6BoKbRMfu9uZLJiwKThVfo260aFWKkJ85GbXb+7SvANfWpg+1gdk3Kz04n
+         JCN5x6yc+g36Urc+ip5x11uE+Tht8ZtNp5dop51lnQ+bjV65FlRiYZBSO4pswbw4U3ks
+         wqfg8FSleBMUoMdLtxld31vc9yqvkb7yItQxrmj8b1Om7ljswZwwkgwlxFN2eMS2Djio
+         HOpw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8eud5ZoY6wZyrEyttyMYgZGjcrzZpdVxbnYm6j6zt5BbLfqBsRueBqbXKPxqFbrVm7Gk=@vger.kernel.org, AJvYcCUez+OVMTA6po98A/8b01mJRYBO4iRsP5dQamGCiAhrM17np5hvERWn5Jish32kiNaJ2nvxbGZG7deEO4uvlmBV@vger.kernel.org, AJvYcCXgOi9EVzGGJ0MW/CR0MfEohAQgaSzfOncD1O7fAbkvbIn1TZzrgulEcHJBrC8KjmD5u+PNLrT//vt9buuW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzoyWwZyy5OYfpZmn8pE0EWEYHaCHy0SscXJc2jpBeEfRFFcPs
+	f1YFso3Y+l0qWTMjle18/qY71IKWO32NplIwGcX/b8Qmomq3mYQkb7R5
+X-Gm-Gg: ASbGncuqOPKz8M/QzznbtxvCPsRV/CczX4i54CnOdyoKHekjUKSgj82P69NSGD3XAlQ
+	FmMeHCBVlfv/8HXF1pSl33jaiFhj0edBENpoeaPZw5RSh/FkNI4b476wOtN4QWYOMJKGzB5tSNu
+	RJXDkgzMyXissLCYBzYQhFezg3UxydqltXZrW6V51uYBFAPngV9f4ue+SS5YnBdHpPZjNRyjoLZ
+	+3qCl7uKUXblVzIAperbZmnC6QsxoNCBLdlyHFcK0OMNcJ6aiPku+QNABd1dHpCVZE/o0l2GDxe
+	fTVE5b55xe4apo2TBZFZbY241Rvd1sKMwGEWkZTIzFecfZLkeBvdVKHXNPR5XPxaIpuInAqkuAG
+	l47qU36OJtvh6niRPEGrH9g2Msj4rqVU=
+X-Google-Smtp-Source: AGHT+IHCC7OUu97GWMAOQYi+hndVB3qfPEyGEt/pCflpkaED9w8c03pQ0ntMhKZbeOTUw6gDQtgfvw==
+X-Received: by 2002:a17:903:2c06:b0:246:cfc5:1b61 with SMTP id d9443c01a7336-24944b15b97mr87894275ad.55.1756712161144;
+        Mon, 01 Sep 2025 00:36:01 -0700 (PDT)
+Received: from days-ASUSLaptop.lan ([2406:8dc0:6008:46::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903737b05sm95867045ad.49.2025.09.01.00.35.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 00:36:00 -0700 (PDT)
+From: dayss1224@gmail.com
+To: pbonzini@redhat.com,
+	shuah@kernel.org,
+	anup@brainfault.org
+Cc: atish.patra@linux.dev,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	Dong Yang <dayss1224@gmail.com>
+Subject: [PATCH v3 0/3] KVM: riscv: selftests: Enable supported test cases
+Date: Mon,  1 Sep 2025 15:35:48 +0800
+Message-Id: <cover.1756710918.git.dayss1224@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250831093918.2815332-2-max.kellermann@ionos.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 31, 2025 at 11:39:07AM +0200, Max Kellermann wrote:
-> For improved const-correctness.
+From: Dong Yang <dayss1224@gmail.com>
 
-It is not a proper commit message.
+Add supported KVM test cases and fix the compilation dependencies.
+---
+Changes in v3:
+- Reorder patches to fix build dependencies
+- Sort common supported test cases alphabetically
+- Move ucall_common.h include from common header to specific source files
+
+Changes in v2:
+- Delete some repeat KVM test cases on riscv
+- Add missing headers to fix the build for new RISC-V KVM selftests
+
+Dong Yang (1):
+  KVM: riscv: selftests: Add missing headers for new testcases
+
+Quan Zhou (2):
+  KVM: riscv: selftests: Use the existing RISCV_FENCE macro in
+    `rseq-riscv.h`
+  KVM: riscv: selftests: Add common supported test cases
+
+ tools/testing/selftests/kvm/Makefile.kvm                    | 6 ++++++
+ tools/testing/selftests/kvm/access_tracking_perf_test.c     | 1 +
+ tools/testing/selftests/kvm/include/riscv/processor.h       | 1 +
+ .../selftests/kvm/memslot_modification_stress_test.c        | 1 +
+ tools/testing/selftests/kvm/memslot_perf_test.c             | 1 +
+ tools/testing/selftests/rseq/rseq-riscv.h                   | 3 +--
+ 6 files changed, 11 insertions(+), 2 deletions(-)
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.34.1
+
 
