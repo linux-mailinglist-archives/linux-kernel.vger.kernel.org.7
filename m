@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-794590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B23B3E3A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5C8B3E39A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1031E17663D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0960B4423D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213CB32A3E0;
-	Mon,  1 Sep 2025 12:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D824D327789;
+	Mon,  1 Sep 2025 12:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZM4wnWCw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSJfNhCs"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664F0257849;
-	Mon,  1 Sep 2025 12:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F8A2749D1
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756730647; cv=none; b=oKxrEuSrPL9rDA9YlYRHJ+P0Sdy1EmLTB5ED+NGx7J33IryiyORytYE3Cdn59vx6kIVrDvpJU71bOBIQos38Csw19MjA5i01+Vwbj5Nk7q8KaoyGQUontBtXYfKD3GmMijrTbXqgEceBhEjyETDq8yCCiXjnvEIIRac+uVepbMI=
+	t=1756730754; cv=none; b=DuC3QfvhKvR5pjvUt6SHH7U4yxDc4cVv8eLf5SxZ0/Zv+aPcozq+BnxkQqumDzZaSg05WjfifA+s1hjlkdHeyod908rUquw2+aGkRD2ntoaQ6/5UafdujC44LxirbebGWOQQ3LwSPFMdggCd431ma6slvHIClNjBsoAaYGD0sRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756730647; c=relaxed/simple;
-	bh=xS03v2TkqZ914q+CnyNuJM7g8ydeDJk4rbXJkzSNvzo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IhpnG5SHMTQhkSUiaH2FmwjSW4zCn8H0evgEsgdEa+bHoQ3zLBseAZi3Diosrlldw9M06teJtS6OyHAD7i/Q7mz2Fr3e7Y/J0q8dojX0I1j5Paiwhk4Qx68WfqG5HHGXOUlLkMjZfQeGXtuoNKM7yyIaGF0dD3VRQAP5VGJRaYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZM4wnWCw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3317C4CEF0;
-	Mon,  1 Sep 2025 12:44:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756730647;
-	bh=xS03v2TkqZ914q+CnyNuJM7g8ydeDJk4rbXJkzSNvzo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZM4wnWCw3tsA75GNFGlp/0sQun8y4D4YdR2MCR8YW+lJXSw9ZktiGYeFb423TrUQ0
-	 0dtvqMY6EzjZ7A1O/5dS0YchqbOY7sZnzDUwyGtVfXN/aH6pPdw71z3gwixyxTyn2t
-	 yVZ3s9wpExIlZd346VsPR9bHG5bO3AySlSy6saktl8Uvd11mVQ6WNZMdTgEs7YyWrg
-	 6cSswBws8PKdP6wopplVz2HkQPC0G6YQud4LukjK2ZbNhxZZhhYolKmnAP1s6Rxwtc
-	 M5Wx6bFTaF35RAyg/mAGOYa8Oh8QM8C0D6hc+lfdKn7fWavTRV8ewVaceBleoXFlZI
-	 xuKOPzlvTA0FQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1ut3tE-00000002Fm1-2nPt;
-	Mon, 01 Sep 2025 12:44:04 +0000
-Date: Mon, 01 Sep 2025 13:44:04 +0100
-Message-ID: <861poqe417.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1756730754; c=relaxed/simple;
+	bh=kKPxwMDQ12/QlFsJHDAQpUGCRuy72hF3jfEmjy7TKnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fK5NgFHdiCdZq3zvKrZg4LheOvmkKPv4WgOI+0On4S4Be6NQ4r0opO9keLPaUSjIoDZ2bthTsV6oEY7m95joO5VdKpC6APFatmNq8vndUORYeM1iuQcS8EgdhH7o62/flF+vWxHPoMb/GwDliGpeXlyYCxr7ZZ184rHGV2d1iZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSJfNhCs; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b475b63ab66so561050a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756730752; x=1757335552; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0LJ4r9mMq8e3mdNbo2g6rD5aD5gZi5B+2aiqw18aFtk=;
+        b=MSJfNhCsg6l7+jA+lUrhyGBeNv3JjmGFsJK96QsReaEt0kgenTbJ6NE0utV2K/kMW4
+         s1T/DZmz+EtpvcIHKdTyJCoNpYtQhXBujgGgI76LDboA+y66P8diKBtyBrwsr6ESWMrq
+         KV+PgcLQ7Kmtc7L7DW8rZPfeTnExXY1pydiF0GdzI0lsLJ+dQn47vDYA4wQNT11WF5CX
+         Jy6/m1tcVjsgQuod3irsj2BxK5u3CzdwpmwxjdGMDurI2mWixibCgtVQPYjRJqsXosSE
+         LbL/a3S6+8fJ32+t65Qw3+b9GR9eeJGSOzjQ5vtJw3hlPNwSxWFo9tbKDE2FANRr4wgu
+         bKjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756730752; x=1757335552;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0LJ4r9mMq8e3mdNbo2g6rD5aD5gZi5B+2aiqw18aFtk=;
+        b=Na+oV4LpxNW9lqLQ4ne1+v0QGptQ52LP3hW8ZAKMxXdZjIv7KjFc0dUnO2+xpzoRCo
+         evUNt3pZH5LQ8WH3XbvUeeQ+YSRZ/CRG8KiUUXU6lOlr9n0mbXvY/C6pbP3jdQnZ4t6V
+         qrPK2QQ9UdbEyl8V6yqk+iKNDXmApt2O9VJOWuRzzkk1otM+kqqLI0URVF0THmxex648
+         cJc+PBR6Ne/uKVdO0yDCPdEjtUy/ILFF0mC0qMza30bnX/YnL2TIveQTUYJ3zhfnOTAQ
+         zynUEJvMC9AAGHoSCrtPLwTPFpCXn5Y2HGvK29OUvXkY9vfKC3GmRG31YB/MRztjSoj8
+         jFMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtpCb6WJrHx90cKheH3KBBZ2Qezy1Au+d7AaVm/Kx8c/EOsT7IDbeoI9xZ7f6UJND5QavscSvwOLVwSQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0bMUzyjjMwrEMoIAFNgdiNB8J4DEIb+5VfIUwb1xCj1PELMIL
+	Dg/CyW4/GFK4FlYRezi42k0y8rUx/Gm+9jszT+Q1N0H5Gii3hF5S3M3q
+X-Gm-Gg: ASbGncsSUMeAgPy2BEBcpKxKs6U1sc4QzA5sD64mNabUsYrR7i5OhKYMfjO68VtB1un
+	mFWP0JsfvBjG45kKkUDsCDt1dVBzFXWASZunDO340M28IJj5JZcQRGfJFww9YAXXV90iPLhTZ1E
+	bv2LzWkFLncwCSl4Yq58vskDBE+EV4v+/3FJNFAHuAnIKhaG6wG3qXGIhAJeLM3PR4b1TO83Mxv
+	cdjdAm8O5hnJo+hbPODk4KheRV5WwQJUmjjxyVtKgarnKAk7hXNtMNWkPFIfJVaNhhw2sEo+BN4
+	GoWnI5URynURGADrCHztorsMLbyO9S5KmDi8YqgFVzIhfUaLy3KJf3tsKNUTOO5NyLl1ZJzUSYK
+	IA3uXUBm/PC4JOg8ikgaoEg==
+X-Google-Smtp-Source: AGHT+IHN71zGlOOMRyH+O5wcaJBAY1QklGt6JPB0plU5qIlkRtUqi8nYhrHaVrv2vP+4Uv8jYf4bYQ==
+X-Received: by 2002:a05:6a00:928d:b0:771:eec7:a71f with SMTP id d2e1a72fcca58-77232874e8cmr5779479b3a.4.1756730752213;
+        Mon, 01 Sep 2025 05:45:52 -0700 (PDT)
+Received: from localhost ([114.70.121.22])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7723d79fcfesm7553805b3a.16.2025.09.01.05.45.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 05:45:51 -0700 (PDT)
+From: Gyujeong Jin <wlsrbwjd7232@gmail.com>
+To: maz@kernel.org,
+	oliver.upton@linux.dev
+Cc: joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
 	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v7 00/29] KVM: arm64: Implement support for SME
-In-Reply-To: <20250822-kvm-arm64-sme-v7-0-7a65d82b8b10@kernel.org>
-References: <20250822-kvm-arm64-sme-v7-0-7a65d82b8b10@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	wlsrbwjd7232@gmail.com,
+	gyutrange <wlsrbwjd643@naver.com>
+Subject: [PATCH] KVM: arm64: nested: Fix VA sign extension in VNCR/TLBI paths
+Date: Mon,  1 Sep 2025 21:45:20 +0900
+Message-ID: <20250901124520.54259-1-wlsrbwjd7232@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, catalin.marinas@arm.com, suzuki.poulose@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, Dave.Martin@arm.com, tabba@google.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 22 Aug 2025 02:53:29 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> I've removed the RFC tag from this version of the series, but the items
-> that I'm looking for feedback on remains the same:
-> 
->  - The userspace ABI, in particular:
->   - The vector length used for the SVE registers, access to the SVE
->     registers and access to ZA and (if available) ZT0 depending on
->     the current state of PSTATE.{SM,ZA}.
->   - The use of a single finalisation for both SVE and SME.
+From: gyutrange <wlsrbwjd643@naver.com>
 
-How about Cc'ing the QEMU folks? They are the ones consuming these
-APIs. Peter Maydell and Eric Auger spring to mind as potential
-targets.
+Signed-off-by: gyutrange <wlsrbwjd643@naver.com>
+---
+ arch/arm64/kvm/nested.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	M.
-
+diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+index 77db81bae86f..eaa6dd9da086 100644
+--- a/arch/arm64/kvm/nested.c
++++ b/arch/arm64/kvm/nested.c
+@@ -1169,7 +1169,7 @@ int kvm_vcpu_allocate_vncr_tlb(struct kvm_vcpu *vcpu)
+ 
+ static u64 read_vncr_el2(struct kvm_vcpu *vcpu)
+ {
+-	return (u64)sign_extend64(__vcpu_sys_reg(vcpu, VNCR_EL2), 48);
++	return (u64)sign_extend64(__vcpu_sys_reg(vcpu, VNCR_EL2), 47);
+ }
+ 
+ static int kvm_translate_vncr(struct kvm_vcpu *vcpu)
 -- 
-Without deviation from the norm, progress is not possible.
+2.43.0
+
 
