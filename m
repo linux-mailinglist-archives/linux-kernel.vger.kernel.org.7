@@ -1,168 +1,138 @@
-Return-Path: <linux-kernel+bounces-794222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90652B3DE95
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628CAB3DE92
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A214188274C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6306C1A81647
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B831D30DEBB;
-	Mon,  1 Sep 2025 09:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2E330DD0F;
+	Mon,  1 Sep 2025 09:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="duhoG9Vf"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+mTvftj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8D430DD29
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00C12FB986
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756718997; cv=none; b=SCQQxJh/3f6twFg9nAyvJ/3y2vXFxxCMIdLeQZ3BP8czHcEChs7AbtS0BWerIaZLdigB6IvH3tIRVvR8OyWCb9io2ntJViBehHCOq9DFCPbq9hElJkAroSZUUq7NCOm8g326qQO1spV5JzOh1X0GbytqrIA0+zebGUBBwBGgIlQ=
+	t=1756718984; cv=none; b=RZgcm6OKzoxwUqTF+HIemq+EAUqclZ85aS7G3ELt3rzNxk/REzgWVGSAgQs1zhMFKhcDoB87BTZ/NwmiuhLZp0HbG00fs+HUUuPs0ms9/zA2QJDM4i6BMKLNHPa1cix/Nfbci1aMdukOCFwZTNkycHJHlR7SIcLIXRNfaRI5b0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756718997; c=relaxed/simple;
-	bh=qZJxbmaqGWsy4atFe2P3rGVqkuLG6BlTXh6WeAcAyhU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=n3dDnc34l+nTCX8AOQznmkcZDdycOTwVrvPxEuH7kcI6Jq2vdI4kqCMHECTuQughtaxcAUo2Wv4UenRcSWqQE/PoMDkiIutA+YJmWITtJBoEkXWgWwWpRlhS4339x885JgCZKBodLgEznBBpdKswsac2P5BKaAIXrZCA4SnYYfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=duhoG9Vf; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250901092952epoutp038b53c8205386eaf52abb52edf9559bed~hHp3LfCmo1906019060epoutp03l
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:29:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250901092952epoutp038b53c8205386eaf52abb52edf9559bed~hHp3LfCmo1906019060epoutp03l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756718992;
-	bh=74Q1v6jsTAK/snjr8Bol8mkXpMT6PrDDB7mwBUaLBDo=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=duhoG9Vfo9MZOdJwEUweOVti6TF5ssKEaXuBHMXGEot2BY0fWmc9P0IBHlRSrsThv
-	 tOpfjQieTm9YhADMDRenITqN/7yWck6ARrjqndgd8fQjNwztCOUxyzUKyQJx9D9emj
-	 vhEPYe+CdkbzK61hgNNRDZTZLN/WrKt0Lsvg300o=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250901092952epcas5p15f9c1d6b59500aeac07e20af90cad9f6~hHp20veHp1370913709epcas5p13;
-	Mon,  1 Sep 2025 09:29:52 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.86]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cFk9W4mCWz2SSKY; Mon,  1 Sep
-	2025 09:29:51 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1~hHp1a6Xqt2257322573epcas5p34;
-	Mon,  1 Sep 2025 09:29:50 +0000 (GMT)
-Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250901092949epsmtip23b4ed2198fb6b60b6d40969701766613~hHpz3yNss1644216442epsmtip2H;
-	Mon,  1 Sep 2025 09:29:49 +0000 (GMT)
-From: Shashank A P <shashank.ap@samsung.com>
-To: jack@suse.com, linux-kernel@vger.kernel.org
-Cc: shadakshar.i@samsung.com, thiagu.r@samsung.com, hy50.seo@samsung.com,
-	kwangwon.min@samsung.com, alim.akhtar@samsung.com, h10.kim@samsung.com,
-	kwmad.kim@samsung.com, selvarasu.g@samsung.com, Shashank A P
-	<shashank.ap@samsung.com>, stable@vger.kernel.org
-Subject: [PATCH] fs: quota: create dedicated workqueue for
- quota_release_work
-Date: Mon,  1 Sep 2025 14:59:00 +0530
-Message-ID: <20250901092905.2115-1-shashank.ap@samsung.com>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1756718984; c=relaxed/simple;
+	bh=+77LpAQwApfrcXf+koZH/J0LGzOh+hJKuVFMuxmXuMs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EoZMUTs0ENUsC/a6cPZHYaHheSYsb4Srs2viKpK3ZvScP7Df5v5gHjGc5ZXaSuLafI8Qhg9mU4ZI/AebRdBEw8r4BJoxkiblV7Fl6qBg9PWVxy36IC7/RsepbljvtAO3zfkScdLxo8cFB8sdrd06adKjl/mGqfi8RkhkwG8GNQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+mTvftj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756718978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gLIfWutU/YiglT+ISVkDDOc433nVPWRihDwo9lIf2vg=;
+	b=Q+mTvftjPt2UBB3eYmjserIqr5N0eZVngI7XZBoWAONT/Hnt008KGmjrAbReHMUe4Y2oGC
+	SSidZanwX5dHfWciml5vtXTwsOuKXB2stmAi/jTreajqLpJDmSzVGxoVWhhZAedL+PVr84
+	T8lTJR+Z0LPOUR67zXDcZWIrm4vx9gQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-49-nXgmFWaFM_-dlv8kqiFsvA-1; Mon, 01 Sep 2025 05:29:37 -0400
+X-MC-Unique: nXgmFWaFM_-dlv8kqiFsvA-1
+X-Mimecast-MFC-AGG-ID: nXgmFWaFM_-dlv8kqiFsvA_1756718976
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b869d3572so4245525e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 02:29:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756718976; x=1757323776;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gLIfWutU/YiglT+ISVkDDOc433nVPWRihDwo9lIf2vg=;
+        b=b/ePFbWsg0+wV8UPLA2u0knfGr5Jp9pcc4lNpsUGAsNJaE1zRghcpv8axMOp8wjNsN
+         lHba3taTRa5gLj/3IClTPlqXSGm1AFLJANThMxxMwUuM52fhcfJNtKtjqAYWyaR4Yhrj
+         EtX7PkpZsxl8M8xXx4D++RceGgfo+2wEKsGkXe+RrfU2f/L7BVJhgaGO4lFTOrfDpUln
+         i7uWFzevqHNQg122PBaR3er31/8PZ9qFHfkeKZx3tGB0/B62G/Dxoaz0maYeNB8//RJ4
+         yE3tBn2YkJphJrjpsbuFJ6dSWA8j51cIRO7mFTbarFvVirgnIPXJlrPujJD6XDqM6QIw
+         ZJSQ==
+X-Gm-Message-State: AOJu0Yzs7JHX48nLX/2fIhGTi2LlJ/I+oKYSdY1/W+BsnMr8b6r1Vj/6
+	9zzog7Hzx31NhNqXtFUQSLzFJGqW+VQBHDLL46pfEUISz0IlN0TmVWt4Cana48KTxKw7Z79J9q3
+	aco3vkAelOGmKab1Vxa1xRWNmyOsG3K8pfICxPpiEGbrV/0opCl2NrlKlfXJoKZFIbA==
+X-Gm-Gg: ASbGncvthypIdwwvCXbCdTonBHlPyJwXoCDEKAdefE8TzEipWhnGmdl/sbc8bYh61hK
+	0KEp+NfLNYPVmZMXHn+38qXoqsy9q2AmregUdX63ECvMnZdD296Az+KuEC+92QFWwY3waCAEjip
+	Ly0Y6nFIluI4qP5cZSTmUKhyHeqXIZy1/Qn2E92VdlsIjgGS2LfsnIZntmh3M9OybLqz1S9Owaf
+	0/H4HzZpiJq2pzuaMIH8rpMDmjhh4nbRiLMkC7hdKpOhGMPTNi5WF7ym4tX+dpT3BJunTJsOxDQ
+	ToHkHi4eUv+KNdR0ojwW9NJHVJtzJVEIrMYNgu/G9DF5/bFQZOzzbIYsqLlNWUCFhA==
+X-Received: by 2002:a05:600c:1d07:b0:453:2066:4a26 with SMTP id 5b1f17b1804b1-45b8553417fmr73118815e9.16.1756718976027;
+        Mon, 01 Sep 2025 02:29:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFv92lhrsAt3OXKOOSRcUvb13YtIbGD8LLn3o0PT6k8/S7ZFs5axHkJaP2LWNR34AeeM9XjJw==
+X-Received: by 2002:a05:600c:1d07:b0:453:2066:4a26 with SMTP id 5b1f17b1804b1-45b8553417fmr73118475e9.16.1756718975616;
+        Mon, 01 Sep 2025 02:29:35 -0700 (PDT)
+Received: from localhost ([89.128.88.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b73cf86f4sm207079325e9.6.2025.09.01.02.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 02:29:34 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, David
+ Airlie <airlied@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Marcus Folkesson
+ <marcus.folkesson@gmail.com>, Maxime Ripard <mripard@kernel.org>, Simona
+ Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2] drm/sitronix/st7571-i2c: Make st7571_panel_data
+ variables static const
+In-Reply-To: <w4tlpcw6s6yogacneo4gthor5annn3qjyxswrtrisoqawdbf3p@y5r7gkrmzmdo>
+References: <20250718152534.729770-1-javierm@redhat.com>
+ <w4tlpcw6s6yogacneo4gthor5annn3qjyxswrtrisoqawdbf3p@y5r7gkrmzmdo>
+Date: Mon, 01 Sep 2025 11:29:33 +0200
+Message-ID: <874itmv7uq.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1
-References: <CGME20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1@epcas5p3.samsung.com>
+Content-Type: text/plain
 
-There is a kernel panic due to WARN_ONCE when panic_on_warn is set.
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> writes:
 
-This issue occurs when writeback is triggered due to sync call for an
-opened file(ie, writeback reason is WB_REASON_SYNC). When f2fs balance
-is needed at sync path, flush for quota_release_work is triggered.
-By default quota_release_work is queued to "events_unbound" queue which
-does not have WQ_MEM_RECLAIM flag. During f2fs balance "writeback"
-workqueue tries to flush quota_release_work causing kernel panic due to
-MEM_RECLAIM flag mismatch errors.
+> On Fri, Jul 18, 2025 at 05:25:25PM +0200, Javier Martinez Canillas wrote:
+>> The kernel test robot reported that sparse gives the following warnings:
+>> 
+>> make C=2 M=drivers/gpu/drm/sitronix/
+>>   CC [M]  st7571-i2c.o
+>>   CHECK   st7571-i2c.c
+>> st7571-i2c.c:1027:26: warning: symbol 'st7567_config' was not declared. Should it be static?
+>> st7571-i2c.c:1039:26: warning: symbol 'st7571_config' was not declared. Should it be static?
+>>   MODPOST Module.symvers
+>>   LD [M]  st7571-i2c.ko
+>> 
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202507180503.nfyD9uRv-lkp@intel.com
+>> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+>> ---
+>> 
+>> Changes in v2:
+>> - Also make the st7571_panel_data variables to be const (Thomas Zimmermann).
+>> 
+>>  drivers/gpu/drm/sitronix/st7571-i2c.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>
 
-This patch creates dedicated workqueue with WQ_MEM_RECLAIM flag
-for work quota_release_work.
+Pushed to drm-misc (drm-misc-next). Thanks!
 
-------------[ cut here ]------------
-WARNING: CPU: 4 PID: 14867 at kernel/workqueue.c:3721 check_flush_dependency+0x13c/0x148
-Call trace:
- check_flush_dependency+0x13c/0x148
- __flush_work+0xd0/0x398
- flush_delayed_work+0x44/0x5c
- dquot_writeback_dquots+0x54/0x318
- f2fs_do_quota_sync+0xb8/0x1a8
- f2fs_write_checkpoint+0x3cc/0x99c
- f2fs_gc+0x190/0x750
- f2fs_balance_fs+0x110/0x168
- f2fs_write_single_data_page+0x474/0x7dc
- f2fs_write_data_pages+0x7d0/0xd0c
- do_writepages+0xe0/0x2f4
- __writeback_single_inode+0x44/0x4ac
- writeback_sb_inodes+0x30c/0x538
- wb_writeback+0xf4/0x440
- wb_workfn+0x128/0x5d4
- process_scheduled_works+0x1c4/0x45c
- worker_thread+0x32c/0x3e8
- kthread+0x11c/0x1b0
- ret_from_fork+0x10/0x20
-Kernel panic - not syncing: kernel: panic_on_warn set ...
-
-Fixes: ac6f420291b3 ("quota: flush quota_release_work upon quota writeback")
-CC: stable@vger.kernel.org
-Signed-off-by: Shashank A P <shashank.ap@samsung.com>
----
- fs/quota/dquot.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index df4a9b348769..d0f83a0c42df 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -162,6 +162,9 @@ static struct quota_module_name module_names[] = INIT_QUOTA_MODULE_NAMES;
- /* SLAB cache for dquot structures */
- static struct kmem_cache *dquot_cachep;
- 
-+/* workqueue for work quota_release_work*/
-+struct workqueue_struct *quota_unbound_wq;
-+
- void register_quota_format(struct quota_format_type *fmt)
- {
- 	spin_lock(&dq_list_lock);
-@@ -881,7 +884,7 @@ void dqput(struct dquot *dquot)
- 	put_releasing_dquots(dquot);
- 	atomic_dec(&dquot->dq_count);
- 	spin_unlock(&dq_list_lock);
--	queue_delayed_work(system_unbound_wq, &quota_release_work, 1);
-+	queue_delayed_work(quota_unbound_wq, &quota_release_work, 1);
- }
- EXPORT_SYMBOL(dqput);
- 
-@@ -3041,6 +3044,11 @@ static int __init dquot_init(void)
- 
- 	shrinker_register(dqcache_shrinker);
- 
-+	quota_unbound_wq = alloc_workqueue("quota_events_unbound",
-+					   WQ_UNBOUND | WQ_MEM_RECLAIM, WQ_MAX_ACTIVE);
-+	if (!quota_unbound_wq)
-+		panic("Cannot create quota_unbound_wq\n");
-+
- 	return 0;
- }
- fs_initcall(dquot_init);
 -- 
-2.34.1
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
 
