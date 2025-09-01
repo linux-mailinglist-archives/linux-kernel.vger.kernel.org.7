@@ -1,94 +1,131 @@
-Return-Path: <linux-kernel+bounces-794604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D23B3E3D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:02:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2742B3E3DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C71F91A837F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F89480A67
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE034142E83;
-	Mon,  1 Sep 2025 13:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CE2136351;
+	Mon,  1 Sep 2025 13:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RO+fFFwj"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z2PuDyU1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lzFhklXV"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA134A23
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06D54A23;
+	Mon,  1 Sep 2025 13:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756731767; cv=none; b=ixTkBm463cTShGDp0FUCAXGAPEq5UAxoXSQ3NVIrdiyEaEY9Ep/sQ7qrt6x7UraZl4fL+UJnSq7pSTMj0i+B0F1cWZMZapDR48fvfxdl3ukBA85miUR1vFST6y9P/UEsEydnWvrXBiF5ypHiYS+aVg7idQtUC03tO8LXf1ak/eo=
+	t=1756731828; cv=none; b=Pof/ErLPpJeS9kwTPvlQ82Z++VmsAIxILLc6kL39nZj1X6hbL1se0c6nvCKLvWxEA7WdFJhOH+QMoOOZSCYWNgUtHM3XRY7Zpv97UsM7RfeAGMZHYaY2mXXOljG0xXNXRXtiHhZW1tcScLB0YnWUaC81iUMcP2w7LO7gNr/9Fw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756731767; c=relaxed/simple;
-	bh=s/OGq76iO6Q3jCMQ8BjSgUHAVJZk5oASAjGKdkrTBvQ=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gw55OOoCJOZKId2dxYMyuKgo9PBxA5qJ2pfG5nfbq4zfyT6gQnNTKUFZHBEnY7PSCAj9HWrv0M8QF6HlnUGMWB2nDZQffHZowFYXvHK7mcFqg2FGx5eC7zNCB8ThL7NFbhZM2tbrSDccz3OnbScY6rublS8bbyIRbJgmWtFsLBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RO+fFFwj; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id D6A174E40C64;
-	Mon,  1 Sep 2025 13:02:41 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AE40060699;
-	Mon,  1 Sep 2025 13:02:41 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8046D1C22D736;
-	Mon,  1 Sep 2025 15:02:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756731761; h=from:subject:date:message-id:to:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=stw2sU2uMpeiDADUvOE5aA2pc/ewBdvRgUY7Re+j3kU=;
-	b=RO+fFFwjn3Td3VlLsYNaOwXRszWa/IIL/dZDFZ0xJ1oAPXnAwx7hLdIYfc2jSG+Z6u5ksI
-	pQFaj3MIHFM4AqjhXjc/LGi/zuBmp48ZGFTMuz/+4O92vkk8bYTPNVeJ1t0DHIeOguf/zU
-	M/F2Vxxtxay+O7EzCtLPse2OTunBy1aYGEJwSwGF0SoM8LK8QEg3ku8KBQJ2TRqHcex3v2
-	fv8u3x0QyjdiQuE8yleNaMXX//8OaJxnMHJ9pDQa7ey3dV14BBV7mdd2P6UvM7G2vWy+64
-	o9TyOeELkAnXmoBbf4evxue67DF36hEtTixyTTW3w5iskv4R4RaipO/ljrvVFg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Michal Simek <michal.simek@amd.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Qianfeng Rong <rongqianfeng@vivo.com>
-In-Reply-To: <20250830100637.14756-1-rongqianfeng@vivo.com>
-References: <20250830100637.14756-1-rongqianfeng@vivo.com>
-Subject: Re: [PATCH] mtd: rawnand: pl353: Use int type to store negative
- error codes
-Message-Id: <175673175662.52409.8678310323858548486.b4-ty@bootlin.com>
-Date: Mon, 01 Sep 2025 15:02:36 +0200
+	s=arc-20240116; t=1756731828; c=relaxed/simple;
+	bh=OaRyPpEf3ICJUO5J1Am7yd7CIdfX8HTlK9xK90rfFMw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MtjGBSqesvzcAP0GcUlj1eVoxioXevu/QhCP1UAUCloDkXtLKBoM2uPIicGCGIcQ4fE5W9HTnaSDMcF+qY1aAB/NTEEkzda1xvSYtBlYtXfpq6Qj+4lYqH40E6TpUIz7ttbORPz+3zNsH/o4UltXaSgVBowZiBeuPvSOeNmA7D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z2PuDyU1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lzFhklXV; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id AEAC01D001E7;
+	Mon,  1 Sep 2025 09:03:44 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 01 Sep 2025 09:03:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1756731824;
+	 x=1756818224; bh=ua+pUEccVHzU7KXErtidkr1gvXjQNlFYt6hNszdXlpo=; b=
+	Z2PuDyU1EPplD9KV7zN/BQzHBW2zET3jSX563Cz1s5tIYcs7tiSQZhQgK3dvOxfB
+	qdU5gQ0ijlopyOCwpWDPgfze+VHnGeyMwUxC9Gdx0Q1PPmibSgujIFaAKPHVpzd1
+	h9nQ2n4yrlRw2Y95pCKAarPoJT616zeAWGwRorx9I3hvR4oC1B1K2LV7QxHzBHP9
+	KxokYto3U4Hj7VO9WVdD3YGix+Q0rCqWgXSWLs9QclxO23vs8StzWIopZQ9Nh7fM
+	Upr/hYH9m8Ve0JIawZcBUI2JttsEvIoMyv7CMV/FMaj65QWktgMOibbkWHocMpD1
+	sdxAbuXQGTz+ESGpjvd4Tw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756731824; x=
+	1756818224; bh=ua+pUEccVHzU7KXErtidkr1gvXjQNlFYt6hNszdXlpo=; b=l
+	zFhklXVJpu0EH8MVs+eDi8eiQ4Kn9mzM7w7ckXVmfeAK9j3G2cdMkVABrAp971ke
+	26pmVomEs/DQB3FftN1x9uU9abgjVjWQXRPzMeslpf9bm+B8keJREkxadBGytWYc
+	8m5Zi98yP53S1llsDYMSdPC0ghN7L72/DhNiwLdslcK2tv2BI3r768MJxA0pDs25
+	tzCJ0BN7TLKO5p/CsFPR8YDPBNk8R2qX1tm88PwkLDKjk2b+nUDLs2najHRf0i4p
+	lkOxDIsg1D00fFopTsiJI1mM5RyuaUWkigJ24I7+PIgCFNRBkhjmxEjwK530ALtT
+	Cm/kcJYyVcoQS+8CH00sQ==
+X-ME-Sender: <xms:sJm1aDA4CvsScCqOB76_rd4HjIdmh7z4UhqLj6hCnJMaMhaQSMtR7Q>
+    <xme:sJm1aJgoC8YHdYbRGbVoHThhdzFHdphP5F-e7dma6XNe6eQ8WPDGY08sUL-jiAR5C
+    8xhsfh9-f7nT1M4iKo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduledvvddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeekkeelffejteevvdeghffhiefh
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgt
+    phhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhglhessghgug
+    gvvhdrphhlpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegsrghrthhoshiirdhgohhlrghsiigvfihskhhisehlihhnrghrohdrohhrghdprhgtph
+    htthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhgphhiohesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:sJm1aOpu-eRjlci3s3TzjkwWTmJDl7SB4asqdQONDkQVIJRlSfGZ7g>
+    <xmx:sJm1aEDsmtHV-rE5YrpTfgkD88QiQRxpyrO_lrIcDO6EKFrq6jAIDw>
+    <xmx:sJm1aIwbBrno3UFgSjTrvVi-jaLv4R44RDxKrh2T0rFV5qToM00WlA>
+    <xmx:sJm1aJ1erfzgV5BGxR6C3vYouygdtxhpdEg31-_gzJBV3D5BT2SClg>
+    <xmx:sJm1aN1dcMRbPdzdMYGm0jhfL0ua1XE-0ThalWkYsYM3UOCl8gYEQ3We>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2655B700065; Mon,  1 Sep 2025 09:03:44 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-ThreadId: ACw3zk5S_Pss
+Date: Mon, 01 Sep 2025 15:03:22 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Linus Walleij" <linus.walleij@linaro.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+ "Rob Herring" <robh@kernel.org>
+Message-Id: <9a1c9735-eb5c-4abe-a96b-bfb02c97c9b2@app.fastmail.com>
+In-Reply-To: <20250901125513.108691-1-brgl@bgdev.pl>
+References: <20250901125513.108691-1-brgl@bgdev.pl>
+Subject: Re: [PATCH] gpio: fix GPIO submenu in Kconfig
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, 30 Aug 2025 18:06:37 +0800, Qianfeng Rong wrote:
-> Change the 'ret' variable from u32 to int in pl35x_nand_probe() to store
-> negative error codes or zero;
-> 
-> Storing the negative error codes in unsigned type, doesn't cause an issue
-> at runtime but can be confusing. Additionally, assigning negative error
-> codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
-> flag is enabled.
-> 
-> [...]
+On Mon, Sep 1, 2025, at 14:55, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Commit a86240a37d43 ("gpiolib: enable CONFIG_GPIOLIB_LEGACY even for
+> !GPIOLIB") accidentally pulled all items from within the GPIOLIB submenu
+> into the main driver menu. Put them back under the top-level GPIO entry.
+>
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Fixes: a86240a37d43 ("gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB")
+> Reported-by: Rob Herring <robh@kernel.org>
+> Closes: https://lore.kernel.org/all/20250813222649.GA965895-robh@kernel.org/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Applied to nand/next, thanks!
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-[1/1] mtd: rawnand: pl353: Use int type to store negative error codes
-      commit: 8a9e097def55391273d3042b32350ded1ec83e04
+I'm sorry I misunderstood the earlier bug report and assumed this
+was already addressed. I now see what my mistake was and the fix looks
+correct to me.
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
-
-Kind regards,
-Miquèl
-
+     Arnd
 
