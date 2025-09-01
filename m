@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-793669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1A4B3D69D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:20:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F9DB3D6A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D61176D28
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:20:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B71A87A460E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68871AF0AF;
-	Mon,  1 Sep 2025 02:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C31E1AAA1B;
+	Mon,  1 Sep 2025 02:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b="ihoikpdX"
-Received: from smtp1.cs.Stanford.EDU (smtp1.cs.stanford.edu [171.64.64.25])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SfRerKWk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1BB1957FC
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=171.64.64.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEC7170826;
+	Mon,  1 Sep 2025 02:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756693244; cv=none; b=TpJyZUZ1qHfS1f51/vzdpAVVAo6mwp1qDn7BePLiU65hHsAxhgbCNmU4R2hepRx9yPAlz4uZ0M4x1Rf8D5vyWtyerY6LEXvxJsD1bTyy+x2L4dz+TJNfBiFB6mTbvJooosOeFPkmlj1CAHTyYwoKT7ciaeQWuxPXyE978Dknigw=
+	t=1756693359; cv=none; b=b6iNJWwPgPoPke2ftC85fKOico05mgul7OVwtDMmwc14U+OKnwncQvlKZpiVDDGuDSjkNcRCetZA+dVPUhS7/mAIMeCAQJFwfUkZGjncWv7WZzp9kxiiyxjEzJ1QUoR2kDXMAjWC5I+m9Z1kYuAjcwUKiy3HdFJCNUx5iVIsMn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756693244; c=relaxed/simple;
-	bh=JT8xpHm5akD0SVc+wble1gZNpbaz8K54nMXqsQ2BeDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gJzwEM+vARhx6Q1SX3RwM63/KQ3xWC5l6rmNnzr+nuyToGrS31fp6uiI25+BqMaTVfnkN8mBdwSYJiLRWelh6VmOJCE+he+7m+nmX6dTn91XCIYbCAMYQLyeVqUikg7HKe6r/E9bCe2EYRtv6TXpKlX8KwS7wP1cVENz39bSCic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu; spf=pass smtp.mailfrom=cs.stanford.edu; dkim=pass (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b=ihoikpdX; arc=none smtp.client-ip=171.64.64.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.stanford.edu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=cs.stanford.edu; s=cs2308; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ucGLHetyfvHvORDISd/LhKKU2NT0oX5XnMJyBYchNJs=; t=1756693241; x=1757557241; 
-	b=ihoikpdX9gKP1ctStIORSGXvJCtlbIlr338I6AHZMZ44fngMcfuAHPqWwuc63f9bT8H0D3IgSvG
-	GTY0dr2cIvlheMZraWTPhgN/nFVwpDa3hQSQb7tMIKMSXtFALucfIw04z09p/Kgp6a7FAaRVSkQe2
-	5ghfNNqeK4FaEBUw1U0XNViMbIRLPtcRZUSZWrCgZ68UjbIVU2WwZqvorAgkGxpx9P2L9bcmCVooB
-	23k3x58McxrU33Dkzosz8kz8psR6yZV8MwrJKm+2xE0fFLxhRQMY4Hrwq0sW56lthmVFH254UtNo1
-	2q6+fh5qkKtmOBTHIWWds/T87AL+F+MdFCdg==;
-Received: from 135-180-5-199.fiber.dynamic.sonic.net ([135.180.5.199]:58629 helo=macbookair.lan)
-	by smtp1.cs.Stanford.EDU with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <jgnieto@cs.stanford.edu>)
-	id 1usu9t-0001Iv-Bg; Sun, 31 Aug 2025 19:20:37 -0700
-Date: Sun, 31 Aug 2025 19:20:14 -0700
-From: Javier Nieto <jgnieto@cs.stanford.edu>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: luiz.dentz@gmail.com, marcel@holtmann.org,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Bluetooth: hci_h5: implement CRC data integrity
-Message-ID: <aLUC3u3ZrF35nIb6@macbookair.lan>
-References: <20250827043254.26611-1-jgnieto@cs.stanford.edu>
- <a261ed13-4c0b-43cf-b177-d33272626d25@molgen.mpg.de>
+	s=arc-20240116; t=1756693359; c=relaxed/simple;
+	bh=PpWSSAKWniQNoXMm4BlCu6taBHYwi7P0wIXUOZ2CSAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JFcW65gDboK77WGuqQziiX8eFOkAgL6DYTUKw25IRQxjEmI3durBsC5Zhgk6INZSeXo29FJ6mm/Hz5dsqUpnHzLrVXEAIvy1hGDdJRGoPDjNX2ZRfjePJM5HcXyZH81QQ1q4EkEy9/7MUwVf/KNTTjSgPhIXBD4poOx6AxZJH34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SfRerKWk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756693349;
+	bh=EFGvxiisY6ntp032p9uuwnn2EztwVaXYSRgqvBJn9Q4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SfRerKWkqCESOiNtpmykOYCTk64TA9TWtveU7YWT9ly6pPHhrZjvhDE4Fr+ldntf1
+	 elC/Bqm0W28dgq7FcCzR1kWnnP1zx3wDB/H+jEjPYd0fGmDbHvFs5q+kbTv5lyuxQm
+	 1gaOcLORKp4JyZjl4q/LSnPse3VC/wC2GIg2C8r6QZOMdNtPoU9rnc2fOQ0IbLfFK7
+	 IEM7lkO+1LZ+gnfjsguc/DQDwuzBeP1/mr4iu/kiD33/SqWTgLS6Q4p0s113vocyve
+	 QRS40h5iTM74arBxniCWn14RvFCpEV7rebO43Ul8H7EKgLInH1HRdlbn3Raf/mMNrg
+	 HzmyM+qX5KEgA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cFXhM3bjdz4w23;
+	Mon,  1 Sep 2025 12:22:27 +1000 (AEST)
+Date: Mon, 1 Sep 2025 12:22:26 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Inki Dae <daeinki@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Kaustabh Chakraborty
+ <kauschluss@disroot.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Dave Airlie <airlied@redhat.com>, DRI
+ <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: build failure after merge of the drm-exynos tree
+Message-ID: <20250901122226.20a39858@canb.auug.org.au>
+In-Reply-To: <20250826121320.4931c6eb@canb.auug.org.au>
+References: <20250821112740.75a41814@canb.auug.org.au>
+	<20250826121320.4931c6eb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a261ed13-4c0b-43cf-b177-d33272626d25@molgen.mpg.de>
-X-Spam-Score: 0.8
-X-Scan-Signature: f69c4e6b4bf914f22ae37cd490358bf0
+Content-Type: multipart/signed; boundary="Sig_/hpO6aJbgawrb6djYb6eWE/c";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Dear Paul,
+--Sig_/hpO6aJbgawrb6djYb6eWE/c
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the review!
+Hi all,
 
-On Wed, Aug 27, 2025 at 12:56:50PM +0200, Paul Menzel wrote:
+On Tue, 26 Aug 2025 12:13:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 21 Aug 2025 11:27:40 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the drm-exynos tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> >=20
+> > drivers/gpu/drm/exynos/exynos_drm_dsi.c:158:20: error: 'DSIM_TYPE_EXYNO=
+S7870' undeclared here (not in a function); did you mean 'DSIM_TYPE_EXYNOS5=
+410'?
+> >   158 |         .hw_type =3D DSIM_TYPE_EXYNOS7870,
+> >       |                    ^~~~~~~~~~~~~~~~~~~~
+> >       |                    DSIM_TYPE_EXYNOS5410
+> >=20
+> > Caused by commit
+> >=20
+> >   d07e4c00696f ("drm/exynos: dsi: add support for exynos7870")
+> >=20
+> > I have used the drm-exynos tree from next-20250820 for today. =20
+>=20
+> I am still seeing this failure.
 
-> Any btmon trace?
+I am still seeing this failure.
+--=20
+Cheers,
+Stephen Rothwell
 
-The presence of CRC is limited to the H5 layer, so it is not visible on
-btmon. However, I did advertise and connect to a few devices while
-running btmon and everything worked and looked as normal. I also ensured
-that CRC was being used by adding temporary debugging prints.
+--Sig_/hpO6aJbgawrb6djYb6eWE/c
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> I´d add the above to the proper commit message.
+-----BEGIN PGP SIGNATURE-----
 
-Should I resubmit the patch as v2?
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi1A2IACgkQAVBC80lX
+0GwMGgf+LcxkIVxVD2Aqubxn7S/y7hHqo6hgnnipd3a6tqGfF9XPO0PFjACFWvas
+j4Qkm3v4cU4qsVZFPD1IXTUzVwfhYLHmJP/R9tfwXPEpyO3VjXCNv4g+En5dT6++
+d2dIVI1uubyKjl2okvxUobejH6oUTyEbwreiX3+xl/kZwmQcWJOCpwkIlkzUJxpn
++i6plPycL+bTHtqwliFXDyb0/wueTa+7JiaiZjgzPXvOMdu+N+xQDm09CAh3Rhpu
+zE0wY2JshtOhJEHyk1t2IrMTfCafvmGsSetWbc67y4MLz3PB/UheOOvIQabPVMQo
+gdG/KvqgdTd+XjI6MilLykpds2hvNA==
+=yeow
+-----END PGP SIGNATURE-----
 
-> >   static u8 h5_cfg_field(struct h5 *h5)
-> >   {
-> > -	/* Sliding window size (first 3 bits) */
-> > -	return h5->tx_win & 0x07;
-> > +	/* Sliding window size (first 3 bits) and CRC request (fifth bit). */
-> > +	return (h5->tx_win & 0x07) | 0x10;
-> 
-> Could a macro be defined for the CRC request bit?
-
-I thought about this, but decided against it since 0x10 is only used
-here and in one other place. Also, the existing code does not define a
-macro for the window size bits 0x07. I am not opposed to adding it if
-someone feels strongly about it though.
-
-> The diff looks good. Feel free to carry:
-> 
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> 
-> 
-> Kind regards,
-> 
-> Paul
-
-I see that my patch fails a few test cases because it fails to link
-crc-ccitt. Do you know whether this is a problem with my patch or the
-test environment and where the code for the tests is found?
-
-Thanks again for your feedback.
-
-Javier
+--Sig_/hpO6aJbgawrb6djYb6eWE/c--
 
