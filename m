@@ -1,135 +1,93 @@
-Return-Path: <linux-kernel+bounces-794933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EB3B3EAF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:39:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33954B3EAE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B174486025
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:33:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CA64166E4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B7D2E6CD4;
-	Mon,  1 Sep 2025 15:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90A52E6CB6;
+	Mon,  1 Sep 2025 15:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/oSawl/"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHPFTbci"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BD02E6CAE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE462E6CA3;
 	Mon,  1 Sep 2025 15:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756740297; cv=none; b=OwbiL7dxgsVALKRbjq/EdMQEJczn2DF+mbgYXB7/G/RW8Ybh8RVb4WeU2/21UyRQghMP8vH0vrDqpfka3oBQXfXuQr3iUuGmo28/IMmA0jSO+BRb9PbIhMW2X2Fu25CoswBYFd87d0Bb1WdXZcjLP7daHWqwl1OaqfPVTqm6H1Y=
+	t=1756740295; cv=none; b=ismooE30NqCm2wQbnva/Wlp3NZIQv3pFDZGkTRZZnY3E5A7vli67r78vz0QCcbqyvVzY6Ws06eTO1/ewQPT16CfU+o6oqopaO5mjxrfRVRLV8Zm6R2L8Y1+AwutiXWYKOew4LxOq7HqmQryZ1ERJvDKTD0u9lRlU3RwKo7jEbvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756740297; c=relaxed/simple;
-	bh=DRU8ygeTO1LipQMO9ZpufH0KjzzPhaUbNhaaLIF4uX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uwvO7mo9rd4M7gdp5ASbEM+Cu0RIPCIPJXggeZRHPMynXewkVzmOWSTADf4v+6DUKzupJx4tX9dFWVyGiY/gLzP2hKBUnX4yiWPWgwD1InGinY4Q2D7xTO9HTIFND8SV/1aTMWk61oki3FQ/aEHrPxW1P2dp6yPapStjHyOPkWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/oSawl/; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3d4dcf3863dso975463f8f.1;
-        Mon, 01 Sep 2025 08:24:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756740293; x=1757345093; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0pRhd0lrfXZ0Au0ju0lgUDZOFE95BU2h+YsyN9ySYew=;
-        b=M/oSawl/SWweEkhay46AGL8uh1IyxuQTley1XzcCpUslB9n+OmulC3LaMq0oyd91cQ
-         3ek7gypS8nQf68zGtxxIp7rvhazb78paxft8c8vp33YM91riedCT9/rjK8vczJNZ6r/i
-         u0DG0vveZbk4BH98FBoySO5yoq2CHlj73PMf5AqmZCmVxtJKPWG5BLenFR5RvYsa+EnX
-         1TSlI5yHMBPbmFliIMH2bmxAxdXLUKu4QRgnDwV43YilO3H59F2HcoY30YujY1CFPnty
-         +bMgmUH+oyE12cVNIFTmZEVoHlU65GVsb/gQtDN4xjMX7HDVazNMufx1n7cfgG4OkCBC
-         rszQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756740293; x=1757345093;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0pRhd0lrfXZ0Au0ju0lgUDZOFE95BU2h+YsyN9ySYew=;
-        b=G1ncOC8IWHEA4sxT4bw/0n+aoU0Cl8ibhw1zFzz+x2mnerP9cMIIO5Cys+1zvXuIiC
-         NcPhyUXAXSDzT7TwXKcd4Eg2JwfkGCuzcWOc8d7sZc7yJHGEb0GUK+JUa/XvpiUvUB1Q
-         Pri/AwqIU5S62J249IboCE0rPmlx9C2zzcWRuZ2A97Fk1ql9VZd7EEcQSRdIvNwyRavn
-         RdBJfQwxZaz4mzwM3KccfmhqSxCqnV1+DX1V0bCLhm3MYDhjCEyF9ZFdxod6WekPGsSH
-         cqXmKevLvYbA97zHMX7RSZ6lt3Gx1svhBkDq7rAViF8K1JTAKRxp114Ku1eMtZAkhjvG
-         ADUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuxPZozYmj9FHuyjghczurDuLHhzqE2dRYV7Qn152S7ZgKsncVtgZSeijUw9qYL4j5O0e80QSiqIM=@vger.kernel.org, AJvYcCWahsLIFs4gsNVPraJkqLA/T/YTmxGtApPAHwoPzH5mW0cHExKZlXBdRl1Ay3uCC7RjR2TwtzgNHYYZccUk@vger.kernel.org, AJvYcCXk+Gi3Uhk+FRfwXz2MaADez5+vRlEP8Geg/AoS5PJFDq7CI15O8Exz8y/xOZhRDyllRDL15pl9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzMaXqZza5ToR4uklM+I5Gd0BpYAHLW175M6eDgSyHemDkIUoW
-	6ZxpXesbPPzddsczmjR9qZpSDN8C42Dv5cnwNVtsnuCVdR0xBmtHWSb2
-X-Gm-Gg: ASbGncvwx43hEm6NaefrLB56roZmH8NKOtfqI3s6KAR/Cg4NOwKEshOvRZXRdJlj4S7
-	MUjkzlsSVSpf+oHf9inXEOe9/72oPPFd3nvUN6UJfDo2FJXl6/Xkb+R4ghbGtd228bYt3nkQ/BE
-	OdIySPah9cUSQYvYzduzIqgON8iKBrlsduzkdsXqjqZ9Uy8Cpqf8rZONWabXJ0IavsoB+0K5A/p
-	5wrDx0TgGvRNICRbhNyvk6QQGmkzlyN7741hdf+HIUReuu9c/kjVAFankBmaKODMd2eu4Teu973
-	BgSRaRKm0RFYaOSW1OAtUO6jsbseZ6bIdYmgBCM1xWwxymlB+AWHgh3hfY6b6dJgKWQ6ojDhWbt
-	B5ha/YfjzFl0JXPRu1+3BxmlfS+TGbdVFoHT0aDJoRTKwai5M9HsvbFG1PvVRcjE=
-X-Google-Smtp-Source: AGHT+IG8L+Y1WLn5A24obkwlkF84y/HEF0FCpuQZuNbCTNlUmHOEZHatFeXSB2OOW/xfvasSPf+K0g==
-X-Received: by 2002:a05:6000:4013:b0:3cb:2049:c743 with SMTP id ffacd0b85a97d-3d1df34f336mr5922864f8f.52.1756740292522;
-        Mon, 01 Sep 2025 08:24:52 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fb9cebsm15711441f8f.46.2025.09.01.08.24.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 08:24:52 -0700 (PDT)
-Message-ID: <3d3c9d5a-d3a4-4c94-8199-a5870474aa23@gmail.com>
-Date: Mon, 1 Sep 2025 17:24:51 +0200
+	s=arc-20240116; t=1756740295; c=relaxed/simple;
+	bh=LUZzXor2dAsq0biAH6H2qGV+yMsSF2E2Io0tWwOnVw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=NqFnPMLBKZ/DWrEZemrcN/8dfm3RJzpJn3EDHSzvcVGjWYHDIg24iydppDoOIZFuUinDriHIKR3KniNOkQtC2H0ytyAu9pSEHiOD/QZpmHjdPtwSlv25RdS+XOHu0+duk6hUAoE/pzlDyioyV1hEXHSVh0P7ddZv9NWB6PEvXMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHPFTbci; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5325AC4CEF0;
+	Mon,  1 Sep 2025 15:24:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756740294;
+	bh=LUZzXor2dAsq0biAH6H2qGV+yMsSF2E2Io0tWwOnVw4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ZHPFTbciP55OFqeBHNlER97nbR+Jj65p5DTTnkYm5eDkPu7zJzb4NdYYw40OgrNF/
+	 wsf9u1Z1McjMQYlPwfJkaQXLczkJv+vp1DTWTkGzllE0x9pYFHJaFlZnzaYbeau45B
+	 N/LO1O1DyCZikDslsNe+v5AkgYGdjTi9kT816zvCds5ikYQmlVfXAMlfTlWIwuK+uD
+	 12TgnYXPtJyw2Yv9lHlq9sPu1vrF7VwsZRBnZR6hFxGQUjaiDwzeYxQnUg/YHmMtn6
+	 pye3nTgITLiEkFJ71Qe8JY0/JBTAhDC5/bDoghWK9qo95eYxW5xqLv8LijkxH/plHr
+	 DQCye7nMgWYFw==
+Date: Mon, 1 Sep 2025 10:24:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Inochi Amaoto <inochiama@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Anders Roxell <anders.roxell@linaro.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Longbin Li <looong.bin@gmail.com>,
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: Re: [PATCH] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
+ cond_[startup|shutdown]_parent()
+Message-ID: <20250901152452.GA1114741@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] i2c: pxa: fix I2C communication on Armada 3700
-Content-Language: hu
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Wolfram Sang <wsa@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Andi Shyti <andi.shyti@kernel.org>, Russell King
- <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
- Hanna Hawa <hhhawa@amazon.com>, Robert Marko <robert.marko@sartura.hr>,
- Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>
-References: <20250827-i2c-pxa-fix-i2c-communication-v3-0-052c9b1966a2@gmail.com>
- <aLVmKrxEzYgbMUQU@smile.fi.intel.com>
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <aLVmKrxEzYgbMUQU@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5c07c5bc-1b02-4b18-89b6-da13c16d62ab@sirena.org.uk>
 
-2025. 09. 01. 11:23 keltezéssel, Andy Shevchenko írta:
-> On Wed, Aug 27, 2025 at 07:13:57PM +0200, Gabor Juhos wrote:
->> There is a long standing bug which causes I2C communication not to
->> work on the Armada 3700 based boards. The first patch in the series
->> fixes that regression. The second patch improves recovery to make it
->> more robust which helps to avoid communication problems with certain
->> SFP modules.
+[cc->to: Thomas]
+
+On Mon, Sep 01, 2025 at 01:35:17PM +0100, Mark Brown wrote:
+> On Wed, Aug 27, 2025 at 02:29:07PM +0800, Inochi Amaoto wrote:
+> > For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
+> > the newly added callback irq_startup() and irq_shutdown() for
+> > pci_msi[x]_templete will not unmask/mask the interrupt when startup/
+> > shutdown the interrupt. This will prevent the interrupt from being
+> > enabled/disabled normally.
+> > 
+> > Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
+> > cond_[startup|shutdown]_parent(). So the interrupt can be normally
+> > unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
 > 
-> ...
+> Tested-by: Mark Brown <broonie@kernel.org>
 > 
->>   - remove Imre's tag from the cover letter, and replace his SoB tag to
->>     Reviewed-by in the individual patches
-> 
-> Note, this can be automated with `b4`.
-> 
-> 	# Start a new branch of the same base
-> 	git checkout -b v3 ...
-> 	# Apply last version from the mailing list
-> 	b4 am $MESSAGE_ID_OF_v2
-> 	# Do actual development of v3
-> 	...
+> This is causing multiple platforms to fail to boot in -next, it'd be
+> great if we could get it merged to fix them.
 
-As far as I know it can be used only to collect tags offered publicly on the
-mailing lists. I can even use 'b4 trailers --update' for that on an existing b4
-tracked branch.
+It looks like you merged 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown
+for per device domains"), Thomas.  I assume you'll merge this fix too?
 
-However, the current case is a bit different. I have replaced Imre's tag
-manually according to our previous discussion [1].
+Let me know if you'd prefer that I take it.  Looks like a candidate
+for v6.17.
 
-[1] https://lore.kernel.org/all/aJyM3N9T4xI4Xo1G@smile.fi.intel.com/
-
-Regards,
-Gabor
+Bjorn
 
