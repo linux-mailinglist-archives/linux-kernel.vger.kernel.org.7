@@ -1,90 +1,96 @@
-Return-Path: <linux-kernel+bounces-795083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1678B3ECA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:49:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF9AB3ECA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E341B20A60
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:49:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 980B24815CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA3A3064B2;
-	Mon,  1 Sep 2025 16:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228EE2F0C6A;
+	Mon,  1 Sep 2025 16:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DOiP5G9m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/+/gXiP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D203F2EF66A;
-	Mon,  1 Sep 2025 16:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E96E231827;
+	Mon,  1 Sep 2025 16:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756745334; cv=none; b=N1gPaP7SYjNvON4uf3IvPIhoByCtnlGujsxipVVuCSbYw0f/xifEr8d6sRCdqIHMo2WfKwmW/J4Bku2Gkc4NfavZr0ri+nRaMFzkbl8TBbw5VD7i/cDGNgJ8YFJF0yJCr+vJbvlX9lkqA/Q2HNak1TgOKGhtmijHXawc+X/oo1g=
+	t=1756745368; cv=none; b=SVHrQjiYI0crP+J2DckHRJ05z0K5VtihgyqZEgeqX4uTejwvtA9Yzhrae7swBb+BO10/DlMb9gfa/JB7oNysnKWyDRzvd9ngmPHPQTrScbYC6pc+27FWEHLbaxUPPUnCKbGCkthAOqLgY64MbRkUGHik6SguTVh60yc/D2Y97/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756745334; c=relaxed/simple;
-	bh=npiCjXJvWwrONV5808iUFIV/5RdHhnOxIdCK+bUrDhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VL6Cn5LCzFVVGosufkYjixRQf5Dl24ahOd59SaxTGpwA8W4ERte8No9XJmYgm0eZWcZbRKcedN7kqe9bImikVgmss/m+bMGEdxUsDwotZ9kCAhnbOfZZhHcEfRo584TkPytoZpVu7dpegGNNmhlB8ZMa15kjtEqFstnG+6OYEAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DOiP5G9m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB79C4CEF1;
-	Mon,  1 Sep 2025 16:48:54 +0000 (UTC)
+	s=arc-20240116; t=1756745368; c=relaxed/simple;
+	bh=wXNt19FS1r8iJIE5qlf4LxmCtmvF8Eksl01N5CTdPJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VUBznCTq18xqG8YOhntlVwkCARN7qKE602SIJSMUO7b2tYZOflMjAlhJxYpLxOOIuljyFrMHAJEiwlnXMzzKlLAWYHp027kGgDBr9UVCuRx/nnwUqcgoLgrvCiO3qhF3WsaBpzNgWxpbTthNv8E9+ACPvndhgDfZw7OmTz1U20U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/+/gXiP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A67C4CEF0;
+	Mon,  1 Sep 2025 16:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756745334;
-	bh=npiCjXJvWwrONV5808iUFIV/5RdHhnOxIdCK+bUrDhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DOiP5G9mcW5YrbNZW9hAkVVXRXYQ6JzkWmPyZOMvn89GSNQifGyPW04tmZ83dhfW/
-	 iJkGyvcm+QyM2Q5XNe+OHDhXC2ugNaG3uUdP68Ru/WtugN3X4vdphCOA2AhE6jdUA/
-	 +I6cH6UdMU+K+upzsk+2SOKSh0uSqDQcbFX4YtA5Zj29Zw2ZRy2jS2NftYpSlYqY1r
-	 XZ0uYPwxEOe27gUdREZDkZYjOgc0LBGKxN63okG6CoE2WFgojR0/5X0rdxWOFTxhUM
-	 fF2Txfxe3/YgPfQWOQwkng0x75qeWpgARJlFBiiRm5eLAFlR2ZPr4OrJhDS3NEpak9
-	 yF8OlxTYFJAoQ==
-Date: Mon, 1 Sep 2025 09:48:54 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Marco Bonelli <marco@mebeim.net>, Petr Vorel <pvorel@suse.cz>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] kconfig: Add transitional symbol attribute for
- migration support
-Message-ID: <202509010945.D266C0E6@keescook>
-References: <20250830020109.it.598-kees@kernel.org>
- <7bca36d46dab04667aa595623fd0966385ee4658@intel.com>
+	s=k20201202; t=1756745368;
+	bh=wXNt19FS1r8iJIE5qlf4LxmCtmvF8Eksl01N5CTdPJw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=B/+/gXiPPsmyqy/OLike2rjjvf8ZFQLrJOcyn1eXoZNTExwzBr9ixaiUefIzhhuFk
+	 ypsyCoe5jRGn2kFHKN4EScZaeB0iMIXAPqTKdUHKhuX9KPfpuV9tFOha68FaxtpoBy
+	 d/irehS2JteBtYkQ9vL9X6F1Dh7WkbiRfme2uamomB7aEX7Apjw+1d84iSfuf6UZ6N
+	 rZRN++PtBVc9IsVs/58330ExQxIXxiHedeqBalytsKK1yprGpyPdIjX/mODeGP8O0M
+	 zr9h+Xjd4B4NcNL3nT5ZOBIyf1nxdS7c3fQ2x+xtzfcZrDwQP+ULQkDA5nafuBFEtk
+	 +oSxSpxe+eDiw==
+Date: Mon, 1 Sep 2025 17:49:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Charles Han <hanchunchao@inspur.com>
+Cc: <marius.cristea@microchip.com>, <dlechner@baylibre.com>,
+ <nuno.sa@analog.com>, <andy@kernel.org>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: adc: Fix a null pointer dereference in
+ pac1934_acpi_parse_channel_config
+Message-ID: <20250901174919.4e2c7873@jic23-huawei>
+In-Reply-To: <20250901064512.1554-1-hanchunchao@inspur.com>
+References: <20250901064512.1554-1-hanchunchao@inspur.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7bca36d46dab04667aa595623fd0966385ee4658@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 01, 2025 at 12:09:14PM +0300, Jani Nikula wrote:
-> On Fri, 29 Aug 2025, Kees Cook <kees@kernel.org> wrote:
-> > The transitional syntax requires a type argument and prevents type
-> > redefinition:
-> >
-> >     config OLD_OPTION
-> >         transitional bool
-> >         help
-> >           Transitional config for OLD_OPTION migration.
+On Mon, 1 Sep 2025 14:45:11 +0800
+Charles Han <hanchunchao@inspur.com> wrote:
+
+> Add check for the return value of devm_kmemdup()
+> to prevent potential null pointer dereference.
 > 
-> How long do you think we'll need to keep the transitional config options
-> around? Forever?
+> Fixes: 0fb528c8255b ("iio: adc: adding support for PAC193x")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+Good catch, but not that simple. This just leaked an ACPI resource that was
+held over the loop this is in. See the ACPI_FREE() that follows it.
 
-As with the "manual" transitions, it'd probably be until the next LTS is
-released.
+Jonathan
 
--- 
-Kees Cook
+> ---
+>  drivers/iio/adc/pac1934.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/pac1934.c b/drivers/iio/adc/pac1934.c
+> index 2e442e46f679..95c9d14b5529 100644
+> --- a/drivers/iio/adc/pac1934.c
+> +++ b/drivers/iio/adc/pac1934.c
+> @@ -1108,6 +1108,9 @@ static int pac1934_acpi_parse_channel_config(struct i2c_client *client,
+>  			devm_kmemdup(dev, rez->package.elements[i].string.pointer,
+>  				     (size_t)rez->package.elements[i].string.length + 1,
+>  				     GFP_KERNEL);
+> +		if (!info->labels[idx])
+> +			return -ENOMEM;
+> +
+>  		info->labels[idx][rez->package.elements[i].string.length] = '\0';
+>  		info->shunts[idx] = rez->package.elements[i + 1].integer.value * 1000;
+>  		info->active_channels[idx] = (info->shunts[idx] != 0);
+
 
