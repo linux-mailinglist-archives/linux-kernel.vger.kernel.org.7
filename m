@@ -1,60 +1,56 @@
-Return-Path: <linux-kernel+bounces-793779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD98B3D818
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:07:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4247B3D81B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9FE3B5789
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907033B518E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD12A223707;
-	Mon,  1 Sep 2025 04:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39A322156A;
+	Mon,  1 Sep 2025 04:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSJ97Pez"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExXBLmxs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA652AE77;
-	Mon,  1 Sep 2025 04:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D97E2AE77;
+	Mon,  1 Sep 2025 04:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756699655; cv=none; b=d0wP2in9bnFfwpskrmZPCXF7wbahXd03lkvUH6V+7c2I0T7B9vWnXoz4eB+r0gEsoU25cIXb4BmJpvwpJ1KGRBN/K+OW2sYHivDFf78bKt8fIr+CRSrASdhu01IXYTOOYglj5S+vdn+0LDWa8PNdItQi13Hjaz+1YnxTjirjGZk=
+	t=1756699692; cv=none; b=ePBHMUS0B6zY0wDHwKUu5Tnp+AEFCe6CTSbwNNW6fd5SbP30sIJQ5z7Oo6SlJzTfzSZkVolAYZmANbX6+iWSk4H1zlSu98f/pMgM9ZmDvXdjyxgkx4bnQlIny9tOAZZq7fRbM+EYIGMkE52EZWE5vC377iHLDd9KTRCRzkTKK6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756699655; c=relaxed/simple;
-	bh=+j8py7V99RgrXRlQXbRzMD7XlRgv0rUsZOd4wl31MhQ=;
+	s=arc-20240116; t=1756699692; c=relaxed/simple;
+	bh=8n+ZuGOwVskIkUL1IWD7BbgHrNgaykzQ+uT1sWEAI70=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=stPP9AIEpwcb9+BBA3WBcj9z2TF4cJwClOwluZ/NowJ3pIepdWE9kRo0RWXGHuVC9rsUKCUFqZ0QNYTE1IVqQfQopap8Rz6tD/p20/60LuffsvSjeo2bRbg/Z7hJQs9gSSP/2Xxczc38qAo4dOdN0lHGYQ/ElNa+z48o+Va1FQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSJ97Pez; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF48C4CEF0;
-	Mon,  1 Sep 2025 04:07:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhC0xgA8CGhRP4mrXpTtvra0RxT0nV9T9Oit5v/iDVh533vOHr7qgxHF//bNfhEUD1tsX7LsyfqX9ZczPIa5i8BaGr2q5Ze+BGRTBA4pVMk4/3ALHRGaGNXhDjdT3nBtJkL1JAj780+ccObKxTAvB/fJwVIaDiOWZH+o+NzJhNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExXBLmxs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37CB1C4CEF0;
+	Mon,  1 Sep 2025 04:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756699654;
-	bh=+j8py7V99RgrXRlQXbRzMD7XlRgv0rUsZOd4wl31MhQ=;
+	s=k20201202; t=1756699691;
+	bh=8n+ZuGOwVskIkUL1IWD7BbgHrNgaykzQ+uT1sWEAI70=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FSJ97Pezc1MKenDVdb45SoWcEQwL+1BixG3iX7ks+YLyacgJ4In6FJDZYZ0I2eEPw
-	 n78sRfkfvxmFRm7CIi6w7kEo/kWUh78iDqnMhypCWPZE0wYvPuR/AK1JPSghB91FrC
-	 raft3+X4l7iuxmQ94VKr5cljo6f/0Y4FS4LUL+RgGY8chi3aD4PuwZxiJYThiZRV+H
-	 IIqY3wQ2NMLtr+fZiOnGj7fozBK8r9EU8QYUHFIC9+hQ3nmr4gbpWoJRXMgiAQAxhr
-	 Bv8zxPn43PaTVmj8k7Qke2rfEUw14TPHsnpXWBLfZiTTQ0V5qUvjPPPd5iKMuarBKh
-	 sRUjNlr9AeDJA==
-Date: Mon, 1 Sep 2025 09:37:26 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com, 
-	avri.altman@wdc.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
- properties
-Message-ID: <6xgsb7thoo7mquz3mxuyhliuqtvrbxj43nc6ga5qpcgcz4ro4u@doe2253ydjbj>
-References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
- <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
- <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
- <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
- <cf203807-77ab-463c-b0b0-4a1cec891fe6@acm.org>
+	b=ExXBLmxscsUFiN0z6Nb7VMRuNdiCVncTbv1CiE3Fv5VFS/gMGiQ0pEwmCor0/bR2A
+	 or/5xBUiStLYDux18it7pZELTizmmk78Jbz31US70OajjDLOqIXOVyq65EG5lUw8Qw
+	 JP8cm9k1LcBCkzNj4XyFKn0aSNnJeRCpTElDlL+oR4EEroAMhpA4jZyhg6vwl/5bTb
+	 QcqP38ywhwQPxBWH+NVbboPVXDfXaSe7SB7tRYEiZGLya5y11Nf3yq6ibG9oKgJwZh
+	 On7HmtG5QuOxx/7e+Os+VqRUBSJNuB2DicHiUHu59hEg4/ff1n4T04G73savpDo/qg
+	 MVborQyGaZ0gg==
+Date: Mon, 1 Sep 2025 06:08:08 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Cc: lee@kernel.org, andreas@kemnade.info, krzk+dt@kernel.org, 
+	robh@kernel.org, conor+dt@kernel.org, ukleinek@kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	shuah@kernel.org
+Subject: Re: [PATCH v4] dt-bindings: mfd: twl: Add missing sub-nodes for
+ TWL4030 & TWL603x
+Message-ID: <20250901-tough-rigorous-porpoise-f14ae2@kuoka>
+References: <20250830001421.126707-1-jihed.chaibi.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,53 +59,220 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cf203807-77ab-463c-b0b0-4a1cec891fe6@acm.org>
+In-Reply-To: <20250830001421.126707-1-jihed.chaibi.dev@gmail.com>
 
-On Thu, Aug 28, 2025 at 10:22:28AM GMT, Bart Van Assche wrote:
-> On 8/28/25 9:45 AM, Ram Kumar Dwivedi wrote:
-> > On 26-Aug-25 9:05 PM, Bart Van Assche wrote:
-> > > On 8/26/25 8:08 AM, Ram Kumar Dwivedi wrote:
-> > > > +  limit-rate:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +    enum: [1, 2]
-> > > > +    default: 2
-> > > > +    description:
-> > > > +      Restricts the UFS controller to Rate A (1) or Rate B (2) for both
-> > > > +      TX and RX directions, often required in automotive environments due
-> > > > +      to hardware limitations.
-> > > 
-> > > As far as I know no numeric values are associated with these rates in
-> > > the UFSHCI 4.1 standard nor in any of the previous versions of this
-> > > standard. Does the .yaml syntax support something like "enum: [A, B]"?
-> > Hi Bart,
-> > 
-> > As per the MIPI UniPro spec:
-> > 
-> > In Section 5.7.12.3.2, the hs_series is defined as:
-> > hs_series = Flags[3] + 1;
-> > 
-> > In Section 5.7.7.1, Flags[3] is described as:
-> > Set to ‘0’ for Series A and ‘1’ for Series B (PA_HSSeries).
-> > 
-> > While issuing the DME command from the UFS driver to set the rate,
-> > the values 1 and 2 are passed as arguments for Rate A and Rate B
-> > respectively. Additionally, the hs_rate variable is of type u32.
+On Sat, Aug 30, 2025 at 02:14:21AM +0200, Jihed Chaibi wrote:
+> Update the main TI TWL-family binding to be self-contained and to fix
+> pre-existing validation errors.
 > 
-> Hi Ram,
+> Following maintainer feedback, the simple power and PWM bindings are
+> now defined directly within this file, and their legacy .txt files
+> are removed.
 > 
-> Thanks for having looked this up.
+> To ensure future patches are bisectable, child nodes whose bindings
+> are in other patches (audio, keypad, usb, etc.) are now defined using
+> a flexible 'additionalProperties: true' pattern. This removes hard
+> dependencies between the MFD and subsystem bindings.
 > 
-> Since it is much more common to refer to these rates as "Rate A" and
-> "Rate B" rather than using numbers for these rates, please change the
-> enumeration labels into something like "Rate_A" and "Rate_B".
+> The complete dtbs_check for this binding is clean except for two
+> warnings originating from pre-existing bugs in the OMAP DTS files,
+> for which fixes have already been submitted separately [1][2].
 > 
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> 
+> ---
+> Changes in v4:
+>   - Reworked binding to be independent and bisectable per maintainer
+>     feedback by using 'additionalProperties: true' for child nodes.
+>   - Added board-specific compatibles to the 'power' node enum.
+>   - Added definitions for 'clocks' and 'clock-names' properties.
+>   - Renamed 'twl6030-usb' child node to 'usb-comparator' to match
+>     existing Device Tree usage (twl6030.dtsi).
+>   - Fixed some spelling/grammar erros in the description.
+> 
+> Changes in v3:
+>   - New patch to consolidate simple bindings (power, pwm) and add
+>     definitions for all child nodes to fix dtbs_check validation
+>     errors found in v2.
+> 
+> Changes in v2:
+>   - This patch is split from larger series [3] per maintainer feedback.
+>   - Added missing sub-node definitions, resolving dtbs_check errors.
+> 
+> [1] https://lore.kernel.org/all/20250822222530.113520-1-jihed.chaibi.dev@gmail.com/
+> [2] https://lore.kernel.org/all/20250822225052.136919-1-jihed.chaibi.dev@gmail.com/
+> [3] https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+> 
+> ---
+>  .../devicetree/bindings/mfd/ti,twl.yaml       | 208 +++++++++++++++++-
+>  .../devicetree/bindings/mfd/twl4030-power.txt |  48 ----
+>  .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
+>  .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
+>  4 files changed, 206 insertions(+), 84 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power.txt
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> index f162ab60c..444e2b2b5 100644
+> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> @@ -11,9 +11,9 @@ maintainers:
+>  
+>  description: |
+>    The TWLs are Integrated Power Management Chips.
+> -  Some version might contain much more analog function like
+> +  Some versions might contain much more analog functionality like
+>    USB transceiver or Audio amplifier.
+> -  These chips are connected to an i2c bus.
+> +  These chips are connected to an I2C bus.
+>  
+>  allOf:
+>    - if:
+> @@ -76,6 +76,107 @@ allOf:
+>            properties:
+>              compatible:
+>                const: ti,twl4030-wdt
+> +
+> +        audio:
+> +          type: object
+> +          properties:
+> +            compatible: true
 
-+1. Since this binding describes the HCI, let's stick to the terminologies in
-UFSHCI spec.
+This should list the compatibles.
 
-- Mani
+> +          additionalProperties: true
+> +
+> +        keypad:
+> +          type: object
+> +          properties:
+> +            compatible: true
+> +          additionalProperties: true
+> +
+> +        pwm:
+> +          type: object
+> +          $ref: /schemas/pwm/pwm.yaml#
+> +          description: PWM1 and PWM2
+> +          properties:
+> +            compatible:
+> +              enum:
+> +                - ti,twl4030-pwm
+> +            '#pwm-cells':
+> +              const: 2
+> +          required:
+> +            - compatible
+> +            - '#pwm-cells'
+> +          additionalProperties: true
 
--- 
-மணிவண்ணன் சதாசிவம்
+This cannot be true.
+
+> +
+> +        pwmled:
+> +          type: object
+> +          $ref: /schemas/pwm/pwm.yaml#
+> +          description: PWMA and PWMB (connected to LEDA & LEDB terminals)
+> +          properties:
+> +            compatible:
+> +              enum:
+> +                - ti,twl4030-pwmled
+> +            '#pwm-cells':
+> +              const: 2
+> +          required:
+> +            - compatible
+> +            - '#pwm-cells'
+> +          additionalProperties: true
+
+Cannot be true.
+
+> +
+> +        twl4030-usb:
+> +          type: object
+> +          properties:
+> +            compatible: true
+
+Missing compatibles.
+
+> +          additionalProperties: true
+> +
+> +        gpio:
+> +          type: object
+> +          properties:
+> +            compatible: true
+> +          additionalProperties: true
+> +
+> +        power:
+> +          type: object
+> +          additionalProperties: false
+> +          description:
+> +            The power management module inside the TWL4030 provides several facilities
+> +            to control the power resources, including power scripts. For now, the
+> +            binding only supports the complete shutdown of the system after poweroff.
+> +          properties:
+> +            compatible:
+> +              description: |
+> +                The compatible string determines the specific power configuration.
+> +                Multiple compatible strings may be used to specify fallback configurations.
+> +                "ti,twl4030-power": Standard power control.
+> +                "ti,twl4030-power-reset": Recommended for OMAP3530 and similar SoCs
+> +                  that require a special configuration for warm reset to work correctly.
+> +                "ti,twl4030-power-idle": Loads the TI-recommended configuration for
+> +                  idle modes into the PMIC.
+> +                "ti,twl4030-power-idle-osc-off": Uses the recommended idle configuration
+> +                  but also shuts down the external oscillator. This may not work on all
+> +                  boards depending on the oscillator wiring.
+> +                Board-specific compatible strings may also be used.
+
+Do not add descriptioons to compatible. You are just duplicating the
+names. Look at other examples if you want to add description to actual
+compatible for some reason.
+
+> +              maxItems: 2
+> +              items:
+> +                enum:
+
+I really do not know what you want to express here. This is not a
+correct syntax.
+
+
+> +                  - ti,twl4030-power
+> +                  - ti,twl4030-power-reset
+> +                  - ti,twl4030-power-idle
+> +                  - ti,twl4030-power-idle-osc-off
+> +                  - ti,twl4030-power-beagleboard-xm
+
+This wasn't in original binding and I did not see explanation of changes
+in the commit msg.
+
+> +                  - ti,twl4030-power-omap3-evm
+> +                  - ti,twl4030-power-n900
+> +
+> +            ti,system-power-controller:
+> +              type: boolean
+> +              deprecated: true
+> +              description: |
+> +                DEPRECATED. The standard 'system-power-controller' property
+> +                on the parent node should be used instead.
+> +
+> +            ti,use_poweroff:
+> +              type: boolean
+> +              deprecated: true
+> +
+> +          required:
+> +            - compatible
+> +
+>    - if:
+>        properties:
+>          compatible:
+> @@ -115,6 +216,43 @@ allOf:
+>            properties:
+>              compatible:
+>                const: ti,twl6030-gpadc
+> +
+> +        pwm:
+
+Do not define properties in if: block, but in top level.
+
+Best regards,
+Krzysztof
+
 
