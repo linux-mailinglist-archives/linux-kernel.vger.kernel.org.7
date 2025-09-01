@@ -1,109 +1,86 @@
-Return-Path: <linux-kernel+bounces-794192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D281B3DE2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:23:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BC8B3DDB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2565D189C89D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:24:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AFC0172E4E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08B230AAD3;
-	Mon,  1 Sep 2025 09:20:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AB730ACEA
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7751A26B2CE;
+	Mon,  1 Sep 2025 09:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9Z1nq8t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2233043C0;
+	Mon,  1 Sep 2025 09:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756718437; cv=none; b=ms2HFqLEwKRHPKbVOqsF1bVBkT2OU+75+oZKLzkgmv0+S5VCqGF8A5wZX5/l+nCHmken/ifG+XH3IofzHuV24I2QoBoZvID2+N9cHlTX8a1f4yuK3nUMr/8D+QENGpkPX2Y2IwR6IdaGoGtMlXShZX9HLZc7DqNaavgE9JEmu2o=
+	t=1756717885; cv=none; b=rV8KpBO1EPNYSsb+V2f7ETQsgT7H+hHoeWESIxWmT+Y4SNb7liqH8J16vb2KsiCm4zOVsTkXNQFS3GEFgspzMiW93WHk+uIoN5NsmIldMqTb1J34Tkc3VulYgqyn3hZh5V4we0g5baXgWGEBStsoFwaUS1+1vaKUUYGh6QS0++E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756718437; c=relaxed/simple;
-	bh=XzqH1NICLb4/VMOykRFai7epHyrJvlLJ0+3DvxnlzmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GuAlE4Ofzitdbfzcb6zKmYkWgzqfsDHTwYuqdqbeKMIpMIZouyjsgsyU15qcF9tz4BWu/ttv8O+jZSx2W8OZTXfrQ3C+HmjJriszekqb39k4BI2mfu0qAty0Y2aYIKTPNCLAcrzuYmm7H87vPUShfuiA9XwajOlEuvx8wFLfi/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cFjlg27GYz9sSn;
-	Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id b3NZTwEC2xRh; Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cFjlg1PMcz9sSm;
-	Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 17A0B8B78C;
-	Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 4ohyUc15GJ95; Mon,  1 Sep 2025 11:10:55 +0200 (CEST)
-Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DE2AF8B77B;
-	Mon,  1 Sep 2025 11:10:54 +0200 (CEST)
-Message-ID: <35c5cd6d-6929-42e5-9505-b38ed316da8b@csgroup.eu>
-Date: Mon, 1 Sep 2025 11:10:54 +0200
+	s=arc-20240116; t=1756717885; c=relaxed/simple;
+	bh=e7IQd7jdRCryUUMeIu1J5IWuEsonevhWYhuN2P6mwwI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=p3CME5AYbAFOn0sac18NoiC8Oeo+3kqvIGV4qPlmbS2ml8+d2wMiALseNhK/he/JMlyA+I99F2gyhc6A0Usg4PqG44TJQNOURB7klJ9Rxuiit9KBGsMC7TFj4htrn6aGG42ft9ixgAPiEaGzGEvWYtIHqmRDzjrKXz/dtbHffco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9Z1nq8t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBEB7C4CEF4;
+	Mon,  1 Sep 2025 09:11:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756717885;
+	bh=e7IQd7jdRCryUUMeIu1J5IWuEsonevhWYhuN2P6mwwI=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=p9Z1nq8tYVcZxiUkDkCpDTRrcV6CGYdo8h/hbff/fDboABjPhYZ7vPWOA4BxPT34e
+	 9I0Lw5F+QevJJoFoCnOMlg0Fb0QoTErcYHxbeZ/wNwk5ubyEABshVyel1rgxO5lzYD
+	 XPtP878fU3PxYhlUDrYie7+gXVSh6//N3gZTCeoGwYBjM8AFH6fS85e41RujBW2ydY
+	 S49q27J5BCdfWLEicJCiDFmibiOXdANo2rdsUUflu5yFnFAMsZNLDsMHqMZRdL57HQ
+	 bThxp4qT5U+Fbv1SwNJyvVm7c+Fdvc+LB7eB8GvedUuJyRhoEDl1JWwVm22Ebkos8P
+	 Xll/bZv0yc19Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc/pasemi: Add a null pointer check to the
- pas_setup_mce_regs
-To: Kunwu Chan <chentao@kylinos.cn>, mpe@ellerman.id.au, npiggin@gmail.com,
- aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com,
- "maddy@linux.ibm.com" <maddy@linux.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20240117091706.153431-1-chentao@kylinos.cn>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20240117091706.153431-1-chentao@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 01 Sep 2025 11:11:20 +0200
+Message-Id: <DCHCILE9D2I9.TWPTF228RIJR@kernel.org>
+To: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <patches@lists.linux.dev>
+Subject: Re: [PATCH 1/3] rust: error: improve `Error::from_errno`
+ documentation
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250829192243.678079-1-ojeda@kernel.org>
+ <20250829192243.678079-2-ojeda@kernel.org>
+In-Reply-To: <20250829192243.678079-2-ojeda@kernel.org>
 
+On Fri Aug 29, 2025 at 9:22 PM CEST, Miguel Ojeda wrote:
+> This constructor is public since commit 5ed147473458 ("rust: error:
+> make conversion functions public"), and we will refer to it from the
+> documentation of `to_result` in a later commit.
+>
+> Thus improve its documentation, including adding examples.
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-Le 17/01/2024 à 10:17, Kunwu Chan a écrit :
-> kasprintf() returns a pointer to dynamically allocated memory
-> which can be NULL upon failure. Ensure the allocation was successful
-> by checking the pointer validity.
-> 
-> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+Cheers,
+Benno
 
 > ---
->   arch/powerpc/platforms/pasemi/setup.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/powerpc/platforms/pasemi/setup.c b/arch/powerpc/platforms/pasemi/setup.c
-> index 0761d98e5be3..8f98f3b58888 100644
-> --- a/arch/powerpc/platforms/pasemi/setup.c
-> +++ b/arch/powerpc/platforms/pasemi/setup.c
-> @@ -165,6 +165,8 @@ static int __init pas_setup_mce_regs(void)
->   	while (dev && reg < MAX_MCE_REGS) {
->   		mce_regs[reg].name = kasprintf(GFP_KERNEL,
->   						"mc%d_mcdebug_errsta", reg);
-> +		if (!mce_regs[reg].name)
-> +			return -ENOMEM;
-
-I think you will leak the reference taken with last call to 
-pci_get_device() here. I think we need a call to pci_dev_put(dev) before 
-bailing out.
-
-By the way there will also be the same leak if the while loop ends when 
-reg reaches MAX_MCE_REGS while dev is still not NULL.
-
-
->   		mce_regs[reg].addr = pasemi_pci_getcfgaddr(dev, 0x730);
->   		dev = pci_get_device(PCI_VENDOR_ID_PASEMI, 0xa00a, dev);
->   		reg++;
-
+>  rust/kernel/error.rs | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
 
