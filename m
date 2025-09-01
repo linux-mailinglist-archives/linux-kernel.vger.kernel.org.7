@@ -1,93 +1,200 @@
-Return-Path: <linux-kernel+bounces-794932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33954B3EAE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:37:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75428B3EAFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CA64166E4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238EC188CFE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90A52E6CB6;
-	Mon,  1 Sep 2025 15:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431072EC09C;
+	Mon,  1 Sep 2025 15:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHPFTbci"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JajueSMK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE462E6CA3;
-	Mon,  1 Sep 2025 15:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB5E2EC08A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756740295; cv=none; b=ismooE30NqCm2wQbnva/Wlp3NZIQv3pFDZGkTRZZnY3E5A7vli67r78vz0QCcbqyvVzY6Ws06eTO1/ewQPT16CfU+o6oqopaO5mjxrfRVRLV8Zm6R2L8Y1+AwutiXWYKOew4LxOq7HqmQryZ1ERJvDKTD0u9lRlU3RwKo7jEbvA=
+	t=1756740330; cv=none; b=ubAk23ARh4jfTuuyyxJ37OrXZfcme7/0OiS3sqJtDeNAkexWFuMp7YhxKmHnsMjOfy0GbLsy1828DCzI/TDPJe/YHjoDNrZVM0Dnt9UQjXnXo2oJUKgUeeO8y2AzUDQsFuHdF4dOrRSQxYMof+Ia2R2y00arnkJQKJIf604WDzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756740295; c=relaxed/simple;
-	bh=LUZzXor2dAsq0biAH6H2qGV+yMsSF2E2Io0tWwOnVw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=NqFnPMLBKZ/DWrEZemrcN/8dfm3RJzpJn3EDHSzvcVGjWYHDIg24iydppDoOIZFuUinDriHIKR3KniNOkQtC2H0ytyAu9pSEHiOD/QZpmHjdPtwSlv25RdS+XOHu0+duk6hUAoE/pzlDyioyV1hEXHSVh0P7ddZv9NWB6PEvXMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHPFTbci; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5325AC4CEF0;
-	Mon,  1 Sep 2025 15:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756740294;
-	bh=LUZzXor2dAsq0biAH6H2qGV+yMsSF2E2Io0tWwOnVw4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ZHPFTbciP55OFqeBHNlER97nbR+Jj65p5DTTnkYm5eDkPu7zJzb4NdYYw40OgrNF/
-	 wsf9u1Z1McjMQYlPwfJkaQXLczkJv+vp1DTWTkGzllE0x9pYFHJaFlZnzaYbeau45B
-	 N/LO1O1DyCZikDslsNe+v5AkgYGdjTi9kT816zvCds5ikYQmlVfXAMlfTlWIwuK+uD
-	 12TgnYXPtJyw2Yv9lHlq9sPu1vrF7VwsZRBnZR6hFxGQUjaiDwzeYxQnUg/YHmMtn6
-	 pye3nTgITLiEkFJ71Qe8JY0/JBTAhDC5/bDoghWK9qo95eYxW5xqLv8LijkxH/plHr
-	 DQCye7nMgWYFw==
-Date: Mon, 1 Sep 2025 10:24:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Longbin Li <looong.bin@gmail.com>,
-	Linux Kernel Functional Testing <lkft@linaro.org>
-Subject: Re: [PATCH] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
- cond_[startup|shutdown]_parent()
-Message-ID: <20250901152452.GA1114741@bhelgaas>
+	s=arc-20240116; t=1756740330; c=relaxed/simple;
+	bh=iLPg5/NsqE2fgJNlNze5wZTZC18RwFd3hiEqg2oxKz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BOvEQYdcSbGTr08nG5BL845jHTXUbBzpwC3tXO5FryFuz0krWzdyuJ9STryjJfQXnOGhtF773BF7HzpZSpSsq6fO4jSLignLNLvAvj14/Hce+ediSPJkzLNPsbVlXpMCtqvoukzqPjgmQOol16bbVNtNcjKLfL6IRolrjovBsmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JajueSMK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756740327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=t7wTvc9eUbw7jtHlrnxQy+rN4qRUOO7ojXz7+PUk6M8=;
+	b=JajueSMKM0IjV39DBZ6nXqgNqJmzASMyInByClVwCfutfAFEEr0Kl5ZWFHBJ3mCOLJmKWv
+	iPYBCXfVcizcWGyeTIWqoBgm5gC/hyA59PIWTOOQM3SBS8/9FPtjk6+obGoNdPT6dYlOPX
+	K65Jz9MGigTWU44Xe8gSUvqZau9e9WY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-505-QEXlJLxrOLCMUZLVnhlLGA-1; Mon, 01 Sep 2025 11:25:26 -0400
+X-MC-Unique: QEXlJLxrOLCMUZLVnhlLGA-1
+X-Mimecast-MFC-AGG-ID: QEXlJLxrOLCMUZLVnhlLGA_1756740325
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3cbe70a7861so3227022f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:25:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756740325; x=1757345125;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t7wTvc9eUbw7jtHlrnxQy+rN4qRUOO7ojXz7+PUk6M8=;
+        b=mPf8kjxyxYofoZ79yGpBUEN0Xx+n3ZB0KqSwFBM6S20uJhIZP22wYFVK5EiYvZljsW
+         jtmhNLZsEuj8fUY9fNNW5YROtK9d4uGhXmCUxqFJ34AQh+0XPi0BDRwwz2EzPoNWsKFZ
+         MDZfCw0f9vncQNxtVTfObeRLGwSdkRV+TXP6UpXldML6GQBqEwbxEaPeB8WNGVeOKeIq
+         J3LVHNagYQCko2FYAtJ8vlDrq54orSQgIaucmBff9XGM9FV2EGVawdNH/0tqwDE0yOQI
+         UB7QxCNo+N497sJhMcC4fQsIFulCL3/gZ4RGY+HNPZEIpZ0CQ55/qaf1LGt0QhLTYRSf
+         6heQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTAoyoeu7Hxo5IsfKy5CtNCwfyMKTGO8u/KG8Az2virbJ/rA+AcRUFjmChxVcSLVAYwI+3Seo2P00K1mA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDit0U7QAKpymIQwiBg4EihaMOth4m1e1CdDEDwLWCZ2eP8dK9
+	OQptelktfjwNoQcMc7j5SwxEJMHUoH8ZJghWm5g1WS10jU7XxKXIZZgQrrSecvFOn1CdNp2WHMz
+	/J+obJ9mlkSkn+KrHVVb16wqckerei7eB46QmRagp1noWopcC3Gq24/m0WDv0AbqA0Q==
+X-Gm-Gg: ASbGncs72zP0XZvnMUjMje4JS0vg9S/tEqiKLOnfTaDMBuHMr9wt+0bOB4NtqRFN2en
+	Tqld97zFaR/cOEFNNfXZepooRWFul80owLY7ulziSS/LLwitRfWzyBWA0azbF59GeqCLx8WN8U+
+	9Wqs4r+jFg9CUjeV/rTYx1X71OwMBkC3fmttEZtI/zZibNoe1KQqmZL9tCWzkYMxWsfUdL8xOlv
+	bB8cd/tzGfLkbpzkw+l3dC6RPwPke6gMpPq/j26DSkCpNcyg6CCG3zziSaiDOorjb+ZcYd8snVp
+	k4kC2MvESAl6JiMEhnCvjQXlfpoas/kJIc7trFlD9CAogh4g4JY+hGaT3TpO0a0AEi4n+1HALe5
+	SHOP1nUagTchE/UMQoIDtMIxFOm/V7EfQPLsL0kI3mA1+f8bOz7FXTM8DHB5iKniLBUI=
+X-Received: by 2002:a5d:5d09:0:b0:3b8:893f:a185 with SMTP id ffacd0b85a97d-3d1df34f216mr7377176f8f.53.1756740325005;
+        Mon, 01 Sep 2025 08:25:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyQFfDTfcx6weYHYURNCUN2TyUMgP1+sDx60HW3E6IenOe07uG2Bl4c+GEZR2K3WNO1i1qFA==
+X-Received: by 2002:a5d:5d09:0:b0:3b8:893f:a185 with SMTP id ffacd0b85a97d-3d1df34f216mr7377103f8f.53.1756740324457;
+        Mon, 01 Sep 2025 08:25:24 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d21a80c723sm10724135f8f.9.2025.09.01.08.25.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 08:25:23 -0700 (PDT)
+Message-ID: <4ce074b4-8f79-4e69-81c1-d6e28239ccf0@redhat.com>
+Date: Mon, 1 Sep 2025 17:25:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c07c5bc-1b02-4b18-89b6-da13c16d62ab@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 11/12] mm: constify assert/test functions in mm.h
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
+ willy@infradead.org, hughd@google.com, mhocko@suse.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
+ linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
+ agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
+ gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
+ davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com,
+ luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
+ jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
+ rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
+ broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
+ mpe@ellerman.id.au, nysal@linux.ibm.com,
+ linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+ linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250901123028.3383461-1-max.kellermann@ionos.com>
+ <20250901123028.3383461-12-max.kellermann@ionos.com>
+ <081a7335-ec84-4e26-9ea2-251e3fc42277@redhat.com>
+ <CAKPOu+8xJJ91pOymWxJ0W3wum_mHPkn_nR7BegzmrjFwEMLrGg@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <CAKPOu+8xJJ91pOymWxJ0W3wum_mHPkn_nR7BegzmrjFwEMLrGg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-[cc->to: Thomas]
-
-On Mon, Sep 01, 2025 at 01:35:17PM +0100, Mark Brown wrote:
-> On Wed, Aug 27, 2025 at 02:29:07PM +0800, Inochi Amaoto wrote:
-> > For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
-> > the newly added callback irq_startup() and irq_shutdown() for
-> > pci_msi[x]_templete will not unmask/mask the interrupt when startup/
-> > shutdown the interrupt. This will prevent the interrupt from being
-> > enabled/disabled normally.
-> > 
-> > Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
-> > cond_[startup|shutdown]_parent(). So the interrupt can be normally
-> > unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
+On 01.09.25 17:17, Max Kellermann wrote:
+> On Mon, Sep 1, 2025 at 4:07 PM David Hildenbrand <david@redhat.com> wrote:
+>>> -static inline void assert_fault_locked(struct vm_fault *vmf)
+>>> +static inline void assert_fault_locked(const struct vm_fault *vmf)
+>>>    {
+>>
+>> This confused me a bit: in the upper variant it's "*const" and here it's
+>> "const *".
 > 
-> Tested-by: Mark Brown <broonie@kernel.org>
+> That was indeed a mistake. Both should be "const*const".
 > 
-> This is causing multiple platforms to fail to boot in -next, it'd be
-> great if we could get it merged to fix them.
+>> There are multiple such cases here, which might imply that it is not
+>> "relatively trivial to const-ify them". :)
+> 
+> I double-checked this patch and couldn't find any other such mistake.
+> Or do you mean the function vs prototype thing on parameter values?
 
-It looks like you merged 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown
-for per device domains"), Thomas.  I assume you'll merge this fix too?
+If there is a simple rule (declaration/definition), then it's trivial. 
+Probably worth spelling out that rule somewhere (unless I missed it).
 
-Let me know if you'd prefer that I take it.  Looks like a candidate
-for v6.17.
+As raised in the other reply, not sure if we should just keep them in sync.
 
-Bjorn
+I'm, not the biggest fan of the *const in general here. I can see why 
+Andrew suggested it, but only doing that for pointers is a bit weird. 
+Anyhow, that discussion is likely happening elsewhere, and I don't think 
+there is real harm when doing it, as long as we are consistent with what 
+we're doing.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
