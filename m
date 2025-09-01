@@ -1,96 +1,104 @@
-Return-Path: <linux-kernel+bounces-795368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27FA7B3F0D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:10:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDEF5B3F0E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938DF483CB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:10:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8AA0206C2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7A1273D77;
-	Mon,  1 Sep 2025 22:10:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B44284892;
+	Mon,  1 Sep 2025 22:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TzSkoxwZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0182274B31
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 22:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9C627F017;
+	Mon,  1 Sep 2025 22:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756764607; cv=none; b=G3fBvYD1BZqmWeo6MlpGOAOV7c6KJRZeUX3sFWq503frpt2Mtm+kLFHUiSllH8RJxamNUMssnXyXvlr+CQwzyzmKIC/dsbeQoimgsCvu814Jm2BO0Fs3/OV4jAJK/PHaM2EYeT/jVeESIHuaTiNG2gCHrsqrV2MbGERt66nOjfw=
+	t=1756764917; cv=none; b=tcaPzBvj1/ZSBPOL6FeJflwGso2+c9zbJAIRB0IdPXXBCjw0vTzZq6IE1pKNaX+HzZ+OsAxWK6DkgPrORpZSFflYuj1fZg52KtNWo+hBFTEDp/6hnjkUlKmCE/wvu/BwvxQFBf5OFT50bArHwvRKxZ9bAWr2MUASsT9mLVJ5EeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756764607; c=relaxed/simple;
-	bh=p0kMM4y7F6N7P9lmCZgTWs3ZjOeXgQCDCsLCsQtEfe0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=scxoo9wDQsEcL6mk1BAhgkwF8a9p9FL320q2B+/pu/+nP+Bl7mMx5ikYwRps/c0L7xGHuzuMJ8nnAwrXHuHD0jJ6s1I+Bqz60A5wFZ2ftUJiujntMRJH/gG4XEiKBslqa5kYw/OQ3Oar7KIzg0J2tUCpKd8muq79sgD1hD9TqL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-886e347d2afso399612539f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 15:10:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756764605; x=1757369405;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rONquuup1tA/FntPWjZbG/timt5LNSvQmqhWL+HMBzU=;
-        b=CPYpnEoiOsWS2v4lChg3ARoQm/9tY5WBV5Q7ZSdTUWajzq/BAjLRrwhU4aJ5gqOeC1
-         zME4lcWN0iycaSfTRZg7Fs+C5I+jl2lBt3ds4ECskNEa471ahSGb2vevxKvNEYpl8xvc
-         u1/OPW0hnAJXTW6Ldwe/YlscpJztsKeKxllqNTbJdfOmd4wpQtuksYYKpUnHYCUylFtU
-         sYRAS1N1kSCYdthaQBKs2jr0TQ2VBfJAuVPxgk1R8Ux536uB+LS0PpzP+EHR1iXqw5yS
-         CmSD3bJsIxFBTTKu1pnLQGA8j8lVvhDQn9ClNZeZPcEx+YsOhtif3DWROoHHh1NAyrpR
-         vGJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpVN/6kBHD47J8UVy6hTegy+w2OKlcmHC+1FmY4PVhVigvsqYkyIwFpca/epIirPezJebnsCruay2JCo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzcQhoD4j+57owDZqE+xTHBd5hEYmOWzPPC5Ma2+9/j7xDakBe
-	SRUyf5MMv2x4W12MTryHULH1RYJF5+vJ5b8jLayvAVqaYAGkVAR30mZ3MhgoB3KvwzoYcgVCd0j
-	rvyDs8gYsDcL1ES2br/pvZOlZMJ1n65zFVUuwScLSERASn18LYVcg1GxSYeM=
-X-Google-Smtp-Source: AGHT+IEwWIM0KR32k0CrIYVm5MqXLqvHyE40n+Jbcb7UVXKXi5zhmdRI/WfQizUkVs9bev2AbFsAxIgzU7Q7sbXwGYhdaNj7lYwg
+	s=arc-20240116; t=1756764917; c=relaxed/simple;
+	bh=8uAKWbLvP1JhsUUPjrpM3S120Et8nLPU32AZnH1mpuw=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EHTdGTS1CeSst3WvAiZgxDnHOZIFi5FHFuwLhRGfeONuGtthnzvBB9sm0OpbK8nHNvOqEUS8TqjjhWh0qtSxRk1yWiUnA7dPcoTPPeI6H0Kii9/GAGDgodgDvlB3U/XHtA8sfxx++QntfjxwKpIbH90G/2pBaXEZiHSWi1/vjkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TzSkoxwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 710C6C4CEF0;
+	Mon,  1 Sep 2025 22:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756764917;
+	bh=8uAKWbLvP1JhsUUPjrpM3S120Et8nLPU32AZnH1mpuw=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=TzSkoxwZfGvW1SDB4X8VCWoZN5VQVEks9sWvRhg3kaR83tYDuOrwBuoHLkjGeo5kF
+	 /aTaGkLYjkRtxFKzdijJ3UHxkBXMclitlaOpini/sjpH44cW/qVD8gic5ncADQlFIm
+	 Spe7agkHqvjipAU33fA7wVFBZQZ2KyVDPFC/T5RogjKylCNc2sdeQSNQ1BRZwzFJ9W
+	 +8RWGGeF+bL/eGD7rdnFneFE9H8bW2Bt1pmS1RF2HNxJSMoV81EtkoVvfSsF0cUz3N
+	 joZSd4cX2iiad/TNVYkdRJakTuojDnEUpvo9FAtx55o3FN2zmhx/6oY3oI2g17p2ks
+	 nyxo6OvdrsLEA==
+From: Mark Brown <broonie@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, arm-scmi@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <20250829101411.625214-1-rongqianfeng@vivo.com>
+References: <20250829101411.625214-1-rongqianfeng@vivo.com>
+Subject: Re: [PATCH] regulator: scmi: Use int type to store negative error
+ codes
+Message-Id: <175676491502.901001.14592841978206903121.b4-ty@kernel.org>
+Date: Mon, 01 Sep 2025 23:15:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa2:b0:3f0:78c3:8fc5 with SMTP id
- e9e14a558f8ab-3f400097882mr176361265ab.5.1756764604779; Mon, 01 Sep 2025
- 15:10:04 -0700 (PDT)
-Date: Mon, 01 Sep 2025 15:10:04 -0700
-In-Reply-To: <68ac9fd3.050a0220.37038e.0096.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b619bc.050a0220.3db4df.01c5.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] possible deadlock in __bpf_ringbuf_reserve (2)
-From: syzbot <syzbot+fa5c2814795b5adca240@syzkaller.appspotmail.com>
-To: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org, 
-	bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com, 
-	haoluo@google.com, hffilwlqm@gmail.com, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org, 
-	martin.lau@linux.dev, memxor@gmail.com, netdev@vger.kernel.org, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-syzbot has bisected this issue to:
+On Fri, 29 Aug 2025 18:14:11 +0800, Qianfeng Rong wrote:
+> Change the 'ret' variable from u32 to int to store negative error codes or
+> zero returned by of_property_read_u32().
+> 
+> Storing the negative error codes in unsigned type, doesn't cause an issue
+> at runtime but it's ugly as pants. Additionally, assigning negative error
+> codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
+> flag is enabled.
+> 
+> [...]
 
-commit 27861fc720be2c39b861d8bdfb68287f54de6855
-Author: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date:   Thu Aug 21 16:26:00 2025 +0000
+Applied to
 
-    bpf: Drop rqspinlock usage in ringbuf
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=167eee34580000
-start commit:   dd9de524183a xsk: Fix immature cq descriptor production
-git tree:       bpf
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=157eee34580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=117eee34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c321f33e4545e2a1
-dashboard link: https://syzkaller.appspot.com/bug?extid=fa5c2814795b5adca240
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142da862580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1588aef0580000
+Thanks!
 
-Reported-by: syzbot+fa5c2814795b5adca240@syzkaller.appspotmail.com
-Fixes: 27861fc720be ("bpf: Drop rqspinlock usage in ringbuf")
+[1/1] regulator: scmi: Use int type to store negative error codes
+      commit: 9d35d068fb138160709e04e3ee97fe29a6f8615b
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
