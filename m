@@ -1,112 +1,156 @@
-Return-Path: <linux-kernel+bounces-793673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF59B3D6A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:28:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3E2B3D6AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5925D7AA546
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:26:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D65616B982
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9787F1C3306;
-	Mon,  1 Sep 2025 02:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C421F5838;
+	Mon,  1 Sep 2025 02:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/czGQT+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3zfDNya"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6040E16DEB1
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FCD1E1DE5;
+	Mon,  1 Sep 2025 02:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756693690; cv=none; b=k5p9Ym/5NvuQTXGJRHoE4lKweFXpoSqULqO97V8mujJkBLFR6/75forT3IaRrw3qCQEUn6HRE9RjeyMaotGvIFSt6z7Dbby6MPZELoML4SlkF2eXfueEQ2a6QvwgWFwfGVzljokkF7oHi2ta8gpv7nro2NtuPaHI5okSjlY6VP8=
+	t=1756693803; cv=none; b=q9xSrqM7cQ/mE96R+pglUCgl97EWIUhdqpANpdNqgurIhNTS2QLRxkixG6aupgHydAQSYa3sgffqTRIzWentkJMpb8oXLOiD/ypHyhEKd3rPc8EWxNT8e1z5bXT1kQ2g67GkEPRgLJUJzARuNWpQ+tIitUvpSd+tmUk1LN8bEL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756693690; c=relaxed/simple;
-	bh=Py2A8RiduT0WX3K9RjBXxRcDBRvzu01D05c+OGIsoNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FIKYKHjBIJCF45reeQOzqP1Tnaf1cPmQeDTTdLCCvEcv+a0F9hlpkDuxYYKdgewNCPwDgRwwjANMllpPNwItR6bKEttA24Nzq4xH/uV6s3ImPUTIdp+00ASONaSCZoZ7IZpqm/Knf3djt82AD2D6YHT0qgGbEAhGn9HkNG8j+ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V/czGQT+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756693687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MXJokDPos0nKm1zfHnhLzwyRYR4oCXMJNHGtY+hKQ1U=;
-	b=V/czGQT+RPb+Y2TfWzXKRLUNvAXxU8e7Lj0ix5SxPsi/6SZ6wRnQhYwUxcA/lS+WN5eNtI
-	b38/XZGN3KzmASWZfEQtY4zvGtCpiJS1+VeBa/lwEMhJNlpmgFx+JNqZOSdxLpTb2Z6EAE
-	Wrn6/U8UP+ANAHWHV1EENZpQRENHk98=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-akd-T3QqOAyCxTF3DNrB3Q-1; Sun, 31 Aug 2025 22:28:03 -0400
-X-MC-Unique: akd-T3QqOAyCxTF3DNrB3Q-1
-X-Mimecast-MFC-AGG-ID: akd-T3QqOAyCxTF3DNrB3Q_1756693683
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3280d0d4d11so2465158a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 19:28:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756693682; x=1757298482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MXJokDPos0nKm1zfHnhLzwyRYR4oCXMJNHGtY+hKQ1U=;
-        b=b2pjM6i+eZ27dxTcwn6NTnBIdsstIl6OK2xYH/n8wwPHTwklWEAP0Y890dN2TfUvHd
-         r7/ZG5Ngn8OGoAWb1NEUm0oWnPlXF/biDPW+4DySag5VoQxvgpUgz+z+nETo1UyNYfF6
-         swNKx39aPmkoPV1f0StsWUtf4nisZ1DZJjzbC90Hy9SLlxQUN7rV7P+aM7kaVJeU4vgV
-         gyUreTAo1Vv4XA+H5XsTHG1D8oj8lIeBgFTdRQS5t02LA5E/nXEPMOM65ZdFTix+rbx6
-         IBPKRYRFaIYYG9jyDe8evRZIRB9hMgQJ1Ld3PIfQpkIfbxrY9EhUkvbHUNE8fxilqezQ
-         nv6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNcYhOc5siP44Pbo3Xm+ZV1uc8S8xrsgux2VABTWQK7CSZxcMZKnn3fwriOiVUwJ/vuOt9iUTHnUwh/WQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP4POv6A5+8wHFHlFLvP/97vtSfuWuJRzAk8o2G34fR7tnN5+U
-	qurHFT8RtchT6icdZs1sWfoMwAParwUr7J7VzzaHXNa67uWpXU6b54PyR9QeboMO6qw9MdJdFEa
-	BN3O11EP3aKrgcyggDjN2ed5ZUaabpiVBW34sX+UY7Tnda8CBeli1OHQ+uFq6d8FrnCeVsOBZv0
-	orj5JD/ABa69qBzbPyh/rQkwTjQ0hiU41NPTzpNwPA
-X-Gm-Gg: ASbGnctcnO3USwpZAbFDot9yHxEgh+2WkiB9PXkXZ2a85pMdXhGJSts6Nsil90vI5Oj
-	REtsdYchBoDCNNSRlbVTVG/m1szuJyNW3o8DnXORBUDIMODOfOEXOBDZa4J8bJwBIEI4PRjgCGb
-	ygZkVijmy5X7lGrseW+hUljg==
-X-Received: by 2002:a17:90b:48c1:b0:325:42ad:29d2 with SMTP id 98e67ed59e1d1-328156e3815mr7104442a91.31.1756693682648;
-        Sun, 31 Aug 2025 19:28:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxUaKN6UXluy29/F+dllwNkQH5s1R60oXrZmMH950RWWU803/YD+qBnqlF6FdoKrHFnYLN6xdG1JqlH061AyU=
-X-Received: by 2002:a17:90b:48c1:b0:325:42ad:29d2 with SMTP id
- 98e67ed59e1d1-328156e3815mr7104413a91.31.1756693682199; Sun, 31 Aug 2025
- 19:28:02 -0700 (PDT)
+	s=arc-20240116; t=1756693803; c=relaxed/simple;
+	bh=EEl7Dl8rmIXPvdQY4z/NjswBXZPLFYOn08q6RmoBUDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=okocLPeFM0HQPzaVZCA0Y9DLPBB8X/cLQvEI5gV1TBNOYorsOji7T0kcp6qohhJraUZ/nXxMZW6yUMqF+lSrmAVefAn4eRu4Dgk9FZKNxu6sNUmdkzc4cc9JpfSsh6MM6tNy+wh1ECqwYx11P+49Nd/U29DXhQE9MANEWNwCPN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3zfDNya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 605BDC4CEED;
+	Mon,  1 Sep 2025 02:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756693802;
+	bh=EEl7Dl8rmIXPvdQY4z/NjswBXZPLFYOn08q6RmoBUDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O3zfDNyacOxGyYt/H3jXqjdgEPauZBBV8jA7NF/VNZPsxsMEFuJO0H/k5gSzMbgQ0
+	 MxpIX4E6DGgGXvvXcZwbh7hWpGkGPdxWzrX5ilahv1w7WnWZozUYye97HCMEqO52GJ
+	 jwMe3Gg8IHDGMsJVHdr2J3f+RWCzZ7zG4RqQuPf39L6007VZvOTKBCPr+1dpaS/OEL
+	 Hs0LG8ImuXKM38VFh5QN9s1vP55AjE81vasWJJKY0d7jltRHQPGBbIZXv2uchxZUkl
+	 8Tj9lKkc4N4T4Klq7MI8/4gzI/DU1R9osgzo+hjaO2iRUduvaMvoORzZXSrpHps2eK
+	 eau9dOYVATLzg==
+Date: Mon, 1 Sep 2025 10:29:57 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Pawel Laszczak <pawell@cadence.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 3/3] cdnsp: Remove unused tracepoints
+Message-ID: <20250901022957.GA2344733@nchen-desktop>
+References: <20250829015552.314865014@kernel.org>
+ <20250829015650.224063821@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.1051172-5-eperezma@redhat.com>
-In-Reply-To: <20250826112709.1051172-5-eperezma@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 1 Sep 2025 10:27:51 +0800
-X-Gm-Features: Ac12FXzdv-h23IXc14dM4bQKB8o4sC_53xLf6KUcXeaogY5iF9KPgzgWOswds0g
-Message-ID: <CACGkMEshp5HaRPchAkYGD2vi7xPBBi=w0H4DaUXOXas4SQ3WDQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] vduse: create vduse_as to make it an array
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829015650.224063821@kernel.org>
 
-On Tue, Aug 26, 2025 at 7:27=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redhat=
-.com> wrote:
->
-> This is a first step so we can make more than one different address
-> spaces.  No change on the colde flow intended.
->
-> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+On 25-08-28 21:55:55, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Tracepoints that are defined take up around 5K each, even if they are not
+> used. If they are defined and not used, then they waste memory for unused
+> code. Soon unused tracepoints will cause warnings.
+> 
+> Remove the unused tracepoints of the cdnsp subsystem. They are:
+> 
+> cdnsp_defered_event
+> cdnsp_ep0_halted
+> cdnsp_free_priv_device
+> cdnsp_handle_cmd_flush_ep
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+Acked-by: Peter Chen <peter.chen@kernel.org>
+
+Peter
 > ---
+>  drivers/usb/cdns3/cdnsp-trace.h | 25 -------------------------
+>  1 file changed, 25 deletions(-)
+> 
+> diff --git a/drivers/usb/cdns3/cdnsp-trace.h b/drivers/usb/cdns3/cdnsp-trace.h
+> index f2bcf77a5d0a..9b33a736c3de 100644
+> --- a/drivers/usb/cdns3/cdnsp-trace.h
+> +++ b/drivers/usb/cdns3/cdnsp-trace.h
+> @@ -178,11 +178,6 @@ DEFINE_EVENT(cdnsp_log_simple, cdnsp_ep0_set_config,
+>  	TP_ARGS(msg)
+>  );
+>  
+> -DEFINE_EVENT(cdnsp_log_simple, cdnsp_ep0_halted,
+> -	TP_PROTO(char *msg),
+> -	TP_ARGS(msg)
+> -);
+> -
+>  DEFINE_EVENT(cdnsp_log_simple, cdnsp_ep_halt,
+>  	TP_PROTO(char *msg),
+>  	TP_ARGS(msg)
+> @@ -399,11 +394,6 @@ DEFINE_EVENT(cdnsp_log_trb, cdnsp_cmd_timeout,
+>  	TP_ARGS(ring, trb)
+>  );
+>  
+> -DEFINE_EVENT(cdnsp_log_trb, cdnsp_defered_event,
+> -	TP_PROTO(struct cdnsp_ring *ring, struct cdnsp_generic_trb *trb),
+> -	TP_ARGS(ring, trb)
+> -);
+> -
+>  DECLARE_EVENT_CLASS(cdnsp_log_pdev,
+>  	TP_PROTO(struct cdnsp_device *pdev),
+>  	TP_ARGS(pdev),
+> @@ -433,16 +423,6 @@ DEFINE_EVENT(cdnsp_log_pdev, cdnsp_alloc_priv_device,
+>  	TP_ARGS(vdev)
+>  );
+>  
+> -DEFINE_EVENT(cdnsp_log_pdev, cdnsp_free_priv_device,
+> -	TP_PROTO(struct cdnsp_device *vdev),
+> -	TP_ARGS(vdev)
+> -);
+> -
+> -DEFINE_EVENT(cdnsp_log_pdev, cdnsp_setup_device,
+> -	TP_PROTO(struct cdnsp_device *vdev),
+> -	TP_ARGS(vdev)
+> -);
+> -
+>  DEFINE_EVENT(cdnsp_log_pdev, cdnsp_setup_addressable_priv_device,
+>  	TP_PROTO(struct cdnsp_device *vdev),
+>  	TP_ARGS(vdev)
+> @@ -575,11 +555,6 @@ DEFINE_EVENT(cdnsp_log_ep_ctx, cdnsp_handle_cmd_stop_ep,
+>  	TP_ARGS(ctx)
+>  );
+>  
+> -DEFINE_EVENT(cdnsp_log_ep_ctx, cdnsp_handle_cmd_flush_ep,
+> -	TP_PROTO(struct cdnsp_ep_ctx *ctx),
+> -	TP_ARGS(ctx)
+> -);
+> -
+>  DEFINE_EVENT(cdnsp_log_ep_ctx, cdnsp_handle_cmd_set_deq_ep,
+>  	TP_PROTO(struct cdnsp_ep_ctx *ctx),
+>  	TP_ARGS(ctx)
+> -- 
+> 2.50.1
+> 
+> 
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+-- 
 
-Thanks
-
+Best regards,
+Peter
 
