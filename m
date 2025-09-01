@@ -1,228 +1,106 @@
-Return-Path: <linux-kernel+bounces-794448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039B6B3E1E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:42:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2ABB3E6C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D57127AFF6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:40:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 619441A815E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074A631A563;
-	Mon,  1 Sep 2025 11:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8B83376AD;
+	Mon,  1 Sep 2025 14:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="SvLmONd6"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="TF+LZZ77"
+Received: from 10.mo533.mail-out.ovh.net (10.mo533.mail-out.ovh.net [46.105.72.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E3931DDBB
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE69223316
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.72.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756726920; cv=none; b=b0cPyqK3+ZzSaL3D03qo47esXHnV+zGy3xNBrcQHl8trJkhNJ8JlVeeKsLzeOaTI4Rea4FupX/9x5d2D37uebcS5oxaKQn/75xlt33HNBdaVAp0DzWNKR6mUTis9aaTSneWkgkwUbnSjmWQMaouNvwxr66KnlqZ645GD91+Th6M=
+	t=1756735922; cv=none; b=ENdtwM09cjCoK16MBRIUzF5PagdUJKNYRY9rfm7qFo/wH7AGeuOiskIOcXmROuPI5GRowkLO1UDROMotELLkOgZommNSteOQAvWx9eKpx493uqwUntrLnrWAQ4+gnYeFxrQHzFpuBcTP4kIz/RIp4Y7FVIXq6yz/xc6y4FKM+po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756726920; c=relaxed/simple;
-	bh=+sZ77WjHTHt90fhAq699UVhWKshOd6ZBE82anXZEMFE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P+W4wK7IvL3ASVgQNSl1leGDAuovy1MYEWhscP6ukvRO+Hc9ZddUQz5xHi6D39Z4wltXAHF7TgPV5ropwPXoYsvqd9lq8FyBVFlV+L36CKYcebe9UEYqIqntROxOnvNnwvgBVFTYPeYbxE0GAs7slwfP9pKom/EAgHbJ51t2+go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=SvLmONd6; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24a9ccbf10dso13094265ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:41:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756726918; x=1757331718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8yoam2Ed8JJCs5sRbaWgfuw9sP/krLyryxA9VsbblUg=;
-        b=SvLmONd69zoKLDfQmVjryTSWKUwz+OzRFtsSL7Kk93nm1meZuAsU8H8inplhF2gNcs
-         KqQrk9zmi54hgSG+9pJllD1GewKOACe4ZdGtYP4jZ2CeYhD0xJyIWIXK18u7a1+kFTWp
-         dZYLUiXMru5LoYPeqHEwfOs1ln2e690KYKd0Q7ro44NbTpeVxyS13ZIDlZ+LQzZwhmD8
-         3TZANCcwoXifihJ8IlJAWLGCJDK6KVyJPn91N/nnkVUk7e2zvmmLkklystuvwBvaVZx4
-         HZO0v84aHQeodIQw558mH4fGLfL+yAiDwKBQh9ptM2uIPu49PkPV3BAFaudRgSjvqXdj
-         BMfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756726918; x=1757331718;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8yoam2Ed8JJCs5sRbaWgfuw9sP/krLyryxA9VsbblUg=;
-        b=DkQmJ1mVW/PZds6eH/i5zOFMwRLOpj/LSuG0ilVACdfunVzuFA+6v6cVhHVYTQAJPf
-         Rx7IemqeCceAp7TgvlW4cEyXMcoFtl4WyNotW9cSFDyNHeMqt/vLZ9CZzZREPRU/ab60
-         JJnGXDI+9Wlto47+CIS+qPiu/X8iCZPbmsfNb9gE/SaGzX7ZmYrcw1bC5gGIqiHrX2zO
-         SnU6awRIKSKbDl++OyGNf1F9bqSvPyhSiSCUfwc/VPlNMIoPCbV1rETnxVZkkSeDCK2H
-         gEd4a5UN3RCcvdj/25NLlEhEJJ1gPXRgmwBX7SQgmO8elXyeqXdzjZwV5USPpY6jgO7l
-         9p2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWlSDDz8jfAaNHeDNmUZh3k8m6FK6zynhgltooGc+bXyvipgFF3sPnsHtoYmU3Elimtr5EAidJ70vAuoAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjoZ54bbHAEhmLTNCbdTUirNu6TDHKd7o13mX42ZSoMejZRm+I
-	RveZZVJ435Pw1cYHxsc3AeWd5orOqZz10W6WHRDKWjB8MnduDsH7gwTE4hy8LfMJNIzWq3W3bqL
-	f/LzFqIw=
-X-Gm-Gg: ASbGncuEmKNJQnLOLfgaMezX2LYsykcgPgC7ADpwxS/EB3EDa1JK7/XY/jd9gIkgUfL
-	lojfzIcKoaIpYDNpz5bva9LGNEVi71RkFoQznXbhIjdATLNifXLe+druR0e5085IhK9G4Qdfqki
-	mBulijqG3bIflzbhLdAR0AkzG/CqBWR/zHFJ+EVCKq+tyPuWMzdKsgvmWB+cHNDfMxLk1jprKjB
-	h9839K4vMC4BGz6OLRXAouuWS5A7Q9S+9m9EHDxRo3xYMfZjvmaKR5iAX4Gx1SohazDrRPXIhPP
-	PzgCvWCj06CqDiOCxX+fDl4xe+RAu5FTeTS1zdbpo46yNiAGdNV0YettyTdYH/IMp5kSiaaS6Ld
-	e/er8TR5mTBrBAqm1RUDL2BLC6mW6QxOB0eBguzed46ea56D3yAnT3qm/jreCqFwza/kLCTKmuD
-	iyzpGUUDPcZC+gPKIkYboBEVOqvwZQEJQnC/08lbpiVVTJgdJInd1zSg==
-X-Google-Smtp-Source: AGHT+IH9HacVdhhrlYWDJB9ao9Cj7vL+SYgn/KxsSVzOs5trPZW7TKzXPjSrbltXooT+Y+1VomhKUA==
-X-Received: by 2002:a17:902:f64a:b0:24a:9475:3dcb with SMTP id d9443c01a7336-24a9475437cmr75175655ad.37.1756726917967;
-        Mon, 01 Sep 2025 04:41:57 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249066e042asm103147055ad.146.2025.09.01.04.41.54
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 01 Sep 2025 04:41:57 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	apw@canonical.com,
-	joe@perches.com,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH RESEND 2/2] riscv: mm: Clear cpu in mm_cpumask after local_flush_tlb_all_asid
-Date: Mon,  1 Sep 2025 19:41:41 +0800
-Message-Id: <20250901114141.5438-3-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250901114141.5438-1-luxu.kernel@bytedance.com>
-References: <20250901114141.5438-1-luxu.kernel@bytedance.com>
+	s=arc-20240116; t=1756735922; c=relaxed/simple;
+	bh=YNbKLVu710ZnrzYTvo4wSx4W8tYlyAAH4cE7VoeWUH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LBjCVzsZ/i5Z2aMBswh0SgEMt/T7rdqUPWKY7Uc8pjySMvOO+lZPiZWAHrh9hE/cfqYDw4ALnKj6zuidzpVh1f1SMmqLPaPdWVFl/RUxeAMJldv/ojjtmJLvg6Nk7Wpii8i2qbxCdz8pzL6MPjFJ4PjjMyvtXQcWNY4YkoHIx30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=TF+LZZ77; arc=none smtp.client-ip=46.105.72.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net [79.137.60.36])
+	by mo533.mail-out.ovh.net (Postfix) with ESMTPS id 4cFn7W2xVvz5yYR;
+	Mon,  1 Sep 2025 11:43:19 +0000 (UTC)
+Received: from director2.derp.mail-out.ovh.net (director2.derp.mail-out.ovh.net. [127.0.0.1])
+        by director2.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <bp@alien8.de>; Mon,  1 Sep 2025 11:43:19 +0000 (UTC)
+Received: from mta6.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.168.17])
+	by director2.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4cFn7W14cnz1xnc;
+	Mon,  1 Sep 2025 11:43:19 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.9])
+	by mta6.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id A30C88E335A;
+	Mon,  1 Sep 2025 11:43:16 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-114S008a30e7f4f-665c-4b54-a687-c73cdc2d892e,
+                    1138E50E5E9D1B19ED739114350B0823FA36FB47) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.112.4.128
+Message-ID: <51c25fb7-46be-4364-9371-6a7cb6b07625@orca.pet>
+Date: Mon, 1 Sep 2025 13:43:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] x86: add hintable NOPs emulation
+To: "H. Peter Anvin" <hpa@zytor.com>,
+ kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Kees Cook <kees@kernel.org>, "Xin Li (Intel)" <xin@zytor.com>,
+ Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+References: <202508291620.bcfb3924-lkp@intel.com>
+ <0ffa7c6e-f32f-4966-85df-3ee5f2426e9e@orca.pet>
+ <33A549B7-B442-402C-A82C-862C0F509274@zytor.com>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <33A549B7-B442-402C-A82C-862C0F509274@zytor.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 9716234722312804020
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduledvtdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduuddvrdegrdduvdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehmrghrtghoshesohhrtggrrdhpvghtpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehsnhhovhhithholhhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopeholhhivhgvrhdrshgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtgh
+ hlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
+DKIM-Signature: a=rsa-sha256; bh=S1+H7EVrDkz/KATiOPFwcYH4HLJvAW2YigB5VQKrlN8=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1756726999;
+ v=1;
+ b=TF+LZZ77LidHIr033lJRuTidzY3G8KWg+r+7m3NbzTA0/REIRNTe7hvApI+Ii06iwae3svkw
+ nMAuH7TEQVlvHTdUvUGiP8wrvy5o7CRLy3SJOVWOScAEz8I/yan+z8RWgPELsQ+Zle+iS3SFkzi
+ vM5bQKpdyGZmSdL6n4bF52KK73QLXCDCrbKX0Jo1SPZzP1gTLs7yDSYXpfnOmxqhPKOHUwGex0G
+ hg4aT4fWvXJESAKfvUUUQZu7c0gRCvnWWRkvxBXh1Ixnc4koDwyn+B7+mhrf8VZul0rVM2Sm9Q6
+ qfRND1N4SWD8vEH+BRDV7dl56hJCdkm/lEb4mxOX4drbQ==
 
-Clear corresponding bit of current cpu in mm_cpumask after executing
-local_flush_tlb_all_asid().
+El 31/08/2025 a las 21:32, H. Peter Anvin escribió:
+> I'm really, *really* starting to question this approach. 
+> 
+> The right thing would be to not compile in endbr instructions on 32 bits,
+> since they aren't supported by the kernel (if you try to enable CET/IBT
+> you will crash instantly, because there is no endbr32 at the vdso system
+> can entry point right now.)
+> 
+> We are talking about a very small number of CPUs stuck between generation
+> 5 and generation 6. Most likely we are talking about a much smaller number
+> than the i486 support we have been debating lately...
 
-This reduces the number of IPI due to tlb flush:
+I assume the kernel is currently simply ignoring the CET flag on ELF for
+all 32-bit x86 binaries and libraries?
 
-* ltp - mmapstress01
-Before: ~98k
-After: 268
-
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- arch/riscv/mm/tlbflush.c | 41 ++++++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 16 deletions(-)
-
-diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index 962db300a1665..571358f385879 100644
---- a/arch/riscv/mm/tlbflush.c
-+++ b/arch/riscv/mm/tlbflush.c
-@@ -17,7 +17,8 @@
-  */
- unsigned long tlb_flush_all_threshold __read_mostly = 64;
- 
--static void local_flush_tlb_range_threshold_asid(unsigned long start,
-+static void local_flush_tlb_range_threshold_asid(struct mm_struct *mm,
-+						 unsigned long start,
- 						 unsigned long size,
- 						 unsigned long stride,
- 						 unsigned long asid)
-@@ -27,6 +28,8 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
- 
- 	if (nr_ptes_in_range > tlb_flush_all_threshold) {
- 		local_flush_tlb_all_asid(asid);
-+		if (mm && mm != current->active_mm)
-+			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(mm));
- 		return;
- 	}
- 
-@@ -46,21 +49,28 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
- 	}
- }
- 
--static inline void local_flush_tlb_range_asid(unsigned long start,
--		unsigned long size, unsigned long stride, unsigned long asid)
-+static inline void local_flush_tlb_range_mm(struct mm_struct *mm,
-+					    unsigned long start,
-+					    unsigned long size,
-+					    unsigned long stride)
- {
--	if (size <= stride)
-+	unsigned long asid = get_mm_asid(mm);
-+
-+	if (size <= stride) {
- 		local_flush_tlb_page_asid(start, asid);
--	else if (size == FLUSH_TLB_MAX_SIZE)
-+	} else if (size == FLUSH_TLB_MAX_SIZE) {
- 		local_flush_tlb_all_asid(asid);
--	else
--		local_flush_tlb_range_threshold_asid(start, size, stride, asid);
-+		if (mm && mm != current->active_mm)
-+			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(mm));
-+	} else {
-+		local_flush_tlb_range_threshold_asid(mm, start, size, stride, asid);
-+	}
- }
- 
- /* Flush a range of kernel pages without broadcasting */
- void local_flush_tlb_kernel_range(unsigned long start, unsigned long end)
- {
--	local_flush_tlb_range_asid(start, end - start, PAGE_SIZE, FLUSH_TLB_NO_ASID);
-+	local_flush_tlb_range_mm(NULL, start, end - start, PAGE_SIZE);
- }
- 
- static void __ipi_flush_tlb_all(void *info)
-@@ -79,17 +89,17 @@ void flush_tlb_all(void)
- }
- 
- struct flush_tlb_range_data {
--	unsigned long asid;
-+	struct mm_struct *mm;
- 	unsigned long start;
- 	unsigned long size;
- 	unsigned long stride;
- };
- 
--static void __ipi_flush_tlb_range_asid(void *info)
-+static void __ipi_flush_tlb_range_mm(void *info)
- {
- 	struct flush_tlb_range_data *d = info;
- 
--	local_flush_tlb_range_asid(d->start, d->size, d->stride, d->asid);
-+	local_flush_tlb_range_mm(d->mm, d->start, d->size, d->stride);
- }
- 
- static void __flush_tlb_range(struct mm_struct *mm,
-@@ -97,7 +107,6 @@ static void __flush_tlb_range(struct mm_struct *mm,
- 			      unsigned long start, unsigned long size,
- 			      unsigned long stride)
- {
--	unsigned long asid = get_mm_asid(mm);
- 	unsigned int cpu;
- 
- 	if (cpumask_empty(cmask))
-@@ -107,17 +116,17 @@ static void __flush_tlb_range(struct mm_struct *mm,
- 
- 	/* Check if the TLB flush needs to be sent to other CPUs. */
- 	if (cpumask_any_but(cmask, cpu) >= nr_cpu_ids) {
--		local_flush_tlb_range_asid(start, size, stride, asid);
-+		local_flush_tlb_range_mm(mm, start, size, stride);
- 	} else if (riscv_use_sbi_for_rfence()) {
--		sbi_remote_sfence_vma_asid(cmask, start, size, asid);
-+		sbi_remote_sfence_vma_asid(cmask, start, size, get_mm_asid(mm));
- 	} else {
- 		struct flush_tlb_range_data ftd;
- 
--		ftd.asid = asid;
-+		ftd.mm = mm;
- 		ftd.start = start;
- 		ftd.size = size;
- 		ftd.stride = stride;
--		on_each_cpu_mask(cmask, __ipi_flush_tlb_range_asid, &ftd, 1);
-+		on_each_cpu_mask(cmask, __ipi_flush_tlb_range_mm, &ftd, 1);
- 	}
- 
- 	put_cpu();
--- 
-2.20.1
-
+Anyhow, seeing this is indeed becoming more tricky and error-prone, I'm
+contating the sudo developer which is, so far, the only software that
+has this issue.
 
