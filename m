@@ -1,211 +1,144 @@
-Return-Path: <linux-kernel+bounces-795341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D042AB3F04D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:07:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37944B3F04F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB8A4E0055
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:07:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9E41A88646
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2D825A2C3;
-	Mon,  1 Sep 2025 21:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAD9258CF8;
+	Mon,  1 Sep 2025 21:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n4xoN0W7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NTP8AcTY"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD25A32F75A;
-	Mon,  1 Sep 2025 21:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAC232F75A;
+	Mon,  1 Sep 2025 21:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756760816; cv=none; b=hccPUF3JjDbS41O9/YgX+nFKg2YfqAy3f5H3UFCj60hbXwm8ahujBGdH0mLNglm7VlVCngH/IMrAb0x2DU1Js8ciqWORrAjoMUmAvIF9bSWzqq71eZ//UpREKXYkfHMSqCd7EfZIVVNXfDzuuXIdIne3MbIerf1mBihr0ieB30E=
+	t=1756760869; cv=none; b=X22owJYL4XQW2GE8g792ThbJZMsOVhudI22chY1A2uilGLRJVf/ukn3rhVCWJ+BOKirnv/4Lnbu+0kASJPFniy4arS+183BTo1QlZSY/W6cRR+vPxNuj8h3TSlhzBNKHUz4xXg+HSJUy8WP3HKpO3Xd6obD5gKegun/RLtWkfOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756760816; c=relaxed/simple;
-	bh=Ti4l8zkyu2kAQ5JGXLo2hb4sSkO72W5d4bHIkOmiLtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4wC3mmgrWTtTS3qjHVVZ8LNg+QewisKTZLOrMVj5B0tN0kIOUc+Wj681Pi+SIXUyEw9vS3AYm7f+5W54Xa+eAS800ActZ94+mEdX3YsNq3lf07FlwVXXg8HWy/em+uyl7PWkrzcZBQebUFrKP2od7wLa/syMYtTfNkrq5J6SGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n4xoN0W7; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756760814; x=1788296814;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Ti4l8zkyu2kAQ5JGXLo2hb4sSkO72W5d4bHIkOmiLtI=;
-  b=n4xoN0W7J+FibJMLiC/GL8c4trXrIYsE0Yrr2zH+b03G9xiTAi7XSfhV
-   jH/F9wUxQ/tBnjmlUADKal6A51fOd3uY64f7bCBzS9+uGCezFBZyx/NOF
-   UTvfqLTp+j59kIguFLhskPMiClmS18Ynn4dZT2vbpjqiZ/HModYuRLxMQ
-   AMQD2Wk3KhgROf9RjcsMtWg0+t27qzx33AibOuyUZT0f9NQPVtg4Z9+ry
-   zzcbiFY7nisORf/acXYrQrVvwW1f9QX37f9GM+ABVQoGeIx7oyBMSK9gU
-   fsiYHbvTEQiLn2zf+lKvmrTcXNoaCbXRtkofqX8bHs9Vdi04xSt3bdrbn
-   w==;
-X-CSE-ConnectionGUID: yzTFga2cQPqSgufUDmh7Fg==
-X-CSE-MsgGUID: fVnD4anLQLixV8XLeEzjcA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="58050932"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="58050932"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 14:06:54 -0700
-X-CSE-ConnectionGUID: WVA8sPPJRB+YFDHqKNrfuQ==
-X-CSE-MsgGUID: uxXGUX42ToekTb2eJN9zWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="170369465"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.254])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 14:06:50 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 209DF11F739;
-	Tue, 02 Sep 2025 00:06:46 +0300 (EEST)
-Date: Tue, 2 Sep 2025 00:06:46 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
-Subject: Re: [PATCH v7 09/10] media: i2c: ov9282: implement try_ctrl for
- strobe_duration
-Message-ID: <aLYK5v0zYYSAdiiH@kekkonen.localdomain>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
- <20250901-ov9282-flash-strobe-v7-9-d58d5a694afc@linux.dev>
+	s=arc-20240116; t=1756760869; c=relaxed/simple;
+	bh=qPRtxQcOv7SHEQCFT+3OtO4MS+BAFz/O7B1+yNl/PBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bLgR6X5NYnyGm1WSXHnbe7HS8urd6CWwPVXn5avaRuFVEI1DrqBQBkcJJ4lVQa/f2IG96wc794CPcyD6Wlnow8gE/tZPQ8HurrbYGmRwBGhRCIzkCYoN3eYENNQpT+eM6DYt5SJJ204eeMkIRsljy5L1Jlfxa3r32M83bFW7URc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NTP8AcTY; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756760865;
+	bh=qPRtxQcOv7SHEQCFT+3OtO4MS+BAFz/O7B1+yNl/PBY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NTP8AcTYCe4f720CUB9THkJ3CHAoqNADaCIFvZV0cN5fz4XyViYe2PWquQeeGMW2R
+	 cW6PnJZRbbOiYL29NlULlXS/t9/1SHDmrpKWnFJ3SDcYn6mOX48sr0Rx9g2/ivyUuQ
+	 Y0Zm1szOCQ5yruo8DJ5temI/TLLORwXWHvwtUit0A2qa6ZxeotXSd4bDT4AviNAXMr
+	 NgPQBU9DkwijHL4W6dCdCPcOck8wzEV8kgbvk4F+3tlk9t6wUle11QknE8v9Z/MP4M
+	 pbkzMsdiJOKwzVRwbwvz4srmcGuTY+ot2X2C73QYd7C/E+0hTotUFqRTv7g7Bny/uo
+	 FDW7zWQ0xq52A==
+Received: from [10.40.0.100] (185-251-200-65.lampert.tv [185.251.200.65])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A3F2717E1062;
+	Mon,  1 Sep 2025 23:07:44 +0200 (CEST)
+Message-ID: <f7ab5662-b813-4d60-80f0-d5bfc91b107f@collabora.com>
+Date: Mon, 1 Sep 2025 23:07:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250901-ov9282-flash-strobe-v7-9-d58d5a694afc@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/7] dt-bindings: phy: rockchip-inno-csi-dphy: make
+ power-domains non-required
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Jagan Teki <jagan@amarulasolutions.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Collabora Kernel Team <kernel@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, stable@kernel.org
+References: <20250616-rk3588-csi-dphy-v3-0-a5ccd5f1f438@collabora.com>
+ <20250616-rk3588-csi-dphy-v3-2-a5ccd5f1f438@collabora.com>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <20250616-rk3588-csi-dphy-v3-2-a5ccd5f1f438@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Richard,
+Hi all,
 
-On Mon, Sep 01, 2025 at 05:05:14PM +0200, Richard Leitner wrote:
-> As the granularity of the hardware supported values is lower than the
-> control value, implement a try_ctrl() function for
-> V4L2_CID_FLASH_DURATION. This function calculates the nearest possible
-> µs strobe duration for the given value and returns it back to the
-> caller.
+On 9/1/25 22:47, Michael Riesch via B4 Relay wrote:
+> From: Michael Riesch <michael.riesch@collabora.com>
 > 
-> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> There are variants of the Rockchip Innosilicon CSI DPHY (e.g., the RK3568
+> variant) that are powered on by default as they are part of the ALIVE power
+> domain.
+> Remove 'power-domains' from the required properties in order to avoid false
+> negatives.
+
+Grmbl, forgot to fix that for the second time. Should be "false
+positives", of course *facepalm*.
+
+Just a note to myself for any v4.
+
+Best regards,
+Michael
+
+
+> 
+> Fixes: 22c8e0a69b7f ("dt-bindings: phy: add compatible for rk356x to rockchip-inno-csi-dphy")
+> Cc: stable@kernel.org
+> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 > ---
->  drivers/media/i2c/ov9282.c | 54 ++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 52 insertions(+), 2 deletions(-)
+>  .../devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml   | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> index 9efc82a1929a76c6fb245e7dbfb5276a133d1c5d..b104ae77f00e9e7777342e48b7bf3caa6d297f69 100644
-> --- a/drivers/media/i2c/ov9282.c
-> +++ b/drivers/media/i2c/ov9282.c
-> @@ -128,6 +128,8 @@
->  #define OV9282_REG_MIN		0x00
->  #define OV9282_REG_MAX		0xfffff
+> diff --git a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> index 5ac994b3c0aa..9ad72518e6da 100644
+> --- a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> @@ -51,13 +51,26 @@ properties:
+>      description:
+>        Some additional phy settings are access through GRF regs.
 >  
-> +#define OV9282_STROBE_SPAN_FACTOR	192
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - rockchip,px30-csi-dphy
+> +              - rockchip,rk1808-csi-dphy
+> +              - rockchip,rk3326-csi-dphy
+> +              - rockchip,rk3368-csi-dphy
+> +    then:
+> +      required:
+> +        - power-domains
 > +
->  static const char * const ov9282_supply_names[] = {
->  	"avdd",		/* Analog power */
->  	"dovdd",	/* Digital I/O power */
-> @@ -691,7 +693,7 @@ static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool en
->  				current_val);
->  }
->  
-> -static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-> +static u32 ov9282_us_to_flash_duration(struct ov9282 *ov9282, u32 value)
->  {
->  	/*
->  	 * Calculate "strobe_frame_span" increments from a given value (µs).
-> @@ -702,7 +704,27 @@ static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
->  	 * The formula below is interpolated from different modes/framerates
->  	 * and should work quite well for most settings.
->  	 */
-> -	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-> +	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-> +
-> +	return value * OV9282_STROBE_SPAN_FACTOR / frame_width;
-> +}
-> +
-> +static u32 ov9282_flash_duration_to_us(struct ov9282 *ov9282, u32 value)
-> +{
-> +	/*
-> +	 * As the calculation in ov9282_us_to_flash_duration uses an integer
-> +	 * divison calculate in ns here to get more precision. Then check if
-> +	 * we need to compensate that divison by incrementing the µs result.
-> +	 */
-> +	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-> +	u64 ns = value * 1000 * frame_width / OV9282_STROBE_SPAN_FACTOR;
-> +
-> +	return DIV_ROUND_UP(ns, 1000);
-> +}
-> +
-> +static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-> +{
-> +	u32 val = ov9282_us_to_flash_duration(ov9282, value);
->  
->  	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
->  	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-> @@ -792,9 +814,37 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
->  	return ret;
->  }
->  
-> +static int ov9282_try_ctrl(struct v4l2_ctrl *ctrl)
-> +{
-> +	struct ov9282 *ov9282 =
-> +		container_of(ctrl->handler, struct ov9282, ctrl_handler);
-
-container_of_const(), please.
-
-> +
-> +	if (ctrl->id == V4L2_CID_FLASH_DURATION) {
-> +		u32 fd = ov9282_us_to_flash_duration(ov9282, ctrl->val);
-> +		u32 us = ctrl->val;
-
-You could use us as argument to ov9282_us_to_flash_duration() if you switch
-the order.
-
-> +
-> +		/* get nearest strobe_duration value */
-> +		u32 us0 = ov9282_flash_duration_to_us(ov9282, fd);
-> +		u32 us1 = ov9282_flash_duration_to_us(ov9282, (fd + 1));
-
-Redundant parentheses.
-
-> +
-> +		if (abs(us1 - us) < abs(us - us0))
-> +			ctrl->val = us1;
-> +		else
-> +			ctrl->val = us0;
-> +
-> +		if (us != ctrl->val) {
-> +			dev_dbg(ov9282->dev, "using next valid strobe_duration %u instead of %u\n",
-> +				ctrl->val, us);
-> +		}
-
-Redundant braces.
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /* V4l2 subdevice control ops*/
->  static const struct v4l2_ctrl_ops ov9282_ctrl_ops = {
->  	.s_ctrl = ov9282_set_ctrl,
-> +	.try_ctrl = ov9282_try_ctrl,
->  };
->  
->  /**
+>  required:
+>    - compatible
+>    - reg
+>    - clocks
+>    - clock-names
+>    - '#phy-cells'
+> -  - power-domains
+>    - resets
+>    - reset-names
+>    - rockchip,grf
 > 
 
--- 
-Kind regards,
-
-Sakari Ailus
 
