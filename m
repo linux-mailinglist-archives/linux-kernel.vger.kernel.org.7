@@ -1,98 +1,576 @@
-Return-Path: <linux-kernel+bounces-793916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E02B3DA19
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B805B3DA1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB173B2ADE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:40:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 070E53B1E03
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D3C25A2C8;
-	Mon,  1 Sep 2025 06:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B224025A2B5;
+	Mon,  1 Sep 2025 06:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jk6JOGWb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOwyaaSM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1645D21D3F5;
-	Mon,  1 Sep 2025 06:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9030118EB0;
+	Mon,  1 Sep 2025 06:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756708823; cv=none; b=YgCgwj/D0dOc8Qu2TdKqSGps1nX0SNiqp6NLBZVWC+iMy5gmfKKMgXVNZ1SShjndpP7+SmpkgghEsyezXnGhnEE0+7NSE5zAPWUGjZDWs/CPX9H7M8nLa6ef3DK7XEA7+t7aXzUtvUG3rb+k23yt4H9ZmXrEMcHgZeWdfxNF5ZE=
+	t=1756708851; cv=none; b=u2RevPf+JyGBX3j0fg1TGg70Juo1gHYgJIwDfC0XTBnRsK80pl/i+7fs2tBZkTrxVFAbK2/r1UXcVCYuEVbD44V82zzglUbrDgmjjJJ37WXzdXmLREBgO4mOTXzl55Vj2U6QwsgeAa8wUZ7KRF7U1AToFStpcsVWqCx2KkWAmJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756708823; c=relaxed/simple;
-	bh=RXDj7xK0ck/gx9buYEpnUyuWq5E4nYhKUE+rPIgPH3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SDK5lMQK6BcR9p+tuEvpYgVPInufGTcluGdqjwrtnKEGlmMy3AmQ1rzF5Q4Z+vj6smcUwR1XXZJJxesVbk2JBskhdvYlUt88CLhnIb4OdgYxK0pruT21hZ02N3Buo8wbhRqJOMCB+gbKWXAr2Oucgr1B+MQRMwql0sevvkzbH4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jk6JOGWb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9322BC4CEF0;
-	Mon,  1 Sep 2025 06:40:19 +0000 (UTC)
+	s=arc-20240116; t=1756708851; c=relaxed/simple;
+	bh=HLIJ/88I9oikGh1FbjwJdvkrDB8odi9uvvX3GgGjNo0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mZhd8lWTabDrcubwGSOH8L7ReRZJZUh0E1FlQi3LXHMeFgLMtv3R1+2OkYSCNoNGtqBoUW+JqJCMYmfUD7wHp4gmMAWtJNhbFenUOOmr/emvyvvWhHaxh2UO/GB7OLMXMu3U9GYMdFP5rD/4hphnw1ksvZ7j0eFI3TKN3jk6ec4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOwyaaSM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98226C4CEF0;
+	Mon,  1 Sep 2025 06:40:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756708822;
-	bh=RXDj7xK0ck/gx9buYEpnUyuWq5E4nYhKUE+rPIgPH3k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jk6JOGWbk7AXGPMMwGsumxHUONuqTrN7ZTmLB/5OhbnNES2j3RCGW5Xjv+7C+BvLf
-	 hTRusQhAMr//AWBAEjeIziWkW+LTMEFZgsweJeD85R5owtaxVn7Ydl6InnNIau0HLw
-	 Yn8lm4GS/p3wPBuBS3QwtxRCsR7jX2h3084v0zepZI4DaPmZu8eoQOvzQOcRGeWnf9
-	 mW8bgwAOXQsutnPIRaYUSOhmcuI6M2zGhUhq+9EJXVq9C6ruCiB6jrb1h+0t1OA2qZ
-	 tm3Hys2FzG6p3JOeiWZtzN8YWW4Q7+XGNOPisV4eoUGw9UuJESAfl1ZNMFFOG63mG6
-	 dMKAll7I4KFPQ==
-Message-ID: <aa6b1a62-787e-4365-aca5-d03c6b94545f@kernel.org>
-Date: Mon, 1 Sep 2025 15:37:25 +0900
+	s=k20201202; t=1756708851;
+	bh=HLIJ/88I9oikGh1FbjwJdvkrDB8odi9uvvX3GgGjNo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fOwyaaSMlmfXR1L4T/1YVaGcgMcTtHeTcXst7BofxQGKDyNy+YsUx/P8uNddQML/+
+	 TCYD8ouRMGHvN3B0tO9d/jKMkm8RZTz91zxvwN2WSoL6KH9LW8Atxxo1rCrVDOc5xF
+	 z/RDi00Zv+SQADyIQ7fc+u0zhvjPJ69pZm1Y1/n1kBY3YRpMZQk3BLa/RMYQDaHxiP
+	 hqSuhaFCzG5l7cVPg3JyHPyK1aiWs7RUqpierP8CMsEv90uBCm1jB6t8ykdDUrTuz0
+	 LiFKnarRun3XL1UZaNU3uvCHDMKoAJFrpXPkIYtwJjC5GoVcbijAX4Nk3bG+BizPfn
+	 XTSeLuAafz8uw==
+Date: Mon, 1 Sep 2025 12:10:41 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: zhangsenchuan@eswincomputing.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	p.zabel@pengutronix.de, johan+linaro@kernel.org, quic_schintav@quicinc.com, 
+	shradha.t@samsung.com, cassel@kernel.org, thippeswamy.havalige@amd.com, 
+	mayank.rana@oss.qualcomm.com, inochiama@gmail.com, ningyu@eswincomputing.com, 
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: [PATCH v2 2/2] PCI: eic7700: Add Eswin eic7700 PCIe host
+ controller driver
+Message-ID: <jghozurjqyhmtunivotitgs67h6xo4sb46qcycnbbwyvjcm4ek@vgq75olazmoi>
+References: <20250829082021.49-1-zhangsenchuan@eswincomputing.com>
+ <20250829082405.1203-1-zhangsenchuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 06/15] md/raid0: convert raid0_handle_discard() to
- use bio_submit_split_bioset()
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
- hare@suse.de, tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org,
- josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com, satyat@google.com,
- ebiggers@google.com, neil@brown.name, akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-7-yukuai1@huaweicloud.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250901033220.42982-7-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250829082405.1203-1-zhangsenchuan@eswincomputing.com>
 
-On 9/1/25 12:32 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Fri, Aug 29, 2025 at 04:24:05PM GMT, zhangsenchuan@eswincomputing.com wrote:
+> From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
 > 
-> Unify bio split code, and prepare to fix disordered split IO
-
-Missing the period at the end of the above sentence.
-
+> Add driver for the Eswin EIC7700 PCIe host controller.
+> The controller is based on the DesignWare PCIe core.
 > 
-> Noted commit 319ff40a5427 ("md/raid0: Fix performance regression for large
-> sequential writes") already fix disordered split IO by converting bio to
-> underlying disks before submit_bio_noacct(), with the respect
-> md_submit_bio() already split by sectors, and raid0_make_request() will
-> split at most once for unaligned IO. This is a bit hacky and we'll convert
-> this to solution in general later.
 
-I do not see how this is relevant to this patch. The patch is a simple
-straightforward conversion of hard-coded BIO split to using
-bio_submit_split_bioset(). So I would just say that.
+Add more info about the controller: DWC IP revision, data rate, lanes etc...
 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> Signed-off-by: Yu Ning <ningyu@eswincomputing.com>
+> Signed-off-by: Senchuan Zhang<zhangsenchuan@eswincomputing.com>
+> ---
+>  drivers/pci/controller/dwc/Kconfig        |  12 +
+>  drivers/pci/controller/dwc/Makefile       |   1 +
+>  drivers/pci/controller/dwc/pcie-eic7700.c | 350 ++++++++++++++++++++++
+>  3 files changed, 363 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-eic7700.c
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index ff6b6d9e18ec..1c4063107a8a 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -492,4 +492,16 @@ config PCIE_VISCONTI_HOST
+>  	  Say Y here if you want PCIe controller support on Toshiba Visconti SoC.
+>  	  This driver supports TMPV7708 SoC.
+> 
+> +config PCIE_EIC7700
+> +	tristate "ESWIN PCIe host controller"
+> +	depends on PCI_MSI
+> +	depends on ARCH_ESWIN || COMPILE_TEST
+> +	select PCIE_DW_HOST
+> +	help
+> +	  Enables support for the PCIe controller in the Eswin SoC
+> +	  The PCI controller on Eswin is based on DesignWare hardware
+> +	  It is a high-speed hardware bus standard used to connect
+> +	  processors with external devices.
 
-With the above addressed, this looks OK to me.
+No need to explain what PCIe bus is.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Say Y here if you want
+> +	  PCIe controller support for the ESWIN.
+> +
+>  endmenu
+> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> index 6919d27798d1..0717fe73a2a9 100644
+> --- a/drivers/pci/controller/dwc/Makefile
+> +++ b/drivers/pci/controller/dwc/Makefile
+> @@ -31,6 +31,7 @@ obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
+>  obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
+>  obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
+>  obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4.o
+> +obj-$(CONFIG_PCIE_EIC7700) += pcie-eic7700.o
+> 
+>  # The following drivers are for devices that use the generic ACPI
+>  # pci_root.c driver but don't support standard ECAM config access.
+> diff --git a/drivers/pci/controller/dwc/pcie-eic7700.c b/drivers/pci/controller/dwc/pcie-eic7700.c
+> new file mode 100644
+> index 000000000000..bf942154d971
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-eic7700.c
+> @@ -0,0 +1,350 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ESWIN PCIe root complex driver
+> + *
+> + * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd.
+> + *
+> + * Authors: Yu Ning <ningyu@eswincomputing.com>
+> + *          Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+> + */
+> +#include <linux/module.h>
+> +#include <linux/pci.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/resource.h>
+> +#include <linux/types.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/reset.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include "pcie-designware.h"
+> +
+> +struct eswin_pcie {
+> +	struct dw_pcie pci;
+> +	void __iomem *mgmt_base;
+> +	struct clk_bulk_data *clks;
+> +	struct reset_control *powerup_rst;
+> +	struct reset_control *cfg_rst;
+> +	struct reset_control *perst;
+> +
+> +	int num_clks;
+> +};
+> +
+> +#define PCIE_PM_SEL_AUX_CLK BIT(16)
+> +#define PCIEMGMT_APP_LTSSM_ENABLE BIT(5)
+> +
+> +#define PCIEMGMT_CTRL0_OFFSET 0x0
+> +#define PCIEMGMT_STATUS0_OFFSET 0x100
+> +
+> +#define PCIE_TYPE_DEV_VEND_ID 0x0
+> +#define PCIE_DSP_PF0_MSI_CAP 0x50
+> +#define PCIE_NEXT_CAP_PTR 0x70
+> +#define DEVICE_CONTROL_DEVICE_STATUS 0x78
+> +
+> +#define PCIE_MSI_MULTIPLE_MSG_32 (0x5 << 17)
+> +#define PCIE_MSI_MULTIPLE_MSG_MASK (0x7 << 17)
+> +
+> +#define PCIEMGMT_LINKUP_STATE_VALIDATE ((0x11 << 2) | 0x3)
+> +#define PCIEMGMT_LINKUP_STATE_MASK 0xff
+> +
+> +static int eswin_pcie_start_link(struct dw_pcie *pci)
+> +{
+> +	struct device *dev = pci->dev;
+> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
+> +	u32 val;
+> +
+> +	/* Enable LTSSM */
+> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
+> +	val |= PCIEMGMT_APP_LTSSM_ENABLE;
+> +	writel_relaxed(val, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
+> +
+> +	return 0;
+> +}
+> +
+> +static bool eswin_pcie_link_up(struct dw_pcie *pci)
+> +{
+> +	struct device *dev = pci->dev;
+> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
+> +	u32 val;
+> +
+> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_STATUS0_OFFSET);
+> +
+> +	return ((val & PCIEMGMT_LINKUP_STATE_MASK) ==
+> +		     PCIEMGMT_LINKUP_STATE_VALIDATE);
+> +}
+> +
+> +static int eswin_pcie_power_on(struct eswin_pcie *pcie)
+> +{
+> +	int ret = 0;
+
+Don't initialize ret.
+
+> +
+> +	/* pciet_cfg_rstn */
+> +	ret = reset_control_deassert(pcie->cfg_rst);
+> +	if (ret) {
+> +		dev_err(pcie->pci.dev, "cfg signal is invalid");
+> +		return ret;
+> +	}
+> +
+> +	/* pciet_powerup_rstn */
+> +	ret = reset_control_deassert(pcie->powerup_rst);
+> +	if (ret) {
+> +		dev_err(pcie->pci.dev, "powerup signal is invalid");
+> +		goto err_deassert_powerup;
+> +	}
+> +
+> +	return ret;
+
+	return 0;
+
+> +
+> +err_deassert_powerup:
+> +	reset_control_assert(pcie->cfg_rst);
+> +
+> +	return ret;
+> +}
+> +
+> +static void eswin_pcie_power_off(struct eswin_pcie *eswin_pcie)
+> +{
+> +	reset_control_assert(eswin_pcie->powerup_rst);
+> +	reset_control_assert(eswin_pcie->cfg_rst);
+> +}
+> +
+> +static int eswin_pcie_host_init(struct dw_pcie_rp *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct eswin_pcie *pcie = dev_get_drvdata(pci->dev);
+> +	int ret;
+> +	u32 val;
+> +	u32 retries;
+> +
+> +	/* Fetch clocks */
+
+Drop the comment.
+
+> +	pcie->num_clks = devm_clk_bulk_get_all_enabled(pci->dev, &pcie->clks);
+> +	if (pcie->num_clks < 0)
+> +		return dev_err_probe(pci->dev, pcie->num_clks,
+> +				     "failed to get pcie clocks\n");
+> +
+> +	ret = eswin_pcie_power_on(pcie);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* set device type : rc */
+> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
+> +	val &= 0xfffffff0;
+
+Can you add bitfield definition for the mask?
+
+> +	writel_relaxed(val | 0x4, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
+
+Also for 0x4.
+
+> +
+> +	ret = reset_control_assert(pcie->perst);
+> +	if (ret) {
+> +		dev_err(pci->dev, "perst assert signal is invalid");
+
+'Failed to assert PERST#'
+
+> +		goto err_perst;
+> +	}
+> +	msleep(100);
+> +	ret = reset_control_deassert(pcie->perst);
+> +	if (ret) {
+> +		dev_err(pci->dev, "perst deassert signal is invalid");
+
+'Failed to deassert PERST#'
+
+> +		goto err_perst;
+> +	}
+> +
+> +	/* app_hold_phy_rst */
+> +	val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
+> +	val &= ~(0x40);
+
+Add definition here and everywhere.
+
+> +	writel_relaxed(val, pcie->mgmt_base + PCIEMGMT_CTRL0_OFFSET);
+> +
+> +	/*
+> +	 * It takes at least 20ms to wait for the pcie
+> +	 * status register to be 0.
+
+Make use of 80 columns for comments.
+
+> +	 */
+> +	retries = 30;
+> +	do {
+> +		val = readl_relaxed(pcie->mgmt_base + PCIEMGMT_STATUS0_OFFSET);
+> +		if (!(val & PCIE_PM_SEL_AUX_CLK))
+> +			break;
+> +		usleep_range(1000, 1100);
+> +		retries--;
+> +	} while (retries);
+> +
+> +	if (!retries) {
+> +		dev_err(pci->dev, "No clock exist.\n");
+
+What does this error mean exactly? "No clock exist" is not a valid error. Error
+has something to do with PCIE_PM_SEL_AUX_CLK, no?
+
+> +		ret = -ENODEV;
+
+-ETIMEDOUT?
+
+> +		goto err_clock;
+> +	}
+> +
+> +	/* config eswin vendor id and eic7700 device id */
+> +	dw_pcie_writel_dbi(pci, PCIE_TYPE_DEV_VEND_ID, 0x20301fe1);
+
+Does it need to be configured all the time?
+
+> +
+> +	/* lane fix config, real driver NOT need, default x4 */
+
+What do you mean by 'readl driver NOT need'?
+
+> +	val = dw_pcie_readl_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL);
+> +	val &= 0xffffff80;
+> +	val |= 0x44;
+> +	dw_pcie_writel_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL, val);
+> +
+> +	val = dw_pcie_readl_dbi(pci, DEVICE_CONTROL_DEVICE_STATUS);
+> +	val &= ~(0x7 << 5);
+> +	val |= (0x2 << 5);
+> +	dw_pcie_writel_dbi(pci, DEVICE_CONTROL_DEVICE_STATUS, val);
+> +
+> +	/*  config support 32 msi vectors */
+> +	val = dw_pcie_readl_dbi(pci, PCIE_DSP_PF0_MSI_CAP);
+> +	val &= ~PCIE_MSI_MULTIPLE_MSG_MASK;
+> +	val |= PCIE_MSI_MULTIPLE_MSG_32;
+> +	dw_pcie_writel_dbi(pci, PCIE_DSP_PF0_MSI_CAP, val);
+> +
+> +	/* disable msix cap */
+
+Why? Hw doesn't support MSI-X but it advertises MSI-X capability?
+
+> +	val = dw_pcie_readl_dbi(pci, PCIE_NEXT_CAP_PTR);
+> +	val &= 0xffff00ff;
+> +	dw_pcie_writel_dbi(pci, PCIE_NEXT_CAP_PTR, val);
+> +
+> +	return 0;
+> +
+> +err_clock:
+> +	reset_control_assert(pcie->perst);
+> +err_perst:
+> +	eswin_pcie_power_off(pcie);
+> +	return ret;
+> +}
+> +
+> +static const struct dw_pcie_host_ops eswin_pcie_host_ops = {
+> +	.init = eswin_pcie_host_init,
+> +};
+> +
+> +static const struct dw_pcie_ops dw_pcie_ops = {
+> +	.start_link = eswin_pcie_start_link,
+> +	.link_up = eswin_pcie_link_up,
+> +};
+> +
+> +static int eswin_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct dw_pcie *pci;
+> +	struct eswin_pcie *pcie;
+
+Use reverse Xmas order for all local variables in this driver.
+
+> +	int ret;
+> +
+> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+> +	if (!pcie)
+> +		return -ENOMEM;
+> +
+> +	pci = &pcie->pci;
+> +	pci->dev = dev;
+> +	pci->ops = &dw_pcie_ops;
+> +	pci->pp.ops = &eswin_pcie_host_ops;
+> +
+> +	/* SiFive specific region: mgmt */
+
+So the DWC glue wrapper belongs to SiFive?
+
+> +	pcie->mgmt_base = devm_platform_ioremap_resource_byname(pdev, "mgmt");
+> +	if (IS_ERR(pcie->mgmt_base))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->mgmt_base),
+> +				     "failed to map mgmt memory\n");
+> +
+> +	/* Fetch reset */
+
+Drop the comment.
+
+> +	pcie->powerup_rst = devm_reset_control_get_optional(&pdev->dev,
+> +							    "powerup");
+> +	if (IS_ERR_OR_NULL(pcie->powerup_rst))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->powerup_rst),
+> +				     "unable to get powerup reset\n");
+> +
+> +	pcie->cfg_rst = devm_reset_control_get_optional(&pdev->dev, "cfg");
+> +	if (IS_ERR_OR_NULL(pcie->cfg_rst))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->cfg_rst),
+> +				     "unable to get cfg reset\n");
+> +
+> +	pcie->perst = devm_reset_control_get_optional(&pdev->dev, "pwren");
+> +	if (IS_ERR_OR_NULL(pcie->perst))
+> +		return dev_err_probe(dev, PTR_ERR(pcie->perst),
+> +				     "unable to get perst reset\n");
+
+All 3 resets are optional? Even the ones you were using to power on the
+controller?
+
+> +
+> +	platform_set_drvdata(pdev, pcie);
+> +
+> +	pm_runtime_set_active(dev);
+> +	pm_runtime_enable(dev);
+
+So by this time controller is powered on? I don't think so, as
+eswin_pcie_power_on() is called from host_init() callback. If I'm right, then
+these should be moved below dw_pcie_host_init().
+
+> +	ret = pm_runtime_get_sync(dev);
+
+Why do you need get_sync? Are you depending on any parent to power on any
+resource?
+
+> +	if (ret < 0) {
+> +		dev_err(dev, "pm_runtime_get_sync failed: %d\n", ret);
+> +		goto err_get_sync;
+> +	}
+> +
+> +	ret = dw_pcie_host_init(&pci->pp);
+> +	if (ret) {
+> +		dev_err(dev, "failed to initialize host: %d\n", ret);
+> +		goto err_host_init;
+> +	}
+> +
+> +	return ret;
+
+	return 0;
+
+> +
+> +err_host_init:
+> +	pm_runtime_put_sync(dev);
+> +err_get_sync:
+> +	pm_runtime_disable(dev);
+> +	return ret;
+> +}
+> +
+> +static void eswin_pcie_remove(struct platform_device *pdev)
+> +{
+> +	struct eswin_pcie *pcie = platform_get_drvdata(pdev);
+> +
+> +	dw_pcie_host_deinit(&pcie->pci.pp);
+> +	pm_runtime_put_sync(&pdev->dev);
+> +	pm_runtime_disable(&pdev->dev);
+> +
+> +	reset_control_assert(pcie->perst);
+> +	eswin_pcie_power_off(pcie);
+> +}
+> +
+> +static void eswin_pcie_shutdown(struct platform_device *pdev)
+> +{
+> +	struct eswin_pcie *pcie = platform_get_drvdata(pdev);
+> +
+> +	/* Bring down link, so bootloader gets clean state in case of reboot */
+
+Asserting PERST# won't bring down the device. It just provides indication that
+the device might get powered off and it needs to be prepared for that.
+
+Also, I don't get what you mean by 'bootloder'. Is it the host system bootloader
+or device? Usually, shutdown callback is needed to power off the device when the
+host powers down/reboots so that the device will be reset to a clean state.
+
+> +	reset_control_assert(pcie->perst);
+> +}
+> +
+> +static int eswin_pcie_suspend(struct device *dev)
+> +{
+> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
+> +
+> +	reset_control_assert(pcie->perst);
+> +	eswin_pcie_power_off(pcie);
+
+So you want to power off the device even if it intends to be in D0? Like NVMe.
+
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+> +
+> +	return 0;
+> +}
+> +
+> +static int eswin_pcie_resume(struct device *dev)
+> +{
+> +	int ret;
+> +	struct eswin_pcie *pcie = dev_get_drvdata(dev);
+> +
+> +	ret = eswin_pcie_host_init(&pcie->pci.pp);
+> +	if (ret < 0) {
+
+if (ret)
+
+> +		dev_err(dev, "Failed to init host: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dw_pcie_setup_rc(&pcie->pci.pp);
+> +	eswin_pcie_start_link(&pcie->pci);
+> +	dw_pcie_wait_for_link(&pcie->pci);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops eswin_pcie_pm_ops = {
+> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(eswin_pcie_suspend, eswin_pcie_resume)
+> +};
+> +
+> +static const struct of_device_id eswin_pcie_of_match[] = {
+> +	{ .compatible = "eswin,eic7700-pcie" },
+> +	{},
+> +};
+> +
+> +static struct platform_driver eswin_pcie_driver = {
+> +	.driver = {
+> +		.name = "eic7700-pcie",
+> +		.of_match_table = eswin_pcie_of_match,
+> +		.suppress_bind_attrs = true,
+> +		.pm = &eswin_pcie_pm_ops,
+> +	},
+> +	.probe = eswin_pcie_probe,
+> +	.remove = eswin_pcie_remove,
+
+Since this controller implements irqchip using the DWC core driver, it is not
+safe to remove it during runtime.
+
+> +	.shutdown = eswin_pcie_shutdown,
+> +};
+> +
+> +module_platform_driver(eswin_pcie_driver);
+
+builtin_platform_driver()
+
+> +
+> +MODULE_DEVICE_TABLE(of, eswin_pcie_of_match);
+
+Move it below eswin_pcie_of_match[].
+
+> +MODULE_DESCRIPTION("PCIe host controller driver for eic7700 SoCs");
+
+EIC7700?
+
+- Mani
 
 -- 
-Damien Le Moal
-Western Digital Research
+மணிவண்ணன் சதாசிவம்
 
