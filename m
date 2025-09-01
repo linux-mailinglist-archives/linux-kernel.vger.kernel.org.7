@@ -1,180 +1,375 @@
-Return-Path: <linux-kernel+bounces-794306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF09B3DFD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7536BB3DFD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03EFB16258C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:11:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFBC0188DE00
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCECE30276A;
-	Mon,  1 Sep 2025 10:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4001230DEB4;
+	Mon,  1 Sep 2025 10:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QEGgGXNB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AembU8x8"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2057.outbound.protection.outlook.com [40.107.101.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE722FB995
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756721460; cv=none; b=tqxoySGysTdGDmMROboKYICbZWAIznUX4qiooEbGLtWC7vmGCzsgDFDCpsXwIJGJZNTQ9v+9LboDNzcsB0GzYLSMcw81ZQwjLQW/P6g7FzhO+1YtClNN5lzejvCTC7Gq7Oj8eHLPZJiq4yuIG0+r/orAuQoNE1RLffUIT5kEgfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756721460; c=relaxed/simple;
-	bh=wuw5HwKKAAcdMYrx1NIRsmUE/IHsppWJ/58eY464t6Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hHwn1tAGyY4eylrJMV6CbEKZYGvjK4JL3BnUxONFXmpTsXZYdhPJCDuRttyKMTgI9V6vNn8lcCMy3n32nwikx0R0c3AoxAymdVsHIgrf4lRywCrVz2vF5iwr6jWaBc2mGAXjO5AYlxdXEBPN+DnnTsMgPNQsiJKGKeSWFQQTsns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QEGgGXNB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756721456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=x1r77G1I+YAhnNLUu7tbtbLLJ0PDDPLqHjMHvRWNWBs=;
-	b=QEGgGXNBkF4XBX0n/FZRBgP/BueqT1kj8VtehWq5Wt8tC/+/AlkPsMFN6Jf5+V6Is7Ho6m
-	NFZ/yqwvZVliSM3PAY3SsjdORWwsL0lvZCHW3AbEtcCsbNFbIBG0SfckZvflnCcljQa+FN
-	n4JlftMAMfnZVodNDC+pv4qVv368dYk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-438-hstLtisONauubM3q-3D9cA-1; Mon, 01 Sep 2025 06:10:53 -0400
-X-MC-Unique: hstLtisONauubM3q-3D9cA-1
-X-Mimecast-MFC-AGG-ID: hstLtisONauubM3q-3D9cA_1756721451
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b8dde54c1so3743745e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 03:10:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756721451; x=1757326251;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x1r77G1I+YAhnNLUu7tbtbLLJ0PDDPLqHjMHvRWNWBs=;
-        b=m5Tt+2u/zifhs6chSxBycdfgk90sW9miy34zscw4EJh2SjrGI3wM8t5aDIc2AOga4z
-         M6AZ1eJPXfVYdrC4jZdA+rckzBgTps6GeYOyAVICDZ0sJASz0u4kB5J2cT2/frxk+CeI
-         umeIGBZhiO+LKR7a3sGzS6+9ktbq/g0DMDtNJv10sZkyUpMA11NUFI+IFWfQKRHadfvH
-         DZY4Gk1CbWym7z4DkwAGrGXZl6r04xKZOWi9yGzoFsT6LHr9DlxAaou6ADGskhKoZg5i
-         e1xvnbQtlYqJEBdtI1TfU9vo+J6/KXD2tR1hlUrkICRMlYnrCttT/7U3p7Odz5DLZf3O
-         C2gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWw9ecDLiOwtrq6mKHnceBNCS0XzhLTk4ZUVcEHCeZIoru9NDDXst9lj+jxwj8PYyvFN6FuyFVGsHvTl+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbIUIlx0DNTHWqosHWgp3sK3zK/zPb3F4SI9imc55TXxsC1gq7
-	LL7OJ5EENf7h8pkUm+1HaD6Wwg6Tg1SYo8aF65q9yXrVRcC7iv40vFeQ4xcp3zil8bnovIIoMyW
-	gpajgrp6CAoFlDxBUMd1z38JpKoingos+p+em8QgQ3usIFHrOz3dM0jwTJLPuu69Brg==
-X-Gm-Gg: ASbGncsWUAIdQw1bPkdrkKf5lEnYFQtJK7Zn1xjgdnmWXyJw04RKPkgA/DBJ0TLoGTf
-	oe/JcJRt074FGygtylVothQoTtea4MIUmvg0pqbOV1z3q49FzMX0RVah96lXz3V9DeQwTQQwTkS
-	cdMBt8Mo345UbfZ/tioxp9dkQp1Eo1cBf9kpU/psBXCcmpbcan7TGn3L9k/zeIkDZdBfKlAcRrx
-	5NVYsz6FaLYSUJEzvIjiir4pKtVSjhktCtNmH71WBuJ2lVr1odi8inBYNHZke0JyYLZdfaqETZB
-	vcVAafD456niQGtwLHHum6LOWyuVimwDiMQCAxMIaCZdmtXqVedxjKb2B5/vn+7HYVEsNQVmdAy
-	s+XRrJiwxyAGvAkrBBmy3PEePtTu26oq2w/xWqyFBcNWmt0DRvU4vOD+KVfSKR7Ab/Uc=
-X-Received: by 2002:a05:600c:4513:b0:45b:7d77:b592 with SMTP id 5b1f17b1804b1-45b8553365bmr59920635e9.12.1756721451086;
-        Mon, 01 Sep 2025 03:10:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/pB/nOXPtBGdoQkiiK9Gd1JB7dU2H/elG/tgXsoU6tepvnwbb4MgRHWoeOy6qaR11jLv+LQ==
-X-Received: by 2002:a05:600c:4513:b0:45b:7d77:b592 with SMTP id 5b1f17b1804b1-45b8553365bmr59920425e9.12.1756721450637;
-        Mon, 01 Sep 2025 03:10:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7fec07sm147030765e9.10.2025.09.01.03.10.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 03:10:50 -0700 (PDT)
-Message-ID: <9a85a903-ac8d-4198-a8d4-01d70f23b443@redhat.com>
-Date: Mon, 1 Sep 2025 12:10:49 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBDE2AE72;
+	Mon,  1 Sep 2025 10:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756721524; cv=fail; b=W1UIjtVzLvGuovXA9m6UVxvR7fR1fQeOZPUVlV4HeNzohx38Evk1f1oXpGmQ7dGVF519pZa+8ORvGciRs5GMAmpkXIPTcsddlNFPInJTQq2qfy7Id2oAHYzqobvPlQnp4FWveRFPX36nvE2qQ9CrLBYXAfjXXdXBgTrsCjhqrAc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756721524; c=relaxed/simple;
+	bh=41cgz/fVIC0vO6SFEamh6mIrLQ1h8ci/N/RicvI+6cA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oLybKwf/UE6k72PeNzt8fI2RyOtVCpWb+h8zgkWkWt/cpzJnErBY6tEX/qmHrLWjOEUDAtYGakfUpF8SbB6UsMdqJsqpjuQ0Mzd0Xb5LfB/tAwL3eJRtk0j0tOjqJ7Kcv8DW4mOl8xP4u8dl0U7XBRty6oBg3+5BgqpeDbQBYGo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AembU8x8; arc=fail smtp.client-ip=40.107.101.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lzcVOUOxwC6jciG+hNK35YNnA5Y6BlmgssrFjHSJd+UedxhqXMQf0J0dnoWqm6tjYWLWV6a7i1Sk06qiX+Jq4m43sA47Wlkuv2HgZtsXa4cmPCNNtH9iw3iRPJQzrRLWpSMyvsRT3/XRk+k5TqUe/7yOh5qeoxe2vh+Dyi4HZcvBD323nijDmtFcUmCPsbC270Aa6OIFIrDomj53aw54t0+DqY77iMGsJONiyuEa9weSoDvZ3nm/OukaVYy4N/EG1k8OUa0i5gbs13ovmd6AEYrT/Mjsp/ht1OMuRV5UFdwH5OPRbNoA1O17jT9V0ceeTmQCpYQfitcI3/o+uJGUug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A4XRs6K2nVAH81o/pump2x1agvKwSzvs3eZSCQeYLaw=;
+ b=l6B73MeqZkYWYvSWmIdIKl2IA0SyRjzaEl5S8NKIiw+YXt3Cs+t49vWwjrxqxJEpcfw41fV2cPmoIRfnWNy/8algKiYURmrYly2TBstmSAA554MLJMZcqFWlYW+ckiCZ8XjBDErzCScFT5u/74QVpXxZX3Ci6i4PvYfNLYBH19GKhf2CiqmjOPP+t4I6MObQiAyWbk3jAqY69Dsiz4ah+LOb3jXbCophD65EHWRRwUduiALFMAzIbjYd0MDR0R6ESw0Wja6Ql6oSK+KCTZ0qG+fWrWOq3j6rczBBULY6p5WMr89qXHlvKKyHlWBMqbnEKq7iB91uXjEaL8+6nCYsOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A4XRs6K2nVAH81o/pump2x1agvKwSzvs3eZSCQeYLaw=;
+ b=AembU8x8Y4f09q2fn3KJ40uYW76bDc8V37oQXydkORMtb2DY527Q5t8qrB6dZ1Fdycmsqq16q+AfhAcC2jSaXL12oo1hgLxSDGLVpCJbcHrNNlti7dIP4u7rrmylGta5pYf7w/jJahksRHI95jZpzbwHDfPQG164VsmyyfMbNR8=
+Received: from DM6PR02CA0071.namprd02.prod.outlook.com (2603:10b6:5:177::48)
+ by SJ0PR12MB7036.namprd12.prod.outlook.com (2603:10b6:a03:483::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 1 Sep
+ 2025 10:11:57 +0000
+Received: from DS2PEPF00003441.namprd04.prod.outlook.com
+ (2603:10b6:5:177:cafe::3d) by DM6PR02CA0071.outlook.office365.com
+ (2603:10b6:5:177::48) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.28 via Frontend Transport; Mon,
+ 1 Sep 2025 10:11:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS2PEPF00003441.mail.protection.outlook.com (10.167.17.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Mon, 1 Sep 2025 10:11:56 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 1 Sep
+ 2025 05:11:56 -0500
+Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Mon, 1 Sep
+ 2025 03:11:50 -0700
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
+	<x86@kernel.org>
+CC: Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
+	<peterz@infradead.org>, "Xin Li (Intel)" <xin@zytor.com>, Pawan Gupta
+	<pawan.kumar.gupta@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Babu Moger
+	<babu.moger@amd.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Naveen N Rao <naveen@kernel.org>, K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: [RFC PATCH v4 5/4] Documentation/x86/topology: Detail CPUID leaves used for topology enumeration
+Date: Mon, 1 Sep 2025 10:11:30 +0000
+Message-ID: <20250901101130.3661-1-kprateek.nayak@amd.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250825075732.10694-1-kprateek.nayak@amd.com>
+References: <20250825075732.10694-1-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][v4] mm/hugetlb: retry to allocate for early boot hugepage
- allocation
-To: lirongqing <lirongqing@baidu.com>, muchun.song@linux.dev,
- osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, giorgitchankvetadze1997@gmail.com
-References: <20250901082052.3247-1-lirongqing@baidu.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250901082052.3247-1-lirongqing@baidu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
+ (10.181.42.218)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003441:EE_|SJ0PR12MB7036:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40cca47c-fbb5-4c88-e85a-08dde93ffb96
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EFKBcY5l0vEkuzHE9Yn15z/gV3wh9m2CQWIDNCahH9lgWKEGKXqbhXdGTbn3?=
+ =?us-ascii?Q?hvgKzjo+Fva1hfTZhfaFfd7mgvUq03ouphZgsV8f4lhcarQeIt0r9xIeVFcT?=
+ =?us-ascii?Q?V2yfK4vNWZ3I5DGmV5kqR1xS2SXsffd09sKbXkAvfIlY9xwf6x6aOsOJfgBY?=
+ =?us-ascii?Q?8dBy3FpJiprm54uNT67CieWRcH58gQEwSoe1WTP+CJvUH8ug6bSBrJlPCCq1?=
+ =?us-ascii?Q?5Z4gki5yzVjpLXbX3/GM5HCFnmIM9So67ohfYXBQACn6GorMrcXQc4QuN16g?=
+ =?us-ascii?Q?YxTdZ8V2ge1CYQJwALuv+W44u12GY+b99gf/1VsDot3dplIqZ51DZZHKddi9?=
+ =?us-ascii?Q?Wah+c643oIC6AqX6jd4kVHFeh0dIKENFrRVX9wp01oJb5AYOuCtBqtmwmHLl?=
+ =?us-ascii?Q?m8XNJJypSOQ5kb4iuyg6JEOM308PizjzFUXtV2KnVTH5hdJ56cRMZJbgJxqZ?=
+ =?us-ascii?Q?EQ2G5hoeyVcZwdSvunfbm32tB255Vg4y1OjLptsQ0BrEjCg36vlAE0UyPljZ?=
+ =?us-ascii?Q?s4Xds0gMWEJfHVPubvHl2VURMXyh0lmpPvpCrJldbn1pPo+3tu1nI06AOzvc?=
+ =?us-ascii?Q?6Iz9nrm4b6hZtyNQwcg3WO45bPxWtm71cZSCXMtEQWjUuFsYeyepe4hHl1+e?=
+ =?us-ascii?Q?wD+v4XbTZhISFmPa78Lwu/vKnF5CibS0pzq9vNI6F+nBBocZ3eGZ5QMtWBpy?=
+ =?us-ascii?Q?g014fDmKelxssGwEzm7ZyCuDIm9HUdyr7bDSGsRNtY9b2kKxohhagbGhvXn5?=
+ =?us-ascii?Q?jjye09uthEIQW9Adb1pcRHXh/L2chO8Aq3hgTvOgbViIm4lDW2RaSjC7MmCk?=
+ =?us-ascii?Q?EfqiYSsLSwoYuO/HFyJ0E7MKaPRAVVLskJVb1HZUSo4pqS0p+5lPMoyrXE/b?=
+ =?us-ascii?Q?GWMlyV6gFKoB69vEBznje2XHTSNrw4mhtJwYUL+ZW5sKp7tkebr8PWaXbwSm?=
+ =?us-ascii?Q?F8RzUrzWt7y0DbhaZBKDIy9TiMC5gGRKI6ciY5jPRaVMAEem49hUeqa9N4Br?=
+ =?us-ascii?Q?6uvgT1fznRVy7bh+udHYbt3ogWygCH0GDwb/chaDWuBv7L1Hq0b/0ONv6k5N?=
+ =?us-ascii?Q?W+HYhGYFFXdcOjdsV5cWZxEU+P7uG1wxurHtAyJIIF3rdgjS/ltFEmXrtWWd?=
+ =?us-ascii?Q?nTBzhgLfs7jnwieBXHS5qhGqpzUvG94TAWKPVc+Et2wv3DecalMfyrPkEOh7?=
+ =?us-ascii?Q?GrJkESUStYyJtAC2WzXsL+ZZ7pSwhdx1YwH2kR4DtHxm1kjXo1aF4Vs87ZwH?=
+ =?us-ascii?Q?xJWKnZKY50B/segmw9mAuo1YfFkjNCNggrH1Bj0Hb+Q0BXBvJAiVwkeemkeh?=
+ =?us-ascii?Q?WOH6E2O+hO18zD7605tf+K94lWG3/pM8hRywnk00OedS+7cdHMTNwd49UKjH?=
+ =?us-ascii?Q?BW7Nd+wyNFXmQgWBG3e5o/OqOIDCL1CrUU5XloZh3E8Y+ppUMVkHQMOx0QEu?=
+ =?us-ascii?Q?d3tOYpD81g3UpEba53gC0g50bCxf+w8zq23H1iwBoRmx6YQoS1kCdxBWgBNJ?=
+ =?us-ascii?Q?a5gFFjBTu9Tx8L8yLFxegJ0QDPyvJ8FTAFhZ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 10:11:56.8854
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40cca47c-fbb5-4c88-e85a-08dde93ffb96
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003441.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7036
 
-On 01.09.25 10:20, lirongqing wrote:
-> From: Li RongQing <lirongqing@baidu.com>
-> 
-> In cloud environments with massive hugepage reservations (95%+ of system
-> RAM), single-attempt allocation during early boot often fails due to
-> memory pressure.
-> 
-> Commit 91f386bf0772 ("hugetlb: batch freeing of vmemmap pages") intensified
-> this by deferring page frees, increase peak memory usage during allocation.
-> 
-> Introduce a retry mechanism that leverages vmemmap optimization reclaim
-> (~1.6% memory) when available. Upon initial allocation failure, the system
-> retries until successful or no further progress is made, ensuring reliable
-> hugepage allocation while preserving batched vmemmap freeing benefits.
-> 
-> Testing on a 256G machine allocating 252G of hugepages:
-> Before: 128056/129024 hugepages allocated
-> After:  Successfully allocated all 129024 hugepages
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> ---
+Add a new section describing the different CPUID leaves and fields used
+to parse topology on x86 systems.
 
-Thanks! BTW, it's interesting to see such extreme hugetlb allocation on 
-machines :)
+Suggested-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+---
+Sending this as an RFC patch first to squash out the amount of details
+required in topology.rst. Once clarified, I'll include this formally in
+v5.
+---
+ Documentation/arch/x86/topology.rst | 194 ++++++++++++++++++++++++++++
+ 1 file changed, 194 insertions(+)
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
+diff --git a/Documentation/arch/x86/topology.rst b/Documentation/arch/x86/topology.rst
+index c12837e61bda..fd9903aab6b5 100644
+--- a/Documentation/arch/x86/topology.rst
++++ b/Documentation/arch/x86/topology.rst
+@@ -141,6 +141,200 @@ Thread-related topology information in the kernel:
+ 
+ 
+ 
++System topology enumeration
++===========================
++The topology on x86 systems can be discovered using a combination of vendor
++specific CPUID leaves introduced specifically to enumerate the processor
++topology and the cache hierarchy.
++
++The CPUID leaves in their preferred order of parsing for each x86 vendor is as
++follows:
++
++1) AMD and Hygon
++
++   On AMD and Hygon platforms, the CPUID leaves that enumerate the processor
++   topology are as follows:
++
++   1) CPUID leaf 0x80000026 [Extended CPU Topology] (Core::X86::Cpuid::ExCpuTopology)
++
++      The extended CPUID leaf 0x80000026 is the extension of the CPUID leaf 0xB
++      and provides the topology information of Core, Complex, CCD(Die), and
++      Socket in each level.
++
++      The support for the leaf is expected to be discovered by checking if the
++      supported extended CPUID level is >= 0x80000026 and then checking if
++      `LogProcAtThisLevel` in `EBX[15:0]` at a particular level (starting from
++      0) is non-zero.
++
++      The `LevelType` in `ECX[15:8]` at the level provides the detail of the
++      topology domain that the level describes - Core, Complex, CCD(Die), or
++      the Socket.
++
++      The kernel uses the `CoreMaskWidth` from `EAX[4:0]` to discover the
++      number of bits that need to be right shifted from the
++      `ExtendedLocalApicId` in `EDX[31:0]` to get a unique Topology ID for
++      the topology level. CPUs with the same Topology ID share the resources
++      at that level.
++
++      CPUID leaf 0x80000026 also provides more information regarding the
++      power and efficiency rankings, and about the core type on AMD
++      processors with heterogeneous characteristics.
++
++      If CPUID leaf 0x80000026 is supported, further parsing is not required.
++
++
++   2) CPUID leaf 0x0000000B [Extended Topology Enumeration] (Core::X86::Cpuid::ExtTopEnum)
++
++      The extended CPUID leaf 0x0000000B is the predecessor on the extended
++      CPUID leaf 0x80000026 and only describes the core, and the socket domains
++      of the processor topology.
++
++      The support for the leaf is expected to be discovered by checking if the
++      supported CPUID level is >= 0xB and then checking if `EBX[31:0]` at a
++      particular level (starting from 0) is non-zero.
++
++      The `LevelType` in `ECX[15:8]` at the level provides the detail of the
++      topology domain that the level describes - Thread, or Processor (Socket).
++
++      The kernel uses the `CoreMaskWidth` from `EAX[4:0]` to discover the
++      number of bits that need to be right shifted from the
++      `ExtendedLocalApicId` in `EDX[31:0]` to get a unique Topology ID for
++      that topology level. CPUs sharing the Topology ID share the resources
++      at that level.
++
++      If CPUID leaf 0xB is supported, further parsing is not required.
++
++
++   3) CPUID leaf 0x80000008 ECX [Size Identifiers] (Core::X86::Cpuid::SizeId)
++
++      If neither the CPUID leaf 0x80000026 or CPUID leaf 0xB is supported, the
++      number of CPUs on the package is detected using the Size Identifier leaf
++      0x80000008 ECX.
++
++      The support for the leaf is expected to be discovered by checking if the
++      supported extended CPUID level is >= 0x80000008.
++
++      The shifts from the APIC ID for the Socket ID is calculated from the
++      `ApicIdSize` field in `ECX[15:12]` if it is non-zero.
++
++      If `ApicIdSize` is reported to be zero, the shift is calculated as the
++      order of the `number of threads` calculated from `NC` field in
++      `ECX[7:0]` which describes the `number of threads - 1` on the package.
++
++      Unless Extended APIC ID is supported, the APIC ID used to find the
++      Socket ID is from the `LocalApicId` field of CPUID leaf 0x00000001
++      `EBX[31:24]`.
++
++      The topology parsing continues to detect if Extended APIC ID is
++      supported or not.
++
++
++   4) CPUID leaf 0x8000001E [Extended APIC ID, Core Identifiers, Node Identifiers]
++      (Core::X86::Cpuid::{ExtApicId,CoreId,NodeId})
++
++      The support for Extended APIC ID can be detected by checking for the
++      presence of `TopologyExtensions` in `EXC[22]` of CPUID leaf 0x80000001
++      [Feature Identifiers] (Core::X86::Cpuid::FeatureExtIdEcx).
++
++      If Topology Extensions is supported, the APIC ID from `ExtendedApicId`
++      from CPUID leaf 0x8000001E `EAX[31:0]` should be preferred over that from
++      `LocalApicId` field of CPUID leaf 0x00000001 `EBX[31:24]` for topology
++      enumeration.
++
++      On processors of Family 0x17 and above that do not support CPUID leaf
++      0x80000026 or CPUID leaf 0xB, the shifts from the APIC ID for the Core
++      ID is calculated using the order of `number of threads per core`
++      calculated using the `ThreadsPerCore` field in `EBX[15:8]` which
++      describes `number of threads per core - 1`.
++
++      On Processors of Family 0x15, the Core ID from `EBX[7:0]` is used as the
++      `cu_id` (Compute Unit ID) to detect CPUs that share the compute units.
++
++
++   All AMD and Hygon processors that support the `TopologyExtensions` feature
++   stores the `NodeId` from the `ECX[7:0]` of CPUID leaf 0x8000001E
++   (Core::X86::Cpuid::NodeId) as the per-CPU `node_id`.
++
++
++2) Intel
++
++   On Intel platforms, the CPUID leaves that enumerate the processor
++   topology are as follows:
++
++   1) CPUID leaf 0x1F (V2 Extended Topology Enumeration Leaf)
++
++      The CPUID leaf 0x1F is the extension of the CPUID leaf 0xB and provides
++      the topology information of Core, Module, Tile, Die, DieGrp, and Socket
++      in each level.
++
++      The support for the leaf is expected to be discovered by checking if
++      the supported CPUID level is >= 0x1F and then `EBX[31:0]` at a
++      particular level (starting from 0) is non-zero.
++
++      The `Domain Type` in `ECX[15:8]` of the sub-leaf provides the detail of
++      the topology domain that the level describes - Core, Module, Tile, Die,
++      DieGrp, and Socket.
++
++      The kernel uses the value from `EAX[4:0]` to discover the number of
++      bits that need to be right shifted from the `x2APIC ID` in `EDX[31:0]`
++      to get a unique Topology ID for the topology level. CPUs with the same
++      Topology ID share the resources at that level.
++
++      If CPUID leaf 0x1F is supported, further parsing is not required.
++
++
++   2) CPUID leaf 0x0000000B (Extended Topology Enumeration Leaf)
++
++      The extended CPUID leaf 0x0000000B is the predecessor of the V2 Extended
++      Topology Enumeration Leaf 0x1F and only describes the core, and the
++      socket domains of the processor topology.
++
++      The support for the leaf is expected to be discovered by checking if the
++      supported CPUID level is >= 0xB and then checking if `EBX[31:0]` at a
++      particular level (starting from 0) is non-zero.
++
++      CPUID leaf 0x0000000B shares the same layout as CPUID leaf 0x1F and
++      should be enumerated in a similar manner.
++
++      If CPUID leaf 0xB is supported, further parsing is not required.
++
++
++   3) CPUID leaf 0x00000004 (Deterministic Cache Parameters Leaf)
++
++      On Intel processors that support neither CPUID leaf 0x1F, nor CPUID leaf
++      0xB, the shifts for the SMT domains is calculated using the number of
++      CPUs sharing the L1 cache.
++
++      Processors that feature Hyper-Threading is detected using `EDX[28]` of
++      CPUID leaf 0x1 (Basic CPUID Information).
++
++      The order of `Maximum number of addressable IDs for logical processors
++      sharing this cache` from `EAX[25:14]` of level-0 of CPUID 0x4 provides
++      the shifts from the APIC ID required to compute the Core ID.
++
++      The APIC ID and Package information is computed using the data from
++      CPUID leaf 0x1.
++
++
++   4) CPUID leaf 0x00000001 (Basic CPUID Information)
++
++      The mask and shifts to derive the Physical Package (socket) ID is
++      computed using the `Maximum number of addressable IDs for logical
++      processors in this physical package` from `EBX[23:16]` of CPUID leaf
++      0x1.
++
++     The APIC ID on the legacy platforms is derived from the `Initial APIC
++     ID` field from `EBX[31:24]` of CPUID leaf 0x1.
++
++
++3) Centaur and Zhaoxin
++
++   Similar to Intel, Centaur and Zhaoxin use a combination of CPUID leaf
++   0x00000004 (Deterministic Cache Parameters Leaf) and CPUID leaf 0x00000001
++   (Basic CPUID Information) to derive the topology information.
++
++
++
+ System topology examples
+ ========================
+ 
 -- 
-Cheers
-
-David / dhildenb
+2.34.1
 
 
