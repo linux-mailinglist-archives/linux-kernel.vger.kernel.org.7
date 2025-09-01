@@ -1,205 +1,113 @@
-Return-Path: <linux-kernel+bounces-794797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAE4B3E75E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:38:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE45B3E769
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5964463D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7DFF189C4FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5711D341641;
-	Mon,  1 Sep 2025 14:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88BB341665;
+	Mon,  1 Sep 2025 14:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gfIWM0WK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="P7l8By8+"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C2A1A08DB;
-	Mon,  1 Sep 2025 14:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C70233A03A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756737490; cv=none; b=QD0gYE9wJaYjF0lc4jP0EU6Qu1qnKMwsq6ZwkvOPQO0/6leZxkye0kEc/rPa5bwoeq1tnjGZQ1OCjrC65CWf2LE90qlfunGo8FKqh5SpnrNydM/E0jAUodaV+Ti3qX95+PoUpQYkaHnNLLUNWDawjXiQ8l3ZVkhg9ut6toa2BcI=
+	t=1756737585; cv=none; b=MrQ44dXen3GPHZTtHyMZFcXAWJoXXwo8bNOPRqUSOu5HDxgrQjl+sR2+v60NjEWiBRhztGG5d9JMV+sxQjQheGbV6a3cNKtlXhfT+op+9ygW4xQ46XBXOkfhEzV7c/xXqoFLPlXByaoam/Pn5NbNUoabvk0sfXDdJsVFyaJkiz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756737490; c=relaxed/simple;
-	bh=WQNkr5EKb/5FuHLMhuxLTbLlrHHNbuV0X7itYDSvCTo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=u+0Bz1zQHy4+J33Kxcai7rq4JfSCjo+wq8rGK3kLoF7GZBWaWJ55msQLlQzJZwRh72FGU3AA3H+RkWoXHGURaFIpVGuWoFmR+NEFXNcFJYjENf9finawFOZ9rvfr6cDQVD1T77JtGSUCK4PKw6zjzf6yZoZPvEF8MeXlhc0JNas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gfIWM0WK; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756737489; x=1788273489;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=WQNkr5EKb/5FuHLMhuxLTbLlrHHNbuV0X7itYDSvCTo=;
-  b=gfIWM0WKGBtFugoxH1NTQBgp5oI51wkl130/ge4hmCD++bmXe2EkEs8A
-   n40ofuPm7eZR+zJTHoeKML1PGEVr6D26TL8MFikJQUYJSjsA4NUo+jhI9
-   Ywd5+gdmMY/XUfAqS6mfvDOt1zPOWiyzjTxDDAcIu6zwRlOkdI4TOkcqj
-   6VLfXP2PmAdz6Snl/ntXQbVA7pDKmhs74zEJ1dUqo+HGWr756HK0cBoDp
-   aQ51YvXX2dvXVb+R8LjwdhUKiZeLZm/4y08jv23DXjFX2HZtE1DO4MhS9
-   EW0imoj4FGXB+oocqs/SZVsU0nnoRDtF03bwHqd2htI7mC2zTG+SXH9co
-   A==;
-X-CSE-ConnectionGUID: LnnCJH8SRdiay1c9pSE/Nw==
-X-CSE-MsgGUID: EP95BETnQ2mrq29MveuMGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="76595896"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="76595896"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 07:38:04 -0700
-X-CSE-ConnectionGUID: FKyLHvmdRWK5frmJXgJzRQ==
-X-CSE-MsgGUID: TmZPTmE/S+a9W82GyBX+0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="170590896"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO [10.245.244.171]) ([10.245.244.171])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 07:37:56 -0700
-Message-ID: <3713e6d83421fcf64978927a1cb40fae1e3c7a57.camel@linux.intel.com>
-Subject: Re: [RFC 0/3] cgroups: Add support for pinned device memory
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Natalie Vock <natalie.vock@gmx.de>, Maarten Lankhorst
- <dev@lankhorst.se>,  Lucas De Marchi <lucas.demarchi@intel.com>, Rodrigo
- Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,  Simona
- Vetter <simona@ffwll.ch>, Maxime Ripard <mripard@kernel.org>, Tejun Heo
- <tj@kernel.org>, Johannes Weiner	 <hannes@cmpxchg.org>, 'Michal
- =?ISO-8859-1?Q?Koutn=FD=27?= <mkoutny@suse.com>,  Michal Hocko
- <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, Shakeel
- Butt	 <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, Andrew
- Morton	 <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "'Liam R . Howlett'"
- <Liam.Howlett@oracle.com>,  Vlastimil Babka	 <vbabka@suse.cz>, Mike
- Rapoport <rppt@kernel.org>, Suren Baghdasaryan	 <surenb@google.com>, Thomas
- Zimmermann <tzimmermann@suse.de>
-Cc: Michal Hocko <mhocko@suse.com>, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org
-Date: Mon, 01 Sep 2025 16:37:51 +0200
-In-Reply-To: <25b42c8e-7233-4121-b253-e044e022b327@gmx.de>
-References: <20250819114932.597600-5-dev@lankhorst.se>
-	 <25b42c8e-7233-4121-b253-e044e022b327@gmx.de>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1756737585; c=relaxed/simple;
+	bh=htQYfrQvt/cTrdobxmgH73W4WPpszNwvgv/0+a/GiHg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hCVHX+NCDKv2ySat4jNU4H8ZgDtD859w8YctzRXO/AaVQLIIjBpajgr9U//G6izUNvU5V2svNokrWu/5anY4Ea2z/gcBt3VWwyjvdRXX1vUGHBZGxRj0kYscqaxr+aizyRrmYlDlK/3vq+dPi/EFa6DuqIBir9YidUlN75d2JmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=P7l8By8+; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b04271cfc3eso154194466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 07:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756737582; x=1757342382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=htQYfrQvt/cTrdobxmgH73W4WPpszNwvgv/0+a/GiHg=;
+        b=P7l8By8+4XE9YYtGkfhSvUvaLgl4Xj15mlqqx/eQuQkvJe2eXJG1bE8ecAK2W+KnI2
+         5vGNhpoVYK3Tu82jRS3+jZF+w/u7KCSdqqPpvRL4KsNI9fhbk0eJdMvNqPFNeYbSsLpk
+         ZmyeSRAeyxWFzcAlaTaCEClS+D3lA3tLCZUaLSK7vmduS7tkQinal12YAwjQGJ45sw9O
+         YEUDKk/BsZZr5D4grqjRDauozq0hcS7dT7vVQX8zrkHujB/tg1DTt/EoqgrUybARY+0c
+         EAWr3CSgV2fuyIUL1fqpg1RdPB9M3lqZKw4aMQzQKjcpV0EZ7fXbeDWH9lhoRHnJ6pw4
+         qbYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756737582; x=1757342382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=htQYfrQvt/cTrdobxmgH73W4WPpszNwvgv/0+a/GiHg=;
+        b=aycvlLE37AHw5c/vLCUnN5XmTBLQfEGjtTlc0FJoNSFFsIrP6loTpSx6fv5rzzdrwG
+         I5hLHeglwxeCjc0P0N5Vox8eOlBTMQOCyEqMvWrf2YbGtByZOnOx+W4Oiyss+2DWpLXQ
+         CehLxGaaBdd6GWae1XJoP6NfuxXeYbJEuUqCh4UoLvGhsj62KF8eJhZOt+i+302G1k1H
+         wXz6USjeSrUYh4NZHvoOY02iOpQJ8QEIW26A726pZOUhcAUsCBWkgJCNXs+dyWdktQIo
+         L5Ulxmg7vtsYaQ7tGk8bg/aCY4GDHT7CqBH+Cj5UYVZmK2x0ZPvICN3aZxjsRMQJZ/tB
+         HcBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkF68meTvPhLusZFoKu6OjOn/G+l8NpGG9x5Us663+EjCuTjvSDX76kNuL5XIvoBjy0zpdf7NPhpSJWOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuvJ1sbSxXl+5EVplJePzotgtjhwqWLygIDkRbP6Tb4yW+Ge2f
+	ExARR13T1bF/HpLdArTR+DtkbJ70w1ut7V8s5pkLx1n2tgkjOgwblCcpKHnxcWQ9Fzct8Qns4Ch
+	Dw0OLOCIeQAQDMGZP5HoA6RCABmdQnYBpyuJE3Vgmqw==
+X-Gm-Gg: ASbGnctkvhu76vwQ0BTNDcLDRRpN3Y9OIvy8PxzTKKz0X1nv5tLBXWuhdDaMwVSYHoW
+	VzzXVoYh8SyeGjuKJtG+6eU5/LTx0CuAgGY7t19fagFQOgVVz5BmQaNH+6ef2wEeh7ccy5j17rc
+	QY8SjTCXzMgEWRzlOpFt/CIzflCH+Nn7Z4a+l6yXaIJgIrJUeCzw5ZQ3K93bfmNqp6XZZo54qTI
+	xnwVweuvIybgdhUgFrAHdHwrnE0G190eXXjtJzuz89/UQ==
+X-Google-Smtp-Source: AGHT+IHTqF1JAmNmg2OO5LltznXi0o7wJKri+X2655du84wb99ZGTC9056cINHWh8si0MefDcLENJcuak3msFoGR/no=
+X-Received: by 2002:a17:907:1ca2:b0:b04:470b:64a5 with SMTP id
+ a640c23a62f3a-b04470b665cmr30691666b.36.1756737581693; Mon, 01 Sep 2025
+ 07:39:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250901123028.3383461-1-max.kellermann@ionos.com>
+ <20250901123028.3383461-3-max.kellermann@ionos.com> <e509a5c4-f71b-4fcd-9776-6a3d39761b4b@redhat.com>
+In-Reply-To: <e509a5c4-f71b-4fcd-9776-6a3d39761b4b@redhat.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 1 Sep 2025 16:39:30 +0200
+X-Gm-Features: Ac12FXxHU5onUYdItrFe4rtUI2ez9M9oa4kNLp6RrsUlpVm1LJn2X4DtIQLritA
+Message-ID: <CAKPOu+-ti5bL6YLfBGMt1=3c6gjLMeBqmHGPD1nQC2J9uU9mPA@mail.gmail.com>
+Subject: Re: [PATCH v5 02/12] mm: constify pagemap related test functions for
+ improved const-correctness
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com, 
+	willy@infradead.org, hughd@google.com, mhocko@suse.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
+	vishal.moola@gmail.com, linux@armlinux.org.uk, 
+	James.Bottomley@hansenpartnership.com, deller@gmx.de, agordeev@linux.ibm.com, 
+	gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com, 
+	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net, 
+	andreas@gaisler.com, dave.hansen@linux.intel.com, luto@kernel.org, 
+	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, weixugc@google.com, 
+	baolin.wang@linux.alibaba.com, rientjes@google.com, shakeel.butt@linux.dev, 
+	thuth@redhat.com, broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, 
+	mpe@ellerman.id.au, nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Sep 1, 2025 at 3:49=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+> Not only test functions but also some other "getters" in there.
 
-On Mon, 2025-09-01 at 14:45 +0200, Natalie Vock wrote:
-> Hi,
->=20
-> On 8/19/25 13:49, Maarten Lankhorst wrote:
-> > When exporting dma-bufs to other devices, even when it is allowed
-> > to use
-> > move_notify in some drivers, performance will degrade severely when
-> > eviction happens.
-> >=20
-> > A perticular example where this can happen is in a multi-card
-> > setup,
-> > where PCI-E peer-to-peer is used to prevent using access to system
-> > memory.
-> >=20
-> > If the buffer is evicted to system memory, not only the evicting
-> > GPU wher
-> > the buffer resided is affected, but it will also stall the GPU that
-> > is
-> > waiting on the buffer.
-> >=20
-> > It also makes sense for long running jobs not to be preempted by
-> > having
-> > its buffers evicted, so it will make sense to have the ability to
-> > pin
-> > from system memory too.
-> >=20
-> > This is dependant on patches by Dave Airlie, so it's not part of
-> > this
-> > series yet. But I'm planning on extending pinning to the memory
-> > cgroup
-> > controller in the future to handle this case.
-> >=20
-> > Implementation details:
-> >=20
-> > For each cgroup up until the root cgroup, the 'min' limit is
-> > checked
-> > against currently effectively pinned value. If the value will go
-> > above
-> > 'min', the pinning attempt is rejected.
->=20
-> Why do you want to reject pins in this case? What happens in desktop=20
-> usecases (e.g. PRIME buffer sharing)? AFAIU, you kind of need to be
-> able=20
-> to pin buffers and export them to other devices for that whole thing
-> to=20
-> work, right? If the user doesn't explicitly set a min value, wouldn't
-> the value being zero mean any pins will be rejected (and thus PRIME=20
-> would break)?
-
-That's really the point. If an unprivileged malicious process is
-allowed to pin arbitrary amounts of memory, thats a DOS vector.
-
-However drivers that allow unlimited pinning today need to take care
-when implementing restrictions to avoid regressions. Like perhaps
-adding this behind a config option.
-
-That said, IMO dma-buf clients should implement move_notify() whenever
-possible to provide an option to avoid pinning unless necessary.
-
-/Thomas
-
-
-
->=20
-> If your objective is to prevent pinned buffers from being evicted,=20
-> perhaps you could instead make TTM try to avoid evicting pinned
-> buffers=20
-> and prefer unpinned buffers as long as there are unpinned buffers to=20
-> evict? As long as the total amount of pinned memory stays below min,
-> no=20
-> pinned buffers should get evicted with that either.
-
-
->=20
-> Best,
-> Natalie
->=20
-> >=20
-> > Pinned memory is handled slightly different and affects calculating
-> > effective min/low values. Pinned memory is subtracted from both,
-> > and needs to be added afterwards when calculating.
-> >=20
-> > This is because increasing the amount of pinned memory, the amount
-> > of
-> > free min/low memory decreases for all cgroups that are part of the
-> > hierarchy.
-> >=20
-> > Maarten Lankhorst (3):
-> > =C2=A0=C2=A0 page_counter: Allow for pinning some amount of memory
-> > =C2=A0=C2=A0 cgroup/dmem: Implement pinning device memory
-> > =C2=A0=C2=A0 drm/xe: Add DRM_XE_GEM_CREATE_FLAG_PINNED flag and
-> > implementation
-> >=20
-> > =C2=A0 drivers/gpu/drm/xe/xe_bo.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 66 ++=
-+++++++++++++++++++-
-> > =C2=A0 drivers/gpu/drm/xe/xe_dma_buf.c | 10 +++-
-> > =C2=A0 include/linux/cgroup_dmem.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +
-> > =C2=A0 include/linux/page_counter.h=C2=A0=C2=A0=C2=A0 |=C2=A0 8 +++
-> > =C2=A0 include/uapi/drm/xe_drm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
-10 +++-
-> > =C2=A0 kernel/cgroup/dmem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 57 ++++++++++++++++++-
-> > =C2=A0 mm/page_counter.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 98
-> > ++++++++++++++++++++++++++++++---
-> > =C2=A0 7 files changed, 237 insertions(+), 14 deletions(-)
-> >=20
->=20
-
+Oh, I thought getter/test function means the same for you. I'll amend the t=
+ext.
 
