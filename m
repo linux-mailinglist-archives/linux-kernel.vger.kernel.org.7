@@ -1,199 +1,135 @@
-Return-Path: <linux-kernel+bounces-795206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73195B3EE37
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:00:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F65B3EE3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 369C33B78C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:00:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A69742C0DE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346B32638BF;
-	Mon,  1 Sep 2025 19:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CA8324B2E;
+	Mon,  1 Sep 2025 19:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5UYpFbK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYASmNv7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827AD175A5;
-	Mon,  1 Sep 2025 19:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B8F255F5C;
+	Mon,  1 Sep 2025 19:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756753231; cv=none; b=ZBOhyPDY//K2W20TM3bJ477/0DFi4LV565EEtgqON91/jWuTfqUMH0YdoCJpmmuQXXRWync2jV5Uyu8Uqz6mdhiqGgz3OdoZPTzj3njlWsNECNf2YNpGx3MEf1xMAc8PdBNePZzrCXLXFZ3LkM531liJNgQUn9Fd0PZt46pEZjo=
+	t=1756753251; cv=none; b=h/BYHUuMdu/1+hUjk2tvs+3pzXpfE8AgVF8YVeZLv8vrSIWGtnUnLvc+UiLpDAyClVrXBiYnGjafy9gtI/Y4ElVJ+qOFWxHwLgopnz0u6D+5JhkE5i+MKVVEvHHhNo8z2CHNBJnb+n46YTkQjMd2Q8fZubtZRku9tJT34ksG2YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756753231; c=relaxed/simple;
-	bh=LctdjUhGxf71qHtiYonh2qpbLAV3p/deNyRN07fjZos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=arWdbsNK/syukpR3/o/VS6VKnQDhbxQfS/lCrK0ZJJasfEm+K9okeJW5BC8FzaG/AlZHhBCTw6kDQLdRrrEW2+yfvJ74VyLmJRfiwzNpspTfrxZf31qOjj5brHs5WDLgMhgkfK5jEc/ZdfLG4RLHqyJJta6qOjZ9ZItRrWNQ+MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5UYpFbK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F547C4CEF1;
-	Mon,  1 Sep 2025 19:00:27 +0000 (UTC)
+	s=arc-20240116; t=1756753251; c=relaxed/simple;
+	bh=ZYcVa6pfew9PsKaI1xeXZkcLuBBn9KyqN+Fvtm6NigE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iFOOTYDnXgOC3966cGc2DkIhkfdJ+8LprM+XgCkbWk5GpumjL43k1smtJ7JehSbwvyhjvs/EKiz+C/5HPqY6G+7EnEDMvbCDYoY9WlWRBg30Qk6SaKmEMYwAkSNs0stfLT35qp1TZLe3L1RTCzhnLJwIXjY4Hzz7SwgKgGJmTAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYASmNv7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB1EC4CEFD;
+	Mon,  1 Sep 2025 19:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756753231;
-	bh=LctdjUhGxf71qHtiYonh2qpbLAV3p/deNyRN07fjZos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A5UYpFbKND00c/aB/57avZ/pTSSw0GM987HdW/KZ2QHrq/x1ScaszBRAv8e2eecuj
-	 92YwLjPpWuTC2KTeKExOJdKfpqs3xKc4hgudiRj+2VkGIA3H5azimMH/QkP7c6SH9N
-	 ET9LA7wRZpS2GdgvuTmMwq0/anCo/hC47WO9jDoCTVnm+9GQ+SSqYKIqKyVkkmROSh
-	 HSloiWdyvTS7Z3COVahZZsBCJd8tIGT758/GF32UWyVh+iKqsnUM7dRptcen7+zLuC
-	 lBWwtunR1SUg3aazWx4bRgzUtP4DV514EtIFf94KZyzGjjpkOpBldRsPoTEYu7L8Hn
-	 MUeHcsiA6MWjA==
-Date: Mon, 1 Sep 2025 20:00:25 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Aswath Govindraju <a-govindraju@ti.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
-	Haibo Chen <haibo.chen@nxp.com>, linux-can@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/6] dt-bindings: phy: ti,tcan104x-can: Document NXP
- TJA105X/1048
-Message-ID: <20250901-uproar-shrill-07d51ea21a29@spud>
-References: <20250901-can-v4-0-e42b5fe2cf9e@nxp.com>
- <20250901-can-v4-1-e42b5fe2cf9e@nxp.com>
- <20250901-diligent-dreaded-59b9ad5c3976@spud>
+	s=k20201202; t=1756753250;
+	bh=ZYcVa6pfew9PsKaI1xeXZkcLuBBn9KyqN+Fvtm6NigE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GYASmNv7BXhIajZZoRvb4roQdeLOHe6DZu39BcO1fk3XdoM5eh0VcfQtL0m3quuCc
+	 VfY4RDvrJWzYdoloiXZ/XMOyb4IB/7MMqZ3ghTJuyJZRW1PUgkkBbgY8P8JDOArlJq
+	 cXkUAIQvYhsH8rYA6x3c30QbChvUVyxG/UaEM3AIgw10wa8gAYZQ0yaXhuW019nYPq
+	 QZo68hY25IpTFJm1aTzpcT3Qlgk+Q6Li0ieGq05XQ4rps9rWq76W2uTFb/2Qgrh7rb
+	 g9ntoHeNuOJYgLM88vGuTC8GhWhQK0luo8wjjwGvatzvam+tBPCx3FDu8zAaztdpgb
+	 0yOsZCtsOz68A==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74526ca7a46so1594431a34.2;
+        Mon, 01 Sep 2025 12:00:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJowj0XZxUqRWTJdUfNeM3puIr6LUHU01MMotlg4y9+zSyx5byRhwwYkVo7twG43M1y6GZoz+3qHdPlAw=@vger.kernel.org, AJvYcCVOFva7j06wBRntkPIloSY6XSBaMB0Un11iIEWqUVva9RJl82Yu4Qz4B3jWTr31ijlc+A/XROI522A=@vger.kernel.org, AJvYcCWCUAWptoHsmgVcUI+ZqQ6vs7MW47UfJISdoZIVOmg+Om+roCV7TLJCbKfwUOBhp+j208Uy/0RCllDy@vger.kernel.org, AJvYcCWpKVhUjRh39OfgOoJdVGA3UOhl6vjj7h5kalO2Q8nrDWY7FcDWEq3JcdBVnqe2HQAIgc7ZlX2g7pZM@vger.kernel.org, AJvYcCXZRWh8KyF7fuN6waQwvuLqacb3XfoEYCyrPfvsRxkoXvjhtMT/K8DM9FjQFemkxvkwJlb+A5VKcuhuZNvb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5yb8uKr3+52nG1hhZH8qxRcrVMsjcQ2N3H6vFazznrilGlOEw
+	gszJQcSWLxdbHZobI/VqJg56yHDkv7iH/kZTj4p1G1YqWGF6FE5PSn1oXbFo4+ARwdN8CkCluUn
+	HcVsYgPkpVErTNqqIZmoCB+42jzVEtcc=
+X-Google-Smtp-Source: AGHT+IF5SaCmHwNGeJ545FabBGFRvWTGFT8zu6kM/v3+zLeQSnjYj3JgLDBA/Na6A5xsnHIoN5OKyg7BUGvdwPDyFD4=
+X-Received: by 2002:a05:6830:6aa3:b0:745:46d6:e73f with SMTP id
+ 46e09a7af769-74569d764bamr4473355a34.1.1756753249708; Mon, 01 Sep 2025
+ 12:00:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Fac7BrZqSni97b6k"
-Content-Disposition: inline
-In-Reply-To: <20250901-diligent-dreaded-59b9ad5c3976@spud>
-
-
---Fac7BrZqSni97b6k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250823200121.1320197-1-sumitg@nvidia.com> <20250823200121.1320197-2-sumitg@nvidia.com>
+ <CAJZ5v0jXq48petXAcf1prb5iuHbh3i8XREJBscs88xs5RY_j=A@mail.gmail.com> <694a85ad-8b55-42e9-91fe-06d40fe8facd@nvidia.com>
+In-Reply-To: <694a85ad-8b55-42e9-91fe-06d40fe8facd@nvidia.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Sep 2025 21:00:38 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ipt=zDDORjuHzuerfLryZO5NE1RpPfnADeWEqi6kyv6Q@mail.gmail.com>
+X-Gm-Features: Ac12FXyb-_bL-3aCu5Q9p5j1OqNhu9RwBJNUi80YwR1oSvxk_jkaXysXbT37dzA
+Message-ID: <CAJZ5v0ipt=zDDORjuHzuerfLryZO5NE1RpPfnADeWEqi6kyv6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] ACPI: CPPC: add perf control read API and clarify naming
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, viresh.kumar@linaro.org, lenb@kernel.org, 
+	robert.moore@intel.com, corbet@lwn.net, pierre.gondois@arm.com, 
+	zhenglifeng1@huawei.com, ray.huang@amd.com, gautham.shenoy@amd.com, 
+	mario.limonciello@amd.com, perry.yuan@amd.com, linux-pm@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com, 
+	bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 07:54:01PM +0100, Conor Dooley wrote:
-> On Mon, Sep 01, 2025 at 11:18:11AM +0800, Peng Fan wrote:
-> > The TJA105[1,7] is a high-speed CAN transceiver which is a pin-compatib=
-le
-> > alternative for TI TCAN1043 with sleep mode supported, and has a compat=
-ible
-> > programming model, therefore use ti,tcan1043 as fallback compatible.
-> >=20
-> > The TJA1048 is a dual high-speed CAN transceiver with sleep mode suppor=
-ted.
-> >=20
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  .../devicetree/bindings/phy/ti,tcan104x-can.yaml   | 30 ++++++++++++++=
-++++++--
-> >  1 file changed, 28 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml=
- b/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
-> > index 4a8c3829d85d3c4a4963750d03567c1c345beb91..f8e0c24856a2ba83b5c988b=
-246464f47e11a032f 100644
-> > --- a/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
-> > +++ b/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
-> > @@ -19,18 +19,25 @@ properties:
-> >            - enum:
-> >                - microchip,ata6561
-> >            - const: ti,tcan1042
-> > +      - items:
-> > +          - enum:
-> > +              - nxp,tja1051
-> > +              - nxp,tja1057
-> > +          - const: ti,tcan1043
-> >        - enum:
-> >            - ti,tcan1042
-> >            - ti,tcan1043
-> > +          - nxp,tja1048
-> >            - nxp,tjr1443
-> > =20
-> >    '#phy-cells':
-> > -    const: 0
-> > +    enum: [0, 1]
-> > =20
-> >    standby-gpios:
-> >      description:
-> >        gpio node to toggle standby signal on transceiver
-> > -    maxItems: 1
-> > +    minItems: 1
-> > +    maxItems: 2
->=20
-> You're adding a second standby gpio, which one is which?
-> I assume you mean that item 1 is stbn1 and item 2 is stbn 2 for tja1048.
-> Might be kinda obvious, but I think it should be mentioned.
->=20
-> tja105{1,7} don't have a standby gpio, but they do have a silent mode.
-> silent mode seems fundamentally different to standby, since the receiver
-> still works. Seems like that should be handled differently, no?
+On Mon, Sep 1, 2025 at 3:46=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wrot=
+e:
+>
+>
+> On 26/08/25 00:03, Rafael J. Wysocki wrote:
+> > External email: Use caution opening links or attachments
+> >
+> >
+> > On Sat, Aug 23, 2025 at 10:02=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com=
+> wrote:
+> >> Add cppc_get_perf_ctrls() to read performance control register values.
+> >> Rename existing APIs for clarity as:
+> >> - To distinguish between:
+> >>    - Feedback counters (fb_ctrs): Read-only performance monitoring dat=
+a.
+> >>    - Performance controls (perf_ctrls): Read-write config registers.
+> >> - cppc_set_epp_perf() updates both EPP and Autonomous Selection.
+> >>
+> >> API's renamed:
+> >> - cppc_set_perf() to cppc_set_perf_ctrls().
+> >> - cppc_get_perf_ctrs() to cppc_get_perf_fb_ctrs().
+> >> - cppc_get_perf_ctrs_sample() to cppc_get_perf_fb_ctrs_sample().
+> >> - cppc_set_epp_perf() to cppc_set_epp_and_autosel().
+> >> Remove redundant energy_perf field from 'struct cppc_perf_caps' since
+> >> the same information is available in 'struct cppc_perf_ctrls' which is
+> >> actively used.
+> >>
+> >> All existing callers are updated to maintain compatibility.
+> >
+> > First, this is too much in one patch IMV and second, I honestly don't
+> > see a reason for the renames above.
+> >
+> > This generally makes tracking the code changes history harder.
+> >
+> > Thanks!
+>
+> Did the renaming for clarity and better readability.
+> If we don't want to do that then i can drop the renaming and keep other
+> changes.
 
-The docs for standby mode for the tcan1043 don't match with the tja1051,
-"Standby mode is a low power mode where the driver and receiver are
-disabled," so does the fallback compatible even make sense? Seems like a
-combination of enable and standby gpios are used to put the tcan device
-into silent mode but the tja1051 has a pin for that alone and seemingly
-does not support standby at all?
+Please do.
 
->=20
-> > =20
-> >    enable-gpios:
-> >      description:
-> > @@ -53,6 +60,25 @@ required:
-> >    - compatible
-> >    - '#phy-cells'
-> > =20
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: nxp,tja1048
-> > +    then:
-> > +      properties:
-> > +        '#phy-cells':
-> > +          const: 1
-> > +        standby-gpios:
-> > +          minItems: 2
-> > +    else:
-> > +      properties:
-> > +        '#phy-cells':
-> > +          const: 0
-> > +        standby-gpios:
-> > +          maxItems: 1
-> > +
-> >  additionalProperties: false
-> > =20
-> >  examples:
-> >=20
-> > --=20
-> > 2.37.1
-> >=20
+> Also, split this patch into two as below:
+>          Patch1: Add cppc_get_perf() API.
+>
+>          Patch2:
+>            - Update both EPP and Autonomous Selection in
+> cppc_set_epp_perf().
+>            - Remove redundant energy_perf field from 'struct
+> cppc_perf_caps'.
 
+Sounds reasonable to me.
 
-
---Fac7BrZqSni97b6k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLXtSQAKCRB4tDGHoIJi
-0vFGAQCYNzumk6MUDIsHrTq+zb2rPK0wlmaEJB3AP3SpQVUxnAEAqIUZeoqA5+in
-UbteyD3yR0gqvOwaghcsU1k+0rcDpgs=
-=Zpms
------END PGP SIGNATURE-----
-
---Fac7BrZqSni97b6k--
+Thanks!
 
