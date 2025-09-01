@@ -1,137 +1,166 @@
-Return-Path: <linux-kernel+bounces-795354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D343B3F07D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:30:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A5CB3F07F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 23:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D2462C11B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:30:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40ABB7AB70E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D313E27B4E4;
-	Mon,  1 Sep 2025 21:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3976D278154;
+	Mon,  1 Sep 2025 21:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLTNODoY"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zvj1d+sA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A7E221577;
-	Mon,  1 Sep 2025 21:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAD2221577;
+	Mon,  1 Sep 2025 21:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756762231; cv=none; b=U+CoHj+vv5ujFFWpBfl+E+cg5pEGqjE2GN3HiHm4y4TG0Yeg6zPSM7EhH6UvRVsDF/S41w9bVSuuAEkUqEAMCJz9fEFf694owt9K0Kr2dT5UhHor2GFQP9WaLaNMq7VEXs3+1d+V8lbnG5mwOl5lSchS81Iuw5OTTaVg3HjEe/A=
+	t=1756762245; cv=none; b=ubf7EIp8PG3KsHTr1uutRJIECE0lb116AVVpSj3DAgoCdY5YwgYQo8ZZT2CNBt3X22FTum8uWp77pTQ/EAP+zGc73pWHcVCZ/wAu1ol6REcOWUPC7VzDX2S/Ia3klVF0oGPy3G3ScbSeFGLW1nuAyhcXQrLrUG8KogbemzPctVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756762231; c=relaxed/simple;
-	bh=dixjbpVuLrXLiVP7cOFBX3iJXj87gNGhR/B4QJGUIGw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eAgqSwuz09fpUPqTyp2L2tzDNFOMNVbZ5Chp2jbCeQHBehjnOygE5aLfQT0OyTFIljiwtHFxLNXZmgwbDc9BGWRWY/oxGT7s67Hp+5PVUuzn5dCglFyWBMKWrltv0MYeFM+3SmxaTZ/TQSc+3AEnTuph0ypQ8rO3mFt6wOxtbWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SLTNODoY; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so3861882b3a.2;
-        Mon, 01 Sep 2025 14:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756762229; x=1757367029; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Buk597jvrgQ2xs9epW7IszzJTNW3HheS0YxncjEWE5o=;
-        b=SLTNODoY1i9hqssKVsGn7dUoKCJwrO7nRGFJQv/d1SWIEqk0ddGMXEYR1wYxY8ZfDn
-         vp6W5lKvbgVfmMQ7p77B0GJb0oWPS6nNrJI4nYytcG6XLQ3lUeC6B3b0YfUAWNPCaHmY
-         /uyFfs0gogN5UfeWDZU2nzdXnPxEU6JsMxP5fL+EbJwfWtT6MkSmTwGyqbq62MtsnZuW
-         UJzYMaj50eLAuJZY7cvGNXtdV42ssjCpa7QIOhKolQbwxBpi0Dqd/xzQU2TIJszpGeoY
-         Kofb9XAzBme9VYe3cvJ0NO6F0r+boagH1UOJUHYzXln55FcxtRDp0To+KffaXQOEJm6j
-         EZUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756762229; x=1757367029;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Buk597jvrgQ2xs9epW7IszzJTNW3HheS0YxncjEWE5o=;
-        b=jg8ghBjndLS6VXJqenijDvkCC4zovS0+xfRenY0kypHOA6+zvD9I63WgF9NfUW7cAD
-         ib3HzRPV90SlsxA8grqSvpYPClTy0NRni51DF5eS9yD//cJGMCZr91T1uHMEjh4nAjuE
-         xbo7l9XtEXeKhIiNKRSKkwvtND3IWq3C87OrHQ1JBklpFKxE6ebsHOxOSckXbB8ipGc0
-         eyOgZMeowF+O8EFmBllHaZSvSn1XkimNWWXnG4gAJj0utdipL4hc9Yv+4X+cTBe3nAv/
-         jM2veKpzhdTHIVHnybvZzA4k1SfOsilAasPUNuYakN8U5juTUIaozD5lplD/pDqPDPGZ
-         GtLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAP31X3og8RLIGCLIfUMNcgFw1zI8oferSyckXEQ2UBz2vCxUyNfsonwakuq2P/el8mVjaOgeQ9+MvMaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLpO0/K+nvo1MB8Td/WpA1lpIWqWqAeCm3jGyqFBAejC1DRU/x
-	IZ/6knVoi6/StJL4ESWHsndCSn4f4rxV6u/+HcTd61el99uJ1XLWu5aRyzxqiQ==
-X-Gm-Gg: ASbGncsRkHn7cs1Z4WIrw1dpCWcKm8bSP7XMErBINMUa1MW/QB1fmeS3TeXQMUhjKbc
-	OIafUXgpL1Tw/0grf86wWsaBNNiAiX0EfBL6X6wTxB5Lq+eMdb1Bgtv+j6IEGRTrtKWnyo92LO1
-	uatk713WBkaHuiAA5AD2d8fQaOZjD++ZRgcDViSmCYfQEaoDjoJEnFQc6KD4xrf12CELwQLp0Q+
-	rtC85VlFfauypq5Hxui8y8M+XR+sxGfgX3/uxmKVwcLUqY2LOJVHCyLaBPUhIBVk/eny/OdxY/B
-	AE+DDIKT3ay+EK5xeANjKvgo+HTjxZx82t+HjLOs6dW6sqx4M9WbVIAeryy4tX5BjNzpuS6qPhp
-	X9kt+H6DwE1WnGhe7bh5yAhr+IZwGOpfCMYRX/fxNLy8nE/WzuK7t3Io+AAvk3KHggq6FhpmagD
-	ZvG3i9nA==
-X-Google-Smtp-Source: AGHT+IFN3sRBrYv7sa0/dX4BXu8HUXYGyswj8+xHvnww0Gcrn6J3aKcCx0FqnyXWEbmGXU3N6SSy4g==
-X-Received: by 2002:a05:6a00:8d4:b0:76e:99fc:db8d with SMTP id d2e1a72fcca58-7723e1eee4amr9456360b3a.3.1756762228931;
-        Mon, 01 Sep 2025 14:30:28 -0700 (PDT)
-Received: from archlinux ([2601:644:8200:acc7::9ec])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a5014desm11594055b3a.92.2025.09.01.14.30.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 14:30:28 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Sunil Goutham <sgoutham@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	David Daney <david.daney@cavium.com>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/CAVIUM THUNDER NETWORK DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] net: thunder_bgx: add a missing of_node_put
-Date: Mon,  1 Sep 2025 14:30:18 -0700
-Message-ID: <20250901213018.47392-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756762245; c=relaxed/simple;
+	bh=PRaBApLQy8iLSplWAmAp1oVZUt+rfypBd7IUK5L9VhM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=C7o+NPAw2HuCXD6kXJMnCCQfiOEkGZnLY1N/vU6jHt6ZZjsCBPr7UK7g73KHRq95jyXWhjpNYpFSxZ5LaaVFlBYJSdjPEE0Bg5jwW250Yl1gDQMb5TENhRrezsVdbp2MWT5p4LhMrBDyZjfOFZB9T2gRa7G4z7XKWEvTz9L2KTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zvj1d+sA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D0C5C4CEF0;
+	Mon,  1 Sep 2025 21:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756762245;
+	bh=PRaBApLQy8iLSplWAmAp1oVZUt+rfypBd7IUK5L9VhM=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=Zvj1d+sAt2W4YW5Xl57DOgpg8QBsjStyQQfzpfLYcCzxD+9csXNUcimZor2V6P0KW
+	 yM7Q/6yDsMDtuJmgSTJV19AsOcujeKUWGI/it9ftfQj8vSW3TKiZb1RDoFbpwdD0ZN
+	 kp10HtU10FCbTS9unLdXvnkrwd/4nEpUrU729vmeKXKkRy7+fRcF0clKThmLAY3TrH
+	 mzqgxlSwjUMM07bnQ9w2VStWZehcdvgCP//nc+136sODLycBb2IR7hK2+LkqVJjWoV
+	 +9bITXEKehW6YCjfUbxR2ZIkBMmqwUMp3j+iZA6hp3waEqxGcCyCMhoWRLs/ffQ9vs
+	 Zqmdg+VKIThuA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE3ACA1002;
+	Mon,  1 Sep 2025 21:30:45 +0000 (UTC)
+From: Anthony Brandon via B4 Relay <devnull+anthony.amarulasolutions.com@kernel.org>
+Date: Mon, 01 Sep 2025 23:30:32 +0200
+Subject: [PATCH v2] dmaengine: xilinx: xdma: Fix regmap max_register
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com>
+X-B4-Tracking: v=1; b=H4sIAHcQtmgC/3WOQQqDMBBFryKz7pSMNaF21XsUF6NONWCMJCoW8
+ e5N3Xf5HvzH3yFKsBLhke0QZLXR+jFBfsmg6XnsBG2bGHKVa1Uqwq11jI43DNIhmaJsTKHLm75
+ DmkxB3nY7c68qcW/j7MPnrK/0s39CKyFhbVgV2pC0NT3ZcVgGjn5Y5vQpXhvvoDqO4wvf58KTs
+ wAAAA==
+X-Change-ID: 20250901-xdma-max-reg-1649c6459358
+To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
+ Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
+ Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Anthony Brandon <anthony@amarulasolutions.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2662;
+ i=anthony@amarulasolutions.com; h=from:subject:message-id;
+ bh=EBsbI+2mqsOLjYpUAS5JaxRB+GFopFCZKJlHq1D/08o=;
+ b=owGbwMvMwCUWIi5b4HjluATjabUkhoxtAs3zz7lceM09Jf/+SkHWJQb5fB0zROt2ty1wUwr0v
+ 6V96varjlIWBjEuBlkxRZZyHXleD+W6cqWZT4xh5rAygQxh4OIUgInkH2X4nydzSpZLnumGyFw/
+ w1l2MyfMWdK0edbmfXkNUnyOpW/0eBn+x/evY7bwklfpea+6/sTppuM1CQ53NvW+7U/VfvD5H1M
+ ZCwA=
+X-Developer-Key: i=anthony@amarulasolutions.com; a=openpgp;
+ fpr=772C1F0D48237E772299E43354171D7041D4C718
+X-Endpoint-Received: by B4 Relay for anthony@amarulasolutions.com/default
+ with auth_id=505
+X-Original-From: Anthony Brandon <anthony@amarulasolutions.com>
+Reply-To: anthony@amarulasolutions.com
 
-phy_np needs to get freed, just like the other child nodes.
+From: Anthony Brandon <anthony@amarulasolutions.com>
 
-Fixes: 5fc7cf179449 ("net: thunderx: Cleanup PHY probing code.")
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+The max_register field is assigned the size of the register memory
+region instead of the offset of the last register.
+The result is that reading from the regmap via debugfs can cause
+a segmentation fault:
+
+tail /sys/kernel/debug/regmap/xdma.1.auto/registers
+Unable to handle kernel paging request at virtual address ffff800082f70000
+Mem abort info:
+  ESR = 0x0000000096000007
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x07: level 3 translation fault
+[...]
+Call trace:
+ regmap_mmio_read32le+0x10/0x30
+ _regmap_bus_reg_read+0x74/0xc0
+ _regmap_read+0x68/0x198
+ regmap_read+0x54/0x88
+ regmap_read_debugfs+0x140/0x380
+ regmap_map_read_file+0x30/0x48
+ full_proxy_read+0x68/0xc8
+ vfs_read+0xcc/0x310
+ ksys_read+0x7c/0x120
+ __arm64_sys_read+0x24/0x40
+ invoke_syscall.constprop.0+0x64/0x108
+ do_el0_svc+0xb0/0xd8
+ el0_svc+0x38/0x130
+ el0t_64_sync_handler+0x120/0x138
+ el0t_64_sync+0x194/0x198
+Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
+---[ end trace 0000000000000000 ]---
+note: tail[1217] exited with irqs disabled
+note: tail[1217] exited with preempt_count 1
+Segmentation fault
+
+Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
 ---
- .../net/ethernet/cavium/thunder/thunder_bgx.c  | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+Changes in v2:
+- Define new constant XDMA_MAX_REG_OFFSET and use that.
+- Link to v1: https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
+---
+ drivers/dma/xilinx/xdma-regs.h | 1 +
+ drivers/dma/xilinx/xdma.c      | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-index 90c718af06c1..9efb60842ad1 100644
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-@@ -1493,13 +1493,17 @@ static int bgx_init_of_phy(struct bgx *bgx)
- 		 * this cortina phy, for which there is no driver
- 		 * support, ignore it.
- 		 */
--		if (phy_np &&
--		    !of_device_is_compatible(phy_np, "cortina,cs4223-slice")) {
--			/* Wait until the phy drivers are available */
--			pd = of_phy_find_device(phy_np);
--			if (!pd)
--				goto defer;
--			bgx->lmac[lmac].phydev = pd;
-+		if (phy_np) {
-+			if (!of_device_is_compatible(phy_np, "cortina,cs4223-slice")) {
-+				/* Wait until the phy drivers are available */
-+				pd = of_phy_find_device(phy_np);
-+				if (!pd) {
-+					of_node_put(phy_np);
-+					goto defer;
-+				}
-+				bgx->lmac[lmac].phydev = pd;
-+			}
-+			of_node_put(phy_np);
- 		}
+diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
+index 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 100644
+--- a/drivers/dma/xilinx/xdma-regs.h
++++ b/drivers/dma/xilinx/xdma-regs.h
+@@ -9,6 +9,7 @@
  
- 		lmac++;
+ /* The length of register space exposed to host */
+ #define XDMA_REG_SPACE_LEN	65536
++#define XDMA_MAX_REG_OFFSET	(XDMA_REG_SPACE_LEN - 4)
+ 
+ /*
+  * maximum number of DMA channels for each direction:
+diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+index 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 100644
+--- a/drivers/dma/xilinx/xdma.c
++++ b/drivers/dma/xilinx/xdma.c
+@@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-	.max_register = XDMA_REG_SPACE_LEN,
++	.max_register = XDMA_MAX_REG_OFFSET,
+ };
+ 
+ /**
+
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250901-xdma-max-reg-1649c6459358
+
+Best regards,
 -- 
-2.51.0
+Anthony Brandon <anthony@amarulasolutions.com>
+
 
 
