@@ -1,101 +1,204 @@
-Return-Path: <linux-kernel+bounces-794227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DE3B3DE9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34EA6B3DE90
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA0AF3A2E4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6593BB1F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA96F248F66;
-	Mon,  1 Sep 2025 09:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC19155C82;
+	Mon,  1 Sep 2025 09:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="NmRDpvo/"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrQ86so5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6484F30AAD3
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238712FB628;
+	Mon,  1 Sep 2025 09:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756719167; cv=none; b=EqT77qSl9rY5081ulpfZ39Pqk8PEHhz1APnemVFaHRCAaAnj/zGbp+YPxcDxELVYhm2eDqHfn2Fr/dwJuorRQrH9deXydDMIudSAHHTwCOdjnk47jJzvyzOAyTMRRjDze4ClTR9eIByh3/8mKhtgth1Jg7H3zhz4GXCkk4VkP94=
+	t=1756718911; cv=none; b=EIEwQpykWvRBf7ChkH8SZ1uv3T5+4KdGtqY+3QRUsoIV1stMBoAa9exjTiwt5lk0W+zAGur44C4SNMDW7JM9td6KrQlPysPj6MSzAqBo4McCzvFN7c93otFkjzLnoeIBCjufzj2DoZMtTnHt/soU4kkORKCXVaJoLLSudkI1gNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756719167; c=relaxed/simple;
-	bh=VV4eXZuKo8t6qNdv2fkZtFqu84pgWpX3hYQh/oEEeRQ=;
+	s=arc-20240116; t=1756718911; c=relaxed/simple;
+	bh=shaElPSOObJfmkZY5LcTmt3dvO0ZWW/U6309J45jo38=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T2MfIr/fmDfWKQXEXWiAFmWjwCdmUoh09V5FIKhytum0VLFIilPYslwqdk7nJLUJkmTiYfySIngp8k6WE7vtH/VpoS2Y7i7w25KKHZl7SG4ZMFc21QH/g04klkQkH2b6kmQz7R6xwrsXDLLtWuwIN/JYBGaYU24GnECi+Xt2TA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=NmRDpvo/; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cFk6J3zggz9t94;
-	Mon,  1 Sep 2025 11:27:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756718824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vlucI1qXn/i28lahrLwdrBh1MDGe5BAq5K43ycGpETQ=;
-	b=NmRDpvo/0m7bAPfBrB74HPBPJq08mK4ak2E2irt06CUbo72lHvLLJ4hLu5/eQlr8nfKvsv
-	/SVbyH8qYm7Se58M8V/WEzqNd333tgpFwaT9uXlraRllKvYTwdvhK0sOu/qvvcgkSYIh19
-	uFPsMl8RjWXt+OespQuYtNH/8wGqJgiX5VezFY5UDk2FYPLDyCKfHhJo1ims2D3gxAmTrM
-	ZLqdr/pQfHoSWSK3UBLln2E2/GWGpr5lytjrdXF1e/dO08sXZkWdNDhdnqJZ5xXQMq7n0P
-	wYsy3BaxsFyXXq5ANj1ft/xY51u0iQ57/ql8cKWJoiA1uKwDRdfJVuXGP4CEXA==
-Message-ID: <51ae551b-6708-4fcd-84f9-fc1400f02427@mailbox.org>
-Date: Mon, 1 Sep 2025 11:27:01 +0200
+	 In-Reply-To:Content-Type; b=bY05yh+d0jq3lkJc+FjC/9mubtO0sEpNIQpfj9eTrDCQDmz+ZGU5jPH2os2fkF+qcLW8wx3hxkBPcaM3/PpVToAhqtIjXUSOzmq1Ilhvc15l46Ia8j5EibhtAIkSqjGrAHWoUmS0B1+DPOCoIE+M9gKfFxB6XCZ6Mji1QGm/AwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrQ86so5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83F2C4CEF0;
+	Mon,  1 Sep 2025 09:28:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756718910;
+	bh=shaElPSOObJfmkZY5LcTmt3dvO0ZWW/U6309J45jo38=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DrQ86so5j2ATBrGJSrkZA1SwnOTQVXVGj0BfVcU29yQ7YLX6a/D/utPuco4g1UCbr
+	 qQdlP1U40hLWhipNtw9Vi1ncwBPsLcFqDCj9jOFw/orQTZBcDfSV06hbaci1d87WB+
+	 pG2N0ZlrXuNdqYjpC6B8eLSgbZD2SwMPLRdbNxAFalRawBRXpTIlH+abGRiRCm7Bn9
+	 cPQz7tx4829tpuYp0tz0YEW+ht80uFYUFYB7pHUbbbtBIP5Q0VBmGwFR4KR5gWUbCI
+	 /tg0gMy60kTEbc7fVgCKjBD8ick3A6xKmmAFGbqLqhstrsm/9rjlIBd1554mIoU3QU
+	 BK3zkVDcvrXvg==
+Message-ID: <aec3629c-27a0-49d9-9fcf-5922b0f9035f@kernel.org>
+Date: Mon, 1 Sep 2025 11:28:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: evergreen_packet3_check:... radeon 0000:1d:00.0: vbo resource
- seems too big for the bo
-To: Borislav Petkov <bp@alien8.de>, Alex Deucher <alexdeucher@gmail.com>
-Cc: amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250829171655.GBaLHgh3VOvuM1UfJg@fat_crate.local>
- <CADnq5_Oqonrth+5T-83dnFBZ67GvykkPt-9aUepJd+fUMwnupw@mail.gmail.com>
- <20250829194044.GCaLICPKJcGJRYdSfO@fat_crate.local>
- <20250829204840.GEaLISKGTwuScnDF8Y@fat_crate.local>
- <CADnq5_MbpYmC2PSyOr0gQk7F8mVz0-LG3dZtUZS2HhV8LTgDww@mail.gmail.com>
- <20250830174810.GAaLM5WkiFc2BtQ6kW@fat_crate.local>
-From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Content-Language: en-CA
-In-Reply-To: <20250830174810.GAaLM5WkiFc2BtQ6kW@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s EC
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
+ <20250831-thinkpad-t14s-ec-v1-1-6e06a07afe0f@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250831-thinkpad-t14s-ec-v1-1-6e06a07afe0f@collabora.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: fbb9b5b97304bf83e9d
-X-MBO-RS-META: p8bwh9jm4mqhjxsrb7dwcebcgr53kora
+Content-Transfer-Encoding: 7bit
 
-On 30.08.25 19:48, Borislav Petkov wrote:
+On 31/08/2025 23:28, Sebastian Reichel wrote:
+> Add binding for the EC found in the Thinkpad T14s Gen6 Snapdragon,
+> which is based on the Qualcomm X1 Elite. Some of the system LEDs
+> and extra keys are only accessible via the EC.
 > 
-> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c b/drivers/gpu/drm/radeon/evergreen_cs.c
-> index a46613283393..6285ff1b1bff 100644
-> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
-> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
-> @@ -2418,7 +2418,7 @@ static int evergreen_packet3_check(struct radeon_cs_parser *p,
->  				size = radeon_get_ib_value(p, idx+1+(i*8)+1);
->  				if (p->rdev && (size + offset) > radeon_bo_size(reloc->robj)) {
->  					/* force size to size of the buffer */
-> -					dev_warn_ratelimited(p->dev, "vbo resource seems too big for the bo\n");
-> +					dev_warn_once(p->dev, "vbo resource seems too big for the bo\n");
->  					ib[idx+1+(i*8)+1] = radeon_bo_size(reloc->robj) - offset;
->  				}
->  
+> Signed-off-by: Sebastian Reichel <sre@kernel.org>
+> ---
+>  .../bindings/platform/lenovo,thinkpad-t14s-ec.yaml | 49 ++++++++++++++++++++++
 
-Like all scenarios which can be triggered by user space, this should rather use some kind of debug output API which doesn't hit dmesg by default (can be a non-once variant instead, that's more useful for user-space developers).
+Please place it in embedded-controller. I moved there all ECs.
+
+>  1 file changed, 49 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml b/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..bab20df2d9ede9a3cb0359944b26b3d18ff7d9b8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/platform/lenovo,thinkpad-t14s-ec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Lenovo Thinkpad T14s Embedded Controller.
+
+Drop full stop, titles never have them.
+
+> +
+> +maintainers:
+> +  - Sebastian Reichel <sre@kernel.org>
+> +
+> +description:
+> +  The Qualcomm Snapdragon-based Lenovo Thinkpad T14s has an Embedded Controller
+> +  (EC) which handles things such as keyboard backlight, LEDs or non-standard keys.
+
+Please wrap at 80.
+
+> +  This binding describes the interface, on an I2C bus, to this EC.
+
+Drop, or just describe the hardware, not binding.
+
+> +
+> +properties:
+> +  compatible:
+> +    const: lenovo,thinkpad-t14s-ec
+> +
+> +  reg:
+> +    const: 0x28
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |+
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c1 {
+
+i2c
+
+> +        clock-frequency = <400000>;
+
+Drop
+
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        embedded-controller@28 {
+> +            compatible = "lenovo,thinkpad-t14s-ec";
+> +            reg = <0x28>;
+> +            interrupts-extended = <&tlmm 66 IRQ_TYPE_LEVEL_LOW>;
+> +        };
+> +    };
+> +...
+> 
 
 
--- 
-Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
-https://redhat.com             \               Libre software enthusiast
+Best regards,
+Krzysztof
 
