@@ -1,125 +1,192 @@
-Return-Path: <linux-kernel+bounces-795328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A482B3F01E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:54:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F6CB3F021
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 22:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3F01A873E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:54:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 927587AF284
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D6E27281C;
-	Mon,  1 Sep 2025 20:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0233274B39;
+	Mon,  1 Sep 2025 20:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cax/6wFl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ICQ0X7e5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD48426F47D;
-	Mon,  1 Sep 2025 20:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6160B1E868;
+	Mon,  1 Sep 2025 20:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756760021; cv=none; b=cqgelM2R5hZA3eRHmT6uGsL93bOC5dGZMNoNb5GoEYe1RZFnzFbWHcxorVl3zNyqoajD/eo0VjhMz10PDIReDLya+gG4ZEQtmbl2+j7tAOcvg9yv5zOItkwTYFmpT1wn29y/nN7ld0e9ys/Ui+DQ5Jpgjnqq4Cjk46Aq/FpEbA8=
+	t=1756760147; cv=none; b=L1F/CuDDtZBFsi92LCHZEAPKfwRDeSuV2XYzsAJM59vRTqTtqnKFPyfqnjlevjeYpQOnzyjSd8ZMaLDricA03TG6ONzEYlygijUqrkJZjpdfe39QBc35AWhnKzY11+ITK7cNVc4Qkumt+Fae48TYEJWVsd6zdE4A92XtuZsXn34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756760021; c=relaxed/simple;
-	bh=EmEPDFeBBJxotEJAdRweNgxFgd00ZCenQukoIPB92JE=;
+	s=arc-20240116; t=1756760147; c=relaxed/simple;
+	bh=rt3zG8i3vlYwmKYtzB8OW4yTeNsqXFE1dxWxwz6rHQE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T30Qjh5dV/jB7nwXhIEIf8nULZTv0jY5wiUj55ZYjSQmCXLGObZliImYoIhnrLlqDv4VPNuPmmEEfdH40x1ULO5uApTAgcNzZdcFjZLHnluvwFyVjSeN1PGfrQELLhsmpT/arbYMvj0VM0qZXJUL25M1zyyY3qs9U8A9a08+Fso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cax/6wFl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8BD1C4CEF0;
-	Mon,  1 Sep 2025 20:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756760021;
-	bh=EmEPDFeBBJxotEJAdRweNgxFgd00ZCenQukoIPB92JE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cax/6wFl529KhgAtAeHnm/zGOt1M5B4Q5BqFpnj3fSmO5hLNcDbTPz8cBvcYAn1Je
-	 2uWy3w6ZLKjjkxqi4U6cM/tSmmOPw6V40BxCcB126yzz4m1KNY0uSPtvFU53FKcaXm
-	 O6vgKrRWpqExHgEefovwHz7RX/tfE/YiDzXPlANfSj95b/zr8fumVQ9l7JK4BpPzvo
-	 0tIA8oBykMQnbDP3flII/mK0bBNFg8voQT1sI0QqNXe9r6Sv0dBCOst9sbbbsDXfUX
-	 2RXwWZWt5Gi/6ucV+OuSONPU1oX/ZUzZh41bx31FaMqc4YIP+xGk7VP09AwYjSrbvC
-	 OzqhBe2kcR9NQ==
-Date: Mon, 1 Sep 2025 13:53:27 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Matt Coster <Matt.Coster@imgtec.com>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Frank Binns <Frank.Binns@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v13 3/4] riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU
- node
-Message-ID: <aLYHx6NgfLovbBAG@gen8>
-References: <20250822-apr_14_for_sending-v13-0-af656f7cc6c3@samsung.com>
- <CGME20250821222023eucas1p1805feda41e485de76c2981beb8b9102d@eucas1p1.samsung.com>
- <20250822-apr_14_for_sending-v13-3-af656f7cc6c3@samsung.com>
- <aKjWiU4fQw3k77GR@x1>
- <aK-BwY8c-OR_WqNk@thelio>
- <aLDQjq9U_mDvMTJo@gen8>
- <a329ff82-ca79-41ac-b61e-e843103f55a6@imgtec.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqgIbUBwdcJe/6kQn+m/KfkbNKpcHqd0JeqJbVznnAxE/DdLj3qzXbIInNXstEIu3L7vM+qRnhepZZ6GNt6JchcJBHtV8afBVS8VxlPL7LXnYj/dKBJPWURjqiueF5BJ+KHQv6s19hwRbTNRk0/eByf8QEKij78hKHRXR4fkNLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ICQ0X7e5; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756760146; x=1788296146;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=rt3zG8i3vlYwmKYtzB8OW4yTeNsqXFE1dxWxwz6rHQE=;
+  b=ICQ0X7e5XDaUyflU7EXX/1ZJZicQIlD6HTlL2WgtgpjkTNoxOPcidhON
+   7Wo9NJbqzkRSW4I8jO73jusqvUEOzV9dnE0qhzYPxLqVtzPR5FQKD7Rrj
+   yOOZrDvbMzvqWvV40DNSj72SaR80HWVX51TiEllGiu4dRDP7Jq1j4rGkD
+   AUquIB2BSdHqWuiCQOFq8v694CjaDW6dNmVMnE4Om9qnQGszaKhplGiYx
+   SXSwvMDNd/lJMtRU0bWot4z2kBWiIdsmNa7wIAatY9UvEBLV2VCzc7Kl0
+   6aW9eUUaaUGJ9GMsDB63QoU21ukXu3FNvCN5sAx/4WixrRVG3mfFWX9Tw
+   Q==;
+X-CSE-ConnectionGUID: abJ8kfCJTm+7Y9wuR4tkFQ==
+X-CSE-MsgGUID: UmdcaWCETKyTGdazgpHImg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="76464538"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="76464538"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 13:55:44 -0700
+X-CSE-ConnectionGUID: S/zzZFtGR5ug7vVsPVzt6g==
+X-CSE-MsgGUID: 8a59BmLNShWQAAbVCw5dVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="170647873"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.254])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 13:55:41 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id B5D7A11F739;
+	Mon, 01 Sep 2025 23:55:37 +0300 (EEST)
+Date: Mon, 1 Sep 2025 23:55:37 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v7 07/10] media: i2c: ov9282: add strobe_duration v4l2
+ control
+Message-ID: <aLYISb07ziGDmFGS@kekkonen.localdomain>
+References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
+ <20250901-ov9282-flash-strobe-v7-7-d58d5a694afc@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gSZ+C/ozphYAjkpf"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <a329ff82-ca79-41ac-b61e-e843103f55a6@imgtec.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250901-ov9282-flash-strobe-v7-7-d58d5a694afc@linux.dev>
 
+Hi Richard,
 
---gSZ+C/ozphYAjkpf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 01, 2025 at 05:05:12PM +0200, Richard Leitner wrote:
+> Add V4L2_CID_FLASH_DURATION support using the "strobe_frame_span"
+> feature of the sensor. This is implemented by transforming the given µs
+> value by an interpolated formula to a "span step width" value and
+> writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
+> PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
+> 
+> The maximum control value is set to the period of the current default
+> framerate.
+> 
+> All register values are based on the OV9281 datasheet v1.53 (jan 2019)
+> and tested using an ov9281 VisionComponents module.
+> 
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  drivers/media/i2c/ov9282.c | 31 ++++++++++++++++++++++++++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> index ff0f69f0dc3a2d0518806b9ea65c1b520b5c55fb..c405e3411daf37cf98d5af3535702f8321394af5 100644
+> --- a/drivers/media/i2c/ov9282.c
+> +++ b/drivers/media/i2c/ov9282.c
+> @@ -97,6 +97,10 @@
+>  #define OV9282_REG_MIPI_CTRL00	0x4800
+>  #define OV9282_GATED_CLOCK	BIT(5)
+>  
+> +/* Flash/Strobe control registers */
+> +#define OV9282_REG_FLASH_DURATION	0x3925
+> +#define OV9282_FLASH_DURATION_DEFAULT	0x0000001a
+> +
+>  /* Input clock rate */
+>  #define OV9282_INCLK_RATE	24000000
+>  
+> @@ -687,6 +691,25 @@ static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool en
+>  				current_val);
+>  }
+>  
+> +static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
+> +{
+> +	/*
+> +	 * Calculate "strobe_frame_span" increments from a given value (µs).
+> +	 * This is quite tricky as "The step width of shift and span is
+> +	 * programmable under system clock domain.", but it's not documented
+> +	 * how to program this step width (at least in the datasheet available
+> +	 * to the author at time of writing).
+> +	 * The formula below is interpolated from different modes/framerates
+> +	 * and should work quite well for most settings.
+> +	 */
+> +	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
+> +
+> +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
+> +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
+> +	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
+> +	return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
 
-On Mon, Sep 01, 2025 at 11:16:18AM +0000, Matt Coster wrote:
-> Hi Drew,
->=20
-> Apologies for the delay, I was on holiday last week.
->=20
-> I've just applied the non-dts patches to drm-misc-next [1], would you
-> mind re-adding the dts patch to thead-dt-for-next?
+The bitwise and operation is redundant.
 
-Thanks for the update.
+Could you do this in a single write?
 
-I've now pushed the dts patch back to thead-dt-for-next:
+Also error handling is (largely) missing.
 
-[3/4] riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU node
-      commit: 5052d5cf1359e9057ec311788c12997406fdb2fc
+> +}
+> +
+>  /**
+>   * ov9282_set_ctrl() - Set subdevice control
+>   * @ctrl: pointer to v4l2_ctrl structure
+> @@ -756,6 +779,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+>  	case V4L2_CID_FLASH_HW_STROBE_SIGNAL:
+>  		ret = ov9282_set_ctrl_flash_hw_strobe_signal(ov9282, ctrl->val);
+>  		break;
+> +	case V4L2_CID_FLASH_DURATION:
+> +		ret = ov9282_set_ctrl_flash_duration(ov9282, ctrl->val);
+> +		break;
+>  	default:
+>  		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+>  		ret = -EINVAL;
+> @@ -1346,7 +1372,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+>  	u32 lpfr;
+>  	int ret;
+>  
+> -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
+> +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 12);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1414,6 +1440,9 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+>  	/* Flash/Strobe controls */
+>  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
+>  
+> +	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> +			  0, 13900, 1, 8);
+> +
+>  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+>  	if (!ret) {
+>  		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+> 
 
--Drew
+-- 
+Regards,
 
---gSZ+C/ozphYAjkpf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSy8G7QpEpV9aCf6Lbb7CzD2SixDAUCaLYHnQAKCRDb7CzD2Six
-DFx1AQDhO4oxK/8VUlhe2hYNiss5b+vRMU1sBAHKoo06bhapNQEAj2PyvDIqT8IF
-nKIS+EVxulnWrJ7yeHXsijpV3oST8wM=
-=NHPw
------END PGP SIGNATURE-----
-
---gSZ+C/ozphYAjkpf--
+Sakari Ailus
 
