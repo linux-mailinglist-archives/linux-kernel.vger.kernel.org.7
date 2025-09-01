@@ -1,133 +1,243 @@
-Return-Path: <linux-kernel+bounces-793666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F231EB3D693
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:15:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50CB1B3D697
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 891133B9B08
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 092FF176D00
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 02:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C2E54758;
-	Mon,  1 Sep 2025 02:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mX//IuTx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7AC176AC8;
+	Mon,  1 Sep 2025 02:16:45 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97361323E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 02:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2DE323E;
+	Mon,  1 Sep 2025 02:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756692928; cv=none; b=RdCMtOWWeu33Fb7H+a1fVK35ANI6SLthbvaST++VdygZsgkh7/LCKQYcuYUlkmYbeWyJ3SFBmHmzhL6Y13bFq+mspXjKaN2schzLIsH9Iv3gHyRaVmn1GLIpzDUgu6aUVZSqaev527yWcFGaZITzuNBnQa0OPAlHjfZXp4EP4UA=
+	t=1756693004; cv=none; b=dUwhaRkwTcmn2ItTsxrqKGTmKHKGWUlWRduB1sD6O2KMPOAxZ1WpUbCu0n3zE0GZXOqRy6HZCYFDSNgIGsdx5VozpTrxtv+HhqWQYTFaITrPRA6OIHnCnhCU9+PZ7eJn9mOY3gOxn3I87hfjWzaYbahObKFtb9IfSK2KASG4FN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756692928; c=relaxed/simple;
-	bh=XO+FH4L46snPbiIleHTk7JE9h89KztDGTl+m6r5W5nw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iTmN814g5XJtBFr56qgDy/NsnbgvJq9lOK6hq9BYkC+xvvkihmHucre4xQJ/uERu3bbNzk4RMSYeD9G+oAjF4wiKHXUpq8FDExnIbhIJhcZwrQydmNIgArmwQs0nx/f+ISz5JZ+ReDRhhDHan6SfCYnXh3jZGTH9dxKxdcpGYqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mX//IuTx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 653D8C4CEED;
-	Mon,  1 Sep 2025 02:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756692927;
-	bh=XO+FH4L46snPbiIleHTk7JE9h89KztDGTl+m6r5W5nw=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=mX//IuTxF22YSaGeKcAgIaJaBlL5eM8DglNPukYlc4M5IYozCEtLtYY7gvuyMiT/7
-	 vsIccJ8jN4JsKnGCRaleNqacj5OGZvgBPx5Hrvta3RxkWQJtCbMIFLf0VplK6MC7BX
-	 Cnaics/y4UK+8I4BQ2hd2iiD/D0BOo/ypdQ0vzZdVtgB+0vFpPMRMNk0j9rhY7ruP5
-	 ac1WzNYNEIalMQAT6pNjK+ui79cdnGkJk/m93H1y9gSbjD3bfZO3Kbw7aEkn2BztZ5
-	 wSLbm7ymsyawnLR+nGOJdOUTB8PAZeIq0173JxWVwve8vUoFXUuf1iBHaCRBnq/3UB
-	 Ycd0W/4T3JW1A==
-Message-ID: <887d9b30-0069-4f4d-8107-48662379fd30@kernel.org>
-Date: Mon, 1 Sep 2025 10:15:24 +0800
+	s=arc-20240116; t=1756693004; c=relaxed/simple;
+	bh=+TGNxwaO5zQP9ZEJNNNEAVGmDWVIafQuuxO1mhqHsiQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZSVcCNqmkcfQX561G1WXcewY4cyp22xRSpKQ7h2IpzHp2lIIrRVm7y1zzGFol3wwvccIoH+Rs/MSiYETv7fUHYFtNWoe6V9kgLZgkieMlb4DxlEnCRvMKLkzEVJmXil02iG3gpY24vEdLxzwJtFt6840FjSc5hK1vjJIS16WFoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cFXYf4snDzKHM0N;
+	Mon,  1 Sep 2025 10:16:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7959A1A0EAA;
+	Mon,  1 Sep 2025 10:16:38 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgDXIY4EArVoScHuAw--.54720S3;
+	Mon, 01 Sep 2025 10:16:38 +0800 (CST)
+Message-ID: <3624f83b-cfb3-9b1a-8cc8-8caffba7a786@huaweicloud.com>
+Date: Mon, 1 Sep 2025 10:16:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: allocate HOT_DATA for IPU writes
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250827215222.1615844-1-jaegeuk@kernel.org>
- <bfbd5db4-c103-4a08-8568-1d27c8eba676@kernel.org>
- <aLB0XeQh_tm2tXIA@google.com>
- <c7a0afdc-3f33-4de7-b36d-b0d5f55216e2@kernel.org>
- <aLIR7BaaAizkdzgl@google.com>
- <d0357cd2-5435-4d99-af31-cc56fc05ce9a@kernel.org>
- <aLOPPQFJEqoYQg24@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <aLOPPQFJEqoYQg24@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] md: ensure consistent action state in md_do_sync
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Li Nan <linan666@huaweicloud.com>
+Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250830090532.4071221-1-linan666@huaweicloud.com>
+ <8d355b81-9a32-4bb6-9951-0905c05434a4@molgen.mpg.de>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <8d355b81-9a32-4bb6-9951-0905c05434a4@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXIY4EArVoScHuAw--.54720S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3GFWUur48AryUGF48GF4UJwb_yoWxtF4xpa
+	ykJFn8GrWUAryrJrWUtr1DJFyUZr1UJa4DJF47Wa4UJr15tr1jqFyUWr1jgryDJw4kJr4U
+	X34UJr47ZF17Gw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUvg4fUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On 8/31/25 07:54, Jaegeuk Kim wrote:
-> On 08/30, Chao Yu wrote:
->> On 8/30/2025 4:47 AM, Jaegeuk Kim wrote:
->>> On 08/29, Chao Yu wrote:
->>>> On 8/28/2025 11:23 PM, Jaegeuk Kim wrote:
->>>>> On 08/28, Chao Yu wrote:
->>>>>> On 8/28/25 05:52, Jaegeuk Kim via Linux-f2fs-devel wrote:
->>>>>>> Let's split IPU writes in hot data area to improve the GC efficiency.
->>>>>>
->>>>>> I didn't get it, IPU may be not friendly for migrating data along w/ write in
->>>>>> hot area?
->>>>>
->>>>> This deals with IPU in the LFS mode.
->>>>
->>>> Okay, so, we missed to add f2fs_lfs_mode() condition, right?
->>>
->>> Why do we need that?
->>
->> As you mentioned above, this deals w/ IPU in the LFS mode. Am I missing
->> something?
+
+
+在 2025/8/30 17:51, Paul Menzel 写道:
+> Dear Nan,
 > 
-> The IPU flag indicates the data is hot. In lfs_mode, we missed to allocate
-> it into HOT_DATA. In normal mode, IPU will update the data in place, which
-> doesn't affect anything, while newly create data is also good to store in
-> HOT_DATA as well. So, I think we don't need other condition here.
+> 
+> Thank you for your patch.
+> 
+> Am 30.08.25 um 11:05 schrieb linan666@huaweicloud.com:
+>> From: Li Nan <linan122@huawei.com>
+>>
+>> The 'mddev->recovery' flags can change during md_do_sync(), leading to
+>> inconsistencies. For example, starting with MD_RECOVERY_RECOVER and
+>> ending with MD_RECOVERY_SYNC can cause incorrect offset updates.
+> 
+> Can you give a concrete example?
+> 
 
-It makes sense, thanks for the explanation.
+T1					T2
+md_do_sync
+  action = ACTION_RECOVER
+					(write sysfs)
+					action_store
+					 set MD_RECOVERY_SYNC
+  [ do recovery ]
+  update resync_offset
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+The corresponding code is:
+```
+         if (!test_bit(MD_RECOVERY_CHECK, &mddev->recovery) &&
+             mddev->curr_resync > MD_RESYNC_ACTIVE) {
+                 if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {	->SYNC 
+is set, But what we do is recovery
+                         if (test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+                                 if (mddev->curr_resync >= 
+mddev->resync_offset) {
+                                         pr_debug("md: checkpointing %s of 
+%s.\n",
+                                                  desc, mdname(mddev));
+                                         if (test_bit(MD_RECOVERY_ERROR,
+                                                 &mddev->recovery))
+                                                 mddev->resync_offset =
+ 
+mddev->curr_resync_completed;
+                                         else
+                                                 mddev->resync_offset =
+                                                         mddev->curr_resync;
+                                 }
+```
 
+>> To avoid this, use the 'action' determined at the beginning of the
+>> function instead of repeatedly checking 'mddev->recovery'.
+> 
+> Do you have a reproducer?
+> 
+
+I don't have a reproducer because reproducing it requires modifying the
+kernel. The approximate steps are:
+
+- Modify the kernel to add a delay before the above check.
+- Trigger recovery by removing and adding disks.
+- After recovery completes, write to the sysfs interface at the delay point
+to set the sync flag.
+
+> Add a Fixes: tag?
+> 
+
+I will add it in v2.
+
+>> Signed-off-by: Li Nan <linan122@huawei.com>
+>> ---
+>>   drivers/md/md.c | 21 +++++++++------------
+>>   1 file changed, 9 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index 6828a569e819..67cda9b64c87 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -9516,7 +9516,7 @@ void md_do_sync(struct md_thread *thread)
+>>           skipped = 0;
+>> -        if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+>> +        if (action != ACTION_RESHAPE &&
+>>               ((mddev->curr_resync > mddev->curr_resync_completed &&
+>>                 (mddev->curr_resync - mddev->curr_resync_completed)
+>>                 > (max_sectors >> 4)) ||
+>> @@ -9529,8 +9529,7 @@ void md_do_sync(struct md_thread *thread)
+>>               wait_event(mddev->recovery_wait,
+>>                      atomic_read(&mddev->recovery_active) == 0);
+>>               mddev->curr_resync_completed = j;
+>> -            if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery) &&
+>> -                j > mddev->resync_offset)
+>> +            if (action == ACTION_RESYNC && j > mddev->resync_offset)
+>>                   mddev->resync_offset = j;
+>>               update_time = jiffies;
+>>               set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
+>> @@ -9646,7 +9645,7 @@ void md_do_sync(struct md_thread *thread)
+>>       blk_finish_plug(&plug);
+>>       wait_event(mddev->recovery_wait, 
+>> !atomic_read(&mddev->recovery_active));
+>> -    if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+>> +    if (action != ACTION_RESHAPE &&
+>>           !test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+>>           mddev->curr_resync >= MD_RESYNC_ACTIVE) {
+>>           mddev->curr_resync_completed = mddev->curr_resync;
+>> @@ -9654,9 +9653,8 @@ void md_do_sync(struct md_thread *thread)
+>>       }
+>>       mddev->pers->sync_request(mddev, max_sectors, max_sectors, &skipped);
+>> -    if (!test_bit(MD_RECOVERY_CHECK, &mddev->recovery) &&
+>> -        mddev->curr_resync > MD_RESYNC_ACTIVE) {
+>> -        if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
+>> +    if (action != ACTION_CHECK && mddev->curr_resync > MD_RESYNC_ACTIVE) {
+>> +        if (action == ACTION_RESYNC) {
+>>               if (test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+>>                   if (mddev->curr_resync >= mddev->resync_offset) {
+>>                       pr_debug("md: checkpointing %s of %s.\n",
+>> @@ -9674,8 +9672,7 @@ void md_do_sync(struct md_thread *thread)
+>>           } else {
+>>               if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
+>>                   mddev->curr_resync = MaxSector;
+>> -            if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+>> -                test_bit(MD_RECOVERY_RECOVER, &mddev->recovery)) {
+>> +            if (action == ACTION_RECOVER) {
+> 
+> What about `MD_RECOVERY_RESHAPE`?
+> 
+>>                   rcu_read_lock();
+>>                   rdev_for_each_rcu(rdev, mddev)
+>>                       if (mddev->delta_disks >= 0 &&
+>> @@ -9692,7 +9689,7 @@ void md_do_sync(struct md_thread *thread)
+>>       set_mask_bits(&mddev->sb_flags, 0,
+>>                 BIT(MD_SB_CHANGE_PENDING) | BIT(MD_SB_CHANGE_DEVS));
+>> -    if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+>> +    if (action == ACTION_RESHAPE &&
+>>               !test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+>>               mddev->delta_disks > 0 &&
+>>               mddev->pers->finish_reshape &&
+>> @@ -9709,10 +9706,10 @@ void md_do_sync(struct md_thread *thread)
+>>       spin_lock(&mddev->lock);
+>>       if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+>>           /* We completed so min/max setting can be forgotten if used. */
+>> -        if (test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery))
+>> +        if (action == ACTION_REPAIR)
+>>               mddev->resync_min = 0;
+>>           mddev->resync_max = MaxSector;
+>> -    } else if (test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery))
+>> +    } else if (action == ACTION_REPAIR)
+>>           mddev->resync_min = mddev->curr_resync_completed;
+>>       set_bit(MD_RECOVERY_DONE, &mddev->recovery);
+>>       mddev->curr_resync = MD_RESYNC_NONE;
+> 
+> I have not fully grogged yet, what the consequence of a mismatch between 
+> `action`, set at the beginning, and changed flags in `&mddev->recovery` are.
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
+> .
+
+-- 
 Thanks,
-
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>> ---
->>>>>>>    fs/f2fs/segment.c | 3 ++-
->>>>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>> index e0f6589c6a1c..bb79dad55ac9 100644
->>>>>>> --- a/fs/f2fs/segment.c
->>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>> @@ -3688,7 +3688,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
->>>>>>>    		if (file_is_hot(inode) ||
->>>>>>>    				is_inode_flag_set(inode, FI_HOT_DATA) ||
->>>>>>> -				f2fs_is_cow_file(inode))
->>>>>>> +				f2fs_is_cow_file(inode) ||
->>>>>>> +				is_inode_flag_set(inode, FI_NEED_IPU))
->>>>>>>    			return CURSEG_HOT_DATA;
->>>>>>>    		return f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
->>>>>>>    						inode->i_write_hint);
+Nan
 
 
