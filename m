@@ -1,208 +1,204 @@
-Return-Path: <linux-kernel+bounces-794376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C6AB3E0D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:03:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38898B3E0DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496B5188DFC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7321896A9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6382E31062C;
-	Mon,  1 Sep 2025 11:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86463101D4;
+	Mon,  1 Sep 2025 11:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yh6KChN2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Llous2c/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213BE126C1E
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6D4217F55;
+	Mon,  1 Sep 2025 11:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724576; cv=none; b=djXO2WEIN9T1cBmK50ffoe1cDLf7IMtzO4lJqgwInZcHN/vzqye2y8rJ1zz0MA3v6IMUsR3TdWhRJC6HGj2DPFerLuytWd4QUfc1+xrpKlPIoxpjOlXqNDvNQ0kVkKDem/cr+w33sdPOqYPlOqzvzVnS+BmhNTNIu5AjuFVeE34=
+	t=1756724696; cv=none; b=ujyp3W2cn7x7T4XQoyMcQwYlUWxr5fJ62CI7ja3PumRpNajW+CoZAxpIWwtnkGRfz1NeQVoTqohpRgc3CCM/EiQ18OFho01vYXvz+Ffc8rNzsQzZhcdibWb6tKkErAuqk89NbDRvu4MPrNul7qlHvRpvYcuNdRaQY5ASLnS4WDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724576; c=relaxed/simple;
-	bh=K5JNJcZ1sKhYtHtX25IaHS+Y5MJfXFqdBBhnB5pe2NY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MpiXjuLzM30i1HwXQgj+uu0modRhnZrqLyBQ0GvQ6s3fiAmhAQatmvl9SpC3XX0xJEVXcIfKWoHIxEPbeX5hAk0/oF2o+OQSl3oTGkhifwY3uiKXX71kUCzrfhrqBkODNPXcfeI8gJ3aymRbfG43eZo2RUt0KTga/FiLpvyWPpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yh6KChN2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756724573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2pwINCj5IC9gGmlFKv2NCzdMq2RgfRkeGypury1Wan0=;
-	b=Yh6KChN27Y7S8/WXsvYN+tCfj1b9Nt0adXTkCTqSvD4vlfOy0BU7zoaGU/uWx4QX2Oxg/V
-	OeNQ6o+6zh2MC/KTcDy89hr7bhiyhMR9eWNFXKWZVFZSfCmDQ+9vaQVGd0R6I2XrWwXMmf
-	6hWcPOvef2xkzdg0AI7+/fDqPqYhbrw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-7PH9FrxzNYO_A7a1hhp6HA-1; Mon, 01 Sep 2025 07:02:52 -0400
-X-MC-Unique: 7PH9FrxzNYO_A7a1hhp6HA-1
-X-Mimecast-MFC-AGG-ID: 7PH9FrxzNYO_A7a1hhp6HA_1756724571
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b7a0d1a71so35211465e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 04:02:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756724571; x=1757329371;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2pwINCj5IC9gGmlFKv2NCzdMq2RgfRkeGypury1Wan0=;
-        b=RJBNT9AokP2kjMUJyKIu1f2qlWPFWUI6vaFLwORUD0EiamZCOw0LJBDlfBLqsypC8t
-         1U1P0nhTfJob3VQ0S2rf8YeVDt+aEmECsx+ynVjjZMDwbg6O1dcoYsC5Du7QDu2kfS5F
-         dMML4nUTpkxqAzz4voxIgy++VvUboOGcFzJOIuIEhEEOqxUrUr1nt8EJRbNHm8uUQBHp
-         +V9mnfrxuKfsuMd6lVMyz1zszRhnXyw85h3PIX5zbURsfi81pZoTNMgLdXbvYp6z3fTl
-         /fR5dL7+P/ZwiIxzYf1aUGa9gcUh/JpG4szs2Yfd/Vsc8YL4Af20POdDPFlLvpYzjCmI
-         0aHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdX+s6Y3fQRffCmNYT/hTQJbT9CW/1QczaenF++WIQq20ckZtzW2foxjx4aM6Qw7NRszibleiGbBuPt3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxiw+2EO3MqL2ovqnGamZpSe+I/gkS+jUJw1ZqJRBKSjXQcGeAn
-	zQQ9fuD8Q8yKmqGMhhar3ekafh4yUlZlQPwbadg9/igoDxRZbKJ/KsBdpUv+afmwRMv+I0WOqXS
-	e+A7u1LNFWoqmlmYQRn9o3oA606sw8IX6C+zTYha1zBsJd1C5V9jWc6TrEEpZHgfMGA==
-X-Gm-Gg: ASbGncsYub5nGZQyNe37vo07HG3Qxp+ZvE11sN4LjYFFf3zobOy0NXTIf2U3lGg+mJX
-	5i3a11ZWkxvTx46YPz0CW6Ik9jLfZgdCm4C/5S2M/AsfKOjlXZaKAq2WPPX6UkrrByvYn+zbhiq
-	ferLTgwmUmiYzIwTcKjl0Fr4jhZCOONoUtobpM8czjRY8l3VJOX4Sl5JdcQCxpB65U+NMzB194/
-	EHXPEQGCiMgkzSYse8yTkrC6B8YiZP78clzmvlB1Sj93+KzPsqQ5S+QsoYDc3CfKvWsF6i1XHb4
-	H42mpSGwoeBg2sY8B2JIVSsiH+ZZhYxxa19Zn8xrJQJjVq+BO/EeLOoB0RV3C1e0176YOq+ROXW
-	GZpuv0+oUv+7kyRq4IXsnooySuCp3ore4VFzhwqlV/HIZF/crNqpjj6CVNDej+pUNL6w=
-X-Received: by 2002:a5d:64cd:0:b0:3ce:16d3:7bd1 with SMTP id ffacd0b85a97d-3d1d9ac1cdamr5525195f8f.0.1756724570700;
-        Mon, 01 Sep 2025 04:02:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFj8ufgKZlVGX8CMmIcbweVvShoidDXf+HM4vFZF7g4psnQ9bVARH+arPZnVNgJxxWj4BMlvA==
-X-Received: by 2002:a5d:64cd:0:b0:3ce:16d3:7bd1 with SMTP id ffacd0b85a97d-3d1d9ac1cdamr5525149f8f.0.1756724570152;
-        Mon, 01 Sep 2025 04:02:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d729a96912sm3045340f8f.8.2025.09.01.04.02.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 04:02:49 -0700 (PDT)
-Message-ID: <d99496bf-6e67-4e64-97d5-6cfe563b8cbe@redhat.com>
-Date: Mon, 1 Sep 2025 13:02:46 +0200
+	s=arc-20240116; t=1756724696; c=relaxed/simple;
+	bh=+8gXdf6AYvkuwsTQHIYRgcNXphR2xrs5FzoYe3zQNB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ubZsODzHSb9eHQPkW8gGSz+cRCVrQ+S394xfn3aFWA0J290rmmCQcHHW35Nj0frGg2oBwpyO3qfoIMOh5swMP5dK/06UTLmce4LBHJ9QVJPCxT8R57YKI5opjbfdHRfEDHLzhf5xAvrMnU83A1RotTNzZsIL6jfexX0ncTPY57k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Llous2c/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 091C0C4CEF0;
+	Mon,  1 Sep 2025 11:04:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756724695;
+	bh=+8gXdf6AYvkuwsTQHIYRgcNXphR2xrs5FzoYe3zQNB4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Llous2c/uD3JzoaFblKUbeqxj95iyLg4Pe9RtHB5A9+wc/3CowARUEdiX6c+RlpK9
+	 K7Sy4J5gMkuKE9B+h2RAVfH8y3f+OmUpv7G+XWD9unINLmh9fdCvUQTdN03KpdAk35
+	 hzyZstEkeFziZZEPab9SAi/4ILOQ2aEQBVrmffbMWDbR7iUJEkiiemGmOhFuihHJdo
+	 XTcB+nweJmJViqA3Ez7ixT6JicWtLOn9VmyI/eYkqYRfpNS/fAoMext2Q1a+TNi8Gu
+	 bMx1Ukviqzys77lSHwd04idX5K3DMIdwrSOmbrK58/p+ngdfjEdBI8SZtH7OsjJNvw
+	 wKIgSjYlqUGSg==
+From: Conor Dooley <conor@kernel.org>
+To: sboyd@kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+Subject: [PATCH v4 0/9] Redo PolarFire SoC's mailbox/clock devicetrees and related code
+Date: Mon,  1 Sep 2025 12:04:12 +0100
+Message-ID: <20250901-rigid-sacrifice-0039c6e6234e@spud>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/12] mm: establish const-correctness for pointer
- parameters
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org,
- axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org,
- hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
- linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
- agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
- davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com,
- luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
- jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
- rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
- broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
- mpe@ellerman.id.au, nysal@linux.ibm.com,
- linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, conduct@kernel.org
-References: <20250901091916.3002082-1-max.kellermann@ionos.com>
- <f065d6ae-c7a7-4b43-9a7d-47b35adf944e@lucifer.local>
- <CAKPOu+9smVnEyiRo=gibtpq7opF80s5XiX=B8+fxEBV7v3-Gyw@mail.gmail.com>
- <76348dd5-3edf-46fc-a531-b577aad1c850@lucifer.local>
- <CAKPOu+-cWED5_KF0BecqxVGKJFWZciJFENxxBSOA+-Ki_4i9zQ@mail.gmail.com>
- <bfe1ae86-981a-4bd5-a96d-2879ef1b3af2@redhat.com>
- <CAKPOu+_jpCE3MuRwKQ7bOhvtNW8XBgV-ZZVd3Qv6J+ULg4GJkw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAKPOu+_jpCE3MuRwKQ7bOhvtNW8XBgV-ZZVd3Qv6J+ULg4GJkw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5793; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=PDC15xyhviRskACrubd0GzR2ve3J1jVrz01HMsd+U6M=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBlba9co/dz9wvq1yRH9jknzywUeCpwU4FtwTT7vfN0in Rjnq78KO0pZGMS4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCR2fWMDBN3n5le9q+/cbuQ xTGuUF6R7Pbbs/pFhDW8P+6TTuZcXMbI0ChRrn/TqHtVfvGcb6Zqa68s1s/o3Z93/czNz4mSV+V mcgIA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-On 01.09.25 12:54, Max Kellermann wrote:
-> On Mon, Sep 1, 2025 at 12:43 PM David Hildenbrand <david@redhat.com> wrote:
->> Max, I think this series here is valuable, and you can see that from the
->> engagement from reviewers (this is a *good* thing, I sometimes wish I
->> would get feedback that would help me improve my submissions).
->>
->> So if you don't want to follow-up on this series to polish the patch
->> descriptions etc,, let me now and I (or someone else around here) can
->> drag it over the finishing line.
-> 
-> Thanks David - I do want to finish this, if there is a constructive
-> path ahead. I know what you want, but I'm not so sure about the
-> others.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-I think we primarily want to briefly explain the what, the why, and why it is okay.
+Yo,
 
-For getter/test functions the "why it is okay" it's trivial -- test function.
-Personally, I would not spell out the individual functions in that case, as
-long as they logically belong together (like "shmem test functions"
-describe what you did in that patch).
+Stephen - I would really like to know if what I have done with the
+regmap clock is what you were asking for (a there's a link to that below
+to remind yourself). I've been trying to get you to look at this for a
+while, even just to affirm that I am on the right track!
 
-For anything beyond that people likely expect a different reasoning.
+Cheers,
+Conor.
 
-For example the following change:
+v4:
+- unify both regmap clk implementations under one option
+- change map_offset to a u32, after Gabriel pointed out that u8 was
+  too restrictive.
+- remove locking from regmap portion of reset driver, relying on
+  inherent regmap lock
 
--static inline void folio_migrate_refs(struct folio *new, struct folio *old)
-+static inline void folio_migrate_refs(struct folio *const new,
-+				      const struct folio *const old)
+v3 changes:
+- drop simple-mfd (for now) from syscon node
 
-Adds two "const" ways of doing things. As a reviewer, seeing something like that
-buried in a patch raises questionmarks.
+v2 cover letter:
+
+Here's something that I've been mulling over for a while, since I
+started to understand how devicetree stuff was "meant" to be done.
+There'd been little reason to actually press forward with it, because it
+is fairly disruptive. I've finally opted to do it, because a user has
+come along with a hwmon driver that needs to access the same register
+region as the mailbox and the author is not keen on using the aux bus,
+and because I do not want the new pic64gx SoC that's based on PolarFire
+SoC to use bindings etc that I know to be incorrect.
+
+Given backwards compatibility needs to be maintained, this patch series
+isn't the prettiest thing I have ever written. The reset driver needs to
+retain support for the auxiliary bus, which looks a bit mess, but not
+much can be done there. The mailbox and clock drivers both have to have
+an "old probe" function to handle the old layout. Thankfully in the
+clock driver, regmap support can be used to identically
+handle both old and new devicetree formats - but using a regmap in the
+mailbox driver was only really possible for the new format, so the code
+there is unfortunately a bit of an if/else mess that I'm both not proud
+of, nor really sure is worth "improving".
+
+The series should be pretty splitable per subsystem, only the dts change
+has some sort of dependency, but I'll not be applying that till
+everything else is in Linus' tree, so that's not a big deal.
+
+I don't really want this stuff in stable, hence a lack of cc: stable
+anywhere here, since what's currently in the tree works fine for the
+currently supported hardware.
+
+AFAIK, the only other project affected here is U-Boot, which I have
+already modified to support the new format.
+
+I previously submitted this as an RFC, only to Lee and the dt list, in
+order to get some feedback on the syscon/mfd bindings:
+https://lore.kernel.org/all/20240815-shindig-bunny-fd42792d638a@spud/
+I'm not really going to bother with a proper changelog, since that was
+submitted with lots of WIP code to get answers to some questions. The
+main change was "removing" some of the child nodes of the syscons.
+
+And as a "real" series where discussion lead to me dropping use of the
+amlogic clk-regmap support:
+https://lore.kernel.org/linux-clk/20241002-private-unequal-33cfa6101338@spud/
+As a result of that, I've implemented what I think Stephen was asking
+for - but I'm not at all sure that it is..
+
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: pierre-henry.moussay@microchip.com
+CC: valentina.fernandezalanis@microchip.com
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Jassi Brar <jassisinghbrar@gmail.com>
+CC: Lee Jones <lee@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: Philipp Zabel <p.zabel@pengutronix.de>
+CC: linux-riscv@lists.infradead.org
+CC: linux-clk@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+
+Conor Dooley (9):
+  dt-bindings: mfd: syscon document the control-scb syscon on PolarFire
+    SoC
+  dt-bindings: soc: microchip: document the simple-mfd syscon on
+    PolarFire SoC
+  soc: microchip: add mfd drivers for two syscon regions on PolarFire
+    SoC
+  reset: mpfs: add non-auxiliary bus probing
+  dt-bindings: clk: microchip: mpfs: remove first reg region
+  riscv: dts: microchip: fix mailbox description
+  riscv: dts: microchip: convert clock and reset to use syscon
+  clk: divider, gate: create regmap-backed copies of gate and divider
+    clocks
+  clk: microchip: mpfs: use regmap clock types
+
+ .../bindings/clock/microchip,mpfs-clkcfg.yaml |  36 ++-
+ .../devicetree/bindings/mfd/syscon.yaml       |   2 +
+ .../microchip,mpfs-mss-top-sysreg.yaml        |  47 +++
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  34 ++-
+ drivers/clk/Kconfig                           |   4 +
+ drivers/clk/Makefile                          |   2 +
+ drivers/clk/clk-divider-regmap.c              | 271 ++++++++++++++++++
+ drivers/clk/clk-gate-regmap.c                 | 254 ++++++++++++++++
+ drivers/clk/microchip/Kconfig                 |   3 +
+ drivers/clk/microchip/clk-mpfs.c              | 151 ++++++----
+ drivers/reset/reset-mpfs.c                    |  83 ++++--
+ drivers/soc/microchip/Kconfig                 |  13 +
+ drivers/soc/microchip/Makefile                |   1 +
+ drivers/soc/microchip/mpfs-control-scb.c      |  45 +++
+ drivers/soc/microchip/mpfs-mss-top-sysreg.c   |  48 ++++
+ include/linux/clk-provider.h                  | 119 ++++++++
+ 16 files changed, 1018 insertions(+), 95 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-mss-top-sysreg.yaml
+ create mode 100644 drivers/clk/clk-divider-regmap.c
+ create mode 100644 drivers/clk/clk-gate-regmap.c
+ create mode 100644 drivers/soc/microchip/mpfs-control-scb.c
+ create mode 100644 drivers/soc/microchip/mpfs-mss-top-sysreg.c
 
 -- 
-Cheers
-
-David / dhildenb
+2.47.2
 
 
