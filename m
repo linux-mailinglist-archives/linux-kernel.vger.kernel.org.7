@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-794812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C91B3E793
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:44:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D152B3E792
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4928200422
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08BD81A83653
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42382346A05;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BFE346A11;
 	Mon,  1 Sep 2025 14:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mC+6MG6M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qx1fCkr0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093C234167B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094C3341AB1;
 	Mon,  1 Sep 2025 14:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756737758; cv=none; b=fQUO0hsuTkiIDpxm9aCTaLyma92vbpVW2k86cFD1n48ppYvtsgt4JeE8lkAbuy0veLarwu3K44fll3RenMQhvfNhyR24wK5oTlIfaCS86uhI0kYx/qAILqE+l4gIv8eEE1Mz+G2qv6rHb/9EzgusR7CIededpUCY89kKB5qqc/s=
+	t=1756737758; cv=none; b=ftZlnbttbZl3v/A0u4jV/BlfKlYptKpMZJvLqrI6NDg/3jZr2w9K9ZSwMNLUf7D/8ti/9UgqnZAjIWCfN28/WnQPB75f/m+9QrWIyjWlRQ3SqMYeyV/hEaXIDv+ymJ5KnvMWRHOyv5oTUsVGuQzqI/UqzsbGsjmwrBiFN1Wgaxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756737758; c=relaxed/simple;
-	bh=pFn4aXuekiJ4nWHYjOpMDGZDzWz9r/tmySbqoG1yg7I=;
+	bh=9q6X7vB/+UD8d5Co4DYpFC4MptFcOsSfJ/mYNLQGx24=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TIG14Tfwvo2GuH3QsPiznWvtekwtXudP9QIN6FMT7swdC/oN4x3xDY7sx3etj3MD+xtox38im0DLMQ3Z1YxN5MU0qZQXI+8AfnHnjVIJZe7O61GTkWq2mP1xjxQUfcG61arTJSd7AtrDlN5BnE57xHXu2B4eB99C4Ttf2M0nHfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mC+6MG6M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7582FC116B1;
+	 Content-Type:MIME-Version; b=cLlaB43Ki823k/Hs0ZF2pNsPWKWJr5vUOqLuGsYE2eOoA0ts5nEV7VnOL3SOCxkww/fsANRY9jTI6NuOZhjvPexQ2SaeX99C2Xz1GrOs+7U5ndTZrpHaqkmXE7ckTd3KIut4Nkp3q0mWuYNlHAkqC+XezTvFCPxtbHPVQXbb8wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qx1fCkr0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75641C113CF;
 	Mon,  1 Sep 2025 14:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756737757;
-	bh=pFn4aXuekiJ4nWHYjOpMDGZDzWz9r/tmySbqoG1yg7I=;
+	bh=9q6X7vB/+UD8d5Co4DYpFC4MptFcOsSfJ/mYNLQGx24=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mC+6MG6MKObG3pHB3gNSKWuOXcHXP6+k4/P0zIYAesII+OB7A8GDc5Q77tzWfGfot
-	 9SkC2lpRH6iqSmWoS6uehrohSPxbRXWiw1HqTn9oHz5NtpBdWfzlUFvCxXqzUvE5We
-	 qHSIrzpC7s7Jm3KEhT/oTPtSaR5JpV4jetieNTiXginLkq90k9gIQe6BnySQr6OraZ
-	 +SmnlRJo+SqU4fRSPKHEZTqC3+lbsItDveQ4M6/2DOyU6iJVp9EfNt6iSNnYzYzanv
-	 jq66eQBZOJxrlnHKbmhVvt2Unq3wftH4RKRrkQDqO8E0XyMVNi9gaMD4Syz4AryMze
-	 F6zweMMewWKzg==
+	b=qx1fCkr032WgtcAvyvOpm9R79Yv6R39CWG0aJUCC7iVKnPXLqWUiwLZe3Vxh61EFV
+	 dlrHEGVx6FlDxhZpWdrsG7GDTUhyRwwH0DrZ93QZDRIRaokIPsDQqOtyiLWi6g20LP
+	 YGVbNYlwHRE2GSq+p+aBKfUOr9UkxtqW4QNH6enMAObbNA8SaA9nP+lYKFrg7BsUFE
+	 TtTBhkOv3K52bWvluSPs1IJlqvCi8gE8FRtF32D0uCv+2CjAR7iyMCVn46n4M5lcvi
+	 akOoIvJKvvK7c105ZmXfHFZc1R3/8IwlwBWgYZ5yKrK7GJawSEMLKtKiyjzc7pCIHp
+	 yHMAG2PdCFgjg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ut5jv-00000003G3k-36Mb;
+	id 1ut5jv-00000003G3o-3ES7;
 	Mon, 01 Sep 2025 16:42:35 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -50,9 +50,10 @@ To: Jonathan Corbet <corbet@lwn.net>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/15] docs: Makefile: document latex/PDF PAPER= parameter
-Date: Mon,  1 Sep 2025 16:42:26 +0200
-Message-ID: <bbe7cdefaf969c14762359b2f96b312c33a7960b.1756737440.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v3 11/15] tools/docs: sphinx-build-wrapper: add an argument
+  for LaTeX interactive mode
+Date: Mon,  1 Sep 2025 16:42:27 +0200
+Message-ID: <c0b14c9c20c44bed49ccc475b3c2d5fc59002892.1756737440.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1756737440.git.mchehab+huawei@kernel.org>
 References: <cover.1756737440.git.mchehab+huawei@kernel.org>
@@ -66,28 +67,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-While the build system supports this for a long time, this was=0D
-never documented. Add a documentation for it.=0D
+By default, we use LaTeX batch mode to build docs. This way, when=0D
+an error happens, the build fails. This is good for normal builds,=0D
+but when debugging problems with pdf generation, the best is to=0D
+use interactive mode.=0D
+=0D
+We already support it via LATEXOPTS, but having a command line=0D
+argument makes it easier:=0D
+=0D
+Interactive mode:=0D
+	./scripts/sphinx-build-wrapper pdfdocs --sphinxdirs peci -v -i=0D
+	...=0D
+	Running 'xelatex --no-pdf  -no-pdf -recorder  ".../Documentation/output/pe=
+ci/latex/peci.tex"'=0D
+	...=0D
+=0D
+Default batch mode:=0D
+        ./scripts/sphinx-build-wrapper pdfdocs --sphinxdirs peci -v=0D
+	...=0D
+	Running 'xelatex --no-pdf  -no-pdf -interaction=3Dbatchmode -no-shell-esca=
+pe -recorder  ".../Documentation/output/peci/latex/peci.tex"'=0D
+	...=0D
 =0D
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>=0D
 ---=0D
- Documentation/Makefile | 2 ++=0D
- 1 file changed, 2 insertions(+)=0D
+ tools/docs/sphinx-build-wrapper | 13 ++++++++++---=0D
+ 1 file changed, 10 insertions(+), 3 deletions(-)=0D
 =0D
-diff --git a/Documentation/Makefile b/Documentation/Makefile=0D
-index 2b0ed8cd5ea8..3e1cb44a5fbb 100644=0D
---- a/Documentation/Makefile=0D
-+++ b/Documentation/Makefile=0D
-@@ -124,4 +124,6 @@ dochelp:=0D
- 	@echo=0D
- 	@echo  '  make DOCS_CSS=3D{a .css file} adds a DOCS_CSS override file for=
- html/epub output.'=0D
- 	@echo=0D
-+	@echo  '  make PAPER=3D{a4|letter} Specifies the paper size used for LaTe=
-X/PDF output.'=0D
-+	@echo=0D
- 	@echo  '  Default location for the generated documents is Documentation/o=
-utput'=0D
+diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrap=
+per=0D
+index 9c5df50fb99d..4e87584a92cd 100755=0D
+--- a/tools/docs/sphinx-build-wrapper=0D
++++ b/tools/docs/sphinx-build-wrapper=0D
+@@ -115,7 +115,7 @@ class SphinxBuilder:=0D
+ =0D
+         return path=0D
+ =0D
+-    def __init__(self, venv=3DNone, verbose=3DFalse, n_jobs=3DNone):=0D
++    def __init__(self, venv=3DNone, verbose=3DFalse, n_jobs=3DNone, intera=
+ctive=3DNone):=0D
+         """Initialize internal variables"""=0D
+         self.venv =3D venv=0D
+         self.verbose =3D None=0D
+@@ -126,7 +126,11 @@ class SphinxBuilder:=0D
+         self.kernelversion =3D os.environ.get("KERNELVERSION", "unknown")=
+=0D
+         self.kernelrelease =3D os.environ.get("KERNELRELEASE", "unknown")=
+=0D
+         self.pdflatex =3D os.environ.get("PDFLATEX", "xelatex")=0D
+-        self.latexopts =3D os.environ.get("LATEXOPTS", "-interaction=3Dbat=
+chmode -no-shell-escape")=0D
++=0D
++        if not interactive:=0D
++            self.latexopts =3D os.environ.get("LATEXOPTS", "-interaction=
+=3Dbatchmode -no-shell-escape")=0D
++        else:=0D
++            self.latexopts =3D os.environ.get("LATEXOPTS", "")=0D
+ =0D
+         if not verbose:=0D
+             verbose =3D bool(os.environ.get("KBUILD_VERBOSE", "") !=3D "")=
+=0D
+@@ -548,6 +552,9 @@ def main():=0D
+     parser.add_argument('-j', '--jobs', type=3Djobs_type,=0D
+                         help=3D"Sets number of jobs to use with sphinx-bui=
+ld")=0D
+ =0D
++    parser.add_argument('-i', '--interactive', action=3D'store_true',=0D
++                        help=3D"Change latex default to run in interactive=
+ mode")=0D
++=0D
+     parser.add_argument("-V", "--venv", nargs=3D'?', const=3Df'{VENV_DEFAU=
+LT}',=0D
+                         default=3DNone,=0D
+                         help=3Df'If used, run Sphinx from a venv dir (defa=
+ult dir: {VENV_DEFAULT})')=0D
+@@ -557,7 +564,7 @@ def main():=0D
+     PythonVersion.check_python(MIN_PYTHON_VERSION)=0D
+ =0D
+     builder =3D SphinxBuilder(venv=3Dargs.venv, verbose=3Dargs.verbose,=0D
+-                            n_jobs=3Dargs.jobs)=0D
++                            n_jobs=3Dargs.jobs, interactive=3Dargs.interac=
+tive)=0D
+ =0D
+     builder.build(args.target, sphinxdirs=3Dargs.sphinxdirs, conf=3Dargs.c=
+onf,=0D
+                   theme=3Dargs.theme, css=3Dargs.css, paper=3Dargs.paper)=
+=0D
 -- =0D
 2.51.0=0D
 =0D
