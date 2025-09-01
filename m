@@ -1,176 +1,109 @@
-Return-Path: <linux-kernel+bounces-794270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D6EB3DF4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:59:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93AD2B3DF39
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98DDF17DB34
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:59:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E344404A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37CE3101A2;
-	Mon,  1 Sep 2025 09:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5173D30EF72;
+	Mon,  1 Sep 2025 09:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lQS/xVmv"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gP2FA4PR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901223081A9
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 09:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C5330DEC4;
+	Mon,  1 Sep 2025 09:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756720727; cv=none; b=OXUmeuQsTA1jUDaWjdzBSYRe/CvQh8Grs9n3PHZMuLrOUrzmZOLJRQoy7aHVALBqPQ8CgcvHR5YRh5ABlQ31zQdKnT14vULah8TiHLLgZDGfhpQInBB4yfsBEhLE8pDF+jNo2MbldHGEZKuoXDPzN9YYSceDn/wdfcIg5cU6JtQ=
+	t=1756720693; cv=none; b=tTIRdnYWs9PshjxpadjG+c7J53e2GbWWYmFm2Y1FRbNuyj48NII8BCQ40tFhyGkc3nb7BrDIrnrJKA4Jf2haU+l8jJ/flin6ZwH4SB8jG7HfL8Ktc4ZEmBR76I0DQ4gYy15LrPBGZZe4JTgqA0NKaNcxAltKUufmtwcQgnmsSyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756720727; c=relaxed/simple;
-	bh=jmOF3YxLYSDfb8Ohpc4kXPJtA6m1LCaahphFup+ozoQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WKW0kQrmtSpiOYm41dXeODv5ZLfe72+pPSGX4TGDuETmHBpryq3m268JjFPn5MifxNwnGn0z4vJrayDzoyul6TsCCiBYALafJdlxYM0+0/3rS987zw8ET/cl6OlhhfIGYgttovVLoOSs5ArjwAgDzpnYV+dAmYsE1ZvIw1tItfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lQS/xVmv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5819fGGT018051
-	for <linux-kernel@vger.kernel.org>; Mon, 1 Sep 2025 09:58:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	s5H/bF7V+/uMeSq3g0gxgqc/EofmL6r/gf0PKGC0ccY=; b=lQS/xVmvG6A+GYPB
-	iOPwO35lO+3st8M1q3ObbX8yFPXMvvWu6Y6KJChPWmEC/1ICyfJDxbhY2K3CibQE
-	zng83HD8CZrgwQdt80DM3VHNjtR6m/rBjPJWgJsBujrmqn/Zj6kPbjIONIj1AuSQ
-	5kM0tpCuaDyqqabWyBIhvoN69ca0yDwfN+/T9SWkjOMuKSYRXErMpuU4OsHgr4K3
-	4PtCpBg2kadVsc5Sn0iyyb4lW/M/hwWMRw48cJIzvbO6jJZu1bdQF4t3aIRFjXzB
-	Nu0eTON0Kyg2KkLQ5kHUmrAWI11a7Ut97G2S8/FizAe7l3Sepy3Ogr2WtZgmA3uw
-	CP143w==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnp4eep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 09:58:44 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b4f736195daso810120a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 02:58:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756720723; x=1757325523;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s5H/bF7V+/uMeSq3g0gxgqc/EofmL6r/gf0PKGC0ccY=;
-        b=c6s8ZM6P/7v6HzDwajSaTKZuyxSTWnnOh76CYNe6xx7rwwAPQPDV2RGqybFuTFUEW1
-         8wy6Tx6LR//hjkTw8P8lRYSny7En83VJmhYQkSIUE81xqAI7vQAX0x+nnOa23v50paKc
-         /5yg8Cb9int+GLozffIe/Wm7TCEN3Y8Zq1XwdoG0Wv3ra4KpzcGWyz7ecwUyOgSJTLd8
-         5ivZ1y68tnRgrPBXLsZsTkwBF4BVo78WEhJbUj6ZPzmYC/6hboclOMSO10oTUVbOrx5x
-         RbmyKZEwtC8Im72gckyqUUwXpJSBLzd0ktO7H5ngMkIgj0OGQABi0j4EbNhw+7wHcc6v
-         TUqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBgUy4pBGx98+MnFn+1JfFyKG4Ia3QSHvGDFzwLFk07nsx06/qTTHFAWkltP2o1tBhAMQPoPLDPlXT8II=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBWSMeNFYB8AmcRh1xo74FNJYNanKj0NWVP76rCtGrXxf5tdhn
-	8MgrbGpws1rpi0s08aWkh2UizrJ7dkruIX4jHyw0qZ/O0XqF1ab3i1UumOJinVuqUR444yo4b8E
-	LNksaa5NggqvhpxPUoa2W4hYUykKPJGGXocQdWxQSL4GePriygUgNsAh087CW1Gmzv80=
-X-Gm-Gg: ASbGnculwAKni6FBjU41lAvlFPgY5yPw4y0vyG3NHmE1YEaA0bVZ9wFDuCyJvDOIY0L
-	GO5jz3EjvqzA9jVOt0JvIVOf33hWrv0EZO8Voaa8Dv4QCE9Oqpb/6Sk+FxNOImL93D5L/zNRnD/
-	LUEnDYCodDgqCx6BuP3gK3gB5Q0Ai44uw+ug8Q8ZkOs0wIYvCLKgy4c3oU3ZW+FTQWrOjAvCbTe
-	4TogaCca9EHKobSXtnURhsHriuxT/O8l7reczYW1YbxbhREW5kUzIFwQm40FefgzANaI3IepRcJ
-	fzQuh+OjbbORCTDpASd8jBgUeYUJKOaFwKMkDgh0PEpm2FQ80XSgWmXwu5jrvyT48OBNeTg=
-X-Received: by 2002:a05:6a20:72a8:b0:243:755:58b5 with SMTP id adf61e73a8af0-243d6f7e021mr10260522637.54.1756720723181;
-        Mon, 01 Sep 2025 02:58:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcT6Sy3B9OTw9HVUyb8xsdhYrAB9UJyNu8eiRPjBXTTgcVrCt/D/vmbND6zyw2UIQqSmNAag==
-X-Received: by 2002:a05:6a20:72a8:b0:243:755:58b5 with SMTP id adf61e73a8af0-243d6f7e021mr10260470637.54.1756720722682;
-        Mon, 01 Sep 2025 02:58:42 -0700 (PDT)
-Received: from cse-cd01-lnx.ap.qualcomm.com ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26bfe2sm10305656b3a.14.2025.09.01.02.58.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 02:58:42 -0700 (PDT)
-From: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Date: Mon, 01 Sep 2025 17:57:34 +0800
-Subject: [PATCH v10 6/6] drm/msm/dp: Add DisplayPort controller for QCS8300
+	s=arc-20240116; t=1756720693; c=relaxed/simple;
+	bh=uvweM5ey37QsTWQAdiyDuf3UROFBuPL82YmcUdYKnz8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fmcFsBRRuopgwW8g1AwFhF49kJNnGfD5dc9qwRr0tTNbHfI34VNBXqTjUMc5S7/d4ZMr55Nry4KZ7gJ+b+ydmdfIGDsL08K5eYANu3LODKCD2NoPVUl++kHVjCP//KD8KR9K6PTQewX8UVd57C7nGqNwiaUmLYQMqACr55fKRBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gP2FA4PR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46BFAC4CEF0;
+	Mon,  1 Sep 2025 09:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756720693;
+	bh=uvweM5ey37QsTWQAdiyDuf3UROFBuPL82YmcUdYKnz8=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=gP2FA4PRHT5fFAIrxTN3DY5JqorBZbdpo6VlChuEtSJfh42HXw5EZWp8Ngms/xaZ7
+	 YYg4KRk+3o+NOQVoZH+CxZkkRxA49bI0NIDj0Cm8Dm9F62uBwZHptyG4N9nXh5YIIo
+	 EhUUsWeSrOD4UYcihjCf9Z6QJJTVEMG5IERpqSFErnD1Ljv7BHeTmyBm5WRSuUKATO
+	 alTRzL+wWx/f6QKNr/0z7SOVPMWCJo54yHyln07mMSUL05yttBoiyrLfp+fbXYBs3J
+	 jiBdXkytvDetOWkZ2g+067hLSSrHMhJuUYYL0j8q4oiK0HAgj4UuCDk3MqSzL658Y/
+	 75SNHejElV8CQ==
+Message-ID: <91a46a61-4a9c-452b-87ae-b8fb45a2e9f2@kernel.org>
+Date: Mon, 1 Sep 2025 10:58:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/2] bpftool: Refactor config parsing and add CET
+ symbol matching
+From: Quentin Monnet <qmo@kernel.org>
+To: chenyuan_fl@163.com, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org
+Cc: yonghong.song@linux.dev, olsajiri@gmail.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, chenyuan@kylinos.cn
+References: <20250829061107.23905-1-chenyuan_fl@163.com>
+ <b245b389-e057-40d3-8e2a-7cce5c290c63@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <b245b389-e057-40d3-8e2a-7cce5c290c63@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-qcs8300_mdss-v10-6-87cab7e48479@oss.qualcomm.com>
-References: <20250901-qcs8300_mdss-v10-0-87cab7e48479@oss.qualcomm.com>
-In-Reply-To: <20250901-qcs8300_mdss-v10-0-87cab7e48479@oss.qualcomm.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Yongxing Mou <yongxing.mou@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756720668; l=1242;
- i=yongxing.mou@oss.qualcomm.com; s=20241121; h=from:subject:message-id;
- bh=jmOF3YxLYSDfb8Ohpc4kXPJtA6m1LCaahphFup+ozoQ=;
- b=f9d+cJvkz4X1o3ygAyE4yDQLdFavOoV2A1iTB2IP2/9bGSNAus9L+k4CJMzrFYJlYnWv5JD2C
- 6XtJKflv/acCfCPt93e5e8IU+9EdYW6yJHxMMWdV5lAkSkxssNGg5TB
-X-Developer-Key: i=yongxing.mou@oss.qualcomm.com; a=ed25519;
- pk=zeCnFRUqtOQMeFvdwex2M5o0Yf67UHYfwCyBRQ3kFbU=
-X-Proofpoint-GUID: 5yCBKDFiNSIGy-mFCn_-cXHWsHjamAM7
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b56e54 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=E9mFum2VwHQHOKsBOicA:9
- a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-ORIG-GUID: 5yCBKDFiNSIGy-mFCn_-cXHWsHjamAM7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX9/EUF8WP0Wd4
- UPzMzPhmakRA0EXRcQ8GGknMd+kghMzsF3eQdaUa7cJUnIXkW7obOpEouZV764SwBvb9AETO/kR
- lC5rfhwmcxCFUMm+7Dv4MFba4lII7ykD3lMBF9ganit6xlOni9hGIqdDUh2Tuw90QTD+hWbLxj/
- CqinFCnQXbfr928DTc/E+xgF8PbRMrMHVldG5h3oMbRijIecR1KZ1beOQs67pfnLyaQEgm6bgOK
- txY2YpQT8EMQpGqTc2GjzC8aNXv5BrnzOz9ZSmfdNvDZmucXgkNJjK3Hq3K+dJ81AjxUl3dgaLa
- zaS1s5YxjSVLISL7j5bfB2DjZvmFMkpk4rBgD2H75N4rEKl+B8uiUfEafYH4Y7kYWlAWqCDZt1P
- 3PxtWHhY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
 
-The Qualcomm QCS8300 platform comes with one DisplayPort controller
-with same base offset as SM8650. But it requires new compatible string
-because QCS8300 controller supports 4 MST streams. 4 MST streams will
-be enabled as part of MST feature support. Currently, using SM8650 data
-structure to enable SST on QCS8300.
+2025-09-01 10:32 UTC+0100 ~ Quentin Monnet <qmo@kernel.org>
+> 2025-08-29 07:11 UTC+0100 ~ chenyuan_fl@163.com
+>> From: Yuan CHen <chenyuan@kylinos.cn>
+>>
+>> 1. **Refactor kernel config parsing**  
+>>    - Moves duplicate config file handling from feature.c to common.c  
+>>    - Keeps all existing functionality while enabling code reuse  
+>>
+>> 2. **Add CET-aware symbol matching**  
+>>    - Adjusts kprobe hook detection for x86_64 CET (endbr32/64 prefixes)  
+>>    - Matches symbols at both original and CET-adjusted addresses  
+>>
+>> Changed in PATCH v4:
+>> * Refactor repeated code into a function.
+>> * Add detection for the x86 architecture.
+>>
+>> Changed int PATH v5:
+>> * Remove detection for the x86 architecture.
+>>
+>>  Changed in PATCH v6:
+>> * Add new helper patch (1/2) to refactor kernel config reading
+>> * Use the new read_kernel_config() in CET symbol matching (2/2) to check CONFIG_X86_KERNEL_IBT
+>>
+>> Changed in PATCH v7:
+>> * Display actual kprobe attachment addresses instead of symbol addresses
+> 
+> Hi Yuan,
+> 
+> Is there any difference between v7 and v8 of your series? They seem
+> identical, from what I can see.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/dp/dp_display.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index d87d47cc7ec3eb757ac192c411000bc50b824c59..bb4660585849d1a67921a28e7e12422e0c327ab2 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.c
-+++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -187,6 +187,7 @@ static const struct msm_dp_desc msm_dp_desc_x1e80100[] = {
- };
- 
- static const struct of_device_id msm_dp_dt_match[] = {
-+	{ .compatible = "qcom,qcs8300-dp", .data = &msm_dp_desc_sm8650 },
- 	{ .compatible = "qcom,sa8775p-dp", .data = &msm_dp_desc_sa8775p },
- 	{ .compatible = "qcom,sc7180-dp", .data = &msm_dp_desc_sc7180 },
- 	{ .compatible = "qcom,sc7280-dp", .data = &msm_dp_desc_sc7280 },
+From Yuan's reply (please let's stick to the ML :) )
 
--- 
-2.34.1
+> The v7 and v8 patches are identical in code changes. The only update
+> in v8 is the addition of "Ack-by" tags in commit messages.
 
+OK thanks for confirming! No need to repost just to add the Ack tags
+next time, maintainers can pick them up automatically before applying to
+their tree.
+
+Thanks,
+Quentin
 
