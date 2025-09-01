@@ -1,89 +1,88 @@
-Return-Path: <linux-kernel+bounces-794324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2681B3E005
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:23:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF53B3E008
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 617B73A6FFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C93D17E9CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA13C30DEB1;
-	Mon,  1 Sep 2025 10:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA003043DA;
+	Mon,  1 Sep 2025 10:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHnmmQhj"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a5gUYk4F"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE8817C203;
-	Mon,  1 Sep 2025 10:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DD01F37C5
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756722220; cv=none; b=huH7uj4sRJFf0C7NCZtZMDMSCxOs0fp+vkxw2sUna08zmRz9TFI5kOlO2fbKzmQmO2Fx9UyHIZxqciaEsGozPWXkexFozVzgUsEuJHQiAyzQNIQaUUC7YJnkgEDsuv6S4RfhXRE4rHSmhlwuoBIRIaSXihZyYb+G8S/hyBfK8Cg=
+	t=1756722227; cv=none; b=mlc5w6lMGCImbvivza//8PweXfvVpJhwA3X4x/NgmvzR4UIGY4G//hM20y4mVINlzcMqoGP83KRrFrMP7cC6L3aTryca9YF1NIDXOYat4YEujjw05SrjexneYwyYqX5QgIVsbQtePCxF93Bp6rP/nogcz50/Bd24Ibyf0k0/uT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756722220; c=relaxed/simple;
-	bh=F13tNTAIWTCSuQlqdmuQv3cZ56a3rTILB9GS33rMeoM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yz2lFtnRbYgtBNx0vLbgvAm2ueh7HF/y+KFSk34FxHSKQWtHVug2cUUapc42LQVjhqs5bhV+prIeQdPCsUgI6T7tL63QvpKy1gJO+gDxI8nNRwLvewMoUkItsLnI90IEHSECu4HGUJQ7flMG1JrFQ+fIth81m4tmZ1OEexRCH6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHnmmQhj; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-336b071e806so25884111fa.1;
-        Mon, 01 Sep 2025 03:23:38 -0700 (PDT)
+	s=arc-20240116; t=1756722227; c=relaxed/simple;
+	bh=iN7KWIHWLryomzRy86DkhEHpxBZtcIx3XkEBd/1FjSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uN7ilEPgvnou6alHRxxuGL32VgwopqPECAVtbHB/4eJogDSqhWgmtdLWVLfVp1A25lwizVtl2nAkASROY8b1UykBkYuaT9cm28OD2PQw9SXh0Y6NQDjNqw6p1/umVCrUdexi0l08x9tJ+iM3lz+gWmoHPNd3GcZ4jGpyUQzbpGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a5gUYk4F; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3cbb3ff70a0so2560652f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 03:23:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756722217; x=1757327017; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756722224; x=1757327024; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IKqd7PpE3yly34arj4SP6XhH3xgSPkbGcUhsqf+SkXE=;
-        b=AHnmmQhjEPl68S0pr8NZfs2/u3ueoTzWuXwmpjFAE5iQeVH9nKECenmXeUSN+VN5B1
-         jpP74bDx5CpKuYNy0jMwg+EuwjOs9t6znX1+Ad5A3HJCSZqU2cFmvTqaekrrLx2Q+Xs7
-         3fEmogZ5zgArYrhldv5FrVNNRnQZ54HTqbWrM+0m2tfufulyaSQR7iuq0ogbetr/vXGp
-         ZVmDINugusJxxVA5MrpUV+9QohR6TEK2//PWk37eOjr2CY7nbbPNTBdjD2KQ7ruM6t63
-         xTLnPts4C99FdGi9+hB6IOxABgAiYe/XrM6mm8qe3GBcYhUpCi1O7Lxeu5LBGFa2DLR2
-         SBAg==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FupNSd4N71G5RaqRUXbWr5mmoLboe7U184QjCzCsDcw=;
+        b=a5gUYk4FN/Cc6f6d5FGj5fp+8JLAKSprkaYVD+MA4lTXnQeusO2dSl8Qse6CivjXvP
+         MxnAkBgwlDwpS2LOUSNrV8nMLOxa9/B5QMR6Rv0dnmr2emX+dytnZSaywWiIzs74/scl
+         abXnmJfwMlxxP9Y1BJaxh4rDhSGv5FVaUUCpZlKEieIchf269kzI7njHxumWrS2V1JA/
+         q2djFxpuw1+G0fwIcisBl0bFtlx1YfcPzSetDyAGNEM8+2zGxDz7wm3G6F3QaaA4ja6w
+         7cH3rt/BezXGtgxC3EW+pXi/rnHnW8lsndGW5pLThBu1pOdpPIpKAOwA5lRaV/jQgPUr
+         Ojhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756722217; x=1757327017;
+        d=1e100.net; s=20230601; t=1756722224; x=1757327024;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IKqd7PpE3yly34arj4SP6XhH3xgSPkbGcUhsqf+SkXE=;
-        b=KS8986+qEKYgBvAASyjDUB9uL8LsV5CLknQGY/LwUMDrB3N3/9x5EfkSYWcPB/cLgr
-         5kfV33q0nQM9ckCbq/c/HBDuHZtZS6CDxEqKunfNtmcnt7q74Tv3cxm3PVexK+tKPbt3
-         YoyCqXzJkyOYPNuMn1k4Cei8CNJ1WDKt8AHNk+5PfhI9Remc/6DBT2RFK6vjHB6DDvnp
-         HplBd/v+CHWG1MkJtw1PGOrynhUtShKYaUl9/drhF71GiCvs2qewU0eOytRzMr12YeEl
-         CWJOzcrogZGC2df6WFcSPYn1Y27RZoNCmRFFIGSndmHuhiuFd4qhVdmrk6n5Em2dx712
-         SK6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWRRC3timWBuSKmsD7pgz9zoLkj1m0wHG/0WJD6vfi7JVkQOh4MArkbAYJMn7IQYni61cIZJPcn@vger.kernel.org, AJvYcCXcRTzm2QNpk67mWC3LWXNDdlpzE7Q4uno5O6zQcOQxorAFqIQK03dDMifGttRCmXLSGLsU8UspocOxZb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq+mzENiOkQDTQf7e9CgBrReYaJOpqc9iGIn7PvqzCGIkRV1kj
-	1o0Uq8i2h5lhvidy34DrPWyM3Q0YpKgRMhCwj0zh2NMx0NXwWPFXnn/M
-X-Gm-Gg: ASbGncuN9Tpu52/pezGV4boUfh3XZTMAM/DZ8G4sAZ8H0DE7wdegw7Svp9azOTEkVIY
-	9t5JHL09bPgfDqqDkEPuv5XNC+n9VojgIUZtnSQMcG6Dp8emCjIWBgeuJUQt4N3xlI6PEQTB9rl
-	m6dp8K5QfiT/V9pFDDYFkUxccwOe/nYk674658/Y+8SZVBJ42pLvofHuW1ha0Wa/R8za3oL7Hfi
-	Gj5HeZNiITFxpifvrSzCINAm0X6j2gbnfqEG6eimJiqLsQdjaMYgdANNXL1cSltdOP0d8I7pv05
-	1+pvnmvRZcxXuHpHbGEg8OhBYQK2oLQxzS8WmPgO0r17XcFS0+E71BfejpDPE/o2VNIJmqwAX8i
-	UaeELwUWZA+kUALGVKGDxcLfzQfQp
-X-Google-Smtp-Source: AGHT+IEofX/eNnkXm26e6KDt8g+jikWgXxGGcfHBANCoOLg4hL3QjuemdJNTszKyuEhhug5qw4amEw==
-X-Received: by 2002:a2e:b88f:0:b0:332:5fc0:24ae with SMTP id 38308e7fff4ca-336ca98d99amr15516571fa.15.1756722216273;
-        Mon, 01 Sep 2025 03:23:36 -0700 (PDT)
-Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-336d0c583absm13691161fa.2.2025.09.01.03.23.35
+        bh=FupNSd4N71G5RaqRUXbWr5mmoLboe7U184QjCzCsDcw=;
+        b=dHgiqzy072cbu3hqxVb4iV3xi5GpZAWkU4NwuzjNa9THWIgKB8CxEZHbehMrI515lc
+         mtihbGALmNPs7LnxLDle9NQBSRuPLw2OQ/2YiViyBYI387K8BM1hj76sIJsp5t8ljPOs
+         zSbuaIDtdj5LJAXWeph5SB0UadveGJYPEUtlt/sIF402ipb1gIClMDLj8aUfQ9oX+v7D
+         BfOpQzXPfzC1aPXi8QfrpLx4exvYrUUf68H7po4/qeblw+VAJHzwO9LD3c4GXnCeodu5
+         3m/MacW8m+z6cxMfSpkvRt2WUxCwKWmQezd11E4yNwh4gH6j90XjJy5dIUvCmQxvgBLb
+         9UZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtrOhP8MMAWn8AksgINnTvkG9iD3HM8bZ3YvJD48/jPbTlJ+dbgyFfe1hQ8qy5kyQ7nHL1qz9EbniLfhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7eRadRhT9oc7JcBFVo+QOBgyT+Tfx6ao7ptpvZAyqNFLRvBF4
+	t9m7VBbgjRV89rPWp5kTxkM22q9LCfTcE2bgcVvMoZwsLoUud8Cw4gzPEijvb0/BRFTA5WAMyyF
+	wBRl/
+X-Gm-Gg: ASbGncuNCmtH6FljC8qY7MGr2Iefl7F9oUa9fDus0wALGmkk3awoUM7M+gdwiVEGkG6
+	pZZ1FRcnTMEAEWsLCJHlq68GPEuPS5PJc92Luf+WZH/1XT1QWTeFvvSj85cIQfNlr3a1Bg2szz/
+	I18WRvAlOmaQrolxBZ+ThEcIlJ5ARdIKu1tLdUE4FVxZ/nlDzSFS6o/dmN/en4AAPv+nNxz5IFq
+	i6txkdL3Tj1vt+2sKTpJ9VHY0vQvylishdl1n7vxmIDw7Hi7kKFUO2/mvje2P7pB7l+iyafhnMe
+	mMUH3MrXEMuz8QDGrxC1AMPZKmHkh3qQT57RMh/vJI9V5l+9rk2VJZVDLPzW7K8iKh7iAtwbhcJ
+	2OTMCN5O1+vPdiQKn7pny8KkHJJM=
+X-Google-Smtp-Source: AGHT+IEv84aTwWbs3yO63r/JRI24Eo/yePwO1sRQK5IAZ7R3Bl3405JKkyTVYcyfa6amc+95TrXJqw==
+X-Received: by 2002:a05:6000:65b:b0:3d4:a64:6754 with SMTP id ffacd0b85a97d-3d40a646bc2mr3954157f8f.62.1756722224384;
+        Mon, 01 Sep 2025 03:23:44 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7e7d141esm155678035e9.2.2025.09.01.03.23.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 03:23:35 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date: Mon, 1 Sep 2025 12:23:34 +0200
-To: Baoquan He <bhe@redhat.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] mm/vmalloc, mm/kasan: respect gfp mask in
- kasan_populate_vmalloc()
-Message-ID: <aLV0JrSPfitu1jFV@pc638.lan>
-References: <20250831121058.92971-1-urezki@gmail.com>
- <aLVyia16eyoYftAw@MiWiFi-R3L-srv>
+        Mon, 01 Sep 2025 03:23:43 -0700 (PDT)
+Date: Mon, 1 Sep 2025 13:23:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
+Subject: Re: [PATCH v2] staging: iio: adc: ad7816: add mutex to serialize
+ SPI/GPIO operations
+Message-ID: <aLV0LBxD0KIHPSmo@stanley.mountain>
+References: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,29 +91,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLVyia16eyoYftAw@MiWiFi-R3L-srv>
+In-Reply-To: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
 
-On Mon, Sep 01, 2025 at 06:16:41PM +0800, Baoquan He wrote:
-> Hi Uladzislau,
+On Mon, Sep 01, 2025 at 10:24:45AM +0330, Mohammad Amin Hosseini wrote:
+> From: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
 > 
-> On 08/31/25 at 02:10pm, Uladzislau Rezki (Sony) wrote:
-> > kasan_populate_vmalloc() and its helpers ignore the caller's gfp_mask
-> > and always allocate memory using the hardcoded GFP_KERNEL flag. This
-> > makes them inconsistent with vmalloc(), which was recently extended to
-> > support GFP_NOFS and GFP_NOIO allocations.
+> The ad7816 driver was accessing SPI and GPIO lines without
+> synchronization, which could lead to race conditions when accessed
+> concurrently from multiple contexts. This might result in corrupted
+> readings or inconsistent GPIO states.
 > 
-> Is this patch on top of your patchset "[PATCH 0/8] __vmalloc() and no-block
-> support"? Or it is a replacement of "[PATCH 5/8] mm/kasan, mm/vmalloc: Respect
-> GFP flags in kasan_populate_vmalloc()" in the patchset?
+> Introduce an io_lock mutex in the driver structure to serialize:
+> - SPI transactions in ad7816_spi_read() and ad7816_spi_write()
+> - GPIO pin toggling sequences
+> - Updates to device state via sysfs store functions (mode, channel, oti)
 > 
-> I may not get their relationship clearly.
+> The mutex ensures proper mutual exclusion and prevents race
+> conditions under concurrent access.
 > 
-It is out of series which i posted to support no-block for vmalloc. 
-I will base a new version based on this patch because it is rather
-a fix.
 
-It is to address and complete GFP_NOFS/GFP_NOIO flags for vmalloc.
+The commit message says "might result", which basically implies this
+is from reviewing the code and that we don't have a stack trace?  Is
+that correct?
 
---
-Uladzislau Rezki
+Are you using some kind of static checker to find racy code?  What
+kind of heuristic is it using to find buggy code?
+
+> Changes in v2:
+> - Fixed mismatch between From: and Signed-off-by lines
+> 
+> Signed-off-by: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
+
+Please add a Fixes tag.
+
+> @@ -200,7 +204,9 @@ static ssize_t ad7816_store_channel(struct device *dev,
+>  		return -EINVAL;
+>  	}
+>  
+> +	mutex_lock(&chip->io_lock);
+>  	chip->channel_id = data;
+> +	mutex_unlock(&chip->io_lock);
+>  
+>  	return len;
+>  }
+> @@ -322,7 +328,9 @@ static inline ssize_t ad7816_set_oti(struct device *dev,
+>  	if (ret)
+>  		return -EIO;
+>  
+> +	mutex_lock(&chip->io_lock);
+>  	chip->oti_data[chip->channel_id] = data;
+> +	mutex_unlock(&chip->io_lock);
+>  
+>  	return len;
+>  }
+
+I'm not really knowledgeable to review the others, if they are
+required or how the locking is supposed to work.  But these aren't
+correct because we're only locking around the writers and not the
+readers so it could still race.
+
+regards,
+dan carpenter
 
