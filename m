@@ -1,258 +1,135 @@
-Return-Path: <linux-kernel+bounces-795035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D732B3EC1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:21:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A3EB3EBE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3146444363
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:21:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11F8E1885777
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35122EC08F;
-	Mon,  1 Sep 2025 16:21:45 +0000 (UTC)
-Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EDD2E6CA3;
+	Mon,  1 Sep 2025 16:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exO2Wsdd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAEF2D5936
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93C213E02A;
+	Mon,  1 Sep 2025 16:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756743705; cv=none; b=TGHDZbEmIOiGKaMgpz+OZkiwzCWan5vMaQwcP/E5wpqFZve2yrTkvHPP+uUXNC3hSLPN9uDazHBbT/usZ3XzjOJcJB0UIRDzNyFl6hrLd0UfmlMj/Y4fl+lzAXJsXfaHaZ2mqZOHsdoqCVt2cPnOKWK3n1AUfiKsHMlVYBVoBxQ=
+	t=1756742823; cv=none; b=eK/yLEEMJstj0tdU6oFx74f+Dn+JY5DA3zWDBamyCj3BAPyr3SfKBtfSq2NzJ1KfblyS2ocPDg9jfSf3Jtyfhq9OmkOE6pF9sMqTiQbHYB1oy0ElmDJ9Ojx4Hpzl956saJ6yLWdwr2qLiHFOyDZx+5mm6pii2C0us1+kw1nTlhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756743705; c=relaxed/simple;
-	bh=AFqHdAfodD4+2yf9u1F2Rp3YBD/K6FRojrAd0mlDvNw=;
+	s=arc-20240116; t=1756742823; c=relaxed/simple;
+	bh=1n8bL3qjuAF4p+1koFRifHNBeybfCeqhb3xbbjrMBGU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQF8FUsvoc0gdTIC4naJBplb7f0hIo9ezNaej9HrsL//QyYd/FOzmfq4hcDFA9Fkq7L9WNKVIQzPGk/2KoVOsfx1KeXUkGGNN2dh363G5FcjnKUWGZAHIJje1u225gfzBQpwqxuHrWRn00cVe+RLm47tKPzvXeVrXAYz0z7rvUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.102 with ESMTP; 2 Sep 2025 01:06:41 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Tue, 2 Sep 2025 01:06:41 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Matthew Wilcox <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330>
-References: <aKgD7nZy7U+rHt9X@yjaykim-PowerEdge-T330>
- <CAF8kJuMb5i6GuD_-XWtHPYnu-8dQ0W51_KqUk60DccqbKjNq6w@mail.gmail.com>
- <aKsAES4cXWbDG1xn@yjaykim-PowerEdge-T330>
- <CACePvbV=OuxGTqoZvgwkx9D-1CycbDv7iQdKhqH1i2e8rTq9OQ@mail.gmail.com>
- <aK2vIdU0szcu7smP@yjaykim-PowerEdge-T330>
- <CACePvbUJSk23sH01msPcNiiiYw7JqWq_7xP1C7iBUN81nxJ36Q@mail.gmail.com>
- <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
- <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
- <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
- <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNqAiiZNNf/Ijy1OwjB8OqOqJSgCXZTH96U4C2RoYOaMgAd+rWUi4HtCItAgvDJCh4kUhH8ZR1jIjF89A6q4RmGTH6jgV5E6AItaSWjhTrrW3onxcjK9H0K9Ige8bk9EYA+JpcTHPsyNYs59hVxrU/FrH8J6hVunXLzgC41Ozbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exO2Wsdd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D78C4CEF0;
+	Mon,  1 Sep 2025 16:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756742822;
+	bh=1n8bL3qjuAF4p+1koFRifHNBeybfCeqhb3xbbjrMBGU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=exO2WsddNgSx8isiIJdfX8l1xUcTKuPRE0G3bM1n9AgVcrKWDK1qXqrvx1lTWVPjD
+	 ixZLeIda06WleCny4w4eW408eHvqyljwcYsY88AigjimKwpAuwvFx/ifnJQBrwRlEc
+	 FShtGozwtJ2Xri8AsPQu6xJjjGGiLiL5M+lUxLgtz+d6inpDSmWqXKE4yR5pct7L3O
+	 d/+qU/J7VCsaLquQ/b8HM5tcaCZV6HtVbBMqkau+y12AykQDZFqf5XCfqImS8XEdmq
+	 TT/BTk3jewNKN1eBFCCs98xUWFuTfYOXYQTmIDlu35CX9/90IJBTGE7jSZ+zjLOKmb
+	 rDBL23IJn20xQ==
+Date: Mon, 1 Sep 2025 11:06:59 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: ipq5424: Add support for emergency
+ download mode
+Message-ID: <vzxop3tp6zjql23juykhnyf6fq6df45ikppw7jwp3oktfrymvg@iys54hjpk65p>
+References: <20250828-ipq5424-edl-v1-1-d6a403800023@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
+In-Reply-To: <20250828-ipq5424-edl-v1-1-d6a403800023@oss.qualcomm.com>
 
-Overall, the alignment looks good. Among the three points you suggested,
-I agree with (3) cgroup inheritance. I would like to continue the
-discussion on (1) swap tier lifecycle and (2) allocation logic.
+On Thu, Aug 28, 2025 at 01:25:31PM +0530, Kathiravan Thirumoorthy wrote:
+> Enable support for the vendor-specific SYSTEM_RESET2 reset in PSCI reboot
+> modes. Using "edl" as the reboot mode will reboot the device into emergency
+> download mode, allowing image loading via the USB interface at the Primary
+> Boot Loader (PBL) stage.
+> 
+> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> ---
+> Depends-on:
+> https://lore.kernel.org/linux-arm-msm/20250815-arm-psci-system_reset2-vendor-reboots-v14-10-37d29f59ac9a@oss.qualcomm.com/
 
-1. swap tier lifecycle
-2. allocation logic
-3. cgroup inheritance
+This hasn't been merged, so there's not much I can do with this patch.
+Please resubmit once the dependencies are in linux-next.
 
-> > This part relates to my earlier point on runtime modification. My
-> > intention was to only allow setting the tiers globally, and to align
-> > bitmask with priority ranges. For example, an input like:
-> >
-> >   ssd:100, hdd:50, network_swap
-> >
-> > would translate into ranges as 100+ (bit0), 50–99 (bit1), and 0–49
-> > (bit2).
-> >
-> > From your description, I understand you are considering allowing
-> > additive updates, insertions and letting bitmask differ from the range priority. Is
-> > that correct? In that case we probably need a way to distinguish
->
-> That is right.
+Thank you,
+Bjorn
 
-Yes, I agree that add/remove semantics can be supported,
-But it was not fully clear whether there was agreement on the full set
-format, I wanted to state explicitly that my preference is to require
-the full set format for simplicity. That said, if staged insertion and
-removal are considered useful, one possible approach is:
-
-(side note! explanation of the interface was somewhat
-descriptive, which may not have been fully clear. If this explanation is
-sufficient to establish the general direction, I will aim to present it
-more concretely in the patch series. Otherwise, I can provide a more
-detailed explanation in a follow-up email.)
-
-  echo "add ssd:100,hdd:50,network_swap" >/sys/kernel/mm/swap/tiers
-  echo "add new:80"  > /sys/kernel/mm/swap/tiers
-  echo "remove hdd" > /sys/kernel/mm/swap/tiers
-
-Alternatively, separate files for add, remove, and show could be used to
-represent staged operations:
-
-  echo "ssd:100,hdd:50,network_swap" >/sys/kernel/mm/swap/tiers/add
-  echo "new:80"  > /sys/kernel/mm/swap/tiers/add
-  echo "hdd" > /sys/kernel/mm/swap/tiers/remove
-
-When using the fullset approach:
-
-  ssd:100(bit0), hdd:50(bit1), network_device(bit2)
-
-If we remove the ssd layer and add a new tier:
-
-  echo new:80,hdd:50,network_device >/sys/kernel/mm/swap/tiers
-
-The show output could display staged state (imaginary output for understanding):
-
-  ssd:100(bit0), new:80(bit3, in stage), hdd:50(bit1, removing), network_device(bit2)
-
-After the hdd tier reference drops to zero:
-
-  ssd:100(bit0), new:80(bit3),  network_device(bit2)
-
-> > between “add” and “reset”. Personally, I feel supporting only reset
-> > semantics would make the interface simpler, while still allowing add
-> > semantics when the full set is provided again.
->
-> The counterpart of "add" is "remove". There are two possible ideas to explore:
-> 1) only allow removing a tier when all swap devices in that tier
-> range have been swapped off.
-> 2) Remove the tier by removing a midpoint from the range. The lower
-> tier automatically gets the range belonging to the tier that was
-> removed. Optionally, you can add another tier back in replacement
-> with different range boundaries. This effectively achieves replacement
-> as well. This approach does not require swapping off the swap device. I
-> like it better. If you want to avoid the race window where the
-> swap device temporarily belongs to the lower tier, you can always swap
-> off the device before performing 2). So 2) can be mixed with 1) as well.
-
-I have already explained this from the perspective of option 2 mixed
-with option 1. Let me clarify one point:
-
-If...
-ssd:100, hdd:50, network_device.
-Insertion above 100 becomes visible after ssd removal,
-Insertion above 50 becomes visible after hdd removal,
-Insertion above 0 becomes visible after network_device removal.
-
-It means that as long as the tier exists, the referenced priority ranges
-cannot be overridden.
-
-And Regarding swap_tier object lifecycle:
-
-A swap_tier should not be deleted until all devices in the tier are
-swapped off (As you said, references are held). Therefore, cgroups that reference a
-tier should also hold a reference. Silently dropping a tier is problematic
-from a cgroup perspective.
-
-If we allow this, the implementation should behave as follows as I think:
-If a swap_tier is removed, the cgroup’s tier configuration could be
-marked invalid. This should trigger an event to the cgroup to notify
-user space.
-
-> >
-> > > > 2. Slow path allocation uses bitmask skipping; fast path uses per-cpu
-> > > >    tier cluster caches.
-> > > If the fast path fails, it will go through the slow path. So the slow
-> > > patch is actually a catch all.
-> >
-> > Do you mean that if the cluster does not belong to the desired tier in
-> > the fast path, it will skip and then fall back to the slow path? If so,
->
-> I am describing the existing swap cluster allocator behavior. In my
-> mind, we are using the existing cluster swap allocator code, with
-> constraints that only allow swap entry to be allocated from the
-> affected tier bitmask.
->
-> > the slow path would need to avoid inserting the cluster back into the
-> > cache, otherwise processes with a global swap view may end up using the
-> > wrong tier device(which must be referenced firstly assumed)
-> > Also cgroup which is tier set experience performance degradation
-> > because, there is possibility to try to alloc swap on slowpath most of the time.
-> > Wouldn’t this have performance implications?
->
-> I think we are mixing two different concepts. There are swap tiers
-> which decide which swap device to use. Then there is the swap
-> allocator to allocate a swap from the allowed list.
->
-> If we move to the swap tiers, the swap allocator needs to be swap
-> tiers aware. So it might move to per-cgroup cache list or disable the
-> cache for cgroups that haven't been allocating for a while. The
-> allocation logic should be in the allocator, not in the swap tier
-> layer.
->
-> > I was thinking that maintaining per-tier per-cpu cluster caches would be
-> > simpler. Then each tier manages its own cluster cache, and we only need
-> > an array of per-cpu caches of size “max tiers”.
->
-> Again, let's not jump to premature optimizations. Do it the simple way
-> first, then let the measurement numbers guide us.
-> It might be per swap file has a cache not necessary per CPU. per-cpu x
-> per-tier the combination is too big, I am worried about caching too
-> much swap clusters. Each cluster is 2M.
-
-You suggested maintaining per-swap-device cluster caches. As an
-alternative, I would like to suggest a per-device per-CPU cache
-approach, which could be simpler from an integration perspective. It
-would fit more naturally with the existing allocation logic, remove tier
-awareness from the allocator, and should not introduce functional
-differences in behavior. Moreover, since SSD devices are likely to be
-concentrated in only a small number of tiers (with one being the "best"
-tier), the number of clusters actually cached at any time would not be
-large. I am not presenting this as the ultimate solution, but rather as
-a simple and reasonably practical approach to consider. I agree that we
-should revisit and evaluate this approach further.
-
-> We DO want some parent level control. That is a real customer
-> requirement. The cons with your proposal is that, if you want to
-> change the whole set from top-level cgroup to child cgroups, you need
-> to traverse the hierarchical chain to set each child cgroup. While
-> walking the child tree, more sub-level cgroups may be added, and
-> you could miss newly created cgroups. It becomes a mess.
->
-> It is much cleaner if we allow the child cgroup to have the default
-> "swap.tiers" empty. Then you just need to set one value at the top-level
-> parent cgroup, and all child cgroups inherit it automatically. A child
-> can overwrite it if desired; by default it inherits from its parent.
->
-> The whole set of cgroups from top-level including children can map
-> into a Kubernetes pod. It is common to perform adjustments on the
-> whole set atomically. We should support it.
-
-Okay I will adopt default inheritance for pod-level and similar use cases. A
-child cgroup inherits the nearest ancestor’s mask upon creation. If it
-later sets its own mask, that configuration will apply to itself.
-
-> I think we are aligned.
->
-> Thanks
->
-> Chris
-
-Many thanks for the detailed review. It helped clarify the implementation
-direction, and I look forward to preparing the patch series accordingly.
-
-Youngjun Park
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 6 ++++++
+>  arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 2 +-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> index 738618551203b9fb58ee3d6f7b7a46b38eea4bf4..b47b0be41a61438c922b1e29d9a2ebc37fca2d70 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> @@ -108,6 +108,12 @@ &pcie3_phy {
+>  	status = "okay";
+>  };
+>  
+> +&psci {
+> +	reboot-mode {
+> +		mode-edl = <0 0x1>;
+> +	};
+> +};
+> +
+>  &qusb_phy_0 {
+>  	vdd-supply = <&vreg_misc_0p925>;
+>  	vdda-pll-supply = <&vreg_misc_1p8>;
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> index 67877fbbdf3a0dcb587e696ed4241f1075000366..8f2ee755d2cc406374faf9e76b0d409d159a7b12 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> @@ -184,7 +184,7 @@ pmu-dsu {
+>  		cpus = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
+>  	};
+>  
+> -	psci {
+> +	psci: psci {
+>  		compatible = "arm,psci-1.0";
+>  		method = "smc";
+>  	};
+> 
+> ---
+> base-commit: 8cd53fb40a304576fa86ba985f3045d5c55b0ae3
+> change-id: 20250828-ipq5424-edl-8c826a2af996
+> prerequisite-change-id: 20250709-arm-psci-system_reset2-vendor-reboots-46c80044afcf:v14
+> prerequisite-patch-id: 38f76a48b6b824f3fa8d8cbc05ae76b43ce79556
+> prerequisite-patch-id: ae7ae183210708f64fb3ff4f097de3c8af31680a
+> prerequisite-patch-id: 5ba323084ac74aa744696b54ff0c17d34e26b7de
+> prerequisite-patch-id: 3a2cedabc1bff24067dc224b2c077373c08b39a0
+> prerequisite-patch-id: e30b97929026120277585907cde2dc000a25a621
+> prerequisite-patch-id: e3ff400e6c72e835612b733b5573b01b045e7336
+> prerequisite-patch-id: 50e081a2a21166aee74af428934bc3b52d3cf43b
+> prerequisite-patch-id: a0148031385883a309dc165fac299d3eb5d4bcd4
+> prerequisite-patch-id: 3c0f5c0e93261f6dab1d9e7293a1a28ef64e2a66
+> prerequisite-patch-id: bb68380b11f9e868eacb0db9f97cc5f3ae8aa29a
+> 
+> Best regards,
+> -- 
+> Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> 
 
