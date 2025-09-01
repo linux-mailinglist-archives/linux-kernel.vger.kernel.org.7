@@ -1,199 +1,153 @@
-Return-Path: <linux-kernel+bounces-795001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E373BB3EBAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:59:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658A4B3EBA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8404F1895F13
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:58:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 417BE7A6E3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9826B2D5958;
-	Mon,  1 Sep 2025 15:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A17B2DF12D;
+	Mon,  1 Sep 2025 15:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILl/M67h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NevggUdZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D763F22DF95;
-	Mon,  1 Sep 2025 15:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBAE1C1F05;
+	Mon,  1 Sep 2025 15:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756742278; cv=none; b=OTOh5mMTFVyO83578fEu6K5CHwjRPMtIM3slHB3ug471AwbfeiQ7R6mB4xJMTjyBfglOjKjhA5mjgG6I1QhFugOAhXqWXCOIA0nXlKu/EGIS0uaxvN34ioD8rKAWx9u1sJiDKQbDQKgD79w0b4lSEq945Q69GjMeEOjsfX5Xdn0=
+	t=1756742307; cv=none; b=ci6dOlcQAwzTVwZVj3G4xaY7TBPdysxA9Hdt91KLwl5ayeuHyYEydwMjKj9PVQpmAhKYjNH1BhUxZvQV5HysRe2h/+45+lWiQJwoHFPQlo7/VtKy1XR+jFWVm4WdwNoHeExbvh8SEkty9kMya0qngCXmy/y0/foAPardXT+jo2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756742278; c=relaxed/simple;
-	bh=UGkUSdVdIFBvsm+oD4Xzw82yx2nmQBmXIiJ9qIDdMcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tllELRK1py0H26IbwaJ0c0WK7PUmSZasX8GO0x0iIg4LjBSgECMfk8TiVBzqsOLxc2pYYBW9PyaOJ/YUZv40hj+juSBx1/mWGnDBVr/Ya8jhvTV/0AsEwCTSfw0h/23KfqzHPlnVvfVO2JgTgUgOD6ePsSp0lGv59/wyxebS2Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILl/M67h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7849FC4CEF0;
-	Mon,  1 Sep 2025 15:57:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756742278;
-	bh=UGkUSdVdIFBvsm+oD4Xzw82yx2nmQBmXIiJ9qIDdMcI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ILl/M67hwB5Muz+QBpvfxKHuBKTUjnIzQtvNVY14X2WGd25HssXTwGgLwmbJ+ydGg
-	 SCKBiz5+Qi/gXgvzOc4xVqz9Uwfag2BnMxrxN782bRB3wfXtSBz+gRRf4q1uREOD3N
-	 sC0Cxjz4FebR28Yhn4W0oTbLjb3QWZi7r/Fx2rk68v3UxK7Mmm0QZf2Az/1JeRN+c6
-	 LlJL/KNz1jtLubwUu1fb5l2fBZkYXF7az3LSE1VbqSMICQfDTU5agCv7HQichuahRc
-	 IM7+qlbad0WOqojkPXahllZP5vOLi5mcFSLU80CwN3O8pLNxugp6ZP4XWK+ougl65b
-	 AHnh2gT9qd54Q==
-Date: Mon, 1 Sep 2025 16:57:51 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7124: fix sample rate for multi-channel use
-Message-ID: <20250901165751.305d0a68@jic23-huawei>
-In-Reply-To: <20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v1-1-f8d4c920a699@baylibre.com>
-References: <20250828-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v1-1-f8d4c920a699@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756742307; c=relaxed/simple;
+	bh=5jo+jH5ROgku+mraL+zpx7nXOX6GVnpDyJdlihi1SGE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SgrSfgJvTMVGSdkIaZb/T9O8WKmIJaFRjm5i1rZmGe4A3VeOE/LmHeu/EO8hSwlZOYFBA5qzYGeBeG11sq8Z8HW5zH5jGz2DQzWJG+8xP07mDSKOhdGaGxeQnZcR3AFT/8sDIYr6IN0zWFgt3U3VIPtuJySgo0hfJvVz4uPFVgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NevggUdZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 581B42U9016470;
+	Mon, 1 Sep 2025 15:58:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=XFJC1xZv2owkzrqKsJBOco
+	m34IodyyWELb7xBcZojVg=; b=NevggUdZvzOU78DcozwlUkwRVtnHE7Y6ht9zx4
+	O9BIVai17k1R8KkBMTkqI+ogWwt9dXHhQNjKY6JBxlxJtVBMHGe8F0tdmsItLAS3
+	rkpLx7cBHZ3SQ4F8mLQ5zZn/q04aG9GZO5ECQTOC2l38wPm8623w0Pa6q8v2pyu1
+	dZkL5stTKyxJmgCxgNEy2G7+a5wSsI6zoj6Nsh+DPaehcezEJTfHZLKWKEl41qj1
+	kLhpHBV2nOjEcz+BILb48W45qix2io6QdkNqoI52hQUBjS17DycbJ9+T4+y268QS
+	CddijrCYrlQ8pJCMPP171/IU27OB9vd6ccwrZ9v/Xp6JxiNQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ush2w6xk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 01 Sep 2025 15:58:16 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 581FwFS8013167
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 1 Sep 2025 15:58:15 GMT
+Received: from hu-rdwivedi-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Mon, 1 Sep 2025 08:58:11 -0700
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+To: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mani@kernel.org>, <James.Bottomley@HansenPartnership.com>,
+        <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH V4 0/4] Add DT-based gear and rate limiting support
+Date: Mon, 1 Sep 2025 21:27:56 +0530
+Message-ID: <20250901155801.26988-1-quic_rdwivedi@quicinc.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX+iHaYOpvc/zd
+ /9HQKrOLOgmbGcxezceJN80kGzTodaPyPmQ0VAHoaaTxv7Alh4eRs1ABGXdCrHZ7CA85Azs6Ayi
+ cZtRGoO1V1T6mdVkHpadb0E2EhkK+skdi5R8CY3jqKXnuJrlfq2lsIKp/tnLKSVTVCfQjTF+4+u
+ mbdotIR085RCGdGdXVtjMGecbCnfDVaTgCxUWFo9/nSquASkIO147pH0HOn2LUXcQ+xX2J8OygZ
+ x+8VgWz2Z9fWTJWj1PaAjfuHdQcIY1kztnuHofAmEo7P+wKmfj2raQpvMhTBXTxLVFTLX/5sH8Y
+ ptU/97epAB0tqKhbRk0e8jqoVqz2vCgbBPCGCFAyAdI6lMocBynw5lGkiZzb6j+nkJ9erO9jerj
+ JS+FCt+V
+X-Proofpoint-ORIG-GUID: q04d7wl-rH4vcCep-SzRrTCSZeHmBVO5
+X-Proofpoint-GUID: q04d7wl-rH4vcCep-SzRrTCSZeHmBVO5
+X-Authority-Analysis: v=2.4 cv=M9NNKzws c=1 sm=1 tr=0 ts=68b5c298 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=yJojWOMRYYMA:10 a=G5li5t1DEtNkI_zgAAMA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-01_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 suspectscore=0 phishscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300032
 
-On Thu, 28 Aug 2025 11:42:28 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+This patch series adds support for limiting the maximum high-speed
+gear and rate used by the UFS controller via device tree properties.
 
-> Change how the FS[10:0] field of the FILTER register is calculated to
-> get consistent sample rates when only one channel is enabled vs when
-> multiple channels are enabled in a buffered read.
-> 
-> By default, the AD7124 allows larger sampling frequencies when only one
-> channel is enabled. It assumes that you will discard the first sample or
-> so to allow for settling time and then no additional settling time is
-> needed between samples because there is no multiplexing due to only one
-> channel being enabled. The conversion formula to convert between the
-> sampling frequency and the FS[10:0] field is:
-> 
->     fADC = fCLK / (FS[10:0] x 32)
-> 
-> which is what the driver has been using.
-> 
-> On the other hand, when multiple channels are enabled, there is
-> additional settling time needed when switching between channels so the
-> calculation to convert between becomes:
-> 
->     fADC = fCLK / (FS[10:0] x 32 x (4 + AVG - 1))
-> 
-> where AVG depends on the filter type selected and the power mode.
-> 
-> The FILTER register has a SINGLE_CYCLE bit that can be set to force the
-> single channel case to use the same timing as the multi-channel case.
-> 
-> Before this change, the first formula was always used, so if all of the
-> in_voltageY_sampling_frequency attributes were set to 10 Hz, then doing
-> a buffered read with 1 channel enabled would result in the requested
-> sampling frequency of 10 Hz. But when more than one channel was
-> enabled, the actual sampling frequency would be 2.5 Hz per channel,
-> which is 1/4 of the requested frequency.
-> 
-> After this change, the SINGLE_CYCLE flag is now always enabled and the
-> multi-channel formula is now always used. This causes the sampling
-> frequency to be consistent regardless of the number of channels enabled.
-> 
-> Technically, introducing the avg parameter is not needed at this time
-> since we currently only support a single filter mode which always has an
-> AVG value of 1. But it helps to show where the factor comes from in the
-> datasheet and will be used in the future when supporting additional
-> filter types.
-> 
-> The AD7124_FILTER_FS define is moved while we are touching this to
-> keep the bit fields in descending order to be consistent with the rest
-> of the file.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> This is one of those unfortunate cases where we are fixing a bug but we
-> risk breaking userspace that may be depending on the buggy behavior.
-> 
-> I intentionally didn't include a Fixes: tag for this reason.
-> 
-> Given some of the other shortcomings of this driver, like using an
-> integer IIO_CHAN_INFO_SAMP_FREQ value when it really needs to allow a
-> fractional values, it makes me hopeful that no one is caring too much
-> about the exact value of the sampling frequency. So I'm more willing
-> than I would normally be to take a risk on making this change.
-> 
-> I also have a plan to resolve things if we do find we broke someone and
-> need to revert the change. We have a recent devicetree fix [1] for these
-> chips that would allow us to detect "new" users using the correct DT
-> bindings and "old" users using the buggy bindings. So we could use this
-> as a way to also enable the old buggy sampling frequency behavior only
-> for "old" users while allowing "new" users to get the correct behavior.
+Some platforms may have signal integrity, clock configuration, or
+layout issues that prevent reliable operation at higher gears or rates.
+This is especially critical in automotive and other platforms where
+stability is prioritized over peak performance.
 
-I'm not convinced this is a good plan as it may avoid regressions on a
-particular board, but they are going to get unexpected changes if say
-they order a new board of same type that has a newer DT.
+The series follows this logical progression:
+1. Document the new DT properties in the common UFS binding
+2. Clean up existing redundant code in the qcom driver
+3. Add platform-level parsing support for the new properties
+4. Integrate the platform support in the qcom driver
 
-Anyway hopefully we won't need it!
+This approach makes the functionality available to other UFS host
+drivers and provides a cleaner, more maintainable implementation.
 
-> 
-> [1] https://lore.kernel.org/linux-iio/20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com/
+Changes from V1: 
+- Restructured patch series for better logical flow and maintainability.
+- Moved DT bindings to ufs-common.yaml making it available for all UFS 
+  controllers.
+- Added platform-level support in ufshcd-pltfrm.c for code reusability.
+- Separated the cleanup patch to remove redundant hs_rate assignment in
+  qcom driver.
+- Removed SA8155 DTS changes to keep the series focused on core
+  functionality.
+- Improved commit messages with better technical rationale.
 
-Just one comment on the comment.
+Changes from V2: 
+- Documented default values of limit-rate and limit-hs-gear in DT bindings
+  as per Krzysztof's suggestion.
 
-I'd like some more eyes on this though as whilst it seems reasonable
-the whole different modes bit changing timings is not particularly obvious.
+Changes from V3:
+- Changed limit-rate property from numeric values 1 and 2 to string values
+  Rate-A and Rate-B for better readability and clarity as suggested by
+  Bart and Krzysztof.
+- Added Co-developed-by tag for Nitin Rawat in 3rd patch. 
 
-> ---
->  drivers/iio/adc/ad7124.c | 26 ++++++++++++++++++--------
->  1 file changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index 3fc24f5fffc8f200c8656cb97f9e7f80546f688b..d75ef4d5de233c2a548c732b36440d0d82c86f34 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -84,10 +84,11 @@
->  #define AD7124_CONFIG_PGA		GENMASK(2, 0)
->  
->  /* AD7124_FILTER_X */
-> -#define AD7124_FILTER_FS		GENMASK(10, 0)
->  #define AD7124_FILTER_FILTER		GENMASK(23, 21)
->  #define AD7124_FILTER_FILTER_SINC4		0
->  #define AD7124_FILTER_FILTER_SINC3		2
-> +#define AD7124_FILTER_SINGLE_CYCLE	BIT(16)
-> +#define AD7124_FILTER_FS		GENMASK(10, 0)
->  
->  #define AD7124_MAX_CONFIGS	8
->  #define AD7124_MAX_CHANNELS	16
-> @@ -250,9 +251,10 @@ static int ad7124_set_mode(struct ad_sigma_delta *sd,
->  	return ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL, 2, st->adc_control);
->  }
->  
-> -static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel, unsigned int odr)
-> +static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel,
-> +				   unsigned int odr, unsigned int avg)
->  {
-> -	unsigned int fclk, odr_sel_bits;
-> +	unsigned int fclk, factor, odr_sel_bits;
->  
->  	fclk = clk_get_rate(st->mclk);
->  	/*
-> @@ -261,8 +263,12 @@ static void ad7124_set_channel_odr(struct ad7124_state *st, unsigned int channel
->  	 * fCLK is the master clock frequency
->  	 * FS[10:0] are the bits in the filter register
->  	 * FS[10:0] can have a value from 1 to 2047
-> +	 * When multiple channels in the sequencer or the SINGLE_CYCLE bit is
-This sentence doesn't read. Maybe something with a few more words like.
+Ram Kumar Dwivedi (4):
+  ufs: dt-bindings: Document gear and rate limit properties
+  ufs: ufs-qcom: Remove redundant re-assignment to hs_rate
+  ufs: pltfrm: Allow limiting HS gear and rate via DT
+  ufs: ufs-qcom: Add support for limiting HS gear and rate
 
-	 * When multiple channels are enabled in the sequencer, the
-	 * SINGLE_CYCLE bit is set or when certain filter modes are enabled,...
+ .../devicetree/bindings/ufs/ufs-common.yaml   | 16 +++++++++
+ drivers/ufs/host/ufs-qcom.c                   | 21 +++++++----
+ drivers/ufs/host/ufshcd-pltfrm.c              | 36 +++++++++++++++++++
+ drivers/ufs/host/ufshcd-pltfrm.h              |  1 +
+ 4 files changed, 68 insertions(+), 6 deletions(-)
 
-> +	 * or when certain filter modes are enabled, there is an extra factor
-> +	 * of (4 + AVG - 1) to allow for settling time.
->  	 */
-> -	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * 32);
-> +	factor = 32 * (4 + avg - 1);
-> +	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor);
-
+-- 
+2.50.1
 
 
