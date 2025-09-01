@@ -1,224 +1,191 @@
-Return-Path: <linux-kernel+bounces-794818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5792AB3E79A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA4AFB3E79F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AB382002F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28CE4161658
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3FB343207;
-	Mon,  1 Sep 2025 14:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1FF33CE93;
+	Mon,  1 Sep 2025 14:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="he83A8Hr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rE/UMgkN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFF33431E5
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C722EF653;
+	Mon,  1 Sep 2025 14:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756737810; cv=none; b=ena8nAGBjutcpzvAa1IWIyYX0FXlAJlJiqpAXfrFc0CxanHkUvTgDAxdWNZZl8taKKbXO0Z5gjz361iYovEA0keTYhbLiTnK+/DUdlkZ13GKUCb1MOBULw5XPzhQWj4hwtiIs26LqsB5NRaWoxBRvpm6rYjp/8b5LltfnsHKxS0=
+	t=1756737880; cv=none; b=IegbCq4PK074yQDH8vwiW4QYUxrSVjV/LTS+b0DdKb3B8NafP2WsPF3/drnIgkKxXZAVga34j3Y0E0sLU1zlZTsHbzutMABwFb51xY3rUJgGu9TzeQnl0Ds5fNTPOqG2BjqYH+sl4Knz+c2mR5ZHT2+LjOI67CiWRkgorMldbdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756737810; c=relaxed/simple;
-	bh=fzV2ArRfUZY3Zqk8nsUA/BCr9akfeCnj+cgX8D3T2U0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o022oZRVhvfUuTytq/dcoAZSRsAKOK+n2WvC+6ueYdH8wBoQwaVF/pxvSlGdY13rCPrecwrt3vKzdJP7h2D3byfHxeLrVpOEE63isfkIzbvB1tpZKVRoHCYrpd13XxrJLLEhHshC5FGpCSp805ZmF1cwd3BI+NuN41sTJj4YV+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=he83A8Hr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756737807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZQf4Reiy5apT64tfdgfETW33d38jjuSty8SoNlXS3hY=;
-	b=he83A8Hr4oZxw6L7xZYUs5O56bNktzRy1zVWXInnzvHq6lU9BSaZhxS71R1yPfCC7poltk
-	ul6uyxGnyjxq32PJhu5YntHb/ow7v59L9W+f9sCh3+ZnLuZG3Xws98WHMAAlh5yYtopkff
-	zsQh8SlOPC6LGLSZi1jId1Np6uy00LA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-437-9c4X0pIONSC7CyVSdpxN1g-1; Mon, 01 Sep 2025 10:43:26 -0400
-X-MC-Unique: 9c4X0pIONSC7CyVSdpxN1g-1
-X-Mimecast-MFC-AGG-ID: 9c4X0pIONSC7CyVSdpxN1g_1756737805
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b920a0c89so1633745e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 07:43:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756737805; x=1757342605;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZQf4Reiy5apT64tfdgfETW33d38jjuSty8SoNlXS3hY=;
-        b=gpt9WymauMmi17sP9yNAKDyh1pEHhreanfQZH0QPhO9PAqVxGCxqMc3zoDMACRb6r3
-         TuhJ28ZSeP+fRb3KAv5vv9js7jE1gv5gFuyhqIw7LX0enGWrdz6lWE9F/PiHVlDbf6IT
-         ZLRr94KXqAjWGS6Wd278dBYOdVvRwUo6tP8Zc8WnYznoanobgi2nkitNLKcwKknWENms
-         AxYPYDY5gxiFXnVriARAJbtiqPF+HuqSelafcHpXeHbspR3VRkhy9MfN0WDO5AiDt81C
-         rnNAE2kx84vkwa1dMfu67ixnw9cY5HYZrbungVIKt3ha6Z5AkL1GaUPTDUAeHdIOK88W
-         XRLw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4qnciipu/GgtCGWokWoAYMjpgQRzuJjrUyeI4ZEOedYai9g8Vk5DbSjOVVc9BG5cUKWZEioD0l2CeN6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF37JchJXSw1z0joqlbRPYzF9xtz8EEYJiI0WkS4lwDVnKMv/+
-	/nRBEpvDAqnHppkBkro5fEwgRBgZygD/aRg3UziIZ8qgaq/J/2XNgtej+4ex1oU955N742eR3ky
-	qhATbgY2XeVnByvjEb10yBqYBml2nkC5RDX7afWdxxxjscXnTiEGn/InE1qD+rEBtsw==
-X-Gm-Gg: ASbGncvlACMVxDcwbUZ/xEcgFA70mH1+aSDsd+OyPBAJtT65IMikb8oJNRVD5anxEr6
-	+7gvqgRUJsC7oNHEnEHrqMNWpkNr2mK16a/qBXxznSuPLoU3JAyTqz6xlEcrcc5Qm5fR3LiF3JQ
-	K/vQBx/q0Rbc8atg5D3594+B47N7IrxQkA7OsMbqRhKDvlRAa9NgfbDBtSYvkiGqnhAxLO+my+b
-	RfI4tgptgavwRaXg9fv4yjOsQdX7WJYOuiYOqPUaPD7PCTNz+Q+IqlIm/wtXZ/5JOT94aC1LPOz
-	1CwGALn/TQy5lrWKflbT8svj2Z0sii6vFjg6FhtM5B0nxcxAaXUMjxazGGfxInoeD2kMkgXfIIf
-	yHEM4RRiyE3NiqPjQbPcmyg6ttl/ejqMqWqn3jtmOKAqL70nLVHYzj8/9wsUkjuyYklM=
-X-Received: by 2002:a05:600c:3b9d:b0:45b:8a84:503b with SMTP id 5b1f17b1804b1-45b8a845256mr54590945e9.31.1756737805324;
-        Mon, 01 Sep 2025 07:43:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQRfn5sR/77vqQEmdzkbnhL4QNlRAOrqr4TrvFYBM6bDd/eneSMeY2Ldu8ZaHvy16wvsmCiw==
-X-Received: by 2002:a05:600c:3b9d:b0:45b:8a84:503b with SMTP id 5b1f17b1804b1-45b8a845256mr54590595e9.31.1756737804892;
-        Mon, 01 Sep 2025 07:43:24 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b87b38fcfsm53262385e9.0.2025.09.01.07.43.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 07:43:24 -0700 (PDT)
-Message-ID: <e2620083-656b-4af1-91d5-6452eda2e4a7@redhat.com>
-Date: Mon, 1 Sep 2025 16:43:22 +0200
+	s=arc-20240116; t=1756737880; c=relaxed/simple;
+	bh=rOQuaa8RDkK43QH4byDdVI+QZow0U6m4AZGslI0lojk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BjBv9aM98h3OtWKlICoJ4vJxS+yOz76IdcHrO3stpBNc9jCsbp50ZFL/W39BOMhUnlRIHYaKfC3Qo29Md8DvHW3uDF40bZMcVENW05Xj+0z1mYXT/67N7Un4RBgXsi8zpd43+lpTEPuPduukqSi1gKd4WMF++t18/99AhLGl1fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rE/UMgkN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54952C4CEF0;
+	Mon,  1 Sep 2025 14:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756737880;
+	bh=rOQuaa8RDkK43QH4byDdVI+QZow0U6m4AZGslI0lojk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rE/UMgkNnYVi4ZNLy8sjvPBhINyu5faw4K0yw857IeiDzM82os/aOyNuW6Wj8YdH6
+	 3QGsDyOpCCQAqmq43Bk5LlQ0cVMl5Q7jZki+gmCkk7lZL2citbZSzH0Wow5q8oUgga
+	 7LGVs4CURcQ7X06kjMbR+lOIcXVH+jDsK+BZeJfi0Jffg3Rtl2fx7OoPwKt2ojGBWI
+	 I59xIKRMfFJa4SLxDXI+y/yidmO6aKwfGpqciBpWLJ957jHbJCqSjrNcOD3pHkMsje
+	 z5QtHULPQ7rpw0DGpMQO/wiGuWKI4mmTDz67K4fha8Sar6ZPt0xrrURTe7OWsq3/Y8
+	 RYcAsnZouu0GQ==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [RFC PATCH 0/6] tracing: wprobe: Add wprobe for watchpoint
+Date: Mon,  1 Sep 2025 23:44:35 +0900
+Message-ID: <175673787502.478080.3342912952394010967.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/12] KVM: Documentation: describe
- GUEST_MEMFD_FLAG_NO_DIRECT_MAP
-To: "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "ackerleytng@google.com" <ackerleytng@google.com>,
- "Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack"
- <jackabt@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "rppt@kernel.org" <rppt@kernel.org>, "seanjc@google.com"
- <seanjc@google.com>, "tabba@google.com" <tabba@google.com>,
- "vbabka@suse.cz" <vbabka@suse.cz>, "will@kernel.org" <will@kernel.org>,
- "Cali, Marco" <xmarcalx@amazon.co.uk>
-References: <786503d6-e58d-412a-a17b-f5e4e481c3fe@redhat.com>
- <20250901143000.5017-1-roypat@amazon.co.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250901143000.5017-1-roypat@amazon.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 01.09.25 16:30, Roy, Patrick wrote:
-> On Thu, 2025-08-28 at 11:27 +0100, David Hildenbrand wrote:
->> On 28.08.25 11:39, Roy, Patrick wrote:
->>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->>> ---
->>>    Documentation/virt/kvm/api.rst | 5 +++++
->>>    1 file changed, 5 insertions(+)
->>>
->>> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
->>> index c17a87a0a5ac..b52c14d58798 100644
->>> --- a/Documentation/virt/kvm/api.rst
->>> +++ b/Documentation/virt/kvm/api.rst
->>> @@ -6418,6 +6418,11 @@ When the capability KVM_CAP_GUEST_MEMFD_MMAP is supported, the 'flags' field
->>>    supports GUEST_MEMFD_FLAG_MMAP.  Setting this flag on guest_memfd creation
->>>    enables mmap() and faulting of guest_memfd memory to host userspace.
->>>
->>> +When the capability KVM_CAP_GMEM_NO_DIRECT_MAP is supported, the 'flags' field
->>> +supports GUEST_MEMFG_FLAG_NO_DIRECT_MAP. Setting this flag makes the guest_memfd
->>> +instance behave similarly to memfd_secret, and unmaps the memory backing it from
->>> +the kernel's address space after allocation.
->>> +
->>>    When the KVM MMU performs a PFN lookup to service a guest fault and the backing
->>>    guest_memfd has the GUEST_MEMFD_FLAG_MMAP set, then the fault will always be
->>>    consumed from guest_memfd, regardless of whether it is a shared or a private
->>
->> WARNING: Missing commit description - Add an appropriate one
-> 
-> Admittedly wasn't sure what to say that wouldn't just repeat the commit title
-> or the contents. Maybe that just means this shouldn't be its own patch. Will
-> squash in the previous one (same for PATCH 11/12).
+Hi,
 
-Very right :)
+Here is an RFC series for adding new wprobe (watch probe) which
+provides memory access tracing event. Moreover, this can be used via
+event trigger. Thus it can trace memory access on a dynamically
+allocated objects too.
 
-If there is nothing to say then probably everything was already said 
-(other patch), lol
+In this version, I reuse Jinchao's arch_reinstall_hw_breakpoint()
+patch[1].
 
-> 
->> WARNING: From:/Signed-off-by: email name mismatch: 'From: "Roy, Patrick"
->> <roypat@amazon.co.uk>' != 'Signed-off-by: Patrick Roy <roypat@amazon.co.uk>'
-> 
-> Heh, my git config only ever uses "Patrick Roy <roypat@amazon.co.uk>". Not sure
-> where "Roy, Patrick" comes from, could it be the mail server mangling things?
+[1] https://lore.kernel.org/all/20250828073311.1116593-6-wangjinchao600@gmail.com/
 
-Good question. Does it only happen through git?
+The basic usage of this wprobe is similar to other probes;
 
-When Nikita sends through amazon.com[1] it seems to be fine.
+  w:[GRP/][EVENT] [r|w|rw]@<ADDRESS|SYMBOL[+OFFS]> [FETCHARGS]
 
-But when he also sent through amazon.co.uk [2], it's also messed up.
+This defines a new wprobe event. For example, to trace jiffies update,
+you can do;
 
-I suggest contacting the amazon.co.uk admin or ... sending through 
-amazon.com :)
+ echo 'w:my_jiffies w@jiffies:8 value=+0($addr)' >> dynamic_events
+ echo 1 > events/wprobes/my_jiffies/enable
+
+Moreover, this can be combined with event trigger to trace the memory
+accecss on slab objects. The trigger syntax is;
+
+  set_wprobe:WPROBE_EVENT:FIELD[+ADJUST]
+  clear_wprobe:WPROBE_EVENT
+
+For example, trace the first 8 byte of the dentry data structure passed
+to do_truncate() until it is deleted by __dentry_kill().
+(Note: all tracefs setup uses '>>' so that it does not kick do_truncate())
+
+  # echo 'w:watch rw@0:8 address=$addr value=+0($addr)' > dynamic_events
+
+  # echo 'f:truncate do_truncate dentry=$arg2' >> dynamic_events
+  # echo 'set_wprobe:watch:dentry' >> events/fprobes/truncate/trigger
+
+  # echo 'f:dentry_kill __dentry_kill dentry=$arg1' >> dynamic_events
+  # echo 'clear_wprobe:watch' >> events/fprobes/dentry_kill/trigger
+
+  # echo 1 >> events/fprobes/truncate/enable
+  # echo 1 >> events/fprobes/dentry_kill/enable
+
+  # echo aaa > /tmp/hoge
+  # echo bbb > /tmp/hoge
+  # echo ccc > /tmp/hoge
+  # rm /tmp/hoge
+
+Then, the trace data will show;
+
+# tracer: nop
+#
+# entries-in-buffer/entries-written: 16/16   #P:8
+#
+#                                _-----=> irqs-off/BH-disabled
+#                               / _----=> need-resched
+#                              | / _---=> hardirq/softirq
+#                              || / _--=> preempt-depth
+#                              ||| / _-=> migrate-disable
+#                              |||| /     delay
+#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+#    [    7.026136] sh (113) used greatest stack depth: 12912 bytes left
+          | |         |   |||||     |         |
+              sh-113     [002] .....     7.024402: truncate: (do_truncate+0x4/0x120) dentry=0xffff8880069194b8
+              sh-113     [002] ..Zff     7.024822: watch: (lookup_fast+0xaa/0x150) address=0xffff8880069194b8 value=0x200008
+              sh-113     [002] ..Zff     7.024830: watch: (step_into+0x82/0x360) address=0xffff8880069194b8 value=0x200008
+              sh-113     [002] ..Zff     7.024834: watch: (step_into+0x9f/0x360) address=0xffff8880069194b8 value=0x200008
+              sh-113     [002] ..Zff     7.024839: watch: (path_openat+0xb3a/0xe70) address=0xffff8880069194b8 value=0x200008
+              sh-113     [002] ..Zff     7.024843: watch: (path_openat+0xb9a/0xe70) address=0xffff8880069194b8 value=0x200008
+              sh-113     [002] .....     7.024847: truncate: (do_truncate+0x4/0x120) dentry=0xffff8880069194b8
+              sh-113     [002] ...1.     7.025364: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff888006919380
+              sh-113     [002] ...1.     7.025511: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880069195f0
+              rm-118     [003] ...1.     7.027543: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880069194b8
+              sh-113     [002] ...2.     7.027825: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff8880044429c0
+              sh-113     [002] ...2.     7.027833: dentry_kill: (__dentry_kill+0x0/0x220) dentry=0xffff888004442270
 
 
-[1] 
-https://lore.kernel.org/all/cda7c46b-c474-48f4-b703-e2f988470f3b@amazon.com/T/#u
-[1] 
-https://lore.kernel.org/all/20250828153049.3922-1-kalyazin@amazon.com/T/#u
+Thank you,
 
--- 
-Cheers
+---
 
-David / dhildenb
+Jinchao Wang (1):
+      x86/HWBP: introduce arch_reinstall_hw_breakpoint() for atomic context
 
+Masami Hiramatsu (Google) (5):
+      tracing: wprobe: Add watchpoint probe event based on hardware breakpoint
+      HWBP: Add modify_wide_hw_breakpoint_local() API
+      tracing: wprobe: Add wprobe event trigger
+      selftests: tracing: Add a basic testcase for wprobe
+      selftests: tracing: Add syntax testcase for wprobe
+
+
+ Documentation/trace/index.rst                      |    1 
+ Documentation/trace/wprobetrace.rst                |  129 ++
+ arch/Kconfig                                       |   10 
+ arch/x86/Kconfig                                   |    1 
+ arch/x86/include/asm/hw_breakpoint.h               |    3 
+ arch/x86/kernel/hw_breakpoint.c                    |   61 +
+ include/linux/hw_breakpoint.h                      |    6 
+ include/linux/trace_events.h                       |    3 
+ kernel/events/hw_breakpoint.c                      |   36 +
+ kernel/trace/Kconfig                               |   24 
+ kernel/trace/Makefile                              |    1 
+ kernel/trace/trace.c                               |    9 
+ kernel/trace/trace.h                               |    5 
+ kernel/trace/trace_probe.c                         |   20 
+ kernel/trace/trace_probe.h                         |    8 
+ kernel/trace/trace_wprobe.c                        | 1111 ++++++++++++++++++++
+ .../ftrace/test.d/dynevent/add_remove_wprobe.tc    |   68 +
+ .../test.d/dynevent/wprobes_syntax_errors.tc       |   20 
+ 18 files changed, 1513 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/trace/wprobetrace.rst
+ create mode 100644 kernel/trace/trace_wprobe.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_wprobe.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/wprobes_syntax_errors.tc
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
