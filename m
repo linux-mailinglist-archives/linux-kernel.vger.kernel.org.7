@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-793725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFA3B3D749
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:33:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FB0B3D76A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B87427A70F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88821780F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8667D1F9A89;
-	Mon,  1 Sep 2025 03:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379FF238C3A;
+	Mon,  1 Sep 2025 03:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r61O3p9i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3cDlirA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BB210F2;
-	Mon,  1 Sep 2025 03:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CACD72618;
+	Mon,  1 Sep 2025 03:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756697583; cv=none; b=TZZmElhgXiBlUvWgDyp1rxIBWAO0eLYvdoLQ/jSf/2pNWNjVDV5xsEIQoKLhmbPXY7R9pq/wT5I3b/UCRD6gRIdrIynLm0KGQPcyAdtAfWTsiPJLhJ1dWbyOTJx5B+khQWw6mAFBjr+/F3Zc238zGavYLaw/AOTMM/wwvlJg9CU=
+	t=1756697664; cv=none; b=OenN5vHv6VsHGzP60twqiQxgmQmRRia7vzXBrzlTAc5359jOnfJN4Yl3TTDsGHfvT6SxEiPfB3k9dbTzLYF7vi86LHU7WakDrd0FFnHOwunPq5b5hcAxt7yxMFYyfJAT3oepo8csARzDvbIDxiZcFZnGzOAE29Ih4UVszvgFns0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756697583; c=relaxed/simple;
-	bh=xR/jjE25Ao+BdAatMaMjOo9qLuJFyaz/aryuYb/IMnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=twHqSy3C+Rp04f+L1StlZC5guaA2zX2oZifzaZdY/N9Ki8X1WtFt2u7o7HytdJG2gUJPtjKEDHmWl4Vbc9YGxyGgPvpN8htSxoi76Vuy3UDDXmn7qu6gHysT0MMQTUD7iJ3jhQr4VpXdw6sY7k+4XEPjmy6gmVeWKRa0S15S+kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r61O3p9i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E533AC4CEF0;
-	Mon,  1 Sep 2025 03:32:57 +0000 (UTC)
+	s=arc-20240116; t=1756697664; c=relaxed/simple;
+	bh=k7zHlBypQOJw+s2CfqMrmnR8tEArANEnYoH9usBkZQs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=plb+zLtM9d9M3hL8KqJ0jBVRVl0duh+f1z+TzsBs2uli7TtnlQtZhYrYh+3RQyTku5fxqiZtkeJ3cL+ArXeGrsqmfa1GRxP+RrD8WUKbR6O2HtmBgvmoSEsUT31Sk/76d0TRh7KjdowJulXHPxZGZo3KVDZvQdLNoYuG3hos8aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3cDlirA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0DA78C4CEF0;
+	Mon,  1 Sep 2025 03:34:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756697582;
-	bh=xR/jjE25Ao+BdAatMaMjOo9qLuJFyaz/aryuYb/IMnQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r61O3p9ioLFTblgtvQj+JtahXqW2VoRyQceVr9j4LlT2on90SjuG3rhgtwWF4v3FI
-	 Qn5cSr8fJ8pjyW7RO8zr/dsS6ikNs+AP+C6VBfcTHLKl9q/me01secKQP1GtDLsXOf
-	 Km5+66AwT7UE/mW2x8L6X2L9IY6d1v74rOPmjv6SNsH0Ko8p8WD6AI7RzUZcM0vsWT
-	 4EtKp/vxi1HoAewgZW7F8uIOnNxPEZAubhZ7bLQGVqq2AK3TtX3NZ3J65Scf4gHcaC
-	 PbnDMy/cew0t6uc6L/AcZey05/K7J42ZbjfZsSgBjYxugB+NTk9wfksw0TGXoOW+WY
-	 rF6RJvVEKDJiQ==
-Message-ID: <d802bcea-d81f-49eb-96ce-5d89dddca7c3@kernel.org>
-Date: Mon, 1 Sep 2025 05:32:55 +0200
+	s=k20201202; t=1756697664;
+	bh=k7zHlBypQOJw+s2CfqMrmnR8tEArANEnYoH9usBkZQs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=M3cDlirArTkAsEM6e2vR8Euxl2inbN1SEuUq0K7ySbpJGWv2LSxjEZmRkrk4rkQLg
+	 sBR2W4PM5EKpron5J1M2P2811Ffv1afPuEYCqxDt/GuX6qEKdjZLDfTAdzxEHq1btn
+	 Zwuf9wIpYY4+O4k9WnQuK9CgIlY33XfGqOSa/xTeKmzZTn7uaUjeDvXocQKANn6WkT
+	 MAA/xjvW6r/LrvN1RFBDYX0hLORzDDjYr97bwfQu3MdeMzjdDI0uOUc6YDYVjyx2lW
+	 nZ6L3gLyKbWoia8uvFlcFcL2YYNSDtJ91+nNJvEp0SKQ9qDKXitfOmcUf7VX3tFIDQ
+	 BzqslBPGYHe3A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED91FCA0FF0;
+	Mon,  1 Sep 2025 03:34:23 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 0/8] Support dynamic EMC frequency scaling on
+ Tegra186/Tegra194
+Date: Sun, 31 Aug 2025 22:33:48 -0500
+Message-Id: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
- imx9*-power.h into dt-bindings
-To: E Shattow <e@freeshell.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20250831200516.522179-1-e@freeshell.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250831200516.522179-1-e@freeshell.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABwUtWgC/02OQQ6CMBBFr0JmbZPpFGjhKsZFW2a0C0ELEhPC3
+ W3URJdvkvnvbTBzTjxDX22QeU1zmsYC+lBBvPjxzCoNhYGQGnRk1MLn7LVrVYpRWeo6rTEO1tZ
+ QXm6ZJT3fc8fThzPfH2V1+Rwh+JlVnK7XtBRLIGNFd8jBDKaVhgYRRutrDA0H0kgOGRH+a/rq2
+ 9L+WuLtIUWk3nJlJYg4HVvnqV8NnPb9Be1Jx8foAAAA
+X-Change-ID: 20250823-tegra186-icc-7299110cd774
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756697663; l=1717;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=k7zHlBypQOJw+s2CfqMrmnR8tEArANEnYoH9usBkZQs=;
+ b=4JOx4ljS41aHjmUu7nGdLiySrCSanKtMCBOeNESG19KQW8+6Duw0XnSGaV6BozWSuo2dyYMXX
+ /JJiP7WAV26BLPDulgpy4P1EKVZagdpukdmHQqK2HpjK+9p7KLmSXnL
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On 31/08/2025 22:04, E Shattow wrote:
-> Move imx9*-{clock,power}.h headers into
-> include/dt-bindings/{clock,power}/ and fix up the DTs
+This series borrows the concept used on Tegra234 to scale EMC based on
+CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+bpmp on those archs does not support bandwidth manager, so the scaling
+iteself is handled similar to how Tegra124 currently works.
 
-Huh? Why?
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (8):
+      dt-bindings: tegra: Add ICC IDs for dummy memory clients for Tegra186
+      dt-bindings: tegra: Add ICC IDs for dummy memory clients for Tegra194
+      cpufreq: tegra186: add OPP support and set bandwidth
+      memory: tegra186-emc: Support non-bpmp icc scaling
+      memory: tegra186: Support icc scaling
+      memory: tegra194: Support icc scaling
+      arm64: tegra: Add CPU OPP tables for Tegra186
+      arm64: tegra: Add CPU OPP tables for Tegra194
 
-> 
-> Reported-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-
-What sort of bug are you fixing? Nothing in commit msg explains that at all.
-
-> Signed-off-by: E Shattow <e@freeshell.de>
-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 317 +++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 636 +++++++++++++++++++++++++++++++
+ drivers/cpufreq/tegra186-cpufreq.c       | 152 +++++++-
+ drivers/memory/tegra/tegra186-emc.c      | 132 ++++++-
+ drivers/memory/tegra/tegra186.c          |  48 +++
+ drivers/memory/tegra/tegra194.c          |  59 ++-
+ include/dt-bindings/memory/tegra186-mc.h |   4 +
+ include/dt-bindings/memory/tegra194-mc.h |   6 +
+ 8 files changed, 1344 insertions(+), 10 deletions(-)
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250823-tegra186-icc-7299110cd774
+prerequisite-change-id: 20250826-tegra186-cpufreq-fixes-7fbff81c68a2:v3
+prerequisite-patch-id: 74a2633b412b641f9808306cff9b0a697851d6c8
+prerequisite-patch-id: 9c52827317f7abfb93885febb1894b40967bd64c
 
 Best regards,
-Krzysztof
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
 
