@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-793896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DE9B3D9D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:23:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B423B3D9D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353A93B789F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 381AB16FFE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A05254B18;
-	Mon,  1 Sep 2025 06:23:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F9F254841;
+	Mon,  1 Sep 2025 06:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JDKvjeYO"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3914F203706;
-	Mon,  1 Sep 2025 06:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA281E9B3F
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 06:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756707787; cv=none; b=l8y0hJXySk8aBCVynib1HtTocG0HO0nDQFpylF916HN3EgtnBlasDwd4Ufr5/iH5RfI1HnbL7YvZF4V42fuZTdCUJ+YiFH4Q8YSKpE01LIJDzwkotEQAt/ja0n/C63Qg0Nn3Mx23g5JYA6GGqfcQj89WlD/rTgs11bwkPysw4Go=
+	t=1756707910; cv=none; b=WcjN+BdG7egubtCt1osW5rD+MlAyrq5yZWz6Y3LmZucLD7oH8sxzyelRvbySvhgP9mAUcb3+wFnRc498HKeL+81WNEbYu6Z0aLkdg6PWQIyiPW22rRtZmLlJB03PTMxDtVjm5Ovwkzo98tNX0qbzcp8HYy8cNJ+IVmXoPliQ/rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756707787; c=relaxed/simple;
-	bh=W2Z++sDS9nUnLNBneF07oL8yJ0fb58gxs1WgCjdwSOE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pM0aw/yF82Utg1IIbemYTxVeJoziDWytX0wOmGK8HI8iwP3Qo9OoaGmIYP5zlW5ys9NXywvrUI81nme2BX9fnT60C5+MgxaeEK5xYlJWwcsjgpzwHkOp5Gl13esUXjB8LbHnGrOyYZIZdEl0C0Jac/EkmJiRlodOC/QTfNdCw0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFf1y5R3GzYQvlf;
-	Mon,  1 Sep 2025 14:23:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3FC261A084B;
-	Mon,  1 Sep 2025 14:23:01 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8IzCO7VoyUICBA--.57685S3;
-	Mon, 01 Sep 2025 14:23:00 +0800 (CST)
-Subject: Re: [PATCH RFC v3 01/15] block: cleanup bio_issue
-To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- hch@infradead.org, colyli@kernel.org, hare@suse.de, tieren@fnnas.com,
- axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- kmo@daterainc.com, satyat@google.com, ebiggers@google.com, neil@brown.name,
- akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-2-yukuai1@huaweicloud.com>
- <7ef5c6dc-5eae-41a7-9403-0d8616668c4b@kernel.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2fc7611b-ed38-7006-580d-f18b12c24ae7@huaweicloud.com>
-Date: Mon, 1 Sep 2025 14:22:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756707910; c=relaxed/simple;
+	bh=5tEFRvyGeKDN+x2Ei9Cj+rHE7MmPIKyHBlDmb1SmtGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L7Hl5dmxTxLGzUjup9dvL4QCE8LvNL15zawZ/QGCLFPdy3ubyWzP5zKQTlna1J5DA+G7TilwIlKrHGftqQwWwdigjiWHmRdaRkuxi39j1t1a1+uPLhP738dxqvshuHk819239HhBi0gJTwSj6cGTdQgf+OOBai2xolB+xnFYOLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JDKvjeYO; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b873a2092so12061125e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 23:25:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756707906; x=1757312706; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2YeKuNtpPLqtxqq8gC2tE+cTRtA0VGDqCWttaxdOw1c=;
+        b=JDKvjeYOO/6HDrP0X+HHkWGd75rKWnbeZl/5VBOLYpQoPKXtFqX5dbwIKAm8QysPGT
+         5NpMTn9JKuXTSluQyPoG/yGxLVvODNUlVtXus+Kfd7ZVGScS+WPnURCutJ0IaVALK1wK
+         Vf9DzIZI+Eol67nnigq6GhdsFYfI/frYX2huZmoMPN0P8PM2mvtKGUI2O1bkSerWURug
+         0F9+k3ANaVx++ezFQm9KylhlTxs3gXztLa/oFi0ABlD1u7o4fJ3BJMUSA/LTywiTo7+D
+         zrqwfcMSevmVKE0qRzeZrV61g12N3gPKC+/eznUYvIcWbohVkQGzFByDt3BWq95YfMjo
+         4nbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756707906; x=1757312706;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2YeKuNtpPLqtxqq8gC2tE+cTRtA0VGDqCWttaxdOw1c=;
+        b=Fu3wdjY4n2J58HCGh2ShcHWwYG08R04OMw9DzEVn5rExRoEYIjyMD5ijYz9p6J0+aJ
+         kDsBnfMIXAPtWCJqDR66xf/56ywFoHAnrQPm8MDvMze3bMPXP8jDxYxvBrKIB3y/GFEz
+         gLjP1ukcVOmTeUgd74K9cOVq5pU9q5VnosGELpAz0KEPCH94SWz34SQz2g3UB4Sg2KLR
+         /KPkCbGQK5rL9HhU+WZbMedaavekOid9hnVrBpcgU38c0Ep842hy5fNFSrTFCBQAv2sD
+         G+zlrxrd/0B9kDtOVL+52xmppJr0xUGl+dQHhVZxxJ/+7C9YjtunHcHmlRY6nSZdxozr
+         dpBQ==
+X-Gm-Message-State: AOJu0YxDyDWCEpiDCK3hHEta5amcvpHTXjnsfWz3Bysd2BrQYYup/bT7
+	5XnAm0uPqQKIIRAq5JJr/LXKNDoQjIKomRUZnhdLuZw7tBlnVBJ8+0ns7m2no01hzz0=
+X-Gm-Gg: ASbGnctlDfuuxtNW/dnGiNxz8In/jrmgQIWyd4c9hNBu15LdhH3jBAMiTFQJJ/fseP4
+	DJu2V5N5rKwUUU77SIyOEffinAEcf8sh90oq0uZdqyUqK1rWZU8YZGHkk3OUWirtsr3u+rIVl5O
+	/qN9JtovdexUHCmvjnuKqiiehUPHsOFQuIziwqWAoZDkvzzafayG4pXcSQ1tmmd86uB3Mlrl7lV
+	GMCa07cFibYGSMxPDJmXio7P5EE7+qyUH4pBXAwi64S4MuJxH/gS/AMJLFWx6dnXJdZSMjIyZ6X
+	1azz80+bRhZVHsMb8vx5tL8gtT/uAKN2bPzQB9LwuG7Hg55XRya0mMfCTzWIyw38LoHe8C63AtB
+	+7EnIxBeTBkLhMEg9U+FZ0zYCPki3aonvqr/Nj2ge
+X-Google-Smtp-Source: AGHT+IHnke2GT0NOJivpigEQtNHBZdI155ZzMIvdBsIqtx3ducDptv4HE++iJXeOAgJzi8Q9MoWEvg==
+X-Received: by 2002:a05:600c:3b9a:b0:45b:8866:50fd with SMTP id 5b1f17b1804b1-45b88665357mr41091535e9.32.1756707905579;
+        Sun, 31 Aug 2025 23:25:05 -0700 (PDT)
+Received: from [192.168.0.251] ([79.115.63.1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d3a7492001sm7507997f8f.42.2025.08.31.23.25.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Aug 2025 23:25:05 -0700 (PDT)
+Message-ID: <788c3aba-568d-4297-bc8e-f47921859d57@linaro.org>
+Date: Mon, 1 Sep 2025 07:25:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7ef5c6dc-5eae-41a7-9403-0d8616668c4b@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8IzCO7VoyUICBA--.57685S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruw4xXw1rZr4kAw1ktFyrZwb_yoW3XrX_WF
-	sYkrZ2yw17X3Wxtwn5tFnxZ3ykGw4fXryUXrWxG3WfG3WkArWktFs5Jrs8Xw4Uu397J34r
-	Krn0gwsxJr1IqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbS8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: firmware: google,gs101-acpm-ipc: add
+ #clock-cells
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
+ <20250827-acpm-clk-v2-1-de5c86b49b64@linaro.org>
+ <b5d0e355-2681-4eaa-8a67-82a364312ec5@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <b5d0e355-2681-4eaa-8a67-82a364312ec5@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-在 2025/09/01 11:43, Damien Le Moal 写道:
-> On 9/1/25 12:32 PM, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Now that bio->bi_issue is only used by io-latency to get bio issue time,
->> replace bio_issue with u64 time directly and remove bio_issue to make
->> code cleaner.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+
+On 8/31/25 11:40 AM, Krzysztof Kozlowski wrote:
+> On 27/08/2025 14:42, Tudor Ambarus wrote:
+>> diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
+>> index 442f9e9037dc33198a1cee20af62fc70bbd96605..f1d0df412fdd49b300db4ba88bc0b1674cf0cdf8 100644
+>> --- a/include/dt-bindings/clock/google,gs101.h
+>> +++ b/include/dt-bindings/clock/google,gs101.h
+>> @@ -634,4 +634,19 @@
+>>  #define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
+>>  #define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
 > 
-> It seems that this patch is completely independent of the series.
-> Maybe post it separately not as an RFC ?
-> 
+> I missed it last time - this is a header for SoC clock controller
+> bindings. ACPM firmware is completely different device, so should go to
+> its own binding header.
 
-Actually, functionaly patch 1,2 must be applied before the following
-cleanup, otherwise bio_submit_split_bioset() will add unnecessary
-blk_time_get_ns() from blkcg_bio_issue_init() for mdraid, because
-iolatency can never be initialized for mdraid, which is bio based.
-
-Thanks,
-Kuai
-
+right. Will do, thanks!
 
