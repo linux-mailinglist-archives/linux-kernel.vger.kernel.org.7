@@ -1,262 +1,316 @@
-Return-Path: <linux-kernel+bounces-794406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8C9B3E12C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:12:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6F7B3E130
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117043AF391
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75FF3B8E4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B743126DC;
-	Mon,  1 Sep 2025 11:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nlPUE/e7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wxl/KWzB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nlPUE/e7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wxl/KWzB"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552AF30FF2A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 11:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DC43128D8;
+	Mon,  1 Sep 2025 11:10:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B1A30EF90;
+	Mon,  1 Sep 2025 11:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724988; cv=none; b=eFBOakN76Q1/EVx6C8y+nDF+nMJx28zv1HK9Vf6gQ4u+kaWMwu5EciIsZsBrQBRi85Jt802re38GJev/3aHdHAw/TDdbGcG3iYdDJu6LExATwvmPUEpDm8QjgG9RW40IwRB+aaKncJD13lSNdthZH9DbaI1XgICSkkZvb+Gb20M=
+	t=1756725012; cv=none; b=CyliKsrcuXgl044GdKuCer39lD9YjlAMmtVZu32Fh5Da6fivuTx29X//E9TqPN/DNqZpUpbRWXQ2nYJ6NYmy0XAOn031Sh6ZAK+lo/SdQL8LtqXhYF79oXM74XmSZVnk6w2AdAGEahLkOjVt3MOyTHxG3m2HbDxpthox4FtL0RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724988; c=relaxed/simple;
-	bh=dkkOcEsD7xn5yD67IHEifvMlDweLyNkUukV+EgT6MdE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OHGHI7x3lSOk5Fccv5k8cmlPyxqrUTvucDtF24W1NSfmcpaotaeSE8DHFeJod8P5YhfBU5W6YIqNnduW4OD2qkG5EBaGt7L1YsK8EXwpdsaC6LZaXdjX3rJ/GsLSFPndoJxSoF+uaxFV5kWlMzoLQ4kzeRyeysKdH7/4MQubOmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nlPUE/e7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wxl/KWzB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nlPUE/e7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wxl/KWzB; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2495F2117F;
-	Mon,  1 Sep 2025 11:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756724934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1gsZxO7UwDiPyyfTVlyF4n/52yTA0EMnZqzW234FbC8=;
-	b=nlPUE/e7F+X8WrUw6J4qfcaLHa1uKKS4XsuggwRVtF7gTcz6nFif/WwVknP27fkOgF8s+Y
-	c+EmrfkGo3vXsFVUVjzCG1vpuxoslzDrD/1Puf/BAybyr8hg2XeZZ68zHLelYE+w82cAC9
-	XaT0ZxkP1W+ocEUdOALgCcVJZY1mdRc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756724934;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1gsZxO7UwDiPyyfTVlyF4n/52yTA0EMnZqzW234FbC8=;
-	b=wxl/KWzB0/GJpacisYIzHBgqZs9iqq7+mJn12vMwX9zQiiIWqooa/mHXaGDOtTjlqsCTbv
-	FZdwNt8oIPrStaCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="nlPUE/e7";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="wxl/KWzB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756724934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1gsZxO7UwDiPyyfTVlyF4n/52yTA0EMnZqzW234FbC8=;
-	b=nlPUE/e7F+X8WrUw6J4qfcaLHa1uKKS4XsuggwRVtF7gTcz6nFif/WwVknP27fkOgF8s+Y
-	c+EmrfkGo3vXsFVUVjzCG1vpuxoslzDrD/1Puf/BAybyr8hg2XeZZ68zHLelYE+w82cAC9
-	XaT0ZxkP1W+ocEUdOALgCcVJZY1mdRc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756724934;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1gsZxO7UwDiPyyfTVlyF4n/52yTA0EMnZqzW234FbC8=;
-	b=wxl/KWzB0/GJpacisYIzHBgqZs9iqq7+mJn12vMwX9zQiiIWqooa/mHXaGDOtTjlqsCTbv
-	FZdwNt8oIPrStaCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E11A1378C;
-	Mon,  1 Sep 2025 11:08:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oAwtA8Z+tWjtDgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 01 Sep 2025 11:08:54 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Mon, 01 Sep 2025 13:09:02 +0200
-Subject: [PATCH 12/12] maple_tree: Convert forking to use the sheaf
- interface
+	s=arc-20240116; t=1756725012; c=relaxed/simple;
+	bh=SLPlGtYkhtJMyhgfQbDcReZPIm5jPnZRyWUTo+SsDMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lxqzta9HxVZ963tj27up8oFTubWAlu7MaoJQvTS6lMnJNM69/Zd2fngVsxFbIn5an2VXJ823mfthIwwsz5B6emY7SZm4rZXRPDe4obcQ7Fh0XnlKMwsXR+PTlbvTujgwGKsOaqd51pnE+uSQ7iD6xoaD3Jg/61AMeH5iro01FCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAC511A00;
+	Mon,  1 Sep 2025 04:10:00 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B7673F6A8;
+	Mon,  1 Sep 2025 04:10:03 -0700 (PDT)
+Date: Mon, 1 Sep 2025 12:09:47 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [PATCH 12/33] arm_mpam: Add the class and component structures
+ for ris firmware described
+Message-ID: <aLV++1PELhKBeKR7@e133380.arm.com>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-13-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-maple-sheaves-v1-12-d6a1166b53f2@suse.cz>
-References: <20250901-maple-sheaves-v1-0-d6a1166b53f2@suse.cz>
-In-Reply-To: <20250901-maple-sheaves-v1-0-d6a1166b53f2@suse.cz>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Matthew Wilcox <willy@infradead.org>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>, 
- Pedro Falcato <pfalcato@suse.de>, Suren Baghdasaryan <surenb@google.com>
-Cc: Harry Yoo <harry.yoo@oracle.com>, 
- Andrew Morton <akpm@linux-foundation.org>, maple-tree@lists.infradead.org, 
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
- "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL5jz3zk9nm44ai14dcppf93zb)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,oracle.com:email];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 2495F2117F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822153048.2287-13-james.morse@arm.com>
 
-From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+Hi,
 
-Use the generic interface which should result in less bulk allocations
-during a forking.
+> Subject: arm_mpam: Add the class and component structures for ris firmware described
 
-A part of this is to abstract the freeing of the sheaf or maple state
-allocations into its own function so mas_destroy() and the tree
-duplication code can use the same functionality to return any unused
-resources.
+Mangled subject line?
 
-Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- lib/maple_tree.c | 42 +++++++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 61a322f945c28f5c3297c506923f00bcce5c7bca..5ef15e39fda8c7c65035fb7ed125b82dfa52ca69 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -1172,6 +1172,19 @@ static inline void mas_alloc_nodes(struct ma_state *mas, gfp_t gfp)
- 	mas_set_err(mas, -ENOMEM);
- }
- 
-+static inline void mas_empty_nodes(struct ma_state *mas)
-+{
-+	mas->node_request = 0;
-+	if (mas->sheaf) {
-+		mt_return_sheaf(mas->sheaf);
-+		mas->sheaf = NULL;
-+	}
-+
-+	if (mas->alloc) {
-+		kfree(mas->alloc);
-+		mas->alloc = NULL;
-+	}
-+}
- 
- /*
-  * mas_free() - Free an encoded maple node
-@@ -5408,15 +5421,7 @@ void mas_destroy(struct ma_state *mas)
- 		mas->mas_flags &= ~MA_STATE_REBALANCE;
- 	}
- 	mas->mas_flags &= ~(MA_STATE_BULK|MA_STATE_PREALLOC);
--
--	mas->node_request = 0;
--	if (mas->sheaf)
--		mt_return_sheaf(mas->sheaf);
--	mas->sheaf = NULL;
--
--	if (mas->alloc)
--		kfree(mas->alloc);
--	mas->alloc = NULL;
-+	mas_empty_nodes(mas);
- }
- EXPORT_SYMBOL_GPL(mas_destroy);
- 
-@@ -6504,7 +6509,7 @@ static inline void mas_dup_alloc(struct ma_state *mas, struct ma_state *new_mas,
- 	struct maple_node *node = mte_to_node(mas->node);
- 	struct maple_node *new_node = mte_to_node(new_mas->node);
- 	enum maple_type type;
--	unsigned char request, count, i;
-+	unsigned char count, i;
- 	void __rcu **slots;
- 	void __rcu **new_slots;
- 	unsigned long val;
-@@ -6512,20 +6517,17 @@ static inline void mas_dup_alloc(struct ma_state *mas, struct ma_state *new_mas,
- 	/* Allocate memory for child nodes. */
- 	type = mte_node_type(mas->node);
- 	new_slots = ma_slots(new_node, type);
--	request = mas_data_end(mas) + 1;
--	count = mt_alloc_bulk(gfp, request, (void **)new_slots);
--	if (unlikely(count < request)) {
--		memset(new_slots, 0, request * sizeof(void *));
--		mas_set_err(mas, -ENOMEM);
-+	count = mas->node_request = mas_data_end(mas) + 1;
-+	mas_alloc_nodes(mas, gfp);
-+	if (unlikely(mas_is_err(mas)))
- 		return;
--	}
- 
--	/* Restore node type information in slots. */
- 	slots = ma_slots(node, type);
- 	for (i = 0; i < count; i++) {
- 		val = (unsigned long)mt_slot_locked(mas->tree, slots, i);
- 		val &= MAPLE_NODE_MASK;
--		((unsigned long *)new_slots)[i] |= val;
-+		new_slots[i] = ma_mnode_ptr((unsigned long)mas_pop_node(mas) |
-+					    val);
- 	}
- }
- 
-@@ -6579,7 +6581,7 @@ static inline void mas_dup_build(struct ma_state *mas, struct ma_state *new_mas,
- 			/* Only allocate child nodes for non-leaf nodes. */
- 			mas_dup_alloc(mas, new_mas, gfp);
- 			if (unlikely(mas_is_err(mas)))
--				return;
-+				goto empty_mas;
- 		} else {
- 			/*
- 			 * This is the last leaf node and duplication is
-@@ -6612,6 +6614,8 @@ static inline void mas_dup_build(struct ma_state *mas, struct ma_state *new_mas,
- 	/* Make them the same height */
- 	new_mas->tree->ma_flags = mas->tree->ma_flags;
- 	rcu_assign_pointer(new_mas->tree->ma_root, root);
-+empty_mas:
-+	mas_empty_nodes(mas);
- }
- 
- /**
+There is a fair intersection between the commit message and what the
+patch does, but they don't quite seem to match up.
 
--- 
-2.51.0
+Some key issues like locking / object lifecycle management
+and DT parsing (a bit of which, it appears, lives here too) are not
+mentioned at all.
 
+In lieu of a complete rewrite, it might be best to discard the
+explanation of the various object types.  The comment in the code
+speaks for itself, and looks clearer.
+
+[...]
+
+On Fri, Aug 22, 2025 at 03:29:53PM +0000, James Morse wrote:
+> An MSC is a container of resources, each identified by their RIS index.
+> Some RIS are described by firmware to provide their position in the system.
+> Others are discovered when the driver probes the hardware.
+> 
+> To configure a resource it needs to be found by its class, e.g. 'L2'.
+> There are two kinds of grouping, a class is a set of components, which
+> are visible to user-space as there are likely to be multiple instances
+> of the L2 cache. (e.g. one per cluster or package)
+> 
+> struct mpam_components are a set of struct mpam_vmsc. A vMSC groups the
+> RIS in an MSC that control the same logical piece of hardware. (e.g. L2).
+> This is to allow hardware implementations where two controls are presented
+> as different RIS. Re-combining these RIS allows their feature bits to
+> be or-ed. This structure is not visible outside mpam_devices.c
+> 
+> struct mpam_vmsc are then a set of struct mpam_msc_ris, which are not
+> visible as each L2 cache may be composed of individual slices which need
+> to be configured the same as the hardware is not able to distribute the
+> configuration.
+> 
+> Add support for creating and destroying these structures.
+> A gfp is passed as the structures may need creating when a new RIS entry
+> is discovered when probing the MSC.
+> 
+> CC: Ben Horgan <ben.horgan@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+> Changes since RFC:
+>  * removed a pr_err() debug message that crept in.
+> ---
+>  drivers/resctrl/mpam_devices.c  | 488 +++++++++++++++++++++++++++++++-
+>  drivers/resctrl/mpam_internal.h |  91 ++++++
+>  include/linux/arm_mpam.h        |   8 +-
+>  3 files changed, 574 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index 71a1fb1a9c75..5baf2a8786fb 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -20,7 +20,6 @@
+
+[...]
+
+> @@ -35,11 +34,483 @@
+>  static DEFINE_MUTEX(mpam_list_lock);
+>  static LIST_HEAD(mpam_all_msc);
+>  
+> -static struct srcu_struct mpam_srcu;
+> +struct srcu_struct mpam_srcu;
+
+Why expose this here?  This patch makes no use of the exposed symbol.
+
+>  
+>  /* MPAM isn't available until all the MSC have been probed. */
+>  static u32 mpam_num_msc;
+>  
+> +/*
+> + * An MSC is a physical container for controls and monitors, each identified by
+> + * their RIS index. These share a base-address, interrupts and some MMIO
+> + * registers. A vMSC is a virtual container for RIS in an MSC that control or
+> + * monitor the same thing. Members of a vMSC are all RIS in the same MSC, but
+> + * not all RIS in an MSC share a vMSC.
+> + * Components are a group of vMSC that control or monitor the same thing but
+> + * are from different MSC, so have different base-address, interrupts etc.
+> + * Classes are the set components of the same type.
+> + *
+> + * The features of a vMSC is the union of the RIS it contains.
+> + * The features of a Class and Component are the common subset of the vMSC
+> + * they contain.
+> + *
+> + * e.g. The system cache may have bandwidth controls on multiple interfaces,
+> + * for regulating traffic from devices independently of traffic from CPUs.
+> + * If these are two RIS in one MSC, they will be treated as controlling
+> + * different things, and will not share a vMSC/component/class.
+> + *
+> + * e.g. The L2 may have one MSC and two RIS, one for cache-controls another
+> + * for bandwidth. These two RIS are members of the same vMSC.
+> + *
+> + * e.g. The set of RIS that make up the L2 are grouped as a component. These
+> + * are sometimes termed slices. They should be configured the same, as if there
+> + * were only one.
+> + *
+> + * e.g. The SoC probably has more than one L2, each attached to a distinct set
+> + * of CPUs. All the L2 components are grouped as a class.
+> + *
+> + * When creating an MSC, struct mpam_msc is added to the all mpam_all_msc list,
+> + * then linked via struct mpam_ris to a vmsc, component and class.
+> + * The same MSC may exist under different class->component->vmsc paths, but the
+> + * RIS index will be unique.
+> + */
+
+This description of the structures and how they relate to each other
+seems OK (bearing in mind that I am already familiar with this stuff --
+I can't speak for other people).
+
+> +LIST_HEAD(mpam_classes);
+> +
+> +/* List of all objects that can be free()d after synchronise_srcu() */
+> +static LLIST_HEAD(mpam_garbage);
+> +
+> +#define init_garbage(x)	init_llist_node(&(x)->garbage.llist)
+
+[...]
+
+> +#define add_to_garbage(x)				\
+> +do {							\
+> +	__typeof__(x) _x = x;				\
+
+Nit:
+
+= (x)
+
+(for the paranoid)
+
+> +	(_x)->garbage.to_free = (_x);			\
+
+_x->garbage.to_free = _x;
+
+(_x is an identifier, not a macro argument.  It can't get re-parsed as
+something else -- assuming that there is not a #define for _x, but then
+all bets would be off anyway.)
+
+> +	llist_add(&(_x)->garbage.llist, &mpam_garbage);	\
+
+&_x->...
+
+
+[...]
+
+> +static void mpam_ris_destroy(struct mpam_msc_ris *ris)
+> +{
+> +	struct mpam_vmsc *vmsc = ris->vmsc;
+> +	struct mpam_msc *msc = vmsc->msc;
+> +	struct platform_device *pdev = msc->pdev;
+> +	struct mpam_component *comp = vmsc->comp;
+> +	struct mpam_class *class = comp->class;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	cpumask_andnot(&comp->affinity, &comp->affinity, &ris->affinity);
+> +	cpumask_andnot(&class->affinity, &class->affinity, &ris->affinity);
+
+This is not the inverse of the cpumask_or()s in mpam_ris_create_locked(),
+unless the the ris associated with each class and each component have
+strictly disjoint affinity masks.  Is that checked anywhere, or should
+it be impossible by construction?
+
+
+But, thinking about it:
+
+I wonder why we ever really need to do the teardown.  If we get an
+error interrupt then we can just go into a sulk, spam dmesg a bit, put
+the hardware into the most vanilla state that we can, and refuse to
+manipulate it further.  But this only happens in the case of a software
+or hardware *bug* (or, in a future world where we might implement
+virtualisation, an uncontainable MPAM error triggered by a guest -- for
+which tearing down the host MPAM would be an overreaction).
+
+Trying to cleanly tear the MPAM driver down after such an error seems a
+bit futile.
+
+The MPAM resctrl glue could eventually be made into a module (though
+not needed from day 1) -- which would allow for unloading resctrlfs if
+that is eventually module-ised.  I think this wouldn't require the MPAM
+devices backend to be torn down at any point, though (?)
+
+
+If we can simplify or eliminate the teardown, does it simplify the
+locking at all?  The garbage collection logic can also be dispensed
+with if there is never any garbage.
+
+Since MSCs etc. never disappear from the hardware, it feels like it
+ought not to be necessary ever to remove items from any of these lists
+except when trying to do a teardown (?)
+
+(Putting the hardware into a quiecent state is not the same thing as
+tearing down the data structures -- we do want to quiesce MPAM when
+shutting down the kernel, as least for the kexec scenario.)
+
+> +	clear_bit(ris->ris_idx, msc->ris_idxs);
+> +	list_del_rcu(&ris->vmsc_list);
+> +	list_del_rcu(&ris->msc_list);
+> +	add_to_garbage(ris);
+> +	ris->garbage.pdev = pdev;
+> +
+> +	if (list_empty(&vmsc->ris))
+> +		mpam_vmsc_destroy(vmsc);
+> +}
+
+[...]
+
+> +static int mpam_ris_create_locked(struct mpam_msc *msc, u8 ris_idx,
+> +				  enum mpam_class_types type, u8 class_id,
+> +				  int component_id, gfp_t gfp)
+> +{
+> +	int err;
+> +	struct mpam_vmsc *vmsc;
+> +	struct mpam_msc_ris *ris;
+> +	struct mpam_class *class;
+> +	struct mpam_component *comp;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	if (test_and_set_bit(ris_idx, msc->ris_idxs))
+> +		return -EBUSY;
+
+Is it impossible by construction to get in here with an out-of-range
+ris_idx?
+
+To avoid the callers (i.e., ACPI) needing to understand the internal
+limitations of this code, maybe it is worth having a check here (even
+if technically redundant).
+
+[...]
+
+Cheers
+---Dave
 
