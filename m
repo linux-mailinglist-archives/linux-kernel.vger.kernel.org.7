@@ -1,175 +1,175 @@
-Return-Path: <linux-kernel+bounces-793929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F4AB3DA59
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:55:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22EBB3DA5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B0E3BA831
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:55:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ABEF163881
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D2F25A2B5;
-	Mon,  1 Sep 2025 06:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD18925A34D;
+	Mon,  1 Sep 2025 06:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UCooQjBn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="35/JeQv4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UCooQjBn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="35/JeQv4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="THgSErlX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92302212556
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 06:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7663239E79
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 06:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756709719; cv=none; b=Jjm7fpsAnxhsvip4X42EP0pwXaRy37Q0XqxBo3Dup4FctNpMfiHIBApkufmRFMiMsO1CEUqH4OPbH31TIO6aypjgl60og4BzZxwykmvkMF8dcdrwznd5vOrp7Ku9jofYGhxgo8rsKSuPzS57kqU/pZznSGmg78LYzzt3RIB+34M=
+	t=1756709774; cv=none; b=TOA6CeRnK50b0ZguCbnj9pZ/1abs/CeyLJkQ2lk/5etQBshuTJqhf1eF8wtkDccM/dNFmH81GzxNn2GRcvmVk0iHDAc5d2Ouy9NPQMoJsYgWjYzeMQ2BUvIMg4Czq0CUfME5lRDbFMdE/7I/5mAAFjuK5MdQt9XEC+zJLfWoJK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756709719; c=relaxed/simple;
-	bh=XljtXRCZzIxYAlR1PIAIjUGBOYO+G+RkoGDswVj7SAs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z9MYoLdUGl6wlhIGREklV8Wh9ZDOnviiQHDDZ1yrzyjCLOClDT21ujQzSV+VUMMUL7qYiN+9//YzFrTBwBtZ44Th6E4KOKsaqlG+Sxx7xpr3VtcIdHXh3JoTgp9XhVh3jlA/LEHbmfKssqoXzZFDb02k/cOE0BcTw2GpqfAqMyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UCooQjBn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=35/JeQv4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UCooQjBn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=35/JeQv4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9ADBC1F38C;
-	Mon,  1 Sep 2025 06:55:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756709715; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0g/Mxe5U1Ti0oZ802PkuJxT0wUhmW2w166QeYUk3FxU=;
-	b=UCooQjBn3lHpCAWwQCL44G3WoblnYxLnRKDVID4aUDX2dKFa2W8pyHeRkjB1fS67OURDlQ
-	H6OXXq0HBazZChWA8VNsan5OPJWuEC26MVyXsNMacznBMZ170nFufxWQpDzoz1tKB/Dss2
-	DtaoHwrCAx3jxsAf8tYuZChWO/sdQkA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756709715;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0g/Mxe5U1Ti0oZ802PkuJxT0wUhmW2w166QeYUk3FxU=;
-	b=35/JeQv4CXbKPgYiwXgQN8PJKNFZBLVctoxYTehnlHsIxcaU3fwx4bJY35DMvSF/Ti1p7x
-	bmtkC3IEPbHKDGDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UCooQjBn;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="35/JeQv4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756709715; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0g/Mxe5U1Ti0oZ802PkuJxT0wUhmW2w166QeYUk3FxU=;
-	b=UCooQjBn3lHpCAWwQCL44G3WoblnYxLnRKDVID4aUDX2dKFa2W8pyHeRkjB1fS67OURDlQ
-	H6OXXq0HBazZChWA8VNsan5OPJWuEC26MVyXsNMacznBMZ170nFufxWQpDzoz1tKB/Dss2
-	DtaoHwrCAx3jxsAf8tYuZChWO/sdQkA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756709715;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0g/Mxe5U1Ti0oZ802PkuJxT0wUhmW2w166QeYUk3FxU=;
-	b=35/JeQv4CXbKPgYiwXgQN8PJKNFZBLVctoxYTehnlHsIxcaU3fwx4bJY35DMvSF/Ti1p7x
-	bmtkC3IEPbHKDGDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 50A72136ED;
-	Mon,  1 Sep 2025 06:55:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NLMgEVNDtWiUPgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 01 Sep 2025 06:55:15 +0000
-Date: Mon, 01 Sep 2025 08:55:14 +0200
-Message-ID: <877byifyr1.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Gergo Koteles <soyer@irl.hu>
-Cc: Shenghao Ding <shenghao-ding@ti.com>,
-	broonie@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	13564923607@139.com,
-	13916275206@139.com,
-	alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org,
-	baojun.xu@ti.com,
-	Baojun.Xu@fpt.com
-Subject: Re: [PATCH v1] ALSA: hda/tas2781: Fix the order of TAS2563 calibrated-data
-In-Reply-To: <3afb62060097eeafbf9faed33654f7f6612596f4.camel@irl.hu>
-References: <20250831124313.438-1-shenghao-ding@ti.com>
-	<3afb62060097eeafbf9faed33654f7f6612596f4.camel@irl.hu>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1756709774; c=relaxed/simple;
+	bh=Kr7bzmorPtSCUASbDkgAHM3jzfUg4k7jSAJIfdMlUUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k8sQd40UGkUY1EzDBBy4B/XqqDYbqZDNfyz5i+ULOKs6OgHuK/Pf0gyzEI3FIlv5U5nWumVPw9ClTQu2fcRRuGN59cP22Pg0FyC7vF9d+ZTZVMdW4rdngVddyBj0ZA9HUAuDTcizkIp3lg9NbnlpY2i7hxRrEmcRsOkgmSZkKPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=THgSErlX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57VNh60c019339
+	for <linux-kernel@vger.kernel.org>; Mon, 1 Sep 2025 06:56:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EUTMpiJXGYapQKmYjxRPfwmA/QRa+grJXv3ZH9iFjRA=; b=THgSErlXkxFPhrDP
+	QdsXzrF1SbsD/3nYOoVqP/InZd+C12uq6dgO3yUcHhVMuniE+IsH5bkq51bT1YYC
+	+4tS+P15GoMQti7suWRACpJYSXbJRdPbKntmzXZmRCJc7tgEO/Ar7DISVEwPy5x8
+	XKblqNqSKrFOwqyyRC238PKH13UkmLJG+BBGpjMHqVASyfKnS8KRwBm0zSQwm+8S
+	iO4/eyP3wM/E/xL3CRI4NvzQFcm91Mcz8peksXHQECckOvYpZmHSGDEe3uKqI2Tf
+	wDLoXNxRhaLJZNEOLbm+vNAPmwhG+bHFHwGwiEbz9hwEdDI6Jj7MwRC0RsmTUND+
+	Jot0bQ==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48usp7uj8u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 06:56:11 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e55665b05so3454019b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 23:56:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756709770; x=1757314570;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EUTMpiJXGYapQKmYjxRPfwmA/QRa+grJXv3ZH9iFjRA=;
+        b=jY6Pn60LUYuzawXGme3lp/bGpZIYsZT5x5OREiUBZYorx+So6bb3ha/6o8i1wRMt9s
+         mcVGKIB4+PioKp0iLa2luAOCycCvV7kRQUG7WmYWtMNfuiY+sG1l/8M8RPmdsGNNxt+N
+         dQAlH+dvKyRvMtu/iveWj6N4S0+r+fP9TwYADbw8FwwUKM2m4HqyuJXoED1KBrttxboQ
+         fNwmn0sKsd0bkbuisQ1Qwiwp7z+JgHgAUBEvuM9lKFy5wYoYlkwOS7LCWasqvuEJ+iun
+         G/Hsns08/h2uYsDhTBDwnFqxR5NdyW6Zud7Ne6Yyoxzh1SQ7lmRO2Xb6PbE54DhKnJZ4
+         dAaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKDLX8wD3djiOgu6pahfQJZYQ61wHxLWgXeOB+r5/2RXL+j+4FZMrXvCO+AS6GjDs7n/+kDGKIFUEMvzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0of/KcCE9/POrcgp08I9FdQRJdY+bxPfY7AX/wxhFIDzhuzuH
+	4ihzAiseFBzHX1DZXAN3pJBa5QZoq6nmxFZ82yVM7DfWSdaxMbhVrNrEWdT4xf8TG4wYgiVSuAU
+	77Quelks7UEAEHE1sLadzZeA16WWzaRVMwoeGfyKXjDffeSReFtz/HoI4LeKy9viY9pY=
+X-Gm-Gg: ASbGncsbkoD58imTQrYZIafymGJPG5YphiScFzBWgG8JKgzBjhbpol1Acmm5ujLpTaE
+	AUBP88R/RIVsUrr2RR/C/94MGPAT/0+kcDwZqWSWmB2DbtZP+RtfHRDUiTIHJ9LxVnPw4XfZrYn
+	erJGnqCNm8mwpmVhVM+FfJuWhUvqFkv6pYAubbCuRmuL+O8wJBYLrSvUNvWpO7WW2fdmquge/SD
+	KEJJHrIxKHVYOal9/pBNsOAX8XePF3G1T9XGHYzGf28kOhMzfJ04k51FwdZ7K/ck3NKSWUoCjaa
+	je+4dwKeVRKrvP9831n1SVBQKsmsttc+w4PQQBsmY4tsfP5JQrt71JlSk1EityjHvfKKYGS8WlU
+	plv0FlMwcloIbTybYgnhgMArFqfURlDFcFA==
+X-Received: by 2002:a05:6a20:7fa8:b0:243:a91c:6564 with SMTP id adf61e73a8af0-243d6f431a3mr8852541637.50.1756709770379;
+        Sun, 31 Aug 2025 23:56:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSaKYhdRZRLVbaVGgPFjyPsISXyEB6DA5LnZU9TaTrGjeZVotxSEaTfa85XU0yVwRM0haE6w==
+X-Received: by 2002:a05:6a20:7fa8:b0:243:a91c:6564 with SMTP id adf61e73a8af0-243d6f431a3mr8852476637.50.1756709769320;
+        Sun, 31 Aug 2025 23:56:09 -0700 (PDT)
+Received: from ?IPV6:2405:201:c40a:785d:2c0b:e596:ead5:2f45? ([2405:201:c40a:785d:2c0b:e596:ead5:2f45])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7724284fa02sm5689324b3a.102.2025.08.31.23.55.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 31 Aug 2025 23:56:08 -0700 (PDT)
+Message-ID: <3cbe6692-2ada-4034-8cb2-bc246bca5611@oss.qualcomm.com>
+Date: Mon, 1 Sep 2025 12:25:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	FREEMAIL_CC(0.00)[ti.com,kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,fpt.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 9ADBC1F38C
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/5] PCI: dwc: Add support for ELBI resource mapping
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
+        quic_vpernami@quicinc.com, mmareddy@quicinc.com
+References: <20250828-ecam_v4-v8-0-92a30e0fa02d@oss.qualcomm.com>
+ <20250828-ecam_v4-v8-2-92a30e0fa02d@oss.qualcomm.com>
+ <ymsoyadz2gkura5evnex3m6jeeyzlcmcssdyuvddl25o5ci4bo@6ie4z5tgnpvz>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <ymsoyadz2gkura5evnex3m6jeeyzlcmcssdyuvddl25o5ci4bo@6ie4z5tgnpvz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX0Fouh9IxR+mz
+ YTbk5N+Gb7ajLTpCMO/pwuFsOZyD+7hpy7YrcRtxocW8dtHjdTLoKJi8R8mf5VVvnbFXBk516BK
+ EkfsGwG3nYcYL3nDHPR9M/K0iIbhV88pGY1LNYbSsply4sIo5sBAZKlfUqHCU4X3Ff6sm8/kVsP
+ 8/UExy0OnKU+g9/4e8/Ii9z5nXUOfXyDIJ+bUBdSnhMONGttWK7ZOBUSyfK6dRSqQ48rRsmvmSZ
+ XGNtXpWvLNWEolNlf2KneLOobjNuH5F+gAFp9TjeRhQRCnij4oePJjA1sOCbB9UVQsfKKjmpegh
+ FqLCMojUJdbAg/6YH8w3TcqgDsbPkWUxp/kVNxENqptRW8cut0ZadcXgSceQglDUBxmc0lsBgff
+ MNYL3Ujt
+X-Authority-Analysis: v=2.4 cv=e6wGSbp/ c=1 sm=1 tr=0 ts=68b5438b cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=8Rd1e7yjQrnBmPj41GQA:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: nMXj9I-RUmH10WwML2GUNYd1t3ieTr6d
+X-Proofpoint-ORIG-GUID: nMXj9I-RUmH10WwML2GUNYd1t3ieTr6d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-01_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015 phishscore=0
+ malwarescore=0 bulkscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300034
 
-On Mon, 01 Sep 2025 08:18:06 +0200,
-Gergo Koteles wrote:
+
+
+On 8/31/2025 5:18 PM, Manivannan Sadhasivam wrote:
+> On Thu, Aug 28, 2025 at 01:04:23PM GMT, Krishna Chaitanya Chundru wrote:
+>> External Local Bus Interface(ELBI) registers are optional registers in
+>> DWC IPs having vendor specific registers.
+>>
+>> Since ELBI register space is applicable for all DWC based controllers,
+>> move the resource get code to DWC core and make it optional.
+>>
+>> Suggested-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-designware.c | 9 +++++++++
+>>   drivers/pci/controller/dwc/pcie-designware.h | 1 +
+>>   2 files changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+>> index 89aad5a08928cc29870ab258d33bee9ff8f83143..4684c671a81bee468f686a83cc992433b38af59d 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+>> @@ -167,6 +167,15 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
+>>   		}
+>>   	}
+>>   
+>> +	if (!pci->elbi_base) {
 > 
-> Hi Shenghao,
+> Why this check is needed? Are we expecting any DWC glue drivers to supply
+> 'dw_pcie::elbi_base' on their own?
 > 
-> On Sun, 2025-08-31 at 20:43 +0800, Shenghao Ding wrote:
-> > A bug reported by one of my customers that the order of TAS2563
-> > calibrated-data is incorrect, the correct way is to move R0_Low_%d
-> > and insert it between R0_%d and InvR0_%d.
-> > 
+I was following the same way that existed for for dbi_base, where we are
+allowing DWC glue drivers to supply if they had any different approach
+like ./pci-dra7xx.c driver.
+
+- Krishna Chaitanya.
+> - Mani
 > 
-> A similar fix is ​​already in Takashi's tree for tas2563.
-> https://lore.kernel.org/all/20250829160450.66623-1-soyer@irl.hu/
-
-Right, I already took Gergo's fix on for-linus branch.
-Likely included in 6.17-rc5.
-
-> But I think, tas2781 also needs one for the order and one for the
-> endianness.
-> I left it out because it's easier for you with documentation.
-
-If anything is missing for 6.17, please submit the fix ASAP.
-
-
-thanks,
-
-Takashi
 
