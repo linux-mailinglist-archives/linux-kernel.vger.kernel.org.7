@@ -1,118 +1,308 @@
-Return-Path: <linux-kernel+bounces-794611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1732CB3E3F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8694B3E43A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C07E9480C25
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB5C3480C9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD63014AD20;
-	Mon,  1 Sep 2025 13:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288383376A0;
+	Mon,  1 Sep 2025 13:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FDQ0GLiH"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQpP1hz3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964C84207A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7514AD20;
+	Mon,  1 Sep 2025 13:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756732110; cv=none; b=bzjqiV5GNOa6hxACFa7knCtTPml3rhjQCJmA/UYhdWi7vOZ3v0p69WkiLqZKNL7+N81CQIfmz0fDdHsEferXWkY6Ed1JBRZbX2/qv0QF4JEQ4J7hUwaQFWKG23+jh1JNPvdaX10JHhxPQKqYceicIlYruYzD+q2qLFqd39Pjl2A=
+	t=1756732249; cv=none; b=Yuy93KLU6m1bKKs+uUBXgQHjWGJzHWXsY76s2KIZ/Cixbl5fyZsYiHPX+X9ZaAxeMJBZKcVcIwd46EHhaIn/djH3b8S9vHZDyGWkXyXVIEZIy/E1O0FEWhsMBwrkXyJCVt0ElTkelC1M9EgfyGXaDrV+7CflwP5Ni5rOS446ZYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756732110; c=relaxed/simple;
-	bh=Gd3KXw1QQlS7MLd0apcsH+QWeJY2pnkwbuUIF6wyLYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GI11HsaqamrNWwcWhTpWvoqXRrMvwEpnwaDcsT8zR7s+RbiZkA05CxWzyE0UU9/edOX0MbgGIoq4QaUEUslM2CWJn56E3yR9ocJa+4+kW0gPUnOFIrvHx6uEFcujYNxtZ277EKNxY7TvpDeP9L0LjIcF0WCSxRxDAuMJ+pz2Q4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FDQ0GLiH; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3d19699240dso1499347f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 06:08:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756732107; x=1757336907; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DaBqxA3nVfiucrNs4TUyEScLqswLf3VZ8Gyi43Fij2o=;
-        b=FDQ0GLiH5ReyyfY8Z0hh47RtOXqMZI3pEFd1osVNuKWJa0/QYYNQGnCSZ4QY51S/WC
-         YQkfniGAyaks7U5/23sYPiNn7QKs5icyabCtITVXZ62DFGrGvQ8g4xKisxoEbtJIHHoK
-         1dFW5yNW8QImb4EJmM5DDYiMN0G6yneRs4pubkTO9CU9ISLTibIIx7eHzJBDD2AOJzNv
-         8byGD5aHihB7ZXE57wb+xoc6mQ0pt1S8XwpF2M5BCPZqaIVoJAoBujkQCzYSt1Ma5nVG
-         eFerR6n+CdLUmgLlQzgNPe16+gVW8SoLOA/A6GfAxC+jOZe8e47P5LoFWCEXzBAxzzTe
-         epow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756732107; x=1757336907;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DaBqxA3nVfiucrNs4TUyEScLqswLf3VZ8Gyi43Fij2o=;
-        b=nwD5Hrja9DDa0G8806/6pof2phDu5MIFoPGhxidyveZoUJH419F0Qfe9UYkmEGN5Ig
-         9vN0GqC++PhLUbZ+6oWaBekYT1NohObKMPTrn3Kdju1G67C/tIj8aThry/3NJdoSTw35
-         IaUq05d4ssDdpRucK6n+ZwUjP1tUH5O4iV8xaJL8Q1Sj2n5A+HWbvLfkuthjjHBEMyvl
-         FzobFhA4/RCc/06CvYYsXm46AulZOfKOJnoDPg+T2jEDbesDAzUhQR8zmPbO7QbxRTBm
-         DNtQkb7fvPjY2x434sJMQYxkBl4C9o0JeFTA2UR9yvdkQvotZmrIkc41ThdE/Fy9oJ99
-         2LUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOuGYhN5LBSrOldomQ6oOJG/9L4GY4g5p1XirbpgviEbRNeeKZx77SU7i3c2x2nhVkDK4DHmKhGDIPBN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpk1G2io5HTyTbqGZ0ZoVFwExYVh7XE0ZIbjPJ6pwoC7aA3viT
-	dR0bfrBANTREcTFCAZJVYzTCMKEiWOpkcVadFjsSW5ip1wg/nP13k3PFdqY7dUthpC4=
-X-Gm-Gg: ASbGncsXf+6E2SrE58TDl925nsCn6M+yec0Xx9qGtpctb2xKEUZrdctZd7f86rgu+aC
-	2dOqN2Umx69h0F0P92b/GynDbeNiUZDbdRFiQIbTnbm2pSvdMQR1iOhsaUB9bcwgR6aKuy3cFly
-	B7lGmQ8RVrV6YTyWQPYHI+vYXQ4p04510H2gpzSg1YKd7jl6y83wS1dFFjEJzaYnLTGGpqZ91xQ
-	RPtAg2VuC9ODlyd4sjIu/sRoGQCM4qeysBSNEHy/PucljV/hIjqmo2KdN4z3EiveyKAIuhnJWr3
-	7ebV6tfL8B0XLpD+JKEgUgcijNB0BRfgpnPyFHx2K/K1pETlim1GAEosyP/UexLLuCDzS/dRokS
-	drxkiYBMBwM5X2wREghIIa3+gYJoWRSCxycjEQw==
-X-Google-Smtp-Source: AGHT+IHoO22NHnLmGCEAuykdmrXfYz5c61cYkp/gae0iHULEguoVzXfknO0ldVQ3ZbksBt1rycB8NA==
-X-Received: by 2002:a05:6000:26d3:b0:3c8:2667:4e25 with SMTP id ffacd0b85a97d-3d1b26d6cd7mr7464741f8f.31.1756732106826;
-        Mon, 01 Sep 2025 06:08:26 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf33add294sm16137899f8f.29.2025.09.01.06.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 06:08:26 -0700 (PDT)
-Date: Mon, 1 Sep 2025 16:08:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
-Subject: Re: [PATCH v2] staging: iio: adc: ad7816: add mutex to serialize
- SPI/GPIO operations
-Message-ID: <aLWaxoBLEVWlfzN7@stanley.mountain>
-References: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
+	s=arc-20240116; t=1756732249; c=relaxed/simple;
+	bh=l+zEh4GN06CwujvuIj3y3Fd32BGM/P2y+zLD4+u7l7M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gVhAQq/Iba4I5xoh+vMPvbkydDCxDX/hwivFMODG8j6Cpp8hqTpKTQA00Nb805uM2JVtkUvE8QaBO4xfnNP+AlfxzN1qkMq/Ib2iqCQwnS8ct+sx7yxtjcl+rJ6PzQzPE3/CjWWcZDPSzJcoSJdsBoebuMvORdiH/hJ1SiLqLg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQpP1hz3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2C4A7C4CEF7;
+	Mon,  1 Sep 2025 13:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756732249;
+	bh=l+zEh4GN06CwujvuIj3y3Fd32BGM/P2y+zLD4+u7l7M=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=KQpP1hz3p7pySlQA+S80YSRFmx1/RZzMbVqgwb6DJ7FII9WAZ2aC0Vkb2bY2IPIgo
+	 5RCwWfOsqj6oH3/pX4lIDCuOOnNj9pXtQBn1tnrmIQEH+XVh9Y1PJP+hS509fIk0oM
+	 7NnEVi31nSQ/8MpxGe34E6NqS5meKjX8tV7J4kEDUQj4qbBrjxI9QxaHniIUyy3yEY
+	 gtjmo/KHVVgmCi45l9Q6BNFzV43IAWtjbRH902bx28dItj0RpqcveeXYME8ipfRIBt
+	 uCZQnUdWBrjyoriL6ICoig8e7WsKXoloqJHchCd36LnqZQtWt5aeK+UBbdVHOc8NTG
+	 YbdnooPnpDcUg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0481CCA1002;
+	Mon,  1 Sep 2025 13:10:49 +0000 (UTC)
+From: Simon Schuster via B4 Relay <devnull+schuster.simon.siemens-energy.com@kernel.org>
+Subject: [PATCH v2 0/4] nios2: Add architecture support for clone3
+Date: Mon, 01 Sep 2025 15:09:49 +0200
+Message-Id: <20250901-nios2-implement-clone3-v2-0-53fcf5577d57@siemens-energy.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB2btWgC/3WNzQqDMBCEX0Vy7pZkrT/05HsUD5quuqCJZEUq4
+ rs3Sq89fsPMN7sSCkyinsmuAq0s7F0EvCXKDo3rCfgdWaHGTJemBMdeEHiaR5rILWBH7yiFosM
+ MLeoy162K4zlQx59L/KojDyyLD9v1s5oz/SnR/FOuBjSYtsWHNkVa5E0lfBYEyFHot7v1k6qP4
+ /gCMZ8FFcUAAAA=
+X-Change-ID: 20250818-nios2-implement-clone3-7f252c20860b
+To: Dinh Nguyen <dinguyen@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@redhat.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+ Kees Cook <kees@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Guo Ren <guoren@kernel.org>, 
+ Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+ =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+ Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ John Johansen <john.johansen@canonical.com>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ Ondrej Mosnacek <omosnace@redhat.com>, 
+ Kentaro Takeda <takedakn@nttdata.co.jp>, 
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, 
+ Richard Henderson <richard.henderson@linaro.org>, 
+ Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Brian Cain <bcain@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+ WANG Xuerui <kernel@xen0n.name>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Michal Simek <monstr@monstr.eu>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Jonas Bonn <jonas@southpole.se>, 
+ Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, 
+ Stafford Horne <shorne@gmail.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Andreas Larsson <andreas@gaisler.com>, Richard Weinberger <richard@nod.at>, 
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Johannes Berg <johannes@sipsolutions.net>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, 
+ Max Filippov <jcmvbkbc@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-csky@vger.kernel.org, 
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ cgroups@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, 
+ selinux@vger.kernel.org, linux-alpha@vger.kernel.org, 
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+ linux-um@lists.infradead.org, 
+ Simon Schuster <schuster.simon@siemens-energy.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14.3-dev-2ce6c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756732247; l=6552;
+ i=schuster.simon@siemens-energy.com; s=20250818;
+ h=from:subject:message-id;
+ bh=l+zEh4GN06CwujvuIj3y3Fd32BGM/P2y+zLD4+u7l7M=;
+ b=GDpCexNrElu2yO/MxuDkpG+xctyQVH7o61ewBoPT3J8lEgMWXNxMsXtjVUaPsmeHSieQm4/hP
+ 49FpVyBe5rsBihPxAhRaNZH/1KUoHHYEsSlrwUEFI8iutPmfJs+jkNi
+X-Developer-Key: i=schuster.simon@siemens-energy.com; a=ed25519;
+ pk=PUhOMiSp43aSeRE1H41KApxYOluamBFFiMfKlBjocvo=
+X-Endpoint-Received: by B4 Relay for
+ schuster.simon@siemens-energy.com/20250818 with auth_id=495
+X-Original-From: Simon Schuster <schuster.simon@siemens-energy.com>
+Reply-To: schuster.simon@siemens-energy.com
 
-On Mon, Sep 01, 2025 at 10:24:45AM +0330, Mohammad Amin Hosseini wrote:
-> @@ -200,7 +204,9 @@ static ssize_t ad7816_store_channel(struct device *dev,
->  		return -EINVAL;
->  	}
->  
-> +	mutex_lock(&chip->io_lock);
->  	chip->channel_id = data;
-> +	mutex_unlock(&chip->io_lock);
->  
->  	return len;
->  }
+This series adds support for the clone3 system call to the nios2
+architecture. This addresses the build-time warning "warning: clone3()
+entry point is missing, please fix" introduced in 505d66d1abfb9
+("clone3: drop __ARCH_WANT_SYS_CLONE3 macro"). The implementation passes
+the relevant clone3 tests of kselftest when applied on top of
+next-20250815:
 
-Unrelated, but what is the point of setting chip->channel_id to
-AD7816_CS_MASK?  The only time where that is used is in
-ad7816_spi_read() when we do:
+	./run_kselftest.sh
+	TAP version 13
+	1..4
+	# selftests: clone3: clone3
+	ok 1 selftests: clone3: clone3
+	# selftests: clone3: clone3_clear_sighand
+	ok 2 selftests: clone3: clone3_clear_sighand
+	# selftests: clone3: clone3_set_tid
+	ok 3 selftests: clone3: clone3_set_tid
+	# selftests: clone3: clone3_cap_checkpoint_restore
+	ok 4 selftests: clone3: clone3_cap_checkpoint_restore
 
-	ret = spi_write(spi_dev, &chip->channel_id, sizeof(chip->channel_id));
+The series also includes a small patch to kernel/fork.c that ensures
+that clone_flags are passed correctly on architectures where unsigned
+long is insufficient to store the u64 clone_flags. It is marked as a fix
+for stable backporting.
 
-So it's something in the hardware spec, I guess, but it isn't
-documented.
+As requested, in v2, this series now further tries to correct this type
+error throughout the whole code base. Thus, it now touches a larger
+number of subsystems and all architectures.
 
-regards,
-dan carpenter
+Therefore, another test was performed for ARCH=x86_64 (as a
+representative for 64-bit architectures). Here, the series builds cleanly
+without warnings on defconfig with CONFIG_SECURITY_APPARMOR=y and
+CONFIG_SECURITY_TOMOYO=y (to compile-check the LSM-related changes).
+The build further successfully passes testing/selftests/clone3 (with the
+patch from 20241105062948.1037011-1-zhouyuhang1010@163.com to prepare
+clone3_cap_checkpoint_restore for compatibility with the newer libcap
+version on my system).
+
+Is there any option to further preflight check this patch series via
+lkp/KernelCI/etc. for a broader test across architectures, or is this
+degree of testing sufficient to eventually get the series merged?
+
+N.B.: The series is not checkpatch clean right now:
+ - include/linux/cred.h, include/linux/mnt_namespace.h:
+   function definition arguments without identifier name
+ - include/trace/events/task.h:
+   space prohibited after that open parenthesis
+
+I did not fix these warnings to keep my changes minimal and reviewable,
+as the issues persist throughout the files and they were not introduced
+by me; I only followed the existing code style and just replaced the
+types. If desired, I'd be happy to make the changes in a potential v3,
+though.
+
+Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
+---
+Changes in v2:
+- Introduce "Fixes:" and "Cc: stable@vger.kernel.org" where necessary
+- Factor out "Fixes:" when adapting the datatype of clone_flags for
+  easier backports
+- Fix additional instances where `unsigned long` clone_flags is used
+- Reword commit message to make it clearer that any 32-bit arch is
+  affected by this bug
+- Link to v1: https://lore.kernel.org/r/20250821-nios2-implement-clone3-v1-0-1bb24017376a@siemens-energy.com
+
+---
+Simon Schuster (4):
+      copy_sighand: Handle architectures where sizeof(unsigned long) < sizeof(u64)
+      copy_process: pass clone_flags as u64 across calltree
+      arch: copy_thread: pass clone_flags as u64
+      nios2: implement architecture-specific portion of sys_clone3
+
+ arch/alpha/kernel/process.c       |  2 +-
+ arch/arc/kernel/process.c         |  2 +-
+ arch/arm/kernel/process.c         |  2 +-
+ arch/arm64/kernel/process.c       |  2 +-
+ arch/csky/kernel/process.c        |  2 +-
+ arch/hexagon/kernel/process.c     |  2 +-
+ arch/loongarch/kernel/process.c   |  2 +-
+ arch/m68k/kernel/process.c        |  2 +-
+ arch/microblaze/kernel/process.c  |  2 +-
+ arch/mips/kernel/process.c        |  2 +-
+ arch/nios2/include/asm/syscalls.h |  1 +
+ arch/nios2/include/asm/unistd.h   |  2 --
+ arch/nios2/kernel/entry.S         |  6 ++++++
+ arch/nios2/kernel/process.c       |  2 +-
+ arch/nios2/kernel/syscall_table.c |  1 +
+ arch/openrisc/kernel/process.c    |  2 +-
+ arch/parisc/kernel/process.c      |  2 +-
+ arch/powerpc/kernel/process.c     |  2 +-
+ arch/riscv/kernel/process.c       |  2 +-
+ arch/s390/kernel/process.c        |  2 +-
+ arch/sh/kernel/process_32.c       |  2 +-
+ arch/sparc/kernel/process_32.c    |  2 +-
+ arch/sparc/kernel/process_64.c    |  2 +-
+ arch/um/kernel/process.c          |  2 +-
+ arch/x86/include/asm/fpu/sched.h  |  2 +-
+ arch/x86/include/asm/shstk.h      |  4 ++--
+ arch/x86/kernel/fpu/core.c        |  2 +-
+ arch/x86/kernel/process.c         |  2 +-
+ arch/x86/kernel/shstk.c           |  2 +-
+ arch/xtensa/kernel/process.c      |  2 +-
+ block/blk-ioc.c                   |  2 +-
+ fs/namespace.c                    |  2 +-
+ include/linux/cgroup.h            |  4 ++--
+ include/linux/cred.h              |  2 +-
+ include/linux/iocontext.h         |  6 +++---
+ include/linux/ipc_namespace.h     |  4 ++--
+ include/linux/lsm_hook_defs.h     |  2 +-
+ include/linux/mnt_namespace.h     |  2 +-
+ include/linux/nsproxy.h           |  2 +-
+ include/linux/pid_namespace.h     |  4 ++--
+ include/linux/rseq.h              |  4 ++--
+ include/linux/sched/task.h        |  2 +-
+ include/linux/security.h          |  4 ++--
+ include/linux/sem.h               |  4 ++--
+ include/linux/time_namespace.h    |  4 ++--
+ include/linux/uprobes.h           |  4 ++--
+ include/linux/user_events.h       |  4 ++--
+ include/linux/utsname.h           |  4 ++--
+ include/net/net_namespace.h       |  4 ++--
+ include/trace/events/task.h       |  6 +++---
+ ipc/namespace.c                   |  2 +-
+ ipc/sem.c                         |  2 +-
+ kernel/cgroup/namespace.c         |  2 +-
+ kernel/cred.c                     |  2 +-
+ kernel/events/uprobes.c           |  2 +-
+ kernel/fork.c                     | 10 +++++-----
+ kernel/nsproxy.c                  |  4 ++--
+ kernel/pid_namespace.c            |  2 +-
+ kernel/sched/core.c               |  4 ++--
+ kernel/sched/fair.c               |  2 +-
+ kernel/sched/sched.h              |  4 ++--
+ kernel/time/namespace.c           |  2 +-
+ kernel/utsname.c                  |  2 +-
+ net/core/net_namespace.c          |  2 +-
+ security/apparmor/lsm.c           |  2 +-
+ security/security.c               |  2 +-
+ security/selinux/hooks.c          |  2 +-
+ security/tomoyo/tomoyo.c          |  2 +-
+ 68 files changed, 95 insertions(+), 89 deletions(-)
+---
+base-commit: 1357b2649c026b51353c84ddd32bc963e8999603
+change-id: 20250818-nios2-implement-clone3-7f252c20860b
+
+Best regards,
+-- 
+Simon Schuster <schuster.simon@siemens-energy.com>
+
+
 
