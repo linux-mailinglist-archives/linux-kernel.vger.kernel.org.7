@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-794804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110B8B3E789
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C91B3E793
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775F317E9B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4928200422
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655FD34320A;
-	Mon,  1 Sep 2025 14:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42382346A05;
+	Mon,  1 Sep 2025 14:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUpJVLWT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mC+6MG6M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B819E17AE1D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093C234167B;
 	Mon,  1 Sep 2025 14:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756737757; cv=none; b=XFcTfy2qsDNRpv/XJg/bkJ+C7fH2W7En9+BIKPh5lnP/ETykHGJIM2ygtev5+nzQOXYvlgny1Hv/Z0iTcIuQq9rFn/f5so73nhptShMphHu9SZ9Q4+XRtkYf4mzErDEzX6qpxRdZeAh5g0Wm//GkcvEY+w+oU8JVetC/wQHPwqw=
+	t=1756737758; cv=none; b=fQUO0hsuTkiIDpxm9aCTaLyma92vbpVW2k86cFD1n48ppYvtsgt4JeE8lkAbuy0veLarwu3K44fll3RenMQhvfNhyR24wK5oTlIfaCS86uhI0kYx/qAILqE+l4gIv8eEE1Mz+G2qv6rHb/9EzgusR7CIededpUCY89kKB5qqc/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756737757; c=relaxed/simple;
-	bh=Bk0CYZe89uBjJFk60uGMA8W8QHBnNhTf8pNxav8MNh0=;
+	s=arc-20240116; t=1756737758; c=relaxed/simple;
+	bh=pFn4aXuekiJ4nWHYjOpMDGZDzWz9r/tmySbqoG1yg7I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bPnRYaU3f3/Rs11FVwR0Ngts78eo+qeDn/g8g0XK2vzFMpf91NkgBSMMfrjs909gokSfLpPXMW+UaKdyQm0Eetj0pVo+GXMNxcGfOifFhD/puFnn/o0otCKTkwYx0ZZGXP1AR/3deCfWIAANT3nkEn1Cy23CsDYQBjgyvAfU00w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUpJVLWT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70ED8C4CEFF;
+	 Content-Type:MIME-Version; b=TIG14Tfwvo2GuH3QsPiznWvtekwtXudP9QIN6FMT7swdC/oN4x3xDY7sx3etj3MD+xtox38im0DLMQ3Z1YxN5MU0qZQXI+8AfnHnjVIJZe7O61GTkWq2mP1xjxQUfcG61arTJSd7AtrDlN5BnE57xHXu2B4eB99C4Ttf2M0nHfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mC+6MG6M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7582FC116B1;
 	Mon,  1 Sep 2025 14:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756737757;
-	bh=Bk0CYZe89uBjJFk60uGMA8W8QHBnNhTf8pNxav8MNh0=;
+	bh=pFn4aXuekiJ4nWHYjOpMDGZDzWz9r/tmySbqoG1yg7I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jUpJVLWTlixSOvfqv/gUFuaT0rDXX6vFTaRBD8awg7mHW06RNZlUDjI3Y5uKTlBWG
-	 sydCZ6a+Bu25nq5okcqWwba4+8gZx1LhB1QARnenCapySwK1OgfjTyurUYJV7b3doB
-	 a7QKYuc7f4zdBiucGXbDH32KLue//isG/f/tBgRM3rIlxdyausXb9wD/LcOOO+uRHK
-	 ESa9bDlK6NK+oQ7CD2XhUKs4XYezbfhbAPhjWgm2kxX5WQ2Gsv0/UxM7YKwGnjKv7j
-	 LF+FqmQaJp2k1IV28feRmnQoyex7TuDg4oOt8a4BT7oMsMAdqGmqzEAuNBU/gqFCrG
-	 sofs1VJeGjYeQ==
+	b=mC+6MG6MKObG3pHB3gNSKWuOXcHXP6+k4/P0zIYAesII+OB7A8GDc5Q77tzWfGfot
+	 9SkC2lpRH6iqSmWoS6uehrohSPxbRXWiw1HqTn9oHz5NtpBdWfzlUFvCxXqzUvE5We
+	 qHSIrzpC7s7Jm3KEhT/oTPtSaR5JpV4jetieNTiXginLkq90k9gIQe6BnySQr6OraZ
+	 +SmnlRJo+SqU4fRSPKHEZTqC3+lbsItDveQ4M6/2DOyU6iJVp9EfNt6iSNnYzYzanv
+	 jq66eQBZOJxrlnHKbmhVvt2Unq3wftH4RKRrkQDqO8E0XyMVNi9gaMD4Syz4AryMze
+	 F6zweMMewWKzg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ut5jv-00000003G3g-2yei;
+	id 1ut5jv-00000003G3k-36Mb;
 	Mon, 01 Sep 2025 16:42:35 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -50,9 +50,9 @@ To: Jonathan Corbet <corbet@lwn.net>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/15] docs: parallel-wrapper.sh: remove script
-Date: Mon,  1 Sep 2025 16:42:25 +0200
-Message-ID: <1b52b64a969091d7fadc1580eddeeb2a5b111a43.1756737440.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v3 10/15] docs: Makefile: document latex/PDF PAPER= parameter
+Date: Mon,  1 Sep 2025 16:42:26 +0200
+Message-ID: <bbe7cdefaf969c14762359b2f96b312c33a7960b.1756737440.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1756737440.git.mchehab+huawei@kernel.org>
 References: <cover.1756737440.git.mchehab+huawei@kernel.org>
@@ -66,56 +66,28 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The only usage of this script was docs Makefile. Now that=0D
-it is using the new sphinx-build-wrapper, which has inside=0D
-the code from parallel-wrapper.sh, we can drop this script.=0D
+While the build system supports this for a long time, this was=0D
+never documented. Add a documentation for it.=0D
 =0D
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>=0D
 ---=0D
- Documentation/sphinx/parallel-wrapper.sh | 33 ------------------------=0D
- 1 file changed, 33 deletions(-)=0D
- delete mode 100644 Documentation/sphinx/parallel-wrapper.sh=0D
+ Documentation/Makefile | 2 ++=0D
+ 1 file changed, 2 insertions(+)=0D
 =0D
-diff --git a/Documentation/sphinx/parallel-wrapper.sh b/Documentation/sphin=
-x/parallel-wrapper.sh=0D
-deleted file mode 100644=0D
-index e54c44ce117d..000000000000=0D
---- a/Documentation/sphinx/parallel-wrapper.sh=0D
-+++ /dev/null=0D
-@@ -1,33 +0,0 @@=0D
--#!/bin/sh=0D
--# SPDX-License-Identifier: GPL-2.0+=0D
--#=0D
--# Figure out if we should follow a specific parallelism from the make=0D
--# environment (as exported by scripts/jobserver-exec), or fall back to=0D
--# the "auto" parallelism when "-jN" is not specified at the top-level=0D
--# "make" invocation.=0D
--=0D
--sphinx=3D"$1"=0D
--shift || true=0D
--=0D
--parallel=3D"$PARALLELISM"=0D
--if [ -z "$parallel" ] ; then=0D
--	# If no parallelism is specified at the top-level make, then=0D
--	# fall back to the expected "-jauto" mode that the "htmldocs"=0D
--	# target has had.=0D
--	auto=3D$(perl -e 'open IN,"'"$sphinx"' --version 2>&1 |";=0D
--			while (<IN>) {=0D
--				if (m/([\d\.]+)/) {=0D
--					print "auto" if ($1 >=3D "1.7")=0D
--				}=0D
--			}=0D
--			close IN')=0D
--	if [ -n "$auto" ] ; then=0D
--		parallel=3D"$auto"=0D
--	fi=0D
--fi=0D
--# Only if some parallelism has been determined do we add the -jN option.=0D
--if [ -n "$parallel" ] ; then=0D
--	parallel=3D"-j$parallel"=0D
--fi=0D
--=0D
--exec "$sphinx" $parallel "$@"=0D
+diff --git a/Documentation/Makefile b/Documentation/Makefile=0D
+index 2b0ed8cd5ea8..3e1cb44a5fbb 100644=0D
+--- a/Documentation/Makefile=0D
++++ b/Documentation/Makefile=0D
+@@ -124,4 +124,6 @@ dochelp:=0D
+ 	@echo=0D
+ 	@echo  '  make DOCS_CSS=3D{a .css file} adds a DOCS_CSS override file for=
+ html/epub output.'=0D
+ 	@echo=0D
++	@echo  '  make PAPER=3D{a4|letter} Specifies the paper size used for LaTe=
+X/PDF output.'=0D
++	@echo=0D
+ 	@echo  '  Default location for the generated documents is Documentation/o=
+utput'=0D
 -- =0D
 2.51.0=0D
 =0D
