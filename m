@@ -1,207 +1,611 @@
-Return-Path: <linux-kernel+bounces-795046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CBBEB3EC3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:34:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4ACAB3EC42
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6368B208086
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:34:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F0D207FED
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A02C2EF66A;
-	Mon,  1 Sep 2025 16:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D93832F763;
+	Mon,  1 Sep 2025 16:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HhIzjYA3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrFpFRuf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896FC2D593F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 16:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B64E2D593F;
+	Mon,  1 Sep 2025 16:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756744471; cv=none; b=byPzYI3/iATCpnhMfirNqx9ABNXdAY6/bcZUS/9ud6vxVoh1FpV9fHijg53+b6NoIWtc6cf1gv2g++SrZXRaaoAsPsVLHKch6EFsFGGWBSnzgOqKbffNCpzGoxUWhnZk+4Er2dyGpsRINR9CsW8tueIkfIPUREse3sqxGMlqyAQ=
+	t=1756744480; cv=none; b=S9czSK9tziuXZZbf9PF0iODd1ZyEgZxYkOx4gdq0X4BO/5VU7aeNXMhCCEAX5H/O7ZYN8ZcLWQJN6xNKvjPFXse+07Wi4f6RXtSK8xCsJpQnMwRMgiAXlGZ0i15Sq3GyiLqJif2M2qXdEMZJ93oYSOOBmpDBBUrYr4QBdaNXlgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756744471; c=relaxed/simple;
-	bh=aWny5m6Wqz1CRg5geT1nOdfOifoEJVrWBp+q4CMHEPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hgRJBCn1+J83ykCFlHVzTg0g5qq32/PUUDe1JvC0HwJvC1iW6/BXwXlHmFZv9lzBTae6IsgVYXI4mhbqevom+D/Y64rcokKDFfx/T/BBhALnDaa/QPVgf7KajedZACt/6s80ORn31qmPHGLpBno/oJA4eZSotNmh8Fdtysvnw3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HhIzjYA3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756744466;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oU/qMtZcyC8i4LZR6Q/18FupAVEqnteAX6wqUkmR8s4=;
-	b=HhIzjYA3/TklirdbLRRp/tRzn9J0EG7H24WnlYxbak1yE6cUT+vhULbVRq8F/DDrlgBz3x
-	ChvOYaDKAb3hJYG1RwemCnRqGhShP1/Fv1h8GhpsGGrSSLkD4ZuDC1mi080iFglKjopR68
-	x65kOoU2M49v/4QW2VF6HNQ6PqdwY40=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-646-qWNZv9x-PcakHwb8E4-A1A-1; Mon,
- 01 Sep 2025 12:34:23 -0400
-X-MC-Unique: qWNZv9x-PcakHwb8E4-A1A-1
-X-Mimecast-MFC-AGG-ID: qWNZv9x-PcakHwb8E4-A1A_1756744461
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F220619560B0;
-	Mon,  1 Sep 2025 16:34:20 +0000 (UTC)
-Received: from [10.44.32.239] (unknown [10.44.32.239])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 416BF19560AB;
-	Mon,  1 Sep 2025 16:34:16 +0000 (UTC)
-Message-ID: <e6cd77a7-bc18-4e0c-9536-5fb107ec4db4@redhat.com>
-Date: Mon, 1 Sep 2025 18:34:14 +0200
+	s=arc-20240116; t=1756744480; c=relaxed/simple;
+	bh=HLK5ity3Uglbp3imUuMuBIINdlUiyPESL7xc8wYgcUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SMFqRY/sNE8Kufi4imNuzQrWbPQKSZT/2kKZmeL3XDAbUnXPjxwTbLs7nFl13bIEoSX5XP0SoUYaGymMYLkoM18tSv1fwrT2xtLiaHCCridqDwFtefd0VV4nZTSrsjsc0syHfKUG+UNweps0uf0I9EbtWGfxAaVW/4MQKNrS11Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrFpFRuf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC33CC4CEF0;
+	Mon,  1 Sep 2025 16:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756744479;
+	bh=HLK5ity3Uglbp3imUuMuBIINdlUiyPESL7xc8wYgcUY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IrFpFRufDAK8SGfOJZXtTEq1+ub17xFjQ9VPf2H1+SiTX94dIZ9ARJ0+Cgn/Lo24X
+	 GdNT4/LrXCFk46n6AW+EoiRzBCiC+hZnHSQ+/kJIWebAUfzw8wAo5Y8H4bYjsGYMKH
+	 1JWK/DummBYdDBFJhlyM9MUa8T59LPqSuHkKmVVapFiLsDGgoepD35Fmlppqn/o48G
+	 Ep2GZTSEJP+yQ3zu4vV6WmSxVfJjSIPutegYXRZiZnylziaghf4uKpjgwvGNbZ34wK
+	 2ArkACTFlUgraxIGBynZrbIak2DruFlC51bsYO6RMRVEKyKlo1qXf31CSqQV4oSnyH
+	 6mt8xQlW2P5nQ==
+Date: Mon, 1 Sep 2025 17:34:31 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, robh@kernel.org,
+ conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 4/6] iio: adc: add ade9000 support
+Message-ID: <20250901173431.08e52c78@jic23-huawei>
+In-Reply-To: <7b10341d-b5a3-4a37-a2b1-fa7826ea116b@baylibre.com>
+References: <20250829115227.47712-1-antoniu.miclaus@analog.com>
+	<20250829115227.47712-5-antoniu.miclaus@analog.com>
+	<7b10341d-b5a3-4a37-a2b1-fa7826ea116b@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 5/5] dpll: zl3073x: Implement devlink flash
- callback
-To: Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
- Petr Oros <poros@redhat.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>
-References: <20250813174408.1146717-1-ivecera@redhat.com>
- <20250813174408.1146717-6-ivecera@redhat.com>
- <20250818192943.342ad511@kernel.org>
- <e7a5ee37-993a-4bba-b69e-6c8a7c942af8@redhat.com>
- <20250829165638.3b50ea2a@kernel.org>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <20250829165638.3b50ea2a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Kuba and Jiri,
+On Fri, 29 Aug 2025 17:02:04 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-On 30. 08. 25 1:56 dop., Jakub Kicinski wrote:
-> On Fri, 29 Aug 2025 16:49:22 +0200 Ivan Vecera wrote:
->>>> +		/* Leave flashing mode */
->>>> +		zl3073x_flash_mode_leave(zldev, extack);
->>>> +	}
->>>> +
->>>> +	/* Restart normal operation */
->>>> +	rc = zl3073x_dev_start(zldev, true);
->>>> +	if (rc)
->>>> +		dev_warn(zldev->dev, "Failed to re-start normal operation\n");
->>>
->>> And also we can't really cleanly handle the failure case.
->>>
->>> This is why I was speculating about implementing the down/up portion
->>> in the devlink core. Add a flag that the driver requires reload_down
->>> to be called before the flashing operation, and reload_up after.
->>> This way not only core handles some of the error handling, but also
->>> it can mark the device as reload_failed if things go sideways, which
->>> is a nicer way to surface this sort of permanent error state.
->>
->> This makes sense... The question is if this should reuse existing
->> .reload_down and .reload_up callbacks let's say with new devlink action
->> DEVLINK_RELOAD_ACTION_FW_UPDATE or rather introduce new callbacks
->> .flash_update_down/_up() to avoid confusions.
+> On 8/29/25 6:41 AM, Antoniu Miclaus wrote:
+> > Add driver support for the ade9000. highly accurate,
+> > fully integrated, multiphase energy and power quality
+> > monitoring device.
+> > 
+> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+I took advantage of David not having cropped his review and
+added some comments on top. Not I did crop away a bunch of stuff
+David wrote that you also need to deal with though!
+
+Jonathan
+
+> > diff --git a/drivers/iio/adc/ade9000.c b/drivers/iio/adc/ade9000.c
+> > new file mode 100644
+> > index 000000000000..b39023be390c
+> > --- /dev/null
+> > +++ b/drivers/iio/adc/ade9000.c
+> > @@ -0,0 +1,1845 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/**
+> > + * ADE9000 driver
+> > + *
+> > + * Copyright 2025 Analog Devices Inc.
+> > + */
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/completion.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/iio/iio.h>
+> > +#include <linux/iio/buffer.h>
+> > +#include <linux/iio/kfifo_buf.h>
+> > +#include <linux/iio/events.h>
+> > +#include <linux/iio/sysfs.h>
+This header is kind of an ancient bit of legacy we only need
+if doing custom attrs (not the nice enum ones)  So assuming
+I remember this right you shouldn't need it here.
+
+
+
+> > +static irqreturn_t ade9000_irq1_thread(int irq, void *data)
+> > +{
+> > +	struct iio_dev *indio_dev = data;
+> > +	struct ade9000_state *st = iio_priv(indio_dev);
+> > +	unsigned int bit = ADE9000_ST1_CROSSING_FIRST;
+> > +	s64 timestamp = iio_get_time_ns(indio_dev);
+> > +	u32 handled_irq = 0;
+> > +	u32 interrupts, result, status, tmp;
+> > +	unsigned long interrupt_bits;
+> > +	const struct ade9000_irq1_event *event;
+> > +	int ret, i;
+> > +
+> > +	if (!completion_done(&st->reset_completion)) {
+> > +		ret = regmap_read(st->regmap, ADE9000_REG_STATUS1, &result);
+> > +		if (ret) {
+> > +			dev_err(&st->spi->dev, "IRQ1 read status fail\n");
+> > +			return IRQ_HANDLED;
+> > +		}
+> > +
+> > +		if (result & ADE9000_ST1_RSTDONE_BIT)
+> > +			complete(&st->reset_completion);
+> > +		else
+> > +			dev_err(&st->spi->dev, "Error testing reset done\n");
+> > +  
 > 
-> Whatever makes sense for your driver, for now. I'm assuming both ops
-> are the same, otherwise you wouldn't be asking? It should be trivial
-> for someone add the extra ops later, and just hook them both up to the
-> same functions in existing drivers.
+> We don't need to clear the status here?
+> 
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	ret = regmap_read(st->regmap, ADE9000_REG_STATUS1, &status);
+> > +	if (ret) {
+> > +		dev_err(&st->spi->dev, "IRQ1 read status fail\n");
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	ret = regmap_read(st->regmap, ADE9000_REG_MASK1, &interrupts);
+> > +	if (ret) {
+> > +		dev_err(&st->spi->dev, "IRQ1 read mask fail\n");
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	interrupt_bits = interrupts;  
+> 
+> bitmap_from_arr32() would make a bit more sense. Otherwise looks a bit
+> like unnecessary copying.
+> 
+> > +	for_each_set_bit_from(bit, &interrupt_bits,
+> > +			      ADE9000_ST1_CROSSING_DEPTH) {
+> > +		tmp = status & BIT(bit);
+> > +		if (tmp) {
 
-Things are a little bit complicated after further investigation...
+Perhaps here
+		if (!tmp)
+			continue;
 
-Some internal flashing backround first:
-The zl3073x HW needs an external program called "flash utility"
-to access an internal flash inside the chip. This utility provides
-flash API over I2C/SPI bus that is different from the FW API provided
-by the normal firmware. So to access the flash memory the driver has
-to stop the device's CPU, to load the utility into chip RAM and resume
-the CPU to execute the utility. At this point normal FW API is not
-accessible so the driver has to stop the normal operation (unregister
-DPLL devices, pins etc.). Then it updates flash using flash API and
-after flash operations it has to reset device's CPU to restart newly
-flashed firmware. Finally when normal FW is available it resumes
-the normal operation (re-register DPLL devices etc.).
+		event = NULL;
+etc is worth while to reduce the indent a little.
 
-Current steps in this patch:
-1. Load given FW file and verify that utility is present
-2. Stop normal operations
-3. Stop CPU, download utility to device, resume CPU
-4. Flash components from the FW file
-5. Unconditionally reset device's CPU to load normal FW
-6. Resume normal operations
+> > +			event = NULL;
+> > +
+> > +			/* Find corresponding event in lookup table */
+> > +			for (i = 0; i < ARRAY_SIZE(ade9000_irq1_events); i++) {
+> > +				if (ade9000_irq1_events[i].bit_mask == tmp) {
+> > +					event = &ade9000_irq1_events[i];
+> > +					break;
+> > +				}
+> > +			}
+> > +
+> > +			if (event) {
+> > +				iio_push_event(indio_dev,
+> > +					       IIO_UNMOD_EVENT_CODE(event->chan_type,
+> > +								    event->channel,
+> > +								    event->event_type,
+> > +								    event->event_dir),
+> > +								    timestamp);
+> > +			}
+> > +			handled_irq |= tmp;
+> > +		}
+> > +	}
+> > +
+> > +	ret = regmap_write(st->regmap, ADE9000_REG_STATUS1, handled_irq);
+> > +	if (ret)
+> > +		dev_err(&st->spi->dev, "IRQ1 write status fail\n");
+> > +  
+> 
+> Probably should use rate limited version of dev_err() everywhere in this
+> function in case there is an "interrupt storm". Applies to all functions
+> called by the irq handlers as well.
+> 
+> > +	return IRQ_HANDLED;
+> > +}
 
-I found 4 possible options how to handle:
+> > +
+> > +static int ade9000_write_raw(struct iio_dev *indio_dev,
+> > +			     struct iio_chan_spec const *chan,
+> > +			     int val,
+> > +			     int val2,
+> > +			     long mask)
+> > +{
+> > +	struct ade9000_state *st = iio_priv(indio_dev);
+> > +	u32 addr, tmp;
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_FREQUENCY:
+> > +		switch (val) {
+> > +		case 50:
+> > +			return regmap_write(st->regmap, ADE9000_REG_ACCMODE,
+> > +					    ADE9000_ACCMODE);
+> > +		case 60:
+> > +			return regmap_write(st->regmap, ADE9000_REG_ACCMODE,
+> > +					    ADE9000_ACCMODE_60HZ);
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	case IIO_CHAN_INFO_CALIBBIAS:
+> > +		switch (chan->type) {
+> > +		case IIO_CURRENT:
+> > +			return regmap_write(st->regmap,
+> > +					    ADE9000_ADDR_ADJUST(ADE9000_REG_AIRMSOS,
+> > +								chan->channel), val);
+> > +		case IIO_VOLTAGE:
+> > +		case IIO_ALTVOLTAGE:
+> > +			return regmap_write(st->regmap,
+> > +					    ADE9000_ADDR_ADJUST(ADE9000_REG_AVRMSOS,
+> > +								chan->channel), val);
+> > +		case IIO_POWER:
+> > +			tmp = chan->address;
+> > +			tmp &= ~ADE9000_PHASE_B_POS_BIT;
+> > +			tmp &= ~ADE9000_PHASE_C_POS_BIT;
+> > +
+> > +			switch (tmp) {
+> > +			case ADE9000_REG_AWATTOS:
+> > +				return regmap_write(st->regmap,
+> > +						    ADE9000_ADDR_ADJUST(ADE9000_REG_AWATTOS,
+> > +									chan->channel), val);
+> > +			case ADE9000_REG_AVAR:
+> > +				return regmap_write(st->regmap,
+> > +						    ADE9000_ADDR_ADJUST(ADE9000_REG_AVAROS,
+> > +									chan->channel), val);
+> > +			case ADE9000_REG_AFVAR:
+> > +				return regmap_write(st->regmap,
+> > +						    ADE9000_ADDR_ADJUST(ADE9000_REG_AFVAROS,
+> > +									chan->channel), val);
+> > +			default:
+> > +				return -EINVAL;
+> > +			}
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	case IIO_CHAN_INFO_CALIBSCALE:
+> > +		/*
+> > +		 * Calibration gain registers for fine-tuning measurements.
+> > +		 * These are separate from PGA gain and applied in the digital domain.
+> > +		 */
+> > +		switch (chan->type) {
+> > +		case IIO_CURRENT:
+> > +			return regmap_write(st->regmap,
+> > +					    ADE9000_ADDR_ADJUST(ADE9000_REG_AIGAIN,
+> > +								chan->channel), val);
+> > +		case IIO_VOLTAGE:
+> > +			return regmap_write(st->regmap,
+> > +					    ADE9000_ADDR_ADJUST(ADE9000_REG_AVGAIN,
+> > +								chan->channel), val);
+> > +		case IIO_POWER:
+> > +			return regmap_write(st->regmap,
+> > +					    ADE9000_ADDR_ADJUST(ADE9000_REG_APGAIN,
+> > +								chan->channel), val);
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	case IIO_CHAN_INFO_SCALE:
+> > +		/* Only shared PGA scale is writable, per-channel scales are read-only */
+> > +		if (!(chan->info_mask_shared_by_all))
+> > +			return -EINVAL;
+> > +
+> > +		/*
+> > +		 * PGA (Programmable Gain Amplifier) settings affect the analog
+> > +		 * input stage scaling, shared by all channels. This is different
+> > +		 * from the per-channel calibration gains above.
+> > +		 */
+> > +		if (val > 4 || val < 1 || val == 3)
+This is matching just 1, 2 and 4 I think.  Just check those explicitly as that
+will be easier to read.
+		if (val != 1 && val != 2 && val != 4)
 
-1. Introduce DEVLINK_RELOAD_ACTION_FW_UPDATE devlink action and reuse
-    .reload_down/up() callbacks and call them prior and after
-    .flash_update callback.
+> > +			return -EINVAL;
+> > +		addr = ADE9000_REG_PGA_GAIN;
+> > +		/*
+> > +		 * PGA gain settings: 1x, 2x, 4x (3x not supported)
+> > +		 * Each channel uses 2 bits in PGA_GAIN register:
+> > +		 * - Channel 0: bits [9:8]
+> > +		 * - Channel 1: bits [11:10]
+> > +		 * - Channel 2: bits [13:12]
+> > +		 * Convert gain (1,2,4) to register value (0,1,2) using ilog2()
+> > +		 */
+> > +		val = ilog2(val) << (chan->channel * 2 + 8);
+> > +		tmp = GENMASK(1, 0) << (chan->channel * 2 + 8);
+> > +		return regmap_update_bits(st->regmap, addr, tmp, val);
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +}
 
-At first glance, it looks the most elegant... The zl3073x driver stops
-during .reload_down() normal operation, then in .flash_update will
-switch the device to flash mode, performs flash update and finally
-during .reload_up() will resume normal operation.
+> > +
+> > +static int ade9000_read_event_config(struct iio_dev *indio_dev,
+> > +				     const struct iio_chan_spec *chan,
+> > +				     enum iio_event_type type,
+> > +				     enum iio_event_direction dir)
+> > +{
+> > +	struct ade9000_state *st = iio_priv(indio_dev);
+> > +	u32 interrupts1;
+> > +	int ret;
+> > +
+> > +	/* All events use MASK1 register */
+> > +	ret = regmap_read(st->regmap, ADE9000_REG_MASK1, &interrupts1);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	switch (chan->channel) {
+> > +	case ADE9000_PHASE_A_NR:
+> > +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER)
+> > +			return !!(interrupts1 & ADE9000_ST1_ZXVA_BIT);
+> > +		else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER)
+> > +			return !!(interrupts1 & ADE9000_ST1_ZXIA_BIT);
+> > +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING)
+> > +			return !!(interrupts1 & ADE9000_ST1_SWELLA_BIT);
+> > +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING)
+> > +			return !!(interrupts1 & ADE9000_ST1_DIPA_BIT);
+> > +		break;  
+> 
+> Just return 0; here. Same applies elsewhere.
 
-Issues:
-- a problematic case, when the given firmware file does not contain
-   utility... During .reload_down() this cannot be checked as the
-   firmware is not available during .reload_down() callback.
-- DEVLINK_RELOAD_ACTION_FW_UPDATE has to be placed in devlink UAPI
-   and but this reload action should be handled as internal one as
-   there should not be possible to initiate it from the userspace
+Getting here is a bug I think. Should call that out with an error print
+if so.
 
-   e.g. devlink dev reload DEV action fw_update
+> 
+> > +	case ADE9000_PHASE_B_NR:
+> > +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER)
+> > +			return !!(interrupts1 & ADE9000_ST1_ZXVB_BIT);
+> > +		else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER)
+> > +			return !!(interrupts1 & ADE9000_ST1_ZXIB_BIT);
+> > +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING)
+> > +			return !!(interrupts1 & ADE9000_ST1_SWELLB_BIT);
+> > +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING)
+> > +			return !!(interrupts1 & ADE9000_ST1_DIPB_BIT);
 
-2. Add new .flash_down/up() or .flash_prepare/done() optional callbacks
-    that are called prior and after .flash_update if they are provided by
-    a driver.
+likewise
 
-This looks also good and very similar to previous option. Could resolve
-the 1st issue as we can pass 'devlink_flash_update_params' to both
-new callbacks, so the driver can parse firmware file during
-.flash_down and check for utility presence.
+> > +		break;
+> > +	case ADE9000_PHASE_C_NR:
+> > +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER)
+> > +			return !!(interrupts1 & ADE9000_ST1_ZXVC_BIT);
+> > +		else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER)
+> > +			return !!(interrupts1 & ADE9000_ST1_ZXIC_BIT);
+> > +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING)
+> > +			return !!(interrupts1 & ADE9000_ST1_SWELLC_BIT);
+> > +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING)
+> > +			return !!(interrupts1 & ADE9000_ST1_DIPC_BIT);
 
-Issues:
-- the firmware has to be parsed twice - during .flash_down() and
-   .flash_update()
-   This could be resolved by extending devlink_flash_update_params
-   structure by 'void *priv' field that could be used by a driver
-   during flash operation.
-   It could be also useful to add flash_failed flag similar to
-   reload_failed that would record a status reported by .flash_up()
-   callback.
+and here as well.
 
-3. Keep my original approach but without restarting normal operation
-    (re-register DPLL devices and pins). User has to use explicitly
-    devlink reload fw_activate to restart normal operation.
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int ade9000_write_event_config(struct iio_dev *indio_dev,
+> > +				      const struct iio_chan_spec *chan,
+> > +				      enum iio_event_type type,
+> > +				      enum iio_event_direction dir,
+> > +				      bool state)
+> > +{
+> > +	struct ade9000_state *st = iio_priv(indio_dev);
+> > +	u32 bit_mask = 0;
 
-This could be reasonable but introduces some kind of asymmetry because
-the driver stops normal operation during .flash_update() and left
-the device in intermediate state (devlink interface is working but
-DPLL devices and pins are not registered). Only upon explicit user
-request (fw_activate) would it restore normal mode (re-registration).
+With the suggested elses below this should always be written before use.
 
-4. Keep my original approach, fix the ignored error code reported by
-    Jakub and pass "re-start normal operation failure" via devlink
-    notification.
+> > +	int ret;
+> > +
+> > +	/* Clear all pending events in STATUS1 register (write 1 to clear) */
+> > +	ret = regmap_write(st->regmap, ADE9000_REG_STATUS1, GENMASK(31, 0));
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Determine which interrupt bit to enable/disable */
+> > +	switch (chan->channel) {
+> > +	case ADE9000_PHASE_A_NR:
+> > +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER) {
+> > +			bit_mask = ADE9000_ST1_ZXVA_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_ZXVA_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXVA_BIT;
+> > +		} else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER) {
+> > +			bit_mask = ADE9000_ST1_ZXIA_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_ZXIA_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXIA_BIT;
+> > +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING) {
+> > +			bit_mask = ADE9000_ST1_SWELLA_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_SWELL_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_SWELL_BIT;
+> > +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING) {
+> > +			bit_mask = ADE9000_ST1_DIPA_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_DIP_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_DIP_BIT;
+> > +		}
 
- From my POV better than previous one as the driver will do its best to
-resume device state prior the flashing. Only corner case where the
-firmware is unresponsive after reset will cause that normal operation
-won't be resumed -> could be handled by health reporting?
+I'm guessing we should get here?  If so perhaps
+		return dev_err(...) is appropriate here?
 
-Thanks for opinions and advises.
+> > +		break;
+> > +	case ADE9000_PHASE_B_NR:
+> > +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER) {
+> > +			bit_mask = ADE9000_ST1_ZXVB_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_ZXVB_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXVB_BIT;
+> > +		} else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER) {
+> > +			bit_mask = ADE9000_ST1_ZXIB_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_ZXIB_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXIB_BIT;
+> > +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING) {
+> > +			bit_mask = ADE9000_ST1_SWELLB_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_SWELL_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_SWELL_BIT;
+> > +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING) {
+> > +			bit_mask = ADE9000_ST1_DIPB_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_DIP_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_DIP_BIT;
+> > +		}
 
-Ivan
+similar here, I'd add what happens if none of the above match.
 
+> > +		break;
+> > +	case ADE9000_PHASE_C_NR:
+> > +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER) {
+> > +			bit_mask = ADE9000_ST1_ZXVC_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_ZXVC_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXVC_BIT;
+> > +		} else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER) {
+> > +			bit_mask = ADE9000_ST1_ZXIC_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_ZXIC_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXIC_BIT;
+> > +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING) {
+> > +			bit_mask = ADE9000_ST1_SWELLC_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_SWELL_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_SWELL_BIT;
+> > +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING) {
+> > +			bit_mask = ADE9000_ST1_DIPC_BIT;
+> > +			if (state)
+> > +				st->wfb_trg |= ADE9000_WFB_TRG_DIP_BIT;
+> > +			else
+> > +				st->wfb_trg &= ~ADE9000_WFB_TRG_DIP_BIT;
+> > +		}
+
+Same here. If it's all going wrong just exit with an error.
+
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	if (!bit_mask)
+> > +		return -EINVAL;
+
+With above I think this test is not needed.
+
+> > +
+> > +	return regmap_assign_bits(st->regmap, ADE9000_REG_MASK1, bit_mask, state ? bit_mask : 0);
+
+That last parameter looks fishy fir a boolean. Perhaps a comment or state && bit_mask
+which think does the same thing. 
+
+> > +}
+
+> > +
+> > +static int ade9000_waveform_buffer_config(struct iio_dev *indio_dev)
+> > +{
+> > +	struct ade9000_state *st = iio_priv(indio_dev);
+> > +	u32 wfb_cfg_val = 0;
+
+Set in all paths where it's used, so don't initialise it here.
+
+> > +	u32 active_scans;
+> > +
+> > +	bitmap_to_arr32(&active_scans, indio_dev->active_scan_mask,
+> > +			indio_dev->masklength);
+> > +
+> > +	switch (active_scans) {
+> > +	case ADE9000_SCAN_POS_IA | ADE9000_SCAN_POS_VA:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_IA_VA;
+> > +		st->wfb_nr_activ_chan = 2;
+> > +		break;
+> > +	case ADE9000_SCAN_POS_IB | ADE9000_SCAN_POS_VB:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_IB_VB;
+> > +		st->wfb_nr_activ_chan = 2;
+> > +		break;
+> > +	case ADE9000_SCAN_POS_IC | ADE9000_SCAN_POS_VC:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_IC_VC;
+> > +		st->wfb_nr_activ_chan = 2;
+> > +		break;
+> > +	case ADE9000_SCAN_POS_IA:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_IA;
+> > +		st->wfb_nr_activ_chan = 1;
+> > +		break;
+> > +	case ADE9000_SCAN_POS_VA:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_VA;
+> > +		st->wfb_nr_activ_chan = 1;
+> > +		break;
+> > +	case ADE9000_SCAN_POS_IB:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_IB;
+> > +		st->wfb_nr_activ_chan = 1;
+> > +		break;
+> > +	case ADE9000_SCAN_POS_VB:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_VB;
+> > +		st->wfb_nr_activ_chan = 1;
+> > +		break;
+> > +	case ADE9000_SCAN_POS_IC:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_IC;
+> > +		st->wfb_nr_activ_chan = 1;
+> > +		break;
+> > +	case ADE9000_SCAN_POS_VC:
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_VC;
+> > +		st->wfb_nr_activ_chan = 1;
+> > +		break;
+> > +	case (ADE9000_SCAN_POS_IA | ADE9000_SCAN_POS_VA | ADE9000_SCAN_POS_IB |
+> > +	      ADE9000_SCAN_POS_VB | ADE9000_SCAN_POS_IC | ADE9000_SCAN_POS_VC):
+> > +		wfb_cfg_val = ADE9000_WFB_CFG_ALL_CHAN;
+> > +		st->wfb_nr_activ_chan = 6;
+> > +		break;
+> > +	default:
+> > +		dev_err(&st->spi->dev, "Unsupported combination of scans\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	wfb_cfg_val |= FIELD_PREP(ADE9000_WF_SRC_MASK, st->wf_src);
+> > +
+> > +	return regmap_write(st->regmap, ADE9000_REG_WFB_CFG, wfb_cfg_val);
+> > +}
+
+> > +static int ade9000_buffer_preenable(struct iio_dev *indio_dev)
+> > +{
+> > +	struct ade9000_state *st = iio_priv(indio_dev);
+> > +	int ret;
+> > +
+> > +	ret = ade9000_waveform_buffer_config(indio_dev);  
+> 
+> Should this be .validate_scan_mask callback instead of calling it here?
+
+That wouldn't normally do any actual register writes so I'm not seeing
+how it is a good fit for this call.  It might make sense to provide
+an available_scan_masks array to rule out configs that aren't supported
+(and let the core demux deal with it).
+
+
+> 
+> 
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	st->wfb_nr_samples = ADE9000_WFB_MAX_SAMPLES_CHAN * st->wfb_nr_activ_chan;
+> > +
+> > +	ade9000_configure_scan(indio_dev, ADE9000_REG_WF_BUFF);
+> > +
+> > +	ret = ade9000_waveform_buffer_interrupt_setup(st);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = regmap_set_bits(st->regmap, ADE9000_REG_WFB_CFG,
+> > +			      ADE9000_WF_CAP_EN_MASK);
+> > +	if (ret) {
+> > +		dev_err(&st->spi->dev, "Post-enable waveform buffer enable fail\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
 
