@@ -1,189 +1,187 @@
-Return-Path: <linux-kernel+bounces-794098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFCDB3DCD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:43:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E12B3DCDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5F2188AF4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC662188AF9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6DF2FB62E;
-	Mon,  1 Sep 2025 08:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F482FB976;
+	Mon,  1 Sep 2025 08:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nuBgR2oz"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YI5Y6Fu5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0LQRU2Gb";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YI5Y6Fu5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0LQRU2Gb"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1937C2FB63F
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7681C2F39C5
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756716223; cv=none; b=gVMDrTK4UMXTONurUotanfMM+MXXI+TClG8MqT3mFYwCPuCifqSszyjdA52sKTvAjmp0YoqWQHcQaAmwWsc9YUKfv/5W6Ej2BAun5+ST79KlNbpfU7sTkg+8u9pXw8Bg+2Rc3Ba0TYPA+czxaTaLm0mBncPjBZkBA5+OOvU7EUI=
+	t=1756716280; cv=none; b=OMdbgXtrVC3hKe3aV5+bYU3wLOuoAXa5D23MfpIjMcXvjFbEeb+4lyo+t8upEyxF2v2Gn3kFyMtIDgSxezsbPnvG5y63E6xiZ2qB8pPH+Zm9t0sKtHvL2mufAVevK+Vc1HoVZhBG0DMo7Q3J7Poua5SdRC/5AHeGolxozy6wpFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756716223; c=relaxed/simple;
-	bh=3H3Jx5oMcfa5QmF4ouRH6A2BD9ZreQQnHMh8vnL1tHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ILLK4jp7pDbWV01rxZyM+eO/jXT90Eyatn1/jqM5J/sVwe/tr9NA3MfeqxBq4u1p6vkvUMR110VROuU2OILKLzFu5E0Qg47K+zK7elNOmFWW53qWvfeaFjXIICbzTUSYDD8Rx1EyNfK8qxKWuKxU8elLsuz+0wm2xJIlapyL48k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nuBgR2oz; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b883aa3c9so7755795e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756716219; x=1757321019; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X1PqOUmZ0Ne7FPif1yb7D1u9567Eu8Y0LGe+cU3C1kk=;
-        b=nuBgR2oz76vd1dXQZF8qarc4nNfhFHMDri+H/iL47CV5GgBl0zLy0PD8XMP+Us8SFc
-         f5Y1yDAEoZzAhzlYP5LrZslerTzoZUWfnAeKho1tyDFUTh+MwJojJO4fGWj7sdpj88Q/
-         WhElkHRXwgEjCiJwo/FJ8T+Zb1lDttutP9hcVwBdVUG3Q/dQRU472P79IHOsUaYCRGQu
-         1WRJpbhpcd4mYiJzw3SlZ6aEA/NPGBmTtmj8EMjZcZXEmqEZeFTZdriVNc4n2XidTn8A
-         zdJnEPcptBIVQta8otexG3DDj+clNfMaY0rnGZ7djHBpKEZkBRNf6zvkQzuicqWXtg8H
-         taYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756716219; x=1757321019;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X1PqOUmZ0Ne7FPif1yb7D1u9567Eu8Y0LGe+cU3C1kk=;
-        b=MB/YMczs43Z7pMuaZoPQRf6bis03AWYxDWHC3VZrwNOEJB2XMbdTESfQFmBAM8Cuv9
-         AeajCZ9nfRF8rOHeynufCGmQd+owxj5XE9AIKefd0hKs/w63Lo/IaZyirjYzaHkl3pxn
-         MltW5VREO3JK7/Cdkn55Yck3+j/RgKRIJWOhvDzyUFHQrdqYM8fMOWMdPLgNJw4WXX/R
-         cZbJGuU+5emHzPHqwb3zLSM+mMU8dr34Zm6/5L7rtT0OUpVZTVJBQguwB1mVlWzocQKU
-         3zLGNQjesDP7FsdzvOxO5kFnhdGJq0QglPbEzVdkARBlb5uGfwDKuI+uvptEmxPZy+14
-         Pq4Q==
-X-Gm-Message-State: AOJu0Yw9QiJSYIkgztceLHDw7lKPEbLDiO4IpEeugEWG4BToTZXADsVq
-	YaDisvVN/c8yc1N/LtSAV2OB5ZsVTBvycAsED1Tq70L+34YEYZ2be36lLPjcnSjFRlM=
-X-Gm-Gg: ASbGncvm9ujvzjXr31CLxHZmhzNXuw4gYI/TQC4d20Fz0T9Irqq6xZm4WiW4OkYqKg9
-	tx06XXz7hntxq8p9MurCSa+z+RvHUCDa5HExtvSZEXAdwYo2kIVmwCQNxz2QxpfxCQKqDXmssOu
-	rmJ+3a3daqjC4FhS8jgbXxRNVXUv3mGuIqWI6ucqEOemNJGTKdIyNDtgQCebEsVhdSnc2fLAzGs
-	A80PwGnF0camOFKtVMt0QxaBNStCrVMpQEIq14ktAhE2cM3fckQ+i7fcATlW4/hdPSZGTeY16Dh
-	v+Py9JjAb76sAFv3Bvm6Qcsueg9GIrvpFs0k99VkLW+i+leBZ8K36HdNl0kQAvOrPvqP00a7ofl
-	wwIcsFavMI9U6MfeJx2PwWZsBLvhyuA==
-X-Google-Smtp-Source: AGHT+IEOfIZTQy6jci7xeBxd5WsSj+WaclDlxn3VgJ9N1OGclS2wRjNkjBAzbocqqf4Z87S9TOQbdQ==
-X-Received: by 2002:a05:600c:a4b:b0:45b:6365:794e with SMTP id 5b1f17b1804b1-45b855711fdmr62236345e9.24.1756716219178;
-        Mon, 01 Sep 2025 01:43:39 -0700 (PDT)
-Received: from [192.168.0.251] ([79.115.63.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b69b7529asm139030665e9.0.2025.09.01.01.43.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 01:43:38 -0700 (PDT)
-Message-ID: <c1321c46-e7a4-4489-a63b-a3ed72e5e98a@linaro.org>
-Date: Mon, 1 Sep 2025 09:43:36 +0100
+	s=arc-20240116; t=1756716280; c=relaxed/simple;
+	bh=JgrniebZA5MUxD6Vin67nWaETutQuO9cOLiuFbvnoME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKlaQ9/kNJXDVSUyhFnxqqbrRgA+/XL0Cpjkp1/KL3dNVWaWAUhU0JY607Ssvo0mE/6AWUBRV/KuVQHH6rvr/JMIxn31oXP+c6V3pmrSEF3vfAFon5/CV5qTsqQ+GpLsgXig86YRtLBkoBgLvmNrvmnZp0CHsX4BuHhbTG44G08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YI5Y6Fu5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0LQRU2Gb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YI5Y6Fu5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0LQRU2Gb; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 766431F385;
+	Mon,  1 Sep 2025 08:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756716276; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O1YWKWcrajp/C3u2xK+YpqGsYdKR60yvLnLmFWr2s/s=;
+	b=YI5Y6Fu5FOeOSWxbzUSkl6LfpY67t6ZGu0YSGjvpz0z0nGFPRcWy0anzr/Vb2UxrVqDCMn
+	Bo5gGdtymVyy6GrTFDV/fJfVPF4s1yMXcf+UbeOot98uZcXP9r0G5gUf80X2qjHha9osbh
+	EkHU51pyQTNpziLm3Bjy/w1ZjzGfQKY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756716276;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O1YWKWcrajp/C3u2xK+YpqGsYdKR60yvLnLmFWr2s/s=;
+	b=0LQRU2GbJv1+qG7K51OmbKsjnVD6ZNg+QiNPmc99/vM8+eoxSX7eRf7riE+Jq9o0wsoc/P
+	I1/PMQmd2+x62mCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YI5Y6Fu5;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0LQRU2Gb
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756716276; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O1YWKWcrajp/C3u2xK+YpqGsYdKR60yvLnLmFWr2s/s=;
+	b=YI5Y6Fu5FOeOSWxbzUSkl6LfpY67t6ZGu0YSGjvpz0z0nGFPRcWy0anzr/Vb2UxrVqDCMn
+	Bo5gGdtymVyy6GrTFDV/fJfVPF4s1yMXcf+UbeOot98uZcXP9r0G5gUf80X2qjHha9osbh
+	EkHU51pyQTNpziLm3Bjy/w1ZjzGfQKY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756716276;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O1YWKWcrajp/C3u2xK+YpqGsYdKR60yvLnLmFWr2s/s=;
+	b=0LQRU2GbJv1+qG7K51OmbKsjnVD6ZNg+QiNPmc99/vM8+eoxSX7eRf7riE+Jq9o0wsoc/P
+	I1/PMQmd2+x62mCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5996A136ED;
+	Mon,  1 Sep 2025 08:44:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QWbbFfRctWirYAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 01 Sep 2025 08:44:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E37DEA099B; Mon,  1 Sep 2025 10:44:27 +0200 (CEST)
+Date: Mon, 1 Sep 2025 10:44:27 +0200
+From: Jan Kara <jack@suse.cz>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Alexander Monakov <amonakov@ispras.ru>, Theodore Ts'o <tytso@mit.edu>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+Message-ID: <i464joalmbxbu2yow2uvkbo3eioj3l4zihzzl2odegr4qqzr7u@4ycu45fecyz7>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <20250826220033.GW39973@ZenIV>
+ <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
+ <20250827115247.GD1603531@mit.edu>
+ <6d37ce87-e6bf-bd3e-81a9-70fdf08b9c4c@ispras.ru>
+ <20250831202244.290823f2@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] firmware: exynos-acpm: register ACPM clocks dev
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
- <20250827-acpm-clk-v2-4-de5c86b49b64@linaro.org>
- <e8346a38-fef7-482f-81ab-20621988b047@kernel.org>
- <761936e8-1626-47f8-b3f5-ebc62f4a409b@linaro.org>
- <2567a939-4938-4c92-8893-83d03ff8767f@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <2567a939-4938-4c92-8893-83d03ff8767f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250831202244.290823f2@pumpkin>
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 766431F385
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
 
-
-
-On 9/1/25 8:48 AM, Krzysztof Kozlowski wrote:
-> On 01/09/2025 08:56, Tudor Ambarus wrote:
->>
->>
->> On 8/31/25 11:50 AM, Krzysztof Kozlowski wrote:
->>> On 27/08/2025 14:42, Tudor Ambarus wrote:
->>>> +
->>>> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
->>>> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
->>>> +};
->>>
->>> I don't understand why clocks are defined in the firmware driver, not in
->>> the clock driver.
->>
->> I chose to define the clocks in the firmware driver and pass them as 
->> platform data to the clock platform device for extensibility. In case
->> other SoCs have different clock IDs, they'll be able to pass the
+On Sun 31-08-25 20:22:44, David Laight wrote:
+> On Wed, 27 Aug 2025 16:05:51 +0300 (MSK)
+> Alexander Monakov <amonakov@ispras.ru> wrote:
 > 
-> You will have to modify firmware driver, so still at least one driver
-> has to be changed. Having clocks defined in non-clock driver is really
-> unusual.
+> > On Wed, 27 Aug 2025, Theodore Ts'o wrote:
+> > 
+> > > On Wed, Aug 27, 2025 at 10:22:14AM +0300, Alexander Monakov wrote:  
+> > > > 
+> > > > On Tue, 26 Aug 2025, Al Viro wrote:
+> > > >   
+> > > > > Egads...  Let me get it straight - you have a bunch of threads sharing descriptor
+> > > > > tables and some of them are forking (or cloning without shared descriptor tables)
+> > > > > while that is going on?  
+> > > > 
+> > > > I suppose if they could start a new process in a more straightforward manner,
+> > > > they would. But you cannot start a new process without fork. Anyway, I'm but
+> > > > a messenger here: the problem has been hit by various people in the Go community
+> > > > (and by Go team itself, at least twice). Here I'm asking about a potential
+> > > > shortcoming in __fput that exacerbates the problem.  
+> > > 
+> > > I'm assuming that the problem is showing up in real life when users
+> > > run a go problem using "go run" where the golang compiler freshly
+> > > writes the executable, and then fork/exec's the binary.  And using
+> > > multiple threads sharing descriptor tables was just to make a reliable
+> > > reproducer?  
+> > 
+> > You need at least two threads: while one thread does open-write-close-fork,
+> > there needs to be another thread that forks concurrently with the write.
 > 
-> This solution here creates also dependency on clock bindings and makes
-> merging everything unnecessary difficult.
-> 
->> clock data without needing to modify the clock driver. GS201 defines
->> the same ACPM clocks as GS101, but I don't have access to other newer
->> SoCs to tell if the ACPM clocks differ or not.
->>
->> The alternative is to define the clocks in the clock driver and
->> use platform_device_register_simple() to register the clock platform
->> device. The clock driver will be rigid in what clocks it supports.
->>
->> I'm fine either way for now. What do you prefer?
-> 
-> Please move them to the driver.
+> Is this made worse by the code that defers fput to a worker thread?
+> (or am I misremembering things again?)
 
-Okay, will move the clock definitions to the clock driver.
+fput() is offloaded to task work (i.e., it happens on exit of a task to
+userspace). But I don't think it impacts this particular problem in a
+significant way.
 
-> 
->>
->>>
->>> This creates dependency of this patch on the clock patch, so basically
->>> there is no way I will take it in one cycle.
->>
->> Would it work to have an immutable tag for the clock and samsung-soc
->> subsytems to use?
-> 
-> No, just try yourself. Patch #3 depends on patch #2, so that's the cross
-> tree merge. It's fine, but now patch #4 depends on patch #3, so you need
-> two merges.
-> 
-> Or how do you actually see it being merged with immutable tag? What goes
-> where?
-> 
-
-Unnecessary difficult indeed. Hypothetically, if we kept the current
-structure, we could have have a single tag on #4. Since the dependency was
-on a new clock driver, the clock subsystem could have lived without merging
-the tag, as the chances of conflicts with the clk core are small. But not
-ideal. Lesson learnt, always put yourself in the maintainer's shoes.
-Thanks for the patience!
-
-Cheers,
-ta
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
