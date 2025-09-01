@@ -1,144 +1,92 @@
-Return-Path: <linux-kernel+bounces-794528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583A2B3E2E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:31:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9624B3E2EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B903A9355
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:31:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ECA97B086F
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9F52586FE;
-	Mon,  1 Sep 2025 12:28:06 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548A83314B7;
+	Mon,  1 Sep 2025 12:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cV+Bta78"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B91225EFBF;
-	Mon,  1 Sep 2025 12:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EF625EFBF
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729686; cv=none; b=DI1fBLrQEtopje8tCzVhhsmBgI7XE1QajkCJ/nt76BUVRa355w1GbvbOncxaJ6dZPuSbBdZYid8Zb7ERhVIdYaBoff/qvXXJncn0iydpjsQBx78O6WurLwrip2Qy4a3kMIy66xgru+7yfOT2KHwJyxaInrwJJDajJscUJ1Tq3iU=
+	t=1756729693; cv=none; b=PL5FXrxMf9z7RQdrETTZ5TZIxVvrucPdSqNsUK1k/NOGt9qWXsA7Ue/2GB2HtJMZfnpsGbkr5R9/NQ97dRhMOTf0GFbgeql5aOOMDz/nA9SYNym15TLKcbEamxheJkKbdWoNIrH22+jaVz51TyH9rkTlw4O2OSXSUrmQioaweM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729686; c=relaxed/simple;
-	bh=BzE8vul4lNtBZdM3iz/qHFXjV56fh0CqXNS+kpkk+wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gfmy2Ah1V/xkgB7zwQLSfQ4fjfnWoktiR0xND1VWA+xxUuLa1AZFpyz16piVEJWMdH8winSLfcqnWk6yuDw2Qp5ULuwYfkzv8ZftpkVxyGEXhzXQAgr8RB4BCrBfnFbv56AAAeO7j/hiT2lVbXxYQe0z4Zd9O8QY5R07RIg9tDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 194E0C4CEF0;
-	Mon,  1 Sep 2025 12:28:03 +0000 (UTC)
-Date: Mon, 1 Sep 2025 13:28:01 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Luo Gengkun <luogengkun@huaweicloud.com>, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
- during preempt_disable
-Message-ID: <aLWRUTFeumwr1--E@arm.com>
-References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
- <20250819135008.5f1ba00e@gandalf.local.home>
- <436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
- <20250829082604.1e3fd06e@gandalf.local.home>
- <20250829083655.3d38d02b@gandalf.local.home>
- <aLIFRHcsEo2e2GE7@arm.com>
- <20250829181311.079f33bf@gandalf.local.home>
- <aLLQ-43Ll8rF7kon@arm.com>
- <aLVt30-Lc9lesqS6@J2N7QTR9R3>
+	s=arc-20240116; t=1756729693; c=relaxed/simple;
+	bh=EKtgCFb76QNLdDWqxy/vKKqZuH/cQa+O98dS4JA6FNw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=H2vWkPWfHFWR8VvuOC/Yf4rU6jEice6qKHWAdBI/A7k6kU7GH2VNpbbpzW+URHwQfcX6ULMLDA664TcYmfWt89t4e6555XmnlIe+NjLCYn4aYUgqshWBkPWMq0eCHXIeP3YB8tDGzzjJxPR7XOHUC+39893+kMt2eZRXAluwaK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cV+Bta78; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 5F3521A0A08;
+	Mon,  1 Sep 2025 12:28:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3158060699;
+	Mon,  1 Sep 2025 12:28:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 14D461C22D920;
+	Mon,  1 Sep 2025 14:28:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756729689; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=UXOsm8qhuucdsAyM1zdKnCT0l85k6/jaf73qtFHA0x8=;
+	b=cV+Bta78fV6WZzUVXYqcLaEhUSlEA6ARnyEsZJdG2Gpqk8G8donsFfZ/NsyOnuXK5Oi6u+
+	Qk5U2aWmsvTvl8KlWDKMGf+ZoEUZunpi2DNAzxeO6Enw/jQBtrpBaHGf7JxeHXYpCSS+YQ
+	C32M/Ag5CkDod5V0e2QUTbeK80veRuSby12/pv/Q50RZmSoRU5PpYTav8pE0PKs7maL47y
+	QqTXOMIoKTM6tRbRMAYEI9pT+2384Rs6AFRzK0OLjEK6d0hghPSI0uNcd9x5lQzLKAdO8l
+	lRUnTclMVNFWsUhibsqOatapG20Wj4geKfXDMkEDjOV9O9Un83T8bOps+FLEfg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Gabor Juhos <j4g8y7@gmail.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250811-qpic_common-unused-defines-v2-1-cfc5aea03a93@gmail.com>
+References: <20250811-qpic_common-unused-defines-v2-1-cfc5aea03a93@gmail.com>
+Subject: Re: [PATCH v2] mtd: nand: qpic-common: remove a bunch of unused
+ defines
+Message-Id: <175672968576.48694.1163405170152581048.b4-ty@bootlin.com>
+Date: Mon, 01 Sep 2025 14:28:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLVt30-Lc9lesqS6@J2N7QTR9R3>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Sep 01, 2025 at 10:56:47AM +0100, Mark Rutland wrote:
-> On Sat, Aug 30, 2025 at 11:22:51AM +0100, Catalin Marinas wrote:
-> > On Fri, Aug 29, 2025 at 06:13:11PM -0400, Steven Rostedt wrote:
-> > > On Fri, 29 Aug 2025 20:53:40 +0100
-> > > Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > > valid user address.
-> > > > BTW, arm64 also bails out early in do_page_fault() if in_atomic() but I
-> > > > suspect that's not the case here.
-> > > > 
-> > > > Adding Al Viro since since he wrote a large part of uaccess.h.
-> > > 
-> > > So, __copy_from_user_inatomic() is supposed to be called if
-> > > pagefault_disable() has already been called? If this is the case, can we
-> > > add more comments to this code? I've been using the inatomic() version this
-> > > way in preempt disabled locations since 2016.
-> > 
-> > This should work as long as in_atomic() returns true as it's checked in
-> > the arm64 fault code. With PREEMPT_NONE, however, I don't think this
-> > works.
+On Mon, 11 Aug 2025 09:40:40 +0200, Gabor Juhos wrote:
+> A bunch of definitions in the 'nand-qpic-common.h' header became
+> unused after the conversion of the 'qcom_nandc' and 'spi-qpic-snand'
+> drivers to use the FIELD_PREP() macro, so remove those.
 > 
-> Sorry, what exactly breaks for the PREEMPT_NONE case?
-
-This code would trigger a warning:
-
-	preempt_disable();
-	WARN_ON(!in_atomic());
-	preempt_enable();
-
-More importantly, a faulting __copy_from_user_inatomic() between
-get/put_cpu() could trigger migration.
-
-> > > I just wanted to figure out why __copy_from_user_inatomic() wasn't atomic.
-> > > If anything, it needs to be better documented.
-> > 
-> > Yeah, I had no idea until I looked at the code. I guess it means it can
-> > be safely used if in_atomic() == true (well, making it up, not sure what
-> > the intention was).
+> No functional changes.
 > 
-> I think that was the intention -- it's the caller asserting that they
-> know the access won't fault (and hence won't sleep), and that's why
-> __copy_to_user_inatomic() and __copy_to_user() only differ by the latter
-> calling might_sleep().
 > 
-> It looks like other inconsistencies have crept in by accident. AFAICT
-> the should_fail_usercopy() check in __copy_from_user() was accidentally
-> missed from __copy_from_user_inatomic() when it was introduced in
-> commit:
+> [...]
 
-I was wondering about that but some code comment for the inatomic
-variant states that it's the responsibility of the caller to ensure it
-doesn't fault. Not sure one can do other than pinning the page _and_
-taking the mm lock. So I agree we should add the fault injection here as
-well.
+Applied to nand/next, thanks!
 
-> ... so there's a bunch of scope for cleanup, and we could probably have:
-> 
-> 	/*
-> 	 * TODO: comment saying to only call this directly when you know
-> 	 * that the fault handler won't sleep.
-> 	 */
-> 	static __always_inline __must_check unsigned long
-> 	__copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
-> 	{
-> 		...
-> 	}
-> 
-> 	static __always_inline __must_check unsigned long
-> 	__copy_from_user(void *to, const void __user *from, unsigned long n)
-> 	{
-> 		might_fault();
-> 		return __copy_from_user_inatomic();
-> 	}
-> 
-> ... to avoid the inconsistency.
+[1/1] mtd: nand: qpic-common: remove a bunch of unused defines
+      commit: 3ea299d3dccdb8554057d0a87552e7673baea95d
 
-I think the _inatomic variant should be reserved to arch code that knows
-the conditions. Generic code/drivers may not necessarily be aware of
-what the arch fault handler does. The _nofault API I think is better
-suited in generic code.
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
 
--- 
-Catalin
+Kind regards,
+Miquèl
+
 
