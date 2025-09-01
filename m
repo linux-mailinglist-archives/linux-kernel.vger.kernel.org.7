@@ -1,128 +1,103 @@
-Return-Path: <linux-kernel+bounces-794541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B794CB3E30A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:34:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F107B3E301
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47E5E16F7B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:33:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BADB616AB5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0092A3431F8;
-	Mon,  1 Sep 2025 12:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0838A33A034;
+	Mon,  1 Sep 2025 12:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="dWXv28ky"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Sc3mWsNK"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2300833EAEA;
-	Mon,  1 Sep 2025 12:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729790; cv=pass; b=t9DYDBe3GPwjmBQcTYsSyvWx9H2Ge8chhmnJVtLasiD5BjPR6FfWl4vL2pP+LmT5pln2ImlaN4anhUatLHve+s7cSYXWYlHHz5qKTjXo9WCuk2O/Mucx31VvnSkiu7zMOf/bXZL4XaIphmzv6NK38pRzYrkgS4c5BU2LJXqWS8s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729790; c=relaxed/simple;
-	bh=h8hniokqQ25rxbar5awSPBoUt0GLx5mZgOWctI2hRjE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Yr3GwG4adCv7cFy1nuzOFvlQ8yhlsquFgxib7YfsMR6QyIjQDxvJHV2Ucfz5Qq97EqWbT9pmfeaZpyOOjIlcS5oJvy62XOcSgo4BIzNotJO4Nsjyce/vnA07Dk9U7GZAjbijyrlSbaipf/lAMKGDuJb6Wv8jYNBRMvwBKnSwffE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=dWXv28ky; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756729754; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z3aKpyKDqfxKrfWeDRBk1GxjNk/eN9j/s6Bi50tnQVCIBAnt++NR8PNReAo5kNLcnJN4/UHBu+sZGzNaJQ3Up/42+bKWuCX4tYD48or6h/zJeyRRwwma5LZ+OLP3GSPVfSWQpNOynVgg/jbilJCB5BxMcyId90LPrX3mZaDM0w8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756729754; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=XY7DtFoMUvZIhJ48QUbI65xkpXr06MMQAtbKMR4MNcs=; 
-	b=Qtj3tS/XaNhUc6JYnptH30LD9idyg/+a7Cc+XnMceylxRjbRWzucaDkb9FCnNHf74uQ1wTyo76zd+sJ3cOcBzBKvVtbh3D6DpRE+qqc0LQX18wtjVuZPpZikhrBNVDXasJ4ou2dm+25xD38u8vXknMTv8GpHMhj83MLraPo0pIM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756729754;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=XY7DtFoMUvZIhJ48QUbI65xkpXr06MMQAtbKMR4MNcs=;
-	b=dWXv28kypEru0Rcy6xrba+p8D/nsQkXdRfPEo8/G/FPx2qzUhElBBuo5MxM6+hsW
-	JmM19wNJTCe0TIY9oVohTjyE2wH0XiG2ZkAxV1+NwoJ4fRuS+KJBPHZUXLWl+J1YtSt
-	tkY7ecSSaLgpQA9jiUStBOPHscNDV9wsc7hHTIQE=
-Received: by mx.zohomail.com with SMTPS id 1756729751046231.62047757400296;
-	Mon, 1 Sep 2025 05:29:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A556D322DD7
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756729785; cv=none; b=ZHKT//32hzce9ht9o29uYISDpLwc+7q6Ymw4Hkvs659qepcdkwKgVuvEezf92vMriTnYNPGCK9j4SB/UJXDE0Qn4tDEcaf4N0icQGlqOzDXtVyeEGzGshdAOiU1z7a8Pu1v3s0xc92ynrwvW4M6WWSb5ONfKkHHT88QNbB5FmhY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756729785; c=relaxed/simple;
+	bh=BXXJFNVnWqFWJdLmrPWmz1ytBvEbJCHfeL49wtsB9yk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZQgeBVXpd1He94oE1pQKuKLAjBYOg67ydom4eDeH/XIiBXHS3WlLQbZXT79TKDKvqE4y+HXt+bktPEHUREbRrzu6O5VwKh1rAqYcuNVg3Kua5h84Rd7IgD7/7lJar+o6xEG8LU9XnuGXn02AUygAVvwFrOjIK8UBY+8H126ySjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Sc3mWsNK; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 28A504E40C65;
+	Mon,  1 Sep 2025 12:29:42 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EDD1860699;
+	Mon,  1 Sep 2025 12:29:41 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3F5951C22D87C;
+	Mon,  1 Sep 2025 14:29:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756729780; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=cWgoH2Dk3tP8+kSxnwvn4KHgYnZS93diogUKlzT44bQ=;
+	b=Sc3mWsNKvebbzs3fTPRX1biLkJfchmfJkPG9xud03MuTJkxYOw1f6UtPBR6QcYZybftTOd
+	HgLuk6jeBaA8OLkkFNMqN1QB1RqV6fx+T84104BcmgpBL9gdVSypKK50rKzKOeEBSxqcOW
+	xCn9lFlNpqSTZ0McAu0gjyabQ6+RDYYKsCNyaHF8FMsi7b+J+nbWLoJntU8IL14fij0JKA
+	zdHZLKwx1ZIzo8zoAd5OAQWvgX2mV8ACVVGbx2WLn8Z+S3uxfHnk9bQgayiv+bohqXQbPe
+	j1QWmqM+iKbbs1HVDr83yckEFJa1c2ynPYqF/q/oXai/olZnPPm1r6qMNl6fgQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc: linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, git@amd.com, amitrkcian2002@gmail.com
+In-Reply-To: <20250623105445.2394825-1-amit.kumar-mahapatra@amd.com>
+References: <20250623105445.2394825-1-amit.kumar-mahapatra@amd.com>
+Subject: Re: [PATCH v14 0/3] mtd: Add support for stacked memories
+Message-Id: <175672977534.48892.6856890804594361623.b4-ty@bootlin.com>
+Date: Mon, 01 Sep 2025 14:29:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v5 0/3] rust: add `ww_mutex` support
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250901130542.32b051bc@nimda.home>
-Date: Mon, 1 Sep 2025 09:28:53 -0300
-Cc: Benno Lossin <lossin@kernel.org>,
- Lyude Paul <lyude@redhat.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- dakr@kernel.org,
- peterz@infradead.org,
- mingo@redhat.com,
- will@kernel.org,
- longman@redhat.com,
- felipe_life@live.com,
- daniel@sedlak.dev,
- bjorn3_gh@protonmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F833F678-85FD-4674-B8A8-9AC9AF0746C1@collabora.com>
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250724165351.509cff53@nimda.home>
- <ec32fc5f5a8658c084f96540bd41f5462fa5c182.camel@gmail.com>
- <20250806085702.5bf600a3@nimda.home>
- <539d3e0da773c32a42b4ab5c9d4aa90383481ff6.camel@redhat.com>
- <DBVLEGFYBWKE.2RW8J853CJHTY@kernel.org> <20250814141302.1eabda12@nimda.home>
- <76D4D052-79B6-4D3F-AAA1-164FF7A41284@collabora.com>
- <20250814185622.468aad30@nimda.home>
- <182E916F-3B59-4721-B415-81C3CF175DA7@collabora.com>
- <20250818155628.1b39d511@nimda.home> <20250901130542.32b051bc@nimda.home>
-To: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Onur,
+On Mon, 23 Jun 2025 16:24:42 +0530, Amit Kumar Mahapatra wrote:
+> This patch series adds stacked support by enhancing the existing mtd-concat
+> driver to be more generic.
+> 
+> As background, a few years ago, Bernhard Frauendienst initiated an effort
+> [2] to achieve the same, which was later adapted by Miquel [1] to introduce
+> stacked mode support. In this approach, partitions to be concatenated were
+> specified using a DT property "part-concat" within the partitions
+> definition, allowing two MTD devices to function as a single larger one in
+> order to be able to define partitions across chip boundaries. However, the
+> bindings were not accepted. As a result, the mtd-concat approach was
+> dropped, and alternative DT bindings were introduced [3][4][5], describing
+> the two flash devices as one. Corresponding SPI core changes to support
+> these bindings were later added [6].
+> 
+> [...]
 
-> Hi,
->=20
-> How should the modules be structured? I am thinking something like:
->=20
->    rust/kernel/sync/lock/ww_mutex/mod.rs
->    rust/kernel/sync/lock/ww_mutex/core.rs
->    rust/kernel/sync/lock/ww_mutex/ww_exec.rs
->=20
-> In core, I would include only the essential parts (e.g., wrapper types
-> and associated functions) and in ww_exec, I would provide a =
-higher-level
-> API similar to drm_exec (more idiomatic rusty version).
->=20
-> Does this make sense?
->=20
->=20
-> -Onur
+Applied to mtd/next, thanks!
 
-That works, but let's not use the name "ww_exec". We don't need the "ww" =
-prefix
-given the locking hierarchy. I think it's fine to keep the "exec" =
-nomenclature
-for now, but someone else will probably chime in with a better name in =
-the
-future.
+[1/3] dt-bindings: mtd: Describe MTD partitions concatenation
+      commit: a7c81ac328a6dddf51588ecc7a94f56da34c7875
+[2/3] mtd: Move struct mtd_concat definition to header file
+      commit: 08be224e3965dc716460ee62ddf1f30421049bed
+[3/3] mtd: Add driver for concatenating devices
+      commit: fa47dc8295194a03c9182945805b617b01447ae9
+
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
+
+Kind regards,
+Miquèl
 
 
