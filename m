@@ -1,148 +1,172 @@
-Return-Path: <linux-kernel+bounces-794437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309B8B3E1C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:37:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5297CB3E1C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2BF7171728
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:37:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA2607A2DA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDF031A563;
-	Mon,  1 Sep 2025 11:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6630731CA6A;
+	Mon,  1 Sep 2025 11:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKe3rVa2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlI2V31G"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235903148A8;
-	Mon,  1 Sep 2025 11:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041B7305E27;
+	Mon,  1 Sep 2025 11:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756726647; cv=none; b=LqX38lYu13DW2Cs1Us86jtxI66iIuOWxlJ5xKzW1VhaMWr/vy+x7LGGUeMGB19u6vzSUZ9VxzEtFBP2iKjyFi3+rjnPJl+X8b3zUX3jess04RnMrQviU3hfNCkJKwVgiFgHXdR1H78PUxrKxuG0v96Rn0JiSaPo0s8nbAxtHYoA=
+	t=1756726729; cv=none; b=o9kBMSUuvqUlKqrj3il1vrmD3RoJESzacPeDy2rsRAlJoO8bQGBFmnu3N+ColvttbWX6kAgRaqzIaDH8hmX0FSRBAgWMOvADQsUJTACXcfDbu15Yp5F/p6tqCo8br6PHwlhMTBjM6TswIE7qJuGmJMeQ9SXhOVNEUR0Bc6hHCQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756726647; c=relaxed/simple;
-	bh=4S/RHev1Y2NUMoafR694usmzuXP1Xi5zuD4R9cVnE3Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uVDhLp2e2IvKgMVaQjBgGizD3tYn794gZC7gZjdqN6EJtYxB9J7jf1s+Hxl6pTjhSYRI9VjtqZ/wnPXZ/pjvgjlz0RwILfF8XCpHUSrXCbiuTYB3Z52J2XsCl6oWvTm/GtByQn/8B8Zf3Bo6QnrEVD8cLL+gQt48KMCa6G1+j7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKe3rVa2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 84CA7C4CEF0;
-	Mon,  1 Sep 2025 11:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756726646;
-	bh=4S/RHev1Y2NUMoafR694usmzuXP1Xi5zuD4R9cVnE3Q=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ZKe3rVa20pxNBPalkM0wfA/JxiFs9RN5L2hyMC16WxL+prb08gI8eJGM/AkCz0pE4
-	 SfBMRbRW1PhaZU2WT4hj/sTAoWjZ0n4GwZPiDzS7LFa8Bkyk/gPJck0h7cNJr7E/11
-	 dCCbFAbLo8t8N3d0vqryE6Qv2VOu1VGrKnXftkFSYGeUfprAv/+97uDp3ZamUHNRCp
-	 7dHlYmgb8bfd8atRPStnKKU6B60YQ4KlixGSVYFldY+rw1mMEmsZPlrOQiOJfPXMhC
-	 MPtHKWfSwK/LH7OcjXEcvbIgz74RfnSdCfK3qBJbd89wABiWXCc4U4hPMygg728DgQ
-	 6YRgeMF36n0VA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1BCCA0FF0;
-	Mon,  1 Sep 2025 11:37:25 +0000 (UTC)
-From: Anthony Brandon via B4 Relay <devnull+anthony.amarulasolutions.com@kernel.org>
-Date: Mon, 01 Sep 2025 13:37:24 +0200
-Subject: [PATCH] dmaengine: xilinx: xdma: Fix regmap max_register
+	s=arc-20240116; t=1756726729; c=relaxed/simple;
+	bh=8fxbNDoTQaCp/ZjVodY45oB0/hj2vDiL/ePu7IRIUbQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YINL/1A0FNtbxA4k9vpRom2mTfbygr01r1W49QTjxwS4ZoDuuudiM3KGBsmIOYi6xk8CPoL2cpT7Usp5AlNeKWXQrLjzoF+nyQ4bK7V8gjJjredfUpnVlZeJEdwCVYyA+pWIshT7oqUFA5IGzTWjCqqsHh6208VIMg+n56vYMNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlI2V31G; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3d87cea889dso266053f8f.1;
+        Mon, 01 Sep 2025 04:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756726726; x=1757331526; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lwKVMNa4xxT1GMCVlO+8KMGhzj/ldA3uou/L45smr28=;
+        b=GlI2V31GkZzLScl41fHqARwKtWCMUU9LklRRIrdinSjHz2dc3RXLcgzadrPgdg/GmL
+         sCGMXGu0ojyb8MYBubp0hj1/gWt3OCi7m7RdcAoanCRzqze2JxPhMH6v7pkti4M2MIFt
+         eNYuxAJY3MmdRvmP4PQEUd8+c7cF6M/cOkf/Z6vSITbKTsvpe+z+/+8qL+rV1VB3kb8n
+         WB/GZSo2yYPbM6XZSamSYHqnK7IRRkcsjAu6lqmN+IuGOuFJxhNXA8h6Rlp3q3Ff10oB
+         27dqYmaevyMTDPQ7slUpWbwNQwceAhqJMlZ89Uv7T0fOpQYoQXA5f66O1w0MjIyuzZjK
+         lfoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756726726; x=1757331526;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lwKVMNa4xxT1GMCVlO+8KMGhzj/ldA3uou/L45smr28=;
+        b=jEZMJgOZIBZaaEwiY66ZCz1JJtmbmBOQNzSlXEAsCIK45yuXlC4WWM4JKESxn0Ayn7
+         4iqpGmRoW/eTflVEN0IZRSDBLQgWbAEy5pBQhVbQAC9ayva3T5QVXoCmZTX7zirIABR8
+         enMuN4fVKYP30OyjkxvpKHS+xPLc2nwqXxG6ZOr8ytUAJ8S/o9PJzhuPe1yHKWV9GBQX
+         8maTrBlPf5J05nM8oEoSyZaAD/sivQKkjLG79T0wkZwwuHQTaQvNLMIksZ+q9hqGeLgw
+         MyRiGmqoAZ3m2bSDA4rS5QA1yfb4DP8bDjWBRS6UCp9RF9ez+y+rdMKcDBz6nbHN9GB+
+         QC9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUfL5bw3E8dNKlOdHx1Ebytx3BN1w/3lEV6Wn1KWVDvNg8LXrSGtcairEPCs1gxZHSZbJW32HhUCJZAYAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr5/ASkBREoU13AH2hhZFJaoGT1PrV2nin80ghgXXGrydWMG2b
+	SuakRqoZNu3kYcfBjI9JOIRdfyp9yEYHPv4Q+CNNYiEtcWlbPGqyi/r74QiZ5LQJk8E=
+X-Gm-Gg: ASbGncs5Gb9eKkNqJART8G6dv1RD+LoMbEu55f+CFERlI1Yne9PNuZfKrL3DRxdz04r
+	HSbSMhzQZCLb94YA5l/rNDg7ED0Dn1f5eyyo/7/1IJwj7DdHffu/RFMGvSrbSo4umj/LKd+4LKR
+	QL7GHq3X5Z1GDOC6fgtyu0MPQjWb0yFvuOS/b+Krlh5to+8jm28Dc9mnCgVJ0St6kCqD8ORjJAq
+	SFtUIm2zM92mwIyUviWGdepDsuoUn2AxLpwh9yYix5CenbhpFvnLEJhWYrKsN7fMYfqAbl9OeJp
+	cja7+vX/zEfGcNySzreEqkrBwb9bIdyjoFRUgfXXfT14fy8Sg7f0yqyeKlypiSEzd6WaS4PyHj5
+	sivgPs/2uae+Agfdz3xaTI06Sp3L72WV549cRMEO5Kfuxg7ec
+X-Google-Smtp-Source: AGHT+IHhVl/mrkWMRm8XTL3ndPvrEBpc5FLF+TzeHV6ufPs1veC2JztRvsLbgP54Zr1Fa0BiKM91jg==
+X-Received: by 2002:a05:6000:2c0f:b0:3d1:d24:ba4e with SMTP id ffacd0b85a97d-3d1def62c8amr5492973f8f.51.1756726725806;
+        Mon, 01 Sep 2025 04:38:45 -0700 (PDT)
+Received: from localhost ([45.10.155.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b69b7529asm143048445e9.0.2025.09.01.04.38.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 04:38:45 -0700 (PDT)
+From: Richard Gobert <richardbgobert@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	corbet@lwn.net,
+	saeedm@nvidia.com,
+	tariqt@nvidia.com,
+	mbloch@nvidia.com,
+	leon@kernel.org,
+	ecree.xilinx@gmail.com,
+	dsahern@kernel.org,
+	ncardwell@google.com,
+	kuniyu@google.com,
+	shuah@kernel.org,
+	sdf@fomichev.me,
+	aleksander.lobakin@intel.com,
+	florian.fainelli@broadcom.com,
+	willemdebruijn.kernel@gmail.com,
+	alexander.duyck@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-net-drivers@amd.com,
+	Richard Gobert <richardbgobert@gmail.com>
+Subject: [PATCH net-next v4 0/5] net: gso: restore outer ip ids correctly
+Date: Mon,  1 Sep 2025 13:38:21 +0200
+Message-Id: <20250901113826.6508-1-richardbgobert@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com>
-X-B4-Tracking: v=1; b=H4sIAHOFtWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSwND3YqU3ETd3MQK3aLUdF1DMxPLZDMTU0tjUwsloJaCotS0zAqwcdG
- xtbUA6UUUal4AAAA=
-X-Change-ID: 20250901-xdma-max-reg-1649c6459358
-To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
- Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
- Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Anthony Brandon <anthony@amarulasolutions.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1961;
- i=anthony@amarulasolutions.com; h=from:subject:message-id;
- bh=Td8m3zq/WUtHpPPBIX28CApxSTxtvMscrufvMw7VZu4=;
- b=owGbwMvMwCUWIi5b4HjluATjabUkhoytrSW8+/XP1KYs0j29dsvB1Y8utfZ8jP7WWPvi9VJxy
- ZfKnuE7OkpZGMS4GGTFFFnKdeR5PZTrypVmPjGGmcPKBDKEgYtTACZyRYyR4VlU+MXDuZ7ZkUvk
- g/WmPFJvl5i5+/JVkYPei2Sd0swF9jH8U3JQ2qvbynxpfYqS/6WloWmyhjyKmW8WHD6UwDfr8Za
- NTAA=
-X-Developer-Key: i=anthony@amarulasolutions.com; a=openpgp;
- fpr=772C1F0D48237E772299E43354171D7041D4C718
-X-Endpoint-Received: by B4 Relay for anthony@amarulasolutions.com/default
- with auth_id=505
-X-Original-From: Anthony Brandon <anthony@amarulasolutions.com>
-Reply-To: anthony@amarulasolutions.com
+Content-Transfer-Encoding: 8bit
 
-From: Anthony Brandon <anthony@amarulasolutions.com>
+GRO currently ignores outer IPv4 header IDs for encapsulated packets
+that have their don't-fragment flag set. GSO, however, always assumes
+that outer IP IDs are incrementing. This results in GSO mangling the
+outer IDs when they aren't incrementing. For example, GSO mangles the
+outer IDs of IPv6 packets that were converted to IPv4, which must
+have an ID of 0 according to RFC 6145, sect. 5.1.
 
-The max_register field is assigned the size of the register memory
-region instead of the offset of the last register.
-The result is that reading from the regmap via debugfs can cause
-a segmentation fault:
+GRO+GSO is supposed to be entirely transparent by default. GSO already
+correctly restores inner IDs and IDs of non-encapsulated packets. The
+tx-tcp-mangleid-segmentation feature can be enabled to allow the
+mangling of such IDs so that TSO can be used.
 
-tail /sys/kernel/debug/regmap/xdma.1.auto/registers
-Unable to handle kernel paging request at virtual address ffff800082f70000
-Mem abort info:
-  ESR = 0x0000000096000007
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x07: level 3 translation fault
-[...]
-Call trace:
- regmap_mmio_read32le+0x10/0x30
- _regmap_bus_reg_read+0x74/0xc0
- _regmap_read+0x68/0x198
- regmap_read+0x54/0x88
- regmap_read_debugfs+0x140/0x380
- regmap_map_read_file+0x30/0x48
- full_proxy_read+0x68/0xc8
- vfs_read+0xcc/0x310
- ksys_read+0x7c/0x120
- __arm64_sys_read+0x24/0x40
- invoke_syscall.constprop.0+0x64/0x108
- do_el0_svc+0xb0/0xd8
- el0_svc+0x38/0x130
- el0t_64_sync_handler+0x120/0x138
- el0t_64_sync+0x194/0x198
-Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
----[ end trace 0000000000000000 ]---
-note: tail[1217] exited with irqs disabled
-note: tail[1217] exited with preempt_count 1
-Segmentation fault
+This series fixes outer ID restoration for encapsulated packets when
+tx-tcp-mangleid-segmentation is disabled. It also allows GRO to merge
+packets with fixed IDs that don't have their don't-fragment flag set.
 
-Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
----
- drivers/dma/xilinx/xdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3 -> v4:
+  - Specify that mangleid for outer ids cannot turn incrementing ids to fixed if DF is unset
+  - Update segmentation-offload documentation
+  - Fix setting fixed ids in ef100 TSO
+  - Reformat gro_receive_network_flush again
 
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index 0d88b1a670e142dac90d09c515809faa2476a816..cb73801fd6cf91fc420d6a8ab0c973dcdb5772f5 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--	.max_register = XDMA_REG_SPACE_LEN,
-+	.max_register = XDMA_REG_SPACE_LEN - 4,
- };
- 
- /**
+v2 -> v3:
+ - Make argument const in fou_gro_ops helper
+ - Rename SKB_GSO_TCP_FIXEDID_OUTER to SKB_GSO_TCP_FIXEDID
+ - Fix formatting in selftest, gro_receive_network_flush and tcp4_gro_complete
 
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250901-xdma-max-reg-1649c6459358
+v1 -> v2:
+ - Add fou_gro_ops helper
+ - Clarify why sk_family check works
+ - Fix ipip packet generation in selftest
 
-Best regards,
+Links:
+ - v1: https://lore.kernel.org/netdev/20250814114030.7683-1-richardbgobert@gmail.com/
+ - v2: https://lore.kernel.org/netdev/20250819063223.5239-1-richardbgobert@gmail.com/
+ - v3: https://lore.kernel.org/netdev/20250821073047.2091-1-richardbgobert@gmail.com/
+
+Richard Gobert (5):
+  net: gro: remove is_ipv6 from napi_gro_cb
+  net: gro: only merge packets with incrementing or fixed outer ids
+  net: gso: restore ids of outer ip headers correctly
+  net: gro: remove unnecessary df checks
+  selftests/net: test ipip packets in gro.sh
+
+ .../networking/segmentation-offloads.rst      |  9 ++-
+ .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  8 ++-
+ drivers/net/ethernet/sfc/ef100_tx.c           | 17 ++++--
+ include/linux/netdevice.h                     |  9 ++-
+ include/linux/skbuff.h                        |  6 +-
+ include/net/gro.h                             | 36 +++++-------
+ net/core/dev.c                                |  4 +-
+ net/ipv4/af_inet.c                            | 10 +---
+ net/ipv4/fou_core.c                           | 32 +++++-----
+ net/ipv4/udp_offload.c                        |  2 -
+ net/ipv6/udp_offload.c                        |  2 -
+ tools/testing/selftests/net/gro.c             | 58 ++++++++++++++-----
+ tools/testing/selftests/net/gro.sh            |  5 +-
+ 13 files changed, 117 insertions(+), 81 deletions(-)
+
 -- 
-Anthony Brandon <anthony@amarulasolutions.com>
-
+2.36.1
 
 
