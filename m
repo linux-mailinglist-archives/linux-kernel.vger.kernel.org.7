@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-794654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A02D8B3E4CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED854B3E4C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464063A28C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:24:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276FA3B47DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ACB33438D;
-	Mon,  1 Sep 2025 13:24:38 +0000 (UTC)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B2B2765CF;
+	Mon,  1 Sep 2025 13:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2o0kfkE"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750BA322775;
-	Mon,  1 Sep 2025 13:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCADA2749E9;
+	Mon,  1 Sep 2025 13:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756733078; cv=none; b=eL0OtvKISJqb05FsUZuTEOn9LW3JEDfn10FiKz7Xpcz2yLWYmEvi7BHejIiRTXso0rIIQ8Q3BEJj/d7Kr9KobN17Man28uV/8+iag+VbOy4sh9Z6HAJAlMGVS8ydmVcI8MTwziy9OB4iS8G8VYhHHgUn1JOUDxu283A0l1IcYjs=
+	t=1756733074; cv=none; b=eZ0mwSlznr9lu64GxsHM/k3zc3sHhCRSSoOb9YO7kuBrwZGX2p6jIVlNr+r0roVAQf9s1I01LQLc5lSE7jfMlSB+wZTuEaOlZuw5AAyf9ahzmb63Qr7wXvNzwftZRBK+nTycZtIgYiferKWWGjFZecJmm4P9g4qAU3Oxww0Qsx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756733078; c=relaxed/simple;
-	bh=rKrYfoPfBBOrA0P7gnSOwuri9R09s712uqIaVZJq5x4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QLz3+CfvsKK+79liA35mxcgUiIBWwr8C111BXjDhp/6a7cr3AEI3WO24+OCIffOacYR7OgUfeAjdaK56WuPCNP/ivUuPwuu41aDpCNyfD1yFSc1MaxxZ0DyftJ2XRJR4LrSCZWSIPzdPnzy83NBuu6fsAlhLVdgGXWiQqI6qGtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1756733074; c=relaxed/simple;
+	bh=6cfI3DwLE9E9SAfgkTqlf+6mrBEBP+O6XCNBkhssvfU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jKEfmqHQXlA0ZcN6l4G0+5JP6gaNpG52gMUfHcBO1uGY97HoPJjV3tdXDtnV9x+ajGGjMXsRtYfr7aVYvoCkCsbPvboZPYgZWV2eEqSfxjEITpY7+zH5xmtyPTFZf59plI3CyOPkAhllhP6sf/bOOjR0um1l88lgPU6cQFljVk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2o0kfkE; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54486a29d1aso1048043e0c.1;
-        Mon, 01 Sep 2025 06:24:35 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b8b1a104cso11167275e9.2;
+        Mon, 01 Sep 2025 06:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756733070; x=1757337870; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3MIDNnIwbSHuzGfQVuyM2agKWSWdZtsoAJRl1Qc3beg=;
+        b=T2o0kfkElRopjXlXrfoG689BaizO1MyYB+1kVq/urHwi+Nz0j/p/7w7fnN2TvX+gcW
+         Z4qJsGivgxUdM4lEts54RZs3X3uatbgdO3oUxoEoAFgBX1l+IusHNB8G7qf7DxrcBVi8
+         BBtZk/AFUASv8m1OT2ZfIuRBaTWUhxhFsi73kzKSnPCEXRWCll68FZRpaz6NFdXptFZa
+         GGOWt637cYPvqaKQZYcFPPNK6IgWhZTDukVRiMap5rChPIgtBL8H00AeEkhp2Jh9R4WP
+         73kAohz4+L7D5L7NoWeTaQlpjg0TyfqkK+E/qu7oXcaFVnBeNfhKrqA7v+Duvgb+1VOZ
+         tmCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756733074; x=1757337874;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756733070; x=1757337870;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wzMryIoyTm6AGhQZFb115xZJAQ41K/mzWDtPCHMIf2I=;
-        b=s33PrPEgSTRvMGyFKYQMbeA5m1fa+oLb3wb/MiElt0+mdD5DPj56Gp2czSI/k5ZKDT
-         cObDCZD/+WpQ1rDLaNi8aMxMGOGvICJmLgX228HXYyQDJEQbLZAfoTXBvqloMMBSt+um
-         /96xuJTWbvTtaJrf3abBf20kStA+Z3vZUX5ezpAzJqr0fUL+gUVuNZVQiALadxKN+XYo
-         /mNsHOFrPOOQjIzgXr/XqRTRhFwRGE+Ytz3TMAfdCtpszHRQ3ciiHG5QhmaDH/symCgW
-         TOLaP1kQDJllTmsO42iHfA5i8EeszuOyphQAGETVmiN7zvECDSnW49Y/PqzldBg5ru/t
-         lVEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvw4Bb5uq8daZKC68Frr+M3xzXb6XP3ExH8Rhb2fyHdO/W1M+f54+3Lb7acquC0eYBV7HN+b/qhYYJ/Yd+@vger.kernel.org, AJvYcCUy4rUbh5lRtnggmFRe7vU/cIwmPYmaDW0psTS9Ud0zJ5qq2yXa99BbMKYZKDonjFAGvZOJLkxXKXwmf6ERjKK66sY=@vger.kernel.org, AJvYcCWKeiBAxC159gAv8j728wAzsXmqNc1nBiu/lLgIGDa8mgi/9ti5GT25HskRuP3pa4o3QH79vld/80w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdspIBflgRH+LSuMozzyiqk3SsEruR8P+ERLhul9+ntjE+ecuo
-	Qa5XrcdeIdUQdHq69JcnGjrnGvloni+53UjExayTP3EQ23ACRLDSyaUfWT8t5Tfp
-X-Gm-Gg: ASbGncvyFEHMFpTUZaVCaStPt/nbu93eq6g45IJQSrNT1qoe0RKMcKH3eRxtUikC4QV
-	OOCAPHwkZtjuX1CiGadJuwbnwi6pxOkQaND51Zeg87BdgjNjCGi4mP94BFxdU/G02sVGp/6UjKy
-	6KqDZZufpNXMfJf0t7LkFaRjfSIsfvEKmCNHNyNUrX5aKgfYs3EcKgpvSZOfFQyxVTSpYYl1Fuo
-	VImgHiL7XXIj7DORSoUDhD9iin/pn87FKOKqcP3BgSaWxQMdYSW25da0UEPkGEJ4kWlb8D7kJK7
-	Pb+HWP/HW/kX4ENGVldaprC7wRbuPFG62IEjUNbrHqAoDfw1xy12w+qVsQJStZkI1pm07lkvDyl
-	Z2QBUae8Pd+3xZh9R3KTZS7pDLFD1/cwC1+EodtVhl9KmShnXlY+4LxJnfsKa
-X-Google-Smtp-Source: AGHT+IGZn4VcdTfDtjHA7uptKc2yiRwqXIn6BG6raFCNsQru9pBK1gXKqBW2v6QTzrtYhDWYCvRvlg==
-X-Received: by 2002:a05:6122:8c21:b0:541:fdc4:2551 with SMTP id 71dfb90a1353d-544a01d3574mr1861627e0c.3.1756733074055;
-        Mon, 01 Sep 2025 06:24:34 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5449131c808sm4236288e0c.13.2025.09.01.06.24.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 06:24:33 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-51d14932f27so1619491137.2;
-        Mon, 01 Sep 2025 06:24:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUwqFzCl3I9U/y5SFNb6CStqfo8VrjOOKzIaqaf5rUU/vifgGivx2jrsXnlRgPi0B4PgAuxs5Krn4=@vger.kernel.org, AJvYcCWGWNDVZ0GjT2oodCG01YrGyHxR8jYVVeebwOYgtXUIr+Q+T9tII9G33kbv4O539ieu4kuXGhEJD2LEODS8@vger.kernel.org, AJvYcCX497DcE24aup4ENpm+FaTDJ1b26n8SOu+zVTp1ZINEmmuz2zLlxzSSjbCZuGyvsJDmXWeMaqUoi+eExAnO/p6VxbQ=@vger.kernel.org
-X-Received: by 2002:a05:6102:6a8c:b0:523:759e:b0cf with SMTP id
- ada2fe7eead31-52b1b8069a9mr1971635137.21.1756733073524; Mon, 01 Sep 2025
- 06:24:33 -0700 (PDT)
+        bh=3MIDNnIwbSHuzGfQVuyM2agKWSWdZtsoAJRl1Qc3beg=;
+        b=dCd0E7wU8SKgw3VrUt9hyUA3GeqQ4wPZMDXwL8Wy0z3Z920moNtNNqcO9R18HLTk/0
+         f0XGTtr81cK/i+cJRDmOgVdZqa0hJrtVcAH2CvRwaYFF1Vw1siGZjegsbvQb/NkmZmhk
+         GXQshWeSl8ZhGNa3zT1IOwcf6MD0eiWrwkVxy4mueLJl1gBMJs0e6NMbzA+958n2h87U
+         rMfHgwDXVBWg0r0+kxOzN61OJBU5cc0J6SL1q1zuoVqz9Gue1AtKA81hvpzHALpuuKBs
+         zyhQt49C/e1K6Pfoeo1k0lWY+iolWqGQ/jcrth0pfWmLTF6xjcPsJpv/HZNN6weApFpW
+         OYMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmLxzfBJ9pJXOQzePLkqHf3xPwX+temkzW3A0da2IzcZD0zq9oYCh8L7oDuOv5KIEHRhK/80pPsHET3Miq@vger.kernel.org, AJvYcCXQecCCmRHul+MuqyedDgAdWfbhoMlfiFssK5ofwka4PXao/FjznIVnd51AzjdzH2MEAshPArdN+SNC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPQZwVZkTxC5mMyhCS7ZUmwvL8IY1uyAXNP6+oN50321bdbov6
+	T7EQt43fbP6UcMelN79V0quI4O1OyXJbi7oAXcAvV+sj0TmgiOpEejEWRC+kxg==
+X-Gm-Gg: ASbGncttb82ZpTfLgXyL+a/SDoSztx/7nnUlcodoYDvPtye7X83+JLp4q2Wlw5nsxaJ
+	tJTABHfkchgVx6RGpSwZnVTAXNNC3b9jBaD+vSnXI0O6klU6XlSNcL7nni8za+U4981I/+mFG/j
+	P7046rSvkQryyXTlBc62twZTDZ222+5qVEu23IlGB+S+JYaq0sXsNlHfD//rFQT8xi3JUJGEeA6
+	eFOgAlrwuAS9aCEU2eANZ035k64zxiX8qu0dNK5L9hyruxSIGx60KrrAO5kQcceUpFWHSxqBOZJ
+	XQOHz+N1I0oavyLmwE3SiLNU+vPd8ywnzzoXRzgNvnLXJxvCPgeYIMUxn078p7xHgeSHzP0Sz9n
+	T/4zdtNDi2C6UI9a/vSQD57obtbbo3hXJnsmYtyE++omU
+X-Google-Smtp-Source: AGHT+IGEbizOeslpGdzsgB8Vl8U5tpt8scwfYKa2tgc8UWG4ljvw3Aex7d2kx3CT8e1CwTEmLfUkrQ==
+X-Received: by 2002:a05:600c:1553:b0:45b:7608:3ca1 with SMTP id 5b1f17b1804b1-45b8c90299fmr30802995e9.23.1756733069861;
+        Mon, 01 Sep 2025 06:24:29 -0700 (PDT)
+Received: from taln60.nuvoton.co.il ([212.199.177.18])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8f2d3c88sm24359635e9.19.2025.09.01.06.24.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 06:24:29 -0700 (PDT)
+From: Tomer Maimon <tmaimon77@gmail.com>
+To: robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	avifishman70@gmail.com,
+	tali.perry1@gmail.com,
+	joel@jms.id.au,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com
+Cc: openbmc@lists.ozlabs.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH RESEND v2 0/2] NPCM845 reset and clock device tree updates
+Date: Mon,  1 Sep 2025 16:24:24 +0300
+Message-Id: <20250901132426.3081648-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821141429.298324-1-biju.das.jz@bp.renesas.com> <20250821141429.298324-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250821141429.298324-3-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 1 Sep 2025 15:24:22 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU8pyRPiS-q5N-WKXLTX+hiNQSR8oPVkoV-VoKHgOp13g@mail.gmail.com>
-X-Gm-Features: Ac12FXyyZRPaOTogYWEPKuCuGSscbKQviaYzpAaGc2LL9C_7v_1G-UL6O_yr0BE
-Message-ID: <CAMuHMdU8pyRPiS-q5N-WKXLTX+hiNQSR8oPVkoV-VoKHgOp13g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] can: rcar_canfd: Update RCANFD_CFG_* macros
-To: Biju <biju.das.au@gmail.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Biju,
+This series updates the NPCM845 device tree for the integrated reset and
+clock controller using the auxiliary device framework.
+Patch 1 combines the reset and clock nodes into nuvoton,npcm845-reset.
+Patch 2 adds a 25 MHz refclk and updates peripherals to use it.
 
-On Thu, 21 Aug 2025 at 16:14, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Update RCANFD_CFG_* macros to give a meaning to the magic number using
-> GENMASK macro and extract the values using FIELD_PREP macro.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v1->v2:
->  * Moved from patch#4 to patch#2.
->  * Updated commit header and description.
->  * Kept RCANFD_CFG* macro definitions to give a meaning to the magic
->    number using GENMASK macro and used FIELD_PREP to extract value.
+Tested on NPCM845 evaluation board.
 
-> --- a/drivers/net/can/rcar/rcar_canfd.c
-> +++ b/drivers/net/can/rcar/rcar_canfd.c
-> @@ -103,10 +103,10 @@
->  /* Channel register bits */
->
->  /* RSCFDnCmCFG - Classical CAN only */
-> -#define RCANFD_CFG_SJW(x)              (((x) & 0x3) << 24)
-> -#define RCANFD_CFG_TSEG2(x)            (((x) & 0x7) << 20)
-> -#define RCANFD_CFG_TSEG1(x)            (((x) & 0xf) << 16)
-> -#define RCANFD_CFG_BRP(x)              (((x) & 0x3ff) << 0)
-> +#define RCANFD_CFG_SJW_MASK            GENMASK(25, 24)
-> +#define RCANFD_CFG_TSEG2_MASK          GENMASK(22, 20)
-> +#define RCANFD_CFG_TSEG1_MASK          GENMASK(19, 16)
-> +#define RCANFD_CFG_BRP_MASK            GENMASK(9, 0)
+Changes since version 1:
+	- Tested in version 6.17.rc1.
 
-Upon a second look, I would drop the "_MASK" suffix.
+Tomer Maimon (2):
+  arm64: dts: nuvoton: combine NPCM845 reset and clk nodes
+  arm64: dts: nuvoton: add refclk and update peripheral clocks for
+    NPCM845
 
->
->  /* RSCFDnCFDCmNCFG - CAN FD only */
->  #define RCANFD_NCFG_NTSEG2(gpriv, x) \
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 20 ++++++++-----------
+ .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts  |  6 ++++++
+ 2 files changed, 14 insertions(+), 12 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
