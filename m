@@ -1,139 +1,91 @@
-Return-Path: <linux-kernel+bounces-795103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A175B3ECDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:03:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7452B3ECE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5D84828A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39BE51B2120C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6527302CB4;
-	Mon,  1 Sep 2025 17:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6B23064BB;
+	Mon,  1 Sep 2025 17:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iy5EHgqW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sshll6/z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A2A32F777;
-	Mon,  1 Sep 2025 17:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A374032F777;
+	Mon,  1 Sep 2025 17:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746178; cv=none; b=jAn+YXVC/6IrK3+bMo4UCTLJnIBy4809A3GLy7IqeXB9cneAknheWLskl1ZGmZtD0wV9S4qvn1j7JIWUgeC6DYtOS7RAiFKeljOBn09bzLQE2Z35uO4/ww6Skcno4d+4Usv9e/aLbpEw932lm+egVIozGdR7153o+j8oci4zInQ=
+	t=1756746239; cv=none; b=LdwZ4SFNonIWl01Ae/3nPxNk7irAl36un0T1fynTjmoZiHAU+uHdnJjgaA0v9RmG5Farw3RmHVOsI0jFBT3R4F2Jx7UwdHKXmkdZ8Ly8em6gBa908/kiQ8483tpvPGHQ4BIDRvKWJc4P1gTCOb3Z/cxQvLhrYI1ELktBFk5dSk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746178; c=relaxed/simple;
-	bh=Mia/xDpMi2KaskL83NHZqheX+zhVtceAPCQiz2ekhVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HI7jHng9eqjXoga1MwTwWWExy379v3+Mva6jZkE3xdIbJ8j+fs/qhH1wR7SrqS/lZwJy0mh5uLoWZ5GsMA0gHpslNqkmrlTJsrbTs2OJthi7Zs4qMF7+EgvbIBi8NnW5pk+N5XV9FBEnAN58AlfvK9egjOWOtvZJD6LS2jBZv9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iy5EHgqW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB26C4CEF1;
-	Mon,  1 Sep 2025 17:02:57 +0000 (UTC)
+	s=arc-20240116; t=1756746239; c=relaxed/simple;
+	bh=7vw7aKVwQgQZE75ooS+4W12By7oKTKW2QfDfvc/Gkqw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=N/zTImhabMyqrF+9oBgBk+PUaYcjbOWqE+2Qe4ofJD+C1J1qJ5BuFOqYVLpWD2g84vLkH2ELkofssH8H4WCt4zwzc1qM3mZhBuR31+HbtAiliUOBgHHzNxzmNKQ6+NO6Zrwg7hQGt+qbW0Wz8fyZHBNwd83gtCIuIb4O45NPUHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sshll6/z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF61DC4CEF1;
+	Mon,  1 Sep 2025 17:03:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756746177;
-	bh=Mia/xDpMi2KaskL83NHZqheX+zhVtceAPCQiz2ekhVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iy5EHgqW5aXEt+t6fw4ZfT70/uWtgztA+RaODRcNK6hqyVb2UAFnd/HQ0lmWWMnWP
-	 wc0v/6wDjPpe9K+PBQ5czicG4QH7Y/gxaVnJe8PpqoHMB2/e7+3fzTnHptyld89vIa
-	 pgD99WqfKxROb8fb5TcA6XRK43DocGynjgnwWGUgN2aqy5WTdpoUnGSLb+awumUxv2
-	 kHeeXx89ua0lKd/+XYYWYQv2PoFtCkG69ALaKGFPn4Z2sCBn2QAfPqyeuRkPH/0+JH
-	 7rJr+veUlU7nqfp7jITCifKFDaFrDNvIxIP5t1iUbwqM9HVHha7EUK/HRS0+gVKvSf
-	 nT5VR0W7piaJw==
-Received: by pali.im (Postfix)
-	id 16D0131D; Mon,  1 Sep 2025 19:02:54 +0200 (CEST)
-Date: Mon, 1 Sep 2025 19:02:53 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Ralph =?utf-8?B?QsO2aG1l?= <slow@samba.org>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/35] cifs: Fix SMB rmdir() and unlink() against Windows
- SMB servers
-Message-ID: <20250901170253.mv63jewqkdo5yqj7@pali>
-References: <20250831123602.14037-1-pali@kernel.org>
- <dfa557ed-eb34-4eaf-9e17-7cae221e74fd@samba.org>
+	s=k20201202; t=1756746239;
+	bh=7vw7aKVwQgQZE75ooS+4W12By7oKTKW2QfDfvc/Gkqw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Sshll6/zmnjzbzUim4kpGfSgkHwtQlOkFj8OZQZy0LyTJz9ILhAqeKvJJkrnb+jCk
+	 QgHSGHnzlTHrf8jaIUfBVty2hCMqm3mRdWOCD8zw10tjjYTclV0H6htcWuHfQCGB5q
+	 utea7N54QDxbVXZbRs9sxOjXJ0AXgQzF8WIXW4vBLIH4f57CAzaEaOFDi/1saFtkB6
+	 IxwkHWkVYf65d/Jsg2+hamOdQDFFU1VNCIgxZCA876FSLa6lG1gyz7TNFlupYyCPUI
+	 8TgjRWPXo0IqNZHqYLc17zc6ekF3SQHI3HUnknS7BHR7dlGt6iArJdrFB/2waOgqMU
+	 celef1YCYsCGA==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Michael Walle <mwalle@kernel.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, 
+ Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
+ Andrew Lunn <andrew@lunn.ch>, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, nm@ti.com, 
+ vigneshr@ti.com
+In-Reply-To: <20250819065622.1019537-1-mwalle@kernel.org>
+References: <20250819065622.1019537-1-mwalle@kernel.org>
+Subject: Re: [PATCH v3] phy: ti: gmii-sel: Always write the RGMII ID
+ setting
+Message-Id: <175674623530.175374.344829536743551293.b4-ty@kernel.org>
+Date: Mon, 01 Sep 2025 22:33:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dfa557ed-eb34-4eaf-9e17-7cae221e74fd@samba.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hello!
 
-On Monday 01 September 2025 09:55:45 Stefan Metzmacher wrote:
-> Hi Pali,
+On Tue, 19 Aug 2025 08:56:22 +0200, Michael Walle wrote:
+> Some SoCs are just validated with the TX delay enabled. With commit
+> ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed
+> RGMII TX delay"), the network driver will patch the delay setting on the
+> fly assuming that the TX delay setting is fixed. In reality, the TX
+> delay is configurable and just skipped in the documentation. There are
+> bootloaders, which will disable the TX delay and this will lead to a
+> transmit path which doesn't add any delays at all.
+> Fix that by always writing the RGMII_ID setting and report an error for
+> unsupported RGMII delay modes.
 > 
-> > This patch series improves Linux rmdir() and unlink() syscalls called on
-> > SMB mounts exported from Windows SMB servers which do not implement
-> > POSIX semantics of the file and directory removal.
-> > 
-> > This patch series should have no impact and no function change when
-> > communicating with the POSIX SMB servers, as they should implement
-> > proper rmdir and unlink logic.
-> 
-> Please note that even servers implementing posix/unix extensions,
-> may also have windows clients connected operating on the same files/directories.
-> And in that case even posix clients will see the windows behaviour
-> of DELETE_PENDING for set disposition or on rename
-> NT_STATUS_ACCESS_DENIED or NT_STATUS_DIRECTORY_NOT_EMPTY.
+> [...]
 
-Ok. So does it mean that the issue described here applies also for POSIX
-SMB server?
+Applied, thanks!
 
-If yes, then I would propose to first fix the problem with
-Windows/non-POSIX SMB server and then with others. So it is not too big.
+[1/1] phy: ti: gmii-sel: Always write the RGMII ID setting
+      commit: a22d3b0d49d411e64ed07e30c2095035ecb30ed2
 
-> > When issuing remove path command against non-POSIX / Windows SMB server,
-> > it let the directory entry which is being removed in the directory until
-> > all users / clients close all handles / references to that path.
-> > 
-> > POSIX requires from rmdir() and unlink() syscalls that after successful
-> > call, the requested path / directory entry is released and allows to
-> > create a new file or directory with that name. This is currently not
-> > working against non-POSIX / Windows SMB servers.
-> > 
-> > To workaround this problem fix and improve existing cifs silly rename
-> > code and extend it also to SMB2 and SMB3 dialects when communicating
-> > with Windows SMB servers. Silly rename is applied only when it is
-> > necessary (when some other client has opened file or directory).
-> > If no other client has the file / dir open then silly rename is not
-> > used.
-> 
-> If I 'git grep -i silly fs/smb/client' there's no hit, can you
-> please explain what code do you mean with silly rename?
-
-Currently (without this patch series) it is CIFSSMBRenameOpenFile()
-function when called with NULL as 3rd argument.
-
-Cleanup is done in PATCH 11/35, where are more details.
-
-Originally the "Silly rename" is the term used by NFS client, when it
-does rename instead of unlink when the path is in use.
-I reused this term.
+Best regards,
+-- 
+~Vinod
 
 
-So for SMB this "silly rename" means:
-- open path with DELETE access and get its handle
-- rename path (via opened handle) to some unique (auto generated) name
-- set delete pending state on the path (via opened handle)
-- close handle
-
-(plus some stuff around to remove READ_ONLY attr which may disallow to
-open path with DELETE ACCESS)
-
-So above silly rename means that the original path is not occupied
-anymore (thanks to rename) and the original file / dir is removed after
-all clients / users release handles (thanks to set delete pending).
-
-It is clear now clear? Or do you need to explain some other steps?
-Sometimes some parts are too obvious for me and I unintentionally omit
-description for something which is important. And seems that this is
-such case. So it is my mistake, I should have explain it better.
 
