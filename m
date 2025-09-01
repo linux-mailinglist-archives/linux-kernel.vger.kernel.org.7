@@ -1,160 +1,119 @@
-Return-Path: <linux-kernel+bounces-793947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D215B3DAC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:07:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7C9B3DAC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AFA73BA560
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:07:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AEDB16BCEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C30325EF90;
-	Mon,  1 Sep 2025 07:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47AA261393;
+	Mon,  1 Sep 2025 07:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5XeNc7C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AFJre2SB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66631804A;
-	Mon,  1 Sep 2025 07:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2212135CE;
+	Mon,  1 Sep 2025 07:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756710425; cv=none; b=rOB89z5l6jpw+ptXuJL6gQQgcxr7U4kML5iJOe3/do5SAE+ohXXVmscRYn92EQVaiFVAxzG6nWok8BwrE3coY2Mew5ia8M1jUKXGNiLKY913xqv5Sbzx6FNha0/Q08wDoE29BSHxgrX9CcpW8JBl2pSInH/llNbJ6+2qCqKc3Zo=
+	t=1756710478; cv=none; b=KDQV3YQmnjWrurKCW67QcLS7VIgvIxFKC5aItDq6xFyPyd213DSIZo2Bi+5qpaBLHRXtKmKwnvJ8rsGLncBlnvOALD14QhP82dSqs5Rz1wz7uDI/E3cIzTWcyJh83szE/tsfAHeORHjWMgonBSCN0gtdENcd0d1kL2aw9DRRch0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756710425; c=relaxed/simple;
-	bh=t+EbY02dYwHMIRuwPA5LMX8oq95JwdclceCsg6WGxsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGMa/aOl5mzVxux6gSLaWsFA69CMkG57n7Y5mxqM/qP1Eh9RBdBTzjdjSqrmcT8BU5IEcISA8TWZztBoQK+24TEROCjpb43PjvkZ/NIjPszBFg5W8pAm8eY+8EBheOHJtRgnNc3KwSEJifYOR5Srd46Ib2MPGnhSexSOyrz9w1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5XeNc7C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36AAC4CEF0;
-	Mon,  1 Sep 2025 07:07:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756710425;
-	bh=t+EbY02dYwHMIRuwPA5LMX8oq95JwdclceCsg6WGxsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W5XeNc7Cv8GxToCWwX2Wxf/Wd6+4Qx6COMqHte76KADDpb+1z8AKRSxY6/EQkZsgR
-	 XU68REjcq5ar0q/5UboMi/cxrMF+TtEIR/lmNmC2jKNclSCAOkiIkggT37yW0Nz5l4
-	 rm1oNIGdwRJ83ZPkjV3V4smIHmG0XyUrsKjkTXLMSfSd9rhIsqNJ25AYmZf0bLVLqC
-	 /BJm/0E2s+8zmuE4ar/44x3lc4owarPZsOPbPGXuGOIeiatzWgOPmRLL6mVuSF53eN
-	 ta3VK1kmgw6yrtxVWfdHJUMBg3Cc7UrhUCP6ozK/Xl59CGRh5NZpeSd6GC8KBBz9lR
-	 rJmN+CkJNRR6A==
-Date: Mon, 1 Sep 2025 09:07:02 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Daniel Stone <daniel@fooishbar.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
- driver capabilities
-Message-ID: <20250901-voracious-classy-hedgehog-ee28ef@houat>
-References: <20250830-drm-limit-infoframes-v3-0-32fcbec4634e@oss.qualcomm.com>
- <CAPj87rNDtfEYV88Ue0bFXJwQop-zy++Ty7uQ9XfrQ2TbAijeRg@mail.gmail.com>
- <57ekub6uba7iee34sviadareqxv234zbmkr7avqofxes4mqnru@vgkppexnj6cb>
+	s=arc-20240116; t=1756710478; c=relaxed/simple;
+	bh=lWE2uNAxmuMbTuzNnv0x0FIPI+3SSxSg/s6KZBB5Yeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mB+WDNUQlrTU3MojByYs9nevLZNdaG0mZHAIuvmk/h0Wngvf4Ef1TIYWP73GgKQ+hHc7dKwVht06Ztx4kic2fbmffCtrdfnLcmpdEWspAkLFNUyOpyoO/FjpeFUjgARF6kkemrTnuV0+JLV7lmIJWd/OgMKV/cisK9Jp52AEF0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AFJre2SB; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756710476; x=1788246476;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lWE2uNAxmuMbTuzNnv0x0FIPI+3SSxSg/s6KZBB5Yeg=;
+  b=AFJre2SB7SYXOPHlg4qYa0XZFUXUkKF9+efyLr8kXXN1WgD7dA7EUYeU
+   9Pwqsxmomz1GFLhV04rwu1+rQVHFjq5JPsm8AJTeXYfi+59tPXqovfUHO
+   0ACoJ7Ddl3U8slDnwrv8+u0tIlT0n90lTgY2H8NTMutqP8Wxx+5JTTqOo
+   GNJfuLz/DKzjwjH5T4O8TIrudsVxHS8TIMQ1viVIIGqxHiwiv3XR+uNyK
+   3uMy3LYYEJR+vroBgl9MCFHtA/SxWYi6FdOix9VR3wRe8dVFeUr7iNbzd
+   rIFAgGX7N0an1AyS80uegsB0GfnJcEUUN+M39i3iGexMPC/+KBhs7aWqm
+   A==;
+X-CSE-ConnectionGUID: ChesgO8ER6ajWiMYGkttZA==
+X-CSE-MsgGUID: ywQ6aREcT/KUGItnBf1FEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="84313522"
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="84313522"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 00:07:55 -0700
+X-CSE-ConnectionGUID: VTOOgbQRS2ubljo/GTJiKQ==
+X-CSE-MsgGUID: VOzrSK26S5OrTeBqFfamzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="171077993"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 00:07:51 -0700
+Message-ID: <5a19db9d-3c76-4712-a308-d88c9ac23f71@intel.com>
+Date: Mon, 1 Sep 2025 15:07:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ma3smgpulpnwz33z"
-Content-Disposition: inline
-In-Reply-To: <57ekub6uba7iee34sviadareqxv234zbmkr7avqofxes4mqnru@vgkppexnj6cb>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 01/24] KVM: x86: Rename kvm_{g,s}et_msr()* to show
+ that they emulate guest accesses
+To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: mlevitsk@redhat.com, rick.p.edgecombe@intel.com, weijiang.yang@intel.com,
+ xin@zytor.com, Sean Christopherson <seanjc@google.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+References: <20250812025606.74625-1-chao.gao@intel.com>
+ <20250812025606.74625-2-chao.gao@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250812025606.74625-2-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 8/12/2025 10:55 AM, Chao Gao wrote:
 
---ma3smgpulpnwz33z
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
- driver capabilities
-MIME-Version: 1.0
+...
 
-On Sun, Aug 31, 2025 at 01:29:13AM +0300, Dmitry Baryshkov wrote:
-> On Sat, Aug 30, 2025 at 09:30:01AM +0200, Daniel Stone wrote:
-> > Hi Dmitry,
-> >=20
-> > On Sat, 30 Aug 2025 at 02:23, Dmitry Baryshkov
-> > <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> > > It's not uncommon for the particular device to support only a subset =
-of
-> > > HDMI InfoFrames. It's not a big problem for the kernel, since we adop=
-ted
-> > > a model of ignoring the unsupported Infoframes, but it's a bigger
-> > > problem for the userspace: we end up having files in debugfs which do
-> > > mot match what is being sent on the wire.
-> > >
-> > > Sort that out, making sure that all interfaces are consistent.
-> >=20
-> > Thanks for the series, it's a really good cleanup.
-> >=20
-> > I know that dw-hdmi-qp can support _any_ infoframe, by manually
-> > packing it into the two GHDMI banks. So the supported set there is
-> > 'all of the currently well-known ones, plus any two others, but only
-> > two and not more'. I wonder if that has any effect on the interface
-> > you were thinking about for userspace?
->=20
-> I was mostly concerned with the existing debugfs interface (as it is
-> also used e.g. for edid-decode, etc).
->=20
-> It seems "everything + 2 spare" is more or less common (ADV7511, MSM
-> HDMI also have those. I don't have at hand the proper datasheet for
-> LT9611 (non-UXC one), but I think its InfoFrames are also more or less
-> generic).  Maybe we should change debugfs integration to register the
-> file when the frame is being enabled and removing it when it gets unset.
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index f19a76d3ca0e..86e4d0b8469b 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -2149,11 +2149,11 @@ void kvm_prepare_event_vectoring_exit(struct kvm_vcpu *vcpu, gpa_t gpa);
+>   
+>   void kvm_enable_efer_bits(u64);
+>   bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer);
+> -int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+> -int kvm_set_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data);
+> +int kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+> +int kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data);
+...
+> -int kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+> -int kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data);
+> +int __kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+> +int __kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data);
 
-But, like, for what benefit?
+I dislike the rename, it loses the information of filter.
 
-It's a debugfs interface for userspace to consume. The current setup
-works fine with edid-decode already. Why should we complicate the design
-that much and create fun races like "I'm running edid-decode in parallel
-to a modeset that would remove the file I just opened, what is the file
-now?".
+can we keep the filer information and make them as below?
 
-> Then in the long run we can add 'slots' and allocate some of the frames
-> to the slots. E.g. ADV7511 would get 'software AVI', 'software SPD',
-> 'auto AUDIO' + 2 generic slots (and MPEG InfoFrame which can probably be
-> salvaged as another generic one)). MSM HDMI would get 'software AVI',
-> 'software AUDIO' + 2 generic slots (+MPEG + obsucre HDMI which I don't
-> want to use). Then the framework might be able to prioritize whether to
-> use generic slots for important data (as DRM HDR, HDMI) or less important
-> (SPD).
+   kvm_get_msr_with_filter() -> kvm_emulate_msr_read_with_filter()
+   kvm_get_msr() -> kvm_emulate_msr_read()
+   kvm_set_msr_with_filter() -> kvm_emulate_msr_write_with_filter()
+   kvm_set_msr() -> kvm_emulate_msr_write()
 
-Why is it something for the framework to deal with? If you want to have
-extra infoframes in there, just go ahead and create additional debugfs
-files in your driver.
-
-If you want to have the slot mechanism, check in your atomic_check that
-only $NUM_SLOT at most infoframes are set.
-
-Maxime
-
---ma3smgpulpnwz33z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLVGFgAKCRAnX84Zoj2+
-dllrAX94GZ81N40ectCnxYcKj+nZpN6UcMWR8EYDih6ILK4w0J49eNzGARVXu+eF
-lwB1CJoBfjdbnsga9yVjeXCFRH47XfORMMFpd6RIh/AoUJ7fu6AYlLvYNrTwxgRE
-sw4U5RZ1qg==
-=g974
------END PGP SIGNATURE-----
-
---ma3smgpulpnwz33z--
 
