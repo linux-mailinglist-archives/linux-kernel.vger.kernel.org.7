@@ -1,266 +1,230 @@
-Return-Path: <linux-kernel+bounces-793926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F4FB3DA56
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:54:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94EDB3DA58
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA973BA57B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B10703A71D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F8D25C82E;
-	Mon,  1 Sep 2025 06:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287F725A35A;
+	Mon,  1 Sep 2025 06:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LmFUTpLl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NaUTsy1F"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1D1273FD;
-	Mon,  1 Sep 2025 06:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AB92475C2;
+	Mon,  1 Sep 2025 06:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756709662; cv=none; b=ScbOMXSztmwI5oDaC1gcr0lgWxaIZv2+eLFac0/zjehZpK1kiHBxmcUOUzrQAG6hpnDoWuldgTebwSgyxVKwmRUNArJzvdn2mFGTvknPvvRuX/4xiDGTVeBPPEiiE9vOs1MLYanzCJaqkYtpbxtbVvF1AbagWhhlb8aG/wkwJ/E=
+	t=1756709697; cv=none; b=ToQh4iFUnuMpH2b7ugxmKYCwS/+mU2dbM40kat32xxRpc4BlME2xFrWYZNrLW6ts1MkBT2HDN0tH2XUcp1C98CcEhgFlRxA4XBzNuV96VdjFe3ToCBvAOlj+6m47uwbai6ENanTbNaQZsvPKwSVqpFqYVnplJ0drrz/6ORLkuA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756709662; c=relaxed/simple;
-	bh=fwrdXGVjUYTBQheWc/IsdqXrl6C9veTKc/wEeMzy6Ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9u0rtesyckOHfDf+ZTvb9au48XZcUDDScW+ztlck0qEgGk67vim/oKyNw9oSRKjFcBM8RcbF8XnKCHfj2R7GWJ3GuPRD5BzKIm+YZ0U1Fq4xwLW5fpme5PdHm+5jNk4/lAc/OTUPr5dE5j0zXDv+pqMkTrAd5LW+7idrvXwLGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LmFUTpLl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC11C4AF0C;
-	Mon,  1 Sep 2025 06:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756709661;
-	bh=fwrdXGVjUYTBQheWc/IsdqXrl6C9veTKc/wEeMzy6Ro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LmFUTpLl5iNLL2/TUwx1oABydVV7GBecXV4IgcoopSl28MYX7ugia5dDbWbet1kRl
-	 2cUHjwsW3S1ULyP/3pVqmTKsG83ZwlsxcbqtcoS+Ri4DqcNDsJfc5SRP4tYq2CRoF6
-	 PIv881LCWriz19Xc0NTpcm53tr9N6JTq6TOgM1EX+vSkoTNFJkBm2apRhZs+a6qXnw
-	 SJE+f2KobYNeXxhWHfGsDH23e5HjX092guokAQUjSCOhALU8BWA2+TOe6hrmoORmJd
-	 LVmQpsWHJLRV97+Xaco5MOtBzfHz0xWnXt9F8njQLdoj1v42qRayegs8nHKmE2UEGC
-	 7NppgdOlpgS9A==
-Date: Mon, 1 Sep 2025 08:54:18 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v2 1/8] drm/connector: let drivers declare infoframes as
- unsupported
-Message-ID: <20250901-illustrious-dark-kagu-f4ef76@houat>
-References: <20250819-drm-limit-infoframes-v2-0-7595dda24fbd@oss.qualcomm.com>
- <20250819-drm-limit-infoframes-v2-1-7595dda24fbd@oss.qualcomm.com>
- <20250820-artichoke-silkworm-of-election-521b5e@houat>
- <v7w7xkefm6ap7delx7wsvxmc76fwptqhe4ehokzfh4baueb7hr@acrx36exv42v>
- <20250827-adorable-ocelot-of-adventure-ba88b7@houat>
- <jrvjvayhjczgb4yx3xshbv3e6ndzkmb7uu3ynoes2maniwjg37@hamxu5mzqmf7>
+	s=arc-20240116; t=1756709697; c=relaxed/simple;
+	bh=GLVelhT9h97w4m/gNH8OT9K8ySnZNsn+XWbkfCQ+VhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jj/JHB2E0YJF02SI1ZMmInblMQuHYj0wC9egQesZSHPX1JK5Zt0BOFzmj+LF2ZXPRAJNb7cq2iVtml7izxCgc48vPk+zReOooT8C19Ed9HaCq8O1xIgM9RTOlI5VZ8V3URi91MzmoEt2JcORGLg+GPiruVSLmqzGlP+RXgu5kHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NaUTsy1F; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-248ff68356aso18950565ad.1;
+        Sun, 31 Aug 2025 23:54:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756709695; x=1757314495; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oa4pEDtoHfy10lQMQvxNZ4KuYRDe8acSazEVNvbRXKU=;
+        b=NaUTsy1FOcFYKX2RXTXCTiMIipuosavyD3qYgU+T3iiCTMiRoLf8itrMNIHu4FmJiO
+         wpxIfK3/kXSKOsDESRyTUx0iff9gB22vdU77N29517gLa+ZTR9dhLXmmX1y6wmfs/y8X
+         Km3l8ZGpRknMBdELo/F0kos9F3TAmCduqgiCKVjtLwsENIcINuftAH1dWsnGbmQ94BH/
+         +fnQucHtpdzXM4972N144K1janyVNPAO151yGjnx0VWJDiTjveybioiKljJlpvWipV1X
+         6Qp8yz1Ah9qPJNB8saqqk8/SvoAxwrcTeB0aUZgDh4/oJ8EhQ6O0qw0ycdVoXUB7XPpm
+         jjeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756709695; x=1757314495;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oa4pEDtoHfy10lQMQvxNZ4KuYRDe8acSazEVNvbRXKU=;
+        b=CdkpdcGWwLlfFnFJoTyGrb4Ie1oY7XNdwYlwce8z3MZjWaDN69we8Zi+tULBjCfcZz
+         4tVqzECaXaY/JvgAgXgZp2FY+UCN6A4hQXxoC/M0qKw9hgOxEqcKfPOiSCwcsQyp1tbX
+         o12td/5xCoAXE0widA9kwOMxRylAIFO8yxRtEMi8dZND6/+fVHqIkAgs6C4RTjWi7syU
+         zIy3JBuL+Msc7nl5oIZ3CtR4vUX2e7UWCff4em4vaWGNcaUoX0VuBfJAt7knM2TYxAJt
+         ZwqqmuHAJav3XGihTu+3EaYZhrwTKOIZVDCKsnwQ9U3TdCHX/EsI7v3dEYcCUzYl/X4Z
+         Z37g==
+X-Gm-Message-State: AOJu0YzDDHx+yX6+FjBmwBRFjgJD2I6nUpDZLLUKEc1ht5Bulc4pwG4o
+	uJzILHZ4/yh9kBgs0ZT40f4+5oTO9HWeNnYXW7aVmUJIc39nAqQ0T/KVA0GaKg==
+X-Gm-Gg: ASbGncvnK1g5atopgNwnvb7gUiNYh9dNVcFzWHn894J0v2ddY+dba8dUu6tOkFoHRSG
+	nlTBkmcab9w49FnEtllcZs4vcVp1LNfiCIusVg3kisqtcf5VTZM7A1p7qCtpNzJnCxH3KKxpa1j
+	q9W7ktccXa1yaoMECjMYXgtjb9kMqyaJDrwIF8F0oMgXysL97kFwRk2kOcumcnYw2jSyztKc/Fc
+	GpqirICwPrbDxAZukbKGee4x7IZkHZ3r5UJz39e3aPK56nTTnVNpRXsnGWWiFa+cVLpKhqaZeV7
+	QTHlTqOl1U4QDgz18NlpGOp+IDjFb1OWu+yY4ccIuBw/rX+j2w+9qDXN5DcApJnkrN1P++er8Od
+	wxMzNFe71SE0yzDwLrjsU4pr4gJjI/6PsvTOGjAycKN6BsvivEhk=
+X-Google-Smtp-Source: AGHT+IGx4CAb9dEsJrZI4+wzP+TsLHMibKKDL7czFpcmBFKfNyGQfvm4hdxWScGcNpf1rbRO2pDqhQ==
+X-Received: by 2002:a17:903:94c:b0:234:8a4a:ad89 with SMTP id d9443c01a7336-2494486df45mr101928175ad.1.1756709695131;
+        Sun, 31 Aug 2025 23:54:55 -0700 (PDT)
+Received: from localhost ([77.111.118.146])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-249065939b0sm92717715ad.110.2025.08.31.23.54.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 23:54:54 -0700 (PDT)
+From: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
+To: linux-iio@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
+Subject: [PATCH v2] staging: iio: adc: ad7816: add mutex to serialize SPI/GPIO operations
+Date: Mon,  1 Sep 2025 10:24:45 +0330
+Message-ID: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="y4s6v275ws7f4w3b"
-Content-Disposition: inline
-In-Reply-To: <jrvjvayhjczgb4yx3xshbv3e6ndzkmb7uu3ynoes2maniwjg37@hamxu5mzqmf7>
+Content-Transfer-Encoding: 8bit
 
+From: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
 
---y4s6v275ws7f4w3b
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/8] drm/connector: let drivers declare infoframes as
- unsupported
-MIME-Version: 1.0
+The ad7816 driver was accessing SPI and GPIO lines without
+synchronization, which could lead to race conditions when accessed
+concurrently from multiple contexts. This might result in corrupted
+readings or inconsistent GPIO states.
 
-On Wed, Aug 27, 2025 at 05:04:53PM +0300, Dmitry Baryshkov wrote:
-> On Wed, Aug 27, 2025 at 09:30:20AM +0200, Maxime Ripard wrote:
-> > On Wed, Aug 20, 2025 at 12:52:44PM +0300, Dmitry Baryshkov wrote:
-> > > On Wed, Aug 20, 2025 at 09:15:36AM +0200, Maxime Ripard wrote:
-> > > > Hi,
-> > > >=20
-> > > > On Tue, Aug 19, 2025 at 09:57:30PM +0300, Dmitry Baryshkov wrote:
-> > > > > Currently DRM framework expects that the HDMI connector driver su=
-pports
-> > > > > all infoframe types: it generates the data as required and calls =
-into
-> > > > > the driver to program all of them, letting the driver to soft-fai=
-l if
-> > > > > the infoframe is unsupported. This has a major drawback on usersp=
-ace
-> > > > > API: the framework also registers debugfs files for all Infoframe=
- types,
-> > > > > possibly surprising the users when infoframe is visible in the de=
-bugfs
-> > > > > file, but it is not visible on the wire.
-> > > > >=20
-> > > > > Let drivers declare that they support only a subset of infoframes,
-> > > > > creating a more consistent interface.
-> > > > >=20
-> > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.co=
-m>
-> > > >=20
-> > > > I'm not really convinced. Infoframes aren't really something you sh=
-ould
-> > > > ignore, AVI is effectively mandatory, HDMI kind of is too, AUDIO is=
- if
-> > > > audio support is enabled, DRM is mandatory if HDR is used.
-> > >=20
-> > > Nevertheless, sun4i, innohdmi, adv7511, it6263 and rk3066 drivers
-> > > provide support only for the AVI infoframe.
-> >=20
-> > Yes, but it's still something we shouldn't paper over. The spec mandates
-> > it, if drivers want to deviate from it it's something we should warn
-> > about, not silence.
-> >=20
-> > sun4i is a good example, to me at least since I have the doc. The
-> > hardware supports AVI, Audio, ACP, and SPD. HDR isn't supported, so DRM
-> > isn't either. The only missing one is HDMI, but the documentation isn't
-> > the best so it might still be supported. In short, it's a driver issue.
-> >=20
-> > adv7511 supports AVI, Audio, ACP, SPD, ACP, and looks to have a
-> > mechanism to send any infoframe as is. So, again, driver issue.
->=20
-> I've send a patch, enabling SPD and VSI (HDMI) InfoFrames on ADV7511.
->=20
-> >=20
-> > I couldn't find the other datasheet, but I'd be very surprised if it
-> > wasn't the case for these too.
-> >=20
-> > > Some of them can be extended to support other infoframe kinds (e.g.
-> > > ADV7511 has two spare infoframes which can be used for HDMI and SPD).
-> > >=20
-> > > > SPD is indeed optional though.
-> > > >=20
-> > > > So, it's really dynamic in essence, and not really something we sho=
-uld
-> > > > expect drivers to ignore.
-> > > >=20
-> > > > I do acknowledge that a lot of drivers just silently ignore the
-> > > > infoframes they don't support at the moment, which isn't great eith=
-er.
-> > > >=20
-> > > > Maybe we should standardize and document what drivers should do when
-> > > > they don't support a given infoframe type?
-> > >=20
-> > > The chips might be generating infoframes internally. This series was
-> > > triggered by LT9611UXC, which does all HDMI work under the hood in the
-> > > firmware. See [1]. The series I posted hooks HDMI audio directly into
-> > > the bridge driver, but I'd really prefer to be able to use
-> > > drm_atomic_helper_connector_hdmi_hotplug(), especially if I ever get =
-to
-> > > implementing CEC support for it.
-> > >=20
-> > > ADV7511 likewise generates audio infoframe without Linux
-> > > help (audio-related fields are programmed, but it's not the
-> > > infoframe itself).
-> >=20
-> > Implementing the write_infoframe hooks as a nop with a comment in those
-> > case is totally reasonable to me.
-> >=20
-> > I'd still like to document that drivers should only return 0 if they
-> > programmed the infoframe, and -ENOTSUPP (and the core logging a warning)
-> > otherwise.
-> >=20
-> > That way, we would be able to differentiate between the legimitate
-> > LT9611UXC case, and the "driver is broken" sun4i (and others) case.
->=20
-> I don't want to end up in a sitation where userspace has a different
-> idea of the InfoFrame being sent than the actual one being present on
-> the wire.
+Introduce an io_lock mutex in the driver structure to serialize:
+- SPI transactions in ad7816_spi_read() and ad7816_spi_write()
+- GPIO pin toggling sequences
+- Updates to device state via sysfs store functions (mode, channel, oti)
 
-It's not ideal, sure, but also, what's wrong with it? We're doing it
-*all the time*. Modes programmed by userspace are adjusted for the
-hardware, and thus the mode reported by the CRTC turns out different
-than the one actually used in hardware. Audio sampling rates might not
-match exactly what we're doing. The quirks infrastructure disables part
-of the EDID the userspace has access to, etc.
+The mutex ensures proper mutual exclusion and prevents race
+conditions under concurrent access.
 
-And all those are under the userspace control, which the infoframes
-aren't.
+Changes in v2:
+- Fixed mismatch between From: and Signed-off-by lines
 
-> It seems, we need several states per the infoframe:
->=20
-> - Not supported
+Signed-off-by: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
+---
+ drivers/staging/iio/adc/ad7816.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
-Honestly, I'm not sure we need a state for that one. If that infoframe
-was set by the framework, then the driver must support it. And if it
-wasn't, then there's nothing in debugfs.
+diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
+index 4774df778de9..06567d048a6d 100644
+--- a/drivers/staging/iio/adc/ad7816.c
++++ b/drivers/staging/iio/adc/ad7816.c
+@@ -50,6 +50,7 @@ struct ad7816_chip_info {
+ 	u8  oti_data[AD7816_CS_MAX + 1];
+ 	u8  channel_id;	/* 0 always be temperature */
+ 	u8  mode;
++	struct mutex io_lock;	/* Protects SPI transactions and GPIO toggling */
+ };
+ 
+ enum ad7816_type {
+@@ -67,13 +68,13 @@ static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
+ 	int ret;
+ 	__be16 buf;
+ 
++	mutex_lock(&chip->io_lock);
++
+ 	gpiod_set_value(chip->rdwr_pin, 1);
+ 	gpiod_set_value(chip->rdwr_pin, 0);
+ 	ret = spi_write(spi_dev, &chip->channel_id, sizeof(chip->channel_id));
+-	if (ret < 0) {
+-		dev_err(&spi_dev->dev, "SPI channel setting error\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 	gpiod_set_value(chip->rdwr_pin, 1);
+ 
+ 	if (chip->mode == AD7816_PD) { /* operating mode 2 */
+@@ -92,13 +93,13 @@ static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
+ 	gpiod_set_value(chip->rdwr_pin, 0);
+ 	gpiod_set_value(chip->rdwr_pin, 1);
+ 	ret = spi_read(spi_dev, &buf, sizeof(*data));
+-	if (ret < 0) {
+-		dev_err(&spi_dev->dev, "SPI data read error\n");
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unlock;
+ 
+ 	*data = be16_to_cpu(buf);
+ 
++unlock:
++	mutex_unlock(&chip->io_lock);
+ 	return ret;
+ }
+ 
+@@ -107,12 +108,13 @@ static int ad7816_spi_write(struct ad7816_chip_info *chip, u8 data)
+ 	struct spi_device *spi_dev = chip->spi_dev;
+ 	int ret;
+ 
++	mutex_lock(&chip->io_lock);
++
+ 	gpiod_set_value(chip->rdwr_pin, 1);
+ 	gpiod_set_value(chip->rdwr_pin, 0);
+ 	ret = spi_write(spi_dev, &data, sizeof(data));
+-	if (ret < 0)
+-		dev_err(&spi_dev->dev, "SPI oti data write error\n");
+ 
++	mutex_unlock(&chip->io_lock);
+ 	return ret;
+ }
+ 
+@@ -136,6 +138,7 @@ static ssize_t ad7816_store_mode(struct device *dev,
+ 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+ 	struct ad7816_chip_info *chip = iio_priv(indio_dev);
+ 
++	mutex_lock(&chip->io_lock);
+ 	if (strcmp(buf, "full") == 0) {
+ 		gpiod_set_value(chip->rdwr_pin, 1);
+ 		chip->mode = AD7816_FULL;
+@@ -143,6 +146,7 @@ static ssize_t ad7816_store_mode(struct device *dev,
+ 		gpiod_set_value(chip->rdwr_pin, 0);
+ 		chip->mode = AD7816_PD;
+ 	}
++	mutex_unlock(&chip->io_lock);
+ 
+ 	return len;
+ }
+@@ -200,7 +204,9 @@ static ssize_t ad7816_store_channel(struct device *dev,
+ 		return -EINVAL;
+ 	}
+ 
++	mutex_lock(&chip->io_lock);
+ 	chip->channel_id = data;
++	mutex_unlock(&chip->io_lock);
+ 
+ 	return len;
+ }
+@@ -322,7 +328,9 @@ static inline ssize_t ad7816_set_oti(struct device *dev,
+ 	if (ret)
+ 		return -EIO;
+ 
++	mutex_lock(&chip->io_lock);
+ 	chip->oti_data[chip->channel_id] = data;
++	mutex_unlock(&chip->io_lock);
+ 
+ 	return len;
+ }
+@@ -363,6 +371,7 @@ static int ad7816_probe(struct spi_device *spi_dev)
+ 	dev_set_drvdata(&spi_dev->dev, indio_dev);
+ 
+ 	chip->spi_dev = spi_dev;
++	mutex_init(&chip->io_lock);
+ 	for (i = 0; i <= AD7816_CS_MAX; i++)
+ 		chip->oti_data[i] = 203;
+ 
+-- 
+2.43.0
 
-> - Autogenerated
-
-Do we have any way to read them back on those?
-
-> - Generated by software
->=20
-> E.g. in case of ADV7511 we can declare that Audio InfofFrame is
-> autogenerated, AVI, HDMI and SPD as 'software-generated' and DRM (HDR)
-> as unsupported. LT9611UXC will declare all (need to check) frame types
-> as auto.
->=20
-> This way we can implement the checks and still keep userspace from
-> having irrelevant data in debugfs.
-
-If the only thing you're after is to prevent inconsistent data in
-userpace for devices that can generate it automatically, then I guess we
-could just implement an (optional) callback to read an infoframe from
-the hardware when reading from debugfs. Would that work?
-
-> I will update my patchset to implement this, but I have another question
-> beforehand: should we just declare VSI support or should it be more exact,
-> specifying that the driver support HVS (00:0c:03), HVFS (c4:5d:d8), etc?
-
-I guess you're talking about HDMI 1.4 Vendor specific Infoframe vs HDMI
-2.0 HF-VSIF here?
-
-If so, the toggle should be HDMI 2.0 support. We'll need that toggle for
-other things anyway (scrambler, YUV420, etc.)
-
-> I'm asking, because e.g. MSM HDMI controller has hardware support for
-> generating HVS frames (but only HVS, the OUI is not programmed, register
-> format doesn't match 1:1 frame contents, etc). I instead ended up using
-> GENERIC0, because it was more flexible (it's like SPARE packets on
-> ADV7511, the contents is being sent as is). However if we ever need to
-> send DRM infoframes, we might need to switch from GENERIC0 to HVS, for
-> the price of being unable to send HVFS frames.
-
-Section 10.2 of the HDMI 2.0 states:
-
-  Transmission of the HF-VSIF by Source Devices is optional unless one (or
-  more) of the features listed in Table 10-1 is active 1. If such features
-  are active, transmission of the HF-VSIF is mandatory.
-
-The features in question being 3d.
-
-So unless you're supporting 3d, suppporting VSI only seems ok to me.
-
-Maxime
-
---y4s6v275ws7f4w3b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLVDFgAKCRAnX84Zoj2+
-dsW/AX0U83PxVz2ZFGRVhJWXbdOSlFJaS3ZJB3hJQHhEvUxAjMDyEmsQtJpab64J
-jlTA8AgBgJFA5ObmVPWx35prpq51wIE1WmPfaEIYnyIy9Nwy/I77gfqMjdFA5fGb
-bQYMz+U6mQ==
-=xcRb
------END PGP SIGNATURE-----
-
---y4s6v275ws7f4w3b--
 
