@@ -1,231 +1,127 @@
-Return-Path: <linux-kernel+bounces-794356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1BBB3E084
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:44:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF31B3E08B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AE417A27D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:42:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3E61A811C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C7830FF01;
-	Mon,  1 Sep 2025 10:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8FA30FC1F;
+	Mon,  1 Sep 2025 10:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IEs2XUOp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h3kw5ZHy"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B68D224AFA
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB982494F8
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756723431; cv=none; b=EGOqmRrlKoduUrrQzPJcRRyejI9jYGfUGUigSFJO+agC43gev55SCScjhkBUxyJK2qhMhuf75xfaMzkAkOe64L3UVlcVGsHywEZuwSpfX1fe6RlESN2tb9K+nDeq7/O4lhff5g9dS5qYIiYz23mJisNgEHzpsRZCLdlWskX0sPE=
+	t=1756723469; cv=none; b=G7ew1Q7+RxsdNlj4+VeOSVFpv36edGCvZXk8x/YM1NJ5oGP6hhFZRruRQx2zC0t0UcMypy1iLJAYXIGSdHaSDIoHy2g+AJV+j3+KWFZbRkhKwY1HCZjx75GJeGH5LB6YqolQCUUvZJSC/qUK0KA/h8PlweaUpjx+pl1Fj++dSvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756723431; c=relaxed/simple;
-	bh=lvzv60LKBxa0H21GOqSNuXFtwIgqJ+F5zPooU13Z+MM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QOSgeGJEy6Syn5Q+iyP07k/aK+DMYZ05FyX0rZglFZ0WAcnGfvrj05LcOfIAUkwgZ32rKJ+PpB4JkjbBLVLhYJ/RHaN9g2PO4RbtwWUkl14DmpwMWpecoe/gihYsXlYLiPH2dAusrlBWd/N2hYXbk3BYrVzx+ghOfUBzQVhwlC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IEs2XUOp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756723429;
+	s=arc-20240116; t=1756723469; c=relaxed/simple;
+	bh=6THE98mcDom9w0YncY2cuBO0AEoX8fSOu4k2kwNBuxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NCQF9vvFAMgeHeag3Z+1Rwz3POQLcUNJYY/AiJ3dtQBBYsZZCcbxsc928g/7Sx7S7dtzAD9OOK6gOyDKwMapah+XkQ05LWFn3pCa8S8MzwJK48eAqXFOjZ9oihzvMMCxe5gjmCHLQ+jdDonYKDWfCsZXI/bNGIyYtO9JRVbPFv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h3kw5ZHy; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 1 Sep 2025 12:44:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756723455;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Zrru358Oin71TiKq2hMC68tlViLzszSZkEqb3BaG11I=;
-	b=IEs2XUOpiOiJ7zZoDYb63g4FWTHZCy5hcK480H2zEajdo9PVm1zkY+xQfb++QqomOBDn6S
-	2+d+9oVwOqbTjfT/iXQyC6xhOb9gVnKgzMsgGs2khStoRLJpz5gg3eUKV+hAS8jyoPbAhF
-	8n1z/9F64XBQgf0Dh4YJoaCcYX5fF6A=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-392-uDxE8YOfNdK1L-ROxGtCPg-1; Mon, 01 Sep 2025 06:43:48 -0400
-X-MC-Unique: uDxE8YOfNdK1L-ROxGtCPg-1
-X-Mimecast-MFC-AGG-ID: uDxE8YOfNdK1L-ROxGtCPg_1756723427
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b7f0d1449so14688415e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 03:43:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756723427; x=1757328227;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zrru358Oin71TiKq2hMC68tlViLzszSZkEqb3BaG11I=;
-        b=omChZIuT19PNg8XmkdtW2wJDHyVY2QeRBFkOsfyPe0CEDBls56D6rqsr5CG4xdn9J1
-         YVBkEEItI1spyN6WZ9pP/DWvpV7e/gkCDJ4XENLjkn1ZdB9+CrSRXbej7l8SgjsNZBXM
-         fiVGheKz7rNZrPx6DVXobTKnSMFndgabjv1azdPu6WXer+FXLX09ajTP5bxaSODVYi1j
-         1+RUrAkwyUWqmlx27Pr6BKRjaMgqf/R0g7C269zBUn3ept6mPzdFsBnQfC59y8pwtUAg
-         3p0sTS86dz08P34wdA3C+mZfo1BnbPoGeQDSjCfjd+dykD2simdPQlTWnHXYI0lvAoXV
-         afNA==
-X-Forwarded-Encrypted: i=1; AJvYcCX91NmZ4kG9KmzejUHuXePMioczKVIl7qrSF6BRsmDT7uzc23xkAP2fMmgAWJ8gKe+6ftGWfG+9p7BDnkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5zae5V+1HPEWsHJOGC30nt8J+M4xgoMJpDzEnL5woVLRSkbFU
-	HVYSoRYwrYxq3M1MSxo/RWoXBVp/iDsg2lue4p6Gn9is560b/jWTZPu7lIQt/fEuP2ORO7yXZXm
-	VOlKj+jYZXPTlESDn7nUQfien7i6VEjDc5nYsiaF3j8V859Rq59EPje5F1CqS2lXeuA==
-X-Gm-Gg: ASbGncuAgAwKrMXaI+vH16tyfpMg99Nn8zZ3c7RJuX2wHPyyw1r3cheHZ2gdjGsQPpa
-	lETELYaIbrW7DYeILH9daQ2mfbItFlM2NHpml9e0VnvZOVHCMIJ/CJQbyc0tmLp/nxkKeO7DgwU
-	Hoc3MQOpUQzSueSxFZbOxbbzWv9VsXceP/0qOkxKa12X3vwgTOoIUAoV2aOOt+/5r8qOLGgfnmf
-	KYciz3Kz/thpmghaxfE/mcDTjnjepdg51cX2yDnhLbAZ1BwsKM+FN7hCFgwTw3HM62rVtSgKPAC
-	bPq2oF2tZWgptLqQOpalmjgTuRA3y16DTNycOCNZzn2mU7dVtu1Q5RtqyPNVPjO++NZ2Ym1mIzF
-	HiHtzTLt0P8lqhREvqqGHkgQEnUMX5EuY+btTSi6PKHGGjJSNSF4vCJ0hLkO9GOVct3k=
-X-Received: by 2002:a05:600c:1f13:b0:45b:8ab0:59a9 with SMTP id 5b1f17b1804b1-45b8ab05bd1mr39256845e9.18.1756723426834;
-        Mon, 01 Sep 2025 03:43:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXxb4OFUEp+gmXD4h1anmHcaA/DXKzIrss5TRKXevtLzyH/iVfzwjgDIJ/CEIsJTOraM8Ezw==
-X-Received: by 2002:a05:600c:1f13:b0:45b:8ab0:59a9 with SMTP id 5b1f17b1804b1-45b8ab05bd1mr39256555e9.18.1756723426359;
-        Mon, 01 Sep 2025 03:43:46 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f37:2b00:948c:dd9f:29c8:73f4? (p200300d82f372b00948cdd9f29c873f4.dip0.t-ipconnect.de. [2003:d8:2f37:2b00:948c:dd9f:29c8:73f4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e74b72esm154711095e9.0.2025.09.01.03.43.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 03:43:45 -0700 (PDT)
-Message-ID: <bfe1ae86-981a-4bd5-a96d-2879ef1b3af2@redhat.com>
-Date: Mon, 1 Sep 2025 12:43:42 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=5S4fuRk+bvbyu3AGCXqWWILKtUl2HbqJIAPTs34e4wg=;
+	b=h3kw5ZHyQ6ph/2Enddeqos4frNf3RhMiFacv4NTFlgzHayIdK79JES6w5APQtac8+iGVRw
+	5wb1DrMnIVTYbqFPyUApEMYCzqgrqTKVYzXcx4QT/ofN+6gsBuf9QVXE+NZHIAHY+iKDUQ
+	LW0hLe3LcpS/VcLo/XSux9RlQHKXelU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 03/11] Documentation: uAPI: media: add
+ V4L2_CID_FLASH_DURATION
+Message-ID: <rcgche43hzctpxbe2xt2cfksjbtyntc6ef26wptgkygcdlg5ga@sdhkkcpdfaek>
+References: <20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev>
+ <20250716-ov9282-flash-strobe-v6-3-934f12aeff33@linux.dev>
+ <aKv3uUXf87im8ajX@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/12] mm: establish const-correctness for pointer
- parameters
-To: Max Kellermann <max.kellermann@ionos.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com,
- willy@infradead.org, hughd@google.com, mhocko@suse.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
- linux@armlinux.org.uk, James.Bottomley@hansenpartnership.com, deller@gmx.de,
- agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
- gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
- davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com,
- luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
- jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
- rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
- broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
- mpe@ellerman.id.au, nysal@linux.ibm.com,
- linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, conduct@kernel.org
-References: <20250901091916.3002082-1-max.kellermann@ionos.com>
- <f065d6ae-c7a7-4b43-9a7d-47b35adf944e@lucifer.local>
- <CAKPOu+9smVnEyiRo=gibtpq7opF80s5XiX=B8+fxEBV7v3-Gyw@mail.gmail.com>
- <76348dd5-3edf-46fc-a531-b577aad1c850@lucifer.local>
- <CAKPOu+-cWED5_KF0BecqxVGKJFWZciJFENxxBSOA+-Ki_4i9zQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAKPOu+-cWED5_KF0BecqxVGKJFWZciJFENxxBSOA+-Ki_4i9zQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aKv3uUXf87im8ajX@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-On 01.09.25 12:20, Max Kellermann wrote:
-> On Mon, Sep 1, 2025 at 12:04â€¯PM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
->>
->> +cc CoC.
->>
->> On Mon, Sep 01, 2025 at 11:54:18AM +0200, Max Kellermann wrote:
->>> On Mon, Sep 1, 2025 at 11:44â€¯AM Lorenzo Stoakes
->>> <lorenzo.stoakes@oracle.com> wrote:
->>>> You are purposefully engaging in malicious compliance here, this isn't how
->>>> things work.
->>>
->>> This accusation of yours is NOT:
->>> - Using welcoming and inclusive language
->>> - Being respectful of differing viewpoints and experiences
->>> - Showing empathy towards other community members
->>>
->>> This is also not constructive criticism. It's just a personal attack.
->>
->> It is absolutely none of these things, you admitted yourself you thought the
->> review was stupid and you used an LLM to adhere to it, clearly with bad faith
->> itnent.
+On Mon, Aug 25, 2025 at 08:42:17AM +0300, Sakari Ailus wrote:
+> Hi Richard,
 > 
-> There must be a huge misunderstanding somewhere. I and you guys must
-> be talking in a completely different language. None of that is true
-> from my perspective.
+> Thanks for the update (and for the ping!).
 > 
-> I never called any review stupid, nor did I admit that. I disagreed,
-> but that's not the same thing. Remember when I told you "Let's agree
-> to disagree"? It's perfectly fine to have different opinions. Please
-> don't mix that up.
+> On Wed, Jul 16, 2025 at 11:06:53AM +0200, Richard Leitner wrote:
+> > Add the new strobe_duration control to v4l uAPI documentation.
+> > 
+> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > ---
+> >  Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > index d22c5efb806a183a3ad67ec3e6550b002a51659a..03a58ef94be7c870f55d5a9bb09503995dbfb402 100644
+> > --- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
+> > @@ -186,3 +186,8 @@ Flash Control IDs
+> >      charged before strobing. LED flashes often require a cooldown period
+> >      after strobe during which another strobe will not be possible. This
+> >      is a read-only control.
+> > +
+> > +``V4L2_CID_FLASH_DURATION (integer)``
+> > +    Duration the flash should be on when the flash LED is in flash mode
+> > +    (V4L2_FLASH_LED_MODE_FLASH). The unit should be microseconds (µs)
+> > +    if possible.
+> > 
 > 
->>>
->>> (I'm also still waiting for your reply to
->>> https://lore.kernel.org/lkml/CAKPOu+8esz_C=-m1+-Uip3ynbLm1geutJc7ip56mNJTOpm0BPA@mail.gmail.com/
->>> )
->>
->> Your behaviour there was appalling and clearly a personal attack.
+> I think we should add this is related to the hardware strobe.
 > 
-> It was not. Maybe you felt that way, but I did not intend you to feel
-> that way. I would like to find out why you felt that way (because I
-> don't have the slightest clue), that's why I asked, and why I'm
-> waiting for your reply. If you would reply, maybe we could clear
-> things up and resolve the misunderstanding.
+> How about:
 > 
-> It sounds like I won't ever have the chance to do that, so... farewell.
+> ``V4L2_CID_FLASH_DURATION (integer)``
+> 
+>     Duration of the flash strobe from the strobe source, typically a camera
+>     sensor. Controlling the flash LED strobe length this way requires that the
+>     flash LED driver's :ref:`flash LED mode <v4l2-cid-flash-led-mode>` is set
+>     to ``V4L2_FLASH_LED_MODE_FLASH`` and :ref:`strobe source
+>     <v4l2-cid-strobe-source>` is set to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL``.
+>     The unit should be microseconds (µs) if possible.
+> 
+> This requires of course the appropriate labels.
+> 
+> I also wonder whether we should use 0,1 µs or even ns for the unit.
 
-Let's all calm down a bit.
+Thanks for the pointer.
 
-Max, I think this series here is valuable, and you can see that from the 
-engagement from reviewers (this is a *good* thing, I sometimes wish I 
-would get feedback that would help me improve my submissions).
+I did a quick internet search and the shortest flash duration of
+speedlights/studio strobes I found was Profoto D2 with 1/63000 sec ~> 15.9µs.
+So I IMHO we are fine with 1µs resolution here.
 
-So if you don't want to follow-up on this series to polish the patch 
-descriptions etc,, let me now and I (or someone else around here) can 
-drag it over the finishing line.
+regards;rl
 
--- 
-Cheers
-
-David / dhildenb
-
+> 
+> -- 
+> Kind regards,
+> 
+> Sakari Ailus
 
