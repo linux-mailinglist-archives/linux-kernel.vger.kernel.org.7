@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-793636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE96B3D654
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:38:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7D9B3D657
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75423B68B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345ED1896ACA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8574C1B4F0A;
-	Mon,  1 Sep 2025 01:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Fhy9asR+"
-Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128DC1E520A;
+	Mon,  1 Sep 2025 01:39:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313C4C2FB
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 01:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F51EC2FB;
+	Mon,  1 Sep 2025 01:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756690708; cv=none; b=ISmXAWwuFPypHzC3ew2kk39GXHX7WuTlhlEw46vgfQyUdN2d2Y2Zz1PGlAP74Dt8/a9HF+M5TSSgPJ8Wpl0XsWkCq31gM+SwUwgGXVFHcG2GwB2OPkjHHUlnwahZEIdZ55qArQUqkBcDyXEW5ehdnfAygYY6bANySeOmjmc4o/Y=
+	t=1756690742; cv=none; b=Lp91VBCHt43fXs+zTWQcoJqtDDhYv8DVPqlpRCR5mfwUG09cBF5jzVzzyKWUpRmfKoSo3Sz3h6R02XnjqJM4qbCiyU0+u8SW1xzl33MWUvgEh0GbyDLPbqtvAcyNoNxmeIdcG9u4GyWfxKplMP6GP4dDpLgcaVoTrB/FXwNneUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756690708; c=relaxed/simple;
-	bh=u/FqhjA1/sXtx7E5fPiSH8R1tbd6kUMljTqj9A7RDdY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BJ6PDBp6MUrBk0Ttj7nvmBPsXmvaACHQeE+2mSNKQRXv0M0ipt/nST80XuSc/eHAhMYDjek+dpyppD1V1F3N9C31IfLDbPyzxPRpWQNmcswz/TKijfwkaNY0aTv3Oje2NNtYSmF9kyzFhaB3Qj59ffVdmpJB3fVLJL1L+fjD3Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Fhy9asR+; arc=none smtp.client-ip=61.135.153.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756690698;
-	bh=41Hj+4QZoJwX4JXyxqOCAg0MsefGVY5tWO7IDIjXO0s=;
-	h=From:Subject:Date:Message-ID;
-	b=Fhy9asR+V4aD3aiQ7n3fJ2wQM5ajlZ3Nz63SD6FUh14bI0GZDbmXyp9Cc70pGQAvx
-	 Qk5tFQwfYXhA5vZQFNFPWdXpM6w8N7GFx2XaexrqY7G32XPiqtr+v9q0hDertBmlFp
-	 al7PUWSI/peXsjjzcabFbZYI4LGKrFXennfbLc58=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68B4F8FF00005039; Mon, 1 Sep 2025 09:38:09 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5566196685393
-X-SMAIL-UIID: 444AB87BC62E4F0D9EDA304FB75BDCEF-20250901-093809-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
-Date: Mon,  1 Sep 2025 09:37:57 +0800
-Message-ID: <20250901013758.6300-1-hdanton@sina.com>
-In-Reply-To: <68b3b1ac.a70a0220.1c57d1.028b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756690742; c=relaxed/simple;
+	bh=KqqRGi+FKxfSAlLjJ4JXNrkj2FkYJBf8wMDLSDjDHNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jk7oFVMhwpQxCZ4Az2sgcOt+8WbMfiGo+i70ouFtg4ptmjnLYQ8bT6gjqXPtigWoHKLrabxFsshtowGZo1UPk6gQ51y0jpICKzYiFamPjU4EwU9WB3Iq0Ij/OSI6Tkc/P/t9DxIdx8VBid0Pko79jPyEXTdRmsNQyMSstAI60hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cFWk44l17zYQv6L;
+	Mon,  1 Sep 2025 09:38:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 3031C1A08C9;
+	Mon,  1 Sep 2025 09:38:51 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgDXII0p+bRoEMbrAw--.24215S2;
+	Mon, 01 Sep 2025 09:38:51 +0800 (CST)
+Message-ID: <afc56d3b-1fc7-48b8-a724-7abc59e06cdd@huaweicloud.com>
+Date: Mon, 1 Sep 2025 09:38:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] cgroup/psi: Set of->priv to NULL upon file release
+To: Tejun Heo <tj@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
+Cc: hannes@cmpxchg.org, mkoutny@suse.com, peterz@infradead.org,
+ zhouchengming@bytedance.com, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com,
+ libaokun1@huawei.com
+References: <20250822070715.1565236-1-chenridong@huaweicloud.com>
+ <20250822070715.1565236-3-chenridong@huaweicloud.com>
+ <aKitWH39wpfTF5st@slm.duckdns.org>
+ <2025082322-canopener-snugness-14e3@gregkh>
+ <aKyeEIArL3gs0jNF@slm.duckdns.org>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <aKyeEIArL3gs0jNF@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDXII0p+bRoEMbrAw--.24215S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUtVW8ZwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UQzVbUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-> Date: Sat, 30 Aug 2025 19:21:32 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
+
+
+On 2025/8/26 1:32, Tejun Heo wrote:
+> Hello, Greg.
 > 
-> HEAD commit:    11e7861d680c Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17c5c242580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671ba62580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1685aa62580000
+> On Sat, Aug 23, 2025 at 08:43:48AM +0200, Greg KH wrote:
+>>> Applied to cgroup/for-6.17-fixes.
+>>
+>> Both or just this second patch?  Should I take the first through the
+>> driver-core tree, or do you want to take it through the cgroup tree?  No
+>> objection from me for you to take both :)
+> 
+> Sorry about the lack of clarity. Just the second one. The first one looks
+> fine to me but it would probably be more appropriate if you take it.
+> 
+> Thanks!
+> 
 
-#syz test
+Hello all,
 
---- x/drivers/vhost/vhost.c
-+++ y/drivers/vhost/vhost.c
-@@ -407,16 +407,14 @@ static int vhost_run_work_kthread_list(v
- 	kthread_use_mm(dev->mm);
- 
- 	for (;;) {
--		/* mb paired w/ kthread_stop */
--		set_current_state(TASK_INTERRUPTIBLE);
--
--		if (kthread_should_stop()) {
--			__set_current_state(TASK_RUNNING);
--			break;
--		}
- 		node = llist_del_all(&worker->work_list);
--		if (!node)
-+		if (!node) {
-+			if (kthread_should_stop())
-+				break;
-+			__set_current_state(TASK_INTERRUPTIBLE);
- 			schedule();
-+			continue;
-+		}
- 
- 		node = llist_reverse_order(node);
- 		/* make sure flag is seen after deletion */
---
+Any other opinions? Can this patch be applied?
+
+-- 
+Best regards,
+Ridong
+
 
