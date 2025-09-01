@@ -1,211 +1,444 @@
-Return-Path: <linux-kernel+bounces-794767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA65B3E6F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:24:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87253B3E6F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22A8C7A6864
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E79BB205554
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3E02F3C11;
-	Mon,  1 Sep 2025 14:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A6E341654;
+	Mon,  1 Sep 2025 14:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3G/osQx"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDUOWBYA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339731F4621;
-	Mon,  1 Sep 2025 14:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57492F49EE;
+	Mon,  1 Sep 2025 14:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736688; cv=none; b=X7rP71fh6XaLx/bgxSUjsSIQNUOaCmABpD4JsWUaiTNjaADBiZBMkkfo2Xneswaf4YWv76lcvF/BtQ++qc9nfQCN+4WpwSvcxikmAbLQIOSsFzRu0L/ZiYHqqfvNVLpv3zXl3wkrH2tfqDsAilzpw116ERCDb+uXqcL8ySbLK0o=
+	t=1756736697; cv=none; b=DBmLxhRYnnIMPTwOj2WaGf4COwtYvLq5OerNk1KSStm9oMzhNfG71BN0OiC+/Mo8iLwIe7E0ssFJhev5mz6+xE9sk9nbnQFTYj64AlcByYNO5K5WvZjh23PLbIR5GtJHXRyD2YJA0vchx2lA0xNxL0CwZJeTrz+qoIuw9+1eWCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736688; c=relaxed/simple;
-	bh=ZtG+wa3X6+HfL309XwwUBOo4DsFffE3TJur0zd963GY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UFOvvIdUSGd3QRzHFbY7oDQL2cnXy+C5zNNOwA1Sil28EZYzkD9mL9OAFW8J9coKmOQkjxo55Sok/jsiPbx8Js4ZqHjQH9O0QwUZ46kdMfzLWskU0b/iyZuExMYBDxHLB8GyGF9A44QUEu4EhhD1q5hSsuZPwKrKv7Y4Yu0/7Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3G/osQx; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b7d485204so34929855e9.0;
-        Mon, 01 Sep 2025 07:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756736684; x=1757341484; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rqvcXlp0W7MSF3vmJ03eJQXl6LGqOtNp4w5UN/Mvcy0=;
-        b=E3G/osQxwlSAKuGIn7c0Fb5kj6ej1+O/J8mUkyesc+F4EQDRhKyXgS+1tLBYJzZd3R
-         2RVFnPXeOkqC+kufCcLSdTtBiyhshbBM5hoZojpPr1sxlkxQnLX3/TnDn7MnclngWFYU
-         nKk/obV3RNXGav7y/DinOjfTvdfqzE0+7Y7H/cElW1feVFot8gRiIhCdX+ivTlq0Egv6
-         1xjhgbZa82Rg3bMQg3fNa1u5xUguQpqWZ5y2hk7MtIA9ESDKB5ZUPp5LxVTyoFhQW7nJ
-         n0WBfLkOETKuX8IQRD1I8oxpTXKFqjfldHZeLTKpoBHz56SdtXYN7O/GNxhQT32aIJzb
-         9E0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756736684; x=1757341484;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rqvcXlp0W7MSF3vmJ03eJQXl6LGqOtNp4w5UN/Mvcy0=;
-        b=Cgf3SVYz3Q2H3kiX8ycin96RVXMl+uJb3ixkTlKAjKIUc5ZDxlSx1+8qi2WHBjrTLJ
-         TUEcvMo+E8CWPpvb+VE/gDWDh5df29OKnenzfMA2DqgcHYWrINrkTc4zl8CnD4kKq+GH
-         f+QA03/mCLFiMHakwP0k2bSu4jh1j31wRmv7LLiw6kDBy+fvZNtEXQzp2b5SnrVoTjv5
-         sNDa+JXzz/hKcviQPTvS7S9oQsyUgNZ5t77r13rS9tr3yokUxEakbcjk6tVZ5lAiA3WE
-         /JKSXy1XDy6G9Tl7SJXyQV39DdYFRzbf/S+EZZRpiV8wZ4DHWWIq3B3QdyuOaJHsQ6L+
-         JTkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjnY2p9Gd/sDNCGjls6pjIqRUHAbZPhHYzc29kgHcTd3iF1CokvEyNF1oV3jtmSPALAmGQm3f3@vger.kernel.org, AJvYcCWcWI0nim3uxdEjcsG5sV8/v7u2ZF8k2P5YVsNM0Ozk/n3H+9ane3rqz+0lLofJdsAiceag7czzKT48bqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk+cXrtb9jfZ+NPqMaypcwG2HWfpsaXyQlX/yg10yq9CUocIlU
-	OuWE5g90TwO452gSQjebk1TJyq1MONVTCLvCEquYPdUG6dkTo8Z4Q/zw
-X-Gm-Gg: ASbGncs6Jf7XxeLNPvtAGa1gBtIxy3/tRrdSvkmGYTRTfJ5ITLUSVf7lrvbb0LQDx8D
-	t8xp8XOuoPGKGctREpYgf9aM/hEIz5c2NnEPH5Dz5p3Mxi2LNBJFUFhyxT7MY6QKU6by4tQsXvu
-	gMW7Gnv4LWdMFLnQIQkMziKM18iWmDEqhvR7YByOsUzSt9iT0JYzqoPhDNldRCsDpoR5ESxe+iF
-	g1TY3vUXFiiYhAHMLo8TQrUzksiw5R0L8GAgVoEyCtbevnA9998deumx6ApyQ8upMNZxZuMzknm
-	RClxegYP6/CxSqgoQKw0vHCPFOBzagX2yF08jgiEWBWWc/X3MNAOgBU/1zdSMjzfxAzIXZpkO8v
-	8irXMoKAunCqBfrLtLIMC+HpjQS9WCgf0j5Q1+T0TrTKgl3QryDAX5yfEaia6Fg==
-X-Google-Smtp-Source: AGHT+IHqPtct6XqWPq/LJ5GxcIfD94d0NHMlxPrBgPKNbuLPMxEx6hG7wkfcL+GTCikbm6rlk5HEHQ==
-X-Received: by 2002:a05:6000:2408:b0:3cb:d8e2:48b2 with SMTP id ffacd0b85a97d-3d1dc78e7f4mr7803896f8f.13.1756736684089;
-        Mon, 01 Sep 2025 07:24:44 -0700 (PDT)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3d26f22f5bdsm10142026f8f.37.2025.09.01.07.24.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 07:24:43 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Mon, 01 Sep 2025 16:24:35 +0200
-Subject: [PATCH v2] mtd: core: always verify OOB offset in
- mtd_check_oob_ops()
+	s=arc-20240116; t=1756736697; c=relaxed/simple;
+	bh=M8fJZB18elUtJ0aWEJBsI1OZ1YzJQLmO5PeUR+HzsIE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u7Pl8gFBPuP0hCbiIQbsEA+1sNZ8Sbm8D1uKdtAZGJ5YKjJTozz6yV7qIoTDdm/NB1qaNGerfbKxEkDV/yf95knGGWznx7tI0DDKxkH9c9ECbnUw5Z5QTMCR5S43mT1v/HrXSxB4OD552ve42g2lVToXDxhHL426bn8ZzoD0kk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDUOWBYA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37196C4CEF9;
+	Mon,  1 Sep 2025 14:24:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756736697;
+	bh=M8fJZB18elUtJ0aWEJBsI1OZ1YzJQLmO5PeUR+HzsIE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CDUOWBYAe6Rns1+UAHOF5uvQft0nWh5vStgnA3YAN1yV3fwZZt4uxOQz/oq2A9DxP
+	 wi16jeYjpwMyqbPvYB3tAzwHKAhlRSmXk9mgWu+BWKvt+89wdo4baSEmWVwEdOBAgY
+	 CgCO4fWx5Wexb79uFIwV+tpEE0gTAqULJ94yc9cg30e8S2SDrjvNNUSnKgFTqN/zJB
+	 ZsfLdkN4erBWnQkCqanZYK2msRp//ImiSaN6OJ2DOW8HcomFLQP5R1IeBEaPHTN0Tu
+	 lLXcL+PaI9XwTudfA5s0eOMOQHFGjbz0YMnFU6Q8+XnhBYnV+EF0Tm7iyW4CcIHi/w
+	 eg8AhTuu/koVg==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0428b537e5so179054066b.3;
+        Mon, 01 Sep 2025 07:24:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUx0wQ1lksWg7VUmCa4DsWqWRXe1EwXiFOcGCRtGRvOzXa2hct4safLC8S8QNVGSS26wYjXMX5B37W7JOLO@vger.kernel.org, AJvYcCVAKXnuVm3uAVapqdlbMchpVG11SOjhrU37V82wJEb83ZVTua/CzuOlaGQi9Q5cUyWgbqTKGHhC2/m3kw==@vger.kernel.org, AJvYcCXpNivneiATjvNQD4abU2SjMmp9cEUArUX2wNts8AOLaIuEuh1ERJvNz/0K8wvV7Uvz/mLpvTbAsqq0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiFKKq9HjZp0jFpMRDevzf5DFQyLyR9bC8U0XiVWpPdW4gwQ+p
+	NviMP2MNQLF0YdcGOmkzpmRRPCu2jmHrVrzG2T+eGqSVgNF7zet/lzYoz2bDU77KSgrt+7u5/pw
+	ubPiTqExVTsB5u0dauG2iZ+vOVCqUmOs=
+X-Google-Smtp-Source: AGHT+IHVpqU4+ujyGOutKEp4h9mv3/b4cS5iOmG7yJHLu/13swFAoYpCjbFyooohRiAKA12+JGJbuVS7Sm3PZtgF8yQ=
+X-Received: by 2002:a17:906:aad6:b0:b04:2160:f61f with SMTP id
+ a640c23a62f3a-b04216100ecmr371386266b.37.1756736695635; Mon, 01 Sep 2025
+ 07:24:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-mtd-validate-ooboffs-v2-1-c1df86a16743@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKKstWgC/4WNQQ6CMBBFr0Jm7RgKAsWV9zAsajuFSSglLWk0h
- LtbuYDL95L//g6RAlOEe7FDoMSR/ZKhuhSgJ7WMhGwyQ1VWTSlrgW4zmNTMRm2E3r+8tRGpbnT
- Xt82ttAR5ugay/D6zzyHzxHHz4XO+JPGzf4JJoEBTW6OpU7Lt5WN0iuer9g6G4zi+14CeK7gAA
- AA=
-X-Change-ID: 20250831-mtd-validate-ooboffs-e35c796540fe
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+References: <20250901133804.38433-1-ziyao@disroot.org> <20250901133804.38433-3-ziyao@disroot.org>
+In-Reply-To: <20250901133804.38433-3-ziyao@disroot.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 1 Sep 2025 22:24:49 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5GixGbrAaJS+hch-LAFt+noCJXHhQD0f7_7BjNfiOncQ@mail.gmail.com>
+X-Gm-Features: Ac12FXz8OpLsu9pH_SGFdYvgBRYpYx6xSKmtG_dB8TOlN4Rt3h8nAHUJHowWJKU
+Message-ID: <CAAhV-H5GixGbrAaJS+hch-LAFt+noCJXHhQD0f7_7BjNfiOncQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] gpio: loongson-64bit: Add support for Loongson
+ 2K0300 SoC
+To: Yao Zi <ziyao@disroot.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>, 
+	Kexy Biscuit <kexybiscuit@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Using an OOB offset past end of the available OOB data is invalid,
-irregardless of whether the 'ooblen' is set in the ops or not. Move
-the relevant check out from the if statement to always verify that.
+Hi, Yao,
 
-The 'oobtest' module executes four tests to verify how reading/writing
-OOB data past end of the devices is handled. It expects errors in case
-of these tests, but this expectation fails in the last two tests on
-MTD devices, which have no OOB bytes available.
+On Mon, Sep 1, 2025 at 9:38=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
+>
+> This controller's input and output logic is similar to previous
+> generations of SoCs. Additionally, it's capable of interrupt masking,
+> and could be configured to detect levels and edges, and is supplied with
+> a distinct reset signal.
+>
+> The interrupt functionality is implemented through an irqchip, whose
+> operations are written with previous generation SoCs in mind and could
+> be reused. Since all Loongson SoCs with similar interrupt capability
+> (2K1500, 2K2000) support byte-control mode, these operations are for
+> byte-control mode only for simplicity.
+Modify the name style the same as in Patch-1.
 
-This is indicated in the test output like the following:
+>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  drivers/gpio/Kconfig               |   1 +
+>  drivers/gpio/gpio-loongson-64bit.c | 191 +++++++++++++++++++++++++++--
+>  2 files changed, 185 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index a437fe652dbc..c55173643eb4 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -437,6 +437,7 @@ config GPIO_LOONGSON_64BIT
+>         depends on LOONGARCH || COMPILE_TEST
+>         depends on OF_GPIO
+>         select GPIO_GENERIC
+> +       select GPIOLIB_IRQCHIP
+>         help
+>           Say yes here to support the GPIO functionality of a number of
+>           Loongson series of chips. The Loongson GPIO controller supports
+> diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loong=
+son-64bit.c
+> index 482e64ba9b42..7fb712e101ce 100644
+> --- a/drivers/gpio/gpio-loongson-64bit.c
+> +++ b/drivers/gpio/gpio-loongson-64bit.c
+> @@ -7,6 +7,8 @@
+>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdesc.h>
+>  #include <linux/module.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/err.h>
+> @@ -14,6 +16,7 @@
+>  #include <linux/gpio/generic.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/bitops.h>
+> +#include <linux/reset.h>
+>  #include <asm/types.h>
+>
+>  enum loongson_gpio_mode {
+> @@ -28,6 +31,14 @@ struct loongson_gpio_chip_data {
+>         unsigned int            out_offset;
+>         unsigned int            in_offset;
+>         unsigned int            inten_offset;
+> +       unsigned int            intpol_offset;
+> +       unsigned int            intedge_offset;
+> +       unsigned int            intclr_offset;
+> +       unsigned int            intsts_offset;
+> +       unsigned int            intdual_offset;
+> +       unsigned int            intr_num;
+> +       irq_flow_handler_t      irq_handler;
+> +       const struct irq_chip   *girqchip;
+>  };
+>
+>  struct loongson_gpio_chip {
+> @@ -137,7 +148,140 @@ static int loongson_gpio_to_irq(struct gpio_chip *c=
+hip, unsigned int offset)
+>         return platform_get_irq(pdev, offset);
+>  }
+>
+> -static int loongson_gpio_init(struct device *dev, struct loongson_gpio_c=
+hip *lgpio,
+> +static void loongson_gpio_irq_ack(struct irq_data *data)
+> +{
+> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
+> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
+> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
+> +
+> +       writeb(0x1, lgpio->reg_base + lgpio->chip_data->intclr_offset + h=
+wirq);
+> +}
+> +
+> +static void loongson_gpio_irq_mask(struct irq_data *data)
+> +{
+> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
+> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
+> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
+> +
+> +       writeb(0x0, lgpio->reg_base + lgpio->chip_data->inten_offset + hw=
+irq);
+> +}
+> +
+> +static void loongson_gpio_irq_unmask(struct irq_data *data)
+> +{
+> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
+> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
+> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
+> +
+> +       writeb(0x1, lgpio->reg_base + lgpio->chip_data->inten_offset + hw=
+irq);
+> +}
+> +
+> +static int loongson_gpio_irq_set_type(struct irq_data *data, unsigned in=
+t type)
+> +{
+> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
+> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
+> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
+> +       u8 pol =3D 0, edge =3D 0, dual =3D 0;
+> +
+> +       if ((type & IRQ_TYPE_SENSE_MASK) =3D=3D IRQ_TYPE_EDGE_BOTH) {
+> +               edge =3D 1;
+> +               dual =3D 1;
+> +               irq_set_handler_locked(data, handle_edge_irq);
+> +       } else {
+> +               switch (type) {
+> +               case IRQ_TYPE_LEVEL_HIGH:
+> +                       pol =3D 1;
+> +                       fallthrough;
+> +               case IRQ_TYPE_LEVEL_LOW:
+> +                       irq_set_handler_locked(data, handle_level_irq);
+> +                       break;
+> +
+> +               case IRQ_TYPE_EDGE_RISING:
+> +                       pol =3D 1;
+> +                       fallthrough;
+> +               case IRQ_TYPE_EDGE_FALLING:
+> +                       edge =3D 1;
+> +                       irq_set_handler_locked(data, handle_edge_irq);
+> +                       break;
+> +
+> +               default:
+> +                       return -EINVAL;
+> +               };
+> +       }
+> +
+> +       writeb(pol, lgpio->reg_base + lgpio->chip_data->intpol_offset + h=
+wirq);
+> +       writeb(edge, lgpio->reg_base + lgpio->chip_data->intedge_offset +=
+ hwirq);
+> +       writeb(dual, lgpio->reg_base + lgpio->chip_data->intdual_offset +=
+ hwirq);
+> +
+> +       return 0;
+> +}
+> +
+> +static void loongson_gpio_ls2k0300_irq_handler(struct irq_desc *desc)
+> +{
+> +       struct loongson_gpio_chip *lgpio =3D irq_desc_get_handler_data(de=
+sc);
+> +       struct irq_chip *girqchip =3D irq_desc_get_chip(desc);
+> +       int i;
+> +
+> +       chained_irq_enter(girqchip, desc);
+> +
+> +       for (i =3D 0; i < lgpio->chip.gc.ngpio; i++) {
+> +               /*
+> +                * For the GPIO controller of 2K0300, interrupts status b=
+its
+s/2K0300/LS2K0300/g.
 
-    [  212.059416] mtd_oobtest: attempting to write past end of device
-    [  212.060379] mtd_oobtest: an error is expected...
-    [  212.066353] mtd_oobtest: error: wrote past end of device
-    [  212.071142] mtd_oobtest: attempting to read past end of device
-    [  212.076507] mtd_oobtest: an error is expected...
-    [  212.082080] mtd_oobtest: error: read past end of device
-    ...
-    [  212.330508] mtd_oobtest: finished with 2 errors
+> +                * may be wrongly set even if the corresponding interrupt=
+ is
+> +                * disabled. Thus interrupt enable bits are checked along=
+ with
+> +                * status bits to detect interrupts reliably.
+> +                */
+> +               if (readb(lgpio->reg_base + lgpio->chip_data->intsts_offs=
+et + i) &&
+> +                   readb(lgpio->reg_base + lgpio->chip_data->inten_offse=
+t + i))
+> +                       generic_handle_domain_irq(lgpio->chip.gc.irq.doma=
+in, i);
+> +       }
+> +
+> +       chained_irq_exit(girqchip, desc);
+> +}
+> +
+> +static const struct irq_chip loongson_gpio_ls2k0300_irqchip =3D {
+> +       .irq_ack        =3D loongson_gpio_irq_ack,
+> +       .irq_mask       =3D loongson_gpio_irq_mask,
+> +       .irq_unmask     =3D loongson_gpio_irq_unmask,
+> +       .irq_set_type   =3D loongson_gpio_irq_set_type,
+> +       .flags          =3D IRQCHIP_IMMUTABLE | IRQCHIP_SKIP_SET_WAKE,
+> +       GPIOCHIP_IRQ_RESOURCE_HELPERS,
+> +};
+> +
+> +static int loongson_gpio_init_irqchip(struct platform_device *pdev,
+> +                                     struct loongson_gpio_chip *lgpio)
+> +{
+> +       const struct loongson_gpio_chip_data *data =3D lgpio->chip_data;
+> +       struct gpio_chip *chip =3D &lgpio->chip.gc;
+> +       int i;
+> +
+> +       chip->irq.default_type =3D IRQ_TYPE_NONE;
+> +       chip->irq.handler =3D handle_bad_irq;
+> +       chip->irq.parent_handler =3D data->irq_handler;
+> +       chip->irq.parent_handler_data =3D lgpio;
+> +       gpio_irq_chip_set_chip(&chip->irq, data->girqchip);
+> +
+> +       chip->irq.num_parents =3D data->intr_num;
+> +       chip->irq.parents =3D devm_kcalloc(&pdev->dev, data->intr_num,
+> +                                        sizeof(*chip->irq.parents), GFP_=
+KERNEL);
+> +       if (!chip->parent)
+> +               return -ENOMEM;
+> +
+> +       for (i =3D 0; i < data->intr_num; i++) {
+> +               chip->irq.parents[i] =3D platform_get_irq(pdev, i);
+> +               if (chip->irq.parents[i] < 0)
+> +                       return dev_err_probe(&pdev->dev, chip->irq.parent=
+s[i],
+> +                                            "failed to get IRQ %d\n", i)=
+;
+> +       }
+> +
+> +       for (i =3D 0; i < data->intr_num; i++) {
+> +               writeb(0x0, lgpio->reg_base + data->inten_offset + i);
+> +               writeb(0x1, lgpio->reg_base + data->intclr_offset + i);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int loongson_gpio_init(struct platform_device *pdev, struct loong=
+son_gpio_chip *lgpio,
+>                               void __iomem *reg_base)
+>  {
+>         struct gpio_generic_chip_config config;
+> @@ -146,7 +290,7 @@ static int loongson_gpio_init(struct device *dev, str=
+uct loongson_gpio_chip *lgp
+>         lgpio->reg_base =3D reg_base;
+>         if (lgpio->chip_data->mode =3D=3D BIT_CTRL_MODE) {
+>                 config =3D (typeof(config)){
+> -                       .dev =3D dev,
+> +                       .dev =3D &pdev->dev,
+>                         .sz =3D 8,
+>                         .dat =3D lgpio->reg_base + lgpio->chip_data->in_o=
+ffset,
+>                         .set =3D lgpio->reg_base + lgpio->chip_data->out_=
+offset,
+> @@ -155,7 +299,7 @@ static int loongson_gpio_init(struct device *dev, str=
+uct loongson_gpio_chip *lgp
+>
+>                 ret =3D gpio_generic_chip_init(&lgpio->chip, &config);
+>                 if (ret) {
+> -                       dev_err(dev, "unable to init generic GPIO\n");
+> +                       dev_err(&pdev->dev, "unable to init generic GPIO\=
+n");
+>                         return ret;
+>                 }
+>         } else {
+> @@ -164,16 +308,22 @@ static int loongson_gpio_init(struct device *dev, s=
+truct loongson_gpio_chip *lgp
+>                 lgpio->chip.gc.get_direction =3D loongson_gpio_get_direct=
+ion;
+>                 lgpio->chip.gc.direction_output =3D loongson_gpio_directi=
+on_output;
+>                 lgpio->chip.gc.set =3D loongson_gpio_set;
+> -               lgpio->chip.gc.parent =3D dev;
+> +               lgpio->chip.gc.parent =3D &pdev->dev;
+>                 spin_lock_init(&lgpio->lock);
+>         }
+>
+>         lgpio->chip.gc.label =3D lgpio->chip_data->label;
+>         lgpio->chip.gc.can_sleep =3D false;
+> -       if (lgpio->chip_data->inten_offset)
+> +       if (lgpio->chip_data->girqchip) {
+> +               ret =3D loongson_gpio_init_irqchip(pdev, lgpio);
+> +               if (ret)
+> +                       return dev_err_probe(&pdev->dev, ret,
+> +                                            "failed to initialize irqchi=
+p\n");
+One line is enough.
 
-For reference, here is the corresponding code from the oobtest module:
+> +       } else if (lgpio->chip_data->inten_offset) {
+>                 lgpio->chip.gc.to_irq =3D loongson_gpio_to_irq;
+> +       }
+>
+> -       return devm_gpiochip_add_data(dev, &lgpio->chip.gc, lgpio);
+> +       return devm_gpiochip_add_data(&pdev->dev, &lgpio->chip.gc, lgpio)=
+;
+>  }
+>
+>  static int loongson_gpio_probe(struct platform_device *pdev)
+> @@ -181,6 +331,7 @@ static int loongson_gpio_probe(struct platform_device=
+ *pdev)
+>         void __iomem *reg_base;
+>         struct loongson_gpio_chip *lgpio;
+>         struct device *dev =3D &pdev->dev;
+> +       struct reset_control *rst;
+>
+>         lgpio =3D devm_kzalloc(dev, sizeof(*lgpio), GFP_KERNEL);
+>         if (!lgpio)
+> @@ -192,7 +343,12 @@ static int loongson_gpio_probe(struct platform_devic=
+e *pdev)
+>         if (IS_ERR(reg_base))
+>                 return PTR_ERR(reg_base);
+>
+> -       return loongson_gpio_init(dev, lgpio, reg_base);
+> +       rst =3D devm_reset_control_get_optional_exclusive_deasserted(&pde=
+v->dev, NULL);
+> +       if (IS_ERR(rst))
+> +               return dev_err_probe(&pdev->dev, PTR_ERR(rst),
+> +                                    "failed to get reset control\n");
+One line is enough.
 
-    /* Attempt to write off end of device */
-    ops.mode      = MTD_OPS_AUTO_OOB;
-    ops.len       = 0;
-    ops.retlen    = 0;
-    ops.ooblen    = mtd->oobavail;
-    ops.oobretlen = 0;
-    ops.ooboffs   = 1;
-    ops.datbuf    = NULL;
-    ops.oobbuf    = writebuf;
-    pr_info("attempting to write past end of device\n");
-    pr_info("an error is expected...\n");
-    err = mtd_write_oob(mtd, mtd->size - mtd->writesize, &ops);
-    if (err) {
-            pr_info("error occurred as expected\n");
-    } else {
-            pr_err("error: wrote past end of device\n");
-            errcnt += 1;
-    }
+With above changes,
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
-As it can be seen, the code sets 'ooboffs' to 1, and 'ooblen' to
-mtd->oobavail which is zero in our case.
-
-Since the mtd_check_oob_ops() function only verifies 'ooboffs' if 'ooblen'
-is not zero, the 'ooboffs' value does not gets validated and the function
-returns success whereas it should fail.
-
-After the change, the oobtest module will bail out early with an error if
-there are no OOB bytes available on the MDT device under test:
-
-    # cat /sys/class/mtd/mtd0/oobavail
-    0
-    # insmod mtd_test; insmod mtd_oobtest dev=0
-    [  943.606228]
-    [  943.606259] =================================================
-    [  943.606784] mtd_oobtest: MTD device: 0
-    [  943.612660] mtd_oobtest: MTD device size 524288, eraseblock size 131072, page size 2048, count of eraseblocks 4, pages per eraseblock 64, OOB size 128
-    [  943.616091] mtd_test: scanning for bad eraseblocks
-    [  943.629571] mtd_test: scanned 4 eraseblocks, 0 are bad
-    [  943.634313] mtd_oobtest: test 1 of 5
-    [  943.653402] mtd_oobtest: writing OOBs of whole device
-    [  943.653424] mtd_oobtest: error: writeoob failed at 0x0
-    [  943.657419] mtd_oobtest: error: use_len 0, use_offset 0
-    [  943.662493] mtd_oobtest: error -22 occurred
-    [  943.667574] =================================================
-
-This behaviour is more accurate than the current one where most tests
-are indicating successful writing of OOB data even that in fact nothing
-gets written into the device, which is quite misleading.
-
-Cc: stable@vger.kernel.org
-Fixes: 5cdd929da53d ("mtd: Add sanity checks in mtd_write/read_oob()")
-Reviewed-by: Daniel Golle <daniel@makrotopia.org>
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Changes in v2:
-  - add Reviewed-by tag from Daniel
-  - add stable and Fixes tags
-  - Link to v1: https://lore.kernel.org/r/20250831-mtd-validate-ooboffs-v1-1-d3fdce7a8698@gmail.com
----
- drivers/mtd/mtdcore.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 5ba9a741f5ac3c297ae21329c2827baf5dc471f0..9a3c9f163219bcb9fde66839f228fd8d38310f2d 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -1590,12 +1590,12 @@ static int mtd_check_oob_ops(struct mtd_info *mtd, loff_t offs,
- 	if (offs < 0 || offs + ops->len > mtd->size)
- 		return -EINVAL;
- 
-+	if (ops->ooboffs >= mtd_oobavail(mtd, ops))
-+		return -EINVAL;
-+
- 	if (ops->ooblen) {
- 		size_t maxooblen;
- 
--		if (ops->ooboffs >= mtd_oobavail(mtd, ops))
--			return -EINVAL;
--
- 		maxooblen = ((size_t)(mtd_div_by_ws(mtd->size, mtd) -
- 				      mtd_div_by_ws(offs, mtd)) *
- 			     mtd_oobavail(mtd, ops)) - ops->ooboffs;
-
----
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
-change-id: 20250831-mtd-validate-ooboffs-e35c796540fe
-
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
-
+> +
+> +       return loongson_gpio_init(pdev, lgpio, reg_base);
+>  }
+>
+>  static const struct loongson_gpio_chip_data loongson_gpio_ls2k_data =3D =
+{
+> @@ -204,6 +360,23 @@ static const struct loongson_gpio_chip_data loongson=
+_gpio_ls2k_data =3D {
+>         .inten_offset =3D 0x30,
+>  };
+>
+> +static const struct loongson_gpio_chip_data loongson_gpio_ls2k0300_data =
+=3D {
+> +       .label =3D "ls2k0300_gpio",
+> +       .mode =3D BYTE_CTRL_MODE,
+> +       .conf_offset =3D 0x800,
+> +       .in_offset =3D 0xa00,
+> +       .out_offset =3D 0x900,
+> +       .inten_offset =3D 0xb00,
+> +       .intpol_offset =3D 0xc00,
+> +       .intedge_offset =3D 0xd00,
+> +       .intclr_offset =3D 0xe00,
+> +       .intsts_offset =3D 0xf00,
+> +       .intdual_offset =3D 0xf80,
+> +       .intr_num =3D 7,
+> +       .irq_handler =3D loongson_gpio_ls2k0300_irq_handler,
+> +       .girqchip =3D &loongson_gpio_ls2k0300_irqchip,
+> +};
+> +
+>  static const struct loongson_gpio_chip_data loongson_gpio_ls2k0500_data0=
+ =3D {
+>         .label =3D "ls2k0500_gpio",
+>         .mode =3D BIT_CTRL_MODE,
+> @@ -300,6 +473,10 @@ static const struct of_device_id loongson_gpio_of_ma=
+tch[] =3D {
+>                 .compatible =3D "loongson,ls2k-gpio",
+>                 .data =3D &loongson_gpio_ls2k_data,
+>         },
+> +       {
+> +               .compatible =3D "loongson,ls2k0300-gpio",
+> +               .data =3D &loongson_gpio_ls2k0300_data,
+> +       },
+>         {
+>                 .compatible =3D "loongson,ls2k0500-gpio0",
+>                 .data =3D &loongson_gpio_ls2k0500_data0,
+> --
+> 2.50.1
+>
 
