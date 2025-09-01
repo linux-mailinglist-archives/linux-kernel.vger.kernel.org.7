@@ -1,161 +1,160 @@
-Return-Path: <linux-kernel+bounces-793627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43634B3D63E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:14:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFD5B3D644
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01F48176262
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:14:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 908E87A25C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E5A1E5B71;
-	Mon,  1 Sep 2025 01:14:38 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0CD1A9F94;
+	Mon,  1 Sep 2025 01:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v6gQ2nnB"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8105C34CDD
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 01:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4719B148830
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 01:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756689278; cv=none; b=NQik1MXmSy1vE5jXnSFDL+HY+iPuHetACQkpeK0ecuZ1R7Nl7SAooAR/F2fBP0i85jnYktFJ6iF9B5C03NSV6eypN3OuJlmiS/SlYHFLiR0vIIPpMLYqpD+wpQyJ+VKiHepDO1inXIR91NrUWF5CGkvVUGGEAXghYKGOD2tFG4s=
+	t=1756689543; cv=none; b=ZMpRrq315jIwsKMgLLGYF3hmQc551jVaxZA+wSgsQcQAM8nZoPzAyoLQ3m0GAcTlvtdBRlQa2cFHKKa/e/ojXq3ThjUMpRPKtq7KenPv/h+vbDhsYQLNn6iQMLuiay5hp0it63tXsZ9z3kVwiT9t4BGmzPJrQzLwi5+3unHGePQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756689278; c=relaxed/simple;
-	bh=wGnSLMZaFezFU7zx5VXAoGtIo7B2IWqstY6jXklPGRo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=moHuWh/FmYVz3ooEY4gGCOsKpd0p4X4BcmaKMiBDtNk2I2xNiT7xi+fk4+WD4/JZrv4KucHn+xDymDUs4utk7DSUi/8CgHaIVY3M9Mla/VTM5hDPGVnMh0bFq9fVBexopfJboXTiyxoJaDyeEiNRvVFvLEV+iNb5Y5zQZmWvHEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3f2a2b1357cso70842845ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 18:14:36 -0700 (PDT)
+	s=arc-20240116; t=1756689543; c=relaxed/simple;
+	bh=SrWMC/uDHrbbYZlysG9QCdPVTqrYW3gH2/qs616wf6w=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=CP6FcIjzhiluuEebtI6KZOnufxkOWVTqvk97kIQ8YSgMLUsR730LrVxpXQoStZxq3JOfBhTM0N4T7bD1/AbHhPtWFY90vQwbd9INje1/Bq5lm2OmUetj6+ClMzzQ2TZnlXUfCdve6yK7rPhKPkwBAyBoeL6UTwiEX7TJMtF3KKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v6gQ2nnB; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e96dc26dfa2so3200522276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 18:19:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756689541; x=1757294341; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbHdiemUVDkGhXF84LagmtCAtV3fnhhvE6fhQVYUm+4=;
+        b=v6gQ2nnBPKqUxEBYn5PXXJFwno5hA/gDyxKgWIErMKOR1sSNIaS8ChCPj5TPmISKea
+         1q1Xcdn2AsUBotWD6yR1gUOAdyHERjZl5hOdGTni6s+bkrUWrivtCOVATjaXFnk2+ove
+         k0824Syqv1LGBdnZPl/ai+sPYCjEHbKT9TfjL8nIzNocclYV/m826/ilP256A0idMtf5
+         7Pl5hu5u8y1Gf+EAZpvjOBr3/KnhCxBUE6QdZjGOwXpzYeX9HbgThy9jUA3afYvZsJN+
+         PB3a4NFKeZlHUYE8D8l/qpd5QOt3owoh1wdZXmnZJQxTGNp3AFEWXmU4I7lszNPvcrHA
+         YN+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756689275; x=1757294075;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CRDISHPcnvYCw538zs45yNx3LhdCKIvieoV/R0p+ymE=;
-        b=S28dLdfuNYzlIDxe4B4XNI8cT4zBCNxDuUbi/d5z0oUA01WqP4waVxZPpE7ZQUwefs
-         Cu9rpg8/5Q4qsigrHympdWlcm6lf3+tpk4ttVbQoCJuPAOhXYFWj5BiwBKbK+2+mlzv7
-         h9sxwyzppHzBV9JOiZd7iV8dgRTAKp1b/R6CDqVZ7IpUdxT8Lg0I4luP5de0f6NNd1IO
-         xYY1bgZlJxUkZc6H6k6ET7wDYBgNc+Yp4GzUVWTFGH0hktfQfKMOj5MCJ212LoeNrvgY
-         G219AS3OEmRdG4QjZbY8ejLq4L6udK7BWab9Tn8XDKWqFMjqJEgoVXmNDWLKt1WXjxLx
-         7IVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUj2esdO2TuIkmdW+BIyWpXH8gAIN5/eCeNEOu4dmLKPybr1XwD1gHx9Lbx111Ls+eA1QodCAAb8Lk0ZSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkJAb+fUa8LsZl2nYHS+LPJAb/hhCNT52ac+lWmK3UcS/je/Cj
-	PVRCNUitxjlwwwxRBY0XrpSEzJxVVhJYkpgWT1gfSqogW7dBJ5W99Ig2wz/UwbzkO+VAiTz9vOv
-	O/o3c3Cg9/iJK3SmGLVUQ2FHeFq130ijDJiutDUbvIOIrB2VQeDNmXTWfcDA=
-X-Google-Smtp-Source: AGHT+IGjoVkKy1PXvhx4JzTvKB4O5wWhvCeMZOvmDHMB2CNVTRoHX6zcsmjpAdoFQhhzU1nbJrZ4Ovba/OKLiiC5JENg1KIG2Pgi
+        d=1e100.net; s=20230601; t=1756689541; x=1757294341;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbHdiemUVDkGhXF84LagmtCAtV3fnhhvE6fhQVYUm+4=;
+        b=L/3WC2f7g610nbtNMkN3iwYicMgPr/h668eW0w3tEYGTJyi7VjEcUDFNN/PP+zU5Be
+         8YxcPUiNafMW4Ani2Cc7+oP18Ayd1mUOUAUiCJthK9k1QH2NkqkJDofp7j8TUzIXuW0n
+         /cgtTqo5RAF5YI522DY5lk+ndVdglkywbpDs6G99dRakgaBP401gVDRGaGwxSQJTIsMQ
+         oemhX/kLx7W7WB3X8lyCo4o00fFOLYR9C/0P4c5/Zl50lObMH6WKDfu6Dqm8YvW9SU9b
+         7qYCs3Gtbp6PLOz0OnsKCnVPbVzU46KeZcbdKZcIhEkEG1miToPvAkkJ4rUs6i+zJc0H
+         VtHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKLZkFvHoi+ig5NbhH6XVYWvG6gLlmgx2D/5GIqX0M0RvdH+neWCl1SIUqI62dV875s2ADnWyL/ORZ3Gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB57pM81Lf0ADCv689PJDVfusxxSEeyRnviA+4OJN8ZJYiwPDF
+	Rmp4o2vLP4o9HkADqj/HqNSGhxo8EbxKW0s7kYP3oUCfxm7PPANkgRJMwL2XKr1JiQ==
+X-Gm-Gg: ASbGncv4uikHcpAUMfe4Q5M5u0RxlAntnA6FFmgD59dEHhitbQ45vv6PcQkGwThqy7R
+	KmlBX9jA6iNK9aSJAe7v4rZLutE+V+AKP/ueoEUiULbCQF9iSukHBOblZ3Lb100JwuKgsvvJEX3
+	XB8ro0gNGZv1rpOKaRG2sxMK3i7UIijJfGPfVmvdPmVEtIVqdl8ESJxbbW6wR2q6CvYJTPdgo90
+	2gr2VKTa0cWw3SKE70grSWTF6c31GS7D0VhTfLpldB31d85prRUP+2L1FLVCTxqAWu8fBRHEdPf
+	2fGUl8lzGsH4c0ScMpnN8YVdHqgtFNkgIaPeTaN7iT1BAlVE6UyBTi9YnQxMgPj/oA4M0z2qmoT
+	9Igi7/0OICz9hjanG9mhYtdv9/HIzHr6siwGUjogTNHUOt1/uUb5MB66kTA/ylELg6c8eapqZ9F
+	I8WhSVQG43Z8Rzd8O/33cQ4go4
+X-Google-Smtp-Source: AGHT+IHtpFnzZtOd5EAUI0dfwmf7wzns/HcB/2UzQjdwkp5/vhvwOwhxTlB0OmsWdGR+CenhvV1BEA==
+X-Received: by 2002:a05:690c:7241:b0:71e:7a28:c0fe with SMTP id 00721157ae682-7227635ccbamr72100947b3.9.1756689540957;
+        Sun, 31 Aug 2025 18:19:00 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7227d8ca596sm11655447b3.42.2025.08.31.18.18.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 Aug 2025 18:18:58 -0700 (PDT)
+Date: Sun, 31 Aug 2025 18:17:02 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Matthew Wilcox <willy@infradead.org>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    Will Deacon <will@kernel.org>, David Hildenbrand <david@redhat.com>, 
+    Shivank Garg <shivankg@amd.com>, Christoph Hellwig <hch@infradead.org>, 
+    Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+    John Hubbard <jhubbard@nvidia.com>, Frederick Mayle <fmayle@google.com>, 
+    Peter Xu <peterx@redhat.com>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
+    Johannes Weiner <hannes@cmpxchg.org>, Vlastimil Babka <vbabka@suse.cz>, 
+    Alexander Krabler <Alexander.Krabler@kuka.com>, 
+    Ge Yang <yangge1116@126.com>, Li Zhe <lizhe.67@bytedance.com>, 
+    Chris Li <chrisl@kernel.org>, Yu Zhao <yuzhao@google.com>, 
+    Axel Rasmussen <axelrasmussen@google.com>, 
+    Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+    Konstantin Khlebnikov <koct9i@gmail.com>, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: Re: [PATCH 1/7] mm: fix folio_expected_ref_count() when
+ PG_private_2
+In-Reply-To: <aLTcsPd4SUAAy5Xb@casper.infradead.org>
+Message-ID: <52da6c6a-e568-38bd-775b-eff74f87215b@google.com>
+References: <a28b44f7-cdb4-8b81-4982-758ae774fbf7@google.com> <f91ee36e-a8cb-e3a4-c23b-524ff3848da7@google.com> <aLTcsPd4SUAAy5Xb@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a45:b0:3ee:7c7a:c89c with SMTP id
- e9e14a558f8ab-3f40085fa09mr136295675ab.14.1756689275689; Sun, 31 Aug 2025
- 18:14:35 -0700 (PDT)
-Date: Sun, 31 Aug 2025 18:14:35 -0700
-In-Reply-To: <672f1c3a.050a0220.138bd5.003a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b4f37b.a00a0220.1337b0.003d.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] INFO: rcu detected stall in schedule_timeout (7)
-From: syzbot <syzbot+8926d1b522e7194a4b3e@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, 
-	frederic@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org, 
-	mingo@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-syzbot has found a reproducer for the following issue on:
+On Mon, 1 Sep 2025, Matthew Wilcox wrote:
+> On Sun, Aug 31, 2025 at 02:01:16AM -0700, Hugh Dickins wrote:
+> > 6.16's folio_expected_ref_count() is forgetting the PG_private_2 flag,
+> > which (like PG_private, but not in addition to PG_private) counts for
+> > 1 more reference: it needs to be using folio_has_private() in place of
+> > folio_test_private().
+> 
+> No, it doesn't.  I know it used to, but no filesystem was actually doing
+> that.  So I changed mm to match how filesystems actually worked.
+> I'm not sure if there's still documentation lying around that gets
+> this wrong or if you're remembering how things used to be documented,
+> but it's never how any filesystem has ever worked.
+> 
+> We're achingly close to getting rid of PG_private_2.  I think it's just
+> ceph and nfs that still use it.
 
-HEAD commit:    7fa4d8dc380f Add linux-next specific files for 20250821
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b0a1f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ae76068823a236b3
-dashboard link: https://syzkaller.appspot.com/bug?extid=8926d1b522e7194a4b3e
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12cf5a62580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b0a1f0580000
+I knew you were trying to get rid of it (hurrah! thank you), so when I
+tried porting my lru_add_drainage to 6.12 I was careful to check whether
+folio_expected_ref_count() would need to add it to the accounting there:
+apparently yes; but then I was surprised to find that it's still present
+in 6.17-rc, I'd assumed it gone long ago.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/63178c6ef3f8/disk-7fa4d8dc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c5c27b0841e0/vmlinux-7fa4d8dc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9a8832715cca/bzImage-7fa4d8dc.xz
+I didn't try to read the filesystems (which could easily have been
+inconsistent about it) to understand: what convinced me amidst all
+the confusion was this comment and code in mm/filemap.c:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8926d1b522e7194a4b3e@syzkaller.appspotmail.com
+/**
+ * folio_end_private_2 - Clear PG_private_2 and wake any waiters.
+ * @folio: The folio.
+ *
+ * Clear the PG_private_2 bit on a folio and wake up any sleepers waiting for
+ * it.  The folio reference held for PG_private_2 being set is released.
+ *
+ * This is, for example, used when a netfs folio is being written to a local
+ * disk cache, thereby allowing writes to the cache for the same folio to be
+ * serialised.
+ */
+void folio_end_private_2(struct folio *folio)
+{
+	VM_BUG_ON_FOLIO(!folio_test_private_2(folio), folio);
+	clear_bit_unlock(PG_private_2, folio_flags(folio, 0));
+	folio_wake_bit(folio, PG_private_2);
+	folio_put(folio);
+}
+EXPORT_SYMBOL(folio_end_private_2);
 
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	(detected by 0, t=10502 jiffies, g=8469, q=411 ncpus=2)
-rcu: All QSes seen, last rcu_preempt kthread activity 10503 (4294959250-4294948747), jiffies_till_next_fqs=1, root ->qsmask 0x0
-rcu: rcu_preempt kthread starved for 10504 jiffies! g8469 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:26728 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7288
- irqentry_exit+0x6f/0x90 kernel/entry/common.c:197
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-RIP: 0010:timer_destroy_on_stack+0x4/0x20 kernel/time/timer.c:822
-Code: 80 e1 07 80 c1 03 38 c1 7c b4 e8 f7 63 76 00 eb ad 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa <53> 48 89 fb e8 43 b9 12 00 48 89 df 48 c7 c6 60 e2 ac 8b 5b e9 c3
-RSP: 0018:ffffc90000157a38 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: 00000000ffffb78c RCX: ffff88801d29da00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90000157a60
-RBP: ffffc90000157b30 R08: ffffffff8fe52d37 R09: 1ffffffff1fca5a6
-R10: dffffc0000000000 R11: fffffbfff1fca5a7 R12: 1ffff9200002af48
-R13: 1ffffffff1c42240 R14: ffffc90000157a60 R15: dffffc0000000000
- schedule_timeout+0x13b/0x270 kernel/time/sleep_timeout.c:103
- rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
- rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 0 UID: 0 PID: 6118 Comm: syz.1.31 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:__local_bh_disable_ip+0x44/0x190 kernel/softirq.c:329
-Code: 89 f3 65 48 8b 05 4c b6 5f 11 48 89 44 24 68 49 bf 00 00 00 00 00 fc ff df 48 c7 04 24 b3 8a b5 41 48 c7 44 24 08 5d 5b ce 8d <48> c7 44 24 10 b0 09 86 81 49 89 e4 49 c1 ec 03 48 b8 f1 f1 f1 f1
-RSP: 0018:ffffc90003597c80 EFLAGS: 00000282
-RAX: 63bb6213f70ec600 RBX: 0000000000000200 RCX: ffff88807d190000
-RDX: 0000000000000000 RSI: 0000000000000200 RDI: ffffffff81699312
-RBP: ffffc90003597d30 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffff520006b2fc6 R12: ffff88807d191940
-R13: ffff88807d19002c R14: dffffc0000000000 R15: dffffc0000000000
-FS:  00007fe55f3cd6c0(0000) GS:ffff8881257c4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000058 CR3: 00000000741c6000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- local_bh_disable include/linux/bottom_half.h:20 [inline]
- fpregs_lock arch/x86/include/asm/fpu/api.h:69 [inline]
- fpu__clear_user_states+0x90/0x350 arch/x86/kernel/fpu/core.c:813
- handle_signal arch/x86/kernel/signal.c:310 [inline]
- arch_do_signal_or_restart+0x452/0x750 arch/x86/kernel/signal.c:339
- exit_to_user_mode_loop+0x75/0x130 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe55e5b7320
-Code: 83 c0 16 83 e0 f7 74 12 50 48 8d 3d 4a 3e 08 00 e8 f5 8f f8 ff 0f 1f 44 00 00 c3 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 <83> ff 21 74 0b c3 66 2e 0f 1f 84 00 00 00 00 00 55 53 48 89 f3 48
-RSP: 002b:00007fe55f3ccb38 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: 0000000000000000 RBX: 00007fe55e7c5fa8 RCX: 00007fe55e58ebe9
-RDX: 00007fe55f3ccb40 RSI: 00007fe55f3ccc70 RDI: 0000000000000021
-RBP: 00007fe55e7c5fa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fe55e7c6038 R14: 00007ffe9f8ccd20 R15: 00007ffe9f8cce08
- </TASK>
+That seems to be clear that PG_private_2 is matched by a folio reference,
+but perhaps you can explain it away - worth changing the comment if so.
 
+I was also anxious to work out whether PG_private with PG_private_2
+would mean +1 or +2: I don't think I found any decisive statement,
+but traditional use of page_has_private() implied +1; and I expect
+there's no filesystem which actually could have both on the same folio.
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thanks,
+Hugh
 
