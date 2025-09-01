@@ -1,85 +1,114 @@
-Return-Path: <linux-kernel+bounces-794338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AF8B3E02F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:31:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7459EB3E02D
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC82B17B47C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084733B3974
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E7430DEAB;
-	Mon,  1 Sep 2025 10:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D2430E854;
+	Mon,  1 Sep 2025 10:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="yvKfEiOe"
-Received: from smtp153-162.sina.com.cn (smtp153-162.sina.com.cn [61.135.153.162])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="WShtJv3j"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E779213D8A4
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 10:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C1833F6;
+	Mon,  1 Sep 2025 10:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756722706; cv=none; b=mvDAE7Vcw1XB64J9qIMxu+wske0zEmfBSBYsDFpiBMNdN2aA/0oq2H0KtgFV/RePfS1m1bwlTEtWYgRke91/dGnvO1bhtfnGqOrZ4YGgDUnnPScK1351cdbVnVO9VweIoQlLDuWFYVho9Emng4yogQOeTo/Vs6hVFKZlpQbtH00=
+	t=1756722660; cv=none; b=rIKf94sKyfIQNgX7IEMxn4cXjuoEIkyyAHUPWpy1ZUO/ii/wz5CwKC2XH9ZMBO2kLAdA0dZnQMImqwdYfLoXQct0TxvtKFM0+k77pdHtxQIfEFqmxelYk12YD0x+5vTeI9mX42B+tg0wQLXI6Lk5nmEZg7esOJlB/+juwDlH20U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756722706; c=relaxed/simple;
-	bh=hWpH2tUFMzIxUSiCE6ERq9LKJUNR3bZ4105Qs5jaA0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YVy7CdQqBFJiVtWPNqOQRxUTbxfGbEJcN6UElo7sv8aKHYuEk2VQp2r5x/aMwGCtn/1Gtp0jgarHfgcrVaTYu+GrkH0lOsCHTO4rSCfV4argPk5LMiPvx6QH6B+SMIt0XUE4IdC1gcWLYXNMljJ4un2DP1a93uSE5lYG5n80Pb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=yvKfEiOe; arc=none smtp.client-ip=61.135.153.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756722699;
-	bh=05AtvCc7k+4lVyxmaQERwndqLXMgTJAgkCeFIgMeQdA=;
-	h=From:Subject:Date:Message-ID;
-	b=yvKfEiOe4/RyMfKhb/6iQFX7vDSAPU+Mse0Ni+ane19i9kp9+L6EIWkEi3bmx7VKx
-	 qySTttaHWvOk+VVhiTTGfdoSA8XoJBtWLD6+mOtcEEnL5326AACXb+bhFtqpXYx+mt
-	 pLPuIKm45RdJXnVBs/olXIstABzHN82Ih1dLpbOQ=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 68B575DC00003C10; Mon, 1 Sep 2025 18:30:54 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2021916816225
-X-SMAIL-UIID: 4FFAF1C64D0E43CB996E117F18996D44-20250901-183054-1
-From: Hillf Danton <hdanton@sina.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>,
-	jasowang@redhat.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Mike Christie <michael.christie@oracle.com>,
-	stefanha@redhat.com
-Subject: Re: [syzbot] [kvm?] [net?] [virt?] INFO: task hung in __vhost_worker_flush
-Date: Mon,  1 Sep 2025 18:30:42 +0800
-Message-ID: <20250901103043.6331-1-hdanton@sina.com>
-In-Reply-To: <20240816141505-mutt-send-email-mst@kernel.org>
-References: 
+	s=arc-20240116; t=1756722660; c=relaxed/simple;
+	bh=cdecocXK5fiAUTGZOd1KKjcZ3IM9twg/URFPgonHzuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NfQ+IUELZ55amE2+3zUjVprNdw31dbwOmzfYcS236yo8QKuOoFM1VcpzzjESkdnrJelgWJEXk/wY95G4DK/ta6yOxnUR00BG6+ylb307JupsyncH9v1zpn8sTtUKFuETQ2htbSDlqbXuvBEYuK3B3Im4FjbZzYf1MVpoH1zZ2wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=WShtJv3j; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cFlWz3Mvtz9tcx;
+	Mon,  1 Sep 2025 12:30:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756722655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/PBTt0C5Gx6hiojLqBDZVPUdijjHh91VEfxrRkHdGhE=;
+	b=WShtJv3jYxoIoUZHOpT3TftdlXPwi64e9k7p204qwWCaYpF7hboaRyxSstTH0Gt/N1Wpq/
+	AoXnPqp1Lly292ZxMP7aGqW/zeL6imj4B7QiInDdfBoskVZSh8bpYFN0hDKN4eWhvgjcKY
+	4WHXCiPUsv4OKBlTBfj1xtg6yV+pjSq4T9/qGGAugi6EPn/1FQKtZE4KqxttGo8TowB79M
+	AlF4Cg22WQMF9qVUC/eUVEdmmpCpbaiZPE5xj71kZhd7u2YHYLS2a4abYhy7qj8mvDnpxH
+	I2fELANa8yO7AHfvIqzEiPH/L/pCqeMDNiVOc1G17geiy79NhB9OBdXl6uABEA==
+Message-ID: <51daddc4-1b86-4688-98cb-ef0f041d4126@mailbox.org>
+Date: Mon, 1 Sep 2025 12:30:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1] dts: arm64: freescale: move imx9*-clock.h
+ imx9*-power.h into dt-bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>, Peng Fan <peng.fan@oss.nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ E Shattow <e@freeshell.de>
+References: <20250831200516.522179-1-e@freeshell.de>
+ <20250901032203.GA393@nxa18884-linux.ap.freescale.net>
+ <3a165d77-3e36-4c0d-a193-aa9b27e0d523@mailbox.org>
+ <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <05f7d69a-9c05-4b47-ab04-594c37e975eb@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: fd3b27795d06f701f7c
+X-MBO-RS-META: 95xap3q14g4r4zuc3ine3z3bbq36zd5w
 
-On Fri, 16 Aug 2024 14:17:30 -0400 "Michael S. Tsirkin" wrote:
+On 9/1/25 5:33 AM, Krzysztof Kozlowski wrote:
+> On 01/09/2025 04:22, Marek Vasut wrote:
+>> On 9/1/25 5:22 AM, Peng Fan wrote:
+>>> On Sun, Aug 31, 2025 at 01:04:45PM -0700, E Shattow wrote:
+>>>> Move imx9*-{clock,power}.h headers into
+>>>> include/dt-bindings/{clock,power}/ and fix up the DTs
+>>>
+>>> No. The files should be under arch/arm64/boot/dts/freescale/
+>> Why ? Linux already has include/dt-bindings/clock/ and
+>> include/dt-bindings/power directories for exactly those headers , why
+>> did iMX9 suddenly start conflating them into arch/arm64/boot/dts/freescale ?
 > 
-> Must be this patchset:
 > 
-> https://lore.kernel.org/all/20240316004707.45557-1-michael.christie@oracle.com/
-> 
-> but I don't see anything obvious there to trigger it, and it's not
-> reproducible yet...
+> Because maybe these are not bindings?
 
-Mike looks innocent as commit 3652117f8548 failed to survive the syzbot test [1]
+Please compare arch/arm64/boot/dts/freescale/imx95-clock.h and 
+include/dt-bindings/clock/imx8mp-clock.h and clarify to me, why the 
+imx95-clock.h is not bindings and the imx8mp-clock.h is bindings.
 
-[1] https://lore.kernel.org/lkml/68b55f67.050a0220.3db4df.01bf.GAE@google.com/
+Both files list clock IDs for the clock nodes, one clock one is SCMI 
+clock (iMX95), the other clock node is CCM clock (iMX8MP), and they are 
+both (SCMI and CCM) clock nodes in DT. Both header files may have to be 
+included in drivers, the iMX8MP headers already are, the iMX95 headers 
+currently are included only in U-Boot drivers.
+
+I really don't see the difference here, sorry.
+
+> Regardless whether you agree or
+> not, the commit should clearly explain the reason behind.
+Which commit ?
 
