@@ -1,59 +1,87 @@
-Return-Path: <linux-kernel+bounces-794610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CDABB3E3EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:07:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1732CB3E3F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D6CF7A651E
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C07E9480C25
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7EE186E2E;
-	Mon,  1 Sep 2025 13:07:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B077114AD20;
-	Mon,  1 Sep 2025 13:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD63014AD20;
+	Mon,  1 Sep 2025 13:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FDQ0GLiH"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964C84207A
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756732061; cv=none; b=hNShLAsMyI26tAa6rm3NRTzaMdHQmwewqGXWKR5x3r5fqwWWDMGIbhvbIr71pgHY/80RSznioRkmLkVnHKRuXM2yyX+AmJlo4HYMZrJzKII6aJ52N46sKVDaBO/b5ChLn5MU2CTiikDXUjhO8Y5oUAfgvnLxGrQp2lMkEznP/Po=
+	t=1756732110; cv=none; b=bzjqiV5GNOa6hxACFa7knCtTPml3rhjQCJmA/UYhdWi7vOZ3v0p69WkiLqZKNL7+N81CQIfmz0fDdHsEferXWkY6Ed1JBRZbX2/qv0QF4JEQ4J7hUwaQFWKG23+jh1JNPvdaX10JHhxPQKqYceicIlYruYzD+q2qLFqd39Pjl2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756732061; c=relaxed/simple;
-	bh=QbFZe6u3Sh8BhmigZmgR8XcBtUZ7qQ38Uirq9NACsj8=;
+	s=arc-20240116; t=1756732110; c=relaxed/simple;
+	bh=Gd3KXw1QQlS7MLd0apcsH+QWeJY2pnkwbuUIF6wyLYg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=geYiSN0cBzbvJJ/fcuccW3X2s3/+ARYlUgvlOzuvVri2H8EkMQnHg7ttPptvCZcLV269kp/RfcNG1FGKMFU8shYuW4SChpgj5k/09Lem+iz67Rm1sgQawxiVTPc3tzwXC/NYLp2bUZGKM6ds2cZdlpH+dufOcTh3DFGMl5HdGbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B37A316A3;
-	Mon,  1 Sep 2025 06:07:30 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 314873F694;
-	Mon,  1 Sep 2025 06:07:37 -0700 (PDT)
-Date: Mon, 1 Sep 2025 14:07:32 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Luo Gengkun <luogengkun@huaweicloud.com>, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
- during preempt_disable
-Message-ID: <aLWalJm3cdfBS70l@J2N7QTR9R3>
-References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
- <20250819135008.5f1ba00e@gandalf.local.home>
- <436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
- <20250829082604.1e3fd06e@gandalf.local.home>
- <20250829083655.3d38d02b@gandalf.local.home>
- <aLIFRHcsEo2e2GE7@arm.com>
- <20250829181311.079f33bf@gandalf.local.home>
- <aLLQ-43Ll8rF7kon@arm.com>
- <aLVt30-Lc9lesqS6@J2N7QTR9R3>
- <aLWRUTFeumwr1--E@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GI11HsaqamrNWwcWhTpWvoqXRrMvwEpnwaDcsT8zR7s+RbiZkA05CxWzyE0UU9/edOX0MbgGIoq4QaUEUslM2CWJn56E3yR9ocJa+4+kW0gPUnOFIrvHx6uEFcujYNxtZ277EKNxY7TvpDeP9L0LjIcF0WCSxRxDAuMJ+pz2Q4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FDQ0GLiH; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3d19699240dso1499347f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 06:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756732107; x=1757336907; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DaBqxA3nVfiucrNs4TUyEScLqswLf3VZ8Gyi43Fij2o=;
+        b=FDQ0GLiH5ReyyfY8Z0hh47RtOXqMZI3pEFd1osVNuKWJa0/QYYNQGnCSZ4QY51S/WC
+         YQkfniGAyaks7U5/23sYPiNn7QKs5icyabCtITVXZ62DFGrGvQ8g4xKisxoEbtJIHHoK
+         1dFW5yNW8QImb4EJmM5DDYiMN0G6yneRs4pubkTO9CU9ISLTibIIx7eHzJBDD2AOJzNv
+         8byGD5aHihB7ZXE57wb+xoc6mQ0pt1S8XwpF2M5BCPZqaIVoJAoBujkQCzYSt1Ma5nVG
+         eFerR6n+CdLUmgLlQzgNPe16+gVW8SoLOA/A6GfAxC+jOZe8e47P5LoFWCEXzBAxzzTe
+         epow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756732107; x=1757336907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DaBqxA3nVfiucrNs4TUyEScLqswLf3VZ8Gyi43Fij2o=;
+        b=nwD5Hrja9DDa0G8806/6pof2phDu5MIFoPGhxidyveZoUJH419F0Qfe9UYkmEGN5Ig
+         9vN0GqC++PhLUbZ+6oWaBekYT1NohObKMPTrn3Kdju1G67C/tIj8aThry/3NJdoSTw35
+         IaUq05d4ssDdpRucK6n+ZwUjP1tUH5O4iV8xaJL8Q1Sj2n5A+HWbvLfkuthjjHBEMyvl
+         FzobFhA4/RCc/06CvYYsXm46AulZOfKOJnoDPg+T2jEDbesDAzUhQR8zmPbO7QbxRTBm
+         DNtQkb7fvPjY2x434sJMQYxkBl4C9o0JeFTA2UR9yvdkQvotZmrIkc41ThdE/Fy9oJ99
+         2LUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOuGYhN5LBSrOldomQ6oOJG/9L4GY4g5p1XirbpgviEbRNeeKZx77SU7i3c2x2nhVkDK4DHmKhGDIPBN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpk1G2io5HTyTbqGZ0ZoVFwExYVh7XE0ZIbjPJ6pwoC7aA3viT
+	dR0bfrBANTREcTFCAZJVYzTCMKEiWOpkcVadFjsSW5ip1wg/nP13k3PFdqY7dUthpC4=
+X-Gm-Gg: ASbGncsXf+6E2SrE58TDl925nsCn6M+yec0Xx9qGtpctb2xKEUZrdctZd7f86rgu+aC
+	2dOqN2Umx69h0F0P92b/GynDbeNiUZDbdRFiQIbTnbm2pSvdMQR1iOhsaUB9bcwgR6aKuy3cFly
+	B7lGmQ8RVrV6YTyWQPYHI+vYXQ4p04510H2gpzSg1YKd7jl6y83wS1dFFjEJzaYnLTGGpqZ91xQ
+	RPtAg2VuC9ODlyd4sjIu/sRoGQCM4qeysBSNEHy/PucljV/hIjqmo2KdN4z3EiveyKAIuhnJWr3
+	7ebV6tfL8B0XLpD+JKEgUgcijNB0BRfgpnPyFHx2K/K1pETlim1GAEosyP/UexLLuCDzS/dRokS
+	drxkiYBMBwM5X2wREghIIa3+gYJoWRSCxycjEQw==
+X-Google-Smtp-Source: AGHT+IHoO22NHnLmGCEAuykdmrXfYz5c61cYkp/gae0iHULEguoVzXfknO0ldVQ3ZbksBt1rycB8NA==
+X-Received: by 2002:a05:6000:26d3:b0:3c8:2667:4e25 with SMTP id ffacd0b85a97d-3d1b26d6cd7mr7464741f8f.31.1756732106826;
+        Mon, 01 Sep 2025 06:08:26 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cf33add294sm16137899f8f.29.2025.09.01.06.08.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 06:08:26 -0700 (PDT)
+Date: Mon, 1 Sep 2025 16:08:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
+Subject: Re: [PATCH v2] staging: iio: adc: ad7816: add mutex to serialize
+ SPI/GPIO operations
+Message-ID: <aLWaxoBLEVWlfzN7@stanley.mountain>
+References: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,115 +90,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aLWRUTFeumwr1--E@arm.com>
+In-Reply-To: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
 
-On Mon, Sep 01, 2025 at 01:28:01PM +0100, Catalin Marinas wrote:
-> On Mon, Sep 01, 2025 at 10:56:47AM +0100, Mark Rutland wrote:
-> > On Sat, Aug 30, 2025 at 11:22:51AM +0100, Catalin Marinas wrote:
-> > > On Fri, Aug 29, 2025 at 06:13:11PM -0400, Steven Rostedt wrote:
-> > > > On Fri, 29 Aug 2025 20:53:40 +0100
-> > > > Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > > > valid user address.
-> > > > > BTW, arm64 also bails out early in do_page_fault() if in_atomic() but I
-> > > > > suspect that's not the case here.
-> > > > > 
-> > > > > Adding Al Viro since since he wrote a large part of uaccess.h.
-> > > > 
-> > > > So, __copy_from_user_inatomic() is supposed to be called if
-> > > > pagefault_disable() has already been called? If this is the case, can we
-> > > > add more comments to this code? I've been using the inatomic() version this
-> > > > way in preempt disabled locations since 2016.
-> > > 
-> > > This should work as long as in_atomic() returns true as it's checked in
-> > > the arm64 fault code. With PREEMPT_NONE, however, I don't think this
-> > > works.
-> > 
-> > Sorry, what exactly breaks for the PREEMPT_NONE case?
-> 
-> This code would trigger a warning:
-> 
-> 	preempt_disable();
-> 	WARN_ON(!in_atomic());
-> 	preempt_enable();
+On Mon, Sep 01, 2025 at 10:24:45AM +0330, Mohammad Amin Hosseini wrote:
+> @@ -200,7 +204,9 @@ static ssize_t ad7816_store_channel(struct device *dev,
+>  		return -EINVAL;
+>  	}
+>  
+> +	mutex_lock(&chip->io_lock);
+>  	chip->channel_id = data;
+> +	mutex_unlock(&chip->io_lock);
+>  
+>  	return len;
+>  }
 
-Ah, you mean in the absence of pagefault_disable()..pagefault_enable().
+Unrelated, but what is the point of setting chip->channel_id to
+AD7816_CS_MASK?  The only time where that is used is in
+ad7816_spi_read() when we do:
 
-The page fault handling code uses faulthandler_disabled(), which checks
-whether either pagefault_disabled() or in_atomic() are true, and aborts
-if either are. Given that, using pagefault_disable() should work fine on
-PREEMPT_NONE.
+	ret = spi_write(spi_dev, &chip->channel_id, sizeof(chip->channel_id));
 
-> More importantly, a faulting __copy_from_user_inatomic() between
-> get/put_cpu() could trigger migration.
+So it's something in the hardware spec, I guess, but it isn't
+documented.
 
-Yep, in the absence of pagefault_disable().
-
-> > > > I just wanted to figure out why __copy_from_user_inatomic() wasn't atomic.
-> > > > If anything, it needs to be better documented.
-> > > 
-> > > Yeah, I had no idea until I looked at the code. I guess it means it can
-> > > be safely used if in_atomic() == true (well, making it up, not sure what
-> > > the intention was).
-> > 
-> > I think that was the intention -- it's the caller asserting that they
-> > know the access won't fault (and hence won't sleep), and that's why
-> > __copy_to_user_inatomic() and __copy_to_user() only differ by the latter
-> > calling might_sleep().
-> > 
-> > It looks like other inconsistencies have crept in by accident. AFAICT
-> > the should_fail_usercopy() check in __copy_from_user() was accidentally
-> > missed from __copy_from_user_inatomic() when it was introduced in
-> > commit:
-> 
-> I was wondering about that but some code comment for the inatomic
-> variant states that it's the responsibility of the caller to ensure it
-> doesn't fault.
-
-I think you mean the kerneldoc comment for __copy_to_user_inatomic(),
-which says:
-
-| The caller should also make sure he pins the user space address
-| so that we don't result in page fault and sleep.
-
-... and I think the key aspect is to avoid the sleeping, and actually
-taking a fault (and failing the uaccess) has to be fine, or the _nofault
-API (which uses the _inatomic API) is broken by design.
-
-I think the bit about pinning the address space is misleading.
-
-> Not sure one can do other than pinning the page _and_ taking the mm
-> lock. So I agree we should add the fault injection here as well.
-
-Cool.
-
-> > ... so there's a bunch of scope for cleanup, and we could probably have:
-> > 
-> > 	/*
-> > 	 * TODO: comment saying to only call this directly when you know
-> > 	 * that the fault handler won't sleep.
-> > 	 */
-> > 	static __always_inline __must_check unsigned long
-> > 	__copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
-> > 	{
-> > 		...
-> > 	}
-> > 
-> > 	static __always_inline __must_check unsigned long
-> > 	__copy_from_user(void *to, const void __user *from, unsigned long n)
-> > 	{
-> > 		might_fault();
-> > 		return __copy_from_user_inatomic();
-> > 	}
-> > 
-> > ... to avoid the inconsistency.
-> 
-> I think the _inatomic variant should be reserved to arch code that knows
-> the conditions. Generic code/drivers may not necessarily be aware of
-> what the arch fault handler does. The _nofault API I think is better
-> suited in generic code.
-
-I agree. In almost all situations it's better for code to use the
-_nofault API.
-
-Mark.
+regards,
+dan carpenter
 
