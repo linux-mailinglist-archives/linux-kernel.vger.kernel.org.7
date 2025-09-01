@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-794993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E32B3EB90
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D4FB3EB8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF901884B5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:51:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47FD216C4F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB752D5927;
-	Mon,  1 Sep 2025 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206B421B9C1;
+	Mon,  1 Sep 2025 15:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anQyuVvd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ON+bbF07"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE94CAD5A
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E494D202997
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756741877; cv=none; b=fIh4cAKziRR5AbKr0QXove+fWbgrF/7mYbY6t8kIvgoWxTSy/hLj7EjLXOAiZ9w/7ydpUZeVGUfURG/p6FLE6Y/8tvWC9REwn4L8g+uB+Q4+HhwVIhQfgN0kqNLFegGMSCJoEkVIiqXCgSY5Cz5N9f3heEzP1CbXPyaPMRmJZVM=
+	t=1756741930; cv=none; b=a4js+6YRgvlwCPjxdjs3WFwzBGP24BCyg8uBpTF619L1nYymMlZ3Rc6fBu7b7fmFZZhUZPzOpt+SdGHIbCMZEtZTEYE1JeV6wUhyMeLRNHRfgXunPdMPhV1XSced8mbFaDNq40KUVLKpes289ZVChU9BiiuImheL2zWgrHRNg08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756741877; c=relaxed/simple;
-	bh=+d4/imJUBiI3Xursn4W/oBtcM8JHT5OMCHlOTWaPeoA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rdKMqMs2sX1uQHDgIZKIy4G00eVE/o/wLeoliZs6olEHVomWYtAz7WQiYa65OqrquFByn2v/PcEQ1NZROaaX3ixeyJcz82T0z1G4g5NSJcjAz+uMzTUS5fMg4u0m85bbWsuS4jz1wYe8HMFSXqNVExxpLecLLRv7d8KOx9GtmNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anQyuVvd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0227C4CEF0;
-	Mon,  1 Sep 2025 15:51:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756741877;
-	bh=+d4/imJUBiI3Xursn4W/oBtcM8JHT5OMCHlOTWaPeoA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=anQyuVvdGy5pkqnFSRSjk+XpK46Zk9Se9/r+byAPbSZYqL64rFOO29O7uxeWWIG56
-	 zX1b97FoWVQVs7guBPkYeUdPz3mxl+XmCg+QBGFeK8VhQnSK4mMWWnyv2RbMOwRKbR
-	 3eV0OvB/D7wOKgLqipJpO1qTjHWzeWD4dkWBKQMTEbcpDFMfBUkXhVK2/xxkkBrq7Z
-	 xtWnzbARjGbUAx0OsNeD9J68ZtaSN3H65cMPUXLCausjKHSrr/LW1eSx9WJNffb4Id
-	 b5clSzOptCyyBIuzomJ2IXI7dlhqm4U6U4gNffA7Q+/V8ABwJharudZIUlrK1Wd0ym
-	 7dQZzltzGPpiQ==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Mon, 01 Sep 2025 17:51:13 +0200
-Subject: [PATCH] nvmet-fcloop: call done callback even when remote port is
- gone
+	s=arc-20240116; t=1756741930; c=relaxed/simple;
+	bh=nepHmhe2my1/TS0/miMgoTId2J0/ckMsAUxgocThFS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K3lsh+OC7xzp5/fJxzcAgcAM2+9wDrGh+xKBqJI8+22wrp4nDWqZdz8dw5NwngH6A8U4miydETL9isryq39YUr9VaU6EkgsN1O8z8I9irizGWgGTRXApxkdY96N0VeFozWdcq6khPLP+DBcs6jYhHfN5LP1aHUDO+24xspN3OPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ON+bbF07; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b869d35a0so13045915e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756741927; x=1757346727; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zvgVg4wMFIPRhYvz1pnYCKruwi4dt6JJzYxl+/aO7gk=;
+        b=ON+bbF07pWk/p6YrAnZNPoBxJszxyGIh2IEYXkEfABbBTdDXcDL/vRyQFQuxkBkIGk
+         viOJNhVaHQPH+mSFCsD7R3Je1X/O/Va18+IEMHxxCIvFxNBYvWkP0/CFRWnlobBS1+VV
+         shV/4Vp/WCcuVxUktMGMd5Pbs55mACESbl76qVycLC5ZRuVXa8fBmVSNWxq/YfUX/OMS
+         AIAJ8Fzob+NvKH+jI+TP8DEvJLpzBvfS7GgsOrnvbqcIrIGk+9OLwHxJjmYfkWAyGmDC
+         83vHHcOiWKYBBcfWx/HfPPJjxZyDyrePqOpTAl65w7bR1Wj/HgK4XxpMEPvpWpt3x48P
+         11Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756741927; x=1757346727;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zvgVg4wMFIPRhYvz1pnYCKruwi4dt6JJzYxl+/aO7gk=;
+        b=ipHY7Y43cyEDUCz8cFzm0YnnYUz1Tq5eq1EXduJmDZS70jbRGHOM4MGah4Zpjg9f/m
+         2RC7LotXEAyb8Z7nAbJFhrHxWsfTuey+hqRBV0fHa1xv58gd2BpdFKEOXe2vr940JwQk
+         vpDXRU6yJNzUS4FKwyMh+Lh0q+sLIol1bekJ209zjDZaGC6nFKifcKL7WkvZBsly23rs
+         TB/fixejMaCwvSy2ttHFc9T9mOx58eXHc3MjfoFWw2+buuStlIstW7xEOPf0duT2bNSA
+         9tyt5OjamVfJB+60UIHCmcU5NEu/kNCMEuAfUVaclyxujgmiAtoJN/C5zkWAc/7OF/32
+         w2xA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0pK1bfQ130YDEo2kPi/Y3Sc+Lp2mXNDkFs4Go2InrE1a3fUnbx06eZiCbMECiVfALY4OzPmsxF6VKxHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFXaGVWTImqb2oI2xiODFN642nr1pZpnBpDgGYcDicKUKS4l1R
+	w4D+FtGXC+fcuWWkZghBckE5OJod7KcG8MCSNrcUBxekDhXjUbTdWn6Ui8Bwr/dnBbc=
+X-Gm-Gg: ASbGnctKIeVKvOVDaqq/fw9VOylw5xjSn/hhWY4YXMyNBq9jih2a4YzcA1kc3JjcAZ3
+	39msQ/0bVslIyo9/pOp3aTQrnAUV4WC2DaQBX9FhJeCeH7lIIfYEY9Xx+5v76V13ncQEPcL3KM0
+	EIxBsWabDlI8u6e4r5f+A3/Err7QlmcUFhrbBi+e3tYBOXNolP5oPv8HoTApOiqqt2tKBujy3j4
+	8gwSB2uH4cMjCITyeYO32R3COyFbiIN6XXF2Xl+nuG0/YjGAlqV+6FLmI/REsSqLUJmNBWYnkOb
+	R898goQ0iENmYlXPh6D40cWfTDMtJXLpOy5Ms5NaCdbstBcVglx9v9GdR/Ijg22Q3+f3oj4cn+E
+	6jsr1AOuu5QOQKSfRKIJzS6ciw9AotiwwoYHWoGpCP6vGHRYGlq4mdAajpP5JwHAFiNmQd1MKRG
+	L9wKd98orFF7FEQySLLD4=
+X-Google-Smtp-Source: AGHT+IHcKqULDsn+c4qoRR0F28BE0OPsYdJT4mw5UiGUiMMns+V2I9JG1CinXmS84aORcGRwIQn16w==
+X-Received: by 2002:a05:600c:4fd6:b0:458:bd31:2c27 with SMTP id 5b1f17b1804b1-45b85588134mr65644725e9.23.1756741927286;
+        Mon, 01 Sep 2025 08:52:07 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d60cf93cb2sm6373216f8f.12.2025.09.01.08.52.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 08:52:06 -0700 (PDT)
+Message-ID: <33e20d27-eb63-4a9c-b459-77021fb384db@linaro.org>
+Date: Mon, 1 Sep 2025 16:52:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] platform: arm64: thinkpad-t14s-ec: new driver
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
+ <20250831-thinkpad-t14s-ec-v1-2-6e06a07afe0f@collabora.com>
+ <899b2e79-572d-44f3-8dff-0d301f254b1a@linaro.org>
+ <wyv3ounark6jccvhj4vp5qxgmn4bleq6hsqinr4s6r32kld4xp@lhbmetuhydns>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <wyv3ounark6jccvhj4vp5qxgmn4bleq6hsqinr4s6r32kld4xp@lhbmetuhydns>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250901-nvme-fc-fix-leaks-v1-1-3ae0aa88d5e5@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPDAtWgC/x2MSQqAMAwAvyI5G6jV4vIV8RBrqkGt0oII4t8tH
- odh5oHIQThClz0Q+JIoh09Q5BnYhfzMKFNi0Eob1aoC/bUzOotObtyY1ogVaWOpbGpDI6TuDJz
- k/+yH9/0AmPJ1cWMAAAA=
-X-Change-ID: 20250901-nvme-fc-fix-leaks-4a25ca3875ab
-To: James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Yi Zhang <yi.zhang@redhat.com>, Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
 
-When the target port is gone, it's not possible to access any of the
-request resources. The function should just silently drop the response.
-The comment is misleading in this regard.
+On 01/09/2025 16:20, Sebastian Reichel wrote:
+> You can find it here:
+> 
+> drivers/platform/x86/lenovo/thinkpad_acpi.c
 
-Though it's still necessary to call the driver via the ->done callback
-so the driver is able to release all resources.
-
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Closes: https://lore.kernel.org/all/CAHj4cs-OBA0WMt5f7R0dz+rR4HcEz19YLhnyGsj-MRV3jWDsPg@mail.gmail.com/
-Fixes: 84eedced1c5b ("nvmet-fcloop: drop response if targetport is gone")
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
----
- drivers/nvme/target/fcloop.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
-index 257b497d515a892a39da82d2f96b3fa3c6e10cdd..5dffcc5becae86c79ef75a123647566b2dfc21f6 100644
---- a/drivers/nvme/target/fcloop.c
-+++ b/drivers/nvme/target/fcloop.c
-@@ -496,13 +496,15 @@ fcloop_t2h_xmt_ls_rsp(struct nvme_fc_local_port *localport,
- 	if (!targetport) {
- 		/*
- 		 * The target port is gone. The target doesn't expect any
--		 * response anymore and the ->done call is not valid
--		 * because the resources have been freed by
--		 * nvmet_fc_free_pending_reqs.
-+		 * response anymore and thus lsreq can't be accessed anymore.
- 		 *
- 		 * We end up here from delete association exchange:
- 		 * nvmet_fc_xmt_disconnect_assoc sends an async request.
-+		 *
-+		 * Return success because this is what LLDDs do; silently
-+		 * drop the response.
- 		 */
-+		lsrsp->done(lsrsp);
- 		kmem_cache_free(lsreq_cache, tls_req);
- 		return 0;
- 	}
+That'd do ;)
 
 ---
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250901-nvme-fc-fix-leaks-4a25ca3875ab
-
-Best regards,
--- 
-Daniel Wagner <wagi@kernel.org>
-
+bod
 
