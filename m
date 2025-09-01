@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-794060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5FCB3DC48
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:23:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5288B3DC56
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C7C3BFCF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F713BFC44
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AA32F362B;
-	Mon,  1 Sep 2025 08:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3A22F39D3;
+	Mon,  1 Sep 2025 08:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dz8uyAzg"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="jRM9AHAH"
+Received: from gallant-hafgan.relay-egress.a.mail.umich.edu (relay-egress-host.us-east-2.a.mail.umich.edu [18.219.209.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EEA2ED868
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 08:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE7C270553;
+	Mon,  1 Sep 2025 08:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.219.209.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756714999; cv=none; b=MBlpMhd8+S6hJgjzRa4YoqoPWj5M97igbaIN+7eTiOgZroQ23NF9hdvKGj1dO4iPbZQCWUTmb3BEV1rcx/Xxo6QvVS465cPq8MtKoSR+Ab1uiSPdsypzVK5bZ6h18+23AeSwbq+op/7R03KMHlnedDH9EhYiIkA5OXWGMnLRqoM=
+	t=1756715266; cv=none; b=XMSN86H5Jzp9vBxA5rcyMtPbvFTXOAHC/yCL6yn44tp+p4CJBGnVAO29BtLYWSvZ+JqcEH4sV1Tj8gn7y7Lo1t03uMbWO/Ges/y+BSAzOTNf+V/ZzahZz66NzlRcUU8KIlsxa0UPnoIip45YYIrxzex8Z7czCa3NtHBm9I3vLbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756714999; c=relaxed/simple;
-	bh=1GRc8xrxN9zGX5wz5BhvKOO2j5zrzx4fFnKG/lVnDdA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J8cb4qLXhrNTEVCHF7TJEIJSB2I4nhSSm2olwqWV+Vvr350zT6SJYhIfNPL/Md2JTbGPnEJ6SeRXOW9sZyvJUHrAtyoJNmqQn6e/jX9iNBJjgH56Z9c2Evw977OrPWH9eQSqeOaKBTZXdrcDvD5oDOoCq2IpDnA/ula63RgIyyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dz8uyAzg; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f6aef1a7dso2422508e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 01:23:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756714995; x=1757319795; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K6bOX31TOnXa3mSpUgWZIksoOSQJIo6oigebcMiGpVk=;
-        b=Dz8uyAzgarZvRBDqWWnP+o0U86ka5hRrkwgV0NlTvB1H4KaavPr9OXtifRWGyBpZhd
-         4RTS1Ii3q9rZPzEXv7pjrIuX0WiyIwNmB0j8UYGYKgzC0kYLccqV3fHDCbNXMZDtQjmo
-         gQiwpG28ZWd1RO5BUKErdyIHmeplvRsTKAfX4KMeT2vNdi35UdCczvAp47o6gXIuRrEW
-         4hAH1yjoEa5fO48bu4rAIl6QTIJptC9r251HxtiEPzW5fHQXTJ+LPtnTCykdnAqZLHG/
-         cu9lewA9vJ5uQ6U/VqsrNIjybREuo4VgvovYZorEknE1YhCNECxrNloex32z6/yU791v
-         /f6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756714995; x=1757319795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K6bOX31TOnXa3mSpUgWZIksoOSQJIo6oigebcMiGpVk=;
-        b=PEh9daASmlcjyYvxcDzD/Y+PgI7ForNAF08YNL6YeIgHXeNJjSkrH9jdeCxIzCIpMV
-         yysoek8WgK6fnp399/dyuwEc4Fy9arnO1XlrYTRfKolUiVlBt1yoyXF7HF4BIMvIUsAb
-         6KuKLMDbYp2KI9CD/OqMn/DaW/vnro8BzjvcoooC/twH9nNU55xjRFP3j9mjvZDMukVn
-         hjTS2jZOLf5kBxtNhUEuoLLpetDMpraMM00X3jIgUlblhLv+QGonH7qAuk5OFxRTXGXn
-         XfrfiadxLvCwOnJ76lygDLFER/AYZWltnYvwI73Ix4P46QIAwHUaYrpOf2gh7P6EM9Op
-         Iqbg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/xtE/keXEqldtVxf2TsMFPaTR7j1Mu02ddjRED1nTHH5EcisjvLzPsxh+Y3nks7m71kshzctyYE035E0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu2GGsfIAzyxrPmD+1lYk9QoGhTmgRp4eNff1N5CLkjfKaZciQ
-	o9rq1PIEG+UR3QnzZTJ68ld79hS97mi+AVV+mEYhoADKVaRFJszY/dzp3tZVvYZFSifOH0ueuaB
-	HHlSMbC15AKnoOXYhKDmWk5+WYhG2G/4CoDa0Igmfmg==
-X-Gm-Gg: ASbGncv3SwOURWwJ5vLSQCNc6ODNDapC1lputh+l2woEekIgCkcoOV5jNHjjn3njk80
-	iYXAnL+EU2IQSXxRegDG7ub714dkvqKVll+xV2H1rXHVYIuMQAOtKhXRN+kP90+8cr386ZLghfL
-	2U47A5gG8f6RB3EL9cGtmbglSCWQIu8RwuiceH0RXW9x9pbdJARVTKaQES2HbnZobC9VQEcqTnr
-	uVoynsYrjlj7uzNmw==
-X-Google-Smtp-Source: AGHT+IHVwIASRqXdiBtabwQpeTaLvx/MwfpuhWhcvrvqvY8VLXWEY8BeiyfCJbCTfLb/GJ7BJFbdc5bUK1izSWZcw90=
-X-Received: by 2002:ac2:4c47:0:b0:55f:6186:c161 with SMTP id
- 2adb3069b0e04-55f70a0081cmr1669470e87.49.1756714995167; Mon, 01 Sep 2025
- 01:23:15 -0700 (PDT)
+	s=arc-20240116; t=1756715266; c=relaxed/simple;
+	bh=9P9+FyI8xq/2ozOIpwXHRDObXjdq2VmTxdKGBYuWN4A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=PU9b8vZcx8T/SkFQNwlP/O75wfqvvyuuGA/FQ860yr8eQJqT4VJufS3FJz0YO5X4h5h+jnlQX1c6CYs1zNLjRQ2xXAvIthIzeKI3+qq3oXse1FaZQNafelgzvlEhNVlytklHpZGWOMbHWwRxUdNDCno18NCF4asdObEgGf6HaRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=jRM9AHAH; arc=none smtp.client-ip=18.219.209.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: from sizable-crocotta.authn-relay.a.mail.umich.edu (ip-10-0-73-123.us-east-2.compute.internal [10.0.73.123])
+	by gallant-hafgan.relay-egress.a.mail.umich.edu with ESMTPS
+	id 68B55870.24BB71E9.678B814A.35136;
+	Mon, 01 Sep 2025 04:25:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=umich.edu;
+	s=relay-1; t=1756715115;
+	bh=RZ3wqzNBJwv9fBwOlExW+J4uoepVcPqX6Z4vI7NvJiA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To;
+	b=jRM9AHAH1zG121BBZRMcl32CDkAVErDEUIFFOCP3qjgfgCg5QKQ8kM9y+geuX6Bjt
+	 BqengFOs3GyTV0LdkjqmkwR1wJmshKaF5Q40mmfPeYFBgF6pnyydoTGuP3jbQyWrsB
+	 WRQoLGe7iqwuJhBaxqcNu80lJZYtEOBPZaUvIdekXOgL4Dkbr42bnCy2lEZMQDPdD1
+	 xlL+x9RwpeROp3JJPNle9p4XMZp5S2oYCCzPgzN6o53qVupWT1R6Y++Afjp9IiG35S
+	 JpYq7yc91HikpS1DTV2zUFQblhxWCj+8mB9vV1bAgMDpmLQDq+CcptZKZWWDkY1nv8
+	 PSC/0Tst8UwPg==
+Authentication-Results: sizable-crocotta.authn-relay.a.mail.umich.edu; 
+	iprev=fail policy.iprev=73.110.187.65 (Mismatch);
+	auth=pass smtp.auth=tmgross
+Received: from localhost (Mismatch [73.110.187.65])
+	by sizable-crocotta.authn-relay.a.mail.umich.edu with ESMTPSA
+	id 68B5586A.3089EBF7.6A2A8015.1374137;
+	Mon, 01 Sep 2025 04:25:15 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250901073224.2273103-1-linmq006@gmail.com>
-In-Reply-To: <20250901073224.2273103-1-linmq006@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 1 Sep 2025 10:23:04 +0200
-X-Gm-Features: Ac12FXwOPFvcHfnOB3USWBMbhSfcVlBY0l39KH-IS_467sKxEs3coXt0xb6oRRE
-Message-ID: <CACRpkdYVCU3Pb2u3r_G0BY19mbF8m1je696RNP_49rU7G4PvUw@mail.gmail.com>
-Subject: Re: [PATCH v2] net: dsa: mv88e6xxx: Fix fwnode reference leaks in mv88e6xxx_port_setup_leds
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 01 Sep 2025 03:25:10 -0500
+Message-Id: <DCHBJ8PJ79FK.B4J91QH6FC7B@umich.edu>
+Cc: <fujita.tomonori@gmail.com>, <tmgross@umich.edu>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <dakr@kernel.org>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: phy: use to_result for error handling
+From: "Trevor Gross" <tmgross@umich.edu>
+To: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
+ <rust-for-linux@vger.kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20250821091235.800-1-work@onurozkan.dev>
+In-Reply-To: <20250821091235.800-1-work@onurozkan.dev>
 
-On Mon, Sep 1, 2025 at 9:32=E2=80=AFAM Miaoqian Lin <linmq006@gmail.com> wr=
-ote:
+On Thu Aug 21, 2025 at 4:12 AM CDT, Onur =C3=96zkan wrote:
+> Simplifies error handling by replacing the manual check
+> of the return value with the `to_result` helper.
+>
+> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
 
-> Fix multiple fwnode reference leaks:
->
-> 1. The function calls fwnode_get_named_child_node() to get the "leds" nod=
-e,
->    but never calls fwnode_handle_put(leds) to release this reference.
->
-> 2. Within the fwnode_for_each_child_node() loop, the early return
->    paths that don't properly release the "led" fwnode reference.
->
-> This fix follows the same pattern as commit d029edefed39
-> ("net dsa: qca8k: fix usages of device_get_named_child_node()")
->
-> Fixes: 94a2a84f5e9e ("net: dsa: mv88e6xxx: Support LED control")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
+
 > ---
-> changes in v2:
-> - use goto for cleanup in error paths
-> - v1: https://lore.kernel.org/all/20250830085508.2107507-1-linmq006@gmail=
-.com/
+>  rust/kernel/net/phy.rs | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
+> index 7de5cc7a0eee..c895582cd624 100644
+> --- a/rust/kernel/net/phy.rs
+> +++ b/rust/kernel/net/phy.rs
+> @@ -196,11 +196,8 @@ pub fn read_paged(&mut self, page: u16, regnum: u16)=
+ -> Result<u16> {
+>          // SAFETY: `phydev` is pointing to a valid object by the type in=
+variant of `Self`.
+>          // So it's just an FFI call.
+>          let ret =3D unsafe { bindings::phy_read_paged(phydev, page.into(=
+), regnum.into()) };
+> -        if ret < 0 {
+> -            Err(Error::from_errno(ret))
+> -        } else {
+> -            Ok(ret as u16)
+> -        }
+> +
+> +        to_result(ret).map(|()| ret as u16)
+>      }
+>
+>      /// Resolves the advertisements into PHY settings.
+> --
+> 2.50.0
 
-When I coded it I honestly believed fwnode_get_named_child_node()
-also released the children after use but apparently not, my bad :(
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
 
