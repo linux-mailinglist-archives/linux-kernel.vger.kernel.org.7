@@ -1,83 +1,53 @@
-Return-Path: <linux-kernel+bounces-793784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44221B3D82A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:22:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B087FB3D82B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A9C77A21F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C663B8583
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B70226D0C;
-	Mon,  1 Sep 2025 04:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00D422259A;
+	Mon,  1 Sep 2025 04:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zZ+CNOV/"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2066.outbound.protection.outlook.com [40.107.94.66])
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="oaBSYFm7"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C46611CBA;
-	Mon,  1 Sep 2025 04:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756700524; cv=fail; b=kCUQns1z9d+FTbRq163KlGi0KwFIvMMfC8tXnlQ8/ddHv11PfQzTkTW1kBCYC1rVG9LhBmXaJFDoeXsWPEEL4l0vmqtILMb77t4pSYOIUJAS8iFQcCRLGED57KhZQ1KQHjyF0K5CPrz/KcjSvo9vJHTmvQXwvnTjUs0kd7VMIKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756700524; c=relaxed/simple;
-	bh=CPrOrInkVdJuIVP4ZDjSr8vlR1EFLNTUNDGu/r+INR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P1jwHjVknMCIxgKHdiuAhWFQYh1NGDiCA6hWYh2HIZ7Z+2VhiJ12HKo3L2FsUK/D1krunEYkOx05iMQ7hYIb59KRRYAE+ZI2evbA7rHopetwF7unP9yjtbky7IFd06ehPiu7RalX4emOhryLW2IFO45C6mNd31GuS5gE3arEi8E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zZ+CNOV/; arc=fail smtp.client-ip=40.107.94.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vUiGkvYhBdPa7YDw3L8Cpbq0QKTmnl9ltg5hFOrj8o+Ldlm3WeG90s7PBu7I563cYE5ar8RtwwLtsZnfF/fZNtK4Akf7lXvgqqZ2er3iPnv1YPipz/jHbNLGKMqwb/rQOruDmL84Z7XI9hN+vrISlAFnht0Dk9MMo+V3i/UJIfF7Ha7bz0E3KE17dmfiCmdSxgOwhY26HTsmEjpQwQA42QYk+LZb4Uio857fj85DmzhoboQRI78YXGjbwhQFx57z3v1VPrCkj4fZy0qopK2JvMQp4hMZHKQAMrWGYF/6OtgOMbsm1iXYmjZ9XRRw8t3i+e5eIH0xfIXs1sgs5CAEPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LXX2uiu1IcgjL4aTHJ9C0tgMpNUm7cDYW9a2P6Ki+Pw=;
- b=QWHthLutsMNbi+D2pTNpcTZEISQJxBp2g8UKSVNawFE6YrR1Vp9LgVtcoigGtjE8OxtandCjVhrvP6ixNZFOJ15Du37KEU5jdsGs8vvO+aswk5MAuYj9RlTrPjQDyCiASAOlBdE8LMV5q+V4p31Gpiq2Eili4E3npQmWzkq4MbJUIW4jUcOHGSAf962ySmSJlsuPwQQFwCNosBgBTaymUBRpRNJ6RHdxw70Z6BEjhbYu0ctwWqTb9ochZ0Hc21maPP1BWbkwxIH5yiiSaEZc3MV0nG/E+MIwUhz4czUlNQTS3BYkX23OKShrN87Qy8pfUSsVbxpoC3Oq48nmKj/aew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LXX2uiu1IcgjL4aTHJ9C0tgMpNUm7cDYW9a2P6Ki+Pw=;
- b=zZ+CNOV/YTu5x2w7UxNwez9N+0Zge1+jDNhwfMHr5rMp7kQvgAu/ucJs6ZYYUEd7O/cmfWUENeSqlkJSM5wfhxqOwLNhlCyedfO8VOstQc9PbrnLk1EhCZpGnF8GYMHQS5sf20YQwBeG0RleEUpNFyBxyNMjVRhctrruAWuBor8=
-Received: from CH0PR03CA0263.namprd03.prod.outlook.com (2603:10b6:610:e5::28)
- by BY5PR12MB4164.namprd12.prod.outlook.com (2603:10b6:a03:207::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Mon, 1 Sep
- 2025 04:22:00 +0000
-Received: from CH1PEPF0000AD77.namprd04.prod.outlook.com
- (2603:10b6:610:e5:cafe::1d) by CH0PR03CA0263.outlook.office365.com
- (2603:10b6:610:e5::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.26 via Frontend Transport; Mon,
- 1 Sep 2025 04:22:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CH1PEPF0000AD77.mail.protection.outlook.com (10.167.244.55) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.11 via Frontend Transport; Mon, 1 Sep 2025 04:21:59 +0000
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 31 Aug
- 2025 23:21:59 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Sun, 31 Aug
- 2025 21:21:59 -0700
-Received: from [10.136.36.137] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Sun, 31 Aug 2025 23:21:54 -0500
-Message-ID: <939c23b3-2a43-4083-985c-ab0b16a3c452@amd.com>
-Date: Mon, 1 Sep 2025 09:51:53 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25151DEFDD
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 04:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756700572; cv=none; b=qdJz3l/tjabHxBUZTCE5/N+YH9RNuiV9jDZ6laYQpntXN6lrB5aOACQxWNGZVpRv7RMy3CwiVgL2FU/5leMzyttEwcZbustp5CJaRc5OrP848LppcdSjaHBsLx5/OL3C0spWmOI5VT4dmj7apv8gd+doVKrKxKWuW1d7DgaKb44=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756700572; c=relaxed/simple;
+	bh=ZF8XrkERlK6k6G+ZcHFn5gwuUK3mqlrkRJO8upg0oqY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ozAf0bT/KqJwmA4RljsHYCnI+mXtN9I1yoHSYrcyaeR+l39691Dk1EXOpAiu9VcxkA0B8YiGeX+m1rJQ0xjfTpH5NI3UJuBZAegKTqCuijm0MrmjoqITCA6irVQbTFlY+CXZ6qp6BOlx+xMHqyc4u3yv3FKSQ04RdO2zTNP4lXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=oaBSYFm7; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
+Received: from NEET (p4246180-ipxg00p01tokaisakaetozai.aichi.ocn.ne.jp [118.15.79.180])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 5814MfFD050581
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 1 Sep 2025 13:22:41 +0900 (JST)
+	(envelope-from k@mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=D0vXyYDp4P+WBuZAVssT7SZjaNm4rEG6WhmOFW17gQA=;
+        c=relaxed/relaxed; d=mgml.me;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250315; t=1756700561; v=1;
+        b=oaBSYFm7f2HPXZwJH/2O7im0kshLqFQ9/g8zn4aS9gch5cKx6iUUe43HhFzOSQQo
+         9GvQZTOTWge8CtnXRX9N8t+Nt/msPKxYOmIt0oD8y7kdn7/mxdLPuYaKE/XLZ783
+         C6ONGjZNJGG3i4dR9T4euQQSpfh4WbyKZ1AgTH8nXI9ZYLn4aRkFZKzaxmi0Tl8U
+         UYdwBPuz3pzNcJiDlapcfGkBHmTRNwxxMTjBNJWWwAWZ67farv5JJ98trtoUgRLh
+         bMB/IvcWuqyaXbMtzGMkLb3OBHjkjZEGGx4JZ3FJTZu16JgxYh1Q/RrE3O162XOW
+         ofXVcLZ/VtBsWJz+SkP1gQ==
+Message-ID: <7e268dff-4f29-4155-8644-45be74d4c465@mgml.me>
+Date: Mon, 1 Sep 2025 13:22:40 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,196 +55,364 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] x86/cpu/topology: Always try
- cpu_parse_topology_ext() on AMD/Hygon
-To: Borislav Petkov <bp@alien8.de>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Sean Christopherson
-	<seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, <x86@kernel.org>,
-	Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>, "H.
- Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
-	<peterz@infradead.org>, "Xin Li (Intel)" <xin@zytor.com>, Pawan Gupta
-	<pawan.kumar.gupta@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Mario Limonciello
-	<mario.limonciello@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Babu Moger <babu.moger@amd.com>, Suravee Suthikulpanit
-	<suravee.suthikulpanit@amd.com>, Naveen N Rao <naveen@kernel.org>,
-	<stable@vger.kernel.org>
-References: <20250825075732.10694-1-kprateek.nayak@amd.com>
- <20250825075732.10694-3-kprateek.nayak@amd.com>
- <20250830171921.GAaLMymVpsFhjWtylo@fat_crate.local>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kenta Akagi <k@mgml.me>
+Subject: Re: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast
+ io failure
+To: Li Nan <linan666@huaweicloud.com>, Song Liu <song@kernel.org>,
+        Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+        Guoqing Jiang <jgq516@gmail.com>
+References: <20250828163216.4225-1-k@mgml.me>
+ <20250828163216.4225-2-k@mgml.me>
+ <dcb72e23-d0ea-c8b3-24db-5dd515f619a8@huaweicloud.com>
+ <6b3119f1-486e-4361-b04d-5e3c67a52a91@mgml.me>
+ <3ea67e48-ce8a-9d70-a128-edf5eddf15f0@huaweicloud.com>
+ <29e337bc-9eee-4794-ae1e-184ef91b9d24@mgml.me>
+ <6edb5e2c-3f36-dc2c-3b41-9bf0e8ebb263@huaweicloud.com>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250830171921.GAaLMymVpsFhjWtylo@fat_crate.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD77:EE_|BY5PR12MB4164:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e228e43-e969-4d10-46ed-08dde90f186a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dllYU3FnY2VmVHhtL2JyUWZQSmVpb051TWI5Vk1PQi9rYlhKbFlkWkJPbTJq?=
- =?utf-8?B?SXl0Y0x1N0VzZkhRbnlHcnJqanpvVWhZK0pQVUQwbUNBOWZmUGFjeThGYVZJ?=
- =?utf-8?B?em9WMTEvaHM0NURJaWtPdFkzRkk0ZnhhTEtYbFpQdVpJK2VzY2JhVlE3S3F0?=
- =?utf-8?B?WWxlUTJCMGwrMEhpSEZEMDVwM2JydFRWZWhBdzFVRzZQV2JCUmRYTGdEcTM2?=
- =?utf-8?B?dWFEUFJVMmdyN2ZWQUFCdDNtVGxSL1E5R3BXc0dPN1ArYlVMaytuZEdMdzBI?=
- =?utf-8?B?U0ZBTFoyc3RvQlZGL2Urd0paejNhc1VBYUl1c1NBZmFKWFBCd0wwUjhNcU1N?=
- =?utf-8?B?dEtYWlM0Z1JDMzNQU2p6N1VGR2pnMDNKd3dtVDllNlFMeWhqQ0FOZGorQ1k2?=
- =?utf-8?B?cWdBRlQ5S1NRS0dQVkpoa2swL0lRM1lPYlJ0K2VmbUcvL1IxTldMYnkyYVZy?=
- =?utf-8?B?cFVGWUpnS200NWNIdVQ2eWU1Vit6VnQzdGRMODYxNzlBbjNaMG95Nm16clBJ?=
- =?utf-8?B?V0hENDBxZTRlSTlGYkF0alZ2b05mcUNkNUVTU1AwdGJxaTlNRG1pdzNaU05I?=
- =?utf-8?B?SHdpcW5Ta3kwSWVUNFZSdGtyTnJ3UjhUdmlyVmh2bjJPVndpb1BMV2lnQ1BU?=
- =?utf-8?B?QXM1WFd4dGV2ZW5KS2Q3cUU2TFJHM256aENnRklKUEVUNURlL2RIUmhaaGVj?=
- =?utf-8?B?Z1JzSW9LcHlDVDEwVSt4ZDVLMzJ2dndjeUwzbisyT0JvdGR6a0RGalFpbzhl?=
- =?utf-8?B?b2Naa01sNTVwSG1JQ2dvUEhuV3BoZGlKYWxaRFdzKzNWTC9Nd1ZEcUN0QmFk?=
- =?utf-8?B?S3hqdit0WmQvc2dmK2k2elJYc2xSMU4vemd2T1FBb0R6WVZzU2F2RDdMRWtt?=
- =?utf-8?B?V0lOb2lSRk01NXdKdFZmYnd0eWtJajQ2elcwM24rVndEMzRhbUcrQWNKQmZh?=
- =?utf-8?B?ZmlRQnlBSzE5Q0JlZFdtdk5Bem04REVCY0dPUVVjdUNxL2NLbFFzdnRGa3cx?=
- =?utf-8?B?REUxdU9Vemp3Wjl2alJpb1JNencrOGNVeitYNHJwUG9OTW40cXJEcndlU0h3?=
- =?utf-8?B?M2hnY1RJTWIvR0RsbjRqVTFSb2U2Mnpqbm1QSXlwazUzcEk4WFU4WGhsV2lm?=
- =?utf-8?B?UWJ5K3d3MWgxdTFibm83a0R5OHhOZHpCbjVaUk5oWlVYb01TR0FlYzlBdksv?=
- =?utf-8?B?UTZ1UzZ0L0NRaUlHOFV6aGdaaVAwQzcxWTNxRWJRK1VWVnljYlFtZTF2Mkgz?=
- =?utf-8?B?Q3k1UVV4ZS9TMDVhNEdZU1U3dERrZ1hzUGp6a2NTclIxQm5GeElBemNwRC9y?=
- =?utf-8?B?SGk1bE5JemZmbityRFNnck1HMmxQdk1SZDRPb01tVzVHdWVCUmNnL2pNTVlk?=
- =?utf-8?B?UG14WGlIU2V5ZkpGalVTM0twVDNCT0NGUVUyZ29OL2pTeHQ2a25adURvdEdB?=
- =?utf-8?B?OUE3L1hXelJ1RXBJamxjc1M1UmhLaUdJTytmZ0dHWjd0RmJQL3QxL1hjSUtD?=
- =?utf-8?B?YngrZ015RHppbHFDOEh2M2ZZWTZKZnU1QWJjQys3VkU3bTdxU25CSGFxYXRE?=
- =?utf-8?B?b2lieE9taFdsSm9kc3pydW54RDFNZW5TMkROQit2SytudmNxYWtOQklaRDY4?=
- =?utf-8?B?YTFtQlUxbEFJeTlVcnBoVm5FbGdXaFBEa0YzMFZlK1RjWmFzaS9hRW5vcHow?=
- =?utf-8?B?R0RxWENWbWllM083cEE1NGhlTTJSaG9WbUJacGE2UHNIQkRDOEFwR3RldGd6?=
- =?utf-8?B?ZGJ3Qi9rZnM1VE82d2JsV1BaYkt5L1BzQ3lBQms4ckZKcWQ4bWZ6VGxSRkxn?=
- =?utf-8?B?Ym9YNE1FOTNscHNneEVaTDBhTFlsdEJ4RGY4MTdYSmRiODI3bmRoWWk1T28z?=
- =?utf-8?B?eGtJZ0lKRUh1MXhpTmxlWFZ2TU9zM3pQYVRqUk1rWEg1OERxRGpSSEJtSW41?=
- =?utf-8?B?aFUyd0dvS0dnY3Jna05LblVUUlNaTUZ0MXNkczBTeGx2UGl3WUVoWnhKU1Fo?=
- =?utf-8?B?Tk52akRmUWx1UnhZSHhsUUE2S3dHaWh0WnlYaHo1UmdMWEF5cFZ1aVY0M0FK?=
- =?utf-8?B?a3Y0RjNPR1BGbTgycFlaTm5BTkdVSGRMYU53Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 04:21:59.9319
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e228e43-e969-4d10-46ed-08dde90f186a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD77.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4164
+From: Kenta Akagi <k@mgml.me>
+In-Reply-To: <6edb5e2c-3f36-dc2c-3b41-9bf0e8ebb263@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Boris,
 
-On 8/30/2025 10:49 PM, Borislav Petkov wrote:
-> On Mon, Aug 25, 2025 at 07:57:30AM +0000, K Prateek Nayak wrote:
->> This has not been a problem on baremetal platforms since support for
->> TOPOEXT (Fam 0x15 and later) predates the support for CPUID leaf 0xb
->> (Fam 0x17[Zen2] and later), however, for AMD guests on QEMU, "x2apic"
->> feature can be enabled independent of the "topoext" feature where QEMU
->> expects topology and the initial APICID to be parsed using the CPUID
->> leaf 0xb (especially when number of cores > 255) which is populated
->> independent of the "topoext" feature flag.
-> 
-> This sounds like we're fixing the kernel because someone *might* supply
-> a funky configuration to qemu. You need to understand that we're not wagging
-> the dog and fixing the kernel because of that.
-> 
-> If someone manages to enable some weird concoction of feature flags in qemu,
-> we certainly won't "fix" that in the kernel.
-> 
-> So let's concentrate that text around fixing the issue of parsing CPUID
-> topology leafs which we should parse and looking at CPUID flags only for those
-> feature leafs, for which those flags are existing.
-> 
-> If qemu wants stuff to work, then it better emulate the feature flag
-> configuration like the hw does.
 
-Ack. I'll add the relevant details in
-Documentation/arch/x86/topology.rst in the next version as discussed but
-I believe you discovered the intentions for this fix in the kernel
-below.
-
+On 2025/09/01 12:22, Li Nan wrote:
 > 
->> Unconditionally call cpu_parse_topology_ext() on AMD and Hygon
->> processors to first parse the topology using the XTOPOLOGY leaves
->> (0x80000026 / 0xb) before using the TOPOEXT leaf (0x8000001e).
+> 
+> 在 2025/8/31 2:10, Kenta Akagi 写道:
 >>
->> Cc: stable@vger.kernel.org # Only v6.9 and above
->> Link: https://lore.kernel.org/lkml/1529686927-7665-1-git-send-email-suravee.suthikulpanit@amd.com/ [1]
->> Link: https://lore.kernel.org/lkml/20080818181435.523309000@linux-os.sc.intel.com/ [2]
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537 [3]
->> Suggested-by: Naveen N Rao (AMD) <naveen@kernel.org>
->> Fixes: 3986a0a805e6 ("x86/CPU/AMD: Derive CPU topology from CPUID function 0xB when available")
->> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
->> ---
->> Changelog v3..v4:
 >>
->> o Quoted relevant section of the PPR justifying the changes.
+>> On 2025/08/30 17:48, Li Nan wrote:
+>>>
+>>>
+>>> 在 2025/8/29 20:21, Kenta Akagi 写道:
+>>>>
+>>>>
+>>>> On 2025/08/29 11:54, Li Nan wrote:
+>>>>>
+>>>>> 在 2025/8/29 0:32, Kenta Akagi 写道:
+>>>>>> This commit ensures that an MD_FAILFAST IO failure does not put
+>>>>>> the array into a broken state.
+>>>>>>
+>>>>>> When failfast is enabled on rdev in RAID1 or RAID10,
+>>>>>> the array may be flagged MD_BROKEN in the following cases.
+>>>>>> - If MD_FAILFAST IOs to multiple rdevs fail simultaneously
+>>>>>> - If an MD_FAILFAST metadata write to the 'last' rdev fails
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>>>>> index 408c26398321..8a61fd93b3ff 100644
+>>>>>> --- a/drivers/md/raid1.c
+>>>>>> +++ b/drivers/md/raid1.c
+>>>>>> @@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
+>>>>>>                 (bio->bi_opf & MD_FAILFAST) &&
+>>>>>>                 /* We never try FailFast to WriteMostly devices */
+>>>>>>                 !test_bit(WriteMostly, &rdev->flags)) {
+>>>>>> +            set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>>                 md_error(r1_bio->mddev, rdev);
+>>>>>>             }
+>>>>>>     @@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>>>>>>      *    - recovery is interrupted.
+>>>>>>      *    - &mddev->degraded is bumped.
+>>>>>>      *
+>>>>>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>>>>>> - * &mddev->fail_last_dev is off.
+>>>>>> + * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
+>>>>>> + * then @mddev and @rdev will not be marked as failed.
+>>>>>> + *
+>>>>>> + * @rdev is marked as &Faulty excluding any cases:
+>>>>>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>>>>>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>>>>>      */
+>>>>>>     static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>>>>     {
+>>>>>> @@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>>>>>           if (test_bit(In_sync, &rdev->flags) &&
+>>>>>>             (conf->raid_disks - mddev->degraded) == 1) {
+>>>>>> +        if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
+>>>>>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>>>>>> +            pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
+>>>>>> +                "last device but ignoring it\n",
+>>>>>> +                mdname(mddev), rdev->bdev);
+>>>>>> +            return;
+>>>>>> +        }
+>>>>>>             set_bit(MD_BROKEN, &mddev->flags);
+>>>>>>               if (!mddev->fail_last_dev) {
+>>>>>> @@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
+>>>>>>         if (test_bit(FailFast, &rdev->flags)) {
+>>>>>>             /* Don't try recovering from here - just fail it
+>>>>>>              * ... unless it is the last working device of course */
+>>>>>> +        set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>>             md_error(mddev, rdev);
+>>>>>>             if (test_bit(Faulty, &rdev->flags))
+>>>>>>                 /* Don't try to read from here, but make sure
+>>>>>> @@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>>>>>>             fix_read_error(conf, r1_bio);
+>>>>>>             unfreeze_array(conf);
+>>>>>>         } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+>>>>>> +        set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>>             md_error(mddev, rdev);
+>>>>>>         } else {
+>>>>>>             r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+>>>>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>>>>>> index b60c30bfb6c7..530ad6503189 100644
+>>>>>> --- a/drivers/md/raid10.c
+>>>>>> +++ b/drivers/md/raid10.c
+>>>>>> @@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
+>>>>>>                 dec_rdev = 0;
+>>>>>>                 if (test_bit(FailFast, &rdev->flags) &&
+>>>>>>                     (bio->bi_opf & MD_FAILFAST)) {
+>>>>>> +                set_bit(FailfastIOFailure, &rdev->flags);
+>>>>>>                     md_error(rdev->mddev, rdev);
+>>>>>>                 }
+>>>>>>     
+>>>>>
+>>>>> Thank you for the patch. There may be an issue with 'test_and_clear'.
+>>>>>
+>>>>> If two write IO go to the same rdev, MD_BROKEN may be set as below:
+>>>>
+>>>>> IO1                    IO2
+>>>>> set FailfastIOFailure
+>>>>>                       set FailfastIOFailure
+>>>>>    md_error
+>>>>>     raid1_error
+>>>>>      test_and_clear FailfastIOFailur
+>>>>>                          md_error
+>>>>>                         raid1_error
+>>>>>                          //FailfastIOFailur is cleared
+>>>>>                          set MD_BROKEN
+>>>>>
+>>>>> Maybe we should check whether FailfastIOFailure is already set before
+>>>>> setting it. It also needs to be considered in metadata writes.
+>>>> Thank you for reviewing.
+>>>>
+>>>> I agree, this seems to be as you described.
+>>>> So, should it be implemented as follows?
+>>>>
+>>>> bool old=false;
+>>>> do{
+>>>>    spin_lock_irqsave(&conf->device_lock, flags);
+>>>>    old = test_and_set_bit(FailfastIOFailure, &rdev->flags);
+>>>>    spin_unlock_irqrestore(&conf->device_lock, flags);
+>>>> }while(old);
+>>>>
+>>>> However, since I am concerned about potential deadlocks,
+>>>> so I am considering two alternative approaches:
+>>>>
+>>>> * Add an atomic_t counter to md_rdev to track failfast IO failures.
+>>>>
+>>>> This may set MD_BROKEN at a slightly incorrect timing, but mixing
+>>>> error handling of Failfast and non-Failfast IOs appears to be rare.
+>>>> In any case, the final outcome would be the same, i.e. the array
+>>>> ends up with MD_BROKEN. Therefore, I think this should not cause
+>>>> issues. I think the same applies to test_and_set_bit.
+>>>>
+>>>> IO1                    IO2                    IO3
+>>>> FailfastIOFailure      Normal IOFailure       FailfastIOFailure
+>>>> atomic_inc
+>>>>                                                   md_error                                     atomic_inc
+>>>>     raid1_error
+>>>>      atomic_dec //2to1
+>>>>                          md_error
+>>>>                           raid1_error           md_error
+>>>>                            atomic_dec //1to0     raid1_error
+>>>>                                                   atomic_dec //0
+>>>>                                                     set MD_BROKEN
+>>>>
+>>>> * Alternatively, create a separate error handler,
+>>>>     e.g. md_error_failfast(), that clearly does not fail the array.
+>>>>
+>>>> This approach would require somewhat larger changes and may not
+>>>> be very elegant, but it seems to be a reliable way to ensure
+>>>> MD_BROKEN is never set at the wrong timing.
+>>>>
+>>>> Which of these three approaches would you consider preferable?
+>>>> I would appreciate your feedback.
+>>>>
+>>>>
+>>>> For metadata writes, I plan to clear_bit MD_FAILFAST_SUPPORTED
+>>>> when the array is degraded.
+>>>>
+>>>> Thanks,
+>>>> Akagi
+>>>>
+>>>
+>>> I took a closer look at the FailFast code and found a few issues, using
+>>> RAID1 as an example:
+>>>
+>>> For normal read/write IO, FailFast is only triggered when there is another
+>>> disk is available, as seen in read_balance() and raid1_write_request().
+>>> In raid1_error(), MD_BROKEN is set only when no other disks are available.
 >>
->> o Moved this patch up ahead.
+>> Hi,
+>> Agree, I think so too.
 >>
->> o Cc'd stable and made a note that backports should target v6.9 and
->>   above since this depends on the x86 topology rewrite.
-> 
-> Put that explanation in the CC:stable comment.
-
-Ack.
-
-> 
->> ---
->>  arch/x86/kernel/cpu/topology_amd.c | 8 ++------
->>  1 file changed, 2 insertions(+), 6 deletions(-)
+>>> So, the FailFast for normal read/write is not triggered in the scenario you
+>>> described in cover-letter.
 >>
->> diff --git a/arch/x86/kernel/cpu/topology_amd.c b/arch/x86/kernel/cpu/topology_amd.c
->> index 827dd0dbb6e9..4e3134a5550c 100644
->> --- a/arch/x86/kernel/cpu/topology_amd.c
->> +++ b/arch/x86/kernel/cpu/topology_amd.c
->> @@ -175,18 +175,14 @@ static void topoext_fixup(struct topo_scan *tscan)
->>  
->>  static void parse_topology_amd(struct topo_scan *tscan)
->>  {
->> -	bool has_topoext = false;
->> -
->>  	/*
->> -	 * If the extended topology leaf 0x8000_001e is available
->> -	 * try to get SMT, CORE, TILE, and DIE shifts from extended
->> +	 * Try to get SMT, CORE, TILE, and DIE shifts from extended
->>  	 * CPUID leaf 0x8000_0026 on supported processors first. If
->>  	 * extended CPUID leaf 0x8000_0026 is not supported, try to
->>  	 * get SMT and CORE shift from leaf 0xb first, then try to
->>  	 * get the CORE shift from leaf 0x8000_0008.
->>  	 */
->> -	if (cpu_feature_enabled(X86_FEATURE_TOPOEXT))
->> -		has_topoext = cpu_parse_topology_ext(tscan);
->> +	bool has_topoext = cpu_parse_topology_ext(tscan);
+>> This corresponds to the case described in the commit message of PATCH v3 1/3.
+>> "Normally, MD_FAILFAST IOs are not issued to the 'last' rdev, so this is
+>> an edge case; however, it can occur if rdevs in a non-degraded
+>> array share the same path and that path is lost, or if a metadata
+>> write is triggered in a degraded array and fails due to failfast."
+>>
+>> To describe it in more detail, the flow is as follows:
+>>
+>> Prerequisites:
+>>
+>> - Both rdevs are in-sync
+>> - Both rdevs have in-flight MD_FAILFAST bios
+>> - Both rdevs depend on the same lower-level path
+>>    (e.g., nvme-tcp over a single Ethernet interface)
+>>
+>> Sequence:
+>>
+>> - A bios with REQ_FAILFAST_DEV fails (e.g., due to a temporary network outage),
+>>    in the case of nvme-tcp:
+>>     - The Ethernet connection is lost on the node where md is running over 5 seconds
+>>     - Then the connection is restored. Idk the details of nvme-tcp implementation,
+>>       but it seems that failfast IOs finish only after the connection is back.
+>> - All failfast bios fail, raid1_end_write_request is called.
+>> - md_error() marks one rdev Faulty; the other rdev becomes the 'last' rdev.
+>> - md_error() on the last rdev sets MD_BROKEN on the array - fail_last_dev=1 is unlikely.
+>> - The write is retried via handle_write_finished -> narrow_write_error, usually succeeding.
+>> - MD_BROKEN remains set, leaving the array in a state where no further writes can occur.
+>>
 > 
-> Ok, I see what the point here is - you want to parse topology regardless of
-> X86_FEATURE_TOPOEXT.
-> 
-> Which is true - latter "indicates support for Core::X86::Cpuid::CachePropEax0
-> and Core::X86::Cpuid::ExtApicId" only and the leafs cpu_parse_topology_ext()
-> attempts to parse are different ones.
-> 
-> So, "has_topoext" doesn't have anything to do with X86_FEATURE_TOPOEXT - it
-> simply means that the topology extensions parser found some extensions and
-> parsed them. So let's rename that variable differently so that there is no
-> confusion.
-> 
-> You can do the renaming in parse_8000_001e() in a later patch as that is only
-> a cosmetic thing and we don't want to send that to stable.
+> Thanks for your patient explanation. I understand. Maybe we need a separate
+> error-handling path for failfast. How about adding an extra parameter to md_error()?
 
-Ack! Does "has_xtopology" sound good or should we go for something more
-explicit like "has_xtopology_0x26_0xb"?
+Thank you for reviewing.
 
-Patch 3 will get rid of that "has_topoext" argument in parse_8000_001e()
-entirely so I'll rename the local variable here and use the subsequent
-cleanup for parse_8000_001e().
+I am thinking of proceeding like as follows.
+md_error is EXPORT_SYMBOL. I think that it is undesirable to change the ABI of this function.
 
--- 
-Thanks and Regards,
-Prateek
+...
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index ac85ec73a409..855cddeb0c09 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -8197,3 +8197,3 @@ EXPORT_SYMBOL(md_unregister_thread);
+
+-void md_error(struct mddev *mddev, struct md_rdev *rdev)
++void _md_error(struct mddev *mddev, struct md_rdev *rdev, bool nofail)
+ {
+@@ -8204,3 +8204,3 @@ void md_error(struct mddev *mddev, struct md_rdev *rdev)
+                return;
+-       mddev->pers->error_handler(mddev, rdev);
++       mddev->pers->error_handler(mddev, rdev, nofail);
+
+@@ -8222,4 +8222,26 @@ void md_error(struct mddev *mddev, struct md_rdev *rdev)
+ }
++
++void md_error(struct mddev *mddev, struct md_rdev *rdev)
++{
++       return _md_error(mddev, rdev, false);
++}
+ EXPORT_SYMBOL(md_error);
+
++void md_error_failfast(struct mddev *mddev, struct md_rdev *rdev)
++{
++       WARN_ON(mddev->pers->head.id != ID_RAID1 &&
++               mddev->pers->head.id != ID_RAID10);
++       return _md_error(mddev, rdev, true);
++}
++EXPORT_SYMBOL(md_error_failfast);
++
+ /* seq_file implementation /proc/mdstat */
+diff --git a/drivers/md/md.h b/drivers/md/md.h
+index 51af29a03079..6ca1aea630ce 100644
+--- a/drivers/md/md.h
++++ b/drivers/md/md.h
+@@ -758,3 +758,3 @@ struct md_personality
+         */
+-       void (*error_handler)(struct mddev *mddev, struct md_rdev *rdev);
++       void (*error_handler)(struct mddev *mddev, struct md_rdev *rdev, bool nofail);
+        int (*hot_add_disk) (struct mddev *mddev, struct md_rdev *rdev);
+@@ -903,3 +903,5 @@ extern void md_write_end(struct mddev *mddev);
+ extern void md_done_sync(struct mddev *mddev, int blocks, int ok);
++void _md_error(struct mddev *mddev, struct md_rdev *rdev, bool nofail);
+ extern void md_error(struct mddev *mddev, struct md_rdev *rdev);
++extern void md_error_failfast(struct mddev *mddev, struct md_rdev *rdev);
+ extern void md_finish_reshape(struct mddev *mddev);
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index f1d8811a542a..8aea51227a96 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -637,3 +637,4 @@ static void raid0_status(struct seq_file *seq, struct mddev *mddev)
+
+-static void raid0_error(struct mddev *mddev, struct md_rdev *rdev)
++static void raid0_error(struct mddev *mddev, struct md_rdev *rdev,
++       bool nofail __maybe_unused)
+ {
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 408c26398321..d93275899e9e 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1739,2 +1739,3 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+  * @rdev: member device to fail.
++ * @nofail: @mdev and @rdev must not fail even if @rdev is the last when @nofail set
+  *
+@@ -1748,6 +1749,8 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+  *
+- * @rdev is marked as &Faulty excluding case when array is failed and
+- * &mddev->fail_last_dev is off.
++ * @rdev is marked as &Faulty excluding any cases:
++ *     - when @mddev is failed and &mddev->fail_last_dev is off
++ *     - when @rdev is last device and @nofail is true
+  */
+-static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
++static void raid1_error(struct mddev *mddev, struct md_rdev *rdev,
++       bool nofail)
+ {
+@@ -1760,2 +1763,9 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+            (conf->raid_disks - mddev->degraded) == 1) {
++               if (nofail) {
++                       spin_unlock_irqrestore(&conf->device_lock, flags);
++                       pr_warn_ratelimited("md/raid1:%s: IO failure on %pg, "
++                               "last device but ignoring it\n",
++                               mdname(mddev), rdev->bdev);
++                       return;
++               }
+                set_bit(MD_BROKEN, &mddev->flags);
+...
+
+> Kuai, do you have any suggestions?
+> 
+>>> Normal writes may call md_error() in narrow_write_error. Normal reads do
+>>> not execute md_error() on the last disk.
+>>>
+>>> Perhaps you should get more information to confirm how MD_BROKEN is set in
+>>> normal read/write IO.
+>>
+>> Should I add the above sequence of events to the cover letter, or commit message?
+>>
+> 
+> I think we should mention this in the commit message.
+
+Understood. I will explicitly describe this in the commit message in v4.
+
+Thanks,
+Akagi
+
+>> Thanks,
+>> Akagi
+>>
+>>> -- 
+>>> Thanks,
+>>> Nan
+>>>
+>>>
+>>
+>>
+>> .
+> 
+> -- 
+> Thanks,
+> Nan
+> 
+> 
 
 
