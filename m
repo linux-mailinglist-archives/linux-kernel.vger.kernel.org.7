@@ -1,174 +1,140 @@
-Return-Path: <linux-kernel+bounces-794871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C3DEB3E8BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:10:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C95BB3E912
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20AE447AC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:08:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411042C0895
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E63B35335F;
-	Mon,  1 Sep 2025 15:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA6535CED2;
+	Mon,  1 Sep 2025 15:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YKb9wlDx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="IyVq172b"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA8434A329;
-	Mon,  1 Sep 2025 15:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED23D343D90
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739147; cv=none; b=MminJmCgo6Yh87XQDnWLhaeR3keQ56kcuYPx9h9ZDXmdKkp6oJqedTWEmLWXlVsvIwj62RI1sBd+6d5ex+1WaUWJIJ95aJmQgIJmDeglMZYQj1oeqkqPVFdWA/JMlKUMcaTOyVXIru8t0JXiQ1KSpeliaHUTxhKszVrUigY3Zmg=
+	t=1756739193; cv=none; b=YUX1SLNmhfVJgqsbO5jesMTDGC5A+dm4lRZixQksRmywMA61cW41qYSxznN110QoNNglOdbXAvEyfX1Us5wF/baBPleSVHjgrrPPYoLgHUwxYG5kaIZ0IkBdMxiKf1E8bvh34P7FgNe4hN5jr7YoxHY4E5KVuhMYURaNuZSDmUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739147; c=relaxed/simple;
-	bh=I5haGetjk5CR5fMUuZoz3rwX2PVyWVsn8Vb9i7Affcg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aTH7e4R/UisDqCPT5gUootB1G49OzewQE81dKCHtuNXay4nahiB/0awVfMvwA8m4myZmJ/hfZKlx4dLimMIEJxkqarXM5+HaMsfj8vAqOLlWzaIqJfHjhW73E1hZQ+j6w3aZ2uZ/YD3cOjm0AppVcRtwK08ZtK+mI5Zrrx89NVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YKb9wlDx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 137C0C2BCB0;
-	Mon,  1 Sep 2025 15:05:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1756739147; bh=I5haGetjk5CR5fMUuZoz3rwX2PVyWVsn8Vb9i7Affcg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YKb9wlDxoHkemyeDNWEemnOwySymjJGElXn8tMrjgTfJfd7zab7/W87bug+d9YY4y
-	 sMcObFiB4pYEeGjvltYuQjS0vESi52sI59AN0QVgNxSGR6uLvuTw4yLXvNx3ycijX2
-	 j1UPUVniFii06+uG3zvQqe8H1q2Kod9g/MfbAuQQ=
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08178CA1009;
-	Mon,  1 Sep 2025 15:05:47 +0000 (UTC)
-From: Richard Leitner <richard.leitner@linux.dev>
-Date: Mon, 01 Sep 2025 17:05:15 +0200
-Subject: [PATCH v7 10/10] media: i2c: ov9282: dynamic flash_duration
- maximum
+	s=arc-20240116; t=1756739193; c=relaxed/simple;
+	bh=RTksJ8/0/nMOSHK1v6hFgH7Xl8rur3P7qYdlo1+hL9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D1+arlffir18A5JxRJTdLqFJZkmmlgmcCBGJLlR5l8KS31jkeQjYLR5h1ZOSZ+iaIxtD0sfid+KXPtDeRhmxIDIpZd3igVlO/RqPSJOSYFhBPtIVgxf9LokEGpgofxk5e/1vZBsZFR0ru000mYY0SuSk1/xcdwzgYueHAmCYKfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=IyVq172b; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b042cc3953cso128931666b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:06:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756739189; x=1757343989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/bwNSdY68Wls82Q0k25WMNjJlHUk0r0pQNA4NzN+C5M=;
+        b=IyVq172bBaLcYBrl9lLB+7k/X6SfaztrXkqA6O0iqHoUsJ4lzBzbgcL9gvPUNB90wF
+         V98plQRUO8aCDpp1TxjvHB4sNQbfgVaU1r6A/qMFGeOAwt3007eIRCKb6cX8QhW3JTl3
+         /FMlQvPXhq074a/+q2pHf4fx0DL++gG4yrr5GeNqQvOsdLHbO21enQjAtsjibvnznilV
+         r3fSbXiowoecUTw+tHR9UJ8TSH88rZurYZBrNKjX5xezi1TPDwQbmPIWhgi3iYkqLkHz
+         iS/KNmAY4cfbOl7YDy7grDQCm8X9R8g9PgMFiSlE285UcKhVXiLstSkvjyjuTitCT+7f
+         7b2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756739189; x=1757343989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/bwNSdY68Wls82Q0k25WMNjJlHUk0r0pQNA4NzN+C5M=;
+        b=vJn5nCp0idejF326hDEmnuI6tvTJ6jL3/mGTyhSQxkt8hea5VDMT9z67ORZRUUmumL
+         XuQw7UOLEkA7OpeYgzOyumbmhpLr7CZY/cQxg6kfmu6o2wQCVchlTx9AfXr6bwsDFS3s
+         yewbvePN3nmnxNYej0sDBmebyDXOPFhVqpy8887zJIYULxD8KrpL6pMpUh62p821FDGE
+         35QSrnm0hLEDMzpaL98HW81IEseUj4WJcIIkbky7zMQBrI/bHrLP5E8n3IUH7dueKf5+
+         VswhzocsGGdWMetu51fS7GCLDnT61UPIrmAyevI6wH1AiUN5MFCqh4XLyND92Xaq5XR+
+         MtOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfBww4axNtV2EzdSEeYJs0vYewucmVy2xVGfiUVwR+E1oRPI6taT6N2YdiRIqBA59tjk1Oj5zgaDFxdrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnHw7/KawhcTPyeR8butbRAkezmInhOJCpWOlcIYDOCk3E2v/K
+	C+/Zl8tompHzcoUEQ8iRSGJ55mC6c/C07E4BBpFcKwYFjYwuT37GTugbQjEO8KDfwXjoBFJieBj
+	dXT4kcDFvuKtwziOrGjtA4QCcM9bSfsAAZhCXGCPefw==
+X-Gm-Gg: ASbGncuupPe8eOGJCA7OLpIxdRFhs5kC0KLMilzSCwFd83ZvkqEpFC7mQzmCOfffTp4
+	CY3NACqALU9pRfYrZ0HGw50pcJoTCr6u7dz2LGNJmqwx2BBcSSAd8EP8B2l3LFoaaSWgRmBVyht
+	cl3UKsI6Qn3PtgsHN6C8pvOgiDgQ+WAyLdpEJgcLQeR+Ff5h9dTFS5qqV1izG5cXJcqNFwP3ANy
+	imhcFpVowB6wsjx4DrfEfDAFQFnHCvmsk+I5tQ9vLx9ZA==
+X-Google-Smtp-Source: AGHT+IG0FxeUic5SFzE3UNYIN3B9+gaajPRoU8Y0dXCHXgh8kVRRqajKZHy7y0TqbZFDzgzomSvfHMhYlurHNOihACs=
+X-Received: by 2002:a17:907:1b10:b0:afe:85d5:a318 with SMTP id
+ a640c23a62f3a-b01d9755f83mr810176666b.36.1756739188996; Mon, 01 Sep 2025
+ 08:06:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250901-ov9282-flash-strobe-v7-10-d58d5a694afc@linux.dev>
-References: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
-In-Reply-To: <20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-leds@vger.kernel.org, Richard Leitner <richard.leitner@linux.dev>, 
- Hans Verkuil <hverkuil@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756739145; l=3617;
- i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=I5haGetjk5CR5fMUuZoz3rwX2PVyWVsn8Vb9i7Affcg=;
- b=89ndo5Sw4zw/nKvZB93fs7yxRCVJKeS0iI6Otle9lIxMlvzB4Rz3LpY2Aqd3yHiHOnyYVrQ0u
- CqGOYzBWPUMBWG+AdLax193OsQiKxpneeKn3J0jH2JyXxGI5vJtkd8H
-X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
- pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
-X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
- with auth_id=350
+References: <20250901123028.3383461-1-max.kellermann@ionos.com>
+ <20250901123028.3383461-9-max.kellermann@ionos.com> <2ad655ca-7003-4030-bb2d-1c4bcfda30cc@redhat.com>
+In-Reply-To: <2ad655ca-7003-4030-bb2d-1c4bcfda30cc@redhat.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 1 Sep 2025 17:06:18 +0200
+X-Gm-Features: Ac12FXwds-_H2NdWifPwev4VbqOwXfa3OcMVFnDeIo9bGQG09tjqsarnzZrb6S4
+Message-ID: <CAKPOu+-_bPwE4sCcb6n-nfi3nWy6L0gBAoHgRz3qwdUHByE_Lg@mail.gmail.com>
+Subject: Re: [PATCH v5 08/12] mm: constify arch_pick_mmap_layout() for
+ improved const-correctness
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, axelrasmussen@google.com, yuanchu@google.com, 
+	willy@infradead.org, hughd@google.com, mhocko@suse.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
+	vishal.moola@gmail.com, linux@armlinux.org.uk, 
+	James.Bottomley@hansenpartnership.com, deller@gmx.de, agordeev@linux.ibm.com, 
+	gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com, 
+	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net, 
+	andreas@gaisler.com, dave.hansen@linux.intel.com, luto@kernel.org, 
+	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, weixugc@google.com, 
+	baolin.wang@linux.alibaba.com, rientjes@google.com, shakeel.butt@linux.dev, 
+	thuth@redhat.com, broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com, 
+	mpe@ellerman.id.au, nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch sets the current exposure time as maximum for the
-flash_duration control. As Flash/Strobes which are longer than the
-exposure time have no effect.
+On Mon, Sep 1, 2025 at 3:58=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+> > index 2201da0afecc..0232d983b715 100644
+> > --- a/include/linux/sched/mm.h
+> > +++ b/include/linux/sched/mm.h
+> > @@ -178,7 +178,7 @@ static inline void mm_update_next_owner(struct mm_s=
+truct *mm)
+> >   #endif
+> >
+> >   extern void arch_pick_mmap_layout(struct mm_struct *mm,
+> > -                               struct rlimit *rlim_stack);
+> > +                               const struct rlimit *rlim_stack);
+> >
+> >   unsigned long
+> >   arch_get_unmapped_area(struct file *filp, unsigned long addr,
+> > @@ -211,7 +211,7 @@ generic_get_unmapped_area_topdown(struct file *filp=
+, unsigned long addr,
+> >                                 unsigned long flags, vm_flags_t vm_flag=
+s);
+> >   #else
+> >   static inline void arch_pick_mmap_layout(struct mm_struct *mm,
+> > -                                      struct rlimit *rlim_stack) {}
+> > +                                      const struct rlimit *rlim_stack)=
+ {}
+> >   #endif
+>
+> Should both these cases also use *const?
+>
+> (for the latter we probably don't care either, but maybe just to be
+> consistent)
 
-Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
----
- drivers/media/i2c/ov9282.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-index b104ae77f00e9e7777342e48b7bf3caa6d297f69..3253d9f271cb3caef6d85837ebec4f5beb466a4d 100644
---- a/drivers/media/i2c/ov9282.c
-+++ b/drivers/media/i2c/ov9282.c
-@@ -198,6 +198,7 @@ struct ov9282_mode {
-  * @exp_ctrl: Pointer to exposure control
-  * @again_ctrl: Pointer to analog gain control
-  * @pixel_rate: Pointer to pixel rate control
-+ * @flash_duration: Pointer to flash duration control
-  * @vblank: Vertical blanking in lines
-  * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
-  * @cur_mode: Pointer to current selected sensor mode
-@@ -220,6 +221,7 @@ struct ov9282 {
- 		struct v4l2_ctrl *again_ctrl;
- 	};
- 	struct v4l2_ctrl *pixel_rate;
-+	struct v4l2_ctrl *flash_duration;
- 	u32 vblank;
- 	bool noncontinuous_clock;
- 	const struct ov9282_mode *cur_mode;
-@@ -611,6 +613,15 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
- 					mode->vblank_max, 1, mode->vblank);
- }
- 
-+static u32 ov9282_exposure_to_us(struct ov9282 *ov9282, u32 exposure)
-+{
-+	/* calculate exposure time in µs */
-+	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-+	u32 trow_us = (frame_width * 1000000UL) / ov9282->pixel_rate->val;
-+
-+	return exposure * trow_us;
-+}
-+
- /**
-  * ov9282_update_exp_gain() - Set updated exposure and gain
-  * @ov9282: pointer to ov9282 device
-@@ -622,9 +633,10 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
- static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
- {
- 	int ret;
-+	u32 exposure_us = ov9282_exposure_to_us(ov9282, exposure);
- 
--	dev_dbg(ov9282->dev, "Set exp %u, analog gain %u",
--		exposure, gain);
-+	dev_dbg(ov9282->dev, "Set exp %u (~%u us), analog gain %u",
-+		exposure, exposure_us, gain);
- 
- 	ret = ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 1);
- 	if (ret)
-@@ -635,6 +647,12 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
- 		goto error_release_group_hold;
- 
- 	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
-+	if (ret)
-+		goto error_release_group_hold;
-+
-+	ret = __v4l2_ctrl_modify_range(ov9282->flash_duration,
-+				       0, exposure_us, 1,
-+				       OV9282_FLASH_DURATION_DEFAULT);
- 
- error_release_group_hold:
- 	ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
-@@ -1420,6 +1438,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 	struct v4l2_fwnode_device_properties props;
- 	struct v4l2_ctrl *ctrl;
- 	u32 hblank_min;
-+	u32 exposure_us;
- 	u32 lpfr;
- 	int ret;
- 
-@@ -1491,8 +1510,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 	/* Flash/Strobe controls */
- 	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_HW_STROBE_SIGNAL, 0, 1, 1, 0);
- 
--	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
--			  0, 13900, 1, 8);
-+	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
-+	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
-+						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-+						   0, exposure_us,
-+						   1, OV9282_FLASH_DURATION_DEFAULT);
- 
- 	ctrl = v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
- 				      V4L2_CID_FLASH_STROBE_SOURCE,
-
--- 
-2.47.2
-
-
+Actually, it would *only* make sense on the latter, because the former
+is a prototype...
 
