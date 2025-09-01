@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-794383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7069B3E0EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:06:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C11B3E0F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A338344393C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BFD3161797
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FE63128DE;
-	Mon,  1 Sep 2025 11:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D6230F81F;
+	Mon,  1 Sep 2025 11:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGScmK/6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eK5Y+H+t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D0830F549;
-	Mon,  1 Sep 2025 11:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFDC313551;
+	Mon,  1 Sep 2025 11:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756724719; cv=none; b=W0c2z88S5ZtWwVXd9Omhd4YYQ7U/+Z3zqKzvTpIl0y/dQ2ZDZFjXyrF4xCRQmBAxUnTT17CWgmGtaRt9j2OtX/m0r6xzCXyLUMo75MDr0pprsPf7QW7J7PtaDEZ6SCL+hlpNTrGEHu7YbgClSb/64rSzPFXX7+KsC8GzF8a48VA=
+	t=1756724723; cv=none; b=f7uRzf/58F9Pwj1LDQNEqeTEDoXbSXMmXgsjOzBHY7vvrOFJ+yL6HnGTDpKV5htNNzVi7YcioPKeu1dzmAGkJ71dROW8FLo2NKJukfDienHU9xH6k0yEvco++3altRYwh+FTF4GHv2nJ8Xx4rMAei31ftnk/3M/v4kCfGpYdyvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756724719; c=relaxed/simple;
-	bh=HhAxMhzIWpGbIo7jKoWEEEwRf9Ce/jHp1L+yBzRh2ZM=;
+	s=arc-20240116; t=1756724723; c=relaxed/simple;
+	bh=/bWgOgtt0HzeQRBAs3E1w5tDhjdTqd+bV+sPH7F9rBw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZyFMGFz34nQv4ywkSEmGmsnmcFDOmCxsmdKBDROV1XK1KEW2kNshvmikyU4+bX8zkqSomZvpTUhKsWcQa93oTNEFvZpVq/kqRDbzavJKcKIcvc9hIrSa/L/8s5zepstiIXHi47CuWaM4X3p51DKZApndQkPac6d+6QPK7QYXxZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGScmK/6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAC49C4CEF9;
-	Mon,  1 Sep 2025 11:05:15 +0000 (UTC)
+	 MIME-Version; b=rkzyrWgSZc2x5geVfXeDo4tRCPgG85ztnT4hgA4jn7auKWtAQcUj9X7iPT/uczh62q9HqW3BKpNzGr2UcXtQ3c0uNs+aJNq2rmnm+vcqf2YAAjdBsN8k0Dyz4oSFm5NSoFu62iamZlXDqzLUShNRGTFcv7WywrL1ZUNz6zYayjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eK5Y+H+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA85EC4CEF0;
+	Mon,  1 Sep 2025 11:05:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756724719;
-	bh=HhAxMhzIWpGbIo7jKoWEEEwRf9Ce/jHp1L+yBzRh2ZM=;
+	s=k20201202; t=1756724723;
+	bh=/bWgOgtt0HzeQRBAs3E1w5tDhjdTqd+bV+sPH7F9rBw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uGScmK/6FpuRVuYSYAd6H6szvYlh2nSs0IA7N+Ncc2fnGUMVkEdTtVjENWPfVGVRS
-	 4qbLR+Le8ZEveB/z70SfVlv9Yy0Ri3HX3v/FAuPFsQKUyKbspxbcwt1hHe0dsQxzq9
-	 nyz8hVihxaZY8TgqG+tttHlyK36S1rHzb4a/dGiMZ3gH593Rqbg2F8sxYf2ULaVMoO
-	 1t6OwdWVto3F1hHV5LyAWyR5Ret/9C7vEmUwsXDeuDcbPIpVhgSxmRPlllrs7uwiph
-	 /Z39zX0vrH8NDBqPVMo4SJ8fBNTzQfA9ps1lMcJC7qOVMpRHpYoj1eBCrB7CkeZNtp
-	 mBETgy49T7S9A==
+	b=eK5Y+H+t1oKMS8lkhYn362IaCBVBAXW1KwIgY0NxRWD/xGfSo3RxuAkHIoRDf6QSm
+	 kG3aSPJyIddFeOUkHGdkGXio3b/BGONbeCbVfcjhBepDDQobEsnPg3++184bj9tB4D
+	 naR5BrZH+g5vsaioPx3gj07qi/2UeNlXVxvlmF4FDSRX91VB+G44fdyB4FZO3av5Z9
+	 E7WuFwGuz43WTLtjL7tsbp+UVXMyY5CYsEy12fHpQgA7lgoRGvz+YIpN4a/jbVuscu
+	 gfmqgTtKmtiYJFgaJ1g3FwLfle7jObCrao37JhApuh1u3yiiBQYQ938+0Wa8mtnFNh
+	 pDAu8YRt0R7aA==
 From: Conor Dooley <conor@kernel.org>
 To: sboyd@kernel.org
 Cc: conor@kernel.org,
@@ -60,9 +60,9 @@ Cc: conor@kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-Subject: [PATCH v4 6/9] riscv: dts: microchip: fix mailbox description
-Date: Mon,  1 Sep 2025 12:04:18 +0100
-Message-ID: <20250901-excretion-employed-1e497728e00e@spud>
+Subject: [PATCH v4 7/9] riscv: dts: microchip: convert clock and reset to use syscon
+Date: Mon,  1 Sep 2025 12:04:19 +0100
+Message-ID: <20250901-famine-turf-deaa34bba81c@spud>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250901-rigid-sacrifice-0039c6e6234e@spud>
 References: <20250901-rigid-sacrifice-0039c6e6234e@spud>
@@ -72,64 +72,75 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2050; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=s6ZIEUHnNiMIErq0YtoV3qkwNiLtaSKSNvr8gxSu+hU=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBlba9edPD9/Mc+5Kx3zlG/fMfXzPBt6qU8g3awxVilSn HmzQ3FuRykLgxgXg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACbiVsfwz/LLfq+Yu9djX4u+ SnzXcbyTXUbauqfk1ze/N/mNDctmzGRk6K3bf/KKB/9OX6cDb0WUms8++7Yqw1br5pOY6QGMjrK rGQE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2218; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=N5M81SbyiMqeqad2gOqNt4lbslX9WNFs88VS2tWTGE4=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBlba9eZHj6bnvZS9rhEr1gMx7P8xZ83md5S4IvcsXR6i 6tQbHlNRykLgxgXg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACZyr5zhf8inLLtloRN052jO jDT4Ou36KcYGO5b5l/bta3/0e7LUpwWMDM3HxdZ/NigX+Pq5n9uzQH+6x78+uc0/r53myEyzMDU JZgAA
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-When the binding for the mailbox on PolarFire SoC was originally
-written, and later modified, mistakes were made - and the precise
-nature of the later modification should have been a giveaway, but alas
-I was naive at the time.
-
-A more correct modelling of the hardware is to use two syscons and have
-a single reg entry for the mailbox, containing the mailbox region. The
-two syscons contain the general control/status registers for the mailbox
-and the interrupt related registers respectively. The reason for two
-syscons is that the same mailbox is present on the non-SoC version of
-the FPGA, which has no interrupt controller, and the shared part of the
-rtl was unchanged between devices.
+The "subblock" clocks and reset registers on PolarFire SoC are located
+in the mss-top-sysreg region, alongside pinctrl and interrupt control
+functionality. Re-write the devicetree to describe the sys explicitly,
+as its own node, rather than as a region of the clock node.
+Correspondingly, the phandles to the reset controller must be updated to
+the new provider. The drivers will continue to support the old way of
+doing things.
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- arch/riscv/boot/dts/microchip/mpfs.dtsi | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ arch/riscv/boot/dts/microchip/mpfs.dtsi | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
 diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-index 9883ca3554c50..f9d6bf08e7170 100644
+index f9d6bf08e7170..5c2963e269b83 100644
 --- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
 +++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-@@ -259,6 +259,11 @@ clkcfg: clkcfg@20002000 {
+@@ -251,11 +251,9 @@ pdma: dma-controller@3000000 {
+ 			#dma-cells = <1>;
+ 		};
+ 
+-		clkcfg: clkcfg@20002000 {
+-			compatible = "microchip,mpfs-clkcfg";
+-			reg = <0x0 0x20002000 0x0 0x1000>, <0x0 0x3E001000 0x0 0x1000>;
+-			clocks = <&refclk>;
+-			#clock-cells = <1>;
++		mss_top_sysreg: syscon@20002000 {
++			compatible = "microchip,mpfs-mss-top-sysreg", "syscon", "simple-mfd";
++			reg = <0x0 0x20002000 0x0 0x1000>;
  			#reset-cells = <1>;
  		};
  
-+		sysreg_scb: syscon@20003000 {
-+			compatible = "microchip,mpfs-sysreg-scb", "syscon";
-+			reg = <0x0 0x20003000 0x0 0x1000>;
-+		};
-+
- 		ccc_se: clock-controller@38010000 {
- 			compatible = "microchip,mpfs-ccc";
- 			reg = <0x0 0x38010000 0x0 0x1000>, <0x0 0x38020000 0x0 0x1000>,
-@@ -521,10 +526,14 @@ usb: usb@20201000 {
+@@ -452,7 +450,7 @@ mac0: ethernet@20110000 {
+ 			local-mac-address = [00 00 00 00 00 00];
+ 			clocks = <&clkcfg CLK_MAC0>, <&clkcfg CLK_AHB>;
+ 			clock-names = "pclk", "hclk";
+-			resets = <&clkcfg CLK_MAC0>;
++			resets = <&mss_top_sysreg CLK_MAC0>;
  			status = "disabled";
  		};
  
--		mbox: mailbox@37020000 {
-+		control_scb: syscon@37020000 {
-+			compatible = "microchip,mpfs-control-scb", "syscon";
-+			reg = <0x0 0x37020000 0x0 0x100>;
-+		};
+@@ -466,7 +464,7 @@ mac1: ethernet@20112000 {
+ 			local-mac-address = [00 00 00 00 00 00];
+ 			clocks = <&clkcfg CLK_MAC1>, <&clkcfg CLK_AHB>;
+ 			clock-names = "pclk", "hclk";
+-			resets = <&clkcfg CLK_MAC1>;
++			resets = <&mss_top_sysreg CLK_MAC1>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -550,5 +548,12 @@ syscontroller_qspi: spi@37020100 {
+ 			clocks = <&scbclk>;
+ 			status = "disabled";
+ 		};
 +
-+		mbox: mailbox@37020800 {
- 			compatible = "microchip,mpfs-mailbox";
--			reg = <0x0 0x37020000 0x0 0x58>, <0x0 0x2000318C 0x0 0x40>,
--			      <0x0 0x37020800 0x0 0x100>;
-+			reg = <0x0 0x37020800 0x0 0x1000>;
- 			interrupt-parent = <&plic>;
- 			interrupts = <96>;
- 			#mbox-cells = <1>;
++		clkcfg: clkcfg@3e001000 {
++			compatible = "microchip,mpfs-clkcfg";
++			reg = <0x0 0x3e001000 0x0 0x1000>;
++			clocks = <&refclk>;
++			#clock-cells = <1>;
++		};
+ 	};
+ };
 -- 
 2.47.2
 
