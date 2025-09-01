@@ -1,109 +1,91 @@
-Return-Path: <linux-kernel+bounces-794776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE584B3E716
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:28:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9423B3E713
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B42162AAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CD93B98A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDBF341646;
-	Mon,  1 Sep 2025 14:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzAQYKzY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C46341AAA;
+	Mon,  1 Sep 2025 14:28:09 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B2D323E;
-	Mon,  1 Sep 2025 14:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAF3341668
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736883; cv=none; b=JJ1oKNw60z5OB6C0ANjhf6NMq0gqsilPFNzW9n7405D/7Y2HtKvVfIccGyoZw4RLAZEPkaYH8ieSgsyhwOwuSf60PBR/3atwKRtC1nycPaTzBhmCzK0FW4s4u6HzXBPHog8nLgm89vr4p8paUNCq9hpGk7jX5NoSF2VjnOgMVz8=
+	t=1756736888; cv=none; b=ECDCI5xaNyx1BLw6Z4eXZ/Tx7gL5ckojcVdDiRJSCvu1fhXthiAOUKalYfJmlnM7B4ASrdIaWgpDDcJ+t1gNWkTRZd0P5jiwtv63Ib3nv1gz6UFL5V5nEVFeqUJsyC82HkcT6Y7LdY9QZ0FzAUO9oU3PsJv46sNrBOzrrAOSxZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736883; c=relaxed/simple;
-	bh=79YhD1biW7ZRAbWexbw6r9UIo8+R0Ehi9QzCMPNdDb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l+67CZVVBuKTgMwKbyP3uD4iN/y7nzoPXqsrujBFjoqts9th7XzqL94l+5we92MjmVY8x7b9Fhs05pGiOKOfkw6bcTIs3UPRMfrSt7LwQhXaY8TiTfbrwFfNVHh84/hWI9qz0cMyzVio8iKYa7J5WzwKzTBULCib+h/N2WI13O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzAQYKzY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF62C4CEF0;
-	Mon,  1 Sep 2025 14:27:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756736882;
-	bh=79YhD1biW7ZRAbWexbw6r9UIo8+R0Ehi9QzCMPNdDb0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YzAQYKzYOdJ3Q71t1i2a14NKnIRG3n/WMD3ZFyAehHTZcJusoFFuNtDI2+HYZCtj4
-	 wk4jXKHQxLBdQ/Wwob+BiDoE7bcA3zFC9B0eRyi7Kfl4+gmWXl8HuIHV2Af5e9fgwA
-	 k9kw3BDo2FcbU50hWaofq1m8IK+QrX0RmYGl2DNtGvaotpXICnparE35Y4MV2Fgiq5
-	 5DMOJp4CNBhGnYB20E8CWFZprn65hFKxKfRI0r2dTONJbvqIUGV2TGTOHgvLj0O5JQ
-	 t5EmUEtJBtKDLedgo9+7Jmh8ty/H6KSolSb9QH8nHkMnNj4dqhY7W8+tFatLVLqv3G
-	 4q+9NkXdezl/A==
-Date: Mon, 1 Sep 2025 17:27:53 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "ackerleytng@google.com" <ackerleytng@google.com>,
-	"david@redhat.com" <david@redhat.com>,
-	"Manwaring, Derek" <derekmn@amazon.com>,
-	"Thomson, Jack" <jackabt@amazon.co.uk>,
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"tabba@google.com" <tabba@google.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"will@kernel.org" <will@kernel.org>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>
-Subject: Re: [PATCH v5 04/12] KVM: guest_memfd: Add flag to remove from
- direct map
-Message-ID: <aLWtaZYi65aLtTAP@kernel.org>
-References: <aLBtwIhQpX6AR2Z6@kernel.org>
- <20250901142220.30610-1-roypat@amazon.co.uk>
+	s=arc-20240116; t=1756736888; c=relaxed/simple;
+	bh=SswYK8NK8/NBuIlxZPEINe8a01YkBoblyh0FZHT5vFU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=s8js7fyQhSS5YK83u+O6YSQmTaqjZUZgyNBtezZP7jbfQAnaM6M47Up0X2hjU3F3NWeUVBuTAgIIW/TOzfFOWsJmE6I8mVsyeVohJEPswbxfVlTeQPTMaTDyQBY+4o2BmHRALPZe9Fs7d5zE8Gv7v257zXJd9mUHturMsYAXMSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-88717723bc0so268005239f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 07:28:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756736886; x=1757341686;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KzoS/rFpWfbjyEKOrpfdLItOmctXoSuOQ4sdGnPwuk8=;
+        b=mJMF6cQ6fAb27f6ji5AQHXLpMZeavX27LOUMOwBZDlu5Z1Chn4NfGxiQcpRtT7jSIc
+         T5oP+WK/RhsxrD28AqL2ccsNZgp0B4cyv2JjiTOAqX1z/yjrGrYNL2WK1W7sagsE8RBy
+         DwBSMSIZBE2Q439W1Ux41P16P22m7TvmCAMb9H9G/vvdi//a0eeZl5QPxOQIkPA8S1l0
+         +izhdhmBQ0OY0hI+XPUKW+QSDitnHvhT4GpnAO/NbwFp7E1uArfsW16V61WIeHiMpoBF
+         RdITBSdRDkTq2UtTGF1bbwWLCeg2JQgTf8wyj97Qg8+y+V9VUjvIAlQw7/8qVJ89hbR6
+         3N+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWgU/ohuX03b8QLDMZWetBcFPzAXxOuzdBHQSRQ0DkdxesuShsuTUpPvfNUOcj9D4d95f9e9YSKTRoPpxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweMeTqTW3tSwYvmH8nNiGfaT3kEWNIgpy6e765n+1+NmqIQSOW
+	RHpwd5gDnkoiFLEJt7D3nRfi0m8/ZdHcqzHr7slBCRhEQABP6jQqR1LkFGagFmB03ZR4wJwfWEl
+	rztqhhzb+0lsNETINB08LEB+JPhBIRHdyDiOP9fGZZpCiasnXFjjLerzpi24=
+X-Google-Smtp-Source: AGHT+IEiesIfDRZe1XchjiZ7FWywLU9bIPuEeclcfhByJXEa2ihgbeBdxEOAoCYTZVWipvfw4VMuDkEPiCeKFq7XWlsmXrNjYa8Q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901142220.30610-1-roypat@amazon.co.uk>
+X-Received: by 2002:a05:6e02:144c:b0:3f3:cd20:d7e4 with SMTP id
+ e9e14a558f8ab-3f3ffda2be4mr162622435ab.1.1756736886309; Mon, 01 Sep 2025
+ 07:28:06 -0700 (PDT)
+Date: Mon, 01 Sep 2025 07:28:06 -0700
+In-Reply-To: <68721d9e.a00a0220.26a83e.0074.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b5ad76.050a0220.3db4df.01c1.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bch2_trans_commit (3)
+From: syzbot <syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 01, 2025 at 02:22:22PM +0000, Roy, Patrick wrote:
-> On Thu, 2025-08-28 at 15:54 +0100, Mike Rapoport wrote:
-> > On Thu, Aug 28, 2025 at 09:39:21AM +0000, Roy, Patrick wrote:
-> >
-> >>  static inline void kvm_gmem_mark_prepared(struct folio *folio)
-> >>  {
-> >> +     struct inode *inode = folio_inode(folio);
-> >> +
-> >> +     if (kvm_gmem_test_no_direct_map(inode))
-> >> +             set_direct_map_valid_noflush(folio_page(folio, 0), folio_nr_pages(folio), false);
-> > 
-> > This may fail to split large mapping in the direct map. Why not move this
-> > to kvm_gmem_prepare_folio() where you can handle returned error?
-> 
-> Argh, yeah, got that the wrong way around. Will update the error handling.
-> 
-> > I think that using set_direct_map_invalid_noflush() here and
-> > set_direct_map_default_noflush() in kvm_gmem_free_folio() better is
-> > clearer and makes it more obvious that here the folio is removed from the
-> > direct map and when freed it's direct mapping is restored.
-> > 
-> > This requires to export two symbols in patch 2, but I think it's worth it.
-> 
-> Mh, but set_direct_map_[default|invalid]_noflush() only take a single struct
-> page * argument, so they'd either need to gain a npages argument, or we add yet
-> more functions to set_memory.h.  Do you still think that's worth it? 
+syzbot has bisected this issue to:
 
-Ah, right, misremembered that. Let's keep set_direct_map_valid_noflush().
- 
--- 
-Sincerely yours,
-Mike.
+commit d0855e210675b8018f4e89ca77cbfa133bce3a71
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Thu Dec 12 09:03:32 2024 +0000
+
+    bcachefs: Kill snapshot_t->equiv
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14f2e242580000
+start commit:   c330cb607721 Merge tag 'i2c-for-6.17-rc3' of git://git.ker..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16f2e242580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f2e242580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=b6ef9edaba01d5b4e43f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163eac42580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136c1862580000
+
+Reported-by: syzbot+b6ef9edaba01d5b4e43f@syzkaller.appspotmail.com
+Fixes: d0855e210675 ("bcachefs: Kill snapshot_t->equiv")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
