@@ -1,304 +1,157 @@
-Return-Path: <linux-kernel+bounces-794591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11455B3E398
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:46:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F711B3E3AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A5E188652F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB8316714B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E261531DD8E;
-	Mon,  1 Sep 2025 12:45:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310BB30DEC3
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760E73277BB;
+	Mon,  1 Sep 2025 12:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o3ABb0gM"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D8D30F952
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756730751; cv=none; b=URmemScn0JWbjvDQqyu1cuzmkPeR8r/bKU5Ux7a8IsQt57/wFooxoijRmqqvlEYACMN8vMcxliLuCWy0AMmaOYdXE8HRheZlUSSpkWnTHfpTFTU5JiX6w6Qz7D5OD+E2jy3pF9ZTah/1VcD/UPPy//Kv0x3kRgt0P+iy4T1LBxo=
+	t=1756730821; cv=none; b=NkYBbJCiRz03K5AToacZQom7/022XjKtP8u5q6/1Alp1nmzs3MG7wHp7nXZ+aVY49GAaE6AgZkkYjHZmARlETfw4cRutruIOw0vvB302AgEGrFeVhDhN6XasTbZ1tBO9y2rpP9uczlxGC95zLFW72UMfmprLOPTx1Ppp9vsOWtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756730751; c=relaxed/simple;
-	bh=dVStAfEgko4TYcCvhCj7zcqJ+XM9dEF+LYtHnZ7rmO0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=r8Vea8o64l3H+l1ScsHNOjovC6YwEiGoJwDnIsRs15X8pOsYc76AocEyuYQhSzJudaaE3INrFDfPM7QjOQ6mbBUOoQ6Fjs8WUBdoCoGbG5NwiFGFfGRVZPr2BG72v4i/sGHjRTyrkazRO4uozOZrvue4LuZi+74z/T/UK/UuSh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 021E716A3;
-	Mon,  1 Sep 2025 05:45:40 -0700 (PDT)
-Received: from [10.163.70.120] (unknown [10.163.70.120])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D169A3F694;
-	Mon,  1 Sep 2025 05:45:44 -0700 (PDT)
-Message-ID: <dd34c47a-ea5a-4bd6-a27e-11f55a08d27e@arm.com>
-Date: Mon, 1 Sep 2025 18:15:41 +0530
+	s=arc-20240116; t=1756730821; c=relaxed/simple;
+	bh=wvRHqi3dScj15IsjLi+ATrCVMUE7d9PpbVx2eGPnx4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jpXUJycJDM+yK/pgYq/fk5w9h/zUwouK7kSQTTSoU+Emh+ewL7wokU0wgYil9iK7a3qlxocA1yJ9mrys8udcjEAJIwGgWE0AAQ9nbCK5BbuxXLemAOxFJeN673T7ujKgSVvSUvJg2mavIXXJ2dzLPi+3WNcuWHYHSLid6sGxCZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o3ABb0gM; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7720f23123dso4011745b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756730819; x=1757335619; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/7y07yor/pAlX2cJEQqvfRVMWVvqV9hnsGNfw0TS32c=;
+        b=o3ABb0gMorxpktNDLmFcNgXrqiViu8hI6Vrks+rXrRkdGfAjTgAyFYlrHIbzn7A6+h
+         mayazLpXjjFp+dbZ23k+UwtBHt06A8Hvo1bEKjXAGEb5ICOjo1I5hcwupuXZVJK18zz/
+         tyewI5Ld+RQCmD4y6pOyXyYWraYhGUTyo4dDrF7bMguhOkKEmRnxqeythECZMhmK7Un6
+         YAnfCHiggvKD4PxKG1Qg9QO/38d+FYAb+BDAMXQE8kDS0DGwtXhUj2h7n4w41QKexpTy
+         5Mbjj4ZAZQHACdTdHwGLrtOAjwLrBd4fb9aXRIOI9zfqwnvBidxhpNUzYC95MuKWvmSa
+         1xHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756730819; x=1757335619;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/7y07yor/pAlX2cJEQqvfRVMWVvqV9hnsGNfw0TS32c=;
+        b=NXkOfseFxgPg+D69dOaO5BRo+NN8jpVqeq6CzV00WdiGmJ6uOkEp2GsMN+gh9pNsv3
+         dsk6oLUGCXuyOMqejD5iZgQh+y5Udew1u86toUWTIaoemgpDfBjrO27BxVpNyAKiHLYu
+         mc6D4P6H8sY5+c8TmK2oy0MxFi0UfthIEN4XjUMhye4HyKXAbcqCqLK6kAX8r0SR7AtU
+         NPjuLdedYKNmFM8kdoeqOszT+uIwFwjCihk3M/hBuhKUbPArORP1yS2oKrmpn6Jizm4S
+         XRsyoU8CgLhoMPUNfKT8Q6v33wrZ1TKEOMue1nlF551fFGy2GiAPIFazbrYFFOz2c6vg
+         KVQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUckjC6M57J0WI633DvlASAT2300YCKae4rSKr2Kq5YkdVI78Ppn+NV0iL7OrqBb0D++ZXlBr1k5A+f+uU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfLnqmYt7nsY13IfF1dm6CJ9/ooo5DP7Tsb12igBsTAXzb9GNg
+	7PnBxPqUB6hSor+b6NLtgby0pgQHbiQ3TDIJpZAB4Lt3I5TJQBmeAf/JdN29/cegyhogOtWng/K
+	V7yNrIV3O7nSdZ9pyONwBIImGaZhnr37hR6kpiwdd
+X-Gm-Gg: ASbGncvZDEr073PsBMWCkFHxQeLKHqsYtZinQcu3YBGCfJx2QQkJFvdaeOV5NfRAzXu
+	cE/RSS2fFN9lx3/twdq3BlgVubL5xRFpDhLF6vyuGEqkRW4tpt+ueOd40H2rmbfO2O0GR6MkuVk
+	jWjNrrAT3uWTpcoCPsL236wA9KIQyVuXZB20UCZoVMRQsCpwnMXxavl1oW4zIrjZ76xhbEc3ty9
+	fKjtRYsCJRNMuyLPdoeK5z7JPkHAj+DnlqY1CXew5dS+ZW+hkc5mQ==
+X-Google-Smtp-Source: AGHT+IHzcBc4YYJpeDDugGdalUGLmOoVhyxPLPgnjb0HlKXSlALfB0fjTWzTMuWcnleuXqTacq9sgKTJ1OxjVOmND00=
+X-Received: by 2002:a17:903:4b0d:b0:24a:aedb:1915 with SMTP id
+ d9443c01a7336-24aaedb1b81mr55675215ad.9.1756730819298; Mon, 01 Sep 2025
+ 05:46:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] arm64/sysreg: Replace TCR_EL1 field macros
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: Ben Horgan <ben.horgan@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Mark Brown <broonie@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250901072037.743380-1-anshuman.khandual@arm.com>
- <20250901072037.743380-3-anshuman.khandual@arm.com>
- <07171e19-71a4-4672-adfd-03feb17433e9@arm.com>
- <8faf8d1d-0987-4ce0-b626-01de8f214baf@arm.com>
-Content-Language: en-US
-In-Reply-To: <8faf8d1d-0987-4ce0-b626-01de8f214baf@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250901091050.1935505-1-abarnas@google.com> <20250901091050.1935505-3-abarnas@google.com>
+ <aLWQSAX1ZKg6IiTb@smile.fi.intel.com>
+In-Reply-To: <aLWQSAX1ZKg6IiTb@smile.fi.intel.com>
+From: =?UTF-8?Q?Adrian_Barna=C5=9B?= <abarnas@google.com>
+Date: Mon, 1 Sep 2025 14:46:47 +0200
+X-Gm-Features: Ac12FXyc3n7Z0qCXdSTjDfMBIr2AbkPj7jLdgKKqBvKbDUlmPSbbyJWBW9Lvlfk
+Message-ID: <CAATBrPHpLnsWb-Ua0z2Nmv7To_yXeosoV8+nGzcWfGUVPFq1Xg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] staging:media: atomisp: Whitespaces cleanup in vmem.c
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 1, 2025 at 2:23=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Mon, Sep 01, 2025 at 09:10:50AM +0000, Adrian Barna=C5=9B wrote:
+> > Whitespaces cleanup to conform with kernel style and improve readabilit=
+y.
+>
+> Strange...
 
+You mean the commit description? Should I reword it?
 
-On 01/09/25 4:47 PM, Anshuman Khandual wrote:
-> 
-> 
-> On 01/09/25 4:07 PM, Ben Horgan wrote:
->> Hi Anshuman,
->>
->> On 9/1/25 08:20, Anshuman Khandual wrote:
->>> This just replaces all used TCR_EL1 field macros with tools sysreg variant
->>> based fields and subsequently drops them from the header (pgtable-hwdef.h)
->>> and moves them into KVM header (asm/kvm_arm.h) for continued usage in KVM.
->>>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Marc Zyngier <maz@kernel.org>
->>> Cc: Mark Brown <broonie@kernel.org>
->>> Cc: kvmarm@lists.linux.dev
->>> Cc: linux-arm-kernel@lists.infradead.org
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>> ---
->>> Changes in V3:
->>>
->>> - KVM TCR_XXX flags are expressed via TCR_EL1_XXX flags per Marc
->>>
->>>  arch/arm64/include/asm/assembler.h     |  6 +-
->>>  arch/arm64/include/asm/cputype.h       |  2 +-
->>>  arch/arm64/include/asm/kvm_arm.h       | 78 ++++++++++++++++++++
->>>  arch/arm64/include/asm/mmu_context.h   |  4 +-
->>>  arch/arm64/include/asm/pgtable-hwdef.h | 98 +-------------------------
->>>  arch/arm64/include/asm/pgtable-prot.h  |  2 +-
->>>  arch/arm64/kernel/cpufeature.c         |  4 +-
->>>  arch/arm64/kernel/pi/map_kernel.c      |  8 +--
->>>  arch/arm64/kernel/vmcore_info.c        |  2 +-
->>>  arch/arm64/mm/proc.S                   | 36 ++++++----
->>>  tools/arch/arm64/include/asm/cputype.h |  2 +-
->>>  11 files changed, 118 insertions(+), 124 deletions(-)
->>>
->>> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
->>> index 23be85d93348..1392860a3c97 100644
->>> --- a/arch/arm64/include/asm/assembler.h
->>> +++ b/arch/arm64/include/asm/assembler.h
->>> @@ -325,14 +325,14 @@ alternative_cb_end
->>>   * tcr_set_t0sz - update TCR.T0SZ so that we can load the ID map
->>>   */
->>>  	.macro	tcr_set_t0sz, valreg, t0sz
->>> -	bfi	\valreg, \t0sz, #TCR_T0SZ_OFFSET, #TCR_TxSZ_WIDTH
->>> +	bfi	\valreg, \t0sz, #TCR_EL1_T0SZ_SHIFT, #TCR_EL1_T0SZ_WIDTH
->>>  	.endm
->>>  
->>>  /*
->>>   * tcr_set_t1sz - update TCR.T1SZ
->>>   */
->>>  	.macro	tcr_set_t1sz, valreg, t1sz
->>> -	bfi	\valreg, \t1sz, #TCR_T1SZ_OFFSET, #TCR_TxSZ_WIDTH
->>> +	bfi	\valreg, \t1sz, #TCR_EL1_T1SZ_SHIFT, #TCR_EL1_T1SZ_WIDTH
->>>  	.endm
->>>  
->>>  /*
->>> @@ -589,7 +589,7 @@ alternative_endif
->>>  	.macro	offset_ttbr1, ttbr, tmp
->>>  #if defined(CONFIG_ARM64_VA_BITS_52) && !defined(CONFIG_ARM64_LPA2)
->>>  	mrs	\tmp, tcr_el1
->>> -	and	\tmp, \tmp, #TCR_T1SZ_MASK
->>> +	and	\tmp, \tmp, #TCR_EL1_T1SZ_MASK
->>>  	cmp	\tmp, #TCR_T1SZ(VA_BITS_MIN)
->>>  	orr	\tmp, \ttbr, #TTBR1_BADDR_4852_OFFSET
->>>  	csel	\ttbr, \tmp, \ttbr, eq
->>> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
->>> index 661735616787..5d80710ca85f 100644
->>> --- a/arch/arm64/include/asm/cputype.h
->>> +++ b/arch/arm64/include/asm/cputype.h
->>> @@ -243,7 +243,7 @@
->>>  /* Fujitsu Erratum 010001 affects A64FX 1.0 and 1.1, (v0r0 and v1r0) */
->>>  #define MIDR_FUJITSU_ERRATUM_010001		MIDR_FUJITSU_A64FX
->>>  #define MIDR_FUJITSU_ERRATUM_010001_MASK	(~MIDR_CPU_VAR_REV(1, 0))
->>> -#define TCR_CLEAR_FUJITSU_ERRATUM_010001	(TCR_NFD1 | TCR_NFD0)
->>> +#define TCR_CLEAR_FUJITSU_ERRATUM_010001	(TCR_EL1_NFD1 | TCR_EL1_NFD0)
->>>  
->>>  #ifndef __ASSEMBLY__
->>>  
->>> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
->>> index 1da290aeedce..4e0ca6140857 100644
->>> --- a/arch/arm64/include/asm/kvm_arm.h
->>> +++ b/arch/arm64/include/asm/kvm_arm.h
->>> @@ -107,6 +107,84 @@
->>>  
->>>  #define MPAMHCR_HOST_FLAGS	0
->>>  
->>> +#define TCR_T0SZ_MASK		TCR_EL1_T0SZ_MASK
->>> +#define TCR_T1SZ_MASK		TCR_EL1_T1SZ_MASK
->>> +
->>> +#define TCR_EPD0_MASK		TCR_EL1_EPD0_MASK
->>> +#define TCR_EPD1_MASK		TCR_EL1_EPD1_MASK
->>> +
->>> +#define TCR_IRGN0_MASK		TCR_EL1_IRGN0_MASK
->>> +#define TCR_IRGN0_NC		(TCR_EL1_IRGN0_NC << TCR_EL1_IRGN0_SHIFT)
->>> +#define TCR_IRGN0_WBWA		(TCR_EL1_IRGN0_WBWA << TCR_EL1_IRGN0_SHIFT)
->>> +#define TCR_IRGN0_WT		(TCR_EL1_IRGN0_WT << TCR_EL1_IRGN0_SHIFT)
->>> +#define TCR_IRGN0_WBnWA		(TCR_EL1_IRGN0_WBnWA << TCR_EL1_IRGN0_SHIFT)
->>> +
->>> +#define TCR_IRGN1_MASK		TCR_EL1_IRGN1_MASK
->>> +#define TCR_IRGN1_NC		(TCR_EL1_IRGN1_NC << TCR_EL1_IRGN1_SHIFT)
->>> +#define TCR_IRGN1_WBWA		(TCR_EL1_IRGN1_WBWA << TCR_EL1_IRGN1_SHIFT)
->>> +#define TCR_IRGN1_WT		(TCR_EL1_IRGN1_WT << TCR_EL1_IRGN1_SHIFT)
->>> +#define TCR_IRGN1_WBnWA		(TCR_EL1_IRGN1_WBnWA << TCR_EL1_IRGN1_SHIFT)
->>> +
->>> +#define TCR_IRGN_NC		(TCR_EL1_IRGN0_NC | TCR_EL1_IRGN1_NC)
->>> +#define TCR_IRGN_WT		(TCR_EL1_IRGN0_WT | TCR_EL1_IRGN1_WT)
->>> +#define TCR_IRGN_WBnWA		(TCR_EL1_IRGN0_WBnWA | TCR_EL1_IRGN1_WBnWA)
->>> +#define TCR_IRGN_MASK		(TCR_EL1_IRGN0_MASK | TCR_EL1_IRGN1_MASK)
->>> +
->>> +#define TCR_ORGN0_MASK		TCR_EL1_ORGN0_MASK
->>> +#define TCR_ORGN0_NC		(TCR_EL1_ORGN0_NC << TCR_EL1_ORGN0_SHIFT)
->>> +#define TCR_ORGN0_WBWA		(TCR_EL1_ORGN0_WBWA << TCR_EL1_ORGN0_SHIFT)
->>> +#define TCR_ORGN0_WT		(TCR_EL1_ORGN0_WT << TCR_EL1_ORGN0_SHIFT)
->>> +#define TCR_ORGN0_WBnWA		(TCR_EL1_ORGN0_WBnWA << TCR_EL1_ORGN0_SHIFT)
->>> +
->>> +#define TCR_ORGN1_MASK		TCR_EL1_ORGN1_MASK
->>> +#define TCR_ORGN1_NC		(TCR_EL1_ORGN1_NC << TCR_EL1_ORGN1_SHIFT)
->>> +#define TCR_ORGN1_WBWA		(TCR_EL1_ORGN1_WBWA << TCR_EL1_ORGN1_SHIFT)
->>> +#define TCR_ORGN1_WT		(TCR_EL1_ORGN1_WT << TCR_EL1_ORGN1_SHIFT)
->>> +#define TCR_ORGN1_WBnWA		(TCR_EL1_ORGN1_WBnWA << TCR_EL1_ORGN1_SHIFT)
->>> +
->>> +#define TCR_ORGN_NC		(TCR_EL1_ORGN0_NC | TCR_EL1_ORGN1_NC)
->>> +#define TCR_ORGN_WT		(TCR_EL1_ORGN0_WT | TCR_EL1_ORGN1_WT)
->>> +#define TCR_ORGN_WBnWA		(TCR_EL1_ORGN0_WBnWA | TCR_EL1_ORGN1_WBnWA)
->> Shouldn't these 3 be defined as per the code you remove below?
->>
->> #define TCR_ORGN_NC		(TCR_ORGN0_NC | TCR_ORGN1_NC)
->> #define TCR_ORGN_WT		(TCR_ORGN0_WT | TCR_ORGN1_WT)
->> #define TCR_ORGN_WBnWA		(TCR_ORGN0_WBnWA | TCR_ORGN1_WBnWA)
->>
->> However, it does seem surprising that whether or not EL1 is in the name
->> changes whether there is a shift or not.
-> 
-> I am afraid you are right.
-> 
-> Originally TCR_ORGN_NC actually ORed in place shifted values
-> for both ORGN0 and ORGN1 register fields.
-> 
-> TCR_ORGN0_NC (UL(0) << TCR_ORGN0_SHIFT)
-> TCR_ORGN1_NC (UL(0) << TCR_ORGN1_SHIFT)
-> TCR_ORGN_NC (TCR_ORGN0_NC | TCR_ORGN1_NC)
-> 
-> Hence after this change it should still do the same.
-> 
-> TCR_ORGN0_NC            (TCR_EL1_ORGN0_NC << TCR_EL1_ORGN0_SHIFT)
-> TCR_ORGN1_WBWA          (TCR_EL1_ORGN1_WBWA << TCR_EL1_ORGN1_SHIFT)
-> 
-> As TCR_ORGN0_NC and TCR_ORGN1_WBWA again contain the shifted
-> in place register field values, hence these macro definitions
-> should not change at all.
-> 
-> It should still be
-> 
-> TCR_ORGN_NC		(TCR_ORGN0_NC | TCR_ORGN1_NC)
-> 
-> Not as proposed in this patch
-> 
-> TCR_ORGN_NC		(TCR_EL1_ORGN0_NC | TCR_EL1_ORGN1_NC)
-> 
-> This problem exists for the above TCR_IRGN_XXX flags as well.
-> Will do the following changes.
-> 
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -125,10 +125,10 @@
->  #define TCR_IRGN1_WT           (TCR_EL1_IRGN1_WT << TCR_EL1_IRGN1_SHIFT)
->  #define TCR_IRGN1_WBnWA                (TCR_EL1_IRGN1_WBnWA << TCR_EL1_IRGN1_SHIFT)
-> 
-> -#define TCR_IRGN_NC            (TCR_EL1_IRGN0_NC | TCR_EL1_IRGN1_NC)
-> -#define TCR_IRGN_WT            (TCR_EL1_IRGN0_WT | TCR_EL1_IRGN1_WT)
-> -#define TCR_IRGN_WBnWA         (TCR_EL1_IRGN0_WBnWA | TCR_EL1_IRGN1_WBnWA)
-> -#define TCR_IRGN_MASK          (TCR_EL1_IRGN0_MASK | TCR_EL1_IRGN1_MASK)
-> +#define TCR_IRGN_NC            (TCR_IRGN0_NC | TCR_IRGN1_NC)
-> +#define TCR_IRGN_WT            (TCR_IRGN0_WT | TCR_IRGN1_WT)
-> +#define TCR_IRGN_WBnWA         (TCR_IRGN0_WBnWA | TCR_IRGN1_WBnWA)
-> +#define TCR_IRGN_MASK          (TCR_IRGN0_MASK | TCR_IRGN1_MASK)
-> 
->  #define TCR_ORGN0_MASK         TCR_EL1_ORGN0_MASK
->  #define TCR_ORGN0_NC           (TCR_EL1_ORGN0_NC << TCR_EL1_ORGN0_SHIFT)
-> @@ -142,10 +142,10 @@
->  #define TCR_ORGN1_WT           (TCR_EL1_ORGN1_WT << TCR_EL1_ORGN1_SHIFT)
->  #define TCR_ORGN1_WBnWA                (TCR_EL1_ORGN1_WBnWA << TCR_EL1_ORGN1_SHIFT)
-> 
-> -#define TCR_ORGN_NC            (TCR_EL1_ORGN0_NC | TCR_EL1_ORGN1_NC)
-> -#define TCR_ORGN_WT            (TCR_EL1_ORGN0_WT | TCR_EL1_ORGN1_WT)
-> -#define TCR_ORGN_WBnWA         (TCR_EL1_ORGN0_WBnWA | TCR_EL1_ORGN1_WBnWA)
-> -#define TCR_ORGN_MASK          (TCR_EL1_ORGN0_MASK | TCR_EL1_ORGN1_MASK)
-> +#define TCR_ORGN_NC            (TCR_ORGN0_NC | TCR_ORGN1_NC)
-> +#define TCR_ORGN_WT            (TCR_ORGN0_WT | TCR_ORGN1_WT)
-> +#define TCR_ORGN_WBnWA         (TCR_ORGN0_WBnWA | TCR_ORGN1_WBnWA)
-> +#define TCR_ORGN_MASK          (TCR_ORGN0_MASK | TCR_ORGN1_MASK)
-> 
->  #define TCR_SH0_MASK           TCR_EL1_SH0_MASK
->  #define TCR_SH0_INNER          (TCR_EL1_SH0_INNER << TCR_EL1_SH0_SHIFT) 
+> >  /* subword bits move like this:         MSB[____xxxx____]LSB -> MSB[00=
+000000xxxx]LSB */
+> > -static inline unsigned long long
+> > -subword(unsigned long long w, unsigned int start, unsigned int end)
+> > +static inline unsigned long long subword(unsigned long long w, unsigne=
+d int start,
+> > +                                      unsigned int end)
+> >  {
+> >       return (w & (((1ULL << (end - 1)) - 1) << 1 | 1)) >> start;
+> >  }
+> >
+> >  /* inverse subword bits move like this: MSB[xxxx____xxxx]LSB -> MSB[xx=
+xx0000xxxx]LSB */
+> > -static inline unsigned long long
+> > -inv_subword(unsigned long long w, unsigned int start, unsigned int end=
+)
+> > +static inline unsigned long long inv_subword(unsigned long long w, uns=
+igned int start,
+> > +                                          unsigned int end)
+> >  {
+> >       return w & (~(((1ULL << (end - 1)) - 1) << 1 | 1) | ((1ULL << sta=
+rt) - 1));
+> >  }
+>
+> These two were just "fixed according to the kernel coding style" and here
+> again. This is odd.
+>
+> Note, the style after the first patch is okay. I dunno what's wrong with =
+it.
 
-These macros are not used in KVM and hence can be dropped off completely
-along with some others that are being moved here. The following set of
-TCR_XXX macros seems to be sufficient for KVM.
+Those were not violate the kernel code style indeed, but it looks more
+consistent this way for me.
+Should I revert those?
 
-#define TCR_T0SZ_MASK           TCR_EL1_T0SZ_MASK
-#define TCR_T1SZ_MASK           TCR_EL1_T1SZ_MASK
+> ...
+>
+> > -void isp_vmem_load(
+> > -    const isp_ID_t           ID,
+> > -    const t_vmem_elem        *from,
+> > -    t_vmem_elem              *to,
+> > -    unsigned int elems) /* In t_vmem_elem */
+> > +void isp_vmem_load(const isp_ID_t ID, const t_vmem_elem *from, t_vmem_=
+elem *to,
+> > +                unsigned int elems) /* In t_vmem_elem */
+>
+> Please, (re)move trailing comments somewhere else.
 
-#define TCR_EPD0_MASK           TCR_EL1_EPD0_MASK
-#define TCR_EPD1_MASK           TCR_EL1_EPD1_MASK
+Those comments are also in header so in my opinion we could get rid of
+them here.
 
-#define TCR_IRGN0_MASK          TCR_EL1_IRGN0_MASK
-#define TCR_ORGN0_MASK          TCR_EL1_ORGN0_MASK
-#define TCR_IRGN0_WBWA          (TCR_EL1_IRGN0_WBWA << TCR_EL1_IRGN0_SHIFT)
-#define TCR_ORGN0_WBWA          (TCR_EL1_ORGN0_WBWA << TCR_EL1_ORGN0_SHIFT)
-
-#define TCR_SH0_MASK            TCR_EL1_SH0_MASK
-#define TCR_SH0_INNER           (TCR_EL1_SH0_INNER << TCR_EL1_SH0_SHIFT)
-
-#define TCR_TG0_SHIFT           TCR_EL1_TG0_SHIFT
-#define TCR_TG0_MASK            TCR_EL1_TG0_MASK
-#define TCR_TG0_4K              (TCR_EL1_TG0_4K << TCR_EL1_TG0_SHIFT)
-#define TCR_TG0_64K             (TCR_EL1_TG0_64K << TCR_EL1_TG0_SHIFT)
-#define TCR_TG0_16K             (TCR_EL1_TG0_16K << TCR_EL1_TG0_SHIFT)
-
-#define TCR_TG1_SHIFT           TCR_EL1_TG1_SHIFT
-#define TCR_TG1_MASK            TCR_EL1_TG1_MASK
-#define TCR_TG1_16K             (TCR_EL1_TG1_16K << TCR_EL1_TG1_SHIFT)
-#define TCR_TG1_4K              (TCR_EL1_TG1_4K << TCR_EL1_TG1_SHIFT)
-#define TCR_TG1_64K             (TCR_EL1_TG1_64K << TCR_EL1_TG1_SHIFT)
-
-#define TCR_IPS_SHIFT           TCR_EL1_IPS_SHIFT
-#define TCR_IPS_MASK            TCR_EL1_IPS_MASK
-#define TCR_A1                  TCR_EL1_A1
-#define TCR_ASID16              TCR_EL1_AS
-#define TCR_TBI0                TCR_EL1_TBI0
-#define TCR_TBI1                TCR_EL1_TBI1
-#define TCR_HA                  TCR_EL1_HA
-#define TCR_HD                  TCR_EL1_HD
-#define TCR_HPD0                TCR_EL1_HPD0
-#define TCR_HPD1                TCR_EL1_HPD1
-#define TCR_TBID0               TCR_EL1_TBID0
-#define TCR_TBID1               TCR_EL1_TBID1
-#define TCR_E0PD0               TCR_EL1_E0PD0
-#define TCR_E0PD1               TCR_EL1_E0PD1
-#define TCR_DS                  TCR_EL1_DS
+Thank you for a review
+Adrian Barna=C5=9B
 
