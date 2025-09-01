@@ -1,371 +1,194 @@
-Return-Path: <linux-kernel+bounces-795223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72DEB3EE84
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:41:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509D5B3EE87
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9267A202FD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:41:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CD2484695
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327F732ED52;
-	Mon,  1 Sep 2025 19:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0775232ED45;
+	Mon,  1 Sep 2025 19:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0iYBfwv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jnd1KNY/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377D619C560;
-	Mon,  1 Sep 2025 19:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A7C2EC0B7;
+	Mon,  1 Sep 2025 19:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756755665; cv=none; b=AG840toZpie8YnK3Gf/d9h2O9+D3KfjBgvW03GrSGW2zfLisicz4aBO5eWUTuZJkHO0ckHzNK4w8eN7saNKpDp+XcGV+H1TaXC9bRKX09feW4WEdu+jmMbjHGZ7a4ShtMtNIsPaBqRZGIAABNyDOyjPOJnJaffbyWkNkMuBjngM=
+	t=1756755708; cv=none; b=fG4wvJX3xxEZB5eRwXmzFIgTB1igyeCCT0Mky9a76rsEH0mmjBVqdHW5lbODiJI9ZYtrH1SixQD0yK5fZ13wNierE8n/2WmobSCX2LsQTnn9DQ0HXQDDcTjkzqk8R7+cYeg7hvwXiqBiw/+mG4eRGE3Z5Vzvyveh0sijyfPoLGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756755665; c=relaxed/simple;
-	bh=wOOOkXIryu8rOSbBi5Cjd3s24L10n/BjeLfojfJtkuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ims8Es1H3kzF5tYCc/K0LmW6zho5dT2yPNvpRmuvyj2e67hePjFmzD0RLBeTY7tiaHwJmbFPWIm55G7vPWgnwFsEM7hP7zwnWviEj1fRiNbSoNLyS0OVskWLXHCLHrAl8D+MSlbwMapjG4gBoLmpHRtmMdG/2+vmHHDgfMDX0wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0iYBfwv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 978E8C4CEF5;
-	Mon,  1 Sep 2025 19:41:00 +0000 (UTC)
+	s=arc-20240116; t=1756755708; c=relaxed/simple;
+	bh=JuWyd0w7O3KJOfMGhW7hd+J8ZubplXvZt1GO/a4nZAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KeiKEOcqxl2cU3Z9hyUXHJOm7uUh+Hn57JUKiTUd/xZmht1tbhbQv8w1GQY+zSIjU2v5rJ9doZzNzNN0dmeYm+eqC59/ifmfyoj7o6MF/P7CfLDXfWSDTcq05ETPK1S/unr5vMF9pQCDMKL39Fp+xjop0wpTbziip+s4wj0ErJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jnd1KNY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F68C4CEF1;
+	Mon,  1 Sep 2025 19:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756755664;
-	bh=wOOOkXIryu8rOSbBi5Cjd3s24L10n/BjeLfojfJtkuw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f0iYBfwvkiq5BPWCcodZSg0DRF130UuefySDD90q7vbit8anK7a0jXVz2IgTM4Of8
-	 PcaUO8zjyW27vwe5oNL5tYqUYGBMxq9fB8WMqxzt97eHnm4Rm5smuuowufGtZ+AdYW
-	 ZdOvFvBWgCS+E2a2ruoi2hI67rFkEzzOFiTadEJOPbVAdjd8SZ3ifICkJDLjgWLoIR
-	 j4G+bR5qgUZKCYbeEpSW5LBWmWBTjc2QPwxFLzQVMLyLt977LI7Ivk6wQ5eND8qa82
-	 uUJayNPZCnMc0DUoEP72og8MtczWD/j91T6hGZ4JMmGHGQf7R3boGVjTihHGzrc8GB
-	 EA/Do2w5WpQzA==
-Date: Mon, 1 Sep 2025 20:40:55 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org,
- linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH 5/5] iio: imu: icm20948: add runtime power management
- support
-Message-ID: <20250901204055.106e6f42@jic23-huawei>
-In-Reply-To: <20250831-icm20948-v1-5-1fe560a38de4@gmail.com>
-References: <20250831-icm20948-v1-0-1fe560a38de4@gmail.com>
-	<20250831-icm20948-v1-5-1fe560a38de4@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756755706;
+	bh=JuWyd0w7O3KJOfMGhW7hd+J8ZubplXvZt1GO/a4nZAs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Jnd1KNY/RlxiFI+o7kNxEmaQ+asWSzuNuZWG6Ne+kctMEDiKMfj5ptxUiGKPaLHbi
+	 hvIIQbjXTZTJwocZjIxd6sMj7KVSBSEJWd0lq1g9s1MtHzV7u50B+Hmxd4k6l6WKD9
+	 Z9dLTAp6YZ9K/zq16ZdOfi9uuiuExw1kdlBxI056oJPymY8HNWhHeEP/VWnQnAUgHG
+	 tPaah8yUdKTfWm+feiWq3cAjk6R5BeQ/5R1LYyeaFSFUcgovhAntOUnp54y8+nbyoI
+	 6/AactEzgWEUc12VVhjWYld79ktMDj+07DchchdRyK4ZZBkv2s2Lal9JOSk26ZrzC5
+	 gJJTGsuB5qL3Q==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61e093930f6so1781760eaf.0;
+        Mon, 01 Sep 2025 12:41:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVAC+Q+t55bNJ8STP5C3kAxZzu/C1wSXwRCQ6fzqy8ZPuUya9EVvOOWfiyXEeKfo3oprQDB0axn2Wg=@vger.kernel.org, AJvYcCVjP6eSO9+m3rcXAZjQw5CLMokh/tzx7VrfMUzfqcod3w6OkF2UeqYKla3HzWDnX8prNp7IJC+QrUjs@vger.kernel.org, AJvYcCWOpir/8woe/+vtx+VcMVdnL2Y95br+YeoTacTPK5CF4uknC2MAJS0jc7kQXa3ZkU+25VZmTS9swJtQEDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz01PDfrbkjc/qAFVyvTjaDGSaqwGHmftqUNA9pieOcSLl6vUXG
+	tm5qiDNxrkiovhm+NcHB0jXnVYMSV+S3mudDQ5Ie+lqk8XPWGUYCM6uyq2f2zRWnDKUXqBZ/uXu
+	Xvi/OXe98CdXeKQPTLDM/jEoEoys8Knw=
+X-Google-Smtp-Source: AGHT+IFg56Nj4wj5MrZO8OjqXwWe6nfcHuoA34JbFlEqQ8Bec9Z7cOVb26N8Bi461FJpPvtZZpqhq2zfYCuFVmsoQ6w=
+X-Received: by 2002:a05:6820:1622:b0:61b:e931:c6c7 with SMTP id
+ 006d021491bc7-61e33773844mr4431933eaf.4.1756755705899; Mon, 01 Sep 2025
+ 12:41:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250826150826.11096-1-ryanzhou54@gmail.com> <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
+ <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
+ <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
+ <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
+ <20250829004312.5fw5jxj2gpft75nx@synopsys.com> <e3b5a026-fe08-4b7e-acd1-e78a88c5f59c@rowland.harvard.edu>
+ <CAJZ5v0gwBvC-y0fgWLMCkKdd=wpXs2msf5HCFaXkc1HbRfhNsg@mail.gmail.com> <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu>
+In-Reply-To: <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Sep 2025 21:41:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyoeBwDzo3KAOFlkYZ2PQBJ5Q6IDHcvI5AcrlVWPtB3Sxlgn4Z5K2YrgtE
+Message-ID: <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
+Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
+ child device xxx.dwc3 but parent is not active
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	ryan zhou <ryanzhou54@gmail.com>, Roy Luo <royluo@google.com>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 31 Aug 2025 00:12:49 +0530
-Bharadwaj Raju <bharadwaj.raju777@gmail.com> wrote:
+On Fri, Aug 29, 2025 at 9:58=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
+du> wrote:
+>
+> On Fri, Aug 29, 2025 at 09:23:12PM +0200, Rafael J. Wysocki wrote:
+> > On Fri, Aug 29, 2025 at 3:25=E2=80=AFAM Alan Stern <stern@rowland.harva=
+rd.edu> wrote:
+> > > It sounds like the real question is how we should deal with an
+> > > interrupted system suspend.  Suppose parent device A and child device=
+ B
+> > > are both in runtime suspend when a system sleep transition begins.  T=
+he
+> > > PM core invokes the ->suspend callback of B (and let's say the callba=
+ck
+> > > doesn't need to do anything because B is already suspended with the
+> > > appropriate wakeup setting).
+> > >
+> > > But then before the PM core invokes the ->suspend callback of A, the
+> > > system sleep transition is cancelled.  So the PM core goes through th=
+e
+> > > device tree from parents to children, invoking the ->resume callback =
+for
+> > > all the devices whose ->suspend callback was called earlier.  Thus, A=
+'s
+> > > ->resume is skipped because A's ->suspend wasn't called, but B's
+> > > ->resume callback _is_ invoked.  This callback fails, because it can'=
+t
+> > > resume B while A is still in runtime suspend.
+> > >
+> > > The same problem arises if A isn't a parent of B but there is a PM
+> > > dependency from B to A.
+> > >
+> > > It's been so long since I worked on the system suspend code that I do=
+n't
+> > > remember how we decided to handle this scenario.
+> >
+> > We actually have not made any specific decision in that respect.  That
+> > is, in the error path, the core will invoke the resume callbacks for
+> > devices whose suspend callbacks were invoked and it won't do anything
+> > beyond that because it has too little information on what would need
+> > to be done.
+> >
+> > Arguably, though, the failure case described above is not different
+> > from regular resume during which the driver of A decides to retain the
+> > device in runtime suspend.
+> >
+> > I'm not sure if the core can do anything about it.
+> >
+> > But at the time when the B's resume callback is invoked, runtime PM is
+> > enabled for A, so the driver of B may as well use runtime_resume() to
+> > resume the device if it wants to do so.  It may also decide to do
+> > nothing like in the suspend callback.
+>
+> Good point.  Since both devices were in runtime suspend before the sleep
+> transition started, there's no reason they can't remain in runtime
+> suspend after the sleep transition is cancelled.
+>
+> On the other hand, it seems clear that this scenario doesn't get very
+> much testing.
 
-> Implement runtime power management support for the ICM20948
-> sensor. The device autosuspends after 2 seconds of idle time.
+No, it doesn't in general AFAICS.
 
-This is an unusual feature to bring in at this point in developing
-a driver, but fair enough if you want to it doesn't hurt!
+> I'm pretty sure the USB subsystem in general is
+> vulnerable to this problem; it doesn't consider suspended devices to be
+> in different states according to the reason for the suspend.  That is, a
+> USB device suspended for runtime PM is in the same state as a device
+> suspended for system PM (aside from minor details like wakeup settings).
+> Consequently the ->resume and ->runtime_resume callbacks do essentially
+> the same thing, both assuming the parent device is not suspended.  As we
+> have discussed, this assumption isn't always correct.
+>
+> I'm open to suggestions for how to handle this.  Should we keep track of
+> whether a device was in runtime suspend when a system suspend happens,
+> so that the ->resume callback can avoid doing anything?  Will that work
+> if the device was the source of a wakeup request?
 
-Anyhow, various comments inline and requests for more information.
+Generally speaking, for proper integration of system suspend with
+runtime suspend at all levels, it is necessary to track whether or not
+the given device has been suspended prior to system suspend.
 
-Jonathan
+In fact, there are even ways to opt-in for assistance from the PM core
+and bus types in that respect to some extent.
 
+In the particular case at hand though, the PM core is not involved in
+making the decision whether or not to leave the devices in runtime
+suspend during system suspend and it all depends on the drivers of A
+and B.
 
-> 
-> Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-> ---
->  drivers/iio/imu/inv_icm20948/Makefile             |  1 +
->  drivers/iio/imu/inv_icm20948/inv_icm20948.h       |  7 +++
->  drivers/iio/imu/inv_icm20948/inv_icm20948_core.c  |  3 +-
->  drivers/iio/imu/inv_icm20948/inv_icm20948_gyro.c  | 28 ++++++---
->  drivers/iio/imu/inv_icm20948/inv_icm20948_power.c | 73 +++++++++++++++++++++++
->  drivers/iio/imu/inv_icm20948/inv_icm20948_temp.c  | 15 +++--
->  6 files changed, 114 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/inv_icm20948/Makefile b/drivers/iio/imu/inv_icm20948/Makefile
-> index 88a37be159e1d6f575da1c070c84ac94cd963020..0a17ad1c003e6a93f3431f7a998e56cdf975d245 100644
-> --- a/drivers/iio/imu/inv_icm20948/Makefile
-> +++ b/drivers/iio/imu/inv_icm20948/Makefile
-> @@ -4,6 +4,7 @@ obj-$(CONFIG_INV_ICM20948) += inv-icm20948.o
->  inv-icm20948-y += inv_icm20948_core.o
->  inv-icm20948-y += inv_icm20948_temp.o
->  inv-icm20948-y += inv_icm20948_gyro.o
-> +inv-icm20948-y += inv_icm20948_power.o
->  
->  obj-$(CONFIG_INV_ICM20948_I2C) += inv-icm20948-i2c.o
->  inv-icm20948-i2c-y += inv_icm20948_i2c.o
-> diff --git a/drivers/iio/imu/inv_icm20948/inv_icm20948.h b/drivers/iio/imu/inv_icm20948/inv_icm20948.h
-> index ca2513114378cdcba5bc315fc94cd61f930b4dfa..194dcccabc2162334779b285320187c7ff1f5236 100644
-> --- a/drivers/iio/imu/inv_icm20948/inv_icm20948.h
-> +++ b/drivers/iio/imu/inv_icm20948/inv_icm20948.h
-> @@ -13,10 +13,13 @@
->   #include <linux/i2c.h>
->   #include <linux/iio/iio.h>
->   #include <linux/err.h>
-> + #include <linux/pm_runtime.h>
->  
->  /* accel takes 20ms, gyro takes 35ms to wake from full-chip sleep */
->   #define INV_ICM20948_SLEEP_WAKEUP_MS 35
->  
-> + #define INV_ICM20948_SUSPEND_DELAY_MS 2000
-I'd just use the value inline.  It should only be in one place
-and the meaning of the value there is well understood by reviewers.
+Note here that the problematic situation occurs when the suspend of B
+has run, but the suspend of A has not run yet and the transition is
+aborted between them, so the driver of A cannot do much to help.  The
+driver of B has a couple of options though.
 
-> +
->   #define INV_ICM20948_REG_BANK_SEL 0x7F
->   #define INV_ICM20948_BANK_SEL_MASK GENMASK(5, 4)
->  
-> @@ -46,6 +49,8 @@
->  
->  extern const struct regmap_config inv_icm20948_regmap_config;
->  
-> +extern const struct dev_pm_ops inv_icm20948_pm_ops;
-> +
->  enum inv_icm20948_gyro_fs {
->  	INV_ICM20948_GYRO_FS_250 = 0,
->  	INV_ICM20948_GYRO_FS_500 = 1,
-> @@ -82,4 +87,6 @@ extern int inv_icm20948_core_probe(struct regmap *regmap);
->  struct iio_dev *inv_icm20948_temp_init(struct inv_icm20948_state *state);
->  struct iio_dev *inv_icm20948_gyro_init(struct inv_icm20948_state *state);
->  
-> +int inv_icm20948_pm_setup(struct inv_icm20948_state *state);
-> +
->   #endif
-> diff --git a/drivers/iio/imu/inv_icm20948/inv_icm20948_core.c b/drivers/iio/imu/inv_icm20948/inv_icm20948_core.c
-> index eb4f940de7013bf4ddeb69b6380a60fbde49964a..e6e670d96e40c3663e55d1545b52f609603a02ed 100644
-> --- a/drivers/iio/imu/inv_icm20948/inv_icm20948_core.c
-> +++ b/drivers/iio/imu/inv_icm20948/inv_icm20948_core.c
-> @@ -101,7 +101,7 @@ static int inv_icm20948_setup(struct inv_icm20948_state *state)
->  	if (IS_ERR(state->gyro_dev))
->  		return PTR_ERR(state->gyro_dev);
->  
-> -	return 0;
-> +	return inv_icm20948_pm_setup(state);
->  }
->  
->  int inv_icm20948_core_probe(struct regmap *regmap)
-> @@ -113,6 +113,7 @@ int inv_icm20948_core_probe(struct regmap *regmap)
->  	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
->  	if (!state)
->  		return -ENOMEM;
-> +	dev_set_drvdata(dev, state);
->  
->  	state->regmap = regmap;
->  	state->dev = dev;
-> diff --git a/drivers/iio/imu/inv_icm20948/inv_icm20948_gyro.c b/drivers/iio/imu/inv_icm20948/inv_icm20948_gyro.c
-> index 2d4d598eb21c8ce98d4ee3c72504554ab49ea596..9cefb47a46b1a323202aa84f0de647d7b7b89728 100644
-> --- a/drivers/iio/imu/inv_icm20948/inv_icm20948_gyro.c
-> +++ b/drivers/iio/imu/inv_icm20948/inv_icm20948_gyro.c
+First off, it might decide to runtime-resume the device in its system
+suspend callback (as long as we are talking about the "suspend" phase
+and not any later phases of system suspend) before suspending it again
+which will also cause A to runtime-resume and aborting system suspend
+would not be problematic any more.  So that's one of the options, but
+it is kind of wasteful and time-consuming.
 
->  
->  static int inv_icm20948_gyro_read_sensor(struct inv_icm20948_state *state,
-> @@ -99,23 +103,25 @@ static int inv_icm20948_gyro_read_sensor(struct inv_icm20948_state *state,
->  		return -EINVAL;
->  	}
->  
-> +	pm_runtime_get_sync(state->dev);
-> +
->  	__be16 raw;
->  	int ret = regmap_bulk_read(state->regmap, reg, &raw, sizeof(raw));
->  
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  
->  	*val = (s16)be16_to_cpu(raw);
->  
-> -	return 0;
-> +out:
-> +	pm_runtime_put_autosuspend(state->dev);
+Another option, which I mentioned before, might be to call
+runtime_resume() from the system resume callback of B (again, as long
+as we are talking about the "resume" phase, not any of the earlier
+phases of system resume).  This assumes that runtime PM is enabled at
+this point for both A and B and so it should work properly.
 
-A common thing to do when runtime pm is involved is to have a wrapper function
-around the main code.  That wrapper then deals with runtime pm, but lets you
-use direct returns in the inner function, which tends to improve readability.
-
-> +	return ret;
->  }
->  
->  static int inv_icm20948_gyro_read_calibbias(struct inv_icm20948_state *state,
->  					    struct iio_chan_spec const *chan,
->  					    int *val, int *val2)
->  {
-> -	guard(mutex)(&state->lock);
-> -
->  	unsigned int reg;
->  
->  	switch (chan->channel2) {
-> @@ -133,8 +139,11 @@ static int inv_icm20948_gyro_read_calibbias(struct inv_icm20948_state *state,
->  	}
->  
->  	__be16 offset_raw;
-> +
-> +	pm_runtime_get_sync(state->dev);
->  	int ret = regmap_bulk_read(state->regmap, reg, &offset_raw,
->  				   sizeof(offset_raw));
-> +	pm_runtime_put_autosuspend(state->dev);
->  
->  	if (ret)
->  		return ret;
-> @@ -216,8 +225,6 @@ static int inv_icm20948_write_calibbias(struct inv_icm20948_state *state,
->  					struct iio_chan_spec const *chan,
->  					int val, int val2)
->  {
-> -	guard(mutex)(&state->lock);
-> -
->  	unsigned int reg;
->  
->  	switch (chan->channel2) {
-> @@ -246,8 +253,13 @@ static int inv_icm20948_write_calibbias(struct inv_icm20948_state *state,
->  	s16 offset = clamp(offset64, (s64)S16_MIN, (s64)S16_MAX);
->  	__be16 offset_write = cpu_to_be16(offset);
->  
-> -	return regmap_bulk_write(state->regmap, reg, &offset_write,
-> +	pm_runtime_get_sync(state->dev);
-> +	mutex_lock(&state->lock);
-> +	int ret = regmap_bulk_write(state->regmap, reg, &offset_write,
->  				 sizeof(offset_write));
-> +	mutex_unlock(&state->lock);
-> +	pm_runtime_put_autosuspend(state->dev);
-> +	return ret;
->  }
->  
->  static int inv_icm20948_gyro_write_raw(struct iio_dev *gyro_dev,
-> diff --git a/drivers/iio/imu/inv_icm20948/inv_icm20948_power.c b/drivers/iio/imu/inv_icm20948/inv_icm20948_power.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..1281a5e5acb539cd3f91ca8ed8d52371f330b60a
-> --- /dev/null
-> +++ b/drivers/iio/imu/inv_icm20948/inv_icm20948_power.c
-
-Don't have a separate file for this. It is not that much code so much more
-obvious to just have it in the core file.
-
-> @@ -0,0 +1,73 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2025 Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-> + */
-> +
-> +#include "inv_icm20948.h"
-> +
-> +static int inv_icm20948_suspend(struct device *dev)
-> +{
-> +	if (pm_runtime_suspended(dev))
-> +		return 0;
-> +
-> +	struct inv_icm20948_state *state = dev_get_drvdata(dev);
-> +
-> +	guard(mutex)(&state->lock);
-
-What data is this mutex protecting here?  Regmap has it's own locks
-internally and I'm not immediately sure what else needs to be protected
-against races.
-
-> +
-> +	return regmap_write_bits(state->regmap, INV_ICM20948_REG_PWR_MGMT_1,
-> +				 INV_ICM20948_PWR_MGMT_1_SLEEP,
-> +				 INV_ICM20948_PWR_MGMT_1_SLEEP);
-> +}
-> +
-> +static int inv_icm20948_resume(struct device *dev)
-> +{
-> +	struct inv_icm20948_state *state = dev_get_drvdata(dev);
-> +
-> +	guard(mutex)(&state->lock);
-> +
-> +	pm_runtime_disable(state->dev);
-> +	pm_runtime_set_active(state->dev);
-> +	pm_runtime_enable(state->dev);
-
-Which device is this on?  I'd not expect to typically see runtime pm state
-manipulated in runtime pm ops for another device. The parent /child relationships
-etc (more complex options exist) should deal with that.
-> +
-> +	int ret = regmap_write_bits(state->regmap, INV_ICM20948_REG_PWR_MGMT_1,
-> +				    INV_ICM20948_PWR_MGMT_1_SLEEP, 0);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(INV_ICM20948_SLEEP_WAKEUP_MS);
-> +
-> +	return 0;
-> +}
-> +
-> +static void inv_icm20948_pm_disable(void *data)
-> +{
-> +	struct device *dev = data;
-> +
-> +	pm_runtime_put_sync(dev);
-> +	pm_runtime_disable(dev);
-> +}
-> +
-> +int inv_icm20948_pm_setup(struct inv_icm20948_state *state)
-> +{
-> +	struct device *dev = state->dev;
-> +
-> +	guard(mutex)(&state->lock);
-> +
-> +	int ret;
-> +
-> +	ret = pm_runtime_set_active(dev);
-> +	if (ret)
-> +		return ret;
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_enable(dev);
-> +	pm_runtime_set_autosuspend_delay(dev, INV_ICM20948_SUSPEND_DELAY_MS);
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_put(dev);
-> +
-> +	return devm_add_action_or_reset(dev, inv_icm20948_pm_disable, dev);
-> +}
-> +
-> +EXPORT_NS_GPL_DEV_PM_OPS(inv_icm20948_pm_ops, IIO_ICM20948) = {
-> +	SYSTEM_SLEEP_PM_OPS(inv_icm20948_suspend, inv_icm20948_resume)
-> +	RUNTIME_PM_OPS(inv_icm20948_suspend, inv_icm20948_resume, NULL)
-If you want to use runtime pm ops for both this is not how it is done.
-See DEFINE_RUNTIME_DEV_PM_OPS()
-
-> +};
-> diff --git a/drivers/iio/imu/inv_icm20948/inv_icm20948_temp.c b/drivers/iio/imu/inv_icm20948/inv_icm20948_temp.c
-> index 916053740cc5acda0316c76504d4086eff5ec7f0..6e17b3719301d6d7f005d545587f558fcadd2f40 100644
-> --- a/drivers/iio/imu/inv_icm20948/inv_icm20948_temp.c
-> +++ b/drivers/iio/imu/inv_icm20948/inv_icm20948_temp.c
-> @@ -24,17 +24,24 @@ static const struct iio_chan_spec
->  static int inv_icm20948_temp_read_sensor(struct inv_icm20948_state *state,
->  					 s16 *temp)
->  {
-> -	guard(mutex)(&state->lock);
-> +	int ret;
-> +
-> +	pm_runtime_get_sync(state->dev);
-> +	mutex_lock(&state->lock);
->  
->  	__be16 raw;
-> -	int ret = regmap_bulk_read(state->regmap, INV_ICM20948_REG_TEMP_DATA,
-> +	ret = regmap_bulk_read(state->regmap, INV_ICM20948_REG_TEMP_DATA,
->  				   &raw, sizeof(raw));
->  	if (ret)
-> -		return ret;
-> +		goto out;
->  
->  	*temp = __be16_to_cpu(raw);
-> +	ret = 0;
->  
-> -	return 0;
-> +out:
-> +	mutex_unlock(&state->lock);
-> +	pm_runtime_put_autosuspend(state->dev);
-> +	return ret;
->  }
->  
->  static int inv_icm20948_temp_read_raw(struct iio_dev *temp_dev,
-> 
-
+Now, if the driver of B needs to do something special to the device in
+its system suspend callback, it may want (and likely should) disable
+runtime PM prior to this and in that case it will have to check what
+the runtime PM status of the device is and adjust its actions
+accordingly.  That really depends on what those actions are etc, so
+I'd rather not talk about it without a specific example.
 
