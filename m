@@ -1,55 +1,46 @@
-Return-Path: <linux-kernel+bounces-794662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853B5B3E4E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91398B3E4E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2A3169E33
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F50B1A847C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 13:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C90337682;
-	Mon,  1 Sep 2025 13:26:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1DC3375B6
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 13:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23E633768C;
+	Mon,  1 Sep 2025 13:26:40 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0EE188A0C;
+	Mon,  1 Sep 2025 13:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756733183; cv=none; b=jbAg5AJqIfaQPL2o/JappZG7IBQ4HkBHu91C8cBpCdhxRtoUWkI9i7OoK+9INe1IJcUkJHWxY4ukcu699xCs3lLQHe32DpiAYNoaF/cfqDJM57FdYKVdll49JkFj5I1KXCfQe+rFxCppwYx/0Pg1bfPpXQEJ3FuLiiZJSZFf8bE=
+	t=1756733200; cv=none; b=jLjCA/n4wMxOgpCN5FBYebfCcgi4FlskooFTFf3J7QVv/eDk3BIrHdy9MwME1xZoFpt8KYiWas/fR0/lTCBNbNpdXVitQC5rYAlTXZJEFA5c1M2+NXjxOJyoF3LTUf9lpVTjFBTuMkcLfYsHAwSpQF0WkRTKarIXqqxbZmEmZwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756733183; c=relaxed/simple;
-	bh=tAWptsPoAQN7clhwaWlgvNzQhTIkN34Fvqere1BPJJg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Lpz0BudF+m70SwCspMqTWcq1s3D3bMjF+Qi/HOFoSCqWEH1RkxY1TaryeXJUcd8MhicNPsUtJs9/ZfgmRIyDfauxPp32dOXNajIKB+8EmqRVcRGo1nZflgLlDx3gvKQ2WUryol15XjLVcRByBmED9uDLzIe/2O3erBxMjBIwdUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4419A2696;
-	Mon,  1 Sep 2025 06:26:13 -0700 (PDT)
-Received: from e127648.cambridge.arm.com (e127648.arm.com [10.1.36.60])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F0A1A3F694;
-	Mon,  1 Sep 2025 06:26:19 -0700 (PDT)
-From: Christian Loehle <christian.loehle@arm.com>
-To: tj@kernel.org,
-	arighi@nvidia.com,
-	void@manifault.com
+	s=arc-20240116; t=1756733200; c=relaxed/simple;
+	bh=C3eGYQEDdFxnVsk8a5fwepd/ZNJVsBNgRtSYuMC1Ldo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qV/AHmNthsKf8yV6T4hpgYKsbv4u0bZFP4yYEJK9e3gimPo3ei1dAVRx/SDomX6pcBwLYAqnv5j92MTK3GwxDv0CUKWnUIOfKQWO237OCxwDvuMUEnS+QttInA/BQU0EMgEvxv2nE6kI91MwgqzoASwhTmz/5H6f18omf+fTcJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.237.72.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [106.117.98.8])
+	by mtasvr (Coremail) with SMTP id _____wAnxUEAn7VotdbDAQ--.3920S3;
+	Mon, 01 Sep 2025 21:26:25 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [106.117.98.8])
+	by mail-app1 (Coremail) with SMTP id yy_KCgBHnNf7nrVoxMquAQ--.45124S2;
+	Mon, 01 Sep 2025 21:26:24 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-media@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev,
-	changwoo@igalia.com,
-	hodgesd@meta.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	jake@hillion.co.uk,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH v5 0/3] sched_ext: Harden scx_bpf_cpu_rq()
-Date: Mon,  1 Sep 2025 14:26:05 +0100
-Message-Id: <20250901132605.2282650-6-christian.loehle@arm.com>
+	mchehab@kernel.org,
+	tharvey@gateworks.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH] media: TDA1997x: Remove redundant cancel_delayed_work in probe
+Date: Mon,  1 Sep 2025 21:26:17 +0800
+Message-Id: <20250901132617.18985-1-duoming@zju.edu.cn>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250901132605.2282650-1-christian.loehle@arm.com>
-References: <20250901132605.2282650-1-christian.loehle@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,59 +48,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:yy_KCgBHnNf7nrVoxMquAQ--.45124S2
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwYQAWi0pXkI7ABdst
+X-CM-DELIVERINFO: =?B?JJit3AXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR16OIBAsQKXAjlXLAGryky68Kwk92lnJUUFRq0XoR83McCuyxtqYhZJFCsnCkXIBkJXDg
+	b6idtCkPqb0KZyHuIZtiXj0gJRcKDxppq2ZgCjRbAscgt2pF7M08Wx2cG+qHAw==
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Gw1xtr15JFykJw13Ary3ZFc_yoWkZFX_Wa
+	4fXay7Xr1UJr1DC3Z8uF4fZ3y0ya1DZF1rW3Z0gr45Aay7uFykAw4ruFyDAw45uw1akFnr
+	Gr9xXF1xAr1kCosvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbsxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvr2IYc2Ij64
+	vIr40E4x8a64kEw24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2Iq
+	xVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r
+	126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY
+	6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67
+	AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x
+	07j0iihUUUUU=
 
-scx_bpf_cpu_rq() currently allows accessing struct rq fields without
-holding the associated rq.
-It is being used by scx_cosmos, scx_flash, scx_lavd, scx_layered, and
-scx_tickless. Fortunately it is only ever used to fetch rq->curr.
-So provide an alternative scx_bpf_remote_curr() that doesn't expose struct rq
-and provide a hardened scx_bpf_cpu_rq_locked() by ensuring we hold the rq lock.
-Add a deprecation warning to scx_bpf_cpu_rq() that mentions the two alternatives.
+The delayed_work delayed_work_enable_hpd is initialized with
+INIT_DELAYED_WORK(), but it is never scheduled in tda1997x_probe().
 
-This also simplifies scx code from:
+Calling cancel_delayed_work() on a work that has never been
+scheduled is redundant and unnecessary, as there is no pending
+work to cancel.
 
-rq = scx_bpf_cpu_rq(cpu);
-if (!rq)
-	return;
-p = rq->curr
-/* ... Do something with p */
+Remove the redundant cancel_delayed_work() from error handling
+path in tda1997x_probe() to avoid potential confusion.
 
-into:
+Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+---
+ drivers/media/i2c/tda1997x.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-p = scx_bpf_remote_curr(cpu);
-/* ... Do something with p */
-
-v4:
-Remove cpu argument from scx_bpf_cpu_rq_locked() as SCX has a unique
-locked_rq_state anyway. (Tejun)
-Expose RCU pointer in scx_bpf_remote_curr() (Peter)
-v3:
-https://lore.kernel.org/lkml/20250805111036.130121-1-christian.loehle@arm.com/
-Don't change scx_bpf_cpu_rq() do not break BPF schedulers without the
-grace period. Just add the deprecation warning and do the hardening in
-the new scx_bpf_cpu_rq_locked(). (Andrea, Tejun, Jake)
-v2:
-https://lore.kernel.org/lkml/20250804112743.711816-1-christian.loehle@arm.com/
-- Open-code bpf_task_acquire() to avoid the forward declaration (Andrea)
-- Rename scx_bpf_task_acquire_remote_curr() to make it more explicit it
-behaves like bpf_task_acquire()
-- Dis
-v1:
-https://lore.kernel.org/lkml/20250801141741.355059-1-christian.loehle@arm.com/
-- scx_bpf_cpu_rq() now errors when a not locked rq is requested. (Andrea)
-- scx_bpf_remote_curr() calls bpf_task_acquire() which BPF user needs to
-release. (Andrea)
-
-Christian Loehle (3):
-  sched_ext: Introduce scx_bpf_cpu_rq_locked()
-  sched_ext: Introduce scx_bpf_remote_curr()
-  sched_ext: deprecation warn for scx_bpf_cpu_rq()
-
- kernel/sched/ext.c                       | 40 ++++++++++++++++++++++++
- tools/sched_ext/include/scx/common.bpf.h |  2 ++
- 2 files changed, 42 insertions(+)
-
---
+diff --git a/drivers/media/i2c/tda1997x.c b/drivers/media/i2c/tda1997x.c
+index 1087d2bddaf2..3532766cd795 100644
+--- a/drivers/media/i2c/tda1997x.c
++++ b/drivers/media/i2c/tda1997x.c
+@@ -2797,7 +2797,6 @@ static int tda1997x_probe(struct i2c_client *client)
+ err_free_handler:
+ 	v4l2_ctrl_handler_free(&state->hdl);
+ err_free_mutex:
+-	cancel_delayed_work(&state->delayed_work_enable_hpd);
+ 	mutex_destroy(&state->page_lock);
+ 	mutex_destroy(&state->lock);
+ 	tda1997x_set_power(state, 0);
+-- 
 2.34.1
 
 
