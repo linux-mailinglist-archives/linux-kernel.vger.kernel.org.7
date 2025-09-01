@@ -1,59 +1,70 @@
-Return-Path: <linux-kernel+bounces-794811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76730B3E796
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:44:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD51B3E794
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA684466E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:44:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 610FC7AF26B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AA034A332;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2089934A318;
 	Mon,  1 Sep 2025 14:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ggtsg//f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTTZiBve"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0931A341676;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAAA341668;
 	Mon,  1 Sep 2025 14:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756737758; cv=none; b=qmTJFWkzS1o9YX2amVmcZ1E9ur/dbDJZy0iXf8Gag7h32gEOUoUdsvdQoKjJRyePDzAJSTfcsOkQIzMO31lsRAFIdYR5np90SKTI5IirAjLQY7Z1uD+/5SeAp643YFhmEBbHTlTbgcaG6sDP/CYEZGTQd8K0yro4RSzSd18vd18=
+	t=1756737758; cv=none; b=HTpW4vUOzNHgKs8KMz8A1sz9vmA0PSuedCv5OOJFTzMO3b7IF/mTVA3OK6Ev+HSeCl0j55H9igMY9zNtn/0Vl2B/3UIQfBVjjOFCzms0MwjE9bWs/HSVeweQLoF+FCQKxNBpyjCamm7JSxgg5TZljfYlZXGLxDk0zwgxuf0pAR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756737758; c=relaxed/simple;
-	bh=cCGybNZ848HWbOkbq8u3C9zPEEDIKt5ieh1GSFijiw8=;
+	bh=oD4FBcBQjtiNTF4iSRqBZutlnQxTGiilKL7CoiFSPug=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DO2orVqJ87oBfBSFF9QP9hricgVUZ6t8Bplkc3p+b2OX8C1Ql9SKIxYCC7JWFmgrXTy8QrFoeDQzv465bhqnzrr68p67bp+WjNZuemB6bdjV3bK5/8SzjpvWQdABgVHlc+g+B+2qHWs4APVxwqzR7Bf//Yt9sKMRY7md7bQffWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ggtsg//f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61282C4CEF7;
+	 Content-Type:MIME-Version; b=KxKgGQKIZDKnPT1uZZckrTSsXRdM2R1vcvIFNjbKFd18z4MD8hSrLxF7B0/S2yy6ucOdqTfBnmA2Iryg5VLPdEozUsQnrmhhS+bjX0O9LnkksYVcFzVblDj5njfrIbfW7HZjtmCfVslRJWNPMDQJMVQkHLgXRIWKkg6tXWVpWso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTTZiBve; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9FFC4CEF1;
 	Mon,  1 Sep 2025 14:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1756737757;
-	bh=cCGybNZ848HWbOkbq8u3C9zPEEDIKt5ieh1GSFijiw8=;
+	bh=oD4FBcBQjtiNTF4iSRqBZutlnQxTGiilKL7CoiFSPug=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ggtsg//f14fq/V/IuzLo986IOSoG4TguReO4nqGgkt97nxTEK3H1YNDhBTBnfUQZ4
-	 +pATSDCVEnk2I4lZb+EnpLaYeIrxYPec+B9WYE+Bxor9iFEzCid9tyb5IHdqNNri+Z
-	 See2EdXHJsEeI9qZTihlC8fhTud8bf9aTELkkDG0wQ6pMQPK/BZ8LNMAujOlL/DC9B
-	 HF8qyADAeCmqLP1kRAJkuFFNSLUcMv8Tv90rLgUQDM9PKgG+AINZokauvwhY8bXWpq
-	 zzgTabHEgNZIx9ShJo/Dm6P3z3qCOBY1ws/5khyaytGFgrQZbXN1Z7eDeyt1saheOa
-	 DMY7/NfJnuMbA==
+	b=pTTZiBveIIwBvm5/zzdb6SWF1NYjKfzv1HsAunt5Jg3D7B9CfbuEh4NrJb07LRlMd
+	 Bnc50hA5FVLm9ExDs9jOydNkzGnylwdI4AyMlC9oGy4ASIH5zabKfSqhxenMFqLHEl
+	 z/QeT6M+4glB9no4LK0UX5R9bcSZU358BIZB6nGzE+J4i3SUqYPuchAMawT237wbCG
+	 1qdYoZAqcWO8UuR+CZ+p7KAUl84YthrgxuXx9csMrAiKT3qXwWyjb+hPZdNeyw4XWJ
+	 WLffOQ5Yq9dkFbGn5GX1obucRmwI9P4oMJC5epHQS5vBCCC18N7xaj2t54DHIA7P/C
+	 0SNanTMxxWy8g==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ut5jv-00000003G3Q-2ROR;
+	id 1ut5jv-00000003G3U-2aPm;
 	Mon, 01 Sep 2025 16:42:35 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <mchehab+huawei@kernel.org>,
+	Benno Lossin <mchehab+huawei@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <mchehab+huawei@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 05/15] tools/docs: sphinx-pre-install: move Python version
-  handling to lib
-Date: Mon,  1 Sep 2025 16:42:21 +0200
-Message-ID: <fb41f4572b36ced30a17c768d723c0f8421fa373.1756737440.git.mchehab+huawei@kernel.org>
+	Miguel Ojeda <mchehab+huawei@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH v3 06/15] tools/docs: sphinx-build-wrapper: add a wrapper for
+  sphinx-build
+Date: Mon,  1 Sep 2025 16:42:22 +0200
+Message-ID: <5c0343b17cf6413006db577c3e2060552cc6ea3a.1756737440.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1756737440.git.mchehab+huawei@kernel.org>
 References: <cover.1756737440.git.mchehab+huawei@kernel.org>
@@ -67,445 +78,564 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-VGhlIHNwaGlueC1wcmUtaW5zdGFsbCBjb2RlIGhhcyBzb21lIGxvZ2ljIHRvIGRlYWwgd2l0aCB=
-Q=0D
-eXRob24KdmVyc2lvbiwgd2hpY2ggZW5zdXJlcyB0aGF0IGEgbWluaW1hbCB2ZXJzaW9uIHdpbGw=
-g=0D
-YmUgZW5mb3JjZWQKZm9yIGRvY3VtZW50YXRpb24gYnVpbGQgbG9naWMuCgpNb3ZlIGl0IHRvIGE=
-g=0D
-c2VwYXJhdGUgbGlicmFyeSB0byBhbGxvdyByZS11c2luZyBpdHMgY29kZS4KCk5vIGZ1bmN0aW9=
-u=0D
-YWwgY2hhbmdlcy4KClNpZ25lZC1vZmYtYnk6IE1hdXJvIENhcnZhbGhvIENoZWhhYiA8bWNoZWh=
-h=0D
-YitodWF3ZWlAa2VybmVsLm9yZz4KLS0tCiB0b29scy9kb2NzL2xpYi9weXRob25fdmVyc2lvbi5=
-w=0D
-eSB8IDEzMyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiB0b29scy9kb2NzL3NwaGl=
-u=0D
-eC1wcmUtaW5zdGFsbCAgICB8IDEyMCArKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAyIGZ=
-p=0D
-bGVzIGNoYW5nZWQsIDE0NiBpbnNlcnRpb25zKCspLCAxMDcgZGVsZXRpb25zKC0pCiBjcmVhdGU=
-g=0D
-bW9kZSAxMDA2NDQgdG9vbHMvZG9jcy9saWIvcHl0aG9uX3ZlcnNpb24ucHkKCmRpZmYgLS1naXQ=
-g=0D
-YS90b29scy9kb2NzL2xpYi9weXRob25fdmVyc2lvbi5weSBiL3Rvb2xzL2RvY3MvbGliL3B5dGh=
-v=0D
-bl92ZXJzaW9uLnB5Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAwMC4uMDU=
-x=0D
-OWQ1MjRlNTQ3Ci0tLSAvZGV2L251bGwKKysrIGIvdG9vbHMvZG9jcy9saWIvcHl0aG9uX3ZlcnN=
-p=0D
-b24ucHkKQEAgLTAsMCArMSwxMzMgQEAKKyMhL3Vzci9iaW4vZW52IHB5dGhvbjMKKyMgU1BEWC1=
-M=0D
-aWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAtb3ItbGF0ZXIKKyMgQ29weXJpZ2h0IChjKSAyMDE=
-3=0D
-LTIwMjUgTWF1cm8gQ2FydmFsaG8gQ2hlaGFiIDxtY2hlaGFiK2h1YXdlaUBrZXJuZWwub3JnPgo=
-r=0D
-CisiIiIKK0hhbmRsZSBQeXRob24gdmVyc2lvbiBjaGVjayBsb2dpYy4KKworTm90IGFsbCBQeXR=
-o=0D
-b24gdmVyc2lvbnMgYXJlIHN1cHBvcnRlZCBieSBzY3JpcHRzLiBZZXQsIG9uIHNvbWUgY2FzZXM=
-s=0D
-CitsaWtlIGR1cmluZyBkb2N1bWVudGF0aW9uIGJ1aWxkLCBhIG5ld2VyIHZlcnNpb24gb2YgcHl=
-0=0D
-aG9uIGNvdWxkIGJlCithdmFpbGFibGUuCisKK1RoaXMgY2xhc3MgYWxsb3dzIGNoZWNraW5nIGl=
-m=0D
-IHRoZSBtaW5pbWFsIHJlcXVpcmVtZW50cyBhcmUgZm9sbG93ZWQuCisKK0JldHRlciB0aGFuIHR=
-o=0D
-YXQsIFB5dGhvblZlcnNpb24uY2hlY2tfcHl0aG9uKCkgbm90IG9ubHkgY2hlY2tzIHRoZSBtaW5=
-p=0D
-bWFsCityZXF1aXJlbWVudHMsIGJ1dCBpdCBhdXRvbWF0aWNhbGx5IHN3aXRjaGVzIHRvIGEgdGh=
-l=0D
-IG5ld2VzdCBhdmFpbGFibGUKK1B5dGhvbiB2ZXJzaW9uIGlmIHByZXNlbnQuCisKKyIiIgorCit=
-p=0D
-bXBvcnQgb3MKK2ltcG9ydCByZQoraW1wb3J0IHN1YnByb2Nlc3MKK2ltcG9ydCBzeXMKKworZnJ=
-v=0D
-bSBnbG9iIGltcG9ydCBnbG9iCisKK2NsYXNzIFB5dGhvblZlcnNpb246CisgICAgIiIiCisgICA=
-g=0D
-QW5jaWxsYXJ5IG1ldGhvZHMgdGhhdCBjaGVja3MgZm9yIG1pc3NpbmcgZGVwZW5kZW5jaWVzIGZ=
-v=0D
-ciBkaWZmZXJlbnQKKyAgICB0eXBlcyBvZiB0eXBlcywgbGlrZSBiaW5hcmllcywgcHl0aG9uIG1=
-v=0D
-ZHVsZXMsIHJwbSBkZXBzLCBldGMuCisgICAgIiIiCisKKyAgICBkZWYgX19pbml0X18oc2VsZiw=
-g=0D
-dmVyc2lvbik6CisgICAgICAgICIiIu+/ve+/vW5pdGlhbGl6ZSBzZWxmLnZlcnNpb24gdHVwbGU=
-g=0D
-ZnJvbSBhIHZlcnNpb24gc3RyaW5nIiIiCisgICAgICAgIHNlbGYudmVyc2lvbiA9IHNlbGYucGF=
-y=0D
-c2VfdmVyc2lvbih2ZXJzaW9uKQorCisgICAgQHN0YXRpY21ldGhvZAorICAgIGRlZiBwYXJzZV9=
-2=0D
-ZXJzaW9uKHZlcnNpb24pOgorICAgICAgICAiIiJDb252ZXJ0IGEgbWFqb3IubWlub3IucGF0Y2g=
-g=0D
-dmVyc2lvbiBpbnRvIGEgdHVwbGUiIiIKKyAgICAgICAgcmV0dXJuIHR1cGxlKGludCh4KSBmb3I=
-g=0D
-eCBpbiB2ZXJzaW9uLnNwbGl0KCIuIikpCisKKyAgICBAc3RhdGljbWV0aG9kCisgICAgZGVmIHZ=
-l=0D
-cl9zdHIodmVyc2lvbik6CisgICAgICAgICIiIlJldHVybnMgYSB2ZXJzaW9uIHR1cGxlIGFzIG1=
-h=0D
-am9yLm1pbm9yLnBhdGNoIiIiCisgICAgICAgIHJldHVybiAiLiIuam9pbihbc3RyKHgpIGZvciB=
-4=0D
-IGluIHZlcnNpb25dKQorCisgICAgZGVmIF9fc3RyX18oc2VsZik6CisgICAgICAgICIiIlJldHV=
-y=0D
-bnMgYSB2ZXJzaW9uIHR1cGxlIGFzIG1ham9yLm1pbm9yLnBhdGNoIGZyb20gc2VsZi52ZXJzaW9=
-u=0D
-IiIiCisgICAgICAgIHJldHVybiBzZWxmLnZlcl9zdHIoc2VsZi52ZXJzaW9uKQorCisgICAgQHN=
-0=0D
-YXRpY21ldGhvZAorICAgIGRlZiBnZXRfcHl0aG9uX3ZlcnNpb24oY21kKToKKyAgICAgICAgIiI=
-i=0D
-CisgICAgICAgIEdldCBweXRob24gdmVyc2lvbiBmcm9tIGEgUHl0aG9uIGJpbmFyeS4gQXMgd2U=
-g=0D
-bmVlZCB0byBkZXRlY3QgaWYKKyAgICAgICAgYXJlIG91dCB0aGVyZSBuZXdlciBweXRob24gYml=
-u=0D
-YXJpZXMsIHdlIGNhbid0IHJlbHkgb24gc3lzLnJlbGVhc2UgaGVyZS4KKyAgICAgICAgIiIiCis=
-K=0D
-KyAgICAgICAga3dhcmdzID0ge30KKyAgICAgICAgaWYgc3lzLnZlcnNpb25faW5mbyA8ICgzLCA=
-3=0D
-KToKKyAgICAgICAgICAgIGt3YXJnc1sndW5pdmVyc2FsX25ld2xpbmVzJ10gPSBUcnVlCisgICA=
-g=0D
-ICAgIGVsc2U6CisgICAgICAgICAgICBrd2FyZ3NbJ3RleHQnXSA9IFRydWUKKworICAgICAgICB=
-y=0D
-ZXN1bHQgPSBzdWJwcm9jZXNzLnJ1bihbY21kLCAiLS12ZXJzaW9uIl0sCisgICAgICAgICAgICA=
-g=0D
-ICAgICAgICAgICAgICAgICAgIHN0ZG91dCA9IHN1YnByb2Nlc3MuUElQRSwKKyAgICAgICAgICA=
-g=0D
-ICAgICAgICAgICAgICAgICAgICAgc3RkZXJyID0gc3VicHJvY2Vzcy5QSVBFLAorICAgICAgICA=
-g=0D
-ICAgICAgICAgICAgICAgICAgICAgICAqKmt3YXJncywgY2hlY2s9RmFsc2UpCisKKyAgICAgICA=
-g=0D
-dmVyc2lvbiA9IHJlc3VsdC5zdGRvdXQuc3RyaXAoKQorCisgICAgICAgIG1hdGNoID0gcmUuc2V=
-h=0D
-cmNoKHIiKFxkK1wuXGQrXC5cZCspIiwgdmVyc2lvbikKKyAgICAgICAgaWYgbWF0Y2g6CisgICA=
-g=0D
-ICAgICAgICByZXR1cm4gUHl0aG9uVmVyc2lvbi5wYXJzZV92ZXJzaW9uKG1hdGNoLmdyb3VwKDE=
-p=0D
-KQorCisgICAgICAgIHByaW50KGYiQ2FuJ3QgcGFyc2UgdmVyc2lvbiB7dmVyc2lvbn0iKQorICA=
-g=0D
-ICAgICByZXR1cm4gKDAsIDAsIDApCisKKyAgICBAc3RhdGljbWV0aG9kCisgICAgZGVmIGZpbmR=
-f=0D
-cHl0aG9uKG1pbl92ZXJzaW9uKToKKyAgICAgICAgIiIiCisgICAgICAgIERldGVjdCBpZiBhcmU=
-g=0D
-b3V0IHRoZXJlIGFueSBweXRob24gMy54eSB2ZXJzaW9uIG5ld2VyIHRoYW4gdGhlCisgICAgICA=
-g=0D
-IGN1cnJlbnQgb25lLgorCisgICAgICAgIE5vdGU6IHRoaXMgcm91dGluZSBpcyBsaW1pdGVkIHR=
-v=0D
-IHVwIHRvIDIgZGlnaXRzIGZvciBweXRob24zLiBXZQorICAgICAgICBtYXkgbmVlZCB0byB1cGR=
-h=0D
-dGUgaXQgb25lIGRheSwgaG9wZWZ1bGx5IG9uIGEgZGlzdGFudCBmdXR1cmUuCisgICAgICAgICI=
-i=0D
-IgorICAgICAgICBwYXR0ZXJucyA9IFsKKyAgICAgICAgICAgICJweXRob24zLlswLTldIiwKKyA=
-g=0D
-ICAgICAgICAgICJweXRob24zLlswLTldWzAtOV0iLAorICAgICAgICBdCisKKyAgICAgICAgIyB=
-T=0D
-ZWVrIGZvciBhIHB5dGhvbiBiaW5hcnkgbmV3ZXIgdGhhbiBtaW5fdmVyc2lvbgorICAgICAgICB=
-m=0D
-b3IgcGF0aCBpbiBvcy5nZXRlbnYoIlBBVEgiLCAiIikuc3BsaXQoIjoiKToKKyAgICAgICAgICA=
-g=0D
-IGZvciBwYXR0ZXJuIGluIHBhdHRlcm5zOgorICAgICAgICAgICAgICAgIGZvciBjbWQgaW4gZ2x=
-v=0D
-Yihvcy5wYXRoLmpvaW4ocGF0aCwgcGF0dGVybikpOgorICAgICAgICAgICAgICAgICAgICBpZiB=
-v=0D
-cy5wYXRoLmlzZmlsZShjbWQpIGFuZCBvcy5hY2Nlc3MoY21kLCBvcy5YX09LKToKKyAgICAgICA=
-g=0D
-ICAgICAgICAgICAgICAgIHZlcnNpb24gPSBQeXRob25WZXJzaW9uLmdldF9weXRob25fdmVyc2l=
-v=0D
-bihjbWQpCisgICAgICAgICAgICAgICAgICAgICAgICBpZiB2ZXJzaW9uID49IG1pbl92ZXJzaW9=
-u=0D
-OgorICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBjbWQKKworICAgICAgICByZXR=
-1=0D
-cm4gTm9uZQorCisgICAgQHN0YXRpY21ldGhvZAorICAgIGRlZiBjaGVja19weXRob24obWluX3Z=
-l=0D
-cnNpb24pOgorICAgICAgICAiIiIKKyAgICAgICAgQ2hlY2sgaWYgdGhlIGN1cnJlbnQgcHl0aG9=
-u=0D
-IGJpbmFyeSBzYXRpc2ZpZXMgb3VyIG1pbmltYWwgcmVxdWlyZW1lbnQKKyAgICAgICAgZm9yIFN=
-w=0D
-aGlueCBidWlsZC4gSWYgbm90LCByZS1ydW4gd2l0aCBhIG5ld2VyIHZlcnNpb24gaWYgZm91bmQ=
-u=0D
-CisgICAgICAgICIiIgorICAgICAgICBjdXJfdmVyID0gc3lzLnZlcnNpb25faW5mb1s6M10KKyA=
-g=0D
-ICAgICAgaWYgY3VyX3ZlciA+PSBtaW5fdmVyc2lvbjoKKyAgICAgICAgICAgIHZlciA9IFB5dGh=
-v=0D
-blZlcnNpb24udmVyX3N0cihjdXJfdmVyKQorICAgICAgICAgICAgcHJpbnQoZiJQeXRob24gdmV=
-y=0D
-c2lvbjoge3Zlcn0iKQorCisgICAgICAgICAgICByZXR1cm4KKworICAgICAgICBweXRob25fdmV=
-y=0D
-ID0gUHl0aG9uVmVyc2lvbi52ZXJfc3RyKGN1cl92ZXIpCisKKyAgICAgICAgbmV3X3B5dGhvbl9=
-j=0D
-bWQgPSBQeXRob25WZXJzaW9uLmZpbmRfcHl0aG9uKG1pbl92ZXJzaW9uKQorICAgICAgICBpZiB=
-u=0D
-b3QgbmV3X3B5dGhvbl9jbWQ6CisgICAgICAgICAgICBwcmludChmIkVSUk9SOiBQeXRob24gdmV=
-y=0D
-c2lvbiB7cHl0aG9uX3Zlcn0gaXMgbm90IHNwcG9ydGVkIGFueW1vcmVcbiIpCisgICAgICAgICA=
-g=0D
-ICBwcmludCgiICAgICAgIENhbid0IGZpbmQgYSBuZXcgdmVyc2lvbi4gVGhpcyBzY3JpcHQgbWF=
-5=0D
-IGZhaWwiKQorICAgICAgICAgICAgcmV0dXJuCisKKyAgICAgICAgIyBSZXN0YXJ0IHNjcmlwdCB=
-1=0D
-c2luZyB0aGUgbmV3ZXIgdmVyc2lvbgorICAgICAgICBzY3JpcHRfcGF0aCA9IG9zLnBhdGguYWJ=
-z=0D
-cGF0aChzeXMuYXJndlswXSkKKyAgICAgICAgYXJncyA9IFtuZXdfcHl0aG9uX2NtZCwgc2NyaXB=
-0=0D
-X3BhdGhdICsgc3lzLmFyZ3ZbMTpdCisKKyAgICAgICAgcHJpbnQoZiJQeXRob24ge3B5dGhvbl9=
-2=0D
-ZXJ9IG5vdCBzdXBwb3J0ZWQuIENoYW5naW5nIHRvIHtuZXdfcHl0aG9uX2NtZH0iKQorCisgICA=
-g=0D
-ICAgIHRyeToKKyAgICAgICAgICAgIG9zLmV4ZWN2KG5ld19weXRob25fY21kLCBhcmdzKQorICA=
-g=0D
-ICAgICBleGNlcHQgT1NFcnJvciBhcyBlOgorICAgICAgICAgICAgc3lzLmV4aXQoZiJGYWlsZWQ=
-g=0D
-dG8gcmVzdGFydCB3aXRoIHtuZXdfcHl0aG9uX2NtZH06IHtlfSIpCmRpZmYgLS1naXQgYS90b29=
-s=0D
-cy9kb2NzL3NwaGlueC1wcmUtaW5zdGFsbCBiL3Rvb2xzL2RvY3Mvc3BoaW54LXByZS1pbnN0YWx=
-s=0D
-CmluZGV4IDk1NGVkM2RjMDY0NS4uZDZkNjczYjc5NDVjIDEwMDc1NQotLS0gYS90b29scy9kb2N=
-z=0D
-L3NwaGlueC1wcmUtaW5zdGFsbAorKysgYi90b29scy9kb2NzL3NwaGlueC1wcmUtaW5zdGFsbAp=
-A=0D
-QCAtMzIsMjAgKzMyLDEwIEBAIGltcG9ydCBzdWJwcm9jZXNzCiBpbXBvcnQgc3lzCiBmcm9tIGd=
-s=0D
-b2IgaW1wb3J0IGdsb2IKIAorZnJvbSBsaWIucHl0aG9uX3ZlcnNpb24gaW1wb3J0IFB5dGhvblZ=
-l=0D
-cnNpb24KIAotZGVmIHBhcnNlX3ZlcnNpb24odmVyc2lvbik6Ci0gICAgIiIiQ29udmVydCBhIG1=
-h=0D
-am9yLm1pbm9yLnBhdGNoIHZlcnNpb24gaW50byBhIHR1cGxlIiIiCi0gICAgcmV0dXJuIHR1cGx=
-l=0D
-KGludCh4KSBmb3IgeCBpbiB2ZXJzaW9uLnNwbGl0KCIuIikpCi0KLQotZGVmIHZlcl9zdHIodmV=
-y=0D
-c2lvbik6Ci0gICAgIiIiUmV0dXJucyBhIHZlcnNpb24gdHVwbGUgYXMgbWFqb3IubWlub3IucGF=
-0=0D
-Y2giIiIKLQotICAgIHJldHVybiAiLiIuam9pbihbc3RyKHgpIGZvciB4IGluIHZlcnNpb25dKQo=
+There are too much magic inside docs Makefile to properly run=0D
+sphinx-build. Create an ancillary script that contains all=0D
+kernel-related sphinx-build call logic currently at Makefile.=0D
+=0D
+Such script is designed to work both as an standalone command=0D
+and as part of a Makefile. As such, it properly handles POSIX=0D
+jobserver used by GNU make.=0D
+=0D
+On a side note, there was a line number increase due to the=0D
+conversion:=0D
+=0D
+$ git show|diffstat -p1=0D
+ Documentation/Makefile          |  129 +++-------------=0D
+ tools/docs/sphinx-build-wrapper |  288 +++++++++++++++++++++++++++++++++++=
+++=0D
+ 2 files changed, 316 insertions(+), 101 deletions(-)=0D
+=0D
+This is because some things are more verbosed on Python and because=0D
+it requires reading env vars from Makefile. Besides it, this script=0D
+has some extra features that don't exist at the Makefile:=0D
+=0D
+- It can be called directly from command line;=0D
+- It properly return PDF build errors.=0D
+=0D
+When running the script alone, it will only take handle sphinx-build=0D
+targets. On other words, it won't runn make rustdoc after building=0D
+htmlfiles, nor it will run the extra check scripts.=0D
+=0D
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>=0D
+---=0D
+ Documentation/Makefile          | 129 ++++----------=0D
+ tools/docs/sphinx-build-wrapper | 288 ++++++++++++++++++++++++++++++++=0D
+ 2 files changed, 316 insertions(+), 101 deletions(-)=0D
+ create mode 100755 tools/docs/sphinx-build-wrapper=0D
+=0D
+diff --git a/Documentation/Makefile b/Documentation/Makefile=0D
+index deb2029228ed..2b0ed8cd5ea8 100644=0D
+--- a/Documentation/Makefile=0D
++++ b/Documentation/Makefile=0D
+@@ -23,21 +23,22 @@ SPHINXOPTS    =3D=0D
+ SPHINXDIRS    =3D .=0D
+ DOCS_THEME    =3D=0D
+ DOCS_CSS      =3D=0D
+-_SPHINXDIRS   =3D $(sort $(patsubst $(srctree)/Documentation/%/index.rst,%=
+,$(wildcard $(srctree)/Documentation/*/index.rst)))=0D
+ SPHINX_CONF   =3D conf.py=0D
+ PAPER         =3D=0D
+ BUILDDIR      =3D $(obj)/output=0D
+ PDFLATEX      =3D xelatex=0D
+ LATEXOPTS     =3D -interaction=3Dbatchmode -no-shell-escape=0D
+ =0D
++PYTHONPYCACHEPREFIX ?=3D $(abspath $(BUILDDIR)/__pycache__)=0D
++=0D
++# Wrapper for sphinx-build=0D
++=0D
++BUILD_WRAPPER =3D $(srctree)/tools/docs/sphinx-build-wrapper=0D
++=0D
+ # For denylisting "variable font" files=0D
+ # Can be overridden by setting as an env variable=0D
+ FONTS_CONF_DENY_VF ?=3D $(HOME)/deny-vf=0D
+ =0D
+-ifeq ($(findstring 1, $(KBUILD_VERBOSE)),)=0D
+-SPHINXOPTS    +=3D "-q"=0D
+-endif=0D
+-=0D
+ # User-friendly check for sphinx-build=0D
+ HAVE_SPHINX :=3D $(shell if which $(SPHINXBUILD) >/dev/null 2>&1; then ech=
+o 1; else echo 0; fi)=0D
+ =0D
+@@ -51,63 +52,29 @@ ifeq ($(HAVE_SPHINX),0)=0D
+ =0D
+ else # HAVE_SPHINX=0D
+ =0D
+-# User-friendly check for pdflatex and latexmk=0D
+-HAVE_PDFLATEX :=3D $(shell if which $(PDFLATEX) >/dev/null 2>&1; then echo=
+ 1; else echo 0; fi)=0D
+-HAVE_LATEXMK :=3D $(shell if which latexmk >/dev/null 2>&1; then echo 1; e=
+lse echo 0; fi)=0D
++# Common documentation targets=0D
++infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:=0D
++	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
++	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \=0D
++		--sphinxdirs=3D"$(SPHINXDIRS)" --conf=3D$(SPHINX_CONF) \=0D
++		--theme=3D$(DOCS_THEME) --css=3D$(DOCS_CSS) --paper=3D$(PAPER)=0D
+ =0D
+-ifeq ($(HAVE_LATEXMK),1)=0D
+-	PDFLATEX :=3D latexmk -$(PDFLATEX)=0D
+-endif #HAVE_LATEXMK=0D
+-=0D
+-# Internal variables.=0D
+-PAPEROPT_a4     =3D -D latex_elements.papersize=3Da4paper=0D
+-PAPEROPT_letter =3D -D latex_elements.papersize=3Dletterpaper=0D
+-ALLSPHINXOPTS   =3D -D kerneldoc_srctree=3D$(srctree) -D kerneldoc_bin=3D$=
+(KERNELDOC)=0D
+-ALLSPHINXOPTS   +=3D $(PAPEROPT_$(PAPER)) $(SPHINXOPTS)=0D
+-ifneq ($(wildcard $(srctree)/.config),)=0D
+-ifeq ($(CONFIG_RUST),y)=0D
+-	# Let Sphinx know we will include rustdoc=0D
+-	ALLSPHINXOPTS   +=3D  -t rustdoc=0D
+-endif=0D
++# Special handling for pdfdocs=0D
++ifeq ($(shell which $(PDFLATEX) >/dev/null 2>&1; echo $$?),0)=0D
++pdfdocs: DENY_VF =3D XDG_CONFIG_HOME=3D$(FONTS_CONF_DENY_VF)=0D
++else=0D
++pdfdocs:=0D
++	$(warning The '$(PDFLATEX)' command was not found. Make sure you have it =
+installed and in PATH to produce PDF output.)=0D
++	@echo "  SKIP    Sphinx $@ target."=0D
+ endif=0D
+-# the i18n builder cannot share the environment and doctrees with the othe=
+rs=0D
+-I18NSPHINXOPTS  =3D $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .=0D
+-=0D
+-# commands; the 'cmd' from scripts/Kbuild.include is not *loopable*=0D
+-loop_cmd =3D $(echo-cmd) $(cmd_$(1)) || exit;=0D
+-=0D
+-# $2 sphinx builder e.g. "html"=0D
+-# $3 name of the build subfolder / e.g. "userspace-api/media", used as:=0D
+-#    * dest folder relative to $(BUILDDIR) and=0D
+-#    * cache folder relative to $(BUILDDIR)/.doctrees=0D
+-# $4 dest subfolder e.g. "man" for man pages at userspace-api/media/man=0D
+-# $5 reST source folder relative to $(src),=0D
+-#    e.g. "userspace-api/media" for the linux-tv book-set at ./Documentati=
+on/userspace-api/media=0D
+-=0D
+-PYTHONPYCACHEPREFIX ?=3D $(abspath $(BUILDDIR)/__pycache__)=0D
+-=0D
+-quiet_cmd_sphinx =3D SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)=0D
+-      cmd_sphinx =3D \=0D
+-	PYTHONPYCACHEPREFIX=3D"$(PYTHONPYCACHEPREFIX)" \=0D
+-	BUILDDIR=3D$(abspath $(BUILDDIR)) SPHINX_CONF=3D$(abspath $(src)/$5/$(SPH=
+INX_CONF)) \=0D
+-	$(PYTHON3) $(srctree)/scripts/jobserver-exec \=0D
+-	$(CONFIG_SHELL) $(srctree)/Documentation/sphinx/parallel-wrapper.sh \=0D
+-	$(SPHINXBUILD) \=0D
+-	-b $2 \=0D
+-	-c $(abspath $(src)) \=0D
+-	-d $(abspath $(BUILDDIR)/.doctrees/$3) \=0D
+-	-D version=3D$(KERNELVERSION) -D release=3D$(KERNELRELEASE) \=0D
+-	$(ALLSPHINXOPTS) \=0D
+-	$(abspath $(src)/$5) \=0D
+-	$(abspath $(BUILDDIR)/$3/$4) && \=0D
+-	if [ "x$(DOCS_CSS)" !=3D "x" ]; then \=0D
+-		cp $(if $(patsubst /%,,$(DOCS_CSS)),$(abspath $(srctree)/$(DOCS_CSS)),$(=
+DOCS_CSS)) $(BUILDDIR)/$3/_static/; \=0D
+-	fi=0D
+ =0D
++# HTML main logic is identical to other targets. However, if rust is enabl=
+ed,=0D
++# an extra step at the end is required to generate rustdoc.=0D
+ htmldocs:=0D
+-	@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
+-	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,html,$(var),,$(var))=
+)=0D
+-=0D
++	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
++	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \=0D
++		--sphinxdirs=3D"$(SPHINXDIRS)" --conf=3D$(SPHINX_CONF) \=0D
++		--theme=3D$(DOCS_THEME) --css=3D$(DOCS_CSS) --paper=3D$(PAPER)=0D
+ # If Rust support is available and .config exists, add rustdoc generated c=
+ontents.=0D
+ # If there are any, the errors from this make rustdoc will be displayed bu=
 t=0D
-Ci0KLVJFQ09NTUVOREVEX1ZFUlNJT04gPSBwYXJzZV92ZXJzaW9uKCIzLjQuMyIpCi1NSU5fUFl=
-U=0D
-SE9OX1ZFUlNJT04gPSBwYXJzZV92ZXJzaW9uKCIzLjciKQorUkVDT01NRU5ERURfVkVSU0lPTiA=
-9=0D
-IFB5dGhvblZlcnNpb24oIjMuNC4zIikudmVyc2lvbgorTUlOX1BZVEhPTl9WRVJTSU9OID0gUHl=
-0=0D
-aG9uVmVyc2lvbigiMy43IikudmVyc2lvbgogCiAKIGNsYXNzIERlcE1hbmFnZXI6CkBAIC0yMzU=
-s=0D
-OTUgKzIyNSwxMSBAQCBjbGFzcyBBbmNpbGxhcnlNZXRob2RzOgogCiAgICAgICAgIHJldHVybiB=
-O=0D
-b25lCiAKLSAgICBAc3RhdGljbWV0aG9kCi0gICAgZGVmIGdldF9weXRob25fdmVyc2lvbihjbWQ=
-p=0D
-OgotICAgICAgICAiIiIKLSAgICAgICAgR2V0IHB5dGhvbiB2ZXJzaW9uIGZyb20gYSBQeXRob24=
-g=0D
-YmluYXJ5LiBBcyB3ZSBuZWVkIHRvIGRldGVjdCBpZgotICAgICAgICBhcmUgb3V0IHRoZXJlIG5=
-l=0D
-d2VyIHB5dGhvbiBiaW5hcmllcywgd2UgY2FuJ3QgcmVseSBvbiBzeXMucmVsZWFzZSBoZXJlLgo=
-t=0D
-ICAgICAgICAiIiIKLQotICAgICAgICByZXN1bHQgPSBTcGhpbnhEZXBlbmRlbmN5Q2hlY2tlci5=
-y=0D
-dW4oW2NtZCwgIi0tdmVyc2lvbiJdLAotICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA=
-g=0D
-ICAgICAgICAgICBjYXB0dXJlX291dHB1dD1UcnVlLCB0ZXh0PVRydWUpCi0gICAgICAgIHZlcnN=
-p=0D
-b24gPSByZXN1bHQuc3Rkb3V0LnN0cmlwKCkKLQotICAgICAgICBtYXRjaCA9IHJlLnNlYXJjaCh=
-y=0D
-IihcZCtcLlxkK1wuXGQrKSIsIHZlcnNpb24pCi0gICAgICAgIGlmIG1hdGNoOgotICAgICAgICA=
-g=0D
-ICAgcmV0dXJuIHBhcnNlX3ZlcnNpb24obWF0Y2guZ3JvdXAoMSkpCi0KLSAgICAgICAgcHJpbnQ=
-o=0D
-ZiJDYW4ndCBwYXJzZSB2ZXJzaW9uIHt2ZXJzaW9ufSIpCi0gICAgICAgIHJldHVybiAoMCwgMCw=
-g=0D
-MCkKLQotICAgIEBzdGF0aWNtZXRob2QKLSAgICBkZWYgZmluZF9weXRob24oKToKLSAgICAgICA=
-g=0D
-IiIiCi0gICAgICAgIERldGVjdCBpZiBhcmUgb3V0IHRoZXJlIGFueSBweXRob24gMy54eSB2ZXJ=
-z=0D
-aW9uIG5ld2VyIHRoYW4gdGhlCi0gICAgICAgIGN1cnJlbnQgb25lLgotCi0gICAgICAgIE5vdGU=
-6=0D
-IHRoaXMgcm91dGluZSBpcyBsaW1pdGVkIHRvIHVwIHRvIDIgZGlnaXRzIGZvciBweXRob24zLiB=
-X=0D
-ZQotICAgICAgICBtYXkgbmVlZCB0byB1cGRhdGUgaXQgb25lIGRheSwgaG9wZWZ1bGx5IG9uIGE=
-g=0D
-ZGlzdGFudCBmdXR1cmUuCi0gICAgICAgICIiIgotICAgICAgICBwYXR0ZXJucyA9IFsKLSAgICA=
-g=0D
-ICAgICAgICJweXRob24zLlswLTldIiwKLSAgICAgICAgICAgICJweXRob24zLlswLTldWzAtOV0=
-i=0D
-LAotICAgICAgICBdCi0KLSAgICAgICAgIyBTZWVrIGZvciBhIHB5dGhvbiBiaW5hcnkgbmV3ZXI=
-g=0D
-dGhhbiBNSU5fUFlUSE9OX1ZFUlNJT04KLSAgICAgICAgZm9yIHBhdGggaW4gb3MuZ2V0ZW52KCJ=
-Q=0D
-QVRIIiwgIiIpLnNwbGl0KCI6Iik6Ci0gICAgICAgICAgICBmb3IgcGF0dGVybiBpbiBwYXR0ZXJ=
-u=0D
-czoKLSAgICAgICAgICAgICAgICBmb3IgY21kIGluIGdsb2Iob3MucGF0aC5qb2luKHBhdGgsIHB=
-h=0D
-dHRlcm4pKToKLSAgICAgICAgICAgICAgICAgICAgaWYgb3MucGF0aC5pc2ZpbGUoY21kKSBhbmQ=
-g=0D
-b3MuYWNjZXNzKGNtZCwgb3MuWF9PSyk6Ci0gICAgICAgICAgICAgICAgICAgICAgICB2ZXJzaW9=
-u=0D
-ID0gU3BoaW54RGVwZW5kZW5jeUNoZWNrZXIuZ2V0X3B5dGhvbl92ZXJzaW9uKGNtZCkKLSAgICA=
-g=0D
-ICAgICAgICAgICAgICAgICAgIGlmIHZlcnNpb24gPj0gTUlOX1BZVEhPTl9WRVJTSU9OOgotICA=
-g=0D
-ICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBjbWQKLQotICAgIEBzdGF0aWNtZXRob2Q=
-K=0D
-LSAgICBkZWYgY2hlY2tfcHl0aG9uKCk6Ci0gICAgICAgICIiIgotICAgICAgICBDaGVjayBpZiB=
-0=0D
-aGUgY3VycmVudCBweXRob24gYmluYXJ5IHNhdGlzZmllcyBvdXIgbWluaW1hbCByZXF1aXJlbWV=
-u=0D
-dAotICAgICAgICBmb3IgU3BoaW54IGJ1aWxkLiBJZiBub3QsIHJlLXJ1biB3aXRoIGEgbmV3ZXI=
-g=0D
-dmVyc2lvbiBpZiBmb3VuZC4KLSAgICAgICAgIiIiCi0gICAgICAgIGN1cl92ZXIgPSBzeXMudmV=
-y=0D
-c2lvbl9pbmZvWzozXQotICAgICAgICBpZiBjdXJfdmVyID49IE1JTl9QWVRIT05fVkVSU0lPTjo=
-K=0D
-LSAgICAgICAgICAgIHZlciA9IHZlcl9zdHIoY3VyX3ZlcikKLSAgICAgICAgICAgIHByaW50KGY=
-i=0D
-UHl0aG9uIHZlcnNpb246IHt2ZXJ9IikKLQotICAgICAgICAgICAgIyBUaGlzIGNvdWxkIGJlIHV=
-z=0D
-ZWZ1bCBmb3IgZGVidWdnaW5nIHB1cnBvc2VzCi0gICAgICAgICAgICBpZiBTcGhpbnhEZXBlbmR=
-l=0D
-bmN5Q2hlY2tlci53aGljaCgiZG9jdXRpbHMiKToKLSAgICAgICAgICAgICAgICByZXN1bHQgPSB=
-T=0D
-cGhpbnhEZXBlbmRlbmN5Q2hlY2tlci5ydW4oWyJkb2N1dGlscyIsICItLXZlcnNpb24iXSwKLSA=
-g=0D
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjYXB0dXJ=
-l=0D
-X291dHB1dD1UcnVlLCB0ZXh0PVRydWUpCi0gICAgICAgICAgICAgICAgdmVyID0gcmVzdWx0LnN=
-0=0D
-ZG91dC5zdHJpcCgpCi0gICAgICAgICAgICAgICAgbWF0Y2ggPSByZS5zZWFyY2gociIoXGQrXC5=
-c=0D
-ZCtcLlxkKykiLCB2ZXIpCi0gICAgICAgICAgICAgICAgaWYgbWF0Y2g6Ci0gICAgICAgICAgICA=
-g=0D
-ICAgICAgIHZlciA9IG1hdGNoLmdyb3VwKDEpCi0KLSAgICAgICAgICAgICAgICBwcmludChmIkR=
-v=0D
-Y3V0aWxzIHZlcnNpb246IHt2ZXJ9IikKLQotICAgICAgICAgICAgcmV0dXJuCi0KLSAgICAgICA=
-g=0D
-cHl0aG9uX3ZlciA9IHZlcl9zdHIoY3VyX3ZlcikKLQotICAgICAgICBuZXdfcHl0aG9uX2NtZCA=
-9=0D
-IFNwaGlueERlcGVuZGVuY3lDaGVja2VyLmZpbmRfcHl0aG9uKCkKLSAgICAgICAgaWYgbm90IG5=
-l=0D
-d19weXRob25fY21kOgotICAgICAgICAgICAgcHJpbnQoZiJFUlJPUjogUHl0aG9uIHZlcnNpb24=
-g=0D
-e3B5dGhvbl92ZXJ9IGlzIG5vdCBzcHBvcnRlZCBhbnltb3JlXG4iKQotICAgICAgICAgICAgcHJ=
-p=0D
-bnQoIiAgICAgICBDYW4ndCBmaW5kIGEgbmV3IHZlcnNpb24uIFRoaXMgc2NyaXB0IG1heSBmYWl=
-s=0D
-IikKLSAgICAgICAgICAgIHJldHVybgotCi0gICAgICAgICMgUmVzdGFydCBzY3JpcHQgdXNpbmc=
-g=0D
-dGhlIG5ld2VyIHZlcnNpb24KLSAgICAgICAgc2NyaXB0X3BhdGggPSBvcy5wYXRoLmFic3BhdGg=
-o=0D
-c3lzLmFyZ3ZbMF0pCi0gICAgICAgIGFyZ3MgPSBbbmV3X3B5dGhvbl9jbWQsIHNjcmlwdF9wYXR=
-o=0D
-XSArIHN5cy5hcmd2WzE6XQotCi0gICAgICAgIHByaW50KGYiUHl0aG9uIHtweXRob25fdmVyfSB=
-u=0D
-b3Qgc3VwcG9ydGVkLiBDaGFuZ2luZyB0byB7bmV3X3B5dGhvbl9jbWR9IikKLQotICAgICAgICB=
-0=0D
-cnk6Ci0gICAgICAgICAgICBvcy5leGVjdihuZXdfcHl0aG9uX2NtZCwgYXJncykKLSAgICAgICA=
-g=0D
-ZXhjZXB0IE9TRXJyb3IgYXMgZToKLSAgICAgICAgICAgIHN5cy5leGl0KGYiRmFpbGVkIHRvIHJ=
-l=0D
-c3RhcnQgd2l0aCB7bmV3X3B5dGhvbl9jbWR9OiB7ZX0iKQotCiAgICAgQHN0YXRpY21ldGhvZAo=
-g=0D
-ICAgIGRlZiBydW4oKmFyZ3MsICoqa3dhcmdzKToKICAgICAgICAgIiIiCiAgICAgICAgIEV4Y2V=
-j=0D
-dXRlIGEgY29tbWFuZCwgaGlkaW5nIGl0cyBvdXRwdXQgYnkgZGVmYXVsdC4KLSAgICAgICAgUHJ=
-l=0D
-c2VydmUgY29tYXRpYmlsaXR5IHdpdGggb2xkZXIgUHl0aG9uIHZlcnNpb25zLgorICAgICAgICB=
-Q=0D
-cmVzZXJ2ZSBjb21wYXRpYmlsaXR5IHdpdGggb2xkZXIgUHl0aG9uIHZlcnNpb25zLgogICAgICA=
-g=0D
-ICAiIiIKIAogICAgICAgICBjYXB0dXJlX291dHB1dCA9IGt3YXJncy5wb3AoJ2NhcHR1cmVfb3V=
-0=0D
-cHV0JywgRmFsc2UpCkBAIC01MjcsMTEgKzQzMywxMSBAQCBjbGFzcyBNaXNzaW5nQ2hlY2tlcnM=
-o=0D
-QW5jaWxsYXJ5TWV0aG9kcyk6CiAgICAgICAgIGZvciBsaW5lIGluIHJlc3VsdC5zdGRvdXQuc3B=
-s=0D
-aXQoIlxuIik6CiAgICAgICAgICAgICBtYXRjaCA9IHJlLm1hdGNoKHIiXnNwaGlueC1idWlsZFx=
-z=0D
-KyhbXGRcLl0rKSg/OlwrKD86L1tcZGEtZl0rKXxiXGQrKT9ccyokIiwgbGluZSkKICAgICAgICA=
-g=0D
-ICAgIGlmIG1hdGNoOgotICAgICAgICAgICAgICAgIHJldHVybiBwYXJzZV92ZXJzaW9uKG1hdGN=
-o=0D
-Lmdyb3VwKDEpKQorICAgICAgICAgICAgICAgIHJldHVybiBQeXRob25WZXJzaW9uLnBhcnNlX3Z=
-l=0D
-cnNpb24obWF0Y2guZ3JvdXAoMSkpCiAKICAgICAgICAgICAgIG1hdGNoID0gcmUubWF0Y2gociJ=
-e=0D
-U3BoaW54LipccysoW1xkXC5dKylccyokIiwgbGluZSkKICAgICAgICAgICAgIGlmIG1hdGNoOgo=
-t=0D
-ICAgICAgICAgICAgICAgIHJldHVybiBwYXJzZV92ZXJzaW9uKG1hdGNoLmdyb3VwKDEpKQorICA=
-g=0D
-ICAgICAgICAgICAgIHJldHVybiBQeXRob25WZXJzaW9uLnBhcnNlX3ZlcnNpb24obWF0Y2guZ3J=
-v=0D
-dXAoMSkpCiAKICAgICBkZWYgY2hlY2tfc3BoaW54KHNlbGYsIGNvbmYpOgogICAgICAgICAiIiI=
-K=0D
-QEAgLTU0Miw3ICs0NDgsNyBAQCBjbGFzcyBNaXNzaW5nQ2hlY2tlcnMoQW5jaWxsYXJ5TWV0aG9=
-k=0D
-cyk6CiAgICAgICAgICAgICAgICAgZm9yIGxpbmUgaW4gZjoKICAgICAgICAgICAgICAgICAgICA=
-g=0D
-bWF0Y2ggPSByZS5tYXRjaChyIl5ccypuZWVkc19zcGhpbnhccyo9XHMqW1wnXCJdKFtcZFwuXSs=
-p=0D
-W1wnXCJdIiwgbGluZSkKICAgICAgICAgICAgICAgICAgICAgaWYgbWF0Y2g6Ci0gICAgICAgICA=
-g=0D
-ICAgICAgICAgICAgICBzZWxmLm1pbl92ZXJzaW9uID0gcGFyc2VfdmVyc2lvbihtYXRjaC5ncm9=
-1=0D
-cCgxKSkKKyAgICAgICAgICAgICAgICAgICAgICAgIHNlbGYubWluX3ZlcnNpb24gPSBQeXRob25=
-W=0D
-ZXJzaW9uLnBhcnNlX3ZlcnNpb24obWF0Y2guZ3JvdXAoMSkpCiAgICAgICAgICAgICAgICAgICA=
-g=0D
-ICAgICBicmVhawogICAgICAgICBleGNlcHQgSU9FcnJvcjoKICAgICAgICAgICAgIHN5cy5leGl=
-0=0D
-KGYiQ2FuJ3Qgb3BlbiB7Y29uZn0iKQpAQCAtNTYyLDggKzQ2OCw4IEBAIGNsYXNzIE1pc3Npbmd=
-D=0D
-aGVja2VycyhBbmNpbGxhcnlNZXRob2RzKToKICAgICAgICAgICAgIHN5cy5leGl0KGYie3NwaGl=
-u=0D
-eH0gZGlkbid0IHJldHVybiBpdHMgdmVyc2lvbiIpCiAKICAgICAgICAgaWYgc2VsZi5jdXJfdmV=
-y=0D
-c2lvbiA8IHNlbGYubWluX3ZlcnNpb246Ci0gICAgICAgICAgICBjdXJ2ZXIgPSB2ZXJfc3RyKHN=
-l=0D
-bGYuY3VyX3ZlcnNpb24pCi0gICAgICAgICAgICBtaW52ZXIgPSB2ZXJfc3RyKHNlbGYubWluX3Z=
-l=0D
-cnNpb24pCisgICAgICAgICAgICBjdXJ2ZXIgPSBQeXRob25WZXJzaW9uLnZlcl9zdHIoc2VsZi5=
-j=0D
-dXJfdmVyc2lvbikKKyAgICAgICAgICAgIG1pbnZlciA9IFB5dGhvblZlcnNpb24udmVyX3N0cih=
-z=0D
-ZWxmLm1pbl92ZXJzaW9uKQogCiAgICAgICAgICAgICBwcmludChmIkVSUk9SOiBTcGhpbnggdmV=
-y=0D
-c2lvbiBpcyB7Y3VydmVyfS4gSXQgc2hvdWxkIGJlID49IHttaW52ZXJ9IikKICAgICAgICAgICA=
-g=0D
-IHNlbGYubmVlZF9zcGhpbnggPSAxCkBAIC0xMzA0LDcgKzEyMTAsNyBAQCBjbGFzcyBTcGhpbnh=
-E=0D
-ZXBlbmRlbmN5Q2hlY2tlcihNaXNzaW5nQ2hlY2tlcnMpOgogICAgICAgICAgICAgZWxzZToKICA=
-g=0D
-ICAgICAgICAgICAgICBpZiBzZWxmLm5lZWRfc3BoaW54IGFuZCB2ZXIgPj0gc2VsZi5taW5fdmV=
-y=0D
-c2lvbjoKICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIChmLCB2ZXIpCi0gICAgICAgICAgICA=
-g=0D
-ICAgZWxpZiBwYXJzZV92ZXJzaW9uKHZlcikgPiBzZWxmLmN1cl92ZXJzaW9uOgorICAgICAgICA=
-g=0D
-ICAgICAgIGVsaWYgUHl0aG9uVmVyc2lvbi5wYXJzZV92ZXJzaW9uKHZlcikgPiBzZWxmLmN1cl9=
-2=0D
-ZXJzaW9uOgogICAgICAgICAgICAgICAgICAgICByZXR1cm4gKGYsIHZlcikKIAogICAgICAgICB=
-y=0D
-ZXR1cm4gKCIiLCB2ZXIpCkBAIC0xNDExLDcgKzEzMTcsNyBAQCBjbGFzcyBTcGhpbnhEZXBlbmR=
-l=0D
-bmN5Q2hlY2tlcihNaXNzaW5nQ2hlY2tlcnMpOgogICAgICAgICAgICAgcmV0dXJuCiAKICAgICA=
-g=0D
-ICAgaWYgc2VsZi5sYXRlc3RfYXZhaWxfdmVyOgotICAgICAgICAgICAgbGF0ZXN0X2F2YWlsX3Z=
-l=0D
-ciA9IHZlcl9zdHIoc2VsZi5sYXRlc3RfYXZhaWxfdmVyKQorICAgICAgICAgICAgbGF0ZXN0X2F=
-2=0D
-YWlsX3ZlciA9IFB5dGhvblZlcnNpb24udmVyX3N0cihzZWxmLmxhdGVzdF9hdmFpbF92ZXIpCiA=
-K=0D
-ICAgICAgICAgaWYgbm90IHNlbGYubmVlZF9zcGhpbng6CiAgICAgICAgICAgICAjIHNwaGlueC1=
-i=0D
-dWlsZCBpcyBwcmVzZW50IGFuZCBpdHMgdmVyc2lvbiBpcyA+PSAkbWluX3ZlcnNpb24KQEAgLTE=
-1=0D
-MDcsNyArMTQxMyw3IEBAIGNsYXNzIFNwaGlueERlcGVuZGVuY3lDaGVja2VyKE1pc3NpbmdDaGV=
-j=0D
-a2Vycyk6CiAgICAgICAgIGVsc2U6CiAgICAgICAgICAgICBwcmludCgiVW5rbm93biBPUyIpCiA=
-g=0D
-ICAgICAgIGlmIHNlbGYuY3VyX3ZlcnNpb24gIT0gKDAsIDAsIDApOgotICAgICAgICAgICAgdmV=
-y=0D
-ID0gdmVyX3N0cihzZWxmLmN1cl92ZXJzaW9uKQorICAgICAgICAgICAgdmVyID0gUHl0aG9uVmV=
-y=0D
-c2lvbi52ZXJfc3RyKHNlbGYuY3VyX3ZlcnNpb24pCiAgICAgICAgICAgICBwcmludChmIlNwaGl=
-u=0D
-eCB2ZXJzaW9uOiB7dmVyfVxuIikKIAogICAgICAgICAjIENoZWNrIHRoZSB0eXBlIG9mIHZpcnR=
-1=0D
-YWwgZW52LCBkZXBlbmRpbmcgb24gUHl0aG9uIHZlcnNpb24KQEAgLTE2MTMsNyArMTUxOSw3IEB=
-A=0D
-IGRlZiBtYWluKCk6CiAKICAgICBjaGVja2VyID0gU3BoaW54RGVwZW5kZW5jeUNoZWNrZXIoYXJ=
-n=0D
-cykKIAotICAgIGNoZWNrZXIuY2hlY2tfcHl0aG9uKCkKKyAgICBQeXRob25WZXJzaW9uLmNoZWN=
-r=0D
-X3B5dGhvbihNSU5fUFlUSE9OX1ZFUlNJT04pCiAgICAgY2hlY2tlci5jaGVja19uZWVkcygpCiA=
-K=0D
-ICMgQ2FsbCBtYWluIGlmIG5vdCB1c2VkIGFzIG1vZHVsZQotLSAKMi41MS4wCgo=3D=0D
+ # won't stop the execution of htmldocs=0D
+@@ -118,49 +85,6 @@ ifeq ($(CONFIG_RUST),y)=0D
+ endif=0D
+ endif=0D
+ =0D
+-texinfodocs:=0D
+-	@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
+-	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,texinfo,$(var),texin=
+fo,$(var)))=0D
+-=0D
+-# Note: the 'info' Make target is generated by sphinx itself when=0D
+-# running the texinfodocs target define above.=0D
+-infodocs: texinfodocs=0D
+-	$(MAKE) -C $(BUILDDIR)/texinfo info=0D
+-=0D
+-linkcheckdocs:=0D
+-	@$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,linkcheck,$(var),,$(v=
+ar)))=0D
+-=0D
+-latexdocs:=0D
+-	@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
+-	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,latex,$(var),latex,$=
+(var)))=0D
+-=0D
+-ifeq ($(HAVE_PDFLATEX),0)=0D
+-=0D
+-pdfdocs:=0D
+-	$(warning The '$(PDFLATEX)' command was not found. Make sure you have it =
+installed and in PATH to produce PDF output.)=0D
+-	@echo "  SKIP    Sphinx $@ target."=0D
+-=0D
+-else # HAVE_PDFLATEX=0D
+-=0D
+-pdfdocs: DENY_VF =3D XDG_CONFIG_HOME=3D$(FONTS_CONF_DENY_VF)=0D
+-pdfdocs: latexdocs=0D
+-	@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
+-	$(foreach var,$(SPHINXDIRS), \=0D
+-	   $(MAKE) PDFLATEX=3D"$(PDFLATEX)" LATEXOPTS=3D"$(LATEXOPTS)" $(DENY_VF)=
+ -C $(BUILDDIR)/$(var)/latex || sh $(srctree)/scripts/check-variable-fonts.=
+sh || exit; \=0D
+-	   mkdir -p $(BUILDDIR)/$(var)/pdf; \=0D
+-	   mv $(subst .tex,.pdf,$(wildcard $(BUILDDIR)/$(var)/latex/*.tex)) $(BUI=
+LDDIR)/$(var)/pdf/; \=0D
+-	)=0D
+-=0D
+-endif # HAVE_PDFLATEX=0D
+-=0D
+-epubdocs:=0D
+-	@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
+-	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,epub,$(var),epub,$(v=
+ar)))=0D
+-=0D
+-xmldocs:=0D
+-	@$(srctree)/tools/docs/sphinx-pre-install --version-check=0D
+-	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,xml,$(var),xml,$(var=
+)))=0D
+-=0D
+ endif # HAVE_SPHINX=0D
+ =0D
+ # The following targets are independent of HAVE_SPHINX, and the rules shou=
+ld=0D
+@@ -172,6 +96,9 @@ refcheckdocs:=0D
+ cleandocs:=0D
+ 	$(Q)rm -rf $(BUILDDIR)=0D
+ =0D
++# Used only on help=0D
++_SPHINXDIRS   =3D $(sort $(patsubst $(srctree)/Documentation/%/index.rst,%=
+,$(wildcard $(srctree)/Documentation/*/index.rst)))=0D
++=0D
+ dochelp:=0D
+ 	@echo  ' Linux kernel internal documentation in different formats from Re=
+ST:'=0D
+ 	@echo  '  htmldocs        - HTML'=0D
+diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrap=
+per=0D
+new file mode 100755=0D
+index 000000000000..df469af8a4ef=0D
+--- /dev/null=0D
++++ b/tools/docs/sphinx-build-wrapper=0D
+@@ -0,0 +1,288 @@=0D
++#!/usr/bin/env python3=0D
++# SPDX-License-Identifier: GPL-2.0=0D
++import argparse=0D
++import os=0D
++import shlex=0D
++import shutil=0D
++import subprocess=0D
++import sys=0D
++from lib.python_version import PythonVersion=0D
++=0D
++LIB_DIR =3D "../../scripts/lib"=0D
++SRC_DIR =3D os.path.dirname(os.path.realpath(__file__))=0D
++sys.path.insert(0, os.path.join(SRC_DIR, LIB_DIR))=0D
++=0D
++from jobserver import JobserverExec=0D
++=0D
++MIN_PYTHON_VERSION =3D PythonVersion("3.7").version=0D
++PAPER =3D ["", "a4", "letter"]=0D
++TARGETS =3D {=0D
++    "cleandocs":     { "builder": "clean" },=0D
++    "linkcheckdocs": { "builder": "linkcheck" },=0D
++    "htmldocs":      { "builder": "html" },=0D
++    "epubdocs":      { "builder": "epub",    "out_dir": "epub" },=0D
++    "texinfodocs":   { "builder": "texinfo", "out_dir": "texinfo" },=0D
++    "infodocs":      { "builder": "texinfo", "out_dir": "texinfo" },=0D
++    "latexdocs":     { "builder": "latex",   "out_dir": "latex" },=0D
++    "pdfdocs":       { "builder": "latex",   "out_dir": "latex" },=0D
++    "xmldocs":       { "builder": "xml",     "out_dir": "xml" },=0D
++}=0D
++=0D
++class SphinxBuilder:=0D
++    def is_rust_enabled(self):=0D
++        config_path =3D os.path.join(self.srctree, ".config")=0D
++        if os.path.isfile(config_path):=0D
++            with open(config_path, "r", encoding=3D"utf-8") as f:=0D
++                return "CONFIG_RUST=3Dy" in f.read()=0D
++        return False=0D
++=0D
++    def get_path(self, path, abs_path=3DFalse):=0D
++        path =3D os.path.expanduser(path)=0D
++        if not path.startswith("/"):=0D
++            path =3D os.path.join(self.srctree, path)=0D
++        if abs_path:=0D
++            return os.path.abspath(path)=0D
++        return path=0D
++=0D
++    def __init__(self, verbose=3DFalse, n_jobs=3DNone):=0D
++        self.verbose =3D None=0D
++        self.kernelversion =3D os.environ.get("KERNELVERSION", "unknown")=
+=0D
++        self.kernelrelease =3D os.environ.get("KERNELRELEASE", "unknown")=
+=0D
++        self.pdflatex =3D os.environ.get("PDFLATEX", "xelatex")=0D
++        self.latexopts =3D os.environ.get("LATEXOPTS", "-interaction=3Dbat=
+chmode -no-shell-escape")=0D
++        if not verbose:=0D
++            verbose =3D bool(os.environ.get("KBUILD_VERBOSE", "") !=3D "")=
+=0D
++        if verbose is not None:=0D
++            self.verbose =3D verbose=0D
++        parser =3D argparse.ArgumentParser()=0D
++        parser.add_argument('-j', '--jobs', type=3Dint)=0D
++        parser.add_argument('-q', '--quiet', type=3Dint)=0D
++        sphinxopts =3D shlex.split(os.environ.get("SPHINXOPTS", ""))=0D
++        sphinx_args, self.sphinxopts =3D parser.parse_known_args(sphinxopt=
+s)=0D
++        if sphinx_args.quiet is True:=0D
++            self.verbose =3D False=0D
++        if sphinx_args.jobs:=0D
++            self.n_jobs =3D sphinx_args.jobs=0D
++        self.n_jobs =3D n_jobs=0D
++        self.srctree =3D os.environ.get("srctree")=0D
++        if not self.srctree:=0D
++            self.srctree =3D "."=0D
++            os.environ["srctree"] =3D self.srctree=0D
++        self.sphinxbuild =3D os.environ.get("SPHINXBUILD", "sphinx-build")=
+=0D
++        self.kerneldoc =3D self.get_path(os.environ.get("KERNELDOC",=0D
++                                                      "scripts/kernel-doc.=
+py"))=0D
++        self.obj =3D os.environ.get("obj", "Documentation")=0D
++        self.builddir =3D self.get_path(os.path.join(self.obj, "output"),=
+=0D
++                                      abs_path=3DTrue)=0D
++=0D
++        self.config_rust =3D self.is_rust_enabled()=0D
++=0D
++        self.pdflatex_cmd =3D shutil.which(self.pdflatex)=0D
++        self.latexmk_cmd =3D shutil.which("latexmk")=0D
++=0D
++        self.env =3D os.environ.copy()=0D
++=0D
++    def run_sphinx(self, sphinx_build, build_args, *args, **pwargs):=0D
++        with JobserverExec() as jobserver:=0D
++            if jobserver.claim:=0D
++                n_jobs =3D str(jobserver.claim)=0D
++            else:=0D
++                n_jobs =3D "auto" # Supported since Sphinx 1.7=0D
++            cmd =3D []=0D
++            cmd.append(sys.executable)=0D
++            cmd.append(sphinx_build)=0D
++            if self.n_jobs:=0D
++                n_jobs =3D str(self.n_jobs)=0D
++=0D
++            if n_jobs:=0D
++                cmd +=3D [f"-j{n_jobs}"]=0D
++=0D
++            if not self.verbose:=0D
++                cmd.append("-q")=0D
++            cmd +=3D self.sphinxopts=0D
++            cmd +=3D build_args=0D
++            if self.verbose:=0D
++                print(" ".join(cmd))=0D
++            return subprocess.call(cmd, *args, **pwargs)=0D
++=0D
++    def handle_html(self, css, output_dir):=0D
++        if not css:=0D
++            return=0D
++        css =3D os.path.expanduser(css)=0D
++        if not css.startswith("/"):=0D
++            css =3D os.path.join(self.srctree, css)=0D
++        static_dir =3D os.path.join(output_dir, "_static")=0D
++        os.makedirs(static_dir, exist_ok=3DTrue)=0D
++        try:=0D
++            shutil.copy2(css, static_dir)=0D
++        except (OSError, IOError) as e:=0D
++            print(f"Warning: Failed to copy CSS: {e}", file=3Dsys.stderr)=
+=0D
++=0D
++    def handle_pdf(self, output_dirs):=0D
++        builds =3D {}=0D
++        max_len =3D 0=0D
++        for from_dir in output_dirs:=0D
++            pdf_dir =3D os.path.join(from_dir, "../pdf")=0D
++            os.makedirs(pdf_dir, exist_ok=3DTrue)=0D
++            if self.latexmk_cmd:=0D
++                latex_cmd =3D [self.latexmk_cmd, f"-{self.pdflatex}"]=0D
++            else:=0D
++                latex_cmd =3D [self.pdflatex]=0D
++            latex_cmd.extend(shlex.split(self.latexopts))=0D
++            tex_suffix =3D ".tex"=0D
++            has_tex =3D False=0D
++            build_failed =3D False=0D
++            with os.scandir(from_dir) as it:=0D
++                for entry in it:=0D
++                    if not entry.name.endswith(tex_suffix):=0D
++                        continue=0D
++                    name =3D entry.name[:-len(tex_suffix)]=0D
++                    has_tex =3D True=0D
++                    try:=0D
++                        subprocess.run(latex_cmd + [entry.path],=0D
++                                       cwd=3Dfrom_dir, check=3DTrue)=0D
++                    except subprocess.CalledProcessError:=0D
++                        pass=0D
++                    pdf_name =3D name + ".pdf"=0D
++                    pdf_from =3D os.path.join(from_dir, pdf_name)=0D
++                    pdf_to =3D os.path.join(pdf_dir, pdf_name)=0D
++                    if os.path.exists(pdf_from):=0D
++                        os.rename(pdf_from, pdf_to)=0D
++                        builds[name] =3D os.path.relpath(pdf_to, self.buil=
+ddir)=0D
++                    else:=0D
++                        builds[name] =3D "FAILED"=0D
++                        build_failed =3D True=0D
++                    name =3D entry.name.removesuffix(".tex")=0D
++                    max_len =3D max(max_len, len(name))=0D
++=0D
++            if not has_tex:=0D
++                name =3D os.path.basename(from_dir)=0D
++                max_len =3D max(max_len, len(name))=0D
++                builds[name] =3D "FAILED (no .tex)"=0D
++                build_failed =3D True=0D
++        msg =3D "Summary"=0D
++        msg +=3D "\n" + "=3D" * len(msg)=0D
++        print()=0D
++        print(msg)=0D
++        for pdf_name, pdf_file in builds.items():=0D
++            print(f"{pdf_name:<{max_len}}: {pdf_file}")=0D
++        print()=0D
++        if build_failed:=0D
++            sys.exit("PDF build failed: not all PDF files were created.")=
+=0D
++        else:=0D
++            print("All PDF files were built.")=0D
++=0D
++    def handle_info(self, output_dirs):=0D
++        for output_dir in output_dirs:=0D
++            try:=0D
++                subprocess.run(["make", "info"], cwd=3Doutput_dir, check=
+=3DTrue)=0D
++            except subprocess.CalledProcessError as e:=0D
++                sys.exit(f"Error generating info docs: {e}")=0D
++=0D
++    def cleandocs(self, builder):=0D
++        shutil.rmtree(self.builddir, ignore_errors=3DTrue)=0D
++=0D
++    def build(self, target, sphinxdirs=3DNone, conf=3D"conf.py",=0D
++              theme=3DNone, css=3DNone, paper=3DNone):=0D
++        builder =3D TARGETS[target]["builder"]=0D
++        out_dir =3D TARGETS[target].get("out_dir", "")=0D
++        if target =3D=3D "cleandocs":=0D
++            self.cleandocs(builder)=0D
++            return=0D
++        if theme:=0D
++                os.environ["DOCS_THEME"] =3D theme=0D
++        sphinxbuild =3D shutil.which(self.sphinxbuild, path=3Dself.env["PA=
+TH"])=0D
++        if not sphinxbuild:=0D
++            sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")=0D
++        if builder =3D=3D "latex":=0D
++            if not self.pdflatex_cmd and not self.latexmk_cmd:=0D
++                sys.exit("Error: pdflatex or latexmk required for PDF gene=
+ration")=0D
++        docs_dir =3D os.path.abspath(os.path.join(self.srctree, "Documenta=
+tion"))=0D
++        kerneldoc =3D self.kerneldoc=0D
++        if kerneldoc.startswith(self.srctree):=0D
++            kerneldoc =3D os.path.relpath(kerneldoc, self.srctree)=0D
++        args =3D [ "-b", builder, "-c", docs_dir ]=0D
++        if builder =3D=3D "latex":=0D
++            if not paper:=0D
++                paper =3D PAPER[1]=0D
++            args.extend(["-D", f"latex_elements.papersize=3D{paper}paper"]=
+)=0D
++        if self.config_rust:=0D
++            args.extend(["-t", "rustdoc"])=0D
++        if conf:=0D
++            self.env["SPHINX_CONF"] =3D self.get_path(conf, abs_path=3DTru=
+e)=0D
++        if not sphinxdirs:=0D
++            sphinxdirs =3D os.environ.get("SPHINXDIRS", ".")=0D
++        sphinxdirs_list =3D []=0D
++        for sphinxdir in sphinxdirs:=0D
++            if isinstance(sphinxdir, list):=0D
++                sphinxdirs_list +=3D sphinxdir=0D
++            else:=0D
++                for name in sphinxdir.split(" "):=0D
++                    sphinxdirs_list.append(name)=0D
++        output_dirs =3D []=0D
++        for sphinxdir in sphinxdirs_list:=0D
++            src_dir =3D os.path.join(docs_dir, sphinxdir)=0D
++            doctree_dir =3D os.path.join(self.builddir, ".doctrees")=0D
++            output_dir =3D os.path.join(self.builddir, sphinxdir, out_dir)=
+=0D
++            src_dir =3D os.path.normpath(src_dir)=0D
++            doctree_dir =3D os.path.normpath(doctree_dir)=0D
++            output_dir =3D os.path.normpath(output_dir)=0D
++            os.makedirs(doctree_dir, exist_ok=3DTrue)=0D
++            os.makedirs(output_dir, exist_ok=3DTrue)=0D
++            output_dirs.append(output_dir)=0D
++            build_args =3D args + [=0D
++                "-d", doctree_dir,=0D
++                "-D", f"kerneldoc_bin=3D{kerneldoc}",=0D
++                "-D", f"version=3D{self.kernelversion}",=0D
++                "-D", f"release=3D{self.kernelrelease}",=0D
++                "-D", f"kerneldoc_srctree=3D{self.srctree}",=0D
++                src_dir,=0D
++                output_dir,=0D
++            ]=0D
++            try:=0D
++                self.run_sphinx(sphinxbuild, build_args, env=3Dself.env)=0D
++            except (OSError, ValueError, subprocess.SubprocessError) as e:=
+=0D
++                sys.exit(f"Build failed: {repr(e)}")=0D
++            if target in ["htmldocs", "epubdocs"]:=0D
++                self.handle_html(css, output_dir)=0D
++        if target =3D=3D "pdfdocs":=0D
++            self.handle_pdf(output_dirs)=0D
++        elif target =3D=3D "infodocs":=0D
++            self.handle_info(output_dirs)=0D
++=0D
++def jobs_type(value):=0D
++    if value is None:=0D
++        return None=0D
++    if value.lower() =3D=3D 'auto':=0D
++        return value.lower()=0D
++    try:=0D
++        if int(value) >=3D 1:=0D
++            return value=0D
++        raise argparse.ArgumentTypeError(f"Minimum jobs is 1, got {value}"=
+)=0D
++    except ValueError:=0D
++        raise argparse.ArgumentTypeError(f"Must be 'auto' or positive inte=
+ger, got {value}")=0D
++=0D
++def main():=0D
++    parser =3D argparse.ArgumentParser(description=3D"Kernel documentation=
+ builder")=0D
++    parser.add_argument("target", choices=3Dlist(TARGETS.keys()),=0D
++                        help=3D"Documentation target to build")=0D
++    parser.add_argument("--sphinxdirs", nargs=3D"+",=0D
++                        help=3D"Specific directories to build")=0D
++    parser.add_argument("--conf", default=3D"conf.py",=0D
++                        help=3D"Sphinx configuration file")=0D
++    parser.add_argument("--theme", help=3D"Sphinx theme to use")=0D
++    parser.add_argument("--css", help=3D"Custom CSS file for HTML/EPUB")=0D
++    parser.add_argument("--paper", choices=3DPAPER, default=3DPAPER[0],=0D
++                        help=3D"Paper size for LaTeX/PDF output")=0D
++    parser.add_argument("-v", "--verbose", action=3D'store_true',=0D
++                        help=3D"place build in verbose mode")=0D
++    parser.add_argument('-j', '--jobs', type=3Djobs_type,=0D
++                        help=3D"Sets number of jobs to use with sphinx-bui=
+ld")=0D
++    args =3D parser.parse_args()=0D
++    PythonVersion.check_python(MIN_PYTHON_VERSION)=0D
++    builder =3D SphinxBuilder(verbose=3Dargs.verbose, n_jobs=3Dargs.jobs)=
+=0D
++    builder.build(args.target, sphinxdirs=3Dargs.sphinxdirs, conf=3Dargs.c=
+onf,=0D
++                  theme=3Dargs.theme, css=3Dargs.css, paper=3Dargs.paper)=
+=0D
++=0D
++if __name__ =3D=3D "__main__":=0D
++    main()=0D
+-- =0D
+2.51.0=0D
+=0D
 
