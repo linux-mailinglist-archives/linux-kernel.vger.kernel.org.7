@@ -1,148 +1,128 @@
-Return-Path: <linux-kernel+bounces-795027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B98B3EBFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AF6B3EC01
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320E3174171
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D89A1761E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713EB324B0D;
-	Mon,  1 Sep 2025 16:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A36D2E6CD2;
+	Mon,  1 Sep 2025 16:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4KxBU+R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5c37bX7"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F05D2EFDA0;
-	Mon,  1 Sep 2025 16:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177B832F771;
+	Mon,  1 Sep 2025 16:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756743030; cv=none; b=hrDYzHncprtZ7SWVGa5iyXXEGW5Mv0GydXZW/2DfvYfQWd5qEO/7sDPA1DSqGoxxRIIVM0wLvCcXGeqHOJtvckQpSgqmB4j+YMwZeKhprzF99M7HepRosk7wWGp8TbpUXyqgAs55uxrrjIISyVcVQ6F0O3L0ntf3DMD1stHlj5I=
+	t=1756743134; cv=none; b=B19xeXvAkADxgxW9HtFJl1aECyi403eSNL+soGGSz6frHTFoeH0JzccazOMed3ZG/PjBgWJhtHUO+XPGAS51OcbaMAVs1rO/FFmi4CHiEyxctKqC9SOAPKpn09tI5d5HxA4bymfXuC+W3+FHgY+NgJnSOHsYS6bmOq43h11f0R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756743030; c=relaxed/simple;
-	bh=0OZH8z7M+FViI0pkVtfAPGcVrskEP451MTfbO07cYPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8ZkJ3inFOTqH92iG7loxsEUBJF+M4TRxKSwYmlYeLtdr6m+pBC3JF1xVXI1KfFfuqP58b7FHA+Bawxa8D0v6qPsc5h0yMDNS/hiOmpwA5mxw1HReouQ5Qt/1Az7vgjPe5AzNa3hj45eLzJnBb1bWnG5y6wa//Wh2e4Io7N0K8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4KxBU+R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2734C4CEF0;
-	Mon,  1 Sep 2025 16:10:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756743029;
-	bh=0OZH8z7M+FViI0pkVtfAPGcVrskEP451MTfbO07cYPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l4KxBU+RGhCc3u4cMYLdD+KjXn+qWZMhzz8hMIAWfGGpKM0FE0ElDYH8w3NEbuOUw
-	 8E9kQfsnASvRjYbjg/bke5DEhzuHuUj5TCz6RjpmQrxFaDpjFCzF2rbCyg/QRxL/Oe
-	 Z7pfS+E3GyvbPAJAhDMZZcwmxoDM6da/dmBytMxLoywoebWLJz6DpSKrSb8Kp4Bboa
-	 OAYNqWoa/jZ7khV5DbFdNnH//pdlT1MEFPx+2ttHFolI7ITMMDHIBr34Rj+U16tLPk
-	 awk84AjAQbLenZgPBvCyRulS7hOUUOtg0SRI+gDs6PE3eiHHb4O58AscV+08HXhgn/
-	 vcU61x9WuNHhw==
-Received: by venus (Postfix, from userid 1000)
-	id D55171801BA; Mon, 01 Sep 2025 18:10:26 +0200 (CEST)
-Date: Mon, 1 Sep 2025 18:10:26 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, "Derek J . Clark" <derekjohn.clark@gmail.com>, 
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/3] platform: arm64: thinkpad-t14s-ec: new driver
-Message-ID: <pslvca6j5fpr5dgvciwlaz3fubnkjq5olfontaaytt56xs4bvk@5typdoosbreo>
-References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
- <20250831-thinkpad-t14s-ec-v1-2-6e06a07afe0f@collabora.com>
- <ea0b329e-ab3e-4655-8f27-e7a74784302a@app.fastmail.com>
+	s=arc-20240116; t=1756743134; c=relaxed/simple;
+	bh=XefpToXI8faKU7bzWysiCjznkCZwcPNqHAt23kwJPbE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=K40hDzXVK3qRcqeLaYBUab9/mu+VBUIQlcUHLnHFNgvOToJeFSv+46RRN7cqrtPWhntG6arVljOWPPY7c7DzeL0xA6FZWdY2Nbc6nuCGyHFipacFPByktvYxAWh7aHiIP/qDDRNOnHTONFz4vBjaIkHWtwWeJDphf9dio/ARdzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U5c37bX7; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f7ab2a84eso1245940e87.1;
+        Mon, 01 Sep 2025 09:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756743130; x=1757347930; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tWJdOsASsTVaMoPyxLoTcgfSjvqU/yV2YgCFw0wJex0=;
+        b=U5c37bX7YC3RSN9BAnH33/FQuZi/JPQY9mWDC4ye2+m/Mg1xwr2hrKdMUyz5U4Rsm+
+         +1hN3sAgtYd8l39YBl1ZBwkY/OOFL9PrXRpTUIWdPRJxoTvn/W4FSvP3ESFzRmGcdYCA
+         XGFF8mU1hIsmM5J3g5t7TFh7LmNsHigsCwIgP8tjjX1S68xgogyIXBQCoCe0dHtX2pns
+         ZX8xi793JGojO7vSAKffZO9xwc5Wbj0nHohePdSsIrW1eXlDdrDzTmEaf9s85+9c8J0V
+         XIOc/iDm96eXyirVkSLPxPgUX/1SE3njkSrUC39qn5DUudpDFYT6nWy7cghvp/ooGKFF
+         b2lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756743130; x=1757347930;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tWJdOsASsTVaMoPyxLoTcgfSjvqU/yV2YgCFw0wJex0=;
+        b=T0zRTkmjErFazmLbOLGr1HPfyOWEHZjl8jf9bY8W/7qsrFTZ4RBoZ8590KCppyIRLR
+         0fN3sVcpHUbUcmgAglyvkPdFKrVwM/e/qbTGJk5pC1Uyfr4vN6n9a2ooVzblRv5TTGq0
+         6EaqWWNjM9AeO0JVStoFez7tljptkQTR8Y7NdO7ZpgEHOS9wRysM8K9ChYbQjQdteOzG
+         /Pmjtc3FJmFavjg7d4LVHAFE7INkWLX6CBty3/6rwwjIO5qurkif1kVjrX9Kuwkl7Gok
+         LIactad+liev1YX8XnFO4lf5swGeklVZB8o7eOJQ5MS8LEGSeUmtskJn2QDHQ48TPs0g
+         Gdzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDDy6+AAc+XGj7K9HP5hNo6YZW1F7RsZJr19TnX/WDWwtrXT3A+KmJgsQ2nPKolx5WPyzfcNjmHw==@vger.kernel.org, AJvYcCUmvVDhcaRTtXV6RFUYM7ROBFJ9qtapN511p22PfJA1Z5scbeX+ChmPS2J2aFeEqq/6TNSPf9JODFlzx4Wr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwavS29UvmTBWCxu9aBusSBimdmG5SBRsEiDOyMCiKOdlfE9QTP
+	TB/zBaimI94Mj3S5E/S6Q2hzVM0xHAAtj7DepDbb1TCYQzSCDtM92cv7
+X-Gm-Gg: ASbGncviSvMe/DGM187LY/JfRAM0DdHdowk4C52thn/Zq2wbB0Obt2rQWX6A+8xKIbj
+	T3TuNF1lPAF99eqUm866QkiV2jTcPxsA5efjkRi8fjdcRuftfpW2g4Pgkbbsu5lf2BWjiEUhL3U
+	/TfQEa1S3SdA4/3x/bOHwJ54lEfNEZAp553IHTeibMA4vkqogASHPaCu4/fjZErbMTQtpyvNlpC
+	S/rosC/RCxIDveWI7uBvwfgknFNi5CQpWRlbIkcfdlSAoeOUkkaku2VwU9qB/ikpGLaShk/kGdc
+	VLZ+EQJxLjb5sSqX+Qr/3nqeLQg6HOMMCuz1jfN1thpBasHqmJw9EGNECUh9HO1H7iAOEG4WmOM
+	tMAHJOR6Wc+A991I1K9tKsqdAGWmyUO9a2owHvigz46tq4QlpB9z7
+X-Google-Smtp-Source: AGHT+IFTWMLUEQtnoB7hpFoQRkFS5VMsX4Q/s8JYAXjx1U98mhPYfLJJdrhBQSzQ+nV2fqe4Mj4VVQ==
+X-Received: by 2002:a05:6512:448e:b0:55c:e806:6508 with SMTP id 2adb3069b0e04-55f7092c3e0mr2292770e87.43.1756743129896;
+        Mon, 01 Sep 2025 09:12:09 -0700 (PDT)
+Received: from NB-6746.corp.yadro.com ([88.201.206.176])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f6771b237sm3028827e87.54.2025.09.01.09.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 09:12:09 -0700 (PDT)
+From: Artem Shimko <artyom.shimko@gmail.com>
+To: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>
+Cc: Artem Shimko <artyom.shimko@gmail.com>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] firmware: arm_scmi: Minor cleanups and documentation fixes
+Date: Mon,  1 Sep 2025 19:12:02 +0300
+Message-ID: <20250901161207.2501078-1-artyom.shimko@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <y>
+References: <y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea0b329e-ab3e-4655-8f27-e7a74784302a@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hello Mark,
+Hello maintainers,
 
-On Mon, Sep 01, 2025 at 09:48:39AM -0400, Mark Pearson wrote:
-> On Sun, Aug 31, 2025, at 5:28 PM, Sebastian Reichel wrote:
-> > Introduce EC driver for the ThinkPad T14s Gen6 Snapdragon, which
-> > is in theory compatible with ThinkPad ACPI. On Linux the system
-> > is booted with device tree, which is not supported by the ThinkPad
-> > ACPI driver. Also most of the hardware compatibility is handled
-> > via ACPI tables, which are obviously not used when booting via
-> > device tree. Thus adding DT compatibility to the existing driver
-> > is not worth it (almost no code sharing).
-> >
-> > The driver currently exposes features, which are not available
-> > via other means:
-> >
-> >  * Extra Keys
-> >  * System LEDs
-> >  * Keyboard Backlight Control
-> >
-> > The driver has been developed by reading the ACPI DSDT. There
-> > are some more features around thermal control, which are not
-> > yet supported by the driver.
-> >
-> 
-> Thanks for working on this - it's great.
+This small patch series addresses some minor issues found in the SCMI driver:
 
-It's a personal scratch your own itch project, as I daily drive the
-machine.
+Patch 1 fixes alignment and indentation inconsistencies in two files:
 
-> I'll see if I can get the EC spec so I can do some checking on the
-> values (I thought I had it already, but I can't find it). If this
-> file can be used for other platforms then it might be good to
-> rename the file to not be specific to the t14s? I'm curious if it
-> can be used on the X13s or the Yoga platform.
+Adjusts function parameter alignment in protocol_id_show()
 
-Maybe. I only have the T14s (apart of my older Intel/AMD ThinkPads,
-which use the ACPI driver). The ACPI DSDT functions completley
-abstract the lowlevel I2C interface, so in theory every ThinkPad
-could have a completley different EC and still use the same ACPI
-driver. So this needs to be checked per-device. Hopefully the low
-level interface is similar in those, so that we don't need to spam
-the kernel tree with multiple different EC drivers :)
+Fixes debugfs call alignment in raw_mode.c for better readability
 
-> Couple of notes
->  - I do agree it doesn't make sense to add this to thinkpad_acpi.
->    That file is too big anyway.
->  - If there are other pieces like this where some detail of the
->    platform is needed, please do let me know. I never got enough
->    time to work on this platform directly, and it wasn't in our
->    Linux program, but I do have access and support from the
->    platform team for getting details on it. If I can help, so not
->    too much reverse engineering is needed, I'm happy to.
+Patch 2 adds missing documentation for the xfer_lock spinlock that protects
+access to xfer buffers and transfer allocation mechanism, making the code
+more maintainable and easier to understand.
 
-Thanks for the offer.
+These are straightforward cleanups that don't change any functionality but
+improve code quality and documentation.
 
-I would be interested in bits around system suspend. Right now
-support on X1E is limited to sending the CPU into suspend. Much of
-the machine seems to be still powered. Right now the keyboard
-backlight and all the status LEDs stay on and the LID + power led
-does not go into the typical breathing pattern. Additionally I had
-to disable wakeup capabilities for the EC interrupt, as closing the
-LID generates an event and thus an interrupt, which wakes the
-system. Obviousy that is undesired from user's perspective. My guess
-is, that there might be some register to mask events, but I haven't
-found it so far. Alternatively the EC might mask them automatically
-when the system is send into suspend, which I also have not yet
-figured out :) The only bit I know is, that EC register 0xE0 is
-involved in modern standby.
+Best regards,
+Artem Shimko
 
-Apart from that and (probably) unrelated to the EC: I noticed that
-accessing the built-in webcam (with the X1E camera patches from
-Bryan O'Donoghue) does not enable the status LED. It would be
-nice if you can check how that is wired, so that it can be enabled
-when a camera stream is started.
+Artem Shimko (2):
+  firmware: arm_scmi: fix alignment in protocol_id_show and debugfs calls
+  firmware: arm_scmi: add missing spinlock documentation
 
-Greetings,
+ drivers/firmware/arm_scmi/bus.c      | 2 +-
+ drivers/firmware/arm_scmi/driver.c   | 1 +
+ drivers/firmware/arm_scmi/raw_mode.c | 4 ++--
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
--- Sebastian
+-- 
+2.43.0
+
 
