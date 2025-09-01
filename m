@@ -1,81 +1,127 @@
-Return-Path: <linux-kernel+bounces-795137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F509B3ED45
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100C6B3ED49
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D371C189CF0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46D33B1D78
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224DA3064B4;
-	Mon,  1 Sep 2025 17:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A523F10F2;
+	Mon,  1 Sep 2025 17:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsVrj1hp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfNy/ozD"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BD032F745;
-	Mon,  1 Sep 2025 17:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB8E314B82;
+	Mon,  1 Sep 2025 17:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756747183; cv=none; b=dnvEdiBe7m4xoqHLi4pCnZwtRM2uuMQjFEbmHMmsWGgBABK3K898A7CZeKO1/cFEPSrosDQ1k+Pffm1Qb/CkxIOnKtKH9lWTpcLYQzNkqd88D1WBkcaPFCGxVB8Aldg5cM4yJe0wIflBUKVwAIAY2k+jMdRLgG1wYBdB73PqI5Y=
+	t=1756747192; cv=none; b=u5mQIj+cYNrtjbCQCIOnDiVxUQiPHe+h3Pf44uLNtxdgdVXHHm/cDmCgkb4heH67uDRFZ97lJNA8PySlgB9k5p19DH68LvB0N5PraYEkSMwu190YN5qdVJTeq4N3ts19w+BvrH2nVbOTu8o2Qa2SspJATki/ogRwktnwLeRs3KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756747183; c=relaxed/simple;
-	bh=LTsYfXSoWy+6ymATvvUmvSuhPhnA+upAcmRN+APLQ+M=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=I26ddZIlEoZAJq1gQWW4VN82BRl56wkPJ+gIFQVGISUNnVZfZLnukTQjMdBLxdsfD+sRzNQXN+Qq6M+kqy3Q12S4tzKIN0w1IZVngOjWZHakC8hjnt25TRvCLwmRlVm3zVZKkRVV9QsEbEv4iv8Ri5Env4gDc4DG32sUckT0/qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsVrj1hp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6422C4CEF0;
-	Mon,  1 Sep 2025 17:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756747182;
-	bh=LTsYfXSoWy+6ymATvvUmvSuhPhnA+upAcmRN+APLQ+M=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=bsVrj1hpsh4DPYF6zULELEC+ysh6Z8ZCPnDW8UiE27ff/hX0IQ/6zbyV/Jz3ig0xu
-	 aN823OHRzDIEi9oj3xXnnASY0xZUQ5nERJo9nSVmOaPCG53rsYFPQFrrIyFafeMLQf
-	 um2107p8JESZkK7c/gmHsg8FzlNPdBTQmmtQVME3s+cAiOtfmOHejhPOXv04TsE6lC
-	 OFRNEwXhdn1f1/yyESCztRojIXgj3ttpEjB86V292we/+EzPyNG/sO3OF/uoMZdjX8
-	 OJ7dc75UQf4+h8ZMUACeCQ2Tl/euUYeqzlXWGvrsfnihBCymYrtNG2ZW37Lf7/UBgH
-	 /ZzPoL49HkjYA==
-From: Vinod Koul <vkoul@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Qianfeng Rong <rongqianfeng@vivo.com>
-In-Reply-To: <20250814142428.282639-1-rongqianfeng@vivo.com>
-References: <20250814142428.282639-1-rongqianfeng@vivo.com>
-Subject: Re: [PATCH] soundwire: Use min() to improve code
-Message-Id: <175674717945.192919.14320510843993196619.b4-ty@kernel.org>
-Date: Mon, 01 Sep 2025 22:49:39 +0530
+	s=arc-20240116; t=1756747192; c=relaxed/simple;
+	bh=uttqUOM4t100YESwxVDANiQ5D5iHIkjc4YpoaCEcEOQ=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cljFOqpHPRTgmk+4iDQb5q0eL4B1j6HscHUM9FPDQSee2ULCBzhfuMEIdmdKvr2ZudiAcR6cW8kTW0ldkjI8a296sCkg7pdT+fK02/1YMLgPbbQfikYO281gLK/QCtoBr15rdP6uhsAAnZT1xJE4EXjamU3uQF3PZhYcxGfQHUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfNy/ozD; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e97021a3695so3412446276.3;
+        Mon, 01 Sep 2025 10:19:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756747190; x=1757351990; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MCdLhHwAOZzd1sHfXyw7j9lNMlwcIlkxo40u1/PlOt8=;
+        b=NfNy/ozD2LrjyWD/nr9UKpp4B7gY7QA8pb70xeJUm7syjcS1I2bo1B9QmuIo7fOXvQ
+         JSzF/WJGdTlelsfJmeLMHfNJ0TH2V5VDWD44PUndblF/aE4HqLFVxdXpfkDA923rIf7c
+         6Gvxeb9IO3Tsnp3I6gdpgx1RUBQFRfqnTznwJXnPZ78giFCcQL+w/qiUpxRY4lKZMPGD
+         S5fQfZhs3/5g1yCO5gejRCnI/cOuzOxkqFslAoMUL4OIeHEsDqHXeJxWhgel4+nTsy1F
+         htwzIxocIpJVxANKSmhZdHfGA58DjS8kByCQch6BxSP8UX7PnMt6VCx6UDiOP73fjCle
+         ArWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756747190; x=1757351990;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MCdLhHwAOZzd1sHfXyw7j9lNMlwcIlkxo40u1/PlOt8=;
+        b=Avk3Ala8VkywBgWiSWR42Bd5COr8fkJaZOuiowQtEikc8dxVnaTQnYAfxVrLUhw9ZB
+         YlewbAidOG09Exz9gG8vwmaJJMe7cwHXuejTAGjtUG2GDYNAzzAzFxUyNDWC0VYY0iFx
+         IfxaYUpF8jBE6krIQkF8sIpdpMvLRhMkIiP7jhf/PuW03SDUL9MBCB9rsEdT08YWk5rv
+         ZvWQb+5u1r80ENbfyOwV7mtP4IQczwjTCEW8ZRhBRHoV39d37YBcJXqI2K9HZ6Jpq2YY
+         vU7ewnApKxXJh1ie3GN4hzVDbhegSWkCtGGOeVHqWffnKBCGgwEJlGiPsFLkgQLkm+4A
+         cjjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLgtoQ0dv6xYO71H1hMnrlSFm6vNWdVmWSGreq590b1ZncbSzfDkPpOu5OLc2DBDRkl9PjBQbJ08aLuKa0D2U=@vger.kernel.org, AJvYcCWc68nIhXy5qKPlFSUTp/O6LUn9KZXxmUeBCwow22geAarIGsdxAfpdL/L9qK1n9PFjbGCZFTXMYMuz02Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy75bdKxMY8uUEghhhprFJM+eda7cNltgbytrq6MX5Gx6M0jIZx
+	z0G3Ua/2f2F8l+xkoVEaZENWjM3L+Ym7CrDQ7nwpa4L9RCAvTAGo7VUW
+X-Gm-Gg: ASbGncvmslEHbOgmW5Y+l5XRd09yZQa2kUyHNVnHLTmOsbTbv9VPF5JeCzDfK0MC28T
+	+oiizJDrgWI+TBfdgXzHMsNO9BedaStzV5Gj2DFn5f18uxmT4I9s64j9oMMxbHGjReDb6eWgjm/
+	Z4ogsTW/Q6sTl3oj0mo6s1BQwxpPR653E1pHz9knzNpecuD+TcjBqKgvYdmBCo6Z7EAbbTzqUCn
+	W9uKg77Z3cGhQKSXduKPriddwaQ+VzeusYbA0HaGaOyLHl/z+V2KUjsZEMZom/B+VCDffKEcKbX
+	iDigR5JJTVgahwpV9z+BnXlBUx8ROgkVb9Ad3LPpIkiPwtH7CGlPm8cR2XPCk7X4ugfH7Yy4nO+
+	iekOUttXPE1lhj0kSKPm+HULB7H4sGLs92lfKfE+JyLD3OwuJrUlU
+X-Google-Smtp-Source: AGHT+IEZ8EMPkHUraaN8N2Ftj2JKXXwZhHK6AIOPsA7PriSSOqQ557kpQqGWlv3cm91Il3PyctomLQ==
+X-Received: by 2002:a05:6902:1204:b0:e96:dc00:300f with SMTP id 3f1490d57ef6-e98a581bf26mr7108819276.30.1756747189693;
+        Mon, 01 Sep 2025 10:19:49 -0700 (PDT)
+Received: from [192.168.1.209] (74.211.99.176.16clouds.com. [74.211.99.176])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e98ac466a13sm2171372276.14.2025.09.01.10.19.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 10:19:49 -0700 (PDT)
+From: Asuna <spriteovo@gmail.com>
+X-Google-Original-From: Asuna <SpriteOvO@gmail.com>
+Message-ID: <b1734c45-42ec-46c7-9d4c-2677044aacab@gmail.com>
+Date: Tue, 2 Sep 2025 01:19:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: RISC-V: Re-enable GCC+Rust builds
+To: Conor Dooley <conor@kernel.org>
+Cc: Jason Montleon <jmontleo@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <68496eed-b5a4-4739-8d84-dcc428a08e20@gmail.com>
+ <20250830-cheesy-prone-ee5fae406c22@spud>
+ <20250901-lasso-kabob-de32b8fcede8@spud>
+Content-Language: en-US
+In-Reply-To: <20250901-lasso-kabob-de32b8fcede8@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
+> For example, there's a check in the riscv Kconfig menu to see if 
+> stack-protector-guard=tls can be used via a cc-option check. If that 
+> check passes with gcc as the compiler that option will be passed to 
+> the rust side of the build, where llvm might not support it.
+If I understand correctly, the `-mstack-protector-guard` option is 
+already always filtered out by `bindgen_skip_c_flags` in 
+`rust/Makefile`, regardless of architecture. Therefore, we don't need to 
+do anything more, right?
 
-On Thu, 14 Aug 2025 22:24:28 +0800, Qianfeng Rong wrote:
-> Use min() to reduce the code in qcom_swrm_xfer_msg() and improve its
-> readability.
-> 
-> 
+> Similarly, turning on an extension like Zacas via a cc-option check 
+> could pass for gcc but not be usable when passed to the rust side, 
+> causing errors.
+That makes sense. I might need to check the version of libclang for each 
+extension that passes the cc-option check for GCC to ensure it supports 
+them.
 
-Applied, thanks!
-
-[1/1] soundwire: Use min() to improve code
-      commit: 88f5d2a477ec64b12e83b488407490bb4a9298f8
-
-Best regards,
--- 
-~Vinod
-
-
+> These sorts of things should be prevented via Kconfig, not show up as 
+> confusing build errors.
+I'm working on a patch, and intend to output an error message in 
+`arch/riscv/Makefile` then exit 1 when detecting an incompatible 
+gcc+libclang mix in use.
 
