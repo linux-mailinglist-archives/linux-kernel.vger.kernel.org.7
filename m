@@ -1,214 +1,167 @@
-Return-Path: <linux-kernel+bounces-795209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135F6B3EE3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB67B3EE40
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 21:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B84487FA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:01:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A8848803B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C099260566;
-	Mon,  1 Sep 2025 19:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A65E3009EF;
+	Mon,  1 Sep 2025 19:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJqIcAtS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="dXEZCX+4"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6BCC2EA;
-	Mon,  1 Sep 2025 19:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060E255F5C
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 19:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756753305; cv=none; b=ADHhREk8K4vem4Dm6S0DdFhJRMerlYqMbzjwuWbG80eXuTaMHFWhd0oselFM6w8H8+Vr49dzzWgYADb6l7RHk9IHtmk/fWna/hbyxp3UMiJSa1ZCAQkAq3xnWVjAahjI205AFFDqn98iEIgZ8ByZ/Bv/edIZkdH1bEODK+Wuwi0=
+	t=1756753406; cv=none; b=Cspmn0BfPFDTxAt0rcW9ZAL5y5W4aURPpfufBW+58NDm778WrQHuQUUDzgsscAl5oEKX4maahFRsElxXSVjAER9a9gPQvUeNUeHWXABgp7OE0rP0705v1+P9CGmXG/HPOJgrbGcLcs8U5RsZlEYw8hm3YwtiB/DI2VkmGwkMCus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756753305; c=relaxed/simple;
-	bh=5OnM0jJZm89UsRUpF9KL6hzKhKJ3Cw3RgJN3zSjZYMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSR1tNB9cC5/2jzUvlCo96VR35lhZi6XEbH98l2uOVZ7W4vvGUGfHKkdWsK3/qEPvFhrhrIjxUUEImxe9Uy+VBIj5ohxASVfTEpOx2UnRnN7Q0CISHx4SR5M5fgcCjT+/8tsaOzpZ5ZEu8q7gaVhtrEuFCmCST1fhPkoH8bm42g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJqIcAtS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D33C4CEF0;
-	Mon,  1 Sep 2025 19:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756753305;
-	bh=5OnM0jJZm89UsRUpF9KL6hzKhKJ3Cw3RgJN3zSjZYMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UJqIcAtSD++5n/VNUkZO0Jwqw6yfKk3WPzouuLUcQV4OP3K06FBjOzhcZRsZz+vd8
-	 5wu7HYq3f8KvbqPHwRvy79yY0EzjgXBArLHleKq2ZWch3OzfWiXZ6rqb4IDMBzk3wo
-	 xRcq+H4ubUQFKxdzvEAFN3fSc8xL10AG9S2UI3WgGvb8xSpj03JKSnc72fly4wJTQe
-	 2Z/G6jh4IVpYDUp0qkbJlzQr9I9kR/VILzhfrCbitXtGLQcNSLWW/qFtKtUCqobGpG
-	 ZpQKgkcJoc1HY7vvoXXHYjmzgYtH8Thzygxnd4HeoymsoCcD8kH/Sj4bJ2nflrAra/
-	 78d6uL09npK4w==
-Date: Mon, 1 Sep 2025 20:01:40 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, kuniyu@google.com, kay.sievers@vrfy.org,
-	gregkh@suse.de, yuehaibing@huawei.com, zhangchangzhong@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: atm: fix memory leak in atm_register_sysfs when
- device_register fail
-Message-ID: <20250901190140.GO15473@horms.kernel.org>
-References: <20250901063537.1472221-1-wangliang74@huawei.com>
+	s=arc-20240116; t=1756753406; c=relaxed/simple;
+	bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YIyvFGmcBSXUkYj1k5a34ABTOsrRsJDR4mKvvabXLuuU+QHK0g2jIzbmGixsRi024g5FoEe7AFISHT1AKtoZVkjXMsSoR/VNZkQjq+Xul92laIQBg5LExk2LIIrZRqAQjzEVU+b1G5nLpfFzGxCJySoyzwjGLCMKVdi2lAUmWcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=dXEZCX+4; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b33527de1eso7157121cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 12:03:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1756753403; x=1757358203; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
+        b=dXEZCX+4rQJGhIL63KLKRHxqwjXdP2O6g2tY4k3x5FDsPLedpIApTg2PFgMjSph2sb
+         W7+k6ybjgpB8T2XdOJZv3OdlsVYLiahsYawM8Q/8AwB05NAqBv9sxeToI8M2Rgph25dc
+         wdyEOL16F1ynXsEJfcW7o23ZmJ0uhXGiOzLzsMdk2sqK25PahNNtJphys4q/8Gb/VEPY
+         522sx3i2EhJeH97+0xb/adJ1cvG4HxYlAVzdBidmkMqWCLgZxDntJUw/NS4DKICJ+Jrm
+         pAj12VClPYdAOehZgVfoDxJYk/OuCxxSO2v12TUzjm3O8ADkwkleByFpStlo+5BoK3Dg
+         NDDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756753403; x=1757358203;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S3hCdUT2ICLXa1GjNdU28dZZnKCVYtibeydsEJ9rZEA=;
+        b=oE6qiIYPXt4nddd7oPGGxvfHpjVpUgKICZFZcUlz18mSTwDs2BjB308AQtKRgLb6wD
+         DRgGftlc5OnFYazDf9NN59E+960RS/5Xu1PeRsE5cuAF7CXjTzWTCYwwdImqOuIwqRjH
+         cw4zDMTtD1FO/rLsRijf3+mxGYbDpaemvbBO8LBhtd0w1PIwT6rR+otBhcYNWzg6ld7H
+         vTYSl3JmEYypbkfkYNO1IEcPd5ZeoKsfpzEnnM3B661xL259lTFCs8EM1aLz9j0/8avK
+         IlBQeUEu32k6b+bnZ42EL2tLTjZJNQ05oyT5Wm9KcCjEqcl9Caoh2Xf4bOcecfNRQZ3J
+         GakQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXl1OZJ7IB1BLV7a2YMsRigWPFG6fx+E7S/8/8VpKe8Vobl+hzNuMWCqiloJe8q85Z130O2zohY7AxkkuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE06geLsLQuZ/vkWMtmqUrpOeuQqQ4t196PakaTF6m+rBA7Z+v
+	skt9cFRKgqIesbO3Lkan2yxyU91u3IRgH1F1kKmKke//MRX/cQZ76LdZTwDvv2CdHPnMRIkLbad
+	JHzKyxmw58aF7BSzr5iqoYBKyHObH5OwAFD/aut0h/g==
+X-Gm-Gg: ASbGncuxvjsVV97eS5tv45JCij9XXl1wOwoH9kpUYLIQdD3SDX0Dzexhhw4ewPuEhR1
+	X7DJ5w5Pked7YglaVfuu0Ix92+IlDRq3CcZnk0Fn7ShlWzFOSq7/XdM6Vo+mY76ZaSfvBqIlZhH
+	mQK92QAV3Vp35M4gLHD8T0fZaYOCbxRPprUVhfSiEFuCTg+IcU2WvDr/YIL0s+AlZGp4l3Oxg7i
+	LjQoA2GQ5JjGjE=
+X-Google-Smtp-Source: AGHT+IGC4IxxW7gTteEuAiFDY4ARihDdjTh7r8Mht+Ln0Ng2xWrhyAI5gEJNZ2B2JAdSBb2GjROz0/at0WjW2Aw4LfQ=
+X-Received: by 2002:a05:622a:1a0a:b0:4ab:902c:5553 with SMTP id
+ d75a77b69052e-4b31da17d84mr113554401cf.52.1756753403110; Mon, 01 Sep 2025
+ 12:03:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901063537.1472221-1-wangliang74@huawei.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250826162019.GD2130239@nvidia.com>
+ <aLXIcUwt0HVzRpYW@kernel.org> <CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
+ <mafs03496w0kk.fsf@kernel.org>
+In-Reply-To: <mafs03496w0kk.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 1 Sep 2025 19:02:46 +0000
+X-Gm-Features: Ac12FXxIFoyzz5jiOJ4O5RxQRUabkrNBq-ldI0H08I8mR4jOJnwP6yzvNT_MXGI
+Message-ID: <CA+CK2bAb6s=gUTCNjMrOqptZ3a_nj3teuVSZs86AvVymvaURQA@mail.gmail.com>
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 01, 2025 at 02:35:37PM +0800, Wang Liang wrote:
-> When device_register() return error in atm_register_sysfs(), which can be
-> triggered by kzalloc fail in device_private_init() or other reasons,
-> kmemleak reports the following memory leaks:
-> 
-> unreferenced object 0xffff88810182fb80 (size 8):
->   comm "insmod", pid 504, jiffies 4294852464
->   hex dump (first 8 bytes):
->     61 64 75 6d 6d 79 30 00                          adummy0.
->   backtrace (crc 14dfadaf):
->     __kmalloc_node_track_caller_noprof+0x335/0x450
->     kvasprintf+0xb3/0x130
->     kobject_set_name_vargs+0x45/0x120
->     dev_set_name+0xa9/0xe0
->     atm_register_sysfs+0xf3/0x220
->     atm_dev_register+0x40b/0x780
->     0xffffffffa000b089
->     do_one_initcall+0x89/0x300
->     do_init_module+0x27b/0x7d0
->     load_module+0x54cd/0x5ff0
->     init_module_from_file+0xe4/0x150
->     idempotent_init_module+0x32c/0x610
->     __x64_sys_finit_module+0xbd/0x120
->     do_syscall_64+0xa8/0x270
->     entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> When device_create_file() return error in atm_register_sysfs(), the same
-> issue also can be triggered.
-> 
-> Function put_device() should be called to release kobj->name memory and
-> other device resource, instead of kfree().
-> 
-> Fixes: 1fa5ae857bb1 ("driver core: get rid of struct device's bus_id string array")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> >> > This really wants some luo helper
+> >> >
+> >> > 'luo alloc array'
+> >> > 'luo restore array'
+> >> > 'luo free array'
+> >>
+> >> We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=kho/vmalloc/v1
+> >
+> > The patch looks okay to me, but it doesn't support holes in vmap
+> > areas. While that is likely acceptable for vmalloc, it could be a
+> > problem if we want to preserve memfd with holes and using vmap
+> > preservation as a method, which would require a different approach.
+> > Still, this would help with preserving memfd.
+>
+> I agree. I think we should do it the other way round. Build a sparse
+> array first, and then use that to build vmap preservation. Our emails
 
-Thanks Wang Liang,
+Yes, sparse array support would help both: vmalloc and memfd preservation.
 
-I agree this is a bug.
+> seem to have crossed, but see my reply to Mike [0] that describes my
+> idea a bit more, along with WIP code.
+>
+> [0] https://lore.kernel.org/lkml/mafs0ldmyw1hp.fsf@kernel.org/
+>
+> >
+> > However, I wonder if we should add a separate preservation library on
+> > top of the kho and not as part of kho (or at least keep them in a
+> > separate file from core logic). This would allow us to preserve more
+> > advanced data structures such as this and define preservation version
+> > control, similar to Jason's store_object/restore_object proposal.
+>
+> This is how I have done it in my code: created a separate file called
+> kho_array.c. If we have enough such data structures, we can probably
+> move it under kernel/liveupdate/lib/.
 
-I think that the guiding principle should be that on error functions
-unwind any resource allocations they have made, rather than leaving
-it up to callers to clean things up.
+Yes, let's place it under kernel/liveupdate/lib/. We will add more
+preservation types over time.
 
-So, as the problem you describe seems to be due to atm_register_sysfs()
-leaking resources if it encounters an error, I think the problem would
-best be resolved there.
+> As for the store_object/restore_object proposal: see an alternate idea
+> at [1].
+>
+> [1] https://lore.kernel.org/lkml/mafs0h5xmw12a.fsf@kernel.org/
 
-Perhaps something like this.
-(Compile tested only!)
+What you are proposing makes sense. We can update the LUO API to be
+responsible for passing the compatible string outside of the data
+payload. However, I think we first need to settle on the actual API
+for storing and restoring a versioned blob of data and place that code
+into kernel/liveupdate/lib/. Depending on which API we choose, we can
+then modify the LUO to work accordingly.
 
-diff --git a/net/atm/atm_sysfs.c b/net/atm/atm_sysfs.c
-index 54e7fb1a4ee5..62f3d520a80a 100644
---- a/net/atm/atm_sysfs.c
-+++ b/net/atm/atm_sysfs.c
-@@ -148,20 +148,23 @@ int atm_register_sysfs(struct atm_dev *adev, struct device *parent)
- 	dev_set_name(cdev, "%s%d", adev->type, adev->number);
- 	err = device_register(cdev);
- 	if (err < 0)
--		return err;
-+		goto err_put_dev;
- 
- 	for (i = 0; atm_attrs[i]; i++) {
- 		err = device_create_file(cdev, atm_attrs[i]);
- 		if (err)
--			goto err_out;
-+			goto err_remove_file;
- 	}
- 
- 	return 0;
- 
--err_out:
-+err_remove_file:
- 	for (j = 0; j < i; j++)
- 		device_remove_file(cdev, atm_attrs[j]);
- 	device_del(cdev);
-+err_put_dev:
-+	put_device(cdev);
-+
- 	return err;
- }
- 
-
-
-Looking over atm_dev_register, it seems to me that it will deadlock
-if it calls atm_proc_dev_deregister() if atm_register_sysfs() fails.
-This is because atm_dev_register() is holding atm_dev_mutex,
-and atm_proc_dev_deregister() tries to take atm_dev_mutex().
-
-If so, I wonder if this can be resolved (in a separate patch to
-the fix for atm_register_sysfs()) like this.
-(Also compile tested only!)
-
-diff --git a/net/atm/resources.c b/net/atm/resources.c
-index b19d851e1f44..3002ff5b60f8 100644
---- a/net/atm/resources.c
-+++ b/net/atm/resources.c
-@@ -112,13 +110,12 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
- 
- 	if (atm_proc_dev_register(dev) < 0) {
- 		pr_err("atm_proc_dev_register failed for dev %s\n", type);
--		goto out_fail;
-+		goto err_free_dev;
- 	}
- 
- 	if (atm_register_sysfs(dev, parent) < 0) {
- 		pr_err("atm_register_sysfs failed for dev %s\n", type);
--		atm_proc_dev_deregister(dev);
--		goto out_fail;
-+		goto err_proc_dev_unregister;
- 	}
- 
- 	list_add_tail(&dev->dev_list, &atm_devs);
-@@ -127,7 +124,9 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
- 	mutex_unlock(&atm_dev_mutex);
- 	return dev;
- 
--out_fail:
-+err_proc_dev_unregister:
-+	atm_proc_dev_deregister(dev);
-+err_free_dev:
- 	kfree(dev);
- 	dev = NULL;
- 	goto out;
-
-Lastly, while not a bug and not material for net, it would be nice to
-follow-up on the above and consolidate the error handling in
-atm_dev_register().
-
-Something like this (compile tested only!):
-
-diff --git a/net/atm/resources.c b/net/atm/resources.c
-index b19d851e1f44..3002ff5b60f8 100644
---- a/net/atm/resources.c
-+++ b/net/atm/resources.c
-@@ -89,9 +89,7 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
- 		inuse = __atm_dev_lookup(number);
- 		if (inuse) {
- 			atm_dev_put(inuse);
--			mutex_unlock(&atm_dev_mutex);
--			kfree(dev);
--			return NULL;
-+			goto err_free_dev;
- 		}
- 		dev->number = number;
- 	} else {
-
-...
-
--- 
-pw-bot: changes-requested
+>
+> --
+> Regards,
+> Pratyush Yadav
 
