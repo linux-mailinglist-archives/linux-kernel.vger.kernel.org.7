@@ -1,289 +1,142 @@
-Return-Path: <linux-kernel+bounces-794918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D5BB3EAC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:35:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C21BB3EAC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C4A162345
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:30:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E0224830B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C70350D7A;
-	Mon,  1 Sep 2025 15:16:56 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758E33570BE;
+	Mon,  1 Sep 2025 15:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HC7VTl55"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63843451C2;
-	Mon,  1 Sep 2025 15:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC38535691C;
+	Mon,  1 Sep 2025 15:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739815; cv=none; b=ZRwbK5q2lSGy9xdF5nfO2RDLbH4AXXhsYOofq6j5ouDriblRB/F/9DQZ2IIavqKjch6twyfVvHQQyQkfZaT6UbOZOXj0FiLCMusStcbILAi/cTNV3XxifFDxYae7VxQGaSLPr1Tpf+IwhwlBSd2hrMFtsdHAXUbBodLAHJrjslk=
+	t=1756739844; cv=none; b=dGcoXZyxEwPOXttp/biYSSQi9eBDrwgGS7pV2bdkomYphWSQiIbhQpwI71NTlzAkJrdT7v6KWx58tydWXSvAWY0DBzURo6NpqvANcSXFyED9uc1OUHpBweCap4FLdimuznDZ0XS3lORMY2YpEL1mU3XiND+mu19rkt1sZ+uX1Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739815; c=relaxed/simple;
-	bh=ZLlhjXHOTYnh/nnuPza6AsOwPUCxWi16rvFSR7LMqs8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tx7c6hjC/f42xEqpEDv9ltBA8Y3LhJdh8ElbjDBsdCiSo3cBAx9dfQX1vussJ92TFs+vejPlG+c5gUAkX5+1WBTl3yAX8kt71X2yuVF5OhzBBVLjfdQWnoyZP4YPTb/jkSGDCn+cnNWl6kiTboWl3T6HhodJT6yGbdghKf1MiKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71481C4CEF0;
-	Mon,  1 Sep 2025 15:16:54 +0000 (UTC)
-Message-ID: <f2411365-9443-43cf-8420-3afd2c5bf6e2@kernel.og>
-Date: Mon, 1 Sep 2025 10:16:48 -0500
+	s=arc-20240116; t=1756739844; c=relaxed/simple;
+	bh=psh/GqKE0N6XjPAZ1VB7WNWkBHTv5Vf+6OZtUUhfAxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qaVz9NNcjrI2qzVBs3f8iXa4iJTP5jDSYnmXBobdSP/gynR96aPyJIKJnSohA3uhLl0V4J1Iok/dqnHxdIRBskd41zXZxSqgsW6sjTWD76cW4WiHSipWXXqVnhLwP7VmQqrIJNanVahuUvVOTXf/DIk32cSXkbrcJGxYXeYhG7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HC7VTl55; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9476D40E01A3;
+	Mon,  1 Sep 2025 15:17:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id j3KPCpgOQIVH; Mon,  1 Sep 2025 15:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756739836; bh=wSGzID+6LWylLYcdbGGGVwZ9BdwqN9FQf6znuIrCiN0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HC7VTl55YcNa//Hxr84/xHArlziRMwy8euPzWuuZfDSbRR6y7MtfFTxTFoS+4dDfz
+	 xUNwM2dRLFevzLQXzGfdKCGpM82SmXrwAo4odO7oNasO8LCuYGeJLxI3p6w0CdftJj
+	 d8ryamzbOdq2RNJH5IYMIC1dZvxDHV0+wjI4Q98qskrt4CDpJBJ9QFlhwn4PbmcAmu
+	 O3u0WsR3f7cxM5OGqgBNaGrpvoEyGCVtsTVATmKX4dDpqVwKmraHeBc/zJVmQ8rN0K
+	 ZGT/fkWcJPVEUG440nv0ecbX4zN/Q/eQFr+QLWqUs6hX+pUrdZwgken1s1dHvn+BqK
+	 AGG3fag1ry5KmOW3p0Hdg2fKv9wW3Klk++7sfbT/7nwh1NhpA6SsP0MRNsAVcXX6+s
+	 I7FmBPh2S3iht0z7mPZyBSsFIap8DW+Ea46bBpE/BPLELg6y85kapiSd1tSSE60LSc
+	 6LSgFjS6im56T/YGy9Tp5ZQ50YaLctZrQK1ZjFjgfJl/GFkr1ukEVkjNV0xa3l2+ZX
+	 nK+GSTs0ELKfpUiaKPugx6oY6El4bnodY3Tt3AeE8HzHVVl6+RMtzKa/Qo09XWx7JP
+	 XYDEaUh5J/7Vt7P5H9jN1k0a16/iSINS+r1icsJbHPXbA0pLvNSOvr/Nctzg4Cx2Au
+	 YX6uDl8o95tEUbM7ZO8Sm7/U=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 469FB40E019F;
+	Mon,  1 Sep 2025 15:16:59 +0000 (UTC)
+Date: Mon, 1 Sep 2025 17:16:58 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, git@amd.com, ptsm@linux.microsoft.com,
+	srivatsa@csail.mit.edu, shubhrajyoti.datta@gmail.com,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>
+Subject: Re: [PATCH v8 3/5] ras: Export log_non_standard_event for External
+ Usage
+Message-ID: <20250901151658.GBaLW46ibJuf4kGgnl@fat_crate.local>
+References: <20250826052914.2066884-1-shubhrajyoti.datta@amd.com>
+ <20250826052914.2066884-4-shubhrajyoti.datta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 4/4] firmware: stratix10-svc: Add for SDM
- mailbox doorbell interrupt
-To: mahesh.rao@altera.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Matthew Gerlach <matthew.gerlach@altera.com>
-References: <20250812-sip_svc_irq-v2-0-53098e11705a@altera.com>
- <20250812-sip_svc_irq-v2-4-53098e11705a@altera.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.og>
-In-Reply-To: <20250812-sip_svc_irq-v2-4-53098e11705a@altera.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250826052914.2066884-4-shubhrajyoti.datta@amd.com>
 
-
-
-On 8/12/25 07:59, Mahesh Rao via B4 Relay wrote:
-> From: Mahesh Rao <mahesh.rao@altera.com>
+On Tue, Aug 26, 2025 at 10:59:12AM +0530, Shubhrajyoti Datta wrote:
+> The function log_non_standard_event is responsible for logging
+> platform-specific or vendor-defined RAS (Reliability, Availability,
+> and Serviceability) events. Currently, this function is only available
+> within the RAS subsystem, preventing external modules from
+> leveraging its capabilities.
 > 
-> Add support for SDM (Secure Device Manager) mailbox
-> doorbell interrupt for async transactions. On interrupt,
-> a workqueue is triggered which polls the ATF for
-> pending responses and retrieves the bitmap of all
-> retrieved and unprocessed transaction ids of mailbox
-> responses from SDM. It then triggers the corresponding
-> registered callbacks.
+> log_non_standard_event is exported so that external drivers like VersalNet
 
-You should configure your editor to use a full 80-char width. Why stop
-at ~50? When you're unsure, look at that other commit logs from other
-developers. If yours doesn't look similar, its probably a problem. For
-example:
+"Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+to do frotz", as if you are giving orders to the codebase to change
+its behaviour."
 
-"Add support for SDM (Secure Device Manager) mailbox doorbell interrupt
-for async transactions. On interrupt, a workqueue is triggered which
-polls the ATF for pending responses and retrieves the bitmap of all
-retrieved and unprocessed transaction ids of mailbox responses from SDM.
-It then triggers the corresponding registered callbacks."
 
+> EDAC can log non-standard RAS events.
 > 
-> Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
 > ---
->   drivers/firmware/stratix10-svc.c             | 117 ++++++++++++++++++++++++---
->   include/linux/firmware/intel/stratix10-smc.h |  23 ++++++
->   2 files changed, 130 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-> index 491a8149033f975d515444f025723658c51aa1fe..a65c64c1be61d9f1fd27114d7f30d7a759e8201e 100644
-> --- a/drivers/firmware/stratix10-svc.c
-> +++ b/drivers/firmware/stratix10-svc.c
-> @@ -9,12 +9,14 @@
->   #include <linux/delay.h>
->   #include <linux/genalloc.h>
->   #include <linux/hashtable.h>
-> +#include <linux/interrupt.h>
->   #include <linux/io.h>
->   #include <linux/kfifo.h>
->   #include <linux/kthread.h>
->   #include <linux/module.h>
->   #include <linux/mutex.h>
->   #include <linux/of.h>
-> +#include <linux/of_irq.h>
->   #include <linux/of_platform.h>
->   #include <linux/platform_device.h>
->   #include <linux/slab.h>
-> @@ -22,6 +24,7 @@
->   #include <linux/firmware/intel/stratix10-smc.h>
->   #include <linux/firmware/intel/stratix10-svc-client.h>
->   #include <linux/types.h>
-> +#include <linux/workqueue.h>
->   
->   /**
->    * SVC_NUM_DATA_IN_FIFO - number of struct stratix10_svc_data in the FIFO
-> @@ -213,6 +216,7 @@ struct stratix10_async_chan {
->    *                               asynchronous operations
->    * @initialized: Flag indicating whether the control structure has
->    *               been initialized
-> + * @irq: Interrupt request number associated with the asynchronous control
->    * @invoke_fn: Function pointer for invoking Stratix10 service calls
->    *             to EL3 secure firmware
->    * @async_id_pool: Pointer to the ID pool used for asynchronous
-> @@ -223,11 +227,13 @@ struct stratix10_async_chan {
->    *                     structure
->    * @trx_list_wr_lock: Spinlock for protecting the transaction list
->    *                    write operations
-> + * @async_work: Work structure for scheduling asynchronous work
->    * @trx_list: Hash table for managing asynchronous transactions
->    */
->   
->   struct stratix10_async_ctrl {
->   	bool initialized;
-> +	int irq;
->   	void (*invoke_fn)(struct stratix10_async_ctrl *actrl,
->   			  const struct arm_smccc_1_2_regs *args,
->   			  struct arm_smccc_1_2_regs *res);
-> @@ -236,6 +242,7 @@ struct stratix10_async_ctrl {
->   	struct stratix10_async_chan *common_async_chan;
->   	/* spinlock to protect the writes to trx_list hash table */
->   	spinlock_t trx_list_wr_lock;
-> +	struct work_struct async_work;
->   	DECLARE_HASHTABLE(trx_list, ASYNC_TRX_HASH_BITS);
->   };
->   
-> @@ -1709,14 +1716,81 @@ static inline void stratix10_smc_1_2(struct stratix10_async_ctrl *actrl,
->   	arm_smccc_1_2_smc(args, res);
->   }
->   
-> +static irqreturn_t stratix10_svc_async_irq_handler(int irq, void *dev_id)
-> +{
-> +	struct stratix10_svc_controller *ctrl = dev_id;
-> +	struct stratix10_async_ctrl *actrl = &ctrl->actrl;
-> +
-> +	queue_work(system_bh_wq, &actrl->async_work);
-> +	disable_irq_nosync(actrl->irq);
-> +	return IRQ_HANDLED;
-> +}
+> (no changes since v6)
+> 
+> Changes in v6:
+> - Update the commit message.
+> 
+> Changes in v2:
+> - New patch addition
+> 
+>  drivers/ras/ras.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
+> index a6e4792a1b2e..ac0e132ccc3e 100644
+> --- a/drivers/ras/ras.c
+> +++ b/drivers/ras/ras.c
+> @@ -51,6 +51,7 @@ void log_non_standard_event(const guid_t *sec_type, const guid_t *fru_id,
+>  {
+>  	trace_non_standard_event(sec_type, fru_id, fru_text, sev, err, len);
+>  }
+> +EXPORT_SYMBOL_GPL(log_non_standard_event);
 
-Add a newline here.
+In a pre-patch, pls delete this silly wrapper log_non_standard_event() and use
+the tracepoint trace_non_standard_event() at the callsites instead.
 
-> +/**
-> + * stratix10_async_workqueue_handler - Handler for the asynchronous
-> + * workqueue in Stratix10 service controller.
-> + * @work: Pointer to the work structure that contains the asynchronous
-> + *        workqueue handler.
-> + * This function is the handler for the asynchronous workqueue. It performs
-> + * the following tasks:
-> + * - Invokes the asynchronous polling on interrupt supervisory call.
-> + * - On success,it retrieves the bitmap of pending transactions from mailbox
-> + *   fifo in ATF.
-> + * - It processes each pending transaction by calling the corresponding
-> + *   callback function.
-> + *
-> + * The function ensures that the IRQ is enabled after processing the transactions
-> + * and logs the total time taken to handle the transactions along with the number
-> + * of transactions handled and the CPU on which the handler ran.
-> + */
-> +static void stratix10_async_workqueue_handler(struct work_struct *work)
-> +{
-> +	struct stratix10_async_ctrl *actrl =
-> +		container_of(work, struct stratix10_async_ctrl, async_work);
-> +	struct arm_smccc_1_2_regs
-> +		args = { .a0 = INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ }, res;
-> +	DECLARE_BITMAP(pend_on_irq, TOTAL_TRANSACTION_IDS);
-> +	struct stratix10_svc_async_handler *handler;
-> +	unsigned long transaction_id = 0;
-> +	u64 bitmap_array[4];
-> +
-> +	actrl->invoke_fn(actrl, &args, &res);
-> +	if (res.a0 == INTEL_SIP_SMC_STATUS_OK) {
-> +		bitmap_array[0] = res.a1;
-> +		bitmap_array[1] = res.a2;
-> +		bitmap_array[2] = res.a3;
-> +		bitmap_array[3] = res.a4;
-> +		bitmap_from_arr64(pend_on_irq, bitmap_array, TOTAL_TRANSACTION_IDS);
-> +		rcu_read_lock();
-> +		do {
-> +			transaction_id = find_next_bit(pend_on_irq,
-> +						       TOTAL_TRANSACTION_IDS,
-> +						       transaction_id);
-> +			if (transaction_id >= TOTAL_TRANSACTION_IDS)
-> +				break;
-> +			hash_for_each_possible_rcu_notrace(actrl->trx_list,
-> +							   handler, next,
-> +							   transaction_id) {
-> +				if (handler->transaction_id == transaction_id) {
-> +					handler->cb(handler->cb_arg);
-> +					break;
-> +				}
-> +			}
-> +			transaction_id++;
-> +		} while (transaction_id < TOTAL_TRANSACTION_IDS);
-> +		rcu_read_unlock();
-> +	}
-> +	enable_irq(actrl->irq);
-> +}
-> +
->   /**
->    * stratix10_svc_async_init - Initialize the Stratix10 service
->    *                            controller for asynchronous operations.
->    * @controller: Pointer to the Stratix10 service controller structure.
->    *
->    * This function initializes the asynchronous service controller by
-> - * setting up the necessary data structures and initializing the
-> - * transaction list.
-> + * setting up the necessary data structures ,initializing the
-> + * transaction list and registering the IRQ handler for asynchronous
-> + * transactions.
->    *
->    * Return: 0 on success, -EINVAL if the controller is NULL or already
->    *         initialized, -ENOMEM if memory allocation fails,
-> @@ -1728,7 +1802,7 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
->   	struct stratix10_async_ctrl *actrl;
->   	struct arm_smccc_res res;
->   	struct device *dev;
-> -	int ret;
-> +	int ret, irq;
->   
->   	if (!controller)
->   		return -EINVAL;
-> @@ -1775,6 +1849,22 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
->   	hash_init(actrl->trx_list);
->   	atomic_set(&actrl->common_achan_refcount, 0);
->   
-> +	irq = of_irq_get(dev_of_node(dev), 0);
-> +	if (irq < 0) {
+Then you can use the same in your driver.
 
-0 is a failing value as well.
+Thx.
 
-> +		dev_warn(dev, "Failed to get IRQ, falling back to polling mode\n");
-> +	} else {
-> +		ret = devm_request_any_context_irq(dev, irq, stratix10_svc_async_irq_handler,
-> +						   IRQF_NO_AUTOEN, "stratix10_svc", controller);
-> +		if (ret == 0) {
-> +			dev_alert(dev,
-> +				  "Registered IRQ %d for sip async operations\n",
-> +				irq);
-> +			actrl->irq = irq;
-> +			INIT_WORK(&actrl->async_work, stratix10_async_workqueue_handler);
-> +			enable_irq(actrl->irq);
-> +		}
-> +	}
-> +
->   	actrl->initialized = true;
->   	return 0;
->   }
-> @@ -1784,13 +1874,14 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
->    *                            service controller
->    * @ctrl: Pointer to the stratix10_svc_controller structure
->    *
-> - * This function performs the necessary cleanup for the asynchronous
-> - * service controller. It checks if the controller is valid and if it
-> - * has been initialized. It then locks the transaction list and safely
-> - * removes and deallocates each handler in the list. The function also
-> - * removes any asynchronous clients associated with the controller's
-> - * channels and destroys the asynchronous ID pool. Finally, it resets
-> - * the asynchronous ID pool and invoke function pointers to NULL.
-> + * This function performs the necessary cleanup for the asynchronous service
-> + * controller. It checks if the controller is valid and if it has been
-> + * initialized. Also If the controller has an IRQ assigned, it frees the IRQ
-> + * and flushes any pending asynchronous work. It then locks the transaction
-> + * list and safely removes and deallocates each handler in the list.
-> + * The function also removes any asynchronous clients associated with the
-> + * controller's channels and destroys the asynchronous ID pool. Finally, it
-> + * resets the asynchronous ID pool and invoke function pointers to NULL.
+-- 
+Regards/Gruss,
+    Boris.
 
-Did you mean to repeat the same paragraph twice?
-
-Dinh
+https://people.kernel.org/tglx/notes-about-netiquette
 
