@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-794499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B786B3E2A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F06B3E2A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C146F202646
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:25:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8C92025CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F7B31577A;
-	Mon,  1 Sep 2025 12:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244E22EE26E;
+	Mon,  1 Sep 2025 12:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RGgwKPRj"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qzL933ZH"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD37257849
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F3A2727E0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729493; cv=none; b=ktkhPWuSqmpWmOYAq0BXGh+Q5B56/KNKg73GKUsBlc61mqHcHHyG/uuwSUQLApIB7OUGSE+1dxuoIi3k13q6AWiR4fysa14EtoUhrICOGCb1SbW0Bv3JJW3TNDLWSBwVKUk3xNW/lxm34yDhPuo/Fvvwz4JUC+YRnDUQnZIFO+g=
+	t=1756729519; cv=none; b=Om71jPVL8WjFvcb7B7yj2IUIYC9kgF/atnpluCZqNV3ANsuw3ezJUyu0WuqyXXpw2KFnd5cwPu6jvSYGYq1ainxMv4wXZkMeA4LZmqtlRixdlyl7IPfVb3nz8n0h8Kq8pp6UO5VD6kOqKASVqbEgp2MbNJghL3aV14+f1ncoAZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729493; c=relaxed/simple;
-	bh=CHed+8mf5mb6CcPy6iQ6I5+S37yuiId+EUusY95s8wA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=NrDZOXFQV9LPg6DtY3qRFHR45BF1waW52bbvL/HoPfURFXDDbiMRz0koGJrlFFxvA9SZt3ZdRyF2+o68SeGuMNWq5m9FR0H3rHOWNQa/OcSNIgHktGX5zvin3XAW6vUGTPjj2j9d1OHxonDTQhjdRCkgWsEmLKB/o8Xgq6+/yGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RGgwKPRj; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1756729519; c=relaxed/simple;
+	bh=1yaBM7rIfjL/fHdH2FOWwsQ4RBNvHl0TGkm8yWeYV4k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ODrR9CkCj8w6TOnWW8fhhcAoUUhDJ4rN7k3G5MHPZBPnqFmBalrNBzvUcdNlGoatJMvxc+I0djJ5ZD3IeO70xTfg8u0f4cbkdTbFhEcGr6U2pCbOeAsXn7RnJ9a10lo6KIzY85Sjw3HtzNqcuFq2DNvnUiVWCmiwT8/715F34p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qzL933ZH; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3d0b6008a8bso1412666f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:24:51 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3cf48ec9fa4so2146589f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:25:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756729490; x=1757334290; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756729514; x=1757334314; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MfkhISYvBMEAQlL6pZ3jPBacsMMEIifm78tAx7TD2ao=;
-        b=RGgwKPRjuuaIfLAWjhBiRpl1+5VkOXM+ORmiVLixIJVWjyUy/7rpxDwRPTfPGTqzQ9
-         evtyex46eCZYPZsppknUY5LCsjqnAz+a/NO3K87aUyk7fvbRla736BIccJIo3uAg2DkX
-         mWsxFyN9gh+0sqU4FhEQGCaQy1Sb993m/X3xq7zIfKN6jg2iVXh5Chs6Ri3eSAbpRsuT
-         usRu/UnjB2XuC5SX/6DvCQqjyn34NNG3eo73ViSEkWYHhJV5uR1NESYd9yrzNCddnSQb
-         /0iACXMdx0lEidGhYUI0LoFveMVfm7yDqrals/Gk3mYOmrGRPnFWyWKuoBLAu0epMWJ6
-         brUQ==
+        bh=9lLMjniQ1/cKQ9SFpYSeLnFNup3YUhmHr3nqDPdCoFU=;
+        b=qzL933ZHTwjey+BmKyRHUJsdAsNbqd1HGvCFUYjU/jl3YjcK3Z2tUiPZNOOYry/jnv
+         ZaaOWn1RTTveZF9Duwj1XZQcIyG+xKDJsrHOK0KzFdt2YH+c9WdSy8vMlWaEsLY5xqGk
+         H/RbqImcgwRkLiNjAYBUDGZ9gYP86nlFKWjxyAMQzcy95wQR6gXWLcNCHtRF+1ClLLRG
+         a6Vbaz5dxiyddfaGi1Ne8Hx2rJdCKKBelwe7vH9+Wwng6G8ZBu5y2UyMTb9BgMMo6Kyg
+         suh01PRoIu/egi7f0Cle3xLwzxMliZCY4UQrObC4hOuUuK9/8+dIw8lMYliRpHYaysER
+         rx5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756729490; x=1757334290;
+        d=1e100.net; s=20230601; t=1756729514; x=1757334314;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=MfkhISYvBMEAQlL6pZ3jPBacsMMEIifm78tAx7TD2ao=;
-        b=rUfx9F6/JGufv7xz6xWcQRAR3vzjFFSF56cHS9C08s9udURztsQfOl+3ie2ZjcJk+5
-         ySVfddEgV5dMZxcWXM+d+0n2N2+WEuJqIVUm+7ouBdPLfAnBPZ5vGphtORjSLHhoTKGq
-         HxMGJu8HaH++t2wMLGuGnI9U1JkGHWh21M//kdeVfYvTsxQWQrXxDGW9MvD0cHf2nWhG
-         Ud3E3Z95YapcoXEq0cqB5a5mbrbIBggOvY1FGrE1XGb8ol7ke5uBtypTb9QMNc8YHHdK
-         B+9XXuuwKBKVnKzEBV0kxKiJuZPdX0klZ4WEG3D4zqao8TnLQx+UElqrdTIwEINoLV9W
-         SsTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8ec07LqfH7uyCA9Sx8mcTnttzDbeXDfsa8dxMM8DmM+kOdih3MXeFN28QhLcz5Ht3is7Rey7fmP5BKpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTmJr6JTESg6Xqk9c/j32DRm1LOQ9fma2elOgCynpdJMaf76oZ
-	EwMO+wl4UpHFJcx+L7ZjoMW/ABVTdqHON+bAgOkGP580UWaUdRV61wsxIEROtr/Tnac=
-X-Gm-Gg: ASbGncu6E9fZ7c+0EpmXutEdTN2ePQ2Js5L9a7rlVW1xySwpy2H94QJO1UbQAPWPrme
-	FUvrrXbSXPFhDn5hpxkeVUGJXOaAWmCRW7rhhrE1uSVVPQvxap9JFJ3MkTmOhVRJJcfq6Rk89nC
-	dXTJsXlpybthxhjRJt+B89qjjE3fDXQsgXFFvYEqyxmIqDxvSWhTDkJNOHslRgcdsaPrPzAtGT7
-	sJylQsWbqVpfzIkUrNyJijqQHNveeXF18DKHIyXjQdK1xB7qLckAfuvfCkNrCzna6CREowEr9vw
-	Mo+LECsZ/SktJLFQsGw3eQBX0/fgPOE/HjfVfhJ872vIoKp+OtsnNFOpRe2cFDUkSn0QcTNj5Pc
-	50fnnmpgxzT1i6NDRiC7SL4oR1zXjeDAVwPb76hdz9/P5AJyrBmiKDyiVoDZXM4p67AnV99QW+K
-	Q8ZNh+XBI=
-X-Google-Smtp-Source: AGHT+IFGT8W3UAxgtuIxzCjUXqI2nE78D/VdHvOwHMOvAuiM4y3wWCDkvebLIQeC9Id+0fTq3AN6+Q==
-X-Received: by 2002:a5d:5888:0:b0:3ce:46d8:5e11 with SMTP id ffacd0b85a97d-3d1dfa19456mr6338946f8f.34.1756729489776;
-        Mon, 01 Sep 2025 05:24:49 -0700 (PDT)
+        bh=9lLMjniQ1/cKQ9SFpYSeLnFNup3YUhmHr3nqDPdCoFU=;
+        b=BB4ReDnISWXLFrC1kxDuX/72uS1nMnvC2w9w+0De1o9M6nOC4+hx9Z8OkZ90r1lIET
+         9ut+IEpC+GNzaoAaneoEBxV1Qffkp3IFQEsv/NGFCy+l0V8CksNJaLs9OQ2DqtTkRbid
+         C7yySHFbHo/3XmoszvzDxlhkKTiirGutjrpKGf7UmpsTFhmzZQpOp95H+xO47VU8t7uo
+         L3dMVIf7SVK2N8NPGXZ2iWr6svvBRwN4sX6jGPceLnGMT/3Y3oo/6kADqXfTV9fPdo5d
+         6OJLTN3aVduyIlswaZGZ7EgtUvsxfJ1AdQwStLzAtmNNvmFzlmlyyweRwsqrdkgJj/FD
+         HFUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4400RdQm8UYLoq7UH5mzHtS7xI78xYE0AwwIDyNSkmHoCR1ykbZxGmOsLIByvmuRk00P3paikshdnc9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUSHqygbtrqifj53tFmAQu+Jzt5GOGTCVSnBDSvVwI8x/IYrXn
+	3JE+xUaz+FxKRCzGMmnqpmoaqqF+qKvNOwyck6d8K13ML8mzZzicpm0WLS+jxP7Jg/c=
+X-Gm-Gg: ASbGncsjWRwIZ5VGPM/LyBlnVSJQmZLOiNFPwMEr52EQ6wqCXs4k8olTg5MqR8DyWve
+	s5CRPtlWWx+s8CcRsqYckdv8nDT2h6OO/xYEXZT/gvzdVxPLJr7uGxmcFnvfck9xS5sDTaOraVz
+	M4+4YiGooNTtE9zld8HFnGFh7NlbneEH6DoNJ2lkUZgJVkHYyTDnNJ6Vq50byzqobALQteFStPM
+	kBHiNjdCE3y/ot8Wgbdz7sj3NvW1lxSoPpuS6IBIdsK4/wRz8DBlrmprQiZZIMW0kwLKMBG5+nt
+	hz7SCD8VqJNVNxZRzifnNhEPkgqlvh6q0uTvXzbM9CHiAL++LE0grUMujUmAHshvQcFTbZpz/0o
+	3mx3b4sbvZX3Ip9jJWJLZRr+jC5cBbIWtT7S7+aL16WsD34BJ4vFoNMxDeoaxZa81Fu4d9ZAp
+X-Google-Smtp-Source: AGHT+IF5dX8kQFF8BXALlKdkwINlMLM/NUWY3UDwGCZ6dH+7AxQ+/AYzUJQq7aUHMzaI02mBKQkM8Q==
+X-Received: by 2002:a05:6000:1786:b0:3d1:4c3d:1933 with SMTP id ffacd0b85a97d-3d1dea8c5e9mr6340755f8f.43.1756729513811;
+        Mon, 01 Sep 2025 05:25:13 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:3d9:2080:881c:7d0e:ad0a:d9a? ([2a01:e0a:3d9:2080:881c:7d0e:ad0a:d9a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d2250115fdsm9738932f8f.40.2025.09.01.05.24.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d60d93b949sm5169999f8f.2.2025.09.01.05.25.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 05:24:49 -0700 (PDT)
-Message-ID: <e92049c6-1d90-482f-ad4f-0c88bb96989e@linaro.org>
-Date: Mon, 1 Sep 2025 14:24:48 +0200
+        Mon, 01 Sep 2025 05:25:13 -0700 (PDT)
+Message-ID: <d0b6bc2d-f191-4025-b97f-c6d234214b69@linaro.org>
+Date: Mon, 1 Sep 2025 14:25:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,16 +85,16 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] drm/panel: visionox-rm69299: Fix clock frequency for
- SHIFT6mq
-To: =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+Subject: Re: [PATCH] drm/panel: lvds: Remove unused members from main
+ structure
+To: Liu Ying <victor.liu@nxp.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
  Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Casey Connolly <casey.connolly@linaro.org>, phone-devel@vger.kernel.org
-References: <e975da213c1f8030db50d66ec1c9597f59f25e35.1756567474.git.agx@sigxcpu.org>
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250829-panel-lvds-remove-width-height-v1-1-acecf0c84dc4@nxp.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -122,38 +121,39 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <e975da213c1f8030db50d66ec1c9597f59f25e35.1756567474.git.agx@sigxcpu.org>
+In-Reply-To: <20250829-panel-lvds-remove-width-height-v1-1-acecf0c84dc4@nxp.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 30/08/2025 17:29, Guido Günther wrote:
-> Make the clock frequency match what the sdm845 downstream kernel
-> uses. Otherwise we're seeing timeouts like
+On 29/08/2025 09:53, Liu Ying wrote:
+> Since commit 03fa454bb666 ("drm/panel: lvds: Simplify mode parsing"),
+> the width and height members of struct panel_lvds are no longer used.
+> Remove them.  No functional change.
 > 
-> ```
-> msm_dsi ae94000.dsi: [drm:dsi_cmds2buf_tx] *ERROR* wait for video done timed out
-> dsi_cmds2buf_tx: cmd dma tx failed, type=0x5, data0=0x28, len=4, ret=-110
-> panel-visionox-rm69299 ae94000.dsi.0: sending DCS SET_DISPLAY_OFF failed: -110
-> ```
-> 
-> Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 > ---
->   drivers/gpu/drm/panel/panel-visionox-rm69299.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/gpu/drm/panel/panel-lvds.c | 2 --
+>   1 file changed, 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-visionox-rm69299.c b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> index 909c280eab1fb..e65697ce6f51c 100644
-> --- a/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> +++ b/drivers/gpu/drm/panel/panel-visionox-rm69299.c
-> @@ -247,7 +247,7 @@ static const struct drm_display_mode visionox_rm69299_1080x2248_60hz = {
->   };
+> diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+> index 23fd535d8f479045a87b0f51bec17cd7c66b0f75..46b07f38559f35aa3b0a41662cc29480e53e885f 100644
+> --- a/drivers/gpu/drm/panel/panel-lvds.c
+> +++ b/drivers/gpu/drm/panel/panel-lvds.c
+> @@ -28,8 +28,6 @@ struct panel_lvds {
+>   	struct device *dev;
 >   
->   static const struct drm_display_mode visionox_rm69299_1080x2160_60hz = {
-> -	.clock = 158695,
-> +	.clock = 149360,
->   	.hdisplay = 1080,
->   	.hsync_start = 1080 + 26,
->   	.hsync_end = 1080 + 26 + 2,
+>   	const char *label;
+> -	unsigned int width;
+> -	unsigned int height;
+>   	struct drm_display_mode dmode;
+>   	u32 bus_flags;
+>   	unsigned int bus_format;
+> 
+> ---
+> base-commit: 3cace99d63192a7250461b058279a42d91075d0c
+> change-id: 20250829-panel-lvds-remove-width-height-1d063f0bb178
+> 
+> Best regards,
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
