@@ -1,319 +1,130 @@
-Return-Path: <linux-kernel+bounces-794760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A59B3E6E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:22:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DEAB3E6F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C58177EFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:22:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8B517F01C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2A733A01D;
-	Mon,  1 Sep 2025 14:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F8631DDAE;
+	Mon,  1 Sep 2025 14:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="QLvSna8c"
-Received: from fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.176.194.123])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Taf3q1Md"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235292EDD76;
-	Mon,  1 Sep 2025 14:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.176.194.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E247C2EDD76
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 14:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736547; cv=none; b=SDeupm/r82AbCGMwsvD4YxrdMmIf4EI/E9utY2wTGGWK+txSDpCS3oUR1YMiqKEVDOlt4qvhKsuP+hx8MBv2CcFgcUoMpb7xeAi4Vu6olbhBmZeD3HC0BT4K3izd+pDj09c8eKeHA+tO1fWG7Iuqk14FQWY0hLjy9iRR/dNO9Bo=
+	t=1756736654; cv=none; b=H/lkCBxqBnkwmvZin580pyldQDDChfwKk4Wcax6Oyczf5l5BbXiG7OvTYkAbUN+x5SjR+TYYhnMZmanqoD8I3mg1oGJ9xevMg5dpw/s0ZoN6x36bQheiZiOB2poB0oG80tVa1/ED+gRrZampYyYNvi1gGgLOzYDBZ4Q4SBimRNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736547; c=relaxed/simple;
-	bh=wMkfF2t0dNP9/Poez+CLWMc02OD/Q4mBWn5bQTewYeM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=b461bsmc0U+CunPNTCaHjUGqp0Ce6FSRvKA3/S143NX6CXvRXuUe0RTVPEhGmxuHyE2PbCoavjpCm217RWQBBUdYB2m8sRD3yb8VMVMijcTLCLi26cHs+bJiZeHcNFZRhM062hDoJVuDiZMmIzFcZCsGEDMNvLUGWPLjBoyXpqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=QLvSna8c; arc=none smtp.client-ip=63.176.194.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1756736545; x=1788272545;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=NexCRVeiTn8yKPd81BsG0VP8TjQq1oA2bxWGfc7HsT4=;
-  b=QLvSna8c5AseRpSbUAD406B7YSqPUUq7C2mDvQU6i1LFMtZbOWY5F1Hd
-   RWihydQ40o+DO2IO5t2ImfchoLuVb9gy/IF/3ejgA2RbcmYeFXowZRwJe
-   ws/F1eq+2VvbJqk42XwoI00iAwexehsup173zwzVYkPNkOnk6MQoFJcLd
-   6QS0n5Ulx1Mm4uzRYOZTgmgJ6jbuumKLKW9PXI2hQgrUN8VVts6kyAtDF
-   mpAjJvBU2ecJboHQJeHgNtytV1BT1u2Zam6aF+s00gLxE2g7eicCDviFx
-   g2pYSdYWuOJ3C3IEl1v4suwmg3IDT8GDWJ79O8vqnYN9/YcjxRGiFxL/G
-   g==;
-X-CSE-ConnectionGUID: qEKZaT7/TbumQlwD4xw4aw==
-X-CSE-MsgGUID: lOy7Z9IPRo66N0b8RO5ESg==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
-   d="scan'208";a="1465584"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 14:22:23 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:2933]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.3.140:2525] with esmtp (Farcaster)
- id ce39f935-8ca3-4e3f-9b35-e9483f981017; Mon, 1 Sep 2025 14:22:23 +0000 (UTC)
-X-Farcaster-Flow-ID: ce39f935-8ca3-4e3f-9b35-e9483f981017
-Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Mon, 1 Sep 2025 14:22:23 +0000
-Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
- EX19D015EUB004.ant.amazon.com (10.252.51.13) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 1 Sep 2025 14:22:22 +0000
-Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
- EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
- 15.02.2562.020; Mon, 1 Sep 2025 14:22:22 +0000
-From: "Roy, Patrick" <roypat@amazon.co.uk>
-To: "rppt@kernel.org" <rppt@kernel.org>
-CC: "ackerleytng@google.com" <ackerleytng@google.com>, "david@redhat.com"
-	<david@redhat.com>, "Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack"
-	<jackabt@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "Roy, Patrick"
-	<roypat@amazon.co.uk>, "seanjc@google.com" <seanjc@google.com>,
-	"tabba@google.com" <tabba@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"will@kernel.org" <will@kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>
-Subject: Re: [PATCH v5 04/12] KVM: guest_memfd: Add flag to remove from direct
- map
-Thread-Topic: [PATCH v5 04/12] KVM: guest_memfd: Add flag to remove from
- direct map
-Thread-Index: AQHcG0vV41OK1VctH0adgeriedPTLg==
-Date: Mon, 1 Sep 2025 14:22:22 +0000
-Message-ID: <20250901142220.30610-1-roypat@amazon.co.uk>
-References: <aLBtwIhQpX6AR2Z6@kernel.org>
-In-Reply-To: <aLBtwIhQpX6AR2Z6@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756736654; c=relaxed/simple;
+	bh=qAAqpIJ1sZ+WXhv9jSL+yNgDxW9OQV2lwq5CpKUVeRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P4kufR3z3cPP/TaFkcJQzMC2ALSRiHz1Palyfir9lNkJcsJujcDd7+CL18GeMXtHrIy8W7IMdV5XdLK6NftLrCflUQ++g7JfCPUDJIr45oG8x5I8XWN8iz9Q+GErgeiolg5ti06rkXGOy6NLeh/2AB/N53Rs6oEEzf31PLQ5kiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Taf3q1Md; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756736651;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DIgXc9xeVr9BBWUbZa2zZn7PQsTxZuClMXuY+mTcrPY=;
+	b=Taf3q1Md13l9t/XFe03udI8KY30l3Kx+jd8BC8QX6jrdyLhIvBw7lZFDcYmgnov5RbWQ0x
+	fLjEcIlxIdFypVI+mGFtgh0LSJa65RfzLSA4ZpSv8X1eiDNz1myl4F3gzGiwl0AyMq5kGG
+	1f0EwqzdlO50y876YlgSg4SG92ShRIM=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-596-GhcSiRnuP7yhq_GsFyjMhA-1; Mon, 01 Sep 2025 10:24:10 -0400
+X-MC-Unique: GhcSiRnuP7yhq_GsFyjMhA-1
+X-Mimecast-MFC-AGG-ID: GhcSiRnuP7yhq_GsFyjMhA_1756736650
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-afe81959c3cso393823166b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 07:24:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756736650; x=1757341450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DIgXc9xeVr9BBWUbZa2zZn7PQsTxZuClMXuY+mTcrPY=;
+        b=m665BWPN9F/TcpuaYrtVTGx/VeKrs0b4toNVr7hOAVOaj35ue84UYyr4dAxty97uwL
+         DfpLx5iHhwOr8WnvcsXXa5NafAzpf/ewEL7jo2JlzytICXJ+n9GFYjnC5XvjbCxunZ9K
+         2TSpj91Nz+AQD4CkfJsdCdhj7G7pkxJkBzyPe9GbxiISzwVDMYet4BINZubrk7R09ptt
+         vP5ybf47KrCFPHwD7vHvTPSOwTJI9nhjmlKTrJjaih5ZkJKBkUCFUJcSEgXELYVQUXMU
+         8KXs0gse1C7JsnrBVuA77P2Tw4k0QWDs4ruAi7zj5p/m87vYQ6Ibnw7j+QNTpFl4DNzI
+         FIKg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+1gimK4La9HGf9WHVtTRCRJ5AiU4EG9iLlr7R6dAbaAON/juYF59qPhLVAWmaqwhTwj7x7aovLP5fRxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeR5s+xRCsL96y79H1pzrawvqDGq9SuHSYk72mOLanoLUjJxI3
+	yQTbKpzVpMAm8H4nmC8FMJohrodyAvQaqHDfm0fO8CGoNHhaE74QteV9aIMEi5Gmvixi5lN1ezy
+	TjbgCfi/cD3tBli6wDy4UmSdBHHPBQjFtL/wygOooPtFLZzhkz8yRBLnGITRepT3qXxm6jOY3TG
+	lCdCozIOXmDx1Lgc/LL/cKpfaIuAIkoTjorV2rGYwk
+X-Gm-Gg: ASbGncu85QVEmnUvMhkguSxtXyUDoqw7tPgti+K5YdRLtCca2z3MWJLvaeG0GdRkb5b
+	snR6mNPAwLQRTJTQkSbvCVA0dmafxBacGBwPzGP70n37Cw8vx2yKTwtb5RJDcjh8YTET3s4bZPg
+	mOth44c0pwtwUqdMOjlCRurjlp4qOOw2SiIoSiwIrV9sEbFJGBRrA=
+X-Received: by 2002:a17:907:94c8:b0:aff:7:4f12 with SMTP id a640c23a62f3a-b01d8a2778dmr739983466b.5.1756736649578;
+        Mon, 01 Sep 2025 07:24:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGn4xY0HH8qCdFSyK5OTzgVVXjJ12ZvaUYluQIqf0B2o60S1nht1dzIxUJp1Vzx3IwFYsWYnxkzkFbv5Vovccg=
+X-Received: by 2002:a17:907:94c8:b0:aff:7:4f12 with SMTP id
+ a640c23a62f3a-b01d8a2778dmr739980466b.5.1756736649117; Mon, 01 Sep 2025
+ 07:24:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1755018581.git.ipravdin.official@gmail.com> <96f305f622de233c28d4ed9f23583b4d6ab2d1ac.1755018581.git.ipravdin.official@gmail.com>
+In-Reply-To: <96f305f622de233c28d4ed9f23583b4d6ab2d1ac.1755018581.git.ipravdin.official@gmail.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Mon, 1 Sep 2025 16:23:55 +0200
+X-Gm-Features: Ac12FXx63Tybu7ddN4dNpy-VZp0KptTHLkvU7Nm5KFnqWm7q4-qPMwNWVhWSlzk
+Message-ID: <CAP4=nvRZ_SY_xdC6N8LkKUA=a-QP5gc5SMgBr4jod6+tu0TFeA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] rtla: fix -a overriding -t argument
+To: Ivan Pravdin <ipravdin.official@gmail.com>
+Cc: rostedt@goodmis.org, corbet@lwn.net, linux-trace-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-08-28 at 15:54 +0100, Mike Rapoport wrote:=0A=
-> On Thu, Aug 28, 2025 at 09:39:21AM +0000, Roy, Patrick wrote:=0A=
->> Add GUEST_MEMFD_FLAG_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD()=0A=
->> ioctl. When set, guest_memfd folios will be removed from the direct map=
-=0A=
->> after preparation, with direct map entries only restored when the folios=
-=0A=
->> are freed.=0A=
->>=0A=
->> To ensure these folios do not end up in places where the kernel cannot=
-=0A=
->> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct=0A=
->> address_space if GUEST_MEMFD_FLAG_NO_DIRECT_MAP is requested.=0A=
->>=0A=
->> Add KVM_CAP_GUEST_MEMFD_NO_DIRECT_MAP to let userspace discover whether=
-=0A=
->> guest_memfd supports GUEST_MEMFD_FLAG_NO_DIRECT_MAP. Support depends on=
-=0A=
->> guest_memfd itself being supported, but also on whether KVM can=0A=
->> manipulate the direct map at page granularity at all (possible most of=
-=0A=
->> the time, just arm64 is a notable outlier where its impossible if the=0A=
->> direct map has been setup using hugepages, as arm64 cannot break these=
-=0A=
->> apart due to break-before-make semantics).=0A=
-> =0A=
-> There's also powerpc that does not select ARCH_HAS_SET_DIRECT_MAP=0A=
-=0A=
-Ah, thanks! Although powerpc also doesnt support guest_memfd in the first=
-=0A=
-place, but will mention.=0A=
-=0A=
->> Note that this flag causes removal of direct map entries for all=0A=
->> guest_memfd folios independent of whether they are "shared" or "private"=
-=0A=
->> (although current guest_memfd only supports either all folios in the=0A=
->> "shared" state, or all folios in the "private" state if=0A=
->> GUEST_MEMFD_FLAG_MMAP is not set). The usecase for removing direct map=
-=0A=
->> entries of also the shared parts of guest_memfd are a special type of=0A=
->> non-CoCo VM where, host userspace is trusted to have access to all of=0A=
->> guest memory, but where Spectre-style transient execution attacks=0A=
->> through the host kernel's direct map should still be mitigated.  In this=
-=0A=
->> setup, KVM retains access to guest memory via userspace mappings of=0A=
->> guest_memfd, which are reflected back into KVM's memslots via=0A=
->> userspace_addr. This is needed for things like MMIO emulation on x86_64=
-=0A=
->> to work.=0A=
->>=0A=
->> Do not perform TLB flushes after direct map manipulations. This is=0A=
->> because TLB flushes resulted in a up to 40x elongation of page faults in=
-=0A=
->> guest_memfd (scaling with the number of CPU cores), or a 5x elongation=
-=0A=
->> of memory population. TLB flushes are not needed for functional=0A=
->> correctness (the virt->phys mapping technically stays "correct",  the=0A=
->> kernel should simply to not it for a while). On the other hand, it means=
-=0A=
-> =0A=
->                           ^ not use it?=0A=
-=0A=
-Yup, thanks!=0A=
-=0A=
->> that the desired protection from Spectre-style attacks is not perfect,=
-=0A=
->> as an attacker could try to prevent a stale TLB entry from getting=0A=
->> evicted, keeping it alive until the page it refers to is used by the=0A=
->> guest for some sensitive data, and then targeting it using a=0A=
->> spectre-gadget.=0A=
->>=0A=
->> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>=0A=
->> ---=0A=
->>  arch/arm64/include/asm/kvm_host.h | 12 ++++++++++++=0A=
->>  include/linux/kvm_host.h          |  7 +++++++=0A=
->>  include/uapi/linux/kvm.h          |  2 ++=0A=
->>  virt/kvm/guest_memfd.c            | 29 +++++++++++++++++++++++++----=0A=
->>  virt/kvm/kvm_main.c               |  5 +++++=0A=
->>  5 files changed, 51 insertions(+), 4 deletions(-)=0A=
-> =0A=
-> ...=0A=
-> =0A=
->> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c=0A=
->> index 9ec4c45e3cf2..e3696880405c 100644=0A=
->> --- a/virt/kvm/guest_memfd.c=0A=
->> +++ b/virt/kvm/guest_memfd.c=0A=
->> @@ -4,6 +4,7 @@=0A=
->>  #include <linux/kvm_host.h>=0A=
->>  #include <linux/pagemap.h>=0A=
->>  #include <linux/anon_inodes.h>=0A=
->> +#include <linux/set_memory.h>=0A=
->>=0A=
->>  #include "kvm_mm.h"=0A=
->>=0A=
->> @@ -42,8 +43,18 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, =
-struct kvm_memory_slot *slo=0A=
->>       return 0;=0A=
->>  }=0A=
->>=0A=
->> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)=0A=
->> +{=0A=
->> +     return ((unsigned long) inode->i_private) & GUEST_MEMFD_FLAG_NO_DI=
-RECT_MAP;=0A=
->> +}=0A=
->> +=0A=
->>  static inline void kvm_gmem_mark_prepared(struct folio *folio)=0A=
->>  {=0A=
->> +     struct inode *inode =3D folio_inode(folio);=0A=
->> +=0A=
->> +     if (kvm_gmem_test_no_direct_map(inode))=0A=
->> +             set_direct_map_valid_noflush(folio_page(folio, 0), folio_n=
-r_pages(folio), false);=0A=
-> =0A=
-> This may fail to split large mapping in the direct map. Why not move this=
-=0A=
-> to kvm_gmem_prepare_folio() where you can handle returned error?=0A=
-=0A=
-Argh, yeah, got that the wrong way around. Will update the error handling.=
-=0A=
-=0A=
-> I think that using set_direct_map_invalid_noflush() here and=0A=
-> set_direct_map_default_noflush() in kvm_gmem_free_folio() better is=0A=
-> clearer and makes it more obvious that here the folio is removed from the=
-=0A=
-> direct map and when freed it's direct mapping is restored.=0A=
-> =0A=
-> This requires to export two symbols in patch 2, but I think it's worth it=
-.=0A=
-=0A=
-Mh, but set_direct_map_[default|invalid]_noflush() only take a single struc=
-t=0A=
-page * argument, so they'd either need to gain a npages argument, or we add=
- yet=0A=
-more functions to set_memory.h.  Do you still think that's worth it? =0A=
-=0A=
->>       folio_mark_uptodate(folio);=0A=
->>  }=0A=
->>=0A=
->> @@ -429,25 +440,29 @@ static int kvm_gmem_error_folio(struct address_spa=
-ce *mapping, struct folio *fol=0A=
->>       return MF_DELAYED;=0A=
->>  }=0A=
->>=0A=
->> -#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=0A=
->>  static void kvm_gmem_free_folio(struct address_space *mapping,=0A=
->>                               struct folio *folio)=0A=
->>  {=0A=
->>       struct page *page =3D folio_page(folio, 0);=0A=
->> +=0A=
->> +#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=0A=
->>       kvm_pfn_t pfn =3D page_to_pfn(page);=0A=
->>       int order =3D folio_order(folio);=0A=
->> +#endif=0A=
->>=0A=
->> +     if (kvm_gmem_test_no_direct_map(mapping->host))=0A=
->> +             WARN_ON_ONCE(set_direct_map_valid_noflush(page, folio_nr_p=
-ages(folio), true));=0A=
-> =0A=
-> I don't think it can fail here. The direct map was split when you removed=
-=0A=
-> the folio so here it will merely update the prot bits.=0A=
-=0A=
-Yup, will drop this WARN_ON_ONCE.=0A=
-=0A=
->> +#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=0A=
->>       kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));=0A=
->> -}=0A=
->>  #endif=0A=
->> +}=0A=
-> =0A=
-> Instead of moving #ifdefs into kvm_gmem_free_folio() it's better to add, =
-say,=0A=
-> kvm_gmem_invalidate() and move ifdefery there or even better have a stati=
-c=0A=
-> inline stub for !CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE case.=0A=
-=0A=
-Ack, will do the latter=0A=
-=0A=
->> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c=0A=
->> index 18f29ef93543..0dbfd17e1191 100644=0A=
->> --- a/virt/kvm/kvm_main.c=0A=
->> +++ b/virt/kvm/kvm_main.c=0A=
->> @@ -65,6 +65,7 @@=0A=
->>  #include <trace/events/kvm.h>=0A=
->>=0A=
->>  #include <linux/kvm_dirty_ring.h>=0A=
->> +#include <linux/set_memory.h>=0A=
->>=0A=
->>=0A=
->>  /* Worst case buffer size needed for holding an integer. */=0A=
->> @@ -4916,6 +4917,10 @@ static int kvm_vm_ioctl_check_extension_generic(s=
-truct kvm *kvm, long arg)=0A=
->>               return kvm_supported_mem_attributes(kvm);=0A=
->>  #endif=0A=
->>  #ifdef CONFIG_KVM_GUEST_MEMFD=0A=
->> +     case KVM_CAP_GUEST_MEMFD_NO_DIRECT_MAP:=0A=
->> +             if (!can_set_direct_map())=0A=
-> =0A=
-> Shouldn't this check with kvm_arch_gmem_supports_no_direct_map()?=0A=
-=0A=
-Absolutely, thanks for catching!=0A=
-=0A=
->> +                     return false;=0A=
->> +             fallthrough;=0A=
->>       case KVM_CAP_GUEST_MEMFD:=0A=
->>               return 1;=0A=
->>       case KVM_CAP_GUEST_MEMFD_MMAP:=0A=
->> --=0A=
->> 2.50.1=0A=
->>=0A=
-> =0A=
-> --=0A=
-> Sincerely yours,=0A=
-> Mike.=0A=
-=0A=
-Best,=0A=
-Patrick=0A=
+=C3=BAt 12. 8. 2025 v 19:22 odes=C3=ADlatel Ivan Pravdin
+<ipravdin.official@gmail.com> napsal:
+>
+> When running rtla as
+>
+>     `rtla <timerlat|osnoise> <top|hist> -t custom_file.txt -a 100`
+>
+> -a options override trace output filename specified by -t option.
+> Running the command above will create <timerlat|osnoise>_trace.txt file
+> instead of custom_file.txt. Fix this by making sure that -a option does
+> not override trace output filename even if it's passed after trace
+> output filename is specified.
+>
+
+Yes, this should not be overridden, it's a bug in both the old
+implementation and the new one using actions. Thank you for the fix.
+
+> Remove clear_terminal in timerlat top as it removes "Saving trace to <fil=
+ename>"
+> line from the terminal and is not used in other modes.
+>
+
+This is not the correct fix for the issue. clear_terminal is needed in
+timerlat top (and osnoise top) to clear the terminal before the
+updated status is printed, the fix removes it without a replacement,
+breaking this behavior. Also, this is a different issue that appeared
+only when the actions patchset [1] was merged, and should go into a
+separate patch with a different Fixes tag.
+
+[1] https://lore.kernel.org/linux-trace-kernel/20250626123405.1496931-1-tgl=
+ozar@redhat.com/T/#t
+
+Tomas
+
 
