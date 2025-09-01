@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-794560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78385B3E35C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:40:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39FAB3E34E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5279166BAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:38:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E33F1A83729
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B98D33439D;
-	Mon,  1 Sep 2025 12:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52C831AF28;
+	Mon,  1 Sep 2025 12:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FfZxRvOf"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AfH3B5ab";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e2CvqpTq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CA131355E;
-	Mon,  1 Sep 2025 12:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD262212FB9
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729999; cv=none; b=OuPWTXeRijsBu7I+cO8hHagSuWfMHpNBG/alCjD+q6mSS8HMvsQvmC8SjWioXbSNcU/xzki16ko74a+G6zUodFSQ0lKJstKtWA0p5Vvvij1D4B+7bhaKqjxLbnpOQhDW5qM8dzhKTVUWaZ/9VJnyo2JztY4ZcE6bsCJVgwgnHkE=
+	t=1756730078; cv=none; b=cPCjY64aYHf/kZQlBpSR7B8bQQVEijoITL5p9shrzsi1wW21vldhTMLohQPbjki0eI92jXOi3uEFej1sqHrVNITfXMf6WoiNHPTSijzauVC/3Wirtzb/uvqtNmlHrV4Hdk9E18sPsbeeV0lmKc1Ymh9+u32WTZzqfoAVk2TEpGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729999; c=relaxed/simple;
-	bh=iJ0INFxLzv5GP5m66QFzhCN6Es45in/NvPOukchdxWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Hyg1f0tr041ZsKZpIViL5birGzH+IwnXCTG0JUI01R9S7+H5hJbhKLgmQ/hCEoi9jRDKObavcFiL0xLTxJIepe7IG0sGFqeMG+bouA6EwXOm9V83aDc9Rz208vTqj3nXF4DngYxhI5c8cpFmb39CdBv2GAIcOl0jdHK46wBFrKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FfZxRvOf; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 581CXDQS2771404;
-	Mon, 1 Sep 2025 07:33:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756729993;
-	bh=HHzZ0FqxIESHVBS2IBNz7HEwrKQZ2pXuzyqx5o4fT7c=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FfZxRvOf5QnnBH32Fid7wFq1Y80oqVV9QxdqtUvPatJgn5w4nHctuAa0dn3ZZnVBv
-	 BmxEBwznbQ9Gxnn7qtUc/Hf4xwOefiQ30Hne7gAIuiBZHcH3ji6FcY4NO4oaIUekI/
-	 4k9EM9ZYu+dUKo6TlziueAkphlNV8Y3pMfKzUwyU=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 581CXDCw1541782
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 1 Sep 2025 07:33:13 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 1
- Sep 2025 07:33:12 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 1 Sep 2025 07:33:12 -0500
-Received: from [10.24.68.177] (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.177])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 581CX89Y2511477;
-	Mon, 1 Sep 2025 07:33:09 -0500
-Message-ID: <b3973566-0959-456d-bed7-c64bf3c34c44@ti.com>
-Date: Mon, 1 Sep 2025 18:03:08 +0530
+	s=arc-20240116; t=1756730078; c=relaxed/simple;
+	bh=gsDbVDGiBLCLkCrBpBIWkJQQHodMQVHrZx9yXOL0A9U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bJClHGaZDGqjhLXp2TtVbd/9OYoR3emdMyb1RLeMCx+MFaxvQUrA3WfnFw2DDOfAIL4x6KlTmanrYT+1AESc1i2i2sR3MBLxobZsKcsaRUgYDemaRVBU9Ob2Cghxo4wuXnT8Ims9EPrwoIHmBg8PUXvuQbyL/mgt5JcmcpWS77c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AfH3B5ab; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e2CvqpTq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756730075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pKmzuPbXP2DW5itZ0ySM9G2SRyPY+lVMopwVoWfmGwM=;
+	b=AfH3B5ab3ArAI/rmXrpc3+6hAEFHrSyn0J8Pt/147w0VJm9dQ0GkRpoFz1Pwm6snJdtM/S
+	Az5CkUgbUVAMO6SuxlDZ6UB0Ar6Oi+uwJEk4gOHanZbmqbOJdXHBP43st+hK1tkzjwQWYv
+	hhM58ThLtxiBoC2QbmMkNl4uH86Buc5QnhS1esLRTM1hu58f2iEvWYRxxivcqxvnndfrge
+	Twka6pBE6utfvix8CxUewNDhJiQ4OYTYe8KqSoohbtxCDH7J2+GagJEufGLjKqAJ35NdY6
+	CVaYjAdxUN8xZmId5CyqX3VPuPQfxGB4qjemrpcjgNYpik76XVHgKJ2+C8ILBw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756730075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pKmzuPbXP2DW5itZ0ySM9G2SRyPY+lVMopwVoWfmGwM=;
+	b=e2CvqpTqZFC6ZRFmJsA+G3nxWQNYjB+/zakK1YRpeLEljYiWAWUhoQXuUXGzmM8YIxyDx6
+	gNIQtKr6spBFExAw==
+Subject: [PATCH v2 0/3] vdso/datastore: Allow prefaulting by mlockall()
+Date: Mon, 01 Sep 2025 14:34:21 +0200
+Message-Id: <20250901-vdso-mlockall-v2-0-68f5a6f03345@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: ti: k3-pinctrl: Add the remaining macros
-To: Dhruva Gole <d-gole@ti.com>
-CC: <vigneshr@ti.com>, <praneeth@ti.com>, <nm@ti.com>, <afd@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <vishalm@ti.com>, <sebin.francis@ti.com>
-References: <20250731115631.3263798-1-a-kaur@ti.com>
- <20250731115631.3263798-4-a-kaur@ti.com>
- <20250813130521.zpe7lguful6gyhjz@lcpd911>
-Content-Language: en-US
-From: Akashdeep Kaur <a-kaur@ti.com>
-In-Reply-To: <20250813130521.zpe7lguful6gyhjz@lcpd911>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAM2StWgC/13MQQ6CMBCF4auQWVvTGUDAlfcwLCgUmVhb02KDI
+ dzdijuX/0vet0LQnnWAc7aC15EDO5uCDhn0U2dvWvCQGkhSKStCEYfgxMO4/t4ZI4oTKpXnJEu
+ FkD5Pr0dedu/app44zM6/dz7id/1JNdKfFFFIQWPRqK7qxxqbi2H7mr2zvBwHDe22bR9vMy2sr
+ gAAAA==
+X-Change-ID: 20250721-vdso-mlockall-461bb33205b1
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756730069; l=1013;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=gsDbVDGiBLCLkCrBpBIWkJQQHodMQVHrZx9yXOL0A9U=;
+ b=i3Vr9EEhisV9h/yrhXWI5WiI2aR/jp8PtKtLikTvjrX8dvW9qqzTSsADASwBoOAXAlD4Hkamf
+ FVUenlzv8dDCaqMyOn2xBU/KeRGUb+8ZfEbkR8v0ZyMotlaShCsQuXy
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Hi Dhruva,
+Latency-sensitive applications expect not to experience any pagefaults
+after calling mlockall(). However mlockall() ignores VM_PFNMAP and VM_IO
+mappings, both of which are used by the generic vDSO datastore.
 
-On 13/08/25 18:35, Dhruva Gole wrote:
-> Akashdeep,
-> 
-...
->> Add the missing macros for deep sleep configuration control.
-> 
-> Please can you add sources/ links to the TRM/collateral and sections where you get
-> all this information from?
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v2:
+- Stop using nth_page() which is being removed
+- Link to v1: https://lore.kernel.org/r/20250812-vdso-mlockall-v1-0-2f49ba7cf819@linutronix.de
 
-Added TRM reference links
-> 
->> Reword the existing deep sleep macros to provide combinations that can
->> directly be used in device tree files.
-> 
-> I am not very clear on what this line is trying to say. Can you explain
-> a bit more with an example of a reword and how it is helping?
-Added example
-> 
->>
->> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
-...
->> +#define WKUP_LVL_EN_SHIFT	    (7)
->> +#define WKUP_LVL_POL_SHIFT	    (8)
->> +#define ST_EN_SHIFT		        (14)
->> +#define DRV_STR_SHIFT		    (19)
->> +#define DS_ISO_OVERRIDE_EN_SHIFT (22)
->> +#define DS_ISO_BYPASS_EN_SHIFT  (23)
-> 
-> Seeing it on lore and in my git log -p as well, the alignment looks off.
-> Please fix it.
-> 
-Fixed
->>   
->>   /* Schmitt trigger configuration */
->>   #define ST_DISABLE		(0 << ST_EN_SHIFT)
-...
->> +
->> +#define WKUP_DISABLE        (0 << WKUP_EN_SHIFT)
->> +
-> 
-> These too, fix all alignment issues please.
-Fixed
-> 
->>   /* Only these macros are expected be used directly in device tree files */
->>   #define PIN_OUTPUT		(INPUT_DISABLE | PULL_DISABLE)
-...
+---
+Thomas Weißschuh (3):
+      vdso/datastore: Explicitly prevent remote access to timens vvar page
+      vdso/datastore: Allow prefaulting by mlockall()
+      vdso/datastore: Map zero page for unavailable data
 
-Regards,
-Akashdeep Kaur
+ kernel/time/namespace.c |  7 ++-----
+ lib/vdso/datastore.c    | 38 ++++++++++++++++++++++----------------
+ 2 files changed, 24 insertions(+), 21 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250721-vdso-mlockall-461bb33205b1
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
