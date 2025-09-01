@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-795122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101CCB3ED10
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D87B3ED15
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 19:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B4D316F4DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1F4D17BC68
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E525932A83F;
-	Mon,  1 Sep 2025 17:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FED32ED2E;
+	Mon,  1 Sep 2025 17:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="og6gHGt/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnQ6Ymvk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C60F32A82F;
-	Mon,  1 Sep 2025 17:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C960C3064BB;
+	Mon,  1 Sep 2025 17:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756746495; cv=none; b=stBCJMSFarqZQIv41OqXIia+HSIS5sAjxp1wgsOBH2zUw0jkkgOuYcLw3OcLRWWXgUx3pe1PvDuH8KZEVaxKN743TCMxsXkdLipSuOC9Af68tFd7ota9WGG0V4ALNCcRj6zheonOmmneC2m7IRu/3P5RBQKYjwbUENQlK3tOK9w=
+	t=1756746498; cv=none; b=hrsmZ2t/DEv/d+lwBPnvhEKa3bKZpYcUQshaowIoq+yJF7G6PBCkSZoMVonKiMTDO3XbQnMak5k7sSp3HI2sjqDah3k5mjBsowar5L+6cKQehQCcLtosahCRTExNFQvKdC718y6zapsd3ZxjyzHggwxMYSMTaDY8xu9Un6vY/Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756746495; c=relaxed/simple;
-	bh=MiVG4h/2NVBHx9BEN5kPBdeZYBqJXTdPTqvwP13klQM=;
+	s=arc-20240116; t=1756746498; c=relaxed/simple;
+	bh=Psu+Ha7+6rvVuekjLBry2gD+q3T4H2+4ZpElYNdlzaY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lgGbSR+dUbn5jI8aKP58itUzVlCrepTkASMT+YznWbyBdjq5+HyvF0y0Bk+zM1GQuh0ZfQEOEakUEN0pS3CXnPzbXOTbenIAwigwv537k1vJmvpU6Ns6r+hyQdtEMMlMRsSFNB1bHjzPkcb7MDwSavHgq+a2hbb4cxXfsDXP2rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=og6gHGt/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5311AC4CEF1;
-	Mon,  1 Sep 2025 17:08:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hA2hhM5nkKRhp8DMMBzDPX6s1sGuqxMlcIA3OyqCxa5jaBueaR/jdyapnsitPEII8UqrCDlQiY8qjCj1euRalzdPQPMjESeTa0YfCti+xrIpGW/djqaQ6s/LvOvQQu4kfqg939fL/0JBgoJ5o318piQy9Fz8NBjq1Ael/ohzC3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnQ6Ymvk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE21EC4CEF0;
+	Mon,  1 Sep 2025 17:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756746495;
-	bh=MiVG4h/2NVBHx9BEN5kPBdeZYBqJXTdPTqvwP13klQM=;
+	s=k20201202; t=1756746498;
+	bh=Psu+Ha7+6rvVuekjLBry2gD+q3T4H2+4ZpElYNdlzaY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=og6gHGt/xEbqzBNs1VQk1T42/jrGlpFRKMToGNkBgJp0YOxEsfs3nKjF8kCJ2npzT
-	 eie7izspfEMD3oQreiqFUfuyfpAoehlZF00kh+oH2gcM7UooMTuzPWF5VTLd2Bo7i8
-	 Oqm8+ChP576ayRF7I1t7uoLOvEQ7MVzAvi1JuT/xzYetD3nTafKSIDZuN0BCG38rJL
-	 kT4YVzsro5jkY0S6kjL1CsB0FGnDptlll6gkBAVnub+DUh+vxVbw+6BFYTWPKULd3F
-	 EEfZcYDaM0CQGWSJxQe3jRl1f9bjzNkg+jYiKRp+RLvVBo3m1W+V2KizILZ7CdSS8w
-	 5xMCFN7oKxBWQ==
+	b=FnQ6YmvkM+qxK3POl6Iw+D/ge1mC3CpLAudD5A5iIfqsu/47FZTZuboiRzkVCGdqT
+	 e2h4dDGcIJvltoeVVWErE0qmZhjvscnprvveJItdURwYcee+RC+KlitBe1reT5IGad
+	 uNjD2zZuyqUYWgCv0g4FReQ529CZxP0AYSOgiK9d0CW606W3HdqWZDe4kczVDBOjnL
+	 NMA3WAi98aJKiKzgEF5ZMDuDWxt3dIRYgkaEVMZDDzVmfqQo9R6kXheQ+7VbAt8oaf
+	 aUuhg2Ngyn8rbBtl5PkY5ta6IEbAW8Ai0vjMFB+izJbwSbh0hwEaAfWbZxClTUxN0H
+	 hqssXOUbXSTjw==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Prashanth K <prashanth.k@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250826105254.3758803-1-prashanth.k@oss.qualcomm.com>
-References: <20250826105254.3758803-1-prashanth.k@oss.qualcomm.com>
-Subject: Re: [PATCH] phy: qcom: m31-eusb2: Fix the error log while enabling
- clock
-Message-Id: <175674649286.186496.15257522918572986509.b4-ty@kernel.org>
-Date: Mon, 01 Sep 2025 22:38:12 +0530
+To: Ioana Ciornei <ioana.ciornei@nxp.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Josua Mayer <josua@solid-run.com>
+Cc: Yazan Shhady <yazan.shhady@solid-run.com>, 
+ Jon Nettleton <jon@solid-run.com>, netdev@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250826-lynx-28g-nullptr-v1-1-e4de0098f822@solid-run.com>
+References: <20250826-lynx-28g-nullptr-v1-1-e4de0098f822@solid-run.com>
+Subject: Re: [PATCH] phy: lynx-28g: check return value when calling
+ lynx_28g_pll_get
+Message-Id: <175674649543.186496.4663580683926892498.b4-ty@kernel.org>
+Date: Mon, 01 Sep 2025 22:38:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,16 +64,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Tue, 26 Aug 2025 16:22:54 +0530, Prashanth K wrote:
-> While enabling clock, we incorrectly log 'ref clk' as 'cfg ahb clk'
-> Fix this since the devicetree bindings mentions it as ref clock.
+On Tue, 26 Aug 2025 20:32:03 +0200, Josua Mayer wrote:
+> The lynx_28g_pll_get function may return NULL when called with an
+> unsupported submode argument.
 > 
+> This function is only called from the lynx_28g_lane_set_{10gbaser,sgmii}
+> functions, and lynx_28g_set_mode checks available modes before setting a
+> protocol.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] phy: qcom: m31-eusb2: Fix the error log while enabling clock
-      commit: 616fe247bdce4e3a23e3ded4b3be951001ed8039
+[1/1] phy: lynx-28g: check return value when calling lynx_28g_pll_get
+      commit: 9bef84d30f1f724191270044a7d045bfc9d6ad97
 
 Best regards,
 -- 
