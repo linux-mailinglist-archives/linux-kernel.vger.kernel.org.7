@@ -1,444 +1,493 @@
-Return-Path: <linux-kernel+bounces-794768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87253B3E6F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:25:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B73B3E712
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E79BB205554
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:25:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C076E17F3B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A6E341654;
-	Mon,  1 Sep 2025 14:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87DA34164E;
+	Mon,  1 Sep 2025 14:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDUOWBYA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ea5Dbp2D";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="sXOyPrMy"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57492F49EE;
-	Mon,  1 Sep 2025 14:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756736697; cv=none; b=DBmLxhRYnnIMPTwOj2WaGf4COwtYvLq5OerNk1KSStm9oMzhNfG71BN0OiC+/Mo8iLwIe7E0ssFJhev5mz6+xE9sk9nbnQFTYj64AlcByYNO5K5WvZjh23PLbIR5GtJHXRyD2YJA0vchx2lA0xNxL0CwZJeTrz+qoIuw9+1eWCg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756736697; c=relaxed/simple;
-	bh=M8fJZB18elUtJ0aWEJBsI1OZ1YzJQLmO5PeUR+HzsIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u7Pl8gFBPuP0hCbiIQbsEA+1sNZ8Sbm8D1uKdtAZGJ5YKjJTozz6yV7qIoTDdm/NB1qaNGerfbKxEkDV/yf95knGGWznx7tI0DDKxkH9c9ECbnUw5Z5QTMCR5S43mT1v/HrXSxB4OD552ve42g2lVToXDxhHL426bn8ZzoD0kk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDUOWBYA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37196C4CEF9;
-	Mon,  1 Sep 2025 14:24:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756736697;
-	bh=M8fJZB18elUtJ0aWEJBsI1OZ1YzJQLmO5PeUR+HzsIE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CDUOWBYAe6Rns1+UAHOF5uvQft0nWh5vStgnA3YAN1yV3fwZZt4uxOQz/oq2A9DxP
-	 wi16jeYjpwMyqbPvYB3tAzwHKAhlRSmXk9mgWu+BWKvt+89wdo4baSEmWVwEdOBAgY
-	 CgCO4fWx5Wexb79uFIwV+tpEE0gTAqULJ94yc9cg30e8S2SDrjvNNUSnKgFTqN/zJB
-	 ZsfLdkN4erBWnQkCqanZYK2msRp//ImiSaN6OJ2DOW8HcomFLQP5R1IeBEaPHTN0Tu
-	 lLXcL+PaI9XwTudfA5s0eOMOQHFGjbz0YMnFU6Q8+XnhBYnV+EF0Tm7iyW4CcIHi/w
-	 eg8AhTuu/koVg==
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0428b537e5so179054066b.3;
-        Mon, 01 Sep 2025 07:24:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUx0wQ1lksWg7VUmCa4DsWqWRXe1EwXiFOcGCRtGRvOzXa2hct4safLC8S8QNVGSS26wYjXMX5B37W7JOLO@vger.kernel.org, AJvYcCVAKXnuVm3uAVapqdlbMchpVG11SOjhrU37V82wJEb83ZVTua/CzuOlaGQi9Q5cUyWgbqTKGHhC2/m3kw==@vger.kernel.org, AJvYcCXpNivneiATjvNQD4abU2SjMmp9cEUArUX2wNts8AOLaIuEuh1ERJvNz/0K8wvV7Uvz/mLpvTbAsqq0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiFKKq9HjZp0jFpMRDevzf5DFQyLyR9bC8U0XiVWpPdW4gwQ+p
-	NviMP2MNQLF0YdcGOmkzpmRRPCu2jmHrVrzG2T+eGqSVgNF7zet/lzYoz2bDU77KSgrt+7u5/pw
-	ubPiTqExVTsB5u0dauG2iZ+vOVCqUmOs=
-X-Google-Smtp-Source: AGHT+IHVpqU4+ujyGOutKEp4h9mv3/b4cS5iOmG7yJHLu/13swFAoYpCjbFyooohRiAKA12+JGJbuVS7Sm3PZtgF8yQ=
-X-Received: by 2002:a17:906:aad6:b0:b04:2160:f61f with SMTP id
- a640c23a62f3a-b04216100ecmr371386266b.37.1756736695635; Mon, 01 Sep 2025
- 07:24:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205CD248F66;
+	Mon,  1 Sep 2025 14:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756736785; cv=fail; b=c6NJr4QzhU54uxy/LZe7+774jPjk+TIgN/tfwh8zkW1DH5d4C4l1lWAx2126MuB8pOH65ZhPT6whPYzcZU3EEaaFjZHaRhMNiJq3EGI0sOMcy1c5XmjiLAwcyTt+P+JHiIwgLEoYA0kyb8D3AamvqY67NJSdH1WE4bALNPhNJQ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756736785; c=relaxed/simple;
+	bh=lgx/q28Bk0xHabfiWm+HRd1eIUd9USWRcG+cO3DOQrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LOLId5EQdeGn0kWUzjOErq/uwCMHRwJn9KM0nfHnKjBVuucUywCe8mpWHS81DKJEW3SFsNMXR0tI+TGsomHm8K4kQVRcVeT7Z/5hqz481aAIExM00F9OVxGgodPSY5YRs9OFkXnPIXfeiX5Y7uUNmTEqr10UZBrGuCvC6mwJ+kE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ea5Dbp2D; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=sXOyPrMy; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5815g5IV030725;
+	Mon, 1 Sep 2025 14:25:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=3dA2WSYyqPzfn3OJ3V
+	+s0cDdA9lI72wyH7A2RQWfyfM=; b=ea5Dbp2DU06PRC/iq/Be7YmYKKIaqTydo9
+	QgfRnQfDRtTpgNJpNujKtA3dNvfI2xKROsF8aE/hAwP66q4f/kOqFilFD9wzTYXI
+	EXm4+Q4j5LRGLUel+A4KagS8CuYFsElBIB/cq2W2J4iq1Yb2irt/R0hx83Gl1TWx
+	P1B1UfShfYxOCbtKEj4H1QR/BYd0Nut3bmNjtfbk22CU9PeN5/vwA/iECOKfUuvV
+	Cdie7wndUgVg0Mw+j0k9fZKqjFbXOiKPuYj/tZsloIxWRY30hwnwcY7wEkirdyYW
+	zMYO0UxoZh/nRhKKUQ53Bq9YDchHGoYUFF56gVo4tn2Ql1BAoPgw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48ussyjh38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 01 Sep 2025 14:25:16 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 581CQCLW004192;
+	Mon, 1 Sep 2025 14:25:16 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2064.outbound.protection.outlook.com [40.107.237.64])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48uqr867yw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 01 Sep 2025 14:25:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KeGtVJnr1OcnGCHEgzw/8p9vQEfCUuARr/FE7KJhUMIefmPqC32suaz8bdGzv/IYWhrPv1GvRZ7C1ephSgZwGu3oCIyiAo8i/Egj1Jr7SkRclkjsNFSNBu/yiTTTzMAHYOfudYBHyg8+rgY2KGHuik97PjSC6ZJH/I8vFtrEzR4hbCWyqZPh93AqCUBdG6HYFwCz7POr8b85XiOui9+4tUXOjgMD2ecMJXoeQvc/dw0SyfaY7FfRB9GQWQwxhoUlgyJWGrcJRxCHQAyhlQpuEIc3IkVLkfKiVTaBHUrnv82aP47Z5fIp7I9G+e5DdOlJ2B8dDjZbAKWzy3GSAR4Zxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3dA2WSYyqPzfn3OJ3V+s0cDdA9lI72wyH7A2RQWfyfM=;
+ b=mS3/q5vG3+mLWKV/LYbsizzD4ta6NEVa+opO45B0KMGlDNSN4TpbrJBqh8bd3cDQORGHHIN3+R063acPzg37CKeNJFm2bhLgeef2HxKfOAZg3t4jAzXc5/Bl7zmGhtNwSjb7c/uymAOmwiOeAuJZXzhhA9wMdvXJXg6GOz5pa75dWqyRwMzTAoIOat+hG7H22mPfF/tIWmPTby6Bj76GQcXwE9FfZ8Vv0g/icr0/hX6uFnBN43zsBKftTcSAivP8octofcT9WirPyHMtKTQU+Q8PuwndowfHkSVTmJylQ+FK7yH8fWBdAxisS+YKSuPKlK6+yriVazszj/I0OOwzcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3dA2WSYyqPzfn3OJ3V+s0cDdA9lI72wyH7A2RQWfyfM=;
+ b=sXOyPrMymPFqfEhIoVoVJ1fU3TenYAkRQQf/Q7M3YVnRQ9xvac2KRWjoF/XvzmhrbpRBQiQiWQpkiRWJ3+sbVRGCLDkyhgUYfTeaMQxA7gIdCUMIDA0oHZIxkGGkOSl9/r0MYPmI0To1DImZEO63EUFSEi4s25yGBNY1EaqhRWg=
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
+ by SJ0PR10MB5696.namprd10.prod.outlook.com (2603:10b6:a03:3ef::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Mon, 1 Sep
+ 2025 14:25:11 +0000
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582%3]) with mapi id 15.20.9073.026; Mon, 1 Sep 2025
+ 14:25:11 +0000
+Date: Mon, 1 Sep 2025 15:24:54 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com,
+        yuanchu@google.com, willy@infradead.org, hughd@google.com,
+        mhocko@suse.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+        surenb@google.com, vishal.moola@gmail.com, linux@armlinux.org.uk,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+        hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+        weixugc@google.com, baolin.wang@linux.alibaba.com, rientjes@google.com,
+        shakeel.butt@linux.dev, thuth@redhat.com, broonie@kernel.org,
+        osalvador@suse.de, jfalempe@redhat.com, mpe@ellerman.id.au,
+        nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org,
+        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 02/12] mm: constify pagemap related test functions for
+ improved const-correctness
+Message-ID: <26cb47bb-df98-4bda-a101-3c27298e4452@lucifer.local>
+References: <20250901123028.3383461-1-max.kellermann@ionos.com>
+ <20250901123028.3383461-3-max.kellermann@ionos.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901123028.3383461-3-max.kellermann@ionos.com>
+X-ClientProxiedBy: GV3PEPF00002E34.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:158:401::1a) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901133804.38433-1-ziyao@disroot.org> <20250901133804.38433-3-ziyao@disroot.org>
-In-Reply-To: <20250901133804.38433-3-ziyao@disroot.org>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 1 Sep 2025 22:24:49 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5GixGbrAaJS+hch-LAFt+noCJXHhQD0f7_7BjNfiOncQ@mail.gmail.com>
-X-Gm-Features: Ac12FXz8OpLsu9pH_SGFdYvgBRYpYx6xSKmtG_dB8TOlN4Rt3h8nAHUJHowWJKU
-Message-ID: <CAAhV-H5GixGbrAaJS+hch-LAFt+noCJXHhQD0f7_7BjNfiOncQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] gpio: loongson-64bit: Add support for Loongson
- 2K0300 SoC
-To: Yao Zi <ziyao@disroot.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Philipp Zabel <p.zabel@pengutronix.de>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>, 
-	Kexy Biscuit <kexybiscuit@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|SJ0PR10MB5696:EE_
+X-MS-Office365-Filtering-Correlation-Id: 948b47c7-621c-4ba7-faea-08dde9635b81
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?D/FEt0N6lF+BstsZRxPxzhiOWA6vmcz/3IcyDC7EHyvWRT3sA0bxullIfTsc?=
+ =?us-ascii?Q?11MB+Nc/djToETtAXpwwwKmSyHHLYYDY736wij6Bn4bgIvWfWXQqLEZUyWlF?=
+ =?us-ascii?Q?cEsrzCze/NervRpb9qYZR9cdBPCf0Br3//qsPQ6bwSpeG4vriJumUeW8aqPV?=
+ =?us-ascii?Q?/QpGXb1zsLaV9NykqLuEqbGkXJzfeasVSSU/oFEVx13Ri4YIWVBIteOqT0ZV?=
+ =?us-ascii?Q?tBxXukMvZMAAh4jNZx7cN7KMGISG5jsKvqZIc81T+okAAa1/1OCcZklxIaMR?=
+ =?us-ascii?Q?ppMGFTylEUtWdCfIlBl/v/Mzg1A/bytFoC0cnnFOTfi8Jxx9l9+IMQhvoSLs?=
+ =?us-ascii?Q?YRi7/ggJM8T5yTNdKD/kKljx8ujQBbRs1ixIpsWgaeRxtXKW11IkqmUcx5si?=
+ =?us-ascii?Q?aAxRd6GQaTgnqXVvuoJBSL7J1C7s0+k6hGOtcEq5uwrm8ZdGTs6RsvQc5WnE?=
+ =?us-ascii?Q?8E1z6cQpNQlE1Uwb5ACYZu4zfAQ382O7jl/hNM+EU4smjXmt1WchwU95o0QO?=
+ =?us-ascii?Q?PPgjn6vHhMzBdK5rHUaU0rW/NkqD/n4q0hv9RhIL+ilgj1+H1gIYZMIpD5KV?=
+ =?us-ascii?Q?xzpzPwfIvd3K5p1nHYR8Lko1yi/83TbMY5pEYtPgKG0sJU2UJ4lVsN1gwp19?=
+ =?us-ascii?Q?a/lWmoNyYamPDgEvy2FNKQQrlv58JVv9o+8sqhmUgnrND/TDcZUZCUMiRzvr?=
+ =?us-ascii?Q?6+WXiwDhQTBw832oDLqpICeW6e7cQsPalSdZJ+dhubOfpeCd+xeFlKOlPxSU?=
+ =?us-ascii?Q?RRAwg6sZhznse2Nb4yeP2SrsfEYOr3VcqTv4dG85g9U2J97FOUtfRezvGyQD?=
+ =?us-ascii?Q?pMHODFfWx0+blIewyWWc8xegNcwr1CmuRYLlIxtRtY88BZL2T4bTvP5dfeG+?=
+ =?us-ascii?Q?omwwlhMriN9qRgLKFyjSd+B326joYu+D7NSxu9VauM4OLdwT8cNtNmE65aai?=
+ =?us-ascii?Q?fi9wxRFV4wl2i9AqgrlmFd9DFs8s0IGiIn3ei60lcyTzZ+26GpPnWU6MUDPT?=
+ =?us-ascii?Q?95XHoQ2X81W8kLHxlT85y0DecN3tfTzbBtBe/FWPQtpG/uZiR9BHxHeMwsSD?=
+ =?us-ascii?Q?CoCYE4QfswYOqnVWWm0DK6C6axi8iiOloiP5iLw/tQew50SiXhh+EFShAMFu?=
+ =?us-ascii?Q?alNpChAEsJr/wapkxXBH5LdAYq5gDIhBRnujLEGHFbioE9fs1jfv4fvpjYKn?=
+ =?us-ascii?Q?shsaxWL9oLBjVcWfKe/jME0EX/ha4EXaAudcO/asKbpyWpZCD323rsX4rTCM?=
+ =?us-ascii?Q?+BSYqWHwYdfSYMJ1EOVrOixZC7qanpCkGIIfNzYmFqveX+cPoFVc8J/+KmpZ?=
+ =?us-ascii?Q?Z7jVY+dzuXKmq+43u2mWfVC8eBp9Pb/JuCowj8yTGZt7+oOaSZaayC39t6EN?=
+ =?us-ascii?Q?Gfu1fRTvgvDMlzW15oRMDhFYuanxf84SWbXBMblY6+DMYiRZc25XdWUPSDu+?=
+ =?us-ascii?Q?9TLPSIKpcEs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UTZil/9gV5vSMflXtHLoZyaKW+DFKgegvM9qqDGrr1zK2+fQObsFUnS3Kr9S?=
+ =?us-ascii?Q?Hd4cfHg9O+KGdlm1ccoZftK+MemoDuwvpzSHeS9Ft7S6LTnPJIgrxob6J0XV?=
+ =?us-ascii?Q?1HQ1+iX9QQNxEkh16nnRwi7h3GdW3bvHRvsJ+Gr9ikNh2I5hixPFE6vP4Bk8?=
+ =?us-ascii?Q?LRR/3P+5bkQ22WfnPjbWtCaNltmM6CslMlaG1yqEJLdtm7uiReKALmRbEsiD?=
+ =?us-ascii?Q?nr6CpAt+1XNLKzAfvWA9tK1pVpL548eWp4zSQgSFIx2yWGz3Q7GHPKN5ames?=
+ =?us-ascii?Q?5mK/JCMKmnhrVwZkQhUaxQwLDclvrJtRBzDuwtK9tIgJWA1xEaEejnWsPm2+?=
+ =?us-ascii?Q?tSCuWAudmh8ZbTBNc+fbb/OiALR8u8cTmGewCa2QgAZwnHx6jFEy/mORQDQh?=
+ =?us-ascii?Q?koVlOFGO03ic7tVgmmCLetIjo/JioRFN4asDJxeag4/tGXa7x35jObmeRMpU?=
+ =?us-ascii?Q?0fP5RLvzOZAfWeIiXYbV3dLPKnN2WijvVCGI+8Yv9Xu3v22ysGM3FwMtcpRA?=
+ =?us-ascii?Q?09nFGkbIBa3ETzYbnhNSkZ1TGv0ij1v84k6phYSYYhNBHUD4u/pWPnJfSgxV?=
+ =?us-ascii?Q?50HkcdkB4J4pULmnPP7crpLDIAbljwOxwFEcWw/FceAsYvjzjOjjFgKfXV10?=
+ =?us-ascii?Q?J+3PQW0CJZX2EjSMzCeDi8Iow85fRvXxLWCQmtESs5d+7JSbOnEo6E0gcuut?=
+ =?us-ascii?Q?Gz+4GefdBt3117IuwZSgkGx74oBtCT/LhdGrePfmELqZBvUFxAxpL0l5cHxo?=
+ =?us-ascii?Q?A1G9Pz0JR7CMfrgnZ+S9U2HzdRyEDhuKs/eUWPqEAeMHZEGcDiGxj7qGFtUz?=
+ =?us-ascii?Q?VeeRtQh1UbPh6gCXDqLQvUpUDqfCXUMUlU/hZeKpDB/nvakWwmqC9miQ0+Zp?=
+ =?us-ascii?Q?fj9zkYB822vLAhP4yZ+OMFVOZ8OC1LzUVEi36XHWVzvTSl4HkBkIW5Xi46Hw?=
+ =?us-ascii?Q?e+y23qCCmzZS2xEFtTzEd/cZuAM7WcfSEvCJHva27cFxV/7VQlUSbEPCs68j?=
+ =?us-ascii?Q?ea0zml7761Y6WTLVw/fZSNIItm2xHiOLF8Qwk4fLFmOIBo3M3/JoMBzlmJta?=
+ =?us-ascii?Q?4hfMcPR5gMH17DUCGRmtQBzqgc4ddfyuExPw+lDwcm/srDNgqMbyOggCtohu?=
+ =?us-ascii?Q?F35bgsAzKsGEeOdfuauB+0X/NJMUBS6WLpK/K3fP52HqDQwdOaAtNwUZa/Nl?=
+ =?us-ascii?Q?V4Avepj9+6A8dq29upVBxXFS3dcB4yxgsh5vi5m4JS/wgJQ5rgJ8PLyH5ofn?=
+ =?us-ascii?Q?ShH8C8BQPJ6qesfqiHDbNY+EVcqjf4D5903FyL8iGcyXONqt6coskVMibAY8?=
+ =?us-ascii?Q?PdbfgweLdbR0+wgqLkSWB1/ib4AREoQlqFrgSdKG0bpkEJPPyQCmDbe5qDf0?=
+ =?us-ascii?Q?nEAn8LaP1iRVKE//K++KPef9jZQIviUd77OD5BYBMSipDL8FaZt0tOHHX7XL?=
+ =?us-ascii?Q?xHPLiJioyRxOPV0w6NiynAh5HFRAtsDakhJpaVFVs7iRvDcpdRpgRImnZ8O4?=
+ =?us-ascii?Q?yJ6NMTZC2m6I0GLnbsRrTZsE2qGP4WyonRUudVhHREzlkQ8sXMd+j3C6Q97u?=
+ =?us-ascii?Q?LIF715Ut1ko9h/UvQBLDro85kmSkK0mthc+ZUpto4K6DoMZYHHizipQ/iuGD?=
+ =?us-ascii?Q?Zg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	sO9o5kP7yWduysbCW5suluuGY32cY72QYmjHzI0wh3AqUO0gRtsPJ36/UiNJRV4NC7j5AtjhhS/HiwH9+n0oDeJUebVcvYCoJQeinM6rKwdDsMC2SS0RC6VzdAzeLMpV6+s+ekSeyGVgD8tnU/ZQj2agV1UWDTJLg1Lg4AbIfoXp4kRu4YeETNxEEbRjLvupzxNA7cphffgKI1SPvH3IUbQJIcHCTW2nVyu1IzYSQjcVo8S3TvEZLLBsv83kHwBmcpd5XC1NOKQUv6IfqSahheiMJbjq8TdUaofGwE09qz1E9HER0Uv37T6CKqiGiXNvN1PU/Z69kpnVal1f9dx/ojKXwZ/uLTGarD5L7rxqhB2RTt9w7+zW0JEjgUObLrhcHOMHcT4f8JocJV8KER1f1WAZHxK9gwP+QbvLLergM1JPUjilQeVKjl3yx2i7AP4ha2INz0U7ysQ+axvPLMXlQecTiz2RuWGPvbEq3TTH6p04Uz1QZgbS5d4dLUL9mYsOBAtzHwnOsl8qfj3T27bJUmVTwyPzYvDPR5kM0gb4fDTq9c2Ejewm9Du794GMe4/46pGSpoUwx4gMrX4l3QvwzA6NpprOQNa8ahNNFXSIxV0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 948b47c7-621c-4ba7-faea-08dde9635b81
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 14:25:11.7025
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fMBMh1vwDo9k+MxbRhnhXvCPoAE5Lf0Xa1Af5+rsYBLRfp+4UsNtbE/j3mHB3+YFvVCKtrmCxbCkXZ4qAor+6P25/MP5G5m0NDddv3nJCZ4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5696
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-01_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509010152
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfXyMT7WqpvI9+H
+ g5iC9ImD9MgjURFntbQmQFaRmLPd9YvWJhQw7U0cXPkmVHdzJeh6b+D8APUz7K2h7HxUAMWKFCp
+ Pbfa3QIh24gRcGv1zXMuax9/z/AKBFOE3OWrExZKH2mXSKFJGWCccBNTLTK0/4zt4vXa59FDmqY
+ 54HtnYWFbJt40V9NSTgVwBXbwRKHZYgkEahroOkKCOVqNU5Sj9WcasZiGClavrvmveMeqkQrRmS
+ +oZKroP/9o8yP+F2VoapGhkyE98WirEz5u+6ic3IkUfdbITmi8s3G5dr+Cyg7c/bhTFCEQZTkwr
+ YN5ArEPYkzGR0V6+2DrsPaPLVVFrEylB8pZzWKJYDI1zP9TiAg9OEDAJqtQgF4RMiObG6nMe9Cd
+ WbCGcxKW
+X-Authority-Analysis: v=2.4 cv=X/9SKHTe c=1 sm=1 tr=0 ts=68b5accc b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=UgJECxHJAAAA:8 a=pGLkceISAAAA:8
+ a=43YwVfZmN8WL7PSlnvYA:9 a=CjuIK1q_8ugA:10 a=-El7cUbtino8hM1DCn8D:22
+X-Proofpoint-ORIG-GUID: 9ZDqQ-0k9NQAdMPhUycYiHhZLXyKYgJV
+X-Proofpoint-GUID: 9ZDqQ-0k9NQAdMPhUycYiHhZLXyKYgJV
 
-Hi, Yao,
-
-On Mon, Sep 1, 2025 at 9:38=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
+On Mon, Sep 01, 2025 at 02:30:18PM +0200, Max Kellermann wrote:
+> We select certain test functions which either invoke each other,
+> functions that are already const-ified, or no further functions.
 >
-> This controller's input and output logic is similar to previous
-> generations of SoCs. Additionally, it's capable of interrupt masking,
-> and could be configured to detect levels and edges, and is supplied with
-> a distinct reset signal.
+> It is therefore relatively trivial to const-ify them, which
+> provides a basis for further const-ification further up the call
+> stack.
 >
-> The interrupt functionality is implemented through an irqchip, whose
-> operations are written with previous generation SoCs in mind and could
-> be reused. Since all Loongson SoCs with similar interrupt capability
-> (2K1500, 2K2000) support byte-control mode, these operations are for
-> byte-control mode only for simplicity.
-Modify the name style the same as in Patch-1.
-
->
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 > ---
->  drivers/gpio/Kconfig               |   1 +
->  drivers/gpio/gpio-loongson-64bit.c | 191 +++++++++++++++++++++++++++--
->  2 files changed, 185 insertions(+), 7 deletions(-)
+>  include/linux/pagemap.h | 57 +++++++++++++++++++++--------------------
+>  1 file changed, 29 insertions(+), 28 deletions(-)
 >
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index a437fe652dbc..c55173643eb4 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -437,6 +437,7 @@ config GPIO_LOONGSON_64BIT
->         depends on LOONGARCH || COMPILE_TEST
->         depends on OF_GPIO
->         select GPIO_GENERIC
-> +       select GPIOLIB_IRQCHIP
->         help
->           Say yes here to support the GPIO functionality of a number of
->           Loongson series of chips. The Loongson GPIO controller supports
-> diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loong=
-son-64bit.c
-> index 482e64ba9b42..7fb712e101ce 100644
-> --- a/drivers/gpio/gpio-loongson-64bit.c
-> +++ b/drivers/gpio/gpio-loongson-64bit.c
-> @@ -7,6 +7,8 @@
->
->  #include <linux/kernel.h>
->  #include <linux/init.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdesc.h>
->  #include <linux/module.h>
->  #include <linux/spinlock.h>
->  #include <linux/err.h>
-> @@ -14,6 +16,7 @@
->  #include <linux/gpio/generic.h>
->  #include <linux/platform_device.h>
->  #include <linux/bitops.h>
-> +#include <linux/reset.h>
->  #include <asm/types.h>
->
->  enum loongson_gpio_mode {
-> @@ -28,6 +31,14 @@ struct loongson_gpio_chip_data {
->         unsigned int            out_offset;
->         unsigned int            in_offset;
->         unsigned int            inten_offset;
-> +       unsigned int            intpol_offset;
-> +       unsigned int            intedge_offset;
-> +       unsigned int            intclr_offset;
-> +       unsigned int            intsts_offset;
-> +       unsigned int            intdual_offset;
-> +       unsigned int            intr_num;
-> +       irq_flow_handler_t      irq_handler;
-> +       const struct irq_chip   *girqchip;
->  };
->
->  struct loongson_gpio_chip {
-> @@ -137,7 +148,140 @@ static int loongson_gpio_to_irq(struct gpio_chip *c=
-hip, unsigned int offset)
->         return platform_get_irq(pdev, offset);
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index a3e16d74792f..1d35f9e1416e 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -140,7 +140,7 @@ static inline int inode_drain_writes(struct inode *inode)
+>  	return filemap_write_and_wait(inode->i_mapping);
 >  }
 >
-> -static int loongson_gpio_init(struct device *dev, struct loongson_gpio_c=
-hip *lgpio,
-> +static void loongson_gpio_irq_ack(struct irq_data *data)
-> +{
-> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
-> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
-> +
-> +       writeb(0x1, lgpio->reg_base + lgpio->chip_data->intclr_offset + h=
-wirq);
-> +}
-> +
-> +static void loongson_gpio_irq_mask(struct irq_data *data)
-> +{
-> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
-> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
-> +
-> +       writeb(0x0, lgpio->reg_base + lgpio->chip_data->inten_offset + hw=
-irq);
-> +}
-> +
-> +static void loongson_gpio_irq_unmask(struct irq_data *data)
-> +{
-> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
-> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
-> +
-> +       writeb(0x1, lgpio->reg_base + lgpio->chip_data->inten_offset + hw=
-irq);
-> +}
-> +
-> +static int loongson_gpio_irq_set_type(struct irq_data *data, unsigned in=
-t type)
-> +{
-> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
-> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
-> +       u8 pol =3D 0, edge =3D 0, dual =3D 0;
-> +
-> +       if ((type & IRQ_TYPE_SENSE_MASK) =3D=3D IRQ_TYPE_EDGE_BOTH) {
-> +               edge =3D 1;
-> +               dual =3D 1;
-> +               irq_set_handler_locked(data, handle_edge_irq);
-> +       } else {
-> +               switch (type) {
-> +               case IRQ_TYPE_LEVEL_HIGH:
-> +                       pol =3D 1;
-> +                       fallthrough;
-> +               case IRQ_TYPE_LEVEL_LOW:
-> +                       irq_set_handler_locked(data, handle_level_irq);
-> +                       break;
-> +
-> +               case IRQ_TYPE_EDGE_RISING:
-> +                       pol =3D 1;
-> +                       fallthrough;
-> +               case IRQ_TYPE_EDGE_FALLING:
-> +                       edge =3D 1;
-> +                       irq_set_handler_locked(data, handle_edge_irq);
-> +                       break;
-> +
-> +               default:
-> +                       return -EINVAL;
-> +               };
-> +       }
-> +
-> +       writeb(pol, lgpio->reg_base + lgpio->chip_data->intpol_offset + h=
-wirq);
-> +       writeb(edge, lgpio->reg_base + lgpio->chip_data->intedge_offset +=
- hwirq);
-> +       writeb(dual, lgpio->reg_base + lgpio->chip_data->intdual_offset +=
- hwirq);
-> +
-> +       return 0;
-> +}
-> +
-> +static void loongson_gpio_ls2k0300_irq_handler(struct irq_desc *desc)
-> +{
-> +       struct loongson_gpio_chip *lgpio =3D irq_desc_get_handler_data(de=
-sc);
-> +       struct irq_chip *girqchip =3D irq_desc_get_chip(desc);
-> +       int i;
-> +
-> +       chained_irq_enter(girqchip, desc);
-> +
-> +       for (i =3D 0; i < lgpio->chip.gc.ngpio; i++) {
-> +               /*
-> +                * For the GPIO controller of 2K0300, interrupts status b=
-its
-s/2K0300/LS2K0300/g.
+> -static inline bool mapping_empty(struct address_space *mapping)
+> +static inline bool mapping_empty(const struct address_space *const mapping)
 
-> +                * may be wrongly set even if the corresponding interrupt=
- is
-> +                * disabled. Thus interrupt enable bits are checked along=
- with
-> +                * status bits to detect interrupts reliably.
-> +                */
-> +               if (readb(lgpio->reg_base + lgpio->chip_data->intsts_offs=
-et + i) &&
-> +                   readb(lgpio->reg_base + lgpio->chip_data->inten_offse=
-t + i))
-> +                       generic_handle_domain_irq(lgpio->chip.gc.irq.doma=
-in, i);
-> +       }
-> +
-> +       chained_irq_exit(girqchip, desc);
-> +}
-> +
-> +static const struct irq_chip loongson_gpio_ls2k0300_irqchip =3D {
-> +       .irq_ack        =3D loongson_gpio_irq_ack,
-> +       .irq_mask       =3D loongson_gpio_irq_mask,
-> +       .irq_unmask     =3D loongson_gpio_irq_unmask,
-> +       .irq_set_type   =3D loongson_gpio_irq_set_type,
-> +       .flags          =3D IRQCHIP_IMMUTABLE | IRQCHIP_SKIP_SET_WAKE,
-> +       GPIOCHIP_IRQ_RESOURCE_HELPERS,
-> +};
-> +
-> +static int loongson_gpio_init_irqchip(struct platform_device *pdev,
-> +                                     struct loongson_gpio_chip *lgpio)
-> +{
-> +       const struct loongson_gpio_chip_data *data =3D lgpio->chip_data;
-> +       struct gpio_chip *chip =3D &lgpio->chip.gc;
-> +       int i;
-> +
-> +       chip->irq.default_type =3D IRQ_TYPE_NONE;
-> +       chip->irq.handler =3D handle_bad_irq;
-> +       chip->irq.parent_handler =3D data->irq_handler;
-> +       chip->irq.parent_handler_data =3D lgpio;
-> +       gpio_irq_chip_set_chip(&chip->irq, data->girqchip);
-> +
-> +       chip->irq.num_parents =3D data->intr_num;
-> +       chip->irq.parents =3D devm_kcalloc(&pdev->dev, data->intr_num,
-> +                                        sizeof(*chip->irq.parents), GFP_=
-KERNEL);
-> +       if (!chip->parent)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < data->intr_num; i++) {
-> +               chip->irq.parents[i] =3D platform_get_irq(pdev, i);
-> +               if (chip->irq.parents[i] < 0)
-> +                       return dev_err_probe(&pdev->dev, chip->irq.parent=
-s[i],
-> +                                            "failed to get IRQ %d\n", i)=
-;
-> +       }
-> +
-> +       for (i =3D 0; i < data->intr_num; i++) {
-> +               writeb(0x0, lgpio->reg_base + data->inten_offset + i);
-> +               writeb(0x1, lgpio->reg_base + data->intclr_offset + i);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int loongson_gpio_init(struct platform_device *pdev, struct loong=
-son_gpio_chip *lgpio,
->                               void __iomem *reg_base)
+Generally - I'm not sure how useful this 'double' const-ification is.
+
+const struct <type> *const <val>
+  ^                    ^
+  |                    |
+  |                    |
+  1                    2
+
+Means:
+
+1. (most useful) Const pointer (const <type> *<param>) means that the dereffed
+   value is const, so *<param> = <val> or <param>-><field> = <val> are prohibited.
+
+2. (less useful) We can't modify the actual pointer value either, so
+   e.g. <param> = <new param> is prohibited.
+
+I mean it's kinda nice to guarantee that this won't happen but I'm not sure if
+we're getting much value for the noise?
+
+We also never mention that we're doing this in any commit message or the cover
+letter.
+
 >  {
->         struct gpio_generic_chip_config config;
-> @@ -146,7 +290,7 @@ static int loongson_gpio_init(struct device *dev, str=
-uct loongson_gpio_chip *lgp
->         lgpio->reg_base =3D reg_base;
->         if (lgpio->chip_data->mode =3D=3D BIT_CTRL_MODE) {
->                 config =3D (typeof(config)){
-> -                       .dev =3D dev,
-> +                       .dev =3D &pdev->dev,
->                         .sz =3D 8,
->                         .dat =3D lgpio->reg_base + lgpio->chip_data->in_o=
-ffset,
->                         .set =3D lgpio->reg_base + lgpio->chip_data->out_=
-offset,
-> @@ -155,7 +299,7 @@ static int loongson_gpio_init(struct device *dev, str=
-uct loongson_gpio_chip *lgp
+>  	return xa_empty(&mapping->i_pages);
+>  }
+> @@ -166,7 +166,7 @@ static inline bool mapping_empty(struct address_space *mapping)
+>   * refcount and the referenced bit, which will be elevated or set in
+>   * the process of adding new cache pages to an inode.
+>   */
+> -static inline bool mapping_shrinkable(struct address_space *mapping)
+> +static inline bool mapping_shrinkable(const struct address_space *const mapping)
+>  {
+>  	void *head;
 >
->                 ret =3D gpio_generic_chip_init(&lgpio->chip, &config);
->                 if (ret) {
-> -                       dev_err(dev, "unable to init generic GPIO\n");
-> +                       dev_err(&pdev->dev, "unable to init generic GPIO\=
-n");
->                         return ret;
->                 }
->         } else {
-> @@ -164,16 +308,22 @@ static int loongson_gpio_init(struct device *dev, s=
-truct loongson_gpio_chip *lgp
->                 lgpio->chip.gc.get_direction =3D loongson_gpio_get_direct=
-ion;
->                 lgpio->chip.gc.direction_output =3D loongson_gpio_directi=
-on_output;
->                 lgpio->chip.gc.set =3D loongson_gpio_set;
-> -               lgpio->chip.gc.parent =3D dev;
-> +               lgpio->chip.gc.parent =3D &pdev->dev;
->                 spin_lock_init(&lgpio->lock);
->         }
->
->         lgpio->chip.gc.label =3D lgpio->chip_data->label;
->         lgpio->chip.gc.can_sleep =3D false;
-> -       if (lgpio->chip_data->inten_offset)
-> +       if (lgpio->chip_data->girqchip) {
-> +               ret =3D loongson_gpio_init_irqchip(pdev, lgpio);
-> +               if (ret)
-> +                       return dev_err_probe(&pdev->dev, ret,
-> +                                            "failed to initialize irqchi=
-p\n");
-One line is enough.
-
-> +       } else if (lgpio->chip_data->inten_offset) {
->                 lgpio->chip.gc.to_irq =3D loongson_gpio_to_irq;
-> +       }
->
-> -       return devm_gpiochip_add_data(dev, &lgpio->chip.gc, lgpio);
-> +       return devm_gpiochip_add_data(&pdev->dev, &lgpio->chip.gc, lgpio)=
-;
+> @@ -267,7 +267,7 @@ static inline void mapping_clear_unevictable(struct address_space *mapping)
+>  	clear_bit(AS_UNEVICTABLE, &mapping->flags);
 >  }
 >
->  static int loongson_gpio_probe(struct platform_device *pdev)
-> @@ -181,6 +331,7 @@ static int loongson_gpio_probe(struct platform_device=
- *pdev)
->         void __iomem *reg_base;
->         struct loongson_gpio_chip *lgpio;
->         struct device *dev =3D &pdev->dev;
-> +       struct reset_control *rst;
->
->         lgpio =3D devm_kzalloc(dev, sizeof(*lgpio), GFP_KERNEL);
->         if (!lgpio)
-> @@ -192,7 +343,12 @@ static int loongson_gpio_probe(struct platform_devic=
-e *pdev)
->         if (IS_ERR(reg_base))
->                 return PTR_ERR(reg_base);
->
-> -       return loongson_gpio_init(dev, lgpio, reg_base);
-> +       rst =3D devm_reset_control_get_optional_exclusive_deasserted(&pde=
-v->dev, NULL);
-> +       if (IS_ERR(rst))
-> +               return dev_err_probe(&pdev->dev, PTR_ERR(rst),
-> +                                    "failed to get reset control\n");
-One line is enough.
-
-With above changes,
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
-
-> +
-> +       return loongson_gpio_init(pdev, lgpio, reg_base);
+> -static inline bool mapping_unevictable(struct address_space *mapping)
+> +static inline bool mapping_unevictable(const struct address_space *const mapping)
+>  {
+>  	return mapping && test_bit(AS_UNEVICTABLE, &mapping->flags);
+>  }
+> @@ -277,7 +277,7 @@ static inline void mapping_set_exiting(struct address_space *mapping)
+>  	set_bit(AS_EXITING, &mapping->flags);
 >  }
 >
->  static const struct loongson_gpio_chip_data loongson_gpio_ls2k_data =3D =
-{
-> @@ -204,6 +360,23 @@ static const struct loongson_gpio_chip_data loongson=
-_gpio_ls2k_data =3D {
->         .inten_offset =3D 0x30,
->  };
+> -static inline int mapping_exiting(struct address_space *mapping)
+> +static inline int mapping_exiting(const struct address_space *const mapping)
+>  {
+>  	return test_bit(AS_EXITING, &mapping->flags);
+>  }
+> @@ -287,7 +287,7 @@ static inline void mapping_set_no_writeback_tags(struct address_space *mapping)
+>  	set_bit(AS_NO_WRITEBACK_TAGS, &mapping->flags);
+>  }
 >
-> +static const struct loongson_gpio_chip_data loongson_gpio_ls2k0300_data =
-=3D {
-> +       .label =3D "ls2k0300_gpio",
-> +       .mode =3D BYTE_CTRL_MODE,
-> +       .conf_offset =3D 0x800,
-> +       .in_offset =3D 0xa00,
-> +       .out_offset =3D 0x900,
-> +       .inten_offset =3D 0xb00,
-> +       .intpol_offset =3D 0xc00,
-> +       .intedge_offset =3D 0xd00,
-> +       .intclr_offset =3D 0xe00,
-> +       .intsts_offset =3D 0xf00,
-> +       .intdual_offset =3D 0xf80,
-> +       .intr_num =3D 7,
-> +       .irq_handler =3D loongson_gpio_ls2k0300_irq_handler,
-> +       .girqchip =3D &loongson_gpio_ls2k0300_irqchip,
-> +};
-> +
->  static const struct loongson_gpio_chip_data loongson_gpio_ls2k0500_data0=
- =3D {
->         .label =3D "ls2k0500_gpio",
->         .mode =3D BIT_CTRL_MODE,
-> @@ -300,6 +473,10 @@ static const struct of_device_id loongson_gpio_of_ma=
-tch[] =3D {
->                 .compatible =3D "loongson,ls2k-gpio",
->                 .data =3D &loongson_gpio_ls2k_data,
->         },
-> +       {
-> +               .compatible =3D "loongson,ls2k0300-gpio",
-> +               .data =3D &loongson_gpio_ls2k0300_data,
-> +       },
->         {
->                 .compatible =3D "loongson,ls2k0500-gpio0",
->                 .data =3D &loongson_gpio_ls2k0500_data0,
+> -static inline int mapping_use_writeback_tags(struct address_space *mapping)
+> +static inline int mapping_use_writeback_tags(const struct address_space *const mapping)
+>  {
+>  	return !test_bit(AS_NO_WRITEBACK_TAGS, &mapping->flags);
+>  }
+> @@ -333,7 +333,7 @@ static inline void mapping_set_inaccessible(struct address_space *mapping)
+>  	set_bit(AS_INACCESSIBLE, &mapping->flags);
+>  }
+>
+> -static inline bool mapping_inaccessible(struct address_space *mapping)
+> +static inline bool mapping_inaccessible(const struct address_space *const mapping)
+>  {
+>  	return test_bit(AS_INACCESSIBLE, &mapping->flags);
+>  }
+> @@ -343,18 +343,18 @@ static inline void mapping_set_writeback_may_deadlock_on_reclaim(struct address_
+>  	set_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
+>  }
+>
+> -static inline bool mapping_writeback_may_deadlock_on_reclaim(struct address_space *mapping)
+> +static inline bool mapping_writeback_may_deadlock_on_reclaim(const struct address_space *const mapping)
+>  {
+>  	return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
+>  }
+>
+> -static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+> +static inline gfp_t mapping_gfp_mask(const struct address_space *const mapping)
+>  {
+>  	return mapping->gfp_mask;
+>  }
+>
+>  /* Restricts the given gfp_mask to what the mapping allows. */
+> -static inline gfp_t mapping_gfp_constraint(struct address_space *mapping,
+> +static inline gfp_t mapping_gfp_constraint(const struct address_space *mapping,
+>  		gfp_t gfp_mask)
+>  {
+>  	return mapping_gfp_mask(mapping) & gfp_mask;
+> @@ -477,13 +477,13 @@ mapping_min_folio_order(const struct address_space *mapping)
+>  }
+>
+>  static inline unsigned long
+> -mapping_min_folio_nrpages(struct address_space *mapping)
+> +mapping_min_folio_nrpages(const struct address_space *const mapping)
+>  {
+>  	return 1UL << mapping_min_folio_order(mapping);
+>  }
+>
+>  static inline unsigned long
+> -mapping_min_folio_nrbytes(struct address_space *mapping)
+> +mapping_min_folio_nrbytes(const struct address_space *const mapping)
+>  {
+>  	return mapping_min_folio_nrpages(mapping) << PAGE_SHIFT;
+>  }
+> @@ -497,7 +497,7 @@ mapping_min_folio_nrbytes(struct address_space *mapping)
+>   * new folio to the page cache and need to know what index to give it,
+>   * call this function.
+>   */
+> -static inline pgoff_t mapping_align_index(struct address_space *mapping,
+> +static inline pgoff_t mapping_align_index(const struct address_space *const mapping,
+>  					  pgoff_t index)
+>  {
+>  	return round_down(index, mapping_min_folio_nrpages(mapping));
+> @@ -507,7 +507,7 @@ static inline pgoff_t mapping_align_index(struct address_space *mapping,
+>   * Large folio support currently depends on THP.  These dependencies are
+>   * being worked on but are not yet fixed.
+>   */
+> -static inline bool mapping_large_folio_support(struct address_space *mapping)
+> +static inline bool mapping_large_folio_support(const struct address_space *mapping)
+>  {
+>  	/* AS_FOLIO_ORDER is only reasonable for pagecache folios */
+>  	VM_WARN_ONCE((unsigned long)mapping & FOLIO_MAPPING_ANON,
+> @@ -522,7 +522,7 @@ static inline size_t mapping_max_folio_size(const struct address_space *mapping)
+>  	return PAGE_SIZE << mapping_max_folio_order(mapping);
+>  }
+>
+> -static inline int filemap_nr_thps(struct address_space *mapping)
+> +static inline int filemap_nr_thps(const struct address_space *const mapping)
+>  {
+>  #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+>  	return atomic_read(&mapping->nr_thps);
+> @@ -936,7 +936,7 @@ static inline struct page *grab_cache_page_nowait(struct address_space *mapping,
+>   *
+>   * Return: The index of the folio which follows this folio in the file.
+>   */
+> -static inline pgoff_t folio_next_index(struct folio *folio)
+> +static inline pgoff_t folio_next_index(const struct folio *const folio)
+>  {
+>  	return folio->index + folio_nr_pages(folio);
+>  }
+> @@ -965,7 +965,7 @@ static inline struct page *folio_file_page(struct folio *folio, pgoff_t index)
+>   * e.g., shmem did not move this folio to the swap cache.
+>   * Return: true or false.
+>   */
+> -static inline bool folio_contains(struct folio *folio, pgoff_t index)
+> +static inline bool folio_contains(const struct folio *const folio, pgoff_t index)
+>  {
+>  	VM_WARN_ON_ONCE_FOLIO(folio_test_swapcache(folio), folio);
+>  	return index - folio->index < folio_nr_pages(folio);
+> @@ -1042,13 +1042,13 @@ static inline loff_t page_offset(struct page *page)
+>  /*
+>   * Get the offset in PAGE_SIZE (even for hugetlb folios).
+>   */
+> -static inline pgoff_t folio_pgoff(struct folio *folio)
+> +static inline pgoff_t folio_pgoff(const struct folio *const folio)
+>  {
+>  	return folio->index;
+>  }
+>
+> -static inline pgoff_t linear_page_index(struct vm_area_struct *vma,
+> -					unsigned long address)
+> +static inline pgoff_t linear_page_index(const struct vm_area_struct *const vma,
+> +					const unsigned long address)
+>  {
+>  	pgoff_t pgoff;
+>  	pgoff = (address - vma->vm_start) >> PAGE_SHIFT;
+> @@ -1468,7 +1468,7 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
+>   * readahead_pos - The byte offset into the file of this readahead request.
+>   * @rac: The readahead request.
+>   */
+> -static inline loff_t readahead_pos(struct readahead_control *rac)
+> +static inline loff_t readahead_pos(const struct readahead_control *const rac)
+>  {
+>  	return (loff_t)rac->_index * PAGE_SIZE;
+>  }
+> @@ -1477,7 +1477,7 @@ static inline loff_t readahead_pos(struct readahead_control *rac)
+>   * readahead_length - The number of bytes in this readahead request.
+>   * @rac: The readahead request.
+>   */
+> -static inline size_t readahead_length(struct readahead_control *rac)
+> +static inline size_t readahead_length(const struct readahead_control *const rac)
+>  {
+>  	return rac->_nr_pages * PAGE_SIZE;
+>  }
+> @@ -1486,7 +1486,7 @@ static inline size_t readahead_length(struct readahead_control *rac)
+>   * readahead_index - The index of the first page in this readahead request.
+>   * @rac: The readahead request.
+>   */
+> -static inline pgoff_t readahead_index(struct readahead_control *rac)
+> +static inline pgoff_t readahead_index(const struct readahead_control *const rac)
+>  {
+>  	return rac->_index;
+>  }
+> @@ -1495,7 +1495,7 @@ static inline pgoff_t readahead_index(struct readahead_control *rac)
+>   * readahead_count - The number of pages in this readahead request.
+>   * @rac: The readahead request.
+>   */
+> -static inline unsigned int readahead_count(struct readahead_control *rac)
+> +static inline unsigned int readahead_count(const struct readahead_control *const rac)
+>  {
+>  	return rac->_nr_pages;
+>  }
+> @@ -1504,12 +1504,12 @@ static inline unsigned int readahead_count(struct readahead_control *rac)
+>   * readahead_batch_length - The number of bytes in the current batch.
+>   * @rac: The readahead request.
+>   */
+> -static inline size_t readahead_batch_length(struct readahead_control *rac)
+> +static inline size_t readahead_batch_length(const struct readahead_control *const rac)
+>  {
+>  	return rac->_batch_count * PAGE_SIZE;
+>  }
+>
+> -static inline unsigned long dir_pages(struct inode *inode)
+> +static inline unsigned long dir_pages(const struct inode *const inode)
+>  {
+>  	return (unsigned long)(inode->i_size + PAGE_SIZE - 1) >>
+>  			       PAGE_SHIFT;
+> @@ -1523,8 +1523,8 @@ static inline unsigned long dir_pages(struct inode *inode)
+>   * Return: the number of bytes in the folio up to EOF,
+>   * or -EFAULT if the folio was truncated.
+>   */
+> -static inline ssize_t folio_mkwrite_check_truncate(struct folio *folio,
+> -					      struct inode *inode)
+> +static inline ssize_t folio_mkwrite_check_truncate(const struct folio *const folio,
+> +						   const struct inode *const inode)
+>  {
+>  	loff_t size = i_size_read(inode);
+>  	pgoff_t index = size >> PAGE_SHIFT;
+> @@ -1555,7 +1555,8 @@ static inline ssize_t folio_mkwrite_check_truncate(struct folio *folio,
+>   * Return: The number of filesystem blocks covered by this folio.
+>   */
+>  static inline
+> -unsigned int i_blocks_per_folio(struct inode *inode, struct folio *folio)
+> +unsigned int i_blocks_per_folio(const struct inode *const inode,
+> +				const struct folio *const folio)
+>  {
+>  	return folio_size(folio) >> inode->i_blkbits;
+>  }
 > --
-> 2.50.1
+> 2.47.2
 >
 
