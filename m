@@ -1,167 +1,130 @@
-Return-Path: <linux-kernel+bounces-794570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08329B3E377
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423A0B3E368
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DFE8171B45
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05C9A1887CB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D842561AF;
-	Mon,  1 Sep 2025 12:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F70322775;
+	Mon,  1 Sep 2025 12:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qW3KDGAw"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HPc8FlCu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F2F14A4F0
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2213A2586FE;
+	Mon,  1 Sep 2025 12:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756730403; cv=none; b=DQmdlt3keRco1v1Xx3fruZnEiZYRI5etXPOI7ykCYx+ljiT75CkwRLEDXEJwXgjSWNdRlorQb///rODtCDE1wwq3kbXoWpTeUgNARUDKuWz2+MIYxVxv1/HAXwWUVXuWLwGB+o8fR8Qn0otbKnS0us0019a+028xNu9r1n204Ts=
+	t=1756730422; cv=none; b=WQL9WI2rFybxMNbSqpHX124fVKGviVMscuOGxNUMz+T1nf2Qz3uzSmJAYyMvpmWZ+Ba6EHvubC8QWls/BKEO/v5hySO6y0guBbzVIXjVjfj7ST815RR6f+jN/rqyAwaVFBr+kSo0vt8kEqSj2+QtcuqBvDIwGosAtXbNrDIzge0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756730403; c=relaxed/simple;
-	bh=YU9zzwUAqqIqnW5kcV44u9Y8/Xl63sX0Ykd+8E4OQBU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eg+54RX9c/d7xJbRvW5oAOr2UhPhc76CYWEtfs52+cXVW98OByiTus/b9uUW9yHN4vOD0Zlm3VfyqdhXAhNnI3291ACh7zX2JyMNeB1uoGDMoJJGUYbi/vDS0QBt0F7fGloxGWoXkD6vIB6PC4Cfgj57lPAUXImxlaRKv8Y02XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qW3KDGAw; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id DD41F1A0A08;
-	Mon,  1 Sep 2025 12:39:58 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B6DCB60699;
-	Mon,  1 Sep 2025 12:39:58 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2582A1C22C8BB;
-	Mon,  1 Sep 2025 14:39:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756730398; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=hjSaWwNhUdo85L2FwvDbHX0Dn1OV+iWxON47HA30DAg=;
-	b=qW3KDGAwEBP+3rUrRyGUnSkw+Shiu1ezwLwgDAGu7hIapG7oUje42O0AEYYZehBKhjyzH8
-	+A80Ho75wc7DHUsJ+Cqs3/EQsRlKyB4gsZETw2LGyH1hfbbGPdhClvd0iZSBGAI9Oojilj
-	3sOhVdRRBG3141TlNwp7jC8WfxD9o9aD1ESTo/wY/N6c0yH9GQ8++a5qIuFzOcLAGyv7C1
-	cUB9K2A2TdEnbjufdbOwX9g/X85bP/9IhVR6k/1fyipwoScCsfc9fuy7IKejQ5XlfJjMAI
-	LnG63rs/MNym10s6Dqk15//zJofIcImQOndalGKOyAd8uo78uwtt5WWejx9OCQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: core: always verify OOB offset in mtd_check_oob_ops()
-In-Reply-To: <20250831-mtd-validate-ooboffs-v1-1-d3fdce7a8698@gmail.com>
-	(Gabor Juhos's message of "Sun, 31 Aug 2025 16:40:10 +0200")
-References: <20250831-mtd-validate-ooboffs-v1-1-d3fdce7a8698@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Mon, 01 Sep 2025 14:39:51 +0200
-Message-ID: <874itmpcrs.fsf@bootlin.com>
+	s=arc-20240116; t=1756730422; c=relaxed/simple;
+	bh=iHVwYYDGvjOtI0TQC7+2tMUE3vkDRGUDM0rFnrg98KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xkz1sImslogPN6DPtQ9s06F5WKpCMtA2LyiVxY4Y5NWW/64/Eh2mO9+xAyzuKRMCZdR638MTtqyeZJ+tJ6Jv+YZ3JhZ33pZXKdnWGiw4r6r/JdgYYQX12DX61y0UMwgpWAoSxBL9I7hm/sF4QHfGdO9RcdYg1TroBT+v87KEFBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HPc8FlCu; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756730422; x=1788266422;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iHVwYYDGvjOtI0TQC7+2tMUE3vkDRGUDM0rFnrg98KU=;
+  b=HPc8FlCuOqo+f2KMUC31VD4STyczxGc+FCJfbhORocjnBeveV9pcSgFR
+   g3cYn9wAZTBs5b2vuAek32S4ZGpJfIEASkr9JKjFeD99xDX6Qw9z9qAvg
+   tSy5NEa2EiwnIEMxHgM4oq7WGX6Bs03SXlygZYvdYyhznPGJ+LLEZH2nb
+   0DKIz9PtnwcSdQqsFnRu0dvg75pR7C+o1m2uUdYTonWrxolUipV1jU7dK
+   GAkAYJkCtFp1KMqD+pYgjWJ8MOorALw/tuBOpBINfbRQHbb4SduG9idqC
+   AQw+a/S/PZ4SA/TPCqxz1D9r/3pxj2mVBSO6YoDlG1VdceWF6kkmmIsFM
+   A==;
+X-CSE-ConnectionGUID: Vxk8G3yNSb2QvvOc8N7Y+g==
+X-CSE-MsgGUID: icEhCTHhQqepziAwoBrfTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59053434"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59053434"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:40:21 -0700
+X-CSE-ConnectionGUID: jwgKaUbIT2Wk1SrJkXlkUA==
+X-CSE-MsgGUID: +Rn7N2NaRya37zlyjY8TKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
+   d="scan'208";a="170566630"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:40:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ut3pW-0000000APgo-1Cv6;
+	Mon, 01 Sep 2025 15:40:14 +0300
+Date: Mon, 1 Sep 2025 15:40:13 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>,
+	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+	jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org
+Subject: Re: [PATCH v2] staging: iio: adc: ad7816: add mutex to serialize
+ SPI/GPIO operations
+Message-ID: <aLWULUIcYEz3N-Rx@smile.fi.intel.com>
+References: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
+ <aLV0LBxD0KIHPSmo@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLV0LBxD0KIHPSmo@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Gabor,
+On Mon, Sep 01, 2025 at 01:23:40PM +0300, Dan Carpenter wrote:
+> On Mon, Sep 01, 2025 at 10:24:45AM +0330, Mohammad Amin Hosseini wrote:
+> > From: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
+> > 
+> > The ad7816 driver was accessing SPI and GPIO lines without
+> > synchronization, which could lead to race conditions when accessed
+> > concurrently from multiple contexts. This might result in corrupted
+> > readings or inconsistent GPIO states.
+> > 
+> > Introduce an io_lock mutex in the driver structure to serialize:
+> > - SPI transactions in ad7816_spi_read() and ad7816_spi_write()
+> > - GPIO pin toggling sequences
+> > - Updates to device state via sysfs store functions (mode, channel, oti)
+> > 
+> > The mutex ensures proper mutual exclusion and prevents race
+> > conditions under concurrent access.
 
-On 31/08/2025 at 16:40:10 +02, Gabor Juhos <j4g8y7@gmail.com> wrote:
+...
 
-> Using an OOB offset past end of the available OOB data is invalid,
-> irregardless of whether the 'ooblen' is set in the ops or not. Move
-> the relevant check out from the if statement to always verify that.
->
-> The 'oobtest' module executes four tests to verify how reading/writing
-> OOB data past end of the devices is handled. It expects errors in case
-> of these tests, but this expectation fails in the last two tests on
-> MTD devices, which have no OOB bytes available.
->
-> This is indicated in the test output like the following:
->
->     [  212.059416] mtd_oobtest: attempting to write past end of device
->     [  212.060379] mtd_oobtest: an error is expected...
->     [  212.066353] mtd_oobtest: error: wrote past end of device
->     [  212.071142] mtd_oobtest: attempting to read past end of device
->     [  212.076507] mtd_oobtest: an error is expected...
->     [  212.082080] mtd_oobtest: error: read past end of device
->     ...
->     [  212.330508] mtd_oobtest: finished with 2 errors
->
-> For reference, here is the corresponding code from the oobtest module:
->
->     /* Attempt to write off end of device */
->     ops.mode      =3D MTD_OPS_AUTO_OOB;
->     ops.len       =3D 0;
->     ops.retlen    =3D 0;
->     ops.ooblen    =3D mtd->oobavail;
->     ops.oobretlen =3D 0;
->     ops.ooboffs   =3D 1;
->     ops.datbuf    =3D NULL;
->     ops.oobbuf    =3D writebuf;
->     pr_info("attempting to write past end of device\n");
->     pr_info("an error is expected...\n");
->     err =3D mtd_write_oob(mtd, mtd->size - mtd->writesize, &ops);
->     if (err) {
->             pr_info("error occurred as expected\n");
->     } else {
->             pr_err("error: wrote past end of device\n");
->             errcnt +=3D 1;
->     }
->
-> As it can be seen, the code sets 'ooboffs' to 1, and 'ooblen' to
-> mtd->oobavail which is zero in our case.
->
-> Since the mtd_check_oob_ops() function only verifies 'ooboffs' if 'ooblen'
-> is not zero, the 'ooboffs' value does not gets validated and the function
-> returns success whereas it should fail.
->
-> After the change, the oobtest module will bail out early with an error if
-> there are no OOB bytes available on the MDT device under test:
->
->     # cat /sys/class/mtd/mtd0/oobavail
->     0
->     # insmod mtd_test; insmod mtd_oobtest dev=3D0
->     [  943.606228]
->     [  943.606259] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
->     [  943.606784] mtd_oobtest: MTD device: 0
->     [  943.612660] mtd_oobtest: MTD device size 524288, eraseblock size 1=
-31072, page size 2048, count of eraseblocks 4, pages per eraseblock 64, OOB=
- size 128
->     [  943.616091] mtd_test: scanning for bad eraseblocks
->     [  943.629571] mtd_test: scanned 4 eraseblocks, 0 are bad
->     [  943.634313] mtd_oobtest: test 1 of 5
->     [  943.653402] mtd_oobtest: writing OOBs of whole device
->     [  943.653424] mtd_oobtest: error: writeoob failed at 0x0
->     [  943.657419] mtd_oobtest: error: use_len 0, use_offset 0
->     [  943.662493] mtd_oobtest: error -22 occurred
->     [  943.667574] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
->
-> This behaviour is more accurate than the current one where most tests
-> are indicating successful writing of OOB data even that in fact nothing
-> gets written into the device, which is quite misleading.
->
-> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> > +	mutex_lock(&chip->io_lock);
+> >  	chip->channel_id = data;
+> > +	mutex_unlock(&chip->io_lock);
 
-Thanks a lot for this contribution, I'm ready to take it. Just one
-question, do you consider it should be backported? I would tend to
-answer yes to this question, which would involve you sending a v2 with:
+> > +	mutex_lock(&chip->io_lock);
+> >  	chip->oti_data[chip->channel_id] = data;
+> > +	mutex_unlock(&chip->io_lock);
 
-       Fixes:
-       Cc: stable...
+> I'm not really knowledgeable to review the others, if they are
+> required or how the locking is supposed to work.  But these aren't
+> correct because we're only locking around the writers and not the
+> readers so it could still race.
 
-Otherwise I can take it as-is if you convince me it is not so relevant
-:-)
+Readers are in spi_write(), or what do you imply by this comment?
+I.o.w. I do not see the issue with the idea of locking and how it's
+done (I haven't checked all of the details, though).
 
-Cheers,
-Miqu=C3=A8l
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
