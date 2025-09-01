@@ -1,97 +1,211 @@
-Return-Path: <linux-kernel+bounces-793845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1FEB3D91B
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97321B3D8C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BFB3B5FD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B871897DDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 05:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67D72472AA;
-	Mon,  1 Sep 2025 05:54:50 +0000 (UTC)
-Received: from c64.rulez.org (c64.rulez.org [79.139.58.36])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0473323D7D6;
+	Mon,  1 Sep 2025 05:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="glE3PBsn"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23AD239E63;
-	Mon,  1 Sep 2025 05:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.139.58.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3AC21FF44;
+	Mon,  1 Sep 2025 05:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756706090; cv=none; b=ZgbbJJPrIfzhdiiuG8CVuThcFdH7g8uXeHSmHX2Oo9jItdVcUa7BP+EuGAblPFU/RKVgslrVu65tniw0a2Rg7dD15PsBXSKSkd2fGAoT3PEnTvhBtaUQmH0e+p29PILBNMeAnD9TzT0xaedwEhd2u0VWkVBGOfL/r14C+xhokwg=
+	t=1756704525; cv=none; b=shxF8iWdWtCSDmrML03BQMWz4vDhwMtZR/LNpkw3iyTHRMtSqL9OSdsnVRSNyN4uCVMiETeqKdDtkngGNDimGVlzPXDmaoUEIXrIwUn2+qknOy1nuA8QH7/9a5mfqvBfaY+Gx1GOum3fQTQcZDBl6LBpc9+wIGzTGM0RFm1/0og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756706090; c=relaxed/simple;
-	bh=nJ9BB9Y3VY69GTDVRQiby0kbXG7hz2ESCGjLDKAqxOE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZBbyOFXgPIn+hwqFmFFbzmaK2DSCZpeDH3uLiFsZ+RkXXtzA0bxYtxdr/52wjg9valut3A2SVLIdN3Q2JFJ3sn05jbA7Sy53JGwjgDLNWxy6/a8fWNpFG/F71BlC/muXiaPRYrEFydYOiUEwHAzcsxV//twBLJPQ4afHynbUXzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c64.rulez.org; spf=pass smtp.mailfrom=c64.rulez.org; arc=none smtp.client-ip=79.139.58.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c64.rulez.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c64.rulez.org
-Received: by c64.rulez.org (Postfix, from userid 1000)
-	id 6E0A110338; Mon,  1 Sep 2025 07:54:19 +0200 (CEST)
-From: Zsolt Kajtar <soci@c64.rulez.org>
-To: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: Zsolt Kajtar <soci@c64.rulez.org>
-Subject: [PATCH v2 4/4] tty/vt: use correct attribute mask in do_update_region
-Date: Mon,  1 Sep 2025 07:26:36 +0200
-Message-Id: <20250901052636.8981-5-soci@c64.rulez.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250901052636.8981-1-soci@c64.rulez.org>
-References: <20250901052636.8981-1-soci@c64.rulez.org>
+	s=arc-20240116; t=1756704525; c=relaxed/simple;
+	bh=VH+6KCioF7nPyFiaGHvYI106SEQk852VC3TqE8gkjzk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BxBcMMgzxR1k4kt4S4XEJUO62kSUoLPB7L1XrecpLWWaPFRtR248PpYjpV7dekSbWan8VxvYWYSLOzzz9Qat9r3KkLG7VYXUWfsXKay0p73wRJKdE1lsAcpzlAv4hEGOIfN2RSL8xw7cpvfIXTRrJ41pdNWuf0ckdUm1jmIgrbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=glE3PBsn; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=0RpMW/QmoSWZmxGRn2TYP438jGsUybJgguDX0wk4nWE=; b=glE3PBsns+8CeBPeVzCFehbg3A
+	bMwdEcHS+cK1l3/Fc4rZ1OAItsxMPvqRHYMbGl6VrP+hIgyv7CFXmlPJWM3uqsfyIYzqUt8mgaHk2
+	d46b/jEBJaSXRtzq9ztcRdmzDF+qT5XOM/ReU481SKEL7cDJkixL0z816Hv6o3ALJfD80FFLxsmqM
+	u1Y65lk+Lu00QeqFa8Ou3mZWqx4aJ56egqx0mw1aYaP4niRoPBzz/Tooz9afPJ3DveEQ9XzUM3oRE
+	Sm4KLe95n+KMsuXO73IoFIW8NQtxR6X5Io/DBLV7Gj8/n1Wm1VkYH4rzOF5pREspa0sOB2CxduujR
+	nkasc42A==;
+Received: from [223.233.71.70] (helo=[192.168.1.8])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1usx5f-0058MA-4e; Mon, 01 Sep 2025 07:28:27 +0200
+Message-ID: <d48f66cf-9843-1575-bcf0-5117a5527004@igalia.com>
+Date: Mon, 1 Sep 2025 10:58:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+From: Bhupesh Sharma <bhsharma@igalia.com>
+Subject: Re: [PATCH v8 4/5] treewide: Switch memcpy() users of 'task->comm' to
+ a more safer implementation
+To: Kees Cook <kees@kernel.org>, Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+ brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ linux-trace-kernel@vger.kernel.org, torvalds@linux-foundation.org
+References: <20250821102152.323367-1-bhupesh@igalia.com>
+ <20250821102152.323367-5-bhupesh@igalia.com> <202508250656.9D56526@keescook>
+Content-Language: en-US
+In-Reply-To: <202508250656.9D56526@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The original code assumes all bits in the attribute byte are for
-attributes. If 512 glyphs are in use then one is used as the 8th bit of
-the glyph. This can unnecessarily split up a region of uniform
-attributes whenever that bit changes.
+Hi Kees,
 
-Signed-off-by: Zsolt Kajtar <soci@c64.rulez.org>
----
- drivers/tty/vt/vt.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+On 8/25/25 7:31 PM, Kees Cook wrote:
+> On Thu, Aug 21, 2025 at 03:51:51PM +0530, Bhupesh wrote:
+>> As Linus mentioned in [1], currently we have several memcpy() use-cases
+>> which use 'current->comm' to copy the task name over to local copies.
+>> For an example:
+>>
+>>   ...
+>>   char comm[TASK_COMM_LEN];
+>>   memcpy(comm, current->comm, TASK_COMM_LEN);
+>>   ...
+>>
+>> These should be rather calling a wrappper like "get_task_array()",
+>> which is implemented as:
+>>
+>>     static __always_inline void
+>>         __cstr_array_copy(char *dst,
+>>              const char *src, __kernel_size_t size)
+>>     {
+>>          memcpy(dst, src, size);
+>>          dst[size] = 0;
+>>     }
+>>
+>>     #define get_task_array(dst,src) \
+>>        __cstr_array_copy(dst, src, __must_be_array(dst))
+>>
+>> The relevant 'memcpy()' users were identified using the following search
+>> pattern:
+>>   $ git grep 'memcpy.*->comm\>'
+>>
+>> Link:https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/  #1
+>>
+>> Signed-off-by: Bhupesh<bhupesh@igalia.com>
+>> ---
+>>   include/linux/coredump.h                      |  2 +-
+>>   include/linux/sched.h                         | 32 +++++++++++++++++++
+>>   include/linux/tracepoint.h                    |  4 +--
+>>   include/trace/events/block.h                  | 10 +++---
+>>   include/trace/events/oom.h                    |  2 +-
+>>   include/trace/events/osnoise.h                |  2 +-
+>>   include/trace/events/sched.h                  | 13 ++++----
+>>   include/trace/events/signal.h                 |  2 +-
+>>   include/trace/events/task.h                   |  4 +--
+>>   tools/bpf/bpftool/pids.c                      |  6 ++--
+>>   .../bpf/test_kmods/bpf_testmod-events.h       |  2 +-
+>>   11 files changed, 54 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+>> index 68861da4cf7c..bcee0afc5eaf 100644
+>> --- a/include/linux/coredump.h
+>> +++ b/include/linux/coredump.h
+>> @@ -54,7 +54,7 @@ extern void vfs_coredump(const kernel_siginfo_t *siginfo);
+>>   	do {	\
+>>   		char comm[TASK_COMM_LEN];	\
+>>   		/* This will always be NUL terminated. */ \
+>> -		memcpy(comm, current->comm, sizeof(comm)); \
+>> +		get_task_array(comm, current->comm); \
+>>   		printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",	\
+>>   			task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);	\
+>>   	} while (0)	\
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index 5a58c1270474..d26d1dfb9904 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -1960,12 +1960,44 @@ extern void wake_up_new_task(struct task_struct *tsk);
+>>   
+>>   extern void kick_process(struct task_struct *tsk);
+>>   
+>> +/*
+>> + * - Why not use task_lock()?
+>> + *   User space can randomly change their names anyway, so locking for readers
+>> + *   doesn't make sense. For writers, locking is probably necessary, as a race
+>> + *   condition could lead to long-term mixed results.
+>> + *   The logic inside __set_task_comm() should ensure that the task comm is
+>> + *   always NUL-terminated and zero-padded. Therefore the race condition between
+>> + *   reader and writer is not an issue.
+>> + */
+>> +
+>>   extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec);
+>>   #define set_task_comm(tsk, from) ({			\
+>>   	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
+>>   	__set_task_comm(tsk, from, false);		\
+>>   })
+>>   
+>> +/*
+>> + * 'get_task_array' can be 'data-racy' in the destination and
+>> + * should not be used for cases where a 'stable NUL at the end'
+>> + * is needed. Its better to use strscpy and friends for such
+>> + * use-cases.
+>> + *
+>> + * It is suited mainly for a 'just copy comm to a constant-sized
+>> + * array' case - especially in performance sensitive use-cases,
+>> + * like tracing.
+>> + */
+>> +
+>> +static __always_inline void
+>> +	__cstr_array_copy(char *dst, const char *src,
+>> +			  __kernel_size_t size)
+>> +{
+>> +	memcpy(dst, src, size);
+>> +	dst[size] = 0;
+>> +}
+> Please don't reinvent the wheel. :) We already have memtostr, please use
+> that (or memtostr_pad).
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 5d458211b..eb60f69f3 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -613,22 +613,23 @@ static void do_update_region(struct vc_data *vc, unsigned long start, int count)
- {
- 	unsigned int xx, yy, offset;
- 	u16 *p = (u16 *)start;
-+	u16 mask = 0xff00 & ~vc->vc_hi_font_mask;
- 
- 	offset = (start - vc->vc_origin) / 2;
- 	xx = offset % vc->vc_cols;
- 	yy = offset / vc->vc_cols;
- 
- 	for(;;) {
--		u16 attrib = scr_readw(p) & 0xff00;
-+		u16 attrib = scr_readw(p) & mask;
- 		int startx = xx;
- 		u16 *q = p;
- 		while (xx < vc->vc_cols && count) {
--			if (attrib != (scr_readw(p) & 0xff00)) {
-+			if (attrib != (scr_readw(p) & mask)) {
- 				if (p > q)
- 					vc->vc_sw->con_putcs(vc, q, p-q, yy, startx);
- 				startx = xx;
- 				q = p;
--				attrib = scr_readw(p) & 0xff00;
-+				attrib = scr_readw(p) & mask;
- 			}
- 			p++;
- 			xx++;
--- 
-2.30.2
+Sure, but wouldn't we get a static assertion failure: "must be array" 
+for memtostr() usage, because of the following:
+
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + 
+__must_be_array(arr))
+
+I think it would be easier just to set:
+
+   memcpy(dst, src, size);
+   dst[size -1] = 0;
+
+instead as Linus and Steven suggested.
+
+Thanks,
+Bhupesh
+
+>> +
+>> +#define get_task_array(dst, src) \
+>> +	__cstr_array_copy(dst, src, __must_be_array(dst))
+> Uh, __must_be_array(dst) returns 0 on success. :P Are you sure you
+> tested this?
+>
 
 
