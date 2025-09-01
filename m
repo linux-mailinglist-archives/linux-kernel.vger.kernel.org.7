@@ -1,142 +1,89 @@
-Return-Path: <linux-kernel+bounces-794855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6988AB3E818
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DEFB3E81C
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38E0A4E2C6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:01:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78DFB3AADBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1E0340DB7;
-	Mon,  1 Sep 2025 15:01:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52B330E839;
-	Mon,  1 Sep 2025 15:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEBC33A01A;
+	Mon,  1 Sep 2025 15:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uooPNlsJ"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24BB21C17D
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738905; cv=none; b=WbGzstPAaOtLUxnLg0zSuLru2iuYeAJ0QyZ9crJVg4+1ZAjSLVXpXs1BzukbC+u/gvklISPhemzZKJQzh+4Z9FPJAcyn1rOP2wIk3MCbwuqtwFyfiMQK8w/kZfMzTjFQ174lk/h10wfMmB2di0MYUdGqCrZ9N326vdKTw5wv5jc=
+	t=1756738942; cv=none; b=D9A/ptyCYdgyP1A4oH544wqrplBmL0XslY+EGWW7Uo6S5eqHPxEsPSG5Fc5DUTVtK1NRN7aa6VbWSm4ac4SZzmofUSBnY7NMFxrGrT5yR0NHKTvoZLMTi2kl0ljVaNFbcll4kmYXtxNxSzDBKKyz0YZR8S01DWw5DOyqWwYT9qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738905; c=relaxed/simple;
-	bh=sKIHQaF4uEzrA4VpXBz7JVyj9mqvjOrJ0LV/LJ7YQ9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WC14lxlml3nMStXDvbQqM2mB5bL0GoEL0siFrIr1km/+D9Cx+42W+/hlEEAJqddgIRxjlLssoLokpHf2PnCBCB3F1oe/F9D/NMg3WCcViv4T3o1+Qik2Dgy90zHGO0qLxyf4rxHj6enBF4prbqDepsxyO7x8DAPmPV2HVeLVREw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCCCC16A3;
-	Mon,  1 Sep 2025 08:01:32 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D4CF3F6A8;
-	Mon,  1 Sep 2025 08:01:37 -0700 (PDT)
-Date: Mon, 1 Sep 2025 16:01:34 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
-	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
-	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
-	ahmed.genidi@arm.com, kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com, mbenes@suse.cz,
-	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
-	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v3 4/5] arm64: initialise SCTLR2_EL1 at cpu_soft_restart()
-Message-ID: <aLW1Thh3Xscw1O3U@e133380.arm.com>
-References: <20250813120118.3953541-1-yeoreum.yun@arm.com>
- <20250813120118.3953541-5-yeoreum.yun@arm.com>
- <aKXlnZ8HXHBZMj4T@e133380.arm.com>
- <aKYGsqCTRXwnb6Gw@e129823.arm.com>
+	s=arc-20240116; t=1756738942; c=relaxed/simple;
+	bh=U4OXJtvN8vRCBlMT6T7EqGLYf4Ogc0t2cuxAXm+kGdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P9PSAs54cPuOSuKAzZ7PmFD+PgbnlUtkMckCi7gxrWE+3cHvz9lEkUmUOFuFRa2R83plHDZmh6FtYaI/3S7SiX7L03V6mGmpWdcSinNHv24KgbhGawFw816U/AdnYR8oovoE5NpAs6+6e8XHz+ggpmV/YEHhhrXQI9/RwlzPt4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uooPNlsJ; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756738938;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=nivWg6+wmlPawo9eOsWBpM889Z0+ZVfC6Vlz9wpOjtQ=;
+	b=uooPNlsJRrVzcR2fbvTqXWWslvEJ4OLz9v29ZDCbtJw2pvhviQUi9/ENd9Sv8agGAHBhLq
+	P6rOnrB7tSeg5rewGwvtGbQyHB0rafMTUqKhVAwGMKp/QFLKzLWrzPszDJXIjodDWr3cFC
+	I97e2b2gab25NLgTZSqC51+NU+X2pzg=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: scrub: replace max_t()/min_t() with clamp_t() in scrub_throttle_dev_io()
+Date: Mon,  1 Sep 2025 17:01:44 +0200
+Message-ID: <20250901150144.227149-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKYGsqCTRXwnb6Gw@e129823.arm.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+Replace max_t() followed by min_t() with a single clamp_t(). Manually
+casting 'bwlimit / (16 * 1024 * 1024)' to u32 is also redundant when
+using max_t(u32,,) or clamp_t(u32,,) and can be removed.
 
-On Wed, Aug 20, 2025 at 06:32:34PM +0100, Yeoreum Yun wrote:
-> Hi Dave,
-> 
-> > On Wed, Aug 13, 2025 at 01:01:17PM +0100, Yeoreum Yun wrote:
-> > > SCTLR2_EL1 register is optional starting from ARMv8.8/ARMv9.3,
-> > > and becomes mandatory from ARMv8.9/ARMv9.4
-> > > and serveral architectural feature are controled by bits in
-> > > these registers.
-> > >
-> > > Before, launching new kernel via kexec, initialise SCTLR2_EL1 explicitly.
-> > >
-> > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > > ---
-> > >  arch/arm64/kernel/cpu-reset.S | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/kernel/cpu-reset.S b/arch/arm64/kernel/cpu-reset.S
-> > > index c87445dde674..123564af345b 100644
-> > > --- a/arch/arm64/kernel/cpu-reset.S
-> > > +++ b/arch/arm64/kernel/cpu-reset.S
-> > > @@ -37,6 +37,12 @@ SYM_TYPED_FUNC_START(cpu_soft_restart)
-> > >  	 * regime if HCR_EL2.E2H == 1
-> > >  	 */
-> > >  	msr	sctlr_el1, x12
-> > > +
-> > > +alternative_if ARM64_HAS_SCTLR2
-> > > +	mov_q	x12, INIT_SCTLR2_EL1
-> > > +	msr_s	SYS_SCTLR2_EL1, x12
-> > > +alternative_else_nop_endif
-> > > +
-> >
-> > It would be better to do this based on the ID regs.
-> >
-> > Although the previous kernel _shouldn't_ have used SCTLR2 if the
-> > capability ARM64_HAS_SCTLR2 did not get enabled, it would be better to
-> > enforce a clean state here for the new kernel.
-> >
-> > If so, maybe one of the macros that you already defined can be used
-> > here?  (But it's also fine to open-code it.)
-> 
-> But cpu_soft_restart() can be called before capability is enabled?
-> I think this function is called after "capability" setup,
-> Was it good to use alternative than check the ID register?
+No functional changes intended.
 
-What I meant is that we should reset SCTLR2_EL1 here even if the
-ARM64_HAS_SCTLR2 capability is not set.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/btrfs/scrub.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The cpu_soft_restart() code has responsibilities similar to those of a
-bootloader.  We want to put the CPU into a known state, irrespective of
-how the current kernel has been using the CPU.
+diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
+index 6776e6ab8d10..ebfde24c0e42 100644
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -1369,8 +1369,7 @@ static void scrub_throttle_dev_io(struct scrub_ctx *sctx, struct btrfs_device *d
+ 	 * Slice is divided into intervals when the IO is submitted, adjust by
+ 	 * bwlimit and maximum of 64 intervals.
+ 	 */
+-	div = max_t(u32, 1, (u32)(bwlimit / (16 * 1024 * 1024)));
+-	div = min_t(u32, 64, div);
++	div = clamp_t(u32, bwlimit / (16 * 1024 * 1024), 1, 64);
+ 
+ 	/* Start new epoch, set deadline */
+ 	now = ktime_get();
+-- 
+2.51.0
 
-For one thing, we come through this path when booting a crash kernel if
-the current kernel panicked.  So we should avoid making too many
-assumptions about anything being in a sensible state here.
-
-(Your rewrite of this in v4 looks fine.)
-
-> > >  	isb
-> > >
-> > >  	cbz	x0, 1f				// el2_switch?
-> >
-> > [...]
-> >
-> > In the case where the el2_switch argument in non-zero, don't we also
-> > need to do something to reinitialise SCTLR2_EL2 after switching back
-> > to EL2, in the HVC_SOFT_RESTART handler?
-> >
-> > Maybe I missed something.
-> 
-> No. I'm missing to init in NVHE's HVC_SOFT_RESTART handler to clear SCTLR2_EL2.
-> 
-> Thanks!
-
-I'll take a look at this in v4.
-
-Cheers
----Dave
 
