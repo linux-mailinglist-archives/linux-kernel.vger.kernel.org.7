@@ -1,133 +1,143 @@
-Return-Path: <linux-kernel+bounces-794981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2580DB3EB38
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:45:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6F9B3EB70
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C4417ADCE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33F2A1B21347
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB382D5950;
-	Mon,  1 Sep 2025 15:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D34B1DEFE8;
+	Mon,  1 Sep 2025 15:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/Atu/UZ"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="0K7ZSC71"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73C41FDE31
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5A51DF271
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 15:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756741502; cv=none; b=pzn0rwO0CsEYLe8eaunSc8zmfvCnTuVIWn9xg4H5XqGQ+cwiqngb3v4GWbmKtgksOdHdzzMFUjioQWK6/pwqvb64wZn3A2JmKhtZnezw73L6O0V01BiM/aFqRAhPm7A3PQhOzssbf83UhVuxyFnBW39XXkQd7dwkU0Inml5lLYU=
+	t=1756741518; cv=none; b=A4zSOP/+JVz+bdzP79cd6q6wyS7kG7YbT5G65MhD+hNNhJxrYtVaVzMIhqEmT3JjIUs06qNHCor3Lohiz9Y+RnwaIPjfJvpgIp/YgYvG5Fc2wgpMgxJVHAtUaDTEQPSukCboM/pMyuIfShUX4xAXD3XawRuL2Kb/iVbW0kprpdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756741502; c=relaxed/simple;
-	bh=GiZo+3xs06RcsVe3xuokutWKR93wSXmm1FaZO2v4oaY=;
+	s=arc-20240116; t=1756741518; c=relaxed/simple;
+	bh=OMgMJoTTIlGi0H5QyW5KhwgKKN36wR/vSC5h5hgxia4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lw/JYb3iqY9ETTNPr1g2/voW5pFIFpX3eMj1EXzgHzgYdDtiAcc763dQRLc5eGTALH8zZlcRe0mu8P+Sm607MNDJShYuhp1DTBO37bViQ8MYiPGCj89d0UhZQAoQmRcKRYbn6FhDO2+Exm/YPOwvIduEhU3d1qcJxT+phVQDnsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/Atu/UZ; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61cd3748c6dso9371774a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:45:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=jvuiNpa4/2ayGzRbMSBXMRQ9aTu8o9mZso0E+J/dZBEyRGRF6HWudlY1ssAptw/86QzvYY7ix4CFdRTicbJ1hHegEHVY3iLiVc47Ll0z1PfsaAJmGQwgsf3uCH7rSZKcK6cU26w4EMZ+Q/AoEuAiIyAiTizGaSV6j2+RNZ4+m4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=0K7ZSC71; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d60157747so34491207b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:45:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756741499; x=1757346299; darn=vger.kernel.org;
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1756741516; x=1757346316; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UHPTKC2Vu8KHnQ+uWsWsYWbp4MhhjwmYo/8R9vlIMOM=;
-        b=c/Atu/UZl6qGHoK8CfZ0az8zaPV7cJcpIrispdaiyxaIdqUtUhEYGy7vFFi0POwyI5
-         towQBtHJ9zjJBCyxuFzTd1w1XeJmj82/CM9bMg8ytuZC643rP0Wcjn3YiJH99+R12YyW
-         GET2no0Fk8NypZf/0iXT+z43X4AQRvKRlQDKYnv5zYoqV6p3I/2aRhiuVFqecnVLy5xu
-         d8Ibx1wrVlwUCnGMUgN3MXHHb5wamACED3YSzIDSVwJmn9AG6G3RpEC5v7BLT9SX+k9t
-         TbcpkXsj3q5srcidVrfMhdHEOVc7DjD+YxWAW1sv9BSnW+qkTLHcBeZahn4ivPW2f/Zw
-         6gNw==
+        bh=vc+cyyLMv3ZDCW9TrBfgm90Y/n1yLM6D15As+zF4o6M=;
+        b=0K7ZSC71g12YfQ9xSO4dbzT8kvkcsOg/WgYr7cp4Gy1Qu5wj6UkxEi/atZoNCZpXCI
+         JcXfiT2GW+gAy3ztd4zcFLwhSspL3aInE2mQm51Fa+99VPBbd5cZIaxCP+a/WQ5sH1AD
+         9lmS2i3xfDFCIcnKvS7Oi06ryVi7vtK0NlS35+4ZtjaKl8LvsEOIgbKYCZgm9XjYbfTV
+         vTg1kG4D7hC6XQnPzTc+wzZdsyhm96Hh4DWFFvH6uBuW5442gMRRE4g+iXEP/Y54/6tm
+         7tvTxa/4kfI7MZrUkDcCy3QM31pUp4FejMM9vHtiZMaNmUJ0INfwCQnDta0S8Ju9KWnn
+         +WWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756741499; x=1757346299;
+        d=1e100.net; s=20230601; t=1756741516; x=1757346316;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UHPTKC2Vu8KHnQ+uWsWsYWbp4MhhjwmYo/8R9vlIMOM=;
-        b=HF7lJFkDflpbNNijRYYrcME2c8uKEfPYiCxBL2bAR13/l0smLKzPs3FKHUQhmEFpkD
-         W1HRsTtpwQUyJgsgfam/t0B3X+SNZalSN1w+aCXvqXwF3GKXvhc9DXoHkKBo5odkRId4
-         VmUIoUqXRqznyuFgraL2EEZMAjn3gLSMePjsaQrRotcFzAjoOyAQ+P10+am1Y3wWsi/A
-         1P2ovw7rn4Won3O6uatWctOF4NoPowyJrRDlYszqA4kcU1Z3ynmYHLbYEDhvjP6OAyFv
-         afKUGh+vANPO7oBudWRd+OvRfcDBKStx1WxYR7ahonwJZvTeJ/TEHbx7wbqoDuXhrbOc
-         K+bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKN0GLphKMod0nRNaelUq+Q2QzDiFeV7idvb15UJ19rvmrOcn8RW9aj7m10YpXMEFdOWwPyIV26TKRuGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx16QK0qZiFqJfdTiMazGo4ukIq4KyD3yVFDhJsP3tfTBY1bnSO
-	HkhLE74gT4r+TsXt2wNW7n2rnuVgqnd23YU5VoLlEGyUpJNTZP5GKH6c9Eaj1zeMjN50NXE03f5
-	V/nSk8PQKIYueVvxowv7MhffNILDQf6I=
-X-Gm-Gg: ASbGnctzEaEDY+IiMv4WJoxR/456hc//UrhEf6b3g+YpQAujmJZhdL1DcMQY28eCJ4L
-	NAqZEGxxUZmoqyd7baKxKs//dZ4eQpwJ/lL2efU0/9AVboux6ZWdRCbs9g2AywX0Ib+foUgMztq
-	Q47xZod41NXUsRlWGE70bJcRVEJsC1iqzepxxIOXqbrXNLWplh2MDOCpU6y/AUzVgx9thZJ0BMd
-	T1qDKh+76tabbq57w==
-X-Google-Smtp-Source: AGHT+IHxIhKYzDvaYlAd0N8sT0LtRUJz5RTuCzWwBkGRu2LMSnlGXT2KJ0YNoKbo88CyOV+mgu4rFLAnfsqrNe5DLD8=
-X-Received: by 2002:a05:6402:42c4:b0:61e:aa4f:657 with SMTP id
- 4fb4d7f45d1cf-61eaa4f1c3dmr1689085a12.8.1756741498991; Mon, 01 Sep 2025
- 08:44:58 -0700 (PDT)
+        bh=vc+cyyLMv3ZDCW9TrBfgm90Y/n1yLM6D15As+zF4o6M=;
+        b=WVqQjnp40exIGOP+qMb1JmhIVN0CVA9fi7CrGfrG/VPz3EhB3eRKBDfJPiSXg0Quv2
+         rzvk92kggdVXmKy9IR8aau+et1575M3HZW6WPsF5RtVbrHaFT/4xysgsaAXriVRy65ap
+         w7gJb6VgtCbVlPztVG+rZ1N0hmfrnvbBpFAYVRB9jl7E81oRmELgK1xWL5QEjnrW/F5J
+         gO4PdncoyJefnY59G41P/fqZbd/wV9ckaLjqDBI5YNdoP9MCB4+yjrky/ATbqO6OEQ85
+         mqvQnAbJK39UyWhS1t1Fhmzk3A38K0Zfrw0YspCPFd673/Dys6mdCiG0ChPVv3WB0KkY
+         jVoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGvvVQaBjh9eW0lrZXr9SakYvdTKBQ+WxinyF2QjuDdZpeGCRrFT7hs5Fq0uohJUlo50gKUDnIUxxfrn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJOvKVm+JwE1NBk6NB0UwO/yIodDWzOpPVKgmIo4bInFvnDaWF
+	2khBCUo59zZY0wmaowXSLihx7N/7ot2IlwHS4ft2E4X/ylN+pDGRjp03knDl8OIdnfbio43aijz
+	oNTx7y7t+sQ==
+X-Gm-Gg: ASbGncti961+5//aEHUFRy6ntuqht1RkdJ/4FujDLok9sviwu86iOfySLtxkKfG71WC
+	2g2K/uvkBamMCN8iZjWSAIBHF61jEYazlbihwPVX6jop5VabAcBjUpyVkMuWz/vse/FA59xJuAL
+	kNxg46B86N+fYlfJ5EmJbvmeOi2jiuYJUt3LASZFPOuKny+URPkXXqHk0w+3dTj4TRdaTgYLWmf
+	pxKtiKq/0CXXMHsqyvb8lifQzjfdg0buJrVN50VTZJFoZauldRikDNIwvEUmTu/YrZARWsHsmi+
+	At3ZAhkr66X6uXrcck3eKJe7pNpfa7HrjcS7AM/R4xMcRqQLSQcYTqD6nv1L66k0weCneWXnDnw
+	5XoJNP6UF3RbvmNC7NXwJmM6YhLkxVIV/ikezwOuULLOuBLxRk9hSKkTMnKNfzmZv1g==
+X-Google-Smtp-Source: AGHT+IEK+H62sspnEtnDLScwWcDVMKTYAM+pOOVoVbMzJnSP6sXYqw2LgdTZR87jBp54tZAFHsSNgA==
+X-Received: by 2002:a05:690c:34ca:b0:71f:f942:8474 with SMTP id 00721157ae682-7227657547fmr93959627b3.49.1756741513730;
+        Mon, 01 Sep 2025 08:45:13 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7227d6308c9sm15885297b3.25.2025.09.01.08.45.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 08:45:13 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d603b674aso30311357b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 08:45:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU76HUfivR6HSWXLLilHhKCq/yykXdYweL2x5ulQ9Tl21T6Zpr+WUqD2FgBoATDrD1IK/o8kFebav0y3qQ=@vger.kernel.org
+X-Received: by 2002:a05:690c:6004:b0:71f:db79:994d with SMTP id
+ 00721157ae682-722763d887dmr101946407b3.19.1756741512904; Mon, 01 Sep 2025
+ 08:45:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
- <20250819-anbeginn-hinsehen-5cf59e5096d4@brauner> <20250819142557.GA11345@redhat.com>
- <20250901153054.GA5587@redhat.com>
-In-Reply-To: <20250901153054.GA5587@redhat.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 1 Sep 2025 17:44:46 +0200
-X-Gm-Features: Ac12FXzPUeZHYAFLmB2vfH7SshZcIwk-HtJug82eUekfQ92QpKyUhQyNxi_zVAY
-Message-ID: <CAGudoHEoK9f=M6-iOL5yHqK=o4wiJW_78t88BEwsAksAW5HNqQ@mail.gmail.com>
-Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Xiang Gao <gxxa03070307@gmail.com>, joel.granados@kernel.org, 
-	lorenzo.stoakes@oracle.com, linux-kernel@vger.kernel.org, 
-	gaoxiang17 <gaoxiang17@xiaomi.com>, Liam.Howlett@oracle.com, viro@zeniv.linux.org.uk
+References: <20250818185658.2585696-1-heiko@sntech.de>
+In-Reply-To: <20250818185658.2585696-1-heiko@sntech.de>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Mon, 1 Sep 2025 17:45:01 +0200
+X-Gmail-Original-Message-ID: <CAAObsKCGbS4kkYjFvQONjF7RWbzNRejCGMi1puzHnSpsR4pguA@mail.gmail.com>
+X-Gm-Features: Ac12FXzZ3kIusG_YEYmGkUAIbd5-b4np1Jxp8QvWXSPz6RxKWESjaAnxctrV8IE
+Message-ID: <CAAObsKCGbS4kkYjFvQONjF7RWbzNRejCGMi1puzHnSpsR4pguA@mail.gmail.com>
+Subject: Re: [PATCH] accel/rocket: Check the correct DMA irq status to warn about
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: ogabbay@kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 1, 2025 at 5:32=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
+On Mon, Aug 18, 2025 at 8:56=E2=80=AFPM Heiko Stuebner <heiko@sntech.de> wr=
+ote:
 >
-> ping...
+> Right now, the code checks the DMA_READ_ERROR state 2 times, while
+> I guess it was supposed to warn about both read and write errors.
 >
-> We need either
+> Change the 2nd check to look at the write-error flag.
 >
->   [1/1] pid: Add a judgment for ns null in pid_nr_ns
->   https://git.kernel.org/vfs/vfs/c/006568ab4c5c
->
-> or
->
->   [1/4] pid: make __task_pid_nr_ns(ns =3D> NULL) safe for zombie callers
->   https://git.kernel.org/vfs/vfs/c/abdfd4948e45
->
-> in any case imo the changelog should explain why do we care
-> to check ns !=3D NUll, "Sometimes null is returned for task_active_pid_ns=
-"
-> doesn't look like a good explanation...
->
+> Fixes: 0810d5ad88a1 ("accel/rocket: Add job submission IOCTL")
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-Since I caught this a stray patchset I'll bite: given the totally
-arbitrary task struct in an irq handler, why even allow querying it
-from that level? The task is literally random, and even possibly dead
-as in this crash report.
+Thanks, Heiko, you are right, I have applied it to drm-misc-next.
 
-To my reading the code which runs into woes here is private to a
-vendor. Maybe I missed something, but I don't see a justification for
-querying the task in an irq handler to begin with (and per above I
-don't understand what the point is).
+Regards,
 
-That is to say, if this was up to me, I would at best assert we are in
-the process context and that ns is not NULL. As a result I would very
-much *ban* the call as reported here, unless there is a good reason to
-make it work (what is it?).
+Tomeu
 
-That's my side rant, feel free to ignore. :->
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> ---
+>  drivers/accel/rocket/rocket_job.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/accel/rocket/rocket_job.c b/drivers/accel/rocket/roc=
+ket_job.c
+> index 5d4afd692306..3440b862e749 100644
+> --- a/drivers/accel/rocket/rocket_job.c
+> +++ b/drivers/accel/rocket/rocket_job.c
+> @@ -422,7 +422,7 @@ static irqreturn_t rocket_job_irq_handler(int irq, vo=
+id *data)
+>         u32 raw_status =3D rocket_pc_readl(core, INTERRUPT_RAW_STATUS);
+>
+>         WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_READ_ERROR);
+> -       WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_READ_ERROR);
+> +       WARN_ON(raw_status & PC_INTERRUPT_RAW_STATUS_DMA_WRITE_ERROR);
+>
+>         if (!(raw_status & PC_INTERRUPT_RAW_STATUS_DPU_0 ||
+>               raw_status & PC_INTERRUPT_RAW_STATUS_DPU_1))
+> --
+> 2.47.2
+>
 
