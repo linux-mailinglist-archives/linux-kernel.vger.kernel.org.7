@@ -1,153 +1,126 @@
-Return-Path: <linux-kernel+bounces-794122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94673B3DD19
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:53:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D60B8B3DD16
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 10:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F8773A8CD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:53:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977E83B2469
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 08:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DC81DEFDD;
-	Mon,  1 Sep 2025 08:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RA4zwAAE"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401D32FE589;
+	Mon,  1 Sep 2025 08:53:18 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F377262F;
-	Mon,  1 Sep 2025 08:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF587262F;
+	Mon,  1 Sep 2025 08:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756716810; cv=none; b=R2HCFnXNS6zOx17K43ITBMRRsgwNlCgjaYd+dKyHR9dNbvNTJYfKnhZQ3t4FYDpiwVGtDJIEIIP9ns+P9znFbVZswms1VN3KFWj4dAH0ROUQd23De7I0CkHdGoOwB/pLs1QbL+vX21HkNkUT0cv5dsO4tVRAJTZC8g/ZcRv/HrQ=
+	t=1756716797; cv=none; b=HvIuttY3xu0HS3IjnwIfOka3NBKJWrwEfHBnxyOOo+jOrHv+UhPRuC2xJwqJV5wonM3enJhtJuM1ASEzfxD8ZVyD9fazt+pw9kOVl9IN+EVaBVq+uWTPDN3Tjy/C9S5t8l3Y+qMCwPwYk+32e9xxfnCEZWbDY7BZgnS2a3xJI5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756716810; c=relaxed/simple;
-	bh=Nu0Z5YRABht37ceEFhru9sO3g0wQQK80E5FaZzZqeME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PhrXeDzSHcH3BW+CN2KhWiYQQe2NQ1aRwsaQphB4g4DBSPyPnrBvoMLEHNTJ1Tjtu1lM3Z7da3bfa5hcuwglKkezWr4I/OJ7RAxezn4rG4ugpYL4KJbUUbzDZBYMSOkQ0ou5eH8XZbzGt8Oc2NP8Q3rU2yQyh8fek26cmJeKodA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RA4zwAAE; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=StnaVQ/kuJKs04O83dX5k4oJKlm7slZS7P8l56c6/pw=; b=RA4zwAAEQiCqRY/TooPy/tk0ud
-	rw/w/lrPMKIuCcLgBggd3vuF4fpgSHX2M6sOVAuXSsUxc6uo62EztDxZp6mUyLYACfh9aAiQ4hUoK
-	82CRdGtK06o3JG8leT4mdeqFWpOvxCq7zbalqum94HHR3wsQiUtwGOvNJ/2o6yTp+OPGxXR5MGYPV
-	1yOapB3oD+7v/gfi+iv8++UHuT1iMd7Mz0pOnUMIQprUWkrJXSVst3cjO2AyrjWrnKgBhq12Fknwk
-	r0JV17FlQBdTf/VOYEqYBwF38xuhW7tHMPCWst5TfMJAk8UyIIHkIoyKzZPme1MsIqukkAMY1KpFN
-	VoQ5ou9w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ut0HF-00000003gW1-0qU0;
-	Mon, 01 Sep 2025 08:52:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3F3FB300342; Mon, 01 Sep 2025 10:52:36 +0200 (CEST)
-Date: Mon, 1 Sep 2025 10:52:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
-	Tobias Huschle <huschle@linux.ibm.com>,
-	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard
- MC scheduling bits
-Message-ID: <20250901085236.GK4068168@noisy.programming.kicks-ass.net>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-5-kprateek.nayak@amd.com>
- <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
- <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
- <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
- <7137972e-bc7a-432c-94be-755ba9029d8c@linux.ibm.com>
- <20250901083507.GD4067720@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1756716797; c=relaxed/simple;
+	bh=xkcIUqU1NHV0DJZXrd/onXacp9Mgwv91i/+bnnqT08M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aQCotY6cYGIQE9NkGlmlQqhLTfA9cbWC34VemNQxZlxMoFaVdFaSgKLJuqUlOr6Eh7Qzw1ioUy5rDXCm7ueULfR4hNbTkCPeAQiwZMJhNzv2euOP7YBrrxTdytHtygJp8S2OWcewjwbatZZvmLcUGzGxBsCwZ5y1EnX3sAi1NNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-544a1485979so512035e0c.3;
+        Mon, 01 Sep 2025 01:53:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756716795; x=1757321595;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hwV0ZxFlGA9LVCwpYAd/S0jSR5rIjW8cIxXeVwnFYUM=;
+        b=a++8IrxBIJlI0f7O/w+L+Cd2K7VKGwzvR1GMHusVn4BzETRCFA0f1Ev36jcIgiioVL
+         kGcb5UsHZITAQg1ijFRr4zmxay5ZDNLWVO6rU1Y8RWTW1KuksUFklpikqNcybUwzKZrp
+         kPBpzO9MHHfH3nslmJ3YGCV6bXJpFOs+nfOuoJngzPGH55s3Ix8zAiuEbq11HKpdJgiV
+         HaBkr/yCHFGmU1f0gaR64M5BuItscZ+mM2SCG/EnKtXEiFnL2S08lMJh8zJm+jNiPJkq
+         PBwcu0EzjB11kjXvqyE/LdXm+v9TX0X3s0gPMlRCyCLyzVBnDeqczWbQ3wjxg/SM5lHA
+         p9sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuBFS9taBSUh+mB+BYTgVYt5xtbTmMkkIzrbxyJLbkDl8RCtVySfmxgig5nwE4lGSqBJeaSar4Akfqfx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyaz/zesJB/3BcFSwWV8PWZy2cKbEhwv8DIbLRGES5JGQKYcgwj
+	jAVDu1g6gf7lWuwz09fehgUIm0Uifi3FZXAm+zio4g4oLJtcwhzMmjQ95gQd9WVg
+X-Gm-Gg: ASbGncsyqiwHluGSkbCGk2hgsEoXNML0Kli0hPhmx5qbJ5XcTdHT28x84iKetiHfSj2
+	b8J4N1/0+n3l2epxleVqsT7dkzh9cPDHHKxPnrLByvlx+vnV4FldSyRK+cKY517xdhof0VAaYT+
+	0A1m1Q7jkczrSXoEdl+wrfKFUbzSF308eAcYmeQ3a400v5/zxKs3CR5rEqwfzEaFnwZLJNF6NMR
+	vfRSkjv/L8zOcChr6qezGLIHBR+Og/6plsKcZWhyO0yjqNd797cotkm9xGlLQALbrA/5BMBvNs4
+	vnBGWqiWzANh7XANx9t0kgZ7VAB7qT7KAHd2kuwi7Gc7qFExeDm7cxbGRPRl5DbFvUaCw30KNed
+	x8HOFIrtMXgeNrz9bVhj3WeIQ3UurAyuOlxNxRXSpntUeHVaGTatw3P6q0PA+tA82qO1t9UA=
+X-Google-Smtp-Source: AGHT+IHTCli5TjIdcjHsgFRsBoq+JJx7dKPZNS1I+boEX9ZBLdf+eMh98R9FcNcRJhUKQpPDev2qLA==
+X-Received: by 2002:a05:6122:659b:b0:541:2e11:6738 with SMTP id 71dfb90a1353d-544a02a9309mr1661553e0c.9.1756716795249;
+        Mon, 01 Sep 2025 01:53:15 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912ef219sm4294323e0c.7.2025.09.01.01.53.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 01:53:15 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-528d8aa2f3bso1310851137.2;
+        Mon, 01 Sep 2025 01:53:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCViA3kUjzxxB96G58PtOPF5rXvq5XVLNoP5+zfhrPVdn5PaMdml4NIngamFE9ddSixNmXn+qOXm0knJ0tE=@vger.kernel.org
+X-Received: by 2002:a05:6102:6889:b0:52a:4268:7618 with SMTP id
+ ada2fe7eead31-52b1c246f01mr1657627137.27.1756716794630; Mon, 01 Sep 2025
+ 01:53:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901083507.GD4067720@noisy.programming.kicks-ass.net>
+References: <20250822104208.751191-1-jirislaby@kernel.org>
+In-Reply-To: <20250822104208.751191-1-jirislaby@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 1 Sep 2025 10:53:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW7e-QOjoWqsccvyBLOeoGgeLrE3ERuHv_o3PXBtKAoRg@mail.gmail.com>
+X-Gm-Features: Ac12FXws79G7sfNDXlYCwBsnRL2gsroj-XTL_Qr7goYhu25uBKLks1ZnLnPmw9c
+Message-ID: <CAMuHMdW7e-QOjoWqsccvyBLOeoGgeLrE3ERuHv_o3PXBtKAoRg@mail.gmail.com>
+Subject: Re: [PATCH] m68k: make HPDCA and HPAPCI bools
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, Philip Blundell <philb@gnu.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 01, 2025 at 10:35:07AM +0200, Peter Zijlstra wrote:
-> On Thu, Aug 28, 2025 at 08:13:51PM +0530, Shrikanth Hegde wrote:
-> 
-> > > --- a/arch/powerpc/Kconfig
-> > > +++ b/arch/powerpc/Kconfig
-> > > @@ -170,6 +170,9 @@ config PPC
-> > >   	select ARCH_STACKWALK
-> > >   	select ARCH_SUPPORTS_ATOMIC_RMW
-> > >   	select ARCH_SUPPORTS_DEBUG_PAGEALLOC	if PPC_BOOK3S || PPC_8xx
-> > > +	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
-> > > +	select ARCH_SUPPORTS_SCHED_MC		if PPC64 && SMP
-> > > +	select SCHED_MC				if ARCH_SUPPORTS_SCHED_MC
-> > 
-> > Wondering if this SCHED_MC is necessary here? shouldn't it be set by arch/Kconfig?
-> 
-> Ah, so without this SCHED_MC becomes a user selectable option, with this
-> it is an always on option (for ppc64) -- no user prompt.
-> 
-> That is, this is the only way I found to have similar semantics to this:
-> 
-> > > -config SCHED_MC
-> > > -	def_bool y
-> > > -	depends on PPC64 && SMP
-> > > -
-> 
-> Which is also not a user selectable option.
-> 
-> > nit: Also, can we have so they are still sorted?
-> > 	select ARCH_SUPPORTS_SCHED_MC		if PPC64 && SMP
-> > 	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
-> 
-> Sure, let me flip them. I need to prod that that patch anyway, built
-> robot still ain'ted happy.
+CC PhilB
 
-Looks like 44x/iss476-smp_defconfig (iow 32bit power) also wants
-SCHED_MC, so it should be:
-
-config SCHED_MC
-	def_bool y
-	depends on SMP
-
-Its just SMT that's a PPC64 special.
+On Fri, 22 Aug 2025 at 12:42, Jiri Slaby (SUSE) <jirislaby@kernel.org> wrote:
+> The only user -- 8250_hp300 -- tests for CONFIG_HPDCA and CONFIG_HPAPCI.
+> It does not test for *_MODULE variants. That means that if someone sets
+> the configs to =m, the code is not compiled at all.
+>
+> There is actually no point having these as tristate. Switch them to
+> bool.
+>
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: linux-m68k@lists.linux-m68k.org
+> ---
+>  arch/m68k/Kconfig.devices | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/m68k/Kconfig.devices b/arch/m68k/Kconfig.devices
+> index e6e3efac1840..e277f1bd2de1 100644
+> --- a/arch/m68k/Kconfig.devices
+> +++ b/arch/m68k/Kconfig.devices
+> @@ -105,14 +105,14 @@ config AMIGA_BUILTIN_SERIAL
+>           To compile this driver as a module, choose M here.
+>
+>  config HPDCA
+> -       tristate "HP DCA serial support"
+> +       bool "HP DCA serial support"
+>         depends on DIO && SERIAL_8250
+>         help
+>           If you want to use the internal "DCA" serial ports on an HP300
+>           machine, say Y here.
+>
+>  config HPAPCI
+> -       tristate "HP APCI serial support"
+> +       bool "HP APCI serial support"
+>         depends on HP300 && SERIAL_8250
+>         help
+>           If you want to use the internal "APCI" serial ports on an HP400
+> --
+> 2.51.0
 
