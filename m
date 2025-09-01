@@ -1,142 +1,127 @@
-Return-Path: <linux-kernel+bounces-794920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C21BB3EAC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:35:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2810B3EAC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 17:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E0224830B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967DF4856A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 15:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758E33570BE;
-	Mon,  1 Sep 2025 15:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B3E356904;
+	Mon,  1 Sep 2025 15:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HC7VTl55"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHSscyxU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC38535691C;
-	Mon,  1 Sep 2025 15:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BC62FB625;
+	Mon,  1 Sep 2025 15:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756739844; cv=none; b=dGcoXZyxEwPOXttp/biYSSQi9eBDrwgGS7pV2bdkomYphWSQiIbhQpwI71NTlzAkJrdT7v6KWx58tydWXSvAWY0DBzURo6NpqvANcSXFyED9uc1OUHpBweCap4FLdimuznDZ0XS3lORMY2YpEL1mU3XiND+mu19rkt1sZ+uX1Zw=
+	t=1756739838; cv=none; b=A/qhr+VQVBEhhcc9FTXrma/nuKUt/SsC8Oa/2m/DKGxkcn+TQBIIbmfTInQ33JWQ0wzarNn9H777EXcRf0YGV0Q6dPwu18chEv6e6IVQwuliQGwP77vQgmDvN5OXHHhKkbL9CIkdg5UgRMTHoS4CRglEYE6oos5mUgXpg4OMx2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756739844; c=relaxed/simple;
-	bh=psh/GqKE0N6XjPAZ1VB7WNWkBHTv5Vf+6OZtUUhfAxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qaVz9NNcjrI2qzVBs3f8iXa4iJTP5jDSYnmXBobdSP/gynR96aPyJIKJnSohA3uhLl0V4J1Iok/dqnHxdIRBskd41zXZxSqgsW6sjTWD76cW4WiHSipWXXqVnhLwP7VmQqrIJNanVahuUvVOTXf/DIk32cSXkbrcJGxYXeYhG7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HC7VTl55; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9476D40E01A3;
-	Mon,  1 Sep 2025 15:17:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id j3KPCpgOQIVH; Mon,  1 Sep 2025 15:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756739836; bh=wSGzID+6LWylLYcdbGGGVwZ9BdwqN9FQf6znuIrCiN0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HC7VTl55YcNa//Hxr84/xHArlziRMwy8euPzWuuZfDSbRR6y7MtfFTxTFoS+4dDfz
-	 xUNwM2dRLFevzLQXzGfdKCGpM82SmXrwAo4odO7oNasO8LCuYGeJLxI3p6w0CdftJj
-	 d8ryamzbOdq2RNJH5IYMIC1dZvxDHV0+wjI4Q98qskrt4CDpJBJ9QFlhwn4PbmcAmu
-	 O3u0WsR3f7cxM5OGqgBNaGrpvoEyGCVtsTVATmKX4dDpqVwKmraHeBc/zJVmQ8rN0K
-	 ZGT/fkWcJPVEUG440nv0ecbX4zN/Q/eQFr+QLWqUs6hX+pUrdZwgken1s1dHvn+BqK
-	 AGG3fag1ry5KmOW3p0Hdg2fKv9wW3Klk++7sfbT/7nwh1NhpA6SsP0MRNsAVcXX6+s
-	 I7FmBPh2S3iht0z7mPZyBSsFIap8DW+Ea46bBpE/BPLELg6y85kapiSd1tSSE60LSc
-	 6LSgFjS6im56T/YGy9Tp5ZQ50YaLctZrQK1ZjFjgfJl/GFkr1ukEVkjNV0xa3l2+ZX
-	 nK+GSTs0ELKfpUiaKPugx6oY6El4bnodY3Tt3AeE8HzHVVl6+RMtzKa/Qo09XWx7JP
-	 XYDEaUh5J/7Vt7P5H9jN1k0a16/iSINS+r1icsJbHPXbA0pLvNSOvr/Nctzg4Cx2Au
-	 YX6uDl8o95tEUbM7ZO8Sm7/U=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 469FB40E019F;
-	Mon,  1 Sep 2025 15:16:59 +0000 (UTC)
-Date: Mon, 1 Sep 2025 17:16:58 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, git@amd.com, ptsm@linux.microsoft.com,
-	srivatsa@csail.mit.edu, shubhrajyoti.datta@gmail.com,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>
-Subject: Re: [PATCH v8 3/5] ras: Export log_non_standard_event for External
- Usage
-Message-ID: <20250901151658.GBaLW46ibJuf4kGgnl@fat_crate.local>
-References: <20250826052914.2066884-1-shubhrajyoti.datta@amd.com>
- <20250826052914.2066884-4-shubhrajyoti.datta@amd.com>
+	s=arc-20240116; t=1756739838; c=relaxed/simple;
+	bh=5weQGGRb22PrjCyP/g4zxlVoFtpKwJSJ+1zX1sG+Ceo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rMdK436whRxs/eRlRQXd4ZbALenInxJWtcorA+TeM/SgsNUuMaHkQkJFcID8EBLNSR4Y9J2QAL/Li4/kwa0vxfRvg67c6FQk+BVpr/jVK9fueaCCP1OnojL/DlWSrBY/yxdPsZi0tYbMYrHQJQHvifnjVAUS9/vxtDMlqfAwAUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHSscyxU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5DE0C4CEF4;
+	Mon,  1 Sep 2025 15:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756739837;
+	bh=5weQGGRb22PrjCyP/g4zxlVoFtpKwJSJ+1zX1sG+Ceo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fHSscyxUBqa2PrUEAJYH4gjbe394x6UINLLLJtU3No/ch07okasdYpPcLQVZ4fQdz
+	 QQVpadnQL9+K/Bpr7PRPb1lji/ueyUJo0Nz3wjlJnIDs6gj2K0bIoBRm5dUqa4DnzM
+	 DY2h8b80jorHneNn39SEcsZRb6GHqyX/EXJ0F/BwtNCV5dmP3SHyX9yn+TVbM49IPg
+	 gJX0lOPTuzPnXXKhNhXoblUzf/66Yb6hsnXIc36xlN9G/S8hlUTrrtuZhlzHc+/YLr
+	 6Fj48VcKspQFdxqqBYoze3u/d/wGFeYtGEBYBk9/cEEhhvcPXXMosbjDG8tSDIKFer
+	 oYp4KruBpNFcA==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-315a7547f26so1830791fac.0;
+        Mon, 01 Sep 2025 08:17:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXIHZ+dieROt+4aTrx1PcQHg7nlIYAk95nHDLmbgbllnv2cmG6mrjfHDF7dMKOFYn2e9VPb5z8RJLo@vger.kernel.org, AJvYcCVQNIvOWLC6VJy/BXPyCiYqIOIff9qvM1NtaWw/Fp/9VZ9UctTh8eZYMr7EXvWZj7EgyB+HphMNcxUsQkop@vger.kernel.org, AJvYcCVyd/p9aEv8bXqzH8DDjtnOHnnDgkBLAQrnaSMATHE8m93ZEpVDiiEtF6pYxJpV40tsFWwCe+yjX1kFbA==@vger.kernel.org, AJvYcCWbLVBPEqVfF5Fvncp2sAWSNlfd2X/1xg3EqRLpUzHFRdkCtmsFaaV5bBRZH1rCTVLJkAVfp5E37H0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCFGC8VefGHUYvWSPcvdPQw8F6nwwAI5NC+dgnHQDtKRQll5Ta
+	wejVDFDIrJHv2w8YOR4qbZwUa5tqskm50f5AKdAwMEZrRK2a8Uhi1XOWSctju/uJKFAt/0aSyeM
+	2ioVdTEQCuKCAbQvIwuGmM6xAYMTCaGA=
+X-Google-Smtp-Source: AGHT+IEqozTSDrtoR1W72zJmy9Z1LH1mlLFPdwzpw5V1Yv8IGBwtb8EBAZercDEFewoqAI3YKrAtdKI2Ii3KK+l5mg4=
+X-Received: by 2002:a05:6870:9b09:b0:30b:b123:b6c9 with SMTP id
+ 586e51a60fabf-319630e13fbmr3523480fac.12.1756739836982; Mon, 01 Sep 2025
+ 08:17:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250826052914.2066884-4-shubhrajyoti.datta@amd.com>
+References: <20250901085748.36795-1-zhangzihuan@kylinos.cn> <20250901085748.36795-4-zhangzihuan@kylinos.cn>
+In-Reply-To: <20250901085748.36795-4-zhangzihuan@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 1 Sep 2025 17:17:05 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hu48NrMr6Vkjn_UyHywJMx7F5N6yWf2LiXxykZF79EKA@mail.gmail.com>
+X-Gm-Features: Ac12FXy28aQLAZnDRwhZh3hbZ0aFKhCyHW17tDgFwo0nHMN5cP-adgYEeM5GYyY
+Message-ID: <CAJZ5v0hu48NrMr6Vkjn_UyHywJMx7F5N6yWf2LiXxykZF79EKA@mail.gmail.com>
+Subject: Re: [PATCH v3 03/12] cpufreq: intel_pstate: Use scope-based cleanup helper
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, Ben Horgan <ben.horgan@arm.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, intel-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 10:59:12AM +0530, Shubhrajyoti Datta wrote:
-> The function log_non_standard_event is responsible for logging
-> platform-specific or vendor-defined RAS (Reliability, Availability,
-> and Serviceability) events. Currently, this function is only available
-> within the RAS subsystem, preventing external modules from
-> leveraging its capabilities.
-> 
-> log_non_standard_event is exported so that external drivers like VersalNet
-
-"Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-to do frotz", as if you are giving orders to the codebase to change
-its behaviour."
-
-
-> EDAC can log non-standard RAS events.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+On Mon, Sep 1, 2025 at 10:58=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
+n> wrote:
+>
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+>
+> No functional change intended.
+>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 > ---
-> 
-> (no changes since v6)
-> 
-> Changes in v6:
-> - Update the commit message.
-> 
-> Changes in v2:
-> - New patch addition
-> 
->  drivers/ras/ras.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
-> index a6e4792a1b2e..ac0e132ccc3e 100644
-> --- a/drivers/ras/ras.c
-> +++ b/drivers/ras/ras.c
-> @@ -51,6 +51,7 @@ void log_non_standard_event(const guid_t *sec_type, const guid_t *fru_id,
+>  drivers/cpufreq/intel_pstate.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index f366d35c5840..4abc1ef2d2b0 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -1502,9 +1502,8 @@ static void __intel_pstate_update_max_freq(struct c=
+pufreq_policy *policy,
+>
+>  static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
 >  {
->  	trace_non_standard_event(sec_type, fru_id, fru_text, sev, err, len);
->  }
-> +EXPORT_SYMBOL_GPL(log_non_standard_event);
+> -       struct cpufreq_policy *policy __free(put_cpufreq_policy);
+> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpuf=
+req_cpu_get(cpudata->cpu);
+>
+> -       policy =3D cpufreq_cpu_get(cpudata->cpu);
+>         if (!policy)
+>                 return false;
 
-In a pre-patch, pls delete this silly wrapper log_non_standard_event() and use
-the tracepoint trace_non_standard_event() at the callsites instead.
-
-Then you can use the same in your driver.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+The structure of the code is intentional here and there's no reason to
+change it.
 
