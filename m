@@ -1,118 +1,108 @@
-Return-Path: <linux-kernel+bounces-793638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF27B3D65A
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:46:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE96B3D654
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 03:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5BD1668E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:46:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75423B68B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 01:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADC41F4297;
-	Mon,  1 Sep 2025 01:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8574C1B4F0A;
+	Mon,  1 Sep 2025 01:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CA8XMlFi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Fhy9asR+"
+Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23333134AC;
-	Mon,  1 Sep 2025 01:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313C4C2FB
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 01:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756691174; cv=none; b=uMh4vV3mRELiy6ijFwUSBmAlMdT5Dk81hKJVf8OOEAXKlt7hla3ZZM+jIqM5GqQ+TNXfpaJC/th4uI1MGqJNzA/Lap3excx0GYfPKNSfQFLrrt897YQW86b0f/Vb0b8r0zmsCJEAh0wbb07sEgewb1WC+l5wNEuJU/uoLpE5zYM=
+	t=1756690708; cv=none; b=ISmXAWwuFPypHzC3ew2kk39GXHX7WuTlhlEw46vgfQyUdN2d2Y2Zz1PGlAP74Dt8/a9HF+M5TSSgPJ8Wpl0XsWkCq31gM+SwUwgGXVFHcG2GwB2OPkjHHUlnwahZEIdZ55qArQUqkBcDyXEW5ehdnfAygYY6bANySeOmjmc4o/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756691174; c=relaxed/simple;
-	bh=RzLdyNU+06UIw3pVzj6lLN2PZ24YjO7bcjxEXmXqMqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSa61IlbooxrQlDb63z8axcIlCn9RAaJmDm9n7iwM+QahFtNt1qeynQ3yaGPDHHVvlDM1LN3txgwxEC5TjphBWTpQO4N6EGRTHHY6AkEEMIUbJ/XiLSi6o2mQ2Mz6/qbyMVRxRouOEJtsb4/9JRrXXnKh1BnTXN8bpXWBed/xkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CA8XMlFi; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756691172; x=1788227172;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RzLdyNU+06UIw3pVzj6lLN2PZ24YjO7bcjxEXmXqMqM=;
-  b=CA8XMlFi/RBK/SC5hhSnGwwa3vV+DC1BzUX4Kl9nBhRn5tnF31o7lP0B
-   T7b53iTNv+F3lQB7bYSK5rYe4cJZuqgRGE4DssF5kKF/rFmMEoBVimnIU
-   m+y02U9UlZbJe4VCC2oTQlOaaT34bcDhAXw5jwJzW/Vb7pbwBvGwk/e2Q
-   IQDnporluPT7XKxlHW89sTFr1V7ro2z8oBoIGKOGGAZDQEWkx5wcYqWw4
-   zeDJoR2LQlbycCnBaJIGXcoj6TbdbFhSxHE89r098hD/GjC6ETp0bQd8c
-   /LbuP0L4561FKrkh6bOnjix64vXb7Few4spf1r9PWTBUy5s7lrDjqgUza
-   w==;
-X-CSE-ConnectionGUID: DUtVJNkUQlm56QMexrUhAQ==
-X-CSE-MsgGUID: ko3fVM1CSpGtemb+qtB7iQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="59034244"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="59034244"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Aug 2025 18:46:11 -0700
-X-CSE-ConnectionGUID: EVNJIULMQYGFusoItCAZlg==
-X-CSE-MsgGUID: /i+qggwiSRS06VOV5df//A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="175203000"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 31 Aug 2025 18:46:09 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ustcT-000011-2A;
-	Mon, 01 Sep 2025 01:46:05 +0000
-Date: Mon, 1 Sep 2025 09:36:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bharadwaj Raju <bharadwaj.raju777@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	shuah@kernel.org, linux-kernel-mentees@lists.linux.dev,
-	Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-Subject: Re: [PATCH 3/5] iio: imu: icm20948: add support for gyroscope
-Message-ID: <202509010950.z3ZOTLrS-lkp@intel.com>
-References: <20250831-icm20948-v1-3-1fe560a38de4@gmail.com>
+	s=arc-20240116; t=1756690708; c=relaxed/simple;
+	bh=u/FqhjA1/sXtx7E5fPiSH8R1tbd6kUMljTqj9A7RDdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BJ6PDBp6MUrBk0Ttj7nvmBPsXmvaACHQeE+2mSNKQRXv0M0ipt/nST80XuSc/eHAhMYDjek+dpyppD1V1F3N9C31IfLDbPyzxPRpWQNmcswz/TKijfwkaNY0aTv3Oje2NNtYSmF9kyzFhaB3Qj59ffVdmpJB3fVLJL1L+fjD3Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Fhy9asR+; arc=none smtp.client-ip=61.135.153.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756690698;
+	bh=41Hj+4QZoJwX4JXyxqOCAg0MsefGVY5tWO7IDIjXO0s=;
+	h=From:Subject:Date:Message-ID;
+	b=Fhy9asR+V4aD3aiQ7n3fJ2wQM5ajlZ3Nz63SD6FUh14bI0GZDbmXyp9Cc70pGQAvx
+	 Qk5tFQwfYXhA5vZQFNFPWdXpM6w8N7GFx2XaexrqY7G32XPiqtr+v9q0hDertBmlFp
+	 al7PUWSI/peXsjjzcabFbZYI4LGKrFXennfbLc58=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 68B4F8FF00005039; Mon, 1 Sep 2025 09:38:09 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5566196685393
+X-SMAIL-UIID: 444AB87BC62E4F0D9EDA304FB75BDCEF-20250901-093809-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+7f3bbe59e8dd2328a990@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net] [virt] INFO: task hung in __vhost_worker_flush
+Date: Mon,  1 Sep 2025 09:37:57 +0800
+Message-ID: <20250901013758.6300-1-hdanton@sina.com>
+In-Reply-To: <68b3b1ac.a70a0220.1c57d1.028b.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250831-icm20948-v1-3-1fe560a38de4@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Bharadwaj,
+> Date: Sat, 30 Aug 2025 19:21:32 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    11e7861d680c Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17c5c242580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671ba62580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1685aa62580000
 
-kernel test robot noticed the following build errors:
+#syz test
 
-[auto build test ERROR on 8742b2d8935f476449ef37e263bc4da3295c7b58]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bharadwaj-Raju/dt-bindings-iio-imu-Add-ICM-20948/20250831-024726
-base:   8742b2d8935f476449ef37e263bc4da3295c7b58
-patch link:    https://lore.kernel.org/r/20250831-icm20948-v1-3-1fe560a38de4%40gmail.com
-patch subject: [PATCH 3/5] iio: imu: icm20948: add support for gyroscope
-config: parisc-randconfig-r132-20250901 (https://download.01.org/0day-ci/archive/20250901/202509010950.z3ZOTLrS-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 10.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250901/202509010950.z3ZOTLrS-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509010950.z3ZOTLrS-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-ERROR: modpost: "__divdi3" [drivers/iio/imu/inv_icm20948/inv-icm20948.ko] undefined!
->> ERROR: modpost: "__moddi3" [drivers/iio/imu/inv_icm20948/inv-icm20948.ko] undefined!
-ERROR: modpost: "inv_icm20948_core_probe" [drivers/iio/imu/inv_icm20948/inv-icm20948-i2c.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--- x/drivers/vhost/vhost.c
++++ y/drivers/vhost/vhost.c
+@@ -407,16 +407,14 @@ static int vhost_run_work_kthread_list(v
+ 	kthread_use_mm(dev->mm);
+ 
+ 	for (;;) {
+-		/* mb paired w/ kthread_stop */
+-		set_current_state(TASK_INTERRUPTIBLE);
+-
+-		if (kthread_should_stop()) {
+-			__set_current_state(TASK_RUNNING);
+-			break;
+-		}
+ 		node = llist_del_all(&worker->work_list);
+-		if (!node)
++		if (!node) {
++			if (kthread_should_stop())
++				break;
++			__set_current_state(TASK_INTERRUPTIBLE);
+ 			schedule();
++			continue;
++		}
+ 
+ 		node = llist_reverse_order(node);
+ 		/* make sure flag is seen after deletion */
+--
 
