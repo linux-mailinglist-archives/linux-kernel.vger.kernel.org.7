@@ -1,171 +1,148 @@
-Return-Path: <linux-kernel+bounces-795177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A25B3EDE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:30:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0EFB3EDE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 20:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E1261702DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F17C61A88434
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 18:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A7A32A823;
-	Mon,  1 Sep 2025 18:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C2D320A1E;
+	Mon,  1 Sep 2025 18:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1A29aKu"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlhxISV+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9968F320A36;
-	Mon,  1 Sep 2025 18:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0046810FD;
+	Mon,  1 Sep 2025 18:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756751410; cv=none; b=kJXUpOOT+NoJPvzYIgPmX8T1wt98Qqzd/7WLNROKMN8z3TvTuf2hEYZO8TsmtKpKezr3eLJfp2T4Qk/eTaVYb7LgydEkVTuR0CgwZg4TUov/usma8qcEhCrzq5KMU1XdBpTY29qy5LpoDDyrjInatfYGTKYKnhLla/zU4mAUeNM=
+	t=1756751488; cv=none; b=mEwD4y4fpFc8JnRDqEk+piUevrU/EXYi5X0yNMx18WBx8qDodtm05huiq/bvwzQSvgquz070XUyhyZmveTQoCjyqhz18BXbXpGAW0KoSIsEQI1hboLp0dYiEPxAfrNaLseZrdu0HCVjX7uwNmmA4OutrGcQeBaCy3Iksj7V4ox4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756751410; c=relaxed/simple;
-	bh=UKiqQCVsZuvQMoC5LloSCPWdLMatGIjhMmftsNhZKL0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d95471OHZUGWCooFxm0fkTXF2gX49LBDTRVVwvGNHBYl+YnvYZ+A+orcaUApeVyHTPhuhgEhkEO6LeK9QEStdrRKM6CoZEAxmij+fQ5WfHEllr4AwGluLBPuNMQefQW23VAqBsW4AySt2mTXHdR+Wq0KKiKnwHEjqANvDy4/OrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C1A29aKu; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso28005775e9.2;
-        Mon, 01 Sep 2025 11:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756751407; x=1757356207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FsRg/Mb6HYOj+u/psnqVQ5MEqP38BMpKlTlaK+X2e7o=;
-        b=C1A29aKu1i6CFRLyGU2AenYuTpzcEuB1azsiYE8f/jEKAScO34hu7gHa8ib6a2pqaY
-         2dNmxgPvkMFUy2CBPqrW1pqEKsmWdTcbZ1FAOBLhkdTMdE1piORh4LE90t3r0JRpMXlQ
-         WpV5zNnFSd8USabOhILK9U8eX7WQI1HaEB+RxDNQrUNNcE2rjdQlyS1dXhPJQd5tq+v3
-         2Hb/0aqnOByfJ6sBq9NKZ34S57se5KLpPKfWtHk45WBftiavdDm8CJtEKrzAyu+gVas/
-         q1lfDfBD70QNfLxcQK+iC8LcvTLxQgnZh6XztjW/ZoBBBaHdzBfHvo3Wptzl97ny60SJ
-         GtXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756751407; x=1757356207;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FsRg/Mb6HYOj+u/psnqVQ5MEqP38BMpKlTlaK+X2e7o=;
-        b=KvD6kCJLfF003TUbgp4XXQMZtM0Xx7irkQSUbGtzzOisIwHl2NPnV6R2xWaRJ1j79D
-         0J6Z7hr+KadjUicwH885T34yRhWdOQhOx7Es6lZ5LcVLbgAmijECFSLO6jtOHfuxW/N1
-         /dH9hiIBdBOSwrpztvi5/g763bosjnxyqgMzBb4Y3zGpi29oEd6ENI+NGe4QnZiVqjUH
-         H9+7xG6QeSVU3qqjEjyPLTPPpeUP8NV4TvqHDegqvsKHQPkpKo6nj+jrbhtrNA4zcm6/
-         p/Rk0KvzS5TuXH8NCaKDHnBZ2nFYjoj03f81f1w1r9e3NwXS/mwj+wPQ+ZnTD7fwsHpd
-         Bo0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUyZLeL5+rr/PmlROgCMJI8pxvuCNcX/d60SvQQbLd5nWJLtklijRJHhQe3O6Iyd/oaokHNORv6xom3@vger.kernel.org, AJvYcCW2mYjC9a9tRhfrEmYkilEyNt775qGddRengOqTWFUVGsEmv1gX7oWsMSI/2Uj0kl0KLCGyXKTA7ifN@vger.kernel.org, AJvYcCX/qjD3QNmJVRECDyOeAa0O6G7JsxLj87l4P3ZgI9dTuct5uy6D/7ak9dYNhfM9tUcS0ZbsZ6HX6/yUDlHJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOz3HWncgLGxDC0oy/6gUUNNgL05lrvJvr5JMdybVY5fjfLb3l
-	EtS27Ph1fE9AvhGsweGLlyb/cFoy4QE76Q6XjqOh1ui0mzYYOaaBPk8J
-X-Gm-Gg: ASbGncuGFuvLURQfrV+GmFofmZl3HAhPMsILdJuQEgs3CJS5daaDtvE6qTi+me+78RX
-	zvl06rV8Czf5G+gLg94a9jX5gVtqlC7TFuYjAwer6jYO6S2wUi3vezswY66KpzPfFy9HbY+pBMO
-	GLcnCSXnHUVs8+qJ13b0D/0Fgq8uLwekU7Za2Yz+JydiAi+Ym3ldYqGk7Iky+9a9rRG5oEanZ9W
-	udi/XRVLlBBBv15gCa6kq7tOMr9bZCF/NWXjKUREu1Zxf1257Mgm0OIj5JhRSLkBS1kwoZwXFgl
-	b/tLldwjoSnFEfLtv+tliTDdzgjkEzB6qyTCvOvcXJG6A1KilOdRXtD9pCmfzYVl1ukRjzEV9Fk
-	d5KeBBJhGHncImjMAXHRVRo7HfNavq5QDl91QeVqPsgWisAnheWZ3VMmz
-X-Google-Smtp-Source: AGHT+IEnsIh6t4OS9eFETYH8kFSZTJm+RPUN40EnFIDMYcz3gbiG4hWFIOhw9wkbVZYQPrfpibUxfA==
-X-Received: by 2002:a05:600c:484a:b0:45b:85d0:9a0c with SMTP id 5b1f17b1804b1-45b85d09ccdmr55182745e9.15.1756751406870;
-        Mon, 01 Sep 2025 11:30:06 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:ca6c:86b2:c8f:84d6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7f53a947sm93602505e9.3.2025.09.01.11.30.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 11:30:06 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/2] clk: renesas: r9a09g077: Add Ethernet Subsystem core and module clocks
-Date: Mon,  1 Sep 2025 19:30:00 +0100
-Message-ID: <20250901183000.1357758-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250901183000.1357758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250901183000.1357758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1756751488; c=relaxed/simple;
+	bh=pXtfi1ZkzOUO0EvJfw/NLRrBKdRrBqz8G01t4pFGeWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KT2zSPXatWKBEdBdg4b3l4flklTRzSxuFnozSZLkQ7RL6sx7c+UzLXqppguImycKWXZCcnOe2UXBFbNufGSP5t7N2gauEc+x3HivOWV1xWwy4mJeBFb1iAt0oVLaahEvZNPBPyAZZP0X6A53PRaMqe3JrmmqsXWHG2ilJu9r63U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlhxISV+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4EB4C4CEF0;
+	Mon,  1 Sep 2025 18:31:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756751487;
+	bh=pXtfi1ZkzOUO0EvJfw/NLRrBKdRrBqz8G01t4pFGeWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DlhxISV+C2bFL3Ur+Gc1AolquH0MXqaxT0OdmZ0Qk6EiT6R3vfjTAyECGYpQMgdHG
+	 PrnKFo79cAwqBwAbvK7uEuzuOIJuGlvxQtBAAjblxOy2UPcZWm9ZKN/aMwtGNJ4rxI
+	 bzd9q+xf1P+xlVeEJbLWNAz0ojOwb+UpXr6sYxPryWLdLzjlWH4PFyM4GCmxmK+8gD
+	 q8we3bVGX8A9yXkgqGeHWjK4t7YQffHon6UPCx56okONzxj7A2LhJeG5Bap69Hl1ft
+	 3PR9sRLueMNBKY3viTDw+VJih4naUlHe2XZGCwJZidephQiiAut8dAryrdBbm2cZft
+	 RuDUQbl1wQT2w==
+Date: Mon, 1 Sep 2025 11:31:27 -0700
+From: Kees Cook <kees@kernel.org>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Marco Bonelli <marco@mebeim.net>, Petr Vorel <pvorel@suse.cz>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] kconfig: Add transitional symbol attribute for
+ migration support
+Message-ID: <202509011125.5879901C@keescook>
+References: <20250830020109.it.598-kees@kernel.org>
+ <59c4f103-7f1b-4829-bd82-0d392047fea4@oracle.com>
+ <202509010949.9A61A98@keescook>
+ <d25b2c63-32e2-4a41-b982-da5131cffd2f@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d25b2c63-32e2-4a41-b982-da5131cffd2f@oracle.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Sep 01, 2025 at 08:20:18PM +0200, Vegard Nossum wrote:
+> 
+> On 01/09/2025 18:56, Kees Cook wrote:
+> > > > @@ -459,13 +462,15 @@ void sym_calc_value(struct symbol *sym)
+> > > >    			sym_calc_choice(choice_menu);
+> > > >    			newval.tri = sym->curr.tri;
+> > > >    		} else {
+> > > > -			if (sym->visible != no) {
+> > > > +			if (sym->usable) {
+> > > >    				/* if the symbol is visible use the user value
+> > > >    				 * if available, otherwise try the default value
+> > > >    				 */
+> > > >    				if (sym_has_value(sym)) {
+> > > > +					tristate value = sym->transitional ?
+> > > > +						sym->def[S_DEF_USER].tri : sym->visible;
+> > > >    					newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri,
+> > > > -							      sym->visible);
+> > > > +							      value);
+> > > This looks a bit odd to me. Just thinking out loud: your new logic is
+> > > there to be able to use a value even though it's not visible. In the
+> > > case where it's transitional you use the .config value instead of the
+> > > condition that makes it visible.
+> > > 
+> > > Could you simply change sym_calc_visibility() instead to always return
+> > > 'yes' when the symbol is transitional? Wouldn't that simplify everything
+> > > in sym_calc_value()?
+> > It's a tristate, so "m" is also possible besides "y". (sym->visible is
+> > also a tristate. 🙂
+> 
+> That would be fine, right?
+> 
+> We'd pass the if (sym->visible != no) check... we'd do the
+> 
+> newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri, sym->visible);
+> 
+> EXPR_AND() is basically min() (with n=0, m=1, y=2), so effectively it
+> would end up doing
+> 
+> newval.tri = min(sym->def[S_DEF_USER].tri, 2);
+> 
+> which is the same as
+> 
+> newval.tri = sym->def[S_DEF_USER].tri;
+> 
+> That's what your code is currently doing too, but in a much more
+> roundabout way.
 
-Add module and core clocks used by Ethernet Subsystem (Ethernet_SS),
-Ethernet MAC (GMAC), Ethernet Switch (ETHSW).
+Right, it was this:
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2:
-- Dropped an unnecessary extra line in core clocks
-- Sorted the module clocks in ascending order of their IDs
----
- drivers/clk/renesas/r9a09g077-cpg.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+    newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri, sym->visible);
 
-diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/r9a09g077-cpg.c
-index 1fdd764f9b91..8a544ef48397 100644
---- a/drivers/clk/renesas/r9a09g077-cpg.c
-+++ b/drivers/clk/renesas/r9a09g077-cpg.c
-@@ -72,7 +72,7 @@ enum rzt2h_clk_types {
- 
- enum clk_ids {
- 	/* Core Clock Outputs exported to DT */
--	LAST_DT_CORE_CLK = R9A09G077_USB_CLK,
-+	LAST_DT_CORE_CLK = R9A09G077_GMAC2_PCLKAH,
- 
- 	/* External Input Clocks */
- 	CLK_EXTAL,
-@@ -166,11 +166,21 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
- 	DEF_DIV("CA55S", R9A09G077_CLK_CA55S, CLK_SEL_CLK_PLL0, DIVCA55S,
- 		dtable_1_2),
- 	DEF_FIXED("PCLKGPTL", R9A09G077_CLK_PCLKGPTL, CLK_SEL_CLK_PLL1, 2, 1),
-+	DEF_FIXED("PCLKH", R9A09G077_CLK_PCLKH, CLK_SEL_CLK_PLL1, 4, 1),
- 	DEF_FIXED("PCLKM", R9A09G077_CLK_PCLKM, CLK_SEL_CLK_PLL1, 8, 1),
- 	DEF_FIXED("PCLKL", R9A09G077_CLK_PCLKL, CLK_SEL_CLK_PLL1, 16, 1),
-+	DEF_FIXED("PCLKAH", R9A09G077_CLK_PCLKAH, CLK_PLL4D1, 6, 1),
- 	DEF_FIXED("PCLKAM", R9A09G077_CLK_PCLKAM, CLK_PLL4D1, 12, 1),
- 	DEF_FIXED("SDHI_CLKHS", R9A09G077_SDHI_CLKHS, CLK_SEL_CLK_PLL2, 1, 1),
- 	DEF_FIXED("USB_CLK", R9A09G077_USB_CLK, CLK_PLL4D1, 48, 1),
-+	DEF_FIXED("ETCLKA", R9A09G077_ETCLKA, CLK_SEL_CLK_PLL1, 5, 1),
-+	DEF_FIXED("ETCLKB", R9A09G077_ETCLKB, CLK_SEL_CLK_PLL1, 8, 1),
-+	DEF_FIXED("ETCLKC", R9A09G077_ETCLKC, CLK_SEL_CLK_PLL1, 10, 1),
-+	DEF_FIXED("ETCLKD", R9A09G077_ETCLKD, CLK_SEL_CLK_PLL1, 20, 1),
-+	DEF_FIXED("ETCLKE", R9A09G077_ETCLKE, CLK_SEL_CLK_PLL1, 40, 1),
-+	DEF_FIXED("GMAC0_PCLKH", R9A09G077_GMAC0_PCLKH, R9A09G077_CLK_PCLKH, 1, 1),
-+	DEF_FIXED("GMAC1_PCLKH", R9A09G077_GMAC1_PCLKAH, R9A09G077_CLK_PCLKAH, 1, 1),
-+	DEF_FIXED("GMAC2_PCLKH", R9A09G077_GMAC2_PCLKAH, R9A09G077_CLK_PCLKAH, 1, 1),
- };
- 
- static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
-@@ -181,7 +191,12 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
- 	DEF_MOD("sci4fck", 12, CLK_SCI4ASYNC),
- 	DEF_MOD("iic0", 100, R9A09G077_CLK_PCLKL),
- 	DEF_MOD("iic1", 101, R9A09G077_CLK_PCLKL),
-+	DEF_MOD("gmac0", 400, R9A09G077_CLK_PCLKM),
-+	DEF_MOD("ethsw", 401, R9A09G077_CLK_PCLKM),
-+	DEF_MOD("ethss", 403, R9A09G077_CLK_PCLKM),
- 	DEF_MOD("usb", 408, R9A09G077_CLK_PCLKAM),
-+	DEF_MOD("gmac1", 416, R9A09G077_CLK_PCLKAM),
-+	DEF_MOD("gmac2", 417, R9A09G077_CLK_PCLKAM),
- 	DEF_MOD("sci5fck", 600, CLK_SCI5ASYNC),
- 	DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
- 	DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
+But I made it effectively:
+
+  if (sym->transitional)
+    newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri, sym->def[S_DEF_USER].tri);
+  else
+    newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri, sym->visible);
+
+That first "if" is kind of pointless. I just sent the v3 before I saw
+this email. :P
+
+I was trying to avoid yet more indentation, but I could change it to:
+
+		if (sym->transitional)
+			newval.tri = sym->def[S_DEF_USER].tri;
+		else
+			newval.tri = EXPR_AND(sym->def[S_DEF_USER].tri,
+					      sym->visible);
+
+?
+
 -- 
-2.51.0
-
+Kees Cook
 
