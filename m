@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-794838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB83EB3E7E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:52:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FF9B3E7EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249E91A84BE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:52:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9DB3BE8BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7FB341ABF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C983431FF;
 	Mon,  1 Sep 2025 14:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="SfTXFqew"
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="R6g1/hga"
 Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5EC2EDD76;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B631B4F2C;
 	Mon,  1 Sep 2025 14:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738339; cv=none; b=clnQpwz1Fp4mwT3MH2DXQ9gyZ0S+3nZYcGWU/ScCw/tS7T9ktAiGP6aW586jCs0Ws5fqQMuJIdFDceOyqg6q8TQK9cr5JYVkxnrA53+936zOHwg2OrfSt/XgwkB9M/ewPUSyr1Z+GMGfO+XNUV4oK457fPXrW7WQAsZvewHaYW0=
+	t=1756738340; cv=none; b=iGOF/efoDMQ/JQZLqwZVJnB0+Jvbzr/GVz/tgjaW2stY6oiUbJ+ttKSs1oJIOqPi3wvHjKu6co0fA6RQ/ICeM4ZfIskq2qOu7HOMDM7A74yXs5AbhNLBzZeNAFOEnVdt1Ml+rB73Vwj/yCla+eKk2virWKp21++xS2hEUwoN/UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738339; c=relaxed/simple;
-	bh=bwutvYte2v5M5foMclZwyKV+peJI6XWuEXuXe4HoaBw=;
+	s=arc-20240116; t=1756738340; c=relaxed/simple;
+	bh=APyzJaKTB6ST0FmLzhCiqv/pck8FVVt3+BQEdNx2Pcg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cfo5efzLoP4TSwfIKbZKHkMPmpFT039q/d1c90e/TVbwgafy87LoV2nbRhoHYcDlfS1yc1qx/9j/otdmst4rS5dcQJ3qDSoOvLpd1NiPJEQ4QyonbCporQBaD/nOtu/P3+Xb3nF/lhCu4q5vhW062h5DLQcCKF4X+LoVn6fSzjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=SfTXFqew; arc=none smtp.client-ip=193.104.135.124
+	 MIME-Version:Content-Type; b=HggNurqjDPfauYMYGqn5ojxAsHcCZj1aBjN8c8ojyyNvwlBx5fvwC1ZzMklF/v+Nrx+P8CCrUPmI8Cig3bKjI32PE31H0JOBFQNyTP+mh51o/sekLn28jBfKZ59zDvnuo2wX9F2e+tWQ29O5AHwiUycjAqJAi60870LqQ93FO/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=R6g1/hga; arc=none smtp.client-ip=193.104.135.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
 	s=202008; t=1756738334;
-	bh=bwutvYte2v5M5foMclZwyKV+peJI6XWuEXuXe4HoaBw=;
+	bh=APyzJaKTB6ST0FmLzhCiqv/pck8FVVt3+BQEdNx2Pcg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SfTXFqewM4mrjsNbqjjJYpkzNzQSs7ILBxImJU2Q2lcDK1cdNpH0oOh/BRtAGjOvy
-	 +telnDst07ECMTXoE312nn9vwMyp6X3wGPj5qjxhBZeX/5zuOSmk0Zf7muQPW8wmgQ
-	 nSRlxYeZKCZ7N21bs9DYXi+6ZFjbHLa52GINp5PCyUY4h5filyjlPVzm4V8rFL6qgz
-	 szjTmpdfv4rm/y/KomFOD05ixOEbs74pQF72HHQH3SzQ9TY7PbB4ioCChQOCsexwsC
-	 TCATXFxr/xnZicSZUWjWdYzqEUGJ1+Jl64mnFRP9uBHxn4cSDlPpwaBJsvRQGkdEnk
-	 PGuFwq/cqDh8A==
+	b=R6g1/hga27RqGOi1Hn35l6Z9Os5REV0aAX34b2TJmLJAy7sMy5DeyPgDzFMA/kVd4
+	 MPI3/YGcwRc0xey3IsjZkPsOpNf74oc+YOXJxGmIPBWyafs4gfGYuVFuv6kzI+SrVs
+	 3gkUmnSEf0rqQ37E5sQ+EAJLf7zi43bUqXNNtCwFXEKNzC5ukQsh0/pkRxwG416Y+X
+	 9tpNoox0nHLEv7BU8dvHf3o8FHP1PB8mP0Un8ai9p21/pqBEJrIDIkCA/xFibG8Yfw
+	 4g1MX/7RxhWyCu1OXj+Ji/V5p7LsAF9tdDdIiNi2+A63K0USYwacMwrVwVHSoTszBB
+	 8ZzAt9O8aazBQ==
 Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id EADA26012E;
+	by mail1.fiberby.net (Postfix) with ESMTPSA id D8E986000C;
 	Mon,  1 Sep 2025 14:51:16 +0000 (UTC)
 Received: by x201s (Postfix, from userid 1000)
-	id 1106A202271; Mon, 01 Sep 2025 14:50:56 +0000 (UTC)
+	id BFCD72022B0; Mon, 01 Sep 2025 14:50:56 +0000 (UTC)
 From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
 To: "David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
@@ -61,9 +61,9 @@ Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
 	wireguard@lists.zx2c4.com,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net 2/4] tools: ynl-gen: use macro for binary min-len check
-Date: Mon,  1 Sep 2025 14:50:21 +0000
-Message-ID: <20250901145034.525518-3-ast@fiberby.net>
+Subject: [PATCH net 3/4] tools: ynl-gen: fix nested array counting
+Date: Mon,  1 Sep 2025 14:50:22 +0000
+Message-ID: <20250901145034.525518-4-ast@fiberby.net>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250901145034.525518-1-ast@fiberby.net>
 References: <20250901145034.525518-1-ast@fiberby.net>
@@ -76,31 +76,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch changes the generated min-len check for binary
-attributes to use the NLA_POLICY_MIN_LEN() macro, and thereby
-ensures that .validation_type is not left at NLA_VALIDATE_NONE.
+The blamed commit introduced the concept of split attribute
+counting, and later allocating an array to hold them, however
+TypeArrayNest wasn't updated to use the new counting variable.
 
-This doesn't change any currently generated code, as it isn't
-used in any specs currently used for generating code.
+Abbreviated example from tools/net/ynl/generated/nl80211-user.c:
+nl80211_if_combination_attributes_parse(...):
+  unsigned int n_limits = 0;
+  [...]
+  ynl_attr_for_each(attr, nlh, yarg->ys->family->hdr_len)
+	if (type == NL80211_IFACE_COMB_LIMITS)
+		ynl_attr_for_each_nested(attr2, attr)
+			dst->_count.limits++;
+  if (n_limits) {
+	dst->_count.limits = n_limits;
+	/* allocate and parse attributes */
+  }
 
-Fixes: be5bea1cc0bf ("net: add basic C code generators for Netlink")
+In the above example n_limits is guaranteed to always be 0,
+hence the conditional is unsatisfiable and is optimized out.
+
+This patch changes the attribute counting to use n_limits++ in the
+attribute counting loop in the above example.
+
+Fixes: 58da455b31ba ("tools: ynl-gen: improve unwind on parsing errors")
 Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
 ---
  tools/net/ynl/pyynl/ynl_gen_c.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/net/ynl/pyynl/ynl_gen_c.py b/tools/net/ynl/pyynl/ynl_gen_c.py
-index ef032e17fec44..52f955ed84a7f 100755
+index 52f955ed84a7f..fb7e03805a113 100755
 --- a/tools/net/ynl/pyynl/ynl_gen_c.py
 +++ b/tools/net/ynl/pyynl/ynl_gen_c.py
-@@ -556,7 +556,7 @@ class TypeBinary(Type):
-         elif 'exact-len' in self.checks:
-             mem = 'NLA_POLICY_EXACT_LEN(' + self.get_limit_str('exact-len') + ')'
-         elif 'min-len' in self.checks:
--            mem = '{ .len = ' + self.get_limit_str('min-len') + ', }'
-+            mem = 'NLA_POLICY_MIN_LEN(' + self.get_limit_str('min-len') + ')'
-         elif 'max-len' in self.checks:
-             mem = 'NLA_POLICY_MAX_LEN(' + self.get_limit_str('max-len') + ')'
+@@ -830,7 +830,7 @@ class TypeArrayNest(Type):
+                      'ynl_attr_for_each_nested(attr2, attr) {',
+                      '\tif (ynl_attr_validate(yarg, attr2))',
+                      '\t\treturn YNL_PARSE_CB_ERROR;',
+-                     f'\t{var}->_count.{self.c_name}++;',
++                     f'\tn_{self.c_name}++;',
+                      '}']
+         return get_lines, None, local_vars
  
 -- 
 2.50.1
