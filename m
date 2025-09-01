@@ -1,179 +1,156 @@
-Return-Path: <linux-kernel+bounces-794141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F16B3DD74
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B134CB3DD68
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 11:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4706F441CE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:02:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78EFC17EE61
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88AA2FE56D;
-	Mon,  1 Sep 2025 08:59:13 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59088304971;
+	Mon,  1 Sep 2025 08:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UT+w+3il"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C343002DC;
-	Mon,  1 Sep 2025 08:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068242FFDDC;
+	Mon,  1 Sep 2025 08:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756717153; cv=none; b=W7ACWeXGCjk1Vv+2xRpZCmUXteXTuf7xN8Tv/7eWJ8TgvdEG1BB3V3yJ0ZZqL5RRDce6YHrFc3IYqH1YvgQikZCD80RdjYd4Zd7ssh9Qoyes9JlzWZjfrWxndpOyY1d65Nvr9ApC654ZD00zp9oBBloH5XHxcdqJg4hjIZG8sSc=
+	t=1756717130; cv=none; b=iBnZ8xpaSGDiT9RH7j/1LCUYPoQdBDfGPHcX0zV3o1gFvVSuAKzr0HfBVcGFPKDmnOLON3wGwZ/8WYOMh/GYiMXCYcH6M/eorWzE96629fc9d8hw3t8Pl469f2ETl/VvTXshvGh0Mggk5sZaYOdMAKpAySMbGoUOU3smdnPJ23M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756717153; c=relaxed/simple;
-	bh=4tj3hkSdGBHU2nCv4WncFZkMvmh6Z1BDT7S6gxT4ks0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mxA8AlW/SpI8yYB8+UVet4rd3W+0C5s2wPRXRTApBHxvzkwqBq05I75nmyswhm4W3HkaBI0cJCZ5leczyB58Bu9OpopGJtbz4PRg8XF1iSxd07pPo18L8uXcj8IZ/xn9zlarj/QSlyygGCTlb4Os2YGyC6DO2qwFWkf0i0cLRR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: e86bfae4871111f0b29709d653e92f7d-20250901
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:9856c3cb-6274-461f-bd60-bd9e3453544a,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:1f38d007408be91faa64e7344a36a8e5,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: e86bfae4871111f0b29709d653e92f7d-20250901
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1266094301; Mon, 01 Sep 2025 16:59:03 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id B89CBE008FA7;
-	Mon,  1 Sep 2025 16:59:02 +0800 (CST)
-X-ns-mid: postfix-68B56055-952872770
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id C0DDDE008FA8;
-	Mon,  1 Sep 2025 16:58:52 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Keerthy <j-keerthy@ti.com>
-Cc: Ben Horgan <ben.horgan@arm.com>,
-	zhenglifeng <zhenglifeng1@huawei.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+	s=arc-20240116; t=1756717130; c=relaxed/simple;
+	bh=InXgBzKhkx7pDLC/UHg7AOWfDsfg22kfeusZjuMAjAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmzLmRx/8blzmIEVJfZyeIkBpta3+LTeBF2WCHko9hWHrIzoAQds5dRXiRAGxv5fZjzGUMR6U180tpJEaP49+PUJh77YO3penIBa2RhbySmcR1d7MXsutF6GNprdNrvl5s2wPxyL7vZDS1UyVBIv2AVdj7nWiKUG0Z9xKnj88xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UT+w+3il; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ELXcS4kuUmNY0mNJAeIrv8bpfUT+7O0FMeM9giGQ16Q=; b=UT+w+3ilhmZ+76H+urMqJ6Hsrd
+	/xfgAuPhxfKGbWSVeTe/Aw9uUNWYzqaoq3v5yiHoutCJeSARcDUyYKAxGZM4CRG8zJwDS2Wqv01F/
+	qWaQ6BipmwycC3OwpGnuVBMr3BlroIg1lki85OuJs1mgzdpi1lZrKQmrY9dgBy/L3fPySfABazIos
+	1sbx5FtHVpXgG9gw7SXaUFg2XsFkqC3u1a9fHIuCXfyV2lqLj5zlj/d5eZkBXsuJBqBdNm9sO0XXX
+	TKdrhTHXgKSbliK9avGEYM8DKpLOK6oAX/G7p9a0UwLXE0CsIcmvPDSpicBl/64VfEYH8GCc6Xy/J
+	xHhUM9YQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ut0Mi-00000003gYr-0NpU;
+	Mon, 01 Sep 2025 08:58:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 96847300342; Mon, 01 Sep 2025 10:58:15 +0200 (CEST)
+Date: Mon, 1 Sep 2025 10:58:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+	Tobias Huschle <huschle@linux.ibm.com>,
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
 	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andrea Righi <arighi@nvidia.com>,
 	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-pm@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v3 12/12] PM: EM: Use scope-based cleanup helper
-Date: Mon,  1 Sep 2025 16:57:48 +0800
-Message-Id: <20250901085748.36795-13-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250901085748.36795-1-zhangzihuan@kylinos.cn>
-References: <20250901085748.36795-1-zhangzihuan@kylinos.cn>
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH v7 0/8] sched/fair: Get rid of sched_domains_curr_level
+ hack for tl->cpumask()
+Message-ID: <20250901085815.GE4067720@noisy.programming.kicks-ass.net>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <b64c820d-084a-40d9-bb4e-82986b9e6482@linux.ibm.com>
+ <20250826101328.GV4067720@noisy.programming.kicks-ass.net>
+ <xhsmh7bymlg2f.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <5ec9ca8a-9ba9-4600-a7a2-f7bd790fca83@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ec9ca8a-9ba9-4600-a7a2-f7bd790fca83@linux.ibm.com>
 
-Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-annotation for policy references. This reduces the risk of reference
-counting mistakes and aligns the code with the latest kernel style.
+On Fri, Aug 29, 2025 at 02:23:06PM +0530, Shrikanth Hegde wrote:
 
-No functional change intended.
+> I was looking at: https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=sched/core
+> 
+> Current code doesn't allow one to enable/disable SCHED_MC on ppc since it is set always in kconfig.
+> Used the below patch:
+> 
+> I think since the config is there, it would be good to provide a option to disable. no?
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- kernel/power/energy_model.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+So current PPC code has this MC thing unconditional. I've been
+preserving that behaviour. If PPC maintainers feel they want this
+selectable, I'm happy to include something like the below, but as a
+separate patch with a separate changelog that states this explicit
+choice.
 
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index ea7995a25780..852d48039ce2 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -451,7 +451,7 @@ static void
- em_cpufreq_update_efficiencies(struct device *dev, struct em_perf_state =
-*table)
- {
- 	struct em_perf_domain *pd =3D dev->em_pd;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	int found =3D 0;
- 	int i, cpu;
-=20
-@@ -479,8 +479,6 @@ em_cpufreq_update_efficiencies(struct device *dev, st=
-ruct em_perf_state *table)
- 			found++;
- 	}
-=20
--	cpufreq_cpu_put(policy);
--
- 	if (!found)
- 		return;
-=20
-@@ -787,21 +785,20 @@ static void em_check_capacity_update(void)
-=20
- 	/* Check if CPUs capacity has changed than update EM */
- 	for_each_possible_cpu(cpu) {
--		struct cpufreq_policy *policy;
-+		struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D
-+			cpufreq_cpu_get(cpu);
- 		struct em_perf_domain *pd;
- 		struct device *dev;
-=20
- 		if (cpumask_test_cpu(cpu, cpu_done_mask))
- 			continue;
-=20
--		policy =3D cpufreq_cpu_get(cpu);
- 		if (!policy) {
- 			pr_debug("Accessing cpu%d policy failed\n", cpu);
- 			schedule_delayed_work(&em_update_work,
- 					      msecs_to_jiffies(1000));
- 			break;
- 		}
--		cpufreq_cpu_put(policy);
-=20
- 		dev =3D get_cpu_device(cpu);
- 		pd =3D em_pd_get(dev);
---=20
-2.25.1
-
+> ---
+> 
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index fc0d1c19f5a1..da5b2f8d3686 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -170,9 +170,8 @@ config PPC
+>  	select ARCH_STACKWALK
+>  	select ARCH_SUPPORTS_ATOMIC_RMW
+>  	select ARCH_SUPPORTS_DEBUG_PAGEALLOC	if PPC_BOOK3S || PPC_8xx
+> -	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
+>  	select ARCH_SUPPORTS_SCHED_MC		if PPC64 && SMP
+> -	select SCHED_MC				if ARCH_SUPPORTS_SCHED_MC
+> +	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
+>  	select ARCH_USE_BUILTIN_BSWAP
+>  	select ARCH_USE_CMPXCHG_LOCKREF		if PPC64
+>  	select ARCH_USE_MEMTEST
+> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+> index 68edb66c2964..458ec5bd859e 100644
+> --- a/arch/powerpc/kernel/smp.c
+> +++ b/arch/powerpc/kernel/smp.c
+> @@ -1706,10 +1706,12 @@ static void __init build_sched_topology(void)
+>  			SDTL_INIT(tl_cache_mask, powerpc_shared_cache_flags, CACHE);
+>  	}
+> +#ifdef CONFIG_SCHED_MC
+>  	if (has_coregroup_support()) {
+>  		powerpc_topology[i++] =
+>  			SDTL_INIT(tl_mc_mask, powerpc_shared_proc_flags, MC);
+>  	}
+> +#endif
+>  	powerpc_topology[i++] = SDTL_INIT(tl_pkg_mask, powerpc_shared_proc_flags, PKG);
+> 
 
