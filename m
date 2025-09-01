@@ -1,213 +1,185 @@
-Return-Path: <linux-kernel+bounces-794497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F5FB3E2A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:24:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C36B3E29A
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E5EA443F15
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:24:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61B2D7AAD2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 12:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0927C30E831;
-	Mon,  1 Sep 2025 12:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92F331159E;
+	Mon,  1 Sep 2025 12:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W65xJbeC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gkZhwX4f"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91616257849;
-	Mon,  1 Sep 2025 12:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7F82727E0
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 12:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756729472; cv=none; b=GvKlqz5sn9Uly9UueHyA9h7hkm2p6QFWbrJtm1jiYiNdS0w+MA1Tj5+SFdx5zMBa5LpzNMjqUyfVcyvLGCQBwZpuHjiTwSTZMKgf0LfjO6Ya0XFMAPndqyOoQoDv91E9MmUjgOvPjGZLherEW8ExUPBwadaQnkTiEWodsuvr2ko=
+	t=1756729367; cv=none; b=dRNzkuBLUENKkwkbUYg0KBY1O4JcuVEVVfBSovWIgyJGcoRBv03SXy2I5/s9IJJbbokfZlimt/B0JQSBJ9/MjQCEAUgS0MYJDpNabg7FS3WfN5uhwybZVYOymGelw+yTaaOVne/v4RCewiwua/E9A6t5IVtHO1Mrc9wDkI0+P7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756729472; c=relaxed/simple;
-	bh=Sj2yOlonlk9NytAupWdvQ+nqdCzx3NSCwCAKgCZlFKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ohhnvpi28Yt85+syFhEg7Y9tzwcyXfOxNoMqk35fSjTPuQDXHHwP6PkcwyJTl9FotyVURSkW7qpA20LpqtJ3gghX7+jQMkUkAeM240NKBWeRO4qUsbHl3HwhHR7403A5/J8sZHKAbgMTgfUrpAlGpIjDx0PR2zfgETGfBasUyiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W65xJbeC; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756729470; x=1788265470;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Sj2yOlonlk9NytAupWdvQ+nqdCzx3NSCwCAKgCZlFKQ=;
-  b=W65xJbeCo2DpAgBGUfNwMdrgjd6aCoZz4HF6/XSKa8yjBv7Rf67AaSxI
-   YRQS3SfIQ1XeM4aAwSceKH5iGH696LEZMNScd71SrDnp4P/q4f5nJncCX
-   /jDo5px53+fBj/m0cbbwfTbPA/i4MItYQFTnCKz/1IWhXDlobpc0O3xeU
-   txUqO07M6TECeVTtN/xooBXEl5gQML/PkypJnsT0FcagBt5rpGrraofN1
-   PPk7S34YrcqNjIAohMsNlffRtbL6v08M7bZZp46fYfEC9D+/CR4x4E+Qm
-   fnRHOiZCYOZBqwgm+nlFp7tHgIyYeoc0HAGXqqaeH2AmW81D/h0ak+FU7
-   Q==;
-X-CSE-ConnectionGUID: EEl8Uj58STeh0z5xr+kpXQ==
-X-CSE-MsgGUID: 5lQVFJsGTiamh3vFi3TLGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11539"; a="58185766"
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="58185766"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:24:30 -0700
-X-CSE-ConnectionGUID: D6eFr4A/Sum/4CRp4vfBsg==
-X-CSE-MsgGUID: BzW27I+2SMud4wrJ3B6YGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; 
-   d="scan'208";a="175149898"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.162])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 05:24:24 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Robert Richter <rrichter@amd.com>
-Cc: linux-cxl@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- ALOK TIWARI <alok.a.tiwari@oracle.com>, Randy Dunlap <rdunlap@infradead.org>,
- Gregory Price <gourry@gourry.net>
-Subject:
- Re: [PATCH v4] cxl: docs/driver-api/conventions resolve conflicts between
- CFMWS, LMH, Decoders
-Date: Mon, 01 Sep 2025 14:22:00 +0200
-Message-ID: <4179950.vuYhMxLoTh@fdefranc-mobl3>
-In-Reply-To: <aK27hvifBdqZK5-v@rric.localdomain>
-References:
- <20250820150655.1170975-1-fabio.m.de.francesco@linux.intel.com>
- <aK27hvifBdqZK5-v@rric.localdomain>
+	s=arc-20240116; t=1756729367; c=relaxed/simple;
+	bh=VxC6+65N7fwjuQSBZWaB2FdQLsbh1mR1wNFbx5IdIN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YBc6m8B2vqr7YI0IfU5RNBtwfSPJh9NSIo8MODBT6ZKMJWcQcEvu8e1gYY1Y3Bwtj14Y7c+GGEmaD/KR1smdpZy/fStOB4ed+5ItVwN0pT23TkE1jOqwEmny+Wk7fTfdYWHSf6nLxBkGSpgoZJ8ylXU+Z4UDz1Jq76FgxC/n/Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gkZhwX4f; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b7c56a987so12164485e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 05:22:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756729363; x=1757334163; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LoSJIL4KWhDGVADj7RHQlobVtqqX19ExJc3z0hs3VMY=;
+        b=gkZhwX4f67XZycM8iNmC/aDa18Yx6W5g5tRRPmFMIS480yTP8VgwFHAgPC+XgaAuYI
+         mdFg7nR6Z9QX/1KdLf1cmIlalyJe0NliyufIUCFH2egk43pZLeKvRVZ7hW0wwiURV0NN
+         RbtQwnHcIGIdJgNHsHY60/I2OYZygHuoZ29Ph3UtWFM3tsv/PvcSBSt0enlyBUPElGMk
+         7a/lpBQH4uYoc2auMEMm9Vud2MBI1pcijg2TLU2JZ1tuZMqwt5TnakgjwCSylNyCp10i
+         129dWclu3yVpIdnDV/vrGuo2QQdvLTmaRBqNSJYBrChp8/YbDP4d0ySR2oDYhF0Lwiiu
+         HzQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756729363; x=1757334163;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LoSJIL4KWhDGVADj7RHQlobVtqqX19ExJc3z0hs3VMY=;
+        b=IU+oWu9BjBOQVPZ1wpOYJ+M6j15AR2gbg6Hog+qybQi6wJ2EMfGzVeLYJkNgO7Gn9+
+         WuJkTzbyQKQeQJAErndPOnuzIWWJMtJPF9jQVBJwwGR50xaFNMQ1FUR97QeCn9U2Ika9
+         7gk+e7JraSDdED3QWKAZWtQTBo1olc71Cmbi3/FkRhzfgT4FSSpt4WBrqm8vsLf1M/QN
+         3kGPelzwvcSCedh9zxQqQzDGlzW8rCuaRDOro3NudOzSIrGcgnKkQoUMzB5Q80PoMfQV
+         xeodZo6irVw7kc3q9lyobS3DW2HJ/iYMmkCvXLid6XO5o0b3vAseNTqm2ryZ9tp3Q9WG
+         Q5sA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfktXQy0IzGdr4wvn9kFFCFZN1Z1UJu456m3zUGB8XqePmyvcSxQ0E6fVQf7VRbqjPSmjlkWUO12muP98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyPIZG3Ywn34jOdpC0emCRLXbXwXx+QY+ds3d6GHKc3X3v0Lhz
+	S75rNYcZrvZS02BH992BCwldWKDXhrQYdwVoZaUkGNGiveSo6NGW/EdJbp9krN5ib4U=
+X-Gm-Gg: ASbGnctK8rTjgwf8E1DRTwoeivt1eUu744jsb/QggWWplmPI2Sc17OwGvjUk/Y+vB3W
+	pS9ZTJRgrnbdJhjjroL0biE6YnNa2zqz/hue77bNKRo3OojjQj65QYI1xLcE+xsCbYTnspwEOY1
+	vMBwW+naH2tkpw+XKFwqJlBnTLodVA1Gp/HzG+DCjMApdtyVUI2JfyRAgKRGd1m6tlHuCiffqUJ
+	ZNZpxb1dm0DLppSTdy/tU3RmSIgVVRYlk4NkJcEIe7PB6OP1bFhF+dtxnIggx8XfrXue/PAnErd
+	LJmGRrCTtbXrKAsKvyCvWFDSZJ2rhmA5jnRq6Lu6dqkKLsDhFyZ7MlUzwp6BVQOtJmY/XKmnykt
+	sAt/QO+40PHLPco+nHrmv5wHBPRhCHM3ZSb43aFeqxvyufbBp
+X-Google-Smtp-Source: AGHT+IEUYIop2eCnZ9cDKO0ghaVfpBEoRkqiBiGK9LUPFsTbQpLi8gzA5x26B8+fFer989zfNL4Sag==
+X-Received: by 2002:a05:600c:4f41:b0:45b:8b3e:9f7c with SMTP id 5b1f17b1804b1-45b8b3ea0e1mr33370165e9.19.1756729362553;
+        Mon, 01 Sep 2025 05:22:42 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b87abc740sm88325035e9.7.2025.09.01.05.22.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 05:22:42 -0700 (PDT)
+Message-ID: <e759f728-2a77-42a7-ba92-0d5f8afe2273@linaro.org>
+Date: Mon, 1 Sep 2025 13:22:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Hi Robert,
-
-On Tuesday, August 26, 2025 3:49:58=E2=80=AFPM Central European Summer Time=
- Robert Richter wrote:
-> Hi Fabio,
->=20
-> questions inline.
->=20
-[snip]
->
-> > +
-> > +On these systems, BIOS publishes CFMWS to communicate the active System
-> > +Physical Address (SPA) ranges that map to a subset of the Host Physical
-> > +Address (HPA) ranges. The SPA range trims out the hole, resulting in l=
-ost
-> > +capacity in the endpoint with no SPA to map to the CXL HPA range that
-> > +exceeds the matching CFMWS range.
-> > +
-> > +E.g, a real x86 platform with two CFMWS, 384 GB total memory, and LMH
-> > +starting at 2 GB:
-> > +
-> > +Window | CFMWS Base | CFMWS Size | HDM Decoder Base | HDM Decoder Size=
- | Ways | Granularity
-> > +  0    |   0 GB     |     2 GB   |      0 GB        |       3 GB      =
- |  12  |    256
->=20
-> Could you explain the zero-base limit and how this is special to LMH
->
-Linux follows the CXL specs and so it allows the construction of CXL Regions
-and the attachment of HDM Decoders to them only if the Specs are not violat=
-ed.
-
-This document addresses only one of many possible violations. The proposed=
-=20
-solution is not general to every possible Memory Hole on purpose.[1]
-
-The proposed strategy wants to allow exceptions only if the CFMWS HPA range
-starts at 0 and ends before 4GB. It only deals with Holes in Low Memory. The
-many other combination of circumstances that lead to failures are out of the
-scope of this document.
->=20
-> or multiple of 3-way configs?
->
-It applies to all possible NIW configs.
->
-> What if the HPA range is non-cxl already?
->
-This solution applies to all CFMWS HPA range that start at zero and end=20
-before 4GB, regardless of the motivation behind memory reserve.
->
-> E.g. my system shows this:
->=20
-> [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009ffff] usa=
-ble
-> [    0.000000] BIOS-e820: [mem 0x00000000000a0000-0x00000000000fffff] res=
-erved
-> [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x0000000075b5ffff] usa=
-ble
-> [    0.000000] BIOS-e820: [mem 0x0000000075b60000-0x0000000075baafff] ACP=
-I NVS
-> ...
->=20
-> > +  1    |   4 GB     |   380 GB   |      0 GB        |     380 GB      =
- |  12  |    256
->=20
-> The EP's HDM decoder's HPA ranges overlap now as both start at 0.
-> Isn't that a spec violation: "Decoder m must cover an HPA range that
-> is below decoder m+1."?
->=20
-The HDM Decoder's HPA range in the second line starts at the fourth GB.
-I made a copy/paste mistake and I'll fix it with the next version of this
-patch. Thanks for spotting it.
->=20
-> For the second decoder, shouldn't the upper limit be cut at 378 GB
-> (multiple of 3, or 372, multiple of 12)? But since the CFMWS Base is
-> non-zero that range is not detected to cut it?
->
-Another mistake. Anyway, please notice that all ranges above 4GB are=20
-out of the scope of this document. On purpose.=20
-> >
-[snip]
->
-> > +Detailed Description of the Change
-> > +----------------------------------
-> > +
-> > +The description of the Window Size field in table 9-22 needs to account
-> > +for platforms with Low Memory Holes, where SPA ranges might be subsets=
- of
-> > +the endpoints' HPA. Therefore, it has to be changed to the following:
-> > +
-> > +"The total number of consecutive bytes of HPA this window represents.
-> > +This value shall be a multiple of NIW * 256 MB. On platforms that rese=
-rve
-> > +physical addresses below 4 GB, such as the Low Memory Hole for PCIe MM=
-IO
-> > +on x86 or a requirement for greater than 8-way interleave CXL Regions
-> > +starting at address 0, an instance of CFMWS whose Base HPA is 0 might =
-have
-> > +a window size that doesn't align with the NIW * 256 MB constraint. Note
-> > +that the matching intermediate Switch and Endpoint Decoders' HPA range
-> > +sizes must still align to the above-mentioned rule, but the memory cap=
-acity
-> > +that exceeds the CFMWS window size will not be accessible."
->=20
-> Have you considered to just allow smaller CFMWS ranges that just cut
-> the boundaries accordingly? That is, just search for a CFMWS range
-> within the EP's HPA ranges (or even multiple CFMWS ranges) and only
-> enable that HPA range? That would be more general and removes some
-> limitations, such as zero-base and below 4 GB only.
->=20
-This solution doesn't want to be a general solution for all kinds of Memory=
-=20
-Holes. Dan has been very clear about cutting out solutions to general cases.
-This solution is limited on purpose.[1]
-
-Thanks,
-
-=46abio
-
-[1] https://lore.kernel.org/linux-cxl/67ec4d61c3fd6_288d2947b@dwillia2-xfh.=
-jf.intel.com.notmuch/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 05/12] arm64/boot: Factor out a macro to check SPE
+ version
+To: Leo Yan <leo.yan@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+ kvmarm@lists.linux.dev
+References: <20250814-james-perf-feat_spe_eft-v7-0-6a743f7fa259@linaro.org>
+ <20250814-james-perf-feat_spe_eft-v7-5-6a743f7fa259@linaro.org>
+ <20250901100558.GJ745921@e132581.arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250901100558.GJ745921@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+
+On 01/09/2025 11:05 am, Leo Yan wrote:
+> On Thu, Aug 14, 2025 at 10:25:27AM +0100, James Clark wrote:
+>> We check the version of SPE twice, and we'll add one more check in the
+>> next commit so factor out a macro to do this. Change the #3 magic number
+>> to the actual SPE version define (V1p2) to make it more readable.
+>>
+>> No functional changes intended.
+>>
+>> Tested-by: Leo Yan <leo.yan@arm.com>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>   arch/arm64/include/asm/el2_setup.h | 17 +++++++++++------
+>>   1 file changed, 11 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+>> index 46033027510c..3a4ca7f9acfb 100644
+>> --- a/arch/arm64/include/asm/el2_setup.h
+>> +++ b/arch/arm64/include/asm/el2_setup.h
+>> @@ -103,8 +103,7 @@
+>>   	csel	x2, xzr, x0, eq			// all PMU counters from EL1
+>>   
+>>   	/* Statistical profiling */
+>> -	ubfx	x0, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
+>> -	cbz	x0, .Lskip_spe_\@		// Skip if SPE not present
+>> +	__spe_vers_imp .Lskip_spe_\@, ID_AA64DFR0_EL1_PMSVer_IMP, x0 // Skip if SPE not present
+>>   
+>>   	mrs_s	x0, SYS_PMBIDR_EL1              // If SPE available at EL2,
+>>   	and	x0, x0, #(1 << PMBIDR_EL1_P_SHIFT)
+>> @@ -255,6 +254,14 @@
+>>   .Lskip_brbe_\@:
+>>   .endm
+>>   
+>> +/* Branch to skip_label if SPE version is less than given version */
+>> +.macro __spe_vers_imp skip_label, version, tmp
+>> +    mrs    \tmp, id_aa64dfr0_el1
+>> +    ubfx   \tmp, \tmp, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
+>> +    cmp    \tmp, \version
+>> +    b.lt   \skip_label
+>> +.endm
+>> +
+> 
+> Just wondering if we need to move the macro to the beginning of the
+> file, so that we can define it first and call it afterwards.
+> 
+> Otherwise, LGTM:
+> 
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
+> 
+
+It's not required, but all the other macros are defined before use and 
+it looks a bit weird to not do it, so I can move it.
+
+>>   /* Disable any fine grained traps */
+>>   .macro __init_el2_fgt
+>>   	mrs	x1, id_aa64mmfr0_el1
+>> @@ -263,10 +270,8 @@
+>>   
+>>   	mov	x0, xzr
+>>   	mov	x2, xzr
+>> -	mrs	x1, id_aa64dfr0_el1
+>> -	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
+>> -	cmp	x1, #3
+>> -	b.lt	.Lskip_spe_fgt_\@
+>> +	/* If SPEv1p2 is implemented, */
+>> +	__spe_vers_imp .Lskip_spe_fgt_\@, #ID_AA64DFR0_EL1_PMSVer_V1P2, x1
+>>   	/* Disable PMSNEVFR_EL1 read and write traps */
+>>   	orr	x0, x0, #HDFGRTR_EL2_nPMSNEVFR_EL1_MASK
+>>   	orr	x2, x2, #HDFGWTR_EL2_nPMSNEVFR_EL1_MASK
+>>
+>> -- 
+>> 2.34.1
+>>
 
 
