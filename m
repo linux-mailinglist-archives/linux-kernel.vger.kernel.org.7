@@ -1,167 +1,256 @@
-Return-Path: <linux-kernel+bounces-793797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF49B3D856
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:48:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12107B3D858
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 06:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D4D1897EE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:48:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB42177A3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 04:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D178221F06;
-	Mon,  1 Sep 2025 04:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7CE22156A;
+	Mon,  1 Sep 2025 04:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="krMcKNxq"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4/bi6uuK"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE91CB663
-	for <linux-kernel@vger.kernel.org>; Mon,  1 Sep 2025 04:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756702104; cv=none; b=QuZfG41i0yfzf7/UJHv3sTpowx3h30HHWjtpSxTSXKMPNCtqGf0TVpLGmWVD2SOpidohwc+ckJwKZEL7/yV6PsAJ/3XoBLHjomXDZCKPxrBrw5DWuEnJ7J+afCq20Nqssh+uDUMLPFxsFw1Yayaq2EbfO/TywEY3i++3Q8LpJ9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756702104; c=relaxed/simple;
-	bh=Ejc4+7iVLBfIxb688IRQFK/gGqFypFduC5exOq4cvps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C3ivSbDPNz64jbAbuC129/MG2BGlgCbqGEm5aYeq9pDwf5gomQeRZqXzM5JK60/HZJIxxK23zdq0gsZP1YAdjn9IFjTf+xX6C97RRdUjQpzphB9H5sn0ihjWVrvBK34chYp4STVKXGnh20xeFcNjuGUOb+QvpR3D4TK2su21qxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=krMcKNxq; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-336ce4a8bfcso9022021fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 31 Aug 2025 21:48:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756702101; x=1757306901; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ItfuYm2JQE614/6hjW72JToirycttAJPocJVdLgsVk=;
-        b=krMcKNxqDW8ZxWUTSP2iGYfwfx5IZZNLTmpOVPI/4gXTKUlfx24BUOUEtfUxHGqTPz
-         eVxagcXBvbkfJb2VPzXblvBvkRnDeCx6KULJ0py/3XaQ76rEy+k3ucqz+/q2pA1H3Un3
-         1DkC6QJG9xyIq2mtJiccoCe7na3Cr+3SjnvNqIbcbyPDr4mlmDvyzVbgS0abCSEOlm43
-         +zuuo0yWbQxNH60RfBZW+hXesd3HDD1fW+ukWI4sLdvp4cuIays3QbsdODQtspH7CpG+
-         wj5t6XQrZDkLW9LbvNOgJ08vlml6XkqkpJ0RK71zgFHtU9TunFWtuyjSIBJWUGav0b/M
-         pj7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756702101; x=1757306901;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5ItfuYm2JQE614/6hjW72JToirycttAJPocJVdLgsVk=;
-        b=frEMonPag0qSGMGgj8viR3mdHLpvJ8z+aiHXe4nC46uyJVy5tT86EqhpQddbNPuHb3
-         XaGV1X+2AyxGFHXtBr8V0YpakdTs0YuIC98dlTFX6L0lpahRHzmTZpV/bEDDnT+9Rypx
-         Rh7FUc408QE40HDVcxrjeVgYR7r88LXP4gRRw4GRRJILleVpd1MTZ9mTivgQ/HKuBgWe
-         0YLLEAW4BlMD9BbDgp2t00iMCNcrqzSycD/xR5Pwu0KFui7RP4fzEseHlfiCD0HzB65I
-         NG5993cQYzW4QjM83GEkjdhrsRTsbMwSJXJd+6LXHhjW+W1/45jhJgMTMtZRElC6HTba
-         lpLg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7aX8Of2aRsJL4xPWhqOXLNMSTScCHQoU2Pq+/I9st55MjIkgeaH/nfIOXKZocUBwFyDvlgJInZxu04f8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpJXz7NAnBabZJsQBcs21l4cOi8n+EY61aUNqd+TNl7PuKm7YD
-	rtZPz4+7vSSGJ9ZUVvDr0zQQpn4bBBaJ/LZs2sszKLCRuNSIcsY7jdOCl1C3wViurrjSzkntajK
-	Z/fLk19Gaivw41yJgkmP6ns0WRxSW30ttnGedMPdlyBUCJfbi29quo9G4GAg=
-X-Gm-Gg: ASbGncss+EeIMUOjWeWBWYQM30B685F7oCyJl7V6d7LtSd8xbrG5eDSLdbBLk9dHMA7
-	8eH1Y1VJ0BLusxLGm3aBdQwcDF11yyvdd6xztIUHAxOhPpM0lPcUrWmJ0tHjWsKeF5CgneNXtd0
-	XI+kLfQVZvHkYe9f2J5HQry9g/T6ubMMt+jJPJlWVmSHZtDUo2TGuuM1FWuH2WYiQuHCpykEe1N
-	gQY8ukKUgghq3HuUw+NKGgBdu/3QzMi5HSlvEt/m1aY0oo=
-X-Google-Smtp-Source: AGHT+IFdVUm+IoSF5Ct2TjYReBuRJ5hJNZUnNPK52+RP3kfFx6ElqS+ay4cBA+GA6UXZvTAib3EGqIhBO4FaPoqfj/o=
-X-Received: by 2002:a05:651c:1119:b0:336:bb9c:d392 with SMTP id
- 38308e7fff4ca-336ca90366fmr12113891fa.9.1756702100852; Sun, 31 Aug 2025
- 21:48:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0301C8604;
+	Mon,  1 Sep 2025 04:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756702237; cv=fail; b=RVJc5n1kECb9CNi/PR490LhXBeg4JirD+RooeZDmvO2PxUlSE13gxvIGwallgKmkGtnWSf6cbdClNYvI2jr6au9ElfAZp2hQVXMcsFrfmGOSJNKiKbdgYyQoZVV7pVu8dchZjhH5NILtMtV1mBjCqrSqQqs0VUA/jo7/fx+PBJQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756702237; c=relaxed/simple;
+	bh=n4UsyoQKhFw2aWZoMJI7zDA2HUJ4nbsjNdQx+hGPznU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XGbV1zwv0IgumB7b+Wbp7CWqvjkWrwivDg2CkJuwdR6vYqooCx1w6HEAEUVhs9ALDivnH1RVy7u6sG9/K2NGMQrSr4Rfm6mqDthJRbP/+UVnslg0ixhbEaESgSOzqbvdoFvCLsRsiSyvvAqquDLYU0prF8bYho8Z9g6Wubcz05s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4/bi6uuK; arc=fail smtp.client-ip=40.107.244.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sX0qNXcg0BANqVKnzlWSA0hL/qXh6ff6a1/h6lAyWTKaHd8WqreCLeXo9vYq0MAv+ADMxW4B+C8GZ/Nzt9UvNNLCAKge0mzeBztvZkgi3zfcyEKcKiaZBFnNRaJ+LWNx6Dr4aIWwsOXe2bqxtY+QHTvOR3hj/568BrLNG6rsrVnfd4FMokJznwS/0rs9BE3QjyKx3BpN12i8oQJYmORpelHauFRuxshGYdq2hqjiVdw4SSJ+IfivvFNPJ+iLBxJNzBynCAbEkH2+BFkW+gd+yBxGZwubH35a8Dtn8JQhoFOZAgPqnoK4arzLSkD/5BK4157/lLP8J2LAP32XahuCCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cq1NeBbYl00zpxDpTfpbjZFRZNHRBTMO4fNHP7OPUW0=;
+ b=euK1CnUl6QSuRVZvjz23nDboRRMltQbrwF99ioNsTX2Vi14XIdOJjvAan76PcBOGgTk66hIPvqSkuFr/70wA9H6wfHewWCNnaf0y+3n5CYWLfbk5F/XhCPj97Udcf/tx0/YDl2sBiDoy1z+kRECPNq+u7doW232618DZXGdmx8eb/r61Y2RwnQtQFgszWCPqaEobvyVKsqPGtR9nA/sp7netXOg22gdEpyaSMBA5hV+7/cW345NiZK4WL8kc8+y/qvIcykScCBWZ0cO8nyM79A2ZwdEEeb/sTH/dH029lGETRTXKZIWbciIXz5jQGWZZXMeXR0eSGOBWGR64CGykmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.ibm.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cq1NeBbYl00zpxDpTfpbjZFRZNHRBTMO4fNHP7OPUW0=;
+ b=4/bi6uuKwsMU+cRiMYij5z8kiqahBUtJJ8KYuVIF5EARQGRjGagasLooRgSfQZ+AkceA5MV5TqESMqBpLjpy2JyPUQzk6ao8pSED//lfFJ7apRIX55iiOKvUTJwL3TBo5RL5W88EShpOWwp9yF12pMAsxorw+m5Di81YqbSAb6M=
+Received: from BL6PEPF00013E11.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:22e:400:0:1001:0:17) by DS7PR12MB6263.namprd12.prod.outlook.com
+ (2603:10b6:8:95::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Mon, 1 Sep
+ 2025 04:50:31 +0000
+Received: from BL6PEPF0001AB78.namprd02.prod.outlook.com
+ (2a01:111:f403:f903::) by BL6PEPF00013E11.outlook.office365.com
+ (2603:1036:903:4::4) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.24 via Frontend Transport; Mon,
+ 1 Sep 2025 04:50:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BL6PEPF0001AB78.mail.protection.outlook.com (10.167.242.171) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Mon, 1 Sep 2025 04:50:30 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 31 Aug
+ 2025 23:50:30 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Sun, 31 Aug
+ 2025 21:50:30 -0700
+Received: from [10.136.36.137] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Sun, 31 Aug 2025 23:50:18 -0500
+Message-ID: <ab3cfd71-57ba-44e6-8954-bf531294351b@amd.com>
+Date: Mon, 1 Sep 2025 10:20:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aKYEpf7xp3NnkBWm@x1> <CACT4Y+YX-ROx0cW4pkDnqbdfbigVycwPLwO12RNbbtX9-Qp73A@mail.gmail.com>
- <aKv_FjtkPIR86inu@google.com> <CACT4Y+ZxqgqAGoSgUaVKk6_=h1dO7iV8qrVHDOrmbBS3VW8-=g@mail.gmail.com>
- <aLIixyZOYD3ZE1gh@google.com>
-In-Reply-To: <aLIixyZOYD3ZE1gh@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 1 Sep 2025 06:48:07 +0200
-X-Gm-Features: Ac12FXya7MQwBjrNruhkQ3vsTZRyqYy763Za_j014hNowF001C1ZrX2GHvqM1kw
-Message-ID: <CACT4Y+aeSN3LuejBEmcse7MLnanvv6L02=SKNd_yBkm72iAO1g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] Revert "perf hist: Fix bogus profiles when filters
- are enabled"
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Ian Rogers <irogers@google.com>, James Clark <james.clark@linaro.org>, 
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard MC
+ scheduling bits
+To: Shrikanth Hegde <sshegde@linux.ibm.com>, Andrea Righi <arighi@nvidia.com>
+CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+	<thomas.weissschuh@linutronix.de>, Li Chen <chenl311@chinatelecom.cn>, "Bibo
+ Mao" <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>, Tobias Huschle
+	<huschle@linux.ibm.com>, Easwar Hariharan
+	<easwar.hariharan@linux.microsoft.com>, Guo Weikang
+	<guoweikang.kernel@gmail.com>, "Rafael J. Wysocki"
+	<rafael.j.wysocki@intel.com>, Brian Gerst <brgerst@gmail.com>, Patryk Wlazlyn
+	<patryk.wlazlyn@linux.intel.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Yicong Yang <yangyicong@hisilicon.com>, Ricardo Neri
+	<ricardo.neri-calderon@linux.intel.com>, Tim Chen
+	<tim.c.chen@linux.intel.com>, Vinicius Costa Gomes
+	<vinicius.gomes@intel.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Heiko Carstens
+	<hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>, Peter Zijlstra
+	<peterz@infradead.org>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <20250826041319.1284-5-kprateek.nayak@amd.com>
+ <5f1a9ed6-b551-48b9-8c62-8ef0f2bd2fca@linux.ibm.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <5f1a9ed6-b551-48b9-8c62-8ef0f2bd2fca@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB78:EE_|DS7PR12MB6263:EE_
+X-MS-Office365-Filtering-Correlation-Id: 172224cd-befd-49f7-5b50-08dde9131422
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QUU2NWJGVGNSNWVLaERJYTJLdldpNEpobVlhQzNkTHE3VUZuR3d0amdOVW8z?=
+ =?utf-8?B?NmJiTCt5UDZmRzJhaUUxSXN6S0tQdlY2dXNlOW0vaVg3WUx0emYrYXltTENn?=
+ =?utf-8?B?Rzk4Tk9DaHlPOGNWVW1FeUgvV2hmYnlnOFQ2VmtZSWYrMmtNWHZKaDB5R1Z3?=
+ =?utf-8?B?U05IaXpHeWhuOE1neFkyMWk2anFmWG9TTTluNkYwSUE3QjkrQ0gxZUM2eS9M?=
+ =?utf-8?B?ZFlURkVoNGY0L0dvdWRzdVQzaElVYnpzaS9FWE5ySDlIVEdLVVhDS0w2TGVO?=
+ =?utf-8?B?TDFIdGZPT3VkUW9WcWdaNVVjWHBwU2ppZWFSN1llZU92MFhrZTlyTEZiTWRB?=
+ =?utf-8?B?cXZhL0JTcWRJVW5pcFZJN0NoUmZxZER6YWltTWFyUFFUVGRPVW8veHNENFJn?=
+ =?utf-8?B?WU94VHVBN1VyVHJZMllpbFNLYXk3aHA3eU13blBTc2ZOTmNmTVpVVE4vYklx?=
+ =?utf-8?B?blBSM0VtNEMwQnpuQmpLb0hvd2NEQzVmN29DOW43aHZQY25aWk82elhkcyt6?=
+ =?utf-8?B?NVRZOWdUblJROVh3bG5lOUtvdFVtWnpEdWJoTXRTM1JjdVIwbElqQXBibEdP?=
+ =?utf-8?B?aGNEaUxUR2JqQVZrOXFSQit0V3hIQVJxUDF4OFBaTGN4ZDR2NDhLMTl5QWN1?=
+ =?utf-8?B?cktVeUJtSVVreWswcGhNL3o4d21SNXBISHVLb2hYR1A3ZmVnNitQc3V4NVAv?=
+ =?utf-8?B?Vkp5U01VYVNTOXFpRjIxY2MrWWo0aUpqOVJabmprSWd5bE1zZ3h1S2V2dWE1?=
+ =?utf-8?B?bjN6Q2dNK2dSRUI2cU51SjhBaERLanNnd1pvbmhSbkFRK2ZMbG9wZ2pzL291?=
+ =?utf-8?B?RXhYRk5BSXl5dHB4eTNTOE1BaXRJcG9pd3RJYU9Ud3BOd2Y1clhzUUwrM0FL?=
+ =?utf-8?B?ZTFGckJ6NnUvd0o4dCtIMmxRajZmVnlhalA3di9GY0NrRHFQSXVnVCtFOUdn?=
+ =?utf-8?B?RG1WSEV4ajZVVTB3ZGhmTFY4UzA1c2doa0E5aGdlM2ZFY3pDc0FweXpMYUxT?=
+ =?utf-8?B?QXZBZHVTa0hRaXdrWVFOZk05ZTZkc3g4dVJHR2Z0OHRjV2dSYUZMN0RYZW5z?=
+ =?utf-8?B?YloxVm5tcEViNzFPS1R6S2xtTHdsbGpXeW9EbHM0UE5zNnJPeVJZQmlMN2RG?=
+ =?utf-8?B?cmoyd2ZxYnYwR1laRkxEb0pWK2xOOFpobHZ3Qy9QQjlDeVJrdXJJL0pJdEtw?=
+ =?utf-8?B?Q2lFLzNFck1aeVFtRjZEdTVvOVJ4N1RtVkJkbVJ1VWJtQ25OR0gyaHdhcVhk?=
+ =?utf-8?B?a1ZHZ3FuaGR5eU5jckxvY2NxclUxUnRIa3k5OEM1cU5GTEdiemlRV2s4WkpX?=
+ =?utf-8?B?azA0OHFRdTBoQzF0bkRFK3hGT0hScVcrM0ltUnUyb2xjV2YrMmRCOTVrVTlX?=
+ =?utf-8?B?clhETENKMVQxZys0ME9yQ01ZdGdIaEx5bXF4UG1YVUJUM3RyS01OYXVYVEsx?=
+ =?utf-8?B?VEd3bmpHek43eXkydUVya3BiRktaSFBrYUFHZHNmNExKK0VYTXA2c3dFSnV2?=
+ =?utf-8?B?ckVZTGRvWExHaDQwdFpNNTdXVnRzVU5TV3RGVk1rbG10MDh6NDllaElXaTVB?=
+ =?utf-8?B?OTJwd09LQ0pPYUJGNytyTkF4OUpvMGZ0b1BBd2dCYU9QZUg4bE16N2JVY0Qw?=
+ =?utf-8?B?SmY5WUNMVmZwVWEybDl5Q0RYeGtLa3VTUTh6dk9iSHlycTZPVE5mQU92TE52?=
+ =?utf-8?B?eWZQS3UzMXVGVVF4Nmsrdkw0VGpUNXJOL0RNcUlWTkprOXZxY3duWEdrR0Jx?=
+ =?utf-8?B?U0dDRW9Cd1kwa0lsd3pxejFxSGorVEhwQkdBNjhlcEl5SHdST3p2QmtKSFpK?=
+ =?utf-8?B?M3dyczBMeGEyV3hsVlpSemRYNHJQamI1Mm1CUXdybklyZlF1bWZQeE9BQW9N?=
+ =?utf-8?B?WU83TzdUblNkbTNBMUNrNkx1bDZZZ0NQRWFCclZjWWYyd0tkWlN6YmU0SHoz?=
+ =?utf-8?B?OXhEc2tYMnJIekNYb2NLSkZSZE1kd3FsU1gyK1doMlhVZ3l6QzV4Yk1nbmpQ?=
+ =?utf-8?B?bEZWTlFrcWFreXNzK3F5YmxnWXByb0tnQWNNN29WMTJ4Rm1sWndCdEU2ek14?=
+ =?utf-8?Q?r9Qh3w?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2025 04:50:30.7477
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 172224cd-befd-49f7-5b50-08dde9131422
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB78.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6263
 
-On Fri, 29 Aug 2025 at 23:59, Namhyung Kim <namhyung@kernel.org> wrote:
->
-> On Fri, Aug 29, 2025 at 07:59:19AM +0200, Dmitry Vyukov wrote:
-> > On Mon, 25 Aug 2025 at 08:13, Namhyung Kim <namhyung@kernel.org> wrote:
-> > >
-> > > Hello,
-> > >
-> > > On Wed, Aug 20, 2025 at 06:14:08PM -0700, Dmitry Vyukov wrote:
-> > > > On Wed, 20 Aug 2025 at 10:23, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > > > >
-> > > > > This reverts commit 8b4799e4f0f40a4ec737bf870aa38d06288bf0fb.
-> > > > >
-> > > > > Not combining entries in 'perf top', so we're getting multiple lines for
-> > > > > the same symbol, with the same address.
-> > > > >
-> > > > > To test it, simply run 'perf top', then do /acpi to see just symbols
-> > > > > starting with acpi_ and notice that there are various lines with the
-> > > > > same symbol, press V to see the address and its the same.
-> > > >
-> > > > With this revert, does it show 1 entry but with a wrong percent?
-> > > > I am not sure why there are 2 entries for the same symbol, but if we
-> > > > merge them, we can sum of percents. Is it the right thing to do?
-> > >
-> > > I don't think it'd have a wrong percent.  The hists maintain stats for
-> > > filtered entries separately.
-> >
-> > I still don't fully follow.
-> >
-> > If we merge a filtered entry into non-filtered entry (with the
-> > revert), now we attribute what was filtered out to the non-filtered
-> > entry, and the non-filtered entry has wrong overhead, no?
->
-> Oh, my bad.  I thought we track both periods in the hist_entry, but it
-> seems it's only in the hists for total.
->
-> >
-> > If we merge the other way around: non-filtered entry into filtered
-> > entry, then we won't show it at all.
-> >
-> > > Based on the position of filtered entries in the RB tree, I think it
-> > > might not merge correct samples together and create multiple entries
-> > > with the same info.
-> >
-> > The second thing I don't understand: without this revert we don't
-> > merge filtered and non-filtered entries, top shows duplicate entries,
-> > does it mean it shows filtered out entries? This also looks wrong...
->
-> I checked those duplicated entries all non-filtered (filtered = 0).
-> I suspect an entry can miss existing one (to be merged) when it sees
-> unrelated filtered entries in the middle of RB tree traversal.
 
-Does it mean that the sorting and merging predicates somehow end up
-being different, while the assumption is that they should be the same?
 
-Will it help if filtered field is checked as the last condition,
-rather than the first? Then I assume unrelated entries should still be
-compared as they were before.
+On 8/26/2025 2:57 PM, Shrikanth Hegde wrote:
+>> diff --git a/arch/powerpc/include/asm/smp.h b/arch/powerpc/include/asm/smp.h
+>> index 86de4d0dd0aa..9a320d96e891 100644
+>> --- a/arch/powerpc/include/asm/smp.h
+>> +++ b/arch/powerpc/include/asm/smp.h
+>> @@ -148,7 +148,9 @@ static inline const struct cpumask *cpu_smt_mask(int cpu)
+>>   }
+>>   #endif /* CONFIG_SCHED_SMT */
+>>   +#ifdef CONFIG_SCHED_MC
+>>   extern const struct cpumask *cpu_coregroup_mask(int cpu);
+>> +#endif
+>>   
+> 
+> Is ifdef necessary here?
 
-> > > Filtering by unused sort keys would be undefined.  We probably want to
-> > > warn users instead.
-> >
-> > Do you mean that the filtered=1 is set incorrectly in this case?
-> > Do you mean that with this revert 2 bugs just compensate each other by
-> > luck: we wrongly set filtered=1, and then wrongly merge them together,
-> > so it all works out in the end?
->
-> I mean you should not allow users to use filters not listed in the sort
-> keys.  For example, `perf report -s comm --tid=123` would return error.
-> They can use `perf report -s tid` or `perf report -s comm,tid -H`.
+This is gone in Peter's squash but I added it just to
+remain consistent with cpu_smt_mask() above.
 
-Is it the root cause of the reported duplicate entries, or is it a
-separate issue?
-Arnaldo said to use just 'perf top' w/o any flags, so I am not sure if
-this is related or not.
+> 
+>>   /* Since OpenPIC has only 4 IPIs, we use slightly different message numbers.
+>>    *
+>> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+>> index e623f2864dc4..7f79b853b221 100644
+>> --- a/arch/powerpc/kernel/smp.c
+>> +++ b/arch/powerpc/kernel/smp.c
+>> @@ -1059,6 +1059,7 @@ static bool has_coregroup_support(void)
+>>       return coregroup_enabled;
+>>   }
+>>   +#ifdef CONFIG_SCHED_MC
+>>   const struct cpumask *cpu_coregroup_mask(int cpu)
+>>   {
+>>       if (has_coregroup_support())
+>> @@ -1071,6 +1072,7 @@ static const struct cpumask *cpu_mc_mask(struct sched_domain_topology_level *tl,
+>>   {
+>>       return cpu_corgrp_mask(cpu);
+>>   }
+>> +#endif
+>>   
+> 
+> Previous patch says cpu_coregroup_mask is exported. Is it exported in any way to user or modules?
+
+Just "exposed" to kernel/sched/topology.c bits :)
+
+I don't think this is used by any generic module / exported to
+userspace.
+
+> 
+> Also i don't see similar gating in other archs. It maybe unnecessary.
+> 
+>>   static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+>>   {
+>> @@ -1729,10 +1731,12 @@ static void __init build_sched_topology(void)
+>>               SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
+>>       }
+>>   +#ifdef CONFIG_SCHED_MC
+>>       if (has_coregroup_support()) {
+>>           powerpc_topology[i++] =
+>>               SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
+>>       }
+>> +#endif
+> 
+> Just this gating should suffice IMO.
+
+Ack. Your suggested diff to have CONFIG_SCHED_MC configurable on powerpc
+looks good.
+
+-- 
+Thanks and Regards,
+Prateek
+
 
