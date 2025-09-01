@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-794844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-794832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309D9B3E7F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FFDB3E7D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 16:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5497C1A865A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E24167BBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 14:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E281342C95;
-	Mon,  1 Sep 2025 14:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4754C17AE1D;
+	Mon,  1 Sep 2025 14:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QTDqVkHu"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xip1or9B"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC712F1FFE;
-	Mon,  1 Sep 2025 14:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2096212575;
+	Mon,  1 Sep 2025 14:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756738387; cv=none; b=ThSrH2I0khLkAZwXu5Swu7uX4ruHIdSGYqhgMTPlYMjqkGZQVEOGCCaTdOXwC3tApB3GE4qbA9RVi+6a7deo+W2LFgoTH2363pXYOcMvlNguQKF4yzbazhJrsn6fqYJ6bPMiqnpKcOykwGCMJVKwddP/amZupjaC3BfRPnrKCHY=
+	t=1756738167; cv=none; b=mOtS96CubN2rcuRXc+8H669LpgRWBoqyQ2n4sW7FLe7TJg78gvk0BMMWHQaEAa6di0b3mtqGc1SW7wcQvWTT4ArRe6miheeo+SdrGIftcEyBK5zNfiz0Y4woh3xbHkr4YWHUsq6EmXfIdtBO5ow1ylytVfwQr4ukU15FhMO0LBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756738387; c=relaxed/simple;
-	bh=GN1H6Rljr8Ht7JhqGRwNKCZVozANl7ITPcDEg2A2qhQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LmPdXhEn2lSlgL4UUqhGEJSAKYjHK58pAbT2t0Ro+QjgvvneGnGSZcvhVU82pDcCVzdZxsS55zl/HeJwk3uWZ1MzUvOoKFdptCZg4HFEa7ShhQzDGd6c+DtLqi01qeYvFIAQHwXY7f7e2cs20qSmFY+xt2xc9inf62iNtl9W++M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QTDqVkHu; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 581En5Ht2389135;
-	Mon, 1 Sep 2025 09:49:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756738145;
-	bh=BM2bi8XRe0Tu2TIMsONhhCSzDVLZSgA3tXyyfFdHX3Y=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=QTDqVkHuLE5jwYg6dSJ09edO1hNNNA9dWYcbctfJzbJU+MrSLbcIUsBB+c5t3DxY+
-	 m0M6dPQuOBLcSSxTOM0vqMpQpEpWjyfqWGQd8vf/mULIDWLCyhtHAyA7KXOCsgZdKw
-	 X/cSnefthPRuFHZx/h3Aj7sH4M6mA7L70XgG0ZA8=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 581En5ik2171508
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 1 Sep 2025 09:49:05 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 1
- Sep 2025 09:49:04 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 1 Sep 2025 09:49:04 -0500
-Received: from [10.249.130.61] ([10.249.130.61])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 581EmpLK2668338;
-	Mon, 1 Sep 2025 09:48:52 -0500
-Message-ID: <1b892cde-bcdc-4a4e-83b7-35cc13eef8f4@ti.com>
-Date: Mon, 1 Sep 2025 20:18:50 +0530
+	s=arc-20240116; t=1756738167; c=relaxed/simple;
+	bh=k0bFzCK8PRAWkJ6lPZuCCzGBzsv5QXY2t4q1dCUumyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PLPoH+UXtCuVy1chuGssRk2hqhEjevn7xoLxOOg/W7iEr+V1F6pc+HBNW/iJjCf6YQS1vf22o112mfOXY5m4Dss/0UQprPSWOFKrGvytQHXRCqHsIsnSQ4msaCWGVts878WyZiJj3G1vWhkP3G3UU7DR20bDhwvieV6RG1boftM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xip1or9B; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3d48b45f9deso973579f8f.1;
+        Mon, 01 Sep 2025 07:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756738164; x=1757342964; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/giPzS+fk2Ol9RxCiUq6yACQ50TfsIs6m8m4/nlKqu4=;
+        b=Xip1or9BAvjByzDtNTnoQOIf1ezMJVxQDdRNIhhMV3yBJzD1L/b9VadjtSrnG7NZKq
+         PBGtHsNmAvH/55bWdwfj0OuhVEB/VeGmzcRpiE85TG/LphQcQ4OE7F2mI4AZl9G6zZ/S
+         J9nDIlX37+YiIGmhqHKJi87LT+BAecImjkpHOHuJkBEQZ9pRyQ1DxmFHPh/TPRISBzcT
+         nq1zVv+0qrc5vNnWzE6u5oX7j9KBi0EPX30gUqOciX8hTfVdk2pWb9H2lkLkGiPzFocI
+         8J5H8qWE4Nj4Kewx6NrN1zoonq3xZHzui+3Q5BajFQ0SRv1AeJXXFVxlNYjM01nzARSr
+         Cy2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756738164; x=1757342964;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/giPzS+fk2Ol9RxCiUq6yACQ50TfsIs6m8m4/nlKqu4=;
+        b=isQCMu+1CD7AZktdW/MzPGqs6iMMisDCEXcpMfWADpn/IOZYDJRbLIp+dH21FdkGuc
+         ZDddQSgJ/s2PZtnHR5jG1wP1c/b7HBR9I0iWaOUIu+6LtHqmaMcrQ4nm3X+ZBOnjS65n
+         rqVAspBj1mSHiJJUr0wSKUvnsXqrwaCmrBMR02lBP6l4Lk/yZj2+HIvIFgIhJMr20RE2
+         qZIu4CqUu1ah7EV0Jy9vB8UEB4g7IwrFGWL+JxkkTkh47VPRLe14oe7cYz37x8eX4rCx
+         pnUzGtB3w60FDvX374cAsnwKAKPt65xnOJm7wQhiBezxGZtNcNt6kCPyguWNfJ0vj2X8
+         aBPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtQ7/EiiVlG+DGok9N6rla+9/4A1NtAH6RwzpLQynroEu/zPu95rxU490MGuE2cj7BKrkibgDpWlkyKanf@vger.kernel.org, AJvYcCWXGS+qfXY8KV9zxe/TbDsM8Rp1E+tTjZnGvONnqA7/cOvCNNnDlMwkzD2sgRxJf6J27YuoIsm5@vger.kernel.org, AJvYcCWmekuuNoM+N+PpJaNnkn/dCKd5N/T0puMgXIJW3g0mCnqkhX/TqsxbiEs0TIUHkS31JfXW5EfnLqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtXa8GKXsb50t7YtqG1gC/KP4lVVUPkf/vUp8T6l2I5eDFkM0R
+	23pmgvdEfN3d41LgXl2IylNkT/PwjvCA2Qq+svgsl7AK5iUmkBVY/K9r
+X-Gm-Gg: ASbGnctGRyMZmI+NMfO6a37gXvtLtbpgaVvzvIsDop1tDUx2W/nkaaufqw9okjrFHo3
+	5JOwyeLx7wTjNd0LJr5fz2obiMnp6Kxr3+7UlqXCM4stRqmkv9oibOWoimVmH0hz74atF87znZR
+	b0kasNSc4V3LXq3EXCdzZ5pVR8cbJ5Rom/EdY92SGDXlNuLfJZit/aUttbcK4szN2CD5zwdUp09
+	VYfC2uNBgfOcZ224vGL+1lxTHwJnIV73iITjMm2Iwxdo59r6C+B3YeravKmyIRKXgjXgKou0kbV
+	fJu5bqf4MITRJqLH9/wm32UAYEXWDC70cmYvsTaei9Lj7yIZ51sfR+c9Zt5h9lzNI4u049REbg3
+	DLIY2XT8CsJChu9t6jZEdL/8KKtKLOpvf
+X-Google-Smtp-Source: AGHT+IEZGoGq98Ijbab1SmiHs2tS3qW8FBTqQ1v4FFAbuRCRgb71MOcnfTnqVgiDXIcwenCjplVkJQ==
+X-Received: by 2002:a05:6000:26cb:b0:3ca:3206:29f with SMTP id ffacd0b85a97d-3d1de4bc29emr6618252f8f.40.1756738163806;
+        Mon, 01 Sep 2025 07:49:23 -0700 (PDT)
+Received: from [192.168.20.170] ([93.89.165.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b83f86c8dsm69415965e9.7.2025.09.01.07.49.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 Sep 2025 07:49:23 -0700 (PDT)
+Message-ID: <587f46d8-598e-4509-bc19-1e6d1b61a624@gmail.com>
+Date: Mon, 1 Sep 2025 16:49:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,107 +81,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v14 2/5] net: ti: icssm-prueth: Adds ICSSM
- Ethernet driver
-To: Parvathi Pudi <parvathi@couthit.com>, <danishanwar@ti.com>,
-        <rogerq@kernel.org>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <ssantosh@kernel.org>, <richardcochran@gmail.com>, <m-malladi@ti.com>,
-        <s.hauer@pengutronix.de>, <afd@ti.com>, <jacob.e.keller@intel.com>,
-        <horms@kernel.org>, <johan@kernel.org>, <m-karicheri2@ti.com>,
-        <s-anna@ti.com>, <glaroque@baylibre.com>, <saikrishnag@marvell.com>,
-        <kory.maincent@bootlin.com>, <diogo.ivo@siemens.com>,
-        <javier.carrasco.cruz@gmail.com>, <basharath@couthit.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <vadim.fedorenko@linux.dev>, <alok.a.tiwari@oracle.com>,
-        <bastien.curutchet@bootlin.com>, <pratheesh@ti.com>, <prajith@ti.com>,
-        <vigneshr@ti.com>, <praneeth@ti.com>, <srk@ti.com>, <rogerq@ti.com>,
-        <krishna@couthit.com>, <pmohan@couthit.com>, <mohan@couthit.com>
-References: <20250822132758.2771308-1-parvathi@couthit.com>
- <20250822132758.2771308-3-parvathi@couthit.com>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <20250822132758.2771308-3-parvathi@couthit.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 0/2] i2c: pxa: fix I2C communication on Armada 3700
+Content-Language: hu
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Wolfram Sang <wsa@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
+ Hanna Hawa <hhhawa@amazon.com>, Robert Marko <robert.marko@sartura.hr>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>
+References: <20250827-i2c-pxa-fix-i2c-communication-v3-0-052c9b1966a2@gmail.com>
+ <aLVle-fEMXlQlDR-@smile.fi.intel.com>
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <aLVle-fEMXlQlDR-@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Parvathi,
-
-On 8/22/2025 6:55 PM, Parvathi Pudi wrote:
-> From: Roger Quadros <rogerq@ti.com>
+2025. 09. 01. 11:20 keltezéssel, Andy Shevchenko írta:
+> On Wed, Aug 27, 2025 at 07:13:57PM +0200, Gabor Juhos wrote:
+>> There is a long standing bug which causes I2C communication not to
+>> work on the Armada 3700 based boards. The first patch in the series
+>> fixes that regression. The second patch improves recovery to make it
+>> more robust which helps to avoid communication problems with certain
+>> SFP modules.
 > 
-> Updates Kernel configuration to enable PRUETH driver and its dependencies
-> along with makefile changes to add the new PRUETH driver.
+>> Changes in v3:
+>>   - rebase on tip of i2c/for-current
 > 
-> Changes includes init and deinit of ICSSM PRU Ethernet driver including
-> net dev registration and firmware loading for DUAL-MAC mode running on
-> PRU-ICSS2 instance.
+> Hmm... Why not the i2c/i2c-host branch? (It's Andi's tree)
 > 
-> Changes also includes link handling, PRU booting, default firmware loading
-> and PRU stopping using existing remoteproc driver APIs.
-> 
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
-> Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
 
-[ ... ]
+Simply, because the previous versions of the series were based on that since
+they contained a patch for the I2C core code. Additionally, I did not notice
+that there is a separate tree for host driver patches.
 
-> +	/* get mac address from DT and set private and netdev addr */
-> +	ret = of_get_ethdev_address(eth_node, ndev);
-> +	if (!is_valid_ether_addr(ndev->dev_addr)) {
-> +		eth_hw_addr_random(ndev);
-> +		dev_warn(prueth->dev, "port %d: using random MAC addr: %pM\n",
-> +			 port, ndev->dev_addr);
-> +	}
-> +	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
-> +
-> +	/* connect PHY */
-> +	emac->phydev = of_phy_get_and_connect(ndev, eth_node,
-> +					      icssm_emac_adjust_link);
-> +	if (!emac->phydev) {
-> +		dev_dbg(prueth->dev, "PHY connection failed\n");
-> +		ret = -EPROBE_DEFER;
-> +		goto free;
-> +	}
-> +
+Although, I could send a new version, but that seems pointless since the i2c-pxa
+driver code is the same in both trees currently.
 
-Why are you returning EPROBE_DEFER here? If phy connection fails, you
-should just return and fail the probe. That's what ICSSG driver does.
-
-In drivers/net/ethernet/ti/icssg/icssg_prueth.c
-
- 404   │     ndev->phydev = of_phy_connect(emac->ndev, emac->phy_node,
- 405   │                       &emac_adjust_link, 0,
- 406   │                       emac->phy_if);
- 407   │     if (!ndev->phydev) {
- 408   │         dev_err(prueth->dev, "couldn't connect to phy %s\n",
- 409   │             emac->phy_node->full_name);
- 410   │         return -ENODEV;
- 411   │     }
-
-
-Before phy connect you do `dev_warn(prueth->dev, "port %d: using random
-MAC addr: %pM\n"`
-
-If device is using random mac address, this will be printed, your phy
-connect fails, you try probe again, print comes again, phy fails again
-and so on ...
-
-This results in system getting spammed with continuos prints of "using
-random MAC addr"
-
-I suggest if phy fails, let the probe fail don't do EPROBE_DEFER.
-
-Saw this issue on few boards which has issue with ICSSG phy.
-
-> +	/* remove unsupported modes */
-> +	phy_remove_link_mode(emac->phydev, ETHTOOL_LINK_MODE_10baseT_Full_BIT);
--- 
-Thanks and Regards,
-Md Danish Anwar
+Regards,
+Gabor
 
 
