@@ -1,112 +1,90 @@
-Return-Path: <linux-kernel+bounces-793953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-793952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FFD1B3DAD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:11:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AAAB3DAD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 09:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F4B160A0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:11:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFFB3170DB7
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Sep 2025 07:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CC8262FFF;
-	Mon,  1 Sep 2025 07:11:11 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F893266582;
+	Mon,  1 Sep 2025 07:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eODTA7j9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BED2566F7;
-	Mon,  1 Sep 2025 07:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5528225A322;
+	Mon,  1 Sep 2025 07:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756710671; cv=none; b=JFgrupIXvxWsslPTD9VsGICIPM4BsYCH+4Z+x0AWq4YThRDWzK8VsfjVt5vbvaEBLHYq0nnx9p9L2zc+VumiG6BraeWrr7cJE8+OKI2KiIsvJORDXw3IV+NBFdZ1z0va8q7iF6oOaH6GdvluKT9wLg01nCF9cQzsZSFEgOhv5nQ=
+	t=1756710625; cv=none; b=Ax8+esiz8MZA5qVW9vX0nCjhD/pGSwLrNr/oeKza9vH8wPZ6dqcnNWwmHS5ycUBVZWOBUE2XL0ioj6DaFj877RbIp9SKriE+D2Ijin96gV2fhXycalHJb3K/kXnWB2JvveesbysaNmCfpbMid6E9J5Up3PGOgiW2Zffr7r7gfpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756710671; c=relaxed/simple;
-	bh=ckvERna5M/VSS3unkR5kmJ0GIdvm9j9J64cn3oC7Svs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ShG4PZx22n9aHL+pUT+zWp8diipFIwlIc1TtdD+P5F1B+yF5W/S5NAt0oRytN0zRVQ8yc4za1S9TcOX5Imb+9gsSvKzKqwLF4bJqL40/qbfI1Xb86qb4278DI+TqDSya3BMKuf79/M5YHvwOZvEqGU9Cg9lkQFKiRE+aE2ho6GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: cbac8fd6870211f0b29709d653e92f7d-20250901
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_LOWREP
-	SA_EXISTED, SN_UNTRUSTED, SN_LOWREP, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:3c2429f1-7d65-434c-985f-1190ab0992f7,IP:10,
-	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:0
-X-CID-INFO: VERSION:1.1.45,REQID:3c2429f1-7d65-434c-985f-1190ab0992f7,IP:10,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:098bc28d336bdd55a66c3303ecff55e1,BulkI
-	D:250901151055TLJ643JH,BulkQuantity:0,Recheck:0,SF:19|24|38|44|66|72|78|10
-	2|850,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:n
-	il,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC
-	:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: cbac8fd6870211f0b29709d653e92f7d-20250901
-X-User: lihongfu@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <lihongfu@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1183434738; Mon, 01 Sep 2025 15:10:52 +0800
-From: Hongfu Li <lihongfu@kylinos.cn>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org
-Cc: mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hongfu Li <lihongfu@kylinos.cn>
-Subject: [PATCH] perf: make pmu_bus constant
-Date: Mon,  1 Sep 2025 15:10:10 +0800
-Message-Id: <20250901071010.350947-1-lihongfu@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756710625; c=relaxed/simple;
+	bh=NTMXFokxaiRJzs9Mo6wvmzD6Foc2YjZyaToi3MONoPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XwSrDb0QxDLraaFkGz3F/KXP7nbrNZaUrshDlGqq/PAoUb7uemjgBF0d9n6L+bDsLDSwRm9wOmoiaMluffgmZvPQ7vGNcSui44FAJzmehRbClogSjAgUSN5TjdR/qSXp4bjll2LjxN916qNk1ofcSQbsex1emOMGtzt/TYMan2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eODTA7j9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FA5AC4CEF0;
+	Mon,  1 Sep 2025 07:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756710624;
+	bh=NTMXFokxaiRJzs9Mo6wvmzD6Foc2YjZyaToi3MONoPw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eODTA7j9VMA2b7Q3ehvseuVyG/h3ABylYM/dh1RGAC4AcsRuivW7YjRlhYdmbUJah
+	 ptfLM+3fS22Xmcg/bWlLwcWytJlKaHS+VUhKoVMDXUxhnLIKOpEuzH9WTC++A2mbjG
+	 UoN25rkhJXSdRR2B06OjQPVldVy1Vas6KBV3MUZg=
+Date: Mon, 1 Sep 2025 09:10:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mohammad Amin Hosseini <moahmmad.hosseinii@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org
+Subject: Re: [PATCH v2] staging: iio: adc: ad7816: add mutex to serialize
+ SPI/GPIO operations
+Message-ID: <2025090147-tapeless-pursuant-3234@gregkh>
+References: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901065445.8787-1-moahmmad.hosseinii@gmail.com>
 
-Since commit d492cc2573a0 ("driver core: device.h: make struct bus_type
-a const *"), the driver core can properly handle constant struct
-bus_type, move the pmu_bus variable to be a constant structure as well,
-placing it into read-only memory which can not be modifie at runtime.
+On Mon, Sep 01, 2025 at 10:24:45AM +0330, Mohammad Amin Hosseini wrote:
+> From: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
+> 
+> The ad7816 driver was accessing SPI and GPIO lines without
+> synchronization, which could lead to race conditions when accessed
+> concurrently from multiple contexts. This might result in corrupted
+> readings or inconsistent GPIO states.
+> 
+> Introduce an io_lock mutex in the driver structure to serialize:
+> - SPI transactions in ad7816_spi_read() and ad7816_spi_write()
+> - GPIO pin toggling sequences
+> - Updates to device state via sysfs store functions (mode, channel, oti)
+> 
+> The mutex ensures proper mutual exclusion and prevents race
+> conditions under concurrent access.
+> 
+> Changes in v2:
+> - Fixed mismatch between From: and Signed-off-by lines
+> 
+> Signed-off-by: mohammad amin hosseini <moahmmad.hosseinii@gmail.com>
 
-Signed-off-by: Hongfu Li <lihongfu@kylinos.cn>
----
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think your old "From:" line was correct, as capital letters are
+proper, right?
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 872122e074e5..155bb686c8ce 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -12216,7 +12216,7 @@ static const struct attribute_group *pmu_dev_groups[] = {
- };
- 
- static int pmu_bus_running;
--static struct bus_type pmu_bus = {
-+static const struct bus_type pmu_bus = {
- 	.name		= "event_source",
- 	.dev_groups	= pmu_dev_groups,
- };
--- 
-2.25.1
+Also, the "v2" information goes below the --- line.
 
+thanks,
+
+greg k-h
 
