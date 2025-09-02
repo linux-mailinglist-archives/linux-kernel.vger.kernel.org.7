@@ -1,124 +1,165 @@
-Return-Path: <linux-kernel+bounces-796209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126BDB3FD55
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:07:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA684B3FD57
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92B31B22CC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:07:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C77F97AE638
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971882F8BC4;
-	Tue,  2 Sep 2025 11:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6201C2F7449;
+	Tue,  2 Sep 2025 11:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XC0EUBnf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="luXQtemq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672AB28541A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BEB2E92C5;
 	Tue,  2 Sep 2025 11:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756811218; cv=none; b=GJXKROApomwepYtVkawwKzBB5sfQpALb5/NUlCSo9wOnfWyfypnag9kitzdpsflojoWU6DxfxWXqECd6x+rUOy8Va5yT9gPsGHNo5iGS7e4d9hdJKHy1YrWfYLad1fXnseV270LkGJ1wI9/E8dlkXWPmi/7WxSW1NlGN/yOpfLY=
+	t=1756811217; cv=none; b=eDk0SJ9NglRtWAlWPjUwtEUFQqcupDCysSz+EyS3VbUDTWPjrL1+qkx7IIP35TZHwbs+7LWIUdqGFEznoNKS+TonOsiy5FADH96/LfuWtJLsw3FkOaxmJJPzLwTDpoVee9n8qKrb/1vqJQFrNKp4xUxeLH+hsUG9FE5+cqbnooM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756811218; c=relaxed/simple;
-	bh=bqhKBbFaxlfNUpOUFZdfQ3oL0LBK5S3VEHPSL8knTQI=;
+	s=arc-20240116; t=1756811217; c=relaxed/simple;
+	bh=hCa1C3d5MBR18h+mVpk4RAM474rjo1/g4TQSzEy0Gzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdZ5fyhB3J0zBVLN+zeMD2uBGOS32jZPL9xIUvGVqiJ2thF/OCubMzoZghkG/c/WXCbXU01Dw/rxdnooMuk+haXFD4lAplCnRgdasKCe93LX7Rj9jHe+LsSY1JOjS+9drs/wgo1QfID6PV+U+msesKBrIf7Rrl5R85eGwKT2qK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XC0EUBnf; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756811218; x=1788347218;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bqhKBbFaxlfNUpOUFZdfQ3oL0LBK5S3VEHPSL8knTQI=;
-  b=XC0EUBnfmMNB4KdOn/MV9gdDib1Z5FFmKn0AJ3bC+EzaSjiimziUl1SZ
-   RRNBDQNuXl8RC7qYJFW7Hfc2723Mszsa5h9FIiv8LNJjM6A0PNcrjQo2W
-   OC+KnlbNEz7XglIfPjg0BGK2ucP6c5B7HCEsAlK3oG3Fj2vXz4wpmyGn7
-   QC48Io6xTobIHuUU9C6c6LjrMTQsUWOnLrdg7Er/MoWV5L20OLR46eXCx
-   kESrBnoHuSHjGy/WZ6ncDtjdc/7p3ZaEDXdaG1fE+LnFUB6QlsSblYkzM
-   XojCnv3sFt75W3rZ1DmbjQ5B6nWhPNAk9NT2ROmgGyKlzanM4Ex9/IJYD
-   Q==;
-X-CSE-ConnectionGUID: xBSqz30/S2qTu3UKFaA3nw==
-X-CSE-MsgGUID: Q60/psc+ThWaosTUxkmo4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="70460314"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="70460314"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 04:06:57 -0700
-X-CSE-ConnectionGUID: wGl8brGaRp2Au9fh2S0SJA==
-X-CSE-MsgGUID: khpair++SS2sFMTJC8qy8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="202193796"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 04:06:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utOqe-0000000AfvR-0aC0;
-	Tue, 02 Sep 2025 14:06:48 +0300
-Date: Tue, 2 Sep 2025 14:06:47 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Lakshay Piplani <lakshay.piplani@nxp.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	marcelo.schmitt1@gmail.com, gregkh@linuxfoundation.org,
-	viro@zeniv.linux.org.uk, peterz@infradead.org,
-	jstephan@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com, jonathan.cameron@huawei.com,
-	akpm@linux-foundation.org, chao@kernel.org, jaegeuk@kernel.org,
-	vikash.bansal@nxp.com, priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com, Frank.Li@nxp.com
-Subject: Re: [PATCH v2 2/2] iio: temperature: Add driver for NXP P3T175x
- temperature sensor
-Message-ID: <aLbPx8yPP_EgzTmW@smile.fi.intel.com>
-References: <20250827103105.2472328-1-lakshay.piplani@nxp.com>
- <20250827103105.2472328-2-lakshay.piplani@nxp.com>
- <72c3ae7d-cb54-4a1b-a27a-9e673ffaddcc@kernel.org>
- <20250901164717.6cba2d50@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Extkj077px/uWP8AStzNqcoYDBdI4QigYu/2389Wp9czN2sOFY7gBxnV8gXCjD/1Zy7iqTcp1u02J/zbETj0bbRgLrQlS8Sbw2m/93EPtR4DYngxC9KrVDurGh8VyYDwDDC7NYHXEbub+wvOkidabjEOKzyqJAJGlTs5MllBlCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=luXQtemq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D67BC4CEED;
+	Tue,  2 Sep 2025 11:06:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756811217;
+	bh=hCa1C3d5MBR18h+mVpk4RAM474rjo1/g4TQSzEy0Gzo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=luXQtemqwauDCW1OGofW7KOn0Ed3TXz+7wSyh4Rq/4C4pBNfrCav73O7nhlQqKsu9
+	 pJwS6fgD10XM5MWzc2V32cauwX2xcs5uKtg2Bn+xWgyC8SmOfVZ8jKdythn+ZO4vAa
+	 0h7EOGiI+UMeKypfX8GCyk9wrCAP4tCX2z8kMskVDMEaLSOSdX6db0uWHaJchKjybu
+	 MaLbWwVqK1itWBWz4FOiOlTEHChtIjiBEjBS0WHuFG4wArCchdxmDkRdChfk7RgGoF
+	 PbQcn5XJw0e6Ezn8C5XZTAc61l/+qt/LvKdGUrn6ovVC7JKrzqR3GHSc85H+bG5dhG
+	 nrqyYFGPfwuJg==
+Date: Tue, 2 Sep 2025 14:06:51 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Christoph Hellwig <hch@lst.de>, dri-devel@lists.freedesktop.org,
+	iommu@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
+	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v1 01/10] PCI/P2PDMA: Remove redundant bus_offset from
+ map state
+Message-ID: <20250902110651.GF10073@unreal>
+References: <cover.1754311439.git.leon@kernel.org>
+ <c9b6237964b9606418af400bb6bec5178fcffff2.1754311439.git.leon@kernel.org>
+ <20250806145825.2654ee59.alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250901164717.6cba2d50@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250806145825.2654ee59.alex.williamson@redhat.com>
 
-On Mon, Sep 01, 2025 at 04:47:17PM +0100, Jonathan Cameron wrote:
-> On Sun, 31 Aug 2025 18:46:32 +0200
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
-
-...
-
-> This device does have a novel definition of register. There
-> are 4 of them, 3 of which are 12 bits zero padded to 16 and
-> the other 8 bits.
+On Wed, Aug 06, 2025 at 02:58:25PM -0600, Alex Williamson wrote:
+> On Mon,  4 Aug 2025 16:00:36 +0300
+> Leon Romanovsky <leon@kernel.org> wrote:
 > 
-> So, I think only way to wrap that up fully in regmap would be
-> a pair of regmaps one of which has only a single register in it.
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Remove the bus_off field from pci_p2pdma_map_state since it duplicates
+> > information already available in the pgmap structure. The bus_offset
+> > is only used in one location (pci_p2pdma_bus_addr_map) and is always
+> > identical to pgmap->bus_offset.
+> > 
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > ---
+> >  drivers/pci/p2pdma.c       | 1 -
+> >  include/linux/pci-p2pdma.h | 3 +--
+> >  2 files changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> > index da5657a020074..274bb7bcc0bc5 100644
+> > --- a/drivers/pci/p2pdma.c
+> > +++ b/drivers/pci/p2pdma.c
+> > @@ -1009,7 +1009,6 @@ void __pci_p2pdma_update_state(struct pci_p2pdma_map_state *state,
+> >  {
+> >  	state->pgmap = page_pgmap(page);
+> >  	state->map = pci_p2pdma_map_type(state->pgmap, dev);
+> > -	state->bus_off = to_p2p_pgmap(state->pgmap)->bus_offset;
+> >  }
+> >  
+> >  /**
+> > diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+> > index 075c20b161d98..b502fc8b49bf9 100644
+> > --- a/include/linux/pci-p2pdma.h
+> > +++ b/include/linux/pci-p2pdma.h
+> > @@ -146,7 +146,6 @@ enum pci_p2pdma_map_type {
+> >  struct pci_p2pdma_map_state {
+> >  	struct dev_pagemap *pgmap;
+> >  	enum pci_p2pdma_map_type map;
+> > -	u64 bus_off;
+> >  };
+> >  
+> >  /* helper for pci_p2pdma_state(), do not use directly */
+> > @@ -186,7 +185,7 @@ static inline dma_addr_t
+> >  pci_p2pdma_bus_addr_map(struct pci_p2pdma_map_state *state, phys_addr_t paddr)
+> >  {
+> >  	WARN_ON_ONCE(state->map != PCI_P2PDMA_MAP_BUS_ADDR);
+> > -	return paddr + state->bus_off;
+> > +	return paddr + to_p2p_pgmap(state->pgmap)->bus_offsetf;
+> >  }
+> >  
+> >  #endif /* _LINUX_PCI_P2P_H */
+
+Sorry for long time to reply, I waited to see what is going on with DMA
+phys_vec basic series and together with my summer vacation, it took a
+while.
+
 > 
-> Agreed though that using bulk accesses is not a good plan.
-> I'd been assuming that was actually a pair of registers, not
-> a single larger one.
+> Looks like you're relying on this bogus code getting resolved in the
+> next patch...
+> 
+> In file included from kernel/dma/direct.c:16:
+> ./include/linux/pci-p2pdma.h: In function ‘pci_p2pdma_bus_addr_map’:
+> ./include/linux/pci-p2pdma.h:188:24: error: implicit declaration of function ‘to_p2p_pgmap’ [-Wimplicit-function-declaration]
+>   188 |         return paddr + to_p2p_pgmap(state->pgmap)->bus_offsetf;
+>       |                        ^~~~~~~~~~~~
+> ./include/linux/pci-p2pdma.h:188:50: error: invalid type argument of ‘->’ (have ‘int’)
+>   188 |         return paddr + to_p2p_pgmap(state->pgmap)->bus_offsetf;
+>       |                                                  ^~
+> ./include/linux/pci-p2pdma.h:189:1: error: control reaches end of non-void function [-Werror=return-type]
+>   189 | }
+>       | ^
+> 
+> to_p2p_pgmap() is a static function and struct pci_p2pdma_pagemap
+> doesn't have a bus_offsetf member.  Thanks,
 
-Why is it a problem? We have PMICs which have 16- and 8-bit registers and we do
-use the bulk transfers. Yes, we have also an exception when it's required to
-use byte transfers to make device work, but otherwise it works fine.
+You are right, probably the best way to fix the error is simply squash
+this change into the next patch.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks
 
 
+
+> 
+> Alex
+> 
 
