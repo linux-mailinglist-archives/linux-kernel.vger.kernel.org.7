@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-796139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADF7B3FC5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:27:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C9BB3FC57
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41EE94E3218
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1BB91B24D66
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01772EDD6B;
-	Tue,  2 Sep 2025 10:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D3A283689;
+	Tue,  2 Sep 2025 10:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRxuQLGb"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mu7vfGrO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A47283CAA;
-	Tue,  2 Sep 2025 10:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B91280309;
+	Tue,  2 Sep 2025 10:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808816; cv=none; b=AbqXcS3uXDccBsKlSzQ4vleTFJY9bJ7x+oELln3Mq61KdzeZDEoiqWk9dl65x/+unf+OG8A8EB8m9pHT8yUe5lSTHa2BUhQPCJHnbu0Vi1ZRsnWbwfI++BwBh6EuhVpEbK5TNlJCfQF2+eG/eNwMw/IdBzePYJEHlZzS47Od4Do=
+	t=1756808802; cv=none; b=eoAb45TeiyljcazfG+hwgGC8xn+0g13stakI/1qJTyRlds4sZwosFHrLybSe58+NPR+/CX/39T+TGv0Lk/YnbfbmjsMY7kSJZwA3bve+xOvCsuvHeEs5jw8bwd56HCJlEGyEZpFBszdj8okLPLgS9H0So1ZdJ61EugZyX6leFPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808816; c=relaxed/simple;
-	bh=WIG36ojakbZR0f34sUPRJRpG8M9NeFHs5wGAsA2m4Ow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mV3BXXA8bT84NzHwAdl5j05r5cQieWthc8c0/iVTKw9qWGIt5DF5Nzm98vJjbgI/oJ9qwz/jmUqsZkCE618D+LpLGnYYIn6v7gy2fAgN69Z3gMJi4Ie9qEN4LGbJkvrLci1J1NwvZpSYH4SZzSqcQLnGYG27yQCFEnDpm6vU/qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRxuQLGb; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3d1bf79d7acso1749461f8f.0;
-        Tue, 02 Sep 2025 03:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756808812; x=1757413612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WIG36ojakbZR0f34sUPRJRpG8M9NeFHs5wGAsA2m4Ow=;
-        b=mRxuQLGbqQ2awRIqKl2lLYZy6/Lb5HNZ3FXFg9HlaK8dJbnS1nSf0oFZMj3mlo8EMv
-         GoVQpHpfP6RlhZT7iyxlKCi5Yf65If0hxRJaMJY8GaDP98gjOJ8U39sGWZvLfS5KtTA6
-         GWv9PUT5ay3hKR+rjlgj3gU7UwdXgHs43TP0GKCI8jwJwMiNdjiliNHWISvvJeVLkCUl
-         8vaEtSkM54UFSD7723v0rWpqrkzdOZln+GH005Q6/QoEkx6rVm9ZGcg6YZ13wLOO3B3H
-         1iZJQtLEgveYg2U7pnuAWovUAZxmVIWGBspavHNxy6O8pc7JqaNuPOdTn03wMqKnADcu
-         b47w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756808812; x=1757413612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WIG36ojakbZR0f34sUPRJRpG8M9NeFHs5wGAsA2m4Ow=;
-        b=pY0RpVHv+SeB5mFvCtj1XlFKKwiBaNlNEEEDX8NCZSMVfS4JuaVUYhFeeAVB4dX7/X
-         PLmSQXY2Ntt+y2X29FC/89qRG9c+LObA+oWazcsQV08r1cOeMkaDNAoLeUJhMPwvFpNE
-         +Rx8ld2JJsnVsvhzZ2iHfQpO1yUSnkpFk9ATixFUjJvEAjve2bvgLrCa5OiXEU+hGudy
-         p5Jrrqk1vRLVpz5J1G/atGkmRMeh31uN2nXIVv32gglr5v6LWv8LVbFByI/KAmoTWn1G
-         w91rEUfrQFgU0IV6p4KgqPUBiPTHiEzt6Z6lSr27XHk0dWs9C5te46HZ7b/dL7HaJjjf
-         /acg==
-X-Forwarded-Encrypted: i=1; AJvYcCVh42+Xm4HWUwQQJPaca7/ogUrVKPEcVwlcQ96jCqRcXO75sNyqwEXAd8yOZ7UvAUdHFGyvPjo8@vger.kernel.org, AJvYcCWOCMTubgYi4jvpb6W/Xfd0Wt99FkdbVa5MxQRldBdu/Tx1rLBa2HorFZt7RLEyHyvYkLQ6vq5JhkmxgDKP@vger.kernel.org, AJvYcCXdGecBgNvdOitGnYmy7Sv6sKlVr9Ac7WSLiETGNTCtALezEt28E3e/rxORAA4HgXuvgym0ut7MpPdE@vger.kernel.org, AJvYcCXwXIzMKEmNG0LARPx3ey1I8XBwpO5/GgzwPz6ZANaxRKsGRhmHl2XlO12suMTIWgnBg93CxkWn2iOsDGGFvenDZcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAJuc3BjpG+1ArjbnvWrtVFHjSUcUPlDepiMGPoXJKM1O2usxv
-	HP7Viw7NV6v7QpsjEwyIEfYNn9CvCauo/8KP4e3ce7alh5+/4R/21jOAL2joTDZCb2Zvtp86YVF
-	epUHjGX+KvhlF0BUQpKN8IWchlED0yW4=
-X-Gm-Gg: ASbGncv3OaJCQor1HEhKActDR/g7iRgR2zRr2ouiNKVTja8l8ercforTTk+rrq21FNb
-	5JiNqR4CRFPdqSUPh4Ts3m1g1ueSZZ+UVn9CHVE7qFVx6s+GtcTcrkaYJvP5EFiwxSFjQhGGFzt
-	U963hCQ4cOdkDYtn3ybqypNeMPKhgSIRxF35Vyrs4kkQ9quGXyQd7D5syGG4ZFGf9sPyLF/sp52
-	I8fpWsCzRxnZVHpb4DXs/x0GuihCfXVH0PQVB/s
-X-Google-Smtp-Source: AGHT+IFxhn+/xz90fXaIgO0np82rcnaVjNZibsx1cSAdBhTTY/NoNyJlaD7235ymxV7QX9ujQupk4dM1I5QudfWWTsQ=
-X-Received: by 2002:a5d:5887:0:b0:3d9:70cc:6dd0 with SMTP id
- ffacd0b85a97d-3d970cc701emr1764550f8f.33.1756808811583; Tue, 02 Sep 2025
- 03:26:51 -0700 (PDT)
+	s=arc-20240116; t=1756808802; c=relaxed/simple;
+	bh=lToFDrcgaN9qTLhM+wiTddSLncDaBi7MkVCs9D8u8nA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qrZALjuoJtRUGU7aEwkczn5XAIqOab2aRlHUdhGKV8KWDJYZAaJAjGL0IDhBsGk7ZTO3Np4wiVznkRPYczy6q5Pa1clrDcdRcykPE1FJgT7Qz7sZNkzQyzzJ0BmTDbSs3dA4uWEGE0mnt59mPUCRvLAarz3mr58QNBghoxmp8oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mu7vfGrO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACA0C4CEED;
+	Tue,  2 Sep 2025 10:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756808801;
+	bh=lToFDrcgaN9qTLhM+wiTddSLncDaBi7MkVCs9D8u8nA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mu7vfGrO9HoMK2J+ETopLTQqJt/Ku5I5gDUIi1Q9FOhHe3A4wKW2p+i6h0+7/yVOM
+	 VF0vv3lXYFrihh/dzfR2XvV0gSY4Hk+f9CaQDH4pUJYZCfAAMILZS/+/7K+tGoZAdY
+	 GuAZlz32I66tuhpm61FimNXeF5uHcRUODQKem5hPtIVa5+Whi8R/JXy1KBUmlKS2m/
+	 vgPRDv42WLRzwTAXtt9fzby9a2ebjskx4Jbut0DraugS1ypHEq1+S89F5y919SWdXl
+	 nxyzblGc7OqK92k5nLOM8JSR5ZojWwCWznvhkb4+Z03SCpIIzmKZSU0LmBpG4hQmdE
+	 +C5O5seSDVrlg==
+Date: Tue, 2 Sep 2025 11:26:36 +0100
+From: Lee Jones <lee@kernel.org>
+To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+Cc: "pavel@kernel.org" <pavel@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V8 2/2] leds: pwm: Add optional GPIO enable pin support
+Message-ID: <20250902102636.GF2163762@google.com>
+References: <20250724080221.7562-1-Qing-wu.Li@leica-geosystems.com.cn>
+ <20250724080221.7562-3-Qing-wu.Li@leica-geosystems.com.cn>
+ <20250731104623.GD1049189@google.com>
+ <PAXPR06MB7966CCA6E36625F3F807DA2BD72BA@PAXPR06MB7966.eurprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901224327.3429099-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250901224327.3429099-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <aLa6IeZsGeESpMKQ@shell.armlinux.org.uk>
-In-Reply-To: <aLa6IeZsGeESpMKQ@shell.armlinux.org.uk>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 2 Sep 2025 11:26:25 +0100
-X-Gm-Features: Ac12FXypw6Y_C9Hl8fhtrMS82dtxXYWsVLfOscBiU78OSTy4UH9_O9UiXM-7IC8
-Message-ID: <CA+V-a8vPJ45ZB8RvLaw7Vhm35f28VrHj3zZkCdN-MZzhcd5CiQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 10/10] net: pcs: rzn1-miic: Add PCS validate
- callback for RZ/T2H MIIC
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR06MB7966CCA6E36625F3F807DA2BD72BA@PAXPR06MB7966.eurprd06.prod.outlook.com>
 
-Hi Russell,
+On Tue, 12 Aug 2025, LI Qingwu wrote:
 
-On Tue, Sep 2, 2025 at 10:34=E2=80=AFAM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Mon, Sep 01, 2025 at 11:43:23PM +0100, Prabhakar wrote:
-> > Add a SoC-specific `pcs_ops` pointer in `miic_of_data` to allow
-> > custom phylink PCS callbacks. For RZ/T2H MIIC, implement
-> > `rzt2h_miic_validate` to restrict valid interfaces to RGMII, RMII,
-> > and MII. Assign `rzt2h_miic_phylink_ops` with the new validate
-> > callback to the RZ/T2H MIIC SoC data structure, keeping existing
-> > PCS support intact for other SoCs.
->
-> This seems completely pointless. Please review commit 508df2de7b3e
-> ("net: pcs: rzn1-miic: fill in PCS supported_interfaces") to find
-> out why.
->
-Thank you for pointing this out. I'll drop this patch while sending a v2.
+> 
+> 
+> > -----Original Message-----
+> > From: Lee Jones <lee@kernel.org>
+> > Sent: Thursday, July 31, 2025 6:46 PM
+> > To: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+> > Cc: pavel@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
+> > conor+dt@kernel.org; linux-leds@vger.kernel.org; devicetree@vger.kernel.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH V8 2/2] leds: pwm: Add optional GPIO enable pin support
+> > 
+> > 
+> > On Thu, 24 Jul 2025, LI Qingwu wrote:
+> > 
+> > > Add support for optional GPIO-based enable pin control to PWM LED driver.
+> > > Some PWM LED driver chips like TPS92380 and LT3743 require a separate
+> > > enable signal in addition to PWM control. Implement support for such
+> > > GPIO control through the "enable-gpios" device tree property,
+> > > activating the pin when LED brightness is non-zero and deactivating it when
+> > off.
+> > >
+> > > Tested on i.MX8MP EVK with TPS92380 LED driver chip
+> > >
+> > > Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+> > > ---
+> > >  drivers/leds/leds-pwm.c | 20 ++++++++++++++++++++
+> > >  1 file changed, 20 insertions(+)
+> > >
+> > > diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c index
+> > > c73134e7b9514..08a1f735166ad 100644
+> > > --- a/drivers/leds/leds-pwm.c
+> > > +++ b/drivers/leds/leds-pwm.c
+> > > @@ -17,6 +17,7 @@
+> > >  #include <linux/err.h>
+> > >  #include <linux/pwm.h>
+> > >  #include <linux/slab.h>
+> > > +#include <linux/gpio/consumer.h>
+> > 
+> > This list is alphabetical.
+> > 
+> The original code's include order is not alphabetical,
+> If you prefer, I can reorder all or just put "#include <linux/gpio/consumer.h>" to first line,
+> Please let me know your preference.
 
-Cheers,
-Prabhakar
+First line is okay for now.
+
+Then, if you feel like it, submit another patch to place them in order.
+
+-- 
+Lee Jones [李琼斯]
 
