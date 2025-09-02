@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-797183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56CE0B40D15
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:23:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C72DB40D1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C42017FD2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CFC01B65E1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE3C34A328;
-	Tue,  2 Sep 2025 18:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6ED34AB0A;
+	Tue,  2 Sep 2025 18:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gz0HmcV3"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="OmAC73NJ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0250334AAE1;
-	Tue,  2 Sep 2025 18:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756837374; cv=none; b=gWf8/+QJMWI7YIQeSj8dENcpFqiyj5ZNiuFawxSIk0MWsTm0TW/I/LHFHQwFdC/P0KJ4tg9D++D3zY0hn8ZHHkw/w169X8I79T+LleXP1hWSWU3KxljaCOmUgYQ9Nj8lMBH2PCqPItrLEx9g+lr/HmA6gS7fiGr/MRWkplpgUXE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756837374; c=relaxed/simple;
-	bh=zeeWJadlJgHk14gsEbJSMLNQQhZLpoRRUKtz+/TtcZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NzaOp1aa7ivw47DIhiRMLGLy6VYiZ3QnFPo9tcq9p5RrKsezEZWi+Buh2KdonOTwnNGlCgzkOveYSMyOLeV//6mdWaHimHgiiy0DWb1Mg9N8HUSJK3fB0KKINZuhpEFnL1bnkTVYH3jTN4YruYX5peLWw6+BQo+rIWsaaUKTtSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gz0HmcV3; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b0454d63802so170718966b.2;
-        Tue, 02 Sep 2025 11:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756837369; x=1757442169; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=onxf7BI9Q6nHuy72iBEoPKHI9kMyhZuYmF6ufjTnpI4=;
-        b=Gz0HmcV3LuRp06HYRCvTu5mj6ojGaKIlq6qAn0Z7320DpNzx/bjeBAX/Z/usLHutHY
-         sISlVNBfNb9gX6eNUgVz6ULVGRRsmamu5eJobcuWi9D/aiCifILm4RzZe/+ecq+UJOcj
-         m5wCrB6bUCB/ZGlVCbNhaWga5O9upsB3+tg/rodZQfhlZg2MAqdUvPMjbK1EN4OODWfo
-         hAPq2RThqUCKhMvZG9GLZ/vxhOvTurDL90XtPP/KmOkzeTNUUVgDY5oXiSRTCG8uzDnk
-         jsIIj79SW0iyNmPVwf/pg+APh+PPlycrUGDe8+T5FVYQ8t4EUzL4LvIzfRTJUotD8HU9
-         TvMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756837369; x=1757442169;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=onxf7BI9Q6nHuy72iBEoPKHI9kMyhZuYmF6ufjTnpI4=;
-        b=N1DXVBkGA0DkF3To+WENlOaVtOAsl2AU+Fvoj2swz/pqK8ALShWllwE02Yq4kDcGaC
-         sF7RrRhG2cAHQdIqPAl4+7CNgEEkhhcv0dzz2DlTR1KhgNkGXHmlJhWEESgbypkMmPzr
-         TfpOQ/q/CyYYeV6wTvzGpfC0Hc66xzdN9I2eGzZdvQFDK/yqB8nO9JqZF3bzG8K8FLIA
-         4ORdnG8tHQGzq8J1lz9wEemfIUrbIJ0EQ6jfY6nl8UC+ekQgLz4Twi+KYkGBMi0/gPEI
-         9Jya6h5oIbfgb4ON6iaNG0bW9LKDN/cSad5aUOHM7iHMTQej0zZD+FUNSOdhfgBseN28
-         Jfsw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2dUVKevSzx5al3vZT0koRgcagF7STxWbNnpjbjfXY9bKPddOeQyXy+TFdnrCsG4pp+lXM5aaMFkvFCxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDBm+Qu2nbLuxJyjclC48uDNwQvmF8YVL+IFtPfYQOOibWFT3b
-	7VAo9ApTrUhFZ0xqOUkPupS3wBWPBobhgHUC55jQ1vXO9OrkuSf7jgzwsLJVLN1/
-X-Gm-Gg: ASbGncuU/jKM29v6J6qrEISLGfTttNXkZGatpwMNFsqQ7vnutvBggPb/N60sih52FVM
-	GUxXX7vWl9c6U0ggKdZu1v4IS5ZuWGvr6UkpHZ5ukXLAFw26HxJFpAySE9yK/AuJPov3TBz+IQn
-	tvQUjvFp8JEzQMEIjR/wi4KWtPTGU2GNWak46ehBsgYsoncQ8kJyqR+6QmRHvQZnBTWGAk92q/d
-	ut1Lx4X9MTQ5ztNuAJaE0ds9yZXr4Ww7kQYZqYpv0h9vQIBKkywu+CcnE82MJoQECivJaftLbwP
-	DK/kpKlxyvE6PpiVzjaGXim37zHm9qjQSz3dxIqRgyR7rDpudkZdy9OTyu73sNWa3ZnWUkJBA5u
-	oUh1LYVK2hE5H3OJuM4ptSezHh9VGJH7K4xgqZRSWuS74aK4RJCmXuDvntNy/6BmwTTB4bZpan9
-	5fFiYYzwHSxLQqQfM=
-X-Google-Smtp-Source: AGHT+IE0w2MWQc5FwmPMrX4rJdQL1Gz7NjcCAmW2jRw68pZqSc5/YgWEliZISbDzH8p7+CxyvjDYSQ==
-X-Received: by 2002:a17:907:bb8b:b0:b04:1d07:40de with SMTP id a640c23a62f3a-b041d074816mr875843566b.23.1756837368690;
-        Tue, 02 Sep 2025 11:22:48 -0700 (PDT)
-Received: from fedora.tux.internal (85.191.71.118.dynamic.dhcp.aura-net.dk. [85.191.71.118])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b041cef6b4dsm662698566b.65.2025.09.02.11.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 11:22:48 -0700 (PDT)
-From: Bruno Thomsen <bruno.thomsen@gmail.com>
-To: linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Bruno Thomsen <bruno.thomsen@gmail.com>
-Subject: [PATCH] rtc: pcf2127: fix watchdog interrupt mask on pcf2131
-Date: Tue,  2 Sep 2025 20:22:35 +0200
-Message-ID: <20250902182235.6825-1-bruno.thomsen@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6B8342CAC;
+	Tue,  2 Sep 2025 18:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756837425; cv=pass; b=h/nIbSp/dIUVcLs3sRjPhOX+DWbsnCGu77WztxUxnXy+YhfRc2Ag9Z3st87SH3Hf8BkDIMu+X5Vza2v5gmAQvgVltiZMHyJiTgmxzqRL10U/nm4lbWi4ZtAmsXzjH+yGAWKn7KBRW0RycHnj6zXT2I5oXh9USbtYPHRfnOw+mEI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756837425; c=relaxed/simple;
+	bh=86yFnlbFgfJOZ1JVMwGweD0cPnE4acOJf3zcLI5fsQU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BRnKU2LbyoquCMSQRexToQoCuEgjGq8oWB/qERzW2GQsY1+le9kWYfck8ZLRhQPhoIlV/IKSkkbDl+5hCsGc2BuYwjfao656G264c3eWRDBQSBi+CLiuyew923S1BwwqjMXXN4Y15tJEyQJT+aql6OrAi6csQeBBWkG7Hz2sGew=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=OmAC73NJ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756837404; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=iVaC1acz+cP2ZbGgsiwgo01uh/ELXH7m4/LAWjXSvaz47uaJMb2tsZOwpA9EMdRICSZMZtWP5LFhmXNM5rb0F5DW86rY04Qm6oEMYkWljZTZLpxcY7tJpexHerZK9JphzL09YFfW++8y7qI4rJ3OdVutRcxuE2VEijk/m3++Nb4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756837404; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BCFlD1zHgQgM4xri0/j82ex/DVmcdA0YHQ4MAtyH7xs=; 
+	b=asOwdXhamGQusT7/wMBK3mxp0Jye+ZDAZN8aDoTpGXFxc0uoC4IpbcSQwPJVxztRcRparxiiE+j9rmuOxdJYnt7Gu6Wp3d00R0iwN1hhg5T6xWaU0shXHZqiwAOg/MlG7g3dqI0Xux7UZiWp39PamO66/529bK5mfZEvddWYGi4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756837404;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=BCFlD1zHgQgM4xri0/j82ex/DVmcdA0YHQ4MAtyH7xs=;
+	b=OmAC73NJoqFQKkZxTWM+3KfV6EGtWhyv8kt0G/CjhzhvFcvW8UyMEOHxjcoA3N7F
+	e73dZRt8XRh9rOWAQXEiMPCLQw1eol5TZlXby+f22f004zYxImj3KbTbwqTvaD6ORHm
+	aNRuQipJseF15Ml9savpQ9KxIoFzkmzf33o9425I=
+Received: by mx.zohomail.com with SMTPS id 1756837403727645.9913468928908;
+	Tue, 2 Sep 2025 11:23:23 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Tue, 02 Sep 2025 20:23:04 +0200
+Subject: [PATCH] pmdomian: core: don't unset stay_on during sync_state
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAAc2t2gC/yWNQQ6CMBBFr9LM2jFttTRyFcOC1ik2CMUpEBPC3
+ a2yfD9572+QiSNlqMUGTGvMMY0F1EmAf7ZjRxgfhUFLbeRNauT+YmyFr+T7ZUKmjin/JDROBRW
+ cDUErKPrEFOLnn743BzO9l/IwHyO4NhP6NAxxrsVanZVF9ldo9v0LIgl9dpcAAAA=
+X-Change-ID: 20250902-rk3576-lockup-regression-5b1f1fb7ff21
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@collabora.com, linux-rockchip@lists.infradead.org, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Heiko Stuebner <heiko@sntech.de>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-When using interrupt pin (INT A) as watchdog output all other
-interrupt sources need to be disabled to avoid additional
-resets. Resulting INT_A_MASK1 value is 55 (0x37).
+This reverts commit de141a9aa52d6b2fbeb63f98975c2c72276f0878.
 
-Signed-off-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+On RK3576, the UFS controller's power domain has a quirk that requires
+it to stay enabled, infrastricture for which was added in Commit
+cd3fa304ba5c ("pmdomain: core: Introduce dev_pm_genpd_rpm_always_on()").
+
+Unfortunately, Commit de141a9aa52d ("pmdomain: core: Leave powered-on
+genpds on until sync_state") appears to break this quirk wholesale. The
+result is that RK3576 devices with the UFS controller enabled but unused
+will freeze once pmdomain shuts off unused domains.
+
+Revert it until a better fix can be found.
+
+Fixes: de141a9aa52d ("pmdomain: core: Leave powered-on genpds on until sync_state")
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- drivers/rtc/rtc-pcf2127.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/pmdomain/core.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
-index 2e1ac0c42e93..5a39c227203a 100644
---- a/drivers/rtc/rtc-pcf2127.c
-+++ b/drivers/rtc/rtc-pcf2127.c
-@@ -606,6 +606,21 @@ static int pcf2127_watchdog_init(struct device *dev, struct pcf2127 *pcf2127)
- 			set_bit(WDOG_HW_RUNNING, &pcf2127->wdd.status);
- 	}
- 
-+	/*
-+	 * When using interrupt pin (INT A) as watchdog output, only allow
-+	 * watchdog interrupt (PCF2131_BIT_INT_WD_CD) and disable (mask) all
-+	 * other interrupts.
-+	 */
-+	if (pcf2127->cfg->type == PCF2131) {
-+		ret = regmap_write(pcf2127->regmap,
-+				   PCF2131_REG_INT_A_MASK1,
-+				   PCF2131_BIT_INT_BLIE |
-+				   PCF2131_BIT_INT_BIE |
-+				   PCF2131_BIT_INT_AIE |
-+				   PCF2131_BIT_INT_SI |
-+				   PCF2131_BIT_INT_MI);
-+	}
-+
- 	return devm_watchdog_register_device(dev, &pcf2127->wdd);
+diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+index 0006ab3d078972cc72a6dd22a2144fb31443e3da..4eba30c7c2fabcb250444fee27d7554473a4d0c2 100644
+--- a/drivers/pmdomain/core.c
++++ b/drivers/pmdomain/core.c
+@@ -1357,7 +1357,6 @@ static int genpd_runtime_resume(struct device *dev)
+ 	return ret;
  }
  
+-#ifndef CONFIG_PM_GENERIC_DOMAINS_OF
+ static bool pd_ignore_unused;
+ static int __init pd_ignore_unused_setup(char *__unused)
+ {
+@@ -1393,7 +1392,6 @@ static int __init genpd_power_off_unused(void)
+ 	return 0;
+ }
+ late_initcall_sync(genpd_power_off_unused);
+-#endif
+ 
+ #ifdef CONFIG_PM_SLEEP
+ 
+@@ -3494,7 +3492,6 @@ void of_genpd_sync_state(struct device_node *np)
+ 	list_for_each_entry(genpd, &gpd_list, gpd_list_node) {
+ 		if (genpd->provider == of_fwnode_handle(np)) {
+ 			genpd_lock(genpd);
+-			genpd->stay_on = false;
+ 			genpd_power_off(genpd, false, 0);
+ 			genpd_unlock(genpd);
+ 		}
+@@ -3522,7 +3519,6 @@ static void genpd_provider_sync_state(struct device *dev)
+ 
+ 	case GENPD_SYNC_STATE_SIMPLE:
+ 		genpd_lock(genpd);
+-		genpd->stay_on = false;
+ 		genpd_power_off(genpd, false, 0);
+ 		genpd_unlock(genpd);
+ 		break;
 
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+---
+base-commit: 5cc61f86dff464a63b6a6e4758f26557fda4d494
+change-id: 20250902-rk3576-lockup-regression-5b1f1fb7ff21
+
+Best regards,
 -- 
-2.51.0
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
