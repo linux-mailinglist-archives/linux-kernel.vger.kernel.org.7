@@ -1,229 +1,225 @@
-Return-Path: <linux-kernel+bounces-795419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A521DB3F1D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:13:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A92B3F1DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A50E7AB2B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AABA1170057
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059D82DEA9E;
-	Tue,  2 Sep 2025 01:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4232DF14A;
+	Tue,  2 Sep 2025 01:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ey38dI/Z"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fmoIuUXa"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2055.outbound.protection.outlook.com [40.107.243.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACFB274B31
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 01:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756775578; cv=none; b=CUZEewcUhUKHYGlpjCSUIl8hWBGiCXf1Q8r9laN/xmWLoZ0auP9qmTd9cwS7QyL+kMgs7RzSl4XWvrW4O6HoGZU66SjKz9E7ed/gGbrLRqUJTy1KoyaIm3pPYXfH/qxwHHPPJ8l0by3Dj5oDYuMAVTM/1KhNjmn2BiYcKgnDygI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756775578; c=relaxed/simple;
-	bh=awX1e0YRkWX41k+/Ji6Uvy3ENqw57cjMbsgXpXjnxqI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dLJP09l87r+dFK8+vpM26LY7tifBg15/zhk9fILSELuZRt+FHznw8f6Cbdn+/geZvzUFtJuC9iy4LAgOBCij6zbOhq4LYYsyV7FDJlNLhYnbgpEYJj2xyzXCce+h3vGOYoHk1Ak5lZ/GBYeyhwgoU2HL+GlZfV9wcxfIZ5NQp5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ey38dI/Z; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24b132bd90dso633535ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 18:12:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1756775576; x=1757380376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XHCvvP+35dkC2S6ABunes2v2HwY6e7Eot3UleSEfYpQ=;
-        b=ey38dI/ZVrr1n04g4Hw5eDhVzdMbcVPtU1teTrL15nm3PSkKxoYhZoaE4zylpgvXJY
-         1qQRx9mZsfxhFJy8Rz/G6yfkL8RjpoTVUO+S47qARnxhw0q9gGXIz0g/yg3QaW66iYbS
-         +bIhkuP4ZZltPZzsTL9WQZ8/nLOyniUsizE+ke5z24M0S9/PzlCt5WPKYIaCk+dyYaUg
-         CI6AtiyY3ro18gRxMithk6mUe9TL0iw/ZFe5881nU8nQgfJiyG+g1EDboa1nb/SFT41B
-         fv1iw0gVrUgC4gzzFy7DJlJeXvH5vsQuRmEUDg1u3CDw838o3uw9XPAcppGXQJeYCi96
-         016w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756775576; x=1757380376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XHCvvP+35dkC2S6ABunes2v2HwY6e7Eot3UleSEfYpQ=;
-        b=s75o0RN93Vpa/l9aOzzPDclY7doVusHwbQhF51RIt+QcW1GC916jsCcY96x0bKpD4m
-         8IY6XGl2IOoSN68RTrEUkZn7OVrwaPgxs5mBnqWwcXJR82guSoUuM5gfW5gqDwLRU7PB
-         5Ioud2E6juL+q9QOoTP6Kp9jbJrvEKdGmw+m/03CMTcSjalUwfGR45tSCs0Ng7zapyjC
-         Uj0sO++WVIeKcId8lYIeASs3gPGDw/B8DvWU77SmFEzhfWYb4uEnUx/Bk6svfrZw1Xi7
-         SU1yBNpyZs8GoDpIL3uldlQ56eFk08ej6T+ZV72/BpkQwscdp5J57CRt24hkWSEYIOsP
-         jBFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTvYxY7oy/U9CERo1Nh7Qhy0OGTg/rHPsoxitYqvVaegDFWSqeP1Q9mj2JJ6AuvGl49L3rCro+VFkRqvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc3ioecxrGUgu/M3m+JlWfwUDEAKg+Dj1AgyG0/1gSalEFpSoM
-	ZaJ/0Lxr+Ob3V/T6QD4/r9I3XB/0eydRB2YUxGScDanjy0dtT7JEQNftLFdMneKOrp5riufuqmz
-	e/dgn4GX4z7bSXlAly0sF0Pk2YXV8s7hrjSmlJ2RK6g==
-X-Gm-Gg: ASbGnct5dJ/FxZiPUdLNM4Kvzkv4yGstnjYYt6ueOCxiQBvV7eAE23Lb8pm8tLYw6pS
-	Q1Sl9K/Y3djsy+7Kb6ElTI3yYXK8/UcqFpFKMnu5D9t7oJrXUoy0c6DlZQ6k/OJZXqYPKmqK72m
-	2OIe7e6rkHyzDFK7IEht3ZJdKV6sqlET/fTrEiGJ8g37rW1hQfQCSHdaxt0Y+pLEMWe4a26RYeU
-	4xiXYpFri32hkHHbbNZBis=
-X-Google-Smtp-Source: AGHT+IEG2IssOpUWBOcieXLsVvbOyzxsmj8mA6d7fj/u5ol+zhX4uKtUoxTEtisgipvsTbZhNW18XYVCsPZLFXH6rAM=
-X-Received: by 2002:a17:902:d2cb:b0:240:280a:5443 with SMTP id
- d9443c01a7336-2491e5df37cmr94240315ad.3.1756775576098; Mon, 01 Sep 2025
- 18:12:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7991FC7C5;
+	Tue,  2 Sep 2025 01:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756775780; cv=fail; b=tY0HYkaa2c426L2w6Ri2uav3Tm1cgU/CylpbHd7fMV0mOj9d14FONCyUNiTTHXPYVvNglgcwpY1o3q4AKTRhQSo4xrxmq9TlYeC9T/GaplO8I4l4ZiaHKpksfD7lXMI55QHhncQU1lydiwzPSjBLDXtJxy1Qu2wpydeuMRgRkIE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756775780; c=relaxed/simple;
+	bh=EB20oqfoyqnjMz04R7q3qdwun/saDDT7Kir1xbC6nc4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HJVVbkA9DSKnHB3QlyzQ7S6qwBjNn8KMoyFRXby27lxneiTSCooI1W5LEGWTmJwJ37qsDAG4epBH5V4H+tX9ARCR+UgWyG/WbXPNZmgPHPgaEftIUXx6jia5wJe2JSUqQnF91ZOFh5sh/eEDgjrcBpdMLzXEGWTmDNv75/qpqYo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fmoIuUXa; arc=fail smtp.client-ip=40.107.243.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QJHdC2tP9BHQu66AwuE2hF+cOz787p2GO21WZx6Djp2U4ybOGQtfzKdW7glAPFHFM+uMMQwcphaTgmmti/hZxflQ3TpsHtotvpg0prBgPDNPjBGxuFHfMF22u6bpffZaOO6y+XvvJT4MW4FqBgym9gnVP+2uKKqGr4JutjyVlb3Yk0lyOu2saDXgPuuOm4qLf3b/xolm0szdS2kuCnJcP+DPya9XRXwy1l6fCtGAJCjEpYAL2D5AgzLQyOuUl0DNYHRdZQc4mNd8advzssHDV7AbzOUeeScbi6dca0dCq0zEHTaRgyQzDKAVyW4dW+EHGiUFfRzKIns3MPl2tSGYGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zPXaueUGk5FpcdPLO+5MaMuebtm39OE0tteskcsE3BI=;
+ b=nTxRkhNFlaiUQi0+W0OhHhi/akouX5m8UcapGiSchhqXqDyj4Cu1DORhYER3BugZ9ImTQI7053QFbCMPdAagb2QYeWMH1X3hVrC/3LJABJyv/EinKWRkbSUyud+ennfCcA9csdlRQyVtgOw8GwgDjNAF+9U9aN2ukXMn700aL8mJPZhQEo9cmu/qmgLEJASrDBAqSIDqdSsCZkrII6e4+MWIQc6bxpvaHPIu+Q968k3I6b76mxLPC4rS5Q0cZELUPS6/OpSPNnOo5MkbIB1swcjM0IsEVmTcCvftzBZ4F6KqF95ZOqXowBcZufv6FPZhafFwfDwOmNR45x+ra3Najw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zPXaueUGk5FpcdPLO+5MaMuebtm39OE0tteskcsE3BI=;
+ b=fmoIuUXaN/m3gFsFu0qCc9ZIemsK1Udk3KwVDRHr46CD2ULVnRvbfzxMQAUJv0H7xFgavUqaIHHlH7jIdo48M7kIZ04hwZfJahwbYKag+1XamsoR2tg3C6Ad386W5a8FMdjOku2I0UKVbyK6VquyQCXZP4r5mj4mNmsITnZwC3UqR0vtSuMq6T/JKhB7fwhug7rihark8rV+JCXD+28hha8lD7pp6A4DFoqJj/YM0b5ix5lAa6Ga8SLG6Mce3anjs2/iZM3gZiBkXhKvW+yNFkQlGIRgTUjwH3uRWxZEoPur50kPrkJlctyrHYIhN//ZzJPR2sS2veZJ7ykaQltrUQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ SN7PR12MB8819.namprd12.prod.outlook.com (2603:10b6:806:32a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 01:16:15 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 01:16:15 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH v1 16/19] staging: media: tegra-video: tegra20: adjust luma buffer
+ stride
+Date: Tue, 02 Sep 2025 10:16:12 +0900
+Message-ID: <4134482.44csPzL39Z@senjougahara>
+In-Reply-To: <20250819121631.84280-17-clamor95@gmail.com>
+References:
+ <20250819121631.84280-1-clamor95@gmail.com>
+ <20250819121631.84280-17-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0336.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38e::7) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-5-sidong.yang@furiosa.ai>
-In-Reply-To: <20250822125555.8620-5-sidong.yang@furiosa.ai>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 1 Sep 2025 18:12:44 -0700
-X-Gm-Features: Ac12FXzs379zYbpHtd7ODaycp9bhnHq9U5sPnDYXJdkInKyity4iorwvYehK-UA
-Message-ID: <CADUfDZoDvAp1yqFyB_SQiynqQfOQPkO_mnQ_pWAXpZJESecFFw@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 4/5] rust: miscdevice: Add `uring_cmd` support
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SN7PR12MB8819:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee7ebd82-e5d7-4eca-9c2b-08dde9be5019
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MnpjYjdMRWhPaUVNd2FuRXZOTUErUDJIa2RBUlljOWJUQ0xobW4rTEM2UVYx?=
+ =?utf-8?B?MXRla0dlSi83a3ZreXRYQ3RnUTA2ejJleUFDTVBOem1FQXpxOTJpOFZ6b25R?=
+ =?utf-8?B?NWtidUNjMG9HejFZaHhiTDBvb0E2VlhudU1XbVRuRktORkRDKzZQOUdCSXBZ?=
+ =?utf-8?B?bGVlck56NGUvYW1zbDkrbWtSRkRFWXBTRUJleTJUVXptYmI5WUw5bmR1UzRl?=
+ =?utf-8?B?c0xERlJ2U0EyY1ZDVlRnMWZQSS90MWYzU1JvTjdFU21scEE5dmZ4UXhrclQ0?=
+ =?utf-8?B?K3lGdThGRTlkbUo0UEg5N2VsYlIwRWduZWdRV3NEM1JmSVd6YkN1bnlrSmhp?=
+ =?utf-8?B?bWpOdTlad2M0S1RpejEzbEZyblNqMkhMSGZ3bkNzL3cvMGRsVFFxbWRTTmpZ?=
+ =?utf-8?B?eXZIdTJUdzlBNG5LY2dxOEdIeGtjYXliTHF6RGJjTTNUd2ZwM0R1RXZpelM1?=
+ =?utf-8?B?OXVoOC83VlhSdm5hdldNZWNmbHBzck0wbThqZVkyZDJUejdWNFp2MXZCdmY5?=
+ =?utf-8?B?KzAwMzJ6WjQ4QTM0ZW1WdEtnUi90TVUwNDdiR3NwVm1GVFgvZ09QaDhjdWh6?=
+ =?utf-8?B?Nmt3OU0raGQrVHlrcE12bTlQSjF2YUVuNmN0R2tmYkFCMTJwU3d3OTNEbE1R?=
+ =?utf-8?B?RTJ4S1B0elY1VzhUaXYwaE4zMUlodmdsN2xOKzFjZ01SVHg0ZTkwcyt5NTRB?=
+ =?utf-8?B?V3pPU3dqSnZRS0d6ajUwZDd3dVYzdUcvZjJkU0dTdnNwRHFZMUVPWU54V3hq?=
+ =?utf-8?B?aFVzTFM3eEN1enNoeFRlMTFCSDYxT00veGlCajNVZkVqaFlvQU9SY1QvZmM4?=
+ =?utf-8?B?L2RrRVQrY3dQb2wvQnVRdHhNV1A4Zjd6cDB6cmF4cE5jMFlCL3FNZXc1Z0Zm?=
+ =?utf-8?B?RXFTRHZ6Y1c1L2VhZ1hHc2h4eXBUTHgrTng1a2labWU1TTZaSnBXeXdtNXRE?=
+ =?utf-8?B?bVk4RTNaSTFZM0FvNGpxdlBRR251UlNVMWdvRVZYbmIxZnZhdnA1MDZZMjhm?=
+ =?utf-8?B?OFF2N3VHRnZQZ1lHeXZxbmtSQXdFUmd0SFhxaS9ZWmFud01qV0w5dDRMSkF0?=
+ =?utf-8?B?cExZak03eTJzengyVUFMWGJOQnZUWFQ1RGp1dlpsc3JTSjNmS2RsSmlqY2d5?=
+ =?utf-8?B?UFFVSVNVK2s0Y29XR0w5M1BEd3Z0RzRHbElLOGkwYnpxYjBDZGx3Z2VySmZx?=
+ =?utf-8?B?bXVpWEp1VmdEZ0FLL2k0ZHFtQmdhbUlZbnZKZ2VmZ1FVZ0lRVnhDUXdXTG1T?=
+ =?utf-8?B?MCtvbG1hNEZsMDhaZisxMEl1ZTJhdnZGNEhKSFdVSHZCSWVVTThFMDJTa1Ru?=
+ =?utf-8?B?dzN5bzlhUXhzVTBaVlJ2Y1ByNVdhdkZnODJyaGRIK3lsN0FHRUZMMzhHeWtw?=
+ =?utf-8?B?d3dyRmJRL3hjWXpNcnNhL09zOUdHNEI0cjRteDZJUEV1b3J4MGVBbyt1SWFn?=
+ =?utf-8?B?aEhFaSs2ZkVCT0xmancwOThZc01BN3NEM0VzRUk4V1lVY0x0U09xY2hmcWtH?=
+ =?utf-8?B?TTZhZTBYQkxTK2RvcVlYZml1VnVCTUIvcVVqdEdORGlabmdlYytPWWpOSUZU?=
+ =?utf-8?B?bnk0alZnSmJBQzVsQjBleDRCZDRPa0NaNFp3dTZGUW1IajBqRzF2enF6TlVJ?=
+ =?utf-8?B?dUhrT1NSYS94YTlNVVFDSEpUckdONzhmSHNHTWNQZUw1M0RqWGZQb01rZHRG?=
+ =?utf-8?B?NjJCTnhub01BNXAzS0pYTHdudTNORXpQTGZWTm9DQ1ZIaC9jQkV0V1JFb0tu?=
+ =?utf-8?B?a3dyaDExMVcxN0lWTEFudlpHVWpkZkFQQ2I2UkRsZ3VSQXBabzJTYmpLM2s5?=
+ =?utf-8?B?NUpGcWUwOWRtUG1lQTVXbGx6WjZ0bjRsL2plcTY3OVZkWmcyR3Eyam9aaGpL?=
+ =?utf-8?B?Uzl0cVoyeDNPSWxveXdPSFA4RXB4eUtYUy9XVnVCYklPVVhxenJQckRMTmhL?=
+ =?utf-8?B?UytPaU5nOXpoUElSZjVlSUx6ak5FSTZlNHMzNEZWK0NnQ3RKcjZmYWhTYkkr?=
+ =?utf-8?B?UEZFSDB1dzRBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a1Vqd2RCNktQaURuQUsyOGViVG5DekdjMXlXMkNKSWhMNWg3UlNDZFBrcG1z?=
+ =?utf-8?B?aXgzUENmUVV6T0hDbExFeHV5VkNkTXdNVEQ0RTc1MWQ2V1pBRUU2Nk1wSGV6?=
+ =?utf-8?B?bzFCc3EzRmFBTlVpakw5d21US1hTdWhZbUVwdTFDSythTEZOQlZwZ3JMTjl6?=
+ =?utf-8?B?dlh3TWVBcHlpaGpRNHh6anBRV3Y1eUZlbDRVYXZNYU5WQnp3NzdFQjZ2T1pk?=
+ =?utf-8?B?bE1qaE00NFBpK0p5dEtIOC9jdWJERjlFZ0pWWEtQbFlpU01OQUJnVUYxRjJr?=
+ =?utf-8?B?VFdBSGcycVhOek5PYWdSdUFCOHpMRUxCZnl3b1JQOFBZNXNvQlF0QWg5ejln?=
+ =?utf-8?B?Y0FJbzlDVXN2YTFROXVlUTdXQWpzRDdXbERvWUlBTkZkdTJzMVpiMnI4eUxW?=
+ =?utf-8?B?d3dyZ01CUjdaejkwUlJVZDhGU21kRUlNT3RFVkZhZnBFSFJ1VjNqbmVzQ29k?=
+ =?utf-8?B?MzVGYVBHYTh5eC9zaE93NlJXak5qV2FSeUthZnZ5TmZDMDdOSVg2WkJQQWV4?=
+ =?utf-8?B?ay95K2tGQmNKR3RYQ2JEK2dyYWc3b1RvQVc5M3I0UGdiUlBMTFl1Mk50bWM2?=
+ =?utf-8?B?M3FIcndQN0FTL1JJeFowNmhuSWdpLy9VYlFHTXhnZDlhRW9PMVR1NHNpWHhH?=
+ =?utf-8?B?eDN3Rk8zYitUU25ZUVZyTE44c1lUcENaUjI3KzZxOEluVUNNQjhDVWxYcEly?=
+ =?utf-8?B?NTBNYkY5ZTgrZ0JIVXZvdXlZdTlNWVJCbEtkN1k1Z01RRWNyaU0xWmJ6Wlgw?=
+ =?utf-8?B?aEw1cXdzQUdZWVluQm9MU2JTdVZDTGUrY1B0U3V1SzFpN2FqYU51Z3BkV3da?=
+ =?utf-8?B?U2RmQ1E3dmRUeWY3YTR4cExRc1NUWnpRRVFyOWNsL1R2QzlaazFpWStLM09a?=
+ =?utf-8?B?ZXZLdU44alhGVGdYYXM1MFNVaER1dFp6QlVKWDNGVlhDMVhvNTdRak5qY0dH?=
+ =?utf-8?B?WTNtNzRNamljaFdnUXdLMGJwQUlHV2xIdnhSUEFyRVNabjZhSXEzdSsyOWY2?=
+ =?utf-8?B?akpYSTdyY1BCeFJwTDhPZXNVOE00SlRCMUFPQzdFZWJkY24xdWlBQXdUQUl5?=
+ =?utf-8?B?T2NVMUNIV3JqbFJpQmExNjB3S1ZqRVc2dVVORGtuUk9Wa1NmVWc4RTIxZ1lJ?=
+ =?utf-8?B?S09ndzc4YWNBTHZXSVludTRxbUJiNEhCU2RiZnBLc3ZuekdnM1dOeVM2djNY?=
+ =?utf-8?B?YURqOHJnQzE2aHRudkJvTFoyRWptT3BWQzF1aWg0NVZITk5BK25GU0pTZytl?=
+ =?utf-8?B?V0ZlMDJwY0hVM01TZ3lubDlqTTBzYVFXazcrWE5SWWtKWFEwU0dXa0ltNXFJ?=
+ =?utf-8?B?aW1DMVA4RjNBNHlzaWlUaG5VUFB5dUE4V0ErVkxaS3YzK2RpVW11MDZnK2sw?=
+ =?utf-8?B?dHpzemFEQWpxODVBMG1zRnlTZDd2K3pNOGJ6RjFpb1M1UmlUNlJtYTBTbENm?=
+ =?utf-8?B?MnlVZXJxbi9zR0o4L1A3cVdiY3Jnd1M1elpYVUhCcUY0QnBRM25FSXl1bURq?=
+ =?utf-8?B?dy9Bd1lCd21CZzB3MzM2WXVibjhPTWJmUzVQZnY3Q2FZd1RWRXlsM01mZkpX?=
+ =?utf-8?B?dDVyOW9GSDRaYU1kOU5pTUlUZ0NSTGxVOCtDRk9XcGFrMkYvTGE3WlhuTStm?=
+ =?utf-8?B?QjJRRGc2NDNrRDA1Y2UvOGFZQm9KV2JLdHJsTjFLcStwV3BXbTFXRDhtSVJh?=
+ =?utf-8?B?MUQwVktERmVXZ01tWXVhQnRkN21paVE1M1ZqRmhKRGRuSDl5WmMrTGxCWWFB?=
+ =?utf-8?B?citqaFJscUdwbytGUHRtaHBBaENoK3FOekRmVkdEL0R2NmpHNExUaEhiY2dM?=
+ =?utf-8?B?NjVtdUtRajU3ajRkcVVOd0hOejBpenRzQVdCK3k4OFJHSFVPRGNxZm5iR2Uw?=
+ =?utf-8?B?dm1nbUFxOGxLL1V0NlVZVDU5SmNROS91cnd6ZzRtUmdOTGFyV212Vk0valBC?=
+ =?utf-8?B?c2lTT0VYU0UraE5lZWZjMW9JYStJNUN1aSsrYUg4SHdDdUphM3IvVThUUXUx?=
+ =?utf-8?B?Qkk3Zkt0MkZvbGpEVXRrMlFOMG14N1hvNXlET2RGdTFWVFJkRDRadzJtWkRh?=
+ =?utf-8?B?LzdyNjVzMHphSmx6bjhWTmRxQm9QRTZFMzdjZStORWdFWExyMmlNZ0lmd0R5?=
+ =?utf-8?B?TVRVQlRaYkpIYmVZd3BqUTY2VEViSy91ZjZTSnZ1ZFcwekdTU0VyMDdWQW9z?=
+ =?utf-8?B?YjNKTzhSbmxDYU5xOVNSNW1NSHIwQmFBYlZsTkx2RXdlTVBLTFVEZ2pwc2tB?=
+ =?utf-8?B?SGovWlVZNHZYZERXR0ZhdEhRL3VBPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee7ebd82-e5d7-4eca-9c2b-08dde9be5019
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 01:16:15.5425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Fiq5hWYfWlcYOygpmQa6GxrQuuXPTsh0OEbCu6Hl0ud82Kmcnr/RH5y5h7FnQ8EweXxOQwK0Aby5lk9E/D/R1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8819
 
-On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai=
-> wrote:
->
-> This patch introduces support for `uring_cmd` to the `miscdevice`
-> framework. This is achieved by adding a new `uring_cmd` method to the
-> `MiscDevice` trait and wiring it up to the corresponding
-> `file_operations` entry.
->
-> The `uring_cmd` function provides a mechanism for `io_uring` to issue
-> commands to a device driver.
->
-> The new `uring_cmd` method takes the device, an `IoUringCmd` object,
-> and issue flags as arguments. The `IoUringCmd` object is a safe Rust
-> abstraction around the raw `io_uring_cmd` struct.
->
-> To enable `uring_cmd` for a specific misc device, the `HAS_URING_CMD`
-> constant must be set to `true` in the `MiscDevice` implementation.
->
-> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Luma buffer stride is calculated by multiplying height in pixels of image
+> by bytes per line. Adjust that value accordingly.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  rust/kernel/miscdevice.rs | 53 ++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 52 insertions(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> index 6373fe183b27..fcef579218ba 100644
-> --- a/rust/kernel/miscdevice.rs
-> +++ b/rust/kernel/miscdevice.rs
-> @@ -11,9 +11,10 @@
->  use crate::{
->      bindings,
->      device::Device,
-> -    error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-> +    error::{from_result, to_result, Error, Result, VTABLE_DEFAULT_ERROR}=
-,
->      ffi::{c_int, c_long, c_uint, c_ulong},
->      fs::File,
-> +    io_uring::IoUringCmd,
->      mm::virt::VmaNew,
->      prelude::*,
->      seq_file::SeqFile,
-> @@ -180,6 +181,21 @@ fn show_fdinfo(
->      ) {
->          build_error!(VTABLE_DEFAULT_ERROR)
->      }
-> +
-> +    /// Handler for uring_cmd.
-> +    ///
-> +    /// This function is invoked when userspace process submits an uring=
-_cmd op
-> +    /// on io-uring submission queue. The `device` is borrowed instance =
-defined
-> +    /// by `Ptr`. The `io_uring_cmd` would be used for get arguments cmd=
-_op, sqe,
-> +    /// cmd_data. The `issue_flags` is the flags includes options for ur=
-ing_cmd.
-> +    /// The options are listed in `kernel::io_uring::cmd_flags`.
-> +    fn uring_cmd(
-> +        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-> +        _io_uring_cmd: Pin<&mut IoUringCmd>,
+>  drivers/staging/media/tegra-video/tegra20.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/staging/media/tegra-video/tegra20.c
+> b/drivers/staging/media/tegra-video/tegra20.c index
+> b466fe7f4504..a06afe91d2de 100644
+> --- a/drivers/staging/media/tegra-video/tegra20.c
+> +++ b/drivers/staging/media/tegra-video/tegra20.c
+> @@ -496,7 +496,7 @@ static void tegra20_camera_capture_setup(struct
+> tegra_vi_channel *chan) u32 data_type =3D chan->fmtinfo->img_dt;
+>  	int width  =3D chan->format.width;
+>  	int height =3D chan->format.height;
+> -	int stride_l =3D chan->format.bytesperline;
+> +	int stride_l =3D chan->format.bytesperline * height;
+>  	int stride_c =3D (output_fourcc =3D=3D V4L2_PIX_FMT_YUV420 ||
+>  			output_fourcc =3D=3D V4L2_PIX_FMT_YVU420) ? 1 : 0;
+>  	int output_channel =3D (data_type =3D=3D TEGRA_IMAGE_DT_RAW8 ||
 
-Passing the IoUringCmd by reference doesn't allow the uring_cmd()
-implementation to store it beyond the function return. That precludes
-any asynchronous uring_cmd() implementation, which is kind of the
-whole point of uring_cmd. I think uring_cmd() needs to transfer
-ownership of the IoUringCmd so the implementation can complete it
-asynchronously.
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-Best,
-Caleb
 
-> +        _issue_flags: u32,
-> +    ) -> Result<i32> {
-> +        build_error!(VTABLE_DEFAULT_ERROR)
-> +    }
->  }
->
->  /// A vtable for the file operations of a Rust miscdevice.
-> @@ -337,6 +353,36 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
->          T::show_fdinfo(device, m, file);
->      }
->
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that:
-> +    /// - The pointer `ioucmd` is not null and points to a valid `bindin=
-gs::io_uring_cmd`.
-> +    unsafe extern "C" fn uring_cmd(
-> +        ioucmd: *mut bindings::io_uring_cmd,
-> +        issue_flags: ffi::c_uint,
-> +    ) -> c_int {
-> +        // SAFETY: `file` referenced by `ioucmd` is valid pointer. It's =
-assigned in
-> +        // uring cmd preparation. So dereferencing is safe.
-> +        let raw_file =3D unsafe { (*ioucmd).file };
-> +
-> +        // SAFETY: `private_data` is guaranteed that it has valid pointe=
-r after
-> +        // this file opened. So dereferencing is safe.
-> +        let private =3D unsafe { (*raw_file).private_data }.cast();
-> +
-> +        // SAFETY: `ioucmd` is not null and points to valid memory `bind=
-ings::io_uring_cmd`
-> +        // and the memory pointed by `ioucmd` is valid and will not be m=
-oved or
-> +        // freed for the lifetime of returned value `ioucmd`
-> +        let ioucmd =3D unsafe { IoUringCmd::from_raw(ioucmd) };
-> +
-> +        // SAFETY: This call is safe because `private` is returned by
-> +        // `into_foreign` in [`open`]. And it's guaranteed
-> +        // that `from_foreign` is called by [`release`] after the end of
-> +        // the lifetime of `device`
-> +        let device =3D unsafe { <T::Ptr as ForeignOwnable>::borrow(priva=
-te) };
-> +
-> +        from_result(|| T::uring_cmd(device, ioucmd, issue_flags))
-> +    }
-> +
->      const VTABLE: bindings::file_operations =3D bindings::file_operation=
-s {
->          open: Some(Self::open),
->          release: Some(Self::release),
-> @@ -359,6 +405,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
->          } else {
->              None
->          },
-> +        uring_cmd: if T::HAS_URING_CMD {
-> +            Some(Self::uring_cmd)
-> +        } else {
-> +            None
-> +        },
->          // SAFETY: All zeros is a valid value for `bindings::file_operat=
-ions`.
->          ..unsafe { MaybeUninit::zeroed().assume_init() }
->      };
-> --
-> 2.43.0
->
+
 
