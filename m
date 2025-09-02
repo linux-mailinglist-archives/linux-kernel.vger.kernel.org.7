@@ -1,153 +1,163 @@
-Return-Path: <linux-kernel+bounces-797406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8393B41013
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:36:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBE5B4035C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A48D543F49
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:36:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5073A56C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF0E275AFA;
-	Tue,  2 Sep 2025 22:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9mYVEen"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF833093CB;
+	Tue,  2 Sep 2025 13:27:34 +0000 (UTC)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D98E1DA4E;
-	Tue,  2 Sep 2025 22:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C8E3081BE;
+	Tue,  2 Sep 2025 13:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756852560; cv=none; b=KANyprc7lmwN20PzT9EKMr4YpJXGs8C3QqBfMsOlixixw6zCNbr16PYRHLzNJguyZnpULnCArRazBawRhabN0R2fsUWPoCKJBeoERutxLYhlyppniZOeY90Cm35PAR8eb3Zz6uAXh5MYrQIOqvFD14tq1NpwqoYmTJ4IytBVHU4=
+	t=1756819654; cv=none; b=Cdk3Ad3rm8Q3gX05rbW2pRoW1QdMJItgjo0WXsNwb7nGr2LZWkqOHr2XD0IlrQ2PZhwiTycHdQUbXklFm0dYAflePZD+635ka6iyvPy1bmcC2xnZO/cG+E084tce9vK2BlFnczSNEpgwdcJM0BqNk8x5bc3A88ITXE+XctMLPq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756852560; c=relaxed/simple;
-	bh=LjD5KvjEiKeBwYilJ2v1IVnwSvuALHZGcPKF3GzasZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lajqk8Kh9KGYGzzmCGq89QhVygiI6+YogUW509OZn6iT5c357JXfzykf1JPO1V3S+OnfjKzFzMnviITXt9Pe+H+ewgBvGFHtHFJOMB/oCQv7sVTOmEkYGPwTO64XVo1BBQmzW4M3P1pxCG4URDNfnfaqZ/H7/edw3ysCoxpAegk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9mYVEen; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1756819654; c=relaxed/simple;
+	bh=2v2OPO/bSxYdTs8lkjHpFf9k0dAktDUW78DNfxE1urc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DxrT3kWx1aFQ85KMzq6djeT0tHwlE6/RINldOhk3oM5G2e/ZA/pnH/FRzxVHnYJZVh/LfyurBg+cODDoJmg3cNa8TAbpRmmmDyf9bkLqnb8W/Qb8FsEX+rTJNQ1CAX1yZm2Zpg7RC7n+iCersGVSZuWOGlLz2ZTs6/u+/G20h+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e87055f827so86884685a.1;
-        Tue, 02 Sep 2025 15:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756852557; x=1757457357; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rRPgYtyRbW+x8nqcCwemvwxk70B14d1QXLSO0znwE9Q=;
-        b=U9mYVEeng33yBtztUWC2h1FfZcuQQujf/kayq/FNwqW1OXKuyMHWWPf4TxJgdg6T0n
-         dJxndejYIm6EftmxNt49kLYD4hmDRM9Km/d17ybzyP7Y0KQ5ohRgXH9No5yAuWE/MHeo
-         ap5nF7YXoy4cAX6ojKtTYdjwEgIdimEv+DulYdc+yO+8XCnW0iQyomlX4bNrxAay2Zu1
-         F0AnwbjfwpWyYhaCfDfbQ2VSiPoDSZIp0CN0VupjgYbssFWFy3QnDuSSD89JsZtyY3T5
-         3qGo5qspHriso7GaTFqjt5gbJ1/r7hM/jj2GCf/YdjgEDNV2s5UPoKf61AT3k63hsbIT
-         SA8Q==
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5290c67854eso3303490137.3;
+        Tue, 02 Sep 2025 06:27:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756852557; x=1757457357;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rRPgYtyRbW+x8nqcCwemvwxk70B14d1QXLSO0znwE9Q=;
-        b=S83dpeOUcVAyft0XN6Ks5rmzvcr5/ND4UGoxgdUEGGimALG1Sxa7je1W/dAv2C2fhp
-         Ve5j/TvnW6E19tBuYPcbXTlnhPL6ly7JZtmo1nsIksAEOW+DKLly0jk/m1ugjssEm+lL
-         1Dh6YvYw/xCl47Ui4YN44cGoFK0viYZHspNNsp6haC4sZybuZM3MtBCn8tKP6OPVyRR3
-         cfGCdvpMoFlFM4Ow7EUgr0s1xMDfgyz6GDijNonijf3+cB39yGrp7pfpVDHRaXvAMaFE
-         Jyo7ehYw36e3uaCBr14utNl/QbKxQLlBvL4xMuwQQ2LgLreLObWT9k4lk/FD60Cs311G
-         r/BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlmhr2SZiSzaL2196bXiGAIrjuAe7sg2uPahDKQPrkDt1c/h8EltZwdJbKVNd0LzEVdPccZGE5XrYM@vger.kernel.org, AJvYcCXXfpcKCzBYuzVb1+DaQ/TfDl+tB03lJd/abXNF/U2Hivwa+78DuJ1Er7eS3ZqcVzfcjGe4AvCgLV+B@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqs68/+rQbbqdgJUjNeaMzKxlFxtuyLCLzKsRBJvkVNelaAjc9
-	VtW/SvZATgVYu5NcNevRM2bJaaxUQljc3QBE2iHRHJ9LoQel2ZKu22uZ
-X-Gm-Gg: ASbGncu6miWvLxcMFZyxaxNIIrGQgWCeg82Fbq4upUmyGCEKG3XmthDJ/IH4m4nl3eo
-	vzjop3q9JSqama80tN2Rx3t/Ng+cJ0qbLX4DMLo+TnqIM4iX4Rnct6WiFfa0Jfggh0YElwhqfA+
-	bjA03PfWuT3sqskRadQ33xQHlbu8DP5eBCq5QhsKhZ3mxpXsFLtXFBrmzDUXft7M1uPm9ehSbYj
-	xrC4lBVMIX5/rJl8nzn+gicxt42ixGakduW5qHG5BV+o0YDfN5Thwr+BDBJhBRbr3m9UwDqu5hV
-	fItGtNQtakGSDMlpVLzvdPigjHXU1Z2PJiTQ3MAeDlLbQmljDIuhF8gbgktWnNZHnTl8YYHSfR5
-	wZMeQiMtRSu3z4+6+gXhQuTtiqbpNJ3LlF/EJvkUMA9BrlGDzWNPubg==
-X-Google-Smtp-Source: AGHT+IFXDmGypJO77ch7xU/ov+7/RDULr8wsdYp2httINoIYtYS9VfrIEg5080KfRvHtScUcSDzbqg==
-X-Received: by 2002:ac8:7f42:0:b0:4b3:c4a:25f3 with SMTP id d75a77b69052e-4b313fad06fmr134217881cf.13.1756852557136;
-        Tue, 02 Sep 2025 15:35:57 -0700 (PDT)
-Received: from JSANTO12-L01.ad.analog.com ([191.255.131.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ac16de16sm19781196d6.3.2025.09.02.15.35.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 15:35:56 -0700 (PDT)
-Date: Tue, 2 Sep 2025 10:27:16 -0300
-From: Jonathan Santos <jonath4nns@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	Michael.Hennerich@analog.com, lars@metafoo.de, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v2 1/4] dt-bindings: iio: adc: ad7768-1: add new
- supported parts
-Message-ID: <aLbwtONZDkC/01gY@JSANTO12-L01.ad.analog.com>
-References: <20250824040943.9385-1-Jonathan.Santos@analog.com>
- <510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org>
- <aLPE3yiSTReS7B2J@JSANTO12-L01.ad.analog.com>
- <e98ed14b-ed97-4e1c-a758-97b9bfc8ded4@kernel.org>
+        d=1e100.net; s=20230601; t=1756819651; x=1757424451;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hjg367ve14UB2eLFgEqGx8q70SaZsiZ2GUHWVuglP4c=;
+        b=pGMKWw3JYsCSJGvUfrF1y9NJIuLKR0Po+aqf086jNKJvaU4x677qHGPNUmHwAiz8LW
+         qvTAtMh9h1KfUmEUfNsTvsWYW4d0Vf06+ADcO0vgLiLzzKBQrYYB6bQvmJYolZgDIsUP
+         z51ZIBNZqnvztVeZ4FXnR51FJpGph53wsgKK5N6Gk7ALKNCRSyIS6xiBz359T1z4KbGM
+         ocvygk6SrkgJ9fZHurjT0+RgPVKsjUm/o174IQkgJQjv3Fyuvw/jkF6t7ER0oJy8+nMC
+         tBgilP7PHfoAju7w2xOUqGqAho5BYRQSvIBB/zBH3/corunSa0gaQxnwULjCAoVci2si
+         iKwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHLsVsY2bv0Yq2SaoruTAW7alvQpordaT/FweXQo85BpuWvY7gySiaY3PwYBvnGb9G2NuuIlgtRTioTQpo4CXYuwY=@vger.kernel.org, AJvYcCVW8kkgU24En4EaanTh1P7xSnyOa9EPMTKiXOwBnQwn3nFgSr7E8lEzEJ2/tyoEjeCqNmUs4HaMzVA=@vger.kernel.org, AJvYcCVhI/vAoJ8JQ2vZogkYkO9ePBbs4UciooRuymC8kVVzyejrjdPGQThJviHKGeHxtV6n3icmntvvaBEdz9Qh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBzB7F6IiNHqnPhwl2N1cc73ZmXrGjniRbEIBLPZByv6kzGAke
+	Qe8Pp+8t4mZAAaoob0MDQ74UUi/H35l1zE7mRuJ8QDOQK4/kMRUeJJBUVv18gNVE
+X-Gm-Gg: ASbGncu4V4uxbUnvgGLImySTFBGJdTZnR8JEcoey5aoAGfn1T8sMW3P68LTs5EOTqfi
+	yl73WtF2hRqtSXf0v2hmTSbtGlcvGqY1mKR2dJMosLNAhIR839z+Gy7dtBLVD6CkxqpRhZUq5CJ
+	6iyxEghRHQDEL5oGv3fYo5hlv86R4DEFQKNiXWtYXhJh2Vtp4gXkSaiWv00JyFmWxlyPgYkgTQi
+	93g3Xowhjx/yfBo6F/G2C1A5rNgW1wPzvkzk+6gGlF+LBvxjJWtuj0K/7c8ym1iDPSjEUws+NTv
+	wn+WvUg7kM6hi1t6ddWVhrKGSq5BT+e/WLxwIiLpUUcd6JNXdkLOdV7HNk/YUJQbSEZqezcsnHk
+	5Jk+i0fSBYcmdGXBjQAFq5hkD6Eem/8cnXtAd8SO5BZBe7oFokIsmO0EBLdL4+fBMsJ+ZyU4=
+X-Google-Smtp-Source: AGHT+IH17CO/IhKeNaCMaFmPJRwR/j9WC9CIvfFSlVLZzkcen91Nxo3x0EU08eb9FZBheEwEtpet/g==
+X-Received: by 2002:a67:e702:0:b0:527:cc44:3d79 with SMTP id ada2fe7eead31-52b197510d4mr3742216137.3.1756819651085;
+        Tue, 02 Sep 2025 06:27:31 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52aef458ebasm4287486137.4.2025.09.02.06.27.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 06:27:30 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-52aa9d0dd6eso2162357137.1;
+        Tue, 02 Sep 2025 06:27:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVaO5rbEMTit2C4s+yqSUbi+awaU4viPEeUTNuvE+oQHLSF7++hQgBCwol3QrEKQoD8+t3Z1Vx+eI3n89oL@vger.kernel.org, AJvYcCWAC3N8CFO5LkKnuSVKX1qv9WOCQ1mAKPyZm64E83Oft9oL52K15aGN0rHl9Ypcs/xfXhyR7BeyUTPl11lz3ewcNrI=@vger.kernel.org, AJvYcCWqJBLeJ3OpTzS7Y0e6JCTm/2N7Px0UElJuvU7iyNYf7FWRcixERxstdj/75tAh/u1oyTZkd/kfUsM=@vger.kernel.org
+X-Received: by 2002:a05:6102:5a92:b0:52a:45b4:7147 with SMTP id
+ ada2fe7eead31-52b1b6fbdb3mr3511355137.21.1756819650188; Tue, 02 Sep 2025
+ 06:27:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e98ed14b-ed97-4e1c-a758-97b9bfc8ded4@kernel.org>
+References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com> <20250820171812.402519-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250820171812.402519-3-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 Sep 2025 15:27:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUmi=pp10=_WNTwbuH-PYknbFyP9iBcQDB+tNKVEXgLpA@mail.gmail.com>
+X-Gm-Features: Ac12FXyVk2yOZVKjDiZ2w1NlLODExRAU-e_ztQQvAlGVHGSo3QSOuUlrCoAreR0
+Message-ID: <CAMuHMdUmi=pp10=_WNTwbuH-PYknbFyP9iBcQDB+tNKVEXgLpA@mail.gmail.com>
+Subject: Re: [PATCH 02/11] clk: renesas: r9a09g047: Add USB3.0 clocks/resets
+To: Biju <biju.das.au@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/31, Krzysztof Kozlowski wrote:
-> On 31/08/2025 05:43, Jonathan Santos wrote:
-> >>>      maxItems: 1
-> >>> @@ -58,6 +66,18 @@ properties:
-> >>>      description:
-> >>>        ADC reference voltage supply
-> >>>  
-> >>> +  adi,gain-milli:
-> >>> +    description: |
-> >>> +       Specifies the gain applied by the Analog Anti-Aliasing Filter (AAF) to the
-> >>> +       ADC input (in milli units). The hardware gain is determined by which input
-> >>
-> >>
-> >> I don't think there is no such thing as "milli units". milli is SI
-> >> prefix, not unit. So "units" is the unit? Or how exactly?
-> >>
-> >> Basis points were before since 2022 so I don't get why these other
-> >> bindings introduced in 2024 could not use it?
-> >>
-> >> Anyway, if you ever do not apply reviewers comment, then your commit msg
-> >> should explain this. Otherwise you get the same discussion here.
-> >>
-> > 
-> > Yes, you are right. We shouldn't use milli as suffix. However, may I
-> > suggest another option?
-> > 
-> > I believe -permille is more appropriate because it represents a 1/1000
-> > proportion, which gives the precision we need to cover all values.
-> > 
-> > so it would be something like: adi,aaf-gain-permille
-> > 
-> > Is that ok for you?
-> > 
-> > Thanks for the feedback,
-> > Jonathan S.
-> 
-> 
-> What's wrong with existing unit I pointed out before?
+Hi Biju,
+
+On Wed, 20 Aug 2025 at 19:18, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 >
-
-Nothing wrong, just thought permille would be a clearer unit than basis
-point for the user. But i can proceed with bp, no problem.
-
-> BTW, any idea why your reply-to header is completely corrupted (copies
-> in-reply-to...)?
+> Add USB3.0 clock and reset entries.
 >
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Yes, i was including the in-reply- to, sorry about that.
+Thanks for your patch!
 
-> 
-> Best regards,
-> Krzysztof
+> --- a/drivers/clk/renesas/r9a09g047-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g047-cpg.c
+> @@ -16,7 +16,7 @@
+>
+>  enum clk_ids {
+>         /* Core Clock Outputs exported to DT */
+> -       LAST_DT_CORE_CLK = R9A09G047_GBETH_1_CLK_PTP_REF_I,
+> +       LAST_DT_CORE_CLK = R9A09G047_USB3_0_CLKCORE,
+>
+>         /* External Input Clocks */
+>         CLK_AUDIO_EXTAL,
+> @@ -181,6 +181,8 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+>                   CLK_PLLETH_DIV_125_FIX, 1, 1),
+>         DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G047_GBETH_1_CLK_PTP_REF_I,
+>                   CLK_PLLETH_DIV_125_FIX, 1, 1),
+> +       DEF_FIXED("usb30_ref_alt_clk_p", R9A09G047_USB3_0_REF_ALT_CLK_P, CLK_QEXTAL, 1, 1),
+> +       DEF_FIXED("usb30_core_clk", R9A09G047_USB3_0_CLKCORE, CLK_QEXTAL, 1, 1),
+
+"usb3_0_..." for both, to match the public define and the clock diagram.
+
+>  };
+>
+>  static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+> @@ -276,6 +278,10 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+>                                                 BUS_MSTOP(8, BIT(4))),
+>         DEF_MOD("sdhi_2_aclk",                  CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
+>                                                 BUS_MSTOP(8, BIT(4))),
+> +       DEF_MOD("usb30_aclk",                   CLK_PLLDTY_DIV8, 10, 15, 5, 15,
+> +                                               BUS_MSTOP(7, BIT(12))),
+> +       DEF_MOD("usb30_pclk_usbtst",            CLK_PLLDTY_ACPU_DIV4, 11, 0, 5, 16,
+> +                                               BUS_MSTOP(7, BIT(14))),
+
+"usb3_0_..." for both.
+I cannot verify the actual clock bits, but they do lie in the empty
+number space. And apparently the censor team forgot to scrub the
+MSTOP bits ;-)
+
+>         DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_i", CLK_SMUX2_GBE0_TXCLK, 11, 8, 5, 24,
+>                                                 BUS_MSTOP(8, BIT(5)), 1),
+>         DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_i", CLK_SMUX2_GBE0_RXCLK, 11, 9, 5, 25,
+> @@ -352,6 +358,7 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+>         DEF_RST(10, 7, 4, 24),          /* SDHI_0_IXRST */
+>         DEF_RST(10, 8, 4, 25),          /* SDHI_1_IXRST */
+>         DEF_RST(10, 9, 4, 26),          /* SDHI_2_IXRST */
+> +       DEF_RST(10, 10, 4, 27),         /* USB30_ARESETN */
+
+I cannot verify the actual reset bits, but they do lie in the empty
+number space.
+USB3_0_ARESETN, for consistency with the clocks?
+
+>         DEF_RST(11, 0, 5, 1),           /* GBETH_0_ARESETN_I */
+>         DEF_RST(11, 1, 5, 2),           /* GBETH_1_ARESETN_I */
+>         DEF_RST(12, 5, 5, 22),          /* CRU_0_PRESETN */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
