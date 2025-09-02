@@ -1,112 +1,125 @@
-Return-Path: <linux-kernel+bounces-797240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48BAB40DDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:27:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DA4B40DDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA745E0D31
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:27:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1347178E67
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E71034F47A;
-	Tue,  2 Sep 2025 19:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92F3350823;
+	Tue,  2 Sep 2025 19:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SwiRAFAq"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRzBx2Av"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0D1C68F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9F22E54B0
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756841220; cv=none; b=NmgH6OjEF5AV8cNK0Tdp3uuBho3V9UTpTbUl27CsdYsO+/J13p4y353S0GxsjWsd0PJpo/LpuE9sEbtTQI+vEgNZ1uTmrFzxgaSLenW1nFqu6XhvWmJPZ76A2qKaLjAAbaM0VYQLXzdEXkqFbXSgkkGP1qzHSRDYY8yPlXrEk58=
+	t=1756841388; cv=none; b=i9RIR3rF5Qr2QtEntNNYAsJCLPNtjwRY/yEYlr2nhif2n7QSwYiHjHKTTxCMDUyP7uridw7X05jwj83QNgeXpOWqPDsEzJm+pbrxuuZDV48Eg8LC5VKkxpy8H0Eg5hn7sbR2Ceui5Cyod24agCaWI2d9VDGR6kXEH22JaAAgc/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756841220; c=relaxed/simple;
-	bh=J8LNkrfiezQAqyBhHhwpLFw/dcn1bpXtzNnUel98Hlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nLoQb+vn0s3cul7nJoEbeok/tFTH8OU49eG5UIxw0Q7gF/bcdB1GTPeCpzfzthugqAaVBk1Fx6/Rq7/TdLpAacmjHrYtEo5yYUXAWHruq9pEiLDuVbTjZRSdZEyyCPuDmM6JagnuMZPShgWS3ZqqdArfLNnX19zQU1mKnUzwus8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SwiRAFAq; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 57780C6D;
-	Tue,  2 Sep 2025 21:25:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756841149;
-	bh=J8LNkrfiezQAqyBhHhwpLFw/dcn1bpXtzNnUel98Hlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SwiRAFAqrRavxtKZfgs+MeQA6mcZb+d591ZHk8oEJeDNKyKKrbLcXbUFzaU53/AUc
-	 dEqpB8dA0EBUbSYy8iQDX1cCx/SLYltqFKeBz9FjqRzyukRGdhKEuhY2Gb3P/6YB4u
-	 l/ikem4dofLn5S0Kl3cGZScngwMw+M/oqmgLUFW4=
-Date: Tue, 2 Sep 2025 21:26:36 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/29] drm/atomic: Fix unused but set warning in
- for_each_old_private_obj_in_state
-Message-ID: <20250902192636.GR13448@pendragon.ideasonboard.com>
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-3-14ad5315da3f@kernel.org>
+	s=arc-20240116; t=1756841388; c=relaxed/simple;
+	bh=EDPYZ7AeuetLSueyUUgIpG1TuGC9xDiYOStlafV5IN4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sir7xcIjfJyQyEtqPiIp4UBDli6CefE1n9fgs+oH3EH4DHIz4stwLp9NfqgOqdSS/P5DRJQ19f/XuY3Pkqu/RlFkLwe21empdIo2ENbTO5HZR7LqhU4O/HV1BgL88V0Zjl0uaV74rOm/glQHuzZyBqSd4OPYGOWyKhxJeiiYuPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRzBx2Av; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d6014810fso46391487b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756841386; x=1757446186; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MCDtmJ9MnRRD8pZdomc+bD7vyzpQ5/EL7gaHH0a7i9k=;
+        b=TRzBx2AvO0g9Ov4GVcpokDzZvtlJtXD1+LPXWOoI5p4y2ChYUiq0ugkJxha/1vcRxg
+         j9F+RKzVQ2eSRSPfKF7ncmn/kmayXj1eNKMdZsHUktTJdHVtWxIDh02PdP3zOyDaY5xM
+         mInZyZnt1qzZHplqvRDnXACN4Jhz2i06EgHTfh31jOlj6ufDBHHe2m09EnllFobuE3lX
+         4leKuBDP6U286ipoqJN5ZqarNmIfFDdtsfusKEd7amS77LM3uI9TLXm2/KUuooveJ4WC
+         j/zid0yB6LCZByHbPzKDjvE+8ubKiEMWb9259OLHAJRdPDBaNUl/XR/DX082aglde5+Z
+         GFEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756841386; x=1757446186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MCDtmJ9MnRRD8pZdomc+bD7vyzpQ5/EL7gaHH0a7i9k=;
+        b=sjO71dlUAsm9hpg2oc4pwZdaFFR6zhkIG6C3ytOd5m6vaO/Nw5BGCV05WyGrF5m4ie
+         8iA5B5URFEtZ3R0RkRjXRT47uY2blD3z0B7JWKg8QMgHn2HvELOVW8OyTQPIZRMx9YzS
+         NVfYlOngt2M9d28jCYYfz0MH3mJHzeDmwcEzZOOd2yBH7+2c5MbCV3N2nj3A1gHw46Ru
+         e3sJ8U43zK3PLrbBYYlRe4Xo0A/tGkpM2I2SrEG8mlnrIFfP1g6SH7OqWcWr5eOPke51
+         eSgQ3kN6yVupZdGC9nA8sm5G+uDpkUSSdNHdtuHrtLTZAukbTpIh/7W/ulg2W2q1Wkxn
+         ZrCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgM2AenoE5c4Bfm9C7cOGH+1jWT+AmHuYmh8f82HKYXTF9P+pwEiFEeWAlVijiu+4wk9i5UGsf11j5i3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgSWrCiu0pcIXkWp3VxxYfUBBU9W8eiR6q7Qh+MHu+3koc9Xmr
+	9V8CwXxCVKb+07OOmG6VTuW0E2d95FGiGE1Y+pnfDtAXtDmS2udnUIgSxedwcJKSmiNbqP/QlBk
+	FUN+XS8foXCWmoNUijSmrokRBiH85uyE=
+X-Gm-Gg: ASbGnctTwYbq8Z34ZbGVgspeec/hYctnXkdVqF2YtiKZEFFzO4fkHvvCq4V863zkL3F
+	+OWKbvmAjRX0wIpeBMVP4qblaHgn0IyjXztGr5JBs+nXZdqDkcApQ6GLxFsRuu4Gwr/rf0kmxl/
+	Xop4/hZQ2s95God8QNHOLYvz28++sZ5Q68rO8gKYL9TnyaFNpqsUztqKw7Po9wsl2F5yH8T6j2A
+	nmHUkBa8UBIFwHewcEwRqKTh8CeHNTnh6tTCAiYXpDirdJGN4E0XPKiNHcV2TetXvZjitcn
+X-Google-Smtp-Source: AGHT+IGTLvT2TgzPf6r2XqdEnizQavc2n6Hz47RT3wEvJ7iVTXIBCwd89zfqpXV936H4mpV9p0egjFgHh9H+RUCPcwQ=
+X-Received: by 2002:a05:690c:3809:b0:721:64ec:bc65 with SMTP id
+ 00721157ae682-72276537066mr135149447b3.44.1756841385677; Tue, 02 Sep 2025
+ 12:29:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902-drm-state-readout-v1-3-14ad5315da3f@kernel.org>
+References: <20250829230251.3095911-1-olvaffe@gmail.com> <20250901092711.15832cfe@fedora>
+In-Reply-To: <20250901092711.15832cfe@fedora>
+From: Chia-I Wu <olvaffe@gmail.com>
+Date: Tue, 2 Sep 2025 12:29:34 -0700
+X-Gm-Features: Ac12FXw1HjxcTsR5YSE7EFPgr2NIGInvguTOoGuC8pCUs2YgJlMpIsI50AoKFsA
+Message-ID: <CAPaKu7QMy6c2zELBUXAUqL_NqYyC7v-xP0_dkxUhOnO86nUCwg@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/panthor: assign unique names to queues
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Maxime,
+On Mon, Sep 1, 2025 at 12:27=E2=80=AFAM Boris Brezillon
+<boris.brezillon@collabora.com> wrote:
+<snipped>
+> > diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/=
+panthor/panthor_sched.c
+> > index ba5dc3e443d9c..62f17476e5852 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> > @@ -360,6 +360,9 @@ struct panthor_queue {
+> >       /** @entity: DRM scheduling entity used for this queue. */
+> >       struct drm_sched_entity entity;
+> >
+> > +     /** @name: DRM scheduler name for this queue. */
+> > +     char name[32];
+>
+> The base string ("panthor-queue---") is already 16 characters. You then
+> have a group ID that's below 128 IIRC, and a queue ID that's no more
+> than 15, so that's 5 more chars. This leaves you 10 chars for the
+> client ID (theoretically a 64-bit integer). I know the logic is sane
+> because you truncate the string, but I'm wondering if we shouldn't make
+> this string bigger to cover the theoretical max client_id, or simply
+> dynamically allocate it (kasprintf()), so we don't have to think about
+> it if we end up adding more stuff to the string.
+It seems we don't validate queue count.  Sending
+https://lore.kernel.org/lkml/20250902192001.409738-1-olvaffe@gmail.com/
+for that.
 
-Thank you for the patch.
+On a user device that opens the render node once per second, 10 chars
+are good for 317 years.  It lasts significantly shorter on a test
+device, but the uptime is also significantly shorter on such a device
+(hopefully).
 
-On Tue, Sep 02, 2025 at 10:32:31AM +0200, Maxime Ripard wrote:
-> The for_each_old_private_obj_in_state() macro triggers a compiler
-> warning if the obj parameter passed to it isn't used in the code block.
-> 
-> Add a similar workaround than in most other macros.
-> 
-
-I'd squash this with the previous patch, and also address the other
-similar macros.
-
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  include/drm/drm_atomic.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> index 689a29bdeb4a06672ab6fffecb513d58ff6e07f9..f13f926d21047e42bb9ac692c2dd4b88f2ebd91c 100644
-> --- a/include/drm/drm_atomic.h
-> +++ b/include/drm/drm_atomic.h
-> @@ -1112,10 +1112,11 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->   */
->  #define for_each_old_private_obj_in_state(__state, obj, old_obj_state, __i) \
->  	for ((__i) = 0; \
->  	     (__i) < (__state)->num_private_objs && \
->  		     ((obj) = (__state)->private_objs[__i].ptr, \
-> +		      (void)(obj) /* Only to avoid unused-but-set-variable warning */, \
->  		      (old_obj_state) = (__state)->private_objs[__i].old_state, 1); \
->  	     (__i)++)
->  
->  /**
->   * for_each_new_private_obj_in_state - iterate over all private objects in an atomic update
-
--- 
-Regards,
-
-Laurent Pinchart
+But kasprintf should be harmless here.  I can certainly switch to it.
 
