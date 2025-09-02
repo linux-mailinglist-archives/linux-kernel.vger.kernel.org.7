@@ -1,233 +1,181 @@
-Return-Path: <linux-kernel+bounces-795894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20063B3F90C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2D8B3F910
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED662C1CDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:47:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EAA63BC937
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC522E92C3;
-	Tue,  2 Sep 2025 08:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f/OdxaQS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FEE2E62D9;
+	Tue,  2 Sep 2025 08:47:33 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82D322A80D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A765E26D4E8;
+	Tue,  2 Sep 2025 08:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802820; cv=none; b=ljD52A7v7pN+t9NqCQ1tzBNykfaH8v4yUcCqLiates2MV/tf1L4bEewKx0LX/pdFU3AW3ev39nMtQTWh8i5k6Dst2dXR7vIIHeslci9JN2+AGc/LEu7zPGDAq2Mdhz1Dmnh0vtHdU970Ti5yU8KWCQQBVS/qat9q64kKpUJvGpQ=
+	t=1756802852; cv=none; b=Z8bYCektmRBzQKa9u34xNcy1YzZMWaBbLsnjDIEeGkEGNNu/13mEh1CZUXa2gAyKfrDnEoNnKYIAQKGRz59giu5wWtGejy26UwhchwMgYxOn+12wmnyO9Ts41uIz0CtJcsw6HDvzcJUGfs8bCeFsm4GTVKbwEN9dCiRtpEBHl3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802820; c=relaxed/simple;
-	bh=1hvhnJ3Qou6TZxu8ykwu/aaeNLxWgvGf6rAwQxeF9qM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E+IHJmxqHBziK9ytGzHPQWe5uo6HTBJBfZ6XSYMYiwbo+IexIWDYRiUYZF0Tw8txeVYpGK6bvcFrKbXhjzWVmVwUNEIN6TtZWXDW6kDuBfw09IkOdw0CHcxlZ5y1pzMZ2w3lUOxOqlmM+VdyGiVxas/MGUg0hhqNZdFZe6/teH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f/OdxaQS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756802818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=u0ildYJgSjzsvQVF/cS7GkKEO/r15LnxYiCt2Un6VX0=;
-	b=f/OdxaQSGWvOKnllB2H/Yt7+6OxohVzn8/uYgA8GrFVoYfxGvu4wUc4NknozW5rBs8KDeN
-	i8yaQbh8fjwxQ0QvCp9w2ttvbImgQ8NSy+Ee3/ohKicEvq4K7i0rAKM9Te1/vhmGYfxvfW
-	Q5XrshOD8CLsNaliGSPQLBdQ23qslnY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-373-1rbMen02NAW5_wxUS6gaWg-1; Tue, 02 Sep 2025 04:46:56 -0400
-X-MC-Unique: 1rbMen02NAW5_wxUS6gaWg-1
-X-Mimecast-MFC-AGG-ID: 1rbMen02NAW5_wxUS6gaWg_1756802815
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ce059e3b83so2012737f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:46:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756802815; x=1757407615;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u0ildYJgSjzsvQVF/cS7GkKEO/r15LnxYiCt2Un6VX0=;
-        b=RXVy/FfpbujZZA3QvpvZYfGssvIr2SvSaL/2Rvfg2qYzJdEsfqwx1RvIeWIHSEEjk9
-         6Ps2HrMAJ3Z/p3n2So2PPfoOw/N/282UP8wUeSV1Gl2RW7bQZnNA75sONmS4IgE4fnmv
-         g2DtaSOtApOkGomLjND1tgS8ZXde0jzSvx35cRkEkBNCbKKcpW/p1QLWoyXYgal15zUX
-         qhttoFkTVXwKs2/7XpBbYaqFtJ6non0POT2IWyfrzi2M6ntFjzFBk/Oh2vYdi0f9ZF71
-         Vaq+EDSdfrnrzkYAlQElIbZyB5GAlqKsH8O2TrXsJfj0bh12+duOAxutkRZhT4PQUvQK
-         zEzg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7RXOzAPLRcX5AUIQVKLkEHEuHmcXKS1+TCMJv1FNKxl3phW9Xh/S0pfvNJ9UdJz8DUaA84JR0Ci8xRpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmslPHP7fEXtE01s7a6UaVYERg7JMmIOHpL9Yb0bPXvSaq6Tv/
-	GKlzosWNLyi5YuGJM0UD2Od6f2Kp6HJWc/wR0/xIWDhKjnR+r3Ad9LFjQEKtYWfJgGYBXaQEGz5
-	D/lb3QdN5N4QDxXs44LQME3FIlkmLx5vASO8UI7VyEFzE1N11yt3VPI6J3zdH6TDlWg==
-X-Gm-Gg: ASbGncuEBjyjLM7tKgNihxbCZmrNvURzpjbstoMhqCX6UAB1D491koHbnsnTCtgugcZ
-	B+iwXChSt+sx3f2R1g31QyXxfyVXDN4Ep7k2jZAHrQlNFldWbTuryqsktmpMtr6EIzszAlt6fO5
-	oSI2wNsW8HekrA2ZubYHCaOKfTznz6y6KtOdPZ3k9VnhVqHHGZSmWOqQ3Fjj9rhA4qaHCnuemj2
-	H8tVAbfa4hhr4xwTAOS/130GMBPfCKKAAHVqIISjmt/Y7oBBDZRhYDugaUsod/VG23QUmSQuiqU
-	9COr0xtt4lUdzDxWgh1/rMZu3xUF2lSC2ACUehGgdmVrmSFQJdPko8JefbaIcctkly2fDrhqmh2
-	EMaO/XiYqi5+XBc1fOqhpsF7tSyudfSvrxacgepqBXsWtrX2MDTxZ+BSyLYOtASfUbYA=
-X-Received: by 2002:a05:6000:2408:b0:3d1:61f0:d264 with SMTP id ffacd0b85a97d-3d1e05b8de7mr8709548f8f.54.1756802815302;
-        Tue, 02 Sep 2025 01:46:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGAxtz/BYe/cYAZtE852NxATwpu55AGTQTFxDVLnuiVmcal5pzbOsGcXV5au5rGMMQW9CWCfw==
-X-Received: by 2002:a05:6000:2408:b0:3d1:61f0:d264 with SMTP id ffacd0b85a97d-3d1e05b8de7mr8709512f8f.54.1756802814776;
-        Tue, 02 Sep 2025 01:46:54 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1f:3f00:731a:f5e5:774e:d40c? (p200300d82f1f3f00731af5e5774ed40c.dip0.t-ipconnect.de. [2003:d8:2f1f:3f00:731a:f5e5:774e:d40c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b98c95c77sm11228115e9.7.2025.09.02.01.46.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 01:46:54 -0700 (PDT)
-Message-ID: <862475d8-5a4f-44c3-9b3f-56319f70192d@redhat.com>
-Date: Tue, 2 Sep 2025 10:46:52 +0200
+	s=arc-20240116; t=1756802852; c=relaxed/simple;
+	bh=4OxtBTSU8U/Bj5ZHgQOORbgmwFWxlpHlvCWrFLANazk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bL/Z44VTRGT5qyHeOe34bzZhvPbvfcV/PQYVgsvME2IYcUub0mDQ3oDcI45cdsxPWrfsMt9wC8DWDyecpe1tu3+qckaBX1/EJkJ5UKkYBGyCIuCErtUbzw0f6yhn8i0Q6ddtBhTw6xJPusLyMc6PLajiKU4uiH2/ZOFm5n35A94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cGKB71pbxzKHNT0;
+	Tue,  2 Sep 2025 16:47:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1D7401A1529;
+	Tue,  2 Sep 2025 16:47:27 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAXYIwdr7ZoZ4CABA--.6387S3;
+	Tue, 02 Sep 2025 16:47:26 +0800 (CST)
+Subject: Re: [PATCH] block: plug attempts to batch allocate tags multiple
+ times
+To: Xue He <xue01.he@samsung.com>, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <CGME20250901082648epcas5p18f81021213f2b8a050efa25f76e0fb54@epcas5p1.samsung.com>
+ <20250901082209.13349-1-xue01.he@samsung.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <345e9d6e-8bb2-3d43-4c3c-cc16fa7dd8c1@huaweicloud.com>
+Date: Tue, 2 Sep 2025 16:47:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-To: Fuad Tabba <tabba@google.com>, "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "ackerleytng@google.com" <ackerleytng@google.com>,
- "Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack"
- <jackabt@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "rppt@kernel.org" <rppt@kernel.org>, "seanjc@google.com"
- <seanjc@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
- "will@kernel.org" <will@kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>
-References: <20250901135408.5965-1-roypat@amazon.co.uk>
- <20250901145632.28172-1-roypat@amazon.co.uk>
- <CA+EHjTxPfzDk=XmwS0uAtjwsYB829s1uZSMC6x3R6KGQ-SqjtQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CA+EHjTxPfzDk=XmwS0uAtjwsYB829s1uZSMC6x3R6KGQ-SqjtQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250901082209.13349-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXYIwdr7ZoZ4CABA--.6387S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxurWruw4xGFW8Jw48WryxAFb_yoW5ury3pF
+	W3JF429w15Wr1UJa18J3y5Jr1UGayDGr17Gr1Yqr1vkw1DC3yxtr18tr48Zry0yrWkJF4U
+	Grs5tFyDZw1jy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7I
+	JmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 02.09.25 09:59, Fuad Tabba wrote:
-> Hi Patrick,
+Hi,
+
+在 2025/09/01 16:22, Xue He 写道:
+> From: hexue <xue01.he@samsung.com>
 > 
-> On Mon, 1 Sept 2025 at 15:56, Roy, Patrick <roypat@amazon.co.uk> wrote:
->>
->> On Mon, 2025-09-01 at 14:54 +0100, "Roy, Patrick" wrote:
->>>
->>> Hi Fuad!
->>>
->>> On Thu, 2025-08-28 at 11:21 +0100, Fuad Tabba wrote:
->>>> Hi Patrick,
->>>>
->>>> On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:
->>>>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->>>>> index 12a12dae727d..b52b28ae4636 100644
->>>>> --- a/include/linux/pagemap.h
->>>>> +++ b/include/linux/pagemap.h
->>>>> @@ -211,6 +211,7 @@ enum mapping_flags {
->>>>>                                     folio contents */
->>>>>          AS_INACCESSIBLE = 8,    /* Do not attempt direct R/W access to the mapping */
->>>>>          AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
->>>>> +       AS_NO_DIRECT_MAP = 10,  /* Folios in the mapping are not in the direct map */
->>>>>          /* Bits 16-25 are used for FOLIO_ORDER */
->>>>>          AS_FOLIO_ORDER_BITS = 5,
->>>>>          AS_FOLIO_ORDER_MIN = 16,
->>>>> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_on_reclaim(struct address_spac
->>>>>          return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
->>>>>   }
->>>>>
->>>>> +static inline void mapping_set_no_direct_map(struct address_space *mapping)
->>>>> +{
->>>>> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);
->>>>> +}
->>>>> +
->>>>> +static inline bool mapping_no_direct_map(struct address_space *mapping)
->>>>> +{
->>>>> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);
->>>>> +}
->>>>> +
->>>>> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma)
->>>>> +{
->>>>> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapping);
->>>>> +}
->>>>> +
->>>> Any reason vma is const whereas mapping in the function that it calls
->>>> (defined above it) isn't?
->>>
->>> Ah, I cannot say that that was a conscious decision, but rather an artifact of
->>> the code that I looked at for reference when writing these two simply did it
->>> this way.  Are you saying both should be const, or neither (in my mind, both
->>> could be const, but the mapping_*() family of functions further up in this file
->>> dont take const arguments, so I'm a bit unsure now)?
->>
->> Hah, just saw
->> https://lore.kernel.org/linux-mm/20250901123028.3383461-3-max.kellermann@ionos.com/.
->> Guess that means "both should be const" then :D
+> In the existing plug mechanism, tags are allocated in batches based on
+> the number of requests. However, testing has shown that the plug only
+> attempts batch allocation of tags once at the beginning of a batch of
+> I/O operations. Since the tag_mask does not always have enough available
+> tags to satisfy the requested number, a full batch allocation is not
+> guaranteed to succeed each time. The remaining tags are then allocated
+> individually (occurs frequently), leading to multiple single-tag
+> allocation overheads.
 > 
-> I don't have any strong preference regarding which way, as long as
-> it's consistent. The thing that should be avoided is having one
-> function with a parameter marked as const, pass that parameter (or
-> something derived from it), to a non-const function. 
+> This patch aims to allow the remaining I/O operations to retry batch
+> allocation of tags, reducing the overhead caused by multiple
+> individual tag allocations.
+> 
+> ------------------------------------------------------------------------
+> test result
+> During testing of the PCIe Gen4 SSD Samsung PM9A3, the perf tool
+> observed CPU improvements. The CPU usage of the original function
+> _blk_mq_alloc_requests function was 1.39%, which decreased to 0.82%
+> after modification.
+> 
+> Additionally, performance variations were observed on different devices.
+> workload:randread
+> blocksize:4k
+> thread:1
+> ------------------------------------------------------------------------
+>                    PCIe Gen3 SSD   PCIe Gen4 SSD    PCIe Gen5 SSD
+> native kernel     553k iops       633k iops        793k iops
+> modified          553k iops       635k iops        801k iops
+> 
+> with Optane SSDs, the performance like
+> two device one thread
+> cmd :sudo taskset -c 0 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1
+> -n1 -r4 /dev/nvme0n1 /dev/nvme1n1
+> 
 
-I think the compiler will tell you that that is not ok (and you'd have 
-to force-cast the const it away).
+How many hw_queues and how many tags in each hw_queues in your nvme?
+I feel it's unlikely that tags can be exhausted, usually cpu will become
+bottleneck first.
+> base: 6.4 Million IOPS
+> patch: 6.49 Million IOPS
+> 
+> two device two thread
+> cmd: sudo taskset -c 0 ./t/io_uring -b512 -d128 -c32 -s32 -p1 -F1 -B1
+> -n1 -r4 /dev/nvme0n1 /dev/nvme1n1
+> 
+> base: 7.34 Million IOPS
+> patch: 7.48 Million IOPS
+> -------------------------------------------------------------------------
+> 
+> Signed-off-by: hexue <xue01.he@samsung.com>
+> ---
+>   block/blk-mq.c | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index b67d6c02eceb..1fb280764b76 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -587,9 +587,9 @@ static struct request *blk_mq_rq_cache_fill(struct request_queue *q,
+>   	if (blk_queue_enter(q, flags))
+>   		return NULL;
+>   
+> -	plug->nr_ios = 1;
+> -
+>   	rq = __blk_mq_alloc_requests(&data);
+> +	plug->nr_ios = data.nr_tags;
+> +
+>   	if (unlikely(!rq))
+>   		blk_queue_exit(q);
+>   	return rq;
+> @@ -3034,11 +3034,13 @@ static struct request *blk_mq_get_new_requests(struct request_queue *q,
+>   
+>   	if (plug) {
+>   		data.nr_tags = plug->nr_ios;
+> -		plug->nr_ios = 1;
+>   		data.cached_rqs = &plug->cached_rqs;
+>   	}
+>   
+>   	rq = __blk_mq_alloc_requests(&data);
+> +	if (plug)
+> +		plug->nr_ios = data.nr_tags;
+> +
+>   	if (unlikely(!rq))
+>   		rq_qos_cleanup(q, bio);
+>   	return rq;
+> 
 
-Agreed that we should be using const * for these simple getter/test 
-functions.
+In __blk_mq_alloc_requests(), if __blk_mq_alloc_requests_batch() failed,
+data->nr_tags is set to 1, so plug->nr_ios = data.nr_tags will still set
+plug->nr_ios to 1 in this case.
 
--- 
-Cheers
+What am I missing?
 
-David / dhildenb
+Thanks,
+Kuai
 
 
