@@ -1,343 +1,283 @@
-Return-Path: <linux-kernel+bounces-796632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0A1B404B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 694C9B404C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A341B6387A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E34A18864AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE69532ED25;
-	Tue,  2 Sep 2025 13:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D352DF15B;
+	Tue,  2 Sep 2025 13:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ejdpA3L6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="A28hkARL";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="A28hkARL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2314632ED30
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01743305E02
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820210; cv=none; b=Y7X/qGGiIRutSUIdOam/e9mgoAFxBX1DqWumvUwJFT6WdOqawnLO5gqtPOVDbQlwAPM/CJOY1PrwA1C00FQX0bb4Xh+Adg2MNA7YIw+cN21jbN8IoIMDKjtcehnpdK4L15W2dXefRepvI+TZ/7E7TQ69WjoCkytCd/1P5bQkaPc=
+	t=1756820226; cv=none; b=oPMcUd0ITCLS2B/Kys2fsIo2vTpEl0T04uVUL9tEdjg6MTv+0g4FjFdWAc+K93wjTdvqf2GLEQsxn+QBS2YITa7jRI1oZrlqBJ2lqM/4C0ZuatASQ5Tw732JKGuIHxsa7B9JtJWsG/mNRd1AduJO/sbi0L0O27hap9FpSbpdoGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820210; c=relaxed/simple;
-	bh=+O16tDhDhrBpLyMgsU885nrQA5KR/KrCl+HJfM6/ItA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRLGr0GqNFTzs0BRw4+CjTEDMgnoQnZ4RYI3Dzwz5exB9k2+4Kun9sb96WEmoXvslIv9h7Bqdf5vo5gdHTwsRZ3Y8SYxJLPNHYlvjT0BSgajgKG739lxoFBtknZQ7aDfhWwmxMtf6GlPDPuVAD8oFg4RaHqD4YUGs94bmbHiKBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ejdpA3L6; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756820208; x=1788356208;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=+O16tDhDhrBpLyMgsU885nrQA5KR/KrCl+HJfM6/ItA=;
-  b=ejdpA3L6RxyaDxImQEZ/wVsMJAT0mC58tWxd9E4GTGtNovqL554RqMs/
-   9iSOEx6OobdHK8v9SRaA3n+sxztSTMXxH9eotiL4K6G5Sqa05TXuvNe/V
-   uhgOPt2dPR44Teys3Svw8HBMYN9R6audCnYPhebSrqi1MXw2t2NFrAzdF
-   CZj+shjnEEknZroIYJo4r11jhfZVsJ0Y9BfoOR/9/OrB7L2ea8UEeY1Bk
-   hVkDyH3HFCQVDhDyYej7nVmZkX2+soXna5AkMEByMy/uTPrivjk5jC+FZ
-   CUNyy/bsgJnXItVmcYDtLIMAvzb/XuarvzWnU8FD1EPzmWsX04LjAZNvf
-   w==;
-X-CSE-ConnectionGUID: gahppeebTS6Ft7l+odCzyQ==
-X-CSE-MsgGUID: 1+820xRqRfCQK0XAWM6+Wg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="62736793"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="62736793"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 06:36:47 -0700
-X-CSE-ConnectionGUID: 8YzlxvkSQIC3enT5Sui24w==
-X-CSE-MsgGUID: 5KRLd1wDT0iPdDWuEkyafw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="176588402"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO stinkbox) ([10.245.245.118])
-  by orviesa005.jf.intel.com with SMTP; 02 Sep 2025 06:36:42 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 02 Sep 2025 16:36:40 +0300
-Date: Tue, 2 Sep 2025 16:36:40 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, kernel@collabora.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [PATCH 1/2] drm: Add CRTC background color property
-Message-ID: <aLby6OPxgubt7kd_@intel.com>
-References: <20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com>
- <20250902-rk3588-bgcolor-v1-1-fd97df91d89f@collabora.com>
+	s=arc-20240116; t=1756820226; c=relaxed/simple;
+	bh=SzeDgycto1XOoMcreGQSCS0wPlbWCFH7nGuPBL83p7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E+5Gax3ibAf/WvQN+7+uhXWCoNn59V/5x2Z4C67EpQTyldvM0z6UYwG3PU3hFrOf4RWv/jOukY/exHbc6qaRXVdSGL19dW/pbXPecPlFs31/yZlAmdjEvSJ0t5+IbJatPhYO/xS87gbOniBQi4j/2kvXcIEqnRuas/PSugA0NLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=A28hkARL; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=A28hkARL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 283B3211A1;
+	Tue,  2 Sep 2025 13:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1756820223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SzeDgycto1XOoMcreGQSCS0wPlbWCFH7nGuPBL83p7U=;
+	b=A28hkARLiL12iS5mPhCBk51miWvaaR0cOAv8NbqjkuPWahMeCehE0ODUwWQCSxil7MR8GO
+	7yAppSDUKfr6cOJ2m1QxNGX6GbUbNCLnlkekP7YV42aTjRMjWax6ndXzvo5hi4HxNaBZk3
+	fBPU2x7zyrslSQU5K7xHQqA74LU4TMs=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=A28hkARL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1756820223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SzeDgycto1XOoMcreGQSCS0wPlbWCFH7nGuPBL83p7U=;
+	b=A28hkARLiL12iS5mPhCBk51miWvaaR0cOAv8NbqjkuPWahMeCehE0ODUwWQCSxil7MR8GO
+	7yAppSDUKfr6cOJ2m1QxNGX6GbUbNCLnlkekP7YV42aTjRMjWax6ndXzvo5hi4HxNaBZk3
+	fBPU2x7zyrslSQU5K7xHQqA74LU4TMs=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B61C213882;
+	Tue,  2 Sep 2025 13:37:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id J0zdKf7ytmgGXwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 02 Sep 2025 13:37:02 +0000
+Message-ID: <f251c17f-7500-4c84-a796-4ea7fc400bf7@suse.com>
+Date: Tue, 2 Sep 2025 15:37:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250902-rk3588-bgcolor-v1-1-fd97df91d89f@collabora.com>
-X-Patchwork-Hint: comment
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] xen/events: Update virq_to_irq on migration
+To: Jason Andryuk <jason.andryuk@amd.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Jeremy Fitzhardinge <jeremy@xensource.com>,
+ Chris Wright <chrisw@sous-sol.org>
+Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org
+References: <20250828003604.8949-1-jason.andryuk@amd.com>
+ <20250828003604.8949-4-jason.andryuk@amd.com>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20250828003604.8949-4-jason.andryuk@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------3qXKDxEArtgBvx45yQgBsyqv"
+X-Spamd-Result: default: False [-5.41 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_BASE64_TEXT(0.10)[];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email,suse.com:mid,suse.com:dkim,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 283B3211A1
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.41
 
-On Tue, Sep 02, 2025 at 12:27:56PM +0300, Cristian Ciocaltea wrote:
-> Some display controllers can be hardware programmed to show non-black
-> colors for pixels that are either not covered by any plane or are
-> exposed through transparent regions of higher planes.  This feature can
-> help reduce memory bandwidth usage, e.g. in compositors managing a UI
-> with a solid background color while using smaller planes to render the
-> remaining content.
-> 
-> To support this capability, introduce the BACKGROUND_COLOR standard DRM
-> mode property, which can be attached to a CRTC through the
-> drm_crtc_attach_background_color_property() helper function.
-> 
-> Additionally, define a 64-bit ARGB format value to be built with the
-> help of a dedicated drm_argb64() utility macro.  Individual color
-> components can be extracted with desired precision using the
-> corresponding DRM_ARGB64_*() macros.
-> 
-> Co-developed-by: Matt Roper <matthew.d.roper@intel.com>
-> Signed-off-by: Matt Roper <matthew.d.roper@intel.com>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/gpu/drm/drm_atomic_state_helper.c |  1 +
->  drivers/gpu/drm/drm_atomic_uapi.c         |  4 ++++
->  drivers/gpu/drm/drm_blend.c               | 37 +++++++++++++++++++++++++++----
->  drivers/gpu/drm/drm_mode_config.c         |  6 +++++
->  include/drm/drm_blend.h                   |  4 +++-
->  include/drm/drm_crtc.h                    | 12 ++++++++++
->  include/drm/drm_mode_config.h             |  5 +++++
->  include/uapi/drm/drm_mode.h               | 30 +++++++++++++++++++++++++
->  8 files changed, 94 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-> index 7142e163e618ea0d7d9d828e1bd9ff2a6ec0dfeb..359264cf467c5270b77f0b04548073bc92cb812e 100644
-> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-> @@ -75,6 +75,7 @@ __drm_atomic_helper_crtc_state_reset(struct drm_crtc_state *crtc_state,
->  				     struct drm_crtc *crtc)
->  {
->  	crtc_state->crtc = crtc;
-> +	crtc_state->background_color = drm_argb64(0xffff, 0, 0, 0);
->  }
->  EXPORT_SYMBOL(__drm_atomic_helper_crtc_state_reset);
->  
-> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-> index 85dbdaa4a2e25878c953b9b41539c8566d55c6d9..a447cb119aaa6cd11348be77b39f342a1386836d 100644
-> --- a/drivers/gpu/drm/drm_atomic_uapi.c
-> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
-> @@ -407,6 +407,8 @@ static int drm_atomic_crtc_set_property(struct drm_crtc *crtc,
->  					&replaced);
->  		state->color_mgmt_changed |= replaced;
->  		return ret;
-> +	} else if (property == config->background_color_property) {
-> +		state->background_color = val;
->  	} else if (property == config->prop_out_fence_ptr) {
->  		s32 __user *fence_ptr = u64_to_user_ptr(val);
->  
-> @@ -452,6 +454,8 @@ drm_atomic_crtc_get_property(struct drm_crtc *crtc,
->  		*val = (state->ctm) ? state->ctm->base.id : 0;
->  	else if (property == config->gamma_lut_property)
->  		*val = (state->gamma_lut) ? state->gamma_lut->base.id : 0;
-> +	else if (property == config->background_color_property)
-> +		*val = state->background_color;
->  	else if (property == config->prop_out_fence_ptr)
->  		*val = 0;
->  	else if (property == crtc->scaling_filter_property)
-> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
-> index 6852d73c931ce32e62062e2b8f8c5e38612d5210..5a287d12685b007a2732f510f62675f500e53727 100644
-> --- a/drivers/gpu/drm/drm_blend.c
-> +++ b/drivers/gpu/drm/drm_blend.c
-> @@ -191,10 +191,6 @@
->   *		 plane does not expose the "alpha" property, then this is
->   *		 assumed to be 1.0
->   *
-> - * Note that all the property extensions described here apply either to the
-> - * plane or the CRTC (e.g. for the background color, which currently is not
-> - * exposed and assumed to be black).
-> - *
->   * SCALING_FILTER:
->   *     Indicates scaling filter to be used for plane scaler
->   *
-> @@ -207,6 +203,23 @@
->   *
->   * Drivers can set up this property for a plane by calling
->   * drm_plane_create_scaling_filter_property
-> + *
-> + * The property extensions described above all apply to the plane.  Drivers
-> + * may also expose the following crtc property extension:
-> + *
-> + * BACKGROUND_COLOR:
-> + *	Background color is set via drm_crtc_attach_background_color_property().
-> + *	It controls the ARGB color of a full-screen layer that exists below all
-> + *	planes.  This color will be used for pixels not covered by any plane and
-> + *	may also be blended with plane contents as allowed by a plane's alpha
-> + *	values.  The background color defaults to black, and is assumed to be
-> + *	black for drivers that do not expose this property.  Although background
-> + *	color isn't a plane, it is assumed that the color provided here
-> + *	undergoes the same pipe-level degamma/CSC/gamma transformations that
-> + *	planes undergo.  Note that the color value provided here includes an
-> + *	alpha channel, hence non-opaque background color values are allowed, but
-> + *	are generally only honored in special cases (e.g. when a memory
-> + *	writeback connector is in use).
->   */
->  
->  /**
-> @@ -621,3 +634,19 @@ int drm_plane_create_blend_mode_property(struct drm_plane *plane,
->  	return 0;
->  }
->  EXPORT_SYMBOL(drm_plane_create_blend_mode_property);
-> +
-> +/**
-> + * drm_crtc_attach_background_color_property - attach background color property
-> + * @crtc: drm crtc
-> + *
-> + * Attaches the background color property to @crtc.  The property defaults to
-> + * solid black and will accept 64-bit ARGB values in the format generated by
-> + * drm_argb64().
-> + */
-> +void drm_crtc_attach_background_color_property(struct drm_crtc *crtc)
-> +{
-> +	drm_object_attach_property(&crtc->base,
-> +				   crtc->dev->mode_config.background_color_property,
-> +				   drm_argb64(0xffff, 0, 0, 0));
-> +}
-> +EXPORT_SYMBOL(drm_crtc_attach_background_color_property);
-> diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
-> index 25f376869b3a41d47bbe72b0df3e35cad142f3e6..6d70bfab45ca2bb81ed3ca1940fd1cd85e8cc58e 100644
-> --- a/drivers/gpu/drm/drm_mode_config.c
-> +++ b/drivers/gpu/drm/drm_mode_config.c
-> @@ -375,6 +375,12 @@ static int drm_mode_create_standard_properties(struct drm_device *dev)
->  		return -ENOMEM;
->  	dev->mode_config.gamma_lut_size_property = prop;
->  
-> +	prop = drm_property_create_range(dev, 0,
-> +					 "BACKGROUND_COLOR", 0, U64_MAX);
-> +	if (!prop)
-> +		return -ENOMEM;
-> +	dev->mode_config.background_color_property = prop;
-> +
->  	prop = drm_property_create(dev,
->  				   DRM_MODE_PROP_IMMUTABLE | DRM_MODE_PROP_BLOB,
->  				   "IN_FORMATS", 0);
-> diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
-> index 88bdfec3bd8848acd1ef5742aaaa23483b332a2e..c7e888767c81c2745cd3cce88c10db4bbe305d1e 100644
-> --- a/include/drm/drm_blend.h
-> +++ b/include/drm/drm_blend.h
-> @@ -31,8 +31,9 @@
->  #define DRM_MODE_BLEND_COVERAGE		1
->  #define DRM_MODE_BLEND_PIXEL_NONE	2
->  
-> -struct drm_device;
->  struct drm_atomic_state;
-> +struct drm_crtc;
-> +struct drm_device;
->  struct drm_plane;
->  
->  static inline bool drm_rotation_90_or_270(unsigned int rotation)
-> @@ -58,4 +59,5 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
->  			      struct drm_atomic_state *state);
->  int drm_plane_create_blend_mode_property(struct drm_plane *plane,
->  					 unsigned int supported_modes);
-> +void drm_crtc_attach_background_color_property(struct drm_crtc *crtc);
->  #endif
-> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> index caa56e039da2a748cf40ebf45b37158acda439d9..4653dacc1077b9ed8fb4cf27cc84530ba1706f6a 100644
-> --- a/include/drm/drm_crtc.h
-> +++ b/include/drm/drm_crtc.h
-> @@ -274,6 +274,18 @@ struct drm_crtc_state {
->  	 */
->  	struct drm_property_blob *gamma_lut;
->  
-> +	/**
-> +	 * @background_color:
-> +	 *
-> +	 * RGB value representing the pipe's background color.  The background
-> +	 * color (aka "canvas color") of a pipe is the color that will be used
-> +	 * for pixels not covered by a plane, or covered by transparent pixels
-> +	 * of a plane.  The value here should be built using drm_argb64(), while
-> +	 * the individual color components can be extracted with desired
-> +	 * precision via the DRM_ARGB64_*() macros.
-> +	 */
-> +	u64 background_color;
-> +
->  	/**
->  	 * @target_vblank:
->  	 *
-> diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.h
-> index 2e848b816218584eb077ed887bf97705f012a622..ea422afec5c4108a223dc872e1b6835ffc596cc3 100644
-> --- a/include/drm/drm_mode_config.h
-> +++ b/include/drm/drm_mode_config.h
-> @@ -814,6 +814,11 @@ struct drm_mode_config {
->  	 * gamma LUT as supported by the driver (read-only).
->  	 */
->  	struct drm_property *gamma_lut_size_property;
-> +	/**
-> +	 * @background_color_property: Optional CRTC property to set the
-> +	 * background color.
-> +	 */
-> +	struct drm_property *background_color_property;
->  
->  	/**
->  	 * @suggested_x_property: Optional connector property with a hint for
-> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-> index a122bea2559387576150236e3a88f99c24ad3138..4bd6a8ca8868109bcbe21f9f6e9864519c9d03ec 100644
-> --- a/include/uapi/drm/drm_mode.h
-> +++ b/include/uapi/drm/drm_mode.h
-> @@ -1363,6 +1363,36 @@ struct drm_mode_closefb {
->  	__u32 pad;
->  };
->  
-> +/*
-> + * Put 16-bit ARGB values into a standard 64-bit representation that
-> + * can be used for ioctl parameters, inter-driver communication, etc.
-> + */
-> +static inline __u64
-> +drm_argb64(__u16 alpha, __u16 red, __u16 green, __u16 blue)
-> +{
-> +	return (__u64)alpha << 48 | (__u64)red << 32 | (__u64)green << 16 | blue;
-> +}
-> +
-> +/*
-> + * Extract the specified number of least-significant bits of a specific
-> + * color component from a standard 64-bit ARGB value.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------3qXKDxEArtgBvx45yQgBsyqv
+Content-Type: multipart/mixed; boundary="------------XFxTLX7XzbIorwGI3WtEKT5w";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Jason Andryuk <jason.andryuk@amd.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Jeremy Fitzhardinge <jeremy@xensource.com>,
+ Chris Wright <chrisw@sous-sol.org>
+Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <f251c17f-7500-4c84-a796-4ea7fc400bf7@suse.com>
+Subject: Re: [PATCH v3 3/3] xen/events: Update virq_to_irq on migration
+References: <20250828003604.8949-1-jason.andryuk@amd.com>
+ <20250828003604.8949-4-jason.andryuk@amd.com>
+In-Reply-To: <20250828003604.8949-4-jason.andryuk@amd.com>
 
-Why would you ever want the least significant bits?
+--------------XFxTLX7XzbIorwGI3WtEKT5w
+Content-Type: multipart/mixed; boundary="------------xZxaHUgdgWZCFnPgopKkQz49"
 
-> + */
-> +#define DRM_ARGB64_COMP(c, shift, numlsb) \
-> +	((__u16)(((c) >> (shift)) & ((1UL << (numlsb) % 17) - 1)))
-> +#define DRM_ARGB64_ALPHA_LSB(c, numlsb) DRM_ARGB64_COMP(c, 48, numlsb)
-> +#define DRM_ARGB64_RED_LSB(c, numlsb)   DRM_ARGB64_COMP(c, 32, numlsb)
-> +#define DRM_ARGB64_GREEN_LSB(c, numlsb) DRM_ARGB64_COMP(c, 16, numlsb)
-> +#define DRM_ARGB64_BLUE_LSB(c, numlsb)  DRM_ARGB64_COMP(c, 0, numlsb)
-> +
-> +/*
-> + * Convenience wrappers to extract all 16 bits of a specific color
-> + * component from a standard 64-bit ARGB value.
-> + */
-> +#define DRM_ARGB64_ALPHA(c)		DRM_ARGB64_ALPHA_LSB(c, 16)
-> +#define DRM_ARGB64_RED(c)		DRM_ARGB64_RED_LSB(c, 16)
-> +#define DRM_ARGB64_GREEN(c)		DRM_ARGB64_GREEN_LSB(c, 16)
-> +#define DRM_ARGB64_BLUE(c)		DRM_ARGB64_BLUE_LSB(c, 16)
-> +
->  #if defined(__cplusplus)
->  }
->  #endif
-> 
-> -- 
-> 2.51.0
+--------------xZxaHUgdgWZCFnPgopKkQz49
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
--- 
-Ville Syrjälä
-Intel
+T24gMjguMDguMjUgMDI6MzYsIEphc29uIEFuZHJ5dWsgd3JvdGU6DQo+IFZJUlFzIGNvbWUg
+aW4gMyBmbGF2b3JzLCBwZXItVlBVLCBwZXItZG9tYWluLCBhbmQgZ2xvYmFsLCBhbmQgdGhl
+IFZJUlFzDQo+IGFyZSB0cmFja2VkIGluIHBlci1jcHUgdmlycV90b19pcnEgYXJyYXlzLg0K
+PiANCj4gUGVyLWRvbWFpbiBhbmQgZ2xvYmFsIFZJUlFzIG11c3QgYmUgYm91bmQgb24gQ1BV
+IDAsIGFuZA0KPiBiaW5kX3ZpcnFfdG9faXJxKCkgc2V0cyB0aGUgcGVyX2NwdSB2aXJxX3Rv
+X2lycSBhdCByZWdpc3RyYXRpb24gdGltZQ0KPiBMYXRlciwgdGhlIGludGVycnVwdCBjYW4g
+bWlncmF0ZSwgYW5kIGluZm8tPmNwdSBpcyB1cGRhdGVkLiAgV2hlbg0KPiBjYWxsaW5nIF9f
+dW5iaW5kX2Zyb21faXJxKCksIHRoZSBwZXItY3B1IHZpcnFfdG9faXJxIGlzIGNsZWFyZWQg
+Zm9yIGENCj4gZGlmZmVyZW50IGNwdS4gIElmIGJpbmRfdmlycV90b19pcnEoKSBpcyBjYWxs
+ZWQgYWdhaW4gd2l0aCBDUFUgMCwgdGhlDQo+IHN0YWxlIGlycSBpcyByZXR1cm5lZC4gIFRo
+ZXJlIHdvbid0IGJlIGFueSBpcnFfaW5mbyBmb3IgdGhlIGlycSwgc28NCj4gdGhpbmdzIGJy
+ZWFrLg0KPiANCj4gTWFrZSB4ZW5fcmViaW5kX2V2dGNobl90b19jcHUoKSB1cGRhdGUgdGhl
+IHBlcl9jcHUgdmlycV90b19pcnEgbWFwcGluZ3MNCj4gdG8ga2VlcCB0aGVtIHVwZGF0ZSB0
+byBkYXRlIHdpdGggdGhlIGN1cnJlbnQgY3B1LiAgVGhpcyBlbnN1cmVzIHRoZQ0KPiBjb3Jy
+ZWN0IHZpcnFfdG9faXJxIGlzIGNsZWFyZWQgaW4gX191bmJpbmRfZnJvbV9pcnEoKS4NCj4g
+DQo+IEZpeGVzOiBlNDZjZGI2NmM4ZmMgKCJ4ZW46IGV2ZW50IGNoYW5uZWxzIikNCj4gQ2M6
+IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gU2lnbmVkLW9mZi1ieTogSmFzb24gQW5kcnl1
+ayA8amFzb24uYW5kcnl1a0BhbWQuY29tPg0KDQpSZXZpZXdlZC1ieTogSnVlcmdlbiBHcm9z
+cyA8amdyb3NzQHN1c2UuY29tPg0KDQoNCkp1ZXJnZW4NCg==
+--------------xZxaHUgdgWZCFnPgopKkQz49
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------xZxaHUgdgWZCFnPgopKkQz49--
+
+--------------XFxTLX7XzbIorwGI3WtEKT5w--
+
+--------------3qXKDxEArtgBvx45yQgBsyqv
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmi28v4FAwAAAAAACgkQsN6d1ii/Ey84
+9Qf6A2F3JG2SW93MO8A9bklox+jBDaxzI9DJ3S8LH0WNEkhBZm2cSa9LJ1pj50PBIIDLl2hPDBEB
+KHfFpAg/9FKBlyvLpmscDvIOL3vzZqLOqoIyqeHWWsSd9Z26XthnZedBT1K7FnhwUimzNvgd3992
+GpCjox8Rs5k7baagpDjOx5owmBFLb/j7fADesYsWum1nAu747JXyazRoLF4Q84ofVrigkOICG8ut
+Jjk4HvgqfrSoycIsD2ZvQKYKTNv4SAN3xXHIVW+fhiXJQ7wgVQUc49csvdivpnFhuiYsOvdA8qan
+W6bmPbcur5rtdm6VCkE/gha9BwcT3kf4Up6xqTLEOQ==
+=6ykr
+-----END PGP SIGNATURE-----
+
+--------------3qXKDxEArtgBvx45yQgBsyqv--
 
