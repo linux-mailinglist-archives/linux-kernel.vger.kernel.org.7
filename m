@@ -1,187 +1,81 @@
-Return-Path: <linux-kernel+bounces-795723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D63B3F716
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:53:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8815B3F712
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2ED485075
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:53:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5D520591A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4DC2E7BCE;
-	Tue,  2 Sep 2025 07:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FC62E7647;
+	Tue,  2 Sep 2025 07:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JkajFgX9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dw/QA4iu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6262E7650;
-	Tue,  2 Sep 2025 07:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381AE2E62D4;
+	Tue,  2 Sep 2025 07:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799591; cv=none; b=c/7odbuiNRA0vYeysAnoJH12iYjPeeJxTmyEAWI56kqVPYqo0xYep3ZIjIEvEM4c13RS9XLhbGWvI995W8GSMecInny+vxqsCFLVlqDIuqahUhzMqSCj3rRJJcKnJ2oLYS2JMF0SypS1ATRxM4eBXaVttQgKo4xvqi6DHB01OOA=
+	t=1756799588; cv=none; b=Ke9XHAiQPNXEBVO4bOkbH5OusUPypy7u1mZCvmMJ6DoXKdWiXJNXyH93p8rN/hxOy7Y4ZlC8iaS0Krait5mJTMhLjLQSIEyB89ekzibVmY6p+TfBbHqpetQlX8z5WkZJH4dXfGabppYYOi2Z4VfanVQtxtuP8JESjm3NkH98PtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799591; c=relaxed/simple;
-	bh=pbOAkPhU9C1NlkUI7+2kdIrQmYlgLm/+UnUQyns5KZk=;
+	s=arc-20240116; t=1756799588; c=relaxed/simple;
+	bh=riQZiJZ4exUI8JW+1R+cAI/RIVX8pPtYIePY0YIjLsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=laSxu9hAZBLdYuUttJkDalgDC2xKkZVhX5Io52Q2/vHTFpqyGkOHUdz311VZsamdbk8RBQpmP1NQ8jXJgWGa2IH71MYh2e3ApMZvovv4/D21WzvEZCJnPdYnQ9DyQtzwm7kvd1uioUWnHLO3/Vp3vOx9CBzj9oUCHF+tMJmpTXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JkajFgX9; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756799590; x=1788335590;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=pbOAkPhU9C1NlkUI7+2kdIrQmYlgLm/+UnUQyns5KZk=;
-  b=JkajFgX962HdWcFGCfQIdNxQokevn8eyhxwLNXNeXC+0mdu2zJoSsI3L
-   eH9UIaVZp8H2qpT/tA4wTAYtj25wfivYswwYwuzuhTYo54UklM3SP57EP
-   1JTrepPCAor35fRoUkOKs1eSXrVdlZiD6jvohlLF/UOGOI0dCOYAb4WAK
-   BNUMsI7qIQrLi4m8WllaPKU6BCs9I/tmV7hcu9XlJyKqvgqoE0C4hxNbM
-   X95HPoleyulojoJzuAfYdtt5MtG5CF9fX/eeMIUHiEYWK4jVX6agj01dE
-   QWhAeqfFyw6vIvEYt4F1L/tD4FSXo6f5QA+STIjXbZZAY4bq6RLm6faZM
-   Q==;
-X-CSE-ConnectionGUID: LzaYjZgbQX6y+/oc9UT8zA==
-X-CSE-MsgGUID: z48Ig+PzR62ofy9wVWFipg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81642573"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="81642573"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 00:53:09 -0700
-X-CSE-ConnectionGUID: VafrqJKgTtOyg3OFOE7GqA==
-X-CSE-MsgGUID: FxldCUVuTpyzB8PTGKKUvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="194851096"
-Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.32])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 00:53:04 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 7977F121F49;
-	Tue, 02 Sep 2025 10:53:01 +0300 (EEST)
-Date: Tue, 2 Sep 2025 10:53:01 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 2/2] media: i2c: add ov2735 image sensor driver
-Message-ID: <aLaiXTw2cieUCzn_@kekkonen.localdomain>
-References: <20250829090959.82966-1-hardevsinh.palaniya@siliconsignals.io>
- <20250829090959.82966-3-hardevsinh.palaniya@siliconsignals.io>
- <PN3P287MB18298FB93EDC498572742B2A8B07A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AOTwxq/AIgoaV83Jh/o/oXCZbEUTIqlkl8MGZCrGpeFbUY0fCwc1QtVzK+PHh/bVI2BaOgTWFyg9LUUAp0P4SSBoTf1R5toaSx+xheqT7V1J9NVrNDAmSn5qeqaXrUBNIx58tM+Ds8TtOhs5frsCITLOkIZC2wERV7BfjfNsep8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dw/QA4iu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64829C4CEED;
+	Tue,  2 Sep 2025 07:53:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756799588;
+	bh=riQZiJZ4exUI8JW+1R+cAI/RIVX8pPtYIePY0YIjLsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dw/QA4iuLCsV2GfTsBLU+q7zXIGmkBCLfJNQC89MvqZra4FPAbOmsMl6Q7Iz8cwbw
+	 4PDHfFYokehXrp8huzoiWiL6X6NJiXL/tCtfpnCERdi2Xic4+ba+JytNJpPcFin6ba
+	 hjnW014cTeZC8WsmPlrK5WBpG16uS3T6mEVdQje6SWzma+XO8yszw95Bi1ZPsYRum3
+	 F3tKcY5MTYL1DZurIQ6lDBhuSidLFORmn4YzXz99wOfGYwwmiveWWlmlVEYBwgg40M
+	 h0V+3lnpTJt+VLmCTB1GvWF3+z3f6SNinTHJ3U63jeOwLF16/YLaJlOXRvX/ibuBwH
+	 gjdEiFRUpVF2g==
+Date: Tue, 2 Sep 2025 09:53:05 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bhelgaas@google.com, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, vkoul@kernel.org, 
+	kishon@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de, 
+	linux-aspeed@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-phy@lists.infradead.org, openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3 04/10] dt-bindings: pinctrl: aspeed,ast2600-pinctrl:
+ Add PCIe RC PERST# group
+Message-ID: <20250902-wakeful-sepia-gecko-eeba05@kuoka>
+References: <20250901055922.1553550-1-jacky_chou@aspeedtech.com>
+ <20250901055922.1553550-5-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3P287MB18298FB93EDC498572742B2A8B07A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <20250901055922.1553550-5-jacky_chou@aspeedtech.com>
 
-Hi Tarang, Hardev,
-
-On Mon, Sep 01, 2025 at 06:44:46AM +0000, Tarang Raval wrote:
-> Hi Hardev, Sakari
+On Mon, Sep 01, 2025 at 01:59:16PM +0800, Jacky Chou wrote:
+> Add PCIe PERST# group to support for PCIe RC.
 > 
-> > Add a v4l2 subdevice driver for the Omnivision OV2735 sensor.
-> > 
-> > The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an
-> > active array size of 1920 x 1080.
-> > 
-> > The following features are supported:
-> > - Manual exposure an gain control support
-> > - vblank/hblank control support
-> > - Test pattern support control
-> > - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10)
-> > 
-> > Co-developed-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
-> > Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
-> > Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-> > ---
-> >  MAINTAINERS                |    1 +
-> >  drivers/media/i2c/Kconfig  |   10 +
-> >  drivers/media/i2c/Makefile |    1 +
-> >  drivers/media/i2c/ov2735.c | 1109 ++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 1121 insertions(+)
-> >  create mode 100644 drivers/media/i2c/ov2735.c
-> 
-> ...
->  
-> > +static int ov2735_enum_mbus_code(struct v4l2_subdev *sd,
-> > +                                struct v4l2_subdev_state *sd_state,
-> > +                                struct v4l2_subdev_mbus_code_enum *code)
-> > +{
-> > +       if (code->index >= 0)
-> 
-> Hardev, I believe this condition is always true.
-> 
-> You should write:
-> if (code->index > 0)
-> 
-> Sakari, Could you please remove the equals sign when you apply the patch? 
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml     | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Done. I also switched it to container_of_const(); the diff is:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/media/i2c/ov2735.c b/drivers/media/i2c/ov2735.c
-index da5978b96146..b96600204141 100644
---- a/drivers/media/i2c/ov2735.c
-+++ b/drivers/media/i2c/ov2735.c
-@@ -402,7 +402,7 @@ static int ov2735_multi_reg_write(struct ov2735 *ov2735,
- 
- static inline struct ov2735 *to_ov2735(struct v4l2_subdev *_sd)
- {
--	return container_of(_sd, struct ov2735, sd);
-+	return container_of_const(_sd, struct ov2735, sd);
- }
- 
- static int ov2735_enable_test_pattern(struct ov2735 *ov2735, u32 pattern)
-@@ -428,8 +428,8 @@ static int ov2735_enable_test_pattern(struct ov2735 *ov2735, u32 pattern)
- 
- static int ov2735_set_ctrl(struct v4l2_ctrl *ctrl)
- {
--	struct ov2735 *ov2735 = container_of(ctrl->handler, struct ov2735,
--					     handler);
-+	struct ov2735 *ov2735 =
-+		container_of_const(ctrl->handler, struct ov2735, handler);
- 	struct v4l2_mbus_framefmt *fmt;
- 	struct v4l2_subdev_state *state;
- 	u64 vts;
-@@ -697,7 +697,7 @@ static int ov2735_enum_mbus_code(struct v4l2_subdev *sd,
- 				 struct v4l2_subdev_state *sd_state,
- 				 struct v4l2_subdev_mbus_code_enum *code)
- {
--	if (code->index >= 0)
-+	if (code->index)
- 		return -EINVAL;
- 
- 	code->code = MEDIA_BUS_FMT_SGRBG10_1X10;
+Best regards,
+Krzysztof
 
--- 
-Kind regards,
-
-Sakari Ailus
 
