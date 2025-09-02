@@ -1,111 +1,102 @@
-Return-Path: <linux-kernel+bounces-797037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13B1B40AF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:47:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F83B40AF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900E31B60180
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20294E313F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4C032ED58;
-	Tue,  2 Sep 2025 16:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="gFgk19Jf"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C94C33A005;
+	Tue,  2 Sep 2025 16:48:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3628F31AF2E;
-	Tue,  2 Sep 2025 16:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4E031AF2E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831669; cv=none; b=lLgKVN94TciWe3OS+UlNsRLJ8GvZ00/l5x2/9IdFneqeKGNgxf+JgvIprdp334f8IFFZxv8NW302PMwN/7NiccTLMZu/a2k/j55Pek1CJt5/yvXC+2Fn2S3IoaSr2HrBJlh8SXIg1VY2uxqG3VkIjb5MpGZcVLXxxwQ1lm/+ExQ=
+	t=1756831680; cv=none; b=C150QhMR2+H9Hu8WmuYTVFsfHiNDZ9FFWk38IfjQpNmU5KeLICoSJS+G9rI+6T8If4M+w3AwvKQwiSVNuvayncWheLVZMh5R0xJbCoJ334l/pSrcHRg3VDon+D6Kwpjep33GQrFEN2JhTdDSWaP290tRtVuIZ4x7Bf5EbnTOpLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831669; c=relaxed/simple;
-	bh=UTC2GyluPdRpA4vm1s9KI1N3EECdAr9uVw3rbOVnxBY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ESzLtPsP9P92ziv8qBywEvXfm/In7c+wldQmvflSXwwIZBk/SpaqzjewpC1OlkR0q5Ubqwi4Axmj5J/W2h5TEd9YSKKiyp+xAwH6QWmUYRFGGjnECcMFRL+7XLAseZtUSSLuKgJD8iqrrGcbtbkQH7Dc5r34lZ2QABjlkn3EstY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=gFgk19Jf; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=0d+VCvvchtfyxeVhxRdYyEzzFtwK5+d4izY09aCco30=; t=1756831666;
-	x=1757436466; b=gFgk19JfTGKF0b1tt8UmD645hbmB3Fz1cpGpYy6MG5Mp9SH/JnYUPk2E7osGu
-	X9+4C54wWvaIioNBBlBVvShVnTndxCQGFXVGSjYSPkmT+LqPlB6BY4VAy4wX709AdA04z82i6CV4J
-	2Lz3an9QnDgzjLzRIqwN2zUKVEOVDEFyxVaW5U6LM0jpjwQt/v8s6NITPrZv5LNY35mmFj7C+GVEN
-	YP0NNtAyFM0klS7BGpSqX5GR/Ud35m6In2bNkXIT6hIhu9a3lEHrGgNjQ8cBJaQbq9MaxaQxl3+91
-	9cH58OvdcLHBYCNkv2RRTC6PIUUER9nrBnN5lHDGAxXutKVw6A==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1utUAZ-00000003vKf-2rLG; Tue, 02 Sep 2025 18:47:43 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1utUAZ-000000008Nr-1CTf; Tue, 02 Sep 2025 18:47:43 +0200
-Message-ID: <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for Niagara
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Rene Rebe <rene@exactcode.com>, kernel@mkarcher.dialup.fu-berlin.de
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
-	andreas@gaisler.com, anthony.yznaga@oracle.com
-Date: Tue, 02 Sep 2025 18:47:41 +0200
-In-Reply-To: <20250902.184011.440504961051160142.rene@exactcode.com>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
-		<20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
-	 <20250902.184011.440504961051160142.rene@exactcode.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1756831680; c=relaxed/simple;
+	bh=EnVKlMRafytN10jYFr1GMVuLeSqEtWAXCSyGwJGvRvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mv63+k/hwuklMcXUkF4HbyhDvQWMIoAupGsUHKPW4XCMqQ8TDOsjzrHF0x8FzAAvmgGKHLZD5xacPPFWYD3SRd9286ldwtccfXy2tV4yunreWf7HeUVUiWSVeMamzrhELkslr7e20+Sf12T0070jSeccYCS2Nmf6KFsZwksK2C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A091AC4CEED;
+	Tue,  2 Sep 2025 16:47:58 +0000 (UTC)
+Date: Tue, 2 Sep 2025 17:47:56 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	James Morse <james.morse@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Don't broadcast TLBI if mm was only active on
+ local CPU
+Message-ID: <aLcfvIfFb6xD-NXp@arm.com>
+References: <20250829153510.2401161-1-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829153510.2401161-1-ryan.roberts@arm.com>
 
-Hi Rene,
+On Fri, Aug 29, 2025 at 04:35:06PM +0100, Ryan Roberts wrote:
+> Beyond that, the next question is; does it actually improve performance?
+> stress-ng's --tlb-shootdown stressor suggests yes; as concurrency increases, we
+> do a much better job of sustaining the overall number of "tlb shootdowns per
+> second" after the change:
+> 
+> +------------+--------------------------+--------------------------+--------------------------+
+> |            |     Baseline (v6.15)     |        tlbi local        |        Improvement       |
+> +------------+-------------+------------+-------------+------------+-------------+------------+
+> | nr_threads |     ops/sec |    ops/sec |     ops/sec |    ops/sec |     ops/sec |    ops/sec |
+> |            | (real time) | (cpu time) | (real time) | (cpu time) | (real time) | (cpu time) |
+> +------------+-------------+------------+-------------+------------+-------------+------------+
+> |          1 |        9109 |       2573 |        8903 |       3653 |         -2% |        42% |
+> |          4 |        8115 |       1299 |        9892 |       1059 |         22% |       -18% |
+> |          8 |        5119 |        477 |       11854 |       1265 |        132% |       165% |
+> |         16 |        4796 |        286 |       14176 |        821 |        196% |       187% |
+> |         32 |        1593 |         38 |       15328 |        474 |        862% |      1147% |
+> |         64 |        1486 |         19 |        8096 |        131 |        445% |       589% |
+> |        128 |        1315 |         16 |        8257 |        145 |        528% |       806% |
+> +------------+-------------+------------+-------------+------------+-------------+------------+
+> 
+> But looking at real-world benchmarks, I haven't yet found anything where it
+> makes a huge difference; When compiling the kernel, it reduces kernel time by
+> ~2.2%, but overall wall time remains the same. I'd be interested in any
+> suggestions for workloads where this might prove valuable.
 
-On Tue, 2025-09-02 at 18:40 +0200, Rene Rebe wrote:
-> Hi,
->=20
-> From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
->=20
-> > Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to accurat=
-e exception reporting.")
-> > Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
->=20
-> Tested-by: Ren=C3=A9 Rebe <rene@exactcode.com> # UltraSparc T4 SPARC T4-1=
- Server
+I suspect it's highly dependent on hardware and how it handles the DVM
+messages. There were some old proposals from Fujitsu:
 
-Thanks for the testing! However, this actually needs to be tested on a SPAR=
-C T1
-as both T2 and T4 have their own implementation that is being used. Testing=
- on a
-T4 will therefore not invoke this particular code unless you modify the ker=
-nel in
-head_64.S to employ the Niagara 1 code on Niagara 4.
+https://lore.kernel.org/linux-arm-kernel/20190617143255.10462-1-indou.takao@jp.fujitsu.com/
 
-Do you happen to have a SPARC T1?
+Christoph Lameter (Ampere) also followed with some refactoring in this
+area to allow a boot-configurable way to do TLBI via IS ops or IPI:
 
-Adrian
+https://lore.kernel.org/linux-arm-kernel/20231207035703.158053467@gentwo.org/
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+(for some reason, the patches did not make it to the list, I have them
+in my inbox if you are interested)
+
+I don't remember any real-world workload, more like hand-crafted
+mprotect() loops.
+
+Anyway, I think the approach in your series doesn't have downsides, it's
+fairly clean and addresses some low-hanging fruits. For multi-threaded
+workloads where a flush_tlb_mm() is cheaper than a series of per-page
+TLBIs, I think we can wait for that hardware to be phased out. The TLBI
+range operations should significantly reduce the DVM messages between
+CPUs.
+
+-- 
+Catalin
 
