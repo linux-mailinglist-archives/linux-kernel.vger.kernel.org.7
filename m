@@ -1,256 +1,195 @@
-Return-Path: <linux-kernel+bounces-797131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB80CB40C33
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2AEB40C37
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 719C2562E85
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:38:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C9D5E3EA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EAB345722;
-	Tue,  2 Sep 2025 17:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F198834574F;
+	Tue,  2 Sep 2025 17:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJJsKDhn"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KGjbL/sa"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2B634572B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D9F286883
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756834679; cv=none; b=PPSCoP2hVzjonmd04WoHjVZWvbIZq3AU/dpVF1ghIfZ9QQs2620g8EJwM+UZu6WQy/zpJcFJWWpYYL0P45vOnNbfpz1c7ESuu2t3rmh3Y8xBNZbcMyqicHj4cAikFQzxwvCZF4SzblCiSFOiVcPI4wbr7NA6OzmZjVPay09mxGQ=
+	t=1756834695; cv=none; b=GtbMPGRBDjQUzVRz8dhSqts82fi0UyZVCPGwdltjJgZMdZ4n3yQaiWn6n6bhVp9h5WTtdfGuTUB5OVbwD/Ok7rbkC2Q052BfZuFr9aJrM1L/42JZqsUwaDrSuhX2OjSdFgaueFSaZ5/67h6agKH/R6hmqxUFzs/DSvmAUvwG5R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756834679; c=relaxed/simple;
-	bh=VYGasW9FVPNTZ8VET90dXS7iMkynfbQXhIYVsHue9Hw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ST823+jTY0kC3wgz2QWH24Xl+zhnxtRWFPygjQjYbT251DbtP38ClAWX7b9T3FkKtmCKwTgh6b5gculx8HJ0LLnlVxT8xYDzEIy6G2qVnxLfoDedNvvdj2EE47G/d9PMGU2Th4x3vWVzo4wLqbcTDBfeyAJoEmIsffbZyr/bBsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJJsKDhn; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70de042246eso43815966d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:37:57 -0700 (PDT)
+	s=arc-20240116; t=1756834695; c=relaxed/simple;
+	bh=2Z+f+tiHla+aQTQotpxacmkadlxYF0eoGoXuymRlJFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iWVEKUjqWNZK84JNG2ZgMdtQmBJREmWIXlCZnOfNu18cEH/VmyjKgBQO7UUkOTEJfTDK8s5PXBoQRuScdP1Qg5QT3Z6NZnLIA8i2N2xy8DOkZl6kL0qt6Ab9MfkBUXEt/wiDsw7j/rGALoNEpNn0EE3DSb/e4GovWZeKYI5eK2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KGjbL/sa; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55f7b6e4145so2229322e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:38:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756834677; x=1757439477; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=otrH9vPB0qBa0u4ndJlMzhUgcMoUjz9chpjKLQGboxY=;
-        b=AJJsKDhnAmr3ZRaBJETVNLyJrFKSez16XW8doNREnUxxCrynYzXE3z9XVAOtUts8Lo
-         QB97jZoYQ69vDjBTBDmSO9jdI9tgEG1fqnXbMBXwol60y9jxsgJIphTut1xlDLXs6FLd
-         ULDoC2Kz8AgspZhau+CKbAe5kK3aixQkMWZV5XunbIKjDRPO/+s5MeYFHo9hX4HboTIW
-         H3gI26sJYr26R7hE431nji+bJOaBSURth8dwRYjhS9cIsQcXRgXum0hdePAH11YV2Qy0
-         pdBk69SzF6GuVYlsma3Kjllzji9UCitYGfgUzoPPP+LxOWN1cH+wrG7fDemovstLonlq
-         /N3A==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756834691; x=1757439491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nMdZlkimpPBEuPAWoTrzN+8f/yVdz1IgzbjTh40gfDQ=;
+        b=KGjbL/samYv4/OkvGoMgUDnKCAEL1eRn+Z/4Q5CLfcCSUXb8aLDVkHr1OdvUxTJvW/
+         jUTSFn7k5s2+JleAC1kbRBTv1y9zYJnrwms9jN0bb/wM5nN71PHThc192SMST7tuB9Rm
+         gyqRec8BjM6sgqSnfE3D7s9VQzrTuIWwIb7RtnCwIOfmpTRPHrodIkGuvCiZI6tw7e3d
+         gAc6jzeGpg6xyZ9JxQqB8ai0vhCTbmoJhQ2CMu1fVYBhv1kXCTBfzwwsz15TLsPEjGvm
+         5+DidMz1kd6+k1GQZ8ZAZQM/Z9nPN24O1kpCuObhGmzt6GPzxaspM8xlKrkN9F8m1W3f
+         sfHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756834677; x=1757439477;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=otrH9vPB0qBa0u4ndJlMzhUgcMoUjz9chpjKLQGboxY=;
-        b=YwLuG1yhhKeyy/zVmOQQapN/YqmAHX1OhmYdXKBt0atvpn9d2aHlLXJMLOJiAjFXrT
-         aCvoaLzbUInXPKnF2cYYDPjzX4yqa+wIjgE782iZXxV1S8JNsiW/ERfRtPXTq5K+nYY+
-         zfLBy7SasTDtgg4isjn0GLQDrUMzKo23/qcBCtDAr4MewHbv3lYnb6q7lzJ/mP77JcHI
-         vyD0vbhwjpj1pPgq6nWhhjONFdEpxELEUMPuXux1E32RkXtTev9/lIWMLoVHs2P6oaFM
-         xZyGbnMGnn6AoLPVPZlXqcJp4Cyuvw1fDLkO3ikNSGqxj9g2rBXXRiiOxamguNxFV3Lx
-         MB4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWZYiw5SI8WMYeg9NKjgDRlNzGUW+1/0bXlkNm7ZjmKWwaB5uAwD60k/MyrcetHRza77AOMcgbOjaoUGV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjbvIA6IKUosb/cfa58K+HrbHtB21ogDWSCOR63WUxDBCD6Dv+
-	Urmcht7xLgMBaBh8smnJ1aIbc8Zm9MB1rFHDYwTvViWvWV3HfQeIFc6q
-X-Gm-Gg: ASbGncuToOZ5Inr7AXpoi816PqcgB/0Z7lDR3Vpsw6BhlcvZf4rDH5o5XErp/9ic7dK
-	KDOUuv8uGiywLjk8FjU3EXOvNeBUzj3sDWwArItA/7CEWtpBdR+4w6Uqb11nTCMMBVl2LpitunK
-	AiK0AhzCcTnblBMYkNyK+jfy/Q8I4e8rRtoaSNqXUNCKebRRZNJMw+cM/XtKBSUAIdrbqB/T3BX
-	vzT0YZFgkj6qTY9xojjkmbcgYapAFHZTMJTvfjruFan9BmBbeaGzUFXMmhbYVJHMdrqt7rl0mFV
-	9d6CsprfiSenN9lAPQRaNb7W2egX3Epv8fgp7SDPaS9lscA8im3VIZN+sdC9IKL9iyovE0pFiW+
-	rluNBdGB0C5FZweCTaxra3/MpnGlw8lD42/5vBckIAYlGaQg34j50s3RR9g59E3kjM9fbo3OMWg
-	CXEkKuTzGR/HZISygb
-X-Google-Smtp-Source: AGHT+IG/awK0cdVCA3tK+xvtx/vaBNKIY9HwI1AxLcqfUdWeVneKjrwj+PdCRYF9kxd5oB33rP1cMA==
-X-Received: by 2002:a05:6214:62c:b0:722:47bd:8759 with SMTP id 6a1803df08f44-72247bd8d8bmr7749036d6.64.1756834676741;
-        Tue, 02 Sep 2025 10:37:56 -0700 (PDT)
-Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ae045ef6sm14861906d6.31.2025.09.02.10.37.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 10:37:56 -0700 (PDT)
-Date: Tue, 02 Sep 2025 13:37:52 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_4/5=5D_auxdisplay=3A_linedisp=3A_suppor?=
- =?US-ASCII?Q?t_attribute_attachment_to_auxdisplay_devices?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <aLbEcN44RT58ywzq@smile.fi.intel.com>
-References: <20250901020033.60196-1-jefflessard3@gmail.com> <20250901020033.60196-5-jefflessard3@gmail.com> <aLbEcN44RT58ywzq@smile.fi.intel.com>
-Message-ID: <9223FFA5-2B0F-4A74-AFE2-CB7C9703CFAB@gmail.com>
+        d=1e100.net; s=20230601; t=1756834691; x=1757439491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nMdZlkimpPBEuPAWoTrzN+8f/yVdz1IgzbjTh40gfDQ=;
+        b=MRAFVAcUA33uW22LzuwenwSgxbaWE2ugVSDEIiHDToJLyGdRyRDw3Y213FJ+WLrDqA
+         lYtAEAIMDtxkbcTAIU4ShVm1eTrNuS1FnhbWIEMYm/sZJzBLd9G8jHsS03OR8C3Gr7LT
+         91rE71MF7MhFDMrwkUPpmVv8E82ngqMiIQ5DA1te5+qFwTAW/4yPbjTYMhnkYOTcoRwD
+         IBwe7IJDmkiKpYIwv1lhfB4/9OTVe37QbUBWen0bH4+2QVj1NsA+xG7f/fLIrU2Q1GEG
+         6RVFKdBu4ByIohUglMlHKINu4m7b6HxiQ7i5mv9gk68qwmvyHJTFQDtGLNzoERJ0SqT8
+         oDMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRd4Bj1MykMH1mpeqXU2NVG5E/lydLOIhB1NIpR+LW21W0LwLdSvOobiu0u6fXe+AZXZLTMe3eHMf3pUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2MuZK9dG9UjpianGbRJU9qqUaAKGWUszfuWHVsx94qqXkMCeH
+	Nk+lTzhos+R8ooto05e+2Na3MPOshB0r9Cts9h7yuuZP9A6X7LxJGWrkJZWDekjq/g+erxlRyXz
+	V6VrDdqAFojRml5friAggaSypf/oghd3xjtXefCEVyw==
+X-Gm-Gg: ASbGncurd/hI7PUFMyZiJwX12gkIIKNx8RxEylBjwNevUxqKSFrbVcG/kvTYfhvUsCw
+	/Mv6ygL/htuL+xS9QX+v4wxCxPsV5rt1xkrSZhd3l668oK35MwK3J67vCAZ1hkYl5G+HaOYVg+a
+	8pRMDpa9ci8OFEorMUJsa9BjujS7CD6g+6K8E59431ecq6P/23/Z7O2DI2y54qr9lMIlZ+sGw8m
+	0MSOQKT0vGENPiKWPlWO+GeuWHVesX40dLZRZw=
+X-Google-Smtp-Source: AGHT+IFm+23zbyZl8sFvNScDe+I2YeYbDYPXFeVHpq8D0bnsdMaG/KEVvVZ9a/rq1R21K2fB6GO+UcDGweplkB3yAgc=
+X-Received: by 2002:a05:6512:b01:b0:55f:6cbd:fc0f with SMTP id
+ 2adb3069b0e04-55f70566bf2mr4012228e87.0.1756834691121; Tue, 02 Sep 2025
+ 10:38:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org> <aLcDP36eEIZ_tqFv@smile.fi.intel.com>
+In-Reply-To: <aLcDP36eEIZ_tqFv@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 2 Sep 2025 19:37:59 +0200
+X-Gm-Features: Ac12FXyPcmhwrJUG952loM2GHhwbaAf9Pg-CA5a2iq5iRb4akDGioSRihDizLT0
+Message-ID: <CAMRc=McSpciZCCzhSRwDqUw-7qiqqQqNAqngSm5mGNefWBJinA@mail.gmail.com>
+Subject: Re: [PATCH v7 00/16] pinctrl: introduce the concept of a GPIO pin
+ function category
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le 2 septembre 2025 06 h 18 min 24 s HAE, Andy Shevchenko <andriy=2Eshevche=
-nko@intel=2Ecom> a =C3=A9crit=C2=A0:
->On Sun, Aug 31, 2025 at 10:00:28PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Enable linedisp library integration into existing kernel devices (like =
-LED
->> class) to provide a uniform 7-segment userspace API without creating
->> separate child devices, meeting the consistent interface while maintain=
-ing
->> coherent device hierarchies=2E
->>=20
->> This allows uniform 7-segment API across all drivers while solving devi=
-ce
->> proliferation and fragmented userspace interfaces=2E
->>=20
->> The provided attributes appear in two locations depending on usage:
+On Tue, Sep 2, 2025 at 4:46=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
->You wanted to say "=2E=2E=2Ein one of the two possible=2E=2E=2E"?
->Otherwise it looks like undesired side effect of the change=2E
+> On Tue, Sep 02, 2025 at 01:59:09PM +0200, Bartosz Golaszewski wrote:
+> > Problem: when pinctrl core binds pins to a consumer device and the
+> > pinmux ops of the underlying driver are marked as strict, the pin in
+> > question can no longer be requested as a GPIO using the GPIO descriptor
+> > API. It will result in the following error:
+> >
+> > [    5.095688] sc8280xp-tlmm f100000.pinctrl: pin GPIO_25 already reque=
+sted by regulator-edp-3p3; cannot claim for f100000.pinctrl:570
+> > [    5.107822] sc8280xp-tlmm f100000.pinctrl: error -EINVAL: pin-25 (f1=
+00000.pinctrl:570)
+> >
+> > This typically makes sense except when the pins are muxed to a function
+> > that actually says "GPIO". Of course, the function name is just a strin=
+g
+> > so it has no meaning to the pinctrl subsystem.
+> >
+> > We have many Qualcomm SoCs (and I can imagine it's a common pattern in
+> > other platforms as well) where we mux a pin to "gpio" function using th=
+e
+> > `pinctrl-X` property in order to configure bias or drive-strength and
+> > then access it using the gpiod API. This makes it impossible to mark th=
+e
+> > pin controller module as "strict".
+> >
+> > This series proposes to introduce a concept of a sub-category of
+> > pinfunctions: GPIO functions where the above is not true and the pin
+> > muxed as a GPIO can still be accessed via the GPIO consumer API even fo=
+r
+> > strict pinmuxers.
+> >
+> > To that end: we first clean up the drivers that use struct function_des=
+c
+> > and make them use the smaller struct pinfunction instead - which is the
+> > correct structure for drivers to describe their pin functions with. We
+> > also rework pinmux core to not duplicate memory used to store the
+> > pinfunctions unless they're allocated dynamically.
+> >
+> > First: provide the kmemdup_const() helper which only duplicates memory
+> > if it's not in the .rodata section. Then rework all pinctrl drivers tha=
+t
+> > instantiate objects of type struct function_desc as they should only be
+> > created by pinmux core. Next constify the return value of the accessor
+> > used to expose these structures to users and finally convert the
+> > pinfunction object within struct function_desc to a pointer and use
+> > kmemdup_const() to assign it. With this done proceed to add
+> > infrastructure for the GPIO pin function category and use it in Qualcom=
+m
+> > drivers. At the very end: make the Qualcomm pinmuxer strict.
 >
-
-Yes, your wording is much clearer=2E I will rephrase:
-
-The provided attributes appear in one of the two locations depending on us=
-age:
-
->>   1=2E On linedisp=2EN child devices (legacy linedisp_register())
->>   2=2E On the parent auxdisplay device (new linedisp_attach())
->> Functionality is identical in both modes=2E
->>=20
->> Existing consumers of linedisp_register() are unaffected=2E The new API
->> enables drivers like TM16XX to integrate 7-segment display functionalit=
-y
->> seamlessly within their LED class device hierarchy=2E
+> I read all this and do not understand why we take all this way,
+> Esp. see my Q in patch 16. Can we rather limit this to the controller
+> driver to decide and have it handle all the possible configurations,
+> muxing, etc?
 >
->=2E=2E=2E
+> I think what we are trying to do here is to delegate part of the
+> driver's work pin mux / pin control core. While it sounds like right
+> direction the implementation (design wise) seems to me unscalable.
 >
->> +struct linedisp_attachment {
->> +	struct list_head list;
->> +	struct device *device;
->> +	struct linedisp *linedisp;
->
->> +	bool owns_device;  /* true for child device mode, false for attached =
-mode */
->
->I would rename this to=20
->
->	bool attached; // with inverted logic
->
->or
->	bool mode; // with "default" (false) mode to be actually legacy one
->
->(so in both cases I think we want false for the legacy mode)=2E
->
-
-Understood=2E I will rename, invert logic and also document as kernel-doc =
-instead
-of inline comment=2E
-
->> +};
->
->=2E=2E=2E
->
->> +static DEFINE_SPINLOCK(linedisp_attachments_lock);
->
->Why spin lock and not mutex?
+> In any case first 12 patch (in case they are not regressing) are good
+> to go as soon as they can. I like the part of constification.
 >
 
-The attachment list operations are extremely lightweight (just adding/remo=
-ving
-list entries), making spinlock the optimal choice because:
-- Very short critical sections: Only list traversal and pointer assignment=
-s;
-  avoids context switching overhead for brief operations
-- No sleeping operations: No memory allocation or I/O within locked sectio=
-ns
-- Future-proof atomic context safety: Can be safely called from interrupt
-  handlers if needed
+I'm not sure how to rephrase it. Strict pinmuxers are already a thing,
+but on many platforms it's impossible to use them BECAUSE pinctrl
+doesn't care about what a function does semantically. It just so
+happens that some functions are GPIOs and as such can also be used by
+GPIOLIB. Except that if the pinmuxer is "strict", any gpiod_get() call
+will fail BECAUSE pinctrl does not know that a function called "gpio"
+is actually a GPIO and will say NO if anything tries to request a
+muxed pin. This (the function name) is just a string, it could as well
+be called "andy" for all pinctrl cares. This is why we're doing it at
+the pinctrl core level - because it will benefit many other platforms
+as Linus mentioned elsewhere - he has some other platforms lined up
+for a similar conversion. And also because it cannot be done at the
+driver level at the moment, it's the pinctrl core that says "NO" to
+GPIOLIB. I think you missed the entire point of this series.
 
->=2E=2E=2E
->
->> +/**
->> + * linedisp_attach - attach a character line display
->> + * @linedisp: pointer to character line display structure
->> + * @dev: pointer of the device to attach to
->> + * @num_chars: the number of characters that can be displayed
->> + * @ops: character line display operations
->> + *
->
->Can you add a description here, please? Important note that it should be =
-freed
->by the respective API afterwards=2E
->
-
-Yes, I will clarify that attach/register operations must be freed using
-their corresponding detach/unregister operations=2E
-
->> + * Return: zero on success, else a negative error code=2E
->> + */
->
->=2E=2E=2E
->
->> +	/* add attribute groups to target device */
->> +	err =3D device_add_groups(dev, linedisp_groups);
->> +	if (err)
->> +		goto out_del_attach;
->> +
->> +	/* display a default message */
->> +	err =3D linedisp_display(linedisp, LINEDISP_INIT_TEXT, -1);
->> +	if (err)
->> +		goto out_rem_groups;
->
->Can this be racy with user space? Once we publish attributes, the new
->message can be already issued and here it puts another message=2E
->OTOH this is done before device_add(), so the attributes are not visible
->until the device is added=2E
->
-
-This concern is perfectly valid=2E linedisp_attach() can and will be calle=
-d after
-device_add() which can be racy=2E In fact, current linedisp_attach() repli=
-cates
-the linedisp_register() logic which is also racy since it displays initial
-message after device_add()=2E It needs to be fixed in both attach/register=
- cases
-by first initializing the display message before calling
-device_add_groups()/device_add()=2E
-
->=2E=2E=2E
->
->> +void linedisp_detach(struct device *dev)
->> +{
->
->> +	struct linedisp *linedisp =3D delete_attachment(dev, false);
->> +
->> +	if (!linedisp)
->> +		return;
->
->Please, rewrite as
->
->	struct linedisp *linedisp;
->
->	linedisp =3D delete_attachment(dev, false);
->	if (!linedisp)
->		return;
->
-
-Acknowledged=2E I will separate assignment from declaration=2E
-
->> +	timer_delete_sync(&linedisp->timer);
->> +
->> +	device_remove_groups(dev, linedisp_groups);
->> +
->> +	kfree(linedisp->map);
->> +	kfree(linedisp->message);
->> +	kfree(linedisp->buf);
->> +}
->
-
+Bartosz
 
