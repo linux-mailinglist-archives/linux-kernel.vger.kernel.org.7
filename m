@@ -1,109 +1,174 @@
-Return-Path: <linux-kernel+bounces-796409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1147EB4007A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:28:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BFFB40072
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A64B25E582B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:22:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2CB5431DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57062F5484;
-	Tue,  2 Sep 2025 12:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE152C08DB;
+	Tue,  2 Sep 2025 12:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bOGDraZd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGb78nSj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5A4283FF1
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A452288C13;
+	Tue,  2 Sep 2025 12:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815619; cv=none; b=qgEbXeE79hxfmS2psC5GcZW3Myc9JjiaJV17F4u8FxWUMNHYS3WLlm8iR7JLuPsPrHFKeEyJaI6wvNJLUy2pBRoXfEd9w61xBiUxMnGF47JUltqIF2yXCEPavkWfwD65dcgGdXw7svfWFF5dmduWAoeEAt/zAt8JKD2jX85R8u0=
+	t=1756815705; cv=none; b=C0UM7gIWKTgVmi0qsDTYJ9P8ntQWLC8zYBMMGlYBe4ZY1DYAtxnVQnC+MVZT4kDkODOI0N+m1qLOoAsfgAOkv4Y/hLIfv209tUl8BHx02+MeimpS5+te0WiMfZFB+9Q+euJtOeLr2p7i1ZcWRuOLg3oCt6NKrkNfyGE+AaEDTAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815619; c=relaxed/simple;
-	bh=w1sPfj70OZMyCNthCSh4tLSSVvSVVQfwa3PIpM97PRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tkJroGQmFvGWmqJr9s68PaWS23ImBHV3G7lmGC+CfsOcWr/e9+H8msAd0XwGmlc4sIQYhOtOb671Sp/j2SAlcVUSszUqCJcTk5NKDwrrlTF2u1yy1HbeZTQexmJtqwnEuCJ2BGel3rsv44nw3PECR46BHxDRUuNH9dA1T4KMZEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bOGDraZd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1471FC4CEED;
-	Tue,  2 Sep 2025 12:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756815617;
-	bh=w1sPfj70OZMyCNthCSh4tLSSVvSVVQfwa3PIpM97PRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bOGDraZdGpH451WUrWLJGmEnX8DO9O82d5lyl8V7NuhR/Od49FaKruw8LUmefNCk3
-	 ZuTg+9F/1dxvjx9jtrurhRxAg9oeR4QFywUlQdw7yhmDod8k3QhKc7RZeFVZcRs/ul
-	 EGjFDhvVe8j+VZkl9mGXCW0d8R0ObPxikEeA4z+k=
-Date: Tue, 2 Sep 2025 14:20:14 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	Zijun Hu <zijun.hu@oss.qualcomm.com>
-Subject: Re: [PATCH] driver core: auxiliary bus: Optimize auxiliary_match_id()
-Message-ID: <2025090222-darn-tweet-739c@gregkh>
-References: <20250902-fix_auxbus-v1-1-9ba6d8aff027@oss.qualcomm.com>
+	s=arc-20240116; t=1756815705; c=relaxed/simple;
+	bh=Xi9w2U0e+LihW+mNY3AWJK5Jdc9jrdixQXdotyzWyfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Druf9bHLNux3ja6TM0MNtl76EFj9F1hs8tMLx4wzMSWG7lGEpxYrr+EFIahQ+2EC3nlez0HVpS8OUID6JGpNP5u9oXMjgu1aNrHYwwXteTs26+qvZUS5gLAQ8v2WsrzcFPOhmAayaDpQSCQMB6WKCW2hLAOHwa6iuOCNItPYSP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGb78nSj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BEFFC4CEED;
+	Tue,  2 Sep 2025 12:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756815703;
+	bh=Xi9w2U0e+LihW+mNY3AWJK5Jdc9jrdixQXdotyzWyfU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XGb78nSjyqEwWDPtWYjqcuclZAEgum8p0u/VNY8w+i1KpaD0C2eU7R3e3kJDoLmTE
+	 S2YjLdMMJ4xTracw8gkXaLrAVR+TCc7oO4LRXch9bQSZCH4jsuIF7g8bU0ARaxS4Hv
+	 V3ISsocEs9Q1EgNSpeMgwTO54MqHAo8nNpCRm3xjZouc2O/HAeoVeLQx58SHx9oDxB
+	 uFoOgmRFV56FKCQKmhMnmid5CLs86dRvcPDXK2d0S6Qik2HWJoCF1SSFDStWw/WkVe
+	 DIJKf8j7eM4vj0bjLQIWgB7OVTqAb6ILFoq/y+5Rv4C01N+e6UkUe49NFX+tFzpOBS
+	 N/hz2Fqgph2mA==
+Message-ID: <5ec3efce-653c-46c5-977f-5a46391e675f@kernel.org>
+Date: Tue, 2 Sep 2025 14:21:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902-fix_auxbus-v1-1-9ba6d8aff027@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 01/10] dt-bindings: net: pcs: renesas,rzn1-miic:
+ Document RZ/T2H and RZ/N2H SoCs
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250901224327.3429099-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250901224327.3429099-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250902-enlightened-hidden-copperhead-4eefdf@kuoka>
+ <CA+V-a8sSiNQ6W-ggmL8PP_G1sFq170DS1LJLFJs_WW0RC+XVEw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CA+V-a8sSiNQ6W-ggmL8PP_G1sFq170DS1LJLFJs_WW0RC+XVEw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 02, 2025 at 08:05:32PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <zijun.hu@oss.qualcomm.com>
+On 02/09/2025 14:17, Lad, Prabhakar wrote:
+>>>    power-domains:
+>>>      maxItems: 1
+>>> @@ -60,11 +77,11 @@ patternProperties:
+>>>      properties:
+>>>        reg:
+>>>          description: MII Converter port number.
+>>> -        enum: [1, 2, 3, 4, 5]
+>>
+>> Why?
+>>
+> If I keep this here and just adjust the below for RZ/T2H case I do get errors:
 > 
-> Variable @match_size is fixed in auxiliary_match_id().
+> reg:
+>   enum: [0, 1, 2, 3]
 > 
-> Optimize the function by moving the logic calculating the variable
-> out of the for loop.
-
-Optimize it how?  Does this actually result in a difference somehow, if
-so, what?
-
-Please be specific.
-
-> Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
-> ---
->  drivers/base/auxiliary.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-> index 12ffdd8437567f282374bbf3775d9de7ca0dc4c7..9a53ada043045031e565ade57fd7ba781e7d20ea 100644
-> --- a/drivers/base/auxiliary.c
-> +++ b/drivers/base/auxiliary.c
-> @@ -171,14 +171,14 @@
->  static const struct auxiliary_device_id *auxiliary_match_id(const struct auxiliary_device_id *id,
->  							    const struct auxiliary_device *auxdev)
->  {
-> -	for (; id->name[0]; id++) {
-> -		const char *p = strrchr(dev_name(&auxdev->dev), '.');
-> -		int match_size;
-> +	const char *p = strrchr(dev_name(&auxdev->dev), '.');
-> +	int match_size;
->  
-> -		if (!p)
-> -			continue;
-> -		match_size = p - dev_name(&auxdev->dev);
-> +	if (!p)
-> +		return NULL;
-> +	match_size = p - dev_name(&auxdev->dev);
->  
-> +	for (; id->name[0]; id++) {
->  		/* use dev_name(&auxdev->dev) prefix before last '.' char to match to */
->  		if (strlen(id->name) == match_size &&
->  		    !strncmp(dev_name(&auxdev->dev), id->name, match_size))
+> arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: ethss@80110000
+> (renesas,r9a09g077-miic): mii-conv@0:reg:0:0: 0 is not one of [1, 2,
+> 3, 4, 5]
+>     from schema $id:
+> http://devicetree.org/schemas/net/pcs/renesas,rzn1-miic.yaml#
 > 
+> Any pointers on how to handle this case?
 
-thanks,
+So please grow this with '0' to cover the widest choices, which you then
+narrow in individual if:then:.
 
-greg k-h
+The trouble with your if:then: is that they are huge and they also nest
+patterns and if:then:.
+
+This often is less maintainable, so maybe you should consider having two
+separate binding files? You can have also common-shared properties.
+Anyway, I am fine with current approach of one binding as well, so up to
+you folks.
+
+
+> 
+>>>
+>>>        renesas,miic-input:
+>>>          description: Converter input port configuration. This value should use
+>>> -          one of the values defined in dt-bindings/net/pcs-rzn1-miic.h.
+>>> +          one of the values defined in dt-bindings/net/pcs-rzn1-miic.h for RZ/N1 SoC
+>>> +          and include/dt-bindings/net/pcs-rzt2h-miic.h for RZ/{T2H, N2H} SoCs.
+>>>          $ref: /schemas/types.yaml#/definitions/uint32
+>>>
+
+
+
+Best regards,
+Krzysztof
 
