@@ -1,583 +1,462 @@
-Return-Path: <linux-kernel+bounces-797358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C846B40F5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90494B40F60
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81E01B25C05
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:27:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EBD21B25EED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0663352062;
-	Tue,  2 Sep 2025 21:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ECF3570A7;
+	Tue,  2 Sep 2025 21:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Z8CYi0Il"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBR7ss7n"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B8D310652
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756848449; cv=fail; b=rXO0JWKexeBQ1mdTVcozx9EWGe42d1TP1tfVCCjuZ5xPbVEsfRqDMo9BliLBS8WAYnCHLgoMKe1MRI88IhN2WfvOQO6jvHr/dPf7c5Mr+GO6wIJiUPLEHsAnulbYJ97m8mNRABX72wRuunIZePIscJnJGVde1TiYO0fdWg8Ef6g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756848449; c=relaxed/simple;
-	bh=h1LIUkmBV2qTe1cfrD3z7VxcZ8EjRicb0Dx1jcgNhoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UOuz2zDPz3Lu/uW43lR59lgl+ZwOoHUpKrzZq2C7pWNHxyJ+Z4bmXjFS5MG2RJDF7raXd7sWY0OXuQE8kn0fVrKmQ+RRgClB5zBEg2ApCgSEkuC4bDHJzwbP6acLmqUe0xiBItFC7aLdTQCzDS2cfbOhNhAetFsTB5OpALvI70s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Z8CYi0Il; arc=fail smtp.client-ip=40.107.244.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OYbVzs2PQuZkwatjMUQtoNh4KyAlg1hrYr+jBH8dM6b5UlxkulWMinOnkXI0seFd3QhTuDfGditdjkAScY3zEiYTp+q1Ebca18Qs0BcMWnFnGJRsncwkv0O+Cp4M8FiU/oMRex5OvIoCgYHygRoyorg8WMHAWX4L9UxX1u4yxWK1YmA8plfphZUPPPZnQlV6TJaZssqVldTFj7qjxj3/gQpyfUGHmnRPm8blMfXveuGRgiqFiOHcXtbeyxc7c1Rbe6hhQi1NzXqHdH1KLA6R6Nrfud508PqAOYaA6qBv0nCkdKSOFd4Z62PtW1KeVERhx2ElXNsVs8rvdIiNMArAbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DUHKbDYQB3LIFFB3k68x8t3I/tre1SlC/Eyu2tOKAmo=;
- b=XinC4GCS7RCrnope/XfUx0I8Xnca3PFxVNGEvNHCAk4qOyitBxlpSebmG12rwITtEm6d1NAwmy42IDoxP1z4vri8+vv/ivwGKXwIQhjO5zeqaDA8OZWj3R1QSsXPXh2Z5bIPzCgVayIV4Fk0AYT4z+G/Ej04170e9tT+EfzSWJ3wanvVZx4CUXOW1D4j8myVVM5R81HYtUjw1jryUytgWt+JEOD2dfnL67RS4quXp1dFvdg67olqyUcjx3x/wzErDMpVKlFcTNWhQQQwuTNSDCXVeobuLXNrKuh7xYh7DOcBmTSpq27towx/EER9r5C+c+eWJzKUIBZcrWsXTTvN2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DUHKbDYQB3LIFFB3k68x8t3I/tre1SlC/Eyu2tOKAmo=;
- b=Z8CYi0IlaO80+nc7FoaVr7bYMv7fMtnvSvMwXM6hlO5o8g7QjfWTgfGTp31k9R9V/BGtVoK05O0FfRlSODonrSQ5yAPLtckanEaz5LO6XZdkBV4kLsEHQN1NPE4sc/b8YvCobsYeVdXi1IZ89cRIHn39w/S8FoiQmV5ebH9P13w=
-Received: from SJ0PR13CA0103.namprd13.prod.outlook.com (2603:10b6:a03:2c5::18)
- by SJ5PPFCB5E1B8F5.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::9a1) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.29; Tue, 2 Sep
- 2025 21:27:19 +0000
-Received: from SA2PEPF000015CA.namprd03.prod.outlook.com
- (2603:10b6:a03:2c5:cafe::28) by SJ0PR13CA0103.outlook.office365.com
- (2603:10b6:a03:2c5::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.16 via Frontend Transport; Tue,
- 2 Sep 2025 21:27:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF000015CA.mail.protection.outlook.com (10.167.241.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9094.14 via Frontend Transport; Tue, 2 Sep 2025 21:27:19 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
- 2025 16:27:18 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Tue, 2 Sep
- 2025 14:27:18 -0700
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 2 Sep 2025 16:27:17 -0500
-Message-ID: <e39cd90c-90c8-4ec3-aa62-7621e1bcb1ee@amd.com>
-Date: Tue, 2 Sep 2025 14:27:17 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A7784039;
+	Tue,  2 Sep 2025 21:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756848570; cv=none; b=ju2MAd+vvTVz74PA9cpj/WOmKzMuwFZb3+xNoIuiyznt9YNxuleI36gAvFI0YjOi9eXjyfeJtL6t71eovpc7ZmA0x3zrGgGqb3JNJwHixbtY5nUj6WTphyytU9Uk/1zNlgfrBqk+uM8zketp5vt4ZMZ5xzqEdZ+3HcuMIobyVhI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756848570; c=relaxed/simple;
+	bh=EZxlGKTX0H5kessk/Ht2RwHDcD9Badc1OzG0bs1xumA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FQJiCq8s/v7TjC+MWmxvVtrxA2FQEINMCnwmbbQOTbLVdaHtVXZi61fyRFzIQdop1kfD1f6N4SDrqR09HntAxOuYtJyxKlvmLrhOHMdpS3KYFokHEaGV7Nv6r08Li6xiSw+MHcA/TuMvfAsyGVCu28h7TZGkAd8RFkvJm5FK+7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBR7ss7n; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b8b7ac427so16956155e9.2;
+        Tue, 02 Sep 2025 14:29:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756848567; x=1757453367; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zO4HjeCrOISXZJlWiM9FBrdzfDeCFxXx2k4+Z/Wy3RM=;
+        b=WBR7ss7nhYMl1zks75dGBDQViN6lS4viADkmki+GjuSWCRX8tW6O/E7AVaVRLP08k5
+         7Q0hWWfpkoh1DSXLVuppctrYBRoDoZ/qafJgJ5LuimU6utCpCdjadscTMUI4sid2j4n0
+         +6M0c6aEW7pV85Ul707lqFWP06TGbRRTG6lNUBkyILgDl5oQ6o9Lw2e/r1s86MHP1x7X
+         jWgQEAh64Ja+UmHhqkA96tWNt0WTmH6gohqt/crry3b2cbNBqNLstXap/rhAwMKDLgA2
+         uHoebMO8KMgVFEq+EANQfd950FmVR5Mt9xPaWqatgB6a1BfYuB+xz60PBaYdaA+mA2rO
+         +7gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756848567; x=1757453367;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zO4HjeCrOISXZJlWiM9FBrdzfDeCFxXx2k4+Z/Wy3RM=;
+        b=MVZMBu/ibgH8Ib7GHJvR/RR5hfHlZboijMb1qsZsSPLYfSf36+n8JBIkXKFyuPqlfu
+         k/2fNt+EenA6/APd4y3JlZwcPDRUwZnUuilh6ovEo0nu1eKd7OGSQp6AMmCfcyigYPkH
+         6DUnu9QaC/s8VMKPWpJXfp98zCvcga3oyHmEE5adayJorb4BgGCMeeE/DAkAVoBiBp27
+         CgEoQnQrljm4H4d2+rq5oR/1YMsOQoyTGVffU9i9FDl08WGVcq5YxUDsugXrWNz8KNX2
+         efEffrnoIaAxUQyTqJavcc+cN1lzit6DFyxqpUhBm8fdfd9jVJHggeIQLhPjdarIExn1
+         XBvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHxboSJzDSunwUzaLXGHr3W8HSkyzXQfZorQkYiZ1AifqCKatVY5vKc2/FVtHgoi1OQqTrWpBxsRXGBC0t@vger.kernel.org, AJvYcCVi6Gn3qH8/xoZdUSBYjDwawC2cPfP9zMgZ9PvTbeHrP86nZCdujjMHCd8WHaXwEKWbZgR8qDic+GKC@vger.kernel.org, AJvYcCWeBPph9bDS1X75mjqw+jveGwoMMS064hSLU0BH8k2pQJ/DapS1JY2EKezkJTYr235XzA0M9ltN3CaY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz66x0O6tFG0eJBatHtmHL6tasIEA4JK8f4ecRYmH6DsHuG+Sk6
+	Fo5CN96e3NKEfE9lB6F0omPEB1WBTe7GYZNDzi/cEoFu/E4u0V92wUY=
+X-Gm-Gg: ASbGncuIfUl/OaCVs9uA1xCeALeX7Wlk6jndWLUvgfMPSQDKzgNo2enaoBH2xU2QTES
+	p8Cahs34ma0rDz47jdShSxlSDm8aEv/4QXali0oDuSKglrmb9j5EVsE9x5DQSTURq9JJ6tycvr+
+	/sHt62rQ8w9DhjKFy/tnSSlV7n+kWh3993aiKCrWKpKmZwit0WiKi65ocad06DXtDdppdrfpyaC
+	Sd7xRZKIgCNTl4h8X0F0Tx0EYDbzUuijeWc4HzlTqZPb1NtXvNZ0J9MaZjXv02HRRH9jl7iwUHR
+	H2Odv6mLduvcyB+hxOU+7IALweCtsQzqIXMueZjx9WSXkWmU8VAaVb5/53R92usqYrx6s4qaSV1
+	N3H3HxPXdMjwz9XaPnj2ja1Da+eLdqUkwOyZonQOqUGqEMm0x00w=
+X-Google-Smtp-Source: AGHT+IG0deGv61kh0jZMa+aYBded7+4j0TmirKkWGpEYzZqrbh/39kOqDtc9WiBQh75zVmPKyspdYw==
+X-Received: by 2002:a05:600c:4fcd:b0:45b:7185:9e5 with SMTP id 5b1f17b1804b1-45b85525cddmr117491975e9.5.1756848566551;
+        Tue, 02 Sep 2025 14:29:26 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:e487:224f:7287:75b3:5214:63cf:2c39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e898b99sm211255195e9.19.2025.09.02.14.29.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 14:29:26 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: lee@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	andreas@kemnade.info
+Cc: conor+dt@kernel.org,
+	ukleinek@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	shuah@kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH v5] dt-bindings: mfd: twl: Add missing sub-nodes for TWL4030 & TWL603x
+Date: Tue,  2 Sep 2025 23:29:21 +0200
+Message-Id: <20250902212921.89759-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V3] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
-Content-Language: en-US
-To: Alex Deucher <alexdeucher@gmail.com>
-CC: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<jacek.lawrynowicz@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
-	<mario.limonciello@amd.com>, <maciej.falkowski@linux.intel.com>
-References: <20250902175034.2056708-1-lizhi.hou@amd.com>
- <CADnq5_MvdU0v7uF8hvA=kkopGAEA=M4DDw8wAGSQMnihfSnKRw@mail.gmail.com>
- <1f4a1d11-e187-a73f-d876-f72a7f799eed@amd.com>
- <CADnq5_NH0yEBprBumF3rvdPJVtCXpR-XLgBkCVV7sOTqnu6GPw@mail.gmail.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <CADnq5_NH0yEBprBumF3rvdPJVtCXpR-XLgBkCVV7sOTqnu6GPw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CA:EE_|SJ5PPFCB5E1B8F5:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91f0865d-999a-404e-5df2-08ddea677f21
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cXMzWjBkY2lyYWZBSFhzQmV4T1lPbXEwZzM1RERtcVoxYUhqSjF2RUs1QW9L?=
- =?utf-8?B?eGZDQVlveUJoTzdaMWdhaTEzRXhRbnQ4VUN5WnpHbUZMTzJlVDNPR0JENm5S?=
- =?utf-8?B?Z1FUMmhQMmgyUWIvalkzZFVUZWp4NFhkMjhjRDJXby8wM1ZxTWFrZWV1MWhO?=
- =?utf-8?B?WHo2d2xMSHNmNWdORit6RlVMZVlSbWNuSXlVOE9ERVdIbVhhTUpwcmxWZTRC?=
- =?utf-8?B?UlFiKzUrcnNMRERDQU41M1lCV3JJY3AwanArVlNOdXdIMDNVRDhlRWM3V3FV?=
- =?utf-8?B?eWFDR29jOVVOQkRHVDlRYVNNTE00YjVVWWFhMWR6bGdhc2hjQndmQmx0dko5?=
- =?utf-8?B?KzlrWVAvY3YzMlJFRjA4NlJLWENmV2RhQUFCK0laQ1U5TnFXQ3dPSFQ4RjhI?=
- =?utf-8?B?VGxFc0JnbXlQbXFCdjhNTXEydy9GUW54bDVSTzQwNFZpKzlOc0xQNVFuNnRZ?=
- =?utf-8?B?QktFWm5VR1ZVSkQ5T1hYbCtXT1JFWFQyZGhCY2xPaEZGSCtXM001WUVIeWRz?=
- =?utf-8?B?UFI2ZXlvNFptR1NHMzRJV25QR01xc2tEOUZ1a2RuYWFXU1BrZ3poWFJvRWhV?=
- =?utf-8?B?eEVhT2pwNVFOQ2dOZWRrb3Rlekxmc0lMQnhCbFJRb3JhbW9WVWIvRjZXMXVV?=
- =?utf-8?B?RGQvZTBLYXQzNGVySjNlN2R6b0NNa3FPMGU1d2kwWjNaa3dJL3lEcnhvcUtY?=
- =?utf-8?B?VUFLSDZWU1VvcjRNRzNXMHRhQ3lYRitKZllab0orby8xajVJM1dtelFHM1NQ?=
- =?utf-8?B?czN0WHZ1MjJ1SndMZHJBZUlJZHR4WFRKMENxczYydndPV1dvd08zN2U2KzdW?=
- =?utf-8?B?Q1NBZnRGOXl2TSt3ejRZRGR5Z2FmaW1NbDBHZ3o5SHI4WTlkRHEyY3ZOMHJZ?=
- =?utf-8?B?aFhhOFl3WDZTbHhXSThtbXpURWRoK29ydDRNbjJ5Y0tiREZJMG1ySmNMOHgy?=
- =?utf-8?B?ZzBDV0lhbHpnanRyU3ltcWpQbHRxT00vOU5mUnpVQ0lGOHhIZU9IUUFLSE1s?=
- =?utf-8?B?WXB4ak1XQ2ZBTVhycmFqZUp6Y2crVER1d3FVcnZrckxubGc5SFU1OVpibitJ?=
- =?utf-8?B?OXNidFlYT2Q5bkt5S1EyVHNTUGJxQ09JbUh5OFBYSm56Z2hQcFNqellCRlZY?=
- =?utf-8?B?UkxYQzR6OFJ2NW5ONU4xTWsxaFR0U1lJMWlKMzN1dFUzUlMweXhpYVlvR0Ja?=
- =?utf-8?B?WFkzMG9GT1FVOWd5YnFFcmZyOFhVN2tFaEV6c3RVeWpmeFptcFMyYUswUENm?=
- =?utf-8?B?cndmWW5TRXNIUHQ2RFZ6bHlSTEFFSU1GdmV5UVAwRW5iTWVyMXZpcVc1WU1r?=
- =?utf-8?B?M250V21WZ2ZVelZFME9ZUTBZMXpVdkZBZXE3V1VIUHZ6MVpTVkN2Yll0aXVu?=
- =?utf-8?B?T1pnL0JxaGRDU0UrMlFsTWJiSXh5T0JsbElPR2oxOHg0SmRjMVU3VUxQT2tk?=
- =?utf-8?B?ZWZ1ajdGblhhWDcycjFjMGZBdGJ6SXYwbDE3enlid2hURzQ1cUxHVnFGVTd2?=
- =?utf-8?B?VjAwT2JJZzNhRkxJdWZsUVVOTWExMzU0U3pueW03VGdkYXh4cEdKZHNYRjlQ?=
- =?utf-8?B?bCt1WFZlR3ZKYmRzOXU4UytTR1h2Rys3YW8vdXBYTVZhejhxZWUzRGsvK1Rp?=
- =?utf-8?B?ekpjSituL0d6TWl2aU5ZaFpEN2pWSzcyVHVxd0xEazduZEdsZWU2SmpsOXVh?=
- =?utf-8?B?MWVsTkZCZG5wRjF5dVFRWjQ4dW9FNnhiUTAxYVlVZnNzblk5NU8xMDU5NVN1?=
- =?utf-8?B?d1RKUW9BZm1ZTVdBcHdxa1Uyc3VmMGpRL0trS3p3RlI1MDY2Z3F6NzZtYUE4?=
- =?utf-8?B?aU1rQnRlYWtXSDFiYTA2eUo1cEk2VFJ2Z2RXdzJWTG5Kc2d6aWpTbVRjRE5o?=
- =?utf-8?B?c0RpakFKa2hhV2puNDZENGVZYyt2NEVSZkpsUytWeGxQVDVGRmY4cW1GM1Vh?=
- =?utf-8?B?SDJ0TUlWRklYUjRIZ1BhTzE5MEd0eFNuTGtJWjFzVFdTNDN5eVhjTFNmbzU5?=
- =?utf-8?Q?bDTyws6tL1+bo9dU0/qj4Qda7KSTzA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 21:27:19.1278
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91f0865d-999a-404e-5df2-08ddea677f21
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CA.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFCB5E1B8F5
 
+Update the main TI TWL-family binding to be self-contained and to fix
+pre-existing validation errors.
 
-On 9/2/25 13:15, Alex Deucher wrote:
-> On Tue, Sep 2, 2025 at 3:58 PM Lizhi Hou <lizhi.hou@amd.com> wrote:
->>
->> On 9/2/25 12:48, Alex Deucher wrote:
->>> On Tue, Sep 2, 2025 at 2:09 PM Lizhi Hou <lizhi.hou@amd.com> wrote:
->>>> Add interface for applications to get information array. The application
->>>> provides a buffer pointer along with information type, maximum number of
->>>> entries and maximum size of each entry. The buffer may also contain match
->>>> conditions based on the information type. After the ioctl completes, the
->>>> actual number of entries and entry size are returned.
->>>>
->>>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
->>>> Link: https://lore.kernel.org/r/20250827203031.1512508-1-lizhi.hou@amd.com
->>> Do you have a link to the proposed userspace which uses this new IOCTL?
->> Yes. It is used by runtime library:
->>
->> https://github.com/amd/xdna-driver/blob/main/src/shim/host/platform_host.cpp#L337
-> You may want to throw that link in your commit message.
+Following maintainer feedback, the simple power and PWM bindings are
+now defined directly within this file, and their legacy .txt files
+are removed.
 
-Sure. I will create V4 patch and include this.
+To ensure future patches are bisectable, child nodes whose bindings
+are in other patches (audio, keypad, usb, etc.) are now defined using
+a flexible 'additionalProperties: true' pattern. This removes hard
+dependencies between the MFD and subsystem bindings.
 
-Thanks
+The complete dtbs_check for this binding is clean except for two
+warnings originating from pre-existing bugs in the OMAP DTS files,
+for which fixes have already been submitted separately [1][2].
 
-Lizhi
+Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
 
->
-> Alex
->
->>
->> Lizhi
->>
->>> Alex
->>>
->>>> ---
->>>>    drivers/accel/amdxdna/aie2_pci.c        | 116 ++++++++++++++++++------
->>>>    drivers/accel/amdxdna/amdxdna_pci_drv.c |  30 ++++++
->>>>    drivers/accel/amdxdna/amdxdna_pci_drv.h |   1 +
->>>>    include/uapi/drm/amdxdna_accel.h        | 111 +++++++++++++++++++++++
->>>>    4 files changed, 232 insertions(+), 26 deletions(-)
->>>>
->>>> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
->>>> index 7a3449541107..87c425e3d2b9 100644
->>>> --- a/drivers/accel/amdxdna/aie2_pci.c
->>>> +++ b/drivers/accel/amdxdna/aie2_pci.c
->>>> @@ -785,11 +785,12 @@ static int aie2_get_clock_metadata(struct amdxdna_client *client,
->>>>
->>>>    static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
->>>>    {
->>>> -       struct amdxdna_drm_query_hwctx *tmp __free(kfree) = NULL;
->>>> -       struct amdxdna_drm_get_info *get_info_args = arg;
->>>> -       struct amdxdna_drm_query_hwctx __user *buf;
->>>> +       struct amdxdna_drm_hwctx_entry *tmp __free(kfree) = NULL;
->>>> +       struct amdxdna_drm_get_array *array_args = arg;
->>>> +       struct amdxdna_drm_hwctx_entry __user *buf;
->>>> +       u32 size;
->>>>
->>>> -       if (get_info_args->buffer_size < sizeof(*tmp))
->>>> +       if (!array_args->num_element)
->>>>                   return -EINVAL;
->>>>
->>>>           tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
->>>> @@ -802,14 +803,23 @@ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
->>>>           tmp->num_col = hwctx->num_col;
->>>>           tmp->command_submissions = hwctx->priv->seq;
->>>>           tmp->command_completions = hwctx->priv->completed;
->>>> -
->>>> -       buf = u64_to_user_ptr(get_info_args->buffer);
->>>> -
->>>> -       if (copy_to_user(buf, tmp, sizeof(*tmp)))
->>>> +       tmp->pasid = hwctx->client->pasid;
->>>> +       tmp->priority = hwctx->qos.priority;
->>>> +       tmp->gops = hwctx->qos.gops;
->>>> +       tmp->fps = hwctx->qos.fps;
->>>> +       tmp->dma_bandwidth = hwctx->qos.dma_bandwidth;
->>>> +       tmp->latency = hwctx->qos.latency;
->>>> +       tmp->frame_exec_time = hwctx->qos.frame_exec_time;
->>>> +       tmp->state = AMDXDNA_HWCTX_STATE_ACTIVE;
->>>> +
->>>> +       buf = u64_to_user_ptr(array_args->buffer);
->>>> +       size = min(sizeof(*tmp), array_args->element_size);
->>>> +
->>>> +       if (copy_to_user(buf, tmp, size))
->>>>                   return -EFAULT;
->>>>
->>>> -       get_info_args->buffer += sizeof(*tmp);
->>>> -       get_info_args->buffer_size -= sizeof(*tmp);
->>>> +       array_args->buffer += size;
->>>> +       array_args->num_element--;
->>>>
->>>>           return 0;
->>>>    }
->>>> @@ -817,23 +827,24 @@ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
->>>>    static int aie2_get_hwctx_status(struct amdxdna_client *client,
->>>>                                    struct amdxdna_drm_get_info *args)
->>>>    {
->>>> +       struct amdxdna_drm_get_array array_args;
->>>>           struct amdxdna_dev *xdna = client->xdna;
->>>> -       struct amdxdna_drm_get_info info_args;
->>>>           struct amdxdna_client *tmp_client;
->>>>           int ret;
->>>>
->>>>           drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
->>>>
->>>> -       info_args.buffer = args->buffer;
->>>> -       info_args.buffer_size = args->buffer_size;
->>>> -
->>>> +       array_args.element_size = sizeof(struct amdxdna_drm_query_hwctx);
->>>> +       array_args.buffer = args->buffer;
->>>> +       array_args.num_element = args->buffer_size / array_args.element_size;
->>>>           list_for_each_entry(tmp_client, &xdna->client_list, node) {
->>>> -               ret = amdxdna_hwctx_walk(tmp_client, &info_args, aie2_hwctx_status_cb);
->>>> +               ret = amdxdna_hwctx_walk(tmp_client, &array_args,
->>>> +                                        aie2_hwctx_status_cb);
->>>>                   if (ret)
->>>>                           break;
->>>>           }
->>>>
->>>> -       args->buffer_size = (u32)(info_args.buffer - args->buffer);
->>>> +       args->buffer_size -= (u32)(array_args.buffer - args->buffer);
->>>>           return ret;
->>>>    }
->>>>
->>>> @@ -877,6 +888,58 @@ static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_i
->>>>           return ret;
->>>>    }
->>>>
->>>> +static int aie2_query_ctx_status_array(struct amdxdna_client *client,
->>>> +                                      struct amdxdna_drm_get_array *args)
->>>> +{
->>>> +       struct amdxdna_drm_get_array array_args;
->>>> +       struct amdxdna_dev *xdna = client->xdna;
->>>> +       struct amdxdna_client *tmp_client;
->>>> +       int ret;
->>>> +
->>>> +       drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
->>>> +
->>>> +       array_args.element_size = min(args->element_size,
->>>> +                                     sizeof(struct amdxdna_drm_hwctx_entry));
->>>> +       array_args.buffer = args->buffer;
->>>> +       array_args.num_element = args->num_element * args->element_size /
->>>> +                               array_args.element_size;
->>>> +       list_for_each_entry(tmp_client, &xdna->client_list, node) {
->>>> +               ret = amdxdna_hwctx_walk(tmp_client, &array_args,
->>>> +                                        aie2_hwctx_status_cb);
->>>> +               if (ret)
->>>> +                       break;
->>>> +       }
->>>> +
->>>> +       args->element_size = array_args.element_size;
->>>> +       args->num_element = (u32)((array_args.buffer - args->buffer) /
->>>> +                                 args->element_size);
->>>> +
->>>> +       return ret;
->>>> +}
->>>> +
->>>> +static int aie2_get_array(struct amdxdna_client *client,
->>>> +                         struct amdxdna_drm_get_array *args)
->>>> +{
->>>> +       struct amdxdna_dev *xdna = client->xdna;
->>>> +       int ret, idx;
->>>> +
->>>> +       if (!drm_dev_enter(&xdna->ddev, &idx))
->>>> +               return -ENODEV;
->>>> +
->>>> +       switch (args->param) {
->>>> +       case DRM_AMDXDNA_HW_CONTEXT_ALL:
->>>> +               ret = aie2_query_ctx_status_array(client, args);
->>>> +               break;
->>>> +       default:
->>>> +               XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
->>>> +               ret = -EOPNOTSUPP;
->>>> +       }
->>>> +       XDNA_DBG(xdna, "Got param %d", args->param);
->>>> +
->>>> +       drm_dev_exit(idx);
->>>> +       return ret;
->>>> +}
->>>> +
->>>>    static int aie2_set_power_mode(struct amdxdna_client *client,
->>>>                                  struct amdxdna_drm_set_state *args)
->>>>    {
->>>> @@ -926,15 +989,16 @@ static int aie2_set_state(struct amdxdna_client *client,
->>>>    }
->>>>
->>>>    const struct amdxdna_dev_ops aie2_ops = {
->>>> -       .init           = aie2_init,
->>>> -       .fini           = aie2_fini,
->>>> -       .resume         = aie2_hw_resume,
->>>> -       .suspend        = aie2_hw_suspend,
->>>> -       .get_aie_info   = aie2_get_info,
->>>> -       .set_aie_state  = aie2_set_state,
->>>> -       .hwctx_init     = aie2_hwctx_init,
->>>> -       .hwctx_fini     = aie2_hwctx_fini,
->>>> -       .hwctx_config   = aie2_hwctx_config,
->>>> -       .cmd_submit     = aie2_cmd_submit,
->>>> +       .init = aie2_init,
->>>> +       .fini = aie2_fini,
->>>> +       .resume = aie2_hw_resume,
->>>> +       .suspend = aie2_hw_suspend,
->>>> +       .get_aie_info = aie2_get_info,
->>>> +       .set_aie_state = aie2_set_state,
->>>> +       .hwctx_init = aie2_hwctx_init,
->>>> +       .hwctx_fini = aie2_hwctx_fini,
->>>> +       .hwctx_config = aie2_hwctx_config,
->>>> +       .cmd_submit = aie2_cmd_submit,
->>>>           .hmm_invalidate = aie2_hmm_invalidate,
->>>> +       .get_array = aie2_get_array,
->>>>    };
->>>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
->>>> index 8ef5e4f27f5e..0a1fd55e745e 100644
->>>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
->>>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
->>>> @@ -26,6 +26,13 @@ MODULE_FIRMWARE("amdnpu/17f0_10/npu.sbin");
->>>>    MODULE_FIRMWARE("amdnpu/17f0_11/npu.sbin");
->>>>    MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
->>>>
->>>> +/*
->>>> + * 0.0: Initial version
->>>> + * 0.1: Support getting all hardware contexts by DRM_IOCTL_AMDXDNA_GET_ARRAY
->>>> + */
->>>> +#define AMDXDNA_DRIVER_MAJOR           0
->>>> +#define AMDXDNA_DRIVER_MINOR           1
->>>> +
->>>>    /*
->>>>     * Bind the driver base on (vendor_id, device_id) pair and later use the
->>>>     * (device_id, rev_id) pair as a key to select the devices. The devices with
->>>> @@ -164,6 +171,26 @@ static int amdxdna_drm_get_info_ioctl(struct drm_device *dev, void *data, struct
->>>>           return ret;
->>>>    }
->>>>
->>>> +static int amdxdna_drm_get_array_ioctl(struct drm_device *dev, void *data,
->>>> +                                      struct drm_file *filp)
->>>> +{
->>>> +       struct amdxdna_client *client = filp->driver_priv;
->>>> +       struct amdxdna_dev *xdna = to_xdna_dev(dev);
->>>> +       struct amdxdna_drm_get_array *args = data;
->>>> +       int ret;
->>>> +
->>>> +       if (!xdna->dev_info->ops->get_array)
->>>> +               return -EOPNOTSUPP;
->>>> +
->>>> +       if (args->pad || !args->num_element || !args->element_size)
->>>> +               return -EINVAL;
->>>> +
->>>> +       mutex_lock(&xdna->dev_lock);
->>>> +       ret = xdna->dev_info->ops->get_array(client, args);
->>>> +       mutex_unlock(&xdna->dev_lock);
->>>> +       return ret;
->>>> +}
->>>> +
->>>>    static int amdxdna_drm_set_state_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
->>>>    {
->>>>           struct amdxdna_client *client = filp->driver_priv;
->>>> @@ -195,6 +222,7 @@ static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
->>>>           DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, amdxdna_drm_submit_cmd_ioctl, 0),
->>>>           /* AIE hardware */
->>>>           DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 0),
->>>> +       DRM_IOCTL_DEF_DRV(AMDXDNA_GET_ARRAY, amdxdna_drm_get_array_ioctl, 0),
->>>>           DRM_IOCTL_DEF_DRV(AMDXDNA_SET_STATE, amdxdna_drm_set_state_ioctl, DRM_ROOT_ONLY),
->>>>    };
->>>>
->>>> @@ -218,6 +246,8 @@ const struct drm_driver amdxdna_drm_drv = {
->>>>           .fops = &amdxdna_fops,
->>>>           .name = "amdxdna_accel_driver",
->>>>           .desc = "AMD XDNA DRM implementation",
->>>> +       .major = AMDXDNA_DRIVER_MAJOR,
->>>> +       .minor = AMDXDNA_DRIVER_MINOR,
->>>>           .open = amdxdna_drm_open,
->>>>           .postclose = amdxdna_drm_close,
->>>>           .ioctls = amdxdna_drm_ioctls,
->>>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
->>>> index b6b3b424d1d5..72d6696d49da 100644
->>>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
->>>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
->>>> @@ -58,6 +58,7 @@ struct amdxdna_dev_ops {
->>>>           int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
->>>>           int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
->>>>           int (*set_aie_state)(struct amdxdna_client *client, struct amdxdna_drm_set_state *args);
->>>> +       int (*get_array)(struct amdxdna_client *client, struct amdxdna_drm_get_array *args);
->>>>    };
->>>>
->>>>    /*
->>>> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
->>>> index ce523e9ccc52..a1fb9785db77 100644
->>>> --- a/include/uapi/drm/amdxdna_accel.h
->>>> +++ b/include/uapi/drm/amdxdna_accel.h
->>>> @@ -34,6 +34,7 @@ enum amdxdna_drm_ioctl_id {
->>>>           DRM_AMDXDNA_EXEC_CMD,
->>>>           DRM_AMDXDNA_GET_INFO,
->>>>           DRM_AMDXDNA_SET_STATE,
->>>> +       DRM_AMDXDNA_GET_ARRAY = 10,
->>>>    };
->>>>
->>>>    /**
->>>> @@ -455,6 +456,112 @@ struct amdxdna_drm_get_info {
->>>>           __u64 buffer; /* in/out */
->>>>    };
->>>>
->>>> +#define AMDXDNA_HWCTX_STATE_IDLE       0
->>>> +#define AMDXDNA_HWCTX_STATE_ACTIVE     1
->>>> +
->>>> +/**
->>>> + * struct amdxdna_drm_hwctx_entry - The hardware context array entry
->>>> + */
->>>> +struct amdxdna_drm_hwctx_entry {
->>>> +       /** @context_id: Context ID. */
->>>> +       __u32 context_id;
->>>> +       /** @start_col: Start AIE array column assigned to context. */
->>>> +       __u32 start_col;
->>>> +       /** @num_col: Number of AIE array columns assigned to context. */
->>>> +       __u32 num_col;
->>>> +       /** @hwctx_id: The real hardware context id. */
->>>> +       __u32 hwctx_id;
->>>> +       /** @pid: ID of process which created this context. */
->>>> +       __s64 pid;
->>>> +       /** @command_submissions: Number of commands submitted. */
->>>> +       __u64 command_submissions;
->>>> +       /** @command_completions: Number of commands completed. */
->>>> +       __u64 command_completions;
->>>> +       /** @migrations: Number of times been migrated. */
->>>> +       __u64 migrations;
->>>> +       /** @preemptions: Number of times been preempted. */
->>>> +       __u64 preemptions;
->>>> +       /** @errors: Number of errors happened. */
->>>> +       __u64 errors;
->>>> +       /** @priority: Context priority. */
->>>> +       __u64 priority;
->>>> +       /** @heap_usage: Usage of device heap buffer. */
->>>> +       __u64 heap_usage;
->>>> +       /** @suspensions: Number of times been suspended. */
->>>> +       __u64 suspensions;
->>>> +       /**
->>>> +        * @state: Context state.
->>>> +        * %AMDXDNA_HWCTX_STATE_IDLE
->>>> +        * %AMDXDNA_HWCTX_STATE_ACTIVE
->>>> +        */
->>>> +       __u32 state;
->>>> +       /** @pasid: PASID been bound. */
->>>> +       __u32 pasid;
->>>> +       /** @gops: Giga operations per second. */
->>>> +       __u32 gops;
->>>> +       /** @fps: Frames per second. */
->>>> +       __u32 fps;
->>>> +       /** @dma_bandwidth: DMA bandwidth. */
->>>> +       __u32 dma_bandwidth;
->>>> +       /** @latency: Frame response latency. */
->>>> +       __u32 latency;
->>>> +       /** @frame_exec_time: Frame execution time. */
->>>> +       __u32 frame_exec_time;
->>>> +       /** @txn_op_idx: Index of last control code executed. */
->>>> +       __u32 txn_op_idx;
->>>> +       /** @ctx_pc: Program counter. */
->>>> +       __u32 ctx_pc;
->>>> +       /** @fatal_error_type: Fatal error type if context crashes. */
->>>> +       __u32 fatal_error_type;
->>>> +       /** @fatal_error_exception_type: Firmware exception type. */
->>>> +       __u32 fatal_error_exception_type;
->>>> +       /** @fatal_error_exception_pc: Firmware exception program counter. */
->>>> +       __u32 fatal_error_exception_pc;
->>>> +       /** @fatal_error_app_module: Exception module name. */
->>>> +       __u32 fatal_error_app_module;
->>>> +       /** @pad: Structure pad. */
->>>> +       __u32 pad;
->>>> +};
->>>> +
->>>> +#define DRM_AMDXDNA_HW_CONTEXT_ALL     0
->>>> +
->>>> +/**
->>>> + * struct amdxdna_drm_get_array - Get information array.
->>>> + */
->>>> +struct amdxdna_drm_get_array {
->>>> +       /**
->>>> +        * @param:
->>>> +        *
->>>> +        * Supported params:
->>>> +        *
->>>> +        * %DRM_AMDXDNA_HW_CONTEXT_ALL:
->>>> +        * Returns all created hardware contexts.
->>>> +        */
->>>> +       __u32 param;
->>>> +       /**
->>>> +        * @element_size:
->>>> +        *
->>>> +        * Specifies maximum element size and returns the actual element size.
->>>> +        */
->>>> +       __u32 element_size;
->>>> +       /**
->>>> +        * @num_element:
->>>> +        *
->>>> +        * Specifies maximum number of elements and returns the actual number
->>>> +        * of elements.
->>>> +        */
->>>> +       __u32 num_element; /* in/out */
->>>> +       /** @pad: MBZ */
->>>> +       __u32 pad;
->>>> +       /**
->>>> +        * @buffer:
->>>> +        *
->>>> +        * Specifies the match conditions and returns the matched information
->>>> +        * array.
->>>> +        */
->>>> +       __u64 buffer;
->>>> +};
->>>> +
->>>>    enum amdxdna_drm_set_param {
->>>>           DRM_AMDXDNA_SET_POWER_MODE,
->>>>           DRM_AMDXDNA_WRITE_AIE_MEM,
->>>> @@ -519,6 +626,10 @@ struct amdxdna_drm_set_power_mode {
->>>>           DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SET_STATE, \
->>>>                    struct amdxdna_drm_set_state)
->>>>
->>>> +#define DRM_IOCTL_AMDXDNA_GET_ARRAY \
->>>> +       DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_ARRAY, \
->>>> +                struct amdxdna_drm_get_array)
->>>> +
->>>>    #if defined(__cplusplus)
->>>>    } /* extern c end */
->>>>    #endif
->>>> --
->>>> 2.34.1
->>>>
+---
+Changes in v5:
+  - Restructured the entire binding to define properties at the top
+    level instead of if/then blocks, per maintainer feedback.
+  - Added specific compatible enums for new child nodes instead of a
+    generic 'compatible: true'.
+  - Set 'unevaluatedProperties: false' for 'pwm' and 'pwmled' nodes to
+    enforce strict validation.
+  - Expanded 'power' node compatible enum to include all board-specific
+    compatible strings (used in existing device trees, e.g. OMAP3-based
+    boards) for more complete coverage.
+  - Corrected the schema for the 'power' node compatible to properly
+    handle single and fallback entries.
+
+Changes in v4:
+  - Reworked binding to be independent and bisectable per maintainer
+    feedback by using 'additionalProperties: true' for child nodes.
+  - Added board-specific compatibles to the 'power' node enum.
+  - Added definitions for 'clocks' and 'clock-names' properties.
+  - Renamed 'twl6030-usb' child node to 'usb-comparator' to match
+    existing Device Tree usage (twl6030.dtsi).
+  - Fixed some spelling/grammar erros in the description.
+
+Changes in v3:
+  - New patch to consolidate simple bindings (power, pwm) and add
+    definitions for all child nodes to fix dtbs_check validation
+    errors found in v2.
+
+Changes in v2:
+  - This patch is split from larger series [3] per maintainer feedback.
+  - Added missing sub-node definitions, resolving dtbs_check errors.
+
+[1] https://lore.kernel.org/all/20250822222530.113520-1-jihed.chaibi.dev@gmail.com/
+[2] https://lore.kernel.org/all/20250822225052.136919-1-jihed.chaibi.dev@gmail.com/
+[3] https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
+---
+ .../devicetree/bindings/mfd/ti,twl.yaml       | 159 +++++++++++++++++-
+ .../devicetree/bindings/mfd/twl4030-power.txt |  48 ------
+ .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
+ .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
+ 4 files changed, 157 insertions(+), 84 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
+
+diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+index f162ab60c09..397eed9b628 100644
+--- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
++++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+@@ -11,9 +11,9 @@ maintainers:
+ 
+ description: |
+   The TWLs are Integrated Power Management Chips.
+-  Some version might contain much more analog function like
++  Some versions might contain much more analog functionality like
+   USB transceiver or Audio amplifier.
+-  These chips are connected to an i2c bus.
++  These chips are connected to an I2C bus.
+ 
+ allOf:
+   - if:
+@@ -181,6 +181,12 @@ properties:
+   "#clock-cells":
+     const: 1
+ 
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: fck
++
+   charger:
+     type: object
+     additionalProperties: true
+@@ -198,6 +204,131 @@ properties:
+       interrupts:
+         maxItems: 1
+ 
++  audio:
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        const: ti,twl4030-audio
++
++  keypad:
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        const: ti,twl4030-keypad
++
++  pwm:
++    type: object
++    $ref: /schemas/pwm/pwm.yaml#
++    unevaluatedProperties: false
++    description:
++      PWM controllers (PWM1 and PWM2 on TWL4030, PWM0 and PWM1 on TWL6030/32).
++    properties:
++      compatible:
++        enum:
++          - ti,twl4030-pwm
++          - ti,twl6030-pwm
++      '#pwm-cells':
++        const: 2
++    required:
++      - compatible
++      - '#pwm-cells'
++
++  pwmled:
++    type: object
++    $ref: /schemas/pwm/pwm.yaml#
++    unevaluatedProperties: false
++    description:
++      PWM controllers connected to LED terminals (PWMA and PWMB on TWL4030,
++      LED PWM on TWL6030/32, mainly used as charging indicator LED).
++    properties:
++      compatible:
++        enum:
++          - ti,twl4030-pwmled
++          - ti,twl6030-pwmled
++      '#pwm-cells':
++        const: 2
++    required:
++      - compatible
++      - '#pwm-cells'
++
++  twl4030-usb:
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        const: ti,twl4030-usb
++
++  usb-comparator:
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        const: ti,twl6030-usb
++
++  gpio:
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        const: ti,twl4030-gpio
++
++  power:
++    type: object
++    description:
++      The power management module inside the TWL4030 provides several
++      facilities to control the power resources, including power scripts.
++      For now, the binding only supports the complete shutdown of the
++      system after poweroff.
++      Board-specific compatible strings may be used for platform-specific
++      power configurations.
++      A board-specific compatible string (e.g., ti,twl4030-power-n900) may
++      be paired with a generic fallback (generally for power saving mode).
++    additionalProperties: false
++    properties:
++      compatible:
++        oneOf:
++          - enum:
++              - ti,twl4030-power
++              - ti,twl4030-power-reset
++              - ti,twl4030-power-idle
++              - ti,twl4030-power-idle-osc-off
++              # Add all board-specific compatibles for completeness
++              - ti,twl4030-power-omap3-sdp
++              - ti,twl4030-power-omap3-ldp
++              - ti,twl4030-power-omap3-evm
++              - ti,twl4030-power-beagleboard-xm
++              - ti,twl4030-power-n900
++          - items:
++              - enum:
++                  - ti,twl4030-power
++                  - ti,twl4030-power-reset
++                  - ti,twl4030-power-idle
++                  - ti,twl4030-power-idle-osc-off
++                  # Add all board-specific compatibles for completeness
++                  - ti,twl4030-power-omap3-sdp
++                  - ti,twl4030-power-omap3-ldp
++                  - ti,twl4030-power-omap3-evm
++                  - ti,twl4030-power-beagleboard-xm
++                  - ti,twl4030-power-n900
++              - enum:
++                  # Fallback (for power saving mode)
++                  - ti,twl4030-power-idle
++                  - ti,twl4030-power-idle-osc-off
++      ti,system-power-controller:
++        type: boolean
++        deprecated: true
++        description:
++          DEPRECATED. The standard 'system-power-controller'
++          property on the parent node should be used instead.
++      ti,use_poweroff:
++        type: boolean
++        deprecated: true
++        description: DEPRECATED, to be removed.
++    required:
++      - compatible
++
+ patternProperties:
+   "^regulator-":
+     type: object
+@@ -271,6 +402,16 @@ examples:
+           compatible = "ti,twl6030-vmmc";
+           ti,retain-on-reset;
+         };
++
++        pwm {
++          compatible = "ti,twl6030-pwm";
++          #pwm-cells = <2>;
++        };
++
++        pwmled {
++          compatible = "ti,twl6030-pwmled";
++          #pwm-cells = <2>;
++        };
+       };
+     };
+ 
+@@ -325,6 +466,20 @@ examples:
+         watchdog {
+           compatible = "ti,twl4030-wdt";
+         };
++
++        power {
++          compatible = "ti,twl4030-power";
++        };
++
++        pwm {
++          compatible = "ti,twl4030-pwm";
++          #pwm-cells = <2>;
++        };
++
++        pwmled {
++          compatible = "ti,twl4030-pwmled";
++          #pwm-cells = <2>;
++        };
+       };
+     };
+ ...
+diff --git a/Documentation/devicetree/bindings/mfd/twl4030-power.txt b/Documentation/devicetree/bindings/mfd/twl4030-power.txt
+deleted file mode 100644
+index 3d19963312c..00000000000
+--- a/Documentation/devicetree/bindings/mfd/twl4030-power.txt
++++ /dev/null
+@@ -1,48 +0,0 @@
+-Texas Instruments TWL family (twl4030) reset and power management module
+-
+-The power management module inside the TWL family provides several facilities
+-to control the power resources, including power scripts. For now, the
+-binding only supports the complete shutdown of the system after poweroff.
+-
+-Required properties:
+-- compatible : must be one of the following
+-	"ti,twl4030-power"
+-	"ti,twl4030-power-reset"
+-	"ti,twl4030-power-idle"
+-	"ti,twl4030-power-idle-osc-off"
+-
+-The use of ti,twl4030-power-reset is recommended at least on
+-3530 that needs a special configuration for warm reset to work.
+-
+-When using ti,twl4030-power-idle, the TI recommended configuration
+-for idle modes is loaded to the tlw4030 PMIC.
+-
+-When using ti,twl4030-power-idle-osc-off, the TI recommended
+-configuration is used with the external oscillator being shut
+-down during off-idle. Note that this does not work on all boards
+-depending on how the external oscillator is wired.
+-
+-Optional properties:
+-
+-- ti,system-power-controller: This indicates that TWL4030 is the
+-  power supply master of the system. With this flag, the chip will
+-  initiate an ACTIVE-to-OFF or SLEEP-to-OFF transition when the
+-  system poweroffs.
+-
+-- ti,use_poweroff: Deprecated name for ti,system-power-controller
+-
+-Example:
+-&i2c1 {
+-	clock-frequency = <2600000>;
+-
+-	twl: twl@48 {
+-		reg = <0x48>;
+-		interrupts = <7>; /* SYS_NIRQ cascaded to intc */
+-		interrupt-parent = <&intc>;
+-
+-		twl_power: power {
+-			compatible = "ti,twl4030-power";
+-			ti,use_poweroff;
+-		};
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt b/Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+deleted file mode 100644
+index d97ca1964e9..00000000000
+--- a/Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-Texas Instruments TWL series PWM drivers
+-
+-Supported PWMs:
+-On TWL4030 series: PWM1 and PWM2
+-On TWL6030 series: PWM0 and PWM1
+-
+-Required properties:
+-- compatible: "ti,twl4030-pwm" or "ti,twl6030-pwm"
+-- #pwm-cells: should be 2. See pwm.yaml in this directory for a description of
+-  the cells format.
+-
+-Example:
+-
+-twl_pwm: pwm {
+-	compatible = "ti,twl6030-pwm";
+-	#pwm-cells = <2>;
+-};
+diff --git a/Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt b/Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
+deleted file mode 100644
+index 31ca1b032ef..00000000000
+--- a/Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-Texas Instruments TWL series PWM drivers connected to LED terminals
+-
+-Supported PWMs:
+-On TWL4030 series: PWMA and PWMB (connected to LEDA and LEDB terminals)
+-On TWL6030 series: LED PWM (mainly used as charging indicator LED)
+-
+-Required properties:
+-- compatible: "ti,twl4030-pwmled" or "ti,twl6030-pwmled"
+-- #pwm-cells: should be 2. See pwm.yaml in this directory for a description of
+-  the cells format.
+-
+-Example:
+-
+-twl_pwmled: pwmled {
+-	compatible = "ti,twl6030-pwmled";
+-	#pwm-cells = <2>;
+-};
+-- 
+2.39.5
+
 
