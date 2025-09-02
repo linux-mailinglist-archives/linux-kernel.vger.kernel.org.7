@@ -1,180 +1,97 @@
-Return-Path: <linux-kernel+bounces-797363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6432B40F6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:32:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2A1B40F75
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7DC5E4ECF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:32:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFCC45E57AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB89235AADF;
-	Tue,  2 Sep 2025 21:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95FB35CED5;
+	Tue,  2 Sep 2025 21:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPYsZK97"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zv6yiOdu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4OFLyBKp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8686735AABF;
-	Tue,  2 Sep 2025 21:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614C835AAB2
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756848707; cv=none; b=VX50WOPv8adyRd5myUwfPZfdstzKRvUhY6hjI75bEJRMF+/W2QnXOK/mxL1CeJKcbcx/jYVPiwRd8aXA0LEY4r0+Iir/zp4F1YqLk9l2x6n7yG0INj5Zkq4mzM3RjOWN9UcJkRLs0tTGxIPPPb5NXCLyAi4Ul+k5SQ/I1uw+lDY=
+	t=1756848727; cv=none; b=pOLk8njhPbrO6+Z7NBgzxRZ6I0HD36wwimNcXQaTs5Be8pMBrpe+IWD1Rerq0FUnIbDvKdOhox6/y9UG6khL48r64kZEOtas5pDhHWFvRiVxxHPtfLc97hv5HRlrQVgGBqL8uUGy8Y6UTD/Wmd+yvjpW6Be41rhjO+BiI4Bmsx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756848707; c=relaxed/simple;
-	bh=Fhr1X2s81mKv666A5gstY8vVQTMahtF+o9XOsgjlsEU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=HpQ7xZdgUTDCbzqBTISI/Ea0Z7qPkVdO2KtUI78txDtDg8dcDwnN0VoWRsGeuUOq0l5in0I/nCHv/ErJ2p2yFEUcl7RItAevnLlVlJfwgxtl6wYW3Y8n6cmrj3Nmu4b9jcVGranxuYwSlhJKwXElcsyo0BhiaQn8qqI33z+cF3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPYsZK97; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-71a2d730d03so19907116d6.3;
-        Tue, 02 Sep 2025 14:31:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756848704; x=1757453504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5ccBuzbs+BrHDDKe4TyRzIoAM5cAJ6pCAgSin1bdA9A=;
-        b=KPYsZK97I8jOg3W85iMy8Ymt5wGRK3JZnEJ6S+N2sml+pFxW4ze7N7mb2OTm69P5S2
-         MHmCDRaIK/NOGcOit4xceh5u+FNHBYrw4IlYAKHm3mwl+kiDZpM+1Lx7efZ5+oYr9dao
-         X2TYiokd+jbMvUXG5dpSXM2tPeS1aGBOuIlX8KjxahsoMUnpqTDkwzqUGvHbez/3XFtd
-         XfOyQYLkeVV1tFTTLTiZK8+encTuFI+TDJ4nKv+xkrzS/OxPY+N0e7l37+MY7Y8YOEF1
-         HIgcU7l4qjwWtFGnEhTTfYF0go7/ZvTZmnSpLxsBXdwk7njpfrJDk0T3uTR8R5RBKF5m
-         tZOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756848704; x=1757453504;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5ccBuzbs+BrHDDKe4TyRzIoAM5cAJ6pCAgSin1bdA9A=;
-        b=CDq+FrqQR/xiLDTajmuEF+mVezjtlJIAmi316HeKDGGTWut8ra7FYgfj+wBG0YlofE
-         kBUEjzavUZGyCr+5WHQjwlluVxTTEGTyIh5YO2EiKjMQFqzDepbw7Gw+85KWhNOfsiDJ
-         Zlnt3eB1qbe6EdV3Du9wDxdd3MoE1tBSLGdLKvHke3LmquyQCmhNZDFmnKtowlTEUroK
-         D90ohjLJ6qSlvPIRE8wxYNJAknsfIb6R6DtzORgkB9oA9odXz9SfulTYbWVxeOIVx1nR
-         xFa5PwDKUnUZLRAF/kfiA6+cAsiYHnYKUCU3klMh6vtK4khwwZTu4S2o3E8v1VsezKKT
-         2lgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQge+GyLXf6OAwNKzJExB1cOiHVw1NExRKKJcbBJlEa/7qEFP44nLlNHDYRWQhDv5m9XK+k+I5@vger.kernel.org, AJvYcCVx/4c3C6pOPM+YMtTF0pmxrTlqBZ5hLX6tAAZdWkuK6KUrU3yqjqlELD+JK7gNf6XikxRSQ8UqWsNjJgMp@vger.kernel.org, AJvYcCXaewxdzdY/44Z6OzDVhHp4sCYjPiarzh2mWklGJ3pgGaqdOXTvNb4Ras63A6BW+y6wlu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwAuGdF/prYnrcAQeNZMHjYKEVzBljGgSyS6ClQmJa0QkjkJm9
-	Qufwst6cDMLXE9ouPo4i7UnVlD8ppY8xTbWrVSDaEsVOpWKyAtwDJvvlSWQbWg==
-X-Gm-Gg: ASbGncutBoknJ4MaOA+uy1RNBq5yMPHDcy1YqXRRbeYjll3zSdsmLUquWhYyJd7QtLd
-	T6RCkgxMY2+2iENwJq+VAToJCxoNuBM9qX/ZYDBubkYlkg+8xJT1gdL1E5rbimjKVH7ZZ0TkCx3
-	eFv5YSzRjzzL0inNkC1t06guRoG5WmrfMoi9RDri7f/lMWTJtmy8Y+kzQa5aSb/6tE+MIkf9Nd1
-	M2wejpTdjC97UVV+VT+YCISGqiNd7ngL2j+Am2RFmnHzc+GzfmmeEaeE+B1Fp+ExuBlsatAZfOi
-	Zyxg+wSaA2nUbS4PRE4cZRmRse5utChC3T3u5Gm8G9/IZiLuFRhVC4HCF1aXgrULvGnAocB0Ja5
-	/lOnMngHD73zvtcJZZSBRjXCF7O4YDKT9wQBpoFqzo7nPLDcUurLeQiUZoeM0L+Bn9r8RKR307Y
-	6k+A==
-X-Google-Smtp-Source: AGHT+IHuSLao98z09CKcRFnRmWQxJ8TrKeoPQyY4lPLQgQdvitTmSna4yO9Wv7pVlwi66WpRyj7GFg==
-X-Received: by 2002:a05:6214:1925:b0:721:7a6a:b703 with SMTP id 6a1803df08f44-7217a6ac7ffmr26477986d6.53.1756848704343;
-        Tue, 02 Sep 2025 14:31:44 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-720b644f2c9sm18578666d6.63.2025.09.02.14.31.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 14:31:43 -0700 (PDT)
-Date: Tue, 02 Sep 2025 17:31:43 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Simon Schippers <simon.schippers@tu-dortmund.de>, 
- willemdebruijn.kernel@gmail.com, 
- jasowang@redhat.com, 
- mst@redhat.com, 
- eperezma@redhat.com, 
- stephen@networkplumber.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- virtualization@lists.linux.dev, 
- kvm@vger.kernel.org
-Cc: Simon Schippers <simon.schippers@tu-dortmund.de>, 
- Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Message-ID: <willemdebruijn.kernel.1b33a2385592@gmail.com>
-In-Reply-To: <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
-References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
- <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
-Subject: Re: [PATCH 2/4] netdev queue flow control for TUN
+	s=arc-20240116; t=1756848727; c=relaxed/simple;
+	bh=vunqQJ5oeuYGzfWXmT8HUR2VoyfQuEfTY9jja4+u48s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Se91exjjR4EoIW3bFuWdTn48j28VeBOApxF+uEeWazMkO5idZmXQQtXoK6kuhOjYPBPc4fvnhH8XHWi4gTciP2AGzbydZDePW1UpBvrTMX5bbbZ+b6sJO+XZWotvc8q7NS0O73NN/Q2mLuloHTYnT6tqYs8FA7zpzzf4xbQBLfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zv6yiOdu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4OFLyBKp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756848722;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VLFZuz30dpa79lpxVcrr60HQRnKxDWtLmNqx3vgx7b8=;
+	b=Zv6yiOduGnjJ0WqWe1gJI2sWO+xJHM+9mryM69iWW/x9MXGRG/dmEb5UMxHnC0JqY7VHbE
+	KHHbicPwJ7Jq+GBYMNhx1UG9Nui11BSuiZYMotWMCO6Lf3HZDuAb3aBdE65zUQ/pqYp8Gh
+	p5TEv1Fmq1cT3aK0QLqnBbeyOAoU5IJaYX31xSxyDjM58hA+mAkC2cQPhJCnd+yXyQLYT9
+	5Md5GZD+H8oGJp7oKWW2osJh9jxuBb0x9qh+a48CX6e5jplWDwb0iw3YR8rHXKmxb5wJN/
+	4vhdlNw4TVY3QM6qFT4PM8krLwBR5BBbvCNBPeco85AWY4MqK+XjyZ8kYkdUsQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756848722;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VLFZuz30dpa79lpxVcrr60HQRnKxDWtLmNqx3vgx7b8=;
+	b=4OFLyBKpb+jH1AHqeowtFzp2dzv/hj3blRLlcme50Ikav16eZnJDUc4Tv0o2ZpyVNoJoLl
+	aEJEG+qy8oSMuzCA==
+To: Kaiwan N Billimoria <kaiwan.billimoria@gmail.com>
+Cc: Llillian@star-ark.net, agordeev@linux.ibm.com,
+ akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
+ anna-maria@linutronix.de, bigeasy@linutronix.de, catalin.marinas@arm.com,
+ chenhuacai@kernel.org, francesco@valla.it, frederic@kernel.org,
+ guoweikang.kernel@gmail.com, jstultz@google.com, kpsingh@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ mark.rutland@arm.com, maz@kernel.org, mingo@kernel.org, pmladek@suse.com,
+ rrangel@chromium.org, sboyd@kernel.org, urezki@gmail.com, v-singh1@ti.com,
+ will@kernel.org, peterz@infradead.org, elver@google.com,
+ namcao@linutronix.de
+Subject: Re: [RFC PATCH] time: introduce BOOT_TIME_TRACKER and minimal boot
+ timestamp
+In-Reply-To: <20250902133920.973210-1-kaiwan.billimoria@gmail.com>
+References: <871pp14pkr.ffs@tglx>
+ <20250902133920.973210-1-kaiwan.billimoria@gmail.com>
+Date: Tue, 02 Sep 2025 23:32:01 +0200
+Message-ID: <87frd4zgku.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Simon Schippers wrote:
-> The netdev queue is stopped in tun_net_xmit after inserting an SKB into
-> the ring buffer if the ring buffer became full because of that. If the
-> insertion into the ptr_ring fails, the netdev queue is also stopped and
-> the SKB is dropped. However, this never happened in my testing. To ensure
-> that the ptr_ring change is available to the consumer before the netdev
-> queue stop, an smp_wmb() is used.
-> 
-> Then in tun_ring_recv, the new helper wake_netdev_queue is called in the
-> blocking wait queue and after consuming an SKB from the ptr_ring. This
-> helper first checks if the netdev queue has stopped. Then with the paired
-> smp_rmb() it is known that tun_net_xmit will not produce SKBs anymore.
-> With that knowledge, the helper can then wake the netdev queue if there is
-> at least a single spare slot in the ptr_ring by calling ptr_ring_spare
-> with cnt=1.
-> 
-> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> ---
->  drivers/net/tun.c | 33 ++++++++++++++++++++++++++++++---
->  1 file changed, 30 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index cc6c50180663..735498e221d8 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1060,13 +1060,21 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
->  
->  	nf_reset_ct(skb);
->  
-> -	if (ptr_ring_produce(&tfile->tx_ring, skb)) {
-> +	queue = netdev_get_tx_queue(dev, txq);
-> +	if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
-> +		/* Paired with smp_rmb() in wake_netdev_queue. */
-> +		smp_wmb();
-> +		netif_tx_stop_queue(queue);
->  		drop_reason = SKB_DROP_REASON_FULL_RING;
->  		goto drop;
->  	}
-> +	if (ptr_ring_full(&tfile->tx_ring)) {
-> +		/* Paired with smp_rmb() in wake_netdev_queue. */
-> +		smp_wmb();
-> +		netif_tx_stop_queue(queue);
-> +	}
->  
->  	/* dev->lltx requires to do our own update of trans_start */
-> -	queue = netdev_get_tx_queue(dev, txq);
->  	txq_trans_cond_update(queue);
->  
->  	/* Notify and wake up reader process */
-> @@ -2110,6 +2118,24 @@ static ssize_t tun_put_user(struct tun_struct *tun,
->  	return total;
->  }
->  
-> +static inline void wake_netdev_queue(struct tun_file *tfile)
+On Tue, Sep 02 2025 at 19:09, Kaiwan N. Billimoria wrote:
+> Subject: Re: [RFC PATCH] time: introduce BOOT_TIME_TRACKER and minimal boot timestamp
+>> Under the assumption that nothing on the way resets the counter.
+> Ah. Is there any known component - within ROM/BL stages/kernel code - that does
+> this?
 
-no inline keyword in .c files, let the compiler decide.
+How should I know? I'm not playing with this boot timing muck and yes,
+some hardware counters can be reset by software...
 
-> +{
-> +	struct netdev_queue *txq;
-> +	struct net_device *dev;
-> +
-> +	rcu_read_lock();
-> +	dev = rcu_dereference(tfile->tun)->dev;
-> +	txq = netdev_get_tx_queue(dev, tfile->queue_index);
-> +
-> +	if (netif_tx_queue_stopped(txq)) {
-> +		/* Paired with smp_wmb() in tun_net_xmit. */
-> +		smp_rmb();
-> +		if (ptr_ring_spare(&tfile->tx_ring, 1))
-> +			netif_tx_wake_queue(txq);
-> +	}
-> +	rcu_read_unlock();
-> +}
+> Forgive my asking, but if fine, will this (above-mentioned) patch be taken? So,
+> knowing that, we can proceed forward..
+
+Just send a patch with a proper justification and we take from there.
+
+Thanks,
+
+        tglx
 
