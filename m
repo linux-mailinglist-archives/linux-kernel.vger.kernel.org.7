@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-796146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FB7B3FC76
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:29:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D89B3FC80
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B4D4E329A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536FC169E5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AB1283689;
-	Tue,  2 Sep 2025 10:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B022773CD;
+	Tue,  2 Sep 2025 10:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGKCytNI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRwaOtZG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B8927FD6E;
-	Tue,  2 Sep 2025 10:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD0D72625
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808974; cv=none; b=KocddOi9tfU3t2EzpBm8blj6CWK6mvnuXNrpfkF4fzr0sj3n4QO2ii4EtO2RgtTykI+G/awzDrzjoXmuz2UJmXCm8PV7rvt62rqeyQBiIm7ZKgnqh5GhAvAIVExVCpaVOn0H4PD7AvaeZlhVoDQpnles9QK+3ubSTRoLCySjFMs=
+	t=1756809065; cv=none; b=OfZmF5Uojq/llz+r/Y68bOje3X31MbF9KSij168McEgGAtrFd2CEEqSbQvOsDti6FZHEws4/ma7sMNkUgKkZnq+JlwUdI8bGYGCyWP5bA084p3XRBb5q09LJt8E+HLYjnOx8/H/mHQ6aWyE9HkI5DMf2D6yZmf+AQgyVa9sJm1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808974; c=relaxed/simple;
-	bh=uRsZ+C5WCQAcFKlUzOAFgpNtRdJuRvUB18EfocZmZW0=;
+	s=arc-20240116; t=1756809065; c=relaxed/simple;
+	bh=YN7eLYWuco7AF43p9BloY9tUtk2VaRed60/nA85hwOQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AdFLPtEVYTnTGgUtJyGidSnY2ON8v3yvfIPNX2Bm1YtA1CzfsucEMfBeZJsC2wQpmsjxT02SbEkpa6yX2XNehnkmgSsPp3Wvvp4zVShBtCtWV1x5G56FmYUFOQIvTAlDCHbngNLChNsM+a5v74AdiW317PzXKbplokJjryE8SYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGKCytNI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EBEC4CEED;
-	Tue,  2 Sep 2025 10:29:29 +0000 (UTC)
+	 MIME-Version:Content-Type; b=HBsWt5slLqA/aGYP2NmtolWMmD7pRD31D3TsDLM+Dy7+B82+aQrUFS/tibBvDTbSQbuqZylEbAPmoh27s8iwirNubBvo+fqNw8BOBTotVSsu8unhVabHHW7cKnR84wRQ/hg8WFFrNoWsnkWl4CKzSSEedfomblx2128n3vmDDZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRwaOtZG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA6BC4CEF5;
+	Tue,  2 Sep 2025 10:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756808973;
-	bh=uRsZ+C5WCQAcFKlUzOAFgpNtRdJuRvUB18EfocZmZW0=;
+	s=k20201202; t=1756809065;
+	bh=YN7eLYWuco7AF43p9BloY9tUtk2VaRed60/nA85hwOQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hGKCytNIfhcxhmIeNUO4HsvI1Ws8sTNPVBiyj1780+x60m3iu7txa8L56s5KQgoyZ
-	 Etl6s0WgN0LwdNEOBGmvkEzRPFnqNg+iDz9m3zQc5GyXibcbPDiU9tk8EZpz0VKlRM
-	 abiMa5b3P0b6/fGWk8yjTzQz7CTQQ8IyFHBMpV8rokJs0e4kJGdAqh0WwPaM6vvnl2
-	 InXfJx3A29klQJJgHD663mqouyweF/xPPRATt9QsEe0vqBBfLGHFCWCq+l6jeKWjwO
-	 vyfZAT+ccE0mCcOJFz5pYc1+xikB2JubBGIKUvbPWd44pKGm/S56o2Dx9dYznuUpVE
-	 W5xk0nQB2TGxg==
+	b=kRwaOtZG3wtBWE+RN/vE0cRyVdUVz4n9KxUjEzWutfUKN6au+0y+f+XgA2wto/f3X
+	 5Xak5ybCJx3dNcLRvX58xJe3gzi+5ft6StunHCpVMTUkB4wygH6WE51Y1lPhegoubP
+	 aQRT/6pd5oysNa+pKd4L11wkYOIlmKTOcGqZtQJPzxp+5yFhGTC2OEAy+qXUwFDQHW
+	 jEIAssHhaqJ/PCm/icTjmjJxXU3rotEPKj3zFc1TMjT8YT0zKn3izFwds0HOvu3R2l
+	 MFuer+WJkJOQ9a/8ty0oGhwJz2vZF2XGJRdfpf3LdrWyeJBG05UOHm0JBq1trBtKcv
+	 rg62XPDXHP9DQ==
 From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Vincent Knecht <vincent.knecht@mailoo.org>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20250811-dt-bindings-db-v1-1-457301523bb5@linaro.org>
-References: <20250811-dt-bindings-db-v1-1-457301523bb5@linaro.org>
-Subject: Re: (subset) [PATCH RESEND 1/2] dt-bindings: leds:
- issi,is31fl319x: Drop 'db' suffix duplicating dtschema
-Message-Id: <175680896973.2257460.6755059243558136636.b4-ty@kernel.org>
-Date: Tue, 02 Sep 2025 11:29:29 +0100
+To: lee@kernel.org, Xichao Zhao <zhao.xichao@vivo.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20250815100601.622923-1-zhao.xichao@vivo.com>
+References: <20250815100601.622923-1-zhao.xichao@vivo.com>
+Subject: Re: (subset) [PATCH] mfd: Use dedicated interrupt wake setters
+Message-Id: <175680906442.2258639.2984759717773465983.b4-ty@kernel.org>
+Date: Tue, 02 Sep 2025 11:31:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,16 +58,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-c81fc
 
-On Mon, 11 Aug 2025 15:54:03 +0200, Krzysztof Kozlowski wrote:
-> A common property unit suffix '-db' was added to dtschema, thus
-> in-kernel bindings should not reference the type.
+On Fri, 15 Aug 2025 18:06:01 +0800, Xichao Zhao wrote:
+> Use enable_irq_wake() and disable_irq_wake() instead of
+> calling low-level irq_set_irq_wake() with a parameter.
+> 
+> No functional changes.
 > 
 > 
 
 Applied, thanks!
 
-[1/2] dt-bindings: leds: issi,is31fl319x: Drop 'db' suffix duplicating dtschema
-      commit: 19c5010e8ae23faf7b98fd738ff9970bb9066b78
+[1/1] mfd: Use dedicated interrupt wake setters
+      commit: 075ac9d669512ec65a7340428c7994167950d868
 
 --
 Lee Jones [李琼斯]
