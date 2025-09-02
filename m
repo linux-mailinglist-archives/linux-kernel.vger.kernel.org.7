@@ -1,259 +1,210 @@
-Return-Path: <linux-kernel+bounces-796655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A747B40584
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:54:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6136DB402D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94FC7561E2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:49:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2031889E78
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB073126A4;
-	Tue,  2 Sep 2025 13:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0FE307AF0;
+	Tue,  2 Sep 2025 13:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NPfJiQm/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UfkhhP6o"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098163128AF;
-	Tue,  2 Sep 2025 13:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3413043AF;
+	Tue,  2 Sep 2025 13:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820697; cv=none; b=HYchu4xtMkv8cIWxXKX3fgXBJL7CM6wGNxT14scaMTynwbDZSv5FQYXeQZ6VSzVJvkl8APOadSNkKN4KR1Ka7aeZQLrMyYknFsc4D9XWa7KoT9EaNwsyptGBl51ydYpF2i+C6t8MI+QTf1nJZgqKz8QF+FicL5FQPgTUFegIy7s=
+	t=1756819380; cv=none; b=jPq4Z32GJLwjEbGm8nGAU/7J4eDR3JDebufb2+7nUrQj4WGV5cDwl/r8Q2A4KQQq6PJxihQWH5jKXpO2gJ71emYXVkVENSnKeiEn/ScdsMvNu8FrE3G7mBxbUWnsFV8hI7/fS/sKnOicsgLPBm8qsPQCURqdM+siP5kTHaKOyHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820697; c=relaxed/simple;
-	bh=5pMzXFrxPTDT3Z2PexdQ6d9teAyKHl1HKqcaOk3CjRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jF9ZiO40X7KsdN0wwfgHIwMXhMwcPi+f0kR9dXay4C7ucbU0W2m3N962wuU0uogGU6enRUQ90mzl1eIvub9WaDfpDWBblhFSFe5l1eE/CDf5DaXt+v8eOstVKlzlAUGE9sjMmIyBWYEOPg5ze645rfPooo7pGTlGbpRqtxyUvc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NPfJiQm/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42FE2C4CEED;
-	Tue,  2 Sep 2025 13:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756820696;
-	bh=5pMzXFrxPTDT3Z2PexdQ6d9teAyKHl1HKqcaOk3CjRI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NPfJiQm/9RymRFM/BSUMSoDRR/W9ZPPWWz6TVTIePvCeU3+1I9hjIfuSTKzW2WInr
-	 9q1/LUka7hlZra6lMP6XkuY+PjN/KB8VLzfMJo9uXV1BJ89kXInZjXJAwicutzES8x
-	 bchJCNGOTQhM61XCPX3wsgY+lODZRVPM5BL0XP+4=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
+	s=arc-20240116; t=1756819380; c=relaxed/simple;
+	bh=JhryCQPIHZMBHN4Dh3iGOODDbabwR0S+i4gukSM6ud0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ne9DJ1Ag70ySHgfFxDxjuNd/XEREzuZ9yZiuwrGlGzsXHCujpDQh2FOqfMhv63X8P1RA3lJUmkDBjPoHbaasizFWbGenMmQHCsVP+y9xAf1SWqHv9hN6px/tSk+EMYKan1qd8bawwJale3J6qsjGMjNbhHHSIkU9M007cdjIF4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UfkhhP6o; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso3561095e9.2;
+        Tue, 02 Sep 2025 06:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756819377; x=1757424177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yzXOYoDcw0s4gQ4w74V4qvU2nwkX5U7En2+CKV1FmvU=;
+        b=UfkhhP6oJANUd5dRus9ALRLAIes2S7H/bkJggQ6hHdnjuSsuu1ZGP4Lu9XpisIAgxH
+         yizAlEJdzy1pf/j2AvUSlUyrnpYfcaDC1GMc+MWeYKLfgO1xDh3ceqeKuTLlTl7SVRZR
+         OTlC6t25DF46PFO5+w+RuT4laRbFLzjNv515q9cl3S3l1+rFaNquM+xpQNj/QKh5oZKH
+         50HBOC9WQLYnqdvYnbOyNZ1Cd2vIDESamAS/qkT46jDkB7OWvjnRXJ+6BhqsjR7FmWCw
+         b7wlYOxqu/jWwg7L1019q0aUAZ9dS8A3II+tgCP9ImmUicYVNHf5O7tPCNRfMk6JDMFw
+         IMUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756819377; x=1757424177;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yzXOYoDcw0s4gQ4w74V4qvU2nwkX5U7En2+CKV1FmvU=;
+        b=Gwayze2UWmNPd4UUr4Mw6D99ujZcmgPmPLgeJSE7jy2lPCHKysT/sgPJYioBJNQoDX
+         hPcOv7abLJY8Z0mnbEAoxj5UYDP8667xP86/Mvlel4tNHzpE5F/CtNn2uSDcTpbWdDZB
+         ycqp70Aw7yLktQZZRr+R0aR//BYvyIEsYeiVW/0KOTQd9RmiVoA4EPZ+9dXBfVcjuslI
+         d0mtE8sEULfnmYg9aCgfTh2D3DDyea007vhmDQRuV2kxg4J0ANCLm9uMSulSH4faTGxI
+         GLwDxEC9t+CdiehNoKCHJzBsFUjqZ6djbE41WBJ9aV+KRA9UuR7bqRwczQdyUrfi4Gdc
+         xlAw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7H31OxOQPIrfFTXnMPS4YLMscZBwoc0JJ9yaFgXfQK17xtAhYN6sXkhZ+mRaMEnJ7SE6KJuwPf5IHaHI=@vger.kernel.org, AJvYcCXE842owRD66SFsogtppfTHUi6flH47cihUCxqo/r0+q90WC6F8DP1a+orN+8+Cj+wgYdyhXRQqn66sUN/X@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGymtIgIWE60PWb+my4fQ1YcfzAyOftW943Gnzl9F4x2tzQEL6
+	9C7j1wvtSqBY8zJkKJ4yXe0bGPgB2PjO1t34F7f1Zvz0qOX9emIMV7Vg
+X-Gm-Gg: ASbGncsWU0cvqWmzGyp2xGgJ+gXeQMHyu/WjmuJRa69LeDQUUtw/FMWkTafNKU5apqV
+	ib8KCOrgdr3lYE7cWMIrVnS3oryeCRBYRIpqd/E/25ps6eJPlgb9xxpIsNMb+87+UMiYg5mmpgd
+	+Xv8u1vMHcWuv7/QXDQ4DCLngoQI28JjJZmfZnPePXSodhG/liOzGF2RkT7scz3DLVpUhPexibX
+	+350fQdoUc9Oo9f18CLs1rAZz6UKGVO4gKjr2v5RBRzDbfLZ+NGyBckfVAHGPvNrQL1tmESCuD5
+	lcyVZoSl/0DvzKe1eatepiOdnqoKu0EpT8sm/NObX9gM8/qS4HOZlua1j2yB0azXq5dpvE9Byfe
+	4vdqIE4tnU1M5DDSO8U+2BXOPtfUW6YWAGg==
+X-Google-Smtp-Source: AGHT+IFt+jAuwZmgoKT1RiQF+kj0FR8UU7YL3V14hPMpMmBPvbwYtZIzf4vHPonAarMjK9TcaNg3/A==
+X-Received: by 2002:a05:600c:3b28:b0:459:d46a:ee3d with SMTP id 5b1f17b1804b1-45b872e711emr80758545e9.2.1756819376326;
+        Tue, 02 Sep 2025 06:22:56 -0700 (PDT)
+Received: from ws-linux01 ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b945332adsm44452155e9.4.2025.09.02.06.22.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:22:55 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: clabbe.montjoie@gmail.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	linux-crypto@vger.kernel.org
+Cc: wens@csie.org,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org
-Subject: [PATCH 5.10 00/34] 5.10.242-rc1 review
-Date: Tue,  2 Sep 2025 15:21:26 +0200
-Message-ID: <20250902131926.607219059@linuxfoundation.org>
-X-Mailer: git-send-email 2.51.0
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Subject: [PATCH v3 1/9] crypto: sun8i-ce - remove channel timeout field
+Date: Tue,  2 Sep 2025 16:21:26 +0300
+Message-ID: <20250902132134.3287515-2-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250902132134.3287515-1-ovidiu.panait.oss@gmail.com>
+References: <20250902132134.3287515-1-ovidiu.panait.oss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.242-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.10.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.10.242-rc1
-X-KernelTest-Deadline: 2025-09-04T13:19+00:00
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 5.10.242 release.
-There are 34 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+Using the number of bytes in the request as DMA timeout is really
+inconsistent, as large requests could possibly set a timeout of
+hundreds of seconds.
 
-Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
-Anything received after that time might be too late.
+Remove the per-channel timeout field and use a single, static DMA
+timeout of 3 seconds for all requests.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.242-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-and the diffstat can be found below.
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Tested-by: Corentin LABBE <clabbe.montjoie@gmail.com>
+Reviewed-by: Corentin LABBE <clabbe.montjoie@gmail.com>
+---
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 1 -
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c   | 5 ++---
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c   | 2 --
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-prng.c   | 1 -
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-trng.c   | 1 -
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h        | 2 +-
+ 6 files changed, 3 insertions(+), 9 deletions(-)
 
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.10.242-rc1
-
-Eric Sandeen <sandeen@redhat.com>
-    xfs: do not propagate ENODATA disk errors into xattr code
-
-Brent Lu <brent.lu@intel.com>
-    ASoC: Intel: sof_da7219_mx98360a: fail to initialize soundcard
-
-Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-    ASoC: Intel: glk_rt5682_max98357a: shrink platform_id below 20 characters
-
-Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-    ASoC: Intel: sof_rt5682: shrink platform_id names below 20 characters
-
-Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-    ASoC: Intel: bxt_da7219_max98357a: shrink platform_id below 20 characters
-
-Imre Deak <imre.deak@intel.com>
-    Revert "drm/dp: Change AUX DPCD probe address from DPCD_REV to LANE0_1_STATUS"
-
-Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-    HID: mcp2221: Handle reads greater than 60 bytes
-
-Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-    HID: mcp2221: Don't set bus speed on every transfer
-
-James Jones <jajones@nvidia.com>
-    drm/nouveau/disp: Always accept linear modifier
-
-Fabio Porcedda <fabio.porcedda@gmail.com>
-    net: usb: qmi_wwan: add Telit Cinterion LE910C4-WWX new compositions
-
-Shanker Donthineni <sdonthineni@nvidia.com>
-    dma/pool: Ensure DMA_DIRECT_REMAP allocations are decrypted
-
-Alex Deucher <alexander.deucher@amd.com>
-    Revert "drm/amdgpu: fix incorrect vm flags to map bo"
-
-Minjong Kim <minbell.kim@samsung.com>
-    HID: hid-ntrig: fix unable to handle page fault in ntrig_report_version()
-
-Ping Cheng <pinglinux@gmail.com>
-    HID: wacom: Add a new Art Pen 2
-
-Qasim Ijaz <qasdev00@gmail.com>
-    HID: asus: fix UAF via HID_CLAIMED_INPUT validation
-
-Thijs Raymakers <thijs@raymakers.nl>
-    KVM: x86: use array_index_nospec with indices that come from guest
-
-Li Nan <linan122@huawei.com>
-    efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
-
-Eric Dumazet <edumazet@google.com>
-    sctp: initialize more fields in sctp_v6_from_sk()
-
-Rohan G Thomas <rohan.g.thomas@altera.com>
-    net: stmmac: xgmac: Do not enable RX FIFO Overflow interrupts
-
-Alexei Lazar <alazar@nvidia.com>
-    net/mlx5e: Set local Xoff after FW update
-
-Alexei Lazar <alazar@nvidia.com>
-    net/mlx5e: Update and set Xon/Xoff upon port speed set
-
-Alexei Lazar <alazar@nvidia.com>
-    net/mlx5e: Update and set Xon/Xoff upon MTU set
-
-Yeounsu Moon <yyyynoom@gmail.com>
-    net: dlink: fix multicast stats being counted incorrectly
-
-Kuniyuki Iwashima <kuniyu@google.com>
-    atm: atmtcp: Prevent arbitrary write in atmtcp_recv_control().
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: hci_event: Detect if HCI_EV_NUM_COMP_PKTS is unbalanced
-
-Madhavan Srinivasan <maddy@linux.ibm.com>
-    powerpc/kvm: Fix ifdef to remove build warning
-
-Oscar Maes <oscmaes92@gmail.com>
-    net: ipv4: fix regression in local-broadcast routes
-
-Nikolay Kuratov <kniv@yandex-team.ru>
-    vhost/net: Protect ubufs with rcu read lock in vhost_net_ubuf_put()
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    NFS: Fix a race when updating an existing write
-
-Christoph Hellwig <hch@lst.de>
-    nfs: fold nfs_page_group_lock_subrequests into nfs_lock_and_join_requests
-
-Tianxiang Peng <txpeng@tencent.com>
-    x86/cpu/hygon: Add missing resctrl_cpu_detect() in bsp_init helper
-
-Damien Le Moal <dlemoal@kernel.org>
-    scsi: core: sysfs: Correct sysfs attributes access rights
-
-Tengda Wu <wutengda@huaweicloud.com>
-    ftrace: Fix potential warning in trace_printk_seq during ftrace_dump
-
-Randy Dunlap <rdunlap@infradead.org>
-    pinctrl: STMFX: add missing HAS_IOMEM dependency
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- arch/powerpc/kernel/kvm.c                          |   8 +-
- arch/x86/kernel/cpu/hygon.c                        |   3 +
- arch/x86/kvm/lapic.c                               |   2 +
- arch/x86/kvm/x86.c                                 |   7 +-
- drivers/atm/atmtcp.c                               |  17 ++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c            |   4 +-
- drivers/gpu/drm/drm_dp_helper.c                    |   2 +-
- drivers/gpu/drm/nouveau/dispnv50/wndw.c            |   4 +
- drivers/hid/hid-asus.c                             |   8 +-
- drivers/hid/hid-mcp2221.c                          |  71 +++++++----
- drivers/hid/hid-ntrig.c                            |   3 +
- drivers/hid/wacom_wac.c                            |   1 +
- drivers/net/ethernet/dlink/dl2k.c                  |   2 +-
- .../ethernet/mellanox/mlx5/core/en/port_buffer.c   |   3 +-
- .../ethernet/mellanox/mlx5/core/en/port_buffer.h   |  12 ++
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |  19 ++-
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   4 -
- drivers/net/usb/qmi_wwan.c                         |   3 +
- drivers/pinctrl/Kconfig                            |   1 +
- drivers/scsi/scsi_sysfs.c                          |   4 +-
- drivers/vhost/net.c                                |   9 +-
- fs/efivarfs/super.c                                |   4 +
- fs/nfs/pagelist.c                                  |  86 +------------
- fs/nfs/write.c                                     | 142 +++++++++++++--------
- fs/xfs/libxfs/xfs_attr_remote.c                    |   7 +
- fs/xfs/libxfs/xfs_da_btree.c                       |   6 +
- include/linux/atmdev.h                             |   1 +
- include/linux/nfs_page.h                           |   2 +-
- kernel/dma/pool.c                                  |   4 +-
- kernel/trace/trace.c                               |   4 +-
- net/atm/common.c                                   |  15 ++-
- net/bluetooth/hci_event.c                          |  12 +-
- net/ipv4/route.c                                   |  10 +-
- net/sctp/ipv6.c                                    |   2 +
- sound/soc/intel/boards/bxt_da7219_max98357a.c      |  12 +-
- sound/soc/intel/boards/glk_rt5682_max98357a.c      |   4 +-
- sound/soc/intel/boards/sof_da7219_max98373.c       |   2 +-
- sound/soc/intel/boards/sof_rt5682.c                |  12 +-
- sound/soc/intel/common/soc-acpi-intel-bxt-match.c  |   2 +-
- sound/soc/intel/common/soc-acpi-intel-cml-match.c  |   2 +-
- sound/soc/intel/common/soc-acpi-intel-glk-match.c  |   4 +-
- sound/soc/intel/common/soc-acpi-intel-jsl-match.c  |   2 +-
- sound/soc/intel/common/soc-acpi-intel-tgl-match.c  |   4 +-
- 44 files changed, 317 insertions(+), 213 deletions(-)
-
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+index 5663df49dd81..113a1100f2ae 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
+@@ -276,7 +276,6 @@ static int sun8i_ce_cipher_prepare(struct crypto_engine *engine, void *async_req
+ 		goto theend_sgs;
+ 	}
+ 
+-	chan->timeout = areq->cryptlen;
+ 	rctx->nr_sgs = ns;
+ 	rctx->nr_sgd = nd;
+ 	return 0;
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+index 658f520cee0c..79ec172e5c99 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+@@ -210,11 +210,10 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
+ 	mutex_unlock(&ce->mlock);
+ 
+ 	wait_for_completion_interruptible_timeout(&ce->chanlist[flow].complete,
+-			msecs_to_jiffies(ce->chanlist[flow].timeout));
++			msecs_to_jiffies(CE_DMA_TIMEOUT_MS));
+ 
+ 	if (ce->chanlist[flow].status == 0) {
+-		dev_err(ce->dev, "DMA timeout for %s (tm=%d) on flow %d\n", name,
+-			ce->chanlist[flow].timeout, flow);
++		dev_err(ce->dev, "DMA timeout for %s on flow %d\n", name, flow);
+ 		err = -EFAULT;
+ 	}
+ 	/* No need to lock for this read, the channel is locked so
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
+index 13bdfb8a2c62..b26f5427c1e0 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
+@@ -446,8 +446,6 @@ int sun8i_ce_hash_run(struct crypto_engine *engine, void *breq)
+ 	else
+ 		cet->t_dlen = cpu_to_le32(areq->nbytes / 4 + j);
+ 
+-	chan->timeout = areq->nbytes;
+-
+ 	err = sun8i_ce_run_task(ce, flow, crypto_ahash_alg_name(tfm));
+ 
+ 	dma_unmap_single(ce->dev, addr_pad, j * 4, DMA_TO_DEVICE);
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-prng.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-prng.c
+index 762459867b6c..d0a1ac66738b 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-prng.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-prng.c
+@@ -137,7 +137,6 @@ int sun8i_ce_prng_generate(struct crypto_rng *tfm, const u8 *src,
+ 
+ 	cet->t_dst[0].addr = desc_addr_val_le32(ce, dma_dst);
+ 	cet->t_dst[0].len = cpu_to_le32(todo / 4);
+-	ce->chanlist[flow].timeout = 2000;
+ 
+ 	err = sun8i_ce_run_task(ce, 3, "PRNG");
+ 	mutex_unlock(&ce->rnglock);
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-trng.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-trng.c
+index e1e8bc15202e..244529bf0616 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-trng.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-trng.c
+@@ -79,7 +79,6 @@ static int sun8i_ce_trng_read(struct hwrng *rng, void *data, size_t max, bool wa
+ 
+ 	cet->t_dst[0].addr = desc_addr_val_le32(ce, dma_dst);
+ 	cet->t_dst[0].len = cpu_to_le32(todo / 4);
+-	ce->chanlist[flow].timeout = todo;
+ 
+ 	err = sun8i_ce_run_task(ce, 3, "TRNG");
+ 	mutex_unlock(&ce->rnglock);
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
+index 0f9a89067016..f12c32d1843f 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h
+@@ -106,6 +106,7 @@
+ #define MAX_SG 8
+ 
+ #define CE_MAX_CLOCKS 4
++#define CE_DMA_TIMEOUT_MS	3000
+ 
+ #define MAXFLOW 4
+ 
+@@ -196,7 +197,6 @@ struct sun8i_ce_flow {
+ 	struct completion complete;
+ 	int status;
+ 	dma_addr_t t_phy;
+-	int timeout;
+ 	struct ce_task *tl;
+ 	void *backup_iv;
+ 	void *bounce_iv;
+-- 
+2.50.0
 
 
