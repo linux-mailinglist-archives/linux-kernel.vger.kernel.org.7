@@ -1,185 +1,150 @@
-Return-Path: <linux-kernel+bounces-795657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089FFB3F601
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:55:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D806B3F5E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFEB720617A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:55:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D3F1A86613
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C8F2E54DB;
-	Tue,  2 Sep 2025 06:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A174A2E54A2;
+	Tue,  2 Sep 2025 06:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="e6dpTEQn"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7gFHxYF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7283F2DEA94;
-	Tue,  2 Sep 2025 06:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A56B2AF1B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756796101; cv=none; b=JplY5GLvgtvaKEnHfthwoakrdDRhh35/lZTm+7emzAONBnRnCuRRHXelT764QAKcamXwKPAn8dCeEHO0sBC9a1Hc/OcHTzeisAgfqY6LrdUBxI/UM6PxbPeev2nQozATBDCJE3/Hnql3anhJed6CXqSy4MjtA0+bgLGr2c5Df7Y=
+	t=1756795942; cv=none; b=gNCwXZdouitgvWV4aUI77QK+MnPU2g4uiUaf6w9sfHj308pnRYgJNavmVvMUgLefKrDUM2jLVs1iMaB3+y7ntB5ZRoJ2Rzd69SwYw/lgkn3ySnq56Orfnwx/WDPdHFYH2d+bZPZl6HUuAjFdIt7QxIn0rx958odPRMOQnch7oXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756796101; c=relaxed/simple;
-	bh=CsC+1NseFGXr+HNNYQlwT7VdG2zs1pDwSBXDb2b5wt0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvxS5raKm2M5b973Qj2g2ls/HtTUNm77qytfJM54smgz/JIxFte3luDfhu8kNmrRpCKOTYs2In7Tflna4j9PnFpnJaaZAEon4KEmF5fNNbkbkMmZOn/QNV34oqT49sHk2NlgCy/h3lgPQjOXGVE3ltc9MKjHHzZA6qcaqsIHTNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=e6dpTEQn; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756796101; x=1788332101;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CsC+1NseFGXr+HNNYQlwT7VdG2zs1pDwSBXDb2b5wt0=;
-  b=e6dpTEQn1VIt7vMsfHviLAvFOqrE008IkP2XKj9Y3If+HfpYrCC8cEYN
-   Nygb/IHxOcL8RhqBanZGW0/9oTRSAGDvd+UW8vz5pBCaR9Zubd8f6CQxa
-   eXa3MjVzcncPXIgfveea6NHyRj31oVeBmSNPX3OgU4pFStRrVwIYKCEZo
-   8BgXMZgNym0z7c1+0hylVBn+Tuy9phcHEYMyOfgCm9SE26TyjslMv/Ql/
-   TEmcbgWxSXPAjn89woh6hLMjjpEdxfGKCnaXrbZm1lauNuYouAtiKXiX7
-   HmPlWEpp+jQ3F4En+w3F8yJs7Ls3X3wwKKYe43Aat7e8E/Xh2zxZa5pG1
-   Q==;
-X-CSE-ConnectionGUID: XpzdIPkfRDuYgIDUOjABFg==
-X-CSE-MsgGUID: GRlAvooiQ9+ZJjI9J61fLg==
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="277307066"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Sep 2025 23:54:54 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 1 Sep 2025 23:54:26 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Mon, 1 Sep 2025 23:54:26 -0700
-Date: Tue, 2 Sep 2025 08:50:47 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
-	<viro@zeniv.linux.org.uk>, <atenart@kernel.org>,
-	<quentin.schulz@bootlin.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net v2] phy: mscc: Stop taking ts_lock for tx_queue and
- use its own lock
-Message-ID: <20250902065047.shz6bkyfewleluzp@DEN-DL-M31836.microchip.com>
-References: <20250901092304.1312787-1-horatiu.vultur@microchip.com>
- <dbc50956-4aa6-4484-be32-0b091d494bc1@linux.dev>
+	s=arc-20240116; t=1756795942; c=relaxed/simple;
+	bh=6wl6cmFHceRAAEs+T1LUMeqQQEIvnM/lh5zH61vEsBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S+alUvzsBJLo4mZn5m1F6vjXOKJiekBtk/n1CuZ6mvrqn7R52D2C+ATuKFmw53FQysF1Sz7Xrz8x5Aun7Mxy5Mh/dPINE16CgHrmiAnoeuOlRk5W+bwCoAjmQ5lw3YGBjTl7tagHmqtOxJryJbaOV60HF3WzTBOzPx0CQ8H/mQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7gFHxYF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 836E1C4CEFA
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756795940;
+	bh=6wl6cmFHceRAAEs+T1LUMeqQQEIvnM/lh5zH61vEsBM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=R7gFHxYFb053AS32peRwBAjn8ZYeNhT0a6ZCC7OAfM+cQKJEvC8k8w4A/VNn8fnTr
+	 hSudmvEhdmAJC37voINtF++4d2V38su0rlaC8xt5sPEdFDcgehI8xVTa8mTuR7XD2k
+	 zweUMNMiN2TQq1GQUoI1cE/GhlzMzrjRWjaJTsJo/cQanGJyCZvyUPnmT0l+bYh6jd
+	 LUzdNBDUy0cmWt3TiPfQjfVc77qazmEXKW0qZ5NqrprLpQ9ImUxyg52Luud+AB+3HW
+	 uI4RjMXF4UWd9397WFoLug+cNDHO5AJwOUuv8dknyjqAG9Wff/NXIgxRJxeRj2bX+z
+	 XERzxjlT05UbA==
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d6051afbfso41927017b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:52:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBuLmtyDXjATNvMCN2jsJAhS8Glgh1iLqOpqOlzgtyfCOTzSRXcrK49i6E39RU3+RNqVcJewsQOev6K38=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+vDdbXhQUycqEILM6ZspWTh0se4t4LuiutFnwZl2YZPUEFvYe
+	IIpZIp+wJq7d4YEI2lz6Y7LSx0sp5cv7b+KyN/vjfk4IBSCAZuSMJkrsFe4HgiV1EXHav+eJ7Uf
+	5vvwm5InAkYI8D0oaRbnn2CQzJ+qMEmVT+SIgmA7tuw==
+X-Google-Smtp-Source: AGHT+IGzRpgkehqNIOLRAMXCcfmGGF3mxatyKy1pNHfvYlAI6JF4EfIHPF8w6zxyPs3mXt6v7TcBX64xqhBWpaUj9OU=
+X-Received: by 2002:a05:690c:9c0f:b0:71f:b419:8f6a with SMTP id
+ 00721157ae682-723ae3b3444mr4530277b3.38.1756795939830; Mon, 01 Sep 2025
+ 23:52:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <dbc50956-4aa6-4484-be32-0b091d494bc1@linux.dev>
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-2-ryncsn@gmail.com>
+ <CAGsJ_4xoN35Av2H70o+dwGzhKrAnm7gppEseG0MgAUPQt2TygQ@mail.gmail.com> <CAMgjq7Au2n7PO6yb7wyCJbvFceGj6cpQCp+kVTewPjU=WhmXKQ@mail.gmail.com>
+In-Reply-To: <CAMgjq7Au2n7PO6yb7wyCJbvFceGj6cpQCp+kVTewPjU=WhmXKQ@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 1 Sep 2025 23:52:08 -0700
+X-Gmail-Original-Message-ID: <CACePvbXWSCm0M-c085ss=ys9XGePQTHocFGfUSm_ZUbemAZwOQ@mail.gmail.com>
+X-Gm-Features: Ac12FXw1E3Nb8_UZtKM2TaG5JnD1427eK-n7xw8pepASNKmzu_t-q8VbeCXEYYM
+Message-ID: <CACePvbXWSCm0M-c085ss=ys9XGePQTHocFGfUSm_ZUbemAZwOQ@mail.gmail.com>
+Subject: Re: [PATCH 1/9] mm, swap: use unified helper for swap cache look up
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Barry Song <21cnbao@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 09/01/2025 11:19, Vadim Fedorenko wrote:
-
-Hi Vadim,
-
-> 
-> On 01/09/2025 10:23, Horatiu Vultur wrote:
-> > When transmitting a PTP frame which is timestamp using 2 step, the
-> > following warning appears if CONFIG_PROVE_LOCKING is enabled:
-> > =============================
-> > [ BUG: Invalid wait context ]
-> > 6.17.0-rc1-00326-ge6160462704e #427 Not tainted
-> > -----------------------------
-> > ptp4l/119 is trying to lock:
-> > c2a44ed4 (&vsc8531->ts_lock){+.+.}-{3:3}, at: vsc85xx_txtstamp+0x50/0xac
-> > other info that might help us debug this:
-> > context-{4:4}
-> > 4 locks held by ptp4l/119:
-> >   #0: c145f068 (rcu_read_lock_bh){....}-{1:2}, at: __dev_queue_xmit+0x58/0x1440
-> >   #1: c29df974 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: __dev_queue_xmit+0x5c4/0x1440
-> >   #2: c2aaaad0 (_xmit_ETHER#2){+.-.}-{2:2}, at: sch_direct_xmit+0x108/0x350
-> >   #3: c2aac170 (&lan966x->tx_lock){+.-.}-{2:2}, at: lan966x_port_xmit+0xd0/0x350
-> > stack backtrace:
-> > CPU: 0 UID: 0 PID: 119 Comm: ptp4l Not tainted 6.17.0-rc1-00326-ge6160462704e #427 NONE
-> > Hardware name: Generic DT based system
-> > Call trace:
-> >   unwind_backtrace from show_stack+0x10/0x14
-> >   show_stack from dump_stack_lvl+0x7c/0xac
-> >   dump_stack_lvl from __lock_acquire+0x8e8/0x29dc
-> >   __lock_acquire from lock_acquire+0x108/0x38c
-> >   lock_acquire from __mutex_lock+0xb0/0xe78
-> >   __mutex_lock from mutex_lock_nested+0x1c/0x24
-> >   mutex_lock_nested from vsc85xx_txtstamp+0x50/0xac
-> >   vsc85xx_txtstamp from lan966x_fdma_xmit+0xd8/0x3a8
-> >   lan966x_fdma_xmit from lan966x_port_xmit+0x1bc/0x350
-> >   lan966x_port_xmit from dev_hard_start_xmit+0xc8/0x2c0
-> >   dev_hard_start_xmit from sch_direct_xmit+0x8c/0x350
-> >   sch_direct_xmit from __dev_queue_xmit+0x680/0x1440
-> >   __dev_queue_xmit from packet_sendmsg+0xfa4/0x1568
-> >   packet_sendmsg from __sys_sendto+0x110/0x19c
-> >   __sys_sendto from sys_send+0x18/0x20
-> >   sys_send from ret_fast_syscall+0x0/0x1c
-> > Exception stack(0xf0b05fa8 to 0xf0b05ff0)
-> > 5fa0:                   00000001 0000000e 0000000e 0004b47a 0000003a 00000000
-> > 5fc0: 00000001 0000000e 00000000 00000121 0004af58 00044874 00000000 00000000
-> > 5fe0: 00000001 bee9d420 00025a10 b6e75c7c
-> > 
-> > So, instead of using the ts_lock for tx_queue, use the spinlock that
-> > skb_buff_head has.
-> > 
-> > Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> > 
-> > ---
-> > v1->v2:
-> > - initialize tx_queue in ptp_probe
-> > - purge the tx_queue when the driver is removed or when TX timestamping
-> >    is OFF
-> > ---
-> >   drivers/net/phy/mscc/mscc_ptp.c | 16 +++++++---------
-> >   1 file changed, 7 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-> > index 72847320cb652..e866a1d865f8b 100644
-> > --- a/drivers/net/phy/mscc/mscc_ptp.c
-> > +++ b/drivers/net/phy/mscc/mscc_ptp.c
-> > @@ -461,7 +461,7 @@ static void vsc85xx_dequeue_skb(struct vsc85xx_ptp *ptp)
-> >               return;
-> > 
-> >       while (len--) {
-> > -             skb = __skb_dequeue(&ptp->tx_queue);
-> > +             skb = skb_dequeue(&ptp->tx_queue);
-> 
-> Now as you switched to use spinlock of tx_queue, it is technically
-> correct to change skb_queue_len(&ptp->tx_queue) to
-> skb_queue_len_lockless(&ptp->tx_queue) a couple of lines above this
-> chunk.
-
-I will update this in the next version.
-Thanks!
-
-> 
-> Otherwise LGTM, once skb_queue_len fixed you can add
-> 
-> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> 
-> 
+On Mon, Sep 1, 2025 at 11:13=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> On Tue, Sep 2, 2025 at 9:14=E2=80=AFAM Barry Song <21cnbao@gmail.com> wro=
+te:
+> >
+> > On Sat, Aug 23, 2025 at 3:20=E2=80=AFAM Kairui Song <ryncsn@gmail.com> =
+wrote:
+> > >
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > Always use swap_cache_get_folio for swap cache folio look up. The rea=
+son
+> > > we are not using it in all places is that it also updates the readahe=
+ad
+> > > info, and some callsites want to avoid that.
+> > >
+> > > So decouple readahead update with swap cache lookup into a standalone
+> > > helper, let the caller call the readahead update helper if that's
+> > > needed. And convert all swap cache lookups to use swap_cache_get_foli=
+o.
+> > >
+> > > After this commit, there are only three special cases for accessing s=
+wap
+> > > cache space now: huge memory splitting, migration and shmem replacing=
+,
+> > > because they need to lock the Xarray. Following commits will wrap the=
+ir
+> > > accesses to the swap cache too with special helpers.
+> > >
+> > > Signed-off-by: Kairui Song <kasong@tencent.com>
+> >
+> > Nice! This has cleaned up the confusing mix of using
+> > swap_cache_get_folio with VMA, filemap_get_entry,
+> > swap_cache_get_folio without VMA, and filemap_get_folio.
+> >
+> > Reviewed-by: Barry Song <baohua@kernel.org>
+>
 > Thanks!
-> 
-> >               if (!skb)
-> >                       return;
-> > 
-> > @@ -486,7 +486,7 @@ static void vsc85xx_dequeue_skb(struct vsc85xx_ptp *ptp)
-> >                * packet in the FIFO right now, reschedule it for later
-> >                * packets.
-> >                */
-> > -             __skb_queue_tail(&ptp->tx_queue, skb);
-> > +             skb_queue_tail(&ptp->tx_queue, skb);
-> 
+>
+> >
+> > Do we have any potential "dropbehind" cases for anonymous folios?
+> > I guess not for now.
+> >
+>
+> Right, dropbehind doesn't apply to anon yet.
+>
+> > __filemap_get_folio()
+> > {
+> >         if (folio_test_dropbehind(folio) && !(fgp_flags & FGP_DONTCACHE=
+))
+> >                 folio_clear_dropbehind(folio);
+> > }
+> >
+> > Can we mention something about it in the changelog?
+>
+> I can add some words about it in the commit message. One can easily
+> tell that if we want dropbehind for anon, swap_caceh_get_folio will be
+> the right place to handle related logics.
+>
+> Now with swap_cache_get_folio being the only place for swap cache
+> lookup, and in the next phase we'll make the swap cache layer the
+> unified way to do swap synchronization and never bypass it, maybe
+> dropbehind will be easier to do too.
 
--- 
-/Horatiu
+Thanks for the cleaning up and unified swap cache synchronization.
+
+Really appreciate it.
+
+Chris
 
