@@ -1,237 +1,131 @@
-Return-Path: <linux-kernel+bounces-796582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71104B402D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E675B40301
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93C93AB37F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:23:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A3816246D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE922DAFA1;
-	Tue,  2 Sep 2025 13:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0109A306496;
+	Tue,  2 Sep 2025 13:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="THgycutG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rk5fc7Nx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="THgycutG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rk5fc7Nx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrZ24BWM"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B215B3054ED
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49463009EF;
+	Tue,  2 Sep 2025 13:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819365; cv=none; b=TQqdYySCVRMMPMVcMhBz/QallK2d2rid0oMTP+Bd0vsY38FEOB3IVz0NY8v0Ua+u80z7Re7Ycxqn0+S2EbZacCrnRoMdJe99jFpbGmqITcjy0Y2ngv46DHUXaBjMYARUPsgBdc2dv3AElR55DV0UtFUl+pWWSUaPP/6kiDwMXdI=
+	t=1756819415; cv=none; b=Zg6uqfqdlwEO1q/7cwOXOtQ89DDa9skMqFq0BNZdJdSmyBYMsU/vaQKzByxe6DF/XnJDRSuERYJMUunfeBrs/rmoNWq7gBWKDa6e1Y/IGsoVdgLTv9rEzojhbtqHXjvmIWQT2wHRdvINa2/4l42KgL2eMUw2GV2yfHFUB5ieguY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819365; c=relaxed/simple;
-	bh=TMevIV6gQUGARz2SaWzGieoRQp0c7UWobPfK94/VHIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YMrrXmWvqW9kKpA0ahipaKyHAV+tbRfEnSQifFEJeY6v4dTy100+pUDtMRm4npNFK2FcCuqcTSPDmGvr6MIhfmTVChuOAFDA2CUqY8gDwLdY6dlMTfAnkVuDrXUNrBk/OKnJeWg70egnQtI7OgxbpRd7yLLsKmWWSxw6NKSVTKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=THgycutG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rk5fc7Nx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=THgycutG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rk5fc7Nx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D033D211A2;
-	Tue,  2 Sep 2025 13:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756819361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0HFmgxdh9UywBudMtT0xj7qaL3uD8klJAz80JBdkKvY=;
-	b=THgycutGaZGE01hUGQL3kiq89Zh1zwNsPxPCGSjuqiH5ZMCJHcz9eC9HuHM8Vwb66E62RR
-	4yljh9ezmRUteOoGGX0DE9DdExDoMuuT2S+msVWWwy7MnX4wCmWZtv5EKsnWzQqHVkZjhH
-	hfkizvL5Ax+L94+fY04j7BFLxuDDSC0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756819361;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0HFmgxdh9UywBudMtT0xj7qaL3uD8klJAz80JBdkKvY=;
-	b=rk5fc7Nx9S9THAfhHbmVR0x3U5E16ANNPkpW/Pfm027b9/dD8QXm8NDs2njezl3DmjD25i
-	i7dEjCFY2TFz5cCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756819361; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0HFmgxdh9UywBudMtT0xj7qaL3uD8klJAz80JBdkKvY=;
-	b=THgycutGaZGE01hUGQL3kiq89Zh1zwNsPxPCGSjuqiH5ZMCJHcz9eC9HuHM8Vwb66E62RR
-	4yljh9ezmRUteOoGGX0DE9DdExDoMuuT2S+msVWWwy7MnX4wCmWZtv5EKsnWzQqHVkZjhH
-	hfkizvL5Ax+L94+fY04j7BFLxuDDSC0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756819361;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0HFmgxdh9UywBudMtT0xj7qaL3uD8klJAz80JBdkKvY=;
-	b=rk5fc7Nx9S9THAfhHbmVR0x3U5E16ANNPkpW/Pfm027b9/dD8QXm8NDs2njezl3DmjD25i
-	i7dEjCFY2TFz5cCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6CDBA13882;
-	Tue,  2 Sep 2025 13:22:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sn3AGKHvtmhVWgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 13:22:41 +0000
-Message-ID: <056b0335-f104-4b67-9882-6beaecd21c76@suse.de>
-Date: Tue, 2 Sep 2025 15:22:40 +0200
+	s=arc-20240116; t=1756819415; c=relaxed/simple;
+	bh=Iu2ZUA1owfkZE2TbpLbzBVFl4/pubaw013aAab0rbac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KqWbMN55EKxf+pC8G2XjPFiIrtN/vmqRibzhBX+/HNOgkHWWzuTA7TxvFqOYZrnXpjasID/WSi4xNqSopZDZPCqkxPFY94Tta7PEm0n3B2F48Kx16KjFQw9cU3A8GmOnE7dZNu1c+OIkwzz4xDkstdLSGONs/MKN8zp2RgPvoII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DrZ24BWM; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61ebe2ce888so1035541a12.1;
+        Tue, 02 Sep 2025 06:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756819412; x=1757424212; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=poZ2nT7UtwpL4m9esHTGjRx9cHfxaHESfkCNN9Nbo6A=;
+        b=DrZ24BWMTOzs+gQ3hvqtVXj6n7x9/7Phsy9fguTXy4LmEopnr7+ffCkRHqTNsdEj+N
+         rxOaIx78xFIEPS3aX/L0o3YXbp6fANCaAKZedSIb860o8R72eHjAi1nf19NDvQUwC2sB
+         gRTpEbRbuUKGPPvFvnqUKBYyZJhnaqkpSm7eBGTqXjJfHP8O4YWLAguzpQAXwVXkFjh3
+         PcjQtELFxmzsW6Ciav+f3KQdkmMGwgiS/icI2pQcWcbgFlj+rZovFg3zppHC54Aw62OC
+         PB7waaef5ub9exXkp8w1xxK8gOG1gNXHuoOA/oGBCY+Qh/UnsLFfdViTnaXfvSDrgFzE
+         EB2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756819412; x=1757424212;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=poZ2nT7UtwpL4m9esHTGjRx9cHfxaHESfkCNN9Nbo6A=;
+        b=kXj6hAAL6S4O2IgJz+tOEmCka0P4QYaoTGRBt+gUVrUG8yj6x1p43DlnJ/MCQtWfW1
+         oLf3Nse9qmZUQpfoJcrc8hMb9emQq9Dd0N/cA0sq4WTZwXp6YfMSiaOTCGVY2zyHlUW8
+         WT4DIrbIiDvknU97+rnOQcrR6ycKNBmBdMf7A+ZLj/MZpuFA9m4iB+bOtpDQ2TZUWZHL
+         4aY4oM8AWQPI1zzulMSBVk3d+zS8oX4nUY4LYwWxLhYPYF6szx/xeOrfk4I7yGvJjQgD
+         xDVdMnbRbmle4hhs7erFh+OqxtU6uEFQSiGNCla7w4XkJUd7y3o6FRIqz5UkcejVRU2N
+         +pEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJUTHxHmtNNbKCPTeZYwaqyu6Nb/BauWfCLscDZ0T0qApMOoOpe+OIMB+W2B3qnooyXVYwwEK5szgJsq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhbk4rXCBKkJOejAUSPDoEhBeGIcNcvxewyJHT6NGMIPOM4Z1X
+	TLEMAroDhUwgEGiQzuM1JnylGuxjgQ6HBaeegeXjxYASus3xmPlVw6uq
+X-Gm-Gg: ASbGncu1Gl3kHmoaY/cG05s1j/pZ0VjWxPbKpP9b0RdBnlwHZj0XxHuVDxV5T9TZ8ct
+	tbrDv8QSidUxWOqsTCJnAXxrt9g+yTTZzCu9x32/2O8wNoVQ3zl856krlQ+9F3XLHXokfjT7tIN
+	oeqDavq9mt9AbSRUaU0N2sBpjWqWFClWgAiNBOHZWoTgrE2VMVcd3ETVbP/mL817QWnR1nMwUJO
+	ddIP2XcoelphFHBXcYS1NG4FRLvztXj8/L9uEMR6iGuBybG/VM+A8efTWyd2hPXFXNPZv1Tv9QO
+	ZR7KbCxAf9Kn+g9rBU65Yp6SbB73apD+cOBaB7TrrHCPnQS5LdJpfrAEcJ4eF6uFIpYTAfOktr6
+	dwtQx5D14RZRRmc8DuC9OsMKFmQkxK6YZhOnRsqPtQJJls4x18zU58uTcoYIlGfIyBwvRV2Qh29
+	HEvak=
+X-Google-Smtp-Source: AGHT+IGBHPQ9QC3UL0N3OUtKoMUMJFFQ8lZkHT+ofuXkeDJBZKczhiX8gGjnRAoBLJyZzWo6xA+28A==
+X-Received: by 2002:a05:6402:23d4:b0:618:528b:7f9b with SMTP id 4fb4d7f45d1cf-61d26ebc064mr9508721a12.31.1756819411656;
+        Tue, 02 Sep 2025 06:23:31 -0700 (PDT)
+Received: from XPS.. ([2a02:908:1b0:afe0:a26d:192:8cf5:7a0d])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc1c7a27sm9668715a12.10.2025.09.02.06.23.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:23:31 -0700 (PDT)
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: tsbogend@alpha.franken.de
+Cc: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: [PATCH v2] mips: math-emu: replace deprecated strcpy() in me-debugfs
+Date: Tue,  2 Sep 2025 15:23:14 +0200
+Message-ID: <20250902132314.49374-1-osama.abdelkader@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/29] drm/bridge: Implement atomic_print_state
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-6-14ad5315da3f@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250902-drm-state-readout-v1-6-14ad5315da3f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+Content-Transfer-Encoding: 8bit
 
-Hi
+use strscpy() instead of deprecated strcpy().
 
-Am 02.09.25 um 10:32 schrieb Maxime Ripard:
-> Bridges have some fields in their state worth printing, but we don't
-> provide an atomic_print_state implementation to show those fields.
->
-> Let's do so.
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->   drivers/gpu/drm/drm_bridge.c | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> index dd439d55177a867acb7ab73c02182bada44d93c9..e803dfd8fd5aae9c16931445213df04d8715b9f6 100644
-> --- a/drivers/gpu/drm/drm_bridge.c
-> +++ b/drivers/gpu/drm/drm_bridge.c
-> @@ -370,13 +370,31 @@ drm_bridge_atomic_destroy_priv_state(struct drm_private_obj *obj,
->   	struct drm_bridge *bridge = drm_priv_to_bridge(obj);
->   
->   	bridge->funcs->atomic_destroy_state(bridge, state);
->   }
->   
-> +static void
-> +drm_bridge_atomic_print_priv_state(struct drm_printer *p,
-> +				   const struct drm_private_state *s)
-> +{
-> +	const struct drm_bridge_state *state =
-> +		container_of_const(s, struct drm_bridge_state, base);
+Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+---
+v2:
+change function signature to get len and the caller.
+---
+ arch/mips/math-emu/me-debugfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Maybe adopt drm_priv_to_bridge_state() to accept const pointers?
-
-https://elixir.bootlin.com/linux/v6.16.4/source/include/drm/drm_atomic.h#L1236
-
-
-
-> +	struct drm_bridge *bridge = drm_priv_to_bridge(s->obj);
-> +
-> +	drm_printf(p, "bridge: %s", drm_get_connector_type_name(bridge->type));
-> +	drm_printf(p, "\tinput bus configuration:");
-> +	drm_printf(p, "\t\tcode: %04x", state->input_bus_cfg.format);
-> +	drm_printf(p, "\t\tflags: %08x", state->input_bus_cfg.flags);
-> +	drm_printf(p, "\toutput bus configuration:");
-> +	drm_printf(p, "\t\tcode: %04x", state->output_bus_cfg.format);
-> +	drm_printf(p, "\t\tflags: %08x", state->output_bus_cfg.flags);
-> +}
-> +
->   static const struct drm_private_state_funcs drm_bridge_priv_state_funcs = {
->   	.atomic_duplicate_state = drm_bridge_atomic_duplicate_priv_state,
->   	.atomic_destroy_state = drm_bridge_atomic_destroy_priv_state,
-> +	.atomic_print_state = drm_bridge_atomic_print_priv_state,
->   };
->   
->   static bool drm_bridge_is_atomic(struct drm_bridge *bridge)
->   {
->   	return bridge->funcs->atomic_reset != NULL;
->
-
+diff --git a/arch/mips/math-emu/me-debugfs.c b/arch/mips/math-emu/me-debugfs.c
+index d5ad76b2bb67..49bf2b827ce2 100644
+--- a/arch/mips/math-emu/me-debugfs.c
++++ b/arch/mips/math-emu/me-debugfs.c
+@@ -37,11 +37,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_fpuemu_stat, fpuemu_stat_get, NULL, "%llu\n");
+  * used in debugfs item names to be clearly associated to corresponding
+  * MIPS FPU instructions.
+  */
+-static void adjust_instruction_counter_name(char *out_name, char *in_name)
++static void adjust_instruction_counter_name(char *out_name, size_t len, char *in_name)
+ {
+ 	int i = 0;
+ 
+-	strcpy(out_name, in_name);
++	strscpy(out_name, in_name, len);
+ 	while (in_name[i] != '\0') {
+ 		if (out_name[i] == '_')
+ 			out_name[i] = '.';
+@@ -226,7 +226,7 @@ do {									\
+ 
+ #define FPU_STAT_CREATE_EX(m)						\
+ do {									\
+-	adjust_instruction_counter_name(name, #m);			\
++	adjust_instruction_counter_name(name, sizeof(name), #m);			\
+ 									\
+ 	debugfs_create_file(name, 0444, fpuemu_debugfs_inst_dir,	\
+ 				(void *)FPU_EMU_STAT_OFFSET(m),		\
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+2.43.0
 
 
