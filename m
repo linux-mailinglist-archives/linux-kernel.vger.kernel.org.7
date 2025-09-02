@@ -1,143 +1,162 @@
-Return-Path: <linux-kernel+bounces-797319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625B9B40EC2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:47:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 444D4B40EC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C535E7D0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD5001B656BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C286F2E8B66;
-	Tue,  2 Sep 2025 20:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7F62701BD;
+	Tue,  2 Sep 2025 20:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T8Y7Gnac"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgLUEb4P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343622DECB4;
-	Tue,  2 Sep 2025 20:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016F2203706;
+	Tue,  2 Sep 2025 20:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756846018; cv=none; b=obDxSM3gyLOWPJ8mVgQAx4isqFEYCnnjvl3AFMJMU6hnu4m2Ahbkol/+oY+eSs5vUsq7QMek5cz2bdyOuf4dRqlhVn8fkXNAp4uZhLz8y9i1xyZikmMyu9pqZSX0Fh1x3vq7LvIuKTHHORQyifz7WyQAXxSsB0bqb7duHrbmKn0=
+	t=1756846074; cv=none; b=WzioUZY13nmuWWs1+dlP+cORUzNo+Y+xdmQkTMAOFtQsLP+roU0sHHL6Toe6UYDykeWZ1UL1SyuS6tVpu6+hjQCXfEX0B45nJ6goiuqU71Tm87e24XY+czp4D+zsH/hrwpx8r5BwCk8MI9uqpbzkU+whO2/lOv39LOGFfpAOIfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756846018; c=relaxed/simple;
-	bh=kutjVkpcvEETb1qEj2HY122cngSwuEsceeDMIRlTOiM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YlDj1sPeQt0ch6tyzhVrGFGtbT2wHzg8Ykpx+k8C6337FfzOQT6QN3gzSU/5wx91MdWJ6S9XDdpizGjiLzoG/pH54O1aameCZV4Q6i7Vz/uRQmKrn7yymQbUbr5j2u5TE22sSDZbAnr2nKTFXfbDmBXoGoBQnGv15wbw5O3FYPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T8Y7Gnac; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb7ace3baso440904166b.3;
-        Tue, 02 Sep 2025 13:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756846015; x=1757450815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kutjVkpcvEETb1qEj2HY122cngSwuEsceeDMIRlTOiM=;
-        b=T8Y7Gnacmq4vOiGY8YqsBkmMTB3Tq4pHX6BLsj+eL8A7Yq0rXmwFbT7amtInhH2IPO
-         Yl9eB9W0SRTOM3yCvwMh8/TEVmmapxjCyGZlJOJ5mVWhUCOm+EHC96sPLSRLz0mf45hr
-         ml1me73jxUtHCB/aNPOip7svo8Frg+JLQTi4E9FysfNaIg8uasZ87S/+67txw9e9Lkep
-         qZEjHgj5EWbSQDBui5vlZh17Mn87AUud00YFD3yKrFywJ9NhVqKNBeyClKNYaTl/Fv7n
-         Rw6giI4jUeL5w/kEIBWz4vJfqJtc9MZ79Itb/GKpnooXI9lTZwK6a5lxp5S/aWBGyqNu
-         F5YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756846015; x=1757450815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kutjVkpcvEETb1qEj2HY122cngSwuEsceeDMIRlTOiM=;
-        b=MeXiP+dWOvp+Qvn+4P21IayjVCclGsSWtSrppFuw8lMmZwkqO5n0U68+qM/QZao6U0
-         xfBzj/fuB/AjNIZ8B6744IJx7ECSQgfwXeKixaIDk32CKrIlZYXMGHf9VZu3/s5Ytb0Q
-         ibFTS08cBLhxHn6aYJXBowzx9lhdXQRVBdyk4MLt1Gbcue6B2dYC8NwvsE20PITyMLmS
-         V99LL+5Z5LLNlD7u2mg4pVZIllvjIIdXXanbjxBqjtWNzNFn8HDpWfqsQNL+D0iTpU3v
-         DVifrilFttYrDPgenb8Gfl+c2jUMFJ3gzryuXiEeZzbJ7ZC7bYp1lbkaFnLuakmtSj6V
-         iUsw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1TvCmK+n7id47Z415vcSXbK/8tf7XIG5+Y6nt3V+RzWKGgtxIMb8CDsHFUpqBmpIVgYETfxThi0c02l57@vger.kernel.org, AJvYcCVOX1dHAk8aIZIWF8UfE8AzM3dAQ82sjDmR582LD/TXJcgUAzLyUpkJPrB0dSdzSCLd05ox2zTlesrsEg==@vger.kernel.org, AJvYcCVpacStE7ESxxu+OLaLrNSkp4Y/7HeorGOKsQoTXWACcTE97LNn5p0yZ1r6FyThuBaXkGNNxyrsiP8Yww==@vger.kernel.org, AJvYcCW3K1eKLORm8BIahs8gFOcvpYxlqzipmXGB+KioQwn0aI++2kT7AhZB/E2/6CRAHVHxoqcgIWFrXyFv23q6@vger.kernel.org, AJvYcCWJDjcgX+lR/Yjk5CvZxBdaBKc0hSODdIgYao1RvTq0lg/JnMqi6tXjrBLjxdl5R0QPLONY2gWGRry9YGNkuZrS@vger.kernel.org, AJvYcCWzE2hR8/HtmQU7JNzDCGZ+qOi+WSbU2HNWovH5HuCgB7hdAx7JxcppoRols3BUGsHvdo7nRZK5lMv4z9p5akQq/T8=@vger.kernel.org, AJvYcCXhYLdvVXghPyBZ4bXGdhP6Xi6EFTmIqcNrjPbKexUlsfpmgx1DH0SfYPfml+Yi6tb73sgxdah4ol39Hw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt8Hm2y3HRY9md8l5/peqTgNLAxdNL301e/CsrijbLxSUEB29f
-	FUj8pVRqotcgoyNN9QxHVxtdbGIFo9PsyIHPhoOktUeZGSEJNbgzxmZIUf0cxbI6fAvCjC3b4+f
-	bVt8Jc1ImuLaPECVyM3KzQjxfWCmnSrw=
-X-Gm-Gg: ASbGncsoYLFieQjMd+7fkkaXNtrVv8BNuZH9au/9u3+5xgQqknnkg2CSGgd7ZxbJezj
-	h2FZrxTDfUTaVyaqMI3jrIGqbHDc7/556ASrU0dg0XFtm9pQfOYHymgYwG4SxZoP9EdZTNQ3U+w
-	dPdVas31u4BjPivkpkuAhO6xBaZKbJMHNyrF4ZkPhoAK+JfOLqw3LX78gGzJFy0X0U6+JqVPwMs
-	RMq4rd7aBaGjRVUwQ==
-X-Google-Smtp-Source: AGHT+IG4zlhdZMe5YSuufGeqwlIQK8acaeuuvg5xL+VVOl3StpGEjjD0yfcY2w04cC3rT7k1Cl4bbDXfAthjT80xlmI=
-X-Received: by 2002:a17:906:4fca:b0:b04:6546:347e with SMTP id
- a640c23a62f3a-b0465463a5bmr50237566b.51.1756846015338; Tue, 02 Sep 2025
- 13:46:55 -0700 (PDT)
+	s=arc-20240116; t=1756846074; c=relaxed/simple;
+	bh=F2kD4w31rmC8aRc55QM8VeAbD7vVZzwGup32InjmXFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GLQMsC5fdrCwDlKXw41ab4vY3pUfhW09l8/YcV4Z+PPt7To0UrJsyKQ4WeBQGAvz9uCAlGJ/nnzHpkShosI8/BltUv5yp8q9Um8evOGLphtOD57H8JnDq9YmxM+5nrZ5+vo+2i2N5IPNrzz7AV0uJL7+FNC7XpdbK3poFejjMeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgLUEb4P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77EE9C4CEED;
+	Tue,  2 Sep 2025 20:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756846073;
+	bh=F2kD4w31rmC8aRc55QM8VeAbD7vVZzwGup32InjmXFY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WgLUEb4P3BucztLyEYtKfNbcksfLtRcdtfoZO90JxzgpGZzCs8hwUk8QA5cvR0jUW
+	 ZTBkkco5IlzvxRkHoOEdYhPCLL5oj02TXNMHtyk0aE+djN49Ov+8B9FQzpcoV/Ath1
+	 8ZwoxSXvYk1vHzBJKct89wwCOfRO50a/4ElIARX4Zcsj+3+isPnd23pVQTQG8Lo60x
+	 enNR7yy9R8fP5Qt2XdgfpFT/HMVBfvRJy4O+q0xchVigrvNKG9Aty9aQShIc+6UdmV
+	 c9PAX0rFX7P3/fNyLgNUR/+WN5FixODVqoQ08WW/mVoC8AWEktbHukjERwcnQWCvZd
+	 eMbTjJGLelOZg==
+Message-ID: <9600871d-7a68-4e7e-8cc1-5280af554378@kernel.org>
+Date: Tue, 2 Sep 2025 22:47:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
- <20250902-pinctrl-gpio-pinfuncs-v7-16-bb091daedc52@linaro.org>
- <aLcBcjvMbrxoDYoC@smile.fi.intel.com> <CAMRc=MfcFMgkNqWNZV5o0NxkAvxBTjC3vv56Cr98n0R2CkxuPw@mail.gmail.com>
-In-Reply-To: <CAMRc=MfcFMgkNqWNZV5o0NxkAvxBTjC3vv56Cr98n0R2CkxuPw@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 2 Sep 2025 23:46:18 +0300
-X-Gm-Features: Ac12FXzQiEATdvX4DXbIt31zcGrGliq36XoLvlgsSrCLd-DIw99Mu03fZo98CMc
-Message-ID: <CAHp75VcgaqnDrPH27wxfgyK6zz4RAKJQB0r7G2vbTONTxkEzTw@mail.gmail.com>
-Subject: Re: [PATCH v7 16/16] pinctrl: qcom: make the pinmuxing strict
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Alexey Klimov <alexey.klimov@linaro.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] HID: lg-g15 - Add support for Logitech G13.
+To: kernel test robot <lkp@intel.com>, "Leo L. Schwab" <ewhac@ewhac.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250902003659.361934-2-ewhac@ewhac.org>
+ <202509030200.ITZPZGmG-lkp@intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <202509030200.ITZPZGmG-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 2, 2025 at 8:42=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> On Tue, Sep 2, 2025 at 4:38=E2=80=AFPM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> >
-> > On Tue, Sep 02, 2025 at 01:59:25PM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > > The strict flag in struct pinmux_ops disallows the usage of the same =
-pin
-> > > as a GPIO and for another function. Without it, a rouge user-space
-> > > process with enough privileges (or even a buggy driver) can request a
-> > > used pin as GPIO and drive it, potentially confusing devices or even
-> > > crashing the system. Set it globally for all pinctrl-msm users.
-> >
-> > How does this keep (or allow) I=E6=B6=8E generic recovery mechanism to =
-work?
->
-> What even is the "generic recovery mechanism"? That's the first time
-> I'm hearing this name.
+Hi,
 
-"I=C2=B2C generic recovery mechanism" (I dunno why you put away the I=C2=B2=
-C keyword).
+On 2-Sep-25 21:46, kernel test robot wrote:
+> Hi Leo,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on hid/for-next]
+> [also build test ERROR on linus/master v6.17-rc4 next-20250902]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Leo-L-Schwab/HID-lg-g15-Add-support-for-Logitech-G13/20250902-091504
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+> patch link:    https://lore.kernel.org/r/20250902003659.361934-2-ewhac%40ewhac.org
+> patch subject: [PATCH v5] HID: lg-g15 - Add support for Logitech G13.
+> config: i386-buildonly-randconfig-006-20250902 (https://download.01.org/0day-ci/archive/20250903/202509030200.ITZPZGmG-lkp@intel.com/config)
+> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509030200.ITZPZGmG-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509030200.ITZPZGmG-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> drivers/hid/hid-lg-g15.c:692:30: error: no member named 'brightness_hw_changed' in 'struct led_classdev'
+>      692 |                                            ^ (g15->leds[0].cdev.brightness_hw_changed > 0);
+>          |                                               ~~~~~~~~~~~~~~~~~ ^
+>    1 error generated.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Ah right, IS_ENABLED() only helps to avoid errors about references which
+are resolved link-time and this is a compile-time issue.
+
+But as discussed in the v3 thread we don't want to use 
+cdev.brightness_hw_changed anyways.
+
+Regards,
+
+Hans
+
+
+> 
+> vim +692 drivers/hid/hid-lg-g15.c
+> 
+>    655	
+>    656	static int lg_g13_event(struct lg_g15_data *g15, u8 const *data)
+>    657	{
+>    658		struct g13_input_report const * const rep = (struct g13_input_report *) data;
+>    659		int i, val;
+>    660	
+>    661		/*
+>    662		 * Main macropad and menu keys.
+>    663		 * Emit key events defined for each bit position.
+>    664		 */
+>    665		for (i = 0; i < ARRAY_SIZE(g13_keys_for_bits); ++i) {
+>    666			if (g13_keys_for_bits[i]) {
+>    667				val = TEST_BIT(rep->keybits, i);
+>    668				input_report_key(g15->input, g13_keys_for_bits[i], val);
+>    669			}
+>    670		}
+>    671		input_sync(g15->input);
+>    672	
+>    673		/*
+>    674		 * Joystick.
+>    675		 * Emit button and deflection events.
+>    676		 */
+>    677		for (i = 0; i < ARRAY_SIZE(g13_keys_for_bits_js); ++i) {
+>    678			val = TEST_BIT(rep->keybits, i + G13_JS_KEYBITS_OFFSET);
+>    679			input_report_key(g15->input_js, g13_keys_for_bits_js[i], val);
+>    680		}
+>    681		input_report_abs(g15->input_js, ABS_X, rep->joy_x);
+>    682		input_report_abs(g15->input_js, ABS_Y, rep->joy_y);
+>    683		input_sync(g15->input_js);
+>    684	
+>    685		if (IS_ENABLED(CONFIG_LEDS_BRIGHTNESS_HW_CHANGED)) {
+>    686			/*
+>    687			 * Bit 23 of keybits[] reports the current backlight on/off
+>    688			 * state.  If it has changed from the last cached value, apply
+>    689			 * an update.
+>    690			 */
+>    691			bool hw_brightness_changed = (!!TEST_BIT(rep->keybits, 23))
+>  > 692						   ^ (g15->leds[0].cdev.brightness_hw_changed > 0);
+>    693			if (hw_brightness_changed)
+>    694				led_classdev_notify_brightness_hw_changed(
+>    695					&g15->leds[0].cdev,
+>    696					TEST_BIT(rep->keybits, 23) ? LED_FULL : LED_OFF);
+>    697		}
+>    698	
+>    699		return 0;
+>    700	}
+>    701	
+> 
+
 
