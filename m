@@ -1,167 +1,148 @@
-Return-Path: <linux-kernel+bounces-796952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D685BB409EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:57:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344F2B409ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DFFF3B1A1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4933AD992
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F32334380;
-	Tue,  2 Sep 2025 15:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D888E2D5C8B;
+	Tue,  2 Sep 2025 15:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCpm0nFA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEBErQXk"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0BA32779E;
-	Tue,  2 Sep 2025 15:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8730D31DDAF
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756828655; cv=none; b=fzteJQ1ZF8DwHUO9qnuqMbpkIGwJwELvuQKgJsu5ynrboPaYPBlSBHam+Ip1MkbiUYRQYSsEfTcFMur2jcwes4qRzXN7iT0bSYQul2xJpN+bNDQNoJFB/jx7FzQal6oZs+BMBgXPJZvi140g2DA/HGKrwCoiiUkePbj4lhw7YXU=
+	t=1756828676; cv=none; b=icim5heeWudsfOHjNJajIAIkhJ8bOqBn+/BEIVi+EGaba+5iSk+2S+wJpdx9tmPaVtr0jwCu6Vv+oX684NSRaJwddS87D6nFNn02KJ0fuqZU6Kedw6CT56AZnFVNe4ZZ8N9Y21TYDiIAHo8oTAHjMY1iL550TYLfzjktA7P6FPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756828655; c=relaxed/simple;
-	bh=oulaMx6/URE69aku7O02WZT2LJyGeZwWW9oibZaXKh0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zvtr+hnPa7gX0qTPIceTHPsCYpjnvCRl72rlm/jkeVVVs1g5mf/Pk/TtDjiaPYHLKs7ZmKmGusSRqM2a+Li35gay3aP+JGlQ6Bbbm4ju0xNEhUw5MOwPKfRxIS45RDZx6iK2i4uKkulx1gWwvM9/1OloiOj5agpCYewuE2J3Voc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCpm0nFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E22BC4CEED;
-	Tue,  2 Sep 2025 15:57:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756828655;
-	bh=oulaMx6/URE69aku7O02WZT2LJyGeZwWW9oibZaXKh0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QCpm0nFA8OqlHw6hwDFdaR8n/MIxwCN7Hw7zPhbdV6ZnbaNRJrTDjnrK/f5OwvFCT
-	 o2fFMEgMXc3hP3ka9oJ7VgzD2MqmAi8WWtVmOCSMhGhwTDsFB7YAP1VlwEjrGxPkR0
-	 gRA0UvBQ+XMzjFv4lfHerXM5WYN0Xcsgf4uKQK1to/OuErcmrpqCNytqX9WsdTyt2y
-	 E2Ih4GmHi+UWU7owB15MuvtFfe9iwZ7xNSwYUYaZV+VTyXJMz+j0QAk9slfWfssatR
-	 FJ8iDpnwplN1DbuphLguGPmAm8UCYCJHsvu++drLD1gX65CO+pRhvzSpsCyP9a83Ef
-	 jjWNnJzVIkRRg==
-Message-ID: <b38e64cc-4971-4e71-931c-820453aa91a7@kernel.org>
-Date: Tue, 2 Sep 2025 17:57:22 +0200
+	s=arc-20240116; t=1756828676; c=relaxed/simple;
+	bh=prb4MEvcS6IwQvXSdzOlkkvEzD4Ne+Soh7lgw2XUmmE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eFdC8Q8rLAcX3gW4KikaC5GNCo+Giz2Xci9/6OxhAWqmVuiQ3rMCq3ZeyTdaLZ/ROR94Gc4plLLwhySrtv2PSY7m9rZKgcaWcKW3TbCr3iNhGtCclc89KwnW9718Sd0UXkkAYbvWvW2ASrm6XgiCgdRvza04XiX9OgsMvDP96Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEBErQXk; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b869d3571so7857175e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756828673; x=1757433473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qpTWgweWXwv5CYoYaJX9o8zOdS7aXfoq/fg/YbFm8l0=;
+        b=cEBErQXktyeZD4G4+7ji1uZ4GVTGMfqZFfrQihkgeRT85GMvLN2hc3EE9rWMRUfb9y
+         5ty0+W2UIsu884hM5TiRZxWphqgXL3gJM25zqKnNu/lZGY5Ij1hHjgN/+fNuIovSfbWg
+         ajZ6XKz3Y8QKpnLPBhCkhTNKiyGDZ71ZxYv97pH32xquUBmYi/86ncYEmQQKPKq5ZyB0
+         FtkpAvKP6jGZYXm8lS/XJ1sOudvy6/e8EcrixZn5WTXJi5l7auKNBKEw2bvPlGJ43/36
+         P5m+t4+4x4IvcawmwU4xQ1TUST/6r+7r5rlo1s82wXd+L4BzivedRTn3FR0uQqjK77rG
+         gzrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756828673; x=1757433473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qpTWgweWXwv5CYoYaJX9o8zOdS7aXfoq/fg/YbFm8l0=;
+        b=Z7wjgumvY+LlmRgRYhwkDgYceMNPA1uGMb4Xbq+A0lAX24Nhi3wHbR0S0hoDM7yzQ+
+         K5WT3R2ejRqNLwT4zqv7eJt+iJ4/PZ4fEp0OzzY7T8JnAWeynesyNcoPdIkaD6ak3Ezp
+         B0697Shp5nnCPD7AsBQybZYQyCHQVrUU3I2QzT2DfVJL09660j1ycfpYbwWeYWvrx0co
+         e9OZnlZjHo1mVQzcYSdcYPF4AUfHmRnEl/zXgdmfVq/TnrzJyb9JzsmeULt089VIhPI+
+         YQJoCiNgi4SuXFQQHDtxeKQZUQRE1LeJj8bvNWtAJENn1vpU3+72eM+xp4NUb/AbOgdA
+         cxpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuvPkPUlDZrGbtzaim/by6eaEY44jbCJvDuS1/Hgd3oMLU4r6/ONyE7dP5VNRgB30Cbcbe/SxyytuyVGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvj3w/sIIugh62fQov3hvRX6+7JkHBVWvSTTxjpw67bPZLSdhz
+	/zLTl2tcKhrOYK+N6ynFAu4/9TCsX7e4gqYE5DH3e99SZc76UW6Gse1T
+X-Gm-Gg: ASbGncvcTl3e2Nv84jnrulO7KFu/koLMcIhFxuGz+htWTtaETOLl50L9oOfKvYTyejx
+	/hbBoHZ0MP/dXY0hhXOQR5BwoZQO9w/igGUX1tYb+x8HXwz8YfLOlsVfiqtJ+EvR/bLPDZrVwJK
+	7s2v0WXV24pJQrB2vrL0bNKmfeFAnqebFL/j/P8+oxlivdjKCTYUD2kfQwgW7ggkPU3DDwmJZYA
+	wDcUBIsMGbzIemScogl/MIk8nrNqWDnhjih0niVdFNNL7zJ9/C+cb6sAUoWVnGv1pHoUbc4sORQ
+	+b0ujltpc2QlnuJn15yxLbAmb9TE7QGFi2HBzGeeVQBibJLWBN69fP+iiZF0dsPROGcPAaE3ue7
+	8vA/58GsPPFWhpQ==
+X-Google-Smtp-Source: AGHT+IEfZqY6+K9hdaYp/KwtiA903hmxnO0Hf1TH8HCjk64cyXTMeAACSnf/1A0NKMe8smJT7hSwSw==
+X-Received: by 2002:a05:600c:4694:b0:453:66f:b96e with SMTP id 5b1f17b1804b1-45c8e6d4cd9mr2987095e9.11.1756828672646;
+        Tue, 02 Sep 2025 08:57:52 -0700 (PDT)
+Received: from localhost ([2a03:2880:31ff:7::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b74950639sm253623785e9.17.2025.09.02.08.57.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 08:57:52 -0700 (PDT)
+From: Yueyang Pan <pyyjason@gmail.com>
+To: Suren Baghdasaryan <surenb@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Zi Yan <ziy@nvidia.com>,
+	Vishal Moola <vishal.moola@gmail.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Usama Arif <usamaarif642@gmail.com>
+Cc: linux-mm@kvack.org,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] mm/show_mem: Bug fix for print mem alloc info
+Date: Tue,  2 Sep 2025 08:57:49 -0700
+Message-ID: <cover.1756827906.git.pyyjason@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/12] PM: EM: Use scope-based cleanup helper
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>,
- "Rafael J . wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Alim Akhtar
- <alim.akhtar@samsung.com>, Thierry Reding <thierry.reding@gmail.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>
-Cc: Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
- Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
- <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>,
- Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250901085748.36795-1-zhangzihuan@kylinos.cn>
- <20250901085748.36795-13-zhangzihuan@kylinos.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250901085748.36795-13-zhangzihuan@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01/09/2025 10:57, Zihuan Zhang wrote:
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->  kernel/power/energy_model.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index ea7995a25780..852d48039ce2 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -451,7 +451,7 @@ static void
->  em_cpufreq_update_efficiencies(struct device *dev, struct em_perf_state *table)
->  {
->  	struct em_perf_domain *pd = dev->em_pd;
-> -	struct cpufreq_policy *policy;
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+This patch set fixes two issues we saw in production rollout. 
 
-You are not improving the source code here. This is not how to use
-__free() and you clearly do not understand the source code.
+The first issue is that we saw all zero output of memory allocation 
+profiling information from show_mem() if CONFIG_MEM_ALLOC_PROFILING 
+is set and sysctl.vm.mem_profiling=0. This cause ambiguity as we 
+don't know what 0B actually means in the output. It can mean either 
+memory allocation profiling is temporary disabled or the allocation 
+at that position is actually 0. Such ambiguity will make further 
+parsing harder as we cannot differentiate between two case.
 
-What's more, you did not use standard tools which would tell you this is
-buggy and wrong.
+The second issue is that multiple entities can call show_mem() 
+which messed up the allocation info in dmesg. We saw outputs like this:  
+```
+    327 MiB    83635 mm/compaction.c:1880 func:compaction_alloc
+   48.4 GiB 12684937 mm/memory.c:1061 func:folio_prealloc
+   7.48 GiB    10899 mm/huge_memory.c:1159 func:vma_alloc_anon_folio_pmd
+    298 MiB    95216 kernel/fork.c:318 func:alloc_thread_stack_node
+    250 MiB    63901 mm/zsmalloc.c:987 func:alloc_zspage
+    1.42 GiB   372527 mm/memory.c:1063 func:folio_prealloc
+    1.17 GiB    95693 mm/slub.c:2424 func:alloc_slab_page
+     651 MiB   166732 mm/readahead.c:270 func:page_cache_ra_unbounded
+     419 MiB   107261 net/core/page_pool.c:572 func:__page_pool_alloc_pages_slow
+     404 MiB   103425 arch/x86/mm/pgtable.c:25 func:pte_alloc_one
+```
+The above example is because one kthread invokes show_mem() 
+from __alloc_pages_slowpath while kernel itself calls 
+oom_kill_process()
 
-Don't introduce cleanup.h if you do not understand how it works.
-Best regards,
-Krzysztof
+Revision History
+=================
+Changes from v1 [1]
+- Dump status of memory allocation profiling instead of disabling 
+the output following Vishal's advise.
+- Move lock from file scope to within __show_mem() and replace mutex 
+with spinlock following Andrew, Vlastimil and Shakeel's advice.
+
+[1] https://lore.kernel.org/linux-mm/cover.1756318426.git.pyyjason@gmail.com/
+
+Yueyang Pan (2):
+  mm/show_mem: Dump the status of the mem alloc profiling  before
+    printing
+  mm/show_mem: Add trylock while printing alloc info
+
+ mm/show_mem.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+2.47.3
 
 
