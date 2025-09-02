@@ -1,270 +1,158 @@
-Return-Path: <linux-kernel+bounces-797092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47250B40BB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:10:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5549CB40BB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2814E7FA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5633AE1B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622A83431FF;
-	Tue,  2 Sep 2025 17:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DFF341AB9;
+	Tue,  2 Sep 2025 17:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvGFNRnR"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hokH9fCV"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF1023D7C4;
-	Tue,  2 Sep 2025 17:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6981033EB01;
+	Tue,  2 Sep 2025 17:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756833011; cv=none; b=N4ZkfrLFnQ0lKuWwEvZHjtDRmB+IN7wrPfXO/ml+IqxTWM71sHIZXOFRbwArODYVj9IYktDgIBpvo7Wj3fQQqNqNt+EKszpDM+2M48n2Whci0HaWwcbYaRYVPTpBp2RkCrNdG7uKlLEZkqjNmkPN7N+pdgy5yw6p87qb8ddlIoU=
+	t=1756833065; cv=none; b=PLDWuFzR5JlbLeEx0jbxIQaJgEd87DU77S7jdxZp411ZBvnYSSrBSNrSI+5K4DmApa7zxJ12j/8nQx3DurfoXPA+mcFqLMlreOPv+HfVqSldljwfDw56I7geYEu+1GdvjaZO0PirGJ8vyim3/jOthBNTyadtuK2Eqy5TzgzqxkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756833011; c=relaxed/simple;
-	bh=EF6aZqNIoSXa0kptmEVVRLVollrxdh2NWJJq1QCOmQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YwIGksdHEI/kdu71i2fmMNf4tqyOZeaif4tQduNEME7IQo7BqyLC07Dv+DA2H1TWBtKrpklTfJu7IQeneSdiWqPxHm4S7lw6Cx1NbU/j8fXlKyUdaQ+nff/+r2Gyw8Q9C6esSoxE4/drc41S7+p2NPnXDmEywv0Gh9MaTRg4yJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XvGFNRnR; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1756833065; c=relaxed/simple;
+	bh=DrCyuQEf6glI7LfRJAuaKNwC1GTQke6K7aTulwZMIX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ErhfFOCYq2jnLkacduX+TLvuRdP+NH+W4iLaccMnpOusrybjc1JPjPRFUorZS2BZQs1oOUEczh82evFIOsCPcziXD4j7/+NHZT3/O0WLe7EdsoEY9Fx3keU6iyNc2tTmzjh9JID2kAaTlslhR5KveEr4lSRyT8wiQxsryafnRlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hokH9fCV; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-772750f6b0eso738510b3a.1;
-        Tue, 02 Sep 2025 10:10:09 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-805a1931a15so139897985a.1;
+        Tue, 02 Sep 2025 10:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756833009; x=1757437809; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ihQjC9yJ1X4I7i2TJOoe7K1INvxzQRyYcVly+4F6YMQ=;
-        b=XvGFNRnRZagP3hjX+6WSklFhFVWd2uJQyFRvv8KIzbT8yRDDm/GHsbSsPzqyyUiCt5
-         +YA12b72b3vJLEXrjFF5dqP7SO54Wb1fVLlyd9DHs1NsLTdm0Dnvern50PE0L5iVpLir
-         qkWxd2zCGaIEM9g6syaAXrLjvtxKOTQCCqNIcblOVnFM0daDMwc+WhtRDNBJEDUCvW6e
-         VZ8pnfXdnBfYpLymIw0IACBIbGLQqn25b8vmwPBGEUZgAdJBuhqEnwBRMDJlIeAk84XN
-         YBlsuIKFzB8tL3yu6SjDUb9C4COtjqhhsX4NnA4C7v/RbAKByRBWgLc5epWj0vGj9zks
-         rqDA==
+        d=gmail.com; s=20230601; t=1756833063; x=1757437863; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=oBHtVSFw10dHsem95fb/g6IdGjhm6pmkppakycR4TZE=;
+        b=hokH9fCV5wJU3iGSWBNQppCHKow0ovbn20aFg7megQ4cTwpGvsUfzGKCU68HZA+Kee
+         V+zw84FUCSddMc3895pCOP9koQT0fQtKl3uJyqA5Q7FfLQquaIx56TCVN9WjXH2akUHZ
+         txXVNWkt2qw97NoKeoje4f8YpyDWRw0WOBn3Nmtda/ajHPIoepOrgViiYnVUuZe7Ed+m
+         4TCxxc3bMj++3cTtmHspMFUWKQu94kSEaxpBCY9THta4wCALm684G66cJLO2FFQkLsbg
+         CUh/RqXt8+8cdmPI778zs6+FXQpOfIl6+rukjWoSLhkFaJZ/xT1eDiUYgvE8LTju+ft5
+         VwLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756833009; x=1757437809;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1756833063; x=1757437863;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ihQjC9yJ1X4I7i2TJOoe7K1INvxzQRyYcVly+4F6YMQ=;
-        b=rSMIJmpiY9SEoTxJsVVWYEEs7j5TactwdaxtR0cNMgX/ibVErwWgai2so/nk1rVM0+
-         Q3qYQhzgU91Rgdrw7CCEQmHYIkSMjp3PnCLpGhENCEF5kQexKBE2SrLlABIwQnPYuj6N
-         TKNQeN/YMQYX5qK2Mkv7J+9EE8DUeq/OT5gBgi2rA2NLeaYk3YECBReAoOiWJVHNWV+d
-         WMTCYOS3uuyQGHEbkMJJOtmePRImsRMKeGBCr+Z+jBdm4UQOnl1qVmHYI4np07F3Oitf
-         ohLjzI8IyqfcH/ZFMeM9LJN/OYw4fp0UG2s2oB9QXlvmX/klbaP2z/AEgkZe1QgChZKl
-         kO9w==
-X-Forwarded-Encrypted: i=1; AJvYcCURw1Pz4PatowxBCXe39KI9PGOS6In8qsoFOP/jsXm6zcxQsl3+EsMi4fb54iH5Iywm4pM=@vger.kernel.org, AJvYcCUrMHSCbZr2zu9X2D1Y9YJYIICZ74bxk1fZ8xQnoWl4KDt38ZhWJQ22mUrUiHVjjjcZ9Z4TcElE@vger.kernel.org, AJvYcCUygK8hHVctNanF3NXJoDyW/v7xRJyoGSYsS/FqJoIC9ffFZVbWCuABO5+cb/MUDP/0l+8G1jMjE9lrhRbz@vger.kernel.org, AJvYcCXW2bJmX2tXay9g63GGqPhlV++BvS2nOzy0BViAvfWfH4rI/Yvf+Demh3W9zk0so3m1Xf6iRlH40bXlDhpZ6Y9q@vger.kernel.org, AJvYcCXhP/6trIPrb+6yw2t36Fh8XgmjVu7Uq2Lb+CxUIrljuBYrHbV3qiF/NdGRQzQQavaSQa2GTGFT8FUnBQ0H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyveaIQnBXWueA+xkAre3ygbjEP+PH0b50ewXOiXzaUDBFNcMrL
-	Xyp5zBITYRde0xu181ZRYpD4/rC+EZZcdTMAYrF5RUyrHDKcvy6TtBij
-X-Gm-Gg: ASbGncvF/VJpcZJQwGFHAvbuAqS2TPNPPUVRsLH2lIDU++bioAtOjjctZ/1HnQfSyOt
-	yZqPL9jkMXYY8kS2GFv7S8fm2gNQltPkP/7U9eqymhkI5myRfCR2umyc0tCI8HpkCr7COVCwiKG
-	dALp2VH96W5W1bJC7Bbd/Rt6GdMZa4BI1upqrLfY0i2sV8+I0JS6qdkb24HdpFZ0iKUPS6Yifu/
-	wAth4LvdvEFQy+0aMP+/Gj6j7XQdWOAwSNz71j3SVVMzxj/9EFFlxx6J9Gk11y9XwZRAoDuwAnE
-	cloFAv0PYu6FC7RARqkVn5hp/GiblxcqonUlHT0jxvhvVwth2frxPhy0AchMZvIdUuUJU4Wecdx
-	xJzX29FLntt80wZLZSrKYFS4IQhZEnHQMQQuUFRK26D4=
-X-Google-Smtp-Source: AGHT+IGyUUiPrfchRjHRX3crNHUYbFF9RNjkv+OcfvEakWvZRQN9OH2MzLTdAngcH4AMJjIzQ+3iyg==
-X-Received: by 2002:a05:6a20:1093:b0:244:58:c159 with SMTP id adf61e73a8af0-2440058c3d1mr3642462637.22.1756833009146;
-        Tue, 02 Sep 2025 10:10:09 -0700 (PDT)
-Received: from devvm6216.cco0.facebook.com ([2a03:2880:2ff:2::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7726a0e7cb8sm3845860b3a.58.2025.09.02.10.10.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 10:10:08 -0700 (PDT)
-Date: Tue, 2 Sep 2025 10:10:00 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Bryan Tan <bryan-bt.tan@broadcom.com>,
-	Vishnu Dasa <vishnu.dasa@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v5 3/9] vsock: add netns to vsock core
-Message-ID: <aLck6IIS3AiDJZPg@devvm6216.cco0.facebook.com>
-References: <20250827-vsock-vmtest-v5-0-0ba580bede5b@meta.com>
- <20250827-vsock-vmtest-v5-3-0ba580bede5b@meta.com>
- <gncp3ynz3inufzex64sla2ia3stjsen2n3hwhfuykdhmpuuegu@7hk5q2hjfxkv>
+        bh=oBHtVSFw10dHsem95fb/g6IdGjhm6pmkppakycR4TZE=;
+        b=BZHMhJ+HlXAlCheCmMPIld+o+alCUhrfiZoagbojdY4/JrUBSQrjR3+pplVsuiK9GK
+         hY0jSs19N4EEmTSuxeskVsD6WB8FArRPDUYgGEgyi/NUUWd8qoUGY4Bi1kc+2lf/V8Xn
+         C+0KiPzOKso8nIajeadeScSkNz8KsotxmJE0LOiYpjm8c43umcnGYSJlDVC3ozUTrzWR
+         62oW/lJst2XDAZzBEw1TdpDxaEziDaeWPtz9W/MNdPBXtSzibhdk+srcfHZX8gNJZCjV
+         TjaxO7JdR3ut9hWne7qjzyMXjDVfNecRIoRH3Qq9MfauhbCHxuvtlTfA/ysw8tNsRFJn
+         q/8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWkLYjE+Gk6sOsbD5WiNWpREwDmTmq4H/eLon2ITPXq3L4OmSQBfFId1TtKAbNMUotqbkjrNpQw@vger.kernel.org, AJvYcCXSZDB/MAzsf/aXIhBTRL+85d11T7JbQC/82ZiFH1vaBxX10Cllrj9RaVxafeUoBEZlQ3IqwTmaS2TvUkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6jUZOFd2wY5NzVlAi2Gzqs/QwV5U2R9Eg/rTI3W5jDwwGjR+C
+	DYmzCE3Si5EfI3Cq2ngPsJ9S+sDklVQuS4WTrzk7hAL/iRQL/aD1jfmH
+X-Gm-Gg: ASbGncsdOo8nw3FEaJcm7rQaB6sNgtXcIONr5xPkqpSLpB/VfxajF9k88W0JjRmCUfl
+	8xhFjh10qjeFpzgIoYyx80ASpi0UPWmNozMyFZUkF3nuc2L4IoL9Jybu1ojb/Gk1C/ZBdUHcQmU
+	lTOPurDUtqAq5heWRxR+ebUKeW+i8L7kP215weNA8taDIKMoZ2r/hINa+jwu8OTf5yDone72DyQ
+	y87KmM4p9dryyvpmWRjVUh1tqmyXeHtvMO+JHIiHcoHujHfqja+Ue3AzyGEa7uAFKJXahicCMj9
+	Lbtx2KbTZjti+d02IYTA/nH3kYgUuh/HHm5Yc6E5z/2ji2Muns1phuOYiDDyfefodDfr4lnZpTV
+	TB70b9IumBFa0JzPgrTJEmtL4EdEm7ku83GyLIw6TCkbrCnwhZQ==
+X-Google-Smtp-Source: AGHT+IHnCSeufqhOHInLwoqV6gJLxiDNg3lrNlsEFOrhrs3RYhLLhW7CKfH3dJjBuOOkx+9jhFc8EA==
+X-Received: by 2002:a05:620a:1710:b0:809:db70:b415 with SMTP id af79cd13be357-809db70b47dmr80053485a.24.1756833062936;
+        Tue, 02 Sep 2025 10:11:02 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8069d6b056dsm167152785a.68.2025.09.02.10.10.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 10:11:01 -0700 (PDT)
+Message-ID: <109893d0-2df3-4a60-b77b-2be47ac605ae@gmail.com>
+Date: Tue, 2 Sep 2025 10:10:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <gncp3ynz3inufzex64sla2ia3stjsen2n3hwhfuykdhmpuuegu@7hk5q2hjfxkv>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 00/23] 5.4.298-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250902131924.720400762@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250902131924.720400762@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 02, 2025 at 05:39:10PM +0200, Stefano Garzarella wrote:
-> On Wed, Aug 27, 2025 at 05:31:31PM -0700, Bobby Eshleman wrote:
-> > From: Bobby Eshleman <bobbyeshleman@meta.com>
-
-...
-
-> > {
-> > 	enum vsock_net_mode ret;
-> > diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-> > index 0538948d5fd9..68a8875c8106 100644
-> > --- a/net/vmw_vsock/af_vsock.c
-> > +++ b/net/vmw_vsock/af_vsock.c
-> > @@ -83,6 +83,24 @@
-> >  *   TCP_ESTABLISHED - connected
-> >  *   TCP_CLOSING - disconnecting
-> >  *   TCP_LISTEN - listening
-> > + *
-> > + * - Namespaces in vsock support two different modes configured
-> > + *   through /proc/sys/net/vsock/ns_mode. The modes are "local" and "global".
-> > + *   Each mode defines how the namespace interacts with CIDs.
-> > + *   /proc/sys/net/vsock/ns_mode is write-once, so that it may be configured
-> > + *   and locked down by a namespace manager. The default is "global". The mode
-> > + *   is set per-namespace.
-> > + *
-> > + *   The modes affect the allocation and accessibility of CIDs as follows:
-> > + *   - global - aka fully public
-> > + *      - CID allocation draws from the public pool
-> > + *      - AF_VSOCK sockets may reach any CID allocated from the public pool
-> > + *      - AF_VSOCK sockets may not reach CIDs allocated from private
-> > pools
+On 9/2/25 06:21, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.298 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Should we define what public and private pools are?
+> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> Anything received after that time might be too late.
 > 
-> What I found difficult to understand was the allocation of CIDs, meaning I
-> had to reread it two or three times to perhaps understand it.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.298-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> IIUC, netns with mode=global can only allocate public CIDs, while netns with
-> mode=local can only allocate private CIDs, right?
+> thanks,
 > 
+> greg k-h
 
-Correct.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-> Perhaps we should first better define how CIDs are allocated and then
-> explain the interaction between them.
-> 
-
-Makes sense, I'll clarify that.
-
-> > + *
-> > + *   - local - aka fully private
-> > + *     - CID allocation draws only from the private pool, does not affect public pool
-> > + *     - AF_VSOCK sockets may only reach CIDs from the private pool
-> > + *     - AF_VSOCK sockets may not reach CIDs allocated from outside the pool
-> 
-> Why using "may" ? I mean, can be cases when this is not true?
-> 
-
-
-Good point, will change to stronger language since it is always true.
-
-[...]
-
-> > 
-> > @@ -2636,6 +2670,137 @@ static struct miscdevice vsock_device = {
-> > 	.fops		= &vsock_device_ops,
-> > };
-> > 
-> > +#define VSOCK_NET_MODE_STRING_MAX 7
-> > +
-> > +static int vsock_net_mode_string(const struct ctl_table *table, int write,
-> > +				 void *buffer, size_t *lenp, loff_t *ppos)
-> > +{
-> > +	char buf[VSOCK_NET_MODE_STRING_MAX] = {0};
-> 
-> Can we change `buf` name?
-> 
-> I find it confusing to have both a `buffer` variable and a `buf` variable in
-> the same function.
-> 
-
-Makes sense, will do.
-
-> > +	enum vsock_net_mode mode;
-> > +	struct ctl_table tmp;
-> > +	struct net *net;
-> > +	const char *p;
-> 
-> Can we move `p` declaration in the `if (!write) {` block?
-> 
-
-yes.
-
-> > +	int ret;
-> > +
-> > +	if (!table->data || !table->maxlen || !*lenp) {
-> > +		*lenp = 0;
-> > +		return 0;
-> > +	}
-> > +
-> > +	net = current->nsproxy->net_ns;
-> > +	tmp = *table;
-> > +	tmp.data = buf;
-> > +
-> > +	if (!write) {
-> > +		mode = vsock_net_mode(net);
-> > +
-> > +		if (mode == VSOCK_NET_MODE_GLOBAL) {
-> > +			p = "global";
-> > +		} else if (mode == VSOCK_NET_MODE_LOCAL) {
-> > +			p = "local";
-> > +		} else {
-> > +			WARN_ONCE(true, "netns has invalid vsock mode");
-> > +			*lenp = 0;
-> > +			return 0;
-> > +		}
-> > +
-> > +		strscpy(buf, p, sizeof(buf));
-> > +		tmp.maxlen = strlen(p);
-> > +	}
-> > +
-> > +	ret = proc_dostring(&tmp, write, buffer, lenp, ppos);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (write) {
-> > +		if (!strncmp(buffer, "global", 6))
-> 
-> Are we sure that the `buffer` is at least 6 bytes long and NULL-terminated?
-> 
-> Maybe we can just check that `lenp <= sizeof(buf)`...
-> 
-> Should we add macros for "global" and "local" ?
-> 
-
-That all sounds reasonable. IIRC I tested with some garbage writes, but might
-as well err on the side of caution.
-
-> 
-> > +			mode = VSOCK_NET_MODE_GLOBAL;
-> > +		else if (!strncmp(buffer, "local", 5))
-> > +			mode = VSOCK_NET_MODE_LOCAL;
-> > +		else
-> > +			return -EINVAL;
-> > +
-> > +		if (!vsock_net_write_mode(net, mode))
-> > +			return -EPERM;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-
-...
-
-
-Thanks for the review!
-
-Best,
-Bobby
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
