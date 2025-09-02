@@ -1,434 +1,343 @@
-Return-Path: <linux-kernel+bounces-797360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4C3B40F62
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:31:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4B5B40F6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2EB1203DD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:30:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2323E7AB7AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5756C3570C4;
-	Tue,  2 Sep 2025 21:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D7EE573;
+	Tue,  2 Sep 2025 21:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ciElb1mv"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qdsTS7/t";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fOuWSRMl"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486422156D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756848651; cv=none; b=JIhxqvdVfRSKmMC59uZSpyWPIPj+wIaawreUe2ZNSuND2iLFhQfTF4hlcAmRkEJCgptQpoUZjzEAuFTYC7bWJm2cBapyk3I6uTH13ZthBOZSUHJisobdZ5yIweEd7V++JKzmxB0qRa7CkJqc5xB5wiQCg6MwHZm2nS+XNc/HxvI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756848651; c=relaxed/simple;
-	bh=9JbTzKYuqfuzYi4Nb2SDELIeela7dMgZPTL4BrExznY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IVUQJqPT5zB3lL6OZB3iNBRPo/9T/x9UHksp4QTG2oKDjrmZWHVYgyBGuPVkfesYXFQca1X9tuUFgBWiR+q1a+aZ44/iAUSe+qs1AyIoH2HJfEQd0fCh58KeqhijTF2gKiEb1QvDQN1jqgzAcaR24aPyRUOBwMhVI3soUKrPOqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ciElb1mv; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109c4af9eso51056021cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 14:30:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A9F2E6CA1;
+	Tue,  2 Sep 2025 21:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756848699; cv=fail; b=WLFVsjVFw7pphj9G0b7jxGaPtZD3j8Plpt/Kte4z7MPvZpwuksUJImlrXFVWqS4MMQd75P1c1F5S2T7DWJvSZcpBK4zBAb0sM+4pDCgcikiO0Ezm5c1q27/RvA9kI/Ow3AtxP1hhCLi5QwytRENiks86KveZxSJYljf926GpulE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756848699; c=relaxed/simple;
+	bh=d67cE6LnUkkaCnmbWIdXdzePvYq2/y75tvmb0a7L7BQ=;
+	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
+	 Content-Type:MIME-Version; b=Cice/x0oXBbevZPMfPpO9oOmqOVTONZwZHpN2uwYbD7DjG2DahBQHlM4NvAD+XmXctZaFJLU8c+j22uC2mwL0/Zo+giH1O3oDzmCwiY3INYDn/zUJe5hjVEQuBq1VGY1uKFJeQwrFapA1Nd4/uEZ6LWbps4ayZv7uv9a1tPZ2VA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qdsTS7/t; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=fOuWSRMl; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582Ki2j5022919;
+	Tue, 2 Sep 2025 21:31:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=FWD5iNqtm9RyOWxK76UXaY76EVzJOGCmebp18Z5yABM=; b=
+	qdsTS7/trbmLN99QzUTdzCnmZquuBlyEFYeY/Vf2U/WeDC6l3uEWuHPjr0OOcWmB
+	fKxQ7GLG4QJOihWscRJfz2i+heNvVvSlOcY1s6rThh+T05FVlKJ2SCLDXRUEHWdE
+	+EWqKXoF1QWgYSWHySLyEA6p8Wj8L6ebkGPZ4obPSySGUN2/eJWdk16LxWQbqzC1
+	/k1khtBKHoCOeFw4V5yTonBYE9CWn7uhzznxueMd+S/BUspW+5i6m0sKMtRGM+9X
+	JBA/kiV1VkFEcB4fplKEncEK0KP+9UfII24MgI0w3/bm24/FcNDvJqU40fj/DXov
+	URB+NqcbJDe3tGw4LwziEw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usm9n57x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Sep 2025 21:31:04 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 582K6rYw015744;
+	Tue, 2 Sep 2025 21:31:03 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2057.outbound.protection.outlook.com [40.107.94.57])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48v01nvtaf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Sep 2025 21:31:03 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qr0J+SFQLhx8mVWVWO41snZyUXFVfEYJKr09nkpjqQCAs7Hl8tSRyJP/x94OyfrafAT8oQmHsV2Ha3feQWIRtz0exphV7zunBGWG7c0+O3afcYWqYvUECp0MqTyiOhUPbczMbYKlGMTRtYwjEWc8BirouR/lnkDY2yGsW9+4DPi0YmmLafjuH9i3PV4WStMsPu2amrY1AAZfc21bDFCvNzuoXq1nAqxn/mS17M+ZwA3mTYKorxwoILHr3Cw2bXA17k+70j3o0DVuxusJRpEHEtyHqDYSAJK89yOa7lYYqU+VWDOqmsIJ9SuxneIq3v9693NxOaio6i6ngdCSh0Wj9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FWD5iNqtm9RyOWxK76UXaY76EVzJOGCmebp18Z5yABM=;
+ b=iJrDAxXACkaB3wB6Z5B36Y1XZdnPPEi9EZxL+IZSqDyhreeyjfo30Y8wHPdwvwH6VsAfR7QHNQ9hjE1XMjcKMPhJuBOJXawDXiovf+2WqvXY0ZsqOewwsctg4XRTMITodnfzypPBjPGOYICds4OzHnkOCC3u8bnaCN4O5YArvTym6iIiQePV31kUK3ydTe1xEnUght1XwuMYCenqAK1bw/jF3zRE3001/+yk7dJlbGyMv3piT+pfPqB6VROmMa0X8C4tSPfAHEq+qVw+kF7B9d6YGUmWZvTdJdSwuk0uvg2S1mFe/uslpcerzVMwkFgxxgxnz0XgnQg7wewbwQerFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756848648; x=1757453448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PIHyBNWlR0xVVObfQSwFPOXxexHsOFj65lhH0sk5/ps=;
-        b=ciElb1mvVk31zSfXF0ZA/OwJzHH1+Z2apunIacU0OmmY7Vf8jOd4jSsUkBOYIqyFIo
-         +csl2jV4dKwTuPetbCYcIFjrkqkk9OsJMKjh6DiqKB7eafNI8M/Nd0gD6cnYaC5AJjtE
-         omeAM4O/UPCh2HiqtDtDS4fg256oV+SVGHSEbeBpvbvmTrx64tXxizqlMUJrs2Z1zjED
-         fVIgbUSq8aSRdx2S3QsEUHVYR3T879hMBGpJD1XOw3ViXfOjBOQZDvLStbpSE/rSOd/x
-         pd3en6TaLTONhxH8xNbmipVCq9goNhde1rvDDOmmHOXulT1+hljrZUQrM1IUmoPDyG5W
-         DKIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756848648; x=1757453448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PIHyBNWlR0xVVObfQSwFPOXxexHsOFj65lhH0sk5/ps=;
-        b=OOOllvHWtOpYcvlvH+NbhJppnPZH95Iyc6/DKebo7QoD76/BEeI/Ul7j4x7O8JAiYa
-         zPmlsl3LndrJ8Y0sghee48SCzdxMhCTeHvaxcfqQkzwsWYMRtAmWFbo6Y6TWv+uO0/F8
-         R+WjQQMU+F4njQ0/l3jAzud/xRCX7oruagTn9WXBMux5wqNAFE8tzv4oZIxps6G/VXDi
-         yVBJwitHEfveAn8Ajjo+ifc5OK4xx/+gQ8YxyjRzKD/Zt7fSRPaWkInvlwuV2v0oak/c
-         KUsMGOdzHr0HY5BartVDfMurWDR7jgpGEKjIUHTd3XWVtNPyhsmtfukkb7Z4LaXBc1IN
-         5kKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwRFJ0s4KtZZuxGlnbQBpmjwrOSY68+YScFRNVqrx7yRkcaoaZO73uItANOdtOtmaZpvl5ntNgYDqmLD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzOiTt/9yfypAqMyjURjowgLFUJr7iT/RuMiiNJnh3uN9tLMUj
-	qfelDkYYo0xoj+AtsZLJHvsTMNtG1qEKMmizd8Myytbm9syLfGPixJJ5x7JRpshM3hB3stKpnIE
-	o4zdC0T5nrJJq7xDZr+b1eRhjnh0E/n2JMD8qw4mO
-X-Gm-Gg: ASbGncvCTxAaQsLj40JTK0KaZ17BkeBlUwAZIEscnTg8qIqqY8EU4GWpomDilFDRwv8
-	pjKXWYSU8UyBUR7MJkxY/bPEB9kbKCF3v83COLF2+cU4RSZD9pjn8YPXlgTqPZ7l9qrFH7XTx6U
-	p05zdnm8uxU2bLk3g5Q3iRjXzScKiD+DBJn6dJI4OeBLOCQhG5MncFjZ8RYMmATH7vuVIV6lcak
-	4Flqn6NVtZGBT1JQgmG9VGGAF+u7Xb3c5X2yjPU+5VWRW58/lqPqW7ULojeZM9oK+4sheY/wleA
-	MJX0OoWl1At8IX3VzBhXgGzm
-X-Google-Smtp-Source: AGHT+IGaSaZZ/mwFe2rWX5IoTc9Yr7dBVALnKPhIk/KX9xd+MEcEetsVsz/oWICul0xvgYqFnqui4SYElqFA2gCr4ms=
-X-Received: by 2002:a05:622a:2cd:b0:4b3:c78:fc18 with SMTP id
- d75a77b69052e-4b31dc84d8cmr161903731cf.68.1756848647663; Tue, 02 Sep 2025
- 14:30:47 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FWD5iNqtm9RyOWxK76UXaY76EVzJOGCmebp18Z5yABM=;
+ b=fOuWSRMlAbELwSla0A+UY9KAwSP9b5HRfoVo3tDrhsQgKdhXkjMVSbrEV27nVwHfOd4c5kjCHmoonj701FzVRAN3YtuOC/hw6US6Ejyb8o18vhDsqgkBLtOrLVY1FDIQIpEGCGNd63j9GcZ3AMKyx/+8AsQ45g3QsxUcHUvc0mE=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by DS0PR10MB6078.namprd10.prod.outlook.com (2603:10b6:8:ca::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.27; Tue, 2 Sep 2025 21:31:00 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9052.013; Tue, 2 Sep 2025
+ 21:31:00 +0000
+References: <20250829080735.3598416-1-ankur.a.arora@oracle.com>
+ <20250829080735.3598416-6-ankur.a.arora@oracle.com>
+ <aLWDcJiZWD7g8-4S@arm.com>
+ <CAADnVQJf317mXSDLs=K0pzTDGqMA8vqSDoNm5=LvEst6kdAi6w@mail.gmail.com>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Ankur Arora
+ <ankur.a.arora@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel
+ <linux-arm-kernel@lists.infradead.org>,
+        bpf <bpf@vger.kernel.org>, Arnd
+ Bergmann <arnd@arndb.de>,
+        Will Deacon <will@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark
+ Rutland <mark.rutland@arm.com>, harisokn@amazon.com,
+        cl@gentwo.org, Alexei
+ Starovoitov <ast@kernel.org>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>, zhenglifeng1@huawei.com,
+        xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>, konrad.wilk@oracle.com
+Subject: Re: [PATCH v4 5/5] rqspinlock: use smp_cond_load_acquire_timewait()
+In-reply-to: <CAADnVQJf317mXSDLs=K0pzTDGqMA8vqSDoNm5=LvEst6kdAi6w@mail.gmail.com>
+Date: Tue, 02 Sep 2025 14:30:58 -0700
+Message-ID: <87plc8r17x.fsf@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MW4PR04CA0050.namprd04.prod.outlook.com
+ (2603:10b6:303:6a::25) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
-In-Reply-To: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
-From: Jonathan Denose <jdenose@google.com>
-Date: Tue, 2 Sep 2025 16:30:36 -0500
-X-Gm-Features: Ac12FXwKv6W57zxcScGDO_HzqTjYPJKie3JgclspE9ji5LQdztiAetxXMV8DHjE
-Message-ID: <CAMCVhVOUn-un9N_Bv00RVJ7kAw1O+AHgAHOzSGM6UuMBZVdtYw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/11] HID: Implement haptic touchpad support
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
-	"Sean O'Brien" <seobrien@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DS0PR10MB6078:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4226aeb6-efdc-499d-bfe3-08ddea6802be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bnpsbkhheS9FNFRzYkxUSU9idHlhTGVHSllTNDFEUnozZWk0K3RBTjEwdW1Y?=
+ =?utf-8?B?ajJWcVFNZmR4MmRlQTlObEtvQUJrSnhueGFWZllUeFBpYlJ1TXhCS3A4V04w?=
+ =?utf-8?B?NXJrNFc0RjFhSUQzOXc5Z0M4S0xLS2ZBVmdKMnlLV1BacnoyYzBMMGJIZXc2?=
+ =?utf-8?B?Mk5DNHVrV1VCSHk4Vk9yUEsvVUR3c21TcjQ0ei80aHRQSCt5YU00MG5ybVdm?=
+ =?utf-8?B?MWZoNi9pem40Mk5PMkFQbk5DZkVIc2N6THdsUXRmQmN0NTF1SEVMWk9mbE82?=
+ =?utf-8?B?M3hxNk9ucDZ0N1p5VkFTd1lZcmVSVm9jWVpQV2lvUDk2N1pOcERWWmllR2xH?=
+ =?utf-8?B?ZEo1TGFvZ3ROQ1lPVXRBM2hpV0haMW9haFY3WFRHeHNWRFdtcHFpNXJDcmQ2?=
+ =?utf-8?B?a0d1d25qWjR0UWhHY0tOMHNjVnFjMmdveWljd0RVc1kwV1dxVVhkOVU1UU83?=
+ =?utf-8?B?WVNPWjFZZStqYkRFY0xJRUJyOVB4VTROU2svSlUvMUpNZk96N1J5VjY0c0Y2?=
+ =?utf-8?B?ZzJ3Mlh1YUhBTHZOeWZYYVdCd1krQTlSREpkZ09ickt1MHQxY3lkUmVNT1hW?=
+ =?utf-8?B?QmIyWFdXRy9PSWlnQjhoRkpqMEpDQ25TWDVPcy9OUWcrYTRzRFZQL2MzaE9B?=
+ =?utf-8?B?dVV2bitWajE1M0R2cHMvcFJlMWg2SkFKNEZncWNhREs4S096RUNrYXR5alNB?=
+ =?utf-8?B?bEwxbFZNUGlJMUlCOWlwaGZOTGVkYThFUXdONGZWMnlzRWRKNHd2TmZkcEY1?=
+ =?utf-8?B?TjRWbzY0VjFKZ0JDZ0Zac2JtZUZqYTVERjJhYzhXMUhJRmxKeU02Ykl1YW5Q?=
+ =?utf-8?B?V1hlaUxpWndDZFFVTkU3V2k4V25LbUh6Zmlud2tRUDJwOHZ1NWFScFdjTTBn?=
+ =?utf-8?B?SzdZQlk1NzlON0UzcEp5a2ZmL1RBKzk2SS83OFhLVFJudXk2ZXB3RnRVaHVU?=
+ =?utf-8?B?REx5ZllldUZPNEtXbmxXZG56cWpMZzBTNmczRndHdnUvendhT3h1V05PUHR0?=
+ =?utf-8?B?Q1FIdWtBTzJ4WFFBcmlpUTk1aitnTzRxYnFMTnNvWFJSekQwc0s0aVhzQ0lE?=
+ =?utf-8?B?dkt3RGlxbElmYUFnSzh6NENZTVgrdVlqWmVDZHFFbGJTdW5QbUxRaUNIQ0N1?=
+ =?utf-8?B?WGdiRnltMGtpN3lHamtmb0lSTjFkV3FjTFZtOGdZVWh0WGNUTldvWHd3K1ND?=
+ =?utf-8?B?TDFtbFRsT05VTUo3WnowQ2MxVHE2cEFHZ0IrdlV4L1pKYWJwVjRoczZQNnk3?=
+ =?utf-8?B?aDJ1ZDYwQ1lvS1RmNlJrUk1vS3piZXpremp4bkFQVFFiQ25zcUtFc09JRFpB?=
+ =?utf-8?B?QWJlVDFVM0pwYU1UNmZIU05CeWp6ZFp0K3NqaVN6R1Z2djhBQ0swVTNOT2JU?=
+ =?utf-8?B?TDVVa3A2Ulc2Sk5pbHl5dFVvSVc3MWFLYklGQzNVbDdaUWZ5WnpkWjAzUUhv?=
+ =?utf-8?B?a0lTeW90NjdvVEJyMHdDWUVqS0JKZDVzMDA0dXVqREkzdk5oRDltOU1QNk9G?=
+ =?utf-8?B?d3JGeXpkcEMzQk1jZlR2S21qYWV5bk5HQmVBbWlNNGFWNkx2S3lBZyt1YTdr?=
+ =?utf-8?B?R2o3blkyUy8rZGFoRSthMUtoaVdmVUUvVDNQVEVzcDFPRXdvcUhoOW5KL0xS?=
+ =?utf-8?B?aW9vQ1dHdFcvS25QdWg3NkxhZnJjOWpFUENFN0Nsb1c2NUNCcmpNYzBYV1Fv?=
+ =?utf-8?B?dDdpeEJYOGhYNzdCZUVMNG0rQktOdlB3UFRQOVdEYVBUVWFRbGtpdWlXSXV6?=
+ =?utf-8?B?VVVFc2Z6Z3BaOTU4ZGtHRjJHRDlCcFc2T1lacjBEMGVaV1Zha093SDRtcXQ4?=
+ =?utf-8?B?czlaR2thdlJmQmp4VTBDODhsVkVENjRNSjFQbXk2VkxtSjNMc1U1RWJrbmRI?=
+ =?utf-8?B?MWRKcDdKakRleU5pVXhQRklVWDFaK0tWaEE3Z0ZsdGpKenBSMXlKaEQxVDBy?=
+ =?utf-8?Q?qjBVtZPEFrQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VXVhMDJlMFNhTWN6azZ2bmFobFcyZDZqUjljU0xINXhXa0w5ZWkzcmdEcUti?=
+ =?utf-8?B?dDFOalkva21qWE95bUZSc2I2WWJ2eDl1a1c2TlNnM0VWczFmS0c2WVYrTDN1?=
+ =?utf-8?B?S1RzYWdaQ3JjaFZ4S3h6QTVtTmNST2NGRFBpbGp3TTQ5TEFCWkZKVm1waXBB?=
+ =?utf-8?B?RUgzckh5RU55eUxMLzZPNVpqZVArb3U3LzUwd1kycFhUOTF0M015T3poQVNQ?=
+ =?utf-8?B?cTBpb3JPSmd6eHY4aFh1WVl0c1JiVFNPejBuclpNMXM2QWtEZ01tTndlc0pG?=
+ =?utf-8?B?RTdsbFNhMS9pQTUyaFd0TmVMbGJkbkQ1a3RUdVFxZkl0d3Y5dVJqanVSMit5?=
+ =?utf-8?B?S0Y4UVJPYzBwSDdSQ2xBb2Uvbjg2bEhjRS8xUU1NanVIVXdyZlNMazBIUnZP?=
+ =?utf-8?B?T1ZPZ1FnandFYi90RkorN1dvdWtlbVVrUXZhTW9odlpTRkxUNHRHYnJRTWpO?=
+ =?utf-8?B?MnBDS2sydVV5cmlZNy9kQnJnbEtLWGk0NlpXaTNHMWE5Z05FbDZmNllhcmdp?=
+ =?utf-8?B?TUhyM09kclZTWCtlUitTZFEwRnV3NGtGdDUxQ1RnQ2VTb2JlbENOM3FLbkZJ?=
+ =?utf-8?B?bjNYUHl3amdFVE9mYStkU2hzTDBlajEvU2lSaHlla2dPRm1ZbjR4RElySkpj?=
+ =?utf-8?B?YzBid1N6cnZsY0d4SDBvMTY2UmJtUlVUbGJYZmR3c0c5Wk1DRXpwSk1OdmE4?=
+ =?utf-8?B?Rk1zcDA1Y3QxbTBkdmhjU2U2eHpreForeFByS2pENWtINGtCckRXRzR5TDhp?=
+ =?utf-8?B?a3gxRUlEVHFmWStkbGZlNi9qNVEraS9nUGE3RGxPWEV4THQwSXdOV0h5UUc1?=
+ =?utf-8?B?TEFySFVBcTVNdlR0M2habGorQi9SUlgzYmc0M3ZpQUlZdTI5MFl4dzkxekw1?=
+ =?utf-8?B?RWJhMVNycStQSXZIL1BwQ2dNU2VLRjAvSTBHc3ZJSDJEdFlCL1prRFhBK1J6?=
+ =?utf-8?B?RWhzeDA3RytPdGhqVVJaeHY5WS8xRW9YdHVEQ3hjNTFZekpXeFNMdXhRMWhC?=
+ =?utf-8?B?cGJyenFQak1ZMEdkek9BZ1ZNTVVsU0tIVWpKeXpHbHRFQjNjeG9OR1FsVW84?=
+ =?utf-8?B?K2xXMjgvNjlMNWk1V09LRlFSNWY2Z1BPODJQOStDNkpKbitiZkhKTGtlVWsy?=
+ =?utf-8?B?c0NRaldVMk9jRVU0K3pTa0R3Z3dFWUJVaTBYaTlkWmYwSHRlc3hwWHE3ajJt?=
+ =?utf-8?B?SEJmQnBpVzBoY2xVRzZtZytqdWxKZmdNMDNEZDhvS2RuclJJbHhQeUZsTkJj?=
+ =?utf-8?B?d3d0dHlrM0o3VXVTUnhYN2xCU1JuYUZPc0N1M0FSaGZiSHpuT0pvWTZkN01M?=
+ =?utf-8?B?L2E3L0dtYlFIWHViazdmcEJZM0YrRUVzaEU0U0xoVWN3WTRYc0hKSWV5MUtG?=
+ =?utf-8?B?eGNrUXZocGducTRWV0Q5NCtPZDhReE8rS29HdDViWWdjNU9YOEtOZmFVcTNW?=
+ =?utf-8?B?MEU3OTlTc2NPVTZVd0xINUZ2RUlzd1BFRFM2bFVvVlVkcjA4NXByWWVmZWhr?=
+ =?utf-8?B?S0w5VmpTZU1GMW5hK0gzamd4N1l6ZlhjcjdXRnUzby9BQ3A3c05IUkFvT1di?=
+ =?utf-8?B?b0wyc3dLU05hcDljQXpTWUw1LzRNVjFOSVBwMzdCQWZEa1FzSmE5MnBFYk1Q?=
+ =?utf-8?B?WWVpM0dySTNvWXlKRTE3YzE1Z3pObDkzOG1nckpMbWN2QVJOWDRKTnAvNWV0?=
+ =?utf-8?B?Z3VlMEN4QlRJaHdvNVRLSlZpdk5Sd21DeUJaYnNLRGpmNWo0N0szTUZ0aEpK?=
+ =?utf-8?B?OUlFT2dGZWJWaVZGQlRFZ2p5RmhmS3RlNmZDMTFxK3JlVnovdXRxSXpFMFE0?=
+ =?utf-8?B?RHRJSndoQkJVWXVtd2F3WndXKzd6L2ltbVZwcUx0OU1tTURGZTVtY2d6WkdH?=
+ =?utf-8?B?S0JaYmR1SWxBc0ttbmNpU2t0cmpWemdvclRTNGU0SEcySXBsdGt4c0xDZXJS?=
+ =?utf-8?B?RjF0S2FLNmRaQVlKUnc1bC9od0Q2ckZoc3JmZlhJMlZvNzNEaFRpN0V3b3BR?=
+ =?utf-8?B?clJZd3lYL1M0N0VqeVhTd1JlN2Jja29wNzYreXU2aUtGcU04RHM2SWN0RE16?=
+ =?utf-8?B?SFBUeWVqcCt5RkZQRnNMbjFIdG40YVBFYVZkNjJSeTF5NHFpL29oWm1iMzdm?=
+ =?utf-8?B?ZmFCRXpPNmI4UkF2cmJ5WkdFYWFzTFZQcTVNcGYvNXl4ZUw0ckJBeG5TaDVu?=
+ =?utf-8?B?ckE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	4lJuz1/A7PyrqMrbbrhYS2y1H6AQUopi9S/MG3EcrOB41jExnKV2SjuRVjQv2FoOJx1xvAMJlQgFPXz/QTX5f6d6/23HN8MnA7VjEct2xVOs7mIETyElo7h9jSCRwOqoPlYVIXIwsgKtKjn1unaLv6hLyuF6DEqMKHQhjKS/a3z7mF3LjpUGwDg+olGFBmkoE7Hcn/FuGeRCNPxXIWThQec9ese0RWGjB0+SaTYkHAhTzChnkbC+5I7CglzQOwHg1z/Wi2fFbg0f38bzzBDW1gzsmL0JQDtUorArzZHHwn7wYatUt0uARxt41xu8N66qUyO1svej/7nEjhyxpm4V0rf1cTF9AefytQD3bRgjsGaJsU5UFV0TtDYZWFoiMMYP+LfwqFfcov2XI7eSjJlJfG1XWlVhOYRRvvXFWoyf59Fn6XOzw7/zqQVMJ+v8dF0HCqoHAbZOfKb5k2MuMwhH5uQ7163+ymPs0mOZyGcRpIScmJvD1idhG0qmn648j5rq4yOXPqA7uIKHFxYytF/jCrfykoIKk19M39onQLdxJarpFMvRCBJ5VDn9W+eCZT/JU7byaR9cewFHviD68Re2EAz7t9nEHFbPtuHPruNkx4g=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4226aeb6-efdc-499d-bfe3-08ddea6802be
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 21:31:00.1871
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aV2DKuZPR0L/GBdsgrMewei76JWYj0NDGl4s9X+7y/3a7AVjT48851ww0oRrWb5W2eGSOZPzAbmN4E3d8OTEGwBzv+4llKKcFv442jdQBE0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6078
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_08,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509020213
+X-Proofpoint-GUID: TNGyFZdxBHz5M04Ey6iEc2vspD4PBIOH
+X-Authority-Analysis: v=2.4 cv=I7xlRMgg c=1 sm=1 tr=0 ts=68b76218 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=pGLkceISAAAA:8 a=7CQSdrXTAAAA:8
+ a=DLYMtL6nnpTSNLbWkJwA:9 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfX4uupuX1Is4xL
+ XlJ+bcSoJX0DscwN3tu9+x0eWyq1Vp0BCLDuwv7NtDNfUIgee4h4O10OWyenXXIUJPcjJpPX1A5
+ ulQNaPYRXRt0yihrHADw6+R46s+zNqZIJmI+0uVDdl2j4cP1JCPd3BeUX1jSJixyPBa5QhA73Kj
+ WrjTxeXW/B2q8bh049aY3/JEkzblRuBf0yFlVERrX/wBab+Jp7WhwkP+vGkY4J9yDM+MhruyLW5
+ b/epCVIc8hsBZRHrAtiT0OkwYKSkIzWWcb+orkr1ndlCU0Gtl2QDuR9gMd01BGbISLAdmnFdboO
+ IlZkNK+cXF8IS4Hwjne1uzom5JUpPc5uM25gYg1o1blum3DpbGpZRITGPlO8FGQX30p5XmN+GWs
+ GHBzjoIg
+X-Proofpoint-ORIG-GUID: TNGyFZdxBHz5M04Ey6iEc2vspD4PBIOH
 
-On Mon, Aug 18, 2025 at 6:10=E2=80=AFPM Jonathan Denose <jdenose@google.com=
-> wrote:
->
-> Hello,
->
-> This is an updated implementation of the interface for controlling haptic
-> touchpads.
->
-> Below is an updated design proposal for the userspace and HID interfaces,
-> modified from what one of my colleagues submitted in 2019 [0].
->
-> We would appreciate any feedback you might have.
->
-> Thank you,
->
-> Jonathan Denose
-> Chromium OS Team
->
-> Background
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> There are multiple independent projects to develop a touchpad with force =
-sensors
-> and haptic actuators, instead of a traditional button.  These haptic touc=
-hpads
-> have several advantages and potential uses; they allow clicking across th=
-e
-> entire touchpad surface, adjusting the force requirement for clicks, hapt=
-ic
-> feedback initiated by UI, etc. Supporting these features will potentially
-> require two new communication channels at the kernel level:
-> * Control of haptic motor by the host
-> * Force sensor data from device to host
->
-> This document includes two related proposals:
-> 1. HID design proposal, that hardware makers would need to implement
-> 2. Kernel design proposal
->
-> Objective
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Develop a standard protocol to allow userspace applications to communicat=
-e with
-> haptic touchpads, and minimize duplicated code and effort.
->
-> Requirements:
-> 1. Support UI-initiated haptic feedback.
-> 2. Allow userspace to control when button press and button release haptic
->    effects are triggered. (Useful when detecting a false click, changing =
-force
->    thresholds, or sending context-dependent effects).
-> 3. Reveal force sensor readings to userspace applications.
-> 4. Only allow OS-controlled haptic feedback for those systems which suppo=
-rt it.
->
-> Proposal
-> =3D=3D=3D=3D=3D=3D=3D=3D
->
-> In order to minimize duplicated effort, we propose standardized haptic to=
-uchpad
-> support in the linux kernel.
->
-> HID API
-> -------
->
-> Modes
-> .....
->
-> The haptic touchpad should be able to operate under two different modes.
->
-> 1. Device-controlled mode
->
-> The haptic touchpad should start up in "device-controlled mode"
-> (HID_HAPTIC_MODE_DEVICE), meaning it acts as a normal touchpad. This mean=
-s it
-> should perform the press and release haptic feedback autonomously at pred=
-efined
-> force thresholds, and send the appropriate BTN_* events.
->
-> 2. Host-controlled mode
->
-> Once the touchpad has been confirmed as supporting haptics (described in =
-more
-> detail in the the "Click and release control" section below), the device =
-should
-> enter "host-controlled mode" (HID_HAPTIC_MODE_HOST). In this mode userspa=
-ce
-> should take control. From here, userspace will take control over
-> press/release haptic feedback, relying on the effects sent by the kernel.
->
-> Multitouch
-> ..........
->
-> The HID API for multitouch reports should follow the Microsoft precision
-> touchpad spec [1], with the following changes:
-> * A tip pressure field [2] should be used to report the force. The physic=
-al unit
->   Type (Newtons or grams), exponent, and limits should be reported in the
->   report descriptor for the force field.
-> * The device will always report the button state according to its predefi=
-ned
->   force thresholds, even when not in device-controlled mode.
-> * The device must expose a "simple haptic controller" logical collection
->   alongside the touchpad collection.
->
-> Haptic control
-> ..............
->
-> The HID protocol described in HUTRR63[3] must be used.
->
-> The following waveforms should be supported:
->
-> | WAVEFORMNONE             | Implicit waveforms required by protocol     =
-      |
-> | WAVEFORMSTOP             |                                             =
-      |
-> | ------------------------ | --------------------------------------------=
------ |
-> | WAVEFORMPRESS            | To be used to simulate button press. In devi=
-ce-   |
-> |                          | controlled mode, it will also be used to sim=
-ulate |
-> |                          | button release.                             =
-      |
-> | ------------------------ | --------------------------------------------=
------ |
-> | WAVEFORMRELEASE          | To be used to simulate button release.      =
-      |
->
-> All waveforms will have an associated duration; continuous waveforms will=
- be
-> ignored by the kernel.
->
-> Triggers & Mode switching
-> .........................
->
-> The =E2=80=9Cauto trigger waveform=E2=80=9D should be set to WAVEFORM_PRE=
-SS by default, and the
-> button from the touchpad collection should be set as the =E2=80=9Cauto tr=
-igger
-> associated control=E2=80=9D.
->
-> The kernel can trigger the different modes in the following ways:
-> * Device-controlled mode can be enabled by setting the =E2=80=9Cauto trig=
-ger waveform=E2=80=9D to
->   WAVEFORM_PRESS.
-> * Host-controlled mode can be enabled by setting the "auto trigger wavefo=
-rm" to
->   WAVEFORM_STOP.
->
-> The device must also support manual triggering. If intensity modification=
- for
-> waveforms is supported by the device, the intensity control should be inc=
-luded
-> in the manual trigger output report. This allows modification of the inte=
-nsity
-> on a per-waveform basis. Retriggering does not need to be supported by th=
-e
-> device.
->
-> Userspace API
-> -------------
->
-> Multitouch protocol
-> ...................
->
-> ABS_MT_PRESSURE will be used to report force. The resolution of ABS_MT_PR=
-ESSURE
-> should also be defined and reported in force units of grams or Newtons.
-> ABS_PRESSURE should be reported as the total force applied to the touchpa=
-d.
-> When the kernel is in host-controlled mode, it should always forward the =
-button
-> press and release events to userspace.
->
-> Use Force Feedback protocol to request pre-defined effects
-> ..........................................................
->
-> The force feedback protocol [4] should be used to control predefined effe=
-cts.
->
-> Typical use of the force feedback protocol requires loading effects to th=
-e
-> driver by describing the output waveform, and then requesting those effec=
-ts
-> using an ID provided by the driver. However, for haptic touchpads we do n=
-ot want
-> to describe the output waveform explicitly, but use a set of predefined e=
-ffects,
-> which are identified by HID usage.
->
-> The force feedback protocol will need to be extended to allow requests fo=
-r HID
-> haptic effects. This requires a new feedback effect type:
->
-> /**
->  * struct ff_haptic_effect
->  * @hid_usage: hid_usage according to Haptics page (WAVEFORM_CLICK, etc.)
->  * @vendor_id: the waveform vendor ID if hid_usage is in the vendor-defin=
-ed
->  * range
->  * @vendor_id: the vendor waveform page if hid_usage is in the vendor-def=
-ined
->  * range
->  * @intensity: strength of the effect
->  * @repeat_count: number of times to retrigger effect
->  * @retrigger_period: time before effect is retriggered (in ms)
->  */
-> struct ff_haptic_effect {
->         __u16 hid_usage;
->         __u16 vendor_id;
->         __u8  vendor_waveform_page;
->         __s16 intensity;
->         __u16 repeat_count;
->         __u16 retrigger_period;
-> }
->
-> Since the standard waveform id namespace does not overlap with the vendor
-> waveform id namespace, the vendor id and page can be ignored for standard
-> waveforms.
->
-> Click and release control
-> .........................
->
-> Haptic functionality shall be gated behind the HID_MULTITOUCH_HAPTIC kern=
-el
-> configuration option, and this kernel configuration option should only be
-> enabled if userspace will support haptic capabilities. Haptic functionali=
-ty will
-> only be initialized and used if HID_MULTITOUCH_HAPTIC is enabled, and if =
-the
-> following conditions have been met:
-> * ABS_MT_PRESSURE is defined and reporting force units of Newtons or gram=
-s.
-> * The device supports haptic effects according to the hid protocol define=
-d in
->   HUTRR63 [3].
-> These checks will happen when the driver probes and initializes the multi=
-touch
-> device.
->
-> In the case when the kernel configuration option has been set and the dev=
-ice
-> reports pressure and haptic effects as defined above, the kernel will ini=
-tialize
-> the haptic device and configure the haptic driver to signal that the touc=
-hpad is
-> haptic-compatible. To signal to userspace that the touchpad is haptic-com=
-patible
-> the kernel will mark INPUT_PROP_HAPTIC_TOUCHPAD.
->
-> With userspace willing and able to take control, the kernel will signal t=
-o the
-> device to exit device-controlled mode once a WAVEFORMPRESS or WAVEFORMREL=
-EASE
-> event is uploaded. From here, userspace will take control over press/rele=
-ase
-> haptic feedback, relying on the effects sent by the kernel.
->
-> In all other cases, the driver will take no action to enable haptic
-> functionality.
->
-> Summary of normal use-case
-> 1. The kernel waits for userspace to upload WAVEFORMPRESS or
->    WAVEFORMRELEASE.
-> 2. Userspace determines when a click has been performed based on its own
->    criteria and tells the touchpad to perform a haptic effect.
-> 3. When userspace erases the WAVEFORMPRESS or WAVEFORMRELEASE effect, sig=
-nal the
->    device to return to device-controlled mode.
->
-> [0]: https://www.spinics.net/lists/linux-input/msg60938.html
-> [1]: https://learn.microsoft.com/en-us/windows-hardware/design/component-=
-guidelines/touchpad-devices
-> [2]: Usage ID 0x30 of HID usage table 0x0D. See chapter 16:
->      https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
-> [3]: https://www.usb.org/sites/default/files/hutrr63b_-_haptics_page_redl=
-ine_0.pdf
-> [4]: https://www.kernel.org/doc/html/v4.20/input/ff.html
->
-> Signed-off-by: Jonathan Denose <jdenose@google.com>
-> ---
-> Changes in v3:
-> - Change CONFIG_HID_HAPTIC from bool to tristate
-> - Fix devm_kzalloc calls in hid-multitouch.c to use correct device
-> - Minor comment cleanup + grammar fix
-> - Link to v2: https://lore.kernel.org/r/20250818-support-forcepads-v2-0-c=
-a2546e319d5@google.com
->
-> Changes in v2:
-> - Rename FF_HID and ff_hid_effect to FF_HAPTIC and ff_haptic_effect
-> - Add more detail to CONFIG_HID_HAPTIC config option description
-> - Remove CONFIG_MULTITOUCH_HAPTIC config option
-> - Utilize devm api in hid-multitouch haptic functions
-> - Link to v1: https://lore.kernel.org/all/20250714-support-forcepads-v1-0=
--71c7c05748c9@google.com
->
-> ---
-> Angela Czubak (11):
->       HID: add haptics page defines
->       Input: add FF_HAPTIC effect type
->       Input: add INPUT_PROP_HAPTIC_TOUCHPAD
->       HID: haptic: introduce hid_haptic_device
->       HID: input: allow mapping of haptic output
->       HID: haptic: initialize haptic device
->       HID: input: calculate resolution for pressure
->       HID: haptic: add functions handling events
->       Input: MT - add INPUT_MT_TOTAL_FORCE flags
->       HID: haptic: add hid_haptic_switch_mode
->       HID: multitouch: add haptic multitouch support
->
->  Documentation/input/event-codes.rst    |  14 +
->  drivers/hid/Kconfig                    |  11 +
->  drivers/hid/Makefile                   |   1 +
->  drivers/hid/hid-haptic.c               | 580 +++++++++++++++++++++++++++=
-++++++
->  drivers/hid/hid-haptic.h               | 127 ++++++++
->  drivers/hid/hid-input.c                |  18 +-
->  drivers/hid/hid-multitouch.c           |  47 +++
->  drivers/input/input-mt.c               |  14 +-
->  include/linux/hid.h                    |  29 ++
->  include/linux/input/mt.h               |   1 +
->  include/uapi/linux/input-event-codes.h |   1 +
->  include/uapi/linux/input.h             |  22 +-
->  12 files changed, 858 insertions(+), 7 deletions(-)
-> ---
-> base-commit: 86731a2a651e58953fc949573895f2fa6d456841
-> change-id: 20250625-support-forcepads-0b4f74fd3d0a
->
-> Best regards,
-> --
-> Jonathan Denose <jdenose@google.com>
->
-Hi all,
 
-Please let me know if there is anything else needed from me.
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-Thanks!
---=20
-Jonathan
+> On Mon, Sep 1, 2025 at 4:28=E2=80=AFAM Catalin Marinas <catalin.marinas@a=
+rm.com> wrote:
+>>
+>> On Fri, Aug 29, 2025 at 01:07:35AM -0700, Ankur Arora wrote:
+>> > diff --git a/arch/arm64/include/asm/rqspinlock.h b/arch/arm64/include/=
+asm/rqspinlock.h
+>> > index a385603436e9..ce8feadeb9a9 100644
+>> > --- a/arch/arm64/include/asm/rqspinlock.h
+>> > +++ b/arch/arm64/include/asm/rqspinlock.h
+>> > @@ -3,6 +3,9 @@
+>> >  #define _ASM_RQSPINLOCK_H
+>> >
+>> >  #include <asm/barrier.h>
+>> > +
+>> > +#define res_smp_cond_load_acquire_waiting() arch_timer_evtstrm_availa=
+ble()
+>>
+>> More on this below, I don't think we should define it.
+>>
+>> > diff --git a/kernel/bpf/rqspinlock.c b/kernel/bpf/rqspinlock.c
+>> > index 5ab354d55d82..8de1395422e8 100644
+>> > --- a/kernel/bpf/rqspinlock.c
+>> > +++ b/kernel/bpf/rqspinlock.c
+>> > @@ -82,6 +82,7 @@ struct rqspinlock_timeout {
+>> >       u64 duration;
+>> >       u64 cur;
+>> >       u16 spin;
+>> > +     u8  wait;
+>> >  };
+>> >
+>> >  #define RES_TIMEOUT_VAL      2
+>> > @@ -241,26 +242,20 @@ static noinline int check_timeout(rqspinlock_t *=
+lock, u32 mask,
+>> >  }
+>> >
+>> >  /*
+>> > - * Do not amortize with spins when res_smp_cond_load_acquire is defin=
+ed,
+>> > - * as the macro does internal amortization for us.
+>> > + * Only amortize with spins when we don't have a waiting implementati=
+on.
+>> >   */
+>> > -#ifndef res_smp_cond_load_acquire
+>> >  #define RES_CHECK_TIMEOUT(ts, ret, mask)                             =
+ \
+>> >       ({                                                            \
+>> > -             if (!(ts).spin++)                                     \
+>> > +             if ((ts).wait || !(ts).spin++)                \
+>> >                       (ret) =3D check_timeout((lock), (mask), &(ts)); =
+\
+>> >               (ret);                                                \
+>> >       })
+>> > -#else
+>> > -#define RES_CHECK_TIMEOUT(ts, ret, mask)                           \
+>> > -     ({ (ret) =3D check_timeout((lock), (mask), &(ts)); })
+>> > -#endif
+>>
+>> IIUC, RES_CHECK_TIMEOUT in the current res_smp_cond_load_acquire() usage
+>> doesn't amortise the spins, as the comment suggests, but rather the
+>> calls to check_timeout(). This is fine, it matches the behaviour of
+>> smp_cond_load_relaxed_timewait() you introduced in the first patch. The
+>> only difference is the number of spins - 200 (matching poll_idle) vs 64K
+>> above. Does 200 work for the above?
+>>
+>> >  /*
+>> >   * Initialize the 'spin' member.
+>> >   * Set spin member to 0 to trigger AA/ABBA checks immediately.
+>> >   */
+>> > -#define RES_INIT_TIMEOUT(ts) ({ (ts).spin =3D 0; })
+>> > +#define RES_INIT_TIMEOUT(ts) ({ (ts).spin =3D 0; (ts).wait =3D res_sm=
+p_cond_load_acquire_waiting(); })
+>>
+>> First of all, I don't really like the smp_cond_load_acquire_waiting(),
+>> that's an implementation detail of smp_cond_load_*_timewait() that
+>> shouldn't leak outside. But more importantly, RES_CHECK_TIMEOUT() is
+>> also used outside the smp_cond_load_acquire_timewait() condition. The
+>> (ts).wait check only makes sense when used together with the WFE
+>> waiting.
+>
+> +1 to the above.
+
+Ack.
+
+> Penalizing all other architectures with pointless runtime check:
+>
+>> -             if (!(ts).spin++)                                     \
+>> +             if ((ts).wait || !(ts).spin++)                \
+>
+> is not acceptable.
+
+Is it still a penalty if the context is a busy wait loop.
+
+Oddly enough the compiler does not eliminate this check on x86 (given
+that it is statically defined to be 0 and ts does not escape the
+function.)
+
+--
+ankur
 
