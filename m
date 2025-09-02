@@ -1,76 +1,234 @@
-Return-Path: <linux-kernel+bounces-796394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285E6B40044
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD4DB4004E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A7E162349
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:18:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510832C7C39
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54D12FD1C6;
-	Tue,  2 Sep 2025 12:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPznax6T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D15C2F998B;
-	Tue,  2 Sep 2025 12:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6AA2FA0ED;
+	Tue,  2 Sep 2025 12:17:25 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1BA2C11C9;
+	Tue,  2 Sep 2025 12:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815289; cv=none; b=KMAmwqSFSgoEnYb/rVygMZBWh35PVtNtbGN4Ngec6QRp5ZzK2+54AH6J+4qzRMTnVwDdctWmoGc3wgCgzrsoy8mXVK2EZ8hykrVHX+QXaRdQbuleN5y/Bl9xNBHTpAklcvPY4nZorm2+JtqUVL4+LPI9f26hZKXuAj674n0ylfY=
+	t=1756815445; cv=none; b=VahLaEJPZjkLV6ytJmZO18xJBkGlNuVVp4USAv+g76voZOIH9ZNnieuBicPu8aSf5a5QYVEHL8Cud81Zd0vJNs+k0dAnDRHe/voied3vfPmTthyusLUxRIxndAgOovsYgjdllKPXeqCKbHis3ZMLuE1NP1kdLn3H0yJQVDp9EcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815289; c=relaxed/simple;
-	bh=UoippvnZMyUSR38pwGIqf6cgxIiJi9THmYOSK7Jr/kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnM3klooS7b9ftwvGWELg4h9CTNT2l1xclxccy1FpnhJuXsoYslEaMYbQPpO++HnCtVJso6ycz8Lhx+tFxmd9jY9T0XdpGw5kP1GsBYQO1EnksvXtikTIHJcTKrxFXwHqhoQSg4QxKXlTiiWfgKwvzS3UqFvnD9lskLLL8kJWAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPznax6T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB680C4CEED;
-	Tue,  2 Sep 2025 12:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756815288;
-	bh=UoippvnZMyUSR38pwGIqf6cgxIiJi9THmYOSK7Jr/kw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DPznax6T+tWbpfFfV9SOjX9KcurCoj0YuqIBFLe1XFdPGKVkEqJu0QqdrI5sDGa3M
-	 jnFj+1wB5G+wPBCuX54wRHT2702GxIJDTLfWFg5cZZdCdRoyZ7lTFZqXP+L4Nm5OuV
-	 uwxzPVfymidfJn/T9tuc7ckuw6BMf17iH/nsfchyRa2O0CI+bUko99xZWUWBbpujzD
-	 1R3sW/bXUTyz/0FKg1aMLC3VXMHVaUBoPkXtbJqI2f89dnlDwtSOyEFNCTrmDiJT9b
-	 vTgiJnZ+dUTnlbdMgI5PpsQhfG2vPCF1dCW21wzdySDUbvhJsjMJ5wBAnhlugNkpX5
-	 PHnBHO5AMsygA==
-Date: Tue, 2 Sep 2025 13:14:44 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Xin Long <lucien.xin@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] ipv4: Fix NULL vs error pointer check in
- inet_blackhole_dev_init()
-Message-ID: <20250902121444.GE15473@horms.kernel.org>
-References: <aLaQWL9NguWmeM1i@stanley.mountain>
+	s=arc-20240116; t=1756815445; c=relaxed/simple;
+	bh=WKeK4TjkDMRS3nDi2iaypR+EoL8NEvPvhPoo5d5rfMI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=k6GMARSfQyRq2fj5iiLXhcVGOla1XLD78IWEVwki6//lj+nOUHNA4At2CJ0kYlfa1lefPoce9lWXlQWOSt7u7M6TPzVbFvllYUMMJw7Ni7chDsNJ8wZdEtxEYn5v9iVIhf1bthSGJZ3A59fHjs84cVp364aM9+NDXhCYw0jOemI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Cxbb9K4LZoessFAA--.11075S3;
+	Tue, 02 Sep 2025 20:17:14 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJBxjcFH4LZozO54AA--.64270S3;
+	Tue, 02 Sep 2025 20:17:13 +0800 (CST)
+Subject: Re: [PATCH 1/4] LoongArch: KVM: Avoid use copy_from_user with lock
+ hold in kvm_eiointc_regs_access
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Xianglai Li <lixianglai@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250902094945.2957566-1-maobibo@loongson.cn>
+ <20250902094945.2957566-2-maobibo@loongson.cn>
+ <CAAhV-H7hCggw_zhQk89uvBrpAPxgHCS_BC5+twsyZdwWkF4A1g@mail.gmail.com>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <4eb3fffa-8330-ad54-8cbc-2cabf6355c74@loongson.cn>
+Date: Tue, 2 Sep 2025 20:15:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLaQWL9NguWmeM1i@stanley.mountain>
+In-Reply-To: <CAAhV-H7hCggw_zhQk89uvBrpAPxgHCS_BC5+twsyZdwWkF4A1g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxjcFH4LZozO54AA--.64270S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxtr47uw4rJr4rGr4fJw1xXrc_yoWxGr1fpr
+	yUAFsakr4rXry7ZrnFyw1DAr17Aw4xZ3W8Jr18KFyUur1jgrn3tFy8GrW7AF1YkwnxJF1I
+	qF1qyF1Yvr1UtwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AK
+	xVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
+	xVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI
+	42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMI
+	IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
+	xhVjvjDU0xZFpf9x07jnUUUUUUUU=
 
-On Tue, Sep 02, 2025 at 09:36:08AM +0300, Dan Carpenter wrote:
-> The inetdev_init() function never returns NULL.  Check for error
-> pointers instead.
+
+
+On 2025/9/2 下午7:58, Huacai Chen wrote:
+> Hi, Bibo,
 > 
-> Fixes: 22600596b675 ("ipv4: give an IPv4 dev to blackhole_netdev")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> On Tue, Sep 2, 2025 at 5:49 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> Function copy_from_user() and copy_to_user() may sleep because of page
+>> fault, and they cannot be called in spin_lock hold context. Otherwise there
+>> will be possible warning such as:
+>>
+>> BUG: sleeping function called from invalid context at include/linux/uaccess.h:192
+>> in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 6292, name: qemu-system-loo
+>> preempt_count: 1, expected: 0
+>> RCU nest depth: 0, expected: 0
+>> INFO: lockdep is turned off.
+>> irq event stamp: 0
+>> hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+>> hardirqs last disabled at (0): [<9000000004c4a554>] copy_process+0x90c/0x1d40
+>> softirqs last  enabled at (0): [<9000000004c4a554>] copy_process+0x90c/0x1d40
+>> softirqs last disabled at (0): [<0000000000000000>] 0x0
+>> CPU: 41 UID: 0 PID: 6292 Comm: qemu-system-loo Tainted: G W 6.17.0-rc3+ #31 PREEMPT(full)
+>> Tainted: [W]=WARN
+>> Stack : 0000000000000076 0000000000000000 9000000004c28264 9000100092ff4000
+>>          9000100092ff7b80 9000100092ff7b88 0000000000000000 9000100092ff7cc8
+>>          9000100092ff7cc0 9000100092ff7cc0 9000100092ff7a00 0000000000000001
+>>          0000000000000001 9000100092ff7b88 947d2f9216a5e8b9 900010008773d880
+>>          00000000ffff8b9f fffffffffffffffe 0000000000000ba1 fffffffffffffffe
+>>          000000000000003e 900000000825a15b 000010007ad38000 9000100092ff7ec0
+>>          0000000000000000 0000000000000000 9000000006f3ac60 9000000007252000
+>>          0000000000000000 00007ff746ff2230 0000000000000053 9000200088a021b0
+>>          0000555556c9d190 0000000000000000 9000000004c2827c 000055556cfb5f40
+>>          00000000000000b0 0000000000000007 0000000000000007 0000000000071c1d
+>> Call Trace:
+>> [<9000000004c2827c>] show_stack+0x5c/0x180
+>> [<9000000004c20fac>] dump_stack_lvl+0x94/0xe4
+>> [<9000000004c99c7c>] __might_resched+0x26c/0x290
+>> [<9000000004f68968>] __might_fault+0x20/0x88
+>> [<ffff800002311de0>] kvm_eiointc_regs_access.isra.0+0x88/0x380 [kvm]
+>> [<ffff8000022f8514>] kvm_device_ioctl+0x194/0x290 [kvm]
+>> [<900000000506b0d8>] sys_ioctl+0x388/0x1010
+>> [<90000000063ed210>] do_syscall+0xb0/0x2d8
+>> [<9000000004c25ef8>] handle_syscall+0xb8/0x158
+>>
+>> Fixes: 1ad7efa552fd5 ("LoongArch: KVM: Add EIOINTC user mode read and write functions")
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/kvm/intc/eiointc.c | 33 ++++++++++++++++++++-----------
+>>   1 file changed, 21 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/eiointc.c
+>> index 026b139dcff2..2fb5b9c6e8ad 100644
+>> --- a/arch/loongarch/kvm/intc/eiointc.c
+>> +++ b/arch/loongarch/kvm/intc/eiointc.c
+>> @@ -462,19 +462,17 @@ static int kvm_eiointc_ctrl_access(struct kvm_device *dev,
+>>
+>>   static int kvm_eiointc_regs_access(struct kvm_device *dev,
+>>                                          struct kvm_device_attr *attr,
+>> -                                       bool is_write)
+>> +                                       bool is_write, int *data)
+>>   {
+>>          int addr, cpu, offset, ret = 0;
+>>          unsigned long flags;
+>>          void *p = NULL;
+>> -       void __user *data;
+>>          struct loongarch_eiointc *s;
+>>
+>>          s = dev->kvm->arch.eiointc;
+>>          addr = attr->attr;
+>>          cpu = addr >> 16;
+>>          addr &= 0xffff;
+>> -       data = (void __user *)attr->addr;
+>>          switch (addr) {
+>>          case EIOINTC_NODETYPE_START ... EIOINTC_NODETYPE_END:
+>>                  offset = (addr - EIOINTC_NODETYPE_START) / 4;
+>> @@ -513,13 +511,10 @@ static int kvm_eiointc_regs_access(struct kvm_device *dev,
+>>          }
+>>
+>>          spin_lock_irqsave(&s->lock, flags);
+>> -       if (is_write) {
+>> -               if (copy_from_user(p, data, 4))
+>> -                       ret = -EFAULT;
+>> -       } else {
+>> -               if (copy_to_user(data, p, 4))
+>> -                       ret = -EFAULT;
+>> -       }
+>> +       if (is_write)
+>> +               memcpy(p, data, 4);
+>> +       else
+>> +               memcpy(data, p, 4);
+> p is a local variable, data is a parameter, they both have nothing to
+> do with s, why memcpy need to be protected?
+p is pointer to register buffer rather than local variable. When dump 
+extioi register to user space, maybe one vCPU is writing extioi register 
+at the same time, so there needs spinlock protection.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+> After some thinking I found the code was wrong at the first time.  The
+> real code that needs to be protected is not copy_from_user() or
+> memcpy(), but the above switch block.
+For switch block in function kvm_eiointc_regs_access() for example, it 
+is only to get register buffer pointer, not register content. Spinlock 
+protection is not necessary in switch block.
+
+Regards
+Bibo Mao
+> 
+> Other patches have similar problems.
+> 
+> Huacai
+> 
+>>          spin_unlock_irqrestore(&s->lock, flags);
+>>
+>>          return ret;
+>> @@ -576,9 +571,18 @@ static int kvm_eiointc_sw_status_access(struct kvm_device *dev,
+>>   static int kvm_eiointc_get_attr(struct kvm_device *dev,
+>>                                  struct kvm_device_attr *attr)
+>>   {
+>> +       int ret, data;
+>> +
+>>          switch (attr->group) {
+>>          case KVM_DEV_LOONGARCH_EXTIOI_GRP_REGS:
+>> -               return kvm_eiointc_regs_access(dev, attr, false);
+>> +               ret = kvm_eiointc_regs_access(dev, attr, false, &data);
+>> +               if (ret)
+>> +                       return ret;
+>> +
+>> +               if (copy_to_user((void __user *)attr->addr, &data, 4))
+>> +                       ret = -EFAULT;
+>> +
+>> +               return ret;
+>>          case KVM_DEV_LOONGARCH_EXTIOI_GRP_SW_STATUS:
+>>                  return kvm_eiointc_sw_status_access(dev, attr, false);
+>>          default:
+>> @@ -589,11 +593,16 @@ static int kvm_eiointc_get_attr(struct kvm_device *dev,
+>>   static int kvm_eiointc_set_attr(struct kvm_device *dev,
+>>                                  struct kvm_device_attr *attr)
+>>   {
+>> +       int data;
+>> +
+>>          switch (attr->group) {
+>>          case KVM_DEV_LOONGARCH_EXTIOI_GRP_CTRL:
+>>                  return kvm_eiointc_ctrl_access(dev, attr);
+>>          case KVM_DEV_LOONGARCH_EXTIOI_GRP_REGS:
+>> -               return kvm_eiointc_regs_access(dev, attr, true);
+>> +               if (copy_from_user(&data, (void __user *)attr->addr, 4))
+>> +                       return -EFAULT;
+>> +
+>> +               return kvm_eiointc_regs_access(dev, attr, true, &data);
+>>          case KVM_DEV_LOONGARCH_EXTIOI_GRP_SW_STATUS:
+>>                  return kvm_eiointc_sw_status_access(dev, attr, true);
+>>          default:
+>> --
+>> 2.39.3
+>>
 
 
