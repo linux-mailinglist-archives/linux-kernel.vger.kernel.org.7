@@ -1,423 +1,259 @@
-Return-Path: <linux-kernel+bounces-795886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12893B3F8F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:45:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B29EB3F8FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE99C483950
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:45:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 253AA4E0688
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9834426AA93;
-	Tue,  2 Sep 2025 08:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A182E92C7;
+	Tue,  2 Sep 2025 08:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mjLFmWEl"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoUiB0fg"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3395926CE2A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A272E9EA4;
+	Tue,  2 Sep 2025 08:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802639; cv=none; b=h0E0tqUGlf1qFAcgBg2Wmv8b6m0uC7ZP78HaYI9y+GftrhidYJU33PqN46UUTix9ExhExxWMFPNhpPPbDe/M5oOV/Q+/ak7fZ2dWlXj/mh0bTdaEch0e6pxIAfIhfP+TIUYUYAVHSH/bDDHy8FgpzNXVTD6o2p9j3PituChLon0=
+	t=1756802713; cv=none; b=pqOvoilw9Q4DXtpoUyK12hZzJk9TaNZhbLlg98Ss41FDHAxARw9y8i7o8ZwQu6GoM+juhehuSqfgATaihS02zFpZe1kVL9gYKnUfEPlBK4Hy+USRnTK7g57zh8Tou7jDS7f9qvHOrgVEHAjRboOnNdYy0dbx9YfkhmjE8GtbwvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802639; c=relaxed/simple;
-	bh=+XwbwAiFHkyD3CirRZBAQjcoiJGJefCWvdqJ4uceKG0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rdTXAPAZkAOohIDkEYqwXjS+VQ8D3BWvKsiTX2rLHM2K7ilhgZR95++KgDzf8q63kLLzeTvdyzfnhDxam0/t1NbpiwunJyqq2JfGswkIaryw0DOd/G48xc3YSHbsvbbIMqLNUtSJCWa11jHqB0by7UdEvLyYpvUgisnlnulL4ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mjLFmWEl; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3d1bf79d6afso2022645f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:43:56 -0700 (PDT)
+	s=arc-20240116; t=1756802713; c=relaxed/simple;
+	bh=pHMmGYoGlJbB7WFIeGZ7N5f575iJJiVTHUPoSvca+54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YGwprhickI3mGtpGD3w/9OEPb9eAL2wUWJmpgUP32nZ88owcp7ZB0DLbZ/qAG7rusdyJIaTGlSSwaOgtZTHf+A8WaLi5LvP/sGR9n4nVloKkaMyoIDZv21JO6bauCwoPaM/gn226N27xZMroUqj1LndRVD7bWxhO5ZSO5npI3Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoUiB0fg; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61e930b27bcso2396365a12.0;
+        Tue, 02 Sep 2025 01:45:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756802635; x=1757407435; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7IpqcIjKyOanWZmyjk93APyKeLgqYayNDX8wX9Y4vs8=;
-        b=mjLFmWEl3RsgR8Y8wat9k2nuUnYC+tfxdzHg0Nv0Et/jnY2IOw3TD4D+qVunsLzRlb
-         TqajkmNZpltGQC+cplbvhxD7lMGlXlxSzLL2wxcpq2GUP7fBf+MrrlXCLMgOShLUQgPt
-         iD3m4nzSUtEFxjnejOs/XBbKY/tlmOMl/lv9bfkd8xB4YwbTqWU4jB4qowzvGf0DWLRd
-         qYaXTyuOT8Ozbtt2OsepD0AobQHB9chmBysKzfVL9hCASdsPjwt11/Tr9NImDftlLmkT
-         qRuLQSmSKnn1B1l1Haf+mo/wRKqri0PnwRMPqMYCybbJvEwTw0kUB0/6Bo5JsB1PtWFD
-         HAJw==
+        d=gmail.com; s=20230601; t=1756802709; x=1757407509; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NVrfdXyH/4C0Wr0YHZaw6gV8VgGdQhG3sK6jQ9dFmeA=;
+        b=MoUiB0fgUbkP/zuwR8Nh7yeNFyhwFWKsz2aT6nptKyiOV7n49rCOXOGWvQRW3piIx4
+         PgrIQI9KdE8fMRzQr5CN9fsGRjNTEH/7GNYsyzY5hCPHcwIggZSvfvUW1y5/XSMlJop1
+         V/jh82Vz8VF+hfekmfNS/kMBrHl8iSBWI9z3g/2DKxjQHtcY1kmNIiToPBxxuDurr8Ec
+         q7+ilQm6udA+BAAf5G7WbmrFDZ+X1xs+rezJnkp0oNMYDzOdroTahazeWTYBlbVfRi+x
+         sp5DXhLNSH4VfjOHuhecGfZIlxuQpCVBdUPgPEMRCa5vN7Q6fGR+1l+DJdY6SLkreP4d
+         W5GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756802635; x=1757407435;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7IpqcIjKyOanWZmyjk93APyKeLgqYayNDX8wX9Y4vs8=;
-        b=DTcdZ3aN6r4mDIDfhGjMTx0fbSGNSgfnjz0pKYpyiQ4QD32m8R9wezcTOrktM12sbM
-         W5QNiUlHiO/jMoTjWFELXzRbhGUaow/dfEGOKjaU0U+RgGP47AcL8agceR+XdQv0MVSP
-         BCX41HSTFy/3MqgAQSxQRHOqufa9V2zJ1ddynYN+UNYZvc3/6YP99S2DXZrTP3+AZX6H
-         YuUWr/+DxnXvO8Wa5/XgyceXRcnUQylWVZG4OF7/hdwD4ggSTUai5Lae+xrnq1nfJvYl
-         Vu6//HT5afzIQDdVtqK7TdpNF4cDigxfWEyVKfUo1dO5wlA/s2r1v0J+vEqEkc3cEZ5b
-         AULg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmo602lZJdUd9O3enyPucxGyN3Bj2iUYTgGbKQ1Tv+J7jmKQbD0vDHvIEOPZS5MnfvFtZUefC/SFvwJjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIM8J6tZ4uFN9QdN7wevrfse/5pHOICHhtv9SZUWipojMf3Fsv
-	G8CJ0lXkAldtLkQy0z4bn6jDPMQ0aGFTPnEsssrZCnm3qrs+P0EZhGR+OqtuZ/gjl5c=
-X-Gm-Gg: ASbGncsS7tbH+V7TvK8g5sti1RCnx+ccG4H8AnClLH7IaNzjWpTCHMcZpiIxlgmohU2
-	few0CMa6lBZ71MhWoRc3hQFOCMTibKLolSiGgDJj8kZ0cXDYFa8+n99KlTla6X53wqVg9CZsnPx
-	gvqLwT1Ub5BjIe/Me2kz9AXfquGSJfXDnnNv3wr2kGu0FS7jhu+DHSYbG63nr/bmqh9s02R6j2Q
-	7C3ZrLsDauTzGKWx+kLt40BIMN8fEMSI5NnfWikUcg7JFHKIb4VEcSdHiGhrEpdUzfdpb5nJ7Mn
-	hTArJKQudzLtquS1EMroUrkT/2jHCAa4EXASpGTUQZwEVhLtVoSuvR+Zq/iC1uphow77bsLK+BQ
-	Wi7lGElJ2128lSX9gBQ5U3kW1uGgxgj5p9G4iy23hjwMHGWnLmSTfgQ==
-X-Google-Smtp-Source: AGHT+IFmfxVcPeqNWVuOW1vIqRI0oy7nwjrjxc1qG+gRBTXx7sZ69f1EsfNm66LCU/xhe9zBPaZZOA==
-X-Received: by 2002:a05:6000:250e:b0:3c8:c89d:6b5b with SMTP id ffacd0b85a97d-3d1e01d2f18mr8160425f8f.48.1756802635427;
-        Tue, 02 Sep 2025 01:43:55 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b93fae643sm34031725e9.3.2025.09.02.01.43.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 01:43:55 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 02 Sep 2025 10:43:49 +0200
-Subject: [PATCH v3] media: iris: add VPU33 specific encoding buffer
- calculation
+        d=1e100.net; s=20230601; t=1756802709; x=1757407509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NVrfdXyH/4C0Wr0YHZaw6gV8VgGdQhG3sK6jQ9dFmeA=;
+        b=B8TyRrdAVJVkXldLST1ZLdzHlJ+pDNrK8vOiQm3r4F34se6J2ClU4oaZjUGx7AfYb6
+         QHGuXOMV09zZazgYc8gOlL8usPIc8xJTXKbYshNQ8OFB9yjbGojCgZ1jhZkjJ8YXn2dJ
+         KkNwJb7E8rYXdC828EAPZorALDXjG20J7fU9GBV627+OmvnTSozudbsYviFvCXQIkNDA
+         8dlj3me/5Czjfe0J5oyQv9cG3e0MJYO74vGpsGIFESh5ccHKFte5N760RekAXwW4syKo
+         N77J9iQuiOTLXRzJWQZ3yPzoX38V+O2sOU1YOGtRawyRnTBfVsgKylgz8lBXXahvqHpK
+         x5Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUp6D47mov7Dj5th+MK//mj2mZYUN1bM6KM857za1dH/PG2xwYHqrL0AKjegD9+dC9fM2TAHp97zmQOLwKq@vger.kernel.org, AJvYcCXU/UBETk26g5fdhwL0kYpVnYLL4P8MpE5k7DzMvEwsujiWMA0uYwRGi/Kcv+wW/C/13FagOYvEvjuC8kzu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx63Yf8hlWaltxJi5CKbEZThQW4IR9x83XIISW4ZiPE06+nVVqt
+	WipMBDj4BP6d1Dmt/rRkkE+E+wijL2Ek4+JaqwvdCLgDG00fTcD1v3ZR7N5BC02rE+MYjqlTXsh
+	lRezcLYIOJyasULOpk6Cr4CZyZFsqSKM=
+X-Gm-Gg: ASbGnctKY6u+muEMfrBN5dtIjDcSNpzvSnfBJcAMuFW2SoClGDnDPnp7E4VPnIOZi2Q
+	xtnaLXOsKM75d+vCTHQl5YMuh9Hjln+oc3W0JFBW+/9AQ32DZRGVV2rUcMtVIAdwuCbHseyMWrw
+	5wbNzU2DoeEacMmPXBbBH61rJqRjJMJNLO5C+XKisiBJaYEnHDfFi+GOw5kKQtMjHVnpgroS/yb
+	ah3LLk=
+X-Google-Smtp-Source: AGHT+IFGTaCsHR4a9P7flHhL8ZGVpHQPhnAA0INvLEVYel2rMzuNm39zgM1QxNQF79NV6M5jkKIZmj7q5oxktyZfAwQ=
+X-Received: by 2002:a17:907:940a:b0:afe:f8cb:f8bc with SMTP id
+ a640c23a62f3a-b01d9732721mr1067259866b.35.1756802709199; Tue, 02 Sep 2025
+ 01:45:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-topic-sm8x50-iris-encoder-v3-hevc-debug-v3-1-9867edfb4dff@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAESutmgC/5XNOw7CMBBF0a1ErhnkTz6Gin0gisQeJyNBHNlgg
- aLsHScNooPyveLcmUUMhJEdi5kFTBTJj3moXcHM0I49Atm8meSy4lpKuPuJDMSbflYcKFAEHI2
- 3GCApGDAZsNg9ehBcNMqVWmlULGtTQEfPrXS+5D1QvPvw2sJJrO//jSRAQK2UPfDSucaq05XGN
- vi9Dz1bI0l+4AMXv8Myw6auSl53nXW1/oKXZXkDaqH1ZTgBAAA=
-X-Change-ID: 20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-10173f4838e3
-To: Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Dikshita Agarwal <quic_dikshita@quicinc.com>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13989;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=+XwbwAiFHkyD3CirRZBAQjcoiJGJefCWvdqJ4uceKG0=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBotq5KsacSWX7j8ubpeh6q42qffu7//8lSvrXuYcMB
- FDYgXZOJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaLauSgAKCRB33NvayMhJ0WfKD/
- 9SxRSTySWdAB6izILLI1MyBtoh5dy+dPbs0XKSsF9/jxQY1mNuCgJM+aN0uNQzmPz4u4iEiX+TW8Vl
- a5pvNkWYh4La0NQt+Ni0upvUv+lWb9vdl0EOjWZqILNaWJ5mUQQ1KjYgL8EoyyogVyv0wcq9mxf62/
- 2tnZmSb5S7GU5ZbXVhXaT8xJagnmIdqZz6JNYtHrYBAwouQOH+oVKfvfhq0bp14QiT9viYtrY1relh
- ZbGz9D6NIXs22GIoglQenfYu1/EoGBBKKb5NVg0G6cBwh4SMSMaqrIDYFrAClfVim1geejutXUUdTv
- YehbcB4SzmuWM+5r610UTElaP0+BBTChp7d44/t9KmNVcIV2yFYmGxw+fB7AAeiyfVM8TEFEugd7HO
- jc16fjF7nYUnPe/HZr1sUYi+SGuYSELn9jBre9fx87jQRTdKjgGzqrTL+YLKV6BWGxJJ0E/9kWaoKg
- gt5t5/5T/CrhPyELaotfgwuMzqoX+nEL3ixTlD+uAnzsjEtfZS5VKQDlklo4AdkNF38A7F7BP0Szdf
- MB219wxm76IdyerHHqHQYr9EADtJXSIeeqFwnWT8+uDpgE5d9PvTE8XaLH0w6jzWgjv8IvHBB6vQ5r
- H4BxTkHmK8oErJchIE6bSVLp/kw/wNW5b9miqgesh9Z0u/eKy027JulgiORQ==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <u4vg6vh4myt5wuytwiif72hlgdnp2xmwu6mdmgarbx677sv6uf@dnr6x7epvddl> <20250902-faust-kolibri-0898c1980de8@brauner>
+In-Reply-To: <20250902-faust-kolibri-0898c1980de8@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 2 Sep 2025 10:44:56 +0200
+X-Gm-Features: Ac12FXyvinFOW_EJGt3vGhfseoNJIoyCngvXL82TwH-ASLnPznf8obpH_dJti4U
+Message-ID: <CAGudoHHV6U5TobvSobzSCor1nN8tb9Ez0fYKxc9+OZtP9EgE-w@mail.gmail.com>
+Subject: Re: ETXTBSY window in __fput
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Monakov <amonakov@ispras.ru>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The VPU33 found in the SM8650 Platform requires some slighly different
-buffer calculation for encoding to allow working with the latest
-firwware uploaded on linux-firmware at [1].
+On Tue, Sep 2, 2025 at 10:33=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Mon, Sep 01, 2025 at 08:39:27PM +0200, Mateusz Guzik wrote:
+> > On Wed, Aug 27, 2025 at 12:05:38AM +0300, Alexander Monakov wrote:
+> > > Dear fs hackers,
+> > >
+> > > I suspect there's an unfortunate race window in __fput where file loc=
+ks are
+> > > dropped (locks_remove_file) prior to decreasing writer refcount
+> > > (put_file_access). If I'm not mistaken, this window is observable and=
+ it
+> > > breaks a solution to ETXTBSY problem on exec'ing a just-written file,=
+ explained
+> > > in more detail below.
+> > >
+> > > The program demonstrating the problem is attached (a slightly modifie=
+d version
+> > > of the demo given by Russ Cox on the Go issue tracker, see URL in fir=
+st line).
+> > > It makes 20 threads, each executing an infinite loop doing the follow=
+ing:
+> > >
+> > > 1) open an fd for writing with O_CLOEXEC
+> > > 2) write executable code into it
+> > > 3) close it
+> > > 4) fork
+> > > 5) in the child, attempt to execve the just-written file
+> > >
+> > > If you compile it with -DNOWAIT, you'll see that execve often fails w=
+ith
+> > > ETXTBSY.
+> >
+> > This problem was reported a few times and is quite ancient by now.
+> >
+> > While acknowleding the resulting behavior needs to be fixed, I find the
+> > proposed solutions are merely trying to put more lipstick or a wig on a
+> > pig.
+> >
+> > The age of the problem suggests it is not *urgent* to fix it.
+> >
+> > The O_CLOFORM idea was accepted into POSIX and recent-ish implemented i=
+n
+> > all the BSDs (no, really) and illumos, but got NAKed in Linux. It's als=
+o
+> > a part of pig's attire so I think that's the right call.
+> >
+> > Not denying execs of files open for writing had to get reverted as
+> > apparently some software depends on it, so that's a no-go either.
+> >
+> > The flag proposed by Christian elsewhere in the thread would sort this
+> > out, but it's just another hack which would serve no purpose if the
+> > issue stopped showing up.
+> >
+> > The real problem is fork()+execve() combo being crap syscalls with crap
+> > semantics, perpetuating the unix tradition of screwing you over unless
+> > you explicitly ask it not to (e.g., with O_CLOEXEC so that the new proc
+> > does not hang out with surprise fds).
+> >
+> > While I don't have anything fleshed out nor have any interest in puttin=
+g
+> > any work in the area, I would suggest anyone looking to solve the ETXTB=
+SY
+> > went after the real culprit instead of damage-controlling the current
+> > API.
+> >
+> > To that end, my sketch of a suggestion boils down to a new API which
+> > allows you to construct a new process one step at a time explicitly
+> > spelling out resources which are going to get passed on, finally doing
+> > an actual exec. You would start with getting a file descriptor to a new
+> > task_struct which you gradually populate and eventually exec something
+> > on. There would be no forking.
+> >
+> > It could look like this (ignore specific naming):
+> >
+> > /* get a file descriptor for the new process. there is no *fork* here,
+> >  * but task_struct & related get allocated
+> >  * clean slate, no sigmask bullshit and similar
+> >  */
+> > pfd =3D proc_new();
+> >
+> > nullfd =3D open("/dev/null", O_RDONLY);
+> >
+> > /* map /dev/null as 0/1/2 in the new proc */
+> > proc_install_fd(pfd, nullfd, 0);
+> > proc_install_fd(pfd, nullfd, 2);
+> > proc_install_fd(pfd, nullfd, 2);
+> >
+> > /* if we can run the proc as someone else, set it up here */
+> > proc_install_cred(pfd, uid, gid, groups, ...);
+> >
+> > proc_set_umask(pfd, ...);
+> >
+> > /* finally exec */
+> > proc_exec_by_path("/bin/sh", argp, envp);
+>
+> You can trivially build this API on top of pidfs. Like:
+>
+> pidfd_empty =3D pidfd_open(FD_PIDFS_ROOT/FD_INVALID, PIDFD_EMPTY)
+>
+> where FD_PIDFS_ROOT and FD_INVALID are things we already have in the
+> uapi headers.
+>
+> Then either just add a new system call like pidfd_config() or just use
+> ioctls() on that empty pidfd.
+>
+> With pidfs you have the complete freedom to implement that api however
+> you want.
+>
+> I had a prototype for that as well but I can't find it anymore. Other
+> VFS work took priority and so I never finished it but I remember it
+> wasn't very difficult.
+>
+> I would definitely merge a patch series like that.
+>
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=ece445af91bbee49bf0d8b23c2b99b596ae6eac7
+I'm happy we are on the same page here, I'm unhappy it is down to the
+point of neither of us doing the work though. :-P
 
-Suggested-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
-[2] https://lore.kernel.org/all/20250825-iris-video-encoder-v4-0-84aa2bc0a46b@quicinc.com/
----
-Changes in v3:
-- EDITME: use bulletpoints and terse descriptions.
-- renamed vpu33x to vpu33
-- reformated calculation to match original code, dropped default set variables to 0
-- Link to v2: https://lore.kernel.org/r/20250901-topic-sm8x50-iris-encoder-v3-hevc-debug-v2-1-c65406bbdf68@linaro.org
+I don't think the work is difficult from tech standpoint, but it does
+warrant some caution.
 
-Changes in v2:
-- Removed calculation fix for hevc encoding, as it was added in common code
-- Link to v1: https://lore.kernel.org/r/20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-v1-1-633d904ff7d3@linaro.org
----
- drivers/media/platform/qcom/iris/iris_buffer.c     |   2 +-
- .../platform/qcom/iris/iris_hfi_gen1_command.c     |   2 +-
- .../platform/qcom/iris/iris_platform_common.h      |   2 +
- .../media/platform/qcom/iris/iris_platform_gen2.c  |   4 +
- .../platform/qcom/iris/iris_platform_sm8250.c      |   2 +
- drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 103 ++++++++++++++++++++-
- drivers/media/platform/qcom/iris/iris_vpu_buffer.h |   3 +-
- 7 files changed, 111 insertions(+), 7 deletions(-)
+With the current model fork + exec model, whatever process-specific
+bullshit gets added, you automatically get it on fork.
 
-diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
-index 8891a297d384b018b3cc8313ad6416db6317798b..c0900038e7defccf7de3cb60e17c71e36a0e8ead 100644
---- a/drivers/media/platform/qcom/iris/iris_buffer.c
-+++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-@@ -284,7 +284,7 @@ static void iris_fill_internal_buf_info(struct iris_inst *inst,
- {
- 	struct iris_buffers *buffers = &inst->buffers[buffer_type];
- 
--	buffers->size = iris_vpu_buf_size(inst, buffer_type);
-+	buffers->size = inst->core->iris_platform_data->get_vpu_buffer_size(inst, buffer_type);
- 	buffers->min_count = iris_vpu_buf_count(inst, buffer_type);
- }
- 
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-index 29cf392ca2566da286ea3e928ce4a22c2e970cc8..e1788c266bb1080921f17248fd5ee60156b3143d 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-@@ -911,7 +911,7 @@ static int iris_hfi_gen1_set_bufsize(struct iris_inst *inst, u32 plane)
- 
- 	if (iris_split_mode_enabled(inst)) {
- 		bufsz.type = HFI_BUFFER_OUTPUT;
--		bufsz.size = iris_vpu_buf_size(inst, BUF_DPB);
-+		bufsz.size = inst->core->iris_platform_data->get_vpu_buffer_size(inst, BUF_DPB);
- 
- 		ret = hfi_gen1_set_property(inst, ptype, &bufsz, sizeof(bufsz));
- 		if (ret)
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-index 96fa7b1bb592441e85664da408ea4ba42c9a15b5..7057c4cd1a9ebefa02c855014e5f19993da58e38 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-+++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-@@ -7,6 +7,7 @@
- #define __IRIS_PLATFORM_COMMON_H__
- 
- #include <linux/bits.h>
-+#include "iris_buffer.h"
- 
- struct iris_core;
- struct iris_inst;
-@@ -189,6 +190,7 @@ struct iris_platform_data {
- 	void (*init_hfi_command_ops)(struct iris_core *core);
- 	void (*init_hfi_response_ops)(struct iris_core *core);
- 	struct iris_inst *(*get_instance)(void);
-+	u32 (*get_vpu_buffer_size)(struct iris_inst *inst, enum iris_buffer_type buffer_type);
- 	const struct vpu_ops *vpu_ops;
- 	void (*set_preset_registers)(struct iris_core *core);
- 	const struct icc_info *icc_tbl;
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-index cf4b92f534b272a0a1ac2a0e7bb9316501374332..9b3c65ebee94998729246652578278e1664be9d2 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-@@ -8,6 +8,7 @@
- #include "iris_hfi_gen2.h"
- #include "iris_hfi_gen2_defines.h"
- #include "iris_platform_common.h"
-+#include "iris_vpu_buffer.h"
- #include "iris_vpu_common.h"
- 
- #include "iris_platform_qcs8300.h"
-@@ -738,6 +739,7 @@ struct iris_platform_data sm8550_data = {
- 	.get_instance = iris_hfi_gen2_get_instance,
- 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
- 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu_buf_size,
- 	.vpu_ops = &iris_vpu3_ops,
- 	.set_preset_registers = iris_set_sm8550_preset_registers,
- 	.icc_tbl = sm8550_icc_table,
-@@ -827,6 +829,7 @@ struct iris_platform_data sm8650_data = {
- 	.get_instance = iris_hfi_gen2_get_instance,
- 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
- 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu33_buf_size,
- 	.vpu_ops = &iris_vpu33_ops,
- 	.set_preset_registers = iris_set_sm8550_preset_registers,
- 	.icc_tbl = sm8550_icc_table,
-@@ -916,6 +919,7 @@ struct iris_platform_data qcs8300_data = {
- 	.get_instance = iris_hfi_gen2_get_instance,
- 	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
- 	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu_buf_size,
- 	.vpu_ops = &iris_vpu3_ops,
- 	.set_preset_registers = iris_set_sm8550_preset_registers,
- 	.icc_tbl = sm8550_icc_table,
-diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-index 978d0130d43b5f6febb65430a9bbe3932e8f24df..16486284f8acccf6a95a27f6003e885226e28f4d 100644
---- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-+++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-@@ -9,6 +9,7 @@
- #include "iris_resources.h"
- #include "iris_hfi_gen1.h"
- #include "iris_hfi_gen1_defines.h"
-+#include "iris_vpu_buffer.h"
- #include "iris_vpu_common.h"
- 
- #define BITRATE_MIN		32000
-@@ -317,6 +318,7 @@ struct iris_platform_data sm8250_data = {
- 	.get_instance = iris_hfi_gen1_get_instance,
- 	.init_hfi_command_ops = &iris_hfi_gen1_command_ops_init,
- 	.init_hfi_response_ops = iris_hfi_gen1_response_ops_init,
-+	.get_vpu_buffer_size = iris_vpu_buf_size,
- 	.vpu_ops = &iris_vpu2_ops,
- 	.set_preset_registers = iris_set_sm8250_preset_registers,
- 	.icc_tbl = sm8250_icc_table,
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-index 34a9094201ccd11d30a776f284ede8248d8017a9..86894e03e37be5cd42aef225f29dbf751080b039 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-@@ -867,6 +867,27 @@ u32 size_vpss_line_buf(u32 num_vpp_pipes_enc, u32 frame_height_coded,
- 		      (((((max_t(u32, (frame_width_coded),
- 				 (frame_height_coded)) + 3) >> 2) << 5) + 256) * 16)), 256);
- }
-+static inline
-+u32 size_vpss_line_buf_vpu33(u32 num_vpp_pipes_enc, u32 frame_height_coded,
-+			     u32 frame_width_coded)
-+{
-+	u32 vpss_4tap_top, vpss_4tap_left, vpss_div2_top;
-+	u32 vpss_div2_left, vpss_top_lb, vpss_left_lb;
-+	u32 size_left, size_top;
-+	u32 max_width_height;
-+
-+	max_width_height = max_t(u32, frame_width_coded, frame_height_coded);
-+	vpss_4tap_top = ((((max_width_height * 2) + 3) >> 2) << 4) + 256;
-+	vpss_4tap_left = (((8192 + 3) >> 2) << 5) + 64;
-+	vpss_div2_top = (((max_width_height + 3) >> 2) << 4) + 256;
-+	vpss_div2_left = ((((max_width_height * 2) + 3) >> 2) << 5) + 64;
-+	vpss_top_lb = (frame_width_coded + 1) << 3;
-+	vpss_left_lb = (frame_height_coded << 3) * num_vpp_pipes_enc;
-+	size_left = (vpss_4tap_left + vpss_div2_left) * 2 * num_vpp_pipes_enc;
-+	size_top = (vpss_4tap_top + vpss_div2_top) * 2;
-+
-+	return ALIGN(size_left + size_top + vpss_top_lb + vpss_left_lb, DMA_ALIGNMENT);
-+}
- 
- static inline
- u32 size_top_line_buf_first_stg_sao(u32 frame_width_coded)
-@@ -977,8 +998,8 @@ static u32 iris_vpu_enc_non_comv_size(struct iris_inst *inst)
- }
- 
- static inline
--u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
--			u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
-+u32 hfi_buffer_line_enc_base(u32 frame_width, u32 frame_height, bool is_ten_bit,
-+			     u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
- {
- 	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
- 	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
-@@ -1018,10 +1039,38 @@ u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
- 		line_buff_recon_pix_size +
- 		size_left_linebuff_ctrl_fe(frame_height_coded, num_vpp_pipes_enc) +
- 		size_line_buf_sde(frame_width_coded) +
--		size_vpss_line_buf(num_vpp_pipes_enc, frame_height_coded, frame_width_coded) +
- 		size_top_line_buf_first_stg_sao(frame_width_coded);
- }
- 
-+static inline
-+u32 hfi_buffer_line_enc(u32 frame_width, u32 frame_height, bool is_ten_bit,
-+			u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
-+{
-+	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
-+	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
-+	u32 frame_height_coded = height_in_lcus * (lcu_size);
-+	u32 frame_width_coded = width_in_lcus * (lcu_size);
-+
-+	return hfi_buffer_line_enc_base(frame_width, frame_height, is_ten_bit,
-+					num_vpp_pipes_enc, lcu_size, standard) +
-+		size_vpss_line_buf(num_vpp_pipes_enc, frame_height_coded, frame_width_coded);
-+}
-+
-+static inline
-+u32 hfi_buffer_line_enc_vpu33(u32 frame_width, u32 frame_height, bool is_ten_bit,
-+			      u32 num_vpp_pipes_enc, u32 lcu_size, u32 standard)
-+{
-+	u32 width_in_lcus = ((frame_width) + (lcu_size) - 1) / (lcu_size);
-+	u32 height_in_lcus = ((frame_height) + (lcu_size) - 1) / (lcu_size);
-+	u32 frame_height_coded = height_in_lcus * (lcu_size);
-+	u32 frame_width_coded = width_in_lcus * (lcu_size);
-+
-+	return hfi_buffer_line_enc_base(frame_width, frame_height, is_ten_bit,
-+					num_vpp_pipes_enc, lcu_size, standard) +
-+		size_vpss_line_buf_vpu33(num_vpp_pipes_enc, frame_height_coded,
-+					 frame_width_coded);
-+}
-+
- static u32 iris_vpu_enc_line_size(struct iris_inst *inst)
- {
- 	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-@@ -1040,6 +1089,24 @@ static u32 iris_vpu_enc_line_size(struct iris_inst *inst)
- 				   lcu_size, HFI_CODEC_ENCODE_AVC);
- }
- 
-+static u32 iris_vpu33_enc_line_size(struct iris_inst *inst)
-+{
-+	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-+	struct v4l2_format *f = inst->fmt_dst;
-+	u32 height = f->fmt.pix_mp.height;
-+	u32 width = f->fmt.pix_mp.width;
-+	u32 lcu_size = 16;
-+
-+	if (inst->codec == V4L2_PIX_FMT_HEVC) {
-+		lcu_size = 32;
-+		return hfi_buffer_line_enc_vpu33(width, height, 0, num_vpp_pipes,
-+						 lcu_size, HFI_CODEC_ENCODE_HEVC);
-+	}
-+
-+	return hfi_buffer_line_enc_vpu33(width, height, 0, num_vpp_pipes,
-+					 lcu_size, HFI_CODEC_ENCODE_AVC);
-+}
-+
- static inline
- u32 hfi_buffer_dpb_enc(u32 frame_width, u32 frame_height, bool is_ten_bit)
- {
-@@ -1387,7 +1454,7 @@ struct iris_vpu_buf_type_handle {
- 	u32 (*handle)(struct iris_inst *inst);
- };
- 
--int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
-+u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
- {
- 	const struct iris_vpu_buf_type_handle *buf_type_handle_arr = NULL;
- 	u32 size = 0, buf_type_handle_size = 0, i;
-@@ -1431,6 +1498,34 @@ int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
- 	return size;
- }
- 
-+u32 iris_vpu33_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
-+{
-+	u32 size = 0, i;
-+
-+	static const struct iris_vpu_buf_type_handle enc_internal_buf_type_handle[] = {
-+		{BUF_BIN,         iris_vpu_enc_bin_size         },
-+		{BUF_COMV,        iris_vpu_enc_comv_size        },
-+		{BUF_NON_COMV,    iris_vpu_enc_non_comv_size    },
-+		{BUF_LINE,        iris_vpu33_enc_line_size      },
-+		{BUF_ARP,         iris_vpu_enc_arp_size         },
-+		{BUF_VPSS,        iris_vpu_enc_vpss_size        },
-+		{BUF_SCRATCH_1,   iris_vpu_enc_scratch1_size    },
-+		{BUF_SCRATCH_2,   iris_vpu_enc_scratch2_size    },
-+	};
-+
-+	if (inst->domain == DECODER)
-+		return iris_vpu_buf_size(inst, buffer_type);
-+
-+	for (i = 0; i < ARRAY_SIZE(enc_internal_buf_type_handle); i++) {
-+		if (enc_internal_buf_type_handle[i].type == buffer_type) {
-+			size = enc_internal_buf_type_handle[i].handle(inst);
-+			break;
-+		}
-+	}
-+
-+	return size;
-+}
-+
- static u32 internal_buffer_count(struct iris_inst *inst,
- 				 enum iris_buffer_type buffer_type)
- {
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-index 94668c5b3d15fb6e10d0b5ed6ed704cadb5a6534..04f0b7400a1e4e1d274d690a2761b9e57778e8b7 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-@@ -146,7 +146,8 @@ static inline u32 size_h264d_qp(u32 frame_width, u32 frame_height)
- 	return DIV_ROUND_UP(frame_width, 64) * DIV_ROUND_UP(frame_height, 64) * 128;
- }
- 
--int iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
-+u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
-+u32 iris_vpu33_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
- int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type);
- 
- #endif
+Something which gradually spells out the state will need a way to
+figure out what was not sorted out and fill it up in kernel-side.
+There maybe some other caveats, basically it would be good if
+someone(tm) really thought this through. It would be really
+embarrassing to end up with a deficient & unfixable API which has to
+remain supported. :-P
 
----
-base-commit: 58717ecfffd642c1e0950dee4a247dd6cdfeb31e
-change-id: 20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-10173f4838e3
+I offer half of the kingdom for a finished product, the interested
+party will have to arrange a bride from elsewhere.
 
-Best regards,
--- 
-Neil Armstrong <neil.armstrong@linaro.org>
+> >
+> > Notice how not once at any point random-ass file descriptors popped int=
+o
+> > the new task, which has a side effect of completely avoiding the
+> > problem.
+> >
+> > you may also notice this should be faster to execute as it does not hav=
+e
+> > to pay the mm overhead.
+> >
+> > While proc_install_fd is spelled out as singular syscalls, this can be
+> > batched to accept an array of <from, to> pairs etc.
+> >
+> > Also notice the thread executing it is not shackled by any of vfork
+> > limitations.
+> >
+> > So... if someone is serious about the transient ETXTBSY, I would really
+> > hope you will consider solving the source of the problem, even if you
+> > come up with someting other than I did (hopefully better). It would be =
+a
+> > damn shame to add even more hacks to pacify this problem (like the O_
+> > stuff).
+> >
+> > What to do in the meantime? There is a lol hack you can do in userspace
+> > which so ugly I'm not even going to spell it out, but given the
+> > temporary nature of ETXTBSY I'm sure you can guess what it is.
+> >
+> > Something to ponder, cheers.
 
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
