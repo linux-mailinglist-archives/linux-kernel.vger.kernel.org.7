@@ -1,157 +1,83 @@
-Return-Path: <linux-kernel+bounces-795407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D91EB3F194
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:22:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7130FB3F196
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB65482F6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044C5189F776
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A132DE71D;
-	Tue,  2 Sep 2025 00:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4319A2DEA6E;
+	Tue,  2 Sep 2025 00:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kGKv9AjU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="PMjZcnE9"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9538CA5E;
-	Tue,  2 Sep 2025 00:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F1F32F747;
+	Tue,  2 Sep 2025 00:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756772555; cv=none; b=tRM1D8CXCMC8AOoLali/q/4DFeqKRvV4Ke72b2jdYD9tuh6NEL773CzB1HFBiJvVV375Qz2OWgzEHcp5g0PQTFBlMfz5dYuPRD3W9nmuITUZT1pdsvYK1AJKMsJrElyQc/46YFey++5jPiNDSLYrutkevwPAHoR8BECGzeWY+zw=
+	t=1756772949; cv=none; b=IQUcQ44Fh7htzhAH/8wtYAd+Cq5jfdJGuRy2tzNHz75ph1Ua9jKAyE3ynYFNIum0KvePP6cF6ZxJHoa8A/4dfYIFIxzMm6qg83WJFPzlSsZBpYwLGYtaaxzj6k1OJaZ0QPLVsaUNgDYCgI0M6KmA1Ntct+KtxaUWkMNegIz8UbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756772555; c=relaxed/simple;
-	bh=y4WZ00EXLNOU4Dwc3A5fvI5jPMAfBOHh+PUZX1asazc=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=RNjPXRmMbh/WU+d8wm6Q7FWRsnXXoQXz7P493AqUCgG0rc1J9JsVoWPR9+Ic/qJQJe91igu71N/xfDPIHz03CtJJ5vPfFKfBufXAs+1mljMG8jNbx9t3Gj7KCgLKhcP8gu0tNJSWP7ZQtnz2VgCobnTNvdLvGqEPND3Am2LsC54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kGKv9AjU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A5AC4CEF0;
-	Tue,  2 Sep 2025 00:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1756772555;
-	bh=y4WZ00EXLNOU4Dwc3A5fvI5jPMAfBOHh+PUZX1asazc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kGKv9AjUrSkK0VZwVhBMOPhSeX1oTmpVcExKGhxd+LMeO4hMyWMuZluwOVCCoN3VC
-	 jhW5ca+1uOVXITiXti5dd3hhqvQV+djPKSaQb9tlJvwsArUSOPuLk+DY1wGl0/wL4t
-	 KecXMbWOQiR3Af6tVvcH9b54TBPWuXRiL8cfu9QU=
-Date: Mon, 1 Sep 2025 17:22:34 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.17-rc5
-Message-Id: <20250901172234.3a74524a97b595a5a81d1697@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756772949; c=relaxed/simple;
+	bh=GrfxPhJo8/AyqVq9Qy5CG2i9z5qbo/JfGKaI5+ITllA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aF6deQnQKk1DqcfChc5OYUY4Q+sDQVUDU+onlSjRNKDKIeUn6MSMNtjIZ1H1r/dJHGVBq44lK1AML9S10hKOomTYl/NjxxAPx7K6gQc8cnutUqfj7UOByVJ+8PV/h7Wi0YfJn08aI+HZMSFi7BuQhGs+K4FvN1Bo61NBAaEea/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=PMjZcnE9; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1756772944;
+	bh=UOrIgomgcc83X3uXVqb+ClQl4pdlIBKfzmTpZ6GlDPg=; l=305;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=PMjZcnE91n8vE1Zbl0zPxjO+gf1SdVHtndQzMI6b/aNa8DC8oDA4jG+pclF5oLve2
+	 JoaF9V5MD2ktUizJYgXZ1SchgN0DPjj3KH2FY2H+GDXLJ23MhzU1JPs1AEcyYPDEpQ
+	 5qlZ1NfuIe7TbBUH1SjsN31Me3s7QbWf8Uexnap6zXDRT+z8UhPoX9r1Pp838HS5Mm
+	 Z0x/GnAQX+++8vWmS0z3f/W4w5eWC0ZIs0RLJAwXzEYclZHqi7QNZXuszfswiKZWtg
+	 hXtc2KZgI4HBR7Sb3K96/0Xy1Q1li7aSb3/hT5dy6i4qdhiRiS/btKNzrBLD0yE47+
+	 2ht+X+7eMgDKQ==
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(2461124:0:AUTH_RELAY)
+	(envelope-from <cy_huang@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 02 Sep 2025 08:28:58 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.26; Tue, 2 Sep
+ 2025 08:28:58 +0800
+Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1748.26 via Frontend
+ Transport; Tue, 2 Sep 2025 08:28:58 +0800
+Date: Tue, 2 Sep 2025 08:30:01 +0800
+From: ChiYuan Huang <cy_huang@richtek.com>
+To: Sebastian Reichel <sre@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND^2] power: supply: rt9467: Add properties for VBUS
+ and IBUS reading
+Message-ID: <aLY6ie3NHtjL0Z0i@git-send.richtek.com>
+References: <54fd32fc23fd959da8aa6508d572ee96de5f6eec.1755156213.git.cy_huang@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <54fd32fc23fd959da8aa6508d572ee96de5f6eec.1755156213.git.cy_huang@richtek.com>
 
+On Thu, Aug 14, 2025 at 03:27:41PM +0800, cy_huang@richtek.com wrote:
+> From: ChiYuan Huang <cy_huang@richtek.com>
+> 
+> Since there's the existing ADC function, add properties 'VOLTAGE_NOW'
+> and 'CURRENT_NOW' to report the current VBUS and IBUS value, respectively.
 
-Linus, please merge this batch of hotfixes, thanks.
+Ping.....
 
-
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
-
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-09-01-17-20
-
-for you to fetch changes up to c873ccbb2f8db46ad9b4a989ea924b6d8f19abf1:
-
-  mm: fix possible deadlock in kmemleak (2025-09-01 17:11:37 -0700)
-
-----------------------------------------------------------------
-17 hotfixes.  13 are cc:stable and the remainder address post-6.16 issues
-or aren't considered necessary for -stable kernels.  11 of these fixes are
-for MM.
-
-This includes a three-patch series from Harry Yoo which fixes an
-intermittent boot failure which can occur on x86 systems.  And a two-patch
-series from Alexander Gordeev which fixes a KASAN crash on S390 systems.
-
-----------------------------------------------------------------
-Ada Couprie Diaz (1):
-      kasan: fix GCC mem-intrinsic prefix with sw tags
-
-Alexander Gordeev (2):
-      mm/kasan: fix vmalloc shadow memory (de-)population races
-      mm/kasan: avoid lazy MMU mode hazards
-
-Baptiste Lepers (1):
-      rust: mm: mark VmaNew as transparent
-
-Brian Mak (1):
-      kexec: add KEXEC_FILE_NO_CMA as a legal flag
-
-Edward Adam Davis (1):
-      ocfs2: prevent release journal inode after journal shutdown
-
-Gu Bowen (1):
-      mm: fix possible deadlock in kmemleak
-
-Harry Yoo (3):
-      mm: move page table sync declarations to linux/pgtable.h
-      mm: introduce and use {pgd,p4d}_populate_kernel()
-      x86/mm/64: define ARCH_PAGE_TABLE_SYNC_MASK and arch_sync_kernel_mappings()
-
-Quanmin Yan (1):
-      mm/damon/core: prevent unnecessary overflow in damos_set_effective_quota()
-
-Sasha Levin (1):
-      mm/userfaultfd: fix kmap_local LIFO ordering for CONFIG_HIGHPTE
-
-Sumanth Korikkar (1):
-      mm: fix accounting of memmap pages
-
-Yeoreum Yun (1):
-      kunit: kasan_test: disable fortify string checker on kasan_strings() test
-
-Yin Tirui (1):
-      of_numa: fix uninitialized memory nodes causing kernel panic
-
-Zi Yan (1):
-      selftests/mm: fix FORCE_READ to read input value correctly
-
-wangzijie (1):
-      proc: fix missing pde_set_flags() for net proc files
-
- arch/x86/include/asm/pgtable_64_types.h           |  3 ++
- arch/x86/mm/init_64.c                             | 18 +++++++++++
- drivers/of/of_numa.c                              |  5 ++-
- fs/ocfs2/inode.c                                  |  3 ++
- fs/proc/generic.c                                 | 38 +++++++++++++----------
- include/linux/kexec.h                             |  3 +-
- include/linux/pgalloc.h                           | 29 +++++++++++++++++
- include/linux/pgtable.h                           | 25 ++++++++++++---
- include/linux/vmalloc.h                           | 16 ----------
- mm/damon/core.c                                   |  4 +--
- mm/kasan/init.c                                   | 12 +++----
- mm/kasan/kasan_test_c.c                           |  2 ++
- mm/kasan/shadow.c                                 | 22 ++++++++-----
- mm/kmemleak.c                                     | 27 +++++++++++-----
- mm/percpu.c                                       |  6 ++--
- mm/sparse-vmemmap.c                               | 11 ++-----
- mm/sparse.c                                       | 15 +++++----
- mm/userfaultfd.c                                  |  9 ++++--
- rust/kernel/mm/virt.rs                            |  1 +
- scripts/Makefile.kasan                            | 12 ++++---
- tools/testing/selftests/mm/cow.c                  |  4 +--
- tools/testing/selftests/mm/guard-regions.c        |  2 +-
- tools/testing/selftests/mm/hugetlb-madvise.c      |  4 ++-
- tools/testing/selftests/mm/migration.c            |  2 +-
- tools/testing/selftests/mm/pagemap_ioctl.c        |  2 +-
- tools/testing/selftests/mm/split_huge_page_test.c |  7 +++--
- tools/testing/selftests/mm/vm_util.h              |  2 +-
- 27 files changed, 190 insertions(+), 94 deletions(-)
- create mode 100644 include/linux/pgalloc.h
-
+Regards
+ChiYuan.
 
