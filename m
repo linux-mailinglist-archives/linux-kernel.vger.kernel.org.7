@@ -1,147 +1,107 @@
-Return-Path: <linux-kernel+bounces-796152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E46B3FC98
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:34:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9274B3FC99
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956921B2531E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A985206F81
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E5D2ECD2A;
-	Tue,  2 Sep 2025 10:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE2D2EB844;
+	Tue,  2 Sep 2025 10:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C0KEy/eN"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5I3F6lb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9001A2773CD
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D3E27D780;
+	Tue,  2 Sep 2025 10:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756809268; cv=none; b=SVSKBvamwzL50iBPebRtn/623NW915yaGBd2uR6lO+JNNiMk3vBGhRa1F9TleOxg2urma00/w1iMcsz4NpYz175g2RCOG5GNFr4ZlEdLhahy6e1oQeqXoJCeIUZh+Fl3CG46a6DYmkZka0Gqi3S7mrkIpSYfplIu/Z4ZEQjIQH8=
+	t=1756809310; cv=none; b=sFnW72plMA9QDF8TtbzoqMsm7OJVOj87uBUdQ9tXFYSfVRPRNmeKJUis22tnBy46UbEAXlP9CC8zi47eDLBclxH4E57PUozYNOecJS628IGOWCU0RZMWloKg27ewIrCxE/GTBLSMRTJL6plD9zg0lQJAiySlOlWQA17e7C1b9L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756809268; c=relaxed/simple;
-	bh=ksKfuvry9Q8QwT2U//387S6v929FOlH9sf2/vRxqYGk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=teNKg4KqmWYlNpYSDTJEMQg+tCyN9ZHgsv+NIEsb/geNP344FyLJwGtaYCI2WeShroO9DZIUkWEAqvJcEcPjcyu1Aqm7PXIQWBs2fGlzhptC+z+wMIfzTdoPaVniMT+8fC7tkgWWkIybH6MNv5A02CxJITGFHkeU4Yf8S6biMfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C0KEy/eN; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e87061a6d5so518597285a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756809265; x=1757414065; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ksKfuvry9Q8QwT2U//387S6v929FOlH9sf2/vRxqYGk=;
-        b=C0KEy/eNM7d8v4RrpWCK349Y90MQx+9SSYm0xj/251EISvC/C/PqwtUmJ2kbcFo1A3
-         0n3tBL+5V4IM5mgkC6D6Nmdxgnu1Mfr9mupvZuCiIKx7qB1orTwevc+t66cYdifGazy8
-         ttDJUEbyCjwp0brpW6L+MbJkB3UuTs7XYSYVueFD1+qhV21vLatvTuGG5RlYHtY67NDv
-         K1T+N2pO9QNJjuDXL98hJ4HdG+j4txHSXTy85iIXG3Q16eOIwaDb0Ny366HO0xq+BW/n
-         GdW3kPfVHFum5eP95gLY8kgT+ZAekmyV5uu5CGE1+st0u2WebFPdnD2vUQkDgC2oeRA/
-         uXMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756809265; x=1757414065;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ksKfuvry9Q8QwT2U//387S6v929FOlH9sf2/vRxqYGk=;
-        b=l+6sEyv0Ry7bsz2GP6mzRBgQ4VpYjHW0aIWSZcDm34361atn04qtJTps6qCpgB37XQ
-         2dXmp/+CHvFidwfEAb3GtXKWJcDzqG1wrwjCAa7uLq6gXk52d/d93eQBr6kHjqYXe7h/
-         frZvi8CofRuOnBvdMsU4a4VD35B4fUmDlKW8qo9wYJ67MyMrxKEePh8+KHQ9yxULoOpc
-         TJsabbdj6hu8bN/5XPFJA0nwfgQ5FmrHhfmAyAfUqqR4wMk0ARZ+1aUpyP7r5vRm/mYF
-         fkwOONWvR3j7bOVZ0qCxTBQmwSzc+x3PgAE3VM/lwCSzswKsrOHnUpA25Cc4xnlFnyJC
-         1I+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrpv8UJ7ir3lgJJnQUm1AXkBptOJ4L5u2WK2i9tCc6O/NCmY7VVOzyOj+FPdoeeSSmzBe0FpP1aKI5SjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5T7WyZyMupKQrdsuenOrUKxbtP9qg7P8aq3a6ayF4pD5aIooA
-	5Xjc4hhwS/4e6qushdIcLAQ/6zAeQtlF2tzSyECnFtbesc5L8loVzwHWR89WA/1szZcCzUhqNCt
-	4vALwlEHA0pN4PgDktpULOXDOlzXxcr2L3KXVgBbg
-X-Gm-Gg: ASbGncsF2rpRrz0ng7DDjb0zX8hUlmmt/3sY8axiB4tos/UrZqgyXDLfMfbGlP3Tf5e
-	s0RAR9fXFJIi6HetIM807oAVV7a8v2nXEIRZNqFr9hfsDxIAV18uNVpFCHokS9AmLFQMdFNXP7U
-	BylX24fzH6SP58iI95kJXu+eKGbOH2F9DTdjkue1CiX7T2IB75ngpurXQ2uWziv2aBcRB2dYkgg
-	R6YHLCt4ummTw==
-X-Google-Smtp-Source: AGHT+IF0huP++mAEHLfphnSoFP0AEq1V5WxRxmoNX667z3TJEO6664A+/TyLy4omMr/TIFDGJ3I7B0/hi7xlvtH41c0=
-X-Received: by 2002:a05:620a:1913:b0:806:9c53:d6ce with SMTP id
- af79cd13be357-8069c53e30amr231115885a.23.1756809264929; Tue, 02 Sep 2025
- 03:34:24 -0700 (PDT)
+	s=arc-20240116; t=1756809310; c=relaxed/simple;
+	bh=DDNg75XzFiRCA+fFUXhfW7TmY1wvXsCiU9pRxv3eTbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LnzMwXiKCvVGx6vJ0ERDCvM/JcSnOPzBy4KYkkLzFAprWiE/7QymfEQbJO1UcO8GXayvZlbmnauSsnm0NtOvjZHqCt3trPmy/NzmHn5bGAjo0UKQrUeHYBQBSRCkT7G3c0KtF7V2pKv00t+1kgfhZiqvkIuVFXDbJKWl+dwXVp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5I3F6lb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B13A0C4CEED;
+	Tue,  2 Sep 2025 10:35:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756809309;
+	bh=DDNg75XzFiRCA+fFUXhfW7TmY1wvXsCiU9pRxv3eTbQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y5I3F6lbDmikS6NnYJYi6InNMUkYNVg4+t7biC99gkxnMDNohCGMpSPcaDk0sk8iH
+	 I75RyPbmySg6wSOC00K/Ktp+vcUE5bX+yz2bwWYeOGVTUw1bbLpng7V6kapukEdCMT
+	 zPkn7AvSFfKLPaIBxbi9j2+kSyyRGZI+fXRcu1AxdkucPI8V0BTpypSOGpzdr3j6rG
+	 CmzHBQEa/jgsdd5DiB9DVOtaSqA1HwAXU0Kp0tkpKTpPg0I7uTsNX9zHr1jPe9Dccu
+	 5rqWSscPP9t53uEpou+JPB3A418Allk3Y0mpZ8s2vs+62bhteZurgX+7VgFfQjGI9+
+	 SJ9DV7HXke3kA==
+Date: Tue, 2 Sep 2025 11:35:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux@treblig.org,
+	arnd@arndb.de, mchehab@kernel.org, lgirdwood@gmail.com,
+	perex@perex.cz, tiwai@suse.com, linux-media@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Remove the wl1273 FM Radio
+Message-ID: <0f43acdc-6b23-4e59-8a80-7f7743689bd0@sirena.org.uk>
+References: <20250625133258.78133-1-linux@treblig.org>
+ <20250808154903.GB23187@pendragon.ideasonboard.com>
+ <20250902103249.GG2163762@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829030456.489405-1-lange_tang@163.com> <20250901132330.589f4ac5@kernel.org>
- <2e29147c.8583.19909a12fa2.Coremail.lange_tang@163.com>
-In-Reply-To: <2e29147c.8583.19909a12fa2.Coremail.lange_tang@163.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 2 Sep 2025 03:34:14 -0700
-X-Gm-Features: Ac12FXyz-evLL-Tx30iKAQXL9Kn7W8NW5G--uOtEcIX2qCuyKL5n--v1MtTIsLI
-Message-ID: <CANn89i+S0hD9FPNYatQz-Mn1PJ5WKfgpJ2T=LOgiA2+kA2K6vw@mail.gmail.com>
-Subject: Re: Re: [PATCH] net: remove local_bh_enable during busy poll
-To: Lange Tang <lange_tang@163.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"pabeni@redhat.com" <pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tang Longjun <tanglongjun@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 2, 2025 at 1:53=E2=80=AFAM Lange Tang <lange_tang@163.com> wrot=
-e:
->
-> Thanks for your reply!
->
-> I've done some testing, pps=3D350000=EF=BC=8Cnet.core.busy_read=3D50.
-
-We can not let __napi_busy_loop() run for thousands of usec while blocking =
-BH,
-if net.core.busy_read=3D5000
-
-To me, your patch is a no go.
-
-Something is wrong in virtqueue_napi_complete() I think.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="P3POwEmxCwFVDH1z"
+Content-Disposition: inline
+In-Reply-To: <20250902103249.GG2163762@google.com>
+X-Cookie: Vote anarchist.
 
 
->
-> Before apply this patch: unhandled =E2=89=88 6400/s
-> After apply this patch: unhandled < 10/s
->
-> As you said, the driver needs to discern spurious interrupts in above des=
-cribing situation, which I strongly agree with. and I also think that it's =
-necessary to remove local_bh_enable during busy polling, as it causes inter=
-rupts to be enabled during the busy poll.
->
-> I think fix this issue requires two patches, in addition to this patch, a=
-nother patch is needed from the driver side to discern spurious interrupts.
->
->
->
->
->
->
-> At 2025-09-02 04:23:30, "Jakub Kicinski" <kuba@kernel.org> wrote:
-> >On Fri, 29 Aug 2025 11:04:56 +0800 Longjun Tang wrote:
-> >> When CONFIG_NET_RX_BUSY_POLL=3D=3DY and net.core.busy_read > 0,
-> >> the __napi_busy_loop function calls napi_poll to perform busy polling,
-> >> such as in the case of virtio_net's virnet_poll. If interrupts are ena=
-bled
-> >> during the busy polling process, it is possible that data has already =
-been
-> >> received and that last_used_idx is updated before the interrupt is han=
-dled.
-> >> This can lead to the vring_interrupt returning IRQ_NONE in response to=
- the
-> >> interrupt because used_idx =3D=3D last_used_idx, which is considered a=
- spurious
-> >> interrupt.Once certain conditions are met, this interrupt can be disab=
-led.
-> >
-> >I'm not sure this patch completely fixes the issue you're describing.
-> >It just makes it less likely to happen. Really, it feels like the onus
-> >for fixing this is on the driver that can't discern its own IRQ sources.
-> >--
-> >pw-bot: cr
+--P3POwEmxCwFVDH1z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Sep 02, 2025 at 11:32:49AM +0100, Lee Jones wrote:
+> On Fri, 08 Aug 2025, Laurent Pinchart wrote:
+
+> > Mark, Lee, how would you like this to be merged ? I have a large patch
+> > series targetting v6.18 that depends on 1/4, and I would like to merge
+> > it in the media tree as soon as possible after -rc1 gets released.
+> > Patches 1/4, 2/4 and 3/4 are independent of each other, but patch 4/4
+> > depends on the first three. Can we merge 1/4 in the media tree and
+> > provide a stable branch right on top of -rc1 ?
+
+> I'm also set-up pretty well to provide this.  Happy either way.
+
+> If you decide to take it:
+
+>   Acked-by: Lee Jones <lee@kernel.org>
+
+Yeah, me too - I acked already and I was expecting someone else to take
+the series, whoever it is that's fine.
+
+--P3POwEmxCwFVDH1z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmi2yFgACgkQJNaLcl1U
+h9BC4gf+JFvnZvhqnbvreICPfkHhDYV1e0Oe9b/gjR3DIlleFid0uS2MRHU9l1Dt
+xWLFmXcojsUmktf3G5INFGnvHZ5gUufkPL0DhePic9H9g3WFfGFcidFlweJRwvM4
+FfPHaT+84C2jFY0QpLGNFeysvWy+ZqKY16oejgKZvYXnTXuhztckQLQlA7jit2ng
+fX5gMyGKE5gsBLNWnrDw+40DruQhBCIJlqgxVe2/mv+aVJ9WATgwIiSqMharWJfi
+KOtKisvdu7iDTgmVNUYtdJiDZUiWgf6d7gkKXfS3BE8cmraLoqtPpaXFtLMdvIMk
+3XOh2ToYKYQa2dr1TgGR0rpNtiB6og==
+=t7X7
+-----END PGP SIGNATURE-----
+
+--P3POwEmxCwFVDH1z--
 
