@@ -1,180 +1,161 @@
-Return-Path: <linux-kernel+bounces-796843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76CEB40828
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F4AB4082D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84DE1B636D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2BB61B658CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBADC324B0E;
-	Tue,  2 Sep 2025 14:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A05B32A81A;
+	Tue,  2 Sep 2025 14:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqNTHpn2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZKncvsJ"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25E42DFA26;
-	Tue,  2 Sep 2025 14:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212B531AF1B;
+	Tue,  2 Sep 2025 14:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756824715; cv=none; b=CYduf4cQduJL/R8Cc+zM699jtNGAqkQXzRpGeGyE73jdbwJvD3ZkczsZdJh497bp1aOmbG8C9fD9mKis/JaIeiyernIfUBw7W2A6dR+Hfk6nWJGaZUFiMVx+GyXvgyZaWwXY+xXvK2LHE+vM2jWDVL6wFUaoMB9ejs4xMhhCqbo=
+	t=1756824737; cv=none; b=q/Rz19pNZ/SrF+bTFoXAVo6k6iTHDYj6jwKSkuE4qZqdhFaLHdUYTwprL7+FldC3tdG0/spx2taOLMOWLLVwPSmzntmydVywkaczx+p5EWXGK4YBFC1PVXooO/MTYk44pjn6KF7LEqlwaRssqD4SSGuqZcMT68pHALwFYKxB5v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756824715; c=relaxed/simple;
-	bh=U+dxRjSf6jIW2bglfWLHV6i6zgwzXBdE8U7BUJ6+/nY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HNKx7OJC5fC6NmFFq2mUvPX5uFTNAAhpk5kpKPks/7/KBeMc/6ORWgx4OGz8CI0i5MhKwIX4TcnTuLBaPIGkTL7seMb5fBABlyJC99kyKLXeuRag68a8/1I4hBN/zPe9pJc20ECyJI7yO6uFwGCQpt6GGkAGhKGSwl+VBqzd7AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqNTHpn2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ADD5C4CEF5;
-	Tue,  2 Sep 2025 14:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756824714;
-	bh=U+dxRjSf6jIW2bglfWLHV6i6zgwzXBdE8U7BUJ6+/nY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aqNTHpn2ALOkuwXUyFyXWzRj7T5Z772S3TGgmk88SHljW6MWxiMTRxpj9+K9+ZB4F
-	 7MGSxFm3pb/hzUFcFjxJ7YI7sERVFODsz7TGm7fUaiWQtcgSsXuSxdHwhNQkQXFaDU
-	 cUTJKKiMOZ4/P+i19WcWhpqneZ7c3eIp15vPYm9rk9TMQtTh7JPynHVUIncqwJEGCq
-	 bqcpCFWQ7qS1zRfyxV86Uy2NpcCu6ABpLcsq5v8o0UxTUwH/eMauDRjgFf1Az+j+MD
-	 JW0QmIHSHfsr+s20IL7D6N9CNw8L8iACANdknVTpPpkckpxe3huqi2FCagdc2yfGAZ
-	 A4sIrBPN/MoBA==
-Message-ID: <834238b4-3549-4062-a29b-bf9c5aefa30f@kernel.org>
-Date: Tue, 2 Sep 2025 16:51:47 +0200
+	s=arc-20240116; t=1756824737; c=relaxed/simple;
+	bh=1gKz/CeqPyjga8H6PURJ9psp+tC0vHzZKYP9TtgcoQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIL2s2HzVBWY8EO2Qn+wlMRzXWI/xECetp26PljJLln30F5ruxU3tHy6XFD3KP1vn93GGxp3+YenBwd2DCOtCD5nKyd/yxr10a+7YMn7cx28UJcgMf3mEP3TfH8t7qn0KYFTU9rpMGzWZoSwve975pPkAz9W3v4O4jv+zlvqcQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nZKncvsJ; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e1fc69f86so4861666b3a.0;
+        Tue, 02 Sep 2025 07:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756824735; x=1757429535; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=krojoMmx1kmmnqCI+gJOfxK13xA7Q4Ni7Uv9DM8FYMw=;
+        b=nZKncvsJE4ycHUC7SC34Vt0aM0ppjOM4FlUkyxxr8U1U9Bwz/SoVoYHD9Lk+bPKZxO
+         pxBxtdSMAmiq698nhS5X+/h2iEFijZsptG/OlGXuQskhgAwWvLd7OMSqx/zeJvkvawJK
+         y9Q+UlE07FGILcXb6Cy7fGBV+eEV65xzIzqqXbPFWEwmnQ0nTvoqn0d0cEEkHi2S2cx9
+         oMBgBl8odmOW+gD7PNokgE1nZ73WNAkh5gEjjnPbmQLqwvp6GB16usdDMTZDhkFg78T5
+         t1wtqiDfuQOCr1xOH0mvBnnE2C5xcD/BbDYv0BhpZ63YEuFkvMWDE1lf6JmRsnYG2Uh1
+         Alyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756824735; x=1757429535;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=krojoMmx1kmmnqCI+gJOfxK13xA7Q4Ni7Uv9DM8FYMw=;
+        b=CsU5VoEh4ArugM6sRhukdV1CNitrgVqiN1BIH3xwsDGzOtKfqLdkbodh7BckrWuQzB
+         E84BzKm3XuVP9kevp/2eXh2Kz4/EJnQzylDxJldFP8F1R84e454qDTM3EoXDL2M5R1t2
+         UXuX2o8Ah6z4wTAwOCGt2nMg5FLJk8SQ7C5ylLWVIWOrpC2tpRb4VFVPFYb3cPRrkQRE
+         KoqL+FOYgDQgWnHG5Xurnm3GMDhm4V5Pm/jKH4B/tMZHpyYIA4+e218YRqDynzg0L8HR
+         5cKJ6Td1p9oksXHuUy2D/tex/EG7o69n21pZvhe2nLH7gXx8hsNNacEy84dD4TEnUm1J
+         kvnA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/wxDuwvXCL5kAQtF9i4e9gSAsXL9iOyzy759PYlE7peuspPvJuTt8uT/2wlf/C9HTOJvQKRPYQrG3@vger.kernel.org, AJvYcCV2ifyOa0RjjUZoSlfIkhAlt0uEBMDKkLdnOLBzinhZbHPpvV8CVQAOprv3Qwh9XxSJjeCOZaVO/j6B@vger.kernel.org, AJvYcCV8NX8NSGtDtOEY4DKYem0C7yivW/1k37pnxWr9FznJutuoECJ2r5ejTvlYvvJR7XLxpeP7R0znRG0gAZ9Y@vger.kernel.org, AJvYcCVAbGmO0K+yREMZ+Z3Nn4nOqqFSxR1vzAdRw1Ihw8KY1BjGeMEdWuyAsy5MNSdrjSMETF77BR8zZlOm@vger.kernel.org, AJvYcCVhG5EYpdUVdsuEitn/rANpl6rKtQqBBTh39e1iMR/gYZvUcPb9hZ58vgMMYMjrAT/rAICW/29TMgQt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAKG2IJtwOiTM1SO5JD/5qi3RUTQvyKVBYnSey4pBQdOOHwHJi
+	ln4Hyk47efLBCdfXvVCDXfTYAjohtU/BZgw6+AioyW1h5m59jXNqYzYp
+X-Gm-Gg: ASbGnctnwEYfCePKhyf/1pJ20GKwIU+dO7nAvkCnZdvRJuCDqGq2t1bZvqXjY25OISO
+	xb3hdT71v5ixGyIT4hcPUabBoecIO/LfWE37prnWSSwMnnngv64f9HWzGafaeY6tSkPEDulskAw
+	5yiXJ/JeK1+3SDHF4dlALz5iuFh2udvIRt7nDGtOlmbOXcAvvkRFeXdNKiJ1oJDvM8ZhuOd+A72
+	deG++5ATWkz4Pw9UdpqS30XS86yhMrkJQRful3bfCCadrNLK09sWOz1AGJqpQZGz1N7QUfTjoW/
+	SusaSpOQCpsiIGTGz1wo+nuHIqRzaNouSJ6jBFCRucU3QIr55fIGFDzrqmLdvUZ2AzNLl/mTlrt
+	dnsLEbTYglQ3iNajQjvZT5Xci0jj7k2S2CghlPPtX6FEZg/2L0WVd
+X-Google-Smtp-Source: AGHT+IFdyjggY3wIGK1mZ+QKQxD0gAMm0SbeMxk7gQcQQm4er/Jmj3WDdrLOtCKXXQrKMByB7c5t7w==
+X-Received: by 2002:a05:6a20:938c:b0:246:5be:ca90 with SMTP id adf61e73a8af0-24605becdb2mr239744637.10.1756824735234;
+        Tue, 02 Sep 2025 07:52:15 -0700 (PDT)
+Received: from localhost ([2804:30c:1f77:e900:8ef5:b053:b8a:9345])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b4cd3670e5csm12088974a12.53.2025.09.02.07.52.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 07:52:13 -0700 (PDT)
+Date: Tue, 2 Sep 2025 11:52:46 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	jic23@kernel.org, Michael.Hennerich@analog.com, nuno.sa@analog.com,
+	eblanc@baylibre.com, andy@kernel.org, corbet@lwn.net,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	broonie@kernel.org, Jonathan.Cameron@huawei.com,
+	andriy.shevchenko@linux.intel.com, ahaslam@baylibre.com,
+	sergiu.cuciurean@analog.com, tgamblin@baylibre.com
+Subject: Re: [PATCH 07/15] iio: adc: ad4030: Add SPI offload support
+Message-ID: <aLcEvmwbysTaEprV@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1756511030.git.marcelo.schmitt@analog.com>
+ <0d9f377295635d977e0767de9db96d0a6ad06de0.1756511030.git.marcelo.schmitt@analog.com>
+ <b024bd46-f1bd-4d9f-9d91-15ba18b9864f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next 0/6] mptcp: misc. features for v6.18
-Content-Language: en-GB, fr-BE
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
- Christoph Paasch <cpaasch@openai.com>, Gang Yan <yangang@kylinos.cn>
-References: <20250901-net-next-mptcp-misc-feat-6-18-v1-0-80ae80d2b903@kernel.org>
- <20250902072600.2a9be439@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20250902072600.2a9be439@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b024bd46-f1bd-4d9f-9d91-15ba18b9864f@baylibre.com>
 
-Hi Jakub,
+Hi David,
 
-On 02/09/2025 16:26, Jakub Kicinski wrote:
-> On Mon, 01 Sep 2025 11:39:09 +0200 Matthieu Baerts (NGI0) wrote:
->> This series contains 4 independent new features:
->>
->> - Patch 1: use HMAC-SHA256 library instead of open-coded HMAC.
->>
->> - Patches 2-3: make ADD_ADDR retransmission timeout adaptive + simplify
->>   selftests.
->>
->> - Patch 4: selftests: check for unexpected fallback counter increments.
->>
->> - Patches 5-6: record subflows in RPS table, for aRFS support.
+On 08/30, David Lechner wrote:
+> On 8/29/25 7:42 PM, Marcelo Schmitt wrote:
+> > AD4030 and similar ADCs can capture data at sample rates up to 2 mega
+> > samples per second (MSPS). Not all SPI controllers are able to achieve
+> > such high throughputs and even when the controller is fast enough to run
+> > transfers at the required speed, it may be costly to the CPU to handle
+> > transfer data at such high sample rates.  Add SPI offload support for
+> > AD4030 and similar ADCs so to enable ADC data capture at maximum sample
+> > rates.
+> > 
+...
+> > +
+> > +static int __ad4030_set_sampling_freq(struct ad4030_state *st, unsigned int freq)
+> > +{
+...
+> > +	do {
+> > +		conv_wf.duty_length_ns = target;
+> > +		ret = pwm_round_waveform_might_sleep(st->conv_trigger, &conv_wf);
+> > +		if (ret)
+> > +			return ret;
+> > +		target += 10;
+> > +	} while (conv_wf.duty_length_ns < 10);
+> > +
+> > +	offload_period_ns = conv_wf.period_length_ns;
+> > +
+> > +	ret = regmap_read(st->regmap, AD4030_REG_MODES, &mode);
+> > +	if (ret)
+> > +		return ret;
+> > +	if (FIELD_GET(AD4030_REG_MODES_MASK_OUT_DATA_MODE, mode) == AD4030_OUT_DATA_MD_30_AVERAGED_DIFF) {
 > 
-> I don't see why, but kmemleak started to hit this with the join test
-> 2 branches ago :\ Have you seen any kmemleak issues on your side?
-> We also see occasional leaked skb in driver tests which makes no sense.
+> Since this depends on the oversampling ration, we need to defer this
+> until we start a buffered read. Otherwise if someone sets sampling
+> frequency first and the changes the oversampling ratio later, then
+> the PWM period will not be correct.
 > 
-> unreferenced object 0xffff8880029d3340 (size 3016):
->   comm "softirq", pid 0, jiffies 4297316940
->   hex dump (first 32 bytes):
->     0a 00 01 02 0a 00 01 01 00 00 00 00 9e b8 7d 27  ..............}'
->     0a 00 07 41 00 00 00 00 00 00 00 00 00 00 00 00  ...A............
->   backtrace (crc 3653d88c):
->     kmem_cache_alloc_noprof+0x284/0x330
->     sk_prot_alloc.constprop.0+0x4e/0x1b0
->     sk_clone_lock+0x4b/0x10d0
->     mptcp_sk_clone_init+0x2e/0x10d0
->     subflow_syn_recv_sock+0x9d1/0x1680
->     tcp_check_req+0x3a4/0x1910
->     tcp_v4_rcv+0x1004/0x30a0
->     ip_protocol_deliver_rcu+0x82/0x350
->     ip_local_deliver_finish+0x35d/0x620
->     ip_local_deliver+0x19c/0x470
->     ip_rcv+0xc2/0x370
->     __netif_receive_skb_one_core+0x108/0x180
->     process_backlog+0x3c1/0x13e0
->     __napi_poll.constprop.0+0x9f/0x460
->     net_rx_action+0x54f/0xda0
->     handle_softirqs+0x215/0x610
 
-Thank you for this notification!
+Yes, that's one of the problems I noticed when testing yesterday and probably
+the reason why I initially thought the scale was buggy for averaging/oversampling.
 
-No, I didn't notice that on our side. For KMemLeak, now I'm waiting 5
-seconds, then I force the scan, and check for issues once. On NIPA, I
-see that there are still 2 scans + cat, and apparently, the issue was
-always visible during the 2nd scan:
+> Alternatly, we could update this both when sampling freqency and
+> when oversampling ratio are updated. This would allow returning an
+> error if the oversampling ratio is too big for the requested
+> sampling frequency.
+> 
 
+Sure, this sounds to be the best way of keeping track of the sampling frequency
+and oversampling ratio combination. Otherwise, unadvised users (like me) could
+set the oversampling ratio then run transfers without the driver being able to
+update the CNV trigger waveform according to the number of samples to average.
+The result of that is the device doesn't do oversampling (despite the
+oversampling attribute value).
 
-https://netdev-3.bots.linux.dev/vmksft-mptcp-dbg/results/279881/1-mptcp-join-sh/stdout
+I also see your comments to this and other patches and I think I agree with them
+all. Will re-spin to apply the requested changes and provide support for SPI
+related stuff in a separate series.
 
-https://netdev-3.bots.linux.dev/vmksft-mptcp-dbg/results/280062/1-mptcp-join-sh/stdout
-
-It is unclear why a second scan is needed and only the second one caught
-something. Was it the same with the strange issues you mentioned in
-driver tests? Do you think I should re-add the second scan + cat?
-
-When looking at the modifications of this series, it is unclear what
-could cause that.
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+Thanks,
+Marcelo
 
