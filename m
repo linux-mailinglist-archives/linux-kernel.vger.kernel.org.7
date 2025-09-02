@@ -1,230 +1,133 @@
-Return-Path: <linux-kernel+bounces-795830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8A6B3F871
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:32:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82EAB3F877
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3EA17F2B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:32:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E671A83556
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FEF26B942;
-	Tue,  2 Sep 2025 08:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCCC2E719B;
+	Tue,  2 Sep 2025 08:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kq3Nd9Xh"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPjWl4Hu"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7527A26CE2A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C6126B942;
+	Tue,  2 Sep 2025 08:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756801968; cv=none; b=qquc2gCj8zqQ6NnsmqYtg2Dnk6X3gbVkqa0N0AsxTOz3JH97mBzBRUNtcy9eQCFlRxcnDxnJ+/16D1v5BE1tfpOcnYC2aq+ATHs2afUFPIwtic8QhBltKmdDh9Q2etH8Xd5F4HNx6w6ssUB7W+GkkdpUO505ZIm5kmB3O7TlYWw=
+	t=1756801984; cv=none; b=rsX5ycK5szdBjsXA03lc277eX2onJaWHWMP85hRHnimwEU6HjgXX7g3Anj3odFkpwc0XGyZNVT3ktesBPdCYH4K8FvbWbPUbzO2AEiYbNJAr0lhtEdAL9sYTFaPy2P/pvsdM8IqPFlDl78pu1gyN9KvKIsH9CRuC2DHhO4B0lXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756801968; c=relaxed/simple;
-	bh=/ZHm/JDt9uNu11y9OnI4iO6hvVL7u6urM48rYIX8pYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Of/w5LyiNvBIMBQmwdYBKpq8Z+nE1Hh6z9f8bNkU5Q9zsFkfsTzw2m6gv13C6bfleaHpjmBoR0XCae/As6G1toQU/ELvwVinYPQOFaxDZmKdu0vkn8+sqY1Br5yw6xL3YwgbHI3vChWPQPMICGZqZiwIOtpUHGiXDvw020HT6MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kq3Nd9Xh; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5828WHvU2943326;
-	Tue, 2 Sep 2025 03:32:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756801938;
-	bh=1mn4GVLgdfXIZW9WLuwx2E9UPpCwZaUs+phlyicQgyE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kq3Nd9XhI5ai4ln05HfQeOnuqHzaWPwJF9/dxM6akoFOD7KQUZwzu6vCy4T6qu8dj
-	 zLTj99YfyWMKZo2cM+LfSnWTFUapnwwx2Apkhnx+C/RvAsHuLKmCT5CXWPVFQh2zHn
-	 q+xFAifiYqagg95UN/qZ1kt57/ni09rM6mar9/eg=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5828WH8N2604321
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 2 Sep 2025 03:32:17 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 2
- Sep 2025 03:32:16 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 2 Sep 2025 03:32:17 -0500
-Received: from [172.24.235.208] (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5828W9Rp3500644;
-	Tue, 2 Sep 2025 03:32:10 -0500
-Message-ID: <49378457-2a75-4db9-9560-5df0c8a9344a@ti.com>
-Date: Tue, 2 Sep 2025 14:02:09 +0530
+	s=arc-20240116; t=1756801984; c=relaxed/simple;
+	bh=B0Fl8vj47u0ecAJz1JXn3stE8F+V6FoSjW5lbPHNnBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KO+4zTrkLClOxiHDX0XdAg18Qp/W3yynkU2/5KBxIi5FWgTiRVWDAW20OcJCcrSHVE1LKRtdMDvJxO72nH1r6ja09/hdhIT0rufVF9rnF0YKuEic9/B7ElMv1TYpua4147SeLtp2bbF4Rmfup96r8WTxP6cNTUrfYaMR9vgVVwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPjWl4Hu; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b84367affso26370885e9.3;
+        Tue, 02 Sep 2025 01:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756801981; x=1757406781; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lARVrcDNWMzVHBABZgXnN/vt4515FXELovAHVuLC0IE=;
+        b=DPjWl4HuE6tHtsZwUrKHaNIjI30f3WUsL8eLSqi8srld+EIOiTEVV0XSdY6HLtEVvF
+         tD9vFWC3Zl9CqTrRqbYoT0cstwDSpf3/tuaLENK0w1hEN5ogqBXpbqqXwwZA6Paf3Bdv
+         c9tJVVHJsLsLpBrumHiMzfGrrY+BafT6osHzazoT5EcH6oI/ugn3vtz9xqN8D5/4w3qN
+         ODYBAjsvl5MwDuRsEiF7CUMEJMjNFqx0+ODonpOBNLMIkqIl5+SnOe7+rrwlixAIdGUl
+         78OujXfG9IdJlmVJmJGlcZjP2e73nUxQoDYXsrxstCS3FjzjPBzLyvUvC8EPeUjiQtcu
+         /mMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756801981; x=1757406781;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lARVrcDNWMzVHBABZgXnN/vt4515FXELovAHVuLC0IE=;
+        b=m08l0V+TBMTg09VmabYeDhPwoHoDJuZMC4S74GzKPFdUP932cwKtFM5CUgnApGalJq
+         Jcr53qPE1iRlt++u87MtFwtYGVDtisstGC+d59f4QVcf8L2kzwjvOFD61ZRjddgQGP+G
+         pjVbrr8xtkg2tgMA5LV0uFvXneY0tCdsElCH0xpsrSbtFmEW0zQ0YxM9BvTw5PYVP3bt
+         U7yiGSteSBgW+tDBzblX+F3aNrTonVZKIsggFjPfyNoAWYy3J0dweaTPCHFboY2F3JNK
+         JGuLn2Q5AZmRN+LGs5qb2XAqk/5Kp1025hdj05a/jI77Od/zkMiIx15DdiU68sYoTeLc
+         IU1g==
+X-Forwarded-Encrypted: i=1; AJvYcCV3E1yEDkEKfiicWOARWmp6HmihXXh3xeqKzoAUm+gFU+kNShBMzQDllbiOdiBN0gH9ydTJnDUd2CRS8UY=@vger.kernel.org, AJvYcCX2ROa3Ds51mbcPcQPnaPgn/yFj/2LEAoA5tyocKGbnVTLp14f9aJg6nI0HQNjkc7mZ7+0LCSM/oXkXJks=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtjr1XBRVj7LCB9QGXm8I6lS8NDFujEvnv+9zWiPBaPOFWpfC2
+	b1gwjfrFFF6igxrVwpw1qXMm2VPGWP3xuTqg+qhyX/ZDirZ4ANh5x5+w
+X-Gm-Gg: ASbGncs1Gd2ZJ+Q9xr5uBW+MFOYmzPqxkv3t+wQ1O6SoJR0MQp/sR41SH8sFl0xsV6r
+	VKW9zTNymMcjGkvB8TjauFqwIXnmT5ahjdoOizxp1kgHJimSMOZkvP8f5x3BBd3Uik3VuopBsfB
+	sr7jnjBP3u3jfL62zb4xzQkn7KdwXbqne0i967WbapRpQwV7scyPRRpZYBjqXlEMcM5/pKjUQgc
+	tw0g1m+aN4AKpswaryDAdlFpyctrpRxV2oLmKmD/hCqsrYFSh/XTMy51TBmBVvPHM7pIKie3fjV
+	ClgoTK7h5uIaafxgMgs/KPz/YJJ4D67bB74WugJ3Eh/qG2u0ia/txdaaI+Zys6Xg4HLnNQxV1Ky
+	FM0DUPUj1cvFs9el2bmbx
+X-Google-Smtp-Source: AGHT+IGLLe+eOuKvhLSIqXjI0iH/E5Ia9hi1Fv7y0huL5PeDBqPu1gIF7clOX+O3F81I3nF3opjDnQ==
+X-Received: by 2002:a05:600c:1c1f:b0:45b:89ac:b80c with SMTP id 5b1f17b1804b1-45b8d50b914mr44569235e9.18.1756801980813;
+        Tue, 02 Sep 2025 01:33:00 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b8a980011sm58789295e9.0.2025.09.02.01.33.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 01:33:00 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: SOF: ipc4-topology: Fix a less than zero check on a u32
+Date: Tue,  2 Sep 2025 09:32:13 +0100
+Message-ID: <20250902083213.2620124-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/6] drm/bridge: cadence: cdns-mhdp8546*: Change
- drm_connector from structure to pointer
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <simona@ffwll.ch>, <lyude@redhat.com>,
-        <luca.ceresoli@bootlin.com>, <viro@zeniv.linux.org.uk>,
-        <andy.yan@rock-chips.com>, <linux@treblig.org>, <javierm@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>,
-        <j-choudhary@ti.com>, <u-kumar1@ti.com>, <s-jain1@ti.com>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <mripard@kernel.org>, <lumag@kernel.org>, <dianders@chromium.org>,
-        <dri-devel@lists.freedesktop.org>
-References: <20250811075904.1613519-1-h-shenoy@ti.com>
- <20250811075904.1613519-3-h-shenoy@ti.com>
- <e1dd9bd1-0e73-4a8d-947b-7c5a117d8827@ideasonboard.com>
-Content-Language: en-US
-From: Harikrishna Shenoy <h-shenoy@ti.com>
-In-Reply-To: <e1dd9bd1-0e73-4a8d-947b-7c5a117d8827@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+Currently the error check from the call to sof_ipc4_get_sample_type
+is always false because a u32 variable out_ref_type is being used
+to perform the less than zero check. Fix this by using the int
+variable ret to perform the check.
 
-On 9/1/25 15:30, Tomi Valkeinen wrote:
-> Hi,
->
-> On 11/08/2025 10:59, Harikrishna Shenoy wrote:
->> From: Jayesh Choudhary <j-choudhary@ti.com>
->>
->> After adding DBANC framework, mhdp->connector is not initialised during
->> bridge_attach(). The connector is however required in few driver calls
->> like cdns_mhdp_hdcp_enable() and cdns_mhdp_modeset_retry_fn().
-> Does this mean that if you apply only the previous commit, mhdp will
-> crash/misbehave as mdhp->connector is not initialized?
->
-possible of crash/misbehave of driver due to NULL pointer de-reference 
-has been discussed
+Fixes: c04c2e829649 ("ASoC: SOF: ipc4-topology: Add support for 8-bit formats")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/sof/ipc4-topology.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-in previous versions of series, will highlight it to make it more clear.
+diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
+index f5e62cd8fc0c..b6a732d0adb4 100644
+--- a/sound/soc/sof/ipc4-topology.c
++++ b/sound/soc/sof/ipc4-topology.c
+@@ -2191,9 +2191,10 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
+ 	case snd_soc_dapm_dai_in:
+ 		out_ref_rate = params_rate(fe_params);
+ 		out_ref_channels = params_channels(fe_params);
+-		out_ref_type = sof_ipc4_get_sample_type(sdev, fe_params);
+-		if (out_ref_type < 0)
+-			return out_ref_type;
++		ret = sof_ipc4_get_sample_type(sdev, fe_params);
++		if (ret < 0)
++			return ret;
++		out_ref_type = (u32)ret;
+ 
+ 		if (!single_output_bitdepth) {
+ 			out_ref_valid_bits = sof_ipc4_get_valid_bits(sdev, fe_params);
+-- 
+2.51.0
 
->> Use drm_connector pointer instead of structure, set it in bridge_enable()
->> and clear it in bridge_disable(), and make appropriate changes.
->>
->> Fixes: c932ced6b585 ("drm/tidss: Update encoder/bridge chain connect model")
-> This also has a fixes tag, but I don't see any mention of any bug being
-> fixed.
->
-> For the subjects of the whole series, I think you can just use
-> "drm/bridge: cdns-mhdp: ...". That's much shorter.
->
->   Tomi
-
-Explanation of bug along with logs are given in previous versions of the 
-series,
-
-will include them as highlights in cover letter to make more clear.
-
->> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->> ---
->>   drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 12 ++++++------
->>   drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h |  2 +-
->>   drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c |  8 ++++----
->>   3 files changed, 11 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
->> index 08702ade2903..c2ce3d6e5a88 100644
->> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
->> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
->> @@ -1755,7 +1755,6 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
->>   	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
->>   	struct cdns_mhdp_bridge_state *mhdp_state;
->>   	struct drm_crtc_state *crtc_state;
->> -	struct drm_connector *connector;
->>   	struct drm_connector_state *conn_state;
->>   	struct drm_bridge_state *new_state;
->>   	const struct drm_display_mode *mode;
->> @@ -1785,12 +1784,12 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
->>   	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_CAR,
->>   			    resp | CDNS_VIF_CLK_EN | CDNS_VIF_CLK_RSTN);
->>   
->> -	connector = drm_atomic_get_new_connector_for_encoder(state,
->> -							     bridge->encoder);
->> -	if (WARN_ON(!connector))
->> +	mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
->> +								   bridge->encoder);
->> +	if (WARN_ON(!mhdp->connector))
->>   		goto out;
->>   
->> -	conn_state = drm_atomic_get_new_connector_state(state, connector);
->> +	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector);
->>   	if (WARN_ON(!conn_state))
->>   		goto out;
->>   
->> @@ -1853,6 +1852,7 @@ static void cdns_mhdp_atomic_disable(struct drm_bridge *bridge,
->>   		cdns_mhdp_hdcp_disable(mhdp);
->>   
->>   	mhdp->bridge_enabled = false;
->> +	mhdp->connector = NULL;
->>   	cdns_mhdp_reg_read(mhdp, CDNS_DP_FRAMER_GLOBAL_CONFIG, &resp);
->>   	resp &= ~CDNS_DP_FRAMER_EN;
->>   	resp |= CDNS_DP_NO_VIDEO_MODE;
->> @@ -2134,7 +2134,7 @@ static void cdns_mhdp_modeset_retry_fn(struct work_struct *work)
->>   
->>   	mhdp = container_of(work, typeof(*mhdp), modeset_retry_work);
->>   
->> -	conn = &mhdp->connector;
->> +	conn = mhdp->connector;
->>   
->>   	/* Grab the locks before changing connector property */
->>   	mutex_lock(&conn->dev->mode_config.mutex);
->> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
->> index bad2fc0c7306..b297db53ba28 100644
->> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
->> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
->> @@ -375,7 +375,7 @@ struct cdns_mhdp_device {
->>   	 */
->>   	struct mutex link_mutex;
->>   
->> -	struct drm_connector connector;
->> +	struct drm_connector *connector;
->>   	struct drm_bridge bridge;
->>   
->>   	struct cdns_mhdp_link link;
->> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
->> index 42248f179b69..59f18c3281ef 100644
->> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
->> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
->> @@ -394,7 +394,7 @@ static int _cdns_mhdp_hdcp_disable(struct cdns_mhdp_device *mhdp)
->>   	int ret;
->>   
->>   	dev_dbg(mhdp->dev, "[%s:%d] HDCP is being disabled...\n",
->> -		mhdp->connector.name, mhdp->connector.base.id);
->> +		mhdp->connector->name, mhdp->connector->base.id);
->>   
->>   	ret = cdns_mhdp_hdcp_set_config(mhdp, 0, false);
->>   
->> @@ -445,7 +445,7 @@ static int cdns_mhdp_hdcp_check_link(struct cdns_mhdp_device *mhdp)
->>   
->>   	dev_err(mhdp->dev,
->>   		"[%s:%d] HDCP link failed, retrying authentication\n",
->> -		mhdp->connector.name, mhdp->connector.base.id);
->> +		mhdp->connector->name, mhdp->connector->base.id);
->>   
->>   	ret = _cdns_mhdp_hdcp_disable(mhdp);
->>   	if (ret) {
->> @@ -487,13 +487,13 @@ static void cdns_mhdp_hdcp_prop_work(struct work_struct *work)
->>   	struct cdns_mhdp_device *mhdp = container_of(hdcp,
->>   						     struct cdns_mhdp_device,
->>   						     hdcp);
->> -	struct drm_device *dev = mhdp->connector.dev;
->> +	struct drm_device *dev = mhdp->connector->dev;
->>   	struct drm_connector_state *state;
->>   
->>   	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
->>   	mutex_lock(&mhdp->hdcp.mutex);
->>   	if (mhdp->hdcp.value != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
->> -		state = mhdp->connector.state;
->> +		state = mhdp->connector->state;
->>   		state->content_protection = mhdp->hdcp.value;
->>   	}
->>   	mutex_unlock(&mhdp->hdcp.mutex);
 
