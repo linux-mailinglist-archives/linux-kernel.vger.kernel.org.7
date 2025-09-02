@@ -1,129 +1,287 @@
-Return-Path: <linux-kernel+bounces-795567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424E6B3F4A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:40:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EC4B3F4A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0775317FE08
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D0C1A85008
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EBB2E1742;
-	Tue,  2 Sep 2025 05:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97542E2667;
+	Tue,  2 Sep 2025 05:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WitTSfwG"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Py1EMFBI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326122D5934
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 05:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D731E5B71;
+	Tue,  2 Sep 2025 05:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756791614; cv=none; b=sTjV/I4jzGB/C45u5PTrLnUUAwsnM3BLIsu8FeSw/H4aQVHwkz40dl47VsbwZ2ccqTJMj0uMUUzHe6rLoo++gcL/Hggxoen/I4Mcw9YaG8FkhZsfTGwAM41geGSAHe4YeX9LyAAplICuy+64axPkPctHS1h2c3T+rCG1IZKOb9c=
+	t=1756791638; cv=none; b=sUd6k/zQo4m4pejpkkBaDy/Rgk58g9fpztazULUAZHRzn8nR9mT+gh8CTbKuT0TaWkU7sSp5bRMODiafZu9KzZ5JgsdALXRQckK4AadhlyDSSzozGi0vq3bouOZVe1JHtfPZ/zxDFLhfOAmPzCd+vStQueyPIlqJfMcONJlC39U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756791614; c=relaxed/simple;
-	bh=8Tn7K5i1isgjo5oamWJLs+4w/BwjVbi7Qfelosp9mko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsjT6nceVHWaRb9VvXAfneHBgYMOz/Mf8wrW9QqyAugcqkWmtKRLaLsx3yookKo2pdBIuIsJvDhU7VKf0K6G1YsmlLVP5nFQH36wg1ASHJFDhHpKJy/3e4WWGLGFO9GvX19eADyuHLZRfhxHnL5dp57DRdbKGz8SSG3a9pO5qnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WitTSfwG; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-772301f8a4cso4231722b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 22:40:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756791612; x=1757396412; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7CgLt7RIUR4eCRkWKk0fzd+AGBm8SmxIJSCNeFZDeGc=;
-        b=WitTSfwGT3Yr34GNcUah1ae/5J+7wiflLbNWZvvqpxvUHei+LNCSNJCG8kihW5L7x1
-         olO70+BCNZydBNHcOMvFMtSVej2CCivhkHl9VKZd5EDLJ8rQJLeRl7+qfUEeZ+G8wv1M
-         xFWqZKnjj42W9HZihrPBpu9gHIz0m7QJO2ZR1SG2NUoiIz0z5WMjVNxQjHqW12TD0R8G
-         t275lieZQJT7wswVxt5zQVOxe9EcXkNvST34E/onR2M/KJzbLAdOz1ObEJVT59c4Pw7h
-         u3TpMA6yOh2fRP2G5F0rIcmF7euR5bqWCRggAK67bhA9hA/FtMS7t+3c4UybBRsRCHCz
-         QS6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756791612; x=1757396412;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7CgLt7RIUR4eCRkWKk0fzd+AGBm8SmxIJSCNeFZDeGc=;
-        b=uGnZQ3OGy/nfQ13I9TG1wV0pVLpAK70nrtjMzPccVVlA7gOT5EKV2+kVhd3Zw9H5pH
-         Lm+XIqRLZPEVpLNDmGt0XTfQ5xW3nRuegKcq2H3ukYXepzSdcNBujlffOqBzXXl6jdsu
-         Q7gxX/5eyYgYODsOYrqDVTZeK8NUUwm4HF/0qw1akSa0PO9HQkYh45SvSKeLpjMYKXoO
-         6sg+2bP2sd+ypbaRyQGWqEbjpnTG+UpVgoAoe79CXwPlfM7so+nKnrlKrCxY02Tb6Ef6
-         PN00yFx8OB4wX8dSQOWwiOqxJN1QfNhfuYSDeh1fMDy1JlRKL/3shR6K4tcU+o0DXj4g
-         b0fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNeGvD4ZXnUziP75r7hRAjraj9wz3dwB0HuqZ/hMyIuPO7G8YZMmK0f0FJQeLasAz40WQLzUn58nT9jQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVxYTuc/zdmVV1gg3JUnwQGruOo+mPM7HQQnvzIS6mwZSZhRRc
-	DfYoqk+im5N+sVJPNXEmTR35yscG2jmZPWtI+BIsFuCdchrW1WtSOYyUYs2E9U1x0iQ=
-X-Gm-Gg: ASbGncvJlNWqBx7YnizQuOB5slDPFW4f++i7XGcUXqqbrKdb7zyBAUJpWNdTUitzvjt
-	OZzAdfe+vhyP2jkhcPzlJl6ZLqoz577yQyVQEzj4XqTgjWe4zDTYfAaeme43DOdVRN0vtcknv77
-	CRTh0MMWTmv8TfW/Cq3nmBx9cTIC1pSlrsos9uXW5E8ZSicZ9lbHEP5PesxNS4r9tMe7sn95zXE
-	Bl0udax1lKTttmuQl7Ul67KfqUwmFel/V6rPUlcth6T/QjUPg3A+hN3+wvnh2dlnaGSTG72FbQi
-	kA2EZz64KdfxDDH+nJ2uW/nzjDFbh2NcQ4ERFqcCSsJQ3LsyKwKvF88xtQO8IwpyOBJ8FTj3NAF
-	lrkygigenzWBgpp1vZmRd5tTYzr4t2+nDq3g=
-X-Google-Smtp-Source: AGHT+IGWJbCBhztTVmd7cwokjocgGM90CqXAfMEUTus4zvpVxidmHRlC8OnM+wteG2mcHiOA8FYJpA==
-X-Received: by 2002:a05:6a00:3e04:b0:76e:2eff:7ae9 with SMTP id d2e1a72fcca58-7723e276de4mr11916438b3a.12.1756791612472;
-        Mon, 01 Sep 2025 22:40:12 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7726475290esm3157523b3a.98.2025.09.01.22.40.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 22:40:11 -0700 (PDT)
-Date: Tue, 2 Sep 2025 11:10:09 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] cpufreq: sh: drop redundant freq_table argument
-Message-ID: <20250902054009.rhqu4ki3bl4kr5a7@vireshk-i7>
-References: <20250901112551.35534-1-zhangzihuan@kylinos.cn>
- <20250901112551.35534-3-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1756791638; c=relaxed/simple;
+	bh=8L/Au7EKsJO+Gp08UyaX8+IsjCJv+n0JefJzvEt54ts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GcbXSypK/nZ7xdD8jY57yB/h9hQhqINpNJk54jfg+9ciSfQ2imNfYEEFjmIh6ZNjALUlt/H+ysMv+z4hRmuevty4mrNRI+oppprnWukZ6+9s4sg25O+zTYAjh5Enmxyb2H+Gg3BpjZfjG5Op6AS6goFEfrxiWUL8y+1+x9VK2Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Py1EMFBI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822X5wT031520;
+	Tue, 2 Sep 2025 05:40:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aBpXF1MufAPVG15/FkjLF2YODM6Aes5ifFG11WMoVlw=; b=Py1EMFBItKhiDGfr
+	hmDcWe/i6AyuV1w2kWChcAxVNvKOQqzDgpoEt4FqN/QmuZmJYQkl057Ox/XZIGiy
+	y+HvC/z9jpcEGmotmsVu3rOGbNVUL8jt5YOyztTSKur3cPO4+6XiQzYj2KtHLBbN
+	Y0YC3xAXA6RONZkTKdudhPaVjJwvz2lBb+gnjA71HbiCCKYFBWlJ2DXWMCtyylrR
+	uEcufOlQQ8Y86sUAluMeiD0nFdPiS1vBBn5UUrTx6zNBWLI5t4zUMoW/WacaOKJS
+	w+dxsJKaSWrPivz0Jbrf3kbzQaNiaeg2bmR1mIDU0WHUAOkUJrrze14QsQoxi5gz
+	sWwddA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48wqvw8cba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 05:40:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5825eUph024652
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Sep 2025 05:40:30 GMT
+Received: from [10.50.35.121] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
+ 2025 22:40:27 -0700
+Message-ID: <a9e5271b-104b-b7b6-2c85-04d40c735a73@quicinc.com>
+Date: Tue, 2 Sep 2025 11:10:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901112551.35534-3-zhangzihuan@kylinos.cn>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] media: iris: add VPU33 specific encoding buffer
+ calculation
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250901-topic-sm8x50-iris-encoder-v3-hevc-debug-v2-1-c65406bbdf68@linaro.org>
+Content-Language: en-US
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20250901-topic-sm8x50-iris-encoder-v3-hevc-debug-v2-1-c65406bbdf68@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDAyNCBTYWx0ZWRfXwOVsbQYyvMYk
+ wjedqn8Cv9bZj70YGjbePXqDXo808IIfVAinTXtLLrk1tdPQsD1g2bejC7KMkJlqcvQHxskSEDS
+ AFba3OPnWp+ab6b8jkYF+7lxv2FWEQp2kHhVv17WzlKow+lFRjgwFSeqLkc6arQQ7dlaPQLbQrR
+ V5gFwXiim5dKYlG3jrqLrrEirEFaAK5Q+YLwpC6Svq7sTdqT3vvD8ojld+Nlq6floWCQli/x8AB
+ D2RE2Ur6rvU5y2pQNDLZ68VaIU/BXHlOf66DOWtv9xIGtPgDKcA7l8agqXmLwkf5mL5fA+WNtvb
+ KzyNY8TcTtGJzxfjaYvxWLp9BxZbo/3FuWNf985BX8qV474HYeTm0rSM/bvi7t3LQK9oDpznvrs
+ Oe0A7aDF
+X-Authority-Analysis: v=2.4 cv=WKh/XmsR c=1 sm=1 tr=0 ts=68b6834f cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=y7uNAMEtOC7jsks-VgYA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: ws4nbiRIslxXFi2b_29mStyG4gPMAiE6
+X-Proofpoint-ORIG-GUID: ws4nbiRIslxXFi2b_29mStyG4gPMAiE6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_01,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020024
 
-On 01-09-25, 19:25, Zihuan Zhang wrote:
-> Previously, some cpufreq core helper functions accepted a separate
-> 'freq_table' argument even though the frequency table is now stored
-> inside struct cpufreq_policy.
+
+
+On 9/1/2025 1:25 PM, Neil Armstrong wrote:
+> The VPU33 found in the SM8650 Platform requires some slighly different
+> buffer calculation for encoding to allow working with the latest
+> firwware uploaded on linux-firmware at [1].
 > 
-> This patch updates all cpufreq core calls to remove the redundant
-> argument and use policy directly.
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=ece445af91bbee49bf0d8b23c2b99b596ae6eac7
 > 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> Suggested-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  drivers/cpufreq/sh-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> [2] https://lore.kernel.org/all/20250825-iris-video-encoder-v4-0-84aa2bc0a46b@quicinc.com/
+> ---
+> Changes in v2:
+> - Removed calculation fix for hevc encoding, as it was added in common code
+> - Link to v1: https://lore.kernel.org/r/20250822-topic-sm8x50-iris-encoder-v3-hevc-debug-v1-1-633d904ff7d3@linaro.org
+> ---
+>  drivers/media/platform/qcom/iris/iris_buffer.c     |   2 +-
+>  .../platform/qcom/iris/iris_hfi_gen1_command.c     |   2 +-
+>  .../platform/qcom/iris/iris_platform_common.h      |   2 +
+>  .../media/platform/qcom/iris/iris_platform_gen2.c  |   4 +
+>  .../platform/qcom/iris/iris_platform_sm8250.c      |   2 +
+>  drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 110 ++++++++++++++++++++-
+>  drivers/media/platform/qcom/iris/iris_vpu_buffer.h |   3 +-
+>  7 files changed, 118 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/sh-cpufreq.c b/drivers/cpufreq/sh-cpufreq.c
-> index 9c0b01e00508..75d224ba56ba 100644
-> --- a/drivers/cpufreq/sh-cpufreq.c
-> +++ b/drivers/cpufreq/sh-cpufreq.c
-> @@ -93,7 +93,7 @@ static int sh_cpufreq_verify(struct cpufreq_policy_data *policy)
+> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
+> index 8891a297d384b018b3cc8313ad6416db6317798b..c0900038e7defccf7de3cb60e17c71e36a0e8ead 100644
+> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+> @@ -284,7 +284,7 @@ static void iris_fill_internal_buf_info(struct iris_inst *inst,
+>  {
+>  	struct iris_buffers *buffers = &inst->buffers[buffer_type];
 >  
->  	freq_table = cpuclk->nr_freqs ? cpuclk->freq_table : NULL;
->  	if (freq_table)
-
-Instead of above, you can now simply check if policy->freq_table is
-valid or not.
-
-> -		return cpufreq_frequency_table_verify(policy, freq_table);
-> +		return cpufreq_frequency_table_verify(policy);
+> -	buffers->size = iris_vpu_buf_size(inst, buffer_type);
+> +	buffers->size = inst->core->iris_platform_data->get_vpu_buffer_size(inst, buffer_type);
+>  	buffers->min_count = iris_vpu_buf_count(inst, buffer_type);
+>  }
 >  
->  	cpufreq_verify_within_cpu_limits(policy);
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> index 29cf392ca2566da286ea3e928ce4a22c2e970cc8..e1788c266bb1080921f17248fd5ee60156b3143d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> @@ -911,7 +911,7 @@ static int iris_hfi_gen1_set_bufsize(struct iris_inst *inst, u32 plane)
 >  
-> -- 
-> 2.25.1
+>  	if (iris_split_mode_enabled(inst)) {
+>  		bufsz.type = HFI_BUFFER_OUTPUT;
+> -		bufsz.size = iris_vpu_buf_size(inst, BUF_DPB);
+> +		bufsz.size = inst->core->iris_platform_data->get_vpu_buffer_size(inst, BUF_DPB);
+>  
+>  		ret = hfi_gen1_set_property(inst, ptype, &bufsz, sizeof(bufsz));
+>  		if (ret)
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index 96fa7b1bb592441e85664da408ea4ba42c9a15b5..7057c4cd1a9ebefa02c855014e5f19993da58e38 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -7,6 +7,7 @@
+>  #define __IRIS_PLATFORM_COMMON_H__
+>  
+>  #include <linux/bits.h>
+> +#include "iris_buffer.h"
+>  
+>  struct iris_core;
+>  struct iris_inst;
+> @@ -189,6 +190,7 @@ struct iris_platform_data {
+>  	void (*init_hfi_command_ops)(struct iris_core *core);
+>  	void (*init_hfi_response_ops)(struct iris_core *core);
+>  	struct iris_inst *(*get_instance)(void);
+> +	u32 (*get_vpu_buffer_size)(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+>  	const struct vpu_ops *vpu_ops;
+>  	void (*set_preset_registers)(struct iris_core *core);
+>  	const struct icc_info *icc_tbl;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index cf4b92f534b272a0a1ac2a0e7bb9316501374332..78a04e76de7c00703b84bd3c1c6e9a884ee7cebe 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -8,6 +8,7 @@
+>  #include "iris_hfi_gen2.h"
+>  #include "iris_hfi_gen2_defines.h"
+>  #include "iris_platform_common.h"
+> +#include "iris_vpu_buffer.h"
+>  #include "iris_vpu_common.h"
+>  
+>  #include "iris_platform_qcs8300.h"
+> @@ -738,6 +739,7 @@ struct iris_platform_data sm8550_data = {
+>  	.get_instance = iris_hfi_gen2_get_instance,
+>  	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+>  	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+> +	.get_vpu_buffer_size = iris_vpu_buf_size,
+>  	.vpu_ops = &iris_vpu3_ops,
+>  	.set_preset_registers = iris_set_sm8550_preset_registers,
+>  	.icc_tbl = sm8550_icc_table,
+> @@ -827,6 +829,7 @@ struct iris_platform_data sm8650_data = {
+>  	.get_instance = iris_hfi_gen2_get_instance,
+>  	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+>  	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+> +	.get_vpu_buffer_size = iris_vpu33x_buf_size,
+>  	.vpu_ops = &iris_vpu33_ops,
+>  	.set_preset_registers = iris_set_sm8550_preset_registers,
+>  	.icc_tbl = sm8550_icc_table,
+> @@ -916,6 +919,7 @@ struct iris_platform_data qcs8300_data = {
+>  	.get_instance = iris_hfi_gen2_get_instance,
+>  	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+>  	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+> +	.get_vpu_buffer_size = iris_vpu_buf_size,
+>  	.vpu_ops = &iris_vpu3_ops,
+>  	.set_preset_registers = iris_set_sm8550_preset_registers,
+>  	.icc_tbl = sm8550_icc_table,
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> index 978d0130d43b5f6febb65430a9bbe3932e8f24df..16486284f8acccf6a95a27f6003e885226e28f4d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> @@ -9,6 +9,7 @@
+>  #include "iris_resources.h"
+>  #include "iris_hfi_gen1.h"
+>  #include "iris_hfi_gen1_defines.h"
+> +#include "iris_vpu_buffer.h"
+>  #include "iris_vpu_common.h"
+>  
+>  #define BITRATE_MIN		32000
+> @@ -317,6 +318,7 @@ struct iris_platform_data sm8250_data = {
+>  	.get_instance = iris_hfi_gen1_get_instance,
+>  	.init_hfi_command_ops = &iris_hfi_gen1_command_ops_init,
+>  	.init_hfi_response_ops = iris_hfi_gen1_response_ops_init,
+> +	.get_vpu_buffer_size = iris_vpu_buf_size,
+>  	.vpu_ops = &iris_vpu2_ops,
+>  	.set_preset_registers = iris_set_sm8250_preset_registers,
+>  	.icc_tbl = sm8250_icc_table,
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> index 34a9094201ccd11d30a776f284ede8248d8017a9..9cb7701722c3644ef4c369fa58490ac83258ea7e 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> @@ -867,6 +867,34 @@ u32 size_vpss_line_buf(u32 num_vpp_pipes_enc, u32 frame_height_coded,
+>  		      (((((max_t(u32, (frame_width_coded),
+>  				 (frame_height_coded)) + 3) >> 2) << 5) + 256) * 16)), 256);
+>  }
+> +static inline
+> +u32 size_vpss_line_buf_vpu33x(u32 num_vpp_pipes_enc, u32 frame_height_coded,
+> +			      u32 frame_width_coded)
+> +{
+> +	u32 vpss_4tap_top = 0, vpss_4tap_left = 0, vpss_div2_top = 0;
+> +	u32 vpss_div2_left = 0, vpss_top_lb = 0, vpss_left_lb = 0;
+> +	u32 size_left = 0, size_top = 0;
+> +
+> +	vpss_4tap_top = (max_t(u32, frame_width_coded, frame_height_coded) * 2) + 3;
+> +	vpss_4tap_top >>= 2;
+> +	vpss_4tap_top <<= 4;
+> +	vpss_4tap_top += 256;
 
--- 
-viresh
+Would it be better if combined?
+vpss_4tap_top = ((((max(frame_width_coded, frame_height_coded) * 2) + 3) >>
+2) << 4) + 256;
+
+Thanks,
+Dikshita
+
+> +	vpss_4tap_left = (((8192 + 3) >> 2) << 5) + 64;
+> +	vpss_div2_top = max_t(u32, frame_width_coded, frame_height_coded) + 3;
+> +	vpss_div2_top >>= 2;
+> +	vpss_div2_top <<= 4;
+> +	vpss_div2_top += 256;
+> +	vpss_div2_left = (max_t(u32, frame_width_coded, frame_height_coded) * 2) + 3;
+> +	vpss_div2_left >>= 2;
+> +	vpss_div2_left <<= 5;
+> +	vpss_div2_left += 64;
+> +	vpss_top_lb = (frame_width_coded + 1) << 3;
+> +	vpss_left_lb = (frame_height_coded << 3) * num_vpp_pipes_enc;
+> +	size_left = (vpss_4tap_left + vpss_div2_left) * 2 * num_vpp_pipes_enc;
+> +	size_top = (vpss_4tap_top + vpss_div2_top) * 2;
+> +
+> +	return ALIGN(size_left + size_top + vpss_top_lb + vpss_left_lb, DMA_ALIGNMENT);
+> +}
+>  
 
