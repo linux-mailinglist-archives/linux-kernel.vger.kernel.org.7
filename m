@@ -1,132 +1,152 @@
-Return-Path: <linux-kernel+bounces-796921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3BCB4095C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:44:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3FA8B40954
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6BD1899995
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E154188691E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6F232A807;
-	Tue,  2 Sep 2025 15:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B843322C99;
+	Tue,  2 Sep 2025 15:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhEz28da"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XonpivA6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2462FC019;
-	Tue,  2 Sep 2025 15:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49D30F526;
+	Tue,  2 Sep 2025 15:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827841; cv=none; b=PGq++boUXqV4N8LCgBzwHTAIuwcJkj3JKi9hjkviYxdKuOBJY8UcdHFuxhMBUc7Ji9QQuga+p98wLgM+T9fVQzK8wpSxoY2p36y6RUuCS0O/YU41UFOH+KvBuOIv9G1CQUbg8gvhgioUtfMNKv1t0cSWr/tCxVJxwVjampAwRTE=
+	t=1756827829; cv=none; b=R107sS3W5S2g/5V+AVTG1o/8rRfPmq8T0Shy2znxtN2OSrvxNKUGZ66xC4F7Kx+28FKj/7FGAhaDKrbzZu8m+EusX8qzrm/GrvBlxQrIVDN66jJaM3q9zkVfv1JKqr/fAZsCIGUfHyX/5kNkvc2I6DwfzmJi3jMy7dHAO724NH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827841; c=relaxed/simple;
-	bh=IPqqn0GnguGU5cSP0RswoQ1BZy2RQuhjSXsG1srLe9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tHi+Ng4a3Ut0r3vpBIgvWUAvPIN4mQG2nEqGud29P8yzuW4cv8zksnVhDsRVzEDwUyUxwRqLK+nDXgnNxXX6avIiHv+FalMPMZ3C0VjdDe11C4LrcknQvFuBVzR85rNlnWu+RijvVqAqZpgeemZlS4zfmiAnZOC+JDCKyijq1Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhEz28da; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afeec747e60so900257966b.0;
-        Tue, 02 Sep 2025 08:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756827838; x=1757432638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IPqqn0GnguGU5cSP0RswoQ1BZy2RQuhjSXsG1srLe9w=;
-        b=DhEz28da4fpmOtTT7JX+H/lyUKvamNefxPs9yt5YT0z0ih1EPanbYtjJqsd/CAn1pz
-         UeXq6LGWz6mKmoYn7HSF15l66UjN9C3eTIvixNuSgLb6fgQjyx+wqjZvEoyTsb54kops
-         e2lr3bdbdp02F0rWS9iRMhIVGd5Ny6dZk+pfT61pmfEFpksJOjQEJOaOxwtJVvD/StWx
-         WKaoxoAxqT3BMC5JuicnBwsH8nsbM2PE2Gs2Pbg9mtQXINQi5Ww1Q1stek3vzbWhBV/H
-         1DbDDE54R+YxRiX9AHH8xVUMWyhA6R4mVx49AhaPk9QK7ppwCWxR2kwLyU7eZqfdYegW
-         lrzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756827838; x=1757432638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IPqqn0GnguGU5cSP0RswoQ1BZy2RQuhjSXsG1srLe9w=;
-        b=WohBhkI2O2GNE3Y0PwXu+0FururTBzBxhE+JTEedLkDHJuQk2EFHZEtbRbjvwzQ3Yp
-         m0K7yBgwr4kAg2g+joA+B/eOrMrg5BWdZL5s38ef6X/O40wldJ7bA9Ql4609k9BtZdBV
-         odjavXwasbItBu7uC/FBgLUR3xnu7TSefjCpLX4rvBEvoSO1zSuEOJsvXq/STSI0j+5N
-         Rv3eXLMWULmz9OmVrBvoACNF5gLo3oMvNKawjdPshrH3s/l3Gw95dhcps0jzbfZYfAGP
-         i3eN4vxD+nbm3IBEjdc0nIotgtCFWILFLsr76KvAjXUfj/lzYjMT+REWVxdv6idoTys7
-         3SKg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1paKepklpm/H0+4bdXoGjGXrivkhlssH3oaVOpqk7iFMVYlIE94Q3eivWa5R1aJAw5KK25DLeNQPh@vger.kernel.org, AJvYcCVqGvemTv1FfG1z3pRIB61mO5FPtI9Oqkp9YjCu2nOp+oQZT9K7cjhg1yvJaed0RhLeLn8AzlUlZNJuXhR1@vger.kernel.org, AJvYcCW9O+fgEMSMnJ9NNAPCvahpPddRfVWqXAUnGoVWeTFzrsEkm+lsybX+Wp66HJ1md4DEzxGoB2r++ColQml4P0i6/uQ=@vger.kernel.org, AJvYcCWAu0vW69ZK/B98eV/bwEJNFJjITRktHKDRcDmKiTVUENaRmZaYHaT488D256FrkwNouWN/lWWY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw21nHjPTHukP6yy0uKDTgcdNjH5oiMpWxY+P1qjT/QgYJ+XY9L
-	6XAEKSVhvdpJEzzKVwsSOc5Brr0pM3houmRWoC1MHuMSIIEEVF4hNbFJE9TajvwBC03G5kN1emI
-	KNLFGqiID/5Cnjyv0Qeug0/zdyqMPwic=
-X-Gm-Gg: ASbGncv2drg4iMTVaaWCuQtkIS8MnawZn3OOXyRTbWb92w7qO4ZfzYUzpC/KpT5Ok9L
-	5z87hUcOtb/5fA74BvQJ5zDpH1LOuQk2iLUUPEHetY9cwVCr+a0zNcMK2F7bBtZcK4Ha+EkXQCg
-	yRh7YmDiSFR1bc/eWhZHgv+LxAq/PtPfJ9knPA0R5GJWFt9Trv0NJ+oTIAA3qPWwlpORDdXuAJE
-	L/XPbWc7pX2HDRKh8M/MUju3L7CBLRL1pwf2Hy1KdCWADu7H80=
-X-Google-Smtp-Source: AGHT+IGjVz9zqn8BbtmRC26R4QSkX6A4Q84g3hbk2BHW4+6JnnTvFG+jS17Ww+dxP48t8AY/g3mKnA0lZtUe2mcohUY=
-X-Received: by 2002:a17:906:4786:b0:afe:e7f1:28a2 with SMTP id
- a640c23a62f3a-b01d8c7835emr1258659066b.23.1756827837577; Tue, 02 Sep 2025
- 08:43:57 -0700 (PDT)
+	s=arc-20240116; t=1756827829; c=relaxed/simple;
+	bh=BXcZPplxJ9zfzW6WJTMNMoL9j1icVZ97rqwgknQ8weo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AfcYgl98xugLtRWjU2Vb7N18uKyw1YysaCHVUoq0GbAeyIJCrDY+r/8C8VMEgPn+9CPjQfpRK6mDyMdUz/gUJrxLoQ22BMlXKPdkpFdW9d0XUraLe0qV/otnmjzvyIM4DjKcGaRy5i1G8bW0exLmZnTCOzsAf+Iib37hkiFkTN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XonpivA6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33632C4CEED;
+	Tue,  2 Sep 2025 15:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756827829;
+	bh=BXcZPplxJ9zfzW6WJTMNMoL9j1icVZ97rqwgknQ8weo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XonpivA6tNUoMCDQnvJnnLsqVLB2GNqTL0ow8E35yoIBQIVLpMWd1/FtQAfRzEPgo
+	 FK/6wtO7+w/d5cSb1AK45aCQ+d4QF5lzzl5L09K/4patmlXWGdDLINjHdexyOUkDov
+	 se+HAwIfM9xcvHW71ClV3Dmo2SONTD+CFE0rZMkXqhPBQ25xjiz3yYRSufMvn5C0jL
+	 Hp3YybPMqQHpH143bjN01lNHubj+doruwD23Q7i1UQMoaXMMmD/jY3TMChIOpXAjOI
+	 TuQyFNjcorYnnAIONtjSe9gvlX/n/rLRCpz+jpFoGfwpsfDDyK/v1Tr8PAeIA9HF1M
+	 v5glpjobLTSaQ==
+Message-ID: <8d538aca-a90f-4710-b697-0d7de65bfc4f@kernel.org>
+Date: Tue, 2 Sep 2025 17:43:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902001302.3823418-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250902001302.3823418-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250902-spirited-congenial-stingray-f8aff7@kuoka>
-In-Reply-To: <20250902-spirited-congenial-stingray-f8aff7@kuoka>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 2 Sep 2025 16:43:31 +0100
-X-Gm-Features: Ac12FXzIsq1sQ-x5uMFEMxBzln58PfPIlzCTK000OG7RlVhFny-x7C12oPVK8qY
-Message-ID: <CA+V-a8uy++vzYh5956X2Dpv2Low5uAK+FRTONaP4Nc3FMty6Bw@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: dwmac: Increase 'maxItems'
- for 'interrupts' and 'interrupt-names'
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Russell King <linux@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: reset: thead,th1520-reset: Add
+ controllers for more subsys
+To: Philipp Zabel <p.zabel@pengutronix.de>, Yao Zi <ziyao@disroot.org>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+ Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Michal Wilczynski
+ <m.wilczynski@samsung.com>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Icenowy Zheng <uwu@icenowy.me>, Han Gao <rabenda.cn@gmail.com>,
+ Han Gao <gaohan@iscas.ac.cn>
+References: <20250901042320.22865-1-ziyao@disroot.org>
+ <20250901042320.22865-2-ziyao@disroot.org>
+ <20250902-peach-jackal-of-judgment-8aee13@kuoka> <aLazFzq2l7s66IqS@pie>
+ <75cafd7e-02a5-41d1-9daf-24bef20dab82@kernel.org>
+ <705de60088f72c1ed575d92e8c4f4b90989385c5.camel@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <705de60088f72c1ed575d92e8c4f4b90989385c5.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 02/09/2025 15:57, Philipp Zabel wrote:
+> On Di, 2025-09-02 at 15:44 +0200, Krzysztof Kozlowski wrote:
+>> On 02/09/2025 11:04, Yao Zi wrote:
+>>> On Tue, Sep 02, 2025 at 10:27:53AM +0200, Krzysztof Kozlowski wrote:
+>>>> On Mon, Sep 01, 2025 at 04:23:17AM +0000, Yao Zi wrote:
+>>>>> +/* VO Subsystem */
+>>>>>  #define TH1520_RESET_ID_GPU		0
+>>>>>  #define TH1520_RESET_ID_GPU_CLKGEN	1
+>>>>> -#define TH1520_RESET_ID_NPU		2
+>>>>> -#define TH1520_RESET_ID_WDT0		3
+>>>>> -#define TH1520_RESET_ID_WDT1		4
+>>>>
+>>>> This is ABI break and deserves explanation and its own patchset.
+>>>
+>>> The registers in control of TH1520_RESET_ID_{NPU,WDT0,WDT1} don't belong
+>>> to the VO reset controller (documented as "thead,th1520-reset"), and
+>>> thus cannot be implemented by it. They're in fact AP subsystem resets,
+>>> which gets supported in Linux with this series.
+>>>
+>>> Is it okay for you to separate a patch to delete these wrong IDs and add
+>>> them back for the AP reset controller latter? Anyway, I should have
+>>> provided more information about these three resets. Thanks for catching
+>>> this.
+>>
+>> So feels like separate patch dropping these resets with above explanation.
+> 
+> They happen to be reintroduced with exactly the same values, just for
+> the AP subsystem reset controller:
 
-Thank you for the review.
-
-On Tue, Sep 2, 2025 at 9:49=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On Tue, Sep 02, 2025 at 01:12:59AM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Increase the `maxItems` value for the `interrupts` and `interrupt-names=
-`
-> > properties to 19 to support additional per-channel Tx/Rx completion
-> > interrupts on the Renesas RZ/T2H SoC, which features the
-> > `snps,dwmac-5.20` IP with 8 Rx queues and 8 Tx queues.
->
-> This alone makes no sense. Why would we need more interrupts here if
-> there is no user of it at all? Squash patches.
->
-Ok, I will squash the changes.
-
-> You also need to constrain other devices, because now one Renesas
-> binding gets 19 interrupts without any explanation. Please rethink how
-> you split your patches...
->
-I see you have already taken care of this, thank you.
-
-Cheers,
-Prabhakar
+Yes, I noticed, but that's different reset controller, so previous ABI
+for that controller stops working. Anyway my comment still stays.
+Best regards,
+Krzysztof
 
