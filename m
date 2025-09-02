@@ -1,122 +1,229 @@
-Return-Path: <linux-kernel+bounces-797431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7E1B41061
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35E4B41063
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B45A4E15C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A101B617C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303B4279358;
-	Tue,  2 Sep 2025 22:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F3F2797AE;
+	Tue,  2 Sep 2025 22:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QwZ+A8Aa"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Svp4bnH3"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4771D265632;
-	Tue,  2 Sep 2025 22:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B452777FC;
+	Tue,  2 Sep 2025 22:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756853740; cv=none; b=eMFhxla2oxmYEo8HG5qCzl+p6Cyupg++SbK8f8eYWsb6EFcZyGl5WXNq7GUWWt+B0JLNK25k6m8Z9jV1xGKp9z1y4TfB1skhPM7K72yCWxjoD2eF/DF97vCGXhgxeJK2X1fDg5rZAjLD358/Ix1RxOmZp2ojjs5MU0C//UO+0gg=
+	t=1756853777; cv=none; b=FYgLlkzZUDcG1NjM671L90x6pizz56HKMi6ejgObRyC1nzEQ3hbqtAAAyeRqWsvXT7QymxnBOgmPiqejf15FDLVlxUYQtkVjFWWjP7MspFlSw/vxMYq1FVw/ZKki+Mcq9m+wsrzwJVc4i6rWmpO4duvXT3iuxBvpVRec3mfoIG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756853740; c=relaxed/simple;
-	bh=U5K1CgL9/7XdXcDU6y/6/skn0JphkIA5PzXxOK4GLUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kfxPT5zfakpl4hUQUvfueGSm3ZJLZNb5+BfZXbBrdxS+Gg66Ftt8FEZFtIULOkx84i5au29ZLHz6EXXQqh9f6oWeU+5jsFpq++ov1V3+DqOH+7J7DyUzH5U1NQ8zmovutfO9xE6NctJ5MqOaZ8M4EG+ceHuRaYy3a6OXvuxamQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QwZ+A8Aa; arc=none smtp.client-ip=209.85.216.51
+	s=arc-20240116; t=1756853777; c=relaxed/simple;
+	bh=L1aSF83k8T/325D8EFCetHBmvrLfymIgil/+0GT0i+k=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=AQxebH5yxclnASXRe1b35THzEcGkA5hAGKX6Uq5htfvdQjHEmL9VrcKdWk9G1wZ1S3s4nygIgECankhhRm8jZbSlKmz7kfydnlzfQSjsklpLMHDeLHB/4LGin+0sYrKOUkiq3Jk1MemxRBgZrXaViEu9IzcIHO3sBEusitQRaOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Svp4bnH3; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso4806048a91.3;
-        Tue, 02 Sep 2025 15:55:39 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-7240eb21ccaso728696d6.0;
+        Tue, 02 Sep 2025 15:56:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756853738; x=1757458538; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QT4bXlWWyAHlyWWTgWohbj6THlw3kJlerrsT5MEKJeM=;
-        b=QwZ+A8Aaiq+YsfkrtxY2+xi2S8kjK02DPVT2LQtkfBE2qjMJfEggdzpmhj18zf0d7t
-         DtzKGRnVwKVmva8v2ONElGifF4tdK+b+Y/EO2xVJ1QyhvK1yqnaL+z5sADlK/W1VfaPS
-         SezYKoJoMA29lds3PBY7d3raE453kJXqiM/Bywy59ueCkKBzR+A2NbTgloE8EsWJszYF
-         DVS/qTHlky5IqGYdrZdQXlnwJ8kBe1Jew6WoxankjiziHYi3tCvYy6TLj/iL+Hg/SUJE
-         uwQ044m2kzdZDFZELI2flvvM0hUtkdd6MKXqc/Cgt7JI1ibfMx1prF1lU+RZ2WDmZm88
-         44Mw==
+        d=gmail.com; s=20230601; t=1756853774; x=1757458574; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6y60fL7NODA3Mze50fVdidlqngxPgWIM1G9KmQ67B7g=;
+        b=Svp4bnH3wZ8kt3gIU9FYnj4DBbp/Gk+ILbtpM+j//Sy1NsGb9ISFHQX/7b2KgwHTnG
+         O85zQIrSRdGP7kZSskEr0pI7yJxxxbw099GaX3zgqztrpYKKqdg3iFytc+vMa527hQR0
+         pLiDhtgie333E+Mspusmk7A2T3eYaD7iZt6PbbmPpwl0ApbQRtoBt93bliRb8fDfPsW+
+         tO4qoN0LkDJRCUgkhvAhhuK/VuNlRBSLwmVqRubBMSCT7wJfi6haOWusGaYDkT8wRPWn
+         waOi06h6AR0ytGNW18eT6IXLcWbxge9AEajXeQy3AkWHfBMueZSbYUSL1F1toyP9A39W
+         1c0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756853738; x=1757458538;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QT4bXlWWyAHlyWWTgWohbj6THlw3kJlerrsT5MEKJeM=;
-        b=vmmbUV9/CFhJeavk026zb7nLzYGyduhauHOyM2XzonsLG/Y+8ZIi5x2g1j7CJxjPPm
-         YlShuH4yqDQULoIX3XRh07WGNTipdj7MG4k1PMzV3eux34v6NPb+sPtwxvtDugPz/KP8
-         w309KSpp0jQdqpDKRSnp3taPJfdaKCQKX+x3BlOJ8flHA9rp0uzY/8fpwMCWbdbd0w22
-         YmLD5GVswDm0OYeYTsepqOOo4bhE/ujkiMkl6TtnsCvE8ntIh6uYZrK78BTH2mxOsl0G
-         zRKr+0vm6dz0LIOG3xB+eoV2wMZPbeLpN0qV/zwwKnhSnD+N8XPuEOvlSJ20rjTsEpiy
-         tISQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9SkoFD88MnMyXMZ/3i77wY7qqcYhmWrJmCurQC0gsFqum3BwmsxyMo5WGumW2ljv4S4UvAfmJvrEsEibS@vger.kernel.org, AJvYcCWpOi+r2Ysni+TnrDunCLsMq8m6Ds0v56OrLL0b5djqduD1oQUD04ZGkY42CTHw67PZYBtFal+uWYoW@vger.kernel.org, AJvYcCXr8YkD2nHRPIYYRgkNpQcksuqL2a+DzJcnsdY7PccOhuaxY4q/qmXioeapet2KD7bGqQc6ckIspPcJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+WazBhKCZvbvw91thKKzAzayuYee03veF8rpMFOiZPp5iAXfG
-	vOgc26ThFORCV144yJFgYc68XCQ+Fk0t79fRc1eZ1eApMFocQklhhyOtJO7aiLbWWwis6O9vPRX
-	5wTFpMMfxipvLFzU9rNjgFzHbJYkHsQ==
-X-Gm-Gg: ASbGncuTOlAQ4M3fNsR289cfBUC6N+Muc764j9F+TVyCS4CFZAynHk8EbDHtbjyP6mA
-	Meo7B2GiMeROCIYJlZq34rqWvpnA8STfrxEXUqGqiad0qBFKOWvZsl+FajjDXKle0a/+oUEvPxq
-	i15LlWby7m3OJIlVFtzSH9vChQsIPFHNyJl7WYBJdWSjq7OLfOJ7qGVTrsRJffcX7oBpfx+ZZXE
-	NYzwxWxMac9TEJs9pI2bYkhLt8jFDbJ9YylYvU8gCl+
-X-Google-Smtp-Source: AGHT+IE6XLqLnNFPywsDOopsHKijbwkX1d+HkInofT6F284X2N0jneOgWZTRMme2FwdzhjDYrd+UxEf1Y03jFcS0FEU=
-X-Received: by 2002:a17:90b:57e7:b0:327:9345:7097 with SMTP id
- 98e67ed59e1d1-32815437431mr18666081a91.10.1756853738356; Tue, 02 Sep 2025
- 15:55:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756853774; x=1757458574;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6y60fL7NODA3Mze50fVdidlqngxPgWIM1G9KmQ67B7g=;
+        b=vEU9BSWqG6axN9FLwyd7kA19GLEZ99ylPEVid1BRV4LL0vanI055zHdveflpZtr3p7
+         gJ5JE4MFn8tw+VbnMRuHAKKPX3FBu1DBOuKQkN9/RVrr+SdfddKjJUHDwmunLTreT1x8
+         am1db1A4R2UwE6pcR8owkHJhxqW3xwtlX8Efj+r/PdI5XJg8qRlqSbbUnWogdvdueUMK
+         5JS6IkZBqt0uSMK8MRauFiKN+lmJ7ygKFVBtzEMfLy0ky9LLAX0g8JzMb41wxfO+Qj88
+         HlcrWyfQLu4QYLM2cpC93n/ehRJwezK9Vcq07F65LX1lmMmeQ7L0/0Z5QYfqe4JvXmBA
+         bHag==
+X-Forwarded-Encrypted: i=1; AJvYcCWJgyLrUcl7waEfPyAjTKNkwaPcIOyOAvJ/sctIuLi+3Mr6B7gyRcCrcyKk6d0VvQk3h9TeIHqNNg4b/xc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUaVxnuifzgbsDwSeEf1MKDj/gMOW7S7Wqre5MNNb2Baendti9
+	pjDo/jQu7+ydMGuOiJpcxaSR/a7exIHNkDLmqemaLTPG7pgqGVjvENZU
+X-Gm-Gg: ASbGnctYIq+qTlrObyxhOioOtpDF1sNzbUa2+2nEx3xbGTfYYNFmPVexlqsylcHJEro
+	HYECpF+kr1FhRMECWdfRCkzTS0i8av8ifxyo2cqQUfY0rWiRYBLh2dZRt+jCNikQXU3HdBH5r4S
+	5J7KHT7lmbWlKDs5k3SOeQngXE+GPvWoDJPIRNiSokLaGyu95e2EBvHPfWkXXCcpK5jn1gS4e7I
+	+cZDz7cnBpElTVcdxgcwnEnek7s0NgkMNjwse/AsvCi7Qb9lTJxNCgQEofXlsZ2wImD1aQmNIVp
+	FsWxwfAe3cNDyqG3y5s6fRwGEmkoezPusYFiZiy+mKerp4v2cp5DFJksfotIXqKWn9q7V8ZGNL9
+	wRL+kSLZ/3Mib/4CRtmyO4NuKpEKPwdggDs/AXrnWe6gJWCozrkytSVmG2ccADxe17NWHh1MXCI
+	U56O1H1p8p7h0gPqoiURhD68I=
+X-Google-Smtp-Source: AGHT+IGZcGFPDQK2aRbRHnSfA7r8wxVj7nChgols/TbbtyMaQgQza900R5sHWoInyWm5NemHw4jthw==
+X-Received: by 2002:a05:622a:2d2:b0:4b0:66a3:f13c with SMTP id d75a77b69052e-4b31b8895eemr134350461cf.12.1756853774064;
+        Tue, 02 Sep 2025 15:56:14 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-80aa60dbf87sm22282785a.3.2025.09.02.15.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 15:56:13 -0700 (PDT)
+Date: Tue, 02 Sep 2025 18:56:13 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Breno Leitao <leitao@debian.org>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Clark Williams <clrkwllms@kernel.org>, 
+ Steven Rostedt <rostedt@goodmis.org>
+Cc: netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ linux-rt-devel@lists.linux.dev, 
+ kernel-team@meta.com, 
+ efault@gmx.de, 
+ calvin@wbinvd.org, 
+ Breno Leitao <leitao@debian.org>
+Message-ID: <willemdebruijn.kernel.a0f67bb6112a@gmail.com>
+In-Reply-To: <20250902-netpoll_untangle_v3-v1-5-51a03d6411be@debian.org>
+References: <20250902-netpoll_untangle_v3-v1-0-51a03d6411be@debian.org>
+ <20250902-netpoll_untangle_v3-v1-5-51a03d6411be@debian.org>
+Subject: Re: [PATCH 5/7] netpoll: Move SKBs pool to netconsole side
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250902212921.89759-1-jihed.chaibi.dev@gmail.com> <20250903000804.689a0a06@akair>
-In-Reply-To: <20250903000804.689a0a06@akair>
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Date: Wed, 3 Sep 2025 00:55:25 +0200
-X-Gm-Features: Ac12FXyZn1XROLNjv2iAqbnz2lIDroM9HP4qy__GnRcEpwkWHkRp9FWZYToEEOQ
-Message-ID: <CANBuOYrcdzDytx0f=ZbpMujcNGn8RLGZwOJBE8FzPsGtt1y9iQ@mail.gmail.com>
-Subject: Re: [PATCH v5] dt-bindings: mfd: twl: Add missing sub-nodes for
- TWL4030 & TWL603x
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: lee@kernel.org, krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org, 
-	ukleinek@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-> > +                  - ti,twl4030-power-idle-osc-off
->
-> this allows quite weird combinations like
->  "ti,twl4030-power-idle", "ti,twl4030-power-idle".
-> I would propose to rather clean this up to things used in
-> twl4030-power.c and at the same time available in dts, also
-> taking the brush in the dts. I do not expect that these specific
-> compatibles are in use anywhere. I looked around earlier.
->
-> Regards,
-> Andreas
+Breno Leitao wrote:
+> Since netconsole is the sole user of the SKBs pool within netpoll, move
+> the pool management into the netconsole driver.
+> 
+> This change prevents other netpoll users from allocating and holding
+> onto skb pool memory unnecessarily, thereby reducing memory usage when
+> the pool is not required (which is all the cases except netconsole).
+> 
+> The skb poll struct is still attached to the netpoll, but, eventually
+> this should move to the netconsole target, since it has nothing to do
+> with netpoll.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+>  drivers/net/netconsole.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++--
+>  net/core/netpoll.c       | 44 ------------------------------------
+>  2 files changed, 56 insertions(+), 46 deletions(-)
+> 
+> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> index 90e359b87469a..3fe55db07cfe5 100644
+> --- a/drivers/net/netconsole.c
+> +++ b/drivers/net/netconsole.c
+> @@ -57,6 +57,19 @@ MODULE_LICENSE("GPL");
+>  #define MAX_EXTRADATA_ITEMS		16
+>  #define MAX_PRINT_CHUNK			1000
+>  
+> +/*
+> + * We maintain a small pool of fully-sized skbs, to make sure the
+> + * message gets out even in extreme OOM situations.
+> + */
+> +
+> +#define MAX_SKBS 32
+> +#define MAX_UDP_CHUNK 1460
+> +#define MAX_SKB_SIZE							\
+> +	(sizeof(struct ethhdr) +					\
+> +	 sizeof(struct iphdr) +						\
+> +	 sizeof(struct udphdr) +					\
+> +	 MAX_UDP_CHUNK)
+> +
+>  static char config[MAX_PARAM_LENGTH];
+>  module_param_string(netconsole, config, MAX_PARAM_LENGTH, 0);
+>  MODULE_PARM_DESC(netconsole, " netconsole=[src-port]@[src-ip]/[dev],[tgt-port]@<tgt-ip>/[tgt-macaddr]");
+> @@ -172,6 +185,33 @@ struct netconsole_target {
+>  	char			buf[MAX_PRINT_CHUNK];
+>  };
+>  
+> +static void refill_skbs(struct netpoll *np)
+> +{
+> +	struct sk_buff_head *skb_pool;
+> +	struct sk_buff *skb;
+> +	unsigned long flags;
+> +
+> +	skb_pool = &np->skb_pool;
+> +
+> +	spin_lock_irqsave(&skb_pool->lock, flags);
+> +	while (skb_pool->qlen < MAX_SKBS) {
+> +		skb = alloc_skb(MAX_SKB_SIZE, GFP_ATOMIC);
+> +		if (!skb)
+> +			break;
+> +
+> +		__skb_queue_tail(skb_pool, skb);
+> +	}
+> +	spin_unlock_irqrestore(&skb_pool->lock, flags);
+> +}
+> +
+> +static void refill_skbs_work_handler(struct work_struct *work)
+> +{
+> +	struct netpoll *np =
+> +		container_of(work, struct netpoll, refill_wq);
+> +
+> +	refill_skbs(np);
+> +}
+> +
+>  #ifdef	CONFIG_NETCONSOLE_DYNAMIC
+>  
+>  static struct configfs_subsystem netconsole_subsys;
+> @@ -341,6 +381,20 @@ static int netpoll_parse_ip_addr(const char *str, union inet_addr *addr)
+>  	return -1;
+>  }
+>  
+> +static int setup_netpoll(struct netpoll *np)
 
-Hi Andreas,
+Having both netpoll_setup and setup_netpoll is a bit confusing.
+Maybe netconsole_setup_netpoll?
 
-Thank you for the feedback. I've done a deeper investigation into
-the 'power:compatible' strings to see if the schema could be made
-stricter.
-
-While cleaning up the list, I found an existing DTSI file
-(logicpd-torpedo-som.dtsi) that uses the combination:
-'compatible = "ti,twl4030-power-idle-osc-off", "ti,twl4030-power-idle";'
-
-Since this "idle, idle" combination is already in use, it seems we
-cannot make the schema stricter without breaking this existing
-board.
-
-I can prepare a v6 that drops the obsolete 'beagleboard-xm' and
-'n900', (which are not used by any driver) but keeps the fallback
-logic permissive to avoid a regression.
-
-Does this sound like the right path forward?
-Cheers,
+> +{
+> +	int err;
+> +
+> +	err = netpoll_setup(np);
+> +	if (err)
+> +		return err;
+> +
+> +	refill_skbs(np);
+> +	INIT_WORK(&np->refill_wq, refill_skbs_work_handler);
+> +
+> +	return 0;
+> +}
+> +
+>  #ifdef	CONFIG_NETCONSOLE_DYNAMIC
+>  
+>  /*
+> @@ -615,7 +669,7 @@ static ssize_t enabled_store(struct config_item *item,
+>  		 */
+>  		netconsole_print_banner(&nt->np);
+>  
+> -		ret = netpoll_setup(&nt->np);
+> +		ret = setup_netpoll(&nt->np);
+>  		if (ret)
+>  			goto out_unlock;
+>  
+> @@ -2036,7 +2090,7 @@ static struct netconsole_target *alloc_param_target(char *target_config,
+>  	if (err)
+>  		goto fail;
+>  
+> -	err = netpoll_setup(&nt->np);
+> +	err = setup_netpoll(&nt->np);
+>  	if (err) {
+>  		pr_err("Not enabling netconsole for %s%d. Netpoll setup failed\n",
+>  		       NETCONSOLE_PARAM_TARGET_PREFIX, cmdline_count);
 
