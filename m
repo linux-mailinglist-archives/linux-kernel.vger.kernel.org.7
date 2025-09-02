@@ -1,153 +1,174 @@
-Return-Path: <linux-kernel+bounces-797147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AFFB40C70
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:50:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C07B40C78
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0BAF200B25
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199D7188F64F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83D307482;
-	Tue,  2 Sep 2025 17:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1D4346A0F;
+	Tue,  2 Sep 2025 17:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/wtsvXo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0Eer1kR0"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B891932F761;
-	Tue,  2 Sep 2025 17:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A639342CB6
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756835400; cv=none; b=NA0Z0C0BXmgFyUIO1zKZan2bqjnhDuDzz0+bEL/5yhExuOsAtL58J7KQwhT7VUEI8VGctDNtXs3f2smNsswr1Q6+jeJ8jn3h920g0XxF9DjLW6G6GtHoccvbbTKwWJK2SBL48SvFbtA5Mt3WFZKHuh2TeS/eRZBZe/PxGudalm8=
+	t=1756835415; cv=none; b=frOEB37d7FkjdHvK4FLilC9fwc388J59y5GnjAfIuhCs2A1NL4kPA4HSlq1u0rwm2HLcPpSoRXU99k9SJ0kEpMP+BKEXg57KdKTTIMAp1IZwWTXCSsmih9TyNU+eiMQbVvkag7SNBx6pNaSPAI+GvNylBWC8gzpAhDGx+MPR6g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756835400; c=relaxed/simple;
-	bh=dILSe0oG4b7dsyoFhCAS4TLkKoUcoG2soSMyV+7jgSI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=al3Omq84YSGobbVZ6H8H8MNbIGDOEht52LyrMMT+1sSguZ0FcFPx87zDVkUAAyspPtIv0Goi+Y9nzMqqWKU5H7bfJPZApS0Q72CPB8r5JrmbSEl2p3CsYdI7GYCFUzV0LqhRLH25IlHUxANUeIENYAmBc0qdSJXYYpGb5WR6gjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/wtsvXo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BF05C4CEED;
-	Tue,  2 Sep 2025 17:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756835400;
-	bh=dILSe0oG4b7dsyoFhCAS4TLkKoUcoG2soSMyV+7jgSI=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=T/wtsvXof13m40ZAKK1s6dMis9lttTpbbPrxxkiOTDm54FQXz1yNUG/jyYnthxjU3
-	 qd3IwEJ90agvm9TfmOzHAkGGZerlaasbt9k9eTqWgB8+Q+jbqGvllpCu3u15WqS0n/
-	 8o9WoWRP3tcGMnQVIobClGpB7pVphwwfcFgjw7e7thYcDIMelxlRvutkxuGK/ukBSQ
-	 qFoRFe5xBLdNKN9RrKk7cyqmHyD4uoxW6mXAqOrxu2rUuepXxbWCe0eCKR2tEMOtia
-	 vbmSZ0r3X/It/kFv8DtW1Itq5WcHWvcKLeiRWtRgJWPyl2bFxHE+UBPoCvEjzuQgwP
-	 CbIPAfpUsUT7Q==
+	s=arc-20240116; t=1756835415; c=relaxed/simple;
+	bh=Qq79ok73NgzUNSPN3ElH84ehBnROIulXyA0yyA4cddE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fq9cOjirY6G8SNSrJoRmFtaxWAjzw5LCJC0GO16Y1Q6dXME7iJoWQQ8EiUpQR9pIyr2ax37Bq0XwJLzHMKTKqbhekXyLzIzxqLUrWNGJl7s2hX3L276yvRSrVcWlTbW7m/33rIMwvLlkhncP+GlyEch2M4vmlx6UptjYs62hjFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0Eer1kR0; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-560888dc903so433268e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:50:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756835412; x=1757440212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qq79ok73NgzUNSPN3ElH84ehBnROIulXyA0yyA4cddE=;
+        b=0Eer1kR0WtKHGcMrO/7bSVfIYNsu9xRoEmIbCIYaLosSLtg3My9vqxz4PdqlxF/Zzj
+         kuODRv4VrTZHkI3/u6S4R6dt9yQCPoq+YJECvzOxCg2kt2AptOw0Gpvlfo12pNFzsFUw
+         9MhxOXd+T6H9pYGg5IsVSx4Ss6ITrM4IYzVTISKEZVS0JLZKIcVtY7v+G8drgmExGN1d
+         ZKd3T1Fp7aKLIoCy0CtI+Ga2rEbKU7RGRPMoQ5xv4vw+kYO0hPRN6FJp0Cb+XvS9hDEM
+         uWqkGH1aI8qktgfDq8cKwa6GTRBj57l+MuEnbAINhsQdgMfis1qIHkz6rFsiHqzFU2a9
+         Jxhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756835412; x=1757440212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qq79ok73NgzUNSPN3ElH84ehBnROIulXyA0yyA4cddE=;
+        b=mDmrjSJeyJEc3NX5uusZ/aNP8y+wP+FErxpUUi2UMHPYQH3GBylD2tUe+XFbYPC2Yj
+         LD/pug6jSR6/zeCklggNKMbsEfMGB+CGqnA9Vf8DMhptCP6vNl3TypEFgDsJwk7aoSXj
+         YE9nKXSAbJBY+yPyiaV4Up9djWt0Fo9dHakWWHax+eXvKgJWrROV7wK6iXD4I3KKzqdW
+         mjmjhnDhD9himU3mhpCXfgXhViAsulxb108e3IBS3LZzhrORrcQYnK3LgYKtKOnGMkdZ
+         6CdGuDCIsP5KK3Ql34uKnZS+gxU7eq9UbstT+ruz4Ow1tJRUZO2MiTvGmNjrxe9eZFBJ
+         IACw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyBep+5Udk0W8ZOmLIWyqkNlkUBYiblXLsO1KjS81qrhBFrTjRQUDmDUrm47H5lHqEE1wLOvK8/Jpdcrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkxRBntr6oA/AFYhSjPW+G13ZtvAwuf4deF/yy+/faAPCKq51b
+	Xkkq2E0qwwOWkGlLi+GyFaD6XdvU7Ysfo8pBm0Jft/e5/Dscy0rNdjUVq2dwTP9dV0/JrnPvdIm
+	8p/T6HNubcL4aX/lKgSAp9kxs8ci5/Ga81X73tlOwBQ==
+X-Gm-Gg: ASbGnctRWBXZ74wJqH/IoAMIpo6BVdPniVaz+FtPnLHiVgwsxAnCOr++yKVxCinTbS+
+	wLirBlPPZ65Uej+n94W0NmFpX9GN/p8qF7O7yDBAythw/7auX75ogA/KErjDTGHKDzq/WPmCRdR
+	kXXYrtZB6BfMrARLhn/+k0BQCoHXqvaL7WgILrW510UuQHNkOh9LAQ4zheeafFjdqIyPfqhvmjz
+	xZtzJ30oGd7nBI3zfFiUsF/qJSVhGo2li2w34+yssOrE6au/Q==
+X-Google-Smtp-Source: AGHT+IHWxMY/UX5pahdxyPomER2R5wCG7WJNOYIC76WLDnRgZXryLWeY1Ce628zgGwqGftmJqN1QawcJ1KuqTk6lVI8=
+X-Received: by 2002:a05:6512:3b12:b0:55f:4f99:f3c9 with SMTP id
+ 2adb3069b0e04-55f708ec830mr4334057e87.32.1756835411674; Tue, 02 Sep 2025
+ 10:50:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-13-bb091daedc52@linaro.org> <aLb_pOG-yc-CHoiY@smile.fi.intel.com>
+In-Reply-To: <aLb_pOG-yc-CHoiY@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 2 Sep 2025 19:50:00 +0200
+X-Gm-Features: Ac12FXzmJRg8_mGsvbk9kTYEAk6i5wfrx-8rp8gdl4L5LHxLn-6rA1BsDeyDmdo
+Message-ID: <CAMRc=Mc-NEFawz11Lr5JGStoe=PU7b91E-MVB3xkdBr_JoiStQ@mail.gmail.com>
+Subject: Re: [PATCH v7 13/16] pinctrl: allow to mark pin functions as
+ requestable GPIOs
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 02 Sep 2025 19:49:56 +0200
-Message-Id: <DCII677CICRL.2OCMSV7ESGTQ5@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add drm-rust tree for Rust DRM drivers and
- infrastructure
-Cc: <aliceryhl@google.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
- <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
- <acourbot@nvidia.com>, <daniel.almeida@collabora.com>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-To: "Maxime Ripard" <mripard@kernel.org>
-References: <20250901202850.208116-1-dakr@kernel.org>
- <humoafx7njwhvdwarelew2bwyl34q3ls5vbrkj6psfukoroni5@z7ap6mc4lj3k>
-In-Reply-To: <humoafx7njwhvdwarelew2bwyl34q3ls5vbrkj6psfukoroni5@z7ap6mc4lj3k>
 
-On Tue Sep 2, 2025 at 7:40 PM CEST, Maxime Ripard wrote:
-> On Mon, Sep 01, 2025 at 10:26:39PM +0200, Danilo Krummrich wrote:
->> Multiple DRM Rust drivers (e.g. nova-core, nova-drm, Tyr, rvkms) are in
->> development, with at least Nova and (soon) Tyr already upstream. Having =
-a
->> shared tree will ease and accelerate development, since all drivers can
->> consume new infrastructure in the same release cycle.
->>=20
->> This includes infrastructure shared with other subsystem trees (e.g. Rus=
-t
->> or driver-core). By consolidating in drm-rust, we avoid adding extra
->> burden to drm-misc maintainers, e.g. dealing with cross-tree topic
->> branches.
->>=20
->> The drm-misc tree is not a good fit for this stage of development, since
->> its documented scope is small drivers with occasional large series.
->>=20
->> Rust drivers in development upstream, however, regularly involve large
->> patch series, new infrastructure, and shared topic branches, which may
->> not align well with drm-misc at this stage.
->>=20
->> The drm-rust tree may not be a permanent solution. Once the core Rust,
->> DRM, and KMS infrastructure have stabilized, drivers and infrastructure
->> changes are expected to transition into drm-misc or standalone driver
->> trees respectively. Until then, drm-rust provides a dedicated place to
->> coordinate development without disrupting existing workflows too much.
->>=20
->> Cc: Alice Ryhl <aliceryhl@google.com>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->> Cc: Maxime Ripard <mripard@kernel.org>
->> Cc: Thomas Zimmermann <tzimmermann@suse.de>
->> Cc: Alexandre Courbot <acourbot@nvidia.com>
->> Cc: Daniel Almeida <daniel.almeida@collabora.com>
->> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->> ---
->>  MAINTAINERS | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index fe168477caa4..1cd6597c7f1d 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -8079,7 +8079,6 @@ F:	Documentation/devicetree/bindings/gpu/
->>  F:	Documentation/gpu/
->>  F:	drivers/gpu/drm/
->>  F:	drivers/gpu/vga/
->> -F:	rust/kernel/drm/
->>  F:	include/drm/drm
->>  F:	include/linux/vga*
->>  F:	include/uapi/drm/
->> @@ -8096,6 +8095,16 @@ X:	drivers/gpu/drm/radeon/
->>  X:	drivers/gpu/drm/tegra/
->>  X:	drivers/gpu/drm/xe/
->> =20
->> +DRM DRIVERS AND COMMON INFRASTRUCTURE [RUST]
->> +M:	Danilo Krummrich <dakr@kernel.org>
->> +M:	Alice Ryhl <aliceryhl@google.com>
->> +S:	Supported
->> +W:	https://drm.pages.freedesktop.org/maintainer-tools/drm-rust.html
->> +T:	git https://gitlab.freedesktop.org/drm/rust/kernel.git
->> +F:	drivers/gpu/drm/nova/
->> +F:	drivers/gpu/nova-core/
->> +F:	rust/kernel/drm/
->> +
+On Tue, Sep 2, 2025 at 4:31=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
-> Would it make sense to add the drm-misc maintainers as reviewers for the
-> bindings?
-
-This will get you all the driver patches in your inbox as well, maybe
-discarding the following hunk is what we want instead?
-
-	@@ -8079,7 +8079,6 @@ F:	Documentation/devicetree/bindings/gpu/
-	 F:	Documentation/gpu/
-	 F:	drivers/gpu/drm/
-	 F:	drivers/gpu/vga/
-	-F:	rust/kernel/drm/
-	 F:	include/drm/drm
-	 F:	include/linux/vga*
-	 F:	include/uapi/drm/
-
-> Either way,
+> On Tue, Sep 02, 2025 at 01:59:22PM +0200, Bartosz Golaszewski wrote:
+> >
+> > The name of the pin function has no real meaning to pinctrl core and is
+> > there only for human readability of device properties. Some pins are
+> > muxed as GPIOs but for "strict" pinmuxers it's impossible to request
+> > them as GPIOs if they're bound to a devide - even if their function nam=
+e
+> > explicitly says "gpio". Add a new field to struct pinfunction that
+> > allows to pass additional flags to pinctrl core.
 >
-> Acked-by: Maxime Ripard <mripard@kernel.org>
+> Which I disagree with. The pin control _knows_ about itself. If one needs
+> to request a pin as GPIO it can be done differently (perhaps with a new,
+> special callback or with the existing ones, I need to dive to this).
+
+What? Why? Makes no sense, there already is a function for requesting
+a pin as GPIO, it's called pinctrl_gpio_request(). And it's affected
+by this series because otherwise we fail as explained in the cover
+letter.
+
+> On a brief view this can be done in the same way as valid_mask in GPIO,
+> actually this is exactly what should be (re-)used in my opinion here.
 >
-> Maxime
+
+Except that the valid_mask is very unclear and IMO it's much cleaner
+to have a flag for that.
+
+> > While we could go with
+> > a boolean "is_gpio" field, a flags field is more future-proof.
+>
+> This sentence is probably extra in the commit message and can be omitted.
+>
+> > If the PINFUNCTION_FLAG_GPIO is set for a given function, the pin muxed
+> > to it can be requested as GPIO even on strict pin controllers.
+>
+> So. this changes the contract between pin control (mux) core and drivers.
+
+Yes, that's allowed in the kernel. The current contract is wrong and
+the reason why we can for instance confuse debug UARTs by requesting
+its pins as GPIOs from user-space whereas a strict pinmuxer will not
+allow it. But to convert pinmuxers to "strict" we need to change the
+behavior.
+
+> Why? How is it supposed to work on the really strict controllers, please?
+>
+
+Like what I explained several times? You have pins used by a device.
+User-space comes around and requests them and fiddles with them and
+now the state of your device is undefined/broken. With a strict
+pinmuxer user-space will fail to request the pins muxed to a non-GPIO
+function.
+
+> > Add a new callback to struct pinmux_ops - function_is_gpio() - that all=
+ows
+> > pinmux core to inspect a function and see if it's a GPIO one. Provide a
+> > generic implementation of this callback.
+
+Bartosz
 
