@@ -1,272 +1,195 @@
-Return-Path: <linux-kernel+bounces-797107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E78B40BE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:22:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097B7B40BF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C858C207D22
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:22:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BDC218808F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABA5342CB6;
-	Tue,  2 Sep 2025 17:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNlDoo4a"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E233A340DA0;
+	Tue,  2 Sep 2025 17:24:33 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF9F4C9D;
-	Tue,  2 Sep 2025 17:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C83342C9D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756833725; cv=none; b=PEmGPTIzqDYxJAt6QpfJ3nY3ovE4Rz3xbk7ebFwrCWxZqCCFvBnFGKay3/pRuH5+3iF/MREsUzG9bDJcWgtlx9/+r87TIqEH0e1Vtl/BUbhqrVK9CEPUn4qFp8ZtMLi9QysW8TrXqwGFV9EH5eVc+4ANfBmsMLXE/4rxF/+9xmk=
+	t=1756833873; cv=none; b=q82qaQfaFx92YghstNEjfP48cV4SsJm0frJ9cynOikkJv8b1XBFnjvnMGEV81oScvaMgMnffhyIblAsksh79uABC0wjOJT25ahO9bIROhc+YhENbCc8Pn2Zuy6l40HXWPsnxdkGFb9QBGIcFwNIUd6LpdV0tlRW0Ncn1ClvTOSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756833725; c=relaxed/simple;
-	bh=B6M7C6RAvQGIo2fAq8KjeI0slfKrcN2+BChM7Fx5Yek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CrK0IEDCRusCHGNZzFJ5A8sH44LqTBKKXNMSBM4yVkhUSc1D3hnja/GPgLSiVq+b5+oAaTYQmwOj8IzEjDWYJc2UIP++nByYZuMifLwx5zNRMvKIvhyUz6LW3PfPCUoLYv4jx8PgDzaV2v+4Deupxem5Ux5CkX98CIJFggRtVzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNlDoo4a; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f74c6d316so3070315e87.0;
-        Tue, 02 Sep 2025 10:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756833721; x=1757438521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UHL/9iHScP0f81WBDBOizsme4Dv5vS87EI96jZlcSN0=;
-        b=VNlDoo4aabpzvnbp+UD/sxN7uinL2Th/IL3DVcU9Gpki4+6sxp2sVDtAARO2GhoZdQ
-         3Cw5XKrTM7wub1dUyLuSEr43ZP69TrKyY68pvUguQf4CjO3RbL64NGsJfy+eZrnd46Bm
-         oSh7kHDgZFAWsIs8DHTJaTVMFnOT/4wwNiwk5aINdSVx3kznQ/bAWMiXtoSklJIGRrdf
-         p3tt3LgpBiM0H0DUWJephh0rRd68wruoHTkURT+SEsR4chhGTFguej4JWpvTWHaBTAsW
-         qRIsyox1WSGhJ9y5bMILn9e3KUEkSz4jXYdjAML1q9AFW5i8Q9D1ud37n/aaDjKPNYUx
-         7YZw==
+	s=arc-20240116; t=1756833873; c=relaxed/simple;
+	bh=1ZZqFbNw/49Gug/s2W/vtYY7n2F4KFxPrpOt6Bf1xyw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Qjx19KEf4Iyp+2XNmqP6QciuF2Lo1yL/PqoFLIfVQsiu5lvUEfqJUm2fe/L+jHHnUq5MCQ9mtpvI3y3jsbRqshO4gGdWXdLtALriO3UEjUpJScjN+p++c/kdWo7RqKoJSv0Gm3A3Dh90514AQP5lbHv6NiiyQNqECQTOBEdNdwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8870b07643bso488069239f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:24:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756833721; x=1757438521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UHL/9iHScP0f81WBDBOizsme4Dv5vS87EI96jZlcSN0=;
-        b=g79gPu7YLF0TsmSZWA1PSa0db4TTNbSHNK1rd4Xm8VCZPRKOwVeG6Uzogml+7MI/UF
-         tQrWho/qF7ecvK89WR7uK/su3LdE99mIPTXM/1+GmzG1bFja0dmdwc5BzwXOq7BTjfqF
-         Kj6+mjKLnNOO7o1poNSBCi/6nHZyx+PfFQ5n/uA0BzDT4nwxWNaWpd/KwphD54i7bSmD
-         /qrRegUxUtTg6bt0Cknw+Evqn2wRjZ1RTPsSwYuQAwfpk5NAdyi1ORKX/HJAhwetpaIi
-         2jvVfSodyyJCQcD/wBlVSph24ucJkDqDk0li59Pzh3GuyhDYKjBNiw+eDEXuUWt0Wzgq
-         rkMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC+DyHkKepa4K/jpZdlgYGA+vIxWI513Im26ziCtjuyFz+lLO7DwvK7wWsyr/OFj+35/LVkhtDHXOEOAM=@vger.kernel.org, AJvYcCUFXJsNtGZs3YJbOTU0dHFlf5AAa39t7ihWgliANvOM5RdkxxkQxnCFp85EMpNx7TjviP/6PeMDzShInzAY@vger.kernel.org, AJvYcCVVr5Tm6Ttx9rneoZexUZW+or/kQsQCwiOUGtY22H8gO4cAqIO9IEKbNapV77CBpGNzyPOjyDsCSknu@vger.kernel.org, AJvYcCW0w4zVmTbvOFXLrraYAz3QV3t4HpoQUosbD9pot3Rahlh/BegTTKV0X7sL46P8YfqzEx9soDgphWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJhA1bACAwP99VB6aJ/qmURmn3vVnUFAd+MZCgOXGuwy8LHN01
-	ByMpAl1S+4l+USC4500G/AU0x6ACnjXhnWFr6uzvshb5AiJPRY534Rns3cDC39ZGGzdinjTcTv9
-	rUef/h6Z1YvXyRphpxqqzLMyrzc0/Lh4=
-X-Gm-Gg: ASbGncusWsZhIbDHxiv4o1I4rcm++zwToBS4wlFXfVJx3s46XIkY4u3F9AhBzjsLRWY
-	dXXS8b37zaE7KJL81UnH1CnSxJr7to0ayunv233pvjF6rvMQMCBmDoLmOuJ667IfpGV478xMjQU
-	hOsYn8lbpd8OXPJWmVmMaU51+GkPToB3C5DqkLMIIL9a7GFBWVJiPKATnTDFkbJqgcq2RAYtB6r
-	+QB0nzfv8z1ijutAQ==
-X-Google-Smtp-Source: AGHT+IE8oTTq+xEDbODxk6NkVp632kFnXlauLi5KyQdm1eD41EnADMVC5Pj54/S9hW5DBLjU9xVeRCbpJzdGAY5g6ME=
-X-Received: by 2002:a05:6512:6812:b0:55f:44b8:1eda with SMTP id
- 2adb3069b0e04-55f709c5066mr3203274e87.57.1756833720986; Tue, 02 Sep 2025
- 10:22:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756833871; x=1757438671;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lPP45SA+l96CUh2c18VDkNcHfjDugr+GGGq2m1pNyw0=;
+        b=HR1Wb0lAY8Xwt9fiLEOVRqs98MJWqGiqHVo6Zf47fDSXbiw8K13v3UVaCUKFynG6MN
+         Ihfl9RNonAXNnx597O74IBGOWT3G4TAyr5hAf1C6qVFMB7SfwS9eUTIdf5iTJvD6XHnU
+         T6xM7VMF6IvTefTaVzFnkL/xY6Nv9CmXGaWREyq127rEj9rIAOB5Anm2oYLy2/eLT1QZ
+         GvrI9hc+45yIFNfD3UBQjJzCzLFurzcKudS+Mgh44WZsZQAJArAuRuLlOTlkIHO2EYzK
+         gS9CbIwB+/YDDayidn8MFrtLtD/QxtMG7rS9reK55psdxc7wTRXc8alUWYdbRmHfLpJQ
+         lsDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOV9XX+yc6+BEKUcdRJGciFzV9CAt9uh0s1GODbJta0NUeLdSzU1Li8IdfBkmP0vCdz4E6nzI5tsS5Iw0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvMkSAkrKSkMDdjz0Ou4/EmcjPaf/LJ40yaOlwjRfH0utpiBMO
+	Nrxt59XlC5w0vgsnJcU7PNU6byhQMUBOOpjUqeXitscFUGFySwlrc2pbGoFraX/+5MjstMViCSF
+	7lZqcSTPEr1NPTxndlBN9hUHTmY8qi355RpcQ9rElMa6IP4YIzmImkVx70wU=
+X-Google-Smtp-Source: AGHT+IFV5H1Fgh3t9Ch95MsLrxeQgVcDnvnLwFQWyFLZD+7A55UCkqpzNbOb/0bAc/B3lUb9xV7mDA4YWg1dL71pPqMCIJdrXAkJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
- <20250831-tegra186-icc-v1-3-607ddc53b507@gmail.com> <20250901055322.eorgaa3sycydjrrj@vireshk-i7>
-In-Reply-To: <20250901055322.eorgaa3sycydjrrj@vireshk-i7>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 2 Sep 2025 12:21:48 -0500
-X-Gm-Features: Ac12FXwAMFX1p_PsOnmUDjM6sbNKJYvGiQz3wZmgcPdZm7OguorJSHmUZJm_-T4
-Message-ID: <CALHNRZ_EbtHSXaDQ+1gGf3HjdyW5Q54EDN901-r8A_aXLbDJkw@mail.gmail.com>
-Subject: Re: [PATCH 3/8] cpufreq: tegra186: add OPP support and set bandwidth
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-pm@vger.kernel.org
+X-Received: by 2002:a05:6e02:19c8:b0:3f0:ac23:ea93 with SMTP id
+ e9e14a558f8ab-3f4026c2863mr250677045ab.29.1756833870850; Tue, 02 Sep 2025
+ 10:24:30 -0700 (PDT)
+Date: Tue, 02 Sep 2025 10:24:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b7284e.050a0220.3db4df.01d6.GAE@google.com>
+Subject: [syzbot] [ext4?] INFO: task hung in ext4_read_bh
+From: syzbot <syzbot+18edb60ce92acd5b4674@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 1, 2025 at 12:53=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 31-08-25, 22:33, Aaron Kling via B4 Relay wrote:
-> > diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra=
-186-cpufreq.c
-> > index bd94beebc4cc2fe6870e13ca55343cedb9729e99..f0abb44e2ed00a301161565=
-e4c4f62cfed4a5814 100644
-> > --- a/drivers/cpufreq/tegra186-cpufreq.c
-> > +++ b/drivers/cpufreq/tegra186-cpufreq.c
-> > @@ -18,6 +18,7 @@
-> >  #define EDVD_CORE_VOLT_FREQ_F_SHIFT  0
-> >  #define EDVD_CORE_VOLT_FREQ_F_MASK   0xffff
-> >  #define EDVD_CORE_VOLT_FREQ_V_SHIFT  16
-> > +#define KHZ                          1000
->
-> Can reuse:
->
-> include/linux/units.h:#define HZ_PER_KHZ                1000UL
+Hello,
 
-Will do.
+syzbot found the following issue on:
 
->
-> > +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigne=
-d long freq_khz)
-> > +{
-> > +     struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
-> > +     struct dev_pm_opp *opp;
-> > +     struct device *dev;
-> > +     int ret;
-> > +
-> > +     dev =3D get_cpu_device(policy->cpu);
-> > +     if (!dev)
-> > +             return -ENODEV;
-> > +
-> > +     opp =3D dev_pm_opp_find_freq_exact(dev, freq_khz * KHZ, true);
-> > +     if (IS_ERR(opp))
-> > +             return PTR_ERR(opp);
-> > +
-> > +     ret =3D dev_pm_opp_set_opp(dev, opp);
->
-> Won't it be easier to use dev_pm_opp_set_rate() instead ?
+HEAD commit:    7fa4d8dc380f Add linux-next specific files for 20250821
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a46662580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ae76068823a236b3
+dashboard link: https://syzkaller.appspot.com/bug?extid=18edb60ce92acd5b4674
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a46662580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1399da62580000
 
-I'm not very familiar with the opp system. If I read correctly,
-dev_pm_opp_set_rate() will round to the closest rate while this code
-will fail if the exact rate isn't found. This code is based on the
-existing tegra194-cpufreq driver. And I'm unsure if this was done for
-a reason. I have seen unexpected rates returned from clk_round_rate in
-the development of this topic, so that could be related.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/63178c6ef3f8/disk-7fa4d8dc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c5c27b0841e0/vmlinux-7fa4d8dc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9a8832715cca/bzImage-7fa4d8dc.xz
 
->
-> > +     if (ret)
-> > +             data->icc_dram_bw_scaling =3D false;
-> > +
-> > +     dev_pm_opp_put(opp);
->
-> The OPP core supports scope based cleanup helpers now, maybe use them
-> to remove all these put calls.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+18edb60ce92acd5b4674@syzkaller.appspotmail.com
 
-I will look into this.
+INFO: task syz.0.17:6042 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.17        state:D stack:24456 pid:6042  tgid:6042  ppid:5993   task_flags:0x400140 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ io_schedule+0x80/0xd0 kernel/sched/core.c:7903
+ bit_wait_io+0x11/0xd0 kernel/sched/wait_bit.c:250
+ __wait_on_bit+0xb6/0x310 kernel/sched/wait_bit.c:52
+ out_of_line_wait_on_bit+0x123/0x170 kernel/sched/wait_bit.c:67
+ wait_on_buffer include/linux/buffer_head.h:420 [inline]
+ ext4_read_bh+0x20d/0x260 fs/ext4/super.c:207
+ ext4_read_bh_lock fs/ext4/super.c:220 [inline]
+ __ext4_sb_bread_gfp+0x1c9/0x210 fs/ext4/super.c:242
+ ext4_sb_bread_unmovable fs/ext4/super.c:265 [inline]
+ ext4_load_super fs/ext4/super.c:5063 [inline]
+ __ext4_fill_super fs/ext4/super.c:5267 [inline]
+ ext4_fill_super+0x802/0x6090 fs/ext4/super.c:5728
+ get_tree_bdev_flags+0x40b/0x4d0 fs/super.c:1692
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1752
+ do_new_mount+0x2a2/0xa30 fs/namespace.c:3810
+ do_mount fs/namespace.c:4138 [inline]
+ __do_sys_mount fs/namespace.c:4349 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4326
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f733498ebe9
+RSP: 002b:00007ffe0adbf068 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f7334bc5fa0 RCX: 00007f733498ebe9
+RDX: 0000200000000000 RSI: 0000200000000040 RDI: 0000200000000100
+RBP: 00007f7334a11e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000200000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7334bc5fa0 R14: 00007f7334bc5fa0 R15: 0000000000000005
+ </TASK>
+INFO: lockdep is turned off.
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:332 [inline]
+ watchdog+0xf60/0xfa0 kernel/hung_task.c:495
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
+Code: cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d 83 0f 22 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90000197de0 EFLAGS: 000002c2
+RAX: a34074f8f13bed00 RBX: ffffffff8197ac78 RCX: a34074f8f13bed00
+RDX: 0000000000000001 RSI: ffffffff8c04e5e0 RDI: ffffffff8197ac78
+RBP: ffffc90000197f10 R08: ffff8880b8732f9b R09: 1ffff110170e65f3
+R10: dffffc0000000000 R11: ffffed10170e65f4 R12: ffffffff8fe52d30
+R13: 0000000000000001 R14: 0000000000000001 R15: 1ffff11003a55b40
+FS:  0000000000000000(0000) GS:ffff8881258c4000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056389163e5d0 CR3: 00000000754ec000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:757
+ default_idle_call+0x74/0xb0 kernel/sched/idle.c:122
+ cpuidle_idle_call kernel/sched/idle.c:190 [inline]
+ do_idle+0x1e8/0x510 kernel/sched/idle.c:330
+ cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:428
+ start_secondary+0x101/0x110 arch/x86/kernel/smpboot.c:315
+ common_startup_64+0x13e/0x147
+ </TASK>
 
->
-> > +     return ret;
-> > +}
-> > +
-> > +static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *pol=
-icy,
-> > +                                         struct cpufreq_frequency_tabl=
-e *bpmp_lut,
-> > +                                         struct cpufreq_frequency_tabl=
-e **opp_table)
-> > +{
-> > +     struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
-> > +     struct cpufreq_frequency_table *freq_table =3D NULL;
-> > +     struct cpufreq_frequency_table *pos;
-> > +     struct device *cpu_dev;
-> > +     struct dev_pm_opp *opp;
-> > +     unsigned long rate;
-> > +     int ret, max_opps;
-> > +     int j =3D 0;
-> > +
-> > +     cpu_dev =3D get_cpu_device(policy->cpu);
-> > +     if (!cpu_dev) {
-> > +             pr_err("%s: failed to get cpu%d device\n", __func__, poli=
-cy->cpu);
-> > +             return -ENODEV;
-> > +     }
-> > +
-> > +     /* Initialize OPP table mentioned in operating-points-v2 property=
- in DT */
-> > +     ret =3D dev_pm_opp_of_add_table_indexed(cpu_dev, 0);
-> > +     if (!ret) {
->
-> If you handle the error case here, then the below can move out of the
-> if/else block.
 
-I'd prefer not to deviate too much from the tegra194-cpufreq code this
-is based on, so the drivers can be more easily kept in parity to each
-other. But I will look at making this a bit cleaner as per this and
-the next comment.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->
-> > +             max_opps =3D dev_pm_opp_get_opp_count(cpu_dev);
-> > +             if (max_opps <=3D 0) {
-> > +                     dev_err(cpu_dev, "Failed to add OPPs\n");
-> > +                     return max_opps;
-> > +             }
-> > +
-> > +             /* Disable all opps and cross-validate against LUT later =
-*/
-> > +             for (rate =3D 0; ; rate++) {
->
-> Maybe using while(1) would be more readable ?
->
-> > +                     opp =3D dev_pm_opp_find_freq_ceil(cpu_dev, &rate)=
-;
-> > +                     if (IS_ERR(opp))
-> > +                             break;
-> > +
-> > +                     dev_pm_opp_put(opp);
-> > +                     dev_pm_opp_disable(cpu_dev, rate);
-> > +             }
-> > +     } else {
-> > +             dev_err(cpu_dev, "Invalid or empty opp table in device tr=
-ee\n");
-> > +             data->icc_dram_bw_scaling =3D false;
-> > +             return ret;
-> > +     }
-> > +
-> > +     freq_table =3D kcalloc((max_opps + 1), sizeof(*freq_table), GFP_K=
-ERNEL);
-> > +     if (!freq_table)
-> > +             return -ENOMEM;
-> > +
-> > +     /*
-> > +      * Cross check the frequencies from BPMP-FW LUT against the OPP's=
- present in DT.
-> > +      * Enable only those DT OPP's which are present in LUT also.
-> > +      */
-> > +     cpufreq_for_each_valid_entry(pos, bpmp_lut) {
-> > +             opp =3D dev_pm_opp_find_freq_exact(cpu_dev, pos->frequenc=
-y * KHZ, false);
-> > +             if (IS_ERR(opp))
-> > +                     continue;
-> > +
-> > +             dev_pm_opp_put(opp);
-> > +
-> > +             ret =3D dev_pm_opp_enable(cpu_dev, pos->frequency * KHZ);
-> > +             if (ret < 0)
-> > +                     return ret;
-> > +
-> > +             freq_table[j].driver_data =3D pos->driver_data;
-> > +             freq_table[j].frequency =3D pos->frequency;
-> > +             j++;
-> > +     }
-> > +
-> > +     freq_table[j].driver_data =3D pos->driver_data;
-> > +     freq_table[j].frequency =3D CPUFREQ_TABLE_END;
-> > +
-> > +     *opp_table =3D &freq_table[0];
-> > +
-> > +     dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
-> > +
-> > +     tegra_cpufreq_set_bw(policy, freq_table[j - 1].frequency);
->
-> Maybe a comment on why exactly you are changing the freq here ?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-To my knowledge, this does not change any clocks. The intent here is
-to prime the interconnect data. In the pre-req series, there's a
-change that sets all clocks to max frequency during probe. Then my use
-case involves setting performance governor by default on some boots.
-During testing, I noticed that the interconnect data provided by this
-driver was all zeroes. Which led me to notice that set_bw is only
-called when the target frequency changes. Which wasn't happening
-because clocks were already set to max. If my understanding here is
-wrong or there's a better way to handle this, I will fix it.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Aaron
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
