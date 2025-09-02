@@ -1,169 +1,147 @@
-Return-Path: <linux-kernel+bounces-796431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69D6B4009C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:31:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3D3B40098
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9887B6793
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:29:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A773189469A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2960221D88;
-	Tue,  2 Sep 2025 12:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULSKc8yH"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FED212574;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8711F582F;
 	Tue,  2 Sep 2025 12:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X2pz/o2K"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A7D1F4C96
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816258; cv=none; b=mc+CbBzaYjg4jKrdL9YjkxkYYr5pQzUyYSP9wSZEHjEfK/obQpQFqFDy4Q5vLnmcwAwAnLNaTu+wGpLuHRNzYwOyeF2iDPoX09GAWzvpgfAj5sKzxNXB4DR71JH/7y911n1LeHgEfOLYvwO7+3gzGJM/NpzxgHxIXB6M58ETBAU=
+	t=1756816256; cv=none; b=qVtCJnX1BG/tLmgKHOHYpUWfUg2RTgywjG7tCos/ApbIWCKDcCZK9i8L9K2IL9z/rqgFvMOgypcJTd3rgKArT0wLrxcCD/THYrcj6QlHbpJnaCLtOL1+EiNyZxZit4bBgZUbm4iBJ2BuSJ9/IgpztT857+7eJEoPButCZQa/UDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816258; c=relaxed/simple;
-	bh=wH5KRVO8DrpRPW4kS9jEPxwcEskcMxWrkrT5TIxUJvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pfEb+h1KbW4m25jWQzSwX9r8rbvN3q7JfaT14jYlEktresZx7e7oECOUXB3jKRWHES9BAcjtlhniGT80fZsB4+bYhhNNd16Qc5x8wxWdJdsUrULjzzQlJQQxnsev+qbEKTcCPH1PUPEruxRwy4ojqszWea8+L+0DshCt0Ojh93k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULSKc8yH; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so3686568e87.2;
-        Tue, 02 Sep 2025 05:30:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756816254; x=1757421054; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lP6s/YaLsqxk0SP2arlfn0tHcFpj43m+GUr636Gha9M=;
-        b=ULSKc8yHUvUeelXwjtOXsy9+Y0Pcm2enjEo2Ykolge2FVcMSSQJ1LP6C5VPAEasgCp
-         0bhtJsPShNgbiMWgel5VuWDlYTQXMBbr7Aq/JyVFq6ViHBdhxdy4Ss+8cXe+rgqiE7+n
-         Ih9Ror06OZrUk36kLDU8HSUiRpvr/07332fIJFTv9hgJL38DcsADaVuNVI7C4Hr87dk3
-         qumx9HiAHlaELRfZGPh4mdf4bvusw2GIsfyH1Fe1+5G/dacpSYId0ciu50FOJz/jfq5S
-         Kz8YnL+1kOs/CCFkeLcw3WmAPw0+MhyNELTBazsZF+IVeA7aJXXZeZswcEN4Fc+2v8a/
-         C5jA==
+	s=arc-20240116; t=1756816256; c=relaxed/simple;
+	bh=BNWoXsVDFnok4UFE+T0JM3TKXHmHj1QrThTVFrNIAkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mLI0yLKP4dMfKcc5I/qFiaEc8dfRr/DV/Tanirb4ujqPZs5MDcJnTLAFbQVGOLGmZ7FESbTWRQtlYXjhZZC1Iipw9+rWNjCdyCPJN82zvDv6Rmx0C+TPm8v8nNIpCz6P/1EwFm9eEWV/TkwVP1h3IkclOnvpobKJDeYTxK/EQkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X2pz/o2K; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582AeGOj024999
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 12:30:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BNWoXsVDFnok4UFE+T0JM3TKXHmHj1QrThTVFrNIAkA=; b=X2pz/o2KGIh9+Ffk
+	JkvjpBU4/98fgg347M2ChiWgeISMl1m7Z6VQoXYRnp2Ktj3oG8Ci/KOXqrs7bXqp
+	kOkwdFX90MjzqHGFGfn7M+Nn00zesmVj1qNejtLuZFoadckRsurdpS4xTcEbadsJ
+	JSkokdDfOhK6CRYNVRo4Khygg8EuZ1eztFrGLGthoipZPEAhvyN2awLdSoqD668b
+	hiCV06UNzrzajK6Quj2iMaV+c5n0dkdJgm118ZHQsrGQpr1VaMB+F4tyippbwuCG
+	thHJcTcB/vS8rMzMZWerk2aWCXgbfEyoILbK6mPqsIw9i1vlbxQ4pIXNFA+eqZKJ
+	vI4EnQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48uscuyt48-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:30:53 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b3d3fc4657so95711cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:30:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756816254; x=1757421054;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lP6s/YaLsqxk0SP2arlfn0tHcFpj43m+GUr636Gha9M=;
-        b=OZuBAPMYPS/T8QhKSY0tGnyzEB/1PhKxtkWWfPcWLvfhfx/8d57dRx+3icUpvd+4fI
-         3JvMvoERU5LSQDrrxHE4pGcFUQ+3a3a4TrSH7fuJMxyrSOXfFyQaGqT/5+AwOkMi3FFA
-         NRFOeDZxO6O9yk7ACehMKIBQzoge8+rmLRffFfIHhauqCK0SbcKa89t4/dFtp+MclRjc
-         RQU6fibZYwElhhuveS5QidBh8cWNuM2GCIGDzYpYDAFG+vi8Vn1pfCkNMF+vy0A9jqmB
-         tHTv8tnoV+Kbd0kBMBvw+kXVXkBH6Y6NZqdP8kOaLRhsLWvSOCul4kU7i2r4KC1cS2/C
-         3EOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3AQn4VIWmnjptDGIdWkQPHHvPaWpuwuhSLMIdgWF7/lbHRr6d3CD39HU/gMZzDcTqZ6FXvW2RPD2I@vger.kernel.org, AJvYcCUgznZDJ+FygmFegxYe70RnNZ6HmDYm+98AVIGvr3RnLaUePSzwrMWXDma3PvR8L2dVoDUBaDGmjvcE@vger.kernel.org, AJvYcCWQlEOgbFjaBmNe5bTi10IdwfhMbB9yIkxjzmXm2ON0lj84Fz4fccZscRi5l4thqrQRgbPWwM5jLtNP9MJb@vger.kernel.org, AJvYcCWdjevKtCyWk8sNDk6Xfj2ojgC3vlvwAQ+nTlDpsBzQ/Woyc9Aq7igLkuqkEIslQpG50o5ccHRsgN3uzw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyYrvbakC3rJyvtezkFFYZ5eSwnsrAqu70yNL1aF8WkgGJDKvW
-	KGVHnJoASyAmPDxdfXrX0ZQLYVc7goTsCo4RBABClk4iDrnmIao+oC1p
-X-Gm-Gg: ASbGncsok05rzXj2hJM6IZb82ic6nKqyLH/l9F6wFbsxHpnQ5pM8TTB81jj9E/VRS8G
-	/vgNUB/JLFxSgg899qz2/RnxnE+DuawRrMIMuZTXt1UDQo5ccEnZ0YOfrjhADcwHe18JbFoUklQ
-	7npJkRYCtpLViEn+5h3sNcyC7WjcvJbOfDbjbkINXEaxj5+ZbjB5Mkhw8LREI0G/uaHUcpYqNK7
-	uqaB30jc+FMXBBrblnnb1CBKBrrSQI4Kj7lXGy75TLXKEbg+AcAk304FQz2f4yEXOm0Dfcxiofz
-	zJHKRsgvvZZm0tRsVoeye+QatNookmvmV3qAVOKVRqldcqOfz0XzkDZMuQA+WQWe0aMbmgMCAEK
-	63qOLD8BORmGpqlaLgv7EPfhGxg==
-X-Google-Smtp-Source: AGHT+IHiEujbkskndE3LyNgJuL1872cRhTbw6Od3C9VG8ZLC8iMCXgMS0is4AXjx8NzAFqyDaw4FGg==
-X-Received: by 2002:a05:6512:4383:b0:55f:6eb0:cad0 with SMTP id 2adb3069b0e04-55f708b4927mr3525218e87.17.1756816254164;
-        Tue, 02 Sep 2025 05:30:54 -0700 (PDT)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-560826d1137sm678207e87.10.2025.09.02.05.30.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 05:30:53 -0700 (PDT)
-Date: Tue, 2 Sep 2025 15:30:48 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Tobias Sperling <tobias.sperling@softing.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	Eason Yang <j2anfernee@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Pop Ioan Daniel <pop.ioan-daniel@analog.com>,
-	Ana-Maria Cusco <ana-maria.cusco@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH 3/3] MAINTAINERS: Support ROHM BD79112 ADC
-Message-ID: <2af3a3ec00c4a21bd9df2b1746b96e0b84080b92.1756813980.git.mazziesaccount@gmail.com>
-References: <cover.1756813980.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1756816252; x=1757421052;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BNWoXsVDFnok4UFE+T0JM3TKXHmHj1QrThTVFrNIAkA=;
+        b=hJyaRq4Pk2PHwxq9BGw9IHUwzg08UzjzrjbGlb/LakhUHcTSjtEJXbKDLyDxqyjG4X
+         sQE2SCqS4HBXcWSZKp7wiG0+gJxlh+qemrgPzLqtA1Qt+sUgOPFS1Jr/LrvTgmWMf2rk
+         rmEyrfkFY8vWC9jekdPTQYwMJJ142Ldw6YG5p/X2xWzGuYUzvEKFyrpSWKdvL2fPzVOF
+         /NR5qRBkhVMXFGf2tiT2bjA5aZdMg/Afl6TnJJKGZ2rB7tn1fiKAnaL+oNgh62QVS8Mz
+         tN4dhOo2oTC00UE+D8iA7it0or1ndCHsa926vQ7jClm3HFraFEq+b3WlrQMdz0P6S0hg
+         qnVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaq8FeEWLSLneh2+GxgGfFTPpkFLP7EqpnX5jRLnSN9zcEjAxYPjxhqTNrkM9SG+5/Go8Ob6atFoNwWps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVWSRTJ3ScRd+J3JFdbG3nOXf69oqrhkLkBs+egKlA6TdiXcA8
+	iOJzp9yI1+VaKEidbqT5bk2xWgNJ9Joifl7qS01uAaL/KyyTjh6bfokjiTzXLvLqEeUw9XM6KmG
+	Yc38D4ucF/NKSXKUEiNgTI5RsRs8AhK+MH5Lp5JSc71LufaGJVASrSVUK8B1vEmRJu6U=
+X-Gm-Gg: ASbGncvQXm7423LPZRL7KqA6aQU4yM+Y/+pxZagmIRWXi0qIOr9cfrOHz5/Ng10Ro2C
+	QvULAu5hxbvM0r0PQe6u/HvsfVOqqO1snIm29mLvcb+GoxIPOpvOnE0db/0bEpVA367LSYiUaKk
+	VYjcRDC9asOnvO4t4TXkkhlxxx4/rbEQ78JvbBQCvhC4AC7jiy38QLK5LPRL1Q5c4dEtNMv1yat
+	t2kI639P7KdWgjV+zlncERa6QyGojUfTqoE+jXhHx6WskncVXhZaRA9f3wJnWTnn2ANrK9TzkY+
+	Z4L3KfjI70OhOY73mYRwkzgkDsirvJQpMFWNz+xBEmm/pAF/SjemR9MsxlNxsggcmTZ1G5GzQ16
+	TuvE8KxDl3d5TKf3cjboD+g==
+X-Received: by 2002:a05:622a:54b:b0:4b3:45a:2b3d with SMTP id d75a77b69052e-4b30e9a845dmr104245331cf.12.1756816252048;
+        Tue, 02 Sep 2025 05:30:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlVMbYgx8dc1lkUCensrY9s8XZ1S7XpWw87suZcVbaJfnjs0OW6CdvMWyEtq87QwjeBLmlGg==
+X-Received: by 2002:a05:622a:54b:b0:4b3:45a:2b3d with SMTP id d75a77b69052e-4b30e9a845dmr104244851cf.12.1756816251241;
+        Tue, 02 Sep 2025 05:30:51 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0424cc1698sm544146166b.21.2025.09.02.05.30.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 05:30:50 -0700 (PDT)
+Message-ID: <a701e4f9-57b7-46cc-b42f-f1a4a902fbbb@oss.qualcomm.com>
+Date: Tue, 2 Sep 2025 14:30:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LQvTRu61ZzJ2UjtA"
-Content-Disposition: inline
-In-Reply-To: <cover.1756813980.git.mazziesaccount@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] drm/msm/adreno: Add a modparam to skip GPU
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        Jonathan Marek <jonathan@marek.ca>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250902-assorted-sept-1-v1-0-f3ec9baed513@oss.qualcomm.com>
+ <20250902-assorted-sept-1-v1-3-f3ec9baed513@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250902-assorted-sept-1-v1-3-f3ec9baed513@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfX0YwTes0j4zQ6
+ 8aucguf+Hm1ZHvFpsVjKqFPd1Edl9nRmkWtbvPQs88Bg3xqlmNSAHPcU26k8F6QU7UNHJwJtlv6
+ 5YPEhflPggUbr55Cd8bXR43TKRKn9RUPG3aQZLtbzy9RR8UAqKVFRkLk5KT8gHDgXrqLqSwdt77
+ ZSUjFc3YVLhx5j+Xyey/Dgh6Kn4uaq7Eg5iqJBQyhvpyn8LfSGUNhARE8rgZZjgledbNtJIVW3P
+ lS75j8FvIzJGVfwEIS9sjFs4y1xhXr3dLIujEQOo//Z5QDHGJSzxTG9eg2/pYE5pC4I1Xlb14Fs
+ G2us13n5nKRIorlMNFCzqiJn7yVVuDWTEVt6+04AMfEY46ZKkjys54rvqhV4zIyhlxVx5GMsKhL
+ zL6uHwJI
+X-Authority-Analysis: v=2.4 cv=A8xsP7WG c=1 sm=1 tr=0 ts=68b6e37d cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=kokVE_FroeQZl1yzAO8A:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-ORIG-GUID: pVdPMw1S0AWzu6YCLESlDfYvSpCHGV07
+X-Proofpoint-GUID: pVdPMw1S0AWzu6YCLESlDfYvSpCHGV07
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 impostorscore=0 bulkscore=0 clxscore=1015
+ suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300031
 
+On 9/2/25 1:50 PM, Akhil P Oommen wrote:
+> During bringup of a new GPU support, it is convenient to have knob to
+> quickly disable GPU, but keep the display support. This helps to
+> fallback to 'kms_swrast' in case of bootup issues due to GPU. Add a
+> modparam to support this.
 
---LQvTRu61ZzJ2UjtA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm not entirely opposed, but slapping a // in front of the compatible
+in the dt works just as well
 
-Add the ROHM BD79112 ADC in the list of the BD791xx ADC drivers
-which are maintained by undersigned.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-
-This patch got some last minute changes after other patches were already
-sent. I hope I got the message-IDs right - but if I didin't - I'm sorry.
-In that case I'll re-spin series after some delay :)
-
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index af1c8d2bfb3d..8e78a1168c17 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21864,9 +21864,10 @@ S:	Supported
- F:	drivers/power/supply/bd99954-charger.c
- F:	drivers/power/supply/bd99954-charger.h
-=20
--ROHM BD79124 ADC / GPO IC
-+ROHM BD791xx ADC / GPO IC
- M:	Matti Vaittinen <mazziesaccount@gmail.com>
- S:	Supported
-+F:	drivers/iio/adc/rohm-bd79112.c
- F:	drivers/iio/adc/rohm-bd79124.c
-=20
- ROHM BH1745 COLOUR SENSOR
---=20
-2.51.0
-
-
---LQvTRu61ZzJ2UjtA
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmi243gACgkQeFA3/03a
-ocUBzQf+IzkBnlIznAD2RxHhu6rZUnGRgCKBWdPvTcAGue3HUdtFr6vB2s+afHaH
-HWTFTtgXiaDEdvIlDuiRqrCjODgx+b3QCU645Sj1Eh9PP7Uwbl16NmLFTUIXIkqY
-qk+qC8KHZ/lJk1XbVKNKUWfvk8zJMWq6XEFrNJfYDwsLqYNv41esa/VquR11HIB8
-KzY6PHS/62kLm8VxzGcK/GWvb0FB3mf1AwARw3E+Uc17idDGtPRIvQORPV0U+Q9N
-roYvRbIJPvgPouwb+99rzJVZ6CU26IIg1ubjrL4oLbC6HcbLEpEn90wPolJjZK9a
-LDti2BfOT20YnOH/27C1F4a5937K3w==
-=32le
------END PGP SIGNATURE-----
-
---LQvTRu61ZzJ2UjtA--
+Konrad
 
