@@ -1,158 +1,154 @@
-Return-Path: <linux-kernel+bounces-796336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60834B3FEFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:03:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F97B3FEF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33A81B26B79
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:02:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58FE53B6EB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB153093C8;
-	Tue,  2 Sep 2025 11:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F512F99A8;
+	Tue,  2 Sep 2025 11:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZyluWRcc"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IaH/CxhQ"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB19306D3F;
-	Tue,  2 Sep 2025 11:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202DE2F8BFF
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814231; cv=none; b=dZawysY+OBpUu1y2vy8YqkY1BIQZn92KKss1h7NaIKxi62Xc3pHVGucKeT+nEXmAcOZEavBqg/1y+44guBS426pT6Bs16wbp5Ur7IPRBbG5+hSuIWDz/2iL2AJp2ASTlznnS4dqgGUwgHhVv/hlqEbxi8erl2j/WtBxOxd8o3f0=
+	t=1756814212; cv=none; b=DlJkjSDayiOyUsi+Ph60IT2skk7lLsdxAb065sp0tTYsdMzsmyOkGcaGfb7RCQnForSxt3mOIstoFwV1vW/F/JopEejlG67mRBtIqooUE5F29tqh40kq/yObwstq+uVfmo+0PV2N93owu/yVk/lgDpsfn/EXJCcBygsK/R1Xpk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814231; c=relaxed/simple;
-	bh=yE4k/N92zxT8/ez56q76hETeCl2+RzWZurf0SczBZ1s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aSRyKEkUFDh992Lp7mz3hrneyZzjm1ZNw3AglknCLYsn3Jc7QTmY8McJf0+FwqYEHLn7XfKotY4JrdIczvdHPY/YplqcvmSnZMs2SefsdbkWn3PaFl92mheAqbujqm0LBdAPJq59z+bo1NA8DA1Ecu1njH24caW43ToX7zFVCks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZyluWRcc; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756814227;
-	bh=yE4k/N92zxT8/ez56q76hETeCl2+RzWZurf0SczBZ1s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZyluWRccMxk7iA3YNY/oikM/fS8xnj9abGZpRiAwVUeXK2ISLokIJNa3XY98JJVat
-	 E7j9i+mULdp74VwdtBXo59UaCJR2/JMOOd+UKLOvjma6G5u/ZtYfP/c/JT4Vq4qQHk
-	 EybmQJDYcF4gXXDEey2eSArbS5GH7AbmH+xOL7gHWPzAoELprCjYBZ2Tiqte0gKj1x
-	 2/c6uwZCoq+zlcBbL73t4tdZUJujnOxGaVIXQVTZf3+MJR7+uf2O5dN9wtKLbBSrxZ
-	 aeR6vU2HLESiARf5X4LqAmVr/sG2mwHZ3KVHWg5HjUh40t0skBYEpdFCP8nftD/68P
-	 MsJnrC6MnLB8A==
-Received: from localhost (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 7E6C917E1355;
-	Tue,  2 Sep 2025 13:57:07 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 02 Sep 2025 14:56:36 +0300
-Subject: [PATCH 14/17] usb: vhci-hcd: Consistently use __func__
+	s=arc-20240116; t=1756814212; c=relaxed/simple;
+	bh=b1YlHgbmyU5wicKUR7DIncYAaRMKAJOWSkzUNdu5Jmc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JChp6mhTtwYLVwBs/umQt+FvGyv8uBirz6lJJhA4Pb/FRSSe7RiZ+DLoHPzwREIWadNfSXWiMK+B2S306Feiju34dTr4QzQ82CiiSN0UvKvbNBTue9/WbE5TOVSSDSQf0IC9dAnRc9/RrzWm/KjkCt2XzWUMJVv3p18YEIvHWog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IaH/CxhQ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61ec59e833aso624832a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 04:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756814209; x=1757419009; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CbUyaSyIRtchuH7yFzxitK+3O6e452pD2yav2xjr5N0=;
+        b=IaH/CxhQvCPlJPs4cRklsEemmvZGoYypsuL5t7mwCNkAHVsGY18rSo6HI90RfnHm6n
+         dNV2JET9XrfzmZ6pdzKAzJ94VDVWd1EoP4L8iP22IJ4ElnNv1yFSgcbHQMntqRxnu4YB
+         LjqN6tmsQmcD0kU+LbS7yURdXLG3k6gIWMczaY6yG7E1Xypg0epsJ0muumyJxwVa6ily
+         Z6n4Z55U7RoWGn82SukX4r+bXhlonzPHDVSQ9Kx0d+L1b2iq+G7YBkEtutfikXqITyGY
+         r3aCd2DgJrQBB7b0KuvjMbEdQ0/0LsDFmgXTPvFZcZZ08SrHHZMXv597aHv+D5iyVKSi
+         k6jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756814209; x=1757419009;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CbUyaSyIRtchuH7yFzxitK+3O6e452pD2yav2xjr5N0=;
+        b=qgUaY3P17oWAyveRrDnibsmDC3DM3vMTC4hlGtBKtQWFxKzfcGPz1kM6C5zsRKQyn+
+         b4t/ZbBd/SL1tqYAHEnphF+ivFju+h8gywE30jVV4fVbKHE0MvbwoVMpzeOqrAhyzD8c
+         7TuSNyYwAzkzX0rN+tXUJKJx5aUmWsfs71eXxIQShBvmEtlYZrQtVreIGw9JU+pz1zVg
+         /VyxacO0BnIQVTOMPNLJz/KB8Bxbjt/krHVDSOAfAgEMZVbYdCWnDBVzCLHuuNV0ApdB
+         3zRJ8UbnnQz3ObdH2MtpJv+kJhW8zUD5cdJkomF2juB3Z8r7VnqNtfETNnt1aIiBGqPC
+         QZog==
+X-Forwarded-Encrypted: i=1; AJvYcCWdmUlJeVouFpG/FCvD5ODjEddJsixTR/3/OWMfuQ2EdKbIDZBvhpw6fNDCkz5BAOqIdxw7NfUcoGISptA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4GzIu8RYekgvyz9Ppo2uwEPwUYZhJhiPUw1F/Hpr7DIAEqtHW
+	lPf0ZFC9Pa23rqiYAq5EkEWGampJJp3xFo2C5mw+kKXB0k8JLTQMWMNEt55i67zfonDtEWGgc/v
+	ADmnjO05l/M2wyAnkWTH6kKgUS62pCfs=
+X-Gm-Gg: ASbGncv8bEXpnLzYyrD6QJZCuIrViwgDyANo0Zm9TxGi44MOT8jdUn0NMhLDbypFQBH
+	jylcSxvZSgX0+bwCOVreVDk091D2vhPY0P7wrm3SwmqipmOFTKjwLbeWG+5aN2lZHjYaq2bxfV8
+	ma7sjO6TQNXkGHRVjJ2HawLt29BKdJ2ThE69RG4YGppaJHkJxCjwCJIWziT6ylMtH7m31hK228z
+	A6aRA==
+X-Google-Smtp-Source: AGHT+IFxuSGAS3lu7B+ojJXi7giy330zUQ+aEe+V3me6DbSYm2Y76wFDblf69yDwU0UiZi9kg9/Bf+jyiF1s8n+OQXQ=
+X-Received: by 2002:a05:6402:2554:b0:61e:ae59:5f04 with SMTP id
+ 4fb4d7f45d1cf-61eae597256mr4093792a12.27.1756814209371; Tue, 02 Sep 2025
+ 04:56:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-vhci-hcd-cleanup-v1-14-1d46247cb234@collabora.com>
-References: <20250902-vhci-hcd-cleanup-v1-0-1d46247cb234@collabora.com>
-In-Reply-To: <20250902-vhci-hcd-cleanup-v1-0-1d46247cb234@collabora.com>
-To: Valentina Manea <valentina.manea.m@gmail.com>, 
- Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel@collabora.com, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+References: <20250829150944.233505-1-hi@alyssa.is>
+In-Reply-To: <20250829150944.233505-1-hi@alyssa.is>
+From: Stefan Hajnoczi <stefanha@gmail.com>
+Date: Tue, 2 Sep 2025 07:56:36 -0400
+X-Gm-Features: Ac12FXxSr8Mq_QbTI61IlgDzDnhRy7hHUSOIvrPdEfy1Gmiv4DAgDC1ELJPYEjc
+Message-ID: <CAJSP0QXd3zgMYRUQ3kCcUZ+RbZ6SHHn-kc5K4DV9C8LeU2g78A@mail.gmail.com>
+Subject: Re: [PATCH] virtio_config: clarify output parameters
+To: Alyssa Ross <hi@alyssa.is>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace all explicit function names in string literals with __func__ and
-silent several checkpatch complaints similar to the following one:
+On Fri, Aug 29, 2025 at 11:10=E2=80=AFAM Alyssa Ross <hi@alyssa.is> wrote:
+>
+> This was ambiguous enough for a broken patch (206cc44588f7 ("virtio:
+> reject shm region if length is zero")) to make it into the kernel, so
+> make it clearer.
+>
+> Link: https://lore.kernel.org/r/20250816071600-mutt-send-email-mst@kernel=
+.org/
+> Signed-off-by: Alyssa Ross <hi@alyssa.is>
+> ---
+>  include/linux/virtio_config.h | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 
-  WARNING: Prefer using '"%s...", __func__' to using 'vhci_start', this function's name, in a string
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-In case of the usbip_dbg_*() helpers, which are wrappers over
-pr_debug(), the function names end up duplicated, hence replace the
-superfluous strings with some useful info or simply drop the log entries
-altogether if they become ftrace-like.
-
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/usb/usbip/vhci_hcd.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-index a71a542e6eec42c79cff091fe0168f44c8c9b4b2..c790e3a435e2b1493c1ed88d3a98edb7c2e35912 100644
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -160,8 +160,6 @@ void rh_port_connect(struct vhci_device *vdev, enum usb_device_speed speed)
- 	u32		status;
- 	unsigned long	flags;
- 
--	usbip_dbg_vhci_rh("rh_port_connect %d\n", rhport);
--
- 	spin_lock_irqsave(&vhci->lock, flags);
- 
- 	status = vhci_hcd->port_status[rhport];
-@@ -183,6 +181,8 @@ void rh_port_connect(struct vhci_device *vdev, enum usb_device_speed speed)
- 
- 	spin_unlock_irqrestore(&vhci->lock, flags);
- 
-+	usbip_dbg_vhci_rh("rhport: %d status: %u\n", rhport, status);
-+
- 	usb_hcd_poll_rh_status(vhci_hcd_to_hcd(vhci_hcd));
- }
- 
-@@ -194,8 +194,6 @@ static void rh_port_disconnect(struct vhci_device *vdev)
- 	u32		status;
- 	unsigned long	flags;
- 
--	usbip_dbg_vhci_rh("rh_port_disconnect %d\n", rhport);
--
- 	spin_lock_irqsave(&vhci->lock, flags);
- 
- 	status = vhci_hcd->port_status[rhport];
-@@ -206,6 +204,9 @@ static void rh_port_disconnect(struct vhci_device *vdev)
- 	vhci_hcd->port_status[rhport] = status;
- 
- 	spin_unlock_irqrestore(&vhci->lock, flags);
-+
-+	usbip_dbg_vhci_rh("rhport: %d status: %u\n", rhport, status);
-+
- 	usb_hcd_poll_rh_status(vhci_hcd_to_hcd(vhci_hcd));
- }
- 
-@@ -1173,8 +1174,6 @@ static int vhci_start(struct usb_hcd *hcd)
- 	int id, rhport;
- 	int err;
- 
--	usbip_dbg_vhci_hc("enter vhci_start\n");
--
- 	if (usb_hcd_is_primary_hcd(hcd))
- 		spin_lock_init(&vhci_hcd->vhci->lock);
- 
-@@ -1296,7 +1295,7 @@ static int vhci_alloc_streams(struct usb_hcd *hcd, struct usb_device *udev,
- 			      struct usb_host_endpoint **eps, unsigned int num_eps,
- 			      unsigned int num_streams, gfp_t mem_flags)
- {
--	dev_dbg(&hcd->self.root_hub->dev, "vhci_alloc_streams not implemented\n");
-+	dev_dbg(&hcd->self.root_hub->dev, "%s not implemented\n", __func__);
- 	return 0;
- }
- 
-@@ -1305,7 +1304,7 @@ static int vhci_free_streams(struct usb_hcd *hcd, struct usb_device *udev,
- 			     struct usb_host_endpoint **eps, unsigned int num_eps,
- 			     gfp_t mem_flags)
- {
--	dev_dbg(&hcd->self.root_hub->dev, "vhci_free_streams not implemented\n");
-+	dev_dbg(&hcd->self.root_hub->dev, "%s not implemented\n", __func__);
- 	return 0;
- }
- 
-
--- 
-2.51.0
-
+>
+> diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.=
+h
+> index 8bf156dde554..7427b79d6f3d 100644
+> --- a/include/linux/virtio_config.h
+> +++ b/include/linux/virtio_config.h
+> @@ -193,14 +193,15 @@ static inline bool virtio_has_feature(const struct =
+virtio_device *vdev,
+>  }
+>
+>  static inline void virtio_get_features(struct virtio_device *vdev,
+> -                                      u64 *features)
+> +                                      u64 *features_out)
+>  {
+>         if (vdev->config->get_extended_features) {
+> -               vdev->config->get_extended_features(vdev, features);
+> +               vdev->config->get_extended_features(vdev, features_out);
+>                 return;
+>         }
+>
+> -       virtio_features_from_u64(features, vdev->config->get_features(vde=
+v));
+> +       virtio_features_from_u64(features_out,
+> +               vdev->config->get_features(vdev));
+>  }
+>
+>  /**
+> @@ -326,11 +327,11 @@ int virtqueue_set_affinity(struct virtqueue *vq, co=
+nst struct cpumask *cpu_mask)
+>
+>  static inline
+>  bool virtio_get_shm_region(struct virtio_device *vdev,
+> -                          struct virtio_shm_region *region, u8 id)
+> +                          struct virtio_shm_region *region_out, u8 id)
+>  {
+>         if (!vdev->config->get_shm_region)
+>                 return false;
+> -       return vdev->config->get_shm_region(vdev, region, id);
+> +       return vdev->config->get_shm_region(vdev, region_out, id);
+>  }
+>
+>  static inline bool virtio_is_little_endian(struct virtio_device *vdev)
+>
+> base-commit: 07d9df80082b8d1f37e05658371b087cb6738770
+> --
+> 2.50.1
+>
+>
 
