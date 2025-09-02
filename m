@@ -1,87 +1,255 @@
-Return-Path: <linux-kernel+bounces-796367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6708EB3FFBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:15:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B258BB3FFC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6835F5E0E2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:10:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B36C16C5BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB4D2FCC1F;
-	Tue,  2 Sep 2025 12:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830852FDC3F;
+	Tue,  2 Sep 2025 12:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="D6dxhHir"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZJkc4idO"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010039.outbound.protection.outlook.com [52.101.69.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8D4286884;
-	Tue,  2 Sep 2025 12:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814465; cv=none; b=OLCWSE+R6vcQJtZuaAJnuDN1cdNUfa0MJIpU1uace/m1ldYLA3wMoUxpEjGQTir8CS1JKAzSmjZuYcq6gon2hD+qpUTCFS9RZXyJkGWuSByL51d0QMfyGFnZp4J1o7TSHxYDcTzy5porN3JF3iS51ml1FYf5TmICdwiqX0MLs7Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814465; c=relaxed/simple;
-	bh=WYJ19TsFV+2Qqe9FAZF07Fv9E8KGb0hwWGVoVvOLLcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ob1cuVI4r+ZhxtQqiXkozl0lKwaZFDOg3NPZIT938ethOsr2L8Wans9Mu7Sj3S1QyVXN14ABNRnIJsolQklD4/E9SHQ7iG35Z3s5Olil5MoZpA+RqGzSYRlwdLK1HY0oBG4NIm/BVsHZK/rOOsM51WUNqLJ+Elmo7PwZLtdB7oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=D6dxhHir; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9911C4CEF4;
-	Tue,  2 Sep 2025 12:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756814464;
-	bh=WYJ19TsFV+2Qqe9FAZF07Fv9E8KGb0hwWGVoVvOLLcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D6dxhHirthDmmOONEd0DoBqRC7rq8jKelt97VFAbd0Er4DlNAtdmyBdRGOIe6SZ07
-	 9UoUAnsnafz4GEokavFcEW5M/7Qpu8MO418TDzZD9XhJ3aNjeb8yOunwlnVBtB5dsd
-	 L00zQm2Y6Hw8sZZ+IhYHpdx0/YycZ6QPKhGzKvCY=
-Date: Tue, 2 Sep 2025 14:01:01 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Mason Chang <mason-cw.chang@mediatek.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Chad Monroe <chad.monroe@adtran.com>
-Subject: Re: [PATCH linux-stable 6.12 0/3] thermal/drivers/mediatek/lvts:
- pick fixes into 6.12 stable tree
-Message-ID: <2025090239-gondola-exes-8e13@gregkh>
-References: <cover.1756568900.git.daniel@makrotopia.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE4D15E8B;
+	Tue,  2 Sep 2025 12:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756814520; cv=fail; b=hPDDijhxBRW04xDu0vLUaYaJ0zne7HZ7bQ8DVW0QR8vJfizqcPn2OkmPO1M8ujKE4JkNfBZ/0ZvBfAPeI7vF/Dsw5pPv0RIeYMBUDFSgKj66QXkgqn6otpIrm7jhVqAudaEeoOX4yZNZ+ubupsTCtP8PoaFedfQUW/EVxz2RlC8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756814520; c=relaxed/simple;
+	bh=IV5pkaE8AveNqwVwccgsrYUQhxIAsJuTY4rf5R8LxvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MORco8I0h5y4oa523kWV0Suimc1lOpve5cLxaT4GqLBdaN3KP6Ne1gg/iEWxZuaIV8/TrTUbzCrMKlN9TPLHiQT6toSyA5BPg3C9eqbEpjbPc7T4CEios2D5UzR5zyEUyHmNhxjWGTn1JTLYoPxaXanFPWND70XCmBK08R2VERI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZJkc4idO; arc=fail smtp.client-ip=52.101.69.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rtRYMdvbs99FcmeFtJi66JlqTtdj+6hq7OQ7i5HFuFWNjBVVITwkMvchydWao8bGQ2OwFLarsZfiBWF//qfAahwkJezKw6mLq8Ph3DoLOUEmSMgiIKjhfXp9wn58DobALkB26d20z+X5AIS28g7PTv6PojIBupKML+zeghc1Jp+qILeBhQ+z8m486sLIm7Na043RQSyW64BaSyumBG57v/sX6ZnVsnb+PRMvpvhEAWuWyvhqMiOVeDuyg7xWpKYyh/q5aRSnaV9pNzPhAgJwed2iTzyUaDHnof3PdysDAMn9nSuoK+hRSopTNUweFbV6eo6z3YuOaiMagphA63R0sA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7cGqZH8W27g1IHfeYxxXo6Yv3X07v8GtNJ48ngZiX58=;
+ b=DN2UIjEGYIy9V4PUGE2ouliaAibn4vLLqJqmR06YZfzqGHvb67D0cYjx/7XvsAfgP27nprPGb2wtDyqonXHViDrxn+lospnYVc6RypfaKAnw+fxc/F8Qzz0519hz3W5ViWw3quJGkCJSUdDiGMt/S8x60myOQu2qZx/xXZ3TSGlNxbqqRnq6eT7nn0YNs79KKTWkDxnzD22jWe9PoAHJ9vLsJQfc1BPISRnQLzZZSL8gOyg/46nUcNpXAL3saI9H1vq2CpUoAdqMXGqzZfsrKfkL4eYZspUl8pQAOwuQRwHRfWlGufoUg0cCaC1tgaVVWmBgcFL1Y12zGjmCbYxp1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7cGqZH8W27g1IHfeYxxXo6Yv3X07v8GtNJ48ngZiX58=;
+ b=ZJkc4idO7xh9/VX4e7u1Bxv6tdnmA1PZPytL76G7LAGkDWiCk0KZP36m4i1jWEKCSeGzRCSZ0B2flfX3VdOTgowDwGa7zGWsSoDS+win5OOoA88W/eAV0Z6OJbctKQHLUbWAtuhZTqbn805Cw4f9TA0WLdFmdz5FzjyBWxkKJr2TfNARObeMG/4MhoD8Ilt4G9cjGXBnwh+hY2l+xM/uT8HjZKTk+5jubrK8OWB3+fdwQdco63nhce/KWbLKGe8hNbbJwE/YdLtpskiXQAwddLOdz1QtugI7Jf145goVwYjpmNAbLQ29zKWS07hPJhlOOmJHBO63kqpYhp6Znw+Pfw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by VI2PR04MB11276.eurprd04.prod.outlook.com (2603:10a6:800:296::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.12; Tue, 2 Sep
+ 2025 12:01:52 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%7]) with mapi id 15.20.9094.015; Tue, 2 Sep 2025
+ 12:01:50 +0000
+Date: Tue, 2 Sep 2025 08:01:40 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Alice Yuan <alice.yuan@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Robert Chiras <robert.chiras@nxp.com>,
+	Zhipeng Wang <zhipeng.wang_1@nxp.com>
+Subject: Re: [PATCH v4 0/5] media: imx8qxp: add parallel camera support
+Message-ID: <aLbcpEZXm5G1Onq7@lizhi-Precision-Tower-5810>
+References: <20250729-imx8qxp_pcam-v4-0-4dfca4ed2f87@nxp.com>
+ <20250805010822.GC24627@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805010822.GC24627@pendragon.ideasonboard.com>
+X-ClientProxiedBy: PH8PR21CA0019.namprd21.prod.outlook.com
+ (2603:10b6:510:2ce::9) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1756568900.git.daniel@makrotopia.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI2PR04MB11276:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc410721-89f2-4949-25d3-08ddea187fc8
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|1800799024|7416014|52116014|366016|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?ZkVqkTF8gSNaE+LzT9VuCdvEvazKTxbmQkENJtv6YNRoWB+toLojLrB1GRrU?=
+ =?us-ascii?Q?5fL3VZHVnLKF0LM673vlIwqt/3nj+mT2Ym5Rg6CwSNPjeedfKYHz7g9dTayj?=
+ =?us-ascii?Q?t40ji8KUMvFk2HZ5hOYNSJFU6vtU9viHNxB+FmWmLz/whkBAE99djHTXnf9S?=
+ =?us-ascii?Q?ndPW9MhwyG9xpfjpfCCGWHcDj/XK7dKguphwupu2NZuo6ZgX76QIEtLMyauw?=
+ =?us-ascii?Q?j/R2uEUk9E5CIz1noJaCtIr1oXSRBvJCIdC8wWQjf0WzSIRmuvEHrwhOzsnk?=
+ =?us-ascii?Q?QySb/jzfjUDs8a/55O7tpTCXKRxhnoy4Agh3M/M4Oy8AjxacJ9MbKeo4kjp1?=
+ =?us-ascii?Q?1yaegT9PYd05UW1yUwnGvkbegVhILkhU7s1biUbeIfmffHBBFAfuAeUYJw7g?=
+ =?us-ascii?Q?h/2RVLuu+TBGDAtfRJGQMXb4qNJmA5PZz6oksXP4+JQ/YJY66/4ODJpUfu3d?=
+ =?us-ascii?Q?dsRwkw3QwnACgY4rR1Jtngce/DwcADusETnTcp8kEzdD3Dinj3+evDd6KN0l?=
+ =?us-ascii?Q?1COcNgG5nyW/se5jgwbTZUUi3zAMWA6lBrChJo5LmOae6WrNU+pyBwDrhMdi?=
+ =?us-ascii?Q?gf9KEWUn8r2Fd7h/UGxevWMHnxnUY7tk90gQR5Hlq+GGRmXb1tx8eB19DW3M?=
+ =?us-ascii?Q?l0yGaK+xGREuhxeW6ygsyrxbXYj4ok0gX2JSFyIXpA45GOAZFMUzRE3lSah4?=
+ =?us-ascii?Q?tqC54lZi0vdHNhtxqnaNqXZfQ9PrcndxvnnQRxWG4lCR9nwQoNWBgKB8mOtI?=
+ =?us-ascii?Q?5Ie9H/AG+inqxKSSdg16q7BGbGYcbt1tlycuRQ/V1QbPGhlEbRHSPDPuKX+w?=
+ =?us-ascii?Q?MIVnOae7QyqtWGFfz3aKImIO8tVC7znouNrgATMemzr/sqSOymWjCRxy5CrD?=
+ =?us-ascii?Q?itni2PVQ4qcMAG8jC+wmrsaZ/3KOYHgrVVoYzeAQNGBSq7lQhcT7OqtD+izZ?=
+ =?us-ascii?Q?mwqktRgTuDyD0z7fBQAQr8tPIVMvFqLa6YT3se6IyqRtLUreG8adkBCqGvlY?=
+ =?us-ascii?Q?mX8iOWXgHC0FnvTjrWVX5a2nuOg7yoZ/qMWTBnZt/IS7i6daF60TjEGQGD0S?=
+ =?us-ascii?Q?hhJnN6UqNoXgkrbdDXi5M4VMIceBKoqP8E0P/09aBuRRqMFKlzPs9noekVQW?=
+ =?us-ascii?Q?ydAWzoV73jcRy5/XwCN8p4d2ZdaHzVX9cApo6n1J9zDtlaSYx27HbJ+Kmi7m?=
+ =?us-ascii?Q?nfckqF4RkBb8xWl2blfZlobfRn9MsAcjdeNlw02VqvLwQcQzxKrWR26RJqjK?=
+ =?us-ascii?Q?/05c9ewPT9V0Pj/8ztSBloD3SDx11vYykEKIoeImd3CPvMmMpxzL697iwggE?=
+ =?us-ascii?Q?uOTr0zuTWGcqTMLHtwRIbfpR5lBThv5Fbgl2BbQc7LvlUPTzX5/lKhPzpQr1?=
+ =?us-ascii?Q?aLhh+WDa3tfsC+DfkFl05E75vAEdy1G+HOovVESmrnuQ9J8cvdtQwLkKz/+y?=
+ =?us-ascii?Q?F94gktxuWAbISqCFH7BVWW24ADwuNLOa?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(7416014)(52116014)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?BzeUIrZptyY0l0y++CinsMbvxQi+We9VpbtFt/16QGZWf4OfK+D+sC4lZIkF?=
+ =?us-ascii?Q?upOyHiSk7KwBYho7JxtLpuClljaFEvbSBatHjCZ6hw9Ay2qNXFWI19+LLA/U?=
+ =?us-ascii?Q?EXduOS7ftkY2b4D2GN+4WJrDwuWYW1LtQnEFQtwZmH2K8tLSb5HEbFZkJkQv?=
+ =?us-ascii?Q?/FMR37AptKGc8LLQSwYcuuMyxayYf5wUtoDiJcpmiYu5QFIzWP+WoT7Ke228?=
+ =?us-ascii?Q?Xap2EWE0WSglgXYxrdHjNBC0OFlNKUNTfx/zcK6rhDSlzN8p7BJHxthIE2iu?=
+ =?us-ascii?Q?XPc07n4r7M4zSL8GTigpvh8bsbPQDsTjcIzViAtGzeZWsiGvPWTj+81CXWOf?=
+ =?us-ascii?Q?xNp5Aqz0+QCDYsS7K2IQbps4obALHWoNBGXiHxtI9OmcTE0Qxhr/JSvUZ5hN?=
+ =?us-ascii?Q?BOCPQoM28a4Td31KmYbBPaBo5WUWtAA/lWjBvS9jEuTdcBhUTSTzW7v/hnZZ?=
+ =?us-ascii?Q?PJ81FBcg7b1E1FCINfDKjOy+yG0+ejv3lSYMGMCDoVD+qMGy+N8SsVLZBQ3d?=
+ =?us-ascii?Q?WV+5cD0S1Erkuuq/0cK5sPenvApLV97+5TDR93TCzW/sUfVxrZwhvF1ZzI53?=
+ =?us-ascii?Q?fAleeP7nPoE08DfwSvl/ItDLKEbyGZr/t0D/hg/IN1XLW7ApuDBgQE4qg8Fu?=
+ =?us-ascii?Q?+SEdesunIPxGcRWrZgKKNVBNIMinR8aOO2UN+DQeZwaaOxqzS5klZhnbyBVN?=
+ =?us-ascii?Q?/zLDbp9e4J3E7EfuieaGMipGq5Kw+9vWfFAN4DvCUc0CnYPzCc4le2qEcFQ7?=
+ =?us-ascii?Q?OY0Y5ticnWekpAhCKO3hebuwzzbYNjoGJmtQpmtzE9j/jhUk2e0FFKDj9hZj?=
+ =?us-ascii?Q?kJYHuRZsitqOCSH4yO+D2A/DD9fMyclAmMXj6qF8YJ0UJCJoLemAf/saJZUQ?=
+ =?us-ascii?Q?oMwCCWH4DnncUHEKvQeonDFCPwqMQiy3zTSiqnjb74277DOu4EPmx1i6nitS?=
+ =?us-ascii?Q?kH4AfmNTYXs91noaJsYwdwn4Qbe6Bj3w2SxYmYsymg3syu9O+mh5nnbLSkRX?=
+ =?us-ascii?Q?/39yiO6Fb0Gz/JGxZDAQJknG0J3BP1u/REuoGzTZ9LxJlVUMCGONbX+sY1BQ?=
+ =?us-ascii?Q?1moonRxF7Ux2HKDjug7xrGw+2EOOJcQKGffsT6D7aw5LyEKH1OF6iets41tE?=
+ =?us-ascii?Q?WcDYRjOx2qzZL96ld2sX2mUvEffS+EcKnHGhiF49eFcINKB4yc4Olj2N+3vC?=
+ =?us-ascii?Q?PUN3u2tUlDgw2m9bXI1EexO9iaOQAVto6BvqpE11kwsWHuMJUjUUUQe0LeNN?=
+ =?us-ascii?Q?p5mVc0it+FyykrPnpBA26Kd/Ep0fWShCrbhJsmTrt2l8gPcssmLnqP2Hun7f?=
+ =?us-ascii?Q?TtdVYIW21JqZZSanTbB9gfNpVTjcMuDJqJXr1fwIYXxgkpLhXoDBf1ia99YE?=
+ =?us-ascii?Q?Clnzr5wQjT7rA+k22cGAIwOh0JbK8KlyIJ8on8A8ex/FVGo2CMjElk8Ay6n4?=
+ =?us-ascii?Q?5l8S3haiYJGkeKJ6H+Zb2G0maRDiBJlHAShU7A9/lDDEq5U355BBhN6lR+tQ?=
+ =?us-ascii?Q?bo1oXEA7uGTvo8QRu+4hfxZa51sh/BOH3z2Pn2qTvGVBxa2VdTUc72hBjDDX?=
+ =?us-ascii?Q?bX3RuxPek17KBGbo9jQWC572zDk83ks2AKGP+fdF?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc410721-89f2-4949-25d3-08ddea187fc8
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 12:01:50.2431
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lWkbF+k7P1LVZRZc3l/nc7TBp5RGoMpbpKiWbfuaWqxM2dyNZd1UwhLVqRixSQtvZGcHtNzqpod527MJdT5nuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB11276
 
-On Sat, Aug 30, 2025 at 04:56:46PM +0100, Daniel Golle wrote:
-> Temperature readings on the MT7988 are severely abnormal and inaccurate
-> on some devices when using the default commands.
-> Patches to fix this have been posted and merged for Linux 6.17, however,
-> missing a Fixes:-tag they have not been picked into the Linux 6.12 stable
-> tree which already comes with the driver support for MT7988 and hence
-> suffers from this problem.
-> All 3 commits apply cleanly on top of linux-6.12.y, so cherry-pick them
-> now, adding the appropriate Fixes:-tag.
+On Tue, Aug 05, 2025 at 04:08:22AM +0300, Laurent Pinchart wrote:
+> Hi Frank,
+>
+> Thank you for the patches.
+>
+> I've quite busy these days, and I don't believe I will have time to
+> review this series before coming back from OSS Europe at the beginning
+> of September. Let's see if anyone on CC could volunteer.
 
-They also need to go to 6.16.y as if you upgraded you would have a
-regression :(
+Laurent Pincha
+	I hope you have good time at OSS.
 
-I'll go queue them up there now as well.
+	Do you have chance to review this patch?
 
-thanks,
-greg k-h
+Frank
+
+>
+> On Tue, Jul 29, 2025 at 12:06:21PM -0400, Frank Li wrote:
+> > Add parallel camera support for i.MX8 chips.
+> >
+> > The below patch to add new format support to test ov5640 sensor
+> >    media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
+> >
+> > The bindings and driver for parallel CSI
+> >    dt-bindings: media: add i.MX parallel csi support
+> >    media: nxp: add V4L2 subdev driver for parallel CSI
+> >
+> > DTS part need depend on previous MIPI CSI patches.
+> >   https://lore.kernel.org/imx/20250522-8qxp_camera-v5-13-d4be869fdb7e@nxp.com/
+> >
+> >   arm64: dts: imx8: add parellel csi nodes
+> >   arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Changes in v4:
+> > - remove imx93 driver support since have not camera sensor module to do test now.
+> >   Add it later
+> > - Add new patch
+> >   media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
+> > - See each patche's change log for detail.
+> > - Link to v3: https://lore.kernel.org/r/20250708-imx8qxp_pcam-v3-0-c8533e405df1@nxp.com
+> >
+> > Changes in v3:
+> > - replace CSI with CPI.
+> > - detail change see each patch's change logs
+> > - Link to v2: https://lore.kernel.org/r/20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com
+> >
+> > Changes in v2:
+> > - remove patch media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
+> >   because pcif controller convert 2x8 to 1x16 to match isi's input
+> > - rename comaptible string to fsl,imx8qxp-pcif
+> > - See each patches's change log for detail
+> > - Link to v1: https://lore.kernel.org/r/20250630-imx8qxp_pcam-v1-0-eccd38d99201@nxp.com
+> >
+> > ---
+> > Alice Yuan (2):
+> >       dt-bindings: media: add i.MX parallel CPI support
+> >       media: nxp: add V4L2 subdev driver for camera parallel interface (CPI)
+> >
+> > Frank Li (3):
+> >       media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
+> >       arm64: dts: imx8: add camera parallel interface (CPI) node
+> >       arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
+> >
+> >  .../devicetree/bindings/media/fsl,imx93-pcif.yaml  | 126 ++++
+> >  MAINTAINERS                                        |   2 +
+> >  arch/arm64/boot/dts/freescale/Makefile             |   3 +
+> >  arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi     |  13 +
+> >  .../boot/dts/freescale/imx8qxp-mek-ov5640-cpi.dtso |  83 +++
+> >  arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi  |  27 +
+> >  drivers/media/platform/nxp/Kconfig                 |  11 +
+> >  drivers/media/platform/nxp/Makefile                |   1 +
+> >  drivers/media/platform/nxp/imx-parallel-cpi.c      | 728 +++++++++++++++++++++
+> >  include/media/v4l2-common.h                        |  30 +
+> >  10 files changed, 1024 insertions(+)
+> > ---
+> > base-commit: 37a294c6211bea9deb14bedd2dcce498935cbd4e
+> > change-id: 20250626-imx8qxp_pcam-d851238343c3
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
