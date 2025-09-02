@@ -1,138 +1,121 @@
-Return-Path: <linux-kernel+bounces-796405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B60B4006B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:27:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09437B40113
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2C655420E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:21:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75C5A7BB8D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE572FD7AD;
-	Tue,  2 Sep 2025 12:18:32 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3322957C2;
+	Tue,  2 Sep 2025 12:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="AWfOKPLH"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA988285CA3;
-	Tue,  2 Sep 2025 12:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F5F28CF4A;
+	Tue,  2 Sep 2025 12:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815512; cv=none; b=ITTDm3RNKVge99fYOAJqRkNshGDtTvV88gdSFhDoFe8YLIaxJeeVitFqsdpObkGDvkAALR5nCXPcywJmXaBwLVIkHR20h4eFuNooNnNCJ6bUuIXl+kk0DIF03CUc1fod2pJUnsKBBjkyLVul6IYCNJ2J5P5s08+rMQUyuZnBx08=
+	t=1756816895; cv=none; b=Y+1xBQSNsnTdYVHn0s70xZ1bNwRR+OcMZCxDGux2mcUAj+pcDkdRiAsAfhgDSh3kj8FD4uNPmIHT6s8gDPfLoIV1C/0CPl4/vSHRkm7B+fMim/Dz3F6349LNVdaweFyzCipgFxEaibOOU4z6oFd+gQOzkxDI3dqT+XI39bSmqvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815512; c=relaxed/simple;
-	bh=8yb0QwvZWhrmWpeBUjsYnZS0PIV2RPL/27K3Kcf5Dnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pnQc6FWUOP4UolRKVdFkRlonOTU2FZHqglhRv6sd+fKv6gbNw9sXAUI0ORAaqrkPmlkjY7t+YyrpuK9kGLtEUbNmvRROZ0DFqpjyp+4rsQiN0iL8TDbhIOdXEf5IyYkIuWO2vi9w7xHmPUE8kX9kCjhDji0J9NvXDz0V2f3lORY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-544a1485979so956279e0c.3;
-        Tue, 02 Sep 2025 05:18:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756815510; x=1757420310;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NzOWDwUf99hQ6uEzEY7PPEe93JThVL9qbHCe5bHjhTI=;
-        b=wtWDnLMNRKFF0eseXk0bC4RKY/ZJPSO9WZqUZ3s4Z6WuZ3uXTgkWhHFK89bhhNp9Tm
-         sgPdZsSJFlYcNzYdz9k4OJm2dloBgbc7SEwDtaBuf5/lv2Pv614v0eFZmXmXvYG/f2tE
-         TbLDl4EsDp2iRDFPaIyBvn/yAOl0eD7dvcYYBkoecvepXQGyuxvAo4hNurA/ffBfx/EF
-         ZskYBhkugdQ8sEoAntjyJse0y7ZbqD+jELLWMnLkyOl/d6kObTJsOJgkcdzfjUnfWv5h
-         ZwWpvxXxIe4nL119E8Sjd/bVHvY2D+qTLiiluzzYGvwj5YOzLMYTIHmShmBfGrlfoOd0
-         b4cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEVedqYmsN3H/TxbdFYsxYA8oDKdauPx31cckrSHaSDA+qxIHfidE/jdPGAr2R5F+7FapMARp++IQ=@vger.kernel.org, AJvYcCWmB8HK6JdoRsn3pZbgksdeHRtIQEZEyA+0Elhk5xAw+UzH3HR4u/lqEyoU+uD+ig9+xaBe6j1zrFZFUkIE@vger.kernel.org, AJvYcCXRFMfjUGQZr75JUJwtLvluApDqCUdXhzry108j92UI54LWF8TWRD00vSw8MXl3CV75L3KGkNnWcZL54s6lpFc50wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW5UDWvMkMxUBvG3ydl3kFiQ/tDuBR/M5lG5+bEo2BHg54KLYn
-	MkdtdP1uYXq1u1m8NT/UfrB6RAaG7UGvDFjfU++VJ5jKRXxquhFbA+JCUExbQWUu
-X-Gm-Gg: ASbGncti/6YIFDnTLa2ey58C3q+W/kDU6yVIbDmfmCA75PPkoLfwvI2AFAgjxoQVbQh
-	SP8elGwfLXPk6G6KHOMGAZeUnZIyiXNA8wYbIPmovilPytYpByAO6zPJ/tRhcwV0JdZ65Hjcv7F
-	TyO8mQ0sAlX8qr/GfhT7Hts5lXnb62Qn19yAiCgQ9q/Y23+lDH+eq05HwFXs4HVPCpPdVnZBOMi
-	tw9Rqh/UuVqxpCxZkDTTbrK/I4sy6/cK8VR/KY+I185iHbX6fNfbHhm9Md9hOQKtWwNXRaQWW67
-	CNiCKHUybmvZ8BKwVJKX6t07/OITRPMdl/paWrkA3JhIQjjJFSUHp7Fdjhdh04/QEEA1s6/Y915
-	9STMOGg2n6UOfniLuu23iyomY3KZD48lZpeLsIkIKBjYkmvBaIp4Gx6e/+V6oHUc92+Wbh54=
-X-Google-Smtp-Source: AGHT+IHD6Dh/+3CAJT4zemTBuZHBfepKZSeHfLyxRviokJTsyA+IDk8vUUXyU00V43za+RoGutoWoQ==
-X-Received: by 2002:a05:6122:4687:b0:542:1516:2701 with SMTP id 71dfb90a1353d-544a0206014mr2879599e0c.8.1756815509594;
-        Tue, 02 Sep 2025 05:18:29 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54491467546sm5374832e0c.17.2025.09.02.05.18.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 05:18:29 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-52992b299feso976909137.0;
-        Tue, 02 Sep 2025 05:18:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYwRws7uQbtKGFrBYAqwAI3IiD0CliceZ73nQQUpDrZTJA6DE7uNYjDaoSrABi2iiK1U+aZGmtQxw=@vger.kernel.org, AJvYcCWpGnYrmkrw56hOEksfjzO4uBBjiiU1uDGIQraMS9Zh0b0IjmwDwI43du9KdCYgNSB9NAVRuE8daRThQdPO/vFht2E=@vger.kernel.org, AJvYcCXkqUWznYke1/Sfx0RGzKzOLHvtQXn7Q8H4s1TB2jwRxgTaO3AVwHjf9EasRGI86bGItGRHN8qHOctxS8PL@vger.kernel.org
-X-Received: by 2002:a05:6102:4b84:b0:4fb:f6ea:cf88 with SMTP id
- ada2fe7eead31-52b19c70a02mr3648232137.10.1756815508508; Tue, 02 Sep 2025
- 05:18:28 -0700 (PDT)
+	s=arc-20240116; t=1756816895; c=relaxed/simple;
+	bh=M4uI8aFAFfvb6PvO1EZR0WydjlQUd8lvqrrz0abedd4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LB7rM7r3My6bwvJ+d1VLj3E6BnZupuARUyTYiKC5dB8il5ywkOIkLCm5eaZwsXX1evnoxjbcf+fdZaov8ycOGHxy9O2UcKX81Wm9st6nt1t88c+we1fsUwsY8syeopdN6QXWiiyMBSdLZFNMtQTA2c4k6PocA9yzjnr2VhAYzuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=AWfOKPLH; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756816894; x=1788352894;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=M4uI8aFAFfvb6PvO1EZR0WydjlQUd8lvqrrz0abedd4=;
+  b=AWfOKPLHdzxkjtcjnrgv2kQy1tYMJhVYLaYxsof4QLfgaiEF2Pvx4lL7
+   BnRgr08tJ6Gye+3AsOUAjm3myT5mJEiY7ifof8CbmEI0Y7C7oe/jbxkEN
+   ECxcWpc2hLxhYovPNAn9pF6gnCoFxw19bEbEZfdKo6nbHq3GF5b9KBCuQ
+   yEE+tLhM3kZyHwmk4y283eLAY5A08Tzoda0B39Fbar3N6VcIOpon8Q3dw
+   +vzqLnPJWkQ6IWTE7iZKhH0bafM2BzeuIAVN6U+XWkHmNjkNDshsIqfp3
+   fyu4Vx4Bg38rhB3XHv3VsVRLry97TOdFWf1J4pKhQ8hREbo8FzQrEyX+B
+   Q==;
+X-CSE-ConnectionGUID: uSbTBh14QEunAdjSx76qwQ==
+X-CSE-MsgGUID: M5dpYUY/Sd2bRQfknAEXmw==
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="213345453"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2025 05:41:32 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 2 Sep 2025 05:41:29 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 2 Sep 2025 05:41:27 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>,
+	<Parthiban.Veerasooran@microchip.com>, <kory.maincent@bootlin.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net-next v7 0/2] net: phy: micrel: Add PTP support for lan8842
+Date: Tue, 2 Sep 2025 14:18:30 +0200
+Message-ID: <20250902121832.3258544-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820100428.233913-1-tommaso.merciai.xr@bp.renesas.com> <20250820100428.233913-3-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250820100428.233913-3-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Sep 2025 14:18:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU_grYXJF_L77-6np9iiVGvo52Z7TXN=ft97BuPX2BGxQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwYabVKof05tDQY5PMEkI_og52dzgDW0fzTzAtj0OMk-t41ALz7aSu9OD8
-Message-ID: <CAMuHMdU_grYXJF_L77-6np9iiVGvo52Z7TXN=ft97BuPX2BGxQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: renesas: rzg2l: Re-assert reset on deassert timeout
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Tommaso,
+The PTP block in lan8842 is the same as lan8814 so reuse all these
+functions.  The first patch of the series just does cosmetic changes such
+that lan8842 can reuse the function lan8814_ptp_probe. There should not be
+any functional changes here. While the second patch adds the PTP support
+to lan8842.
 
-On Wed, 20 Aug 2025 at 12:05, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Prevent issues during reset deassertion by re-asserting the reset if a
-> timeout occurs when trying to deassert. This ensures the reset line is in a
-> known state and improves reliability for hardware that may not immediately
-> clear the reset monitor bit.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+v6->v7:
+- the v6 was not sent by mistake to mailing lists, so this version just
+  sends also to the mailing list
 
-Thanks for your patch!
+v5->v6:
+- update commit message of the first commit to say that lan8842 had a
+  different number of GPIOs
+- add define for 0x8832
+- threrefore -> therefore
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -1667,9 +1667,16 @@ static int __rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
->                 return 0;
->         }
->
-> -       return readl_poll_timeout_atomic(priv->base + reg, value,
-> -                                        assert ? (value & mask) : !(value & mask),
-> -                                        10, 200);
-> +       ret = readl_poll_timeout_atomic(priv->base + reg, value,
-> +                                       assert ? (value & mask) : !(value & mask),
-> +                                       10, 200);
-> +       if (ret && !assert) {
-> +               dev_warn(rcdev->dev, "deassert timeout, re-asserting reset id %ld\n", id);
-> +               value = mask << 16;
-> +               writel(value, priv->base + CLK_RST_R(info->resets[id].off));
-> +       }
+v4->v5:
+- remove phydev from lan8842_priv as is not used
+- change type for rev to be u16 and fix holes in the struct
+- assign ret to priv->rev only after it is checked
 
-Is this an issue you've seen during actual use?
-Would it make sense to print warnings on assertion timeouts, too?
+v3->v4:
+- when reading PHY addr first check return value and then mask it
+- change the type of gpios in the declration of __lan8814_ptp_probe_once
 
-> +
-> +       return ret;
->  }
+v2->v3:
+- check return value of function devm_phy_package_join
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+v1->v2:
+- use reverse x-mas notation
+- replace hardcoded value with define
 
-Gr{oetje,eeting}s,
+Horatiu Vultur (2):
+  net: phy: micrel: Introduce function __lan8814_ptp_probe_once
+  net: phy: micrel: Add PTP support for lan8842
 
-                        Geert
+ drivers/net/phy/micrel.c | 116 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 111 insertions(+), 5 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
