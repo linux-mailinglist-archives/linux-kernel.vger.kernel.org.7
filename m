@@ -1,175 +1,252 @@
-Return-Path: <linux-kernel+bounces-796615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E47B403DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:36:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D852B40397
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C15189DF07
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:34:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B8F3AF0D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3419230DD36;
-	Tue,  2 Sep 2025 13:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1416C31CA60;
+	Tue,  2 Sep 2025 13:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Pqx7oMJZ"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="muldPbKB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8VB8ShqV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mDAQki4D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fa0yyIJo"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A52D31A569
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F9830E0DF
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819788; cv=none; b=PlP04MPjZveltWG331VPnYdHbXELpU1KivSr8Iya5XTxUxy5poPbnLeLHwY2Qh28HM0LimHwrHzVs+mmFDp/9pJ3ER0lczcuAHNOSh4G7UV5ew3hoi8kVRDYXuQpW+QV4kMJQEwY+p0Ce/CeXbrOYEw/HZmi1eDCIduwr+E2EWk=
+	t=1756819801; cv=none; b=PU+yVRzfWmCSKul8IdqxlRtf71vnI4iIj1d7qXD17k/Ede0vTh39GtSdFoA/ZQYQtT+FGN2AfJwsEWux7nz0uCuYR4NJSTzgjoiBKUobhzrKoLlsFQ24Im5EwrJodjYe9foEZi4Ml8fud4EEzXfKnf+gzL3KGc+D2a3ZDzNuK10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819788; c=relaxed/simple;
-	bh=3QlkS9Ed9gmuv+futXyyIrRTd0WcKtKmub0+uBCFWn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rwHmqcvecZ1+f2HOVJxZ9MYSilS4Bwuu9dbMhmXc7wcQs79uQAxXpNyUbdIOt2tByjQR6JUe0mKHVltGX3jSBaVM1h8mpQE+ZJPagDKrgvjUnBiZaS6wHuPFYmk93OwB16FWQAwUT5eqcj251b67mBgjVHL8aOVjhQ/UAb6RB+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Pqx7oMJZ; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f716e25d9so2797640e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756819784; x=1757424584; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jZCKJv4aYcw+dSdOw+40akoqTFv6AX+SyMdRpV8+ksQ=;
-        b=Pqx7oMJZ8qmUS++jRYyyhqdtBvKrDhz7thM/sP/AIUqNiNpmHftLPYJhhVme284dqw
-         RAdtqlFKT7FrZ3Rz1GX8xhGW+BBM2QY5VPYjbSIWJuspwmGwceeFVM3b2ynGB3qctMRL
-         idvbLeA23uCw893n0faRQHAcJdXUOueZbbg3Q1uyM8rjLhN9n/JEH56hN41R7v0yIyE2
-         VfSbUISln8Tf8hmVMNHM2iy6fBq4WeSjxD4NMa2DBCpLD6n19eKlCuCMmEPLAedCr82s
-         sQQm6i+QzNXR90VfLxaQp7REQlM9F3sBlV2+DmLu5DACOk0Vfg9QLZB7yUEkwZJVmSA1
-         mNzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756819784; x=1757424584;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jZCKJv4aYcw+dSdOw+40akoqTFv6AX+SyMdRpV8+ksQ=;
-        b=S3toke8bhrBLQCu2EeFC0of7bgxkt9qXnJaBMyUw9sIIYBpJlkDOh/Rx+hSgtTo92R
-         D/Kv1vf9+n7vjxQuAHwmQo2pHoJ28bZZLLq5MhDAx9JMXLTgp33aCK2LL54Mx8TuSJcy
-         PPpncFN/ZofH/jqobxjSp9GEkc+aHbKPRLshHO2Vyy89evbNqcy1J9Soz61ISW8HEEYH
-         AuqOMaxCVJMhawFY/XaYFJrRt35PAKAfwfZIqFmZqGSERCBk7nrGCty4OwVq20i9ntYs
-         VW3z4muss1zFbGZmrLF5IgYRbX8Dr+vgHSrE7nO2aPA09M1gZve/6BwBkvgLpO+UKlOY
-         prkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbwMGxrZQSunblAv1CMl/4cNTzOwDGXhnf0oHWxaNc5/uajF25r39v6V9uzGtyQcfs3UMTk/QxMvshf0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH38di/cdeb4R7p+jFS1KYFlqt5T0PKfC/tapR9/m51hVBhXC4
-	zwDMjywlXUIAmpmeOncbxh4EhavDWYbWb7Rw83DQndX67qnA14Sjcr9Pa9g50DRv8R6wy83p26B
-	cwOolgFGzxQV6tUybnemC3HD58/YNkUvdXMFt5ft8hQ==
-X-Gm-Gg: ASbGncv/77jK53FZq55Sq9pZqNWDwBjYmVjP8a07Uqbd8kHjgdygPfoXvTZNK3lCoQ6
-	ofLIRmyGXkzNu4FraXNbxZaSkv8GUhEZEkQIij0Dms/6z93a9fz7I7JPl2wTHr60GIwy46InM+T
-	eM45QDRciEdk7jhPe+vFZiGdpAPBPQxOhkPFGazagHdHP3aiobFtLEW6diSYbOUmGcCwyrWkm/F
-	9T2w+GUCrzKF1X2glKOEa3fWxtJf7s5BwelQksIgthWZGcx1w==
-X-Google-Smtp-Source: AGHT+IEokI8/QdZgrQf6Khw+qmZIKYKiiUgjGe2BsWGspCY5PLtcBEV9VcspomwVXiAZN5jhrLGIGNRfYpYegqH5QMI=
-X-Received: by 2002:a05:6512:6512:b0:55f:4760:ffc4 with SMTP id
- 2adb3069b0e04-55f709953admr2780344e87.29.1756819782757; Tue, 02 Sep 2025
- 06:29:42 -0700 (PDT)
+	s=arc-20240116; t=1756819801; c=relaxed/simple;
+	bh=E3yq5cRtyiSNLEiQnKoURmT3ZY/cEWvKXre66KYTGz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prU6M46Hg65uGk0cuTNKZBt3DnmgBfU9lFv35iotmIJBN1GmmMbX0g3TEY6yEFv7FqN7TsSTIPEgTqCKtnfRiFViKEXEaAeSVM3q/TTD4AGhNlOteWQzL86Jya45SwpVyn1tOVHnSHFwDiWuVq0WAaiPfagpHoFG6l5iQIVQDxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=muldPbKB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8VB8ShqV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mDAQki4D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fa0yyIJo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DEBA0211A1;
+	Tue,  2 Sep 2025 13:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756819797; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+tmHzc4JszRWN9Uk+IedaTWn5QYqC9HOR77ygGDmZQ=;
+	b=muldPbKBoJrxHtg03AISKTJnQwNg8sWhaa5P3098MK8jgq7T1SDlICG4zkyjoKBdi+PAnG
+	u/4EAg/MIfwd/mYWzcrhDvsxX0pMRrSUOl5drrjyn5TjVlCSkmMZ9G1ICpjpCFcF+wiJJG
+	SSQ28eCH/rv4tCJjHDA8gFfDY7wFl7M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756819797;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+tmHzc4JszRWN9Uk+IedaTWn5QYqC9HOR77ygGDmZQ=;
+	b=8VB8ShqVPRCkUe6K/aSJWNQgSbpBaFTlMKNuDchDCbUfN9h5g5zJfoPZ1lTeujPBbs04MQ
+	LVDH7uWVvRAF6SBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mDAQki4D;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=fa0yyIJo
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756819796; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+tmHzc4JszRWN9Uk+IedaTWn5QYqC9HOR77ygGDmZQ=;
+	b=mDAQki4DW0gfkRf9PN/SMdVzR+/9JmNe5xaQV7D59VpZksxXABFEnnuGtpzOhI5h1X0+h5
+	zqiNEuZTDH3ZyQYQgRYJG284H5XgeqkDJfsgIjYBfWOpf/OvY2y+67MBGolT/1JDCuNWTl
+	qBeFrHiwvpAgawQ0q2c7Gesk38VQfpw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756819796;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+tmHzc4JszRWN9Uk+IedaTWn5QYqC9HOR77ygGDmZQ=;
+	b=fa0yyIJoLYpQ9jwIcEAx1dkCGSzY+aF++vgpvpqKjgicxWylzxnUDw+ggc4MQOYuV2yUtx
+	msM5ny4BpEQnw7CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C077213882;
+	Tue,  2 Sep 2025 13:29:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LyejLlTxtmiKXAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 02 Sep 2025 13:29:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 59571A0A9F; Tue,  2 Sep 2025 15:29:56 +0200 (CEST)
+Date: Tue, 2 Sep 2025 15:29:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <christian@brauner.io>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, Jan Kara <jack@suse.com>, gfs2@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gfs2, udf: update to use mmap_prepare
+Message-ID: <kjcvzhgyiucsdcgsrbyglf3c2cybelhzggns5rh6tslvzstw3n@c7gyqtxnvzgt>
+References: <20250902115341.292100-1-lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
- <20250902-pinctrl-gpio-pinfuncs-v7-1-bb091daedc52@linaro.org> <aLbrz5DYS5Yxx_UE@smile.fi.intel.com>
-In-Reply-To: <aLbrz5DYS5Yxx_UE@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 2 Sep 2025 15:29:31 +0200
-X-Gm-Features: Ac12FXxptM2x0FIw3VzAD9gZWlHPceo9WcRvgcocpGcthnkDE6yjXmv7vVmpP9U
-Message-ID: <CAMRc=Mfx5czDM=vfEYhFtVO3MviYaW4wKBYjGZ9ZnMbr-+T4mg@mail.gmail.com>
-Subject: Re: [PATCH v7 01/16] pinctrl: check the return value of pinmux_ops::get_function_name()
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902115341.292100-1-lorenzo.stoakes@oracle.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: DEBA0211A1
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-On Tue, Sep 2, 2025 at 3:06=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> On Tue, Sep 02, 2025 at 01:59:10PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > While the API contract in docs doesn't specify it explicitly,
->
-> So, why not to amend the doc at the same time?
->
+On Tue 02-09-25 12:53:41, Lorenzo Stoakes wrote:
+> The f_op->mmap() callback is deprecated, and we are in the process of
+> slowly converting users to f_op->mmap_prepare().
+> 
+> While some filesystems require additional work to be done before they can
+> be converted, the gfs2 and udf filesystems (like most) are simple and can
+> simply be replaced right away.
+> 
+> This patch adapts them to do so.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Because this series is already big as is. That would be another commit
-that can be separate.
+Looks good to me. Feel free to add:
 
-> > the generic implementation of the get_function_name() callback from str=
-uct
-> > pinmux_ops - pinmux_generic_get_function_name() - can fail and return
-> > NULL. This is already checked in pinmux_check_ops() so add a similar
-> > check in pinmux_func_name_to_selector() instead of passing the returned
-> > pointer right down to strcmp() where the NULL can get dereferenced. Thi=
-s
-> > is normal operation when adding new pinfunctions.
->
-> Fixes?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-This has always been like that.
+								Honza
 
-> Reported?
-
-I mean, technically Mark Brown reported my previous patch failing but
-I don't think we do this if we're still within the same series just
-another iteration?
-
-> Closes?
-
-Ditto.
-
->
-> ...
->
-> >       while (selector < nfuncs) {
-> >               const char *fname =3D ops->get_function_name(pctldev, sel=
-ector);
-> >
-> > -             if (!strcmp(function, fname))
-> > +             if (fname && !strcmp(function, fname))
-> >                       return selector;
->
-> I would slightly refactor this:
->
->                 const char *fname;
->
->                 fname =3D ops->get_function_name(pctldev, selector);
->                 if (fname && !strcmp(function, fname))
->                         return selector;
->
-> >               selector++;
->
-
-You can do this in a subsequent patch, I prefer a smaller diff personally.
-
-Bartosz
+> ---
+>  fs/gfs2/file.c | 12 ++++++------
+>  fs/udf/file.c  |  8 +++++---
+>  2 files changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> index bc67fa058c84..c28ff8786238 100644
+> --- a/fs/gfs2/file.c
+> +++ b/fs/gfs2/file.c
+> @@ -577,7 +577,7 @@ static const struct vm_operations_struct gfs2_vm_ops = {
+>  };
+>  
+>  /**
+> - * gfs2_mmap
+> + * gfs2_mmap_prepare
+>   * @file: The file to map
+>   * @vma: The VMA which described the mapping
+>   *
+> @@ -588,8 +588,9 @@ static const struct vm_operations_struct gfs2_vm_ops = {
+>   * Returns: 0
+>   */
+>  
+> -static int gfs2_mmap(struct file *file, struct vm_area_struct *vma)
+> +static int gfs2_mmap_prepare(struct vm_area_desc *desc)
+>  {
+> +	struct file *file = desc->file;
+>  	struct gfs2_inode *ip = GFS2_I(file->f_mapping->host);
+>  
+>  	if (!(file->f_flags & O_NOATIME) &&
+> @@ -605,7 +606,7 @@ static int gfs2_mmap(struct file *file, struct vm_area_struct *vma)
+>  		gfs2_glock_dq_uninit(&i_gh);
+>  		file_accessed(file);
+>  	}
+> -	vma->vm_ops = &gfs2_vm_ops;
+> +	desc->vm_ops = &gfs2_vm_ops;
+>  
+>  	return 0;
+>  }
+> @@ -1585,7 +1586,7 @@ const struct file_operations gfs2_file_fops = {
+>  	.iopoll		= iocb_bio_iopoll,
+>  	.unlocked_ioctl	= gfs2_ioctl,
+>  	.compat_ioctl	= gfs2_compat_ioctl,
+> -	.mmap		= gfs2_mmap,
+> +	.mmap_prepare	= gfs2_mmap,
+>  	.open		= gfs2_open,
+>  	.release	= gfs2_release,
+>  	.fsync		= gfs2_fsync,
+> @@ -1620,7 +1621,7 @@ const struct file_operations gfs2_file_fops_nolock = {
+>  	.iopoll		= iocb_bio_iopoll,
+>  	.unlocked_ioctl	= gfs2_ioctl,
+>  	.compat_ioctl	= gfs2_compat_ioctl,
+> -	.mmap		= gfs2_mmap,
+> +	.mmap_prepare	= gfs2_mmap_prepare,
+>  	.open		= gfs2_open,
+>  	.release	= gfs2_release,
+>  	.fsync		= gfs2_fsync,
+> @@ -1639,4 +1640,3 @@ const struct file_operations gfs2_dir_fops_nolock = {
+>  	.fsync		= gfs2_fsync,
+>  	.llseek		= default_llseek,
+>  };
+> -
+> diff --git a/fs/udf/file.c b/fs/udf/file.c
+> index 0d76c4f37b3e..fbb2d6ba8ca2 100644
+> --- a/fs/udf/file.c
+> +++ b/fs/udf/file.c
+> @@ -189,10 +189,12 @@ static int udf_release_file(struct inode *inode, struct file *filp)
+>  	return 0;
+>  }
+>  
+> -static int udf_file_mmap(struct file *file, struct vm_area_struct *vma)
+> +static int udf_file_mmap_prepare(struct vm_area_desc *desc)
+>  {
+> +	struct file *file = desc->file;
+> +
+>  	file_accessed(file);
+> -	vma->vm_ops = &udf_file_vm_ops;
+> +	desc->vm_ops = &udf_file_vm_ops;
+>  
+>  	return 0;
+>  }
+> @@ -201,7 +203,7 @@ const struct file_operations udf_file_operations = {
+>  	.read_iter		= generic_file_read_iter,
+>  	.unlocked_ioctl		= udf_ioctl,
+>  	.open			= generic_file_open,
+> -	.mmap			= udf_file_mmap,
+> +	.mmap_prepare		= udf_file_mmap_prepare,
+>  	.write_iter		= udf_file_write_iter,
+>  	.release		= udf_release_file,
+>  	.fsync			= generic_file_fsync,
+> -- 
+> 2.50.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
