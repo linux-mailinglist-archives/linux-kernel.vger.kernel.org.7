@@ -1,138 +1,100 @@
-Return-Path: <linux-kernel+bounces-797236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A7AB40DD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:24:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E5DB40DD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6FF1B62389
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF411B27EC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7A234DCF8;
-	Tue,  2 Sep 2025 19:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E7035084E;
+	Tue,  2 Sep 2025 19:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXsvfV+N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LB/utJB1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94001EA6F;
-	Tue,  2 Sep 2025 19:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C1C1EA6F;
+	Tue,  2 Sep 2025 19:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756841046; cv=none; b=ixWBxxfumGM1FGYqkmKIJcq87dEyrULjQVMlfuezqaosXDGUEK02ZFxmaWa6bxQTaPd3B29lZtT/HOyQgkB47FIz18kdHzq7NUm7GagDlR0dHQ0wQLxVsCH1kigCpKS4mLcwBGBWSdJJr7E3ZnTQLiNMoqh6nsf49sxrF35MipM=
+	t=1756841142; cv=none; b=bJrkl+ojN70e17chBLHr9BhUgHusaYPYLMTNUwLQQBzGg9l2DM5TIB7e77yqhMCW7BOZs/MCNaE2qywNJWKbPfj74yjiplK9Bfem2Kj1qXDBaLeRfMz/k+PgYvT+JT1TSanNwKjd8VZxZdiH4LHYejfiGmcXxpzW7CdnlF9zLm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756841046; c=relaxed/simple;
-	bh=PrZQF7DqB4WBGDbfe5rYBm3EXfW8hqYfhzp4dywtRUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thU2kRkY6ks8a+8BqAlsjEdA0nn++VbsQwloMYXL2zDnlJ7xOEgVugFgaHeMRvZWyea9ouddcUEoR6QaFz5AYD9BYp1L4dI2/2bqx03/JYmrY1HiCwgoHDVwhD2JbjE5eM055hbSYc74dyfXt2WAANulqMzu0Wf8Bh1py1Mup1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXsvfV+N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC7A3C4CEED;
-	Tue,  2 Sep 2025 19:24:02 +0000 (UTC)
+	s=arc-20240116; t=1756841142; c=relaxed/simple;
+	bh=L3vFT/IdelDACrDSgTsu4sB7gj4eAGW0cv9aqFaXkqo=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=lbLCEwr3vg4whNVXIquvUmhtI9jATHfPW73S5BbMuTjBQMjFeX7WA5Jtq6dkHXBe1FrOjjdVr98BPb6lrWX7S00dUvRuS4b/98PDI21+M/+8bIaagMjsqe/cNvYgugnxNq5QE1NfNf7sTjRMx5AXrhg+hCrveeMFb27n1TAvdQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LB/utJB1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3014EC4CEED;
+	Tue,  2 Sep 2025 19:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756841045;
-	bh=PrZQF7DqB4WBGDbfe5rYBm3EXfW8hqYfhzp4dywtRUc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EXsvfV+Ne7vgcn5U5Fc1+XxrWxVoYYaW29WTNVPML1WFeSc/1I8o2pQa7ehxasEXQ
-	 UipAW0puLRedbEhatK49RsbW5qQn/VoB871BJ98eqp7/Y2WugHv8iirge3vn6cVdvs
-	 HU04+bYBixr8aTOMI0fYgEmKzkKs9tCAcMucugNu2pB4ngBfpOAAbmIt/c8rueOj1p
-	 SBwEVwDt5sO0+iDZCSIIcatxlnqvM/bni8v7Je26DCHc/wxXJrf9FLqY7c0KjIbLgA
-	 PNzSyYTVG+j+zEyp2Kt4sqVErFYfr7ByvgObDmYgkxVVZLqG6tLeKd2WXUtoiguC+p
-	 UzmlxkYVRgIRQ==
-Message-ID: <893dff7a-2a31-4054-bc93-38544b1d6576@kernel.org>
-Date: Tue, 2 Sep 2025 21:24:00 +0200
+	s=k20201202; t=1756841142;
+	bh=L3vFT/IdelDACrDSgTsu4sB7gj4eAGW0cv9aqFaXkqo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=LB/utJB1l2CGLT2DgzE5quO99KtNIWQhXKOf2cTDZ05pV4ig9lIDLl05OiHqSbDq3
+	 nnXQadFDjFYMy2am6p74oD3v+6X1kylUmYHMFRfEKgF96sBjJ+pG0rloVVhAwmcavN
+	 6ddjsfOuVdh54O9MHj862KVRliN9HDo0imVPDqp46IUAXCCLgKsSMd3fnPsdqkIILU
+	 TNB4hRJmZiOVROwYUZZXlWG9/+ectAPG3lulmBngpi7OzgQAHIG2qpsyt00gS46CA6
+	 9kC+hdpBPE0gV5LQd5uDM7GI//g+NNe3UWXyIDpTQwAKZHJ9GpKMdGMNA2oC0NPK2A
+	 pFnvsTh6R7Yzg==
+Date: Tue, 2 Sep 2025 21:25:33 +0200 (GMT+02:00)
+From: Matthieu Baerts <matttbe@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+	Christoph Paasch <cpaasch@openai.com>, Gang Yan <yangang@kylinos.cn>
+Message-ID: <83d76f61-e8ad-4c8d-b38b-d197cefe4088@kernel.org>
+In-Reply-To: <20250902120933.5dbd61cf@kernel.org>
+References: <20250901-net-next-mptcp-misc-feat-6-18-v1-0-80ae80d2b903@kernel.org> <d5397026-92eb-4a43-9534-954b43ab9305@kernel.org> <20250902120933.5dbd61cf@kernel.org>
+Subject: Re: [PATCH net-next 0/6] mptcp: misc. features for v6.18
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: eswin: Fix regulator error check and Kconfig
- dependency
-To: Yulin Lu <luyulin@eswincomputing.com>, linus.walleij@linaro.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, zhengyu@eswincomputing.com,
- linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
- fenglin@eswincomputing.com, lianghujun@eswincomputing.com,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <20250902094508.288-1-luyulin@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250902094508.288-1-luyulin@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <83d76f61-e8ad-4c8d-b38b-d197cefe4088@kernel.org>
 
-On 02/09/2025 11:45, Yulin Lu wrote:
-> Smatch reported the following warning in eic7700_pinctrl_probe():
-> 
->   drivers/pinctrl/pinctrl-eic7700.c:638 eic7700_pinctrl_probe()
->   warn: passing zero to 'PTR_ERR'
-> 
-> The root cause is that devm_regulator_get() may return NULL when
-> CONFIG_REGULATOR is disabled. In such case, IS_ERR_OR_NULL() triggers
-> PTR_ERR(NULL) which evaluates to 0, leading to passing a success code
-> as an error.
-> 
-> However, this driver cannot work without a regulator. To fix this:
-> 
->  - Change the check from IS_ERR_OR_NULL() to IS_ERR()
->  - Update Kconfig to explicitly select REGULATOR and
->    REGULATOR_FIXED_VOLTAGE, ensuring that the regulator framework is
->    always available.
-> 
-> This resolves the Smatch warning and enforces the correct dependency.
-> 
-> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+2 Sept 2025 21:09:36 Jakub Kicinski <kuba@kernel.org>:
 
-Wrong tag. Didn't Dan give you proper way to attribute reported? See
-submitting-patches. You need Reported-by with Closes.
+> On Tue, 2 Sep 2025 16:29:33 +0200 Matthieu Baerts wrote:
+>> On 01/09/2025 11:39, Matthieu Baerts (NGI0) wrote:
+>>> This series contains 4 independent new features:
+>>>
+>>> - Patch 1: use HMAC-SHA256 library instead of open-coded HMAC.
+>>>
+>>> - Patches 2-3: make ADD_ADDR retransmission timeout adaptive + simplify
+>>> =C2=A0 selftests.=C2=A0
+>>
+>> I just noticed that NIPA reported some issues due to these 2 patches. In
+>> short, some packets (MPTCP ADD_ADDR notifications) can now be
+>> retransmitted quicker, but some tests check MIB counters and don't
+>> expect retransmissions. If the environment is a bit slow, it is possible
+>> to have more retransmissions. We should adapt the tests to avoid false
+>> positives.
+>>
+>> Is it possible to drop just these two patches? Or do you prefer to mark
+>> the whole series as "Changes requested"?
+>
+> Your call, we can also apply as is. mptcp-join is ignored, anyway.
 
+I realised patch 3/6 is going to cause issues when running on older
+kernels, so we would need to revert it if we want to apply all patches.
 
-Best regards,
-Krzysztof
+But if you prefer a v2 for the whole series instead of applying 1,4-6,
+I can also do that :)
+
+Cheers,
+Matt
 
