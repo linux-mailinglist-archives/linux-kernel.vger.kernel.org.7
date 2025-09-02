@@ -1,161 +1,125 @@
-Return-Path: <linux-kernel+bounces-796142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB53AB3FC67
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:28:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14339B3FC6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B20F1167078
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:28:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A3C2C42FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F293283137;
-	Tue,  2 Sep 2025 10:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6B3283FD5;
+	Tue,  2 Sep 2025 10:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dgWiBNNg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mAizxFrJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dgWiBNNg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mAizxFrJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANsrxkQU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3F4283FE7
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4CC283153;
+	Tue,  2 Sep 2025 10:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808870; cv=none; b=MlqfP7VToxXf9cL8eb6b7+akAq9IqIzf8qs8vitMArEjSxcqTEXULA7EAzbyQ84V/KJzIfUB8Br+Fd7Do9HMuF04KnrtVzPxIx5SGw8f0+p1Q7JA3hTgqbNP66oYAR0JaE0UBKbT+775lQfAkdReJQJtmHVjZKYBqljuxFuTf+U=
+	t=1756808880; cv=none; b=iRuI/g5h5rpFTC0GDjojWRfGxxRZcbcStnrtSr+bCynQ4m3pLy/mU9dXfuKSevw4hf+dz41pFLjiFnRJ04lw+23oUyMLMS94pwfYQjAUZbY2dAFJhIslHDVy4FlPxHWSasDUbYa7OKq3J4zBiCWoKOf6wgmo7U41BAbVTZDYC6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808870; c=relaxed/simple;
-	bh=BRzCqC/wGbl29Iq/2LDpz4Cx5BPnsGXTNYX4SNuJJME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aVdy/e0815zQuL7VxpbDzUUBfROL05CNlGWyavxfyloaVqHuj1A2j5lcyGSuIrORF9mH3FkhpJNBNJnxNDivg65CAdfwZoFnxVBHsnEN3YO4HZ0yHh4xKCOUPhrB6sWq7X4s+8sXz9bAWaJ9o375vj7CbXgM1a2PgYCfmICgPoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dgWiBNNg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mAizxFrJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dgWiBNNg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mAizxFrJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 48B7D1F453;
-	Tue,  2 Sep 2025 10:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756808866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NAdEUvGGrTcrNa5rNwgfDltoMSsHsHlk3IKB0f9qHkY=;
-	b=dgWiBNNguzvImDtBQyuRlvJjJdmzQZreJnZBTkws1U6sr49cTlEAcnI6mRVfBjU/+/CRn0
-	kbIze76LFBYhsaI8NtoQdU6YBLHgJiXnn2Z58E2/zhr/AP5Hfi+8XRzcGO2K1ZIrpvltdE
-	4Ga9H73uxIGt41xAoMTyFg/xOcbJ2jc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756808866;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NAdEUvGGrTcrNa5rNwgfDltoMSsHsHlk3IKB0f9qHkY=;
-	b=mAizxFrJJL9CbzrXiszNaUfDOsjiZD2/xK+KIopjGH+N/9rWibEQb4DbSAaluJEDLGo1J+
-	4s3OO6e1Wp7whoDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756808866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NAdEUvGGrTcrNa5rNwgfDltoMSsHsHlk3IKB0f9qHkY=;
-	b=dgWiBNNguzvImDtBQyuRlvJjJdmzQZreJnZBTkws1U6sr49cTlEAcnI6mRVfBjU/+/CRn0
-	kbIze76LFBYhsaI8NtoQdU6YBLHgJiXnn2Z58E2/zhr/AP5Hfi+8XRzcGO2K1ZIrpvltdE
-	4Ga9H73uxIGt41xAoMTyFg/xOcbJ2jc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756808866;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NAdEUvGGrTcrNa5rNwgfDltoMSsHsHlk3IKB0f9qHkY=;
-	b=mAizxFrJJL9CbzrXiszNaUfDOsjiZD2/xK+KIopjGH+N/9rWibEQb4DbSAaluJEDLGo1J+
-	4s3OO6e1Wp7whoDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 17E6E13888;
-	Tue,  2 Sep 2025 10:27:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hkLSBKLGtmguIAAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 02 Sep 2025 10:27:46 +0000
-Message-ID: <15097ba9-c84f-427c-8a9e-9823385dfd14@suse.de>
+	s=arc-20240116; t=1756808880; c=relaxed/simple;
+	bh=e+JGdBZlEQwB2llDtbOT+bOn4vC2kuWun8FcHjC5bks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1fZ9kouyISVgGf07bPDfO2GfQHPFJxFekk47rzwEShOR0Y7Vnc4KHwzpce+t26EwQQ1qLepaHLF8YnB58gdOLB8nsismZrjqufkU7TlB87MqQ0ewBOlUGA+p9rGypNRp8oPCFuX8kfXEwNyoQs7zpIBaCVku9gDlJb4pPwpY/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANsrxkQU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9F8DC4CEED;
+	Tue,  2 Sep 2025 10:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756808879;
+	bh=e+JGdBZlEQwB2llDtbOT+bOn4vC2kuWun8FcHjC5bks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ANsrxkQUFhi5hZBSz0WtooVaJxE5l+wRicHWEAThlbi/a6vHYPAmrVf+PeEhP+Bw3
+	 UCTj3+BSvreM/faFHfcW5E49EPfmbU8clrlZS+jEZRc5AkYAeJDkgkov2Ey2yEEdl/
+	 mbxujtvTFCk/kmgIH4TMjL/E0bs1+DF630opkefAbqRoJfDmjfKtwOi1tQuZele/1z
+	 7FBe5MFj6l3KbH2A1vxqHzAJe9sqx7KrePqCNJ9f+MUBxdhe/HhVogwH7aQZ6vVY3X
+	 gvzIoMc3IsV27cOn0QZMjrmUPnwxRk0VHAYfIOYVx+fs0yUL10nK7YyVh6z1Xtj3jW
+	 PPxGki5FAA4kg==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1utOEr-000000008Uh-0EbN;
+	Tue, 02 Sep 2025 12:27:45 +0200
 Date: Tue, 2 Sep 2025 12:27:45 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Jan Palus <jpalus@fastmail.com>
+Subject: Re: [PATCH] firmware: arm_scmi: quirk: fix write to string constant
+Message-ID: <aLbGoctnA-Ad-Hxv@hovoldconsulting.com>
+References: <20250829132152.28218-1-johan@kernel.org>
+ <aLG5XFHXKgcBida8@hovoldconsulting.com>
+ <aLa__M_VJYqxb9mc@hovoldconsulting.com>
+ <20250902-axiomatic-salamander-of-reputation-d70aa8@sudeepholla>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] nvme-fc: use lock accessing port_state and rport
- state
-To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Keith Busch <kbusch@kernel.org>
-Cc: Yi Zhang <yi.zhang@redhat.com>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250902-fix-nvmet-fc-v3-0-1ae1ecb798d8@kernel.org>
- <20250902-fix-nvmet-fc-v3-4-1ae1ecb798d8@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250902-fix-nvmet-fc-v3-4-1ae1ecb798d8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-axiomatic-salamander-of-reputation-d70aa8@sudeepholla>
 
-On 9/2/25 12:22, Daniel Wagner wrote:
-> nvme_fc_unregister_remote removes the remote port on a lport object at
-> any point in time when there is no active association. This races with
-> with the reconnect logic, because nvme_fc_create_association is not
-> taking a lock to check the port_state and atomically increase the
-> active count on the rport.
+On Tue, Sep 02, 2025 at 11:16:46AM +0100, Sudeep Holla wrote:
+> On Tue, Sep 02, 2025 at 11:59:24AM +0200, Johan Hovold wrote:
+> > On Fri, Aug 29, 2025 at 04:29:48PM +0200, Johan Hovold wrote:
+> > > On Fri, Aug 29, 2025 at 03:21:52PM +0200, Johan Hovold wrote:
+
+> > > > The quirk version range is typically a string constant and must not be
+> > > > modified (e.g. as it may be stored in read-only memory):
+> > > > 
+> > > > 	Unable to handle kernel write to read-only memory at virtual
+> > > > 	address ffffc036d998a947
+> > > > 
+> > > > Fix the range parsing so that it operates on a copy of the version range
+> > > > string, and mark all the quirk strings as const to reduce the risk of
+> > > > introducing similar future issues.
+> > > 
+> > > With Jan's permission, let's add:
+> > > 
+> > > Reported-by: Jan Palus <jpalus@fastmail.com>
+> > > 
 > 
-> Reported-by: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-> Closes: https://lore.kernel.org/all/u4ttvhnn7lark5w3sgrbuy2rxupcvosp4qmvj46nwzgeo5ausc@uyrkdls2muwx
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->   drivers/nvme/host/fc.c | 10 ++++++++--
->   1 file changed, 8 insertions(+), 2 deletions(-)
+> I was hoping to hear back, but I assume silence is kind of acceptance.
+
+I sent the reply with the tag after making sure off-list that Jan was OK
+with it. Sorry if that was not clear.
+
+> > Please don't do such (non-trivial) changes without making that clear
+> > in the commit message before your Signed-off-by tag:
+> > 
+> > 	[ sudeep: rewrite commit message; switch to cleanup helpers ]
+> > 
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Sorry I meant to do that when I replied and asked you if you are OK
+> with cleanup helpers. Also yes I planned to add a line like something
+> above before finalizing.
 
-Cheers,
+Sounds like a mail has gotten lost since I never saw that question from
+you.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+I'm fine with using the helpers here even if I'm not generally a fan of
+them (e.g. due to declarations in middle of functions).
+
+> > In this case, you also changed the meaning so that the commit message
+> > now reads like the sole reason that writing to string constants is wrong
+> > is that they may reside in read-only memory.
+> 
+> Ah, I didn't realise that it changes the meaning now.
+> 
+> > I used "e.g." on purpose instead of listing further reasons like the
+> > fact that string constants may be shared so that parsing of one quirk
+> > can subtly break a later one.
+> 
+> I see your point, will revert to your commit message.
+
+Thanks!
+
+Johan
 
