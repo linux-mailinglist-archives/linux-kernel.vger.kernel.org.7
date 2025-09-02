@@ -1,301 +1,121 @@
-Return-Path: <linux-kernel+bounces-796888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BD7B408DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:24:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410F1B408E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A586189EAE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:24:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 542EF3A9D73
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50184314B82;
-	Tue,  2 Sep 2025 15:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cauk4XG/"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013B831E0EF;
+	Tue,  2 Sep 2025 15:25:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70EA311592
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C01623D7C4;
+	Tue,  2 Sep 2025 15:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826638; cv=none; b=QmTXfOjVeTyj77y9S0BE7jAfi0qK+HCkkvCyAoOHkSMRH+I0iPgOuz/752IgsmpHkAUWUVbcZRPSMnyPI+3PYHzlAhEa+hWxOQKA+HFHx8fuXuZCfQnD6pZ5wlyqNZvhRQYdsnZNv+j0NUsXpeXMkzQ+EGV2wt6XcQi09Yc+78o=
+	t=1756826699; cv=none; b=T2Qi7AV+7sH5y1cNKs0hHd4uGKFm68qTdwuk80r5gjfGu9rJyvPt2xsoSvdkkt+SwNje2dFd2zQqW8qkKUtg7QxAQaHBunYpcYc8XajDFxBWj312NruzUPphShjGeYSG0avZa1Di/d6XqgGHSwzFSvcjTq0K0sBbh94c0NP0G1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826638; c=relaxed/simple;
-	bh=OqY3SiwgvNyKvsyjANWshqbGUQpj2fGjQ77ChSyYS6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nblkbDWEjwL19G1TJg/0z0golmMjm0f+YFoxDiMBmYx+8Oqom/O+vP3fwEiOtpjh1D7mGfORvr2O4UUK5y+OrO8UWBld6yRopgm38iTeNZ6L9qRtTtkz80rMtxBNyQbq4/eP1zglqqY6+T+wjNzvb3ChIRj8mxi24WDsMr9mAFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cauk4XG/; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0431c12df3so326004466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:23:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756826635; x=1757431435; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xy7lqC8l+fpzdKDTj3MBSjONsHATI2B+twLZZeWyMug=;
-        b=cauk4XG/pcr//V9Zj3thUiKtfdbNgBlsn+Lky0rN5G57vLasMl6+NvPiOmea8JkScC
-         oyzLaHnwW/NJXzg1TP/ONFeC23ijhi3nv4b63+wiLpd6uitEaT2IxObDHA4GLavAvujd
-         T1G8q7q8YpcK2dBExoe5pVA7pEYRl7TrtQgZuoqGxia3KQjllBvjfkxCyndL3JcSeB1F
-         c1o5kz4e7hYdHW/CWsKYZncmuZ8/EMbpZyqUDCPStVSqY/Is+DfmWddMZ4bFoQ46B3CZ
-         jZ7Qt/5Joj+vebkc74QEfqHFzGljMMODnEJ1qZi99MIhn3Stivk9wTKUEfa7T1lEYd0A
-         0taw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756826635; x=1757431435;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xy7lqC8l+fpzdKDTj3MBSjONsHATI2B+twLZZeWyMug=;
-        b=VdcPn1zw6kbY0nrd/42exGGraDXV6fy3mWc3qVXLnmAvLQk76OE68f1vM3A9yqXcrp
-         1tGYutyNM1EG7jwzlutjUv5aejKNpplleghYjR96PmweW4uap4neY4mxaDNmD68Guaeb
-         cv0CwDJxau5+BWcFkwGrHBOdN2vczLwnSaXMNXfl5FY7brj9ceLEBMBooOW2WHE4/Vi6
-         CoitU141c9ir6xEQBGUh5ynCmQRiWnw88wQlOqGj5bihKj32x4Z56oFzQz0pd4doGrPk
-         8IJeWcDyDjA1V/W4lWJ3fU08HZkko6oDVxRT0rXYS/NAmHHi+uw4uAJlV9az08KO8QZJ
-         8iOQ==
-X-Gm-Message-State: AOJu0Yw0q9oulw0C+VuHqk74Kmo1UhuIkAlPlyZd9l20Dv3TjGUJsiay
-	KMu5EVQp6cwMamnQsVrmyPQp1JvDHqQ4vOjmAyLXiuVE+bPDRWzgiRHX
-X-Gm-Gg: ASbGncvAaT6TKbPcFvZEkM6v2Ma1B8bVcBGvXWYlj0V2E3NvlfZNRDo2qFgMA3RwpDd
-	Bp/LsbHrPM+qUTHRqarjW5Vq0U56u/J4uYgjCiHSvC7hzBOR4br4Wh74pjT8PhfU3WIBHmxwoeB
-	/LFImyAWLuBVLrQhF5kPlwx+zDMbvAYx362rKXUC83BUECvdIOtpTya1ppt7Bntm0jgTWhSUYKR
-	WCeJMFUkYwnKs/bu/1H7Hpg0KKEZLRk6gsF0J2GPP51ZmAZj5D5x8Z9eZxZnLV0XkJ2RhyjgM2W
-	5ykm6Znku1uJKn51IiqwfXXP7qX2rT10LtXrcUmnCG2qhpJILrnr/bh9GjSTlm5nQNqilHfov6h
-	66yVygob0edYX87gCtsfHbYcPH0lIQvXviG1ZjAn5ITz0ffUETE++X6cebYSRCK6fSaQ3tkTUXb
-	dJMUJAdAdwjQ==
-X-Google-Smtp-Source: AGHT+IFp+IUw9yuDTbtrISQBv+qHdY8dOa2hi8I2mTJWLVGZ8Gyy+GuufzcGp+vT+jjt32eI0l+kcA==
-X-Received: by 2002:a17:907:5c1:b0:afe:d2e1:9018 with SMTP id a640c23a62f3a-b01d8c86721mr1249602466b.25.1756826634772;
-        Tue, 02 Sep 2025 08:23:54 -0700 (PDT)
-Received: from [192.168.50.203] (83.11.209.234.ipv4.supernova.orange.pl. [83.11.209.234])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc51e109sm9755731a12.41.2025.09.02.08.23.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 08:23:54 -0700 (PDT)
-Message-ID: <5fb06bdd-b1d2-4625-9e9a-1679c5e69713@gmail.com>
-Date: Tue, 2 Sep 2025 17:23:52 +0200
+	s=arc-20240116; t=1756826699; c=relaxed/simple;
+	bh=08WLGYvIs6DHBHZWmf9vElYib+z/jFkZCljxRkJotHw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bv3JVIXpQi2eDbNqKgfZe6FJFj7TPfx0UQsys2zQyxsnmlXob0NPzO8lFuf9qAta6+yFZOGFvzALtofoRA3oMo+IurM//oFeffQnih6mks2aajywc0y28mSQjn/iFsgA0BLGHcTwh0G71x621a4nbN56v0QpeS2RG5hLDodcoLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cGTxt08Cmz6M4ZQ;
+	Tue,  2 Sep 2025 23:22:26 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E5D40140136;
+	Tue,  2 Sep 2025 23:24:52 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 2 Sep
+ 2025 17:24:52 +0200
+Date: Tue, 2 Sep 2025 16:24:50 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Dave Jiang <dave.jiang@intel.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+	<rafael@kernel.org>, <dakr@kernel.org>, <dave@stgolabs.net>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dan.j.williams@intel.com>,
+	<marc.herbert@linux.intel.com>, <akpm@linux-foundation.org>,
+	<david@redhat.com>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 3/4] cxl, acpi/hmat: Update CXL access coordinates
+ directly instead of through HMAT
+Message-ID: <20250902162450.00002684@huawei.com>
+In-Reply-To: <20250829222907.1290912-4-dave.jiang@intel.com>
+References: <20250829222907.1290912-1-dave.jiang@intel.com>
+	<20250829222907.1290912-4-dave.jiang@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: bcm590xx: Add support for interrupt handling
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Stanislav Jakubek <stano.jakubek@gmail.com>
-References: <20250816-bcm590xx-irq-v1-1-ccbb490628dd@gmail.com>
- <20250902075057.GB2163762@google.com>
-Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <20250902075057.GB2163762@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Fri, 29 Aug 2025 15:29:06 -0700
+Dave Jiang <dave.jiang@intel.com> wrote:
 
+> The current implementation of CXL memory hotplug notifier gets called
+> before the HMAT memory hotplug notifier. The CXL driver calculates the
+> access coordinates (bandwidth and latency values) for the CXL end to
+> end path (i.e. CPU to endpoint). When the CXL region is onlined, the CXL
+> memory hotplug notifier writes the access coordinates to the HMAT target
+> structs. Then the HMAT memory hotplug notifier is called and it creates
+> the access coordinates for the node sysfs attributes.
+> 
+> During testing on an Intel platform, it was found that although the
+> newly calculated coordinates were pushed to sysfs, the sysfs attributes for
+> the access coordinates showed up with the wrong initiator. The system has
+> 4 nodes (0, 1, 2, 3) where node 0 and 1 are CPU nodes and node 2 and 3 are
+> CXL nodes. The expectation is that node 2 would show up as a target to node
+> 0:
+> /sys/devices/system/node/node2/access0/initiators/node0
+> 
+> However it was observed that node 2 showed up as a target under node 1:
+> /sys/devices/system/node/node2/access0/initiators/node1
+> 
+> The original intent of the 'ext_updated' flag in HMAT handling code was to
+> stop HMAT memory hotplug callback from clobbering the access coordinates
+> after CXL has injected its calculated coordinates and replaced the generic
+> target access coordinates provided by the HMAT table in the HMAT target
+> structs. However the flag is hacky at best and blocks the updates from
+> other CXL regions that are onlined in the same node later on. Remove the
+> 'ext_updated' flag usage and just update the access coordinates for the
+> nodes directly without touching HMAT target data.
+> 
+> The hotplug memory callback ordering is changed. Instead of changing CXL,
+> move HMAT back so there's room for the levels rather than have CXL share
+> the same level as SLAB_CALLBACK_PRI. The change will resulting in the CXL
+> callback to be executed after the HMAT callback.
+> 
+> With the change, the CXL hotplug memory notifier runs after the HMAT
+> callback. The HMAT callback will create the node sysfs attributes for
+> access coordinates. The CXL callback will write the access coordinates to
+> the now created node sysfs attributes directly and will not pollute the
+> HMAT target values.
+> 
+> A nodemask is introduced to keep track if a node has been updated and
+> prevents further updates.
+> 
+> Fixes: 067353a46d8c ("cxl/region: Add memory hotplug notifier for cxl region")
+> Cc: stable@vger.kernel.org
+> Tested-by: Marc Herbert <marc.herbert@linux.intel.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
 
-On 9/2/25 09:50, Lee Jones wrote:
-> On Sat, 16 Aug 2025, Artur Weber wrote:
-> 
->> The BCM590XX supports up to 128 internal interrupts, which are used by
->> various parts of the chip. Add regmap_irq-based interrupt handling and
->> helper functions to allow subdevice drivers to easily use the interrupts.
->>
->> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
->> ---
->> This patch is a prerequisite for future subdevice additions, since
->> many of them rely on the interrupts; I have a power-on key driver and
->> an RTC driver ready which both use the IRQ data/helper functions included
->> in this patch (they will be sent in subsequent patch series), and more
->> are on the way.
-
-(...)
-
->> diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
->> index 5a8456bbd63f65b9260f05ef6546c026bf822bae..d688abd08c12b621a38586650843e55bd71ca715 100644
->> --- a/drivers/mfd/bcm590xx.c
->> +++ b/drivers/mfd/bcm590xx.c
->> @@ -26,16 +26,30 @@
->>   #define BCM590XX_PMUREV_ANA_MASK	0xF0
->>   #define BCM590XX_PMUREV_ANA_SHIFT	4
->>   
->> +#define BCM590XX_REG_IRQ1		0x20
->> +#define BCM590XX_REG_IRQ1_MASK		0x30
-> 
-> REG and MASK mean different things.  What is it?
-
-IRQ1_MASK is the corresponding IRQ mask register for IRQ1. I agree that
-the naming is confusing, would "IRQ1MASK" (without the underscore
-separator) sound better?
-
-> 
->> +
->>   static const struct mfd_cell bcm590xx_devs[] = {
->>   	{
->>   		.name = "bcm590xx-vregs",
->>   	},
->>   };
->>   
->> +static bool bcm590xx_volatile_pri(struct device *dev, unsigned int reg)
-> 
-> What does pri mean?
-
-Primary I2C subdev/regmap, named after the bcm590xx_regmap_config_pri
-struct (where the BCM590XX_REGMAP_PRI/SEC constants got their name as
-well). Should I add a comment here?
-
-> 
->> +{
->> +	/*
->> +	 * IRQ registers are clear-on-read, make sure we don't cache them
->> +	 * so that they get read/cleared correctly
->> +	 */
->> +	return (reg >= BCM590XX_REG_IRQ1 &&
->> +		reg <= (BCM590XX_REG_IRQ1 + 15));
-> 
-> Use up to 100-chars to prevent these line feeds.
-
-Ack, will fix this.
-
-> 
->> +}
->> +
->>   static const struct regmap_config bcm590xx_regmap_config_pri = {
->>   	.reg_bits	= 8,
->>   	.val_bits	= 8,
->>   	.max_register	= BCM590XX_MAX_REGISTER_PRI,
->> +	.volatile_reg	= bcm590xx_volatile_pri,
->>   	.cache_type	= REGCACHE_MAPLE,
->>   };
->>   
->> @@ -46,6 +60,268 @@ static const struct regmap_config bcm590xx_regmap_config_sec = {
->>   	.cache_type	= REGCACHE_MAPLE,
->>   };
->>   
->> +/** Interrupt handling **/
-> 
-> This is obvious with the alerting header comment.
-IMO it makes scrolling through the driver code a bit less confusing (the
-interrupt list is clearly split from the regmap config and later model
-detection and probe code), but I'll remove it if needed.>
->> +/* IRQ IDs in the MFD header follow the IRQ order in hardware. */
-> 
-> Not sure I the helpfulness of this comment.
-
-Indeed I suppose it's not particularily helpful. I'll remove it.
-
-> 
->> +#define BCM590XX_REGMAP_IRQ_REG(id)	REGMAP_IRQ_REG_LINE(id, 8)
-> 
-> What does the 8 mean?
-
-IRQ register width - 8-bit wide registers. Each IRQ gets one bit for
-status in the IRQx registers, and one bit for mask in the IRQxMASK
-registers. See REGMAP_IRQ_REG_LINE in include/linux/regmap.h.
-
-> 
->> +
->> +/* BCM59054 IRQs */
-> 
-> We can see this by the nomenclature.
-
-(...)
-
->> +/* BCM59056 IRQs */
-> 
-> As above.
-> 
-
-Ack, will drop these.
->> +	switch (bcm590xx->pmu_id) {
->> +	case BCM590XX_PMUID_BCM59054:
->> +		irq_chip = &bcm59054_irq_chip;
->> +		break;
->> +	case BCM590XX_PMUID_BCM59056:
->> +		irq_chip = &bcm59056_irq_chip;
->> +		break;
->> +	default:
->> +		dev_err(bcm590xx->dev,
->> +			"Unknown device type, this is a driver bug!\n");
-> 
-> Prevent the wrap here.
-> 
-> No, this is not a driver bug.
-> 
-> Just "Unsupported device type %d" will be fine.
-Ack, I'll reword the message.
-
-> 
->> +		return -EINVAL;
->> +	}
->> +
->> +	ret = devm_regmap_add_irq_chip(bcm590xx->dev, bcm590xx->regmap_pri,
->> +			bcm590xx->irq, IRQF_TRIGGER_FALLING, 0,
->> +			irq_chip, &bcm590xx->irq_data);
->> +	if (ret) {
->> +		dev_err(bcm590xx->dev, "Failed to reguest IRQ %d: %d\n",
-> 
-> "Failed to add IRQ Chip for IRQ: %d (%d)"
-> 
->> +			bcm590xx->irq, ret);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +/** Chip version parsing **/
-> 
-> Not needed.
-> 
-
-See my reply to "/** Interrupt handling **/" comment part.
-
-(...)
->> diff --git a/include/linux/mfd/bcm590xx.h b/include/linux/mfd/bcm590xx.h
->> index 5a5783abd47b9a6bb6f9bb3a8cafddbd01aa7fcc..e6ea643766ab1a9d579c94605b54c53dc1d742d7 100644
->> --- a/include/linux/mfd/bcm590xx.h
->> +++ b/include/linux/mfd/bcm590xx.h
->> @@ -50,6 +50,237 @@ struct bcm590xx {
->>   	/* Chip revision, read from PMUREV reg */
->>   	u8 rev_digital;
->>   	u8 rev_analog;
->> +
->> +	/* Interrupts */
->> +	int irq;
->> +	struct regmap_irq_chip_data *irq_data;
->> +};
->> +
->> +/* Interrupt handling helper functions */
->> +
->> +static inline int
->> +bcm590xx_devm_request_irq(struct device *dev, struct bcm590xx *bcm590xx, int irq,
->> +			  irq_handler_t handler, unsigned long flags,
->> +			  const char *name, void *data)
->> +{
->> +	if (!bcm590xx->irq_data)
->> +		return -EINVAL;
->> +
->> +	return devm_request_threaded_irq(dev,
->> +				regmap_irq_get_virq(bcm590xx->irq_data, irq),
->> +				NULL, handler, flags, name, data);
->> +}
->> +
->> +static inline void
->> +bcm590xx_devm_free_irq(struct device *dev, struct bcm590xx *bcm590xx, int irq,
->> +		       void *data)
->> +{
->> +	if (!bcm590xx->irq_data)
->> +		return;
->> +
->> +	devm_free_irq(dev, regmap_irq_get_virq(bcm590xx->irq_data, irq), data);
->> +}
-> 
-> These functions are abstracted for the sake of abstraction.  Please remove.
-
-OK, will do.
-
-Best regards
-Artur
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
