@@ -1,121 +1,93 @@
-Return-Path: <linux-kernel+bounces-797373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AADB40F8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:38:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45EC7B40F8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3886B1B60D2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1DBC5E5C81
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C2E35AAC9;
-	Tue,  2 Sep 2025 21:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3459235AAB6;
+	Tue,  2 Sep 2025 21:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8IPsHmX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="qtswnzyL"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB5935A2BB;
-	Tue,  2 Sep 2025 21:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00300258EF0
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756849119; cv=none; b=EzA0NPcj3a++ABhj2xYC2ipA9HKybshEWWsaacYiHacGWg7ae120hglypnOsMkDd/+XYkn5xdr9W5u5hqnNER3zOKdefcYzlUb432NHZeoA7fN8coMsiNCuEBsYx5XZC0ERP+a832aDwk3O1aKt8ghPkSjJycl4xfF3Z0LjEgHk=
+	t=1756849274; cv=none; b=SYk9hC2t6ONTBXFDm3Ip6uyGgMBMW9qrQ620mhPnx87xcElBBHV56o+E5Hzmx31MJFj8ZETWJgz+3NpzlwIX/UeeX1TQOd9fUtyftCKx34uxN05pSbTBLyiFQs3lUJxWBH0Onmmu1XMf1AOpaZxDCQvs+Q1t8NjDF+9VQ+WqFHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756849119; c=relaxed/simple;
-	bh=RWzLvD4JVoHR9ApAGc3gcO8HvFNJdZzT8+yB+n3MPH8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Izh4zclrWQF28AN8tFf1RK9zv/cZw8xvEjR3qTrWa78I2btmLNxW9NEqc97OPCDehWg55Xd4+dNwG8MULLEJ050oiTEoT7sa22X+5vt3hAJuvfhU83KUE2paK9JAL0Bnfwj2HJibZfQguA2BhyE4nIACEoHJJkCTdaXNWqrS3C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8IPsHmX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA998C4CEED;
-	Tue,  2 Sep 2025 21:38:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756849119;
-	bh=RWzLvD4JVoHR9ApAGc3gcO8HvFNJdZzT8+yB+n3MPH8=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=t8IPsHmXG6//1qi8MrzggmcAeS6O4MPBqpIvOHmnsr+uAYCDE0lQy5XlqB/BGoCmU
-	 SnpOMsD+c21drqXTZBRxlXjDEWqNAyYSpIYsUo5yF00gYSL0r3pd1YsguBY1RnMw6U
-	 5WYk0J6xQMstx5sqLmFDKuGO61AR4Rex2twtp6VlKjIkgTXikqzWwOjCjhjzRhZ8l6
-	 zDXW6RsalKZBeBt11H5JofT4eAU57EFume07q8xA9RA719Y2ejOobSHKHRx+Q5OJO2
-	 nNN7b4J2opd4VofivTbkMqGlrX+HGVO50+RgrQ2v+r0/jGY4oS1Jr6heEMt9P1cVA6
-	 6/6u6Chm9Y9FA==
-Date: Tue, 2 Sep 2025 23:38:31 +0200 (GMT+02:00)
-From: Matthieu Baerts <matttbe@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, mptcp@lists.linux.dev,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
-	Christoph Paasch <cpaasch@openai.com>, Gang Yan <yangang@kylinos.cn>
-Message-ID: <739c86b1-5cf5-4525-919f-1ca13683b77f@kernel.org>
-In-Reply-To: <aLdfOrQ4O4rnD5M9@arm.com>
-References: <20250901-net-next-mptcp-misc-feat-6-18-v1-0-80ae80d2b903@kernel.org> <20250902072600.2a9be439@kernel.org> <834238b4-3549-4062-a29b-bf9c5aefa30f@kernel.org> <20250902082759.1e7813b8@kernel.org> <aLc2hyFAH9kxlNEg@arm.com> <d4205818-e283-4862-946d-4e51bf180158@kernel.org> <aLdfOrQ4O4rnD5M9@arm.com>
-Subject: Re: [PATCH net-next 0/6] mptcp: misc. features for v6.18
+	s=arc-20240116; t=1756849274; c=relaxed/simple;
+	bh=wS50MOhHWsnMiqonPW7eIOg6r3BfOfNZgJl6TjCqs5Q=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ickqKYkmo79QOOEF44KMwQUZ8/VpuQ0TqQgxWICplcuegFLoOed5L2+/a31haOjCRBAaMcnROgGTymra/oU/gWd96jR39m+ZjHet08DNnlb1iREoMOEsmjvbT+c41U4p3gMX4gBLl3D7nowvMKSi760gCMfwu9z5QKloD25EDqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=qtswnzyL; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1756849272;
+	bh=wS50MOhHWsnMiqonPW7eIOg6r3BfOfNZgJl6TjCqs5Q=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=qtswnzyLDTa4gDkPdnZ2SlsbCITviKO02+Ope2Po0zVZEP2SNdsf6LULlMADetO9M
+	 iSSIlodlZZT4FUxpv2WsgO/l1IxSS+U5aldV32yyepCgAkQykh0U0IeZhu4y3v/Nvd
+	 Dv2RiCr7nWASh1D7XaJ5rZHml1HTUnoeJ44MgJmc=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 3FDAA40398; Tue,  2 Sep 2025 14:41:12 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 3D8EF401EF;
+	Tue,  2 Sep 2025 14:41:12 -0700 (PDT)
+Date: Tue, 2 Sep 2025 14:41:12 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Vlad Dumitrescu <vdumitrescu@nvidia.com>
+cc: Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+    Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] percpu: fix race on alloc failed warning limit
+In-Reply-To: <84bbc996-27c7-4f83-a8c2-4f88b439bd23@nvidia.com>
+Message-ID: <070d9527-0852-e71b-78db-bd9768ba7525@gentwo.org>
+References: <ab22061a-a62f-4429-945b-744e5cc4ba35@nvidia.com> <061405e5-8670-2873-9b6f-0f152863adfc@gentwo.org> <84bbc996-27c7-4f83-a8c2-4f88b439bd23@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Correlation-ID: <739c86b1-5cf5-4525-919f-1ca13683b77f@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
 
-2 Sept 2025 23:18:56 Catalin Marinas <catalin.marinas@arm.com>:
+On Tue, 2 Sep 2025, Vlad Dumitrescu wrote:
 
-> On Tue, Sep 02, 2025 at 08:50:19PM +0200, Matthieu Baerts wrote:
->> Hi Catalin,
->>
->> 2 Sept 2025 20:25:19 Catalin Marinas <catalin.marinas@arm.com>:
->>
->>> On Tue, Sep 02, 2025 at 08:27:59AM -0700, Jakub Kicinski wrote:
->>>> On Tue, 2 Sep 2025 16:51:47 +0200 Matthieu Baerts wrote:
->>>>> It is unclear why a second scan is needed and only the second one caught
->>>>> something. Was it the same with the strange issues you mentioned in
->>>>> driver tests? Do you think I should re-add the second scan + cat?
->>>>
->>>> Not sure, cc: Catalin, from experience it seems like second scan often
->>>> surfaces issues the first scan missed.
->>>
->>> It's some of the kmemleak heuristics to reduce false positives. It does
->>> a checksum of the object during scanning and only reports a leak if the
->>> checksum is the same in two consecutive scans.
->>
->> Thank you for the explanation!
->>
->> Does that mean a scan should be triggered at the end of the tests,
->> then wait 5 second for the grace period, then trigger another scan
->> and check the results?
->>
->> Or wait 5 seconds, then trigger two consecutive scans?
+> On 9/2/25 10:39, Christoph Lameter (Ampere) wrote:
+> > On Fri, 22 Aug 2025, Vlad Dumitrescu wrote:
+> >
+> >> +	if (do_warn && atomic_read(&warn_limit) > 0) {
+> >> +		int remaining = atomic_dec_return(&warn_limit);
+> >
+> >
+> > The code creates a race condition since another atomic_dec_return() can
+> > happen on another cpu between these two lines. warn_limit can go negative.
 >
-> The 5 seconds is the minimum age of an object before it gets reported as
-> a leak. It's not related to the scanning process. So you could do two
-> scans in succession and wait 5 seconds before checking for leaks.
+> Yes, which is why I mentioned it in the description. But compared to before,
+> it should be benign.
 >
-> However, I'd go with the first option - do a scan, wait 5 seconds and do
-> another. That's mostly because at the end of the scan kmemleak prints if
-> it found new unreferenced objects. It might not print the message if a
-> leaked object is younger than 5 seconds. In practice, though, the scan
-> may take longer, depending on how loaded your system is.
+> > Use a single atomic operation instead?
 >
-> The second option works as well but waiting between them has a better
-> chance of removing false positives if, say, some objects are moved
-> between lists and two consecutive scans do not detect the list_head
-> change (and update the object's checksum).
+> Did you have something like this in mind?
+>
+> -	if (do_warn && atomic_read(&warn_limit) > 0) {
+> -		int remaining = atomic_dec_return(&warn_limit);
+> +	if (do_warn) {
+> +		int remaining = atomic_dec_if_positive(&warn_limit);
 
-Thank you for this very nice reply, that's very clear!
+Something like it... Maybe
 
-I will then adapt our CI having CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF
-to do a manual scan at the very end, wait 5 seconds and do another.
-
-Cheers,
-Matt
+if (do_warn && (atomic_dec_if_positive(&warn_limit)) ) {
+  pr_warn  ...
+}
 
 
