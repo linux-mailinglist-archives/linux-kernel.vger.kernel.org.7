@@ -1,230 +1,167 @@
-Return-Path: <linux-kernel+bounces-795622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CC7B3F56E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:25:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF91B3F587
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37E22204239
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 403C9204D86
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F0D2E3AEA;
-	Tue,  2 Sep 2025 06:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547422E3B1C;
+	Tue,  2 Sep 2025 06:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qK7f/sLn"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDRQAaBF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C612E36E9
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DDF1DFFD;
+	Tue,  2 Sep 2025 06:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756794299; cv=none; b=XX54uN0wWr1QUHFufEGoBlamZzFP7Tvrq5jLaa7c3C2Y61Vrqw0O5UDUP/+MaFtjQPr4wllYt3tHEAuCEppV1GeFhOSQ4e4lBaK6keSEiLj1mkKxAnr7C1SELfq7sPkTwiFeqR7K/Vps4u9MYhrhQBEIG7p2wrkU9AKLw4giPP8=
+	t=1756794744; cv=none; b=Oped70tVsVwm1ImWP4iKPO5mz2/M+tFnLdQpSERJrO6sBUUjzVm63iqEqT1v7S/GULXVF1x5cDWz1w4ZTWg5R5JC2Upk5Tbd05aSb8L6/qwXwbbLOlylUgVAL5Q2e1q379YQm5MXB73V9TuKq8/3fJAthnqWSgznvybnk8JRHCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756794299; c=relaxed/simple;
-	bh=/X5tvcuJAxWn3JDYkNwSrjpsesfg6FURaUkJpV2ccGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pyX5aSlwIyYWGMxukUs7ssrAoqnRbLfDR+VYk6sImowf2Di6LH+pkBoLaj3FPU90BCRikpgMmE6Ewkw4mb3A8v4sa+AMLnPmdzNJQj5wFcJVUZTego3mAZgfx0S6YfqJ3FlcN9Amm0BToPeUU3TIYYHtiaDawR9xsSHrcmmqIFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=qK7f/sLn; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e96f401c478so4613574276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1756794295; x=1757399095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T7vWWxNzseg54QZAjivUxxK0pnJ4DlOhxfw0ykDICyI=;
-        b=qK7f/sLnPoJeVQTd9FElwAA0Tl0UFyDF1bQ3sZBHacOoeGdsYb4Luai+0J+OTwpbSo
-         JzAFychWDM2JZkQ0Fz6jMcEqvhesOXKBgivD7UCxyF0JcaeQxWNqpccxc8fPBCnDGZNH
-         9Q68kGAWOAX/oc4yvr7gAi4FcQ/RgA1vot/hg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756794295; x=1757399095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T7vWWxNzseg54QZAjivUxxK0pnJ4DlOhxfw0ykDICyI=;
-        b=xEAu+0jG+aeK8IvVmqkUSfSmn6J6iekoDlda7ZXmz51ux/skwl7/iq1lv28jt3ytBx
-         FOyHglK2K//4QgbmacbzVYYvpxxro7vBbBwHSmwGDXdDAD6t271dOScjHBbRdllhuaCa
-         jkqLHareuMQgJJpWbCSMdY2qA81YobJDaXUizumTgZI3RnMWLmG1W1mTW0eDv+Fi2J0X
-         ubvDGqj2ieK1Jpbu+Zz6E93Mdq5k41EgNKyjr7I9uT/Wm9zjxDe4CK55qocoKa7Ohol6
-         O0sv7fnpJzUdS6geQjqeUzeM5G8tqKG1DKUT0SrPWeS4K13pvlhB2y6Q+2kxZmLmFe8Y
-         x0nA==
-X-Gm-Message-State: AOJu0YzQfYfsKRAHCkjWSDxnDRqYnwtOSHctNJ8YD8FDS+P8WXJMnK+R
-	Yw8icNue5tgNc0G3GfnEJhCj63jHBqitLUcNOlY/5cjgGR09pMedgd7+Oz263+fGcsAbuhWb+4A
-	DEp9D/kkEDwkdDa1m+IcPhk26X2NyNFAq0yySZFQVbw==
-X-Gm-Gg: ASbGnct0VBMFYC+B4CnvjPKle19A0i1Zq1b3ugxKYz9EnLGfx3zQzZXDJRYCcvIRrdD
-	MFPiaj//PxzvopZdYJwuh0sfkKJ2nztdHah3LZ/qCmn/RpflFA3i6lohBKzB04Rg8t8fAjz4GtI
-	hyPmtjOfcHlz99rTwSpizJK6KKd06RP4oPpCFe4o8GzD8cOI137SMJoJNi54kBBAK9qNkSk3ICS
-	ac4proa5qXp7aSL
-X-Google-Smtp-Source: AGHT+IEC+bhwfIsYKYd4OXHEYbsF24ESl19VnrU0Lm+wzyoJZpbOTOeMhCWWexm/yC9IvNQdZvyYLuGaB9Amv1jSkRs=
-X-Received: by 2002:a05:6902:e03:b0:e96:ec6a:26c7 with SMTP id
- 3f1490d57ef6-e98a567eea7mr11493602276.0.1756794295489; Mon, 01 Sep 2025
- 23:24:55 -0700 (PDT)
+	s=arc-20240116; t=1756794744; c=relaxed/simple;
+	bh=RMQkvomOLLAE9BCgJJ7rozPydCyG9TQK4oYVCVv2aYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PnXlD8RG40X6xOGhvZ7RRO+DmUgszk680aU3HvdpuAyjOvlHo+Fu6FdyuHQPnt/TRMzo23TVY5bNEuVUwwRPZ6gZC0w+txlW8YlOfGPR14ke7F41DwT7NIX5JaHAdnTVgt/yAx/hGyOuk7osCr6n7joJx/7L61ojt6BbM7K5Vy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDRQAaBF; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756794743; x=1788330743;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RMQkvomOLLAE9BCgJJ7rozPydCyG9TQK4oYVCVv2aYg=;
+  b=DDRQAaBFNM6K354v5jJZCuRJVmoKb8O8txcpS4EbCGNmlf7lmfkxSZj+
+   XE/uDYeaB/EuvHaaSnTTmxSn6/Ocmc6biQM/84q3ghebdRq9W/pGF4cOk
+   6a4l7sR1tdAS1I/ZLrtysslHsAyx7eeyemSqNcvK2T8pnlCvgvY+3SzP7
+   lDgXUg8dWWaHKmzvNwqs6h4bDa1SSD6VkMRgwuVtmAz2UEUq59cWfZVT+
+   npqGi+hrvzQguttbeLRQc8tSCumIRSJ9v+ZQu5wfaVSQsYbgR1/eqEPxb
+   SCpgy9UQxFiZe4W7esXbu4D8Dc9fzRkVQmMsYPryfQ5ja00P5ruM6vU7s
+   g==;
+X-CSE-ConnectionGUID: RHsJSnH4RAGCIvc2M2XAEg==
+X-CSE-MsgGUID: nCAdhD6RRBKWSv7Clk5pbA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81635642"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="81635642"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 23:32:22 -0700
+X-CSE-ConnectionGUID: msWB30CGTKybT0ha7abKAg==
+X-CSE-MsgGUID: +QSl33vHQXaB9NE9KO9NEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="170741958"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 01 Sep 2025 23:32:17 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utKYK-0001Vj-35;
+	Tue, 02 Sep 2025 06:31:58 +0000
+Date: Tue, 2 Sep 2025 14:30:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com
+Cc: oe-kbuild-all@lists.linux.dev, peter.wang@mediatek.com,
+	tanghuan@vivo.com, liu.song13@zte.com.cn, quic_nguyenb@quicinc.com,
+	viro@zeniv.linux.org.uk, huobean@gmail.com, adrian.hunter@intel.com,
+	can.guo@oss.qualcomm.com, ebiggers@kernel.org,
+	neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
+	quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com,
+	zhongqiu.han@oss.qualcomm.com
+Subject: Re: [PATCH] scsi: ufs: core: Fix data race in CPU latency PM QoS
+ request handling
+Message-ID: <202509021425.HuVijyYS-lkp@intel.com>
+References: <20250901085117.86160-1-zhongqiu.han@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722103706.3440777-1-dario.binacchi@amarulasolutions.com>
- <20250722103706.3440777-3-dario.binacchi@amarulasolutions.com>
- <20250723050319.GA1239529-robh@kernel.org> <CABGWkvpWPXz8bFPC3OgqY+C6cgu6hHGh6muCQkoCOEVK048fSA@mail.gmail.com>
-In-Reply-To: <CABGWkvpWPXz8bFPC3OgqY+C6cgu6hHGh6muCQkoCOEVK048fSA@mail.gmail.com>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Tue, 2 Sep 2025 08:24:44 +0200
-X-Gm-Features: Ac12FXxEccgAI8M5f9oOb9ii1ya7raF_SCejPp9-Hl3t92BIFWLzJIdX2D6ZhXo
-Message-ID: <CABGWkvqazpyra=n5Jswon576pGG7yEOQg=_qdpTM+X6WmHP43g@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: input: touchscreen: fsl,imx6ul-tsc: add fsl,glitch-threshold
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901085117.86160-1-zhongqiu.han@oss.qualcomm.com>
 
-Hello Rob,
+Hi Zhongqiu,
 
-just a gentle ping =E2=80=94 I=E2=80=99ve replied to your comments on this =
-patch, but
-I haven=E2=80=99t seen any further feedback.
+kernel test robot noticed the following build warnings:
 
-Thanks and regards,
-Dario
+[auto build test WARNING on jejb-scsi/for-next]
+[also build test WARNING on mkp-scsi/for-next linus/master v6.17-rc4 next-20250901]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-On Wed, Jul 23, 2025 at 8:25=E2=80=AFAM Dario Binacchi
-<dario.binacchi@amarulasolutions.com> wrote:
->
-> On Wed, Jul 23, 2025 at 7:03=E2=80=AFAM Rob Herring <robh@kernel.org> wro=
-te:
-> >
-> > On Tue, Jul 22, 2025 at 12:36:16PM +0200, Dario Binacchi wrote:
-> > > Add support for glitch threshold configuration. A detected signal is =
-valid
-> > > only if it lasts longer than the set threshold; otherwise, it is rega=
-rded
-> > > as a glitch.
-> > >
-> > > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> > > ---
-> > >
-> > >  .../input/touchscreen/fsl,imx6ul-tsc.yaml      | 18 ++++++++++++++++=
-++
-> > >  1 file changed, 18 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/fsl,=
-imx6ul-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/fsl,i=
-mx6ul-tsc.yaml
-> > > index 678756ad0f92..2fee2940213f 100644
-> > > --- a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-=
-tsc.yaml
-> > > +++ b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-=
-tsc.yaml
-> > > @@ -62,6 +62,23 @@ properties:
-> > >      description: Number of data samples which are averaged for each =
-read.
-> > >      enum: [ 1, 4, 8, 16, 32 ]
-> > >
-> > > +  fsl,glitch-threshold:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    default: 0
-> > > +    enum: [ 0, 1, 2, 3 ]
-> > > +    description: |
-> > > +      Indicates the glitch threshold. The threshold is defined by nu=
-mber
-> > > +      of clock cycles. A detect signal is only valid if it is exist =
-longer
-> > > +      than threshold; otherwise, it is regarded as a glitch.
-> > > +      0: Normal function: 8191 clock cycles
-> > > +         Low power mode: 9 clock cycles
-> > > +      1: Normal function: 4095 clock cycles
-> > > +         Low power mode: 7 clock cycles
-> > > +      2: Normal function: 2047 clock cycles
-> > > +         Low power mode: 5 clock cycles
-> > > +      3: Normal function: 1023 clock cycles
-> > > +         Low power mode: 3 clock cycles
-> >
-> > Don't we have common properties for this expressed in time? Debounce
-> > time IIRC.
->
-> I tried checking in
-> Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml,
-> but I didn't find anything about it.
->
-> It exists in some specific touchscreen bindings:
-> - azoteq,iqs7211.yaml
-> - brcm,iproc-touchscreen.txt
-> - fsl-mx25-tcq.txt,
-> - ti,ads7843.yaml.
->
-> Only fsl-mx25-tcq.txt expresses it in terms of time (ns).
->
-> Thanks and regards,
-> Dario
->
-> >
-> > > +
-> > >  required:
-> > >    - compatible
-> > >    - reg
-> > > @@ -94,4 +111,5 @@ examples:
-> > >          measure-delay-time =3D <0xfff>;
-> > >          pre-charge-time =3D <0xffff>;
-> > >          touchscreen-average-samples =3D <32>;
-> > > +        fsl,glitch-threshold =3D <2>;
-> > >      };
-> > > --
-> > > 2.43.0
-> > >
->
->
->
-> --
->
-> Dario Binacchi
->
-> Senior Embedded Linux Developer
->
-> dario.binacchi@amarulasolutions.com
->
-> __________________________________
->
->
-> Amarula Solutions SRL
->
-> Via Le Canevare 30, 31100 Treviso, Veneto, IT
->
-> T. +39 042 243 5310
-> info@amarulasolutions.com
->
-> www.amarulasolutions.com
+url:    https://github.com/intel-lab-lkp/linux/commits/Zhongqiu-Han/scsi-ufs-core-Fix-data-race-in-CPU-latency-PM-QoS-request-handling/20250901-165540
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20250901085117.86160-1-zhongqiu.han%40oss.qualcomm.com
+patch subject: [PATCH] scsi: ufs: core: Fix data race in CPU latency PM QoS request handling
+config: arc-randconfig-002-20250902 (https://download.01.org/0day-ci/archive/20250902/202509021425.HuVijyYS-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250902/202509021425.HuVijyYS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509021425.HuVijyYS-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/ufs/core/ufshcd.c: In function 'ufshcd_pm_qos_init':
+>> drivers/ufs/core/ufshcd.c:1052:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+    1052 |  if (hba->pm_qos_enabled)
+         |  ^~
+   drivers/ufs/core/ufshcd.c:1054:3: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+    1054 |   return;
+         |   ^~~~~~
+   drivers/ufs/core/ufshcd.c: In function 'ufshcd_pm_qos_exit':
+   drivers/ufs/core/ufshcd.c:1072:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+    1072 |  if (!hba->pm_qos_enabled)
+         |  ^~
+   drivers/ufs/core/ufshcd.c:1074:3: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+    1074 |   return;
+         |   ^~~~~~
+   drivers/ufs/core/ufshcd.c: In function 'ufshcd_pm_qos_update':
+   drivers/ufs/core/ufshcd.c:1090:2: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+    1090 |  if (!hba->pm_qos_enabled)
+         |  ^~
+   drivers/ufs/core/ufshcd.c:1092:3: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+    1092 |   return;
+         |   ^~~~~~
 
 
+vim +/if +1052 drivers/ufs/core/ufshcd.c
 
---=20
+7a3e97b0dc4bba drivers/scsi/ufs/ufshcd.c Santosh Yaraganavi 2012-02-29  1043  
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1044  /**
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1045   * ufshcd_pm_qos_init - initialize PM QoS request
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1046   * @hba: per adapter instance
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1047   */
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1048  void ufshcd_pm_qos_init(struct ufs_hba *hba)
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1049  {
+5824c3647e1ad8 drivers/ufs/core/ufshcd.c Zhongqiu Han       2025-09-01  1050  	mutex_lock(&hba->pm_qos_mutex);
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1051  
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19 @1052  	if (hba->pm_qos_enabled)
+5824c3647e1ad8 drivers/ufs/core/ufshcd.c Zhongqiu Han       2025-09-01  1053  		mutex_unlock(&hba->pm_qos_mutex);
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1054  		return;
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1055  
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1056  	cpu_latency_qos_add_request(&hba->pm_qos_req, PM_QOS_DEFAULT_VALUE);
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1057  
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1058  	if (cpu_latency_qos_request_active(&hba->pm_qos_req))
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1059  		hba->pm_qos_enabled = true;
+5824c3647e1ad8 drivers/ufs/core/ufshcd.c Zhongqiu Han       2025-09-01  1060  
+5824c3647e1ad8 drivers/ufs/core/ufshcd.c Zhongqiu Han       2025-09-01  1061  	mutex_unlock(&hba->pm_qos_mutex);
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1062  }
+2777e73fc154e2 drivers/ufs/core/ufshcd.c Maramaina Naresh   2023-12-19  1063  
 
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
