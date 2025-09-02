@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-797171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A0EB40CE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:10:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91789B40CEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD7304E43FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3785E208416
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C62934A31D;
-	Tue,  2 Sep 2025 18:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7278C34AB0A;
+	Tue,  2 Sep 2025 18:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XnEnw29V"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7RTEvT9"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9093469FC
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 18:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2071034A316;
+	Tue,  2 Sep 2025 18:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756836627; cv=none; b=O1/+I4qjInE0BqwkFtat7ko3+dVJhuhMrBOMNpAln0u6Xp3MCRS/MG18V4Wi0ogf51O7NLLy7L54HlFYcsvWnrvMWIQeTQdlilStbbcT8Fc2sxN30KC0L86m7JmVUl4CIkCCw5RNiPtR/W1xGVegeM36gFfpWpt6Fg++g4LEPT8=
+	t=1756836636; cv=none; b=k0Krorl6ZKpiLkoOC2GfqUZNu8OubNC7N28gnYghQ685U4nbOpeFP1/SErVLGkAFCHVuIFv1uzV+lTgZrKpjSSLjYuE2bSlr4xfOPfL1qJSDkscvhlcqi6nceE2RYyJANvSXwse/50hRQjQ0iUaQPXq2RuEcJAnPh2vDFEHMMFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756836627; c=relaxed/simple;
-	bh=HUZUWUJarg7W6rqDCZMjaomtY0RkYmWhDh1YrtdJo2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Q9Al1VWjpXxpp4CBbxXYOP4ygm10IlJD+14THPRciUKxKRyq2HAYyYsIdWUkG7yHFrLPeKOHKxHYdYDlTZ1n5TpIcZiqpf7Ysu9RiByA/Z3QzUXhRKwBaRTYMbio1kAjbzFTdvpdvebvgv4dbxHffX1Y6AvwR7es/JpdUlOtGGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XnEnw29V; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1756836636; c=relaxed/simple;
+	bh=mnD4JRGbk9W/QM5EuH31k1b1ffUiZwbDvhrc0zl10ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Si6vr48T8p3IxDtRxqrIbBCFsF3XCBcrKqC6WROeGdFcu5gMW2ogpgLxpVauyJ3jzOIWzaWvZ1pitQPPar4ohNnbqw0B8rUyKA9JocflrEdAgF6E5nEOh0jpk9C5kinHE/L1ifLXGy5CcJinCjj7aBSWhY94IWjJ6d4pY1JPDks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7RTEvT9; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7722bcb989aso3166599b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 11:10:26 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4c72885c8bso4029346a12.0;
+        Tue, 02 Sep 2025 11:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756836625; x=1757441425; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1TH0A07StqxqCETJBwzgyuGcbJt6lyB5z/jM8qgdsuU=;
-        b=XnEnw29VJuubyMHWCLkTpe3wvj7KC+vv1SDjlMjz0ySXvOcfeL1yKB3jEWxNpSRxJ6
-         6o2NlLuCARBv+jt0ps5fWdHTzWrzRxmNsFGk3gMGh8h8TZQgE5wNR5+FcOOrx/e51Pnp
-         o1zR1MVV5nF09Uedce2aHtCaLcb5nXBG2mb6biPVCMRMSWIhtAyIDy/ch7TyrBnrQ/qQ
-         8K9hMkNPPxIx03Ss3mfD+7eyN3FHvjNxnY7gm15OPY98Hn7YqiiqwbzkKADjk4VWr3DF
-         eGE/uzhM896ush9r7UAww0r6fVGaw8dipvyA6xdKg2BLTkNS3ulO9AlsYtths2EZCMGQ
-         iiIQ==
+        d=gmail.com; s=20230601; t=1756836634; x=1757441434; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=11SI7K2HrD1Xkcfg4YipKbfNlLrbJJRsWjUQWdPP85o=;
+        b=E7RTEvT9DCLUalX5qqgIb1adpP1w3XtBkcNyhbLh6SN3LziI2J4vyJb0VhsXZ+yKRx
+         0EMr8LjAgOnFi+qzuWyCstf5o8sMxGJ/oU7UEDcKKBtvmq9ZwxfPXEy91LInzf1WaY4I
+         Zpaa+MnVRNHhnhUeCMi1xjWJBHLcYrjmzsm282OYz4Q+gqwd3d+T5ukATcHkx5GVjc6t
+         Bw/uvgjGk4WrhXXyTADJNnDtUjxOptt8bRAPCsRcbgx5+6m08FeM1B83BQ7/HuYhwBOR
+         LEofsCau59yd43oXQyij2XiZ5Rw+AFLLWIwI3WqXogi/Kg0c/b1fqwDsJsV4YDQkKk1h
+         NChg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756836625; x=1757441425;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1TH0A07StqxqCETJBwzgyuGcbJt6lyB5z/jM8qgdsuU=;
-        b=DTImjPztXCgum4XqPMiNq7L99bBzdytOZ/sdqcoNz+k1I3Oq+laVMPfvV1Mt8TnvsG
-         Ze3N359KX+byIjo4kdRDfncaDIVn5X9zyEWQuH7G6HUpIXPmuPgqYZ6FCv62ZV/Qby6h
-         XYM+UsHPbBvn+d7KfHKgNgYr50iGGD+gUK/qdknlYyXOXadJd7TCNXdKJs4dKG3HVvO9
-         LfTX7HhYIVNrGcEVo29xb04T7Z/sSEXVxDf5U4VQ893+WVSVWysnjaDwIuN+Jn+W3hL0
-         ZMAWG0/dUKxNSduNDpFAN8CEZOcjJMoQH9ATOmW5XvXslzaoEX33HdmWTytnUG0sfbad
-         enrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWE74FHYIt/YZmCeQqRmt+k9JUHA58kWSaX4g8FupDhfkihiZ6yEQAwFAyDNabm8Dpl250SaCfGLvPreAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytdpWtNe9gj/nwXHa5ixJ6U5VdXWxyrxprneKaj+v2mUk2+fJn
-	uF39B3LfP8YiFVaC/lsnVrSyPa5MpDvbNEIiQOTMbYjG/UfRLmfjpy+YssLCIA==
-X-Gm-Gg: ASbGnctcZYgP6PV5LlwttnsZA6UJUdJgEp0jy/fK1djnKuOKYBAjmmp6zh5cwbL5GfY
-	8BaLtq2O7h71HE8NZCW2K68UIFwTG2qRKI387mu3N9b3KUXjFzljLNbjFGFhj17dpj3wcPJyG6f
-	lB528eblvyPFjC0374aIMFhoTSB5/J+piTcrXfLuiZ2XaOBNETL/PMrKN6a9w6g/ImhVcwapU4C
-	0ydkMG5qA/aJb1OeXKpo1M3uesMWkk58Jn8ktF3AsS1RJviv77GOCLcjAH9lNJnbt6Kb4xDmrfn
-	fse5oTqCcY442nFuLXgrWI9M1FOCBBjW4r8BVNv6yPJ0caITUtrycbs16sOAkb3WqEOHIG4D/Ik
-	cq/qc+CyA73QYK2nO6g==
-X-Google-Smtp-Source: AGHT+IGFHCri7WeJln98XxJPVPtUkEe7QIgxGiwCcpWDJ+7ZO0ZQMfaPJ4nVVMR14D8qz0BRhvzB1g==
-X-Received: by 2002:a05:6a00:2e04:b0:772:5b16:1081 with SMTP id d2e1a72fcca58-7725b161490mr8303874b3a.28.1756836625470;
-        Tue, 02 Sep 2025 11:10:25 -0700 (PDT)
-Received: from Terra ([2001:df0:b240:6cbd:e842:2f6a:96d:9188])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2b362dsm14334484b3a.32.2025.09.02.11.10.22
+        d=1e100.net; s=20230601; t=1756836634; x=1757441434;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=11SI7K2HrD1Xkcfg4YipKbfNlLrbJJRsWjUQWdPP85o=;
+        b=Dm4bqIu9BfmHnOxSdkRU/pnsC11+8tIUo62Wl7wA+IBRevTygWMwjbv2nZ8hdRZRL6
+         9ejONlL1lKTDoVnlc67Adh2F3NIxFwTRZGlbyaz8vYx77ImrWFUNCXkNbHsTLBLGnVft
+         ruHUVThaAt/yOxNZiIDc7YgHJxo2kixHDOg83XrerknYBjfi9p6uAb80hZJLIY5p5Ai0
+         cibQEwgkHmrxrc7CMCVHwdjoQsm5b4J3JsRRMPw6GCZjYHyRXHHOpgjRb+ImZnLayDZC
+         tnbfZqaQ5bZklzpbT7ojPHWMGeHVZup8okdwDzw77uysHG1uUk1sghEmNJabeU8aZhaK
+         EPuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs99MItuhhO60ZfvrSouqJYGPwjr6BsABL13mS+QJRwanYwWGF2vVvr8O31cNpZHAE3LCw6oNgAl3/gIh5@vger.kernel.org, AJvYcCVQOwTTBdY32dJqRUJzzwnJi+ZR23g77j+bt4dLEsvvIfTimUtUuc4kZqltIWTLcwt/KLoVQiBo@vger.kernel.org, AJvYcCW0ofg42+KYXIFIObANRBEeG37bp+nubPLSq4ks1thP8JR2Gmj+Q7T02mEtZSaKqOOb6Adqo9Eg/iPMKdON@vger.kernel.org, AJvYcCWd4gKBavgtUHItqphzoY3IHiADOdPVtD8z3JRXp7yK7e0lcbqG7QNIVvDIlm9ILvyWULDkX2cFdtkGDjokPZzH@vger.kernel.org, AJvYcCXtMDMbqWRJ8B7SFd7Cz/WgTfaYIdT+IXhQwx4BQeOnksPwkVpgm5Ke+akH8JTkkOvHFYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCJ5JpVEXRQn7WNaAtX2Nj5LA4duV1pQz2qv4vrV/y+MvUBk8f
+	B6vnXtcFFJIaXf+/8GQ1ObsOWmtAVyhSvBGnVFPZkl0AlmL+rhmpclFO
+X-Gm-Gg: ASbGnctLLNc4ev9f1SYAh1bb6J5JTLVm+4p+QXBJNT/8aGx1G0ERIvTlspLTN7Vr/qC
+	N3oq60PeH2YEPfaKI/T7grAdaqKua3SbGRdJJIyeTiibEp1fLrZ3sI1vCYehXmW2/ACoYr3a3AX
+	2T8Sd+D9mLRpP7qhSTKCHklfpIgIHsCxjM32mb2dttwaOlltnupXLGIaQha8t8v+BWDnW2AwyGt
+	5tfqXY/K19yP90RIqLH7ITRWvbYw3+Ho3zIYE6bRXQ4zMg3xwX7zkqaMtfNpCh0MruP4JpJwO4p
+	Chn2PZsbcKmv7lYWbkuGZf0T2G30nhO3Lb0wRY9P4KKS18sQS+BRUuOqCLuJT0ZDzEe3xNxE13m
+	+HpZtav/YZ24eEotcr3byY9F0aJLvTYTAM8prLUNWDQw=
+X-Google-Smtp-Source: AGHT+IFi/A5kl+CSm9Pre9tgHAXuj4Y9/s3vbKAIdfdu32Djhb4qcTMLMePJS7ddZUuOGxsxTT3zRQ==
+X-Received: by 2002:a17:903:230c:b0:248:ea98:3d12 with SMTP id d9443c01a7336-24944acc7d6mr170727225ad.40.1756836634401;
+        Tue, 02 Sep 2025 11:10:34 -0700 (PDT)
+Received: from devvm6216.cco0.facebook.com ([2a03:2880:2ff:1::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b2570cfb0sm18256955ad.139.2025.09.02.11.10.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 11:10:25 -0700 (PDT)
-Date: Tue, 2 Sep 2025 23:40:20 +0530
-From: Athul Raj Kollareth <krathul3152@gmail.com>
-To: michal.wajdeczko@intel.com, tzimmermann@suse.de
-Cc: skhan@linuxfoundation.org, dri-devel@lists.freedesktop.org,
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
-	simona@ffwll.ch, mripard@kernel.org
-Subject: [PATCH v5] drm: Replace the deprecated DRM_* logging macros in gem
- helper files
-Message-ID: <aLczDHV_yGnnRKbr@Terra>
+        Tue, 02 Sep 2025 11:10:33 -0700 (PDT)
+Date: Tue, 2 Sep 2025 11:10:31 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v5 9/9] selftests/vsock: add namespace tests
+Message-ID: <aLczFwjAClnFvANG@devvm6216.cco0.facebook.com>
+References: <20250827-vsock-vmtest-v5-0-0ba580bede5b@meta.com>
+ <20250827-vsock-vmtest-v5-9-0ba580bede5b@meta.com>
+ <phckm6qx2drazblg4fsheqe4meg7likmvhbyquffwct4xj35ub@ddz2iikovcq5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,101 +106,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6a5cc1e0-ea0a-4d7f-8834-20a371346d79@intel.com>
+In-Reply-To: <phckm6qx2drazblg4fsheqe4meg7likmvhbyquffwct4xj35ub@ddz2iikovcq5>
 
-Replace the DRM_* logging macros used in gem helper files with the
-appropriate ones specified in /include/drm/drm_print.h.
+On Tue, Sep 02, 2025 at 05:40:38PM +0200, Stefano Garzarella wrote:
+> On Wed, Aug 27, 2025 at 05:31:37PM -0700, Bobby Eshleman wrote:
+> > From: Bobby Eshleman <bobbyeshleman@meta.com>
+> > 
+> > Add tests for namespace support in vsock. Use socat for basic connection
+> 
+> Are netns tests skipped if the kernel doesn't support it?
 
-Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
-Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
----
-Changes in v5:
-    - Minor style fix.
+No, will fix in next rev.
 
-Changes in v4:
-    - Some codestyle corrections.
-    - Remove OOM error logging in drm_gem_init().
-
-Changes in v3:
-    - Revert all changes to drm_gem_objects_lookup().
-    - Use drm_device from minor.
-
-Changes in v2:
-    - Change drm_gem_objects_lookup() to take a drm_device* argument.
-    - Make appropriate changes to all calls of drm_gem_objects_lookup().
----
- drivers/gpu/drm/drm_gem.c            | 16 ++++++++--------
- drivers/gpu/drm/drm_gem_dma_helper.c |  2 +-
- 2 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 4a89b6acb6af..fb12cc2051d8 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -101,10 +101,8 @@ drm_gem_init(struct drm_device *dev)
- 
- 	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
- 					  GFP_KERNEL);
--	if (!vma_offset_manager) {
--		DRM_ERROR("out of memory\n");
-+	if (!vma_offset_manager)
- 		return -ENOMEM;
--	}
- 
- 	dev->vma_offset_manager = vma_offset_manager;
- 	drm_vma_offset_manager_init(vma_offset_manager,
-@@ -783,9 +781,10 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
- int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
- 			   int count, struct drm_gem_object ***objs_out)
- {
--	int ret;
--	u32 *handles;
-+	struct drm_device *dev = filp->minor->dev;
- 	struct drm_gem_object **objs;
-+	u32 *handles;
-+	int ret;
- 
- 	if (!count)
- 		return 0;
-@@ -805,7 +804,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
- 
- 	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
- 		ret = -EFAULT;
--		DRM_DEBUG("Failed to copy in GEM handles\n");
-+		drm_dbg_core(dev, "Failed to copy in GEM handles\n");
- 		goto out;
- 	}
- 
-@@ -853,12 +852,13 @@ EXPORT_SYMBOL(drm_gem_object_lookup);
- long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
- 				    bool wait_all, unsigned long timeout)
- {
--	long ret;
-+	struct drm_device *dev = filep->minor->dev;
- 	struct drm_gem_object *obj;
-+	long ret;
- 
- 	obj = drm_gem_object_lookup(filep, handle);
- 	if (!obj) {
--		DRM_DEBUG("Failed to look up GEM BO %d\n", handle);
-+		drm_dbg_core(dev, "Failed to look up GEM BO %d\n", handle);
- 		return -EINVAL;
- 	}
- 
-diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
-index 4f0320df858f..a507cf517015 100644
---- a/drivers/gpu/drm/drm_gem_dma_helper.c
-+++ b/drivers/gpu/drm/drm_gem_dma_helper.c
-@@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
- 
- 	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
- 	if (ret) {
--		DRM_ERROR("Failed to vmap PRIME buffer\n");
-+		drm_err(dev, "Failed to vmap PRIME buffer\n");
- 		return ERR_PTR(ret);
- 	}
- 
--- 
-2.51.0
-
+Thanks,
+Bobby
 
