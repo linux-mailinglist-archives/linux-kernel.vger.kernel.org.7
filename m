@@ -1,158 +1,108 @@
-Return-Path: <linux-kernel+bounces-795707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32212B3F6C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:35:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C6BB3F6C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D851A82545
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:35:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2F83BF175
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B63F2E5439;
-	Tue,  2 Sep 2025 07:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659C22E3703;
+	Tue,  2 Sep 2025 07:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nymPyFHa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="Jx528d/6"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C3F266580;
-	Tue,  2 Sep 2025 07:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D96B266580
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756798518; cv=none; b=NIoM/zYtcBByDHWhG98N2hp9pXEBur/MV5Vy2lcNLbahUsMHwG+vdGJiDp0mFW5oiptY1V80ByL8CtrWT5sXw+XLN8qDflzF/RJjUcGGOLuShaNxYznH3RrnnfQAG0DNL5GOAhAqkqDvVqEM7iEwCQ85y3FYYzl0ww4d5n40V94=
+	t=1756798644; cv=none; b=F6s5jhoUXmcHHiaAAyScf2x/vjjMUV+/H16OuveDRTW7ca6tpvl9nMaPSkVo/VJyLhYbDQIcp1azWHcpxniwpZ3yK0HVHf/ZOkJg6kJCmIfzqrAaJQa4Y/XiC+oeAWM981Wr85l9uZp7ZBBUs6weJwpmKAkx6Jh1yPXg4yyW4Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756798518; c=relaxed/simple;
-	bh=E/WY5o6a97fVHU8e5uy2CoWMRAn7yHxp4l1Tt05M7pQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ot7dRY1wfxlddNIYHJQPAwm4H6glBU27FzHgRkByax6o/OliYyMolYMBz6w3pXRW3y30HHNDbdzVGlKosFt7TqQFvOsm+M17C/KrOrNsKYPXl5Qgz/5MCi+hhgDuA1ojbWCMSC9HfTTgoB+brBwB+obqFe1CzAnzYlUmVD9Cqsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nymPyFHa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F30C4CEED;
-	Tue,  2 Sep 2025 07:35:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756798517;
-	bh=E/WY5o6a97fVHU8e5uy2CoWMRAn7yHxp4l1Tt05M7pQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nymPyFHaAcgHY3kjoLFAWTfg/VeqM5171gZw/UhNyg9PSulFo70S9+Uf89ywYHI2F
-	 TP0kj0tj7CVr8uk31H7r6i8kgwp/Vz/lIMQJfsFXZ+qe5QdumAEUtB7oaB6fWS30oA
-	 ba0B1Z4l66xfrJs0oNuIbiVCvOJzTxdFntl4jR8aunxFyTXYVkITEOMVs9zZvzFT9I
-	 BksleDrnd05NzHesNhvNdLu7bpN3EkUHHVKhhYu27OCgSambrPhwWIieAEK8n3eQys
-	 9QgBDGPKGDm6KMWAW2efFr5R/C+a3M3oSggjnqSZSBuK2CHxWS5GxKmt453CYagsKq
-	 0tCjlMKVdJOnA==
-Date: Tue, 2 Sep 2025 16:35:14 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Luo Gengkun <luogengkun@huaweicloud.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
- during preempt_disable
-Message-Id: <20250902163514.f877d9c96e913f08c0c6b0b1@kernel.org>
-In-Reply-To: <cc6eb973-d82b-4afc-83fb-a2c28cc79d36@huaweicloud.com>
-References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
-	<20250819135008.5f1ba00e@gandalf.local.home>
-	<436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
-	<20250829082604.1e3fd06e@gandalf.local.home>
-	<20250902005645.8c6436b535731a4917745c5d@kernel.org>
-	<cc6eb973-d82b-4afc-83fb-a2c28cc79d36@huaweicloud.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756798644; c=relaxed/simple;
+	bh=oMjXeyB4iI6Dmg26BM3e9rBlxLJ4xrOoViQErPfNlV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMOtDqBAo8xnt6vRHC+AWHF/2CjyeHwPIKIaGNEPsCroi9a8LfqSP+Xl3Wddi8KH42pa517ttHJL3kgI3PkUpI0W9+ZJR4PijWSN1kXlZ62gBwjuZw+6FDiyd+TDqfreZOcwE9SwjbFAfnq6HwxHWzYoqnntGQZUQuqQH3Q91bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=Jx528d/6; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7EB0B14807F6;
+	Tue,  2 Sep 2025 09:37:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1756798640; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=BN5rmZ3Xmdnj4GOMlRZw4tipJjzFnAUUFeXUaKQC9SI=;
+	b=Jx528d/6GSON+C1FFzFQKq75vxXgJYj1aSooP3r6s4/coLwQUfKbT17XELsKIxTpjWvdOr
+	LO8nOh6z5UnpmjWHUCc/6Hr8hcxYXP/N/2LhU7YhJcGd7EMMkSdLbq2M1jK/AAb+uCYPDN
+	u0fTIvBiQIg+dqTOKuYvqjFnCXI6xzaUUjuCIrMcq/ILtbfiKwztXtm8sHWf1hFuSSsJsa
+	gmjysuUCcBZAWIZMPgvOqXEs0zCt7bIAfgUAaOi59b+CnzoR/jWZIJRGenw6eNtb0U3peS
+	qJ3XXO6jLsSG1TqMDiUNH5puNC6s1mis4mkd9UIHK+EBWBP4Wi5foRh0UrILnQ==
+Date: Tue, 2 Sep 2025 09:37:17 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Richard Weinberger <richard.weinberger@gmail.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: State of the UBI fastmap feature
+Message-ID: <20250902-life-domestic-c341a8992cac@thorsis.com>
+Mail-Followup-To: Richard Weinberger <richard.weinberger@gmail.com>,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250902-yarn-from-020874b4da63@thorsis.com>
+ <CAFLxGvzO2yszspJtd_A3BSTCRNSF+ts_5+2aMkNksxM48DYEwA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFLxGvzO2yszspJtd_A3BSTCRNSF+ts_5+2aMkNksxM48DYEwA@mail.gmail.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 2 Sep 2025 11:47:32 +0800
-Luo Gengkun <luogengkun@huaweicloud.com> wrote:
+Hello Richard,
 
+Am Tue, Sep 02, 2025 at 09:23:04AM +0200 schrieb Richard Weinberger:
+> On Tue, Sep 2, 2025 at 8:00 AM Alexander Dahl <ada@thorsis.com> wrote:
+> > Hello everyone,
+> >
+> > after using UBI for almost 15 years now without fastmap, I'm currently
+> > experimenting with that feature.  The help text in Kconfig menu
+> > (drivers/mtd/ubi/Kconfig) still says "Experimental feature" and
+> > further down:
+> >
+> > > Important: this feature is experimental so far and the on-flash
+> > > format for fastmap may change in the next kernel versions
+> >
+> > Is this still the current state?  I can not remember seing any patches
+> > touching fastmap in the last time.  Are there plans to stabilize this?
+> > Will there be changes in the on-flash format?  Do folks even use this
+> > feature?  In production?
 > 
-> On 2025/9/1 23:56, Masami Hiramatsu (Google) wrote:
-> > On Fri, 29 Aug 2025 08:26:04 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> >
-> >> [ Adding arm64 maintainers ]
-> >>
-> >> On Fri, 29 Aug 2025 16:29:07 +0800
-> >> Luo Gengkun <luogengkun@huaweicloud.com> wrote:
-> >>
-> >>> On 2025/8/20 1:50, Steven Rostedt wrote:
-> >>>> On Tue, 19 Aug 2025 10:51:52 +0000
-> >>>> Luo Gengkun <luogengkun@huaweicloud.com> wrote:
-> >>>>   
-> >>>>> Both tracing_mark_write and tracing_mark_raw_write call
-> >>>>> __copy_from_user_inatomic during preempt_disable. But in some case,
-> >>>>> __copy_from_user_inatomic may trigger page fault, and will call schedule()
-> >>>>> subtly. And if a task is migrated to other cpu, the following warning will
-> >>>> Wait! What?
-> >>>>
-> >>>> __copy_from_user_inatomic() is allowed to be called from in atomic context.
-> >>>> Hence the name it has. How the hell can it sleep? If it does, it's totally
-> >>>> broken!
-> >>>>
-> >>>> Now, I'm not against using nofault() as it is better named, but I want to
-> >>>> know why you are suggesting this change. Did you actually trigger a bug here?
-> >>> yes, I trigger this bug in arm64.
-> >> And I still think this is an arm64 bug.
-> > I think it could be.
-> >
-> >>>>   
-> >>>>> be trigger:
-> >>>>>           if (RB_WARN_ON(cpu_buffer,
-> >>>>>                          !local_read(&cpu_buffer->committing)))
-> >>>>>
-> >>>>> An example can illustrate this issue:
-> > You've missed an important part.
-> >
-> >>>>> process flow						CPU
-> >>>>> ---------------------------------------------------------------------
-> >>>>>
-> >>>>> tracing_mark_raw_write():				cpu:0
-> >>>>>      ...
-> >>>>>      ring_buffer_lock_reserve():				cpu:0
-> >>>>>         ...
-> > 	preempt_disable_notrace(); --> this is unlocked by ring_buffer_unlock_commit()
-> >
-> >>>>>         cpu = raw_smp_processor_id()			cpu:0
-> >>>>>         cpu_buffer = buffer->buffers[cpu]			cpu:0
-> >>>>>         ...
-> >>>>>      ...
-> >>>>>      __copy_from_user_inatomic():				cpu:0
-> > So this is called under preempt-disabled.
-> >
-> >>>>>         ...
-> >>>>>         # page fault
-> >>>>>         do_mem_abort():					cpu:0
-> >>>> Sounds to me that arm64 __copy_from_user_inatomic() may be broken.
-> >>>>   
-> >>>>>            ...
-> >>>>>            # Call schedule
-> >>>>>            schedule()					cpu:0
-> > If this does not check the preempt flag, it is a problem.
-> > Maybe arm64 needs to do fixup and abort instead of do_mem_abort()?
+> I don’t expect changes to the on-disk format, but the number of new raw NAND
+> devices being introduced is now close to zero. As a result, the user
+> base is very small,
+> and subtle bugs are likely to remain undiscovered.
+
+We are still using it in cost-sensitive products.  Those raw NAND
+flash chips are a lot cheaper than eMMC or even NOR flashs of the same
+size.
+
+> Fastmap does have users, including in production,
+> but I don’t have concrete numbers. And I don't know their workload.
+> That said, Fastmap should work but I still anticipate performance and
+> runtime issues.
 > 
-> My kernel was built without CONFIG_PREEMPT_COUNT, so the preempt_disable()
-> does nothing more than act as a barrier. In this case, it can pass the
-> check by schedule(). Perhaps this is another issue?
+> I guess your motivation is reducing the attach time?
 
-OK, I got it. Indeed, in that case, we have no way to check this
-happens in the preempt critical section.
-Anyway, as in discussed here, __copy_from_user_inatomic() is for
-the internal function, so I'm also OK to this patch.
+Indeed.  Need to reduce boot time here, and UBI is attached twice.
+Once in U-Boot to read the kernel image and then again in Linux.
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Greets
+Alex
 
-BTW, currently we just write a fault message if the
-__copy_from_user_*() hits a fault, but I think we can retry with
-normal __copy_from_user() to a kernel buffer and copy it in the
-ring buffer as slow path.
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
