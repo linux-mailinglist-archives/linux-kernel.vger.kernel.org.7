@@ -1,115 +1,93 @@
-Return-Path: <linux-kernel+bounces-795976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A7CB3FA3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED631B3FA0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18352168B87
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:24:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE06C16C9F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488D0221F09;
-	Tue,  2 Sep 2025 09:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B4D27466D;
+	Tue,  2 Sep 2025 09:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="Q5BTvG0A"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lvsfTK13"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7663D987;
-	Tue,  2 Sep 2025 09:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C79221F09
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756805050; cv=none; b=czyg8caX7weW0HYD/srftTTEhv4hN0a3GhX0suUZcD2vjZJ/q/4Z0LY3ypd++HSvOe8JNRtyatkC5u53Lvb4XFtfUQUFfh3j/Dw0NU80KX/WCuzGe7ydHewmomAxOUpBufeIQEIyqgFTcBNR3HiHlDoRWWw+ZbszDgA5f1B5/EU=
+	t=1756804721; cv=none; b=rfsS9kl5iCJVdjwfWvkZgx42j6TzSDwP+cUrs084xZVSsgF/1dWe/j4zPxRtqf8+YSgqr3YknH7uL/RjD+nmVhm9PDey304Qp5AVyALmE9BRBVQkcsc+rxCmL1BnMrEfwHUpTVr++N9ap3ASg9+Uk+H65ZTielekjylPtN0WJTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756805050; c=relaxed/simple;
-	bh=pPTR2DPjWLZI78Um/TK9fffQxLMetALz3OjN/SJclL8=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=mlK5LRNUlIS5Tg+S91xgvnM+5otgW08LIkWUQACsrar1qQMByB2dpk2HIa+BdwjN2QIMwrKqIfMKxT0vlaRFUh6Cn6BrlCmA72sHUo2Xrien/Rv5vPrm3Q7BxR6rgMlLCZ2BMiU66AhQ0uMSZkhwtkWUXvjhRd6kQiW0b+M8WjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=Q5BTvG0A; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756804739;
-	bh=EpAarfKxM9Xf2n5id5G25GoKghSsP58gEeX99TV+bR4=;
-	h=From:To:Cc:Subject:Date;
-	b=Q5BTvG0AHk+LlRDP/VDDrPzYzeGvTV/OcbJL1FvpxBSXtLTRggnP3gCJPzeEITBt2
-	 Hcqt7ZO5FRzYTUBDjvz2d5/KZzy+HS3g9+EkProBoxvFXOpE1p14QfaAD75gIJe+Iz
-	 C3gZ+lzbBUIa/aGvKU40pDlFuQoVXn/JH+OohwuU=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 4B722280; Tue, 02 Sep 2025 17:18:55 +0800
-X-QQ-mid: xmsmtpt1756804735tlq9vma9p
-Message-ID: <tencent_E3598F975B2A13AFC3A3E08837062E42A908@qq.com>
-X-QQ-XMAILINFO: NMGzQWUSIfvTYId8edV+Tl6aZmURxcRHFXImvr8PRps3rdF3p9vcMWW80VYG5G
-	 D81vFsFzsDVjC1LTGHQXYV4SH5riK/L5cfIoTJ+rDitDc2jqcIeSC+CwcTdNU3W0O6t2mO0BxSFQ
-	 +irP8PtmoVN3xZngDZBHO10e2fZGCEdU6tI54g4irRcRKLguaRGE8ROp6dbVcKoVibtOmc8NVYDR
-	 NIlx9S9riUWX8FXS3vjtfdums/y0tEj3oX62FcH4rA4FUaVTMmCGDfQ+Ez4QGhn9OJIGd4OhesJt
-	 n8F5WCtgGf3L0LdmN9C1V+3kWEhXqIN8Hk6vc5wOLbcq+FT9LLsOiks35hDd8Ppu//6TWDAoRUH3
-	 MKR9WZwjm+laioU/WWi0MfpD85QYQrR+rEf6c6eNxK4oWbly+vv+DF7h2CldLoot6xW/ghAUlPEX
-	 1YxAkf90xlWxsk1gytTOAY/cnvF0zfbBhC7HWVyWaRi4NZhWqfsv0xvykpJ31S71I/C/n2hMolib
-	 yPh94okuoYaM1BUiMudTKhuNCPUX8wdoqlX2T0MJR38/Bl9rT6StgD3NYmpH+EaSYbhaAwfYWGY8
-	 tatgGSe+5sB2FscRADUd83uIJkL8ry8ckjgcnTMZdCcWel0BLfOvYIV/7MLraPMfLgKZJlcVGjKx
-	 BBHkVqYmrj7OQUNFBJ+SCHTWys2tlRZA2GFKUo9t4+QgkQRhdo0/B1Og2KPaCpga1s/LGVW80zd0
-	 gXSysHNqJZq5HlVlSWZhlggX6p9fbnr/0+ZIdhI8wwm43KpjV2SwvStSbwAhBiWXORLe/kRabCZI
-	 m1c2cibIz9ixfoMVJqsYn5BCc2S4OLvKpva9Izi7bWzIaES3WmqKpDFNY7RjQdnos/7K0uBHVEw8
-	 tOrLR2j41cSqvMoQHQM+OEVpyWQQAnjXBgQq6S2dClyA310HypC4UEMK8/EjpuOFUZXBqDvffv9m
-	 uVNSjBNrfELbzk1Rpgzme+SFBkwHgfKDqLbc6va0JJCmn5PHnwBVBSAGe5NDHTo3fkgcjKHcbZ5R
-	 O/1UNBP82EJMn0hVNOzI85LwhuV8/64FF/ttNUwgULGsrOhoatAWHLnJIGJvTXPzgyggDAUQ==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii@kernel.org,
-	ast@kernel.org,
-	vmalik@redhat.com
-Cc: rtoax@foxmail.com,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Rong Tao <rongtao@cestc.cn>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v3 0/2] bpf: Add kfunc bpf_strcasecmp()
-Date: Tue,  2 Sep 2025 17:18:25 +0800
-X-OQ-MSGID: <cover.1756804522.git.rtoax@foxmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756804721; c=relaxed/simple;
+	bh=RxjpUVLKcoWc5xvHEWJKCRABhDI2uL7/9sXv3eiVjyQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pSC+MNbLSavjHwpXjig/+8NW8hD4jzVz6JN5ApM3kTKUoFBEUDB5MaSeMa2B5kgAwb8XKyk0Z66A1YVzYZpB83tiTJqWF465wOGQIjLE72qoxSiEYQhY9U1//FnKDyU6RwGuYOdNSs0XFaJvg+uUegpMLROnlrLrVvwiANyXzGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lvsfTK13; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 96B7F4E40C6E;
+	Tue,  2 Sep 2025 09:18:37 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 68EF260695;
+	Tue,  2 Sep 2025 09:18:37 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 508A01C22D9A3;
+	Tue,  2 Sep 2025 11:18:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756804715; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=RxjpUVLKcoWc5xvHEWJKCRABhDI2uL7/9sXv3eiVjyQ=;
+	b=lvsfTK13vM4HeVhgQCqxYEyRq763oPQbBGQ0D9e6bXGsCyn4VvG+LvC96D0LW3bkPVEJar
+	XncUK08QA/jLDEmGquT+yq97aUScIYjddznLyBT4AGYWqvytQjGbeoBXVvijhD8A5rCcbI
+	nIvJiGPrNgE8Ul6UmL8Evm31Y9uiaWR2U1gbN4pgbwAPhOSl4xW3hI4pRnR0dcFpUOj/Kr
+	2LsLrpOAVJntK0DeT1GOdBAPU6EYvJAGJ4ouf2l+63bEsaSlxd0+3i70G3hiCj9rtPR3ri
+	VTg1UGcKSD+/AKMXNCN8D8giqEYYqAvI11e1P50MdVGTaXjJPqKdTdFfG4Ecxw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Viresh Kumar <vireshk@kernel.org>,  Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>,  Vinod Koul <vkoul@kernel.org>,  Ilpo
+ =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+  dmaengine@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  stable@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: dw: dmamux: Fix device reference leak in
+ rzn1_dmamux_route_allocate
+In-Reply-To: <20250902090358.2423285-1-linmq006@gmail.com> (Miaoqian Lin's
+	message of "Tue, 2 Sep 2025 17:03:58 +0800")
+References: <20250902090358.2423285-1-linmq006@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Tue, 02 Sep 2025 11:18:32 +0200
+Message-ID: <875xe1nrfb.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Kfunc already support bpf_strcmp, this patchset introduce bpf_strcasecmp
-and add some selftests.
+Hi,
 
-Rong Tao (2):
-  bpf: add bpf_strcasecmp kfunc
-  selftests/bpf: Test kfunc bpf_strcasecmp
+On 02/09/2025 at 17:03:58 +08, Miaoqian Lin <linmq006@gmail.com> wrote:
 
- kernel/bpf/helpers.c                          | 68 +++++++++++++------
- .../selftests/bpf/prog_tests/string_kfuncs.c  |  1 +
- .../bpf/progs/string_kfuncs_failure1.c        |  6 ++
- .../bpf/progs/string_kfuncs_failure2.c        |  1 +
- .../bpf/progs/string_kfuncs_success.c         |  5 ++
- 5 files changed, 61 insertions(+), 20 deletions(-)
+> The reference taken by of_find_device_by_node()
+> must be released when not needed anymore.
+> Add missing put_device() call to fix device reference leaks.
+>
+> Fixes: 134d9c52fca2 ("dmaengine: dw: dmamux: Introduce RZN1 DMA router su=
+pport")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> ---
 
----
-v3: Update prog_tests/string_kfuncs.c for "strcasecmp";
-v2: Remove __ign prefix from __bpf_strcasecmp and add E2BIG failure test;
-    https://lore.kernel.org/lkml/tencent_8646158457D4511C447C833B21B3ACF6CB07@qq.com/
-v1: https://lore.kernel.org/lkml/tencent_5AE811A28781BE106AD6CDE59F4ADD2BFA06@qq.com/
--- 
-2.51.0
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
+Thanks,
+Miqu=C3=A8l
 
