@@ -1,102 +1,86 @@
-Return-Path: <linux-kernel+bounces-796560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A234B40296
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:19:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B76B40277
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6733487225
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:17:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3671B21E80
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26FF3043AF;
-	Tue,  2 Sep 2025 13:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6ED630506D;
+	Tue,  2 Sep 2025 13:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pKQeqfPK"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3iMWO/9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E789E2BDC17
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2815E2BDC17;
+	Tue,  2 Sep 2025 13:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819019; cv=none; b=T4xYjq2+mGSiWhcDbH2NYHotGBTUfjSj+bh6+g24MeaZ4WXClTe1hx3pJaVcuY5orFxuzWwyyWleIGZn1s3FpeycXjfpIWBV5si8j4gYv8ruW7mS8P4bN5S4HCFt+anzBue1m9IOog+8VVrnZHwnBML5S2ZVbysP+snAofxXaB0=
+	t=1756819024; cv=none; b=R4nxL1k/ErdMJRc6lgBy1zEF/9d2utqhA6C0Ua2WrBhQY+0xSMWghX+D8cCk4VVVl4LhYeFkJ6gNJj0nqwrrCGDVQaamjil9wfvSeFgF8fXLWpofGdFkpmiDfBvPJ2lLFlvSZW3j9EYYGwrC3RDtDrruIWg8wAm1f4cY3s35IaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819019; c=relaxed/simple;
-	bh=57B7B6BubeyfbaohI7kZ6axaAJDdQoHWU7qVqQPSP6E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Otknt1AFIyRs7nnpxR7dYDR2VbKCa+rN6S0tJ02wODJXc/Re6+hCwplD4DpRKGWLNdklh5x+NJXysfVPgUsonRZPqlJtgBuYxF8Fj6zGLFdEmPOyKA++dmbq5A61EujxxHOq3GyhVjhBxbhOryexCnXSy8Q3XG7O1+jtrHbbXXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pKQeqfPK; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 5660C1A0D65;
-	Tue,  2 Sep 2025 13:16:54 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2D74960695;
-	Tue,  2 Sep 2025 13:16:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 248A61C22D253;
-	Tue,  2 Sep 2025 15:16:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756819013; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=OD6qhRDyS8q2kCor5yPA7YDO6FHMm1Wu843InmsDchg=;
-	b=pKQeqfPK532IYnPuEdIw0daG1ELhvGs9hWjeL6miEsqUWjkImbjVc1681eRK2vsVOVJlTc
-	bRnJUgbmkTdkK87w8WxyJmycw1WLrgzZMdhKjEQ9Qa19UG7vKrN773KUDp6od6+L9HeyeD
-	P4qFOrx72oryIb1J576IhQs59ebIkECGfWV8BrIMQRwj1sd4JmSR9HrH2HvcHyQsvxbeJy
-	qftxJ7amt4jASpYDIj5zqZZOyObSGYaBb4wH3+XfalNkGf90rxh4Pc+MDT2HDxNXibsPrV
-	Xm5yT4FLCvbUKAiTwJK189aFcvHZys9osAzHHY2q+ksI8cb+BA1HnTfer3nRDg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: Wang Zhaolong <wangzhaolong@huaweicloud.com>,  <richard@nod.at>,
-  <vigneshr@ti.com>,  <linux-mtd@lists.infradead.org>,
-  <linux-kernel@vger.kernel.org>,  <yi.zhang@huawei.com>,
-  <yangerkun@huawei.com>
-Subject: Re: [PATCH V2] mtd: core: skip badblocks increment for blocks
- already known bad
-In-Reply-To: <95bf5e07-7f03-efb0-da9b-cb50999c2524@huawei.com> (Zhihao Cheng's
-	message of "Tue, 2 Sep 2025 19:41:06 +0800")
-References: <20250902092732.2244544-1-wangzhaolong@huaweicloud.com>
-	<95bf5e07-7f03-efb0-da9b-cb50999c2524@huawei.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Tue, 02 Sep 2025 15:16:45 +0200
-Message-ID: <87ldmxm1tu.fsf@bootlin.com>
+	s=arc-20240116; t=1756819024; c=relaxed/simple;
+	bh=yWGTZjnQCay/KF6aZRNmaJWEUQkXtG6xIkFUtfP/pDc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Kqtf8w3yYOSkkPKolENs0M9CP/7XPEKXbbag/O/xuAEUhrqsSkfJwD+TRZzKYMvKaDV7zyxQ1uUwvpzTkgPwSgAiypR4s1rMpQfPbIvd6ACixla/ubDOG5o20TSEnqL/a74g7EBexEgCNywuxwuIYuFk4jtLdz4VtD5Qy1J+k/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3iMWO/9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 787CFC4CEF4;
+	Tue,  2 Sep 2025 13:17:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756819022;
+	bh=yWGTZjnQCay/KF6aZRNmaJWEUQkXtG6xIkFUtfP/pDc=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=C3iMWO/9cCK1A6Kc4REcyYqhaFrSpnRstDH8RaIRhdG7C091kjMz45r/oIXCOYZej
+	 x0Cl0KGuMUXmF8L/RiU2HsviF+FjTYE/JkwcUo9Yig0uJmNTa+h1v4P1aT38Yp+F+7
+	 pWC06SU2uK2euy/pfmN/6JvAlJQTcIakbkWQdtjyAlNtqCMI7Un9gmgAnZI6xZ7mBY
+	 yQh+lF6bVqeK/ytoKTND5nay0cxYkDEIP9ZIHu89RIEMB9Cezk1T6Rq8hu55HjbBqQ
+	 69uvotiXyZk5GCPdqZZKjbU3e+vo00QBu61fLwKGg1oepTSagedBYOs7D1bHzzL7lR
+	 KYJMgJ3Xx8gqg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 02 Sep 2025 15:16:59 +0200
+Message-Id: <DCICD7V5OG7A.20QNKKBEDK0IG@kernel.org>
+Subject: Re: [PATCH] rust: device: fix unresolved link to drm::Device
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "kernel test robot" <lkp@intel.com>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250829195745.31174-1-dakr@kernel.org>
+In-Reply-To: <20250829195745.31174-1-dakr@kernel.org>
 
-
->> @@ -2349,11 +2350,19 @@ int mtd_block_markbad(struct mtd_info *mtd, loff=
-_t ofs)
->>   		return -EROFS;
->>     	if (mtd->flags & MTD_SLC_ON_MLC_EMULATION)
->>   		ofs =3D (loff_t)mtd_div_by_eb(ofs, mtd) * master->erasesize;
->>   -	ret =3D master->_block_markbad(master, mtd_get_master_ofs(mtd,
->> ofs));
->> +	moffs =3D mtd_get_master_ofs(mtd, ofs);
->> +
->> +	if (master->_block_isbad) {
->> +		ret =3D master->_block_isbad(master, moffs);
->> +		if (ret > 0)
->> +			return 0;
+On Fri Aug 29, 2025 at 9:57 PM CEST, Danilo Krummrich wrote:
+> drm::Device is only available when CONFIG_DRM=3Dy, which we have to
+> consider for intra-doc links, otherwise the rustdoc make target produces
+> the following warning.
 >
-> Hi, Miqu=C3=A8l.
-> Here, should we keep the same logic with the lower
-> level(eg. nand_block_markbad, onenand_block_markbad) when 'ret < 0' is
-> returned by master->_block_isbad. Many specific nand drivers(markbad)
-> return the negative code when 'isbad' fails.
+>>> warning: unresolved link to `kernel::drm::Device`
+>    --> rust/kernel/device.rs:154:22
+>    |
+>    154 | /// [`drm::Device`]: kernel::drm::Device
+>    |                      ^^^^^^^^^^^^^^^^^^^ no item named `drm` in modu=
+le `kernel`
+>    |
+>    =3D note: `#[warn(rustdoc::broken_intra_doc_links)]` on by default
+>
+> Fix this by making the intra-doc link conditional on CONFIG_DRM being ena=
+bled.
+>
+> Fixes: d6e26c1ae4a6 ("device: rust: expand documentation for Device")
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508261644.9LclwUgt-lkp@i=
+ntel.com/
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Good question, I guess in case of error in isbad() we shall probably
-still try to mark the block bad because actually marking a block bad is
-probably more important than returning correct statistics.
-
-Thanks,
-Miqu=C3=A8l
+Applied to driver-core-linus, thanks!
 
