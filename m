@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-796482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE55B40130
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B62AB40133
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFFFE1B28482
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF7E1B60B37
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A772C15AC;
-	Tue,  2 Sep 2025 12:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B512D2493;
+	Tue,  2 Sep 2025 12:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KG4bJ7HE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bm2AUXca"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1099F17A306
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8E833E7;
+	Tue,  2 Sep 2025 12:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817369; cv=none; b=M7kFSRMY56Bd2NSpZzu1XfBo8MPTvINfhNHpE5iB+5EdTtdhMAbxp45km0hLcJzm2imQ97PmvSeTCltEIFat42VSLkl2eu0wEuZG7r5b+snLTNadKqB5aiE1UbCAA8zw6v9hnrER3Ao0GFgAMeukSi5ucC/wnFhGeVpWJLCCf/Q=
+	t=1756817396; cv=none; b=g1bWg7HNhh7ktbSNh91oCnB3vtxx8ezBrLRfItdcBhIG6a31ejZLRmUuinpxpdrrNV8/wMupJM+SdQiHapFlyjU9bLCbAgkrWNtj65NtAuSWp0al+yPMu66ho8WUdE8zb7UKqPzcKMv8fHq9SfHiX2yiqj7DHbyqcAhXjf5tjao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817369; c=relaxed/simple;
-	bh=EMB2T5DafQl3006WrGmts6TrJuWyhS9XIdiD6sebMx0=;
+	s=arc-20240116; t=1756817396; c=relaxed/simple;
+	bh=dWRXtDoYp5v4SRV2t3rxa+lHAX/qWDqfeEE7hmCL48M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vv8JT8Oiqh3tCbQT7KfEccLWXip9drDeacjFZ3iMxYdE6hWJZpnao5EX8J5bJOs7AebmH0vj8IZARKcVsG6STb9+7/D0e/lOCSGO/8OguKhOZxdHBc/edOw0M0cKOBKTy0d5yqIXvgWofmf7ineO4ShE6klJpGtkNSaSAErSyfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KG4bJ7HE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C045BC4CEF4;
-	Tue,  2 Sep 2025 12:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756817368;
-	bh=EMB2T5DafQl3006WrGmts6TrJuWyhS9XIdiD6sebMx0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPDrgfjQUBplbOypXDZK3ewtpqchJcVgZOM6sozVyEeI2bdebZOe2J+IIVSfyDZXUltqsJwCkAqA6HXkDO8C8ZUkWigS6WYOwPh+e6uDHWyzBBWlQJzDsV/XbimiPAntJxLr24msTRlgmIKab/eYGzHhAKjGh12mFIERpUz+9QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bm2AUXca; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1070EC77;
+	Tue,  2 Sep 2025 14:48:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756817325;
+	bh=dWRXtDoYp5v4SRV2t3rxa+lHAX/qWDqfeEE7hmCL48M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KG4bJ7HEGPmFMMWKkXK+2g45j8kML/9k8d5OnIqDFblKLw7H9deOBC3DcHju32WQr
-	 miVwv73YXioiMir3HcA0eNP+y1iPFtilO5fUjUQ99e93GDgcxiECUXhqJQI7JagTbZ
-	 T/ahPr3kxjha1jMBUgCrUDE93QpBK7bnZ0nbXhIMP2nPHFjv4jqUfMFbKrTXJD8zRT
-	 m+GKvczE52qSBXGURGGTi8Ls10VEX8PuF0/YqIN1uzNhRKxW7ZBoM4ZCB0Y+0EXpdM
-	 Twnsi4hTtlceBUnaXwjWwv9v/kOrOm3S8MyNE3HG45zL4JCDBFbqvxtyXA1Bgd6hdf
-	 AXvYG9Wh53UYg==
-Date: Tue, 2 Sep 2025 15:49:23 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	Zijun Hu <zijun.hu@oss.qualcomm.com>
-Subject: Re: [PATCH] driver core: auxiliary bus: Optimize auxiliary_match_id()
-Message-ID: <20250902124923.GG10073@unreal>
-References: <20250902-fix_auxbus-v1-1-9ba6d8aff027@oss.qualcomm.com>
- <2025090222-darn-tweet-739c@gregkh>
- <f01e5ce0-6e23-4d1e-bd3a-b4e18bb3286b@icloud.com>
+	b=bm2AUXcaTJlN71Rrq1DZvI4l+EZ4kJxV02RlMa5vDTqgtmO6pZooJ+SxV9iSNspAA
+	 G/siOXegP8fuWpavGgAKwGG2pGzupIPrAk7qqG4OO2rQSKtM/TrIjtpRIiLRcSbqRF
+	 ZmY3yql9XAmwbUoF2AIk/dUI4a5DQwslSRaYOhn4=
+Date: Tue, 2 Sep 2025 14:49:32 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Bin Du <Bin.Du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
+	sakari.ailus@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sultan@kerneltoast.com, pratap.nirujogi@amd.com,
+	benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
+	Phil.Jawich@amd.com, Dominic.Antony@amd.com,
+	mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
+	Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+Subject: Re: [PATCH v3 1/7] media: platform: amd: Introduce amd isp4 capture
+ driver
+Message-ID: <20250902124932.GN13448@pendragon.ideasonboard.com>
+References: <20250828100811.95722-1-Bin.Du@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f01e5ce0-6e23-4d1e-bd3a-b4e18bb3286b@icloud.com>
+In-Reply-To: <20250828100811.95722-1-Bin.Du@amd.com>
 
-On Tue, Sep 02, 2025 at 08:42:24PM +0800, Zijun Hu wrote:
-> On 2025/9/2 20:20, Greg Kroah-Hartman wrote:
-> > On Tue, Sep 02, 2025 at 08:05:32PM +0800, Zijun Hu wrote:
-> >> From: Zijun Hu <zijun.hu@oss.qualcomm.com>
-> >>
-> >> Variable @match_size is fixed in auxiliary_match_id().
-> >>
-> >> Optimize the function by moving the logic calculating the variable
-> >> out of the for loop.
-> > Optimize it how?  Does this actually result in a difference somehow, if
-> > so, what?
-> > 
-> 
-> auxiliary_match_id() repeatedly calculates variable @match_size in the
-> for loop. however, the variable is fixed actually. so it is enough to
-> calculate the variable once.
-> 
-> Optimize it by moving the logic calculating the variable out of the for
-> loop, and it result in:
-> 
-> 1) calculate the variable once instead of repeatedly.
-> 2) it will return as early as possible if device name is unexpected,
-> namely, (@p == NULL).
-> 
-> so this fix will improve performance.
+Hi Bin,
 
-While the proposed change is valid, it is not a fix and unlikely give
-any performance benefits too. First, smart compilers should optimize this
-code and perform single calculation instead in the loop and second the
-result will be in cache anyway.
+Could you please provide the v4l2-compliance report (please use the
+very latest version of v4l2-compliance), as well as the output of
+`media-ctl -p -d /dev/media0` (replacing media0 with the appropriate
+device) ?
 
-Thanks
+Generally speaking, you should include a cover letter in patch series,
+and that information can be included in the cover letter.
 
+On Thu, Aug 28, 2025 at 06:08:05PM +0800, Bin Du wrote:
+> AMD isp4 capture is a v4l2 media device which implements media controller
+> interface. It has one sub-device (AMD ISP4 sub-device) endpoint which can
+> be connected to a remote CSI2 TX endpoint. It supports only one physical
+> interface for now. Also add ISP4 driver related entry info into the
+> MAINTAINERS file
 > 
-> > Please be specific.
-> 
-> will give more commit message in v2.
-> 
-> thanks
+> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+> Signed-off-by: Bin Du <Bin.Du@amd.com>
+> ---
+>  MAINTAINERS                              |  13 +++
+>  drivers/media/platform/Kconfig           |   1 +
+>  drivers/media/platform/Makefile          |   1 +
+>  drivers/media/platform/amd/Kconfig       |   3 +
+>  drivers/media/platform/amd/Makefile      |   3 +
+>  drivers/media/platform/amd/isp4/Kconfig  |  13 +++
+>  drivers/media/platform/amd/isp4/Makefile |   6 ++
+>  drivers/media/platform/amd/isp4/isp4.c   | 121 +++++++++++++++++++++++
+>  drivers/media/platform/amd/isp4/isp4.h   |  24 +++++
+>  9 files changed, 185 insertions(+)
+>  create mode 100644 drivers/media/platform/amd/Kconfig
+>  create mode 100644 drivers/media/platform/amd/Makefile
+>  create mode 100644 drivers/media/platform/amd/isp4/Kconfig
+>  create mode 100644 drivers/media/platform/amd/isp4/Makefile
+>  create mode 100644 drivers/media/platform/amd/isp4/isp4.c
+>  create mode 100644 drivers/media/platform/amd/isp4/isp4.h
+
+-- 
+Regards,
+
+Laurent Pinchart
 
