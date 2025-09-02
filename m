@@ -1,88 +1,95 @@
-Return-Path: <linux-kernel+bounces-796618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CB0B403C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:36:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99EF6B403D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80EAD168DEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 547487B9171
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA08324B1B;
-	Tue,  2 Sep 2025 13:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C69322A2B;
+	Tue,  2 Sep 2025 13:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OdPBgfN9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JPg/JMzz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4CjRX9DI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JPg/JMzz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4CjRX9DI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E749C322C78
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057D3322A2A
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819826; cv=none; b=bNQ8bFK0eZy8gmT7U/EMHXHjc7OWNxDb7yfSNGN1sdSdhuHN3LyrrjhLMxd8rFpFNNU6zRJVPqJXuEzUuIGvj++1PHWCRaE18Wd1HkUaVZHlbUgIVSXsGk6ElL47ownMVm7QS6z3dYSwXxH8hz8IRHbkxJ7HttTmwsgCSQohC/Q=
+	t=1756819822; cv=none; b=iMsWcfl/6jMTR00fsvazbs7JkwJVJzu1agg6K2yBj4xRetZtET39g6YWGBmBNDfod3S8od0G5pr2+mKYhhYAQ9AvGa6BwhMS8NMQ8SCw2fJdKemv2oxW2n5VcOkz0Y/XkCNH7tI+S3qDxNW+z1tjweBf5Ws8vxz3+uJ0OTmSMHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819826; c=relaxed/simple;
-	bh=g3sifc9TW5tsJF8SxDzkpDMgfvwIfT1Q5I/5Dy+fJ6I=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ckp0G8fklsI12YfaHB1nEVFXHCfXWnSvUwWO6vk15RDsTmhYlH0pNB9g7NmY8BlvfgrlLrtWE4zzG2UW6yrdz9KHB8I4CYdVzrMuwwg7YMDlpA8DIaBwvBFAdxlA/cP9M5Fn03+uJ46ZM9RelKklJKuXA+Y5c88P+Nia3jMCeLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OdPBgfN9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756819823;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1756819822; c=relaxed/simple;
+	bh=FPuTwF++aQxThQVHSHFLrnEsu+atcyregdnmyHVhvOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fDirHNVPPLtYxIF89drqw+rJ7vTWdFThrTtL8TAJviSJT47DzYBTH0auGxNAUDAN6IiaB4ISyJiAvhdqiiMgc5pJeiskQ8o/JjH2uIdm1DOjf47sRGwDpD6FNhffmL1ilmY0UzHjeiVxSBF3Vohi/st3afHi5Y7m7LpalfpA53E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JPg/JMzz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4CjRX9DI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JPg/JMzz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4CjRX9DI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 221301F391;
+	Tue,  2 Sep 2025 13:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756819819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b5rIBDXadKc0Riamv/Bxc9wrw9KFcdiEe2g6YluW24E=;
-	b=OdPBgfN9I/EFhTp2W8586Pc7bnwwha1vELjsaNjJGZVc4qdvYkYCqqgDGSVPe0Rhrg8nRo
-	DIpIuYE4XBKx2YRDcz/1OZfhedS2iaxrc3j8gVac0MTwMzevMq1dOFLOCr5SOoYixYAfgb
-	HnV02jCO6F4Py4GfcMGMnYbNT4V58Hw=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-620-Zs0ZVPOTMeCuSofHqbcQoA-1; Tue, 02 Sep 2025 09:30:20 -0400
-X-MC-Unique: Zs0ZVPOTMeCuSofHqbcQoA-1
-X-Mimecast-MFC-AGG-ID: Zs0ZVPOTMeCuSofHqbcQoA_1756819820
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b33e8943e3so21658901cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:30:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756819820; x=1757424620;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b5rIBDXadKc0Riamv/Bxc9wrw9KFcdiEe2g6YluW24E=;
-        b=p1ReOZf2QPm9oGrvZZfW9YrqkIvYOC1GzdMqm3L6UFXWj7/JI+Qftvua3It/78Ft6o
-         sRh+pp9Wy+vPBr8S6H4T70ZXi4OGj6S3aqoHnCpAoqhPBBg1mNF5ZEzMWSd5RxdG/np0
-         dMDt88Gee4IGBCnNB/U05sO2aj91jWJ46dkU6BiP6esvrbFJphMPcCya9/Qbarkdj8w/
-         e2rl2Eol4jQYp6LkPw0IrlFMET3Vvn1fmi7wYRtS2u6NxoUs9uWhzRIPZsh7Qp9gpTCk
-         33ew21JQ+w4L7jUNUZmtzjJDGsEPPHuAEirXSm83BK8gdAlq0nEVk1cbIb/Fc6P4+kHI
-         TF1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXfp7f9HJLX9/rSzLj6FcG1FUjSi8EJ/mWiJEkWDtylW/2w3wshVfrt7ty5gJlM9Ho79Nbfe18fPi4vAjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhvIbKDlQaFb6RBq78j+wD15ao9ea/dRIfLEuRpGWGhUTssQUr
-	RCayKK6zXlYm3QnYUfaW3nm6A4zBjfggPVQcRLNUpc5PGmJvRy7nbZr9e12em4NzbjN4qzX+DOO
-	p0/rCWH4aRgBf9yq9ibQvownivZ+niRWxkDYlsAPmkrCcjexba1l47WGXbFldo6UnTA==
-X-Gm-Gg: ASbGncs92ld1fiZGeSVpglBVcYlvozIylIysZ2DyLENNsBv2iYV1CsNv92/iEoG6lhr
-	S5UT7MqsHtdIChbO1U/fWheukTCYl4NTXt31K2B+il9wGm/FzJiwF8acmH5vQmwv1icm7d72PFl
-	TZp225sTQov3jbSTMKYhTbNqNqk8rlvNFJOGOB5kqaYl2VNSC8GvLeYxgYcgQylwc1rdOKB4xt0
-	WqPIDrnsPLs52m82RFUkEb/PPpGMeArWGbs8e/YQ2pbvVir1SV2SqABWoix+YlETnusrpnmH04L
-	Y2LiM2Tt896I3DZWFpDTq4XrUd8AFUa+0Dgp41DnWhumMS/31XOVhFDyoH3BneMMPqAcL8P0QMK
-	S5djhGjMvAw==
-X-Received: by 2002:a05:622a:5443:b0:4b3:4d20:2f6 with SMTP id d75a77b69052e-4b34d200c44mr11166261cf.19.1756819819626;
-        Tue, 02 Sep 2025 06:30:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDYAIOyEc9Fw0i0zuOWxfALXYIKNMMLAs3fedzZX/lCIFNOzBsogoQf3qUBhtg2wrUl6dh1A==
-X-Received: by 2002:a05:622a:5443:b0:4b3:4d20:2f6 with SMTP id d75a77b69052e-4b34d200c44mr11165501cf.19.1756819818750;
-        Tue, 02 Sep 2025 06:30:18 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8069ccec9besm130589885a.53.2025.09.02.06.30.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 06:30:18 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <2a6759fa-841a-4185-ae94-b8215c93daf5@redhat.com>
-Date: Tue, 2 Sep 2025 09:30:17 -0400
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1Tuj4d2o1aVaUTb7IB0TvNttUNIo+iNkmbKZxn0ZJbI=;
+	b=JPg/JMzzfKaLNRfEcPx7qWYPytsiMSsNMVBSvEEZBPuWnjIG2WHl9z7Qs81jg2F77l3ktd
+	PGrW/EiSoSFg1sq3PYMDXqbYbCilQpUt49Nfdxn43U/Vt9CZxYiD5cr/bUDiIkmvVII4Di
+	jjHES0Ekx83MFeDCHlirvAXdxJ70vvQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756819819;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1Tuj4d2o1aVaUTb7IB0TvNttUNIo+iNkmbKZxn0ZJbI=;
+	b=4CjRX9DIL2jSsq7gkopogIh0clK1gdyxffBIjCsk1yml5Sjy03L9L75Kzw3z3TBvlsvFp6
+	ge/HKWZ5zlJuboAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="JPg/JMzz";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4CjRX9DI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756819819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1Tuj4d2o1aVaUTb7IB0TvNttUNIo+iNkmbKZxn0ZJbI=;
+	b=JPg/JMzzfKaLNRfEcPx7qWYPytsiMSsNMVBSvEEZBPuWnjIG2WHl9z7Qs81jg2F77l3ktd
+	PGrW/EiSoSFg1sq3PYMDXqbYbCilQpUt49Nfdxn43U/Vt9CZxYiD5cr/bUDiIkmvVII4Di
+	jjHES0Ekx83MFeDCHlirvAXdxJ70vvQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756819819;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1Tuj4d2o1aVaUTb7IB0TvNttUNIo+iNkmbKZxn0ZJbI=;
+	b=4CjRX9DIL2jSsq7gkopogIh0clK1gdyxffBIjCsk1yml5Sjy03L9L75Kzw3z3TBvlsvFp6
+	ge/HKWZ5zlJuboAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B6D7013882;
+	Tue,  2 Sep 2025 13:30:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1cJtK2rxtmjKXAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 13:30:18 +0000
+Message-ID: <d5ca271e-899f-4240-9a0a-99f70a81c000@suse.de>
+Date: Tue, 2 Sep 2025 15:30:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,124 +97,198 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC 09/11] cpuset: refactor partition_cpus_change
-To: Chen Ridong <chenridong@huaweicloud.com>, Waiman Long <llong@redhat.com>,
- tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250828125631.1978176-1-chenridong@huaweicloud.com>
- <20250828125631.1978176-10-chenridong@huaweicloud.com>
- <632cd2ab-9803-4b84-8dd9-cd07fbe73c95@redhat.com>
- <031d83b6-bc67-4941-8c49-e1d12df74062@huaweicloud.com>
+Subject: Re: [PATCH 08/29] drm/atomic: Only call atomic_destroy_state on a
+ !NULL pointer
+To: Maxime Ripard <mripard@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-8-14ad5315da3f@kernel.org>
 Content-Language: en-US
-In-Reply-To: <031d83b6-bc67-4941-8c49-e1d12df74062@huaweicloud.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250902-drm-state-readout-v1-8-14ad5315da3f@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 221301F391
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On 8/29/25 10:01 PM, Chen Ridong wrote:
+
+
+Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+> The drm_atomic_state structure is freed through the
+> drm_atomic_state_put() function, that eventually calls
+> drm_atomic_state_default_clear() by default when there's no active
+> users of that state.
 >
-> On 2025/8/30 4:32, Waiman Long wrote:
->> On 8/28/25 8:56 AM, Chen Ridong wrote:
->>> From: Chen Ridong <chenridong@huawei.com>
->>>
->>> Refactor the partition_cpus_change function to handle both regular CPU
->>> set updates and exclusive CPU modifications, either of which may trigger
->>> partition state changes. This generalized function will also be utilized
->>> for exclusive CPU updates in subsequent patches.
->>>
->>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>> ---
->>>    kernel/cgroup/cpuset.c | 59 ++++++++++++++++++++++++++----------------
->>>    1 file changed, 36 insertions(+), 23 deletions(-)
->>>
->>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>> index 75ad18ab40ae..e3eb87a33b12 100644
->>> --- a/kernel/cgroup/cpuset.c
->>> +++ b/kernel/cgroup/cpuset.c
->>> @@ -2447,6 +2447,41 @@ static int acpus_validate_change(struct cpuset *cs, struct cpuset *trialcs,
->>>        return retval;
->>>    }
->>>    +/**
->>> + * partition_cpus_change - Handle partition state changes due to CPU mask updates
->>> + * @cs: The target cpuset being modified
->>> + * @trialcs: The trial cpuset containing proposed configuration changes
->>> + * @tmp: Temporary masks for intermediate calculations
->>> + *
->>> + * This function handles partition state transitions triggered by CPU mask changes.
->>> + * CPU modifications may cause a partition to be disabled or require state updates.
->>> + */
->>> +static void partition_cpus_change(struct cpuset *cs, struct cpuset *trialcs,
->>> +                    struct tmpmasks *tmp)
->>> +{
->>> +    if (cs_is_member(cs))
->>> +        return;
->>> +
->>> +    invalidate_cs_partition(trialcs);
->>> +    if (trialcs->prs_err)
->>> +        cs->prs_err = trialcs->prs_err;
->>> +
->>> +    if (is_remote_partition(cs)) {
->>> +        if (trialcs->prs_err)
->>> +            remote_partition_disable(cs, tmp);
->>> +        else
->>> +            remote_cpus_update(cs, trialcs->exclusive_cpus,
->>> +                       trialcs->effective_xcpus, tmp);
->>> +    } else {
->>> +        if (trialcs->prs_err)
->>> +            update_parent_effective_cpumask(cs, partcmd_invalidate,
->>> +                            NULL, tmp);
->>> +        else
->>> +            update_parent_effective_cpumask(cs, partcmd_update,
->>> +                            trialcs->effective_xcpus, tmp);
->>> +    }
->>> +}
->>> +
->>>    /**
->>>     * update_cpumask - update the cpus_allowed mask of a cpuset and all tasks in it
->>>     * @cs: the cpuset to consider
->>> @@ -2483,29 +2518,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->>>         */
->>>        force = !cpumask_equal(cs->effective_xcpus, trialcs->effective_xcpus);
->>>    -    invalidate_cs_partition(trialcs);
->>> -    if (trialcs->prs_err)
->>> -        cs->prs_err = trialcs->prs_err;
->>> -
->>> -    if (is_partition_valid(cs) ||
->>> -       (is_partition_invalid(cs) && !trialcs->prs_err)) {
->>> -        struct cpumask *xcpus = trialcs->effective_xcpus;
->>> -
->>> -        if (cpumask_empty(xcpus) && is_partition_invalid(cs))
->>> -            xcpus = trialcs->cpus_allowed;
->> This if statement was added in commit 46c521bac592 ("cgroup/cpuset: Enable invalid to valid local
->> partition transition") that is missing in your new partition_cpus_change() function. Have you run
->> the test_cpuset_prs.sh selftest with a patched kernel to make sure that there is no test failure?
->>
->> Cheers,
->> Longman
-> Thank you Longman,
+> It then iterates over all entities with a state, and will call the
+> atomic_destroy_state callback on the state pointer. The state pointer is
+> mostly used these days to point to which of the old or new state needs
+> to be freed, depending on whether the state was committed or not.
 >
-> I did run the self-test for every patch, and I appreciate the test script test_cpuset_prs.sh you
-> provided.
+> So it all makes sense.
 >
-> The trialcs->effective_xcpus will be updated using compute_trialcs_excpus, which was introduced in
-> Patch 4. The corresponding logic was then added in Patch 5:
+> However, with the hardware state readout support approaching, we might
+> have a state, with multiple entities in it, but no state to free because
+> we want them to persist. In such a case, state is going to be NULL, and
+> thus we'll end up with NULL pointer dereference.
 >
-> -	cpumask_and(excpus, user_xcpus(trialcs), parent->effective_xcpus);
-> +	/* trialcs is member, cpuset.cpus has no impact to excpus */
-> +	if (cs_is_member(cs))
-> +		cpumask_and(excpus, trialcs->exclusive_cpus,
-> +				parent->effective_xcpus);
-> +	else
-> +		cpumask_and(excpus, user_xcpus(trialcs), parent->effective_xcpus);
+> In order to make it work, let's first test if the state pointer isn't
+> NULL before calling atomic_destroy_state on it.
+>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+> ---
+>   drivers/gpu/drm/drm_atomic.c | 23 +++++++++++++++--------
+>   1 file changed, 15 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index 38f2b2633fa992b3543e8c425c7faeab1ce69765..f26678835a94f40da56a8c1297d92f226d7ff2e2 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -249,12 +249,14 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+>   		struct drm_connector *connector = state->connectors[i].ptr;
+>   
+>   		if (!connector)
+>   			continue;
+>   
+> -		connector->funcs->atomic_destroy_state(connector,
+> -						       state->connectors[i].state);
+> +		if (state->connectors[i].state)
+> +			connector->funcs->atomic_destroy_state(connector,
+> +							       state->connectors[i].state);
 > +
+>   		state->connectors[i].ptr = NULL;
+>   		state->connectors[i].state = NULL;
+>   		state->connectors[i].old_state = NULL;
+>   		state->connectors[i].new_state = NULL;
+>   		drm_connector_put(connector);
+> @@ -264,12 +266,13 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+>   		struct drm_crtc *crtc = state->crtcs[i].ptr;
+>   
+>   		if (!crtc)
+>   			continue;
+>   
+> -		crtc->funcs->atomic_destroy_state(crtc,
+> -						  state->crtcs[i].state);
+> +		if (state->crtcs[i].state)
+> +			crtc->funcs->atomic_destroy_state(crtc,
+> +							  state->crtcs[i].state);
+>   
+>   		state->crtcs[i].ptr = NULL;
+>   		state->crtcs[i].state = NULL;
+>   		state->crtcs[i].old_state = NULL;
+>   		state->crtcs[i].new_state = NULL;
+> @@ -284,12 +287,14 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+>   		struct drm_plane *plane = state->planes[i].ptr;
+>   
+>   		if (!plane)
+>   			continue;
+>   
+> -		plane->funcs->atomic_destroy_state(plane,
+> -						   state->planes[i].state);
+> +		if (state->planes[i].state)
+> +			plane->funcs->atomic_destroy_state(plane,
+> +							       state->planes[i].state);
+> +
+>   		state->planes[i].ptr = NULL;
+>   		state->planes[i].state = NULL;
+>   		state->planes[i].old_state = NULL;
+>   		state->planes[i].new_state = NULL;
+>   	}
+> @@ -298,12 +303,14 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+>   		struct drm_private_obj *obj = state->private_objs[i].ptr;
+>   
+>   		if (!obj)
+>   			continue;
+>   
+> -		obj->funcs->atomic_destroy_state(obj,
+> -						 state->private_objs[i].state);
+> +		if (state->private_objs[i].state)
+> +			obj->funcs->atomic_destroy_state(obj,
+> +							       state->private_objs[i].state);
+> +
+>   		state->private_objs[i].ptr = NULL;
+>   		state->private_objs[i].state = NULL;
+>   		state->private_objs[i].old_state = NULL;
+>   		state->private_objs[i].new_state = NULL;
+>   	}
 >
-> Therefore, as long as excpus is computed correctly, I believe this implementation can handle the
-> scenario appropriately.
 
-It will be helpful to put down a note in the commit log that the missing 
-logic will be re-introduced in a subsequent patch.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Thanks,
-Longman
 
 
