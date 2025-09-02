@@ -1,174 +1,156 @@
-Return-Path: <linux-kernel+bounces-797022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EE5B40AD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E1DB40AD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D7FE3A7AC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:40:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F203B9A5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F091D33A01A;
-	Tue,  2 Sep 2025 16:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CF033A02D;
+	Tue,  2 Sep 2025 16:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b="UEUqo0vz"
-Received: from exactco.de (exactco.de [176.9.10.151])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D517tg33"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA832E92BB;
-	Tue,  2 Sep 2025 16:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.10.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D495C2DCF70;
+	Tue,  2 Sep 2025 16:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831213; cv=none; b=glKVU78vxMdqwmyfOaIGE6YDA5P8aBNuRTFTc/rBGCXLoKbxIC5WJThVXza6bXodjCtRHaZQ7VNGTaTzJgAykpEkKWkiQGXheDACDjj4OarB/w+y+ls4G22O4XHdOQuEjeLg4U5XesE94OuvIjhaY2CJR6jPf0yT2EW/Wy4SoPs=
+	t=1756831291; cv=none; b=Mf9DVWgmwHC0h8BjhX7KPXBLpvl6vMiZU0wyPsIbTyEBhq4qAEnRodXJUMvoE8kuGQPKX4JczbNkM4PmB7DkHFhuOduebNIxccvTtScOq/p8C4hi8JIbQzoYwUfNMH0UfbYxbBawVyoH4+sR4taijMYtzhprvWzgOVlR/hi9W7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831213; c=relaxed/simple;
-	bh=O+CiFUXK19a4qlQTMXJPUCsKlQMWNNu08cipXC779Cc=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Tgdnwpjxv8V7q+m++WB5eilxnga1ZXzj8akPG5IpE7comm8rCUN+UeT/pH+ycgnpU26I/4cAO3jekvDWfzSp83LQV/J1MiXxX6ViRkEjonneHTbUTPlUT2V9ydnGE/Pant05V7j7hzcjYL3QFEYxipWX9AvQ6XNgMLpjDf6WD5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com; spf=pass smtp.mailfrom=exactco.de; dkim=pass (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b=UEUqo0vz; arc=none smtp.client-ip=176.9.10.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactco.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de;
-	s=x; h=Sender:Content-Transfer-Encoding:Content-Type:Mime-Version:References:
-	In-Reply-To:From:Subject:Cc:To:Message-Id:Date:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=newOGdvmUa6vft90u655j3V2ptdVczfzsCxNV5dwPU0=; b=UEUqo0vz3ZZwZpMYFRTxGTHPNS
-	Qhk8Ds2x8ZrTah8//V7xim+BjADO9xJ1suHM6NLbU9Z1w0f6KKxoq0BLHtVf8BQ2Eiso/XJaKETMJ
-	7gdw3knlZ/FLqoSMBj46+6xMXyWB0EWfO9XthZa6E9s15icmi8TN5UjSRn0ZEWI8RIncD/CaXwmHD
-	rqa32MOINIY3deiCVjwbjPlBZ0BkbE3L+TP/Ql3yJcKjJPdvATuLZQp+YuVnGzuXZIJBezJniQGra
-	H4/AdSMACun/333ufjJYEtcrFuw7vfXWhsMbpijO373sXMo8UzBJjzFnLoEIEPS6EzLJoj8b/9lIu
-	wfYGGZmQ==;
-Date: Tue, 02 Sep 2025 18:40:11 +0200 (CEST)
-Message-Id: <20250902.184011.440504961051160142.rene@exactcode.com>
-To: kernel@mkarcher.dialup.fu-berlin.de
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
- andreas@gaisler.com, glaubitz@physik.fu-berlin.de,
- anthony.yznaga@oracle.com
-Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for Niagara
-From: Rene Rebe <rene@exactcode.com>
-In-Reply-To: <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
-	<20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
-X-Mailer: Mew version 6.10 on Emacs 30.2
+	s=arc-20240116; t=1756831291; c=relaxed/simple;
+	bh=3gFsUEU4Xg6d5vQrEOsWIkbWaaUZWsSenDNCYqPYVT0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZRxYfR6uVp47ovOzUUGzOTXg876DGPGdjSIk/L8yQC6YD+sHH4VdDof3dGCSLEo75sipkcvphOb2vvPSQmkcbk7o/49BeIWX6/3whNEYsvXtnjZuaEnsV+KB4VXuX3v9moInpZtW8sdSDDRYUro8thOHb9mj1xZrj9OSAg9pauY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D517tg33; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756831290; x=1788367290;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3gFsUEU4Xg6d5vQrEOsWIkbWaaUZWsSenDNCYqPYVT0=;
+  b=D517tg334PDkFPvcavn3qYhctr95hZ7N3UD/koZJXAFzL75QQfuxiIFa
+   Tt+0zBl1KdInl/hOBfMYFiFFxnLoRxTIIQFFWx/2ikgwHMlsx8QJY0pzU
+   vSOywmLV09YAAzXO1cseeZyATFZm8yHuV6pRPuXcCbIGTtHlo392sgYkd
+   lJ40LP70zxu9Q/kF9ci8lEK6TpYvBdIliBx+SpnXI90Q/5bAbH4iG5EY+
+   8IIcnm/WHFK9ZnwhIQgJJJgbajUrJH1sL2S8u2Ygm+R87O6TffpGHrtwE
+   YIq8+9s5TvlMmIukL1YEz1iFaUNgdQ3h7UqvNsngsqTqEOAAs3s+KjLP6
+   Q==;
+X-CSE-ConnectionGUID: 5UPo3Ay9Tou9fRyo7ZWaMA==
+X-CSE-MsgGUID: DUaCRHddS8GopMlIpbtZoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81701738"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="81701738"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 09:41:29 -0700
+X-CSE-ConnectionGUID: rjdJSP3NSD2jg5TP84/8Vg==
+X-CSE-MsgGUID: 4+9ExmX/TsuLIuBTo5FHFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="208527161"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO tfalcon-desk.intel.com) ([10.125.109.212])
+  by orviesa001.jf.intel.com with ESMTP; 02 Sep 2025 09:41:27 -0700
+From: Thomas Falcon <thomas.falcon@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Andi Kleen <ak@linux.intel.com>,
+	Thomas Falcon <thomas.falcon@intel.com>
+Subject: [RESEND][PATCH v2 0/2] perf record: ratio-to-prev event term for auto counter reload
+Date: Tue,  2 Sep 2025 11:40:44 -0500
+Message-ID: <20250902164047.64261-1-thomas.falcon@intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
-Sender: rene@exactco.de
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The Auto Counter Reload (ACR)[1] feature is used to track the
+relative rates of two or more perf events, only sampling
+when a given threshold is exceeded. This helps reduce overhead
+and unnecessary samples. However, enabling this feature
+currently requires setting two parameters:
 
-From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+ -- Event sampling period ("period")
+ -- acr_mask, which determines which events get reloaded
+    when the sample period is reached.
 
-> Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to accur=
-ate exception reporting.")
-> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+For example, in the following command:
 
-Tested-by: Ren=E9 Rebe <rene@exactcode.com> # UltraSparc T4 SPARC T4-1 =
-Server
+perf record -e "{cpu_atom/branch-misses,period=200000,\
+acr_mask=0x2/ppu,cpu_atom/branch-instructions,period=1000000,\
+acr_mask=0x3/u}" -- ./mispredict
 
-> ---
->  arch/sparc/lib/NGmemcpy.S | 29 ++++++++++++++++++-----------
->  1 file changed, 18 insertions(+), 11 deletions(-)
-> =
+The goal is to limit event sampling to cases when the
+branch miss rate exceeds 20%. If the branch instructions
+sample period is exceeded first, both events are reloaded.
+If branch misses exceed their threshold first, only the
+second counter is reloaded, and a sample is taken.
 
-> diff --git a/arch/sparc/lib/NGmemcpy.S b/arch/sparc/lib/NGmemcpy.S
-> index ee51c1230689..bbd3ea0a6482 100644
-> --- a/arch/sparc/lib/NGmemcpy.S
-> +++ b/arch/sparc/lib/NGmemcpy.S
-> @@ -79,8 +79,8 @@
->  #ifndef EX_RETVAL
->  #define EX_RETVAL(x)	x
->  __restore_asi:
-> -	ret
->  	wr	%g0, ASI_AIUS, %asi
-> +	ret
->  	 restore
->  ENTRY(NG_ret_i2_plus_i4_plus_1)
->  	ba,pt	%xcc, __restore_asi
-> @@ -125,15 +125,16 @@ ENTRY(NG_ret_i2_plus_g1_minus_56)
->  	ba,pt	%xcc, __restore_asi
->  	 add	%i2, %g1, %i0
->  ENDPROC(NG_ret_i2_plus_g1_minus_56)
-> -ENTRY(NG_ret_i2_plus_i4)
-> +ENTRY(NG_ret_i2_plus_i4_plus_16)
-> +        add     %i4, 16, %i4
->  	ba,pt	%xcc, __restore_asi
->  	 add	%i2, %i4, %i0
-> -ENDPROC(NG_ret_i2_plus_i4)
-> -ENTRY(NG_ret_i2_plus_i4_minus_8)
-> -	sub	%i4, 8, %i4
-> +ENDPROC(NG_ret_i2_plus_i4_plus_16)
-> +ENTRY(NG_ret_i2_plus_i4_plus_8)
-> +	add	%i4, 8, %i4
->  	ba,pt	%xcc, __restore_asi
->  	 add	%i2, %i4, %i0
-> -ENDPROC(NG_ret_i2_plus_i4_minus_8)
-> +ENDPROC(NG_ret_i2_plus_i4_plus_8)
->  ENTRY(NG_ret_i2_plus_8)
->  	ba,pt	%xcc, __restore_asi
->  	 add	%i2, 8, %i0
-> @@ -160,6 +161,12 @@ ENTRY(NG_ret_i2_and_7_plus_i4)
->  	ba,pt	%xcc, __restore_asi
->  	 add	%i2, %i4, %i0
->  ENDPROC(NG_ret_i2_and_7_plus_i4)
-> +ENTRY(NG_ret_i2_and_7_plus_i4_plus_8)
-> +	and	%i2, 7, %i2
-> +	add	%i4, 8, %i4
-> +	ba,pt	%xcc, __restore_asi
-> +	 add	%i2, %i4, %i0
-> +ENDPROC(NG_ret_i2_and_7_plus_i4)
->  #endif
->  =
+To simplify this, provide a new “ratio-to-prev” event term
+that works alongside the period event option or -c option.
+This would allow users to specify the desired relative rate
+between events as a ratio, making configuration more intuitive.
 
->  	.align		64
-> @@ -405,13 +412,13 @@ FUNC_NAME:	/* %i0=3Ddst, %i1=3Dsrc, %i2=3Dlen *=
-/
->  	andn		%i2, 0xf, %i4
->  	and		%i2, 0xf, %i2
->  1:	subcc		%i4, 0x10, %i4
-> -	EX_LD(LOAD(ldx, %i1, %o4), NG_ret_i2_plus_i4)
-> +	EX_LD(LOAD(ldx, %i1, %o4), NG_ret_i2_plus_i4_plus_16)
->  	add		%i1, 0x08, %i1
-> -	EX_LD(LOAD(ldx, %i1, %g1), NG_ret_i2_plus_i4)
-> +	EX_LD(LOAD(ldx, %i1, %g1), NG_ret_i2_plus_i4_plus_16)
->  	sub		%i1, 0x08, %i1
-> -	EX_ST(STORE(stx, %o4, %i1 + %i3), NG_ret_i2_plus_i4)
-> +	EX_ST(STORE(stx, %o4, %i1 + %i3), NG_ret_i2_plus_i4_plus_16)
->  	add		%i1, 0x8, %i1
-> -	EX_ST(STORE(stx, %g1, %i1 + %i3), NG_ret_i2_plus_i4_minus_8)
-> +	EX_ST(STORE(stx, %g1, %i1 + %i3), NG_ret_i2_plus_i4_plus_8)
->  	bgu,pt		%XCC, 1b
->  	 add		%i1, 0x8, %i1
->  73:	andcc		%i2, 0x8, %g0
-> @@ -468,7 +475,7 @@ FUNC_NAME:	/* %i0=3Ddst, %i1=3Dsrc, %i2=3Dlen */
->  	subcc		%i4, 0x8, %i4
->  	srlx		%g3, %i3, %i5
->  	or		%i5, %g2, %i5
-> -	EX_ST(STORE(stx, %i5, %o0), NG_ret_i2_and_7_plus_i4)
-> +	EX_ST(STORE(stx, %i5, %o0), NG_ret_i2_and_7_plus_i4_plus_8)
->  	add		%o0, 0x8, %o0
->  	bgu,pt		%icc, 1b
->  	 sllx		%g3, %g1, %g2
-> -- =
+With this enhancement, the equivalent command would be:
 
-> 2.50.1
-> =
+perf record -e "{cpu_atom/branch-misses/ppu,\
+cpu_atom/branch-instructions,period=1000000,ratio_to_prev=5/u}" \
+-- ./mispredict
 
-> =
+or
 
+perf record -e "{cpu_atom/branch-misses/ppu,\
+cpu_atom/branch-instructions,ratio-to-prev=5/u}" -c 1000000 \
+-- ./mispredict
 
--- =
+[1] https://lore.kernel.org/lkml/20250327195217.2683619-1-kan.liang@linux.intel.com/
 
-  Ren=E9 Rebe, ExactCODE GmbH, Berlin, Germany
-  https://exactcode.com | https://t2linux.com | https://rene.rebe.de
+Changes in v2 (mostly suggested by Ian Rogers):
+
+-- Add documentation explaining acr_mask bitmask used by ACR
+-- Move ACR specific implementation to arch/x86/
+-- Provide test cases for event parsing and perf record tests
+
+Thomas Falcon (2):
+  perf record: Add ratio-to-prev term
+  perf record: add auto counter reload parse and regression tests
+
+ tools/perf/Documentation/intel-acr.txt | 53 ++++++++++++++++++
+ tools/perf/Documentation/perf-list.txt |  2 +
+ tools/perf/arch/x86/util/evsel.c       | 53 ++++++++++++++++++
+ tools/perf/tests/parse-events.c        | 54 ++++++++++++++++++
+ tools/perf/tests/shell/record.sh       | 40 ++++++++++++++
+ tools/perf/util/evsel.c                | 76 ++++++++++++++++++++++++++
+ tools/perf/util/evsel.h                |  1 +
+ tools/perf/util/evsel_config.h         |  1 +
+ tools/perf/util/parse-events.c         | 22 ++++++++
+ tools/perf/util/parse-events.h         |  3 +-
+ tools/perf/util/parse-events.l         |  1 +
+ tools/perf/util/pmu.c                  |  3 +-
+ 12 files changed, 307 insertions(+), 2 deletions(-)
+ create mode 100644 tools/perf/Documentation/intel-acr.txt
+
+-- 
+2.50.1
+
 
