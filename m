@@ -1,561 +1,234 @@
-Return-Path: <linux-kernel+bounces-796451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BA8B400DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0073B400E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8CC3482254
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1A31B6044F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B154628F935;
-	Tue,  2 Sep 2025 12:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25EC28DB56;
+	Tue,  2 Sep 2025 12:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mdr0/V6Y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GR/Yf5D/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IuMUkM/I";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3IeBYSv8"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iCVh+SWJ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="FUP781nI"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F8728D8D2
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816779; cv=none; b=PXpfylWAX1uAN1sjMeOQLBI/tZlP4fCskG/2CgQAqoYx3O/xaUCdUVzUnMpvAh1WOVWSiaUpphnde4CBGSwUDM4fGiCraNHEZ0MoDuuvwkxFjYUxfL/1rOEhMqGtg/quL7KfqmpTWSkW1nlOgk71OrHHLJB1lWbXjsPSklPh4oI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816779; c=relaxed/simple;
-	bh=bLDxRD/thuNR9rJmgmSCKn55R2oPhE6lAAVGJNoSe5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OPMHe9X/2y14c9W00+1o0Fs6zP3+9wtom4t5aKzDkzDx+cxtE2g5SAUa9znbjgDI+g5CIdirXzgrDCffnKV7E3Lx6LgfTsOCmoNAqv+VzV/HkMzph57d4lKGGJn184ZJW4GAd1uQVyt7gB8E0dnkq4Z8s3rTuT0PdV4E2i4h5hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mdr0/V6Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GR/Yf5D/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IuMUkM/I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3IeBYSv8; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 521B9211D0;
-	Tue,  2 Sep 2025 12:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756816774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=naa/2EaTeluXrePUWWuI8BZDcR9HO/D4pokoGhuTDZI=;
-	b=Mdr0/V6Y7dYqXXv4064Qz9OcTNqihj4WVZt3bW7PcoZ8qpXb+qN4gjvljhWjrb8qkiEZsJ
-	7Q9w3Y+kO/2UFw5/3bNPqNe0L2AaB1TOkGJlrXkn5n82CAtO/gxHVhHfAV5C/9XKdGBLRD
-	CNihfXC9vvl0dXgBweDuwMFioNZhe1M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756816774;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=naa/2EaTeluXrePUWWuI8BZDcR9HO/D4pokoGhuTDZI=;
-	b=GR/Yf5D/zpt3z3Meh22Ri3lltkeGgIXzwJroo0Ndj6/WGOLOe7WI4aJyonDt99v7yn8XOq
-	8J0Sxr/gko+/ARBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756816773; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=naa/2EaTeluXrePUWWuI8BZDcR9HO/D4pokoGhuTDZI=;
-	b=IuMUkM/IkGXxM8628bjCtvQf75PzSEtN3JvrtI46u2wUhxu1OV7FECbqagUCL+SpH9eIlf
-	4Bkqvk9x8W4zj4GfDuzzQeulN1d6ZorSUDPUgOTJ/cr8WTu/S/D9B52iFSM8tzSKQtlaM2
-	yeCJHuZzUsRYGsN530S3+2dDV472WeA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756816773;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=naa/2EaTeluXrePUWWuI8BZDcR9HO/D4pokoGhuTDZI=;
-	b=3IeBYSv8Pmxa7eVJ75mUcs5PdmeaiNQZuuI6XpKz5uH38IjE+2ZKt8I9K7hXOxdfRdTFSH
-	DWfMoebY/Wa2n+AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4060513888;
-	Tue,  2 Sep 2025 12:39:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OOtgD4XltmhySwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 02 Sep 2025 12:39:33 +0000
-Message-ID: <01e1f74a-d531-4e51-9b40-efbf80f338c0@suse.cz>
-Date: Tue, 2 Sep 2025 14:39:32 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357F3288C2D;
+	Tue,  2 Sep 2025 12:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756816851; cv=fail; b=OVDn7ts1hKJWZcODotPCIx1uFNP7fkRkXurpcDVG+Jp2+l4CiEjSu7jjLSeacQVECOGcclqcERsSFxxUwK72JmTIMtMB0m0rOeeuqNtwAhCgpMAL1IrQiFMviETXuPY4nxELDGxp3x0OulV78PSaV/0fh99WABBgrWLYq74+uhU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756816851; c=relaxed/simple;
+	bh=IHomWNo70KjKaohxUcgHtm7Xc1tJ69M6Ck34/DKmg4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bDWOUoFfjEzO17CH2NMYArUNqiixhqzApjz1s/QVMX2n9mZmu5w5YdouEPNocEJs4aPXM4QJidB9aJZrFMCyjVj9BgqxWrdNfU+hTivTzPkowsr8FvEdb2kxW2tGc5lSyTZU68O1wrtgzAl90IPdJRwZtyAqH4bwn3mmp6Bm1Pk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=iCVh+SWJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=FUP781nI; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582ANqVB028341;
+	Tue, 2 Sep 2025 12:40:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=IHomWNo70KjKaohxUc
+	gHtm7Xc1tJ69M6Ck34/DKmg4E=; b=iCVh+SWJU0Y66TOs735MKKKnXTbmn1h/ZT
+	HMdBOAnoBf61ADnZai6gHjvIJopWZEFjCLORmcMaAzx1+PndQ8uG9VpqkBAoOgi+
+	OT/Yyamz+YPSZxDmzB+iXldNvXCR6yjHAkLpKVz0O9iegvjiHZYgIMcM8EEYfEoN
+	yxv4CTF+SLavKBW59aUd600qFz6MqO3lsZT0h9Br1hrglX+dp+8adPf16JqlXSU6
+	Y5N7WXg5CQj4W5t2Qw04Tiq3VFMl+l4kfXOYAk1rlboRmiGnRSYgbeCoJr/7cpL3
+	dvvzwofWWw4eTK5xrmK20jOSkNXlwP/Q6q3hXzZL8tosgk3mcF4w==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48ushvuy7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Sep 2025 12:40:35 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 582BqDgV030968;
+	Tue, 2 Sep 2025 12:40:35 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04on2061.outbound.protection.outlook.com [40.107.100.61])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48uqr943w5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Sep 2025 12:40:35 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kfDNsnBe6tGPUk3v077dqU/AHxqpGBeGnvLAd2jSY/8mxM5NsbbQPwnyl2iSOK3boYLOjMifVsxPHdFJtPe57sibocf5pZA9XQaHwZn+Za3HRZJOQpBT4i/fTxuhI4v6HDKlGpHfjRkHJQcOHmoyeKAlHall+1HTC/IChDgdNAzFPHHvKeh1oiY0r1q1evuOjWVAJzncPK3ZNKiQqs/VI+iTIaKx/IFaNYzXAqf07QN47m6Iv8P54LbOWi3TGvh1xoj+dHtHPBN+iH1hH72dJJetDo+xqfr87DdY8xzW/gGv5VoVSP/2hb64V3V6jNcaqNQMOs+agXHHsCLb3gprzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IHomWNo70KjKaohxUcgHtm7Xc1tJ69M6Ck34/DKmg4E=;
+ b=ZxtIoazTM+U6gLWZGkGrSIxB0uXYQzaSW5gg+Kw7XOhQCXScfAWrj4unLcWUX8YVpmUMnHqMhdiLv9K9IT3nPgh8EbGLfSCOIOQd0PcIHrmmu7PEk7PDbCUuZt9w2Y4klwCqWvd5Ta6ECD7TDOgtjjOZoXlpuc+0PpO+5UaySJjHEqH6TMdJu+Hs1ILBbD3RDDdzyIuDn+ZzXBHnUjvzb6u2oRs3XbSVXIJa/vmy8sYUhWuL2GEsy6C/QNxO9LZ0/W/2OL08auT5Bn6susreqocqVRnpe7LKLaY+Q/KPeA5YftDjpKHzdxcYh4yZx03rfSzv9IREMTb59W0gQKdC/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IHomWNo70KjKaohxUcgHtm7Xc1tJ69M6Ck34/DKmg4E=;
+ b=FUP781nIrHbmewsCqnXi8znUXX8XoL5FLwTDfdWptgy4YsQN049XJ0AHNm3pdh3aX8b1zy+t+/IUfKmCVEkpWs5+FlsEA8vjIkV/IHeKqidE/I/71Oc0F4/1y3SHRPl7jrs1RlbozZa/867DPNYtI+6trmMJyPuEpJgmYRHDYjs=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by BY5PR10MB4210.namprd10.prod.outlook.com (2603:10b6:a03:201::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.17; Tue, 2 Sep
+ 2025 12:40:29 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 12:40:29 +0000
+Date: Tue, 2 Sep 2025 13:40:26 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] mm: do not assume file == vma->vm_file in
+ compat_vma_mmap_prepare()
+Message-ID: <4345bd3a-3ac3-4eab-807d-15388f1a7422@lucifer.local>
+References: <20250902104533.222730-1-lorenzo.stoakes@oracle.com>
+ <20250902-kapital-waghalsige-7e043061b0a3@brauner>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-kapital-waghalsige-7e043061b0a3@brauner>
+X-ClientProxiedBy: LO4P302CA0005.GBRP302.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c2::13) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next20250901] Boot fail on IBM Power Server
-Content-Language: en-US
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Thorsten Leemhuis <linux@leemhuis.info>, Harry Yoo <harry.yoo@oracle.com>
-References: <866d7f30-7cde-4c88-87ba-bdad16075433@linux.ibm.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <866d7f30-7cde-4c88-87ba-bdad16075433@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BY5PR10MB4210:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e7f71bf-6dbd-43bf-3ef6-08ddea1de62f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8Cr0N6JhC32kLYbeeo6bwYfLw+8JXIOsn/qqo0dWqIB7nlo12FEwYNM1q8zc?=
+ =?us-ascii?Q?IgeBtkPlzDP2Wri268nZ69BpaaFXFVk4o2zHq0JWj/x37uD5fW4ZD2kQHHl4?=
+ =?us-ascii?Q?rgg53FyRmFtThBvSG0iVaLPnsjglTZ3OiSgfZY9Yeqb8l/lGIOZ12C+PJSQd?=
+ =?us-ascii?Q?MRmeQM/+byVuOuEFRaEBXOVY2NU9A7GV+x9p/pD34ndOkQNKXIO0+OA3Iovo?=
+ =?us-ascii?Q?SLCfFj1yJq9+Kkkg7R+3/+/LfplMXJCVdBy3Gfk2JsyabQGCPaNC2fpWCRbv?=
+ =?us-ascii?Q?24gG+atEyJq68PIC/z6sV2x6TECB85S/T3UCHBFr2dpV5xdcRGy9ou5qKu3N?=
+ =?us-ascii?Q?sO9qJ62odrPL83IodXAt5e4k83p8FpShTa2Jb4FIciOliPVqkcbUvP01cu0B?=
+ =?us-ascii?Q?EARW7aZtS/OvgPCDJdjRzm+D4gwkJBAZIOIjvp+WaxfNqc9mLRzJHEU4eSXi?=
+ =?us-ascii?Q?DeLwd7uHdwnuAFS40j0jeV4k1tmYlZ4qrn8pkl2OAyaOEI0sxcO/wY9kcSfJ?=
+ =?us-ascii?Q?4g1PMVhnLcz+UwMSvT7q+C9LNjAZOkSRUnzr5lh8pE/sl4hpaprT8ZQgxgvu?=
+ =?us-ascii?Q?sCjlEmMBVVwhKKZ8M59sLEfIXBn2OX7QrMnQZOPRINyevhc4PAqM19v0YdUg?=
+ =?us-ascii?Q?Sd/m1/ar+TW+AwyzUewP3m9ikjOcTgCfHZChBIuQh4g+6fQhwa4Ds05Lfq7Y?=
+ =?us-ascii?Q?Sr30xsv8pigHrZm7rvDNFtz1r6IO6jTxQgOBEdYO/mfmtGRVkOCUc8wHlWAo?=
+ =?us-ascii?Q?oeq9T/oQokd6vsu2HjWw9AIIDI4O/HUc9Nwkh/Ukfr5Bbs8XPkvygbBancEp?=
+ =?us-ascii?Q?2UbKacspdLAgBDes7gmF0m3NgeFPedIx7r8Jqz23UEmN7JMBBlnP6fuLAkif?=
+ =?us-ascii?Q?CL6vuXzP5CAUjA9z5A52VuOvKtlt853bK5qYVvZrdIYR87CUeTgid4xE50FE?=
+ =?us-ascii?Q?enelTp/vjfl9EvuskPG9P8lMgiySeQILYasDQfnxd3MokXUTViuzfFvwKZ3S?=
+ =?us-ascii?Q?21QDqiQVBmBIDiVawgRVzl5YjH08iUq+omo5A9p9aWtt4kqwLdfpZHPwtsjl?=
+ =?us-ascii?Q?U2vT+AadZSosb8ZrcvsmrH9du5FgaXZp7FbMCigVdsWwfek1ebczLG/cuN/O?=
+ =?us-ascii?Q?T4Ei5LP6PDoJzcZGrmB/UTn2jbZV4TJkf+ZtBrVbA2GGrysWAGs6Ck9/EiG0?=
+ =?us-ascii?Q?1k0dqtTQCiBILecHRgKpzOeJhY+U1dyubvTIzleeMGfKg3Gl9KIREGlenA06?=
+ =?us-ascii?Q?MWFq9v8SzJ6MKpqaUX8831X+7QbyIzFzZv1L/vKpuRIOdDLxqPdXd1MNwlTe?=
+ =?us-ascii?Q?9mxB/tIU01p27Dt5ef3IUWFRfGPmYJiawiHwFUUqArbKSMwc5zyCVYAOj7/M?=
+ =?us-ascii?Q?T2ciL/pdCqAj3r9PkEFhTW61PQM17CddwsYXaivwxbdmPcUgSw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vRPPe17RbDs+DW6zB5kd6QuhUuWAQPn7+Z7CjppXgy4lDNDcwozouxJyENQg?=
+ =?us-ascii?Q?zKify1WOPmg5uKVfbMr8RqU2ItIF4yztgEp+Zx3yNvUCnujR/bZ1Z2y2+tnE?=
+ =?us-ascii?Q?WhcJX7M3fZhZC2iWU2kfbMhDWRKvFGGZReGmxGMEJii/jYxizwK9uXtvxV51?=
+ =?us-ascii?Q?t4AWnXNJmZkQ1L814lUfOW/KVLH06s6atTViPfBonbfylNrtLuS3yjyDL+ZY?=
+ =?us-ascii?Q?bIj1kNNLRzH2z/4NkB2rTE0WiXwFLo4aC7joGx8q4fGP4yll+hxVzFJeyuYx?=
+ =?us-ascii?Q?sbn/Hlq153F40J1QppyZycSBlIGI9fOlXgbIEU4GgzKwiflsvX/+LJz2+1MD?=
+ =?us-ascii?Q?Mv7sSn9IimiOIRkFjlbkZuxwBRVDoC+Wzh2i4LQ7/+XAs56X10MgV2Tilyx4?=
+ =?us-ascii?Q?2a5X0S1aoeBxOlxOC/MP/OOAqMR5YzQEbYizmtv9wn3g0GZHIiEfbVS6QwNX?=
+ =?us-ascii?Q?C/OkvZ1mc4889hzaR1aqKLerYILZ8vMkZXSkHZ9f46BpJ7d8kJqlVY1hO0Yx?=
+ =?us-ascii?Q?XbERBP3azVBX6d3obqWIeZ6BjMpIOH5DLYpTvJ5+/vyap0GX5d+2rnHKR16a?=
+ =?us-ascii?Q?y3iI/UNtUJX1VR2ZCc42THXd+ebZJTurJxQPqeFJGnx1XT9pzfDnnpYq0nhZ?=
+ =?us-ascii?Q?kgr75reF3Z/OReTyTq1vf9zsLOWW9EVsw+ghpcOZRy0AUWt5E7aW1cmBIrAf?=
+ =?us-ascii?Q?N7DwFvMczfj2SfamvKIMLf+2fqkwAz69Jf15uPt36aRhe+zRnRIpU0Eu1jhN?=
+ =?us-ascii?Q?8c+cKcao8p2POudj391wt46pTMjAds1C3Ksb6XMug+VAnR2JGfqpzzJWMmVZ?=
+ =?us-ascii?Q?vZQ0OYt+5/Kai79V+NZZT+CwMbQsfbDaPSVC4AEHCMOP7e3gKep3V06fVRSc?=
+ =?us-ascii?Q?I914xswIkSsupGPRd/W23wm8k45oboa2y2RmK8aMq9uzRKgXVAe1dADCq0mG?=
+ =?us-ascii?Q?CblNi3FpnIdKFgUuPJwJ0SdQkbK/D5EJMBa74YTye1AMcUeGjFbpR02I/F+1?=
+ =?us-ascii?Q?YkKtaIgs4q6nTMD7hFFe2iJndOJraKvVF5UBk5lsGez4cE8vbt6+GajWWeYk?=
+ =?us-ascii?Q?KX7oAjpnF+P26QJh2my/ebOCRzWEfmwNYVQi1ppU+0PoqQem4GJtM4y3ogJD?=
+ =?us-ascii?Q?8hUg6eThBLW3tNHl2VmFU+JqM2avFJpsWGUxCV5d+5SBMhovClPhtvciSRGg?=
+ =?us-ascii?Q?rKCyW+Bkl62osZWf7ey5lIZdNXBfBunLjIlFhj2x1EtHvRpJuxHYoirKyjBv?=
+ =?us-ascii?Q?4r2EFpKcjA/lrmAIt3lv9a+CxBCRYJTKquQaH7bRCxJrelT1n5Ift/GxNA8e?=
+ =?us-ascii?Q?PuLE+GKJMr70FSlzzDQRnW7zrH/Iai8m/zNiKGtyEsaeEIZ1fK6t2wUmwhGS?=
+ =?us-ascii?Q?gZbTc+OH1OMY4iAVkFKzWeDXhTgChhABfFXerkdvItJ2u3xIZEXQkZSVp90F?=
+ =?us-ascii?Q?7ivC1mRRA8eqYuZ1mnmvs6n4ScLVcEBQPVZhyszt9WzCJe8ksDxLwD7l7Hnv?=
+ =?us-ascii?Q?11uiu4bmsOVPBMnTOusx+A00SdE92C23N5oWSXAoO69j3pjw9jf9tof+megT?=
+ =?us-ascii?Q?gW0LoD2LDKDVbQhlJf6QGollea9/uD+x552vXO/ullZvrDQGSnYcqOvnONcR?=
+ =?us-ascii?Q?KA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	4m5V8XDSKfkfXkubiAGeZgLfOygTNyWkwIF0/HHXs0b/xUFeoE4GSw/u8tyuLgnYYNThn2l/dwznYRBASmlpg7nij2sch6wG8NMZTk2Csu0LOBZKtr9FboS9MZwNTkHxzcp3+/pwd45QEo2hS2uD0PD7XHtvpR/zDmf6t0Zb3zaku7Ip+1hMYn9aFSbxzv9EmgmtXHPncNtVhY095REyT98LInt5n75HRa1lwPYOMFcrAulGjpyGrmdnyRGab7P7wrqlg/w9izOSrQ1h28UpVLTnxysU7NXYY0ZG4l7icq7+nYGkwEnFns2/8kd0NN6ehWSB/OdAlQfvAv3L9sCaDvoJLkE/PDg06HHHcDJLMok+njr29RI/XDFFK2byNvoZpkLdwY/WJdKuWW/+gLFAHs9F+5/GWN/SziZpi70yFFEv0BZG2tjLtQN764+5qdYU9Rx5r6Rr39qA+ytT1GPQkG+COE46m2s0a9DZDSKJLutPbVTee6xXHMf2X+aDaxw1HGOmZ7rXmvdWtu91iw7SZ6zsR9HUZIvQi/dUm2uY7CD8d4GVf9cNs7NgUVWvlUapcalEJooLJdjudmEJUp0IlJFqnyk6SSc+MI1FPJoasiI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e7f71bf-6dbd-43bf-3ef6-08ddea1de62f
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 12:40:29.3926
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: laPcsy6c5UxoVnc1OpkarC/kdMvkmG+h/JEpQ3XT5bXJAFU7I/aEJSdgCjxxVO3TFClrWs7GnWM2RUQZi/Gc41YDK276PzljI/fxYr8EIZg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4210
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=753 adultscore=0
+ suspectscore=0 spamscore=0 phishscore=0 mlxscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509020125
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX8MxcnDu+u9Rw
+ HFg3ao2P7DI5ogJGU8aelp2/v9lrZRcpfy+3Oc6JgIB5BHpZoJ71getwGHl9L8+grS+1KwkkrYp
+ pz0/M0lvDuJDjlABq0hQINnO+bWTuVKRDdM6+cVj5rksqbtixzgjHTdUIOcfdsCNNnlYJyS8OvN
+ 4ADlD1W6gHs+ckAtotz5lOsoqHR9T+c1WyROaBKCSHmSahnJsIQ9ZXD9i2ZeRH/4jrkmLgcCKY4
+ A3BrYkTmm2/m4Uip7FBCuubnAWGgfDuFSS+mfZJ5BrCi5NFwubaYofqcaPzTjGa5c7O78ux2p/3
+ D4P3aRBoBwPojbdxUVQ2ljw2sefe1FVrzlAz1qhAADjGpDa/LBQ0t+R8b1A7vdimNpwt6eYWFHZ
+ d2/WWWnVCtQg8ZFyyuYXFCoLt3zkDw==
+X-Authority-Analysis: v=2.4 cv=fZaty1QF c=1 sm=1 tr=0 ts=68b6e5c3 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=z9AGQiVS9zrA-VWx8mwA:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:13602
+X-Proofpoint-ORIG-GUID: gSiQ26b5CHfwd3PAHfC2FHiLkMOI2Ayd
+X-Proofpoint-GUID: gSiQ26b5CHfwd3PAHfC2FHiLkMOI2Ayd
 
-On 9/2/25 06:55, Venkat Rao Bagalkote wrote:
-> Greetings!!!
-> 
-> 
-> IBM CI has reported a boot failure with next-20250901 repo on IBM Power 
-> Server.
-> 
-> 
-> Repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> 
-> gcc version 11.5.0 20240719
-> 
-> GNU ld version 2.35.2-54.el9
-> 
-> 
-> Attached is the .config file.
-> 
-> 
-> Traces:
-> 
-> 
-> [    0.000000] mem auto-init: stack:off, heap alloc:off, heap free:off
-> [    0.000000] SLUB: HWalign=128, Order=0-3, MinObjects=0, CPUs=32, Nodes=32
-> [    0.000000] BUG: Kernel NULL pointer dereference on read at 0x00000040
-> [    0.000000] Faulting instruction address: 0xc00000000059eaac
-> [    0.000000] Oops: Kernel access of bad area, sig: 7 [#1]
-> [    0.000000] LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=8192 NUMA pSeries
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 
-> 6.17.0-rc4-next-20250901 #1 VOLUNTARY
-> [    0.000000] Hardware name: IBM,9080-HEX Power11 (architected) 
-> 0x820200 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-> [    0.000000] NIP:  c00000000059eaac LR: c00000000059eadc CTR: 
-> 0000000000000000
-> [    0.000000] REGS: c000000002c7faf0 TRAP: 0300   Not tainted 
-> (6.17.0-rc4-next-20250901)
-> [    0.000000] MSR:  8000000002001033 <SF,VEC,ME,IR,DR,RI,LE>  CR: 
-> 44008220  XER: 20040001
-> [    0.000000] CFAR: c00000000059eaf8 DAR: 0000000000000040 DSISR: 
-> 00080000 IRQMASK: 3
-> [    0.000000] GPR00: c00000000059eab8 c000000002c7fd90 c000000001678100 
-> c000000004017400
-> [    0.000000] GPR04: 0000000000000cc0 0000000000000001 0000000000000000 
-> c000000002cea768
-> [    0.000000] GPR08: 0000000000000008 0000000000000000 0000000000000000 
-> 0000000000008000
-> [    0.000000] GPR12: c00000000058f8d0 c000000002ff0000 0000000000000000 
-> 0000000000000000
-> [    0.000000] GPR16: 0000000000000000 0000000000000000 0000000000000000 
-> 0000000000000000
-> [    0.000000] GPR20: 0000000000c00000 0000000000000008 0000000000000000 
-> c000000002f46870
-> [    0.000000] GPR24: 0000000000000100 c000000002f468c8 c000000002f425c0 
-> c000000004017400
-> [    0.000000] GPR28: c000000001591188 c000000002cfca00 0000000000000001 
-> c0000013fd27ebe0
-> [    0.000000] NIP [c00000000059eaac] do_kmem_cache_create+0x4d4/0x634
-> [    0.000000] LR [c00000000059eadc] do_kmem_cache_create+0x504/0x634
-> [    0.000000] Call Trace:
-> [    0.000000] [c000000002c7fd90] [c00000000059eab8] 
-> do_kmem_cache_create+0x4e0/0x634 (unreliable)
-> [    0.000000] [c000000002c7fe40] [c00000000050e518] 
-> __kmem_cache_create_args+0x198/0x434
-> [    0.000000] [c000000002c7fef0] [c0000000020b3630] 
-> maple_tree_init+0x60/0x98
-> [    0.000000] [c000000002c7ff40] [c000000002006420] 
-> start_kernel+0x288/0x60c
-> [    0.000000] [c000000002c7ffe0] [c00000000000ea9c] 
-> start_here_common+0x1c/0x20
-> [    0.000000] Code: 4e800020 3d220167 38e92668 3d2200c0 39490a84 
-> e93b0008 7fe7402a 7d5f52aa 7fe9fa14 392a001c 79291f24 7d3b482a 
-> <e9290040> f93f0020 4bff15e5 38be0001
-> [    0.000000] ---[ end trace 0000000000000000 ]---
-> [    0.000000]
-> [    0.000000] Kernel panic - not syncing: Fatal exception
-> [    0.000000] Rebooting in 10 seconds..
-> 
-> 
-> 
-> If you happen to fix this please add below tag.
-> 
-> 
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+On Tue, Sep 02, 2025 at 01:09:57PM +0200, Christian Brauner wrote:
+> On Tue, Sep 02, 2025 at 11:45:33AM +0100, Lorenzo Stoakes wrote:
+> > In commit bb666b7c2707 ("mm: add mmap_prepare() compatibility layer for
+> > nested file systems") we introduced the ability for 'nested' drivers and
+>
+> Fwiw, they're called "stacked filesystems" or "stacking filesystems" such
+> as overlayfs. I would recommend you use that terminology going forward
+> so we don't confuse each other.
+>
+> You've used "nested" here and in the code doc for
+> compat_vma_mmap_prepare() you used "'wrapper' file systems".
 
-Could you check if this fixes it please?
+Thanks, good to know there's a general term (yeah seems even I am not consistent
+there :) will fix that up in a separate patch if that's ok.
 
-From 345b6b43ebf2dacae570a6971ab147be0f724fa1 Mon Sep 17 00:00:00 2001
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Tue, 2 Sep 2025 14:36:44 +0200
-Subject: [PATCH] slub: don't cache barn pointers in pcs
+>
+> Otherwise seems fine,
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slub.c | 69 +++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 42 insertions(+), 27 deletions(-)
+Thanks!
 
-diff --git a/mm/slub.c b/mm/slub.c
-index e47032ea38e0..cb0ba1cf0ee4 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -481,7 +481,6 @@ struct slub_percpu_sheaves {
- 	struct slab_sheaf *main; /* never NULL when unlocked */
- 	struct slab_sheaf *spare; /* empty or full, may be NULL */
- 	struct slab_sheaf *rcu_free; /* for batching kfree_rcu() */
--	struct node_barn *barn;
- };
- 
- /*
-@@ -504,6 +503,12 @@ static inline struct kmem_cache_node *get_node(struct kmem_cache *s, int node)
- 	return s->node[node];
- }
- 
-+/* Get the barn of the current cpu's memory node */
-+static inline struct node_barn *get_barn(struct kmem_cache *s)
-+{
-+	return get_node(s, numa_mem_id())->barn;
-+}
-+
- /*
-  * Iterator over all nodes. The body will be executed for each node that has
-  * a kmem_cache_node structure allocated (which is true for all online nodes)
-@@ -4722,6 +4727,7 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
- {
- 	struct slab_sheaf *empty = NULL;
- 	struct slab_sheaf *full;
-+	struct node_barn *barn;
- 	bool can_alloc;
- 
- 	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
-@@ -4731,7 +4737,9 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
- 		return pcs;
- 	}
- 
--	full = barn_replace_empty_sheaf(pcs->barn, pcs->main);
-+	barn = get_barn(s);
-+
-+	full = barn_replace_empty_sheaf(barn, pcs->main);
- 
- 	if (full) {
- 		stat(s, BARN_GET);
-@@ -4748,7 +4756,7 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
- 			empty = pcs->spare;
- 			pcs->spare = NULL;
- 		} else {
--			empty = barn_get_empty_sheaf(pcs->barn);
-+			empty = barn_get_empty_sheaf(barn);
- 		}
- 	}
- 
-@@ -4780,6 +4788,7 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
- 	 */
- 	local_lock(&s->cpu_sheaves->lock);
- 	pcs = this_cpu_ptr(s->cpu_sheaves);
-+	barn = get_barn(s);
- 
- 	/*
- 	 * If we are returning empty sheaf, we either got it from the
-@@ -4790,7 +4799,7 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
- 	 */
- 
- 	if (pcs->main->size == 0) {
--		barn_put_empty_sheaf(pcs->barn, pcs->main);
-+		barn_put_empty_sheaf(barn, pcs->main);
- 		pcs->main = full;
- 		return pcs;
- 	}
-@@ -4801,12 +4810,12 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
- 	}
- 
- 	if (pcs->spare->size == 0) {
--		barn_put_empty_sheaf(pcs->barn, pcs->spare);
-+		barn_put_empty_sheaf(barn, pcs->spare);
- 		pcs->spare = full;
- 		return pcs;
- 	}
- 
--	barn_put_full_sheaf(pcs->barn, full);
-+	barn_put_full_sheaf(barn, full);
- 	stat(s, BARN_PUT);
- 
- 	return pcs;
-@@ -4907,7 +4916,7 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
- 			goto do_alloc;
- 		}
- 
--		full = barn_replace_empty_sheaf(pcs->barn, pcs->main);
-+		full = barn_replace_empty_sheaf(get_barn(s), pcs->main);
- 
- 		if (full) {
- 			stat(s, BARN_GET);
-@@ -5104,7 +5113,7 @@ kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
- 		stat(s, SHEAF_PREFILL_FAST);
- 	} else {
- 		stat(s, SHEAF_PREFILL_SLOW);
--		sheaf = barn_get_full_or_empty_sheaf(pcs->barn);
-+		sheaf = barn_get_full_or_empty_sheaf(get_barn(s));
- 		if (sheaf && sheaf->size)
- 			stat(s, BARN_GET);
- 		else
-@@ -5155,6 +5164,7 @@ void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
- 
- 	local_lock(&s->cpu_sheaves->lock);
- 	pcs = this_cpu_ptr(s->cpu_sheaves);
-+	barn = get_barn(s);
- 
- 	if (!pcs->spare) {
- 		pcs->spare = sheaf;
-@@ -5169,14 +5179,11 @@ void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
- 
- 	stat(s, SHEAF_RETURN_SLOW);
- 
--	/* Accessing pcs->barn outside local_lock is safe. */
--	barn = pcs->barn;
--
- 	/*
- 	 * If the barn has too many full sheaves or we fail to refill the sheaf,
- 	 * simply flush and free it.
- 	 */
--	if (data_race(pcs->barn->nr_full) >= MAX_FULL_SHEAVES ||
-+	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES ||
- 	    refill_sheaf(s, sheaf, gfp)) {
- 		sheaf_flush_unused(s, sheaf);
- 		free_empty_sheaf(s, sheaf);
-@@ -5601,6 +5608,8 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
- static void __pcs_install_empty_sheaf(struct kmem_cache *s,
- 		struct slub_percpu_sheaves *pcs, struct slab_sheaf *empty)
- {
-+	struct node_barn *barn;
-+
- 	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
- 
- 	/* This is what we expect to find if nobody interrupted us. */
-@@ -5610,19 +5619,21 @@ static void __pcs_install_empty_sheaf(struct kmem_cache *s,
- 		return;
- 	}
- 
-+	barn = get_barn(s);
-+
- 	/*
- 	 * Unlikely because if the main sheaf had space, we would have just
- 	 * freed to it. Get rid of our empty sheaf.
- 	 */
- 	if (pcs->main->size < s->sheaf_capacity) {
--		barn_put_empty_sheaf(pcs->barn, empty);
-+		barn_put_empty_sheaf(barn, empty);
- 		return;
- 	}
- 
- 	/* Also unlikely for the same reason */
- 	if (pcs->spare->size < s->sheaf_capacity) {
- 		swap(pcs->main, pcs->spare);
--		barn_put_empty_sheaf(pcs->barn, empty);
-+		barn_put_empty_sheaf(barn, empty);
- 		return;
- 	}
- 
-@@ -5630,7 +5641,7 @@ static void __pcs_install_empty_sheaf(struct kmem_cache *s,
- 	 * We probably failed barn_replace_full_sheaf() due to no empty sheaf
- 	 * available there, but we allocated one, so finish the job.
- 	 */
--	barn_put_full_sheaf(pcs->barn, pcs->main);
-+	barn_put_full_sheaf(barn, pcs->main);
- 	stat(s, BARN_PUT);
- 	pcs->main = empty;
- }
-@@ -5647,15 +5658,17 @@ static struct slub_percpu_sheaves *
- __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
- {
- 	struct slab_sheaf *empty;
-+	struct node_barn *barn;
- 	bool put_fail;
- 
- restart:
- 	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
- 
-+	barn = get_barn(s);
- 	put_fail = false;
- 
- 	if (!pcs->spare) {
--		empty = barn_get_empty_sheaf(pcs->barn);
-+		empty = barn_get_empty_sheaf(barn);
- 		if (empty) {
- 			pcs->spare = pcs->main;
- 			pcs->main = empty;
-@@ -5669,7 +5682,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
- 		return pcs;
- 	}
- 
--	empty = barn_replace_full_sheaf(pcs->barn, pcs->main);
-+	empty = barn_replace_full_sheaf(barn, pcs->main);
- 
- 	if (!IS_ERR(empty)) {
- 		stat(s, BARN_PUT);
-@@ -5729,7 +5742,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs)
- 
- got_empty:
- 	if (!local_trylock(&s->cpu_sheaves->lock)) {
--		barn_put_empty_sheaf(pcs->barn, empty);
-+		barn_put_empty_sheaf(barn, empty);
- 		return NULL;
- 	}
- 
-@@ -5832,6 +5845,7 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
- 	if (unlikely(!pcs->rcu_free)) {
- 
- 		struct slab_sheaf *empty;
-+		struct node_barn *barn;
- 
- 		if (pcs->spare && pcs->spare->size == 0) {
- 			pcs->rcu_free = pcs->spare;
-@@ -5839,7 +5853,9 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
- 			goto do_free;
- 		}
- 
--		empty = barn_get_empty_sheaf(pcs->barn);
-+		barn = get_barn(s);
-+
-+		empty = barn_get_empty_sheaf(barn);
- 
- 		if (empty) {
- 			pcs->rcu_free = empty;
-@@ -5854,14 +5870,14 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
- 			goto fail;
- 
- 		if (!local_trylock(&s->cpu_sheaves->lock)) {
--			barn_put_empty_sheaf(pcs->barn, empty);
-+			barn_put_empty_sheaf(barn, empty);
- 			goto fail;
- 		}
- 
- 		pcs = this_cpu_ptr(s->cpu_sheaves);
- 
- 		if (unlikely(pcs->rcu_free))
--			barn_put_empty_sheaf(pcs->barn, empty);
-+			barn_put_empty_sheaf(get_barn(s), empty);
- 		else
- 			pcs->rcu_free = empty;
- 	}
-@@ -5906,6 +5922,7 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
- 	void *remote_objects[PCS_BATCH_MAX];
- 	unsigned int remote_nr = 0;
- 	int node = numa_mem_id();
-+	struct node_barn *barn;
- 
- next_remote_batch:
- 	while (i < size) {
-@@ -5941,8 +5958,10 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
- 	if (likely(pcs->main->size < s->sheaf_capacity))
- 		goto do_free;
- 
-+	barn = get_barn(s);
-+
- 	if (!pcs->spare) {
--		empty = barn_get_empty_sheaf(pcs->barn);
-+		empty = barn_get_empty_sheaf(barn);
- 		if (!empty)
- 			goto no_empty;
- 
-@@ -5956,7 +5975,7 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
- 		goto do_free;
- 	}
- 
--	empty = barn_replace_full_sheaf(pcs->barn, pcs->main);
-+	empty = barn_replace_full_sheaf(barn, pcs->main);
- 	if (IS_ERR(empty)) {
- 		stat(s, BARN_PUT_FAIL);
- 		goto no_empty;
-@@ -7041,15 +7060,11 @@ static int init_percpu_sheaves(struct kmem_cache *s)
- 
- 	for_each_possible_cpu(cpu) {
- 		struct slub_percpu_sheaves *pcs;
--		int nid;
- 
- 		pcs = per_cpu_ptr(s->cpu_sheaves, cpu);
- 
- 		local_trylock_init(&pcs->lock);
- 
--		nid = cpu_to_mem(cpu);
--
--		pcs->barn = get_node(s, nid)->barn;
- 		pcs->main = alloc_empty_sheaf(s, GFP_KERNEL);
- 
- 		if (!pcs->main)
--- 
-2.51.0
-
-
+Cheers, Lorenzo
 
