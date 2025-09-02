@@ -1,153 +1,188 @@
-Return-Path: <linux-kernel+bounces-796412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E571DB4002D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:22:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B759CB40040
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5964618961B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30ED5189F0A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD8B2E5B1F;
-	Tue,  2 Sep 2025 12:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001AA2C026B;
+	Tue,  2 Sep 2025 12:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjxLry+k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bA1097Dy"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4782E21FF44;
-	Tue,  2 Sep 2025 12:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B5921FF44;
+	Tue,  2 Sep 2025 12:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815751; cv=none; b=ANfAdlhBbbS2rua2MJfG17dXyQfCtnZmdO572kHNYD+hQQFxwLyYhhgHqQANIqYtzXWspnwMjrtMZzt7K60jCzqNtrp7LFmgUwBq6W3Y5KcS+kXRG88zwfcvf4XC5F7P/bxmZfxa9woezUxld/BcDjdfxKYfqF7P0YyYlVOX3xI=
+	t=1756815815; cv=none; b=kRXj2j6+k5MaqesR6n74TN/UOuu5VALXxu6n2FgXOwS6Bld9K/XiFMJS4VB05wDQMS4GBc4DjJKzNVG8eXKQD+bOWcl+O4lKlgTpA8VqRqFHnsv/6RSpCjqVWRVnpHgSj8LoZo4dUITy0inaMajSkpB3SOknhDlZiBzhIjLKwm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815751; c=relaxed/simple;
-	bh=WNvwZbGhhRwiEb2NPZN3SCJ15SAxBEIHxjUM1lFStyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uxgiwfy4+CyRUI1SZdcFYfiIPXmanFpk8QcNBH0t4iBEQvy/+xlFIgg6bOIdj2YDs2+vao2Z1gXxmMp6+y8GGYPkT0O8iZgqwnJI6B4kzIjt/92NVTh5o5tWcuRAgO0gzLTHrl3EDudg+JOuCmL6q0k19QGQJ5ZzAm+FWmuOQYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjxLry+k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3778AC4CEF9;
-	Tue,  2 Sep 2025 12:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756815750;
-	bh=WNvwZbGhhRwiEb2NPZN3SCJ15SAxBEIHxjUM1lFStyY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YjxLry+kEeJUnxV6320vUXHUgAtysOdDe1jnnqQakBn7XHkLy8IoCYiz8XaXyarnp
-	 bWqO7UB1DMQbu6g/GNEI/9c683OShl1Tm5ybjq3HTAJ0dXNzeBgLPPvO/SE7jgcA6c
-	 on9jzYxcdrpIA8yMU+NHVWtno+Lr2A3a7ziQdUWLsRYUGyi58FjZMBnWq/r9qjRrVt
-	 moZAi2g3uJsCbVOi+L0c9EDWk68EAcF57Jl4mdwJ2fRqfB31D0uMEk7wcBGy/tp+kM
-	 ZrDCqn2GQow2szfYXf3yfR8Z0EfenYPsDinvAIX+5UA855oKs6nUJqJgTB/whvPG1t
-	 ttqlMwa6eVV5A==
-Date: Tue, 2 Sep 2025 14:22:28 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Liu Ying <victor.liu@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Zijun Hu <quic_zijuhu@quicinc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 1/9] list: add list_last_entry_or_null()
-Message-ID: <20250902-speedy-friendly-alpaca-f80709@houat>
-References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
- <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-1-888912b0be13@bootlin.com>
- <aJJ9ttmL7wiw41fY@smile.fi.intel.com>
- <20250814183609.3788a6df@booty>
- <aKXRHAyfPHPpZmMs@smile.fi.intel.com>
- <20250902135709.19e1ef54@booty>
+	s=arc-20240116; t=1756815815; c=relaxed/simple;
+	bh=FLDyaeitWgzyjtbtKS1qQH+5m7paa4bJfoFRItnpzkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PGmE6IcAJMKyBjJU8HgJ2IVh6pcO7IXS6zxde0+pyW0jVfn/RnTjUoM9vzmDnVEhFbDKPtDoyirIyCMWh8ht+B/pZo8BXAKmbVXxgCnLYYNoIQbyQ2msJcm47fDTX55ZgOdvwVWmrunY+4gMNDpk5t764UD5PQ1ucOT0qFy2Fpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bA1097Dy; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-336d2b0ea8dso17340321fa.3;
+        Tue, 02 Sep 2025 05:23:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756815811; x=1757420611; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8a9r+uc+llMMsKTvoOHfvAxI18eXAggU7U6vypTQdKI=;
+        b=bA1097DyLv70Us0DE+ve0+v+RrAWbFLd+swLigWo47YpsQFznB3cCI7lMihDxEyW/j
+         fnoLz13RtiHlLbyvHkxtw2mBID2aJ9uR+8JBM9zfGyDD0nX+e6OSllpn5WP8jF4nUDrU
+         cHzLMgDWHZzpLfpItbnRe14xK04lib422m4KSHEhlLrnL5oCoBwI/1MM30Xnp4HLNyLJ
+         BsdUcBaEd5Puek8V6NArh3sAFOL8L0MGgJmVD7cSfN/EsyIucSs6G6q4ChQ23EbHTyGv
+         9fAtcGGhm7jSyomVRITlODGCvoVsBBfA+xKWTg7xsvPukjE8gK70bGz5bmsoJt8oGdXi
+         cHNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756815811; x=1757420611;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8a9r+uc+llMMsKTvoOHfvAxI18eXAggU7U6vypTQdKI=;
+        b=Eb2/6QSgRd/qm5GrAhSyUms5+YKxKTO1BH/YdjYQRq40vzGADVLxNOCPT4sFmczdfa
+         F5ZFpPv2iXNvKo1LlCKoba2DaKTrw7WR/axPITq6PBJAr2u6qlp37dEk3ljU0W1au5cB
+         5WbP/zTBjJ47yztzLeYOG313wE3rkOK4CGCdrmbCK7AyP6iHaUaHWRms7MffpqOgW1tq
+         z/HsB1DqPc8ZhE1Ss0NzddH4g17JbDK15E0Tt6udPJmg05dshRz1hRbL3OtyWVJ9Sz0a
+         FM4hzhOXfK6s+eKJ3rl2kUj9advsph7oCYvRR77xdfaTi9hEatpHFYw0xtsKKu7roFe4
+         idqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjA0bUI7Rk4rvbJEmPDSvy5FiJKf9qIF/4fwZOOVytv5nwfJs2sKVRAtdAXFLl5oclpaHkUE5PAyNc@vger.kernel.org, AJvYcCWA1zQHcr2EoTlW1KPyMnS+OE8iLWCbm67EoMl0mMsLS5RtTCMTjjn9kSwugOJs2UTt6u16pOauLTrQug==@vger.kernel.org, AJvYcCWt/d6dzORZxarFh0TCn4pUgbT6ndEJiVHEmYo6Vwdu1OhU4Hs5Kr9sv3xv7vPPW+qtJaiV0i8Awd+5qEe1@vger.kernel.org, AJvYcCXmcTwCLXLBmwVK7+dw94OWxRfunEZ18Z9O25ur7Z5M+DPpTvRv6M3dMOoRS2GioVtu+HLV8Pt6udoF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz46GP2mGeDTB+isTFOz2qRMk8jIG17C3BgkP5cYdCnVG+Uo8ui
+	KTb3kRa3rgaO0D0QwUlOFvk/vDaHR6Gtrsa9Jtr5Lgb9Nut6vhKt5GNP
+X-Gm-Gg: ASbGncsOyMH58pR7eRnI94fUUW8eg/XtT3A/s21P5ksnYlpNjEhtqgGjqHtfjId+JZN
+	oSM4oWnW8xYOa9bBhFEN5tbQCHbsRYgVz7J1TlntM7h8lOIvYwjNh50FETnt0BI01Rx//UJuc03
+	GYNLAeraW+CwJepYcf1oA3Hg5OZNgJ2N7XOMC0rJs86r7uzOJ5kNBer3zU8EH2Z7EX043iJpRA8
+	sj96l9A6EHzOUdEwTzhRjlyIK1EvD+ENMJNPk9CBA+uXLkG6WIwj3FX1q02rgiTm747ruAtgDlm
+	Y2ETrZFCJq3qmXYOGoHR+xr1jxIJqBO9Y4aLv4vU2pX/B9GJodzK3TjaVHw+1PWSqHAzzNAPnqv
+	2G0gTJVIQ32L6tE6bUIqqqwgpKw==
+X-Google-Smtp-Source: AGHT+IERSU0Al6GV+1NxCq8D0rP4/idbDWR0KPpTpIWo4vTHuwaD/BNUvBHzhNzNaPhPpGVUyD0qVA==
+X-Received: by 2002:a05:651c:2353:20b0:333:fff0:7c96 with SMTP id 38308e7fff4ca-336ca8de791mr27244971fa.8.1756815810259;
+        Tue, 02 Sep 2025 05:23:30 -0700 (PDT)
+Received: from mva-rohm ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f5032aaesm4247251fa.37.2025.09.02.05.23.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 05:23:29 -0700 (PDT)
+Date: Tue, 2 Sep 2025 15:23:21 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH 0/3] Support ROHM BD79112 ADC
+Message-ID: <cover.1756813980.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ha3ss3lic4lbxxde"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ba9oyCntt7GsOc2k"
 Content-Disposition: inline
-In-Reply-To: <20250902135709.19e1ef54@booty>
 
 
---ha3ss3lic4lbxxde
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--ba9oyCntt7GsOc2k
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/9] list: add list_last_entry_or_null()
-MIME-Version: 1.0
 
-On Tue, Sep 02, 2025 at 01:57:09PM +0200, Luca Ceresoli wrote:
-> Hello DRM maintainers,
->=20
-> On Wed, 20 Aug 2025 16:43:56 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->=20
-> > On Thu, Aug 14, 2025 at 06:36:09PM +0200, Luca Ceresoli wrote:
-> > > On Wed, 6 Aug 2025 00:55:02 +0300
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > >  =20
-> > > > On Fri, Aug 01, 2025 at 07:05:23PM +0200, Luca Ceresoli wrote: =20
-> > > > > Add an equivalent of list_first_entry_or_null() to obtain the las=
-t element
-> > > > > of a list.   =20
-> > > >=20
-> > > > Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com> =20
-> > >=20
-> > > Thanks Andy!
-> > >=20
-> > > However I'm not sure when and where this should be applied.
-> > >=20
-> > > Except for this one patch, all patches in the series are for
-> > > drm-misc-next. Also, patch 1 is currently not needed by any other
-> > > series AFAIK.
-> > >=20
-> > > Based on the above, is it correct to assume that the whole series can
-> > > be applied on drm-misc-next? (when other patches will have a
-> > > R-by/Ack-by of course)
-> > >=20
-> > > Also, is Andy's A-by enough to apply this patch? =20
-> >=20
-> > The list.h is common for many, I think going via DRM with my Ack is eno=
-ugh
-> > based on the Git history of my changes in this file. But if you want mo=
-re
-> > reliable source, get an Ack from Andrew Morton.
->=20
-> While applying this patch with dim on drm-misc-next, dim push-branch
-> failed because:
->=20
->   dim: ERROR: cb86408b1fc2 ("list: add list_last_entry_or_null()"): Manda=
-tory Maintainer Acked-by missing., aborting
->=20
-> Looking at the dim code, it is looking for a Reviewed- or Acked-by from
-> people listed by `scripts/get_maintainer.pl --no-git-fallback -m --nol
-> --norolestats`. but that command returns an empty string, so it will
-> never allow me to push.
->=20
-> How can I get that commit pushed to drm-misc-next?
+Support ROHM BD79112 ADC/GPIO
 
-Adding a MAINTAINERS entry for it would be nice too
+The ROHM BD79112 is a 12-bit, 32 channel SAR ADC / GPIO IC. Or, a "Signal
+Monitor Hub IC" as data-sheet describes it.
 
-Maxime
+Data sheet states the maximum sampling rate to be 1 MSPS, but achieving
+this would probably require the SPI and samples to be processed by
+something else but the CPU running Linux. This could work with the "SPI
+offloading" which has recently landed upstream - but I have no HW to test
+this so nothing fancy is implemented here. It's still worth mentioning
+if someone needs the speed and wants to try implementing it :)
 
---ha3ss3lic4lbxxde
-Content-Type: application/pgp-signature; name="signature.asc"
+The SPI protocol is slightly peculiar. Accesses are done in 16-bit
+sequences, separated by releasing and re-aquiring the chip-select.
+
+Register write takes 1 such sequence. The 8-bit register data to write,
+is stored in the last 8 bits. The high 8 bits contain register address
+and an I/O-bit which needs to be set for register accesses.
+
+Register read consists of two 16-bit sequences (separated by
+chip-select). First sequence has again the register address and an IO
+bit in the high byte. Additionally, reads must have a 'read bit' set.
+The last 8 bits must be zero. The register data will be carried in the
+last 8 bits of the next 16-bit sequence while high bits in reply are zero.
+
+ADC data reading is similar to register reading except:
+ - No R/W bit or I/O bit should be set.
+ - Register address is replaced by channel number (0 - 31).
+ - Reply data is carried in the 12 low bits (instead of 8 bits) of the
+   reply sequence.
+
+The protocol is implemented using custom regmap read() and write()
+operations.
+
+Other than that, pretty standard device and driver.
+
+Matti Vaittinen (3):
+  dt-bindings: iio: adc: ROHM BD79112 ADC/GPIO
+  iio: adc: Support ROHM BD79112 ADC/GPIO
+  MAINTAINERS: Support ROHM BD79112 ADC
+
+ .../bindings/iio/adc/rohm,bd79112.yaml        | 118 ++++
+ MAINTAINERS                                   |   3 +-
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/rohm-bd79112.c                | 542 ++++++++++++++++++
+ 5 files changed, 673 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/rohm,bd79112.=
+yaml
+ create mode 100644 drivers/iio/adc/rohm-bd79112.c
+
+
+base-commit: d1487b0b78720b86ec2a2ac7acc683ec90627e5b
+--=20
+2.51.0
+
+
+--ba9oyCntt7GsOc2k
+Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLbhewAKCRAnX84Zoj2+
-dkQBAYDszpV6SGYWBTBgJCvIUpiseT/exARuDvzdOQmtFKiQnfCnA6jnGgP8dcxi
-1t81QSABfjclCtf2qV5ucKcKjfmq3i46LSX4vnLy8fnGVrq09f1F1r8yuY2lSQs0
-Cp9wkfBFxA==
-=G+6D
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmi24bUACgkQeFA3/03a
+ocUVhQgA0tsCPjD06/OPfuWM0thN6JnisysIu/ZFFMGBMG581MMRLhsZ+y36oulR
+liyT9bqNvWJe6JDYQ0s89xpOIbBSYUhRPcKMz3ZJRYsfkD85dxeJGDy0aWjSzSX2
+PVdSnm7ipibYv8wQfATcBWlXcmbDexOLTY89EDx3OshMD59eJqV2P4YuPfl+C/TL
+Ff2aMLY1Pi+R4dIdDSsXEpQPtqaeROnDvXaw3nF2kkxInl9/5XOyRr7hg80+KCLE
+zCAd+7ClmfsCdshXDDrtePefVQs9Mut9yjGOekyp/ZqE9ftev+HpI4rk+wdfnMIJ
+EttOgMVBIWNSZm6bfpw6B56iDzz+pg==
+=IrgE
 -----END PGP SIGNATURE-----
 
---ha3ss3lic4lbxxde--
+--ba9oyCntt7GsOc2k--
 
