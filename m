@@ -1,93 +1,215 @@
-Return-Path: <linux-kernel+bounces-795965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED631B3FA0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6FFB3FAC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE06C16C9F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:18:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C3AF7AA5D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B4D27466D;
-	Tue,  2 Sep 2025 09:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506A92EB873;
+	Tue,  2 Sep 2025 09:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lvsfTK13"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ydplr6KJ"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C79221F09
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCD227FD40;
+	Tue,  2 Sep 2025 09:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756804721; cv=none; b=rfsS9kl5iCJVdjwfWvkZgx42j6TzSDwP+cUrs084xZVSsgF/1dWe/j4zPxRtqf8+YSgqr3YknH7uL/RjD+nmVhm9PDey304Qp5AVyALmE9BRBVQkcsc+rxCmL1BnMrEfwHUpTVr++N9ap3ASg9+Uk+H65ZTielekjylPtN0WJTI=
+	t=1756805856; cv=none; b=UuSFW4ZvJ1FLoBYbS4ynMOFhj2J074+NoESGb4WhAKLLsqEsrkons6TF9gCepeuBNNPeIzc2sfYvjxOzsJWeJxC+phtUb5FShw+A099TWi4gfmOlTDJzBtWA71wMbzTIyd199f+AQOGScdJ11W/Vnh30acRQFJ5Rldo5ic0eK4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756804721; c=relaxed/simple;
-	bh=RxjpUVLKcoWc5xvHEWJKCRABhDI2uL7/9sXv3eiVjyQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pSC+MNbLSavjHwpXjig/+8NW8hD4jzVz6JN5ApM3kTKUoFBEUDB5MaSeMa2B5kgAwb8XKyk0Z66A1YVzYZpB83tiTJqWF465wOGQIjLE72qoxSiEYQhY9U1//FnKDyU6RwGuYOdNSs0XFaJvg+uUegpMLROnlrLrVvwiANyXzGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lvsfTK13; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 96B7F4E40C6E;
-	Tue,  2 Sep 2025 09:18:37 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 68EF260695;
-	Tue,  2 Sep 2025 09:18:37 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 508A01C22D9A3;
-	Tue,  2 Sep 2025 11:18:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756804715; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=RxjpUVLKcoWc5xvHEWJKCRABhDI2uL7/9sXv3eiVjyQ=;
-	b=lvsfTK13vM4HeVhgQCqxYEyRq763oPQbBGQ0D9e6bXGsCyn4VvG+LvC96D0LW3bkPVEJar
-	XncUK08QA/jLDEmGquT+yq97aUScIYjddznLyBT4AGYWqvytQjGbeoBXVvijhD8A5rCcbI
-	nIvJiGPrNgE8Ul6UmL8Evm31Y9uiaWR2U1gbN4pgbwAPhOSl4xW3hI4pRnR0dcFpUOj/Kr
-	2LsLrpOAVJntK0DeT1GOdBAPU6EYvJAGJ4ouf2l+63bEsaSlxd0+3i70G3hiCj9rtPR3ri
-	VTg1UGcKSD+/AKMXNCN8D8giqEYYqAvI11e1P50MdVGTaXjJPqKdTdFfG4Ecxw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Viresh Kumar <vireshk@kernel.org>,  Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Vinod Koul <vkoul@kernel.org>,  Ilpo
- =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-  dmaengine@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  stable@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: dw: dmamux: Fix device reference leak in
- rzn1_dmamux_route_allocate
-In-Reply-To: <20250902090358.2423285-1-linmq006@gmail.com> (Miaoqian Lin's
-	message of "Tue, 2 Sep 2025 17:03:58 +0800")
-References: <20250902090358.2423285-1-linmq006@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Tue, 02 Sep 2025 11:18:32 +0200
-Message-ID: <875xe1nrfb.fsf@bootlin.com>
+	s=arc-20240116; t=1756805856; c=relaxed/simple;
+	bh=AnhWbFtadzDp+KVelZzMiEybBw+Cb3GyCRfsjMIZs84=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=qv4z2jATiZ0nCTAoyjLiENMdVUKgZyrdzjHVtWeNkj1WDA/gK3ULoJnVLb0sTH5QfkOOWqV+bpocC/TS/sZM6NnDxRmUY6skPBBdac1UAIAvjlDqO92k2DO15eqsjQxmQKC+DhNWpwF5lRTItqD8aTHozVCWRrpO2xa+BuCXWN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ydplr6KJ; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756805844;
+	bh=bCivpz+VqiYG4IHGqHshtomf2YaYzPPHc5KMtAgauvY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ydplr6KJPSr/Mq12+O66TousMFNNCf0f0LYpvhQd+V5wPLxUeyT8yITJi/i0PdQ/D
+	 TyVHG6wrjDREONc4wpC2nKtg81byFV9amV8iFAo8H8psBXEfwujan/lMFzo/OsWMd6
+	 ETYBz44AnC4Ah4qqVNADRe6GzuZtdJz2EqnV+YCU=
+Received: from NUC10 ([39.156.73.10])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 4E221C18; Tue, 02 Sep 2025 17:19:34 +0800
+X-QQ-mid: xmsmtpt1756804774tavdqsaey
+Message-ID: <tencent_0E0C830021A02CBCCB6D95AE57CFD100C407@qq.com>
+X-QQ-XMAILINFO: NbgegmlEc3JuGjBNB9O1B8NwOUeqXuYKkCBNNmBpv809JwDDN4Oj0bGjtbAKLW
+	 aQAmwHvBZ5motSgKCFOWzQWRhD+MwS9SAim0HZkzsIvV7S0YUs9yWU/dW2gGXztTohO+zwlwTi5R
+	 mMkQ8wf2wTjWgzMSV/vy02Cz+kF1SC6ImhwiB6hbpZo/4QKzesKdBcOK/yfUoNvuTBMhxdmvgeAS
+	 0ay/Q6ftlCtlyUdtJu9cZf3VOXaYATzBsePaTv3s8jUHLLJjfVAoThgLH1amV+d9T6Mk8SOVOmyz
+	 vX0dSMo6YIrkvQURWOsh3r6ZvGLi8aLunv+n0PoE/6J7FkfBeAtBXvdWlXM9mJrw0FHkrOc2WaZQ
+	 8xjo97XwtlPcCQKcnCDjDLXw3fWGEzboiF8iGTSXV3uAzhWITuuqve9TQURrvkn09jDtMiI7COs0
+	 OItpkD/VVc7qjoArUsINNQuNblGMEGCdYnteS9sLwXpCfFSouhefNVCpIML7hmmuG7vztyA90Zo7
+	 XJ4/dV8EfQ0O8RXee0S2JvE8xxeS/kTVsP4woJwSTrkYTQAB9HGRhLvT1vDxr6KBtDix1VV0RyFG
+	 BfCVp4OYCZFGp+0Wc1Tv5kM9iNJZcc7lF55hpom1zaUeO8M38AeG2pcd+QtzFB5kmCNXh1wB0fWM
+	 S6G5qiwbSkVojCgEdeLPv2+Bv496jT0TJZ5IG/D3R7oMZUldRaPRL38N/6Ul2kb6E1wqRKoU3c2R
+	 hltLsdfJAsfUSBkieO9mxf0PJm/RU4czBeLIE4mAx0lV3YZlCP8WPYTN5kEcnn6Tm80Q/2fIaUxn
+	 sPD8xbdfNEXJFvDpuKoFaI9ezoFR/2lDw84zAPXK4SRVjj97VVaLB3VmpJipYA9aj0PEfO738w8d
+	 /N54F6OIUuSeFKmw8XZJRXAokdJtREdEQNYocKSkAtLo1NviWg58vemssosTHWHGCTvb30YBd2Lc
+	 Wl70sDPUfSbIXlN0UKVptQlxgUkG3uteLSrCzQTCtObNusKfTwn4TpjYU7u+4nmBGohUGpROHRZB
+	 wt/Aw+k81E6d6O+hAPYpXk0Jyg+v20ZSvWJGGWl4LTJTqviBVcgmQmDQDcPb7Vq5KudBXSWE3GEa
+	 Tmd5qY6InMTro04MVUauOTmwDOZ/c0O6LUbZma
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Rong Tao <rtoax@foxmail.com>
+To: andrii@kernel.org,
+	ast@kernel.org,
+	vmalik@redhat.com
+Cc: rtoax@foxmail.com,
+	Rong Tao <rongtao@cestc.cn>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next v3 1/2] bpf: add bpf_strcasecmp kfunc
+Date: Tue,  2 Sep 2025 17:19:03 +0800
+X-OQ-MSGID: <3dde314ef1772aa3ab9775bd3ca50518b5ba4cc3.1756804522.git.rtoax@foxmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1756804522.git.rtoax@foxmail.com>
+References: <cover.1756804522.git.rtoax@foxmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Rong Tao <rongtao@cestc.cn>
 
-On 02/09/2025 at 17:03:58 +08, Miaoqian Lin <linmq006@gmail.com> wrote:
+bpf_strcasecmp() function performs same like bpf_strcmp() except ignoring
+the case of the characters.
 
-> The reference taken by of_find_device_by_node()
-> must be released when not needed anymore.
-> Add missing put_device() call to fix device reference leaks.
->
-> Fixes: 134d9c52fca2 ("dmaengine: dw: dmamux: Introduce RZN1 DMA router su=
-pport")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
+---
+ kernel/bpf/helpers.c | 68 +++++++++++++++++++++++++++++++-------------
+ 1 file changed, 48 insertions(+), 20 deletions(-)
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 401b4932cc49..238fd992c786 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -3349,45 +3349,72 @@ __bpf_kfunc void __bpf_trap(void)
+  * __get_kernel_nofault instead of plain dereference to make them safe.
+  */
+ 
+-/**
+- * bpf_strcmp - Compare two strings
+- * @s1__ign: One string
+- * @s2__ign: Another string
+- *
+- * Return:
+- * * %0       - Strings are equal
+- * * %-1      - @s1__ign is smaller
+- * * %1       - @s2__ign is smaller
+- * * %-EFAULT - Cannot read one of the strings
+- * * %-E2BIG  - One of strings is too large
+- * * %-ERANGE - One of strings is outside of kernel address space
+- */
+-__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
++int __bpf_strcasecmp(const char *s1, const char *s2, bool ignore_case)
+ {
+ 	char c1, c2;
+ 	int i;
+ 
+-	if (!copy_from_kernel_nofault_allowed(s1__ign, 1) ||
+-	    !copy_from_kernel_nofault_allowed(s2__ign, 1)) {
++	if (!copy_from_kernel_nofault_allowed(s1, 1) ||
++	    !copy_from_kernel_nofault_allowed(s2, 1)) {
+ 		return -ERANGE;
+ 	}
+ 
+ 	guard(pagefault)();
+ 	for (i = 0; i < XATTR_SIZE_MAX; i++) {
+-		__get_kernel_nofault(&c1, s1__ign, char, err_out);
+-		__get_kernel_nofault(&c2, s2__ign, char, err_out);
++		__get_kernel_nofault(&c1, s1, char, err_out);
++		__get_kernel_nofault(&c2, s2, char, err_out);
++		if (ignore_case) {
++			c1 = tolower(c1);
++			c2 = tolower(c2);
++		}
+ 		if (c1 != c2)
+ 			return c1 < c2 ? -1 : 1;
+ 		if (c1 == '\0')
+ 			return 0;
+-		s1__ign++;
+-		s2__ign++;
++		s1++;
++		s2++;
+ 	}
+ 	return -E2BIG;
+ err_out:
+ 	return -EFAULT;
+ }
+ 
++/**
++ * bpf_strcmp - Compare two strings
++ * @s1__ign: One string
++ * @s2__ign: Another string
++ *
++ * Return:
++ * * %0       - Strings are equal
++ * * %-1      - @s1__ign is smaller
++ * * %1       - @s2__ign is smaller
++ * * %-EFAULT - Cannot read one of the strings
++ * * %-E2BIG  - One of strings is too large
++ * * %-ERANGE - One of strings is outside of kernel address space
++ */
++__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
++{
++	return __bpf_strcasecmp(s1__ign, s2__ign, false);
++}
++
++/**
++ * bpf_strcasecmp - Compare two strings, ignoring the case of the characters
++ * @s1__ign: One string
++ * @s2__ign: Another string
++ *
++ * Return:
++ * * %0       - Strings are equal
++ * * %-1      - @s1__ign is smaller
++ * * %1       - @s2__ign is smaller
++ * * %-EFAULT - Cannot read one of the strings
++ * * %-E2BIG  - One of strings is too large
++ * * %-ERANGE - One of strings is outside of kernel address space
++ */
++__bpf_kfunc int bpf_strcasecmp(const char *s1__ign, const char *s2__ign)
++{
++	return __bpf_strcasecmp(s1__ign, s2__ign, true);
++}
++
+ /**
+  * bpf_strnchr - Find a character in a length limited string
+  * @s__ign: The string to be searched
+@@ -3832,6 +3859,7 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+ #endif
+ BTF_ID_FLAGS(func, __bpf_trap)
+ BTF_ID_FLAGS(func, bpf_strcmp);
++BTF_ID_FLAGS(func, bpf_strcasecmp);
+ BTF_ID_FLAGS(func, bpf_strchr);
+ BTF_ID_FLAGS(func, bpf_strchrnul);
+ BTF_ID_FLAGS(func, bpf_strnchr);
+-- 
+2.51.0
 
-Thanks,
-Miqu=C3=A8l
 
