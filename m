@@ -1,140 +1,248 @@
-Return-Path: <linux-kernel+bounces-795880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D14B3F8E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21DA1B3F8ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A69A189E2EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C5D1B22010
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3283126D4EF;
-	Tue,  2 Sep 2025 08:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46B02E8DF5;
+	Tue,  2 Sep 2025 08:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Y/4F16wa"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Eci+vruD"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F78E26B942
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC88F2DF144
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802448; cv=none; b=is0+RC2IbJGqe9snl0mPGg0e7oUge/0tapLF1QvcM0CoxIvWQ0xqjCHYC2Uro1iqR6vOsKe3fYMv7bBFxMOG9o2pgj7BLNzHu9nf2f5FrMnT6maqcaxxQ/jzA+O19KMTNTKVpC8TLgLIq4WLbZSKZq/IttPbO5MfA20C8qiFFdI=
+	t=1756802493; cv=none; b=HHo3Z0f4aDt8UJdzI9innA5VYu7oUmf3fbB+0JuSxeD+BtEywG488d+VbQR4fbRDH/7rWBkjpG7dgjvGsnb6K4mntxEbUDwpeQia8EwDSVB4wtWPTrJDZ2hfiACvoQ9Ol+Bx32GByFveHn0t0yd5dOoB+6DK1Prvh014vnHpOcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802448; c=relaxed/simple;
-	bh=p/H0Nk2EdQglmVRNDA+nUDy34tN6Bkf1tRsG2fvQBZ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q6a4Y0yynbO7dgXPCExo9Z/j2VZWkUhnABu6SO0vVkIp+HJ2rNalz5bb++Mwvnudxj4UZXBX6BazcxZGnIJ2djwpwtM8Vdhp7OP6Pa6BXJA6pVvZjQCJWmVlNjNWMplpl6sHDvpzavUsJhqvA5XPe20JXyhLRJPGjJ+SE4b2n1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Y/4F16wa; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cGK2L66GNz9t8R;
-	Tue,  2 Sep 2025 10:40:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1756802442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0/a02yz8h5AoW0d65xNVfVoFW4HrPL8se2AzkAPbTQQ=;
-	b=Y/4F16waScTi9XnCuVH0PZRtbDFxtutwki+0JNbugO3Aaxt4FbTvqUv2L5TB5OHsxISQ1L
-	L3BXdllpf6C6k8AmHMuJW0c1OlSjjklVoUC0gMYx8+UrCfWL8uQLJuP9RNfXZ7bBqCyJat
-	6T5Phrxkt+STzam57amAQSOP4bcaz0n6/NI/watvCV+P8E/o+Eof3bGToLXGrgSPbrwrz4
-	WGDmphVpW0cuU0ksMRenfeY3jycJuy0J9E+/kUpebF9RkGHT4bfJVKXzP+S2BeGca/xX9I
-	fGPNPgTktMwFvpA3uKP0PB3mztxiaE4R33Po3viQ3UgudwnhyCEsuHO7r6Z1Ow==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nico Pache <npache@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	willy@infradead.org,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	kernel@pankajraghav.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH] huge_memory: return -EINVAL in folio split functions when THP is disabled
-Date: Tue,  2 Sep 2025 10:40:36 +0200
-Message-ID: <20250902084036.208921-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1756802493; c=relaxed/simple;
+	bh=siwxqdvmc2cGsQ7i4gMzL7n/eO5qT7+mvM9ee17l5tM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=K8njaVNRwMth5SCpXstQ+RflP1ENqTudT3K1PWXkWJeL2vGAmH/uPvXsLG/LvmMPBUEfOcViCt14I76nclgCVLjpZWQjPtOQTZpQxK49ACPQ99ZKykospoDMvdWTvNcEixMrOqwjPCF6e/zJTshnBRrT3vGHnSWkgNmdB/Kcm3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Eci+vruD; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250902084128euoutp022f26349e16898a7d606b57019a1bfa63~hao5I2MZ70257402574euoutp02X
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:41:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250902084128euoutp022f26349e16898a7d606b57019a1bfa63~hao5I2MZ70257402574euoutp02X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756802489;
+	bh=2rFlZSvDXJ6UB5LFmsBy2n4fbjL45t5bwREA8keC6AM=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Eci+vruDS9b6+2c4o/Ij4S7tSXyFK8b/dG3rEiFaSQRuPxHLeJDIOJueGmU1wD+u7
+	 nZ5+Tk6H0eEP/gDXMTpU3l+jaANBRIADTWA6cd4uLhmpKG4NiRbW/Z+U7YgM0hUzj2
+	 fnpxeWSTrtPrgueG/LBFfs65iJ3fq169zlNfXvvQ=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250902084128eucas1p1c7d199644e80fa6acb97b6a38ac0436a~hao46LE432028120281eucas1p1T;
+	Tue,  2 Sep 2025 08:41:28 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250902084128eusmtip232ee9d590d90df9cf1673840c53f0d18~hao4RzhK_2319223192eusmtip2R;
+	Tue,  2 Sep 2025 08:41:27 +0000 (GMT)
+Message-ID: <3d756d9a-38fa-4e50-8999-cc7232dd595e@samsung.com>
+Date: Tue, 2 Sep 2025 10:41:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4cGK2L66GNz9t8R
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] dma-debug: don't enforce dma mapping check on
+ noncoherent allocations
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>, Robin Murphy
+	<robin.murphy@arm.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250828-dma-debug-fix-noncoherent-dma-check-v1-1-76e9be0dd7fc@oss.qualcomm.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250902084128eucas1p1c7d199644e80fa6acb97b6a38ac0436a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250828081745eucas1p17e199b6fb90348d6a2187e4a5c6da692
+X-EPHeader: CA
+X-CMS-RootMailID: 20250828081745eucas1p17e199b6fb90348d6a2187e4a5c6da692
+References: <CGME20250828081745eucas1p17e199b6fb90348d6a2187e4a5c6da692@eucas1p1.samsung.com>
+	<20250828-dma-debug-fix-noncoherent-dma-check-v1-1-76e9be0dd7fc@oss.qualcomm.com>
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On 28.08.2025 10:17, Baochen Qiang wrote:
+> As discussed in [1], there is no need to enforce dma mapping check on
+> noncoherent allocations, a simple test on the returned CPU address is
+> good enough.
+>
+> Add a new pair of debug helpers and use them for noncoherent alloc/free
+> to fix this issue.
+>
+> Fixes: efa70f2fdc84 ("dma-mapping: add a new dma_alloc_pages API")
+> Link: https://lore.kernel.org/all/ff6c1fe6-820f-4e58-8395-df06aa91706c@oss.qualcomm.com # 1
+> Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Thanks, applied to dma-mapping-fixes branch.
+> ---
+>   kernel/dma/debug.c   | 48 +++++++++++++++++++++++++++++++++++++++++++++++-
+>   kernel/dma/debug.h   | 20 ++++++++++++++++++++
+>   kernel/dma/mapping.c |  4 ++--
+>   3 files changed, 69 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> index e43c6de2bce4e7d3e58f8d9601a7637d8f6da767..b82399437db03116a396c7d1cebd16b2e1af98c3 100644
+> --- a/kernel/dma/debug.c
+> +++ b/kernel/dma/debug.c
+> @@ -39,6 +39,7 @@ enum {
+>   	dma_debug_sg,
+>   	dma_debug_coherent,
+>   	dma_debug_resource,
+> +	dma_debug_noncoherent,
+>   };
+>   
+>   enum map_err_types {
+> @@ -141,6 +142,7 @@ static const char *type2name[] = {
+>   	[dma_debug_sg] = "scatter-gather",
+>   	[dma_debug_coherent] = "coherent",
+>   	[dma_debug_resource] = "resource",
+> +	[dma_debug_noncoherent] = "noncoherent",
+>   };
+>   
+>   static const char *dir2name[] = {
+> @@ -993,7 +995,8 @@ static void check_unmap(struct dma_debug_entry *ref)
+>   			   "[mapped as %s] [unmapped as %s]\n",
+>   			   ref->dev_addr, ref->size,
+>   			   type2name[entry->type], type2name[ref->type]);
+> -	} else if (entry->type == dma_debug_coherent &&
+> +	} else if ((entry->type == dma_debug_coherent ||
+> +		    entry->type == dma_debug_noncoherent) &&
+>   		   ref->paddr != entry->paddr) {
+>   		err_printk(ref->dev, entry, "device driver frees "
+>   			   "DMA memory with different CPU address "
+> @@ -1581,6 +1584,49 @@ void debug_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+>   	}
+>   }
+>   
+> +void debug_dma_alloc_pages(struct device *dev, struct page *page,
+> +			   size_t size, int direction,
+> +			   dma_addr_t dma_addr,
+> +			   unsigned long attrs)
+> +{
+> +	struct dma_debug_entry *entry;
+> +
+> +	if (unlikely(dma_debug_disabled()))
+> +		return;
+> +
+> +	entry = dma_entry_alloc();
+> +	if (!entry)
+> +		return;
+> +
+> +	entry->type      = dma_debug_noncoherent;
+> +	entry->dev       = dev;
+> +	entry->paddr	 = page_to_phys(page);
+> +	entry->size      = size;
+> +	entry->dev_addr  = dma_addr;
+> +	entry->direction = direction;
+> +
+> +	add_dma_entry(entry, attrs);
+> +}
+> +
+> +void debug_dma_free_pages(struct device *dev, struct page *page,
+> +			  size_t size, int direction,
+> +			  dma_addr_t dma_addr)
+> +{
+> +	struct dma_debug_entry ref = {
+> +		.type           = dma_debug_noncoherent,
+> +		.dev            = dev,
+> +		.paddr		= page_to_phys(page),
+> +		.dev_addr       = dma_addr,
+> +		.size           = size,
+> +		.direction      = direction,
+> +	};
+> +
+> +	if (unlikely(dma_debug_disabled()))
+> +		return;
+> +
+> +	check_unmap(&ref);
+> +}
+> +
+>   static int __init dma_debug_driver_setup(char *str)
+>   {
+>   	int i;
+> diff --git a/kernel/dma/debug.h b/kernel/dma/debug.h
+> index f525197d3cae605aa7e0499eb2ca6f1ae134ec93..48757ca13f31403f58090e1015de828893b8f94f 100644
+> --- a/kernel/dma/debug.h
+> +++ b/kernel/dma/debug.h
+> @@ -54,6 +54,13 @@ extern void debug_dma_sync_sg_for_cpu(struct device *dev,
+>   extern void debug_dma_sync_sg_for_device(struct device *dev,
+>   					 struct scatterlist *sg,
+>   					 int nelems, int direction);
+> +extern void debug_dma_alloc_pages(struct device *dev, struct page *page,
+> +				  size_t size, int direction,
+> +				  dma_addr_t dma_addr,
+> +				  unsigned long attrs);
+> +extern void debug_dma_free_pages(struct device *dev, struct page *page,
+> +				 size_t size, int direction,
+> +				 dma_addr_t dma_addr);
+>   #else /* CONFIG_DMA_API_DEBUG */
+>   static inline void debug_dma_map_page(struct device *dev, struct page *page,
+>   				      size_t offset, size_t size,
+> @@ -126,5 +133,18 @@ static inline void debug_dma_sync_sg_for_device(struct device *dev,
+>   						int nelems, int direction)
+>   {
+>   }
+> +
+> +static inline void debug_dma_alloc_pages(struct device *dev, struct page *page,
+> +					 size_t size, int direction,
+> +					 dma_addr_t dma_addr,
+> +					 unsigned long attrs)
+> +{
+> +}
+> +
+> +static inline void debug_dma_free_pages(struct device *dev, struct page *page,
+> +					size_t size, int direction,
+> +					dma_addr_t dma_addr)
+> +{
+> +}
+>   #endif /* CONFIG_DMA_API_DEBUG */
+>   #endif /* _KERNEL_DMA_DEBUG_H */
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 107e4a4d251df65fb86a1d7302261c31138061b7..56de28a3b1799f7c18f7e3f8e5ecd438c5748677 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -712,7 +712,7 @@ struct page *dma_alloc_pages(struct device *dev, size_t size,
+>   	if (page) {
+>   		trace_dma_alloc_pages(dev, page_to_virt(page), *dma_handle,
+>   				      size, dir, gfp, 0);
+> -		debug_dma_map_page(dev, page, 0, size, dir, *dma_handle, 0);
+> +		debug_dma_alloc_pages(dev, page, size, dir, *dma_handle, 0);
+>   	} else {
+>   		trace_dma_alloc_pages(dev, NULL, 0, size, dir, gfp, 0);
+>   	}
+> @@ -738,7 +738,7 @@ void dma_free_pages(struct device *dev, size_t size, struct page *page,
+>   		dma_addr_t dma_handle, enum dma_data_direction dir)
+>   {
+>   	trace_dma_free_pages(dev, page_to_virt(page), dma_handle, size, dir, 0);
+> -	debug_dma_unmap_page(dev, dma_handle, size, dir);
+> +	debug_dma_free_pages(dev, page, size, dir, dma_handle);
+>   	__dma_free_pages(dev, size, page, dma_handle, dir);
+>   }
+>   EXPORT_SYMBOL_GPL(dma_free_pages);
+>
+> ---
+> base-commit: 95bf875b89b48a95a82aca922eeaf19d52543028
+> change-id: 20250828-dma-debug-fix-noncoherent-dma-check-8e6915d58494
+>
+> Best regards,
 
-split_huge_page_to_list_[to_order](), split_huge_page() and
-try_folio_split() return 0 on success and error codes on failure.
-
-When THP is disabled, these functions return 0 indicating success even
-though an error code should be returned as it is not possible to split a
-folio when THP is disabled.
-
-Make all these functions return -EINVAL to indicate failure instead of
-0.
-
-This issue was discovered while experimenting enabling large folios
-without THP and found that returning 0 in these functions is resulting in
-undefined behavior in truncate operations. This change fixes the issue.
-
-Fixes: c010d47f107f ("mm: thp: split huge page to any lower order pages")
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- include/linux/huge_mm.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 29ef70022da1..48c4f91c5b13 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -588,22 +588,22 @@ static inline int
- split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		unsigned int new_order)
- {
--	return 0;
-+	return -EINVAL;
- }
- static inline int split_huge_page(struct page *page)
- {
--	return 0;
-+	return -EINVAL;
- }
- 
- static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
- {
--	return 0;
-+	return -EINVAL;
- }
- 
- static inline int try_folio_split(struct folio *folio, struct page *page,
- 		struct list_head *list)
- {
--	return 0;
-+	return -EINVAL;
- }
- 
- static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
-
-base-commit: 291634ccfd2820c09f6e8c4982c2dee8155d09ae
+Best regards
 -- 
-2.50.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
