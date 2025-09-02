@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-796381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB5CB40002
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:19:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079CCB3FFB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A84C545250
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:14:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BBB87B7149
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB57B306D2B;
-	Tue,  2 Sep 2025 12:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06E32877CB;
+	Tue,  2 Sep 2025 12:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Sm+OdEfo"
-Received: from outbound.pv.icloud.com (p-west1-cluster2-host12-snip4-10.eps.apple.com [57.103.64.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmJ30fQD"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF32306D3F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814945; cv=none; b=Jcx928w0lthCUwhIxtd/NAenRdD+fARjfrYz0RVoZValoBNeW9yDWAziH8ngeLx5hd68KOsh5KoUxRKzxoFDSR+qg8iK0r28unlWWJzXhC657gj2i6M8cd0kXlc9N0B7ysuhIobB7lwMQAm6FLHYoxbiz21pRxy1xq8OjybuKbg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814945; c=relaxed/simple;
-	bh=dmGqJ/2goIx70WN+gIp5nRrIjfUbCkiwef8JojtxaDU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mx0dA05/IuQfAMOv1G0dyLcPMG3a3fDEfduMzFFlJmSAUbHKyoJSEa5c5BaDaU7b6wWS/LCA5j1KCLsLGN50GXQt+HHUiiCKYsCfKipyNJGeY1j3kWkKTpJxZ2UDNB7rDEsABNx1CsEcYGcPfwqxmGcuEZ1Cn/Le+JWg4dfQeA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Sm+OdEfo; arc=none smtp.client-ip=57.103.64.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-west-1a-100-percent-9 (Postfix) with ESMTPS id 0D2D91807F10;
-	Tue,  2 Sep 2025 12:08:57 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=ydfPInkQfhv4gPusJ78yunnLvCmXq86IJsY1DqpE5j0=; h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme; b=Sm+OdEforhqDqmfccsSwkm4eXyLx5ii2IdffbjQoGy7bZlKcIeeUB+ImKNMPzrbQCsyBq1Jfk5nR5C49nJe6tVKixgIn7/2ct4zKtzhrHkEXPt90ONNWeFDu4mZKNb35mZEzkX/CsBtcsoQ5O3UQMPESJAoF3F1Ks4ie8l53lPxKw1GCvep21YiYjP9KyKRHnn+sBbtnky3A3hU5hDs69PBUCDxoWN4OVSYrWhLk8xzgvKDgHuGiDTTwDJltjMCbsBsrNlmIZmE+RWgxSx8+somCn0qzjYRXu/ezyoC4J8vNXzpt+icwFnYriArXPP1mRd6bcZgTfm8kdNqX//4Now==
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by p00-icloudmta-asmtp-us-west-1a-100-percent-9 (Postfix) with ESMTPSA id 729501803657;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD656283138;
 	Tue,  2 Sep 2025 12:05:53 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 02 Sep 2025 20:05:32 +0800
-Subject: [PATCH] driver core: auxiliary bus: Optimize auxiliary_match_id()
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756814755; cv=none; b=aNA8m1XHFaxTVtEOPFZAr3uqGkyfLA49IdbbuSkibBCLyWnYK97bD+yvpUqyRf9iKPZr8G1bnaVOW0r7+ho5u2HSAeU00siVKOOGykNSAuIe1YMIbOpm9BGmNSgKKVzxfHxf3OYxy9Xkod8v9db+OnY7k9ngXPoW+q4okh/bKG8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756814755; c=relaxed/simple;
+	bh=i0mpvbj6Ghv80vK3sVaIT97NkLXuF0QsyYOlFBF1ZIs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=sQCLC0J6RA2d6IuCfAo6G2TAJwm34klK1Xsk9aKfcpzybXb53jN15acFThrpD2+OJOBP6SOtuGhhLvn7jFjH1dY1BHTFRpyBJSqaJiWfNwArnRDBk+FQRocmPh4BltmtPaDByiujmMgqRoLbygehfjhCr50LA0ARU+jqtOGsVb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FmJ30fQD; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so4326503b3a.2;
+        Tue, 02 Sep 2025 05:05:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756814753; x=1757419553; darn=vger.kernel.org;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0OYqOdojk/NS3R2yroT3gqNVmirRcNIleOKWvh3ebD4=;
+        b=FmJ30fQD+6Th9kGVqHkYZgN9+BHcHUeIG9paCLypiMJvr7dx1FqnkB/D6h7jLrIJDj
+         2Ds5pqUiIAJ8Jj9OOaPgk4tdeEIi+qTPeIcfV/9XnKd+dx6XoKWIXkUSRpz64Gz7vov1
+         gClpcxTibHMy/lIW3qq1kSaLTf+SSKVP17LjutUVpKvpNjz/FCB6bGP+kmy6EAspRgMi
+         fS7S3Ob6aBvvTrL0gjFV4FsxvVkbkd/v/C8CxJ2DKcH81ezXjO0UiK/+owesCXqqU5nU
+         0fHXX7+ay/3Vkm6AvZdPmvno+mdoJSZcpehKBZSOdRn6dyM59jQcBgU22oY9Lsyao1Pp
+         1LTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756814753; x=1757419553;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0OYqOdojk/NS3R2yroT3gqNVmirRcNIleOKWvh3ebD4=;
+        b=ATDWZvSEjVrxfoKh6QlWW/9PR4U8eCDYylFiJ1pZjKdXPDhccvrlRiuKTFWJcfIX8R
+         iv/HHtLCnNlRshAWGAiTfVL82/azN1/VOOWb7mjt7/jDKVUmalQ3zDqo7OIbGgUIASkJ
+         JHWuDb21dteJVi8VCozKWCkhRbY3vforrdJaJ325ZkToDGrqSWaJdYn7xVL9lDQct1y3
+         gcrILE35nOvMOlrIuwFREEG20pyLObfOSCXlRDoDIy60rlL02WWqJVmzs6VRqTJ+TEBb
+         FM1PNozepLHtNpr4w9Tjf6TpsVYmfUH8p+7M/pQtMeYawEueDecN9y+CgoN+lrvfy4JR
+         q10w==
+X-Forwarded-Encrypted: i=1; AJvYcCWOL95CSPrdanil32DSg5RNxJ8gd6F3NEdawvv7ugANyEkjC+lhBqgakkV9kUDswyVJMVU2EbPYr2E=@vger.kernel.org, AJvYcCX/KoFUsIuERr6E46DNa9XJnQTFbvkKkNWbzT57/5OwKyYvmvQW102RMu74UJ5boNLz8MncZktaHOlrvSuj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWt5I9J3yWI3Sx1P8BIr5kI0pg1xplSY6FkReEyRZmHynC/l/w
+	XNKA0mCrRNHFg2udByVVbpMx2tMCfs0QPhMQfiTG8upUh2+BT3JWcrhv
+X-Gm-Gg: ASbGncsisBr50JMP1SWSgmb5FbTdun5jOuRVwSgE4dG4Bbzb1rSjquEpPrLh0wixO6p
+	FvbgD4SC9FDP7gP0tZmOyznyfx9KuwtoAlb4IXgS60AjJ3rhMZ759rbRIOKOiYRW++UkMIrhttT
+	kFpC4UQXjZC3DxR8qCXTOvKiYsOk/bxp2Euyk8nvD4JdBF7/6p8DP6aOARESuBv18Ntji26sp6E
+	UriPZNvr7MKu3lMNQsYs/C+v1wTuIJRhSjGuqVGSd7WpW2AO82bzlRE8AWsuPnm0e9wmB0LC5QR
+	KNBbx5wTdWYcYdesDDvIIKetObK1OFIssoT2os2FqUhzW/g4r+min7qjrt3aaU3qfmiIsDOPB7p
+	vRdFrTcASbTt4WVsgHxtT6rX0xv3WNA3domgu7++nZ4I=
+X-Google-Smtp-Source: AGHT+IGAn+8tlmojPpU0u+pGAz8nrnQUJRaRFHChDwY00L2BAfCWpM/u1lUYvDR+BzxYX4MgkGFcFQ==
+X-Received: by 2002:a05:6a21:3396:b0:243:c3c9:e1f with SMTP id adf61e73a8af0-243d6f41865mr14314758637.44.1756814752949;
+        Tue, 02 Sep 2025 05:05:52 -0700 (PDT)
+Received: from localhost ([123.119.72.67])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772447058dbsm9375374b3a.38.2025.09.02.05.05.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 05:05:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-fix_auxbus-v1-1-9ba6d8aff027@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAIzdtmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSwMj3bTMivjE0oqk0mJdc7Ok1GRLQ2Nzs5QkJaCGgqJUoCzYsOjY2lo
- AqiMfBlwAAAA=
-X-Change-ID: 20250902-fix_auxbus-76bec91376db
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Danilo Krummrich <dakr@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <zijun.hu@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: QfozRavpE5opzp4rHOce01VZ_eZI0UCr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDEyMCBTYWx0ZWRfXz8UcbmDFjzEg
- eBbNG2Ht0HhpjQkcr3r39WAZ+p1FMqtGQMJWfj2zCpxB5di6m3JwybgMVLqfeDMbghjSVdfWnWX
- stwSMFn9AmG0fAMCzXAjccfyscyJi+ItFnsmRxQh3bCA3zKZiS+o7AYquwYDQks3VN5r7XWux+0
- VchTpeZUNmaauR3zJdGP09dJVdsZkYKi8sVhtt9SWQYKCVfXAcV5fumBya+fTVx0zyH7saU0CUG
- 5ON1x68Tv0KvJ+trLDKoMkBB+iOvLuI6DXK8gemm8I9oGcmsabF7oN5s0yLn9OW2SacmzLsDc=
-X-Proofpoint-GUID: QfozRavpE5opzp4rHOce01VZ_eZI0UCr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
- malwarescore=0 clxscore=1011 mlxlogscore=957 spamscore=0 adultscore=0
- mlxscore=0 phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.22.0-2506270000 definitions=main-2509020120
-X-JNJ: AAAAAAAB4XCQS8EUVh4rlHmiCAuCnCXXymW/hCdi1SmPxnkhV/xPDGvxDpP+s5FzIPhFooqyOOoUnpbHh7GQ98jXQFiX1L06c6WDCpFc72LrALE4mmDKgvnJFnRebin9SiY+blFJ7IIaD8LC+yMYG0VePGRPYW7oJMWCpLTwzGC/T6/Nkia/6zx/uP6Y9H5CXX1+kYc1Pc44r4p0nbnQdv0Q4mXLoo5/QbnQhXMPOxGOSUbXWQG8DKDJKGd+uhVHp6hr+T9JxdnUpkwJ9r2qRFNy+NA22yiF3zbXIj61OORUf3+5BcTi7l9hRhupt2yK+tA6dRdE2Q3drc3Z/P7KV80XEQl9+TAKyMyQagszH0e+pJvz4/Xm8azAyLlaX5DvWFxuJi79Hkv/KbMSh7Uezp7qRK76z+H1ERiGBs6EEoolyTpH3lfSpH+A9KeW+XK1ViSTBG1GJGGeVuC0LkYJqBpLeXbwz1vNW+uApPbOOXY//76bOsm9WZUV4pBp8kJoZ93bwxXZtRl7gTTPT5vIxFzK1LrUU3a9SlPMrTIp/zVZ0RvEH948E3zLlbVcPDd0ROlo6yfnpvMEYDEdYhKvv307M709ZhwDxURWX3nYKOg0oHV177w/Buw/dW7g4ApgZyeit7X2R91oEw==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 02 Sep 2025 20:05:47 +0800
+Message-Id: <DCIAUP552XK1.10SMMK7H3VAVH@gmail.com>
+From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
+Subject: Re: [PATCH v2 1/2] iio: humditiy: hdc3020: fix units for
+ temperature and humidity measurement
+Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Chris Lesiak"
+ <chris.lesiak@licorbio.com>
+To: <dimitri.fedrau@liebherr.com>, "Li peiyu" <579lpy@gmail.com>, "Jonathan
+ Cameron" <jic23@kernel.org>, "David Lechner" <dlechner@baylibre.com>,
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
+ <andy@kernel.org>, "Dimitri Fedrau" <dima.fedrau@gmail.com>
+X-Mailer: aerc 0.20.1-4-g02324e9d9cab
+References: <20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com>
+ <20250901-hdc3020-units-fix-v2-1-082038a15917@liebherr.com>
+In-Reply-To: <20250901-hdc3020-units-fix-v2-1-082038a15917@liebherr.com>
 
-From: Zijun Hu <zijun.hu@oss.qualcomm.com>
+On Tue Sep 2, 2025 at 1:51 AM CST, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+>
+> According to the ABI the units after application of scale and offset are
+> milli degrees for temperature measurements and milli percent for relative
+> humidity measurements. Currently the resulting units are degree celsius f=
+or
+> temperature measurements and percent for relative humidity measurements.
+> Change scale factor to fix this issue.
+>
+> Fixes: c9180b8e39be ("iio: humidity: Add driver for ti HDC302x humidity s=
+ensors")
+> Reported-by: Chris Lesiak <chris.lesiak@licorbio.com>
+> Suggested-by: Chris Lesiak <chris.lesiak@licorbio.com>
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> ---
+>  drivers/iio/humidity/hdc3020.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/iio/humidity/hdc3020.c b/drivers/iio/humidity/hdc302=
+0.c
+> index ffb25596d3a8bad01d1f84a9a972561266f65d76..8aa567d9aded9cab461f1f905=
+b6b5ada721ba2f0 100644
+> --- a/drivers/iio/humidity/hdc3020.c
+> +++ b/drivers/iio/humidity/hdc3020.c
+> @@ -301,9 +301,9 @@ static int hdc3020_read_raw(struct iio_dev *indio_dev=
+,
+>  	case IIO_CHAN_INFO_SCALE:
+>  		*val2 =3D 65536;
+>  		if (chan->type =3D=3D IIO_TEMP)
+> -			*val =3D 175;
+> +			*val =3D 175 * MILLI;
+>  		else
+> -			*val =3D 100;
+> +			*val =3D 100 * MILLI;
+>  		return IIO_VAL_FRACTIONAL;
+> =20
+>  	case IIO_CHAN_INFO_OFFSET:
 
-Variable @match_size is fixed in auxiliary_match_id().
-
-Optimize the function by moving the logic calculating the variable
-out of the for loop.
-
-Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
----
- drivers/base/auxiliary.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index 12ffdd8437567f282374bbf3775d9de7ca0dc4c7..9a53ada043045031e565ade57fd7ba781e7d20ea 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -171,14 +171,14 @@
- static const struct auxiliary_device_id *auxiliary_match_id(const struct auxiliary_device_id *id,
- 							    const struct auxiliary_device *auxdev)
- {
--	for (; id->name[0]; id++) {
--		const char *p = strrchr(dev_name(&auxdev->dev), '.');
--		int match_size;
-+	const char *p = strrchr(dev_name(&auxdev->dev), '.');
-+	int match_size;
- 
--		if (!p)
--			continue;
--		match_size = p - dev_name(&auxdev->dev);
-+	if (!p)
-+		return NULL;
-+	match_size = p - dev_name(&auxdev->dev);
- 
-+	for (; id->name[0]; id++) {
- 		/* use dev_name(&auxdev->dev) prefix before last '.' char to match to */
- 		if (strlen(id->name) == match_size &&
- 		    !strncmp(dev_name(&auxdev->dev), id->name, match_size))
-
----
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
-change-id: 20250902-fix_auxbus-76bec91376db
-
-Best regards,
--- 
-Zijun Hu <zijun.hu@oss.qualcomm.com>
-
+Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
