@@ -1,276 +1,246 @@
-Return-Path: <linux-kernel+bounces-797305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E5EB40EA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:43:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2DEB40ECB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24661B2840E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:43:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A61521B659B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B972E7F3C;
-	Tue,  2 Sep 2025 20:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF802DECB4;
+	Tue,  2 Sep 2025 20:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SFx89Re6"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b="JEglwZKz"
+Received: from iguana.tulip.relay.mailchannels.net (iguana.tulip.relay.mailchannels.net [23.83.218.253])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B682B2E8B73
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 20:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756845764; cv=none; b=Ezt6BSYmkAo0jx7OcxMXtYh0MWW/AF9IPdcaJ4s8YCDcjv77fk7VnHLM56HlP+UsmCYIniwebMBIfyJy4VWvvmg9bouFNeDNWRlj4xtxiAU2crO4cATkJLKI4RaYlcNtTjc/xbrbmGifcPOiTA2/q+afk6Vk55j9s+5KDSgJsPI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756845764; c=relaxed/simple;
-	bh=x82Jw5wqFwf5tgn9E6Lepo4K03vc9exu43JGH/ms4I8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qxOHIESn+ttpX+qtBKoFmi+nI7j8v4TrjgcQ/f0xGA14nJaU/U210X5Z3S5t1I1XH+3P1Sv8D1LZMBonbtA5xMTzQt/jmJBNKIKpIKdcvhCyiY/s5LHWgP6LbjuHkqIj0EGJX/Ce2+8IpVx6RrFV3rqqRDRC2O/34ViKYpYlMjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--korakit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SFx89Re6; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--korakit.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24ae30bd2d0so21282515ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 13:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756845762; x=1757450562; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=508Km/FkLLuCZMDYH1L2ZlW0Xfn9AuS1nhNltR/nWGQ=;
-        b=SFx89Re6Q4jAiB3ZxO7YtKuYhxhgNIy2VYVPANZlbTulUqXZ16FH4+RyaUHX9dzLq/
-         sQ/IT2uZIUUv1qCmIE8Mx8fOKbK8z3zOlpHppyCPj7KCqGWZvYAcyCQLdjJ39P95Wawi
-         c8cqm7Gdgg1wUKGmdX81lMvVxwZhHPhKom9A8XNErNox90o5MUOGteDmWW4p0tKjGqQZ
-         ffB2YyicQ/hisAYOdJsAfeZkblGhNaqe8mH9/5x0tMwwidizzs4cFme1OCKpfvL5KVw+
-         FOk4pqMVYh7O9GEiX2QRzqNY16xU4vbzRs5NcoVfwII97EgClWSyyqeCXSglrWJZ2EzI
-         Hqhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756845762; x=1757450562;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=508Km/FkLLuCZMDYH1L2ZlW0Xfn9AuS1nhNltR/nWGQ=;
-        b=MowopnftPfCaRJGb35WzGL3uRcTUqW2W69UdLcD86R3RdnhlqQhOefdwJYrmatQ6l0
-         ET4jNDULktT743TCVjQK8svSnid86KEQFRoW68A18EN+LTtpZEsuHXKHmVIAFUZPF8tp
-         2yjb4kdXH6MJOOh0dvnfTFrjeVIqrzwKtuw/kkiNLkgZDDBCUIJgMV3BS8PKhr6anolN
-         U8J8ISK9XzaRgNrbCfkPSjxXb3L57ZMqmhRbwlZGNvKoXX8hq5VykxYkov2BuwLKSRDb
-         +k2oqRsm/i5c5CIVqpjITTMw5JoZ9hjKgGkf5Bx5nJ1Fg5/6a01anMqCF7HQTYJ4hAYD
-         krig==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Q3Z/txIX4DM2tLKndYMK5UaROV6xZVjNhiYaGTw/Y178MS3jsJbA/4nQrGAutTNc9sVDvSAjTyLphD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTNkU8sKgMqnfwUZ3RuiUIrigtjOlasbpyyLZV3dLrRnvUajFJ
-	BY0GDDDqxZnHOduMGLeBKK5SetZoxit2pn/mfDyMq+3LH2vsdfxgBVkJcJEZuM1J+He8Pa8NZ/7
-	3pkdkNWE7MA==
-X-Google-Smtp-Source: AGHT+IHAiuP5Or72P4/+Vo+k5apo86uHPOLPfJOosMxeTrNNS8y3B4Gsc1FNpnkCXFHkd5/DcBnbZukmGKDX
-X-Received: from pgab186.prod.google.com ([2002:a63:34c3:0:b0:b4c:73df:adff])
- (user=korakit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:41cd:b0:249:306a:edd0
- with SMTP id d9443c01a7336-24944b03328mr156215935ad.53.1756845762039; Tue, 02
- Sep 2025 13:42:42 -0700 (PDT)
-Date: Tue,  2 Sep 2025 20:40:09 +0000
-In-Reply-To: <20250828005249.39339-1-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0B521B9F5;
+	Tue,  2 Sep 2025 20:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.253
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756846116; cv=pass; b=DZVkpgtj/r1Id+BYWwD0srSKtYm60FYg5mjsuPGLEBAmX1TPYq0J6jfIUc8sTV8pZbg1u1PcidUMT2AF5XP07NR8WCYUxvm2sXXSyKUryn/NqnmTV1JarKoeKrEuv7CAkt1NLrMYuE98zml+QKcTds7h1FHhx1MjjJ/TtJVtDRU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756846116; c=relaxed/simple;
+	bh=+NVCKPp3zYqLBUbgr4Ge6ob+VEhpekn3ccN3sUZHe1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UBiyjCZWwX0tQdcjJikuHp3PtFP/Qx2k6yWzRLeSUNuFS9xq8cE8K2sL/ewSe3QJojNGi87EmO+5mkNHIGEDJLLkRNCBNew+P+aYachqTKwPHJrF481cHYUv/N5lRyLtne6m07rKwsiexo9UcTQLZLdroSlO+pKRT5AlyER1n0c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org; spf=pass smtp.mailfrom=ewhac.org; dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b=JEglwZKz; arc=pass smtp.client-ip=23.83.218.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ewhac.org
+X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 936B71825E1;
+	Tue,  2 Sep 2025 20:41:09 +0000 (UTC)
+Received: from pdx1-sub0-mail-a243.dreamhost.com (trex-blue-7.trex.outbound.svc.cluster.local [100.102.63.102])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 20999183ACE;
+	Tue,  2 Sep 2025 20:41:09 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1756845669; a=rsa-sha256;
+	cv=none;
+	b=qoDGw+oRFmUOm+zOb61DX+cDSjw2dTzSfvxYQDgBm1BZBlqF1c9nZvjpIjwa2US2kzxQ/6
+	/Y+KK2trcj4lfVeWPzTlBDMHjacHesA2wGJb8N7YIFcFtmar5KuzvP6Bmosll7Fqjf5yg9
+	Jt2R3ar0Z1ootn323rZANrx21wBMGJMCWluqaxZJJ8LLBWEqkA7PQlWfq9hnsnDnPKYyxt
+	RSI3mFxqA5Hzt/SEwB941KyTFP5pBrTcYGGIqq42twIP1gMeHN1latrdn/291QBjdOoPz3
+	/17n/PSKqwuP7+E3svtlmHlEpxf+1zJGELCOoR06ZRfVzz/vxN3Tb8JIl9ZRoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1756845669;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=E0okHnmYpT9qYGcZgXPF2BnijAb0JGl+8I0cxZqvVw8=;
+	b=Aj2FvY6WsdQUhgVbVU8S0ABpdQty+CEPv1iI+wyU0j6hXNWEFwIGMG1klEsiK0L8dn3T7d
+	JoZ0aKksrkqWc/oE5w4FOtp+5dHufCkTtJuDaxKLwx0dBLoNiA7fbjYd0J7BuLP9R0KMg0
+	U85sQv0k1jyJXwOGfRBY+K56ag3qjR+qFfjj/WEoiWzba6mmL35Ijq7j6Pnv6xA7h/gEJl
+	fnVthdj3JJ4MiEF31mgovnkxBcKsolO7uMUME2kllC10cKZSzgBVr6dYMHkbOWM9jYyitZ
+	kCTwKxAuWeTQw49rVD/6VQuqVUU/sl6ddp+Ap5qg0Hem6OPIPyhb7ODG+lU2ZQ==
+ARC-Authentication-Results: i=1;
+	rspamd-7db949f9dd-dp9f8;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=ewhac@ewhac.org
+X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|ewhac@ewhac.org
+X-MailChannels-Auth-Id: dreamhost
+X-Bottle-Relation: 09d23e6168b0c68a_1756845669393_3604610517
+X-MC-Loop-Signature: 1756845669393:2276742218
+X-MC-Ingress-Time: 1756845669392
+Received: from pdx1-sub0-mail-a243.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.102.63.102 (trex/7.1.3);
+	Tue, 02 Sep 2025 20:41:09 +0000
+Received: from ewhac.org (unknown [135.180.175.143])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ewhac@ewhac.org)
+	by pdx1-sub0-mail-a243.dreamhost.com (Postfix) with ESMTPSA id 4cGd1c673jz99;
+	Tue,  2 Sep 2025 13:41:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ewhac.org;
+	s=dreamhost; t=1756845668;
+	bh=E0okHnmYpT9qYGcZgXPF2BnijAb0JGl+8I0cxZqvVw8=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=JEglwZKz4P2EsDqGpZOQv+ezcMHiQViQOiUL/dsLktoUyRY/OaOydtTTX6V80kFkw
+	 6RatbbiyIg0xL4IoK2yG5Z+aeetamiVe2hy3Ro2ph1bv2hXWStQWhCL2uE7+tNlCwc
+	 VzZfWAfXWqYijjSlOeoLne/NLLO+8W/3yOdez2vGdb/qiw0sDLw7ENm1Xj5n617GNB
+	 2fe6UdYgs1aRePkVvRUDBhFBRxO/CKlLfGAPn0Z7lA3Wjne2R12WnpYxFFSjYmqpEM
+	 vCzTqOL/m92aXc82OTQU3AsBbyn995/tL5MafbQ50ZWcayS6baQeYjG58TAvgX6VBX
+	 7LgUQmaz3NyHw==
+Received: from ewhac by walkies with local (Exim 4.98.2)
+	(envelope-from <ewhac@ewhac.org>)
+	id 1utXoS-00000000TFG-0Uhk;
+	Tue, 02 Sep 2025 13:41:08 -0700
+Date: Tue, 2 Sep 2025 13:41:08 -0700
+From: "Leo L. Schwab" <ewhac@ewhac.org>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
+Message-ID: <aLdWZJwSrpvgXPFL@ewhac.org>
+References: <20250814212641.197573-2-ewhac@ewhac.org>
+ <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
+ <aLSntMknSv3lMarZ@ewhac.org>
+ <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
+ <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250828005249.39339-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
-Message-ID: <20250902204009.221913-1-korakit@google.com>
-Subject: Re: [PATCH v2] x86/kvm: Force legacy PCI hole to UC when overriding
- MTRRs for TDX/SNP
-From: Korakit Seemakhupt <korakit@google.com>
-To: seanjc@google.com
-Cc: binbin.wu@linux.intel.com, jgross@suse.com, jxgao@google.com, 
-	korakit@google.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nik.borisov@suse.com, pbonzini@redhat.com, pgonda@google.com, 
-	thomas.lendacky@amd.com, vkuznets@redhat.com, vannapurve@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
 
-On 8/28/2025 8:52 AM, Sean Christopherson wrote:
-> When running as an SNP or TDX guest under KVM, force the legacy PCI hole,
-> i.e. memory between Top of Lower Usable DRAM and 4GiB, to be mapped as UC
-> via a forced variable MTRR range.
->
-> In most KVM-based setups, legacy devices such as the HPET and TPM are
-> enumerated via ACPI.  ACPI enumeration includes a Memory32Fixed entry, and
-> optionally a SystemMemory descriptor for an OperationRegion, e.g. if the
-> device needs to be accessed via a Control Method.
->
-> If a SystemMemory entry is present, then the kernel's ACPI driver will
-> auto-ioremap the region so that it can be accessed at will.  However, the
-> ACPI spec doesn't provide a way to enumerate the memory type of
-> SystemMemory regions, i.e. there's no way to tell software that a region
-> must be mapped as UC vs. WB, etc.  As a result, Linux's ACPI driver always
-> maps SystemMemory regions using ioremap_cache(), i.e. as WB on x86.
->
-> The dedicated device drivers however, e.g. the HPET driver and TPM driver,
-> want to map their associated memory as UC or WC, as accessing PCI devices
-> using WB is unsupported.
->
-> On bare metal and non-CoCO, the conflicting requirements "work" as firmware
-> configures the PCI hole (and other device memory) to be UC in the MTRRs.
-> So even though the ACPI mappings request WB, they are forced to UC due to
-> the kernel properly handling the MTRR overrides, and thus are compatible
-> with the drivers' requested WC/UC-.
->
-> With force WB MTRRs on SNP and TDX guests, the ACPI mappings get their
-> requested WB if the ACPI mappings are established before the dedicated
-> driver code attempts to initialize the device.  E.g. if acpi_init()
-> runs before the corresponding device driver is probed, ACPI's WB mapping
-> will "win", and result in the driver's ioremap() failing because the
-> existing WB mapping isn't compatible with the requested WC/UC-.
->
-> E.g. when a TPM is emulated by the hypervisor (ignoring the security
-> implications of relying on what is allegedly an untrusted entity to store
-> measurements), the TPM driver will request UC and fail:
->
->    [  1.730459] ioremap error for 0xfed40000-0xfed45000, requested 0x2, got 0x0
->    [  1.732780] tpm_tis MSFT0101:00: probe with driver tpm_tis failed with error -12
->
-> Note, the '0x2' and '0x0' values refer to "enum page_cache_mode", not x86's
-> memtypes (which frustratingly are an almost pure inversion; 2 == WB, 0 == UC).
-> E.g. tracing mapping requests for TPM TIS yields:
->
->   Mapping TPM TIS with req_type = 0
->   WARNING: CPU: 22 PID: 1 at arch/x86/mm/pat/memtype.c:530 memtype_reserve+0x2ab/0x460
->   Modules linked in:
->   CPU: 22 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.16.0-rc7+ #2 VOLUNTARY
->   Tainted: [W]=WARN
->   Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/29/2025
->   RIP: 0010:memtype_reserve+0x2ab/0x460
->    __ioremap_caller+0x16d/0x3d0
->    ioremap_cache+0x17/0x30
->    x86_acpi_os_ioremap+0xe/0x20
->    acpi_os_map_iomem+0x1f3/0x240
->    acpi_os_map_memory+0xe/0x20
->    acpi_ex_system_memory_space_handler+0x273/0x440
->    acpi_ev_address_space_dispatch+0x176/0x4c0
->    acpi_ex_access_region+0x2ad/0x530
->    acpi_ex_field_datum_io+0xa2/0x4f0
->    acpi_ex_extract_from_field+0x296/0x3e0
->    acpi_ex_read_data_from_field+0xd1/0x460
->    acpi_ex_resolve_node_to_value+0x2ee/0x530
->    acpi_ex_resolve_to_value+0x1f2/0x540
->    acpi_ds_evaluate_name_path+0x11b/0x190
->    acpi_ds_exec_end_op+0x456/0x960
->    acpi_ps_parse_loop+0x27a/0xa50
->    acpi_ps_parse_aml+0x226/0x600
->    acpi_ps_execute_method+0x172/0x3e0
->    acpi_ns_evaluate+0x175/0x5f0
->    acpi_evaluate_object+0x213/0x490
->    acpi_evaluate_integer+0x6d/0x140
->    acpi_bus_get_status+0x93/0x150
->    acpi_add_single_object+0x43a/0x7c0
->    acpi_bus_check_add+0x149/0x3a0
->    acpi_bus_check_add_1+0x16/0x30
->    acpi_ns_walk_namespace+0x22c/0x360
->    acpi_walk_namespace+0x15c/0x170
->    acpi_bus_scan+0x1dd/0x200
->    acpi_scan_init+0xe5/0x2b0
->    acpi_init+0x264/0x5b0
->    do_one_initcall+0x5a/0x310
->    kernel_init_freeable+0x34f/0x4f0
->    kernel_init+0x1b/0x200
->    ret_from_fork+0x186/0x1b0
->    ret_from_fork_asm+0x1a/0x30
->    </TASK>
->
-> The above traces are from a Google-VMM based VM, but the same behavior
-> happens with a QEMU based VM that is modified to add a SystemMemory range
-> for the TPM TIS address space.
->
-> The only reason this doesn't cause problems for HPET, which appears to
-> require a SystemMemory region, is because HPET gets special treatment via
-> x86_init.timers.timer_init(), and so gets a chance to create its UC-
-> mapping before acpi_init() clobbers things.  Disabling the early call to
-> hpet_time_init() yields the same behavior for HPET:
->
->    [  0.318264] ioremap error for 0xfed00000-0xfed01000, requested 0x2, got 0x0
->
-> Hack around the ACPI gap by forcing the legacy PCI hole to UC when
-> overriding the (virtual) MTRRs for CoCo guest, so that ioremap handling
-> of MTRRs naturally kicks in and forces the ACPI mappings to be UC.
->
-> Note, the requested/mapped memtype doesn't actually matter in terms of
-> accessing the device.  In practically every setup, legacy PCI devices are
-> emulated by the hypervisor, and accesses are intercepted and handled as
-> emulated MMIO, i.e. never access physical memory and thus don't have an
-> effective memtype.
->
-> Even in a theoretical setup where such devices are passed through by the
-> host, i.e. point at real MMIO memory, it is KVM's (as the hypervisor)
-> responsibility to force the memory to be WC/UC, e.g. via EPT memtype
-> under TDX or real hardware MTRRs under SNP.  Not doing so cannot work,
-> and the hypervisor is highly motivated to do the right thing as letting
-> the guest access hardware MMIO with WB would likely result in a variety
-> of fatal #MCs.
->
-> In other words, forcing the range to be UC is all about coercing the
-> kernel's tracking into thinking that it has established UC mappings, so
-> that the ioremap code doesn't reject mappings from e.g. the TPM driver and
-> thus prevent the driver from loading and the device from functioning.
->
-> Note #2, relying on guest firmware to handle this scenario, e.g. by setting
-> virtual MTRRs and then consuming them in Linux, is not a viable option, as
-> the virtual MTRR state is managed by the untrusted hypervisor, and because
-> OVMF at least has stopped programming virtual MTRRs when running as a TDX
-> guest.
->
-> ---
->
-> v2: Force the PCI hole to be UC via synthetic variable MTRR range instead
->      of hijacking is_untracked_pat_range() (which was horrific and apparently
->      didn't work). [Binbin]
->
-> v1:
->   - https://lore.kernel.org/all/20250201005048.657470-1-seanjc@google.com
->   - https://lore.kernel.org/all/CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=i+R+33w@mail.gmail.com
->
->   arch/x86/kernel/kvm.c | 21 +++++++++++++++++++--
->   1 file changed, 19 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 8ae750cde0c6..57379698015e 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -933,6 +933,19 @@ static void kvm_sev_hc_page_enc_status(unsigned long pfn, int npages, bool enc)
->   
->   static void __init kvm_init_platform(void)
->   {
-> +	u64 tolud = PFN_PHYS(e820__end_of_low_ram_pfn());
-> +	/*
-> +	 * Note, hardware requires variable MTRR ranges to be power-of-2 sized
-> +	 * and naturally aligned.  But when forcing guest MTRR state, Linux
-> +	 * doesn't program the forced ranges into hardware.  Don't bother doing
-> +	 * the math to generate a technically-legal range.
-> +	 */
-> +	struct mtrr_var_range pci_hole = {
-> +		.base_lo = tolud | X86_MEMTYPE_UC,
-> +		.mask_lo = (u32)(~(SZ_4G - tolud - 1)) | MTRR_PHYSMASK_V,
-> +		.mask_hi = (BIT_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
-> +	};
-> +
->   	if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT) &&
->   	    kvm_para_has_feature(KVM_FEATURE_MIGRATION_CONTROL)) {
->   		unsigned long nr_pages;
-> @@ -982,8 +995,12 @@ static void __init kvm_init_platform(void)
->   	kvmclock_init();
->   	x86_platform.apic_post_init = kvm_apic_init;
->   
-> -	/* Set WB as the default cache mode for SEV-SNP and TDX */
-> -	guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
-> +	/*
-> +	 * Set WB as the default cache mode for SEV-SNP and TDX, with a single
-> +	 * UC range for the legacy PCI hole, e.g. so that devices that expect
-> +	 * to get UC/WC mappings don't get surprised with WB.
-> +	 */
-> +	guest_force_mtrr_state(&pci_hole, 1, MTRR_TYPE_WRBACK);
->   }
->   
->   #if defined(CONFIG_AMD_MEM_ENCRYPT)
->
-> base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+	Didn't directly receive the intermediate reply:
 
-Tested on Google's VMM. The TPM driver successfully ioremap to UC with the patch.
+On Tue, Sep 02, 2025 at 11:14:09AM +0200, Hans de Goede wrote:
+> On 2-Sep-25 11:07 AM, Hans de Goede wrote:
+> > Ah I see. Yes if you do need to do a CONFIG check then using IS_ENABLED()
+> > is good.
+> > 
+> > But I'm afraid that the underlying problem here is the use of
+> > cdev.brightness_hw_changed this is really only meant for led-class.c
+> > internal use.
+> > 
+	Then there should be a comment in the include file to that effect.
 
-Tested-by: Korakit Seemakhupt <korakit@google.com>
+> > The idea of cdev.brightness_hw_changed is that it stores the last
+> > value set by the hw.
+> > 
+> > But in the mean time that value may have been overwritten by software.
+> > 
+> > I think that you will fail to call led_classdev_notify_brightness_hw_changed()
+> > (you can add a debug print to check) if the following happens:
+> > 
+> > 1. Brightness set to 255 (RGB 255,255,255) through sysfs
+> > 2. State toggled to off by backlight control button, brightness is now 0
+> > 3. Brightness set to 255 (RGB 255,255,255) through sysfs
+> > 4. State toggled to off by backlight control button, brightness is now 0
+> > 
+	This does not happen.  The G13 accepts and remembers backlight color
+settings even when the LEDs have been toggled off locally.
 
+```
+#### Initial state: Backlight on, full green:
+root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
+255
+255
+0 255 0
+root:/sys/class/leds/g13:rgb:kbd_backlight# echo 255 0 0 > multi_intensity 
+#### Backlight is on, full red.
+root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
+255
+255
+255 0 0
+#### Backlight toggle button pressed; backlight is now off.
+root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
+255
+0
+255 0 0
+root:/sys/class/leds/g13:rgb:kbd_backlight# echo 0 0 255 > multi_intensity 
+#### Backlight color set to full blue, but is still off.
+root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
+255
+0
+0 0 255
+#### Backlight toggle button pressed; backlight is now on, and blue.
+root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
+255
+255
+0 0 255
+```
+
+	This also works if you alter `brightness` while the backlight is
+toggled off.  IMHO, this is correct, principle-of-least-surprise behavior.
+
+	Further (at least on my machine), `brightness_hw_changed` is
+read-only in sysfs, and therefore can't be altered by host software.
+Therefore, it would seem that using `cdev.brightness_hw_changed` as a cache
+value is valid.  Otherwise, as you ouline below, we'd have to go through all
+the workqueue gymnastics.
+
+> > I also see that you use TEST_BIT(rep->keybits, 23) ? LED_FULL : LED_OFF
+> > for the brightness value send to led_classdev_notify_brightness_hw_changed()
+> > but I would expect the hw to restore the previous brightness on a toggle
+> > from off -> on through the button? So then that should be send.
+> > 
+> > And you also never update cdev.brightness and use the cached 
+> > struct lg_g15_led.brightness in lg_g13_kbd_led_get(). This means that
+> > after a hw toggle of the backlight reading the brightness from sysfs
+> > will show the wrong (old) value.
+> > 
+	This prompts the question:  What is the full intensity calculation
+formula intended to be?  The docs appear to be rather quiet on this point.
+If we assume all intensity/brightness values (0-255) are essentially mapped
+to the range [0.0, 1.0], then it seems to me the calculation is:
+
+	out = intensity * brightness * brightness_hw_changed
+
+	i.e., turning either brightness value down to zero will turn the LED
+"off" without affecting the other values, so when you turn it back on again,
+you'll get back the color/other brightness you started with.  (Corollary:
+For software to know the current output value, it must consider all three
+input values.)
+
+	I'm further assuming that brightness_hw_changed should have the same
+range as brightness, as there is no separate `max_brightness_hw_changed`
+sysfs value.
+
+> > I think that instead what you need to do is create a
+> > lg_g13_leds_changed_work() mirroring lg_g15_leds_changed_work()
+
+	I dissent.  But then it's entirely possible I'm still missing
+something...
+
+	The only edge case I'm immediately aware of is:
+
+	* Plug in G13.
+	* Toggle backlight off.
+	* Unload kernel module.
+	* Reload kernel module.
+
+	The backlight is now toggled off, but the newly loaded driver
+doesn't know this.  Attempting to read `brightness_hw_changed` from sysfs at
+this point will result in ENODATA (essentially reporting, "I don't know").
+AFAIK, there is no way to probe the G13 for the current state of the
+backlight HW toggle.  However, the moment the user generates any event on
+the G13, the correct state will be obtained, and `brightness_hw_changed`
+will be updated accordingly.  Not ideal, but seemed the most honest
+approach.
+
+> p.s.
+> 
+> Hmm, I wonder if this device is maybe more like the G510, where
+> once the BL is turned off it simply ignores any updates send
+> from the PC?  [ ... ]
+
+	Nope.  As per my experiments above, the G13 accepts and remembers
+backlight color updates even when the backlight is locally toggled off.
+
+					Schwab
 
