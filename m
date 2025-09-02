@@ -1,278 +1,402 @@
-Return-Path: <linux-kernel+bounces-795719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE42BB3F6F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:49:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DADEB3F6FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AC64485184
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:48:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0F8E1A85A24
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3F02E7631;
-	Tue,  2 Sep 2025 07:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8822E7622;
+	Tue,  2 Sep 2025 07:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eCyZFndy"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipBE2LIi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E042E7196
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E24A2E62D4;
+	Tue,  2 Sep 2025 07:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799321; cv=none; b=dLN8F3cIK8S7vwCxhG3bg2Jnwd9igjus8Zp6eaUV6mxpYbwBaFMFIrex+U44J88RTanwhnvfFFJ+ITEIK9mfFCM4KCGUnmxuk6HLL2d5dm21LfZu0phn4f+tw7fKJefNtS6lkpw+HyS8J3KHV4iO5rTan6rvlex9Ef4B1t5V7Ns=
+	t=1756799442; cv=none; b=q0fnTAjCs735FQvHShX2mfdhabjiDtbwBKzDLu79eO/odJhC7A9Go8FOPaVoMWoXx7anEOdxdxILqKyhQfst9DJ8AbT8XmsEoilwXz6o5RRAi9l9STef9Ov6InXKVvIMri98+yVO1G/UgkUiRJvnCfx3ggVjqGVWFdfdQ1fta4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799321; c=relaxed/simple;
-	bh=fDoOHY0Zpl4rBQTY1PUdC0etCtUgqqjSMNTz3YokoUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rz+z5G1dGcTJXMjzNKF1IDgZle1NtAPT+zIHc7aQP4Zc7s9qpo7VrHDhq5ru7lhre+hf2BJCrQaNGg+rbAglqtHD1RxEinZ6WDJscGz17o0I1co7k5qo2GaK4e5itLzXA75Czvo5MJCqczgYpItQFtPH1vbkn2I+WCHirYBpSm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eCyZFndy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822S5ZG025153
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 07:48:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=qaqsDaJl/E8BLR+cwPeJEtVPr1RgbXmwoZR
-	9XUu8+uw=; b=eCyZFndy+RC0oFgBGyH160boutj8Oi6XPvPRlIUodiUgVkvddEB
-	acBtYugF8QLf/LhwJfxWmjPJNCwwpYb/xQnFyvTjKuWG7MXVII3kB8zVxJUrnp/A
-	czImov6QLNggYXBWH/uoskeYKcu79w74E6/ajxtZtzozzv7O1KEt6072kv3w4E0y
-	Y92g5b9BrxBTso7KLa3IYHOe5tNrtrzGGOk8mzeFw9drVGA4LUYnNUrl9A8X3FYM
-	foMdixCTd1l61xhlF1jbaMqSC1oMlnw67yHlchmZIPWLqrPHZUVYdFBu3I9uwD2s
-	qQakv0+7HOlioYIl2H4S53owqJjdDMRe24g==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48uscuy0xk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:48:37 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7725c995dd0so1468318b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 00:48:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756799316; x=1757404116;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qaqsDaJl/E8BLR+cwPeJEtVPr1RgbXmwoZR9XUu8+uw=;
-        b=ZjAJQAhN9W6bfbZnwuUgKo1rVEZt1P1GXCT4FJFY+AzO5mQfdnzG67gFSMwzmNJmCv
-         qECyjg9SI+8h5XmpDRgYxKqPJcf/f0frGM4UUeMVnpmBUdermMSfdbbHrUW/DVFohMuj
-         dpAquOL1nzDVxSW8easpngZiV8SUkU+zaF1eFVPNoTp0/c2lVV/QyrQoZJHdXxoZAgRW
-         dNHiSlN5ur/eFIyRaTfN9ncDHa9sIlI+HwRSUWK9YoUd5kSOu9s951Sk6/fZf9BYSaSA
-         t5QyLa3SQ0BOPTrT3sATI0GZcOPiXqg8Xc5atIjJDr5o9pRESifYTGyfAZIW4APUSn5E
-         xlpg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9P4pGPIf9BeCJUPiRX8+5vzT+BNnenSFd1L+7aKOcBh5oZwV36X2SSdImbTgRQ4/7jW1hYFboTiPZTUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyeDDfQQJFqqjdqayb7FMJIBsrtuDwP4tJAyyorwiwYOqITgse
-	TNSATMdXkn4slQCLQtqrefl6r6m9Xl5ylHINW7RVQy4uIu36/wWRld1tc+V9L3O6ZDqYmHYPT70
-	ky93Ez/B1V26W9GoZAeJ74m0RjkFudrPm9AoICrTrzsm/YtDGCp9bxC7eHhTmKdMJ+II=
-X-Gm-Gg: ASbGncvFox687XZEd1exXP/ch32y5rNH38NZ128cWsnecJLp6oq7vhBq0wlO9PnyEJU
-	LZJScA4osWBSxO5FsywRlTPwt2V2i4V7rxXG0k3Nh5uqFajaLXgTOLbpSzBn3WIVzDsWtNtrmT6
-	IP6NGN65kiW7KhcxRvv3XNl0u0PCREzAQpzFnANqAto3Yc5a1jZm/CwxuovZxXZ79h+QVvG31pB
-	TNfABRaKRzzjLW3Jf/CPSWkoRhQ4LdoSa7EBlAMtPyMzhOR/+8OJk7FDL1oE9Z9W3HYzDPq/sLN
-	xXaOZzuyVrO6o0x3bxXUQB0Ssg/oMkI96IyQf5lAmlAc8/4VeN9pgum1McVe1dDkWJxeq16XIFc
-	kBw4msJFJmhj/HxKYUJG2L25Qqjlsp60=
-X-Received: by 2002:a05:6a00:90aa:b0:772:554c:4879 with SMTP id d2e1a72fcca58-772554c5019mr7993593b3a.26.1756799315830;
-        Tue, 02 Sep 2025 00:48:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqC44eTVxcBKP6ZclsLZDlo5hgjCLdI1LecbFM3XvQVNcUn1KLXFVzYxhNe0DkscCmNKJkSA==
-X-Received: by 2002:a05:6a00:90aa:b0:772:554c:4879 with SMTP id d2e1a72fcca58-772554c5019mr7993562b3a.26.1756799315346;
-        Tue, 02 Sep 2025 00:48:35 -0700 (PDT)
-Received: from zhonhan-gv.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7723427c127sm11372459b3a.62.2025.09.02.00.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 00:48:34 -0700 (PDT)
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
-        quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
-        adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
-        neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
-        quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com,
-        zhongqiu.han@oss.qualcomm.com
-Subject: [PATCH v2] scsi: ufs: core: Fix data race in CPU latency PM QoS request handling
-Date: Tue,  2 Sep 2025 15:48:29 +0800
-Message-ID: <20250902074829.657343-1-zhongqiu.han@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756799442; c=relaxed/simple;
+	bh=jUwejSsgbLEFI49DnF07gNccecyfLLhAlz1wMXuHxfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1YGyPAq7xxc9JZJ0BZJYdKeUT5Gn391gyWpvwGoTG3Mc9odO5ws8hwPOhwY2UQCAw+zF76wYU3XjBF+7SBwJEcTdCXSXMy4Z7t0jOuwlLagMqm2ZLadcmiAH1nBcN8Cz8gbDt7xyMzKxklii0PE8W4aQVWRM4jCk8h0rlPsRnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipBE2LIi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E399CC4CEED;
+	Tue,  2 Sep 2025 07:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756799441;
+	bh=jUwejSsgbLEFI49DnF07gNccecyfLLhAlz1wMXuHxfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ipBE2LIiSRLAcl0gv0asq3SiQvlpOF1ddHiCKBld7CAiMsYG8MfHPParsrUnz4Ieq
+	 JxVivqSp1UQKVwx7c8bA+6qOIuZsyiu61Bzk5ABtXUxs5M3GJtfHOhc66J4tQwiHIF
+	 PWFyVcq+Z0robyml+z/YszmRQRnk87kagkvoRITsSMKPrwyK3Bjma0NNnHFRxOqpOr
+	 tbjZdWPoe8/S6tIjn2ktREdmm/VqbF+TVKBvtTccLJmLMSiHPy5AgvWtmZeQ1hc0rb
+	 Wq0EpyBWOVQiqqd+O4jAKYlN72zooKkaFxcKhhcbosWLUFr7qfoX4Ju67vrhfHKDdL
+	 Z62/tZjYyyN7g==
+Date: Tue, 2 Sep 2025 08:50:37 +0100
+From: Lee Jones <lee@kernel.org>
+To: Lukas Timmermann <linux@timmermann.space>
+Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 2/2] leds: as3668: Driver for the ams Osram 4-channel
+ i2c LED driver
+Message-ID: <20250902075037.GA2163762@google.com>
+References: <20250808213143.146732-1-linux@timmermann.space>
+ <20250808213143.146732-3-linux@timmermann.space>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfXwLU0asnzwq2Y
- 0Mw4Us1Dm00beOaOk7jrRmfGydCeG6CZOa8I0tgBCseecc3n/nB/nMKw3PO7ZUVcalomBMIPWHZ
- A6vU8YVlvIg/4ztEOeiv3cKQlbXtabIVbnrSaARxcQK/FePNLKPc1VZbA/JfpbNz1rltjaroYWV
- sO7oZWcJf3e6vVG4il6wf3GQOhZXuc3jFK4z8Y+fS/vyMyf2QTuj7Y+PuzPLc8B5xAQWcz9cyPd
- BOtmX1k+68pWBCoDN7wXu/MwPqBfvbcfRkXKMughPq2Zmwa8JvzyVBc3Jnf5aGQlhGbR/Rz10o/
- qKCbt75VTyrDYUy1BQX5rzUSGrq3H1r5Kh4nx+NUBK3bS5bl8myoSZY6i2dY8V9DNZQrbSaotG7
- aheXj/fo
-X-Authority-Analysis: v=2.4 cv=A8xsP7WG c=1 sm=1 tr=0 ts=68b6a155 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=LWsq1cZ33obsDQM5gBoA:9
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-ORIG-GUID: Pg2FjUWeovGn-lfIXOJeCMiuNFgibm7c
-X-Proofpoint-GUID: Pg2FjUWeovGn-lfIXOJeCMiuNFgibm7c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 impostorscore=0 bulkscore=0 clxscore=1015
- suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300031
+In-Reply-To: <20250808213143.146732-3-linux@timmermann.space>
 
-The cpu_latency_qos_add/remove/update_request interfaces lack internal
-synchronization by design, requiring the caller to ensure thread safety.
-The current implementation relies on the `pm_qos_enabled` flag, which is
-insufficient to prevent concurrent access and cannot serve as a proper
-synchronization mechanism. This has led to data races and list corruption
-issues.
+On Fri, 08 Aug 2025, Lukas Timmermann wrote:
 
-A typical race condition call trace is:
+> Since there were no existing drivers for the AS3668 or related devices,
+> a new driver was introduced in a separate file. Similar devices were
+> reviewed, but none shared enough characteristics to justify code reuse.
+> As a result, this driver is written specifically for the AS3668.
+> 
+> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+> ---
+>  MAINTAINERS                |   1 +
+>  drivers/leds/Kconfig       |  13 +++
+>  drivers/leds/Makefile      |   1 +
+>  drivers/leds/leds-as3668.c | 202 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 217 insertions(+)
+>  create mode 100644 drivers/leds/leds-as3668.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 091206c54c63..945d78fef380 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3511,6 +3511,7 @@ M:	Lukas Timmermann <linux@timmermann.space>
+>  L:	linux-leds@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/leds/ams,as3668.yaml
+> +F:	drivers/leds/leds-as3668.c
+>  
+>  ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
+>  M:	Tianshu Qiu <tian.shu.qiu@intel.com>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index a104cbb0a001..8cfb423ddf82 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -100,6 +100,19 @@ config LEDS_ARIEL
+>  
+>  	  Say Y to if your machine is a Dell Wyse 3020 thin client.
+>  
+> +config LEDS_AS3668
+> +	tristate "LED support for AMS AS3668"
+> +	depends on LEDS_CLASS
+> +	depends on I2C
+> +	help
+> +	  This option enables support for the AMS AS3668 LED controller.
+> +	  The AS3668 provides up to four LED channels and is controlled via
+> +	  the I2C bus. This driver offers basic brightness control for each
+> +	  channel, without support for blinking or other advanced features.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called leds-as3668.
+> +
+>  config LEDS_AW200XX
+>  	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
+>  	depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 2f170d69dcbf..983811384fec 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
+>  obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
+>  obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
+>  obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
+> +obj-$(CONFIG_LEDS_AS3668)		+= leds-as3668.o
+>  obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
+>  obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
+>  obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
+> diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
+> new file mode 100644
+> index 000000000000..0cfd3b68f90c
+> --- /dev/null
+> +++ b/drivers/leds/leds-as3668.c
+> @@ -0,0 +1,202 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + *  Osram AMS AS3668 LED Driver IC
+> + *
+> + *  Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/i2c.h>
+> +#include <linux/leds.h>
+> +#include <linux/module.h>
+> +#include <linux/uleds.h>
+> +
+> +#define AS3668_MAX_LEDS 4
+> +#define AS3668_EXPECTED_I2C_ADDR 0x42
+> +
+> +/* Chip Ident */
+> +
+> +#define AS3668_CHIP_ID1_REG 0x3e
 
-[Thread A]
-ufshcd_pm_qos_exit()
-  --> cpu_latency_qos_remove_request()
-    --> cpu_latency_qos_apply();
-      --> pm_qos_update_target()
-        --> plist_del              <--(1) delete plist node
-    --> memset(req, 0, sizeof(*req));
-  --> hba->pm_qos_enabled = false;
+Can you tab out all of the values please.
 
-[Thread B]
-ufshcd_devfreq_target
-  --> ufshcd_devfreq_scale
-    --> ufshcd_scale_clks
-      --> ufshcd_pm_qos_update     <--(2) pm_qos_enabled is true
-        --> cpu_latency_qos_update_request
-          --> pm_qos_update_target
-            --> plist_del          <--(3) plist node use-after-free
+> +#define AS3668_CHIP_ID2_REG 0x3f
+> +#define AS3668_CHIP_ID1_EXPECTED_IDENTIFIER 0xa5
 
-This patch introduces a dedicated mutex to serialize PM QoS operations,
-preventing data races and ensuring safe access to PM QoS resources.
-Additionally, READ_ONCE is used in the sysfs interface to ensure atomic
-read access to pm_qos_enabled flag.
+This is odd.  What do you mean by expected?
 
-Fixes: 2777e73fc154 ("scsi: ufs: core: Add CPU latency QoS support for UFS driver")
-Signed-off-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
----
-v1 -> v2:
-- Fix misleading indentation by adding braces to if statements in pm_qos logic.
-- Resolve checkpatch strict mode warning by adding an inline comment for pm_qos_mutex.
-- Link to v1: https://lore.kernel.org/all/20250901085117.86160-1-zhongqiu.han@oss.qualcomm.com/
+What kind of ID is this?  Board ID, platform ID, Chip ID?
 
- drivers/ufs/core/ufs-sysfs.c |  2 +-
- drivers/ufs/core/ufshcd.c    | 25 ++++++++++++++++++++++---
- include/ufs/ufshcd.h         |  3 +++
- 3 files changed, 26 insertions(+), 4 deletions(-)
+Call it that instead.
 
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index 4bd7d491e3c5..8f7975010513 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -512,7 +512,7 @@ static ssize_t pm_qos_enable_show(struct device *dev,
- {
- 	struct ufs_hba *hba = dev_get_drvdata(dev);
- 
--	return sysfs_emit(buf, "%d\n", hba->pm_qos_enabled);
-+	return sysfs_emit(buf, "%d\n", READ_ONCE(hba->pm_qos_enabled));
- }
- 
- /**
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 926650412eaa..98b9ce583386 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1047,14 +1047,19 @@ EXPORT_SYMBOL_GPL(ufshcd_is_hba_active);
-  */
- void ufshcd_pm_qos_init(struct ufs_hba *hba)
- {
-+	mutex_lock(&hba->pm_qos_mutex);
- 
--	if (hba->pm_qos_enabled)
-+	if (hba->pm_qos_enabled) {
-+		mutex_unlock(&hba->pm_qos_mutex);
- 		return;
-+	}
- 
- 	cpu_latency_qos_add_request(&hba->pm_qos_req, PM_QOS_DEFAULT_VALUE);
- 
- 	if (cpu_latency_qos_request_active(&hba->pm_qos_req))
- 		hba->pm_qos_enabled = true;
-+
-+	mutex_unlock(&hba->pm_qos_mutex);
- }
- 
- /**
-@@ -1063,11 +1068,16 @@ void ufshcd_pm_qos_init(struct ufs_hba *hba)
-  */
- void ufshcd_pm_qos_exit(struct ufs_hba *hba)
- {
--	if (!hba->pm_qos_enabled)
-+	mutex_lock(&hba->pm_qos_mutex);
-+
-+	if (!hba->pm_qos_enabled) {
-+		mutex_unlock(&hba->pm_qos_mutex);
- 		return;
-+	}
- 
- 	cpu_latency_qos_remove_request(&hba->pm_qos_req);
- 	hba->pm_qos_enabled = false;
-+	mutex_unlock(&hba->pm_qos_mutex);
- }
- 
- /**
-@@ -1077,10 +1087,15 @@ void ufshcd_pm_qos_exit(struct ufs_hba *hba)
-  */
- static void ufshcd_pm_qos_update(struct ufs_hba *hba, bool on)
- {
--	if (!hba->pm_qos_enabled)
-+	mutex_lock(&hba->pm_qos_mutex);
-+
-+	if (!hba->pm_qos_enabled) {
-+		mutex_unlock(&hba->pm_qos_mutex);
- 		return;
-+	}
- 
- 	cpu_latency_qos_update_request(&hba->pm_qos_req, on ? 0 : PM_QOS_DEFAULT_VALUE);
-+	mutex_unlock(&hba->pm_qos_mutex);
- }
- 
- /**
-@@ -10764,6 +10779,10 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 	mutex_init(&hba->ee_ctrl_mutex);
- 
- 	mutex_init(&hba->wb_mutex);
-+
-+	/* Initialize mutex for PM QoS request synchronization */
-+	mutex_init(&hba->pm_qos_mutex);
-+
- 	init_rwsem(&hba->clk_scaling_lock);
- 
- 	ufshcd_init_clk_gating(hba);
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 30ff169878dc..a16f857a052f 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -962,6 +962,7 @@ enum ufshcd_mcq_opr {
-  * @ufs_rtc_update_work: A work for UFS RTC periodic update
-  * @pm_qos_req: PM QoS request handle
-  * @pm_qos_enabled: flag to check if pm qos is enabled
-+ * @pm_qos_mutex: synchronizes PM QoS request and status updates
-  * @critical_health_count: count of critical health exceptions
-  * @dev_lvl_exception_count: count of device level exceptions since last reset
-  * @dev_lvl_exception_id: vendor specific information about the
-@@ -1135,6 +1136,8 @@ struct ufs_hba {
- 	struct delayed_work ufs_rtc_update_work;
- 	struct pm_qos_request pm_qos_req;
- 	bool pm_qos_enabled;
-+	/* synchronizes PM QoS request and status updates */
-+	struct mutex pm_qos_mutex;
- 
- 	int critical_health_count;
- 	atomic_t dev_lvl_exception_count;
+> +#define AS3668_CHIP_ID2_SERIAL_MASK GENMASK(7, 4)
+> +#define AS3668_CHIP_ID2_REV_MASK GENMASK(3, 0)
+> +
+> +/* Current Control */
+> +
+
+The X thing (below) is weirding me out.
+
+> +#define AS3668_CURRX_CONTROL_REG 0x01
+
+Drop the X.
+
+> +#define AS3668_CURR1_REG 0x02
+> +#define AS3668_CURR2_REG 0x03
+> +#define AS3668_CURR3_REG 0x04
+> +#define AS3668_CURR4_REG 0x05
+
+Are these not also a 'CONTROL' regs?
+
+If not, what kind of regs are they?
+
+> +#define AS3668_CURRX_MODE_ON 0x1
+> +#define AS3668_CURRX_CURR1_MASK GENMASK(1, 0)
+> +#define AS3668_CURRX_CURR2_MASK GENMASK(3, 2)
+> +#define AS3668_CURRX_CURR3_MASK GENMASK(5, 4)
+> +#define AS3668_CURRX_CURR4_MASK GENMASK(7, 6)
+
+Drop the CURRX from each of these?
+
+> +
+> +struct as3668_led {
+> +	struct led_classdev cdev;
+> +	struct as3668 *chip;
+> +	struct fwnode_handle *fwnode;
+> +
+
+The new line seems unnecessary.
+
+> +	int led_id;
+> +};
+> +
+> +struct as3668 {
+> +	struct i2c_client *client;
+> +	struct as3668_led leds[AS3668_MAX_LEDS];
+> +};
+> +
+> +static enum led_brightness as3668_brightness_get(struct led_classdev *cdev)
+> +{
+> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
+> +
+> +	return i2c_smbus_read_byte_data(led->chip->client, AS3668_CURR1_REG + led->led_id);
+> +}
+> +
+> +static void as3668_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
+> +{
+> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
+> +
+> +	int err = i2c_smbus_write_byte_data(led->chip->client,
+> +					    AS3668_CURR1_REG + led->led_id,
+> +					    brightness);
+> +
+> +	if (err)
+> +		dev_err(&led->chip->client->dev, "error writing to reg 0x%02x, returned %d\n",
+> +			AS3668_CURR1_REG + led->led_id, err);
+> +}
+> +
+> +static int as3668_dt_init(struct as3668 *as3668)
+> +{
+> +	struct device *dev = &as3668->client->dev;
+> +	struct as3668_led *led;
+> +	struct led_init_data init_data = {};
+> +	int err;
+> +	u32 reg;
+> +
+> +	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
+> +		err = of_property_read_u32(child, "reg", &reg);
+> +		if (err)
+> +			return dev_err_probe(dev, err, "'reg' property missing from %s\n",
+> +					     child->name);
+> +
+> +		if (reg < 0 || reg > AS3668_MAX_LEDS)
+> +			return dev_err_probe(dev, -EOPNOTSUPP,
+> +					     "'reg' property in %s is out of scope: %d\n",
+> +					     child->name, reg);
+> +
+> +		led = &as3668->leds[reg];
+> +		led->fwnode = of_fwnode_handle(child);
+> +
+> +		led->led_id = reg;
+> +		led->chip = as3668;
+> +
+> +		led->cdev.max_brightness = U8_MAX;
+> +		led->cdev.brightness_get = as3668_brightness_get;
+> +		led->cdev.brightness_set = as3668_brightness_set;
+> +
+> +		init_data.fwnode = led->fwnode;
+> +		init_data.default_label = ":";
+> +
+> +		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
+> +		if (err)
+> +			return dev_err_probe(dev, err, "failed to register LED %d\n", reg);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int as3668_probe(struct i2c_client *client)
+> +{
+> +	struct as3668 *as3668;
+> +	int err;
+> +	u8 chip_ident, chip_subident, chip_serial, chip_rev;
+> +
+> +	/* Check for sensible i2c address */
+
+I2C
+
+"sensible" probably isn't the correct term here.
+
+Actually, do we really need this comment?  What does it add?
+
+> +	if (client->addr != AS3668_EXPECTED_I2C_ADDR)
+> +		return dev_err_probe(&client->dev, -EFAULT,
+> +				     "expected i2c address 0x%02x, got 0x%02x\n",
+
+I2C
+
+If we already know the I2C address - why is it being set elsewhere?
+
+> +				     AS3668_EXPECTED_I2C_ADDR, client->addr);
+> +
+> +	/* Read identifier from chip */
+> +	chip_ident = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID1_REG);
+> +
+> +	if (chip_ident != AS3668_CHIP_ID1_EXPECTED_IDENTIFIER)
+> +		return dev_err_probe(&client->dev, -ENODEV,
+> +				     "expected chip identifier 0x%02x, got 0x%02x\n",
+> +				     AS3668_CHIP_ID1_EXPECTED_IDENTIFIER, chip_ident);
+> +
+> +	chip_subident = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID2_REG);
+> +	chip_serial = FIELD_GET(AS3668_CHIP_ID2_SERIAL_MASK, chip_subident);
+> +	chip_rev = FIELD_GET(AS3668_CHIP_ID2_REV_MASK, chip_subident);
+> +
+> +	/* Print out information about the chip */
+
+This is definitely superfluous.
+
+> +	dev_dbg(&client->dev,
+> +		"chip_ident: 0x%02x | chip_subident: 0x%02x | chip_serial: 0x%02x | chip_rev: 0x%02x\n",
+> +		chip_ident, chip_subident, chip_serial, chip_rev);
+
+Does this have a role now that development is over?
+
+Is the user going to care about all this stuff?
+
+> +
+> +	as3668 = devm_kzalloc(&client->dev, sizeof(*as3668), GFP_KERNEL);
+> +	if (!as3668)
+> +		return -ENOMEM;
+> +
+> +	as3668->client = client;
+> +
+> +	err = as3668_dt_init(as3668);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Set all four channel modes to 'on' */
+> +	err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG,
+> +					FIELD_PREP(AS3668_CURRX_CURR1_MASK, AS3668_CURRX_MODE_ON) |
+> +					FIELD_PREP(AS3668_CURRX_CURR2_MASK, AS3668_CURRX_MODE_ON) |
+> +					FIELD_PREP(AS3668_CURRX_CURR3_MASK, AS3668_CURRX_MODE_ON) |
+> +					FIELD_PREP(AS3668_CURRX_CURR4_MASK, AS3668_CURRX_MODE_ON));
+> +
+> +	/* Set initial currents to 0mA */
+> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR1_REG, 0);
+> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR2_REG, 0);
+> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR3_REG, 0);
+> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR4_REG, 0);
+> +
+> +	if (err)
+> +		return dev_err_probe(&client->dev, -EIO, "error during hardware initialization\n");
+
+"Failed to write to the device"?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static void as3668_remove(struct i2c_client *client)
+> +{
+> +	int err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG, 0);
+
+Do this after declaration please.
+
+> +
+> +	if (err)
+> +		dev_err(&client->dev, "couldn't deinit device\n");
+
+"deinit" is not a word.
+
+Please expand slang and shortened words in comments and user-facing messages.
+
+> +}
+> +
+> +static const struct i2c_device_id as3668_idtable[] = {
+> +	{ "as3668" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, as3668_idtable);
+> +
+> +static const struct of_device_id as3668_match_table[] = {
+> +	{ .compatible = "ams,as3668" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, as3668_match_table);
+> +
+> +static struct i2c_driver as3668_driver = {
+> +	.driver = {
+> +		.name = "leds_as3668",
+> +		.of_match_table = as3668_match_table,
+> +	},
+> +	.probe = as3668_probe,
+> +	.remove = as3668_remove,
+> +	.id_table = as3668_idtable,
+> +};
+> +module_i2c_driver(as3668_driver);
+> +
+> +MODULE_AUTHOR("Lukas Timmermann <linux@timmermann.space>");
+> +MODULE_DESCRIPTION("AS3668 LED driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.50.1
+> 
+> 
+
 -- 
-2.43.0
-
+Lee Jones [李琼斯]
 
