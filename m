@@ -1,157 +1,130 @@
-Return-Path: <linux-kernel+bounces-796254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280EAB3FDE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:38:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126E6B3FDE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73D84E2860
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:37:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44B717A3ABF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8525E2F618F;
-	Tue,  2 Sep 2025 11:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523042F8BD5;
+	Tue,  2 Sep 2025 11:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lgi/a6np";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xZCaxC+s";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lgi/a6np";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xZCaxC+s"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="GS5m+T8F";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="BF76D3Ix"
+Received: from a7-17.smtp-out.eu-west-1.amazonses.com (a7-17.smtp-out.eu-west-1.amazonses.com [54.240.7.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DC9634EC
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8372F5480;
+	Tue,  2 Sep 2025 11:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756813073; cv=none; b=uTr6wMMxSBzSYG3w1FUFlNHjXwyF4rsV+VO0HQyfo5zdgfpiCcU+IeLnTO/IpWX9oAJXFODkD14MtWQ0rgVO3HNjKCQXWse4aUauK4x+him7qJ8ELMRsBsWPjRXneRtdrcrpH6mdL4wPIwWGiSzp24WjXoSbwrT8wvHJQMa8O9I=
+	t=1756813075; cv=none; b=AjpQj1gtxx+WcBosv/J7BTcqpYxhLXj4VNxymw/t7IHuiawNb31sgWrG+yNELjrjxP1ZXN5bI6ho7F0Slj9sE9kRdvnvsV6q030y00dVVAbA4FJ7VE9CZyCO9RoascnDjcSwsdKi6OxK5YgKANaxLJohSzhZ5nE5wmwDIab/Zsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756813073; c=relaxed/simple;
-	bh=E7qwp6rvkDJSiXpS0gmHYk6+WqhhqDVZrNcg4XXegZo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r8Vu42KSQx0LukS9U7/1raaHD1tJWLTpeN/e245uUI3GhbRF5JSDoN+T6BsfAIEEB8/oJ8elTQc1e3mVSHQZdufkqWEL5d9UCtpvuIgx3kDpZimSL5SnzO/HrfztPcaZr4Qda/X8uhnAEhq8FtpwafcoOO7yZmFqu/lOuyOobXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lgi/a6np; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xZCaxC+s; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lgi/a6np; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xZCaxC+s; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 575871F455;
-	Tue,  2 Sep 2025 11:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756813069; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZHQcXQifMWa4v30eNpXBIvzgbF43iQ+MtPgX3RQFVU4=;
-	b=lgi/a6npxFPGRz4eGDXehQUf12Dat2WR4O6D+nslgw924AUqsZshQOVmUU8Q9JCpnck+57
-	dH8y8TBIU37pSp/2c3GH8LVlsBL7el4ZKSANPieRPAMC+dPlbNTKPp+jXBHuLW+Ie7vgUy
-	iERhXB4ojR7gBarQRExGZU6lMEwkDrg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756813069;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZHQcXQifMWa4v30eNpXBIvzgbF43iQ+MtPgX3RQFVU4=;
-	b=xZCaxC+sMeRvepIKQN/+YaX3eW4k8wKhaFmYrFCtHY91cG1BrDqmQTF5YqmCuRpO5xI4oZ
-	lRKXJnldbc7zIqBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756813069; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZHQcXQifMWa4v30eNpXBIvzgbF43iQ+MtPgX3RQFVU4=;
-	b=lgi/a6npxFPGRz4eGDXehQUf12Dat2WR4O6D+nslgw924AUqsZshQOVmUU8Q9JCpnck+57
-	dH8y8TBIU37pSp/2c3GH8LVlsBL7el4ZKSANPieRPAMC+dPlbNTKPp+jXBHuLW+Ie7vgUy
-	iERhXB4ojR7gBarQRExGZU6lMEwkDrg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756813069;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZHQcXQifMWa4v30eNpXBIvzgbF43iQ+MtPgX3RQFVU4=;
-	b=xZCaxC+sMeRvepIKQN/+YaX3eW4k8wKhaFmYrFCtHY91cG1BrDqmQTF5YqmCuRpO5xI4oZ
-	lRKXJnldbc7zIqBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3635813882;
-	Tue,  2 Sep 2025 11:37:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jWdsDA3XtmgMNwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 02 Sep 2025 11:37:49 +0000
-Date: Tue, 02 Sep 2025 13:37:48 +0200
-Message-ID: <878qix9jar.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<13564923607@139.com>,
-	<13916275206@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<baojun.xu@ti.com>,
-	<Baojun.Xu@fpt.com>
-Subject: Re: [PATCH v1] ALSA: hda/tas2781: Fix the order of TAS2781 calibrated-data
-In-Reply-To: <20250902113155.1761-1-shenghao-ding@ti.com>
-References: <20250902113155.1761-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1756813075; c=relaxed/simple;
+	bh=fOC4Ci7rmWLlE7+CmRAfLDBmJU7MR0vI9YnVYrlSdsc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hgqf+gtqrLyfElqFWYx6tpKfeRYQn2x89hL9UBNyOhQdQonIuSrcFuyOhiSYE3cHlLrzyu7Ni7ksyJoExQL5NbyElXtADpYQVtpffCHcfXiNWGVpaFPLsZ5k4q+1L2tj69P6NX14ceF9YjFBJMQ92f/oE8yqSZ57ddzyZGxrYk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=eu-west-1.amazonses.com; dkim=pass (1024-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=GS5m+T8F; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=BF76D3Ix; arc=none smtp.client-ip=54.240.7.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinarskis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eu-west-1.amazonses.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=vuvznkywrn6u4jb2ozie3fqz3nbg6pps; d=vinarskis.com; t=1756813071;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:Content-Type;
+	bh=fOC4Ci7rmWLlE7+CmRAfLDBmJU7MR0vI9YnVYrlSdsc=;
+	b=GS5m+T8FZK6qKeVv0S/YnfwOt4bePcVCO3sg1SG/y1DrcR+qJeGVUbDkxjY2DZVJ
+	5/ZI3FdrOHA9zz0HTaUjZ/HoFxVixBn1m3s4e9vmAe9JokzAc5tmBJ/MHOGqdq4Lr0Y
+	kSYFBjRZIlmN7g73UUz/YDc2pecJhRqkse8HZO4o=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1756813071;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:Content-Type:Feedback-ID;
+	bh=fOC4Ci7rmWLlE7+CmRAfLDBmJU7MR0vI9YnVYrlSdsc=;
+	b=BF76D3IxKBXKwYPLYjeRlnh4T6QLeUN87UN823SBmZ+WfvRg6XhGNPVWaT4SJkco
+	xn/YekpBRSIeML546kOmygch/CyIDgTXOASKpou4pBF1WEw85/r2MxzWsGx9YsOCqQ+
+	r9nbQcR3uzQTx31ekLADkWBVeQXlTVFW2WWiEu8s=
+X-Forwarded-Encrypted: i=1; AJvYcCUdr8Q4SriVn56yvkp9lcYApYGxLev8Coc2revJi3BCW/eOErj9AhckiB5h7GsZQ/BiMvS8Nx4zHMtIQw==@vger.kernel.org, AJvYcCVUCzeFSgaRBl3TKlBuo1387Ous67iIneYIJDMv8fLsZFNVeLw9dCsD2cnj5E9DItpWKnficg/fWCnk@vger.kernel.org, AJvYcCXjJl8yM+DnhlE+CGLRpc48XNiYUt+mhmjREZQZm1tLFrlr2vIQcsH2DKhAxvo9mN0WpvDTIh7ReMjfzseX@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwch8aHq8crlSliTd95q4hxulZWa5nKGFsyw8ckZx825T2izud
+	DTbClKMYKTFjVePSpHzdNNqFw/iuuZdbm1Tpefm6VpD3Dhcn0OvZ7aM8VctP0tC9dJVDwTo0qgI
+	PaH0daX0Nc737wBMVNTs8TJXyRPPIcQ==
+X-Google-Smtp-Source: AGHT+IGoRS6Anmy4FUFqU80ucZ82xuRteNGzwXhLzRMiAYKXGwFcbqiKUKj5DLqtoDKHzMojQVFURUY79tywi/kKb+g=
+X-Received: by 2002:a05:6a20:3d19:b0:243:d3d3:61cd with SMTP id
+ adf61e73a8af0-243d6f8e784mr16728686637.59.1756813069384; Tue, 02 Sep 2025
+ 04:37:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+References: <010201990a1f5f7a-54dcbc11-1402-4ef5-8392-b1c5321e0f1f-000000@eu-west-1.amazonses.com>
+In-Reply-To: <010201990a1f5f7a-54dcbc11-1402-4ef5-8392-b1c5321e0f1f-000000@eu-west-1.amazonses.com>
+From: Alex Vinarskis <alex@vinarskis.com>
+Date: Tue, 2 Sep 2025 11:37:51 +0000
+X-Gmail-Original-Message-ID: <CAMcHhXpQ9hS+kZmO6QUBdiKExkQVBtd6YynM42a+3uWjD4dJyg@mail.gmail.com>
+X-Gm-Features: Ac12FXxK2OJTgZUTwLgwtQWfzbfwE22Fh4nV2Pehy7wozep2EadnzcbzJfX3T_U
+Message-ID: <010201990a3815b7-20d99ba4-7603-4bc8-8817-29398bb32972-000000@eu-west-1.amazonses.com>
+Subject: Re: [PATCH 0/2] leds: privacy-led support for devicetree
+To: Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Feedback-ID: ::1.eu-west-1.dmE2JeRFSagpgiG6D+fa+YE0PH7S+b7tab7/4kfDOU8=:AmazonSES
+X-SES-Outgoing: 2025.09.02-54.240.7.17
 
-On Tue, 02 Sep 2025 13:31:55 +0200,
-Shenghao Ding wrote:
-> 
-> A bug reported by one of my customers that the order of TAS2781
-> calibrated-data is incorrect, the correct way is to move R0_Low_%d
-> and insert it between R0_%d and InvR0_%d.
-> 
-> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
-> 
+>
+> Re-spin of RFC patch from ~2.5 years ago [1]. v4l2 controls for privacy
+> LEDs has landed, but the DT part was left out.
+>
+> With recent inflow of arm64-power laptops (Snapdragon X1E/X1P) which
+> mostly use MIPI cameras, this feature becomes more desired. Original
+> rebased patch is still working as expected (with respective DT changes)
+> on Dell XPS 9345.
+>
+> Changelog to original series:
+> - Pick RFC patch, pick R-by, drop RFC-related commit message part
+> - Add new DT binding to describe generic LED consumer properties
+> - Rebase and test on X1E laptop
+>
+> [1] https://lore.kernel.org/all/20230120114524.408368-6-hdegoede@redhat.com/
+>
+> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+
+Apologies all for the broken thread.
+
+I have just switched to b4 with a different email, and it appears that
+due to broken message-IDs the thread is not preserved. I will see how
+to fix my email and resend it as v2. Content-wise this series is
+complete, but it seems the cover is not linked to the patches, and the
+series cannot be picked with `b4 am` anymore
+
+Alex
+
 > ---
-> v1:
->  - Add varialbe csz to store cali_data->cali_dat_sz_per_dev, which is long
->    enough to need two lines.
->  - Add more comments on calibrated-data order
-
-Is this still needed for the latest for-linus branch of sound.git
-tree?  There have been a couple of fixes for TAS2781 already.
-
-
-thanks,
-
-Takashi
+> Aleksandrs Vinarskis (1):
+>       dt-bindings: leds: add generic LED consumer documentation
+>
+> Hans de Goede (1):
+>       leds: led-class: Add devicetree support to led_get()
+>
+>  .../devicetree/bindings/leds/leds-consumer.yaml    | 69 ++++++++++++++++++++++
+>  drivers/leds/led-class.c                           | 38 +++++++++---
+>  2 files changed, 98 insertions(+), 9 deletions(-)
+> ---
+> base-commit: 3db46a82d467bd23d9ebc473d872a865785299d8
+> change-id: 20250902-leds-c61c877add80
+>
+> Best regards,
+> --
+> Aleksandrs Vinarskis <alex@vinarskis.com>
+>
 
