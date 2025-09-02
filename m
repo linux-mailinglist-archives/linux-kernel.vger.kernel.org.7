@@ -1,508 +1,150 @@
-Return-Path: <linux-kernel+bounces-796910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA71B40934
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:40:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BFBB40939
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04670172A36
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:40:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 370B2480FD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0CB32A802;
-	Tue,  2 Sep 2025 15:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC05313E04;
+	Tue,  2 Sep 2025 15:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zkxupd1z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="DY7B30bt"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E801E23D7C4
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827585; cv=none; b=Pu5ZK48KdNGHFU+dnYIbANkD5RyCoiyCnifnNXbO++LynTgfZu+cE3cFTeCs6MEgpYo+KPViiWDfhkfnaklvMPaCdBgLpTIur/7XK5D088K96edFDMMCJiPSy62cGYyr6OeC2ha2YK+NsmFXz3MuI+fVYqh6tpSkLn7skldcRHU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827585; c=relaxed/simple;
-	bh=ijK/+xIpeN17dxbQHbMOG2ke44a1MFr4g1HJn02UfSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ft9hSxstZKD+WUfQ13vJ8e/ZmpkbQxQa7fBCPnR4xkZhBoZvJtlHrG/0WUMCNGmEEgX0LT4GBPqQ5sBQi95Z257qbYSPMnmzwWTG/CsAa8I51ZeRHR4FxPCfL2itDkXzmQgvA2mONqyrLfRRQU+SqyIsyokARCbwb+Eqrr2rs/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zkxupd1z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756827582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SQaincXKmSrmm4miwZrh+ORA+WjmxLVBDz6USAiGAKA=;
-	b=Zkxupd1z83G+Hc42wg3vld4L04IZET85OzZiSubPY2GvAQB85JLlsShDoNo3Yrt/mzC97v
-	HpL+h/JffbJ4tt+mTtVAXrEo8woGWkemKFjWXz9H4NPrAPE/uo6ek+klbR7evwCCZGvqD2
-	IwDGs9VYnkl+46hfS0Qv4+tqcGNzE6Y=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-608-Zrs0HjwmNduosuu6CvtWDg-1; Tue, 02 Sep 2025 11:39:40 -0400
-X-MC-Unique: Zrs0HjwmNduosuu6CvtWDg-1
-X-Mimecast-MFC-AGG-ID: Zrs0HjwmNduosuu6CvtWDg_1756827580
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7e870614b86so1618662285a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:39:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756827580; x=1757432380;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SQaincXKmSrmm4miwZrh+ORA+WjmxLVBDz6USAiGAKA=;
-        b=kvMVEHIw4gD+m6uzdZlB0klGgfXnmXYfJhOGnYAsO0ulROaN2FRPSAIRw/DnQa7SOY
-         Y9z9HMhOEKHB2EdDrB9L6PB4b26/8r1j5byFetgPV721X93KSF7RXb92U0ygyjnPifSb
-         VdPJ/m+Bxmy9ZbmRcUqkt5nWb+4bUKO8IUW8u0pMas5423ICq02jFhDk0CCdFuuXRLqc
-         xuVL1QlneOZHIi3YlsCuEsP00+Bvk6OJsVSnDpHhal3MJLlAZgu6xyYRiZazyquIgnjv
-         zGie2zQfnGtsM2ZpnJVE7QhKqWXZsr9m1VsyDQ9AGuLL/4mTOjS4MEJxsSq9C9iFRL4F
-         WEww==
-X-Forwarded-Encrypted: i=1; AJvYcCU/JsgILr5KJnitBjVFeLtGb2pXvRGlf4c1Ub4zo1o6mwWhBDh1DZlyIijCcC17DiiSpc/St3EZkzmtMFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV5lMOjJdveJEdhsy9dfuHBRaM9McvRkzUseEChU30KMoznH2E
-	xrqNprieQaQS6jQ+L0rTz0Rwd+0bmaGIaF/Tl65ebYtdIOhms2S6Tz/8gwhhM9tTxhQF0Dk41ut
-	GAMzW9MrVRrzUNnVjuNDzujawQV9T9CNcTm1bPiaGByi73OC7EpkbgR8gLHwE2C2w5g==
-X-Gm-Gg: ASbGncsrm2MFzWIF8m18XdOhOXwwhqobL1FLSLjuAh3mnzrZ+7NX3eRhGJjgL4qqdB+
-	6QpE9l6AcAPsPy6wScCp3sK7C2tduaJmVnyciPL1GDc1shDx0k6zVwEsrHLIVDhErBKkdvTSCQY
-	eN/tDA7itFxMz1y66JSDO5vs/wcSdLSveIRIoZA9QXtkjDiTTv1BXY3XcRnk3xGhFGYLjRCuK+N
-	RLziCwx40Hz5GGQ/MZ0V5+bZHe8fzXIeJEbS7IYugCMFeWWgel+o+BVUeZCsjzywtXxP5nxHvCi
-	Uep34tZ6ZPBzEmgq3DoiwJaRmq1ihfaGj+ZtP5T76YXmsg27TSZsRGyjxem7pNvjLrIu1ivc1Ep
-	SPalVji4/+N4oF0ED
-X-Received: by 2002:a05:620a:372a:b0:7e8:17a6:df7a with SMTP id af79cd13be357-7ff2aa20761mr1338558385a.52.1756827580096;
-        Tue, 02 Sep 2025 08:39:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6/y08WKJpx5mnjw2i65ALVd9fFwq5cYei6ST/nQhexfxqSk9Y8GAx8rFFbyj8AxVhJpr5Gw==
-X-Received: by 2002:a05:620a:372a:b0:7e8:17a6:df7a with SMTP id af79cd13be357-7ff2aa20761mr1338552085a.52.1756827579403;
-        Tue, 02 Sep 2025 08:39:39 -0700 (PDT)
-Received: from sgarzare-redhat (host-87-12-185-93.business.telecomitalia.it. [87.12.185.93])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80918cbf80csm31703885a.43.2025.09.02.08.39.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 08:39:38 -0700 (PDT)
-Date: Tue, 2 Sep 2025 17:39:33 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v5 4/9] vsock/loopback: add netns support
-Message-ID: <mhjgn7fdztfqi6ku3gesgd42jj5atn4sqnvpyncw2jds23dpc3@iiupljayjxs4>
-References: <20250827-vsock-vmtest-v5-0-0ba580bede5b@meta.com>
- <20250827-vsock-vmtest-v5-4-0ba580bede5b@meta.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64322147E6
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756827640; cv=pass; b=U0w7VWP7kplfaytENslZnfdx+jxOme5O5ZShFwroiTnUShMw19ivIXHndnFT51TUwnRL0wkwD2FrSOE8M/XTcF8mfoowCUHnc+kA0nocz3TaE3r2pw0ghCx0z05u00adhzNO5fI6ecK6F8Z7GyrXVuBn57dQD79++3KJ4R+8n6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756827640; c=relaxed/simple;
+	bh=l0a5d8Bq/rNvK9rZz6eVzwJDRq62Oo1VLiOvhjtNKw8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZeRvtqmUSB1NIH5qmf9oR+lnUWyok4D4QoKIYjGgRahdh94tYDxQa0C/r6Bx/wfu9T4Yz3ZVx9qCegPYhGsMmBobREIec4+hX5nXd+PAvwiT16zQ5y9mLeA3x2dJJ1amwgIw3JHBfVvbzj3gmoUpcMhA13PAp2RFgQ3zJXt8X6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=DY7B30bt; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1756827613; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=aWSAyqXGsbZjyShKncpMOh2bidqXBUaIDVtuzUJ9ynIU8Ey2gXXZZi9XAQdK5sp4Nrz81JWpmpb48FI2REhZHUnKA7sM1fNZke6JLLHmCJEkTd+jtJPnz/ts1VpUaa+25zLVdw2OSDkBo+VH2/puV1S60oIb7tuLMYKPBy9NZfY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756827613; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=l0a5d8Bq/rNvK9rZz6eVzwJDRq62Oo1VLiOvhjtNKw8=; 
+	b=XviKQ7S2Lz1VZUPRK6bGbuRdPZHwIg+emTIBGm6CanG9Zoq9HsZFIiNlXQ6sm4II4EUcTAjetTPLQwev+DyRmtLqpd/B5fvOiqbO+nkxk+p41UXtegdRbi+fEKkLqGCQSI38bHQpSwpxjhyJR0RHbQPWApyObAmD5DRYFHh79fc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756827613;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=l0a5d8Bq/rNvK9rZz6eVzwJDRq62Oo1VLiOvhjtNKw8=;
+	b=DY7B30btFfiDhiATF39UO6rTAcb9BQuxHUdDLHInGZWVjnvJFTd5P5XJXwvFuD1+
+	ztTip4d26jnvXJNgfPR2ZcTRMNzNvUJRHnU0f9X+lASTyUTKZNKyqaHlfD5UpLYYsrR
+	4C0avRo+a3k3iTTRnH9NtwKs6SBij7nW6rirOnveSQhFq0D1fIz+yYzCZDFb3CdFaOv
+	Ys9fM4ltdce7ejncw23vjKEba45VWRCrAh93kwluVrPodct5ycgMnRKnr5O7p2QU07d
+	FQqNZ+9YGJ+ciBbPG0hIOy3NFAj3VX3ZCBdnvu82CGZLp6dFrQsMaIFNWO3UYADi4Ri
+	MBHpOorwRA==
+Received: by mx.zohomail.com with SMTPS id 1756827610463291.94280483667023;
+	Tue, 2 Sep 2025 08:40:10 -0700 (PDT)
+Message-ID: <05ef7c0df0a2235277030b9e33f34082e8938faa.camel@icenowy.me>
+Subject: Re: [PATCH 6/7] drm/etnaviv: add shared context support for iommuv2
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>, Lucas Stach <l.stach@pengutronix.de>, Russell King
+ <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>,  David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Date: Tue, 02 Sep 2025 23:40:02 +0800
+In-Reply-To: <20250816074757.2559055-7-uwu@icenowy.me>
+References: <20250816074757.2559055-1-uwu@icenowy.me>
+	 <20250816074757.2559055-7-uwu@icenowy.me>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250827-vsock-vmtest-v5-4-0ba580bede5b@meta.com>
+X-ZohoMailClient: External
 
-On Wed, Aug 27, 2025 at 05:31:32PM -0700, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Add NS support to vsock loopback. Sockets in a global mode netns
->communicate with each other, regardless of namespace. Sockets in a local
->mode netns may only communicate with other sockets within the same
->namespace.
->
->Add callbacks for transport to hook into the initialization and exit of
->net namespaces.
->
->The transport's init hook will be called once per netns init. Likewise
->for exit.
->
->When a set of init/exit callbacks is registered, the init callback is
->called on each already existing namespace.
->
->Only one callback registration is supported for now. Currently
->vsock_loopback is the only user.
-
-Why?
-
-In general, commit descriptions (and code comments) should focus on the 
-reason (why?) to simplify also the review.
-
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->
->---
->Changes in v5:
->- add callbacks code to avoid reverse dependency
->- add logic for handling vsock_loopback setup for already existing
->  namespaces
->---
-> include/net/af_vsock.h         |  34 +++++++++++++
-> include/net/netns/vsock.h      |   5 ++
-> net/vmw_vsock/af_vsock.c       | 110 +++++++++++++++++++++++++++++++++++++++++
-> net/vmw_vsock/vsock_loopback.c |  72 ++++++++++++++++++++++++---
-> 4 files changed, 213 insertions(+), 8 deletions(-)
->
->diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
->index 83f873174ba3..9333a98b9a1e 100644
->--- a/include/net/af_vsock.h
->+++ b/include/net/af_vsock.h
->@@ -305,4 +305,38 @@ static inline bool vsock_net_check_mode(struct net *n1, struct net *n2)
-> 	       (vsock_net_mode(n1) == VSOCK_NET_MODE_GLOBAL &&
-> 		vsock_net_mode(n2) == VSOCK_NET_MODE_GLOBAL);
-> }
->+
->+struct vsock_net_callbacks {
->+	int (*init)(struct net *net);
->+	void (*exit)(struct net *net);
->+	struct module *owner;
->+};
->+
->+#if IS_ENABLED(CONFIG_VSOCKETS_LOOPBACK)
->+
->+#define vsock_register_net_callbacks(__init, __exit) \
->+	__vsock_register_net_callbacks((__init), (__exit), THIS_MODULE)
->+
->+int __vsock_register_net_callbacks(int (*init)(struct net *net),
->+				   void (*exit)(struct net *net),
->+				   struct module *owner);
->+void vsock_unregister_net_callbacks(void);
->+
->+#else
->+
->+#define vsock_register_net_callbacks(__init, __exit) do { } while (0)
->+
->+static inline int __vsock_register_net_callbacks(int (*init)(struct net *net),
->+						 void (*exit)(struct net *net),
->+						 struct module *owner)
->+{
->+	return 0;
->+}
->+
->+static inline void vsock_unregister_net_callbacks(void) {}
->+static inline int vsock_net_call_init(struct net *net) { return 0; }
->+static inline void vsock_net_call_exit(struct net *net) {}
->+
->+#endif /* CONFIG_VSOCKETS_LOOPBACK */
->+
-> #endif /* __AF_VSOCK_H__ */
->diff --git a/include/net/netns/vsock.h b/include/net/netns/vsock.h
->index d4593c0b8dc4..08d9a933c540 100644
->--- a/include/net/netns/vsock.h
->+++ b/include/net/netns/vsock.h
->@@ -9,6 +9,8 @@ enum vsock_net_mode {
-> 	VSOCK_NET_MODE_LOCAL,
-> };
->
->+struct vsock_loopback;
->+
-> struct netns_vsock {
-> 	struct ctl_table_header *vsock_hdr;
-> 	spinlock_t lock;
->@@ -16,5 +18,8 @@ struct netns_vsock {
-> 	/* protected by lock */
-> 	enum vsock_net_mode mode;
-> 	bool written;
->+#if IS_ENABLED(CONFIG_VSOCKETS_LOOPBACK)
->+	struct vsock_loopback *loopback;
-
-If this is not protected by `lock`, please leave an empty line, but 
-maybe we should consider using locking (see comment later).
-
->+#endif
-> };
-> #endif /* __NET_NET_NAMESPACE_VSOCK_H */
->diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
->index 68a8875c8106..5a73d9e1a96f 100644
->--- a/net/vmw_vsock/af_vsock.c
->+++ b/net/vmw_vsock/af_vsock.c
->@@ -134,6 +134,9 @@
-> #include <uapi/linux/vm_sockets.h>
-> #include <uapi/asm-generic/ioctls.h>
->
->+static struct vsock_net_callbacks vsock_net_callbacks;
->+static DEFINE_MUTEX(vsock_net_callbacks_lock);
->+
-> static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr);
-> static void vsock_sk_destruct(struct sock *sk);
-> static int vsock_queue_rcv_skb(struct sock *sk, struct sk_buff *skb);
->@@ -2781,6 +2784,49 @@ static void vsock_net_init(struct net *net)
-> 	net->vsock.mode = VSOCK_NET_MODE_GLOBAL;
-> }
->
->+#if IS_ENABLED(CONFIG_VSOCKETS_LOOPBACK)
->+static int vsock_net_call_init(struct net *net)
->+{
->+	struct vsock_net_callbacks *cbs;
->+	int ret;
->+
->+	mutex_lock(&vsock_net_callbacks_lock);
->+	cbs = &vsock_net_callbacks;
->+
->+	ret = 0;
->+	if (!cbs->owner)
->+		goto out;
->+
->+	if (try_module_get(cbs->owner)) {
->+		ret = cbs->init(net);
->+		module_put(cbs->owner);
->+	}
->+
->+out:
->+	mutex_unlock(&vsock_net_callbacks_lock);
->+	return ret;
->+}
->+
->+static void vsock_net_call_exit(struct net *net)
->+{
->+	struct vsock_net_callbacks *cbs;
->+
->+	mutex_lock(&vsock_net_callbacks_lock);
->+	cbs = &vsock_net_callbacks;
->+
->+	if (!cbs->owner)
->+		goto out;
->+
->+	if (try_module_get(cbs->owner)) {
->+		cbs->exit(net);
->+		module_put(cbs->owner);
->+	}
->+
->+out:
->+	mutex_unlock(&vsock_net_callbacks_lock);
->+}
->+#endif /* CONFIG_VSOCKETS_LOOPBACK */
->+
-> static __net_init int vsock_sysctl_init_net(struct net *net)
-> {
-> 	vsock_net_init(net);
->@@ -2788,12 +2834,20 @@ static __net_init int vsock_sysctl_init_net(struct net *net)
-> 	if (vsock_sysctl_register(net))
-> 		return -ENOMEM;
->
->+	if (vsock_net_call_init(net) < 0)
->+		goto err_sysctl;
->+
-> 	return 0;
->+
->+err_sysctl:
->+	vsock_sysctl_unregister(net);
->+	return -ENOMEM;
-> }
->
-> static __net_exit void vsock_sysctl_exit_net(struct net *net)
-> {
-> 	vsock_sysctl_unregister(net);
->+	vsock_net_call_exit(net);
-> }
->
-> static struct pernet_operations vsock_sysctl_ops __net_initdata = {
->@@ -2938,6 +2992,62 @@ void vsock_core_unregister(const struct 
->vsock_transport *t)
-> }
-> EXPORT_SYMBOL_GPL(vsock_core_unregister);
->
->+#if IS_ENABLED(CONFIG_VSOCKETS_LOOPBACK)
->+int __vsock_register_net_callbacks(int (*init)(struct net *net),
->+				   void (*exit)(struct net *net),
->+				   struct module *owner)
->+{
->+	struct vsock_net_callbacks *cbs;
->+	struct net *net;
->+	int ret = 0;
->+
->+	mutex_lock(&vsock_net_callbacks_lock);
->+
->+	cbs = &vsock_net_callbacks;
->+	cbs->init = init;
->+	cbs->exit = exit;
->+	cbs->owner = owner;
->+
->+	/* call callbacks on any net previously created */
->+	down_read(&net_rwsem);
->+
->+	if (try_module_get(cbs->owner)) {
->+		for_each_net(net) {
->+			ret = cbs->init(net);
->+			if (ret < 0)
->+				break;
->+		}
->+
->+		if (ret < 0)
->+			for_each_net(net)
->+				cbs->exit(net);
->+
->+		module_put(cbs->owner);
->+	}
->+
->+	up_read(&net_rwsem);
->+	mutex_unlock(&vsock_net_callbacks_lock);
->+
->+	return ret;
->+}
->+EXPORT_SYMBOL_GPL(__vsock_register_net_callbacks);
->+
->+void vsock_unregister_net_callbacks(void)
->+{
->+	struct vsock_net_callbacks *cbs;
->+
->+	mutex_lock(&vsock_net_callbacks_lock);
->+
->+	cbs = &vsock_net_callbacks;
->+	cbs->init = NULL;
->+	cbs->exit = NULL;
->+	cbs->owner = NULL;
->+
->+	mutex_unlock(&vsock_net_callbacks_lock);
->+}
->+EXPORT_SYMBOL_GPL(vsock_unregister_net_callbacks);
-
-IIUC this function is called only in the error path of 
-`vsock_loopback_init()`, but shuold we call it also in the 
-vsock_loopback_exit() ?
-
->+#endif /* CONFIG_VSOCKETS_LOOPBACK */
->+
-> module_init(vsock_init);
-> module_exit(vsock_exit);
->
->diff --git a/net/vmw_vsock/vsock_loopback.c b/net/vmw_vsock/vsock_loopback.c
->index 1b2fab73e0d0..f16d21711cb0 100644
->--- a/net/vmw_vsock/vsock_loopback.c
->+++ b/net/vmw_vsock/vsock_loopback.c
->@@ -28,8 +28,19 @@ static u32 vsock_loopback_get_local_cid(void)
->
-> static int vsock_loopback_send_pkt(struct sk_buff *skb)
-> {
->-	struct vsock_loopback *vsock = &the_vsock_loopback;
->+	struct vsock_loopback *vsock;
-> 	int len = skb->len;
->+	struct net *net;
->+
->+	if (skb->sk)
->+		net = sock_net(skb->sk);
->+	else
->+		net = NULL;
-
-Why we can't use `virtio_vsock_skb_net` here?
-
->+
->+	if (net && net->vsock.mode == VSOCK_NET_MODE_LOCAL)
->+		vsock = net->vsock.loopback;
->+	else
->+		vsock = &the_vsock_loopback;
->
-> 	virtio_vsock_skb_queue_tail(&vsock->pkt_queue, skb);
-> 	queue_work(vsock->workqueue, &vsock->pkt_work);
->@@ -134,27 +145,72 @@ static void vsock_loopback_work(struct work_struct *work)
-> 	}
-> }
->
->-static int __init vsock_loopback_init(void)
->+static int vsock_loopback_init_vsock(struct vsock_loopback *vsock)
-> {
->-	struct vsock_loopback *vsock = &the_vsock_loopback;
->-	int ret;
->-
-> 	vsock->workqueue = alloc_workqueue("vsock-loopback", 0, 0);
-> 	if (!vsock->workqueue)
-> 		return -ENOMEM;
->
-> 	skb_queue_head_init(&vsock->pkt_queue);
-> 	INIT_WORK(&vsock->pkt_work, vsock_loopback_work);
->+	return 0;
->+}
->+
->+static void vsock_loopback_deinit_vsock(struct vsock_loopback *vsock)
->+{
->+	if (vsock->workqueue)
->+		destroy_workqueue(vsock->workqueue);
->+}
->+
->+/* called with vsock_net_callbacks lock held */
->+static int vsock_loopback_init_net(struct net *net)
->+{
->+	if (WARN_ON_ONCE(net->vsock.loopback))
->+		return 0;
->+
-
-Do we need some kind of locking here? I mean when reading/setting 
-`net->vsock.loopback`?
-
->+	net->vsock.loopback = kmalloc(sizeof(*net->vsock.loopback), 
->GFP_KERNEL);
->+	if (!net->vsock.loopback)
->+		return -ENOMEM;
->+
->+	return vsock_loopback_init_vsock(net->vsock.loopback);
->+}
->+
->+/* called with vsock_net_callbacks lock held */
->+static void vsock_loopback_exit_net(struct net *net)
->+{
->+	if (net->vsock.loopback) {
->+		vsock_loopback_deinit_vsock(net->vsock.loopback);
->+		kfree(net->vsock.loopback);
-
-Should we set `net->vsock.loopback` to NULL here?
-
->+	}
->+}
->+
->+static int __init vsock_loopback_init(void)
->+{
->+	struct vsock_loopback *vsock = &the_vsock_loopback;
->+	int ret;
->+
->+	ret = vsock_loopback_init_vsock(vsock);
->+	if (ret < 0)
->+		return ret;
->+
->+	ret = vsock_register_net_callbacks(vsock_loopback_init_net,
->+					   vsock_loopback_exit_net);
-
-IIUC we need this only here because for now the only other transport 
-supported is vhost-vsock, and IIUC `struct vhost_vsock *` there is 
-handled with a map instead of a static variable, and `net` assigned when 
-/dev/vhost-vsock is opened, right?
-
-If in the future we will need to support G2H transports, like 
-virtio-transport, we need to do something similar, right?
-
-BTW I think we really need to exaplin this better in the commit 
-description. It tooks me a while to get all of this (if it's correct)
-
-Thanks,
-Stefano
-
->+	if (ret < 0)
->+		goto out_deinit_vsock;
->
-> 	ret = vsock_core_register(&loopback_transport.transport,
-> 				  VSOCK_TRANSPORT_F_LOCAL);
-> 	if (ret)
->-		goto out_wq;
->+		goto out_unregister_net;
->+
->
-> 	return 0;
->
->-out_wq:
->-	destroy_workqueue(vsock->workqueue);
->+out_unregister_net:
->+	vsock_unregister_net_callbacks();
->+
->+out_deinit_vsock:
->+	vsock_loopback_deinit_vsock(vsock);
-> 	return ret;
-> }
->
->
->-- 
->2.47.3
->
+5ZyoIDIwMjUtMDgtMTbmmJ/mnJ/lha3nmoQgMTU6NDcgKzA4MDDvvIxJY2Vub3d5IFpoZW5n5YaZ
+6YGT77yaCj4gVW5mb3J0dW5hdGVseSB0aGUgR0M2MjAgR1BVIHNlZW1zIHRvIGhhdmUgYnJva2Vu
+IFBUQSBjYXBpYmlsaXR5LCBhbmQKPiBzd2l0Y2hpbmcgcGFnZSB0YWJsZSBJRCBpbiBjb21tYW5k
+IHN0cmVhbSBhZnRlciBpdCdzIHJ1bm5pbmcgd29uJ3QKPiB3b3JrLgo+IEFzIGRpcmVjdGx5IHN3
+aXRjaGluZyBtdGxiIGlzbid0IHdvcmtpbmcgZWl0aGVyLCB0aGVyZSB3aWxsIGJlIG5vCj4gcmVs
+aWFibGUgd2F5IHRvIHN3aXRjaCBwYWdlIHRhYmxlIGluIHRoZSBjb21tYW5kIHN0cmVhbSwgYW5k
+IGEgc2hhcmVkCj4gY29udGV4dCwgbGlrZSBpb21tdXYxLCBpcyBuZWVkZWQuCj4gCj4gQWRkIHN1
+cHBvcnQgZm9yIHRoaXMgc2hhcmVkIGNvbnRleHQgc2l0dWF0aW9uLiBTaGFyZWQgY29udGV4dCBp
+cyBzZXQKPiB3aGVuIHRoZSBicm9rZW4gUFRBIGlzIGtub3duLCBhbmQgdGhlIGNvbnRleHQgYWxs
+b2NhdGlvbiBjb2RlIHdpbGwgYmUKPiBtYWRlIHNob3J0IGNpcmN1aXQgd2hlbiBhIHNoYXJlZCBj
+b250ZXh0IGlzIHNldC4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBJY2Vub3d5IFpoZW5nIDx1d3VAaWNl
+bm93eS5tZT4KPiAtLS0KPiDCoGRyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2aXZfaW9tbXVf
+djIuYyB8IDggKysrKysrKysKPiDCoGRyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2aXZfbW11
+LmPCoMKgwqDCoMKgIHwgMSArCj4gwqBkcml2ZXJzL2dwdS9kcm0vZXRuYXZpdi9ldG5hdml2X21t
+dS5owqDCoMKgwqDCoCB8IDIgKysKPiDCoDMgZmlsZXMgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygr
+KQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXRuYXZpdi9ldG5hdml2X2lvbW11
+X3YyLmMKPiBiL2RyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2aXZfaW9tbXVfdjIuYwo+IGlu
+ZGV4IDU2NTRhNjA0YzcwY2YuLjk2MGJhM2Q2NTlkYzUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2V0bmF2aXYvZXRuYXZpdl9pb21tdV92Mi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V0bmF2aXYvZXRuYXZpdl9pb21tdV92Mi5jCgpXZWxsLCBJIGZvcmdvdCB0byBjbGVhbiBzaGFy
+ZWRfY29udGV4dCBpbiBldG5hdml2X2lvbW11djJfZnJlZSgpIHdoZW4KdGhlIHNoYXJlZCBjb250
+ZXh0IGlzIHRvcm4gZG93bi4uLgoKPiBAQCAtMjczLDYgKzI3MywxMiBAQCBldG5hdml2X2lvbW11
+djJfY29udGV4dF9hbGxvYyhzdHJ1Y3QKPiBldG5hdml2X2lvbW11X2dsb2JhbCAqZ2xvYmFsKQo+
+IMKgwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZXRuYXZpdl9pb21tdV9jb250ZXh0ICpjb250ZXh0Owo+
+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoG11dGV4X2xvY2soJmdsb2JhbC0+bG9jayk7Cj4gK8KgwqDC
+oMKgwqDCoMKgaWYgKGdsb2JhbC0+c2hhcmVkX2NvbnRleHQpIHsKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgY29udGV4dCA9IGdsb2JhbC0+c2hhcmVkX2NvbnRleHQ7Cj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGV0bmF2aXZfaW9tbXVfY29udGV4dF9nZXQoY29udGV4
+dCk7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoG11dGV4X3VubG9jaygmZ2xvYmFs
+LT5sb2NrKTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIGNvbnRleHQ7
+Cj4gK8KgwqDCoMKgwqDCoMKgfQo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoHYyX2NvbnRleHQgPSB2
+emFsbG9jKHNpemVvZigqdjJfY29udGV4dCkpOwo+IMKgwqDCoMKgwqDCoMKgwqBpZiAoIXYyX2Nv
+bnRleHQpCj4gQEAgLTMwMSw2ICszMDcsOCBAQCBldG5hdml2X2lvbW11djJfY29udGV4dF9hbGxv
+YyhzdHJ1Y3QKPiBldG5hdml2X2lvbW11X2dsb2JhbCAqZ2xvYmFsKQo+IMKgwqDCoMKgwqDCoMKg
+wqBtdXRleF9pbml0KCZjb250ZXh0LT5sb2NrKTsKPiDCoMKgwqDCoMKgwqDCoMKgSU5JVF9MSVNU
+X0hFQUQoJmNvbnRleHQtPm1hcHBpbmdzKTsKPiDCoMKgwqDCoMKgwqDCoMKgZHJtX21tX2luaXQo
+JmNvbnRleHQtPm1tLCBTWl80SywgKHU2NClTWl8xRyAqIDQgLSBTWl80Syk7Cj4gK8KgwqDCoMKg
+wqDCoMKgaWYgKGdsb2JhbC0+djIuYnJva2VuX3B0YSkKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgZ2xvYmFsLT5zaGFyZWRfY29udGV4dCA9IGNvbnRleHQ7Cj4gwqAKPiDCoMKgwqDC
+oMKgwqDCoMKgbXV0ZXhfdW5sb2NrKCZnbG9iYWwtPmxvY2spOwo+IMKgwqDCoMKgwqDCoMKgwqBy
+ZXR1cm4gY29udGV4dDsKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V0bmF2aXYvZXRu
+YXZpdl9tbXUuYwo+IGIvZHJpdmVycy9ncHUvZHJtL2V0bmF2aXYvZXRuYXZpdl9tbXUuYwo+IGlu
+ZGV4IGRmNTE5MjA4M2IyMDEuLmEwZjljOTUwNTA0ZTAgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2V0bmF2aXYvZXRuYXZpdl9tbXUuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9ldG5h
+dml2L2V0bmF2aXZfbW11LmMKPiBAQCAtNTA0LDYgKzUwNCw3IEBAIGludCBldG5hdml2X2lvbW11
+X2dsb2JhbF9pbml0KHN0cnVjdCBldG5hdml2X2dwdQo+ICpncHUpCj4gwqDCoMKgwqDCoMKgwqDC
+oG1lbXNldDMyKGdsb2JhbC0+YmFkX3BhZ2VfY3B1LCAweGRlYWQ1NWFhLCBTWl80SyAvCj4gc2l6
+ZW9mKHUzMikpOwo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoGlmICh2ZXJzaW9uID09IEVUTkFWSVZf
+SU9NTVVfVjIpIHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ2xvYmFsLT52Mi5i
+cm9rZW5fcHRhID0gZ3B1LT5pZGVudGl0eS5tb2RlbCA9PQo+IGNoaXBNb2RlbF9HQzYyMDsKPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGdsb2JhbC0+djIucHRhX2NwdSA9IGRtYV9h
+bGxvY193YyhkZXYsCj4gRVROQVZJVl9QVEFfU0laRSwKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAmZ2xvYmFsLT52Mi5wdGFfZG1hLAo+IEdGUF9LRVJORUwpOwo+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKCFnbG9iYWwtPnYyLnB0YV9jcHUpCj4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2aXZfbW11LmgKPiBiL2RyaXZl
+cnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2aXZfbW11LmgKPiBpbmRleCAyZWM0YWNkYTAyYmM2Li41
+NjI3ZDJhMGQwMjM3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ldG5hdml2L2V0bmF2
+aXZfbW11LmgKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXRuYXZpdi9ldG5hdml2X21tdS5oCj4g
+QEAgLTU1LDYgKzU1LDggQEAgc3RydWN0IGV0bmF2aXZfaW9tbXVfZ2xvYmFsIHsKPiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHU2NCAqcHRhX2NwdTsKPiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoGRtYV9hZGRyX3QgcHRhX2RtYTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoERFQ0xBUkVfQklUTUFQKHB0YV9hbGxvYywgRVROQVZJVl9QVEFfRU5UUklF
+Uyk7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qIFdoZXRoZXIgcnVudGltZSBz
+d2l0Y2hpbmcgcGFnZSB0YWJsZSBJRCB3aWxsIGZhaWwKPiAqLwo+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBib29sIGJyb2tlbl9wdGE7Cj4gwqDCoMKgwqDCoMKgwqDCoH0gdjI7Cj4g
+wqB9Owo+IMKgCgo=
 
 
