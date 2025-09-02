@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-795860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAB5B3F8B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:38:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 969B9B3F8B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D931A171C68
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:38:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6802A172558
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8982EC57E;
-	Tue,  2 Sep 2025 08:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381F22ECD2C;
+	Tue,  2 Sep 2025 08:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPbTkk3B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE9wNu6F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2A82EC572
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761152ECD20
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802054; cv=none; b=Rvhvdy/1K1GmTz50agLDt3yjkodSxVb/B/8sfBIccz2+S4WbLz5RUnMtr30c7hIvKhq8GooGWwX/PubLdbyK0XeTR+VY3fHI22D6dxxq3AOZaqJKpKKUvfntxcNq9DTvOCyZ6oUW7M+CPk21WCBmUCxhMJ8GBsTwZW+rI9y8/iw=
+	t=1756802056; cv=none; b=NOhiTk6nZSTOMfs+gZ4NnmvUknxzDN4oe56bfUGdQIU6TeUQ8i4BKg+N6ugPr4WwkU54lEGYA49o9jt3YIwe4/8dbecJOdL0cYrEnlRWkXdnFoJahIl1E7UG9v9Eq+0iogPbeI7SgCrR4ho2yiHgBUpazokjFHwgRjQu8H9QgvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802054; c=relaxed/simple;
-	bh=8MPmTxUTV3g1rzAZxNPkLlwzM2lhv8IEy3sLqM4qcjM=;
+	s=arc-20240116; t=1756802056; c=relaxed/simple;
+	bh=rt6xHw1/6F4wIZvvIQx12pdyMgsEZs64/BuHhHgoQwY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A99GobEs5Ttdx30uBfX21eGtU+qrfUWJb6HwykY31uYpMQnQp1r861zMV1boK64jZPPFgpOfs+E7nYIhaiHRLsgtq8cUiqN+Plnb3AyVMspRLGdDvUx/oSImQbQ8Nq0uVO1MVHHOkjdFHEBm2tTBh7+tYMMmkkK0PEys8wPFuNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPbTkk3B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB54C4CEED;
-	Tue,  2 Sep 2025 08:34:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=skpyybpHaoVgQllpCzXeJxbEz/gKdZqK4Tj8QLokHclhhT6SaUMisqSqdecJovEGk0nU2E0pMhdJm+2WfZLuW8EZlx7tycdWO1sybPlJj9FjHYtESU5tS3Rsyi/n6XQw7m70cSIqm7jGBPB8TRSvXBW9/XKuA+EGI969KkHkjkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE9wNu6F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1A02C4CEED;
+	Tue,  2 Sep 2025 08:34:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756802053;
-	bh=8MPmTxUTV3g1rzAZxNPkLlwzM2lhv8IEy3sLqM4qcjM=;
+	s=k20201202; t=1756802056;
+	bh=rt6xHw1/6F4wIZvvIQx12pdyMgsEZs64/BuHhHgoQwY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NPbTkk3BdqK9YFrNnktddrvvZYhOIcwi7pmv6ifLQt/TsekHBob3GXp7dUT3sCxQj
-	 eoAiD1gfGnwueKMtFMkSMPUI8SLukB5BjVx4vBFqDF4fK2x/GXBo2WtSypKYOsNR+I
-	 ErqiQdYbCsijVZKkAi97pq8yBXHcOlwEHcWZY//gVl96jBKGLEiOJWomzMi5J8LH4F
-	 U3qhUp9vmFO7kYlJzWZo8pP3OXOsot2jTO8Hy+xm1cYMqR+smsKuGqIM6m/Lvquudo
-	 SXEDVA/qhEa5RwqxPesZU0EDFCjfjwCOqEDhZgp28YNE4GKPeagUW8ste7CG2/ignV
-	 LG3GzTNsx+Irw==
+	b=OE9wNu6Fow/wzbcDKpaesIgEoPQDBgwiy3phinjKnfBpJjNYcFqDTaZHjgx22BYrn
+	 JuRDoSEXIkqzW0itymk/DH6pMziXluwWwdzaK+iVXOJTtTSQsRvv1yfW/ujpHICsQ0
+	 q4T+b0VOivpxSLB+1qqJILq4qz0cO96bawJs0sp8Zq+p94icSWLdxcEb76PA1qPFhR
+	 4Q2iGyB7eCWpA/9EEsruBBG8cW3I8eIZBu1ihtV/lcSFyxxqcQQRnXDTwbQeAFPxXy
+	 m3U5PqVjikq9gendmC5hS6dHCOJoUY4BJOEDz5UJqXN4CvKvEMtsGwr5WwyA+Vy/69
+	 /0D9ukBT7+UuA==
 From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 02 Sep 2025 10:32:52 +0200
-Subject: [PATCH 24/29] drm/tidss: dispc: Improve mode checking logs
+Date: Tue, 02 Sep 2025 10:32:53 +0200
+Subject: [PATCH 25/29] drm/tidss: dispc: Move dispc_device definition to
+ headers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-drm-state-readout-v1-24-14ad5315da3f@kernel.org>
+Message-Id: <20250902-drm-state-readout-v1-25-14ad5315da3f@kernel.org>
 References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
 In-Reply-To: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -65,146 +66,120 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org, 
  linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4279; i=mripard@kernel.org;
- h=from:subject:message-id; bh=8MPmTxUTV3g1rzAZxNPkLlwzM2lhv8IEy3sLqM4qcjM=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBnbVu9vFH0+3zxEZtvCBUJvQ84lz/kWK3Rd3mRfN/fsW
- JvE7++mdUxlYRDmZJAVU2R5IhN2enn74ioH+5U/YOawMoEMYeDiFICJtD1mbDj7vmd++jkeh5TV
- 7z45hW3Sf3rjgItJfG54XV5uUOPNDyE9+/IO/blXVRGwb3fKLumEmYwNb0UCm+2D+OMnZzHrGRV
- uuXFx7qact3EHN7PJ1366xbkk4nkHj1b7/amyjnt04t66pAgDAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3016; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=rt6xHw1/6F4wIZvvIQx12pdyMgsEZs64/BuHhHgoQwY=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBnbVu9vWbVg48IHYQnLPijEmvWE2DJstFfbbHFAdnr2j
+ U3qJgwzO6ayMAhzMsiKKbI8kQk7vbx9cZWD/cofMHNYmUCGMHBxCsBEFu5irE/61DHnc6/J/VVS
+ s56FM9Wvz+cTep4wMWl26IcmAfsrE+96Lti571nNreyAyQl9J8/tj2BsuFGn7jBlyck5LZu2met
+ f/nS6tM74UY9ewYQeyz1dlZ97/CV37Up1TVi52KFgps8lCxklAA==
 X-Developer-Key: i=mripard@kernel.org; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-The dispc_vp_mode_valid() function checks whether a mode can be handled
-by the display controller.
-
-There's a whole bunch of criteria, and it's not clear when a rejection
-happens why it did. Let's add a bunch of logs on error to make it
-clearer.
+We'll need to access the dispc_device structure from other parts of the
+driver so let's move it to a header.
 
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
- drivers/gpu/drm/tidss/tidss_dispc.c | 47 +++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/tidss/tidss_dispc.c | 33 ---------------------------------
+ drivers/gpu/drm/tidss/tidss_dispc.h | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-index 32248b5f71b7566dc33d7a7db0efb26d3a9ed1c3..ef948e3041e10bc65cf2c4794a4e4cffa7e3fb3a 100644
+index ef948e3041e10bc65cf2c4794a4e4cffa7e3fb3a..2f9cf95d6d0525a02d8adaae968aa551b7e27077 100644
 --- a/drivers/gpu/drm/tidss/tidss_dispc.c
 +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-@@ -1349,47 +1349,63 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
+@@ -476,43 +476,10 @@ const struct dispc_features dispc_am62l_feats = {
+ 	.vid_order = {0},
+ };
  
- enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
- 					 u32 hw_videoport,
- 					 const struct drm_display_mode *mode)
+ static const u16 *dispc_common_regmap;
+ 
+-struct dss_vp_data {
+-	u32 *gamma_table;
+-};
+-
+-struct dispc_device {
+-	struct tidss_device *tidss;
+-	struct device *dev;
+-
+-	void __iomem *base_common;
+-	void __iomem *base_vid[TIDSS_MAX_PLANES];
+-	void __iomem *base_ovr[TIDSS_MAX_PORTS];
+-	void __iomem *base_vp[TIDSS_MAX_PORTS];
+-
+-	struct regmap *am65x_oldi_io_ctrl;
+-
+-	struct clk *vp_clk[TIDSS_MAX_PORTS];
+-
+-	const struct dispc_features *feat;
+-
+-	struct clk *fclk;
+-
+-	bool is_enabled;
+-
+-	struct dss_vp_data vp_data[TIDSS_MAX_PORTS];
+-
+-	u32 *fourccs;
+-	u32 num_fourccs;
+-
+-	u32 memory_bandwidth_limit;
+-
+-	struct dispc_errata errata;
+-};
+-
+ static void CH(struct dispc_device *dispc)
  {
-+	struct tidss_device *tidss = dispc->tidss;
-+	struct drm_device *dev = &tidss->ddev;
- 	u32 hsw, hfp, hbp, vsw, vfp, vbp;
- 	enum dispc_vp_bus_type bus_type;
- 	int max_pclk;
+ 	WARN_ON((dispc->dev->power.runtime_status != RPM_ACTIVE) &&
+ 		(dispc->dev->power.runtime_status != RPM_RESUMING) &&
+ 		(dispc->dev->power.runtime_status != RPM_SUSPENDING));
+diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
+index 849ec984026e223de7c8a55a4b5672c2262f38c0..f5d5798de1ba550dedbcba36b1ef41d5ecceaa0c 100644
+--- a/drivers/gpu/drm/tidss/tidss_dispc.h
++++ b/drivers/gpu/drm/tidss/tidss_dispc.h
+@@ -95,10 +95,43 @@ struct dispc_features {
+ 	u32 num_vids;
+ 	struct dispc_vid_info vid_info[TIDSS_MAX_PLANES];
+ 	u32 vid_order[TIDSS_MAX_PLANES];
+ };
  
- 	bus_type = dispc->feat->vp_bus_type[hw_videoport];
- 
- 	max_pclk = dispc->feat->max_pclk_khz[bus_type];
- 
--	if (WARN_ON(max_pclk == 0))
-+	if (WARN_ON(max_pclk == 0)) {
-+		drm_dbg(dev, "Invalid maximum pixel clock");
- 		return MODE_BAD;
-+	}
- 
--	if (mode->clock < dispc->feat->min_pclk_khz)
-+	if (mode->clock < dispc->feat->min_pclk_khz) {
-+		drm_dbg(dev, "Mode pixel clock below hardware minimum pixel clock");
- 		return MODE_CLOCK_LOW;
-+	}
- 
--	if (mode->clock > max_pclk)
-+	if (mode->clock > max_pclk) {
-+		drm_dbg(dev, "Mode pixel clock above hardware maximum pixel clock");
- 		return MODE_CLOCK_HIGH;
-+	}
- 
--	if (mode->hdisplay > 4096)
-+	if (mode->hdisplay > 4096) {
-+		drm_dbg(dev, "Number of active horizontal pixels above hardware limits.");
- 		return MODE_BAD;
-+	}
- 
--	if (mode->vdisplay > 4096)
-+	if (mode->vdisplay > 4096) {
-+		drm_dbg(dev, "Number of active vertical lines above hardware limits.");
- 		return MODE_BAD;
-+	}
- 
- 	/* TODO: add interlace support */
--	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
-+	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
-+		drm_dbg(dev, "Interlace modes not suppported.");
- 		return MODE_NO_INTERLACE;
-+	}
- 
- 	/*
- 	 * Enforce the output width is divisible by 2. Actually this
- 	 * is only needed in following cases:
- 	 * - YUV output selected (BT656, BT1120)
- 	 * - Dithering enabled
- 	 * - TDM with TDMCycleFormat == 3
- 	 * But for simplicity we enforce that always.
- 	 */
--	if ((mode->hdisplay % 2) != 0)
-+	if ((mode->hdisplay % 2) != 0) {
-+		drm_dbg(dev, "Number of active horizontal pixels must be even.");
- 		return MODE_BAD_HVALUE;
-+	}
- 
- 	hfp = mode->hsync_start - mode->hdisplay;
- 	hsw = mode->hsync_end - mode->hsync_start;
- 	hbp = mode->htotal - mode->hsync_end;
- 
-@@ -1397,29 +1413,40 @@ enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
- 	vsw = mode->vsync_end - mode->vsync_start;
- 	vbp = mode->vtotal - mode->vsync_end;
- 
- 	if (hsw < 1 || hsw > 256 ||
- 	    hfp < 1 || hfp > 4096 ||
--	    hbp < 1 || hbp > 4096)
-+	    hbp < 1 || hbp > 4096) {
-+		drm_dbg(dev,
-+			"Horizontal blanking or sync outside of hardware limits (fp: %u, sw: %u, bp: %u).",
-+			hfp, hsw, hbp);
- 		return MODE_BAD_HVALUE;
-+	}
- 
- 	if (vsw < 1 || vsw > 256 ||
--	    vfp > 4095 || vbp > 4095)
-+	    vfp > 4095 || vbp > 4095) {
-+		drm_dbg(dev,
-+			"Vertical blanking or sync outside of hardware limits (fp: %u, sw: %u, bp: %u).",
-+			vfp, vsw, vbp);
- 		return MODE_BAD_VVALUE;
-+	}
- 
- 	if (dispc->memory_bandwidth_limit) {
- 		const unsigned int bpp = 4;
- 		u64 bandwidth;
- 
- 		bandwidth = 1000 * mode->clock;
- 		bandwidth = bandwidth * mode->hdisplay * mode->vdisplay * bpp;
- 		bandwidth = div_u64(bandwidth, mode->htotal * mode->vtotal);
- 
--		if (dispc->memory_bandwidth_limit < bandwidth)
-+		if (dispc->memory_bandwidth_limit < bandwidth) {
-+			drm_dbg(dev, "Required memory bandwidth outside of hardware limits.");
- 			return MODE_BAD;
-+		}
- 	}
- 
-+	drm_dbg(dev, "Mode is valid.");
- 	return MODE_OK;
- }
- 
- int dispc_vp_enable_clk(struct dispc_device *dispc, u32 hw_videoport)
- {
++struct dss_vp_data {
++	u32 *gamma_table;
++};
++
++struct dispc_device {
++	struct tidss_device *tidss;
++	struct device *dev;
++
++	void __iomem *base_common;
++	void __iomem *base_vid[TIDSS_MAX_PLANES];
++	void __iomem *base_ovr[TIDSS_MAX_PORTS];
++	void __iomem *base_vp[TIDSS_MAX_PORTS];
++
++	struct regmap *am65x_oldi_io_ctrl;
++
++	struct clk *vp_clk[TIDSS_MAX_PORTS];
++
++	const struct dispc_features *feat;
++
++	struct clk *fclk;
++
++	bool is_enabled;
++
++	struct dss_vp_data vp_data[TIDSS_MAX_PORTS];
++
++	u32 *fourccs;
++	u32 num_fourccs;
++
++	u32 memory_bandwidth_limit;
++
++	struct dispc_errata errata;
++};
++
+ extern const struct dispc_features dispc_k2g_feats;
+ extern const struct dispc_features dispc_am625_feats;
+ extern const struct dispc_features dispc_am62a7_feats;
+ extern const struct dispc_features dispc_am62l_feats;
+ extern const struct dispc_features dispc_am65x_feats;
 
 -- 
 2.50.1
