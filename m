@@ -1,107 +1,110 @@
-Return-Path: <linux-kernel+bounces-796087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA59B3FBBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:05:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC29FB3FBBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158903BE2F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:05:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA7A92C2C49
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C846B2F39B8;
-	Tue,  2 Sep 2025 10:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DAA2EE5F0;
+	Tue,  2 Sep 2025 10:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="za/KGQhN"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N8+uvpO4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4862EDD54
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8A01A288
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756807438; cv=none; b=B3NoR6MCOh6qHo596q2TFlfq14OEY6ud+H8yGKKZ2N6UDrrpIDUXGzQCUAzs6xmI/jW0vwf656P6CxHiOumoi+zp11JjhE0ye8seQLz7e2JFPL9wZZJh453J8nb4buG+gdRTVm7xpjrKVn6XIKja4tMzgldpbFwbCascra5LQhk=
+	t=1756807480; cv=none; b=EMWA55nYFxZw8R3ZzKP90mS5MLvgLrok2JT0d/ztPkk9v1cE7/4ljAklhG4dkefpbWE0VxBzERdAizBo3BD0I5ULgYIqpooL9JMNDELZIRyaGaOx6302+qaedzdqLpAP/o7A+wpHH7bqf9dHp56i40CupCLvTu7xdXqjQyJ5YLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756807438; c=relaxed/simple;
-	bh=RQDIbLgimVbUl3Rk1h7DgepboLPCimSzwadLXc104t4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AKHCrQEfPuTQhls5uu+KIFscAdJELJLnj7q57sUkN/4A9GfOkZpJMZpq9oiN0MwUAnIqh9FcHMll29jCME1mgO+C5hjBjUMkwiBSr3JPld6/3a7lmyLR0T4eUsDsawF1OXSt4aGPLU7EP8fSiCvCwpWTfqUl5rqSs9bWgeEAzrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=za/KGQhN; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-336b071e806so33580571fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756807435; x=1757412235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RQDIbLgimVbUl3Rk1h7DgepboLPCimSzwadLXc104t4=;
-        b=za/KGQhN9soTtfENAe/SFQHX3+wuePlxRQc30VdCE6LoObc+AL9nT7YszLXzIiFg8O
-         Pf5MqwMyCASFr9ZuIp7CcLI8Y5Rhsa9IKEfSor+zdX8Cv7sproprvkqx4XEfJpHca+zI
-         IW5Ga3n7jdDqDGv1x79+0uN6Eo+w/MTXJny0s92HhkAo5GVFsYV/8IvXiLZ+7RP9xbAi
-         uIIUghp75Xl9e5pboC1HydQ8FJZYBhWzNQ6CuU/k2Kmo7CPD1E3BQheRXhwi5Dv+gNJY
-         fmBeEVCat6lWdBSJEzDscONDADLzIgpwXtNtKqy36Y6k4psUDbBim+QCzuvWzrODpQId
-         TBZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756807435; x=1757412235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RQDIbLgimVbUl3Rk1h7DgepboLPCimSzwadLXc104t4=;
-        b=uO9A0tV7Zk5iLbSEAdxVZCpFcYiv41FFbK2Fn4AYEspP531RkdaVEXtIMkqsmzW0CS
-         p+Y4X1ID2opffwULnfhsMqTSRM+9OPGlVLpm94q9oQqBOlgAtRCwlcqlbec4lwAo7vHB
-         7igwSB2KIncKvY8bqU5KZePe49ZsX8JKwNWtlDmBoHl8OX80t+0LSXJK+GSvv8CrclI0
-         XVf1D1pUlW5tLwVwNBE5UYLgkXkTSLXkHNRdf2Bvw5L5I5JVjJl40pHlH9dLoJ3QoQTp
-         D6uTjJbgoWdwopaRxuwYXXBkejKGb6X0z9MogxkpP/BzGh0srjSuUqfvMR7/+rh/BQd0
-         HEAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpUrBE3Mxr3dFzrStxRn8xbUO9xynB84GSmAZGyAsUwJxKXmbCzicuCC/il/R2lJ7J9n91oHBE9CH+Ee4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+zYtOvpBNQaYTtqkceMC3w78uUCZu0OALzHq4PJKLdnXkMKMq
-	nSefb3RxvbJ0gCvLgUVUwwTRJ7exBv0ev4EcnuOZD6TP07yRLhMQJpVwdwwodFp3X678g8+MWNP
-	wixJbYDXKBL0wnkOzny7WUEaM7H3izfOfkqPaWMKNnQ==
-X-Gm-Gg: ASbGnctOCP71gApFL6TLGRS7SoydwDSwo1gaKSMDlgPq9OL+9pX1TjPN2S/5Rp//UBZ
-	YHMo+cgX7BUtDIn2hlORryye2bzkqN5fQOsabSr12VK6zmX25K9kAq99ayOIF3E0wHNyUaHVqih
-	xkUiNfJ3OORWAtfw8yqW96gpgdJHKozuzzc+wZ4jGDYQBiyY0l+wI18y3qOqQ1L4irtMUqNNzpz
-	QARmXzrIUCiqDrwyQ==
-X-Google-Smtp-Source: AGHT+IE1BlKadkaF5kTFrWzyfYeZ1gvEPDs1S73bM6siyQqc2LEO6j2N1sYbNnQdDv++P5uJf3aJ4CJmqxHTwwn+dFc=
-X-Received: by 2002:a05:6512:3b0f:b0:55f:3ecd:31b9 with SMTP id
- 2adb3069b0e04-55f708ec379mr2871898e87.26.1756807434523; Tue, 02 Sep 2025
- 03:03:54 -0700 (PDT)
+	s=arc-20240116; t=1756807480; c=relaxed/simple;
+	bh=DaeLapKaYHOr60eRmE53nQmUJf2cga3S68w5EoPTUHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iC2d+MVdRc4X69Yakme19JPO5R9QDEitzjDHG3rYH8BY6lRYw5UEuMwzr4c6ZW6QTq7MbuSXsdZYU1O7df91URMhvP9Xk3J6P1touNNHZusQQioHHkhC3JpuIwwVIfVCUpNanSMNvCSjiZ03i2q0NFc4u4E3ZYc0VjKuDCgwzdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N8+uvpO4; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756807479; x=1788343479;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=DaeLapKaYHOr60eRmE53nQmUJf2cga3S68w5EoPTUHw=;
+  b=N8+uvpO4yRc0Ufv9HX7mGHhZ7ww0DCgc+EWtVQAbdLXRPlVQzouNK/vO
+   ZQuE+Y3L3KnuC1m831D9SVyW5JBNYU1lINJS1sppG1TfOQWUrPJA8gskT
+   KxuOXfwxvMLoa3gRLk7fDphLe02onxY0n2uvLXnMnu7UBQ30z0hkEYN9d
+   4qk0k8mqAeIK1iubPIH3K6al/2SZeODl7hgpUk+TXj3rZ4dntnlsYjOaT
+   h3koMJnc55jCzrNvso2pOtMivlB3CxyWV/x5yMiw0Xik6sJTQVmZMZZ+C
+   5MFc8ciSAYVl6UAAclEp8pqfxfNZh2w5dnpE6H15MJIQlYRZnGDMjm4Ny
+   A==;
+X-CSE-ConnectionGUID: AQ+jpAt5QSKyV5BuYyggyA==
+X-CSE-MsgGUID: LaoDRzk3SEKqrrbMz+JjzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="76516981"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="76516981"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:04:38 -0700
+X-CSE-ConnectionGUID: jzLSp0h1ReeP5e5kStCq1g==
+X-CSE-MsgGUID: 3R6Hl9h0Tlux6QRnCwWEZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="170494976"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:04:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utNsQ-0000000Af5n-45Hp;
+	Tue, 02 Sep 2025 13:04:34 +0300
+Date: Tue, 2 Sep 2025 13:04:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] auxdisplay: linedisp: add num_chars sysfs attribute
+Message-ID: <aLbBMumD9mJK2z5U@smile.fi.intel.com>
+References: <20250901020033.60196-1-jefflessard3@gmail.com>
+ <20250901020033.60196-4-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-gpio-mmio-mfd-conv-v1-0-68c5c958cf80@linaro.org> <20250811-gpio-mmio-mfd-conv-v1-2-68c5c958cf80@linaro.org>
-In-Reply-To: <20250811-gpio-mmio-mfd-conv-v1-2-68c5c958cf80@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 2 Sep 2025 12:03:43 +0200
-X-Gm-Features: Ac12FXzw139kUIsz1dfkuS3UcF1OoGTrZV60kLcfqSHr6g-PiOd7LzRx_KnI0uE
-Message-ID: <CACRpkdbuoEitE6ggrmLFBhTCwRzBq4J75RPjFpKzzu=9eXzEbA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mfd: vexpress-sysreg: use new generic GPIO chip API
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Lee Jones <lee@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Pawel Moll <pawel.moll@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250901020033.60196-4-jefflessard3@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Aug 11, 2025 at 3:36=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+On Sun, Aug 31, 2025 at 10:00:27PM -0400, Jean-François Lessard wrote:
+> Add a read-only 'num_chars' sysfs attribute to report display digit count.
+> 
+> The num_chars attribute provides essential capability information to
+> userspace applications that need to know display dimensions before writing
+> messages, complementing the existing message and scroll controls.
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Convert the driver to using the new generic GPIO chip interfaces from
-> linux/gpio/generic.h.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+...
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>  	&dev_attr_message.attr,
+>  	&dev_attr_scroll_step_ms.attr,
+> +	&dev_attr_num_chars.attr,
+>  	&dev_attr_map_seg7.attr,
+>  	&dev_attr_map_seg14.attr,
 
-Yours,
-Linus Walleij
+It looks like we have two groups of the attributes here, can we keep the upper
+one sorted? (Put the new attribute one line above?)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
