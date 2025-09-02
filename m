@@ -1,70 +1,89 @@
-Return-Path: <linux-kernel+bounces-796230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC17B3FD93
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:17:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7CBB3FD99
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245A81B22F7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0DBA2C3184
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5AB2DEA7E;
-	Tue,  2 Sep 2025 11:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFD82F745C;
+	Tue,  2 Sep 2025 11:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SMZ7+Bmc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2rPU+K4o"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="Fk7PXV/v"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F390E280A2F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3F027FD5B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756811866; cv=none; b=gzgvyt2AKAB05LANzzf8qF+shv1X0BialjNR9YOlDjIj6ox/zQQBzg1AE5Yz1AM/Xb1ib+D7FPEPLqeTHfiRLBBlWso8UuciOsP7lphPECKp+FBh3Ctyzhcb3RrcrbXEByQe6SAwOUcUK/RjYDTELukjy4HEKCWOvNCSHIBnqBc=
+	t=1756811923; cv=none; b=Vcy4IjGUew8mXqJLaBVWlKi2Nh60AP+oB386blMC2nn8E0BMe7HLjevTKo5AhHlXl2bYbpUCVeJDQAQox/6cVe0kpFplEtJWZYpkDQb1SzgFoGaG2UC9PPhdlx1e5xw23FBzPeKvGKNcIM14l/v7EIZTyEJ7PwjGBa41do+63/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756811866; c=relaxed/simple;
-	bh=fHzzoYSHg9ksGleSFYDrl9wU1kx1EKt1g9S3/Xb5Qcs=;
+	s=arc-20240116; t=1756811923; c=relaxed/simple;
+	bh=gGRmi9BKNmESEIGIYdP+7B9F6iwTVze0fleAiVXwmco=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWKjjZhZsarV2YXI/oFC2PAK+d8hNDeiNlpbU/XDorI7KLHQceY4y2A/rZX+se4D38O4gEq6KmijF750X/dNWIwb4FOCde5FZROlv7rwmHZqiq+vU3gCUEllJwMxFiO62E6k1tiJ2/orAX9hzBjq0tHi7rI8lVOvzBtciWbrnlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SMZ7+Bmc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2rPU+K4o; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 2 Sep 2025 13:17:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756811863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oFjWGYIsy98AcXysopDf44OU1aoUg06aXLTfYq7t5/Y=;
-	b=SMZ7+Bmca+nbikRYRdLxU+XVQnbDVZovZileY6fafW96He4JmaMW7dXm+3OC8JqcqlcEZV
-	TKcIaBIKFivExqIrU0PhqIEQn8TqCNCeK/brusv/90W14XC1j6oov6FE1QuZwGnIPRevcI
-	OyhujgVQO8r4sTYfotQDkrMaFJs7OwSqUeWQiCSywfEE9aTxyJ43eIUR85AXYHDmghEmMx
-	Y2liL2e3C7IxlLXqe9AShWWMMd9pe9FIlMY/eJpjkh5AXrX0zue+ExItIXTg5HsDYALskC
-	0aRFi2zmf4WHaSRQJbgHWk4g1cAjlvHV2qguY7zVtiE+6ExSmAHB3LwjfdRnzA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756811863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oFjWGYIsy98AcXysopDf44OU1aoUg06aXLTfYq7t5/Y=;
-	b=2rPU+K4osKEZ4g9DRYiIyNmCpekP07sNWBICZPX8nt6n46cGh6Y+4JkJn0B9SnwmKQZc1j
-	yPS/MtXtRZsmpZAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Clark Williams <clrkwllms@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 1/3] workqueue: Provide a handshake for canceling BH
- workers
-Message-ID: <20250902111740.hwMmUu4T@linutronix.de>
-References: <20250901163811.963326-1-bigeasy@linutronix.de>
- <20250901163811.963326-2-bigeasy@linutronix.de>
- <CAJhGHyBaqn_HOoHX+YinKW5YSy1rncfbvYXktkEtmFgK44E9wg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtqRhEyfRnWsRAkmX3QDN1YPhQWnijWC8Wwu5zVLuzLczvHllZgWoCiSuGAf0KxV+cfZDs1n1uLIFurbC5Z/pMeTtEptrL2QyIe1SnbowH7PVKVpcRN2nhnOqys9yH5miouV35zLT3rVgp2l6i8si/hu2arACQE2k3p8uaia83M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=Fk7PXV/v; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77246079bc9so2712698b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 04:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1756811921; x=1757416721; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0nWMjohz4DV5AHDo374fac7S+dpBXMCA8tWWrP1vlQY=;
+        b=Fk7PXV/v32yuwhr9INs8+JHQ3Oqp02NdzJUbhj55qZ0WolrgyfZ9WIdkdEw5KtFuwt
+         cBxlXyP4BZMjcMzbkaZinfN3lNVI8JDs1gRZiSvpLr9jz3GAZAyMjoKSNEGPFmKuds7o
+         yYhobuESqB5vjhrSS2MA6SJJ0+sLjkxLt4Vu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756811921; x=1757416721;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0nWMjohz4DV5AHDo374fac7S+dpBXMCA8tWWrP1vlQY=;
+        b=CNbTHOn+YSwldeXNH4Fq9LvqYtTM9V3MrCUSroMNWd72wSIK8FH4I7np1A/C9Y4iEb
+         yQ9DyDHThdM5U367ARPhW5cgazull6zWzwd1lP5wvNjjFB+r2DVGEgegA7mYklBLaEgJ
+         cLKkUW1DZcakIiN8VE12BZWsDE+PMIue84s/gTI8p09yJP8N/5UZREqQ+t5yq2vHwLX7
+         MnImYM2KeGnJEv0ycVD/pVkmgzHAEgSiP0WQuxU730mLXX4Nv5ehWXQ0WUyl/F8n768n
+         SAxpmyQ4PCTan/ers+6RB3GhCcrEk2WFPmEg/KvETUd6Hjkq5ZONJm2nVZFWcYdEwRp/
+         vGnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBAcK7bwhBW8vnCzL1JzVLXEhem6/Xn4LWF1spoo5gmpTv/RH9NtZybhsZlxe1zt2n2/QqLDdck4nBR0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzzCLnKKX3OkXuXAOPuM24g+5ZLy92yNA/w2EgG10lP6uYCYUs
+	9ZGZR5wr5xb8pS4ejgJrieylkVByr8bMiDtd5rMXDSH4MHsl/5o6UrItOtW59SB1FPU=
+X-Gm-Gg: ASbGncuAZl67Gll7SBqTgC7MGRyH420ae4OODP3GVVqi9QQ66gsEkqAav0/T4sLhh4J
+	AFfbj7cSRV8mRF8yAllDZHEGALdBRnb7kpXa0ww5YvOCTIIA+zf2CVAy0hdqXfaeCsHUDeFBnX+
+	kPf+gHubiCLb5j0Je+8xs7v0bsWGYDQDQJU6hCWQCLpOW8uUJRebcIiI5iWFcV5eVaQagseMheE
+	5QRCPcko0Jbbhu0VGynSYgDz6nwsZyM0BTDQe4W0Mc9edX3qKORQ65LeEdJNSjnYlYRIgK83oO3
+	64lyPsKB2cuy2Nx6VIOHjzSxfqA1tmDFl9ZeiGKYgLnno21x80KmSy52+VwrVB28lJfxoXnuvuk
+	MBRcLiuUgIDAvlLZzMRFXvAgTODDF97ubRkbmrC29WlPfXQqaA8XAPH8sYOLAZaJL
+X-Google-Smtp-Source: AGHT+IE+I2Gk8VSrnS6eFFPIKGMhJEZoHV5J500ITPlIHjfERnr0mfn/YxRU4ImwyNpSqSmp4jInyg==
+X-Received: by 2002:a05:6a20:6a27:b0:246:17b:3577 with SMTP id adf61e73a8af0-246017b37d1mr908910637.58.1756811921381;
+        Tue, 02 Sep 2025 04:18:41 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26bc9csm13471707b3a.18.2025.09.02.04.18.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 04:18:41 -0700 (PDT)
+Date: Tue, 2 Sep 2025 20:18:35 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v3 4/5] rust: miscdevice: Add `uring_cmd` support
+Message-ID: <aLbSi5-a67i78BHl@sidongui-MacBookPro.local>
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
+ <20250822125555.8620-5-sidong.yang@furiosa.ai>
+ <CADUfDZoDvAp1yqFyB_SQiynqQfOQPkO_mnQ_pWAXpZJESecFFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,55 +92,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJhGHyBaqn_HOoHX+YinKW5YSy1rncfbvYXktkEtmFgK44E9wg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADUfDZoDvAp1yqFyB_SQiynqQfOQPkO_mnQ_pWAXpZJESecFFw@mail.gmail.com>
 
-On 2025-09-02 18:12:10 [+0800], Lai Jiangshan wrote:
-> Hello
-Hi Lai,
-
-> > --- a/kernel/workqueue.c
-> > +++ b/kernel/workqueue.c
-> > @@ -222,7 +222,9 @@ struct worker_pool {
-> >         struct workqueue_attrs  *attrs;         /* I: worker attributes */
-> >         struct hlist_node       hash_node;      /* PL: unbound_pool_hash node */
-> >         int                     refcnt;         /* PL: refcnt for unbound pools */
-> > -
-> > +#ifdef CONFIG_PREEMPT_RT
-> > +       spinlock_t              cb_lock;        /* BH worker cancel lock */
-> > +#endif
-> >         /*
+On Mon, Sep 01, 2025 at 06:12:44PM -0700, Caleb Sander Mateos wrote:
+> On Fri, Aug 22, 2025 at 5:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> >
+> > This patch introduces support for `uring_cmd` to the `miscdevice`
+> > framework. This is achieved by adding a new `uring_cmd` method to the
+> > `MiscDevice` trait and wiring it up to the corresponding
+> > `file_operations` entry.
+> >
+> > The `uring_cmd` function provides a mechanism for `io_uring` to issue
+> > commands to a device driver.
+> >
+> > The new `uring_cmd` method takes the device, an `IoUringCmd` object,
+> > and issue flags as arguments. The `IoUringCmd` object is a safe Rust
+> > abstraction around the raw `io_uring_cmd` struct.
+> >
+> > To enable `uring_cmd` for a specific misc device, the `HAS_URING_CMD`
+> > constant must be set to `true` in the `MiscDevice` implementation.
+> >
+> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > ---
+> >  rust/kernel/miscdevice.rs | 53 ++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 52 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> > index 6373fe183b27..fcef579218ba 100644
+> > --- a/rust/kernel/miscdevice.rs
+> > +++ b/rust/kernel/miscdevice.rs
+> > @@ -11,9 +11,10 @@
+> >  use crate::{
+> >      bindings,
+> >      device::Device,
+> > -    error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+> > +    error::{from_result, to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+> >      ffi::{c_int, c_long, c_uint, c_ulong},
+> >      fs::File,
+> > +    io_uring::IoUringCmd,
+> >      mm::virt::VmaNew,
+> >      prelude::*,
+> >      seq_file::SeqFile,
+> > @@ -180,6 +181,21 @@ fn show_fdinfo(
+> >      ) {
+> >          build_error!(VTABLE_DEFAULT_ERROR)
+> >      }
+> > +
+> > +    /// Handler for uring_cmd.
+> > +    ///
+> > +    /// This function is invoked when userspace process submits an uring_cmd op
+> > +    /// on io-uring submission queue. The `device` is borrowed instance defined
+> > +    /// by `Ptr`. The `io_uring_cmd` would be used for get arguments cmd_op, sqe,
+> > +    /// cmd_data. The `issue_flags` is the flags includes options for uring_cmd.
+> > +    /// The options are listed in `kernel::io_uring::cmd_flags`.
+> > +    fn uring_cmd(
+> > +        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
+> > +        _io_uring_cmd: Pin<&mut IoUringCmd>,
 > 
-> Is it possible to use rt_mutex_init_proxy_locked(), rt_mutex_proxy_unlock()
-> and rt_mutex_wait_proxy_lock()?
+> Passing the IoUringCmd by reference doesn't allow the uring_cmd()
+> implementation to store it beyond the function return. That precludes
+> any asynchronous uring_cmd() implementation, which is kind of the
+> whole point of uring_cmd. I think uring_cmd() needs to transfer
+> ownership of the IoUringCmd so the implementation can complete it
+> asynchronously.
+
+I didn't know that I can take IoUringCmd ownership and calling done(). 
+In C implementation, is it safe to call `io_uring_cmd_done()` in any context?
+
 > 
-> Or is it possible to add something like rt_spinlock_init_proxy_locked(),
-> rt_spinlock_proxy_unlock() and rt_spinlock_wait_proxy_lock() which work
-> the same as the rt_mutex's proxy lock primitives but for non-sleep context?
-
-I don't think so. I think non-sleep context is the killer part. Those
-are for PI and this works by assigning waiter's priority, going to sleep
-until "it" is done. Now if you want non-sleep then you would have to
-remain on the CPU and spin until the "work" is done. This spinning would
-work if the other task is on a remote CPU. But if both are on the same
-CPU then spinning is not working.
-
-> I think they will work as an rt variant of struct completion and
-> they can be used for __flush_work() for BH work for preempt_rt
-> as the same way as wait_for_completion() is used for normal work.
-
-I completely dislike the idea of spinning until completion for the BH
-work. Yes, we have three tasklet users which are doing this as of today.
-We have no users which require this for workqueue and you can schedule a
-workqueue from interrupt context.
-Why do we even what this? My idea was to submit this and then hide later
-behind an "atomic" API which will hopefully remain unused. As explained
-it the previous thread: From RT's point of view it requires to acquire
-and drop the cb_lock each time and boost all items on that worker until
-the "barrier" work item arrives. While in general the "one" item is
-boosted if needed.
-
-> Thanks
-> Lai
-
-Sebastian
+> Best,
+> Caleb
+> 
+> > +        _issue_flags: u32,
+> > +    ) -> Result<i32> {
+> > +        build_error!(VTABLE_DEFAULT_ERROR)
+> > +    }
+> >  }
+> >
+> >  /// A vtable for the file operations of a Rust miscdevice.
+> > @@ -337,6 +353,36 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+> >          T::show_fdinfo(device, m, file);
+> >      }
+> >
+> > +    /// # Safety
+> > +    ///
+> > +    /// The caller must ensure that:
+> > +    /// - The pointer `ioucmd` is not null and points to a valid `bindings::io_uring_cmd`.
+> > +    unsafe extern "C" fn uring_cmd(
+> > +        ioucmd: *mut bindings::io_uring_cmd,
+> > +        issue_flags: ffi::c_uint,
+> > +    ) -> c_int {
+> > +        // SAFETY: `file` referenced by `ioucmd` is valid pointer. It's assigned in
+> > +        // uring cmd preparation. So dereferencing is safe.
+> > +        let raw_file = unsafe { (*ioucmd).file };
+> > +
+> > +        // SAFETY: `private_data` is guaranteed that it has valid pointer after
+> > +        // this file opened. So dereferencing is safe.
+> > +        let private = unsafe { (*raw_file).private_data }.cast();
+> > +
+> > +        // SAFETY: `ioucmd` is not null and points to valid memory `bindings::io_uring_cmd`
+> > +        // and the memory pointed by `ioucmd` is valid and will not be moved or
+> > +        // freed for the lifetime of returned value `ioucmd`
+> > +        let ioucmd = unsafe { IoUringCmd::from_raw(ioucmd) };
+> > +
+> > +        // SAFETY: This call is safe because `private` is returned by
+> > +        // `into_foreign` in [`open`]. And it's guaranteed
+> > +        // that `from_foreign` is called by [`release`] after the end of
+> > +        // the lifetime of `device`
+> > +        let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+> > +
+> > +        from_result(|| T::uring_cmd(device, ioucmd, issue_flags))
+> > +    }
+> > +
+> >      const VTABLE: bindings::file_operations = bindings::file_operations {
+> >          open: Some(Self::open),
+> >          release: Some(Self::release),
+> > @@ -359,6 +405,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+> >          } else {
+> >              None
+> >          },
+> > +        uring_cmd: if T::HAS_URING_CMD {
+> > +            Some(Self::uring_cmd)
+> > +        } else {
+> > +            None
+> > +        },
+> >          // SAFETY: All zeros is a valid value for `bindings::file_operations`.
+> >          ..unsafe { MaybeUninit::zeroed().assume_init() }
+> >      };
+> > --
+> > 2.43.0
+> >
 
