@@ -1,159 +1,176 @@
-Return-Path: <linux-kernel+bounces-795873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453A0B3F8D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:42:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F108EB3F8D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BC4E18902C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05AE01B22062
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A8F2EACF2;
-	Tue,  2 Sep 2025 08:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26F32EACE1;
+	Tue,  2 Sep 2025 08:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ENG7PRGQ"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E227+7pD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E682E8E03
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654292EAD16
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802180; cv=none; b=pEL/5Q1EmCPRDt5SeMw4sn4TpYe94zV37v/XdzaP8CS3bC+hT9y9o3uwSc4GTnNVXUD29ZVgk2KZq7ZC2XrUZvhzFmRrPH6OPyKhqX50TcRx8hkNA7J9Q+HKCV3sAG8oaGz/s+m0HVkPJFVly3An6zCfuDvmYBpgIiKjLOlOcWA=
+	t=1756802187; cv=none; b=mbm9GIZorpsnh7FuimcQ/WyiFLmeQ/jgciKeLVlOvWtpZL3/nyVNwj27s1kZD7/CXp8aqQYP06xvjQnvPA33f9VrSfek9PGSlDJLB+PyHced2dEbpvniQgwRcUwTiafqLb9BQ/rB36Tt5F+lq0PD35Q/YlcsdQk0g8Rl2PcNytk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802180; c=relaxed/simple;
-	bh=QnfwVPV7sl+XBZzzZ+jUFbEpa7KtnzFZK0GxLBS3hSs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=B0D229HT3QofHRzpEcb9xsPDBATXpRZuAl3MZGUGUmzLOP9BGsmHA3a+ppHo7BE6X/ghye9B0dBEpcSGy8m3nz83pOnLwv5QgLtqxVF4qzyp0HA66Ve/yeCk37ELygN9zTGpKvMucZpU7bY3NVeY4ormkyIZ08mqIVwntuQkALM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ENG7PRGQ; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b8af0b8deso11169165e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756802176; x=1757406976; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QH+dNhuwk1lL/MGBDy4gK3rPW79vkNW7Vepzh60wxeY=;
-        b=ENG7PRGQTj/xbeHGJTGCdFO2BryXM31uFX+W0tZ2BFk6MEDCuTO4ZBIguGWKjrFxyu
-         uFBxNlNP5KbSZDxK4pFDK67gYhwyLn+1692jJ2mbRsl3VP6NxSSFpTkyONt5fqCx1tot
-         9Sinc8bZheofIwnQ9YeWgG3szPHLsX4IRVHhYL9WPmv7LwTvtnkrUtTKwoPdBRq8xnAf
-         nHZsz0jGcCCFZ6VIg7rOCf7t0fC0RUBy604MH5YQj4RZ/yvHuwD37k8k4lZY+5cN3o2w
-         x20/G/kwTmynbrc/qCkOcWMtyEcvYWrnv56WftP69ozgCNWkUgl7g6SNdFaOpHWwybjN
-         CBBg==
+	s=arc-20240116; t=1756802187; c=relaxed/simple;
+	bh=DjKt8UNzaYiXX1wbg6hcu32U0WJE+vcx7RIjaEDBBxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NbWivTONi5rBbQ+KXtzU+pY/hY64AzKVhEmgKRqVuM5QEPoBhTDZVyxRLWpDl/Z9EAuqsnivn/0gTfQ/lUya2hkmSOHCFkA48xMBoXof4HDg31S0z0ggJbzYNJQdxUS5WMChEIZKfSG/ccOBnNChlTz/7vRr4opOOkmauKQEsjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E227+7pD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756802184;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cPlpyJtfF/5pmu8TR1GvHY68fM+j55CwwknTKQNY7Uk=;
+	b=E227+7pDckrw4+EZqAywOiWKOXdfc1NPrLWPpRMFUE9ICf2FTpZM+b7k+g3lOeE0G3i33e
+	P7lNV6AvalfmG/gA6gjcZ0SADg2gtmxpgM9ceqCaPioKn7ts8RdtyiXavhiI8CqFCUP1Cf
+	oqq3vXYgM83ortiy9XhbDX+9cVk7OeM=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-387-4ZOUXeJTMfyf-EiCK80NOA-1; Tue, 02 Sep 2025 04:36:19 -0400
+X-MC-Unique: 4ZOUXeJTMfyf-EiCK80NOA-1
+X-Mimecast-MFC-AGG-ID: 4ZOUXeJTMfyf-EiCK80NOA_1756802179
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e96e5521af4so5540628276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:36:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756802176; x=1757406976;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QH+dNhuwk1lL/MGBDy4gK3rPW79vkNW7Vepzh60wxeY=;
-        b=iFgaSvsgBtTPzuWf7ZBHvB/lfgD3wJW/t19ob4hG7AMOLW2mDrzoPMuJlEyuWtY5IO
-         /eneVs5pMudLrhwqOTSgL6Up8cvkSJelDZ3KeFJODiQeIaGt3usE0xx/DK6XccpL/90R
-         g7Dhh21wXFdpgU9p+eBMy/uCkXZCQcN8iPyooP0r/cLO5IWWn76wqM1zDS5WeBJZs9uS
-         elYj+Rb0dt+rWXYsVgFbPdaCF8Pdcyx1E6hg2d5VNkeMVwTQkaVTKA02nxPvHVP2khIw
-         bV0FI6ood+pgTOn/URj2LoI4Wv2evlEb1smgga5WLU7dVi3aBudab/ItLftNesAy74ly
-         VLtw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3DGS2Vm6MZ+jIkGj6WYvGjB3hognDWTltZJZM7QV1aDSaVkbZTqZuPjmlOcFofvb53MoaqJg64IpmnNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyyus+59sx8hL4dAdelGrhF4HLNDrRITAky3mlC8dbvhkAFAfpN
-	nRLsNpV3SZzW1b90fxmqnIgY/d/Vq9OlQA2DE0zWqI9SItsODadVX3ZNOfyFQRH0/o7/lep9M6E
-	mFxGkhrCA601TM46fRQ==
-X-Google-Smtp-Source: AGHT+IFrwiLMwac2efeWQGD8tg+3earadoHpSjr59iffX99070qwvna5zy2O9EDiYznHm5rt2CVI2cPNwcE5eb8=
-X-Received: from wmbep10.prod.google.com ([2002:a05:600c:840a:b0:458:bed1:8923])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:46c8:b0:45b:7c09:bc0e with SMTP id 5b1f17b1804b1-45b8549c7admr85100405e9.0.1756802175884;
- Tue, 02 Sep 2025 01:36:15 -0700 (PDT)
-Date: Tue, 02 Sep 2025 08:36:11 +0000
+        d=1e100.net; s=20230601; t=1756802179; x=1757406979;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPlpyJtfF/5pmu8TR1GvHY68fM+j55CwwknTKQNY7Uk=;
+        b=tD1/gXpMXI0E9T5qV8wUFIgORpYz9ZNIgVWo2MzvLpWiqr/6ZyCqbFpslnd3nWekb0
+         I6FDIdLCZVgmQj0u5h88arStjn2tqOmEskpCfQgBQqCeo17cuQ7txZwbyudfMlEaaVxU
+         X4LqxjzmZhBiFszupKSvCPmpepRTdZw5sDqzstgdPRLL4FZKmODV+fPx+nERT0ZfrGiV
+         pjI9wJ+q/CtpmbHqubhC2z920JVx6YkBzRDLn6q2ob6suUN8Kn6ztptBTwUtPdgf+siv
+         /PWOYk5hk+yWvJO/PTiTwgHHblEZp2A+Mx0m4AsA6ybEc72PBHXfoov2/Pu6QuOGuFX3
+         IeDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSvknwaLLpTufIldXXY7BdYL9uYvgIV0e+ReE80MJHQktdWp6+GqWoQ/w7PJNeg2efkhTP6VRVOBgLqkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynsZ+3zKSqHFpojM4+zPaFTxC5FV+otDNjXsGia0SWhg4Xpw+4
+	Zzv9PyjyfLd3TLse4hdW8uVDLntjnJCia0c+ErpCnEq1JcWOsrgGzUYC4bfieT3+LbwkZt4SQJ4
+	WXh/k4Bn1nMdIg5guUKMIr2x1WCIPbfW8YrIMl+SuF7FujBqVVuhyq2sX/s4+4yTIVQ98vzvl1Q
+	==
+X-Gm-Gg: ASbGnctftlUdEcfcA+rNSMXJSCRzolgETKx2L93PWEyDqfroLXqEoafRHYbrVqehjZ+
+	9SpSZXzZFmCMdBKNU+Pk1g2HegVDEBRvZHOq8BAlAQ7DYk1h8W9iWWXen4HmUuCCsfWvtCcmDJF
+	oVBzxMp964ktMWmPTPEDzrsTii5olOtSSM6dE1o3R2OUScV4tF9TFPOG59/NjhR/HW+a/SBjIvO
+	7wGPNX2qWXijg2Jzr8G1c3G9e6KfpkL3L7qXABThN5HIp5PF2MpVtdNeqEkhCp6Ef0A9U2rzEjK
+	A06Ixe4UWjPoIUEFaI2bHs1N6fiUzKSgJEvzdFAtrkfqmq0ftMD+612eDjWYpFEnz/gFW49NdF/
+	UTfpGbxnCQKQ=
+X-Received: by 2002:a05:6902:4187:b0:e95:3636:fec7 with SMTP id 3f1490d57ef6-e98a575d3f7mr9810597276.3.1756802179011;
+        Tue, 02 Sep 2025 01:36:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHN1rW921wMnlhkrowJD62Ue2sE0nnUiq8xQvdxYpOwafskgnuVzhDNETsAfUG/ascbcpgGRw==
+X-Received: by 2002:a05:6902:4187:b0:e95:3636:fec7 with SMTP id 3f1490d57ef6-e98a575d3f7mr9810577276.3.1756802178465;
+        Tue, 02 Sep 2025 01:36:18 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e00:6083:48d1:630a:25ae? ([2a0d:3344:2712:7e00:6083:48d1:630a:25ae])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e9bbdf4bfccsm409044276.10.2025.09.02.01.36.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 01:36:18 -0700 (PDT)
+Message-ID: <13903eae-7a61-44d6-8e54-1d3f85799f58@redhat.com>
+Date: Tue, 2 Sep 2025 10:36:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAHqstmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSwMj3dzEgpxU3Zz85OyU1ALdAt1ES2ODVAsz02RzsyQloK6CotS0zAq widGxtbUAO4ntmWEAAAA=
-X-Change-Id: 20250902-maple-lockdep-p-a930e865c76b
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2041; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=QnfwVPV7sl+XBZzzZ+jUFbEpa7KtnzFZK0GxLBS3hSs=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBotqx/CYGhzcPznFiE7UDh9XQoTakkyebBpyup4
- FA6tih9P9+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaLasfwAKCRAEWL7uWMY5
- RszmD/0RBaQV9WIxAvZ+VnmbMFTKWuCAP44AGbTl/3sQk4GNwQFQY9uNosttG4sVrjzvQo6CTyW
- ssJ6yEm0Q6z6beDpkId7DyPz22AG9PkO3nLxJaI4tge9qKiw7MPDxBhMDBxirdYiD8VBhMqICaW
- RQJ3GrQrlFmgfmxgF/P2Lq7tVEuevZQ6Y63z5/iNW7b0HM/a3cRaJj1wKSqvkGL+3Dy6GsKBSAj
- jsofZrZAXvHnbRViM86JVCRcK8Rl61lRiaMAC3iMbhV3molQB5qWSEQFBscIkLoa6UBLhKvLuUC
- PvU2199QpdCFl3rM0ahASdsYrb0hDkTUljpLu4SOv5hGDqNofoSLg0TqG4CyVevrnmNXynEEY5F
- 1twK6PR3dbAhfKze01E6Y8cTRxgeJtgOR6xgLV59rnY1Jhb7n83QZdODGrKnbFpIG9Gq2YMQB1T
- wbTbMi2yVf9ZxlI5ZF2aGhPuIHMtFx8kc5iigDyHNLojAnN8IeN26oGF2jgUJgvUMGdVnaXOd+/
- bSIsPhTcucBM5bW1YKhe2Ya4XH3nGT5eDwAUfIL7wUinYIayPZeUe/oL/5f3MninIpDJg7phLyH
- 8oCWYTXP7b/Pd44KqJIdOgcSPrWZACiOi+Wn3joeYeNQxwsL9Zx8y+KYwazcLdY7MqunZopAdj8 ZrYZJc1g8fHGUPQ==
-X-Mailer: b4 0.14.2
-Message-ID: <20250902-maple-lockdep-p-v1-1-3ae5a398a379@google.com>
-Subject: [PATCH] maple_tree: remove lockdep_map_p typedef
-From: Alice Ryhl <aliceryhl@google.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, maple-tree@lists.infradead.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: net: usb: r8152: resume-reset deadlock
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Realtek linux nic maintainers <nic_swsd@realtek.com>,
+ Takashi Iwai <tiwai@suse.de>
+Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <a4pjgee3vncuqw5364ajocuipnfudkjnguwmmvjzz3ee3yjxzs@zxldhr5x7dkk>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <a4pjgee3vncuqw5364ajocuipnfudkjnguwmmvjzz3ee3yjxzs@zxldhr5x7dkk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Having the ma_external_lock field exist when CONFIG_LOCKDEP=n isn't used
-anywhere, so just get rid of it. This also avoids generating a typedef
-called lockdep_map_p that could overlap with typedefs in other header
-files.
+On 8/26/25 11:55 AM, Sergey Senozhatsky wrote:
+> I'm looking into the following deadlock
+> 
+> <4>[ 1596.492101] schedule_preempt_disabled+0x15/0x30
+> <4>[ 1596.492170] __mutex_lock_common+0x256/0x490
+> <4>[ 1596.492209] __mutex_lock_slowpath+0x18/0x30
+> <4>[ 1596.492249] __rtl8152_set_mac_address+0x80/0x1f0 [r8152 (HASH:ce6f 4)]
+> <4>[ 1596.492327] dev_set_mac_address+0x7d/0x150
+> <4>[ 1596.492395] rtl8152_post_reset+0x72/0x150 [r8152 (HASH:ce6f 4)]
+> <4>[ 1596.492438] usb_reset_device+0x1ce/0x220
+> <4>[ 1596.492507] rtl8152_resume+0x99/0xc0 [r8152 (HASH:ce6f 4)]
+> <4>[ 1596.492550] usb_resume_interface+0x3c/0xc0
+> <4>[ 1596.492619] usb_resume_both+0x104/0x150
+> <4>[ 1596.492657] ? usb_dev_suspend+0x20/0x20
+> <4>[ 1596.492725] usb_resume+0x22/0x110
+> <4>[ 1596.492763] ? usb_dev_suspend+0x20/0x20
+> <4>[ 1596.492800] dpm_run_callback+0x83/0x1d0
+> <4>[ 1596.492873] device_resume+0x35f/0x3d0
+> <4>[ 1596.492912] ? pm_verb+0xa0/0xa0
+> <4>[ 1596.492951] async_resume+0x1d/0x30
+> <4>[ 1596.493019] async_run_entry_fn+0x2b/0xd0
+> <4>[ 1596.493060] worker_thread+0x2ce/0xef0
+> <4>[ 1596.493101] ? cancel_delayed_work+0x2d0/0x2d0
+> <4>[ 1596.493170] kthread+0x16d/0x190
+> <4>[ 1596.493209] ? cancel_delayed_work+0x2d0/0x2d0
+> <4>[ 1596.493247] ? kthread_associate_blkcg+0x80/0x80
+> <4>[ 1596.493316] ret_from_fork+0x1f/0x30
+> 
+> rtl8152_resume() seems to be tricky, because it's under tp->control
+> mutex, when it can see RTL8152_INACCESSIBLE and initiate a full
+> device reset via usb_reset_device(), which eventually re-enters rtl8152,
+> at which point it calls __rtl8152_set_mac_address() and deadlocks on
+> tp->control (I assume) mutex.
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Originally sent as
-https://lore.kernel.org/all/20250819-maple-tree-v2-1-229b48657bab@google.com/
+Decoding the above stack trace will tell for sure.
 
-But I'm moving it out of that series as it did not have the intended
-effect on the Rust bindgen output. However, I still think it makes sense
-as a pure cleanup patch.
----
- include/linux/maple_tree.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> __rtl8152_set_mac_address() has in_resume flag (added by Takashi in
+> 776ac63a986d), which is set only in "reset_resume" case, wheres what
+> we have is "resume_reset".  Moreover in_resume flag is not for tp->control
+> mutex, as far as I can tell, but for PM lock.  When we set_mac_address
+> from resume_reset, we lose in_resume flat, so not only we deadlock on
+> tp->control mutex, but also we may (I guess) deadlock on the PM lock.
+> 
+> Also, we still call rtl8152_resume() even in reset_resume, which I
+> assume still can end up resetting device and hence in set_mac_address()
+> in non-in_resume mode, potentially triggering the same deadlock that
+> Takashi fixed.  Well, unless I'm missing something.
+> 
+> So I don't think I want to add another flag to mark "current owns tp->control
+> mutex" so that we can handle re-entry.  How about moving usb reset
+> outside of tp->control scope?  Is there any harm in doing that?
 
-diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-index bafe143b1f783202e27b32567fffee4149e8e266..8244679ba1758235e049acbaedee62aae5c0e226 100644
---- a/include/linux/maple_tree.h
-+++ b/include/linux/maple_tree.h
-@@ -194,7 +194,6 @@ enum store_type {
- #define MAPLE_RESERVED_RANGE	4096
- 
- #ifdef CONFIG_LOCKDEP
--typedef struct lockdep_map *lockdep_map_p;
- #define mt_lock_is_held(mt)                                             \
- 	(!(mt)->ma_external_lock || lock_is_held((mt)->ma_external_lock))
- 
-@@ -207,7 +206,6 @@ typedef struct lockdep_map *lockdep_map_p;
- 
- #define mt_on_stack(mt)			(mt).ma_external_lock = NULL
- #else
--typedef struct { /* nothing */ } lockdep_map_p;
- #define mt_lock_is_held(mt)		1
- #define mt_write_lock_is_held(mt)	1
- #define mt_set_external_lock(mt, lock)	do { } while (0)
-@@ -230,8 +228,10 @@ typedef struct { /* nothing */ } lockdep_map_p;
-  */
- struct maple_tree {
- 	union {
--		spinlock_t	ma_lock;
--		lockdep_map_p	ma_external_lock;
-+		spinlock_t		ma_lock;
-+#ifdef CONFIG_LOCKDEP
-+		struct lockdep_map	*ma_external_lock;
-+#endif
- 	};
- 	unsigned int	ma_flags;
- 	void __rcu      *ma_root;
+According to commit 4933b066fefbee4f1d2d708de53c4ab7f09026ad, the
+usb_reset_device() call is intentionally under tp->control protection to
+vs double reset.
 
----
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
-change-id: 20250902-maple-lockdep-p-a930e865c76b
+At very least the proposed code here could end-up causing an unexpected
+reset when SELECTIVE_SUSPEND is set.
 
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+I *guess* you should track the current status explicitly to restrict the
+reset at in the !test_bit(SELECTIVE_SUSPEND) scenario and explicitly
+avoid delayed reset during resume.
+
+Ad very least you should add a fixes tag, a proper Sob and use canonical
+commit references.
+
+Thanks,
+
+Paolo
 
 
