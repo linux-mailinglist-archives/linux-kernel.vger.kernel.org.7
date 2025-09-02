@@ -1,234 +1,305 @@
-Return-Path: <linux-kernel+bounces-795430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF31AB3F1F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:41:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6847AB3F1F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E329D4817CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:41:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1832025B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05CE2DFA31;
-	Tue,  2 Sep 2025 01:41:42 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF0B2E03FA;
+	Tue,  2 Sep 2025 01:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ecTAvNWK"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1565B26AF3;
-	Tue,  2 Sep 2025 01:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CFB2DFF33
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 01:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756777302; cv=none; b=Km56Sa7DTwzPdxESLDEUrtV5jFvYfNTnmQPrkASkTWQBV3kZZoz+gRQnI+AFq9oaQpULN6fxJanRnyROTgrXbNGgPSJWyXCfPc/IGJ/P5qvg6HN4hb7BGXOxleCdhfXUbNjgg+qujm3500pvCcpywrYtg8JRNxneJW6da890TfU=
+	t=1756777366; cv=none; b=aK87S6fyildN5h1wXViKhvmX4mvqRLMIlGVAKh+WEPSRIpo4mu5h+9FGPrDoHWsQGh2S0Gi0uzCeBXu9bDggXDDLyGd8NcLSzG9iSJ8Yoe7vds9NFeSpmQRBZoANfTT6pzXnkzyFSQ0FTfPRcYvy/vLGFSEHJSobLJPRQ/FuYYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756777302; c=relaxed/simple;
-	bh=8y6UXf1cJCy0O9hqwY5iin2/oHnrp2C623DlqT0lLAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EVxIWJjqk86t9qHcpLr7DzC5msVjp1I8U/oZRWHdfW1BtQqhBfHh3IZd6Q5QWte5KSWFMs76kxvamiFwKQJCtH3dKZR3B8sYiKQXYe7OYpKGhG1OVRRxSj7V26pYo3/bfu9xA4fG8LAimVHEWRO+hkKUcM6iDJc84VPmJ8fqn7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cG7jg25YdztTSQ;
-	Tue,  2 Sep 2025 09:40:39 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id E3C24180483;
-	Tue,  2 Sep 2025 09:41:35 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 2 Sep 2025 09:41:34 +0800
-Message-ID: <4ae3ca7b-dc64-4ab5-b1bf-e357ccc449b4@huawei.com>
-Date: Tue, 2 Sep 2025 09:41:33 +0800
+	s=arc-20240116; t=1756777366; c=relaxed/simple;
+	bh=4/Uhd8Znb9sZjcGcDPqLOzxQbIb6ppksBxHE4QsnWQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nDztnPUXn6NzRDeowiJHwRj/lbFjGUNUX2VeHRY4fSoUdxNo+6Pd+vbBkToyQdZVr7vZbnvvgUNgUaD/aaViHlKVRidfJaxc0cNfQxi3/tkfylpjRLRta4tLTY4TtDaSatnOI/hcFhW89A73f/9PdutQeu0pjVNhb8JSajIW7XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ecTAvNWK; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2493798cd83so6212455ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 18:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1756777363; x=1757382163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BfCifJrB2SLyWnEpCswsFOTC1RVMEBJVNSJK/ERFiaY=;
+        b=ecTAvNWKmsApE0GWkKM15tnLYJntjGFFrAfb5pdXfTbsxF4BVsGI5ttDmdFWxUFReK
+         Ojzn1DToUtGqv2x6Ey1J0DOcdtzdmuo8YZQwn2syTDWT8PxotoKE0KNCH/8X92S53ytR
+         goq3VTIih6c1kK5wTijdhUjJafwCDX4qkrhHSTBtlEe2j4WMOM64khlRsRuaM2PwMiwl
+         26pRR/qOyVpHcoWCzdv1Da7kIjyzd9q9PNLNM4qz+JWBBoaVbCjCg6rn1HQCaNpf/5JL
+         zQZnbqeSmYHLqLvuCFi4vjyR56Q1CElcLufkO5fRhu033jJqZnBqHWFJFmE/kQzXgvZ/
+         SEIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756777363; x=1757382163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BfCifJrB2SLyWnEpCswsFOTC1RVMEBJVNSJK/ERFiaY=;
+        b=I9zf6fbAU543UkHLNd3zUZl5WidKUXdRiPT6BFrfHNzZbqNOsUtXNvjE7HamQa0yau
+         m8wk95UWK5cZ0iZEcknEKXyJu0WZqWhVwsuw7e30jzktvkPeUnvE+p+GSVTj6vaphqfY
+         Px3laq34mDuAhoS1vB465EE6YrSiUXL06AxZtbwv4by7+oAcQVbJOclq8jUsfOK3kw+A
+         kLCNxczs+wTJZUecWMIUO36GuNMM6HdY0DrCZKKeLV0cPrNP2uc9/S5o1hdJQVNZiPBx
+         7CMkucjNSp2kPhAsL16N96bQMRM4GMSzXla0iJZ/wiNJG5xTPs07FY/+dxC5xa2NfK+y
+         JE9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXRnwB1gvBRSlUfhhdBuABHPjeQyY2a2BgLsNxB6JMxAcCR/84WX+n8AdrjidbDeQIgd0Nw2jwdt3kkeoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtzoU/WP9fnG/CelSpkkwf1J3dRSXR5uB7NC2OkdAJS126/K0k
+	ZrO4MdDPUpJiE4NhBARqwghbpkkRmdOy3Y6v1Kqv7VgnBIhmSiu6fwKRJ6aMb9k9sFphc7xepdQ
+	CLTH/MDdVTITf5SL585ZoQufxaQ6O6DXjY/XDeBl6JHwo9kzZGeZrCXolvQ==
+X-Gm-Gg: ASbGncvcrg8ZHYuUK62GdILDxIq3IOgW4LHsPkBsqwbUYUMTo3ky11DNNnn4VywJQj4
+	MYyM3IpWf0fQCl8OEhoe/+pJsR0chLgX2frPBcmsgKWV00jvJroX9Lgua6KU/7wfYSFyxAUc5q8
+	ejmgyS+CG/V8fJZIP7LvfrXEu5qGZKjCn9Xbn86DLuSqQfv2HTZA6CMPii5j94ypCYlL7s9qI9P
+	0ceTaqw9fcO
+X-Google-Smtp-Source: AGHT+IFNrCMV5JbVD/Utd+eFEPbj80kRL6MOqB3HvdE5Vm/AOFRuQOyvBR7oXZH7xIIJH4zyY7d9O43cXofgbAhdYXs=
+X-Received: by 2002:a17:903:186:b0:248:9afa:7bc3 with SMTP id
+ d9443c01a7336-2491f246dc8mr81314945ad.8.1756777362921; Mon, 01 Sep 2025
+ 18:42:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: atm: fix memory leak in atm_register_sysfs when
- device_register fail
-To: Simon Horman <horms@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <kuniyu@google.com>, <kay.sievers@vrfy.org>,
-	<gregkh@suse.de>, <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250901063537.1472221-1-wangliang74@huawei.com>
- <20250901190140.GO15473@horms.kernel.org>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <20250901190140.GO15473@horms.kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+References: <20250808153251.282107-1-csander@purestorage.com>
+In-Reply-To: <20250808153251.282107-1-csander@purestorage.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Mon, 1 Sep 2025 18:42:31 -0700
+X-Gm-Features: Ac12FXw8NS4EHlKpbA5KOiJ_5HMYwxKG21MH7DTOolyIr0tWM_P3gM76r_c3I2U
+Message-ID: <CADUfDZovEN1MouTGyWHC4ZuhuPPTZ6WCkrS=yqa18xuJifuvqw@mail.gmail.com>
+Subject: Re: [PATCH] ublk: inline __ublk_ch_uring_cmd()
+To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 8, 2025 at 8:32=E2=80=AFAM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
+>
+> ublk_ch_uring_cmd_local() is a thin wrapper around __ublk_ch_uring_cmd()
+> that copies the ublksrv_io_cmd from user-mapped memory to the stack
+> using READ_ONCE(). This ublksrv_io_cmd is passed by pointer to
+> __ublk_ch_uring_cmd() and __ublk_ch_uring_cmd() is a large function
+> unlikely to be inlined, so __ublk_ch_uring_cmd() will have to load the
+> ublksrv_io_cmd fields back from the stack. Inline __ublk_ch_uring_cmd()
+> into ublk_ch_uring_cmd_local() and load the ublksrv_io_cmd fields into
+> local variables with READ_ONCE(). This allows the compiler to delay
+> loading the fields until they are needed and choose whether to store
+> them in registers or on the stack.
 
-在 2025/9/2 3:01, Simon Horman 写道:
-> On Mon, Sep 01, 2025 at 02:35:37PM +0800, Wang Liang wrote:
->> When device_register() return error in atm_register_sysfs(), which can be
->> triggered by kzalloc fail in device_private_init() or other reasons,
->> kmemleak reports the following memory leaks:
->>
->> unreferenced object 0xffff88810182fb80 (size 8):
->>    comm "insmod", pid 504, jiffies 4294852464
->>    hex dump (first 8 bytes):
->>      61 64 75 6d 6d 79 30 00                          adummy0.
->>    backtrace (crc 14dfadaf):
->>      __kmalloc_node_track_caller_noprof+0x335/0x450
->>      kvasprintf+0xb3/0x130
->>      kobject_set_name_vargs+0x45/0x120
->>      dev_set_name+0xa9/0xe0
->>      atm_register_sysfs+0xf3/0x220
->>      atm_dev_register+0x40b/0x780
->>      0xffffffffa000b089
->>      do_one_initcall+0x89/0x300
->>      do_init_module+0x27b/0x7d0
->>      load_module+0x54cd/0x5ff0
->>      init_module_from_file+0xe4/0x150
->>      idempotent_init_module+0x32c/0x610
->>      __x64_sys_finit_module+0xbd/0x120
->>      do_syscall_64+0xa8/0x270
->>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> When device_create_file() return error in atm_register_sysfs(), the same
->> issue also can be triggered.
->>
->> Function put_device() should be called to release kobj->name memory and
->> other device resource, instead of kfree().
->>
->> Fixes: 1fa5ae857bb1 ("driver core: get rid of struct device's bus_id string array")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> Thanks Wang Liang,
+Ming, thoughts on this patch? Do you see any value I'm missing in
+keeping ublk_ch_uring_cmd_local() and __ublk_ch_uring_cmd() as
+separate functions?
+
+Thanks,
+Caleb
+
 >
-> I agree this is a bug.
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> ---
+>  drivers/block/ublk_drv.c | 62 +++++++++++++++-------------------------
+>  1 file changed, 23 insertions(+), 39 deletions(-)
 >
-> I think that the guiding principle should be that on error functions
-> unwind any resource allocations they have made, rather than leaving
-> it up to callers to clean things up.
+> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+> index 6561d2a561fa..a0ac944ec965 100644
+> --- a/drivers/block/ublk_drv.c
+> +++ b/drivers/block/ublk_drv.c
+> @@ -2267,56 +2267,60 @@ static bool ublk_get_data(const struct ublk_queue=
+ *ubq, struct ublk_io *io,
+>                         ublk_get_iod(ubq, req->tag)->addr);
 >
-> So, as the problem you describe seems to be due to atm_register_sysfs()
-> leaking resources if it encounters an error, I think the problem would
-> best be resolved there.
+>         return ublk_start_io(ubq, req, io);
+>  }
 >
-> Perhaps something like this.
-> (Compile tested only!)
+> -static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
+> -                              unsigned int issue_flags,
+> -                              const struct ublksrv_io_cmd *ub_cmd)
+> +static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
+> +               unsigned int issue_flags)
+>  {
+> +       /* May point to userspace-mapped memory */
+> +       const struct ublksrv_io_cmd *ub_src =3D io_uring_sqe_cmd(cmd->sqe=
+);
+>         u16 buf_idx =3D UBLK_INVALID_BUF_IDX;
+>         struct ublk_device *ub =3D cmd->file->private_data;
+>         struct ublk_queue *ubq;
+>         struct ublk_io *io;
+>         u32 cmd_op =3D cmd->cmd_op;
+> -       unsigned tag =3D ub_cmd->tag;
+> +       u16 q_id =3D READ_ONCE(ub_src->q_id);
+> +       u16 tag =3D READ_ONCE(ub_src->tag);
+> +       s32 result =3D READ_ONCE(ub_src->result);
+> +       u64 addr =3D READ_ONCE(ub_src->addr); /* unioned with zone_append=
+_lba */
+>         struct request *req;
+>         int ret;
+>         bool compl;
 >
-> diff --git a/net/atm/atm_sysfs.c b/net/atm/atm_sysfs.c
-> index 54e7fb1a4ee5..62f3d520a80a 100644
-> --- a/net/atm/atm_sysfs.c
-> +++ b/net/atm/atm_sysfs.c
-> @@ -148,20 +148,23 @@ int atm_register_sysfs(struct atm_dev *adev, struct device *parent)
->   	dev_set_name(cdev, "%s%d", adev->type, adev->number);
->   	err = device_register(cdev);
->   	if (err < 0)
-> -		return err;
-> +		goto err_put_dev;
->   
->   	for (i = 0; atm_attrs[i]; i++) {
->   		err = device_create_file(cdev, atm_attrs[i]);
->   		if (err)
-> -			goto err_out;
-> +			goto err_remove_file;
->   	}
->   
->   	return 0;
->   
-> -err_out:
-> +err_remove_file:
->   	for (j = 0; j < i; j++)
->   		device_remove_file(cdev, atm_attrs[j]);
->   	device_del(cdev);
-> +err_put_dev:
-> +	put_device(cdev);
+> +       WARN_ON_ONCE(issue_flags & IO_URING_F_UNLOCKED);
 > +
->   	return err;
->   }
->   
-
-
-Thanks for your replies, it is very clear!
-
-But the above code may introduce a use-after-free issue. If 
-device_register()
-fails, put_device() call atm_release() to free atm_dev, and
-atm_proc_dev_deregister() will visit it.
-
-And kfree() should be removed in atm_dev_register() to avoid double-free.
-
+>         pr_devel("%s: received: cmd op %d queue %d tag %d result %d\n",
+> -                       __func__, cmd->cmd_op, ub_cmd->q_id, tag,
+> -                       ub_cmd->result);
+> +                       __func__, cmd->cmd_op, q_id, tag, result);
 >
+>         ret =3D ublk_check_cmd_op(cmd_op);
+>         if (ret)
+>                 goto out;
 >
-> Looking over atm_dev_register, it seems to me that it will deadlock
-> if it calls atm_proc_dev_deregister() if atm_register_sysfs() fails.
-> This is because atm_dev_register() is holding atm_dev_mutex,
-> and atm_proc_dev_deregister() tries to take atm_dev_mutex().
-
-
-I cannot find somewhere tries to take atm_dev_mutex(), can you give some
-hints?
-
-------
-Best regards
-Wang Liang
-
-> If so, I wonder if this can be resolved (in a separate patch to
-> the fix for atm_register_sysfs()) like this.
-> (Also compile tested only!)
+>         /*
+>          * io_buffer_unregister_bvec() doesn't access the ubq or io,
+>          * so no need to validate the q_id, tag, or task
+>          */
+>         if (_IOC_NR(cmd_op) =3D=3D UBLK_IO_UNREGISTER_IO_BUF)
+> -               return ublk_unregister_io_buf(cmd, ub, ub_cmd->addr,
+> -                                             issue_flags);
+> +               return ublk_unregister_io_buf(cmd, ub, addr, issue_flags)=
+;
 >
-> diff --git a/net/atm/resources.c b/net/atm/resources.c
-> index b19d851e1f44..3002ff5b60f8 100644
-> --- a/net/atm/resources.c
-> +++ b/net/atm/resources.c
-> @@ -112,13 +110,12 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
->   
->   	if (atm_proc_dev_register(dev) < 0) {
->   		pr_err("atm_proc_dev_register failed for dev %s\n", type);
-> -		goto out_fail;
-> +		goto err_free_dev;
->   	}
->   
->   	if (atm_register_sysfs(dev, parent) < 0) {
->   		pr_err("atm_register_sysfs failed for dev %s\n", type);
-> -		atm_proc_dev_deregister(dev);
-> -		goto out_fail;
-> +		goto err_proc_dev_unregister;
->   	}
->   
->   	list_add_tail(&dev->dev_list, &atm_devs);
-> @@ -127,7 +124,9 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
->   	mutex_unlock(&atm_dev_mutex);
->   	return dev;
->   
-> -out_fail:
-> +err_proc_dev_unregister:
-> +	atm_proc_dev_deregister(dev);
-> +err_free_dev:
->   	kfree(dev);
->   	dev = NULL;
->   	goto out;
+>         ret =3D -EINVAL;
+> -       if (ub_cmd->q_id >=3D ub->dev_info.nr_hw_queues)
+> +       if (q_id >=3D ub->dev_info.nr_hw_queues)
+>                 goto out;
 >
-> Lastly, while not a bug and not material for net, it would be nice to
-> follow-up on the above and consolidate the error handling in
-> atm_dev_register().
+> -       ubq =3D ublk_get_queue(ub, ub_cmd->q_id);
+> +       ubq =3D ublk_get_queue(ub, q_id);
 >
-> Something like this (compile tested only!):
+>         if (tag >=3D ubq->q_depth)
+>                 goto out;
 >
-> diff --git a/net/atm/resources.c b/net/atm/resources.c
-> index b19d851e1f44..3002ff5b60f8 100644
-> --- a/net/atm/resources.c
-> +++ b/net/atm/resources.c
-> @@ -89,9 +89,7 @@ struct atm_dev *atm_dev_register(const char *type, struct device *parent,
->   		inuse = __atm_dev_lookup(number);
->   		if (inuse) {
->   			atm_dev_put(inuse);
-> -			mutex_unlock(&atm_dev_mutex);
-> -			kfree(dev);
-> -			return NULL;
-> +			goto err_free_dev;
->   		}
->   		dev->number = number;
->   	} else {
+>         io =3D &ubq->ios[tag];
+>         /* UBLK_IO_FETCH_REQ can be handled on any task, which sets io->t=
+ask */
+>         if (unlikely(_IOC_NR(cmd_op) =3D=3D UBLK_IO_FETCH_REQ)) {
+> -               ret =3D ublk_check_fetch_buf(ubq, ub_cmd->addr);
+> +               ret =3D ublk_check_fetch_buf(ubq, addr);
+>                 if (ret)
+>                         goto out;
+> -               ret =3D ublk_fetch(cmd, ubq, io, ub_cmd->addr);
+> +               ret =3D ublk_fetch(cmd, ubq, io, addr);
+>                 if (ret)
+>                         goto out;
 >
-> ...
+>                 ublk_prep_cancel(cmd, issue_flags, ubq, tag);
+>                 return -EIOCBQUEUED;
+> @@ -2326,11 +2330,11 @@ static int __ublk_ch_uring_cmd(struct io_uring_cm=
+d *cmd,
+>                 /*
+>                  * ublk_register_io_buf() accesses only the io's refcount=
+,
+>                  * so can be handled on any task
+>                  */
+>                 if (_IOC_NR(cmd_op) =3D=3D UBLK_IO_REGISTER_IO_BUF)
+> -                       return ublk_register_io_buf(cmd, ubq, io, ub_cmd-=
+>addr,
+> +                       return ublk_register_io_buf(cmd, ubq, io, addr,
+>                                                     issue_flags);
+>
+>                 goto out;
+>         }
+>
+> @@ -2348,26 +2352,26 @@ static int __ublk_ch_uring_cmd(struct io_uring_cm=
+d *cmd,
+>                         ^ (_IOC_NR(cmd_op) =3D=3D UBLK_IO_NEED_GET_DATA))
+>                 goto out;
+>
+>         switch (_IOC_NR(cmd_op)) {
+>         case UBLK_IO_REGISTER_IO_BUF:
+> -               return ublk_daemon_register_io_buf(cmd, ubq, io, ub_cmd->=
+addr,
+> +               return ublk_daemon_register_io_buf(cmd, ubq, io, addr,
+>                                                    issue_flags);
+>         case UBLK_IO_COMMIT_AND_FETCH_REQ:
+> -               ret =3D ublk_check_commit_and_fetch(ubq, io, ub_cmd->addr=
+);
+> +               ret =3D ublk_check_commit_and_fetch(ubq, io, addr);
+>                 if (ret)
+>                         goto out;
+> -               io->res =3D ub_cmd->result;
+> +               io->res =3D result;
+>                 req =3D ublk_fill_io_cmd(io, cmd);
+> -               ret =3D ublk_config_io_buf(ubq, io, cmd, ub_cmd->addr, &b=
+uf_idx);
+> +               ret =3D ublk_config_io_buf(ubq, io, cmd, addr, &buf_idx);
+>                 compl =3D ublk_need_complete_req(ubq, io);
+>
+>                 /* can't touch 'ublk_io' any more */
+>                 if (buf_idx !=3D UBLK_INVALID_BUF_IDX)
+>                         io_buffer_unregister_bvec(cmd, buf_idx, issue_fla=
+gs);
+>                 if (req_op(req) =3D=3D REQ_OP_ZONE_APPEND)
+> -                       req->__sector =3D ub_cmd->zone_append_lba;
+> +                       req->__sector =3D addr;
+>                 if (compl)
+>                         __ublk_complete_rq(req);
+>
+>                 if (ret)
+>                         goto out;
+> @@ -2377,11 +2381,11 @@ static int __ublk_ch_uring_cmd(struct io_uring_cm=
+d *cmd,
+>                  * ublk_get_data() may fail and fallback to requeue, so k=
+eep
+>                  * uring_cmd active first and prepare for handling new re=
+queued
+>                  * request
+>                  */
+>                 req =3D ublk_fill_io_cmd(io, cmd);
+> -               ret =3D ublk_config_io_buf(ubq, io, cmd, ub_cmd->addr, NU=
+LL);
+> +               ret =3D ublk_config_io_buf(ubq, io, cmd, addr, NULL);
+>                 WARN_ON_ONCE(ret);
+>                 if (likely(ublk_get_data(ubq, io, req))) {
+>                         __ublk_prep_compl_io_cmd(io, req);
+>                         return UBLK_IO_RES_OK;
+>                 }
+> @@ -2428,30 +2432,10 @@ static inline struct request *__ublk_check_and_ge=
+t_req(struct ublk_device *ub,
+>  fail_put:
+>         ublk_put_req_ref(io, req);
+>         return NULL;
+>  }
+>
+> -static inline int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
+> -               unsigned int issue_flags)
+> -{
+> -       /*
+> -        * Not necessary for async retry, but let's keep it simple and al=
+ways
+> -        * copy the values to avoid any potential reuse.
+> -        */
+> -       const struct ublksrv_io_cmd *ub_src =3D io_uring_sqe_cmd(cmd->sqe=
+);
+> -       const struct ublksrv_io_cmd ub_cmd =3D {
+> -               .q_id =3D READ_ONCE(ub_src->q_id),
+> -               .tag =3D READ_ONCE(ub_src->tag),
+> -               .result =3D READ_ONCE(ub_src->result),
+> -               .addr =3D READ_ONCE(ub_src->addr)
+> -       };
+> -
+> -       WARN_ON_ONCE(issue_flags & IO_URING_F_UNLOCKED);
+> -
+> -       return __ublk_ch_uring_cmd(cmd, issue_flags, &ub_cmd);
+> -}
+> -
+>  static void ublk_ch_uring_cmd_cb(struct io_uring_cmd *cmd,
+>                 unsigned int issue_flags)
+>  {
+>         int ret =3D ublk_ch_uring_cmd_local(cmd, issue_flags);
+>
+> --
+> 2.45.2
 >
 
