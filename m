@@ -1,244 +1,469 @@
-Return-Path: <linux-kernel+bounces-796923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55C1B40964
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:45:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C9EB4096E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A51C67AEE63
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:43:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A72457AF60A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCFF32A800;
-	Tue,  2 Sep 2025 15:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DDD32ED3D;
+	Tue,  2 Sep 2025 15:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N0I8QUUc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yzXa+H9l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9863314CC
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B35032ED25;
+	Tue,  2 Sep 2025 15:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827848; cv=none; b=XGzPMO8swXTo+8/kEh9PzZpfVUJ3qyPFShszM4H9+NDCnaudvMItshIoJnKwFIfHQtDzHLORIrFA2rz8w4KoLq4RwNWXOCGUXukQsc12G/5lkP/+LI9yllWIFWKEXXROUdhVW0H+CiCO69NCBU09avyNtSwRyR+E12LkCmpuN88=
+	t=1756827869; cv=none; b=nqr3klc4i/BPPDM3XuREG0U753ybZaMX01c+jUniKZ5bUIFo3A6u4MuRcfB6CEIYF3Kmb+6DFtLIPwukkrEO1BBMVa8OQA5oG4/zfOdumEfizlGRQtnxAbF1PzjOVkg8fKcemGRowURHlaYZyLhz1Vo2vNvb2UZzwmB9XwVtr6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827848; c=relaxed/simple;
-	bh=nCOD/GgJeF9jFumtQqGF2tdEx3YT1s+rTWk1dHIavmk=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ba/+w0Ggmy2ZXclA4WakdLc3xqHhxVQkP93TCx0e+BQaXpRNatwOFYl/gktGOjZnWwkPPptG89BGJY11MxbMIeQHXOYcQC1DBJ7TfZYpbwWfvT6IHO7xvA0rbyURXJAuDorFqLXonhXX3NyxA6XDf8S+MToPbqZN6SMUMPO9iRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N0I8QUUc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756827845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7v6IZWbDzzjbXLUhKiCpcBQpIRj6qcPMeJox/MtUR4=;
-	b=N0I8QUUcKP5JmkSPzFGuM24Ce0nndaD8HNjDdWj8g5ox0ljrRY20E8bOhkXdTKny+lx98e
-	V04YkgMtPFjMAOskMgQynl7FXHF9Z4CSsRqM/Lj1VfLsvwAW8paUISCk2y869J251EhFxF
-	Z1pfYFwzV3KMbhhCejDP4gNNkfYvDlc=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-8-Ludm0gYiN_2Q3BrGXKwmuQ-1; Tue, 02 Sep 2025 11:44:04 -0400
-X-MC-Unique: Ludm0gYiN_2Q3BrGXKwmuQ-1
-X-Mimecast-MFC-AGG-ID: Ludm0gYiN_2Q3BrGXKwmuQ_1756827843
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70de0bdb600so91334836d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:44:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756827842; x=1757432642;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y7v6IZWbDzzjbXLUhKiCpcBQpIRj6qcPMeJox/MtUR4=;
-        b=UGvlqgTQNdvhUdHqDo7r/4WIq66bUtuFP9el/Q7M1Ft0Wa0gLSgyTvY1b5zNuOur/H
-         34FzBqKNx9wYpHFJ3dnA2dZKGA2ty/QJ69G3TomWmR5L1G2nrDPWBwyXZKWCEdnirJuP
-         AnJlDClnIRODcabjGMEKvsjUVhl0Nab++ljNyYDiu4LuT+CiPyivkNfTIlfAKWhmCLYf
-         b5KxAYpyIP3fIFHCo9mPdDgyNYBJibLPfppBaeaVrRR9RAzjsr7EYRQNsab1xiHzWvLN
-         ixCgFK2xT9RaQS/ukMdTgeus4yrvCi/Ai6BixKz6Fq2n3zotb4pDt8kt6T5CaSeQHOVi
-         V/RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVgR416b235zNy1kGLPtN9GBqDKPFhsIsvMf/4XQl19EGAPIOokCR06qbu+kAkige8+shVck+6bz+s6/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaHt79m5q2bgFuLZ2ay8HHc8mS46IV4js1KjAMjS8mThDm9K4N
-	C9u6dU/iW0Hy7XSV7sgDQ2MZRGOiBvYwkv+uLKChfEWxi6FyejEEtgoj6XDoc7FgRe5RL0mZgqR
-	Qz0e+f3lX0a8NR0VHI4n8Lm3ZP04ShnvEmhRWpFaa9YgEZB1LN9bV7mT4tvGkYWTmZDh7UqW34A
-	==
-X-Gm-Gg: ASbGncu5qH+E9v3DiJ894a//KgL470be4eSQbZXYy6jMv5telAQjUMHn+GXf2EqMsgI
-	a4kEfZB/B/vt/mraQL362cEJuhUaUHubVIedzgEUBTYNheNytBZ2sYJ4a0SN6JcL14vb6V4hQar
-	jcUu75Q+g4ISQJXHOU8wbXVJQ2LNpvjtZV8uBNWw41lAf8YbhGxUKQ+1rMDHLsS9XGwUoH28CVo
-	gNCKh/s9QdNoxuNZaRQ8IRixYSJ4VhgjxvDRjP7sxa5Ufw85xgtjUD4kuuU9nBbSc5K9Kz1KfLh
-	kuiMRpXVYDzzRNamG89JKrFX80w6mNJDguWEhl/okVMgdm9kRjPQ1Gk5tB9EzL6YiDEhTOT2uHh
-	s2/Dk0+md2A==
-X-Received: by 2002:a05:6214:4019:b0:70d:d5eb:cb09 with SMTP id 6a1803df08f44-70fac741625mr120651816d6.20.1756827842186;
-        Tue, 02 Sep 2025 08:44:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGiGCzvqsDFaL+2XUR0jmbF3BnfpeLZNOh8MzFtgTYm01Gnbfw1aHMydaJvOj0Teny7OPG0Rw==
-X-Received: by 2002:a05:6214:4019:b0:70d:d5eb:cb09 with SMTP id 6a1803df08f44-70fac741625mr120651506d6.20.1756827841738;
-        Tue, 02 Sep 2025 08:44:01 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b4947b0fsm13770536d6.46.2025.09.02.08.44.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 08:44:01 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <6457dd87-95cb-4c4d-aaab-6c9b65414a75@redhat.com>
-Date: Tue, 2 Sep 2025 11:44:00 -0400
+	s=arc-20240116; t=1756827869; c=relaxed/simple;
+	bh=Rom7YdnDC+ei+ZjVb5OSPCLqbUce5PefOBT5Bkxh3rw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KxciEvLgLSEk7grcERIrVzK+H3FdT85BaZf8zv4/gx7XB9UgIhXXLJPppLWRIZaSTil2UkppXmGuovooxAAtRdW3qTdOBrURVi1Bch0qiPQnVfGzFxtnrLCW9I4Aj2GSCNu0HSwXUzizq/cyfmZK/+EE9338dPwQwa5V8CaU7Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yzXa+H9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D152C4CEF6;
+	Tue,  2 Sep 2025 15:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756827868;
+	bh=Rom7YdnDC+ei+ZjVb5OSPCLqbUce5PefOBT5Bkxh3rw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=yzXa+H9lkZ8AWV1opiBTpjYlEiMDa0E/rX1m73BonlvUAodt65Vu5VDUI3ABo0vxf
+	 +KAT9XNQRNRG85ZGAFI+XJn5R3IhNFIMBUureLtqgpty2RQ+j1tAQdS0IkxogliPLK
+	 EKEG2KxIrArGkeGN+z5uRhh4WV0wJ984FTiTqSX4=
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Date: Tue, 02 Sep 2025 11:44:19 -0400
+Subject: [PATCH] Documentation: update maintainer-pgp-guide for latest best
+ practices
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 26/33] cgroup/cpuset: Fail if isolated and nohz_full don't
- leave any housekeeping
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Johannes Weiner
- <hannes@cmpxchg.org>, Marco Crivellari <marco.crivellari@suse.com>,
- Michal Hocko <mhocko@suse.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Peter Zijlstra <peterz@infradead.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- cgroups@vger.kernel.org
-References: <20250829154814.47015-1-frederic@kernel.org>
- <20250829154814.47015-27-frederic@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250829154814.47015-27-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250902-pgp-guide-updates-v1-1-62ac7312d3f9@linuxfoundation.org>
+X-B4-Tracking: v=1; b=H4sIANIQt2gC/x3MQQqAIBBA0avErBtQKaiuEi1ER5tNiZMRhHdPW
+ r7F/y8IZSaBpXsh083C59Gg+w7cbo9IyL4ZjDKjmpXBFBPGwp6wJG8vEpymoAbtgtajg9alTIG
+ f/7lutX4KajRsYwAAAA==
+X-Change-ID: 20250902-pgp-guide-updates-88f041cf115c
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+X-Mailer: b4 0.15-dev-dfb17
+X-Developer-Signature: v=1; a=openpgp-sha256; l=19033;
+ i=konstantin@linuxfoundation.org; h=from:subject:message-id;
+ bh=Rom7YdnDC+ei+ZjVb5OSPCLqbUce5PefOBT5Bkxh3rw=;
+ b=owGbwMvMwCW27YjM47CUmTmMp9WSGDK2C9zuXnr4ULKrzpMzLXeLZ1v7nrL65zb3jG5il5g14
+ xPbaXdYOkpZGMS4GGTFFFnK9sVuCip86CGX3mMKM4eVCWQIAxenAExExpfhv0tKysLow1sf6Psb
+ uh5PMp7SfW6X6/Er854f6rjl73719CVGho0HNIqd3jYmzeZ/6enOxsH/4LfyafFSW1mxxpqoEta
+ HjAA=
+X-Developer-Key: i=konstantin@linuxfoundation.org; a=openpgp;
+ fpr=DE0E66E32F1FDD0902666B96E63EDCA9329DD07E
 
+Freshen up the maintainer PGP guide:
 
-On 8/29/25 11:48 AM, Frederic Weisbecker wrote:
-> From: Gabriele Monaco <gmonaco@redhat.com>
->
-> Currently the user can set up isolated cpus via cpuset and nohz_full in
-> such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
-> domain isolated nor nohz full). This can be a problem for other
-> subsystems (e.g. the timer wheel imgration).
->
-> Prevent this configuration by blocking any assignation that would cause
-> the union of domain isolated cpus and nohz_full to covers all CPUs.
->
-> Acked-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->   kernel/cgroup/cpuset.c | 57 ++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 57 insertions(+)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index df1dfacf5f9d..8260dd699fd8 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1275,6 +1275,19 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
->   		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
->   }
->   
-> +/*
-> + * isolated_cpus_should_update - Returns if the isolated_cpus mask needs update
-> + * @prs: new or old partition_root_state
-> + * @parent: parent cpuset
-> + * Return: true if isolated_cpus needs modification, false otherwise
-> + */
-> +static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
-> +{
-> +	if (!parent)
-> +		parent = &top_cpuset;
-> +	return prs != parent->partition_root_state;
-> +}
-> +
->   /*
->    * partition_xcpus_add - Add new exclusive CPUs to partition
->    * @new_prs: new partition_root_state
-> @@ -1339,6 +1352,36 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
->   	return isolcpus_updated;
->   }
->   
-> +/*
-> + * isolcpus_nohz_conflict - check for isolated & nohz_full conflicts
-> + * @new_cpus: cpu mask for cpus that are going to be isolated
-> + * Return: true if there is conflict, false otherwise
-> + *
-> + * If nohz_full is enabled and we have isolated CPUs, their combination must
-> + * still leave housekeeping CPUs.
-> + */
-> +static bool isolcpus_nohz_conflict(struct cpumask *new_cpus)
-> +{
-> +	cpumask_var_t full_hk_cpus;
-> +	int res = false;
-> +
-> +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
-> +		return false;
-> +
-> +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
-> +		return true;
-> +
-> +	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
-> +		    housekeeping_cpumask(HK_TYPE_DOMAIN));
-> +	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
-> +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_online_mask);
-> +	if (!cpumask_weight_andnot(full_hk_cpus, new_cpus))
-> +		res = true;
-> +
-> +	free_cpumask_var(full_hk_cpus);
-> +	return res;
-> +}
-> +
->   static void update_housekeeping_cpumask(bool isolcpus_updated)
->   {
->   	int ret;
-> @@ -1453,6 +1496,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->   	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
->   	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
->   		return PERR_INVCPUS;
-> +	if (isolated_cpus_should_update(new_prs, NULL) &&
-> +	    isolcpus_nohz_conflict(tmp->new_cpus))
-> +		return PERR_HKEEPING;
->   
->   	spin_lock_irq(&callback_lock);
->   	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
-> @@ -1552,6 +1598,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->   		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
->   			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
->   			cs->prs_err = PERR_NOCPUS;
-> +		else if (isolated_cpus_should_update(prs, NULL) &&
-> +			 isolcpus_nohz_conflict(tmp->addmask))
-> +			cs->prs_err = PERR_HKEEPING;
->   		if (cs->prs_err)
->   			goto invalidate;
->   	}
-> @@ -1904,6 +1953,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->   			return err;
->   	}
->   
-> +	if (deleting && isolated_cpus_should_update(new_prs, parent) &&
-> +	    isolcpus_nohz_conflict(tmp->delmask)) {
-> +		cs->prs_err = PERR_HKEEPING;
-> +		return PERR_HKEEPING;
-> +	}
-> +
->   	/*
->   	 * Change the parent's effective_cpus & effective_xcpus (top cpuset
->   	 * only).
-> @@ -2924,6 +2979,8 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->   		 * Need to update isolated_cpus.
->   		 */
->   		isolcpus_updated = true;
-> +		if (isolcpus_nohz_conflict(cs->effective_xcpus))
-> +			err = PERR_HKEEPING;
->   	} else {
->   		/*
->   		 * Switching back to member is always allowed even if it
+- Bump minimum GnuPG version requirement from 2.2 to 2.4, since 2.2 is
+  no longer maintained
+- All major hardware tokens now support Curve25519, so remove outdated
+  ECC support callouts
+- Update hardware device recommendations (Nitrokey Pro 2 -> Nitrokey 3)
+- Broaden backup media terminology (USB thumb drive -> external media)
+- Update wording to follow vale's linter recommendations
+- Various minor wording improvements for clarity
 
-In both remote_cpus_update() and update_parent_effective_cpumask(), some 
-new CPUs can be added to the isolation list while other CPUs can be 
-removed from it. So isolcpus_nohz_conflict() should include both set in 
-its analysis to avoid false positive. Essentally, if the CPUs removed 
-from the isolated_cpus intersect with the nohz_full housekeeping mask, 
-there is no conflict.
+Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+---
+ Documentation/process/maintainer-pgp-guide.rst | 158 ++++++++++++-------------
+ 1 file changed, 75 insertions(+), 83 deletions(-)
 
-Cheers,
-Longman
+diff --git a/Documentation/process/maintainer-pgp-guide.rst b/Documentation/process/maintainer-pgp-guide.rst
+index f5277993b195..b6919bf606c3 100644
+--- a/Documentation/process/maintainer-pgp-guide.rst
++++ b/Documentation/process/maintainer-pgp-guide.rst
+@@ -49,7 +49,7 @@ hosting infrastructure, regardless of how good the security practices
+ for the latter may be.
+ 
+ The above guiding principle is the reason why this guide is needed. We
+-want to make sure that by placing trust into developers we do not simply
++want to make sure that by placing trust into developers we do not merely
+ shift the blame for potential future security incidents to someone else.
+ The goal is to provide a set of guidelines developers can use to create
+ a secure working environment and safeguard the PGP keys used to
+@@ -60,7 +60,7 @@ establish the integrity of the Linux kernel itself.
+ PGP tools
+ =========
+ 
+-Use GnuPG 2.2 or later
++Use GnuPG 2.4 or later
+ ----------------------
+ 
+ Your distro should already have GnuPG installed by default, you just
+@@ -69,9 +69,9 @@ To check, run::
+ 
+     $ gpg --version | head -n1
+ 
+-If you have version 2.2 or above, then you are good to go. If you have a
+-version that is prior than 2.2, then some commands from this guide may
+-not work.
++If you have version 2.4 or above, then you are good to go. If you have
++an earlier version, then you are using a release of GnuPG that is no
++longer maintained and some commands from this guide may not work.
+ 
+ Configure gpg-agent options
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -199,13 +199,6 @@ separate signing subkey::
+ 
+     $ gpg --quick-addkey [fpr] ed25519 sign
+ 
+-.. note:: ECC support in GnuPG
+-
+-    Note, that if you intend to use a hardware token that does not
+-    support ED25519 ECC keys, you should choose "nistp256" instead or
+-    "ed25519." See the section below on recommended hardware devices.
+-
+-
+ Back up your Certify key for disaster recovery
+ ----------------------------------------------
+ 
+@@ -213,7 +206,7 @@ The more signatures you have on your PGP key from other developers, the
+ more reasons you have to create a backup version that lives on something
+ other than digital media, for disaster recovery reasons.
+ 
+-The best way to create a printable hardcopy of your private key is by
++A good way to create a printable hardcopy of your private key is by
+ using the ``paperkey`` software written for this very purpose. See ``man
+ paperkey`` for more details on the output format and its benefits over
+ other solutions. Paperkey should already be packaged for most
+@@ -224,11 +217,11 @@ key::
+ 
+     $ gpg --export-secret-key [fpr] | paperkey -o /tmp/key-backup.txt
+ 
+-Print out that file (or pipe the output straight to lpr), then take a
+-pen and write your passphrase on the margin of the paper. **This is
+-strongly recommended** because the key printout is still encrypted with
+-that passphrase, and if you ever change it you will not remember what it
+-used to be when you had created the backup -- *guaranteed*.
++Print out that file, then take a pen and write your passphrase on the
++margin of the paper. **This is strongly recommended** because the key
++printout is still encrypted with that passphrase, and if you ever change
++it you will not remember what it used to be when you had created the
++backup -- *guaranteed*.
+ 
+ Put the resulting printout and the hand-written passphrase into an envelope
+ and store in a secure and well-protected place, preferably away from your
+@@ -236,10 +229,9 @@ home, such as your bank vault.
+ 
+ .. note::
+ 
+-    Your printer is probably no longer a simple dumb device connected to
+-    your parallel port, but since the output is still encrypted with
+-    your passphrase, printing out even to "cloud-integrated" modern
+-    printers should remain a relatively safe operation.
++    The key is still encrypted with your passphrase, so printing out
++    even to "cloud-integrated" modern printers should remain a
++    relatively safe operation.
+ 
+ Back up your whole GnuPG directory
+ ----------------------------------
+@@ -255,16 +247,17 @@ on these external copies whenever you need to use your Certify key --
+ such as when making changes to your own key or signing other people's
+ keys after conferences and summits.
+ 
+-Start by getting a small USB "thumb" drive (preferably two!) that you
+-will use for backup purposes. You will need to encrypt them using LUKS
+--- refer to your distro's documentation on how to accomplish this.
++Start by getting an external media card (preferably two!) that you will
++use for backup purposes. You will need to create an encrypted partition
++on this device using LUKS -- refer to your distro's documentation on how
++to accomplish this.
+ 
+ For the encryption passphrase, you can use the same one as on your
+ PGP key.
+ 
+-Once the encryption process is over, re-insert the USB drive and make
+-sure it gets properly mounted. Copy your entire ``.gnupg`` directory
+-over to the encrypted storage::
++Once the encryption process is over, re-insert your device and make sure
++it gets properly mounted. Copy your entire ``.gnupg`` directory over to
++the encrypted storage::
+ 
+     $ cp -a ~/.gnupg /media/disk/foo/gnupg-backup
+ 
+@@ -273,11 +266,10 @@ You should now test to make sure everything still works::
+     $ gpg --homedir=/media/disk/foo/gnupg-backup --list-key [fpr]
+ 
+ If you don't get any errors, then you should be good to go. Unmount the
+-USB drive, distinctly label it so you don't blow it away next time you
+-need to use a random USB drive, and put in a safe place -- but not too
+-far away, because you'll need to use it every now and again for things
+-like editing identities, adding or revoking subkeys, or signing other
+-people's keys.
++device, distinctly label it so you don't overwrite it by accident, and
++put in a safe place -- but not too far away, because you'll need to use
++it every now and again for things like editing identities, adding or
++revoking subkeys, or signing other people's keys.
+ 
+ Remove the Certify key from your homedir
+ ----------------------------------------
+@@ -303,7 +295,7 @@ and store it on offline storage.
+     your GnuPG directory in its entirety. What we are about to do will
+     render your key useless if you do not have a usable backup!
+ 
+-First, identify the keygrip of your Certify key::
++First, identify the "keygrip" of your Certify key::
+ 
+     $ gpg --with-keygrip --list-key [fpr]
+ 
+@@ -328,8 +320,8 @@ Certify key fingerprint). This will correspond directly to a file in your
+     2222000000000000000000000000000000000000.key
+     3333000000000000000000000000000000000000.key
+ 
+-All you have to do is simply remove the .key file that corresponds to
+-the Certify key keygrip::
++It is sufficient to remove the .key file that corresponds to the Certify
++key keygrip::
+ 
+     $ cd ~/.gnupg/private-keys-v1.d
+     $ rm 1111000000000000000000000000000000000000.key
+@@ -372,7 +364,7 @@ GnuPG operation is performed, the keys are loaded into system memory and
+ can be stolen from there by sufficiently advanced malware (think
+ Meltdown and Spectre).
+ 
+-The best way to completely protect your keys is to move them to a
++A good way to completely protect your keys is to move them to a
+ specialized hardware device that is capable of smartcard operations.
+ 
+ The benefits of smartcards
+@@ -383,11 +375,11 @@ private keys and performing crypto operations directly on the card
+ itself. Because the key contents never leave the smartcard, the
+ operating system of the computer into which you plug in the hardware
+ device is not able to retrieve the private keys themselves. This is very
+-different from the encrypted USB storage device we used earlier for
+-backup purposes -- while that USB device is plugged in and mounted, the
++different from the encrypted media storage device we used earlier for
++backup purposes -- while that device is plugged in and mounted, the
+ operating system is able to access the private key contents.
+ 
+-Using external encrypted USB media is not a substitute to having a
++Using external encrypted media is not a substitute to having a
+ smartcard-capable device.
+ 
+ Available smartcard devices
+@@ -398,17 +390,15 @@ easiest is to get a specialized USB device that implements smartcard
+ functionality. There are several options available:
+ 
+ - `Nitrokey Start`_: Open hardware and Free Software, based on FSI
+-  Japan's `Gnuk`_. One of the few available commercial devices that
+-  support ED25519 ECC keys, but offer fewest security features (such as
+-  resistance to tampering or some side-channel attacks).
+-- `Nitrokey Pro 2`_: Similar to the Nitrokey Start, but more
+-  tamper-resistant and offers more security features. Pro 2 supports ECC
+-  cryptography (NISTP).
++  Japan's `Gnuk`_. One of the cheapest options, but offers fewest
++  security features (such as resistance to tampering or some
++  side-channel attacks).
++- `Nitrokey 3`_: Similar to the Nitrokey Start, but more
++  tamper-resistant and offers more security features and USB
++  form-factors. Supports ECC cryptography (ED25519 and NISTP).
+ - `Yubikey 5`_: proprietary hardware and software, but cheaper than
+-  Nitrokey Pro and comes available in the USB-C form that is more useful
+-  with newer laptops. Offers additional security features such as FIDO
+-  U2F, among others, and now finally supports NISTP and ED25519 ECC
+-  keys.
++  Nitrokey with a similar set of features. Supports ECC cryptography
++  (ED25519 and NISTP).
+ 
+ Your choice will depend on cost, shipping availability in your
+ geographical region, and open/proprietary hardware considerations.
+@@ -419,8 +409,8 @@ geographical region, and open/proprietary hardware considerations.
+     you `qualify for a free Nitrokey Start`_ courtesy of The Linux
+     Foundation.
+ 
+-.. _`Nitrokey Start`: https://shop.nitrokey.com/shop/product/nitrokey-start-6
+-.. _`Nitrokey Pro 2`: https://shop.nitrokey.com/shop/product/nkpr2-nitrokey-pro-2-3
++.. _`Nitrokey Start`: https://www.nitrokey.com/products/nitrokeys
++.. _`Nitrokey 3`: https://www.nitrokey.com/products/nitrokeys
+ .. _`Yubikey 5`: https://www.yubico.com/products/yubikey-5-overview/
+ .. _Gnuk: https://www.fsij.org/doc-gnuk/
+ .. _`qualify for a free Nitrokey Start`: https://www.kernel.org/nitrokey-digital-tokens-for-kernel-developers.html
+@@ -455,7 +445,7 @@ the smartcard). You so rarely need to use the Admin PIN, that you will
+ inevitably forget what it is if you do not record it.
+ 
+ Getting back to the main card menu, you can also set other values (such
+-as name, sex, login data, etc), but it's not necessary and will
++as name, gender, login data, etc), but it's not necessary and will
+ additionally leak information about your smartcard should you lose it.
+ 
+ .. note::
+@@ -615,7 +605,7 @@ run::
+ You can also use a specific date if that is easier to remember (e.g.
+ your birthday, January 1st, or Canada Day)::
+ 
+-    $ gpg --quick-set-expire [fpr] 2025-07-01
++    $ gpg --quick-set-expire [fpr] 2038-07-01
+ 
+ Remember to send the updated key back to keyservers::
+ 
+@@ -656,9 +646,9 @@ hundreds of cloned repositories floating around, how does anyone verify
+ that their copy of linux.git has not been tampered with by a malicious
+ third party?
+ 
+-Or what happens if a backdoor is discovered in the code and the "Author"
+-line in the commit says it was done by you, while you're pretty sure you
+-had `nothing to do with it`_?
++Or what happens if malicious code is discovered in the kernel and the
++"Author" line in the commit says it was done by you, while you're pretty
++sure you had `nothing to do with it`_?
+ 
+ To address both of these issues, Git introduced PGP integration. Signed
+ tags prove the repository integrity by assuring that its contents are
+@@ -681,8 +671,7 @@ should be used (``[fpr]`` is the fingerprint of your key)::
+ How to work with signed tags
+ ----------------------------
+ 
+-To create a signed tag, simply pass the ``-s`` switch to the tag
+-command::
++To create a signed tag, pass the ``-s`` switch to the tag command::
+ 
+     $ git tag -s [tagname]
+ 
+@@ -693,7 +682,7 @@ not been maliciously altered.
+ How to verify signed tags
+ ~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-To verify a signed tag, simply use the ``verify-tag`` command::
++To verify a signed tag, use the ``verify-tag`` command::
+ 
+     $ git verify-tag [tagname]
+ 
+@@ -712,9 +701,9 @@ The merge message will contain something like this::
+     # gpg: Signature made [...]
+     # gpg: Good signature from [...]
+ 
+-If you are verifying someone else's git tag, then you will need to
+-import their PGP key. Please refer to the
+-":ref:`verify_identities`" section below.
++If you are verifying someone else's git tag, you will first need to
++import their PGP key. Please refer to the ":ref:`verify_identities`"
++section below.
+ 
+ Configure git to always sign annotated tags
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -728,16 +717,16 @@ configuration option::
+ How to work with signed commits
+ -------------------------------
+ 
+-It is easy to create signed commits, but it is much more difficult to
+-use them in Linux kernel development, since it relies on patches sent to
+-the mailing list, and this workflow does not preserve PGP commit
+-signatures. Furthermore, when rebasing your repository to match
+-upstream, even your own PGP commit signatures will end up discarded. For
+-this reason, most kernel developers don't bother signing their commits
+-and will ignore signed commits in any external repositories that they
+-rely upon in their work.
++It is also possible to create signed commits, but they have limited
++usefulness in Linux kernel development. The kernel contribution workflow
++relies on sending in patches, and converting commits to patches does not
++preserve git commit signatures. Furthermore, when rebasing your own
++repository on a newer upstream, PGP commit signatures will end up
++discarded. For this reason, most kernel developers don't bother signing
++their commits and will ignore signed commits in any external
++repositories that they rely upon in their work.
+ 
+-However, if you have your working git tree publicly available at some
++That said, if you have your working git tree publicly available at some
+ git hosting service (kernel.org, infradead.org, ozlabs.org, or others),
+ then the recommendation is that you sign all your git commits even if
+ upstream developers do not directly benefit from this practice.
+@@ -748,7 +737,7 @@ We recommend this for the following reasons:
+    provenance, even externally maintained trees carrying PGP commit
+    signatures will be valuable for such purposes.
+ 2. If you ever need to re-clone your local repository (for example,
+-   after a disk failure), this lets you easily verify the repository
++   after reinstalling your system), this lets you verify the repository
+    integrity before resuming your work.
+ 3. If someone needs to cherry-pick your commits, this allows them to
+    quickly verify their integrity before applying them.
+@@ -756,9 +745,8 @@ We recommend this for the following reasons:
+ Creating signed commits
+ ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-To create a signed commit, you just need to pass the ``-S`` flag to the
+-``git commit`` command (it's capital ``-S`` due to collision with
+-another flag)::
++To create a signed commit, pass the ``-S`` flag to the ``git commit``
++command (it's capital ``-S`` due to collision with another flag)::
+ 
+     $ git commit -S
+ 
+@@ -775,7 +763,6 @@ You can tell git to always sign commits::
+ 
+ .. _verify_identities:
+ 
+-
+ How to work with signed patches
+ -------------------------------
+ 
+@@ -793,6 +780,11 @@ headers (a-la DKIM):
+ Installing and configuring patatt
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++.. note::
++
++    If you use B4 to send in your patches, patatt is already installed
++    and integrated into your workflow.
++
+ Patatt is packaged for many distributions already, so please check there
+ first. You can also install it from pypi using "``pip install patatt``".
+ 
+@@ -835,9 +827,9 @@ encounters, for example::
+ How to verify kernel developer identities
+ =========================================
+ 
+-Signing tags and commits is easy, but how does one go about verifying
+-that the key used to sign something belongs to the actual kernel
+-developer and not to a malicious imposter?
++Signing tags and commits is straightforward, but how does one go about
++verifying that the key used to sign something belongs to the actual
++kernel developer and not to a malicious imposter?
+ 
+ Configure auto-key-retrieval using WKD and DANE
+ -----------------------------------------------
+@@ -884,7 +876,7 @@ various software makers dictating who should be your trusted certifying
+ entity, PGP leaves this responsibility to each user.
+ 
+ Unfortunately, very few people understand how the Web of Trust works.
+-While it remains an important aspect of the OpenPGP specification,
++While it is still an important part of the OpenPGP specification,
+ recent versions of GnuPG (2.2 and above) have implemented an alternative
+ mechanism called "Trust on First Use" (TOFU). You can think of TOFU as
+ "the SSH-like approach to trust." With SSH, the first time you connect
+@@ -894,8 +886,8 @@ to connect, forcing you to make a decision on whether you choose to
+ trust the changed key or not. Similarly, the first time you import
+ someone's PGP key, it is assumed to be valid. If at any point in the
+ future GnuPG comes across another key with the same identity, both the
+-previously imported key and the new key will be marked as invalid and
+-you will need to manually figure out which one to keep.
++previously imported key and the new key will be marked for verification
++and you will need to manually figure out which one to keep.
+ 
+ We recommend that you use the combined TOFU+PGP trust model (which is
+ the new default in GnuPG v2). To set it, add (or modify) the
+
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250902-pgp-guide-updates-88f041cf115c
+
+Best regards,
+--  
+Konstantin Ryabitsev <konstantin@linuxfoundation.org>
 
 
