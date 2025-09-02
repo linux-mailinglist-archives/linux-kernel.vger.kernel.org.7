@@ -1,169 +1,172 @@
-Return-Path: <linux-kernel+bounces-796950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9153FB409DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:56:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58339B409EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 536614E456C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FBA3B335B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65685324B2E;
-	Tue,  2 Sep 2025 15:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643A5334376;
+	Tue,  2 Sep 2025 15:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2tt+Sbh7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pBFyc0oz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="luJbMLL4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4912D5C8B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCBB2D73BD
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756828599; cv=none; b=fR1ordNnJdyvIT1BxiDlF1ExfoMuba27EIIiKY8NpRaiP/5JQPQ56PenGklm9+HdNFuFpBaa1PHTfxkcUrQcp8sQereFQooPuu4+s5D1+/cIkiecapa704yEhteSo91e+e9/e7cNjME/QmzD1sUb8BQeruoKn9wIvQco92gsK/0=
+	t=1756828655; cv=none; b=aOQ8BTicicdIskBeLxRUyfavLnCxZMYXvtvnHC+sPzmrvt34BggW8ZAWJ/wDmBLPavVqnXBkGmmmHV8B9dqE+/Zninz2oEIYqoi6MUR2jMguZx+LqH6Rir1uiZ/DWnwjI5MgR4nb3aQt3TOM+sVF9pzpz71nyHQQuX4cTLs0A0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756828599; c=relaxed/simple;
-	bh=g1bkIG37s9fgjXu+ib19trGheHGbvz+8KR9RvID0OGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cr9mSdR8ZgSG3DZAwsML2GAcjotqInNh+G0UIEwHK9sv587qbjfvloSRXgGaqAptD0ALRyDCTi/9kZL49mx64qGCeCcUdAxPJ0fVYDr42+i63ONeMuV0CVg7Bt5LpU4xQpEfL2SrbUslWSY+sHvEAZ7ipSMsjwPLZhASGATsvMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2tt+Sbh7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pBFyc0oz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 2 Sep 2025 17:56:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756828596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LswVthRZlVgY9iC1UxIP2BbJPLTS0TiEx2kp0GoNkR4=;
-	b=2tt+Sbh7Pws/rEAFVGNjoTAQYjWM61wm5c/IDVWVfPoB9gyPv6anfPxqmvMoa2GvR11Czk
-	+JPHo+55bSVsz9vAfqcH/gBVSoNWPXcCf5Hh82TY0Ui7YjZoIypyF3osTaktjZTrcri8l1
-	rdmXx73j8qK3pDKr5Q+7scFgDfpG1VGoKpEOT20vB5GLWBIWi7Wm0IrESUiW+F5KZfKEjm
-	99q1VTa6wG8OSXmyxklNKIguKqiH2v4RpJSu8Q+Lji+s35uXw9CJdDPsehh0GzxttbvGmr
-	rcHM9IXk3RJLDnjxi0SrHLQtcP35mqUATGxwY0/u5KHWkY3BL8Jw63D0584IWg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756828596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LswVthRZlVgY9iC1UxIP2BbJPLTS0TiEx2kp0GoNkR4=;
-	b=pBFyc0ozG9j3HdnTlVm0ArkSsc2pW0pfiI8wyNJIb9Fw8yBskyjUSLTjOuEPBl+quaDZS2
-	57+ngw7A4c3S3xDg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Clark Williams <clrkwllms@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 1/3] workqueue: Provide a handshake for canceling BH
- workers
-Message-ID: <20250902155634.enTifVKX@linutronix.de>
-References: <20250901163811.963326-1-bigeasy@linutronix.de>
- <20250901163811.963326-2-bigeasy@linutronix.de>
- <CAJhGHyBaqn_HOoHX+YinKW5YSy1rncfbvYXktkEtmFgK44E9wg@mail.gmail.com>
- <20250902111740.hwMmUu4T@linutronix.de>
- <CAJhGHyD7x9QLJ+uoRnbh4qOhphdxJU4c384D1Ph2tn5ktR_=kw@mail.gmail.com>
+	s=arc-20240116; t=1756828655; c=relaxed/simple;
+	bh=f8dB89FFFlQppC9iKhRxh/NQhmzMIkdFH6xcmmT4U3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JLevV6LWXVTudC8/SqaAVDKknzufQzaxedWzV/Ucb9SFRyY7mlPmjRpyn8enrJxklM952RJUZyXaAFrLbigGo9xM/LFm/OGFpnYfMvNgNxe/4TYrSfiacfhwtVCLOiwbEmB1JG4eXjax+EQsu/Fwg53Nmbcb80gRZfC4coqYiYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=luJbMLL4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582EqGeQ012726
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 15:57:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=TREnSWpfAdWrhmOtMgkCSdJYlV1MbSdoxyYVKxg6HYw=; b=lu
+	JbMLL47Ftx9g9Db4lqWD1qbEVabosqCPd+0Qr/JAi6TePDUU/GKbTLq894xe1JKX
+	WOHsWP+nlfxuW3JHRyx6lbHkNeRejs7DbeZmIo4te8gF/spHIzDCCoH2biGydJnT
+	CMjIbhLCbdCCu+j9H5VDPslhQ0AXdVx3AVVlRVwSv+DGX/UhTo4/+Rd9FnlNVAe2
+	5XUo2komMoOHF3B6orvdFkAW0kDOc3pkTQnO32l0EvBc0WWjmEsC7wYYHmGRmnKq
+	5OrDadHtvq05ukhB++lLHUr9wQuEsC5fHr3EwzAr5PFA4kqs84gy76CI8sQD9ghw
+	5LLP0Lwf52ooGiIRulDA==
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48utk9076d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 15:57:33 +0000 (GMT)
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-435de5ccae6so5405367b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:57:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756828652; x=1757433452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TREnSWpfAdWrhmOtMgkCSdJYlV1MbSdoxyYVKxg6HYw=;
+        b=fWNRhhC+ExKDqpSWgdj5gCh6juQCZmbruw86yLOhMGY/tMjI8pCs1rmP2iH2iY1hbA
+         a0Xj5Po5OLxMGvT+ldYyc1Be62CoKCQnhwHhVGSAGiqa2MQbdm60bB5aj54bRADlvcGI
+         F21B9swPWDIecb8hHvVsAq69d8j3NF60/4MFwgBTb/8TP+clpThdQqYVHqTGR83BUGOq
+         1vs+fktFHeNgGJfsjO45PFTQoEC4SPyLZNSDCZPFrrEplsw+jQSSNOf6/iHbXFzdNoPr
+         dihIYwHwBuvaY7ztdlzcrJKy+pkpuAJpvVkZ/pDHcirRBiCzTDr3RLZpZd2u3cVIL4Tk
+         gaeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWa2KNvBb7klqhJTXJnVHFLRmL0dD/bzqji2eJ4SoscEwFZ6Jc+AN9KrPHhknBhNfQj+g6Sze8fAvBREuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZhfP43X3Upo5e+WLqG7hsBWYIomKo2/o/XPvBgnpMkBAp/Pq1
+	DwzGMK+ZInN7eKyAKep/WG1L8Wslrq5Irve+zapz+/PEV3RP8Wkd/Sm6tQm0jwsF9QIBSxRxnMp
+	8k7cL5UbxiZYXKBrwrjVorh3ALSuolRtpcjA5Rcsd2K6j076yecIR9ajHUxbtPUOxKWRHuPgXYO
+	GVMwXBz3BL01W9bvA15YKqfOkW8T8+MYGJMcAKmqcIIg==
+X-Gm-Gg: ASbGnctdL1xjf9D7tAK3kyOB6J3k6m14J8eIB4q+7vkmiGobS1MZqbb1kVx8BRB1KJh
+	H7up2mRy0ACs02GTrzA7DVzDTzMRhCNBdyeTyQ3aeKvNiHjyENeKf9c2dXKcBa8aAx3ScXUeDHT
+	ilUDiGS8jeCit60o3Q+YILWc9qG6b8Cssa2bQeAhe79pBvdSzvynTL
+X-Received: by 2002:a05:6808:152b:b0:437:b10d:3b46 with SMTP id 5614622812f47-437f7de1519mr5637674b6e.30.1756828650809;
+        Tue, 02 Sep 2025 08:57:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYnnQDfuHV9n/jWre+x5H5L+i6EA8p0glanc4jK3wzaEOdW1w8zr1QPsTQkge73XmH1NyXNbBSBZwJ1vwOsTc=
+X-Received: by 2002:a05:6808:152b:b0:437:b10d:3b46 with SMTP id
+ 5614622812f47-437f7de1519mr5637653b6e.30.1756828650361; Tue, 02 Sep 2025
+ 08:57:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250902-assorted-sept-1-v1-0-f3ec9baed513@oss.qualcomm.com>
+ <20250902-assorted-sept-1-v1-4-f3ec9baed513@oss.qualcomm.com> <694f0989-64ea-4c3c-8613-863da1dd286a@oss.qualcomm.com>
+In-Reply-To: <694f0989-64ea-4c3c-8613-863da1dd286a@oss.qualcomm.com>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Tue, 2 Sep 2025 08:57:19 -0700
+X-Gm-Features: Ac12FXzQPwDIUy_DiVh-kEO71EFonDrLLU22HZlou8nVFBUUUe2guiMPv6umOuA
+Message-ID: <CACSVV037e-GquRk7P1_qT7T4HF=f-TF93FpJ16NiKShqicaCfw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] drm/msm/a6xx: Add a comment to acd_probe()
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAJhGHyD7x9QLJ+uoRnbh4qOhphdxJU4c384D1Ph2tn5ktR_=kw@mail.gmail.com>
+X-Proofpoint-GUID: 3R9oJYXNMP2u8q4cuK99CcJCrUp0ncDC
+X-Proofpoint-ORIG-GUID: 3R9oJYXNMP2u8q4cuK99CcJCrUp0ncDC
+X-Authority-Analysis: v=2.4 cv=ccnSrmDM c=1 sm=1 tr=0 ts=68b713ed cx=c_pps
+ a=yymyAM/LQ7lj/HqAiIiKTw==:117 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=EUspDBNiAAAA:8 a=ycJl_s5THFxdJBPSnQsA:9 a=QEXdDO2ut3YA:10
+ a=efpaJB4zofY2dbm2aIRb:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDA0MiBTYWx0ZWRfXwClooAEQkfHO
+ H91x2MSncCUo/uVKrqzPwIjeP3Q4fgXbJKsPg0vZYpENrpoNOpx3DisWOUST3j+JtDufu11gX8A
+ T9vKL+p9tF0bqv5yT06Bf4Wa/ZzsTBnJ5yz+X3v5fjxwlkcAmdaEVCgatHME700qMYEisCFoFDV
+ IOgV5TIu8rG8ZzXoIsl6lakko4QzWftSAqAKTFW8RJUYgCx1ZzC6JLYIi3C0VbV2nZBi/xSC8Ng
+ wHaKHapzTOVYfAAnZFyTM5IsJqQ2BwFTF3la0zEKFDcY+n9t/zJKoJfRMdYYo1V8YNN5tbwYqj6
+ cSRninK5O9MGq9SaEQZb0lEn+P41zENrCDcBwMX6o4bCwgWTo7pjuClJDPP5maDFhDztNm7UB8C
+ VH8vhuQ6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_05,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300042
 
-On 2025-09-02 22:19:26 [+0800], Lai Jiangshan wrote:
-> Hello, Sebastian
-Hi Lai,
-
-> On Tue, Sep 2, 2025 at 7:17=E2=80=AFPM Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
-> > > Is it possible to use rt_mutex_init_proxy_locked(), rt_mutex_proxy_un=
-lock()
-> > > and rt_mutex_wait_proxy_lock()?
-> > >
-> > > Or is it possible to add something like rt_spinlock_init_proxy_locked=
-(),
-> > > rt_spinlock_proxy_unlock() and rt_spinlock_wait_proxy_lock() which wo=
-rk
-> > > the same as the rt_mutex's proxy lock primitives but for non-sleep co=
-ntext?
+On Tue, Sep 2, 2025 at 5:33=E2=80=AFAM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 9/2/25 1:50 PM, Akhil P Oommen wrote:
+> > It is not obvious why we can skip error checking of
+> > dev_pm_opp_find_freq_exact() API. Add a comment explaining it.
 > >
-> > I don't think so. I think non-sleep context is the killer part. Those
-> > are for PI and this works by assigning waiter's priority, going to sleep
-> > until "it" is done. Now if you want non-sleep then you would have to
-> > remain on the CPU and spin until the "work" is done. This spinning would
-> > work if the other task is on a remote CPU. But if both are on the same
-> > CPU then spinning is not working.
+> > Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 1 +
+> >  1 file changed, 1 insertion(+)
 > >
->=20
-> I meant to say that the supposed rt_spinlock_wait_proxy_lock() would
-> work similarly to the rt_mutex proxy lock, which would wait until the
-> boosted task (in this case, the kthread running the BH work) calls
-> rt_spinlock_proxy_unlock(). It would also behave like the PREEMPT_RT
-> version of spin_lock, where the task blocked  on a spin_lock has a
-> special style of blocked/sleep instead of spinning on the CPU and this
-> is what the prefix "rt_spinlock" means.
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/ms=
+m/adreno/a6xx_gmu.c
+> > index ea52374c9fcd481d816ed9608e9f6eb1c2e3005a..de8f7051402bf0fd931fc06=
+5b5c4c49e2bfd5dc7 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > @@ -1694,6 +1694,7 @@ static int a6xx_gmu_acd_probe(struct a6xx_gmu *gm=
+u)
+> >               u32 val;
+> >
+> >               freq =3D gmu->gpu_freqs[i];
+> > +             /* This is unlikely to fail because we are passing back a=
+ known freq */
+>
+> This could probably mention that known =3D=3D we just retrieved it a coup=
+le
+> function calls above, but I suppose the reader can come up with such
+> conclusions
 
-That interface is actually implementing that boosting for users which
-don't use it directly. By "it" I mean the proper rtmutex.
+Also, I think s/unlikely/not expected/ ?  "Unlikely" implies that it
+could still happen..
 
-This is used by the PI/ futex code where a rtmutex is created as a
-substitute for the lock that is held by the user in userland. The lock
-is acquired in userland without kernel's doing. So in case of contention
-the user goes to kernel and creates a rtmutex as a representation of the
-userland lock in the kernel and assign it to the task that is holding
-the userland lock. Now you can block on the lock and userland tasks is
-forced to go to the kernel for unlocking.
+BR,
+-R
 
-For RCU, as far as I remember, a task within an RCU can get preempted
-and in that case it adds itself to a list during schedule() so it can be
-identified later on. There can be more than one task which is preempted
-within a RCU section and so block a GP. The boost mutex is assigned to
-the first task currently blocking the GP and then next one if needed.=20
-A poor substitute would be something like taking a lock during
-schedule() and having a list of all those locks in case boosting is
-needed so it be acquired one by one.
-
-> By the way, I=E2=80=99m not objecting to this patch =E2=80=94 I just want=
- to explore
-> whether there might be other options.
-
-Right. So you would avoid taking the cb_lock in bh_worker(). Instead you
-would need to assign the "acquired" lock to the bh_work() task in
-__flush_work() and then block on that lock in __flush_work(). In order
-to figure out which task it is, you need some bookkeeping for it. And a
-lock to synchronise adding/ removing tasks on that list (bookkeeping) as
-well as accessing the lock itself in case of "contention".
-So given all this, that approach looks slightly more complicated. You
-would avoid the need to acquire the lock in bh_worker() but you would
-also substitute it with bookkeeping and its locking elsewhere. So I am
-not sure it is worth it.
-
-On !RT you can have only one running softirq at a time. On RT with the
-removal of the lock in local_bh_disable() (patch #3) there can be
-multiple softirqs instances in parallel on the same CPU. The primary
-goal is avoid center bottleneck and make it possible to have one NIC
-doing throughput and another NIC doing low latency packets and allowing
-the low latency NIC preempt the throughput NIC in the middle of sending/
-receiving packets instead of waiting for NAPI doing a handover.
-
-The lock I'm adding here adds some synchronisation here. So you see how
-this requirement for the three legacy users makes it slightly more
-complicated especially after the cleanup years ago=E2=80=A6
-However I hope now to come up with a atomic API as Tejun suggested and
-push it behind Kconfig bars or so.
-
-> Thanks
-> Lai
-
-Sebastian
+>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>
+> Konrad
 
