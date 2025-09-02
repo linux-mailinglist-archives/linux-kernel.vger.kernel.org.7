@@ -1,47 +1,42 @@
-Return-Path: <linux-kernel+bounces-795543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730ABB3F431
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:11:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF23B3F42F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16FCF1A8100B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F0D20103E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96272E11BF;
-	Tue,  2 Sep 2025 05:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjSvL828"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1573F2E0B5F;
+	Tue,  2 Sep 2025 05:09:33 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482962DF15F;
-	Tue,  2 Sep 2025 05:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB057BA4A;
+	Tue,  2 Sep 2025 05:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756789896; cv=none; b=J9wJHAV+oBzxlg85VG5G8Rvoy3OwplxVy58y6pxqzh66Wri/lGkV2FeExJHK76W/n9X2KJSjeBOX1BsB+FtA/WDUA9iFnIlLtFfR9gdHHp6dgkSD5vIctCkxMZKiflzotqbT5/HFtIEG8UqluLu1RHCt9hno5VWckVvv5yNPVOU=
+	t=1756789772; cv=none; b=UXI595cBPfGHVvmYMYI/7qcSvf4iPU1wgyZUTu5pOhN5CTmMvQvwUns6o/mk1Z9IEuKuqwKbjUfvn/RHhmSjmy1cV6STZsCiHJGjINHz+LRd/rnj52MNASOSnmzn8vvKIluTKpd+VkKNgnSw2f2Ogx1EjhpnvzsAs8cJdOaa+WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756789896; c=relaxed/simple;
-	bh=nPVyH9G9lI1Km2IUyFQw8xE1zC3zi2xNgVGYJNHZqbU=;
+	s=arc-20240116; t=1756789772; c=relaxed/simple;
+	bh=rKCIPKzawr9c9rbkUtSKJObEOaagZquXS9K9Ng9+rgM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D3ieN7e4G48XzJkGxNSnlLxbXiU9TwxhaNQ/PVaz3i4hP7tYd+G40MjUJ4Nx3/z4C2HuzQPadJV0RKdzGtvn/Xc5EZ2wCTR5/v4vJbCRP0uW4eZ+vFr1e9QLkmT//Rc3wUMDIeTEicHrHAR6pTchYrcdbHoDduNbj7IA/1uzn0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjSvL828; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA721C4CEED;
-	Tue,  2 Sep 2025 05:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756789895;
-	bh=nPVyH9G9lI1Km2IUyFQw8xE1zC3zi2xNgVGYJNHZqbU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LjSvL828CIbAl0U97ocjMgI6rbpyQvR4Xa9hlBR0gkwI1h0oRbH1dXf1ZHqLxE4BZ
-	 XgFQTuGufApZrPE5k5RN7dNqm0oaIiSJJpXhpZP9Rgo0m66rklXDXAqwbCtYeShOa1
-	 ihf6d96GHlurSFR5owb8uQWjfqa2iyykdUDJ4i52PiCj49pPIDG8Hj75meDvtPerOv
-	 cYQNqDBE+lJA4AB/T+GVWHlA5FB4ru/f5pPQWfHnqSctN00tNZIv+L9Jn/4Jubxsil
-	 ceauTeNAxAae4r26afYYezKrUB5581loje4hrrkS2KcitxH46jIrgxCv5wbkszRTI6
-	 SipCcM5hvr7Pw==
-Message-ID: <04ca315e-e375-40ab-8596-613f8d453008@kernel.org>
-Date: Tue, 2 Sep 2025 14:08:41 +0900
+	 In-Reply-To:Content-Type; b=fuQnGgEJ04bgdDzOPliWDkdwJrCwNHBQhMTB1emPTXYvUzCHqIm+42VSey8npuxzfcrCLZWIHrcHrH0hGLm+DrLji72XrPxDSjRsdf6RAHAVhUVOlVwRpQ9yGvQvs2iTvar1zex8AdpxkytGV5Z4enkQ+MtiiHgrTmD4EktELO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.205] (p5dc55ed2.dip0.t-ipconnect.de [93.197.94.210])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8008D60213AC3;
+	Tue, 02 Sep 2025 07:08:51 +0200 (CEST)
+Message-ID: <4f746e98-b81b-4632-a2f8-f14d66c71ced@molgen.mpg.de>
+Date: Tue, 2 Sep 2025 07:08:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,41 +44,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] scsi: scsi_error: Introduce new error handle
- mechanism
-To: JiangJianJun <jiangjianjun3@huawei.com>, linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, hewenliang4@huawei.com,
- yangyun50@huawei.com, wuyifeng10@huawei.com, yangxingui@h-partners.com
-References: <f02f049f-efa3-481b-b681-cf75308bfbc4@kernel.org>
- <20250902053035.2486666-1-jiangjianjun3@huawei.com>
-From: Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [Intel-wired-lan] [PATCH v2] ixgbe: fix too early devlink_free()
+ in ixgbe_remove()
+To: Koichiro Den <den@valinux.co.jp>
+Cc: intel-wired-lan@lists.osuosl.org, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch,
+ jedrzej.jagielski@intel.com, mateusz.polchlopek@intel.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250902003941.2561389-1-den@valinux.co.jp>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250902053035.2486666-1-jiangjianjun3@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250902003941.2561389-1-den@valinux.co.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/2/25 2:30 PM, JiangJianJun wrote:
->> Barely half of your emails have made it through for me and they landed in my
->> spam folder. So please check your email setup.
+Dear Koichiro,
+
+
+Thank you for your patch.
+
+Am 02.09.25 um 02:39 schrieb Koichiro Den:
+> Since ixgbe_adapter is embedded in devlink, calling devlink_free()
+> prematurely in the ixgbe_remove() path can lead to UAF. Move devlink_free()
+> to the end.
 > 
-> I also find it strange, but my colleague can receive it. Maybe i reset email
-> and send again? 
+> KASAN report:
 > 
->> Also, was this all tested with libata and libsas attached devices as well ?
->> They all depend on scsi EH.
+>   BUG: KASAN: use-after-free in ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
+>   Read of size 8 at addr ffff0000adf813e0 by task bash/2095
+>   CPU: 1 UID: 0 PID: 2095 Comm: bash Tainted: G S  6.17.0-rc2-tnguy.net-queue+ #1 PREEMPT(full)
+>   [...]
+>   Call trace:
+>    show_stack+0x30/0x90 (C)
+>    dump_stack_lvl+0x9c/0xd0
+>    print_address_description.constprop.0+0x90/0x310
+>    print_report+0x104/0x1f0
+>    kasan_report+0x88/0x180
+>    __asan_report_load8_noabort+0x20/0x30
+>    ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
+>    ixgbe_clear_interrupt_scheme+0xf8/0x130 [ixgbe]
+>    ixgbe_remove+0x2d0/0x8c0 [ixgbe]
+>    pci_device_remove+0xa0/0x220
+>    device_remove+0xb8/0x170
+>    device_release_driver_internal+0x318/0x490
+>    device_driver_detach+0x40/0x68
+>    unbind_store+0xec/0x118
+>    drv_attr_store+0x64/0xb8
+>    sysfs_kf_write+0xcc/0x138
+>    kernfs_fop_write_iter+0x294/0x440
+>    new_sync_write+0x1fc/0x588
+>    vfs_write+0x480/0x6a0
+>    ksys_write+0xf0/0x1e0
+>    __arm64_sys_write+0x70/0xc0
+>    invoke_syscall.constprop.0+0xcc/0x280
+>    el0_svc_common.constprop.0+0xa8/0x248
+>    do_el0_svc+0x44/0x68
+>    el0_svc+0x54/0x160
+>    el0t_64_sync_handler+0xa0/0xe8
+>    el0t_64_sync+0x1b0/0x1b8
 > 
-> There is currently no tool available for injecting faults into hard drives,
-> but we have implemented this solution in our company's products. So i just
-> test with scsi_debug.
+> Fixes: a0285236ab93 ("ixgbe: add initial devlink support")
+> Signed-off-by: Koichiro Den <den@valinux.co.jp>
+> ---
+> Changes in v2:
+> - Move only devlink_free()
+> ---
+>   drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> index 80e6a2ef1350..b3822c229300 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+> @@ -12092,7 +12092,6 @@ static void ixgbe_remove(struct pci_dev *pdev)
+>   
+>   	devl_port_unregister(&adapter->devlink_port);
+>   	devl_unlock(adapter->devlink);
+> -	devlink_free(adapter->devlink);
+>   
+>   	ixgbe_stop_ipsec_offload(adapter);
+>   	ixgbe_clear_interrupt_scheme(adapter);
+> @@ -12125,6 +12124,8 @@ static void ixgbe_remove(struct pci_dev *pdev)
+>   
+>   	if (disable_dev)
+>   		pci_disable_device(pdev);
+> +
+> +	devlink_free(adapter->devlink);
+>   }
+>   
+>   /**
 
-Use write long command to "destroy" sectors. Then try to read them. That will
-generate uncorrectable read errors.
-
-See sg_write_long (sg3utils).
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
 
--- 
-Damien Le Moal
-Western Digital Research
+Kind regards,
+
+Paul
 
