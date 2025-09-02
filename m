@@ -1,82 +1,133 @@
-Return-Path: <linux-kernel+bounces-797324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2210B40ED1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:49:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694B4B40ED9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E76D7A8B5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013DD1883424
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F662E7F1D;
-	Tue,  2 Sep 2025 20:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6A32E92A3;
+	Tue,  2 Sep 2025 20:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQGeIPGl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TCSDXZF2"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2552253EB;
-	Tue,  2 Sep 2025 20:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9CA2253EB;
+	Tue,  2 Sep 2025 20:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756846148; cv=none; b=aSErZ08zSX8r/+GjbAQ27CgiwfG9O59up7lVs9Uy0B4sIcPm/8sJ2MgdO7lImGjB3RskFLEgSsoFD4k1+A7hdE+iyLaKmgWwac7rYEe69HLTQDMfVKqlgvB6qdygzNjhTyGDCblD9dXwTa1m8qCzj97pBE7XtHExr96Lb8Khs2E=
+	t=1756846201; cv=none; b=slgvV5gKliqHcAHj5xNr/iXHKxF0MH//InFClCSsqW4OtFmhcc9zMSdavtYh4+zZ9b8CeZ3E50mx8vhGYZvOTEpdLngrdqHPhYue5e9Jg5YM4zTFaQheLN2DRFJyQZUrAPn9KsPG3ztpKN7LcxvBa8XlzIKTciUhpG3a4b1rho8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756846148; c=relaxed/simple;
-	bh=Pr1wu64cTiWnW5NF0Mxcc4fL7y6TV7kC88hov/faBLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fkWPA49VOdOC1CYZUIkm36+rk/Shw5Yu33gYXvtuZ+scZ1f0d1yAY/smQ21WFNPe2iS7WO9Or1LLj3lcsn/sNPWqVaDHa9bmY4+IDeZmO6TuHD9e5p5FKiDDVPVF6jNyDpK9IT7qZeBdD1ArCTdYCI2kDtjWZ1Qx+8zcTc7z44o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQGeIPGl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F970C4CEED;
-	Tue,  2 Sep 2025 20:49:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756846147;
-	bh=Pr1wu64cTiWnW5NF0Mxcc4fL7y6TV7kC88hov/faBLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YQGeIPGl7+3I3azKgEImCizIYM5cFNzZqYuwdaL5kP8KZ7kU19Tbjcmrx3xGTHyF9
-	 YBFMmEFkgItGB13DfW8CaTWSzI8Ti7WS5y0wbEOk8Dn9d8Nq/g1PnkVFlm0OGj062X
-	 fOIq3uxJW1M4xU0VXmREpOU/n+4K8T1HpkolwZ/LNUSDpOY2a/w71m6Fye6DjpYtlj
-	 BeBD2b7r4/bcXHDwS0suP2LJSecvzTcdf4Ft/A57qr+3qzeBNIBQ9Ar9TdNudOdHBY
-	 0HlclM0lZAk2dfZvLmullRJut1qRK30S81ezmvIEWGqc4BxIsA+3ZsKL/CKOnMDqHN
-	 znn6LdKpFpVdA==
-Date: Tue, 2 Sep 2025 15:49:06 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alexander Kurz <akurz@blala.de>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Dzmitry Sankouski <dsankouski@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	linux-input@vger.kernel.org, Lee Jones <lee@kernel.org>
-Subject: Re: [PATCH v3 6/7] dt-bindings: mfd: fsl,mc13xxx: add buttons node
-Message-ID: <175684614636.1159256.793148520977277557.robh@kernel.org>
-References: <20250829201517.15374-1-akurz@blala.de>
- <20250829201517.15374-7-akurz@blala.de>
+	s=arc-20240116; t=1756846201; c=relaxed/simple;
+	bh=h9YG598jez9xHSTtoGC3TbdsaCDXkMcOLxofIDRanhw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=LB/bJb6+jMiGxTatRYRdw5WhH11CwgG0T6mTmZ2mHrocQ8a4QSGmZN4LYTjmb/fRdN4OuO0SGRPKVkM/nvLkb/i+gcmZbhWkZg9RfbWbxVLMnAVy2izv3HdC5pu7vUXksHsBntmufIe+fZVQEm063gp6j2K4mCqOgK6nZXa4iE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TCSDXZF2; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250902204951euoutp019772216366e471dce5ab670ff270a1c3~hkk2PqBI40583005830euoutp01b;
+	Tue,  2 Sep 2025 20:49:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250902204951euoutp019772216366e471dce5ab670ff270a1c3~hkk2PqBI40583005830euoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756846191;
+	bh=cns0fXIAbt1EqvizSg/wAnSv3SWVs6AXpQ/9VbxT1xc=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=TCSDXZF2Z62YcDiWqMDDa7Dv+pRBN+EUSjgrFZ1mzkO8tak0poyAI0nhbznKNDhqf
+	 D8kNvQjhwMLyfbECL2R2+e0uzHGZze/5arbNIj/FB7PwNbK4vxp5cjSUYa4Wb+jDZr
+	 M4rtfp2Rgp2ma7OWloLOB4f81ua8G4Rw/nxkJvc0=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250902204950eucas1p1185c6ab6c55958183bb0c347b0396b5b~hkk1r34Tc3157531575eucas1p1q;
+	Tue,  2 Sep 2025 20:49:50 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250902204948eusmtip14b51a6d907c8deca19aa6660d162e2c8~hkkz6C6Li1369313693eusmtip1I;
+	Tue,  2 Sep 2025 20:49:48 +0000 (GMT)
+Message-ID: <2d8e67b2-4ab2-4c1f-9ef3-470810f99d07@samsung.com>
+Date: Tue, 2 Sep 2025 22:49:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829201517.15374-7-akurz@blala.de>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 14/16] block-dma: migrate to dma_map_phys instead of
+ map_page
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Leon Romanovsky <leonro@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, Alexander Potapenko
+	<glider@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, Danilo
+	Krummrich <dakr@kernel.org>, iommu@lists.linux.dev, Jason Wang
+	<jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>, Joerg Roedel
+	<joro@8bytes.org>, Jonathan Corbet <corbet@lwn.net>, Juergen Gross
+	<jgross@suse.com>, kasan-dev@googlegroups.com, Keith Busch
+	<kbusch@kernel.org>, linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org, Madhavan Srinivasan
+	<maddy@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, Michael
+	Ellerman <mpe@ellerman.id.au>, "Michael S. Tsirkin" <mst@redhat.com>, Miguel
+	Ojeda <ojeda@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	rust-for-linux@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>, Stefano
+	Stabellini <sstabellini@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <22b824931bc8ba090979ab902e4c1c2ec8327b65.1755624249.git.leon@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250902204950eucas1p1185c6ab6c55958183bb0c347b0396b5b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250819173845eucas1p221cd6842839f5e7130f131cd341df566
+X-EPHeader: CA
+X-CMS-RootMailID: 20250819173845eucas1p221cd6842839f5e7130f131cd341df566
+References: <cover.1755624249.git.leon@kernel.org>
+	<CGME20250819173845eucas1p221cd6842839f5e7130f131cd341df566@eucas1p2.samsung.com>
+	<22b824931bc8ba090979ab902e4c1c2ec8327b65.1755624249.git.leon@kernel.org>
 
-
-On Fri, 29 Aug 2025 20:15:16 +0000, Alexander Kurz wrote:
-> Add a buttons node and properties describing the "ONOFD" (MC13783) and
-> "PWRON" (MC13892/MC34708) buttons available in the fsl,mc13xxx PMIC ICs.
-> 
-> Signed-off-by: Alexander Kurz <akurz@blala.de>
+On 19.08.2025 19:36, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+>
+> After introduction of dma_map_phys(), there is no need to convert
+> from physical address to struct page in order to map page. So let's
+> use it directly.
+>
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 > ---
->  .../devicetree/bindings/mfd/fsl,mc13xxx.yaml  | 70 +++++++++++++++++++
->  1 file changed, 70 insertions(+)
-> 
+>   block/blk-mq-dma.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/block/blk-mq-dma.c b/block/blk-mq-dma.c
+> index ad283017caef..37e2142be4f7 100644
+> --- a/block/blk-mq-dma.c
+> +++ b/block/blk-mq-dma.c
+> @@ -87,8 +87,8 @@ static bool blk_dma_map_bus(struct blk_dma_iter *iter, struct phys_vec *vec)
+>   static bool blk_dma_map_direct(struct request *req, struct device *dma_dev,
+>   		struct blk_dma_iter *iter, struct phys_vec *vec)
+>   {
+> -	iter->addr = dma_map_page(dma_dev, phys_to_page(vec->paddr),
+> -			offset_in_page(vec->paddr), vec->len, rq_dma_dir(req));
+> +	iter->addr = dma_map_phys(dma_dev, vec->paddr, vec->len,
+> +			rq_dma_dir(req), 0);
+>   	if (dma_mapping_error(dma_dev, iter->addr)) {
+>   		iter->status = BLK_STS_RESOURCE;
+>   		return false;
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+I wonder where is the corresponding dma_unmap_page() call and its change 
+to dma_unmap_phys()...
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
