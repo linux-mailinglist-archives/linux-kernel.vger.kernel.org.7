@@ -1,118 +1,79 @@
-Return-Path: <linux-kernel+bounces-795816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703A2B3F83A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:23:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130B9B3F83D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CCA23B9083
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA44177FDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB66A2E7BA5;
-	Tue,  2 Sep 2025 08:23:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5A82E6CB0;
-	Tue,  2 Sep 2025 08:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A532E7F14;
+	Tue,  2 Sep 2025 08:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quANh/F8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E4B2E612D;
+	Tue,  2 Sep 2025 08:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756801426; cv=none; b=VqRAPigujVgZtE3V5P95NJlx0HMqWlFAidJSI9RNIEpxILpbntfev3j4M0R3bHnz5HGgOKreRN5WovW/uyG5WVpxmRKfhcRdTKT41fu9yJX+QIf0RWBifF3yHNZebEsmxRbSgVhrkHF1TtZwXSFT5htr8135XA4dS/SkQOk2OJE=
+	t=1756801439; cv=none; b=jj44UrVS8QJeFs1LrWpsO0T6GhwO6JEhORoFYHU9x7dmmvRwqpiCp98o80mJnptlkp3/mtItIbgIjs/Yrd9f/ZbPnqUdbdC1H1qENIaGS7o61CwyYfhYOvjBxUjTOZ5lJULCxB5NJ9m2tzoO+gMdkVkX+9etq8pfRpPC3P9/Y4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756801426; c=relaxed/simple;
-	bh=/Fc93HJyTsls3mqFSuyCskutbKEm0Sfk24vuIXo3Fw8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XrB7f9tRa4piAFt0xReA/eCapwR0RZolchyAcS9z1hHjLEIX5pGO/sKPtVWLPS3/aO/N47omHsE3IcXxQX389k+ygCWUaav8IkcleVzb+xrlg6qWQvIpMT5BKEtW1hW1d2WWLlif8Mv3VC6iVFZa1mXtD5uf1tYuVKqoLlULVMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B6D82720;
-	Tue,  2 Sep 2025 01:23:29 -0700 (PDT)
-Received: from [10.57.4.221] (unknown [10.57.4.221])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5EA903F6A8;
-	Tue,  2 Sep 2025 01:23:35 -0700 (PDT)
-Message-ID: <e823610a-e145-4627-9968-6d2dcc873184@arm.com>
-Date: Tue, 2 Sep 2025 09:23:34 +0100
+	s=arc-20240116; t=1756801439; c=relaxed/simple;
+	bh=1ATwK9QeTQPiTLRp7e1b8aQrtqeEFUfLhDTxDp84PSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BEf0teLpfjEerTW+BzantJPIZh8N2dHsu5Ud82FHedJ3IsaIjTuoWBrOgcaWVhg5Q2OkthvaBSN/hdsqfKIx1TpjqBElQoKrbL2oYq7XUwdn5DfOxRvRysubmlcUi/BSIhKg2eVvdofcDG2ujoi3hZ2/+/6DRdabQ5YfJrPTYUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quANh/F8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D06C4CEED;
+	Tue,  2 Sep 2025 08:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756801438;
+	bh=1ATwK9QeTQPiTLRp7e1b8aQrtqeEFUfLhDTxDp84PSc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=quANh/F8Q8ySKbjfQo9wpn+67nUYriaEUG9upUzUsFxoPSaI8gHBbtavupzn7TaTG
+	 YjGCsrm1yPeRAC9kERMQLFeY0OrCtCumwf+nHwcOT+yejC7zNJoR28fgn+kfMinRe7
+	 xF8pdUfgpKrM+avje5qS68of1z2MiTfQQlOGqRcEyrU7r/LTyrgPl8kPcH6MEQWKDr
+	 ROUxTqpGSu6kL2wKwdJnyI7IWERufXJ45R1t1Yv4cRKepliy5ptM2TAJ/NC9HuDD4G
+	 fKb33mlqJyhB2lQVkVI8191p1BFI7na5ibMYr79NeXBAaYG+G2IKU7UHU3Syhz2ZGp
+	 YzPZWSBmob8cg==
+Date: Tue, 2 Sep 2025 10:23:56 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on
+ Tegra186/Tegra194
+Message-ID: <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] arm64: cpucaps: Add GICv5 Legacy vCPU interface
- (GCIE_LEGACY) capability
-Content-Language: en-GB
-To: Sascha Bischoff <Sascha.Bischoff@arm.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Cc: nd <nd@arm.com>, "maz@kernel.org" <maz@kernel.org>,
- "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
- Joey Gouly <Joey.Gouly@arm.com>, "yuzenghui@huawei.com"
- <yuzenghui@huawei.com>, "will@kernel.org" <will@kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- Timothy Hayes <Timothy.Hayes@arm.com>
-References: <20250828105925.3865158-1-sascha.bischoff@arm.com>
- <20250828105925.3865158-4-sascha.bischoff@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250828105925.3865158-4-sascha.bischoff@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
 
-On 28/08/2025 11:59, Sascha Bischoff wrote:
-> Implement the GCIE_LEGACY capability as a system feature to be able to
-> check for support from KVM. The type is explicitly
-> ARM64_CPUCAP_EARLY_LOCAL_CPU_FEATURE, which means that the capability
-> is enabled early if all boot CPUs support it. Additionally, if this
-> capability is enabled during boot, it prevents late onlining of CPUs
-> that lack it, thereby avoiding potential mismatched configurations
-> which would break KVM.
+On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
+> This series borrows the concept used on Tegra234 to scale EMC based on
+> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+> bpmp on those archs does not support bandwidth manager, so the scaling
+> iteself is handled similar to how Tegra124 currently works.
 > 
-> Signed-off-by: Sascha Bischoff <sascha.bischoff@arm.com>
+
+Three different subsystems and no single explanation of dependencies and
+how this can be merged.
 
 
-> ---
->   arch/arm64/kernel/cpufeature.c | 15 +++++++++++++++
->   arch/arm64/tools/cpucaps       |  1 +
->   2 files changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 9ad065f15f1d..afb3b10afd75 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2520,6 +2520,15 @@ test_has_mpam_hcr(const struct arm64_cpu_capabilities *entry, int scope)
->   	return idr & MPAMIDR_EL1_HAS_HCR;
->   }
->   
-> +static bool
-> +test_has_gicv5_legacy(const struct arm64_cpu_capabilities *entry, int scope)
-> +{
-> +	if (!this_cpu_has_cap(ARM64_HAS_GICV5_CPUIF))
-> +		return false;
-> +
-> +	return !!(read_sysreg_s(SYS_ICC_IDR0_EL1) & ICC_IDR0_EL1_GCIE_LEGACY);
-> +}
-> +
->   static const struct arm64_cpu_capabilities arm64_features[] = {
->   	{
->   		.capability = ARM64_ALWAYS_BOOT,
-> @@ -3131,6 +3140,12 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->   		.matches = has_cpuid_feature,
->   		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, GCIE, IMP)
->   	},
-> +	{
-> +		.desc = "GICv5 Legacy vCPU interface",
-> +		.type = ARM64_CPUCAP_EARLY_LOCAL_CPU_FEATURE,
-
-This is the right type for the capability intended, running the test on 
-each boot time CPUs and setting the cap accordingly.
-
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
+Best regards,
+Krzysztof
 
 
