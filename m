@@ -1,137 +1,165 @@
-Return-Path: <linux-kernel+bounces-796402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1682DB4005E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:26:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6BFB4000A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0BB23A39A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21424189C69D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE192FF14C;
-	Tue,  2 Sep 2025 12:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BF12F83D4;
+	Tue,  2 Sep 2025 12:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7s22P4q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvoF5wYz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD1B2FDC2D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68B528726E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815495; cv=none; b=AZwfqSx99dWPQVreLpyXeaMZ79hFy4OQZ3dUYNd4UNLVKeH/tz4UcTeQSPJjuIcQiUn2xEB+NogdSXOVXKvrUu4x/DM/CS12R/rrqgqtwWa17pyYWofrn6e6nlnOUijFR+KjmTWkgtPBnLBpC1rIfShmpm0hIfjai898a8wH0AI=
+	t=1756815488; cv=none; b=j1WlJ0cHn/Lnbw8sKynVlEkSXRI/cGmsMW4Aqpmj7zGjPbdlhEAzJkwzda0UMx0fZlr8fn7Wyn/ya+98np/tLi6W/W+O0mwH+6QlMtd1+BkPolSy/AOBPzt94iyz8Q0xyffdpXQUBKu2N0tRIw+QWUh0zpXKHzylIchRyK9pX3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815495; c=relaxed/simple;
-	bh=iV9OOBcP8NNsmpN1fZ74F397+PanErPMHV3l66Lj7mw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LOPiQdFdIqk6zMnGhwhupzuDeVMvs7KKELpgp2oo5G9wOYrZFzFHGmrSJVkpC3t+l7PjgMS6OFYsuKbK7acxCNgmnFiq8rA7GJM39Qt6nmT1F1fMTZ0Xs717T4C1WuuGW8NtMpoY6OpeMf1wLjOOnjeNBGaXs58ZIe2DulzCkv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7s22P4q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756815491;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OYbm++mLFAP2eOBK8zrIZwtSqYqUCZncQQAHIfNeOB8=;
-	b=h7s22P4q6Mqh5ELUOM0ZFIcvvMNpESHT8cAn+XNmYtuLV5ggXZ47ep83+dePzdw5X14vAt
-	NRgsJhn0OrENMczSX+jA3OdXrw9djy0W11KfunvvGhCbv+VRWGUT0j7DKmJPDKe2QmPTTp
-	F4VZ48qre8Rg3R7fkF0b78E9VF8PUig=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-459-8i1AwF8gPKqI2M4Jonf5yQ-1; Tue, 02 Sep 2025 08:18:10 -0400
-X-MC-Unique: 8i1AwF8gPKqI2M4Jonf5yQ-1
-X-Mimecast-MFC-AGG-ID: 8i1AwF8gPKqI2M4Jonf5yQ_1756815489
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b869d3562so25284795e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:18:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756815489; x=1757420289;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OYbm++mLFAP2eOBK8zrIZwtSqYqUCZncQQAHIfNeOB8=;
-        b=qo00XqVOIil5GWSL3zXWr5WxjwNibRQcMizdMaSXbvFC4Bw4MSlz3VGDe5sXfacuk1
-         h9JFgKe1E7wZSlsB6u5dQJkd0LxNo3tIRj5Q8q+q/+9UGTxS2uJzHK+dQv7c+Z5TTd6n
-         xz6j0LjwVQb6zH2UqNs6mgqb7NSg1zw70IFeyHmoV/Z5V0nBWtFDwGJmOEv+uS0QfGig
-         M7F7Tsw4tQlBOWQ6OTK67lbT/nGCjJLEXRw9K34CF+8uSRzDKBS2RrqbciBDEnW89BGy
-         wDDlNWTt4uHTyWRWMLVEkrJQOiionrwEOSVExYAIqeklRDEMBy5S1R9jEL2pxkCbKJUK
-         D1Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGnWziZAL3KW+uIHgIH+ZEK+a3Sj6tFIfqka2QJ9ZK/ZxiRI33X56UWdQ3GQf0bdfkLtQK1P+/YJI5Myg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLdOpdmbI1Pm0QLVt8PtrvRV5RCAEO9CsVnu624p0QmnGebLf6
-	Sa9U7XO+MhDHH2D8qtKLU5QjsaUS8B5ntRp4S81IjD6Wp4hmsa/yF1tJLehT6VDH2968utcbrqP
-	6THnaR+QEXMdg6u62gQxWMVKDQ3WHStKnACEt+wOI9bzYOrIIsnXkEUA5QhglHr852g==
-X-Gm-Gg: ASbGnctxK+LzR50Atj+2KfNbiKbud+QJrzbZhBAf83vEKPsohVpXqm6KDORgiIUH9bW
-	qdp/YuMIfzZ/DYKt7xCzvuz5VP5jiGm5qLmtT+u/VsMjHupxCXfW+s5VXANEsfjD03/rOC1J8Qg
-	Heo1mCos/VmDgBQfmQa43rqsYn0a4jvlH1Tin3W63e7JleVn26jc0nqaQ210SaxnC0UV2Kpf3oL
-	F89+eiRhJGUXRJ1YcWhgOCiMvAuyVs6LUEKvyzdi/RKKbViuHtX7WCNM4u/NSe81WOwesokwCd4
-	dXH4Ci9a020ct3PfFu+zMWPXCmCtcpyiY2bf2AS5fOD6D6aVNYgdKkmjtFn66zbmHyHZjGp9Q8S
-	FgdejnvNi4lTW
-X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr31211975e9.23.1756815488652;
-        Tue, 02 Sep 2025 05:18:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjWniM8t87MstmOKseixN3K4oxvQKmIMmSp/10Fw9hcxqnkqnioeD1dS7AiZVevFngzZ7ccg==
-X-Received: by 2002:a05:600c:4ec9:b0:45b:7ffa:1bf8 with SMTP id 5b1f17b1804b1-45b934f6a56mr31211795e9.23.1756815488249;
-        Tue, 02 Sep 2025 05:18:08 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7fec07sm191441215e9.10.2025.09.02.05.18.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 05:18:07 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] clk: qcom: Select the intended config in QCS_DISPCC_615
-Date: Tue,  2 Sep 2025 14:17:54 +0200
-Message-ID: <20250902121754.277452-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756815488; c=relaxed/simple;
+	bh=ZTSQwA+EpSV9+ojOsAvLyoFKMHNvauRlTuvilm25yM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ldWVA0BcjnMHFLtle9mGp0+xRlvm18auZESqLmxhcbMVIbCAaBlJ9fb07y9JhVgA576J7iDowb9f9Yg5N2naXbwPH6cGqeYlL0EVk0FaA/zEcdP6SFPChKf4LZaqSu1cJrEWtlbUHPnviioBQAtsxh5QRX9VABNKW8gh0r/+sv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvoF5wYz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77EC5C4CEF9
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756815488;
+	bh=ZTSQwA+EpSV9+ojOsAvLyoFKMHNvauRlTuvilm25yM4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dvoF5wYzcFG9Nrl6nny3ed0swGUNu7wEsqqlI6jaIUZ7UWokOtEe8tpEM+cpYYl93
+	 Xemi+o08AjNxxBWzRTXO8FxLzzbJcxrmrBAQ7hzud0ySVzUUTWkQ3FxH51A5hoGq66
+	 7RAm5R+RIHBCDYyxiMAvhH8luvUhtQgG80KgBZgQrl9oZrKXyODkFpiXsVHYVWduDy
+	 vg3qArNHOBTeQF0i0Dr1UyNuiBv6bLAprg06d5dS97krGEb6+oYVMM5Iv26mzleYNj
+	 REs0jtz7dg0TP55oRyGCgkm9/67SYd/Iwi2MJKm6VKEjAR/3yNoBOfUJKyo6rIg1Pb
+	 Q3hgOnOUcWYnQ==
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-72267c05050so25649947b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:18:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2pm5kvSHeHp6wjVh4lmjNlNJezvSttKRRPkUvElhRTQ/8pFszbGLIWW8L2jwUuJbJdJ66r+HY4D0LELE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoQMBiSx9vgQ6pllhG6wtuDEyjaroayLnPfVdbzKi2NIAnyKVX
+	i2SjVVqZEADxTg2xRToGW/E/YkZZP8j7NLw5IfLoJGBISSzhQfnMRdQacCP2shzpmKUgyf+QIQN
+	42VwtooQm8dBh5Opk69Ozr8KITJ6A76L1BJtEuoU86g==
+X-Google-Smtp-Source: AGHT+IF/fv8Z/lXj5JP5clHJ8aYfTcZOW+8f7Hi0XMCpJtw1fdJZ8y33yDnQyUMOboAz/G8jvSnLVwL7BHJdmVDe/zg=
+X-Received: by 2002:a05:690c:6c8f:b0:722:731d:f622 with SMTP id
+ 00721157ae682-7227636c98cmr110511477b3.17.1756815487736; Tue, 02 Sep 2025
+ 05:18:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250806161748.76651-1-ryncsn@gmail.com> <20250806161748.76651-3-ryncsn@gmail.com>
+In-Reply-To: <20250806161748.76651-3-ryncsn@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 2 Sep 2025 05:17:56 -0700
+X-Gmail-Original-Message-ID: <CACePvbWbNeQ1+nk_BHgFyyFM0m1iQvXqa09iPWTRnsUp5Be_Yg@mail.gmail.com>
+X-Gm-Features: Ac12FXwYM-QjowMD2uLpV6vp34CLhFUBAr49slLfUGLs_PraM_RMeUsbnnKX7LE
+Message-ID: <CACePvbWbNeQ1+nk_BHgFyyFM0m1iQvXqa09iPWTRnsUp5Be_Yg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mm, swap: remove fragment clusters counter
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Acked-by: Chris Li <chrisl@kernel.org>
 
-Commit 9b47105f5434 ("clk: qcom: dispcc-qcs615: Add QCS615 display clock
-controller driver") adds the config QCS_DISPCC_615, which selects the
-non-existing config QCM_GCC_615. Probably, this is just a three-letter
-abbreviation mix-up here, though. There is a config named QCS_GCC_615,
-and the related config QCS_CAMCC_615 selects that config.
+Chris
 
-Fix the typo and use the intended config name in the select command.
-
-Fixes: 9b47105f5434 ("clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- drivers/clk/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index aeb6197d7c90..823125f48346 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -504,7 +504,7 @@ config QCM_DISPCC_2290
- 
- config QCS_DISPCC_615
- 	tristate "QCS615 Display Clock Controller"
--	select QCM_GCC_615
-+	select QCS_GCC_615
- 	help
- 	  Support for the display clock controller on Qualcomm Technologies, Inc
- 	  QCS615 devices.
--- 
-2.51.0
-
+On Wed, Aug 6, 2025 at 9:18=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrote=
+:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> It was used for calculating the iteration number when the swap allocator
+> wants to scan the whole fragment list. Now the allocator only scans one
+> fragment cluster at a time, so no one uses this counter anymore.
+>
+> Remove it as a cleanup; the performance change is marginal:
+>
+> Build linux kernel using 10G ZRAM, make -j96, defconfig with 2G cgroup
+> memory limit, on top of tmpfs, 64kB mTHP enabled:
+>
+> Before:  sys time: 6278.45s
+> After:   sys time: 6176.34s
+>
+> Change to 8G ZRAM:
+>
+> Before:  sys time: 5572.85s
+> After:   sys time: 5531.49s
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>  include/linux/swap.h | 1 -
+>  mm/swapfile.c        | 7 -------
+>  2 files changed, 8 deletions(-)
+>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index 2fe6ed2cc3fd..a060d102e0d1 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -310,7 +310,6 @@ struct swap_info_struct {
+>                                         /* list of cluster that contains =
+at least one free slot */
+>         struct list_head frag_clusters[SWAP_NR_ORDERS];
+>                                         /* list of cluster that are fragm=
+ented or contented */
+> -       atomic_long_t frag_cluster_nr[SWAP_NR_ORDERS];
+>         unsigned int pages;             /* total of usable pages of swap =
+*/
+>         atomic_long_t inuse_pages;      /* number of those currently in u=
+se */
+>         struct swap_sequential_cluster *global_cluster; /* Use one global=
+ cluster for rotating device */
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 1f1110e37f68..5fdb3cb2b8b7 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -470,11 +470,6 @@ static void move_cluster(struct swap_info_struct *si=
+,
+>         else
+>                 list_move_tail(&ci->list, list);
+>         spin_unlock(&si->lock);
+> -
+> -       if (ci->flags =3D=3D CLUSTER_FLAG_FRAG)
+> -               atomic_long_dec(&si->frag_cluster_nr[ci->order]);
+> -       else if (new_flags =3D=3D CLUSTER_FLAG_FRAG)
+> -               atomic_long_inc(&si->frag_cluster_nr[ci->order]);
+>         ci->flags =3D new_flags;
+>  }
+>
+> @@ -965,7 +960,6 @@ static unsigned long cluster_alloc_swap_entry(struct =
+swap_info_struct *si, int o
+>                  * allocation, but reclaim may drop si->lock and race wit=
+h another user.
+>                  */
+>                 while ((ci =3D isolate_lock_cluster(si, &si->frag_cluster=
+s[o]))) {
+> -                       atomic_long_dec(&si->frag_cluster_nr[o]);
+>                         found =3D alloc_swap_scan_cluster(si, ci, cluster=
+_offset(si, ci),
+>                                                         0, usage);
+>                         if (found)
+> @@ -3217,7 +3211,6 @@ static struct swap_cluster_info *setup_clusters(str=
+uct swap_info_struct *si,
+>         for (i =3D 0; i < SWAP_NR_ORDERS; i++) {
+>                 INIT_LIST_HEAD(&si->nonfull_clusters[i]);
+>                 INIT_LIST_HEAD(&si->frag_clusters[i]);
+> -               atomic_long_set(&si->frag_cluster_nr[i], 0);
+>         }
+>
+>         /*
+> --
+> 2.50.1
+>
 
