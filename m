@@ -1,170 +1,119 @@
-Return-Path: <linux-kernel+bounces-796215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E80B3FD69
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:11:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6343B3FD71
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 828B72C3A40
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:11:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57FB53B28BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9746F2F745F;
-	Tue,  2 Sep 2025 11:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BDE2F7473;
+	Tue,  2 Sep 2025 11:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="LfjPP699";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="MXnnYu/U"
-Received: from a7-20.smtp-out.eu-west-1.amazonses.com (a7-20.smtp-out.eu-west-1.amazonses.com [54.240.7.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ou41VjJ1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08232F6184;
-	Tue,  2 Sep 2025 11:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D66A279DA6;
+	Tue,  2 Sep 2025 11:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756811455; cv=none; b=n6wv37ijbPQQ6bUzMXfwR8QGRasjJuI2yYkt+0z69os3poojYZZyIPOCyLIFFlSGZ2fHoisJAc3SDE+wolvmOPgyfihFHFpRYSay6oLOQXcdFUkp1YhHryYED0lBDQZfyERIvWTRqzMozka9/lN/DhdPGNV5R+2397R8epn0Rl0=
+	t=1756811485; cv=none; b=qknGan+H5mrmmq7wgUcB+X4/WRISZna9fQJskTFpDFJ6SMXgwvboIec/z2HnUsMx3KNHAapSk9zExATFhxVjPVNcqLF8lG2HjmKu6EcRjMSBNJPFZxvt8V/NXQcRisTjd+XVKqeZtu76rz3Ou/hnKUjmWvjLXlmSPDisP+Y6GaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756811455; c=relaxed/simple;
-	bh=AaRYi+jmsy2YjXkwKwmstrh7+REHWsnzAyWzbgqEj4k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:Cc; b=ucRfAw5/qUUfQhYS63DC8rh8DgLDSZ6F742LWjFo5yILg2ZODenjggrDl2DRpQGFUr6353gY8igyRUqnXcpv3QO2qr449U8bieI9IP2pTXVChrXeN+tvyyUG6+ntmLU4vV9ABI5/F5AHBdctq2haz2LJlOgT6iJwp5/qlw4iPtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=eu-west-1.amazonses.com; dkim=pass (1024-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=LfjPP699; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=MXnnYu/U; arc=none smtp.client-ip=54.240.7.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eu-west-1.amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=vuvznkywrn6u4jb2ozie3fqz3nbg6pps; d=vinarskis.com; t=1756811451;
-	h=From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc;
-	bh=AaRYi+jmsy2YjXkwKwmstrh7+REHWsnzAyWzbgqEj4k=;
-	b=LfjPP699zh4sdUoeR80eVDStgONY9EMdrKGWaYPMxqgi9HLThwDFn7+G1Ip5cTmM
-	nCrDJLWSgRYZOCef7ljhfIkF/3tQEmHGIqZmQUoUlN7dTkJog/ILebsojv8hMuKypo6
-	wCfez+TtjNM25WQWwtdHPfSCOgwgEXUPMemY4Al8=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1756811451;
-	h=From:Date:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:Feedback-ID;
-	bh=AaRYi+jmsy2YjXkwKwmstrh7+REHWsnzAyWzbgqEj4k=;
-	b=MXnnYu/Ux+vJVS4iD7o2bnzRoNUaN+V/SUD4kBXs//bnO4zpQLZ4T+NCRKU5Zwqg
-	cEGpnIl+3yI+JOgmxZeKkI0tstsoHV7eyTruHDFSsgTC7gk3wN4+sMr3xwMghZXkJ5m
-	C0XjSMsxzTmzGY4IQAu8GWXixG4iPztRm1CBNu+c=
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Date: Tue, 2 Sep 2025 11:10:51 +0000
-Subject: [PATCH 1/2] dt-bindings: leds: add generic LED consumer
- documentation
+	s=arc-20240116; t=1756811485; c=relaxed/simple;
+	bh=TPu07su/3VM8SEQywPtrJmzbAe46oS3S7G2DqM/0ij4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZZeTiHiUO1/bXzV0ktbbo/w1Mw8olj70Xdqi6z/6B1MBzSru4jnGoy5PwH+Cbsx7+l/mvC6VJfAw8PAJ1QhujzuU/59TMsQiY1sC/r3ik3H+MIGLxu0FR+QDkqtqwRbgdJQlx2jvMoJEeekRxqxMtGnxpC2FRTs0yIg+ig3m2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Ou41VjJ1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3FC9740E01BB;
+	Tue,  2 Sep 2025 11:11:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Qojvh_XrsXSa; Tue,  2 Sep 2025 11:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756811469; bh=3/V00Uv1i06CI763yI6IFspJgpQRVik3r9LvA1Qhk1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ou41VjJ1pEl2Rm4wtfZMIZYfoi5TlT5hWkur+pkn6c2KPQqGOF8qSMJdz4xzm1FG2
+	 ll78ml4LmNN+3vrsTQgeaFbeWaeblCexmZYghE36aM0mtZmtdGFWcmO3xoI7uT/rEt
+	 2IUpizJpMwmnb8jcNaSuNZTpyWH51PjMi9bOl4H7b9RwRXEKjjBikCiYmHlrhva1CR
+	 eVGMuv2P1Gt7xteaIU/oFhBDW7FPTLwUIAxBrsEML4BRqUV1o3OfLas8IKelHwVvlc
+	 GUFXBFHf49DNV4uwRRu2FImuisQ1wlij+1hja7VoUzwdmWKOG28DOkNNwEEqHD/4G/
+	 /SbQqkdPJTCt0GtucHu7Y9ksO6svLs4dMX1lTnEPtGkT5BeS2hQAVNlzUKf6INV4Fc
+	 927vOayqP+AHrdcsFwkUFujf76du8hXijH8bbY+PgKRJnM4APKtZ84B/CEI3ErzUyU
+	 zg5+uYkjV2XwFX7DvVxhOCF/uM4+Jb0XrMvLSc+BbehpGoYDUjkoQkqNalXTq3clle
+	 5r0vUTiJI67kyOsXS6tBzowDtmlO7B0/gJGNuYyjoLixslw3ucVcE46cAt8JPCEFC0
+	 eTSl18U/mHd2xp9b6g8uNunOzcGO1qrXBlIbgFYsmJSuJt3a1Hs21WIH58ZUUTAimE
+	 z2jGucoGtQX5XomVtWn+Mbx4=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5CE0E40E01B3;
+	Tue,  2 Sep 2025 11:10:59 +0000 (UTC)
+Date: Tue, 2 Sep 2025 13:10:52 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v5 13/20] x86/mce: Unify AMD THR handler with MCA Polling
+Message-ID: <20250902111052.GDaLbQvA2A0b8Ii26k@fat_crate.local>
+References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
+ <20250825-wip-mca-updates-v5-13-865768a2eef8@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <010201990a1f5ad8-fc97fc84-9ef9-4a03-bf1c-2d54423c6497-000000@eu-west-1.amazonses.com>
-References: <20250902-leds-v1-0-4a31e125276b@vinarskis.com>
-In-Reply-To: <20250902-leds-v1-0-4a31e125276b@vinarskis.com>
-To: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Aleksandrs Vinarskis <alex@vinarskis.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2485; i=alex@vinarskis.com;
- h=from:subject:message-id; bh=AaRYi+jmsy2YjXkwKwmstrh7+REHWsnzAyWzbgqEj4k=;
- b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBnbLmx5E8sufXhOVv5x2VdyKQcezpnurmK3SpKNX1TKy
- FI59otARykLgxgXg6yYIkv3n69pXYvmrmW4rvENZg4rE8gQBi5OAZiIzC9Ghu184RMTZi14lTlt
- Ba9E24WCu/YVmiumcHxxy3tyyOZliyPD/7KGP6t/Hst8U7r1RO+G6YJan48x+malTGtYZmikOtW
- wmw8A
-X-Developer-Key: i=alex@vinarskis.com; a=openpgp;
- fpr=8E21FAE2D2967BB123303E8C684FD4BA28133815
-Feedback-ID: ::1.eu-west-1.dmE2JeRFSagpgiG6D+fa+YE0PH7S+b7tab7/4kfDOU8=:AmazonSES
-X-SES-Outgoing: 2025.09.02-54.240.7.20
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250825-wip-mca-updates-v5-13-865768a2eef8@amd.com>
 
-Currently supports passing 'led-names' used to map LED devices to their
-respective functions.
+On Mon, Aug 25, 2025 at 05:33:10PM +0000, Yazen Ghannam wrote:
+> +/*
+> + * Threshold interrupt handler will service THRESHOLD_APIC_VECTOR. The interrupt
+> + * goes off when error_count reaches threshold_limit.
+> + */
+> +static void amd_threshold_interrupt(void)
+> +{
+> +	machine_check_poll(MCP_TIMESTAMP, &this_cpu_ptr(&mce_amd_data)->thr_intr_banks);
+>  }
 
-Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
----
- .../devicetree/bindings/leds/leds-consumer.yaml    | 69 ++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
+So the thresholding interrupt will fire.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..a63e78417df84609e279835f7dae62e3ad2f0bf5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Common leds consumer
-+
-+maintainers:
-+  - Aleksandrs Vinarskis <alex@vinarskis.com>
-+
-+description:
-+  Some LED defined in DT are required by other DT consumers, for example
-+  v4l2 subnode may require privacy or flash LED.
-+
-+  Document LED properties that its consumers may define.
-+
-+properties:
-+  leds:
-+    description:
-+      Phandle to LED device(s) required by particular consumer.
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+  led-names:
-+    description:
-+      List of device name(s). Used to map LED devices to their respective
-+      functions, when consumer requires more than one LED.
-+
-+additionalProperties: true
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
-+
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      camera@36 {
-+        compatible = "ovti,ov02c10";
-+        reg = <0x36>;
-+
-+        reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&cam_rgb_default>;
-+
-+        led-names = "privacy-led";
-+        leds = <&privacy_led>;
-+
-+        clocks = <&ov02e10_clk>;
-+
-+        assigned-clocks = <&ov02e10_clk>;
-+        assigned-clock-rates = <19200000>;
-+
-+        avdd-supply = <&vreg_l7b_2p8>;
-+        dvdd-supply = <&vreg_l7b_2p8>;
-+        dovdd-supply = <&vreg_cam_1p8>;
-+
-+        port {
-+          ov02e10_ep: endpoint {
-+            data-lanes = <1 2>;
-+            link-frequencies = /bits/ 64 <400000000>;
-+            remote-endpoint = <&csiphy4_ep>;
-+          };
-+        };
-+      };
-+    };
-+
-+...
+It'll call machine_check_poll().
+
+That thing will do something and eventually call back into amd.c again:
+
+                if (mce_flags.amd_threshold)
+                        amd_reset_thr_limit(i);
+
+Why the back'n'forth?
+
+Why not:
+
+static void amd_threshold_interrupt(void)
+{
+	machine_check_poll(MCP_TIMESTAMP, &this_cpu_ptr(&mce_amd_data)->thr_intr_banks);
+	amd_reset_thr_limit();
+}
 
 -- 
-2.48.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
