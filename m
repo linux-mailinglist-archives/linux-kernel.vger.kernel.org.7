@@ -1,203 +1,158 @@
-Return-Path: <linux-kernel+bounces-796383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D0AB3FFBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:15:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245F1B40018
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B8F1A82076
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BFFE5E55C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C563093CE;
-	Tue,  2 Sep 2025 12:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768B63002DB;
+	Tue,  2 Sep 2025 12:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lc91ojCx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PgLzcIB7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904D4308F3C;
-	Tue,  2 Sep 2025 12:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDBF634EC
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814988; cv=none; b=MBwJ1hk0Uc1yXJDwIf28baOGz9F0wgoipsfY1JruGgv+LGbHgSHjgJQ3LyYfoV79Ov3KigHtsOQyKYlAfy2OWKwtgLIWHSkwgTMvJinogg2vU8kjQbJvTusJPBB2Yh+E6Qe4Mwyq5siBTumdyg/P4u7pC6TbH52nudBOsFqnaCA=
+	t=1756815029; cv=none; b=LFXdCfyw17OnZyDLsM8RiO0YzW9WWtPq8j5DUxAgKRXHvvR3lpszpLt4cv2FORJhBx6E9W2bbQa1zZdspjAHHItwz8spSTgK3I3It/dbvXNgnh/y19GBgA5+vAE26l/ayYjRY0xLCnHUUBap5kI9e/TijNvSKosu9SfuXQIG+v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814988; c=relaxed/simple;
-	bh=gqijL2WEXNz0IFdJdtChN9Sde9A4dgCriDS28RNbEHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJ1/ta5i1Pv6pm9JkT0L6X85x/6bCvvpriaO0m3ZT0FQe7nO+0nr7RSVXU0bqORFQH2ae97+9FzCTv1BflyHYXQOe5rOwNsfD7OFJlI8GtW/JCH0Cj2rLDYj/MGFw/wwj+iMNWizUmx4+VtBhs6sAhkycd+o4evgq2RW9Lhj5ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lc91ojCx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B819BC4CEED;
-	Tue,  2 Sep 2025 12:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756814988;
-	bh=gqijL2WEXNz0IFdJdtChN9Sde9A4dgCriDS28RNbEHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lc91ojCxpVcS2dU+0144sWASq+rtIpFMHCb4CocMCW++Nwj+kt8sp9i/7dJ3EEvLz
-	 7CQcx48K0DAI8dp0/2WxcKcwZ8PSkzrCd4m4YU7UjRcFlKkM+ak+s+dm2thWzJRqZn
-	 qDD63vAzckxE5u9vM/Wa6dKyuUQVlasQDvb0DqlEh9zgNZx96HHoxipu7pSYylVVLv
-	 hcoa+RA9c4Sj/YsCbcbbbf8KWjcyt4f5Xb2UY5s5GyTs9qihX0PF0EwAvB/Bq5n8on
-	 J0O/+0CioRnKWWhXTGuA2gRI1zurjXFgp4B6rL7nM+m02s3d+qgaVvu47L3yeQUza1
-	 31MJAZpS6RLMg==
-Date: Tue, 2 Sep 2025 13:09:44 +0100
-From: Lee Jones <lee@kernel.org>
-To: Lukas Timmermann <linux@timmermann.space>
-Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/2] leds: as3668: Driver for the ams Osram 4-channel
- i2c LED driver
-Message-ID: <20250902120944.GJ2163762@google.com>
-References: <20250808213143.146732-1-linux@timmermann.space>
- <20250808213143.146732-3-linux@timmermann.space>
- <20250902075037.GA2163762@google.com>
- <886ea017-7b40-43e8-a366-9e890b10c0f8@timmermann.space>
+	s=arc-20240116; t=1756815029; c=relaxed/simple;
+	bh=EIhkVcqZh7xoh6EwQB0Ef5Yl6j+ZOHuN2tJZwCUV8XM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HQkKF9zClnjgrHZ7v8Cow4nea3py9WwS4YE5muUKSKXvr/h+xBZ+QIX6fqo7njWx0PjzkJBFLAz6lP3JDeW3p0Hv5OHLc/k2B01b4Hb2oF7EabrxLlqEnErbn/sKI3vINkgyaz4bfhPOkQ8H7TmiEb6MJ2Ne8hkEg1AFxlohgC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PgLzcIB7; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756815029; x=1788351029;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=EIhkVcqZh7xoh6EwQB0Ef5Yl6j+ZOHuN2tJZwCUV8XM=;
+  b=PgLzcIB7E+2fxglXYvfgAFs1jylg9eyuJrrTw5JOHgIhNBUVE2h95d4v
+   TFW30SE7g+OTMlUUspPhbQ8PmMrBVdCIrTplt35l2nltof5JuB4L+fP3S
+   4IyHyp1sKeId4ioRW/Dh+4LSte/HvU4u89Gn3jJCnJl9OZQ/5wTbIrSSb
+   rdPO6oT6W0FGuRKxgYOG1Nv5CJLiFjGTAAJnw4DvJMerMH8vcCV5ZCVZL
+   Knp7aH41sAKHelAdcPU7oxxssSXiZmna+qYhgiwvEeOBD2qa40jOm7ciI
+   c9cn6Dbcg+yuMn4ET+J23jPJfcJkO0+ovxreYFM6oGEumwbAxye2dMNEe
+   A==;
+X-CSE-ConnectionGUID: eJWCKOQqQGuGDt0/rUK+OQ==
+X-CSE-MsgGUID: 5xG0e0+LQp+htybynkpGyA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62916788"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62916788"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:10:28 -0700
+X-CSE-ConnectionGUID: sqCCoMu9QZOFalIu441odg==
+X-CSE-MsgGUID: TeSFeNUGQKyxcCnu6WSKPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="172104612"
+Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.193])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:10:18 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Liu Ying
+ <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Tomi Valkeinen
+ <tomi.valkeinen@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Hui Pu <Hui.Pu@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Andrew Morton
+ <akpm@linux-foundation.org>, Zijun Hu <quic_zijuhu@quicinc.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 1/9] list: add list_last_entry_or_null()
+In-Reply-To: <20250902135709.19e1ef54@booty>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
+ <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-1-888912b0be13@bootlin.com>
+ <aJJ9ttmL7wiw41fY@smile.fi.intel.com> <20250814183609.3788a6df@booty>
+ <aKXRHAyfPHPpZmMs@smile.fi.intel.com> <20250902135709.19e1ef54@booty>
+Date: Tue, 02 Sep 2025 15:10:14 +0300
+Message-ID: <2f156cf6c57d0054c20b10f931ceef9a575d533f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <886ea017-7b40-43e8-a366-9e890b10c0f8@timmermann.space>
+Content-Type: text/plain
 
-On Tue, 02 Sep 2025, Lukas Timmermann wrote:
+On Tue, 02 Sep 2025, Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+> Hello DRM maintainers,
+>
+> On Wed, 20 Aug 2025 16:43:56 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>
+>> On Thu, Aug 14, 2025 at 06:36:09PM +0200, Luca Ceresoli wrote:
+>> > On Wed, 6 Aug 2025 00:55:02 +0300
+>> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>> >   
+>> > > On Fri, Aug 01, 2025 at 07:05:23PM +0200, Luca Ceresoli wrote:  
+>> > > > Add an equivalent of list_first_entry_or_null() to obtain the last element
+>> > > > of a list.    
+>> > > 
+>> > > Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>  
+>> > 
+>> > Thanks Andy!
+>> > 
+>> > However I'm not sure when and where this should be applied.
+>> > 
+>> > Except for this one patch, all patches in the series are for
+>> > drm-misc-next. Also, patch 1 is currently not needed by any other
+>> > series AFAIK.
+>> > 
+>> > Based on the above, is it correct to assume that the whole series can
+>> > be applied on drm-misc-next? (when other patches will have a
+>> > R-by/Ack-by of course)
+>> > 
+>> > Also, is Andy's A-by enough to apply this patch?  
+>> 
+>> The list.h is common for many, I think going via DRM with my Ack is enough
+>> based on the Git history of my changes in this file. But if you want more
+>> reliable source, get an Ack from Andrew Morton.
+>
+> While applying this patch with dim on drm-misc-next, dim push-branch
+> failed because:
+>
+>   dim: ERROR: cb86408b1fc2 ("list: add list_last_entry_or_null()"): Mandatory Maintainer Acked-by missing., aborting
+>
+> Looking at the dim code, it is looking for a Reviewed- or Acked-by from
+> people listed by `scripts/get_maintainer.pl --no-git-fallback -m --nol
+> --norolestats`. but that command returns an empty string, so it will
+> never allow me to push.
+>
+> How can I get that commit pushed to drm-misc-next?
+>
+> I think `dim push-branch -f` would work: am I supposed to use it?
 
-> On Tue, 02 Sep 2025, Lee Jones wrote:> On Fri, 08 Aug 2025, Lukas Timmermann
-> wrote:
-> > 
-> > > Since there were no existing drivers for the AS3668 or related devices,
-> > > a new driver was introduced in a separate file. Similar devices were
-> > > reviewed, but none shared enough characteristics to justify code reuse.
-> > > As a result, this driver is written specifically for the AS3668.
-> > > 
-> > > Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-> > > ---
-> > >   MAINTAINERS                |   1 +
-> > >   drivers/leds/Kconfig       |  13 +++
-> > >   drivers/leds/Makefile      |   1 +
-> > >   drivers/leds/leds-as3668.c | 202 +++++++++++++++++++++++++++++++++++++
-> > >   4 files changed, 217 insertions(+)
-> > >   create mode 100644 drivers/leds/leds-as3668.c
-> > > 
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 091206c54c63..945d78fef380 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -3511,6 +3511,7 @@ M:	Lukas Timmermann <linux@timmermann.space>
-> > >   L:	linux-leds@vger.kernel.org
-> > >   S:	Maintained
-> > >   F:	Documentation/devicetree/bindings/leds/ams,as3668.yaml
-> > > +F:	drivers/leds/leds-as3668.c
-> > >   ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
-> > >   M:	Tianshu Qiu <tian.shu.qiu@intel.com>
-> > > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> > > index a104cbb0a001..8cfb423ddf82 100644
-> > > --- a/drivers/leds/Kconfig
-> > > +++ b/drivers/leds/Kconfig
-> > > @@ -100,6 +100,19 @@ config LEDS_ARIEL
-> > >   	  Say Y to if your machine is a Dell Wyse 3020 thin client.
-> > > +config LEDS_AS3668
-> > > +	tristate "LED support for AMS AS3668"
-> > > +	depends on LEDS_CLASS
-> > > +	depends on I2C
-> > > +	help
-> > > +	  This option enables support for the AMS AS3668 LED controller.
-> > > +	  The AS3668 provides up to four LED channels and is controlled via
-> > > +	  the I2C bus. This driver offers basic brightness control for each
-> > > +	  channel, without support for blinking or other advanced features.
-> > > +
-> > > +	  To compile this driver as a module, choose M here: the module
-> > > +	  will be called leds-as3668.
-> > > +
-> > >   config LEDS_AW200XX
-> > >   	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
-> > >   	depends on LEDS_CLASS
-> > > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> > > index 2f170d69dcbf..983811384fec 100644
-> > > --- a/drivers/leds/Makefile
-> > > +++ b/drivers/leds/Makefile
-> > > @@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
-> > >   obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
-> > >   obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
-> > >   obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
-> > > +obj-$(CONFIG_LEDS_AS3668)		+= leds-as3668.o
-> > >   obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
-> > >   obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
-> > >   obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
-> > > diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
-> > > new file mode 100644
-> > > index 000000000000..0cfd3b68f90c
-> > > --- /dev/null
-> > > +++ b/drivers/leds/leds-as3668.c
-> > > @@ -0,0 +1,202 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > +/*
-> > > + *  Osram AMS AS3668 LED Driver IC
-> > > + *
-> > > + *  Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
-> > > + */
-> > > +
-> > > +#include <linux/bitfield.h>
-> > > +#include <linux/i2c.h>
-> > > +#include <linux/leds.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/uleds.h>
-> > > +
-> > > +#define AS3668_MAX_LEDS 4
-> > > +#define AS3668_EXPECTED_I2C_ADDR 0x42
-> > > +
-> > > +/* Chip Ident */
-> > > +
-> > > +#define AS3668_CHIP_ID1_REG 0x3e
-> > 
-> > Can you tab out all of the values please.
-> > 
-> > > +#define AS3668_CHIP_ID2_REG 0x3f
-> > > +#define AS3668_CHIP_ID1_EXPECTED_IDENTIFIER 0xa5
-> > 
-> > This is odd.  What do you mean by expected?
-> > 
-> > What kind of ID is this?  Board ID, platform ID, Chip ID?
-> > 
-> > Call it that instead.
-> Calling it just AS3668_CHIP_ID1 then?
-> It's the identifier of the chip model burned into silicon in the CHIP_ID1
-> register. Checking it isn't critical in the first place.
-> It catches errors made in DT files but nothing else. You haven't commented
-> about that so i guess it's okay. Are drivers in the led subsystem supposed
-> to check that?>
+Try 'dim -f push-branch'. The parameters after push-branch go to git,
+and you don't want that.
 
-CHIP_ID1 is the register, but what does the number signify?
+BR,
+Jani.
 
-What version of the chip?  Does the chip have a name?
-
-What's the difference between the values in ID1 and ID2?
-
-> > > +#define AS3668_CHIP_ID2_SERIAL_MASK GENMASK(7, 4)
-> > > +#define AS3668_CHIP_ID2_REV_MASK GENMASK(3, 0)
-> > > +
-> > > +/* Current Control */
-> > > +
-> > 
-> > The X thing (below) is weirding me out.
-> > 
-> > > +#define AS3668_CURRX_CONTROL_REG 0x01
-> > 
-> > Drop the X.
-> The datasheet explictly calls this "CurrX control". It configures the
-> outputs for different modes like off/on and pwm or pattern generation for
-> all four channels simultaneously.
-> I could imagine AS3668_MODE_REG being more descriptive but we would diverge
-> from the datasheet. Is that acceptable?>
-
-It is if you say it is.  Some authors like to stick to the datasheet,
-which I would respect.  Others think that datasheet authors / register
-namers are bonkers and the S/W should be much more friendly to readers.
+>
+> (not sure my committer rights allow that)
+>
+> Luca
 
 -- 
-Lee Jones [李琼斯]
+Jani Nikula, Intel
 
