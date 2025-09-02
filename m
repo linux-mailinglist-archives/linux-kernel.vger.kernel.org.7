@@ -1,157 +1,213 @@
-Return-Path: <linux-kernel+bounces-795793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CFDB3F7DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:12:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BEE3B3F770
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D6E04877C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC8A3AA325
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93892EA755;
-	Tue,  2 Sep 2025 08:10:22 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B510D2E3387;
+	Tue,  2 Sep 2025 08:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ivf0Ofpw"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013040.outbound.protection.outlook.com [40.107.159.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA5932F757
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800622; cv=none; b=JY8UNmTTuN5vTyWTqk9Yo2Y9Xtmh7hrJ53q5JEKCuC6R5gOStmps+mcnRdWho91bRsa/dXtndtlk3W5JNMTmJPBbQrYtC64k5xaMdm+p5PgApEqXZ41fQhLKzT287QEuW/cOWnDjwIs9Bf3uJxGcq4UjpNx+Jj7/B+6D0EgokxA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800622; c=relaxed/simple;
-	bh=VUsbJf13eTWHHzO6E1Tbng496k0TXqy2c0B2KcPX72E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rXpHTFNaPmLDuGMw950UALpnyiiwOV+46sjyXeGPtfi6Z4jhmhE13paMcdB/pkkznDdZq0BWuozWri+ceX0JlEUkCmzD0DFVJWDmfZ6dWBnPIzy4k9jZa1GvX4GGbnjLUZGb5fSQgNjW14Pjp1qg/akEl3S715J+MDAiUhL/lCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cGJMB18b1zKHNS1
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:10:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 07BEA1A1912
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:10:14 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY1jprZoh4x9BA--.23817S4;
-	Tue, 02 Sep 2025 16:10:13 +0800 (CST)
-From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	chengzhihao1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] mtd: core: only increment ecc_stats.badblocks on confirmed good->bad transition
-Date: Tue,  2 Sep 2025 16:01:17 +0800
-Message-Id: <20250902080117.3658372-1-wangzhaolong@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549C91684B4;
+	Tue,  2 Sep 2025 08:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756800157; cv=fail; b=bUmGS2usPJzoSndC70B/qpSJj2n7bvRGoBQWmsitK++IUKUnBnLQpguTfMDnUV9qSM1fVwb816c3YxF/DO7r2HK7316y6Yo15fDydxD8X7kx382xY2C9hnuxAv8O3cURNh4w3KqtxBsU8Q3x/DGQH9XHz2bGk9ZaSMfyUl3v+TI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756800157; c=relaxed/simple;
+	bh=1WKIx+bmfferhoMRFmpnmHPhaGm4xqu4GUG424h9RnY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=umBf/MPW0KVH7SS9x1bDTBDOr1buueq2z6/8UrYqCCSePL7o7Y3NhGzrutoSFh+byGiZlYoLm3qeXkAkZURpQwJedimMzXI26wFTVODTK0Rb9+uTMQ9w0xmrqBgtyAuvAWGi04gjs1FAp9y2a8BCCj4AAXoYjqJgcv4q3IvPrzs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ivf0Ofpw; arc=fail smtp.client-ip=40.107.159.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YWjBhoC+E3E5Eb+YzjP2+p/kTZWESHpXPdCzrvxhtPVW48Kf3jaPzh5EDds9qE3tLUhvJVRpFqtWZZ9Vs/no48t/gmJgnruXQytQNApA0PY4CL/uCT4fQd6BeuMxO7BHNIW4buGv+nJW6prltZmbFASZCQGnfVIRIkVhQhjk2ulPaiUqsSaOCwgd/VNcxUwqgkjBvaFcuScVe0djnfBwQZwc8nlX2Kwt5cEOWLKBFUiTIzDQHeu8bBZ51ixvSDlRqGH3EFCuj+8KhbKW0ukM847BEq2l3PGa527ymWka8kuA5gyLUPyk1DZ6AsPXMJaAK4miZh0/LEMWVNe90hyj0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qLiOlvkpMCQuutcpH2G92mwDAaId4H1HJTOeDXHtHig=;
+ b=v86aJMZGS3eFNOByVhYwnSFg/5VKi6ABgGPahhkeaF7csLRB1B+AtPHhOcZfx1I7hyk9hFkeQlSwWEB9G4LIkibM41LTI3eG5HyyCMTkAnu5nos8+udYStaY+Wtb+5CPUwuysYnGcOAj0uj8M4ALm9Xl7DSBOk+DuT3vHr6t2xL9Na8YZvJaX+2eUnBaqMPWrdpKeoUAu9Hz02fHD6EFazxhaw/xfJFg+YSf5Bbq1kBOWWrYPOB7g/+l8TFMADXFRgSPF4O/8W+YmEet8MyEWXV39PkTHuKNIY7xNinp2nCA30W23jhUdRCjIXFi5tyqZFFEtH9wSTxijpzpLOm30g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qLiOlvkpMCQuutcpH2G92mwDAaId4H1HJTOeDXHtHig=;
+ b=Ivf0OfpwQOTQaC+kcqYUrQhIlcadtgRY6thDRvxKU1Bjv3G18lzkV9i2O/o/UljODLA0onubzMy71kCpkEvOEf1ZZ4nwWTT2fbndzFK+UqWH3nWrH4zT6OtnR1H5nl/N8vLFG7QOuQ5HfPj76+USQKxJFjguCSKt/H38N1BAkH1pd7GAItdMboOfhsSQ/Fpvd3b6vIA8Nxt6ctrBLIc89lrBODoDrCBc0bilUcHY2von2vm39MRQa2eb/GzqafY5aNKppjab0ynnLCFdaHgv7Crxcfd4hMLJSeScylFiWTTFUqelDTrab0E2RBHEu0hRAOOBJAyom73dvTqY5ugNKg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8833.eurprd04.prod.outlook.com (2603:10a6:20b:42c::19)
+ by VI0PR04MB10880.eurprd04.prod.outlook.com (2603:10a6:800:265::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 08:02:31 +0000
+Received: from AS8PR04MB8833.eurprd04.prod.outlook.com
+ ([fe80::209c:44e4:a205:8e86]) by AS8PR04MB8833.eurprd04.prod.outlook.com
+ ([fe80::209c:44e4:a205:8e86%4]) with mapi id 15.20.9094.015; Tue, 2 Sep 2025
+ 08:02:31 +0000
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: frank.li@nxp.com,
+	jingoohan1@gmail.com,
+	l.stach@pengutronix.de,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/6] Add quirks to proceed PME handshake in DWC PM
+Date: Tue,  2 Sep 2025 16:01:45 +0800
+Message-Id: <20250902080151.3748965-1-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0087.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::15) To AS8PR04MB8833.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3wY1jprZoh4x9BA--.23817S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr48Aw1UZF17Cr4UGFy8Krg_yoW5Jw1fpa
-	15JryrGw4UWw1Iq3ZrAryIgwnag34fWFyUGF4xA3s8CF98Wa13Wrn5KFy8Xr12gF12yFnr
-	Wr45t3yUWay09rDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8833:EE_|VI0PR04MB10880:EE_
+X-MS-Office365-Filtering-Correlation-Id: a97d3322-d8c1-4c21-6bb8-08dde9f7110e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|7416014|366016|19092799006|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NBh3msVcG2KzI7EOfUxhFhYCP1dip0jPmHXJsqGJhpFK3wFtTZqJAxgp/U7V?=
+ =?us-ascii?Q?SBPDW9+0MODu/b8++7UXDrWUUBC7XD7EwX4TNZ1VpuB6nIGtHO+9Rjsp72jp?=
+ =?us-ascii?Q?on+cjgT9xWVdH1SmYT7OS2zOirFhZpuk+9dBOPR5f1GFPtCLywReChHKhbuJ?=
+ =?us-ascii?Q?cShnhIaLPj+MaYtUtjQgwR3s/zje1JzdiubeG7OVHnj1r0S15icrC0Ewv5zL?=
+ =?us-ascii?Q?R1ujvu9ihCmSaomytTrlzZydcV4G0yMzp2vDRTcBWQgFxXltJ/f7RWH7+e6j?=
+ =?us-ascii?Q?KHjmc7B9rtILR+r59+INS6VrF6PwTwAQFe+BEYET9G1sTYwJci9hGQuhdpQz?=
+ =?us-ascii?Q?SpnWmBjKdrvB7XpDRCG3+0YxjXQ0ziLqVSCBYFYIcW+nsmOfMzsZmm8aucDl?=
+ =?us-ascii?Q?6/2CqdPO7oLYZR1yqQB8NSF0140G2jQrLOk9A35lXBGcAsYb9/dPuK28vSeS?=
+ =?us-ascii?Q?hWvI62PcqZm/jOvlcGKSV9MatdNulCdirALagStrvV2VuBrr2iiW/4gw2zdf?=
+ =?us-ascii?Q?Wsq+hlWNzFM8rKYIxgaiVwrcVQyr91CB9UZ14NScuzDQpb7w7jEP49n902RR?=
+ =?us-ascii?Q?uFzvQOSm3BUTYqIclXMY+Fps+AnAMr2LhEnWivlNlb848gzA8iGbQFn61Rme?=
+ =?us-ascii?Q?tq/0H1dqbE4p9TSG8nPtb/ZXXPVqQ9+UlEtQc9Z9hm/5pq9PUB7PwZoNrG/n?=
+ =?us-ascii?Q?rzX/k1Dq+XOXP24WJyU6lTONk6c+w8ddIq0mhyW0N2VHmwW5ciw55idSRs+D?=
+ =?us-ascii?Q?Ek6hm3fT0wdeib5JIDI/K/kHHlywjrXpS6V0qn7c0TQ99+uqnjv6zy5Pe6Xn?=
+ =?us-ascii?Q?iHgOWbogqDIwY2zx31c8ir4iDOjzesHSE2+Ca5tQXqD88whNUyqDHR2l/Qyv?=
+ =?us-ascii?Q?IoUrb6l00WzCf+nBUZF/28VtnCQU7bHiurLfp2JshLfgvKA9OwFlxVHUrFgn?=
+ =?us-ascii?Q?N74xNvKj50cCJg4awyboNsy/z3HsAIyFrK6BA8C4ytz5Xl5QR/b9YMgaDKrE?=
+ =?us-ascii?Q?R7rxmLRUncwG2cdBZM4N2hkCGlL+17G+ysct+LwxPKchIZYPAr7SN07k/Ypn?=
+ =?us-ascii?Q?u4KMu3tT1S7G1UqeoM2n/UCxoRGDnr8cU8JzKcQIpDQXH9T9wgR9651ebytI?=
+ =?us-ascii?Q?MAL7x6lF2G+iPwGcfC/VePlOJze85Yg4wldy3NeM91IXAJs3aF7jYQBWQpOv?=
+ =?us-ascii?Q?y8wctsQSRI4tew93hJ0d8FWiwjnS+wdXgtU4yrKP07GgWuTPSgg8Op63nLNj?=
+ =?us-ascii?Q?VCgEwqOXI13I9dXn2mzaBT9TPoY4tZ0eR+qqr9UR3IvMspGLd/u8mNwJzssg?=
+ =?us-ascii?Q?T+5KFwvh0YuyVwRPeCHxlM09S+xQNRyFDkSDc5+XrHy/MAoD5O+pXiGKjtzU?=
+ =?us-ascii?Q?qCw0guVf/WonGxj3VVNlCopNEOlf66mUoi4ShFaiMcxDNOh6PlJwq6pvU1yk?=
+ =?us-ascii?Q?o8id10ElRcykyqqtjaoVWJ9kWZjIS0AwOaQUimLJ6jrBZXsJlhCnNOY3aVwm?=
+ =?us-ascii?Q?hebbEZpCWIM6woRG+J+GZZSlP3bxyTxHG7B/?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8833.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(7416014)(366016)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/KA+5l66s9lWwfWfaYHt3vI2R8dLfoXfXPqXQj0LwdjmfzwR/OYSMSY7Thty?=
+ =?us-ascii?Q?EtjDTmTXGxqL0D6wqcLzKwbTeeTR73PHSl4kQWKlvA+vwz/5pn+kpReT1reQ?=
+ =?us-ascii?Q?BEi9rIVL9HfRDF4nSDhZUp2qCoDfpziq5EC7qSLMGssZWvBsPRkXr4EDXZP6?=
+ =?us-ascii?Q?zBIzWFIKKGnsU+wjwWSSUU2YZGuDagnMOB+f3YsoYgqA3QcTkYuDE49J2UeU?=
+ =?us-ascii?Q?wKimFiYmiLzRoZArnloBzTVeT79AeaooKkhlFrDCY5mt8M8r3xM6VggaOiS+?=
+ =?us-ascii?Q?M9bMZuchUHBFKu9JWiOpHgHvouf5z5+cNTnI2ckNlMAunYnok031nfTrLVlH?=
+ =?us-ascii?Q?9NLS0FzBr6cDIgskkiosPWymmWlOeJUK7cRoSemj/uBf0DXWvMv0kHenRenP?=
+ =?us-ascii?Q?CyPfBZlWg//aYqkuu2OFPrIEWeQfFqguAYzr79Vw6LxG/A7MqnwFXWU5eSGg?=
+ =?us-ascii?Q?r6A3vfpgAhrb16JmhgLguo/xBDYkIrvBVbRmvP9ohrnHUuL2Qc2wCEzeHVnG?=
+ =?us-ascii?Q?g/mOL5+iu9J/FOZ161THWgXJtbhbMks5VD3HK633RBylV8niGsbfyKZB84Qz?=
+ =?us-ascii?Q?sBw/5AYIpPRZoyB7JkwqC4ilgE51Vomycv8dhcu6G1SAHPa21bhqB3ydyQON?=
+ =?us-ascii?Q?hB4yx4aWtqvBRFaHx1A4peH9hRTbyU97ikvoPhjHIJxNfUHoa5ITl3YeUPEe?=
+ =?us-ascii?Q?6ubd4c61rgFiPyzu2TRjGFRTnvDJfzolrvGNP+sED4Iy8xSHm5prPAsjx6UI?=
+ =?us-ascii?Q?sGHWIk1g2AWCnUzUiPeXFCUV+U0gfrK6COgqzOO1iYqCud3+v/dPP5Trne+S?=
+ =?us-ascii?Q?eWqHRUsmQ6bVJGYjfsGaagsOz3ZTXcjc4N1SMf+6WcedLuADwRJK/qNv00Qp?=
+ =?us-ascii?Q?0NEtjEOJTVwm8miXRud8Rm4dBNEg3JHhFTCAX4a8QNChgdQ0qq21cibZYSPN?=
+ =?us-ascii?Q?7JyLBYAoeKCDQP5fI6rvYRsg81PEs38XtNJPU+BRldT4ddp2tMkahG/x11zU?=
+ =?us-ascii?Q?GRiB1Ht8EP/0rY01EdQCPLIBfIsycdTY+A3VCEPzJ+UapOo+RiSLEs0c6ajP?=
+ =?us-ascii?Q?2EtZVlINRrHPpGpbwYngnBdxVnvUBagFUnQgvVRw/qrZ4x7w7fKY75PYijNx?=
+ =?us-ascii?Q?oD/83DNgx5y4tzcmg9tnmhzzIOKbuVS3aSfio7OiV2BggqPthwRu2tGq/2AP?=
+ =?us-ascii?Q?C2i/M9lGe0q6nwwthA4iLYmOyDXZRFGfOHURFGehx+24LC7H/VWII7NA5JxX?=
+ =?us-ascii?Q?tQm46jL8eIOtkJEokVXr8DgQUUKM2cI/8eDfxZ4D6ZDNkmzn88b4rE3Ye6E+?=
+ =?us-ascii?Q?GCmZ35vzW/Wr7u+crY+Nx6B0Qnd+WJVfgfSc+Zor/kzsgEld3u78XhBovgnL?=
+ =?us-ascii?Q?MeovWQpPnLW0S5NshAuclxnQzeaW7gn4OM6mXCyJGxY5MQ7sSMTrvfenMmqI?=
+ =?us-ascii?Q?WTqwZDty7/orDvp38pp3q4CGMZQWRmCAYSwRjV61a+KVPJwJyUvlrtpvBoi6?=
+ =?us-ascii?Q?/1mPbTkwGNfVKIWcMekaagUqagQ/QXxo/qd10Tug1dDaje+KQlHtQPuzCWdL?=
+ =?us-ascii?Q?Qwb/qqIHy31wNeBFldXPyEzBWg11lpbYtjzq2mAR?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a97d3322-d8c1-4c21-6bb8-08dde9f7110e
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8833.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 08:02:31.2224
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RE5ZPfnh3fya+QrqmQukYc5xgTBJBAWDslDDWRHUoINqmUBXcE4J0rAVYPtmC8kIhK/6omVGQpMMOLAoK42yrg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10880
 
-Repeatedly marking the same eraseblock bad inflates
-mtd->ecc_stats.badblocks because mtd_block_markbad() unconditionally
-increments the counter on success, while some implementations (e.g.
-NAND) return 0 both when the block was already bad and when it has just
-been marked[1].
+Refer to PCIe r6.0, sec 5.2, fig 5-1 Link Power Management State Flow
+Diagram. Both L0 and L2/L3 Ready can be transferred to LDn directly.
 
-Fix by probing the bad-block state before and after calling
-->_block_markbad() (when _block_isbad is available) and only increment
-the counter on a confirmed good->bad transition. If _block_isbad is not
-implemented, be conservative and do not increment.
+It's harmless to let dw_pcie_suspend_noirq() proceed suspend after the
+PME_Turn_Off is sent out, whatever the LTSSM state is in L2 or L3 after
+a recommended 10ms max wait refer to PCIe r6.0, sec 5.3.3.2.1 PME
+Synchronization.
 
-Keep the logic centralized in mtdcore; the markbad path is not a hot
-path, so the extra IO is acceptable.
+The LTSSM states of i.MX6QP PCIe is inaccessible after the PME_Turn_Off
+is kicked off. To handle this case, don't poll L2 state and add one max
+10ms delay if QUIRK_NOL2POLL_IN_PM flag is existing in suspend.
 
-Link: https://lore.kernel.org/all/ef573188-9815-4a6b-bad1-3d8ff7c9b16f@huaweicloud.com/ [1]
-Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
----
- drivers/mtd/mtdcore.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+Main changes in v5:
+- Fix build warning caused by 6-1 patch.
+v4:https://patchwork.kernel.org/project/linux-pci/cover/20250822084341.3160738-1-hongxing.zhu@nxp.com/
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 5ba9a741f5ac..a6d38da651e9 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -2338,10 +2338,12 @@ EXPORT_SYMBOL_GPL(mtd_block_isbad);
- 
- int mtd_block_markbad(struct mtd_info *mtd, loff_t ofs)
- {
- 	struct mtd_info *master = mtd_get_master(mtd);
- 	int ret;
-+	loff_t moffs;
-+	int oldbad = -1;
- 
- 	if (!master->_block_markbad)
- 		return -EOPNOTSUPP;
- 	if (ofs < 0 || ofs >= mtd->size)
- 		return -EINVAL;
-@@ -2349,17 +2351,35 @@ int mtd_block_markbad(struct mtd_info *mtd, loff_t ofs)
- 		return -EROFS;
- 
- 	if (mtd->flags & MTD_SLC_ON_MLC_EMULATION)
- 		ofs = (loff_t)mtd_div_by_eb(ofs, mtd) * master->erasesize;
- 
--	ret = master->_block_markbad(master, mtd_get_master_ofs(mtd, ofs));
-+	moffs = mtd_get_master_ofs(mtd, ofs);
-+
-+	/* Pre-check: remember current state if available. */
-+	if (master->_block_isbad)
-+		oldbad = master->_block_isbad(master, moffs);
-+
-+	ret = master->_block_markbad(master, moffs);
- 	if (ret)
- 		return ret;
- 
--	while (mtd->parent) {
--		mtd->ecc_stats.badblocks++;
--		mtd = mtd->parent;
-+	/*
-+	 * Post-check and bump stats only on a confirmed good->bad transition.
-+	 * If _block_isbad is not implemented, be conservative and do not bump.
-+	 */
-+	if (master->_block_isbad) {
-+		/* If it was already bad, nothing to do. */
-+		if (oldbad > 0)
-+			return 0;
-+
-+		if (master->_block_isbad(master, moffs) > 0) {
-+			while (mtd->parent) {
-+				mtd->ecc_stats.badblocks++;
-+				mtd = mtd->parent;
-+			}
-+		}
- 	}
- 
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(mtd_block_markbad);
--- 
-2.39.2
+Main changes in v4:
+- Add one patch[1/6] to remove the L1SS check during L2 entry.
+- Update the code comments of 2/6 patch and commit description of 6/6 patch.
+- Add background to 5/6 to describe why skip PME_Turn_off message when no
+endpoint device is connected.
+v3:https://patchwork.kernel.org/project/linux-pci/cover/20250818073205.1412507-1-hongxing.zhu@nxp.com/
+
+Main changes in v3:
+- Adjust the patch sequence to avoid the build break.
+- Update the commit message.
+v2:https://patchwork.kernel.org/project/linux-pci/cover/20250618024116.3704579-1-hongxing.zhu@nxp.com/
+
+Main changes in v2:
+Add the following two patches.
+- Skip PME_Turn_Off message if there is no endpoint connected.
+- Don't return error when wait for link up.
+v1:https://patchwork.kernel.org/project/linux-pci/cover/20250408065221.1941928-1-hongxing.zhu@nxp.com/
+drivers/pci/controller/dwc/pcie-designware-host.c
+
+[PATCH v5 1/6] PCI: dwc: Remove the L1SS check before putting the
+[PATCH v5 2/6] PCI: dwc: Don't poll L2 if QUIRK_NOL2POLL_IN_PM is
+[PATCH v5 3/6] PCI: imx6: Don't poll LTSSM state of i.MX6QP PCIe in
+[PATCH v5 4/6] PCI: imx6: Don't poll LTSSM state of i.MX7D PCIe in PM
+[PATCH v5 5/6] PCI: dwc: Skip PME_Turn_Off message if there is no
+[PATCH v5 6/6] PCI: dwc: Don't return error when wait for link up in
+
+drivers/pci/controller/dwc/pci-imx6.c             |  4 ++++
+drivers/pci/controller/dwc/pcie-designware-host.c | 62 +++++++++++++++++++++++++++++++++++---------------------------
+drivers/pci/controller/dwc/pcie-designware.h      |  4 ++++
+3 files changed, 43 insertions(+), 27 deletions(-)
 
 
