@@ -1,144 +1,128 @@
-Return-Path: <linux-kernel+bounces-796905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0FF1B40916
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:38:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354E8B40912
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ABE2202670
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70AD3A869E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE671324B0B;
-	Tue,  2 Sep 2025 15:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F3B312830;
+	Tue,  2 Sep 2025 15:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7jQM8xy"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GC5HieO3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bM2xTufd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCBA2FD1CA;
-	Tue,  2 Sep 2025 15:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D45725EFBF
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827477; cv=none; b=tUScePcUwCB5idSF+JrecuLwKu6lKl6x3nJ8F51TSEQNwxvuo1xHfV/pLbvm0sRoKFCtLp3lk71ghwwbjd/+gviDfjEvRDFnmy1INjAScVFpBM1HnHD5+dLoljLkkcTrM0o1Fx1YZ7XfojxEN0cG02fHaWuyM759N2zkqHkm5nM=
+	t=1756827475; cv=none; b=U0me1HKt+dqjXGmXrm/TNatufrSpxkXwtHBapz8kpxq6x9WIWMmDXijnOCiXwkZSlx+lWxzL3NgfnTMhcf8vhYMYKZU0CWa2pQmVzllYRmNISDcYejU6tUGkKptC9t+OTthCK5slIrSGUDfNtBb9gdASg8QrLVv/6KjFGIjNmJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827477; c=relaxed/simple;
-	bh=Q0V0+8/9cQhFYhyJ10VGhON8RF6qKxEQag6+/cJWUfE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cinsdwP6Iwamz7LYWSjq+6njp/BwjmZ85Ckwqa20RLy0Pb6dJ4qbOSc0J7j4CbNIEvQDvQtLtFLFfqQjyjYDPRmEGHtziIYRcgbCaWzBgR9OWgTYE45uqItmBDhRhilEelxAHawEu1/ugFl4uuLN8Helz7IWHwabv7wTl5JN/Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7jQM8xy; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b040df389easo509580166b.3;
-        Tue, 02 Sep 2025 08:37:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756827474; x=1757432274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ToovZG8SQtuUFFknVRkxm5fUqcSGP9vu7/1Fx5ABo6s=;
-        b=Q7jQM8xyQD5Cq4+HfFezvIrf8qGKs2443M5lO2nFF0oCyUdLfSeG7hIWNYZn0FMbBE
-         FxlursyWC9t9t9MnN/S/CkqUC3A68DfmJEQJ/7UNfrH78zRXUpDFZGxiGgHZnudGEibu
-         f2b4CvCfrXrE+1kVroC7ZZbQt7fG8Wl0EEqn2tKIjUHLuVmIBjtPdVCmC1jbd62t4u1N
-         9G78MQDF9DPxzcFlDg/9zgb9jW8hZr5DX0b5+nJWM1nBiRLzQH9X/qeuvbqft4dPrM2l
-         PcKy/cOk+41hEcShX2ZfPg3SyAcKctEgbL1b8evm4qTGQQEobz/WnzGcWcIQ0B4IM/B0
-         1dhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756827474; x=1757432274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ToovZG8SQtuUFFknVRkxm5fUqcSGP9vu7/1Fx5ABo6s=;
-        b=fUgyUPYbJqOzgAg1p0qBxfoaPTWC3dOOtob5ZThgqTmlrSSUacmg/hhKEsLlV1n1om
-         LvSNlzy04OEOp5dBCn1Sy8CI7H2/cLcggv7g8lK8PIhFzpPsaRUtVZmeh17y4PqA82TX
-         XVeSZVDW2RouG9RPejZOkOD1gm6g0xPr0XntujdVMPIRUuLU2jj4WBtKzoaxf3nuVkCN
-         +qG3Kf2AOr6W9TDrhzanQkWmGPVSemwF+etisZihnscpOYDYWgxka9HYYgAVkpXwv878
-         rgwWsXQkFn+3zABQAsrPrBq3NYabKhGSVU4pCN+mStnSpPj+6vKFe6k4GfWDDyLK3flq
-         0OTw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4k14tk1UwfR//ROAAolzErZqX7FVzzwWEofvsniOa24NzB1bZZDZwQicqNRKAgWKwa7BuGGUWfsTBbGoX@vger.kernel.org, AJvYcCX99qajrD8d0ocsnh3iIJfsG+9x6Vi1FUsRUSt2Pn6aHtxJUwxegHnDc8GMPhdlXLxv/0fIZIzrOMgN@vger.kernel.org, AJvYcCXKCbZDho7GeosTLV19ujAAxT3pbDwUkR8sk4JMxqck9k+lC+iKmQYOUd7sc1MAi4QEH+TwaeGgBdtSTp54b2wSFVY=@vger.kernel.org, AJvYcCXosOOVbyQT1T9MOzjJYEq7F0604yhEgbx9I6jWs6km37Sr5/hF8Ed/3ETAW5OnLVEHYsC7YVNIxpA0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP3DiwI4rJG0Aj7qBATdXUNA+gecZBkpw3/ZNXkAd9IU2q+8cL
-	vr8QzQbqtXTFf3vKixGtGo3CMnBw/83agC3HTfw0vO40CNMh6VGKqs3TCzytB0I0SXP7xt8Kbd9
-	n7knfHN7rHNkautE51kAOJ8iiSLVDSxU=
-X-Gm-Gg: ASbGncvoxip/W+KlxzHOtVCQkKIG09yIAV3A42mxScmhFzNizWercxjCMNGWewSv0BZ
-	vuBLpu/MV2/hLnMSVkSt/yQHVGkvVTusiMtlKlSBWdwS2U35Lq2nAX2ihPkiFe1rBR2UQSeILFr
-	vorz7qXrOHxIWVWXMyvtkETb/d9dSFikz6PViAnntXWqvHhHI1Evjroakzl7I0RjszEhJo8GIiT
-	yokD4jBBbKzkRdDG7fm+r3FP0nf2/gWLnvLSLsf
-X-Google-Smtp-Source: AGHT+IFAIdNO+1gO9Ilx8n6K907nn54bmjXBWyPpLuVOa8774PJjRCJs7SoLDLYXImHEg2v2acrnfsYECCp+2+KrFLA=
-X-Received: by 2002:a17:907:86a3:b0:afe:d3b2:8b2c with SMTP id
- a640c23a62f3a-b01d979e9b2mr1145170166b.52.1756827473256; Tue, 02 Sep 2025
- 08:37:53 -0700 (PDT)
+	s=arc-20240116; t=1756827475; c=relaxed/simple;
+	bh=W7Z/+xnHZ2xAtg7hetdlcN5zb+B5wk7QAXYp8SuxHNY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jd54IrluONcdj/QneiKNDxBA3x9ZbxWPfBYrJW8CNpWgLc/FJdVIG4aMJyiVvw6Wr918S9CbzPBaSOrSRDuWIuqCisvAmuXF51bgp1C6od7GdraKvWHPaeqFE+u5bw4OoWDdPVRsyyf5K14fuoBpxouV7ob60UY2j2Vzj0a4td4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GC5HieO3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bM2xTufd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756827471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2voFApd0L/2HaIu7XOE6XjtZ1FUtQO3zfVOc0FfCnfA=;
+	b=GC5HieO3uhwTXWruc7N4ZGreN/z9DlWuJSNPNrqbUgiRUU+VzwW5WYr4O6mEA3elDHSvTS
+	cokNewrpmnvhPdctSN+xePx8rPFIg1q/+0o8ZjA0kEcfdY3ihzNXSyI1D8FualvUoAfsMM
+	V5cdRSCI1yAuYijyCVSWKjKePiEP7Zdxo0oDmtFGLN3m4IU+4OI2bC2w3Fzlqec7yJDB7y
+	VWLqIfPAW2Yc//W+6iLcnblMxIKO0iKSaqfeizeJjLx1xb1gCR+0VFWjgJsSf5DxsLVw+C
+	yCa2VsPpLo94VTiBQA8HdwOgB1bM0HGLxP3PMDeRL8BkN+vX2W5m4h5ZlB2t4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756827471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2voFApd0L/2HaIu7XOE6XjtZ1FUtQO3zfVOc0FfCnfA=;
+	b=bM2xTufdcO5L0yixJMv0GBIzu7ZdfpJu382PVImqJRQYYvPKFlfojXT+gmJEMH2r3iWaZn
+	MeYvMjoH+eog8eCA==
+To: Sean Christopherson <seanjc@google.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Paolo
+ Bonzini <pbonzini@redhat.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>, "Paul E.
+ McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ x86@kernel.org, Arnd Bergmann <arnd@arndb.de>, Heiko Carstens
+ <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>
+Subject: Re: [patch V2 07/37] rseq, virt: Retrigger RSEQ after vcpu_run()
+In-Reply-To: <aKzGZjyEQq3u-M68@google.com>
+References: <20250823161326.635281786@linutronix.de>
+ <20250823161653.711118277@linutronix.de>
+ <d8c69b7a-43ca-41b7-af8a-6eb1772c55a4@efficios.com>
+ <aKzGZjyEQq3u-M68@google.com>
+Date: Tue, 02 Sep 2025 17:37:50 +0200
+Message-ID: <87zfbczwz5.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901183000.1357758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250901183000.1357758-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdV+-WK3KQNfwrN30LFCGaWgRuRH4QOpMMC_6cko1bz3uQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdV+-WK3KQNfwrN30LFCGaWgRuRH4QOpMMC_6cko1bz3uQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 2 Sep 2025 16:37:26 +0100
-X-Gm-Features: Ac12FXwcT0gz1a6x2-m6fCf1bNV0IkrlzXdNyK7bJFVkGSwJN082tnh18fq-a8A
-Message-ID: <CA+V-a8v9SBF7zkCq4zgZJV=B-=t6Dea7dG=whA0YjwOrPrO5Hg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: renesas,r9a09g077/87: Add
- Ethernet and GMAC clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Geert,
+On Mon, Aug 25 2025 at 13:24, Sean Christopherson wrote:
+> On Mon, Aug 25, 2025, Mathieu Desnoyers wrote:
+>> > @@ -4466,6 +4467,8 @@ static long kvm_vcpu_ioctl(struct file *
+>> >   		r = kvm_arch_vcpu_ioctl_run(vcpu);
+>> >   		vcpu->wants_to_run = false;
+>> > +		rseq_virt_userspace_exit();
+>
+> I don't love bleeding even more entry/rseq details into KVM.
 
-Thank you for the review.
+Neither do I.
 
-On Tue, Sep 2, 2025 at 2:02=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 1 Sept 2025 at 20:30, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add clock definitions for Ethernet (ETCLK A-E) and GMAC (GMAC0-2)
-> > peripherals to both R9A09G077 and R9A09G087 SoCs. These definitions
-> > are required for describing Ethernet and GMAC devices in device trees.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
->
-> Thanks for your patch!
->
-> > --- a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
-> > +++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
-> > @@ -26,5 +26,14 @@
-> >  #define R9A09G077_CLK_PCLKL            14
-> >  #define R9A09G077_SDHI_CLKHS           15
-> >  #define R9A09G077_USB_CLK              16
-> > +#define R9A09G077_ETCLKA               17
-> > +#define R9A09G077_ETCLKB               18
-> > +#define R9A09G077_ETCLKC               19
-> > +#define R9A09G077_ETCLKD               20
-> > +#define R9A09G077_ETCLKE               21
->
-> These five LGTM.
->
-> > +#define R9A09G077_GMAC0_PCLKH          22
-> > +#define R9A09G077_GMAC1_PCLKAH         23
-> > +#define R9A09G077_GMAC2_PCLKAH         24
->
-> I doubt you really need these, cfr. my comments on [PATCH v2 2/2].
->
-As agreed on patch 2/2, I will drop these macros in v3.
+> Rather than optimize KVM and then add TIF_RSEQ, what if we do the
+> opposite?
 
-Cheers,
-Prabhakar
+I'm not optimizing KVM. I'm simplifying the RSEQ parts to ignore
+TIF_NOTIFY_RESUME when invoked with @regs == NULL.
+
+> I.e. add TIF_RSEQ to XFER_TO_GUEST_MODE_WORK as part of "rseq: Switch
+> to TIF_RSEQ if supported", and then drop TIF_RSEQ from
+> XFER_TO_GUEST_MODE_WORK in a new patch?
+
+The problem is that I have to keep all the architectures which
+
+    - do not use the generic entry code
+    - therefore can't be switched trivially over to the TIF_RSEQ scheme
+    - have RSEQ support enabled
+
+alive and working.
+
+> That should make it easier to revert the KVM/virt change if it turns
+> out PV setups are playing games with rseq,
+
+I can't find a hint of such an insanity in kernel, so *shrug*.
+
+If there is out of tree code which plays games with the vCPU's user
+space thread::TLS::rseq, then it rightfully breaks. The update, which
+happens today, is just coincidence and a kernel internal implementation
+detail.
+
+> and it would give the stragglers (arm64 in particular) some
+> motiviation to implement TIF_RSEQ and/or switch to generic TIF bits.
+
+There is enough motivation in this series to do so :)
+
+Thanks,
+
+        tglx
 
