@@ -1,201 +1,283 @@
-Return-Path: <linux-kernel+bounces-795489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAE3B3F2CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF24B3F2CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F3048550F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06E0B1A81E4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17462E0928;
-	Tue,  2 Sep 2025 03:38:35 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E02A2E0B42;
+	Tue,  2 Sep 2025 03:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QF5yT2Ru"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0F3207A0C;
-	Tue,  2 Sep 2025 03:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C44207A0C;
+	Tue,  2 Sep 2025 03:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756784315; cv=none; b=EePaSoyYu2GZFwWhwov2foTItXCCWKheNWfF2CCaus19brcsWD7NU9a3Lbg9asOE6+AjvIcGoOlZQcj3MdZ/LH9ISRXhkPcJvmA9GwBX0afyx5IKUoXHghpI5k2PK9BghtfJtzKZxRcS37VMRQq1/2DukD2nXjBGg9NB2GaSISg=
+	t=1756784341; cv=none; b=Lz75eNkSkcJfXgCXIKCzufJ+fS7GSezqtiUl54RIrymC1fv907CaRKJlt4ReQAvYMFEbM/L9jkPfZExg3nFxGtwplMCBffQcLTphinPNaduPQxHhvaaBQox+0fpmDFzQ69Ek2FAXA4bVWQWO9+U0b0HQFHGKIRiW3lxJ5I71wMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756784315; c=relaxed/simple;
-	bh=xjFXwLgN9+Tb+kcrEl/8o0thagVQvKnOfuOi+lF72ho=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=Ro1bHVRt7XAv48hM2/AcTl7ZofFg6/Idd33mQ1n28zBysUpIBM9EwHIFbM1IxJWE/DgxnYSz87bbsIOT63YpvixzUIrTYjsP7DOCxcu/abPwQRZfZbsu0hD99dandTv31TUrZ9Bha7bUH5LCJmB8NK/Hg4mq9dS8ziVRbg8q204=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cGBKZ4ZPrz5B8mt;
-	Tue, 02 Sep 2025 11:38:26 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl1.zte.com.cn with SMTP id 5823c8KZ088347;
-	Tue, 2 Sep 2025 11:38:08 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 2 Sep 2025 11:38:09 +0800 (CST)
-Date: Tue, 2 Sep 2025 11:38:09 +0800 (CST)
-X-Zmail-TransId: 2afb68b666a1f39-0ca5f
-X-Mailer: Zmail v1.0
-Message-ID: <202509021138097501cXkw4xiXiYSWRs8thevi@zte.com.cn>
-In-Reply-To: <20250902100030967nPEcUoRRSnruExakQxAIm@zte.com.cn>
-References: 202509020957458514CMgUiaqPjTURNET_d-w0@zte.com.cn,20250902100030967nPEcUoRRSnruExakQxAIm@zte.com.cn
+	s=arc-20240116; t=1756784341; c=relaxed/simple;
+	bh=S/w4rcPpjdCSlbEXLRTbupYmKMQDjYrB2GZB3TJpTuc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eum+DeUeMiZ3gwY6XUMHK0hjKfqn1/C3z7t91GLrSvUKSb+0PK1SpJdu57zMu50NadnQsOyFM+wG4xxn+hP96EhCnqqasMzpAdIYcs+c7j9uoqZXg1yU+kvVCM4OjKwEdVBdzCR6OUeIjqbmL1QwCAgUPhzi6FefKXNmlWSMWdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QF5yT2Ru; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2445824dc27so44617445ad.3;
+        Mon, 01 Sep 2025 20:38:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756784339; x=1757389139; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cIaSbWL2dZQ+TqaX4gZk06wKwcC7c40+iHQ42933n6M=;
+        b=QF5yT2RubznGjW7uefMi+0bMs6QTA9AZ4rJV1uLuY11eOnT0/zMYBxQciVMgOyFk+z
+         //RO+ykb99bA6KXLocT4e1IXxQf38TShr7IT+a7bF5Qr/f9Y/WqhSLBHWCQbu+lwBv+D
+         AEq9c2TzkNf+T8ChLY+OTSygzXWs6U//f+W3ShV1kdm5jQ5GAPpjyqO4l4xBCLbuRkT7
+         /G2vP2X0EaCdeX8xmM/0VXC4bYbI6CSgvPgNwfiTXC0auT4fyLXrJqny0mO1UPyfMqw8
+         Uuhxh2W810F2g0fLlqY3osy6Xq3gPm3Kfuuu7zNj78HDzm8Rgx6oVVenH+niCINWs0MR
+         YBFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756784339; x=1757389139;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cIaSbWL2dZQ+TqaX4gZk06wKwcC7c40+iHQ42933n6M=;
+        b=RGKH8/MBPnSLvy7piFRIRZakCkZ4IHD5Uaz9njU9SNooRTpPNzZzdOqrtjwgKcxYp4
+         AuMJw6XXzOSMUeTMJ3IlTdA88yIbebH1CD6zibPu3SwE9p84R4drmbFEpoWW9ygnINSQ
+         ggIFudv5AJyQ9ZGYHSqndyQCgKvvOEf+J0ePFm5lrrN0MMyiIrjmdccEDS0MnfzOsW8G
+         jrBguigUBawEVd1uDeJL6GhrDUwUZz3grhQyZSkEM70bUmqjuV4FR6MaKoBQR16g3+Of
+         UGbibGqkgG7QLwxl+hJIZZMeL7D504RunQVvctMIRhQW49x9fov8dMrPTQUa4H7JUL3H
+         XdhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeHB3RbUWtSNNO6kZ/iC5WKE1MiwbQhbk29LGXoaTchG6gFXjmNAd1MyMMQ+1fWAYkBEN0NhQ17SZRif7k@vger.kernel.org, AJvYcCWWYZSEGUVEL6cW96ISYVRiQOPYYlnTrh4GvKYh/yTaRmsAiOxHtemKKy7aA4SwjV4uVV8xy4TN@vger.kernel.org, AJvYcCXdQF1GIM1C1Eg9H7FyKR8uxjeXPQtzX3x3g8gEhhIACOUSYhCgWZEFyILcp1rjk1cFvLUYq2T2xBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBa9lojwhbAav45uP+h4wn2u0duELi3HXdWNQ7nboQt3d30GPk
+	viY6zDxfvYXn3vHlUwCZWdspI6IQbv2Dz2stSi06C+bl8+5raNkLg5zV
+X-Gm-Gg: ASbGnctnUwri89wqfmM8C0Atvjs3pBVIfvmNQIpcBvC4CeErbjZFoHZAekAx+U2WVCA
+	6o0m86/0CKOmdraixvEOniHC9Fcjw7UL6kXwHWUy5pZTcPRZTUbgBQnJS4H15tnmV/Ih+/x9145
+	gQQhzbDr/T6EledE3Qdd1xPRJsHbHTy1NWN1KI8iB3kT/hDWSQMBL6uEQKBbK3GYsCiHS/vkMaC
+	zhvVQVev9MhFz/Bbzi6wBHemSr0i+UmW65n1o67yyPuxu88UiyB+Zk1fSxPfPhOR96JCuDa4zV9
+	qc4Gz1F7UE/1UjPnP5K5W0wLfn/6xTQIzXJepWB3is7x4a7AyBmQ3aZDRzB5qf5OKRWjNIw59t7
+	mTARDjfrM7kX6NYL2v37/ckhBug==
+X-Google-Smtp-Source: AGHT+IHpKPhunch+gKdXPihdTtHy8wS4Gp4GiQ6oSq0uQEsO4ntq613aSW+z0RvX6o0rQl/Rac+k9g==
+X-Received: by 2002:a17:902:d501:b0:245:f1bb:9bf9 with SMTP id d9443c01a7336-24944870959mr155779785ad.12.1756784339123;
+        Mon, 01 Sep 2025 20:38:59 -0700 (PDT)
+Received: from fedora ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24905da3c43sm118118215ad.80.2025.09.01.20.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 20:38:58 -0700 (PDT)
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Fastabend <john.fastabend@gmail.com>
+Cc: Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alistair Francis <alistair.francis@wdc.com>,
+	Damien Le'Moal <dlemoal@kernel.org>,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: [PATCH v2] net/tls: support maximum record size limit
+Date: Tue,  2 Sep 2025 13:38:10 +1000
+Message-ID: <20250902033809.177182-2-wilfred.opensource@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <fan.yu9@zte.com.cn>, <akpm@linux-foundation.org>
-Cc: <akpm@linux-foundation.org>, <wang.yaxin@zte.com.cn>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eC1uZXh0IDEvM10gdG9vbHMvZGVsYXl0b3A6IGFkZCBtZW1vcnkgdmVyYm9zZSBtb2RlIHN1cHBvcnQ=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 5823c8KZ088347
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Tue, 02 Sep 2025 11:38:26 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68B666B2.000/4cGBKZ4ZPrz5B8mt
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> From: Fan Yu <fan.yu9@zte.com.cn>
-> 
-> The original delaytop tool always displayed detailed memory
-> subsystem breakdown, which could be overwhelming for users
-> who only need high-level overview.
-> 
-> Add flexible display control allowing users to choose their
-> preferred information granularity.
-> 
-> The new flexibility provides:
-> 1) For quick monitoring: use normal mode to reduce visual clutter
-> 2) For deep analysis: use verbose mode to see all memory subsystem details
-> 
-> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
-This feature is very useful to analyze specific delay sources due to memory operations.
+During a handshake, an endpoint may specify a maximum record size limit.
+Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
+maximum record size. Meaning that, the outgoing records from the kernel
+can exceed a lower size negotiated during the handshake. In such a case,
+the TLS endpoint must send a fatal "record_overflow" alert [1], and
+thus the record is discarded.
 
-But these shown datas are basically average values rather than min/max, it's not enough
+Upcoming Western Digital NVMe-TCP hardware controllers implement TLS
+support. For these devices, supporting TLS record size negotiation is
+necessary because the maximum TLS record size supported by the controller
+is less than the default 16KB currently used by the kernel.
 
-for debugging delay jitters. Will you add showing min/max values to delaytop in future? 
+This patch adds support for retrieving the negotiated record size limit
+during a handshake, and enforcing it at the TLS layer such that outgoing
+records are no larger than the size negotiated. This patch depends on
+the respective userspace support in tlshd and GnuTLS [2].
 
-> ---
->  tools/accounting/delaytop.c | 111 ++++++++++++++++++++++++++++--------
->  1 file changed, 87 insertions(+), 24 deletions(-)
-> 
->  /* PSI statistics structure */
-> @@ -163,13 +166,14 @@ static void usage(void)
->  {
->  	printf("Usage: delaytop [Options]\n"
->  	"Options:\n"
-> -	"  -h, --help				Show this help message and exit\n"
-> -	"  -d, --delay=SECONDS	  Set refresh interval (default: 2 seconds, min: 1)\n"
-> -	"  -n, --iterations=COUNT	Set number of updates (default: 0 = infinite)\n"
-> -	"  -P, --processes=NUMBER	Set maximum number of processes to show (default: 20, max: 1000)\n"
-> -	"  -o, --once				Display once and exit\n"
-> -	"  -p, --pid=PID			Monitor only the specified PID\n"
-> -	"  -C, --container=PATH	 Monitor the container at specified cgroup path\n");
-> +	"  -h, --help               Show this help message and exit\n"
-> +	"  -d, --delay=SECONDS      Set refresh interval (default: 2 seconds, min: 1)\n"
-> +	"  -n, --iterations=COUNT   Set number of updates (default: 0 = infinite)\n"
-> +	"  -P, --processes=NUMBER   Set maximum number of processes to show (default: 20, max: 1000)\n"
-> +	"  -o, --once               Display once and exit\n"
-> +	"  -p, --pid=PID            Monitor only the specified PID\n"
-> +	"  -C, --container=PATH     Monitor the container at specified cgroup path\n"
-> +	"  -M, --memverbose         Display memory detailed information\n");
->  	exit(0);
->  }
-> 
+[1] https://www.rfc-editor.org/rfc/rfc8449
+[2] https://gitlab.com/gnutls/gnutls/-/merge_requests/2005
 
-..
+Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+---
+ Documentation/networking/tls.rst |  7 ++++++
+ include/net/tls.h                |  1 +
+ include/uapi/linux/tls.h         |  2 ++
+ net/tls/tls_main.c               | 39 ++++++++++++++++++++++++++++++--
+ net/tls/tls_sw.c                 |  4 ++++
+ 5 files changed, 51 insertions(+), 2 deletions(-)
 
-> 
-> +	suc &= BOOL_FPRINT(out, "%8s  %8s  %-17s", "PID", "TGID", "COMMAND");
-> +
-> +	if (!cfg.mem_verbose_mode) {
-> +		suc &= BOOL_FPRINT(out, "%8s %8s %8s %8s\n",
-> +			"CPU(ms)", "IO(ms)", "IRQ(ms)", "MEM(ms)");
-> +		suc &= BOOL_FPRINT(out, "-----------------------");
-> +		suc &= BOOL_FPRINT(out, "-----------------------");
-> +		suc &= BOOL_FPRINT(out, "--------------------------\n");
-> +	} else {
-> +		suc &= BOOL_FPRINT(out, "%8s %8s %8s %8s %8s %8s %8s %8s %8s\n",
-> +			"CPU(ms)", "IO(ms)", "IRQ(ms)", "MEM(ms)",
-> +			"SWAP(ms)", "RCL(ms)", "THR(ms)", "CMP(ms)", "WP(ms)");
-> +		suc &= BOOL_FPRINT(out, "-----------------------");
-> +		suc &= BOOL_FPRINT(out, "-----------------------");
-> +		suc &= BOOL_FPRINT(out, "-----------------------");
-> +		suc &= BOOL_FPRINT(out, "-----------------------");
-> +		suc &= BOOL_FPRINT(out, "-------------------------\n");
-> +	}
-> +
-> 
-> -	suc &= BOOL_FPRINT(out, "-----------------------------------------------");
-> -	suc &= BOOL_FPRINT(out, "----------------------------------------------\n");
->  	count = task_count < cfg.max_processes ? task_count : cfg.max_processes;
-> 
->  	for (i = 0; i < count; i++) {
-> -		suc &= BOOL_FPRINT(out, "%5d  %5d  %-15s",
-> +		suc &= BOOL_FPRINT(out, "%8d  %8d  %-15s",
->  			tasks[i].pid, tasks[i].tgid, tasks[i].command);
-> -		suc &= BOOL_FPRINT(out, "%7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f\n",
-> -			average_ms(tasks[i].cpu_delay_total, tasks[i].cpu_count),
-> -			average_ms(tasks[i].blkio_delay_total, tasks[i].blkio_count),
-> -			average_ms(tasks[i].swapin_delay_total, tasks[i].swapin_count),
-> -			average_ms(tasks[i].thrashing_delay_total, tasks[i].thrashing_count),
-> -			average_ms(tasks[i].compact_delay_total, tasks[i].compact_count),
-> -			average_ms(tasks[i].wpcopy_delay_total, tasks[i].wpcopy_count),
-> -			average_ms(tasks[i].irq_delay_total, tasks[i].irq_count));
-> +		if (!cfg.mem_verbose_mode) {
-> +			suc &= BOOL_FPRINT(out, FMT_NORMAL,
-> +				average_ms(tasks[i].cpu_delay_total,
-> +						   tasks[i].cpu_count),
-> +				average_ms(tasks[i].blkio_delay_total,
-> +						   tasks[i].blkio_count),
-> +				average_ms(tasks[i].irq_delay_total,
-> +						   tasks[i].irq_count),
-> +				average_ms(task_total_mem_delay(&tasks[i]),
-> +						   task_total_mem_count(&tasks[i])));
-> +		} else {
-> +			suc &= BOOL_FPRINT(out, FMT_MEMVERBOSE,
-> +				average_ms(tasks[i].cpu_delay_total,
-> +						   tasks[i].cpu_count),
-> +				average_ms(tasks[i].blkio_delay_total,
-> +						   tasks[i].blkio_count),
-> +				average_ms(tasks[i].irq_delay_total,
-> +						   tasks[i].irq_count),
-> +				average_ms(task_total_mem_delay(&tasks[i]),
-> +						   task_total_mem_count(&tasks[i])),
-> +				average_ms(tasks[i].swapin_delay_total,
-> +						   tasks[i].swapin_count),
-> +				average_ms(tasks[i].freepages_delay_total,
-> +						   tasks[i].freepages_count),
-> +				average_ms(tasks[i].thrashing_delay_total,
-> +						   tasks[i].thrashing_count),
-> +				average_ms(tasks[i].compact_delay_total,
-> +						   tasks[i].compact_count),
-> +				average_ms(tasks[i].wpcopy_delay_total,
-> +						   tasks[i].wpcopy_count));
-> +		}
->  	}
+diff --git a/Documentation/networking/tls.rst b/Documentation/networking/tls.rst
+index 36cc7afc2527..0232df902320 100644
+--- a/Documentation/networking/tls.rst
++++ b/Documentation/networking/tls.rst
+@@ -280,6 +280,13 @@ If the record decrypted turns out to had been padded or is not a data
+ record it will be decrypted again into a kernel buffer without zero copy.
+ Such events are counted in the ``TlsDecryptRetry`` statistic.
+ 
++TLS_TX_RECORD_SIZE_LIM
++~~~~~~~~~~~~~~~~~~~~~~
++
++During a TLS handshake, an endpoint may use the record size limit extension
++to specify a maximum record size. This allows enforcing the specified record
++size limit, such that outgoing records do not exceed the limit specified.
++
+ Statistics
+ ==========
+ 
+diff --git a/include/net/tls.h b/include/net/tls.h
+index 857340338b69..c9a3759f27ca 100644
+--- a/include/net/tls.h
++++ b/include/net/tls.h
+@@ -226,6 +226,7 @@ struct tls_context {
+ 	u8 rx_conf:3;
+ 	u8 zerocopy_sendfile:1;
+ 	u8 rx_no_pad:1;
++	u16 record_size_limit;
+ 
+ 	int (*push_pending_record)(struct sock *sk, int flags);
+ 	void (*sk_write_space)(struct sock *sk);
+diff --git a/include/uapi/linux/tls.h b/include/uapi/linux/tls.h
+index b66a800389cc..3add266d5916 100644
+--- a/include/uapi/linux/tls.h
++++ b/include/uapi/linux/tls.h
+@@ -41,6 +41,7 @@
+ #define TLS_RX			2	/* Set receive parameters */
+ #define TLS_TX_ZEROCOPY_RO	3	/* TX zerocopy (only sendfile now) */
+ #define TLS_RX_EXPECT_NO_PAD	4	/* Attempt opportunistic zero-copy */
++#define TLS_TX_RECORD_SIZE_LIM	5	/* Maximum record size */
+ 
+ /* Supported versions */
+ #define TLS_VERSION_MINOR(ver)	((ver) & 0xFF)
+@@ -194,6 +195,7 @@ enum {
+ 	TLS_INFO_RXCONF,
+ 	TLS_INFO_ZC_RO_TX,
+ 	TLS_INFO_RX_NO_PAD,
++	TLS_INFO_TX_RECORD_SIZE_LIM,
+ 	__TLS_INFO_MAX,
+ };
+ #define TLS_INFO_MAX (__TLS_INFO_MAX - 1)
+diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
+index a3ccb3135e51..1098c01f2749 100644
+--- a/net/tls/tls_main.c
++++ b/net/tls/tls_main.c
+@@ -812,6 +812,31 @@ static int do_tls_setsockopt_no_pad(struct sock *sk, sockptr_t optval,
+ 	return rc;
+ }
+ 
++static int do_tls_setsockopt_record_size(struct sock *sk, sockptr_t optval,
++					 unsigned int optlen)
++{
++	struct tls_context *ctx = tls_get_ctx(sk);
++	u16 value;
++
++	if (sockptr_is_null(optval) || optlen != sizeof(value))
++		return -EINVAL;
++
++	if (copy_from_sockptr(&value, optval, sizeof(value)))
++		return -EFAULT;
++
++	if (ctx->prot_info.version == TLS_1_2_VERSION &&
++	    value > TLS_MAX_PAYLOAD_SIZE)
++		return -EINVAL;
++
++	if (ctx->prot_info.version == TLS_1_3_VERSION &&
++	    value > TLS_MAX_PAYLOAD_SIZE + 1)
++		return -EINVAL;
++
++	ctx->record_size_limit = value;
++
++	return 0;
++}
++
+ static int do_tls_setsockopt(struct sock *sk, int optname, sockptr_t optval,
+ 			     unsigned int optlen)
+ {
+@@ -833,6 +858,9 @@ static int do_tls_setsockopt(struct sock *sk, int optname, sockptr_t optval,
+ 	case TLS_RX_EXPECT_NO_PAD:
+ 		rc = do_tls_setsockopt_no_pad(sk, optval, optlen);
+ 		break;
++	case TLS_TX_RECORD_SIZE_LIM:
++		rc = do_tls_setsockopt_record_size(sk, optval, optlen);
++		break;
+ 	default:
+ 		rc = -ENOPROTOOPT;
+ 		break;
+@@ -1065,7 +1093,7 @@ static u16 tls_user_config(struct tls_context *ctx, bool tx)
+ 
+ static int tls_get_info(struct sock *sk, struct sk_buff *skb, bool net_admin)
+ {
+-	u16 version, cipher_type;
++	u16 version, cipher_type, record_size_limit;
+ 	struct tls_context *ctx;
+ 	struct nlattr *start;
+ 	int err;
+@@ -1110,7 +1138,13 @@ static int tls_get_info(struct sock *sk, struct sk_buff *skb, bool net_admin)
+ 		if (err)
+ 			goto nla_failure;
+ 	}
+-
++	record_size_limit = ctx->record_size_limit;
++	if (record_size_limit) {
++		err = nla_put_u16(skb, TLS_INFO_TX_RECORD_SIZE_LIM,
++				  record_size_limit);
++		if (err)
++			goto nla_failure;
++	}
+ 	rcu_read_unlock();
+ 	nla_nest_end(skb, start);
+ 	return 0;
+@@ -1132,6 +1166,7 @@ static size_t tls_get_info_size(const struct sock *sk, bool net_admin)
+ 		nla_total_size(sizeof(u16)) +	/* TLS_INFO_TXCONF */
+ 		nla_total_size(0) +		/* TLS_INFO_ZC_RO_TX */
+ 		nla_total_size(0) +		/* TLS_INFO_RX_NO_PAD */
++		nla_total_size(sizeof(u16)) +   /* TLS_INFO_TX_RECORD_SIZE_LIM */
+ 		0;
+ 
+ 	return size;
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index bac65d0d4e3e..9f9359f591d3 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -1033,6 +1033,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+ 	unsigned char record_type = TLS_RECORD_TYPE_DATA;
+ 	bool is_kvec = iov_iter_is_kvec(&msg->msg_iter);
+ 	bool eor = !(msg->msg_flags & MSG_MORE);
++	u16 record_size_limit;
+ 	size_t try_to_copy;
+ 	ssize_t copied = 0;
+ 	struct sk_msg *msg_pl, *msg_en;
+@@ -1058,6 +1059,9 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+ 		}
+ 	}
+ 
++	record_size_limit = tls_ctx->record_size_limit ?
++			    tls_ctx->record_size_limit : TLS_MAX_PAYLOAD_SIZE;
++
+ 	while (msg_data_left(msg)) {
+ 		if (sk->sk_err) {
+ 			ret = -sk->sk_err;
+-- 
+2.51.0
 
-I think if users press 'M', delaytop doesn't need to shown CPU/IRQ/IO delays, just show the detailed memory delays.
-
-
-> 
->  	suc &= BOOL_FPRINT(out, "\n");
-> -- 
-> 2.25.1
 
