@@ -1,78 +1,179 @@
-Return-Path: <linux-kernel+bounces-797008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648F6B40AAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:32:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 457CDB40AA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCADF1B6057A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3411562AEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E803376A6;
-	Tue,  2 Sep 2025 16:31:09 +0000 (UTC)
-Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EF02E0938;
+	Tue,  2 Sep 2025 16:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLFsl1MS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4061E2D6630;
-	Tue,  2 Sep 2025 16:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA2420110B;
+	Tue,  2 Sep 2025 16:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756830669; cv=none; b=PmlkTZpnECnOyiGnWTbBi5Ct2spD6AXRnN9UzZ0avCl5gou12POnk1ZP1WP8CNGqtartGVQtCczoSw23MHbRRJ/NiKL0lreya+4vBrpvORQnJd1sSjdabC22/ocCDr+bOKdZKWOn6CRYoyS+V+RgOulL7S8NbiUvW8CN3IvhOeA=
+	t=1756830657; cv=none; b=hXdg6z3c477BL8TUC+OKFsdyqZj+qDgdSiLH4Y5HpaAKM0v19P6p1tCKC3j09gtiUcIa++1jpaWdp2wifQkhFNsPiayHAwWW8CFYJKNBKPwGzjSOCad3KYCXMiV6xkpVOjyOvoEjQ/S1fMhfBBkKkNIQXAQ7slJrunN0PBwFhEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756830669; c=relaxed/simple;
-	bh=Lxi5N7pEzHPertFKGMK3gi/LFW0Y66WebwKJJUHPvQI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fXm78pKQ+yLQ9FRt73xEJpLBRvcPWKjG6AAMFbw4mck7Ku+oxwmaE2/0tC0EEMoxozJtNdhjs00fBFU5U+VFAMLlJ2wz2Fdn7zR+xs105b/Bzd/dgEI56knOusiuMGOh9WdzA/X46/M9KjCjFABOPmYvgTjt7RcdWMYY/gkaFXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-From: Brett A C Sheffield <bacs@librecast.net>
-To: gregkh@linuxfoundation.org
-Cc: stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org,
-	Brett A C Sheffield <bacs@librecast.net>
-Subject: Re: 6.1.150-rc1-00051 review
-Date: Tue,  2 Sep 2025 16:30:42 +0000
-Message-ID: <20250902163041.4467-2-bacs@librecast.net>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250902131930.509077918@linuxfoundation.org>
-References: <20250902131930.509077918@linuxfoundation.org>
+	s=arc-20240116; t=1756830657; c=relaxed/simple;
+	bh=7DSDu3xe+61KTUCFNykFVwnFmHEleC8yPorysYzOCXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9JPDbGe1xyeZhSvbqVCNgdAo36ProNQp9VFO/j3UJt91atVl5ZycB9mekliGbmU5s3vu+AgNZSoyRigYZTCJHE2J6QvJbm8H5VhAm6fxV8Pa4Xh1ABZm/I8g46n0YMn+ujjrIPJtuP/y0yVgBD3gKO5S1GDCm+9uXq3301HS5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLFsl1MS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81DC9C4CEED;
+	Tue,  2 Sep 2025 16:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756830656;
+	bh=7DSDu3xe+61KTUCFNykFVwnFmHEleC8yPorysYzOCXs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FLFsl1MSsn8yfioftt3LDIwhCdZxval+GKnNQp5yfkog6UDNDgH7hQMUREQmBz56q
+	 BzGAbDpKwFZ7m4ARYpInN8XoqIB5fiPS+/suHl2GBi66ZJ0P6FlHDOesEwwWK2J53y
+	 Yp/tc2JLydTg9RCgsI7JGoulI1MhfpksSFCKVqDyMmEKh+KzMRdop+7PNwWupsj7iA
+	 TJyUL+iHamMzqnfEhPXHUwBTs5kB+NTf6zyXwGzBYpgHjQgjCJzNiRJo91E34sJujR
+	 NrY1JQA7umDsH406z7RcXWIuVRC4m7HAuJywfF2sgN7HF+06n+AV5wuCUCAEBqWEJO
+	 0+5htAk7aXqnw==
+Received: by pali.im (Postfix)
+	id 46B634BB; Tue,  2 Sep 2025 18:30:53 +0200 (CEST)
+Date: Tue, 2 Sep 2025 18:30:53 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Stefan Metzmacher <metze@samba.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Ralph =?utf-8?B?QsO2aG1l?= <slow@samba.org>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/35] cifs: Fix SMB rmdir() and unlink() against Windows
+ SMB servers
+Message-ID: <20250902163053.zzgd5ee4qguciajj@pali>
+References: <20250831123602.14037-1-pali@kernel.org>
+ <dfa557ed-eb34-4eaf-9e17-7cae221e74fd@samba.org>
+ <20250901170253.mv63jewqkdo5yqj7@pali>
+ <6660f6bd-ea74-4b25-b7dd-280833b5568c@samba.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6660f6bd-ea74-4b25-b7dd-280833b5568c@samba.org>
+User-Agent: NeoMutt/20180716
 
-Broadcast regression confirmed fixed:
-  https://lore.kernel.org/regressions/20250822165231.4353-4-bacs@librecast.net
+Hello!
 
-# Librecast Test Results
+On Tuesday 02 September 2025 17:17:14 Stefan Metzmacher wrote:
+> Hi Pali,
+> 
+> > > > This patch series improves Linux rmdir() and unlink() syscalls called on
+> > > > SMB mounts exported from Windows SMB servers which do not implement
+> > > > POSIX semantics of the file and directory removal.
+> > > > 
+> > > > This patch series should have no impact and no function change when
+> > > > communicating with the POSIX SMB servers, as they should implement
+> > > > proper rmdir and unlink logic.
+> > > 
+> > > Please note that even servers implementing posix/unix extensions,
+> > > may also have windows clients connected operating on the same files/directories.
+> > > And in that case even posix clients will see the windows behaviour
+> > > of DELETE_PENDING for set disposition or on rename
+> > > NT_STATUS_ACCESS_DENIED or NT_STATUS_DIRECTORY_NOT_EMPTY.
+> > 
+> > Ok. So does it mean that the issue described here applies also for POSIX
+> > SMB server?
+> 
+> I guess so.
+> 
+> > If yes, then I would propose to first fix the problem with
+> > Windows/non-POSIX SMB server and then with others. So it is not too big.
+> 
+> That's up to Steve. But isn't it just a matter of removing the
+> if statement that checks for posix?
 
-010/010 [ OK ] libmld
-120/120 [ OK ] liblibrecast
+I can modify that if statement, no problem. I just did not wanted to
+touch POSIX code path as my focus is on the Windows code path.
+I do not know all those case which POSIX paths against POSIX server may
+trigger, so it was safer for me to let POSIX as is.
 
-CPU/kernel: Linux auntie 6.1.150-rc1-00051-gcdcdd968ff27 #58 SMP PREEMPT_DYNAMIC Tue Sep  2 16:05:12 -00 2025 x86_64 AMD Ryzen 9 9950X 16-Core Processor AuthenticAMD GNU/Linux
+> > > > When issuing remove path command against non-POSIX / Windows SMB server,
+> > > > it let the directory entry which is being removed in the directory until
+> > > > all users / clients close all handles / references to that path.
+> > > > 
+> > > > POSIX requires from rmdir() and unlink() syscalls that after successful
+> > > > call, the requested path / directory entry is released and allows to
+> > > > create a new file or directory with that name. This is currently not
+> > > > working against non-POSIX / Windows SMB servers.
+> > > > 
+> > > > To workaround this problem fix and improve existing cifs silly rename
+> > > > code and extend it also to SMB2 and SMB3 dialects when communicating
+> > > > with Windows SMB servers. Silly rename is applied only when it is
+> > > > necessary (when some other client has opened file or directory).
+> > > > If no other client has the file / dir open then silly rename is not
+> > > > used.
+> > > 
+> > > If I 'git grep -i silly fs/smb/client' there's no hit, can you
+> > > please explain what code do you mean with silly rename?
+> > 
+> > Currently (without this patch series) it is CIFSSMBRenameOpenFile()
+> > function when called with NULL as 3rd argument.
+> > 
+> > Cleanup is done in PATCH 11/35, where are more details.
+> > 
+> > Originally the "Silly rename" is the term used by NFS client, when it
+> > does rename instead of unlink when the path is in use.
+> > I reused this term.
+> > 
+> > 
+> > So for SMB this "silly rename" means:
+> > - open path with DELETE access and get its handle
+> > - rename path (via opened handle) to some unique (auto generated) name
+> > - set delete pending state on the path (via opened handle)
+> > - close handle
+> > 
+> > (plus some stuff around to remove READ_ONLY attr which may disallow to
+> > open path with DELETE ACCESS)
+> > 
+> > So above silly rename means that the original path is not occupied
+> > anymore (thanks to rename) and the original file / dir is removed after
+> > all clients / users release handles (thanks to set delete pending).
+> > 
+> > It is clear now clear? Or do you need to explain some other steps?
+> > Sometimes some parts are too obvious for me and I unintentionally omit
+> > description for something which is important. And seems that this is
+> > such case. So it is my mistake, I should have explain it better.
+> 
+> I think I understand what it tries to do, thanks for explaining.
+> 
+> I was just wondering why the rename on a busy handle would work
+> while delete won't work. I'd guess the chances are high that both fail.
 
-Tested-by: Brett A C Sheffield <bacs@librecast.net>
+Both "set delete pending" and "rename" operations are working (if open
+pass). Just "set delete pending" does not unlink file/dir immediately
+but rather wait until path is not busy anymore. "rename" on the other
+hand is executed immediately.
+
+So we can rename the in-use/busy file on Windows server, but we cannot
+remove it immediately. We can only "schedule" its removal on the Windows
+server. So combination of "rename" + "schedule removal" is what are
+patches doing.
+
+In case open fails (e.g. due to conflicting DENY shared reservations or
+because path is already in delete pending state) then obviously it is
+not possible to continue with either rename or set delete pending
+operation, both then fails.
+
+> Do you have network captures showing the old and new behavior
+> that's often easier to understand than looking at patches alone.
+> 
+> metze
+
+I do not have them right now, but I can run test scenario and capture
+them, this is not problem. Test case is pretty straightforward.
 
