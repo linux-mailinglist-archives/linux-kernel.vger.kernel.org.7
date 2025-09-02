@@ -1,146 +1,103 @@
-Return-Path: <linux-kernel+bounces-796150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72024B3FC8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B97B3FC86
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DA184E3643
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:33:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BFF54E35BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB8D2EF678;
-	Tue,  2 Sep 2025 10:33:10 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F08283FF9;
+	Tue,  2 Sep 2025 10:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HE91gcmx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FFC2ED148;
-	Tue,  2 Sep 2025 10:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C400032F757;
+	Tue,  2 Sep 2025 10:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756809190; cv=none; b=dfHHfdQ3hoh3LSRxxLZKZ4TWVjDDWJJ/aiH3H2HN+lKJaCvk2CsXrrgMZuDzn/Rp2h67h888fIhX2PhVmEcIgkpzu5TFpnK+h43UrT0zfze0rD8M64oiMWEo2VsP/5TAhfeD2860XOREhbod1BbZGNfggNNEQYJqYZJj4uFNh5I=
+	t=1756809174; cv=none; b=DeY3L+viVxGOPeboLPscxsBf23dZ2uJWHzWe0qhNEtf86NUV1FeYUQDbIAoxq1vN3nhgn5P/ElzVt24cbLowr2DgCu3/Jcm2k0OljJ2MtD5TsaJKM3IYMBL/leiVIXNhZpWwcBKpe1KMi7iXd2z7YL6wpyzmJYP5G6oPgFymG0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756809190; c=relaxed/simple;
-	bh=L8JaUs3SOhVHk302t291gHlKh5NKD5qAHGAnGijZbM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=azXb57iSNxQajeST1qYtisZ3/3TIw215OeN1HolMp7qM+G+mSjXWrOn9KWpf9/zQgxVXA2aUUD+dybgk03VeZ3k10jX6TqJDHSyB035OI7r4p2BXiuXbPAmkIxBXMxzIX0lIcjqbpZQHnpSPAueAD857K1tLQps5KoDiBSRPnv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3107081c87e811f0b29709d653e92f7d-20250902
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:3fbf43f8-ebc9-4b27-884e-79c619713230,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:7ac0a2afc203774c376dc034898cbd81,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 3107081c87e811f0b29709d653e92f7d-20250902
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1546738643; Tue, 02 Sep 2025 18:32:57 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id A718FE008FA3;
-	Tue,  2 Sep 2025 18:32:56 +0800 (CST)
-X-ns-mid: postfix-68B6C7D8-5510786
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 589C2E008FA2;
-	Tue,  2 Sep 2025 18:32:48 +0800 (CST)
-Message-ID: <29890791-4ddf-49c7-a4f2-0ac83e6d53c6@kylinos.cn>
-Date: Tue, 2 Sep 2025 18:32:47 +0800
+	s=arc-20240116; t=1756809174; c=relaxed/simple;
+	bh=/Xb7tjcBTs0irk+53t/twPJrZDuNfzc0qeTp6XJFqPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cB6veRWC1Da/jSivVx+2eM5xhnBXYq/2SHUy6eCFRKx8YfoozPehTryldctHmtR1Vj/rTSdiLrWFFtCNJIvQ+C0EhdK1Hskh97Fi4d3QM9Llsb2mDrspVHJPXxfhOGiag+2vF80AJSn4CIPQPBlNiJ5v0uKSuzoRsU49hz9dcMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HE91gcmx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3273EC4CEED;
+	Tue,  2 Sep 2025 10:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756809174;
+	bh=/Xb7tjcBTs0irk+53t/twPJrZDuNfzc0qeTp6XJFqPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HE91gcmxT+twJbwhYN33w1GmU3/c6KhtfcvBeHeYmGx/oK0OuBfdgCtmDdCIp7FC0
+	 eSGJ7cZJSuh+/6mZB3PGRvO3BrIZRBu2dHZqtudOOSZUfYC1o7AIDHJ77pY2CR3yn5
+	 nv6YJZcbu0KT0RVVrARt4nGZ3RGLwr7FtkOhIYjGkrEagmMM6/2aUpR/mqKIDbE8Ra
+	 WjnT9Q+xK1uxYuwC6zYLcjl83Mp2a3tM796W5pKhnPsCfcVXYbcdu0QPzk4SdJcV23
+	 KFOifRYtH4mhjP4ewcETZiNRjUYz8n6duRwgNjwWj59dB5+mSzuGQHTlOMprfueU2v
+	 HnRqfkqalSr8w==
+Date: Tue, 2 Sep 2025 11:32:49 +0100
+From: Lee Jones <lee@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux@treblig.org, arnd@arndb.de, mchehab@kernel.org,
+	lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+	tiwai@suse.com, linux-media@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Remove the wl1273 FM Radio
+Message-ID: <20250902103249.GG2163762@google.com>
+References: <20250625133258.78133-1-linux@treblig.org>
+ <20250808154903.GB23187@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/12] cpufreq: intel_pstate: Use scope-based cleanup
- helper
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
- Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
- Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
- <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>,
- Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250901085748.36795-1-zhangzihuan@kylinos.cn>
- <20250901085748.36795-4-zhangzihuan@kylinos.cn>
- <CAJZ5v0hu48NrMr6Vkjn_UyHywJMx7F5N6yWf2LiXxykZF79EKA@mail.gmail.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <CAJZ5v0hu48NrMr6Vkjn_UyHywJMx7F5N6yWf2LiXxykZF79EKA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250808154903.GB23187@pendragon.ideasonboard.com>
 
+On Fri, 08 Aug 2025, Laurent Pinchart wrote:
 
-=E5=9C=A8 2025/9/1 23:17, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> On Mon, Sep 1, 2025 at 10:58=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylin=
-os.cn> wrote:
->> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
->> annotation for policy references. This reduces the risk of reference
->> counting mistakes and aligns the code with the latest kernel style.
->>
->> No functional change intended.
->>
->> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
->> ---
->>   drivers/cpufreq/intel_pstate.c | 8 +++-----
->>   1 file changed, 3 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_ps=
-tate.c
->> index f366d35c5840..4abc1ef2d2b0 100644
->> --- a/drivers/cpufreq/intel_pstate.c
->> +++ b/drivers/cpufreq/intel_pstate.c
->> @@ -1502,9 +1502,8 @@ static void __intel_pstate_update_max_freq(struc=
-t cpufreq_policy *policy,
->>
->>   static bool intel_pstate_update_max_freq(struct cpudata *cpudata)
->>   {
->> -       struct cpufreq_policy *policy __free(put_cpufreq_policy);
->> +       struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D c=
-pufreq_cpu_get(cpudata->cpu);
->>
->> -       policy =3D cpufreq_cpu_get(cpudata->cpu);
->>          if (!policy)
->>                  return false;
-> The structure of the code is intentional here and there's no reason to
-> change it.
+> On Wed, Jun 25, 2025 at 02:32:54PM +0100, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > I noticed that the wl1273 radio had an unused symbol, but then noticed
+> > it is on Arnd's unused driver list:
+> >   https://lore.kernel.org/lkml/a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com/
+> > 
+> > So, delete it.
+> > The components seem pretty separable, except for Kconfig dependencies.
+> > 
+> > That lore URL is over 75 chars, which checkpatch warns about,
+> > suggestions welcome.
+> > 
+> > Dave
+> > 
+> > Dr. David Alan Gilbert (4):
+> >   media: radio-wl1273: Remove
+> >   ASoC: wl1273: Remove
+> >   mfd: wl1273-core: Remove
+> >   mfd: wl1273-core: Remove the header
+> 
+> Mark, Lee, how would you like this to be merged ? I have a large patch
+> series targetting v6.18 that depends on 1/4, and I would like to merge
+> it in the media tree as soon as possible after -rc1 gets released.
+> Patches 1/4, 2/4 and 3/4 are independent of each other, but patch 4/4
+> depends on the first three. Can we merge 1/4 in the media tree and
+> provide a stable branch right on top of -rc1 ?
 
+I'm also set-up pretty well to provide this.  Happy either way.
 
-Got it. Thanks for clarifying.
+If you decide to take it:
 
-So for this case the current structure is intentional -
+  Acked-by: Lee Jones <lee@kernel.org>
 
-should I also avoid similar changes in other drivers?
-
+-- 
+Lee Jones [李琼斯]
 
