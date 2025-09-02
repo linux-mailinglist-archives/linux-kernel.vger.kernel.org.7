@@ -1,131 +1,79 @@
-Return-Path: <linux-kernel+bounces-797276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33EB9B40E48
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:00:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F7DB40E4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1560564AC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:00:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A0A1A81145
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C3B32BF49;
-	Tue,  2 Sep 2025 20:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D2B2FC019;
+	Tue,  2 Sep 2025 20:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2EntBPx"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b="b2lFybW5";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="bXOkKmCq"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CFEEEC0;
-	Tue,  2 Sep 2025 20:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9983B2AF1B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 20:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756843240; cv=none; b=rLmFvvApj9umolMhLfkXFQZH75gKP5GM95ZFHg4W8o63RH3gXOAT5HSH+sQP8diN4n30yJGtnqKz86L6LAxHGoFtKkNB0Fof7yz2ocRWnpP3NSgFaWAZuulI00wRXhidTa2VszlzUSOpw/SlyhX3/JSyuJtNqaihYSHRaHp5yGk=
+	t=1756843415; cv=none; b=k4pqTLba7riVQBH/FkgYVWFuxr1iF0xD5OFpGchsWMw2ZVWwZNNwH3kG+4/6WKe3SHYASpNDL3cObF2E2R6redSleBQxCC0CuYDjiToTCkxn+dYKe7bfbzZnExA4x/q4qW7UfDMAadilDYWHQbW3tg5sNNNEYrrb59VbWzhbkzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756843240; c=relaxed/simple;
-	bh=aniwYY9jkYgpyjWKUmM4zFbGbCTrHhZtp2Ctj7gZrGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YWEwSruk61SyBaGNWTBfNrMXEqj2iuhpHRifs/LCpjuaLpkACpsXZjuaahIZ1B/gfSR6atYssNlCb2QYiulFAJGQv4LypX+fwQ75K08G4LoAQFv6xdSSB7dOVWnQqHWDFukecu1gXWmNJEjc/3JBl+cs65CUT2raefNdeD5DcD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S2EntBPx; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b7722ea37so1570155e9.1;
-        Tue, 02 Sep 2025 13:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756843237; x=1757448037; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vnwn8oz3u8ERteNvGUGXeU59pUXRW/r8woC2acqZVsg=;
-        b=S2EntBPxtljbspcIlJioJbCESww+cOjw8g9yThPWZ6NiulzAQkTbvenw2DP0NMwIE5
-         zEiE/34hgFJF2jbopFHeQIWQE8d6B+EAjDQOet7L6rKK0Mw9RPPfXhAEn6DWQIxHKBjJ
-         HrOa0YMjncl0xkKxz1Z1EFuXNzGYZARO8dDrXUWS+SDGEh54VEhIiiEgc1Byxmrc1SJq
-         NANJ7G7iOLdPCGgUnzp97e0RmCeYLKcYVkaIToUFGFQv7qOuJHRuZl7Vh+339/qwPiqB
-         cp7oHytdEZexIGqV8ZCAxm/iQ9sb6yfUpHtGkkVYKKmkcf+3kDS00QkPQiAZ/B3IIloR
-         zcJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756843237; x=1757448037;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Vnwn8oz3u8ERteNvGUGXeU59pUXRW/r8woC2acqZVsg=;
-        b=hL59JeiMFQ8nug3vuYtfzL1dsyu7ZNKERjphbbQ86kLQ/4Gv134wIct6A5p9L/9XPL
-         jcDHz2FeeGO2HihpL3Qf1fWfySJSgk9GJ7zobFXRM3NbaTsksKnf5xjq+CtyfWm0pUYg
-         /win+jKRksaelGTV7ZQYo4yPdoHUkWfs8XW8GilB6q+H3zgIwH7GT2GRBib7tQlAZGMt
-         FQytnI9GrVPfERT7ALVk8Zvil8S2AjkoY0FsGBrY7hcD9d+fikjXDreqD4T3FyCJoipt
-         Iu5uN1McgXXZEMQStjMFg1EI/4cvovV9sXZUS9lALHyXylPO995uKUDYaRc5ts5iqtBG
-         I/+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX7f+fSa1MOoGM1FyufEoH2u5QM56RqXmmz7LXtoRpnBEGgiUYhmIDI1JqLGuQws3a5lZeh1s+k8G1tRyTSxTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKUpSi+bgzgy9sDYya4xKLsGXBXxNMz9WtRmRTgmS0OX8KWIqt
-	bKxwBKhQO+iW8t2NxxgAbb9jy4yi0npu9W/ncG7/o0hAOn+QCtAljiC0
-X-Gm-Gg: ASbGncuMI8Sq4gUK8dpQi2RBGoSBmoJjWcXVf25av+ud9EhkAQMJgVqohR1WTmb4sN5
-	kc3sC8xIYfN9yT43oVG1aoX67r5FYIo+bhXGOKq0UTaFZ8IJF0YrXsFvkTFOPq1rj3pk5ywNgU5
-	SsNPO0AnGJIHIAjvKJ+u5WvdpzgOYeRzvFmEzgWW4Xe8sI8YqSQGztgxkjfN9IvCz/k26SemhDX
-	sHTffnOxyEF3GIMED1wggotgJIlNLf+xoGV9V799kYz9C8/cFzRdEUZfrXhWQU9LL0Ii9MuGLsU
-	1k7p+D1fCo8uNiPUYXQxuXRVAlx2UqgOy914M5LbnQoPoK2FDMwTjsJC1g8VLHm1WGq/nZcSFCu
-	fv9HfzF+rfbAZ1hWlsKAropqjug==
-X-Google-Smtp-Source: AGHT+IHEgm0JQcczqL6qbChvbVinJC0mTKPGSa9ic1yc/g9tqv/HdFawzpA/UHa8PWGwns9G5GWJOA==
-X-Received: by 2002:a05:600c:6210:b0:45b:8d2a:cd07 with SMTP id 5b1f17b1804b1-45b8d2acf12mr60904505e9.5.1756843236735;
-        Tue, 02 Sep 2025 13:00:36 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8525a94bsm162489725e9.15.2025.09.02.13.00.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Sep 2025 13:00:36 -0700 (PDT)
-Date: Tue, 2 Sep 2025 20:00:36 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v2 2/2] selftests/mm: split_huge_page_test: cleanups for
- split_pte_mapped_thp test
-Message-ID: <20250902200036.6mv4wqenbnjir277@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250902162536.956465-1-david@redhat.com>
- <20250902162536.956465-3-david@redhat.com>
+	s=arc-20240116; t=1756843415; c=relaxed/simple;
+	bh=nqYjo+c3TExuTII3/IldzrPY/ERqW+m8zP1ABITcHM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UvGrHeVemr8+gPOch4UyHWsvphDC85zoSUEM9nSjCGKP1CqDGAUTkKsHeEHSZJkvKWoQrwxifmCNic+yHkp/Sfac5BPA0bRRgYXfGZki7ZTtPEn1mHjLNmTnT+ptty4NNTWxV8zmNUu2DcDN+8XkublRFFao8JqPTNfeJZOBlwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space; spf=pass smtp.mailfrom=elijahs.space; dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b=b2lFybW5; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=bXOkKmCq; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=elijahs.space
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=b2lFybW5y01/0cUn2gVbkjfm6KYePL3oZlgH6K+N3GQBubcnAd5XfnIkeq037c4eGkvDXPmyLquyV/5ob3mYwwt+y49Y3MK2manCk5RzjKlcWrQdkyPPV04zXR74y5QXIJ/mmVuymCxmTCeZgIwMCE0QWn4uiRcb1BtKXvKxk4cKfZpCPIxKfQVGJHTPqnZTvT9Vvxs+XuyHZ1hgkxy0JXsB8nZhIegAkHTws2jnVf9lUX4ls/HrGXlhpvzVIaCeKaMq96qTI7i0fgw6b4wYOsaWvyxKWRDwA+Ynf0hGOv+jreHdImShr9JTB+grWSXncXo8FNQj8K4LHa0lw2WMgQ==; s=purelymail2; d=elijahs.space; v=1; bh=nqYjo+c3TExuTII3/IldzrPY/ERqW+m8zP1ABITcHM0=; h=Received:Date:Subject:To:From;
+DKIM-Signature: a=rsa-sha256; b=bXOkKmCqIFFN+cka0/+WgWKf+Imvhoh08kBrT0Hdddz4gl22lg96SPr8q1wliEjKw/iduxnxHUia+a+EyNv84Od8YvqK7NAT75jS7cFlbIdCT+HKBGGj22KFLSeeo4PG+A1HzEAM4p6PfDvAB1sutgpIn6Fu8rNsEYRs0evYQjF9zjY0shtKAvPDmy4mQaLW+CuX9y4+OWMlhEgek1z38Z06q+QN+pmP3tTMQ/9B1lj4yVXG9qPCgWKIwpPWkZTSkhgYpBWvpzR177yS+8R8s1xNkVGRcLtpfG+klZ3OPG5GMzTxWSKnBtsEnK9WNc7zBLCk/vSUptx4UPfMwTjdUg==; s=purelymail2; d=purelymail.com; v=1; bh=nqYjo+c3TExuTII3/IldzrPY/ERqW+m8zP1ABITcHM0=; h=Feedback-ID:Received:Date:Subject:To:From;
+Feedback-ID: 26912:4866:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1514646534;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Tue, 02 Sep 2025 20:03:20 +0000 (UTC)
+Message-ID: <4be8fdf0-9cd8-47cd-a37b-b41437e3e63e@elijahs.space>
+Date: Tue, 2 Sep 2025 13:03:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902162536.956465-3-david@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tracing: move buffer in trace_seq to end of struct
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Elijah Wright <git@elijahs.space>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20250821053917.23301-1-git@elijahs.space>
+ <20250821114355.6ee546b0@gandalf.local.home>
+ <20250821115359.3988b807@gandalf.local.home>
+ <ce062d82-41cb-42c0-b970-1312dbcd1094@elijahs.space>
+ <20250902160020.5cd24fce@batman.local.home>
+Content-Language: en-US
+From: Elijah <me@elijahs.space>
+In-Reply-To: <20250902160020.5cd24fce@batman.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 02, 2025 at 06:25:36PM +0200, David Hildenbrand wrote:
->There is room for improvement, so let's clean up a bit:
->
->(1) Define "4" as a constant.
->
->(2) SKIP if we fail to allocate all THPs (e.g., fragmented) and add
->    recovery code for all other failure cases: no need to exit the test.
->
->(3) Rename "len" to thp_area_size, and "one_page" to "thp_area".
->
->(4) Allocate a new area "page_area" into which we will mremap the
->    pages; add "page_area_size". Now we can easily merge the two
->    mremap instances into a single one.
->
->(5) Iterate THPs instead of bytes when checking for missed THPs after
->    mremap.
->
->(6) Rename "pte_mapped2" to "tmp", used to verify mremap(MAP_FIXED)
->    result.
->
->(7) Split the corruption test from the failed-split test, so we can just
->    iterate bytes vs. thps naturally.
->
->(8) Extend comments and clarify why we are using mremap in the first
->    place.
->
->Reviewed-by: Zi Yan <ziy@nvidia.com>
->Signed-off-by: David Hildenbrand <david@redhat.com>
+that could work yeah
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+On 9/2/2025 1:00 PM, Steven Rostedt wrote:
+>   struct seq_buf {
+>   	char			*buffer;
+> -	size_t			size;
+> -	size_t			len;
+> +	unsigned int		size;
+> +	unsigned int		len:31;
+> +	unsigned int		full:1;
+>   };
 
--- 
-Wei Yang
-Help you, Help me
 
