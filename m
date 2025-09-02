@@ -1,136 +1,170 @@
-Return-Path: <linux-kernel+bounces-795745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E2DB3F748
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:59:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7DEB3F755
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBF348722E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2567F206E77
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0375F2E7F04;
-	Tue,  2 Sep 2025 07:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882AC2E8B66;
+	Tue,  2 Sep 2025 07:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSFsEhZL"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uuAK93YH"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5192E7BD9;
-	Tue,  2 Sep 2025 07:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394192E7F27
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799973; cv=none; b=XCV8mth5EHb3vuamkAHHYkrll+NGRgJKlvvn/g3Us7M6dWtKT2Ay9Ot2VS4+JKJf2+7VJUsZXizEPGlzeSXk6dHwYnEIqWayle0MyKnb877h4+P1iS8uD/sB44xNL9474u1MTFB+AKftuOtNwp3uMNZEja+UAEcGO/fvXeUzDUw=
+	t=1756799994; cv=none; b=Ws4YZWuWHVUGuBWAqNAYXGFuv+tbYSA2wHnoGkLfIrOU8QCKMJ/UAzvl6li3WR9WokZ3eHpEDR1x6iGZ6P4HcLN8WJ/bpK/yY2xjWohCqVsZYv7jTFNOsdYt76uMoQBdfCCFW50bkgq88O/CXEgd5KddrnaXANSnROnkWK732qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799973; c=relaxed/simple;
-	bh=UetU6Q0k6KRv6T5Ge8HNc+MI7mAoKHwLvsekh+TGmJM=;
+	s=arc-20240116; t=1756799994; c=relaxed/simple;
+	bh=tebRK0QcMgpMQT7H4oKZqhEct4KUpLNswRIw/gQ5Jd8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ErKIdLnq3GR7fvMwNBMWz5699bjkfJtiagVAIuBXd+TPozCape0ojJuNhhZRgBOvuZ3iRKAUJxjBwJyeDp8KAT31btusMl8UmSUIUAeQG3IMNoflg+VbL9+w/lRuZGnCxGSy4VfhT9zX6BE1TAjYzc59NVseUcXMKnFb5C5LruU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSFsEhZL; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-88432e6700dso40102839f.3;
-        Tue, 02 Sep 2025 00:59:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=RBNhx5sQKqn6YnINMtPnz5v+YsJO/CUTgah3+NuncsICVxeSOCY8z0Zn8ohobE5golHwsjkDUBk7qauq7i4lL8faraosC0QfSLlzCWwqZY5xjbFcmhPg6bfsKXYO7UylwhhBIFOO33dtYPRY9Es6d8+zGaGP7W7DZwSZ0agtsAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uuAK93YH; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b327480fd0so824591cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 00:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756799971; x=1757404771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UetU6Q0k6KRv6T5Ge8HNc+MI7mAoKHwLvsekh+TGmJM=;
-        b=mSFsEhZLgMjim3oiFNWw9y0BVx5Ck2VI0vYaJsmN9AwPBmcyKNVDb+Ml8M0IISNzGQ
-         beqjW+nLlkeYE27nhHzLnrrwo6qcG8uPpTOtzRzm/Wf13wKA3S1F1bQqjh3KaG1IPasy
-         bymTwki7hc5bskXczcSDNkdq/R2ir6g3rYA/us2WY0NoDDtb1XEmmpb1dRVidVz9b4aq
-         vzoN/IXbSFn0Acw5tbFKJKgi11/gf5YgXyLBf9YT70+1G49ex9jU6dE62mUi+vsZbYtm
-         hkinDhtqlyZvKbgbtK71EUY0/dztMaIgp3PH4sg/96j0xof4MNvBXZFiBdV3ZPMzlVvE
-         UWug==
+        d=google.com; s=20230601; t=1756799991; x=1757404791; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oNeLWs2qHyUDts+2iHePFK0hNcgX1eWBxmSFpW760QQ=;
+        b=uuAK93YHHFDmmTKFvJYZDd9O++g6IPIcA94//Z84CVnkw5SlNIJENssyFlmJQnIoOc
+         Yr5MU8Z2/FESdJKdmmUeqq58bpHcwTeTKTs7sTTJjAcV1zuBfS8hv6dBPL22gBbIyQAe
+         4J+pKhiLL7uhoYWOxEdTH3hvLotk0PfHyZcXJx222qovWVtLAsLYRNKOLMHuHDiWULAv
+         buYbVvW+0ne9Rc+EOcos3+FJWQkJDR4mZFdZegpDyeWOj5XVAn6HNLwPLpyq0edSVoGC
+         F7hU/z5j6nUXMycY5kqxqjS5CUO0ARO2hw0up18N48EX1CViF+Khh8pBfbpR8Qg/h/kv
+         fQGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756799971; x=1757404771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UetU6Q0k6KRv6T5Ge8HNc+MI7mAoKHwLvsekh+TGmJM=;
-        b=cVgZBSSsY2A2d5q0rO+L+Ev8/YQpEiKBQahbVCTEUF0Ima64WFq4ICC/vm+McJ23K2
-         ZLMgR1qRkMPyUzkk+MtR4etwLMkt+g+yqyp73RehzjwkJp4kLDABXLXJsyybd3HHHih8
-         6o3zpOissfWlslvMKCiAOWCtP/p7g596HXRmYa39C+N33a62Je0dxh+zmWa/cmOviUsm
-         GEP8TbtlYtKfyZ8+tyMJ5Wer9Bhz3XMhRTu+lvMlPiCwT82f0QWt3kthAB1Uz/Dmu1Dt
-         WAt2QNMAWdDlvXUjFLIejA96ecfoYYgKW8RVkBZAm7jTxvAPbSVDpBmUQ4SINt/i8zOg
-         HfGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNu+9Sz6OQjpkjGAZCMMKDF/J05J6lxdSyC/R76qeHBJaBK9+vMi4buHeBbJhiGelZbI2D2mJtfR5f2GM=@vger.kernel.org, AJvYcCWRN4a9Rxt/o98n7P9/OVW+nO2vB+uILswW+p8wAXKHmgUWK31s/XH3gpr3BmMTvTzkudjBImv0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrqyANeHViI/pFeZcB51HWBlXEWGqt9SgvXXate2sqJ8Rg2GKY
-	6eT3MBDN0vlP4DIebNkgahpy+5KhMBXBUZrPJaY5deQR1W/wxBPeCyqXuB27etyJihv8iR+vl9Q
-	q1lffWB3ueje/Z3J260udOp/QfAZT13Q=
-X-Gm-Gg: ASbGncs/Yh88zbjajxRTswvDMWrt1qXvh6BqFsVx6gY81YmCRSrYDj9rY0+M5XeK6u1
-	/7i1xr92A76/f5ylqri3YGYc7w6buJVg3qfmwmJijeTY/fz5qlmCpEABPnCjJhND+z0HhhxbFbc
-	hPocJ/LGUiSB1T4mB36sWHEx/nLOn3OrvTNkiV2Y/iaWl0wtpmPc9mkjKEIB2UQzHIjxH4x4H4L
-	/aDwUtPUWvd5w0uKQ==
-X-Google-Smtp-Source: AGHT+IGEkf8gg7Ow1PMGLkorRV34nEHMquJJIPNm+rQ3E2LGYOSocGgbgKW015adiEbMvaroPzAP/00jQqW5+KXJsGQ=
-X-Received: by 2002:a05:6e02:2165:b0:3e5:51bb:9cd9 with SMTP id
- e9e14a558f8ab-3f400674ac2mr211654925ab.8.1756799970758; Tue, 02 Sep 2025
- 00:59:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756799991; x=1757404791;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oNeLWs2qHyUDts+2iHePFK0hNcgX1eWBxmSFpW760QQ=;
+        b=RImI8gDff8VzSXaGsvP4SUHPbmIIamJAafxMIqayL1YPCRvELy/vKDsAIpFHUmgOY3
+         zZ1ioe9d1kMQkEB5IZQY5yO/cUf/ZN1AOeW8aaPMh3Di0/+dAC1/91p0SwOC4BF6fizM
+         I2ByU1Z7pN36+vUzjK9GLemLefONkJ7uLEHkdiP4P28r030TJPtPuEq9xQXb9Mbdx9Al
+         yCg5mrb+xMJayUmVm+MTI9LdXHh0OXmA+NVBaKgNTz2zdqtsx/VhH4GHgcNWTU7Q6V5G
+         XUFUh6lPtmScLzlWBkxlpKtCGrLfr7pwXYMLBfgr3IA+DPsB6EA/LSTxz3I+MRn3AoXr
+         iDCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKe88BLHgG7anuIZln+bLBUP1KLWpT0WCimNkhBhQgyurJ5+VVXaTPdNK9zn4Ukf8qWYEVCGG/yKZVgu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg00vckJNcPLATvxP6Rw9+pjmep7zNWFHIBAOL7t17t5eGrAwe
+	ztwPFFpzUzollkKRtyXTOKirkzwiV/i+oyF99cq14AmO56DKdbx8Dzyeij4dJ1J3MlDVr8dUANH
+	xIgMJMw7AdhkVQBq0Pp/iK5ZppGjCLJvvI6Mnorad
+X-Gm-Gg: ASbGncvQLeR9MwE7wWBIejBuilndRQ5kHS98+FN0TwDhyu7WenU2Acge6Ycrj0t4jR1
+	6WaqdVztRjZ31LKvyMrsHxCozhXRwOEUhrsxkpXr6JSqgvODttOtDSIWZA9/XSZqgzWiPGCGN6e
+	Vp7TWitTIpA6MsTEWuLOMHlicl5wQysiSy2pyKZVa+q9p+8D8DpMtN3+jO8otIISU4cMjqooyps
+	shU2JHShfVuNu3PFtDi6cg0YtfMJCbn1k8t
+X-Google-Smtp-Source: AGHT+IFkdbqiMarowY+mmKOzuU9RyYySZu0bnzDQg3QNeDfxzMXfy+3OtZ2GRaaDn0H+MAu5W+vNpqCjVKeX20zwo4o=
+X-Received: by 2002:a05:622a:107:b0:48d:8f6e:ece7 with SMTP id
+ d75a77b69052e-4b31b245bdfmr13130661cf.3.1756799990207; Tue, 02 Sep 2025
+ 00:59:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902022529.1403405-1-m13940358460@163.com>
-In-Reply-To: <20250902022529.1403405-1-m13940358460@163.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Tue, 2 Sep 2025 15:58:53 +0800
-X-Gm-Features: Ac12FXzkrriW9NPsuU0kv6Gzb7sSOm_lvfHS5UbJoKxOsdiMQSxWaqEft8y53B0
-Message-ID: <CAL+tcoDZf2RC7Y+vfmUv73Mi+PJSCgzGAieekpTnz92V4dBfWw@mail.gmail.com>
-Subject: Re: [PATCH v5] net/core: Replace offensive comment in skbuff.c
-To: mysteryli <m13940358460@163.com>
-Cc: willemdebruijn.kernel@gmail.com, aleksander.lobakin@intel.com, 
-	andrew@lunn.ch, kuba@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250901135408.5965-1-roypat@amazon.co.uk> <20250901145632.28172-1-roypat@amazon.co.uk>
+In-Reply-To: <20250901145632.28172-1-roypat@amazon.co.uk>
+From: Fuad Tabba <tabba@google.com>
+Date: Tue, 2 Sep 2025 08:59:13 +0100
+X-Gm-Features: Ac12FXwFaub6kV3Kd2ykY4foMIV_-u80DlGRtIr2iGvqoKH4iO-6ScE4yMry24U
+Message-ID: <CA+EHjTxPfzDk=XmwS0uAtjwsYB829s1uZSMC6x3R6KGQ-SqjtQ@mail.gmail.com>
+Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "ackerleytng@google.com" <ackerleytng@google.com>, "david@redhat.com" <david@redhat.com>, 
+	"Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack" <jackabt@amazon.co.uk>, 
+	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "rppt@kernel.org" <rppt@kernel.org>, 
+	"seanjc@google.com" <seanjc@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>, "will@kernel.org" <will@kernel.org>, 
+	"Cali, Marco" <xmarcalx@amazon.co.uk>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 2, 2025 at 10:26=E2=80=AFAM mysteryli <m13940358460@163.com> wr=
-ote:
->
-> From: Mystery <m13940358460@163.com>
->
-> The original comment contained profanity to express the frustration of
-> dealing with a complex and resource-constrained code path. While the
-> sentiment is understandable, the language is unprofessional and
-> unnecessary.
-> Replace it with a more neutral and descriptive comment that maintains
-> the original technical context and conveys the difficulty of the
-> situation without the use of offensive language.
-> Indeed, I do not believe this will offend any particular individual or gr=
-oup.
-> Nonetheless, it is advisable to revise any commit that appears overly emo=
-tional or rude.
->
-> v5:
->
-> - Added this detailed changelog section
->
-> v4:https://lore.kernel.org/netdev/20250901060635.735038-1-m13940358460@16=
-3.com/
-> - Fixed incorrect Signed-off-by format (removed quotes) as requested by A=
-ndrew Lunn
-> - Consolidated multiple versions (v1/v2) into a single version history
->
-> v3:Due to some local reasons in my area, this is a lost version. I'm trul=
-y sorry
->
-> v2:https://lore.kernel.org/netdev/20250901055802.727743-1-m13940358460@16=
-3.com/
-> - Initial version addressing feedback
->
-> v1:https://lore.kernel.org/netdev/20250828084253.1719646-1-m13940358460@1=
-63.com/
-> - First submission
->
-> Signed-off-by: Mystery Li <m13940358460@163.com>
+Hi Patrick,
 
-IIUC, you've received an explicit NACK from Jakub at the previous link
-https://lore.kernel.org/netdev/20250901114157.5345a56a@kernel.org/.
+On Mon, 1 Sept 2025 at 15:56, Roy, Patrick <roypat@amazon.co.uk> wrote:
+>
+> On Mon, 2025-09-01 at 14:54 +0100, "Roy, Patrick" wrote:
+> >
+> > Hi Fuad!
+> >
+> > On Thu, 2025-08-28 at 11:21 +0100, Fuad Tabba wrote:
+> >> Hi Patrick,
+> >>
+> >> On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:
+> >>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> >>> index 12a12dae727d..b52b28ae4636 100644
+> >>> --- a/include/linux/pagemap.h
+> >>> +++ b/include/linux/pagemap.h
+> >>> @@ -211,6 +211,7 @@ enum mapping_flags {
+> >>>                                    folio contents */
+> >>>         AS_INACCESSIBLE = 8,    /* Do not attempt direct R/W access to the mapping */
+> >>>         AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
+> >>> +       AS_NO_DIRECT_MAP = 10,  /* Folios in the mapping are not in the direct map */
+> >>>         /* Bits 16-25 are used for FOLIO_ORDER */
+> >>>         AS_FOLIO_ORDER_BITS = 5,
+> >>>         AS_FOLIO_ORDER_MIN = 16,
+> >>> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_on_reclaim(struct address_spac
+> >>>         return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
+> >>>  }
+> >>>
+> >>> +static inline void mapping_set_no_direct_map(struct address_space *mapping)
+> >>> +{
+> >>> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);
+> >>> +}
+> >>> +
+> >>> +static inline bool mapping_no_direct_map(struct address_space *mapping)
+> >>> +{
+> >>> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);
+> >>> +}
+> >>> +
+> >>> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma)
+> >>> +{
+> >>> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapping);
+> >>> +}
+> >>> +
+> >> Any reason vma is const whereas mapping in the function that it calls
+> >> (defined above it) isn't?
+> >
+> > Ah, I cannot say that that was a conscious decision, but rather an artifact of
+> > the code that I looked at for reference when writing these two simply did it
+> > this way.  Are you saying both should be const, or neither (in my mind, both
+> > could be const, but the mapping_*() family of functions further up in this file
+> > dont take const arguments, so I'm a bit unsure now)?
+>
+> Hah, just saw
+> https://lore.kernel.org/linux-mm/20250901123028.3383461-3-max.kellermann@ionos.com/.
+> Guess that means "both should be const" then :D
 
-Thanks,
-Jason
+I don't have any strong preference regarding which way, as long as
+it's consistent. The thing that should be avoided is having one
+function with a parameter marked as const, pass that parameter (or
+something derived from it), to a non-const function. Instead of
+helping, this could cause a lot of headaches when trying to debug
+things in the future, and figuring out what something that's supposed
+to be "const" is being "corrupted".
+
+Cheers,
+/fuad
+
+
+>
+> >> Cheers,
+> >> /fuad
+> >
+> > Best,
+> > Patrick
+>
 
