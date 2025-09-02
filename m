@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-797045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE67B40B10
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:51:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD88B40B1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6E7200BDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525A31B25FF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71389337697;
-	Tue,  2 Sep 2025 16:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA36A337697;
+	Tue,  2 Sep 2025 16:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b="Qob79FtR"
-Received: from exactco.de (exactco.de [176.9.10.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J94iLqyw"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D457922FAFD;
-	Tue,  2 Sep 2025 16:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.10.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A6332BF49;
+	Tue,  2 Sep 2025 16:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831863; cv=none; b=DJ31ctSlYnagHkI93XrA/6PtP02NGAXgZrx6Y+UtosTTxga/e4KY5F6niWE9uDGuuTBGTGXVGTCT3Asy3pCUUr610Dmdbf7kjw+HJ20apNSUTTemr6BbkAoWIZpiC697xopjbm9YQRpm46GFUqXvMW+aaSXxuLCCoxPtn1AJqLc=
+	t=1756831887; cv=none; b=V1S1hu5i/Q9DGzdwprS0I3fjvNAOGPYx7R7CsO05mEN2w8ErjVvz4HtCYO8cxaYK0B+9E8NubtAZLPKSjt9iVMDKeX5+/IQJNUxOUkLjxylX4vZqn9q6iUGZYiM6Tc12ZN1FSUuUu08smrdskICZBcUuXB33dOTMuGXDn6tZtMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831863; c=relaxed/simple;
-	bh=1i0JvEXxzeQhDhQ3QadruQc9Pqg2kkvDSoZvHpUJGLQ=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fY1ShZWvBpGcpkFlmYFp4rt/ts77ncIjvneKwIf7e1Iqm97RQQe6gPuz+Qp8UMxP9BedIw5ogykAE4ewSWzi0ZIblIHTaMjiRYit7Aklf04Irn2kVbEdrWyxWYBlspgMkNfblqaMTTTgW0sysoQiRFqMkFvRDSNs7mBRNTi1Y+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com; spf=pass smtp.mailfrom=exactco.de; dkim=pass (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b=Qob79FtR; arc=none smtp.client-ip=176.9.10.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactco.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de;
-	s=x; h=Sender:Content-Transfer-Encoding:Content-Type:Mime-Version:References:
-	In-Reply-To:From:Subject:Cc:To:Message-Id:Date:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=U1NVNZzFNPKLfNEMAY0syXFR4s/LQ4mHFlghr5myPvw=; b=Qob79FtRilIUogJOs+Phf9f5LH
-	wUMKGXBZ+HLpXL6d+U2n0QC+gxURNeC3DyY8bY3n4SpzwtE771nl4iYJeJD9w5QACk4veXweDbHKj
-	uzVDjM5oiINTeCOWCPsjDZiP7MdbAUVfq9Xakjx42wS1r/eHvtCxYiQPYMV3bCHo6GmaCqW5geTJO
-	I9cyR3g6bCdPLDyPRmjcWoA6HhcFWo9L7Yoh1aIU97Fpp5kxCmLwotxFv+PFAV6aRplusCdT35ahr
-	v4kFh3iNoTlBPNQEvXpWc66fSVtG1Z8q+FSB6gDDs3XoAZuZfphP6/A7Um1DTDqw85Q/g0AN/uxod
-	bmUEm6EQ==;
-Date: Tue, 02 Sep 2025 18:51:01 +0200 (CEST)
-Message-Id: <20250902.185101.101005511917098882.rene@exactcode.com>
-To: glaubitz@physik.fu-berlin.de
-Cc: kernel@mkarcher.dialup.fu-berlin.de, linux-kernel@vger.kernel.org,
- sparclinux@vger.kernel.org, andreas@gaisler.com, anthony.yznaga@oracle.com
-Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for Niagara
-From: Rene Rebe <rene@exactcode.com>
-In-Reply-To: <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
-References: <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
-	<20250902.184011.440504961051160142.rene@exactcode.com>
-	<cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
-X-Mailer: Mew version 6.10 on Emacs 30.2
+	s=arc-20240116; t=1756831887; c=relaxed/simple;
+	bh=lIbE/1Aoqm4Jo61r+hMyagD0H71z3BwYFHkhUMeX9zQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tWewmGiZoVi4M9gN+87wBMskL9NJvlp2S2xAgIWJ99O2iS2MmEBboBz281kXQrPvjrK+w1Qm5atkECA6TpEbBYIplxo4/QX/GBRvA6jE9yw+GVKU9YyZle2o4xNwOUnAXurytuIUvLKgbPwsdThdobxJrOUJtYpz1MA8niMXel4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J94iLqyw; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f78e3cdf9so3196563e87.1;
+        Tue, 02 Sep 2025 09:51:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756831884; x=1757436684; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lIbE/1Aoqm4Jo61r+hMyagD0H71z3BwYFHkhUMeX9zQ=;
+        b=J94iLqyw4Y9xEGaAYce2nV2xlgusHZkx3vXA+gWWWEFukU2iVPAffTfEsX+a9Gohvp
+         Qm/+aOHNEQgqJEqnZyyQwHswH5ZCqGEjtjUZKjKJ9Zw5AUNcXKsPNW14DVCD2aAaFdkr
+         K+tvWRCFr+ROgw9u4BhY2v0FRZRN/cn+n20c+CMOltfhGI6obIayE3JXR400KngOFGQS
+         OkGXWhEkOuB+u32JXdpT38cgrpbTLDCmzrXB6jQejYfqQiMbonGw8R8DHVKaFFg6TLUp
+         GJP+yymOel3pDRcez8bnBEyhtLtxPBPtjtVj4hd+fIb/pDJK8FyL306zb6nFbMhr79m9
+         bQKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756831884; x=1757436684;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lIbE/1Aoqm4Jo61r+hMyagD0H71z3BwYFHkhUMeX9zQ=;
+        b=rsZpnUSRNTe8Y4SB7TdhHqoA/HbTpKGnoTBDwoy0lyGDHk5kUe12caJZITmMq07XWc
+         xa0WnWFmjCfec4e0MttPUs9XJWR6CpT7eEElrwCfHD+iyKpy6jXt5s5NUu/jfOvnROr/
+         n1ekf7RQpi2710Bv+I6Dx47dAkUW1CyyvabA/VEN2p1g2ZGC9GAFN+Hm2Nxmf01mE14B
+         X2VnHgApj0ysYKdwVrg39AXHAWNnL2EGNKrFZypw9MZUTEOkDFcWTv6mMxStb5pYPiu8
+         iaSk65bWhvdc9BfJ43D1vLQ2qMK23gOUOgUtOJ0OdrN5G4pEDl5mjWK16mdmx/Hynhl4
+         V3jA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1l67AkcN8T1D7qtyC1T8tKkBgiX7qwS3vIYU2ut069kfQFzDhfXf1Bz6dAVe2uAz1OaZ8BeBkMDt+@vger.kernel.org, AJvYcCV7o3GvJkhOArEqfXduCVEdQB5pvSEmCcnGdAHN2BUJL8eY9ArD9CTRg9lqxRW36peahp/a4gQZQWvSrQo=@vger.kernel.org, AJvYcCWYQOMSmiH/Yv60T6NsWj1c5maZ9fPR0JI4odxV3ZY5e/muOcSmOC9vNruWWGLmTpoH2tzdxYR2pZiJ8IAR@vger.kernel.org, AJvYcCXt1meYzWYxfW8K6sDzV13FPyQvvIXAphyLoUog2pJb0E9LK3U1V83jrqbr0+5d8hSqCJmAvcCdCFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU+RF5QNAypOGrouilOVevSUH/Yze/zy4rkKpgMVo8JHu7eqUt
+	z9S8eF0PfO/rGQXAnFzXKk6lUMA/LTeAeRJmP1gJUcKwe5ZRsow1C26ZwUMveIPtPC16v1pNhpx
+	vSHFThnAxXSvnk/zh3GxsKh1tbWkkeQU=
+X-Gm-Gg: ASbGncuaaT/AeTqEsaQ3Mc7yIBH+mg98TjIZTsmGEBq30MrVQ7gJK+vb0t8PyjKVQEj
+	LFo9ZNydQrto7wliim7gbBFZsVd30fnaBg+PE7nVnQT8LS4VsNMNcNCQxNPHUIMKKuCrBtDCSCh
+	DLUn17VAJnSpaONq/fyp6A9haZxlH++BrfG54DbcRFVMsauA5yiQzyfKo+dUZWTcHRbNMax4riX
+	EVYrH8=
+X-Google-Smtp-Source: AGHT+IEChupoSD+9y1BXRKDMPiEUXXbCpO5UGzRaQ31kMw0aqronmTkKMHnTV+chIoZjNTqShh3rv+672NAMniN+Xf8=
+X-Received: by 2002:a05:6512:448e:b0:55f:645a:7146 with SMTP id
+ 2adb3069b0e04-55f70968d9dmr3182922e87.46.1756831883361; Tue, 02 Sep 2025
+ 09:51:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
+MIME-Version: 1.0
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com> <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
+In-Reply-To: <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 2 Sep 2025 11:51:11 -0500
+X-Gm-Features: Ac12FXwYWaxQZ7C2fCm_0oyX8iaPoPZ0amPC4H_SBlrNsaYfoKZf6cjuvVA16aA
+Message-ID: <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on Tegra186/Tegra194
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Sender: rene@exactco.de
 
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
+> > This series borrows the concept used on Tegra234 to scale EMC based on
+> > CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+> > bpmp on those archs does not support bandwidth manager, so the scaling
+> > iteself is handled similar to how Tegra124 currently works.
+> >
+>
+> Three different subsystems and no single explanation of dependencies and
+> how this can be merged.
 
-> Hi Rene,
-> =
+The only cross-subsystem hard dependency is that patches 5 and 6 need
+patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
+operate as expected, but there should not be compile compile or probe
+failures if those are out of order. How would you expect this to be
+presented in a cover letter?
 
-> On Tue, 2025-09-02 at 18:40 +0200, Rene Rebe wrote:
-> > Hi,
-> > =
-
-> > From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-> > =
-
-> > > Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to a=
-ccurate exception reporting.")
-> > > Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.=
-de>
-> > =
-
-> > Tested-by: Ren=E9 Rebe <rene@exactcode.com> # UltraSparc T4 SPARC T=
-4-1 Server
-> =
-
-> Thanks for the testing! However, this actually needs to be tested on =
-a SPARC T1
-> as both T2 and T4 have their own implementation that is being used. T=
-esting on a
-> T4 will therefore not invoke this particular code unless you modify t=
-he kernel in
-> head_64.S to employ the Niagara 1 code on Niagara 4.
-
-Ah right, sorry, IIRC you wrote that :-/
-
-> Do you happen to have a SPARC T1?
-
-Unfortuantely not. A T2 user might have one, but I could also modify
-the kernel and use the less optimized T1 code if that helps, ...
-
-    Ren=E9
-
-> Adrian
-> =
-
-> -- =
-
->  .''`.  John Paul Adrian Glaubitz
-> : :' :  Debian Developer
-> `. `'   Physicist
->   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
-
--- =
-
-  Ren=E9 Rebe, ExactCODE GmbH, Berlin, Germany
-  https://exactcode.com | https://t2linux.com | https://rene.rebe.de
+Aaron
 
