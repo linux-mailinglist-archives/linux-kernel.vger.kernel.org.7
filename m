@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-796987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F13B40A6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:21:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCD4B40AD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502F4546111
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF176189A320
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5532F744C;
-	Tue,  2 Sep 2025 16:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97FD2E92BB;
+	Tue,  2 Sep 2025 16:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hg89vHyF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=editrage.com header.i=@editrage.com header.b="dLtmKg4p"
+Received: from beige.yew.relay.mailchannels.net (beige.yew.relay.mailchannels.net [23.83.220.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222732FF64C;
-	Tue,  2 Sep 2025 16:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756830057; cv=none; b=sOFN+kjAtGBZf1lSfuFmUR6iRwfAmeI3XtCumjsUxSwr2F2+jX30GoebceptFasg+BJzB52Q8Arg5ZI23joNfxxhuGqF6/B9QR6nWGt2Ley0qJGLgNakrGV5SY4sq3ut12jWNU1pERFZPO6wOEbdawTgIg3557RoLZkGw0MUnho=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756830057; c=relaxed/simple;
-	bh=vTpofpxPDyN+FDxPUYtW2w37ZH4XY50XsXBqaWIPZ6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TALloxvQttpyTa1hqcXBwaOROfD3lNFc8MD5RNuir/b0Fnj8wW1+HGLnkGbucPkDSjFjV60CcJeGhgtdorkL4u+9kpoZnhW4pp5XNM14IKIhnIk5I2cOCzO2JrAamYR+1cS+qUnAGVXmH8rwKldfLfrvo9oKGogN6qSRxCtQTQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hg89vHyF; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756830056; x=1788366056;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=vTpofpxPDyN+FDxPUYtW2w37ZH4XY50XsXBqaWIPZ6M=;
-  b=hg89vHyFtUrsnxdkqp6iEjLEKo8c+FnU/a9+xH7YW5z6onpMV+Bf6OlQ
-   H1b05Se4U8IOIrJu0288bJOg1qL4BLdhNH1iKvFDKeDEHwzlj+uMYScDa
-   m+SxsucbrN5vIO88mnWFGyrpBVtfLzGOMrYaStBNU0f8GtQ2TDYCDItPI
-   I6y2n0eec9Q1GOfK/5ukdGXa6TANA/Kr1+XfrhWCkmUfrF2OlqpeI8kji
-   4HINQtfNjaBq69hkRIDVUusWxtqEILxcHdhvMomkmVT0ciwqIbgvQLHp0
-   O5TD8PDzs4SGnIjFPq+FUU6fkrLuUaXJYZRzI86Y1+b0xJGmaUc8oZAwt
-   A==;
-X-CSE-ConnectionGUID: Bvohqr9DSt6oEuFohSrdvg==
-X-CSE-MsgGUID: M6UOy6F4RJ6z6sZHh2jsFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="58147040"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="58147040"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 09:20:55 -0700
-X-CSE-ConnectionGUID: M/oOxW/6RUy1IQ13bleFxw==
-X-CSE-MsgGUID: ntESb25MRfStMrsKIqUWFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="175689690"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 09:20:55 -0700
-Received: from [10.246.166.96] (unknown [10.246.166.96])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id C5E1920B571C;
-	Tue,  2 Sep 2025 09:20:53 -0700 (PDT)
-Message-ID: <d5062761-c00b-470c-ac01-08b9dd32329f@linux.intel.com>
-Date: Tue, 2 Sep 2025 09:20:53 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A1A1E3DC8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.220.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756831253; cv=pass; b=SwPmzz39zmxcvH9a3ll6bqAXrqgZqEpZTU2+Po3GL+/njd7+SJyGYMCu2qoLPeRDW8N6FGLv+wEZoVu7vcuKlE6NmN2aSouNkyfqNgV1fL4Rx8DVlcOZOrtXGGwE7gfdCNvH6HodEojqJxhjyC3SF8L7ohJKDpOrpQA7HEtI2Dw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756831253; c=relaxed/simple;
+	bh=wTp0x4tLPqeu2Q9DV08gO/SBU13R2LlZZkkWmiDgUmA=;
+	h=Message-ID:From:To:Subject:MIME-Version:Content-Type:Date; b=BP8uIs54uVsUQ8BfIcs/kZPm+I+QSWKwNa4zkAuQgNWmZ0HGKebWVETXtKksC88bNhl2dKEEspacr6GJMrlONWLnxKyJWFLTTu5NADhR81U3P3m60dkXRofyiZ8ehuWWDMivo4VWnjZBl0hSO5BRPJYGbr2ZV9qaRYvYa9pozMI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=editrage.com; spf=pass smtp.mailfrom=editrage.com; dkim=pass (2048-bit key) header.d=editrage.com header.i=@editrage.com header.b=dLtmKg4p; arc=pass smtp.client-ip=23.83.220.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=editrage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=editrage.com
+X-Sender-Id: hostingeremailsmtpin|x-authuser|drsupport@editrage.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 391B616557F
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:21:55 +0000 (UTC)
+Received: from fr-int-smtpout29.hostinger.io (trex-blue-2.trex.outbound.svc.cluster.local [100.103.74.195])
+	(Authenticated sender: hostingeremailsmtpin)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 8948E165744
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:21:54 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1756830114; a=rsa-sha256;
+	cv=none;
+	b=NkB04QLBI70VEeL1RAdlKTuQbGqkjw0RqLgcl8X5nixFm/82IDRZBAz2k4sjgQrKf/U6e8
+	JJpDzIh6YEqhH31vncfxoBX8V6O9g0kd1xHluUXF9yZnJeUCbWROv3IUUdBtx2B0lRzELy
+	2vqWk5wykNrzUVVS49BM+Zz4ynLCrvYl9wpgXJGYxOzn4KS7tgTXsyNgOwGBNaqkZZk6cI
+	EcP41YipucRCac4ojrPvTpnb+9L8ynfWbqFCd4i/6Tt06hZQgV7a0c7LnY8ImowjS7JXhO
+	61vrX8nxeGYp80lb50hTNe+fxrro8Uyn2AT5Vploch58Uv9W+m9LSO4yevTyjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1756830114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:dkim-signature;
+	bh=wTp0x4tLPqeu2Q9DV08gO/SBU13R2LlZZkkWmiDgUmA=;
+	b=9efiC4NfEtouqEyt8ZZ4jtvffh+f4eYWTe9GZWKGoK2cpSqFH2qU/Rqn3e6VCCWvUA7QYa
+	E0Qdr2cB0ZbhU0jIbnGs2mQuWDFfCQmCwOatRlxDKqW9ucuVg4gH0OyFHxFxTjaBI09RF6
+	r/jnDvHpVuctxgDBYaZBkYC6A4YdSWp0i1tWRTXs67ymzTwUWiR4rpm78bOzqf0JSZNs5M
+	Mfyxh8ZlizDdbpLFQ59QscgHuC5SYLdo7Y5lC6xPqwgSDtcBjj1Jc+QMdoSFuBZ7VlWBPU
+	ynbsX/fSqOwUigT9a/PHDbOle0Xf7kd1I1b/6xP2gZEkg8xJw94xH8Q3EKYqug==
+ARC-Authentication-Results: i=1;
+	rspamd-77486b5f64-ksdpg;
+	auth=pass smtp.auth=hostingeremailsmtpin smtp.mailfrom=drsupport@editrage.com
+X-Sender-Id: hostingeremailsmtpin|x-authuser|drsupport@editrage.com
+X-MC-Relay: Good
+X-MailChannels-SenderId:
+ hostingeremailsmtpin|x-authuser|drsupport@editrage.com
+X-MailChannels-Auth-Id: hostingeremailsmtpin
+X-Troubled-Trouble: 0b177d090ea6f3d2_1756830115087_2899299348
+X-MC-Loop-Signature: 1756830115087:2180666393
+X-MC-Ingress-Time: 1756830115087
+Received: from fr-int-smtpout29.hostinger.io ([UNAVAILABLE]. [148.222.54.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.103.74.195 (trex/7.1.3);
+	Tue, 02 Sep 2025 16:21:55 +0000
+Received: from e96a1102-e82b-454f-babe-481ad9575a1d.local (ec2-3-87-146-14.compute-1.amazonaws.com [3.87.146.14])
+	(Authenticated sender: drsupport@editrage.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cGWGS4ck7z2yD3
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=editrage.com;
+	s=hostingermail-a; t=1756830112;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wTp0x4tLPqeu2Q9DV08gO/SBU13R2LlZZkkWmiDgUmA=;
+	b=dLtmKg4pVTq5zjb+YXeSxDZmECeg7EImSzeZ1I1+pc9W/WiLGHJ+Y4Do+pfR2vld8VCCDk
+	ClPNazOX3Q82Mt3g8GSOXil1BX/+UKygq726oLa+hBzhVK/b0POBiyT5Gey1ci5kZLdjwg
+	LdhXXwEllpKPD++bmnNzoehBFTdec+xXNQgsO3BUliS13DpksF5/9pmK5gQF3s14LW4tVV
+	V6uSj31SVuPE1szs39IRwrgS03sTYhUlCAn4dlSxm0juo+W0dS4LAiuqLDs/9EW0Vv1eTM
+	FdkKT5+CwtU1Dyat4CzMk1f15E0Ry8TcriiU62Cgk4lHo9YHRRr1y3BNbuPDLA==
+Message-ID: <e96a1102-e82b-454f-babe-481ad9575a1d@editrage.com>
+From: Mohanish Ved <drsupport@editrage.com>
+To: linux-kernel@vger.kernel.org
+Subject: After Hours? Dr. Sam Lavi Cosmetic And Implant Dentistry
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86/intel: Use guard() instead of mutex_lock() to
- simplify code
-To: Liao Yuanhong <liaoyuanhong@vivo.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
- "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-References: <20250901131714.646988-1-liaoyuanhong@vivo.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20250901131714.646988-1-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Date: Tue,  2 Sep 2025 16:21:52 +0000 (UTC)
+X-CM-Envelope: MS4xfE0uAB/xcl5J3CN3Gr3hFc5dK3j/hpS13tLZOyCD/ZUFEroDwKCoI0YtR1ons8lA0KCNXYkLQI10DWNNYNE7/FP/+gAMicwhgqoDt0CEU69z+HQ+GNhV hxjAPDA4rp5hB73I1Z2LO+HaZm6jh/Uc1o6z/UUvWR9ia2W5IgM9yQXDAfBAcPxllnFkEF4UmU3HrEVFU8jf5wurEHGyCmpxN7Xw34Xi27alE47mRFg3PNc6
+X-CM-Analysis: v=2.4 cv=DJTd4DNb c=1 sm=1 tr=0 ts=68b719a0 a=VlwNVqXaHQNT1vEXKdEA7g==:117 a=VlwNVqXaHQNT1vEXKdEA7g==:17 a=IkcTkHD0fZMA:10 a=CGy6BIFyVvJXCxJuAb0A:9 a=QEXdDO2ut3YA:10 a=UzISIztuOb4A:10
+X-AuthUser: drsupport@editrage.com
 
+Hi Dr. Sam Lavi Cosmetic And Implant Dentistry=C2=A0,
 
+Quick question: what happens when a patient calls after hours about =
+implants?
+Studies show 35=E2=80=9340% of dental calls go unanswered.
 
-On 2025-09-01 6:17 a.m., Liao Yuanhong wrote:
-> Using guard(mutex) instead of mutex_lock/mutex_unlock pair. Simplifies the
-> error handling to just return in case of error. No need for the 'done'
-> label anymore so remove it.
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+Every unanswered call =3D one implant patient choosing another practice.
+We built an AI voice agent that answers every call, educates patients, and =
+books consultations
+24/7.
 
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+Want me to send you a 30-sec demo recording so =
+you can hear it in action?
+Just reply 'Yes' and I=E2=80=99ll send it right =
+away.
 
-Thanks,
-Kan
+=E2=80=94
+Best regards, =C2=A0
+Mohanish Ved =C2=A0
+AI Growth Specialist =C2=A0
+EditRage Solutions
 
-> ---
->  arch/x86/events/intel/core.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 28f5468a6ea3..ac88d9535e85 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -6107,18 +6107,16 @@ static ssize_t freeze_on_smi_store(struct device *cdev,
->  	if (val > 1)
->  		return -EINVAL;
->  
-> -	mutex_lock(&freeze_on_smi_mutex);
-> +	guard(mutex)(&freeze_on_smi_mutex);
->  
->  	if (x86_pmu.attr_freeze_on_smi == val)
-> -		goto done;
-> +		return count;
->  
->  	x86_pmu.attr_freeze_on_smi = val;
->  
->  	cpus_read_lock();
->  	on_each_cpu(flip_smm_bit, &val, 1);
->  	cpus_read_unlock();
-> -done:
-> -	mutex_unlock(&freeze_on_smi_mutex);
->  
->  	return count;
->  }
-
+=C2=A0
 
