@@ -1,175 +1,186 @@
-Return-Path: <linux-kernel+bounces-796522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FE7B40200
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:07:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EF7B401E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25F18543197
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F44188CB4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925E22DBF78;
-	Tue,  2 Sep 2025 13:01:30 +0000 (UTC)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10122DA757;
+	Tue,  2 Sep 2025 13:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AEkVv/jw"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013038.outbound.protection.outlook.com [40.107.162.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B5D28489B;
-	Tue,  2 Sep 2025 13:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818090; cv=none; b=WEJT0JzIg6gJk7dDrIodJ6lg7XSuGyATKHu1Z9pooZaqIQBWXgMt4ZvEmYcsvFF3T/a6t8tbUHwFPR+NhpKZKVepFmxZvGZ7410bSU7gqjIAM47dWqqS927HnD8a2DfcxdpzIcAvwqGnT87w4uf6TEb/12HAvauVu2jdaAFCiPQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818090; c=relaxed/simple;
-	bh=HN+nMcYPoksRrGAHVUWlYcHpXEDY8JS8DIy7EzngbU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=luTHjUVnCCvs/NG8jwu627hq8Rvn5CJAVIz5P8X8tGeqM89cv9XQC4BvuOZw0y8WOiYqiGHOJBXaOJv2UvlYQx2Fw40grPzvXcyIGNB0nTBBVl/nVw5QqLKB8LuT4+/pMICDRN4qHmqxBQYmj1Ckt4edTgNxlpIVW1JmpQB+dyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-89018e97232so1476579241.0;
-        Tue, 02 Sep 2025 06:01:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756818087; x=1757422887;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0ipUT4LuA3Uq+03zAJhzQACV0/Bh2/IfW3yvD+DhtEs=;
-        b=KySn/fb/+/FqG7KmglWzA+gLk8+a95u3T3m2/Nj0HK4TsU4Z+jYxbpIi5LTwg/56Pu
-         PAVnKJ5SExsiTNV2HI8VAruwPa2WHb2qttptsH7gZ71dnFAjeB9ReuWd3V7ZQPaP1USz
-         FPhg5WTDJPF1SYihIxKmS5rWv9ENQvrecOwN+EQ/YVY5zHIjmJKWL+h1AafIu/y8FoEy
-         yhTXn2U8HBVentAotlQmFWfMuwbo7a07P9QLsAM60iDXLVT0wkoexgXKROBaF868J8kh
-         nWFN6KMbSvwr23U1+tjAGbh++raPFnJZwkXu94XfrZnoFlsCiWPJs8S5Rvx1yy9u9ZTf
-         lpmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbSJBwDXvH5ruO+aQKJjzyI6EvJ7Dx1gMQcJ2nYI+GQ/ACOLCbfVa+GQKRH9Qk7QVU4NH3u23E/mpSUpyNKgqD6Yw=@vger.kernel.org, AJvYcCUwtUiL403lbPwQxEPF8BlI6Aq+Jy9tvKrpfTDwjFcqThOZ0aVdjHg/+odjmLuXg3jemrOVOJXMa/J1@vger.kernel.org, AJvYcCX1sUXQ9x1BiOsByD9UWYGWhO5x7Yl2wkDELeKmqT3DlSRrF/8tXm6CwWkOtZHQPRGEuQX92NVIPgzY@vger.kernel.org, AJvYcCXuaVViOAAkSU3U9Chl62MRzR/hNuabYQ2hZ9MuBpaZkd2ZGpnxUeJtiWd3BOR1Hn9W+MoVmYc+ShWBXFG+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhxdcVWZKdIrBkSTJfQpHCQiAoWrDESGm4fE/PO4swYDHNs4gT
-	QzUGiMwzf1bi3RIO2oiv27o6anRlm1h5y3iDHUSfi+qONVvKfHT3u5qkGJ1i6LQC
-X-Gm-Gg: ASbGncv2tzi7RoSOb0XQUbSl6v2xHPyHRxja21gzuwx32dv7GGEaUT/28Wa/YqRMbA4
-	cduq+ZupGbuJ16SqylpsNEi18wAK/Kl4D3/rZDXxLSYclJfGNLcmCS9Y18lFlMst83jOxeT7OeW
-	JEkhQM/iZCT+R/SA6CejubM/WQGHNKp+pd/dfaEb07EBx7KIfJb85yMqHXAcnaEKbzpoROYLbuZ
-	k75KJlOnO81BVFjWPki+mmc3ZLLZnSsriJKHoZNvwhX9THKapFdtlX3gFnS6FJWSyrjCt0t3iDM
-	SFUzb0+0N73xp9uhAxa5I61yUD2a3EXDs6akNgfSpM+WCdnVgkeDPXJK/9+fT7zkLNTCgfWBbr4
-	kbmZkl6ILSemu6UnGsqn9H6MPlJbMKySKGHvsm727V0N9t0i4JGGnG5hmYM0egeKddY301kI=
-X-Google-Smtp-Source: AGHT+IEDDNim0mhLlvIjVt2siNgv/QtHXeypnRx6Wuqh6seNOZUp3lmNqR4BALbh8w93GzWLWSyerw==
-X-Received: by 2002:a05:6102:44c4:20b0:52d:a7d9:b5d2 with SMTP id ada2fe7eead31-52da7e8fcdfmr2486960137.10.1756818086638;
-        Tue, 02 Sep 2025 06:01:26 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-89608759c3bsm2344957241.9.2025.09.02.06.01.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 06:01:26 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-89a079e029bso117995241.1;
-        Tue, 02 Sep 2025 06:01:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1LMkaWA4/vInKNFm5ADaCjIgPvK/b0Rslahvn91q6bJSiidsYjZ8lMEhLBkWTny+ZrKYZ7j+I1hNJ@vger.kernel.org, AJvYcCVZmpExeFoMho6P3xhPAbUL1BHpehbka6IKOheKXHkd0JKe/wgQDHxc61g5EU+fz2m91CB/DdAZhCws@vger.kernel.org, AJvYcCVzQmziZHFaR224pqyRyECQvzuOlcxGfXPnGH5WEh5CUd15WiDmuSOmfnBQ7ROnxRsSkAcUxnThGwp8zY8E@vger.kernel.org, AJvYcCXVIKOQPl1IUjQdy9injBkXbZi13AT6F3b3PeE/mLNaMP0rOUpkn4+QSUaVILfCKfPCMGHSzATLyCvzNhue3p+rWVU=@vger.kernel.org
-X-Received: by 2002:a05:6102:5127:b0:525:df9e:9365 with SMTP id
- ada2fe7eead31-52b1b4eb9e6mr3639297137.16.1756818084823; Tue, 02 Sep 2025
- 06:01:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B932D3ECF
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756818103; cv=fail; b=oKutdht3t9CuLHkqS4aZHoS292kpuuHShreurZAZqkrdXnJHRGZzWKVUhSHavop5mTQQF2WORG9ikBqEB0szpQI59vhTxMSiX2FVkaRHby3exkqSpT2FVd0iWtsc5pPPIHyZiRpHegPabpvcgza0raHcswV8LnaZaS2OJRM9m54=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756818103; c=relaxed/simple;
+	bh=x7cDelXlhSiiYiYvHuutrAKjXkosimBtsJ8K198UDbo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iedp/rg5LKSuJ6LpPo3L8UFKpFgO9194yOQVTnDy+fmsKfsJ8Xsjl6tIen+Yqh266F9baMW7cNdYZJn71TU4sR5cLk4FFZkD0g/yaXZVEG8NaHRt+8mLr7VGtZtMvJUkkPSeRthnBRAEd/DqBUaBPVnAbMzGVjglKwbNQXxfxmk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AEkVv/jw; arc=fail smtp.client-ip=40.107.162.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YgM5rnCJalqqeqPl9/AVPcciMVtjUf1zAyYjfqtaUNclgNO4zXwRhzeBRUgM5yLOEL8YHpGnK7VWcwaG/rAT26DOy9+SasU1VPeeSXLt1vPOmcm8yzIeQHlTpRfIaVTMzQ7tj/qLwW2eSS3/KbJCChYSPn4vlYU+II4Xct6ecKE/5KO8dmwarwq6TtTmE6a9sgI2TckY3Ux3LQLhGVFHgYcvL253JxQ/eiFdYQ/WbydBc/Ob3LvY6CJWQ1zaOcSJIPnFtrLK8axw9y5yUEnmCm0AHvqMLQ1cGH5YzLG1yDVoxiEl02z32XHDiAM4+xSXNO57YPeumkA9a6Uh4YlbJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x7cDelXlhSiiYiYvHuutrAKjXkosimBtsJ8K198UDbo=;
+ b=bydzW6CYEKUO82yFwd/W5tXI0soqPL9Se0BVdHgW7g468qtuMEPvMtscBHBIgRMu9EFFH2fZPzCP/U/mHGVPljXb8bWpu16RTzwU66BfiU/C9c+vFfXFOWhtyGE4RZvwhDWiBdG4r+T8HRuQv8O5M2LXMIrcHgUMn2+UcjuRyfndL4pJM08C0JFBAB79yPlbNRts7ahIEYwmdE5JnJZ3CZiWlnT57x5HWgPObRuBMrG/ea5YSTlLjKoIDly9Dwefxdrb3o23SX096Cs+q+9EvtocBSFoxpwala/UuM/y7S1zjzJxUXA82of0jzJ7Xqnuxlta+7h8sxjyKydwnhDBaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x7cDelXlhSiiYiYvHuutrAKjXkosimBtsJ8K198UDbo=;
+ b=AEkVv/jwU0XEavpvcXsoTpcRvZTnRLW0SBHPr5f73XBhnJvBnafod/Vk11N0JuKOntrrAB+p4toJuwbnHPLeJRV/sONNcW+7XSNIzItXfkjP/tF8E7qCYwy8po7zlL23+qFIjvW9v79APrybCrPDDMSJx7wExoIxJDvYnY7acaSJtZiTMDBM+KtaNsyuWLNnqwoXHn6AwDkHJXbOZ85he+9ergszX35CFefUDaPyYkIyOpkaliOWhOko0TRIucPSMjnJo36olKAuLhU8hsyNRJQOV7sHzyyKmIQrkJ+orVz5jnskDL1UYb4MS3Qg2zSSGZ9KlXjWhSkmGSv2vLVdbQ==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS5PR04MB11393.eurprd04.prod.outlook.com (2603:10a6:20b:6c8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Tue, 2 Sep
+ 2025 13:01:39 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9094.015; Tue, 2 Sep 2025
+ 13:01:39 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Sudeep Holla
+	<sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 0/3] firmware: imx: Add stub functions for MISC/CPU/LMM
+ APIs
+Thread-Topic: [PATCH v2 0/3] firmware: imx: Add stub functions for
+ MISC/CPU/LMM APIs
+Thread-Index: AQHcFY3715Y6RKM3aEivvywWZpe6MrR/58Ng
+Date: Tue, 2 Sep 2025 13:01:39 +0000
+Message-ID:
+ <PAXPR04MB845910056A522BC1DD5D0F168806A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20250825-imx9-sm-v2-0-0bae0265e66a@nxp.com>
+In-Reply-To: <20250825-imx9-sm-v2-0-0bae0265e66a@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS5PR04MB11393:EE_
+x-ms-office365-filtering-correlation-id: a216206b-fa72-4622-1fc2-08ddea20db06
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|19092799006|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?SFRENTkwcjdsemhaQW9QZ3IzTllobE5OMnUzdjFrWFhKeC85ek1BMVBHUjlC?=
+ =?utf-8?B?VDBkejZDVVVDRkczRmtua3h5dXI1ZWl3YnU4clV1d1RGK2tIMnFpc08wNDJS?=
+ =?utf-8?B?OGRsNmt2blpodWJaUStHNEhYUUVqa0x4WUFiR2tpVGdneGkxTEs4ZXJNOVp1?=
+ =?utf-8?B?UHlGbFJhbzFYMTE1bTVkUmxWMUQyMHY0TiswRXRvd21paERYMzVOTzJtclhz?=
+ =?utf-8?B?KzBGNGYzWjA0OFJaMElqMzZDaWNhZWpLYktaOXArVW10MXpnSHViQ0VIS0FF?=
+ =?utf-8?B?UGx6ZGN0VXZTZzZVOHdxNXJSbHR4QWtQdzFreG1XU0dIMzBqSDl0TWp1bHls?=
+ =?utf-8?B?dGlUdDNsZHNhRFllMEl6QndFSit2ZytYN3dTZjJFVUtURXVkQzdRSU9MSzd5?=
+ =?utf-8?B?YXhaT01PMG16ZHYydDN5U0tkWFJSQlEwNGtGamN0RmlDLzltcCtuczNIVGh3?=
+ =?utf-8?B?c05yVWNZUmhUMGxhLzBkeVJvcS9zMjdDbktuQXNrVjlJUXV3L0hPYytYV0dk?=
+ =?utf-8?B?eFdieXJnYTdMSXpySWJLZDh0eUZVdi80SXlORDFHMUlHQlkvRFlUMys4emhX?=
+ =?utf-8?B?Mk5yelNkVUVqWUlSVjVmM3RwUWNJTDhqZFd6aEFESllHQ1QxbU1tNUVSWFJP?=
+ =?utf-8?B?eFgwVE55NDYrVStWeTJLZHpaSGZGNDh0Y1RoMFN4YjBUb0dUbWRaUVFoR2Zx?=
+ =?utf-8?B?R0FCbEFEakNCMUJpeTdWZjhSclA4bENqNXBkcHZ3c0gyaVF4NmhVTTlJY1Y1?=
+ =?utf-8?B?VmlwTXR1cmhZL3puVGxkaE91OWhDcWMvN2sxUDdMc1BsNDc2NEVpVEM3ZTJy?=
+ =?utf-8?B?MVJFZyswSm1oeWtDQkNucUFlZS9PbHBWc3hoK3ZmN0lSS1g4L1FORHU3ZWNx?=
+ =?utf-8?B?UEE0cWdZYUhXQmFMTW5qR3pJWkRKRjREanIzNHBtRjg4VFZBRy9XTkJMOU51?=
+ =?utf-8?B?TDZRYmxOZGgvUm9GM2ZHUmJBelBVSExDSE01anBMT3hTMDZRS1ZNd1crakRS?=
+ =?utf-8?B?a25DZ05iZ05oV1BuZGF5R0RicW9GWEVKS29hbDlHcDhRaHl3ZUQ5OWFERlpE?=
+ =?utf-8?B?R1FkY0lNcjRjZ1U3ODhTaEJoeVRadWg4aHdCT0VmcE9JR055Mkl3NUNkdmp0?=
+ =?utf-8?B?QUFaRWN6TlRHVGlrejBWN3VzaGVBT2VpYnB6MjFpaHZwcVh5N3dHRkRRK0hO?=
+ =?utf-8?B?emQwL0J5ay9XQ04zZ0wvb1NaREhSM2d2eTFGVGpQakE4eEdOd3ZBeWZCeTFO?=
+ =?utf-8?B?Ri9KaXh6elEzdVNsOXFqSmw0NkVzYllsVitJbmd5TW45aTArTjdzUmNnakdJ?=
+ =?utf-8?B?MnFrREJBZnRFa21PM2h4Q29DQXFnVlhhL1o4c21UN05PL0ZOdEYwVG13aU5V?=
+ =?utf-8?B?VGVqcmtlT3RZeWRDV2dYaVREbWo0NjMrZ0pUYXZORkxNeVI0YVRBbytBRGJI?=
+ =?utf-8?B?bWRtRUl2NkR2a3hBWVlQa00zVHMrQVdlQXpqbzU2WURXajZpN08wN0xrc0JY?=
+ =?utf-8?B?N3h3UnoyZWlCRHVLN1k2czhUdzhjemo3WVo4Y05GSnVDaXB6aVR2NXE2ZVds?=
+ =?utf-8?B?OHZNUnNlemN6azVOUEdkbkRLZkRBMmkyMlM3SVcyVGhvSXBOK2tzS0h5cXU0?=
+ =?utf-8?B?VFBHUmkrNnpRdTV1Z0FhU1RvQzJ5ZmN0VDVFbGNDK0NBNXlYR0pFby9sZFZZ?=
+ =?utf-8?B?d1NkZExWU1RoNFZLMTZWUlF6dUJGMkJTTE5ocE9GekRkZzl3SGZScDk0V1RB?=
+ =?utf-8?B?WXVndTM4dHF1alBpaEFVcTJXRVlRa2M1RG1kbWJDMEVob1kzZDJsL3lyQ1cw?=
+ =?utf-8?B?bjN6N1lVZnA4eGZYVGhoQ2lWQmt1N0FlckxzcU5HTWFTa2YwNE5oWHFJdDFa?=
+ =?utf-8?B?VXhBRWpFTWZUVnBmbnlUK3VYcHBqV2YwdUpxQzVkdnEvQzBSMFNicWZVbEpH?=
+ =?utf-8?B?SHJ1RnllMFozOTZEN3hadVZDR1ZEUVJtdXN2QUNBUFVnaDZyMFJ0YXlSbk9h?=
+ =?utf-8?B?SFIyY01JNnZRPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(19092799006)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?SENUUU1JZ28zVDBXdGJ3Yk92aWpXcktYYUVENVcxYVRzTkVzaXFMN3Exb09W?=
+ =?utf-8?B?NGlWRS95anI5VHRlVnZPeVJKR0psbVIxMmxSTHVvTVprSEoxaSt3MDBER0Y4?=
+ =?utf-8?B?UG4zWnNSdlRTZnd4UFBtZ0lMTWZqUGd4QnRHZGhtd3hQV3lodkZmRHlGd1JI?=
+ =?utf-8?B?V3FRM3RrcmZmREJudXhGV3Y4YzltMHhQVmdXaTlsZXZXQXFwd1NSc2lKZCtQ?=
+ =?utf-8?B?cjdjb3NkbVZDNVFFRjdla2g5dHJRdzZkQkFRZDlFSnM4ZjFUaFR5czYxTmlO?=
+ =?utf-8?B?SEpJTzNmaUZMUFRRbDhrVXAxTjI4OHV1cG1kSHBhb1ZkRU41ZVpjbFJlNWZm?=
+ =?utf-8?B?a0dqN0NRMlQxSXMwaWRQY0hndVBNZW5YSDhzamp3WXFIR1QwVjJQNXpjUU9P?=
+ =?utf-8?B?VGVhd3NQdmZFeVFUNVRmNEVHdHhBMmo0b1o5TWc3NzMxNDdNTnl2ckt3N2Vi?=
+ =?utf-8?B?amNUS1JHNmZ2K2VTbTBRNENwQWpSY01CbEVZcWpjVWw3RUgwb3IvRzFQMi9o?=
+ =?utf-8?B?TmY0RGVLTU5hWDRxUzVUcUF0T1UwUUJrT1Nwekl4UGYxS2UrYTVuRmx0OGZS?=
+ =?utf-8?B?bk5XcG11d3Y1blJJRU9oL2N5SmFzdWxFa3o2V2hqRFVma0xBeXhRM3BuUjRT?=
+ =?utf-8?B?QUExVERXUEx3TlZZZ0RCRUYzdGdHd3I1NE85MVpXQU40Rk9OVUJhcStmOEFl?=
+ =?utf-8?B?M1pGWnZLLzNObVJkRFV6UFlwaEhqNXdQc1JTeDV0T2xOeHBMSzk0YjJPbHp4?=
+ =?utf-8?B?S3NhcUk1YW1jR0dIa016VFZSL3Z5V0dnTjV2aGdOS3lYd2x2L1piOW5nQ2ds?=
+ =?utf-8?B?b1pTb3dqZDhnTWtjeGowNk5HZDQza3RDeCtoU1Z5SDFSTGNtalpMSndxU1k5?=
+ =?utf-8?B?ZGhWNHd2Z1N4RkhFemJXSlF0YXRDeHBEbStOZlVHcXQxL1d5SDNHNW1iQldk?=
+ =?utf-8?B?RzlHci9tRHhDdE05SWV5R3dZdzRpSzdiR2c5bitCNVlYZDdOcFZVVkJESTNM?=
+ =?utf-8?B?aUNFZzV0VEcvdVNxU2w3QlIzZ3ZaUmNtYWk2MzdLN3RtRUVNcmhhUmx2Uzgy?=
+ =?utf-8?B?K1RkUFlOaEl6czVGRnNRQzBtaHlaeFJKZnZUMkJjQU9rUUpMZXF3S0d5RE5D?=
+ =?utf-8?B?dWhmN1YwL3RmNTVwVFdJbVZHRW9xNlFFQVdEMCtET3dTZDlsc1ZTc1NuK0lp?=
+ =?utf-8?B?UzF0dXJpc2htYWNZaEtKdjl0a09UVEF4MmE0RXc3U2lPell6RFlCU0VibUV0?=
+ =?utf-8?B?ZmQwSVRJVkc4SWJ0RisvbkRKcUIrbnVxTERFMGUySEkzNFJ1QVZxMnhGcXZy?=
+ =?utf-8?B?MTBkWlhqb2NnYTc1VHBWWVZPTGgyNVQ0d1FjQ2lzMjVGc2JJYU9Gcy95VWoz?=
+ =?utf-8?B?MHBnRWt2WVhrT2IxNU1rYldseVdxcWc0OTN1YjBvanh5Ty9SUUIyVGsyMmZ2?=
+ =?utf-8?B?SmZRdnhMSWdWOUVDbWYzOGdhUWJVdEtsVEtWdWdyNG4xdFZhSDVBSW1jdk1I?=
+ =?utf-8?B?Q2wvK0VyZHhLYWVEWUE4N1JaZnN0OGNtL3N6YmRXSUNqcXF5alkybVZJQlMw?=
+ =?utf-8?B?R0w2bGcycU1RQnB5a2YwZDVCbzFCUWFORC9vWmRNL2VQazNSZFc0cklEc1Ev?=
+ =?utf-8?B?eVBRU1FnMDdsZ09XU0l1dEk2M2wyclhYNHhSQ3hpRi94VGxkUUZkUHlEdmp1?=
+ =?utf-8?B?ekkrTnNySzJZVWxtRWE3cFY2OW85ekpNVzRkMUJYc3Q4U2ljWGJrQk5MM1Zn?=
+ =?utf-8?B?RnNaVFkycUdOVG1QbC8vbXZoOGZIeXBCdXg5WGdIY0VEbnE3WnVKU1lsZDlQ?=
+ =?utf-8?B?YmdSTFFHSStuVTR4VWp3aXIvc0JXeGdOakZqWVV5dVg5VER2cko1MTRzTnVj?=
+ =?utf-8?B?R1FBcnU0TTV4UVluVGZDYVdaZ2p4RkVPMkI4ajVNUlM2cnFOT3RQcFgreCtN?=
+ =?utf-8?B?L2FQZFhUeFhOYzgyUjJTYWUxRlRXdFZmdFFFbFExS0xNaWtoeGl3MHBTM3Rr?=
+ =?utf-8?B?WHlGV3JVZHNLTWdQTWsvTkhicVV0OG9BdFhNL0diWjBkTElqbG11RWVRTytI?=
+ =?utf-8?B?OFJENitTblNDYjJ4MHBQcVpFVVZwUzlwajA3S0ZkSWJqcTFPdUpWcWU1VjY2?=
+ =?utf-8?Q?gNcY=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901183000.1357758-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250901183000.1357758-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250901183000.1357758-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Sep 2025 15:01:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWARu=9__pqcHXUq92LYuxAQPZNJ6Fn_b7Z6x78i4twDw@mail.gmail.com>
-X-Gm-Features: Ac12FXzZPa2GVjpzvF9yIAcXM1iwq6wK-qbmTfdCcNVih-2ufoqsXBW2Vj2qGg8
-Message-ID: <CAMuHMdWARu=9__pqcHXUq92LYuxAQPZNJ6Fn_b7Z6x78i4twDw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: r9a09g077: Add Ethernet Subsystem
- core and module clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a216206b-fa72-4622-1fc2-08ddea20db06
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2025 13:01:39.0812
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7EPMf2u1IUZtkcsXTHno4j+NyBR4DsrAMmJGb87/TeuNNXFFK/4uLeZEO41k77MMQGHSZrpR89oic6RrVF2wNg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB11393
 
-Hi Prabhakar,
-
-On Mon, 1 Sept 2025 at 20:30, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add module and core clocks used by Ethernet Subsystem (Ethernet_SS),
-> Ethernet MAC (GMAC), Ethernet Switch (ETHSW).
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
-> @@ -72,7 +72,7 @@ enum rzt2h_clk_types {
->
->  enum clk_ids {
->         /* Core Clock Outputs exported to DT */
-> -       LAST_DT_CORE_CLK = R9A09G077_USB_CLK,
-> +       LAST_DT_CORE_CLK = R9A09G077_GMAC2_PCLKAH,
->
->         /* External Input Clocks */
->         CLK_EXTAL,
-> @@ -166,11 +166,21 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
->         DEF_DIV("CA55S", R9A09G077_CLK_CA55S, CLK_SEL_CLK_PLL0, DIVCA55S,
->                 dtable_1_2),
->         DEF_FIXED("PCLKGPTL", R9A09G077_CLK_PCLKGPTL, CLK_SEL_CLK_PLL1, 2, 1),
-> +       DEF_FIXED("PCLKH", R9A09G077_CLK_PCLKH, CLK_SEL_CLK_PLL1, 4, 1),
->         DEF_FIXED("PCLKM", R9A09G077_CLK_PCLKM, CLK_SEL_CLK_PLL1, 8, 1),
->         DEF_FIXED("PCLKL", R9A09G077_CLK_PCLKL, CLK_SEL_CLK_PLL1, 16, 1),
-> +       DEF_FIXED("PCLKAH", R9A09G077_CLK_PCLKAH, CLK_PLL4D1, 6, 1),
->         DEF_FIXED("PCLKAM", R9A09G077_CLK_PCLKAM, CLK_PLL4D1, 12, 1),
->         DEF_FIXED("SDHI_CLKHS", R9A09G077_SDHI_CLKHS, CLK_SEL_CLK_PLL2, 1, 1),
->         DEF_FIXED("USB_CLK", R9A09G077_USB_CLK, CLK_PLL4D1, 48, 1),
-> +       DEF_FIXED("ETCLKA", R9A09G077_ETCLKA, CLK_SEL_CLK_PLL1, 5, 1),
-> +       DEF_FIXED("ETCLKB", R9A09G077_ETCLKB, CLK_SEL_CLK_PLL1, 8, 1),
-> +       DEF_FIXED("ETCLKC", R9A09G077_ETCLKC, CLK_SEL_CLK_PLL1, 10, 1),
-> +       DEF_FIXED("ETCLKD", R9A09G077_ETCLKD, CLK_SEL_CLK_PLL1, 20, 1),
-> +       DEF_FIXED("ETCLKE", R9A09G077_ETCLKE, CLK_SEL_CLK_PLL1, 40, 1),
-> +       DEF_FIXED("GMAC0_PCLKH", R9A09G077_GMAC0_PCLKH, R9A09G077_CLK_PCLKH, 1, 1),
-> +       DEF_FIXED("GMAC1_PCLKH", R9A09G077_GMAC1_PCLKAH, R9A09G077_CLK_PCLKAH, 1, 1),
-> +       DEF_FIXED("GMAC2_PCLKH", R9A09G077_GMAC2_PCLKAH, R9A09G077_CLK_PCLKAH, 1, 1),
-
-Do you need these? I can't seem to find them in the documentation,
-so they are not just for aiding the casual reader.  As their
-multipliers/dividers are 1/1, you can just use R9A09G077_CLK_PCLKH
-resp. R9A09G077_CLK_PCLKAH in the DTS?
-
->  };
->
->  static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
-> @@ -181,7 +191,12 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
->         DEF_MOD("sci4fck", 12, CLK_SCI4ASYNC),
->         DEF_MOD("iic0", 100, R9A09G077_CLK_PCLKL),
->         DEF_MOD("iic1", 101, R9A09G077_CLK_PCLKL),
-> +       DEF_MOD("gmac0", 400, R9A09G077_CLK_PCLKM),
-> +       DEF_MOD("ethsw", 401, R9A09G077_CLK_PCLKM),
-
-According to Table 7.13 ("Overview of Clock Generation Circuit
-Specifications (Internal Clock)"), ETCLKA is used as the operating
-clock for ETHSW?
-
-> +       DEF_MOD("ethss", 403, R9A09G077_CLK_PCLKM),
->         DEF_MOD("usb", 408, R9A09G077_CLK_PCLKAM),
-> +       DEF_MOD("gmac1", 416, R9A09G077_CLK_PCLKAM),
-> +       DEF_MOD("gmac2", 417, R9A09G077_CLK_PCLKAM),
->         DEF_MOD("sci5fck", 600, CLK_SCI5ASYNC),
->         DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
->         DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
-
-The rest LGTM.  But as the full wiring is not clear to me, I guess
-I'll have to wait for the DTS...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgU2hhd24sDQoNCj4gU3ViamVjdDogW1BBVENIIHYyIDAvM10gZmlybXdhcmU6IGlteDogQWRk
+IHN0dWIgZnVuY3Rpb25zIGZvcg0KPiBNSVNDL0NQVS9MTU0gQVBJcw0KDQpJcyB0aGlzIHBhdGNo
+c2V0IGdvb2QgZm9yIHlvdSB0byBwaWNrIHVwPw0KDQpUaGFua3MsDQpQZW5nLg0KDQo=
 
