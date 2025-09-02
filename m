@@ -1,251 +1,158 @@
-Return-Path: <linux-kernel+bounces-797230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687B7B40DB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:16:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF8EB40DBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 163E77AB4AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:15:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E11B547C53
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5D434A31B;
-	Tue,  2 Sep 2025 19:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB83934DCDB;
+	Tue,  2 Sep 2025 19:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="ef55wGw4"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2115.outbound.protection.outlook.com [40.107.220.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nX2uKzvj"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F99C20C038;
-	Tue,  2 Sep 2025 19:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756840601; cv=fail; b=ubEHh81QloO/sgPvDxyZP8CIhU0uk0zGRjXMfuiZrX4Bs9gC8BBsl8fjyuBRibwgBl8EviQzgsH50UJ8uwx8uWVaf4MmHDcwfY6QaC/LGeWSZuwIFtq7mJCSCoeD/HZMF4H92AKLD1BCELB04j2be7C9lP+HwaJWjTGHpJRJlII=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756840601; c=relaxed/simple;
-	bh=MX5KAO6csZFsbFEVKZWy3Y/sxP1r7U2UlJeUV+2RLdU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tp/NzDDK5wrdSf9WhWBQcS4z15edSAXq7S4x5WYvZ8ysVhOAXUo8Rer6x8J6xh+dl6jO1+ZO4AXZs4gwINchGeR9GhV63uzyi5KrXv1ZETcPmENGX4cvBrQ1n2U2U8LRQpuNOW6XmPdBocq4L7sL1L1THT2e7fdXZVzQ271NJJA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=ef55wGw4; arc=fail smtp.client-ip=40.107.220.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jQYH4a3Qpcf7R/Fp2gt0jwSBiZ5d9lJQqOKKFxbhaxnspBrWauvDmN6k+56/+REBV5SjmpcohRFYIrCWf7WlRb03i6HkHFIJrJeRGKinEorGEeI+yylG5B+aztp/7gKVyFazEit3TB3QF/OpWjZJo8d+PQI9UK7MixmDI3Gq1N13KcK9ZWINfidgiqKqFuZgEZNjc8yBD7f2sAkQZAXbTGEYAiGsILpmcSGKJgJqWmaW64IuFXaO4FpFbTEZ+OPXKbhJ2SeKdA90obhLGBmK1IsFqfmuZ25FBRr8tnJ/QBp9qAATOgAhA7dnJ77Tvv2Lyj/ry7S1dmZZCmlJDaGlOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9PNhWdZKvKC5QLQoG1SafrTDK+g/nY/6NgLl7hc3w5o=;
- b=VaZcJgF8xXs4pRVbXmp66vOQ3yC9MyJMCZGQ2RVW4lLaSQuWY2HVUoeG+nDjoiAMFzmlw4LVj1Bs5zgwnjm/n2/Q1vuDui5U4hpdYGbK4hwfeynyoudC+5xa4uxFG7YNQ4Yz7pTuRm0iwgOgRxc5s1AlRVYlElPBUU7aGPKbMp4bF9qPxOUFKTYAJAYB12l3cwXB1HVXp6cwkBQpCI/7pM4Djy29piXJc7iPVxlT3puutPSg2R+CMDrv/4aBDWA5MBtlu36a1TTyCcBNmLwaxk3v0tm5ovHOysLrvO6b+n1qF+TVx3I9uhxqXnHSy9lTqi/mX9SMqsj6jEClh+pB5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 50.233.182.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axiado.com;
- dmarc=none action=none header.from=axiado.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9PNhWdZKvKC5QLQoG1SafrTDK+g/nY/6NgLl7hc3w5o=;
- b=ef55wGw4pErQ1/0CSRPbK9ZA+Aheo125ONAzaUQl9iMeeqB6xBF1ylxdME9fQ6G+Ywy6IU4JMLLv+DDiKTKCDIymus4JjFPCkvQtoV/GS6jitQmOtC+/5ZO0gQMvWHTt2HWXvP1+9YqdWlDl9VxsiT1/cXqaECIV4DyeOkw+6RPkRtL+SwUOOIaqjVu81sMIGS5nNSRII1i5Wr7oU7j72Pw1DT9xgWDocMJ3zCsbfj+zOldCsX2xiEXOAilKJNUvzj9X8WRlXX/Vrx7tNtk43jqIvPGWQHUotjwyvvLh/MLAJ1fViQAkMMxTTfgiOd3TIB10y4JUD7G4sesEM6eQnQ==
-Received: from CH0PR03CA0345.namprd03.prod.outlook.com (2603:10b6:610:11a::29)
- by DS0PR18MB5395.namprd18.prod.outlook.com (2603:10b6:8:12a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 19:16:37 +0000
-Received: from CH2PEPF00000141.namprd02.prod.outlook.com
- (2603:10b6:610:11a:cafe::68) by CH0PR03CA0345.outlook.office365.com
- (2603:10b6:610:11a::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.16 via Frontend Transport; Tue,
- 2 Sep 2025 19:16:37 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
- smtp.mailfrom=axiado.com; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axiado.com;
-Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
- designate 50.233.182.194 as permitted sender)
- receiver=protection.outlook.com; client-ip=50.233.182.194; helo=[127.0.1.1];
-Received: from [127.0.1.1] (50.233.182.194) by
- CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.14
- via Frontend Transport; Tue, 2 Sep 2025 19:16:36 +0000
-From: Harshit Shah <hshah@axiado.com>
-Date: Tue, 02 Sep 2025 12:16:29 -0700
-Subject: [PATCH RESEND v3] serial: xilinx_uartps: read reg size from DTS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A8520C038;
+	Tue,  2 Sep 2025 19:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756840661; cv=none; b=XPYXFvS/ppvXNGZek/EVqUGov/kcwH6Okz79Mm70PGs6kIhhEflTxsUnl71yFT+kzIJh6J3Yrd7lB5wdszpk53hoRxWaxOljB9I6JOijt22b/hjDB1TC8oev5JQfrYIBdDzoVzO54wWsrfIIhamHPe98uYs0mwCqUjJg3DGWVlA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756840661; c=relaxed/simple;
+	bh=RjqLgI4citiPJIaE0ZVGeagqCqs/x5z2BR7Wa4OBtrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZtBwHCLxrTWO3suoG8zF/Gu1foJnD0MMGKt/8TrXCKL2ZtOdtIOMB1rGo2dKCH6JxzYJoa66WCLsZotxC2aKTYtZfPfSoWzg9VcevpH4wS7vI5iHX1uJXCMo+T0zSZgsfcox2pKUs0J79R6cz+JkSxYZX9TNqlpQBoGQm6gMEOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nX2uKzvj; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7fa334351b1so704723085a.3;
+        Tue, 02 Sep 2025 12:17:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756840658; x=1757445458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NlrkwIeeF5wYzTf+TDant5f9voytbCkXdqUnd+fma1Q=;
+        b=nX2uKzvj02My1TobBfo4MpjvDnQT2PkFHFZnpYWQZQrKIGdTTuQbK8PDwsGW9lOcRU
+         8HQFeCu1zHmkVk0kW4QZ+7OjpGI7wVR1dXLn4dEmeMsr8zpPRUTF6UHorbWgMhWZ+gqK
+         XAtO+omNkEtobjnsOwIDrHNLYeGLFdRTf+69U38GsOQkGiYeCr4u9RRePi+qmv58vXOy
+         jz0tCL8pcY2JqgDc1mUJIS31YSKH5nU/xaJvtS4tJiCU4NWcyv/ESZ9+xkSTdPwQM7tv
+         xqyu2A0m/WlIKwob9PAVqs6veNjPUAmxzGDsthuCbr96Gh1StTQmFrNfE7XCHBy5oRwb
+         TqEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756840658; x=1757445458;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NlrkwIeeF5wYzTf+TDant5f9voytbCkXdqUnd+fma1Q=;
+        b=eNnPrSw/V9S2/lHynkAv4JfsvL13WSgf5HdNZvXiM0fczKXnr5YGG3cN+KEoCyEfh7
+         lfdaRxiKiTMVnVRkUiglfAz/PzWMkwYgmkbnFDbWFEshhzSjwmBOVuW2ttQ1ZJwqeUaq
+         BMXbQfslbHZJ09pfKNtLLx0sGCr6aHFWAHW2H37FRUkm2zh+uVzDZtTybBAgCD9CaWYL
+         Bc95ec0UvHmW8mBzYPXIyFWO0FbdumXL7oECdsebF1xm8NDzS1zm/knZ2rtQnobvGnY7
+         qW70dzRlesC7jg8c+CQlQcXda/lJAFU4rCMnSVwefgpTNpj1cuN0ye48Al5S0TwFc0m0
+         ju6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWczjt14kkf2AUp6IJ81Kw7eOTpm/OWPyszSBhJOge4utl3dIFuTYF3FZWdA74HKIr8bslrN3IN@vger.kernel.org, AJvYcCXyYxK8ZimK6sy12lXyEqEnhDyq2PIEbpL9deDy4scnzAmmCLp8ytdRpVMvYCzz957YdpKsrmHtQNJZILE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/Eo5NbqhG1DhchzLWbeZVzXZ7RV/q4o0jABWLXrewxs2Fz3w/
+	YG7lR7O+aDE/SyBDzPZZxAut6pF8NSY0JtaRoh7MPCUjiQ6lfXEJpBDy
+X-Gm-Gg: ASbGnct7Qct3X8R8tUJkICjEEgUTwdkN4Mob+04tW/qlrH5WkrL78Ene38aJpd7khvq
+	2GsdgSub2XsDVdv7KdBwaap7+i9mPz7/3BS7KDtRyJ+RH9qjfTombwnp5fp2coycL9NSXUZlcKy
+	FGNU4TX6gwbclzJth8F7rqlLJEZ8PrtI9UIQCh9LY3AdRTCrIMwfnu0MD7HQW3gNe5Bfn+vFX7S
+	oYwVwKTKowcsdyiJNmZHiISxjj2O00wwgOrLYFGQyxbWclsHN/Je051L3mu0KmyZ3AN2YwxAEN3
+	rY/ptePHaGszzDgMcbMWwqye2P21QSLGb/wmDSoCUZ7cM9YcBb71iwQ514128Xm5y66LhwDCO6B
+	Je/zSW9cJpL4uYGHcbwDo8HVUcekCSwK4L66F2BVRp74cZNuwSg==
+X-Google-Smtp-Source: AGHT+IEykFJWH7yrkW7+ucL9v1OvvtN2ojheggdUlr+BEf9k5Ns2xlztzt970YBxqlYGYmBPW0OSjQ==
+X-Received: by 2002:a05:620a:2804:b0:80a:5665:d959 with SMTP id af79cd13be357-80a56662345mr66635985a.75.1756840658272;
+        Tue, 02 Sep 2025 12:17:38 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-806980659f1sm186427085a.21.2025.09.02.12.17.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 12:17:37 -0700 (PDT)
+Message-ID: <f961e180-f0de-4a6f-9c35-7163fb979a31@gmail.com>
+Date: Tue, 2 Sep 2025 12:17:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 00/75] 6.6.104-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250902131935.107897242@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250902131935.107897242@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-xilinx-uartps-reg-size-v3-1-d11cfa7258e3@axiado.com>
-X-B4-Tracking: v=1; b=H4sIAIxCt2gC/32OPRMBMRRF/4pJLWaTrCRUCloFpVHk44U3w65J2
- FnM/nexFBSU97055947SRAREpkO7iRCgwnrKgcxHBC3N9UOKPqcCS/4uNBM0BYPWLX0YuL5lGi
- EHU14A+qEBam81lY5kuFThIBtL96Q1WK9WM7JNt/3mM51vPZ9Deu/b/Xkl7phlNEiWCVKVnAR7
- My0aHw9cvXxWfXiOf/LK23GTgpnpQ+f/HNTIz528PKnR2SPlloFWRrFPXx5uq57AJNBRIlNAQA
- A
-X-Change-ID: 20250813-xilinx-uartps-reg-size-c3be67d88b7c
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Harshit Shah <hshah@axiado.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3389; i=hshah@axiado.com;
- h=from:subject:message-id; bh=MX5KAO6csZFsbFEVKZWy3Y/sxP1r7U2UlJeUV+2RLdU=;
- b=owEB7QES/pANAwAKAfFYcxGhMtX7AcsmYgBot0KTsgbPW0No1Xw0qQfokaBFKs/8Ai+KvJkkX
- y+nevha8VaJAbMEAAEKAB0WIQRO3pC/7SkLS2viWOvxWHMRoTLV+wUCaLdCkwAKCRDxWHMRoTLV
- +w0IDACf98gRR3BoRdbE+0NtUC1QqXHK4xTxJMlUhWv+6gn+DgzvkVMKjyhhnytW4ev48ywaxKB
- xmkyoYHFKQFOzNKMbee3r3++tPNfG6WA9yDxZCUCo+SRj79kfs/Lyt39FnObVOXYY3U+1uae78B
- LS1WGgYhd1ho+4Xs64ekH5to/kfAu8fiXRdD8/ubkj6pPAdUraHe1+ULDlRkJIktMOL2w9NIpY2
- tvbj+C4+MhmUhr21hbaAux3nEJtGBjKcbnGgpDUiPEIx6/npRcIAZ0JlOWjDoSxwLtyMatqe9Mp
- D5G0qTPxbwNxZl7z7YFw16sOre61dtvYf1iih7QL55ga/5okHwU3QefO6+QW39Gmk9c2+D1u+gU
- nMDmr4iYi7kHvXZxvLV6CV65v0EKZYQx+bFffR19UDyWfMXv0GNZ6y6zdFxtS+oHxrxDP0cIH+q
- Ffl2aUzppknOvq8NA1F/T/ctixb8MxbkbyC5zSWlim/hw/lbnJmRh3xpquvSWcyIJb/1w=
-X-Developer-Key: i=hshah@axiado.com; a=openpgp;
- fpr=4EDE90BFED290B4B6BE258EBF1587311A132D5FB
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|DS0PR18MB5395:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8517f98e-54d4-43a3-2228-08ddea553cd5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?KzNqNTVKNHJqaXJ4M1VCV01wbCtsNVZBR1F4bldNL1ZXQmtDQ29oYkx1SHRX?=
- =?utf-8?B?dUE3VXFuUGlVNnV6UitsVjFIUzBSS2RHL0t5OGJaK1h1U1BOUlZZSHBCNUY0?=
- =?utf-8?B?VEM2OXlzUUoyTitMSFR2YWRSdzlQdTlIQk1jT2JYSE5pS2lFYWZEelI5Z2tX?=
- =?utf-8?B?amJaN29jSUpyRjhWVEpvM1IwaXBXR0R0UWttSnd6azFnbnVod2Z3dU1GU0Ry?=
- =?utf-8?B?a3RoOC9WV0pnaTBrdFdaNHVEb1dkZHNWTVZTME0wQ0Z1ZzlmVGJPQjJGTkd3?=
- =?utf-8?B?bWlJbzdxTFZxVW9zNFlmdkd6VzUzWHdEdkkwU01ObnVPYkE5UUZGUUZMUVZB?=
- =?utf-8?B?VnpnR2h2REtFQTA2ZHJNSVczWmhueHlHeGVUc0xieFQxRFJubmtzYk9WL3kr?=
- =?utf-8?B?Q1ZJeEZNbzFqRndQQkUxM2hIRmhaZDNWOGh0RjQ0RVozNmtiZXVTdFVxUGpa?=
- =?utf-8?B?anliZUkwS29QcmxUMm44VGZrUW9jd09TUU9Gamp2T3pUTThWV0FVNDRXakZP?=
- =?utf-8?B?RE92aWxKMzBXak5HdTNWMVFkTkZoL0RoR3RhU01lUlpRbkpFUW9uOUVRZVdo?=
- =?utf-8?B?aHpXMkVlOUdGeHV5UHBCbVZaM1VXSWNZUEZHa1BKUDVFWnpUaXgzaXlHbEQ3?=
- =?utf-8?B?enRWYTVHbFBaemtqK2cvOG9TaEM2aGpuYWVMSmNOTnJSQUlOVjhpeHF5dzhL?=
- =?utf-8?B?a2V3S0RITG81WkFhd3ZKdjFoT3I2VzBBaFFJd2RPYzYwcWVMblNMRktVMUIz?=
- =?utf-8?B?d3lGczFwQWJrNms4ZGUvNkJ5Y3o1M1NqNythdUMzVHBGMGpyanh4azZTbnE2?=
- =?utf-8?B?aEd6aDEzZnBFZXgxQUUyeXlVd2hPRVVvcXhBQ3lWUU0zVWJhK2Y3WFhBcXFM?=
- =?utf-8?B?eXhzSnVWRlRXV25iWTB1U0xtZ3YwSGJFWFRoVFZjWncxNmMrVzFHQytJRnY0?=
- =?utf-8?B?cWkyRENkcE91T24rSFZWb0hJdXBZM3Z4V1F3VEtLcDVZa2hSNzR6bUo0U1dv?=
- =?utf-8?B?djh0Wk41MFB5ZXh5NkI1QlNRYTUyTVdhQUZoWDRTcTJNemwxOFh0ZHVQNDFn?=
- =?utf-8?B?eCtmYUN4TGVHcmE0bDVPZ2ZKdmtNL2U3Q1d3MXRpaHNyd293aUczMGJQUk5k?=
- =?utf-8?B?d2lIRG15UHVsQ1hXMHd0VTZpck5vbHdrVnJZYndRazl2SFU5Z0xHdy9SQkFy?=
- =?utf-8?B?WjlpTDA5QUgrWUtlMzYyMXVsQTZKWlpndGQzL3R4N3BXT2l4ZnlkR3VwZkgw?=
- =?utf-8?B?dUxWN2w3TzJQVTVJV2l5MTBxUEVYN2ROR3ZBTkt2Z1ZRUU4xY2RZMzN1ei94?=
- =?utf-8?B?S3hJd2duRXFldlJSeWovY1dWdU9jTkh1SmZuYndpRHdwUkpFMHptM21IU095?=
- =?utf-8?B?YlVWL1ZEcnlGZnpRMzRYbG9BN1lpbzdubnByVk5NdVdLbmJrMVFqNm5pQllK?=
- =?utf-8?B?YWw5MVU1T2ZTeHo1cVhjVjVyM2hkb2FYSDUzc0JJTUJXd2RocG45VkFTYVpM?=
- =?utf-8?B?Y1Z1TjNRTmd4MG15YkJqUXg0QS96b3FkYjk1R2hNak5JNmMvRjZWSHNsSHFr?=
- =?utf-8?B?U0xoZzFVYUFYelVqYUQwck9nSjR3V25tUEc1a2VtTkJ4cVFyQ0JMK1lDd2lZ?=
- =?utf-8?B?Ri9MbHloS3RRTXQxeFVzUE83TnZZS1E1YlpXQ3RpMzlHSHhRL1djbWkvV2p0?=
- =?utf-8?B?MWxubUYwRGhkdjZVVTBZbTdwZlkxOHF3WUhUZEF0TURXdHk4S1g3UURNN2NX?=
- =?utf-8?B?UkZCWEVzK0Fub0w5V29ZMWNGa0kwOTdSMTlwTW9lSnFTNEQySnFGcWtaMVhG?=
- =?utf-8?B?QXdMUW9HNVJnSjluT2JiWWd0emd5cTRPcng4ZnRIVCtCajlYZndlOVdVdW4x?=
- =?utf-8?B?bVpDR1g2YW1WY0xyd2xEQWlsZmx6VUwvYXhTTEdUTGlPOVUvRm9CVHlYVFgv?=
- =?utf-8?B?ZUpUOTJ2Ny84cThmVHd4SW9ZVGNNSStWdHhtVXRxQmRyVjBwSDJJaEVZbnZr?=
- =?utf-8?B?UXFFUmdIdmV3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.1.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: axiado.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 19:16:36.5306
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8517f98e-54d4-43a3-2228-08ddea553cd5
-X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[[127.0.1.1]]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000141.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR18MB5395
 
-Current implementation uses `CDNS_UART_REGISTER_SPACE(0x1000)`
-for request_mem_region() and ioremap() in cdns_uart_request_port() API.
+On 9/2/25 06:20, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.104 release.
+> There are 75 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.104-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The cadence/xilinx IP has register space defined from offset 0x0 to 0x48.
-It also mentions that the register map is defined as [6:0]. So, the upper
-region may/maynot be used based on the IP integration.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-In Axiado AX3000 SoC two UART instances are defined
-0x100 apart. That is creating issue in some other instance due to overlap
-with addresses.
-
-Since, this address space is already being defined in the
-devicetree, use the same when requesting the register space.
-
-Fixes: 1f7055779001 ("arm64: dts: axiado: Add initial support for AX3000 SoC and eval board")
-Acked-by: Michal Simek <michal.simek@amd.com>
-Signed-off-by: Harshit Shah <hshah@axiado.com>
----
-- Link to v3: https://lore.kernel.org/r/20250824-xilinx-uartps-reg-size-v3-1-8687f64a72de@axiado.com
-
-Changes in v3:
-- move Fixes: tag before Acked-by (Greg)
-- Link to v2: https://lore.kernel.org/r/20250819-xilinx-uartps-reg-size-v1-1-0fb7341023fb@axiado.com
-
-Changes in v2:
-- Add fixes tag in commit msg
-- Link to v1: https://lore.kernel.org/r/20250822-xilinx-uartps-reg-size-v1-1-78a5c63cb6df@axiado.com
----
-
----
- drivers/tty/serial/xilinx_uartps.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index fe457bf1e15bb4fc77a5c7de2aea8bfbdbaa643a..a66b44d21fba2558d0b2a62864d86d3b73152e26 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -33,7 +33,6 @@
- #define CDNS_UART_MINOR		0	/* works best with devtmpfs */
- #define CDNS_UART_NR_PORTS	16
- #define CDNS_UART_FIFO_SIZE	64	/* FIFO size */
--#define CDNS_UART_REGISTER_SPACE	0x1000
- #define TX_TIMEOUT		500000
- 
- /* Rx Trigger level */
-@@ -1098,15 +1097,15 @@ static int cdns_uart_verify_port(struct uart_port *port,
-  */
- static int cdns_uart_request_port(struct uart_port *port)
- {
--	if (!request_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE,
-+	if (!request_mem_region(port->mapbase, port->mapsize,
- 					 CDNS_UART_NAME)) {
- 		return -ENOMEM;
- 	}
- 
--	port->membase = ioremap(port->mapbase, CDNS_UART_REGISTER_SPACE);
-+	port->membase = ioremap(port->mapbase, port->mapsize);
- 	if (!port->membase) {
- 		dev_err(port->dev, "Unable to map registers\n");
--		release_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE);
-+		release_mem_region(port->mapbase, port->mapsize);
- 		return -ENOMEM;
- 	}
- 	return 0;
-@@ -1121,7 +1120,7 @@ static int cdns_uart_request_port(struct uart_port *port)
-  */
- static void cdns_uart_release_port(struct uart_port *port)
- {
--	release_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE);
-+	release_mem_region(port->mapbase, port->mapsize);
- 	iounmap(port->membase);
- 	port->membase = NULL;
- }
-@@ -1780,6 +1779,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	 * and triggers invocation of the config_port() entry point.
- 	 */
- 	port->mapbase = res->start;
-+	port->mapsize = resource_size(res);
- 	port->irq = irq;
- 	port->dev = &pdev->dev;
- 	port->uartclk = clk_get_rate(cdns_uart_data->uartclk);
-
----
-base-commit: 8742b2d8935f476449ef37e263bc4da3295c7b58
-change-id: 20250813-xilinx-uartps-reg-size-c3be67d88b7c
-
-Best regards,
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Harshit Shah <hshah@axiado.com>
-
+Florian
 
