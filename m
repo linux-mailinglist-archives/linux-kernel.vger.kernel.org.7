@@ -1,336 +1,121 @@
-Return-Path: <linux-kernel+bounces-797068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B78EB40B74
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:01:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3DEB40B76
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06051B24E51
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:02:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B93CD200DDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0B9270551;
-	Tue,  2 Sep 2025 17:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61591309DC6;
+	Tue,  2 Sep 2025 17:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="0u/ei5Cl"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="FkUxEILO"
+Received: from iad-out-007.esa.us-east-1.outbound.mail-perimeter.amazon.com (iad-out-007.esa.us-east-1.outbound.mail-perimeter.amazon.com [3.221.209.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652D1201017
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1C8267B89
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.221.209.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756832500; cv=none; b=EfqQKnZoQ4f38zw01ntbqnZDag1epXN3KFBHFMy8WSJGHJ8POd9uqX1t3sdkCaNGzIHpGg4llIpvCjD1Za2h5zaPKk8MNn8slAkLdh6SKGSF/v72H0Wdb1MF4aLNakSKWFx1de1oH0dqZI2Uwn94vdaY4kHWdXw3gfzeR6F1x/w=
+	t=1756832523; cv=none; b=kTgCZC05k7wE6DMOB5THBP+77xxPwMXtzcbU19E+s0sOzPBcWhRBfSInXclyzwaMnphvju4EIx4tBCepVUAj0hoSp5bUTClyUtjfXrwyURK3VrpuiBQYeZe75SloOo3oPzEJQKso3GEb6j/d5/2h7TqCK5V9J641nD8jY5isgdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756832500; c=relaxed/simple;
-	bh=FqpDknNYFndtUDX29+pMZ09mq27Tcb/fur1fuHT9Pcg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GKSjUEgB2RPUM7U3G3YJbCTt/AnhwyE/GZBcTUZtZ/qIBEVJMMs9xYRh8QI6dFs4UjsS6LALpV6cmbyzc1j2QxsUGHkqB4NoYCVt3BwRD3tGqSOjfXj3fWHaKUWzIpNxA0E/Rl+jVYU2dWdZjkX3iE2BATFbMRTkPVUpW2o2ZEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=0u/ei5Cl; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7f7a6baf794so711223785a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:01:38 -0700 (PDT)
+	s=arc-20240116; t=1756832523; c=relaxed/simple;
+	bh=aRi81xEr2xcqiHE0kuc1uHCWN3eEyMOKBVhZ3dVR47s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YeM0SbCzwy8Vp7zqIipe+9f9EE+6WLrGy1OzyxfEnpw9L5Dhc/3T80FcH4jyr4t5s89+IRmL/jXqpYL84wz5a5YIkckEnP3zxQOnefKtGMK7XA1hISGb0uMvfI7KpvE8yEob94+jsVmhbXnEsuYI7OrF4528v8ajVE31zUNfQYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=FkUxEILO; arc=none smtp.client-ip=3.221.209.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1756832497; x=1757437297; darn=vger.kernel.org;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=gjQPzp3OKlw/zzV2Y8hLeLQ+4i7hSjApzF/xf3zvApg=;
-        b=0u/ei5Cl/0uRiVNIWTUDQlgVz63PLrpZ0PxLj2fS8GIqud94rpqzbf5vmeYlU7+ZEe
-         8VJElmTLBD3MobEHXHYDvTaLg5RYasPO2EbtshpB2ldpKskgTzD66cGNxHETeBaPIXu7
-         Ee/n0qwyRduWTtjmAlDUXpM8JICZxSeLmBTO6dO341166USOjKRuMbi3D2gSzjhpYgYh
-         zL01umKjTAFyhL5f010+LKDTrEp3ag59w8wY2NLIBYaPhb5THn+O5zJzbC6PIQsQ/Jbj
-         4ZR+DoMkRSpTz0Qr6z/oRrpxWBO0Fcca/0JzHQMJjsTeBME4Unkb0rQpvDqqtueTP5Rv
-         LUdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756832497; x=1757437297;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gjQPzp3OKlw/zzV2Y8hLeLQ+4i7hSjApzF/xf3zvApg=;
-        b=ZjOmV1jvpyQa/6+Mij0F6ZgsOG7HuuRY6o3zgUhBCWpwATxUpnU0EZXz6lYInBgl9O
-         KwBYr1md4iADJpZmnm8NVmyqGefpMF7w8D5tWeP2Ltz8r5RtkmfpitzegTvZTFb8L2O0
-         0RLdEBLRn8YgPLtHcaxPaN2AEEv2YL1NnCXztVQ1xjNM3fZpNnvyFAkhhOYinhaTCLpn
-         xrdwWU46livRHrUrBrhX+bb7ABZuzkuB0XAClfQdbGq30/Bh3NXxQKrRytV42ptrxAN5
-         ziUmGof33RmfwjzgQujNCYjUIlWQJ+nUKZwvgI/7/+LvUY+mt+rbPRwJjtYwb50ckvk0
-         Mr6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzXaR7SJNuUpzohS7bLcX2Ekh0kn2MIZNe0cBUjH9Q59gvbPG7Fuj3Lg1Jode8us3UvoxOsU+NJ98hw28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7Ra3Fv2xiwxV4JebDWId/utnOUH3pAW4sudS7F3GnnQ3pWfS9
-	Dh1VffcBEn9czAo0qvwFYM5Uh8m1tx+fkq43Jthe46ExOCFxP79aFwH1PcWBpKchSr8=
-X-Gm-Gg: ASbGncttme89yICIWyfYraAhjaj5QXVPlThLMlvU3DadmoZkQbVt3XGC/Jf+K6cx4Wz
-	JHFh7v5gTImVKrytK6Rw1NPJvix45qhSADL9sbkD0zWB4RVPvz6Gb0YwMpVNjj7891hNnkHw6ZB
-	drCw2Owpg+KUZcyFbhhQ/6ME6nBEwPSJm3uN4v6Wwi/x3fWOEbCQ33pahtIrP8drZru44dm1GFK
-	uOErPU+gUTrdiMyuAidD5A5APCDRUszq/r2ysGskDVxtnj0k57nJRbtY909Iq0c3XXUoVchC16q
-	PxvlmUWIqvAi5uhjVOArYHxFFy/dIq+qcn1DNCUBwAHMGbuhhp/co6ohUi2Ownuprac6guXfIse
-	eeiaCDuZRUI0Ax6QNgQkC1fxPNRp2r6Ao5BJn0w1CcD9yDh6R
-X-Google-Smtp-Source: AGHT+IGkFaL10RYKipHUpI0kj9FEjJXmVz6qoux7i4ASKOHv4yzHf32aHVHY76E+7bItd5+j6zSurg==
-X-Received: by 2002:a05:620a:1a01:b0:7e8:579d:11c6 with SMTP id af79cd13be357-7ff26eab218mr1387636485a.3.1756832496958;
-        Tue, 02 Sep 2025 10:01:36 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:11:5a76::5ac? ([2606:6d00:11:5a76::5ac])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8069d5b9614sm163429785a.60.2025.09.02.10.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 10:01:36 -0700 (PDT)
-Message-ID: <d0102df15412fc827dca3b330b10904f97a1a240.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: amphion: Drop the sequence header after seek for
- VC1L
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: "Ming Qian(OSS)" <ming.qian@oss.nxp.com>, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl
-Cc: sebastian.fricke@collabora.com, shawnguo@kernel.org,
- s.hauer@pengutronix.de, 	kernel@pengutronix.de, festevam@gmail.com,
- linux-imx@nxp.com, xiahong.bao@nxp.com, 	eagle.zhou@nxp.com,
- imx@lists.linux.dev, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Tue, 02 Sep 2025 13:01:32 -0400
-In-Reply-To: <dbd7ec6c-9837-4bf3-a363-e287d075b677@oss.nxp.com>
-References: <20250725080712.1705-1-ming.qian@oss.nxp.com>
-	 <ede4226a80e27c8b047b0eb25fe8f5ba90214d12.camel@ndufresne.ca>
-	 <dbd7ec6c-9837-4bf3-a363-e287d075b677@oss.nxp.com>
-Autocrypt: addr=nicolas@ndufresne.ca; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-bV38p/TGIUCsdGFxL5ya"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1756832521; x=1788368521;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cz3lDzn0UcYssZ0SDsYtHmrnkmHQBrVHUfWnPQ7Qch8=;
+  b=FkUxEILOoArdX9rYIC5SZzKf/EtOiyanMZ0c35WZ+BuZe8u3OILZ8DRP
+   yfnB4AbUaLY1RqYfxzJ40dmV9OZdYd498Ed+yDwzFkzAwDCr711lH4FfZ
+   tM1x+rlrgawkzTFH9Zuvb7QmUR8PBlKOUoImoXtd0uoY/qK0GRRsKhfdJ
+   QMmP0b4Rp8QkIjHJ8Sar/NjfPRbwFmZNJpXtSHqHanYQEJg2DXkFdipiv
+   dBWGELbdAnpMQ3RAt7epzB1pHZ0FOjzFxDDqQxLJA1WNbqZfvklwlH8h4
+   ZTwMwtFBpnoTCCg8EC6Plr0L5T1y1M8CEL2AVF8pj+YzTc2f7DKv2PILP
+   g==;
+X-CSE-ConnectionGUID: hfn3rfNpTReXfYWy+II2WA==
+X-CSE-MsgGUID: jRIFNbY/RaSD5ZvwIlZLlQ==
+X-IronPort-AV: E=Sophos;i="6.14,267,1736812800"; 
+   d="scan'208";a="1799358"
+Received: from ip-10-4-10-75.ec2.internal (HELO smtpout.naws.us-east-1.prod.farcaster.email.amazon.dev) ([10.4.10.75])
+  by internal-iad-out-007.esa.us-east-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 17:01:59 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:14969]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.56:2525] with esmtp (Farcaster)
+ id 52b9a439-02cb-438b-b156-3e0c55758966; Tue, 2 Sep 2025 17:01:58 +0000 (UTC)
+X-Farcaster-Flow-ID: 52b9a439-02cb-438b-b156-3e0c55758966
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
+ Tue, 2 Sep 2025 17:01:57 +0000
+Received: from dev-dsk-aqibaf-1b-17060f52.eu-west-1.amazon.com (10.253.72.42)
+ by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 2 Sep 2025 17:01:55 +0000
+From: Aqib Faruqui <aqibaf@amazon.com>
+To: Christian Brauner <brauner@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <nh-open-source@amazon.com>, <aqibaf@amazon.com>
+Subject: [PATCH v2 0/7] Add compatibility fixes for KVM selftests with non-glibc C libraries
+Date: Tue, 2 Sep 2025 17:01:37 +0000
+Message-ID: <20250902170147.55583-1-aqibaf@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWB004.ant.amazon.com (10.13.139.134) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+
+This patch series adds compatibility fixes for building and running KVM selftests with musl 
+and other non-glibc implementations. The changes address missing function definitions, syscall 
+numbers, macros, type definitions, and runtime compatibility issues that are otherwise handled 
+by glibc.
+
+The series includes both build-time compatibility fixes (missing definitions, type mismatches) 
+and runtime fixes (stdbuf compatibility in mixed libc environments) to ensure KVM selftests 
+work correctly across different C library implementations.
+
+Changes in v2:
+- Split pidfd patch into two separate commits
+- Dropped PAGE_SIZE redefinition patch - will root cause warning separately
+- Dropped __packed fallback patch - tools infrastructure already handles this correctly
+- Dropped pthread_attr_setaffinity_np patch - maintainer provided solution
 
 
---=-bV38p/TGIUCsdGFxL5ya
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Aqib Faruqui (7):
+  selftests/pidfd: Add architecture-specific fallback definitions for
+    pidfd_open
+  selftests: harness: Include pidfd.h to get syscall definitions from
+    tools/
+  selftests: kselftest: Add memfd_create syscall compatibility
+  KVM: selftests: Add backtrace fallback
+  rseq: selftests: Add non-glibc compatibility fixes
+  selftests: Fix stdbuf compatibility in mixed libc environments
+  selftests: kselftest: Add ulong typedef for non-glibc compatibility
 
-Le lundi 01 septembre 2025 =C3=A0 17:41 +0800, Ming Qian(OSS) a =C3=A9crit=
-=C2=A0:
->=20
-> Hi Nicolas,
->=20
-> > Hi,
-> >=20
-> > Le vendredi 25 juillet 2025 =C3=A0 16:07 +0800, ming.qian@oss.nxp.com=
-=C2=A0a =C3=A9crit :
-> > > From: Ming Qian <ming.qian@oss.nxp.com>
-> > >=20
-> > > For Simple and Main Profiles of VC-1 format stream, the amphion vpu
-> > > requires driver to discard the sequence header, but insert a custom
-> > > sequence start code at the beginning.
-> > > The first buffer after a seek always contains only the sequence heade=
-r.
-> > > But vpu_vb_is_codecconfig() always return false as there is currently=
- no
-> > > flag indicating that the buffer contains only sequence header data an=
-d
-> > > not frame data.
-> > > So driver needs to drop the first buffer after seek, otherwise the dr=
-iver
-> > > will treat the sequence header as a frame, which will cause the image=
- to
-> > > be corrupted after the vpu decodes.
-> > >=20
-> > > Signed-off-by: Ming Qian <ming.qian@oss.nxp.com>
-> > > ---
-> > > =C2=A0 drivers/media/platform/amphion/vpu_malone.c | 4 +---
-> > > =C2=A0 1 file changed, 1 insertion(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/drivers/media/platform/amphion/vpu_malone.c b/drivers/me=
-dia/platform/amphion/vpu_malone.c
-> > > index ba688566dffd..a4c423600d70 100644
-> > > --- a/drivers/media/platform/amphion/vpu_malone.c
-> > > +++ b/drivers/media/platform/amphion/vpu_malone.c
-> > > @@ -1373,11 +1373,9 @@ static int vpu_malone_insert_scode_vc1_l_seq(s=
-truct malone_scode_t *scode)
-> > > =C2=A0=C2=A0	int size =3D 0;
-> > > =C2=A0=C2=A0	u8 rcv_seqhdr[MALONE_VC1_RCV_SEQ_HEADER_LEN];
-> > > =C2=A0=20
-> > > -	if (vpu_vb_is_codecconfig(to_vb2_v4l2_buffer(scode->vb)))
-> >=20
-> > Please remove vpu_vb_is_codecconfig() entirely, it always returns false=
-, so its
-> > miss-leading.
-> >=20
->=20
-> We have tried to define V4L2_BUF_FLAG_HEADERS_ONLY to to distinguish
-> whether it only contains codec data.
->=20
-> https://lore.kernel.org/lkml/20221125020741.28239-1-ming.qian@nxp.com/
->=20
-> Although it was not accepted, we applied this flag in our Android
-> project. Then in the Android platform, vpu_vb_is_codecconfig() doesn't
-> always return false.
->=20
-> I know that's not enough reason to keep it. I just want to say that this
-> vpu need to know if the buffer only contains codec header in some cases.
-> And if we remove this, I need to add some comments to remind users that
-> they need to pay attention here.
+ tools/testing/selftests/kselftest.h                    | 24 ++++++++++++++++++++++++
+ tools/testing/selftests/kselftest/runner.sh            |  2 +-
+ tools/testing/selftests/kselftest_harness.h            |  1 +
+ tools/testing/selftests/kvm/lib/assert.c               | 10 +++++++++-
+ tools/testing/selftests/kvm/lib/kvm_util.c             |  1 +
+ tools/testing/selftests/pidfd/pidfd.h                  |  4 ++++
+ tools/testing/selftests/rseq/rseq-x86-thread-pointer.h | 14 ++++++++++++++
+ tools/testing/selftests/rseq/rseq.c                    |  8 ++++++++
+ 8 files changed, 62 insertions(+), 2 deletions(-)
 
-In all cases, this dead code have to go away, if we had noticed earlier it =
-would
-have been rejected.
+-- 
+2.47.3
 
-Either the format document strictly requires codec data as first buffer (al=
-one),
-or you create a new format for you IP. As said, legacy codecs are ill-defin=
-ed
-and we need to gather information from other maintainers of IP that support=
-s it
-to fill in the doc. Perhaps this is the behavior that should have been
-documented, and if this is the case, the fix is simply to put that in the
-documentation.
-
->=20
-> So I tend to keep it.
->=20
->=20
-> > > -		scode->need_data =3D 0;
-> > > +	scode->need_data =3D 0;
-> > > =C2=A0=C2=A0	if (scode->inst->total_input_count)
-> > > =C2=A0=C2=A0		return 0;
-> > > -	scode->need_data =3D 0;
-> >=20
-> > I only remember testing this once quickly on Exynos 4 and I had no clue=
- what
-> > Annex G vs J was and most likley the MFC firmware was detecting it. Che=
-cking
-> > quickly, I'm not sure GStreamer actually support both, despite the v4l2=
- wrapper
-> > pretending. I would expect one to be used in ASF/ISOMP4/AVI, and the ot=
-her used
-> > in MPEG Transport Stream. GStreamer does not support VC1 in MPEG TS.
-> >=20
-> > Have you tested this with FFMPEG ? It only maps annex G.
-> >=20
-> > In general, I don't mind the the change if this is correct userspace be=
-havior.
-> > If ffmpeg and gstreamer don't agree though, we'll have to rethink. GStr=
-eamer
-> > code back in the days was design in a way that it should not matter if =
-the
-> > header is split or not. This limitation came with lower latency decoder=
- later,
-> > but none had VC1.
-> >=20
-> > Please test both userspace, and lets see if this solution is acceptable=
-. ffmpeg
-> > have ffplay and you can seek with your keyboard arrows.
-> >=20
-> > Nicolas
->=20
-> I tested this with gstreaer, not FFMPEG,
-> And I checked the gstreamer code in our repository, Then I found the
-> following related code:
->=20
-> =C2=A0=C2=A0 } else if (g_str_equal (mimetype, "video/x-wmv")) {
-> =C2=A0=C2=A0=C2=A0=C2=A0 const gchar *format =3D gst_structure_get_string=
- (structure, "format");
-> =C2=A0=C2=A0=C2=A0=C2=A0 if (format) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!g_ascii_strcasecmp (format, "WV=
-C1"))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fourcc =3D V4L2_PIX_FMT_=
-VC1_ANNEX_G;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else if (!g_ascii_strcasecmp (format=
-, "WMV3"))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fourcc =3D V4L2_PIX_FMT_=
-VC1_ANNEX_L;
-> =C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> Basically it processes WMV3 into VC1_ANNEX_L, and WVC1 to VC1_ANNEX_G.
-> I didn't found them in the upstream gstreamer repository.
-> Now I'm not sure if it is correct userspace behavior.
-
-Its a little concerning, since we are in the largely untested territory. Wi=
-thout
-proper documentation and with all the downstream changes done to userspace,=
- we
-can easily endup with NXP considering this is the right mapping and let's s=
-ay
-Qualcomm or Samsung thinking differently. Since this is for upstream, we ne=
-ed to
-ensure this is concistant. Have you reached to other driver maintainers alr=
-eady
-to discuss and resolve the subject in a way it works for everyone ?
-
->=20
-> And the reason of this issue is the below code in gstreamer, that the
-> v4l2decoder may only send codec data after seek.
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 codec_data =3D self->input_state->codec_data;
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 /* We are running in byte-stream mode, so we don=
-'t know the=20
-> headers, but
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * we need to send something, otherwise the=
- decoder will refuse to
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * initialize.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> =C2=A0=C2=A0=C2=A0=C2=A0 if (codec_data) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gst_buffer_ref (codec_data);
-> =C2=A0=C2=A0=C2=A0=C2=A0 } else {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 codec_data =3D gst_buffer_ref (frame=
-->input_buffer);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 processed =3D TRUE;
-> =C2=A0=C2=A0=C2=A0=C2=A0 }
-
-That is truncating a bit too much of the context. The "processed" boolean i=
-s set
-when the codec data and frame is combined. In the case the codec data is on=
-ly to
-be found in caps, it will queue the codec data and immediately queue the fr=
-ame
-data. This is perfectly valid with the way the stateful decoder specificati=
-on is
-written.
-
-In practice, GStreamer stateful decoder is multi-threaded, so it will fill =
-the
-OUTPUT queue with following frames too. What you can do to make your driver=
- more
-flexible is whenever you didn't find a frame in a buffer, merge this buffer=
- with
-the next one, and do that until there is no more space in one buffer. This =
-way
-you don't copy all the time like ring buffers do, but you can survive abitr=
-ary
-splits of byte-stream.
-
-Nicolas
-
->=20
-> Regards,
-> Ming
->=20
->=20
-> >=20
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	ret =3D vpu_malone_insert_scode_seq(scode, MALONE_CODEC_=
-ID_VC1_SIMPLE, sizeof(rcv_seqhdr));
-> > > =C2=A0=C2=A0	if (ret < 0)
-
---=-bV38p/TGIUCsdGFxL5ya
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLci7QAKCRDZQZRRKWBy
-9EucAQCDpDQ23PEiLbvrPVu582nT4syH1ECoqvI5lbtG2IxCpQD/Wi1AX61MNSaV
-RP5P644O8Od9w+f8beizyYC77y9jewY=
-=SB3Z
------END PGP SIGNATURE-----
-
---=-bV38p/TGIUCsdGFxL5ya--
 
