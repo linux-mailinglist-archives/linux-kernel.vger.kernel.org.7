@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-797451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFDFB410A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:12:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F82B410A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0033AC238
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:12:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7679A7AD729
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF8327A92A;
-	Tue,  2 Sep 2025 23:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B095B271476;
+	Tue,  2 Sep 2025 23:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDQTrL7u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jx5HmeMM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B0D1A288;
-	Tue,  2 Sep 2025 23:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A10F23B0;
+	Tue,  2 Sep 2025 23:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756854739; cv=none; b=uG/QLqMJDlA6eW8Y70nzat8dQDuqMo55o6D5zFLqVmEGhagJCHoQ3Rx6WLBldLwjXPdHAfccNVjE46veRpCJDGiQB5CGAIlVIAXpNKogM84zqTYDPS6UhwePbxn/baBkL0q9M5HsBt+g5LOmrJUqOmRTVZsufGInXb4ACmcy2Ek=
+	t=1756854999; cv=none; b=HNz946c2b4r/kS254h5QN127SDri4WSADisVTeI/2a7KSAaEDuEn64IRbt3XMkToXGS/pNMh+haTYJjnfe6i5BvdSu4Yl+hCiCoKPE7/gDfpVZdHqpWRHb+AMGBnbr7DNXyZVABT/aCgp17mrxn05eD2MZ9YZUfFc/hqR7I3x8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756854739; c=relaxed/simple;
-	bh=nGd6ubL9Tf/e1xXoHEq4QdDtCjYAfInQ7R9+GVfgkr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lzNKrr3/N2xyKh0SjlPRII6MneFUCS/EtAHTswImAIQ4othbID+vDWfPg0XCeLFuyfh6v/JS5nblgXlOvNFX9zfo3dZIehN80NICnPtnDi0YXhtNo1RLHlgsBGN1CKezUG2V4MrT/ZMIOTvfIJW31SALcTizrV3iem6dvNv25jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bDQTrL7u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05DDEC4CEED;
-	Tue,  2 Sep 2025 23:12:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756854739;
-	bh=nGd6ubL9Tf/e1xXoHEq4QdDtCjYAfInQ7R9+GVfgkr0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bDQTrL7ukZTL5zgkIX5VBewQ0FdZgocbX6GbSmLy/+MdtvPcsEwaOnZStytUVCrML
-	 7Lrw5b1arUATJvNXgcR4Nvmms0kqYMACqF9yNduS4XCV4BcCj/JtJWZncuHwrIciTy
-	 oQUtcInfo4Wcf47DtuIMQmm3bDJzkXWhhzXS+vlwJvkhMjuaI3WEdiaF1FD6OByiN+
-	 hCHucubAA9r8rUX5zM+wfHcQ21+hmhMmtzwugJn9eyII0EA1k/rsjLAnuHuq5+1IIU
-	 7+Bp1ovO33f4F3vcGVs/36vNBtyowvZl/ZbuU/gEeFMqr5+rTBTb/CkdblfFanZHhJ
-	 JWofrD5m+pJRg==
-Message-ID: <843554b1-f4c5-43f5-a23b-583339708bea@kernel.org>
-Date: Wed, 3 Sep 2025 01:12:13 +0200
+	s=arc-20240116; t=1756854999; c=relaxed/simple;
+	bh=rKZ0Nh3RqLt7tI4TxWi0XsS1AUOFKimTgfg+6MXiFRk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rasbgZoRGbDLajD+Y/9n2ZGRqiujN+tbLtDe0iYKsMQES/A3n0ETyP6MyqYs2tB7S2smpsVxqjYrkVsKiQyNuLf5MEfp4hkx2aqyY8Su1682f8jO3o6gT2O5igQ0wRQYtQIebl9CyqfMvDtuuBLw0ngVk1mObfoejjGfiiBdZro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jx5HmeMM; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756854997; x=1788390997;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=rKZ0Nh3RqLt7tI4TxWi0XsS1AUOFKimTgfg+6MXiFRk=;
+  b=jx5HmeMMyM4IpPDDHYZ8oGFTbNjw4RIWIA7GAsF/bBn76rqtGOHE35+g
+   6B707NRELTtIGyRT/+KM1mWRbiG5JUFD002XJgoRSqjKAUBPRFdDZjdaB
+   DLEYZhmZjjRWM9RXQeyo4pKJwBvW3pLGNqN9j1Y8bRvuzhVtXzz8fuPJ7
+   GcTv+n1eBhRkrau5Y2SCH8Qa99UH0JPGVMSWRXFWEykSXUHlA4DBTLxfm
+   REIa5NlFsbHY9rdKYr4y2IawFaFMtablUGkLJ7mSEGkabv4mB7GV0PjBt
+   /LHSUyzls1wpo8XCnnlMfn5zWtj8MT70pYDQMr0aJ4gZSKIusGqG7dZqd
+   g==;
+X-CSE-ConnectionGUID: A07RvFEkRISgXVJTBsr1BQ==
+X-CSE-MsgGUID: FMftboe/SvKaJlkpm01EFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59069949"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59069949"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 16:16:36 -0700
+X-CSE-ConnectionGUID: /TDJio1bRD65DbAqOEH9gQ==
+X-CSE-MsgGUID: QFHtOfN1RP26sXgES81hZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="176712943"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.76]) ([10.247.118.76])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 16:16:28 -0700
+Message-ID: <8212254f-2c2b-4a48-8238-eacabc5645f4@intel.com>
+Date: Tue, 2 Sep 2025 16:16:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,63 +66,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/11] gpu: nova-core: move GSP boot code out of `Gpu`
- constructor
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20250902-nova_firmware-v3-0-56854d9c5398@nvidia.com>
- <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v3 0/4] cxl, acpi/hmat, node: Update CXL access
+ coordinates to node directly
+From: Dave Jiang <dave.jiang@intel.com>
+To: linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com,
+ marc.herbert@linux.intel.com, akpm@linux-foundation.org, david@redhat.com
+References: <20250829222907.1290912-1-dave.jiang@intel.com>
 Content-Language: en-US
-In-Reply-To: <20250902-nova_firmware-v3-2-56854d9c5398@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20250829222907.1290912-1-dave.jiang@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/2/25 4:31 PM, Alexandre Courbot wrote:
->       pub(crate) fn new(
->           pdev: &pci::Device<device::Bound>,
->           devres_bar: Arc<Devres<Bar0>>,
 
-The diff is hiding it, but with this patch we should also make sure that this 
-returns impl PinInit<Self, Error> rather than Result<impl PinInit<Self>.
 
-I think this should be possible now.
-
-> @@ -293,20 +317,15 @@ pub(crate) fn new(
->           )?;
->           gsp_falcon.clear_swgen0_intr(bar);
->   
-> -        let _sec2_falcon = Falcon::<Sec2>::new(pdev.as_ref(), spec.chipset, bar, true)?;
-> -
-> -        let fb_layout = FbLayout::new(spec.chipset, bar)?;
-> -        dev_dbg!(pdev.as_ref(), "{:#x?}\n", fb_layout);
-> -
-> -        let bios = Vbios::new(pdev.as_ref(), bar)?;
-> -
-> -        Self::run_fwsec_frts(pdev.as_ref(), &gsp_falcon, bar, &bios, &fb_layout)?;
-> +        let sec2_falcon = Falcon::<Sec2>::new(pdev.as_ref(), spec.chipset, bar, true)?;
->   
->           Ok(pin_init!(Self {
->               spec,
->               bar: devres_bar,
->               fw,
->               sysmem_flush,
-> +            gsp_falcon,
-> +            sec2_falcon,
->           }))
->       }
->   }
+On 8/29/25 3:29 PM, Dave Jiang wrote:
+> I plan to take this series through the CXL tree when all the necessary tags
+> are received.
 > 
+> Rafael, please ack patches 3/4 and 4/4 if you are happy with the changes.
+> 
+> Thank you!
+
+Rafael said Dan's review tag is sufficient.
+
+Applied to cxl/next
+02f6c6a3654911e286ae04e5dfd5deb0f39559b1
+
+> 
+> v3:
+> - Fix grammar in comment. (DavidH)
+> - Use nodemask instead of xarray. (Jonathan)
+> 
+> v2:
+> - Use clearer comment from DavidH for 1/4. (DavidH)
+> - Fix comment in 2/4. (DavidH)
+> - Streamline code in 2/4. (DavidH)
+> - Add description to observed issue. (Dan)
+> - Add correct Fixes tag. (Dan)
+> - Add cc to stable for fix patch. (Dan)
+> - Add mechansim to only update on first region for the node. (Jonathan)
+> 
+> The series aim to clean up the current CXL memory region hotplug notifier by
+> removing the update path through HMAT and updating the node access coordinates
+> directly. With the existing implementation, the CXL memory hotplug notifier
+> gets called first. It updates the HMAT target access coordinates. And then
+> the HMAT notifier gets called and create the node sysfs attribs. The new
+> implemenation flips the callback ordering and directly updates the sysfs
+> attribs already created in the node and leaves HMAT data structures alone.
+> 
+> Dave Jiang (4):
+>   mm/memory_hotplug: Update comment for hotplug memory callback
+>     priorities
+>   drivers/base/node: Add a helper function node_update_perf_attrs()
+>   cxl, acpi/hmat: Update CXL access coordinates directly instead of
+>     through HMAT
+>   acpi/hmat: Remove now unused hmat_update_target_coordinates()
+> 
+>  drivers/acpi/numa/hmat.c  | 34 ----------------------------------
+>  drivers/base/node.c       | 38 ++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/core/cdat.c   | 11 -----------
+>  drivers/cxl/core/core.h   |  3 ---
+>  drivers/cxl/core/region.c | 20 ++++++++++++--------
+>  include/linux/acpi.h      | 12 ------------
+>  include/linux/memory.h    |  6 +++---
+>  include/linux/node.h      |  8 ++++++++
+>  8 files changed, 61 insertions(+), 71 deletions(-)
+> 
+> 
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 
 
