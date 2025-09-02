@@ -1,222 +1,133 @@
-Return-Path: <linux-kernel+bounces-797376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDF3B40F96
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:45:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40164B40F98
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA491B61C7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:46:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13ABE547423
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0172E8E0B;
-	Tue,  2 Sep 2025 21:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717972F744C;
+	Tue,  2 Sep 2025 21:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KU9FxQr0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qx1PuQgq"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6CD1E51D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6701E51D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756849550; cv=none; b=gD8GpJh/QqmpcMFyiLeJLXZOzd8jBcpbMWOYR7pLCsa0V1hw91m1VsZn13LcphZFV1rzV1dWQ/fgrAum4oR67Mxidt5PFda6HCIBMKifNw5d90A1EBVOL4ew2eNzvVs3DFLwECcYyteNLcWzQJiMbWk6Z4//YDKP7zyvKeggzG0=
+	t=1756849603; cv=none; b=P43qHSOrDQD2C0NyDBCO/z9tDnxUnicIqD4a6e2wKjR1YxjdR3wADFwdTYE0nOlZThmmz0DOMBWv0I3nijaeKx4OQZJZbjN4thQa0BaBfjinNRlq1gY4b12RxQyZsB0OsB4HOjral+sFMtg2XhMcskE0YtayfZ7FheIJ8hPb2Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756849550; c=relaxed/simple;
-	bh=qYbjt0FRDxWppmSPNceU5fkD9FJzBHfBeD7f4c9by6U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h8aDNUJXAgFE67emiKsE13pt0Mo89Y6VMVE4Fh4dVn2pGCMadz3razcBIOKeJonoiiOWXzcK0i8mDfjEEDEyiVnuNvMbspEWIy4V5UxJm9dbdvgxsM6GbwYwHLFiCfCTDtyHCVw6K23wszxsHsCRghNropTIvdUWAP4T8w0XoVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KU9FxQr0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582EqCKI019600
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 21:45:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=uQQZgphG6OFoqGrYvnuOA6GQYJfzJK/1Em6
-	trqgSBFU=; b=KU9FxQr0S1hM6aTfaGQbAlJPr3sO7X01UNOj4kS1uM/qD00TI9Q
-	pL/ZRMbwspj0ys6TIt9MP9pQEFPdKu6L2qTJa2tAqZGHj/Y+bP2Z14FY09FU5JYW
-	05L8OnT17p4EgTSUpU4VnBuy8YMK4hhmrvXX9T1GQFFXaLUvbmw/ArhEyN5HtNFb
-	hnZfSEVB0H2WpjmlYX2vIukGRtfbFjx6moY/OhcdVyN1ts/OZZEOZ8ZEVMTizxH4
-	tW9bhBTHWbNJFTC/tZprCDbkltAIBKhdXBweT52D5pHWpYZk5GddlHVH8vRPElRC
-	bX7We2C2OD1ox56+pwGTcRWawkjvLjZXWnQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw01btu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 21:45:47 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-244581953b8so63995855ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 14:45:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756849546; x=1757454346;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uQQZgphG6OFoqGrYvnuOA6GQYJfzJK/1Em6trqgSBFU=;
-        b=oi87j5fdbqCudq8/NU0G3KHdXcAsnHA2UWaXSh0A3+QSbRGL7LlQIFS2Pzyrcl+rpv
-         1qZpS16GtXz+yZwzV0xvadcYCRLeC1jbrFWdPru4JS3qlnAEdRae+zhUpCbQYsyer/wD
-         nfyX2lc4aVyIq8dQdpeN52XTqfEtOJ1rMOGtiETfXTQsfE3SRw4uGMnlLffjZqROwhjU
-         0m6guNPvkeYkT/KQLVKOIN3V2BLK2DobgTfVaRvblSDFUpihK1QV9t6SzIoIH21jzvqL
-         RlzxoS24xqD/ULwOjkg+VJoCMBshD+k1ASUYE8jL8Kve5ULJgt0BqaKgxkccd68nCjHg
-         XmZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJGXF1yshaZvHT3MytYOalAuaXL1PL6bjMvxaMyx2qx1fZ/0rCaEbyBSjQ8d2Gg/6c6qj6Gdy4e8fKYyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaP0UN8F9SsIHa+YGAY9xD+W5iiWs+iom5krZdawYIjTNr09w8
-	O6Chcyj1rzphRlVAsZDrqM9wU6tQkmwCDgONpUgnBvZMFqT57NmtNjGBW8U4zHd5YIwrMrPZqPP
-	3NRUz22Laqeke+OeeumHdqnBnZkWQcF0BcW4kFmReMhqzKvjKrx1sWLYvlPXaZ0loYBg9XJxU2k
-	Q=
-X-Gm-Gg: ASbGncszMpSXsZCCiaqB/RaDysJXoexJA5xELhLctRGiX8XaR5zjuUwZlx8IcaQcbET
-	f1bFY8DM0mwFVM8RFYQ77i3OgTc7ewDejYgjC8H0KYNx15mOWrCJGoBHia9muFkxpXdtEqzkbgG
-	hRxGbqlfDGDQRbew29qczTmIvLqjxsyO+4+vOdyItYVmeIfMdY0cgRAh6zvYoPtaEG63WztiNth
-	yYCXGGbn9kOB4vyUe2I4EhB4uClkc+mOs7hfDJEtriWR9XELEP4WD/3rjuT2DAlgcsyAPzxeNjP
-	3AVp3TYb2m8VRbtnECUne083g0tcen/Pzd+mfa2nHEbmzfeFBXy6gD9LTqC8wX9ABqnJd9E5jUk
-	PjFbxvB0G0jzJYZQgoUmO8AquBII=
-X-Received: by 2002:a17:902:e747:b0:24a:8ed6:fa0 with SMTP id d9443c01a7336-24a8ed61300mr149952525ad.54.1756849546254;
-        Tue, 02 Sep 2025 14:45:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGvIOhICh15uD16Xcr9z8S+z0F+ibedqbckSK2cFUoHumlbYdDSIxPBy7TIzVczTgcnxsaRRw==
-X-Received: by 2002:a17:902:e747:b0:24a:8ed6:fa0 with SMTP id d9443c01a7336-24a8ed61300mr149952285ad.54.1756849545811;
-        Tue, 02 Sep 2025 14:45:45 -0700 (PDT)
-Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329cb6a2ec2sm4746324a91.21.2025.09.02.14.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 14:45:45 -0700 (PDT)
-From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: qcom: pmic_glink: Add support for SOCCP remoteproc channels
-Date: Tue,  2 Sep 2025 14:45:44 -0700
-Message-Id: <20250902214544.543038-1-anjelique.melendez@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756849603; c=relaxed/simple;
+	bh=AwF70zVoPxPFHbgMFP/g4nfv4ChgkPXzUCs+JC2Fz3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzHf9Rx0ZXcSv7KLOg2H+KgI5vFb0xWJyWuZZIVmKANlGGARBDIfmJTq3RlbM9OZL/EqAqplGQGc4xfOnsd2CObxPDVwLGhqsWaJ/9SeYz/f9Jsu34sRXSvQLmniwVUWl4smyRcnKksuQrYxvwNfYIZJrRebXu8+YkVYhtcogBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qx1PuQgq; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KJAMV6NrT8yOikKizgtOc925UlXi8jRM8kpRuSXZ9Og=; b=qx1PuQgqz23OMToUTsN7ldegKC
+	r+yBxNds3QjlZ6f8nLxOOggGt0T+6lup1A/48p3M5BcbOraV9gSR8AjQPraorVjECeTLJChRpLLRg
+	HXtXk6toxWlVIBorD7Uc/hYw8QB9HTjzPQzwFQYMMf0Qj2BlK4/Rd4l91x39a6ksZ9onyDGGXbz7A
+	hhgVisUaw5J6Oy6jvY1rj1sW1CldNMp7DHtVWYZaDB5iTLj381qCpUyi9DtHsxsfcVdl8GHUfiUDx
+	UoWl4rr0etKsIrMXtrvdZ0Z23tVaXolqIq5h/QyF7WC51NOD8d9oK+LkIYRtz9hDamjwB5/EE0OmL
+	VKTXAZWQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utYph-000000044XY-40Rl;
+	Tue, 02 Sep 2025 21:46:30 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C542730039F; Tue, 02 Sep 2025 23:46:28 +0200 (CEST)
+Date: Tue, 2 Sep 2025 23:46:28 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: syzbot <syzbot+034246a838a10d181e78@syzkaller.appspotmail.com>
+Cc: andrealmeid@igalia.com, dave@stgolabs.net, dvhart@infradead.org,
+	linux-kernel@vger.kernel.org, mingo@redhat.com,
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [syzbot] [kernel?] general protection fault in try_to_wake_up (3)
+Message-ID: <20250902214628.GL4067720@noisy.programming.kicks-ass.net>
+References: <68b75989.050a0220.3db4df.01dd.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: IWOJ7cLslOqM1xMAIYIYQsqN0ZDEtdaL
-X-Proofpoint-ORIG-GUID: IWOJ7cLslOqM1xMAIYIYQsqN0ZDEtdaL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX66g+M06zYDyi
- cAhmYOdVv6ale/V5vIlntaG/sjZGAwh9YZsaCqfFArkYAWMyZTMUCsGPBB9a/8jM178iKjalt/y
- 6+BKfLxLEfnPmPsMIjOgNT0uYjW6UDaQFV8HbW4ggSuew59O5THMwp4gBSruz2CWIAAVDQX0Xr9
- R7YRRGvV1qAdmxFIR5BFeAduXHq8w0sBA0vpVeEnKRDDUCBsVjDIpWFVkPQgfGDGDMUohAczAjh
- mNHMDyuETLlwHVWmI1Bsp6RiMk1CMsZhb2wFtda4SwOk7V+a9ER9eUPDh7bpmiUbLT6Nb1bubkP
- P/PpBJdwbA09GoyrqGICD+olbWTyUiZWYsUcmn4wmZgXOA0tpsN5rtMNR1E8vyfj28uDbU/1wnu
- XJtEO9ZX
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b7658b cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=XlvkYG1BLVWRrT8hbnoA:9
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_08,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68b75989.050a0220.3db4df.01dd.GAE@google.com>
 
-Add support for charger FW running on SOCCP by adding the
-"PMIC_RTR_SOCCP_APPS" channel name to the rpmsg_match list and
-updating notify_clients logic.
+On Tue, Sep 02, 2025 at 01:54:33PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    5c3b3264e585 Merge tag 'x86_urgent_for_v6.17_rc4' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12e1ae34580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=bd9738e00c1bbfb4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=034246a838a10d181e78
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f6a1f0580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/37953b384dff/disk-5c3b3264.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/df5cc1c4e51d/vmlinux-5c3b3264.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/2ed6195eae9f/bzImage-5c3b3264.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+034246a838a10d181e78@syzkaller.appspotmail.com
+> 
+> Oops: general protection fault, probably for non-canonical address 0xdffffc000000014b: 0000 [#1] SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000a58-0x0000000000000a5f]
 
-SOCCP does not have multiple PDs and hence PDR is not supported. So, if
-the subsystem comes up/down, rpmsg driver would be probed or removed.
-Use that for notifiying clients of pmic_glink for PDR events.
+When I build the provided .config with clang-20, that a58 offset is
+exactly task_struct::pi_lock::lockdep_map, which nicely corresponds with
+the below stacktrace, and seems to suggest someone did:
+try_to_wake_up(NULL).
 
-Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
----
- drivers/soc/qcom/pmic_glink.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+> CPU: 1 UID: 0 PID: 6293 Comm: syz.0.60 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+> RIP: 0010:kasan_byte_accessible+0x12/0x30 mm/kasan/generic.c:199
+> Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 07 3c 08 0f 92 c0 e9 d0 9f dc 08 cc 66 66 66 66 66 66 2e
+> RSP: 0018:ffffc9000157f7e0 EFLAGS: 00010006
+> RAX: dffffc0000000000 RBX: ffffffff8af9dfe7 RCX: e1dbfc1ee2ae4a00
+> RDX: 0000000000000000 RSI: ffffffff8af9dfe7 RDI: 000000000000014b
+> RBP: ffffffff81908477 R08: 0000000000000001 R09: 0000000000000000
+> R10: dffffc0000000000 R11: fffffbfff1e3a947 R12: 0000000000000000
+> R13: 0000000000000a58 R14: 0000000000000a58 R15: 0000000000000001
+> FS:  00007ff6ed61d6c0(0000) GS:ffff8881269c2000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ff6ed61cf40 CR3: 0000000027554000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  __kasan_check_byte+0x12/0x40 mm/kasan/common.c:567
+>  kasan_check_byte include/linux/kasan.h:399 [inline]
+>  lock_acquire+0x8d/0x360 kernel/locking/lockdep.c:5842
+>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>  _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
+>  class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:557 [inline]
+>  try_to_wake_up+0x67/0x12b0 kernel/sched/core.c:4216
+>  requeue_pi_wake_futex+0x24b/0x2f0 kernel/futex/requeue.c:249
 
-diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
-index c0a4be5df926..bcd17fc05544 100644
---- a/drivers/soc/qcom/pmic_glink.c
-+++ b/drivers/soc/qcom/pmic_glink.c
-@@ -17,6 +17,11 @@
- 
- #define PMIC_GLINK_SEND_TIMEOUT (5 * HZ)
- 
-+enum {
-+	PMIC_GLINK_PDR_UNAVAIL = 0,
-+	PMIC_GLINK_PDR_AVAIL,
-+};
-+
- enum {
- 	PMIC_GLINK_CLIENT_BATT = 0,
- 	PMIC_GLINK_CLIENT_ALTMODE,
-@@ -39,6 +44,7 @@ struct pmic_glink {
- 	struct mutex state_lock;
- 	unsigned int client_state;
- 	unsigned int pdr_state;
-+	bool pdr_available;
- 
- 	/* serializing clients list updates */
- 	spinlock_t client_lock;
-@@ -203,17 +209,17 @@ static void pmic_glink_del_aux_device(struct pmic_glink *pg,
- 	auxiliary_device_uninit(aux);
- }
- 
--static void pmic_glink_state_notify_clients(struct pmic_glink *pg)
-+static void pmic_glink_state_notify_clients(struct pmic_glink *pg, unsigned int state)
- {
- 	struct pmic_glink_client *client;
- 	unsigned int new_state = pg->client_state;
- 	unsigned long flags;
- 
- 	if (pg->client_state != SERVREG_SERVICE_STATE_UP) {
--		if (pg->pdr_state == SERVREG_SERVICE_STATE_UP && pg->ept)
-+		if (state == SERVREG_SERVICE_STATE_UP && pg->ept)
- 			new_state = SERVREG_SERVICE_STATE_UP;
- 	} else {
--		if (pg->pdr_state == SERVREG_SERVICE_STATE_DOWN || !pg->ept)
-+		if (state == SERVREG_SERVICE_STATE_DOWN || !pg->ept)
- 			new_state = SERVREG_SERVICE_STATE_DOWN;
- 	}
- 
-@@ -233,7 +239,7 @@ static void pmic_glink_pdr_callback(int state, char *svc_path, void *priv)
- 	guard(mutex)(&pg->state_lock);
- 	pg->pdr_state = state;
- 
--	pmic_glink_state_notify_clients(pg);
-+	pmic_glink_state_notify_clients(pg, state);
- }
- 
- static int pmic_glink_rpmsg_probe(struct rpmsg_device *rpdev)
-@@ -246,10 +252,14 @@ static int pmic_glink_rpmsg_probe(struct rpmsg_device *rpdev)
- 		return dev_err_probe(&rpdev->dev, -ENODEV, "no pmic_glink device to attach to\n");
- 
- 	dev_set_drvdata(&rpdev->dev, pg);
-+	pg->pdr_available = rpdev->id.driver_data;
- 
- 	guard(mutex)(&pg->state_lock);
- 	pg->ept = rpdev->ept;
--	pmic_glink_state_notify_clients(pg);
-+	if (pg->pdr_available)
-+		pmic_glink_state_notify_clients(pg, pg->pdr_state);
-+	else
-+		pmic_glink_state_notify_clients(pg, SERVREG_SERVICE_STATE_UP);
- 
- 	return 0;
- }
-@@ -265,11 +275,15 @@ static void pmic_glink_rpmsg_remove(struct rpmsg_device *rpdev)
- 
- 	guard(mutex)(&pg->state_lock);
- 	pg->ept = NULL;
--	pmic_glink_state_notify_clients(pg);
-+	if (pg->pdr_available)
-+		pmic_glink_state_notify_clients(pg, pg->pdr_state);
-+	else
-+		pmic_glink_state_notify_clients(pg, SERVREG_SERVICE_STATE_DOWN);
- }
- 
- static const struct rpmsg_device_id pmic_glink_rpmsg_id_match[] = {
--	{ "PMIC_RTR_ADSP_APPS" },
-+	{.name = "PMIC_RTR_ADSP_APPS", .driver_data = PMIC_GLINK_PDR_AVAIL },
-+	{.name = "PMIC_RTR_SOCCP_APPS", .driver_data = PMIC_GLINK_PDR_UNAVAIL },
- 	{}
- };
- 
--- 
-2.34.1
+Trouble is, we've not changed the requeue bits in a fair while... So I'm
+somewhat confused on how this happens now ?!
 
+>  futex_proxy_trylock_atomic kernel/futex/requeue.c:340 [inline]
+>  futex_requeue+0x135f/0x1870 kernel/futex/requeue.c:498
+>  do_futex+0x362/0x420 kernel/futex/syscalls.c:-1
+>  __do_sys_futex kernel/futex/syscalls.c:179 [inline]
+>  __se_sys_futex+0x36f/0x400 kernel/futex/syscalls.c:160
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
