@@ -1,149 +1,263 @@
-Return-Path: <linux-kernel+bounces-796102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6661CB3FBF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:12:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AF4B3FBF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95632480040
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA72A48353B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E162F0699;
-	Tue,  2 Sep 2025 10:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414ED2EFD87;
+	Tue,  2 Sep 2025 10:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGkPP53Y"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0iq12Hp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0072B2F068B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3A62EA49D;
+	Tue,  2 Sep 2025 10:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756807944; cv=none; b=qMbw+cOyF0ycXv0wXzlW+7T61lLc1UHsx8XuTAUCLkxFGNpfTjlVMT9NuDHUXkHAaEad/t3qpPTF4eGBe2flMylfPyTN9K7LHfYVLH1IBsksvU2yYEq2nK+kg3jdNLxsZ8Zh8mNst4MQLAueRHo8z45smIE+WP6SChK6AVbh3vY=
+	t=1756807939; cv=none; b=HG+w0xAZ5paa/VIoS3rYQAYZiSoskUKGQK5VysEczTqNlGgxnVp2OF9VpXu29AvTxvVcR98E6JzWqSi2e4U6mRgTl8BDfWLn0nsu2+JNnsq/oyPVaY6tYB46aqP/nX9aeyH/7qCdqHY0a7Bd3HXMBPxczd5gM9DAHGqJWjjygJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756807944; c=relaxed/simple;
-	bh=leXB5mHyEcG586IzWuBWfTUM4regLFxyXevDN7z6VV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YRHPmIlWFHhd/8AB86+sPuacusX5zEh/OF/05PD88UPG9aW+thBUEDpjxcyrI5qig/DAk5oGyGqwl6zRcVPl7qmUDbHzb8j3CF47Iqw0Lu1MM1qSpMELIz1SfmUCCrFpBuPoCsOhYftL16r9Rmz9z0Mh+v1qHGIiAydSJwntNI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGkPP53Y; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8080a88a32aso9547485a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:12:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756807942; x=1757412742; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tGHsOt8ECn0wnw6q+d1jg+PuZZM4BobcldkVyU4WYFM=;
-        b=HGkPP53YQtKNLRGZZBmjON/4inC6inBaJYHqc4DD0ogNuqFPU5qso76HQytk8KRgti
-         pQO3qdimmj80wbr2JiKccb40LJkEfmD7iZHaQMQRc72JHHs8FxmjZoFSLW1eaMhIheyU
-         4CBPXPnVsVq8l1H+ZEeUaDzFCqMlTMuEAw/A7Ic3w29I+JPJQVoJR+JFF2rlmbmn7W4q
-         8zaq7Yv1UOKa4K8ycIFJzIQHlApThwvZs4vTpIPOCb1JrYS9h2WXNDWI6hSw/D+FNi9R
-         tSG7yjmdGZS52cxA+FHsxBtjbKTqL/lRvQ2gB8Yn2IQmB8+WRLWX5EAhQRazVYNn7dAC
-         1Ncw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756807942; x=1757412742;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tGHsOt8ECn0wnw6q+d1jg+PuZZM4BobcldkVyU4WYFM=;
-        b=C7kYXTz51AG5a1vlcojN1xET4NUmD/T+9xJbZmLVwVDjedFli6kCRlxXiUzk5H9B6U
-         0+pCSB8Z3lhpa7B84Hi1I1dC1ccCbQOBm+xAwnSgK9ihyiRLzYEe3wn3Z4AJ2smKaleV
-         7vQBUY3u6T2ZRH0DHGcm8XO3PmYzbIzt1XUFoxGFHCJlo9TszuaGwCgvaWQCGmqNHMnT
-         veGXrzgINuWPPtMlsSM3+2N5MvJB6bgWo5R/blozuYoGAY6rlgHnsj9X/5mBKFF3T93i
-         jcj6S7E4JDZtsBS/IpNIozMPba/qlGKj22bjWginF0k3H2TpP8SLTuFYsWhRZGAY1sNm
-         Geuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpeOgh//IV6FByXtyyntL725HX/N7cTHF/mBSEUfDQyl/+R0+Q3zvU+wtW7QYsK0UKvNsBANCjnLTl1Mc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyokRMjHNNglaZrM0n5jyLdf5TmCIB8PJbGQuX10c8JeFRBLXrX
-	Z9aD0DgFKqh0jg3xIdqx+iGr7+D+Mu05QEly9CNuOb/7WS/RCZ2D43SvlSI54uKYI6h3avtG5pH
-	60vlN4/OhnB50gXZX8gjFEUJ89ZLdgQs=
-X-Gm-Gg: ASbGncvVPsdsQjG1cs62tkVZlwcLCQ2F8COV3qgiHgVn2OvLiHIyBSEc78GV+QCKSLV
-	6jQemRzlx5u/OcQtAro2tldFbeZjtsWq86qTBTK9V7U03G/jIrP06woxJ/IgQ8sNXfmD+ZDaiNB
-	ngfKYAJkh+lGabumoQy9K7ZoOnQVRTIHvOaU/ECwCY150CIEJD4hKfcFiCadvK5Z6wCETsrKgh7
-	qHFa0MlATLMtHLvLEVlRV2yu1z54uwTPiEet7j4LI6YnYEnwr+KBCQPMlfzUE/ZYj7iWMNX+oXe
-	7NUTxlzQk/GhxK++8A60VN4ywV19RDw5IB750XOhKpo7PEo=
-X-Google-Smtp-Source: AGHT+IFURzNV0ZRA2CEmzn4C4F5wx2AglECKri7SC4LbVMFSGvyYHHeEFu77ztNpX9Y8kvIPhBjBOyID6J4vYd3FIlo=
-X-Received: by 2002:a05:620a:400a:b0:7ef:38e6:5a3c with SMTP id
- af79cd13be357-7ff26eaabc5mr1250719785a.6.1756807941715; Tue, 02 Sep 2025
- 03:12:21 -0700 (PDT)
+	s=arc-20240116; t=1756807939; c=relaxed/simple;
+	bh=dLzEaqaX+WltyZNFo8+JxunBRV1p0dzHnmT+/Qzfz8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMyFmBEOWGwauDvdY6H9ZaJPy02gYsqoRCADz4V2/4slLKGxAI4r3yP9AmJLSb6ZTYzlvJl0NH13/DhALnbnCHmwgT+n1dJYWVctCbKGOzr0buLR6IUdQHkcogZoJMVQLnJLnhkp4lh9OcoVPUWmAWOotA62T1HUvEQgnnbpHNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0iq12Hp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4683CC4CEED;
+	Tue,  2 Sep 2025 10:12:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756807938;
+	bh=dLzEaqaX+WltyZNFo8+JxunBRV1p0dzHnmT+/Qzfz8o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m0iq12HpLoyS1ZEAT5vmL19wjDENpOw9N5G0QDaXoQdlEofns52lh6RpdN50jPO1R
+	 ak9cN19qpcWOmfzidBioNz9i37LW2qVyAl5dWev8b84X8BSTgtW0ZMyF4wiZ0tODeg
+	 37l1Sep25jEgdMGQHpabFabtdhE+lwhO6o+Di9dJo0ZG6t2jmNfUBKH7M7uB3jFB6O
+	 5WZHS1PcaoBBHqm/0SYq7KvP1gHczRkZMPdsjuqXzDgfe9gJm7j7lDhlRX90wmt6SW
+	 SYOkHuV3FfBoVusXPqpobYqfqcRCBx/iMgfB9zkd2PB0fxpTLlrUzxcn+6lXr5mQOi
+	 N9IrNKtKmu07w==
+Date: Tue, 2 Sep 2025 11:12:11 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	kasan-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	Matthew Maurer <mmaurer@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] rust: kasan/kbuild: fix missing flags on first build
+Message-ID: <20250902-crablike-bountiful-eb1c127f024a@spud>
+References: <20250408220311.1033475-1-ojeda@kernel.org>
+ <20250901-shrimp-define-9d99cc2a012a@spud>
+ <aLaq6TpUtLkqHg_o@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901163811.963326-1-bigeasy@linutronix.de> <20250901163811.963326-2-bigeasy@linutronix.de>
-In-Reply-To: <20250901163811.963326-2-bigeasy@linutronix.de>
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Tue, 2 Sep 2025 18:12:10 +0800
-X-Gm-Features: Ac12FXwFEtKBWDDwozhX-PpQ1R9Twfd2v-7LcyNEG9PxtZQZ5ptbapJ5erNEG_M
-Message-ID: <CAJhGHyBaqn_HOoHX+YinKW5YSy1rncfbvYXktkEtmFgK44E9wg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] workqueue: Provide a handshake for canceling BH workers
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Clark Williams <clrkwllms@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="H+VzOpbPUpNEExps"
+Content-Disposition: inline
+In-Reply-To: <aLaq6TpUtLkqHg_o@google.com>
+
+
+--H+VzOpbPUpNEExps
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hello
+On Tue, Sep 02, 2025 at 08:29:29AM +0000, Alice Ryhl wrote:
+> On Mon, Sep 01, 2025 at 06:45:54PM +0100, Conor Dooley wrote:
+> > Yo,
+> >=20
+> > On Wed, Apr 09, 2025 at 12:03:11AM +0200, Miguel Ojeda wrote:
+> > > If KASAN is enabled, and one runs in a clean repository e.g.:
+> > >=20
+> > >     make LLVM=3D1 prepare
+> > >     make LLVM=3D1 prepare
+> > >=20
+> > > Then the Rust code gets rebuilt, which should not happen.
+> > >=20
+> > > The reason is some of the LLVM KASAN `rustc` flags are added in the
+> > > second run:
+> > >=20
+> > >     -Cllvm-args=3D-asan-instrumentation-with-call-threshold=3D10000
+> > >     -Cllvm-args=3D-asan-stack=3D0
+> > >     -Cllvm-args=3D-asan-globals=3D1
+> > >     -Cllvm-args=3D-asan-kernel-mem-intrinsic-prefix=3D1
+> > >=20
+> > > Further runs do not rebuild Rust because the flags do not change anym=
+ore.
+> > >=20
+> > > Rebuilding like that in the second run is bad, even if this just happ=
+ens
+> > > with KASAN enabled, but missing flags in the first one is even worse.
+> > >=20
+> > > The root issue is that we pass, for some architectures and for the mo=
+ment,
+> > > a generated `target.json` file. That file is not ready by the time `r=
+ustc`
+> > > gets called for the flag test, and thus the flag test fails just beca=
+use
+> > > the file is not available, e.g.:
+> > >=20
+> > >     $ ... --target=3D./scripts/target.json ... -Cllvm-args=3D...
+> > >     error: target file "./scripts/target.json" does not exist
+> > >=20
+> > > There are a few approaches we could take here to solve this. For inst=
+ance,
+> > > we could ensure that every time that the config is rebuilt, we regene=
+rate
+> > > the file and recompute the flags. Or we could use the LLVM version to
+> > > check for these flags, instead of testing the flag (which may have ot=
+her
+> > > advantages, such as allowing us to detect renames on the LLVM side).
+> > >=20
+> > > However, it may be easier than that: `rustc` is aware of the `-Cllvm-=
+args`
+> > > regardless of the `--target` (e.g. I checked that the list printed
+> > > is the same, plus that I can check for these flags even if I pass
+> > > a completely unrelated target), and thus we can just eliminate the
+> > > dependency completely.
+> > >=20
+> > > Thus filter out the target.
+> >=20
+> >=20
+> >=20
+> >=20
+> > > This does mean that `rustc-option` cannot be used to test a flag that
+> > > requires the right target, but we don't have other users yet, it is a
+> > > minimal change and we want to get rid of custom targets in the future.
+> >=20
+> > Hmm, while this might be true, I think it should not actually have been
+> > true. Commit ca627e636551e ("rust: cfi: add support for CFI_CLANG with =
+Rust")
+> > added a cc-option check to the rust kconfig symbol, checking if the c
+> > compiler supports the integer normalisations stuff:
+> > 	depends on !CFI_CLANG || RUSTC_VERSION >=3D 107900 && $(cc-option,-fsa=
+nitize=3Dkcfi -fsanitize-cfi-icall-experimental-normalize-integers)
+> > and also sets the relevant options in the makefile:
+> > 	ifdef CONFIG_RUST
+> > 	       # Always pass -Zsanitizer-cfi-normalize-integers as CONFIG_RUST=
+ selects
+> > 	       # CONFIG_CFI_ICALL_NORMALIZE_INTEGERS.
+> > 	       RUSTC_FLAGS_CFI   :=3D -Zsanitizer=3Dkcfi -Zsanitizer-cfi-norma=
+lize-integers
+> > 	       KBUILD_RUSTFLAGS +=3D $(RUSTC_FLAGS_CFI)
+> > 	       export RUSTC_FLAGS_CFI
+> > 	endif
+> > but it should also have added a rustc-option check as, unfortunately,
+> > support for kcfi in rustc is target specific. This results in build
+> > breakages where the arch supports CFI_CLANG and RUST, but the target in
+> > use does not have the kcfi flag set.
+> > I attempted to fix this by adding:
+> > 	diff --git a/arch/Kconfig b/arch/Kconfig
+> > 	index d1b4ffd6e0856..235709fb75152 100644
+> > 	--- a/arch/Kconfig
+> > 	+++ b/arch/Kconfig
+> > 	@@ -916,6 +916,7 @@ config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
+> > 	 config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
+> > 	        def_bool y
+> > 	        depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
+> > 	+       depends on $(rustc-option,-C panic=3Dabort -Zsanitizer=3Dkcfi =
+-Zsanitizer-cfi-normalize-integers)
+> > 	        depends on RUSTC_VERSION >=3D 107900
+> > 	        # With GCOV/KASAN we need this fix: https://github.com/rust-la=
+ng/rust/pull/129373
+> > 	        depends on (RUSTC_LLVM_VERSION >=3D 190103 && RUSTC_VERSION >=
+=3D 108200) || \
+> > but of course this does not work for cross compilation, as you're
+> > stripping the target information out and so the check passes on my host
+> > even though my intended
+> > RUSTC_BOOTSTRAP=3D1 rustc -C panic=3Dabort -Zsanitizer=3Dkcfi -Zsanitiz=
+er-cfi-normalize-integers -Ctarget-cpu=3Dgeneric-rv64 --target=3Driscv64ima=
+c-unknown-none-elf
+> > is a failure.
+> >=20
+> > I dunno too much about rustc itself, but I suspect that adding kcfi to
+> > the target there is a "free" win, but that'll take time to trickle down
+> > and the minimum version rustc version for the kernel isn't going to have
+> > that.
+> >=20
+> > I'm not really sure what your target.json suggestion below is, so just
+> > reporting so that someone that understands the alternative solutions can
+> > fix this.
+>=20
+> Probably right now we have to do this cfg by
+>=20
+> 	depends on CONFIG_ARM
 
-On Tue, Sep 2, 2025 at 12:38=E2=80=AFAM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> While a BH work item is canceled, the core code spins until it
-> determines that the item completed. On PREEMPT_RT the spinning relies on
-> a lock in local_bh_disable() to avoid a live lock if the canceling
-> thread has higher priority than the BH-worker and preempts it. This lock
-> ensures that the BH-worker makes progress by PI-boosting it.
->
-> This lock in local_bh_disable() is a central per-CPU BKL and about to be
-> removed.
->
-> To provide the required synchronisation add a per pool lock. The lock is
-> acquired by the bh_worker at the begin while the individual callbacks
-> are invoked. To enforce progress in case of interruption, __flush_work()
-> needs to acquire the lock.
-> This will flush all BH-work items assigned to that pool.
->
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  kernel/workqueue.c | 51 ++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 42 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index c6b79b3675c31..94e226f637992 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -222,7 +222,9 @@ struct worker_pool {
->         struct workqueue_attrs  *attrs;         /* I: worker attributes *=
-/
->         struct hlist_node       hash_node;      /* PL: unbound_pool_hash =
-node */
->         int                     refcnt;         /* PL: refcnt for unbound=
- pools */
-> -
-> +#ifdef CONFIG_PREEMPT_RT
-> +       spinlock_t              cb_lock;        /* BH worker cancel lock =
-*/
-> +#endif
->         /*
+It's valid on x86 too, right?
 
-Is it possible to use rt_mutex_init_proxy_locked(), rt_mutex_proxy_unlock()
-and rt_mutex_wait_proxy_lock()?
+>=20
+> to prevent riscv if rustc has the missing setting
+> set on riscv. Once we add it to riscv, we change it to
+>=20
+> 	depends on CONFIG_ARM || (RUSTC_VERSION >=3D ??? || CONFIG_RISCV)
 
-Or is it possible to add something like rt_spinlock_init_proxy_locked(),
-rt_spinlock_proxy_unlock() and rt_spinlock_wait_proxy_lock() which work
-the same as the rt_mutex's proxy lock primitives but for non-sleep context?
+I kinda shied away from something like this since there was already a
+cc-option on the other half and checking different versions per arch
+becomes a mess - but yeah it kinda is a no-brainer to do it here when
+rustc-option is kinda broken.
 
-I think they will work as an rt variant of struct completion and
-they can be used for __flush_work() for BH work for preempt_rt
-as the same way as wait_for_completion() is used for normal work.
+I guess the temporary fix is then:
 
-Thanks
-Lai
+config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
+	def_bool y
+	depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
+	depends on ARM64 || x86_64
+	depends on RUSTC_VERSION >=3D 107900
+	# With GCOV/KASAN we need this fix: https://github.com/rust-lang/rust/pull=
+/129373
+	depends on (RUSTC_LLVM_VERSION >=3D 190103 && RUSTC_VERSION >=3D 108200) |=
+| \
+		(!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
+
+because there's no 32-bit target with SanitizerSet::KCFI in rustc either
+AFAICT. Then later on it'd become more like:
+
+config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
+	def_bool y
+	depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
+	depends on RISCV || ((ARM64 || x86_64) && RUSTC_VERSION >=3D 107900)
+	depends on (ARM64 || x86_64) || (RISCV && RUSTC_VERSION >=3D 999999)
+	# With GCOV/KASAN we need this fix: https://github.com/rust-lang/rust/pull=
+/129373
+	depends on (RUSTC_LLVM_VERSION >=3D 190103 && RUSTC_VERSION >=3D 108200) |=
+| \
+		(!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
+
+but that exact sort of mess is what becomes unwieldy fast since that
+doesn't even cover 32-bit arm.
+
+
+--H+VzOpbPUpNEExps
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLbC+wAKCRB4tDGHoIJi
+0hjyAP9tByKVI1IGeavixZ01MOC4OXttf2BTFfivcgVEZF5lAAEA27I7Tv1B7oFK
+OTlynfN6TLIg3kRbEhZ4XzMKZVeSLgU=
+=lQ9s
+-----END PGP SIGNATURE-----
+
+--H+VzOpbPUpNEExps--
 
