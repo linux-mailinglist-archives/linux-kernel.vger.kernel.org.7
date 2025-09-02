@@ -1,158 +1,131 @@
-Return-Path: <linux-kernel+bounces-796391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3AAB3FFD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:17:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD46B40036
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644601B22006
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:17:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F12805E1E91
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1311D30DD24;
-	Tue,  2 Sep 2025 12:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93D32FFDFC;
+	Tue,  2 Sep 2025 12:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eeyr4qBs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxyMvXjQ"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4D62FFDD4
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995182F0692
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815102; cv=none; b=WfdtYHEe2BFSPR6vW/npaAa3LKmuQXQZTK4u8JqjQHICZ1WevgurAsWszaQVYqFlpM+d+fDZkcEUXDaw8y5i6ICDLaO/nH+KcmcNOP8cAwB+8djfgSA0LQMeE9KjQQ6ULMUNnyhIFPTN6UwTmdlcpiv6G04RPHOXzxc7CuM3iwg=
+	t=1756815101; cv=none; b=oucHSFqoB2hn666DlxMir0gc5pIt18RV98BqsWN+YUfHLihaOKvKhBMKE7gkA07zAfakGxN3VGqzxj7H0uEoCIRyjEorQdVmzUUNlb6MgXA4HS48o3WtPfVPnkWIDpG2gsOvMaUrf4oMGtHDiWsZWG+XY3eTNK9ELuD4GHk+ckg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815102; c=relaxed/simple;
-	bh=VKPh/ct5Q5m08hxDCp/EDthmOiS6ucPULO1VHGN1G3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjjSFeIXWTjG2pzrBu5aCN5CSSFbhT4NvVgCAl7ElOBqrZF+kOlzZcCBr4zo6nSSnMCfyW9Ae2vATX+AXmVgQdUIRUxlw0ra2XGKyoDsF6m58cdByCe6AxTdl2sj0dQcmAFPikCP9nJkMQJlfJI7m+IhjHZZdIN+gYy/e7Y0v44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eeyr4qBs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582BAXST030605
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 12:11:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R9+3e9dP2WaVs0y05qgMULMfCunUKyox0pXutflnw2s=; b=eeyr4qBskZ6+frZT
-	07ReQadFBKOtqTEhsmyQ9kul7fEYeJO+8J+mQQrnwuO9rQRVpNFrYaAe64uu/GEo
-	6/5vGMmjfknMejSA6PujLNvCS6EFRzRGKZqestEKJJa/sn9048M+hHwnRTOFHwAy
-	E6Er00oehkoLqYqQ7+xhusvQpk9CZjTw2AxrXLBpj7XC57NlJtCG3EUpc+wzZGWl
-	UvM1H/10mMCF6qEEBcDTql2UJQtV8v4MUJ0si0QCTMQcphEJy8Egtbsj8tmbJyh0
-	ZGoavm0dRVgWfvUM70fAqplEaWxM/mMs1p5punMdgb1qB9AIRCyAf0tLumVPfaFP
-	sw1wtQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8qp7x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:11:38 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b2967fd196so16300831cf.3
+	s=arc-20240116; t=1756815101; c=relaxed/simple;
+	bh=/KDit76WR/wN90pG29OCtjslpnm7+69jT6279w37Fcg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FVraIA8NtwQlMopsmyaYLMRfIcI8DW9Cp9R931Gd00Jv8dWo0Ml2BKzIe3SE09TO5uDvnfhevn9F0CJBulZzV/K+k/GZG6WgrN77JIRqxVQM0BniMdRBNODJKJkvYE3dTkmq9APvL5XtILN5ZY4srLL8mYsgFrG1OZ1xwHWwlyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxyMvXjQ; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b4f8bf49aeaso1154823a12.1
         for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756815098; x=1757419898; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hcxn6D/ibSYdahoq+sKRu0suEG2CO3fUwHn3gn4nLn8=;
+        b=ZxyMvXjQMRMALFsiNTJ7TnxHqLqJ5qq+qAILbZdR3YPABZ2QJ13euXBHBjacXkq3Ga
+         /N3IQbwBpvoBRpli1WUVHvczEuAI4pCY3H1pSE5TjvTRUVKmED3LLQUEsBRk31Gbca4J
+         b51dCVwoNqTCmTB3Fupdt5pHdo2FNCjf34bqTm3q9wmFzvdFCp8qR6WAuzseJAlJkh8Q
+         6gnsDe4cwt8SfIlH3Yq5AmllehQdq3Tm8TuHefBEb0duyseW/C8+wf0UUCZ8ph6QrjZ6
+         YI17bL+5jJmmQknyp675W14YD3bgDy5QJ37cdxnXpcCmBjGNGBvZqyP09Q0/jBjvBeMU
+         66oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1756815098; x=1757419898;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R9+3e9dP2WaVs0y05qgMULMfCunUKyox0pXutflnw2s=;
-        b=swypkNJ72vphb5IoowrURSHIkmE6o+acArUFdam9knog/8Y8cQWPKCvkHIlkk0boyY
-         P7Ee5onru8lpzIr/gjHlEUd66asyOPiXm1scnJpURDb06ErFZYnyKlyJcu7K+0E2j1dq
-         Ao6ZTzdTS6pjJSSlOzz7k0BvadgFL5QiCcONPED58oyddy7eVLjsOysX3UK2I2Zpn+nt
-         qRK6+xDXOlRBZRq33ZA0GPaHrv1/tcxHB73xIbkBCn+UywciGndAgKkDyOMKt6y6KbnT
-         QV0jcc6gusLd4V15VxI2Y/PQBMjiIU0cFMKz9j7rCp3pZYi6e3FwJcbbHkrH+XbvoRWz
-         OjYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrefKMimgVVt18yvZCkbIOyeld3gDHkYLdksmQ81Psg9j0cUxSM5CGweZCp6w/xA+9ZXLa7Iw4zdeqzfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVvHIVyxUkhb9bZUIrA0jcNd+uNk9nR6SqlvIoxu4TJXNOjuMp
-	55nPSMm2Pv4GmS8hrdORvWjkcjxcthNISnSk5LYAqupOLZL/TJyO2BKQJ84J+QsI0lcCjcvS6kK
-	vsEjXVRtgBOofDH9H4kHiF+yERo73QLaSxH9P9ssjSMQxC6wN9qE7Hpe6Xj7F4ZzxuGU=
-X-Gm-Gg: ASbGncu0D5JcvcdXnjLtBh/6LsymdHDASJOA95DSKqY/YOKVC3B7Ot+8yvJ7NH1Bh/l
-	FXjcDqxXC4e4Vvh1CmyMnI9xwBsqilpctbbR3hN9+8wJ4JuFxmNSbDQMyYHdKw8BeFJvxEINgJe
-	6PKE0nWfntxG3tPtc94byL9MHlHazBVbBXQwmXTKYYOmkdlElddTNHEOQO0trLaofmrgY7k/pZA
-	WxuPS6VwZjQkIKA7NcTrM+xUCa3+bdKMmfyiPRamUj9aLu0Fw7dl0VK2h3D9f6R74+mR4Ip3DJ6
-	IxQY7SSPDRXHOxpIFf3b37VPtJE+TMl1MR1L9hCKW+AVNSus2vRBazW6HeICLkDM9yyNtk3Tro8
-	/7eLcTayU689JB2K3vtrp6A==
-X-Received: by 2002:ac8:5710:0:b0:4ab:723e:fba7 with SMTP id d75a77b69052e-4b313ea00camr114042841cf.7.1756815098020;
-        Tue, 02 Sep 2025 05:11:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFwW4G4jjkaUKtXkdS+GHMSUK5ZRdAh64PysqQIkVPG7KSVbGILFSKErYbYiYkdMuTYCelzhw==
-X-Received: by 2002:ac8:5710:0:b0:4ab:723e:fba7 with SMTP id d75a77b69052e-4b313ea00camr114042341cf.7.1756815097447;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hcxn6D/ibSYdahoq+sKRu0suEG2CO3fUwHn3gn4nLn8=;
+        b=S5KJ1s0d75mDPdU2TsxDSz8OxxhEMlDTVP2xuMntLFqL4OP9dyLw8h+3SOSYF+UkIn
+         2w3iLwsARwqQ/UldYDCnG4hAlCFHrjL98cXDoWwPbBS3pphSxgBkSBBZ50q9Hfbp7xW1
+         YArKsNYxCmhOCR0Dq6mZDfNeN48RsT4fdHBBCLGYc+/HzhtrA6OrzuoEuzZ+pUujDUgi
+         zlkF6DWW6D9kgND8Zje7u7PNzvzFzFgR11aLCT5ZvHyM3HIumJbqZnx0B0a/vmkq6ArB
+         v6JegLVWtfqTRFG7be/nKe9RkI0iDMRxiO13SFvX6zay3b3IYQJPBCmEdrBD0P7mHe8v
+         Ztjw==
+X-Gm-Message-State: AOJu0YxwwBJ2nAalQcglKXqj8uJUVl2lsiXEe+6ciC6mzTG4kO2Gm0fR
+	zHsAVkSWLMCmoydDqZMbBRfUk41M75MwmGIvM+400Dpk9ujIMibh8CIaFkTWb6HIWV0=
+X-Gm-Gg: ASbGncvJCSKELPEmdSLxFdufR3D+kxNCf/c26ZN3802owlPy8WIvYR9Asts+rsoLalf
+	1nE8GHNgUKUBH24AnTztdKbgn3D6iez20d4sPTWipefKkl7K13cq/LBuuFZb1m0X+YTmLt7tWju
+	nUIU4eShQVVs0EBep7vpD0gaoJaVmxKqOfNKt26/vCocpuQWmFblnuDus9b8xZzkSmCWPLHvbSQ
+	YVfL+S1NagBGrBiEi1hciTxuul2K0y4pHWDUWEXa0UeXPIwGa0eIDWKjfgC1WTs3C3fPi4zaQLC
+	rpmrBy+vyJN8Uqld7spKg0boFAexRRrxC8E63KW2zI8opsT0AzHZXok0/JK2qb9ScW4NtTWRE5J
+	97iK8VcxA0Z58TGkZrIPu7GXUDe/vSdW7
+X-Google-Smtp-Source: AGHT+IHK7h/brIhIBkBkVRuFxXqX9nhha+NrFh961RzT1s1Bacw+Guvt9CWS/EurPjJI6J0DEz8RPw==
+X-Received: by 2002:a17:903:3c4b:b0:24b:1589:5046 with SMTP id d9443c01a7336-24b158958f3mr28356235ad.5.1756815097802;
         Tue, 02 Sep 2025 05:11:37 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-affc2fac683sm873825266b.83.2025.09.02.05.11.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 05:11:36 -0700 (PDT)
-Message-ID: <84c48543-815c-44fe-9334-ec1f688e9639@oss.qualcomm.com>
-Date: Tue, 2 Sep 2025 14:11:32 +0200
+Received: from yangwen.localdomain ([117.88.134.52])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249065939b0sm128891565ad.110.2025.09.02.05.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 05:11:37 -0700 (PDT)
+From: YangWen <anmuxixixi@gmail.com>
+To: hirofumi@mail.parknet.co.jp
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fat: fix data-race between fat12_ent_put() and fat_mirror_bhs()
+Date: Tue,  2 Sep 2025 20:11:34 +0800
+Message-ID: <20250902121134.486-1-anmuxixixi@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <87y0qxp6rf.fsf@mail.parknet.co.jp>
+References: <87y0qxp6rf.fsf@mail.parknet.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/10] clk: qcom: gcc-ipq5424: Add gpll0_out_aux clock
-To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        Devi Priya <quic_devipriy@quicinc.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
-        quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
-        quic_suruchia@quicinc.com
-References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
- <20250828-qcom_ipq5424_nsscc-v4-5-cb913b205bcb@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250828-qcom_ipq5424_nsscc-v4-5-cb913b205bcb@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: LyYi9HoGgeompIpWrsoU_VIDILe31QUd
-X-Proofpoint-GUID: LyYi9HoGgeompIpWrsoU_VIDILe31QUd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfXyLAWRyXMKEZB
- Ko0K8wA/CUyUEi7XPCOR3AXvgyVZOMt30Lyq5Z1dw+7JJdV7Wsq7mXvHsBmo+kv8erpfPpuEOjC
- 4tYS3cpcP3zyArSklgrG+mCHeyMqsOju4ojeXBegh358U0nUUXgtv/FurtyKz2dU2Ahah2MrIBi
- r5gjqTJZhpylhO6WWV6TyYKAGMHJqiML3gSSGpvQQAfShlY2BOb/t82u7fEcUt7K+HVsV+EGxs3
- yePbTpvipKMnIQtgHm7uSJxiDe4fgf0cqRXGrPuHZJTH4+iFeJfRoh5GUh4GDuhPmtJkxnplT8v
- 8KL+o7+4ELQ5idX+JbhbDm4cilAL590KD2Jnvc9m6GeaFocyD0h1b7MzLjBlXXI5lD9bwtvw/ot
- ORpHxnnY
-X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b6defa cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=xy1T5CxqftMPibTtt60A:9 a=QEXdDO2ut3YA:10 a=jh1YyD438LUA:10
- a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
+Content-Transfer-Encoding: 8bit
 
-On 8/28/25 12:32 PM, Luo Jie wrote:
-> The clock gpll0_out_aux acts as the parent clock for some of the NSS
-> (Network Subsystem) clocks.
+Hi,
+
+On Tue, 02 Sep 2025 23:13:42 +0900, OGAWA Hirofumi wrote:
+> Hm, what is wrong with temporary inconsistent?
 > 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
+> If it had the race with future modification, it can be temporary
+> inconsistent. However, future modification will fix it by updating with
+> latest blocks, right?
+> 
+> Or did you actually get the inconsistent state after clean unmount?
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Thanks for your comment.
 
-Konrad
+This is not only a temporary in-memory inconsistency.  KCSAN detected a
+race where fat12_ent_put() updates two bytes of a 12-bit FAT entry while
+fat_mirror_bhs() concurrently memcpy()’s the entire sector.  The mirror
+FAT may therefore receive a torn entry.
+
+Since fat_mirror_bhs() marks those buffers dirty, the corrupted mirror
+content can be flushed to disk.  In our syzkaller testing, this already
+resulted in runtime errors such as:
+
+    FAT-fs (loop4): error, clusters badly computed (421 != 418)
+    FAT-fs (loop4): error, fat_bmap_cluster: request beyond EOF (i_pos 2075)
+
+These errors occurred even after a clean unmount, which suggests that the
+inconsistent FAT entries were actually written to disk and not corrected
+later by "future modification".
+
+FAT16/32 do not suffer from this problem because their entries are
+naturally aligned 16/32-bit accesses, which are atomic on supported
+architectures.  FAT12 is special because of the 12-bit packing across
+two bytes.
+
+So I think it is necessary to protect memcpy() in fat_mirror_bhs() with
+fat12_entry_lock to avoid copying a torn FAT12 entry.
+
+Thanks.
+
 
