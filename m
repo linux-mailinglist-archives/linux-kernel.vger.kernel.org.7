@@ -1,176 +1,99 @@
-Return-Path: <linux-kernel+bounces-795636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B14B3F5A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4469B3F5AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2BAC1A86441
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:38:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC2C917595B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D74D2E540C;
-	Tue,  2 Sep 2025 06:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431192E5415;
+	Tue,  2 Sep 2025 06:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X1pcGz/i";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NPNvzpdO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X1pcGz/i";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NPNvzpdO"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJYL3Zxq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01266202F93
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AC8202F93;
+	Tue,  2 Sep 2025 06:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756795071; cv=none; b=MsxW2LGm8wNlj0ntZlPuaADhmC797GL159LMZ0Eex5vCxhKqGM2/3HcAYlJ+RmpmCgVDq1gr9iRgItRf6WmwPA6Sigxjy9+uUgeGBFVkVz4JSqxN6vt7OHUgKrX1SU/9S6lHWw6fopSDARFseAxfTkODTsN/Btq9bIr4AHmBWmA=
+	t=1756795105; cv=none; b=m5ukhL8FBe3VEzLFk7O9rS17fC9wPoH7ICSDR9SOnwxbri9mr0Auqo3pLI03FFzEynux3SZaAMjkbo2NfrTJ0I3AXwh+4YX9RpIR8T9xRfTgG++SLsSnuBmnyOMvsnwjjPB4FOumlwPAUF8sGrYL7IojCIn+su4aGZ3dJo8+pZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756795071; c=relaxed/simple;
-	bh=sPE4Kc+Unl6reAmFjTL5aOHW/HQarIXSqOC1cc+Qdo4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sr9D4qMSyL44LAc1eNw75fHn1jGfC/Pnri9LpBJ5hhmy9qIdSkkyFf6PDzaKpVs6m9vwlpjf5lBBahPJBlVrDcUkIeGVP3bmVKV9OahV82vi6eODbvlY+zY8UrgHJnZ8hUvY6gdgdgqJA9gNtzAysXqie+sYa/uo6a3gC7B9AmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X1pcGz/i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NPNvzpdO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X1pcGz/i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NPNvzpdO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3F3CB1F395;
-	Tue,  2 Sep 2025 06:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756795062; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YdW9vvIXltHFOltrHb059oMVAnYxDBFx4gR2hd/NFC8=;
-	b=X1pcGz/isnEA46NWN/CHqhQfFqd8a9jeTqsFicrxXPdpLUaZh/kL1pAVmf4UHaMj+EFLax
-	igLYGnbCcfXKGPqqfD0MhlsneO9sL5ZkZ519Uu5Ne+lZCyih8rcyfuvoMgIYh+yf9ntmZS
-	h3qAG5vICmXOCL17LFDGKB8D5yZNbMg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756795062;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YdW9vvIXltHFOltrHb059oMVAnYxDBFx4gR2hd/NFC8=;
-	b=NPNvzpdO8s+0zZ/YNfwgT2fHAllyj8EEBrcgASCamUi0cTsZon2c1X8R92MN6YO3S5YjoC
-	PLBhzR5bBZIWDxCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756795062; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YdW9vvIXltHFOltrHb059oMVAnYxDBFx4gR2hd/NFC8=;
-	b=X1pcGz/isnEA46NWN/CHqhQfFqd8a9jeTqsFicrxXPdpLUaZh/kL1pAVmf4UHaMj+EFLax
-	igLYGnbCcfXKGPqqfD0MhlsneO9sL5ZkZ519Uu5Ne+lZCyih8rcyfuvoMgIYh+yf9ntmZS
-	h3qAG5vICmXOCL17LFDGKB8D5yZNbMg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756795062;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YdW9vvIXltHFOltrHb059oMVAnYxDBFx4gR2hd/NFC8=;
-	b=NPNvzpdO8s+0zZ/YNfwgT2fHAllyj8EEBrcgASCamUi0cTsZon2c1X8R92MN6YO3S5YjoC
-	PLBhzR5bBZIWDxCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E32E813888;
-	Tue,  2 Sep 2025 06:37:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id X+MiNbWQtmg/UwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 02 Sep 2025 06:37:41 +0000
-Message-ID: <dc15bdf0-9b16-43a3-ba8a-b335b8042934@suse.de>
-Date: Tue, 2 Sep 2025 08:37:41 +0200
+	s=arc-20240116; t=1756795105; c=relaxed/simple;
+	bh=y+KwSI21zIY/J9GHDXq5VKNRciMqhOzsq5iKLOeZwE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jCwyJhNz8dlxhowVoI/Tryhasb393CCiD7UsqebyVxcWb2YdiJJczGoxa2nYdTdQlcNyFftlQTMwvsFjQYhfRjW8/pQXJo5B/Wy3I0tXemWrECTgqysFLrt+sgdGYGeHhyG9fL6riIs9WuRPtDCzyAkUiegna58bV7h/z4UdnDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJYL3Zxq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B14CC4CEED;
+	Tue,  2 Sep 2025 06:38:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756795105;
+	bh=y+KwSI21zIY/J9GHDXq5VKNRciMqhOzsq5iKLOeZwE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GJYL3ZxqIlgu8oiq4zv/Z3l+Z6ZlSDoILhccVWVAK7W0ZudUYz0lGxgvjjoCKfHNg
+	 Tcah2MvFYbZ4MLAbA4Q+E/LHk5lJAh3H8TW97irv8Dk5uy5M8XOD+qXPPZwIws1V2t
+	 u0JGMDE2uf6XyLWcFAwOuCkQ5q4b1pj+a6hZ4Jv492D15pW4cY7MTSm1ipYGpggfV/
+	 54eo0apGUdT5vUVVY/HCDX5nLGoASO32IhqQWi4rOjaVMW2PejGEj1/+vvveaxPgtJ
+	 twNpA5RP9UI/hqBgyMZWNPaRQ6aq1/bJykc59SoYo03zVyypAJk/3oJ93T6+23hc4X
+	 hLsm746sqY2PQ==
+Date: Tue, 2 Sep 2025 08:38:22 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 2/6] dt-bindings: display/msm: dp-controller:
+ document QCS8300 compatible
+Message-ID: <20250902-speedy-overjoyed-dove-edf2ee@kuoka>
+References: <20250901-qcs8300_mdss-v10-0-87cab7e48479@oss.qualcomm.com>
+ <20250901-qcs8300_mdss-v10-2-87cab7e48479@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] scsi: scsi_error: Introduce new error handle
- mechanism
-To: JiangJianJun <jiangjianjun3@huawei.com>, linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, hewenliang4@huawei.com,
- yangyun50@huawei.com, wuyifeng10@huawei.com, yangxingui@h-partners.com
-References: <17230842-0a7a-403e-abc7-a15e3aa5d424@suse.de>
- <20250902055628.2524926-1-jiangjianjun3@huawei.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250902055628.2524926-1-jiangjianjun3@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250901-qcs8300_mdss-v10-2-87cab7e48479@oss.qualcomm.com>
 
-On 9/2/25 07:56, JiangJianJun wrote:
->> I fully agree that SCSI EH is in need of reworking. But adding
->> another layer of complexity on top of the existing one ... not sure.
-> 
-> Perhaps it would have been better to use only the error handler on the
-> device from the start. Users might wonder why a single disk failure
-> could cause other disks to become blocking.
-> 
->> Additionally: TARGET RESET TMF is dead, and has been removed from SAM
->> since several years. It really is not worthwhile implementing.
-> 
-> Hmm.
-> 
->> Can't we take a simple step, and just try to have a non-blocking version
->> of device reset?
->> I think that should cover quite some issues already.
-> 
-> Do you think it's necessary to escalate the issue after the device reset
-> fails? Should we reset the bus or the host?
-> Moreover, a failed device reset does not necessarily indicate a fault
-> with the target or host.
-> And what means of "non-blocking"?
-> 
-On the contrary, a failed device reset _always_ needs to be escalated.
-The problem is that all EH issues start with a failed command (ignoring
-the sg_reset case for now).
-And a command typically is associated with data buffers / memory areas.
-So when a command is failed we need to know when these buffers can be
-released. If the device reset fails the command could not be reset,
-and the buffers cannot be released. And without further escalation the
-buffers remain locked until the next reboot.
-That's why host reset is so important: that typically resets the entire
-HBA (via a PCI-level reset or similar), so we can be sure that
-afterwards all buffers are released and the command can be completed.
+On Mon, Sep 01, 2025 at 05:57:30PM +0800, Yongxing Mou wrote:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              # QCS8300 only has one DP controller that supports 4
+> +              # streams MST.
+> +              - qcom,qcs8300-dp
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 9
+> +          maxItems: 9
+> +        clocks:
+> +          minItems: 8
+> +          maxItems: 8
 
-Cheers,
+Clocks have only five items, reg has 5. At least in my next from few
+days ago.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Nothing explains any patchset dependencies, so this makes reviewing more
+difficult than it should be.
+
+Best regards,
+Krzysztof
+
 
