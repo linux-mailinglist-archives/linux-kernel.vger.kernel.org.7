@@ -1,414 +1,240 @@
-Return-Path: <linux-kernel+bounces-797031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50273B40AE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:43:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B68B40AE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E86F416997B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:43:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553AC1BA293C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1846327787;
-	Tue,  2 Sep 2025 16:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78771327787;
+	Tue,  2 Sep 2025 16:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZvn64uf"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Wg8dBJfF"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35482877FC;
-	Tue,  2 Sep 2025 16:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831400; cv=none; b=JCABddLK99QvVL3KHowh3TbXWDrQENNrT2AtbKCU4i2jbmoYh8YA1NVcZk2BX3LAyDbF9Ar/nurzs/WKbz2Ry/2Vgugc41GMYbAc9gNKLiLBogRIFRhwzp+5Zwo8fdYgLpaqUh1DNM0FsiBat7LHXz/qhZ3ab/92nNsBJFFymUQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831400; c=relaxed/simple;
-	bh=pNQF920LCP5sfkJuLl2/bHlmNH0CpwtW8TRO7FNfORw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VybPKP21lGM32zLxUtJF9RH6AMrcZElsXaSi8pVDE6OAvEYApMBcf8O5tc21QSkENQ/giBG25KEC/Ntxxp7QQ9h9O+dEYblftGk0jSnZw1g/WtxCDSIgF+RTTz8X7/Wz8ATZ5sICrll7eHnJ5Pw1agEERVGW6nnnqh9pPjJ2mUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZvn64uf; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-887490f0654so44032639f.0;
-        Tue, 02 Sep 2025 09:43:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756831397; x=1757436197; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f0l/lpFpsMhxQP1BvXo5dY414yVX8MMT3B+6FaO0U0c=;
-        b=KZvn64ufMxRdF+PP/PT8zNokm0yEojvgEVQdu+7RSzjSdZa5zU7qMiU2HTkcG/KBoZ
-         9ws03m4+rEt9H2+EU8ARhnh0ztGLORDRUiXbFKFcboQtg/NuO7bH5Kiye0YwFpY7VSqj
-         GygOZKWzOoSe5Bfe4tlBHvIajldEaeTnlSQejkXgnIVS6+jIIgCiBoBqcknEy/PIY/z0
-         JVfd4EHvwSUTdXNk7tFKC3FznjbOU1QJwF8mCD31VwXcmAjYBG/CvCNEKXXxpeEhfiOo
-         iICuTVBhDG9jWZe5VlUSLCvUZJJVQVYKCPdHmnwVcBxe07qNFTVvQOBkkWf9/VkVp8KA
-         qTZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756831397; x=1757436197;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f0l/lpFpsMhxQP1BvXo5dY414yVX8MMT3B+6FaO0U0c=;
-        b=IIZ7OsA3bvUzns6e1pkHYzkXZiVD50y4VBAUNk2o4Wo1i9oB9BY17L8gjbDT8jhIPx
-         7/EElGrY1HeuGDKZP2EYgl/Ws7YzwQrk52LCoT+OFAqFkqFKSPQYe5as5pjdiFH+9IQy
-         sctZfJekYEy9xwwAxDavI2j2ickPtxFgWFdHDkE79GkP7e/Ye342cUVmhhXBD2Sg/H08
-         8zegJJEl+UER0wg5V/D3GKrUeuPTfXZNfRNfRADmE0mLLK2VjbLcolEBQC+XdiIYjzGw
-         lg6eOTTcOoYhy535xq768HqIzC7RTr+b0tTdYBPrF/EX8I1gvLAL+O/3KAHpNgJgFvRA
-         4dAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmoxkhHwi1kt8NlB4nO8uB1pkGc9P/rs7RJBe5c4Wc5DPJqhfEAADmO0fOWtfxcYz0Uo3TGM97ixsQM5Y=@vger.kernel.org, AJvYcCVCM/qaO/jpcuBAMPLQiDwh54UiIsH89Eru2q9nrbiwQmyeqH0eb3RdzZs7ONSGS5RqQiDUBt1B@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6ZcIpcR3OHP0ue8TplvNS5d3fUNzBGRCUkDA/aTf14uKMRy+k
-	CKKP3PXjMmP+tyUQgBXlNlnfiaXE56C/CGV7H5R43dQ8rIsxCMjU6wzxA6BoCAHPh8VISCSIHl6
-	NCu3Ozf0g35vZohCWw65IfmicSmENNlg=
-X-Gm-Gg: ASbGncsm8zyXDZ/PbDlX9Lz0qM2KSXi7F4/Ksy5kKrLvk098FWgI4v7Z1LRB974CePh
-	icbU2bmbJ0mr24k/fOGopsjYpUi4fBYKIurbVDAXPBjgdiDr+5oA9Os6S/euuWROtG6I2we3xCI
-	rdqzrYzfRZttpQi4+si3IitokTLItMOXQi+cT5icW/t2L+EQQmoEDRcmgbw3z7IntbJkNL4LoIt
-	zNjqaQ=
-X-Google-Smtp-Source: AGHT+IFKIPZnrHdY3XIMV3a1mVk429grb81ouaqdswR4E+iGmnFWdewNuJwcO3WbaFkhhSqzpTgjttmTtvSMo8O4RwE=
-X-Received: by 2002:a05:6e02:2147:b0:3f0:71da:c07 with SMTP id
- e9e14a558f8ab-3f4021c7ae1mr198398625ab.22.1756831397249; Tue, 02 Sep 2025
- 09:43:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7542E0922;
+	Tue,  2 Sep 2025 16:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756831378; cv=fail; b=d7+F0DKAU9vospXJOszWCPeIGs67XO9Z6cbmnCrlPTXvp6Wq7a06glNWBPV55QvZkbGvlHmxPD+ND2wpkHh/N5wZOqzPwsyPcDfkpeS1XMJ3rD7ViV4TNDlL2wWKS6Ms2d+rhrb8PH77mbAOlv/kag+TvA1BQO8WcCFuMAr562A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756831378; c=relaxed/simple;
+	bh=dREZtTlr/Txl96Al4uaDTaumZH0avMgaoqSl0khBMJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pfC8Ej+71dy1qp0JgV8yyiapnioL0VS2VIqqkjxQn4y0V+paJLJ8VPtdQdLp6v55Z3RxOgceYuglRzn1zZiRDugeD3lFKLYaEI1UwKG2fksIVlRipQ4syoD1EuQDcnssXa8qQvn5UpAhY4Ry/dTAR+I+/6PFL4YktuuIoudwwzY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Wg8dBJfF; arc=fail smtp.client-ip=40.107.237.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sm/WarTe8VhCIU+EeVOTS4ofL26q9Zr/1mbsny74LA5h6br+x77Y/s/As5r6YMoQ9ubBASDxRLCWMs8wo5iH80QZiukmFwikQysBq1bgIMwBz09nFxKUoNirrwEf5cuXEaLAon65UrcqGL3WLwZYGnEG9abmyAklqGGPOA7ATaKaWTxLW+ngeFZccZ1uWldBayZlOeXqWlLSOU/bPkUhGcygbdkxKD6eqEnrVOPjpFvutJ7VEU3ruQJoSZSjr07ORB4EivGQLhm650oXPPRdAZTvhlpqsAw+Co3TjQBLRjp3NnfYFGYSRnUMBrCIDeYS3Sy/dOjsMKqScCqd0TM2kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P8ZPk7pHhe9CS5wxuHRIkvDpa/m/8S6/lQZG225TEss=;
+ b=FjfwWzvxgWG6SQfI7/zE9ox1qNmLEF1sI9lVZxjDH+7AzgE3QjizVMdnDgWtSW5mDrZ0cnZtKpjWKEZBechFyC/q3Ls+wZs0Lp/d4FMpLdvifaIGe6HpzJZ7VYWgqT0/wFXoAQlHMtLk1qTmeH3dJ9mALiovWb4zCQKFxxLProHlps3QgfVLN2XSH0K3Envph+HrTY4zCDcYRa42WRUDPzn3jP2t9IKkxJQVYEWcERUsWFYNjtAQx7FW7TFFuZTIA9LLnC1sqFXY4LsNH5PYfKzHpHE878G7q/mYnSqlrY+yQkqCa1qa6dokYW/9M0YKbm2+P6JNWBwTntrCmsy7iQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=amarulasolutions.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P8ZPk7pHhe9CS5wxuHRIkvDpa/m/8S6/lQZG225TEss=;
+ b=Wg8dBJfFtv1gFCcnRFbm8iwVWovYQUtzlAZA86WkylRBzY/ZRnrVIU+lwmgg1lZSBwAhtBZNgBlJ4aA4sH8Pn3ftB8hosSyw3QppEmDkRH286qONwN3K4/OW3AsZCBlzJ4QM23yqEgC8OVRpSV048y0GK1231B8H7EaACTT8TOA=
+Received: from CH2PR20CA0004.namprd20.prod.outlook.com (2603:10b6:610:58::14)
+ by MN0PR12MB6055.namprd12.prod.outlook.com (2603:10b6:208:3cd::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 16:42:53 +0000
+Received: from CH3PEPF00000011.namprd21.prod.outlook.com
+ (2603:10b6:610:58:cafe::af) by CH2PR20CA0004.outlook.office365.com
+ (2603:10b6:610:58::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.29 via Frontend Transport; Tue,
+ 2 Sep 2025 16:42:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CH3PEPF00000011.mail.protection.outlook.com (10.167.244.116) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9115.0 via Frontend Transport; Tue, 2 Sep 2025 16:42:53 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
+ 2025 11:42:52 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Tue, 2 Sep
+ 2025 09:42:52 -0700
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 2 Sep 2025 11:42:52 -0500
+Message-ID: <423ef4b3-d92b-8833-e21e-88ac4153c87e@amd.com>
+Date: Tue, 2 Sep 2025 09:42:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831100822.1238795-1-jackzxcui1989@163.com>
- <20250831100822.1238795-3-jackzxcui1989@163.com> <CAL+tcoCAVxt3RuYEsaqcvprCfMWfA0A34O9S3xSexzmmnbwSJQ@mail.gmail.com>
-In-Reply-To: <CAL+tcoCAVxt3RuYEsaqcvprCfMWfA0A34O9S3xSexzmmnbwSJQ@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Wed, 3 Sep 2025 00:42:41 +0800
-X-Gm-Features: Ac12FXyKVQ1dS1tKR_JR2tMZEMNL2kKMnljwh3Ao9GDPNUbF8i28ao2WUF22sfs
-Message-ID: <CAL+tcoCp12t_5PRWWkiMi++1MgYX4WXW4dUDXYzHF_tJACw3dg@mail.gmail.com>
-Subject: Re: [PATCH net-next v10 2/2] net: af_packet: Use hrtimer to do the
- retire operation
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: willemdebruijn.kernel@gmail.com, edumazet@google.com, ferenc@fejes.dev, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2] dmaengine: xilinx: xdma: Fix regmap max_register
+Content-Language: en-US
+To: <anthony@amarulasolutions.com>, Brian Xu <brian.xu@amd.com>, "Raj Kumar
+ Rampelli" <raj.kumar.rampelli@amd.com>, Vinod Koul <vkoul@kernel.org>, Michal
+ Simek <michal.simek@amd.com>
+CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000011:EE_|MN0PR12MB6055:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2141bff9-cb01-4e1c-1823-08ddea3fc32f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VTFLdW5Tb3NRYmJQeWpPRi92RFVOKzJ3ZWwvVTBaaVNjT05PVUdWTjlJUVhj?=
+ =?utf-8?B?VlptSVBaRC9sYlFXaUpVVzZHTklvaEZCY213R0dDUjJ3M0VLSmVHdW10MjZr?=
+ =?utf-8?B?UjlQZmRlTXdiSVlQY3czOWtQRXhHZnZFakRFcUJ0S08weGUvdmpFTXVpNjNL?=
+ =?utf-8?B?eWVWMFR1NVRPRlJRck1uOVJuVHlBeU5aZVBwTjkyUFY4SG94WnpvVHQ1eGJ0?=
+ =?utf-8?B?YWlSSEd5YnQxVzFTMld5aWg0ZGJNTGJnanVGVzFWb2RjdHJQVzE3aldxUE5E?=
+ =?utf-8?B?cjBPL1JGNmZHbkhkQmU1Ylk2bDZPbTJjdzJzOC9iTnR5T3pMRSt4c3ErSExE?=
+ =?utf-8?B?WTQ1TkNnekJ2dWNWTVBSYW5jSEt0MHNVZE9nNHpIVEFuYUlVQVVDSG9mZ2Nr?=
+ =?utf-8?B?QnBibXZBQ2V5cnZsMnI5WG5LdW05TWZQUDZ5OTVIbXpTdXlQVFFlczJVQXRv?=
+ =?utf-8?B?UmZXQzVWK2MvaGVEbVJ2cnQ5OVNJWkU2QmIyVkF6LzFQeU9kTW45cnZCWmdo?=
+ =?utf-8?B?MnlyaHJiK0pXYnpZeWZhNGJ6dWpSK0t5OEFtWStEM0NhTU5wNEVNUmxHV1Rq?=
+ =?utf-8?B?MlZ0M3FjRTU3dUl6M0NRQUZ4V1dibmxnUlAwZmpuQmQwdWd6VkJMTy9vLzkx?=
+ =?utf-8?B?MVBUUnE5NGxYTzVjc01KcUZhVXBVYkxiWml0UE5RN0M2WXJDclRsbVdEeGZu?=
+ =?utf-8?B?MHJTZm4vTk9naFZIbEM3aVhLN2RLSEwxMGZXZFBZaFU4eGtEVUltNDNOdmRE?=
+ =?utf-8?B?b0YvaS9uVlVMYmw0UndQbzF0YkpKWFoyZ1VQUGhmWW93RlkrakQ4NDZlTXF4?=
+ =?utf-8?B?TU9WVzQvTU16YUdNd3FXUFR5dWZ1bWFWcG43dTIrNjBVR3pnRStBTmw2VkVj?=
+ =?utf-8?B?a0t3SUlSY3V3UW5nZDkwU3NsL0RKVjdWSlFnN0hvSWlheEJ4cHNMSFJBejdI?=
+ =?utf-8?B?VEtFR2xScGwwRmZtSFJMNDdCN2JhMVFDN1pUVXhsUSsxVkNZZFhtcW1mUysz?=
+ =?utf-8?B?a2lGTXdDbUc0VkNhSHdiQVhEUkNKZXJoOTRQWmZMS3BiOGw2T01FSVBYcE13?=
+ =?utf-8?B?Y2lwSTV0NWl3UFRrZTcveHg0K2I0VlA0VW5iN3NzdXpTOU5BNlgvS2s2OG90?=
+ =?utf-8?B?S2NvNVVJM2QrYU5raDNEWk5QMUZQNkVPblk3ZkhQZXA2TU5RemIzUnFjb1M3?=
+ =?utf-8?B?dWZCeFZLMFd3SjhXaTM0bFZ1WlFQYk5Db3p6R3p3K3kwM0tJRFBQVnI0c1My?=
+ =?utf-8?B?RFRnRXMweVhJQndRUThkQ0dMRXdmT1hNSG9BK3hBaWVkN3JJMFFOSVRHUVc5?=
+ =?utf-8?B?S3RxUi96L1oxZ2p3Y1BVTGhHZ3UvU1k5OG9jZWdyTzMxSDZSdXZ0UytwNnJ6?=
+ =?utf-8?B?TTUrVTNia2Z5TVRBclE4SHdIQUVkNGpDZk4wU3ZqMVZvRjJoSUtsLzVkSk81?=
+ =?utf-8?B?R3gxYURtNnVjMldycnlqakZCZEhJSHlGdnVFWnE2bVlDSW1PQ2oySlBKVE11?=
+ =?utf-8?B?UzZUOXc5VGsxRVpjRk94ZmloOXJrekh1a3pwM1JKejhTbGEwOHdFSEdXNVph?=
+ =?utf-8?B?ekIvSytPVjcvdjVwSVplaVhmM215L1ZqSHBiMCtYMWtyMmxEOW5pdDN0M1FI?=
+ =?utf-8?B?anBtLytKWjdGclRyeWVLU1lhSUtOd0lNQjJtTHVEbk9uOGZiZWwyMDRSR3Js?=
+ =?utf-8?B?ZGRHZ3lDYVF3UWhkZjh1OWEwTjhySmJmSmdZZjZXd1hPbW0rcG1qQmlMbGlF?=
+ =?utf-8?B?TWpXWXB5emNRVCsvUDd4dEhReXpxTFliQXNaMExKNVc4MmxCZWdPQ0w1b1Z6?=
+ =?utf-8?B?Rmh6TjhxR2RzUTcxT0ltUXZ3U1NwZmZBZnkzclY1VzBxamFlcVYySXpCVFJx?=
+ =?utf-8?B?VGhMSlpCV2N1bGxJSnJWeVdyN21lTzJQWXRVdkVtZWcxMHB4L1RUYjMzSjV2?=
+ =?utf-8?B?YlhuNTdEaDBJbWtzYjlzWklwenJZL011S2lvb2hNcEJZZ2RUaUhGTEo1UU9v?=
+ =?utf-8?B?dDA1Sm1CY3dRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 16:42:53.4407
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2141bff9-cb01-4e1c-1823-08ddea3fc32f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF00000011.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6055
 
-On Tue, Sep 2, 2025 at 11:43=E2=80=AFPM Jason Xing <kerneljasonxing@gmail.c=
-om> wrote:
->
-> On Sun, Aug 31, 2025 at 6:09=E2=80=AFPM Xin Zhao <jackzxcui1989@163.com> =
-wrote:
-> >
-> > In a system with high real-time requirements, the timeout mechanism of
-> > ordinary timers with jiffies granularity is insufficient to meet the
-> > demands for real-time performance. Meanwhile, the optimization of CPU
-> > usage with af_packet is quite significant. Use hrtimer instead of timer
-> > to help compensate for the shortcomings in real-time performance.
-> > In HZ=3D100 or HZ=3D250 system, the update of TP_STATUS_USER is not rea=
-l-time
-> > enough, with fluctuations reaching over 8ms (on a system with HZ=3D250)=
-.
-> > This is unacceptable in some high real-time systems that require timely
-> > processing of network packets. By replacing it with hrtimer, if a timeo=
-ut
-> > of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-> > 3 ms.
-> >
-> > Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
-> > ---
-> > Changes in v8:
-> > - Simplify the logic related to setting timeout.
-> >
-> > Changes in v7:
-> > - Only update the hrtimer expire time within the hrtimer callback.
-> >
-> > Changes in v1:
-> > - Do not add another config for the current changes.
-> >
-> > ---
-> >  net/packet/af_packet.c | 79 +++++++++---------------------------------
-> >  net/packet/diag.c      |  2 +-
-> >  net/packet/internal.h  |  6 ++--
-> >  3 files changed, 20 insertions(+), 67 deletions(-)
-> >
-> > diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> > index d4eb4a4fe..3e3bb4216 100644
-> > --- a/net/packet/af_packet.c
-> > +++ b/net/packet/af_packet.c
-> > @@ -203,8 +203,7 @@ static void prb_retire_current_block(struct tpacket=
-_kbdq_core *,
-> >  static int prb_queue_frozen(struct tpacket_kbdq_core *);
-> >  static void prb_open_block(struct tpacket_kbdq_core *,
-> >                 struct tpacket_block_desc *);
-> > -static void prb_retire_rx_blk_timer_expired(struct timer_list *);
-> > -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core =
-*);
-> > +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrt=
-imer *);
-> >  static void prb_fill_rxhash(struct tpacket_kbdq_core *, struct tpacket=
-3_hdr *);
-> >  static void prb_clear_rxhash(struct tpacket_kbdq_core *,
-> >                 struct tpacket3_hdr *);
-> > @@ -579,33 +578,13 @@ static __be16 vlan_get_protocol_dgram(const struc=
-t sk_buff *skb)
-> >         return proto;
-> >  }
-> >
-> > -static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-> > -{
-> > -       timer_delete_sync(&pkc->retire_blk_timer);
-> > -}
-> > -
-> >  static void prb_shutdown_retire_blk_timer(struct packet_sock *po,
-> >                 struct sk_buff_head *rb_queue)
-> >  {
-> >         struct tpacket_kbdq_core *pkc;
-> >
-> >         pkc =3D GET_PBDQC_FROM_RB(&po->rx_ring);
-> > -
-> > -       spin_lock_bh(&rb_queue->lock);
-> > -       pkc->delete_blk_timer =3D 1;
+Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
 
-One more review from my side is that as to the removal of
-delete_blk_timer, I'm afraid it deserves a clarification in the commit
-message.
-
-> > -       spin_unlock_bh(&rb_queue->lock);
-> > -
-> > -       prb_del_retire_blk_timer(pkc);
-> > -}
-> > -
-> > -static void prb_setup_retire_blk_timer(struct packet_sock *po)
-> > -{
-> > -       struct tpacket_kbdq_core *pkc;
-> > -
-> > -       pkc =3D GET_PBDQC_FROM_RB(&po->rx_ring);
-> > -       timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_exp=
-ired,
-> > -                   0);
-> > -       pkc->retire_blk_timer.expires =3D jiffies;
-> > +       hrtimer_cancel(&pkc->retire_blk_timer);
-> >  }
-> >
-> >  static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-> > @@ -671,29 +650,22 @@ static void init_prb_bdqc(struct packet_sock *po,
-> >         p1->version =3D po->tp_version;
-> >         po->stats.stats3.tp_freeze_q_cnt =3D 0;
-> >         if (req_u->req3.tp_retire_blk_tov)
-> > -               p1->retire_blk_tov =3D req_u->req3.tp_retire_blk_tov;
-> > +               p1->interval_ktime =3D ms_to_ktime(req_u->req3.tp_retir=
-e_blk_tov);
-> >         else
-> > -               p1->retire_blk_tov =3D prb_calc_retire_blk_tmo(po,
-> > -                                               req_u->req3.tp_block_si=
-ze);
-> > -       p1->tov_in_jiffies =3D msecs_to_jiffies(p1->retire_blk_tov);
-> > +               p1->interval_ktime =3D ms_to_ktime(prb_calc_retire_blk_=
-tmo(po,
-> > +                                               req_u->req3.tp_block_si=
-ze));
-> >         p1->blk_sizeof_priv =3D req_u->req3.tp_sizeof_priv;
-> >         rwlock_init(&p1->blk_fill_in_prog_lock);
-> >
-> >         p1->max_frame_len =3D p1->kblk_size - BLK_PLUS_PRIV(p1->blk_siz=
-eof_priv);
-> >         prb_init_ft_ops(p1, req_u);
-> > -       prb_setup_retire_blk_timer(po);
-> > +       hrtimer_setup(&p1->retire_blk_timer, prb_retire_rx_blk_timer_ex=
-pired,
-> > +                     CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
-> > +       hrtimer_start(&p1->retire_blk_timer, p1->interval_ktime,
-> > +                     HRTIMER_MODE_REL_SOFT);
+On 9/1/25 14:30, Anthony Brandon via B4 Relay wrote:
+> From: Anthony Brandon <anthony@amarulasolutions.com>
 >
-> You expect to see it start at the setsockopt phase? Even if it's far
-> from the real use of recv at the moment.
+> The max_register field is assigned the size of the register memory
+> region instead of the offset of the last register.
+> The result is that reading from the regmap via debugfs can cause
+> a segmentation fault:
 >
-> >         prb_open_block(p1, pbd);
-> >  }
-> >
-> > -/*  Do NOT update the last_blk_num first.
-> > - *  Assumes sk_buff_head lock is held.
-> > - */
-> > -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core =
-*pkc)
-> > -{
-> > -       mod_timer(&pkc->retire_blk_timer,
-> > -                       jiffies + pkc->tov_in_jiffies);
-> > -}
-> > -
-> >  /*
-> >   * Timer logic:
-> >   * 1) We refresh the timer only when we open a block.
-> > @@ -717,7 +689,7 @@ static void _prb_refresh_rx_retire_blk_timer(struct=
- tpacket_kbdq_core *pkc)
-> >   * prb_calc_retire_blk_tmo() calculates the tmo.
-> >   *
-> >   */
-> > -static void prb_retire_rx_blk_timer_expired(struct timer_list *t)
-> > +static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrt=
-imer *t)
-> >  {
-> >         struct packet_sock *po =3D
-> >                 timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_t=
-imer);
-> > @@ -730,9 +702,6 @@ static void prb_retire_rx_blk_timer_expired(struct =
-timer_list *t)
-> >         frozen =3D prb_queue_frozen(pkc);
-> >         pbd =3D GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
-> >
-> > -       if (unlikely(pkc->delete_blk_timer))
-> > -               goto out;
-> > -
-> >         /* We only need to plug the race when the block is partially fi=
-lled.
-> >          * tpacket_rcv:
-> >          *              lock(); increment BLOCK_NUM_PKTS; unlock()
-> > @@ -749,26 +718,16 @@ static void prb_retire_rx_blk_timer_expired(struc=
-t timer_list *t)
-> >         }
-> >
-> >         if (!frozen) {
-> > -               if (!BLOCK_NUM_PKTS(pbd)) {
-> > -                       /* An empty block. Just refresh the timer. */
-> > -                       goto refresh_timer;
-> > +               if (BLOCK_NUM_PKTS(pbd)) {
-> > +                       /* Not an empty block. Need retire the block. *=
-/
-> > +                       prb_retire_current_block(pkc, po, TP_STATUS_BLK=
-_TMO);
-> > +                       prb_dispatch_next_block(pkc, po);
-> >                 }
-> > -               prb_retire_current_block(pkc, po, TP_STATUS_BLK_TMO);
-> > -               if (!prb_dispatch_next_block(pkc, po))
-> > -                       goto refresh_timer;
-> > -               else
-> > -                       goto out;
-> >         } else {
-> >                 /* Case 1. Queue was frozen because user-space was
-> >                  * lagging behind.
-> >                  */
-> > -               if (prb_curr_blk_in_use(pbd)) {
-> > -                       /*
-> > -                        * Ok, user-space is still behind.
-> > -                        * So just refresh the timer.
-> > -                        */
-> > -                       goto refresh_timer;
-> > -               } else {
-> > +               if (!prb_curr_blk_in_use(pbd)) {
-> >                         /* Case 2. queue was frozen,user-space caught u=
-p,
-> >                          * now the link went idle && the timer fired.
-> >                          * We don't have a block to close.So we open th=
-is
-> > @@ -777,15 +736,12 @@ static void prb_retire_rx_blk_timer_expired(struc=
-t timer_list *t)
-> >                          * Thawing/timer-refresh is a side effect.
-> >                          */
-> >                         prb_open_block(pkc, pbd);
-> > -                       goto out;
-> >                 }
-> >         }
-> >
-> > -refresh_timer:
-> > -       _prb_refresh_rx_retire_blk_timer(pkc);
-> > -
-> > -out:
-> > +       hrtimer_forward_now(&pkc->retire_blk_timer, pkc->interval_ktime=
-);
-> >         spin_unlock(&po->sk.sk_receive_queue.lock);
-> > +       return HRTIMER_RESTART;
-> >  }
-> >
-> >  static void prb_flush_block(struct tpacket_kbdq_core *pkc1,
-> > @@ -917,7 +873,6 @@ static void prb_open_block(struct tpacket_kbdq_core=
- *pkc1,
-> >         pkc1->pkblk_end =3D pkc1->pkblk_start + pkc1->kblk_size;
-> >
-> >         prb_thaw_queue(pkc1);
-> > -       _prb_refresh_rx_retire_blk_timer(pkc1);
+> tail /sys/kernel/debug/regmap/xdma.1.auto/registers
+> Unable to handle kernel paging request at virtual address ffff800082f70000
+> Mem abort info:
+>    ESR = 0x0000000096000007
+>    EC = 0x25: DABT (current EL), IL = 32 bits
+>    SET = 0, FnV = 0
+>    EA = 0, S1PTW = 0
+>    FSC = 0x07: level 3 translation fault
+> [...]
+> Call trace:
+>   regmap_mmio_read32le+0x10/0x30
+>   _regmap_bus_reg_read+0x74/0xc0
+>   _regmap_read+0x68/0x198
+>   regmap_read+0x54/0x88
+>   regmap_read_debugfs+0x140/0x380
+>   regmap_map_read_file+0x30/0x48
+>   full_proxy_read+0x68/0xc8
+>   vfs_read+0xcc/0x310
+>   ksys_read+0x7c/0x120
+>   __arm64_sys_read+0x24/0x40
+>   invoke_syscall.constprop.0+0x64/0x108
+>   do_el0_svc+0xb0/0xd8
+>   el0_svc+0x38/0x130
+>   el0t_64_sync_handler+0x120/0x138
+>   el0t_64_sync+0x194/0x198
+> Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
+> ---[ end trace 0000000000000000 ]---
+> note: tail[1217] exited with irqs disabled
+> note: tail[1217] exited with preempt_count 1
+> Segmentation fault
 >
-> Could you say more on why you remove this here and only reset/update
-> the expiry time in the timer handler? Probably I missed something
-> appearing in the previous long discussion.
-
-I gradually understand your thought behind this modification. You're
-trying to move the timer operation out of prb_open_block() and then
-spread the timer operation into each caller.
-
-You probably miss the following call trace:
-packet_current_rx_frame() -> __packet_lookup_frame_in_block() ->
-prb_open_block() -> _prb_refresh_rx_retire_blk_timer()
-?
-
-May I ask why bother introducing so many changes like this instead of
-leaving it as-is?
-
-Thanks,
-Jason
-
+> Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
+> ---
+> Changes in v2:
+> - Define new constant XDMA_MAX_REG_OFFSET and use that.
+> - Link to v1: https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
+> ---
+>   drivers/dma/xilinx/xdma-regs.h | 1 +
+>   drivers/dma/xilinx/xdma.c      | 2 +-
+>   2 files changed, 2 insertions(+), 1 deletion(-)
 >
-> >
-> >         smp_wmb();
-> >  }
-> > diff --git a/net/packet/diag.c b/net/packet/diag.c
-> > index 6ce1dcc28..c8f43e0c1 100644
-> > --- a/net/packet/diag.c
-> > +++ b/net/packet/diag.c
-> > @@ -83,7 +83,7 @@ static int pdiag_put_ring(struct packet_ring_buffer *=
-ring, int ver, int nl_type,
-> >         pdr.pdr_frame_nr =3D ring->frame_max + 1;
-> >
-> >         if (ver > TPACKET_V2) {
-> > -               pdr.pdr_retire_tmo =3D ring->prb_bdqc.retire_blk_tov;
-> > +               pdr.pdr_retire_tmo =3D ktime_to_ms(ring->prb_bdqc.inter=
-val_ktime);
-> >                 pdr.pdr_sizeof_priv =3D ring->prb_bdqc.blk_sizeof_priv;
-> >                 pdr.pdr_features =3D ring->prb_bdqc.feature_req_word;
-> >         } else {
-> > diff --git a/net/packet/internal.h b/net/packet/internal.h
-> > index d367b9f93..f8cfd9213 100644
-> > --- a/net/packet/internal.h
-> > +++ b/net/packet/internal.h
-> > @@ -20,7 +20,6 @@ struct tpacket_kbdq_core {
-> >         unsigned int    feature_req_word;
-> >         unsigned int    hdrlen;
-> >         unsigned char   reset_pending_on_curr_blk;
-> > -       unsigned char   delete_blk_timer;
-> >         unsigned short  kactive_blk_num;
-> >         unsigned short  blk_sizeof_priv;
-> >
-> > @@ -39,12 +38,11 @@ struct tpacket_kbdq_core {
-> >         /* Default is set to 8ms */
-> >  #define DEFAULT_PRB_RETIRE_TOV (8)
-> >
-> > -       unsigned short  retire_blk_tov;
-> > +       ktime_t         interval_ktime;
-> >         unsigned short  version;
-> > -       unsigned long   tov_in_jiffies;
-> >
-> >         /* timer to retire an outstanding block */
-> > -       struct timer_list retire_blk_timer;
-> > +       struct hrtimer  retire_blk_timer;
-> >  };
+> diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
+> index 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 100644
+> --- a/drivers/dma/xilinx/xdma-regs.h
+> +++ b/drivers/dma/xilinx/xdma-regs.h
+> @@ -9,6 +9,7 @@
+>   
+>   /* The length of register space exposed to host */
+>   #define XDMA_REG_SPACE_LEN	65536
+> +#define XDMA_MAX_REG_OFFSET	(XDMA_REG_SPACE_LEN - 4)
+>   
+>   /*
+>    * maximum number of DMA channels for each direction:
+> diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+> index 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 100644
+> --- a/drivers/dma/xilinx/xdma.c
+> +++ b/drivers/dma/xilinx/xdma.c
+> @@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
+>   	.reg_bits = 32,
+>   	.val_bits = 32,
+>   	.reg_stride = 4,
+> -	.max_register = XDMA_REG_SPACE_LEN,
+> +	.max_register = XDMA_MAX_REG_OFFSET,
+>   };
+>   
+>   /**
 >
-> The whole structure needs a new organization?
+> ---
+> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+> change-id: 20250901-xdma-max-reg-1649c6459358
 >
-> Before:
->         /* size: 152, cachelines: 3, members: 22 */
->         /* sum members: 144, holes: 2, sum holes: 8 */
->         /* paddings: 1, sum paddings: 4 */
->         /* last cacheline: 24 bytes */
-> After:
->         /* size: 176, cachelines: 3, members: 19 */
->         /* sum members: 163, holes: 4, sum holes: 13 */
->         /* paddings: 1, sum paddings: 4 */
->         /* forced alignments: 1, forced holes: 1, sum forced holes: 6 */
->         /* last cacheline: 48 bytes */
->
-> Thanks,
-> Jason
->
-> >
-> >  struct pgv {
-> > --
-> > 2.34.1
-> >
-> >
+> Best regards,
 
