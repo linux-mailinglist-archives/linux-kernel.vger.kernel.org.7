@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-797263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A975B40E1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:49:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81140B40E1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96225E0D26
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427154E4323
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31250343206;
-	Tue,  2 Sep 2025 19:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kbv/mDMW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DFC34F494;
+	Tue,  2 Sep 2025 19:50:04 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10612DF152
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF6A2DF152;
+	Tue,  2 Sep 2025 19:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756842589; cv=none; b=LyJAqPiXGXVSQ9dpTXdAS68fCU4l5upukMK9cwTmK8EDKCihe10VwLlNWFI+HUgWIBjcdsremasKBE+Ip6Emaa4E0CMRCcEGCtJ1IC2vqWQUd7aUXhy8CjOQUUX2/3K0GEGqsLTOcWujLczRv1kaSXsp2HtimyBRQx+E9a678gk=
+	t=1756842604; cv=none; b=S7112C3HOhk95oruSMe12AdizSFGl/rjhkJeFxQqr58QNHy/drGGcWoZqEoQYzZiB5/GbX6UTnyhGMxUeOqVWTj7Oil+KCTjPvVsxIZs6n/OKXDkW1KPikfUE29F9+vupXAaIKEJc4McXMi1HgsmlECEg8QEj1/vnnI491PSQvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756842589; c=relaxed/simple;
-	bh=j2FGCZt5h71J5kGeIF0TOdjUL86/+YlDqZ3I/3KmapY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ryeKKgPEjOttEkjwXN6lvmWU8/rWCkSqOe+tTfwjzgY9H5Dv+/yWuAxLQxp1pqzMcX11t2b1JkrnFonejYgwSWU4U4kB4uDiZfNK4wkiaD/7AuIn7duKhzwOCzFjwubg/q5HPveWlwdONBSGVaOuLiDBkyXEW7AAC8cD5PR5D6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kbv/mDMW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 6EC62C6D;
-	Tue,  2 Sep 2025 21:48:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756842517;
-	bh=j2FGCZt5h71J5kGeIF0TOdjUL86/+YlDqZ3I/3KmapY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kbv/mDMW6rjxbT/gMIOMbGm0SrkceC3cVvn/XJCsdjQFkqC7H0iofOrciZo+tZgMN
-	 /0ySLXZGttjRXob7orwueR+tpTs3oGqCdWXR5fJpaJkl/s6Y1ZM5mct1SV/dAWda0e
-	 0h94cKvZzb2oN4ou6xlaM7tKfJqxusVhICyY1T0k=
-Date: Tue, 2 Sep 2025 21:49:24 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/29] drm/atomic_state_helper: Fix bridge state
- initialization
-Message-ID: <20250902194924.GT13448@pendragon.ideasonboard.com>
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-5-14ad5315da3f@kernel.org>
+	s=arc-20240116; t=1756842604; c=relaxed/simple;
+	bh=NdufQxzOZlWguBL9HwYXkIGe7xQ4IfzTq08st8ba+Vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TdZUrEil8BzQZLiWODhYAjmRmn4reXTbRvJ0BOZu1FOOEhEl5/MFTJNmdCg7Fv0jzqV/V6N8WwAgZo/NMwJp7zXfas44B4yqMLEIdOu1p+Pq/GMAkt4wAcylj5hrX16T9motKcpJlUtL+8FL/MeARJxc4yYWj18BeLqDHqsp8h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id E5862160383;
+	Tue,  2 Sep 2025 19:49:59 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 5553E20013;
+	Tue,  2 Sep 2025 19:49:58 +0000 (UTC)
+Date: Tue, 2 Sep 2025 15:49:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Xiaomeng Zhang <zhangxiaomeng13@huawei.com>
+Cc: <mhiramat@kernel.org>, <dhowells@redhat.com>, <wsa@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] i2c: Fix OOB access in
+ trace_event_raw_event_smbus_write
+Message-ID: <20250902154957.7987e5ff@batman.local.home>
+In-Reply-To: <20250821012312.3591166-1-zhangxiaomeng13@huawei.com>
+References: <20250821012312.3591166-1-zhangxiaomeng13@huawei.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902-drm-state-readout-v1-5-14ad5315da3f@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 5553E20013
+X-Stat-Signature: mg7mrwaidbnnetu8tc6mdrjs59sgswc9
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+w6D8sT48f7HfE0tYL7qw3Yp0RncEh3AU=
+X-HE-Tag: 1756842598-367105
+X-HE-Meta: U2FsdGVkX1/Zwox4elp08vAurhM9a+8r1ZwMgqON4QB5V13NJBjg0ybR29Es+nnnph0YcG/ZrMJeqWcup+0ELcBGfqbbKPVH0Le9RruIdDrzFn8dTa3/JcMpBD2sNbVB3aIigB6YxdO5Jl4zJNteoF5i12/xLo6Ncpnko8/l45jR6YZawOQnNkMibbdqDlGWgGSmaZ8skhDZi0VhgoXrh6AE9QWUwQtHXI0qNC5FhQEq4FKouCKl5J7zWIsmzc8cGjWw7TbGSgb4YuAr3JijjSkg+mucQOvH77G+dGfxVcYRl/aPg+g10ZDJfbgTOOi4xu8CAgh1RPR9umFXWgHlnHXGVkZs+M5U
 
-Hi Maxime,
+On Thu, 21 Aug 2025 01:23:12 +0000
+Xiaomeng Zhang <zhangxiaomeng13@huawei.com> wrote:
 
-On Tue, Sep 02, 2025 at 10:32:33AM +0200, Maxime Ripard wrote:
-> Bridges implement their state using a drm_private_obj and an
-
-s/and an/and a/
-
-> hand-crafted reset implementation.
+> The smbus_write tracepoint copies __entry->len bytes into a fixed
+> I2C_SMBUS_BLOCK_MAX + 2 buffer. Oversized lengths (e.g., 46)
+> exceed the destination and over-read the source buffer, triggering
+> OOB warning:
 > 
-> Since drm_private_obj doesn't have a set of reset helper like the other
-> states, __drm_atomic_helper_bridge_reset() was initializing both the
-
-s/was initializing/initializes/
-
-> drm_private_state and the drm_bridge_state structures.
+> memcpy: detected field-spanning write (size 48) of single field
+> "entry->buf" at include/trace/events/smbus.h:60 (size 34)
 > 
-> This initialization however was missing the drm_private_state.obj
-
-s/was missing/is missing/
-
-Or do I incorrectly think that the commit message should describe the
-current situation in the present tense ?
-
-> pointer to the drm_private_obj the state was allocated for, creating a
-> NULL pointer dereference when trying to access it.
+> Clamp the copy size to I2C_SMBUS_BLOCK_MAX + 2 before memcpy().
+> This only affects tracing and does not change I2C transfer behavior.
 > 
-> Fixes: 751465913f04 ("drm/bridge: Add a drm_bridge_state object")
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> Fixes: 8a325997d95d ("i2c: Add message transfer tracepoints for SMBUS [ver #2]")
+> Signed-off-by: Xiaomeng Zhang <zhangxiaomeng13@huawei.com>
 > ---
->  drivers/gpu/drm/drm_atomic_state_helper.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  include/trace/events/smbus.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-> index 7142e163e618ea0d7d9d828e1bd9ff2a6ec0dfeb..b962c342b16aabf4e3bea52a914e5deb1c2080ce 100644
-> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-> @@ -707,10 +707,17 @@ void drm_atomic_helper_connector_destroy_state(struct drm_connector *connector,
->  	__drm_atomic_helper_connector_destroy_state(state);
->  	kfree(state);
->  }
->  EXPORT_SYMBOL(drm_atomic_helper_connector_destroy_state);
->  
-> +static void __drm_atomic_helper_private_obj_reset(struct drm_private_obj *obj,
-> +						  struct drm_private_state *state)
-> +{
-> +	memset(state, 0, sizeof(*state));
+> diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
+> index 71a87edfc46d..e306d8b928c3 100644
+> --- a/include/trace/events/smbus.h
+> +++ b/include/trace/events/smbus.h
+> @@ -57,6 +57,8 @@ TRACE_EVENT_CONDITION(smbus_write,
+>  		case I2C_SMBUS_I2C_BLOCK_DATA:
+>  			__entry->len = data->block[0] + 1;
+>  		copy:
+> +			if (__entry->len > I2C_SMBUS_BLOCK_MAX + 2)
+> +				__entry->len = I2C_SMBUS_BLOCK_MAX + 2;
+>  			memcpy(__entry->buf, data->block, __entry->len);
+>  			break;
+>  		case I2C_SMBUS_QUICK:
 
-As Thomas mentioned, the memset is likely not needed.
+The code has:
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+                switch (protocol) {
+                case I2C_SMBUS_BYTE_DATA:
+                        __entry->len = 1;
+                        goto copy;
+                case I2C_SMBUS_WORD_DATA:
+                case I2C_SMBUS_PROC_CALL:
+                        __entry->len = 2;
+                        goto copy;
+                case I2C_SMBUS_BLOCK_DATA:
+                case I2C_SMBUS_BLOCK_PROC_CALL:
+                case I2C_SMBUS_I2C_BLOCK_DATA:
+                        __entry->len = data->block[0] + 1;
+                copy:   
+                        memcpy(__entry->buf, data->block, __entry->len);
+                        break;
+                case I2C_SMBUS_QUICK:
+                case I2C_SMBUS_BYTE:
+                case I2C_SMBUS_I2C_BLOCK_BROKEN:
+                default:
+                        __entry->len = 0;
+                }
 
-> +	state->obj = obj;
-> +}
-> +
->  /**
->   * __drm_atomic_helper_private_obj_duplicate_state - copy atomic private state
->   * @obj: CRTC object
->   * @state: new private object state
->   *
-> @@ -796,10 +803,11 @@ EXPORT_SYMBOL(drm_atomic_helper_bridge_destroy_state);
->   */
->  void __drm_atomic_helper_bridge_reset(struct drm_bridge *bridge,
->  				      struct drm_bridge_state *state)
->  {
->  	memset(state, 0, sizeof(*state));
-> +	__drm_atomic_helper_private_obj_reset(&bridge->base, &state->base);
->  	state->bridge = bridge;
->  }
->  EXPORT_SYMBOL(__drm_atomic_helper_bridge_reset);
->  
->  /**
-> 
+I only see two calls to the copy where one is len = 1 and the other is
+len = 2. Why not put the check before the copy label?
 
--- 
-Regards,
-
-Laurent Pinchart
+-- Steve
 
