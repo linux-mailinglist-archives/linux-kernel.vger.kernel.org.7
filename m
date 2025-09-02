@@ -1,118 +1,139 @@
-Return-Path: <linux-kernel+bounces-797199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF30EB40D43
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:37:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96481B40D45
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC5AD2070C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D311B6606A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF8234AB0E;
-	Tue,  2 Sep 2025 18:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A291434574E;
+	Tue,  2 Sep 2025 18:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iqmchAm8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PRT4StSM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSHBAPEa"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32E5285C82
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 18:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F77A95E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 18:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756838220; cv=none; b=obZxCQGnzqRaTMP8zuzBq9idojwM1Zkh4hcYLNn4vszsCHSZHBnuzWuUb8yP6Q2vzhmWJG9a7MCLAJUMCMr2+sj+hwguzGK6O1L8sJAtJ4/wSJz4xyyhRPsxr4+xuhM3hS5yn0Tynu/XPFS/EHhY+ZEtEnwJqnLXxI8K0ktmjPI=
+	t=1756838319; cv=none; b=OCqc+oAJMgwE208qvqMG8lbpXoI1KUIfif3gT2TOfXfZZHco5mhbP1tNa7vVz1I+DiyR++d7SttTt6WolK4eGE1f0810RrSXJveF0/Q8Dc06YM6O32TngMEwqFDyD/Lodi7s9lvx7m43ulyk2/7NzlHOnQVthYLgYJapPa36IyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756838220; c=relaxed/simple;
-	bh=rCK0XmdfirdTjBzYP6rjoHXY9+FRkmLuEnUZBr+vqXk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BbKgv1c5nlHa/hzpRdj2XI7qgIVEosKH0mOHd3iwgew3is7zvIY3OJrCBm9qLFORu0Gb7TrO7ttN2+B3Tt4eQ8Lc0TxtxPK0MK53RQ01scVdIzTxf9KEylhQSwa4qkSDzQ6GRBLQmUNm08Wo7w4AD8J/7whSvNvOYSl7JxI2/LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iqmchAm8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PRT4StSM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756838216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rCK0XmdfirdTjBzYP6rjoHXY9+FRkmLuEnUZBr+vqXk=;
-	b=iqmchAm8KnDwQOOjAfyHMSNgR2/bqyjy9UVQaKrwBHG81Wz8Fmf9y3xDsJvAPExOtZ96Pr
-	+leETdBLFiRhoc8uKOHJqFfwODJ9mc9i62FtiwJnuo2cxOrpNi1XO8QBJ8fRiI2FalXyCT
-	sxLWWnzSxMW2nuL3OgP/6tqa/okk53SM3bN9rJx0XPPq1mYkgVar9itt1x1dub+MNhI9cW
-	6cWowCzXktnYuy93yJh1vQYXuCalNGyjZoFhoC7QvlaTJTZ05zRX9e4IAyhr5ZlZHoUzYA
-	oV2uZbGnvZnd+7xzGrTHCsKPVoA4wpVPy1yZXx6WnUSitHPXjb8+fxiX31V6Xw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756838216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rCK0XmdfirdTjBzYP6rjoHXY9+FRkmLuEnUZBr+vqXk=;
-	b=PRT4StSMELZKwpYRKmGWd12NxutTM7OL4rcGtSEJMUZYUAdmbLwZDRiJ5t5xATKPP5NKD3
-	OO0jzBFuv9Dlq3Ag==
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Sean
- Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>, Dexuan
- Cui <decui@microsoft.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Huacai
- Chen <chenhuacai@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [patch V2 28/37] rseq: Switch to fast path processing on exit
- to user
-In-Reply-To: <02e74cef-f2fe-4590-8921-ef4df2b24786@efficios.com>
-References: <20250823161326.635281786@linutronix.de>
- <20250823161655.063205235@linutronix.de>
- <bf216d3c-9d9a-45e4-b7a6-64c0c3cbe6ed@efficios.com>
- <02e74cef-f2fe-4590-8921-ef4df2b24786@efficios.com>
-Date: Tue, 02 Sep 2025 20:36:55 +0200
-Message-ID: <87iki0zooo.ffs@tglx>
+	s=arc-20240116; t=1756838319; c=relaxed/simple;
+	bh=v548S0d/xPO5C2+As6FEXaIbPCftKbrXlzxHb8LWVbU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=spvqAlUIyeVXtvY/Vb1/RTwfU+RFDoWywezeahEtCM4etLxTybGqiSHVEahQBe4VBpfeL0qXYguxUWVu5tA3UyZFXUDDFCbG9t+LYzflrGd3xWBb/3GOa9Xk+ausy4aj2zUwH5YD+101TOIuMkpK1p/3Wx4VS56ljfG9B8zLNEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSHBAPEa; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b87bc67a4so21290755e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 11:38:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756838316; x=1757443116; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HtIfgKLp3NVc3pSHlMfWF5VgNgJuRmHDA2CEfhOQ8+E=;
+        b=BSHBAPEaZ2HXZJ3QA5adsiOWU1sEZKHJjdjTBGceq/Zv/N3tpQiN/QT/WN4Dl3xlV4
+         AcOlIykCKY8Q1iw3hwPjHIfNRU6kxnuBzIphFiihyoc/riDdrODa0xmuj0bNQA76w42P
+         0kP7HGzCzN4uvbZ3xdAQxFz4IO0tJr/T31YpkuYrp2K0mCRj8u3FmWwCD7MvndJ1pL1d
+         0P9/eh51z9cRV/Bg/Cw+sZIONF3DKpDCGaPj0Y6EE687h3sB1NTuizE+ZMIhHjyZDNg/
+         J9qNQYxQBSD2B9PBnMFSr6TSEe1MJ1hgui1X7E0feeiSRfSyrS7vseHROX5KiCBRA5G5
+         fE8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756838316; x=1757443116;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HtIfgKLp3NVc3pSHlMfWF5VgNgJuRmHDA2CEfhOQ8+E=;
+        b=PR2cMYtLK15Dp+WTUjLvmV4qAMkj46AC934pYxbRSk/IihQ3S0NXgwyvc46jU5DnMy
+         LpG06BzCzTJ/hU0wiXOQe5QRbjTBKiEanqwnFWbjil8ai4yF/h9GvP1QNoIQplQigJe/
+         /00IhtyJW0eVkH0ROsAcoIicU6bf37BYGafDZKqa1mHgqF8dXDrRpGnljGpsSGM46fyb
+         x3DXWs0q8pc+4EUYwzP8XUqjla1gya9s2OJWnGIXIRAhZjvD9DZR7t52jZuisTsOvl0r
+         Yg7BLMp7SLgDNhY/iR5nO2/VpR6YqBqKZKJNh3eKn5KGxUeGaaTYG47zdsWzSlZqnSJ5
+         lbfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWiBfTau94KOtkiaMcabjbofH5tM16EZGjJHfgCEZ0ezHJxJ5mJzhH9vIlTvDCIEHoJj9i/uCcOc+SnCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztAFzfXFkPHdyzSBhu3SHJcOZ72DIQEp3tjQPauwPyvOHay28u
+	dWAa9zlidPDpbsajMbtQ6JhznGw4pXI679LJzW6O0u5VBiHnFAJu80Ab
+X-Gm-Gg: ASbGncsqRv7LHph3u69E7xoNwt0IhBf2HwFgluqD3M2j50wywzdQxxB+PdGq6p4AmGR
+	ao1CSu8O6ZycJHU5QVbSLChl47DYvzqp1CGa5iJ3G090zmP3DlY1rS4XnzdOtqk279P8d1/vwsL
+	QlINAhx1FF3xOGXGFjwelO2WFWRLsUxBZuHwVQVMghFOoKszW6Gat/n2AgVa39gwzedigp1ReXp
+	z77jm8L7kcGPq4VrZW+CxDSBZmoAnRtPoOxKWmnCOUp07qF98BBJcsGRfOi9Lckd4EikYBudMaV
+	drQmkony07f+XboLO+Yf6KLmJkrEdeaCTfVox4sfEAzWH1fJeH36x7FMhssBXAJDIBSW9pG5F4u
+	RzVjD4lL8vEsrYHwYqnm8gG48S+m7AuYwZVMVHQ==
+X-Google-Smtp-Source: AGHT+IFZOtGXHRvSGQGMQlxqtMFkysWL1TKTqsEmVYhRZ84LZTFvZGmQrrRX0tM8g8SIZ1TNTU5eUQ==
+X-Received: by 2002:a05:600c:46c3:b0:458:c059:7db1 with SMTP id 5b1f17b1804b1-45b8557f254mr116499635e9.30.1756838315255;
+        Tue, 02 Sep 2025 11:38:35 -0700 (PDT)
+Received: from flaviu-Aspire-E5-572G.. ([5.15.80.80])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b85090262sm157641835e9.17.2025.09.02.11.38.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 11:38:34 -0700 (PDT)
+From: Flaviu Nistor <flaviu.nistor@gmail.com>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	flaviu.nistor@gmail.com
+Subject: Re: [PATCH] mtd: spi-nor: issi: Add support for is25wx01g
+Date: Tue,  2 Sep 2025 21:38:18 +0300
+Message-ID: <20250902183818.17415-1-flaviu.nistor@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <mafs0cy8aw0yf.fsf@kernel.org>
+References: <mafs0cy8aw0yf.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-T24gV2VkLCBBdWcgMjcgMjAyNSBhdCAwOTo0NSwgTWF0aGlldSBEZXNub3llcnMgd3JvdGU6DQo+
-IE9uIDIwMjUtMDgtMjYgMTE6NDAsIE1hdGhpZXUgRGVzbm95ZXJzIHdyb3RlOg0KPj4+IMKgwqAg
-UlNFUSBzZWxmdGVzdHPCoMKgwqDCoMKgIEJlZm9yZcKgwqDCoMKgwqDCoMKgwqDCoCBBZnRlcsKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFJlZHVjdGlvbg0KPj4+DQo+Pj4gwqDCoCBleGl0IHRv
-IHVzZXI6wqDCoMKgwqDCoMKgIDM4NjI4MTc3OMKgwqDCoMKgwqDCoMKgwqDCoCAzODczNzM3NTAN
-Cj4+PiDCoMKgIHNpZ25hbCBjaGVja3M6wqDCoMKgwqDCoMKgIDM1NjYxMjAzwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAwwqDCoMKgwqDCoMKgwqDCoMKgwqAgMTAwJQ0KPj4+IMKg
-wqAgc2xvd3BhdGggcnVuczrCoMKgwqDCoMKgIDE0MDU0MjM5NiAzNi4zOCXCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIDEwMMKgIDAuMDAlwqDCoMKgIDEwMCUNCj4+PiDCoMKgIGZhc3RwYXRoIHJ1bnM6
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDk1MDk3ODnC
-oCAyLjUxJcKgwqDCoMKgIE4vQQ0KPj4+IMKgwqAgaWQgdXBkYXRlczrCoMKgwqDCoMKgwqDCoMKg
-IDE3NjIwMzU5OSA0NS42MiXCoMKgwqDCoMKgwqDCoCA5MDg3OTk0wqAgMi4zNSXCoMKgwqDCoCA5
-NSUNCj4+PiDCoMKgIGNzIGNoZWNrczrCoMKgwqDCoMKgwqDCoMKgwqAgMTc1NTg3ODU2IDQ1LjQ2
-JcKgwqDCoMKgwqDCoMKgIDQ3MjgzOTTCoCAxLjIyJcKgwqDCoMKgIDk4JQ0KPj4+IMKgwqDCoMKg
-IGNzIGNsZWFyZWQ6wqDCoMKgwqDCoMKgIDE3MjM1OTU0NMKgwqAgOTguMTYlwqDCoMKgIDEzMTkz
-MDfCoMKgIDI3LjkwJcKgwqAgOTklDQo+Pj4gwqDCoMKgwqAgY3MgZml4dXA6wqDCoMKgwqDCoMKg
-wqDCoMKgwqAgMzIyODMxMsKgwqDCoCAxLjg0JcKgwqDCoCAzNDA5MDg3wqDCoCA3Mi4xMCUNCj4N
-Cj4gQnkgdGhlIHdheSwgeW91IHNob3VsZCByZWFsbHkgbm90IGJlIHVzaW5nIHRoZSBlbnRpcmUg
-cnNlcSBzZWxmdGVzdHMNCj4gYXMgYSByZXByZXNlbnRhdGl2ZSB3b3JrbG9hZCBmb3IgcHJvZmls
-aW5nIHRoZSBrZXJuZWwgcnNlcSBpbXBsZW1lbnRhdGlvbi4NCj4NCj4gVGhvc2Ugc2VsZnRlc3Rz
-IGluY2x1ZGUgImxvb3AgaW5qZWN0aW9uIiwgInlpZWxkIGluamVjdGlvbiIsICJraWxsDQo+IGlu
-amVjdGlvbiIgYW5kICJzbGVlcCBpbmplY3Rpb24iIHdpdGhpbiB0aGUgcmVsZXZhbnQgdXNlcnNw
-YWNlIGNvZGUNCj4gcGF0aHMsIHdoaWNoIHJlYWxseSBpbmNyZWFzZSB0aGUgbGlrZWxpaG9vZCBv
-ZiBoaXR0aW5nIHN0dWZmIGxpa2UNCj4gImNzIGZpeHVwIiBjb21wYXJlZCB0byBhbnl0aGluZyB0
-aGF0IGNvbWVzIGNsb3NlIHRvIGEgcmVhbGlzdGljDQo+IHVzZS1jYXNlLiBUaGlzIGlzIHJlYWxs
-eSB1c2VmdWwgZm9yIHRlc3RpbmcgY29ycmVjdG5lc3MsIGJ1dCBub3QNCj4gZm9yIHByb2ZpbGlu
-Zy4gRm9yIGluc3RhbmNlLCB0aGUgImxvb3AgaW5qZWN0aW9uIiBpbnRyb2R1Y2VzIGJ1c3kNCj4g
-bG9vcHMgd2l0aGluIHJzZXEgY3JpdGljYWwgc2VjdGlvbnMgdG8gc2lnbmlmaWNhbnRseSBpbmNy
-ZWFzZSB0aGUNCj4gbGlrZWxpaG9vZCBvZiBoaXR0aW5nIGEgY3MgZml4dXAuDQo+DQo+IFRob3Nl
-IHNwZWNpZmljIHNlbGZ0ZXN0cyBhcmUgcmVhbGx5IGp1c3QgInN0cmVzcy10ZXN0cyIgdGhhdCBk
-b24ndA0KPiByZXByZXNlbnQgYW55IHJlbGV2YW50IHdvcmtsb2FkLg0KDQpUcnVlLCB0aGV5IHN0
-aWxsIHRlbGwgaG93IG11Y2ggdXNlbGVzcyB3b3JrIHRoZSBrZXJuZWwgd2FzIGRvaW5nLCBubz8N
-Cg0K
+> Hi Flaviu,=0D
+>=0D
+> On Mon, Sep 01 2025, Flaviu Nistor wrote:=0D
+>=0D
+>> Add support for the IS25WX01G 128MB (1Gb) ISSI Serial Flash Memory.=0D
+>>=0D
+>> Signed-off-by: Flaviu Nistor <flaviu.nistor@gmail.com>=0D
+>> ---=0D
+>>  drivers/mtd/spi-nor/issi.c | 3 +++=0D
+>>  1 file changed, 3 insertions(+)=0D
+>>=0D
+>> diff --git a/drivers/mtd/spi-nor/issi.c b/drivers/mtd/spi-nor/issi.c=0D
+>> index 18d9a00aa22e..e4997f9bd557 100644=0D
+>> --- a/drivers/mtd/spi-nor/issi.c=0D
+>> +++ b/drivers/mtd/spi-nor/issi.c=0D
+>> @@ -126,6 +126,9 @@ static const struct flash_info issi_nor_parts[] =3D =
+{=0D
+>>  		.flags =3D SPI_NOR_QUAD_PP,=0D
+>>  		.fixups =3D &is25lp256_fixups,=0D
+>>  		.fixup_flags =3D SPI_NOR_4B_OPCODES,=0D
+>> +	}, {=0D
+>> +		/* IS25WX01G */=0D
+>> +		.id =3D SNOR_ID(0x9d, 0x5b, 0x1b),=0D
+>=0D
+> It seems the flash needs no special configuration. IIUC it can be driven=
+=0D
+> entirely based on SFDP data. In that case, I don't think there is a need=
+=0D
+> for an entry at all. The generic SFDP-based driver should already be=0D
+> enough for your flash. Just add a "jedec,spi-nor" node to your DT and it=
+=0D
+> should work.=0D
+=0D
+Thanks for the review and the explanation. I now see in=0D
+the core driver that spi_nor_check_sfdp_signature() is=0D
+used if spi_nor_match_id() does not find a valid entry.=0D
+=0D
+>=0D
+>>  	}=0D
+>>  };=0D
 
