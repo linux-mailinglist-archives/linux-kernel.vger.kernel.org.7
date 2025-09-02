@@ -1,232 +1,322 @@
-Return-Path: <linux-kernel+bounces-797336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F347EB40EFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:05:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBAEB40F01
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B9E07A55F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:03:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F18CD1B65C4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3372B34DCC9;
-	Tue,  2 Sep 2025 21:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC71835082F;
+	Tue,  2 Sep 2025 21:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRkn+Or4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMyFJoHB"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0F32E7BDF;
-	Tue,  2 Sep 2025 21:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F992E3397;
+	Tue,  2 Sep 2025 21:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756847110; cv=none; b=n3si7PokGUy1r0o+wS4ip6NW8TVb2Q7Gp6WsYet2J3LLOaVAvw6hoj20P01BkJVmhAp3QsY38NJbgt6Z7O7q7wIBOVGHhVwgNfmkJaR031fG82A/qFVxXKzukSQmUTIPvjoLNnbzVIGs+HJsvaCy8Ct533n5iGytlioCr/Fa5S8=
+	t=1756847165; cv=none; b=LWLiNYnhaJamr5j3eZgAzWgeIp1tFGb81xiw9CyxuKBB0aNSA2WNALEWUWimHp/qktR63VEyD0jKnfkQFbETXKS7XOOZSF9nQDJunQwa+ZnT3lxaHgtN+p6gMqAXEK76MEGBV1erP0Tfz/QmNmvlQWC7ItPMOTqaA0vL4ryR7fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756847110; c=relaxed/simple;
-	bh=WjiAUtQOvsH2qbKA2s3udE/vJGeq936XDWYdFQFYvcs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=htbfG8clWbfgdqfwLUCwuRYRw5YWo3+dnDOKaM2LExSGTaGIDrNdV1vHAe5Ik0r1V+NclnDB0DCgJfxxQcKTn/+DMg99N+yfNyvXGpKOPjvbLtxYV9z09zC/44pVv2ZRLv9qxriNn1nH73tZ09xyb4FxpfacXqC5ZzP/AAYMFdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRkn+Or4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DB9C4CEED;
-	Tue,  2 Sep 2025 21:05:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756847109;
-	bh=WjiAUtQOvsH2qbKA2s3udE/vJGeq936XDWYdFQFYvcs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MRkn+Or4h5vSaoc8kgJJZxOd01MMQtXJdlNPFtvfpam78OFAwZ/1/qa68zZmj22Gb
-	 nGI05LBWnJ6YWYdIAH5ejuIAVZkD+tt4YrR5AqJSRTbYhTmH2dF3GTBUWrubRObIJh
-	 Rqb/La23wuKcNSA2Z8eLF3OQAehienYD0V9VkptteXNC6E4FhOrtDSd7kkQ0g+Vpc4
-	 O306EAeZyc1PIuQM5UV0xxq+eX2m5Bc+wWFpkvGjjYRdncsQ8RD7lhWc9+AUCCC1bv
-	 xcmxmLfTHbcTQPtf3oyYmcQ1F2JJl5eZDXeYUvUgaabIV22o8VDLt9cs0Q8ASzOLEf
-	 btllMZVTAqIcQ==
-Message-ID: <9c47d260-b51e-4ad0-80b5-fc735b48c894@kernel.org>
-Date: Tue, 2 Sep 2025 23:05:06 +0200
+	s=arc-20240116; t=1756847165; c=relaxed/simple;
+	bh=F+sNQoiV11l/99944sCCatiPrQr7r6jxss3CEwRTbGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VaoVCAZY3PMLph72OJoU1D+fUYGQxaOIkrXuFbrBp/ztDB3xgx9wXFDFSeA5lYXa3NQle2n9xOEkjzvLetHmsxAfQIFDNNtRA7LL5V3YFvoklkGzrP494u4hts+u2MTpHPH+8PQ09t/ZYC7MOyeyXXTMx7OTwVYLiev6IBG97X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMyFJoHB; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24c784130e6so8646755ad.3;
+        Tue, 02 Sep 2025 14:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756847162; x=1757451962; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qJLfEYkB6UVJumLExVLCIIWdWfypSDCafuwiOw0/T4E=;
+        b=bMyFJoHBL+nMyrW2fzV4iLdvkbviOPnd043TI/T0iEGFCFjJYdJvYn59dMNtfMAJVb
+         8wsTXJMriMoRRTIKlZcKqioJLNPqoXPStEWDep9ucIW6zt4gCKoOZc34eq+DfzGXYjyu
+         Ep79TcZQpfA0uXnEIIhrh8EW4CZJYYiH0axwDgNqR3PHoB5TIpFIpPR872zjhJ1aepBy
+         MyKm89xmxNw+RrEhOcib3izJnE/wUIpmBV++5UsVp2furV0BydGY2Qd3c70Y69JZVYS8
+         d3N88FZy7dolJdK/sOeSyKHODehSBERiE/lzaM91MViaKheMqc26/sDNeKt8N2O6LqBX
+         DRnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756847162; x=1757451962;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qJLfEYkB6UVJumLExVLCIIWdWfypSDCafuwiOw0/T4E=;
+        b=sZ3vs2YI3MiCHQQKt6Sn8qSH3JzgtQQu9BsK8Vpz/KtafhYcdK0zvDiO6KlA+SKgT6
+         Tit/ectzejCT3mUoyhgm9a0/owOW5b8EIA35EtaU5MMjKRYVy95arkREEtlwQws9K3kF
+         Y6uHIYLhNOvZJkd0q7uQoCZgv3U2Pw3+RHFfP0BkIpPJFIqvqkStuo/GPN5HT7SHS/zm
+         NbmjjMIeQcUJ6Kb4I1q0dVC3mDGD12XXRwxTeVFtooFDtIypCogta7O9Gg6yJVqxfpx8
+         7QTFslhE/pRHF83LJA3lFkjKBWAVSZi4lUl8SAbqcMvVKA8O5v+FKbtW0JuMzwdU9x7x
+         onLg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0dZAu24hP/8GciUog8nvjUvzEvnhFy3uVE25O7oV4sJbeXkn7N7Qg8YNLKl5Pwxis7q0GgOjOd6mZ@vger.kernel.org, AJvYcCXwQQXA3uhmsDsaSqipJTel6YASC3YOlZu3GH8FH+nq8uPaOXhm/j3PMcANZ+qsNlLxp2nMxGnJEZG9oEdA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKE/x3VpQMsljIauQZVrDG0lSXX4J/etixkrZEAUVLN2pieUMP
+	2tRHw0yPE3z5hnArRqZnyV+VPwVZXTsCHGyiWtXAWypgdkdRraok4Rvj
+X-Gm-Gg: ASbGnct1yieGWsF9Av4S+2ceLtSx65X2pefg5MAMxOa3pVWrpivjc3VxboL9shfvLwC
+	ffvCGBIYLCIk5rj4gShnxK00PVeeXFDWx/vks952Bzx8JyFvlUgx0TuudMAfO441LC4ioySwdxq
+	+k62r5WIk1gbGQfRT6K0ZbUuy+qIquvWVG0DHnzwKfn3Y3SEKpr2vKsCiDjBSPYx+nT8CDi5moK
+	MHRYxX0AOoGWf9Wg9JgF/E/8318gvxKOhK3v3KA5oMCHzIFws1uEjxn1wsTGEcWqamLb7b1bvhw
+	ePv5QgxEbX0KvQhvER2KRQbHGzgTvGiw5EDTJ5xoDRv5qr9j0t5lehgMwhj7za6UPn6kcfTU5/D
+	V676bwdKyep4G2tt+H7MWq2ZjSrM8U8cd1SBjYQLlMfg11JQxNLhIIQ8DQVq/
+X-Google-Smtp-Source: AGHT+IGh+tV4SjXIbE0trtatefR8wbkxy6wvOIBQ3nR/wzXRrjg9bED0JDhMSe62lWtxxpKydJDbyw==
+X-Received: by 2002:a17:902:f707:b0:24b:1d30:5b09 with SMTP id d9443c01a7336-24b1d3076f8mr32649735ad.13.1756847162210;
+        Tue, 02 Sep 2025 14:06:02 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24c860066d3sm4002475ad.71.2025.09.02.14.06.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 14:06:01 -0700 (PDT)
+Date: Wed, 3 Sep 2025 05:05:58 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: "409411716@gms.tku.edu.tw" <409411716@gms.tku.edu.tw>,
+	Xiubo Li <xiubli@redhat.com>,
+	"idryomov@gmail.com" <idryomov@gmail.com>,
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ceph: optimize ceph_base64_encode() with block processing
+Message-ID: <aLdcNhKrPXxaEUtm@visitorckw-System-Product-Name>
+References: <20250830132822.7827-1-409411716@gms.tku.edu.tw>
+ <fce1adab2b450097edbcea3ec83420257997ec00.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] HID: lg-g15 - Add support for Logitech G13.
-To: "Leo L. Schwab" <ewhac@ewhac.org>
-Cc: Kate Hsuan <hpa@redhat.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250814212641.197573-2-ewhac@ewhac.org>
- <7d356834-5795-4979-9f51-0ffcec52ae1d@kernel.org>
- <aLSntMknSv3lMarZ@ewhac.org>
- <8ae2cc92-5dfe-466d-95fd-da74309d7244@kernel.org>
- <2de88077-eb8d-44ad-a96a-5db889913cba@kernel.org>
- <aLdWZJwSrpvgXPFL@ewhac.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <aLdWZJwSrpvgXPFL@ewhac.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fce1adab2b450097edbcea3ec83420257997ec00.camel@ibm.com>
 
-Hi,
-
-On 2-Sep-25 22:41, Leo L. Schwab wrote:
-> 	Didn't directly receive the intermediate reply:
+On Tue, Sep 02, 2025 at 07:37:22PM +0000, Viacheslav Dubeyko wrote:
+> On Sat, 2025-08-30 at 21:28 +0800, Guan-Chun Wu wrote:
+> > Previously, ceph_base64_encode() used a bitstream approach, handling one
+> > input byte at a time and performing extra bit operations. While correct,
+> > this method was suboptimal.
+> > 
 > 
-> On Tue, Sep 02, 2025 at 11:14:09AM +0200, Hans de Goede wrote:
->> On 2-Sep-25 11:07 AM, Hans de Goede wrote:
->>> Ah I see. Yes if you do need to do a CONFIG check then using IS_ENABLED()
->>> is good.
->>>
->>> But I'm afraid that the underlying problem here is the use of
->>> cdev.brightness_hw_changed this is really only meant for led-class.c
->>> internal use.
->>>
-> 	Then there should be a comment in the include file to that effect.
+> Sounds interesting!
 > 
->>> The idea of cdev.brightness_hw_changed is that it stores the last
->>> value set by the hw.
->>>
->>> But in the mean time that value may have been overwritten by software.
->>>
->>> I think that you will fail to call led_classdev_notify_brightness_hw_changed()
->>> (you can add a debug print to check) if the following happens:
->>>
->>> 1. Brightness set to 255 (RGB 255,255,255) through sysfs
->>> 2. State toggled to off by backlight control button, brightness is now 0
->>> 3. Brightness set to 255 (RGB 255,255,255) through sysfs
->>> 4. State toggled to off by backlight control button, brightness is now 0
->>>
-> 	This does not happen.  The G13 accepts and remembers backlight color
-> settings even when the LEDs have been toggled off locally.
+> Is ceph_base64_decode() efficient then?
+> Do we have something in crypto library of Linux kernel? Maybe we can use
+> something efficient enough from there?
 > 
-> ```
-> #### Initial state: Backlight on, full green:
-> root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
-> 255
-> 255
-> 0 255 0
-> root:/sys/class/leds/g13:rgb:kbd_backlight# echo 255 0 0 > multi_intensity 
-> #### Backlight is on, full red.
-> root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
-> 255
-> 255
-> 255 0 0
-> #### Backlight toggle button pressed; backlight is now off.
-> root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
-> 255
-> 0
-> 255 0 0
-> root:/sys/class/leds/g13:rgb:kbd_backlight# echo 0 0 255 > multi_intensity 
-> #### Backlight color set to full blue, but is still off.
-> root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
-> 255
-> 0
-> 0 0 255
-> #### Backlight toggle button pressed; backlight is now on, and blue.
-> root:/sys/class/leds/g13:rgb:kbd_backlight# cat brightness brightness_hw_changed multi_intensity 
-> 255
-> 255
-> 0 0 255
-> ```
-> 
-> 	This also works if you alter `brightness` while the backlight is
-> toggled off.  IMHO, this is correct, principle-of-least-surprise behavior.
+Hi Viacheslav,
 
-I see, interesting.
+FYI, we already have base64 encode/decode implementations in
+lib/base64.c. As discussed in another thread [1], I think we can put
+the optimized version there and have users switch to call the library
+functions.
 
-So what happens if you turn off the backlight with the toggle button on the G13
-and then write 0 to brightness in sysfs and then press the toggle button again?
+[1]: https://lore.kernel.org/lkml/38753d95-8503-4b72-9590-cb129aa49a41@t-8ch.de/
 
-> 	Further (at least on my machine), `brightness_hw_changed` is
-> read-only in sysfs, and therefore can't be altered by host software.
-> Therefore, it would seem that using `cdev.brightness_hw_changed` as a cache
-> value is valid.
+Hi Guan-Chun,
 
-Right it does seem that using cdev.brightness_hw_changed is valid in
-this case.
-
-But the LED API is supposed to have the brightness attribute present
-the actual current brightness of the device.
-
-I'm not sure how upower will react if the poll() on brightness_hw_changed
-wakes upower up and then the reported brightness is unchanged...
-
-I need to think about this a bit and check the upower code, let me
-get back to you on this in a day or 2 ...
-
->>> I also see that you use TEST_BIT(rep->keybits, 23) ? LED_FULL : LED_OFF
->>> for the brightness value send to led_classdev_notify_brightness_hw_changed()
->>> but I would expect the hw to restore the previous brightness on a toggle
->>> from off -> on through the button? So then that should be send.
->>>
->>> And you also never update cdev.brightness and use the cached 
->>> struct lg_g15_led.brightness in lg_g13_kbd_led_get(). This means that
->>> after a hw toggle of the backlight reading the brightness from sysfs
->>> will show the wrong (old) value.
->>>
-> 	This prompts the question:  What is the full intensity calculation
-> formula intended to be?  The docs appear to be rather quiet on this point.
-> If we assume all intensity/brightness values (0-255) are essentially mapped
-> to the range [0.0, 1.0], then it seems to me the calculation is:
-> 
-> 	out = intensity * brightness * brightness_hw_changed
-
-The way the API is intended to work is that after a hw-brightness-changes
-event brightness == brightness_hw_changed in sysfs.
-
-brightness_hw_changed only purpose is to cache the last hw set value so
-that if userspace writing a new value to brightness races with
-a brightness_hw_changed event a userspace process listening can still
-read which value the hw actually send. TBH this is of little value to
-userspace but the LED subsys maintainer insisted on this.
-
-IOW the formula should always be:
-
- 	out = intensity * brightness
-
-The problem is that in the G13 case the real formula is:
-
- 	out = intensity * brightness * internal-g13-toggle-bool
-
-And there is no standard userspace API for how to deal with
-the device having an internal-g13-toggle-bool
-
-The G510 has something similar which is why I left out
-brightness_hw_changed event generation in the G510 code.
-
-As mentioned before I need to think a bit about how to handle
-this. I have an idea howto handle this and I can try and
-prototype this on the G510 which has more or less the same
-problem, except that it simply throws away brightness writes
-while toggled off with the button.
-
-
-> 
->>> I think that instead what you need to do is create a
->>> lg_g13_leds_changed_work() mirroring lg_g15_leds_changed_work()
-> 
-> 	I dissent.  But then it's entirely possible I'm still missing
-> something...
-> 
-> 	The only edge case I'm immediately aware of is:
-> 
-> 	* Plug in G13.
-> 	* Toggle backlight off.
-> 	* Unload kernel module.
-> 	* Reload kernel module.
-> 
-> 	The backlight is now toggled off, but the newly loaded driver
-> doesn't know this.  Attempting to read `brightness_hw_changed` from sysfs at
-> this point will result in ENODATA (essentially reporting, "I don't know").
-> AFAIK, there is no way to probe the G13 for the current state of the
-> backlight HW toggle.  However, the moment the user generates any event on
-> the G13, the correct state will be obtained, and `brightness_hw_changed`
-> will be updated accordingly.  Not ideal, but seemed the most honest
-> approach.
-
-Ack.
+I was also trying optimizing base64 performance, but I saw your patch
+first. Happy to help if you need any assistance!
 
 Regards,
+Kuan-Wei
 
-Hans
-
+> > This patch processes input in 3-byte blocks, mapping directly to 4 output
+> > characters. Remaining 1 or 2 bytes are handled according to standard Base64
+> > rules. This reduces computation and improves performance.
+> > 
+> 
+> So, why namely 3-byte blocks? Could you please explain in more details your
+> motivation and improved technique in commit message? How exactly your technique
+> reduces computation and improves performance?
+> 
+> > Performance test (5 runs) for ceph_base64_encode():
+> > 
+> > 64B input:
+> > -------------------------------------------------------
+> > > Old method | 123 | 115 | 137 | 119 | 109 | avg ~121 ns |
+> > -------------------------------------------------------
+> > > New method |  84 |  83 |  86 |  85 |  84 | avg ~84 ns  |
+> > -------------------------------------------------------
+> > 
+> > 1KB input:
+> > --------------------------------------------------------
+> > > Old method | 1217 | 1150 | 1146 | 1149 | 1149 | avg ~1162 ns |
+> > --------------------------------------------------------
+> > > New method |  776 |  772 |  772 |  774 |  770 | avg ~773 ns  |
+> > --------------------------------------------------------
+> > 
+> > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > ---
+> > Tested on Linux 6.8.0-64-generic x86_64
+> > with Intel Core i7-10700 @ 2.90GHz
+> > 
+> 
+> I assume that it is still the commit message. So, I think this portion should be
+> before Signed-off-by.
+> 
+> > Test is executed in the form of kernel module.
+> 
+> > Test script:
+> > 
+> 
+> Is it finally script or kernel module? As far as I can see, it is not complete
+> source code. So, I am not sure that everybody will be capable to build and test
+> this module.
+> 
+> What's about to introduce this as Kunit test or self-test that can be used by
+> everybody in CephFS kernel client for testing and checking performance? I am
+> working on initial set of Kunit tests for CephFS kernel client right now.
+> 
+> > static int encode_v1(const u8 *src, int srclen, char *dst)
+> > {
+> > 	u32 ac = 0;
+> > 	int bits = 0;
+> > 	int i;
+> > 	char *cp = dst;
+> > 
+> > 	for (i = 0; i < srclen; i++) {
+> > 		ac = (ac << 8) | src[i];
+> > 		bits += 8;
+> > 		do {
+> > 			bits -= 6;
+> > 			*cp++ = base64_table[(ac >> bits) & 0x3f];
+> > 		} while (bits >= 6);
+> > 	}
+> > 	if (bits)
+> > 		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
+> > 	return cp - dst;
+> > }
+> > 
+> > static int encode_v2(const u8 *src, int srclen, char *dst)
+> > {
+> > 	u32 ac = 0;
+> > 	int i = 0;
+> > 	char *cp = dst;
+> > 
+> > 	while (i + 2 < srclen) {
+> > 		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8) | (u32)src[i + 2];
+> > 		*cp++ = base64_table[(ac >> 18) & 0x3f];
+> > 		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > 		*cp++ = base64_table[(ac >> 6) & 0x3f];
+> > 		*cp++ = base64_table[ac & 0x3f];
+> > 		i += 3;
+> > 	}
+> > 
+> > 	switch (srclen - i) {
+> > 	case 2:
+> > 		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8);
+> > 		*cp++ = base64_table[(ac >> 18) & 0x3f];
+> > 		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > 		*cp++ = base64_table[(ac >> 6) & 0x3f];
+> > 		break;
+> > 	case 1:
+> > 		ac = ((u32)src[i] << 16);
+> > 		*cp++ = base64_table[(ac >> 18) & 0x3f];
+> > 		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > 		break;
+> > 	}
+> > 	return cp - dst;
+> > }
+> > 
+> > static void run_test(const char *label, const u8 *data, int len)
+> > {
+> >     char *dst1, *dst2;
+> >     int n1, n2;
+> >     u64 start, end;
+> > 
+> >     dst1 = kmalloc(len * 2, GFP_KERNEL);
+> >     dst2 = kmalloc(len * 2, GFP_KERNEL);
+> > 
+> >     if (!dst1 || !dst2) {
+> >         pr_err("%s: Failed to allocate dst buffers\n", label);
+> >         goto out;
+> >     }
+> > 
+> >     pr_info("[%s] input size = %d bytes\n", label, len);
+> > 
+> >     start = ktime_get_ns();
+> >     n1 = encode_v1(data, len, dst1);
+> >     end = ktime_get_ns();
+> >     pr_info("[%s] encode_v1 time: %lld ns\n", label, end - start);
+> > 
+> >     start = ktime_get_ns();
+> >     n2 = encode_v2(data, len, dst2);
+> >     end = ktime_get_ns();
+> >     pr_info("[%s] encode_v2 time: %lld ns\n", label, end - start);
+> > 
+> >     if (n1 != n2 || memcmp(dst1, dst2, n1) != 0)
+> >         pr_err("[%s] Mismatch detected between encode_v1 and encode_v2!\n", label);
+> >     else
+> >         pr_info("[%s] Outputs are identical.\n", label);
+> > 
+> > out:
+> >     kfree(dst1);
+> >     kfree(dst2);
+> > }
+> > ---
+> >  fs/ceph/crypto.c | 33 ++++++++++++++++++++++-----------
+> >  1 file changed, 22 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+> > index 3b3c4d8d401e..a35570fd8ff5 100644
+> > --- a/fs/ceph/crypto.c
+> > +++ b/fs/ceph/crypto.c
+> > @@ -27,20 +27,31 @@ static const char base64_table[65] =
+> >  int ceph_base64_encode(const u8 *src, int srclen, char *dst)
+> >  {
+> >  	u32 ac = 0;
+> > -	int bits = 0;
+> > -	int i;
+> > +	int i = 0;
+> >  	char *cp = dst;
+> >  
+> > -	for (i = 0; i < srclen; i++) {
+> > -		ac = (ac << 8) | src[i];
+> > -		bits += 8;
+> > -		do {
+> > -			bits -= 6;
+> > -			*cp++ = base64_table[(ac >> bits) & 0x3f];
+> > -		} while (bits >= 6);
+> > +	while (i + 2 < srclen) {
+> 
+> Frankly speaking, I am not completely happy about hardcoded constants. As a
+> result, it makes code hard to understand, modify and support. Could you please
+> introduce named constants instead of hardcoded numbers?
+> 
+> 
+> > +		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8) | (u32)src[i + 2];
+> > +		*cp++ = base64_table[(ac >> 18) & 0x3f];
+> > +		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > +		*cp++ = base64_table[(ac >> 6) & 0x3f];
+> > +		*cp++ = base64_table[ac & 0x3f];
+> > +		i += 3;
+> > +	}
+> > +
+> > +	switch (srclen - i) {
+> > +	case 2:
+> > +		ac = ((u32)src[i] << 16) | ((u32)src[i + 1] << 8);
+> > +		*cp++ = base64_table[(ac >> 18) & 0x3f];
+> > +		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > +		*cp++ = base64_table[(ac >> 6) & 0x3f];
+> > +		break;
+> > +	case 1:
+> > +		ac = ((u32)src[i] << 16);
+> > +		*cp++ = base64_table[(ac >> 18) & 0x3f];
+> > +		*cp++ = base64_table[(ac >> 12) & 0x3f];
+> > +		break;
+> >  	}
+> > -	if (bits)
+> > -		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
+> >  	return cp - dst;
+> >  }
+> >  
+> 
+> Let me test your patch and check that it doesn't introduce regression(s).
+> 
+> Thanks,
+> Slava.
 
