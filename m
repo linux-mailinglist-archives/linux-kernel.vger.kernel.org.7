@@ -1,109 +1,116 @@
-Return-Path: <linux-kernel+bounces-795447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A408B3F225
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:09:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6162CB3F226
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FA6485C9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ECE92048AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3E82DFA26;
-	Tue,  2 Sep 2025 02:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A197526A0C7;
+	Tue,  2 Sep 2025 02:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UCegrn+A"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZVlNej93"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730B9198A11;
-	Tue,  2 Sep 2025 02:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04501189BB6
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 02:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756778939; cv=none; b=IjMt4DjI5G6gznZFvy9gLWiskZpIl+KgTb7xPg4r/TyryOGHy/KrbTBLOqBRFgYbDxaOGhGj1q5QGUNw0uCWhHuRkp55o9VYEuxsPQQIlEuGqSiZk12lttWtJXMtx7z1l50wkVvTLPMsndxqhNqqghWyH7rxQUx5T6dX+pafato=
+	t=1756779014; cv=none; b=uIKDO9bYditOt1r5NMbrvgT0xNo7mG7fJcT3qa4st15actGgKMU+mRZ6eZLcCajm3CK+cL29TPjKpJ7lDGoNFErfHe21/Y092TKMbUsLrXL6Zl3/jV3BVX+fPgQKOYMq6NHB+jGwgcJDdVXMJ3AZl4csppvV3jElEFGrITPexVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756778939; c=relaxed/simple;
-	bh=uB6QWnbZDiWCmK5+f+kyoVPLiAnPPv+9PKaHvdKeH7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CAIJYCT+auGLqxGyGJSHUaalljtSujJ2NWKPr7kTUAxrG2NrJOXay9Ge5KgO9LBVP+ISfgNqvWl2eVvPazcufr74E7kuaxrWVgqZ6UFtzdRJIxn0V4KFdG3S1RTupLCa4JdgIUiySK3Iwq47QxUTJAW7Ck08Q+cZrG9WpHRDCuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UCegrn+A; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756778933;
-	bh=4Rarl1F3/8TR2preCPM5ogTCDnbr0sAt2z/2yt4/sR4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UCegrn+ANLqUrx8gLu12BVSCpiGjv2q1sssbKLSIVwwvo0x/gRX6E1BIoEr+WdjL/
-	 qXx8N+bGUpyyfr2kQZOgEZwTDSrTm1U2H4WcQAzYKR/k4OH2W5t0sriYFYPrBhNH7F
-	 RESxeJJ1ugliT1lMq33NgzJFvrpNHBVZfubCbBjOfNtRGlqYgIv+LNxauqVuMbaWtM
-	 dCZiZfeRY9SrZfT3b2oK6Vt0lrpLmSrPHxCNlkFdDBeR3SbPn6yt+lCMkm1vQg5HJd
-	 7NVh2t8+ZjzYoxJuuVKvesJUJaegg61Rxl83vTJzYXZtlprMUTIFFBPPZj3jR9wyaa
-	 d1nlwOk7kJ63A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cG8LF2MV7z4w9w;
-	Tue,  2 Sep 2025 12:08:53 +1000 (AEST)
-Date: Tue, 2 Sep 2025 12:08:52 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mtd tree
-Message-ID: <20250902120852.3dd6f0d6@canb.auug.org.au>
+	s=arc-20240116; t=1756779014; c=relaxed/simple;
+	bh=M/1zDnriG8ilm2H7iQwKqlgOR9ONJObBvnbqBpDcnsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCE2FtHiDSj45TdvYI1JSVKzJa8JJSy2BmSAGGLfjhah0u6CXzZeYBAghBsVM5OQGzUrHg7I1YUkusag/h4ZmVkmV1U569pe7YsJWrHlU36+rJSsRMlEwtKNbERtsUVu7UWWBVM0yxQ3R46v7zCIYLHjbcroCrGPqqNoI/OBg6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZVlNej93; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4d1e7d5036so2256985a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 19:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1756779011; x=1757383811; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xMToDNcwi+JjPobVyHU6qbfn2l8RCkFP2dBoE6EGpl0=;
+        b=ZVlNej939gxr09q0GM+YkdQbts4n+A7/WDy6lQGMTe+CSgevjctOJWFRmo9K+8B3Vb
+         bzvKKJjCW4SXgU+F51r0IX305wWapSdNGjvuSDmBpyjSqU9NnVw3BVEvcwkjD6GgxX6F
+         ghQZ4eUznJNHG8B1AJgGfl/HKuJeIIYcRaw3I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756779011; x=1757383811;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xMToDNcwi+JjPobVyHU6qbfn2l8RCkFP2dBoE6EGpl0=;
+        b=CkwHSRu6zm6pJCv4SfreFVGSzlF9SajKgAF2eJfpK2ntc02Eu7GPUnNMBjiXHF6QLL
+         NQDav8dtZqS7CzyUH2zcPWF5u0kyXvf6tE0Xmwk4SOHUuy8yi8NyiVYsjN7BxuePc19o
+         DGqaByDEmIRdV5ETqtqWdVGBZ9Wp1DEtDPnrM1E7mXAV/AGKGtpKU1gzmssMawJaiFVO
+         /PH+D8QhPtrIJ1uGBMvXjNpw6Vq2onoCUPeHu3gG0uTsHZ7fA2BQQc7kqsvYrvAZWthw
+         Y8V2q2dsAIErxN5LFG1i+6quUn4SVPOBZEglBrimxmYzxkDI6vS1+ZpQ2smdRTVlN1/A
+         90Eg==
+X-Gm-Message-State: AOJu0YzppPDGiScPfDoxbs+Wm6RimFgGk1HOQZ1n1wxFLKmMn9mGfufo
+	WaIRihf2iL4xwz7t3wrLypCOCGa6xIYyo2tGrahCOnrDmJsRbCuXUnmECs+VdSXLBw==
+X-Gm-Gg: ASbGncuM+Nb4isWxOV7prdfyBAD3CrjKTHOO0wxnC9/i+Z0MbY8Bv7VYUXr2dPeYnxT
+	R1D5iLqckF8iY7BDNjTEf3zig6QWscIaRGQrm+QbAcFYAThmhwPiuxVzMft04bLtDjExJASonVu
+	tKxg/wvjRgfQmEvkJD9CJNVvmHRbHk3FJSmpbPjziPDGmTEMBRrT3KYEidz/S8Awdv1bkbdg4qE
+	gokHOOo52B+XIjrvT4Q0XRa2yvyT8hCUt76fMN8Lk76ngfgJmJVVSfb+IIxtNWYD2qHe98Wckw0
+	mSLRa6vDIvE9g1eW9/QtSLA7i/QEPMEMqzaG5OJR1aU1iQ03ccuCuUgmQBNFFzA2y6ChTwxgWEU
+	fIcIvtISI7XS882R+g03guk8s+A==
+X-Google-Smtp-Source: AGHT+IFFsgaUMNmStaw7X17phzd3lUhWjfR+pBLqnu11jIGmAdr9OFQevWfZTFcfLRVDyRy4wJSiFA==
+X-Received: by 2002:a17:903:28c:b0:248:fbec:7c99 with SMTP id d9443c01a7336-24944a7728bmr128727935ad.26.1756779011223;
+        Mon, 01 Sep 2025 19:10:11 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:52df:d776:7862:776f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b0d881afasm9754075ad.47.2025.09.01.19.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 19:10:10 -0700 (PDT)
+Date: Tue, 2 Sep 2025 11:10:05 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Vlastimil Babka <vbabka@suse.cz>, 
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, kernel-dev@igalia.com, 
+	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>
+Subject: Re: [PATCH] mm: show_mem: show number of zspages in show_free_areas
+Message-ID: <ypp4byiagmgmdaaq3wskjxwxvub7pxhhqlvwsrhsyqlapqp5v2@rbfidxth3z6z>
+References: <20250901183729.3900578-1-cascardo@igalia.com>
+ <f25b1ad3-c2d9-4267-bf7d-f48c78beebc7@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/x91p5svg/H6TK2mHY7Z0u4/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f25b1ad3-c2d9-4267-bf7d-f48c78beebc7@suse.cz>
 
---Sig_/x91p5svg/H6TK2mHY7Z0u4/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On (25/09/01 20:54), Vlastimil Babka wrote:
+> On 9/1/25 20:37, Thadeu Lima de Souza Cascardo wrote:
+> > When OOM is triggered, it will show where the pages might be for each zone.
+> > When using zram, it might look like lots of pages are missing. After this
+> > patch, zspages are shown as below.
+> 
+> AFAIK zswap can also use zsmalloc so this would be reported for zswap with
+> the same effect too, right?
 
-Hi all,
+Correct.
 
-After merging the mtd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+> > [   48.792859] Node 0 DMA free:2812kB boost:0kB min:60kB low:72kB high:84kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB zspages:11160kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+> > [   48.792962] lowmem_reserve[]: 0 956 956 956 956
+> > [   48.792988] Node 0 DMA32 free:3512kB boost:0kB min:3912kB low:4888kB high:5864kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:28kB active_file:8kB inactive_file:16kB unevictable:0kB writepending:0kB zspages:916780kB present:1032064kB managed:978944kB mlocked:0kB bounce:0kB free_pcp:500kB local_pcp:248kB free_cma:0kB
+> > [   48.793118] lowmem_reserve[]: 0 0 0 0 0
+> > 
+> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> 
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-ERROR: modpost: "mtd_virt_concat_node_create" [drivers/mtd/mtd.ko] undefine=
-d!
-ERROR: modpost: "mtd_virt_concat_add" [drivers/mtd/mtd.ko] undefined!
-ERROR: modpost: "mtd_virt_concat_create_join" [drivers/mtd/mtd.ko] undefine=
-d!
-ERROR: modpost: "mtd_virt_concat_destroy" [drivers/mtd/mtd.ko] undefined!
-
-Caused by commit
-
-  fa47dc829519 ("mtd: Add driver for concatenating devices")
-
-I have used the mtd tree from next-20250901 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/x91p5svg/H6TK2mHY7Z0u4/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmi2UbQACgkQAVBC80lX
-0Gw9VAgAjptlvO46FIAEuhWI+onB6powKrpFRfxO9UfrNCAH3+U/jCFs7OF77Fav
-RWuHw8uZz1MNQnzp3KOcOjnTscnohZFah5F/WJq+TlD+XVIRlVSyDLA6/6TbR9Wc
-VuOdf6+m3KpZJl9vx5yZUPOfAtRGqSUvPGUAwRTElOEL1BlwyGyAR0JCQOyCXJG9
-DfxZDZYcbd01PKhiy7Cq3Mo2WRbL7ajIWWYWJz9UV6FmsTL1vRHxQIYkK+7wjk44
-CYI0awJWFl2b0ZpO+fsgeVbdUyqt0cLz1KjK7GpJzZEAonthfRzSWJ1XHauZCAYA
-rl7BvQDz9qfFUYdNwOIYesXp5G7YVg==
-=m7Gk
------END PGP SIGNATURE-----
-
---Sig_/x91p5svg/H6TK2mHY7Z0u4/--
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
