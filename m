@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-795737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E78FB3F737
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:58:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCD0B3F722
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3E4A1A8792D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:58:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8602066D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7772E92AB;
-	Tue,  2 Sep 2025 07:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8172E7F00;
+	Tue,  2 Sep 2025 07:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lzDUE8u6"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOkBWf+s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6007B2E8DF1;
-	Tue,  2 Sep 2025 07:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4FD2E7BCE;
+	Tue,  2 Sep 2025 07:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799808; cv=none; b=gd2TbDC7GlOavSjeDCg7kKHfwk5Q9sbzKBbyLs18MefOOTbRxgKpXGN0vO34PNqnHO/TbWlgDJscmtpJZWKwqeKyurcZTTLqOtzG/Mv4637fcFVKDqJwvu9qKTsJJ+oC/aCnVOIvusDlau1T+/0X3m4IKOjS+BF22WoJR5rAmhE=
+	t=1756799752; cv=none; b=KLUTlIiEi8IV2RuvOlqSdIZgC4QrQPtTN4d4BMhVRY45/kWVWDfg7EWtdrzPuxRH7rh9vsIf5Fo0GtbCLklc+y1gFSiwFaJEx/qc79PBRRjwb0nXfwD2QWba9YSBtYGaDuvZ3gf9ySAbIES3yvYdnJZT8SBmfHL4L5iyTd8/6Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799808; c=relaxed/simple;
-	bh=TAnyCLRfE3EQgtrPFVJVltgt/YNxdMV/5FZ7fdcJlJA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iQxWe4lCBbD7D/PjzJiznAqahr5jwLHo0X/T/VpIWDeNm3JsfIpBvVkIYGIM2D2ci+C4fQHnNEe26vdW9yMY6cHnmUIDXlVLwcxt4iSajekJ4WrFn5MSTHwU74LQojhDz0hSqZT8tEsGI+8Jd8u2sOUNFlgZaimuMDZzx4YpyDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lzDUE8u6; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756799808; x=1788335808;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TAnyCLRfE3EQgtrPFVJVltgt/YNxdMV/5FZ7fdcJlJA=;
-  b=lzDUE8u6cQyJLdYwCtaJrNcDuLS8yMQ2yG9K0YY5egqY4CaidbvgFsLM
-   zgIb9yiQFlo3svAK6kXTu3ikiiuyoY92KrJ7wV8q8vlbW4pWYxBvDN6M/
-   UWSyyjswnBOGvL+nmAJn+QvxtsXevouE0QeYdtEg8voBZREhFEOdguYps
-   BAtckLIOvGIHksdYTCTzRUIKVXCXZNdu//IkyfOEhblBqHR9VsxRrdzCy
-   4RK+u3vPZ/kuR2Dzo+tGlLSHqdX2HLs2J9beNWZErpbGOD4WyR2I+6TTT
-   sgUyqO7AckTnvpleaHAQYLR4Z4CzZXc9eYTp8GSY5R+RpLftB2Lffzk+6
-   g==;
-X-CSE-ConnectionGUID: I0e7JmeXSliqGe+ljgjh1Q==
-X-CSE-MsgGUID: JWvEiZzbTJ67xuX5JzQCRg==
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="45916749"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2025 00:56:45 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 2 Sep 2025 00:56:19 -0700
-Received: from valentina.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Tue, 2 Sep 2025 00:56:16 -0700
-From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-To: <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>,
-	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
-	<valentina.fernandezalanis@microchip.com>
-CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH v2 4/5] dt-bindings: riscv: microchip: document Discovery Kit
-Date: Tue, 2 Sep 2025 08:55:47 +0100
-Message-ID: <20250902075548.1967613-5-valentina.fernandezalanis@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250902075548.1967613-1-valentina.fernandezalanis@microchip.com>
-References: <20250902075548.1967613-1-valentina.fernandezalanis@microchip.com>
+	s=arc-20240116; t=1756799752; c=relaxed/simple;
+	bh=fGhLLwdCedmb+/WPqlL245TpagpYHJiGJoMQWGa2fHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggwQ3MTbE8tflqqhlTMEoSdgG9QODZ1yS/pGjRjelPaGZqvmqilP0slhBp8ObEVhBiHndyXc0FqPi6dw4lkaSXFOrLpOrW8ge3d1gnE2cLDmgDM+9rpkt1txoRuSqyx38THeQzUl1aFD6Ctws5XT4lOcq6r/xo1GX/Q8LZcOvhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOkBWf+s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF9FAC4CEF8;
+	Tue,  2 Sep 2025 07:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756799750;
+	bh=fGhLLwdCedmb+/WPqlL245TpagpYHJiGJoMQWGa2fHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bOkBWf+syJfTDnMKxIgzan3/kkMFxM1aVMv+RSJbTkuKOZIQrMSiMiSz7TNzb/W9r
+	 HklilaSAMpDzzfPhjsillI34OGFmDeV+RAL8efOr2wJJYSfu2jXKWl5htarNBHL/i8
+	 RV+l08rI8yY6hbZL+0QU9j/8HQ8+cyDlmm7zSiXXJ6S0//PPfEANm9aPmyi9a1k8rz
+	 j85gpapJ606lRIKboiz5GA/OrCpHWFNABLCPLxpnY5o/AsiONvChZqXbwSHh8XVwgd
+	 yCSoy3Zgf1vl20t0JGqxGkVNwFFik/6KZW/Cv2Cj+PQC57uT93Nk9UlqE8wkikQolg
+	 vFZycSq/3NOxw==
+Date: Tue, 2 Sep 2025 09:55:47 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michael Riesch <michael.riesch@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Kever Yang <kever.yang@rock-chips.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Diederik de Haas <didi.debian@cknow.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Collabora Kernel Team <kernel@collabora.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v3 3/7] dt-bindings: phy: rockchip-inno-csi-dphy: add
+ rk3588 variant
+Message-ID: <20250902-piquant-secret-moose-06c4b6@kuoka>
+References: <20250616-rk3588-csi-dphy-v3-0-a5ccd5f1f438@collabora.com>
+ <20250616-rk3588-csi-dphy-v3-3-a5ccd5f1f438@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250616-rk3588-csi-dphy-v3-3-a5ccd5f1f438@collabora.com>
 
-The Discovery Kit (MPFS-DISCO-KIT) is a development board featuring
-a Microchip PolarFire SoC MPFS095T.
+On Mon, Sep 01, 2025 at 10:47:44PM +0200, Michael Riesch wrote:
+> The Rockchip RK3588 variant of the CSI-2 DPHY features two reset lines.
+> Add the variant and allow for the additional reset.
+> 
+> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+> ---
+>  .../bindings/phy/rockchip-inno-csi-dphy.yaml       | 50 +++++++++++++++++++++-
+>  1 file changed, 49 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> index 9ad72518e6da..e37c9fd74788 100644
+> --- a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> @@ -21,6 +21,7 @@ properties:
+>        - rockchip,rk3326-csi-dphy
+>        - rockchip,rk3368-csi-dphy
+>        - rockchip,rk3568-csi-dphy
+> +      - rockchip,rk3588-csi-dphy
+>  
+>    reg:
+>      maxItems: 1
+> @@ -40,11 +41,15 @@ properties:
+>  
+>    resets:
+>      items:
+> -      - description: exclusive PHY reset line
+> +      - description: APB reset line
+> +      - description: PHY reset line
 
-Link: https://www.microchip.com/en-us/development-tool/mpfs-disco-kit
-Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
----
- Documentation/devicetree/bindings/riscv/microchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+That's changing the order, before first was the phy....
 
-diff --git a/Documentation/devicetree/bindings/riscv/microchip.yaml b/Documentation/devicetree/bindings/riscv/microchip.yaml
-index 8ddc5c02973e..381d6eb6672e 100644
---- a/Documentation/devicetree/bindings/riscv/microchip.yaml
-+++ b/Documentation/devicetree/bindings/riscv/microchip.yaml
-@@ -33,6 +33,11 @@ properties:
-           - const: microchip,mpfs-icicle-kit
-           - const: microchip,mpfs
- 
-+      - items:
-+          - const: microchip,mpfs-disco-kit-reference-rtl-v2507
-+          - const: microchip,mpfs-disco-kit
-+          - const: microchip,mpfs
-+
-       - items:
-           - enum:
-               - aldec,tysom-m-mpfs250t-rev2
--- 
-2.34.1
+> +    minItems: 1
+>  
+>    reset-names:
+>      items:
+>        - const: apb
+> +      - const: phy
+
+Although here first was apb? Quite confusing.
+
+Anyway "phy" reset for "phy" is pretty non-informative, please give some
+useful name.
+
+> +    minItems: 1
+
+Best regards,
+Krzysztof
 
 
