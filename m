@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-795454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CF6B3F23B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:23:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7253B3F238
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB8B7A32BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:22:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E4B48612A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79752E03F5;
-	Tue,  2 Sep 2025 02:23:22 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE5E2848BC;
+	Tue,  2 Sep 2025 02:23:16 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D583C4414;
-	Tue,  2 Sep 2025 02:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEC64414;
+	Tue,  2 Sep 2025 02:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756779802; cv=none; b=B+1TXiD40zyv1lMhBRS52tJkcry2GEK9CZYThdrD/6Rza3fhaVOlhUNyp9AKvkouBAXiFdwivjBJ0FooZmX+15zTOewiA18VVX8oMgju+zZDAmXOIjflV5hq2/r/fYssGafUkTrd1F+p5Y3bUYRkFJJp45F+wNcBD1WrSg79GPw=
+	t=1756779795; cv=none; b=LsdqOpvy/IkbUy5utIE3chJOtHaxmxVCCsIpG98V0PEUe08LhlYIAW1U8ShGkWXIdxb0qdEiUfwffW1hFeFwnVEB1tKRiCiTcWY+pbOKv0xwMS9ItfJuzhcCUFZZqjS3AebVw/p+Kda9S0ZQBG9oJMrqqAc6NY1bLncipHHW4Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756779802; c=relaxed/simple;
-	bh=EgJvsXcYBC3/9lVL/8kjHt6FlO2LajSjRCpOYUOIh+g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n5IuQDClC6ljxYCTUTGT2Bio2s8Q2E7ZPPYPCR9UQ/qDHgV/p2z023GR/T7nsW/PyKdJcNHJ5TqSbBznr1UgHox2kJmJHZEBgzo/Zz4DWMIsayIHWv8ciCfB0couAhOsAVftibsjUAeN2Vk/JEs2fguvVmScytG4p0hfiSXZB2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+	s=arc-20240116; t=1756779795; c=relaxed/simple;
+	bh=vbp+xwAzKmTpo4AyNEDblh9m98+wpwZzDRDxxwY2tV0=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=I11A00CLZFmcOwYmFhijNzSY1OeGCOnQD94f031mQncGegNr8fnc8M+MUY/mRFGIjEvb4lYMpoXURcQkxELzSDLzhZX8kV/00EheXnfCfU+F6r+/p0LGWI1zgq3nb92ynZvCXvuJU2EPVybgbc/u3npGJCHNICWXS084ssS3FLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cG8bH6zrZz2VRKQ;
-	Tue,  2 Sep 2025 10:20:11 +0800 (CST)
-Received: from kwepemj200013.china.huawei.com (unknown [7.202.194.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id 454C81A0188;
-	Tue,  2 Sep 2025 10:23:17 +0800 (CST)
-Received: from huawei.com (10.50.85.155) by kwepemj200013.china.huawei.com
- (7.202.194.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 2 Sep
- 2025 10:23:16 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neil@brown.name>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<lilingfeng3@huawei.com>, <zhangjian496@huawei.com>
-Subject: [PATCH] nfsd: remove long-standing revoked delegations by force
-Date: Tue, 2 Sep 2025 10:22:37 +0800
-Message-ID: <20250902022237.1488709-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.46.1
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cG8ZJ53scz13NSF;
+	Tue,  2 Sep 2025 10:19:20 +0800 (CST)
+Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
+	by mail.maildlp.com (Postfix) with ESMTPS id 618801402EA;
+	Tue,  2 Sep 2025 10:23:10 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 2 Sep 2025 10:23:09 +0800
+Subject: Re: [PATCH] hisi_acc_vfio_pci: Fix reference leak in
+ hisi_acc_vfio_debug_init
+To: Miaoqian Lin <linmq006@gmail.com>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Yishai Hadas <yishaih@nvidia.com>, Kevin Tian <kevin.tian@intel.com>, Alex
+ Williamson <alex.williamson@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <stable@vger.kernel.org>
+References: <20250901081809.2286649-1-linmq006@gmail.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <47e97b77-edfa-3a90-f74c-068b24afe917@huawei.com>
+Date: Tue, 2 Sep 2025 10:23:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemj200013.china.huawei.com (7.202.194.25)
+In-Reply-To: <20250901081809.2286649-1-linmq006@gmail.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500015.china.huawei.com (7.185.36.143)
 
-When file access conflicts occur between clients, the server recalls
-delegations. If the client holding delegation fails to return it after
-a recall, nfs4_laundromat adds the delegation to cl_revoked list.
-This causes subsequent SEQUENCE operations to set the
-SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
-validate all delegations and return the revoked one.
+On 2025/9/1 16:18, Miaoqian Lin wrote:
+> The debugfs_lookup() function returns a dentry with an increased reference
+> count that must be released by calling dput().
+> 
+> Fixes: b398f91779b8 ("hisi_acc_vfio_pci: register debugfs for hisilicon migration driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> ---
+>  drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> index 2149f49aeec7..1710485cbbec 100644
+> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> @@ -1611,8 +1611,10 @@ static void hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device *hisi_acc_vd
+>  	}
+>  
+>  	migf = kzalloc(sizeof(*migf), GFP_KERNEL);
+> -	if (!migf)
+> +	if (!migf) {
+> +		dput(vfio_dev_migration);
+>  		return;
+> +	}
+>  	hisi_acc_vdev->debug_migf = migf;
+>  
+>  	vfio_hisi_acc = debugfs_create_dir("hisi_acc", vfio_dev_migration);
+> @@ -1622,6 +1624,8 @@ static void hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device *hisi_acc_vd
+>  				    hisi_acc_vf_migf_read);
+>  	debugfs_create_devm_seqfile(dev, "cmd_state", vfio_hisi_acc,
+>  				    hisi_acc_vf_debug_cmd);
+> +
+> +	dput(vfio_dev_migration);
+>  }
+>
 
-However, if the client fails to return the delegation due to a timeout
-after receiving the recall or a server bug, the delegation remains in the
-server's cl_revoked list. The client marks it revoked and won't find it
-upon detecting SEQ4_STATUS_RECALLABLE_STATE_REVOKED. This leads to a loop:
-the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED, and the
-client repeatedly tests all delegations, severely impacting performance
-when numerous delegations exist.
+Reviewed-by: Longfang Liu <liulongfang@huawei.com>
 
-Since abnormal delegations are removed from flc_lease via nfs4_laundromat
---> revoke_delegation --> destroy_unhashed_deleg -->
-nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new open
-requests indefinitely, retaining such a delegation on the server is
-unnecessary.
+Thanks!
+Longfang.
 
-Reported-by: Zhang Jian <zhangjian496@huawei.com>
-Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STATE_REVOKED")
-Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com/
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- fs/nfsd/nfs4state.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 88c347957da5..aa65a685dbb9 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -4326,6 +4326,8 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	int buflen;
- 	struct net *net = SVC_NET(rqstp);
- 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
-+	struct list_head *pos, *next;
-+	struct nfs4_delegation *dp;
- 
- 	if (resp->opcnt != 1)
- 		return nfserr_sequence_pos;
-@@ -4470,6 +4472,15 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	default:
- 		seq->status_flags = 0;
- 	}
-+	if (!list_empty(&clp->cl_revoked)) {
-+		list_for_each_safe(pos, next, &clp->cl_revoked) {
-+			dp = list_entry(pos, struct nfs4_delegation, dl_recall_lru);
-+			if (dp->dl_time < (ktime_get_boottime_seconds() - 2 * nn->nfsd4_lease)) {
-+				list_del_init(&dp->dl_recall_lru);
-+				nfs4_put_stid(&dp->dl_stid);
-+			}
-+		}
-+	}
- 	if (!list_empty(&clp->cl_revoked))
- 		seq->status_flags |= SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
- 	if (atomic_read(&clp->cl_admin_revoked))
--- 
-2.46.1
-
+>  static void hisi_acc_vf_debugfs_exit(struct hisi_acc_vf_core_device *hisi_acc_vdev)
+> 
 
