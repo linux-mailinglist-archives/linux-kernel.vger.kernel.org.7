@@ -1,259 +1,368 @@
-Return-Path: <linux-kernel+bounces-795888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B29EB3F8FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:46:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3ADB3F8FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 253AA4E0688
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC3C1A80126
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A182E92C7;
-	Tue,  2 Sep 2025 08:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8913D2E8E10;
+	Tue,  2 Sep 2025 08:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoUiB0fg"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGT2FOX2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A272E9EA4;
-	Tue,  2 Sep 2025 08:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8591E2E36F4;
+	Tue,  2 Sep 2025 08:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802713; cv=none; b=pqOvoilw9Q4DXtpoUyK12hZzJk9TaNZhbLlg98Ss41FDHAxARw9y8i7o8ZwQu6GoM+juhehuSqfgATaihS02zFpZe1kVL9gYKnUfEPlBK4Hy+USRnTK7g57zh8Tou7jDS7f9qvHOrgVEHAjRboOnNdYy0dbx9YfkhmjE8GtbwvI=
+	t=1756802705; cv=none; b=EGjGtlwCA+4/690KlMITKVYzlSpYCHYuxuwdqZhQTKOMwkKWO4wLPWjLg9bMt/PfYQTVBfpWoURaF1fC+gfT7AAUWTHwncBa4CC3wMJBAB9AwmDIig4Tvzz4qIQNhs9xwj5qnBeI86drinWyjNqQBlhBvfVF45SZ+M7X+fsADZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802713; c=relaxed/simple;
-	bh=pHMmGYoGlJbB7WFIeGZ7N5f575iJJiVTHUPoSvca+54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YGwprhickI3mGtpGD3w/9OEPb9eAL2wUWJmpgUP32nZ88owcp7ZB0DLbZ/qAG7rusdyJIaTGlSSwaOgtZTHf+A8WaLi5LvP/sGR9n4nVloKkaMyoIDZv21JO6bauCwoPaM/gn226N27xZMroUqj1LndRVD7bWxhO5ZSO5npI3Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoUiB0fg; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61e930b27bcso2396365a12.0;
-        Tue, 02 Sep 2025 01:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756802709; x=1757407509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NVrfdXyH/4C0Wr0YHZaw6gV8VgGdQhG3sK6jQ9dFmeA=;
-        b=MoUiB0fgUbkP/zuwR8Nh7yeNFyhwFWKsz2aT6nptKyiOV7n49rCOXOGWvQRW3piIx4
-         PgrIQI9KdE8fMRzQr5CN9fsGRjNTEH/7GNYsyzY5hCPHcwIggZSvfvUW1y5/XSMlJop1
-         V/jh82Vz8VF+hfekmfNS/kMBrHl8iSBWI9z3g/2DKxjQHtcY1kmNIiToPBxxuDurr8Ec
-         q7+ilQm6udA+BAAf5G7WbmrFDZ+X1xs+rezJnkp0oNMYDzOdroTahazeWTYBlbVfRi+x
-         sp5DXhLNSH4VfjOHuhecGfZIlxuQpCVBdUPgPEMRCa5vN7Q6fGR+1l+DJdY6SLkreP4d
-         W5GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756802709; x=1757407509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NVrfdXyH/4C0Wr0YHZaw6gV8VgGdQhG3sK6jQ9dFmeA=;
-        b=B8TyRrdAVJVkXldLST1ZLdzHlJ+pDNrK8vOiQm3r4F34se6J2ClU4oaZjUGx7AfYb6
-         QHGuXOMV09zZazgYc8gOlL8usPIc8xJTXKbYshNQ8OFB9yjbGojCgZ1jhZkjJ8YXn2dJ
-         KkNwJb7E8rYXdC828EAPZorALDXjG20J7fU9GBV627+OmvnTSozudbsYviFvCXQIkNDA
-         8dlj3me/5Czjfe0J5oyQv9cG3e0MJYO74vGpsGIFESh5ccHKFte5N760RekAXwW4syKo
-         N77J9iQuiOTLXRzJWQZ3yPzoX38V+O2sOU1YOGtRawyRnTBfVsgKylgz8lBXXahvqHpK
-         x5Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUp6D47mov7Dj5th+MK//mj2mZYUN1bM6KM857za1dH/PG2xwYHqrL0AKjegD9+dC9fM2TAHp97zmQOLwKq@vger.kernel.org, AJvYcCXU/UBETk26g5fdhwL0kYpVnYLL4P8MpE5k7DzMvEwsujiWMA0uYwRGi/Kcv+wW/C/13FagOYvEvjuC8kzu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx63Yf8hlWaltxJi5CKbEZThQW4IR9x83XIISW4ZiPE06+nVVqt
-	WipMBDj4BP6d1Dmt/rRkkE+E+wijL2Ek4+JaqwvdCLgDG00fTcD1v3ZR7N5BC02rE+MYjqlTXsh
-	lRezcLYIOJyasULOpk6Cr4CZyZFsqSKM=
-X-Gm-Gg: ASbGnctKY6u+muEMfrBN5dtIjDcSNpzvSnfBJcAMuFW2SoClGDnDPnp7E4VPnIOZi2Q
-	xtnaLXOsKM75d+vCTHQl5YMuh9Hjln+oc3W0JFBW+/9AQ32DZRGVV2rUcMtVIAdwuCbHseyMWrw
-	5wbNzU2DoeEacMmPXBbBH61rJqRjJMJNLO5C+XKisiBJaYEnHDfFi+GOw5kKQtMjHVnpgroS/yb
-	ah3LLk=
-X-Google-Smtp-Source: AGHT+IFGTaCsHR4a9P7flHhL8ZGVpHQPhnAA0INvLEVYel2rMzuNm39zgM1QxNQF79NV6M5jkKIZmj7q5oxktyZfAwQ=
-X-Received: by 2002:a17:907:940a:b0:afe:f8cb:f8bc with SMTP id
- a640c23a62f3a-b01d9732721mr1067259866b.35.1756802709199; Tue, 02 Sep 2025
- 01:45:09 -0700 (PDT)
+	s=arc-20240116; t=1756802705; c=relaxed/simple;
+	bh=2HMvFldIf4W22/qAW2cax0Qg6e91/8xocc74yW5+qaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+px3JGnkL5dEBFTRazkLuLdF5iv++gmNx2xbMCitsF/aK274jjMN47N5JX0JcDJNb2A67w/vJNPHlE7mfwbcPoJNapZW/esVgjqn1swlwehz2/EpLC11QSps+p5upvGwyDGvSIq536kMP6LiMkuQmtoiedq2EUvZbtA99SltaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGT2FOX2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9FA7C4CEF5;
+	Tue,  2 Sep 2025 08:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756802705;
+	bh=2HMvFldIf4W22/qAW2cax0Qg6e91/8xocc74yW5+qaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hGT2FOX21NCjI8lkfzPXhHvSw7MIMEcTvxczG7rJQFZQdKXm8+ACeNRTSbZQdWKdl
+	 aHb0rt2APIB8rPvQsOh4YSP1RHgP57qsnYSIDv/O5RWDmfIJ5MFVrzVXqnMujKuH37
+	 4uqqnl14CVIe/TVRsXAxN4BQKHZKhJpNRjyIhDl3R4g+2Qttu61y5mEQguSSOKFeD3
+	 aUh5lT1eaeEvVVd0aDZAEMmU9Xe7/EeJY74x3B1BqQwNHhQZSxLQEsagJUksJTnezx
+	 sIRZryCr/K9gR8WStKe8OuBtLzv5d4MsOaIOmdzQPfWco8I/NTPEf5N02rIq9UjbfO
+	 9CD6TfR1fCdIg==
+Date: Tue, 2 Sep 2025 10:45:02 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH net-next 01/10] dt-bindings: net: pcs: renesas,rzn1-miic:
+ Document RZ/T2H and RZ/N2H SoCs
+Message-ID: <20250902-enlightened-hidden-copperhead-4eefdf@kuoka>
+References: <20250901224327.3429099-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250901224327.3429099-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
- <u4vg6vh4myt5wuytwiif72hlgdnp2xmwu6mdmgarbx677sv6uf@dnr6x7epvddl> <20250902-faust-kolibri-0898c1980de8@brauner>
-In-Reply-To: <20250902-faust-kolibri-0898c1980de8@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 2 Sep 2025 10:44:56 +0200
-X-Gm-Features: Ac12FXyvinFOW_EJGt3vGhfseoNJIoyCngvXL82TwH-ASLnPznf8obpH_dJti4U
-Message-ID: <CAGudoHHV6U5TobvSobzSCor1nN8tb9Ez0fYKxc9+OZtP9EgE-w@mail.gmail.com>
-Subject: Re: ETXTBSY window in __fput
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Monakov <amonakov@ispras.ru>, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250901224327.3429099-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Tue, Sep 2, 2025 at 10:33=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Mon, Sep 01, 2025 at 08:39:27PM +0200, Mateusz Guzik wrote:
-> > On Wed, Aug 27, 2025 at 12:05:38AM +0300, Alexander Monakov wrote:
-> > > Dear fs hackers,
-> > >
-> > > I suspect there's an unfortunate race window in __fput where file loc=
-ks are
-> > > dropped (locks_remove_file) prior to decreasing writer refcount
-> > > (put_file_access). If I'm not mistaken, this window is observable and=
- it
-> > > breaks a solution to ETXTBSY problem on exec'ing a just-written file,=
- explained
-> > > in more detail below.
-> > >
-> > > The program demonstrating the problem is attached (a slightly modifie=
-d version
-> > > of the demo given by Russ Cox on the Go issue tracker, see URL in fir=
-st line).
-> > > It makes 20 threads, each executing an infinite loop doing the follow=
-ing:
-> > >
-> > > 1) open an fd for writing with O_CLOEXEC
-> > > 2) write executable code into it
-> > > 3) close it
-> > > 4) fork
-> > > 5) in the child, attempt to execve the just-written file
-> > >
-> > > If you compile it with -DNOWAIT, you'll see that execve often fails w=
-ith
-> > > ETXTBSY.
-> >
-> > This problem was reported a few times and is quite ancient by now.
-> >
-> > While acknowleding the resulting behavior needs to be fixed, I find the
-> > proposed solutions are merely trying to put more lipstick or a wig on a
-> > pig.
-> >
-> > The age of the problem suggests it is not *urgent* to fix it.
-> >
-> > The O_CLOFORM idea was accepted into POSIX and recent-ish implemented i=
-n
-> > all the BSDs (no, really) and illumos, but got NAKed in Linux. It's als=
-o
-> > a part of pig's attire so I think that's the right call.
-> >
-> > Not denying execs of files open for writing had to get reverted as
-> > apparently some software depends on it, so that's a no-go either.
-> >
-> > The flag proposed by Christian elsewhere in the thread would sort this
-> > out, but it's just another hack which would serve no purpose if the
-> > issue stopped showing up.
-> >
-> > The real problem is fork()+execve() combo being crap syscalls with crap
-> > semantics, perpetuating the unix tradition of screwing you over unless
-> > you explicitly ask it not to (e.g., with O_CLOEXEC so that the new proc
-> > does not hang out with surprise fds).
-> >
-> > While I don't have anything fleshed out nor have any interest in puttin=
-g
-> > any work in the area, I would suggest anyone looking to solve the ETXTB=
-SY
-> > went after the real culprit instead of damage-controlling the current
-> > API.
-> >
-> > To that end, my sketch of a suggestion boils down to a new API which
-> > allows you to construct a new process one step at a time explicitly
-> > spelling out resources which are going to get passed on, finally doing
-> > an actual exec. You would start with getting a file descriptor to a new
-> > task_struct which you gradually populate and eventually exec something
-> > on. There would be no forking.
-> >
-> > It could look like this (ignore specific naming):
-> >
-> > /* get a file descriptor for the new process. there is no *fork* here,
-> >  * but task_struct & related get allocated
-> >  * clean slate, no sigmask bullshit and similar
-> >  */
-> > pfd =3D proc_new();
-> >
-> > nullfd =3D open("/dev/null", O_RDONLY);
-> >
-> > /* map /dev/null as 0/1/2 in the new proc */
-> > proc_install_fd(pfd, nullfd, 0);
-> > proc_install_fd(pfd, nullfd, 2);
-> > proc_install_fd(pfd, nullfd, 2);
-> >
-> > /* if we can run the proc as someone else, set it up here */
-> > proc_install_cred(pfd, uid, gid, groups, ...);
-> >
-> > proc_set_umask(pfd, ...);
-> >
-> > /* finally exec */
-> > proc_exec_by_path("/bin/sh", argp, envp);
->
-> You can trivially build this API on top of pidfs. Like:
->
-> pidfd_empty =3D pidfd_open(FD_PIDFS_ROOT/FD_INVALID, PIDFD_EMPTY)
->
-> where FD_PIDFS_ROOT and FD_INVALID are things we already have in the
-> uapi headers.
->
-> Then either just add a new system call like pidfd_config() or just use
-> ioctls() on that empty pidfd.
->
-> With pidfs you have the complete freedom to implement that api however
-> you want.
->
-> I had a prototype for that as well but I can't find it anymore. Other
-> VFS work took priority and so I never finished it but I remember it
-> wasn't very difficult.
->
-> I would definitely merge a patch series like that.
->
+On Mon, Sep 01, 2025 at 11:43:14PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Extend the RZN1 MIIC device-tree binding schema to cover the RZ/T2H
+> and RZ/N2H SoCs. These SoCs have a MIIC converter similar to RZ/N1, but
+> with some differences:
+>=20
+> - RZ/T2H has two reset lines; RZ/N1 has none.
+> - RZ/N1 supports 5 MIIC ports, whereas RZ/T2H supports 4 ports.
+> - On RZ/N1, MIIC ports can be mapped to various endpoints such as RTOS
+>   MAC ports, switch ports, EtherCAT ports, SERCOS ports, HSR ports, or
+>   fixed PHY ports (covering PHY input indices 0-13). On RZ/T2H, ports
+>   can connect to EtherCAT slave ports, Ethernet switch ports, or GMAC
+>   ports (mapped to PHY input indices 0-8).
+> - There are register bit differences between the SoCs, and RZ/N1 has
+>   additional registers currently unused by the driver.
+> - On RZ/T2H, the switch is connected to GMAC0 whereas on RZ/N1 the
+>   switch can be connected to GMAC2/HW-RTOS GMAC.
+>=20
+> To accommodate these differences, a new generic compatible string
+> `renesas,rzt2h-miic` is introduced for both RZ/T2H and RZ/N2H variants.
+>=20
+> The DT schema is updated to validate these differences and ensure proper
+> port and reset configurations per SoC.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../bindings/net/pcs/renesas,rzn1-miic.yaml   | 171 +++++++++++++-----
+>  include/dt-bindings/net/pcs-rzt2h-miic.h      |  23 +++
+>  2 files changed, 148 insertions(+), 46 deletions(-)
+>  create mode 100644 include/dt-bindings/net/pcs-rzt2h-miic.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.=
+yaml b/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+> index 2d33bbab7163..832a49877a29 100644
+> --- a/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+> +++ b/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+> @@ -4,13 +4,14 @@
+>  $id: http://devicetree.org/schemas/net/pcs/renesas,rzn1-miic.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> =20
+> -title: Renesas RZ/N1 MII converter
+> +title: Renesas RZ/{N1, N2H, T2H} MII converter
 
-I'm happy we are on the same page here, I'm unhappy it is down to the
-point of neither of us doing the work though. :-P
+Don't use regex here. RZ/N1, RZ/N2H and TZ/T2H....
 
-I don't think the work is difficult from tech standpoint, but it does
-warrant some caution.
+> =20
+>  maintainers:
+>    - Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> =20
+>  description: |
+> -  This MII converter is present on the Renesas RZ/N1 SoC family. It is
+> +  This MII converter is present on the Renesas RZ/{N1, N2H, T2H} SoC fam=
+ilies. It is
 
-With the current model fork + exec model, whatever process-specific
-bullshit gets added, you automatically get it on fork.
+Just list the soc families, so people can grep for it.
 
-Something which gradually spells out the state will need a way to
-figure out what was not sorted out and fill it up in kernel-side.
-There maybe some other caveats, basically it would be good if
-someone(tm) really thought this through. It would be really
-embarrassing to end up with a deficient & unfixable API which has to
-remain supported. :-P
+>    responsible to do MII passthrough or convert it to RMII/RGMII.
+> =20
+>  properties:
+> @@ -21,10 +22,17 @@ properties:
+>      const: 0
+> =20
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - renesas,r9a06g032-miic
+> -      - const: renesas,rzn1-miic
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a06g032-miic
+> +          - const: renesas,rzn1-miic
+> +
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a09g077-miic # RZ/T2H
+> +              - renesas,r9a09g087-miic # RZ/N2H
+> +          - const: renesas,rzt2h-miic
+> =20
+>    reg:
+>      maxItems: 1
+> @@ -43,11 +51,20 @@ properties:
+>        - const: rmii_ref
+>        - const: hclk
+> =20
+> +  resets:
+> +    items:
+> +      - description: Converter register reset
+> +      - description: Converter reset
+> +
+> +  reset-names:
+> +    items:
+> +      - const: rst
+> +      - const: crst
+> +
+>    renesas,miic-switch-portin:
+>      description: MII Switch PORTIN configuration. This value should use =
+one of
+>        the values defined in dt-bindings/net/pcs-rzn1-miic.h.
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> -    enum: [1, 2]
 
-I offer half of the kingdom for a finished product, the interested
-party will have to arrange a bride from elsewhere.
+Why? Widest constraints should be here.
 
-> >
-> > Notice how not once at any point random-ass file descriptors popped int=
-o
-> > the new task, which has a side effect of completely avoiding the
-> > problem.
-> >
-> > you may also notice this should be faster to execute as it does not hav=
-e
-> > to pay the mm overhead.
-> >
-> > While proc_install_fd is spelled out as singular syscalls, this can be
-> > batched to accept an array of <from, to> pairs etc.
-> >
-> > Also notice the thread executing it is not shackled by any of vfork
-> > limitations.
-> >
-> > So... if someone is serious about the transient ETXTBSY, I would really
-> > hope you will consider solving the source of the problem, even if you
-> > come up with someting other than I did (hopefully better). It would be =
-a
-> > damn shame to add even more hacks to pacify this problem (like the O_
-> > stuff).
-> >
-> > What to do in the meantime? There is a lol hack you can do in userspace
-> > which so ugly I'm not even going to spell it out, but given the
-> > temporary nature of ETXTBSY I'm sure you can guess what it is.
-> >
-> > Something to ponder, cheers.
+> =20
+>    power-domains:
+>      maxItems: 1
+> @@ -60,11 +77,11 @@ patternProperties:
+>      properties:
+>        reg:
+>          description: MII Converter port number.
+> -        enum: [1, 2, 3, 4, 5]
 
+Why?
 
+> =20
+>        renesas,miic-input:
+>          description: Converter input port configuration. This value shou=
+ld use
+> -          one of the values defined in dt-bindings/net/pcs-rzn1-miic.h.
+> +          one of the values defined in dt-bindings/net/pcs-rzn1-miic.h f=
+or RZ/N1 SoC
+> +          and include/dt-bindings/net/pcs-rzt2h-miic.h for RZ/{T2H, N2H}=
+ SoCs.
+>          $ref: /schemas/types.yaml#/definitions/uint32
+> =20
+>      required:
+> @@ -73,47 +90,109 @@ patternProperties:
+> =20
+>      additionalProperties: false
+> =20
+> -    allOf:
+> -      - if:
+> -          properties:
+> -            reg:
+> -              const: 1
+> -        then:
+> -          properties:
+> -            renesas,miic-input:
+> -              const: 0
+> -      - if:
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,rzn1-miic
+> +    then:
+> +      properties:
+> +        renesas,miic-switch-portin:
+> +          enum: [1, 2]
+> +      patternProperties:
+> +        "^mii-conv@[0-5]$":
+>            properties:
+>              reg:
+> -              const: 2
+> -        then:
+> -          properties:
+> -            renesas,miic-input:
+> -              enum: [1, 11]
+> -      - if:
+> -          properties:
+> -            reg:
+> -              const: 3
+> -        then:
+> -          properties:
+> -            renesas,miic-input:
+> -              enum: [7, 10]
+> -      - if:
+> +              enum: [1, 2, 3, 4, 5]
+> +            resets: false
+> +            reset-names: false
+> +          allOf:
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 1
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    const: 0
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 2
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    enum: [1, 11]
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 3
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    enum: [7, 10]
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 4
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    enum: [4, 6, 9, 13]
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 5
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    enum: [3, 5, 8, 12]
+> +    else:
+> +      properties:
+> +        renesas,miic-switch-portin:
+> +          const: 0
+> +      required:
+> +        - resets
+> +        - reset-names
+> +      patternProperties:
+> +        "^mii-conv@[0-5]$":
+>            properties:
+>              reg:
+> -              const: 4
+> -        then:
+> -          properties:
+> -            renesas,miic-input:
+> -              enum: [4, 6, 9, 13]
+> -      - if:
+> -          properties:
+> -            reg:
+> -              const: 5
+> -        then:
+> -          properties:
+> -            renesas,miic-input:
+> -              enum: [3, 5, 8, 12]
+> +              enum: [0, 1, 2, 3]
+> +          allOf:
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 0
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    enum: [0, 3, 6]
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 1
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    enum: [1, 4, 7]
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 2
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    enum: [2, 5, 8]
+> +            - if:
+> +                properties:
+> +                  reg:
+> +                    const: 3
+> +              then:
+> +                properties:
+> +                  renesas,miic-input:
+> +                    const: 1
+> =20
+>  required:
+>    - '#address-cells'
+> diff --git a/include/dt-bindings/net/pcs-rzt2h-miic.h b/include/dt-bindin=
+gs/net/pcs-rzt2h-miic.h
+> new file mode 100644
+> index 000000000000..c1f35fc0f1cd
+> --- /dev/null
+> +++ b/include/dt-bindings/net/pcs-rzt2h-miic.h
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Missing vendor prefix. Filename based on compatible, unless this is not
+for Renesas?
+
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (C) 2025 Renesas Electronics Corporation.
+> + */
+
+Best regards,
+Krzysztof
+
 
