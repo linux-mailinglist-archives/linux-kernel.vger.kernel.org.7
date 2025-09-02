@@ -1,128 +1,312 @@
-Return-Path: <linux-kernel+bounces-795632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D46EB3F598
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:34:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E76B3F59F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0ABC204F48
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:34:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 57B0C4E347C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457A22E6112;
-	Tue,  2 Sep 2025 06:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A60D2E5429;
+	Tue,  2 Sep 2025 06:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nIef9fJt"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lhO/8h89"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2064.outbound.protection.outlook.com [40.107.212.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8AF2DF137
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756794839; cv=none; b=hUWpv+qCN+A2ys4rIgKb93VsPSVNN3L6qJyEfPmUwBZsH3BVN0rzYK4yhRpzH6+/GyNgzt+Yyw+1muOF3zl5uOKAERjTYbANnd4A+zRZxpW1ioMAB5USu+Aufa7WJKQ02fO8v3jltqh0e5hAVDAVvXS2GLK1p6MjXMZHAQd8Ywk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756794839; c=relaxed/simple;
-	bh=++wXYqYgn9MXRhgojQOCRcAmHUnAXz4lTJ8R4B11SPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OBhEG9+cPhWekgdOxPUPhwWUVLXsJ/cY+rgJD2xQuXWR42JrJyzfErzyGzntsL/JqiEAl1qgNV33SqE/jzfcEfp+Ztynho9MOjjctAaJqbdK8GyGCMDxNWFoDKDjRFLoZ7WLEMgM8cVaqCH8GDv72pX6ZsqMrtnoGa0FJ1BXflE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nIef9fJt; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3da9ad0c1f4so107850f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:33:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756794836; x=1757399636; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7ympzDmmI8MhfVPuR62lP77gCJMNp5uNIli2mbJ4bZQ=;
-        b=nIef9fJtOuIpNPltP6uf812Mjqtg7avdF+Lgt57i8VoaxmokIaGoec3dznT+LLR3Vb
-         E4VgGDzbxwobGW6fmBYK6Q0WdHSYq4e46MHxI8WZwc9rC+Oj432uJyjifctHjhj2JpdN
-         KyKaR1587TLpeNgywIxm+11FwehteK9M87Jm/Su3jfnOjjTyKruDtJ9r+hS/lZlTrX1k
-         QeRYwPCDrKZ/5eRG1aHnkY0GtSHXScXSJ1/Y8CKA/QeRyUV1pF7G4fzz7o+0UOYD/6Xu
-         23A2sTlvUQ+bU0tQDY6PRBwKgRYR5o952issE/7wQKqUdu7f012eFyRE1TeeKZn3SN2M
-         XUSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756794836; x=1757399636;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ympzDmmI8MhfVPuR62lP77gCJMNp5uNIli2mbJ4bZQ=;
-        b=GTx8B7Ldf4FlpBTcZGvJsPmyMM4OahC8GDVwsOpvhxuoe++CM+xGzdkF/BjaneDA/y
-         WI9Qj9HLT2F7pWVgH760rgvClW4KoIGaOMYlQtUpRT6govnk7Jv+iCeVRvg6B+zBqFbx
-         Cu9OkOIHmb/KBozysTK9h+GziQA9yBN3SvZZaWvyg6WQBsIuFqV/fkOnToRkC1NymPrg
-         tQAv4YPGL+L5DjQrcSWBkH2XI7XR13MStyJ0GdetofcRhj3DJeq8iNaPm0peiq+lzcOs
-         Lq3sELvlNMVBgxevdPlU04fDHwffi5frq+HEFY9Kmzdhph3P3uTA3C8NqpXYvSME4/Z1
-         x8Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8WlodD0Pvo0cHiV9mGCmsvHIfCxTTCcVkXYJkFLFWGFNNFEhAqXrYSLBDI9Yg03dZGp3WDopJFSELR9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpTyM+DYrkv+gTA+uGT4Dd60gmKfYlB98DejI1emMPYQI+GUq9
-	Mel921MNpNOTQbQ48hL++nh8GG3uqxdqwquvNseiMPqtN3KbJiPxEg+qZ7MX6v/gJXw=
-X-Gm-Gg: ASbGncsGKGQLqmyKPuzTkHTPGyM/Qi0Fem5VKsSpbCD0y4JUZ350rwA30HLW7EpmNRW
-	nNmoSH1tlS61CIpMnZRRZXmeE3CWAiSyXlp5r+BQaa8X0ttmtKHywan2XkwmdeExYCefplnFv3a
-	EKkDRr6GbYL5NgqI+l0wVJUWnlhDnngwQa0KD6mTkM3Z+JzgGVNexoFllvBoQjZDzv0mDiGF8cc
-	5hjVXlOzHqrTdGeDlGiO3Ed8JfkA10OzIxSRWL1ONgeK1BPnQsWJjo6Pougwiw8x26tY7a6fWOL
-	49eprXhdah2tkcDiiycDjd/Y7onB6N4vZSN+AYR/bvsQ1VKH0AJRvmNtRmnEeqPlvmsLPwkO7xw
-	KswAUFQqqcTyZp2lzfaxDo5pna9zy/4e8aeDEDk3it6THbkmZ
-X-Google-Smtp-Source: AGHT+IGczOOV8MWINPPIkYniAwwdymVO48SZpByPT7RWy59E5cu+BCfrp0a+JKywzdS+lIUS1DG3Dw==
-X-Received: by 2002:a05:6000:2112:b0:3d2:6129:5505 with SMTP id ffacd0b85a97d-3d261295a85mr6792091f8f.36.1756794836310;
-        Mon, 01 Sep 2025 23:33:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d26f22f5bdsm13043671f8f.37.2025.09.01.23.33.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 23:33:55 -0700 (PDT)
-Date: Tue, 2 Sep 2025 09:33:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/bridge: synopsys: Return correct variable in
- dw_dp_bind()
-Message-ID: <aLaP0JVagRyL0f_O@stanley.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AC1235C01;
+	Tue,  2 Sep 2025 06:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756794932; cv=fail; b=Uwz8iDkUzKA0DzFgLVd5SVZzs7Lk89qJgtECxKuRTwAWcVhELsiyeE6md6WmGFVd3brdphfz4DmR/MROV03foZUhpCacMK5daNFn4F9eh50y5/Akrw7dYKWSVhbHDuAYNHt0fZIxwul2gIUFVnishqXY0j8btsnzdKxv5CF8vUU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756794932; c=relaxed/simple;
+	bh=9C77wsZtH5mLWwOSsuXk6L8B7xGSoh3p+PeLnIt3yBE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JKvKRW3V76WdDNyjbIymET/qLbrcYrRDZxEnkk2TMZtueDc4mWmYFqAHrG0h5645vF3YJHvSRSXtLN1DF3EMx4cUf9t08aYos5ue3NKX2T33f+8wliG9FqN/QJc3oWmXFZXWnKp39YxoDavlDF1DtVWtc4Yho4OwS5sk9efJLp4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lhO/8h89; arc=fail smtp.client-ip=40.107.212.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O6zWk7hx+OltFbvTfnaXc2FWfB8d2YJaA5w430tHYbHFi6CoB7BzpKAon22WTB90pHc+Aqebo8FP0fI8nKAYcO6r9cCpYweXReoUODKW/FHXHeuj+TF1qFDtvKxu/HHNAEKhMri7OD4s1w4/BDu1g1QvBlp1/b23FtwzVdgbTRAfebd9Cd39FaLr/r4T9j3bsCjnOlWAHNRw2VsqNVfjiK+G5HU1OYRWDIaj5frflNmp02m8wzPbhuwLMG1d94QeiYZMnE+fSAHRKJ3+MR+Qa5jJYDQ2qlz6Rv/ihCNCL2oIvlT09V2fOqNVQvcdhNwuo5FfQF7m1GmFLx10HuMD4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1/eEjFrkLJtbT3VNEbaA/rqQzmZfAx+22qDAzD9RfNw=;
+ b=pagil+dRqKnfEfn+URk/GzuZkWaKtCuEibxWBIkaYKfBL8q9FmnVqzOP/GHYG7ZW6N+UeyuvBbb0diNmBqP5T/FcfKVN2zh4PtBU5UTWksxGL0AecClZU4FaQ0JJ9LdbiPvEfPaBsA3gfD/gjWwjGylZqnAehra1XjKr9Dczut/cxIcDpYo4jt8sPcQO9seLMTCjDX/MMqvSjxfATiP5nihJiioj2h8Y6/RHCV+oE90eNUBV0ZI2rfaF+UJVoImwGAVO43jRPsv2etmRMNyTBP6B0pdM+6bAZ3a5FcYfpcj1t/0jJ9KR24bnk9gDICGYmtdy64ddNg95vXyYasoYfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1/eEjFrkLJtbT3VNEbaA/rqQzmZfAx+22qDAzD9RfNw=;
+ b=lhO/8h897R6NUxTKID9ZkLvQ7y17X2wuZZJMfXv79hnOJvlJdcSgqEiZoxvqMqgel1AP6Y/YbvmFNkXGI6byCwY3jFFn0bkRfpXTp4Rt/jDm4CovO2DcrLCPF3W0vP/p1ODkiwoXPNSjhFsbSVuQIIgtn9ozIGIyWsdxgvN5qj1797opkTvflwM5ENMqXZim6DAOUugfviSD3lYfSnXz7NTfUK02TMdd5x6kkyUw1cjIuXOQC9COOy+6jR3uc3Qn9rQ23tB6K7OS+mmby6zUnbIN6WVnhv4BhkTNSt3OAYsAEgujDlle9s17b+z7sagJaZK/cwEi71yI/8/mVejuJQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ SA1PR12MB8120.namprd12.prod.outlook.com (2603:10b6:806:331::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 06:35:24 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 06:35:24 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>, linux-media@vger.kernel.org,
+ linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH v1 07/19] staging: media: tegra-video: csi: parametrize MIPI
+ calibration device presence
+Date: Tue, 02 Sep 2025 15:35:20 +0900
+Message-ID: <9254009.EvYhyI6sBW@senjougahara>
+In-Reply-To:
+ <CAPVz0n2dp7kdCWFLWQjQY+tGO_ayzxGW=zxx3FwX_yeeR9J2Bg@mail.gmail.com>
+References:
+ <20250819121631.84280-1-clamor95@gmail.com> <6948375.lOV4Wx5bFT@senjougahara>
+ <CAPVz0n2dp7kdCWFLWQjQY+tGO_ayzxGW=zxx3FwX_yeeR9J2Bg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP301CA0015.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:386::17) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SA1PR12MB8120:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17353b54-5b36-445e-f45d-08dde9eae59c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|10070799003|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UFV6VDhxUGxTZG1CRnFFVkpyR1c4eXVqalRvL2pUVVhqeFIrN1JmdmxoMW14?=
+ =?utf-8?B?L1JxTWhRNXVBN2VTcThrWnJRaVNjL1BGZWlZWlU1NzRvODRrbitZK0tMRmN3?=
+ =?utf-8?B?QWJxRkJ2aDl6RWZGV1JBRzJWWnJVMjMxMFNaaXU0MGVGR2NFNVpXdGhOM2Ju?=
+ =?utf-8?B?MTlrejVFb1lvdTVwWE01V3o2RWREdUxaS05vRHljRks3TS9zdk1oUFQrMmxJ?=
+ =?utf-8?B?MG5yUlcxcXZKSk1lUmZRcHNUL3hZODdCL2lzZTE4MHVVN1NYckkrUVNHbXBV?=
+ =?utf-8?B?WmVkT0puOVpSNFJTRllRZU0raW9XdElSU1ltbjduanJtQUx1Nm5qRm1TZ0Fi?=
+ =?utf-8?B?cnNKSkxQN2lUNEQ5T2xhVVl0b0MrejNKWHVyV0pCL0I5SkdrL3dURTJOY1VP?=
+ =?utf-8?B?OVNqanhLNlBLT3Q5aDdLc0UyRTVQclEyOTJXdGx0NzU1V1psQzdsVUxBVml3?=
+ =?utf-8?B?b3d6dmNvMXAySUNaZkJiOWFXSHFNdWpZT0Y5L1Nwb280cnhSSnNhQnZOT1cv?=
+ =?utf-8?B?Z0M4eVhGc08wblYvcTlFY0M2akZKcHd5aDBTL3U1dlYzQSsyWm1JU2tNK1Iz?=
+ =?utf-8?B?bzNONjI1TzgxUnNaMnhuUDVOcU85WmQzZWZ3UUNyM2lIblR4ZHBsMzBHTHda?=
+ =?utf-8?B?Yi9LMTB6OERtcGJ3dWhjUlVDMGJVbTlpcGRBWDFZYmlmdytMZ3M1WUVvTncr?=
+ =?utf-8?B?Q1BQR1lYTm5rQndweTlEYVB1UjJwMHBtTGZ0Njg3YnEwbjlML3ZOSU5HUXhp?=
+ =?utf-8?B?UTVONGFDb3dqcm5FMWR0ckEvcnVxQUZabXpIMzZYeWdpOFZ2eXRXNjUyZUtl?=
+ =?utf-8?B?eXllbTVKenZqblpSMTltZVErZEF6WXJUa2JMK0szRFVMbWRpTEY0dFZOdDh4?=
+ =?utf-8?B?NHlGeVdqN2NGMml3OG44NkN1MkMxT3FBR2s5U1A2SmVWbEdENk5yVDJTNkJY?=
+ =?utf-8?B?RlZaczFKbksrTjNEMHE3VVdmOVVEaUxKS2hNdi9yTWlCdXNHa2F1U0xGa2th?=
+ =?utf-8?B?ZlRTK0ljcFVoS1RONFBaQ3FLRzZiaWd1LzBoWko0ZWw3RnVSdTlzQXdDNXVJ?=
+ =?utf-8?B?T3lQYVRwakdTMW5GR1lVSW5JY2p5T2R0UDVpL0IyM2VJV2tkSExlSnpTa29r?=
+ =?utf-8?B?SEQyM3UyUk4wc2Vja1QrQ2tXZ3dlZzUrbmJ5TzNwN004b2toTUQ4elp5U0dp?=
+ =?utf-8?B?aStPOWRXL1VtdEQ2SzhlSVR4V2JBTEMrWEpQcmdnKzNzclhnSTgyWGhSM0dY?=
+ =?utf-8?B?ZzR0YXIzdHVXVkszVDgzR1J6N3RBcitrZWdiNTVyNDJSYzN3Vlh1Wnc2QWZY?=
+ =?utf-8?B?V1VaK3E3bnNtdUh2cWJyL1R5OUhCWk9iT0xQQVVYek41SDgwUlVYSm5SS1pM?=
+ =?utf-8?B?UDBqR3oxVFFtS2RMeDhqbkhIaW1FeVBKVDBWYWV5LzdVZ3ZEMkJjWWxiL3Yx?=
+ =?utf-8?B?czArRWFsckNyTHpGYkVzTDhZS2VoMk8yZ0EydTdlMlhJWnhaNW9wKzhFRlFK?=
+ =?utf-8?B?c2VOZ0V5NFFEYU9EL1RUUEcvbGZjbkNNSWsxME4vSW96ckpEZVZaVDFtUjJR?=
+ =?utf-8?B?OVNrZTk4K0Vlb242N1hxbDBXYU85ak5XaFVnNXFmZTBGL3RnZWFnR3pBQWJJ?=
+ =?utf-8?B?L1BhZ1hRS09pWWx5LzUzazdiNjRzNjdpbWN5VGtzSy9zbWs4QmlmZ2Zmb1Av?=
+ =?utf-8?B?Tjd6cFFTSGV4S0xFWkgxWGpNZ2grNXpkWTBLN0tFUUs5eWNKc3BqaGtRdVpt?=
+ =?utf-8?B?MXhhV0xnVk9MbVFpZlRHQjZFeitLRUg4THNZZkdIMlV5a20zdzBnMGdQOXF2?=
+ =?utf-8?B?MEpRcFhLQWdLMlFjdWZUMUJoQVBJRXVuWkhNd0t4Q0xFRmNIMW1TZHowZStX?=
+ =?utf-8?B?eC9vdm4rNXQzV2JKRHU4N1h1UUM1eEZlYUNLdHZPRW5nSlpTZ1kybTBUN1Br?=
+ =?utf-8?Q?xqaTRHQmtvE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(10070799003)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aTFEeFF0VHBjRTl1em1SQzdGU2ROQytqVTRvMTNoNVlzSlF1OEM3T1pGLzBV?=
+ =?utf-8?B?eDRMak8yZEJkNWYwcGp3aEdnOTNLQUNLTDFqdU94SmVmM2VkU3BVZW5JK1hU?=
+ =?utf-8?B?amsrNmJLa0M4YmtZMVpkR3duR3B3QXJyRHMyeTJoaHVTN2pkQXU2QTB2VGlt?=
+ =?utf-8?B?S0VQUmtJa1hzQjhkK05ZTk1GNkRRYzdUUzBEVEUrazdlTmZGbVJuUjZaNTNH?=
+ =?utf-8?B?cjUrOHVWVG5GL1hWdGp2akpkL015WGQwb1IreXhzTzVnRmhlSUJhdTcwUHFQ?=
+ =?utf-8?B?bGRQZkJ4M1labkpNTmY1RFdqR1pWSndUeGhLS3hkd0dxUktjbm55dlJBRmM2?=
+ =?utf-8?B?cFNxd0tEQzNacTBJbmUwUzRWTzF6OFZiaEpLbkU0Vk9xN0tXK2prVHVRK3BL?=
+ =?utf-8?B?V2c2ejlhSVR6UmpEYWlqVUZiUG11Qk1QdlpwWjNpRlZhbUhNUGxLbmIwc3hK?=
+ =?utf-8?B?UFBGK21oOUM4UnluVy9uQU9QbzRVRm4rYWJ3akprV2VOcXpsMTlnN0phZWJW?=
+ =?utf-8?B?ck9HRXZEUjJQV0FzMlpNT0ExZkJKdHBOV1FjQVErVGlHa2dEN1FYT3JmZkZo?=
+ =?utf-8?B?b24wNDJrejI3TkJraGFqUnFLVngyT3M3TkF0ZWNEN1hRNGhOaU05WXROMjVv?=
+ =?utf-8?B?NG5WcFllanQ1dmtWbHRsSEpPUjNlYlJlZVhkcmVXOUZtbXpCMWxQUUFKNUpN?=
+ =?utf-8?B?bDN5SmJZbGZYTjVtM0hiZjNobFJjbU45L2V4cGV2RzYrYjJkR1REdE5UL2No?=
+ =?utf-8?B?SlA0M2RvQU1yS0RjNVY4RjZuYWhudmt1MlhFejhvTnJnSGxYT3FyRUFWbklu?=
+ =?utf-8?B?RWcxNFdESWFsVzhJOTRGakoyMGppRTNydjBnbUNVWkZXWFFZd2F2VlkwN294?=
+ =?utf-8?B?RktOa29qbWVBTGVrRGczSzQ5aVkwZnVlMVVYNngybVl1QzNyQXVnd2lMeVpm?=
+ =?utf-8?B?NWJJUkhPcWlIalZOajAwNm1ZUFBaK2FSdHJiUWV6ZTdYV2E5WXlHcENEMkNn?=
+ =?utf-8?B?bFBORGF4c1lSMUxXR3c0dlRjMkhONTNlRC9oZDlwMEFGeEFNRThDdVpaUWd5?=
+ =?utf-8?B?K3NUZ3Zmb0JoNjhLS2NlUEZ4NnBHWElpZWJld3dGRy84VElRajNmejlPeE52?=
+ =?utf-8?B?SUl5WHJLbncyRkwyMWM4TTh0cUlhbWViMlIzU0EvTnZtWjFIV0hTbXZtUGs0?=
+ =?utf-8?B?UWhhVGwxUjF3QS9TSExocHR0N081dm8zQU4yR1lXVmpNN2hJUHNFS2poNVNy?=
+ =?utf-8?B?QzRPMTRoR2xPcmdyYklpbUJZd1I4RmNtNjJoY3dRV0dEWHhqU3RsUm1taHlP?=
+ =?utf-8?B?U2J5NVhPeDlkU1RkMkVvWGZWRkJDOG14VEo2TlN3UTdCMFdsU2xndWYwbWxJ?=
+ =?utf-8?B?a1ViWFVMT1lwOGg4UjRKd2lmcmdkUnZudzZCZ25RSkdHalhCcXBzWjBuSG1Q?=
+ =?utf-8?B?TjI1Z3E1ZVF4NzNMR093MEw1d3E4aWNyakEvRmNxb1dLM0lPRjBBM3BIOXhs?=
+ =?utf-8?B?K3ZxRjJVSjRONUVqbGgwcUhlQzJnL3I0M2Z5d0lYamVDY2NqQ2dsSHhCOEpI?=
+ =?utf-8?B?WDlxMU9VSEgzY2lrZEhWTEk1RkdsOTI1ZlhDeTlQR1NaNGRnb3pmTlJ1UnBi?=
+ =?utf-8?B?ZlRRTGpKcmZTS2NCT0FrZVJIbHB5dzJnQmEydllRVWxYa3dJMDkxY1hxOVQ5?=
+ =?utf-8?B?ZUhQd09LU2dHbE5QKzEvOSs1V1pWZnlFaEFOZ2lUTlFrQUlkT2NYNXg3QWlV?=
+ =?utf-8?B?UW85T20zczJkWU0xY1NXczIxbzhZTkVqdGd0c0hWdGUraTY5eUozME85RlNW?=
+ =?utf-8?B?RHhhUjkrS2pvcjIwZUo5Rjk0ZThXM2tuZmhvVjYzbHJXd011WmYzQktLVGN2?=
+ =?utf-8?B?ZS9weGdydTlSanp6b0pGeW1kTHNvTHJVTFRLa2hqd1BjdFhuTzJhMW5qWlFk?=
+ =?utf-8?B?aUY3WkJobGV0L3BnTUx2ZDVMY1FsQS9oVyt4bWx6engxNm5TODJwNlA3ZGZS?=
+ =?utf-8?B?Ni81OW1lWjJjNHFwMm1lbEJza2FLSkVZWDBTY0Nkem12eU9lWDl3MEdycm9L?=
+ =?utf-8?B?bjFaM0dhUHEyb1Y2S1NOaW0vSkZsc2llclBnWks0aTl4eWJFRE1XNy93a1NH?=
+ =?utf-8?B?MFVyVDZFMFdobXltV2xKOGxSQlpXVHpPRFZWenVpUVBvSTBnY24ySThPQWV5?=
+ =?utf-8?B?UjFxVmc0YTgwQ3hNaGhoM3NyZHlhaFk4bFVmN1cxeGlockkvaW1SemJtSjRj?=
+ =?utf-8?B?b2xsQlVEYkh3ZktCWVZSNVlhZ0JBPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17353b54-5b36-445e-f45d-08dde9eae59c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 06:35:24.2730
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eNMMdFcvtq2mrXjlvIfjPqDZkNprpE9wAyaZ4fGdRaLLMj/AOJ2pZTb7sazW45UpVIbekrMiT5JGuhvXMNpJ6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8120
 
-There is a copy and paste bug here so we accidentally return "ret"
-which is zero instead of "dp->irq" which is an error code.  Return
-the correct variable.
+On Tuesday, September 2, 2025 2:05=E2=80=AFPM Svyatoslav Ryhel wrote:
+> =D0=B2=D1=82, 2 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 03:47 Mik=
+ko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > Dedicated MIPI calibration block appears only in Tegra114, before Teg=
+ra114
+> > > all MIPI calibration pads were part of VI block.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/staging/media/tegra-video/csi.c      | 12 +++++++-----
+> > >  drivers/staging/media/tegra-video/csi.h      |  1 +
+> > >  drivers/staging/media/tegra-video/tegra210.c |  1 +
+> > >  3 files changed, 9 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/drivers/staging/media/tegra-video/csi.c
+> > > b/drivers/staging/media/tegra-video/csi.c index 74c92db1032f..2f9907a=
+20db1
+> > > 100644
+> > > --- a/drivers/staging/media/tegra-video/csi.c
+> > > +++ b/drivers/staging/media/tegra-video/csi.c
+> > > @@ -485,11 +485,13 @@ static int tegra_csi_channel_alloc(struct tegra=
+_csi
+> > > *csi, if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+> > >               return 0;
+> > >
+> > > -     chan->mipi =3D tegra_mipi_request(csi->dev, node);
+> > > -     if (IS_ERR(chan->mipi)) {
+> > > -             ret =3D PTR_ERR(chan->mipi);
+> > > -             chan->mipi =3D NULL;
+> > > -             dev_err(csi->dev, "failed to get mipi device: %d\n", re=
+t);
+> > > +     if (csi->soc->has_mipi_calibration) {
+> > > +             chan->mipi =3D tegra_mipi_request(csi->dev, node);
+> >
+> > The way I would read 'soc->has_mipi_calibration' is that this device (C=
+SI)
+> > contains the MIPI calibration hardware. I.e. the opposite of here. I wo=
+uld
+> > invert the logic and optionally call it e.g. 'internal_mipi_calib'.
+> >
+> > A cleaner way to do this might be to always call tegra_mipi_request et =
+al. --
+> > on pre-Tegra114 SoCs this would just call back to the VI/CSI driver usi=
+ng the
+> > callbacks registered in the MIPI driver as we discussed before. That wa=
+y the
+> > CSI driver won't need separate code paths for SoCs with internal MIPI
+> > calibration and SoCs with the external MIPI calibration device.
+> >
+>=20
+> So basically MIPI calibration device for Tegra20/Tegra30 has to be
+> created within CSI and when MIPI calibration is requested, CSI phandle
+> is used. Question: may I use a dedicated node for MIPI calibration
+> within CSI or it has to use CSI node itself? With dedicated node
+> configuration should be much simpler and can help avoiding probe of
+> entire.
 
-Fixes: 86eecc3a9c2e ("drm/bridge: synopsys: Add DW DPTX Controller support library")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/bridge/synopsys/dw-dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think it'd better to use the CSI node itself. The calibration registers a=
+re somewhat scattered in the address space so it's hard to argue for the MI=
+PI calibration to be a subdevice of CSI.
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-index 33be4eae2b20..22e8b08ecb74 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-@@ -2077,7 +2077,7 @@ struct dw_dp *dw_dp_bind(struct device *dev, struct drm_encoder *encoder,
- 
- 	dp->irq = platform_get_irq(pdev, 0);
- 	if (dp->irq < 0)
--		return ERR_PTR(ret);
-+		return ERR_PTR(dp->irq);
- 
- 	ret = devm_request_threaded_irq(dev, dp->irq, NULL, dw_dp_irq,
- 					IRQF_ONESHOT, dev_name(dev), dp);
--- 
-2.47.2
+If it's problematic, we can also just call the calibration logic internally=
+ within the driver. But in that case also I'd place both the DSI and CSI ca=
+libration logic together in one place since AIUI they can interact with eac=
+h other.
+
+>=20
+> > Cheers,
+> > Mikko
+> >
+> > > +             if (IS_ERR(chan->mipi)) {
+> > > +                     ret =3D PTR_ERR(chan->mipi);
+> > > +                     chan->mipi =3D NULL;
+> > > +                     dev_err(csi->dev, "failed to get mipi device:
+> > %d\n", ret);
+> > > +             }
+> > >       }
+> > >
+> > >       return ret;
+> > > diff --git a/drivers/staging/media/tegra-video/csi.h
+> > > b/drivers/staging/media/tegra-video/csi.h index 3ed2dbc73ce9..400b913=
+bb1cb
+> > > 100644
+> > > --- a/drivers/staging/media/tegra-video/csi.h
+> > > +++ b/drivers/staging/media/tegra-video/csi.h
+> > > @@ -128,6 +128,7 @@ struct tegra_csi_soc {
+> > >       unsigned int num_clks;
+> > >       const struct tpg_framerate *tpg_frmrate_table;
+> > >       unsigned int tpg_frmrate_table_size;
+> > > +     bool has_mipi_calibration;
+> > >  };
+> > >
+> > >  /**
+> > > diff --git a/drivers/staging/media/tegra-video/tegra210.c
+> > > b/drivers/staging/media/tegra-video/tegra210.c index
+> > > da99f19a39e7..305472e94af4 100644
+> > > --- a/drivers/staging/media/tegra-video/tegra210.c
+> > > +++ b/drivers/staging/media/tegra-video/tegra210.c
+> > > @@ -1218,4 +1218,5 @@ const struct tegra_csi_soc tegra210_csi_soc =3D=
+ {
+> > >       .num_clks =3D ARRAY_SIZE(tegra210_csi_cil_clks),
+> > >       .tpg_frmrate_table =3D tegra210_tpg_frmrate_table,
+> > >       .tpg_frmrate_table_size =3D ARRAY_SIZE(tegra210_tpg_frmrate_tab=
+le),
+> > > +     .has_mipi_calibration =3D true,
+> > >  };
+> >
+> >
+> >
+> >
+
+
+
 
 
