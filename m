@@ -1,175 +1,122 @@
-Return-Path: <linux-kernel+bounces-797062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2ADB40B58
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:58:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F268B40B54
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9CE8562B1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:58:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC471B27BA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB851341641;
-	Tue,  2 Sep 2025 16:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BED341651;
+	Tue,  2 Sep 2025 16:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWnzN3y2"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4uUGFLw"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5C6342C9C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9AA30F94D;
+	Tue,  2 Sep 2025 16:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756832298; cv=none; b=RI/cK3fiurhWufK0ZSqF/W31aksf6kj5XdDdMJ/rcP41ypEonpDZWCkJDdoyo42ZKeEhBCnCu0qGjO/a5Ww302TLO6dK4LdQC/0qGH14Be2CCAFRYf0jJ3pO30Q2PHQ2P17LZ4Q283Xc3Iz4O/2ciE+yKhe538MhDdLcLvc8xGE=
+	t=1756832273; cv=none; b=NjnXJcmaaM6HkmfBFp0hnxiILuXTh0x2RwOAZO956sVtnD5exJeiShyN87QaDu85JQ5fTNwK+mj0KqKUIB3gYxT2vVjknkcY/QufkDI3PPvjm/W++MYiSHCAjimH11+Gvso3CG/K5Z1G+68L3yGu3I6S07JTkDsD+cxGlzUouSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756832298; c=relaxed/simple;
-	bh=1DqzUf+rokfxWS7zx8j4EhXH84SFLtCBUyk6VBoprNQ=;
+	s=arc-20240116; t=1756832273; c=relaxed/simple;
+	bh=xjZdrMmxgQtX66TPP8v+Vqq+oEDA+LsGXidCV2cNP9g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z37yQPVy+9olRZoyPdLYdcQkLVvDNzpeFfIhtEthGvGn2TIFT6MvE2Y8K6beTXOwW6Ie66Xw5O99Nakr4/631pATmlKDwJngnQUsrjKbC2ESyOOtczXAeyJ0J+ddWDEckKiDBZCRQflcXZ25fM0MjMm2GntZORV/2spGvQcRmL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWnzN3y2; arc=none smtp.client-ip=209.85.218.45
+	 To:Cc:Content-Type; b=dZ3CXrXneq+rxGxiO6yUreFkpiMFLOy6KuOPUaPm7r55ABIg0yBy5YzUYuODS2apgbczs+cZgWVeocLyK7U1HCuC6TmX+GWuQx6C3zl9D79v6fUuJUqz7cIWtbTKGECydcn57euDEH6RvZACDO6/WtzPatXVq6I2p7IjgcHGRKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4uUGFLw; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7322da8so1101894266b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:58:15 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f69cf4b77so3968280e87.2;
+        Tue, 02 Sep 2025 09:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756832294; x=1757437094; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756832269; x=1757437069; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1DqzUf+rokfxWS7zx8j4EhXH84SFLtCBUyk6VBoprNQ=;
-        b=gWnzN3y2+B9jE3Dvz90rkkW546XIcPJhJ/97ITRp0To03CvmYhZu2vFcGW74ZOqPxo
-         2bVeGRkvxe0FNjU1gJvnZB/kox2Hy2D2TOGn4uU/aztW/DRdfubVG4/bXmTsFqXnEiwm
-         sS25E/A3hRd/9KXySfjiIXvOL34gWPULBS29pQ0MnEyqB96aHJwL5Ea2FtJycFShaSOI
-         AGFqj1Xwr52rgjP3fJsR11WcRF5X5vSz/uuXVZxGFpA/QeiCfsHo5+QeZoI8eMWkmJfq
-         rsgmGrjnUzgANyWV+yNGaSoV8BinjNYy4psCz72VvQnkq4qRrSlw4+NLgIet9V30VJmi
-         je7Q==
+        bh=USMABpzeN1jg9NNbpP8+DcIerB0Re2d1/c7KuEPDElE=;
+        b=G4uUGFLwy2ZH7Dv7lCRGy00i/Sm/IocCayBz9ttTMOixOFOzupMcjKCOjMfClYSR21
+         ngzhXES9dxWKJZIlCzjk5yZWPld647iVI70ij+lkWpxyxirVBtl8cItTPz2Ng+KOKg+B
+         YxrafEbkYNpcQUGGh77aWXoGt+jkZlv+CxX/EhRDpNOseCi/IGRFyfQ/nCTdX2hMWtwJ
+         7EOhG/nt6Ry+r0Da6VtL/RE//E7MWGsf8dR7ru5za5/n4t3AQ/bxEkQvic5i9LWVoTzj
+         58HxwTrAtxhAkjJbJdjSCcdiK1baFLPdUsq1SPl0iHQeNMvtgMPO6rcQSJaZVlrgkOYE
+         N8Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756832294; x=1757437094;
+        d=1e100.net; s=20230601; t=1756832269; x=1757437069;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1DqzUf+rokfxWS7zx8j4EhXH84SFLtCBUyk6VBoprNQ=;
-        b=RyoODJiEByDBlUMMBQ8YtC2S3JCgXogRMn1ZN0KDH3Y3ip8bNwrZMN3SVy5dS1ppd3
-         cHkRR9crpPnK8FuqpMerWYb/VgwLvIbR1V5weCS6s4CtgWLzrwrdq1MJByIeCBRIMFZP
-         07l+GVm2tF25nPaVVUx6JEf1O9KxhO/MTler/kwWfZJ7lug6CuhIs8H5Pi1oobmQYiIP
-         rMDZ07QBO5qGnD6RI9aO6h3kvIK2g+h/fniq4gIkCg5ca/mfKOzkVH/H2EhoFpPjycyb
-         bAPZs1Ki3sBqunRuxf2IAZAP0Nd6c5yKs/UC4QqBoI5vn47gj81JRf5FoSsM0ONlIEfR
-         sKkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdTrgbVqrWvfreHS8XeLhIQjdK5C0zS5fibgs2LlsBxfmmfZJk2YY+ZioN2dw9PfuHAhC+XyXym1uKjeA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZF42dr/QQpfjiX05FwwGKMRFsngDRWubv80m5NlSpSAPWJofE
-	7wJJhrjRu1UtsokgGeMnWVxMgNkKKDxgt0EXlpgHXcICSuLhu8ijM29E+DStqBF0sn9pegqCNVm
-	J3rxAGExRWD/+hCVrayl7R1WaAMQqhY4=
-X-Gm-Gg: ASbGncvyM6p0bQWZFJd0BfuHxnWJOtmwzwPy6jDBUy/dhDXkagmuh/AxrlS8yqF5wQO
-	4YQo6jbTEa9SEBkEhEHZHmyF3mwO//Chnf+hC9qcBpQPhGy/DNRFg3Vylt5j2oQhAbHT7NqLPBD
-	J4W4gbLbpJu+g6zj+bEmm5ct3WpjkWyTHW8MjQqRUwttNC8GtisAwG7cYYBPgrHB24eXyCdirb2
-	PhiHIgIalQTiJFU7pKiGA==
-X-Google-Smtp-Source: AGHT+IFV2QlvgK4ES5Q5hipIJ0HYZ3QNaHslPIamKNny8rmThkrXzpfyiRWIDhc6Daw5bFI/xzPGYCZrlcgOio94HgA=
-X-Received: by 2002:a17:906:9fcf:b0:b04:4928:7e33 with SMTP id
- a640c23a62f3a-b0449289c65mr377879866b.37.1756832294200; Tue, 02 Sep 2025
- 09:58:14 -0700 (PDT)
+        bh=USMABpzeN1jg9NNbpP8+DcIerB0Re2d1/c7KuEPDElE=;
+        b=tsLpEpyN1A2Wh3IWzjPLUH6FlKs2+MyW75IkDIuYmlzefK7mftv1IN5GQm4Wf4OouO
+         lTv9RveazBvprDhokYbN0Hckkr7JFaNIW6BvbHCDyemSZwnFtJQPQ0Eg+c4uC3metn9T
+         UfmCJStjPC+BiqylK/nhVijAfmzORGw3K5KZhi+duKZGC3RkEvZSE4b+FM6ni0bvNy74
+         Kh93gCllqtSMGskXvAO8OEIvAG7UJgxCqeOUzS1klFHR/1HW6zNcdpz0un+KSgA6Gnvp
+         F1McYJ4NSaFGr+8rvS6cuciOAF6VzXoJ5xW18tqWscQ0wUcBy7/oomNOXpgnR97E3IES
+         7Z1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU9mBPXcskPihfJ2GlJWCln2G8T8DTNBfM2rmWGPNLEbM7ytaMYwyvavDcB/CEnYIzxoSQMIIeEpjD+Cd4M@vger.kernel.org, AJvYcCWi2OluK/g+wG4dHzcxYbVM0pMMU7flFH28HfxwYaIDsZgWST5tM4UhUixGzU89mluOBQDZtoLNEIA=@vger.kernel.org, AJvYcCWyAOj0JighmIp32Mcp0M5dhhSzOQ1qkGr2IoMXcpBVWNNVfXkGSdFisCD1fEEb9dROspi4eDOBymkL@vger.kernel.org, AJvYcCXm7JrEUx4goNAF/A/bPblVPfrIQfCxSToFc0LjThTRjIVayGMH+kf4kHsrK5AV+64T9gPZhuI9ZPd16eQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylWTD3kAbei5kYL1NMcouSgA+hhgr84DK/K49Ok/XhGTFGzvZN
+	rIhbTbFDiw76oNcKGEeSNzcvMbDwb/9UO5aTCgyTsD+CHOu+iqMFIvZIF1bMyPz2qfe0+66+wTc
+	pDScAMNVZqbkYgQIl5MDLyiyI9N3/1a4kOyfgBFexKg==
+X-Gm-Gg: ASbGnct3pZYYhQJN5kSEA9XBTd28Dz+sw1aM5xOjMNYgKEsFCZO1jb1Ky6boJbDlqaR
+	i/WvixH5OyPmDlHyEdcxsYmzQk3m3b5k6SR/57G9ahh7YZH9OVfjwbVaPxNuEWfz33LSAGcPknn
+	JpGJlSlWOSNJrvWf/q8ujMhJjq+tC5XdMgpH1StW1wl3t0kWTasrpILHCpW9LYaWkgZ0B5k4l+m
+	WWW7q0Tmpr35Ec4WQ==
+X-Google-Smtp-Source: AGHT+IHhfyehhL9dzCmmW7RKEpzEoQp3xfJMMII4o8LTS1/yYrgYDUDOmVLVqNX1VUdzQSoTOGBSF65LedRhnwtIiBI=
+X-Received: by 2002:a05:6512:3b9e:b0:55c:e95e:cd63 with SMTP id
+ 2adb3069b0e04-55f708ecf1dmr3560056e87.30.1756832268893; Tue, 02 Sep 2025
+ 09:57:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-9-ryncsn@gmail.com>
- <CAGsJ_4xON7fYg1VvcjLOsgBb_Wp4ruC+vdA4Q496GH1jXunU1A@mail.gmail.com> <CACePvbUVK45uRPVoO3ubDfQHikebSHFNQOsMTMvJ91QQZH2HwQ@mail.gmail.com>
-In-Reply-To: <CACePvbUVK45uRPVoO3ubDfQHikebSHFNQOsMTMvJ91QQZH2HwQ@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 3 Sep 2025 00:57:37 +0800
-X-Gm-Features: Ac12FXz176VVDB--mL2c8AYi8BveQ5DyAiz8PB-sBrX27q13GWBnbT3NtZeBoEg
-Message-ID: <CAMgjq7CADKhU8r0xg+=xKJ20JybFbXc8mkBNYxaHsp3ZvYfV7g@mail.gmail.com>
-Subject: Re: [PATCH 8/9] mm, swap: implement dynamic allocation of swap table
-To: Chris Li <chrisl@kernel.org>
-Cc: Barry Song <21cnbao@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
+ <20250831-tegra186-icc-v1-2-607ddc53b507@gmail.com> <20250902-curious-cooperative-agouti-1efdcd@kuoka>
+In-Reply-To: <20250902-curious-cooperative-agouti-1efdcd@kuoka>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 2 Sep 2025 11:57:37 -0500
+X-Gm-Features: Ac12FXzEK5elSQZytKBQDMCCZLo03Xy4jbKPZ68ZK5aetWahruENEzoM8bpe-ok
+Message-ID: <CALHNRZ8VBXnf0UULDP=fqGSEYvWXoGhoY10P8FyHbYGwi9uY4w@mail.gmail.com>
+Subject: Re: [PATCH 2/8] dt-bindings: tegra: Add ICC IDs for dummy memory
+ clients for Tegra194
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 2, 2025 at 9:20=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+On Tue, Sep 2, 2025 at 3:25=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
 >
-> On Tue, Sep 2, 2025 at 4:15=E2=80=AFAM Barry Song <21cnbao@gmail.com> wro=
-te:
+> On Sun, Aug 31, 2025 at 10:33:50PM -0500, Aaron Kling wrote:
+> > Add ICC IDs for dummy software clients representing CCPLEX clusters.
 > >
-> > On Sat, Aug 23, 2025 at 3:21=E2=80=AFAM Kairui Song <ryncsn@gmail.com> =
-wrote:
-> > >
-> > > From: Kairui Song <kasong@tencent.com>
-> > >
-> > > Now swap table is cluster based, which means free clusters can free i=
-ts
-> > > table since no one should modify it.
-> > >
-> > > There could be speculative readers, like swap cache look up, protect
-> > > them by making them RCU safe. All swap table should be filled with nu=
-ll
-> > > entries before free, so such readers will either see a NULL pointer o=
-r
-> > > a null filled table being lazy freed.
-> > >
-> > > On allocation, allocate the table when a cluster is used by any order=
-.
-> > >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >  include/dt-bindings/memory/tegra194-mc.h | 6 ++++++
+> >  1 file changed, 6 insertions(+)
 > >
-> > Might be a silly question.
-> >
-> > Just curious=E2=80=94what happens if the allocation fails? Does the swa=
-p-out
-> > operation also fail? We sometimes encounter strange issues when memory =
-is
-> > very limited, especially if the reclamation path itself needs to alloca=
-te
-> > memory.
-> >
-> > Assume a case where we want to swap out a folio using clusterN. We then
-> > attempt to swap out the following folios with the same clusterN. But if
-> > the allocation of the swap_table keeps failing, what will happen?
 >
-> I think this is the same behavior as the XArray allocation node with no m=
-emory.
-> The swap allocator will fail to isolate this cluster, it gets a NULL
-> ci pointer as return value. The swap allocator will try other cluster
-> lists, e.g. non_full, fragment etc.
-> If all of them fail, the folio_alloc_swap() will return -ENOMEM. Which
-> will propagate back to the try to swap out, then the shrink folio
-> list. It will put this page back to the LRU.
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-pat=
+ches.html#i-for-patch-submitters
 >
-> The shrink folio list either free enough memory (happy path) or not
-> able to free enough memory and it will cause an OOM kill.
->
-> I believe previously XArray will also return -ENOMEM at insert a
-> pointer and not be able to allocate a node to hold that ponter. It has
-> the same error poperation path. We did not change that.
+> dt-bindings: memory: tegra194-mc: (or nvidia,tegra194-mc)
 
-Yes, exactly. The overall behaviour is the same.
+For reference, I did base the commit subject on existing commits,
+namely b0dae3d which these patches are based on. Apparently that was a
+bad reference. I will update as requested for v2.
 
-The allocation is only needed when a CPU's local swap cluster is
-drained and swap allocator needs a new cluster. But after the previous
-patch [1], many swap devices will prefer nonfull list. So the chance
-that we need a swap table allocation is lower.
-
-If it failed to allocate a swap table for a new cluster, it will try
-fallback to frag / reclaim full. Only if all lists are drained,
-folio_alloc_swap may fail with -ENOMEM and the caller (lru shink)
-either try reclaim some other page or fail with OOM.
-
-I think the fallback of nonfull / free / frag / reclaim-full might
-even be helpful to avoid swapout failure when under heavy pressure. I
-don't have data for that though, but I did run many test with heavy
-pressure and didn't seen any issue.
-
-Link: https://lore.kernel.org/linux-mm/20250812-swap-scan-list-v3-0-6d73504=
-d267b@kernel.org/
-[1]
->
-> Chris
->
+Aaron
 
