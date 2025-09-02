@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-795744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87716B3F7AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:07:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E2DB3F748
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A1C3B2B2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:06:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBF348722E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C512E8B61;
-	Tue,  2 Sep 2025 07:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0375F2E7F04;
+	Tue,  2 Sep 2025 07:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mtYLoEvD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSFsEhZL"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBE42E7F01;
-	Tue,  2 Sep 2025 07:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5192E7BD9;
+	Tue,  2 Sep 2025 07:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799932; cv=none; b=bYp2BqOiTDzT3Zz209xHWNrKDhgMADtAfgK+zp78fAf/XrjbsSCixavdu3N6Zr9SRMajyQZ0qVGRzJ9rxfcB1khnmbCGvQxUcGKkXpjJxYfm9f8tUE3xyvfexjIGP3G+S9WE2Sk0Id/K+QHhOTrKcHJ3dr/BrPxgLYrrCqqYw2w=
+	t=1756799973; cv=none; b=XCV8mth5EHb3vuamkAHHYkrll+NGRgJKlvvn/g3Us7M6dWtKT2Ay9Ot2VS4+JKJf2+7VJUsZXizEPGlzeSXk6dHwYnEIqWayle0MyKnb877h4+P1iS8uD/sB44xNL9474u1MTFB+AKftuOtNwp3uMNZEja+UAEcGO/fvXeUzDUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799932; c=relaxed/simple;
-	bh=cbq8MF9eGEnnphMQ9wc4BMUt4Hu+h2jsqpOJa5W4udU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HY4EK4EaM9NqGr0ZYTmwEKg9svAi6arpTJu1pdrudbOjtwWmvNESlex7zB2U6XS0gw9kR5sKnLfVz668etlp2JU7SQdw6IgMFBKSIFdLu+5Xy2L7yALISc2RzSlzTtxMdFTIreFipc9DQFEOgFRALHBYL2f9YMOj2U1albT+eDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mtYLoEvD; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756799931; x=1788335931;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cbq8MF9eGEnnphMQ9wc4BMUt4Hu+h2jsqpOJa5W4udU=;
-  b=mtYLoEvD8LCtrJ6KWO+ADI+9owmEo0xKaYgQIB72xo+Zl4zDQJZbIcHe
-   Qr72onyO8kYBjWhUe8mPVoe+s7L8SBA0NNsShiJxW5ImM00/9cpIhe6t1
-   wRQYTTUUopkmMnKLf03s/oJ8IgOST1Sw5RRRa/4Qi9CBxBAG4zEeshmx/
-   6jtDfbu1dvcp9tSA2pAL9Z+9QJmmHJFBTNs7lx73wYEyXp+4lds4EiCfs
-   1QJHswfwnz1Ti3H50AQOgRWxdokJgIgrOlQy25toaOllCyvCjWlzqO9eg
-   dZII2puqx+FrWd7J5S+HD+/ZAQbAYInZrLAjt+tlqLFTJdqa6v9ElPFsa
-   A==;
-X-CSE-ConnectionGUID: bEN/JYy3Qs+OSJRwjaMK7w==
-X-CSE-MsgGUID: 2AEsStArTK65cp+Qq5Ap0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="70489944"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="70489944"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 00:58:48 -0700
-X-CSE-ConnectionGUID: OmTL4EdoQVyoBmeICbyc9A==
-X-CSE-MsgGUID: l04QEiHiTeyRgGLknydhHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="170464617"
-Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.32])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 00:58:39 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id C88FA121F49;
-	Tue, 02 Sep 2025 10:58:36 +0300 (EEST)
-Date: Tue, 2 Sep 2025 10:58:36 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Bin Du <Bin.Du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sultan@kerneltoast.com, pratap.nirujogi@amd.com,
-	benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
-	Phil.Jawich@amd.com, Dominic.Antony@amd.com,
-	mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
-	Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-Subject: Re: [PATCH v3 1/7] media: platform: amd: Introduce amd isp4 capture
- driver
-Message-ID: <aLajrP6ANpCZl-0n@kekkonen.localdomain>
-References: <20250828100811.95722-1-Bin.Du@amd.com>
- <aLaTRwNp_SmHc4K3@kekkonen.localdomain>
+	s=arc-20240116; t=1756799973; c=relaxed/simple;
+	bh=UetU6Q0k6KRv6T5Ge8HNc+MI7mAoKHwLvsekh+TGmJM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ErKIdLnq3GR7fvMwNBMWz5699bjkfJtiagVAIuBXd+TPozCape0ojJuNhhZRgBOvuZ3iRKAUJxjBwJyeDp8KAT31btusMl8UmSUIUAeQG3IMNoflg+VbL9+w/lRuZGnCxGSy4VfhT9zX6BE1TAjYzc59NVseUcXMKnFb5C5LruU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSFsEhZL; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-88432e6700dso40102839f.3;
+        Tue, 02 Sep 2025 00:59:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756799971; x=1757404771; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UetU6Q0k6KRv6T5Ge8HNc+MI7mAoKHwLvsekh+TGmJM=;
+        b=mSFsEhZLgMjim3oiFNWw9y0BVx5Ck2VI0vYaJsmN9AwPBmcyKNVDb+Ml8M0IISNzGQ
+         beqjW+nLlkeYE27nhHzLnrrwo6qcG8uPpTOtzRzm/Wf13wKA3S1F1bQqjh3KaG1IPasy
+         bymTwki7hc5bskXczcSDNkdq/R2ir6g3rYA/us2WY0NoDDtb1XEmmpb1dRVidVz9b4aq
+         vzoN/IXbSFn0Acw5tbFKJKgi11/gf5YgXyLBf9YT70+1G49ex9jU6dE62mUi+vsZbYtm
+         hkinDhtqlyZvKbgbtK71EUY0/dztMaIgp3PH4sg/96j0xof4MNvBXZFiBdV3ZPMzlVvE
+         UWug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756799971; x=1757404771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UetU6Q0k6KRv6T5Ge8HNc+MI7mAoKHwLvsekh+TGmJM=;
+        b=cVgZBSSsY2A2d5q0rO+L+Ev8/YQpEiKBQahbVCTEUF0Ima64WFq4ICC/vm+McJ23K2
+         ZLMgR1qRkMPyUzkk+MtR4etwLMkt+g+yqyp73RehzjwkJp4kLDABXLXJsyybd3HHHih8
+         6o3zpOissfWlslvMKCiAOWCtP/p7g596HXRmYa39C+N33a62Je0dxh+zmWa/cmOviUsm
+         GEP8TbtlYtKfyZ8+tyMJ5Wer9Bhz3XMhRTu+lvMlPiCwT82f0QWt3kthAB1Uz/Dmu1Dt
+         WAt2QNMAWdDlvXUjFLIejA96ecfoYYgKW8RVkBZAm7jTxvAPbSVDpBmUQ4SINt/i8zOg
+         HfGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNu+9Sz6OQjpkjGAZCMMKDF/J05J6lxdSyC/R76qeHBJaBK9+vMi4buHeBbJhiGelZbI2D2mJtfR5f2GM=@vger.kernel.org, AJvYcCWRN4a9Rxt/o98n7P9/OVW+nO2vB+uILswW+p8wAXKHmgUWK31s/XH3gpr3BmMTvTzkudjBImv0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrqyANeHViI/pFeZcB51HWBlXEWGqt9SgvXXate2sqJ8Rg2GKY
+	6eT3MBDN0vlP4DIebNkgahpy+5KhMBXBUZrPJaY5deQR1W/wxBPeCyqXuB27etyJihv8iR+vl9Q
+	q1lffWB3ueje/Z3J260udOp/QfAZT13Q=
+X-Gm-Gg: ASbGncs/Yh88zbjajxRTswvDMWrt1qXvh6BqFsVx6gY81YmCRSrYDj9rY0+M5XeK6u1
+	/7i1xr92A76/f5ylqri3YGYc7w6buJVg3qfmwmJijeTY/fz5qlmCpEABPnCjJhND+z0HhhxbFbc
+	hPocJ/LGUiSB1T4mB36sWHEx/nLOn3OrvTNkiV2Y/iaWl0wtpmPc9mkjKEIB2UQzHIjxH4x4H4L
+	/aDwUtPUWvd5w0uKQ==
+X-Google-Smtp-Source: AGHT+IGEkf8gg7Ow1PMGLkorRV34nEHMquJJIPNm+rQ3E2LGYOSocGgbgKW015adiEbMvaroPzAP/00jQqW5+KXJsGQ=
+X-Received: by 2002:a05:6e02:2165:b0:3e5:51bb:9cd9 with SMTP id
+ e9e14a558f8ab-3f400674ac2mr211654925ab.8.1756799970758; Tue, 02 Sep 2025
+ 00:59:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLaTRwNp_SmHc4K3@kekkonen.localdomain>
+References: <20250902022529.1403405-1-m13940358460@163.com>
+In-Reply-To: <20250902022529.1403405-1-m13940358460@163.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Tue, 2 Sep 2025 15:58:53 +0800
+X-Gm-Features: Ac12FXzkrriW9NPsuU0kv6Gzb7sSOm_lvfHS5UbJoKxOsdiMQSxWaqEft8y53B0
+Message-ID: <CAL+tcoDZf2RC7Y+vfmUv73Mi+PJSCgzGAieekpTnz92V4dBfWw@mail.gmail.com>
+Subject: Re: [PATCH v5] net/core: Replace offensive comment in skbuff.c
+To: mysteryli <m13940358460@163.com>
+Cc: willemdebruijn.kernel@gmail.com, aleksander.lobakin@intel.com, 
+	andrew@lunn.ch, kuba@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 02, 2025 at 09:48:41AM +0300, Sakari Ailus wrote:
-> Hi Bin,
-> 
-> On Thu, Aug 28, 2025 at 06:08:05PM +0800, Bin Du wrote:
-> > AMD isp4 capture is a v4l2 media device which implements media controller
-> > interface. It has one sub-device (AMD ISP4 sub-device) endpoint which can
-> > be connected to a remote CSI2 TX endpoint. It supports only one physical
-> > interface for now. Also add ISP4 driver related entry info into the
-> > MAINTAINERS file
-> > 
-> > Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> > Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> > Signed-off-by: Bin Du <Bin.Du@amd.com>
-> 
-> Could you elaborate what are the changes in this version compared to the
-> previous one, please?
+On Tue, Sep 2, 2025 at 10:26=E2=80=AFAM mysteryli <m13940358460@163.com> wr=
+ote:
+>
+> From: Mystery <m13940358460@163.com>
+>
+> The original comment contained profanity to express the frustration of
+> dealing with a complex and resource-constrained code path. While the
+> sentiment is understandable, the language is unprofessional and
+> unnecessary.
+> Replace it with a more neutral and descriptive comment that maintains
+> the original technical context and conveys the difficulty of the
+> situation without the use of offensive language.
+> Indeed, I do not believe this will offend any particular individual or gr=
+oup.
+> Nonetheless, it is advisable to revise any commit that appears overly emo=
+tional or rude.
+>
+> v5:
+>
+> - Added this detailed changelog section
+>
+> v4:https://lore.kernel.org/netdev/20250901060635.735038-1-m13940358460@16=
+3.com/
+> - Fixed incorrect Signed-off-by format (removed quotes) as requested by A=
+ndrew Lunn
+> - Consolidated multiple versions (v1/v2) into a single version history
+>
+> v3:Due to some local reasons in my area, this is a lost version. I'm trul=
+y sorry
+>
+> v2:https://lore.kernel.org/netdev/20250901055802.727743-1-m13940358460@16=
+3.com/
+> - Initial version addressing feedback
+>
+> v1:https://lore.kernel.org/netdev/20250828084253.1719646-1-m13940358460@1=
+63.com/
+> - First submission
+>
+> Signed-off-by: Mystery Li <m13940358460@163.com>
 
-Ah, I missed there was a cover page in a different thread. Please ignore.
+IIUC, you've received an explicit NACK from Jakub at the previous link
+https://lore.kernel.org/netdev/20250901114157.5345a56a@kernel.org/.
 
--- 
-Sakari Ailus
+Thanks,
+Jason
 
