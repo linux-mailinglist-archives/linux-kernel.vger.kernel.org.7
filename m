@@ -1,152 +1,160 @@
-Return-Path: <linux-kernel+bounces-796479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B0AB40124
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:48:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F37FB40137
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86AA1B28556
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EF4C178C8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B802D94B4;
-	Tue,  2 Sep 2025 12:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB5A2D6E4C;
+	Tue,  2 Sep 2025 12:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hBSGimte";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q/bqLeAN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GJEXki9K"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69902D6E4C;
-	Tue,  2 Sep 2025 12:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442522D47FD;
+	Tue,  2 Sep 2025 12:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817230; cv=none; b=XEDpu3/ggF2eexmI5AFO/97qthWHf9W4p+WzW0FgGF/gXKpf9wbZ2hVYREpPVtRCEg2oV91iQmw3QBFppX410IXIGssYSt0fB1MrwRF/cHciN1c4GkXoWk/u83Zfylt58WQ7DA83QNuL9X2+ObBsQ7Ol5z1lPM6sUuL6RawL6UE=
+	t=1756817280; cv=none; b=gGcDieBxnrOvr90YNYQRmQHTsNDmZ3az9mtpfyQSTz1oDCnNc3kObL5Gm8XEshtD+BBZj/Ma3Tvz7JEnbbcF5Q5o2AAV7UMfS+3qCMpEUV8LeCiysjOxJzNTyTvQur79BFyujcTfshoOM5EdYwg+KZCkPeObNSzum4FaTtAcGPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817230; c=relaxed/simple;
-	bh=5D+BEpotTbaYSdgyO333sqCd9RMOU+Soju7QcoQCavI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PKdezJ2SSzOfJUM0R64y+N+Dc/Le87hX5I7+ha8jHhFkqKuLR74uhJ/awStpr/X2YuAMwp6BZYqlvEQawXxOJr8d4ZanIY9R6myw+EBkYizmojDtkrh3fmDR7ubPzTy++bvAhYXX2QW6QoT95xHY15w61HYAa30QkLZaKyOWQjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hBSGimte; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q/bqLeAN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 02 Sep 2025 12:47:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756817226;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jUKvXwPqSFWwxbJOuWTk6p7Nzfpt+4r72zHDEVXHZvY=;
-	b=hBSGimteUaXT1rFk7eVo+QWxpLvvddHGySb+AAlPT9WcYspjib2wsCm1/Q1+2HpI26D6fD
-	R5JnBdg6Ad7IMqH89o0mCXnWKKaBjE3d7qXnZ+OgJBMwUprD+TA/Fq6svf8CNbmdrmWHh/
-	Kr8jI2tjBUrsXFgv0/W1Bl1ZOXR5t02bdGGvL0eC2xLBs/uxWA96Xr/LD/AoMWiBlKkg1k
-	ESqbHBfQYvmxw1GVWKKSeKxiFUNQU+1TZxeUl8cUI1dkViIuLqhbDw8hgSqcoe4Nax+a2G
-	zPSAXkAN8Uw4Bia7BAIsTXf3RhXH79HmCXTgrD5V+xjTXP+jS1pESjBfZSXh/A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756817226;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jUKvXwPqSFWwxbJOuWTk6p7Nzfpt+4r72zHDEVXHZvY=;
-	b=Q/bqLeANYWRJtDBQVDKf+3iLv1Ex04oAF4CcUHXWLRnxvIV6RtSQ6vmLm0zaUGkZJGXN+b
-	dF0xBQ1PWRlccaCA==
-From: "tip-bot2 for Inochi Amaoto" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/drivers] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
- cond_[startup|shutdown]_parent()
-Cc: Linux Kernel Functional Testing <lkft@linaro.org>,
- Nathan Chancellor <nathan@kernel.org>, Wei Fang <wei.fang@nxp.com>,
- Inochi Amaoto <inochiama@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Jon Hunter <jonathanh@nvidia.com>, Chen Wang <unicorn_wang@outlook.com>,
- Bjorn Helgaas <bhelgaas@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250827230943.17829-1-inochiama@gmail.com>
-References: <20250827230943.17829-1-inochiama@gmail.com>
+	s=arc-20240116; t=1756817280; c=relaxed/simple;
+	bh=Kpa+Tue6cWwu0ubpWnl7iNvs6jWo/rXsL77LDSyUY58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HBlpAZrf/1hOU1nlk35dtJC04xMTMklpD38MlMpCuDraTlC7IGR6A+JX6WO48lcXlDXt75BJyzMWrxZBJcvFmvxFxsiAyt0W185uc34Lv6VAUPurgwIbcAbKoc2XHAlM0EgtvfgL85++K5zDWzMEk6L0MDGyaevYsYoHrPozSnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GJEXki9K; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756817279; x=1788353279;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Kpa+Tue6cWwu0ubpWnl7iNvs6jWo/rXsL77LDSyUY58=;
+  b=GJEXki9KPsMDHx5EH9QAw1mDnIvGRVf6s6hVUyHTu3vDtiq6a3q6+zBQ
+   IjQdCOiYcHYw4/+is+gAIGZAIlUu0VaZ5iCInW8wKo7AcCK/jesK0h9dX
+   +PmjoMNwCCVVOien1nzrdsUJACAEyzlqtWIpi70J/uGLUUgop180g0/Cq
+   Kz/m1x42mNwd6JUEog0dE3SAdq7q76ewOsN4lHhrofwIdxGWcbqQAnera
+   SVBeQfrSS0/E+h+zU6kwwc+itWVO9UhJn4pP1DTirq8wU1hqALZYvim2v
+   aImv9uJ7aLZVzl97OSkeeh7YZ2GW/hbjumhwr8+h/2naIaF8HwiWO8QLo
+   w==;
+X-CSE-ConnectionGUID: 5q+FacOlSTeFdgOBZq2EuQ==
+X-CSE-MsgGUID: TVs3ppmQTfOHgyhHgC7fNA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59154434"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59154434"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:47:58 -0700
+X-CSE-ConnectionGUID: 1I3nBDPWRwWpfGQS2oXKgw==
+X-CSE-MsgGUID: u8BSr4fyQG+xfSrLRH2RhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="175631961"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:47:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utQQS-0000000AhBo-1lM6;
+	Tue, 02 Sep 2025 15:47:52 +0300
+Date: Tue, 2 Sep 2025 15:47:52 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: dimitri.fedrau@liebherr.com
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chris Lesiak <chris.lesiak@licorbio.com>
+Subject: Re: [PATCH v2 2/2] iio: humditiy: hdc3020: fix units for thresholds
+ and hysteresis
+Message-ID: <aLbneKXFd7Nc711T@smile.fi.intel.com>
+References: <20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com>
+ <20250901-hdc3020-units-fix-v2-2-082038a15917@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175681722544.1920.17009750793019581928.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901-hdc3020-units-fix-v2-2-082038a15917@liebherr.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The following commit has been merged into the irq/drivers branch of tip:
+On Mon, Sep 01, 2025 at 07:51:59PM +0200, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> 
+> According to the ABI the units after application of scale and offset are
+> milli degree celsius for temperature thresholds and milli percent for
+> relative humidity thresholds. Currently the resulting units are degree
+> celsius for temperature thresholds and hysteresis and percent for relative
+> humidity thresholds and hysteresis. Change scale factor to fix this issue.
 
-Commit-ID:     727e914bbfbbda9e6efa5cb1abe4e96a949d576f
-Gitweb:        https://git.kernel.org/tip/727e914bbfbbda9e6efa5cb1abe4e96a949=
-d576f
-Author:        Inochi Amaoto <inochiama@gmail.com>
-AuthorDate:    Thu, 28 Aug 2025 07:09:42 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 02 Sep 2025 14:42:09 +02:00
+...
 
-PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in cond_[startup|shutdown]_parent=
-()
+>  	/*
+> -	 * Get the temperature threshold from 9 LSBs, shift them to get
+> -	 * the truncated temperature threshold representation and
+> -	 * calculate the threshold according to the formula in the
+> -	 * datasheet. Result is degree celsius scaled by 65535.
+> +	 * Get the temperature threshold from 9 LSBs, shift them to get the
+> +	 * truncated temperature threshold representation and calculate the
+> +	 * threshold according to the formula in the datasheet and additionally
 
-For MSI controllers which only support MSI_FLAG_PCI_MSI_MASK_PARENT, the
-newly added callback irq_startup() and irq_shutdown() for
-pci_msi[x]_template will not unmask or mask the interrupt when startup()
-resp.  shutdown() is invoked. This prevents the interrupt from being
-enabled resp. disabled.
+Replace "formula in the datasheet" by explicit formula
 
-Invoke irq_[un]mask_parent() in cond_[startup|shutdown]_parent(), when the
-interrupt has the MSI_FLAG_PCI_MSI_MASK_PARENT flag set.
+> +	 * scale by HDC3020_THRESH_FRACTION to avoid precision loss when
+> +	 * calculating threshold and hysteresis values.
+>  	 */
+>  	temp = FIELD_GET(HDC3020_THRESH_TEMP_MASK, thresh) <<
+>  	       HDC3020_THRESH_TEMP_TRUNC_SHIFT;
+>  
+> -	return -2949075 + (175 * temp);
+> +	return -589815 + (35 * temp);
 
-Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Reported-by: Wei Fang <wei.fang@nxp.com>
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Nathan Chancellor <nathan@kernel.org>
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Wei Fang <wei.fang@nxp.com>
-Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pioneerbox/SG2042
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Link: https://lore.kernel.org/all/20250827230943.17829-1-inochiama@gmail.com
-Closes: https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
-Closes: https://lore.kernel.org/regressions/20250826220959.GA4119563@ax162/
-Closes: https://lore.kernel.org/all/20250827093911.1218640-1-wei.fang@nxp.com/
----
- drivers/pci/msi/irqdomain.c | 5 +++++
- 1 file changed, 5 insertions(+)
+TBH, I prefer to have the proper units be mentioned in the comment along with
 
-diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-index e0a800f..b11b7f6 100644
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -154,6 +154,8 @@ static void cond_shutdown_parent(struct irq_data *data)
-=20
- 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
- 		irq_chip_shutdown_parent(data);
-+	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
-+		irq_chip_mask_parent(data);
- }
-=20
- static unsigned int cond_startup_parent(struct irq_data *data)
-@@ -162,6 +164,9 @@ static unsigned int cond_startup_parent(struct irq_data *=
-data)
-=20
- 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
- 		return irq_chip_startup_parent(data);
-+	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
-+		irq_chip_unmask_parent(data);
-+
- 	return 0;
- }
-=20
+	return -2949075 / 5 + ((175 / 5) * temp);
+
+5 itself can be a definition
+
+#define ..._PRE_SCALE	5
+
+and used everywhere.
+
+...
+
+>  	/*
+>  	 * Get the humidity threshold from 7 MSBs, shift them to get the
+>  	 * truncated humidity threshold representation and calculate the
+> -	 * threshold according to the formula in the datasheet. Result is
+> -	 * percent scaled by 65535.
+> +	 * threshold according to the formula in the datasheet and additionally
+> +	 * scale by HDC3020_THRESH_FRACTION to avoid precision loss when
+> +	 * calculating threshold and hysteresis values.
+>  	 */
+
+Ditto. "percent scaled by ..." is much better to understand.
+
+>  	hum = FIELD_GET(HDC3020_THRESH_HUM_MASK, thresh) <<
+>  	      HDC3020_THRESH_HUM_TRUNC_SHIFT;
+>  
+> -	return hum * 100;
+> +	return hum * 20;
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
