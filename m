@@ -1,111 +1,268 @@
-Return-Path: <linux-kernel+bounces-796577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3D5B402B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:22:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B2BB402D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59B4189D1DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27D51B27527
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22121304BA0;
-	Tue,  2 Sep 2025 13:19:41 +0000 (UTC)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCC53009EF;
+	Tue,  2 Sep 2025 13:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="u84S6j7v"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4190378F43;
-	Tue,  2 Sep 2025 13:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FF72C15A3
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819180; cv=none; b=BApqIhQZ82FpiAi8wtCdk7Xj2Oe5dxYn/rnRukPwudDH/wdxK+BeAzqLOLU3NYNHgMO6zC5kVifCUIrGQmoXw9M+qDLEE8JeVeZck509wAooZ1Sdjp8fwCVblpM2RLOzcmdTJPSLpTO/gh0lbD+QtahYBYrnLsfYD/Nc1lygQ4w=
+	t=1756819372; cv=none; b=eJHyiPPskJ6srYjDho9fYRgyYxcT+JN+3Ik0uRJuwla2vaYLPd/CdmuZC7wCw3mMEa+Tv8iiiVUuSPKZbGGm6dYiTld6iIsyuQH1kaC0GHlqwQL8ZdnWFOuohtaMcvXMuhaGIxS1Dxz82S0i/BASu3vo57YxBlyvwoPJL31Bv8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819180; c=relaxed/simple;
-	bh=7ezCBtEzEDCfWMrIuBk2RX4WBzGukb9PoA+nthRFEJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RkcJcvd4wtYe4r4kLHrcPguYfdRi2fqg/f28by3DvRYiRdHAYHNu0fTx0PrpKNEaDf1fexZNCIuUyARjtBBEXoTTQeGYCA7UrxSkeDQYDGRCDFur0mdmbXurV7XR58+z+HC8I2cBuypqQgDpcwsWQJPdiQWsY+FCRSmPeAa5vns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-529858dc690so1272254137.0;
-        Tue, 02 Sep 2025 06:19:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756819178; x=1757423978;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qw26R79NODPbly0gxpCIdsEY0s00Sf9I+4m6dANRMwY=;
-        b=IfPhpsRCLsScHHtbEGxf88bo0E7vNIuR/ezr//jjVrtfR4OZfTTOPSjSCNWh+6EXnG
-         1pPx8YOcj0JZgHSvRmCtS39ph+43jRK7PLVmm6HflTHPOdgFX3SboajSJsvMbnU3RWSL
-         1+fry91R75s0KReydgMFSOlDKBS/BwpWckORlgecHs5zA2RTCItulY6bCQSV20Ua1CO2
-         NNJpkuubiZlhe5Shi962Iv0xG0SSWB1DuWzRxcLLDMKH+BJAKzsbmblSRVfdyWEeY5bf
-         T5MVgcidflpjMvMBSbex7u3X6lulZnd1aozOOnajx84BzUmEItSog6/gwiKY5jjX/cY3
-         1Zzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUep/aFKnAiELjONH4GHOZsE4JMdOTqA6kDs1YT09R0HV+J6WQddzbMvMW0ouaCHrAPsVbwCdRoCHysf0EjYlRarT4=@vger.kernel.org, AJvYcCW8h//3l6fQR4u+kXUOKStFPOmlvxqO3fYOfK6luBnk7GYGtFqaH9Hr6mKQAzGyFrbQVbGg97G/82xn@vger.kernel.org, AJvYcCXQ+fGvM91MJyv9hLbSr3oK8z1rRSbI5HJiCRWVIw6oC9bC1fwJoR9ovm6jBMDM20PwTsYiDvonv0LJ+Ait@vger.kernel.org, AJvYcCXbQeW2d+8tFyvL1ZQhr5eDqUXP/q1uklR7E5K5ZqyEIEsopM0737ectXISJa6KKZU9pvRpOi7WYMaO@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQcWIFKvcqqR68E9I2Evjc6p3KxvE0hHyIe1qJ1HPtE/YXCMr1
-	/AC/zB+CEEYhL4Q+aJjQO7w8/uGB1yF8Q8lZXvoAyf9HTBWt7pv/lQOCWa9xgQyd
-X-Gm-Gg: ASbGncsDzYWtr5EOZkEoz0scmwt6wq8Vs/iJcRXSLKnWd7xQV9ZSAeNoEYKf4M7Xa0a
-	spzBPJOe/FflIaQiyMw6BvFffOsSaLjYOqQinbKbgzh6Q5Fplj23HOtIGHGXMUrPIGgXEf04nng
-	rQjqF5Z+jqvPg1GY+nIsHUenemxaBo6ZLOg/NfeCd3dfvluPDr/L79vBVP/12SUzMzsMKFayemH
-	R65rXnjZ9ww52UEupreWQtsrsE1LoEUNFHVRzNZTLDZjHgzLQpYD07ZofNAHmO/4ej30pXaw5p8
-	J2hOgbIKUDZmgugiKMUaefS+QsPk+e0F4XUhu2YW+XsaRsdZTIrFJet/pqIMxlGDRQpnZeMDiFW
-	LiwTHsxUy2gjFnY4v6w6VCzXqFPOdO3/H+aTB40rlk5spgooqlBzoRCUv6ILflCXdKzUE62k=
-X-Google-Smtp-Source: AGHT+IGPzEDyHxkB8d2ck8y1zQ2pzOwX20cHA+kb7StIQPajrTfFNKTtmPO5aEkXI1xGjdFurhEYAA==
-X-Received: by 2002:a05:6102:510e:b0:524:b344:748d with SMTP id ada2fe7eead31-52b1b2ea2a7mr3940416137.17.1756819176583;
-        Tue, 02 Sep 2025 06:19:36 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8943ba549d2sm4511162241.12.2025.09.02.06.19.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 06:19:36 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-890190c6165so1714618241.2;
-        Tue, 02 Sep 2025 06:19:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW53Ht1nUKjk8Z08geyN665gZ5J0NGM4k5BAtLWh2olGuFocvIaPHv1l1bpOjB8MquXg4jtK1juDOko@vger.kernel.org, AJvYcCWVIb+HJSR4pVYCGySQcn8y4Gmd2VbnCsWrXntflp6H3+WDigB+DzCG0RsemjjYOA+Vm++ET6q1NviG@vger.kernel.org, AJvYcCXNAZa86NN/tBP1zEBaFj4kqtqMkZ72WKav0iNRckiT3/dcdlbV78KkpXxUzN4wUHKWo4wvMDwJZa6JlRm0@vger.kernel.org, AJvYcCXPe7mg+n64t8waWopRAjIGm0InbaoKInbqRd2Fjlm/wBBL+KTrllhI59+aqIBO6yR33jlBNN2gSojT2Yz1ziw0Pfc=@vger.kernel.org
-X-Received: by 2002:a05:6102:2ac9:b0:520:a44f:3dd6 with SMTP id
- ada2fe7eead31-52b19950e41mr3178704137.8.1756819175942; Tue, 02 Sep 2025
- 06:19:35 -0700 (PDT)
+	s=arc-20240116; t=1756819372; c=relaxed/simple;
+	bh=8EVAh+Z1xBxy/eheZe1KkMyx/IgsEAmEtQaS2g1Zb1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hz2ftL+ULQ4iF7BcxlvQt7JIAW9ZI7Qc9zvfqYkSTko0f2VlillvSI45pV000cAlV2w0SovKCIxSTW1GYhKXuLv0ZXBdL8Bf9duPP+lvGorXhsAWyKZ9xPz1PGJr1HENDB0FF4MB7JYQkcGn/L0kfzRl9fHH/QjAkEXhLVXPeYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=u84S6j7v; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582D9Gx4024544;
+	Tue, 2 Sep 2025 15:22:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	s9AN+5V0g7vIUCzNGDoPZQbgjwt0oGtbWkVLcxxUCEE=; b=u84S6j7vGFoTzNcx
+	nujLMQXT3/vtxSG6iDshDSA9qIaiCXruRuPNuPBHboHE+oGEuu4ePIDpbZzZOrKI
+	79lKv/JcTr/OATQHaQI56QsHoPfGi5/tiQkO6WxVVIssVDOcundllXj+qwci3sMW
+	15gtEvfRf/6Ya1U51nJUeE6fkVC5w1v3er8yz3L+etAttvSApAuLVvCKQ99y27iZ
+	qW3lazu3akpqFkxDHL8X36t2XJ/4GkTNO6ddI9uynDt3q2+aW1fFEs9UZeuIDmwm
+	n9gtDibUd3tOm2KX0ZK3M7q332RV7QXpuwqzKE322Ywwa92XD48VEOxr6xo4XFi9
+	lcBqnA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48urmxcaap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 15:22:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4298340045;
+	Tue,  2 Sep 2025 15:20:24 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 89B513AD3AF;
+	Tue,  2 Sep 2025 15:19:27 +0200 (CEST)
+Received: from [10.130.74.180] (10.130.74.180) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Tue, 2 Sep
+ 2025 15:19:26 +0200
+Message-ID: <50e3f25c-f4e1-40f6-8e36-23193863f1ee@foss.st.com>
+Date: Tue, 2 Sep 2025 15:19:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com> <20250820171812.402519-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250820171812.402519-2-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Sep 2025 15:19:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVrMJEpM4T6YjSbttmkezPRhVGCeDGHTf2EAbDGR4bbxQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwR38KEkRhbr2Q1mg-SFhan459xmkTa4MvT02eo-vKbPi6G21ViQysuQCg
-Message-ID: <CAMuHMdVrMJEpM4T6YjSbttmkezPRhVGCeDGHTf2EAbDGR4bbxQ@mail.gmail.com>
-Subject: Re: [PATCH 01/11] dt-bindings: clock: renesas,r9a09g047-cpg: Add
- USB3.0 core clocks
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Introduce BACKGROUND_COLOR DRM CRTC property
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Andy Yan
+	<andy.yan@rock-chips.com>
+CC: <kernel@collabora.com>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        Matt Roper <matthew.d.roper@intel.com>
+References: <20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com>
+Content-Language: en-US
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
 
-On Wed, 20 Aug 2025 at 19:18, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
+
+
+On 9/2/25 11:27, Cristian Ciocaltea wrote:
+> Some display controllers can be hardware-configured to present non-black
+> colors for pixels which are not covered by any plane (or are exposed
+> through transparent regions of higher planes).
 >
-> Add definitions for USB3.0 core clocks in the R9A09G047 CPG DT bindings
-> header file.
+> The first patch of the series introduces the BACKGROUND_COLOR DRM
+> property that can be attached to a CRTC via a dedicated helper function.
+> A 64-bit ARGB color value format is also defined and can be manipulated
+> with the help of a few utility macros.
+
+Hi Cristian,
+
+Thanks for this work ! :)
+
+FWIW I sent a series also based on Matt's work four years ago:
+https://lore.kernel.org/dri-devel/20210707084557.22443-2-raphael.gallais-pou@foss.st.com/
+
+IIRC at the time there was some questions around the pixel format used for the
+property, and non-opaque color vs alpha pre-multiplication.
+Mind that on STM32MP platforms alpha channel for the background color is not
+supported.
+
+Hope the thread can bring some insights.
+
+Best regards,
+Raphaël
 >
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Note this is a reworked version of the patch [1] submitted (many) years
+> ago by Matt Roper.  The main changes are:
+>
+> * Dropped drm_arg() in favor of drm_argb64() to get rid of the bpc
+>   parameter and the related shifting for more flexibility in operation,
+>   e.g. when user-space cannot make use of the helper and/or when it
+>   doesn't now the actual precision supported by the HW.  This also
+>   simplifies the property verification/validation testing (see below).
+>   It works by extracting the specified number of least-significant bits
+>   from each color component.
+> * Renamed DRM_ARGB_*() to DRM_ARGB64_*_LSB() while providing convenience
+>   wrappers to extract all 16 bits of a specific color via DRM_ARGB64_*()
+> * Replaced GENMASK_ULL(63, 0) with U64_MAX when calling
+>   drm_property_create_range() to create the BACKGROUND_COLOR property
+> * Moved crtc_state->bgcolor initialization from
+>   __drm_atomic_helper_crtc_reset() to
+>   __drm_atomic_helper_crtc_state_reset()
+> * Replaced '*bgcolor*' occurrences to '*background_color*' for
+>   consistency with the actual property name in both storage field and
+>   helper functions names
+>
+> The second patch adds background color support to the VOP2 display
+> controller used in the RK3568, RK3576, and RK3588 Rockchip SoC families.
+>
+> For the moment this has been validated using a modetest wrapper script
+> [2], which is able to execute several tests - see an example of a
+> generated report at the end.  Proper support in Weston is currently in
+> development, and I will provide a reference once it becomes available.
+>
+> The tests were performed on the Radxa boards listed below.  Please note
+> that as of next-20250901, there are a few known regressions; for each
+> case, I mentioned the actual problem and its related fix/workaround
+> accordingly:
+>
+> * ROCK 3A (RK3568)
+>  - issue: broken networking
+>  - fix: revert commit da114122b831 ("net: ethernet: stmmac: dwmac-rk: Make
+>    the clk_phy could be used for external phy")
+>
+> * ROCK 4D (RK3576)
+>  - issue: random freezes right after booting
+>  - fix: add regulator_ignore_unused to kernel cmdline
+>
+> * ROCK 5B (RK3588)
+>  - issue: broken networking
+>  - fix: apply patch [3]
+>
+> [1] https://lore.kernel.org/all/20190930224707.14904-2-matthew.d.roper@intel.com/
+> [2] https://gitlab.collabora.com/cristicc/linux-next/-/commits/drm-vop2-bgcolor-test
+> [3] https://lore.kernel.org/all/20250827230943.17829-1-inochiama@gmail.com/
+>
+> Validation report on ROCK 5B
+> ============================
+>
+> $ tools/testing/rk-bgcol-test.sh
+>
+> ---------------------------------------------------------------
+>  Available Rockchip display connectors
+> ---------------------------------------------------------------
+> id	type	status	crtc_id	plane_id
+> 85	11	2	0	34
+> 88	11	1	83	40
+>
+> Selected connector: id=88 crtc=83 plane=40
+>
+> ---------------------------------------------------------------
+>  Check initial state
+> ---------------------------------------------------------------
+> Read BACKGROUND_COLOR prop (ARGB64): 0xffff000000000000
+>     Connector: HDMI-A-2
+> 	background color (10bpc): r=0 g=0 b=0
+>
+> ---------------------------------------------------------------
+>  Set/get DRM property
+> ---------------------------------------------------------------
+> Changing prop value to: 0xffff00000000ffff
+> opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+> Read BACKGROUND_COLOR prop (ARGB64): 0xffff00000000ffff
+>     Connector: HDMI-A-2
+> 	background color (10bpc): r=0 g=0 b=ffff
+>
+> ---------------------------------------------------------------
+>  Plane display test 40@83:960x540+480+270
+> ---------------------------------------------------------------
+>
+> Changing prop value to 0xffffffff00000000
+> Press ENTER to continue..
+> opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+> testing 960x540@XR24 overlay plane 40
+>
+> Read BACKGROUND_COLOR prop (ARGB64): 0xffffffff00000000
+>     Connector: HDMI-A-2
+> 	background color (10bpc): r=ffff g=0 b=0
+>
+> Changing prop value to 0xffff0000ffff0000
+> Press ENTER to continue..
+> opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+> testing 960x540@XR24 overlay plane 40
+>
+> Read BACKGROUND_COLOR prop (ARGB64): 0xffff0000ffff0000
+>     Connector: HDMI-A-2
+> 	background color (10bpc): r=0 g=ffff b=0
+>
+> Changing prop value to 0xffff00000000ffff
+> Press ENTER to continue..
+> opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+> testing 960x540@XR24 overlay plane 40
+>
+> Read BACKGROUND_COLOR prop (ARGB64): 0xffff00000000ffff
+>     Connector: HDMI-A-2
+> 	background color (10bpc): r=0 g=0 b=ffff
+>
+> ---------------------------------------------------------------
+>  Restoring state
+> ---------------------------------------------------------------
+> Changing prop value to: 0xffff000000000000
+> opened device `RockChip Soc DRM` on driver `rockchip` (version 1.0.0 at 0)
+> Read BACKGROUND_COLOR prop (ARGB64): 0xffff000000000000
+>     Connector: HDMI-A-2
+> 	background color (10bpc): r=0 g=0 b=0
+>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+> Cristian Ciocaltea (2):
+>       drm: Add CRTC background color property
+>       drm/rockchip: vop2: Support setting custom background color
+>
+>  drivers/gpu/drm/drm_atomic_state_helper.c    |  1 +
+>  drivers/gpu/drm/drm_atomic_uapi.c            |  4 +++
+>  drivers/gpu/drm/drm_blend.c                  | 37 +++++++++++++++++++++++++---
+>  drivers/gpu/drm/drm_mode_config.c            |  6 +++++
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 13 +++++++++-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.h |  4 +++
+>  include/drm/drm_blend.h                      |  4 ++-
+>  include/drm/drm_crtc.h                       | 12 +++++++++
+>  include/drm/drm_mode_config.h                |  5 ++++
+>  include/uapi/drm/drm_mode.h                  | 30 ++++++++++++++++++++++
+>  10 files changed, 110 insertions(+), 6 deletions(-)
+> ---
+> base-commit: d0630b758e593506126e8eda6c3d56097d1847c5
+> change-id: 20250829-rk3588-bgcolor-c1a7b9a507bc
+>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
