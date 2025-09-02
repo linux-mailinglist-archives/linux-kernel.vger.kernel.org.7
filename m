@@ -1,86 +1,141 @@
-Return-Path: <linux-kernel+bounces-795818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54D0B3F844
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:25:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE999B3F848
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E3B37A35B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:23:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9021782D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5412E7F20;
-	Tue,  2 Sep 2025 08:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bYCxO9xh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25ACE2E7F38;
+	Tue,  2 Sep 2025 08:26:03 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EBD2E613A;
-	Tue,  2 Sep 2025 08:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DCA3D76;
+	Tue,  2 Sep 2025 08:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756801526; cv=none; b=H8xL6bsmcuKTO4PkyrXjvdPFE4YGq81RItN1EZrLZeSTt4lTHwWanOaa5FR/EQiYLpE+3tog9XNy+o4K27D/Cc6xv76VKXyApd1RvfURQlfwCXYvQRR3vobzzImZohK4o1BQlSwLLorCfIbAocccJOi+ptS1gXfUAyEsKI81fOs=
+	t=1756801562; cv=none; b=DnIp8/kBy5wJzWShAiKbZrZpskR51skXisnMWrME8xX3oAbCdcMf7gwzu8y2TVyMqZeh5ZfdJ5JrwSoa0BSi7dp+uI78VvI9XSwoNJY5SRyjR15d/EwAecZLHpEzSJT+UNhIwMA3cQepPW8wnIIv/cY143LOP87WtPkxAq+QOcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756801526; c=relaxed/simple;
-	bh=m8v8Z7SngkH8vSoJlDA+lnDIPikSc2blJeJCqYOjf+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h1yzPrdoYrM1LTkFI05fS5/VYNwCiaU/AI0EEPGI96XwqUTK/pjPk75zya1cytpmJcoEbuXvbtOiwmc8X6INiU+/Cz3R8j5INJHFFakgR8YyikS9I+w+We/T8OT/2lZMPZqpKCo/xVd7E4IkiWH/xdxzb8I8H0Dd4SPLSHT/XRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bYCxO9xh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 673B0C4CEED;
-	Tue,  2 Sep 2025 08:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756801526;
-	bh=m8v8Z7SngkH8vSoJlDA+lnDIPikSc2blJeJCqYOjf+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bYCxO9xhKI+J4Z0cCZGTWK2Cd8xdhI2mwnHNJeUJFMlZqHqEK7daaq5H3KwNzXHHr
-	 FL8QqfQ74EzpjgA6NAOJPADBi+pxpfU87Cj/iU8cQt9GYdx/xIMJ8S04s+MhWaU6Cg
-	 n7MJS0Q9r8LStepZu7D/plyXTd8nJB9JExDahBRUJlCCNGTZd0lkZBBGvDdsDlLvYL
-	 Rr7E+E1jj9O+irwBVgK1tXesEjrwDOAvbumukYoZYYwgPvyhoHgAMJrEJgFycPZDFX
-	 GXVu5a11FzlOJRqucKl5loe/cSkRiStX6kANkPiygeG+9cXgEBu18IGxXa08JxHOCn
-	 zExKh0ylyzvFQ==
-Date: Tue, 2 Sep 2025 10:25:23 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/8] dt-bindings: tegra: Add ICC IDs for dummy memory
- clients for Tegra194
-Message-ID: <20250902-curious-cooperative-agouti-1efdcd@kuoka>
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
- <20250831-tegra186-icc-v1-2-607ddc53b507@gmail.com>
+	s=arc-20240116; t=1756801562; c=relaxed/simple;
+	bh=9CfBYNh+4iSPQYtdoH6uGIT6doeJg35kpISD+8fFxJg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nu0munmAKCZ1hv0piIyCAXyQzI5V1CAAjSzarzpHYkvxKcy5XK+ZPXjbYwVvLbyccIa80R/tI+E9G6H8pzbL029a7fJ10Sg6lRExB7sZyShHlzdVm4jeD5vWnTIjX//8+c6uUaB6rKCTc1IkWhLGdz5omKxGpUcgBlIvcKxwFms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cGJjK0rjbzKHNRN;
+	Tue,  2 Sep 2025 16:25:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EB89D1A0DCD;
+	Tue,  2 Sep 2025 16:25:56 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCn8IwSqrZo0Mp+BA--.22340S3;
+	Tue, 02 Sep 2025 16:25:56 +0800 (CST)
+Subject: Re: [PATCH RFC 4/7] md/raid10: convert read/write to use
+ bio_submit_split()
+To: John Garry <john.g.garry@oracle.com>,
+ Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: anthony <antmbox@youngman.org.uk>, colyli@kernel.org, hare@suse.de,
+ tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
+ song@kernel.org, akpm@linux-foundation.org, neil@brown.name,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
+ <20250825093700.3731633-5-yukuai1@huaweicloud.com>
+ <aKxCJT6ul_WC94-x@infradead.org>
+ <6c6b183a-bce7-b01c-8749-6e0b5a078384@huaweicloud.com>
+ <aK1ocfvjLrIR_Xf2@infradead.org>
+ <fe595b6a-8653-d1aa-0ae3-af559107ac5d@huaweicloud.com>
+ <835fe512-4cff-4130-8b67-d30b91d95099@youngman.org.uk>
+ <aK60bmotWLT50qt5@infradead.org>
+ <def0970e-0bf7-4a6d-9b68-692b40aeecae@oracle.com>
+ <aLaPHctB8IgtD_Sg@infradead.org>
+ <bcdb3af6-44b4-44f8-b03f-a89f98d8a71b@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <4a360dec-79ff-1444-6c1e-830f43b13c2f@huaweicloud.com>
+Date: Tue, 2 Sep 2025 16:25:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250831-tegra186-icc-v1-2-607ddc53b507@gmail.com>
+In-Reply-To: <bcdb3af6-44b4-44f8-b03f-a89f98d8a71b@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCn8IwSqrZo0Mp+BA--.22340S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar47ur4kKFW3GF4UCFW7Jwb_yoW8Gw18pF
+	Z2v3ZYyr4qkF10v3Z7Zw4IqFyrt3yfA34UJFW5JrWFkFyY9FyftFs7GFZ0gFy29ryxJ3sF
+	9ayYgFykGFs8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, Aug 31, 2025 at 10:33:50PM -0500, Aaron Kling wrote:
-> Add ICC IDs for dummy software clients representing CCPLEX clusters.
+Hi,
+
+在 2025/09/02 14:58, John Garry 写道:
+> On 02/09/2025 07:30, Christoph Hellwig wrote:
+>> On Tue, Sep 02, 2025 at 07:18:01AM +0100, John Garry wrote:
+>>> BTW, do we realistically expect atomic writes HW support and bad 
+>>> blocks ever
+>>> to meet?
+>>
+>> That's the point I'm trying to make.  bad block tracking is stupid
+>> with modern hardware.  Both SSDs and HDDs are overprovisioned on
+>> physical "blocks", and once they run out fine grained bad block tracking
+>> is not going to help.  І really do not understand why md even tries
+>> to do this bad block tracking, 
 > 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  include/dt-bindings/memory/tegra194-mc.h | 6 ++++++
->  1 file changed, 6 insertions(+)
->
+> Just because they can try to deal with bad blocks for some (mirroring) 
+> personalities, I suppose.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+I agree it's useless for enterprise storage, however, for personal
+storage, there are lots of users using cost-effective (often aging)
+disks, badblocks tracking can reduce the risk of data lost, and
+make sure these devices will not become waste.
 
-dt-bindings: memory: tegra194-mc: (or nvidia,tegra194-mc)
+> 
+>> but claiming to support atomic writes
+>> while it does is actively harmful.
+>>
+> 
+> There does not look to be some switch to turn off bad block support. 
+> That's from briefly checking raid10.c anyway. Kuai, any thoughts on 
+> whether we should allow this to be disabled?
+> 
 
-Best regards,
-Krzysztof
+I remember that I used to suggest always enable failfast in this case,
+and badblocks can be bypassed. Anyway, I think it's good to allow this
+to be disabled, it will behave very similar to failfast.
+
+Thanks,
+Kuai
+
+> Thanks,
+> John
+> 
+> .
+> 
 
 
