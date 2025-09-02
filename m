@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-795698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38654B3F699
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:25:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF38B3F69A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B1391A84495
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF6B3BE5B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298C62E718E;
-	Tue,  2 Sep 2025 07:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82172E6CC3;
+	Tue,  2 Sep 2025 07:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cglrKSiU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i1Owkx2r"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60431FBC92;
-	Tue,  2 Sep 2025 07:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46699469D;
+	Tue,  2 Sep 2025 07:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756797935; cv=none; b=K0FONRoYJHfCatD2PfaXYFC+ddznX2+VDOwwUwMgVsHXVoe+TAViiQuXA/96oBNHwUDbrB39hZwEjxsAJ/dP3AzN2JCQUwC39jmHEaWoITFXZl5QTndDstPgx0qapdKta68HBEYTkuWJkODRLSujzvwaH63zMq4XWWbXiAh1aLo=
+	t=1756797960; cv=none; b=VpXSWSdA/CP3r30knYGJHhK8dsv6mGzkyXVzJHDl7uxxR/0Q9rlkiPPt6GwEIwt+xeG6i44fMSKlCN3sjWMR85jI3axWpVfMmruE0syxzazCJOa6JCdIj5mZ5HHXhjuX29DIRoJjgpLSuDNgx9Dwi2cpejP0EyimXeXavw1MPDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756797935; c=relaxed/simple;
-	bh=a3yelBm/hyKGoL78tvyn3nQRc8ynp8Q/nWg1vSscgXE=;
+	s=arc-20240116; t=1756797960; c=relaxed/simple;
+	bh=o6x3XwnesQDDmeLegEJ5eW1wXByzf9Oe3An9+C4zs+w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQbfjOBbrbatQQPIeFcCoDHwacEcszVCzLEWuqdmHkd/f/YtQ0Uc2ba92Yo6+FG2HYcQ//QtTZuRn4q5mFvfOugZBVUgdHAYSZkQ3WsEf6yQ5iSM8NUYRN6RFeP1WshmzThvHfu6gb9OJbXwSk4edi/K/eWN149sbcn+VapznIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cglrKSiU; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756797934; x=1788333934;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a3yelBm/hyKGoL78tvyn3nQRc8ynp8Q/nWg1vSscgXE=;
-  b=cglrKSiUorS0xR6VH+2J9k4jtWuMD52NkfdbV+z5k+X33PdENyqLgTyQ
-   tIGh6+JNvN1k+oO1UtelNVjlcY59kzv+kaKH3XsiD97O5kyhayCAK4i/y
-   3DgQGWDRKtAj66X+8N1OT9Z4vgt1m3ZrSYFNT2CbrJxmMBBxVIGH/zlku
-   lzfpevZlW8cD/ENdXUszVlgllE5sTWUiL0Mjrwohjmu3xKyLbvt2ZPBhJ
-   ScxR0+z24HQUxk9Ru2C2Ac+gMCkr0tudcuk/ZeRFDsFCIYvk/MEB5nh+d
-   7yvu3du33Mm1D9JkSH3g2gyCvT+8C12C1KhioTbDTi/AFxEUG1c0VUBaq
-   w==;
-X-CSE-ConnectionGUID: GibEawFTRPqCux1mIQUqdg==
-X-CSE-MsgGUID: V5kREh1YRmCrXK32Dbclrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="58756189"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="58756189"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 00:25:32 -0700
-X-CSE-ConnectionGUID: vXLZx0CaQE6YHmi2dDSB7w==
-X-CSE-MsgGUID: iSV6uzNzRgC5M8hbrekRFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="172053825"
-Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.32])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 00:25:30 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 9EC6E121F49;
-	Tue, 02 Sep 2025 10:25:27 +0300 (EEST)
-Date: Tue, 2 Sep 2025 10:25:27 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Brian Norris <briannorris@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	kunit-dev@googlegroups.com, Len Brown <lenb@kernel.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] PM: runtime: Make put{,_sync}() return 1 when
- already suspended
-Message-ID: <aLab51BTgvnULBUd@kekkonen.localdomain>
-References: <20250829003319.2785282-1-briannorris@chromium.org>
- <20250829003319.2785282-2-briannorris@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQyZjWWwFCj9Eyuetome7ZNvcGWCAFlTf5DD0wBRUFgJz5Vit5AFaPgiSEiMQwG6E/MV8kMoRhx/35qy3BStJtfh1RIj85NNa0X2l3plzyJ9OQIRlOkAJNSrOrp4DimJyCpQJg+VTFWgiQk7UWSfY1fEJufRJ/fMtFCBrrFnTpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i1Owkx2r; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dz1ceWnZXo4B0qGAWeNu9tznsutRy2a+hLaPzKpp8aM=; b=i1Owkx2r4j8LbmnwbmF2kgzq7t
+	Ph5caIj/3w+fYMruvADDrQknU6tRuI4jxCmJN3uaElyA5C+242Y2CvDbmj1AXxTMCMZ1l9HFUAa1/
+	oyP3edANsa/rTGGVXtM4vYogzV2ad8qkCQqd7kGFtNsobbebRbPvCQevYIfoaga5eiWrkBBJZuBrK
+	xNhEjZThZ9v4ATkWV/7vfAbZwddRGCxirZfjTZzRa5RfwuTo/L5FVva8FhfDyRW1DRO7RJcABmQJY
+	rmYR0BMLHJ+3uuSPeA36QHp/5Mf8wiyZ1U9qZhKzQX4ISCNGfP9yqapU52fzxJPDSUWnbXSDnaDSc
+	70P1BguA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utLOo-00000002S7u-3Vd2;
+	Tue, 02 Sep 2025 07:25:51 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 45D7030039F; Tue, 02 Sep 2025 09:25:50 +0200 (CEST)
+Date: Tue, 2 Sep 2025 09:25:50 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf core: Replace offsetof() with struct_size()
+Message-ID: <20250902072550.GJ3245006@noisy.programming.kicks-ass.net>
+References: <20250902034349.601692-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,98 +65,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250829003319.2785282-2-briannorris@chromium.org>
+In-Reply-To: <20250902034349.601692-1-zhao.xichao@vivo.com>
 
-Hi Brian,
-
-On Thu, Aug 28, 2025 at 05:28:27PM -0700, Brian Norris wrote:
-> The pm_runtime.h docs say pm_runtime_put() and pm_runtime_put_sync()
-> return 1 when already suspended, but this is not true -- they return
-> -EAGAIN. On the other hand, pm_runtime_put_sync_suspend() and
-> pm_runtime_put_sync_autosuspend() *do* return 1.
+On Tue, Sep 02, 2025 at 11:43:49AM +0800, Xichao Zhao wrote:
+> When dealing with structures containing flexible arrays, struct_size()
+> provides additional compile-time checks compared to offsetof(). This
+> enhances code robustness and reduces the risk of potential errors.
 > 
-> This is an artifact of the fact that the former are built on rpm_idle(),
-> whereas the latter are built on rpm_suspend().
-> 
-> There are precious few pm_runtime_put()/pm_runtime_put_sync() callers
-> that check the return code at all, but most of them only log errors, and
-> usually only for negative error codes. None of them should be treating
-> this as an error, so:
-> 
->  * at best, this may fix some case where a driver treats this condition
->    as an error, when it shouldn't;
-> 
->  * at worst, this should make no effect; and
-> 
->  * somewhere in between, we could potentially clear up non-fatal log
->    messages.
-> 
-> Fix the pm_runtime_already_suspended_test() while tweaking the behavior.
-> The test makes a lot more sense when these all return 1 when the device
-> is already suspended:
-> 
->     pm_runtime_put(dev);
->     pm_runtime_put_sync(dev);
->     pm_runtime_suspend(dev);
->     pm_runtime_autosuspend(dev);
->     pm_request_autosuspend(dev);
->     pm_runtime_put_sync_autosuspend(dev);
->     pm_runtime_put_autosuspend(dev);
-> 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 > ---
+>  kernel/events/callchain.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->  drivers/base/power/runtime-test.c | 8 ++------
->  drivers/base/power/runtime.c      | 3 +++
->  2 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/base/power/runtime-test.c b/drivers/base/power/runtime-test.c
-> index 263c28d5fc50..1be18e871f1d 100644
-> --- a/drivers/base/power/runtime-test.c
-> +++ b/drivers/base/power/runtime-test.c
-> @@ -43,15 +43,11 @@ static void pm_runtime_already_suspended_test(struct kunit *test)
->  	KUNIT_EXPECT_EQ(test, 0, pm_runtime_barrier(dev)); /* no wakeup needed */
->  
->  	KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> -	/*
-> -	 * We never actually left RPM_SUSPENDED, but rpm_idle() still treats
-> -	 * this as -EAGAIN / "runtime PM status change ongoing".
-> -	 */
-> -	KUNIT_EXPECT_EQ(test, -EAGAIN, pm_runtime_put(dev));
-> +	KUNIT_EXPECT_EQ(test, 1, pm_runtime_put(dev));
->  
->  	pm_runtime_get_noresume(dev);
->  	KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> -	KUNIT_EXPECT_EQ(test, -EAGAIN, pm_runtime_put_sync(dev));
-> +	KUNIT_EXPECT_EQ(test, 1, pm_runtime_put_sync(dev));
->  
->  	KUNIT_EXPECT_EQ(test, 1, pm_runtime_suspend(dev));
->  	KUNIT_EXPECT_EQ(test, 1, pm_runtime_autosuspend(dev));
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 3e84dc4122de..17cf111d16aa 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -498,6 +498,9 @@ static int rpm_idle(struct device *dev, int rpmflags)
->  	if (retval < 0)
->  		;	/* Conditions are wrong. */
->  
-> +	else if ((rpmflags & RPM_GET_PUT) && (retval == 1))
-> +		;	/* put() is allowed in RPM_SUSPENDED */
+> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
+> index 6c83ad674d01..0f88e44af664 100644
+> --- a/kernel/events/callchain.c
+> +++ b/kernel/events/callchain.c
+> @@ -80,7 +80,7 @@ static int alloc_callchain_buffers(void)
+>  	 * accessed from NMI. Use a temporary manual per cpu allocation
+>  	 * until that gets sorted out.
+>  	 */
+> -	size = offsetof(struct callchain_cpus_entries, cpu_entries[nr_cpu_ids]);
+> +	size = struct_size(entries, cpu_entries, nr_cpu_ids);
 
-Ah, I missed this while reviewing the 3rd patch. Makes sense. Please ignore
-my comments regarding the 3rd patch on whether the return value 1 is
-applicable.
-
-The latter parentheses are redundant (the former, too, actually, but the
-compiler warns so let them be).
-
-> +
->  	/* Idle notifications are allowed only in the RPM_ACTIVE state. */
->  	else if (dev->power.runtime_status != RPM_ACTIVE)
->  		retval = -EAGAIN;
-
--- 
-Kind regards,
-
-Sakari Ailus
+None of this code is needed anymore; that issue with NMI not being able
+to access vmalloc memory should be long fixed.
 
