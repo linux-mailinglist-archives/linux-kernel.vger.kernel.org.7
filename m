@@ -1,113 +1,86 @@
-Return-Path: <linux-kernel+bounces-795769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD0FB3F7A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:06:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1EB3B3F71E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC9D486556
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C42942064DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378962E7620;
-	Tue,  2 Sep 2025 08:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5F52E7BAD;
+	Tue,  2 Sep 2025 07:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="OKAc/ubq"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UruS2akV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097B52BF016;
-	Tue,  2 Sep 2025 08:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0FE1F428C;
+	Tue,  2 Sep 2025 07:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800389; cv=none; b=O/Nrd9mF+2ATrK7J9vdHOHPMTAbouBlsk3lI4kjU/AU/ivtFWvBFTgHvQvcm3+0qFeO8TpNLbenbc2SrYQ/RHdMyuHBA4W1pPYBF/W0er2fgxigjkS634ce4rCMtalY/IJxRhAqooYua3dZk+ATMYcwneB7eNFo+EV24bAXHBb0=
+	t=1756799706; cv=none; b=Bia5itrurdsHx/y0QNm+NII/sxtp2gB+vgIzK5N97f1uoFhx8oi4OJ+bVWkw3VOqkk8uptP7IQj5SzDrPKREf5B6FQPrApsH8AUY1F9wGX6VdtBGSxilXUQJYJ3+4PTPy/LV985ODKt8MSlhxd3zTSydgxGAdATkbAyVnmb5QCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800389; c=relaxed/simple;
-	bh=0SOyxXX/qHl6SqSRp+x310BDxgQvjz3hk6Ncj8gXeAQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=tBHoe26TqSHXUIXMbTkuHwQPX1e+9qANrP827rLw603A7+YRsG7BB7EYWmMmGw8kRL6fknX6ZFpIM2l0Wa+OuItJfH/5vIAoACYLXNivGgjeETRdEHpV5zGJy1IqxAY4Zc4Hj1u59d9U4sG2/ptLdnT3OyXRvJbWLyt7AZha+iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=OKAc/ubq; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756800075;
-	bh=3zr6kbZjRQWUoOO88Q989Lx+h+cd8L+5MKlTJNAOsq0=;
-	h=From:To:Cc:Subject:Date;
-	b=OKAc/ubqji+YYCcA+KxqbqYap4/DS+qqBdoXVYR0yT/ccqZ0FsNCCz7cnvPpkIVXZ
-	 R/SvIUMd+HZh/MAr25MRUAhcyx995OYppm84SAeLWdV4YgW94JAv+/hmYhJX+VmYd3
-	 11m0BA6QpTce3BVRmn2QnLGe9DsTIpRTsD7ND3hk=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
-	id DC2344B2; Tue, 02 Sep 2025 15:55:02 +0800
-X-QQ-mid: xmsmtpt1756799702t8g2gddqa
-Message-ID: <tencent_B2594897022A82AF3AA370885B06A9421808@qq.com>
-X-QQ-XMAILINFO: Mm/8i8/T4yneWrhmr66C58xAgvc1xkJ6CihZB/SaNhmWsSGRtzzpfg0BmI5knl
-	 lw8eSoX4YxONSL7VuhnWskaRAg4LTrxyQXzzVg5hMi5OEfDoulQWLUmfXPLCA7EfYdFCrY/IKr2K
-	 IP5qqD5UN9maxrYBl9A018ShcodWqucL7EYn+7i+IiAjyvYasaMo262yhgbLErvCJCimHGWofWpz
-	 DyEHPUnHcdsrQzODfDNz2A+7rBuTOKMyWyDqGQuMbkojiiEDPP7JiS8t20ox2qhlL4obAG78u7h0
-	 ftUWJQBJRxp5kC/daMSFI33LcSKOmjwPqgwoXphLCVC3bc1jbO+Rhk53akoS0GeS4WKXmd3cmqqN
-	 nlHQIdoY+vh393IXo/yvXsAmakTvgQ82lF0n05DNCxXCb0c7rUfRQdWb4lBOIht+Z7pJ5IvfJMox
-	 93NuEqrPVpH4hu3Gnt+MkYxNJLvjU8ReKd+T9yTAdksGe8p0OAKMR/svdebFmEo86+bCipsrmLcP
-	 ErOxtW4tp5cgW0Vn7/IuWuT2gNqvecS8/YxBciLNX31ZnjtgCwQpTEIsIJNyn1ECqMyfmj7A0Qij
-	 IMtoGLdyvi5FsS0gqmIhqjFiDFoRWECIuQw10Q+2C98Ou/78aguu8ivzxXupKV4WRtxjFok+YrZ2
-	 rMSyiy1kR5kMU3K2F6wXKJKBCiMria4wBSsgVc8+LsKrbLQO4zsE3/Cbeh+B9Pyk7qW/ahDOQOna
-	 klVvz/iK91RXhqSQPRJa5OctUgGWloDVAIUAY5qelIQrqX5QIG8iTaaTAdmmXHSY6WpLwoywc9NF
-	 6ICtC63hz/HsfA2pMw1ugeQPJ/Xv0gEgWnGAiZ2iq74w6NiRLTLH30Kl1SzPb5u4zQag3nOe3VGE
-	 ediofonOog8yy/UNSD56hZJkp3Ghq2zH+sIOPoL9uGR3NBxx1R21vxbptWsDqHAImooUE2sBFB2m
-	 uhMNFcj7mB9bqS11g3aYv42WJtsad3Mc/Lz2j92eSR9MqI72JaHo7ijYFWuNIWDq36Fktycdc7hS
-	 67Fh0QlFkvDlqCPUihgI/8Gs4hrciNTFu7FdF2Ww==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii@kernel.org,
-	ast@kernel.org,
-	vmalik@redhat.com
-Cc: rtoax@foxmail.com,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Rong Tao <rongtao@cestc.cn>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v2 0/2] bpf: Add kfunc bpf_strcasecmp()
-Date: Tue,  2 Sep 2025 15:54:27 +0800
-X-OQ-MSGID: <cover.1756798860.git.rtoax@foxmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756799706; c=relaxed/simple;
+	bh=0p061QRlRRPPqydkyrHzuZtRorsNAvt9HktQjzeHQzU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DMNYotC8KZImkYbn5y5F3fUMrGCtGzNI50uycrd+TPvgyecmr/8UOU9Y/xM5YkZ1pTiCMABi0BS8gl9hONawObwW+ANNhOrv9ceacYMKJBmOFZDTEDXCSPWX1Zdzqy1lSVfQqap68SBqENjXZ0J+c62Nns0brednQ2UIkP22O4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UruS2akV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B0DC4CEED;
+	Tue,  2 Sep 2025 07:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756799705;
+	bh=0p061QRlRRPPqydkyrHzuZtRorsNAvt9HktQjzeHQzU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=UruS2akVo04rXgp9tUKoNLHh/5qKH56PPMBY/VU/899YbddkqaVpcGxDsG4eh9sg1
+	 hb4f6Y18ahIQZYuSmtWZYO5p8nkb0sGY8x16i9RK0N1ay0Y9nRpSEON0tIiQVjhWnf
+	 EyX/1WGCNnOq7CLNtXQvipCcSGSp+bd/6MLp92iTUhbQwIS8y9W1EsQTJtEACS5B2d
+	 CRg8zPS+GgoZnTMOV6yEAi8klUXlImCfKvAG7qztXGtShgNrpvWL1gGocjmDSd5t+B
+	 3DU5Bxa3F0ssUPZ8An33ncJCq/5VsT9TpRxqI0AKRwUsyUA470ITvCdxn0jm1S5L/N
+	 Qjb0o/yRslA1A==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, pavel@kernel.org, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250804114949.3127417-1-heiko@sntech.de>
+References: <20250804114949.3127417-1-heiko@sntech.de>
+Subject: Re: [PATCH v2 0/2] qnap-mcu: add support for the status LEDs
+Message-Id: <175679970380.2171571.14542632250516080528.b4-ty@kernel.org>
+Date: Tue, 02 Sep 2025 08:55:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-Kfunc already support bpf_strcmp, this patchset introduce bpf_strcasecmp
-and add some selftests.
+On Mon, 04 Aug 2025 13:49:47 +0200, Heiko Stuebner wrote:
+> Add the status LED controlled via the MCU and clean up the usb LED
+> a tiny bit.
+> 
+> changes in v2:
+> - add patch to clarify the command "area" of the usb status LED
+> - captilze LED in text areas (Lee)
+> - use 100 chars to prevent some line breaks (Lee)
+> - added the newly found state for "both on"
+> - don't forward declare struct, instead just point both LEDs to
+>   the red one, to allow resolving the parent struct and shared
+>   setter functions
+> 
+> [...]
 
-Rong Tao (2):
-  bpf: add bpf_strcasecmp kfunc
-  selftests/bpf: Test kfunc bpf_strcasecmp
+Applied, thanks!
 
- kernel/bpf/helpers.c                          | 68 +++++++++++++------
- .../bpf/progs/string_kfuncs_failure1.c        |  6 ++
- .../bpf/progs/string_kfuncs_failure2.c        |  1 +
- .../bpf/progs/string_kfuncs_success.c         |  5 ++
- 4 files changed, 60 insertions(+), 20 deletions(-)
+[1/2] leds: qnap-mcu: fix state numbering for usb LED
+      commit: fe4ffdbab4bb3cda1d72b93f7d2c3f7ea3df415d
+[2/2] leds: qnap-mcu: add support for the red and green status LEDs
+      commit: c2d5d8f247049e22ef0afe8188cf8a6430144a17
 
-
----
-v2: Remove __ign prefix from __bpf_strcasecmp and add E2BIG failure test;
-v1: https://lore.kernel.org/lkml/tencent_5AE811A28781BE106AD6CDE59F4ADD2BFA06@qq.com/
--- 
-2.51.0
+--
+Lee Jones [李琼斯]
 
 
