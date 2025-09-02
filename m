@@ -1,462 +1,434 @@
-Return-Path: <linux-kernel+bounces-797359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90494B40F60
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:29:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4C3B40F62
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EBD21B25EED
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:30:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2EB1203DD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ECF3570A7;
-	Tue,  2 Sep 2025 21:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5756C3570C4;
+	Tue,  2 Sep 2025 21:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBR7ss7n"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ciElb1mv"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A7784039;
-	Tue,  2 Sep 2025 21:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486422156D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756848570; cv=none; b=ju2MAd+vvTVz74PA9cpj/WOmKzMuwFZb3+xNoIuiyznt9YNxuleI36gAvFI0YjOi9eXjyfeJtL6t71eovpc7ZmA0x3zrGgGqb3JNJwHixbtY5nUj6WTphyytU9Uk/1zNlgfrBqk+uM8zketp5vt4ZMZ5xzqEdZ+3HcuMIobyVhI=
+	t=1756848651; cv=none; b=JIhxqvdVfRSKmMC59uZSpyWPIPj+wIaawreUe2ZNSuND2iLFhQfTF4hlcAmRkEJCgptQpoUZjzEAuFTYC7bWJm2cBapyk3I6uTH13ZthBOZSUHJisobdZ5yIweEd7V++JKzmxB0qRa7CkJqc5xB5wiQCg6MwHZm2nS+XNc/HxvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756848570; c=relaxed/simple;
-	bh=EZxlGKTX0H5kessk/Ht2RwHDcD9Badc1OzG0bs1xumA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FQJiCq8s/v7TjC+MWmxvVtrxA2FQEINMCnwmbbQOTbLVdaHtVXZi61fyRFzIQdop1kfD1f6N4SDrqR09HntAxOuYtJyxKlvmLrhOHMdpS3KYFokHEaGV7Nv6r08Li6xiSw+MHcA/TuMvfAsyGVCu28h7TZGkAd8RFkvJm5FK+7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBR7ss7n; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b8b7ac427so16956155e9.2;
-        Tue, 02 Sep 2025 14:29:28 -0700 (PDT)
+	s=arc-20240116; t=1756848651; c=relaxed/simple;
+	bh=9JbTzKYuqfuzYi4Nb2SDELIeela7dMgZPTL4BrExznY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IVUQJqPT5zB3lL6OZB3iNBRPo/9T/x9UHksp4QTG2oKDjrmZWHVYgyBGuPVkfesYXFQca1X9tuUFgBWiR+q1a+aZ44/iAUSe+qs1AyIoH2HJfEQd0fCh58KeqhijTF2gKiEb1QvDQN1jqgzAcaR24aPyRUOBwMhVI3soUKrPOqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ciElb1mv; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109c4af9eso51056021cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 14:30:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756848567; x=1757453367; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zO4HjeCrOISXZJlWiM9FBrdzfDeCFxXx2k4+Z/Wy3RM=;
-        b=WBR7ss7nhYMl1zks75dGBDQViN6lS4viADkmki+GjuSWCRX8tW6O/E7AVaVRLP08k5
-         7Q0hWWfpkoh1DSXLVuppctrYBRoDoZ/qafJgJ5LuimU6utCpCdjadscTMUI4sid2j4n0
-         +6M0c6aEW7pV85Ul707lqFWP06TGbRRTG6lNUBkyILgDl5oQ6o9Lw2e/r1s86MHP1x7X
-         jWgQEAh64Ja+UmHhqkA96tWNt0WTmH6gohqt/crry3b2cbNBqNLstXap/rhAwMKDLgA2
-         uHoebMO8KMgVFEq+EANQfd950FmVR5Mt9xPaWqatgB6a1BfYuB+xz60PBaYdaA+mA2rO
-         +7gA==
+        d=google.com; s=20230601; t=1756848648; x=1757453448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PIHyBNWlR0xVVObfQSwFPOXxexHsOFj65lhH0sk5/ps=;
+        b=ciElb1mvVk31zSfXF0ZA/OwJzHH1+Z2apunIacU0OmmY7Vf8jOd4jSsUkBOYIqyFIo
+         +csl2jV4dKwTuPetbCYcIFjrkqkk9OsJMKjh6DiqKB7eafNI8M/Nd0gD6cnYaC5AJjtE
+         omeAM4O/UPCh2HiqtDtDS4fg256oV+SVGHSEbeBpvbvmTrx64tXxizqlMUJrs2Z1zjED
+         fVIgbUSq8aSRdx2S3QsEUHVYR3T879hMBGpJD1XOw3ViXfOjBOQZDvLStbpSE/rSOd/x
+         pd3en6TaLTONhxH8xNbmipVCq9goNhde1rvDDOmmHOXulT1+hljrZUQrM1IUmoPDyG5W
+         DKIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756848567; x=1757453367;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zO4HjeCrOISXZJlWiM9FBrdzfDeCFxXx2k4+Z/Wy3RM=;
-        b=MVZMBu/ibgH8Ib7GHJvR/RR5hfHlZboijMb1qsZsSPLYfSf36+n8JBIkXKFyuPqlfu
-         k/2fNt+EenA6/APd4y3JlZwcPDRUwZnUuilh6ovEo0nu1eKd7OGSQp6AMmCfcyigYPkH
-         6DUnu9QaC/s8VMKPWpJXfp98zCvcga3oyHmEE5adayJorb4BgGCMeeE/DAkAVoBiBp27
-         CgEoQnQrljm4H4d2+rq5oR/1YMsOQoyTGVffU9i9FDl08WGVcq5YxUDsugXrWNz8KNX2
-         efEffrnoIaAxUQyTqJavcc+cN1lzit6DFyxqpUhBm8fdfd9jVJHggeIQLhPjdarIExn1
-         XBvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHxboSJzDSunwUzaLXGHr3W8HSkyzXQfZorQkYiZ1AifqCKatVY5vKc2/FVtHgoi1OQqTrWpBxsRXGBC0t@vger.kernel.org, AJvYcCVi6Gn3qH8/xoZdUSBYjDwawC2cPfP9zMgZ9PvTbeHrP86nZCdujjMHCd8WHaXwEKWbZgR8qDic+GKC@vger.kernel.org, AJvYcCWeBPph9bDS1X75mjqw+jveGwoMMS064hSLU0BH8k2pQJ/DapS1JY2EKezkJTYr235XzA0M9ltN3CaY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz66x0O6tFG0eJBatHtmHL6tasIEA4JK8f4ecRYmH6DsHuG+Sk6
-	Fo5CN96e3NKEfE9lB6F0omPEB1WBTe7GYZNDzi/cEoFu/E4u0V92wUY=
-X-Gm-Gg: ASbGncuIfUl/OaCVs9uA1xCeALeX7Wlk6jndWLUvgfMPSQDKzgNo2enaoBH2xU2QTES
-	p8Cahs34ma0rDz47jdShSxlSDm8aEv/4QXali0oDuSKglrmb9j5EVsE9x5DQSTURq9JJ6tycvr+
-	/sHt62rQ8w9DhjKFy/tnSSlV7n+kWh3993aiKCrWKpKmZwit0WiKi65ocad06DXtDdppdrfpyaC
-	Sd7xRZKIgCNTl4h8X0F0Tx0EYDbzUuijeWc4HzlTqZPb1NtXvNZ0J9MaZjXv02HRRH9jl7iwUHR
-	H2Odv6mLduvcyB+hxOU+7IALweCtsQzqIXMueZjx9WSXkWmU8VAaVb5/53R92usqYrx6s4qaSV1
-	N3H3HxPXdMjwz9XaPnj2ja1Da+eLdqUkwOyZonQOqUGqEMm0x00w=
-X-Google-Smtp-Source: AGHT+IG0deGv61kh0jZMa+aYBded7+4j0TmirKkWGpEYzZqrbh/39kOqDtc9WiBQh75zVmPKyspdYw==
-X-Received: by 2002:a05:600c:4fcd:b0:45b:7185:9e5 with SMTP id 5b1f17b1804b1-45b85525cddmr117491975e9.5.1756848566551;
-        Tue, 02 Sep 2025 14:29:26 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:224f:7287:75b3:5214:63cf:2c39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e898b99sm211255195e9.19.2025.09.02.14.29.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 14:29:26 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: lee@kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	andreas@kemnade.info
-Cc: conor+dt@kernel.org,
-	ukleinek@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com
-Subject: [PATCH v5] dt-bindings: mfd: twl: Add missing sub-nodes for TWL4030 & TWL603x
-Date: Tue,  2 Sep 2025 23:29:21 +0200
-Message-Id: <20250902212921.89759-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1756848648; x=1757453448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PIHyBNWlR0xVVObfQSwFPOXxexHsOFj65lhH0sk5/ps=;
+        b=OOOllvHWtOpYcvlvH+NbhJppnPZH95Iyc6/DKebo7QoD76/BEeI/Ul7j4x7O8JAiYa
+         zPmlsl3LndrJ8Y0sghee48SCzdxMhCTeHvaxcfqQkzwsWYMRtAmWFbo6Y6TWv+uO0/F8
+         R+WjQQMU+F4njQ0/l3jAzud/xRCX7oruagTn9WXBMux5wqNAFE8tzv4oZIxps6G/VXDi
+         yVBJwitHEfveAn8Ajjo+ifc5OK4xx/+gQ8YxyjRzKD/Zt7fSRPaWkInvlwuV2v0oak/c
+         KUsMGOdzHr0HY5BartVDfMurWDR7jgpGEKjIUHTd3XWVtNPyhsmtfukkb7Z4LaXBc1IN
+         5kKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwRFJ0s4KtZZuxGlnbQBpmjwrOSY68+YScFRNVqrx7yRkcaoaZO73uItANOdtOtmaZpvl5ntNgYDqmLD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzOiTt/9yfypAqMyjURjowgLFUJr7iT/RuMiiNJnh3uN9tLMUj
+	qfelDkYYo0xoj+AtsZLJHvsTMNtG1qEKMmizd8Myytbm9syLfGPixJJ5x7JRpshM3hB3stKpnIE
+	o4zdC0T5nrJJq7xDZr+b1eRhjnh0E/n2JMD8qw4mO
+X-Gm-Gg: ASbGncvCTxAaQsLj40JTK0KaZ17BkeBlUwAZIEscnTg8qIqqY8EU4GWpomDilFDRwv8
+	pjKXWYSU8UyBUR7MJkxY/bPEB9kbKCF3v83COLF2+cU4RSZD9pjn8YPXlgTqPZ7l9qrFH7XTx6U
+	p05zdnm8uxU2bLk3g5Q3iRjXzScKiD+DBJn6dJI4OeBLOCQhG5MncFjZ8RYMmATH7vuVIV6lcak
+	4Flqn6NVtZGBT1JQgmG9VGGAF+u7Xb3c5X2yjPU+5VWRW58/lqPqW7ULojeZM9oK+4sheY/wleA
+	MJX0OoWl1At8IX3VzBhXgGzm
+X-Google-Smtp-Source: AGHT+IGaSaZZ/mwFe2rWX5IoTc9Yr7dBVALnKPhIk/KX9xd+MEcEetsVsz/oWICul0xvgYqFnqui4SYElqFA2gCr4ms=
+X-Received: by 2002:a05:622a:2cd:b0:4b3:c78:fc18 with SMTP id
+ d75a77b69052e-4b31dc84d8cmr161903731cf.68.1756848647663; Tue, 02 Sep 2025
+ 14:30:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
+In-Reply-To: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
+From: Jonathan Denose <jdenose@google.com>
+Date: Tue, 2 Sep 2025 16:30:36 -0500
+X-Gm-Features: Ac12FXwKv6W57zxcScGDO_HzqTjYPJKie3JgclspE9ji5LQdztiAetxXMV8DHjE
+Message-ID: <CAMCVhVOUn-un9N_Bv00RVJ7kAw1O+AHgAHOzSGM6UuMBZVdtYw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] HID: Implement haptic touchpad support
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Henrik Rydberg <rydberg@bitmath.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
+	"Sean O'Brien" <seobrien@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update the main TI TWL-family binding to be self-contained and to fix
-pre-existing validation errors.
+On Mon, Aug 18, 2025 at 6:10=E2=80=AFPM Jonathan Denose <jdenose@google.com=
+> wrote:
+>
+> Hello,
+>
+> This is an updated implementation of the interface for controlling haptic
+> touchpads.
+>
+> Below is an updated design proposal for the userspace and HID interfaces,
+> modified from what one of my colleagues submitted in 2019 [0].
+>
+> We would appreciate any feedback you might have.
+>
+> Thank you,
+>
+> Jonathan Denose
+> Chromium OS Team
+>
+> Background
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> There are multiple independent projects to develop a touchpad with force =
+sensors
+> and haptic actuators, instead of a traditional button.  These haptic touc=
+hpads
+> have several advantages and potential uses; they allow clicking across th=
+e
+> entire touchpad surface, adjusting the force requirement for clicks, hapt=
+ic
+> feedback initiated by UI, etc. Supporting these features will potentially
+> require two new communication channels at the kernel level:
+> * Control of haptic motor by the host
+> * Force sensor data from device to host
+>
+> This document includes two related proposals:
+> 1. HID design proposal, that hardware makers would need to implement
+> 2. Kernel design proposal
+>
+> Objective
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Develop a standard protocol to allow userspace applications to communicat=
+e with
+> haptic touchpads, and minimize duplicated code and effort.
+>
+> Requirements:
+> 1. Support UI-initiated haptic feedback.
+> 2. Allow userspace to control when button press and button release haptic
+>    effects are triggered. (Useful when detecting a false click, changing =
+force
+>    thresholds, or sending context-dependent effects).
+> 3. Reveal force sensor readings to userspace applications.
+> 4. Only allow OS-controlled haptic feedback for those systems which suppo=
+rt it.
+>
+> Proposal
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>
+> In order to minimize duplicated effort, we propose standardized haptic to=
+uchpad
+> support in the linux kernel.
+>
+> HID API
+> -------
+>
+> Modes
+> .....
+>
+> The haptic touchpad should be able to operate under two different modes.
+>
+> 1. Device-controlled mode
+>
+> The haptic touchpad should start up in "device-controlled mode"
+> (HID_HAPTIC_MODE_DEVICE), meaning it acts as a normal touchpad. This mean=
+s it
+> should perform the press and release haptic feedback autonomously at pred=
+efined
+> force thresholds, and send the appropriate BTN_* events.
+>
+> 2. Host-controlled mode
+>
+> Once the touchpad has been confirmed as supporting haptics (described in =
+more
+> detail in the the "Click and release control" section below), the device =
+should
+> enter "host-controlled mode" (HID_HAPTIC_MODE_HOST). In this mode userspa=
+ce
+> should take control. From here, userspace will take control over
+> press/release haptic feedback, relying on the effects sent by the kernel.
+>
+> Multitouch
+> ..........
+>
+> The HID API for multitouch reports should follow the Microsoft precision
+> touchpad spec [1], with the following changes:
+> * A tip pressure field [2] should be used to report the force. The physic=
+al unit
+>   Type (Newtons or grams), exponent, and limits should be reported in the
+>   report descriptor for the force field.
+> * The device will always report the button state according to its predefi=
+ned
+>   force thresholds, even when not in device-controlled mode.
+> * The device must expose a "simple haptic controller" logical collection
+>   alongside the touchpad collection.
+>
+> Haptic control
+> ..............
+>
+> The HID protocol described in HUTRR63[3] must be used.
+>
+> The following waveforms should be supported:
+>
+> | WAVEFORMNONE             | Implicit waveforms required by protocol     =
+      |
+> | WAVEFORMSTOP             |                                             =
+      |
+> | ------------------------ | --------------------------------------------=
+----- |
+> | WAVEFORMPRESS            | To be used to simulate button press. In devi=
+ce-   |
+> |                          | controlled mode, it will also be used to sim=
+ulate |
+> |                          | button release.                             =
+      |
+> | ------------------------ | --------------------------------------------=
+----- |
+> | WAVEFORMRELEASE          | To be used to simulate button release.      =
+      |
+>
+> All waveforms will have an associated duration; continuous waveforms will=
+ be
+> ignored by the kernel.
+>
+> Triggers & Mode switching
+> .........................
+>
+> The =E2=80=9Cauto trigger waveform=E2=80=9D should be set to WAVEFORM_PRE=
+SS by default, and the
+> button from the touchpad collection should be set as the =E2=80=9Cauto tr=
+igger
+> associated control=E2=80=9D.
+>
+> The kernel can trigger the different modes in the following ways:
+> * Device-controlled mode can be enabled by setting the =E2=80=9Cauto trig=
+ger waveform=E2=80=9D to
+>   WAVEFORM_PRESS.
+> * Host-controlled mode can be enabled by setting the "auto trigger wavefo=
+rm" to
+>   WAVEFORM_STOP.
+>
+> The device must also support manual triggering. If intensity modification=
+ for
+> waveforms is supported by the device, the intensity control should be inc=
+luded
+> in the manual trigger output report. This allows modification of the inte=
+nsity
+> on a per-waveform basis. Retriggering does not need to be supported by th=
+e
+> device.
+>
+> Userspace API
+> -------------
+>
+> Multitouch protocol
+> ...................
+>
+> ABS_MT_PRESSURE will be used to report force. The resolution of ABS_MT_PR=
+ESSURE
+> should also be defined and reported in force units of grams or Newtons.
+> ABS_PRESSURE should be reported as the total force applied to the touchpa=
+d.
+> When the kernel is in host-controlled mode, it should always forward the =
+button
+> press and release events to userspace.
+>
+> Use Force Feedback protocol to request pre-defined effects
+> ..........................................................
+>
+> The force feedback protocol [4] should be used to control predefined effe=
+cts.
+>
+> Typical use of the force feedback protocol requires loading effects to th=
+e
+> driver by describing the output waveform, and then requesting those effec=
+ts
+> using an ID provided by the driver. However, for haptic touchpads we do n=
+ot want
+> to describe the output waveform explicitly, but use a set of predefined e=
+ffects,
+> which are identified by HID usage.
+>
+> The force feedback protocol will need to be extended to allow requests fo=
+r HID
+> haptic effects. This requires a new feedback effect type:
+>
+> /**
+>  * struct ff_haptic_effect
+>  * @hid_usage: hid_usage according to Haptics page (WAVEFORM_CLICK, etc.)
+>  * @vendor_id: the waveform vendor ID if hid_usage is in the vendor-defin=
+ed
+>  * range
+>  * @vendor_id: the vendor waveform page if hid_usage is in the vendor-def=
+ined
+>  * range
+>  * @intensity: strength of the effect
+>  * @repeat_count: number of times to retrigger effect
+>  * @retrigger_period: time before effect is retriggered (in ms)
+>  */
+> struct ff_haptic_effect {
+>         __u16 hid_usage;
+>         __u16 vendor_id;
+>         __u8  vendor_waveform_page;
+>         __s16 intensity;
+>         __u16 repeat_count;
+>         __u16 retrigger_period;
+> }
+>
+> Since the standard waveform id namespace does not overlap with the vendor
+> waveform id namespace, the vendor id and page can be ignored for standard
+> waveforms.
+>
+> Click and release control
+> .........................
+>
+> Haptic functionality shall be gated behind the HID_MULTITOUCH_HAPTIC kern=
+el
+> configuration option, and this kernel configuration option should only be
+> enabled if userspace will support haptic capabilities. Haptic functionali=
+ty will
+> only be initialized and used if HID_MULTITOUCH_HAPTIC is enabled, and if =
+the
+> following conditions have been met:
+> * ABS_MT_PRESSURE is defined and reporting force units of Newtons or gram=
+s.
+> * The device supports haptic effects according to the hid protocol define=
+d in
+>   HUTRR63 [3].
+> These checks will happen when the driver probes and initializes the multi=
+touch
+> device.
+>
+> In the case when the kernel configuration option has been set and the dev=
+ice
+> reports pressure and haptic effects as defined above, the kernel will ini=
+tialize
+> the haptic device and configure the haptic driver to signal that the touc=
+hpad is
+> haptic-compatible. To signal to userspace that the touchpad is haptic-com=
+patible
+> the kernel will mark INPUT_PROP_HAPTIC_TOUCHPAD.
+>
+> With userspace willing and able to take control, the kernel will signal t=
+o the
+> device to exit device-controlled mode once a WAVEFORMPRESS or WAVEFORMREL=
+EASE
+> event is uploaded. From here, userspace will take control over press/rele=
+ase
+> haptic feedback, relying on the effects sent by the kernel.
+>
+> In all other cases, the driver will take no action to enable haptic
+> functionality.
+>
+> Summary of normal use-case
+> 1. The kernel waits for userspace to upload WAVEFORMPRESS or
+>    WAVEFORMRELEASE.
+> 2. Userspace determines when a click has been performed based on its own
+>    criteria and tells the touchpad to perform a haptic effect.
+> 3. When userspace erases the WAVEFORMPRESS or WAVEFORMRELEASE effect, sig=
+nal the
+>    device to return to device-controlled mode.
+>
+> [0]: https://www.spinics.net/lists/linux-input/msg60938.html
+> [1]: https://learn.microsoft.com/en-us/windows-hardware/design/component-=
+guidelines/touchpad-devices
+> [2]: Usage ID 0x30 of HID usage table 0x0D. See chapter 16:
+>      https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
+> [3]: https://www.usb.org/sites/default/files/hutrr63b_-_haptics_page_redl=
+ine_0.pdf
+> [4]: https://www.kernel.org/doc/html/v4.20/input/ff.html
+>
+> Signed-off-by: Jonathan Denose <jdenose@google.com>
+> ---
+> Changes in v3:
+> - Change CONFIG_HID_HAPTIC from bool to tristate
+> - Fix devm_kzalloc calls in hid-multitouch.c to use correct device
+> - Minor comment cleanup + grammar fix
+> - Link to v2: https://lore.kernel.org/r/20250818-support-forcepads-v2-0-c=
+a2546e319d5@google.com
+>
+> Changes in v2:
+> - Rename FF_HID and ff_hid_effect to FF_HAPTIC and ff_haptic_effect
+> - Add more detail to CONFIG_HID_HAPTIC config option description
+> - Remove CONFIG_MULTITOUCH_HAPTIC config option
+> - Utilize devm api in hid-multitouch haptic functions
+> - Link to v1: https://lore.kernel.org/all/20250714-support-forcepads-v1-0=
+-71c7c05748c9@google.com
+>
+> ---
+> Angela Czubak (11):
+>       HID: add haptics page defines
+>       Input: add FF_HAPTIC effect type
+>       Input: add INPUT_PROP_HAPTIC_TOUCHPAD
+>       HID: haptic: introduce hid_haptic_device
+>       HID: input: allow mapping of haptic output
+>       HID: haptic: initialize haptic device
+>       HID: input: calculate resolution for pressure
+>       HID: haptic: add functions handling events
+>       Input: MT - add INPUT_MT_TOTAL_FORCE flags
+>       HID: haptic: add hid_haptic_switch_mode
+>       HID: multitouch: add haptic multitouch support
+>
+>  Documentation/input/event-codes.rst    |  14 +
+>  drivers/hid/Kconfig                    |  11 +
+>  drivers/hid/Makefile                   |   1 +
+>  drivers/hid/hid-haptic.c               | 580 +++++++++++++++++++++++++++=
+++++++
+>  drivers/hid/hid-haptic.h               | 127 ++++++++
+>  drivers/hid/hid-input.c                |  18 +-
+>  drivers/hid/hid-multitouch.c           |  47 +++
+>  drivers/input/input-mt.c               |  14 +-
+>  include/linux/hid.h                    |  29 ++
+>  include/linux/input/mt.h               |   1 +
+>  include/uapi/linux/input-event-codes.h |   1 +
+>  include/uapi/linux/input.h             |  22 +-
+>  12 files changed, 858 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+> change-id: 20250625-support-forcepads-0b4f74fd3d0a
+>
+> Best regards,
+> --
+> Jonathan Denose <jdenose@google.com>
+>
+Hi all,
 
-Following maintainer feedback, the simple power and PWM bindings are
-now defined directly within this file, and their legacy .txt files
-are removed.
+Please let me know if there is anything else needed from me.
 
-To ensure future patches are bisectable, child nodes whose bindings
-are in other patches (audio, keypad, usb, etc.) are now defined using
-a flexible 'additionalProperties: true' pattern. This removes hard
-dependencies between the MFD and subsystem bindings.
-
-The complete dtbs_check for this binding is clean except for two
-warnings originating from pre-existing bugs in the OMAP DTS files,
-for which fixes have already been submitted separately [1][2].
-
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-
----
-Changes in v5:
-  - Restructured the entire binding to define properties at the top
-    level instead of if/then blocks, per maintainer feedback.
-  - Added specific compatible enums for new child nodes instead of a
-    generic 'compatible: true'.
-  - Set 'unevaluatedProperties: false' for 'pwm' and 'pwmled' nodes to
-    enforce strict validation.
-  - Expanded 'power' node compatible enum to include all board-specific
-    compatible strings (used in existing device trees, e.g. OMAP3-based
-    boards) for more complete coverage.
-  - Corrected the schema for the 'power' node compatible to properly
-    handle single and fallback entries.
-
-Changes in v4:
-  - Reworked binding to be independent and bisectable per maintainer
-    feedback by using 'additionalProperties: true' for child nodes.
-  - Added board-specific compatibles to the 'power' node enum.
-  - Added definitions for 'clocks' and 'clock-names' properties.
-  - Renamed 'twl6030-usb' child node to 'usb-comparator' to match
-    existing Device Tree usage (twl6030.dtsi).
-  - Fixed some spelling/grammar erros in the description.
-
-Changes in v3:
-  - New patch to consolidate simple bindings (power, pwm) and add
-    definitions for all child nodes to fix dtbs_check validation
-    errors found in v2.
-
-Changes in v2:
-  - This patch is split from larger series [3] per maintainer feedback.
-  - Added missing sub-node definitions, resolving dtbs_check errors.
-
-[1] https://lore.kernel.org/all/20250822222530.113520-1-jihed.chaibi.dev@gmail.com/
-[2] https://lore.kernel.org/all/20250822225052.136919-1-jihed.chaibi.dev@gmail.com/
-[3] https://lore.kernel.org/all/20250816021523.167049-1-jihed.chaibi.dev@gmail.com/
----
- .../devicetree/bindings/mfd/ti,twl.yaml       | 159 +++++++++++++++++-
- .../devicetree/bindings/mfd/twl4030-power.txt |  48 ------
- .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
- .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
- 4 files changed, 157 insertions(+), 84 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power.txt
- delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
- delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-index f162ab60c09..397eed9b628 100644
---- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-+++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-@@ -11,9 +11,9 @@ maintainers:
- 
- description: |
-   The TWLs are Integrated Power Management Chips.
--  Some version might contain much more analog function like
-+  Some versions might contain much more analog functionality like
-   USB transceiver or Audio amplifier.
--  These chips are connected to an i2c bus.
-+  These chips are connected to an I2C bus.
- 
- allOf:
-   - if:
-@@ -181,6 +181,12 @@ properties:
-   "#clock-cells":
-     const: 1
- 
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: fck
-+
-   charger:
-     type: object
-     additionalProperties: true
-@@ -198,6 +204,131 @@ properties:
-       interrupts:
-         maxItems: 1
- 
-+  audio:
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        const: ti,twl4030-audio
-+
-+  keypad:
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        const: ti,twl4030-keypad
-+
-+  pwm:
-+    type: object
-+    $ref: /schemas/pwm/pwm.yaml#
-+    unevaluatedProperties: false
-+    description:
-+      PWM controllers (PWM1 and PWM2 on TWL4030, PWM0 and PWM1 on TWL6030/32).
-+    properties:
-+      compatible:
-+        enum:
-+          - ti,twl4030-pwm
-+          - ti,twl6030-pwm
-+      '#pwm-cells':
-+        const: 2
-+    required:
-+      - compatible
-+      - '#pwm-cells'
-+
-+  pwmled:
-+    type: object
-+    $ref: /schemas/pwm/pwm.yaml#
-+    unevaluatedProperties: false
-+    description:
-+      PWM controllers connected to LED terminals (PWMA and PWMB on TWL4030,
-+      LED PWM on TWL6030/32, mainly used as charging indicator LED).
-+    properties:
-+      compatible:
-+        enum:
-+          - ti,twl4030-pwmled
-+          - ti,twl6030-pwmled
-+      '#pwm-cells':
-+        const: 2
-+    required:
-+      - compatible
-+      - '#pwm-cells'
-+
-+  twl4030-usb:
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        const: ti,twl4030-usb
-+
-+  usb-comparator:
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        const: ti,twl6030-usb
-+
-+  gpio:
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      compatible:
-+        const: ti,twl4030-gpio
-+
-+  power:
-+    type: object
-+    description:
-+      The power management module inside the TWL4030 provides several
-+      facilities to control the power resources, including power scripts.
-+      For now, the binding only supports the complete shutdown of the
-+      system after poweroff.
-+      Board-specific compatible strings may be used for platform-specific
-+      power configurations.
-+      A board-specific compatible string (e.g., ti,twl4030-power-n900) may
-+      be paired with a generic fallback (generally for power saving mode).
-+    additionalProperties: false
-+    properties:
-+      compatible:
-+        oneOf:
-+          - enum:
-+              - ti,twl4030-power
-+              - ti,twl4030-power-reset
-+              - ti,twl4030-power-idle
-+              - ti,twl4030-power-idle-osc-off
-+              # Add all board-specific compatibles for completeness
-+              - ti,twl4030-power-omap3-sdp
-+              - ti,twl4030-power-omap3-ldp
-+              - ti,twl4030-power-omap3-evm
-+              - ti,twl4030-power-beagleboard-xm
-+              - ti,twl4030-power-n900
-+          - items:
-+              - enum:
-+                  - ti,twl4030-power
-+                  - ti,twl4030-power-reset
-+                  - ti,twl4030-power-idle
-+                  - ti,twl4030-power-idle-osc-off
-+                  # Add all board-specific compatibles for completeness
-+                  - ti,twl4030-power-omap3-sdp
-+                  - ti,twl4030-power-omap3-ldp
-+                  - ti,twl4030-power-omap3-evm
-+                  - ti,twl4030-power-beagleboard-xm
-+                  - ti,twl4030-power-n900
-+              - enum:
-+                  # Fallback (for power saving mode)
-+                  - ti,twl4030-power-idle
-+                  - ti,twl4030-power-idle-osc-off
-+      ti,system-power-controller:
-+        type: boolean
-+        deprecated: true
-+        description:
-+          DEPRECATED. The standard 'system-power-controller'
-+          property on the parent node should be used instead.
-+      ti,use_poweroff:
-+        type: boolean
-+        deprecated: true
-+        description: DEPRECATED, to be removed.
-+    required:
-+      - compatible
-+
- patternProperties:
-   "^regulator-":
-     type: object
-@@ -271,6 +402,16 @@ examples:
-           compatible = "ti,twl6030-vmmc";
-           ti,retain-on-reset;
-         };
-+
-+        pwm {
-+          compatible = "ti,twl6030-pwm";
-+          #pwm-cells = <2>;
-+        };
-+
-+        pwmled {
-+          compatible = "ti,twl6030-pwmled";
-+          #pwm-cells = <2>;
-+        };
-       };
-     };
- 
-@@ -325,6 +466,20 @@ examples:
-         watchdog {
-           compatible = "ti,twl4030-wdt";
-         };
-+
-+        power {
-+          compatible = "ti,twl4030-power";
-+        };
-+
-+        pwm {
-+          compatible = "ti,twl4030-pwm";
-+          #pwm-cells = <2>;
-+        };
-+
-+        pwmled {
-+          compatible = "ti,twl4030-pwmled";
-+          #pwm-cells = <2>;
-+        };
-       };
-     };
- ...
-diff --git a/Documentation/devicetree/bindings/mfd/twl4030-power.txt b/Documentation/devicetree/bindings/mfd/twl4030-power.txt
-deleted file mode 100644
-index 3d19963312c..00000000000
---- a/Documentation/devicetree/bindings/mfd/twl4030-power.txt
-+++ /dev/null
-@@ -1,48 +0,0 @@
--Texas Instruments TWL family (twl4030) reset and power management module
--
--The power management module inside the TWL family provides several facilities
--to control the power resources, including power scripts. For now, the
--binding only supports the complete shutdown of the system after poweroff.
--
--Required properties:
--- compatible : must be one of the following
--	"ti,twl4030-power"
--	"ti,twl4030-power-reset"
--	"ti,twl4030-power-idle"
--	"ti,twl4030-power-idle-osc-off"
--
--The use of ti,twl4030-power-reset is recommended at least on
--3530 that needs a special configuration for warm reset to work.
--
--When using ti,twl4030-power-idle, the TI recommended configuration
--for idle modes is loaded to the tlw4030 PMIC.
--
--When using ti,twl4030-power-idle-osc-off, the TI recommended
--configuration is used with the external oscillator being shut
--down during off-idle. Note that this does not work on all boards
--depending on how the external oscillator is wired.
--
--Optional properties:
--
--- ti,system-power-controller: This indicates that TWL4030 is the
--  power supply master of the system. With this flag, the chip will
--  initiate an ACTIVE-to-OFF or SLEEP-to-OFF transition when the
--  system poweroffs.
--
--- ti,use_poweroff: Deprecated name for ti,system-power-controller
--
--Example:
--&i2c1 {
--	clock-frequency = <2600000>;
--
--	twl: twl@48 {
--		reg = <0x48>;
--		interrupts = <7>; /* SYS_NIRQ cascaded to intc */
--		interrupt-parent = <&intc>;
--
--		twl_power: power {
--			compatible = "ti,twl4030-power";
--			ti,use_poweroff;
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt b/Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
-deleted file mode 100644
-index d97ca1964e9..00000000000
---- a/Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
-+++ /dev/null
-@@ -1,17 +0,0 @@
--Texas Instruments TWL series PWM drivers
--
--Supported PWMs:
--On TWL4030 series: PWM1 and PWM2
--On TWL6030 series: PWM0 and PWM1
--
--Required properties:
--- compatible: "ti,twl4030-pwm" or "ti,twl6030-pwm"
--- #pwm-cells: should be 2. See pwm.yaml in this directory for a description of
--  the cells format.
--
--Example:
--
--twl_pwm: pwm {
--	compatible = "ti,twl6030-pwm";
--	#pwm-cells = <2>;
--};
-diff --git a/Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt b/Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
-deleted file mode 100644
-index 31ca1b032ef..00000000000
---- a/Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
-+++ /dev/null
-@@ -1,17 +0,0 @@
--Texas Instruments TWL series PWM drivers connected to LED terminals
--
--Supported PWMs:
--On TWL4030 series: PWMA and PWMB (connected to LEDA and LEDB terminals)
--On TWL6030 series: LED PWM (mainly used as charging indicator LED)
--
--Required properties:
--- compatible: "ti,twl4030-pwmled" or "ti,twl6030-pwmled"
--- #pwm-cells: should be 2. See pwm.yaml in this directory for a description of
--  the cells format.
--
--Example:
--
--twl_pwmled: pwmled {
--	compatible = "ti,twl6030-pwmled";
--	#pwm-cells = <2>;
--};
--- 
-2.39.5
-
+Thanks!
+--=20
+Jonathan
 
