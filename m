@@ -1,143 +1,152 @@
-Return-Path: <linux-kernel+bounces-796478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238F4B40121
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B0AB40124
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84D04E7CF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:48:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86AA1B28556
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFE92D63ED;
-	Tue,  2 Sep 2025 12:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B802D94B4;
+	Tue,  2 Sep 2025 12:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VB9JPZA9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hBSGimte";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q/bqLeAN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341C32D595B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69902D6E4C;
+	Tue,  2 Sep 2025 12:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817188; cv=none; b=O6NEwXBpxr4LIB82rgHT3EV9qgprPrPP3s1mnUto10Y5eWUJe/ucrjWA/AlACyaUS8spgj9Cs9s7PyUZB2uzk3OI67aGu8+opt89X0lWuIqytqM84jiS3pViHx/rdT6HDYPEAW4eneYo4CfyDb0aOaFy2A7qk0n+m1yZQsHZTHM=
+	t=1756817230; cv=none; b=XEDpu3/ggF2eexmI5AFO/97qthWHf9W4p+WzW0FgGF/gXKpf9wbZ2hVYREpPVtRCEg2oV91iQmw3QBFppX410IXIGssYSt0fB1MrwRF/cHciN1c4GkXoWk/u83Zfylt58WQ7DA83QNuL9X2+ObBsQ7Ol5z1lPM6sUuL6RawL6UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817188; c=relaxed/simple;
-	bh=jOieBAdKq+Jk/zOQnhoH+w34fueGOes42t8OWIFbIDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q6xGSw1wJsl3wL5xex3ZAzekAKVM1ireKJ7VnmBleU6Tsztho1j511ge444tEk4Nx3P1IUOOsKemSrfFAfbqukomfEmc6v43ZUfOrOesoRR4h8rTsFmWfZekC7mUNSENE32TMG1scE3zNVie+EwD6/02/WeudNIvmnpcnuyoH80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VB9JPZA9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A85A3C4CEFA
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756817187;
-	bh=jOieBAdKq+Jk/zOQnhoH+w34fueGOes42t8OWIFbIDY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VB9JPZA9RCu3qjMGQAm74GWgS1xp9XUsEB45Ary6FU82UenY0Zn8adZfIpI9h566K
-	 FQVEdDLJuFO1+qrdMgHTfCnzzxVtxxu4Fugjy1a3SgasusIMkYMP+0QpEqhCY6OA7y
-	 AK8dyPkQkwJ1JBAOcfyNwStnFC+xn4KBz6NDKc/edNsUE/K9fP3YpdRGaUlgsdfrEH
-	 xOhcK/Bt/UDkxPmftvswm/BEzIYw1D9bZLkRneahihjrxpeirCp8jwPubeiRLGITlg
-	 Si9IoQc2ztcJ8paiBxL5nDcN7oZoQa7b1q30uAPoK3NoU0RWHfY3ZcjTHKO4lxpJKJ
-	 bkiAsKZn7zq8w==
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d603f13abso53415997b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:46:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWQbXt1oIgP6Ogy2gE9Amuv6oXKISd0f0qhyQuzS8bF3nOvNCfj7E61bsnW3sTJ0SYRR6j81raLamCFv2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw53yILao3rLdqkxe+waNSsL2fX6ZD+rp50CsWj9KnjNyP3zisx
-	LTD0P7GF6NMUnwm1hKzPDRi9So2R+/EnEhaJmyXmigHT0RVlflQ7uNlZj+eOx/QySZLyoD9Hgyv
-	qgYZ9VzWUMPF9utZ0AmTHqu4vUlqJqJsgQlJahTlpJw==
-X-Google-Smtp-Source: AGHT+IED0lg2698fOemE35zLVrPDmVbySfg8LCS3cQ4HucMwxzGZ2PHSsimY7oa1U9hph/JcpzmWGJ+uTLEqNf7mybM=
-X-Received: by 2002:a05:690c:64c7:b0:722:6f24:6293 with SMTP id
- 00721157ae682-722764d1a86mr111055047b3.32.1756817186932; Tue, 02 Sep 2025
- 05:46:26 -0700 (PDT)
+	s=arc-20240116; t=1756817230; c=relaxed/simple;
+	bh=5D+BEpotTbaYSdgyO333sqCd9RMOU+Soju7QcoQCavI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PKdezJ2SSzOfJUM0R64y+N+Dc/Le87hX5I7+ha8jHhFkqKuLR74uhJ/awStpr/X2YuAMwp6BZYqlvEQawXxOJr8d4ZanIY9R6myw+EBkYizmojDtkrh3fmDR7ubPzTy++bvAhYXX2QW6QoT95xHY15w61HYAa30QkLZaKyOWQjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hBSGimte; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q/bqLeAN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 02 Sep 2025 12:47:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756817226;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jUKvXwPqSFWwxbJOuWTk6p7Nzfpt+4r72zHDEVXHZvY=;
+	b=hBSGimteUaXT1rFk7eVo+QWxpLvvddHGySb+AAlPT9WcYspjib2wsCm1/Q1+2HpI26D6fD
+	R5JnBdg6Ad7IMqH89o0mCXnWKKaBjE3d7qXnZ+OgJBMwUprD+TA/Fq6svf8CNbmdrmWHh/
+	Kr8jI2tjBUrsXFgv0/W1Bl1ZOXR5t02bdGGvL0eC2xLBs/uxWA96Xr/LD/AoMWiBlKkg1k
+	ESqbHBfQYvmxw1GVWKKSeKxiFUNQU+1TZxeUl8cUI1dkViIuLqhbDw8hgSqcoe4Nax+a2G
+	zPSAXkAN8Uw4Bia7BAIsTXf3RhXH79HmCXTgrD5V+xjTXP+jS1pESjBfZSXh/A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756817226;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jUKvXwPqSFWwxbJOuWTk6p7Nzfpt+4r72zHDEVXHZvY=;
+	b=Q/bqLeANYWRJtDBQVDKf+3iLv1Ex04oAF4CcUHXWLRnxvIV6RtSQ6vmLm0zaUGkZJGXN+b
+	dF0xBQ1PWRlccaCA==
+From: "tip-bot2 for Inochi Amaoto" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/drivers] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
+ cond_[startup|shutdown]_parent()
+Cc: Linux Kernel Functional Testing <lkft@linaro.org>,
+ Nathan Chancellor <nathan@kernel.org>, Wei Fang <wei.fang@nxp.com>,
+ Inochi Amaoto <inochiama@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Jon Hunter <jonathanh@nvidia.com>, Chen Wang <unicorn_wang@outlook.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250827230943.17829-1-inochiama@gmail.com>
+References: <20250827230943.17829-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-3-ryncsn@gmail.com>
- <911dc3b4-c511-4ef2-a159-091780987965@redhat.com>
-In-Reply-To: <911dc3b4-c511-4ef2-a159-091780987965@redhat.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 2 Sep 2025 05:46:15 -0700
-X-Gmail-Original-Message-ID: <CACePvbXs3J6qYWFycVW8rGjiaOw9iTFLdWq1Lq4HyaDkSY45uA@mail.gmail.com>
-X-Gm-Features: Ac12FXy7nblHn4LKwFgkQrQWVUfFCHgtM428VnsEBAgz8jKNZju1D-xaxLOVN18
-Message-ID: <CACePvbXs3J6qYWFycVW8rGjiaOw9iTFLdWq1Lq4HyaDkSY45uA@mail.gmail.com>
-Subject: Re: [PATCH 2/9] mm, swap: always lock and check the swap cache folio
- before use
-To: David Hildenbrand <david@redhat.com>
-Cc: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175681722544.1920.17009750793019581928.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 2, 2025 at 3:18=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 22.08.25 21:20, Kairui Song wrote:
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Swap cache lookup is lockless, it only increases the reference count
-> > of the returned folio. That's not enough to ensure a folio is stable in
-> > the swap cache, so the folio could be removed from the swap cache at an=
-y
-> > time. The caller always has to lock and check the folio before use.
-> >
-> > Document this as a comment, and introduce a helper for swap cache folio
-> > verification with proper sanity checks.
-> >
-> > Also, sanitize all current users to use this convention, and use the ne=
-w
-> > helper when possible for easier debugging. Some existing callers won't
-> > cause any major problem right now, only trivial issues like incorrect
-> > readahead statistic (swapin) or wasted loop (swapoff). It's better to
-> > always follow this convention to make things robust.
-> >
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
->
-> [...]
->
-> > +/**
-> > + * folio_contains_swap - Does this folio contain this swap entry?
-> > + * @folio: The folio.
-> > + * @entry: The swap entry to check against.
-> > + *
-> > + * Swap version of folio_contains()
-> > + *
-> > + * Context: The caller should have the folio locked to ensure
-> > + * nothing will move it out of the swap cache.
-> > + * Return: true or false.
-> > + */
->
-> I appreciate the kerneldoc.
->
-> Intuitively, this should be called "..._swap_entry".
->
-> But I wonder if "contains" is really the right term to use here. It's
-> more like that a swap entry "belongs to" (was assigned to) a folio, right=
-?
+The following commit has been merged into the irq/drivers branch of tip:
 
-Right, in the other design doc I use the word "binding" for the
-relationship between folio and swap entry. As if it is a binding
-contract, your folio data goes and only goes here. There is no owning
-relationship. Other folios might want to compete and win over the
-binding contract as well (the race in swap in).
+Commit-ID:     727e914bbfbbda9e6efa5cb1abe4e96a949d576f
+Gitweb:        https://git.kernel.org/tip/727e914bbfbbda9e6efa5cb1abe4e96a949=
+d576f
+Author:        Inochi Amaoto <inochiama@gmail.com>
+AuthorDate:    Thu, 28 Aug 2025 07:09:42 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 02 Sep 2025 14:42:09 +02:00
 
-> Sure, we store the information in the folio, but the "contains" is a bit
-> weird.
->
-> folio_matches_swp_entry() maybe?
+PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in cond_[startup|shutdown]_parent=
+()
 
-Yes, I like the name folio_match_swap_entry() you suggested in the
-other email as well.
+For MSI controllers which only support MSI_FLAG_PCI_MSI_MASK_PARENT, the
+newly added callback irq_startup() and irq_shutdown() for
+pci_msi[x]_template will not unmask or mask the interrupt when startup()
+resp.  shutdown() is invoked. This prevents the interrupt from being
+enabled resp. disabled.
 
-Chris
+Invoke irq_[un]mask_parent() in cond_[startup|shutdown]_parent(), when the
+interrupt has the MSI_FLAG_PCI_MSI_MASK_PARENT flag set.
+
+Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Reported-by: Wei Fang <wei.fang@nxp.com>
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Wei Fang <wei.fang@nxp.com>
+Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pioneerbox/SG2042
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Link: https://lore.kernel.org/all/20250827230943.17829-1-inochiama@gmail.com
+Closes: https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
+Closes: https://lore.kernel.org/regressions/20250826220959.GA4119563@ax162/
+Closes: https://lore.kernel.org/all/20250827093911.1218640-1-wei.fang@nxp.com/
+---
+ drivers/pci/msi/irqdomain.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+index e0a800f..b11b7f6 100644
+--- a/drivers/pci/msi/irqdomain.c
++++ b/drivers/pci/msi/irqdomain.c
+@@ -154,6 +154,8 @@ static void cond_shutdown_parent(struct irq_data *data)
+=20
+ 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+ 		irq_chip_shutdown_parent(data);
++	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
++		irq_chip_mask_parent(data);
+ }
+=20
+ static unsigned int cond_startup_parent(struct irq_data *data)
+@@ -162,6 +164,9 @@ static unsigned int cond_startup_parent(struct irq_data *=
+data)
+=20
+ 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+ 		return irq_chip_startup_parent(data);
++	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
++		irq_chip_unmask_parent(data);
++
+ 	return 0;
+ }
+=20
 
