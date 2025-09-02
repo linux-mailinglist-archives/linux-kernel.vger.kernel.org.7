@@ -1,156 +1,152 @@
-Return-Path: <linux-kernel+bounces-797250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF7CB40DF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:37:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47265B40DFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262EC5E17C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:37:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55B91B6428E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539C22E62B5;
-	Tue,  2 Sep 2025 19:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0844A34AAEF;
+	Tue,  2 Sep 2025 19:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2At1RCp"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPE46Tz/"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED80529BDBC
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1961261B75;
+	Tue,  2 Sep 2025 19:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756841863; cv=none; b=p8WFX/G+G9xHpcpKw9SH8Zfc8BoQYtfPDDDKY70JqqekfpbwciaKQacrQmAMrqpXIaBzZyYEGVuTrBB6IYJsQLtB+3/ytBxBTDWEgYnxrLo0KBdC4mPAbp8CdK6ise6vPNrNiJX8Cic0aQWW0ozpnbkyqcueLrvphmSYAr6J164=
+	t=1756841919; cv=none; b=X6Z7JoayeQYcwlPYbiUTivYC+Z/yZ1HoVb5J1ZYUxsTYuSTlPlvY255yf42TNA8+Ihul3qxHG6tNahgm0WCEK9zbU9vK5YDUazQtIM40m+FtCA5vQ/uZfZ948/YucNO2ZV9yfL+vliSJGH80njnYTb737o3dfK4bwtWtAq3JHJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756841863; c=relaxed/simple;
-	bh=LT6iwYPn+yitERzqtYFHHmP4Vm+0O+/xC7OaAftkoRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ov2lQC/wDHdKQ77+FQEgwnezMyLONsm+c34UZ/UEnGyMGInUEi+gD983yplg0wnI8espjjwLbukFGax2QheIxfztXtSkhZKo0U4Et86saQm+cWsl+zYG//5xq52ZMU5PRrOWjWtSp5QZwryTt5cbqbaNdcN2tkW06DYl+EukWxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2At1RCp; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1756841919; c=relaxed/simple;
+	bh=HaZVq77hCeEKJj48W9T/SV2y0EXDcF4xBD7RBPytWIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WLOuEGPYRxODXa8gJ46vJNYSdlwoN8D7R7RyFTCSXfne2y10x7VAeWZv/MlDwG59tyRc0JRRcuSTjiUKMHbxirMNkz2I4D0/Yjg1FPgEX4QCLLpNncdwTOjNF511vReKvqk0GQL115E3IZ+c3fgLmg3svqnkZHQl2pZNr+BQcaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPE46Tz/; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3dcce361897so50398f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:37:41 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77263a06618so231795b3a.3;
+        Tue, 02 Sep 2025 12:38:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756841860; x=1757446660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TN+LWKqwK4sMN1iNqWht7ls9UeWeamLxqzlz9dPBRJ4=;
-        b=O2At1RCpV86tyZO3K0ljCK0bfdIBjYEI/u177Rh1rqPl71EqzQU9RhITBe5fZozt2b
-         s3u6pcaaKtjslWQBMIBQ8+wyitCFbhSx2u+mM9uQJFwOeP7dfKHtON7CJ5Rfk3posI1/
-         ItFIQx9DrwjwEQi63Hx8O7zsuBqJSquOtvcebJJqwZ45LXnZAKXXiJKaNJ3pziVmszhs
-         Loplm6bKGZr1fTafZEYZ4tug+cF7ovjyk3QWoSEoWBoCbbauEIpd46fJF/ZP62AKTPW5
-         j3XPTWp3IZCGJVeZGvU7udsKJ6aXncMoluHpLnPjBctxaBRjx57K2LV93ZcmFdBrzLLI
-         PrHw==
+        d=gmail.com; s=20230601; t=1756841916; x=1757446716; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4kLBob4ZpoHhTQlAXB2V9hETmsGMAM+pRjiWrcqYh6c=;
+        b=FPE46Tz/SBFD1fWLR9+LX5tG0si3zsMOrGaOWS41foC4R5zkBSQ5sGmEKo28Nbx5/U
+         L8tW4/Aqwp+hZ6IcP8leAqkfV7ZimVzu8ZDvPF72RBL43ADy2QZBsOQns5HfrJE+WANo
+         DVR2AYC/jTtG2fbFxqVQ5+Aei4N2yXkKc3OE4L0dJMcwVMo7n/7J5VZjpf09Zn38EzHY
+         TlNhAAz6RW7oz2RIXg220ywHm8P3TBPMNQx8RsAKm/dIsdJscHKCL5jQfCjpgQQr7apZ
+         kouXuIdqoTPibDWt5479endQU8uKUCp4qxcSO6QkowyZxbzz6xe4rPM/aZHn+k0iO+61
+         JdCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756841860; x=1757446660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TN+LWKqwK4sMN1iNqWht7ls9UeWeamLxqzlz9dPBRJ4=;
-        b=cNujqm79iYI1fbBhjx+K48xebv5gmkn0Vwl9iL2omtd/qw9LIZXz7i1LhLV8yzCDzv
-         YngmY3vjglaOGqfJeocvgcqiYGpugESymk11cAeJ5mh3U3GkyurriR6ntHaCgAVcnmsr
-         XoOeP9+VPMFs8jBsvg8r9WJphCCSihp/XoR7x7ysQ6SA7zIeKlY80mZGOfbmC/5Zq+CR
-         xCKC6z8kJL/qQZIVNmPeD7MZ9WUN00bazFpwfjHOuSEcPL9pxvgZdgl7sPRYEpPCoPSf
-         DSVA6eQjIvLXOLrdNKZ/cTptyNfSIQoLWaGBjHHD2kUAGq/yBh25OJanJKf99trWMqk6
-         VUFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaCEigr6sBNB49JEF03bPpW69yJcaFjGN32w3YTZTH8Pq46raOJ9nDL7bvVzY5geaF4wVEPzHHd8wC8vI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywhXbWXReV98jDjSf7LH6Z2ffZwF470wxnfaJWomCG7Xo67ASc
-	gFaAUspzjwgktdk9oiiaGL3wg7N21WJEK+R56FkvPAvYhns/paBwf7OYWgC5BRDd6DmV4MP2Rvb
-	v17oesRpu7uVyFdojG9FQVR4dqG9bm1Q=
-X-Gm-Gg: ASbGncu4emgvJa7LnX6ds5BhEot7Gl76j/Z1UIrmmZcg4cQrq5cZj5VeqX92uS40VjR
-	N4zpySKpe3ZMdiMAQIiroYVtbZQGwOxmnXk9Nlh7ZyijPns+wfWPVxnRiNQVXkMgWNgzp3APori
-	AM0iUOWKeCFvDxVcqTz/Tot7iAg0ir07e6AqkF9aPjM7+QMWq/E1Po28N0EJCvvzbV+a0TKydHD
-	pzNu0HaksrVh7tfFAp6BdM7TWRJVtjxMQ==
-X-Google-Smtp-Source: AGHT+IE6JA1rXpJi8UiA+K6Yea5vIZxcrVcThUxtiOrKC1Gba2vVHUc3Ak3hsKF9d6zhxVs5C57aCATtYKOozOMVisg=
-X-Received: by 2002:a05:6000:4013:b0:3cb:2049:c743 with SMTP id
- ffacd0b85a97d-3d1df34f336mr8933126f8f.52.1756841859887; Tue, 02 Sep 2025
- 12:37:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756841916; x=1757446716;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4kLBob4ZpoHhTQlAXB2V9hETmsGMAM+pRjiWrcqYh6c=;
+        b=GMH8El2xK2PhXRHO40KLPQz4bsuLApkwJFACqgC5k1fTcLFRYTvkxti5P73QljsKvC
+         QMGUFrILvRcbJKImZTWT3sPzZ1HszXKDhET8JzMkdkQ/ie28tO5PNwbTqGngEdZNgG3r
+         SapYSbDkR3c98FL+PTN9coqzmAkjfQ1QNsupe1F2SG+KHzZ0W2o6MfkGzSpE7E35BmmI
+         P6csw6ZRaISBAaKDeh1AcRvf/gWFjvAq8EOefEZgTZV7mkJSp4lgwPaMsudxiMSpYiKp
+         VxZzeE9wuVn/DtKKGh1HbydPrvZIJNu5FppAgNYkpDrngY4C7r0TAKeZJm4fZHYL6HEa
+         CGqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFMhlUcxjFZJ7rS6xCXFT723z7rYPYvMiPaTE4jtIzvZDo9n8Q7aYplTmDdSEaanfrnfVN2FllZwD+vC7aEw==@vger.kernel.org, AJvYcCVh5r64WDIB81xKz8SgDmQUjw8Ma+TE2w7yn3HlvJs+w1PIUBUT0SPCw9In2k8MTSLrE9xlXa/0t5Z/Xb+Q@vger.kernel.org, AJvYcCW6BYiYhmknFZ5WybBp7C5JYzNAVGCg3D69UBYpHU/Z0S8kL2CNtTZEEl9s1ZBI+T5gNaRxzMz5dXff@vger.kernel.org, AJvYcCXGXOkSVDtl5b6Y+coZYOclv+yx25m/Zi0cm6nSoddv2KP6XSNFPbTtvFcHSTmE2vQaL53f@vger.kernel.org, AJvYcCXpUmK3gY+lbvOofo4gB8zBbth7Nj/wZZuxB+qMlCtxUddbSSI25OnS2oK4StxuFUigvw7Sf32UFPCE@vger.kernel.org
+X-Gm-Message-State: AOJu0YysF5HLzo514jaBpt6SW9KHC8lr6WH/5groo44GD7Kzbkh+RmQB
+	wAAu8+PPvK1Iwfz/5Vjd940/pstDgEx5ifKnEWx1SFUWbQ/0TjjraUvBYlFjbOF4
+X-Gm-Gg: ASbGncv85XEulmPstwmplujcwBPOraQV3cbjh+UwfYzZkYS4+E50QjZuR8o2suPtusq
+	1rv+K7Ehj7yHrFusNySbu2Fw4Vw0n/cZo9n9NTy9okqxrMVfgGKmqNLqr3YcLmRHc0tsCrpVkAJ
+	c5PU8lVVWQq5a4QJ84wPKrutpQVxiHRWN5HHoSecMKES34V0BV4eIrPGBG3Qi/QjI7N+D+noLAB
+	o+l9b/HsNuHJ/ITgbV3ogh4IPeUpshH9vvrSFlhU3KMunh3s6/CNpN5RyN478JPJ9kOckElNuS8
+	70BPoNDrZk3q9I4nogdea15vBUvcGK8TZ5hTC/iTSzxqG1hrPIdT/DUW9ceRMkjx3S6rTgWSD9q
+	Mj58ma4osuypK+ovb8q85BN7LpA/I
+X-Google-Smtp-Source: AGHT+IGhEhOhFp7BmdZi4Pl90JZtjsQL2QmhqyTXezZ3L1cETXjqvrmjx+3LXTI/4Qf1FAWGWRCAbA==
+X-Received: by 2002:a05:6300:218a:b0:240:d39:ffc1 with SMTP id adf61e73a8af0-243c847a252mr11620306637.5.1756841916066;
+        Tue, 02 Sep 2025 12:38:36 -0700 (PDT)
+Received: from ranganath.. ([2406:7400:98:c842:443f:2e7:2136:792b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26a4e5sm14567108b3a.19.2025.09.02.12.38.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 12:38:35 -0700 (PDT)
+From: Ranganath V N <vnranganath.20@gmail.com>
+To: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	corbet@lwn.net,
+	pbonzini@redhat.com,
+	laurent.pinchart@ideasonboard.com,
+	vnranganath.20@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: [PATCH] Documentation: Fix spelling mistakes
+Date: Wed,  3 Sep 2025 01:08:22 +0530
+Message-ID: <20250902193822.6349-1-vnranganath.20@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901191307.GI4067720@noisy.programming.kicks-ass.net>
- <20250902081915.GK3245006@noisy.programming.kicks-ass.net>
- <CAADnVQJ2zm7BRb3SuwcmCQ5SBULznbUq777vMCHkm9UbPkaAbQ@mail.gmail.com> <20250902192609.GL3245006@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250902192609.GL3245006@noisy.programming.kicks-ass.net>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 2 Sep 2025 12:37:26 -0700
-X-Gm-Features: Ac12FXwDXN9QMNiUTJknMrbdlulmyCL31eMwICGIcz-49koiMu5xKhxNEMe7f40
-Message-ID: <CAADnVQKns0xLA+oEdgF-gZ9W=pqjkL2h2OcUQxH+CvJ=vVL-0A@mail.gmail.com>
-Subject: Re: [PATCH v2] x86,ibt: Use UDB instead of 0xEA
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>, 
-	alyssa.milburn@intel.com, scott.d.constable@intel.com, 
-	Joao Moreira <joao@overdrivepizza.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, ojeda@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 2, 2025 at 12:26=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Tue, Sep 02, 2025 at 09:04:51AM -0700, Alexei Starovoitov wrote:
-> > On Tue, Sep 2, 2025 at 1:19=E2=80=AFAM Peter Zijlstra <peterz@infradead=
-.org> wrote:
-> > >
-> > >
-> > > Because this is all somewhat magical code, and this change is a littl=
-e
-> > > on the large side, it as been suggested I 'upgrade' the Changelog som=
-e.
-> > >
-> > > On Mon, Sep 01, 2025 at 09:13:07PM +0200, Peter Zijlstra wrote:
-> > > >
-> > > > A while ago [0] FineIBT started using the 0xEA instruction to raise=
- #UD.
-> > > > All existing parts will generate #UD in 64bit mode on that instruct=
-ion.
-> > > >
-> > > > However; Intel/AMD have not blessed using this instruction, it is o=
-n
-> > > > their 'reserved' opcode list for future use.
-> > > >
-> > > > Peter Anvin worked the committees and got use of 0xD6 blessed, it
-> > > > shall be called UDB (per the next SDM or so), and it being a single
-> > > > byte instruction is easy to slip into a single byte immediate -- as
-> > > > is done by this very patch.
-> > > >
-> > > > Reworking the FineIBT code to use UDB wasn't entirely trivial. Nota=
-bly
-> > > > the FineIBT-BHI1 case ran out of bytes. In order to condense the
-> > > > encoding some it was required to move the hash register from R10D t=
-o
-> > > > EAX (thanks hpa!).
-> > > >
-> > > > Per the x86_64 ABI, RAX is used to pass the number of vector regist=
-ers
-> > > > for vararg function calls -- something that should not happen in th=
-e
-> > > > kernel. More so, the kernel is built with -mskip-rax-setup, which
-> > > > should leave RAX completely unused, allowing its re-use.
-> > >
-> > >  [ For BPF; while the bpf2bpf tail-call uses RAX in its calling
-> > >    convention, that does not use CFI and is unaffected. Only the
-> > >    'regular' C->BPF transition is covered by CFI. ]
-> >
-> > I cannot comprehend the new scheme, but thanks for heads up.
->
-> Anywhere in particular you're getting stuck? That is, where should I
-> improve the comments / changelog?
+Corrected a few spelling mistakes to improve the readability.
 
-Well, I mean all these tricky changes are allegedly because
-"Intel/AMD have not blessed using this instruction, it is on
-their 'reserved' opcode list for future use"
+Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+---
+ Documentation/devicetree/bindings/submitting-patches.rst | 2 +-
+ Documentation/filesystems/iomap/operations.rst           | 2 +-
+ Documentation/virt/kvm/review-checklist.rst              | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-I suspect that 'reserved' opcode will not be used any time soon.
-If 10 years from now the opcode is used in some future CPU that CPU
-is better to be not vulnerable and CFI, FineIBT things will be
-gone from the kernel by then.
-So I would do absolutely nothing and just ignore the lack of blessing.
+diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
+index 46d0b036c97e..191085b0d5e8 100644
+--- a/Documentation/devicetree/bindings/submitting-patches.rst
++++ b/Documentation/devicetree/bindings/submitting-patches.rst
+@@ -66,7 +66,7 @@ I. For patch submitters
+      any DTS patches, regardless whether using existing or new bindings, should
+      be placed at the end of patchset to indicate no dependency of drivers on
+      the DTS.  DTS will be anyway applied through separate tree or branch, so
+-     different order would indicate the serie is non-bisectable.
++     different order would indicate the series is non-bisectable.
+ 
+      If a driver subsystem maintainer prefers to apply entire set, instead of
+      their relevant portion of patchset, please split the DTS patches into
+diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+index 067ed8e14ef3..387fd9cc72ca 100644
+--- a/Documentation/filesystems/iomap/operations.rst
++++ b/Documentation/filesystems/iomap/operations.rst
+@@ -321,7 +321,7 @@ The fields are as follows:
+   - ``writeback_submit``: Submit the previous built writeback context.
+     Block based file systems should use the iomap_ioend_writeback_submit
+     helper, other file system can implement their own.
+-    File systems can optionall to hook into writeback bio submission.
++    File systems can optionally hook into writeback bio submission.
+     This might include pre-write space accounting updates, or installing
+     a custom ``->bi_end_io`` function for internal purposes, such as
+     deferring the ioend completion to a workqueue to run metadata update
+diff --git a/Documentation/virt/kvm/review-checklist.rst b/Documentation/virt/kvm/review-checklist.rst
+index debac54e14e7..053f00c50d66 100644
+--- a/Documentation/virt/kvm/review-checklist.rst
++++ b/Documentation/virt/kvm/review-checklist.rst
+@@ -98,7 +98,7 @@ New APIs
+   It is important to demonstrate your use case.  This can be as simple as
+   explaining that the feature is already in use on bare metal, or it can be
+   a proof-of-concept implementation in userspace.  The latter need not be
+-  open source, though that is of course preferrable for easier testing.
++  open source, though that is of course preferable for easier testing.
+   Selftests should test corner cases of the APIs, and should also cover
+   basic host and guest operation if no open source VMM uses the feature.
+ 
+-- 
+2.43.0
+
 
