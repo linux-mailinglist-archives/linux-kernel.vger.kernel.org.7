@@ -1,147 +1,240 @@
-Return-Path: <linux-kernel+bounces-796430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3D3B40098
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:31:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599A5B4009D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A773189469A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7381B23B31
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8711F582F;
-	Tue,  2 Sep 2025 12:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC67C1FFC48;
+	Tue,  2 Sep 2025 12:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X2pz/o2K"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=inadvantage.onmicrosoft.com header.i=@inadvantage.onmicrosoft.com header.b="UzyhUhNZ"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2127.outbound.protection.outlook.com [40.107.93.127])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A7D1F4C96
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816256; cv=none; b=qVtCJnX1BG/tLmgKHOHYpUWfUg2RTgywjG7tCos/ApbIWCKDcCZK9i8L9K2IL9z/rqgFvMOgypcJTd3rgKArT0wLrxcCD/THYrcj6QlHbpJnaCLtOL1+EiNyZxZit4bBgZUbm4iBJ2BuSJ9/IgpztT857+7eJEoPButCZQa/UDw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816256; c=relaxed/simple;
-	bh=BNWoXsVDFnok4UFE+T0JM3TKXHmHj1QrThTVFrNIAkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mLI0yLKP4dMfKcc5I/qFiaEc8dfRr/DV/Tanirb4ujqPZs5MDcJnTLAFbQVGOLGmZ7FESbTWRQtlYXjhZZC1Iipw9+rWNjCdyCPJN82zvDv6Rmx0C+TPm8v8nNIpCz6P/1EwFm9eEWV/TkwVP1h3IkclOnvpobKJDeYTxK/EQkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X2pz/o2K; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582AeGOj024999
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 12:30:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BNWoXsVDFnok4UFE+T0JM3TKXHmHj1QrThTVFrNIAkA=; b=X2pz/o2KGIh9+Ffk
-	JkvjpBU4/98fgg347M2ChiWgeISMl1m7Z6VQoXYRnp2Ktj3oG8Ci/KOXqrs7bXqp
-	kOkwdFX90MjzqHGFGfn7M+Nn00zesmVj1qNejtLuZFoadckRsurdpS4xTcEbadsJ
-	JSkokdDfOhK6CRYNVRo4Khygg8EuZ1eztFrGLGthoipZPEAhvyN2awLdSoqD668b
-	hiCV06UNzrzajK6Quj2iMaV+c5n0dkdJgm118ZHQsrGQpr1VaMB+F4tyippbwuCG
-	thHJcTcB/vS8rMzMZWerk2aWCXgbfEyoILbK6mPqsIw9i1vlbxQ4pIXNFA+eqZKJ
-	vI4EnQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48uscuyt48-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:30:53 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b3d3fc4657so95711cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:30:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756816252; x=1757421052;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BNWoXsVDFnok4UFE+T0JM3TKXHmHj1QrThTVFrNIAkA=;
-        b=hJyaRq4Pk2PHwxq9BGw9IHUwzg08UzjzrjbGlb/LakhUHcTSjtEJXbKDLyDxqyjG4X
-         sQE2SCqS4HBXcWSZKp7wiG0+gJxlh+qemrgPzLqtA1Qt+sUgOPFS1Jr/LrvTgmWMf2rk
-         rmEyrfkFY8vWC9jekdPTQYwMJJ142Ldw6YG5p/X2xWzGuYUzvEKFyrpSWKdvL2fPzVOF
-         /NR5qRBkhVMXFGf2tiT2bjA5aZdMg/Afl6TnJJKGZ2rB7tn1fiKAnaL+oNgh62QVS8Mz
-         tN4dhOo2oTC00UE+D8iA7it0or1ndCHsa926vQ7jClm3HFraFEq+b3WlrQMdz0P6S0hg
-         qnVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaq8FeEWLSLneh2+GxgGfFTPpkFLP7EqpnX5jRLnSN9zcEjAxYPjxhqTNrkM9SG+5/Go8Ob6atFoNwWps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVWSRTJ3ScRd+J3JFdbG3nOXf69oqrhkLkBs+egKlA6TdiXcA8
-	iOJzp9yI1+VaKEidbqT5bk2xWgNJ9Joifl7qS01uAaL/KyyTjh6bfokjiTzXLvLqEeUw9XM6KmG
-	Yc38D4ucF/NKSXKUEiNgTI5RsRs8AhK+MH5Lp5JSc71LufaGJVASrSVUK8B1vEmRJu6U=
-X-Gm-Gg: ASbGncvQXm7423LPZRL7KqA6aQU4yM+Y/+pxZagmIRWXi0qIOr9cfrOHz5/Ng10Ro2C
-	QvULAu5hxbvM0r0PQe6u/HvsfVOqqO1snIm29mLvcb+GoxIPOpvOnE0db/0bEpVA367LSYiUaKk
-	VYjcRDC9asOnvO4t4TXkkhlxxx4/rbEQ78JvbBQCvhC4AC7jiy38QLK5LPRL1Q5c4dEtNMv1yat
-	t2kI639P7KdWgjV+zlncERa6QyGojUfTqoE+jXhHx6WskncVXhZaRA9f3wJnWTnn2ANrK9TzkY+
-	Z4L3KfjI70OhOY73mYRwkzgkDsirvJQpMFWNz+xBEmm/pAF/SjemR9MsxlNxsggcmTZ1G5GzQ16
-	TuvE8KxDl3d5TKf3cjboD+g==
-X-Received: by 2002:a05:622a:54b:b0:4b3:45a:2b3d with SMTP id d75a77b69052e-4b30e9a845dmr104245331cf.12.1756816252048;
-        Tue, 02 Sep 2025 05:30:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlVMbYgx8dc1lkUCensrY9s8XZ1S7XpWw87suZcVbaJfnjs0OW6CdvMWyEtq87QwjeBLmlGg==
-X-Received: by 2002:a05:622a:54b:b0:4b3:45a:2b3d with SMTP id d75a77b69052e-4b30e9a845dmr104244851cf.12.1756816251241;
-        Tue, 02 Sep 2025 05:30:51 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0424cc1698sm544146166b.21.2025.09.02.05.30.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 05:30:50 -0700 (PDT)
-Message-ID: <a701e4f9-57b7-46cc-b42f-f1a4a902fbbb@oss.qualcomm.com>
-Date: Tue, 2 Sep 2025 14:30:48 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D32F215055;
+	Tue,  2 Sep 2025 12:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.127
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756816284; cv=fail; b=By6figEGJvXYMC4w1Jvev78sBgZW6e62rxwnw/P8r2FNeju1KXmYWafbM2iSqQQPd98ZrMp2TDJHB5BFz2KsWSHzZO7Dpdh2REaA+o3yN8HNrxY6uMBupt0bDVH7Ig4vsabquJ9etkBd9S4IB5qechQwGnfQljGaLL5wmAH/HmA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756816284; c=relaxed/simple;
+	bh=AY2xzY/DdWIjapmpj4oQXo7QsSk5RF6fkS/oExxMwXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KYVr/IbKWLm1IRSjBjdQRLehRJZ9HKCvqosyb5LeDGOXTJHAsx1xswgQRbRm6QZXnxvKq9h94siT3F5qed2LkKAirzAp62HBRBbwjfxODJ3zRqPMDlTpuEQAxymspUdOMnvJ9fx+TRNlHY79EJGL4wgCZN2HWKCW1GD9nPioGvg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=in-advantage.com; spf=pass smtp.mailfrom=in-advantage.com; dkim=pass (1024-bit key) header.d=inadvantage.onmicrosoft.com header.i=@inadvantage.onmicrosoft.com header.b=UzyhUhNZ; arc=fail smtp.client-ip=40.107.93.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=in-advantage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in-advantage.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ERb25x0Y4uBzy9dL/VqeOOdRh6Qrlnt1QgtmCddI1/H/V5XQdkKWzjvxJUtW02Jj5ElVo9LAjWh/5ukc+d+rcHTdY8n6IXYBiZGYqr1iHB+3vSWfvEx7zi+QhiD0uopQiGWDj3UvZuJ7l0EYvuSCArNyN4vxspa+ITn7HpnG1VRcBRj4Iqfpmk/Coy3bXzPwegVAGOrTAEBxMo7mkJPjybvgnSC7BhpGcuOZbwAiNdIiXQq4VUzmzq4ZtpD94DslR3aPgPi2c0dL+zGSVc/W5UWZ26tpFp5UP29AhUUtH3BA4HmtsYMQZytoNdaxivTVOStNASpDVSPzt2QkJWRcWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N+Y1jqHsuMuUA6aXxlprcXtAkZW+HzrPuAkH5OjPX4I=;
+ b=t+vwHZYf7knKR2l8Zhhmc7g3MkR0K7zWbXwu0O1x1oRbRrBpLy7pPdqoa6sc7/wph5jsvdb86eWqesoD9k48OxQdi28HF0YSAVzOCSO7hWL51QcBUeiiNI0hrCC768S9pb6jLYRBKinBIedH1CaT6/kWvI6F+hPLFNhP/E3OZ4O3CuYGq5wLp2qcaHeFLkLbei7257O0w75LUk3KD0V7CCMXUtGKpv4ri87KpR7dwavAZ63LRRyMDe9iOz3smiGJMn5qHEznnmrPVhoZByGLDK5v889KbQcP7ihtrGz2cCWEiNu7lidOF0aPV7mmgMbVXVYHOKt509WjDUiK4W9yAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=in-advantage.com; dmarc=pass action=none
+ header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N+Y1jqHsuMuUA6aXxlprcXtAkZW+HzrPuAkH5OjPX4I=;
+ b=UzyhUhNZgz3brJaB4WcEtN0nuwBA3MMbfKdzjguyMh+CU5tPvSA5e5jPO1j4uF1tfkmPE7840kZNLhKk9PZgg54diMJ8QHCW0BtQkCpWzTcpahenx3g9GpzKvd5tToUe4rVZCg1GWpDGnQrm5YHjRZzp6uJhFu4tFyaH1a7cLg4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=in-advantage.com;
+Received: from DS4PPF3984739DB.namprd10.prod.outlook.com
+ (2603:10b6:f:fc00::d15) by BN0PR10MB4903.namprd10.prod.outlook.com
+ (2603:10b6:408:122::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 12:31:17 +0000
+Received: from DS4PPF3984739DB.namprd10.prod.outlook.com
+ ([fe80::ba61:8a1f:3eb5:a710]) by DS4PPF3984739DB.namprd10.prod.outlook.com
+ ([fe80::ba61:8a1f:3eb5:a710%5]) with mapi id 15.20.9094.016; Tue, 2 Sep 2025
+ 12:31:17 +0000
+Date: Tue, 2 Sep 2025 07:31:13 -0500
+From: Colin Foster <colin.foster@in-advantage.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Steve Glendinning <steve.glendinning@shawell.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH v1] smsc911x: add second read of EEPROM mac when possible
+ corruption seen
+Message-ID: <aLbjkQF8mA5HGDfx@colin-ia-desktop>
+References: <20250828214452.11683-1-colin.foster@in-advantage.com>
+ <20250901135712.272f72a9@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901135712.272f72a9@kernel.org>
+X-ClientProxiedBy: BL1PR13CA0265.namprd13.prod.outlook.com
+ (2603:10b6:208:2ba::30) To DS4PPF3984739DB.namprd10.prod.outlook.com
+ (2603:10b6:f:fc00::d15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] drm/msm/adreno: Add a modparam to skip GPU
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Jonathan Marek <jonathan@marek.ca>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250902-assorted-sept-1-v1-0-f3ec9baed513@oss.qualcomm.com>
- <20250902-assorted-sept-1-v1-3-f3ec9baed513@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250902-assorted-sept-1-v1-3-f3ec9baed513@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfX0YwTes0j4zQ6
- 8aucguf+Hm1ZHvFpsVjKqFPd1Edl9nRmkWtbvPQs88Bg3xqlmNSAHPcU26k8F6QU7UNHJwJtlv6
- 5YPEhflPggUbr55Cd8bXR43TKRKn9RUPG3aQZLtbzy9RR8UAqKVFRkLk5KT8gHDgXrqLqSwdt77
- ZSUjFc3YVLhx5j+Xyey/Dgh6Kn4uaq7Eg5iqJBQyhvpyn8LfSGUNhARE8rgZZjgledbNtJIVW3P
- lS75j8FvIzJGVfwEIS9sjFs4y1xhXr3dLIujEQOo//Z5QDHGJSzxTG9eg2/pYE5pC4I1Xlb14Fs
- G2us13n5nKRIorlMNFCzqiJn7yVVuDWTEVt6+04AMfEY46ZKkjys54rvqhV4zIyhlxVx5GMsKhL
- zL6uHwJI
-X-Authority-Analysis: v=2.4 cv=A8xsP7WG c=1 sm=1 tr=0 ts=68b6e37d cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=kokVE_FroeQZl1yzAO8A:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: pVdPMw1S0AWzu6YCLESlDfYvSpCHGV07
-X-Proofpoint-GUID: pVdPMw1S0AWzu6YCLESlDfYvSpCHGV07
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 impostorscore=0 bulkscore=0 clxscore=1015
- suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300031
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS4PPF3984739DB:EE_|BN0PR10MB4903:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7018330a-5cfb-4c06-7d93-08ddea1c9c9b
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?H2Q9Q3/+MLMjqGRyw/s9qIsE6Iyoe1Z6aSIm4pwYIgh1EqypLH6FjqYyZtMH?=
+ =?us-ascii?Q?aoca3xYcFNz/KhhsA4YFO4z5ju/NF3MOkcdXwZ4YzgGvWu3P+8ucZ7wTngNY?=
+ =?us-ascii?Q?oHkjUTmlg1xiqFBUegNDqK0LDHWfa8KnmKrnfEJjIMrAyL/W1kQQLuN6HqaY?=
+ =?us-ascii?Q?FEpcrH5xULGDbTYfZhyodWM+PLXGod6U5qcezkgn65GIOEUaKzZC+4bQjw+H?=
+ =?us-ascii?Q?JdEIRpkqDtml/b9TmoG3MUHu8Zj98YmB2OhWK64UvtKXvu5vhs4QKiouEQL4?=
+ =?us-ascii?Q?sriygFMLJrN7jDjIDYY5WZwZ5OaS+CfHqPCf7KKkTjLNOO0/E14fe7uHWG29?=
+ =?us-ascii?Q?vxKItuqoKgW/4BQ399vL8vaSk3Igq1TAfa3TVLnTOamI8P6u7JBu98jJ1FXv?=
+ =?us-ascii?Q?CGdeRAVxPfItotG4a7hA+PdRzEVSbl7+R16kUPCOZc907g4Ml/LzYwTDOip5?=
+ =?us-ascii?Q?s/wTwJVSWBvcHnA0otfgMAe0aCxoZu4Yr+eXTKs4slJe9+P/WJUcKXc480vz?=
+ =?us-ascii?Q?SJaGgn6NKEJGSkMPyK248kv1KAC3/dpj6Y+3qXW1asOJNap79BJUIJnhk332?=
+ =?us-ascii?Q?2z0Wh/KjrbVBrqTanDNo4lEAm73OZ4CtsEy50RdKBfN9MiZiqT6P0wRil765?=
+ =?us-ascii?Q?1k1yQ+caxwF7YOMijvixuBvbtnoe52YLXIPvfJLWJrV8ZI3jp7wL5r2eBRfo?=
+ =?us-ascii?Q?y8AV/DC/V6W3DivPhVKLgys/D9A7skr2cBW6ZBm+m0XaiS6rpBsm2qaz3Dq7?=
+ =?us-ascii?Q?61H545ffXu9yChgi5y/VhARpq6ntg6rteUlFhnXyv0hN39AY53hhz/RWX7ZN?=
+ =?us-ascii?Q?l73fq1a/EaDjjp5FBrL7hOnhSIxVn/Bi7sFItIzO3G2FspIrvZ6+nxpDteeI?=
+ =?us-ascii?Q?0ZQvzdrKZgo/ecO0/172U6hGZoEmhWW4lDqFOstVtTNhzKcUimCCP+0oW4p4?=
+ =?us-ascii?Q?jGKUmSIKTCWenDDzOWn4+qcb5Hiu6ayuDjmVFAOqd5PEXX2GtKKmIK8azX/a?=
+ =?us-ascii?Q?J1qvIpf1zC4XJivBBuRnCO339D0EJq2oqBIjJIIS9v+CFl6JjpLjAFBzz2Tr?=
+ =?us-ascii?Q?0nSsH2YSfLAe7P7WI6T6v89+yxXTP8Bw8xxpSrFSFtH+NpVM8wvbhWZWsDtF?=
+ =?us-ascii?Q?tcwTvoQ+thUaNE+Bov2I8ofHWoYOSMAusbfbhJhf3VjiRML6zcI4ZXcOZBWe?=
+ =?us-ascii?Q?INDODyTetH9HfDYjfgzg4dNEiEQhMZCEvPaxxkBS9UIcy2/4rNa0ya8FH6Xs?=
+ =?us-ascii?Q?ARO0x4fELj6a29l+cz6VsBvQ5PWKi+p6HwzBwPY3P/aCP3EJZcTltniWd7zx?=
+ =?us-ascii?Q?FNwhPsVUEB9hGv4tdSZV5X7wC4p14abD1a7w9mqzLDm7u5pCF8TCCEC3sP05?=
+ =?us-ascii?Q?ZUfqADdJNqnlTPkHQLWXRaO06N+6lvabnDxT1YkHKPf8VExMeEInqYu88lVP?=
+ =?us-ascii?Q?VIO4jasTu+w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF3984739DB.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YzhU69WHBShlvz/kZI/LhdBiJpsOgJlnRCIIcpvhlYe75E31RRFJ92pEFy4f?=
+ =?us-ascii?Q?xtTs4hV+cqDn5rBBBK+o7LocTAkeJuzqiNe40aNjJ9TKT/9XqDcbumCixeM1?=
+ =?us-ascii?Q?3PGDkZez/+cvw4rt/51LlbPs2MNDd7uCTx+1NyKKoKFY29sir9LlGfdRYtjL?=
+ =?us-ascii?Q?/+x87fNnMAM76iMzViyKa3W1fT5nCJUQnJIpIUI5jFlC58tSDLMLxOx9s0Hm?=
+ =?us-ascii?Q?zFaqC61k4/pjvOIV7Q1WNkXw7RoxG4m5oMEqERa32VXdai3z/WrU5pHLep9y?=
+ =?us-ascii?Q?Shjk6l6lG+khpkARiZIgN0e1WXBEUW8e92BuNAm16By1pDqM5rngKVl5sxuR?=
+ =?us-ascii?Q?EB+TW+SdpUfuaoliAx0neUO7pABJOumt+Gq8WRhmld6z+znfh0EuVaZuUa8S?=
+ =?us-ascii?Q?s9jX6lj4djoChY9aGaiOscqtdbUZmVOqBhTCfBsog0uiA/tFRPggS35zqlwm?=
+ =?us-ascii?Q?VJA0SdbFTlGFsZq6uByMwXwRYcrS1dJT+hjt3EcnGTlIcJV/6uZ4kr+T4UkD?=
+ =?us-ascii?Q?VmJz6oATqCIe7/vEcWmky6stn++aOoTF80tEZfWUFpruL1tXG9vnUGECoiN9?=
+ =?us-ascii?Q?gyNgDUdDOj3g6eE4Ev1ZiZHaF9ACsLwJ0UlyAwmPPiSgjC4KGXf/g7QicRKE?=
+ =?us-ascii?Q?WsYvKnzpyhkuwZly9yARGPQYs15LewuGyM0p5Fs56zLv/xV2W9NyY43sjnIN?=
+ =?us-ascii?Q?VDoppDwhW8lU+zIHRhoLgosyyEWK/ZBg08C7D1HR4jUP8r36kBvifdGpcJfv?=
+ =?us-ascii?Q?Czj+KfiDwfrJPAZ++LdUWYY6lULrhGdRAuJRYR2UJlHy18dx1fgJqoSNFao9?=
+ =?us-ascii?Q?QS+3ClGluYPUqWFglPbmCj+aygMpHroh2mEAlnrusefg/BwAKg4IWf1ihFG4?=
+ =?us-ascii?Q?64tQkMZRhmAm/ZPiVnUef8uOBjugEEaZGBfodNW820v7tcrVnyc9kTY8UL8B?=
+ =?us-ascii?Q?M1xU3A24VICfCZSxTPDl9UrgGidfbF6tAcuAHYuGk2lv+AUb1y9S2U44TOOi?=
+ =?us-ascii?Q?VVKX8WZo5L/2Y2OVXo7xUBR8XeWcGM6d0A/HETGJuWBQYO3lNRDtSQ0RbzkV?=
+ =?us-ascii?Q?9nGSWWmfludkRYZekzgXhEKJrm0VxIx+Ryituvku45cPGznfuMugJNkKH5aN?=
+ =?us-ascii?Q?JbVTl6pp9BKE2EDLdYuKXxTVjkEvqKtcoc2Xjj7O6UvMqRbUU9d/qTbCxq9B?=
+ =?us-ascii?Q?1kUrllgdlF1EmghTcUhDCxYAEZPwLypwBy/EmDJ385G+VbQXfxxVT5bA4Bcv?=
+ =?us-ascii?Q?2XURYdMLfPX/TK8RC5rxy4QxJ1n8Am9O33/+bsYRcABWMf7eKgGWE+KmzKdD?=
+ =?us-ascii?Q?hi4MTCXQYps3GOxqBoLBObkeqeHNhZ3MaWzjXY2URAKqQI1AGLR6YQZnnC2+?=
+ =?us-ascii?Q?/OIFgU2bTSUls57bA5Wt3JiUmtmf+2gtZG/+tiYXyWY92IiDwVQN0OAqzcTf?=
+ =?us-ascii?Q?OFIggT/IFlRTqfflBgGuOsqZMzcVvJqyAwkjIL64KlGwMjoEnGow6ChjneSd?=
+ =?us-ascii?Q?AYySV0k6Es6BS2QmGrv27P/z1ddwh2ijD9cZ3pJjkTIzYx2SamEBCNQhJJT4?=
+ =?us-ascii?Q?GWKE/BLR+g7ZPP5pdnHYNCC3qDbmDax/2zj52N5WQytMx+A0y5Thz4lT8CoV?=
+ =?us-ascii?Q?Da2Cpr+/8fR6hrlVKbWK8VE=3D?=
+X-OriginatorOrg: in-advantage.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7018330a-5cfb-4c06-7d93-08ddea1c9c9b
+X-MS-Exchange-CrossTenant-AuthSource: DS4PPF3984739DB.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 12:31:17.0046
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gK+DnzZcVnc042+6hf86r4ypYJBq98+hpYnbIQaCBnoMVRe1d3A1EE0DCP5xlD9VCs94oRNCrtmcB3afRmrqmYZ59J43tuDUI/W1Udbnquw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4903
 
-On 9/2/25 1:50 PM, Akhil P Oommen wrote:
-> During bringup of a new GPU support, it is convenient to have knob to
-> quickly disable GPU, but keep the display support. This helps to
-> fallback to 'kms_swrast' in case of bootup issues due to GPU. Add a
-> modparam to support this.
+Hi Jakub,
 
-I'm not entirely opposed, but slapping a // in front of the compatible
-in the dt works just as well
+On Mon, Sep 01, 2025 at 01:57:12PM -0700, Jakub Kicinski wrote:
+> On Thu, 28 Aug 2025 16:44:52 -0500 Colin Foster wrote:
+> > When the EEPROM MAC is read by way of ADDRH, it can return all 0s the
+> > first time. Subsequent reads succeed.
+> > 
+> > Re-read the ADDRH when this behaviour is observed, in an attempt to
+> > correctly apply the EEPROM MAC address.
+> 
+> Please name the device, and FW version if applicable, on which you
+> observe the issue.
 
-Konrad
+I'll add that to the commit message. FWIW it is the Phytec PCM049 SOM.
+
+> 
+> > Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
+> > ---
+> >  drivers/net/ethernet/smsc/smsc911x.c | 16 ++++++++++++++--
+> >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
+> > index a2e511912e6a9..63ed221edc00a 100644
+> > --- a/drivers/net/ethernet/smsc/smsc911x.c
+> > +++ b/drivers/net/ethernet/smsc/smsc911x.c
+> > @@ -2162,8 +2162,20 @@ static const struct net_device_ops smsc911x_netdev_ops = {
+> >  static void smsc911x_read_mac_address(struct net_device *dev)
+> >  {
+> >  	struct smsc911x_data *pdata = netdev_priv(dev);
+> > -	u32 mac_high16 = smsc911x_mac_read(pdata, ADDRH);
+> > -	u32 mac_low32 = smsc911x_mac_read(pdata, ADDRL);
+> > +	u32 mac_high16, mac_low32;
+> > +
+> > +	mac_high16 = smsc911x_mac_read(pdata, ADDRH);
+> > +	mac_low32 = smsc911x_mac_read(pdata, ADDRL);
+> > +
+> > +	/*
+> 
+> nit: netdev multi-line comment style doesn't place /* on a separate
+> line:
+
+Apologies - that shouldn't have slipped through.
+
+> 	
+> 
+> > +	 * The first mac_read always returns 0. Re-read it to get the
+> > +	 * full MAC
+> 
+> Always? Strange, why did nobody notice until now?
+
+For me it is 100% reproduceable. The first read is always 0. I've added
+delays in case timing was the issue. I've swapped ADDRH and ADDRL and
+the opposite effect happened (where the first four MAC octets were
+zero). Re-reads always succeed.
+
+Without the patch, the last two MAC octets are always zero.
+
+We didn't notice it until we started hooking multiple devices on the
+same network.
+
+If there is anyone else running this hardware, I'd love verification.
+Its an SMSC9221.
+
+That's a long way of saying "I don't know" unfortunately.
+
+> 
+> > +	 */
+> > +	if (mac_high16 == 0) {
+> > +		SMSC_TRACE(pdata, probe, "Re-read MAC ADDRH\n");
+> > +		mac_high16 = smsc911x_mac_read(pdata, ADDRH);
+> > +	}
+> 
+> > 	u8 addr[ETH_ALEN];
+> 
+> Please don't add code in the middle of variable declarations
+
+Ack.
+
+> -- 
+> pw-bot: cr
 
