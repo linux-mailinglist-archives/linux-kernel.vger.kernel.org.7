@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-797016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD603B40ABD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43361B40AC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDEFE188B3B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:35:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4CD84820B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C3633CE8E;
-	Tue,  2 Sep 2025 16:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E282333A005;
+	Tue,  2 Sep 2025 16:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="se378+Ml"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBh3Pmjc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125662E0938;
-	Tue,  2 Sep 2025 16:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F77826C384;
+	Tue,  2 Sep 2025 16:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756830899; cv=none; b=l17QwmDfaha5fHVWUfah8BURrqzSnVBSGCWAuwkaA0x1SbgeHLFiaaRNVUz1nxhAtXFmOBE9cOKPQnMDBFa7+NoesAIoxPygBm7OIWExynbZMPVBPzUyiKe12cXx58dcxCdL+mxJPhMtEbACKQYDeIzJWf5j+dhBu6sHQXWCrKo=
+	t=1756830954; cv=none; b=YFn1ymJuJvzc8otYHTdBiZxBk4KrrWBfMa8cPqM45Yl1gi0NniORJFQj8W0abhFTNiGljGDgYs92nSxxsQ7NYCUXmGEciOjOVzgL7Ip1jI5NUKWhIKZciUqkis551CpoljC76XPuv5te9IilzRv0/2VGwLX/D23+O0M7F/rz7a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756830899; c=relaxed/simple;
-	bh=WKE5YWde9vUZoAR/YE6COM2HF0cSOqVSYHHws5xDHyk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hx7EcLYp4zLTCVv9Gy2wp7od2aqjToGu1qf7Au+2/ZUIKzsmp0QXL8GKMprzA8WNWTjP4mWSfMDpsg8AeW9kSSqpDOj8x1Uitsrv3q8WSzDG+hjb+G+X0IxVvntYKVlFpNubOg9IAjIL/J5u1at42xJgsJ0NoZYdLoFSTo3mdQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=se378+Ml; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cGWYY0nNqzlgqTx;
-	Tue,  2 Sep 2025 16:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756830889; x=1759422890; bh=WKE5YWde9vUZoAR/YE6COM2H
-	F0cSOqVSYHHws5xDHyk=; b=se378+Ml1jVW4IIN1cr95WhNBuCixzsa0pFwo2Ym
-	JYcwfUfqpNLKnL6G46EisGaEQgJUmKAymeMTVpOaQS2owrWwOldYrxY6zPnoTYsp
-	bPxXFhktCOeQXU3Onz+ErkAIAPYkZpXpXFmgkFYEd7kKmp+loxgQpbiXbluk2ANb
-	kGV/DgnmcY1vkg19OYFo5MpOAGfFFbuZPoDrxIsr8vhjTFfxDoGPYw4L9H+f40o2
-	gknZNMvo0iz7HLIv1LwtUpTEpow3s4ilmwXRNFfN3Pxc0yzptchvyxBEMbBwmo0O
-	LMNpvDhDGB1u574KdejdD5nC5nwaNYdb6jb5fbbFqAEoJA==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 5HmvpwhRwGtA; Tue,  2 Sep 2025 16:34:49 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cGWY55XqyzlgqV7;
-	Tue,  2 Sep 2025 16:34:32 +0000 (UTC)
-Message-ID: <6e854090-a071-416a-b7a5-cc8ee0122a90@acm.org>
-Date: Tue, 2 Sep 2025 09:34:31 -0700
+	s=arc-20240116; t=1756830954; c=relaxed/simple;
+	bh=4dMCQTY93FDdn7ueR8Z2tcJ3/CtiSsSmu2HzPGOu/Z0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBa9bnlWl7GguzsSLZW7929djLaS00vjpAjBkAmW40npqnkEE5CHxaWsUWyT+KVxu+pPYS6yVN9BuIIijhDvnIDH7QJIRvVbMiX85y29ZS/PuiSy9+xEE72mZR890rdGX1Mnjcrvi+nNU7oLo9GJqd5/S8rWc76KENhkfkFKsBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBh3Pmjc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CCAEC4CEED;
+	Tue,  2 Sep 2025 16:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756830953;
+	bh=4dMCQTY93FDdn7ueR8Z2tcJ3/CtiSsSmu2HzPGOu/Z0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rBh3PmjcZuIEgrrElADaHH9xJIJUAI1t9Bk6cyJMewu7XYbg9zA1CaeEmGz+qtipd
+	 RNZlDjYi9KPC1zeQmwvRiKQ8lTfNaWlsrpU1KAMRZ4bkm1CNWp0GThlUm/fPJ8U/ef
+	 BsSPjZ1RB9m39VEWZ4BLO9AY5iwrokcWvaXLikixJk/aFZQ5m862kOg7s1ObYyK6g6
+	 EspIHiAp48J/5ZfpEPhy4pBonJx2/4kS1dkbMYn8Rpkrefk9HQgD9anbm/tEvFk3Kf
+	 ToZn5hB0Td9dLq/xAf91vB6dxGJ6qZ1Lpo5HXftZQx7mW0G3lXFmW78zg2tCUW3ZU6
+	 DNLjadeOIt0DQ==
+Date: Tue, 2 Sep 2025 17:35:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	kasan-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	Matthew Maurer <mmaurer@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] rust: kasan/kbuild: fix missing flags on first build
+Message-ID: <20250902-gown-relapse-8fd3978c1ea0@spud>
+References: <20250408220311.1033475-1-ojeda@kernel.org>
+ <20250901-shrimp-define-9d99cc2a012a@spud>
+ <aLaq6TpUtLkqHg_o@google.com>
+ <20250902-crablike-bountiful-eb1c127f024a@spud>
+ <CAH5fLggmXaa9JJ-yGdyH06Um8FopvYh97=rANLcoLc+60_HGqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] scsi: ufs: Add an enum for ufs_trace to check ufs cmd
- error
-To: DooHyun Hwang <dh0421.hwang@samsung.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- peter.wang@mediatek.com, manivannan.sadhasivam@linaro.org,
- quic_mnaresh@quicinc.com
-Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
- jangsub.yi@samsung.com, sh043.lee@samsung.com, cw9316.lee@samsung.com,
- sh8267.baek@samsung.com, wkon.kim@samsung.com
-References: <20250417023405.6954-1-dh0421.hwang@samsung.com>
- <CGME20250417023417epcas1p31338c05e70e61b0a5e96d0ac0910713d@epcas1p3.samsung.com>
- <20250417023405.6954-2-dh0421.hwang@samsung.com>
- <239ea120-841f-478d-b6b4-9627aa453795@acm.org>
- <093601dc1ae0$2389c460$6a9d4d20$@samsung.com>
- <27882582-58b8-4ac2-9596-3602098e7c1d@acm.org>
- <17db01dc1ba6$41d37350$c57a59f0$@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <17db01dc1ba6$41d37350$c57a59f0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4EeWks93mszFnPWF"
+Content-Disposition: inline
+In-Reply-To: <CAH5fLggmXaa9JJ-yGdyH06Um8FopvYh97=rANLcoLc+60_HGqA@mail.gmail.com>
 
-On 9/1/25 6:09 PM, DooHyun Hwang wrote:
-> The UFS_CMD_ERR stands for "command completion error."
 
-I've never before seen anyone abbreviating "completion" as "CMD".
-Please choose a better enumeration label name.
+--4EeWks93mszFnPWF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bart.
+> > AFAICT. Then later on it'd become more like:
+> >
+> > config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
+> >         def_bool y
+> >         depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
+> >         depends on RISCV || ((ARM64 || x86_64) && RUSTC_VERSION >=3D 10=
+7900)
+> >         depends on (ARM64 || x86_64) || (RISCV && RUSTC_VERSION >=3D 99=
+9999)
+> >         # With GCOV/KASAN we need this fix: https://github.com/rust-lan=
+g/rust/pull/129373
+> >         depends on (RUSTC_LLVM_VERSION >=3D 190103 && RUSTC_VERSION >=
+=3D 108200) || \
+> >                 (!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
+> >
+> > but that exact sort of mess is what becomes unwieldy fast since that
+> > doesn't even cover 32-bit arm.
+>=20
+> I think a better way of writing it is like this:
+>=20
+> depends on ARCH1 || ARCH2 || ARCH3
+> depends on !ARCH1 || RUSTC_VERSION >=3D 000000
+> depends on !ARCH2 || RUSTC_VERSION >=3D 000000
+> depends on !ARCH3 || RUSTC_VERSION >=3D 000000
+
+
+Ye, that's a lot more manageable than what I came up with, shoulda
+really done better since the option I used for a reference looks a lot
+more like this than what I had... Thanks.
+
+--4EeWks93mszFnPWF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLcc3gAKCRB4tDGHoIJi
+0jnKAP9LYjFVXcrh5zaOZUH0oAgMo/4x8LRtidC5WGVJnSFzRAEAwRmIFTqnghCO
+5eXDhlTuIMYMEiqkRoSEu+mM/OF6PwQ=
+=RGAX
+-----END PGP SIGNATURE-----
+
+--4EeWks93mszFnPWF--
 
