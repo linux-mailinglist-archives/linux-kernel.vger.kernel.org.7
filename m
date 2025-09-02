@@ -1,163 +1,114 @@
-Return-Path: <linux-kernel+bounces-796973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBA3B40A2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:10:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A3CB40A2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CECD5630CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED4B56321D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E84C3376BA;
-	Tue,  2 Sep 2025 16:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0773376B9;
+	Tue,  2 Sep 2025 16:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V2muBdCO"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cixQ1Fza"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E3132A81A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B383375BD
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756829410; cv=none; b=Krs9L4Sp3lcSSTNh2nF6mAL+KjBO5VawwEfkhfM5j1H+QhCieKdS/5CTtY+nSnyuLNaMBIhLBBabSiNOuo8x4aKth5upT36bJWsuzMa8qM+vQ/J844a2h8d1HV3YRZ1qpoUN6kLTvBOizAddRsqP1voSR6tMyaYPl92d5DGu4CE=
+	t=1756829432; cv=none; b=CK/6DxSPBJbOrKdiJb+8JhzlDOBDJU3IdWeKmk7OLY1MxA9qn0DX4n1rQt3Ri76wLVmw7E1osWywFT6ojbFFQlISM02ck7aHKRZBBcBRbvW1S9/JSoFsa9Zm7UUwyM9CFIZFk9CqL/KmSE2L+h8hqsaE8U+x1xfXi60N8iEcGEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756829410; c=relaxed/simple;
-	bh=f0aScQ/J03XLZhKUQrnrs4HuyH7xtridjeGuO9Do+Fk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XKJQlHDHanvFsKQVBgGJIY7oKuXAcEJ9RojTTHjQJZkssI2aC4cHWiky+03XwMkNHiVdpohTjssxxnjsjTlXMxgcvRziy7LEvBYYe5nhUC8pwX9ImcBupjOTJGKBLRSJGgXAdPTye0RWxZZD1pyhd6ffCvA7r0RHn5Xps5cby48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V2muBdCO; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso5099395e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:10:08 -0700 (PDT)
+	s=arc-20240116; t=1756829432; c=relaxed/simple;
+	bh=KG5LHOGo2mh5vIaKq+QebXYxVd4hhMHqQE7w3KCpNFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGMXo376V4tGWA/xknSGGo/1WA9QZBxlsu+ftWKoVjwSfQPjCoGe2hD+m1TsgOfGBPrB8Wy5z94rgZi1LCJ42QFErpDHco3s5Jmlcgv/cULceieIK5DrayG8hyt2dtUdMoas8UTnNP/IDDFP2iH4pBAfJn2Ck1SPfvi1y/RxzcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=cixQ1Fza; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-71a2d730d03so16888146d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756829407; x=1757434207; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bfhmZPSi1KHWXKJTbzEPGUiLR9+Cog8BCQqxFPGA9f8=;
-        b=V2muBdCOeWAujbR42ukQCIn6rmANzQJ9wdC6yxAcpcIPKLtu95q1qB5jOTqiIahVah
-         vqw76+G4rs3VSQWe76x0aoWB/ClsSff0L/tsn7KYuIEmppKLs/AgfUSJMoLFeTF4YV6M
-         2uK0vvHXC4WqA0/rzJXtnpY94ZTBzwhDJGDd3Wew/bowg40+2ucjrrbyrCDKrZsLdMG6
-         qqZa/NdAdDRVUc/vhyMURnTj9TIAm0W5I1HQy7AnlQNxGoVRmv0GbVAiVBjMW1QtCHVe
-         s34dSKQvAjxem+5eWBnQ0eRqAaT6KDxmgkhD7ZLV+9EOhFjVczK5ofK+bSeBKZRfB4UD
-         f/tA==
+        d=ziepe.ca; s=google; t=1756829429; x=1757434229; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DTQRLWXvEI14NWUbWjh+wxk4xMHeIyr9b4st02lORnE=;
+        b=cixQ1FzaKCEa/ud4QBiGY7AYIP/zNCSzs9hEOpvGqwIXal21I9qDc5TD2fDfq/xILR
+         JSpcUFM6sF7eUAKXU/+dfjjCYTE8rweLlMVmOZvYzW2Z34+v9dyKis3rgz0Zq5MX0Ziu
+         tpp8oX3l7Zd8vSjSFfhduMY00lrWn/SOB15z/5lW0dzLkDmaHsTirKS3D2+vHK7/1sNs
+         SnN1P4+HOtSgGhh6xn9s84EgvCBvIQgwBm98CYeBusq+O1kJUH5XG/rLPDABsdnNaXvA
+         2MSaCttQ9DwCGlWIvTrm2YPPl+ne5mGubFMEUrXGSOzNBCT/yVDE/VNboIfKeGx3IEbV
+         pOEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756829407; x=1757434207;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bfhmZPSi1KHWXKJTbzEPGUiLR9+Cog8BCQqxFPGA9f8=;
-        b=hLJyFDeEK/vxN6jEZDpznV87QLWwDhRT0nEbfzGlzZv/GDtbAopwVk/AiETHMS52wc
-         WI+L7sOWet5UUXZBPasFBX0O8ZKloqIolePAkB9NiTs68jnd5F9X9fHyfpky2/jdOFHX
-         8QMXIxCU+masOXKcjoGURC2LqlNGcztiV/ptQxGsBmMRYV6SRQUCQ/JGElso+HPiWAip
-         M419E4GCiMa5mOFEDeOrgPkogwq1bmI1CIruxioVN5ACapPj6RAEdr2K5OqOuyyQAyvo
-         sJQXxDmTE3Xr/TQATQ33MU2zPldF6jQyDRyZVYUhTZO8DV4VE3YNnYYHpd+2Y5yhid0B
-         aBjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWY0gG8auuCnVv0Y9diNyOBVPOpONz8FL7c19RBQJqrFZjo+EtsvmmMeJvl5vZ72aUi8QTBm1EGeLEi6jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1qx9ji2jvecAYVzEAf9sSWBtBkYptVAmftaWP7utGlW8do2wb
-	kFJTaMREVBsWaaSVXxZ34Bi4oPMkUkpWV6XObNNGLuVpwA4WzDwpCYck11iggt6bq9s=
-X-Gm-Gg: ASbGncvM7EkVHzO9i4L+6bj69t3FqdsXkUg5UcuEISE9AP4oxAyhS9l/N4Pek+p9hAm
-	U4WKRVRUE4ldF2ZCrDsrb1IkhYUkSh3ekDvqOUPY7LhZrMVnw0Ql7oVd7UwKENvJTXbrQDuNjV0
-	WgZeo+drTOQ3krW5iOLAnGBB7eFmwPR2hFbIN/+sLGOguUrTk1GgrmQVia67mbCKsFMlyTlJmhT
-	pJ1j45OwhV5MVRR5MNqluM6L+0YXdITgUZJspqwCEk9OM/jkrUkOFTaqmUPcix2nrQmEDurxlYi
-	WvOO8uT0NZnQJtmf8BdjtQ3sxlrRo5A9ZOTxXvoOWaPOCEPfCasGeqIig0tIulfp6Vd/b3W8iHg
-	tg09M42n+g18pH+7GY23KKs+J8muZqhHVAmDLuFAauoulj8uTmSlNaw==
-X-Google-Smtp-Source: AGHT+IGyVF7oEpXMquEUvaM+UpeKMTllrx2t6qEOJfRIe99zcju47Lbg52A1eC99wf5MacESo4LYUg==
-X-Received: by 2002:a05:600c:154a:b0:45b:8a20:5437 with SMTP id 5b1f17b1804b1-45b95fd646bmr34034435e9.31.1756829407005;
-        Tue, 02 Sep 2025 09:10:07 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b9a6ecfafsm29858595e9.21.2025.09.02.09.10.06
+        d=1e100.net; s=20230601; t=1756829429; x=1757434229;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DTQRLWXvEI14NWUbWjh+wxk4xMHeIyr9b4st02lORnE=;
+        b=o8C/VBSNMV//4HnLZXUbhvbJY9TSh352zqXzJwe8mZhw1jJO1UzAkCL2DEcmEw21BX
+         YXg/yWggxVi1UnajhVSU0ViG0YcBb98xD0c5X517dlx7wpHxoofWmXGPlpmogBHHNqAO
+         HXJBCXXpgGfSCERbdT1YFScJL1rpPsd3HuAaBCgi7y11SyaTdm+P7NDtQWJvrycGMFnY
+         oudtPJNEhg/SVrEiVoeDUIosJEv4gbjwMcgbyBvqEUoVFiBZpGmTcGulEs0gWrE67tcl
+         QkLCEuf1jcC9rvQleKPYTsYYECy5qnn53kQgkJXQz3aPxBnzfGzfiAuBQWsaZEVx6g+M
+         yIRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKXy5kVihvFegOCD+DfSEaKGprxJ3/27SKsOUXoy/BJbFFmlRyBibu1ylzio/f0wAVOjJJVys2o4hacRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr7YcRzkTORbCwumU+vGZ625aSNQcjAkvR01zR79BPM7XT5Anu
+	Bi4Ba6uEmxECsKHtSu4WUgZWh5EzAHNRgJsvjnWX/5Eul2TGkEcVAChAXIdg96Ex1ZY=
+X-Gm-Gg: ASbGncsEw80XOEYlBPwQY8R+2BmTzYOgTx5ozHGKQCaMFTBjp6kpy2byzd85AlS1d6G
+	k2y4I9ynFTQUlOP99dxY2acvwe8kTOU97zHnRlPbQYHikfwpiup1RiXV+tKSubNWogHr33E/R6p
+	E2bwXy/tbhH3al0QoJWsRoq+yzCRHfhDGjawxGOdmg6J79N70FUgedKnzJHRoC3MMwGuZ1k0qWx
+	rvJ68bGhQStirjxRhSBhEbnTuE8YrwK0kWpHLt6HXR6CvGE/xURfa7piizExRaUBExvHd+opqII
+	/TS/IHOLHhueVXo0DruAg40UhTakGDPyrDCT1XStRGDH03Eia86PypKJzrVTNmEHNCit+D6ldDF
+	FXkv6BCsMAYs2xeSC7xcmWQ41xQTb5cMdU5fGkDF58l7uASBnvUxD22ytedBRg2RSb1S3
+X-Google-Smtp-Source: AGHT+IFhzQTA7hTae/ikIqwqd6lRBifnM++rAw/xHgCOughJssiMfvo0jbnnGhHjDPXZ244dXS3P5w==
+X-Received: by 2002:ad4:5a07:0:b0:70f:b283:77e8 with SMTP id 6a1803df08f44-70fb2837f6dmr81568126d6.3.1756829429395;
+        Tue, 02 Sep 2025 09:10:29 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-721cf6d6cffsm6692606d6.54.2025.09.02.09.10.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 09:10:06 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 02 Sep 2025 18:10:05 +0200
-Subject: [PATCH] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: do not
- reference whole usb-switch.yaml
+        Tue, 02 Sep 2025 09:10:28 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1utTaW-00000001ZJf-1Cbn;
+	Tue, 02 Sep 2025 13:10:28 -0300
+Date: Tue, 2 Sep 2025 13:10:28 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Qinxin Xia <xiaqinxin@huawei.com>
+Cc: will@kernel.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	yangyicong@huawei.com, wangzhou1@hisilicon.com,
+	prime.zeng@hisilicon.com, xuwei5@huawei.com, fanghao11@huawei.com,
+	jonathan.cameron@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH 0/2] iommu: Add io_ptdump debug interface for iommu
+Message-ID: <20250902161028.GC184112@ziepe.ca>
+References: <20250814093005.2040511-1-xiaqinxin@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v1-1-5b4a51c8c5a8@linaro.org>
-X-B4-Tracking: v=1; b=H4sIANwWt2gC/x2NQQqDMBBFryKz7kCaJlJ7leJCk1FnoaYZrYLk7
- oasHg8e/18gFJkEPtUFkf4svC5Zno8K3NQtIyH77KCVtqpRGrc1sEOZ36dVOPCJvzngLr15+UK
- Ugzc3ofVD7U1j+s46yGshUq7L07dN6QY4qj7GeQAAAA==
-X-Change-ID: 20250902-topic-sm8x50-fix-qmp-usb43dp-usb-switch-5df6d494ba5c
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1790;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=f0aScQ/J03XLZhKUQrnrs4HuyH7xtridjeGuO9Do+Fk=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBotxbdyYMqAfs8JqgNnyDZEviHhnQMD+Wp6Rh2YYKi
- Y7dimPqJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaLcW3QAKCRB33NvayMhJ0R/nD/
- 9V8ivt0sW9FlCcRXjqpYPaM5Gpt6cQXkgSVHSgAGLVjXCkyNCMac1qkhb0NbcxFopA4HLQFazMDNum
- OP+jYUdmi0xqgyCKVELcboDGB8QtPAXVpfzrBk6mAgmReJtIQwf7fAflwk9eLpKBz0fNKlv5HUnd4G
- CaxKP5T+cWFRGjaHVsJ3/00gWVaiPmeQFkCi2M5o1O+zZHBOHul+VELej+WZSFrm/NfAWcDnoUoFE/
- e3TYJY8ddMY6hJtpdCSdBxbVfFBWRwK8DDi89tQqAYJBX6WtKNsgJtwShnMgxxR1mv5QoLsZuBbRML
- eccsBbZEBQCd+Kxjj4mBQiE2skKcnotDtVSD3WbunVoV7hg9OjrGBfacsCRecbQDgoN4tOgerVkItw
- KMYPY8U3qaE00MXqO6/H8nXRDXdSyjCMapbpbfCS1rW78/jVqvbRNwoWQ+TK6amSqDMgUEP7o1NOMs
- w52lipoKuK+7NdhS3DuugIzhAHQVD09dAgUWJoW3VQ3ULxbV41eDGKEqFtFy4sh7fty5WSIxNiv9Vw
- ynGTZOQOcQmXHBNlArh9bkZHNz5c6AqzQcScJLjGOOMBwFe00TPz4kyZ6mNQV+QcZr0usUkBYge/C4
- DvQqapiH5EdUmhxb0TzOTEjZ5BSANqdwMVt6/vZddhDjom111mBiBDNzjlqA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814093005.2040511-1-xiaqinxin@huawei.com>
 
-Both bindings describe a different layout of the ports properties,
-leading to errors when validating DT using this PHY bindings as
-reported by Rob Herring.
+On Thu, Aug 14, 2025 at 05:30:03PM +0800, Qinxin Xia wrote:
+> This patch supports the iopgtable_dump function (similar to kernel_page_dump).
+> The IOMMU page table dump debugging function is added to the framework layer.
+> Different architectures only need to provide the implemented dump ops.
+> It also provides the implementation of ARM SMMUv3 and io-pgtable-arm.
+> 
+> Qinxin Xia (2):
+>   iommu/debug: Add IOMMU page table dump debug facility
+>   iommu/io-pgtable: Add ARM SMMUv3 page table dump support
 
-Reported-by: Rob Herring <robh@kernel.org>
-Closes: https://lore.kernel.org/all/175462129176.394940.16810637795278334342.robh@kernel.org/
-Fixes: 3bad7fe22796 ("dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- .../devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml    | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+I'd prefer we do this on top of iommu pt please, I don't want to
+further deeping the hole of changing all the page table code in all
+drivers for debugfs.
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-index c8bc512df08b5694c8599f475de78679a4438449..5005514d7c3a1e4a8893883497fd204bc04e12be 100644
---- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-@@ -73,8 +73,11 @@ properties:
-     description:
-       See include/dt-bindings/phy/phy-qcom-qmp.h
- 
--  mode-switch: true
--  orientation-switch: true
-+  mode-switch:
-+    $ref: /schemas/usb/usb-switch.yaml#properties/mode-switch
-+
-+  orientation-switch:
-+    $ref: /schemas/usb/usb-switch.yaml#properties/orientation-switch
- 
-   ports:
-     $ref: /schemas/graph.yaml#/properties/ports
-@@ -104,7 +107,6 @@ required:
-   - "#phy-cells"
- 
- allOf:
--  - $ref: /schemas/usb/usb-switch.yaml#
-   - if:
-       properties:
-         compatible:
-
----
-base-commit: 3db46a82d467bd23d9ebc473d872a865785299d8
-change-id: 20250902-topic-sm8x50-fix-qmp-usb43dp-usb-switch-5df6d494ba5c
-
-Best regards,
--- 
-Neil Armstrong <neil.armstrong@linaro.org>
-
+Jason
 
