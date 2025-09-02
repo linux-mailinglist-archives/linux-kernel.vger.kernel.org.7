@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-797272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274D3B40E3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:59:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CECB40E43
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 147E95E242D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:59:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5227D564A8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA589352080;
-	Tue,  2 Sep 2025 19:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CED534F494;
+	Tue,  2 Sep 2025 20:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCuCSbS8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hBEgUw2u"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18325350835;
-	Tue,  2 Sep 2025 19:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DE5350D58;
+	Tue,  2 Sep 2025 19:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756843151; cv=none; b=SpaLJCuOX1IcQzxBIfttpogpYqupqaHSc2PYq6xa4UbKHzoZX2Wmk+JWpXwfPdO3TJPO/b5jDZe8/lJmGSHrHZg6x2X00j8qCb3VyopHl7TVswtxKdr9TBbJY+9WOtfwuQb11dthTCFbKa2Zp3ITOA3q18Td1Wwbyobl1+/kp98=
+	t=1756843201; cv=none; b=aVLO1sffH0Utk9X2uPhSHv4AvV0FZaqDw6kNDTbAgp/EhD9Peb3FVdGhWMVGpWPqcXMP5/i8b08R0iG5tXk3+rIh8a98VmWk4wLq+jpxh4dwYg5hM+lXTBUMpxey1zj6Wx7A8eO/44W0be3o6pioxgXTUIT00UO+e/AvhA6IqyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756843151; c=relaxed/simple;
-	bh=AAyjqy2t4b7D45R3hwz6v/QuZbHXjEAtZGhmjlFlAoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=puBXEKTrwzCyOEYNaBsy1UeVnqG+BdSKtQh7g4588X0fPeGX+3R76oPCpST9lN17OthpD2UPZOL5/n0yLyKFWI13UHaKTU5ldRmYL6F2CwBFSXsQeSiBP3vmMpnJw5YzuqgMF25MRl6ZzzRht6Q2ManXKZsjdWljHIsaYT84cok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCuCSbS8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0F24C4CEED;
-	Tue,  2 Sep 2025 19:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756843150;
-	bh=AAyjqy2t4b7D45R3hwz6v/QuZbHXjEAtZGhmjlFlAoQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WCuCSbS8Vrg67V4iAqNg7mqxvdHZZV4FKmIyd8LieVqANKbFcFqhBljmLXWjmHxBu
-	 Z1EZ/YfnDVmroqTYHOjuiDbaMRbxEBry8h3ngNNiYTIXvipsiVD6qmvmZmA3CzP93P
-	 e82YhW/zRLX2ChjycfTcgjqni8b31Zh7qzaw8o/944QEhzV0VBNl1xebU8Ju9xHAU9
-	 NtQKdBDf/I3NUfAIE4iWpZDve8QLvMWplyNCx2ZulDCAWTS61i6e0WmjJXlkkKBnEU
-	 lQUrqwg+g4CL2O66+dBLuJfue7nYFFQBDjsF85K5nRZ3Hmezz6T+A2c8J6TvDdQ0Jz
-	 DO9KH6g86w9EQ==
-Message-ID: <2a1344d7-cbf4-4963-a774-6332aa440cd7@kernel.org>
-Date: Tue, 2 Sep 2025 21:59:05 +0200
+	s=arc-20240116; t=1756843201; c=relaxed/simple;
+	bh=K8PqE6yD7VyVJpbq451PthNDx+WFiPWgsV2846fPfes=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=gthMVcL68U18VyvrUI/t0J+1VFIGePeY96KuoJuSILam3YiKtDo9NplbFm4hjQlPCJAsXOn5hkhSsY/i7xueuU1y8RBcUXXGd9kzBCV3yItlf2g062dFpm8/VThU4hJTnLFn5QS9hT+tUyBNmjh7/543SzQYzAC4fqui5JADsZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hBEgUw2u; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 582JxhRU3060822;
+	Tue, 2 Sep 2025 14:59:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756843183;
+	bh=PeB7J67e77B/FVOBsTZYzVHCuZ3ynnlku78M2GFf46w=;
+	h=Date:From:Subject:To:CC:References:In-Reply-To;
+	b=hBEgUw2u5TY4JawQtMAWEIYOO9VdwSOgzIFRsquAhINjD1blO0ZY0ni5wQbmS+zbl
+	 2ar4L7JWm/+LQ1lK2/xRyvLboggYKPQSMEPSBvSy3omB/k35YIVsXk4c32t38j/XIB
+	 8nQ8DELuEvBC583K6SDXw3fcKJoS7885EXKfJ+tM=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 582JxhGG2507031
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 2 Sep 2025 14:59:43 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 2
+ Sep 2025 14:59:42 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 2 Sep 2025 14:59:42 -0500
+Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 582JxgZ7136329;
+	Tue, 2 Sep 2025 14:59:42 -0500
+Message-ID: <33a285bc-2fbe-4ff6-ae09-e4c13a098647@ti.com>
+Date: Tue, 2 Sep 2025 14:59:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +64,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: Fix spelling mistakes
-To: Ranganath V N <vnranganath.20@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- brauner@kernel.org, djwong@kernel.org, corbet@lwn.net, pbonzini@redhat.com,
- laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250902193822.6349-1-vnranganath.20@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Kendall Willis <k-willis@ti.com>
+Subject: Re: [PATCH v9 1/4] dt-bindings: can: m_can: Add wakeup properties
+To: Markus Schneider-Pargmann <msp@baylibre.com>,
+        Chandrasekar Ramakrishnan
+	<rcsekar@samsung.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+        Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>,
+        Akashdeep
+ Kaur <a-kaur@ti.com>, Simon Horman <horms@kernel.org>,
+        Vincent MAILHOL
+	<mailhol.vincent@wanadoo.fr>,
+        <linux-can@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250820-topic-mcan-wakeup-source-v6-12-v9-0-0ac13f2ddd67@baylibre.com>
+ <20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250902193822.6349-1-vnranganath.20@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 02/09/2025 21:38, Ranganath V N wrote:
-> Corrected a few spelling mistakes to improve the readability.
+On 8/20/25 07:42, Markus Schneider-Pargmann wrote:
+> The pins associated with m_can have to have a special configuration to
+> be able to wakeup the SoC from some system states. This configuration is
+> described in the wakeup pinctrl state while the default state describes
+> the default configuration. Also add the sleep state which is already in
+> use by some devicetrees.
 > 
-> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+> Also m_can can be a wakeup-source if capable of wakeup.
+> 
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 > ---
->  Documentation/devicetree/bindings/submitting-patches.rst | 2 +-
->  Documentation/filesystems/iomap/operations.rst           | 2 +-
->  Documentation/virt/kvm/review-checklist.rst              | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+>   .../devicetree/bindings/net/can/bosch,m_can.yaml   | 25 ++++++++++++++++++++++
+>   1 file changed, 25 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/submitting-patches.rst b/Documentation/devicetree/bindings/submitting-patches.rst
-> index 46d0b036c97e..191085b0d5e8 100644
-> --- a/Documentation/devicetree/bindings/submitting-patches.rst
-> +++ b/Documentation/devicetree/bindings/submitting-patches.rst
-> @@ -66,7 +66,7 @@ I. For patch submitters
->       any DTS patches, regardless whether using existing or new bindings, should
->       be placed at the end of patchset to indicate no dependency of drivers on
->       the DTS.  DTS will be anyway applied through separate tree or branch, so
-> -     different order would indicate the serie is non-bisectable.
-> +     different order would indicate the series is non-bisectable.
-That's not entirely a spelling mistake
-https://en.wiktionary.org/wiki/serie#English
+> diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> index c4887522e8fe97c3947357b4dbd4ecf20ee8100a..0e00be18a8be681634f25378bb2cdef034dc4e6b 100644
+> --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+> @@ -106,6 +106,26 @@ properties:
+>           maximum: 32
+>       minItems: 1
+>   
+> +  pinctrl-0:
+> +    description: Default pinctrl state
+> +
+> +  pinctrl-1:
+> +    description: Can be Sleep or Wakeup pinctrl state
+> +
+> +  pinctrl-2:
+> +    description: Can be Sleep or Wakeup pinctrl state
 
-Best regards,
-Krzysztof
+nit: change Sleep and Wakeup to be in quotes, i.e. "wakeup", "sleep"
+
+Other than that, LTGM
+
+Reviewed-by: Kendall Willis <k-willis@ti.com>
+
+> +
+> +  pinctrl-names:
+> +    description:
+> +      When present should contain at least "default" describing the default pin
+> +      states. Other states are "sleep" which describes the pinstate when
+> +      sleeping and "wakeup" describing the pins if wakeup is enabled.
+> +    minItems: 1
+> +    items:
+> +      - const: default
+> +      - const: sleep
+> +      - const: wakeup
+> +
+>     power-domains:
+>       description:
+>         Power domain provider node and an args specifier containing
+> @@ -122,6 +142,11 @@ properties:
+>       minItems: 1
+>       maxItems: 2
+>   
+> +  wakeup-source:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      List of phandles to system idle states in which mcan can wakeup the system.
+> +
+>   required:
+>     - compatible
+>     - reg
+> 
+
 
