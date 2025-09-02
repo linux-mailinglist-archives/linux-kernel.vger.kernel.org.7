@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-796566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811C9B40293
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:19:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289C6B40295
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C73AC7B1FCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:17:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B39597B38EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118C0304BC1;
-	Tue,  2 Sep 2025 13:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512272F9C3D;
+	Tue,  2 Sep 2025 13:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzukxrmN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFqXKUei"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF13305E2D;
-	Tue,  2 Sep 2025 13:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63383043BA;
+	Tue,  2 Sep 2025 13:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819080; cv=none; b=rTGs4OSCN6D6dJMonw4IMBnLwt2uuxJSUsdd2Ku1nb0uGvtamSW0fJGyXf9Cn9NbjZZ+NQ5myV6bqlBw4YnFo/YDMtqgJfA0ixyQQf0YFeyMOJ2+SvOVKycSW0uzO/QF4z6gNyVgw61Hnzv5Se9QHIsj7p3twxbdl1dUDh7DinU=
+	t=1756819098; cv=none; b=A9QWnW7NYRFueDVUB+8QGFxa1ZCfs3ndVflzkZlBGd43qdjZvROmsZJk24fUmrnfJOG6xBxPYb/1f9bIsqyvY8c8APhN6rGckqGAIm3ncGaYk0uWTMIlvAS3Kq9J77zY7Vps9nO1bKDaXTO3a7GtFmTjGm2PiBfJDBPww9WEO9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819080; c=relaxed/simple;
-	bh=z7FwtaZZzwjQdtwpEuB9tpjcm7SAnUfcPFRtC2LIdKE=;
+	s=arc-20240116; t=1756819098; c=relaxed/simple;
+	bh=K0GSdivUZWDBfPpkGbzM+dh5X2lVniJv3YjK1fZ5fEM=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=dvAOuJzNKekDZQwW85fZo04NWnx13Iq1bzFriQMvSBT1wVKxug31BUb+lfvkrFhm+gvrR9Sh3DCGo2el610wqFcb4BqyI7vgP0Z1Jq8zJOGP1L3LHcqbzV+cpvjC4XW8qMdaEtjheMIY13hkqd7WSuMuNh2Mm8H6lqIRi1OeCjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzukxrmN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D4FC4CEF4;
-	Tue,  2 Sep 2025 13:17:58 +0000 (UTC)
+	 Message-Id:Subject; b=twBGgAv+E8pHsWwm9HIhJctKfXDSfG/DQjWIy6bxhaY6vWkUaGZlLKF82CXaxOgchfcqn1sjw/ArhCxcRW/p02Hraq7Hi5cgNNMpzxRqmZG5yQNh/tJEDWuQT6OC4eYlT/ZRYbWNZhFKy1kfaqZx1P2wPqfmRnyCEqFGO50QArk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFqXKUei; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92BAFC4CEED;
+	Tue,  2 Sep 2025 13:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756819079;
-	bh=z7FwtaZZzwjQdtwpEuB9tpjcm7SAnUfcPFRtC2LIdKE=;
+	s=k20201202; t=1756819098;
+	bh=K0GSdivUZWDBfPpkGbzM+dh5X2lVniJv3YjK1fZ5fEM=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=rzukxrmNB9iuxVkdbLPuZC7Jsk6tKQen9VhnAzMxmcSdjTjYKti1y9nmRy4XxvXeM
-	 P6Y9wpxGAyPpsGuDQHHa8ZLzzZu7iluNZucOW+brNBoFVAta612ujIY2C4h5+M19ow
-	 y6elkUFGOczdPhqYIS2bPxnwcuZ8Foin2gsvKXCFdXHP3yBjJgCjJumt0C3IAlko7J
-	 YT2sHWnL2vOpl3AS1PY1GtcidjdV9DBKWxRemNtoMaWafUwiOG9kO+1swdU2E7L9sZ
-	 JOarBQsSwx4J+vuSxV8XLcqnG0Ulv1olpNWzddGSmfOPK+PFo/NLt0+qB2nGsQ3ZW3
-	 riarxr8TeyyVg==
-Date: Tue, 02 Sep 2025 08:17:56 -0500
+	b=UFqXKUeicCIzvOluYdJkonrNBf/8NoPzAq1tQwdG8JSYZMnvVmrABd/iL+IF7QyHS
+	 ft3YG30ij+cp5MBdJwKPNfJ15Ih3ZgTXTDD9wr9lB14ZlRrjJXvVVcTx5Te0rhKNso
+	 4XdqqPIRU/OzfqghFsZ8tNSLOUi2kngMCdOvll0PwYGssKqoouM/oKpROgjayRMLvV
+	 YPpdQkzGdmlQ+BZ+Fah1AeE8uLrW4N8Bn6LmfDUpDcB/0mB4tGhG65rfvjmKZFDq+w
+	 hxQfjpHBa4uhvOyZpV3c3L0wKz4zHrk6rV4t2e16E4I/pTy/yI4ziyPCWU1xGXzs5f
+	 uuZ4+yvT/+Y4A==
+Date: Tue, 02 Sep 2025 08:18:00 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,72 +50,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Hans de Goede <hansg@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Mark Pearson <mpearson-lenovo@squebb.ca>, 
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
- Conor Dooley <conor+dt@kernel.org>, 
+Cc: devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Fred Bloggs <f.blogs@napier.co.nz>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- "Derek J. Clark" <derekjohn.clark@gmail.com>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-In-Reply-To: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
-References: <20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com>
-Message-Id: <175678731124.877987.10991214512843096912.robh@kernel.org>
-Subject: Re: [PATCH 0/3] platform: arm64: thinkpad-t14s-ec: new driver
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Heiko Stuebner <heiko@sntech.de>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+ linux-kernel@vger.kernel.org
+To: Hsun Lai <i@chainsx.cn>
+In-Reply-To: <20250901025037.81548-1-i@chainsx.cn>
+References: <20250901025037.81548-1-i@chainsx.cn>
+Message-Id: <175678731228.878036.16153642695383320999.robh@kernel.org>
+Subject: Re: [PATCH v3 0/2] Add support for 100ASK DShanPi A1
 
 
-On Sun, 31 Aug 2025 23:28:30 +0200, Sebastian Reichel wrote:
-> Introduce driver for the ThinkPad T14s Gen6 Snapdragon EC. In theory
-> it seems to be compatible with the ThinkPad ACPI driver, but these
-> devices are booted with device tree. As the name implies, the existing
-> ThinkPad ACPI driver only supports the ACPI interface. Looking at
-> the implementation, the ACPI DSDT contains many mapping functions
-> to translate the low level I2C messages into the interface used by
-> the ThinkPad ACPI driver. Adding DT support to the ThinkPad ACPI driver
-> would require adding all those translation functions, which would add
-> more or less the same amount of code as writing a separate driver using
-> the low level interface directly. I don't think it's sensible to make
-> the existing ACPI driver even more complicated, so I went for a separate
-> driver.
+On Mon, 01 Sep 2025 10:50:35 +0800, Hsun Lai wrote:
+> This series add support for 100ASK DShanPi A1.
 > 
-> I managed to get system LEDs, audio LEDs, extra keys and the keyboard
-> backlight control working. The EC also seems to be used for some thermal
-> bits, which I haven't looked into deeply. As far as I understand most
-> thermal and fan control is handled by a different controller
-> (0x36@i2c5) anyways.
+> Info of device can be found at:
+> https://wiki.dshanpi.org/en/docs/DshanPi-A1/intro/
 > 
-> Apart from that the EC is involved in proper system suspend, which
-> is something I do not yet understand (I don't have any documentation
-> apart from the dis-assembled DSDT and existing ACPI driver). Right
-> now I disabled wake capabilities for the IRQ, since it would wake
-> up the system when closing the LID. Hopefully a way to mask specific
-> events will be found in the future.
+> Changes in v3:
+> - Update the name of vcc_in regulator (Chukun Pan, v2)
+> - Fix PCIE (Chukun Pan, v2)
+> - Update the name of typec5v_pwren_h pinctrl (Chukun Pan, v2)
+> - Fix USB3 (Chukun Pan, v2)
+> - Remove i2c2 node, unsupported RTC model rs4c1338 (Chukun Pan, v2)
 > 
-> Signed-off-by: Sebastian Reichel <sre@kernel.org>
-> ---
-> Sebastian Reichel (3):
->       dt-bindings: platform: Add Lenovo Thinkpad T14s EC
->       platform: arm64: thinkpad-t14s-ec: new driver
->       arm64: dts: qcom: x1e80100-t14s: add EC
+> Changes in v2:
+> - Delete the pwm include file (Chukun Pan, v1)
+> - Fix vcc3v3_pcie gpios (Chukun Pan, v1)
+> - Adjust the order of some nodes (Chukun Pan, v1)
+> - Fix sdmmc (Chukun Pan, v1)
+> - Add phy-supply for u2phy0_otg (Chukun Pan, v1)
 > 
->  .../bindings/platform/lenovo,thinkpad-t14s-ec.yaml |  49 ++
->  MAINTAINERS                                        |   6 +
->  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    |  23 +
->  drivers/platform/arm64/Kconfig                     |  20 +
->  drivers/platform/arm64/Makefile                    |   1 +
->  drivers/platform/arm64/lenovo-thinkpad-t14s.c      | 597 +++++++++++++++++++++
->  6 files changed, 696 insertions(+)
-> ---
-> base-commit: c8bc81a52d5a2ac2e4b257ae123677cf94112755
-> change-id: 20250831-thinkpad-t14s-ec-ddeb23dbdafb
+> Changes in v1:
+> - Add support for 100ASK DShanPi A1
 > 
-> Best regards,
+> Hsun Lai (2):
+>   dt-bindings: arm: rockchip: Add 100ASK DShanPi A1
+>   arm64: dts: rockchip: add DTs for 100ASK DShanPi A1
+> 
+>  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+>  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>  .../dts/rockchip/rk3576-100ask-dshanpi-a1.dts | 795 ++++++++++++++++++
+>  3 files changed, 801 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dts
+> 
 > --
-> Sebastian Reichel <sebastian.reichel@collabora.com>
+> 2.34.1
 > 
 > 
 > 
@@ -136,17 +118,17 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: using specified base-commit c8bc81a52d5a2ac2e4b257ae123677cf94112755
+ Base: attempting to guess base-commit...
+ Base: tags/v6.17-rc1-22-g7d11b8c260ea (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250831-thinkpad-t14s-ec-v1-0-6e06a07afe0f@collabora.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250901025037.81548-1-i@chainsx.cn:
 
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dtb: ec@28 (lenovo,thinkpad-t14s-ec): 'wakeup-source' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/platform/lenovo,thinkpad-t14s-ec.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: ec@28 (lenovo,thinkpad-t14s-ec): 'wakeup-source' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/platform/lenovo,thinkpad-t14s-ec.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dtb: syscon@26034000 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[21, 492]]
+	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dtb: /soc/dsi@27d80000: failed to match any schema with compatible: ['rockchip,rk3576-mipi-dsi2']
 
 
 
