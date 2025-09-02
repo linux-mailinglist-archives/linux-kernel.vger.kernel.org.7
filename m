@@ -1,122 +1,201 @@
-Return-Path: <linux-kernel+bounces-796109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46683B3FC0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:18:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BEECB3FC07
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA62C2212
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:18:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D592D3BC531
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7790C27F75C;
-	Tue,  2 Sep 2025 10:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6062927EFE3;
+	Tue,  2 Sep 2025 10:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jru7JPJ3"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1fUFz7H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6E42BD11;
-	Tue,  2 Sep 2025 10:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A90116F265
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808311; cv=none; b=ES1nHpTjorOZWxo95XhMslvM5E8/EbH4gSKZeGn+U0h7GouVZXhxTEkCsFMu6kXVq+nrUrUppFooWsZ5+SbIvyCCVfu4OtRlNwkLm5G6XbRl/BZH20ZK+7Se3GoXWdOIZWnlLMGRt6KYfPhypS5+0iGZN9Y7fGE3+QQqq52ppKU=
+	t=1756808310; cv=none; b=IFZN+Ye0qk+8mtHIi3c2hcDlHXS3HFj1ZJ1B963BB+WxoGjileecA2al/KX3zypSYRcbczfiJF5KJajh+eqzwJImXgCLPZMcR3nINuv82eSKIRCF9BsHwsZWjhF1FEmwuSyHtTKU+z5opCHlI2/P8eCIyTLLWiBmIkQ3H5TPiPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808311; c=relaxed/simple;
-	bh=PjXtNs4YC0h6LPa+dDz9PICK9+YC6sQvJndGnb44ANo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MPZc6ptezg8K9d7TQlkhrFEyF3bNwnmFKXWYvgnOaUxn076sUv6wW5VmLtw7EnvSxOi6Uofd+Q6FoeP/3o4V73NUPZOsUaZHVsFCQGzmYhX8ZLCzFdsqp+fikFDOPi79E2Fjq66QnPzDuYhFb3P2Z8JPfsW3aSMjIY6UncUMlRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jru7JPJ3; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-30cceb749d7so2285859fac.2;
-        Tue, 02 Sep 2025 03:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756808309; x=1757413109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PjXtNs4YC0h6LPa+dDz9PICK9+YC6sQvJndGnb44ANo=;
-        b=Jru7JPJ3Utm5elfuE8rhx8E1ClcWiikuV40Qx4G6zGv3WklZxLNF2MOrGMQBqLisDh
-         +rl2H+gWBuythGQEuc3uTVZDEVmdIIecjJ1dCPLG9jGe0IVZMq5z5pp86gtxTWLcnNlt
-         wINNPEgxJY92lraLQSVBqA+lDTixo8ZgEJaKC4wkWHOFM0XpucVTWAatQc57GpNxDj7J
-         lFNZvo6xYr3LimfBl/3n3NSVUssQKpYP+a0Ih7Gr5vA8DOz+13j8fKkx/p6rJWASwEDQ
-         wMAw21K3Kl6NMCY4FxOTIyuYdfTTjo3eNVv4Yj6ae2Q+v4BIL2AOxpdN5f3B5TXeVfuR
-         ChAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756808309; x=1757413109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PjXtNs4YC0h6LPa+dDz9PICK9+YC6sQvJndGnb44ANo=;
-        b=lwc5+tloXd31OoR/XqKS+Jye12HZgT12zOjbR7y0mF14BwgQlawvCZ7TvjzBuoSYEi
-         8ZtsMiB0bM++qlnUsVUf1QgxQWuMptcbKnRif2OueP+uk0gIp9Zq9NNd4MmRTkw2dMbZ
-         6Dki8SvfK3jMd7+I3GxOjoDq8BlaZ5zxpGBuIusOq6N38O2HB45M95503eQv6mepvCzk
-         zywl2eaheyMdZoXwmGxhZ4+BaAT1iI0lezcREjB5Ds3Dn8NK8LVM1S9PXmN4xgneP8DK
-         D927A7HDpFkoZuqq0M2YAXYC3YRlQ3EZMjJoSVhZHH1reHvyHUAWtLHjIJS2CIGQMnhd
-         WzFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDheCmRzPsQuI0S7Dh13LZ1goD4zfs4X67TgnONg/wKcaaE7rgmrwwSyHLQkcYylCW8EA085MnSno=@vger.kernel.org, AJvYcCWag/YSGFlx5qLNIQA05YkoWKGa7M/ksyc7au6pHXJQUiqRCYydFTg2oxzw61TZdCAg+Vphq8uE@vger.kernel.org, AJvYcCX77irr1op/cPU/JF+ui+bsSsfx740YfDnPnkw77mPBPShBEXpuX2Spfh+mm2rZR9ROwJGcAoTZa641RcXJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw64JNe1sqcxiXvNxjHgFmAunTTdJCV5Iqf+JC/AYOwquGzC4Ms
-	htKDO2FXQ6FTB1YZbYVi6M956u1FRpSJthr6XVbpS6ZkQRq8rupWkS9+kuxhb9kE8aJQWOXiIkD
-	b32qO6r95Tz3RMxewzjwOoeb26/EzGIkjpqzd5pG57AeV
-X-Gm-Gg: ASbGncuwYWuT2vGCh+U40+lZqaVT3bIiyxe5DF0BYWoOmCo5qapdrrZ9NQ3glITu3Y/
-	pG72UrIpKwiU7VWxQiP75Fy/z2Hgg5XLXsxNBv3Qf+cEy/w9QKO2BZkY0DWcg8axRbjVhge9MzU
-	yubNwpj7y5cn6IXZKp3dCliQQnKOk9I4tCEKwrh60RM8n36K3jRn9iN52z6DGWdnaLdr+326+4U
-	K25D9yaF2IPMNbk3ostOyhlwZD4IiHSWU5m3zA7r6Qd4COjyezBVJSiy1kA
-X-Google-Smtp-Source: AGHT+IHoluS49sv2nmukgbWP7b6FwLDU80XzZNqePYwnL4R81omyy7ZLB04xXF8Z11RXpv00FnASkGTMAGF/3on9KEQ=
-X-Received: by 2002:a05:6808:1c0e:b0:437:b10d:3b41 with SMTP id
- 5614622812f47-437f7cd6015mr6495068b6e.11.1756808309372; Tue, 02 Sep 2025
- 03:18:29 -0700 (PDT)
+	s=arc-20240116; t=1756808310; c=relaxed/simple;
+	bh=3QCI5tGjqvaAI5ML9Q0DYkiUhN1cD4vJ+o/YMVotpxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3Hcj22dsdiY75cJ1ZjprqCslM9rQY/3L7kEFYYkCJFpeDPvqU8aZIPIYe4X+sJqQ8LzchdiXnqFDpRHmlp3wcYOFMwIck3zBHaLOJK6RJSRGQrQAeH3jSqBrQQYNNVlmONh3KzkCEMcTPeQT6IJMqRBmlCX2LsJxDiwKSVjoRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1fUFz7H; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756808310; x=1788344310;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=3QCI5tGjqvaAI5ML9Q0DYkiUhN1cD4vJ+o/YMVotpxM=;
+  b=T1fUFz7HS51bsaBykMHCMgHylhRAa0LUadREsozVHQs7c2vAnyZUGMaI
+   pkHpTywSy5jV/rqEwrtpORZ9AneUOwq6zj8R6VBoEjl9UWv1zQYdzVC1j
+   mbmQvTr83EXhIrf1lYpTAEA2rEPQFZqyJ1dKTRUXX+jvUJ0HigCXFQqDR
+   5zo5f2gN2IJTLNhYVDIjbYITwowMNbb8yBz4ejiEVHwSy7N+7V7dRVBk2
+   sBvXT0SUzKJSBpIEzm16KT4B2VXrlp2UUrduD5xgZ96FlOVNxbmVvE/z/
+   Fy5hMjx5RL5nVzQYka4NTzLgzdjilUCzhvu/2Cc06Rn19zFo1Rpmp4B78
+   w==;
+X-CSE-ConnectionGUID: HE8LVPCKSYCws3RGaIaysw==
+X-CSE-MsgGUID: uKoJJGYARzS1PmazeLVNyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62904817"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62904817"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:18:29 -0700
+X-CSE-ConnectionGUID: umvimwuvTw2dej7SgTR00A==
+X-CSE-MsgGUID: MhoMojHnTzqgt5EMi6mLEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="208432209"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:18:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utO5o-0000000AfH1-3E7S;
+	Tue, 02 Sep 2025 13:18:24 +0300
+Date: Tue, 2 Sep 2025 13:18:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] auxdisplay: linedisp: support attribute attachment
+ to auxdisplay devices
+Message-ID: <aLbEcN44RT58ywzq@smile.fi.intel.com>
+References: <20250901020033.60196-1-jefflessard3@gmail.com>
+ <20250901020033.60196-5-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902090358.2423285-1-linmq006@gmail.com> <aLa65t3j1tmyEMnp@smile.fi.intel.com>
-In-Reply-To: <aLa65t3j1tmyEMnp@smile.fi.intel.com>
-From: =?UTF-8?B?5p6X5aaZ5YCp?= <linmq006@gmail.com>
-Date: Tue, 2 Sep 2025 18:18:18 +0800
-X-Gm-Features: Ac12FXxIvP7QcAjSDmmTAhRVGtyVzkXNIVP0hqYtHKZDRDb4VQaUEK2qgFnAeco
-Message-ID: <CAH-r-ZHx+vcL3QY0rKP3Lo_qofYLSuxCxqyb=URPSbnStxA5cQ@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: dw: dmamux: Fix device reference leak in rzn1_dmamux_route_allocate
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250901020033.60196-5-jefflessard3@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi,
+On Sun, Aug 31, 2025 at 10:00:28PM -0400, Jean-François Lessard wrote:
+> Enable linedisp library integration into existing kernel devices (like LED
+> class) to provide a uniform 7-segment userspace API without creating
+> separate child devices, meeting the consistent interface while maintaining
+> coherent device hierarchies.
+> 
+> This allows uniform 7-segment API across all drivers while solving device
+> proliferation and fragmented userspace interfaces.
+> 
+> The provided attributes appear in two locations depending on usage:
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E4=BA=8E2025=E5=B9=B49=
-=E6=9C=882=E6=97=A5=E5=91=A8=E4=BA=8C 17:37=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, Sep 02, 2025 at 05:03:58PM +0800, Miaoqian Lin wrote:
-> > The reference taken by of_find_device_by_node()
-> > must be released when not needed anymore.
-> > Add missing put_device() call to fix device reference leaks.
->
-> How is this being found? Do you have a stacktrace or kmemleak reports?
+You wanted to say "...in one of the two possible..."?
+Otherwise it looks like undesired side effect of the change.
 
-This was found through static code analysis.
-The of_find_device_by_node() documentation states that it
-"takes a reference to the embedded struct device which needs to be
-dropped after use."
+>   1. On linedisp.N child devices (legacy linedisp_register())
+>   2. On the parent auxdisplay device (new linedisp_attach())
+> Functionality is identical in both modes.
+> 
+> Existing consumers of linedisp_register() are unaffected. The new API
+> enables drivers like TM16XX to integrate 7-segment display functionality
+> seamlessly within their LED class device hierarchy.
 
-I cross-referenced other of_find_device_by_node() usage patterns to
-check the correct usage,
-then audited this code and found the problem.
+...
 
-I don't have a stacktrace or kmemleak reports.
+> +struct linedisp_attachment {
+> +	struct list_head list;
+> +	struct device *device;
+> +	struct linedisp *linedisp;
 
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+> +	bool owns_device;  /* true for child device mode, false for attached mode */
+
+I would rename this to 
+
+	bool attached; // with inverted logic
+
+or
+	bool mode; // with "default" (false) mode to be actually legacy one
+
+(so in both cases I think we want false for the legacy mode).
+
+> +};
+
+...
+
+> +static DEFINE_SPINLOCK(linedisp_attachments_lock);
+
+Why spin lock and not mutex?
+
+...
+
+> +/**
+> + * linedisp_attach - attach a character line display
+> + * @linedisp: pointer to character line display structure
+> + * @dev: pointer of the device to attach to
+> + * @num_chars: the number of characters that can be displayed
+> + * @ops: character line display operations
+> + *
+
+Can you add a description here, please? Important note that it should be freed
+by the respective API afterwards.
+
+> + * Return: zero on success, else a negative error code.
+> + */
+
+...
+
+> +	/* add attribute groups to target device */
+> +	err = device_add_groups(dev, linedisp_groups);
+> +	if (err)
+> +		goto out_del_attach;
+> +
+> +	/* display a default message */
+> +	err = linedisp_display(linedisp, LINEDISP_INIT_TEXT, -1);
+> +	if (err)
+> +		goto out_rem_groups;
+
+Can this be racy with user space? Once we publish attributes, the new
+message can be already issued and here it puts another message.
+OTOH this is done before device_add(), so the attributes are not visible
+until the device is added.
+
+...
+
+> +void linedisp_detach(struct device *dev)
+> +{
+
+> +	struct linedisp *linedisp = delete_attachment(dev, false);
+> +
+> +	if (!linedisp)
+> +		return;
+
+Please, rewrite as
+
+	struct linedisp *linedisp;
+
+	linedisp = delete_attachment(dev, false);
+	if (!linedisp)
+		return;
+
+> +	timer_delete_sync(&linedisp->timer);
+> +
+> +	device_remove_groups(dev, linedisp_groups);
+> +
+> +	kfree(linedisp->map);
+> +	kfree(linedisp->message);
+> +	kfree(linedisp->buf);
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
