@@ -1,86 +1,112 @@
-Return-Path: <linux-kernel+bounces-796455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B331B400EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:42:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E889FB400F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77662C2CA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:41:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97B467BC12E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A647C28D82F;
-	Tue,  2 Sep 2025 12:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08AA2BDC1B;
+	Tue,  2 Sep 2025 12:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qG0KUtAn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZCRd08B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735AC28C011;
-	Tue,  2 Sep 2025 12:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D860429B8E1;
+	Tue,  2 Sep 2025 12:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816876; cv=none; b=a5q5Vsv/lY9HLtLa/qSvc7K2EuCgAunj3Vi7y8D84Ove/NWR+a7/NaDeHS3rYM0Io0z+4QncUCooIXvKYuTzQUUt/mWb+B+Y4r8OF/cvJTydRE1qivwp+hH7baUaLs1g2XglFS2ltD7GB/XZ/sracQBp+kCNPKTkZPl4vyCYiT0=
+	t=1756816931; cv=none; b=SJBaaEMKKmnLZDn+X27Hs2crsYUoorlEShfKB30KH/oAHTE8706/2qED6r15Px4U//dpmb8TLJCbon7yoxhvZwrgIjnoJB3yYHNYff9x3UGkN6CysNoKP+jmEzStw8CIwGyzqY5vWg1yyAUqQuxHLGsB1/z7FSUdqfGJ/5UC4PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816876; c=relaxed/simple;
-	bh=chLF2nlQTy4Kpvo2bXrIx+leLqO+VioC8WiW4UtGceU=;
+	s=arc-20240116; t=1756816931; c=relaxed/simple;
+	bh=vfVAXgi/xoadFdLNQPKyg6IA8NM2WS3piyY2GDuRiDI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sj9gG/Sfpj89j47SAee0YIzbbm9Jc2Ci+3yzX7a6lFHPEg0sC5fAGdfub90gSr/FhD0+CVYccEnAJvxtDRQquqYU2cAyJh4uJx58JWbtcNsHGOGoFIkF8mNHJQ65/Mf4FwbhlQ4Pvj7iCSz3iwPhIh4FESZiKTu2fhoWjE0d5x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qG0KUtAn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=bqMz1bhGC904dYzAluW4uQ3RkfYk6nuO3qGuIBL/alw=; b=qG0KUtAnicsr8K9ndh/X1WMezO
-	n2qI2cZKqaaEQeG5pue+0lnkeBCyvhDzIqLa97+XkkmeHdZTPGJ9mIcRMxN+8QHZFEYVzagoDFHMF
-	EcZiDncaojNfus08Q9XkK9esSZO91SXwYljRxPngi450hhF79gNg9LOKdYB3yQOgl+qQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1utQJt-006t1f-7H; Tue, 02 Sep 2025 14:41:05 +0200
-Date: Tue, 2 Sep 2025 14:41:05 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: rohan.g.thomas@altera.com
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Matthew Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next] net: phy: marvell: Fix 88e1510 downshift
- counter errata
-Message-ID: <b1501674-5a24-4ebb-829b-4f2972f7e886@lunn.ch>
-References: <20250902-marvell_fix-v1-1-9fba7a6147dd@altera.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9ZINF7559/J1vFqdossfV6Ig+P5kRgpal7HKzSF6WZYIxvVnF70Q/ohLYDXHX7eurOpAPqagXcRc4p+AkS/hlShbQMRcxFXuR7maAXs3i2TGo4hgdzci/PzauowKwtq75n20dArjI2iOa/M7i1pLZ1+jH3AOOlPY9T11dA+GwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZCRd08B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6360BC4CEED;
+	Tue,  2 Sep 2025 12:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756816930;
+	bh=vfVAXgi/xoadFdLNQPKyg6IA8NM2WS3piyY2GDuRiDI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sZCRd08BOuFqi4xDMDXSY4mSBtD7aWXhCzNa1EiUuStTllrufiB2M7hX8WQyL3d+H
+	 yfNUAeapHP1iiF+Ui+BnCDAingaYfo+kqDrdGYDIpe7zstaEehQSjbI4C6EGgLzlRh
+	 HU5PlaKkR0iAMcUeCPx+HAVik87lGQXUtS7XH/9yRBCqpFjASpBXIOAxFNTbv90ukh
+	 JC+SWE4B1OBcOUf/foBq7kWn3Ij6DZNIBE2Sj5I887z68tnm9I6m9izLKVRWX07j4O
+	 QEgc8d1FxpkcNGaCL8UuDCV6wGjxUileXxvVUWH62Fp5oEUY+eZQ2B6FBL60zEFxrn
+	 Yb7lcQkSNmqDQ==
+Date: Tue, 2 Sep 2025 13:42:05 +0100
+From: Lee Jones <lee@kernel.org>
+To: Qunqin Zhao <zhaoqunqin@loongson.cn>
+Cc: herbert@gondor.apana.org.au, jarkko@kernel.org,
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+	davem@davemloft.net, linux-crypto@vger.kernel.org,
+	peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org
+Subject: [GIT PULL] Immutable branch between MFD, Char and Crypto due for the
+ v6.18 merge window
+Message-ID: <20250902124205.GL2163762@google.com>
+References: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250902-marvell_fix-v1-1-9fba7a6147dd@altera.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250705072045.1067-1-zhaoqunqin@loongson.cn>
 
-On Tue, Sep 02, 2025 at 01:59:57PM +0800, Rohan G Thomas via B4 Relay wrote:
-> From: Rohan G Thomas <rohan.g.thomas@altera.com>
-> 
-> The 88e1510 PHY has an erratum where the phy downshift counter is not
-> cleared on a link power down/up. This can cause the gigabit link to
-> intermittently downshift to a lower speed.
-> 
-> Disabling and re-enabling the downshift feature clears the counter,
-> allowing the PHY to retry gigabit link negotiation up to the programmed
-> retry count times before downshifting. This behavior has been observed
-> on copper links.
-> 
-> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+Enjoy!
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-    Andrew
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-char-crypto-v6.18
+
+for you to fetch changes up to 74fddd5fbab879a7d039d9fb49af923927a64811:
+
+  MAINTAINERS: Add entry for Loongson Security Engine drivers (2025-09-02 12:29:57 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD, Char and Crypto due for the v6.18 merge window
+
+----------------------------------------------------------------
+Qunqin Zhao (4):
+      mfd: Add support for Loongson Security Engine chip controller
+      crypto: loongson - add Loongson RNG driver support
+      tpm: Add a driver for Loongson TPM device
+      MAINTAINERS: Add entry for Loongson Security Engine drivers
+
+ MAINTAINERS                            |   9 ++
+ drivers/char/tpm/Kconfig               |   9 ++
+ drivers/char/tpm/Makefile              |   1 +
+ drivers/char/tpm/tpm_loongson.c        |  84 +++++++++++
+ drivers/crypto/Kconfig                 |   1 +
+ drivers/crypto/Makefile                |   1 +
+ drivers/crypto/loongson/Kconfig        |   5 +
+ drivers/crypto/loongson/Makefile       |   1 +
+ drivers/crypto/loongson/loongson-rng.c | 209 +++++++++++++++++++++++++++
+ drivers/mfd/Kconfig                    |  11 ++
+ drivers/mfd/Makefile                   |   2 +
+ drivers/mfd/loongson-se.c              | 253 +++++++++++++++++++++++++++++++++
+ include/linux/mfd/loongson-se.h        |  53 +++++++
+ 13 files changed, 639 insertions(+)
+ create mode 100644 drivers/char/tpm/tpm_loongson.c
+ create mode 100644 drivers/crypto/loongson/Kconfig
+ create mode 100644 drivers/crypto/loongson/Makefile
+ create mode 100644 drivers/crypto/loongson/loongson-rng.c
+ create mode 100644 drivers/mfd/loongson-se.c
+ create mode 100644 include/linux/mfd/loongson-se.h
+
+-- 
+Lee Jones [李琼斯]
 
