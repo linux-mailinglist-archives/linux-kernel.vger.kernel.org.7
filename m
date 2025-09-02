@@ -1,341 +1,150 @@
-Return-Path: <linux-kernel+bounces-796700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29EECB4060D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:05:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A3FB40614
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A10C189E0DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:01:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145DB1A80D10
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4C42DF3CF;
-	Tue,  2 Sep 2025 14:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370541E5B7C;
+	Tue,  2 Sep 2025 14:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YZc5s+Kt"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cBhk9YbG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACAB2DC32D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06EA2DECD2
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756821632; cv=none; b=gZuz386O+6Rvna6sI7MALvvUvqtYZAn8H5IO0hM7SmSymW2ADvY36+QtRwcrIxa9R9utazs3GeOyolRe5K8hgtvn6LMj1tf9FxCY55QApfPr/3X69/djwYz+Z/wqJI9WVSEo+FQxjqX+aO5lEDtDOoQ0bDS6W7cZbC/RyY49CnU=
+	t=1756821663; cv=none; b=iX2E+k60QlbyxpA9j85Ib3uEbfMF6ivkR+2pme6XJWeMa1mlwI6i6ty0f6+L/JcGCd5Jf9MgbHenK3BYgP3UzOUawB7wa8DmVLsjZUkLy+sRP5pJFZ66mtutdXzqX9GyZHmFmanTKgjIze8Lj3uYp7EiSnVH1ni9uKGsTFEI18M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756821632; c=relaxed/simple;
-	bh=YZAH/V1P/09om9Ubb2lCJps3ibSld2f8OjAoadqgER4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bgv4Jzgpd5e9w1uVWnBMohT6RhErAa5KdeZueHGmJLYAl1D0RawIL21WruSxsbbN5FXqpcNrQXrQ80weI8RqfMiImybcK8by7NWIsWkUW0VdG6X94lAXmkD0kBkLgQY7uKoE+4xlRvFgNOUwAAqBx42b3gIe2miQ6krt4oAHICw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YZc5s+Kt; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ab87ffso93791966b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756821629; x=1757426429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=glTF6ghkk/uOHfwCIvpH7x76sV+73HSeA2VQ96I2mIw=;
-        b=YZc5s+Ktls3nMHzyX7plYijupPYIpmU6pU8asrfszX6+/otlqiSjfmGKxObEgQzrSo
-         ZbnGr5QbPGFw74FVzJHQWz9wSJnS/T3HlxuldcaOAfJNIJkg3UBKXQ+UMV9lVdDlJDsz
-         Z10lfn2LF9lliEffPNOndB/fj57t8HIZrDO03VWEGBGhtiTAZpw4Ixq9D093/FHeCVHM
-         poVXpzAl64leAWIILbz/bN30tZPcVpuZ10EbaQDziNa8ZxJQ2YhuGL5UeDDNb2EpCuP6
-         bKz1BXYj7TbHiSWQasxj+3pjPzp3su/JtDEu6o53/enaCOpfaIUTUa87nBPKXfUphvbE
-         uNog==
+	s=arc-20240116; t=1756821663; c=relaxed/simple;
+	bh=JJm99rnDzEe1ECFjAWGF6ytHuNYXto1CkMPXhCZn0eE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HCyS7ha9FkS0eZLcnFnlrimi59ov/84INIl8zJ40gEwT3KqLzQr/M/1G0CzF5egc/Rrn15t631fxhhmqIb0y6DmSojHNDL+GdOlQ+RdicDrJRi44tCxW1sHiEmq1b/sab16l8UGSa8zbj3YRuX+il7266fPQT/shmfkd4CAMhJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cBhk9YbG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582B4iQK010134
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 14:01:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=2az2Im644tqnDNw05Ee2bX+L6BhbJIk8rCO
+	P5D6QQYo=; b=cBhk9YbGVfE1KJltBOSAjAVN3ty5dm2PKnQPH8+BkaNEkf5yn03
+	Qi4tOiiNDX7w+w136jSnLYS2bzvpj88K17ja6jeQWIUOysuhNLjK9p6gJmN2v24z
+	8JQc1wKnUF1v9P4ws1LJu/YU8Y14l5zRF+P9hXzLReCn2zSxnhfg9iQJcl1BfBYQ
+	o7U/sczHXFUUN4bFAivgNv9rMWyZsYer227cw/f2OlqR4pv6dwGTZdIeaDs+VTLj
+	uriMTvcTB8dejNN4kYP72b3AblUeXhLUi7hGj9GhCtXuKXI0keWQ5y5/T+ZtSeFf
+	nHb3Hxaz1F7lvv7cKyOlvPlnNNjLt+Rn0sw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjg0ff-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 14:01:00 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b3472b7efeso12330941cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:00:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756821629; x=1757426429;
+        d=1e100.net; s=20230601; t=1756821659; x=1757426459;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=glTF6ghkk/uOHfwCIvpH7x76sV+73HSeA2VQ96I2mIw=;
-        b=h7GtQ1XRbXzwDgSKsPxnEJZojadFy+BR9rUxJ3B+iT7Oh873ag/xpkouUpBqY5GYOX
-         e0epqljmvje1RA9vSzl1qlT+VMrwjE8Dw1fkEn1uPTUmwrqvTL7SMg44Zbhbw6tOh9FG
-         UqPWHjjwH7CC3Df1rle7hiHDPEFoKhjEwron7A9ewPYrvcJjmze68Xx01UvVTB9Q31XC
-         PexIkTwKxjltfYLAxr7T7O8rW/Oyj4ppuNs+cxdd1igjkWE/JwXpg8jHegwhgAhRmA8F
-         GBIbTSuIQKIWSano0dLMnNwQBRmQVrMAmUDyeyXmbGE/WGtabv7tpi66s5HU39L0PxFt
-         4y/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDig3nOXIVJOSVZNt7Idp6qSFDZ9C9+PzQyqhUsAGv/7xbrmZ7TzToT4a/jG+W1Rd1J4w62LVDAXoqqp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCiz6cByLxRggj2cPWQcm4ti3GFPYQjGV1SvfafwCTj4MTtkhx
-	UnPKDR0aVDTV3D1Azy2xDdwL04DeosIaf22ijHwHi76PT/xCExD98vXTGuM+7DhYJck=
-X-Gm-Gg: ASbGncsptTZtDKLm4QloI1wKerbBCMvntmofKu05uLMgp2ku0DbtvQBQvsqbAy7YkIX
-	QIGyWE0t+TTiKsRwBRutxmcO6T7FqVu6S/3ciUXPwu9AarZjROvi+mywRfs2q+WevN7tM441VC8
-	H3yhZs+O9DozPYs7xfcQT1zdMHCuf7f1FEkqqln7s4Osd6TZv6kDTy1OYbk4NvO6xOyw8YCXJrS
-	AXdE58LXRrGcypSVB4bjQyOuVmr5FTTP3vrUveMSEhIdo4RHnEZ9/P1q1V9A357fT5VpQMnqgtM
-	caqozKKF9EEvT8Jm6CITYbzm/Rb887gkcn9lQRI71P4VmtQ9Jr6y+R3MZibkgYPrjphypJgi5Qq
-	iQVeP8Zh8d57rHCGnmwjg8QfQDlDq1vVT1WdWHKnTe2SV
-X-Google-Smtp-Source: AGHT+IGDAshsJg36aVD4eQnhtxPLKIJLVsKtgZ2Z0HAaLohyIGC1DvuIqRiP4HLvEGb1IvHql5sFCg==
-X-Received: by 2002:a17:907:3e1e:b0:afe:fc35:4324 with SMTP id a640c23a62f3a-aff0ee058e5mr773663866b.1.1756821627646;
-        Tue, 02 Sep 2025 07:00:27 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0445cb9296sm275455566b.61.2025.09.02.07.00.25
+        bh=2az2Im644tqnDNw05Ee2bX+L6BhbJIk8rCOP5D6QQYo=;
+        b=ldjeHhi0QYLEbjZGb+g+fb99+5IVrCFieluB5xDMqnLVwXGIuoMG2wjRtSSVMR8rR5
+         ZAPZfXxiEL7g2BlypISugxWpOuycqAxOZFvNKo5q6H4hL/39L/dv9RSHGRK7uZCpI/oP
+         +6DyNI0tAPBvebJWV9VcH/I5St+iVoxIsGHyHsVSLz5MsiL0kr3hLT/Tm4ApaY9IcmeB
+         G+sabpbFqk6BjIl5zduzP35kx5eclWncdkYIXUvdCp09dGkkrV9YVMuYrlliNNfiaxB7
+         t56dujSjpBJmuLdRKurPIebVk2tOIUI3C3tVgmd/oqkIOXJMjio5PipMH05CDk/neM6k
+         G8Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVziEKMR7vW8v93LhAHI2wRXVH+omzevZnjwrGmm+Nx8nghmtSLFhhP3+mlR4YDHriqyUwc1df7SJ6a5UM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQpbONOb+OW7Z4Y6sC9GC1nd0YDMzy/2bwJFgjgA11WV+71/qI
+	h/SzPhXXG5rhzM7ZSmu2emkD69/1ubhSchBOoRzlD05GcxDKjQGOUr/A+yyRkIYjW919y/E0JKa
+	WWyed7jPFqyQqng4NxiXyQdDu+wPbb+x9tlZSHVE0wfucv1hPG+DJSAaVcTVAyIIM2VE=
+X-Gm-Gg: ASbGncs/jkqm8xGTgZEBdAJqzqvOkT+pUBiLuEWME/ithgQKt/0KiniCU9KWH6ShpIe
+	+4IHuThH7A3/Y+vba4cLC9JwOFYrDPIx80CMNF7uzmKz1RLRQS+uuvSE90ZgTNnj4Ypa/U/jIqt
+	Eic+2YzwA9W45hfSt9zNaup8QcUKaeVZAWWvMgKZKsL0UP2bWGqJM9VmIMiZ7uS/yBjSer6jtGs
+	anHBLykYlvTpjxNS3E0Bmn/8x4sjYGraWXxQ1ApnA1fw73js+ErxZNqw0xbqYkgaGnJLSWyi2ps
+	g9lcym8l+pNV8BgloZmkxXWHATbHCfswUBfh8qdX8gtz/8jvpMCWTw==
+X-Received: by 2002:a05:622a:1111:b0:4b3:7ec:d238 with SMTP id d75a77b69052e-4b31b85ed4fmr135597401cf.4.1756821656658;
+        Tue, 02 Sep 2025 07:00:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEPhaC3o/U4JWaz8rPrv8EPnrnVo7uBTe7rQa0n7CsRBSYcKVshYqyzlm+d72I/Hi9srgNHSA==
+X-Received: by 2002:a05:622a:1111:b0:4b3:7ec:d238 with SMTP id d75a77b69052e-4b31b85ed4fmr135595041cf.4.1756821654981;
+        Tue, 02 Sep 2025 07:00:54 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d2250115fdsm14381196f8f.40.2025.09.02.07.00.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 07:00:26 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RESEND PATCH v3] arm64: dts: qcom: sm8750-mtp: Add WiFi and Bluetooth
-Date: Tue,  2 Sep 2025 16:00:19 +0200
-Message-ID: <20250902140018.247209-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+        Tue, 02 Sep 2025 07:00:54 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+To: srini@kernel.org, broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org
+Cc: conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
+        linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH 0/6] ASoC: qcom: add support for Glymur
+Date: Tue,  2 Sep 2025 15:00:38 +0100
+Message-ID: <20250902140044.54508-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6002; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=YZAH/V1P/09om9Ubb2lCJps3ibSld2f8OjAoadqgER4=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBotvhy+p2P0NQxpZzZk6TlU73cVU3cl0Oyx5PWE
- yAw1NdoyPuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaLb4cgAKCRDBN2bmhouD
- 1wJDD/oCb8b3kdJA3Ch5EjmwN4flY44wGkimwToCGnmLOOVQpF1M2COfSolr8OI/YdZ2kN5KdTE
- +zHJsPN2RsBIb+TrWyPmEOH9uBKDVH4nsdLmDeS4mJarjq7DmD1pkM2Im94D3qHEde8644tdPjy
- IRvueW5Su3F102iH3ObqvYcQN3vFL8wKCvr4AeHZvDn3vWLE4xK7UY/ihFmlj+kl09iySUS1wo3
- tUf3uJ8gU3/Uh5yTccjIrRfbinPZbpr+u+OIid0m+Iq7j04231mN2UnW7SZ58E0v1WsQLNngDl0
- loJ00jrCYlUV36oiA+K5JFcSUypbVufsEum4bOm8EJ9Y/EjIWJRT5IgogPI84ixkr9aaPle7+Ky
- Nx2NQYK+v/D1gDjBbICaJ1CeU7jll8mKezG2aht1aALFsofBl5Jd+P0zpzUJAG3j/H6Cy7oeAvV
- cx7hXBS8ev2X4xxZUJ0zLiUJKKVUnAZy92I1BLxpF7j6LTRQnDgokCaeOSEik1L+DrSMG2WK9rF
- wUG7b8OiCR4/axxWqI6ixEFasJy5P0jJNMJw8fMoPdPZjbTONCxKs9wltS6srGqM0QpvUh9DIz4
- 4sMjFnLUedscM553V4ULCmH4ZmCO6tFLD2RvW7Be7SXEBjvdUNXIbapUdnTkLeBo7jTiOSa9wYk zdyf2SJbjo/DQFQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b6f89c cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=yJojWOMRYYMA:10 a=FrvE4Lm6qVnUI7UI9j8A:9 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: gtrDEPvUjJEu8QJLwAJr3ypPExzZc2GI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfXws2AUJxWzmq6
+ ETrhHvgjIOZWmRDdkCNcjjLLREqjgGcTIDUd197VSKGmiBnae9Oj2JVuno+D5Njm/pv0wP2gbwk
+ +JKTjF4AIQ30PmmFp2uPxbNxWd57u1s8fAMh9utX335Pn/2lXuIjgC8gMFNy7KIaWESYu6hVJ07
+ t44p1PZA1Z7d/CR0yjUKFPxFycI3eD0IL1/Vc1vf/XduUj3QT4ico5U6fFHZ1ivZ3RTsCq1Wycz
+ VKQNszaeQ8ot1Cxjdj+TamY8amOXvMjbjwmrf7g2b1VJLj8ejt+mfI+xEbETUuy2P4EfEHZj4cZ
+ FXS6XC698qwaaSRiG8BP4AnHHSTziGGj8qdCci1Qq1mR4iTLpeIup9BSYgQYUtwXgpfTqwiGPAw
+ IVTJFxSu
+X-Proofpoint-ORIG-GUID: gtrDEPvUjJEu8QJLwAJr3ypPExzZc2GI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
 
-MTP8750 rev 2.0 (power grid v8) boards come as two different variants
-with different WiFi chips: WCN7850 and WCN786x.  WCN7850 is already
-supported by the kernel, but WCN786x is not.  Both of the board variants
-are considered newest revisions and the difference is only in MCN
-numbers and internal codenames.
+This patchset adds basic support for Glymur sound card,
+- by reusing x1e80100 snd card machine
+- reusing lpass wsa and va codec macro which are identical to v2.9 codec version.
 
-Add WCN7850 WiFi and Bluetooth to the MTP8750, stating that this DTS
-represents the WCN7850 variant.  The S4D and S5F regulators should
-operate at 0.85 V, thus adjust lower constraint and regulator name.
+For now only tested WSA and VA, which is why tx and rx codec macros are
+not added as part of this series.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Tested this on Glymur reference platform.
 
----
+thanks,
+Srini
 
-Changes in v3:
-1. Add also PCIe nodes, because they were not planned to be sent
-   separately.
-2. Drop pieces of comments as discussed with Dmitry.
-v2: https://lore.kernel.org/all/20250811131055.154233-2-krzysztof.kozlowski@linaro.org/
+Srinivas Kandagatla (6):
+  ASoC: qcom: x1e80100: set card driver name from match data
+  ASoC: dt-bindings: qcom,sm8250: Add glymur sound card
+  ASoC: qcom: x1e80100: add compatible for glymur SoC
+  ASoC: dt-bindings: qcom: Add Glymur LPASS wsa and va macro codecs
+  ASoC: codecs: lpass-macro: add Codec version 2.9
+  ASoC: codecs: lpass-wsa-macro: add Codev version 2.9
 
-Changes in v2:
-1. Add missing &qupv3_2 enable, so Bluetooth works.
-2. Adjust also S4D regulator constraint.
+ .../devicetree/bindings/sound/qcom,lpass-va-macro.yaml       | 1 +
+ .../devicetree/bindings/sound/qcom,lpass-wsa-macro.yaml      | 1 +
+ Documentation/devicetree/bindings/sound/qcom,sm8250.yaml     | 1 +
+ sound/soc/codecs/lpass-macro-common.h                        | 1 +
+ sound/soc/codecs/lpass-va-macro.c                            | 2 ++
+ sound/soc/codecs/lpass-wsa-macro.c                           | 2 ++
+ sound/soc/qcom/x1e80100.c                                    | 5 +++--
+ 7 files changed, 11 insertions(+), 2 deletions(-)
 
-No dependencies, can be merged.
----
- arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 147 +++++++++++++++++++++++-
- 1 file changed, 143 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-index 946ba53fe63a..3bbb53b7c71f 100644
---- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-@@ -201,6 +201,74 @@ vph_pwr: vph-pwr-regulator {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+
-+	/*
-+	 * MTPs rev 2.0 (power grid v8) come with two different WiFi chips:
-+	 * WCN7850 and WCN786x.
-+	 * Device nodes here for the PMU, WiFi and Bluetooth describe the MTP
-+	 * variant with WCN7850.
-+	 */
-+	wcn7850-pmu {
-+		compatible = "qcom,wcn7850-pmu";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wlan_en>, <&bt_default>;
-+
-+		wlan-enable-gpios = <&tlmm 16 GPIO_ACTIVE_HIGH>;
-+		bt-enable-gpios = <&pm8550ve_f_gpios 3 GPIO_ACTIVE_HIGH>;
-+
-+		vdd-supply = <&vreg_s5f_0p85>;
-+		vddio-supply = <&vreg_l3f_1p8>;
-+		vddio1p2-supply = <&vreg_l2f_1p2>;
-+		vddaon-supply = <&vreg_s4d_0p85>;
-+		vdddig-supply = <&vreg_s1d_0p97>;
-+		vddrfa1p2-supply = <&vreg_s7i_1p2>;
-+		vddrfa1p8-supply = <&vreg_s3g_1p8>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK1>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -426,7 +494,7 @@ vreg_s3d_1p2: smps3 {
- 
- 		vreg_s4d_0p85: smps4 {
- 			regulator-name = "vreg_s4d_0p85";
--			regulator-min-microvolt = <500000>;
-+			regulator-min-microvolt = <852000>;
- 			regulator-max-microvolt = <1036000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
-@@ -472,9 +540,9 @@ regulators-2 {
- 
- 		qcom,pmic-id = "f";
- 
--		vreg_s5f_0p5: smps5 {
--			regulator-name = "vreg_s5f_0p5";
--			regulator-min-microvolt = <500000>;
-+		vreg_s5f_0p85: smps5 {
-+			regulator-name = "vreg_s5f_0p85";
-+			regulator-min-microvolt = <852000>;
- 			regulator-max-microvolt = <1000000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
-@@ -891,6 +959,40 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+&pcie0 {
-+	wake-gpios = <&tlmm 104 GPIO_ACTIVE_HIGH>;
-+	perst-gpios = <&tlmm 102 GPIO_ACTIVE_LOW>;
-+
-+	pinctrl-0 = <&pcie0_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie0_phy {
-+	vdda-phy-supply = <&vreg_l1f_0p88>;
-+	vdda-pll-supply = <&vreg_l3g_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pcieport0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1107";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &pmih0108_eusb2_repeater {
- 	status = "okay";
- 
-@@ -902,6 +1004,10 @@ &qupv3_1 {
- 	status = "okay";
- };
- 
-+&qupv3_2 {
-+	status = "okay";
-+};
-+
- &remoteproc_adsp {
- 	firmware-name = "qcom/sm8750/adsp.mbn",
- 			"qcom/sm8750/adsp_dtb.mbn";
-@@ -1035,6 +1141,14 @@ spkr_1_sd_n_active: spkr-1-sd-n-active-state {
- };
- 
- &tlmm {
-+	bt_default: bt-default-state {
-+		sw-ctrl-pins {
-+			pins = "gpio18";
-+			function = "gpio";
-+			bias-pull-down;
-+		};
-+	};
-+
- 	wcd_default: wcd-reset-n-active-state {
- 		pins = "gpio101";
- 		function = "gpio";
-@@ -1042,6 +1156,31 @@ wcd_default: wcd-reset-n-active-state {
- 		bias-disable;
- 		output-low;
- 	};
-+
-+	wlan_en: wlan-en-state {
-+		pins = "gpio16";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-down;
-+	};
-+};
-+
-+&uart14 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn7850-bt";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+
-+		max-speed = <3200000>;
-+	};
- };
- 
- &ufs_mem_phy {
 -- 
-2.48.1
+2.50.0
 
 
