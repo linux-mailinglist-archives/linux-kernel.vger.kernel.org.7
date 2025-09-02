@@ -1,201 +1,93 @@
-Return-Path: <linux-kernel+bounces-795740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7135BB3F73C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:58:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CEFB3F740
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9401A87AA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D8D9206685
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F0B2E7F3E;
-	Tue,  2 Sep 2025 07:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54B12E7BC3;
+	Tue,  2 Sep 2025 07:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="MUsO79ux"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aphJ2tE2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF852E8B9A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029722E7BAB;
+	Tue,  2 Sep 2025 07:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799810; cv=none; b=ZMFWz01dChH9u5fMVJDHOHbEDH7BnITtiaxJ8iUMRjj1GUxAFJPG184j4KzD34CEzuTeJlqxFardHFeaQ1CyUrKyp0nXp3g43oqtwDDldBt+TvSJ+fH7v99l5YXAHywLzXk/maJKpKuHxSmnSuqk8V6qKNlBB5n/lp4Ed72rY8I=
+	t=1756799858; cv=none; b=OZThOpdqz5qakraJbTvWURYPhX/30nS8zrBmU85rcy7dZFgJhUcBdIPwSPEQ75pjpFfXKZNKuvQR3aUPXXZFmbvc6w6pdwD89UMxvGe4on+w9m5sgbkw0bWL6azzxlVzmuDRST6LI0NbGnn1UOnvKn2l45H7aWS8VZpyz+lH6cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799810; c=relaxed/simple;
-	bh=Yk18SBQzoXAjnIAWv+ffWMWjIUs8ABHusclWRbr8Yi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DCGvyhjaaXNBuhIWobjFy6XbWOGGnqPuD5hHILBlxI+2Kksx01xgQ/8p6j685HflUX+zUMNwWVwF2G1LR5LKS2/ChOAtrekdv1gA5sor0oHWhK8P981I6QRAt6yIdad/s4tvxD6yx2gceDSq+cBmD6sZJPZ8Av/9nnQbeey2HOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=MUsO79ux; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
-	by cmsmtp with ESMTPS
-	id t6wuu3htfaPqLtLskuXyer; Tue, 02 Sep 2025 07:56:46 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id tLsiu9SKIrnsYtLsjux6PS; Tue, 02 Sep 2025 07:56:45 +0000
-X-Authority-Analysis: v=2.4 cv=OLkn3TaB c=1 sm=1 tr=0 ts=68b6a33d
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=XW3vq5T86JFyMsJaYQInbg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=_Wotqz80AAAA:8
- a=lix9ENjbuMu12OTMD5EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=buJP51TR1BpY-zbLSsyS:22 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=okXODQ+jKSpaf8IXKd7wjaUPjNu4b3AlYTLZMl40oYc=; b=MUsO79uxb/9Xu+nHgDBocU/0sa
-	xre8NgTKO9dYx+uUBydBAXXmmF+K+sEpVMJ+4qQ11nlH5yWauq7RmXl3+TCQgpTeusW6C4SoWTRyB
-	XUgQev4utosfhcpT8mw6G9qBg3Hndo3M0PhFRCzXGkoH7a1eOBLkVOIl2ZQYMJqgoWq7lFB9uSCEn
-	8M9YSl1W0yTXGLOYOxToZVm14CoySxUTaZwTU/s1OMMsS+hVwqP7BRg/QSZodl3ZmCDX3MSrXWXB1
-	vNG/VRF7+WtVmb5LOqIe2cVSN8hEvtw5EMKX5wnYka0h4/D6bio7JCELL3dborg5jVJrE7RvfuTL+
-	U1swrEWg==;
-Received: from d4b26982.static.ziggozakelijk.nl ([212.178.105.130]:47322 helo=[10.28.188.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1utLsh-00000002QXb-3nRk;
-	Tue, 02 Sep 2025 02:56:44 -0500
-Message-ID: <92912540-23d2-4b18-9002-bac962682caf@embeddedor.com>
-Date: Tue, 2 Sep 2025 09:56:34 +0200
+	s=arc-20240116; t=1756799858; c=relaxed/simple;
+	bh=Gcvqnyx8Usk/FWPQbu2+qHYvDN50/xAOdJmelSgFGmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvWcCe+f+1/whY3FDDOtu8sypjo+JNMfIUbCDa1ij/nM4n3iG2/AocoEVGIT0VatwHo5QqlWBNd6WUIczQBGofJe7BuavV62zLnoc8niFXCwPalPY0oIaO2kvxG1HmRgmPyEE8RuKLPfQZfqrnjp/zzrCfqcdjnwK+nfY7QGkdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aphJ2tE2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41405C4CEED;
+	Tue,  2 Sep 2025 07:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756799857;
+	bh=Gcvqnyx8Usk/FWPQbu2+qHYvDN50/xAOdJmelSgFGmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aphJ2tE2lKg0ht07WmeV+lCEePwouSbeu64wnkgYb+khK2Tj6DN10V1/tjJSGBTE5
+	 HgBQtN5WvjAx9ag+elPJiP6WrFczukBev4nM3r22/HmzIRTG1I9kpJXYU5H633Rr5y
+	 fVSGEfFQQ6YSQp2rbUwbqS8vYizINRI9LmO5xg0wWfljrwPzO311zlkC4mzNox5CtH
+	 TUuDywaVZ0UnJNreB0fcaiYoHskcyifIgVGFpmw5zA9ArX3na2QYaZP5Rki70YFHSk
+	 mPRiXUDX3F1C7OG5lvmQq0GFLzaFL0bDB/rjj5emuuM9vE6V+XgiUs0l8xgIqG6nSh
+	 kwSeV6S00qaQQ==
+Date: Tue, 2 Sep 2025 09:57:34 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, linux-sound@vger.kernel.org, 
+	lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	drake@endlessm.com, katsuhiro@katsuster.net, matteomartelli3@gmail.com, 
+	zhoubinbin@loongson.cn, KCHSU0@nuvoton.com, patches@opensource.cirrus.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org
+Subject: Re: [PATCH 1/3] ASoC: dt-bindings: everest,es8316: Document routing
+ strings
+Message-ID: <20250902-cooperative-mink-from-asgard-b7ed63@kuoka>
+References: <20250809151853.47562-1-jihed.chaibi.dev@gmail.com>
+ <20250809151853.47562-2-jihed.chaibi.dev@gmail.com>
+ <d5d0133f-1b42-4ad0-a3e0-2a2bdeb67484@kernel.org>
+ <c280310a-d9cf-4bc5-989c-0fb8093f714d@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
- warnings
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-hardening@vger.kernel.org, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>, Chen Ridong <chenridong@huaweicloud.com>
-References: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
- <wkkrw7rot7cunlojzyga5fgik7374xgj7aptr6afiljqesd6a7@rrmmuq3o4muy>
- <d0c49dc9-c810-47d2-a3ce-d74196a39235@embeddedor.com>
- <y7nqc4bwovxmef3r6kd62t45w3xwi2ikxfmjmi2zxhkweezjbi@ytenccffmgql>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <y7nqc4bwovxmef3r6kd62t45w3xwi2ikxfmjmi2zxhkweezjbi@ytenccffmgql>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 212.178.105.130
-X-Source-L: No
-X-Exim-ID: 1utLsh-00000002QXb-3nRk
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: d4b26982.static.ziggozakelijk.nl ([10.28.188.44]) [212.178.105.130]:47322
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfCuq88bk4aQiDXdTXKsNCvxU9TluoiD1fTW86DGqHfE05NT3noR4Mm1/+vHhqzMfZOTzjngqybGY/KVfrQox2N1Th1QYcwtXYMDtIjTlCU3dq55wncEb
- zgZpaddaQHYJzb3b2IGOXNUAPjnjBRZJd3RBhAJERouJU7iQP0ZFJNc9qYnAAV0KgM4nFeMCvkPg/mB/0GkoiaN0Ia4CR3w+wHopp0nzSEd19ixoyPwFebeN
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c280310a-d9cf-4bc5-989c-0fb8093f714d@sirena.org.uk>
 
-
-
-On 9/1/25 19:58, Michal Koutný wrote:
-> On Mon, Sep 01, 2025 at 05:21:22PM +0200, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
->> Because struct cgroup ends in a flexible-array member `ancestors`.
->> This triggers the -Wflex-array-member-not-at-end warns about. So,
->> while `ancestors` is indeed a flexible array, any instance of
->> cgroup embedded in another struct should be placed at the end.
+On Tue, Aug 12, 2025 at 12:05:55PM +0100, Mark Brown wrote:
+> On Tue, Aug 12, 2025 at 09:40:20AM +0200, Krzysztof Kozlowski wrote:
+> > On 09/08/2025 17:18, Jihed Chaibi wrote:
+> > > The es8316 driver defines several DAPM widget names that are used for
+> > > audio routing in the device tree. However, these strings are not
+> > > documented in the binding file.
 > 
-> Oh, so TRAILING_OVERLAP() won't work like that?
-> (I thought that it'd hide the FAM from the end of the union and thus it
-> could embedded when wrapped like this. On second thought, I realize
-> that's exclusive with the static validations.)
+> > > This forces developers to read the C source to discover the valid
+> > > names, which can be inefficient and error-prone.
 > 
->> However, if we change it to something like this (and of course
->> updating any related code, accordingly):
->>
->> -       struct cgroup *ancestors[];
->> +       struct cgroup **ancestors;
->>
->> Then the flex in the middle issue goes away, and we can have
->> struct cgroup embedded in another struct anywhere.
->>
->> The question is if this would be an acceptable solution?
->>
->> I'd probably prefer this to remain a flexible-array member,
->> but I'd like to hear people's opinions and feedback. :)
+> > Reading free form text is as inefficient and error-prone as reading the
+> > driver.
 > 
-> I'd prefer if cgroup_create could still work with one allocation only
-> both for struct cgroup and its ancestors array. (Cgroup allocation
-> happens many times in a day.)
-> 
-> The increase in struct cgroup_root size is IMO not that problematic.
-> (There are typically at most CGROUP_SUBSYS_COUNT roots with gradual
-> trend to only the single cgrp_dfl_root.)
-> 
-> Note that it'd be good to keep it enclosed within struct cgroup_root
-> (cgroup1_root_to_use could use struct_size()), however, the
-> cgrp_dfl_root would still need the storage somewhere.
+> On the one hand, yes.  On the other hand this is better than what we had
+> before so seems useful.  Ideally at some point someone will add a
+> binding for this but that's a much bigger piece of work.
 
-If the increase in size is not a problem, then something like this
-works fine (unless there is a problem with moving those two members
-at the end of cgroup_root?):
+Fair enough. Jihed, please send v2 with descriptions referring rather to
+pins or device, instead of the driver. Even though you took them from
+driver, people would just copy-paste this description later for their
+new drivers...
 
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 539c64eeef38..bd28d639a78a 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -630,16 +630,6 @@ struct cgroup_root {
-         struct list_head root_list;
-         struct rcu_head rcu;    /* Must be near the top */
-
--       /*
--        * The root cgroup. The containing cgroup_root will be destroyed on its
--        * release. cgrp->ancestors[0] will be used overflowing into the
--        * following field. cgrp_ancestor_storage must immediately follow.
--        */
--       struct cgroup cgrp;
--
--       /* must follow cgrp for cgrp->ancestors[0], see above */
--       struct cgroup *cgrp_ancestor_storage;
--
-         /* Number of cgroups in the hierarchy, used only for /proc/cgroups */
-         atomic_t nr_cgrps;
-
-@@ -651,7 +641,21 @@ struct cgroup_root {
-
-         /* The name for this hierarchy - may be empty */
-         char name[MAX_CGROUP_ROOT_NAMELEN];
-+
-+       /*
-+        * The root cgroup. The containing cgroup_root will be destroyed on its
-+        * release. cgrp->ancestors[0] will be used overflowing into the
-+        * following field. cgrp_ancestor_storage must immediately follow.
-+        *
-+        * Must be last --ends in a flexible-array member.
-+        */
-+       TRAILING_OVERLAP(struct cgroup, cgrp, ancestors,
-+               /* must follow cgrp for cgrp->ancestors[0], see above */
-+               struct cgroup *cgrp_ancestor_storage;
-+       );
-  };
-+static_assert(offsetof(struct cgroup_root, cgrp.ancestors) ==
-+             offsetof(struct cgroup_root, cgrp_ancestor_storage));
-
-
-The assert above checks that no misalignment is inadvertently
-introduced between FAM and cgrp_ancestor_storage.
-
-Thanks
--Gustavo
-
+Best regards,
+Krzysztof
 
 
