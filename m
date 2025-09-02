@@ -1,98 +1,209 @@
-Return-Path: <linux-kernel+bounces-796894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE58B408F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:30:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A36BB408F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396BD5479AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26DE1B27C52
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AF4320A07;
-	Tue,  2 Sep 2025 15:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42C30C341;
+	Tue,  2 Sep 2025 15:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUQtterF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Qo5pXRib"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E053128D6;
-	Tue,  2 Sep 2025 15:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA04D231A23
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827003; cv=none; b=Ubn6TZqYyih5QuTxr2dLSXvkFw+hBrYZvUi/TLrWTS3Mq46nAOFq4qk0jKGGoDaB7kgSUeIw1DL5zSNQcDBZUstiC652ymtFulaBmfDGAU37DkBtA/tbvDBFFm7lwT4tURbUyIK4n48YYleeB/UBei4psDqOjJO2TUksJ5wG27I=
+	t=1756827054; cv=none; b=dvpqTZPT6uRZuVKmT6EZ0+JFlsaJsyUff2Af5eMj4m2/M51MHNmpPgOYT0Y8WbqvwHwMNUVe7LdGyXl4bMZplQ2iBY4P3GCrHyIhveLKKYka2btGZROaiXFaV4PQJn0mQhQ7A6kW5CDGByWbcgT++123bJ5vnHCthqyzsUd3JOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827003; c=relaxed/simple;
-	bh=k7xaqgxUhvucn0+WGTvIZyGwsHYi8uMgMRuBoGs5D2A=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JUs+q2r0dZy+PLNoxsulg5E7Df7hgpRqYXBmuaeYAhDVKHQ3jUaosJ7ipqvFALdfm3TnFggWIpGLAb4sbZjY+J/ko+kZ24rh6ojSUXef4WodF4gj/rMUtykYugzFczhJPqZRbTHXKcIXXY6eWxy+1XSYUHQjHxAa8Im6vSQUT2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUQtterF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2572C4CEED;
-	Tue,  2 Sep 2025 15:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756827003;
-	bh=k7xaqgxUhvucn0+WGTvIZyGwsHYi8uMgMRuBoGs5D2A=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KUQtterFkIXAp7fifKyFzJwyDVmBBG+8ZvlyDAo195yMl3MvXp5ptDn9DuFExrAF3
-	 MPc7jGYVN3IU8bHcE0aO74lsKjP/2msrbo0rpRCe1BKMzrh3kvLwYVjrybB+qB+r1j
-	 jEHncNUOMBHC9J5vMlrvjXra3zajdO5NjRAaYtam2HdxOgnFbIxMFdYbQqiBuz92J6
-	 0SxIpaBslOOXOHyPgGPkMteREwmLBKZVYzaB3qvyS7GawWpd2u1wB4fC92WjWABbLZ
-	 VxQBeg82CtjJG70upMh+crbtKK8f7Jl60UBEIorEjM4jUJQ+zIq20X6C4hAJVS+B28
-	 sPf8HDpbRo3RA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE9A3383BF75;
-	Tue,  2 Sep 2025 15:30:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756827054; c=relaxed/simple;
+	bh=H5D1mB92sVGC6p9xvxd1ycfmo/pkWqLUN1RRpbx9IGk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kCkjTXlTklpNeI4392661Q0nFHfhHH0BMgl+ixtODS+Waazvc7s/ljIzmtb1KnhdVLiRwt726OsEEACeXJWajUOUfluS4WIiO6KK/yqRRKmpi+YplQPzj9iyB+eodN2t/Q9/0SKS8h0MSMeZ9dhOnMsZ5tnGGQYAy5TixGKhBHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Qo5pXRib; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30ccebab736so4807638fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756827051; x=1757431851; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cqQ4WPvFOC/zDvh2F7EYF1aCNsNr1wJdA0MPmR/NX3o=;
+        b=Qo5pXRibrGRLi9tNUDaGyfy5b4tRNvPTawufsk3Ukd+ISmJjI8jRB1QyNkV0T+R6ry
+         tVdg1OgGD7eCC6IdP5+ueDaPTeYRpzfDSEBRajKjKYo0LDOdp6GQWD+Z/md+rkAqYy1J
+         +39OUts3NO7mkZ18HYEtuMsVnHAbMOxCp9utsQ42ZuvDJQXgqx6aY42mePUPs6zaWMc2
+         OkryK9gvpfQwfejEiOPIYq29GO3+r3+RIuw0xJGTJnndsNXpmXl7a8VC2hPzNod2x6YN
+         KCP1dkKjMv7wrFMu2887Ut7VtEzyu6dz692WaqTZIwpNSOgLTWww9tqVC0drY8pv35mM
+         Na8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756827051; x=1757431851;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cqQ4WPvFOC/zDvh2F7EYF1aCNsNr1wJdA0MPmR/NX3o=;
+        b=PAMMvyBeDUVmPUleoGvFVxW+hBAKx9ttbcGuN8RfKMwmp9c0KNCG8cNJE6WIvfg7Qu
+         HuA0Fjr8K7Jn5Bk/nVX2YQ5elIMQrWI1BqmZ4xKOiXNqUVhCd1BNwFqTZNkAOnpfQp0U
+         2MCyPD4s2dvEFKUC+NtQ/2lVbsIPUDxMZUwVHir3g76MOcVZD0ep9tNtnof4IXOT+MLG
+         l8vS0K5AVAevuHvQMMkCm2xVzGE5sb0PCTF82fUt2l+DGCrPHXRNTxXpvbagi2z4Zf27
+         OBvy0rxA7pFR7k5NTt7VvjeIjDOGVDqk6mvyf6BfunCgmyU2cxu36dznn/LHx0T6xxoM
+         Ixrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRN4xmiTIT47CucrXw38MBnSpN1E5vf2E2mvVZN08f+dfz5Dl4Y47IJCaur4cjIrI9NnpCS6Qy/uCmRLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHK2K/TZ/bWFWv/2NXe0t5Y5WsLOKxqwTjFegePzIcY7c54QqP
+	iyvdhlcuk04qqMs5w/2FUMDZssyNPhPqdGXNOraY71eXz/Y9kPor8nrdeIoHwlTP2cN4cAyN3gq
+	ad9ku
+X-Gm-Gg: ASbGncvzYg8H4yXbTq8hIy89i/CoaJF75DKPMg5BvbJ9nsVWhW4WH0jkrLZ1gr88Syi
+	h1TZVMG+l5N2cj/3oUDIoEFPqLUetsYgEXPMj15sg8ywaZ0IHQv2iRiiilA0CeZ++xxD3z050hK
+	ypyqnmE1MZsOtIv8DLmhd5MQDgWxLZb+fcoMtpQeHYc/59k9EmZD2OF7Y5kmUzwfuR3nAwvqS+9
+	5JtAvxLd+cJrbAQnXCXldQS1rxrLrBHHmINSuE4QBf5iwuNAoumUQ3m87kEC8YeE9wlqI+1ZYVJ
+	T7gwLUWxiTgSNhB6kl3CHmZj1z2FQHPQqfa1fLSmkCzbgUOtNjmfLIfYJNBZOqA0faagV3wQfsv
+	ifuARGWWZ1QaQIyB7lQzJqHaPZhQkmjVRBy3jSglD0tNlUgsh1B8a6Cq1nUdNgyBCUHFQ8oEp
+X-Google-Smtp-Source: AGHT+IHT8XwRiHCN75IMWkHExPEmJnsitMmA0YzWNkodLNJRcwmanY0UNlPygOc7Bc7GtosZ+wqf2w==
+X-Received: by 2002:a05:6870:e0d4:b0:315:7456:1ec2 with SMTP id 586e51a60fabf-3196337628emr4327586fac.24.1756827049391;
+        Tue, 02 Sep 2025 08:30:49 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b? ([2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-745742a6716sm1644969a34.14.2025.09.02.08.30.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 08:30:48 -0700 (PDT)
+Message-ID: <7176887b-d406-46e4-b43a-7924c36ddb78@baylibre.com>
+Date: Tue, 2 Sep 2025 10:30:47 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v8 0/2] bpftool: Refactor config parsing and add CET
- symbol
- matching
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175682700752.343659.7302091706748568937.git-patchwork-notify@kernel.org>
-Date: Tue, 02 Sep 2025 15:30:07 +0000
-References: <20250829061107.23905-1-chenyuan_fl@163.com>
-In-Reply-To: <20250829061107.23905-1-chenyuan_fl@163.com>
-To: chenyuan <chenyuan_fl@163.com>
-Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- yonghong.song@linux.dev, olsajiri@gmail.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, chenyuan@kylinos.cn
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 1/2] dt-bindings: iio: adc: add max14001
+From: David Lechner <dlechner@baylibre.com>
+To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Kim Seer Paller <kimseer.paller@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Jonathan Santos <Jonathan.Santos@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>
+References: <cover.1756816682.git.marilene.agarcia@gmail.com>
+ <34b7cc7226e789acdc884d35927269aa5a0d5e14.1756816682.git.marilene.agarcia@gmail.com>
+ <89265de7-eeff-4eea-838b-6a810c069a20@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <89265de7-eeff-4eea-838b-6a810c069a20@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
-
-On Fri, 29 Aug 2025 07:11:05 +0100 you wrote:
-> From: Yuan CHen <chenyuan@kylinos.cn>
+On 9/2/25 9:29 AM, David Lechner wrote:
+> On 9/2/25 8:15 AM, Marilene Andrade Garcia wrote:
+>> Add device-tree documentation for MAX14001/MAX14002 ADCs.
+>> The MAX14001/MAX14002 are isolated, single-channel analog-to-digital
+>> converters with programmable voltage comparators and inrush current
+>> control optimized for configurable binary input applications.
 > 
-> 1. **Refactor kernel config parsing**
->    - Moves duplicate config file handling from feature.c to common.c
->    - Keeps all existing functionality while enabling code reuse
+> When there are multiple devices, DT maintainers like to know
+> what is the difference between the devices.
 > 
-> 2. **Add CET-aware symbol matching**
->    - Adjusts kprobe hook detection for x86_64 CET (endbr32/64 prefixes)
->    - Matches symbols at both original and CET-adjusted addresses
+>>
+>> Co-developed-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+>> Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+>> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 > 
-> [...]
+> Sine the patch is From: M.A.G., according to [1], this should be:
+> 
+> Co-developed-by: K.S.P.
+> Signed-off-by: K.S.P.
+> Signed-off-by: M.A.G.
+> 
+> (hopefully obvious, but don't use the abbreviations - I just did
+> that for brevity)
+> 
+> [1]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
+> 
+>> ---
+>>  .../bindings/iio/adc/adi,max14001.yaml        | 79 +++++++++++++++++++
+>>  MAINTAINERS                                   |  8 ++
+>>  2 files changed, 87 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+>> new file mode 100644
+>> index 000000000000..ff9a41f04300
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+>> @@ -0,0 +1,79 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +# Copyright 2023-2025 Analog Devices Inc.
+>> +# Copyright 2023 Kim Seer Paller
+>> +# Copyright 2025 Marilene Andrade Garcia
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/adc/adi,max14001.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Analog Devices MAX14001-MAX14002 ADC
+>> +
+>> +maintainers:
+>> +  - Kim Seer Paller <kimseer.paller@analog.com>
+>> +  - Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+>> +
+>> +description: |
+>> +    Single channel 10 bit ADC with SPI interface.
+>> +    Datasheet can be found here
+>> +      https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
+>> +
+>> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - adi,max14001
+>> +      - adi,max14002
 
-Here is the summary with links:
-  - [v8,1/2] bpftool: Refactor kernel config reading into common helper
-    https://git.kernel.org/bpf/bpf-next/c/70f32a10ad42
-  - [v8,2/2] bpftool: Add CET-aware symbol matching for x86_64 architectures
-    https://git.kernel.org/bpf/bpf-next/c/6417ca85305e
+It looks like we could have a fallback here since it looks like
+the only difference between the chips is:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+	The inrush trigger threshold, current magnitude, and
+	current duration are all programmable in the MAX14001
+	but are fixed in the MAX14002.
 
+Which would look like this:
+
+    compatible:
+      oneOf:
+        - const: adi,max14002
+        - items:
+            - const: adi,max14001
+            - const: adi,max14002
+
+And
+
+	compatible = "adi,max14001", "adi,max14002";
+
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  spi-max-frequency:
+>> +    maximum: 5000000
+
+After reading the driver, I see that we should also have:
+
+	spi-lsb-first: true
+
+as a required property.
 
 
