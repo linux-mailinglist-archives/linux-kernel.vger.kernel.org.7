@@ -1,128 +1,122 @@
-Return-Path: <linux-kernel+bounces-796562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1A8B40279
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:18:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2C2B4028D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EDD81B22AF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67794168140
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936132D6E4C;
-	Tue,  2 Sep 2025 13:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01BC3043D0;
+	Tue,  2 Sep 2025 13:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0YHo9Ca"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CWaUPFgS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55552BDC17
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFC52BE65C;
+	Tue,  2 Sep 2025 13:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819052; cv=none; b=JI9UBRy5k2BcEgRT3U0+gZVoPSqROb4LjwXwCqXn1ZrIGA+VEIUiZZD5jhKGPNcBUmxBJQ0LnBr8qxBt5gXKCiNi/Ti36MXqZP54iLcfcwcseolfJnX0np2Fx1NYOWfX8cOpRSmzFynJOZjJLiNrLo82qeY+1w6I+m2FbjhInOQ=
+	t=1756819009; cv=none; b=OY7Fi85uzLBuV32m8y6fBePSxj9mE02LtGrerW9L0z6zE3R0BACK4vY7fp9XXLNJjo0I0ODm+ka9N60AmqPhl8E8s7/Iqnj85pGym+yDTgVqk9aZBM4cp/pI521wTJAF706NG3Wz2IzR1HTcjQeJUkdsYzWqYPccKlCKgVSDEkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819052; c=relaxed/simple;
-	bh=P4DRa5JyII0VmmjBaXPWBiaM6z9yrS48QrKnGh0SnUw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6fimvYtOKR9unQKTvwN4QLLOEdz8wr8nu/x13W2uUmfUiD44LcVy0BXGVZ77LR60bum75E1cAOdbu06KPPhJH4HvCabPKsOPmpCeZSP5+nz3U3JvqMTU3MDuYBnT0pkKs1SGPVPYuDuOF4JycTP+qmuvKntP+GL/8yk1+3HeP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0YHo9Ca; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF71C4CEFB
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756819051;
-	bh=P4DRa5JyII0VmmjBaXPWBiaM6z9yrS48QrKnGh0SnUw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=g0YHo9CasoNdIWBnC6ZWofH+6+jqufHWP1dOSTmjkDrgktqxjbx7FfSye145xBY8e
-	 pE/N5HwOFiIwYrkaJTcy6Scp3N23RjmOUqQhp2n0JW1m5sqaAjOi//5ivjAxt3LdnF
-	 bMaSRDh8LY53loUz3hBh28yEdX9viNdSxeYRd5X1U1Z6FSkQmGmU0gNbWcpIwmO6fg
-	 5bSpDsAOnAdZ5q7jlK1NRGsWpRpWAn8WnnN2fe1PNpdP6l1D4hToGGvJPZmbuGwHsC
-	 CVuh88KrE96N84P2Ul4Kutwqv49prfq28tLqn8hOS5VNeDyeuEr7cvnOCTbnDGEuO2
-	 lI5euodoUpW0Q==
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-723ad237d1eso4355727b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:17:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAj8gu/hM21WfaPofc1p1zpW7sInPSAsaNCQJMeGYlCKkLdHPkVYmEjF+mjN1v0DVDbAUJTR29Ci87Fbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ7qI/TbRyP+s7VTlV8gTxbXnOph/9C4zaoOFESYX2OCTVzBO4
-	aBIQpWl8hSAXp/W1njFG92sCmrXs64J3+3PTBBEbW0nkae2Mq9/5KBAcZBGhxbD3He20XUvk+7r
-	2c1RWMdddnXT35pO/OmHwXyuyBq7PiTO0gYHiwq6oIg==
-X-Google-Smtp-Source: AGHT+IFyG1TWkVu49fYJr3rP5UGefFT3fiTlrwpJwWSaLn5aykXeZnUeAYEc1mU7ovusljsHKcgHt7hBrhUYRP9VA5g=
-X-Received: by 2002:a05:690c:6311:b0:721:5b31:54c4 with SMTP id
- 00721157ae682-7227654f437mr124374017b3.46.1756819050786; Tue, 02 Sep 2025
- 06:17:30 -0700 (PDT)
+	s=arc-20240116; t=1756819009; c=relaxed/simple;
+	bh=vgV6oU+KN3/QRZFIeHk7PC6Ii26XZHrx8aCL79SZIG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QDEx5VrdoLiZXyGgwuP9jSxdYLIBa14vJEHTlmhvZlqM1GuxNV7Sq914SKwti99ASZFtdoXpIq9QlFWbu2vRXGuDf/Lm1HTzDUq40FDferIjUvLw54Yk3nGGhJ5MuhZBK1Au2C8j4Q56CAdnJp54lBnXP5MRMXD2ZUg5SXxtOIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CWaUPFgS; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756819008; x=1788355008;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vgV6oU+KN3/QRZFIeHk7PC6Ii26XZHrx8aCL79SZIG4=;
+  b=CWaUPFgSI5dLxXyz2uyBIsHvigOmII+blAQS3sN/nkYNkH3LqEvEas6w
+   3AVuuoHtOkDiN4/qJ3JdEuCzqxg9+iTux1cwk5rzds0AQEzjT80gFHZ4F
+   G9u0z5zNrXyW/31Ax3t7ju6cEKnZk0UZikROUeA4GKuAzGS9YrhX/+Upx
+   CZe+wMyJqi2NZVVodNxt+TfgmmQcEJcuvDLmgx7siYuPuZKAFuSC8nm8z
+   hDXalSjI1FxxDOg3+tLSTteHLhN0094fN2gXZL7I9Ai4vHfJobtdGlYXx
+   86iwvo3QOlx890RZGQGutts0Mb9cUorOT0t5bJVDlK3lRyCAEnxkP048N
+   A==;
+X-CSE-ConnectionGUID: CBgZDrbhT+apD24wq/2w1g==
+X-CSE-MsgGUID: 8+Fw75hWSpOZ7joM4JTwbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="70521229"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="70521229"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 06:16:47 -0700
+X-CSE-ConnectionGUID: NfIZbdgxRV2me/reuHxKHA==
+X-CSE-MsgGUID: orfH6rrfQgGlXSCs3uNgog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="170831206"
+Received: from carterle-desk.ger.corp.intel.com (HELO [10.245.246.183]) ([10.245.246.183])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 06:16:42 -0700
+Message-ID: <ec553d4f-169c-4173-8fa8-281ed3a147d8@linux.intel.com>
+Date: Tue, 2 Sep 2025 16:17:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-9-ryncsn@gmail.com>
- <CAGsJ_4xON7fYg1VvcjLOsgBb_Wp4ruC+vdA4Q496GH1jXunU1A@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xON7fYg1VvcjLOsgBb_Wp4ruC+vdA4Q496GH1jXunU1A@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 2 Sep 2025 06:17:19 -0700
-X-Gmail-Original-Message-ID: <CACePvbUVK45uRPVoO3ubDfQHikebSHFNQOsMTMvJ91QQZH2HwQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxDy3IryjPOmDhEZr0Uxc_iBeLDxMwIVpiY5RAprHfkS2MuWTBmDS4qd2I
-Message-ID: <CACePvbUVK45uRPVoO3ubDfQHikebSHFNQOsMTMvJ91QQZH2HwQ@mail.gmail.com>
-Subject: Re: [PATCH 8/9] mm, swap: implement dynamic allocation of swap table
-To: Barry Song <21cnbao@gmail.com>
-Cc: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] ASoC: SOF: Intel: hda-stream: Fix incorrect
+ variable used in error message
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Keyon Jie <yang.jie@linux.intel.com>,
+ sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250902120639.2626861-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <20250902120639.2626861-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 2, 2025 at 4:15=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> On Sat, Aug 23, 2025 at 3:21=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Now swap table is cluster based, which means free clusters can free its
-> > table since no one should modify it.
-> >
-> > There could be speculative readers, like swap cache look up, protect
-> > them by making them RCU safe. All swap table should be filled with null
-> > entries before free, so such readers will either see a NULL pointer or
-> > a null filled table being lazy freed.
-> >
-> > On allocation, allocate the table when a cluster is used by any order.
-> >
->
-> Might be a silly question.
->
-> Just curious=E2=80=94what happens if the allocation fails? Does the swap-=
-out
-> operation also fail? We sometimes encounter strange issues when memory is
-> very limited, especially if the reclamation path itself needs to allocate
-> memory.
->
-> Assume a case where we want to swap out a folio using clusterN. We then
-> attempt to swap out the following folios with the same clusterN. But if
-> the allocation of the swap_table keeps failing, what will happen?
 
-I think this is the same behavior as the XArray allocation node with no mem=
-ory.
-The swap allocator will fail to isolate this cluster, it gets a NULL
-ci pointer as return value. The swap allocator will try other cluster
-lists, e.g. non_full, fragment etc.
-If all of them fail, the folio_alloc_swap() will return -ENOMEM. Which
-will propagate back to the try to swap out, then the shrink folio
-list. It will put this page back to the LRU.
 
-The shrink folio list either free enough memory (happy path) or not
-able to free enough memory and it will cause an OOM kill.
+On 02/09/2025 15:06, Colin Ian King wrote:
+> The dev_err message is reporting an error about capture streams however
+> it is using the incorrect variable num_playback instead of num_capture.
+> Fix this by using the correct variable num_capture.
+> 
+> Fixes: a1d1e266b445 ("ASoC: SOF: Intel: Add Intel specific HDA stream operations")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-I believe previously XArray will also return -ENOMEM at insert a
-pointer and not be able to allocate a node to hold that ponter. It has
-the same error poperation path. We did not change that.
+Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
 
-Chris
+> ---
+>  sound/soc/sof/intel/hda-stream.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/sof/intel/hda-stream.c b/sound/soc/sof/intel/hda-stream.c
+> index aa6b0247d5c9..a34f472ef175 100644
+> --- a/sound/soc/sof/intel/hda-stream.c
+> +++ b/sound/soc/sof/intel/hda-stream.c
+> @@ -890,7 +890,7 @@ int hda_dsp_stream_init(struct snd_sof_dev *sdev)
+>  
+>  	if (num_capture >= SOF_HDA_CAPTURE_STREAMS) {
+>  		dev_err(sdev->dev, "error: too many capture streams %d\n",
+> -			num_playback);
+> +			num_capture);
+>  		return -EINVAL;
+>  	}
+>  
+
+-- 
+Péter
+
 
