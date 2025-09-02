@@ -1,128 +1,184 @@
-Return-Path: <linux-kernel+bounces-797137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDD0B40C52
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:43:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F57EB40C55
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9B347B11F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:41:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F4A5649B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD03322C94;
-	Tue,  2 Sep 2025 17:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEA1345749;
+	Tue,  2 Sep 2025 17:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AvgufOJw"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWzaZhRU"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087772DF15B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DDE213E7A;
+	Tue,  2 Sep 2025 17:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756834958; cv=none; b=IrrFAI0ETf+JRaKiJkxrKDJh6SjtP+pGa5t+Ab3ilJTaUYyyAVFwTepbJm0yWMHVGZODaCS64zLrrgm9rkaTJFkqkHuWccLg9XTVxYLjtFPUqi2+epOH85/Ev3KoFSIROjLPtJvApBfTQQWVneUHxnxeLDI73hAqQ3IFbEhG8Nk=
+	t=1756835039; cv=none; b=qbpRsEzIoISDMKFksWD3Xbj3c2fDS1yqgGDm28e1qPf/6U9K1Vzo7VM2crXs4cS9wjKB+uGIC0NeQ5ryGljC8zCI6jlXOK8ywlIRiPQfAwYjGg44Ymq44X4rXgLiPUqJlztSVKnjyuoOjImE/UOceCJ27INWmlOgsOSP4CbHED8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756834958; c=relaxed/simple;
-	bh=YSAuONSCHnf1OeIZxyJU6HvRtWzZfadpwyG+EIMBY2E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=sHQnh4hFxP07oruH15jPmHNABiUi8xYzJitlipY2LqUQUe7vL30MQ0GKtbBk08kY/Xr1mKuhQw/j9KvrCC/JQHfgNkgN63WN9CD+/is7AbVNfYO4rI+YcktksznX+IV9Schickvll+daIERrqmoiS1LglcRszTjYOw6HPUgb1NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AvgufOJw; arc=none smtp.client-ip=209.85.160.174
+	s=arc-20240116; t=1756835039; c=relaxed/simple;
+	bh=Vme36lNSGQ23tNgKQ2c9wO6J1JV4k7r3beNMjqDeJKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cPFWNI2seRRV0Mjz5cbGZoCQqw6mqLj0KofXk+Qe2Gb8xaGb4f32NCbtwooGiCv4hK8PQGuKwYikA4gNl3w3A5YlaIpB+U+Byc+icXM0/Xs3dHl3J6bR1kSlGLaPISkA+8Beri4mNpzXlqAE6S+y+T+e6jrVattUCkffWfXVkYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWzaZhRU; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b38d4de6d9so3945071cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:42:36 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3cf48ec9fa4so3104213f8f.0;
+        Tue, 02 Sep 2025 10:43:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756834956; x=1757439756; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YSAuONSCHnf1OeIZxyJU6HvRtWzZfadpwyG+EIMBY2E=;
-        b=AvgufOJwSAoG6nw9fSFkONr6sk6mOmofxt8UtMUJ8Qqj0UTLX5tR31YRXxwVSfMHOz
-         +rRAOS484E00mExK+hsUhO7AF+QnVwEvIfq2X2KkFln/wwZNux697YhUdU6Kj4xOIcUZ
-         WR/Y3f+vs6eZTdaObNyOKtfTLna5vmmIVTei+Xq8UmiIQQWoUvAtUwMlHEz7ec6ZN5iX
-         YUf6yL8s3kfkaDqF/TITmLGR5mOirbc4JQdjE6bnD1VNSi4Xy+XUfK/vhQB/cq2mYVhc
-         WNa0YqnLDKkxy/caha+WSu2L1JJmwUa6lMwKkzEjmghwL+yv0uUMNNoaUSrF+5iHVlkL
-         g1kg==
+        d=gmail.com; s=20230601; t=1756835036; x=1757439836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GYP2onSUJNHhGvq3oMvWn0G6NURkvkxAY3WWJ1PkhtM=;
+        b=EWzaZhRUbAif3VB8IJCEePifGTQgX4OrTsrCnqFMps68pUFOA1JYA91qOyqoRvQGn6
+         9T+11nxHU5UwbzpGkJSZ/TjZ0HK/xYXvQlbqp0AiIgUrxxF/OpKTXwyhAh1QCmqBAIsN
+         xPKIb81m19WeynV//VCz4tYv6BewaAUCyIUlbQBm1/PYh8gB6BFV1gUUCmPuA34Vu0If
+         J8iqyx2ttpkP4WgApK2bCDD55k8Np2Bf3k45ZZ1uwl+ni7qcWQOR2+oP95JtT0IAmj14
+         lU+6/7qqOv8NL5MMrS+wFUWd4oElX79X1CjZVmqKmQbK+IAlGWXgdpwrI/Wczi+PelBX
+         1oqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756834956; x=1757439756;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YSAuONSCHnf1OeIZxyJU6HvRtWzZfadpwyG+EIMBY2E=;
-        b=AZLDJoIMut3n3d5vRZk+vANT8FGLjdK0XsfZtZsLMKlKZV/NuV83C6D4eL6hYt9FBG
-         3HlVNCLkBsB9Zz+P6vFIu+Z7DySTTJkwlLZn6khNara93TKoAFWjwBdjvyI2eEPLZPc8
-         DcawyMhM4QaiQGJVhjhfoSpCD2e97TOlBBkUi14lcosBx5TaHxBlcKQQKWeqT089hoAJ
-         Hg9n86DAGcHS8u8w+ceKPgHmrLxSHkL1Rtj+lPhrYh+EgYfPpBUDaHHtt1C8zDlKAErI
-         T9Onre5WrFS6seu1gDtv4qC0HpioDQSMru6iU7/urxDBnJB4vqZFAVAa3dgoG6qo0e8a
-         eOWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEgqNxb0utw9h9k7R3vQilA5COdbp+Xy58rye++ggwcNUnU1pCVuTYgSD5SejCyhVdxKMvjdIj4+ZhIpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz17n4ZcuzIgsAGD1130eiEDpGYDl2+tms1EBEl4eGWrHVBZdwZ
-	BlFmoVDILe/W64VabLMGebWizG0QLVSOEyB6VT5kaKSfbbR3htsnhiBo
-X-Gm-Gg: ASbGnctMW3vZxd4ZRTFODi6VkoYsmw8B5C48H5SRRez4kiwaqEDIcfaADGzGVSvB40P
-	WvXeqhl6yAROYay4qiS7rIXYAliveV0IAIKHB/lPaWzehPd1GRjF9C0b6QADSnwiuJDglHSOY5I
-	WNm0I+7YdfCBxJp/Y/ELoVZVztdMxFf0lnIF31Azhh5jlkZ22YSJfKPmEKVRT2qrJcsrj/VMw7l
-	uWl42XFzIox5zBpZNJiulp129Mqp1FzwhrXsb2pPFopvD0ksFRZDxJVopLB4HbTU55H3DOa3QgS
-	uZPC5OTr4SuYlf6T/b29YxU4iKJPwL6+MLVpo9y5bVAHPWpN82mPlpFzD1bdnxVbXi+nlt83hde
-	9x/2W58fW5yZp6Yl4zf9uuVBchDYaSfGn3xrRu1Ly2dahsLdjXR29cES3S+niw6G6gIFq3jL0/f
-	vrS4VTKQ==
-X-Google-Smtp-Source: AGHT+IEG2NQqLFWuGp1CIieUH4wkqXPqrZcPhOnSBIsgj3DvL4j+IG6INDOPgcU+lMYLbBKn9X44cQ==
-X-Received: by 2002:a05:622a:50b:b0:4b2:e166:7a84 with SMTP id d75a77b69052e-4b31d547b73mr139530961cf.0.1756834955789;
-        Tue, 02 Sep 2025 10:42:35 -0700 (PDT)
-Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b3461c420fsm15622451cf.14.2025.09.02.10.42.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 10:42:35 -0700 (PDT)
-Date: Tue, 02 Sep 2025 13:42:31 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_5/5=5D_docs=3A_ABI=3A_auxdisplay=3A_d?=
- =?US-ASCII?Q?ocument_linedisp_library_sysfs_attributes?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <aLbOGg06ZHkRpDNr@smile.fi.intel.com>
-References: <20250901020033.60196-1-jefflessard3@gmail.com> <20250901020033.60196-6-jefflessard3@gmail.com> <aLbOGg06ZHkRpDNr@smile.fi.intel.com>
-Message-ID: <582C642B-6E20-4E01-9477-8DE9A134D49B@gmail.com>
+        d=1e100.net; s=20230601; t=1756835036; x=1757439836;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GYP2onSUJNHhGvq3oMvWn0G6NURkvkxAY3WWJ1PkhtM=;
+        b=bI1NDtHjCGoa2pkLDvGwFaEoV/Gi+sSdb5heFH3xHimPxAwMenhxh9tBaW/esIWBe+
+         NYW+pUYnGzKHmub8T8jeuSAhjsAwD7aHxvvCDO/sKrzGTKW0hZHRwpWFevG9PdObtUOf
+         lLOspsiI0DAUef6+4wM5Cjih0mbx39gXWIbCC+ucPISAlMFMmBPrjBE8gAcO7j8TdUYl
+         zlCri4cGNPEZNmi+arqY03hwEFRFAymEdW03nYU0wGJKHc7d255rnm4TQ9uBy6YFwvHC
+         wwzctWxZ581FhJiiROrJTk+lk4QwhvRWXNcHo9DqlgYYAcuPSMgeRY8ddHnqaUT6Jq3f
+         u/YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQjWmJD5QMYCs4bt66vZE3S186bVVjbNC6J4bZXDmcKtQk7MnvE50+RKzLQNfwCis1yMxnkb8lKRFcCw==@vger.kernel.org, AJvYcCW65Pz4ma23BjsUlcnq8uCBDve5d8YE7xhVI2uTjBmW36yDP6Uc38dbFGpk2bzDvMBeu9BYdZ6v8ica6P7C@vger.kernel.org, AJvYcCWayIZ81PM0Z08F+zn0sULrtV5IBE0I6j7Se9NkAga2mUhxDWpVjIgPWsHTvH54KUY0U2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+srxgUiv/flPwa38olpr5wDhrF98NEszC/l9SNfmT/MFaw0DR
+	VfAUGLSDW/V0Q8bDGbwpr6sbGpNLLGhVRngyl+l59ws2Zjks22ssNrq2EvQtEs9IVKi1aPL1ruh
+	sJZkL7T4OozNBp35HDLBLxz0WRe3a5UY=
+X-Gm-Gg: ASbGncuIgl0b+vrRMUYr68pNuPvO144l3bJRGA4Sxh8YeWiREFcz5a3FmLVOG5yC+6/
+	2MktddL8rIa2KY3bN28UobsBfOTRdy4ecYLQGJljb7a9/ZuhYPbqbJxpX9q56ks66dvbz6vElWY
+	OwHKM+Naem7Al1+V4w0T9ga/qsS4v7vGeQZwv0wgjX5yHLH28qlBH5uZJz+OZixHOXvxYt7RILU
+	mx5hzDBOVjQ6dqJZdXwG7BUD5OJ4tcUUA==
+X-Google-Smtp-Source: AGHT+IGnbXb7pZEEKjDl3Xb/VVDaXmOkLzTurvRIsV32P0sxrEfn6u8c4/IIuiIksHosRpAojQeaElZ2NxTEaXB5bnc=
+X-Received: by 2002:a05:6000:22c4:b0:3ce:5408:3e9b with SMTP id
+ ffacd0b85a97d-3d1de4bc312mr10005305f8f.32.1756835035509; Tue, 02 Sep 2025
+ 10:43:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20250829080735.3598416-1-ankur.a.arora@oracle.com>
+ <20250829080735.3598416-6-ankur.a.arora@oracle.com> <aLWDcJiZWD7g8-4S@arm.com>
+In-Reply-To: <aLWDcJiZWD7g8-4S@arm.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 2 Sep 2025 10:43:41 -0700
+X-Gm-Features: Ac12FXxPt48d0DrkO5T5_o7KXQLuNvB-VRFsY3mAwjR3V9x2L6YyOpjWOTrBYoQ
+Message-ID: <CAADnVQJf317mXSDLs=K0pzTDGqMA8vqSDoNm5=LvEst6kdAi6w@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] rqspinlock: use smp_cond_load_acquire_timewait()
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-arch <linux-arch@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, bpf <bpf@vger.kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Mark Rutland <mark.rutland@arm.com>, harisokn@amazon.com, 
+	cl@gentwo.org, Alexei Starovoitov <ast@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
+	zhenglifeng1@huawei.com, xueshuai@linux.alibaba.com, 
+	joao.m.martins@oracle.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	konrad.wilk@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le 2 septembre 2025 06 h 59 min 38 s HAE, Andy Shevchenko <andriy=2Eshevche=
-nko@intel=2Ecom> a =C3=A9crit=C2=A0:
->On Sun, Aug 31, 2025 at 10:00:29PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Add ABI documentation for sysfs attributes provided by the line-display
->> auxdisplay library module=2E These attributes enable text message displ=
-ay and
->> configuration on character-based auxdisplay devices=2E
->>=20
->> Documents previously undocumented attributes:
->> - message, scroll_step_ms (introduced in v5=2E16)
->> - map_seg7, map_seg14 (introduced in v6=2E9)
->>=20
->> Documents newly added attribute:
->> - num_chars (targeted for v6=2E18)
->>=20
->> The line-display library is used by multiple auxdisplay drivers and
->> can expose these attributes either on linedisp=2EN child devices or
->> directly on parent auxdisplay devices=2E
+On Mon, Sep 1, 2025 at 4:28=E2=80=AFAM Catalin Marinas <catalin.marinas@arm=
+.com> wrote:
 >
->Can you split to two? Document undocumented but existing ones (as the fir=
-st
->patch in the series) and only add a num_chars when it's implemented?
+> On Fri, Aug 29, 2025 at 01:07:35AM -0700, Ankur Arora wrote:
+> > diff --git a/arch/arm64/include/asm/rqspinlock.h b/arch/arm64/include/a=
+sm/rqspinlock.h
+> > index a385603436e9..ce8feadeb9a9 100644
+> > --- a/arch/arm64/include/asm/rqspinlock.h
+> > +++ b/arch/arm64/include/asm/rqspinlock.h
+> > @@ -3,6 +3,9 @@
+> >  #define _ASM_RQSPINLOCK_H
+> >
+> >  #include <asm/barrier.h>
+> > +
+> > +#define res_smp_cond_load_acquire_waiting() arch_timer_evtstrm_availab=
+le()
 >
+> More on this below, I don't think we should define it.
+>
+> > diff --git a/kernel/bpf/rqspinlock.c b/kernel/bpf/rqspinlock.c
+> > index 5ab354d55d82..8de1395422e8 100644
+> > --- a/kernel/bpf/rqspinlock.c
+> > +++ b/kernel/bpf/rqspinlock.c
+> > @@ -82,6 +82,7 @@ struct rqspinlock_timeout {
+> >       u64 duration;
+> >       u64 cur;
+> >       u16 spin;
+> > +     u8  wait;
+> >  };
+> >
+> >  #define RES_TIMEOUT_VAL      2
+> > @@ -241,26 +242,20 @@ static noinline int check_timeout(rqspinlock_t *l=
+ock, u32 mask,
+> >  }
+> >
+> >  /*
+> > - * Do not amortize with spins when res_smp_cond_load_acquire is define=
+d,
+> > - * as the macro does internal amortization for us.
+> > + * Only amortize with spins when we don't have a waiting implementatio=
+n.
+> >   */
+> > -#ifndef res_smp_cond_load_acquire
+> >  #define RES_CHECK_TIMEOUT(ts, ret, mask)                              =
+\
+> >       ({                                                            \
+> > -             if (!(ts).spin++)                                     \
+> > +             if ((ts).wait || !(ts).spin++)                \
+> >                       (ret) =3D check_timeout((lock), (mask), &(ts)); \
+> >               (ret);                                                \
+> >       })
+> > -#else
+> > -#define RES_CHECK_TIMEOUT(ts, ret, mask)                           \
+> > -     ({ (ret) =3D check_timeout((lock), (mask), &(ts)); })
+> > -#endif
+>
+> IIUC, RES_CHECK_TIMEOUT in the current res_smp_cond_load_acquire() usage
+> doesn't amortise the spins, as the comment suggests, but rather the
+> calls to check_timeout(). This is fine, it matches the behaviour of
+> smp_cond_load_relaxed_timewait() you introduced in the first patch. The
+> only difference is the number of spins - 200 (matching poll_idle) vs 64K
+> above. Does 200 work for the above?
+>
+> >  /*
+> >   * Initialize the 'spin' member.
+> >   * Set spin member to 0 to trigger AA/ABBA checks immediately.
+> >   */
+> > -#define RES_INIT_TIMEOUT(ts) ({ (ts).spin =3D 0; })
+> > +#define RES_INIT_TIMEOUT(ts) ({ (ts).spin =3D 0; (ts).wait =3D res_smp=
+_cond_load_acquire_waiting(); })
+>
+> First of all, I don't really like the smp_cond_load_acquire_waiting(),
+> that's an implementation detail of smp_cond_load_*_timewait() that
+> shouldn't leak outside. But more importantly, RES_CHECK_TIMEOUT() is
+> also used outside the smp_cond_load_acquire_timewait() condition. The
+> (ts).wait check only makes sense when used together with the WFE
+> waiting.
 
-Acknowledged=2E I will document the existing attributes in first patch of =
-the
-series and then document the new num_chars attribute within the num_chars =
-patch
-itself=2E
++1 to the above.
 
+Penalizing all other architectures with pointless runtime check:
+
+> -             if (!(ts).spin++)                                     \
+> +             if ((ts).wait || !(ts).spin++)                \
+
+is not acceptable.
 
