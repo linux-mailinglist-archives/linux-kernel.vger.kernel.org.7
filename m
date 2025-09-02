@@ -1,226 +1,368 @@
-Return-Path: <linux-kernel+bounces-795574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3138B3F4B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:44:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8A3B3F4B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 553F2484823
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:44:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAC267A57E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB082E1749;
-	Tue,  2 Sep 2025 05:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612132E1EE1;
+	Tue,  2 Sep 2025 05:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g6YnVqyB"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WWal+LLy"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADD91E5B71
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 05:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756791842; cv=fail; b=Sr8HMB/tAgeGJUvqywYXBmcCjFJujb8QEZ0VHxOiGbYM0h/wOAf0RQf8rM9ZFIrQ4HHeJH0NHYGuaQznZnVxJ2XVq2qq9dt/vUrTiKyRKw5I9N2RpW7w6ajG2uleKdzVTxsW5Uf3VEGNU+R9/PVlo/7qH9k00NAH1IO5grUf4S4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756791842; c=relaxed/simple;
-	bh=sM8VYabrY0KxcWnIaXEkP6qPPXRwy/msjORet5++Miw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=V3OQsWULjUFBwiJJJlkh8AksiRBuh5bVfsWMsLJo2l7ulMtym9Y/WBdHl5mmk8xFzpX8EjSVSqLt7hLXic5gbGULD0ALUfOz+6LeiyJOPTepiLePgn25q45uTbfnjb2TD+0ngqAKJfsqLhc0vqcBXsGIYFN6n5UFqRKKfAnGfEg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g6YnVqyB; arc=fail smtp.client-ip=40.107.223.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=occ4L9yUum303WAZq3I0C7M0D8el22LEsDH4rmenkDH5FcWTNMHt5Rf5AMlPXH8YJWUv3uzCVO7aNXLvIvcH6ofSqk9Tr5vizAp0l4EZhrAb/IkwLHYb/6030e4pbU/s/iRuscmb63XClvXdb5bX8Stme2z4DmETfMpnIvEhdUs2B3aAlLgz3aHuBIbgjr8eAfLwlCG37YGvDzt27zCDlJjvL545QLAXt4+7Lndixmzy/RC1X09+6LZnlJDvHd2Q0TtbCpO5XI4MhkibSiIQHeiabXj6yZkawyDlmryZV01mh4yX0xbRGCz2ke+zFYrKTtun2jwLXvt4XLreKdv30g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gPDr/yHoVSo7K7CylP1yQv/4TuDZBXdBG3Z7kOeClFQ=;
- b=xQkqiV9DJuGjk60CEZqTcNHGHSgDPX8pDL9uCytUm0gft9m9TbEJXjBJuDjUl84P27Nu+sTwS3uuKEGEqqfI0/oDamokZ6nvfl8+ksjJMLZ/fhK6jzyZ8M7OygFMtwi5SYFtnnp3P7NjQkiko1cSYgQsLY/tztG21f8DvjzfxKc8Sg6kLMCx9nYUKYcuWBJC6IcpfS0E4xEMaNCDGAbXixlJPRcHQH1qKqu5M8+UEEDiuMTjx9xhDZBhMTuUc9NLlveWnPeWeU3QC3BszMemRv5vbI7JfhUputBdcE6daALMz989rOtE3ot6YjfbWnL9Njbe8Nl7eymi9R7B7ediqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gPDr/yHoVSo7K7CylP1yQv/4TuDZBXdBG3Z7kOeClFQ=;
- b=g6YnVqyBffWR0pfFzmmKf1/QzcEIDAVOJwA6OF/1HCV1Bel6OKdjxyWjI9Hman67wGu9MLD3FFe+YWmeEfeqvKyRMhKMJ/F6Pobp1q5rF8eHr7CZZXcN2yqCcoen3ZPckTdmnC9IVQim2EQdaYPe//muEjrqVqKBUAcWSPx9Mzo8bCTqaIiyjpnHi35Mhsmyu0RkI3nlpb54KsXIu7XgbFq0tpmArV9zcDYOEd8BWiHopyMmM1O++iXIJqOscnPeVUExQVarT4ZMbqTwKbFnxfjzJd64qdKgk5+gr0H9mxcLQ80UmUFyK9OtTIbZvGTwnbtVwyhFx1WXC2gvK9dnQg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by IA4PR12MB9834.namprd12.prod.outlook.com (2603:10b6:208:5d3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 2 Sep
- 2025 05:43:55 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 05:43:55 +0000
-Date: Tue, 2 Sep 2025 07:43:42 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
-	mingo@redhat.com, peterz@infradead.org, jake@hillion.co.uk
-Subject: Re: [PATCH v5 2/3] sched_ext: Introduce scx_bpf_remote_curr()
-Message-ID: <aLaEDuOEPT_9VOMO@gpd4>
-References: <20250901132605.2282650-1-christian.loehle@arm.com>
- <20250901132605.2282650-4-christian.loehle@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901132605.2282650-4-christian.loehle@arm.com>
-X-ClientProxiedBy: MI0P293CA0009.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::6) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0BE222581
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 05:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756791883; cv=none; b=ZKoB/deXMMUGHLuwGCGDWZaA0oqn19JunjUfW0bCmyx5ngft/tclCqIvnq+5slv/71LWpsNIshCOET/M+iJoV1S8JFJBXkFxUwijVEU9ljPY7pEsI0PupIIOpAx68DwNbK7gBEIGx/30rWTiXI1SL6otPj2yNghnGEm7RLtOsKI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756791883; c=relaxed/simple;
+	bh=kReW8+vlowvQuNUNtCkvGfwRgH4bJjMGtbP3iw6ytYw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:In-Reply-To:
+	 Content-Type:References; b=IsiTSGpOFxiugt4/GVr0nnt3vPq24wpwp2cIzpTG2DEukHkSDKbO1/pxV55B4CePtCxfmFFtd2yfixZacrDke/5jPN1xmQ8ifI3N0IVwJahAM9jws6pHjsbAmf9lEVlKcYnQSe6E7/VAp3UdaO/B0/O/wHp8f++RaVfeJtGapao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WWal+LLy; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250902054437epoutp0475d83681018caab7ca56eca170ec77f7~hYOexsrB20354303543epoutp04K
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 05:44:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250902054437epoutp0475d83681018caab7ca56eca170ec77f7~hYOexsrB20354303543epoutp04K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756791877;
+	bh=61yoeEEkUHQGyMAppsO7aMM35CSfOq9H04h90+v+208=;
+	h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+	b=WWal+LLyijUWaVeyoAVvh2FutjZqTIko1k6zODDNJgaGf8mNOwGcRh0y3f+P2Yj+5
+	 mrbQbj64UBn+vOAKXn1GurGnUqE0g6iS4imkcJU2r5uA04w/CetGv4qV/hbe5w3126
+	 clzzaWyyTrKvN4q33jjr8mk0o3Mt1OlELZ98Ef2g=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250902054437epcas1p11b9bb6c7032e00f7cee850aa7a9b7ad4~hYOeVQlN-2008320083epcas1p1z;
+	Tue,  2 Sep 2025 05:44:37 +0000 (GMT)
+Received: from epcas1p3.samsung.com (unknown [182.195.38.249]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cGF786rrRz3hhTL; Tue,  2 Sep
+	2025 05:44:36 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250902054436epcas1p39750ecfebd5abff3d74fab591153d1b2~hYOdWMjlj2944829448epcas1p3U;
+	Tue,  2 Sep 2025 05:44:36 +0000 (GMT)
+Received: from [172.25.92.0] (unknown [10.253.99.103]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250902054436epsmtip2e3292f7b85db5120c78dbf43d0eaf2b6~hYOdPwtFP3242032420epsmtip2Z;
+	Tue,  2 Sep 2025 05:44:36 +0000 (GMT)
+Message-ID: <4bacbb26-01b4-4d42-b59b-36fc6ff8fc75@samsung.com>
+Date: Tue, 2 Sep 2025 14:44:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|IA4PR12MB9834:EE_
-X-MS-Office365-Filtering-Correlation-Id: c880dc20-6e3b-44eb-3cf6-08dde9e3b44f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QKNSIYcSNMpOvcX349pXxQhOsyr/hFwIZAYJHIKgPIhMu0sssG4ryIytFeav?=
- =?us-ascii?Q?gHAflfT1x08eWSbsyfffdCp9o437bo6BkmrzfXnNz1tYotJlCkxKJ/Jv9Wp9?=
- =?us-ascii?Q?ePWkmG7AS8dNNYW066KwA0IJ0wdjkMWjzgU7D3WDghI8/HZjYP/2+DZr5Jfw?=
- =?us-ascii?Q?IQuEVfzpQu1ukJbprBX5wfEE/x2vSYHEA6Wi4Cmy2NtNV2FIyy1kBXqFvlpv?=
- =?us-ascii?Q?xKEpVvn+5wS4Slkv/VOAaXAz+Hnq+YIECEcRQCk4Z/0UeocLxcl4aI1s4a+n?=
- =?us-ascii?Q?Zr9XJQrbXCapxg7KGo+RUVn8AD6cfBVDC1VVO+EBwiNYapdGWiu/mku99wl/?=
- =?us-ascii?Q?zxtHPSZpfqkTVogmZZyDBkDRuhkZPHUUcwFD9NLH8/nv2+dIYfeCjtBoR19H?=
- =?us-ascii?Q?Erphr5MFDRebU/MdAjZhRuJ8CmFzKirgJ/mU5hSyQNksIVcq0bp2TJx0Lw6W?=
- =?us-ascii?Q?F2ZUffeFhOn2uGqvf9Ku5CEumaQMQlisn/Nf//wLT6rQtziLnJfEb1d15zQ+?=
- =?us-ascii?Q?YdqKX8LC9ijP1qgYpjc6Vy8RU/zhvMEc/vmUQRh425qxKaY2B0zMRiNWoaLj?=
- =?us-ascii?Q?TdXJVuwXgXMCPM07Rp84v/05JQZFVSaWxdl8w4gCus14xoZrA/pY8P5jqg8k?=
- =?us-ascii?Q?5XSEcIDNHsBq61IsMwpt2PNPXbJh15cUX9/rQc6wSt6QfK9iG7ByCKOdJOWq?=
- =?us-ascii?Q?glarB4DTdyTx9wcbaLHadgNCowZPBypD4iw63G7nTPmDq1h4TbrsjA85+uhi?=
- =?us-ascii?Q?y3HwdeSMpBYue4zazg/QGaLHMiRUsJOhV4RAPtmgq+jyM/Xivp2a82U5P1Rn?=
- =?us-ascii?Q?AFPzVm9xbiJfJFi1M9/RcO+RQJeSCPTREfR72FTxNVHoXubbkrrhe36myaKo?=
- =?us-ascii?Q?ImQyryaTK7GFO0BwzNFwtSxQAixippyalmQAo9HgMAvyvfifhfrCWssxBkwo?=
- =?us-ascii?Q?zbWATKUje9+BgyO/HqF39wd51n1WRg9tEKWdzDRkOPVWSf8dM+NJAz3hHEC0?=
- =?us-ascii?Q?ux0AhByvDydloCi4ZG01ixMGNnoaJX753XvF74OspoDhX9AXSHNU6DebNS5Z?=
- =?us-ascii?Q?+ySCHAIQtBTU1Cp3FEJPevwITQcrn5UYOXZDM57BCnj1EeCUpfEYkDKUB8S5?=
- =?us-ascii?Q?YiTw2X03pxMz6rSmrTB5uN3ytddCPWwAxAbFh+PRee4On50vziWD/shf4fZa?=
- =?us-ascii?Q?FLuI4r+bwIRbV77AVKEW2ZnfRCGV6vTKYjNdmMfB+qwaLMroILdOZ5KnlI3i?=
- =?us-ascii?Q?6mPJBr4a8oPTsPM1q7keU3S3IG14ZN5NQlHPMtpkORLtEdr/K54givFy2+bf?=
- =?us-ascii?Q?b7JrFlnsxEyiv/dIdlJQ/0p4Lph4w86cCJ7jSfsmqw6yrRQZyplPTy+RHwgS?=
- =?us-ascii?Q?PP4awRawClSp8nm/n4/4PTW+urRNrlGYcyxO+gDdtcOxToW1Bw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6VJheiSpqkmXlH0El+ZLsx+Y/ZI7Lw11RztHeommCMKNyPPMnBlfcarpKg4H?=
- =?us-ascii?Q?YrVZr6a3DpxeTy1N3sCHjbgwjOdLbKVW3ulgcs2EVjlB6yRyEw33SkabXOYT?=
- =?us-ascii?Q?pUu+pQWFNwqszqX7GvblNmbwsOvFReU46YOAfE51a1yxj0gAbe7I1vzn66ts?=
- =?us-ascii?Q?dSuqmKiWTAnQvAnUaGn//RO69BJWfZOJbwjWNBQj0dyJCCCZfU+7/TmwCTRv?=
- =?us-ascii?Q?NoBuC9Hz59fF1x6t7SNQVcE0UCj6f+qaTkfv4ycTuvtcrOSmheghy3q2v63f?=
- =?us-ascii?Q?A/qZrVcIwddAI4Kxv3zZ4bQ+rfZUhVGUDPGQinmPzG+/5mQjIN33ToOuhKUZ?=
- =?us-ascii?Q?Q6O7CYoeeb1HQafzsaj9IUztW23HtItAQuKVUN+AC+KZpnwj9VKCFaxnw3ws?=
- =?us-ascii?Q?9z698TRriP9hpennxd+qdZn8BGmkyvudjjjRL/zKMsL1yRcNryydtTf62i2t?=
- =?us-ascii?Q?9Z3GKW3CXdBSHppx0UFXXUyFXKqKDaGyy0xYY8c5NGyFadGFYGBxDo9l2Cio?=
- =?us-ascii?Q?JauMPXutpH0UEsUjWxRnXdxPmjpHSX81TN2CKfyfJQy0jqKxblfhOSf3D1bm?=
- =?us-ascii?Q?+5lORKdgQAWnvdCJ/8VZ2LOByqqqQTFIrk2L0Jj7o+rFzKT4RlKEtFAWOvg0?=
- =?us-ascii?Q?Pb31VwZT1ik/+Hb8r/ElhYqnJYZDma3Bhl5U8ekltUzx8D9ixebgdQOYvst6?=
- =?us-ascii?Q?w5WDdUDPT+6+kK+ZptQGGKwVmv8p9JVdyZucwMG9YrDmPtFZ4MYyTRtpS36b?=
- =?us-ascii?Q?Oy44NocsifwjzZqes28xj7JdbtKRamBAaDxtaqOyZ9Z7AOfsU43VlJB1HLq2?=
- =?us-ascii?Q?LDyvqoQ5LWiCn7B7zNwWonW0X3zFWb4fgoIL1djgEBILqhYHiGWeCH6eATFX?=
- =?us-ascii?Q?WzWJkB615smMj+m8a74MiePzTonKsN8TBmpQw9Z9p90gmbUbTeA45vQbtA2W?=
- =?us-ascii?Q?kv6Oyp8/hs0IWJL7SK4vk/3FJrVO2plaIoCfcxVVSkSP65vyVMYUZb11IJA0?=
- =?us-ascii?Q?mFiPxE+0dq13jO5Q3ryQo4JFCz21ccJ7LkMql66/7WBiE3Ab+UW3WlZ9cubj?=
- =?us-ascii?Q?hA289lQqDjpRUYgTFijsbWkJB5ngLd4MTOWONzFNh5CQdG1kwbyd+K+KUrN3?=
- =?us-ascii?Q?bv9fZ1+2DSaS+yc1LuSt/vh4nquB6Cil5YPTDV9TtBU+euEg34HT7+P8xPmO?=
- =?us-ascii?Q?bz81sZd33RS+Nk5bQ+xaOaQlRKDk1f4IL55z4NisaIaWTEYkuT2gjV3EIvwI?=
- =?us-ascii?Q?/qZ5nNZjNV4xm0j/H9bgrno4Zoha0H6/nFPjFW/A9LV/KXTpGq0mfU2SJw9g?=
- =?us-ascii?Q?EQCaLhcg3xCtRFF6mavBkHYaIA5JFA/RnIBZG97OIsDsji/QjC2QXnhqgSt4?=
- =?us-ascii?Q?CGxhMyuaInXjbqVc6cd6UtzG9kno9mtniV4UCnZhMRIlo+WcRZkpcrN1+waY?=
- =?us-ascii?Q?Jy3rVqZxlco7SqMFfeSVOm6pZsd78/icrUVkHQ049nuTZHcyXa7IZiP5tOha?=
- =?us-ascii?Q?94H7C6PaBcfOtx3CPN2py6PCJlHIjysbm6w9SffHO6TYmkZ8lIXqcAQDi8/U?=
- =?us-ascii?Q?Q9zWinjBI9EOdQe5y4JvlrUGLSiAdfsnQRBJ+sNX?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c880dc20-6e3b-44eb-3cf6-08dde9e3b44f
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 05:43:54.9757
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8E2tH9Cr7Uyara7PGG3w0gI0Hwe+b1Vlir24LqAiF+jmudlfJyHQJFKaTYr7WUgNVSh1VTrU3h2dguACbrOlMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9834
+User-Agent: Mozilla Thunderbird
+From: Sungjong Seo <sj1557.seo@samsung.com>
+Subject: Re: [PATCH v4 0/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+To: Ethan Ferguson <ethan.ferguson@zetier.com>
+Cc: cpgs@samsung.com, linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yuezhang.mo@sony.com, Sungjong Seo
+	<sj1557.seo@samsung.com>
+Content-Language: en-US
+In-Reply-To: <20250901180201.509218-1-ethan.ferguson@zetier.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250902054436epcas1p39750ecfebd5abff3d74fab591153d1b2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-711,N
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250901180210epcas1p2545fc89d9d2e3d4fec12c5684c70ad9b
+References: <000001dc1a5c$aaac6350$000529f0$@samsung.com>
+	<CGME20250901180210epcas1p2545fc89d9d2e3d4fec12c5684c70ad9b@epcas1p2.samsung.com>
+	<20250901180201.509218-1-ethan.ferguson@zetier.com>
 
-Hi Christian,
 
-On Mon, Sep 01, 2025 at 02:26:03PM +0100, Christian Loehle wrote:
-> Provide scx_bpf_remote_curr() as a way for scx schedulers to check the curr
-> task of a remote rq without assuming its lock is held.
+
+On 25. 9. 2. 03:02, Ethan Ferguson wrote:
+> On 8/31/25 05:50, Sungjong Seo wrote:
+>> Hi,
+>>> Add support for reading / writing to the exfat volume label from the
+>>> FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
+>>>
+>>> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+>>> ---
+>>>  fs/exfat/exfat_fs.h  |   5 +
+>>>  fs/exfat/exfat_raw.h |   6 ++
+>>>  fs/exfat/file.c      |  88 +++++++++++++++++
+>>>  fs/exfat/super.c     | 224 +++++++++++++++++++++++++++++++++++++++++++
+>>>  4 files changed, 323 insertions(+)
+>>>
+>>> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+>>> index f8ead4d47ef0..ed4b5ecb952b 100644
+>>> --- a/fs/exfat/exfat_fs.h
+>>> +++ b/fs/exfat/exfat_fs.h
+>>> @@ -267,6 +267,7 @@ struct exfat_sb_info {
+>>>  	struct buffer_head **vol_amap; /* allocation bitmap */
+>>>
+>>>  	unsigned short *vol_utbl; /* upcase table */
+>>> +	unsigned short *volume_label; /* volume name */
+>> Why is it necessary to allocate and cache it? I didn't find where to reuse
+>> it.
+>> Is there a reason why uniname is not used directly as an argument?
+>> Is there something I missed?
+>>
+> I thought it might be prudent to store it in the sbi, in case other
+> patches in the future might want to use the volume label. However, since
+> this is not necessary, I can remove it if needed.
 > 
-> Many scx schedulers make use of scx_bpf_cpu_rq() to check a remote curr
-> (e.g. to see if it should be preempted). This is problematic because
-> scx_bpf_cpu_rq() provides access to all fields of struct rq, most of
-> which aren't safe to use without holding the associated rq lock.
+> I chose not to use a uniname, as that would require allocating lots of
+> data, when the maximum amount of bytes present in a volume label is 22.
 > 
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  kernel/sched/ext.c                       | 14 ++++++++++++++
->  tools/sched_ext/include/scx/common.bpf.h |  1 +
->  2 files changed, 15 insertions(+)
+
+What I meant was that since uniname is already assigned within the new
+ioctl, I think we can use it right away. Anyway, this variable in
+sbi right now seems unnecessary.
+
+>>>
+>>>  	unsigned int clu_srch_ptr; /* cluster search pointer */
+>>>  	unsigned int used_clusters; /* number of used clusters */
+>>> @@ -431,6 +432,10 @@ static inline loff_t exfat_ondisk_size(const struct
+>>> inode *inode)
+[snip[
+>>> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+>>> index 538d2b6ac2ec..970e3ee57c43 100644
+>>> --- a/fs/exfat/file.c
+>>> +++ b/fs/exfat/file.c
+>>> @@ -12,6 +12,7 @@
+>>>  #include <linux/security.h>
+>>>  #include <linux/msdos_fs.h>
+>>>  #include <linux/writeback.h>
+>>> +#include "../nls/nls_ucs2_utils.h"
+>>>
+>>>  #include "exfat_raw.h"
+>>>  #include "exfat_fs.h"
+>>> @@ -486,10 +487,93 @@ static int exfat_ioctl_shutdown(struct super_block
+>>> *sb, unsigned long arg)
+>>>  	return exfat_force_shutdown(sb, flags);
+>>>  }
+>>>
+>>> +static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned
+>>> long arg)
+>>> +{
+>>> +	int ret;
+>>> +	char utf8[FSLABEL_MAX] = {0};
+>>> +	struct exfat_uni_name *uniname;
+>>> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>>> +
+>>> +	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
+>>> +	if (!uniname)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	ret = exfat_read_volume_label(sb);
+>>> +	if (ret < 0)
+>>> +		goto cleanup;
+>>> +
+>>> +	memcpy(uniname->name, sbi->volume_label,
+>>> +	       EXFAT_VOLUME_LABEL_LEN * sizeof(short));
+>>> +	uniname->name[EXFAT_VOLUME_LABEL_LEN] = 0x0000;
+>>> +	uniname->name_len = UniStrnlen(uniname->name,
+>>> EXFAT_VOLUME_LABEL_LEN);
+>> The volume label length is stored on-disk. It makes sense to retrieve
+>> it directly. This way, there is no need to unnecessarily include the 
+>> NLS utility header file.
+>>
+> That's true, given I'll be removing the volume_label field from the
+> superblock info struct, I can rework this function to output to a
+> uniname struct.
+>>> +
+>>> +	ret = exfat_utf16_to_nls(sb, uniname, utf8, FSLABEL_MAX);
+>>> +	if (ret < 0)
+>>> +		goto cleanup;
+>>> +
+>>> +	if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX)) {
+>>> +		ret = -EFAULT;
+>>> +		goto cleanup;
+>>> +	}
+>>> +
+>>> +	ret = 0;
+>>> +
+>>> +cleanup:
+>>> +	kfree(uniname);
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static int exfat_ioctl_set_volume_label(struct super_block *sb,
+>>> +					unsigned long arg,
+>>> +					struct inode *root_inode)
+>>> +{
+>>> +	int ret, lossy;
+>>> +	char utf8[FSLABEL_MAX];
+>>> +	struct exfat_uni_name *uniname;
+>>> +
+>>> +	if (!capable(CAP_SYS_ADMIN))
+>>> +		return -EPERM;
+>>> +
+>>> +	uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
+>>> +	if (!uniname)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX)) {
+>>> +		ret = -EFAULT;
+>>> +		goto cleanup;
+>>> +	}
+>>> +
+>>> +	if (utf8[0]) {
+>>> +		ret = exfat_nls_to_utf16(sb, utf8, strnlen(utf8,
+>>> FSLABEL_MAX),
+>>> +					 uniname, &lossy);
+>>> +		if (ret < 0)
+>>> +			goto cleanup;
+>>> +		else if (lossy & NLS_NAME_LOSSY) {
+>>> +			ret = -EINVAL;
+>>> +			goto cleanup;
+>>> +		}
+>>> +	} else {
+>>> +		uniname->name[0] = 0x0000;
+>>> +		uniname->name_len = 0;
+>>> +	}
+>>> +
+>>> +	if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
+>>> +		exfat_info(sb, "Volume label length too long, truncating");
+>>> +		uniname->name_len = EXFAT_VOLUME_LABEL_LEN;
+>>> +	}
+>>> +
+>>> +	ret = exfat_write_volume_label(sb, uniname, root_inode);
+>>> +
+>>> +cleanup:
+>>> +	kfree(uniname);
+>>> +	return ret;
+>>> +}
+>>> +
+>>>  long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>>>  {
+>>>  	struct inode *inode = file_inode(filp);
+>>>  	u32 __user *user_attr = (u32 __user *)arg;
+>>> +	struct inode *root_inode = filp->f_path.mnt->mnt_root->d_inode;
+>> From this point, there is no need to pass root_inode. The root_inode can be
+>> obtained directly from sb->s_root->d_inode within the function.
+>>
+> Must have missed that, thank you!
+>>>
+>>>  	switch (cmd) {
+>>>  	case FAT_IOCTL_GET_ATTRIBUTES:
+>>> @@ -500,6 +584,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd,
+>>> unsigned long arg)
+>>>  		return exfat_ioctl_shutdown(inode->i_sb, arg);
+>>>  	case FITRIM:
+>>>  		return exfat_ioctl_fitrim(inode, arg);
+>>> +	case FS_IOC_GETFSLABEL:
+>>> +		return exfat_ioctl_get_volume_label(inode->i_sb, arg);
+>>> +	case FS_IOC_SETFSLABEL:
+>>> +		return exfat_ioctl_set_volume_label(inode->i_sb, arg,
+>>> root_inode);
+>>>  	default:
+>>>  		return -ENOTTY;
+>>>  	}
+>>> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+>>> index 8926e63f5bb7..7931cdb4a1d1 100644
+>>> --- a/fs/exfat/super.c
+>>> +++ b/fs/exfat/super.c
+>>> @@ -18,6 +18,7 @@
+>>>  #include <linux/nls.h>
+>>>  #include <linux/buffer_head.h>
+>>>  #include <linux/magic.h>
+>>> +#include "../nls/nls_ucs2_utils.h"
+>>>
+>>>  #include "exfat_raw.h"
+>>>  #include "exfat_fs.h"
+>>> @@ -573,6 +574,228 @@ static int exfat_verify_boot_region(struct
+>>> super_block *sb)
+>>>  	return 0;
+>>>  }
+>>>
+>>> +static int exfat_get_volume_label_ptrs(struct super_block *sb,
+>>> +				       struct buffer_head **out_bh,
+>>> +				       struct exfat_dentry **out_dentry,
+>>> +				       struct inode *root_inode)
+>> Instead of passing root_inode, it seems more helpful to pass the
+>> need_create condition to better understand the function's behavior.
+>> As mentioned earlier, the root_inode can be found directly from
+>> sb->s_root->d_inode.
+>>
+> Given I can now obtain the root inode due to your above suggestion, I
+> can use need_create from my previous patch (v3).
+>>> +{
+>>> +	int i, ret;
+>>> +	unsigned int type, old_clu;
+>>> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>>> +	struct exfat_chain clu;
+>>> +	struct exfat_dentry *ep, *deleted_ep = NULL;
+>>> +	struct buffer_head *bh, *deleted_bh;
+>>> +
+>>> +	clu.dir = sbi->root_dir;
+>>> +	clu.flags = ALLOC_FAT_CHAIN;
+>>> +
+>>> +	while (clu.dir != EXFAT_EOF_CLUSTER) {
+>>> +		for (i = 0; i < sbi->dentries_per_clu; i++) {
+>>> +			ep = exfat_get_dentry(sb, &clu, i, &bh);
+>>> +
+>>> +			if (!ep) {
+>>> +				ret = -EIO;
+>>> +				goto end;
+>>> +			}
+>>> +
+>>> +			type = exfat_get_entry_type(ep);
+>>> +			if (type == TYPE_DELETED && !deleted_ep &&
+>> root_inode)
+>>> {
+>>> +				deleted_ep = ep;
+>>> +				deleted_bh = bh;
+>>> +				continue;
+>>> +			}
+>>> +
+>>> +			if (type == TYPE_UNUSED) {
+>>> +				if (!root_inode) {
+>>> +					brelse(bh);
+>>> +					ret = -ENOENT;
+>>> +					goto end;
+>>> +				}
+>> Too many unnecessary operations are being performed here.
+>> 1. Since the VOLUME_LABEL entry requires only one empty entry, if a DELETED
+>>     or UNUSED entry is found, it can be used directly.
+>> 2. According to the exFAT specification, all entries after UNUSED are
+>>     guaranteed to be UNUSED.
+>>
+>> Therefore, there is no need to allocate additional clusters or
+>> mark the next entry as UNUSED here.
+>>
+>> In the case of need_create(as of now, root_inode is not null),
+>> if the next cluster is EOF and TYPE_VOLUME, TYPE_DELETED, or TYPE_UNUSED
+>> entries are not found, then a new cluster should be allocated.
+>>
+>> Lastly, if a new VOLUME_LABEL entry is created, initialization of
+>> hint_femp is required.
+>>
+> Just so I'm sure, if the last dentry in a cluster is TYPE_UNUSED, we can
+> safely overwrite that with the volume label (assuming no other
+> TYPE_VOLUME or TYPE_DELETED have been found previously), and we don't
+> have to allocate a new cluster? And we would only have to allocate a
+> new cluster if there are no TYPE_UNUSED, TYPE_VOLUME, or TYPE_DELETED
+> anywhere in the chain?
+Yes, that's right. If the root directory has an empty entry to use as
+a volume label, no additional cluster is required at this point.
+
 > 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 9fcc310d85d5..e242a2520f06 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -7452,6 +7452,19 @@ __bpf_kfunc struct rq *scx_bpf_cpu_rq_locked(void)
->  	return rq;
->  }
->  
-> +/**
-> + * scx_bpf_remote_curr - Return remote CPU's curr task
-> + * @cpu: CPU of interest
-> + *
-> + * Callers must hold RCU read lock (KF_RCU).
-> + */
-> +__bpf_kfunc struct task_struct *scx_bpf_remote_curr(s32 cpu)
-> +{
-> +	if (!kf_cpu_valid(cpu, NULL))
-> +		return NULL;
-> +	return READ_ONCE(cpu_rq(cpu)->curr);
+> As for hint_femp, should I set the root_inode's hint_femp field to
+> EXFAT_HINT_NONE?
+I think so.
 
-It shouldn't be rcu_dereference(cpu_rq(cpu)->curr)?
+> Thanks you for the sugestions,
+> Ethan Ferguson
 
-Thanks,
--Andrea
-
-> +}
-> +
->  /**
->   * scx_bpf_task_cgroup - Return the sched cgroup of a task
->   * @p: task of interest
-> @@ -7617,6 +7630,7 @@ BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
->  BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
->  BTF_ID_FLAGS(func, scx_bpf_cpu_rq)
->  BTF_ID_FLAGS(func, scx_bpf_cpu_rq_locked, KF_RET_NULL)
-> +BTF_ID_FLAGS(func, scx_bpf_remote_curr, KF_RET_NULL | KF_RCU)
->  #ifdef CONFIG_CGROUP_SCHED
->  BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
->  #endif
-> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-> index f5be06c93359..dd3d94256c10 100644
-> --- a/tools/sched_ext/include/scx/common.bpf.h
-> +++ b/tools/sched_ext/include/scx/common.bpf.h
-> @@ -92,6 +92,7 @@ bool scx_bpf_task_running(const struct task_struct *p) __ksym;
->  s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
->  struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
->  struct rq *scx_bpf_cpu_rq_locked(void) __ksym;
-> +struct task_struct *scx_bpf_remote_curr(s32 cpu) __ksym;
->  struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
->  u64 scx_bpf_now(void) __ksym __weak;
->  void scx_bpf_events(struct scx_event_stats *events, size_t events__sz) __ksym __weak;
-> -- 
-> 2.34.1
-> 
+Thanks!
 
