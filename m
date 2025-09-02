@@ -1,158 +1,164 @@
-Return-Path: <linux-kernel+bounces-796133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDE6B3FC49
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:25:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BBFB3FC73
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B102C3F47
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:25:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7C9D7B6080
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1752F9988;
-	Tue,  2 Sep 2025 10:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA612F4A11;
+	Tue,  2 Sep 2025 10:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="NnJ2AwpV"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kB9mGtfc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1B92F8BD6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A831280CCE;
+	Tue,  2 Sep 2025 10:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808592; cv=none; b=e/p0Ca5YsOYmPRhdO/shK/K1kF/H4Y0sCTgds7cYs7et47Hea13ZC1RbFegKRnDgb1yD7Pf2eNBhmbndAxFos93Zqu9F1VPkFff6SYIhc+rhSNfH7rcp0wJw/RhYpbmwf7c6+kI6MLahpy3a3or1nyoT4oCBbfrGju53AFKcd4I=
+	t=1756808654; cv=none; b=S2igG0DtqgN39RXhj1KKTPLmSr+LamOIEzVFGyPZx5SS+Ws6JLw7SFATuoaFWC1nwqeSXS0FSDvkPRyNLJugyiJVAReQ9v1Hx8LodQu5Sr8mz+h2kSs6KXiNNetZVwR0UBsHf672iIqw98OSsOZ8Kh2kOfktDzL+2CvkN/BOozQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808592; c=relaxed/simple;
-	bh=ak6o9wfTp5ryXXDPf6XC/P1UWDMbG95VtmT3E3nrYhU=;
+	s=arc-20240116; t=1756808654; c=relaxed/simple;
+	bh=v5NDjFO8lUrsXYBoNk20x/0jTMsSJewfLyzSWN2NvCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZoVvc7S0upg88ACDXEsmBjy3jfcHSl87v8USCdeNbB697cBanLKp/3gJwr/tXeB5GsV0Q6rlKKKhSeUvQ33DK6wyUra4/MSmTmedqu9bAgEf4pphzProIJUUnT8xYBmTBN12LjgI1dVfqX5vsi496hdvH3JROQNS/mJOu/5IDiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=NnJ2AwpV; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3298961169bso1941933a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1756808590; x=1757413390; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FiTS8gxM3M1BxU9qGDpyd7c4JddJzb5cIrv8kDeiKxU=;
-        b=NnJ2AwpVAacprqgWWfpyHRoGiTuDLZQ4hjcTP9xeOhVaq1eYPuSXsBM3uvohyNsVOv
-         8FiN2/pICcS06DijmGpYMNy+yq/7E3aMfASCAsNkfnT+vijtwJxr2/n0djHgtBIny/TX
-         RPVLZeH08g0qdNLluDlRZLLBibZ2+tILMnEXg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756808590; x=1757413390;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FiTS8gxM3M1BxU9qGDpyd7c4JddJzb5cIrv8kDeiKxU=;
-        b=YmVTgu4OAPRy8wp8YHVjxph+GNBzkIhtxXVjxccBgh35KaC0ipn/Gh2FIX16vuSxmd
-         d1mn5fkzNRDHPF5nRJSD5UVB2+C2LMOCtk/RQ/hx3L+gVuj4yFQ8kJQbPRIJ8qxCTjrD
-         k5kJmNO9nEhkmUL8p6Ye5SxWpPcmVHYBwPtcmeE3rX8tWg3OD+fU9N2Qlw1oowiGj1T7
-         5d27QzNFroqqHsNbY+SdZgU0IrZWbWlYwO8IZT7tLdqd/dRcsZLxc/qCD3Y5WTd2cCeS
-         6kwrSBt7U0/cDcZv4vVNeZKhKHJxrhuUDo0+03bJ2N1jcLQTkpxKjYK76c3nukY2wsuY
-         6+2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWMjfAZItXzTf8qhtRsBnFOuP9U1uhfMRmNowLeqKUOVLXQCez3KikOS2vtcIxsgGtjO2QQyp2EYOhnrww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0MOK3ZlDy3yFKhB6fKtliR1TYSmZKS5g0RCPlJXseV7kO9ysR
-	fnH9Y2gybO26Uf3TfVTuPV7PhHvMQTIVEs5XRHXQmNWu0en0v0PaHNVlHradd1ZqgCg=
-X-Gm-Gg: ASbGncuNHD5oQgWpl8mIN61WblrbwifHo0VLrg9asBaJq9H7Rur0uQSHFuZqsve2zo3
-	qN98YxI+RrY9KOnfnm6XlgFoCe/FO8rlECzPxTiTpoP7cYi6u4B5F5mV5TSGeTheOuKxDM6Pc/h
-	SGcsM9+AfNDGUqXrFj2SL6LNwjqyelc1Gy9wL3GhiU2ryoRwfFfrxdRS/Z9KdKpSmrCwsNKXCkO
-	tSFuxDCI4lc1G5g00Hsm+GFB+V7fyq6KjD+DK4IHHYhqg9w4ZH175WRJfyNLE+5pBcg1JsfAZjy
-	0x1mJ4UOue1SfAQtoWiTN6hwrij3YqaunC50HtAVTJaPdltgcd9ha4ExIMYrTfWnMzJTWo2DQJ8
-	d/KEtojEc2qbF7yh6l+DMkRkr4uh7AVR7lM4CBUWOqgwGMP1Nmyc5CjsH5sZ6m8xo
-X-Google-Smtp-Source: AGHT+IGWCmV4r/pIo/9Wk0+jYQ9MaFKAPcMCdaaijBHwrZWR32/Er3eKPO5sjeX9rGf22Y8ZIdV76Q==
-X-Received: by 2002:a17:90b:3d48:b0:321:cf49:2c04 with SMTP id 98e67ed59e1d1-32815433803mr14753274a91.9.1756808590452;
-        Tue, 02 Sep 2025 03:23:10 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3274572be3bsm12098423a91.2.2025.09.02.03.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 03:23:09 -0700 (PDT)
-Date: Tue, 2 Sep 2025 19:23:04 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-Message-ID: <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
- <20250822125555.8620-3-sidong.yang@furiosa.ai>
- <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kvv88kFlhyubbDwm4bw5uzwXb5xQpufioAoBaMqU9x4x+c3hO4HyAPcbfvJSD8QNoghj7YDyQgcy2nsSd39AkoC/Ig5h5MhI/m05qiNInHjimOtUxARwWihq+ctVpTMv3cWcOm+rN5jnHHzGIgipKpmFAETyliNPsVuQtF3PE48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kB9mGtfc; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756808653; x=1788344653;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v5NDjFO8lUrsXYBoNk20x/0jTMsSJewfLyzSWN2NvCQ=;
+  b=kB9mGtfcuA0QRGswH0l8MKRJysn3eD5noDeyI/wAzG86Y4zWE3tYwKvm
+   725NxrVwV7mLuKTNwcDh7kap5+IMVyRet/MAIL429UCLFP30H1d3BV0xI
+   r6h1D/XxqOY5EjWawVd0iFhN/dX7qZa8x6i0xic8Gh+dodxWXegOplvBK
+   BsYWaNOIJnzEby7NQQvIDEOId21CaGiU8sQ2YjHh2ty9khkf27NvKGrOF
+   0p/JcOvgt3E5JVIZmZZYTQILslfHp4zYnjCJ1qhqKd3e7Jshl9A+qj3V0
+   1WDkdk1vbOFGO3lBdlTz0Zxoeu+0h2GQJESmD0ixsrJ+umZG2IUcBj4vt
+   w==;
+X-CSE-ConnectionGUID: mhFdhiLGQx2Tgqo/8RcBqw==
+X-CSE-MsgGUID: dLNMD7Y/RnKqDfNwY72UjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="62719596"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="62719596"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:24:12 -0700
+X-CSE-ConnectionGUID: I6HlhqjdSHGTNm9QxC555Q==
+X-CSE-MsgGUID: qaZkQZ/4QvmaUvY93+nUTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="176556266"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 02 Sep 2025 03:24:06 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utOBI-0001pP-0p;
+	Tue, 02 Sep 2025 10:24:04 +0000
+Date: Tue, 2 Sep 2025 18:23:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jacky Chou <jacky_chou@aspeedtech.com>, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	vkoul@kernel.org, kishon@kernel.org, linus.walleij@linaro.org,
+	p.zabel@pengutronix.de, linux-aspeed@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jacky_chou@aspeedtech.com
+Subject: Re: [PATCH v3 07/10] PHY: aspeed: Add ASPEED PCIe PHY driver
+Message-ID: <202509021806.1NtrcLpF-lkp@intel.com>
+References: <20250901055922.1553550-8-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
+In-Reply-To: <20250901055922.1553550-8-jacky_chou@aspeedtech.com>
 
-On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
-> On Fri, Aug 22, 2025 at 5:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > The pdu field in io_uring_cmd may contain stale data when a request
-> > object is recycled from the slab cache. Accessing uninitialized or
-> > garbage memory can lead to undefined behavior in users of the pdu.
-> >
-> > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
-> > each command starts from a well-defined state. This avoids exposing
-> > uninitialized memory and prevents potential misinterpretation of data
-> > from previous requests.
-> >
-> > No functional change is intended other than guaranteeing that pdu is
-> > always zero-initialized before use.
-> >
-> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > ---
-> >  io_uring/uring_cmd.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > index 053bac89b6c0..2492525d4e43 100644
-> > --- a/io_uring/uring_cmd.c
-> > +++ b/io_uring/uring_cmd.c
-> > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
-> >         if (!ac)
-> >                 return -ENOMEM;
-> >         ioucmd->sqe = sqe;
-> > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> 
-> Adding this overhead to every existing uring_cmd() implementation is
-> unfortunate. Could we instead track the initialized/uninitialized
-> state by using different types on the Rust side? The io_uring_cmd
-> could start as an IoUringCmd, where the PDU field is MaybeUninit,
-> write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees the
-> PDU has been initialized.
+Hi Jacky,
 
-I've found a flag IORING_URING_CMD_REISSUE that we could initialize
-the pdu. In uring_cmd callback, we can fill zero when it's not reissued.
-But I don't know that we could call T::default() in miscdevice. If we
-make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
+kernel test robot noticed the following build errors:
 
-How about assign a byte in pdu for checking initialized? In uring_cmd(),
-We could set a byte flag that it's not initialized. And we could return
-error that it's not initialized in read_pdu().
+[auto build test ERROR on pci/for-linus]
+[also build test ERROR on robh/for-next linusw-pinctrl/devel linusw-pinctrl/for-next linus/master v6.17-rc4 next-20250902]
+[cannot apply to pci/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
-Sidong
+url:    https://github.com/intel-lab-lkp/linux/commits/Jacky-Chou/dt-bindings-soc-aspeed-Add-ASPEED-PCIe-Config/20250901-140231
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git for-linus
+patch link:    https://lore.kernel.org/r/20250901055922.1553550-8-jacky_chou%40aspeedtech.com
+patch subject: [PATCH v3 07/10] PHY: aspeed: Add ASPEED PCIe PHY driver
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20250902/202509021806.1NtrcLpF-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250902/202509021806.1NtrcLpF-lkp@intel.com/reproduce)
 
-> 
-> Best,
-> Caleb
-> 
-> >         return 0;
-> >  }
-> >
-> > --
-> > 2.43.0
-> >
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509021806.1NtrcLpF-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/phy/aspeed/phy-aspeed-pcie.c:14:
+>> drivers/phy/aspeed/phy-aspeed-pcie.c:195:25: error: 'aspeed_pcie_of_match_table' undeclared here (not in a function); did you mean 'aspeed_pcie_phy_of_match_table'?
+     195 | MODULE_DEVICE_TABLE(of, aspeed_pcie_of_match_table);
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/module.h:250:15: note: in definition of macro 'MODULE_DEVICE_TABLE'
+     250 | static typeof(name) __mod_device_table__##type##__##name                \
+         |               ^~~~
+>> include/linux/module.h:250:21: error: '__mod_device_table__of__aspeed_pcie_of_match_table' aliased to undefined symbol 'aspeed_pcie_of_match_table'
+     250 | static typeof(name) __mod_device_table__##type##__##name                \
+         |                     ^~~~~~~~~~~~~~~~~~~~
+   drivers/phy/aspeed/phy-aspeed-pcie.c:195:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
+     195 | MODULE_DEVICE_TABLE(of, aspeed_pcie_of_match_table);
+         | ^~~~~~~~~~~~~~~~~~~
+--
+   In file included from phy-aspeed-pcie.c:14:
+   phy-aspeed-pcie.c:195:25: error: 'aspeed_pcie_of_match_table' undeclared here (not in a function); did you mean 'aspeed_pcie_phy_of_match_table'?
+     195 | MODULE_DEVICE_TABLE(of, aspeed_pcie_of_match_table);
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/module.h:250:15: note: in definition of macro 'MODULE_DEVICE_TABLE'
+     250 | static typeof(name) __mod_device_table__##type##__##name                \
+         |               ^~~~
+>> include/linux/module.h:250:21: error: '__mod_device_table__of__aspeed_pcie_of_match_table' aliased to undefined symbol 'aspeed_pcie_of_match_table'
+     250 | static typeof(name) __mod_device_table__##type##__##name                \
+         |                     ^~~~~~~~~~~~~~~~~~~~
+   phy-aspeed-pcie.c:195:1: note: in expansion of macro 'MODULE_DEVICE_TABLE'
+     195 | MODULE_DEVICE_TABLE(of, aspeed_pcie_of_match_table);
+         | ^~~~~~~~~~~~~~~~~~~
+
+
+vim +195 drivers/phy/aspeed/phy-aspeed-pcie.c
+
+   183	
+   184	static const struct of_device_id aspeed_pcie_phy_of_match_table[] = {
+   185		{
+   186			.compatible = "aspeed,ast2600-pcie-phy",
+   187			.data = &pcie_phy_ast2600,
+   188		},
+   189		{
+   190			.compatible = "aspeed,ast2700-pcie-phy",
+   191			.data = &pcie_phy_ast2700,
+   192		},
+   193		{ },
+   194	};
+ > 195	MODULE_DEVICE_TABLE(of, aspeed_pcie_of_match_table);
+   196	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
