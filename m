@@ -1,106 +1,82 @@
-Return-Path: <linux-kernel+bounces-797323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32DCB40ECE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:48:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2210B40ED1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15BD61B65C05
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:49:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E76D7A8B5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D692E8B64;
-	Tue,  2 Sep 2025 20:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F662E7F1D;
+	Tue,  2 Sep 2025 20:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUiOR0cb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQGeIPGl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B7F26C3A4;
-	Tue,  2 Sep 2025 20:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2552253EB;
+	Tue,  2 Sep 2025 20:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756846126; cv=none; b=a5R45yTvE7FAn2fiUpQIdATHSbtdL0KBaxF8drU2stAJPthP02grdnimA5rDqZ2JxWd1rnxUg9qd0qB4+spQ6aSAt0PBb+7mIgr84R7kBM/OgyE8Tyf67gmKyqcPv/OQU+Cs62lRjZO8cJD7krE/ceaQHYm8SYkhNWjKdl6ZyU4=
+	t=1756846148; cv=none; b=aSErZ08zSX8r/+GjbAQ27CgiwfG9O59up7lVs9Uy0B4sIcPm/8sJ2MgdO7lImGjB3RskFLEgSsoFD4k1+A7hdE+iyLaKmgWwac7rYEe69HLTQDMfVKqlgvB6qdygzNjhTyGDCblD9dXwTa1m8qCzj97pBE7XtHExr96Lb8Khs2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756846126; c=relaxed/simple;
-	bh=Ko89yqThQbtEVD/Z6qOUqkc0NWxBpqJX4NF3Pv6PF3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i/wZV9Vn12KXbHLIXZgj7Kc6YM1Mq5yaaL6LqP1U5UVqP+xC/dxQ8FIsgvbQqPp+lEjghfkTZZT+lPkZ+GUc1UcJWe/PXRUYTzlR0uC9wycY5jHJvob9B8SSS5lYeTeKwZq83sQjmUCd+unRyqJdP3fydjIZGeVBb4+k1Sdzk3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUiOR0cb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81B7EC4CEED;
-	Tue,  2 Sep 2025 20:48:45 +0000 (UTC)
+	s=arc-20240116; t=1756846148; c=relaxed/simple;
+	bh=Pr1wu64cTiWnW5NF0Mxcc4fL7y6TV7kC88hov/faBLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkWPA49VOdOC1CYZUIkm36+rk/Shw5Yu33gYXvtuZ+scZ1f0d1yAY/smQ21WFNPe2iS7WO9Or1LLj3lcsn/sNPWqVaDHa9bmY4+IDeZmO6TuHD9e5p5FKiDDVPVF6jNyDpK9IT7qZeBdD1ArCTdYCI2kDtjWZ1Qx+8zcTc7z44o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQGeIPGl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F970C4CEED;
+	Tue,  2 Sep 2025 20:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756846126;
-	bh=Ko89yqThQbtEVD/Z6qOUqkc0NWxBpqJX4NF3Pv6PF3c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nUiOR0cbn66EUQdHnk6+dq9j3saxVLgS4v+jfDCG4UNDl5JhNL+YaW+Yx9WQtyBho
-	 NqRTwW19embFDgLRAFUj484i/somimOZYvffPVHB+LjgjBMkZrG923xUcaJ/ErqtOd
-	 L0b8S/gx/58nEPVbSAAtHvk1BDmaHP0tOHzCg6ccimSVAs1vT4DJjgaXVqEiQDnxY0
-	 HLlvDGz6PGaT3HV1CcSlA062QgzUkqx+De4oUQTN/iUEexf47B1PNw0Wy2F5DVWj8F
-	 rSIgiibW6wWozZX3P4rTIakAUSbwcRgBI8PQFaRkNWK978zceJAGNPIf+tG/l0qn4v
-	 eD/XOtKxs80kg==
-Date: Tue, 2 Sep 2025 13:48:44 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
- <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, kernel@pengutronix.de, Dent Project
- <dentproject@linuxfoundation.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v2 4/4] net: pse-pd: pd692x0: Add devlink
- interface for configuration save/reset
-Message-ID: <20250902134844.7e3593b9@kernel.org>
-In-Reply-To: <20250902134212.4ceb5bc3@kernel.org>
-References: <20250829-feature_poe_permanent_conf-v2-0-8bb6f073ec23@bootlin.com>
-	<20250829-feature_poe_permanent_conf-v2-4-8bb6f073ec23@bootlin.com>
-	<20250901133100.3108c817@kernel.org>
-	<20250902164314.12ce43b4@kmaincent-XPS-13-7390>
-	<20250902134212.4ceb5bc3@kernel.org>
+	s=k20201202; t=1756846147;
+	bh=Pr1wu64cTiWnW5NF0Mxcc4fL7y6TV7kC88hov/faBLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YQGeIPGl7+3I3azKgEImCizIYM5cFNzZqYuwdaL5kP8KZ7kU19Tbjcmrx3xGTHyF9
+	 YBFMmEFkgItGB13DfW8CaTWSzI8Ti7WS5y0wbEOk8Dn9d8Nq/g1PnkVFlm0OGj062X
+	 fOIq3uxJW1M4xU0VXmREpOU/n+4K8T1HpkolwZ/LNUSDpOY2a/w71m6Fye6DjpYtlj
+	 BeBD2b7r4/bcXHDwS0suP2LJSecvzTcdf4Ft/A57qr+3qzeBNIBQ9Ar9TdNudOdHBY
+	 0HlclM0lZAk2dfZvLmullRJut1qRK30S81ezmvIEWGqc4BxIsA+3ZsKL/CKOnMDqHN
+	 znn6LdKpFpVdA==
+Date: Tue, 2 Sep 2025 15:49:06 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Alexander Kurz <akurz@blala.de>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Dzmitry Sankouski <dsankouski@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	linux-input@vger.kernel.org, Lee Jones <lee@kernel.org>
+Subject: Re: [PATCH v3 6/7] dt-bindings: mfd: fsl,mc13xxx: add buttons node
+Message-ID: <175684614636.1159256.793148520977277557.robh@kernel.org>
+References: <20250829201517.15374-1-akurz@blala.de>
+ <20250829201517.15374-7-akurz@blala.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829201517.15374-7-akurz@blala.de>
 
-On Tue, 2 Sep 2025 13:42:12 -0700 Jakub Kicinski wrote:
-> On Tue, 2 Sep 2025 16:43:14 +0200 Kory Maincent wrote:
-> > > Sorry for not offering a clear alternative, but I'm not aware of any
-> > > precedent for treating devlink params as action triggers. devlink params
-> > > should be values that can be set and read, which is clearly not
-> > > the case here:    
-> > 
-> > Ok.
-> > We could save the configuration for every config change and add a reset-conf
-> > action to devlink reload uAPI? The drawback it that it will bring a bit of
-> > latency (about 110ms) for every config change.
-> > 
-> > Or adding a new devlink uAPI like a devlink conf but maybe we don't have enough
-> > cases to add such generic new uAPI.
-> > Or get back to the first proposition to use sysfs. 
-> > 
-> > What do you think?  
+
+On Fri, 29 Aug 2025 20:15:16 +0000, Alexander Kurz wrote:
+> Add a buttons node and properties describing the "ONOFD" (MC13783) and
+> "PWRON" (MC13892/MC34708) buttons available in the fsl,mc13xxx PMIC ICs.
 > 
-> If you are asking for my real preference, abstracting away whether it's
-> doable and justifiable amount of effort for you -- I'd explore using
-> flags in the ethtool header to control whether setting is written to
-> the flash.
+> Signed-off-by: Alexander Kurz <akurz@blala.de>
+> ---
+>  .../devicetree/bindings/mfd/fsl,mc13xxx.yaml  | 70 +++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+> 
 
-PS. failing that the less uAPI the better. Tho, given that the whole
-point here is giving user the ability to write the flash -- asking for
-uAPI-light approach feels contradictory.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Taking a step back -- the "save to flash" is something that OEM FW
-often supports. But for Linux-based control the "save to flash" should
-really be equivalent to updating some user space config. When user
-configures interfaces in OpenWRT we're not flashing them into the
-device tree... Could you perhaps explain what makes updating the
-in-flash config a high-priority requirement for PoE?
 
