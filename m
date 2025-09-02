@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-796812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D52B4079C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:49:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9483DB40773
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3B45802FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:45:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0093B413C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C2F31158C;
-	Tue,  2 Sep 2025 14:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFA531CA61;
+	Tue,  2 Sep 2025 14:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Dva9Ou12"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GpjeFl/v"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA45F31355A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AED3126B8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756824236; cv=none; b=n1qm3HPpfMoNLBeSWtbPvN2NOlxCLLM3RJMIsZf2eljieXvvVfVyP48DJ4d0fkhljeJrBIp5QW5NsFF8ZavvnHl2d9ER9HNvIR48hlABFgrPrnjL/hlN3UwQIOgIuc0XqoVQMqrNMumnzJnda0SwNGjieazdxrDw7LDxayzs4NA=
+	t=1756824238; cv=none; b=qJMj72FPDD90/mWM5RHopY+j8B+M3xFyDncfD5y/8sSCXJ2paoU98QPxp7ZrWUQ3xQO+/8AxO7ROYp7aOYpn3Y+FjW1eSrmWGhZwFT+QhcFW60L01JQuRgec7pAlUNgZWxdMmfL+UKOxOj/6qQqVDPtnBWUBCziVnPCIlRD+L/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756824236; c=relaxed/simple;
-	bh=xTXQxy5LEUnwn+AUYQL3WwUiGwCnR5BVVqAD2FNTezM=;
+	s=arc-20240116; t=1756824238; c=relaxed/simple;
+	bh=HcQchtRslDyRXYgw4RtewbOf6/LJsYueNE8Laf4FCKc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NBh7w9CCJyPnM7SaL/8LeRR8NsTkAFuEQZQN0lzmrZfTF2rd1ipa4f69e+6E2FZP6LxcxuWmd/8Prr9mHkwu5x4wscKKYca2B3lGv9KweaBTA5nG4tK8Gt0rDmV2VmqTUhhWWimy3FC8qSjujmTtfVwG2mIU/898mcuvCFsO/Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Dva9Ou12; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=M/EmFLPtmQ5RMtkXS0UR/BdjIjDehucpUpbjCAmDdLSK9tOMuMUlo7myJOmoZFW1vF0NpNQm+EAQ0dp4KWejnIi3Ar3veUNhsUaS9SLPuv7ej3X9TflbuSQ5ItLhQp41uUZfRPup9XWWr88qoWsYU+rJpiUyzR1Ii7caOwa2ijM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GpjeFl/v; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b88bff3ebso16683715e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:43:54 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b8b7ac427so14387255e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756824233; x=1757429033; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756824234; x=1757429034; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k8wzm/mr5xp7tXM1oehlTTQpv32VYRWQAoA0cZh04As=;
-        b=Dva9Ou12iZCpijRErkAn+P5X0XHqn1nRF/nbdPY9dS1EbJOAfGLv/2nrsyDIlwHI+N
-         sLj56zSh6s3+XDGM30mIMkeoeTeOMf+QUb6MauycVxN0ZS9WT7qx7qxTh3x0P2MY1x8L
-         QKSLUf6foG+jCD+ZMIlqDrHF0TrqsczEVV4Z8uatsZfQR8r8ul6HfQLHKQ582V+qsaWZ
-         YPYS6E38lUw0ePD95iVnkRJfvicIA47G9v3ewy59UluZPXGIkqThYXe8NokBysRRwjwu
-         dKyEsIujgagGTevfRVHZ4hLDa/i34rEhrQmyx4V6CwJlpEVurbKjWzyE8j96jVnyiKO7
-         QI8Q==
+        bh=IH9KVtMgBsrkYXH8nnFecmz5YKaJj3+GxgiEXc+y1YA=;
+        b=GpjeFl/vTUDELKh06rwoJmtkj2VnNfzEjcmCd6InQq3Hqvln1JQi6z9wRyiuMW1Dde
+         YGKIWQfIp2iFQGlJA5a0XYCETTEIJ91ADzRyvnU38M5/VZ2SbhuUwYld3vWPLbszLHZY
+         CRqLYkNkFKDE1lsdudak9xlU86jgXMawusFBmqrTqjZaRmwRzbiSGSVVNZbRHJ/G1tUB
+         Bhgi/ulvjEJE2wPwuxqNJvjBels2vulXESSNBGr3TA5LFTXui4YZPv7HIkh8c0IOqGxF
+         ghvlpii2+GB+A2VNjnzLJmM+MIt+9vq40BLJcr2HprOjxIKY6SXNks2YciZPpdXWFrto
+         KWzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756824233; x=1757429033;
+        d=1e100.net; s=20230601; t=1756824234; x=1757429034;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k8wzm/mr5xp7tXM1oehlTTQpv32VYRWQAoA0cZh04As=;
-        b=XLlzGn5G+qJDLeH9d8+AfzArCwSbDDmk08/vPfxf2Txluujh5ab2Msya9YR6tbrcPZ
-         JMoPxF8pEEaMVUf9tBdghHn59ocxixpLKf/msyTd6GOyC2gUA4xbNIO4nJccYqtVbUVn
-         qSH5WL8ESQP0RmLmSrQK7WgHm6V+ZsTzuR/8vW2IAXsLzH7o54/L/o1XqvH+7KCYGqjz
-         phqS378DUfhHc8MFwJDk+1eRVw0uONO+jSgdTfQp6DA5jMOOW9aHhnTyKDL7UQ6q4oA8
-         y/Z5rpXz8wn99ixXM+C30SDZqEXutRrHd8nEtdKRdfCc+QypGLoyumGVBXqqcsY+PsG5
-         nFzA==
-X-Gm-Message-State: AOJu0Yz4Dku5lwnI2Rcv/4AkXfCQggr13NBsouMMhjb/ZEpGeWgec+ZO
-	MiXgcwT+//kcbRl3eB6CaHQifopqat8yerFl0FwhFjrmhOky7s/62vmbGBlh2s24nkk=
-X-Gm-Gg: ASbGncsWADmUMQFGJCWRyawQyd2pBLRQMeqSFbF6yPb5i/ERQ2mhhQLlsV8MgAcNW5I
-	NZiXOyfnrYfebj1O9CJl9PKoRodH9ClB6epvIM60YZfI36Xq7EYGZbTL8+FbkNwqzLcryGFHgkV
-	leePNnm/zuT09/Vr6+SG2J1HhVf73ZDwn0HCUhfwifeFQjEjIYUnDMKQTfkRlS/D4hhclHUhRQv
-	dxaV1mB4JksnDKnos6zO7nCEUQGCOnSUV1BzQmFEQcYOk7/YHdPTFJr4NOFd9yjz39fvXYeVOyC
-	DNav4s5MzytWDyK6j8cLxmKI3e/5hsI5A8FAdIGW2i07hKeUKZrwOl2KN2PAAkL01io5CLsDsLe
-	6bg9QTpH6DVy6LGEVOmfehNr0kA==
-X-Google-Smtp-Source: AGHT+IHRnjnVV4+h89iJA6vomGUrvNgbPO9WKrF6Sr0B7KSXUlhBS820UObNuEt6/CaNgmJwauk31A==
-X-Received: by 2002:a05:600c:35c8:b0:45b:8939:8b1c with SMTP id 5b1f17b1804b1-45b89398f5emr74684795e9.27.1756824233151;
-        Tue, 02 Sep 2025 07:43:53 -0700 (PDT)
+        bh=IH9KVtMgBsrkYXH8nnFecmz5YKaJj3+GxgiEXc+y1YA=;
+        b=fsq6GI5ux3ynYQ5dHHw8g6NJWJIl8ITeOuwtDzY5RMWOkjsnvmkxxyhzrG+irJPvE9
+         nHDrQAtFka12VxV5nZ7XPsutsjSVIe8S6HNGgZqHhaLdOzn3IXMNyUX+emnVFn9Mu+sO
+         3LE7cr6KA7NxvyIFiuAdY28ECgq4r4D56zkJEeq80x2WNwzjU5+I3RwYmR3jUUV28xSi
+         WldGlQ0Dc8OEr4N4r2RTV2vnxI72ICwiHjw0mgOWkZSTaCTTZj7m8Rc0PE5TjiDswRRR
+         uSc+jaYzFPuEMQ1VgbyJk4oSRZp/ZWGWb1FI8/cBJhm91keeZ1FRrRHyb7XSZcnXzNnY
+         yjXQ==
+X-Gm-Message-State: AOJu0Yzbqv7SHcXL+0CaLn/Q1oKHFwljzgXYyZKLIb8kN1kF8MjLR6jJ
+	eyiraEpomngPRzYZFRx9GDhBu76EQOuuqI8nHxzI4ISYb6yZ6mPzD21cQsxFxcXLPNn13w1Uv69
+	QYoSs+iE=
+X-Gm-Gg: ASbGncvQpkv9oyQiu89ycdFkGdEubeK4nxARJ0Q8eJ1XlgXfzwqdp7N36KRQrzTe0D4
+	Tj9p0lTzQvyDjJS6Ju02tywikol8sSNM/lA/r0o2163/MDD24yLbJaEBjAiztKluI4FcckN0pzN
+	+Wt71kK7CoEuz9AJEmUDHTebZ1ZCDEzH+4Jpm/JUmC1FHF0u7R6847y4gckWOtjSEZvXj5/bM4R
+	tF8CmiEURmhZ7GieHk1oVCMf0DbwyHFrlYIMkN7/L1mnuQIt9nvXggstRpmxpJz8HeOQawV0Nk0
+	9dF/ZIC7bCzra7gipNqxFJA02n8GbYu7zuc7YSny2hPNvTaDTjBdIaxxOpb1FGzG7H+AojynUjn
+	hGJmMHYmp4+4CE8l4nCTFqCN+HAxLpVqGdoon
+X-Google-Smtp-Source: AGHT+IGpupBT6EHFzOMLYCsL7LBAOUDN4k39dYPwyyUTNOojUsQ7qqzMe2eWw9e30BaKnja3qYWcIA==
+X-Received: by 2002:a05:600c:1c96:b0:459:e466:1bec with SMTP id 5b1f17b1804b1-45b979f4207mr21840595e9.2.1756824234329;
+        Tue, 02 Sep 2025 07:43:54 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:e0a:e50:3860:5982:3242:38ad:8b12])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab093sm209604635e9.22.2025.09.02.07.43.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab093sm209604635e9.22.2025.09.02.07.43.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 07:43:52 -0700 (PDT)
+        Tue, 02 Sep 2025 07:43:53 -0700 (PDT)
 From: Guillaume La Roque <glaroque@baylibre.com>
-Date: Tue, 02 Sep 2025 16:43:49 +0200
-Subject: [PATCH RESEND v2 1/2] genirq/msi: Export functions to support TI
- SCI INTA MSI module
+Date: Tue, 02 Sep 2025 16:43:50 +0200
+Subject: [PATCH RESEND v2 2/2] soc: ti: ti_sci_inta_msi: Enable module
+ compilation support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-timsi-v2-1-a5bf0f32905b@baylibre.com>
+Message-Id: <20250902-timsi-v2-2-a5bf0f32905b@baylibre.com>
 References: <20250902-timsi-v2-0-a5bf0f32905b@baylibre.com>
 In-Reply-To: <20250902-timsi-v2-0-a5bf0f32905b@baylibre.com>
 To: Thomas Gleixner <tglx@linutronix.de>, vigneshr@ti.com, 
@@ -93,66 +94,56 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Guillaume La Roque <glaroque@baylibre.com>
 X-Mailer: b4 0.14.1
 
-Export MSI domain management functions to allow the TI SCI INTA MSI
-driver to be compiled as a module.
+Add module support to the TI SCI INTA MSI driver:
+- Change Kconfig from bool to tristate to allow module compilation
+- Add linux/module.h include for module functionality
+- Add MODULE_LICENSE, MODULE_DESCRIPTION, and MODULE_AUTHOR macros
 
-The following functions are now available for module use:
-
-- msi_domain_insert_msi_desc()
-- msi_domain_free_msi_descs_range()
-- msi_setup_device_data()
-- msi_create_irq_domain()
-- msi_domain_alloc_irqs_all_locked()
+This allows the driver to be compiled as a loadable kernel module
+named ti_sci_inta_msi.
 
 Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
 ---
- kernel/irq/msi.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/soc/ti/Kconfig           | 5 ++++-
+ drivers/soc/ti/ti_sci_inta_msi.c | 5 +++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/irq/msi.c b/kernel/irq/msi.c
-index 9febe797a5f6..4af232b6796b 100644
---- a/kernel/irq/msi.c
-+++ b/kernel/irq/msi.c
-@@ -163,6 +163,7 @@ int msi_domain_insert_msi_desc(struct device *dev, unsigned int domid,
+diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
+index 1a93001c9e36..0a9eb5ac264b 100644
+--- a/drivers/soc/ti/Kconfig
++++ b/drivers/soc/ti/Kconfig
+@@ -85,7 +85,10 @@ config TI_PRUSS
+ endif # SOC_TI
  
- 	return msi_insert_desc(dev, desc, domid, init_desc->msi_index);
+ config TI_SCI_INTA_MSI_DOMAIN
+-	bool
++	tristate "TI SCI INTA MSI Domain driver"
+ 	select GENERIC_MSI_IRQ
+ 	help
+ 	  Driver to enable Interrupt Aggregator specific MSI Domain.
++
++	  Say Y here to compile it into the kernel or M to compile it as a
++	  module. The module will be called ti_sci_inta_msi.
+diff --git a/drivers/soc/ti/ti_sci_inta_msi.c b/drivers/soc/ti/ti_sci_inta_msi.c
+index 193266f5e3f9..d92cab319d57 100644
+--- a/drivers/soc/ti/ti_sci_inta_msi.c
++++ b/drivers/soc/ti/ti_sci_inta_msi.c
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
++#include <linux/module.h>
+ #include <linux/msi.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -115,3 +116,7 @@ int ti_sci_inta_msi_domain_alloc_irqs(struct device *dev,
+ 	return ret;
  }
-+EXPORT_SYMBOL_GPL(msi_domain_insert_msi_desc);
- 
- static bool msi_desc_match(struct msi_desc *desc, enum msi_desc_filter filter)
- {
-@@ -235,6 +236,7 @@ void msi_domain_free_msi_descs_range(struct device *dev, unsigned int domid,
- 
- 	msi_domain_free_descs(dev, &ctrl);
- }
-+EXPORT_SYMBOL_GPL(msi_domain_free_msi_descs_range);
- 
- /**
-  * msi_domain_add_simple_msi_descs - Allocate and initialize MSI descriptors
-@@ -342,6 +344,7 @@ int msi_setup_device_data(struct device *dev)
- 	devres_add(dev, md);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(msi_setup_device_data);
- 
- /**
-  * __msi_lock_descs - Lock the MSI descriptor storage of a device
-@@ -910,6 +913,7 @@ struct irq_domain *msi_create_irq_domain(struct fwnode_handle *fwnode,
- {
- 	return __msi_create_irq_domain(fwnode, info, 0, parent);
- }
-+EXPORT_SYMBOL_GPL(msi_create_irq_domain);
- 
- /**
-  * msi_create_parent_irq_domain - Create an MSI-parent interrupt domain
-@@ -1472,6 +1476,7 @@ int msi_domain_alloc_irqs_all_locked(struct device *dev, unsigned int domid, int
- 
- 	return msi_domain_alloc_locked(dev, &ctrl);
- }
-+EXPORT_SYMBOL_GPL(msi_domain_alloc_irqs_all_locked);
- 
- static struct msi_map __msi_domain_alloc_irq_at(struct device *dev, unsigned int domid,
- 						unsigned int index,
+ EXPORT_SYMBOL_GPL(ti_sci_inta_msi_domain_alloc_irqs);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Texas Instruments K3 Interrupt Aggregator MSI bus");
++MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ti.com>");
 
 -- 
 2.34.1
