@@ -1,79 +1,109 @@
-Return-Path: <linux-kernel+bounces-797277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F7DB40E4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:03:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0973B40E54
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A0A1A81145
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:04:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3686B3AF66E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D2B2FC019;
-	Tue,  2 Sep 2025 20:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF045350856;
+	Tue,  2 Sep 2025 20:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b="b2lFybW5";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="bXOkKmCq"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fOITXO3l"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9983B2AF1B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 20:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8280C30C629;
+	Tue,  2 Sep 2025 20:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756843415; cv=none; b=k4pqTLba7riVQBH/FkgYVWFuxr1iF0xD5OFpGchsWMw2ZVWwZNNwH3kG+4/6WKe3SHYASpNDL3cObF2E2R6redSleBQxCC0CuYDjiToTCkxn+dYKe7bfbzZnExA4x/q4qW7UfDMAadilDYWHQbW3tg5sNNNEYrrb59VbWzhbkzM=
+	t=1756843519; cv=none; b=qJAUTzVl6q1A/2QdlHJCVEjuKe/6FA1KC+NJrxUQm7Ozu4JqGTNYxFmts+QwEWgK3MmyxHSnD0E/XJQd/YAnmEsgavOLq1awRw+wHTH43zcMoof0IBMQrKZJ9aCbCmUQySgOyVP1OM6+/3cgDvuAb+zygkIDZSAQC31HNL7btRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756843415; c=relaxed/simple;
-	bh=nqYjo+c3TExuTII3/IldzrPY/ERqW+m8zP1ABITcHM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UvGrHeVemr8+gPOch4UyHWsvphDC85zoSUEM9nSjCGKP1CqDGAUTkKsHeEHSZJkvKWoQrwxifmCNic+yHkp/Sfac5BPA0bRRgYXfGZki7ZTtPEn1mHjLNmTnT+ptty4NNTWxV8zmNUu2DcDN+8XkublRFFao8JqPTNfeJZOBlwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space; spf=pass smtp.mailfrom=elijahs.space; dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b=b2lFybW5; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=bXOkKmCq; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=elijahs.space
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=b2lFybW5y01/0cUn2gVbkjfm6KYePL3oZlgH6K+N3GQBubcnAd5XfnIkeq037c4eGkvDXPmyLquyV/5ob3mYwwt+y49Y3MK2manCk5RzjKlcWrQdkyPPV04zXR74y5QXIJ/mmVuymCxmTCeZgIwMCE0QWn4uiRcb1BtKXvKxk4cKfZpCPIxKfQVGJHTPqnZTvT9Vvxs+XuyHZ1hgkxy0JXsB8nZhIegAkHTws2jnVf9lUX4ls/HrGXlhpvzVIaCeKaMq96qTI7i0fgw6b4wYOsaWvyxKWRDwA+Ynf0hGOv+jreHdImShr9JTB+grWSXncXo8FNQj8K4LHa0lw2WMgQ==; s=purelymail2; d=elijahs.space; v=1; bh=nqYjo+c3TExuTII3/IldzrPY/ERqW+m8zP1ABITcHM0=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=bXOkKmCqIFFN+cka0/+WgWKf+Imvhoh08kBrT0Hdddz4gl22lg96SPr8q1wliEjKw/iduxnxHUia+a+EyNv84Od8YvqK7NAT75jS7cFlbIdCT+HKBGGj22KFLSeeo4PG+A1HzEAM4p6PfDvAB1sutgpIn6Fu8rNsEYRs0evYQjF9zjY0shtKAvPDmy4mQaLW+CuX9y4+OWMlhEgek1z38Z06q+QN+pmP3tTMQ/9B1lj4yVXG9qPCgWKIwpPWkZTSkhgYpBWvpzR177yS+8R8s1xNkVGRcLtpfG+klZ3OPG5GMzTxWSKnBtsEnK9WNc7zBLCk/vSUptx4UPfMwTjdUg==; s=purelymail2; d=purelymail.com; v=1; bh=nqYjo+c3TExuTII3/IldzrPY/ERqW+m8zP1ABITcHM0=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 26912:4866:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1514646534;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Tue, 02 Sep 2025 20:03:20 +0000 (UTC)
-Message-ID: <4be8fdf0-9cd8-47cd-a37b-b41437e3e63e@elijahs.space>
-Date: Tue, 2 Sep 2025 13:03:18 -0700
+	s=arc-20240116; t=1756843519; c=relaxed/simple;
+	bh=ykWOa2jXdfF/nhMoE/XhMQMlz2GrK9+COjBO/ieUrxE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=f4M/EoPLZQIVBvRWavLfNdtiX6WvcxKmDYpoM8apWALRihVnKO0OgP7L6qCcUFsWZ/BtMBdaJV9IIeMt1Am/V10rheIZC14NWZoUoJteUp2c94k6cL31BH3tUzzg9s8QI2pnY82TuhkxDeNJlMZkGTtO6I5XkFz/Zxm+jrZ/ldQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fOITXO3l; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=BTJf8a3c8djKy/9Sijq7tylusCxaJef2zwGQf7+eDdg=; b=fOITXO3lE5266NU05BWGMpuW8o
+	hv3scSW5HT66QL8/L4ofneKFefvsWlzNpi1smAf/275wSSLYavdI5L5XaL4fyEhsfs/RX+Umn5d8Q
+	SyXKGSPpFLfTlAvErn4Ndr4AjTfAvNJfDhwUGa+WjKJ/vyXS0dUvtKiGvXKNQ8JP+/3yAP7MClhfK
+	qGZX+u1Fa7EmpILdLO9KoHpH2DwYVt2xv124EBg73q/PIsVEd46lxBqp2alcuxHUOU2+k3vAq8Rxg
+	HLvoz75nlAmvhFRGhWCN7Tis+NrZpm27UkU9ztipjQXGkkT06bKtndo4CCPvv/4K+S6SngeV7Qi7l
+	+Ll19jHA==;
+Received: from [50.53.25.54] (helo=ehlo.thunderbird.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utXFf-000000043p2-3AO9;
+	Tue, 02 Sep 2025 20:05:12 +0000
+Date: Tue, 02 Sep 2025 13:05:09 -0700
+From: Randy Dunlap <rdunlap@infradead.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Ranganath V N <vnranganath.20@gmail.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+CC: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, brauner@kernel.org,
+ djwong@kernel.org, corbet@lwn.net, pbonzini@redhat.com,
+ laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kvm@vger.kernel.org
+Subject: Re: [PATCH] Documentation: Fix spelling mistakes
+User-Agent: K-9 Mail for Android
+In-Reply-To: <2a1344d7-cbf4-4963-a774-6332aa440cd7@kernel.org>
+References: <20250902193822.6349-1-vnranganath.20@gmail.com> <2a1344d7-cbf4-4963-a774-6332aa440cd7@kernel.org>
+Message-ID: <A33D792E-4773-458B-ACF4-5E66B1FCB5AC@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing: move buffer in trace_seq to end of struct
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Elijah Wright <git@elijahs.space>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20250821053917.23301-1-git@elijahs.space>
- <20250821114355.6ee546b0@gandalf.local.home>
- <20250821115359.3988b807@gandalf.local.home>
- <ce062d82-41cb-42c0-b970-1312dbcd1094@elijahs.space>
- <20250902160020.5cd24fce@batman.local.home>
-Content-Language: en-US
-From: Elijah <me@elijahs.space>
-In-Reply-To: <20250902160020.5cd24fce@batman.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-that could work yeah
+On September 2, 2025 12:59:05 PM PDT, Krzysztof Kozlowski <krzk@kernel=2Eor=
+g> wrote:
+>On 02/09/2025 21:38, Ranganath V N wrote:
+>> Corrected a few spelling mistakes to improve the readability=2E
+>>=20
+>> Signed-off-by: Ranganath V N <vnranganath=2E20@gmail=2Ecom>
+>> ---
+>>  Documentation/devicetree/bindings/submitting-patches=2Erst | 2 +-
+>>  Documentation/filesystems/iomap/operations=2Erst           | 2 +-
+>>  Documentation/virt/kvm/review-checklist=2Erst              | 2 +-
+>>  3 files changed, 3 insertions(+), 3 deletions(-)
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/submitting-patches=2Erst=
+ b/Documentation/devicetree/bindings/submitting-patches=2Erst
+>> index 46d0b036c97e=2E=2E191085b0d5e8 100644
+>> --- a/Documentation/devicetree/bindings/submitting-patches=2Erst
+>> +++ b/Documentation/devicetree/bindings/submitting-patches=2Erst
+>> @@ -66,7 +66,7 @@ I=2E For patch submitters
+>>       any DTS patches, regardless whether using existing or new binding=
+s, should
+>>       be placed at the end of patchset to indicate no dependency of dri=
+vers on
+>>       the DTS=2E  DTS will be anyway applied through separate tree or b=
+ranch, so
+>> -     different order would indicate the serie is non-bisectable=2E
+>> +     different order would indicate the series is non-bisectable=2E
+>That's not entirely a spelling mistake
+>https://en=2Ewiktionary=2Eorg/wiki/serie#English
+>
+>Best regards,
+>Krzysztof
+>
 
-On 9/2/2025 1:00 PM, Steven Rostedt wrote:
->   struct seq_buf {
->   	char			*buffer;
-> -	size_t			size;
-> -	size_t			len;
-> +	unsigned int		size;
-> +	unsigned int		len:31;
-> +	unsigned int		full:1;
->   };
+Obsolete=2E  Close enough for me=2E=20
 
+
+~Randy
 
