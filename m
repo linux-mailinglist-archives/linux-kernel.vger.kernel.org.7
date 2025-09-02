@@ -1,178 +1,171 @@
-Return-Path: <linux-kernel+bounces-795644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7847FB3F5C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7CEB3F5DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90EF1A8674B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:45:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E9071A86B2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351DF2E54AA;
-	Tue,  2 Sep 2025 06:44:45 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C022E54DA;
+	Tue,  2 Sep 2025 06:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LMogt2Ph";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RbemTe7b";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LMogt2Ph";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RbemTe7b"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3EF2E06C9;
-	Tue,  2 Sep 2025 06:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2AC20C038
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756795484; cv=none; b=qQItXyYYs5SW+ummgQWlFNJPPpzhzRw/ciALgQTlnR0EeH/WK/CDjLlQmOvAmNUbjLaH8S+sF3zPwhmMqjRlac3q4GaLC5g0SpIz02NwZ8L4oHE+kjEm9H4dedg8x8oB+AKs3Xn3V7/HNWWNz7dFUu2A6ILn5aMXQA2lp1UU2jQ=
+	t=1756795558; cv=none; b=nN96+23Nc8HgIpMFrJtzJAkD6eyFZ4KKy2MCM0L9ULFlUXV0erUi7ytNnwLlSKw0veXqnblB8yedtcMFSai6TyX2SGNsGlzVkj42q5CnMZHMGy4ZOF/+ODow6JWZ6zeTQo7jxJlY2XKCGCz57FU0XQawHEW1wqyvHP1+DzrGORo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756795484; c=relaxed/simple;
-	bh=fk+OzkC4BhovNz0xJglq9M+q6OOOPg8PO/HWfOaT4PM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjmdV0Ys2c/w9x8TuJ8TTG6vK99vR8g0Xrax5KVgPW5iAW3KgfuxOwclSX3wfmLgicQ8qeiBehgl7vuaRAfPiH0FMXrKIofehR8Urt0IIrgNVHlx7XjLqMCcI0tOz50ePn/TlqvMmrswgVdYQ3vp6n5wpDM5RDIdXK0qZbzpTcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9BB0C4CEED;
-	Tue,  2 Sep 2025 06:44:43 +0000 (UTC)
-Date: Tue, 2 Sep 2025 08:44:41 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Abel Vesa <abel.vesa@linaro.org>, Mahadevan <quic_mahap@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH v7 7/9] dt-bindings: display/msm: expand to support MST
-Message-ID: <20250902-fast-hissing-sturgeon-cafdac@kuoka>
-References: <20250829-dp_mst_bindings-v7-0-2b268a43917b@oss.qualcomm.com>
- <20250829-dp_mst_bindings-v7-7-2b268a43917b@oss.qualcomm.com>
+	s=arc-20240116; t=1756795558; c=relaxed/simple;
+	bh=I1PfshKHROmMcThjNy5rqOZbI5drHx+UvRZbfPB+SE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MAJBgT0E7TgXil9NeH5lJERfpK9DAZNe455P3Qn9TvGPVmwjyfswXzkPoHA2X/pgXViI23HKd5pzbszTJZOu/RYxxtJEY6pXojmva0FphS71YzVwGyPYzzy+8zEnPiHeo9Luo5oi9DTIEkRXPKqHB3RwFvhR4TSpOtSfrWlL5Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LMogt2Ph; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RbemTe7b; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LMogt2Ph; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RbemTe7b; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 69CE31F445;
+	Tue,  2 Sep 2025 06:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756795554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YesWicfSHaYSZUbHTDX/ghjshejKbaj2ovjBUHFLsAM=;
+	b=LMogt2PhgX86GCwov6Mo0NB1J8Y7H+/RYiBSLy9u2DeKCx8TYpy39JQNkAe3S+ZcuGYx08
+	i3XEKbue0QBrFq+pI5e3GTZeXc1pXXCUhsipX1mmna0f19q3tjdVsdNLWX/XAUHUNUIOzJ
+	NnkxiVxpZHZAqYiTdQB0CiGAMHH/JNM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756795554;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YesWicfSHaYSZUbHTDX/ghjshejKbaj2ovjBUHFLsAM=;
+	b=RbemTe7bj+QTRfe4SxNaQXIVwUemi2FzEzPsBKtYHx9Ngi/sIIIFBql/m51Vn9mTcDKEIo
+	qB/taPB4wLI/oxCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=LMogt2Ph;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RbemTe7b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756795554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YesWicfSHaYSZUbHTDX/ghjshejKbaj2ovjBUHFLsAM=;
+	b=LMogt2PhgX86GCwov6Mo0NB1J8Y7H+/RYiBSLy9u2DeKCx8TYpy39JQNkAe3S+ZcuGYx08
+	i3XEKbue0QBrFq+pI5e3GTZeXc1pXXCUhsipX1mmna0f19q3tjdVsdNLWX/XAUHUNUIOzJ
+	NnkxiVxpZHZAqYiTdQB0CiGAMHH/JNM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756795554;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YesWicfSHaYSZUbHTDX/ghjshejKbaj2ovjBUHFLsAM=;
+	b=RbemTe7bj+QTRfe4SxNaQXIVwUemi2FzEzPsBKtYHx9Ngi/sIIIFBql/m51Vn9mTcDKEIo
+	qB/taPB4wLI/oxCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16D5713888;
+	Tue,  2 Sep 2025 06:45:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ziw5A6KStmiZVQAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 02 Sep 2025 06:45:54 +0000
+Message-ID: <79935b36-45a5-4388-b392-fb252e69ca42@suse.de>
+Date: Tue, 2 Sep 2025 08:45:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250829-dp_mst_bindings-v7-7-2b268a43917b@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] nvme-fc: reorganize ctrl ref-counting and cleanup
+ code
+To: Daniel Wagner <wagi@kernel.org>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ James Smart <james.smart@broadcom.com>
+Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250829-nvme-fc-sync-v3-0-d69c87e63aee@kernel.org>
+ <20250829-nvme-fc-sync-v3-2-d69c87e63aee@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250829-nvme-fc-sync-v3-2-d69c87e63aee@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 69CE31F445
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-On Fri, Aug 29, 2025 at 01:48:20AM +0300, Dmitry Baryshkov wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+On 8/29/25 17:37, Daniel Wagner wrote:
+> The lifetime of the controller is managed by the upper layers. This
+> ensures that the controller does not go away as long as there are
+> commands in flight. Thus, there is no need to take references in the
+> command handling code.
 > 
-> On a vast majority of Qualcomm chipsets DisplayPort controller can
-> support several MST streams (up to 4x). To support MST these chipsets
-> use up to 4 stream pixel clocks for the DisplayPort controller and
-> several extra register regions. Expand corresponding region and clock
-> bindings for these platforms and fix example schema files to follow
-> updated bindings.
+> Currently, the refcounting code is partially open-coded for handling
+> error paths. By moving the cleanup code fully under refcounting and
+> releasing references when necessary, the error handling can be
+> simplified.
 > 
-> Note: On chipsets that support MST, the number of streams supported
-> can vary between controllers. For example, SA8775P supports 4 MST
-> streams on mdss_dp0 but only 2 streams on mdss_dp1.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
 > ---
->  .../bindings/display/msm/dp-controller.yaml        | 91 +++++++++++++++++++++-
->  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 26 +++++--
->  .../bindings/display/msm/qcom,sar2130p-mdss.yaml   | 10 ++-
->  .../bindings/display/msm/qcom,sc7280-mdss.yaml     |  3 +-
->  .../bindings/display/msm/qcom,sm7150-mdss.yaml     | 10 ++-
->  .../bindings/display/msm/qcom,sm8750-mdss.yaml     | 10 ++-
->  .../bindings/display/msm/qcom,x1e80100-mdss.yaml   | 10 ++-
->  7 files changed, 138 insertions(+), 22 deletions(-)
+>   drivers/nvme/host/fc.c | 102 ++++++++++++++++---------------------------------
+>   1 file changed, 32 insertions(+), 70 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index afe01332d66c3c2e6e5848ce3d864079ce71f3cd..8282f3ca45c8b18f159670a7d8c4d9515cdb62ca 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -66,25 +66,37 @@ properties:
->        - description: link register block
->        - description: p0 register block
->        - description: p1 register block
-> +      - description: p2 register block
-> +      - description: p3 register block
-> +      - description: mst2link register block
-> +      - description: mst3link register block
->  
->    interrupts:
->      maxItems: 1
->  
->    clocks:
-> +    minItems: 5
->      items:
->        - description: AHB clock to enable register access
->        - description: Display Port AUX clock
->        - description: Display Port Link clock
->        - description: Link interface clock between DP and PHY
-> -      - description: Display Port Pixel clock
-> +      - description: Display Port stream 0 Pixel clock
-> +      - description: Display Port stream 1 Pixel clock
-> +      - description: Display Port stream 2 Pixel clock
-> +      - description: Display Port stream 3 Pixel clock
->  
->    clock-names:
-> +    minItems: 5
->      items:
->        - const: core_iface
->        - const: core_aux
->        - const: ctrl_link
->        - const: ctrl_link_iface
->        - const: stream_pixel
-> +      - const: stream_1_pixel
-> +      - const: stream_2_pixel
-> +      - const: stream_3_pixel
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Cheers,
 
-So this changes explain dependency in "Display enablement changes for
-Qualcomm QCS8300 platform". Well, heh, I already marked other one as
-changes requested. It's way too many  patches touching the same file.
-
->  
->    phys:
->      maxItems: 1
-> @@ -166,7 +178,6 @@ required:
->  allOf:
->    # AUX BUS does not exist on DP controllers
->    # Audio output also is present only on DP output
-> -  # p1 regions is present on DP, but not on eDP
->    - if:
->        properties:
->          compatible:
-> @@ -195,11 +206,83 @@ allOf:
->        else:
->          properties:
->            aux-bus: false
-> -          reg:
-> -            minItems: 5
->          required:
->            - "#sound-dai-cells"
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              # these platforms support SST only
-> +              - qcom,sc7180-dp
-> +              - qcom,sc7280-dp
-> +              - qcom,sc7280-edp
-> +              - qcom,sc8180x-edp
-> +              - qcom,sc8280xp-edp
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 5
-> +          maxItems: 5
-> +        clocks:
-> +          minItems: 5
-> +          maxItems: 5
-
-You need to restrict clock-names. Same in other places.
-
-Best regards,
-Krzysztof
-
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
