@@ -1,179 +1,162 @@
-Return-Path: <linux-kernel+bounces-797192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E12EB40D2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:32:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F93CB40D38
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9603562ADC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D78DB1B27B5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BAE3469F3;
-	Tue,  2 Sep 2025 18:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463362E8B68;
+	Tue,  2 Sep 2025 18:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwpkpNXN"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NYzbFqTx"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859962853E0;
-	Tue,  2 Sep 2025 18:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5842853E0
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 18:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756837909; cv=none; b=HSH7HIwT0BFr1L65fGgYO+VVgdOLIY/cLE6NTmHHfFcPaTdSDeE/Gq2MsdkQ2S31qSxSwonxLxPylTcPnyoVv1kYODluRiVOTnYYIb+zviGCzgzYG7QUXp5JNAmtiwiHHP+MMSMMD7TRzNL5CmJ9bMNeJwzQE2OXhGy5xf68Mzk=
+	t=1756838050; cv=none; b=Wa5cFGmx8F0HJsbsxQOrdMIM2mOlHfBeXT/osRkb+LXo4JYjc92OvQ38jni/rjyUBV9G81YR/RpzrVM/OE2QWcHHJfURpF1KYxi/tpU5fkor0lQcfR6BzJ+XCkCymBrgTLO+ecVsc+erK7gH0pVdxMHZdxfUTKFA/EAq1GHgVT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756837909; c=relaxed/simple;
-	bh=6W3DcUkvuDn6ffZ/Yp4bwQSp61ZGeiWIgF3Ou2HFsC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dRQ9XffRlb0vRzS+TS43Qydm9pdWXJXzQQBmIoENawC2sXEo43BZ4wM8G2d3MWLnxS/NzxJfu2rvlayI3WDI0Rpe5RUj+RVEZ4WcGFD4eEMzP2nIpCVzyWHIyr+2acWl3XIYwKPaDi6F/JxGzTQJN1JU6XvoUD2gaXMZNY1tNaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwpkpNXN; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b109c58e29so98658081cf.3;
-        Tue, 02 Sep 2025 11:31:47 -0700 (PDT)
+	s=arc-20240116; t=1756838050; c=relaxed/simple;
+	bh=CfCTirauyBDRzM3gQY7ONrKpMxNilr0F17w9gsO04N4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lSwb/0E4Cr47lEqUcpe+Rbd+Oc0eJSgccYnXoHLLjy/2SUgBmzpDVUGRiJi+2qUIHVD5L6oGt/B9XTR0FiRVYHTw+TudmC++z9FTzxs0ERi/h2dIXszW22qQp0xSeTqNm0kuSxaPzYmkEgMZpQU9QudayDPNT0Ia4Lfbclp2WnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NYzbFqTx; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3d3ff4a4d6fso2051298f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 11:34:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756837906; x=1757442706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/BmLoBAAArAnQ+mO5WuxR7ckRkG/PjVIDgG0FMHYxWE=;
-        b=EwpkpNXNAOd92QHEn9t5m8kXx8qj6GzGy91nVt0WcOgfE/jqkehVSZnAQdhR8JgvgR
-         kNJZ+wn7LmM0J8Qc8kvbHABlcQ4rmGVOtCmeWMOwBEeD4+sZGo/juN+eieSApQXcvGCL
-         CwVnI0hF9dS0MUPAILTMCbS/7Us1wqysamXJYyQyq6jezKFKiFOCFHc5SLCqoXecXvU7
-         zG3cPAkZ6xBs2TTRJH/gEyjnrJRW9rw9eHAn1omRW6PArUQyBz7t8ntP6pgfbMSeLA+P
-         b0CPQw0Ce96fub7Us8MWfwwasSJmT6LSNSMf6jyPmGJFmyXIxv202orJruH0ZWqyQ/oR
-         fQJw==
+        d=suse.com; s=google; t=1756838046; x=1757442846; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K3cKnJ2EnRVvoxrwdhzOABG+ckrFCGnrS/QnRyyFG6Q=;
+        b=NYzbFqTxtJoEQKakp2m1iM5alaxTdaKPJ5udj1OkCLTI/yho/zi8Hba6MZJF4ALabf
+         fHeLT8k578pZQiE6II+xGvxgGr3vcZPmTxX5Uk/bfMo3TSqNUgLa62NydesNqHsZ5VQA
+         NVVrv3meswB94joNBeH+7GIwhPUq9V3dCbRbeAxq+LRP2ma2AbX4orXFoWWukACi+PFv
+         8iCf+/Oz9yDS7rtVPxNN+X3Aw0uZHJXpAXUVhmHM8xX6xh/6ktPnK6NffPSah9Pl6iwu
+         96C1WB6O6OTt9GctSmGLwYadAWI+PpwUWqKdCzKJ1G4qeebMFUTA/xxOmiysO9/KOw9B
+         n19w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756837906; x=1757442706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/BmLoBAAArAnQ+mO5WuxR7ckRkG/PjVIDgG0FMHYxWE=;
-        b=KaOXTPN3sW8PfcLawGctqdq1JYB9Qo/MbNc3baKBa0knCjOxeNvjft0YHvUVZqVhAH
-         sj/3vM4frGSzUQb8labkEcY7CvMYwpodRoozOadK3BVPWitgqO0VDozm+d7HQ1cw7R+k
-         NnNV0ysiXm0QI1fTmADnYoO8rg4lJeOjmK3TjpKAPa7lmNkl5Ils55h5205Amn0hIbNs
-         lN8qxIDa12bzsm92UGjVu/HDXUP018C//ySLNJeQwBT8pAO46MIZXiVd4m0fl/pC8Dp7
-         qqz+6jdSYIPD/jLqKANHSdM542CLKh0UHyfS0HbKIwCEyDCLebsbLIxC+1bVfjtiScTy
-         4V3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUIWikBzcFyoIaaBUOSYxKcObgDDZX6uXUS1r9Cv4khoEOSHKJRiLi1LqiUIHTxQi4UsEBM9M7XhciQ3PrA@vger.kernel.org, AJvYcCVurQ93NLvUX5tQPR77vRRPoa9/m5tuZlOrhQwPikpmfr+8tNWz1CJxrjgVCku5wEca3GAmgSc9mdt7Ulv2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqNs5TKPscazZf6yj79fQgnbRtA/XFI++cX88L76r7kG6JsFOJ
-	j4D2drzuZSWhydli1saNS0yuvEDpr6wfaVhcOpwMXzaTKqTYtuhWFcmV+OydAwVlBBHWxMWUrbz
-	lCppoNpqKw551GmTgbtwzehDwT8Jc67ypcGtZQw4=
-X-Gm-Gg: ASbGncvvLZziM83dQocX7oSel2yHNn5VfdpdhUHRizywMkOkpFnc+U16ixicTvgJLI1
-	g2dGgtnfO60GB4bigrnPJ6AuC6S2jMLMmkm377sAh4CCJmoY+eq7kali+4y8/B9yp4rK0yaOLsm
-	ZTrZXY1JHOp+0IWEf/KgxOrUd+ETzSXTAv2KbmSUtw5IHFKPQ0NT934xMPJzyzazoJUqF753vd0
-	mIyyx3JGWrJI3BUrJc=
-X-Google-Smtp-Source: AGHT+IHcAyBnsnaRFB6GvR0M9DwvhMZoK+VuMBmgCxXr/vNuz67Gbf8JR2OjFajr+EO+IDJjDUux1S3Vf225kTFDcBc=
-X-Received: by 2002:a05:622a:5b9a:b0:4b0:8883:d893 with SMTP id
- d75a77b69052e-4b31d7f05f1mr155243871cf.9.1756837906304; Tue, 02 Sep 2025
- 11:31:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756838046; x=1757442846;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K3cKnJ2EnRVvoxrwdhzOABG+ckrFCGnrS/QnRyyFG6Q=;
+        b=ACWXJVZHGoX/IrhWYfyPE3iuHXlTtlBt3tDNIxKHh4Ya5i+ffjNpKhlOYcq6RepWei
+         nv/qPd6zeuQj4Ccyrjh1CSlojCoJvgaXWd4zFC6AjRrcMpRfYWrlFYoV0etgkDY/MDtb
+         xHto3GKtLtq9bOwRzRKOyuwsak8tA3QoaL46QXg4Dy4U63O1JRFOFGji0mVIQLEYlRar
+         zPS56mhYTXnQlTONAMgCQzOvPs+OI+GbM3acXbnOJB6sFQBhPT0NliZUBWPtmTTe4U1m
+         BiJbmz26e8mTokWqXlYafBtsPx3AqJ5deVmm3NYmF3giCBBvxTpqlExUqAV0PgWKTB0W
+         80WQ==
+X-Gm-Message-State: AOJu0Yy0+8O1Rk7mMe8lElJlNjvIzaFArsDSBorlySicC0NOCn7unRyT
+	Ad5qugRJQ02nIgpQqwReo27L4NqxDnznybVOdmg4DtluyW9B1flkus/L35RjZj/CZtc=
+X-Gm-Gg: ASbGncvz1gdGEKfxk60ODnizF4GEgD4k2pLVQIkz4P4H7nlPEaL1zZeAa0lfkloEC/g
+	bptY3p9TpbdN/KyORQiMe2EQhFab9/RZhAoO6f6TYj1lJNdY2T15gjQYawNV31D7P9GiBKTAiCr
+	/FtI1lLXUzKk4DlgiBQaIxXZo/xTmTMuHiAdDQ6kXU/26E7e/2bvb/2GobZYaheML/fnevpV8bU
+	YDC+rYkeGjp7w9PKQ87jOeANJ/WmdhjpV2/fyDLGUTOm/i07Rk+NMXw44i3YI5doANFr6TiAbkq
+	E7T416rTUim87b5NlLRsrlVh98dZcleDwCnCr9ZDOP/NZLWSO++H2tQ3jJ+Lxk0Gai3lOoHPg36
+	zBIk/ne2QxIQ+MV+ahsxmT4S+W/Evjw==
+X-Google-Smtp-Source: AGHT+IGadJheVs+rqTccpTvSvnSIsk3/R5H3cQsdPe4JISg6VV0H6tDzIke0cO2LZPiK04BtP1dLjw==
+X-Received: by 2002:a05:6000:2409:b0:3d6:89f0:f348 with SMTP id ffacd0b85a97d-3d689f0f684mr5815272f8f.15.1756838046323;
+        Tue, 02 Sep 2025 11:34:06 -0700 (PDT)
+Received: from [127.0.0.1] ([2804:5078:9a0:f000:58f2:fc97:371f:2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e1d4fsm14028477b3a.73.2025.09.02.11.34.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 11:34:05 -0700 (PDT)
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: [PATCH v3 0/4] Handle NBCON consoles on KDB
+Date: Tue, 02 Sep 2025 15:33:51 -0300
+Message-Id: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902152234.35173-1-luis@igalia.com> <CAJnrk1awtqnSQS0F+TNTuQdLDsAAkArjbu1L=5L1Eoe0fGf31A@mail.gmail.com>
- <87bjnssp7e.fsf@wotan.olymp>
-In-Reply-To: <87bjnssp7e.fsf@wotan.olymp>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 2 Sep 2025 11:31:35 -0700
-X-Gm-Features: Ac12FXyWCjRArQS_0eTRUkJ33VG6qC_AY2RkPyQAWqPz0UNa3dHdO88bp5HHn6s
-Message-ID: <CAJnrk1bd62RcE9UU8COdpzSF0kk3DPYwgmwk+xCQew0-C43WXg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: remove WARN_ON_ONCE() from fuse_iomap_writeback_{range,submit}()
-To: Luis Henriques <luis@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI84t2gC/3XMSw7CIBSF4a00dyym0AfVkfswDsrl0hIjNKBE0
+ 3Tv0k40Jg7PSb5/hkjBUoRjMUOgZKP1Lo9qVwCOvRuIWZ03iFI0peQVcwq9Y9dBK4+MDBqspNF
+ Ut5DJFMjY55Y7X/Iebbz78Nrqia/vn1DirGQNJ0R9ELXsu1N8RNqjv8HaSeJjO85/rMgWJUqhU
+ FNv2i+7LMsbk4QU9+MAAAA=
+X-Change-ID: 20250713-nbcon-kgdboc-efcfc37fde46
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ John Ogness <john.ogness@linutronix.de>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Jason Wessel <jason.wessel@windriver.com>, 
+ Daniel Thompson <danielt@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
+ Marcos Paulo de Souza <mpdesouza@suse.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756838042; l=2374;
+ i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
+ bh=CfCTirauyBDRzM3gQY7ONrKpMxNilr0F17w9gsO04N4=;
+ b=4GXSeC2mymjqgC6HpCNhh153BJsiNcoKEQ5XJHaMzLIA2VAkhofrrNCXPk1HFk/WGyk0hFxVr
+ WOXlsJgTYrvBsSyfa4yqMiRg6nXCcGkd3SbpKagV/G4NPqO3PVVxXRv
+X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
+ pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
 
-On Tue, Sep 2, 2025 at 11:07=E2=80=AFAM Luis Henriques <luis@igalia.com> wr=
-ote:
->
-> Hi Joanne,
->
-> On Tue, Sep 02 2025, Joanne Koong wrote:
->
-> > On Tue, Sep 2, 2025 at 8:22=E2=80=AFAM Luis Henriques <luis@igalia.com>=
- wrote:
-> >>
-> >> The usage of WARN_ON_ONCE doesn't seem to be necessary in these functi=
-ons.
-> >> All fuse_iomap_writeback_submit() call sites already ensure that wpc->=
-wb_ctx
-> >> contains a valid fuse_fill_wb_data.
-> >
-> > Hi Luis,
-> >
-> > Maybe I'm misunderstanding the purpose of WARN()s and when they should
-> > be added, but I thought its main purpose is to guarantee that the
-> > assumptions you're relying on are correct, even if that can be
-> > logically deduced in the code. That's how I see it being used in other
-> > parts of the fuse and non-fuse codebase. For instance, to take one
-> > example, in the main fuse dev.c code, there's a WARN_ON in
-> > fuse_request_queue_background() that the request has the FR_BACKGROUND
-> > bit set. All call sites already ensure that the FR_BACKGROUND bit is
-> > set when they send it as a background request. I don't feel strongly
-> > about whether we decide to remove the WARN or not, but it would be
-> > useful to know as a guiding principle when WARNs should be added vs
-> > when they should not.
->
-> I'm obviously not an authority on the subject, but those two WARN_ON
-> caught my attention because if they were ever triggered, the kernel would
-> crash anyway and the WARNs would be useless.
->
-> For example, in fuse_iomap_writeback_range() you have:
->
->         struct fuse_fill_wb_data *data =3D wpc->wb_ctx;
->         struct fuse_writepage_args *wpa =3D data->wpa;
->
->         [...]
->
->         WARN_ON_ONCE(!data);
->
-> In this case, if 'data' was NULL, you would see a BUG while initialising
-> 'wpa' and the WARN wouldn't help.
->
-> I'm not 100% sure these WARN_ON_ONCE() should be dropped.  But if there i=
-s
-> a small chance of that assertion to ever be true, then there's a need to
-> fix the code and make it safer.  I.e. the 'wpa' initialisation should be
-> done after the WARN_ON_ONCE() and that WARN_ON_ONCE() should be changed t=
-o
-> something like:
->
->         if (WARN_ON_ONCE(!data))
->                 return -EIO; /* or other errno */
->
-> Does it make sense?
+These changes reached v3 (since the first version was tagged as v2 by me...),
+thanks to all reviewers for the suggestions and questions about the code.
 
-Yes, perhaps you missed my previous reply where I stated
+A new patch was introduced this time (3/4), adding an exception to nbcon
+code when trying to acquire the context of a console when KDB is running,
+suggested by John and Petr. Thanks a lot!
 
-"I agree, for the fuse_iomap_writeback_range() case, it would be more
-useful if "wpa =3D data->wpa" was moved below that warn."
+Testing
+-------
 
->
-> As I said, I can send another patch to keep those WARNs and fix these
-> error paths.  But again, after going through the call sites I believe it'=
-s
-> safe to assume that WARN_ON_ONCE() will never trigger.
+I did the tests using qemu and reapplying commit f79b163c4231
+('Revert "serial: 8250: Switch to nbcon console"') created originally by
+John, just to exercise the common 8250 serial from qemu. The commit can
+be checked on [1]. I had to solve some conflicts since the code has been
+reworked after the commit was reverted.
 
-I am fine with either keeping (w/ the writeback_range() one reordered)
-or removing it, I don't feel strongly about it, but it seems
-inconsistent to me that if we are removing it because going through
-the call sites proves that it's logically safe, then doesn't that same
-logic apply to the other cases of existing WARN_ONs in the codebase
-where they are also logically safe if we go through the call sites?
+Without the patches, I can't see any mirrored messages on the NBCON
+console when KDB is triggered. With the patches I can see the messages.
 
-Thanks,
-Joanne
->
-> Cheers,
-> --
-> Lu=C3=ADs
->
->
-> > Thanks,
-> > Joanne
+[1]: https://github.com/marcosps/linux/commit/618bd49f8533db85d9c322f9ad1cb0da22aca9ee
+
+Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+---
+Changes in v3:
+- Only call nbcon_context_release if nbcon_context_exit_unsafe returns true (John Ogness)
+- Dropped the prototype of console_is_usable from kernel/printk/internal. (Petr Mladek)
+- Add comments to the new functions introduced (Petr Mladek)
+- Flush KDB console on nbcon_kdb_release (Petr Mladek)
+- Add an exception for KDB on nbcon_context_try_acquire_direct (John Ogness and Petr Mladek)
+- Link to v2: https://lore.kernel.org/r/20250811-nbcon-kgdboc-v2-0-c7c72bcdeaf6@suse.com
+
+Changes in v2:
+- Set by mistake ..
+- Link to v1: https://lore.kernel.org/r/20250713-nbcon-kgdboc-v1-0-51eccd9247a8@suse.com
+
+---
+Marcos Paulo de Souza (4):
+      printk: nbcon: Export console_is_usable
+      printk: nbcon: Introduce KDB helpers
+      printk: nbcon: Allow KDB to acquire the NBCON context
+      kdb: Adapt kdb_msg_write to work with NBCON consoles
+
+ include/linux/console.h   | 50 +++++++++++++++++++++++++++++++++
+ kernel/debug/kdb/kdb_io.c | 46 +++++++++++++++++++++----------
+ kernel/printk/internal.h  | 44 -----------------------------
+ kernel/printk/nbcon.c     | 70 +++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 151 insertions(+), 59 deletions(-)
+---
+base-commit: 618bd49f8533db85d9c322f9ad1cb0da22aca9ee
+change-id: 20250713-nbcon-kgdboc-efcfc37fde46
+
+Best regards,
+-- 
+Marcos Paulo de Souza <mpdesouza@suse.com>
+
 
