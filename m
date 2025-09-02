@@ -1,231 +1,181 @@
-Return-Path: <linux-kernel+bounces-795763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10435B3F788
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:04:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD2DB3F783
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADEAD481418
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC95117D317
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C391D2E8DE1;
-	Tue,  2 Sep 2025 08:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7B22E8B70;
+	Tue,  2 Sep 2025 08:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XhBnInmr"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2044.outbound.protection.outlook.com [40.107.95.44])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b4h3P23p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508DE2E8B8C;
-	Tue,  2 Sep 2025 08:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800235; cv=fail; b=EX037IMaIQQZKANdYHK88suj63kEGJQLgM5LRADJ9LqUXxTvfijF54eT9/atkKmDHkWNMrH926smKIF1T6H9e9f6Ep6rpdhSH98Q+Q7WLYq4aXy1G0HGG9BHceSu9YVxBygnQPVpCxrsj4Hz6R9WaxRZ7OsoMvIhS8oyZM7M28Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800235; c=relaxed/simple;
-	bh=DTRC8baTVROgYcnW9yQ+xgWwXHi0DAwqI9im0M+sojg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CoAb1X7mV30Quw2z7ZWUZwNSDkmnt5SWS1kJXGwME9i+Xs6KcMaxXqbaFwGBfM6+a723P0WAfb/MdDxLSq+H9LI8k/bN7IWlYBSSxzB3NjYp3BPxu7aUQf2qD1xF/P9Eyv8idTl4s/VmFrwwenxNJY3aVHBWb5E3AZRG2n+9iaM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XhBnInmr; arc=fail smtp.client-ip=40.107.95.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QERlz2RLDO/C5/l6IRMffPJeQHUr3mX5ReeaFl699Hc128LD39oyklw/NeOXCEnDBr8U+j1YjHl1cbjT+anFNKkFXsci6J9P4CB9e86rW/4qYE0a+FWDhCFoXxjdABZOQYIID4LXfflnH6ggWYOsPY9PZUQDkN7WBUJuIYvt3Yop0GKq6o6dnFg0uKBIymN0Tj3lWW2nfNUOiOW420Az1MUugjaxJ518X0A6gH5LWxqlmxb8iW6hpOxDPwGtm2FrGX/iSGHC1TR+5Qt3BkIqjChMuW+n7sBxydcPr6LreXKwmcED3hM84rEx1/S4R4NqdV8azgmbmHWanDDqCrEJeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QUwRDQuF/MfCItz9I6B/voS4djqL4zjmGk1P4DPB2K4=;
- b=QkbnQ50tGMb5Bi8OzEBpD5hWBmR/6D7oPRP9eJiCygy9Z2m7BD0XOBRGzUe2jVkBpG2uWtVvEwRA4uZQ6IvaR9My8w+vmUwYu2+E+TKF14hIH1cM93vYj2nmubemn5mH1S82L7na6+UX/esH5YuSorpeuxPCa83US06TfoeFgNVnadE2Ijo0+BleRl7+JY2ntATLoD3hhgLutKGkco0TabVzE5f9PfK+zSxdVL/4RE/poMqkjFPAxoiY4heHluOKF2WVlMi0wd0b1Lb540j7HigOfVfLUz2CAcR9pYrk2oriVxjvPoChiIHzOYjgIMsTe3V+6h+Yqmv6eeuZO5suYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QUwRDQuF/MfCItz9I6B/voS4djqL4zjmGk1P4DPB2K4=;
- b=XhBnInmrTS5AS1Zk3+QCSaF4dpFv2lyRiXzgSgzPuZh1UuJygVCgpOUU5q4Gwa19GTl2lmePfj+k+SAqBrDCFqy8sCpZ8GvhDJX7hG6A7V4nf0KJ+whKx9gITOgeCBAWZX8HDwDvbnpGwrWSgc/hp2gHZIaIwWIdFNTGa1/5Ps0=
-Received: from CH2PR19CA0013.namprd19.prod.outlook.com (2603:10b6:610:4d::23)
- by PH8PR12MB6747.namprd12.prod.outlook.com (2603:10b6:510:1c3::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 08:03:51 +0000
-Received: from CH3PEPF0000000F.namprd04.prod.outlook.com
- (2603:10b6:610:4d:cafe::a8) by CH2PR19CA0013.outlook.office365.com
- (2603:10b6:610:4d::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Tue,
- 2 Sep 2025 08:03:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CH3PEPF0000000F.mail.protection.outlook.com (10.167.244.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9094.14 via Frontend Transport; Tue, 2 Sep 2025 08:03:51 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
- 2025 03:03:50 -0500
-Received: from kaveri.amd.com (10.180.168.240) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Tue, 2 Sep
- 2025 01:03:48 -0700
-From: Shivank Garg <shivankg@amd.com>
-To: <pbonzini@redhat.com>, <david@redhat.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-coco@lists.linux.dev>, <shivankg@amd.com>
-Subject: [PATCH V2 kvm-next] KVM: guest_memfd: use kvm_gmem_get_index() in more places and smaller cleanups
-Date: Tue, 2 Sep 2025 08:03:08 +0000
-Message-ID: <20250902080307.153171-2-shivankg@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A19D2DF135
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756800224; cv=none; b=uttCBETzw/L1BtBVMEgQVdeYfi+3TitKIrQPR+9hSUztRva4+u65Y9bMDD0YhX3Cbi9W8k+P8id/0s+EGCkFyNbchfLi6CKnuP8bYzJn+kj9R76At+kskErzRjaf6pfdyhDCmLhx6FkUQKe5Pg4olXUbHZLYiT/hYnPSDGHvJlY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756800224; c=relaxed/simple;
+	bh=ksKqA3iVgcDyVSoIBjmEtSC5G07laXVwfks0AXMVGIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZX8UTvvVIEqNYtqAWE0d5vqdsegKvbRr/j9y3kQDVc++J3YTLJOeygco7L2WJtEa3fDEY3dhcPe2wk6QvgK7fjAL7bu80h9uwrOXfn5OAPJ5rTqdGz9iD+T3ohtDsjp/Yb2+Xdcdg0QT5PLs24KecXrVQ50XTooqtMxn7n1Unho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b4h3P23p; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756800221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aS4Vyr1Pain/urXoI8HpaIVdg+wdDq3QstyD3UxMikY=;
+	b=b4h3P23pb9ok7l0b4InavRynzp38A5K1rzIYUZ82JO/GmH4WClTEcoz5UDYzIlZVFe+lf+
+	kPoUBLLw4n33ZUiv7GtluIvIgT4p++YwmgqJjr8kAl9t+cmG/q1gcLDf1iXeG9YrQn4PrG
+	Yn+4oyxBHxHTpnf+2zmZqpyZBw40i/Q=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-D90HdkOZP86rNR1_zwkWqw-1; Tue, 02 Sep 2025 04:03:40 -0400
+X-MC-Unique: D90HdkOZP86rNR1_zwkWqw-1
+X-Mimecast-MFC-AGG-ID: D90HdkOZP86rNR1_zwkWqw_1756800219
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ce65accfc7so4586787f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:03:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756800219; x=1757405019;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aS4Vyr1Pain/urXoI8HpaIVdg+wdDq3QstyD3UxMikY=;
+        b=jUOkpaCOOLuQmhvvLt4xNYn3ARsn33fXOGdpGGKD7CZwxXxlDWGgWFjlfwlMEiu32H
+         Tz0XCzrEz293F5e6CClvEa6vko5SNGZSOzMzW1eSHBErDnFGVoMFTdeACC2Uu5O2Ss49
+         INSIon1OfiqIuVbTDbumlfhHxoYbG7pnAvflgaM2Po6yo2NjdBlTlEZ022KdxfK0jOde
+         OUBP8MEQLUppI0g+HjwEIh3e5UKYxgJzDWaeEIscQdPPYqGXz/scozyQSquzsvYcWJiK
+         WTkDdWsbh02eKcQCVZqGARw5NiwuKUtbnKYA6lIogRCNNbxqRCZyhA0tqxL4+EpOqFFC
+         HzRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzTR5PnT02Vuy5Ux0JPKIJCGw8C8UZ5UOF9ivA8v55dSgqtmns3b/cEhSxkCYpfFGwd/09JSfM/NFw8KE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVgfJ6M01BclxkckCcXP1qzPaqcKqJY3WZEXmkoebRXJ49SZCF
+	2twBuB8oZJkGJxvPg7wIRV69FzHbAMg1QDmioHywauQLu9pVTGksDsGLUjx7c8ScWY5RDVZEtKE
+	iKZFnX6rJWSn9gHXHIs3mC6axy+ecM4lkFiKAjNToZjU8aT3TuPiNXr9CQslzc2zdSQ==
+X-Gm-Gg: ASbGnct4SEQ70qAL/sHO97+s4/MFt2SaIPgP92cWz2ecgozX9fhopTqZkEXoOFj7E36
+	ELZF90nDc793lG7s/isQi2P0xF6FdVlP0bSIdMTMIwezkbwveeAIIF70aOM2Fy/TIZo1lAryCzy
+	O/yRAh5CXgjUhk7ykcrcwvZup4xOnsbin8WNZtbJvIDBsPqv/3QVdL1ZdNJA4pMo4muty/7dxRR
+	w29f+X9W50AvkughT8GUa3vXA+mEp3Ux56J1tU4qqJP0a31a435J4W4w+YYyw8Nl6fkl54L1q20
+	LDYlM5zgugWcGc09EVX0l71nKFyTCpC+ilgy46EhhX2YaICa6nqjXMyGR/cy8Bn3pIi3UeL1W5M
+	n8mvVuWkDj7Jvzl2S54VgPJ7TzQXeqsQSHlQHsYuEUkqdjkO468rweVznhproJ9pxpS0=
+X-Received: by 2002:a5d:5d07:0:b0:3d5:4967:1895 with SMTP id ffacd0b85a97d-3d549671ee8mr6894430f8f.10.1756800219164;
+        Tue, 02 Sep 2025 01:03:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHQpyPxYTW4X3f3NKWjIgNaSxeeHpjwanEWaUJCVc+WrhnHijlVjaMRV/TGhD+ddM98xdJSAw==
+X-Received: by 2002:a5d:5d07:0:b0:3d5:4967:1895 with SMTP id ffacd0b85a97d-3d549671ee8mr6894360f8f.10.1756800218588;
+        Tue, 02 Sep 2025 01:03:38 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1f:3f00:731a:f5e5:774e:d40c? (p200300d82f1f3f00731af5e5774ed40c.dip0.t-ipconnect.de. [2003:d8:2f1f:3f00:731a:f5e5:774e:d40c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d690f2edf1sm7879366f8f.16.2025.09.02.01.03.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 01:03:38 -0700 (PDT)
+Message-ID: <deaabbf6-655c-4a83-b5f8-131a6be7b2fa@redhat.com>
+Date: Tue, 2 Sep 2025 10:03:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
- (10.181.42.218)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000F:EE_|PH8PR12MB6747:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb6397a1-acb7-4ec6-0152-08dde9f74136
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vMzDU8A/UXWinBg0rsG6W4yjJbN8Se04U+7vakPDPnDWDZjW17jGHZm90ij+?=
- =?us-ascii?Q?GiyBLQB5+rRQ7SKOtSwgoOgFTvbCxU3oXGrlZT5RdkhmGIE+gPenI+YM7ErZ?=
- =?us-ascii?Q?/9FZGVOQ59iKlnEHBQBx9lWWS7fdPjzdsWqFmrlyKQr9yufyB88X2QRm1gst?=
- =?us-ascii?Q?6sabpwoVLtokm/Nwrci6cQxR19Y6MXjrQ++LoOBR04z1rwM7IXXvo9DWAwPU?=
- =?us-ascii?Q?BlAGOVcEv3MWWz3dyXYPvNBgdP91eREOHpB50oXMZG5sKSQN82jvSQESxAzu?=
- =?us-ascii?Q?mWn7joUvqhDfdhycUR3TwlD2yeB37tyjPpnLtKOUqL4eSzjMNDiY2rTqrVzL?=
- =?us-ascii?Q?bOj6wSvFkOdS6q/sk4mjPSr/ma4nBXWZiXvjswaIg7g1YA9K7W8IH3G/eExt?=
- =?us-ascii?Q?REjlmP7ROxrymnfRK3Qvg8ImV35qHnznOTx6kGZ0OGtgEHV7aLFQR+H/y/w6?=
- =?us-ascii?Q?MenVg2Kn+auohLGWFW2yQsu+xaSnXfLRCR4TSFDcnaP1Mk3PwtzhT/MgY1nA?=
- =?us-ascii?Q?AlFu5bImNt9CbuUtsO4QhJ61GDMj102OuWPK1dYqFgvy9vumyL185LgR8Gcw?=
- =?us-ascii?Q?SrCkEqwu3ZcCjmK+lNvzeoUqwAAeMaPYrKm3vz2CTggYeC2aYn+ncW4iq25Y?=
- =?us-ascii?Q?vsK3He6/BwXNkzJ2P5ZqwL0aKC92pf/QTtkaSsyzkYWS45aZMJZXV82dYrdG?=
- =?us-ascii?Q?8jh9kXgnX9cWYXg4aCDxLnM6hT+2rP5c0RCx5VldjpxSxYNQ45bw/qVRuMqM?=
- =?us-ascii?Q?/Z7uyS8XlC2t8upwqijZjbAZF5fx1iClq0EFLEoL0K6sw4ZU/U6AI17wPjMI?=
- =?us-ascii?Q?NKqbW9KQ0kpQcra8SoJGwcxja2yEzQM3oKZi5acRrbi3cFxnIFJADnSiTm/u?=
- =?us-ascii?Q?e2wATmx35bhQAAavrje3Pc1Ga/ATRqHE4WXH0lW/uv+KXp7FgGXT6SvrdT6d?=
- =?us-ascii?Q?bLUlEgtwkgJrRANfhHW83OvCA1/xnheyCBxWx6095t290bSl/wKVukET7pIt?=
- =?us-ascii?Q?gwld/9CYeO1p9edywajfnjay2ZhQ2TVprbuqJftJJOpfCgCDw+CT/XLXdKm1?=
- =?us-ascii?Q?0czls0hxaGZSDb1Bt0dSxzgVxc8RxmwA/SIZumcMRuaky4QSAvjlR2iIkHHl?=
- =?us-ascii?Q?uyQ7Bvpn/OS0hwOnPJd81JonH8qF3cJKrSErvSS6o/nwi2gRKW+TP2QFwEQv?=
- =?us-ascii?Q?5XlHLLVW6Klu2E2Lamvog/pHQBOYZ4mE4QSnjK5rsMAkj7Yoxnzhg667Obh/?=
- =?us-ascii?Q?CKb+RKzG91SyCiZSho/7//WTwphHRpUiV/HA3E9GBYoYDPUbKzsQWu7fEXiC?=
- =?us-ascii?Q?pLw1DVBfk4tNKDFAewdUegBfN7E41JIUSPDNZSOSby5d1tR2FPQUXibcPKwx?=
- =?us-ascii?Q?ZNiSXEspDYfC3YmhRez3SwGP+vLxUJtCkJT/xWpBiU8tTUMd9U3RhBtBH7MG?=
- =?us-ascii?Q?HwwonsEIhImjqr/hmi+OJFcpQQnpoBglfsTEZpsR0uotRKvQFSMtlOINCaYX?=
- =?us-ascii?Q?0xtg4Fwz9IJIJfVq4RsgoYDgDnTM2Lg7iGs18QeNtMXCxLJjnkDsl0Ak2w?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 08:03:51.6192
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb6397a1-acb7-4ec6-0152-08dde9f74136
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6747
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/12] mm: constify process_shares_mm() for improved
+ const-correctness
+To: Max Kellermann <max.kellermann@ionos.com>, akpm@linux-foundation.org,
+ axelrasmussen@google.com, yuanchu@google.com, willy@infradead.org,
+ hughd@google.com, mhocko@suse.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, rppt@kernel.org, surenb@google.com, vishal.moola@gmail.com,
+ linux@armlinux.org.uk, James.Bottomley@HansenPartnership.com, deller@gmx.de,
+ agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com, hca@linux.ibm.com,
+ gor@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
+ davem@davemloft.net, andreas@gaisler.com, dave.hansen@linux.intel.com,
+ luto@kernel.org, peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, x86@kernel.org, hpa@zytor.com, chris@zankel.net,
+ jcmvbkbc@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, weixugc@google.com, baolin.wang@linux.alibaba.com,
+ rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
+ broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
+ mpe@ellerman.id.au, nysal@linux.ibm.com,
+ linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+ linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250901205021.3573313-1-max.kellermann@ionos.com>
+ <20250901205021.3573313-6-max.kellermann@ionos.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250901205021.3573313-6-max.kellermann@ionos.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Move kvm_gmem_get_index() to the top of the file and make it available for
-use in more places.
+On 01.09.25 22:50, Max Kellermann wrote:
+> This function only reads from the pointer arguments.
+> 
+> Local (loop) variables are also annotated with `const` to clarify that
+> these will not be written to.
+> 
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
 
-Remove redundant initialization of the gmem variable because it's already
-initialized.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Replace magic number -1UL with ULONG_MAX.
-
-No functional change intended.
-
-Signed-off-by: Shivank Garg <shivankg@amd.com>
----
-Applies cleanly on kvm-next (a6ad54137) and guestmemfd-preview (3d23d4a27).
-
-Changelog:
-V2: Incorporate David's suggestions.
-V1: https://lore.kernel.org/all/20250901051532.207874-3-shivankg@amd.com
-
-
- virt/kvm/guest_memfd.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index b2d6ad80f54c..1299e5e50844 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -44,6 +44,11 @@ static inline kvm_pfn_t folio_file_pfn(struct folio *folio, pgoff_t index)
- 	return folio_pfn(folio) + (index & (folio_nr_pages(folio) - 1));
- }
- 
-+static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
-+{
-+	return gfn - slot->base_gfn + slot->gmem.pgoff;
-+}
-+
- static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
- 				    pgoff_t index, struct folio *folio)
- {
-@@ -51,6 +56,7 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
- 	kvm_pfn_t pfn = folio_file_pfn(folio, index);
- 	gfn_t gfn = slot->base_gfn + index - slot->gmem.pgoff;
- 	int rc = kvm_arch_gmem_prepare(kvm, gfn, pfn, folio_order(folio));
-+
- 	if (rc) {
- 		pr_warn_ratelimited("gmem: Failed to prepare folio for index %lx GFN %llx PFN %llx error %d.\n",
- 				    index, gfn, pfn, rc);
-@@ -107,7 +113,7 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
- 	 * checked when creating memslots.
- 	 */
- 	WARN_ON(!IS_ALIGNED(slot->gmem.pgoff, 1 << folio_order(folio)));
--	index = gfn - slot->base_gfn + slot->gmem.pgoff;
-+	index = kvm_gmem_get_index(slot, gfn);
- 	index = ALIGN_DOWN(index, 1 << folio_order(folio));
- 	r = __kvm_gmem_prepare_folio(kvm, slot, index, folio);
- 	if (!r)
-@@ -327,8 +333,8 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
- 	 * Zap all SPTEs pointed at by this file.  Do not free the backing
- 	 * memory, as its lifetime is associated with the inode, not the file.
- 	 */
--	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
--	kvm_gmem_invalidate_end(gmem, 0, -1ul);
-+	kvm_gmem_invalidate_begin(gmem, 0, ULONG_MAX);
-+	kvm_gmem_invalidate_end(gmem, 0, ULONG_MAX);
- 
- 	list_del(&gmem->entry);
- 
-@@ -354,10 +360,6 @@ static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot)
- 	return get_file_active(&slot->gmem.file);
- }
- 
--static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
--{
--	return gfn - slot->base_gfn + slot->gmem.pgoff;
--}
- 
- static bool kvm_gmem_supports_mmap(struct inode *inode)
- {
-@@ -940,7 +942,6 @@ static struct folio *__kvm_gmem_get_pfn(struct file *file,
- 		return ERR_PTR(-EFAULT);
- 	}
- 
--	gmem = file->private_data;
- 	if (xa_load(&gmem->bindings, index) != slot) {
- 		WARN_ON_ONCE(xa_load(&gmem->bindings, index));
- 		return ERR_PTR(-EIO);
 -- 
-2.43.0
+Cheers
+
+David / dhildenb
 
 
