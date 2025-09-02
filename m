@@ -1,276 +1,148 @@
-Return-Path: <linux-kernel+bounces-795922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E40AB3F977
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:02:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 989ACB3F979
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD7F1B2257D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:02:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5ADC2C2203
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FB82EB5A2;
-	Tue,  2 Sep 2025 09:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0672EA735;
+	Tue,  2 Sep 2025 09:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9EC+SXL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baUJTPlI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A216D26FA46;
-	Tue,  2 Sep 2025 09:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EB42EA726;
+	Tue,  2 Sep 2025 09:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756803668; cv=none; b=r8OQlT7j49mbuznTz3MDhOpEltg+D5iiBsg6AF5JlnfNS8r60/9r+NI0lzQjMHK93mq5edceuxy5RL16FNt9fPJYiyMlNclqdFv+Z5KV+Za26vu/cJ2hL8uRlM5y2Ee/+w5Z2A8w1qNbqTv2jdy6rzBZeJx8+LghJzLRI9APVVs=
+	t=1756803685; cv=none; b=ncTALpXQR2Zl4/KlgrbcQpJTcLRNsjyqeD7QqceByMKhhKTJTPuvuN0p9qbNg3Dprc4xYsZWiHu+A5fhmmvVeEfzkOi/wh8s8qNOkem+C3C8lCKck6EsqZKCOMLq45aIHmfScv6WpQQdzbET4YTj0VrS4WqZtZlrmzClGxmrqkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756803668; c=relaxed/simple;
-	bh=mN5alaCamYFIsOV5DNqhwizhf2rPGa+oUFPBFZxEPYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QpAmAyFPUWBQztjwJuOt0ujI0U8xQXQWubMR2NKfJYM0K98Xt5btEkt80qwDxcI1WIU+gsrvMJFkSgnWTeD6INMOK2U513yn+2F+gsmN/+9zKmX/ONOAxq+kKBDnbZBc920Hniw4+ouEmfjfmTDVo+6dvvHx43GaXvXCWy3D3Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9EC+SXL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B9BC4CEED;
-	Tue,  2 Sep 2025 09:01:07 +0000 (UTC)
+	s=arc-20240116; t=1756803685; c=relaxed/simple;
+	bh=p07YiMczpEjLy1P1T4iapwfegPf/bwOQIeOyzaKjibE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=nxRo0amrYLADxSGDEzcWmlBByklhghQPQwpwKkwce6RHSfaxEpsgdFfX+PxOf4fLInAFSRPND/7hzyWw3Z0C9PDQUY2qpj+Iw70d8zh3SlQE8uroIOLGJTMJP/umWvEYb1vzsShx5XqL49tfPsTDFCjPv1qnAhEuZKjKV9fcVMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baUJTPlI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 471E8C4CEED;
+	Tue,  2 Sep 2025 09:01:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756803668;
-	bh=mN5alaCamYFIsOV5DNqhwizhf2rPGa+oUFPBFZxEPYY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t9EC+SXLly+Vx+79G57ZJem3FcxzZXJyPpX9DupmeAU5doHELqySn32k5H3OGMJx2
-	 qGqCX3b9GHQ8otVWjup3BhFcGsFfqwMjZpIHR8D5WDxmC6NJtZobScVVGnuN38Ggst
-	 tpd9w9eJpUyEVaIJvvwnn01I9DzIZ6LysK3vzDUq6wEkVQgE+pXXCXLWKbEQigzmXt
-	 cmycjbwyUnnDQNiHBrvB1wRlI9V+zCWL6EViyWV7QmY8bHsTcHZEBS5SzpC2H6Ar+r
-	 UeEoTrwjt9igTHLYLNMdNiM00GNms+D4swv38K1yF5952+TiIaU9kNBWSYhkcipmp5
-	 1FAVoLcyHaqVA==
-Date: Tue, 2 Sep 2025 11:01:05 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Russell King <linux@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next 2/4] dt-bindings: net: renesas,rzv2h-gbeth:
- Document Renesas RZ/T2H and RZ/N2H SoCs
-Message-ID: <20250902-gainful-meerkat-of-prestige-dd4952@kuoka>
-References: <20250902001302.3823418-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250902001302.3823418-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=k20201202; t=1756803684;
+	bh=p07YiMczpEjLy1P1T4iapwfegPf/bwOQIeOyzaKjibE=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=baUJTPlIeMsuFcGtJgDaavsbxf3j0VGDSNtAa3sWQjclASyVXrz3MWb//IGV0Lm3b
+	 On1aKdbjZHd+SbeT4WbkWRlVOfo7S/V8TZXiVMKOgZTgJ+WC9ij5WbbYEkcZqSfhwx
+	 +APBQvKOZFLrZrgpzfA74IUtMW3q0p7quiIX+FdGh4fpJcaYAGkGEDvu3FpnfZh6f8
+	 g8+0C5v06W0ytqofAZ/F2Zho4InBsDqM+m8Yy9jOKvztDwpJK7qGiXWGWhGWF0mzUR
+	 y4G4ZdMRKw4c05yhGeFgJYRJowgkT3aJ1jU9XqjXojuLoVh/CaTG3fLBjn2aKU1SEW
+	 xXaYjF/4DaIxw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902001302.3823418-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 02 Sep 2025 11:01:19 +0200
+Message-Id: <DCI6XGR65KH9.27TWYVKNZNGHV@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v3 1/3] rust: maple_tree: add MapleTree
+Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Andrew Ballance"
+ <andrewjballance@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-kernel@vger.kernel.org>, <maple-tree@lists.infradead.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-mm@kvack.org>
+References: <20250902-maple-tree-v3-0-fb5c8958fb1e@google.com>
+ <20250902-maple-tree-v3-1-fb5c8958fb1e@google.com>
+In-Reply-To: <20250902-maple-tree-v3-1-fb5c8958fb1e@google.com>
 
-On Tue, Sep 02, 2025 at 01:13:00AM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Document the Ethernet MAC (GMAC) IP present on the Renesas RZ/T2H
-> (R9A09G077) and RZ/N2H (R9A09G087) SoCs. The GMAC IP on RZ/N2H is
-> identical to that found on the RZ/T2H SoC.
-> 
-> While the RZ/V2H(P), RZ/T2H, and RZ/N2H SoCs all integrate the Synopsys
-> DesignWare MAC (version 5.20), the hardware is synthesized with different
-> options compared to the RZ/V2H(P):
->   - RZ/T2H requires only 3 clocks instead of 7
->   - RZ/T2H supports 8 RX/TX queue pairs instead of 4
->   - RZ/T2H needs 2 reset controls with reset-names property, vs. a single
->     unnamed reset
->   - RZ/T2H has the split header feature enabled, while it is disabled on
->     RZ/V2H(P)
-> 
-> To accommodate these differences, introduce a new generic compatible
-> string `renesas,rzt2h-gbeth`, used as a fallback for both RZ/T2H and
-> RZ/N2H SoCs.
-> 
-> The DT schema is updated to validate the clocks, resets, reset-names,
-> interrupts, and interrupt-names properties accordingly. Also extend
-> `snps,dwmac.yaml` with the new `renesas,rzt2h-gbeth` compatible.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../bindings/net/renesas,rzv2h-gbeth.yaml     | 177 ++++++++++++++----
->  .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
->  2 files changed, 138 insertions(+), 40 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-> index 23e39bcea96b..e01763389164 100644
-> --- a/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-> +++ b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
-> @@ -17,63 +17,112 @@ select:
->            - renesas,r9a09g047-gbeth
->            - renesas,r9a09g056-gbeth
->            - renesas,r9a09g057-gbeth
-> +          - renesas,r9a09g077-gbeth
-> +          - renesas,r9a09g087-gbeth
->            - renesas,rzv2h-gbeth
->    required:
->      - compatible
->  
->  properties:
->    compatible:
-> -    items:
-> -      - enum:
-> -          - renesas,r9a09g047-gbeth # RZ/G3E
-> -          - renesas,r9a09g056-gbeth # RZ/V2N
-> -          - renesas,r9a09g057-gbeth # RZ/V2H(P)
-> -      - const: renesas,rzv2h-gbeth
-> -      - const: snps,dwmac-5.20
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a09g047-gbeth # RZ/G3E
-> +              - renesas,r9a09g056-gbeth # RZ/V2N
-> +              - renesas,r9a09g057-gbeth # RZ/V2H(P)
-> +          - const: renesas,rzv2h-gbeth
-> +          - const: snps,dwmac-5.20
+On Tue Sep 2, 2025 at 10:35 AM CEST, Alice Ryhl wrote:
+> The maple tree will be used in the Tyr driver to allocate and keep track
+> of GPU allocations created internally (i.e. not by userspace). It will
+> likely also be used in the Nova driver eventually.
+>
+> This adds the simplest methods for additional and removal that do not
+> require any special care with respect to concurrency.
+>
+> This implementation is based on the RFC by Andrew but with significant
+> changes to simplify the implementation.
+>
+> Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+
+One nit below, otherwise:
+
+	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+
+> +    pub fn insert_range<R>(&self, range: R, value: T, gfp: Flags) -> Res=
+ult<(), InsertError<T>>
+> +    where
+> +        R: RangeBounds<usize>,
+> +    {
+> +        let Some((first, last)) =3D to_maple_range(range) else {
+> +            return Err(InsertError {
+> +                value,
+> +                cause: InsertErrorKind::InvalidRequest,
+> +            });
+> +        };
 > +
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a09g077-gbeth # RZ/T2H
-> +              - renesas,r9a09g087-gbeth # RZ/N2H
-> +          - const: renesas,rzt2h-gbeth
-> +          - const: snps,dwmac-5.20
->  
->    reg:
->      maxItems: 1
->  
->    clocks:
-> -    items:
-> -      - description: CSR clock
-> -      - description: AXI system clock
-> -      - description: PTP clock
-> -      - description: TX clock
-> -      - description: RX clock
-> -      - description: TX clock phase-shifted by 180 degrees
-> -      - description: RX clock phase-shifted by 180 degrees
-> +    oneOf:
-> +      - items:
-> +          - description: CSR clock
-> +          - description: AXI system clock
-> +          - description: PTP clock
-> +          - description: TX clock
-> +          - description: RX clock
-> +          - description: TX clock phase-shifted by 180 degrees
-> +          - description: RX clock phase-shifted by 180 degrees
+> +        let ptr =3D T::into_foreign(value);
 > +
-
-Drop blank line
-
-> +      - items:
-> +          - description: CSR clock
-> +          - description: AXI system clock
-> +          - description: TX clock
->  
->    clock-names:
-> -    items:
-> -      - const: stmmaceth
-> -      - const: pclk
-> -      - const: ptp_ref
-> -      - const: tx
-> -      - const: rx
-> -      - const: tx-180
-> -      - const: rx-180
-> -
-> -  interrupts:
-> -    minItems: 11
-> +    oneOf:
-> +      - items:
-> +          - const: stmmaceth
-> +          - const: pclk
-> +          - const: ptp_ref
-> +          - const: tx
-> +          - const: rx
-> +          - const: tx-180
-> +          - const: rx-180
+> +        // SAFETY: The tree is valid, and we are passing a pointer to an=
+ owned instance of `T`.
+> +        let res =3D to_result(unsafe {
+> +            bindings::mtree_insert_range(self.tree.get(), first, last, p=
+tr, gfp.as_raw())
+> +        });
 > +
-
-Drop blank line
-
-> +      - items:
-> +          - const: stmmaceth
-> +          - const: pclk
-> +          - const: tx
+> +        if let Err(err) =3D res {
+> +            // SAFETY: As `mtree_insert_range` failed, it is safe to tak=
+e back ownership.
+> +            let value =3D unsafe { T::from_foreign(ptr) };
 > +
->  
+> +            let cause =3D if err =3D=3D ENOMEM {
+> +                InsertErrorKind::AllocError(kernel::alloc::AllocError)
+> +            } else if err =3D=3D EEXIST {
+> +                InsertErrorKind::Occupied
+> +            } else {
+> +                InsertErrorKind::InvalidRequest
+> +            };
+> +            Err(InsertError { value, cause })
+> +        } else {
+> +            Ok(())
+> +        }
+> +    }
 
-Just one blank line
+	// SAFETY: The tree is valid, and we are passing a pointer to an owned ins=
+tance of `T`.
+	to_result(unsafe {
+	    bindings::mtree_insert_range(self.tree.get(), first, last, ptr, gfp.as=
+_raw())
+	}).map_err(|err| {
+	    // SAFETY: As `mtree_insert_range` failed, it is safe to take back own=
+ership.
+	    let value =3D unsafe { T::from_foreign(ptr) };
+=09
+	    let cause =3D if err =3D=3D ENOMEM {
+	        InsertErrorKind::AllocError(kernel::alloc::AllocError)
+	    } else if err =3D=3D EEXIST {
+	        InsertErrorKind::Occupied
+	    } else {
+	        InsertErrorKind::InvalidRequest
+	    };
+	    Err(InsertError { value, cause })
+	})
 
->    interrupt-names:
-> -    items:
-> -      - const: macirq
-> -      - const: eth_wake_irq
-> -      - const: eth_lpi
-> -      - const: rx-queue-0
-> -      - const: rx-queue-1
-> -      - const: rx-queue-2
-> -      - const: rx-queue-3
-> -      - const: tx-queue-0
-> -      - const: tx-queue-1
-> -      - const: tx-queue-2
-> -      - const: tx-queue-3
-> +    oneOf:
-> +      - items:
-> +          - const: macirq
-> +          - const: eth_wake_irq
-> +          - const: eth_lpi
-> +          - const: rx-queue-0
-> +          - const: rx-queue-1
-> +          - const: rx-queue-2
-> +          - const: rx-queue-3
-> +          - const: tx-queue-0
-> +          - const: tx-queue-1
-> +          - const: tx-queue-2
-> +          - const: tx-queue-3
-> +
-> +      - items:
-> +          - const: macirq
-> +          - const: eth_wake_irq
-> +          - const: eth_lpi
-> +          - const: rx-queue-0
-> +          - const: rx-queue-1
-> +          - const: rx-queue-2
-> +          - const: rx-queue-3
-> +          - const: rx-queue-4
-> +          - const: rx-queue-5
-> +          - const: rx-queue-6
-> +          - const: rx-queue-7
-> +          - const: tx-queue-0
-> +          - const: tx-queue-1
-> +          - const: tx-queue-2
-> +          - const: tx-queue-3
-> +          - const: tx-queue-4
-> +          - const: tx-queue-5
-> +          - const: tx-queue-6
-> +          - const: tx-queue-7
->  
->    resets:
-> -    items:
-> -      - description: AXI power-on system reset
-> +    oneOf:
-> +      - items:
-> +          - description: AXI power-on system reset
-> +
-> +      - items:
-> +          - description: GMAC stmmaceth reset
-
-That's the same as before, no?
-
-> +          - description: AHB reset
-> +
-> +  reset-names: true
-
-Does not look needed.
-
-Best regards,
-Krzysztof
-
+I think that's a bit cleaner than the above (not compile tested).
 
