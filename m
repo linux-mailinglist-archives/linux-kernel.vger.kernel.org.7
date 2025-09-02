@@ -1,337 +1,175 @@
-Return-Path: <linux-kernel+bounces-795674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD605B3F645
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:12:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A834B3F647
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C3531791A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601731A840E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C692E6CAD;
-	Tue,  2 Sep 2025 07:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A1E2E62B9;
+	Tue,  2 Sep 2025 07:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRhtDNB2"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DHSDlBL0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5E32E36E9;
-	Tue,  2 Sep 2025 07:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249A72E6CD5
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756797136; cv=none; b=pQ2MpZvM0AoVJEYuTlmH4f6jYo6U7Tlc2EnBUlze0vhwyWfqMjVo47Z+QLK+Qah3jqFuQG2UYjdLfRSagBpzmg7GL+o1gFxCQ7RmHLRhJHaj1xKXMFzyo+DBElJE4ThhXInvBgQoYaHfLPhsQgBvJ2h/ehRipxphlREKQJII+YE=
+	t=1756797144; cv=none; b=OEQfkkMWEPXml5Aj2w4M05mbSf9kybN7ta1prBY684cHF8ToZaHMNJRsH8JhsdaxFXhiybViIGozhhHTw22KKf/ncvver//Ynm/N7syl8Et4DDzlLcwPKe/52Z6QZjOMKe3LhWOZveodjMcV8CPctQloXtwY/DGVULg6jZ6hi7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756797136; c=relaxed/simple;
-	bh=KfIhs/QHI9uKXAU6wEHiDKRxtZStBaqgm9XSaLZH9oo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K4cXogEdI1uLlF6Xnn/Ml4/UVrYLmHnsMGW6MmS4EF5J7UApRV1szf96u+6qTMkvfNAx78DsI5KySq85mw+WoFUe3lAZG1vLiyp/rCXy7FDmjr34khOVsUBStfl31w8csnVFjMTAA//vs1mNWibdIlZXZzmF51F+x9cDRyGNqxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRhtDNB2; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6188b5ad681so6265598a12.0;
-        Tue, 02 Sep 2025 00:12:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756797132; x=1757401932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mxufWewqEFAv99uIytCHjgx11TKUdAha3OgtKd/++a0=;
-        b=PRhtDNB2Zc+XOvJ23q/FcJJffrEXT6ssqhP+DoT/FTEMWBArm1eN6v3Cqnwo9Ru0c0
-         gMGXsj+mqUUvNGWreniI3Lk/lTWi17QjuLoyIN75stanwos4AX8i7/Ki3dk43VxHpypB
-         dnm9RP6gYHNpnxvTFasElChcg12qUKRb4F/g4gH/fuFkYhd3jzpk9YsGtB+KKkveGvj7
-         xoWRmMNwQuyZYtyTBTgCNPnW5Ky+lqEdWhdDGgenKgadhDVZn7ujyR5HgLRmiK6yOFSC
-         Q9km72ySgZAbHeQ8UZVQI2gdcuZP0XO9BIQr22IEICI4t5VhG2TeQyPte6e5a7u6pd0s
-         Z45A==
+	s=arc-20240116; t=1756797144; c=relaxed/simple;
+	bh=f+48EFYEOK9/gGYBAFjpEmvOnGj2KBHajmq99DNwCko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X66AM7ruQQtOa0Hy1P+ZVGVQLLUTGjqao+oNs3DyDH+j8VuvLRRBi1LdDCnistbxx78+cW3M4NrJgtJRSJr+fxI5TAedvh/Tyrncrz2yUOCKKhGhAbwnjmhHDyqOtlFm1irjZ2j2L5AFA5M3FVxGtGfYvGAtHdm4VGNW4RuJOJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DHSDlBL0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756797142;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aHW+XNkDvyAQgiNT8kPrrATrI02cqYINz991u5aP3yk=;
+	b=DHSDlBL0N6bmXMtsI5c8Eh7VYLHcp5Enyng7Im+I8QDaKjLhL7KKt3BvHOdaF5UgPc0QmH
+	+5Zn4RHezNky0MF2tgBYbOqzO+6xIUYShO251iGiDQbm7SLQr9ydx8uZLG0J41XYu0HT+K
+	GZ9JHCADXQFNB9Mydp8VY1Yg8cyWqbs=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-413-ffcuWs26OxO_-h-0RbcB3w-1; Tue, 02 Sep 2025 03:12:20 -0400
+X-MC-Unique: ffcuWs26OxO_-h-0RbcB3w-1
+X-Mimecast-MFC-AGG-ID: ffcuWs26OxO_-h-0RbcB3w_1756797140
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70deaa19e05so132234716d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 00:12:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756797132; x=1757401932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mxufWewqEFAv99uIytCHjgx11TKUdAha3OgtKd/++a0=;
-        b=c7lVYmalNNOG8T3F+lFF2RiABsvkXJlEDhwzz6uIzem6zjjkcRDptuMW9xI07wXuzJ
-         i5IXa+oorBenDSjgbVcudaCNtYTns+Q6Rf79Hsb10l1t83hhMpIxZGdwjP4Rr5ooiDat
-         epJ3KdS9Pxuf8C+A77nwwYn31USOmoroocZaMTOxxWiw0I8qX5cMexkjZqqoEhmRx7Lw
-         2wT1XkJ3l+QeMEM8koFV9oZivJb/dRaso/y/4zdVjBbKtKhDt1ktAluH7+T2VnRCnVfv
-         dYpEO+5S2B6WmyRng4M+yZn7jJz7FNfFhHiFnS23gtBLgbpmQo4eQ8idAROAqC771qPg
-         LT1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUW2/yKJ5VPfZVpN/1VsIwMNenNi3IYz8joSkstvGOqedPTlonqBgAbriOBTK8lfusoPi4a6uHd@vger.kernel.org, AJvYcCVSLOKKz2nvJkPz7XzWDM0ghHQ2iOmN9FLY5OXxPXMnRyXlJtR6R+DQLImm83SGNfq20jZ8IGrhOr86@vger.kernel.org, AJvYcCVm3OFcSVg/WX0eLU77c/SEXmVgA3PAkIOGfIC0FNoHvM5TARTn0+WMAXoOTWmFKbLVrFT+8RkRWFcgSgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxktm510wDmmWew5LM82WNKDLPdb3wYTv2qlcZusPDrK5MiZldp
-	y6EwsrJVAfJiozaA2T7tlNviyFCehni6F6/k+1JCP3APd6PGW1ognNQvfbIci3q4Yj2KgPvng9p
-	G3Jfgu36VYNZ4PmQdJYStDUI9QwY3aWg=
-X-Gm-Gg: ASbGncsfF03NBeUTsEE2bU9dCRZ5hC7O3K/72a+LoW4TW7nwC7+PYNSued6sJbupdW7
-	V1+vxE8bMaBd6u96O2h50G+KW2Tb7SkJyFY2wK4xip+YbDCtgcXs6+lClPJ/jU3Rr1eEVTWr7Rz
-	zoCcwfMd779+As4i7Xk2CSV6sGhA7V2jbFNQ8HzO8ubfpdJbAHWsBEIalomHbeBmByvNprYdWFw
-	ND5H04=
-X-Google-Smtp-Source: AGHT+IEyHlYgeZfIQuCEEMlaGXtcQkEDLZkP/oxXg+pXvIGzIZDCNUrIB3twESvdqCr+edRWXTuNE+K5TpWeNONlvb8=
-X-Received: by 2002:a05:6402:d0e:b0:61c:8114:8832 with SMTP id
- 4fb4d7f45d1cf-61d2699b037mr9272851a12.16.1756797131949; Tue, 02 Sep 2025
- 00:12:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756797140; x=1757401940;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aHW+XNkDvyAQgiNT8kPrrATrI02cqYINz991u5aP3yk=;
+        b=L0XMlV83p35DB1yrDci/6uhBJDJFxP+uJAL+XUigjlmoXJypjA/d6EEnYyXbYXeRGM
+         C/C7ZfchLuYkrKfgVHk0S4CFUqTxvMj2ZWVSxOMh7EwFDnuEaDSPvg2bxo7Ui7QpeJZH
+         es8I22cbhAGH0+rk6wIb0L7LBNo4dIcjYWgiF70k+lg7IwbDjnrGE5d2QbLGPJtDqNy9
+         BATE7vkcemivxb/rSPkVsgyP8/n0BtZ7cThkXC4hDfW2V+SP0zei1gTeGI3cuAzvyyNo
+         eNqvygkfBJzsmjCYLkcpzpr2EJTwYWgEfX0/ou9YRP8wTzTIIVgbOk5clzYB6sqI1YWg
+         WnGg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/uoPJqppDxauKC3Bd5g8rV5rhokbarInA9sE0pqSIOpkElEzuDPedc9k2Fo5OZoO9YvytOHiZ2zuuSm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIgEyU8iKQbY81qg7raD2grhHVZ8t9tl4fxs7OCXg4z3iq7GQj
+	/O0cYhOlmJs0EiyKDARE1UlrBcaSEg8WixaM7tfCPMfhP2Tr+RcFbONCcJWGIF117C1zFN3IZ2l
+	uX++A1HzDvsZT9jyBtbawmye/5Hi5o7UoSGH9rceRHcEEyG63daEK/ixoEZw5pbdF
+X-Gm-Gg: ASbGncsqsI2lT4ZXm0aSxDSSAMGkCriWiLH78uKG8vLYNljaVwNkorlxXPoaId8X16m
+	gJht1R6IvrJ4QU3vmguE/SWRT/RvDZukv/OiZbzKanJ5IdXrgot4EZ61beSU+vL+WI0XhgHb7xt
+	bRJzhG1g/6z9wKmFHYTqR62vbS2tZ/sej+1ci+9T/iOSZ+wKkwNI3tM/Q2R0+w7FG+McCKYZ3cO
+	KZClpklWf/6ma/p6Z3iTwT2Zhcd6a+vtj/l283FPbJ3lI3AlOwhab6FcPWdIh1cJ49KcjhW9BiF
+	g0jjfTpgNTWWQjd2aOkC3jzNf51i6raVLD0=
+X-Received: by 2002:a05:6214:cc4:b0:71c:f018:1b21 with SMTP id 6a1803df08f44-71cf0181cd6mr52071266d6.22.1756797140323;
+        Tue, 02 Sep 2025 00:12:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGoL5TadHGzK08pwU/ofCObqH2WsXKq8YA1zY1Tl8IaVjo2XXnBRLdtwWSMQvO3JfMuxQi9Pw==
+X-Received: by 2002:a05:6214:cc4:b0:71c:f018:1b21 with SMTP id 6a1803df08f44-71cf0181cd6mr52070936d6.22.1756797139943;
+        Tue, 02 Sep 2025 00:12:19 -0700 (PDT)
+Received: from [10.43.17.17] ([85.93.96.130])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ad2cbc78sm7520936d6.23.2025.09.02.00.12.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 00:12:19 -0700 (PDT)
+Message-ID: <7b7e28e4-f04b-44dc-a478-e4c07e51067f@redhat.com>
+Date: Tue, 2 Sep 2025 09:12:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901094224.3920-1-benchuanggli@gmail.com> <18915c80-84c3-4a61-a5d2-d40387ec4eb7@intel.com>
- <CACT4zj9n9E45E2T84ciLTEZgUAbcOzH5+ZgTYq8=m=Pusy37iA@mail.gmail.com>
-In-Reply-To: <CACT4zj9n9E45E2T84ciLTEZgUAbcOzH5+ZgTYq8=m=Pusy37iA@mail.gmail.com>
-From: Ben Chuang <benchuanggli@gmail.com>
-Date: Tue, 2 Sep 2025 15:12:00 +0800
-X-Gm-Features: Ac12FXwZjVjOIdI0stbqdSoQ3vqSXNRZz8TDgcS4HPUWIgrScaqqsm6p9EBwSpg
-Message-ID: <CACT4zj-_NHV0td1RULmww4tvw3beJZASNv3+e5TG8wE318wvGg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: sdhci-pci-gli: GL9767: Fix initializing the
- UHS-II interface during a power-on
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: ulf.hansson@linaro.org, victor.shih@genesyslogic.com.tw, 
-	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
-	SeanHY.Chen@genesyslogic.com.tw, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Test kfunc bpf_strcasecmp
+To: Rong Tao <rtoax@foxmail.com>, andrii@kernel.org, ast@kernel.org
+Cc: Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>,
+ "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
+ <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+References: <cover.1756793624.git.rongtao@cestc.cn>
+ <tencent_4142FE591497F42A5FAF5EA36A8861068708@qq.com>
+From: Viktor Malik <vmalik@redhat.com>
+Content-Language: en-US
+In-Reply-To: <tencent_4142FE591497F42A5FAF5EA36A8861068708@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 2, 2025 at 2:33=E2=80=AFPM Ben Chuang <benchuanggli@gmail.com> =
-wrote:
->
-> On Tue, Sep 2, 2025 at 1:02=E2=80=AFAM Adrian Hunter <adrian.hunter@intel=
-.com> wrote:
-> >
-> > On 01/09/2025 12:42, Ben Chuang wrote:
-> > > From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> > >
-> > > According to the power structure of IC hardware design for UHS-II
-> > > interface, reset control and timing must be added to the initializati=
-on
-> > > process of powering on the UHS-II interface.
-> > >
-> > > Fixes: 27dd3b82557a ("mmc: sdhci-pci-gli: enable UHS-II mode for GL97=
-67")
-> > > Cc: stable@vger.kernel.org # v6.13+
-> > > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> > > ---
-> > >  drivers/mmc/host/sdhci-pci-gli.c | 71 ++++++++++++++++++++++++++++++=
-+-
-> > >  1 file changed, 70 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhc=
-i-pci-gli.c
-> > > index 3a1de477e9af..85d0d7e6169c 100644
-> > > --- a/drivers/mmc/host/sdhci-pci-gli.c
-> > > +++ b/drivers/mmc/host/sdhci-pci-gli.c
-> > > @@ -283,6 +283,8 @@
-> > >  #define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE     0xb
-> > >  #define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL       BIT(6)
-> > >  #define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE         0x1
-> > > +#define   PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN   BIT(13)
-> > > +#define   PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VALUE BIT(14)
-> > >
-> > >  #define GLI_MAX_TUNING_LOOP 40
-> > >
-> > > @@ -1179,6 +1181,69 @@ static void gl9767_set_low_power_negotiation(s=
-truct pci_dev *pdev, bool enable)
-> > >       gl9767_vhs_read(pdev);
-> > >  }
-> > >
-> > > +static void sdhci_gl9767_uhs2_phy_reset_assert(struct sdhci_host *ho=
-st)
-> > > +{
-> > > +     struct sdhci_pci_slot *slot =3D sdhci_priv(host);
-> > > +     struct pci_dev *pdev =3D slot->chip->pdev;
-> > > +     u32 value;
-> > > +
-> > > +     gl9767_vhs_write(pdev);
-> > > +     pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-> > > +     value |=3D PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN;
-> > > +     pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-> > > +     value &=3D ~PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VALUE;
-> > > +     pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-> > > +     gl9767_vhs_read(pdev);
-> > > +}
-> > > +
-> > > +static void sdhci_gl9767_uhs2_phy_reset_deassert(struct sdhci_host *=
-host)
-> > > +{
-> > > +     struct sdhci_pci_slot *slot =3D sdhci_priv(host);
-> > > +     struct pci_dev *pdev =3D slot->chip->pdev;
-> > > +     u32 value;
-> > > +
-> > > +     gl9767_vhs_write(pdev);
-> > > +     pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-> > > +     value |=3D PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VALUE;
-> >
-> > Maybe add a small comment about PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VA=
-LUE
-> > and PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN being updated separately.
-> >
-> > > +     pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-> > > +     value &=3D ~PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN;
-> > > +     pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-> > > +     gl9767_vhs_read(pdev);
-> > > +}
-> >
-> > sdhci_gl9767_uhs2_phy_reset_assert() and sdhci_gl9767_uhs2_phy_reset_de=
-assert()
-> > are fairly similar.  Maybe consider:
-> >
-> > static void sdhci_gl9767_uhs2_phy_reset(struct sdhci_host *host, bool a=
-ssert)
-> > {
-> >         struct sdhci_pci_slot *slot =3D sdhci_priv(host);
-> >         struct pci_dev *pdev =3D slot->chip->pdev;
-> >         u32 value, set, clr;
-> >
-> >         if (assert) {
-> >                 set =3D PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN;
-> >                 clr =3D PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VALUE;
-> >         } else {
-> >                 set =3D PCIE_GLI_9767_UHS2_CTL2_FORCE_RESETN_VALUE;
-> >                 clr =3D PCIE_GLI_9767_UHS2_CTL2_FORCE_PHY_RESETN;
-> >         }
-> >
-> >         gl9767_vhs_write(pdev);
-> >         pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-> >         value |=3D set;
-> >         pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-> >         value &=3D ~clr;
-> >         pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-> >         gl9767_vhs_read(pdev);
-> > }
-> >
->
-> OK, I will update it. Thank you.
->
-> >
-> > > +
-> > > +static void __gl9767_uhs2_set_power(struct sdhci_host *host, unsigne=
-d char mode, unsigned short vdd)
-> > > +{
-> > > +     u8 pwr =3D 0;
-> > > +
-> > > +     if (mode !=3D MMC_POWER_OFF) {
-> > > +             pwr =3D sdhci_get_vdd_value(vdd);
-> > > +             if (!pwr)
-> > > +                     WARN(1, "%s: Invalid vdd %#x\n",
-> > > +                          mmc_hostname(host->mmc), vdd);
-> > > +             pwr |=3D SDHCI_VDD2_POWER_180;
-> > > +     }
-> > > +
-> > > +     if (host->pwr =3D=3D pwr)
-> > > +             return;
-> > > +
-> > > +     host->pwr =3D pwr;
-> > > +
-> > > +     if (pwr =3D=3D 0) {
-> > > +             sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-> > > +     } else {
-> > > +             sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-> > > +
-> > > +             pwr |=3D SDHCI_POWER_ON;
-> > > +             sdhci_writeb(host, pwr & 0xf, SDHCI_POWER_CONTROL);
-> > > +             mdelay(5);
-> >
-> > Can be mmc_delay(5)
-> >
-> > > +
-> > > +             sdhci_gl9767_uhs2_phy_reset_assert(host);
-> > > +             pwr |=3D SDHCI_VDD2_POWER_ON;
-> > > +             sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
-> > > +             mdelay(5);
-> >
-> > Can be mmc_delay(5)
->
-> I may not modify it now.
-> mmc_delay() is in "drivers/mmc/core/core.h".
-> If sdhci-pci-gli.c only includes "../core/core.h", the compiler will
-> report some errors.
+On 9/2/25 08:18, Rong Tao wrote:
+> From: Rong Tao <rongtao@cestc.cn>
+> 
+> Add testsuites for kfunc bpf_strcasecmp.
+> 
+> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+> ---
+>  tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c | 6 ++++++
+>  tools/testing/selftests/bpf/progs/string_kfuncs_success.c  | 5 +++++
+>  2 files changed, 11 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
+> index 53af438bd998..99d72c68f76a 100644
+> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
+> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
+> @@ -31,6 +31,8 @@ char *invalid_kern_ptr = (char *)-1;
+>  /* Passing NULL to string kfuncs (treated as a userspace ptr) */
+>  SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_null1(void *ctx) { return bpf_strcmp(NULL, "hello"); }
+>  SEC("syscall")  __retval(USER_PTR_ERR)int test_strcmp_null2(void *ctx) { return bpf_strcmp("hello", NULL); }
+> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_null1(void *ctx) { return bpf_strcasecmp(NULL, "HELLO"); }
+> +SEC("syscall")  __retval(USER_PTR_ERR)int test_strcasecmp_null2(void *ctx) { return bpf_strcasecmp("HELLO", NULL); }
+>  SEC("syscall")  __retval(USER_PTR_ERR)int test_strchr_null(void *ctx) { return bpf_strchr(NULL, 'a'); }
+>  SEC("syscall")  __retval(USER_PTR_ERR)int test_strchrnul_null(void *ctx) { return bpf_strchrnul(NULL, 'a'); }
+>  SEC("syscall")  __retval(USER_PTR_ERR)int test_strnchr_null(void *ctx) { return bpf_strnchr(NULL, 1, 'a'); }
+> @@ -49,6 +51,8 @@ SEC("syscall")  __retval(USER_PTR_ERR)int test_strnstr_null2(void *ctx) { return
+>  /* Passing userspace ptr to string kfuncs */
+>  SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr1(void *ctx) { return bpf_strcmp(user_ptr, "hello"); }
+>  SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr2(void *ctx) { return bpf_strcmp("hello", user_ptr); }
+> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr1(void *ctx) { return bpf_strcasecmp(user_ptr, "HELLO"); }
+> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr2(void *ctx) { return bpf_strcasecmp("HELLO", user_ptr); }
+>  SEC("syscall") __retval(USER_PTR_ERR) int test_strchr_user_ptr(void *ctx) { return bpf_strchr(user_ptr, 'a'); }
+>  SEC("syscall") __retval(USER_PTR_ERR) int test_strchrnul_user_ptr(void *ctx) { return bpf_strchrnul(user_ptr, 'a'); }
+>  SEC("syscall") __retval(USER_PTR_ERR) int test_strnchr_user_ptr(void *ctx) { return bpf_strnchr(user_ptr, 1, 'a'); }
+> @@ -69,6 +73,8 @@ SEC("syscall") __retval(USER_PTR_ERR) int test_strnstr_user_ptr2(void *ctx) { re
+>  /* Passing invalid kernel ptr to string kfuncs should always return -EFAULT */
+>  SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault1(void *ctx) { return bpf_strcmp(invalid_kern_ptr, "hello"); }
+>  SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault2(void *ctx) { return bpf_strcmp("hello", invalid_kern_ptr); }
+> +SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault1(void *ctx) { return bpf_strcasecmp(invalid_kern_ptr, "HELLO"); }
+> +SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault2(void *ctx) { return bpf_strcasecmp("HELLO", invalid_kern_ptr); }
+>  SEC("syscall") __retval(-EFAULT) int test_strchr_pagefault(void *ctx) { return bpf_strchr(invalid_kern_ptr, 'a'); }
+>  SEC("syscall") __retval(-EFAULT) int test_strchrnul_pagefault(void *ctx) { return bpf_strchrnul(invalid_kern_ptr, 'a'); }
+>  SEC("syscall") __retval(-EFAULT) int test_strnchr_pagefault(void *ctx) { return bpf_strnchr(invalid_kern_ptr, 1, 'a'); }
+> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+> index 46697f381878..67830456637b 100644
+> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+> @@ -12,6 +12,11 @@ char str[] = "hello world";
+>  /* Functional tests */
+>  __test(0) int test_strcmp_eq(void *ctx) { return bpf_strcmp(str, "hello world"); }
+>  __test(1) int test_strcmp_neq(void *ctx) { return bpf_strcmp(str, "hello"); }
+> +__test(0) int test_strcasecmp_eq1(void *ctx) { return bpf_strcasecmp(str, "hello world"); }
+> +__test(0) int test_strcasecmp_eq2(void *ctx) { return bpf_strcasecmp(str, "HELLO WORLD"); }
+> +__test(0) int test_strcasecmp_eq3(void *ctx) { return bpf_strcasecmp(str, "HELLO world"); }
+> +__test(1) int test_strcasecmp_neq1(void *ctx) { return bpf_strcasecmp(str, "hello"); }
+> +__test(1) int test_strcasecmp_neq2(void *ctx) { return bpf_strcasecmp(str, "HELLO"); }
+>  __test(1) int test_strchr_found(void *ctx) { return bpf_strchr(str, 'e'); }
+>  __test(11) int test_strchr_null(void *ctx) { return bpf_strchr(str, '\0'); }
+>  __test(-ENOENT) int test_strchr_notfound(void *ctx) { return bpf_strchr(str, 'x'); }
 
-Ah, just add another headersand it will build.
+Missing a test for returning -E2BIG in
+tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c.
 
---- a/drivers/mmc/host/sdhci-pci-gli.c
-+++ b/drivers/mmc/host/sdhci-pci-gli.c
-@@ -14,6 +14,8 @@
- #include <linux/delay.h>
- #include <linux/of.h>
- #include <linux/iopoll.h>
-+#include <linux/mmc/host.h>
-+#include "../core/core.h"
- #include "sdhci.h"
- #include "sdhci-cqhci.h"
- #include "sdhci-pci.h"
-@@ -968,10 +970,10 @@ static void gl9755_set_power(struct sdhci_host
-*host, unsigned char mode,
+Viktor
 
-                sdhci_writeb(host, pwr & 0xf, SDHCI_POWER_CONTROL);
-                /* wait stable */
--               mdelay(5);
-+               mmc_delay(5);
-                sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
-                /* wait stable */
--               mdelay(5);
-+               mmc_delay(5);
-                sdhci_gli_overcurrent_event_enable(host, true);
-        }
-
-
->
-> <snippet>
-> IIn file included from host/sdhci-pci-gli.c:17:
-> host/../core/core.h:131:52: warning: =E2=80=98struct mmc_ctx=E2=80=99 dec=
-lared inside
-> parameter list will not be visible outside of this definition or
-> declaration
->   131 | int __mmc_claim_host(struct mmc_host *host, struct mmc_ctx *ctx,
->       |                                                    ^~~~~~~
-> host/../core/core.h:134:49: warning: =E2=80=98struct mmc_ctx=E2=80=99 dec=
-lared inside
-> parameter list will not be visible outside of this definition or
-> declaration
->   134 | void mmc_get_card(struct mmc_card *card, struct mmc_ctx *ctx);
->       |                                                 ^~~~~~~
-> host/../core/core.h:135:49: warning: =E2=80=98struct mmc_ctx=E2=80=99 dec=
-lared inside
-> parameter list will not be visible outside of this definition or
-> declaration
->   135 | void mmc_put_card(struct mmc_card *card, struct mmc_ctx *ctx);
->       |                                                 ^~~~~~~
-> host/../core/core.h: In function =E2=80=98mmc_pre_req=E2=80=99:
-> host/../core/core.h:165:17: error: invalid use of undefined type
-> =E2=80=98struct mmc_host=E2=80=99
->   165 |         if (host->ops->pre_req)
->       |                 ^~
->
-> >
-> > > +     }
-> > > +}
-> > > +
-> > >  static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned=
- int clock)
-> > >  {
-> > >       struct sdhci_pci_slot *slot =3D sdhci_priv(host);
-> > > @@ -1205,6 +1270,10 @@ static void sdhci_gl9767_set_clock(struct sdhc=
-i_host *host, unsigned int clock)
-> > >       }
-> > >
-> > >       sdhci_enable_clk(host, clk);
-> > > +
-> > > +     if (mmc_card_uhs2(host->mmc))
-> > > +             sdhci_gl9767_uhs2_phy_reset_deassert(host);
-> > > +
-> > >       gl9767_set_low_power_negotiation(pdev, true);
-> > >  }
-> > >
-> > > @@ -1476,7 +1545,7 @@ static void sdhci_gl9767_set_power(struct sdhci=
-_host *host, unsigned char mode,
-> > >               gl9767_vhs_read(pdev);
-> > >
-> > >               sdhci_gli_overcurrent_event_enable(host, false);
-> > > -             sdhci_uhs2_set_power(host, mode, vdd);
-> > > +             __gl9767_uhs2_set_power(host, mode, vdd);
-> > >               sdhci_gli_overcurrent_event_enable(host, true);
-> > >       } else {
-> > >               gl9767_vhs_write(pdev);
-> >
->
-> Best regards,
-> Ben Chuang
 
