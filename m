@@ -1,304 +1,225 @@
-Return-Path: <linux-kernel+bounces-796543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7004EB40220
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:11:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96440B40222
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32FB189BB1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82547189D1B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7162DCF69;
-	Tue,  2 Sep 2025 13:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121822DE710;
+	Tue,  2 Sep 2025 13:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gHu0U1dm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TjZz4Iqg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aKHmtreB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TjZz4Iqg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aKHmtreB"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6F229BD89
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847012DE704
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818645; cv=none; b=hfAhVo7oN2ld2eQ0EjTTUd1sKaS5T7uGLzwhisKs93crDYcHuGNLT68uB68cDkhHpodnCHIGKRhkkSuB96qPcNDX69W81x6gG2UKw4vGaQMayfAwkNazRp8KU+4+mhK1kKoHsNoj9p1K3AtIMp8A0AiU1XgxTq2BVvSgGo6NGAM=
+	t=1756818652; cv=none; b=akNvBg0FhaPDIgUE8P/cx3kMcjzFlUxBMvMTynHnXFZJ6wvdGdgIdfcI3sR0uki9uMJnURuGmCrzeIm378uV4CkYw7LvsGw+sMu7PTYookbgsFnt8g3CRA9HJnNp38nQsM9MVLBPKbcsvNEW0UNDJ1nMTKHda66fQd+POfk+Wos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818645; c=relaxed/simple;
-	bh=k6+dHn40QNMMOFNkt0GnZ5cvVVODfmPyn2V4WNddqrc=;
+	s=arc-20240116; t=1756818652; c=relaxed/simple;
+	bh=GqYsCTP6AsR7Ji+m8iuAmRcXiSz9bKsaa1ECpTTNhSA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=is+v2lvv1ybK4g0Txrglo6pG4hGnN/GyWhpaI/aGfzn8mvEvjd1HSifHz/LNzHyrmiEzGG/xzGczrK0XZ771qRxz66kpIkcDk19jOBh26/QiEY22F9RKTXiz5LkQVhq2SJ6Ye231QCeB+Kd4jbBaud9OMcZCgGgERmt5I7PWLx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gHu0U1dm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582AVe74032487
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 13:10:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TCcA+aEJtftBpa2OufUrueWE59LMYXUTL4dnnFoQBO0=; b=gHu0U1dmKiKCTqBD
-	u7J4gqMech7tkepGDJJo7quoIkhi5tuFLZzWHgNqeVdxqpwB7MN4xSEUAiNlOKc7
-	zAp2cZfmonRXoeUi4WwcjzV6GM6t3iA0YYsuMcO90XEqRz9IEPe14RAkSxSFhkKY
-	5g3W8poZghfkOR9HLBawJsZ2+k4F4gOo5vcCPctK21XIocKkein92K+6B2PjZiEY
-	vf+ONokvRsl4/WIFpEVRgv4zzQGVhce7jQ/YDETpDnmeNqScZgPioZxNkX+tpBW0
-	S9nr6zkwMKDiJsm8y8fRyLT5+hsE+6G7wy15aYMHnp3sHiFF9aQXtw1ERqHsuIs1
-	a/+zBQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48wqvw9kna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 13:10:42 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24afab6d4a7so20864025ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:10:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756818642; x=1757423442;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCcA+aEJtftBpa2OufUrueWE59LMYXUTL4dnnFoQBO0=;
-        b=s5ZQife9BnSBASHuFP/Y4gc5BOrh5vyrx+eQj335RsMExMS/VMCU2wdxotQcB2w7mU
-         8RUPZIW81iW9s+ytzeEWY0dk0WQjEkgKAx8t1+isqBT7T//ic4pi62vnXtktCdsH2Z3l
-         xk5i3gxEXPmIHRgUIjPYVMrDj3FoMXbWt7L48+zYejfWgFvB8raWryE2YU+b233ZvKXt
-         AlNhNAwUJTHSIxVJIl698APMs3gtlVtavBnOCIJOXKDBHRJ+D/mnuIZAkbRJ7wbkJm8Y
-         PjtD15AHiIy728on7yePthiyw0mSIuykkiuMcvQ5QhIsjiyE51M7KulgotIXh2mOk2uf
-         oNdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwpnxFNSnOes3qEBVfQjCU8otHZ0oN+yvwhaJAv3ukSzy97SsPEtHrvnkLum+hqci7NGJQQT7cRY5hTsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOJGspzwepjF+Yh6/b7V3rJ5uJjqTb4TIuj1MziRpsEZ4JiEsd
-	qyhfmlJI408mmF31XiCO1g1wp+fpXpj7cKTgNTTLLEniQy/dpw6tm4uH0aQQTXeLzcOIjcBJrpJ
-	EczMuPZQ1ok5ky0jnDh/QYVvHEsI3BmeFqW08Kma79Sh2qGSH8XUT/+ESkYvPMjOl480=
-X-Gm-Gg: ASbGncuZQzlHmWKDig3O1e7CH9z7D7/9vxPeFBevnMnjRjZZi0EzkA3l18P0J22CoNC
-	+YZKKTuZ4oqWcchX/kV9POqt/VfzrdTOaEYbPmFFxGDKSNNXFxP8/OWZYTOO/LQaSFrauXzswbB
-	y/7Jx6EzZQyzRcBA0gkpOVdx/kqUz9JFnruplkcHVi2y4mbuUlK5VImGEUAtCqHR8MmBRNrVSaG
-	kXCDyZ9OFyBgHtN4oX8hTiZH2URr4X5IOt6LY2Rp+Kay+X1xO7XfmzXOtsTf7WiGxkFG3WkDkr2
-	j08L+XEu1Xrr/6VpFq+aDpL8ZPtJulyIHzLoboKxj2HxuuoMi4EDczzWoWtj20HcYPcaLUDv
-X-Received: by 2002:a17:903:2383:b0:246:570:2d9a with SMTP id d9443c01a7336-24944b1fc6emr155608545ad.59.1756818641662;
-        Tue, 02 Sep 2025 06:10:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+ZJLr+Tf5Vmoqn+FE9bXrBZCyCNL2ukTMmTiw09eW+UDgXgNsnXvoUOcF4YrOwiO7rbplQA==
-X-Received: by 2002:a17:903:2383:b0:246:570:2d9a with SMTP id d9443c01a7336-24944b1fc6emr155607855ad.59.1756818641095;
-        Tue, 02 Sep 2025 06:10:41 -0700 (PDT)
-Received: from [10.216.7.97] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490f755ebdsm128599375ad.26.2025.09.02.06.10.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 06:10:40 -0700 (PDT)
-Message-ID: <7941da77-06bb-a2d3-c2fa-ad2fba54b4a1@oss.qualcomm.com>
-Date: Tue, 2 Sep 2025 18:40:27 +0530
+	 In-Reply-To:Content-Type; b=IArY1bsbrq6mHP63Yo98xzcQObUuDuHL+Pi7D6tSm42JcZ3W4p9B9BV1eTQ6XKyOqX/75rF/cjnXVIPRSXeeoQKi2FCOFZv0jQD65mUGaK6tyUGIuC4v7RW2TYg/5XLBDwFesQm4tTlf+FmMSBuDosPs9CWPdFgyezsl6MM7IEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TjZz4Iqg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aKHmtreB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TjZz4Iqg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aKHmtreB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 70EA11F394;
+	Tue,  2 Sep 2025 13:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756818648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jV6EmMIqBKPBrwb8x6lWHZghJUtds/59uY5BNXWez+0=;
+	b=TjZz4IqgnqZ+LzVt8oAPtFqMqq4XcPNZl5uLtrjesYgbnQ1We//f+FGpBSQ+TuqQbkt6mJ
+	2NSBbvhMEME45Dh5PCyBA8nPUajDmDogoYxqAixy9t7zrw5O5LLq1mz8ewR4rmkA3ld2o1
+	jDroN+2FOSadFO7WdwYNGShB7tsp/Eg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756818648;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jV6EmMIqBKPBrwb8x6lWHZghJUtds/59uY5BNXWez+0=;
+	b=aKHmtreBDrktAtYbjqYbWL0Z9MIRk+luH1vaWZW6kcPvvHwTgXFGQydhOKWSJI9BV7bDEi
+	uLTJg3f3dRH+S+Dg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TjZz4Iqg;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=aKHmtreB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756818648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jV6EmMIqBKPBrwb8x6lWHZghJUtds/59uY5BNXWez+0=;
+	b=TjZz4IqgnqZ+LzVt8oAPtFqMqq4XcPNZl5uLtrjesYgbnQ1We//f+FGpBSQ+TuqQbkt6mJ
+	2NSBbvhMEME45Dh5PCyBA8nPUajDmDogoYxqAixy9t7zrw5O5LLq1mz8ewR4rmkA3ld2o1
+	jDroN+2FOSadFO7WdwYNGShB7tsp/Eg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756818648;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jV6EmMIqBKPBrwb8x6lWHZghJUtds/59uY5BNXWez+0=;
+	b=aKHmtreBDrktAtYbjqYbWL0Z9MIRk+luH1vaWZW6kcPvvHwTgXFGQydhOKWSJI9BV7bDEi
+	uLTJg3f3dRH+S+Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0323013888;
+	Tue,  2 Sep 2025 13:10:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TPgtO9fstmhaVgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 13:10:47 +0000
+Message-ID: <c76f914e-13ed-463f-be94-1a5c3d031986@suse.de>
+Date: Tue, 2 Sep 2025 15:10:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v14 00/10] Implement vendor resets for PSCI SYSTEM_RESET2
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Elliot Berman <elliot.berman@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250815-arm-psci-system_reset2-vendor-reboots-v14-0-37d29f59ac9a@oss.qualcomm.com>
- <b08aa8f4-7283-40d5-9f5e-ed8697f882a9@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/29] drm/atomic: Fix unused but set warning in
+ for_each_old_private_obj_in_state
+To: Maxime Ripard <mripard@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-3-14ad5315da3f@kernel.org>
 Content-Language: en-US
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <b08aa8f4-7283-40d5-9f5e-ed8697f882a9@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDAyNCBTYWx0ZWRfX/OPKzOC48IGO
- qzWlypzf60qGjIw2ohl5ZtdiscJDkji3tLh4EnAx/Md0qFQkVP2nRvBtIWG3fbBYtslbKH2k6sN
- NXkBXM8q8Xq7JtaokzAxWXEJWJypwFXDZFctVehH3afKFJOxIUAfijOeReP5LaehsJXxSTPj1Ab
- NVZJDPAXmJ/A6ANlsZVV4eTIEl1N0PklE2b9PAMq2MUam3C1zTLrBbSacERM9V6KnCWKZGkctND
- mONDTKYRKfvCcG7ayvLVuEwN58XVV/elSMapl7B4adBdq235gWyiI62qXzm9iCJDHwIwD+BbrdZ
- Ld20VIPKJW2SGSZ/1XjYJo7ARLmb2fmka5DbverETZhcgnx0XzzBpjh0ThrY97yVcz+Prsx45hu
- CW6mP0T/
-X-Authority-Analysis: v=2.4 cv=WKh/XmsR c=1 sm=1 tr=0 ts=68b6ecd2 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=YbM9Y6cvHUstxk9peq8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: f5q46-cnboTWzyBW73AgtNnkIMZUvu9l
-X-Proofpoint-ORIG-GUID: f5q46-cnboTWzyBW73AgtNnkIMZUvu9l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
- spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020024
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250902-drm-state-readout-v1-3-14ad5315da3f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 70EA11F394
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email]
+X-Spam-Score: -3.01
 
 
 
-On 8/28/2025 1:35 PM, Kathiravan Thirumoorthy wrote:
-> 
-> On 8/15/2025 8:05 PM, Shivendra Pratap wrote:
->> The PSCI SYSTEM_RESET2 call allows vendor firmware to define
->> additional reset types which could be mapped to the reboot
->> argument.
->>
->> User-space should be able to reboot a device into different
->> operational boot-states supported by underlying bootloader and
->> firmware. Generally, some HW registers need to be written, based
->> on which the bootloader and firmware decide the next boot state
->> of device, after the reset. For example, a requirement on
->> Qualcomm platforms may state that reboot with "bootloader"
->> command, should reboot the device into bootloader flashing mode
->> and reboot with “edl” command, should reboot the device into an
->> Emergency flashing mode.  Setting up such reboots on Qualcomm
->> devices can be inconsistent across SoC platforms and may require
->> setting different HW registers, where some of these registers may
->> not be accessible to HLOS. These knobs evolve over product
->> generations and require more drivers.  PSCI defines a
->> vendor-specific reset in SYSTEM_RESET2 spec, which enables the
->> firmware to take care of underlying setting for any such
->> supported vendor-specific reboot. Qualcomm firmwares are
->> beginning to support and expose PSCI SYSTEM_RESET2
->> vendor-specific reset types to simplify driver requirements from
->> Linux. With such support added in the firmware, we now need a
->> Linux interface which can make use of the firmware calls for PSCI
->> vendor-specific resets. This will align such reboot requirement
->> across platforms and vendors.
->>
->> The current psci driver supports two types of resets –
->> SYSTEM_RESET2 Arch warm-reset and SYSTEM_RESET cold-reset. The
->> patchset introduces the PSCI SYSTEM_RESET2 vendor-specific reset
->> into the reset path of the psci driver and aligns it to work with
->> reboot system call - LINUX_REBOOT_CMD_RESTART2, when used along
->> with a supported string-based command in “*arg”.
->>
->> The patchset uses reboot-mode based commands, to define the
->> supported vendor reset-types commands in psci device tree node
->> and registers these commands with the reboot-mode framework.
->>
->> The PSCI vendor-specific reset takes two arguments, being,
->> reset_type and cookie as defined by the spec. To accommodate this
->> requirement, enhance the reboot-mode framework to support two
->> 32-bit arguments by switching to 64-bit magic values.
->>
->> Along this line, the patchset also extends the reboot-mode
->> framework to add a non-device-based registration function, which
->> will allow drivers to register using device tree node, while
->> keeping backward compatibility for existing users of reboot-mode.
->> This will enable psci driver to register for reboot-mode and
->> implement a write function, which will save the magic and then
->> use it in psci reset path to make a vendor-specific reset call
->> into the firmware. In addition, the patchset will expose a sysfs
->> entry interface within reboot-mode which can be used by userspace
->> to view the supported reboot-mode commands.
->>
->> The list of vendor-specific reset commands remains open due to
->> divergent requirements across vendors, but this can be
->> streamlined and standardized through dedicated device tree
->> bindings.
->>
->> Currently three drivers register with reboot-mode framework -
->> syscon-reboot-mode, nvmem-reboot-mode and qcom-pon. Consolidated
->> list of commands currently added across various vendor DTs:
->>   mode-loader
->>   mode-normal
->>   mode-bootloader
->>   mode-charge
->>   mode-fastboot
->>   mode-reboot-ab-update
->>   mode-recovery
->>   mode-rescue
->>   mode-shutdown-thermal
->>   mode-shutdown-thermal-battery
->>
->> On gs101 we also pass kernel-generated modes from kernel_restart()
->> or panic(), specifically DM verity's 'dm-verity device corrupted':
->>     mode-dm-verity-device-corrupted = <0x50>;
->>
->> - thanks Andre' for providing this.
->>
->> Detailed list of commands being used by syscon-reboot-mode:
->>      arm64/boot/dts/exynos/exynosautov9.dtsi:
->>     mode-bootloader = <EXYNOSAUTOV9_BOOT_BOOTLOADER>;
->>     mode-fastboot = <EXYNOSAUTOV9_BOOT_FASTBOOT>;
->>     mode-recovery = <EXYNOSAUTOV9_BOOT_RECOVERY>;
->>
->>      arm64/boot/dts/exynos/google/gs101.dtsi:
->>          mode-bootloader = <0xfc>;
->>          mode-charge = <0x0a>;
->>          mode-fastboot = <0xfa>;
->>          mode-reboot-ab-update = <0x52>;
->>          mode-recovery = <0xff>;
->>          mode-rescue = <0xf9>;
->>          mode-shutdown-thermal = <0x51>;
->>          mode-shutdown-thermal-battery = <0x51>;
->>
->>      arm64/boot/dts/hisilicon/hi3660-hikey960.dts:
->>          mode-normal = <0x77665501>;
->>          mode-bootloader = <0x77665500>;
->>          mode-recovery = <0x77665502>;
->>
->>      arm64/boot/dts/hisilicon/hi6220-hikey.dts:
->>          mode-normal = <0x77665501>;
->>          mode-bootloader = <0x77665500>;
->>          mode-recovery = <0x77665502>;
->>
->>      arm64/boot/dts/rockchip/px30.dtsi:
->>          mode-bootloader = <BOOT_BL_DOWNLOAD>;
->>          mode-fastboot = <BOOT_FASTBOOT>;
->>          mode-loader = <BOOT_BL_DOWNLOAD>;
->>          mode-normal = <BOOT_NORMAL>;
->>          mode-recovery = <BOOT_RECOVERY>;
->>
->>      arm64/boot/dts/rockchip/rk3308.dtsi:
->>          mode-bootloader = <BOOT_BL_DOWNLOAD>;
->>          mode-loader = <BOOT_BL_DOWNLOAD>;
->>          mode-normal = <BOOT_NORMAL>;
->>          mode-recovery = <BOOT_RECOVERY>;
->>          mode-fastboot = <BOOT_FASTBOOT>;
->>
->>      arm64/boot/dts/rockchip/rk3566-lckfb-tspi.dts:
->>          mode-normal = <BOOT_NORMAL>;
->>          mode-loader = <BOOT_BL_DOWNLOAD>;
->>             mode-recovery = <BOOT_RECOVERY>;
->>             mode-bootloader = <BOOT_FASTBOOT>;
->>
->> Detailed list of commands being used by nvmem-reboot-mode:
->>      arm64/boot/dts/qcom/pmXXXX.dtsi:(multiple qcom DTs)
->>             mode-recovery = <0x01>;
->>             mode-bootloader = <0x02>;
->>
->> Previous discussions around SYSTEM_RESET2:
->> -https://lore.kernel.org/lkml/20230724223057.1208122-2-quic_eberman@quicinc.com/T/
->> -https://lore.kernel.org/all/4a679542-b48d-7e11-f33a-63535a5c68cb@quicinc.com/
->>
->> Signed-off-by: Elliot Berman<quic_eberman@quicinc.com>
->> Signed-off-by: Shivendra Pratap<shivendra.pratap@oss.qualcomm.com>
-> 
-> 
-> With this series, 'edl' mode is working fine in QCOM's IPQ5424 SoC. So
-> 
-> Tested-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com> # IPQ5424-RDP466
-> 
+Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+> The for_each_old_private_obj_in_state() macro triggers a compiler
+> warning if the obj parameter passed to it isn't used in the code block.
+>
+> Add a similar workaround than in most other macros.
+>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-Thanks for giving time for testing this series for IPQ5424. So we have PSCI SYS reset2 support for
-IPQ5424 firmware? and did we make any extra changes in DT for edl mode?
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-thanks,
-Shivendra
+> ---
+>   include/drm/drm_atomic.h | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+> index 689a29bdeb4a06672ab6fffecb513d58ff6e07f9..f13f926d21047e42bb9ac692c2dd4b88f2ebd91c 100644
+> --- a/include/drm/drm_atomic.h
+> +++ b/include/drm/drm_atomic.h
+> @@ -1112,10 +1112,11 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
+>    */
+>   #define for_each_old_private_obj_in_state(__state, obj, old_obj_state, __i) \
+>   	for ((__i) = 0; \
+>   	     (__i) < (__state)->num_private_objs && \
+>   		     ((obj) = (__state)->private_objs[__i].ptr, \
+> +		      (void)(obj) /* Only to avoid unused-but-set-variable warning */, \
+>   		      (old_obj_state) = (__state)->private_objs[__i].old_state, 1); \
+>   	     (__i)++)
+>   
+>   /**
+>    * for_each_new_private_obj_in_state - iterate over all private objects in an atomic update
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
