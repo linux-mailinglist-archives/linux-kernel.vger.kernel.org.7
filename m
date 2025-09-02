@@ -1,164 +1,212 @@
-Return-Path: <linux-kernel+bounces-796840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE52AB4083E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:59:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9445CB40821
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709DF563377
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFCD1A817F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2A5322775;
-	Tue,  2 Sep 2025 14:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5543148D5;
+	Tue,  2 Sep 2025 14:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yiWzrT4P"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcFWa8vW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554C3320A0D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373342DFA26;
+	Tue,  2 Sep 2025 14:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756824628; cv=none; b=ALNkIhJuB+a2GVpUtJaTq5y6LbJdP815+VqlIhRuCVsxNl7pqkVMhX/qgvxGqWDK0LbFJ7pG4snKg9tZoEOjJJzA09yposa1hFWld/SsyfsfkvgShWLVIeerbIJYWj7HGvmLM/4MyHfYUo5Cbz01B0v6Uy7BDY19dJosAQeaO6c=
+	t=1756824700; cv=none; b=kuVOAilCEOw3Hwf6lYtjbyp0k/lcdyxdXHtFHk4Nabi8u3wFVG2QWLvLRuwDWSU+zX4gmdgdzJVEQUYLRCRrcZi9nXs8XZnxs09tKJ3IAKDGCIMDNIg4Ey3ChvH5m/ZgNubaDEPqBBYC956BcaUUY3VAiswJ5K6o910psxAOkFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756824628; c=relaxed/simple;
-	bh=dH9WJqnnaUBg0PJEQdCMKAbP/OG3mpvTrdhmMKmcYHw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kM10tW4Ntw9Cj9V3+bWgDNNHD5nnv8g5FuNGtBkeH2P1L+J/I3ECz7d+idGWquQLa4DmZn1R9kpirlOSCnoSh2nPVMz7k2tj108M0GOgnqw6174YCepeLfCHXv4Vt2ZGrKTIxlsQyGB5soiYjcl93sp3bInrvCH52S6yvpEFepk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yiWzrT4P; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e395107e2so5380101b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:50:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756824626; x=1757429426; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BVhDXq7LIMwuZZc1aVBi0bntn8J+fEILMHHxGS2ec3Q=;
-        b=yiWzrT4PQjJgLy8fs6EhcAUdEd96gqW/soblg7P3rZLuhLOuqG4keii5hwV4an1dp0
-         HuRp+LzoIdkRBRhpLdNMIAFRePjsIiuOhQMKPoTiQqiA5LqKz6uRhejWVXeTFc7xJuc3
-         9lwVcVQXwmy+S2Sw6VA2vwbgy4BpxvRT0aWGD/RFWTjn/+6zk3Tk6x4nIhGSQa4FEK7Q
-         CnesL3vbauHSsn31sHYdPp3ocwy71ZS4wJ1WuCgbR93bSw5n3fYMVyDK4+29ZJsNr9XN
-         g1zzf1qXautgtybKpdmHxMOs/QeBLVj/IMVhla+zVyFw4xucZ9PW4GFNBvAWMoAlyzZr
-         AR+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756824626; x=1757429426;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BVhDXq7LIMwuZZc1aVBi0bntn8J+fEILMHHxGS2ec3Q=;
-        b=pPB/A/S9Ge4tcnZ9QG313M3RiFpaCbelmq+4VILRF2XG1K0YEDtOUSgHgvoLNaQy43
-         nZmZilSyLT9d6eJT0Xos+qF09OprblqZhU8rNSeuo1IxPkjntY4LJ2pwa9x2Xf4TlqNN
-         tsqv7ANDg7WwljBz52vLbSUAyvkOIjjP2PC5m+sRmw3SW1zwjG8qzJ18id8x4Tp5jK1+
-         +23Lf1MStBiFETyUtqyS9PoZwLCgj6TWDhM6Kb3/t9E+F4fRB9TpPM0bqGs8gjwn6gEP
-         vaa1e5UXpnDP0rl7Lcm/t6a0ep7q5YJw9OBscZJEk2oCSoMd8ouuWluyY73PIN0gkZ1w
-         vAng==
-X-Forwarded-Encrypted: i=1; AJvYcCUaHK9+h8eP11S5vGpz5Tg4yVp1AwGUx3lIC260+Fu3KnI0dBphXRgJ4mvWQFYz81C6tJQ84rVKAEWJtMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoKJEqpaP3Nhno+u6zWfZUA//ncR5RlxGWC/8JDSJI37ruBKiG
-	ZVbr+UY3ZusJd3izOxpNjLlSmA1vEwfxByjcME4Bqbyh21JU35a1REnSZGcBedXJ34fl+sosYE8
-	YATrn6Q==
-X-Google-Smtp-Source: AGHT+IFtWd0Vy9I1oKsoEPVbgz7z2BDFEVbR9IM8u1o9qW9c7L994gWT3hCAFl0msMpLwSM0dvMW7Cf8q/4=
-X-Received: from pfbdi11-n2.prod.google.com ([2002:a05:6a00:480b:20b0:76c:6ec8:ac2d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4fd2:b0:772:641:cfb8
- with SMTP id d2e1a72fcca58-7723e0d366emr11456143b3a.0.1756824626392; Tue, 02
- Sep 2025 07:50:26 -0700 (PDT)
-Date: Tue, 2 Sep 2025 07:50:24 -0700
-In-Reply-To: <fbdcca61-e9c4-47fc-b629-7a46ad35cd24@intel.com>
+	s=arc-20240116; t=1756824700; c=relaxed/simple;
+	bh=b37E1Q+N23pT46YkYY9IK/lkNbzMf3Zsz7EbTF3ctUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVuSpEoiRpCSo16Ctm2yYPdT8gJrtodHnnj/dAKkehkWYwPTygiqOuxqcuAC8k5C4lOX0qk8V1oaVRm96QOu9RORapO38vimk53q5aIMkGaqUOPgz/PK3xCu6drVxt0YrnJqJ/hNOs2nfoZTkB5UOxqoNcNR37ZgTPgwXfA2M7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcFWa8vW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EABCC4CEED;
+	Tue,  2 Sep 2025 14:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756824699;
+	bh=b37E1Q+N23pT46YkYY9IK/lkNbzMf3Zsz7EbTF3ctUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KcFWa8vW9lALcC7oUDIaDCey6FU/dJsGePh6HZmfYNSbspr2ff70qozIZ2dqC7Ify
+	 q0PkmZjGtCoaoERqG1sRqPe2RwKBL6COWXn6KT5gI1QZGAv2GmgpZeFSv1aQbe1opU
+	 ooslCd146AS/52XtoLFC+57IEaxRk/w3gi1LbYrp09X8XVFqde3Z/DMBFMKQ6JMlpD
+	 nmGNcjp93gFzTNLEXGx7BJiwYFkKixXtoXcOOYUScenFps6poenJ2ZUVRiwbk/axM5
+	 PTcuXnY8xTrGTJ1DQ6Cn2qo7nyWWpXbeOAEC2hruc6ehWgWbwzoPbvigZWm4PsfwEn
+	 /dPkegQhfR4UA==
+Date: Tue, 2 Sep 2025 09:51:36 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, kernel@oss.qualcomm.com, 
+	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Subject: Re: [PATCH v8 6/9] arm64: dts: qcom: qcs6490-rb3gen2: Add WSA8830
+ speakers amplifier
+Message-ID: <arjgotmhd6b3ip2cvyvl74nanapqxleeeyxg63m6ike7osrjw7@gqp44che72gn>
+References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+ <20250821044914.710044-7-quic_pkumpatl@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250805202224.1475590-1-seanjc@google.com> <20250805202224.1475590-5-seanjc@google.com>
- <424e2aaa-04df-4c7e-a7f9-c95f554bd847@intel.com> <849dd787-8821-41f1-8eef-26ede3032d90@linux.intel.com>
- <c4bc61da-c42c-453d-b484-f970b99cb616@zytor.com> <fbdcca61-e9c4-47fc-b629-7a46ad35cd24@intel.com>
-Message-ID: <aLcEMCMDRCEZnmdH@google.com>
-Subject: Re: [PATCH v3 4/6] KVM: x86: Add support for RDMSR/WRMSRNS w/
- immediate on Intel
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Xin Li <xin@zytor.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821044914.710044-7-quic_pkumpatl@quicinc.com>
 
-On Mon, Sep 01, 2025, Xiaoyao Li wrote:
-> On 9/1/2025 3:04 PM, Xin Li wrote:
-> > On 8/31/2025 11:34 PM, Binbin Wu wrote:
-> > > > We need to inject #UD for !guest_cpu_has(X86_FEATURE_MSR_IMM)
-> > > >=20
-> > >=20
-> > > Indeed.
-> >=20
-> > Good catch!
-> >=20
-> > >=20
-> > > There is a virtualization hole of this feature for the accesses to th=
-e
-> > > MSRs not intercepted. IIUIC, there is no other control in VMX for thi=
-s
-> > > feature. If the feature is supported in hardware, the guest will succ=
-eed
-> > > when it accesses to the MSRs not intercepted even when the feature is=
- not
-> > > exposed to the guest, but the guest will get #UD when access to the M=
-SRs
-> > > intercepted if KVM injects #UD.
-> >=20
-> > hpa mentioned this when I just started the work.=C2=A0 But I managed to=
- forget
-> > it later... Sigh!
-> >=20
-> > >=20
-> > > But I guess this is the guest's fault by not following the CPUID,
-> > > KVM should
-> > > still follow the spec?
-> >=20
-> > I think we should still inject #UD when a MSR is intercepted by KVM.
+On Thu, Aug 21, 2025 at 10:19:11AM +0530, Prasad Kumpatla wrote:
+> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+> 
+> Add nodes for WSA8830 speakers amplifier on qcs6490-rb3gen2 board.
+> 
+> Enable lpass_wsa and lpass_va macros along with pinctrl settings
+> for audio.
+> 
+> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> ---
+>  .../boot/dts/qcom/qcs6490-audioreach.dtsi     |  6 ++++
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 35 +++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi          |  8 +++++
+>  3 files changed, 49 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+> index 6d3a9e171066..078936237e20 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+> @@ -58,6 +58,12 @@ &lpass_va_macro {
+>  	clock-names = "mclk",
+>  		      "macro",
+>  		      "dcodec";
+> +
+> +	pinctrl-0 = <&lpass_dmic01_clk>, <&lpass_dmic01_data>,
+> +		    <&lpass_dmic23_clk>, <&lpass_dmic23_data>;
 
-Hmm, no, inconsistent behavior (from the guest's perspective) is likely wor=
-se
-than eating with the virtualization hole.  Practically speaking, the only g=
-uest
-that's going to be surprised by the hole is a guest that's fuzzing opcodes,=
- and
-a guest that's fuzzing opcodes at CPL0 isn't is going to create an inherent=
-ly
-unstable environment no matter what.
+Does all QCS6490 boards with AudioReach have these two (4?) DMICs? Is
+this board-specific or generic?
 
-Though that raises the question of whether or not KVM should emulate WRMSRN=
-S and
-whatever the official name for the "RDMSR with immediate" instruction is (I=
- can't
-find it in the SDM).  I'm leaning "no", because outside of forced emulation=
-, KVM
-should only "need" to emulate the instructions if Unrestricted Guest is dis=
-abled,
-the instructions should only be supported on CPUs with unrestricted guest, =
-there's
-no sane reason (other than testing) to run a guest without Unrestricted Gue=
-st,
-and using the instructions in Big RM would be quite bizarre.  On the other =
-hand,
-adding emulation support should be quite easy...
+> +	pinctrl-names = "default";
+> +
+> +	qcom,dmic-sample-rate = <4800000>;
+>  };
+>  
+>  &lpass_wsa_macro {
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> index 7509c27bd3f8..09e2cb9053a6 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -19,6 +19,7 @@
+>  #include "pm7325.dtsi"
+>  #include "pm8350c.dtsi"
+>  #include "pmk8350.dtsi"
+> +#include "qcs6490-audioreach.dtsi"
+>  
+>  /delete-node/ &ipa_fw_mem;
+>  /delete-node/ &rmtfs_mem;
+> @@ -765,6 +766,14 @@ redriver_usb_con_sbu: endpoint {
+>  	};
+>  };
+>  
+> +&lpass_va_macro {
+> +	status = "okay";
+> +};
+> +
+> +&lpass_wsa_macro {
+> +	status = "okay";
+> +};
+> +
+>  &mdss {
+>  	status = "okay";
+>  };
+> @@ -1039,6 +1048,32 @@ &sdhc_2 {
+>  	status = "okay";
+>  };
+>  
+> +&swr2 {
+> +	status = "okay";
+> +
+> +	left_spkr: speaker@0,1 {
+> +		compatible = "sdw10217020200";
+> +		reg = <0 1>;
+> +		reset-gpios = <&tlmm 158 GPIO_ACTIVE_LOW>;
+> +		#sound-dai-cells = <0>;
+> +		sound-name-prefix = "SpkrLeft";
+> +		#thermal-sensor-cells = <0>;
+> +		vdd-supply = <&vreg_l18b_1p8>;
+> +		qcom,port-mapping = <1 2 3 7>;
+> +	};
+> +
+> +	right_spkr: speaker@0,2 {
+> +		compatible = "sdw10217020200";
+> +		reg = <0 2>;
+> +		reset-gpios = <&tlmm 158 GPIO_ACTIVE_LOW>;
+> +		#sound-dai-cells = <0>;
+> +		sound-name-prefix = "SpkrRight";
+> +		#thermal-sensor-cells = <0>;
+> +		vdd-supply = <&vreg_l18b_1p8>;
+> +		qcom,port-mapping = <4 5 6 8>;
+> +	};
+> +};
+> +
+>  &tlmm {
+>  	gpio-reserved-ranges = <32 2>, /* ADSP */
+>  			       <48 4>; /* NFC */
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index c51c38cf147a..d472de18296b 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -3001,21 +3001,29 @@ lpass_tlmm: pinctrl@33c0000 {
+>  			lpass_dmic01_clk: dmic01-clk-state {
+>  				pins = "gpio6";
+>  				function = "dmic1_clk";
+> +				drive-strength = <8>;
+> +				bias-disable;
 
-Side topic, does RDMSRLIST have any VMX controls?
+Does these settings belong in the SoC description? Are they fixed for
+all targets of sc7280, or are there any board-specific variations? Any
+variations based on which audio solution the board implements?
 
-> For handle_wrmsr_imm(), it seems we need to check
-> guest_cpu_cap_has(X86_FEATURE_WRMSRNS) as well, since immediate form of M=
-SR
-> write is only supported on WRMSRNS instruction.
->=20
-> It leads to another topic, do we need to bother checking the opcode of th=
-e
-> instruction on EXIT_REASON_MSR_WRITE and inject #UD when it is WRMSRNS
-> instuction and !guest_cpu_cap_has(X86_FEATURE_WRMSRNS)?
->=20
-> WRMSRNS has virtualization hole as well, but KVM at least can emulate the
-> architectural behavior when the write on MSRs are not pass through.
+Regards,
+Bjorn
+
+>  			};
+>  
+>  			lpass_dmic01_data: dmic01-data-state {
+>  				pins = "gpio7";
+>  				function = "dmic1_data";
+> +				drive-strength = <8>;
+> +				bias-pull-down;
+>  			};
+>  
+>  			lpass_dmic23_clk: dmic23-clk-state {
+>  				pins = "gpio8";
+>  				function = "dmic2_clk";
+> +				drive-strength = <8>;
+> +				bias-disable;
+>  			};
+>  
+>  			lpass_dmic23_data: dmic23-data-state {
+>  				pins = "gpio9";
+>  				function = "dmic2_data";
+> +				drive-strength = <8>;
+> +				bias-pull-down;
+>  			};
+>  
+>  			lpass_rx_swr_clk: rx-swr-clk-state {
+> -- 
+> 2.34.1
+> 
 
