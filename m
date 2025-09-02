@@ -1,193 +1,152 @@
-Return-Path: <linux-kernel+bounces-796477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F3DB40120
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:47:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42EA2B40102
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA97487087
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:47:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD49A7B6DA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB612DCC13;
-	Tue,  2 Sep 2025 12:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD1E2C032C;
+	Tue,  2 Sep 2025 12:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="orTCVXt/"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a97TVXO+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6742DAFDE
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065221E9B3A
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817178; cv=none; b=Tjms6m9vMubwb1a6VEadNqm6et412f2FMIDO2HtaY7bRNv6IUuZZf7PrKAgtbFlvBPYSARHVxerzEGHgonRvtiUBxnMC21mxX3+MskBY2dOSJ4W5+ZxuKiQ9OX8c1Xd86+Wk5IOTSpnRrGoRGLjRze/CCjXfrZVztA5h6EIwoEo=
+	t=1756817110; cv=none; b=ntVIGCfB+TKzBthHjVXP7J/gYPliuWi6J+5NXe9g1MhG+tlayG4uaS9a3DX++Fx+dZqoEif7DjSU8fnNpvAbnjXJFh1WlYamc2ReWQgNj4vjEAgoQ9XMzc51N0corWqyv97GefHtmRzY2RdZOozGZHmNUAbkIY361sOYTou1p2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817178; c=relaxed/simple;
-	bh=fDy13d0jadoNgDpWip0eDAJ9ZTQEC7MeqwnmLrMOq3g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GK3gxXgv5vdVT7NYUGRrxRVJxJea+B1ApbCn4rsa1ejAYm+uP9N4wBCAg4vEFUv0ZGD6e8aunqp8ja+4s6YTeqGGtNdaDVRdqYBsNaY8EUOw0nF06De20SuaEmhwcPYJ1hqqkbol1WOyNN1hzY5POEtOBaT1oKbNjUk6IpuiiHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=orTCVXt/; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3da9ad0c1f4so439393f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756817173; x=1757421973; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t/upoONcJkK6CJjYHWkLIMw2CILsxwp/wVjDokkLyWs=;
-        b=orTCVXt/bLmQ7sXY0Sj2MNp4u05xO8G1i1fmSxX/nrFZuCcI4eEjzu+RMDpyrK8dyi
-         Sf0wLuaFSkbJOSUV83XCdvhRhOxS0HLspUF/rV8UZEWjbFSh620lSQdnqaiTwpRGXTNC
-         zYwp667oEcsH4D3lly/alGcPCPayxUCd7gJW3EfvUYi3r0F8hdhT8NvVwDbs+7/HHVK3
-         NaWFUuhvhf4lV6AtQVYVOk2Cpk+m/wK3atEzUlMTgqPM+y4OjxBe57Ldz+hW7OmXJkly
-         fUR4K75lBbKT/WbgiIz7HB16CjJisO2GZvVfDpc/Sr20j7S2MUYO5HicGtc50g3rwqHY
-         VbDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756817173; x=1757421973;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t/upoONcJkK6CJjYHWkLIMw2CILsxwp/wVjDokkLyWs=;
-        b=AlZjV476h+s3k0Yla6jnL6NkK8gpGR9lIS75cHMj3zRyHOLiFMEZENKktN7nsc7LH7
-         3y5ElYmqCF/bJ+ct3s83O9zXUuMqCsOuIZh4jFSU0zdgZk+CnjPvEmX6naNpQ8aVTe+u
-         FJiuC1Yaz8GF5+pUxn6nAA4JMEo98rhvRIvnCmgMdbrSdzymEOtjLfV/XvEMj6odW14k
-         CAVW6q8ELbzwWAR3N3uu0plv5UvEowqNypMU2EqzErbcc+hqAx9owy/5qRcI9oC9KC17
-         B/zjUL4aGBB0UQQv5rP8epwfbccHu4xyIZhl3i2ka7uon5R3LShQbJdPri9bEAXfpRJX
-         bPFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZGNFJ1pUQXthSTXhzgGyZAYyoAFfWCOfgSr9xj8u33ZYja3AaUvm7xCDHa8y1wWuuEy3449PSBxpHNuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyICHPjLWhi/UfPZuXPrFDplgYmWgRUm5gD4a2oyw/5qGd98DYj
-	OO/4WdxZJwgQtzsXlS7XMvCDcefw/+qfgHPWECTzKO/nke6maIasiQkY5Q7DlnTDgFoczDOAweS
-	Vjw+v1II=
-X-Gm-Gg: ASbGncsFOuVJnUdF93SzGAmYVYPWyv2/pW+tiPgmh1k9H9LiwV8rEY+gnJ4n0Mkmyjr
-	HMJIwnZQKCyKxJuqfkXHiHPYSCW160IoolDOorbwQBnd/ljFu0RUc6SgrknmLA1s+YD+ZYLFinc
-	I+P88BuhXa2Y846axhLojHOuMzh5/nUf7l9QNHFdvdjd7S0WQi0ytaICH16aW3JixqnZrD400nL
-	zXu5qoniV+Qg9UMW5R60cJ8PAOnOmTeGibOme1DXOxaf9EB8Ytbjn8VgFE0Xtjyd27GXBFBH/fY
-	2fFcAHXzTmxiUjZC+rT2PhUCtiyZY6zYgQ9SSBbVpik/GV8+70TciNx68SN+Lo3nlUFBLVeJQM4
-	DFR6w6EE249MUNRg4MV7Qr1ixNTCcMjyr0+x/4YUwvg==
-X-Google-Smtp-Source: AGHT+IG6jUoitTgiFTXdSrwMTL/OoQio/BlhVxzRStwKd/kUGsgb2XZinkbeZSLm7z/B6IiziT0tBQ==
-X-Received: by 2002:a05:6000:1883:b0:3c0:7e30:a95f with SMTP id ffacd0b85a97d-3d1e0a94fbfmr9044471f8f.60.1756817173362;
-        Tue, 02 Sep 2025 05:46:13 -0700 (PDT)
-Received: from ho-tower-lan.lan ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf275d2717sm19589896f8f.15.2025.09.02.05.46.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 05:46:12 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Tue, 02 Sep 2025 13:44:59 +0100
-Subject: [PATCH v6 7/7] spi: spi-fsl-dspi: Report FIFO overflows as errors
+	s=arc-20240116; t=1756817110; c=relaxed/simple;
+	bh=9BmRlT+BJOmmJrsaNhcwbX6i45q2i2uMT/N4Iz1vys4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9GR0Rm876oy46kI+VSzC1zujZ9kIgKs8ZBmLqS08eQrPdcfy/6QlJR64yHhyWmGnkavxuSbC6U/pglmOtpFhnUOpBmvCJqxGpWynnnT/EXQiu/hL93ie5ZhzeSc5sfZWqPCYJkbgCTiKFFTU31Pf7QSd8+q47fdoAFeDza6EYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a97TVXO+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EBFEC4CEED;
+	Tue,  2 Sep 2025 12:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756817109;
+	bh=9BmRlT+BJOmmJrsaNhcwbX6i45q2i2uMT/N4Iz1vys4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a97TVXO+ikAQctsQzsVWkJ2F3joGpfx1Ueo0dMD8sQkg2oi1M+Sigt95+TkwBImOe
+	 uk0HOb1dy1pkgZWDgvggJ1iKrDtaZzQQZvNNZNDxxM5WnLuypXbzJD3oEKHBBlf4p+
+	 fNxiCtu2KTeYdOJtVbSS2NuJX1JBY1D/Qhe+ZCfU9PB/rmLvjC2SwkjEUIn5c3lFj1
+	 JwUePvEu0t7af393BjyJrOj6XIjZl5cJUFNF8MBhkMG3b57ELypbI1eHRn+efeyf3r
+	 1mtXl4ir7TlC3qdWdMytsnlrsL8DelHwHBLkwEsi8tZE42tj2nSYWpEaQWQXU3Pqc6
+	 pzckRVEI8zHNw==
+Date: Tue, 2 Sep 2025 14:45:06 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v11 8/8] timers: Exclude isolated cpus from timer
+ migration
+Message-ID: <aLbm0srwDJVpt8cM@localhost.localdomain>
+References: <20250808160142.103852-1-gmonaco@redhat.com>
+ <20250808160142.103852-9-gmonaco@redhat.com>
+ <aLWUkpKgFFVr_TEx@localhost.localdomain>
+ <d001f1bc9a87e031cf4f8721d6843013c766c28a.camel@redhat.com>
+ <aLYMA8niL9Uxhu7G@pavilion.home>
+ <ab9348b0e67f36dea92922bf76aadb7fe9d1667a.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-james-nxp-spi-dma-v6-7-f7aa2c5e56e2@linaro.org>
-References: <20250902-james-nxp-spi-dma-v6-0-f7aa2c5e56e2@linaro.org>
-In-Reply-To: <20250902-james-nxp-spi-dma-v6-0-f7aa2c5e56e2@linaro.org>
-To: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Vladimir Oltean <vladimir.oltean@nxp.com>, Arnd Bergmann <arnd@arndb.de>, 
- Larisa Grigore <larisa.grigore@nxp.com>, Frank Li <Frank.li@nxp.com>, 
- Christoph Hellwig <hch@lst.de>
-Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ab9348b0e67f36dea92922bf76aadb7fe9d1667a.camel@redhat.com>
 
-In target mode, the host sending more data than can be consumed would be
-a common problem for any message exceeding the FIFO or DMA buffer size.
-Cancel the whole message as soon as this condition is hit as the message
-will be corrupted.
+Le Tue, Sep 02, 2025 at 01:08:25PM +0200, Gabriele Monaco a écrit :
+> On Mon, 2025-09-01 at 23:11 +0200, Frederic Weisbecker wrote:
+> > Le Mon, Sep 01, 2025 at 03:48:15PM +0200, Gabriele Monaco a écrit :
+> > > On Mon, 2025-09-01 at 14:41 +0200, Frederic Weisbecker wrote:
+> > > > Why not evaluate tick_nohz_cpu_hotpluggable() from
+> > > > tmigr_clear_cpu_available() instead of this force IPI?
+> > > 
+> > > The idea is that this IPI runs once during late boot only for the
+> > > tick CPU, while the call to tick_nohz_cpu_hotpluggable() would be
+> > > running at every hotplug event if I move it to
+> > > tmigr_clear_cpu_available. In that scenario, it's guaranteed to
+> > > return true (besides the very first call).
+> > > 
+> > > I don't have a strong opinion against running that check every time
+> > > although it's needed only at boot time and remove this IPI, but in
+> > > my understanding that's one of the thing Thomas was finding
+> > > confusing [1].
+> > > 
+> > > Am I missing anything here?
+> > 
+> > Right, Thomas didn't like it, but the organization of the code has
+> > changed a bit since then with the late initcall. If the best we can
+> > do to workaround the situation is to make the CPU unavailable
+> > regardless and then undo that right after with an IPI, then it's a
+> > good sign that we should just simplify and eventually check
+> > tick_nohz_cpu_hotpluggable() from tmigr_is_isolated().
+> 
+> Makes sense.
+> I'd be tempted using a static branch but since the call to
+> tick_nohz_cpu_hotpluggable() isn't really heavy, we can just be fine
+> including it in the tmigr_is_isolated() check.
 
-Only do this for target mode in a DMA transfer, it's not likely these
-flags will be set in host mode so it's not worth adding extra checks. In
-IRQ and polling modes we use the same transfer functions for hosts and
-targets so the error flags always get checked. This is slightly
-inconsistent but it's not worth doing the check conditionally because it
-may catch some host programming errors in the future.
+Right.
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- drivers/spi/spi-fsl-dspi.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> 
+> > > > But if I understand correctly, this will be handled by cpuset,
+> > > > right?
+> > > 
+> > > Currently tick_nohz_cpu_hotpluggable() is called by
+> > > tmigr_should_isolate_cpu() and that is called by cpuset code,
+> > > changing cpuset would save that call but won't deal with the tick
+> > > CPU not enabled at boot time, unless I'm misunderstanding what
+> > > Waiman implied.
+> > 
+> > Good point!
+> 
+> Here I'm a bit unsure how to proceed though. We want to fail any single
+> isolated cpuset that includes the tick CPU under nohz_full. I can do it
+> directly in isolcpus_nohz_conflict and that looks easy.
+> 
+> But is that going to be clear for the user?
+> Can the user even know what the tick CPU is? Besides /assuming/ 0.
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 3d29285c772c..83ea296597e9 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -480,6 +480,17 @@ static void dspi_push_rx(struct fsl_dspi *dspi, u32 rxdata)
- 	dspi->dev_to_host(dspi, rxdata);
- }
- 
-+static int dspi_fifo_error(struct fsl_dspi *dspi, u32 spi_sr)
-+{
-+	if (spi_sr & (SPI_SR_TFUF | SPI_SR_RFOF)) {
-+		dev_err_ratelimited(&dspi->pdev->dev, "FIFO errors:%s%s\n",
-+				    spi_sr & SPI_SR_TFUF ? " TX underflow," : "",
-+				    spi_sr & SPI_SR_RFOF ? " RX overflow," : "");
-+		return -EIO;
-+	}
-+	return 0;
-+}
-+
- #if IS_ENABLED(CONFIG_DMA_ENGINE)
- 
- /* Prepare one TX FIFO entry (txdata plus cmd) */
-@@ -553,6 +564,7 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
- 	struct device *dev = &dspi->pdev->dev;
- 	struct fsl_dspi_dma *dma = dspi->dma;
- 	int time_left;
-+	u32 spi_sr;
- 	int i;
- 
- 	for (i = 0; i < dspi->words_in_flight; i++)
-@@ -603,7 +615,8 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
- 
- 	if (spi_controller_is_target(dspi->ctlr)) {
- 		wait_for_completion_interruptible(&dspi->dma->cmd_rx_complete);
--		return 0;
-+		regmap_read(dspi->regmap, SPI_SR, &spi_sr);
-+		return dspi_fifo_error(dspi, spi_sr);
- 	}
- 
- 	time_left = wait_for_completion_timeout(&dspi->dma->cmd_tx_complete,
-@@ -1073,6 +1086,10 @@ static void dspi_poll(struct fsl_dspi *dspi)
- 		for (tries = 1000; tries > 0; --tries) {
- 			regmap_read(dspi->regmap, SPI_SR, &spi_sr);
- 			regmap_write(dspi->regmap, SPI_SR, spi_sr);
-+
-+			dspi->cur_msg->status = dspi_fifo_error(dspi, spi_sr);
-+			if (dspi->cur_msg->status)
-+				return;
- 			if (spi_sr & SPI_SR_CMDTCF)
- 				break;
- 		}
-@@ -1088,6 +1105,7 @@ static void dspi_poll(struct fsl_dspi *dspi)
- static irqreturn_t dspi_interrupt(int irq, void *dev_id)
- {
- 	struct fsl_dspi *dspi = (struct fsl_dspi *)dev_id;
-+	int status;
- 	u32 spi_sr;
- 
- 	regmap_read(dspi->regmap, SPI_SR, &spi_sr);
-@@ -1096,6 +1114,14 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
- 	if (!(spi_sr & SPI_SR_CMDTCF))
- 		return IRQ_NONE;
- 
-+	status = dspi_fifo_error(dspi, spi_sr);
-+	if (status) {
-+		if (dspi->cur_msg)
-+			WRITE_ONCE(dspi->cur_msg->status, status);
-+		complete(&dspi->xfer_done);
-+		return IRQ_HANDLED;
-+	}
-+
- 	if (dspi_rxtx(dspi) == false) {
- 		if (dspi->cur_msg)
- 			WRITE_ONCE(dspi->cur_msg->status, 0);
+You're right the user can't know in advance which CPU is the tick.
+I don't mind if we prevent or not cpuset from allowing to isolate
+the timekeeper but either way, a pr_info() could be helpful to tell
+that either:
+
+* The isolated timekeeper will have limited isolation
+or
+* The timekeeper can't be isolated.
+
+Thanks.
+
+> 
+> Thanks,
+> Gabriele
+> 
+> > Thanks.
+> > 
+> > > 
+> > > Thanks,
+> > > Gabriele
+> > > 
+> > > [1] - https://lore.kernel.org/lkml/875xgqqrel.ffs@tglx
+> > > 
+> 
 
 -- 
-2.34.1
-
+Frederic Weisbecker
+SUSE Labs
 
