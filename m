@@ -1,94 +1,113 @@
-Return-Path: <linux-kernel+bounces-795966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38722B3FA13
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:20:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0796BB3FA15
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C2B1B200F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:20:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C33B7AF67C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057012749D5;
-	Tue,  2 Sep 2025 09:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f7lDmIYH"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA692E9EBA;
+	Tue,  2 Sep 2025 09:20:36 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70FE3D987
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674C8274669
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756804825; cv=none; b=FF65dCwV79Uoe8zd3xzSNA9SQsrEHJ2lHb2XD6r0fYOFNpZxDXhVJJb5C1kEvyp9OCLI/r/2Kw+y98rDQPExA96bYYU+E/D8lqfWAQsvwEiNPJbrHH48AD9QCh5coQXiE8wnXcyPkNnLjh8ytP+BTZyDC8Cw3GNaKW3JdF878rQ=
+	t=1756804835; cv=none; b=mJHijZmAxlAYKtwGZfxIbA6WkQa4+6GAPmZAlTCNVNeyKyZGvdn2uYQuqgwOU6CN7Vsk3hqzQLhlCSbcaSj7FykdFZU43zWmuos0WM7bF5by2/dBEzMPIu55GqHptEMcNfuBAy6hzsSJlviEZto/D+gHTMcSyMHALrfyyk3ehHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756804825; c=relaxed/simple;
-	bh=vxkgYmr0na4zwlPowsJWw/T3UMnvYBUEt6gF36I49b0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n8ASPta2WInCNNUh6d1TaHHFMXRlH2fmF5F7tGpSWSlRRFwrWejJeTqF+blOyoxd2UWKCES2zip9YU69x6s+/s7g4xW83BskqHicnidw6koTqgIekz0gUIt9OZsYNeUQK5rvSZyBeYMq9DO89D/pu1xq8er6od0praSUgq5zhcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f7lDmIYH; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 7928A4E40B94;
-	Tue,  2 Sep 2025 09:20:20 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 37F5360695;
-	Tue,  2 Sep 2025 09:20:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9D2421C22D61F;
-	Tue,  2 Sep 2025 11:20:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756804819; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=YOvQGStceXvCa6+9l/nLVbzaS08FnkJ7K2s7/vOvOWg=;
-	b=f7lDmIYHp1rBw3TWK91p4NcyZ1pzqRF/rgIW2Ij3Ej4QwRFl4EB38p4rCRLBqbh4Lm7YMZ
-	tuR21DOaRaCVfvKta4qZgLoQZ/ID6UAahefrz4VynO2uaYoa+pZuwVJa0q3AzyHIYJNgHV
-	FrOaZdO3sdsPhc9g9RxCi1zomXFFe55eR4FkhqDzfH+qHnoI2vaOtjNMvuouqUtZC49SAf
-	TTwyE9qDsbwpsCHQRGFF2dbDw9p3ijgDELYXpGnFmMs5ZcOzg/Sp/xNTm9TG//seZdKN/e
-	wipYWj/wmKSOAELGWNmAj7YVVDD3izGKhORLvy3Sn9YuqJCMPNmHw++NVX1jEQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-Cc: richard@nod.at,  vigneshr@ti.com,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  chengzhihao1@huawei.com,
-  yi.zhang@huawei.com,  yangerkun@huawei.com
-Subject: Re: [PATCH] mtd: core: only increment ecc_stats.badblocks on
- confirmed good->bad transition
-In-Reply-To: <732d629c-d1b9-4483-95c3-9a80bd7b2511@huaweicloud.com> (Wang
-	Zhaolong's message of "Tue, 2 Sep 2025 17:03:54 +0800")
-References: <20250902080117.3658372-1-wangzhaolong@huaweicloud.com>
-	<87ms7dntlb.fsf@bootlin.com>
-	<732d629c-d1b9-4483-95c3-9a80bd7b2511@huaweicloud.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Tue, 02 Sep 2025 11:20:02 +0200
-Message-ID: <87zfbdmcsd.fsf@bootlin.com>
+	s=arc-20240116; t=1756804835; c=relaxed/simple;
+	bh=mQnQcZJzzChhwa42vQX6qHNqh3y9IAYb2KRNG0sxE7U=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ml79fGrSXRFhuEade1KiesSB4Qe2UmEhbKXUvFeahez7iZQaV2wor7ekM9sdITkqvZg0Auh5XXLDIxpgS3jeXEizOkJZvItMwPCYOzG4DejrpaMvEvVwouNLR70auAPbbK+jfVWK/H11SxAa5/O81pW+n/zNexfgYr3C6/DMieQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ed9502b6b3so59385015ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:20:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756804833; x=1757409633;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yUdz8oHchSa5vXVdHhjJpdXTNdE8QIc3MfmWSmfINcU=;
+        b=HPllFbCgXkKTrnI8mpYAJUI5OJNbEFEMz85mx0EUqJi/XqhrGuTxfWOgKTL8bzRh7u
+         lZ1e5PElfULozBEv2zQJkdQ7Ig++Rw17Z5tlWMSqRgQVYXnW2TruBjQN+I1z19pzUWHO
+         xdoTz38otLNBoM1JgEE7H1ppTKP2gawxjdaxdHMeHN9DOjegfiZfcfBqZ8SSSBcuFKjL
+         t07IMA+vrR4Y0x+XwFi3gC+HTTDjLcm6sB1grrYVD9keWPZeLR6He+xL0PH+FSei8Lps
+         oU1ucjwXVTFJeNmN4z4vs/Tq18DOKlwNdKnNyNEkB96WgJmHqpqAbjmz4rbifd4rMHS/
+         LL7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUDp6EoQHd7t+4eaXCOH+HGV0ikb/LYGQK/xW1Q8gh+odU5lEr2gFRuDlfdlDUM1+34P85B8DU+O9zkZzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnScLp4NhV+hIZ+S+qOpi/INxMcUqTkY5tFp9vRymTRU0l1a3w
+	bf+CtjK7eYugR6vTJcznKdNm1AdBEHsdfNkVX248RRmpAyG65FrmKbX3boYclXFClLhxxVFXZP5
+	Kmjti3rvKhg6dkttv3KQKTkpEjSrnYcorIaQoh7UR+S+3ZaNxG4XjAvokXc0=
+X-Google-Smtp-Source: AGHT+IGp4gW6lu9OTBIir25xzwV0vJJpI3xHKndejQnwd4XWVixRqyu5RHHt1Y1Pr6TEV8Wo0dit6GkabjBRTZz71lGmZQwgj0Jf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+X-Received: by 2002:a05:6e02:19c7:b0:3ee:1aca:3162 with SMTP id
+ e9e14a558f8ab-3f4021bfd90mr180808315ab.26.1756804833545; Tue, 02 Sep 2025
+ 02:20:33 -0700 (PDT)
+Date: Tue, 02 Sep 2025 02:20:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b6b6e1.050a0220.3db4df.01cc.GAE@google.com>
+Subject: [syzbot] Monthly ocfs2 report (Sep 2025)
+From: syzbot <syzbot+listce5ab545f249d56dc0c5@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Hello ocfs2 maintainers/developers,
 
->> Said otherwise, the { while () badblocks++ } block shall remain outside
->> of the if (_block_isbad) condition and remain untouched. Just bail out
->> early if you are sure this is not needed.
->>=20
->
-> I=E2=80=99ll send a V2 shortly that:
->
-> - Checks old state when _block_isbad exists and bails out early if alread=
-y bad
-> - Otherwise calls ->_block_markbad() and increments the counter on succes=
-s, with
->   the increment left outside of the conditional as you suggested
+This is a 31-day syzbot report for the ocfs2 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ocfs2
 
-LGTM.
+During the period, 6 new issues were detected and 0 were fixed.
+In total, 71 issues are still open and 20 have already been fixed.
 
-Thanks,
-Miqu=C3=A8l
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  261241  Yes   possible deadlock in ocfs2_try_remove_refcount_tree
+                   https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
+<2>  78886   Yes   possible deadlock in dqget
+                   https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
+<3>  55588   Yes   possible deadlock in ocfs2_acquire_dquot
+                   https://syzkaller.appspot.com/bug?extid=51244a05705883616c95
+<4>  27349   Yes   possible deadlock in ocfs2_reserve_suballoc_bits
+                   https://syzkaller.appspot.com/bug?extid=5d516fba7bc3c966c9a9
+<5>  17511   Yes   possible deadlock in ocfs2_init_acl
+                   https://syzkaller.appspot.com/bug?extid=4007ab5229e732466d9f
+<6>  16645   Yes   possible deadlock in ocfs2_reserve_local_alloc_bits
+                   https://syzkaller.appspot.com/bug?extid=843fa26882088a9ee7e3
+<7>  10439   Yes   possible deadlock in ocfs2_setattr
+                   https://syzkaller.appspot.com/bug?extid=d78497256d53041ee229
+<8>  4269    No    possible deadlock in ocfs2_xattr_set
+                   https://syzkaller.appspot.com/bug?extid=ba9a789bd1f4d21fcefe
+<9>  2938    No    possible deadlock in ocfs2_lock_global_qf
+                   https://syzkaller.appspot.com/bug?extid=b53d753ae8fb473e2397
+<10> 2336    Yes   kernel BUG in ocfs2_write_cluster_by_desc
+                   https://syzkaller.appspot.com/bug?extid=18a87160c7d64ba2e2f6
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
