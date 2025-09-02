@@ -1,378 +1,359 @@
-Return-Path: <linux-kernel+bounces-796942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F64B409C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:53:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187A8B409D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D9C3B0A53
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEEF3200CAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F7532ED21;
-	Tue,  2 Sep 2025 15:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AB232ED5F;
+	Tue,  2 Sep 2025 15:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7yZ59ec"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZS1x9qyY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BE52F530E;
-	Tue,  2 Sep 2025 15:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52DF32ED25;
+	Tue,  2 Sep 2025 15:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756828422; cv=none; b=exmbAC8YPqPANV5ewIJRVvycIW15lcIJ3KxoR4+SsI7U/cTH7uJzW8dcWWqXJl9NBaB20lH8nibWosybkpBTJf8jFJCszXdH2mZ9QBmlJkgEHGbTxIZhL0dhbd0MG6RW+CsANQ7e2Zj9wQv2OOZFANtyEmUBqiRmoV6GyN02HHI=
+	t=1756828438; cv=none; b=Scs/0uS0jFLahm7kxwyEWOx/l9c6YQMtx0Y3gk89FyZKd1oAzRQddPsCDJw66YaXIu0m4Njjo/lHWNpPE4i/ne+eznGubFSf3N6t5h9PUrhPwPzZerWomqFZUgBnhLEvd9YZ6Lh2IE2quCk8dvDQlD5l89d8efMYs3HO2qzU5VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756828422; c=relaxed/simple;
-	bh=k967DAt4rwczEf8YqDD7OJRDqumLz4pIOyT/YeYOOY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gDN+dbMBePI72k3+JMYFwTSbuV6E3ZdgLnN0cQrPsfljlVrlgPY4K28IbvASVdOLHhqvn0GhYz7pYCrjlEp4RhRbSUFeKJgEQeTHo/jFiLi484pXzp5PWgUlKcsYVX4uqXcDix3rvJ3dAR2OtkVHOSzpdPXC4Go99IEez9Zsbjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7yZ59ec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EB56C4CEED;
-	Tue,  2 Sep 2025 15:53:40 +0000 (UTC)
+	s=arc-20240116; t=1756828438; c=relaxed/simple;
+	bh=Yp082BtJyNkl+UbZt1DIV8VDjpmSNVA8FEzIUsrdAl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0nrexgbvNGKHoVQc9H+szZWJk/0TUgiEiOf5f7c19HdhSC7Dw4l9I1PpUkLcnk/cVDdeIFdubwxBn/+Gpcg8IJhU10qLy2VKgAowXFpsluZA9v/2XkRPlzpcryJgMQ3L342XOkvzBxbx+l7wzlxmZ1wc1OrMLgY6OofY+yGKgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZS1x9qyY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881D1C4CEED;
+	Tue,  2 Sep 2025 15:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756828422;
-	bh=k967DAt4rwczEf8YqDD7OJRDqumLz4pIOyT/YeYOOY0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e7yZ59ecMI/K31tu2zZJ6JdY8Kt+3CW0V2fvSYiIX7Q+7u+p99ArGGd98bJ/faDCg
-	 7w9ZFCHROE/GEOewZBD5Bc1dViLTxP7X0OkSfs+Gpi5jtsfgIQqYvqjVc+4iDSkLGP
-	 irLCLHqzyffszHPr6LK8AReHEBxQwqm7Y3pvJAeTqXRg+EkF/qBoWqY1tLCkrBJa3O
-	 eYBcbftopVh1VmPRYig3QIp2LKgZD6QKR/yMCEyMtxzWdC65q3sxvm99o4YDMRXy47
-	 3OytVmQIVKZlt4AFGq6rcdcYdq+o3SGuIFlokL1nXmPU4s51k3+yvi47dMhVwotq+H
-	 km9X7Zpkp36BQ==
-Message-ID: <b2175a9a-f110-4103-ac2d-24971ee41fc9@kernel.org>
-Date: Tue, 2 Sep 2025 10:53:39 -0500
+	s=k20201202; t=1756828438;
+	bh=Yp082BtJyNkl+UbZt1DIV8VDjpmSNVA8FEzIUsrdAl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZS1x9qyY9xFiqaUNQkQIiX7FPmOoSBYH6/d3baPgMBBEgcIxitkA697Tbl0bowrkO
+	 aB8OUFTZ3nrcxmNobBInj7m6e2GjTsKa5V9oC0zpExq3quBQAK4ysRnHI4zeoP/GBF
+	 M8E6Pw7ODdtKYDiY1wj0Rf1wi1K7q0Enj9Dhs9Ba++5fONi3zFBbJzzZn/gJkfbbTR
+	 iMJ+OkavngafYoCplMwJsTx8gcT4k8sk6UvU9pXHMlbQm0fgcv29OGF2gAUkxWIidq
+	 BBm/AxfnWc12vRuHH5C6AAC9Y1ykexo5/zJmq2ZJQDNB+MqVIH8Rv1o+hmvFBJdDG7
+	 YBKc+xvBwnSEg==
+Date: Tue, 2 Sep 2025 16:53:52 +0100
+From: Lee Jones <lee@kernel.org>
+To: nuno.sa@analog.com
+Cc: linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 2/6] mfd: ltc4283: Add support for the LTC4283 Swap
+ Controller
+Message-ID: <20250902155352.GW2163762@google.com>
+References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+ <20250814-ltc4283-support-v1-2-88b2cef773f2@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] Add AMD ISP4 driver
-To: "Du, Bin" <bin.du@amd.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- sultan@kerneltoast.com, pratap.nirujogi@amd.com, benjamin.chan@amd.com,
- king.li@amd.com, gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
- Dominic.Antony@amd.com, richard.gong@amd.com, anson.tsao@amd.com
-References: <20250828084507.94552-1-Bin.Du@amd.com>
- <20250828165605.GA9916@pendragon.ideasonboard.com>
- <20250828165850.GA14246@pendragon.ideasonboard.com>
- <0a10bae2-600c-4ca2-8437-411e9c236d5c@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <0a10bae2-600c-4ca2-8437-411e9c236d5c@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250814-ltc4283-support-v1-2-88b2cef773f2@analog.com>
 
+On Thu, 14 Aug 2025, Nuno Sá via B4 Relay wrote:
 
-On 9/1/2025 10:39 PM, Du, Bin wrote:
-> Hi Laurent Pinchart, sorry for the confusion.
+> From: Nuno Sá <nuno.sa@analog.com>
 > 
-> On 8/29/2025 12:58 AM, Laurent Pinchart wrote:
->> On Thu, Aug 28, 2025 at 06:56:06PM +0200, Laurent Pinchart wrote:
->>> Hi Bin Bu,
->>>
->>> Have you sent out the cover letter only ? I haven't received the rest of
->>> the series, and it's not found on lore.kernel.org either.
->>
->> I've just noticed you sent the rest later and separately, as
->> https://lore.kernel.org/all/20250828100811.95722-1-Bin.Du@amd.com/.
->>
+> The LTC4283 is a negative voltage hot swap controller that drives an
+> external N-channel MOSFET to allow a board to be safely inserted and
+> removed from a live backplane.
 > 
-> Before sending the formal ones, i did some internal test, after the 
-> cover letter, when i tried to send the rest, i encountered this error, 
-> 4.4.2 Message submission rate for this client has exceeded the 
-> configured limit. So i had to wait for some time so i could send again.
-
-FYI - this was an AMD I/T SMTP server problem with git send-email.
-
-I understand some other teams were hitting it too and worked with I/T 
-and it should be fixed now.  If you have problems the next go around 
-raise it I/T again.
-
+> Main usage is as an Hardware Monitoring device. However, it has up to 8
+> pins that can be configured and used as GPIOs and hence, the device can
+> also be a GPIO controller (and so being added as MFD device).
 > 
->>> On Thu, Aug 28, 2025 at 04:45:00PM +0800, Bin Du wrote:
->>>> Hello,
->>>>
->>>> AMD ISP4 is the AMD image processing gen 4 which can be found in HP 
->>>> ZBook Ultra G1a 14 inch Mobile Workstation PC ( Ryzen AI Max 385)
->>>> (https://ubuntu.com/certified/202411-36043)
->>>> This patch series introduces the initial driver support for the AMD 
->>>> ISP4.
->>>>
->>>> Patch summary:
->>>> - Powers up/off and initializes ISP HW
->>>> - Configures and kicks off ISP FW
->>>> - Interacts with APP using standard V4l2 interface by video node
->>>> - Controls ISP HW and interacts with ISP FW to do image processing
->>>> - Support enum/set output image format and resolution
->>>> - Support queueing buffer from app and dequeueing ISP filled buffer 
->>>> to App
->>>> - It supports libcamera ver0.2 SimplePipeline
->>>> - It is verified on qv4l2, cheese and qcam
->>>> - It is verified together with following patches
->>>>     platform/x86: Add AMD ISP platform config (https:// 
->>>> lore.kernel.org/all/20250514215623.522746-1-pratap.nirujogi@amd.com/)
->>>>     pinctrl: amd: isp411: Add amdisp GPIO pinctrl (https:// 
->>>> github.com/torvalds/linux/commit/ 
->>>> e97435ab09f3ad7b6a588dd7c4e45a96699bbb4a)
->>>>     drm/amd/amdgpu: Add GPIO resources required for amdisp (https:// 
->>>> gitlab.freedesktop.org/agd5f/linux/-/commit/ 
->>>> ad0f5966ed8297aa47b3184192b00b7379ae0758)
->>>>
->>>> AMD ISP4 Key features:
->>>> - Processes bayer raw data from the connected sensor and output them 
->>>> to different YUV formats
->>>> - Downscale input image to different output image resolution
->>>> - Pipeline to do image processing on the input image including 
->>>> demosaic, denoise, 3A, etc
->>>>
->>>> ----------
->>>>
->>>> Changes v2 -> v3:
->>>>
->>>> - All the dependent patches in other modules (drm/amd/amdgpu, 
->>>> platform/x86, pinctrl/amd) merged on upstream mainline kernel 
->>>> (https://github.com/torvalds/linux) v6.17.
->>>> - Removed usage of amdgpu structs in ISP driver. Added helper 
->>>> functions in amdgpu accepting opaque params from ISP driver to 
->>>> allocate and release ISP GART buffers.
->>>> - Moved sensor and MIPI phy control entirely into ISP FW instead of 
->>>> the previous hybrid approach controlling sensor from both FW and x86 
->>>> (sensor driver).
->>>> - Removed phy configuration and sensor binding as x86 (sensor 
->>>> driver) had relinquished the sensor control for ISP FW. With this 
->>>> approach the driver will be exposed as web camera like interface.
->>>> - New FW with built-in sensor driver is submitted on upstream linux- 
->>>> firmware repo (https://gitlab.com/kernel-firmware/linux-firmware/).
->>>> - Please note the new FW submitted is not directly compatible with 
->>>> OEM Kernel ISP4.0 (https://github.com/amd/Linux_ISP_Kernel/tree/4.0) 
->>>> and the previous ISP V2 patch series.
->>>> - If intend to use the new FW, please rebuild OEM ISP4.0 Kernel with 
->>>> CONFIG_VIDEO_OV05C10=N and CONFIG_PINCTRL_AMDISP=Y.
->>>> - Included critical fixes from Sultan Alsawaf branch (https:// 
->>>> github.com/kerneltoast/kernel_x86_laptop.git) related to managing 
->>>> lifetime of isp buffers.
->>>>        media: amd: isp4: Add missing refcount tracking to mmap memop
->>>>        media: amd: isp4: Don't put or unmap the dmabuf when detaching
->>>>        media: amd: isp4: Don't increment refcount when dmabuf export 
->>>> fails
->>>>        media: amd: isp4: Fix possible use-after-free in 
->>>> isp4vid_vb2_put()
->>>>        media: amd: isp4: Always export a new dmabuf from get_dmabuf 
->>>> memop
->>>>        media: amd: isp4: Fix implicit dmabuf lifetime tracking
->>>>        media: amd: isp4: Fix possible use-after-free when putting 
->>>> implicit dmabuf
->>>>        media: amd: isp4: Simplify isp4vid_get_dmabuf() arguments
->>>>        media: amd: isp4: Move up buf->vaddr check in 
->>>> isp4vid_get_dmabuf()
->>>>        media: amd: isp4: Remove unused userptr memops
->>>>        media: amd: isp4: Add missing cleanup on error in 
->>>> isp4vid_vb2_alloc()
->>>>        media: amd: isp4: Release queued buffers on error in 
->>>> start_streaming
->>>> - Addressed all code related upstream comments
->>>> - Fix typo errors and other cosmetic issue.
->>>>
->>>>
->>>> Changes v1 -> v2:
->>>>
->>>> - Fix media CI test errors and valid warnings
->>>> - Reduce patch number in the series from 9 to 8 by merging 
->>>> MAINTAINERS adding patch to the first patch
->>>> - In patch 5
->>>>     - do modification to use remote endpoint instead of local endpoint
->>>>     - use link frequency and port number as start phy parameter 
->>>> instead of extra added phy-id and phy-bit-rate property of endpoint
->>>>
->>>> ----------
->>>>
->>>> It passes v4l2 compliance test, the test reports for:
->>>>
->>>> (a) amd_isp_capture device /dev/video0
->>>>
->>>> Compliance test for amd_isp_capture device /dev/video0:
->>>> -------------------------------------------------------
->>>>
->>>> atg@atg-HP-PV:~/bin$ ./v4l2-compliance -d /dev/video0
->>>> v4l2-compliance 1.29.0-5348, 64 bits, 64-bit time_t
->>>> v4l2-compliance SHA: 75e3f0e2c2cb 2025-03-17 18:12:17
->>>>
->>>> Compliance test for amd_isp_capture device /dev/video0:
->>>>
->>>> Driver Info:
->>>>          Driver name      : amd_isp_capture
->>>>          Card type        : amd_isp_capture
->>>>          Bus info         : platform:amd_isp_capture
->>>>          Driver version   : 6.14.0
->>>>          Capabilities     : 0xa4200001
->>>>                  Video Capture
->>>>                  I/O MC
->>>>                  Streaming
->>>>                  Extended Pix Format
->>>>                  Device Capabilities
->>>>          Device Caps      : 0x24200001
->>>>                  Video Capture
->>>>                  I/O MC
->>>>                  Streaming
->>>>                  Extended Pix Format
->>>> Media Driver Info:
->>>>          Driver name      : amd_isp_capture
->>>>          Model            : amd_isp41_mdev
->>>>          Serial           :
->>>>          Bus info         : platform:amd_isp_capture
->>>>          Media version    : 6.14.0
->>>>          Hardware revision: 0x00000000 (0)
->>>>          Driver version   : 6.14.0
->>>> Interface Info:
->>>>          ID               : 0x03000005
->>>>          Type             : V4L Video
->>>> Entity Info:
->>>>          ID               : 0x00000003 (3)
->>>>          Name             : Preview
->>>>          Function         : V4L2 I/O
->>>>          Pad 0x01000004   : 0: Sink
->>>>            Link 0x02000007: from remote pad 0x1000002 of entity 'amd 
->>>> isp4' (Image Signal Processor): Data, Enabled, Immutable
->>>>
->>>> Required ioctls:
->>>>          test MC information (see 'Media Driver Info' above): OK
->>>>          test VIDIOC_QUERYCAP: OK
->>>>          test invalid ioctls: OK
->>>>
->>>> Allow for multiple opens:
->>>>          test second /dev/video0 open: OK
->>>>          test VIDIOC_QUERYCAP: OK
->>>>          test VIDIOC_G/S_PRIORITY: OK
->>>>          test for unlimited opens: OK
->>>>
->>>> Debug ioctls:
->>>>          test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
->>>>          test VIDIOC_LOG_STATUS: OK (Not Supported)
->>>>
->>>> Input ioctls:
->>>>          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->>>>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->>>>          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
->>>>          test VIDIOC_ENUMAUDIO: OK (Not Supported)
->>>>          test VIDIOC_G/S/ENUMINPUT: OK
->>>>          test VIDIOC_G/S_AUDIO: OK (Not Supported)
->>>>          Inputs: 1 Audio Inputs: 0 Tuners: 0
->>>>
->>>> Output ioctls:
->>>>          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
->>>>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->>>>          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
->>>>          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
->>>>          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
->>>>          Outputs: 0 Audio Outputs: 0 Modulators: 0
->>>>
->>>> Input/Output configuration ioctls:
->>>>          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
->>>>          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->>>>          test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
->>>>          test VIDIOC_G/S_EDID: OK (Not Supported)
->>>>
->>>> Control ioctls (Input 0):
->>>>          test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->>>>          test VIDIOC_QUERYCTRL: OK (Not Supported)
->>>>          test VIDIOC_G/S_CTRL: OK (Not Supported)
->>>>          test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
->>>>          test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
->>>>          test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->>>>          Standard Controls: 0 Private Controls: 0
->>>>
->>>> Format ioctls (Input 0):
->>>>          test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->>>>          test VIDIOC_G/S_PARM: OK
->>>>          test VIDIOC_G_FBUF: OK (Not Supported)
->>>>          test VIDIOC_G_FMT: OK
->>>>          test VIDIOC_TRY_FMT: OK
->>>>          test VIDIOC_S_FMT: OK
->>>>          test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->>>>          test Cropping: OK (Not Supported)
->>>>          test Composing: OK (Not Supported)
->>>>          test Scaling: OK (Not Supported)
->>>>
->>>> Codec ioctls (Input 0):
->>>>          test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->>>>          test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->>>>          test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
->>>>
->>>> Buffer ioctls (Input 0):
->>>>          test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->>>>          test CREATE_BUFS maximum buffers: OK
->>>>          test VIDIOC_REMOVE_BUFS: OK
->>>>          test VIDIOC_EXPBUF: OK
->>>>          test Requests: OK (Not Supported)
->>>>          test blocking wait: OK
->>>>
->>>> Total for amd_isp_capture device /dev/video0: 49, Succeeded: 49, 
->>>> Failed: 0, Warnings: 0
->>>>
->>>> Please review and provide feedback.
->>>>
->>>> Many thanks,
->>>>
->>>> Bin Du (7):
->>>>    media: platform: amd: Introduce amd isp4 capture driver
->>>>    media: platform: amd: low level support for isp4 firmware
->>>>    media: platform: amd: Add isp4 fw and hw interface
->>>>    media: platform: amd: isp4 subdev and firmware loading handling 
->>>> added
->>>>    media: platform: amd: isp4 video node and buffers handling added
->>>>    media: platform: amd: isp4 debug fs logging and  more descriptive
->>>>      errors
->>>>    Documentation: add documentation of AMD isp 4 driver
->>>>
->>>>   Documentation/admin-guide/media/amdisp4-1.rst |   66 +
->>>>   Documentation/admin-guide/media/amdisp4.dot   |    8 +
->>>>   .../admin-guide/media/v4l-drivers.rst         |    1 +
->>>>   MAINTAINERS                                   |   25 +
->>>>   drivers/media/platform/Kconfig                |    1 +
->>>>   drivers/media/platform/Makefile               |    1 +
->>>>   drivers/media/platform/amd/Kconfig            |    3 +
->>>>   drivers/media/platform/amd/Makefile           |    3 +
->>>>   drivers/media/platform/amd/isp4/Kconfig       |   13 +
->>>>   drivers/media/platform/amd/isp4/Makefile      |   10 +
->>>>   drivers/media/platform/amd/isp4/isp4.c        |  237 ++++
->>>>   drivers/media/platform/amd/isp4/isp4.h        |   26 +
->>>>   drivers/media/platform/amd/isp4/isp4_debug.c  |  272 ++++
->>>>   drivers/media/platform/amd/isp4/isp4_debug.h  |   41 +
->>>>   .../platform/amd/isp4/isp4_fw_cmd_resp.h      |  314 +++++
->>>>   drivers/media/platform/amd/isp4/isp4_hw_reg.h |  125 ++
->>>>   .../media/platform/amd/isp4/isp4_interface.c  |  972 +++++++++++++
->>>>   .../media/platform/amd/isp4/isp4_interface.h  |  149 ++
->>>>   drivers/media/platform/amd/isp4/isp4_subdev.c | 1198 ++++++++++++++++
->>>>   drivers/media/platform/amd/isp4/isp4_subdev.h |  133 ++
->>>>   drivers/media/platform/amd/isp4/isp4_video.c  | 1213 +++++++++++++ 
->>>> ++++
->>>>   drivers/media/platform/amd/isp4/isp4_video.h  |   87 ++
->>>>   22 files changed, 4898 insertions(+)
->>>>   create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
->>>>   create mode 100644 Documentation/admin-guide/media/amdisp4.dot
->>>>   create mode 100644 drivers/media/platform/amd/Kconfig
->>>>   create mode 100644 drivers/media/platform/amd/Makefile
->>>>   create mode 100644 drivers/media/platform/amd/isp4/Kconfig
->>>>   create mode 100644 drivers/media/platform/amd/isp4/Makefile
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4.c
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4.h
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.c
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.h
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.c
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.h
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.c
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.h
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_video.c
->>>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_video.h
->>
+> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+> ---
+>  MAINTAINERS                 |   2 +
+>  drivers/mfd/Kconfig         |  11 ++++
+>  drivers/mfd/Makefile        |   1 +
+>  drivers/mfd/ltc4283.c       | 140 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/ltc4283.h |  33 +++++++++++
+>  5 files changed, 187 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 413bb77d5eebe2b51aa9c3af86e7cfd5ab142044..b5f4f1c41c64b738d57c1fb5552a60b4c6b9985c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14506,6 +14506,8 @@ L:	linux-hwmon@vger.kernel.org
+>  L:	linux-gpio@vger.kernel.org
+>  S:	Supported
+>  F:	Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml
+> +F:	drivers/mfd/ltc4283.c
+> +F:	include/linux/mfd/ltc4283.h
+>  
+>  LTC4286 HARDWARE MONITOR DRIVER
+>  M:	Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 425c5fba6cb1e7848dcea05bd77c729a71d48e2c..ec3e02d40fd17a0bba29e3157723055feedebd11 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -900,6 +900,17 @@ config MFD_MAX14577
+>  	  additional drivers must be enabled in order to use the functionality
+>  	  of the device.
+>  
+> +config MFD_LTC4283
+> +	tristate "LTC4283 Hot Swap Controller"
+> +	depends on I2C
+> +	select MFD_CORE
+> +	select REGMAP_I2C
+> +	help
+> +	  This enables support for the LTC4283 Negative Voltage Hot Swap
+> +	  Controller. This driver provides common support for accessing the
+> +	  device; additional drivers must be enabled in order to use the
+> +	  functionality of the device.
+> +
+>  config MFD_MAX77541
+>  	tristate "Analog Devices MAX77541/77540 PMIC Support"
+>  	depends on I2C=y
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index f7bdedd5a66d16bf8ccee0da1236a441e6f085b0..4a3bcd30ab7e12aed4bc5e48294500c77cb61aa7 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -23,6 +23,7 @@ obj-$(CONFIG_MFD_EXYNOS_LPASS)	+= exynos-lpass.o
+>  obj-$(CONFIG_MFD_GATEWORKS_GSC)	+= gateworks-gsc.o
+>  obj-$(CONFIG_MFD_MACSMC)	+= macsmc.o
+>  
+> +obj-$(CONFIG_MFD_LTC4283)	+= ltc4283.o
+>  obj-$(CONFIG_MFD_TI_LP873X)	+= lp873x.o
+>  obj-$(CONFIG_MFD_TI_LP87565)	+= lp87565.o
+>  obj-$(CONFIG_MFD_TI_AM335X_TSCADC)	+= ti_am335x_tscadc.o
+> diff --git a/drivers/mfd/ltc4283.c b/drivers/mfd/ltc4283.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a45c01278f884630984790c922c057c4f2db9c82
+> --- /dev/null
+> +++ b/drivers/mfd/ltc4283.c
+> @@ -0,0 +1,140 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Analog Devices LTC4283 I2C Negative Voltage Hot Swap Controller
+> + *
+> + * Copyright 2025 Analog Devices Inc.
+> + */
+> +#include <linux/bitmap.h>
+> +#include <linux/bitops.h>
+> +#include <linux/device.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/regmap.h>
+> +#include <linux/property.h>
+
+Alphabetical.
+
+> +
+> +#include <linux/mfd/ltc4283.h>
+> +
+> +static const struct mfd_cell ltc4283_cells[] = {
+> +	MFD_CELL_OF("ltc4283-hwmon", NULL, NULL, 0, 0, "adi,ltc4283-hwmon"),
+> +	MFD_CELL_OF("ltc4283-gpio", NULL, NULL, 0, 0, "adi,ltc4283-gpio"),
+> +};
+> +
+> +static bool ltc4283_writable_reg(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case 0x00 ... 0x03:
+
+Define these magic numbers.
+
+> +		return false;
+> +	case 0x3c:
+> +		return false;
+> +	case 0x86 ... 0x8f:
+> +		return false;
+> +	case 0x91 ... 0xa1:
+> +		return false;
+> +	case 0xa3:
+> +		return false;
+> +	case 0xac:
+> +		return false;
+> +	case 0xf1 ... 0xff:
+> +		return false;
+> +	default:
+> +		return true;
+> +	}
+> +}
+> +
+> +static const struct regmap_config ltc4283_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = 0xff,
+> +	.writeable_reg = ltc4283_writable_reg,
+> +};
+> +
+> +static int ltc4283_get_gpio_pins(struct i2c_client *client, u32 *n_cells)
+
+Why not do this in the GPIO driver?
+
+> +{
+> +	struct device *dev = &client->dev;
+> +	u32 pins[LTC4283_GPIO_MAX], pin;
+> +	unsigned long *gpio_mask;
+> +	int n_pins, ret;
+> +
+> +	/*
+> +	 * The device has up to 8 pins that can be configured either as GPIOS or
+> +	 * for monitoring purposes. Both gpio and hwmon devices need to have
+> +	 * this information in order to do proper validations and
+> +	 * configurations. Hence, this property needs to be in the top level
+> +	 * device.
+> +	 */
+> +	n_pins = device_property_count_u32(dev, "adi,gpio-pins");
+> +	if (n_pins < 0)
+> +		return 0;
+> +	if (n_pins >= LTC4283_GPIO_MAX)
+> +		return dev_err_probe(dev, -EINVAL, "Too many GPIO pins specified (%d), max is %d\n",
+> +				     n_pins, LTC4283_GPIO_MAX);
+> +
+> +	ret = device_property_read_u32_array(dev, "adi,gpio-pins", pins, n_pins);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to read GPIO pins\n");
+> +
+> +	gpio_mask = devm_bitmap_zalloc(dev, LTC4283_GPIO_MAX, GFP_KERNEL);
+> +	if (!gpio_mask)
+> +		return -ENOMEM;
+> +
+> +	for (pin = 0; pin < n_pins; pin++) {
+> +		if (pins[pin] >= LTC4283_GPIO_MAX)
+> +			return dev_err_probe(dev, -EINVAL,
+> +					     "Invalid GPIO pin specified (%u), max is %d\n",
+> +					     pins[pin], LTC4283_GPIO_MAX);
+> +
+> +		__set_bit(pins[pin], gpio_mask);
+> +	}
+> +
+> +	/* Add the GPIO cell */
+> +	*n_cells += 1;
+
+Just register it anyway and have the GPIO driver error out if it doesn't
+have the right cells / properties.
+
+> +	i2c_set_clientdata(client, gpio_mask);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ltc4283_probe(struct i2c_client *client)
+> +{
+> +	u32 n_cells = ARRAY_SIZE(ltc4283_cells) - 1;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = devm_regmap_init_i2c(client, &ltc4283_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	ret = ltc4283_get_gpio_pins(client, &n_cells);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_mfd_add_devices(&client->dev, PLATFORM_DEVID_AUTO,
+> +				    ltc4283_cells, n_cells, NULL, 0, NULL);
+> +}
+> +
+> +static const struct of_device_id ltc4283_of_match[] = {
+> +	{ .compatible = "adi,ltc4283" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, ltc4283_of_match);
+> +
+> +static const struct i2c_device_id ltc4283_i2c_id[] = {
+> +	{ "ltc4283" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, ltc4283_i2c_id);
+> +
+> +static struct i2c_driver ltc4283_driver = {
+> +	.driver = {
+> +		.name = "ltc4283",
+> +		.of_match_table = ltc4283_of_match,
+> +	},
+> +	.probe = ltc4283_probe,
+> +	.id_table = ltc4283_i2c_id,
+> +};
+> +module_i2c_driver(ltc4283_driver);
+> +
+> +MODULE_AUTHOR("Nuno Sá <nuno.sa@analog.com>");
+> +MODULE_DESCRIPTION("LTC4283 MFD I2C driver");
+
+It's not an MFD anything!
+
+And the communication method is meaningless.
+
+You can use "Core driver" instead.
+
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/mfd/ltc4283.h b/include/linux/mfd/ltc4283.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..153594009c07b296ce5743e5e817e96464d81cb3
+> --- /dev/null
+> +++ b/include/linux/mfd/ltc4283.h
+> @@ -0,0 +1,33 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Analog Devices LTC4283 I2C Negative Voltage Hot Swap Controller
+> + *
+> + * Copyright 2025 Analog Devices Inc.
+> + */
+> +
+> +#ifndef __MFD_LTC4283_H_
+> +#define __MFD_LTC4283_H_
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/bits.h>
+> +
+> +/*
+> + * We can have up to 8 gpios. 4 PGIOs and 4 ADIOs. PGIOs start at index 4 in the
+> + * gpios mask.
+> + */
+> +#define LTC4283_PGIOX_START_NR	4
+> +
+> +#define LTC4283_PGIO_CONFIG		0x10
+> +#define   LTC4283_PGIO_CFG_MASK(pin) \
+> +	GENMASK(((pin) - LTC4283_PGIOX_START_NR) * 2 + 1, (((pin) - LTC4283_PGIOX_START_NR) * 2))
+
+What do all of these numbers mean?  Can you define them?
+
+> +#define LTC4283_PGIO_CONFIG_2		0x11
+> +#define   LTC4283_ADC_MASK		GENMASK(2, 0)
+> +#define   LTC4283_PGIO_OUT_MASK(pin)	BIT(4 + (pin))
+> +
+> +#define LTC4283_GPIO_MAX	8
+> +
+> +/* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
+
+Why?
+
+> +#define field_get(_mask, _reg)	(((_reg) & (_mask)) >> (ffs(_mask) - 1))
+> +#define field_prep(_mask, _val)	(((_val) << (ffs(_mask) - 1)) & (_mask))
+> +
+> +#endif
+> 
+> -- 
+> 2.50.1
+> 
 > 
 
+-- 
+Lee Jones [李琼斯]
 
