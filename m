@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-797241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DA4B40DDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35A0B40DE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1347178E67
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD633B3316
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92F3350823;
-	Tue,  2 Sep 2025 19:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7F82E54B0;
+	Tue,  2 Sep 2025 19:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRzBx2Av"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bkYeAaTg"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9F22E54B0
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709162E6127
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756841388; cv=none; b=i9RIR3rF5Qr2QtEntNNYAsJCLPNtjwRY/yEYlr2nhif2n7QSwYiHjHKTTxCMDUyP7uridw7X05jwj83QNgeXpOWqPDsEzJm+pbrxuuZDV48Eg8LC5VKkxpy8H0Eg5hn7sbR2Ceui5Cyod24agCaWI2d9VDGR6kXEH22JaAAgc/g=
+	t=1756841405; cv=none; b=baM1J+b8uIa/TwwAg6sCDVgbu46fJsRa43f1OIz9t9kd4oODnOHqfsF+yuUCWOKZsVMHo1FKpKBCI2h7eqj3Rg1QS3t6LkADDzXwP/J/3gkZAb39+VIPh3WF4MoWf0VZWpRburzzZ+8GfYJ1hkAOjkKk5npxKb+E9p7zA01qJLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756841388; c=relaxed/simple;
-	bh=EDPYZ7AeuetLSueyUUgIpG1TuGC9xDiYOStlafV5IN4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sir7xcIjfJyQyEtqPiIp4UBDli6CefE1n9fgs+oH3EH4DHIz4stwLp9NfqgOqdSS/P5DRJQ19f/XuY3Pkqu/RlFkLwe21empdIo2ENbTO5HZR7LqhU4O/HV1BgL88V0Zjl0uaV74rOm/glQHuzZyBqSd4OPYGOWyKhxJeiiYuPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRzBx2Av; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d6014810fso46391487b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756841386; x=1757446186; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MCDtmJ9MnRRD8pZdomc+bD7vyzpQ5/EL7gaHH0a7i9k=;
-        b=TRzBx2AvO0g9Ov4GVcpokDzZvtlJtXD1+LPXWOoI5p4y2ChYUiq0ugkJxha/1vcRxg
-         j9F+RKzVQ2eSRSPfKF7ncmn/kmayXj1eNKMdZsHUktTJdHVtWxIDh02PdP3zOyDaY5xM
-         mInZyZnt1qzZHplqvRDnXACN4Jhz2i06EgHTfh31jOlj6ufDBHHe2m09EnllFobuE3lX
-         4leKuBDP6U286ipoqJN5ZqarNmIfFDdtsfusKEd7amS77LM3uI9TLXm2/KUuooveJ4WC
-         j/zid0yB6LCZByHbPzKDjvE+8ubKiEMWb9259OLHAJRdPDBaNUl/XR/DX082aglde5+Z
-         GFEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756841386; x=1757446186;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MCDtmJ9MnRRD8pZdomc+bD7vyzpQ5/EL7gaHH0a7i9k=;
-        b=sjO71dlUAsm9hpg2oc4pwZdaFFR6zhkIG6C3ytOd5m6vaO/Nw5BGCV05WyGrF5m4ie
-         8iA5B5URFEtZ3R0RkRjXRT47uY2blD3z0B7JWKg8QMgHn2HvELOVW8OyTQPIZRMx9YzS
-         NVfYlOngt2M9d28jCYYfz0MH3mJHzeDmwcEzZOOd2yBH7+2c5MbCV3N2nj3A1gHw46Ru
-         e3sJ8U43zK3PLrbBYYlRe4Xo0A/tGkpM2I2SrEG8mlnrIFfP1g6SH7OqWcWr5eOPke51
-         eSgQ3kN6yVupZdGC9nA8sm5G+uDpkUSSdNHdtuHrtLTZAukbTpIh/7W/ulg2W2q1Wkxn
-         ZrCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgM2AenoE5c4Bfm9C7cOGH+1jWT+AmHuYmh8f82HKYXTF9P+pwEiFEeWAlVijiu+4wk9i5UGsf11j5i3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgSWrCiu0pcIXkWp3VxxYfUBBU9W8eiR6q7Qh+MHu+3koc9Xmr
-	9V8CwXxCVKb+07OOmG6VTuW0E2d95FGiGE1Y+pnfDtAXtDmS2udnUIgSxedwcJKSmiNbqP/QlBk
-	FUN+XS8foXCWmoNUijSmrokRBiH85uyE=
-X-Gm-Gg: ASbGnctTwYbq8Z34ZbGVgspeec/hYctnXkdVqF2YtiKZEFFzO4fkHvvCq4V863zkL3F
-	+OWKbvmAjRX0wIpeBMVP4qblaHgn0IyjXztGr5JBs+nXZdqDkcApQ6GLxFsRuu4Gwr/rf0kmxl/
-	Xop4/hZQ2s95God8QNHOLYvz28++sZ5Q68rO8gKYL9TnyaFNpqsUztqKw7Po9wsl2F5yH8T6j2A
-	nmHUkBa8UBIFwHewcEwRqKTh8CeHNTnh6tTCAiYXpDirdJGN4E0XPKiNHcV2TetXvZjitcn
-X-Google-Smtp-Source: AGHT+IGTLvT2TgzPf6r2XqdEnizQavc2n6Hz47RT3wEvJ7iVTXIBCwd89zfqpXV936H4mpV9p0egjFgHh9H+RUCPcwQ=
-X-Received: by 2002:a05:690c:3809:b0:721:64ec:bc65 with SMTP id
- 00721157ae682-72276537066mr135149447b3.44.1756841385677; Tue, 02 Sep 2025
- 12:29:45 -0700 (PDT)
+	s=arc-20240116; t=1756841405; c=relaxed/simple;
+	bh=uubYWsLB8sHbJ6sg4su53nUp1k3XLRTGP2lt3u71QCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JsW0RbrDUkdvAxwe6R/21JOY0opjCMA+lyj28beEsfeo46zo5GnQI5yzqsiQVsFitkdYkNIPtj8c+c0Gd1Wk2MozSqlDZpNk6SEyrMGZG5uD/EOC2+d/pspzdPMv3JdlKEgTRwxhgqhR9GsKnOUZVDJnohxo+ihfI6eUMmUMe1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bkYeAaTg; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 469148BF;
+	Tue,  2 Sep 2025 21:28:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756841333;
+	bh=uubYWsLB8sHbJ6sg4su53nUp1k3XLRTGP2lt3u71QCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bkYeAaTg/SyaEP1d9BCrHM0cdmikJ7k+Tvc3/DVxY3o8lNkxczQYu6ItqIGnlcdUw
+	 bSFDZtIKmWtvsanhO8wJQbJPxlt0ewK/T6YBI4jy5/9MbXbXgPYdje6WlOSi2CeZCa
+	 RI/BLA6BMZVPZXZU0br31o3NqDV994r5cAGXuXLQ=
+Date: Tue, 2 Sep 2025 21:29:40 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/29] drm/atomic_helper: Skip over NULL private_obj
+ pointers
+Message-ID: <20250902192940.GS13448@pendragon.ideasonboard.com>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-4-14ad5315da3f@kernel.org>
+ <adba0c39-228b-4311-83d1-09aa71ddb911@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829230251.3095911-1-olvaffe@gmail.com> <20250901092711.15832cfe@fedora>
-In-Reply-To: <20250901092711.15832cfe@fedora>
-From: Chia-I Wu <olvaffe@gmail.com>
-Date: Tue, 2 Sep 2025 12:29:34 -0700
-X-Gm-Features: Ac12FXw1HjxcTsR5YSE7EFPgr2NIGInvguTOoGuC8pCUs2YgJlMpIsI50AoKFsA
-Message-ID: <CAPaKu7QMy6c2zELBUXAUqL_NqYyC7v-xP0_dkxUhOnO86nUCwg@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/panthor: assign unique names to queues
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <adba0c39-228b-4311-83d1-09aa71ddb911@suse.de>
 
-On Mon, Sep 1, 2025 at 12:27=E2=80=AFAM Boris Brezillon
-<boris.brezillon@collabora.com> wrote:
-<snipped>
-> > diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/=
-panthor/panthor_sched.c
-> > index ba5dc3e443d9c..62f17476e5852 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> > @@ -360,6 +360,9 @@ struct panthor_queue {
-> >       /** @entity: DRM scheduling entity used for this queue. */
-> >       struct drm_sched_entity entity;
+On Tue, Sep 02, 2025 at 03:13:30PM +0200, Thomas Zimmermann wrote:
+> Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> 
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+> 
+> However, can this happen? Private state objects without state data?
+
+I was going to ask the same. The commit message should explain why.
+
+> > ---
+> >   drivers/gpu/drm/drm_atomic.c | 3 +++
+> >   1 file changed, 3 insertions(+)
 > >
-> > +     /** @name: DRM scheduler name for this queue. */
-> > +     char name[32];
->
-> The base string ("panthor-queue---") is already 16 characters. You then
-> have a group ID that's below 128 IIRC, and a queue ID that's no more
-> than 15, so that's 5 more chars. This leaves you 10 chars for the
-> client ID (theoretically a 64-bit integer). I know the logic is sane
-> because you truncate the string, but I'm wondering if we shouldn't make
-> this string bigger to cover the theoretical max client_id, or simply
-> dynamically allocate it (kasprintf()), so we don't have to think about
-> it if we end up adding more stuff to the string.
-It seems we don't validate queue count.  Sending
-https://lore.kernel.org/lkml/20250902192001.409738-1-olvaffe@gmail.com/
-for that.
+> > diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> > index b356d26faad4acaa25c1fe6f9bd5043b6364ce87..9b198610791d19c7fd276ca59264a961d21caf43 100644
+> > --- a/drivers/gpu/drm/drm_atomic.c
+> > +++ b/drivers/gpu/drm/drm_atomic.c
+> > @@ -295,10 +295,13 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+> >   	}
+> >   
+> >   	for (i = 0; i < state->num_private_objs; i++) {
+> >   		struct drm_private_obj *obj = state->private_objs[i].ptr;
+> >   
+> > +		if (!obj)
+> > +			continue;
+> > +
+> >   		obj->funcs->atomic_destroy_state(obj,
+> >   						 state->private_objs[i].state);
+> >   		state->private_objs[i].ptr = NULL;
+> >   		state->private_objs[i].state = NULL;
+> >   		state->private_objs[i].old_state = NULL;
 
-On a user device that opens the render node once per second, 10 chars
-are good for 317 years.  It lasts significantly shorter on a test
-device, but the uptime is also significantly shorter on such a device
-(hopefully).
+-- 
+Regards,
 
-But kasprintf should be harmless here.  I can certainly switch to it.
+Laurent Pinchart
 
