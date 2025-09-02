@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-796373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079CCB3FFB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C0DB3FFD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BBB87B7149
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 700B45E2310
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06E32877CB;
-	Tue,  2 Sep 2025 12:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B532F0664;
+	Tue,  2 Sep 2025 12:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmJ30fQD"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="FtH6qTQm"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD656283138;
-	Tue,  2 Sep 2025 12:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8AA283138
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814755; cv=none; b=aNA8m1XHFaxTVtEOPFZAr3uqGkyfLA49IdbbuSkibBCLyWnYK97bD+yvpUqyRf9iKPZr8G1bnaVOW0r7+ho5u2HSAeU00siVKOOGykNSAuIe1YMIbOpm9BGmNSgKKVzxfHxf3OYxy9Xkod8v9db+OnY7k9ngXPoW+q4okh/bKG8=
+	t=1756814791; cv=none; b=OQOuaBPr6kD8YY1O+av99GcirYOq8T2ql/GmHEputIbmTEzwe4g/ReHy+zqezUAccr0CddqDolQAIWO8VdmAAYMRAjUUFI6Y5IheV4XpWel62DYOCvX9fyRyEFho1f98++BedQYJAOKYGpSe8tKywYhP6knd6joyIepgpeS8/bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814755; c=relaxed/simple;
-	bh=i0mpvbj6Ghv80vK3sVaIT97NkLXuF0QsyYOlFBF1ZIs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=sQCLC0J6RA2d6IuCfAo6G2TAJwm34klK1Xsk9aKfcpzybXb53jN15acFThrpD2+OJOBP6SOtuGhhLvn7jFjH1dY1BHTFRpyBJSqaJiWfNwArnRDBk+FQRocmPh4BltmtPaDByiujmMgqRoLbygehfjhCr50LA0ARU+jqtOGsVb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FmJ30fQD; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so4326503b3a.2;
-        Tue, 02 Sep 2025 05:05:53 -0700 (PDT)
+	s=arc-20240116; t=1756814791; c=relaxed/simple;
+	bh=N5fr3W5WmfopIvnLueh68C8SXPvEFYcBmY8He5xkrOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aqzIMuMEizOZ7zoFcsHN7evLW0oaPC/eXD7n8hHAjrxLnKA9d0zU1aSAG8ww10eTtdV3kCBhIurMa6OwESI4hiqOmex9AUho/B8jCY6PTknmlr14JS4deO428Q/E0hp/gVWtiLVD7N6PBUPDPvuBWC2/6fdbqdm5WdcVC9Nzjz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=FtH6qTQm; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b320c1353dso33795971cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:06:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756814753; x=1757419553; darn=vger.kernel.org;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0OYqOdojk/NS3R2yroT3gqNVmirRcNIleOKWvh3ebD4=;
-        b=FmJ30fQD+6Th9kGVqHkYZgN9+BHcHUeIG9paCLypiMJvr7dx1FqnkB/D6h7jLrIJDj
-         2Ds5pqUiIAJ8Jj9OOaPgk4tdeEIi+qTPeIcfV/9XnKd+dx6XoKWIXkUSRpz64Gz7vov1
-         gClpcxTibHMy/lIW3qq1kSaLTf+SSKVP17LjutUVpKvpNjz/FCB6bGP+kmy6EAspRgMi
-         fS7S3Ob6aBvvTrL0gjFV4FsxvVkbkd/v/C8CxJ2DKcH81ezXjO0UiK/+owesCXqqU5nU
-         0fHXX7+ay/3Vkm6AvZdPmvno+mdoJSZcpehKBZSOdRn6dyM59jQcBgU22oY9Lsyao1Pp
-         1LTg==
+        d=ziepe.ca; s=google; t=1756814788; x=1757419588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ae26jb7eMgKo9jPZq9aVW5MuaO6TSCdU+50Vy/SJX5k=;
+        b=FtH6qTQmnc/VFJwvWX6DH2DlWt7wz1YwBbibW3A5Hu4KRJJqwJtio24qRR76P6DwqV
+         HJD+afzx9iuyO+0aSPXabPYxyrJvr7HEiNuRaZ9CNMx4SK13vR4F3YyJitYiwOxsCVIn
+         cIknhVhVrDgRzXO2mBiqIyw1S/dXl+pDErLOCQueDmBAKG8wq9I14woDa8fvDJ09BmUy
+         EuWi1lvP37Vb46RRk7pqTkqgve+pJT4UjIOeLbt3hritxS70MHHvF/CGD4lIGASCr16X
+         wjDazNmp7ynAD6aOy6NOQQJp5bJMm0ylO/J6CHe8kh6YXwRqTeKDRx22tWJ8kIBq/TS4
+         GE2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756814753; x=1757419553;
-        h=in-reply-to:references:to:cc:subject:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0OYqOdojk/NS3R2yroT3gqNVmirRcNIleOKWvh3ebD4=;
-        b=ATDWZvSEjVrxfoKh6QlWW/9PR4U8eCDYylFiJ1pZjKdXPDhccvrlRiuKTFWJcfIX8R
-         iv/HHtLCnNlRshAWGAiTfVL82/azN1/VOOWb7mjt7/jDKVUmalQ3zDqo7OIbGgUIASkJ
-         JHWuDb21dteJVi8VCozKWCkhRbY3vforrdJaJ325ZkToDGrqSWaJdYn7xVL9lDQct1y3
-         gcrILE35nOvMOlrIuwFREEG20pyLObfOSCXlRDoDIy60rlL02WWqJVmzs6VRqTJ+TEBb
-         FM1PNozepLHtNpr4w9Tjf6TpsVYmfUH8p+7M/pQtMeYawEueDecN9y+CgoN+lrvfy4JR
-         q10w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOL95CSPrdanil32DSg5RNxJ8gd6F3NEdawvv7ugANyEkjC+lhBqgakkV9kUDswyVJMVU2EbPYr2E=@vger.kernel.org, AJvYcCX/KoFUsIuERr6E46DNa9XJnQTFbvkKkNWbzT57/5OwKyYvmvQW102RMu74UJ5boNLz8MncZktaHOlrvSuj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWt5I9J3yWI3Sx1P8BIr5kI0pg1xplSY6FkReEyRZmHynC/l/w
-	XNKA0mCrRNHFg2udByVVbpMx2tMCfs0QPhMQfiTG8upUh2+BT3JWcrhv
-X-Gm-Gg: ASbGncsisBr50JMP1SWSgmb5FbTdun5jOuRVwSgE4dG4Bbzb1rSjquEpPrLh0wixO6p
-	FvbgD4SC9FDP7gP0tZmOyznyfx9KuwtoAlb4IXgS60AjJ3rhMZ759rbRIOKOiYRW++UkMIrhttT
-	kFpC4UQXjZC3DxR8qCXTOvKiYsOk/bxp2Euyk8nvD4JdBF7/6p8DP6aOARESuBv18Ntji26sp6E
-	UriPZNvr7MKu3lMNQsYs/C+v1wTuIJRhSjGuqVGSd7WpW2AO82bzlRE8AWsuPnm0e9wmB0LC5QR
-	KNBbx5wTdWYcYdesDDvIIKetObK1OFIssoT2os2FqUhzW/g4r+min7qjrt3aaU3qfmiIsDOPB7p
-	vRdFrTcASbTt4WVsgHxtT6rX0xv3WNA3domgu7++nZ4I=
-X-Google-Smtp-Source: AGHT+IGAn+8tlmojPpU0u+pGAz8nrnQUJRaRFHChDwY00L2BAfCWpM/u1lUYvDR+BzxYX4MgkGFcFQ==
-X-Received: by 2002:a05:6a21:3396:b0:243:c3c9:e1f with SMTP id adf61e73a8af0-243d6f41865mr14314758637.44.1756814752949;
-        Tue, 02 Sep 2025 05:05:52 -0700 (PDT)
-Received: from localhost ([123.119.72.67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772447058dbsm9375374b3a.38.2025.09.02.05.05.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 05:05:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756814788; x=1757419588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ae26jb7eMgKo9jPZq9aVW5MuaO6TSCdU+50Vy/SJX5k=;
+        b=IBkZqWKdknjPpUYztdngKT0sa0hcvIPIa7CU3zWo0cBIlroegOkeK8B1ZQqd32vgQj
+         gBiwWofeKrZ2eWp66OmRTbpTYTPrvqfcPHLUBl2jsXE4cLqnMI18VuZPTI5jwvfzEDcX
+         5kiRacj/MfQGwudBA8WC+6jqH3ANNV3LNQeSCzfJIeosz1tq7oORuDHDEV2APnISaA8V
+         Z1hl2whYnMM7yGfZ9xBqnW3ghQXpJHRalc1bSXQTxyR2qcDAsFmvZLFT3wdij1XTZe9T
+         KUnxA7sDvwI6qGJO9znqO+wEMhWfvw6JZm0Coeyz+Y50JNfPJ1iF2C9h2fPeWabgO67o
+         IXeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYCYSWfr8pRrKR/vMLaIbt55F1bGtmBXvCQ9o5uXsXKn8uhhpkNIf5wZMmI+MsHZJecbRYAHuQQc11Dok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS7TpRUdEZFonFWo/7mTzJE7n+c6odk/eJ+/VlnZcPrg+wh6dM
+	6bLTtKTynI0QMqAR24rWFNU2Hg66aurqXJuANYXtmOenH39+2BCCnsgdGuL9O3yz0Tg=
+X-Gm-Gg: ASbGncudrUPnhkPnfR5//OVPQn7zxoUzzCgiHcbLmMZcLn8//PuEZ7YeisXdPgUK+al
+	p0WNWdWNpp8P3PZCRrzidOhaax/FgklgTYDZXUVzu1/S8scr+gr2z4n1oOU6tRA9FrB9Vfxki5k
+	oz3bNGJHX+8Yrr29f9IwncELf5ZhUQB1J9fLnkomkC3OgpuxA77kH9C9GnAhoZz6jbjEoEMe8i8
+	I798Mo+ZQiE9iRwSVSoRllYOqkutv7x3rOWI3JGgyaXtfthqKgKuey3ntU3nlnl8njyFLW1aSHp
+	Qm/RD9MhNGENpeta8Ye8cR/Gg8cHH7mytRM2EijFND2MIc7ldueOcFg8hYrgpOxczHnKul+SLHA
+	Z1S9THsr605mIb85WYJEuhQVeSqy6jzjuG8H0PWtg2Hco4J9r9FpbD8fPnmOiSqLYWTQb+1xm0G
+	PD2Ww=
+X-Google-Smtp-Source: AGHT+IGq+b8MukhXiFM3oGQJBiAc7TI3DsYh7Y+rH0+wkWrBkgjU/7jW1I73b1PVVaTQ6nJ+pi8pJA==
+X-Received: by 2002:a05:622a:5b91:b0:4b2:8ac5:27bc with SMTP id d75a77b69052e-4b31dd55c80mr136582951cf.71.1756814788218;
+        Tue, 02 Sep 2025 05:06:28 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b3462ca49fsm11168561cf.31.2025.09.02.05.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 05:06:27 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1utPmM-00000000saf-2PL1;
+	Tue, 02 Sep 2025 09:06:26 -0300
+Date: Tue, 2 Sep 2025 09:06:26 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, david@redhat.com,
+	osalvador@suse.de, jhubbard@nvidia.com, peterx@redhat.com,
+	linux-kernel@vger.kernel.org, dan.j.williams@intel.com
+Subject: Re: [PATCH 1/2] mm/gup: Remove dead pgmap refcounting code
+Message-ID: <20250902120626.GA184112@ziepe.ca>
+References: <20250902051421.162498-1-apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 02 Sep 2025 20:05:47 +0800
-Message-Id: <DCIAUP552XK1.10SMMK7H3VAVH@gmail.com>
-From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
-Subject: Re: [PATCH v2 1/2] iio: humditiy: hdc3020: fix units for
- temperature and humidity measurement
-Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Chris Lesiak"
- <chris.lesiak@licorbio.com>
-To: <dimitri.fedrau@liebherr.com>, "Li peiyu" <579lpy@gmail.com>, "Jonathan
- Cameron" <jic23@kernel.org>, "David Lechner" <dlechner@baylibre.com>,
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
- <andy@kernel.org>, "Dimitri Fedrau" <dima.fedrau@gmail.com>
-X-Mailer: aerc 0.20.1-4-g02324e9d9cab
-References: <20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com>
- <20250901-hdc3020-units-fix-v2-1-082038a15917@liebherr.com>
-In-Reply-To: <20250901-hdc3020-units-fix-v2-1-082038a15917@liebherr.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902051421.162498-1-apopple@nvidia.com>
 
-On Tue Sep 2, 2025 at 1:51 AM CST, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->
-> According to the ABI the units after application of scale and offset are
-> milli degrees for temperature measurements and milli percent for relative
-> humidity measurements. Currently the resulting units are degree celsius f=
-or
-> temperature measurements and percent for relative humidity measurements.
-> Change scale factor to fix this issue.
->
-> Fixes: c9180b8e39be ("iio: humidity: Add driver for ti HDC302x humidity s=
-ensors")
-> Reported-by: Chris Lesiak <chris.lesiak@licorbio.com>
-> Suggested-by: Chris Lesiak <chris.lesiak@licorbio.com>
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Tue, Sep 02, 2025 at 03:14:20PM +1000, Alistair Popple wrote:
+> Prior to aed877c2b425 ("device/dax: properly refcount device dax pages
+> when mapping") ZONE_DEVICE pages were not fully reference counted when
+> mapped into user page tables. Instead GUP would take a reference on the
+> associated pgmap to ensure the results of pfn_to_page() remained valid.
+> 
+> This is no longer required and most of the code was removed by
+> fd2825b0760a ("mm/gup: remove pXX_devmap usage from get_user_pages()").
+> Finish cleaning this up by removing the dead calls to put_dev_pagemap()
+> and the temporary context struct.
+> 
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
 > ---
->  drivers/iio/humidity/hdc3020.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/iio/humidity/hdc3020.c b/drivers/iio/humidity/hdc302=
-0.c
-> index ffb25596d3a8bad01d1f84a9a972561266f65d76..8aa567d9aded9cab461f1f905=
-b6b5ada721ba2f0 100644
-> --- a/drivers/iio/humidity/hdc3020.c
-> +++ b/drivers/iio/humidity/hdc3020.c
-> @@ -301,9 +301,9 @@ static int hdc3020_read_raw(struct iio_dev *indio_dev=
-,
->  	case IIO_CHAN_INFO_SCALE:
->  		*val2 =3D 65536;
->  		if (chan->type =3D=3D IIO_TEMP)
-> -			*val =3D 175;
-> +			*val =3D 175 * MILLI;
->  		else
-> -			*val =3D 100;
-> +			*val =3D 100 * MILLI;
->  		return IIO_VAL_FRACTIONAL;
-> =20
->  	case IIO_CHAN_INFO_OFFSET:
+>  mm/gup.c | 67 ++++++++++++++++++++++----------------------------------
+>  1 file changed, 26 insertions(+), 41 deletions(-)
 
-Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Yay! This never made alot of sense :\
+
+Jason
 
