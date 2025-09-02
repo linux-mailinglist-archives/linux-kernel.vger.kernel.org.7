@@ -1,134 +1,319 @@
-Return-Path: <linux-kernel+bounces-796713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25116B40637
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:10:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFBCB40643
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1AE6188753C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:06:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435F317212E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEFB33997;
-	Tue,  2 Sep 2025 14:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4A5286433;
+	Tue,  2 Sep 2025 14:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JX4SWZd6"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NowuO1XU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qJvO2GVB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NowuO1XU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qJvO2GVB"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B248C1DD9AD
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2285616FF37
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756821986; cv=none; b=RSxpUrxXd1Mw9yYaHNejtktEqHO1/VuP+/czlODZ0apiUCZUxE9EQMIIjONIgvDrtRbsADLGv21lMLX/E8hKXz3RqHgK0NExMx1V5765snFqD4IZt3KrrYDp7n0zw9Gw+/3kdGtD0ewhzLoAApMOPPXnkngfZ4EqjCpHzUCPcn0=
+	t=1756822010; cv=none; b=jJfR/zyygEnkb8qtrt7pKE6oc/ucB3RdyiTtKf/dY+B2b0dd3lrAYX2Q74YGuudGhC3GN2rk6Ms1yfu3xJd+jSTrNN/NHv/4/sjT4TygFyHavr0EgHleE2JPN/1edkgpSKk1bZaf/JjiXSnFpQ7P6K2yfeXl61i4A2YirNo2RKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756821986; c=relaxed/simple;
-	bh=uLft5kRVu50U08OO/8BXcCGPsrG3pukiHLm/Fxycblc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MAxIxEbfbsXgkCjV+89TUScL2ir9Ijz+EB6WbjLLnx0TQTRg0qFcl7wuQ5DEkb/tlct+HXqSlUwsKMYq4s7l49NOI9DwtKsc8ceVuj/vfbx6OBR8Mma8Jf+F8gYRs6TYlQS/IL4eU6WHx9KP9RcCgdmGVOB6aGMjug8jifEd1Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JX4SWZd6; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7723cf6e4b6so2204008b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:06:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756821984; x=1757426784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G3vAMDDKCjzCh1ioreOxwAOGysxZFkQVkoExnnbmuyM=;
-        b=JX4SWZd6/IF4cM51tYU0NO/8M1zfb89DPhMYNcMXBVZQNtZ9R9slGoV+087a/5LiGh
-         TE7FTjy6hEt18iCxVh9v+zLCCk8yoaebdl22oLhg6+Sg+yXz6KrjfhKWVuIIyjVcPx7v
-         N21eYLyF43TplMTGTFV1YxwmBbvM19KmNZjjweuTcLq+QzsIEiTCxkxQjh1/bm+skAij
-         tCJ529C+OGdKwLFguDdv8UT8rweF/9wdeGkbVM1hrvsneVUeBjlL6HeeF9qQst9D2o1N
-         2Ds2bfOkbesdzl6uh2eAMcG4Hxs99cHnKVDPf4rnIKHotOJhnEBPikQVUwU+JlAzrDdb
-         lQcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756821984; x=1757426784;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G3vAMDDKCjzCh1ioreOxwAOGysxZFkQVkoExnnbmuyM=;
-        b=gbXxawCl4Dvlj2t4oMxhRJolKj8lNz4oi6YOJaOIhlWEeZSyZ6UOoR9IaIb5nK8fD4
-         w2kbGwylMPumsKnJZkprpF56xCa7Qq0GlQIun+RBwiBRe8EFgC1dNUpfNVHtUI60AGse
-         Lf99eFFuMZTfNfXun/ygEnLlZZ9Sh6ai7jbeBlvPkuvC+k3l/SerPVNb+wm1myDGhxlK
-         /6Aaml2Zi+HpIlTAnVXJiPD1E56MxhDYoI/Kl4ECW/bHbTySfuoCyLS2M0i30TELZ2Tl
-         uqvvslmjIW1uullyc7i9mky/6vQ3K1LxpnzE37LT9xdzQYtqmF0E0pArCEU40h89PJRQ
-         9dmQ==
-X-Gm-Message-State: AOJu0YyphH0FZLts95ZOCs6UoGbfbom/AAwz1w6+RsQuPgPs7KSLGZlB
-	mC/kITalKzWBM/5H+oZ4V9wG22jmLc1gZ/964DudoRQJnY1ZxcO7MWqzTc/K7Q==
-X-Gm-Gg: ASbGncu5K23t75SybIMfYfhBpChW7GZQK4lK4cCo9DRT+Fp8umOoita3+jMGaJVT+Tp
-	qV+Hvzq+eyef1m6AElMKVxx2ZWLH16LjQfDdhZAwet+uJQNLbjDe1dAIBi/QkxfYuPoUqPfxL00
-	6nYkJiQE+eJEvVyeqwFLNooHUO9n7rnYHn8Heb7v6LkY1QxClk1HR+kXTVVV0+vvUIv+oV7j7mj
-	ffghxK47OBhSa2hMWFHi3HyBbzmn2Ak/XQplOaOnzrnS+wipOF5tU1TlkDguEEjE03DgVYGVIFu
-	yycZ/PqtAW8NWWzfzqii9T2fmTeAFd7jB4rK9TMEaD3FEl+NBk3QnPw0Cy01rnqEAr4MAhK3MY2
-	xxsDwZV5cYx0pWHrGAcPDikPs6a8EFXqfhqL3vQ1e5WUGRD3K79GCKFrxyV+1unbNqDDmmjgnOi
-	TQkaW9Uw==
-X-Google-Smtp-Source: AGHT+IFsScJ15/QUZv60Zo2uHTm2UDdGGH2WIwQwZpn6zxGguEGAcChStYOSgmUQZBZg3Dn+Yt+tsQ==
-X-Received: by 2002:a05:6a21:3396:b0:243:b0fb:7086 with SMTP id adf61e73a8af0-243d6dc8084mr14285242637.4.1756821982032;
-        Tue, 02 Sep 2025 07:06:22 -0700 (PDT)
-Received: from localhost.localdomain (36-231-167-123.dynamic-ip.hinet.net. [36.231.167.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a269f27sm13927961b3a.12.2025.09.02.07.06.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 07:06:21 -0700 (PDT)
-From: Nick Huang <sef1548@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: kusogame68@gmail.com,
-	Nick Huang <sef1548@gmail.com>
-Subject: [PATCH] ipc/msg: Replace testmsg with  msg_matchs_type
-Date: Tue,  2 Sep 2025 22:05:48 +0800
-Message-ID: <20250902140548.110167-1-sef1548@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1756822010; c=relaxed/simple;
+	bh=GVUgnan1LosCVj07j3WEjaZ5OMCe/Lnq4hUFvl7uQo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nvo4TCBs8kIbXjweGgRkvGCGKMdwYM7EpaKZOUTcrCe3X5h2fqmEromjTBkf9xoHzhJFqKj/Uy18V2RT/7grhbkgBSinLYRirmHhkF4DcZ1e08hXgTv2/EbW8S7qDs3Nv/Dg0S9lSw3W+HGeKpSqRKxOd2YZEg6ULYiV06+zFFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NowuO1XU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qJvO2GVB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NowuO1XU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qJvO2GVB; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 57F0D211D0;
+	Tue,  2 Sep 2025 14:06:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756822006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pCeyRXDjeXdIYPa2EpXAmE++weae5wnHDPz0vJ1nNwI=;
+	b=NowuO1XU6pCdFMxyzfVwCM1NVTRvLoMLTMno+dzrAQb415IHogH4B7aBOu4eNUly5QqDI5
+	5kd6OlDY5NnSRVMgtpTuSL/MI/PGOEDdyPSUxJVn3oMLDPyZ087tRNWFt9lRGrYa/cfG6I
+	fvz8tfGTSrXOrReF5FClCJ6WzNRO0T4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756822006;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pCeyRXDjeXdIYPa2EpXAmE++weae5wnHDPz0vJ1nNwI=;
+	b=qJvO2GVB8bhj1tslii9DcANIwb2ZqQIJBjpFScu7IfvOlu6Zkad9i/0ig5gQ24R8e+O2Mk
+	sEXdiotHFFhOFkCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756822006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pCeyRXDjeXdIYPa2EpXAmE++weae5wnHDPz0vJ1nNwI=;
+	b=NowuO1XU6pCdFMxyzfVwCM1NVTRvLoMLTMno+dzrAQb415IHogH4B7aBOu4eNUly5QqDI5
+	5kd6OlDY5NnSRVMgtpTuSL/MI/PGOEDdyPSUxJVn3oMLDPyZ087tRNWFt9lRGrYa/cfG6I
+	fvz8tfGTSrXOrReF5FClCJ6WzNRO0T4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756822006;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pCeyRXDjeXdIYPa2EpXAmE++weae5wnHDPz0vJ1nNwI=;
+	b=qJvO2GVB8bhj1tslii9DcANIwb2ZqQIJBjpFScu7IfvOlu6Zkad9i/0ig5gQ24R8e+O2Mk
+	sEXdiotHFFhOFkCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E4BF113882;
+	Tue,  2 Sep 2025 14:06:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uC4uNvX5tmjvaQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 14:06:45 +0000
+Message-ID: <3a73aada-48ad-45ad-8144-b58760113d6f@suse.de>
+Date: Tue, 2 Sep 2025 16:06:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 24/29] drm/tidss: dispc: Improve mode checking logs
+To: Maxime Ripard <mripard@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-24-14ad5315da3f@kernel.org>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250902-drm-state-readout-v1-24-14ad5315da3f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-The function name testmsg is misleading, as its purpose is not to test a message
-but to check whether a message matches the given mode and type conditions.
 
-To more clearly convey its role in validating whether a message can be used for
-send or receive operations, it has been renamed to msg_matchs_type.
 
-Signed-off-by: Nick Huang <sef1548@gmail.com>
----
- ipc/msg.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+> The dispc_vp_mode_valid() function checks whether a mode can be handled
+> by the display controller.
+>
+> There's a whole bunch of criteria, and it's not clear when a rejection
+> happens why it did. Let's add a bunch of logs on error to make it
+> clearer.
+>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>   drivers/gpu/drm/tidss/tidss_dispc.c | 47 +++++++++++++++++++++++++++++--------
+>   1 file changed, 37 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index 32248b5f71b7566dc33d7a7db0efb26d3a9ed1c3..ef948e3041e10bc65cf2c4794a4e4cffa7e3fb3a 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -1349,47 +1349,63 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
+>   
+>   enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
+>   					 u32 hw_videoport,
+>   					 const struct drm_display_mode *mode)
+>   {
+> +	struct tidss_device *tidss = dispc->tidss;
+> +	struct drm_device *dev = &tidss->ddev;
+>   	u32 hsw, hfp, hbp, vsw, vfp, vbp;
+>   	enum dispc_vp_bus_type bus_type;
+>   	int max_pclk;
+>   
+>   	bus_type = dispc->feat->vp_bus_type[hw_videoport];
+>   
+>   	max_pclk = dispc->feat->max_pclk_khz[bus_type];
+>   
+> -	if (WARN_ON(max_pclk == 0))
+> +	if (WARN_ON(max_pclk == 0)) {
 
-diff --git a/ipc/msg.c b/ipc/msg.c
-index ee6af4fe52..0831a3589c 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -791,7 +791,7 @@ COMPAT_SYSCALL_DEFINE3(old_msgctl, int, msqid, int, cmd, void __user *, uptr)
- #endif
- #endif
- 
--static int testmsg(struct msg_msg *msg, long type, int mode)
-+static int msg_matchs_type(struct msg_msg *msg, long type, int mode)
- {
- 	switch (mode) {
- 	case SEARCH_ANY:
-@@ -819,7 +819,7 @@ static inline int pipelined_send(struct msg_queue *msq, struct msg_msg *msg,
- 	struct msg_receiver *msr, *t;
- 
- 	list_for_each_entry_safe(msr, t, &msq->q_receivers, r_list) {
--		if (testmsg(msg, msr->r_msgtype, msr->r_mode) &&
-+		if (msg_matchs_type(msg, msr->r_msgtype, msr->r_mode) &&
- 		    !security_msg_queue_msgrcv(&msq->q_perm, msg, msr->r_tsk,
- 					       msr->r_msgtype, msr->r_mode)) {
- 
-@@ -1077,7 +1077,7 @@ static struct msg_msg *find_msg(struct msg_queue *msq, long *msgtyp, int mode)
- 	long count = 0;
- 
- 	list_for_each_entry(msg, &msq->q_messages, m_list) {
--		if (testmsg(msg, *msgtyp, mode) &&
-+		if (msg_matchs_type(msg, *msgtyp, mode) &&
- 		    !security_msg_queue_msgrcv(&msq->q_perm, msg, current,
- 					       *msgtyp, mode)) {
- 			if (mode == SEARCH_LESSEQUAL && msg->m_type != 1) {
+Better remove this WARN_ON(). User-space could trigger it and spam the 
+kernel logs. It's also a driver bug, I think.
+
+> +		drm_dbg(dev, "Invalid maximum pixel clock");
+>   		return MODE_BAD;
+> +	}
+>   
+> -	if (mode->clock < dispc->feat->min_pclk_khz)
+> +	if (mode->clock < dispc->feat->min_pclk_khz) {
+> +		drm_dbg(dev, "Mode pixel clock below hardware minimum pixel clock");
+>   		return MODE_CLOCK_LOW;
+> +	}
+>   
+> -	if (mode->clock > max_pclk)
+> +	if (mode->clock > max_pclk) {
+> +		drm_dbg(dev, "Mode pixel clock above hardware maximum pixel clock");
+>   		return MODE_CLOCK_HIGH;
+> +	}
+>   
+> -	if (mode->hdisplay > 4096)
+> +	if (mode->hdisplay > 4096) {
+> +		drm_dbg(dev, "Number of active horizontal pixels above hardware limits.");
+>   		return MODE_BAD;
+> +	}
+>   
+> -	if (mode->vdisplay > 4096)
+> +	if (mode->vdisplay > 4096) {
+> +		drm_dbg(dev, "Number of active vertical lines above hardware limits.");
+>   		return MODE_BAD;
+> +	}
+>   
+>   	/* TODO: add interlace support */
+> -	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+> +	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
+> +		drm_dbg(dev, "Interlace modes not suppported.");
+>   		return MODE_NO_INTERLACE;
+> +	}
+>   
+>   	/*
+>   	 * Enforce the output width is divisible by 2. Actually this
+>   	 * is only needed in following cases:
+>   	 * - YUV output selected (BT656, BT1120)
+>   	 * - Dithering enabled
+>   	 * - TDM with TDMCycleFormat == 3
+>   	 * But for simplicity we enforce that always.
+>   	 */
+> -	if ((mode->hdisplay % 2) != 0)
+> +	if ((mode->hdisplay % 2) != 0) {
+> +		drm_dbg(dev, "Number of active horizontal pixels must be even.");
+>   		return MODE_BAD_HVALUE;
+> +	}
+>   
+>   	hfp = mode->hsync_start - mode->hdisplay;
+>   	hsw = mode->hsync_end - mode->hsync_start;
+>   	hbp = mode->htotal - mode->hsync_end;
+>   
+> @@ -1397,29 +1413,40 @@ enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
+>   	vsw = mode->vsync_end - mode->vsync_start;
+>   	vbp = mode->vtotal - mode->vsync_end;
+>   
+>   	if (hsw < 1 || hsw > 256 ||
+>   	    hfp < 1 || hfp > 4096 ||
+> -	    hbp < 1 || hbp > 4096)
+> +	    hbp < 1 || hbp > 4096) {
+> +		drm_dbg(dev,
+> +			"Horizontal blanking or sync outside of hardware limits (fp: %u, sw: %u, bp: %u).",
+> +			hfp, hsw, hbp);
+>   		return MODE_BAD_HVALUE;
+> +	}
+>   
+>   	if (vsw < 1 || vsw > 256 ||
+> -	    vfp > 4095 || vbp > 4095)
+> +	    vfp > 4095 || vbp > 4095) {
+> +		drm_dbg(dev,
+> +			"Vertical blanking or sync outside of hardware limits (fp: %u, sw: %u, bp: %u).",
+> +			vfp, vsw, vbp);
+>   		return MODE_BAD_VVALUE;
+> +	}
+>   
+>   	if (dispc->memory_bandwidth_limit) {
+>   		const unsigned int bpp = 4;
+>   		u64 bandwidth;
+>   
+>   		bandwidth = 1000 * mode->clock;
+>   		bandwidth = bandwidth * mode->hdisplay * mode->vdisplay * bpp;
+>   		bandwidth = div_u64(bandwidth, mode->htotal * mode->vtotal);
+>   
+> -		if (dispc->memory_bandwidth_limit < bandwidth)
+> +		if (dispc->memory_bandwidth_limit < bandwidth) {
+> +			drm_dbg(dev, "Required memory bandwidth outside of hardware limits.");
+>   			return MODE_BAD;
+> +		}
+>   	}
+>   
+> +	drm_dbg(dev, "Mode is valid.");
+>   	return MODE_OK;
+>   }
+>   
+>   int dispc_vp_enable_clk(struct dispc_device *dispc, u32 hw_videoport)
+>   {
+>
+
 -- 
-2.48.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
