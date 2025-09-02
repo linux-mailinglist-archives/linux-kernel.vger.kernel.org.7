@@ -1,129 +1,224 @@
-Return-Path: <linux-kernel+bounces-796393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F54B4003A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:23:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CDBB40064
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F0095E1F76
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBC95E4380
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B28A2F8BC6;
-	Tue,  2 Sep 2025 12:13:06 +0000 (UTC)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB1C2FA0FC;
+	Tue,  2 Sep 2025 12:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="S7V0IlVe"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284692882D6;
-	Tue,  2 Sep 2025 12:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CB82FA0DB;
+	Tue,  2 Sep 2025 12:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815185; cv=none; b=maJNZ9sQrdY3DPLf02FxF8YP2Awq6G/exELwMYaKPSoj8/vILTA2Zgl76MuaiP1ccKnUEmDyd81mlRckBoTFFcMJxlvSnt4Y1XcsjuA9EVW4XGXXKs961GSQfdWLOHozU6YI+n4ZZmupKIME44LFnznDUNbHQmi4vttS0r3qfC0=
+	t=1756815493; cv=none; b=sntcSEOC2SIsVsD+pzuQSFaC4MAMece6laYYVBAjCt5ZopNGbW3SiSVyjMRwPojlqieXckcmiqrhsF2BBH8/e3wcfGVE2OTw01cOiiWSCcW6E7MnSIbYGoYU5d4w29puon7ObgrHahpU3K7Es+nYeTs6aur4DFQ8cbxWhT9InpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815185; c=relaxed/simple;
-	bh=TOhSKm/cs0IcjUSAOvCakjp4LAKiuqz0Bl8m/ahHY5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ypw0C9mh7m/145z8z75ankGHayzQFTdmMY+MsidE6x7WFSW/5nHAna4EdDOuM5pXKT9BOiJbh/xUUeM5sRIj9BnHbiSLf28cQvEHuwmxo18qOLIG7CW1rniM7SL8io6MVpYP73lFN6OoJOZx3R/sW1fsu/y7S1HD/ZSuxWAwAbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5449fc0a7f1so2437147e0c.0;
-        Tue, 02 Sep 2025 05:13:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756815182; x=1757419982;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/UimdT1ibBTesy/AP3pxhJqwDMsUxNlw8Zh+OBcciDk=;
-        b=gTZyQbA0Wm8s0WysviV9VnK7ydHUCenev1Q57pl2yu8kK/jrg1PTCMlZM3SB2FOqh8
-         2mzwxcKS53lJGktBtgGaPxaYfRTHBr1BNVbBIANUctouc5xEnxHnTwHkzj3xF2nmbJj7
-         M0KnJnpi25HztTq5Qvqd46ObbE7OMlNsKOkEvznetDfdA+T3UJQ8b8c/+9Phca3RNs3X
-         Ky5HqqLOUCrV9qVYGRdE6qckITqZuXNDcXMmHXPZqUfGe29Kf2Jqes64kqYo6mshMpBh
-         R1KkWEqgcatJifFAIYhcfPKY+DdEbbWXhY1DAI3RCC182Nw0fFoMujzUCGRtsfst/ICm
-         k/+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNCZ9TsIU6mpY7lefGUv2K14GOToawHObQPJUa6r8dLNwhP6jaL6a4mo5xahYh+b7nI658e7XtCvggd6l18d0ufIw=@vger.kernel.org, AJvYcCWs3LU6kwWfSFZJVyMNByvS3mUW4v7yDR3h8gkd0ZrDoDQ4guqXF3TIWZJKJWW20oZSAYWUq7HycLs=@vger.kernel.org, AJvYcCXVxXANdaUIkoy5GctyTnh0sbwd2OVXNozZ2xkmXjmMkZck+3lAW12A2rr6pWb8Eq5ayPX8bo/fip54q9YF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJF66eSruc/2WZvvcgikLBXMeDsjSR3WlkEsw9KiPjBl+YOCub
-	nZJZhmX0Sq6CQ8Paru7TprNMUwWmKGKWhXNRm6lPvzzo4JEQRga9tfXku1CvrO0x
-X-Gm-Gg: ASbGnctCkH3Zx8vhEZZkzourPOFanWJ/KscQSgE3oIwv365R1w3EhvV3bdlvn5JvW4j
-	hihZVCAx7y03GS9Xq8y3KoyMN8oAGcK2ghC7dOu/2yHvxJRsaSHlYBOoHNC3uyO47wgId8ln8ki
-	lWTxa06Ithfx3NgcrDzqR/IyEiAnyK+Q3a0a+G5eeqiTcgUKXLTJyX7NePGbGDBn8LEeOFZzx4D
-	pe9YQtoYU0JQja9tlTTnxkAINbSLwjshcV5jRK++a267woaCqIGzJN09ZFteygOw5sDfXjZcBcQ
-	U7Vo2v2BPx2GDdVzGpWp5ObOAgcHBGcjBu3vj5lBOsmJShpNLXV8ptprPvW5eElNSoJZzXrSXC8
-	9X3r+Z+urYLSVrPecrc340XeOdzo0+nq8rjdx3dA3GuQdx6B6HztOZpy7oXDK
-X-Google-Smtp-Source: AGHT+IH4PMXC7FIWpoDwykyTNStkR9UQRZ9/h1c+juN1zRpzkwKoZkyp6vFzTxbBG4jOyt78oCZNmA==
-X-Received: by 2002:a05:6122:3d06:b0:542:59a2:72fb with SMTP id 71dfb90a1353d-544a02b1510mr3472136e0c.9.1756815181696;
-        Tue, 02 Sep 2025 05:13:01 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544912c6d3bsm5516535e0c.6.2025.09.02.05.13.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 05:13:01 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5299769c79cso2471265137.3;
-        Tue, 02 Sep 2025 05:13:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZLU8P3bqvTCfR6eN1yUQmyXbzzMu4H+SrjKcz/XnO6ehtN4+C6LZjO3SMyrT2Bf1a5ENiEcCyiU16kmZf9PyhruA=@vger.kernel.org, AJvYcCVdSWYlDfWLI8p6e/EzN1tQS4vaLGjjT5nANWLrd1sFcEUG9eEzIE1geIP7pgKys7hMCd5czRNNrf8rOoJS@vger.kernel.org, AJvYcCWMU0P8uZc0elQx7QLQuLZ9RA80WC/IO6f7znhpBpkLVHIW46RCJki4lGohyzzNVlVq1XMBJLtK2SY=@vger.kernel.org
-X-Received: by 2002:a05:6102:5f04:b0:520:3f1a:c533 with SMTP id
- ada2fe7eead31-52b1b91e423mr3012578137.21.1756815181104; Tue, 02 Sep 2025
- 05:13:01 -0700 (PDT)
+	s=arc-20240116; t=1756815493; c=relaxed/simple;
+	bh=8MQuwFTABPkO9ySA/Qz0a4ZCUshzU7SVMBVe7/oGLuE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aj4oMwR6sphggpm5lPG9KCBeydcWH1SFZFT+mDhWBg3dcLEkGZfUPO4NtUv6Op/JJhqlu7TPl2wNgE7wuIz3AZ6b5ThPuF4N7rl5N2CyfkC9ewrvYmQ9klKrRQnTSJMUv0mQ4GX174qcEfaiHinjR54BW3kcEIRlHT8FctyiuXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=S7V0IlVe; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756815491; x=1788351491;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8MQuwFTABPkO9ySA/Qz0a4ZCUshzU7SVMBVe7/oGLuE=;
+  b=S7V0IlVebgfoOrYYg7/lT15y5MvdTIDG1L6pa3Hx28I9zs5549ZSXfbR
+   qiGqCndPArsJfdzaEth6etcfPCvCJz9aMkpRr/w281ak1DR86RFUcrWuN
+   TLJX2ZvNPpVyM8s6uMaeboyVl+nJMGjw7/J8XCRjlGuePkKP3w3f+hah0
+   hGPnTxXNV48eAsIiJDzfO35jpquPLEHwRZ84OGoqXqJvykepKcdzEP6MB
+   voIZE9dT3SQuEBCU3D7KlLA/ZMGwpuqUdZYCvnVtw0GW4JOxruSrvzDOF
+   C9UGAXup3kRW+R65AbSrq/TdOW7jU6sCRgpBvWFSmrLQNaxbDW+Kh1gLC
+   Q==;
+X-CSE-ConnectionGUID: b2GtH1jnQ62VBZ1JLxN0GQ==
+X-CSE-MsgGUID: dhNSDwMaS/2A7zy1rDTAbQ==
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="51627327"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2025 05:18:10 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 2 Sep 2025 05:17:29 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 2 Sep 2025 05:17:27 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vadim.fedorenko@linux.dev>,
+	<vladimir.oltean@nxp.com>, <viro@zeniv.linux.org.uk>,
+	<quentin.schulz@bootlin.com>, <atenart@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net v3] phy: mscc: Stop taking ts_lock for tx_queue and use its own lock
+Date: Tue, 2 Sep 2025 14:12:59 +0200
+Message-ID: <20250902121259.3257536-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820100428.233913-1-tommaso.merciai.xr@bp.renesas.com> <20250820100428.233913-2-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250820100428.233913-2-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Sep 2025 14:12:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX3xesNr7VXjH75jfaQ=aXrzNhAhpPkdN6LiC3wY8sX3Q@mail.gmail.com>
-X-Gm-Features: Ac12FXx7puQzjJrrLGE0Y4HY7C5fGC5GMSPwBCK32PiGQ-K3n4k4nXO_Grb_Z38
-Message-ID: <CAMuHMdX3xesNr7VXjH75jfaQ=aXrzNhAhpPkdN6LiC3wY8sX3Q@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: renesas: rzg2l: Simplify rzg2l_cpg_assert() and rzg2l_cpg_deassert()
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Tommaso,
+When transmitting a PTP frame which is timestamp using 2 step, the
+following warning appears if CONFIG_PROVE_LOCKING is enabled:
+=============================
+[ BUG: Invalid wait context ]
+6.17.0-rc1-00326-ge6160462704e #427 Not tainted
+-----------------------------
+ptp4l/119 is trying to lock:
+c2a44ed4 (&vsc8531->ts_lock){+.+.}-{3:3}, at: vsc85xx_txtstamp+0x50/0xac
+other info that might help us debug this:
+context-{4:4}
+4 locks held by ptp4l/119:
+ #0: c145f068 (rcu_read_lock_bh){....}-{1:2}, at: __dev_queue_xmit+0x58/0x1440
+ #1: c29df974 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock){+...}-{2:2}, at: __dev_queue_xmit+0x5c4/0x1440
+ #2: c2aaaad0 (_xmit_ETHER#2){+.-.}-{2:2}, at: sch_direct_xmit+0x108/0x350
+ #3: c2aac170 (&lan966x->tx_lock){+.-.}-{2:2}, at: lan966x_port_xmit+0xd0/0x350
+stack backtrace:
+CPU: 0 UID: 0 PID: 119 Comm: ptp4l Not tainted 6.17.0-rc1-00326-ge6160462704e #427 NONE
+Hardware name: Generic DT based system
+Call trace:
+ unwind_backtrace from show_stack+0x10/0x14
+ show_stack from dump_stack_lvl+0x7c/0xac
+ dump_stack_lvl from __lock_acquire+0x8e8/0x29dc
+ __lock_acquire from lock_acquire+0x108/0x38c
+ lock_acquire from __mutex_lock+0xb0/0xe78
+ __mutex_lock from mutex_lock_nested+0x1c/0x24
+ mutex_lock_nested from vsc85xx_txtstamp+0x50/0xac
+ vsc85xx_txtstamp from lan966x_fdma_xmit+0xd8/0x3a8
+ lan966x_fdma_xmit from lan966x_port_xmit+0x1bc/0x350
+ lan966x_port_xmit from dev_hard_start_xmit+0xc8/0x2c0
+ dev_hard_start_xmit from sch_direct_xmit+0x8c/0x350
+ sch_direct_xmit from __dev_queue_xmit+0x680/0x1440
+ __dev_queue_xmit from packet_sendmsg+0xfa4/0x1568
+ packet_sendmsg from __sys_sendto+0x110/0x19c
+ __sys_sendto from sys_send+0x18/0x20
+ sys_send from ret_fast_syscall+0x0/0x1c
+Exception stack(0xf0b05fa8 to 0xf0b05ff0)
+5fa0:                   00000001 0000000e 0000000e 0004b47a 0000003a 00000000
+5fc0: 00000001 0000000e 00000000 00000121 0004af58 00044874 00000000 00000000
+5fe0: 00000001 bee9d420 00025a10 b6e75c7c
 
-On Wed, 20 Aug 2025 at 12:05, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Combine common code from rzg2l_cpg_assert() and rzg2l_cpg_deassert() into a
-> new __rzg2l_cpg_assert() helper to avoid code duplication. This reduces
-> maintenance effort and improves code clarity.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+So, instead of using the ts_lock for tx_queue, use the spinlock that
+skb_buff_head has.
 
-Thanks for your patch!
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+---
+v2->v3:
+- replace skb_queue_len with skb_queue_len_lockless
 
-> @@ -1664,37 +1668,20 @@ static int rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
->         }
->
->         return readl_poll_timeout_atomic(priv->base + reg, value,
-> -                                        value & mask, 10, 200);
-> +                                        assert ? (value & mask) : !(value & mask),
+v1->v2:
+- initialize tx_queue in ptp_probe
+- purge the tx_queue when the driver is removed or when TX timestamping
+  is OFF
+---
+ drivers/net/phy/mscc/mscc_ptp.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-This can be simplified to "assert == !!(value & mask)".
-Do you like that?
-
-> +                                        10, 200);
-> +}
-
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
+index 72847320cb652..d692df7d975c7 100644
+--- a/drivers/net/phy/mscc/mscc_ptp.c
++++ b/drivers/net/phy/mscc/mscc_ptp.c
+@@ -456,12 +456,12 @@ static void vsc85xx_dequeue_skb(struct vsc85xx_ptp *ptp)
+ 		*p++ = (reg >> 24) & 0xff;
+ 	}
+ 
+-	len = skb_queue_len(&ptp->tx_queue);
++	len = skb_queue_len_lockless(&ptp->tx_queue);
+ 	if (len < 1)
+ 		return;
+ 
+ 	while (len--) {
+-		skb = __skb_dequeue(&ptp->tx_queue);
++		skb = skb_dequeue(&ptp->tx_queue);
+ 		if (!skb)
+ 			return;
+ 
+@@ -486,7 +486,7 @@ static void vsc85xx_dequeue_skb(struct vsc85xx_ptp *ptp)
+ 		 * packet in the FIFO right now, reschedule it for later
+ 		 * packets.
+ 		 */
+-		__skb_queue_tail(&ptp->tx_queue, skb);
++		skb_queue_tail(&ptp->tx_queue, skb);
+ 	}
+ }
+ 
+@@ -1068,6 +1068,7 @@ static int vsc85xx_hwtstamp(struct mii_timestamper *mii_ts,
+ 	case HWTSTAMP_TX_ON:
+ 		break;
+ 	case HWTSTAMP_TX_OFF:
++		skb_queue_purge(&vsc8531->ptp->tx_queue);
+ 		break;
+ 	default:
+ 		return -ERANGE;
+@@ -1092,9 +1093,6 @@ static int vsc85xx_hwtstamp(struct mii_timestamper *mii_ts,
+ 
+ 	mutex_lock(&vsc8531->ts_lock);
+ 
+-	__skb_queue_purge(&vsc8531->ptp->tx_queue);
+-	__skb_queue_head_init(&vsc8531->ptp->tx_queue);
+-
+ 	/* Disable predictor while configuring the 1588 block */
+ 	val = vsc85xx_ts_read_csr(phydev, PROCESSOR,
+ 				  MSCC_PHY_PTP_INGR_PREDICTOR);
+@@ -1180,9 +1178,7 @@ static void vsc85xx_txtstamp(struct mii_timestamper *mii_ts,
+ 
+ 	skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
+ 
+-	mutex_lock(&vsc8531->ts_lock);
+-	__skb_queue_tail(&vsc8531->ptp->tx_queue, skb);
+-	mutex_unlock(&vsc8531->ts_lock);
++	skb_queue_tail(&vsc8531->ptp->tx_queue, skb);
+ 	return;
+ 
+ out:
+@@ -1548,6 +1544,7 @@ void vsc8584_ptp_deinit(struct phy_device *phydev)
+ 	if (vsc8531->ptp->ptp_clock) {
+ 		ptp_clock_unregister(vsc8531->ptp->ptp_clock);
+ 		skb_queue_purge(&vsc8531->rx_skbs_list);
++		skb_queue_purge(&vsc8531->ptp->tx_queue);
+ 	}
+ }
+ 
+@@ -1571,7 +1568,7 @@ irqreturn_t vsc8584_handle_ts_interrupt(struct phy_device *phydev)
+ 	if (rc & VSC85XX_1588_INT_FIFO_ADD) {
+ 		vsc85xx_get_tx_ts(priv->ptp);
+ 	} else if (rc & VSC85XX_1588_INT_FIFO_OVERFLOW) {
+-		__skb_queue_purge(&priv->ptp->tx_queue);
++		skb_queue_purge(&priv->ptp->tx_queue);
+ 		vsc85xx_ts_reset_fifo(phydev);
+ 	}
+ 
+@@ -1591,6 +1588,7 @@ int vsc8584_ptp_probe(struct phy_device *phydev)
+ 	mutex_init(&vsc8531->phc_lock);
+ 	mutex_init(&vsc8531->ts_lock);
+ 	skb_queue_head_init(&vsc8531->rx_skbs_list);
++	skb_queue_head_init(&vsc8531->ptp->tx_queue);
+ 
+ 	/* Retrieve the shared load/save GPIO. Request it as non exclusive as
+ 	 * the same GPIO can be requested by all the PHYs of the same package.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
