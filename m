@@ -1,141 +1,138 @@
-Return-Path: <linux-kernel+bounces-796244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A29B3FDBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:23:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 088D5B3FDBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242AB3BF6DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:23:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB911B22A2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4222F7440;
-	Tue,  2 Sep 2025 11:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159392F7440;
+	Tue,  2 Sep 2025 11:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="PV2qAiLP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="R/6snUpu"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H9xYIMU4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE72246BB4;
-	Tue,  2 Sep 2025 11:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A0D2F49EE;
+	Tue,  2 Sep 2025 11:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756812222; cv=none; b=P/LjOJRIxAeJA1FLu0EFCgTGRfgnNc6GQxFPaeIpZ15LlFAmn/FrDWZdkrXC/gqDjBjRPuMt7KuWdcMplvkkyRkrhSReDJhWzRiKP5eDVgP5Sj6L6cI1AGMB3ZxAZOjdLNylFXPQbDl4TPdWcKCS6RFWmKB5HPkjWPEBiqEUZyY=
+	t=1756812295; cv=none; b=uI9l42IuRZJZru49BjzLMuQ7iz9MsricLO+mVTCT6TOJT/qmXMLiTfow9rMSx0tl4+xNJTTtV2qYLfxzKPrnMRk51MZXH4ibp1aqhVGtLQx6Ux/z3eDp1MIGMcOQxRZn0za2uC40XhX0uzlX9uHDqMNMgAZ/u9Q3gqVYNUtFxwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756812222; c=relaxed/simple;
-	bh=p/8ygFbEgtNV5wSQi1SEP1xqS2pYIN9T58TZ8hpdiH4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kRDuJEHgJyFeWCAEcgoa2UDTdQG0BQ0ryKxP9j5F2L6KeDP/Tiw+fGpg3nOkNMySbMtEL1tEZ6W7yTw7QLbH8xFCulKhyzUmSksAFi3EnBDr4t3buTqgAHOS3LWCroWYTFv9s5OObItE/sKkr5xypGJ3SgvEemf9NCBPH6fVmWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=PV2qAiLP; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=R/6snUpu reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1756812217; x=1788348217;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=p/8ygFbEgtNV5wSQi1SEP1xqS2pYIN9T58TZ8hpdiH4=;
-  b=PV2qAiLPtg2ehTwpdvb0StX4QRWLPgzYF+iGTZA43RTpbVAbRYm7Nz0K
-   wf+FX1qk1+fxr/qUgTNzv7iEEJipdlMHZXpluggvss/jFaTHMGGKNdkYg
-   z0TKkW5eD4k2hhNwxzoTtr8vRv+5udhtvPCmxbxvB+HFhkFtjrQ90fIEE
-   hbOuMs9vaM8/oD5ZnHCXjMg/NXdmQ7wYyUB705hqEzf+nN4Dn6eP8tt4H
-   Dpu36U6c4b0PQ7iXcIwGreGuG9+F/yF7w0skKpcTLuG62rShSWbLWGt57
-   kRyxTFf1ERGeXNmPBCaLzHDVbcG1n4UIxGQSrgZilT1IsmbzIKP5Vziy0
+	s=arc-20240116; t=1756812295; c=relaxed/simple;
+	bh=rnzaOQuxTScDn7ysIBToMNNj9BiNuSVPElmId2+/0Xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=us4OKhhOPSRR8MPqFKdVypQxJGbNB3THwS+qyi0IMuErioF36j0aRy878UlOPzB+J1hro3NIkyWzv4O0cbrc2CXXX8aooueqUgxsTzm8Wg2jcxT+Et6kURhwY+EJYHCrBWhFu8ZVFfUPycaFwjTfRPS+TDwh6Iaz9hQVTfHJUZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H9xYIMU4; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756812294; x=1788348294;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rnzaOQuxTScDn7ysIBToMNNj9BiNuSVPElmId2+/0Xo=;
+  b=H9xYIMU43nMhibphcLxFfhAPIBRp1jqbDyh+TrR/jPkNITZe4YcwhLHG
+   ukx15zov4Hnwqu3Q3ifb/UVIeE8u3zTpAsDOueYOyN+WBVhinKg8aKaSP
+   kxtYGZgvFaenqM2Y8cccrF5FeJWYt9pxPFkJhDwpvD9d1xOGVjP3fmmet
+   RbZDQWJM/TNPqSY2IFY7WeQ742XhloXGFZ4L3yHiy0OSY1eHs9BZHpY4T
+   FEHKN2dM4if/UsEjCaaCWVXi0lE8Rn355QZaBiqDm0OLyutOdl14STGLA
+   wBfGnWxxn5KFweIJTKRm3C7gKbBz97Eddc31Fdnnukpafhg+7MlrHAmqY
    w==;
-X-CSE-ConnectionGUID: /InFAUSAQBiDzQYzAB7Jhg==
-X-CSE-MsgGUID: iRlDMovyTvqnQs9GRWqNCw==
-X-IronPort-AV: E=Sophos;i="6.18,230,1751234400"; 
-   d="scan'208";a="46028589"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 02 Sep 2025 13:23:27 +0200
-X-CheckPoint: {68B6D3AF-1E-410E8DD8-CEA8F0F8}
-X-MAIL-CPID: 9CBDA58469C4256730D2998464D30FAE_3
-X-Control-Analysis: str=0001.0A002111.68B6D3AC.0013,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 05936164002;
-	Tue,  2 Sep 2025 13:23:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1756812203;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=p/8ygFbEgtNV5wSQi1SEP1xqS2pYIN9T58TZ8hpdiH4=;
-	b=R/6snUputxLjudPp2/0ad8T64Y4pm5GRb2KwnfMLVCp5LfZpqNekWLfHOny1No/XlzPB4I
-	c+SEfmmfitLnJoO3RRVkFhB/t4V+lJn2Zd70ncslVuUh8X6VEp9c7av5zZbRmb8Fisgwmm
-	XUXzDRq18/YnHkNkKGehYejfRuPbCoLa0GinSKWFcFDrPwM7Kny/NALHrmtXiS+1IYe9Le
-	vBYpeQUA05O04JYpo9C+yr3kSmo6+Q1fsdKUM2xfiWYKaQ8dZLHlb26XucxMwh/4hdITDM
-	t5NBsVIOX+V0NMqPPKbQ6ZgDMt1lfiqHpcc10nsVc8309/JGAWgCozg6jcGYtQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Adam Ford <aford173@gmail.com>,
- Krzysztof =?utf-8?B?SGHFgmFzYQ==?= <khalasa@piap.pl>
-Cc: Stefan Klug <stefan.klug@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Dafna Hirschfeld <dafna@fastmail.com>, Heiko Stuebner <heiko@sntech.de>,
- Paul Elder <paul.elder@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Ondrej Jirman <megi@xff.cz>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption: resolved
-Date: Tue, 02 Sep 2025 13:23:20 +0200
-Message-ID: <5921855.DvuYhMxLoT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <m31popxjqk.fsf@t19.piap.pl>
-References:
- <175308758352.3134829.9472501038683860006@localhost>
- <CAHCN7xKq_o_u7PhPMcZ2W9nzrFP8+CnhaYJOyxnjpKfbMTBCEw@mail.gmail.com>
- <m31popxjqk.fsf@t19.piap.pl>
+X-CSE-ConnectionGUID: HIDeFqr1QnKWSoNDil26KA==
+X-CSE-MsgGUID: YGciWsesQwSQKXpEmEPxGw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="59017753"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="59017753"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 04:24:53 -0700
+X-CSE-ConnectionGUID: OPoOrR7OTGCtVWqxtm+8pg==
+X-CSE-MsgGUID: 60cEhCt6QYqf1a2wIiS0kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="171411846"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 02 Sep 2025 04:24:51 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utP83-0001tb-2j;
+	Tue, 02 Sep 2025 11:24:47 +0000
+Date: Tue, 2 Sep 2025 19:23:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+	Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+Subject: Re: [PATCH 3/3] drm/panel: visionox-rm69299: Add backlight support
+Message-ID: <202509021907.mZZ38HtR-lkp@intel.com>
+References: <20250901-shift6mq-panel-v1-3-444b4abbfaea@sigxcpu.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901-shift6mq-panel-v1-3-444b4abbfaea@sigxcpu.org>
 
-Am Dienstag, 2. September 2025, 11:54:27 CEST schrieb Krzysztof Ha=C5=82asa:
-> Hi,
->=20
-> summary:
->=20
-> I've done a few additional tests and it seems the MEDIA_AXI clock is the
-> problem. Reducing it to 400 MHz while still running MEDIA_ISP at 500 MHz
-> produces no errors.
-> MEDIA_ISP at 400 MHz and MEDIA_AXI at 500 MHz produces errors, though
-> (register address errors while reading and writing from/to ISP MI
-> (memory interface) registers, only on the secondary ISP (isp1), and
-> generally only while streaming data from the ISP).
->=20
-> What is driven by MEDIA_AXI clock root? MEDIAMIX: ISI, LCDIF, ISP, DWE.
->=20
-> According to both datasheets (industrial and commercial), MEDIA_AXI
-> is limited to 400 MHz in normal mode and 500 MHz in overdrive mode.
-> All my hardware is setup for overdrive mode, though (two manufacturers,
-> both using the same PMIC setup).
->=20
-> Since no hardware in the official Linux kernel tree (DT) uses the second
-> ISP... Should we just add a warning to the imx8mp.dtsi and be done with
-> it?
-> Out of tree hardware using isp1 (csi1) obviously exists.
+Hi Guido,
 
-There is also [1] which addresses normal mode and clock limits. I don't know
-if there is any progress.
+kernel test robot noticed the following build warnings:
 
-Best regards
-Alexander
+[auto build test WARNING on b320789d6883cc00ac78ce83bccbfe7ed58afcf0]
 
-[1] https://lore.kernel.org/all/20250218-imx8m-clk-v4-2-b7697dc2dcd0@pengut=
-ronix.de/
+url:    https://github.com/intel-lab-lkp/linux/commits/Guido-G-nther/drm-panel-visionox-rm69299-Fix-clock-frequency-for-SHIFT6mq/20250901-222400
+base:   b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+patch link:    https://lore.kernel.org/r/20250901-shift6mq-panel-v1-3-444b4abbfaea%40sigxcpu.org
+patch subject: [PATCH 3/3] drm/panel: visionox-rm69299: Add backlight support
+config: x86_64-randconfig-123-20250902 (https://download.01.org/0day-ci/archive/20250902/202509021907.mZZ38HtR-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250902/202509021907.mZZ38HtR-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509021907.mZZ38HtR-lkp@intel.com/
 
-=2D-=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-http://www.tq-group.com/
+sparse warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/panel/panel-visionox-rm69299.c:341:24: sparse: sparse: Using plain integer as NULL pointer
+   drivers/gpu/drm/panel/panel-visionox-rm69299.c:411:42: sparse: sparse: symbol 'visionox_rm69299_1080p_display_desc' was not declared. Should it be static?
+   drivers/gpu/drm/panel/panel-visionox-rm69299.c:417:42: sparse: sparse: symbol 'visionox_rm69299_shift_desc' was not declared. Should it be static?
 
+vim +341 drivers/gpu/drm/panel/panel-visionox-rm69299.c
 
+   329	
+   330	static struct backlight_device *
+   331	visionox_rm69299_create_backlight(struct visionox_rm69299 *ctx)
+   332	{
+   333		struct device *dev = &ctx->dsi->dev;
+   334		const struct backlight_properties props = {
+   335			.type = BACKLIGHT_RAW,
+   336			.brightness = ctx->desc->initial_brightness,
+   337			.max_brightness = ctx->desc->max_brightness,
+   338		};
+   339	
+   340		if (!ctx->desc->max_brightness)
+ > 341			return 0;
+   342	
+   343		return devm_backlight_device_register(dev, dev_name(dev), dev, ctx->dsi,
+   344						      &visionox_rm69299_bl_ops,
+   345						      &props);
+   346	}
+   347	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
