@@ -1,164 +1,111 @@
-Return-Path: <linux-kernel+bounces-795911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CACB3F94B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C05FFB3F954
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF5748685D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0C0A482F5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11662E8DE5;
-	Tue,  2 Sep 2025 08:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DED22EA17A;
+	Tue,  2 Sep 2025 09:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="cxY734an"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="fFtnC1zW"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BCB32F77A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2FC2E9EDD
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756803528; cv=none; b=NBdz57pVxjRCQFzZx8Vd3noy4vmjkxGEpZikIIXxnKBj70XtS/y0O60XA34YGcLgy/ZGp6BV7fvvmWOP6vG3Rm4fmT4XtG8hWpMy6D78455czWriPbMAmQNQgW+zhFZ9t/WVMPjonh0rtRuQdieAAQgae8tZ/nuyWz4WN2MSxIo=
+	t=1756803605; cv=none; b=Y3pld7+toH4A4ttNyZ0BjJNwV/AAy8NBS+8rCSBgwmVBa51vI+SE8FaKpJar+zvjO+xi+uAoZ4IBrO5uRgod3lhcx0i3sjx+RLsDOLKp2YcxyPXhbcOpWoyhBfk53E+dYL7KK0VZOJ4kvOB7r+7ZLASnuno5AgtTj7pr/CyA71w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756803528; c=relaxed/simple;
-	bh=QIoh5jTL1PVJKZRG+Lb+CALSh7Ks8nnumJanccDk1qY=;
+	s=arc-20240116; t=1756803605; c=relaxed/simple;
+	bh=xNK7ZbJpWHux4rtkInwb0kGP3CRd0QxulbDZD6FxFfA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eKCBqHzQnXIkPJUEb79aRoEUpNZmL5bpJPZo8rEe3vgqt1ooAs4SwH3p0tmfRyM2jr9pbB/ew2uroydHAWSVf89wLHNSqpOk0/QU/LTAdcKw141kD/7D8roi1se0gmXxIc0dFcL//icRRGdjc3gmBYHJk3C4dJIIu+ycP7JUN+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=cxY734an; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ce4ed7a73fso2614289f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:58:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1756803524; x=1757408324; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fdTnKkYv89qYmuDrHKQiKv7a5BMqopZQ28l888CmXYk=;
-        b=cxY734anSnfb+oITa5tBkrwf/MssBjaCjCuGgtx8MUq+PyNHK5KGdllBqgNSLmHZd5
-         ZMdNVG52RkIwTfZgUpcZ50OT7nqEw7TI7QuTJYcxNMYcfMuJqdfMiAIgcjZu28qt+gvL
-         C3t4uolDC8e/My5Qlb84S25VvHl4Fg+bgoS0AaS3GFJisiJxg5znIJ/njRSsHfAzsIPk
-         uaFJGj/QhqabSxZVzfaHFQbuVjgq7DJiSbQogGuKvF4CA8bdwQ/afPSL//bdQgy2aQI5
-         /otauF1xKaUFFfDk3bQcqtXYyUJXki2y/xYj2dH1O9X20OpHNFf6X2XdYXK6Os+Z556z
-         qd1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756803524; x=1757408324;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fdTnKkYv89qYmuDrHKQiKv7a5BMqopZQ28l888CmXYk=;
-        b=QG/fAvvg+X1C6CvYfsaUG6eBK1ti9MyPfq4fvqxPXaAcZQORxNL4gD0qkF+gya9kSr
-         9YoVVKR/GkLe6OtCb1esW3uQtLlm8Zsamgb8LpyOhhDdhtunaLKdAK4ELoDn9R9mS9AH
-         k/ZPFcjZMRV4PPL/udR0WvB3BwR96Zpaww3pzMbjxDxzM3lONicM8cYBfSEazLl+kL/9
-         SSovDYakhdZ3fitZy2dpy+wtRwJ9Mi/qaO5MEepL37xD+s86uzgU6MvFggCCG16+T8lE
-         0hqJsrMMZmuqH4w8XJ3ziaEIAqrog8XJd/m4N78AU17XP2Xb1fZL0aZ3QWK/ZcK+sK1i
-         AoTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJWFpnalkpuNuj3oSPodu1csoQoKq+nlosdcRMYdlDYshn5BwuK7FEFJAmhA0cfTFWmPGNaRsGXJY0Hws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx38xAh4Jz/KP0qMSYzrYTLhD33iFjW7Zn8POkmFjRvvKP/WW84
-	uN6F9Xad1Il7rXdVbDEeF433DArMCd9zPecE9CRVHb6ES3N+oG3CExuUCcbxx8WIclg=
-X-Gm-Gg: ASbGncu580H1K0SXSHJ4KRVwkbAgxXqb7o8DfkIgIMQohOyDOD20mYbIS9kRLT4CFu8
-	D00s6RzHAdvO002N8x0OOMquJKzniyzOgYpz4CnUkcLkIEwForpv7TDo3n6v1h7TM1106JuFgWW
-	mihoNDou1hErX0Fm89mdSs1VG8UqwePTabLVmYyD9QgNtL9h3WnRnhn7ymwbQU5DYAn9lT5sMEE
-	KIliUISxZJHZMXB+zhETLPxNSwE7voe33EBIkgXM/Tey05fM8TLddzKT7QLScX9YRCl6l6jghY6
-	kbjvDDQzamCB8E3JZ09WAGO8V4iwvGHfHg7Cmf3KlRlk8I14ZSjpn4ze7MiukeGU9uOKy4Z+mHx
-	FA//QRfKf6KaWo3Q8a7ui9/VEdHexOKVJhk4=
-X-Google-Smtp-Source: AGHT+IHcFsAfK5WIhq+S9Y1CY3ZPTu/1Q3IzKtJHTb6xFETccQcxq0O80x8z8t2LLzPK76tz+CxMCA==
-X-Received: by 2002:a5d:5d8a:0:b0:3ce:a06e:f248 with SMTP id ffacd0b85a97d-3d1dddf374dmr6988087f8f.17.1756803523951;
-        Tue, 02 Sep 2025 01:58:43 -0700 (PDT)
-Received: from [192.168.0.101] ([84.66.36.92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d3a7492001sm13361996f8f.42.2025.09.02.01.58.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 01:58:43 -0700 (PDT)
-Message-ID: <5f6c7541-93ca-4b67-b4e4-33ff60e99c7d@ursulin.net>
-Date: Tue, 2 Sep 2025 09:58:42 +0100
+	 In-Reply-To:Content-Type; b=gIsFJ+RAM7IUyok4d/G1oZTSMbq3ClivFGTWJoD05cjZ4PS/tKc/OKMfENA/P86FAbI8yKgpkiBdPf6qQw3pid6W5+ikrAUuAJKp1CY5gPR5f/hS6ssX1dcFAdB9s71weun+/lH2aiLjknZ2SBHkTP9+Qaz306qdzNO6UqmhJeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=fFtnC1zW; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cGKSb1P72z9tmC;
+	Tue,  2 Sep 2025 10:59:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1756803599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u6U/TCetAKMfHaRmR9thC/jSWNiJ+4ewzJjcPKb0o6s=;
+	b=fFtnC1zW5WM1bgu/WlqUS/sI0OJC2MxE5x1uHvH6i4fIE165xyzxBv3FdZwJUjiyqLBbxQ
+	g4c8bbAwCE/LViX2pTr7zdp4JZzAlFKCMi/fgOaJK0w/t+XCnUY7EfJFqdk+sQU52wNW9h
+	40kEKzsONmRYpoT/m3a/rEpxXKETmHtAuLADBYcfnDtO+JXYmmrLXTz6xvHSHSS1EPGbO2
+	Ox6+LVfcJIZUKo0hVScj0ulzP4pQHSS/H8y8PiqftQsTBfLMVKUUBzrDHQk9bpW7VllRsk
+	PYRSoaoNd1FTzKOOuiwbVAAZrisJGYJJlNefrJvwYKY44e1IfEX0Ne+OldAQhQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Message-ID: <cdbc4c22-7a6f-4c01-8d2b-550b643318d8@pankajraghav.com>
+Date: Tue, 2 Sep 2025 10:59:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/i915: Replace kmalloc() + copy_from_user() with
- memdup_user()
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Nitin Gote <nitin.r.gote@intel.com>,
- =?UTF-8?Q?Miko=C5=82aj_Wasiak?= <mikolaj.wasiak@intel.com>,
- Krzysztof Niemiec <krzysztof.niemiec@intel.com>,
- Andi Shyti <andi.shyti@linux.intel.com>
-Cc: Jani Nikula <jani.nikula@intel.com>, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250902081046.35463-2-thorsten.blum@linux.dev>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20250902081046.35463-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] huge_memory: return -EINVAL in folio split functions when
+ THP is disabled
+To: David Hildenbrand <david@redhat.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+ mcgrof@kernel.org, gost.dev@samsung.com, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250902084036.208921-1-kernel@pankajraghav.com>
+ <1acb705c-4846-4a12-9e90-f7853da8a295@redhat.com>
+Content-Language: en-US
+From: Pankaj Raghav <kernel@pankajraghav.com>
+In-Reply-To: <1acb705c-4846-4a12-9e90-f7853da8a295@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4cGKSb1P72z9tmC
 
 
-On 02/09/2025 09:10, Thorsten Blum wrote:
-> Replace kmalloc() followed by copy_from_user() with memdup_user() to
-> improve and simplify set_context_image(), and to silence the following
-> Coccinelle/coccicheck warning reported by memdup_user.cocci:
+On 9/2/25 10:43, David Hildenbrand wrote:
+> On 02.09.25 10:40, Pankaj Raghav (Samsung) wrote:
+>> From: Pankaj Raghav <p.raghav@samsung.com>
+>>
+>> split_huge_page_to_list_[to_order](), split_huge_page() and
+>> try_folio_split() return 0 on success and error codes on failure.
+>>
+>> When THP is disabled, these functions return 0 indicating success even
+>> though an error code should be returned as it is not possible to split a
+>> folio when THP is disabled.
+>>
+>> Make all these functions return -EINVAL to indicate failure instead of
+>> 0.
+>>
+>> This issue was discovered while experimenting enabling large folios
+>> without THP and found that returning 0 in these functions is resulting in
+>> undefined behavior in truncate operations. This change fixes the issue.
 > 
->    WARNING opportunity for memdup_user
+> Currently large folios that could be split are impossible without THP, so why should this be a fix?
 > 
-> No functional changes intended.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> Resending this (with updated patch subject and description) because the
-> CI logs [1] from my first submission [2] about a year ago are no longer
-> available.
-> 
-> [1] https://patchwork.freedesktop.org/series/139319/
-> [2] https://lore.kernel.org/lkml/20240925141750.51198-1-thorsten.blum@linux.dev/
-> ---
->   drivers/gpu/drm/i915/gem/i915_gem_context.c | 12 +++---------
->   1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_context.c b/drivers/gpu/drm/i915/gem/i915_gem_context.c
-> index 15835952352e..ed6599694835 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_context.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_context.c
-> @@ -2158,18 +2158,12 @@ static int set_context_image(struct i915_gem_context *ctx,
->   		goto out_ce;
->   	}
->   
-> -	state = kmalloc(ce->engine->context_size, GFP_KERNEL);
-> -	if (!state) {
-> -		ret = -ENOMEM;
-> +	state = memdup_user(u64_to_user_ptr(user.image), ce->engine->context_size);
-> +	if (IS_ERR(state)) {
-> +		ret = PTR_ERR(state);
->   		goto out_ce;
->   	}
->   
-> -	if (copy_from_user(state, u64_to_user_ptr(user.image),
-> -			   ce->engine->context_size)) {
-> -		ret = -EFAULT;
-> -		goto out_state;
-> -	}
-> -
->   	shmem_state = shmem_create_from_data(ce->engine->name,
->   					     state, ce->engine->context_size);
->   	if (IS_ERR(shmem_state)) {
+I was debating with myself whether it will classify as a fix or not. I have had people tell me that
+I should mention it as fix even though I didn't feel like it ;)
 
-LGTM.
+But I agree with you, we can't hit this issue in the upstream kernel. I can remove the fixes tag in
+the next version.
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-
-Note however that CI is not picking up external patches these days, so I 
-will need to re-send it for you. Once it passes I will merge it but if I 
-forget feel free to ping.
-
-Regards,
-
-Tvrtko
+--
+Pankaj
 
 
