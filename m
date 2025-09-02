@@ -1,149 +1,197 @@
-Return-Path: <linux-kernel+bounces-796967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFDCB40A1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:06:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C29B40A20
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 572917B637E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:04:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2138562FBA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2960C322775;
-	Tue,  2 Sep 2025 16:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C07732C336;
+	Tue,  2 Sep 2025 16:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f0Kb/z85"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ORBapOli"
+Received: from mail-yb1-f226.google.com (mail-yb1-f226.google.com [209.85.219.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A6C30AADA
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0675A219A8E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756829182; cv=none; b=IJzSCOiEeE0Tg4nGiePeG+HE1jrx1jfoq/yKoLmIUgySTFPU+G5qepsCoSZDURz7V7gNisi/ECyULSdz+HVtPRRGh5LZ7dpMEb+GEBdeDibqBrc1XOHb3H7bDjzXbSsgghG0NioMW+60HRv6LB6aCQCUGqeNMuh0wrI7f6vvcsE=
+	t=1756829223; cv=none; b=FxKP3MVyXuRB2jOhMe0JRvlhH9UHXj9uUGCfN0if6JP5QW9JdbWgUqntnnIqlznOCMbTwsRFkrO3aW/yB4LfTXZgqNuwmGC9/5bEKi5yAkBYqnYZblouaXaSDvdNgbNqQbvrOYNTgGbLkWjit5bkWRrYWX0LDBYNJHOqRJd2rK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756829182; c=relaxed/simple;
-	bh=5VuJ2i9/jC7ksUTZP07b2sTU5J6JZN0KY6kjI0VYiHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cHOC3qUQGy7+DTc3FPFKNfBpAP1ov0p3ufWLLezzCeZUNFMFVf/bN1iEN24OeRAG9L6GZToUTFXfJuRtqWwQBgMfoPWXV+60vNSB+vCkPn82T+8E75pTMuzFVF3uoXKN/r3lsRi15SyOjpSl5wuWnw4Gn5UBx18HmmJ9nm04YxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f0Kb/z85; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61ed395ba46so2576a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:06:20 -0700 (PDT)
+	s=arc-20240116; t=1756829223; c=relaxed/simple;
+	bh=oscotWeu2ofDRZ2I7B+ST50R3lMq/oklG8FOxuKuJzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fC2Rc7ooksNkqZtTIDNQAvQbqye4cBzNCCyZOiSNREWJrHDYfY8MMRG1hSI1mnAQtKiAtqqsoeHut8zarFMfa1VWQWBoKG0oB3M8xBc3LRaSJql1aRaPe8thoTTLPI0ZxoSQMT9RMcGAvQiWMisWsItHMrcqxNQbvhaiHQ0fQhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ORBapOli; arc=none smtp.client-ip=209.85.219.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-yb1-f226.google.com with SMTP id 3f1490d57ef6-e973f268b07so730270276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:07:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756829179; x=1757433979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IzANuyEuI1RP0uICgM6hjPd4IH6cBKzDDVGFb2HLC+A=;
-        b=f0Kb/z85AOu8Rcl9bz1iid++/pIpSTWGRrcBwKFi9TnGnBqSRp456wkRMqZx36BSvo
-         +ZYBz5SqzDOr8xjMp+PCEdrg9lKDxHeCOqyEKxUwlI4v1B+dKFUTgy39Q6NKEEbpZBZc
-         mZLH4ut3u/hICAbcM0BHxPLv2BBvqlwy+g0exMxSc6qbSSlJd5Sonnv+AKs74C0LcT+N
-         v7ACB6VsJ0+Kz0F1w/IHdjmHdPxeTO5K2ilpGoaQJMJaWcxNuuPXV//hWfWujxmRT6ho
-         e0HvHpNGvrDs5TwNQp/e+7pYfM60DABmuDPQbGMTYb8n6XdGcdzWo7oTUerIJCXmly/k
-         lDLQ==
+        d=purestorage.com; s=google2022; t=1756829221; x=1757434021; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RlJrQ5tmWGYzBhNWJHSwFwCHVK4G1iWt6SUsZakgOpw=;
+        b=ORBapOli6/6JhTr2x9gqyDu9E5YWMhdLqsDfJG8Z4QUMslowi/Ce2a5P0jRX1Jo2Sd
+         VESAeNi0/DKlSUM7eh9s8rO6cxuYN1sHAUOQBxq0NIvdZKhbKkjOKCxjEbrasRQDRCYA
+         vL88jlzinCMwYwmWTIx8cUJDz5fDZ3pfQz4CZ4QMMJfpH3HrX5fRErRZpUtm00hrNx0y
+         0oO6UeRsVQK1ewgzY8mmH2mTwaTbPIZvP2WUOnsEEsmqltqTZIAXZnqXq0yw8Yg7FZdd
+         WiF1/9iLu8Sl2sFEGu3k2jSW6yt7v86DpU1yePnvaIKN6tnBzkQRqrCbGmmCIGfAIPdn
+         YZsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756829179; x=1757433979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IzANuyEuI1RP0uICgM6hjPd4IH6cBKzDDVGFb2HLC+A=;
-        b=QiWifWepugrytP6HKF0JyzQeqa/BzXdJpXG3tgdHaVXXnYe073UcrvOfob89hEowhv
-         0w/DHB3E4hMyNgRIQaIXjvzuw9CNrKLU/SJ02iTJwdKFLnXBAMbK3ktYJ4GIwrGusA5b
-         I8K8xaYwGWLUet8d0ZpmEMSiQSAYun8YKn6y6varL8hmD6sv/BG+pmGHFgtKbZCj3pG5
-         XZI1DraX148DLd5yxAspJT4FoiJuTmdqzf7HDOMtplW+qmYEvgRF3k38diwnhi1WQctt
-         DKHuM+Ti413wUF05atXm+3g9e13qJwupfSr/1KlPdTF/G6CkZ5UC4JemZEAXi+CNugWE
-         u9yg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3RjdXXhzg7S+2cm+DfgBXIHwyikbmJv+SaMp3UFT6okbZPNmSzyQeJN0HqjpATAIvRaSh0Uw3MD9LQP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0iEj4KWH0Tw1Tdk/nqIaK8czDTqmn1Rur9cR0OA9bYbvneZsb
-	yhpfTPv4/Xt5GiUSx4y3jW8JTt2fpwBOhsSNMfyLGNiWEVyf8GdO67YffZeY5RL7/O2RqkilFvv
-	KYs5VvwVRWnZAzZ6HCReoCb75sMN9MbW/OoZmgtzW
-X-Gm-Gg: ASbGncsIxJEnSZ1ueXz7OiGiQtou8BwocxkZxxdDqNYa8uoovE/5qVONIkTwNKLxlVg
-	rxWrAveTWd/6x+QOtFwvxEN7l3bF/mfgZxM4ldelPDDgCJMp8a9n3QFfDpHmr4u77gjWT015OQ0
-	UbeA/T4cG1ofFDr9u+0mervkXGYmpxjDM05rDarRACwD53krIwXylvzE35S65rLZmccsLizcyM6
-	KeBS5gRcKsmYYE2pTlRjs1vTQwzLTY50Wg+4jHXrk36WIeHrf9p
-X-Google-Smtp-Source: AGHT+IFVjdQ+2T7/LXpZCpOfk33GaA9SF6xBIIl71Fs9cHt3AeFCESliSAH3aiD8Kxte9Rt8Kym9K8NUgZg1oMEq0VE=
-X-Received: by 2002:aa7:df92:0:b0:61c:ab1b:1828 with SMTP id
- 4fb4d7f45d1cf-61d21f9fc51mr262090a12.7.1756829178846; Tue, 02 Sep 2025
- 09:06:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756829221; x=1757434021;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RlJrQ5tmWGYzBhNWJHSwFwCHVK4G1iWt6SUsZakgOpw=;
+        b=vR0NGM4Y4B8vQ15FksFuCUaUFbhdEb6K7ktSxuUuup37QOIyBsV48fehbB51WkehAV
+         0T79iTMYoWH/hbh82cN+htuEGSSsm4o0FJOnWwDrdWYrZncybGbKIihjeSGx7FLrbb+l
+         hRqwYu0KcX3f2k00ZDBKBSwxTiLkwKMpX15ob5VYLF5tAkkKKFWAoXC3/+sfaJH0kLHe
+         WZOmRuCcnQ3G60vhCLYrhxDrxbazd7ea1DY1/C7Wd3hrZhpsNYxjf9HWFeDgi6pTBAUY
+         prFFlm9vGs3kIEC2kfG8N7mOjhpcLjhmzQPgD+wZqV4Mli6Ox0mQmonAobLwXLyebRqU
+         R1vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBCZqa2rbdPNi5WgBZhmM5v3GDtqVsyL0Rozn0WMbe7IgV28RPTNQaF+7I8ZC6HHodeaMXbeJUS6arS0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo/hjJ/PijXp21nASIFSNWmFa4u3ZF+hThNTJ3orRPBT7IkC+T
+	WBAfGblQWH5ueq8tHdsDkpoipQDVZrOJrqsgErut6t3E9enac6u6r19qeYle4XOiHmSW1tvdkas
+	3V4q+oLQJCiMR1N1K3+UOQpRDg/Udx+k26ATiIuaMpg1BN7l/C0Pz
+X-Gm-Gg: ASbGncsR9k/OZ/2bV5IEU0m6ChvVogbPgLT+q2VVbK97fTru3RkmUC1cmsfyixFZ+UC
+	QPLWFSS860xOoxsRVnvZWd26ve0bJGV3lndhgmd3kHJt+4KKQzpt2bqRCY9gEBYyesr5mNbuGH1
+	Gp9OyBL3XIkuK9KxevgyLi9N5ImS6AgJP4A4EGwojHzzjydf7CD1uM5sAfiyzxhrR+v7XB9W6EJ
+	kTTuQ1JLhs+BK+u8h5WwvhNOlr3fisMKl3qDHClQTvTmJoudp94AkjTY0luVFInCaw9mrn6owDI
+	sYbG61ac+7j/WSJnj8tj+6+f9ptZ3o9AgFbrhBW3B/K3JBXIrmSsTQdhvw==
+X-Google-Smtp-Source: AGHT+IGehGKy1s/4ECGVhm6Ytshrk21h/CKWiX53aH303nut6igUt+bsRoA2rH9L1NNTY357MPkA4BL/eq2s
+X-Received: by 2002:a05:6902:1148:b0:e97:604c:ce6f with SMTP id 3f1490d57ef6-e989be98834mr8924297276.1.1756829220457;
+        Tue, 02 Sep 2025 09:07:00 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 3f1490d57ef6-e9bbe1a9f19sm171338276.17.2025.09.02.09.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 09:07:00 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id CD706340214;
+	Tue,  2 Sep 2025 10:06:58 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id C92A7E415E2; Tue,  2 Sep 2025 10:06:58 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/uring_cmd: add io_uring_cmd_tw_t type alias
+Date: Tue,  2 Sep 2025 10:06:56 -0600
+Message-ID: <20250902160657.1726828-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226030129.530345-1-riel@surriel.com> <20250226030129.530345-2-riel@surriel.com>
- <aLcQ3UCXXNcByW1O@gcabiddu-mobl.ger.corp.intel.com>
-In-Reply-To: <aLcQ3UCXXNcByW1O@gcabiddu-mobl.ger.corp.intel.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 2 Sep 2025 18:05:42 +0200
-X-Gm-Features: Ac12FXwEw7Qk0kLzRMa95Y1yUaklA4c8qD40uRP3S8PLdE1A0rat-HccquoTMss
-Message-ID: <CAG48ez1q_Sgk5nr7Bngyt0UB3FkYb6e0cHv18wqD=sLEdrZkmw@mail.gmail.com>
-Subject: Re: [BUG] x86/mm: regression after 4a02ed8e1cc3
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	bp@alien8.de, peterz@infradead.org, dave.hansen@linux.intel.com, 
-	zhengqi.arch@bytedance.com, nadav.amit@gmail.com, thomas.lendacky@amd.com, 
-	kernel-team@meta.com, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	jackmanb@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com, 
-	Manali.Shukla@amd.com, mingo@kernel.org, Dave Hansen <dave.hansen@intel.com>, 
-	baolu.lu@intel.com, david.guckian@intel.com, damian.muszynski@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 2, 2025 at 5:44=E2=80=AFPM Giovanni Cabiddu
-<giovanni.cabiddu@intel.com> wrote:
-> On Tue, Feb 25, 2025 at 10:00:36PM -0500, Rik van Riel wrote:
-> > Reduce code duplication by consolidating the decision point
-> > for whether to do individual invalidations or a full flush
-> > inside get_flush_tlb_info.
-> >
-> > Signed-off-by: Rik van Riel <riel@surriel.com>
-> > Suggested-by: Dave Hansen <dave.hansen@intel.com>
-> > Tested-by: Michael Kelley <mhklinux@outlook.com>
-> > Acked-by: Dave Hansen <dave.hansen@intel.com>
-> > Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
-> > ---
-> After 4a02ed8e1cc3 ("x86/mm: Consolidate full flush threshold
-> decision"), we've seen data corruption in DMAd buffers when testing SVA.
->
-> From our preliminary analysis, it appears that get_flush_tlb_info()
-> modifies the start and end parameters for full TLB flushes (setting
-> start=3D0, end=3DTLB_FLUSH_ALL). However, the MMU notifier call at the en=
-d
-> of the function still uses the original parameters instead of the
-> updated info->start and info->end.
->
-> The change below appears to solve the problem, however we are not sure if
-> this is the right way to fix the problem.
->
-> ----8<----
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 39f80111e6f1..e66c7662c254 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -1459,7 +1459,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsig=
-ned long start,
->
->         put_flush_tlb_info();
->         put_cpu();
-> -       mmu_notifier_arch_invalidate_secondary_tlbs(mm, start, end);
-> +       mmu_notifier_arch_invalidate_secondary_tlbs(mm, info->start, info=
-->end);
->  }
+Introduce a function pointer type alias io_uring_cmd_tw_t for the
+uring_cmd task work callback. This avoids repeating the signature in
+several places. Also name both arguments to the callback to clarify what
+they represent.
 
-I don't see why the IOMMU flush should be broadened just because the
-CPU flush got broadened.
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ include/linux/io_uring/cmd.h | 13 ++++++++-----
+ io_uring/uring_cmd.c         |  2 +-
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-On x86, IOMMU flushes happen from arch_tlbbatch_add_pending() and
-flush_tlb_mm_range(); the IOMMU folks might know better, but as far as
-I know, there is nothing that elides IOMMU flushes depending on the
-state of X86-internal flush generation tracking or such.
+diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+index 4bd3a7339243..7211157edfe9 100644
+--- a/include/linux/io_uring/cmd.h
++++ b/include/linux/io_uring/cmd.h
+@@ -9,15 +9,18 @@
+ /* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
+ #define IORING_URING_CMD_CANCELABLE	(1U << 30)
+ /* io_uring_cmd is being issued again */
+ #define IORING_URING_CMD_REISSUE	(1U << 31)
+ 
++typedef void (*io_uring_cmd_tw_t)(struct io_uring_cmd *cmd,
++				  unsigned issue_flags);
++
+ struct io_uring_cmd {
+ 	struct file	*file;
+ 	const struct io_uring_sqe *sqe;
+ 	/* callback to defer completions to task context */
+-	void (*task_work_cb)(struct io_uring_cmd *cmd, unsigned);
++	io_uring_cmd_tw_t task_work_cb;
+ 	u32		cmd_op;
+ 	u32		flags;
+ 	u8		pdu[32]; /* available inline for free use */
+ };
+ 
+@@ -55,11 +58,11 @@ int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+  */
+ void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret, u64 res2,
+ 			unsigned issue_flags);
+ 
+ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+-			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
++			    io_uring_cmd_tw_t task_work_cb,
+ 			    unsigned flags);
+ 
+ /*
+  * Note: the caller should never hard code @issue_flags and only use the
+  * mask provided by the core io_uring code.
+@@ -104,11 +107,11 @@ static inline int io_uring_cmd_import_fixed_vec(struct io_uring_cmd *ioucmd,
+ static inline void io_uring_cmd_done(struct io_uring_cmd *cmd, ssize_t ret,
+ 		u64 ret2, unsigned issue_flags)
+ {
+ }
+ static inline void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+-			    void (*task_work_cb)(struct io_uring_cmd *, unsigned),
++			    io_uring_tw_t task_work_cb,
+ 			    unsigned flags)
+ {
+ }
+ static inline void io_uring_cmd_mark_cancelable(struct io_uring_cmd *cmd,
+ 		unsigned int issue_flags)
+@@ -141,17 +144,17 @@ static inline void io_uring_cmd_iopoll_done(struct io_uring_cmd *ioucmd,
+ 	io_uring_cmd_done(ioucmd, ret, res2, 0);
+ }
+ 
+ /* users must follow the IOU_F_TWQ_LAZY_WAKE semantics */
+ static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
+-			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
++			io_uring_cmd_tw_t task_work_cb)
+ {
+ 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, IOU_F_TWQ_LAZY_WAKE);
+ }
+ 
+ static inline void io_uring_cmd_complete_in_task(struct io_uring_cmd *ioucmd,
+-			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
++			io_uring_cmd_tw_t task_work_cb)
+ {
+ 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, 0);
+ }
+ 
+ static inline struct task_struct *io_uring_cmd_get_task(struct io_uring_cmd *cmd)
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index f5a2642bb407..d76d6d27765c 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -124,11 +124,11 @@ static void io_uring_cmd_work(struct io_kiocb *req, io_tw_token_t tw)
+ 	/* task_work executor checks the deffered list completion */
+ 	ioucmd->task_work_cb(ioucmd, flags);
+ }
+ 
+ void __io_uring_cmd_do_in_task(struct io_uring_cmd *ioucmd,
+-			void (*task_work_cb)(struct io_uring_cmd *, unsigned),
++			io_uring_cmd_tw_t task_work_cb,
+ 			unsigned flags)
+ {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+ 
+ 	if (WARN_ON_ONCE(req->flags & REQ_F_APOLL_MULTISHOT))
+-- 
+2.45.2
 
-To me this looks like a change that is correct but makes it easier to
-hit IOMMU flushing issues in other places.
-
-Are you encountering these issues on an Intel system or an AMD system?
 
