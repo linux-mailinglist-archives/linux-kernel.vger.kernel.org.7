@@ -1,85 +1,201 @@
-Return-Path: <linux-kernel+bounces-795823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F07B3F859
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:29:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2D4B3F85D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8E717B99D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D473B53AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEAD2E8B6F;
-	Tue,  2 Sep 2025 08:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C1321FF38;
+	Tue,  2 Sep 2025 08:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUnXee45"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q736aFP6"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8213D987;
-	Tue,  2 Sep 2025 08:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473123D987
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756801759; cv=none; b=pOHoVeohXEbcD7+PFDKE9uIx5EQ5m7zO8gtFMeadyD6ARGLs2kSEPtGTcBwj5wxxQ+ixKckztMHWzPuDePUbG6EKykCJD0UwhDQHS3xNkTbC5zLVpJSmSWfU4Im6Af4wGX40Z5+iWyC7/6zLvQbuAXbxU+SgRYYEzoyDRAjF5/Y=
+	t=1756801774; cv=none; b=B91grsfmSCOGu/P4Hd0aqy22qi8vEKwO5XiPSZ55VGTCO3BwdfS0uINajFNWqcWmv9GwzZ0ssbDSWr1sdg6Mld6sRYCHZi1IeG2cEoC/3k0PpGwXF3PD2rRiKo0xJ7xj6zbqwN29mqvrG7OMA4qyPWGSPtKRlfGy2oYkqhVIJYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756801759; c=relaxed/simple;
-	bh=TI8iWiXPUcMsp1Yq4V7ng0SNQZgecLWmnTLlRDdrUAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HMXwccuSF7ZYAVQVXq9UbmVtgeZx5JtngIdqxbogup82FRzE38fjqAc1TqufKbHNkb0xscJJJxbjg4e30CgPwAoyfJJkH86QeyT8T4pDP2XJGwRvpRPcUmasFgW/XOqyAJSV5g+QRYd2eHrZvwuMKfMCCIEYDVpD/+eGX2gyRHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUnXee45; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E0BC4CEED;
-	Tue,  2 Sep 2025 08:29:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756801759;
-	bh=TI8iWiXPUcMsp1Yq4V7ng0SNQZgecLWmnTLlRDdrUAA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RUnXee45Km6xClRAZTwN3sRjENamYZ9KGX5sNdIU5whvk9R4xxDvDF63XxVGMZRLj
-	 SE29c2F5wMc/T8oFQ9R2txEAnccp2MAu4jAvWuecS4Jgls8B0n5sgECxGZ2upQgld6
-	 2ryRVnvrbRU/cSpNGK5bp/4sfE5fKabw5M7IHVdXthCd+VQhFktQlFK7nPy0xtkydD
-	 EcNsvcmajRwqC5sk1r77X2aRtmRL2jsHi5fS6gCKxhgQyhyK7tgPr21sJt4WaVMCPb
-	 fZXgVg6dOkieSOpteNEG7WZfmyNisHRzcECS73+b8uBhpJ+lpwTXGLSmk5ZcyitWY9
-	 5LOp6YRXJjObQ==
-Date: Tue, 2 Sep 2025 10:29:16 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] Documentation: media: update Dikshita Agarwal's
- email address
-Message-ID: <20250902-space-sawfly-of-protection-ffdb06@kuoka>
-References: <20250901-update-email-v1-0-8fd49d58c0e5@oss.qualcomm.com>
- <20250901-update-email-v1-2-8fd49d58c0e5@oss.qualcomm.com>
+	s=arc-20240116; t=1756801774; c=relaxed/simple;
+	bh=mz6MChWAhIh1fUS9YL3zMQPODRH3xmYPsKPrGEnKmVE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=U8JrZ84OF1cj5n32ojDFb4K6wHTFTR+HsVrZMdt9FMrkCyxBChrKMEUah5fBC5nBJ+peu7Jzank/FPGGaLVPsYPoXsBz33hxqaxAHl4TvTtjS6QN2TSvPFjwFx8aY5xRTvexjf8NXouJ6MZ2A/PBGxUik1cjloADQ6X/cFVE7/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q736aFP6; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b8a2b9fcaso16125845e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:29:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756801771; x=1757406571; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fMrVj7jAgdBMUg6bB9EkBvTIBFRbh5mF4KGnDnI9ZoQ=;
+        b=Q736aFP6pE3HDPM1K/YTKrI13Zb6j2GY5mHXoLrn4KCtI3xOjhebM5iy6A08lG93BB
+         Hi/o5b7fTunhII2O8aVjG0dVcRZuK8onnTAnZK9BNL3pz65Wq8ysaDprx7iGCg+X9ClO
+         +oOt4jZlMxfjNHBAgvoulFPTlWoizVg+rwz6KU9/Wgs3+fcziY+e8WLLrsNRFmnZN23x
+         wgXq/V9JnsWAjFVpJPfSJvQV4JMih465l6MZiKGQVkHUxH4yQBvSTaj6NqHs2jFD8Hl7
+         3OANehw40X32KI5GhUvkNcju4enJRc+4uf/vcLrarAFYuobPHkiPNxfS0dEBLuZ9qlhi
+         ERwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756801771; x=1757406571;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fMrVj7jAgdBMUg6bB9EkBvTIBFRbh5mF4KGnDnI9ZoQ=;
+        b=pTH8Wl1k4NpsREgo65ifjsrlDBRUbpMRLqLvuhfDpIwt8cqeyQs1EzDuXs25XjofXu
+         ImBaaU1j+YM2ZeyPSX6l5BVh69P47tmPOo5BSAXt/jZy7U61nkmiGnVZ4/ZhcraRUAW2
+         dG/NMOVCW0lD7pkmvYwbZepGfViiqGTTnIng3c0t/rJBBKMu5n4kOq8ooBCG23F8HGSa
+         TFajJSdpiuaJ2cOcheXixOuvX4Aqo9f8MI57OB060UrFC0j6qrlodDC2gNRSdkHr6V07
+         kE0SO92z0RThCbmnrOTSp62PTVvCLEZ4YGhJ3dpCtpJ+jKzbhZ7EOj2cPjMEsCfq84/k
+         jXvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpWQb3mLuunZ1MVAkbc0+NMMfAwKU8wO0O5c1y4DX947C2/Xjn4ds2/DeoYeNtE7XOEtg7i+7+WaPXWm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx19WrQEswiSbl9+kDe/XQfVCv9VBOkZ18WUn38QsoUp4Ghy3V3
+	hAOnGXj4mkqlsiFuH4okHKKLBuFgH4WCaDpJU0+BvT6bikU4oShIHiXXDjZEafze6y06BS8MhB8
+	sLDkW6b1f+luC8CFlyQ==
+X-Google-Smtp-Source: AGHT+IH+wbAKMP4pet3Iec/jg+z/+uHyKtEPnwn80rzGG04HiSXVcEQZ2VRn1KYTtbbuXX26NiHOYJCKfauiaaw=
+X-Received: from wrbbs17.prod.google.com ([2002:a05:6000:711:b0:3b7:8b93:59f4])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:1a8c:b0:3c9:24f5:4711 with SMTP id ffacd0b85a97d-3d1def66f6dmr8162944f8f.43.1756801770707;
+ Tue, 02 Sep 2025 01:29:30 -0700 (PDT)
+Date: Tue, 2 Sep 2025 08:29:29 +0000
+In-Reply-To: <20250901-shrimp-define-9d99cc2a012a@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250901-update-email-v1-2-8fd49d58c0e5@oss.qualcomm.com>
+Mime-Version: 1.0
+References: <20250408220311.1033475-1-ojeda@kernel.org> <20250901-shrimp-define-9d99cc2a012a@spud>
+Message-ID: <aLaq6TpUtLkqHg_o@google.com>
+Subject: Re: [PATCH] rust: kasan/kbuild: fix missing flags on first build
+From: Alice Ryhl <aliceryhl@google.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	kasan-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Matthew Maurer <mmaurer@google.com>, Sami Tolvanen <samitolvanen@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Sep 01, 2025 at 01:03:29PM +0530, Dikshita Agarwal wrote:
-> Replace quic_dikshita@quicinc.com by dikshita.agarwal@oss.qualcomm.com.
+On Mon, Sep 01, 2025 at 06:45:54PM +0100, Conor Dooley wrote:
+> Yo,
 > 
-> Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+> On Wed, Apr 09, 2025 at 12:03:11AM +0200, Miguel Ojeda wrote:
+> > If KASAN is enabled, and one runs in a clean repository e.g.:
+> > 
+> >     make LLVM=1 prepare
+> >     make LLVM=1 prepare
+> > 
+> > Then the Rust code gets rebuilt, which should not happen.
+> > 
+> > The reason is some of the LLVM KASAN `rustc` flags are added in the
+> > second run:
+> > 
+> >     -Cllvm-args=-asan-instrumentation-with-call-threshold=10000
+> >     -Cllvm-args=-asan-stack=0
+> >     -Cllvm-args=-asan-globals=1
+> >     -Cllvm-args=-asan-kernel-mem-intrinsic-prefix=1
+> > 
+> > Further runs do not rebuild Rust because the flags do not change anymore.
+> > 
+> > Rebuilding like that in the second run is bad, even if this just happens
+> > with KASAN enabled, but missing flags in the first one is even worse.
+> > 
+> > The root issue is that we pass, for some architectures and for the moment,
+> > a generated `target.json` file. That file is not ready by the time `rustc`
+> > gets called for the flag test, and thus the flag test fails just because
+> > the file is not available, e.g.:
+> > 
+> >     $ ... --target=./scripts/target.json ... -Cllvm-args=...
+> >     error: target file "./scripts/target.json" does not exist
+> > 
+> > There are a few approaches we could take here to solve this. For instance,
+> > we could ensure that every time that the config is rebuilt, we regenerate
+> > the file and recompute the flags. Or we could use the LLVM version to
+> > check for these flags, instead of testing the flag (which may have other
+> > advantages, such as allowing us to detect renames on the LLVM side).
+> > 
+> > However, it may be easier than that: `rustc` is aware of the `-Cllvm-args`
+> > regardless of the `--target` (e.g. I checked that the list printed
+> > is the same, plus that I can check for these flags even if I pass
+> > a completely unrelated target), and thus we can just eliminate the
+> > dependency completely.
+> > 
+> > Thus filter out the target.
+> 
+> 
+> 
+> 
+> > This does mean that `rustc-option` cannot be used to test a flag that
+> > requires the right target, but we don't have other users yet, it is a
+> > minimal change and we want to get rid of custom targets in the future.
+> 
+> Hmm, while this might be true, I think it should not actually have been
+> true. Commit ca627e636551e ("rust: cfi: add support for CFI_CLANG with Rust")
+> added a cc-option check to the rust kconfig symbol, checking if the c
+> compiler supports the integer normalisations stuff:
+> 	depends on !CFI_CLANG || RUSTC_VERSION >= 107900 && $(cc-option,-fsanitize=kcfi -fsanitize-cfi-icall-experimental-normalize-integers)
+> and also sets the relevant options in the makefile:
+> 	ifdef CONFIG_RUST
+> 	       # Always pass -Zsanitizer-cfi-normalize-integers as CONFIG_RUST selects
+> 	       # CONFIG_CFI_ICALL_NORMALIZE_INTEGERS.
+> 	       RUSTC_FLAGS_CFI   := -Zsanitizer=kcfi -Zsanitizer-cfi-normalize-integers
+> 	       KBUILD_RUSTFLAGS += $(RUSTC_FLAGS_CFI)
+> 	       export RUSTC_FLAGS_CFI
+> 	endif
+> but it should also have added a rustc-option check as, unfortunately,
+> support for kcfi in rustc is target specific. This results in build
+> breakages where the arch supports CFI_CLANG and RUST, but the target in
+> use does not have the kcfi flag set.
+> I attempted to fix this by adding:
+> 	diff --git a/arch/Kconfig b/arch/Kconfig
+> 	index d1b4ffd6e0856..235709fb75152 100644
+> 	--- a/arch/Kconfig
+> 	+++ b/arch/Kconfig
+> 	@@ -916,6 +916,7 @@ config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
+> 	 config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
+> 	        def_bool y
+> 	        depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
+> 	+       depends on $(rustc-option,-C panic=abort -Zsanitizer=kcfi -Zsanitizer-cfi-normalize-integers)
+> 	        depends on RUSTC_VERSION >= 107900
+> 	        # With GCOV/KASAN we need this fix: https://github.com/rust-lang/rust/pull/129373
+> 	        depends on (RUSTC_LLVM_VERSION >= 190103 && RUSTC_VERSION >= 108200) || \
+> but of course this does not work for cross compilation, as you're
+> stripping the target information out and so the check passes on my host
+> even though my intended
+> RUSTC_BOOTSTRAP=1 rustc -C panic=abort -Zsanitizer=kcfi -Zsanitizer-cfi-normalize-integers -Ctarget-cpu=generic-rv64 --target=riscv64imac-unknown-none-elf
+> is a failure.
+> 
+> I dunno too much about rustc itself, but I suspect that adding kcfi to
+> the target there is a "free" win, but that'll take time to trickle down
+> and the minimum version rustc version for the kernel isn't going to have
+> that.
+> 
+> I'm not really sure what your target.json suggestion below is, so just
+> reporting so that someone that understands the alternative solutions can
+> fix this.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Probably right now we have to do this cfg by
 
+	depends on CONFIG_ARM
 
-Best regards,
-Krzysztof
+to prevent riscv if rustc has the missing setting
+set on riscv. Once we add it to riscv, we change it to
 
+	depends on CONFIG_ARM || (RUSTC_VERSION >= ??? || CONFIG_RISCV)
+
+Alice
 
