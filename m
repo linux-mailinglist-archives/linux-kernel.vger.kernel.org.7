@@ -1,209 +1,181 @@
-Return-Path: <linux-kernel+bounces-797165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC9EB40CC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:07:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49A7B40CCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC0457AC57F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:05:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E820F7AD8E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8F3343D91;
-	Tue,  2 Sep 2025 18:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF808343D91;
+	Tue,  2 Sep 2025 18:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUJUzb/F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JWb6TM65"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803EC2FD1DC;
-	Tue,  2 Sep 2025 18:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859182FD1DC;
+	Tue,  2 Sep 2025 18:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756836418; cv=none; b=KIJSBQ23OrEzJhv1dVuLV+Jw1xjpNgKeh5kW0IEyBFiB/+23agTzKIeUpwlGff5SMGDoHNT8sK85CapftAe9iJjjG2FlyvSxbYSg/EluQqhuANrgG3HruVaGuqAG8drwt+0bC5aTDZCBo1zqDobzJr1EtAvpQW5+iNl6Goqdcak=
+	t=1756836462; cv=none; b=Cg2mylnID6+76Cu4+LoMscsF2BccQknFqTARcrg20A6rTAxZQcayHcH0QaxbCe4MdVhXJK2x1mnjJznQNiVstsQtQfPBH83xyxXcBM80nxIi2VoLEwY6GThpYx0wUZzBvllyc0VfquwcnlHxqYqrcmbilBxBZI9F39HMeEDAWow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756836418; c=relaxed/simple;
-	bh=gHqutckRXz5XP4RgC8sLZI2+EMilxv4s1+VahX0x4KQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O2vK1uGDMGS+ase08GM4RpRp9Kp91dcEFRWt6XQtK1h16wmTCw851SZ3As3spqY0vWV7B5//lrji54HGTXJkqnhWzPtIa+PHfvOPUGyeymrNakfRpRuK+mtxDhOzsfpdNbHQ/Ig5Nx0GDSNihpbdP+Pf8WllVtdYCKGvZdcbK78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUJUzb/F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD5BC4CEED;
-	Tue,  2 Sep 2025 18:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756836418;
-	bh=gHqutckRXz5XP4RgC8sLZI2+EMilxv4s1+VahX0x4KQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oUJUzb/FCp7NMEMYs7VrpnjLkQ4z3xyyxo0dFDOlkccenX3RYl+IjxI6ZrfoPzpmb
-	 o3t7H7+LF+M5QWFZbWBjtREhH/ttv7QweXoz7ucvQ6jH15IElwi1u+MnpZn9y4Zlkm
-	 NnqrxijmeZelPHcqMtV0fEAat5SSKrTAPlYvDofyYf/fakv7h0PWcuLC7IB4Ty8Gp0
-	 qPHxHaXT8pfXbKj6V9XvRnxWCvyq0WXViZ6Ymt6Xp31vL/zpTKgU2nlss3Lm8lapEP
-	 UTmDxT+ybdxll8FHpizGh8N5C0+jFYyqoOCByleDes9gcVPFLDmyUqNG8fin5TmUQJ
-	 s5gCqTYfkaVtA==
-Date: Tue, 2 Sep 2025 20:06:54 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Daniel Stone <daniel@fooishbar.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Liu Ying <victor.liu@nxp.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
- driver capabilities
-Message-ID: <st6wob5hden6ypxt2emzokfhl3ezpbuypv2kdtf5zdrdhlyjfw@l2neflb4uupo>
-References: <20250830-drm-limit-infoframes-v3-0-32fcbec4634e@oss.qualcomm.com>
- <CAPj87rNDtfEYV88Ue0bFXJwQop-zy++Ty7uQ9XfrQ2TbAijeRg@mail.gmail.com>
- <57ekub6uba7iee34sviadareqxv234zbmkr7avqofxes4mqnru@vgkppexnj6cb>
- <20250901-voracious-classy-hedgehog-ee28ef@houat>
- <voknqdv3zte2jzue5yxmysdiixxkogvpblvrccp5gu55x5ycca@srrcscly4ch4>
+	s=arc-20240116; t=1756836462; c=relaxed/simple;
+	bh=hDQkjgpchSfHdmIKlzZy1e2r5Zb4UPQsU9QDvkepNzs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K0Wph0QxT6ovTOQ5VvsyC3T+dCzmGCSvnLYtLed99psQF6XUKiELlrZjxyGz3iVyvimM8roUY0dR8sA4m2gI8r/ylefrBITCkZXm7X5Sojj728/RULTH+QeAuiNoERnwhgnPvLDkwvHiROvj/Qi//7JAsYZu9M1MLvWw1D6Wkzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JWb6TM65; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=oNdlysJjdtKeCzz+IbJEvciXiA4nco2aQvV39BALyhM=; b=JWb6TM65a/UPvsSXA+pyfx2u2O
+	b5dm0iZbFXQ9nSHsSTIN8KRaRSiQzrTkWRsj7/OVxsYaiYS9PAuZID2HLca9F+mclJ0soZmf4eSmZ
+	72XHDh5NZrvPUKFuIWLEc49vAYP9FJEF+R6o2kOIWri3uoSGobPc41dxUKdULSNaUsc2ilGSOQlmX
+	QncHO+omRc+ch8P3Sa0yWddSWubSqrOLqD6uVNdxVrtV2EjOHZN40D4mxEm1KKTr4qxoTgFH05QD5
+	MnFP//3WIOGlvMrTSTQev8Zesu7H6LmPiR05BkVAq8meLDzEP3+BzDIx6+Z+TCLYYSNTPGtqHg9Sy
+	Sxl1BaTA==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1utVPq-005p1w-BU; Tue, 02 Sep 2025 20:07:34 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: remove WARN_ON_ONCE() from
+ fuse_iomap_writeback_{range,submit}()
+In-Reply-To: <CAJnrk1awtqnSQS0F+TNTuQdLDsAAkArjbu1L=5L1Eoe0fGf31A@mail.gmail.com>
+	(Joanne Koong's message of "Tue, 2 Sep 2025 10:35:28 -0700")
+References: <20250902152234.35173-1-luis@igalia.com>
+	<CAJnrk1awtqnSQS0F+TNTuQdLDsAAkArjbu1L=5L1Eoe0fGf31A@mail.gmail.com>
+Date: Tue, 02 Sep 2025 19:07:33 +0100
+Message-ID: <87bjnssp7e.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="w4agiwtkcjwsgz6j"
-Content-Disposition: inline
-In-Reply-To: <voknqdv3zte2jzue5yxmysdiixxkogvpblvrccp5gu55x5ycca@srrcscly4ch4>
-
-
---w4agiwtkcjwsgz6j
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 00/11] drm/connector: hdmi: limit infoframes per
- driver capabilities
-MIME-Version: 1.0
 
-On Tue, Sep 02, 2025 at 06:45:44AM +0300, Dmitry Baryshkov wrote:
-> On Mon, Sep 01, 2025 at 09:07:02AM +0200, Maxime Ripard wrote:
-> > On Sun, Aug 31, 2025 at 01:29:13AM +0300, Dmitry Baryshkov wrote:
-> > > On Sat, Aug 30, 2025 at 09:30:01AM +0200, Daniel Stone wrote:
-> > > > Hi Dmitry,
-> > > >=20
-> > > > On Sat, 30 Aug 2025 at 02:23, Dmitry Baryshkov
-> > > > <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> > > > > It's not uncommon for the particular device to support only a sub=
-set of
-> > > > > HDMI InfoFrames. It's not a big problem for the kernel, since we =
-adopted
-> > > > > a model of ignoring the unsupported Infoframes, but it's a bigger
-> > > > > problem for the userspace: we end up having files in debugfs whic=
-h do
-> > > > > mot match what is being sent on the wire.
-> > > > >
-> > > > > Sort that out, making sure that all interfaces are consistent.
-> > > >=20
-> > > > Thanks for the series, it's a really good cleanup.
-> > > >=20
-> > > > I know that dw-hdmi-qp can support _any_ infoframe, by manually
-> > > > packing it into the two GHDMI banks. So the supported set there is
-> > > > 'all of the currently well-known ones, plus any two others, but only
-> > > > two and not more'. I wonder if that has any effect on the interface
-> > > > you were thinking about for userspace?
-> > >=20
-> > > I was mostly concerned with the existing debugfs interface (as it is
-> > > also used e.g. for edid-decode, etc).
-> > >=20
-> > > It seems "everything + 2 spare" is more or less common (ADV7511, MSM
-> > > HDMI also have those. I don't have at hand the proper datasheet for
-> > > LT9611 (non-UXC one), but I think its InfoFrames are also more or less
-> > > generic).  Maybe we should change debugfs integration to register the
-> > > file when the frame is being enabled and removing it when it gets uns=
-et.
-> >=20
-> > But, like, for what benefit?
-> >=20
-> > It's a debugfs interface for userspace to consume. The current setup
-> > works fine with edid-decode already. Why should we complicate the design
-> > that much and create fun races like "I'm running edid-decode in parallel
-> > to a modeset that would remove the file I just opened, what is the file
-> > now?".
->=20
-> Aren't we trading that with the 'I'm running edid-decode in paralle with
-> to a modeset and the file suddenly becomes empty'?
+Hi Joanne,
 
-In that case, you know what the file is going to be: empty. And you went
-=66rom a racy, straightforward, design to a racy, complicated, design.
+On Tue, Sep 02 2025, Joanne Koong wrote:
 
-It was my question before, but I still don't really see what benefits it
-would have, and why we need to care about it in the core, when it could
-be dealt with in the drivers just fine on a case by case basis.
+> On Tue, Sep 2, 2025 at 8:22=E2=80=AFAM Luis Henriques <luis@igalia.com> w=
+rote:
+>>
+>> The usage of WARN_ON_ONCE doesn't seem to be necessary in these function=
+s.
+>> All fuse_iomap_writeback_submit() call sites already ensure that wpc->wb=
+_ctx
+>> contains a valid fuse_fill_wb_data.
+>
+> Hi Luis,
+>
+> Maybe I'm misunderstanding the purpose of WARN()s and when they should
+> be added, but I thought its main purpose is to guarantee that the
+> assumptions you're relying on are correct, even if that can be
+> logically deduced in the code. That's how I see it being used in other
+> parts of the fuse and non-fuse codebase. For instance, to take one
+> example, in the main fuse dev.c code, there's a WARN_ON in
+> fuse_request_queue_background() that the request has the FR_BACKGROUND
+> bit set. All call sites already ensure that the FR_BACKGROUND bit is
+> set when they send it as a background request. I don't feel strongly
+> about whether we decide to remove the WARN or not, but it would be
+> useful to know as a guiding principle when WARNs should be added vs
+> when they should not.
 
-> > > Then in the long run we can add 'slots' and allocate some of the fram=
-es
-> > > to the slots. E.g. ADV7511 would get 'software AVI', 'software SPD',
-> > > 'auto AUDIO' + 2 generic slots (and MPEG InfoFrame which can probably=
- be
-> > > salvaged as another generic one)). MSM HDMI would get 'software AVI',
-> > > 'software AUDIO' + 2 generic slots (+MPEG + obsucre HDMI which I don't
-> > > want to use). Then the framework might be able to prioritize whether =
-to
-> > > use generic slots for important data (as DRM HDR, HDMI) or less impor=
-tant
-> > > (SPD).
-> >=20
-> > Why is it something for the framework to deal with? If you want to have
-> > extra infoframes in there, just go ahead and create additional debugfs
-> > files in your driver.
-> >=20
-> > If you want to have the slot mechanism, check in your atomic_check that
-> > only $NUM_SLOT at most infoframes are set.
->=20
-> The driver can only decide that 'we have VSI, SPD and DRM InfoFrames
-> which is -ETOOMUCH for 2 generic slots'. The framework should be able to
-> decide 'the device has 2 generic slots, we have HDR data, use VSI and
-> DRM InfoFrames and disable SPD for now'.
+I'm obviously not an authority on the subject, but those two WARN_ON
+caught my attention because if they were ever triggered, the kernel would
+crash anyway and the WARNs would be useless.
 
-I mean... the spec does? The spec says when a particular feature
-requires to send a particular infoframe. If your device cannot support
-to have more than two "features" enabled at the same time, so be it. It
-something that should be checked in that driver atomic_check.
+For example, in fuse_iomap_writeback_range() you have:
 
-Or just don't register the SPD debugfs file, ignore it, put a comment
-there, and we're done too.
+	struct fuse_fill_wb_data *data =3D wpc->wb_ctx;
+	struct fuse_writepage_args *wpa =3D data->wpa;
 
-> But... We are not there yet and I don't have clear usecase (we support
-> HDR neither on ADV7511 nor on MSM HDMI, after carefully reading the
-> guide I realised that ADV7511 has normal audio infoframes). Maybe I
-> should drop all the 'auto' features, simplifying this series and land
-> [1] for LT9611UXC as I wanted origianlly.
->=20
-> [1] https://lore.kernel.org/dri-devel/20250803-lt9611uxc-hdmi-v1-2-cb9ce1=
-793acf@oss.qualcomm.com/
+	[...]
 
-Looking back at that series, I think it still has value to rely on the
-HDMI infrastructure at the very least for the atomic_check sanitization.
+	WARN_ON_ONCE(!data);
 
-But since you wouldn't use the generated infoframes, just skip the
-debugfs files registration. You're not lying to userspace anymore, and
-you get the benefits of the HDMI framework.
+In this case, if 'data' was NULL, you would see a BUG while initialising
+'wpa' and the WARN wouldn't help.
 
-Maxime
+I'm not 100% sure these WARN_ON_ONCE() should be dropped.  But if there is
+a small chance of that assertion to ever be true, then there's a need to
+fix the code and make it safer.  I.e. the 'wpa' initialisation should be
+done after the WARN_ON_ONCE() and that WARN_ON_ONCE() should be changed to
+something like:
 
---w4agiwtkcjwsgz6j
-Content-Type: application/pgp-signature; name="signature.asc"
+	if (WARN_ON_ONCE(!data))
+		return -EIO; /* or other errno */
 
------BEGIN PGP SIGNATURE-----
+Does it make sense?
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLcyPgAKCRAnX84Zoj2+
-doX0AX93Q4zANj52tF9dUYikkKhfOnVgebYAQL9Lxom3OCpl8W6kZ2Ik+VcbTiyU
-1tDN4eoBgIeHZ7m/7ekMpxpStDQ1y4lq8smmLkNZ3KMveJKiM0MD3WjPNuxmmLEZ
-63+ZOyFlqA==
-=5/yk
------END PGP SIGNATURE-----
+As I said, I can send another patch to keep those WARNs and fix these
+error paths.  But again, after going through the call sites I believe it's
+safe to assume that WARN_ON_ONCE() will never trigger.
 
---w4agiwtkcjwsgz6j--
+Cheers,
+--=20
+Lu=C3=ADs
+
+
+> Thanks,
+> Joanne
+>
+>>
+>> Function fuse_iomap_writeback_range() also seems to always be called wit=
+h a
+>> valid value.  But even if this wasn't the case, there would be a crash
+>> before this WARN_ON_ONCE() because ->wpa is being accessed before it.
+>>
+>
+> I agree, for the fuse_iomap_writeback_range() case, it would be more
+> useful if "wpa =3D data->wpa" was moved below that warn.
+>
+>> Signed-off-by: Luis Henriques <luis@igalia.com>
+>> ---
+>> As I'm saying above, I _think_ there's no need for these WARN_ON_ONCE().
+>> However, if I'm wrong and they are required, I believe there's a need for
+>> a different patch (I can send one) to actually prevent a kernel crash.
+>>
+>>  fs/fuse/file.c | 4 ----
+>>  1 file changed, 4 deletions(-)
+>>
+>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> index 5525a4520b0f..fac52f9fb333 100644
+>> --- a/fs/fuse/file.c
+>> +++ b/fs/fuse/file.c
+>> @@ -2142,8 +2142,6 @@ static ssize_t fuse_iomap_writeback_range(struct i=
+omap_writepage_ctx *wpc,
+>>         struct fuse_conn *fc =3D get_fuse_conn(inode);
+>>         loff_t offset =3D offset_in_folio(folio, pos);
+>>
+>> -       WARN_ON_ONCE(!data);
+>> -
+>>         if (!data->ff) {
+>>                 data->ff =3D fuse_write_file_get(fi);
+>>                 if (!data->ff)
+>> @@ -2182,8 +2180,6 @@ static int fuse_iomap_writeback_submit(struct ioma=
+p_writepage_ctx *wpc,
+>>  {
+>>         struct fuse_fill_wb_data *data =3D wpc->wb_ctx;
+>>
+>> -       WARN_ON_ONCE(!data);
+>> -
+>>         if (data->wpa) {
+>>                 WARN_ON(!data->wpa->ia.ap.num_folios);
+>>                 fuse_writepages_send(wpc->inode, data);
+
 
