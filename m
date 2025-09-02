@@ -1,330 +1,1219 @@
-Return-Path: <linux-kernel+bounces-795612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40351B3F54D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:21:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A458B3F554
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6FCE1A80D90
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC8B3B0E90
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E6D2E2EF5;
-	Tue,  2 Sep 2025 06:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DB72E2F0E;
+	Tue,  2 Sep 2025 06:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hDmAkNEH";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="T/xKAXsU"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7H7eS/W"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA012DF120;
-	Tue,  2 Sep 2025 06:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756794059; cv=fail; b=lyrsd1GNF4fPLKgYKxB/VjAaz6c8+RsO5tIgiUkm1yuD3H7Bz25FYiTCrhT0XeYJ3xqY9V5mqO0c6eeZd6Ncf9lSB666Xg+wejeqvzibwjtcDVWT1Uv0om4s8Wz7JWrzZfqljVyaPD9xEO6+w7/qHeJk4RGUoHbgpBbfi8aKhhU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756794059; c=relaxed/simple;
-	bh=QPH3BSjyJYYsrRZ/Ek91uvkPzdBjzHO2duRajNlMfMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ksSRoUlzW/twhjuIigAV6XsJXxIiDv4KLa1fSMrDBbH9op935AaSzBiDUBO4o9BnQnkdnPrQeMgpzMmZpDHi8HOjkHKZK91f960IO2MjmmrAAx9/mE0+Hp06uzZdd9W+OgB3L/DphMXNsNQUwdZHHgk45FNiqC/y2T5xU3R3XTU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hDmAkNEH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=T/xKAXsU; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5824g0Gm024792;
-	Tue, 2 Sep 2025 06:20:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=VcmTPfbBh25aWGd8r5
-	qS+r+uNAffq0URSjDSUJRGm4s=; b=hDmAkNEHWgCBsGzVYJtAAKbX9CRZCHiSFs
-	+sKBhmscyWgLMAOmLCIiKakAYfxvG4W3jS/+SF+vZbW+BNom9MWMoLgPxJVSpE2C
-	jiKZ/hofGtqtfdZQICXV1w3f9bEhLHmP/wgyP4r9AQBGQ5/yhWS+/ufKhMVq01b4
-	uBgRVnubtiOPwLlCiH6EYGYi9sGZgGk1jkUw1gjD3549z6h4KHjUmvn1ZLde+LP7
-	vwme5egBeGl5En8sw/b1t1MItA2qoDx49Vb6pFNT7RfR/GSyPTJP+jNv5z+mE2dy
-	PEv/ZYKrPr+sa+H53KM7gaDyeCWuKudIiyXHbWTbE7PibzMCKGAw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usm9kc0n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 02 Sep 2025 06:20:07 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5824XZaS026755;
-	Tue, 2 Sep 2025 06:20:06 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48v01mygr2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 02 Sep 2025 06:20:06 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gikb3rP1qol96jVs9Z/weDkAIXjzso28mWfhvOSDWY5tpEKyTPR+yf15+KuEtq+QXeyfeSJyIes7qTSVgisWVS1DAI/rgBKAK0xprBOicQ3Via1lrcCNvpvRIXs6SfDnqsETwjJQ8owAben0m5w3qpOqPBcExEEy27K9T9/cXV7QTH0/dOnYZJiEhAFHfE8jyrOQWxkWtxBNDXkoTJs97gC7ZHCa35tnClNTZeOOFhGidEkyVw85GjE7Vh057RllNO0TYJow9h+RsidW/4sxiOV6J1Vk8MIL5j+Yw++N5nuAoKMpD+oTXQgEdJMqFiaN4jbhQjOL5SLb5weWL1pD8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VcmTPfbBh25aWGd8r5qS+r+uNAffq0URSjDSUJRGm4s=;
- b=mY86PlOqPT0d4Tew6nPgp9DimUV9kjTEmMCJ7tVs05SFzmt960bAMaGKwS9/Slhou2ZmvPF3mNZ7FGLIsfqoQEB2Op4dLtYomipB6sFdb9ED4ZnejpdCYK3IdkhHVr037njTUPWWDLUIF4s8RzB7W8FuWt/ulVxV+e6aFnRxzc2oPof4xlfbFKmfcFwoviTVs3EVs+JlHiyxkG4EAc7Q400JW87qlxa+kpkmTo53SpCJ6kLgf71lmwFlzKFyMbUmjS65aKsMjnlI2WoUGDu8MhlBhcNhNFhA6K2BQqnJl9iNWzSKUZErjLpgAEbftcxMeRrornEhf5jKTyFpwewWpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6572E2850;
+	Tue,  2 Sep 2025 06:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756794091; cv=none; b=H79LXFhVl5FbDyV5gLRSvSueIwVXDU8BpjoxH5x11f3JUfM9b3RaQMONGgeoPckPRd2yPxWOrsiT4dzYjGJcHZ59sNbJ2/g/LB2YYhG+cFLTKGDG0+ZXu0U7uflsnW3nPB7GVlsuFIUmXDaYZoQFKmOGZXXO6zfAQl5HWSfGZi0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756794091; c=relaxed/simple;
+	bh=kssR1FbEp/QOCQ9YVtogcNeucLefHEp9kcw7iR1pLT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JI5gZZaZnP0nk0fKDANvd7ohhtPxclvSl4gjFH3cOAOt8pR1DF0/hKmVyez2eKcXFYSfFgepG2+2R3TA1LoGPu7jjaXsvODcu7fmHZP+0pWZz6Bn8te4/YpgN4Lf7JX9qMcWPs4n+eGyQ6OUS0Gv8UEPNEdG9PUPmwKiFGjB9oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7H7eS/W; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3d0b6008a8bso1810638f8f.0;
+        Mon, 01 Sep 2025 23:21:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VcmTPfbBh25aWGd8r5qS+r+uNAffq0URSjDSUJRGm4s=;
- b=T/xKAXsUkUcFbkPUVC1BS06fP3Ty+iYsrzgAsbiCK4d3uQrCYfYvF2andRELwQgpuzmArCoMaI9P2t9hf8ugjmMibLl62PCNKz1ugS3rj83XnKeoqC+xZ5MQPB5CpBzeHAaHnGRby4pLa7Txzsbm9x+SvrIqFP7qO84PSwwcRWY=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS7PR10MB5928.namprd10.prod.outlook.com (2603:10b6:8:84::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Tue, 2 Sep
- 2025 06:20:01 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 06:20:01 +0000
-Date: Tue, 2 Sep 2025 07:19:58 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com,
-        yuanchu@google.com, willy@infradead.org, hughd@google.com,
-        mhocko@suse.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-        surenb@google.com, vishal.moola@gmail.com, linux@armlinux.org.uk,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com,
-        hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-        weixugc@google.com, baolin.wang@linux.alibaba.com, rientjes@google.com,
-        shakeel.butt@linux.dev, thuth@redhat.com, broonie@kernel.org,
-        osalvador@suse.de, jfalempe@redhat.com, mpe@ellerman.id.au,
-        nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 00/12] mm: establish const-correctness for pointer
- parameters
-Message-ID: <76ec40af-d234-400a-af0f-faeb001c9182@lucifer.local>
-References: <20250901205021.3573313-1-max.kellermann@ionos.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901205021.3573313-1-max.kellermann@ionos.com>
-X-ClientProxiedBy: LO4P265CA0098.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2bc::15) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1756794086; x=1757398886; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=On6++/Si0yqCavIi//zzd66tMvplpSVc9ekBQHrnAmY=;
+        b=S7H7eS/WH245VULUepW3YOk4olo3JJXFdSj/mEZ3j49gxyRcqhlfUSBTvpXcTQgtwE
+         h4sCly+tlpeoYwLTnyzJPFstvEBK/RgE8uqavCbU4XWtydAKPwdOBz6E2AXZHr1qF8J5
+         1WAwGU7K9iIV7ioz3Q+rsFP8ovAhSk4D+TS6SlAIlfcR90lK5pauLITOwwEKZ2u/k2YM
+         5qmTdMKMXSoYBxpuVYUoL5aBEu12H+sYibDgnoKWVGzZunoYciA6fjuWJIYg8m0uh5wK
+         nHezk0LWT5dEwHMvkvUxTDFpHjeNVWzHA3nfShyS+NFSyF1KSInU9gzCUYDEhOA6I8+1
+         J5IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756794086; x=1757398886;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=On6++/Si0yqCavIi//zzd66tMvplpSVc9ekBQHrnAmY=;
+        b=jEi+FnlhAARmc6DDYCr48as4ShrvjPEpjrTbtMh4L/3b8Iwlf+Fsm+KEs3yD3nfWCM
+         q6UvykscLmErJQOHWXwnJX8EkTE1UECynzYTQeu682soHO4ioUWFIyqi6D8SonMYHaCT
+         /od9N7D/vomqgIz5AAeFeoDNV+eOgsLCyQgaCPOi/3aKoOiP1m8LS6CqPXv3ZMHPhCBA
+         Ufotl9WG+75lHN6vuT9AxS3+wMYLYmgMS5YySAKiEtp5O2H3Nzxv3JQiUqW7Y1wwrBdY
+         EZeSoTlcQguEa/Ixp96W4vphfZH7vYx3jvfEd0YVFFFoB/G4rbSf7QM+OC0CNxtROH8o
+         Fbfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTERGmYZd5ySzDhrVG6jLoC+5exmSOOZ3LDygC9sCkm9GB9rZo1XwISrLw1hNfc8mDP7/J0gEGfKWSWs0=@vger.kernel.org, AJvYcCW9GkMQxpnH/tmU4bb6hCgJbfZfZHZfpE7T1ipxcYe2kyVlxGcSLkrjcd8RQSpLnyCGxqCb4qNc/qqrVgw8@vger.kernel.org, AJvYcCWN1w4/O4yIJD0FT/Pv6sxSD0Bwpv7PuaceK/eO0jMu9z+tx47yRnSWjpo7xk2ozXtaNiJeleRg/G2Q@vger.kernel.org, AJvYcCXD1mLkXE8HP4INlqXSxkhaei/GPKqNeei9ongFs9F4mweUWwC8hOG+cKK6CRdiofRSU7KdABMzvRMx@vger.kernel.org, AJvYcCXmPJzYDLX8fU4z1/SkaOBal9WOWU1BRpnX1J/ZJdy5qjInpDWVSoJH8y4irA1plbKSIR4PA6RbDtVYBnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNxS8oHqx8UGP0slJTLg7tr34cfcYsyY+Z8G2OlixH2NsusxYB
+	MSP2Hhtj0qsuAzO89Vx/err+veo009rd0800KmXexLPQi6Q3IO8JZev6uxwlVHf2jXIcproe1rK
+	3jCqS3Fy14ahrUQaOajaKdgH1f7SvaJY=
+X-Gm-Gg: ASbGncttSqX2o9dnt+hC0nd/Y3D61xXN4OWnThpc4kQ0dCIGvqxT8gNaLq0339No4dh
+	vd0+D4/0uE3J3JG2HAsmO9XUdd2fsYxM54sG787V8/ZidUjp2fQxeSl1eK+0eohfmGt1ecS2svI
+	uRpcweqOlehiikRHlD/uE4VTJ4M5JJ1BtoOOcMJ+sRRIUT9ubqgT0YOo+5ZZOFYyVWAhuxY8a85
+	EHrWqxkidN7o7J9b+E=
+X-Google-Smtp-Source: AGHT+IGkioOG5hbJvOqzdlsw3JeDs16T47Swbw0T9wC8m2v84vN5nQEyIizqLF+dGIvVDXQ8asizbLPtmHFOt5MkwDE=
+X-Received: by 2002:a05:6000:2082:b0:3da:84e2:c042 with SMTP id
+ ffacd0b85a97d-3da85016a9fmr549522f8f.34.1756794085318; Mon, 01 Sep 2025
+ 23:21:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS7PR10MB5928:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55b659b6-27da-488d-732d-08dde9e8bfb9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UlMLdaRALYxuF49fM+PxJvwsdR9QEgH2PLjm0Yy2XMVnliBTkqEibfdsDhMc?=
- =?us-ascii?Q?rUSTVT+SFGr0dIA4K0vzyPPvKcwOp2bgezreXIMKjsLnp54av36UwZkELpLa?=
- =?us-ascii?Q?+NXqW2rlTuOpBTO/P/mxpbxNIE4O2AANL07Aak1nMGN9pDjmA1XSXq+p33OB?=
- =?us-ascii?Q?CflhavIJk1gtSWNgiZu7ZA3Hg6J6rbcXVCbQkJWupw08outbfJdBb/pQKaOl?=
- =?us-ascii?Q?UgXt/XLDB3hV4RLehQ0nkZv0TSnQU0tlkRM89sfyWuRyPkk2x/px2aMHPUDI?=
- =?us-ascii?Q?l+1dki9VwnDQseJIt7wFGf8nkCiQ/QVSH2NQgCQi9RCwr8mlQ/b+QdK6SKJy?=
- =?us-ascii?Q?cuP1S8WyE7Up0l1U62OR3mt15OYc3MTOtB/hEKx1laFwokIN+qAmpoRGIPOA?=
- =?us-ascii?Q?gdls1jLW1tAcxsCn4SmMcDZNJCp8UBrrIpkRFoVk9yqscctxyJ/pQgv7IS6f?=
- =?us-ascii?Q?enH3i9Vwbmf7h0un9JZCPceYunobwJRL1HGmNT2k3DVTAb8ah1HC9lO8Wp5X?=
- =?us-ascii?Q?KxnihON9uC80KVkZtNXi1rQCsRRKRbxSCoa3V+hpdt2G2Kh1T2r5CDUzxrho?=
- =?us-ascii?Q?OTB0eGqat5zZwJl4TQN6EdJJqvXd9aaaz3RmZPWih9Wui3RCqGEU3/rJvyUR?=
- =?us-ascii?Q?y1J6I5GS5BITnrtgMj0G9Aar7Lvvr7dkO4I1/45CjNwJWieNKlBanZSQd/bT?=
- =?us-ascii?Q?em2PmG+sHNTG0t8AdoNBd9uN+EZpb4VDdqTck+Iqc7i2Dsbf6ZZAkRnhzqb0?=
- =?us-ascii?Q?UbV2xK4zGJrZnJAxJ0ISh6TH9Og+cwLLoerEu8DqAknVr+FjGjE4ckpfXDgY?=
- =?us-ascii?Q?SE45Ze87mZG3vXrVLtT3NZfDqp6UrU2/L7gJCd7g4deKFmUNI7/XBbLoY1o6?=
- =?us-ascii?Q?8BNkCFoKA6Ts1HkMRsBTXlZFBf8GCOh9eBa8UKjTaL/W425jFF5RuErgyPh/?=
- =?us-ascii?Q?gHny7/IjAykeSVsn3ldzvfEzPhpVGcRXvzL0V74ONd4Tx7rczn93ikxDqxp2?=
- =?us-ascii?Q?at9wPdxzle7891LFGgVvhUgzwvFqQ/3gcJ0gglZ2BaI9x5ZLTupMuLB0B3nL?=
- =?us-ascii?Q?ux1driWfn/3FvCrqLsGtfcENv3iINTFI2LD2NFICxLcj6xMy2zI9lPWl4gvz?=
- =?us-ascii?Q?cVM5Lbh85MHw8RkFEHo2V/UlgxdvNns9KxOBsSxJHh9gX/vpSzPyz2yvqSZ2?=
- =?us-ascii?Q?CCRxHE+H8coE6WqlbXlPXjh1puD7Q6dRbMqifsAylSDd/dexL2TcAC+pFUqz?=
- =?us-ascii?Q?ewnij5mLh8K1Q50HKw6KA4MDxPnMsdKY1l+pHkEeBauqbirmz/nTrnIzf+8t?=
- =?us-ascii?Q?dkm1GeCLFO7N6eCqYEAvfMcLqFHWrj3ouhX3fCh99ZLN7D/T5VPuTTVs9GEK?=
- =?us-ascii?Q?Er5jYA8ajbsYLrAm0evJuOdaclMoS7oB4p3Cw+yEICFFanakyfnWDGhY4jW4?=
- =?us-ascii?Q?YFil93G7C+Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ABLb45KiOxrrQQdWsHeXHXuTbUdQ7iqttV1vlHLdhvfS8YSxRgSKG7ehlPTg?=
- =?us-ascii?Q?13HOQ1qPELCw934tA38heKsjV7hUjnAJbsykQtLy59TzJxAhTVuIPkv0tvQX?=
- =?us-ascii?Q?kWjcWw2xaBgvumdcKXhhpifL4flKPiL5b9UvCj5gNLOnXvEV6o0oHqsuHXZZ?=
- =?us-ascii?Q?Z4ha9KeiZRVo49eUQvpzIIUHzjn80ao3mG+6SMpYZirQ9/zYW0IwMmIB2zk2?=
- =?us-ascii?Q?rpOlVuZapb93ztRBC6fjHbJGXm3H7hteGQs23poxAlZiVCzXsiDuatUA/P19?=
- =?us-ascii?Q?5X5UOM3ygAz8gl1SXuOWmjH8jQjet4BkuUpuv3UaM/Nq4fqu193lCZbFk/A1?=
- =?us-ascii?Q?cMgFVyLmJ5ESn24H2Z/Ew+R4hF0PftBlVoEAsq3lwjDHhMNHveAi2aelEmjc?=
- =?us-ascii?Q?odqIndSglNB9cY+DluiezfFY2I6tEoI64d0QMp/YcMvg/T72qEfK24bhpF67?=
- =?us-ascii?Q?Rq8OBNJYoihK1wSpVnzQ+AaQ088hQHIWvV8hccan/wKNbeHdmECjeG7f0blc?=
- =?us-ascii?Q?Wsa8zHMglBL8565rJky2SBeu1u3uueEkko/KxjDBRRYboB23Tb3OMXn8Q0qe?=
- =?us-ascii?Q?xIeRbHmeIv5h6Fgzg+kYz7QbrbLL6J6CMk17vFLIH2WqmcQwD0Q8erW5TsJT?=
- =?us-ascii?Q?OJcqNl27vQg0IBRkDYjFZd9VimYBzbbYeRXr1dTVLm27OSneOXcPPDk9RvrH?=
- =?us-ascii?Q?kBvh6p2jLS9KAKrmsGwlsiRJmfqqpK+RX4wXFKOICV2U4mHIf60Gaslcvn8y?=
- =?us-ascii?Q?x5FWksdBtyjRhT/VEeXUHVVDXjb1kpk28EjFWpIPoHJBTa9QlWiVKjkzx1M+?=
- =?us-ascii?Q?LQjhPlD77nknkrTb/4lRxcyRVYCemckZQ0TIy/x63RWdlS1C89Lz0pN4otJi?=
- =?us-ascii?Q?qsbIDYUpsvAGmW69OvtQDZxOaYC2MfJ5BS6bZF6vnErE6PTrdQto1Bs8s9eU?=
- =?us-ascii?Q?R8yGp1XP18dbj1VXUzoCeGRIlt7g3LycG3dV6slidFS76dk6n48e5sFX2MTe?=
- =?us-ascii?Q?QiBrg1b6kuPj1CoMHs5XqNQ4MUvmm2xU1RvlthMmtGWusB8QIVvG/JIMfmLu?=
- =?us-ascii?Q?Ch8rB4+tR8mz2+N/v1xZb2IMnICJgH6jm0hVkNyxDb2flgAvjatB0nU4YlVv?=
- =?us-ascii?Q?CkGRYJBSEPq8UAOHolINR95yFOjkZtKhQkQalufhEUfJCcLvqBoclVy73Qve?=
- =?us-ascii?Q?g+3wfpvlwiSfJe/2ZxhoJ3DgBy11pfqH1qANHF+aduaoZbvk9ibbYlF5PbOl?=
- =?us-ascii?Q?Rp3Si79OOLpW+VqnZvBbeMFy8b8x5stdsL1wrBaMdhLAA925aQujog89qKmm?=
- =?us-ascii?Q?pDEupr7cnvjKlQ3n6qBvVHwrQpseeEug8YTnHwUoNyPL2LrCJgogwQE8OoID?=
- =?us-ascii?Q?Z8aLF6B8TsAfjEd8rcOqeslNwVTLZbqTmvhrW3nP9fSzGbBf1BAwLGd5QZ8d?=
- =?us-ascii?Q?6EnkrVGR9NmTNm0k45J/ugGakMjAK7Dh12eQ5JOB95VWljxe73pX/5HobJe3?=
- =?us-ascii?Q?HrzR4ILetXIa7EF6GPZGQZaSJhKB2At8F0NdGD0dBbMUjTScm5rOusmz9Jqh?=
- =?us-ascii?Q?rzKGZXrOCBojeHVyVm5ujYAsKLH291NOuMq5joSXSkCjzAKlYj9yKGfOBy69?=
- =?us-ascii?Q?Ig=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	tKqloIeJ+3JTUEUBHwC7cL0jDGndcZ2zMh8s9ogacvnPn1A3mzTXHlnDGcQENccrDciDHrLyvV/6xGQmkiu3nN/5QIDKhAPlYoPi3CYAEPzqwU83QXwlNLWnEr7awRUBgv2iBt14PMrS0wA7zBKy+hX0yrXCyzG9c1noYLxWKh8Rg0G1oFVXmDuUwSbp87p0fVgGUtOEokKKtjzu/v0Q2YTbfhE+wX8aDDs9RWg3G6VLexpAV4JZIKZ69125ZcDTFFvs9PUK1DdK81ozdenoJlX+alzK9wHKXSiTWgthVlKt/EU9q5H2CvcmI5p4RgV5ADzk7q1PEE/STSuD4X6fY7Ofg/aP/1g2XKXFzywTw2ZDQ+0CM19C1mc0qUAjIWt5xZIIbGmDWz9QvZ5E9Z0j5za9KX8dB2bX23O3vJERwFo+BPiVC5hYlZ0x4zk27FQSWKjAIGT2HA1CZy58OZc7M6EY5bGF3Qb9S7rggm46KD6Q+UTtLY9NATkNn2h0+2h2pXCMx5uGOPUDfzbEAjgulIY2UnvyfbAVn2NSS/gIcMs8YVUadhqMeSMeNr+5SNVRmzfr7bE3FJlMDvISt/0kc3Sj+2kz6f3mXjYU9ebG38Y=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55b659b6-27da-488d-732d-08dde9e8bfb9
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 06:20:01.5505
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CIMBfVWxTiIdSL019bIs7WB7NczJy7Y5gwx9+nxBpkGpjDzVDDnwU7fNldFUfJdqtykOYJalEHaEIDOOlBqM6XkhsmBeknsIN6t/6JTjtuA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5928
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_01,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509020061
-X-Proofpoint-GUID: QPSwk3BsPzbjMy2l_8gNS9i5P-KprX7g
-X-Authority-Analysis: v=2.4 cv=I7xlRMgg c=1 sm=1 tr=0 ts=68b68c97 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=UgJECxHJAAAA:8
- a=lHmRfTpA4gC-4aNflXMA:9 a=CjuIK1q_8ugA:10 a=-El7cUbtino8hM1DCn8D:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfX0fF6XsViOtuM
- vZFTTirD1yNvPru6uw+9OFnjUm6QyPq1yYLXGjk6QSdYRgXD5FKf8KlsU3hNJRzcDuif9/xdAX4
- Btcn7/7wXC+lzptCDNUPJ0/7BCfwgXHLMxYLtbHqF3D0E10HsGxtiEb/aC81iqHkMiEBZd6L0xm
- QOcIfgTQx1Il85DsnrH7yZRPGetUBcHeKXY4H1QOrYvAvjxDOvvpq8gIBa1nAkweea2mbW4NDjU
- sTuGtJ4Ek71wqKEqbdB6gavQJqR+lFW20AEbEFND+zOG48MKeuvs9CWkNVVKLB32C4yij6IwRVO
- KmNmw/vSkURSUC4eNLTtj/uZuQ0y3UznuEv62Nlk4Q5+UmLuJLTDrt1GMhSnuVlmMWEgQTGR+pz
- fgFJvRV6
-X-Proofpoint-ORIG-GUID: QPSwk3BsPzbjMy2l_8gNS9i5P-KprX7g
+References: <20250819121631.84280-1-clamor95@gmail.com> <3643424.irdbgypaU6@senjougahara>
+ <CAPVz0n2Uv9s6O9EqGA9nRYHnv2Uq1-nTeO2jtE_g9OApks7QNw@mail.gmail.com> <4776680.aeNJFYEL58@senjougahara>
+In-Reply-To: <4776680.aeNJFYEL58@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 2 Sep 2025 09:21:09 +0300
+X-Gm-Features: Ac12FXzbwB8X1ijL2O6S112IxxqzdmHrSinMXsy65Ce4Zr1fPVpvqRS3kZrale8
+Message-ID: <CAPVz0n2M3PggtaRCx6bWd555xuuS63Ovj=YPy8-oiFpvOz6aPw@mail.gmail.com>
+Subject: Re: [PATCH v1 19/19] staging: media: tegra-video: add CSI support for
+ Tegra20 and Tegra30
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 01, 2025 at 10:50:09PM +0200, Max Kellermann wrote:
-> For improved const-correctness in the low-level memory-management
-> subsystem, which provides a basis for further const-ification further
-> up the call stack (e.g. filesystems).
+=D0=B2=D1=82, 2 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:18 Mikko=
+ Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tuesday, September 2, 2025 2:51=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > =D0=B2=D1=82, 2 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 05:38 M=
+ikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > > > Add support for MIPI CSI device found in Tegra20 and Tegra30 SoC.
+> > > >
+> > > > Co-developed-by: Jonas Schw=C3=B6bel <jonasschwoebel@yahoo.de>
+> > > > Signed-off-by: Jonas Schw=C3=B6bel <jonasschwoebel@yahoo.de>
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > ---
+> > > >  drivers/staging/media/tegra-video/csi.c     |  12 +
+> > > >  drivers/staging/media/tegra-video/tegra20.c | 575 ++++++++++++++++=
+++--
+> > > >  drivers/staging/media/tegra-video/vi.h      |   2 +
+> > > >  drivers/staging/media/tegra-video/video.c   |   2 +
+> > > >  4 files changed, 553 insertions(+), 38 deletions(-)
+> > > >
+> > > > diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/stag=
+ing/media/tegra-video/csi.c
+> > > > index 2f9907a20db1..714ce52a793c 100644
+> > > > --- a/drivers/staging/media/tegra-video/csi.c
+> > > > +++ b/drivers/staging/media/tegra-video/csi.c
+> > > > @@ -826,11 +826,23 @@ static void tegra_csi_remove(struct platform_=
+device *pdev)
+> > > >       pm_runtime_disable(&pdev->dev);
+> > > >  }
+> > > >
+> > > > +#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
+> > > > +extern const struct tegra_csi_soc tegra20_csi_soc;
+> > > > +#endif
+> > > > +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+> > > > +extern const struct tegra_csi_soc tegra30_csi_soc;
+> > > > +#endif
+> > > >  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
+> > > >  extern const struct tegra_csi_soc tegra210_csi_soc;
+> > > >  #endif
+> > > >
+> > > >  static const struct of_device_id tegra_csi_of_id_table[] =3D {
+> > > > +#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
+> > > > +     { .compatible =3D "nvidia,tegra20-csi", .data =3D &tegra20_cs=
+i_soc },
+> > > > +#endif
+> > > > +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+> > > > +     { .compatible =3D "nvidia,tegra30-csi", .data =3D &tegra30_cs=
+i_soc },
+> > > > +#endif
+> > > >  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
+> > > >       { .compatible =3D "nvidia,tegra210-csi", .data =3D &tegra210_=
+csi_soc },
+> > > >  #endif
+> > > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/=
+staging/media/tegra-video/tegra20.c
+> > > > index a06afe91d2de..e528ba280ae4 100644
+> > > > --- a/drivers/staging/media/tegra-video/tegra20.c
+> > > > +++ b/drivers/staging/media/tegra-video/tegra20.c
+> > > > @@ -4,6 +4,9 @@
+> > > >   *
+> > > >   * Copyright (C) 2023 SKIDATA GmbH
+> > > >   * Author: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > > + *
+> > > > + * Copyright (c) 2025 Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > + * Copyright (c) 2025 Jonas Schw=C3=B6bel <jonasschwoebel@yahoo.de=
+>
+> > > >   */
+> > > >
+> > > >  /*
+> > > > @@ -12,12 +15,16 @@
+> > > >   */
+> > > >
+> > > >  #include <linux/bitfield.h>
+> > > > +#include <linux/clk.h>
+> > > > +#include <linux/clk/tegra.h>
+> > > >  #include <linux/delay.h>
+> > > >  #include <linux/host1x.h>
+> > > > +#include <linux/iopoll.h>
+> > > >  #include <linux/kernel.h>
+> > > >  #include <linux/kthread.h>
+> > > >  #include <linux/v4l2-mediabus.h>
+> > > >
+> > > > +#include "csi.h"
+> > > >  #include "vip.h"
+> > > >  #include "vi.h"
+> > > >
+> > > > @@ -42,6 +49,9 @@ enum {
+> > > >  #define       VI_CONT_SYNCPT_OUT_CONTINUOUS_SYNCPT   BIT(8)
+> > > >  #define       VI_CONT_SYNCPT_OUT_SYNCPT_IDX_SFT              0
+> > > >
+> > > > +#define TEGRA_VI_CONT_SYNCPT_CSI_PP_FRAME_START(n)   (0x0070 + (n)=
+ * 8)
+> > > > +#define TEGRA_VI_CONT_SYNCPT_CSI_PP_FRAME_END(n)     (0x0074 + (n)=
+ * 8)
+> > > > +
+> > > >  #define TEGRA_VI_VI_INPUT_CONTROL                    0x0088
+> > > >  #define       VI_INPUT_FIELD_DETECT                  BIT(27)
+> > > >  #define       VI_INPUT_BT656                         BIT(25)
+> > > > @@ -87,6 +97,8 @@ enum {
+> > > >  #define       VI_OUTPUT_OUTPUT_FORMAT_SFT            0
+> > > >  #define       VI_OUTPUT_OUTPUT_FORMAT_YUV422POST     (3 << VI_OUTP=
+UT_OUTPUT_FORMAT_SFT)
+> > > >  #define       VI_OUTPUT_OUTPUT_FORMAT_YUV420PLANAR   (6 << VI_OUTP=
+UT_OUTPUT_FORMAT_SFT)
+> > > > +#define       VI_OUTPUT_OUTPUT_FORMAT_CSI_PPA_BAYER  (7 << VI_OUTP=
+UT_OUTPUT_FORMAT_SFT)
+> > > > +#define       VI_OUTPUT_OUTPUT_FORMAT_CSI_PPB_BAYER  (8 << VI_OUTP=
+UT_OUTPUT_FORMAT_SFT)
+> > > >  #define       VI_OUTPUT_OUTPUT_FORMAT_VIP_BAYER_DIRECT       (9 <<=
+ VI_OUTPUT_OUTPUT_FORMAT_SFT)
+> > > >
+> > > >  #define TEGRA_VI_VIP_H_ACTIVE                                0x00a=
+4
+> > > > @@ -151,8 +163,106 @@ enum {
+> > > >  #define TEGRA_VI_VI_RAISE                            0x01ac
+> > > >  #define       VI_VI_RAISE_ON_EDGE                    BIT(0)
+> > > >
+> > > > +#define TEGRA_VI_CSI_PP_RAISE_FRAME_START(n)         (0x01d8 + (n)=
+ * 8)
+> > > > +#define TEGRA_VI_CSI_PP_RAISE_FRAME_END(n)           (0x01dc + (n)=
+ * 8)
+> > > > +#define TEGRA_VI_CSI_PP_H_ACTIVE(n)                  (0x01e8 + (n)=
+ * 8)
+> > > > +#define TEGRA_VI_CSI_PP_V_ACTIVE(n)                  (0x01ec + (n)=
+ * 8)
+> > > > +
+> > > > +/* Tegra20 CSI registers: Starts from 0x800, offset 0x0 */
+> > > > +#define TEGRA_CSI_VI_INPUT_STREAM_CONTROL            0x0000
+> > > > +#define TEGRA_CSI_HOST_INPUT_STREAM_CONTROL          0x0008
+> > > > +#define TEGRA_CSI_INPUT_STREAM_CONTROL(n)            (0x0010 + (n)=
+ * 0x2c)
+> > > > +#define       CSI_SKIP_PACKET_THRESHOLD(n)           (((n) & 0xff)=
+ << 16)
+> > > > +#define TEGRA_CSI_PIXEL_STREAM_CONTROL0(n)           (0x0018 + (n)=
+ * 0x2c)
+> > > > +#define       CSI_PP_PAD_FRAME_PAD0S                 (0 << 28)
+> > > > +#define       CSI_PP_PAD_FRAME_PAD1S                 (1 << 28)
+> > > > +#define       CSI_PP_PAD_FRAME_NOPAD                 (2 << 28)
+> > > > +#define       CSI_PP_HEADER_EC_ENABLE                        BIT(2=
+7)
+> > > > +#define       CSI_PP_PAD_SHORT_LINE_PAD0S            (0 << 24)
+> > > > +#define       CSI_PP_PAD_SHORT_LINE_PAD1S            (1 << 24)
+> > > > +#define       CSI_PP_PAD_SHORT_LINE_NOPAD            (2 << 24)
+> > > > +#define       CSI_PP_EMBEDDED_DATA_EMBEDDED          BIT(20)
+> > > > +#define       CSI_PP_OUTPUT_FORMAT_ARBITRARY         (0 << 16)
+> > > > +#define       CSI_PP_OUTPUT_FORMAT_PIXEL             (1 << 16)
+> > > > +#define       CSI_PP_OUTPUT_FORMAT_PIXEL_REP         (2 << 16)
+> > > > +#define       CSI_PP_OUTPUT_FORMAT_STORE             (3 << 16)
+> > > > +#define       CSI_PP_VIRTUAL_CHANNEL_ID(n)           (((n) - 1) <<=
+ 14)
+> > > > +#define       CSI_PP_DATA_TYPE(n)                    ((n) << 8)
+> > > > +#define       CSI_PP_CRC_CHECK_ENABLE                        BIT(7=
+)
+> > > > +#define       CSI_PP_WORD_COUNT_HEADER                       BIT(6=
+)
+> > > > +#define       CSI_PP_DATA_IDENTIFIER_ENABLE          BIT(5)
+> > > > +#define       CSI_PP_PACKET_HEADER_SENT                      BIT(4=
+)
+> > > > +#define TEGRA_CSI_PIXEL_STREAM_CONTROL1(n)           (0x001c + (n)=
+ * 0x2c)
+> > > > +#define TEGRA_CSI_PIXEL_STREAM_WORD_COUNT(n)         (0x0020 + (n)=
+ * 0x2c)
+> > > > +#define TEGRA_CSI_PIXEL_STREAM_GAP(n)                        (0x00=
+24 + (n) * 0x2c)
+> > > > +#define       CSI_PP_FRAME_MIN_GAP(n)                        (((n)=
+ & 0xffff) << 16)
+> > > > +#define       CSI_PP_LINE_MIN_GAP(n)                 (((n) & 0xfff=
+f))
+> > > > +#define TEGRA_CSI_PIXEL_STREAM_PP_COMMAND(n)         (0x0028 + (n)=
+ * 0x2c)
+> > > > +#define       CSI_PP_START_MARKER_FRAME_MAX(n)               (((n)=
+ & 0xf) << 12)
+> > > > +#define       CSI_PP_START_MARKER_FRAME_MIN(n)               (((n)=
+ & 0xf) << 8)
+> > > > +#define       CSI_PP_VSYNC_START_MARKER                      BIT(4=
+)
+> > > > +#define       CSI_PP_SINGLE_SHOT                     BIT(2)
+> > > > +#define       CSI_PP_NOP                             0
+> > > > +#define       CSI_PP_ENABLE                          1
+> > > > +#define       CSI_PP_DISABLE                         2
+> > > > +#define       CSI_PP_RST                             3
+> > > > +#define TEGRA_CSI_PHY_CIL_COMMAND                    0x0068
+> > > > +#define       CSI_A_PHY_CIL_NOP                              0x0
+> > > > +#define       CSI_A_PHY_CIL_ENABLE                   0x1
+> > > > +#define       CSI_A_PHY_CIL_DISABLE                  0x2
+> > > > +#define       CSI_A_PHY_CIL_ENABLE_MASK                      0x3
+> > > > +#define       CSI_B_PHY_CIL_NOP                              (0x0 =
+<< 16)
+> > > > +#define       CSI_B_PHY_CIL_ENABLE                   (0x1 << 16)
+> > > > +#define       CSI_B_PHY_CIL_DISABLE                  (0x2 << 16)
+> > > > +#define       CSI_B_PHY_CIL_ENABLE_MASK                      (0x3 =
+<< 16)
+> > > > +#define TEGRA_CSI_PHY_CIL_CONTROL0(n)                        (0x00=
+6c + (n) * 4)
+> > > > +#define       CSI_CONTINUOUS_CLOCK_MODE_ENABLE               BIT(5=
+)
+> > > > +#define TEGRA_CSI_CSI_PIXEL_PARSER_STATUS            0x0078
+> > > > +#define TEGRA_CSI_CSI_CIL_STATUS                     0x007c
+> > > > +#define       CSI_MIPI_AUTO_CAL_DONE                 BIT(15)
+> > > > +#define TEGRA_CSI_CSI_PIXEL_PARSER_INTERRUPT_MASK    0x0080
+> > > > +#define TEGRA_CSI_CSI_CIL_INTERRUPT_MASK             0x0084
+> > > > +#define TEGRA_CSI_CSI_READONLY_STATUS                        0x008=
+8
+> > > > +#define TEGRA_CSI_ESCAPE_MODE_COMMAND                        0x008=
+c
+> > > > +#define TEGRA_CSI_ESCAPE_MODE_DATA                   0x0090
+> > > > +#define TEGRA_CSI_CIL_PAD_CONFIG0(n)                 (0x0094 + (n)=
+ * 8)
+> > > > +#define TEGRA_CSI_CIL_PAD_CONFIG1(n)                 (0x0098 + (n)=
+ * 8)
+> > > > +#define TEGRA_CSI_CIL_PAD_CONFIG                     0x00a4
+> > > > +#define TEGRA_CSI_CILA_MIPI_CAL_CONFIG                       0x00a=
+8
+> > > > +#define TEGRA_CSI_CILB_MIPI_CAL_CONFIG                       0x00a=
+c
+> > > > +#define       CSI_CIL_MIPI_CAL_STARTCAL                      BIT(3=
+1)
+> > > > +#define       CSI_CIL_MIPI_CAL_OVERIDE_A             BIT(30)
+> > > > +#define       CSI_CIL_MIPI_CAL_OVERIDE_B             BIT(30)
+> > > > +#define       CSI_CIL_MIPI_CAL_NOISE_FLT(n)          (((n) & 0xf) =
+<< 26)
+> > > > +#define       CSI_CIL_MIPI_CAL_PRESCALE(n)           (((n) & 0x3) =
+<< 24)
+> > > > +#define       CSI_CIL_MIPI_CAL_SEL_A                 BIT(21)
+> > > > +#define       CSI_CIL_MIPI_CAL_SEL_B                 BIT(21)
+> > > > +#define       CSI_CIL_MIPI_CAL_HSPDOS(n)             (((n) & 0x1f)=
+ << 16)
+> > > > +#define       CSI_CIL_MIPI_CAL_HSPUOS(n)             (((n) & 0x1f)=
+ << 8)
+> > > > +#define       CSI_CIL_MIPI_CAL_TERMOS(n)             (((n) & 0x1f)=
+)
+> > > > +#define TEGRA_CSI_CIL_MIPI_CAL_STATUS                        0x00b=
+0
+> > > > +#define TEGRA_CSI_CLKEN_OVERRIDE                     0x00b4
+> > > > +#define TEGRA_CSI_DEBUG_CONTROL                              0x00b=
+8
+> > > > +#define       CSI_DEBUG_CONTROL_DEBUG_EN_ENABLED     BIT(0)
+> > > > +#define       CSI_DEBUG_CONTROL_CLR_DBG_CNT_0                BIT(4=
+)
+> > > > +#define       CSI_DEBUG_CONTROL_CLR_DBG_CNT_1                BIT(5=
+)
+> > > > +#define       CSI_DEBUG_CONTROL_CLR_DBG_CNT_2                BIT(6=
+)
+> > > > +#define       CSI_DEBUG_CONTROL_DBG_CNT_SEL(n, v)    ((v) << (8 + =
+8 * (n)))
+> > > > +#define TEGRA_CSI_DEBUG_COUNTER(n)                   (0x00bc + (n)=
+ * 4)
+> > > > +#define TEGRA_CSI_PIXEL_STREAM_EXPECTED_FRAME(n)     (0x00c8 + (n)=
+ * 4)
+> > > > +#define       CSI_PP_EXP_FRAME_HEIGHT(n)             (((n) & 0x1ff=
+f) << 16)
+> > > > +#define       CSI_PP_MAX_CLOCKS(n)                   (((n) & 0xfff=
+) << 4)
+> > > > +#define       CSI_PP_LINE_TIMEOUT_ENABLE             BIT(0)
+> > > > +#define TEGRA_CSI_DSI_MIPI_CAL_CONFIG                        0x00d=
+0
+> > > > +#define TEGRA_CSI_MIPIBIAS_PAD_CONFIG0                       0x00d=
+4
+> > > > +#define       CSI_PAD_DRIV_DN_REF(n)                 (((n) & 0x7) =
+<< 16)
+> > > > +#define       CSI_PAD_DRIV_UP_REF(n)                 (((n) & 0x7) =
+<< 8)
+> > > > +#define       CSI_PAD_TERM_REF(n)                    (((n) & 0x7) =
+<< 0)
+> > > > +#define TEGRA_CSI_CSI_CILA_STATUS                    0x00d8
+> > > > +#define TEGRA_CSI_CSI_CILB_STATUS                    0x00dc
+> > > > +
+> > > >  /* ---------------------------------------------------------------=
+-----------
+> > > > - * VI
+> > > > + * Read and Write helpers
+> > > >   */
+> > > >
+> > > >  static void tegra20_vi_write(struct tegra_vi_channel *chan, unsign=
+ed int addr, u32 val)
+> > > > @@ -160,6 +270,25 @@ static void tegra20_vi_write(struct tegra_vi_c=
+hannel *chan, unsigned int addr, u
+> > > >       writel(val, chan->vi->iomem + addr);
+> > > >  }
+> > > >
+> > > > +static int __maybe_unused tegra20_vi_read(struct tegra_vi_channel =
+*chan, unsigned int addr)
+> > > > +{
+> > > > +     return readl(chan->vi->iomem + addr);
+> > > > +}
+> > > > +
+> > > > +static void tegra20_csi_write(struct tegra_csi_channel *csi_chan, =
+unsigned int addr, u32 val)
+> > > > +{
+> > > > +     writel(val, csi_chan->csi->iomem + addr);
+> > > > +}
+> > > > +
+> > > > +static int __maybe_unused tegra20_csi_read(struct tegra_csi_channe=
+l *csi_chan, unsigned int addr)
+> > > > +{
+> > > > +     return readl(csi_chan->csi->iomem + addr);
+> > > > +}
+> > > > +
+> > > > +/* ---------------------------------------------------------------=
+-----------
+> > > > + * VI
+> > > > + */
+> > > > +
+> > > >  /*
+> > > >   * Get the main input format (YUV/RGB...) and the YUV variant as v=
+alues to
+> > > >   * be written into registers for the current VI input mbus code.
+> > > > @@ -282,20 +411,27 @@ static int tegra20_vi_enable(struct tegra_vi =
+*vi, bool on)
+> > > >  static int tegra20_channel_host1x_syncpt_init(struct tegra_vi_chan=
+nel *chan)
+> > > >  {
+> > > >       struct tegra_vi *vi =3D chan->vi;
+> > > > -     struct host1x_syncpt *out_sp;
+> > > > +     struct host1x_syncpt *out_sp, *fs_sp;
+> > > >
+> > > >       out_sp =3D host1x_syncpt_request(&vi->client, HOST1X_SYNCPT_C=
+LIENT_MANAGED);
+> > > >       if (!out_sp)
+> > > > -             return dev_err_probe(vi->dev, -ENOMEM, "failed to req=
+uest syncpoint\n");
+> > > > +             return dev_err_probe(vi->dev, -ENOMEM, "failed to req=
+uest mw ack syncpoint\n");
+> > >
+> > > Existing issue, but dev_err_probe doesn't print anything when the err=
+or is -ENOMEM, since "there is already enough output". But that's not neces=
+sarily the case with failing syncpoint allocation. Maybe we should be using=
+ a different error code like EBUSY?
+> > >
+> >
+> > That is interesting. I am fine to switching to any error code as long
+> > as it fits here, EBUSY fits fine.
+> >
+> > > >
+> > > >       chan->mw_ack_sp[0] =3D out_sp;
+> > > >
+> > > > +     fs_sp =3D host1x_syncpt_request(&vi->client, HOST1X_SYNCPT_CL=
+IENT_MANAGED);
+> > > > +     if (!fs_sp)
+> > > > +             return dev_err_probe(vi->dev, -ENOMEM, "failed to req=
+uest frame start syncpoint\n");
+> > > > +
+> > > > +     chan->frame_start_sp[0] =3D fs_sp;
+> > > > +
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > >  static void tegra20_channel_host1x_syncpt_free(struct tegra_vi_cha=
+nnel *chan)
+> > > >  {
+> > > >       host1x_syncpt_put(chan->mw_ack_sp[0]);
+> > > > +     host1x_syncpt_put(chan->frame_start_sp[0]);
+> > > >  }
+> > > >
+> > > >  static void tegra20_fmt_align(struct v4l2_pix_format *pix, unsigne=
+d int bpp)
+> > > > @@ -418,30 +554,60 @@ static void tegra20_channel_vi_buffer_setup(s=
+truct tegra_vi_channel *chan,
+> > > >  static int tegra20_channel_capture_frame(struct tegra_vi_channel *=
+chan,
+> > > >                                        struct tegra_channel_buffer =
+*buf)
+> > > >  {
+> > > > +     struct v4l2_subdev *csi_subdev =3D NULL;
+> > > > +     struct tegra_csi_channel *csi_chan =3D NULL;
+> > > > +     u32 port;
+> > > >       int err;
+> > > >
+> > > > -     chan->next_out_sp_idx++;
+> > > > +     csi_subdev =3D tegra_channel_get_remote_csi_subdev(chan);
+> > > > +     if (csi_subdev) {
+> > > > +             /* CSI subdevs are named after nodes, channel@0 or ch=
+annel@1 */
+> > > > +             if (!strncmp(csi_subdev->name, "channel", 7)) {
+> > > > +                     csi_chan =3D to_csi_chan(csi_subdev);
+> > > > +                     port =3D csi_chan->csi_port_nums[0] & 1;
+> > > > +             }
+> > > > +     }
+> > >
+> > > tegra_channel_get_remote_csi_subdev sounds like it should only return=
+ non-NULL if it's a CSI subdev. I'd move this check into that function.
+> > >
+> >
+> > That is possible.
+> >
+> > > Checking by name doesn't seem right -- v4l2_subdev has an 'ops' point=
+er, could we compare that to tegra_csi_ops to check if it's a CSI subdev?
+> > >
+> >
+> > I may try that. My main concern was VIP. Unlike Tegra210,
+> > Tegra20/Tegra30 have VIP which can cause issues if no additional
+> > checks are done.
+> >
+> > > Finally, is it possible to move this logic to some initialization log=
+ic for the 'chan' instead of each frame?
+> > >
+> >
+> > Yes, I hope so. We did not implement this logic, it existed before, we
+> > just expanded it to support CSI.
+>
+> If it's non-trivial it can be left for later.
+>
 
-Great, this succinctly expresses what you want!
+No no, I have some ideas that may address this.
 
+> >
+> > > >
+> > > >       tegra20_channel_vi_buffer_setup(chan, buf);
+> > > >
+> > > > -     tegra20_vi_write(chan, TEGRA_VI_CAMERA_CONTROL, VI_CAMERA_CON=
+TROL_VIP_ENABLE);
+> > > > +     if (csi_chan) {
+> > > > +             tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_PP=
+_COMMAND(port),
+> > > > +                               CSI_PP_START_MARKER_FRAME_MAX(0xf) =
+|
+> > > > +                               CSI_PP_SINGLE_SHOT | CSI_PP_ENABLE)=
+;
+> > > > +
+> > > > +             chan->next_fs_sp_idx++;
+> > > > +             err =3D host1x_syncpt_wait(chan->frame_start_sp[0], c=
+han->next_fs_sp_idx,
+> > > > +                                      TEGRA_VI_SYNCPT_WAIT_TIMEOUT=
+, NULL);
+> > > > +             if (err) {
+> > > > +                     host1x_syncpt_incr(chan->frame_start_sp[0]);
+> > >
+> > > This is technically a race condition -- the HW could increment the sy=
+ncpoint between the wait timing out and the call to _incr. The driver shoul=
+d ensure the HW won't increment the syncpoint before checking the value one=
+ more time and then making conclusions about the syncpoint's value. I also =
+don't think it's necessary to call _incr here, you can pass chan->next_fs_s=
+p_idx + 1 to syncpt_wait, and then only on success increment chan->next_fs_=
+sp_idx.
+> > >
+> >
+> > The race condition should be avoidable by resetting pixel parser and
+> > checking syncpt value again.
+> > Incrementing the software reference counter only if hardware completed
+> > successfully sounds like a good idea.
+> >
+> > > Also, I'd rename this to next_fs_sp_value. 'idx' to me sounds like th=
+ere are multiple syncpoints that are used e.g. in succession.
+> > >
+> > > (I know these are in line with the existing out_sp code, but it'd be =
+great if we can fix these issues.)
+> > >
+> > > > +                     if (err !=3D -ERESTARTSYS)
+> > > > +                             dev_err_ratelimited(&chan->video.dev,
+> > > > +                                                 "frame start sync=
+pt timeout: %d\n", err);
+> > > > +             }
+> > > > +
+> > > > +             tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_PP=
+_COMMAND(port),
+> > > > +                               CSI_PP_START_MARKER_FRAME_MAX(0xf) =
+|
+> > > > +                               CSI_PP_DISABLE);
+> > > > +     } else {
+> > > > +             tegra20_vi_write(chan, TEGRA_VI_CAMERA_CONTROL, VI_CA=
+MERA_CONTROL_VIP_ENABLE);
+> > > > +     }
+> > > >
+> > > > -     /* Wait for syncpt counter to reach frame start event thresho=
+ld */
+> > > > +     chan->next_out_sp_idx++;
+> > > >       err =3D host1x_syncpt_wait(chan->mw_ack_sp[0], chan->next_out=
+_sp_idx,
+> > > >                                TEGRA_VI_SYNCPT_WAIT_TIMEOUT, NULL);
+> > > >       if (err) {
+> > > >               host1x_syncpt_incr(chan->mw_ack_sp[0]);
+> > > > -             dev_err_ratelimited(&chan->video.dev, "frame start sy=
+ncpt timeout: %d\n", err);
+> > > > -             release_buffer(chan, buf, VB2_BUF_STATE_ERROR);
+> > > > -             return err;
+> > > > +             if (err !=3D -ERESTARTSYS)
+> > > > +                     dev_err_ratelimited(&chan->video.dev, "mw ack=
+ syncpt timeout: %d\n", err);
+> > > >       }
+> > > >
+> > > > -     tegra20_vi_write(chan, TEGRA_VI_CAMERA_CONTROL,
+> > > > -                      VI_CAMERA_CONTROL_STOP_CAPTURE | VI_CAMERA_C=
+ONTROL_VIP_ENABLE);
+> > > > +     if (!csi_chan)
+> > > > +             tegra20_vi_write(chan, TEGRA_VI_CAMERA_CONTROL,
+> > > > +                              VI_CAMERA_CONTROL_STOP_CAPTURE | VI_=
+CAMERA_CONTROL_VIP_ENABLE);
+> > > >
+> > > >       release_buffer(chan, buf, VB2_BUF_STATE_DONE);
+> > > >
+> > > > -     return 0;
+> > > > +     return err;
+> > > >  }
+> > > >
+> > > >  static int tegra20_chan_capture_kthread_start(void *data)
+> > > > @@ -502,28 +668,6 @@ static void tegra20_camera_capture_setup(struc=
+t tegra_vi_channel *chan)
+> > > >       int output_channel =3D (data_type =3D=3D TEGRA_IMAGE_DT_RAW8 =
+||
+> > > >                             data_type =3D=3D TEGRA_IMAGE_DT_RAW10) =
+?
+> > > >                             OUT_2 : OUT_1;
+> > > > -     int main_output_format;
+> > > > -     int yuv_output_format;
+> > > > -
+> > > > -     tegra20_vi_get_output_formats(chan, &main_output_format, &yuv=
+_output_format);
+> > > > -
+> > > > -     /*
+> > > > -      * Set up low pass filter.  Use 0x240 for chromaticity and 0x=
+240
+> > > > -      * for luminance, which is the default and means not to touch
+> > > > -      * anything.
+> > > > -      */
+> > > > -     tegra20_vi_write(chan, TEGRA_VI_H_LPF_CONTROL,
+> > > > -                      0x0240 << VI_H_LPF_CONTROL_LUMA_SFT |
+> > > > -                      0x0240 << VI_H_LPF_CONTROL_CHROMA_SFT);
+> > > > -
+> > > > -     /* Set up raise-on-edge, so we get an interrupt on end of fra=
+me. */
+> > > > -     tegra20_vi_write(chan, TEGRA_VI_VI_RAISE, VI_VI_RAISE_ON_EDGE=
+);
+> > > > -
+> > > > -     tegra20_vi_write(chan, TEGRA_VI_VI_OUTPUT_CONTROL(output_chan=
+nel),
+> > > > -                      (chan->vflip ? VI_OUTPUT_V_DIRECTION : 0) |
+> > > > -                      (chan->hflip ? VI_OUTPUT_H_DIRECTION : 0) |
+> > > > -                      yuv_output_format << VI_OUTPUT_YUV_OUTPUT_FO=
+RMAT_SFT |
+> > > > -                      main_output_format << VI_OUTPUT_OUTPUT_FORMA=
+T_SFT);
+> > > >
+> > > >       /* Set up frame size */
+> > > >       tegra20_vi_write(chan, TEGRA_VI_OUTPUT_FRAME_SIZE(output_chan=
+nel),
+> > > > @@ -548,24 +692,148 @@ static void tegra20_camera_capture_setup(str=
+uct tegra_vi_channel *chan)
+> > > >       tegra20_vi_write(chan, TEGRA_VI_VI_ENABLE(output_channel), 0)=
+;
+> > > >  }
+> > > >
+> > > > +static int tegra20_csi_pad_calibration(struct tegra_csi_channel *c=
+si_chan)
+> > > > +{
+> > > > +     struct tegra_csi *csi =3D csi_chan->csi;
+> > > > +     void __iomem *cil_status_reg =3D csi_chan->csi->iomem + TEGRA=
+_CSI_CSI_CIL_STATUS;
+> > > > +     unsigned int port =3D csi_chan->csi_port_nums[0] & 1;
+> > > > +     u32 value, pp, cil;
+> > > > +     int ret;
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_DSI_MIPI_CAL_CONFIG,
+> > > > +                       CSI_CIL_MIPI_CAL_HSPDOS(4) |
+> > > > +                       CSI_CIL_MIPI_CAL_HSPUOS(3) |
+> > > > +                       CSI_CIL_MIPI_CAL_TERMOS(0));
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_MIPIBIAS_PAD_CONFIG0,
+> > > > +                       CSI_PAD_DRIV_DN_REF(5) |
+> > > > +                       CSI_PAD_DRIV_UP_REF(7) |
+> > > > +                       CSI_PAD_TERM_REF(0));
+> > > > +
+> > > > +     /* CSI B */
+> > > > +     value =3D CSI_CIL_MIPI_CAL_HSPDOS(0) |
+> > > > +             CSI_CIL_MIPI_CAL_HSPUOS(0) |
+> > > > +             CSI_CIL_MIPI_CAL_TERMOS(4);
+> > > > +
+> > > > +     if (port =3D=3D PORT_B || csi_chan->numlanes =3D=3D 4)
+> > > > +             value |=3D CSI_CIL_MIPI_CAL_SEL_B;
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CILB_MIPI_CAL_CONFIG, v=
+alue);
+> > > > +
+> > > > +     /* CSI A */
+> > > > +     value =3D CSI_CIL_MIPI_CAL_STARTCAL |
+> > > > +             CSI_CIL_MIPI_CAL_NOISE_FLT(0xa) |
+> > > > +             CSI_CIL_MIPI_CAL_PRESCALE(0x2) |
+> > > > +             CSI_CIL_MIPI_CAL_HSPDOS(0) |
+> > > > +             CSI_CIL_MIPI_CAL_HSPUOS(0) |
+> > > > +             CSI_CIL_MIPI_CAL_TERMOS(4);
+> > > > +
+> > > > +     if (port =3D=3D PORT_A)
+> > > > +             value |=3D CSI_CIL_MIPI_CAL_SEL_A;
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CILA_MIPI_CAL_CONFIG, v=
+alue);
+> > > > +
+> > > > +     ret =3D readl_relaxed_poll_timeout(cil_status_reg, value,
+> > > > +                                      value & CSI_MIPI_AUTO_CAL_DO=
+NE, 50, 250000);
+> > > > +     if (ret < 0) {
+> > > > +             dev_warn(csi->dev, "MIPI calibration timeout!\n");
+> > > > +             goto exit;
+> > > > +     }
+> > > > +
+> > > > +     /* clear status */
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_CIL_STATUS, value);
+> > > > +     ret =3D readl_relaxed_poll_timeout(cil_status_reg, value,
+> > > > +                                      !(value & CSI_MIPI_AUTO_CAL_=
+DONE), 50, 250000);
+> > > > +     if (ret < 0) {
+> > > > +             dev_warn(csi->dev, "MIPI calibration status timeout!\=
+n");
+> > > > +             goto exit;
+> > > > +     }
+> > > > +
+> > > > +     pp =3D tegra20_csi_read(csi_chan, TEGRA_CSI_CSI_PIXEL_PARSER_=
+STATUS);
+> > > > +     cil =3D tegra20_csi_read(csi_chan, TEGRA_CSI_CSI_CIL_STATUS);
+> > > > +     if (pp | cil) {
+> > > > +             dev_warn(csi->dev, "Calibration status not been clear=
+ed!\n");
+> > > > +             ret =3D -EINVAL;
+> > > > +             goto exit;
+> > > > +     }
+> > > > +
+> > > > +exit:
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_CIL_STATUS, pp);
+> > > > +
+> > > > +     /* un-select to avoid interference with DSI */
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CILB_MIPI_CAL_CONFIG,
+> > > > +                       CSI_CIL_MIPI_CAL_HSPDOS(0) |
+> > > > +                       CSI_CIL_MIPI_CAL_HSPUOS(0) |
+> > > > +                       CSI_CIL_MIPI_CAL_TERMOS(4));
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CILA_MIPI_CAL_CONFIG,
+> > > > +                       CSI_CIL_MIPI_CAL_NOISE_FLT(0xa) |
+> > > > +                       CSI_CIL_MIPI_CAL_PRESCALE(0x2) |
+> > > > +                       CSI_CIL_MIPI_CAL_HSPDOS(0) |
+> > > > +                       CSI_CIL_MIPI_CAL_HSPUOS(0) |
+> > > > +                       CSI_CIL_MIPI_CAL_TERMOS(4));
+> > > > +
+> > > > +     return ret;
+> > > > +}
+> > > > +
+> > > >  static int tegra20_vi_start_streaming(struct vb2_queue *vq, u32 co=
+unt)
+> > > >  {
+> > > >       struct tegra_vi_channel *chan =3D vb2_get_drv_priv(vq);
+> > > >       struct media_pipeline *pipe =3D &chan->video.pipe;
+> > > > +     struct v4l2_subdev *csi_subdev, *src_subdev;
+> > > > +     struct tegra_csi_channel *csi_chan =3D NULL;
+> > > >       int err;
+> > > >
+> > > > +     csi_subdev =3D tegra_channel_get_remote_csi_subdev(chan);
+> > > > +     if (csi_subdev) {
+> > > > +             if (!strncmp(csi_subdev->name, "channel", 7))
+> > > > +                     csi_chan =3D to_csi_chan(csi_subdev);
+> > > > +     }
+> > > > +
+> > > > +     chan->next_fs_sp_idx =3D host1x_syncpt_read(chan->frame_start=
+_sp[0]);
+> > > >       chan->next_out_sp_idx =3D host1x_syncpt_read(chan->mw_ack_sp[=
+0]);
+> > > >
+> > > >       err =3D video_device_pipeline_start(&chan->video, pipe);
+> > > >       if (err)
+> > > >               goto error_pipeline_start;
+> > > >
+> > > > -     tegra20_camera_capture_setup(chan);
+> > > > +     /*
+> > > > +      * Set up low pass filter.  Use 0x240 for chromaticity and 0x=
+240
+> > > > +      * for luminance, which is the default and means not to touch
+> > > > +      * anything.
+> > > > +      */
+> > > > +     tegra20_vi_write(chan, TEGRA_VI_H_LPF_CONTROL,
+> > > > +                      0x0240 << VI_H_LPF_CONTROL_LUMA_SFT |
+> > > > +                      0x0240 << VI_H_LPF_CONTROL_CHROMA_SFT);
+> > > > +
+> > > > +     /* Set up raise-on-edge, so we get an interrupt on end of fra=
+me. */
+> > > > +     tegra20_vi_write(chan, TEGRA_VI_VI_RAISE, VI_VI_RAISE_ON_EDGE=
+);
+> > > >
+> > > >       err =3D tegra_channel_set_stream(chan, true);
+> > > >       if (err)
+> > > >               goto error_set_stream;
+> > > >
+> > > > +     tegra20_camera_capture_setup(chan);
+> > > > +
+> > > > +     if (csi_chan) {
+> > > > +             /*
+> > > > +              * TRM has incorrectly documented to wait for done st=
+atus from
+> > > > +              * calibration logic after CSI interface power on.
+> > > > +              * As per the design, calibration results are latched=
+ and applied
+> > > > +              * to the pads only when the link is in LP11 state wh=
+ich will happen
+> > > > +              * during the sensor stream-on.
+> > > > +              * CSI subdev stream-on triggers start of MIPI pads c=
+alibration.
+> > > > +              * Wait for calibration to finish here after sensor s=
+ubdev stream-on.
+> > > > +              */
+> > > > +             src_subdev =3D tegra_channel_get_remote_source_subdev=
+(chan);
+> > > > +             if (!src_subdev->s_stream_enabled) {
+> > > > +                     err =3D v4l2_subdev_call(src_subdev, video, s=
+_stream, true);
+> > > > +                     if (err < 0 && err !=3D -ENOIOCTLCMD)
+> > > > +                             goto error_set_stream;
+> > > > +             }
+> > > > +
+> > > > +             tegra20_csi_pad_calibration(csi_chan);
+> > > > +     }
+> > > > +
+> > > >       chan->sequence =3D 0;
+> > > >
+> > > >       chan->kthread_start_capture =3D kthread_run(tegra20_chan_capt=
+ure_kthread_start,
+> > > > @@ -592,12 +860,17 @@ static int tegra20_vi_start_streaming(struct =
+vb2_queue *vq, u32 count)
+> > > >  static void tegra20_vi_stop_streaming(struct vb2_queue *vq)
+> > > >  {
+> > > >       struct tegra_vi_channel *chan =3D vb2_get_drv_priv(vq);
+> > > > +     struct v4l2_subdev *src_subdev;
+> > > >
+> > > >       if (chan->kthread_start_capture) {
+> > > >               kthread_stop(chan->kthread_start_capture);
+> > > >               chan->kthread_start_capture =3D NULL;
+> > > >       }
+> > > >
+> > > > +     src_subdev =3D tegra_channel_get_remote_source_subdev(chan);
+> > > > +     if (src_subdev->s_stream_enabled)
+> > > > +             v4l2_subdev_call(src_subdev, video, s_stream, false);
+> > > > +
+> > > >       tegra_channel_release_buffers(chan, VB2_BUF_STATE_ERROR);
+> > > >       tegra_channel_set_stream(chan, false);
+> > > >       video_device_pipeline_stop(&chan->video);
+> > > > @@ -652,11 +925,231 @@ const struct tegra_vi_soc tegra20_vi_soc =3D=
+ {
+> > > >       .default_video_format =3D &tegra20_video_formats[0],
+> > > >       .ops =3D &tegra20_vi_ops,
+> > > >       .hw_revision =3D 1,
+> > > > -     .vi_max_channels =3D 1, /* parallel input (VIP) */
+> > > > +     .vi_max_channels =3D 4, /* parallel input (VIP), CSIA, CSIB, =
+HOST */
+> > > >       .vi_max_clk_hz =3D 450000000,
+> > > >       .has_h_v_flip =3D true,
+> > > >  };
+> > > >
+> > > > +/* ---------------------------------------------------------------=
+-----------
+> > > > + * CSI
+> > > > + */
+> > > > +static void tegra20_csi_capture_clean(struct tegra_csi_channel *cs=
+i_chan)
+> > > > +{
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_VI_INPUT_STREAM_CONTROL=
+, 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_HOST_INPUT_STREAM_CONTR=
+OL, 0);
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_PIXEL_PARSER_STATUS=
+, 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_CIL_STATUS, 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_PIXEL_PARSER_INTERR=
+UPT_MASK, 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_CIL_INTERRUPT_MASK,=
+ 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_READONLY_STATUS, 0)=
+;
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_ESCAPE_MODE_COMMAND, 0)=
+;
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_ESCAPE_MODE_DATA, 0);
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CIL_PAD_CONFIG, 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CIL_MIPI_CAL_STATUS, 0)=
+;
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CLKEN_OVERRIDE, 0);
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_DEBUG_CONTROL,
+> > > > +                       CSI_DEBUG_CONTROL_CLR_DBG_CNT_0 |
+> > > > +                       CSI_DEBUG_CONTROL_CLR_DBG_CNT_1 |
+> > > > +                       CSI_DEBUG_CONTROL_CLR_DBG_CNT_2);
+> > > > +}
+> > > > +
+> > > > +static int tegra20_csi_port_start_streaming(struct tegra_csi_chann=
+el *csi_chan,
+> > > > +                                         u8 portno)
+> > > > +{
+> > > > +     struct tegra_vi_channel *vi_chan =3D v4l2_get_subdev_hostdata=
+(&csi_chan->subdev);
+> > > > +     int width  =3D vi_chan->format.width;
+> > > > +     int height =3D vi_chan->format.height;
+> > > > +     u32 data_type =3D vi_chan->fmtinfo->img_dt;
+> > > > +     u32 word_count =3D (width * vi_chan->fmtinfo->bit_width) / 8;
+> > > > +     int output_channel =3D OUT_1;
+> > > > +
+> > > > +     unsigned int main_output_format, yuv_output_format;
+> > > > +     unsigned int port =3D portno & 1;
+> > > > +     u32 value;
+> > > > +
+> > > > +     tegra20_vi_get_output_formats(vi_chan, &main_output_format, &=
+yuv_output_format);
+> > > > +
+> > > > +     switch (data_type) {
+> > > > +     case TEGRA_IMAGE_DT_RAW8:
+> > > > +     case TEGRA_IMAGE_DT_RAW10:
+> > > > +             output_channel =3D OUT_2;
+> > > > +             if (port =3D=3D PORT_A)
+> > > > +                     main_output_format =3D VI_OUTPUT_OUTPUT_FORMA=
+T_CSI_PPA_BAYER;
+> > > > +             else
+> > > > +                     main_output_format =3D VI_OUTPUT_OUTPUT_FORMA=
+T_CSI_PPB_BAYER;
+> > > > +             break;
+> > > > +     }
+> > > > +
+> > > > +     tegra20_csi_capture_clean(csi_chan);
+> > > > +
+> > > > +     /* CSI port cleanup */
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_INPUT_STREAM_CONTROL(po=
+rt), 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_CONTROL0(p=
+ort), 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_CONTROL1(p=
+ort), 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_WORD_COUNT=
+(port), 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_GAP(port),=
+ 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_PP_COMMAND=
+(port), 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_EXPECTED_F=
+RAME(port), 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PHY_CIL_CONTROL0(port),=
+ 0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CIL_PAD_CONFIG0(port), =
+0);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CIL_PAD_CONFIG1(port), =
+0);
+> > > > +
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_VI_CORE_CONTROL, BIT(25 + =
+port)); /* CSI_PP_YUV422 */
+> > > > +
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_H_DOWNSCALE_CONTROL, BIT(2=
+ + port)); /* CSI_PP */
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_V_DOWNSCALE_CONTROL, BIT(2=
+ + port)); /* CSI_PP */
+> > > > +
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_CSI_PP_H_ACTIVE(port), wid=
+th << 16);
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_CSI_PP_V_ACTIVE(port), hei=
+ght << 16);
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_CONTROL1(p=
+ort), 0x1);
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_WORD_COUNT=
+(port), word_count);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_GAP(port),
+> > > > +                       CSI_PP_FRAME_MIN_GAP(0x14)); /* 14 vi clks =
+between frames */
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_EXPECTED_F=
+RAME(port),
+> > > > +                       CSI_PP_EXP_FRAME_HEIGHT(height) |
+> > > > +                       CSI_PP_MAX_CLOCKS(0x300) | /* wait 0x300 vi=
+ clks for timeout */
+> > > > +                       CSI_PP_LINE_TIMEOUT_ENABLE);
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_CONTROL0(p=
+ort),
+> > > > +                       CSI_PP_OUTPUT_FORMAT_PIXEL |
+> > > > +                       CSI_PP_DATA_TYPE(data_type) |
+> > > > +                       CSI_PP_CRC_CHECK_ENABLE |
+> > > > +                       CSI_PP_WORD_COUNT_HEADER |
+> > > > +                       CSI_PP_DATA_IDENTIFIER_ENABLE |
+> > > > +                       CSI_PP_PACKET_HEADER_SENT |
+> > > > +                       port);
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_INPUT_STREAM_CONTROL(po=
+rt),
+> > > > +                       CSI_SKIP_PACKET_THRESHOLD(0x3f) |
+> > > > +                       (csi_chan->numlanes - 1));
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PHY_CIL_CONTROL0(port),
+> > > > +                       CSI_CONTINUOUS_CLOCK_MODE_ENABLE |
+> > > > +                       0x5); /* Clock settle time */
+> > > > +
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_CONT_SYNCPT_CSI_PP_FRAME_S=
+TART(port),
+> > > > +                      VI_CONT_SYNCPT_OUT_CONTINUOUS_SYNCPT |
+> > > > +                      host1x_syncpt_id(vi_chan->frame_start_sp[0])
+> > > > +                      << VI_CONT_SYNCPT_OUT_SYNCPT_IDX_SFT);
+> > > > +
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_CONT_SYNCPT_OUT(output_cha=
+nnel),
+> > > > +                      VI_CONT_SYNCPT_OUT_CONTINUOUS_SYNCPT |
+> > > > +                      host1x_syncpt_id(vi_chan->mw_ack_sp[0])
+> > > > +                      << VI_CONT_SYNCPT_OUT_SYNCPT_IDX_SFT);
+> > > > +
+> > > > +     value =3D (port =3D=3D PORT_A) ? CSI_A_PHY_CIL_ENABLE | CSI_B=
+_PHY_CIL_DISABLE :
+> > > > +             CSI_B_PHY_CIL_ENABLE | CSI_A_PHY_CIL_DISABLE;
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PHY_CIL_COMMAND, value)=
+;
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_PP_COMMAND=
+(port),
+> > > > +                       CSI_PP_START_MARKER_FRAME_MAX(0xf) |
+> > > > +                       CSI_PP_DISABLE);
+> > > > +
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_VI_OUTPUT_CONTROL(output_c=
+hannel),
+> > > > +                      (vi_chan->vflip ? VI_OUTPUT_V_DIRECTION : 0)=
+ |
+> > > > +                      (vi_chan->hflip ? VI_OUTPUT_H_DIRECTION : 0)=
+ |
+> > > > +                      yuv_output_format | main_output_format);
+> > > > +
+> > > > +     return 0;
+> > > > +};
+> > > > +
+> > > > +static void tegra20_csi_port_stop_streaming(struct tegra_csi_chann=
+el *csi_chan, u8 portno)
+> > > > +{
+> > > > +     struct tegra_csi *csi =3D csi_chan->csi;
+> > > > +     unsigned int port =3D portno & 1;
+> > > > +     u32 value;
+> > > > +
+> > > > +     value =3D tegra20_csi_read(csi_chan, TEGRA_CSI_CSI_PIXEL_PARS=
+ER_STATUS);
+> > > > +     dev_dbg(csi->dev, "TEGRA_CSI_CSI_PIXEL_PARSER_STATUS 0x%08x\n=
+", value);
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_PIXEL_PARSER_STATUS=
+, value);
+> > > > +
+> > > > +     value =3D tegra20_csi_read(csi_chan, TEGRA_CSI_CSI_CIL_STATUS=
+);
+> > > > +     dev_dbg(csi->dev, "TEGRA_CSI_CSI_CIL_STATUS 0x%08x\n", value)=
+;
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_CSI_CIL_STATUS, value);
+> > > > +
+> > > > +     tegra20_csi_write(csi_chan, TEGRA_CSI_PIXEL_STREAM_PP_COMMAND=
+(port),
+> > > > +                       CSI_PP_START_MARKER_FRAME_MAX(0xf) |
+> > > > +                       CSI_PP_DISABLE);
+> > > > +
+> > > > +     if (csi_chan->numlanes =3D=3D 4) {
+> > > > +             tegra20_csi_write(csi_chan, TEGRA_CSI_PHY_CIL_COMMAND=
+,
+> > > > +                               CSI_A_PHY_CIL_DISABLE | CSI_B_PHY_C=
+IL_DISABLE);
+> > > > +     } else {
+> > > > +             value =3D (port =3D=3D PORT_A) ? CSI_A_PHY_CIL_DISABL=
+E | CSI_B_PHY_CIL_NOP :
+> > > > +                     CSI_B_PHY_CIL_DISABLE | CSI_A_PHY_CIL_NOP;
+> > > > +             tegra20_csi_write(csi_chan, TEGRA_CSI_PHY_CIL_COMMAND=
+, value);
+> > > > +     }
+> > > > +}
+> > > > +
+> > > > +static int tegra20_csi_start_streaming(struct tegra_csi_channel *c=
+si_chan)
+> > > > +{
+> > > > +     u8 *portnos =3D csi_chan->csi_port_nums;
+> > > > +     int ret, i;
+> > > > +
+> > > > +     for (i =3D 0; i < csi_chan->numgangports; i++) {
+> > > > +             ret =3D tegra20_csi_port_start_streaming(csi_chan, po=
+rtnos[i]);
+> > > > +             if (ret)
+> > > > +                     goto stream_start_fail;
+> > > > +     }
+> > > > +
+> > > > +     return 0;
+> > > > +
+> > > > +stream_start_fail:
+> > > > +     for (i =3D i - 1; i >=3D 0; i--)
+> > > > +             tegra20_csi_port_stop_streaming(csi_chan, portnos[i])=
+;
+> > > > +
+> > > > +     return ret;
+> > > > +}
+> > > > +
+> > > > +static void tegra20_csi_stop_streaming(struct tegra_csi_channel *c=
+si_chan)
+> > > > +{
+> > > > +     u8 *portnos =3D csi_chan->csi_port_nums;
+> > > > +     int i;
+> > > > +
+> > > > +     for (i =3D 0; i < csi_chan->numgangports; i++)
+> > > > +             tegra20_csi_port_stop_streaming(csi_chan, portnos[i])=
+;
+> > > > +}
+> > > > +
+> > > > +/* Tegra20 CSI operations */
+> > > > +static const struct tegra_csi_ops tegra20_csi_ops =3D {
+> > > > +     .csi_start_streaming =3D tegra20_csi_start_streaming,
+> > > > +     .csi_stop_streaming =3D tegra20_csi_stop_streaming,
+> > > > +};
+> > > > +
+> > > > +static const char * const tegra20_csi_clks[] =3D {
+> > > > +     "csi",
+> > > > +};
+> > > > +
+> > > > +/* Tegra20 CSI SoC data */
+> > > > +const struct tegra_csi_soc tegra20_csi_soc =3D {
+> > > > +     .ops =3D &tegra20_csi_ops,
+> > > > +     .csi_max_channels =3D 2, /* CSI-A and CSI-B */
+> > > > +     .clk_names =3D tegra20_csi_clks,
+> > > > +     .num_clks =3D ARRAY_SIZE(tegra20_csi_clks),
+> > > > +     .has_mipi_calibration =3D false,
+> > > > +};
+> > > > +
+> > > > +static const char * const tegra30_csi_clks[] =3D {
+> > > > +     "csi",
+> > > > +     "csia_pad",
+> > > > +     "csib_pad",
+> > > > +};
+> > > > +
+> > > > +/* Tegra30 CSI SoC data */
+> > > > +const struct tegra_csi_soc tegra30_csi_soc =3D {
+> > > > +     .ops =3D &tegra20_csi_ops,
+> > > > +     .csi_max_channels =3D 2, /* CSI-A and CSI-B */
+> > > > +     .clk_names =3D tegra30_csi_clks,
+> > > > +     .num_clks =3D ARRAY_SIZE(tegra30_csi_clks),
+> > > > +     .has_mipi_calibration =3D false,
+> > > > +};
+> > > > +
+> > > >  /* ---------------------------------------------------------------=
+-----------
+> > > >   * VIP
+> > > >   */
+> > > > @@ -677,10 +1170,11 @@ static int tegra20_vip_start_streaming(struc=
+t tegra_vip_channel *vip_chan)
+> > > >                             data_type =3D=3D TEGRA_IMAGE_DT_RAW10) =
+?
+> > > >                             OUT_2 : OUT_1;
+> > > >
+> > > > -     unsigned int main_input_format;
+> > > > -     unsigned int yuv_input_format;
+> > > > +     unsigned int main_input_format, yuv_input_format;
+> > > > +     unsigned int main_output_format, yuv_output_format;
+> > > >
+> > > >       tegra20_vi_get_input_formats(vi_chan, &main_input_format, &yu=
+v_input_format);
+> > > > +     tegra20_vi_get_output_formats(vi_chan, &main_output_format, &=
+yuv_output_format);
+> > > >
+> > > >       tegra20_vi_write(vi_chan, TEGRA_VI_VI_CORE_CONTROL, 0);
+> > > >
+> > > > @@ -713,6 +1207,11 @@ static int tegra20_vip_start_streaming(struct=
+ tegra_vip_channel *vip_chan)
+> > > >
+> > > >       tegra20_vi_write(vi_chan, TEGRA_VI_CAMERA_CONTROL, VI_CAMERA_=
+CONTROL_STOP_CAPTURE);
+> > > >
+> > > > +     tegra20_vi_write(vi_chan, TEGRA_VI_VI_OUTPUT_CONTROL(output_c=
+hannel),
+> > > > +                      (vi_chan->vflip ? VI_OUTPUT_V_DIRECTION : 0)=
+ |
+> > > > +                      (vi_chan->hflip ? VI_OUTPUT_H_DIRECTION : 0)=
+ |
+> > > > +                       yuv_output_format | main_output_format);
+> > > > +
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/stagi=
+ng/media/tegra-video/vi.h
+> > > > index cac0c0d0e225..c02517c9e09b 100644
+> > > > --- a/drivers/staging/media/tegra-video/vi.h
+> > > > +++ b/drivers/staging/media/tegra-video/vi.h
+> > > > @@ -127,6 +127,7 @@ struct tegra_vi {
+> > > >   *           frame through host1x syncpoint counters (On Tegra20 u=
+sed for the
+> > > >   *              OUT_1 syncpt)
+> > > >   * @sp_incr_lock: protects cpu syncpoint increment.
+> > > > + * @next_fs_sp_idx: next expected value for frame_start_sp[0] (Teg=
+ra20)
+> > > >   * @next_out_sp_idx: next expected value for mw_ack_sp[0], i.e. OU=
+T_1 (Tegra20)
+> > > >   *
+> > > >   * @kthread_start_capture: kthread to start capture of single fram=
+e when
+> > > > @@ -191,6 +192,7 @@ struct tegra_vi_channel {
+> > > >       /* protects the cpu syncpoint increment */
+> > > >       spinlock_t sp_incr_lock[GANG_PORTS_MAX];
+> > > >       u32 next_out_sp_idx;
+> > > > +     u32 next_fs_sp_idx;
+> > > >
+> > > >       struct task_struct *kthread_start_capture;
+> > > >       wait_queue_head_t start_wait;
+> > > > diff --git a/drivers/staging/media/tegra-video/video.c b/drivers/st=
+aging/media/tegra-video/video.c
+> > > > index a25885f93cd7..8fa660431eb0 100644
+> > > > --- a/drivers/staging/media/tegra-video/video.c
+> > > > +++ b/drivers/staging/media/tegra-video/video.c
+> > > > @@ -124,10 +124,12 @@ static int host1x_video_remove(struct host1x_=
+device *dev)
+> > > >
+> > > >  static const struct of_device_id host1x_video_subdevs[] =3D {
+> > > >  #if defined(CONFIG_ARCH_TEGRA_2x_SOC)
+> > > > +     { .compatible =3D "nvidia,tegra20-csi", },
+> > > >       { .compatible =3D "nvidia,tegra20-vip", },
+> > > >       { .compatible =3D "nvidia,tegra20-vi", },
+> > > >  #endif
+> > > >  #if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+> > > > +     { .compatible =3D "nvidia,tegra30-csi", },
+> > > >       { .compatible =3D "nvidia,tegra30-vip", },
+> > > >       { .compatible =3D "nvidia,tegra30-vi", },
+> > > >  #endif
+> > > >
+> > >
+> > >
+> > >
+> > >
 >
-> This patch series splitted into smaller patches was initially posted
-> as a single large patch:
 >
->  https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
 >
-> I started this work when I tried to constify the Ceph filesystem code,
-> but found that to be impossible because many "mm" functions accept
-> non-const pointer, even though they modify nothing.
-
-And as Vlasta said, this is great context.
-
->
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-
-Glad we got there in the end :) hopefully having more const-ification will have
-a knock-on effect anyway for future development both by:
-
-a. People needing to ensure it downstream of this stuff &.
-b. Seeing the pattern and adopting it.
-
-So this should have a positive impact I think :)
-
-Cheers, Lorenzo
-
-> ---
-> v1 -> v2:
-> - made several parameter values const (i.e. the pointer address, not
->   just the pointed-to memory), as suggested by Andrew Morton and
->   Yuanchu Xie
-> - drop existing+obsolete "extern" keywords on lines modified by these
->   patches (suggested by Vishal Moola)
-> - add missing parameter names on lines modified by these patches
->   (suggested by Vishal Moola)
-> - more "const" pointers (e.g. the task_struct passed to
->   process_shares_mm())
-> - add missing "const" to s390, fixing s390 build failure
-> - moved the mmap_is_legacy() change in arch/s390/mm/mmap.c from 08/12
->   to 06/12 (suggested by Vishal Moola)
->
-> v2 -> v3:
-> - remove garbage from 06/12
-> - changed tags on subject line (suggested by Matthew Wilcox)
->
-> v3 -> v4:
-> - more verbose commit messages including a listing of function names
->   (suggested by David Hildenbrand and Lorenzo Stoakes)
->
-> v4 -> v5:
-> - back to shorter commit messages after an agreement between David
->   Hildenbrand and Lorenzo Stoakes was found
->
-> v5 -> v6:
-> - fix inconsistent constness of assert_fault_locked()
-> - revert the const parameter value change from v2 (requested by
->   Lorenzo Stoakes)
-> - revert the long cover letter, removing long explanations again
->   (requested by Lorenzo Stoakes)
->
-> Max Kellermann (12):
->   mm: constify shmem related test functions for improved
->     const-correctness
->   mm: constify pagemap related test/getter functions
->   mm: constify zone related test/getter functions
->   fs: constify mapping related test functions for improved
->     const-correctness
->   mm: constify process_shares_mm() for improved const-correctness
->   mm, s390: constify mapping related test/getter functions
->   parisc: constify mmap_upper_limit() parameter
->   mm: constify arch_pick_mmap_layout() for improved const-correctness
->   mm: constify ptdesc_pmd_pts_count() and folio_get_private()
->   mm: constify various inline functions for improved const-correctness
->   mm: constify assert/test functions in mm.h
->   mm: constify highmem related functions for improved const-correctness
->
->  arch/arm/include/asm/highmem.h      |  6 +--
->  arch/parisc/include/asm/processor.h |  2 +-
->  arch/parisc/kernel/sys_parisc.c     |  2 +-
->  arch/s390/mm/mmap.c                 |  6 +--
->  arch/sparc/kernel/sys_sparc_64.c    |  2 +-
->  arch/x86/mm/mmap.c                  |  6 +--
->  arch/xtensa/include/asm/highmem.h   |  2 +-
->  include/linux/fs.h                  |  6 +--
->  include/linux/highmem-internal.h    | 36 +++++++++---------
->  include/linux/highmem.h             |  8 ++--
->  include/linux/mm.h                  | 56 +++++++++++++--------------
->  include/linux/mm_inline.h           | 25 ++++++------
->  include/linux/mm_types.h            |  4 +-
->  include/linux/mmzone.h              | 42 ++++++++++----------
->  include/linux/pagemap.h             | 59 +++++++++++++++--------------
->  include/linux/sched/mm.h            |  4 +-
->  include/linux/shmem_fs.h            |  4 +-
->  mm/highmem.c                        | 10 ++---
->  mm/oom_kill.c                       |  6 +--
->  mm/shmem.c                          |  6 +--
->  mm/util.c                           | 16 ++++----
->  21 files changed, 155 insertions(+), 153 deletions(-)
->
-> --
-> 2.47.2
 >
 
