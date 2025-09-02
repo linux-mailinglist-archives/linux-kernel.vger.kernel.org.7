@@ -1,259 +1,159 @@
-Return-Path: <linux-kernel+bounces-796996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A40B40A89
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:26:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090B1B40A8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1461BA283E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:26:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE2DB7B1FD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC61033A017;
-	Tue,  2 Sep 2025 16:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FF732A825;
+	Tue,  2 Sep 2025 16:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YMfMCr70"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mnz2RLK4"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3A533CEA8
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E8D3376B3
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756830355; cv=none; b=oQXsotrF6FxAGP/aXr92NAT2fhtiaeD6+gKoHSrif4qEhtUWwj6FrgzygeymnsmbUL+2dp3ceabpyB4PiYbRVhgxrYTWR2hEjcoK6EE8OlMWAK05pq8dmR8bGAuOHz0nk/Nbs8ysSEyIgkMoibQmduka1sBc1IW5os0S9qFbx38=
+	t=1756830366; cv=none; b=pC/byVU1bihQjrEqENp7MkIs2fIrP/+tmu3CvV6AtmvlJtSWkS14tKb3BPKuOhqDnlP//jUiTPr/zRLR8bpJXyMg5IAu1t9pNouDMij3Svd1M5Te3S47XMUcyRewj8Bu6czBtQo4fzoUWU1h/ktP8hFHZlkxV8dtG+p7O1FA3E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756830355; c=relaxed/simple;
-	bh=EPDKgQOgK+7zSwZkJ82YqCzR2US+XMjNJC6FYAnV0bU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A9aWzNEIMF8WFDsW9uZvosNbRPStyhvw1flbgY2PE8OOmiETKryeLVniisef8b8DGWgLTDI9XHReTYBXSQd+wBsb/p8qA2Fu6lOLQCLcwxVIwGWHIIsVECyhDcaWi9u2hSuznCSFfElFHWacKzDMwvldu9l2VxCmV1f4A8nRdj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YMfMCr70; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756830352;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sMnknAcw0zGmxUXxtl0RJkmxRxufvbi04WvYxzB4SiQ=;
-	b=YMfMCr70A6Lx7j9iW1AIRDVmIV/0r/Pi70/ITPZzFTjkf8qQ0Ce5zWPAPKiFFM0/g99GDZ
-	m76wadtHCYJsJMxOtp23/4cMiLiZpCq9eYBsSZnEY508yp+tdT6Btz+Ifx8t2Q38H5fX9o
-	lHFFBAygELTv38MdOcvEP3wLsXd943U=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-190-W1xsoQL6PVWgUup9MWJIow-1; Tue,
- 02 Sep 2025 12:25:49 -0400
-X-MC-Unique: W1xsoQL6PVWgUup9MWJIow-1
-X-Mimecast-MFC-AGG-ID: W1xsoQL6PVWgUup9MWJIow_1756830348
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1756830366; c=relaxed/simple;
+	bh=WALewwHx2C+Gr6Q65PLmSt5V0bZuUMTVLBppkG5GReI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SjF9KdXybJaucY/gZ0GWzvaacDRzJFsgvq9BXv5xNvl90d1aMv/VbpSYu9/ujP9O0IU5WW51uTU5xRTAhCpRQEJ7nshoUj7USUUmXJgL6rnoZV++Lj3KEtAxD7zGYI0QbmJKUOI8+Sw+1CbT9YSS8S5uusaLNlE4WI0ylMAOyIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mnz2RLK4; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756830362;
+	bh=WALewwHx2C+Gr6Q65PLmSt5V0bZuUMTVLBppkG5GReI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mnz2RLK4X3Hk5GbUktymH8Z7xV3xj05l/Ro6j5NbhrNjDWsApUu8raDBfmlyQaJpT
+	 BVPoxC4eqLR3B+te5KPtj0FiQ1ymxK+fJo23QM2Kq8ihnBNB6t/lT0YvhU48OD/S1A
+	 IT1BK+xCwrQDeZqG2pHK8ijHJcop/QUFi57O9hR4Fr6CNSb3WD8DE+/WImSnPaI2oV
+	 3rSa7s6KWHrnrGj2EC+3BcOSJfOFz5IadIRB6dZq3G1FCxI68dOqclnUdZda5CKMnD
+	 tnQcQvg0wg1GGHeLx/vLzWkxAfjYaO79PVi8Aj5VUf5a2Ifp4YkAoD7RepZN4x+vmf
+	 OMyM4CwsQQqtQ==
+Received: from [192.168.1.90] (unknown [82.79.138.60])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C7951800290;
-	Tue,  2 Sep 2025 16:25:48 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.22.80.27])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1C0AB300019F;
-	Tue,  2 Sep 2025 16:25:45 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v2 2/2] selftests/mm: split_huge_page_test: cleanups for split_pte_mapped_thp test
-Date: Tue,  2 Sep 2025 18:25:36 +0200
-Message-ID: <20250902162536.956465-3-david@redhat.com>
-In-Reply-To: <20250902162536.956465-1-david@redhat.com>
-References: <20250902162536.956465-1-david@redhat.com>
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2FDA617E0B84;
+	Tue,  2 Sep 2025 18:26:02 +0200 (CEST)
+Message-ID: <2a8ab8c3-36ae-46bd-8f98-6b3760532cb5@collabora.com>
+Date: Tue, 2 Sep 2025 19:26:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drm: Add CRTC background color property
+To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ Matt Roper <matthew.d.roper@intel.com>
+References: <20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com>
+ <20250902-rk3588-bgcolor-v1-1-fd97df91d89f@collabora.com>
+ <aLby6OPxgubt7kd_@intel.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <aLby6OPxgubt7kd_@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-There is room for improvement, so let's clean up a bit:
+On 9/2/25 4:36 PM, Ville Syrjälä wrote:
+> On Tue, Sep 02, 2025 at 12:27:56PM +0300, Cristian Ciocaltea wrote:
+>> Some display controllers can be hardware programmed to show non-black
+>> colors for pixels that are either not covered by any plane or are
+>> exposed through transparent regions of higher planes.  This feature can
+>> help reduce memory bandwidth usage, e.g. in compositors managing a UI
+>> with a solid background color while using smaller planes to render the
+>> remaining content.
+>>
+>> To support this capability, introduce the BACKGROUND_COLOR standard DRM
+>> mode property, which can be attached to a CRTC through the
+>> drm_crtc_attach_background_color_property() helper function.
+>>
+>> Additionally, define a 64-bit ARGB format value to be built with the
+>> help of a dedicated drm_argb64() utility macro.  Individual color
+>> components can be extracted with desired precision using the
+>> corresponding DRM_ARGB64_*() macros.
+>>
+>> Co-developed-by: Matt Roper <matthew.d.roper@intel.com>
+>> Signed-off-by: Matt Roper <matthew.d.roper@intel.com>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  drivers/gpu/drm/drm_atomic_state_helper.c |  1 +
+>>  drivers/gpu/drm/drm_atomic_uapi.c         |  4 ++++
+>>  drivers/gpu/drm/drm_blend.c               | 37 +++++++++++++++++++++++++++----
+>>  drivers/gpu/drm/drm_mode_config.c         |  6 +++++
+>>  include/drm/drm_blend.h                   |  4 +++-
+>>  include/drm/drm_crtc.h                    | 12 ++++++++++
+>>  include/drm/drm_mode_config.h             |  5 +++++
+>>  include/uapi/drm/drm_mode.h               | 30 +++++++++++++++++++++++++
+>>  8 files changed, 94 insertions(+), 5 deletions(-)
 
-(1) Define "4" as a constant.
+[...]
 
-(2) SKIP if we fail to allocate all THPs (e.g., fragmented) and add
-    recovery code for all other failure cases: no need to exit the test.
+>> +/*
+>> + * Put 16-bit ARGB values into a standard 64-bit representation that
+>> + * can be used for ioctl parameters, inter-driver communication, etc.
+>> + */
+>> +static inline __u64
+>> +drm_argb64(__u16 alpha, __u16 red, __u16 green, __u16 blue)
+>> +{
+>> +	return (__u64)alpha << 48 | (__u64)red << 32 | (__u64)green << 16 | blue;
+>> +}
+>> +
+>> +/*
+>> + * Extract the specified number of least-significant bits of a specific
+>> + * color component from a standard 64-bit ARGB value.
+> 
+> Why would you ever want the least significant bits?
 
-(3) Rename "len" to thp_area_size, and "one_page" to "thp_area".
+Right, that's useless - will replace with proper helpers dealing with custom
+precision.
 
-(4) Allocate a new area "page_area" into which we will mremap the
-    pages; add "page_area_size". Now we can easily merge the two
-    mremap instances into a single one.
+Thanks,
+Cristian
 
-(5) Iterate THPs instead of bytes when checking for missed THPs after
-    mremap.
-
-(6) Rename "pte_mapped2" to "tmp", used to verify mremap(MAP_FIXED)
-    result.
-
-(7) Split the corruption test from the failed-split test, so we can just
-    iterate bytes vs. thps naturally.
-
-(8) Extend comments and clarify why we are using mremap in the first
-    place.
-
-Reviewed-by: Zi Yan <ziy@nvidia.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- .../selftests/mm/split_huge_page_test.c       | 123 +++++++++++-------
- 1 file changed, 74 insertions(+), 49 deletions(-)
-
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-index 72d6d8bb329ed..7731191cc8e9b 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -389,67 +389,92 @@ static void split_pmd_thp_to_order(int order)
- 
- static void split_pte_mapped_thp(void)
- {
--	char *one_page, *pte_mapped, *pte_mapped2;
--	size_t len = 4 * pmd_pagesize;
--	uint64_t thp_size;
-+	const size_t nr_thps = 4;
-+	const size_t thp_area_size = nr_thps * pmd_pagesize;
-+	const size_t page_area_size = nr_thps * pagesize;
-+	char *thp_area, *tmp, *page_area = MAP_FAILED;
- 	size_t i;
- 
--	one_page = mmap((void *)(1UL << 30), len, PROT_READ | PROT_WRITE,
-+	thp_area = mmap((void *)(1UL << 30), thp_area_size, PROT_READ | PROT_WRITE,
- 			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
--	if (one_page == MAP_FAILED)
--		ksft_exit_fail_msg("Fail to allocate memory: %s\n", strerror(errno));
-+	if (thp_area == MAP_FAILED) {
-+		ksft_test_result_fail("Fail to allocate memory: %s\n", strerror(errno));
-+		return;
-+	}
- 
--	madvise(one_page, len, MADV_HUGEPAGE);
-+	madvise(thp_area, thp_area_size, MADV_HUGEPAGE);
- 
--	for (i = 0; i < len; i++)
--		one_page[i] = (char)i;
-+	for (i = 0; i < thp_area_size; i++)
-+		thp_area[i] = (char)i;
- 
--	if (!check_huge_anon(one_page, 4, pmd_pagesize))
--		ksft_exit_fail_msg("No THP is allocated\n");
-+	if (!check_huge_anon(thp_area, nr_thps, pmd_pagesize)) {
-+		ksft_test_result_skip("Not all THPs allocated\n");
-+		goto out;
-+	}
- 
--	/* remap the first pagesize of first THP */
--	pte_mapped = mremap(one_page, pagesize, pagesize, MREMAP_MAYMOVE);
--
--	/* remap the Nth pagesize of Nth THP */
--	for (i = 1; i < 4; i++) {
--		pte_mapped2 = mremap(one_page + pmd_pagesize * i + pagesize * i,
--				     pagesize, pagesize,
--				     MREMAP_MAYMOVE|MREMAP_FIXED,
--				     pte_mapped + pagesize * i);
--		if (pte_mapped2 == MAP_FAILED)
--			ksft_exit_fail_msg("mremap failed: %s\n", strerror(errno));
--	}
--
--	/* smap does not show THPs after mremap, use kpageflags instead */
--	thp_size = 0;
--	for (i = 0; i < pagesize * 4; i++)
--		if (i % pagesize == 0 &&
--		    is_backed_by_folio(&pte_mapped[i], pmd_order, pagemap_fd, kpageflags_fd))
--			thp_size++;
--
--	if (thp_size != 4)
--		ksft_exit_fail_msg("Some THPs are missing during mremap\n");
--
--	/* split all remapped THPs */
--	write_debugfs(PID_FMT, getpid(), (uint64_t)pte_mapped,
--		      (uint64_t)pte_mapped + pagesize * 4, 0);
--
--	/* smap does not show THPs after mremap, use kpageflags instead */
--	thp_size = 0;
--	for (i = 0; i < pagesize * 4; i++) {
--		if (pte_mapped[i] != (char)i)
--			ksft_exit_fail_msg("%ld byte corrupted\n", i);
-+	/*
-+	 * To challenge spitting code, we will mremap a single page of each
-+	 * THP (page[i] of thp[i]) in the thp_area into page_area. This will
-+	 * replace the PMD mappings in the thp_area by PTE mappings first,
-+	 * but leaving the THP unsplit, to then create a page-sized hole in
-+	 * the thp_area.
-+	 * We will then manually trigger splitting of all THPs through the
-+	 * single mremap'ed pages of each THP in the page_area.
-+	 */
-+	page_area = mmap(NULL, page_area_size, PROT_READ | PROT_WRITE,
-+			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-+	if (page_area == MAP_FAILED) {
-+		ksft_test_result_fail("Fail to allocate memory: %s\n", strerror(errno));
-+		goto out;
-+	}
- 
--		if (i % pagesize == 0 &&
--		    !is_backed_by_folio(&pte_mapped[i], 0, pagemap_fd, kpageflags_fd))
--			thp_size++;
-+	for (i = 0; i < nr_thps; i++) {
-+		tmp = mremap(thp_area + pmd_pagesize * i + pagesize * i,
-+			     pagesize, pagesize, MREMAP_MAYMOVE|MREMAP_FIXED,
-+			     page_area + pagesize * i);
-+		if (tmp != MAP_FAILED)
-+			continue;
-+		ksft_test_result_fail("mremap failed: %s\n", strerror(errno));
-+		goto out;
-+	}
-+
-+	/*
-+	 * Verify that our THPs were not split yet. Note that
-+	 * check_huge_anon() cannot be used as it checks for PMD mappings.
-+	 */
-+	for (i = 0; i < nr_thps; i++) {
-+		if (is_backed_by_folio(page_area + i * pagesize, pmd_order,
-+				       pagemap_fd, kpageflags_fd))
-+			continue;
-+		ksft_test_result_fail("THP %zu missing after mremap\n", i);
-+		goto out;
- 	}
- 
--	if (thp_size)
--		ksft_exit_fail_msg("Still %ld THPs not split\n", thp_size);
-+	/* Split all THPs through the remapped pages. */
-+	write_debugfs(PID_FMT, getpid(), (uint64_t)page_area,
-+		      (uint64_t)page_area + page_area_size, 0);
-+
-+	/* Corruption during mremap or split? */
-+	for (i = 0; i < page_area_size; i++) {
-+		if (page_area[i] == (char)i)
-+			continue;
-+		ksft_test_result_fail("%zu byte corrupted\n", i);
-+		goto out;
-+	}
-+
-+	/* Split failed? */
-+	for (i = 0; i < nr_thps; i++) {
-+		if (is_backed_by_folio(page_area + i * pagesize, 0,
-+				       pagemap_fd, kpageflags_fd))
-+			continue;
-+		ksft_test_result_fail("THP %zu not split\n", i);
-+	}
- 
- 	ksft_test_result_pass("Split PTE-mapped huge pages successful\n");
--	munmap(one_page, len);
-+out:
-+	munmap(thp_area, thp_area_size);
-+	if (page_area != MAP_FAILED)
-+		munmap(page_area, page_area_size);
- }
- 
- static void split_file_backed_thp(int order)
--- 
-2.50.1
+>> + */
+>> +#define DRM_ARGB64_COMP(c, shift, numlsb) \
+>> +	((__u16)(((c) >> (shift)) & ((1UL << (numlsb) % 17) - 1)))
+>> +#define DRM_ARGB64_ALPHA_LSB(c, numlsb) DRM_ARGB64_COMP(c, 48, numlsb)
+>> +#define DRM_ARGB64_RED_LSB(c, numlsb)   DRM_ARGB64_COMP(c, 32, numlsb)
+>> +#define DRM_ARGB64_GREEN_LSB(c, numlsb) DRM_ARGB64_COMP(c, 16, numlsb)
+>> +#define DRM_ARGB64_BLUE_LSB(c, numlsb)  DRM_ARGB64_COMP(c, 0, numlsb)
+>> +
+>> +/*
+>> + * Convenience wrappers to extract all 16 bits of a specific color
+>> + * component from a standard 64-bit ARGB value.
+>> + */
+>> +#define DRM_ARGB64_ALPHA(c)		DRM_ARGB64_ALPHA_LSB(c, 16)
+>> +#define DRM_ARGB64_RED(c)		DRM_ARGB64_RED_LSB(c, 16)
+>> +#define DRM_ARGB64_GREEN(c)		DRM_ARGB64_GREEN_LSB(c, 16)
+>> +#define DRM_ARGB64_BLUE(c)		DRM_ARGB64_BLUE_LSB(c, 16)
+>> +
+>>  #if defined(__cplusplus)
+>>  }
+>>  #endif
+>>
+>> -- 
+>> 2.51.0
+> 
 
 
