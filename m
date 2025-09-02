@@ -1,78 +1,96 @@
-Return-Path: <linux-kernel+bounces-795411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D5BB3F19E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:40:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9062B3F1B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CAC03B8471
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:40:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56D4F7B01F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 00:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35366286897;
-	Tue,  2 Sep 2025 00:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A0F2DEA7A;
+	Tue,  2 Sep 2025 00:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="bPlwavYH"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010025.outbound.protection.outlook.com [52.101.228.25])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DsKaS+A0"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2085.outbound.protection.outlook.com [40.107.92.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645AE220F24;
-	Tue,  2 Sep 2025 00:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462AD189BB6;
+	Tue,  2 Sep 2025 00:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.85
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756773603; cv=fail; b=GXWUFJ6+bg/LIOQDMP8Kc7tLnCXO9cSJe12tQTz6H3BT2WberPQq1J9eNz372vUCQnE2OKa2GXjcLuBsdilkNVmrJW4YgbYqIieRpFEPhUgmOWtV5ji8dInUkuzXQEe0gYCUiOtWHUaMxIQg5aoIn2w0oYlzoIv6GhFJDKCTOfQ=
+	t=1756774027; cv=fail; b=Xx74i1jns0ICMbt6XUzL0x3JH9t2HVBVhG7lzgPEqLkr+hnQQQw2+6wf//+4R0ChSJ4uXifqzmK1gkp52w04Yh/kuqqfnxaeV5kkOzm1UoW8sY3bV5BoEMGRMWOtZYyZSs6ZlZzXXHp/xHGyPSreaw/A8JFzqRu+WAJtuoxXuvI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756773603; c=relaxed/simple;
-	bh=CjNnMkLbFkzp+b43zP1Yr4lPVrdHXfFgdRSMInuwXBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VALL9S+q8fViiO/Su9sqdU9u7rLXAGp+q39Xb1BMA4UJWSMs4KqJJPMd2kN/OsXHpKwsrwrWjWZoHB7TyI9+/l2xGpnJN/zt7PJgqHIydz5gATguOO/IgT7+rpLYkhWAYJ7SaGUsfvGL2bx0NEBp3T8+VlF7dc7gc+Wwrp8fFMU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=bPlwavYH; arc=fail smtp.client-ip=52.101.228.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+	s=arc-20240116; t=1756774027; c=relaxed/simple;
+	bh=fbQyPP5ReKhrXOwqj7xhaLKS855Sjb2n7XWDwtAZcc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XAYv4WcshfZ1gC5CzfWLrG20Vl7EXmsVfYw1db2DTFrtaKbkI26n2j3Iz+rA92A8xJxMMTZ5wD0fN61zEZFNsMXhnaxkSQdsavJ1N+QR6YpgWeom+jX9IFPzNQ03lBG2kg0NPBkkwN7yLOP6rNu8HBKLcyvhvH2jdkeMqNP+IV8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DsKaS+A0; arc=fail smtp.client-ip=40.107.92.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XeaxJI12rZ3qJL7oyPGQgtYCkNzV+GRW7VThufchzpKxOfJyiWY9svJUShE2uhNhHMk772/2RcbGozN0xQr/oYipbGjCnFazYGqMOV/37tK+/C75lg3s/cf8V8kqtgdxy6h9giQbza+mgF7Pf2WP3kb6R6hD9+KRVs+2xuCMhoLyr6Y1d5n3BfISN/6JS+mACJnF1exWSutknQEj8D7AE6GWl9gjaCEGoe7J4+1Q30EPfpzsJ0h4EqFt+Ite/K5iYfuLX6OUDsZLEavW4n2ZSoSEAuAXLFgMFfYvSBtGxvMpTVoWmvt/FHswdD7r17NuBEnVPOh2v1W2e2Do0bCb1w==
+ b=sa8SSlzmAJts05b5DQgrGEgwQKdXXleSxxUTZN0GzIjYggKWFcDlAmCV7hvX1MJvIbnCyfTIJHfCEh4UqRjFuItJCySpqPHvEE24maxjfEHkt2UiGcmGKGA4YhzGdQlGFkEVDGL5BdKAHnqR4ayANxSkDj8BmufHPaL8bJo2mNpYhIlsLbzlDFnDNEiotzOk7++vEjVj7ahLUZMYU4QgfyfofTb0nUqhO/+3xI1ToZdQbZJlzMCgIeG/A1f6riSF/0P9jheX62v9r7gWrt7lAuBbUG0xNhxIr3yur6Zh84j9eJzsdZvrO3wcuW3rygF5oQd4kAYAussbRYmrRyXPLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LFf0+LCcjtT5KpGW7yciM8RbR7sDFC2VdzGGL+pjDwM=;
- b=uHEpORje9LaDFfo4hbPZNWcMpNaYtM784YWdZLshQ+DwB1AMcCJ9VowV2ZcPN9jZuRDjCQA0M15Gxz0/qqvWhtukx+bd3BbWGFHabLENUPZ8nBpVPdN2zygCXdOlUZJ3jSnAyr6GCasfBkkTJGgF3u5HnNMqknqEv9DSdw/TCM861C5iRuesYlKorNALEA/e4N/E6lWOo7aQpyldlit9wMocAGc22iSB1PhUhAOuWqUtCTwKulgSSvJjljLOhHOO/1XWcUVTqpc9sskjU/cn3VZtgBGQgkRxAyuLJ91qUpE3t5zxc6+aLdTbaDFNLK0Rasbqn0/+eOPeP+VlanOA+w==
+ bh=cjaZdJWtzqJzZOe1MrtlgK3QspzVxm9OTmEXIq7HvjE=;
+ b=TF30Dwhzf1xZYsDFudFYQgtZ1SHu3eZzn1GP3JA9hEDVInNOb0SCpoS9+TbnM+1rvZ9+Zp62j6JQ8p4FLKOyIaE5Y3rAJ+DphqGGfBmEeixDti4548bLwEVlhVqOAA2smVFSgoD23O7dS/ZWb+CeNqoj7dfiKtDnmVee6SxszwM3Gr3eAILWhaFDUoROBbFLhs+7qXceY0J4gYig15tfXNcPRCIfogVFMeN3+LVsQKZyvC9aA0/vDZRflad0/4415yeT49RHSer62xlaolHAIwMU+AHB1feanLo2QL5giW+I8vESBvWu0XSuGC1NrjSdbvQ1e1ZHurQpNDH6OB2kvQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
- header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
- s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LFf0+LCcjtT5KpGW7yciM8RbR7sDFC2VdzGGL+pjDwM=;
- b=bPlwavYH6fapXPYebR71I/MEQd6kYSwuPl7FmhTdvdtOVR6Z0cidoR/tKHX+2k0mWShnLJ7+WHZQ+RN6nqN7HeX8oQRM3nB9GWAvLew35pWMnS5ra7IgT+rRZBn5W4mmH2G2xmoq5wrmPMW3C8+HYjYm3VqWMhk8zaHmjHBYdlA=
+ bh=cjaZdJWtzqJzZOe1MrtlgK3QspzVxm9OTmEXIq7HvjE=;
+ b=DsKaS+A0xIwSkGZDrc+ler93gMWDJ5wV+p0Qw+Xqa1xVuHoL/kzD9cnUf4M1/kqTURLAmzY0rCdtWn7lfT0Ciof9wKVobDfYTU0SxTIbxtuQAEcBVi1C5a5dH/JZ05HULtfg61/zCONiHMgTQYDltU7fMx6TQ/yi+zfd+8fp3wyQfW7loWGerCga7DyQzQLiE/SMV1U3hzbFTpGAMwb0QnD3hyI2g41iRd3LF2yV3bGQghlDmDeWKvfcuQ3Q7NFEi+OXmR15VoHzx84x1KzNzIKcqE+LIEjsrjSEPs6bKiY0wU8BNE9fsMWr2ZY0evh1MAMXKu3xx0tT90Ul1Vcuvw==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=valinux.co.jp;
-Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:10d::7)
- by TYWP286MB2298.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:13d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 00:39:58 +0000
-Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- ([fe80::80f1:db56:4a11:3f7a]) by OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- ([fe80::80f1:db56:4a11:3f7a%5]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 00:39:58 +0000
-From: Koichiro Den <den@valinux.co.jp>
-To: intel-wired-lan@lists.osuosl.org
-Cc: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch,
-	jedrzej.jagielski@intel.com,
-	mateusz.polchlopek@intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ixgbe: fix too early devlink_free() in ixgbe_remove()
-Date: Tue,  2 Sep 2025 09:39:41 +0900
-Message-ID: <20250902003941.2561389-1-den@valinux.co.jp>
-X-Mailer: git-send-email 2.48.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0261.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:455::12) To OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:10d::7)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ SA1PR12MB9001.namprd12.prod.outlook.com (2603:10b6:806:387::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.27; Tue, 2 Sep 2025 00:47:01 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 00:47:01 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH v1 07/19] staging: media: tegra-video: csi: parametrize MIPI
+ calibration device presence
+Date: Tue, 02 Sep 2025 09:46:52 +0900
+Message-ID: <6948375.lOV4Wx5bFT@senjougahara>
+In-Reply-To: <20250819121631.84280-8-clamor95@gmail.com>
+References:
+ <20250819121631.84280-1-clamor95@gmail.com>
+ <20250819121631.84280-8-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0292.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c8::17) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,151 +98,185 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3P286MB0979:EE_|TYWP286MB2298:EE_
-X-MS-Office365-Filtering-Correlation-Id: c32e9274-bc5e-4aa7-1b53-08dde9b93e6a
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SA1PR12MB9001:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec3c8559-6e87-4215-42ca-08dde9ba3a61
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|366016|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|7416014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Hzqf0fNhp2YJ91YUMQpNAQRG7pqiEfZFgb2UlFgyak9QO1Vmq55glY+KaE3z?=
- =?us-ascii?Q?K35AdyEuhZh7RVTMOGqxSS4VjRGoALes373HrMy0Tpx7mOWuVphcUFD3YmKT?=
- =?us-ascii?Q?DQjpuwb6TQGAvpvdt4Bgd+nUavuOOJS448PLfHYrBVjIjR44ffhalKOGDQpV?=
- =?us-ascii?Q?keBFozvIU/y9dOo8g1byvARqrOdeV0GsXNxfk1lN8ZDLI9RVKLPdkwkghFiH?=
- =?us-ascii?Q?ykL2gay99mSjk8hXlFlKfcNrY0Nnt320qpUwK01ZCXeL+LKjBQq4QA7LQa/w?=
- =?us-ascii?Q?qgbS+azr3+cS7N57DQHkuIJEKA7wKdDf7ljM5QUK7l3fJ17THdEBTiTlF2hu?=
- =?us-ascii?Q?Wa8JIBZzIdZcbg3m6ts5zJ4ORttStL4qjPIQMQJAFZ2vn4vwOLLRg2cQCuDR?=
- =?us-ascii?Q?UJMnZEIQ1NKiT7kmfSCjm1AGhHZFymSnJtHvXqsF/MYJDCufcws9zO2JN5dH?=
- =?us-ascii?Q?cvGGYzzjy02dECX3LOcEXQz51htQny3HJbS/hZZgNbgZjDrNbXjWXJiitorL?=
- =?us-ascii?Q?wYW6L4wjhm9ug3p6c8u5JQiXpa10PHOfoy4GI7zosX0zrXteGVCxq0Q48KXz?=
- =?us-ascii?Q?4UKGJqubEgQO4WsMkGxj93LndQAHR900159YFXH0amZs7hP7hf0BrkurIp2U?=
- =?us-ascii?Q?+SqiX+MvKhcZbC4xyyeP1cnK0i6kgRX3KJmQczmSjgwa8/DKfbyJj62T6B1O?=
- =?us-ascii?Q?CZasCaPJY2sNXCCI95k1BsVmu8ujQESFSnK/4sqWbJ1w6yhnxu8+o/D7S6Ey?=
- =?us-ascii?Q?pkJduHoxmeHbCxJ55vbxZ6wdfbg6sSxcRWMdISFRXOnGXqASp4gtYjSy95St?=
- =?us-ascii?Q?xbUkh7h+ccwr7GitKQA13H6WhEwRcpIVzCYtVAAsH0YtnhyDG+C2Fjweu4KA?=
- =?us-ascii?Q?bpGwrXp3KiSVA4ZFAlJ+JJ7rpXBAH+ZKGvdyuDGGYwMqEaLLUumrU4B2cNq7?=
- =?us-ascii?Q?cR1103WVrqkhFCsnO1ghk3RtqHgCEO3BQeKOaImYlaoaV8OOkjATcUF6bmVJ?=
- =?us-ascii?Q?cGl8V3DSiR0ew8VisqnXpqtckvLVJd8a/twwyx2oktUCvMNVcSIctfhrdjyM?=
- =?us-ascii?Q?9G9BDraD67om2J24xgfoo8D5qkfP5JdUUy3Rzh/MQVcxnZZ5YSnYnV4XusFb?=
- =?us-ascii?Q?OVurTuEM78E6+66m/nvuKFJ1v76Ph4Z3iC2bFPKgofK+ulgOKMfMQGewcP+e?=
- =?us-ascii?Q?IOrIihUl+iSuZF93gTGLxz6uZQE3G5PT/2UgkE07Z5DpT+LTHKzilBldizmV?=
- =?us-ascii?Q?Z+1FJYkHBNaeOQ+lPQKDv+dhBHCO6FpSMmsnG3zb/1LBBePpaJvbZcugM0Oj?=
- =?us-ascii?Q?RfnSzK7mRF22PsZcw6L7QTFOqkRlyyvTGWe01uzn6g97i84BG4Ws+yNSJItC?=
- =?us-ascii?Q?Vx/pLxlDh0oNPWbPRpr/fchSHtT00jFIii6Ct1HpX3TGzbMNUZG7HUTI2esr?=
- =?us-ascii?Q?LZOu7Lq+SJ8=3D?=
+	=?utf-8?B?UkFiTlRmZktueHl3NnhPcmhBVFlzWHFjcmt0RWhTblpTMWdDRFJVSG1VVnkw?=
+ =?utf-8?B?U2hQQ3B1ZUlhejA2NGp5TFFmVnhxdjIxN1JOdWF3bzVzUHBVUFpLNmdBT21q?=
+ =?utf-8?B?eit1ZE84R3BkWkZmV2lVelZlRXk2ZlB2Tm0xRmYzblJ0T1E2MFVWUWNLQy9t?=
+ =?utf-8?B?Q3VLMzcyYUc0aGFMZDR6WjdXRllaaHd5elRnNFk0Z3Y0ZzloYjcyRGRlZjV2?=
+ =?utf-8?B?LzB1dEs3dVRKNFYrYkx5NjB3dysvM2RjR0RtSEdtTmJLemEreC9xcGdiek9Y?=
+ =?utf-8?B?eTRNaDlkZXlxSkNVVGRVKzg1TXoyclFBaTFHV214VlhTa1pZajhXSUxtYVV4?=
+ =?utf-8?B?K293K2I1MzRFb0xndWcwcDdWaFlhdzRjNE1ra2xCaklDMGNUVWdDeGpJRzR0?=
+ =?utf-8?B?Qi9Cck1yN2VLMVZtTFVOSkR2U0VQT1BLWWlSWWl4aUdxWmdBdVlPQWg1S3o2?=
+ =?utf-8?B?QlYzU0JMOUt6R1FSd2pyUlhPWUh2QjhpS3RXdGVuY0Z4WjVST1ZwdEJTbmM2?=
+ =?utf-8?B?N2RqTk1LMFZJY1drZSt1Sm1VeXNhdzhoeUdjUmNGY3ptZkIra1k4Q1lsb05V?=
+ =?utf-8?B?a2RpcnRheXZUc1pnVHZvK1BtTzhlQ1lMSDB6SGc4UmhrNm5OdnZGbFlmSWFk?=
+ =?utf-8?B?alhHZ2hQcThMeGdTVFN5SXBaMUovbVVVaFVLTHFVS1lrbnU0c0hlVFo4L24z?=
+ =?utf-8?B?M1c0VzRMbURkd0h1UDNhN0ZaZk15MzByLzFHT1F2TUV3aTEyalozVitjMm1Z?=
+ =?utf-8?B?ZHpkZ0s0MFhkTHlpbmQvb2krazN2N0JoZ2lHNjRYVkkxbmhlRk5EZlJnbkdW?=
+ =?utf-8?B?YUNWMGszRU1MVC9DVThNNDFPOVVaUXlKOGNFQ3VUbGRiMUw1OW92eEdPTGxY?=
+ =?utf-8?B?N2ExelVLUk1RN3p1c0xzMGlMOUNBRmJqT1Y1ZWZlbW5NbXBPYjBmV0x0R3Fu?=
+ =?utf-8?B?OVpTbGJZOHBjODZoSHJpeis5TUZFWVVvejRQbEl5VVdtZnlmVHJyU1BBdWc3?=
+ =?utf-8?B?VWtRdDQ0OUpQeUVsYnArUFdENklJZ0VBM2U0TFVhY1dSVjFwMTJ2czZIbS9T?=
+ =?utf-8?B?TS9DUk1hQncyaWg2SGVqWFptcGczem8wdVhVenMyVXlpUHJxQS9MY3RiaHBD?=
+ =?utf-8?B?R1FZSGo0N0hHSHRUWEMyWHVxYVFsanpSQmhPeFhCUWpCdjlpVWxvTUtSYURa?=
+ =?utf-8?B?OEoxS1kwNDBGWjVqcFVnWllCamtUTVRGNGJhSXpHdFUxNEZnQkxFcWovcFhY?=
+ =?utf-8?B?cjJnK3h3WTFEaTdnVXBWRFpzbGVQdFhENEFvOURReFhPOTFPUGltTEQzUDA5?=
+ =?utf-8?B?VVVzbU8xYTdzQm5pZGZCSU5uMi8yeFVZMWNVSC9pUzFBY3lsT0k3b2hTQ3RG?=
+ =?utf-8?B?eUlkY3FqcFRXaGdaUGorR29QYkZ2V0NCeTVmRW5wYUNwTWpUeVJDaDQzWXJK?=
+ =?utf-8?B?ZkhkWGpaUnBwVm5JNEJtMVdtOVpIaWtEL1FsaWJCejhKZ25OUzQvWm1xcmxn?=
+ =?utf-8?B?NzNrdFhwRkgrU3FOdmtyVkhWMTZ4TU5jVGhmT2hvMEl3RGNNN0lqTWdDeGNZ?=
+ =?utf-8?B?YmVnYmozQnBpdy9pc2FHTllOYm9naDNsblhDVEdNQzBmcEV5Rmh1RjUrQVZD?=
+ =?utf-8?B?ZzB1dXN1R2lYWjc4VS9UZlB1OXlDdzJVcUdldk9LU2dRVHloc0tjdmdiSHZv?=
+ =?utf-8?B?ZGRPOTllWk5JQzBGWGVPbzc4WWgrU3FST3lhRzlJRy9LYjJBdDdQMnlUTjZu?=
+ =?utf-8?B?YTIwRjI3WC82YzFUZTJtdHZJazZEM2RjTkdFelhHdjdwaWkrWmUwRE02ME1Z?=
+ =?utf-8?B?U1NrTjNoL1J1cGRLNExVN3pFMVBiRnNWWkw3N2w4VXY1UkFGVnJFVjkvZk5K?=
+ =?utf-8?B?Mkc0NG1KY3JEQ29FZ0kra0ljdjltN2hMeVRTKzBkT29xakRTNE5qNEpMdlY2?=
+ =?utf-8?B?WkxtNlAyNEovcFM2K3FSV25SR01JWjdlYTdjR0VRNmE3UGFwVFlYT29pc3Vs?=
+ =?utf-8?B?K28zV2FaRmdBPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(7416014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LCncm0EgngYv+AG5JUNLZdmQ81qAMKuNCwo9jyNS96Ss3veRcuZGmuqbU6LK?=
- =?us-ascii?Q?p3PjAkUdKektWjPa3rxIgz0YKQf5ZcMOFDKjmZgBeO4O65Pg4X9uvtHbYF9I?=
- =?us-ascii?Q?9gC92Tf7IamHF9eGOl/BbDlYZCDnSmkFI29I1WHyymc9usOSitanClMDYqX1?=
- =?us-ascii?Q?nlq7gvsgtt1wDeZGQsHYKtdicGQSvaR2xkDr5xg91i3dTBHFF1OkC0oNrmJo?=
- =?us-ascii?Q?WtsQuYrPbfMiQk0+ATaSetdqcI8Zi9oiSj9Hcc5SN6jGLv1K+vgWeGbz0w/t?=
- =?us-ascii?Q?74AvJvKsZyvXDOUAIjUH++LZUHePKa/jvqJ5W6O5Qxi5cOIdj25Z11oFLhb4?=
- =?us-ascii?Q?PFxCwUDDvjwEWHYCcLtrs217x0gx8vzQE/V898bK9TSxfCDsw9SvTmrxATL7?=
- =?us-ascii?Q?SU51udohp7ow6immlR+sNhAnXtb/7bjapFpWmb6ddT9GdVgDdC9Aqgt8tgLf?=
- =?us-ascii?Q?HhQfZkNXtYHFqHnYO2P8Oe0MG8Ly6Wd7b07L0oqF29ghOtidSf2szXbLnaWM?=
- =?us-ascii?Q?VuHBKwbHG5XKF/iRWde3IzeLu2NGC7FU6Ktm0EFxs5Ef5bISH02XD/+xczvh?=
- =?us-ascii?Q?l9xOTmxVa6wdmxAtXKh6t/wetvH7ACNwG2yZHrSjLYfGJvLVfLUZkDCbFBVj?=
- =?us-ascii?Q?1wqZh3FkKUOeNkfA57NniJXyRHX2uqfkyJbwTg4tNG2NYvXSP7u12unxGfdq?=
- =?us-ascii?Q?HQ48qq8pQXn/zdDsJWXTnU4IIRtseCNIwi2A9mw5z0PXzS8nj11pELmSWC95?=
- =?us-ascii?Q?ceMCVzsChFmUVBZ2+f3Oxtg6boRo7jbXej21roZpUf3kwGn5rZCOb7wLwhqG?=
- =?us-ascii?Q?nF1FPYlqkmjdp0QzpSYKC/Z9k0IhWdtPGdvtyA34jrzXNuM8l5MkeUbfJU3g?=
- =?us-ascii?Q?aDuho6nl+nWvKILC0mEQM0SQaf6t5fPzaSrX+Ea3Ryf5Xdo1jFnV6XbFi/Jk?=
- =?us-ascii?Q?xOTfPF8i+gzJ/46lyaOPH6rks1HUBZn8SJxU28hQJMKj0cgxcWpZPgvMYBJN?=
- =?us-ascii?Q?GpMrUI1kz6JrefDLy6xMU8489WTOc048jL8vlQcjZhXwRMctqaxjxZs+f4kK?=
- =?us-ascii?Q?Y4+KJnBQV/HOo5/3tDCG2w0OOpv90nknOvlHBVO1qUgyUS6ed/kjkQsw/rLN?=
- =?us-ascii?Q?adsu3BSvxpnwmDe/nOsHEXOO5ZoT4ihOnruRFOonpKbPU4kRQClab19neVwn?=
- =?us-ascii?Q?FT6Pv0UsM61CXBjP8W6Dkwq+dgCbmQOs6mtboklJNdQ2aBDxcC+JO9+ysJ1m?=
- =?us-ascii?Q?NybwPgiKvGFIi7/Ftxw8LHH5KWH5PcAtpDgXCiPbp3mkaGEu0EiYSVeK91T2?=
- =?us-ascii?Q?YKm5emQOzbigEJCPqaNmynzd0zcQXWG1lf1hWgRYCGJ/9pd4hYClzxXeuu70?=
- =?us-ascii?Q?IYnVifyQmLbAvKj6W8tR0otdOLU01ydVHKj2Mns8DPWtkNu21tkuEhDUHQRs?=
- =?us-ascii?Q?C3fdimcDyNvQeYcu2voAcP9Xvan/7wHJKVSFVbqbHJCvEzdDZHYqavcPi//Q?=
- =?us-ascii?Q?o8f6A3eZ0cHpOpDMRcGagM/Ce4YdLLmg8ScBxEz1yUBSgi5Bn7Uo4wI1kVfg?=
- =?us-ascii?Q?TlPCKRt4f5v0nv5gBR0p+Qq1/3FSuEWVb1uYFzW8IDf0FWsW0yco+xIPbyQd?=
- =?us-ascii?Q?SmQk0u1AVRjTqhBvCidLRis=3D?=
-X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: c32e9274-bc5e-4aa7-1b53-08dde9b93e6a
-X-MS-Exchange-CrossTenant-AuthSource: OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+	=?utf-8?B?Q3N3TDM4YndKUEtxZ2RPMUdLR3YyWEF3VDhUR3o1WWZsdXROL285eTR1cVYz?=
+ =?utf-8?B?QkhGTEFZSWpXTU1NV2RTelUvWjlIR2xrWjArVS8wSEsweHFWZlNldjVxNzRw?=
+ =?utf-8?B?MS9XOXYxOUxueVdwUnlodm8vbWpTWDY1MEd4RnMwQ0VRLzlkSmlkSlJOYXVj?=
+ =?utf-8?B?YkE3c3d3Z2VxQnVtcTJ0QTlMRU9XdHg3VUVxNStmdy8yV3I4cGZIOENYRXd3?=
+ =?utf-8?B?RzR6ZFYzbmVaY1NpMTV1Vkg3dlMyWFM2MFgyVHlTYVoyRWlFVVNTaUJVUkhh?=
+ =?utf-8?B?WmNuTkZvYnpxZHpxQjRtemJmU0JFTzZyM0hackQyWmZKeU4rbzlNN2ZWS3Np?=
+ =?utf-8?B?c1Q0SndCOVZEYVpsbGtCY0lIK0gzTmJNaUI1ZmE4RERRTzJna3BVZ0tzQ3pB?=
+ =?utf-8?B?VEhVSlB5QURCaTlIdHZvNHRUNTk5QTFrenR3K3FSV0o3TXB6c1BDanYwaE52?=
+ =?utf-8?B?a3JDc3JSSGR4U1I3NUo5L09FazgvYTYvMkFaTXN5b3JZb0F4RFA1ZTV6NnYz?=
+ =?utf-8?B?SE1jbXRyMDhMNUVZeG1pRXRPaWE1bmgvNTZFRWZYOWFYZHpqeUp6YUpsb0VR?=
+ =?utf-8?B?SE0wb1JaTGZBMW93S1dtY1AxTGk0bFQzOElDOUxYUkpvand6K054bWpXeERL?=
+ =?utf-8?B?UXVoZmlwZnVweWhLY3h2ZVIzc2RDeTZpS1k3eklNU1BId3lTY1FZWkhXQkxM?=
+ =?utf-8?B?cWovK1RSS3pJb3Ztd1pvRGVRRWQ5NmRlTWhPSTI0czVlVytZc1lCYWYzYlJa?=
+ =?utf-8?B?OWFaS1FPNDQ2alZoVjRmcS8rNWVFdjg2YndXczFIb0d1dUFXejdlQ1Z4Sk1x?=
+ =?utf-8?B?SDloWHRNRVYwRStBM3VUUzFtY3lTbUtHZnhVZHlaZ2Q5Y0Q0ZHNEL0YwMWFn?=
+ =?utf-8?B?bTNZRTZWNkNFRWJkY0lsb0JOYlVYcmpqaTN3U0dpKy9zR3JiNGNrMk1FemNm?=
+ =?utf-8?B?TWszMmFUWEYrWCtRQ0cyR0Y2OUk4Wk5scUkrMnhtYUJtRVVMTmF1b21hRWZY?=
+ =?utf-8?B?aVZCdlV3UGZpWGtkV2p6QW95UGp1QmZROFBReGM0MGdZbFRBUzcrYzhySkpB?=
+ =?utf-8?B?a29qd0lWSWJaczdIOTV2Tk5PSklzM0l0ZXF2YXMzQm1VTlZKcmNuMlR4UDd0?=
+ =?utf-8?B?V3dGTGIvc2xwYjRwdXJJT0hWOXBGOFJuR3BEeFk5L09sTWN6MzA2ajVSRGdN?=
+ =?utf-8?B?VDByVlJvdzEwMmMyTlVWOXRnVlgrbzdBbkZ3dGRKejNLclUvekcwaHRJUzlE?=
+ =?utf-8?B?VW5uaFRpUkJwUjBEcHpKQU5JNGRETUl1TVo3U2lyZHV4T2d3V2tMREFLVGxv?=
+ =?utf-8?B?TWR6QjBEdDZ4SExHbG13TjlQbWtqN3BCZFV4V1F1RWdNQzUrd0dHejVVZHBY?=
+ =?utf-8?B?QUVGOXhXZ1VRMjAyRlV1QTF1YlUwQ0FUdThRUDJqVUtXcUpySHloY3pjNzJV?=
+ =?utf-8?B?MkZ0M1BkK05KZE4wSk1sMUdYRFN5OElWVFFoVml4R3RtbEpwVWZKNlFMYWVY?=
+ =?utf-8?B?QnJSdEQvYmc4MkxSV20xUi9SbWRrVis4QmhSWWRlaWkrQnNIQkQvL3B1SjA1?=
+ =?utf-8?B?RGhpQ05zSVdFTXBQQ21IdCt2UE1LeGhpTHdNRkJhQkl0MVYyUEFLYXB3MHAr?=
+ =?utf-8?B?Rk9XSEEwYkJSNWt4bm9aRXlFVGwrNy83ZnRHK3hDN0syNmRTTXArS3BaMjhp?=
+ =?utf-8?B?aTUyRWFtQUtvR2RaTGRqRDRvbHVNdk1KVE9jR2hrTXh3TnUzLzlPVFluUDNl?=
+ =?utf-8?B?cENRMG5vMVl3MXAyRVpvVjBuSlBDazZzNVRhdGFxUVVVQjM1d3ErYXJENWxN?=
+ =?utf-8?B?US9FUGN6TTUrSERuSGZ5ZGVuN0M4Skh0T0RXNCs3US96aEowZ2hqbkJKb0Vw?=
+ =?utf-8?B?U2NnOTZ4WlVXbW14ODVkelNvSm9RNlowd3QwV2Z3YW5LN3NRS3I5SHJlSWJk?=
+ =?utf-8?B?NUhhMHI1RTRxUUM3ZVlhTzN6UUQ4SzVNU2xMSnRNK2ttOFdEZldjWVhHOVdD?=
+ =?utf-8?B?QkVvR3d3QjlienFVanRxWUtNNUJaSGl5RSs0MGtrTVJkQ2hKc2xBdTZjZWN1?=
+ =?utf-8?B?a1B6M3E4STBVWnAyZXU4Zm9NSlh1d1BBeWZHdTJlNHlrK2pjTmpKZ281Q05r?=
+ =?utf-8?B?MGxXTlVnMVI4a0ZGUGNyblZnWFI5dWxjSWhPVnUzblZOOXFaVmgzQTJYL0tG?=
+ =?utf-8?B?ZTl0MkJGWWpZQktUWERITzAxUDFoQUkzYkR0L256NVhTbDBGdlRndDJZSC83?=
+ =?utf-8?B?M2RjWEZCZ1Z3Mm5WOEtoelVVR3ZnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec3c8559-6e87-4215-42ca-08dde9ba3a61
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 00:39:58.8358
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 00:47:01.2985
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iZfE/E8oIecKk2+N0rsUHB0yT4EZIJFcGKu/5rhRP2/kJADynlOUAug6fJQzuliFTO2s72CQt2d0JIL9isRm1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWP286MB2298
+X-MS-Exchange-CrossTenant-UserPrincipalName: f9+jaOdVuufX2FlmWYWpZ7TesUpA2wH5pSL8gdS34urTjGJWGJ1zmQD7EpH2Aswdq4xGBC+1mRpXOKsE6ejuIw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9001
 
-Since ixgbe_adapter is embedded in devlink, calling devlink_free()
-prematurely in the ixgbe_remove() path can lead to UAF. Move devlink_free()
-to the end.
+On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Dedicated MIPI calibration block appears only in Tegra114, before Tegra11=
+4
+> all MIPI calibration pads were part of VI block.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/staging/media/tegra-video/csi.c      | 12 +++++++-----
+>  drivers/staging/media/tegra-video/csi.h      |  1 +
+>  drivers/staging/media/tegra-video/tegra210.c |  1 +
+>  3 files changed, 9 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/staging/media/tegra-video/csi.c
+> b/drivers/staging/media/tegra-video/csi.c index 74c92db1032f..2f9907a20db=
+1
+> 100644
+> --- a/drivers/staging/media/tegra-video/csi.c
+> +++ b/drivers/staging/media/tegra-video/csi.c
+> @@ -485,11 +485,13 @@ static int tegra_csi_channel_alloc(struct tegra_csi
+> *csi, if (IS_ENABLED(CONFIG_VIDEO_TEGRA_TPG))
+>  		return 0;
+>=20
+> -	chan->mipi =3D tegra_mipi_request(csi->dev, node);
+> -	if (IS_ERR(chan->mipi)) {
+> -		ret =3D PTR_ERR(chan->mipi);
+> -		chan->mipi =3D NULL;
+> -		dev_err(csi->dev, "failed to get mipi device: %d\n", ret);
+> +	if (csi->soc->has_mipi_calibration) {
+> +		chan->mipi =3D tegra_mipi_request(csi->dev, node);
 
-KASAN report:
+The way I would read 'soc->has_mipi_calibration' is that this device (CSI)=
+=20
+contains the MIPI calibration hardware. I.e. the opposite of here. I would=
+=20
+invert the logic and optionally call it e.g. 'internal_mipi_calib'.
 
- BUG: KASAN: use-after-free in ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
- Read of size 8 at addr ffff0000adf813e0 by task bash/2095
- CPU: 1 UID: 0 PID: 2095 Comm: bash Tainted: G S  6.17.0-rc2-tnguy.net-queue+ #1 PREEMPT(full)
- [...]
- Call trace:
-  show_stack+0x30/0x90 (C)
-  dump_stack_lvl+0x9c/0xd0
-  print_address_description.constprop.0+0x90/0x310
-  print_report+0x104/0x1f0
-  kasan_report+0x88/0x180
-  __asan_report_load8_noabort+0x20/0x30
-  ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
-  ixgbe_clear_interrupt_scheme+0xf8/0x130 [ixgbe]
-  ixgbe_remove+0x2d0/0x8c0 [ixgbe]
-  pci_device_remove+0xa0/0x220
-  device_remove+0xb8/0x170
-  device_release_driver_internal+0x318/0x490
-  device_driver_detach+0x40/0x68
-  unbind_store+0xec/0x118
-  drv_attr_store+0x64/0xb8
-  sysfs_kf_write+0xcc/0x138
-  kernfs_fop_write_iter+0x294/0x440
-  new_sync_write+0x1fc/0x588
-  vfs_write+0x480/0x6a0
-  ksys_write+0xf0/0x1e0
-  __arm64_sys_write+0x70/0xc0
-  invoke_syscall.constprop.0+0xcc/0x280
-  el0_svc_common.constprop.0+0xa8/0x248
-  do_el0_svc+0x44/0x68
-  el0_svc+0x54/0x160
-  el0t_64_sync_handler+0xa0/0xe8
-  el0t_64_sync+0x1b0/0x1b8
+A cleaner way to do this might be to always call tegra_mipi_request et al. =
+--=20
+on pre-Tegra114 SoCs this would just call back to the VI/CSI driver using t=
+he=20
+callbacks registered in the MIPI driver as we discussed before. That way th=
+e=20
+CSI driver won't need separate code paths for SoCs with internal MIPI=20
+calibration and SoCs with the external MIPI calibration device.
 
-Fixes: a0285236ab93 ("ixgbe: add initial devlink support")
-Signed-off-by: Koichiro Den <den@valinux.co.jp>
----
-Changes in v2:
-- Move only devlink_free()
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Cheers,
+Mikko
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 80e6a2ef1350..b3822c229300 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -12092,7 +12092,6 @@ static void ixgbe_remove(struct pci_dev *pdev)
- 
- 	devl_port_unregister(&adapter->devlink_port);
- 	devl_unlock(adapter->devlink);
--	devlink_free(adapter->devlink);
- 
- 	ixgbe_stop_ipsec_offload(adapter);
- 	ixgbe_clear_interrupt_scheme(adapter);
-@@ -12125,6 +12124,8 @@ static void ixgbe_remove(struct pci_dev *pdev)
- 
- 	if (disable_dev)
- 		pci_disable_device(pdev);
-+
-+	devlink_free(adapter->devlink);
- }
- 
- /**
--- 
-2.48.1
+> +		if (IS_ERR(chan->mipi)) {
+> +			ret =3D PTR_ERR(chan->mipi);
+> +			chan->mipi =3D NULL;
+> +			dev_err(csi->dev, "failed to get mipi device:=20
+%d\n", ret);
+> +		}
+>  	}
+>=20
+>  	return ret;
+> diff --git a/drivers/staging/media/tegra-video/csi.h
+> b/drivers/staging/media/tegra-video/csi.h index 3ed2dbc73ce9..400b913bb1c=
+b
+> 100644
+> --- a/drivers/staging/media/tegra-video/csi.h
+> +++ b/drivers/staging/media/tegra-video/csi.h
+> @@ -128,6 +128,7 @@ struct tegra_csi_soc {
+>  	unsigned int num_clks;
+>  	const struct tpg_framerate *tpg_frmrate_table;
+>  	unsigned int tpg_frmrate_table_size;
+> +	bool has_mipi_calibration;
+>  };
+>=20
+>  /**
+> diff --git a/drivers/staging/media/tegra-video/tegra210.c
+> b/drivers/staging/media/tegra-video/tegra210.c index
+> da99f19a39e7..305472e94af4 100644
+> --- a/drivers/staging/media/tegra-video/tegra210.c
+> +++ b/drivers/staging/media/tegra-video/tegra210.c
+> @@ -1218,4 +1218,5 @@ const struct tegra_csi_soc tegra210_csi_soc =3D {
+>  	.num_clks =3D ARRAY_SIZE(tegra210_csi_cil_clks),
+>  	.tpg_frmrate_table =3D tegra210_tpg_frmrate_table,
+>  	.tpg_frmrate_table_size =3D ARRAY_SIZE(tegra210_tpg_frmrate_table),
+> +	.has_mipi_calibration =3D true,
+>  };
+
+
+
 
 
