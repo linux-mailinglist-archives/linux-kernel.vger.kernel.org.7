@@ -1,166 +1,151 @@
-Return-Path: <linux-kernel+bounces-796452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6BFB400DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:40:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E7CB400E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58A4482D17
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D888F1A830C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7521296BD6;
-	Tue,  2 Sep 2025 12:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608AC29AB05;
+	Tue,  2 Sep 2025 12:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qI/pm+ny"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="zKbLt9hn"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390A0288C81;
-	Tue,  2 Sep 2025 12:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9914229A9FE;
+	Tue,  2 Sep 2025 12:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816784; cv=none; b=Lg0V4IAJMQovRMc1nmBQmQcPCgNrf6x1ZGZeVqH99Pd1RZMSZxSSuOcUpGNg4fdQ7F7hOaRej/le7wPQarFWlZvFdmpgU2LFjStW8+1a0lN7V2wGz3hoSlhdek0DnYomGeL62/CuHSSP459zTuyBDBIB7Oi6hYmpBLaGf0s6vMY=
+	t=1756816792; cv=none; b=jznNXwX0xUmTEB2DoZWQzw8X/cotHNPQRgo40X33xVlZfr2rc0OKqdVWWUcZEcUFjilQIZWlI5Q/VPwV7m2fvfE48HktVGQiDSRooLy4/9fjinN0rAzOuDWLC5o0IP2jnwpOKD7DGwuV4U/+ocx0SQnOKmGnifDwXwRdQmP+8H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816784; c=relaxed/simple;
-	bh=fDh1rVUT2E+ochpfHW3rbcGmXbzriJy5LeM0r503rOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=im1iqss8+hRRrEt6XKpxTmcSjfDae2WgXMHq1GqoMgOx8sBnKvV06Tnza1rZK/EMQsl4N6vYC5LxGw5I7mgxco0BjIoBd9Ne+BUT+uZqqVhXqbGamZw+PMMP1ar0AZZCock0tV1M53NzifWwdvjj9PSkUhQKB2S6HqEBfWckN5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qI/pm+ny; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E2CBAC77;
-	Tue,  2 Sep 2025 14:38:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756816713;
-	bh=fDh1rVUT2E+ochpfHW3rbcGmXbzriJy5LeM0r503rOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qI/pm+nyTRdTSb/7Rb4s47sNeX3rkfRajqHDsIhTgVyB1RPVsK4a2HCzeVoejFtno
-	 zLQLi473VX3QOwsMYXfdQ05kxih5QZ002ZcLWIOzZM14EpP9LR031KCfQWa6xNEzCg
-	 TqLklRigOu/paxTyDaviol5p6P+0SrWdWD+dP1bQ=
-Date: Tue, 2 Sep 2025 14:39:20 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Alice Yuan <alice.yuan@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Robert Chiras <robert.chiras@nxp.com>,
-	Zhipeng Wang <zhipeng.wang_1@nxp.com>
-Subject: Re: [PATCH v4 0/5] media: imx8qxp: add parallel camera support
-Message-ID: <20250902123920.GM13448@pendragon.ideasonboard.com>
-References: <20250729-imx8qxp_pcam-v4-0-4dfca4ed2f87@nxp.com>
- <20250805010822.GC24627@pendragon.ideasonboard.com>
- <aLbcpEZXm5G1Onq7@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1756816792; c=relaxed/simple;
+	bh=60160ZMeQ4Snti2+fYThbkKZXQg2sw13t3seEmEuNLI=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=VPUqLvlNINYGuFBod4bMtro8POukNLSuc8eRYpzrlFxoy0RripXmgRST3hq7xk2djNnMXrozQ0r/Sz3Rc0UXEHEHnYxA8JjsbYWfHU8Zxz6o4DjC6s/8xuxzXNwq2zfVPPssAje9gIuE8BWiHJ8b1VvD9BFiukSIfZb28NHXUuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=zKbLt9hn; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756816784;
+	bh=UMVGkCSvy6khHMWXG0E9TSxl0qFXWOuW3mLWRkGeFPI=;
+	h=From:To:Cc:Subject:Date;
+	b=zKbLt9hnUleVmJcD1Fq9ijWOX6gFDCZhWauw9ZIK39t8eOgVBihc8ccycgbB75a/a
+	 0qKhVh7QT8R2G2bJhwqJ3k/UQ5lrv6hs3At4FyzuMwIr++Ydz6krwLiHCEO/oHZiNX
+	 SEcIdPMzkeSEOd5CdzfHJZVss22nGgDM3zWqFRRU=
+Received: from SSOC3-SH.company.local ([58.33.109.195])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 9DD970A9; Tue, 02 Sep 2025 20:39:29 +0800
+X-QQ-mid: xmsmtpt1756816769td5u3ns8m
+Message-ID: <tencent_E4C0C41415118E05F82833A1453A097DD10A@qq.com>
+X-QQ-XMAILINFO: NbgegmlEc3JuKAL4gsmG+KZNdlsX8GYrLNwDW8A1faojRRVMJFfukZFhqqSaxw
+	 a+UqpvdzGYhgGRQhCKIyt/toKyFHdPLHjVSjpz8cnKs0bnAvAS8FiRn58ZgGsCDv6N0x47BXhCPQ
+	 Hjg2ChhWpO7+usGMqFpu8Kb0pqvVvGfiu6FvkzEr2VeOuFpbOCijyDhOoM9a9n+4+KUrghFnsSxb
+	 HXkGyfAb5cSN976UCqdy64LZ9vhwtxX4Hrm9CrEpPY+g6v4WkYXFWY+1M47R8dUqfaMoopgpAlnk
+	 mJlgBd+j49CBJGtdkMFGSyE42csgDv6tYXgZ7iZv95HMlMuvF7eC3QpcRqu/pTN6ZiXKxRhnjmb+
+	 sOyJOX5BYY5n02vEgdUSUWBCBQbWDqtMatElK6Pymi/3jTs2V87IRAv4jmnmdEpA7tucQdFTay5m
+	 l1fJQ42ubU6LsziT7JFoyzU9ot/GDjPq8Kdhpog1bKXT/MLlxsNui1cgt5CLCLq9WeuPD0cXESmS
+	 vBCWPdC5w01BcLtxfFOg9dfhXf1PYqVLaFENj9nKp0MUbY6phC1GoZRo3CL1HkxQSfTcTprDzT+h
+	 5qsagS6dKvij3NTIh+2K7p2vi+gNnxr42Z/jlGKDx7z5TNwMY/GIC8Zz5yCE1bo6Pagy2rXkcETX
+	 +4MfSEQv/WsN9cCroMSYkldoEuKksZ5xQoBdk9rPjzYZn7woE428qCiJVcRpbuYoEhdGpgsb2WmI
+	 dhwQqKT9nx0hhf05+9XVqy6kJk6Tl9uhNKHJzsdXO965e1QcDID9YRdqf1oAnVNshqqfvjP9P3Rr
+	 68ng1IPfSiAV1AF+CUGd+Sk6Ufiz3TX9xgabHP+380BzUAJfkhRC74lvjlPGTbG2tNGSiZYDk/g1
+	 YKirYvi2CVAdCSoeKNpDoiqvgcphmcyOdYa0S7EbEDnMMA52VPzkTTW29+Do7rrOkmoHA+DSoz/P
+	 qehwKtrk45nFa9BCZ179T553/9EbYwHezG9LHeNVJWd89nTo5DdV8f0XNPOIIUOPwmsOV4Xx2dYT
+	 EElA5apNQq8Fc5oBUSCnQqaSxBeJaOtUJISjXmEmRafCjfckX+14eQKaI87rbbDdrAnfqvsQ==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: gj.han@foxmail.com
+To: Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org (open list:BLOCK LAYER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: hanguangjiang@lixiang.com,
+	fanggeng@lixiang.com,
+	yangchen11@lixiang.com,
+	liangjie@lixiang.com
+Subject: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
+Date: Tue,  2 Sep 2025 20:39:24 +0800
+X-OQ-MSGID: <20250902123926.3674323-1-gj.han@foxmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aLbcpEZXm5G1Onq7@lizhi-Precision-Tower-5810>
+Content-Transfer-Encoding: 8bit
 
-Hi Frank,
+From: Han Guangjiang <hanguangjiang@lixiang.com>
 
-On Tue, Sep 02, 2025 at 08:01:40AM -0400, Frank Li wrote:
-> On Tue, Aug 05, 2025 at 04:08:22AM +0300, Laurent Pinchart wrote:
-> > Hi Frank,
-> >
-> > Thank you for the patches.
-> >
-> > I've quite busy these days, and I don't believe I will have time to
-> > review this series before coming back from OSS Europe at the beginning
-> > of September. Let's see if anyone on CC could volunteer.
-> 
-> Laurent Pincha
-> 	I hope you have good time at OSS.
-> 
-> 	Do you have chance to review this patch?
+On repeated cold boots we occasionally hit a NULL pointer crash in
+blk_should_throtl() when throttling is consulted before the throttle
+policy is fully enabled for the queue. Checking only q->td != NULL is
+insufficient during early initialization, so blkg_to_pd() for the
+throttle policy can still return NULL and blkg_to_tg() becomes NULL,
+which later gets dereferenced.
 
-I'm going through my mail backlog, which is really big at the moment.
-I'd like someone else to volunteer to review this series. It won't scale
-if I have to review all NXP media patches in my spare time :-/
+ Unable to handle kernel NULL pointer dereference
+ at virtual address 0000000000000156
+ ...
+ pc : submit_bio_noacct+0x14c/0x4c8
+ lr : submit_bio_noacct+0x48/0x4c8
+ sp : ffff800087f0b690
+ x29: ffff800087f0b690 x28: 0000000000005f90 x27: ffff00068af393c0
+ x26: 0000000000080000 x25: 000000000002fbc0 x24: ffff000684ddcc70
+ x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
+ x20: 0000000000080000 x19: ffff000684ddcd08 x18: ffffffffffffffff
+ x17: 0000000000000000 x16: ffff80008132a550 x15: 0000ffff98020fff
+ x14: 0000000000000000 x13: 1fffe000d11d7021 x12: ffff000688eb810c
+ x11: ffff00077ec4bb80 x10: ffff000688dcb720 x9 : ffff80008068ef60
+ x8 : 00000a6fb8a86e85 x7 : 000000000000111e x6 : 0000000000000002
+ x5 : 0000000000000246 x4 : 0000000000015cff x3 : 0000000000394500
+ x2 : ffff000682e35e40 x1 : 0000000000364940 x0 : 000000000000001a
+ Call trace:
+  submit_bio_noacct+0x14c/0x4c8
+  verity_map+0x178/0x2c8
+  __map_bio+0x228/0x250
+  dm_submit_bio+0x1c4/0x678
+  __submit_bio+0x170/0x230
+  submit_bio_noacct_nocheck+0x16c/0x388
+  submit_bio_noacct+0x16c/0x4c8
+  submit_bio+0xb4/0x210
+  f2fs_submit_read_bio+0x4c/0xf0
+  f2fs_mpage_readpages+0x3b0/0x5f0
+  f2fs_readahead+0x90/0xe8
 
-> > On Tue, Jul 29, 2025 at 12:06:21PM -0400, Frank Li wrote:
-> > > Add parallel camera support for i.MX8 chips.
-> > >
-> > > The below patch to add new format support to test ov5640 sensor
-> > >    media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
-> > >
-> > > The bindings and driver for parallel CSI
-> > >    dt-bindings: media: add i.MX parallel csi support
-> > >    media: nxp: add V4L2 subdev driver for parallel CSI
-> > >
-> > > DTS part need depend on previous MIPI CSI patches.
-> > >   https://lore.kernel.org/imx/20250522-8qxp_camera-v5-13-d4be869fdb7e@nxp.com/
-> > >
-> > >   arm64: dts: imx8: add parellel csi nodes
-> > >   arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
-> > >
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > > Changes in v4:
-> > > - remove imx93 driver support since have not camera sensor module to do test now.
-> > >   Add it later
-> > > - Add new patch
-> > >   media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
-> > > - See each patche's change log for detail.
-> > > - Link to v3: https://lore.kernel.org/r/20250708-imx8qxp_pcam-v3-0-c8533e405df1@nxp.com
-> > >
-> > > Changes in v3:
-> > > - replace CSI with CPI.
-> > > - detail change see each patch's change logs
-> > > - Link to v2: https://lore.kernel.org/r/20250703-imx8qxp_pcam-v2-0-188be85f06f1@nxp.com
-> > >
-> > > Changes in v2:
-> > > - remove patch media: nxp: isi: add support for UYVY8_2X8 and YUYV8_2X8 bus codes
-> > >   because pcif controller convert 2x8 to 1x16 to match isi's input
-> > > - rename comaptible string to fsl,imx8qxp-pcif
-> > > - See each patches's change log for detail
-> > > - Link to v1: https://lore.kernel.org/r/20250630-imx8qxp_pcam-v1-0-eccd38d99201@nxp.com
-> > >
-> > > ---
-> > > Alice Yuan (2):
-> > >       dt-bindings: media: add i.MX parallel CPI support
-> > >       media: nxp: add V4L2 subdev driver for camera parallel interface (CPI)
-> > >
-> > > Frank Li (3):
-> > >       media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
-> > >       arm64: dts: imx8: add camera parallel interface (CPI) node
-> > >       arm64: dts: imx8qxp-mek: add parallel ov5640 camera support
-> > >
-> > >  .../devicetree/bindings/media/fsl,imx93-pcif.yaml  | 126 ++++
-> > >  MAINTAINERS                                        |   2 +
-> > >  arch/arm64/boot/dts/freescale/Makefile             |   3 +
-> > >  arch/arm64/boot/dts/freescale/imx8-ss-img.dtsi     |  13 +
-> > >  .../boot/dts/freescale/imx8qxp-mek-ov5640-cpi.dtso |  83 +++
-> > >  arch/arm64/boot/dts/freescale/imx8qxp-ss-img.dtsi  |  27 +
-> > >  drivers/media/platform/nxp/Kconfig                 |  11 +
-> > >  drivers/media/platform/nxp/Makefile                |   1 +
-> > >  drivers/media/platform/nxp/imx-parallel-cpi.c      | 728 +++++++++++++++++++++
-> > >  include/media/v4l2-common.h                        |  30 +
-> > >  10 files changed, 1024 insertions(+)
-> > > ---
-> > > base-commit: 37a294c6211bea9deb14bedd2dcce498935cbd4e
-> > > change-id: 20250626-imx8qxp_pcam-d851238343c3
+Tighten blk_throtl_activated() to also require that the throttle policy
+bit is set on the queue:
 
+  return q->td != NULL &&
+         test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
+
+This prevents blk_should_throtl() from accessing throttle group state
+until policy data has been attached to blkgs.
+
+Fixes: a3166c51702b ("blk-throttle: delay initialization until configuration")
+Co-developed-by: Liang Jie <liangjie@lixiang.com>
+Signed-off-by: Liang Jie <liangjie@lixiang.com>
+Signed-off-by: Han Guangjiang <hanguangjiang@lixiang.com>
+---
+ block/blk-throttle.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/blk-throttle.h b/block/blk-throttle.h
+index 3b27755bfbff..9ca43dc56eda 100644
+--- a/block/blk-throttle.h
++++ b/block/blk-throttle.h
+@@ -156,7 +156,7 @@ void blk_throtl_cancel_bios(struct gendisk *disk);
+ 
+ static inline bool blk_throtl_activated(struct request_queue *q)
+ {
+-	return q->td != NULL;
++	return q->td != NULL && test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
+ }
+ 
+ static inline bool blk_should_throtl(struct bio *bio)
 -- 
-Regards,
+2.25.1
 
-Laurent Pinchart
 
