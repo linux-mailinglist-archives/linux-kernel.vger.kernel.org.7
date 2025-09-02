@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-796634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAABB404AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:45:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AC6B40517
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2E8C16F368
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17A61892CEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05DF33A005;
-	Tue,  2 Sep 2025 13:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3C831B130;
+	Tue,  2 Sep 2025 13:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EaPdkGtv"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="epPsxvja"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A3123D7EC;
-	Tue,  2 Sep 2025 13:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527B73112C4;
+	Tue,  2 Sep 2025 13:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820238; cv=none; b=Zd91F3Z6EegX3zMIF52GOcgKHo8zmC/XGDgNpXp8WtTS5xbwi2kmQWeAQR5/C/fxCa+0hMZRyTaXWFfzwgZOAIC1gOQ331zbzxjrLIsDFtt1Q7frL1WAklc++GOGZh25JMcPLQcetAnL7D4CoRiG8KHVZoJqS1pr2/d3ALn/9Wc=
+	t=1756820466; cv=none; b=GoJuqGwt0CietmsqIVBjt4ekcigpSqzYC0/V2NgchbUU6IJZnXML2gp+L8rxu+Z3bjGSwxT933E4HNsJkVSS2TvQHkTeBDRNELjgSibPjAoefcOHnWuJqHfihUFg15DtM80TY3afpAiEgr4hhDaMUdLfabcu+hnzLuZArXv5ptM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820238; c=relaxed/simple;
-	bh=m+I9yKtLh+hfE4g4xUdhB+y9EbdNfTm2xyWqG3OiCJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Eztf9xJEftrtHWulGrler5UVEq8vUWKYE5qKXM6pYKWWWD6/9ocEc2PbW6LrlRX9N+g2VZIPdtHw1Dl5LqcQKeuzau5qE2SqiUMz9UYW6/FUyJSoZEMhHshJ/w0zR7yn29UvIBf5Rhh9ewAVK3bNWpz9o6EQs3wG6PZ2WDnOdvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EaPdkGtv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5ECEC4CEF5;
-	Tue,  2 Sep 2025 13:37:16 +0000 (UTC)
+	s=arc-20240116; t=1756820466; c=relaxed/simple;
+	bh=KXWqzORuG9Ze9ezc7EBN2RkSPImiRWJAzC1KxcAFAAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Vm9Ej96Xb3lDsWFvEcP7wRqdZ61tWz0N3natm7oFb4ZepJs2A6usKziTGZTJmfFBgRgKZTHDfoMlBSts1mveRb8qRKKtBP4sJ1e3ANh22LA2qYs+xxBAo/sl7nZVSEe1BVfBzCuUj4GzjyBsHvUxB/5sBvM/GL+pvBpwMOCQBb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=epPsxvja; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56C9CC4CEF4;
+	Tue,  2 Sep 2025 13:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756820237;
-	bh=m+I9yKtLh+hfE4g4xUdhB+y9EbdNfTm2xyWqG3OiCJ8=;
+	s=korg; t=1756820466;
+	bh=KXWqzORuG9Ze9ezc7EBN2RkSPImiRWJAzC1KxcAFAAE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=EaPdkGtvJC5FyMP14S7P+A/buxSS1v/exPfoR+EMF0e6fy4lHC6e3rSPaVWTds9wn
-	 rTmns1lAsgW99rXsCbOzKknqoU9CuvuKBILcK1L0hNrTG9EnXYW8trh9fgp2Tf5CcT
-	 mvUD6dDNxY8UXlpa+2EC39VEiRoqYwjeXuUSz99o=
+	b=epPsxvjaL1EP5yHYPQU7og3fkBu0R3guIq/ymHcvt03bbakjZB1BAT2tuIIeWRP2D
+	 tq7rht/Ozq2AsPY7mAEMwKXeTwr8o8v95rK2X6xu3rPj2am2puxlydDL8ZDBtGHHx0
+	 s5wNRn8oHC71TeP6ELaAr2+Pz5MvlRpaaHd2ucc8=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -57,9 +57,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	hargar@microsoft.com,
 	broonie@kernel.org,
 	achill@achill.org
-Subject: [PATCH 6.6 00/75] 6.6.104-rc1 review
-Date: Tue,  2 Sep 2025 15:20:12 +0200
-Message-ID: <20250902131935.107897242@linuxfoundation.org>
+Subject: [PATCH 6.1 00/50] 6.1.150-rc1 review
+Date: Tue,  2 Sep 2025 15:20:51 +0200
+Message-ID: <20250902131930.509077918@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,17 +70,17 @@ MIME-Version: 1.0
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.104-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.150-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.6.y
+X-KernelTest-Branch: linux-6.1.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.6.104-rc1
+X-KernelTest-Version: 6.1.150-rc1
 X-KernelTest-Deadline: 2025-09-04T13:19+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 6.6.104 release.
-There are 75 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 6.1.150 release.
+There are 50 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -88,9 +88,9 @@ Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.104-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.150-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
 and the diffstat can be found below.
 
 thanks,
@@ -101,7 +101,7 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.6.104-rc1
+    Linux 6.1.150-rc1
 
 Eric Sandeen <sandeen@redhat.com>
     xfs: do not propagate ENODATA disk errors into xattr code
@@ -114,9 +114,6 @@ Hamish Martin <hamish.martin@alliedtelesis.co.nz>
 
 Hamish Martin <hamish.martin@alliedtelesis.co.nz>
     HID: mcp2221: Don't set bus speed on every transfer
-
-Chris Mi <cmi@nvidia.com>
-    net/mlx5: SF, Fix add port error handling
 
 Eric Dumazet <edumazet@google.com>
     net: rose: fix a typo in rose_clear_routes()
@@ -145,20 +142,11 @@ Minjong Kim <minbell.kim@samsung.com>
 Ping Cheng <pinglinux@gmail.com>
     HID: wacom: Add a new Art Pen 2
 
-Matt Coffin <mcoffin13@gmail.com>
-    HID: logitech: Add ids for G PRO 2 LIGHTSPEED
-
-Antheas Kapenekakis <lkml@antheas.dev>
-    HID: quirks: add support for Legion Go dual dinput modes
-
 Qasim Ijaz <qasdev00@gmail.com>
     HID: multitouch: fix slab out-of-bounds access in mt_report_fixup()
 
 Qasim Ijaz <qasdev00@gmail.com>
     HID: asus: fix UAF via HID_CLAIMED_INPUT validation
-
-Borislav Petkov (AMD) <bp@alien8.de>
-    x86/microcode/AMD: Handle the case of no BIOS microcode
 
 Thijs Raymakers <thijs@raymakers.nl>
     KVM: x86: use array_index_nospec with indices that come from guest
@@ -179,15 +167,6 @@ Takamitsu Iwai <takamitz@amazon.co.jp>
     net: rose: split remove and free operations in rose_remove_neigh()
 
 Rohan G Thomas <rohan.g.thomas@altera.com>
-    net: stmmac: Set CIC bit only for TX queues with COE
-
-Rohan G Thomas <rohan.g.thomas@altera.com>
-    net: stmmac: xgmac: Correct supported speed modes
-
-Serge Semin <fancer.lancer@gmail.com>
-    net: stmmac: Rename phylink_get_caps() callback to update_caps()
-
-Rohan G Thomas <rohan.g.thomas@altera.com>
     net: stmmac: xgmac: Do not enable RX FIFO Overflow interrupts
 
 Alexei Lazar <alazar@nvidia.com>
@@ -200,27 +179,6 @@ Alexei Lazar <alazar@nvidia.com>
     net/mlx5e: Update and set Xon/Xoff upon MTU set
 
 Moshe Shemesh <moshe@nvidia.com>
-    net/mlx5: Nack sync reset when SFs are present
-
-Jiri Pirko <jiri@resnulli.us>
-    net/mlx5: Convert SF port_indices xarray to function_ids xarray
-
-Jiri Pirko <jiri@resnulli.us>
-    net/mlx5: Use devlink port pointer to get the pointer of container SF struct
-
-Jiri Pirko <jiri@resnulli.us>
-    net/mlx5: Call mlx5_sf_id_erase() once in mlx5_sf_dealloc()
-
-Moshe Shemesh <moshe@nvidia.com>
-    net/mlx5: Fix lockdep assertion on sync reset unload event
-
-Moshe Shemesh <moshe@nvidia.com>
-    net/mlx5: Add support for sync reset using hot reset
-
-Moshe Shemesh <moshe@nvidia.com>
-    net/mlx5: Add device cap for supporting hot reset in sync reset flow
-
-Moshe Shemesh <moshe@nvidia.com>
     net/mlx5: Reload auxiliary drivers on fw_activate
 
 Horatiu Vultur <horatiu.vultur@microchip.com>
@@ -228,27 +186,6 @@ Horatiu Vultur <horatiu.vultur@microchip.com>
 
 Yeounsu Moon <yyyynoom@gmail.com>
     net: dlink: fix multicast stats being counted incorrectly
-
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-    dt-bindings: display/msm: qcom,mdp5: drop lut clock
-
-Michal Kubiak <michal.kubiak@intel.com>
-    ice: fix incorrect counter for buffer allocation failures
-
-Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-    ice: stop storing XDP verdict within ice_rx_buf
-
-Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-    ice: gather page_count()'s of each frag right before XDP prog call
-
-Larysa Zaremba <larysa.zaremba@intel.com>
-    ice: Introduce ice_xdp_buff
-
-Timur Tabi <ttabi@nvidia.com>
-    drm/nouveau: remove unused memory target test
-
-Timur Tabi <ttabi@nvidia.com>
-    drm/nouveau: remove unused increment in gm200_flcn_pio_imem_wr
 
 Kuniyuki Iwashima <kuniyu@google.com>
     atm: atmtcp: Prevent arbitrary write in atmtcp_recv_control().
@@ -292,9 +229,6 @@ Christoph Hellwig <hch@lst.de>
 Werner Sembach <wse@tuxedocomputers.com>
     ACPI: EC: Add device to acpi_ec_no_wakeup[] qurik list
 
-Junli Liu <liujunli@lixiang.com>
-    erofs: fix atomic context detection when !CONFIG_DEBUG_LOCK_ALLOC
-
 Alexey Klimov <alexey.klimov@linaro.org>
     ASoC: codecs: tx-macro: correct tx_macro_component_drv name
 
@@ -310,12 +244,6 @@ Damien Le Moal <dlemoal@kernel.org>
 Tengda Wu <wutengda@huaweicloud.com>
     ftrace: Fix potential warning in trace_printk_seq during ftrace_dump
 
-Dan Carpenter <dan.carpenter@linaro.org>
-    of: dynamic: Fix use after free in of_changeset_add_prop_helper()
-
-Rob Herring <robh@kernel.org>
-    of: Add a helper to free property struct
-
 Aleksander Jan Bajkowski <olek2@wp.pl>
     mips: lantiq: xway: sysctrl: rename the etop node
 
@@ -325,97 +253,69 @@ Aleksander Jan Bajkowski <olek2@wp.pl>
 Randy Dunlap <rdunlap@infradead.org>
     pinctrl: STMFX: add missing HAS_IOMEM dependency
 
-Lizhi Hou <lizhi.hou@amd.com>
-    of: dynamic: Fix memleak when of_pci_add_properties() failed
-
 
 -------------
 
 Diffstat:
 
- .../devicetree/bindings/display/msm/qcom,mdp5.yaml |   1 -
  Makefile                                           |   4 +-
  arch/mips/boot/dts/lantiq/danube_easy50712.dts     |   5 +-
  arch/mips/lantiq/xway/sysctrl.c                    |  10 +-
  arch/powerpc/kernel/kvm.c                          |   8 +-
- arch/x86/kernel/cpu/microcode/amd.c                |  22 ++-
  arch/x86/kvm/lapic.c                               |   2 +
  arch/x86/kvm/x86.c                                 |   7 +-
  drivers/acpi/ec.c                                  |   6 +
- drivers/atm/atmtcp.c                               |  17 +-
+ drivers/atm/atmtcp.c                               |  17 ++-
  drivers/gpu/drm/amd/amdgpu/amdgpu_csa.c            |   4 +-
  drivers/gpu/drm/display/drm_dp_helper.c            |   2 +-
  drivers/gpu/drm/msm/msm_gem_submit.c               |  14 +-
  drivers/gpu/drm/nouveau/dispnv50/wndw.c            |   4 +
- drivers/gpu/drm/nouveau/nvkm/falcon/gm200.c        |  15 +-
  drivers/hid/hid-asus.c                             |   8 +-
- drivers/hid/hid-ids.h                              |   3 +
  drivers/hid/hid-input-test.c                       |  10 +-
- drivers/hid/hid-input.c                            |  51 +++---
- drivers/hid/hid-logitech-dj.c                      |   4 +
- drivers/hid/hid-logitech-hidpp.c                   |   2 +
- drivers/hid/hid-mcp2221.c                          |  71 +++++---
- drivers/hid/hid-multitouch.c                       |   8 +
+ drivers/hid/hid-input.c                            |  51 ++++----
+ drivers/hid/hid-mcp2221.c                          |  71 +++++++----
+ drivers/hid/hid-multitouch.c                       |   8 ++
  drivers/hid/hid-ntrig.c                            |   3 +
- drivers/hid/hid-quirks.c                           |   2 +
  drivers/hid/wacom_wac.c                            |   1 +
  drivers/net/ethernet/dlink/dl2k.c                  |   2 +-
- drivers/net/ethernet/intel/ice/ice_txrx.c          |  94 +++++++---
- drivers/net/ethernet/intel/ice/ice_txrx.h          |  19 +-
- drivers/net/ethernet/intel/ice/ice_txrx_lib.h      |  53 ++----
  drivers/net/ethernet/mellanox/mlx5/core/devlink.c  |   2 +-
  .../ethernet/mellanox/mlx5/core/en/port_buffer.c   |   3 +-
  .../ethernet/mellanox/mlx5/core/en/port_buffer.h   |  12 ++
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |  19 +-
- drivers/net/ethernet/mellanox/mlx5/core/fw_reset.c | 200 ++++++++++++++-------
- drivers/net/ethernet/mellanox/mlx5/core/fw_reset.h |   1 +
- drivers/net/ethernet/mellanox/mlx5/core/main.c     |   3 +
- .../net/ethernet/mellanox/mlx5/core/sf/devlink.c   |  87 ++++-----
- drivers/net/ethernet/mellanox/mlx5/core/sf/sf.h    |   6 +
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   8 +-
- .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |  13 +-
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   9 +-
- drivers/net/ethernet/stmicro/stmmac/hwif.h         |   8 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  12 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |  19 ++-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   4 -
  drivers/net/phy/mscc/mscc.h                        |   4 +
  drivers/net/phy/mscc/mscc_main.c                   |   4 +-
- drivers/net/phy/mscc/mscc_ptp.c                    |  34 ++--
+ drivers/net/phy/mscc/mscc_ptp.c                    |  34 +++--
  drivers/net/usb/qmi_wwan.c                         |   3 +
- drivers/of/dynamic.c                               |  29 +--
- drivers/of/of_private.h                            |   1 +
- drivers/of/overlay.c                               |  11 +-
- drivers/of/unittest.c                              |  12 +-
  drivers/pinctrl/Kconfig                            |   1 +
  drivers/scsi/scsi_sysfs.c                          |   4 +-
  drivers/vhost/net.c                                |   9 +-
  fs/efivarfs/super.c                                |   4 +
- fs/erofs/zdata.c                                   |  13 +-
- fs/nfs/pagelist.c                                  |  86 +--------
- fs/nfs/write.c                                     | 148 +++++++++------
+ fs/nfs/pagelist.c                                  |  86 +------------
+ fs/nfs/write.c                                     | 142 +++++++++++++--------
  fs/smb/client/cifsfs.c                             |  14 ++
- fs/smb/client/inode.c                              |  34 +++-
+ fs/smb/client/inode.c                              |  34 ++++-
  fs/smb/client/smb2inode.c                          |   7 +-
  fs/xfs/libxfs/xfs_attr_remote.c                    |   7 +
  fs/xfs/libxfs/xfs_da_btree.c                       |   6 +
  include/linux/atmdev.h                             |   1 +
- include/linux/mlx5/mlx5_ifc.h                      |  11 +-
  include/linux/nfs_page.h                           |   2 +-
  include/net/bluetooth/hci_sync.h                   |   2 +-
- include/net/rose.h                                 |  18 +-
+ include/net/rose.h                                 |  18 ++-
  kernel/dma/pool.c                                  |   4 +-
  kernel/trace/trace.c                               |   4 +-
- net/atm/common.c                                   |  15 +-
+ net/atm/common.c                                   |  15 ++-
  net/bluetooth/hci_event.c                          |  20 ++-
  net/bluetooth/hci_sync.c                           |   6 +-
  net/bluetooth/mgmt.c                               |   5 +-
  net/ipv4/route.c                                   |  10 +-
  net/rose/af_rose.c                                 |  13 +-
  net/rose/rose_in.c                                 |  12 +-
- net/rose/rose_route.c                              |  62 ++++---
+ net/rose/rose_route.c                              |  62 +++++----
  net/rose/rose_timer.c                              |   2 +-
  net/sctp/ipv6.c                                    |   2 +
  sound/soc/codecs/lpass-tx-macro.c                  |   2 +-
- 82 files changed, 897 insertions(+), 560 deletions(-)
+ 57 files changed, 514 insertions(+), 302 deletions(-)
 
 
 
