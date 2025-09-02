@@ -1,207 +1,128 @@
-Return-Path: <linux-kernel+bounces-796258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE7BB3FDF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:39:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F65B3FDF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC2834E2E1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:39:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537111898C9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D762F744F;
-	Tue,  2 Sep 2025 11:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296792F83C1;
+	Tue,  2 Sep 2025 11:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WcetMnXr"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2084.outbound.protection.outlook.com [40.107.101.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUj9IxHj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06244279DA6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756813181; cv=fail; b=gVqwOH8jSeTcngbidaowbKLxEYRuPgS88UZyzUBTVXuHm89mwjolb2z8ZbU8QnzupyVqnYjVJoCR5sL4llonIkDLyckeJF8wyJw2XeLv4pVJzR6VnenhCFX7djKrx0C8UHKDnZZwbDdr3vbImLsfU8LcTlK5qj1F/VZypMFTuGE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756813181; c=relaxed/simple;
-	bh=NTnE5N6Uzji+mkQD6yeWqaavb/TcrXqny72pJwDVgRc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GWkOnzzJ7L02JmA0DJKjeD1AAUXFYqxpQGbHkJvpKIUFPcEi0DrFZaMT1+LMUPe9lYBkca79nUGL4u3IIyfbmsEwoBRjxMO/6e9SDtcClrOrEcR73PH1y8r/AEHgDNDZ3RRHz7T310xZEaD3P2N7ntDkF1kYaLHJJdQ8dWWaOT8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WcetMnXr; arc=fail smtp.client-ip=40.107.101.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WgIjNT8UjH0M3ddwvuyTIjHtimvn3N8O6/7oxp3dfk0S7vSJDt0Hs8uMLdnZ+Zu43uOPgLzW9epjTvCM74FZoTdog2MCD5nqp5c6S0TuVJA5MJc4yzEPa/63Gnoeja2cqzP/TUPF3Rj7E8US5Gs7WhJB801Sc6RXfviJQmoRE4XZuc4zUNzaetDi2XV52pTIJELq06NM6FflZ//v9xSMDRWwyfa/kGWWY8ljyWZAFNaNia9PXzHKIy3B0swOH296kAuetTqi/G5vZpQtlK5sCf0EueD6i4gItrJvOpmwqpTbgMwKQZf3vlP5VcOStqJv5hZr4z8nsakNebmUA/06uw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x0UL5mjHfT0R71yv2zCk4BfKTzF2L69370TO9wxqmBE=;
- b=ldbyeEk2Jr7QEL+RA/gf8lLX2kpjfAlMw80KgLgw2PaGqHdTFRj1cgLWNcVtFOw/u1RxPcHlMd989NYDbjDLXAUdljedPy5BSF/+Z7SK/deklB3mYwuld7A1jDqydON5jVE8bNTU8bCWvZ+V+A5Pkf2TRpuyce3B0zfhEImrKLBPMLsLo5LbbaNWgV96heiJD5PoAV5mJkR5hPPC1gr+lIL5WvyqDNwEUF9irUO6SEuGHWJuK1NAjMr8SO/gnm0BPsgPH2RadZYqPxk15k7fRlfkpOubXNiFLFrVKSig5VVbSRDaU2exVuWhz6WBkjC1ydXbzz16KvAcwuE8cwn2IQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x0UL5mjHfT0R71yv2zCk4BfKTzF2L69370TO9wxqmBE=;
- b=WcetMnXrfubDyP96O6jXEg/4avDzV9yGpAXmZNOI/5TSvnE4+iSxZnVQ9n4L5SOvCLQQirGjfBd4gJQXoa+p4y42oqazarrQRGqaJ78bgOwWO1ymc2+glI0Zqqj9ldWw2ODgef1gmBx5LKb1gG7b8gz9zbUBchTQ0XEbuhJjAgE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by PH7PR12MB9102.namprd12.prod.outlook.com (2603:10b6:510:2f8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 11:39:37 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9073.021; Tue, 2 Sep 2025
- 11:39:37 +0000
-Message-ID: <0d2d6d3e-594c-445e-96f4-c2a7991d2b14@amd.com>
-Date: Tue, 2 Sep 2025 13:39:32 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] drm/amdgpu: use KMEM_CACHE instead of
- kmem_cache_create
-To: Longlong Xia <xialonglong@kylinos.cn>, alexander.deucher@amd.com
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250902072759.2386131-1-xialonglong@kylinos.cn>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250902072759.2386131-1-xialonglong@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0090.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cd::16) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3281A08DB;
+	Tue,  2 Sep 2025 11:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756813234; cv=none; b=Y2u7czQhO4/jur2SEYOi7C7q3nkjYBuhuVzz1NxyBsN1XFYr1Y/szdO7+q2kPtFJNjsxxO6b11dH6wllDS5+UTYMrumh2MK2gZMuy4sEPS5H5o0MTpmpLvn2iyEYZeWuXcR/qqfUwSkU0WKlpEEy1Wh807z/TpVDjyXiJmuUv4A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756813234; c=relaxed/simple;
+	bh=wPSaH7cjW+NldJZ1SPTIET9Tf1SoUAdrI/uEh3a0nTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sBy4FXGTw3HZByEpxSQp7J2VVmBFzByBDjKg+EdzKsDhDbDf0/FShLqcl5slKDevZd1VtfAyY9nTLN7CL4hBrL9eLi5pjR2O5aFq5eaV6b7d7sQKknYnscpl/RGuUDCw33sEYFlTOvKAj3Fi3EpQ/PkQIBCYh6zF1qaEHOOWzfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUj9IxHj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE74C4CEED;
+	Tue,  2 Sep 2025 11:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756813234;
+	bh=wPSaH7cjW+NldJZ1SPTIET9Tf1SoUAdrI/uEh3a0nTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rUj9IxHjDKnLpou31B+i5MNND3MCnio/527nPeG6gqRYhVSY1S70j7jhIEhUirTWx
+	 Bg8tZoM3xDUymFY4YaPfj4h3s42nZGqiTKQW1MWv1EE6MHRDb9431jP5D2ilKi9x37
+	 79pN/8k38vHHbOucIkP6Fd9kuLTpLyXHyqgItartg/sJepj7jziVwoc9AZ0dRRbCY0
+	 BERICBhSiZH11LxJ0iSjI07FvdgOT5qROIJkbtsF6BBr+nPMHFpT/1VV0/J0iNFhjv
+	 K9xt2gRxub4Ns1Xq2HVsN8Sx3K5OHv7sGK92pVrQ8ME+capTKxh5CIugZX3eHDP8ZY
+	 NuVLhWU/0m6fg==
+Date: Tue, 2 Sep 2025 12:40:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alistair Francis <alistair.francis@wdc.com>,
+	Damien Le'Moal <dlemoal@kernel.org>,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: Re: [PATCH v2] net/tls: support maximum record size limit
+Message-ID: <20250902114027.GD15473@horms.kernel.org>
+References: <20250902033809.177182-2-wilfred.opensource@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH7PR12MB9102:EE_
-X-MS-Office365-Filtering-Correlation-Id: b032dd5a-28c8-443b-ffa3-08ddea156561
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?REV6UUNIQ3ZpWGtiMmoxemlnRHV4QzdqdktndzBtaXd2OVU2RlcycElYYTQ0?=
- =?utf-8?B?N0dQbi96M0ZiU0VadGxTNktndnhUQVhkK2ZRV3pyV3hwdW96YUZBRElSbXFz?=
- =?utf-8?B?VmpvUjRJbDYrTnVNTE4xdzlxYVJKUHN0RDFaNW9EdTJ3UW5aTEZnQkdrdFph?=
- =?utf-8?B?Q0JXc3FhbXhHaXlZVCtyaTQrMWFaTEpIVkNsbko1K1BsYVBnR0NNOHlWaEQz?=
- =?utf-8?B?RXVwV0ZiYkZQa29nNGxsVS8rMERkTUdpeVV4WWRQZkNDS3BkS3ptR1Z3d1Jq?=
- =?utf-8?B?Q2wyNzI3S2F1dVRwMmxyRGlCekJ6UklrZk9JdnNTL3I4ZFNOWXRnY3ZEQzQ1?=
- =?utf-8?B?dlZZMmRWUDZHT096ZXBlZGd0ZmhrUDBFNWFkUSs3c0hoZnR1TFZpK1kvY2x5?=
- =?utf-8?B?eFpLcVVrYUxRN3RNa1hZUUxyRVhoQnlRMTZ2emQ1aDRDQ0xJV3hhK0dtZGtS?=
- =?utf-8?B?UlJBMFZqMzdOenpFYm1EdWx6TjZqbkFiNGRZTjdINEJ4cjVVcVc3ZHZkbUt4?=
- =?utf-8?B?NTNoWU9oMzJFeTdkbWhFRzZBZnp2VDUwcndJRDZtVTVlUE9NdUZUR1d5aTRm?=
- =?utf-8?B?T2JvcmtwUS9HQ1pTRGFOVW4zWndsNEZPeGpqYkxRVGVxc2RuVnRjaUFNU01w?=
- =?utf-8?B?VWdWWEJSTVZZUy9XdWczMU5YSlliZ1lQL1FHbnI3SGhQUi8xUEtEN1BFSW1z?=
- =?utf-8?B?STRQZ3pRUkd0R1R1NStPdUFjcUpTNWtncjZ3eTVjcXd6MEJCNlBHSlFhQmR0?=
- =?utf-8?B?d3h4bU10dU5KbGFkRzlNUmxiRG9aeXJoM08yaDRhOVBDU3ZmbWI1VGNiUnJt?=
- =?utf-8?B?M2dROEExWE9aK0xaSUwwMjltSW4vVkhCdHRLemdiRTFqWi9CaUlyYnc2Yys2?=
- =?utf-8?B?ejlkSHg5QjY1UjdLMXk1dFFUUk16V1p5S1pmZGdLaXdTWkc4R2ZKUGtnTW9E?=
- =?utf-8?B?QjNYVlpoYlZ3bDhTckRNL25FVkoyUFVTdDNvdXlYTHkrbzJWc24vRVRnMHBu?=
- =?utf-8?B?TzhzUHNlaGJqN0N2Z1lJVXNlMkg0M1ZXYi9SNDlVQTM5Ty8vN0t4QmZpcGQ2?=
- =?utf-8?B?UlB0L2NsNEIzSXg5S0J5ZlFtM2RQc0VzWm13TnBZT0hFdlNJNEt1ZnNaUDBo?=
- =?utf-8?B?WEVlVUo2Qk9Pd2w5U2RzbnVWSVRrdWhoY1lNbEU5ZUhpNCtaMzZqVWRpNkdk?=
- =?utf-8?B?cXhKSWNxQnFYcjhwNjM2Z2pwRXR6Y0pNSzZUa21idjlibGJZQXM5RFIxKy8w?=
- =?utf-8?B?L1VJQ1NDUDNmcFNJSDJlYWUya2hUc2MzWmhPZ0g0eFB3S1BmaWpocnR5VkVu?=
- =?utf-8?B?dlowT3lqdjJoTDVsbHlwRWtuM0RJdmhvU3hvZERPRG9BVWJEK2F4MlcxSDcy?=
- =?utf-8?B?Qno2WVhPZlIzZTBNZi9IQXJncWptaGNJblNob2RGa0wrOEtYbkpkbW1XZEdU?=
- =?utf-8?B?MDl1cFhSOXhSSTJFcXR4THZsTVdYMVJ5SE5KckJLMVh5bG8yNEFiS2gxY1ls?=
- =?utf-8?B?azVHR0RCczRtcGJqRm8yazFwR3d3VjA2L1JPd3JOU2VoNEVVbDNueEJGQ2xK?=
- =?utf-8?B?YnZ6KzJaM05ZYlcyUFZyRGVoR0R3ckhIcDgvZ1pTZWJmeVlxdnNnVmczaEcy?=
- =?utf-8?B?TGNYcnpxWXVJSWxSbkUvdDhIV0JGVUxuZkJ3bXAzeXBUcGNsamUzanVBSGFs?=
- =?utf-8?B?djZsTm1adUN6bFUvaXJJRWNHVXZyN1cxWUgrc0xqOXV6QWppWS9lcDl4UUZH?=
- =?utf-8?B?ZTFtQ2JSTzJsc0szVzJrczN1NnJQM1B6eUh1aDFaUmhUQnRnbllrSE95OHJE?=
- =?utf-8?B?QURSWGVvM3pwc3BHUVVGTmY4T2ZndHJlb01wbGMwaFFBc1VsQk9GeW5odk5o?=
- =?utf-8?B?aE5HaFloMzRISGNrS2tWdUFTb0dpSjA4eFgzS3JMMUZKTExoaGRZUXdHSFNz?=
- =?utf-8?Q?QPlPSOel1/0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ME13NFNRNkQwS3I2S2xia0xPUThVMXBvajlEWUFIdXMxRnhxSWh4OWVPOHJG?=
- =?utf-8?B?YzRBWDgwa2lrUHFYZzB4M2RBdjVaK1BNTEJKaWRuNDZpdEswRktJTVFveDk2?=
- =?utf-8?B?NCtFNm1CeE9rSzRvamZ6MU92aUR1L25RTjVLOWEvMWlJSlNESXkwb0pOK2JV?=
- =?utf-8?B?QkFrZ0tkZDUvVHlBM1d0bHQ5eGFTTGd5Q2xGWCtQM3V4cWdPcWh1NXRMcmJ0?=
- =?utf-8?B?OXJ0Y21VRXdMSEU3K0tRRlNkajhVa0pZWlhqcnovNmhEaWlaZlhHNEp6QnZB?=
- =?utf-8?B?bktxUGVXaWlHK21HaTZ6TDZkUHRoUVI1dGpmYXVPSFltUDRzRHBvT2dWRGpC?=
- =?utf-8?B?aGVVejVMRUN3TXBIYVVvTHkrdEFXZ1BONmZpTlVWTm1CLzh2ZDlneVdLQnls?=
- =?utf-8?B?aVpyUTAzaHhERHR3L09hOGNuTEdITHM1R1Y4ZmsrYndLTEJtRjFlYk5vTVg0?=
- =?utf-8?B?SUZuQ1pMbVk2bmo5Vm51ZG1kQk5JTDJxSXVSVVpZMTVCM1gxL0Y1WkU0U0lu?=
- =?utf-8?B?N1hiejRqWEQxaDVpQlBlQ1NNbXlzTDljazZ2bkFPWmxoVDA0UTE3QmNObnpS?=
- =?utf-8?B?ZFpXMUYzUGlUNjJxeW5OZ0ljZ2ZYdWZ1NFdqMnJoaDdzZzBtNHJUN0E2WEdx?=
- =?utf-8?B?S3c0MHlVMjdXWVBlRGUrcGhnQVBZdEZ1MnJJVnphNlRPeDEvdzdYcEVJM0Mr?=
- =?utf-8?B?VFNnZDlXRUZPdmhDTjA0ZzZ1MDFvSUJGUHhzc2JacURqWGQvT3Bua0IwcXZC?=
- =?utf-8?B?VDBNV3J6RGZ3c1VhY1lBVGtzNWJLd3hUcjZIbmt0SGF5RmVFWlYxQVJuaXU3?=
- =?utf-8?B?Q2gzNzR2ZFVxWlFqOUtOVXlKdmF6OUZpUnVmbVlkcStwZ1RqY0gwNWJqVWRj?=
- =?utf-8?B?UzhNeWo1SXBaMVFhTVY5enhIbDhyelMyRlVVYkNaM0pFMjZqOHc3b2dwWlNz?=
- =?utf-8?B?ZUx4UnFIa1NhZ2RoNGFDcmZRSmg0RjUzN0ZFZGhPdmZ0NjFkNTRTQUpZdXVY?=
- =?utf-8?B?cTR4MmxvcDBqVXFXdWFHN2s5NVRycW1nQTV0LzVwazdIOWh2Zi9EOERINTA4?=
- =?utf-8?B?Q2NRdUNGM0FDZFZNUlZPMlpSUDNVZVFlYU50d2xpN01GSnE3c0grQisyYXhQ?=
- =?utf-8?B?ckNUbW54NGNWMEtqRFczay9JWUFRbFM5ZGs4WXJDRlY2NmlrMFdONXpOclBy?=
- =?utf-8?B?Sy9NdVlZM0RlYitQMGQvOGo5S01ZVkFLTmVGeFFzNG5teTRsMEdCQm1aM0xS?=
- =?utf-8?B?WUFxTEYrRER4eTlpcCt4MWNaVDRRNm5GWDFTejdsZDhSZC9zd0IyWGRMbXEx?=
- =?utf-8?B?eVk1T0xKd1h6STFUV01qOTNCaUZzM3dpaGx4ajZHRnhjbWlBdGY2dElOSkhN?=
- =?utf-8?B?dWxwRW96alFQUkFDRXZiUnpqMkFZMG1XNE5sVUZvenNHVGVWYTc4U2VZVDk2?=
- =?utf-8?B?NmJjYk1WNFlCZGJSOENkRW9BcHN0RFVuNiswU1d5MzhjSHZ2bjJiLzVzMjdU?=
- =?utf-8?B?akloSThkTHF5aVVtS0g2Zlg5eFM0a21DVzVmaDhCVTBRUk1EN0FvSzlxZkcz?=
- =?utf-8?B?YmFyY1o5a2xaRXZPbmwzbjhXQ2RoeXByOHJzVHdsUmlHeUhqNzROWDFyYU16?=
- =?utf-8?B?Sml4OXNuOWtVdFNOVHR4MDFCb252TW9MUXYrcEYxWjlQdlRCTDMzTG16elJE?=
- =?utf-8?B?bW1WRDc2N2IvUGFLWmtDemRpSGZlbUpQYzIyZWtpb2dJaS9ORzR3M0k1TDN4?=
- =?utf-8?B?cTVjMi8xYlkyRllWUGdrQ3k2cjFEOTNjbitzUlZ5SU9YVGxpeEJ4ZkRsbTlj?=
- =?utf-8?B?Y09BcnFTOVhHSzJGa3R2T2gra0kvZVBsZCtQbG1hT204cVJNVzNNS1FZVHVI?=
- =?utf-8?B?TElBZk5KTXAvVGx1Q1FteDJ6aXRjemdZS29Ja3ZpQ0pCMXQ2OXo4WCtmbkF6?=
- =?utf-8?B?WkNLZnBEVHp2dzQySnZVWXdxRjhZc0NuZ1lXR0N2UHVkV01mYTdlNnFmN09J?=
- =?utf-8?B?bTF0VzRXNDRZRW9wTTFnZWtxb01taDFFS1ZuQmp5cStFZ09MYkJHQ01UemJH?=
- =?utf-8?B?bVVyTTZ4Smlyc3ErMXhaVTduSGtOSFRIZURXdGJOc1h0UTkvVjVrSnpsUVlK?=
- =?utf-8?Q?paZ9pGgIiyFz2SaPvGdG5oirJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b032dd5a-28c8-443b-ffa3-08ddea156561
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 11:39:37.5104
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vd5nqJcYzYUqhH702QwmShT2VeoDvoczg44MbCn3WCLlktJy739wTL6atU6VZ9u5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902033809.177182-2-wilfred.opensource@gmail.com>
 
-On 02.09.25 09:27, Longlong Xia wrote:
-> Use KMEM_CACHE() instead of kmem_cache_create() to simplify the code.
-
-In general a good cleanup, but why are we using a separate kmem_cache here in the first place?
-
-SLAB_HWCACHE_ALIGN rounds up the struct size to 128 bytes and that is something kzalloc() can return as well.
-
-Regards,
-Christian.
-
+On Tue, Sep 02, 2025 at 01:38:10PM +1000, Wilfred Mallawa wrote:
+> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 > 
-> Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+> During a handshake, an endpoint may specify a maximum record size limit.
+> Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
+> maximum record size. Meaning that, the outgoing records from the kernel
+> can exceed a lower size negotiated during the handshake. In such a case,
+> the TLS endpoint must send a fatal "record_overflow" alert [1], and
+> thus the record is discarded.
 > 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
-> index c2a983ff23c9..51f51064685f 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
-> @@ -37,11 +37,7 @@ static struct kmem_cache *amdgpu_userq_fence_slab;
->  
->  int amdgpu_userq_fence_slab_init(void)
->  {
-> -	amdgpu_userq_fence_slab = kmem_cache_create("amdgpu_userq_fence",
-> -						    sizeof(struct amdgpu_userq_fence),
-> -						    0,
-> -						    SLAB_HWCACHE_ALIGN,
-> -						    NULL);
-> +	amdgpu_userq_fence_slab = KMEM_CACHE(amdgpu_userq_fence, SLAB_HWCACHE_ALIGN);
->  	if (!amdgpu_userq_fence_slab)
->  		return -ENOMEM;
->  
+> Upcoming Western Digital NVMe-TCP hardware controllers implement TLS
+> support. For these devices, supporting TLS record size negotiation is
+> necessary because the maximum TLS record size supported by the controller
+> is less than the default 16KB currently used by the kernel.
+> 
+> This patch adds support for retrieving the negotiated record size limit
+> during a handshake, and enforcing it at the TLS layer such that outgoing
+> records are no larger than the size negotiated. This patch depends on
+> the respective userspace support in tlshd and GnuTLS [2].
+> 
+> [1] https://www.rfc-editor.org/rfc/rfc8449
+> [2] https://gitlab.com/gnutls/gnutls/-/merge_requests/2005
+> 
+> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
+Hi Wilfred,
+
+I'll leave review of this approach to others.
+But in the meantime I wanted to pass on a minor problem I noticed in the code
+
+> diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+> index bac65d0d4e3e..9f9359f591d3 100644
+> --- a/net/tls/tls_sw.c
+> +++ b/net/tls/tls_sw.c
+> @@ -1033,6 +1033,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+>  	unsigned char record_type = TLS_RECORD_TYPE_DATA;
+>  	bool is_kvec = iov_iter_is_kvec(&msg->msg_iter);
+>  	bool eor = !(msg->msg_flags & MSG_MORE);
+> +	u16 record_size_limit;
+>  	size_t try_to_copy;
+>  	ssize_t copied = 0;
+>  	struct sk_msg *msg_pl, *msg_en;
+> @@ -1058,6 +1059,9 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+>  		}
+>  	}
+>  
+> +	record_size_limit = tls_ctx->record_size_limit ?
+> +			    tls_ctx->record_size_limit : TLS_MAX_PAYLOAD_SIZE;
+> +
+>  	while (msg_data_left(msg)) {
+>  		if (sk->sk_err) {
+>  			ret = -sk->sk_err;
+
+record_size_limit is set but otherwise unused.
+Did you forget to add something here?
+
+If not, please remove record_size_limit from this function.
+
+-- 
+pw-bot: changes-requested
 
