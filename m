@@ -1,171 +1,183 @@
-Return-Path: <linux-kernel+bounces-797095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF89EB40BBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:12:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08EF5B40BC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7737C3AFFE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27341B63E2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB1E32ED2D;
-	Tue,  2 Sep 2025 17:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F229341ADC;
+	Tue,  2 Sep 2025 17:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HO++hThI"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kHCEQrgc"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8054B2DF125
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AF52DF125;
+	Tue,  2 Sep 2025 17:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756833128; cv=none; b=UQWQ+j9aDrdk4A4iMTuwk4G3xO5Oemy1s2UgmGHlc9+k2b4SoDgXCbRwS8Tealbj7b8aPpidWinlsZJzJfme162BgyvWaorPMY10eIKjD8uv4MjL6eYlqlvhagH0aPSombxkqnwhTBVBek6zWF75vfy+0G1XZsFflvv6OGPIJ08=
+	t=1756833175; cv=none; b=XT2O76bT3vjr5s7Ds+IkRAfZQ8TEZfrSj5nXl2YRMLxL4HFnasPUDX6AWJLXv3brNQx2ZaQAlGCtnHBmi+kFSRTK0tselaHJV7UnS67ad8rgoQP5xuRmfPo+ckcT/JNVCTYHJK4dZwyVuDJjvv6I7WXGNCyTheWHnQoYBv8aIAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756833128; c=relaxed/simple;
-	bh=kLulON52Om8Z4pxIZY5CU/uTaHP2ba0qiEFKMMgQMjs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=p5r7ItNSVmXldC8DyGeVNM2U+YWekqnYf5j8x5Z2m2zLCkX+1XnLDZbG86+v/rhgtdFHeOSv1NB2o7kApnuQpQei5ptli1lf+bGxiR/d5gUiGFFPe5KBsjNqJ5H8ki4zKuvuYQY9l1Q8uu+o7XL0wpDKGyBG2WctzEo0RlQy/hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HO++hThI; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7fac8fdea9fso515023185a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:12:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756833125; x=1757437925; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KlKi1IhPbIREB5l7Jtf5VR1Ks6tYfzbySz3T1LU0wCM=;
-        b=HO++hThITb3UH2fCL71Pu2JP7zrwAhCdmh89+HCNAmihfmZHKpoYVFGrcU2d7erk6c
-         4baWaOSjQmG90Cp8ab+QUTnDK213qUkMXRCdZIHqVyvaft2tgVV+6/1yadQHK5h+9ZTJ
-         0k7uwp1I3ZYEQBRzPLH2gUSyxfNwCTlcB8YjGMzouU1e0KnzwXYiS+ykSqprJV0ORLs0
-         00kwGVlo2ybn4cEYcgkmjFNFztd4YeulZkSl6M9SyAHyS6OFiBbr/K8wx/UekpMfFxJd
-         soBsfiofNKioltj9Ljg2lxt2UqsyQ/rbGKV7FDhYNiPsx8pVk2pMJ4Nu6ivMGSbO1NXK
-         WmZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756833125; x=1757437925;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KlKi1IhPbIREB5l7Jtf5VR1Ks6tYfzbySz3T1LU0wCM=;
-        b=S3ExosIGSgyIT5hl2tk3NAOy83ekxK+p+4QuxMCFEWO+p24skYa6W4OtQQakJwQY6m
-         qgYE4Klzpxer5vPdmarXAUIZw8oqAvy6HHaocaU5Wenu21OtSsbx34kQrH27zSCILcas
-         EiAC5l1UbjWEID9dO+R6B/rEg6q7RhT+6aHUHlHeb1mrrSdD5q/FhRdnUwmnbnf9hWGX
-         bnYVAJ4RAd+z7bXjJaOXdjwi9ABxgBTIrivR4FTl16q3pPdsTBH+i5jR/fZOCHTYn3lP
-         RZtFkOuTrDWUQDVM4i9A796+/mTL5SybdQjDpfaE4J8/9j08m+Om1e1qosCwhy//VwVf
-         tBXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVglIsgOd+dN6meZuI9xnUGXILvjujJywMFM8YknX1VvsuA3TSbGSG91rGE2Z54bSwxBRym/HDh8vCqxPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMN0/t5rOBkWFJ1ij3fkfZHGvozgGZDKnTY9w+rKF/BWFLEy3p
-	1h3lJVylap0+sqimtXiJ0dhXQutSDV1VLW9z49bfASBJ8VrIE86KFpy0RdabzBy8
-X-Gm-Gg: ASbGncudonGwI4vcNO70cUZSEvYuYNJvVGE4Xn5JALZMHdjc9i8VFSzdfRLUzrQLuXO
-	xwa/57V/0c2YODON9MscCzuzZJ6FYHPmVAv2+cyBZU2x1fYfKL5qc/ODnKen+ex+Q7g+zBKiFO2
-	7vkJSjbIvkB3y2rN6VcIzSZUsiDnVUX4PrphM5biMfkq9ebsPi7MxhikEllk7eI1Bw/ispAhaFX
-	Is1hUCkLhkEbUcyWky2jaXn2yKh1LnYGtzfuuSKAwq6g+y6rod858EEATYThvvhG6h6Vlgesgk0
-	upP8L6ppZGi23o82iCH2AWcTiB/rOejA+RaNsOP2Y3umB2N//7MhmCtxyobcTtGMXgQGB+gjdAb
-	X62QnIpK+zC8eAqmC7mwcgS6J1JToPDRAuQ5D8VeuaoSdCRBaXxs9pu6hCPMXL1TzGt/kkHtWU5
-	Kn+Bk9IK4qdBm12XvZ
-X-Google-Smtp-Source: AGHT+IGK9pnmJgZZVbnYhzD6px9+M8pC8AT2KOK1+mA3Nlw4acAgZS6CxphBrR5H2vApZUyS5piFjg==
-X-Received: by 2002:a05:620a:4151:b0:807:b04:e8fe with SMTP id af79cd13be357-8070b04ff2dmr345506185a.65.1756833125190;
-        Tue, 02 Sep 2025 10:12:05 -0700 (PDT)
-Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8069c1536bcsm167184185a.45.2025.09.02.10.12.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 10:12:04 -0700 (PDT)
-Date: Tue, 02 Sep 2025 13:12:00 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/5=5D_auxdisplay=3A_linedisp=3A_displa?=
- =?US-ASCII?Q?y_static_message_when_length_=3C=3D_display_size?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <aLbA1Ma9Cig3gbWV@smile.fi.intel.com>
-References: <20250901020033.60196-1-jefflessard3@gmail.com> <20250901020033.60196-3-jefflessard3@gmail.com> <aLbA1Ma9Cig3gbWV@smile.fi.intel.com>
-Message-ID: <8821938C-2C77-49CA-B2F5-E2A7F0B95449@gmail.com>
+	s=arc-20240116; t=1756833175; c=relaxed/simple;
+	bh=zzJ4wekw121HV+1LGlw+VZ9r4A+FYjx7cuGLxI/OQ4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N7ePue024oN1hD5sEG313rFrJK2wA6IPtH0oc3Ta4NiJ3CE/tk3UEyw40mqTUn3Mrr5rODAKVdYoFTfJirH2C+UHQbMl+mndXBR03XmEKDK0OKMC13NEyhslE1YEsQf/8QlG8hwA5xhrmE+5MhAYWBb0xBf59ViddMXWT6eovOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kHCEQrgc; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cGXPJ3h1MzlgqTx;
+	Tue,  2 Sep 2025 17:12:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756833161; x=1759425162; bh=XFMXx0YMZT0qYrjNa38S/JfC
+	/6Gh0XKHLMBx0IhJc3w=; b=kHCEQrgcHOP0cXGScxkRefH4RWBnvO1Pvl8WUZXa
+	EedK6qCuboEYrf/8uUzztnYX+aucyimV66B5cSmmONgJKjRVKUaoNnRyIF3D56qZ
+	MfOoJJiKtlPg3TadG6AUP2P/hId/imbpiSeecP0Aei82dy1T5appjOOtcMdNEaYo
+	maAylj64nfzIStGXoaT7ZxYnZfUBUekQ2VxLbciit6s2aZ9xi1s1jBsVC3xPTHbm
+	DRJXDuXHVyC0B/lSfVugKbXDJIri5daEa/x1aQ60hnTG3LMZJiNO86ZfGOOWpFCJ
+	5N0IJuzG0+Dkej1PvIAFM3fwiVkbHbG9IzsYOWCQFE8rdQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id mhqwayppvs84; Tue,  2 Sep 2025 17:12:41 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cGXNn2JDCzlgqTq;
+	Tue,  2 Sep 2025 17:12:24 +0000 (UTC)
+Message-ID: <4f54d81a-d330-44b2-b667-3b13d516c576@acm.org>
+Date: Tue, 2 Sep 2025 10:12:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 05/15] block: factor out a helper
+ bio_submit_split_bioset()
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
+ hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com, axboe@kernel.dk,
+ tj@kernel.org, josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com,
+ satyat@google.com, ebiggers@google.com, neil@brown.name,
+ akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-6-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250901033220.42982-6-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le 2 septembre 2025 06 h 03 min 00 s HAE, Andy Shevchenko <andriy=2Eshevche=
-nko@intel=2Ecom> a =C3=A9crit=C2=A0:
->On Sun, Aug 31, 2025 at 10:00:26PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Currently, when a message shorter than the display size is written, the
->> content wraps around (e=2Eg=2E, "123" on a 4-digit display shows "1231"=
-)
->> without scrolling, which is confusing and unintuitive=2E
->>=20
->> Change behavior to display short messages statically with space padding
->> (e=2Eg=2E "123 ") while only scrolling messages longer than the display=
- width=2E
->> This provides more natural behavior that aligns with user expectations
->> and current linedisp_display() kernel-doc=2E
->>=20
->> The scroll logic is also consolidated into a helper function for clarit=
-y=2E
->>=20
->> No API changes are introduced=2E
->
->=2E=2E=2E
->
->>  /**
->>   * linedisp_scroll() - scroll the display by a character
->>   * @t: really a pointer to the private data structure
->
->>  	linedisp->scroll_pos %=3D linedisp->message_len;
->> =20
->>  	/* rearm the timer */
->> -	if (linedisp->message_len > num_chars && linedisp->scroll_rate)
->> +	if (should_scroll(linedisp))
->>  		mod_timer(&linedisp->timer, jiffies + linedisp->scroll_rate);
->>  }
->> =20
->
->=2E=2E=2E
->
->>  	linedisp->message_len =3D count;
->>  	linedisp->scroll_pos =3D 0;
->> =20
->> -	/* update the display */
->> -	linedisp_scroll(&linedisp->timer);
->> +	if (should_scroll(linedisp)) {
->> +		/* display scrolling message */
->> +		linedisp_scroll(&linedisp->timer);
->> +	} else {
->> +		/* display static message */
->> +		memset(linedisp->buf, ' ', linedisp->num_chars);
->> +		memcpy(linedisp->buf, linedisp->message,
->> +		       umin(linedisp->num_chars, linedisp->message_len));
->> +		linedisp->ops->update(linedisp);
->> +	}
->
->Hmm=2E=2E=2E But it seems the linedisp_scroll already has a check, why do=
- we need
->an additional one here? Perhaps we need to pad a message somewhere else a=
-nd
->guarantee it won't ever be less than num_chars?
->
+On 8/31/25 8:32 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> No functional changes are intended, some drivers like mdraid will split
+> bio by internal processing, prepare to unify bio split codes.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   block/blk-merge.c      | 63 ++++++++++++++++++++++++++++--------------
+>   include/linux/blkdev.h |  2 ++
+>   2 files changed, 44 insertions(+), 21 deletions(-)
+> 
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 70d704615be5..e1afb07040c0 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -104,34 +104,55 @@ static unsigned int bio_allowed_max_sectors(const struct queue_limits *lim)
+>   	return round_down(UINT_MAX, lim->logical_block_size) >> SECTOR_SHIFT;
+>   }
+>   
+> +/**
+> + * bio_submit_split_bioset - Submit a bio, splitting it at a designated sector
+> + * @bio:		the original bio to be submitted and split
+> + * @split_sectors:	the sector count at which to split
+> + * @bs:			the bio set used for allocating the new split bio
+> + *
+> + * The original bio is modified to contain the remaining sectors and submitted.
+> + * The caller is responsible for submitting the returned bio.
+> + *
+> + * If succeed, the newly allocated bio representing the initial part will be
+> + * returned, on failure NULL will be returned and original bio will fail.
+> + */
+> +struct bio *bio_submit_split_bioset(struct bio *bio, unsigned int split_sectors,
+> +				    struct bio_set *bs)
+> +{
+> +	struct bio *split = bio_split(bio, split_sectors, GFP_NOIO, bs);
+> +
+> +	if (IS_ERR(split)) {
+> +		bio->bi_status = errno_to_blk_status(PTR_ERR(split));
+> +		bio_endio(bio);
+> +		return NULL;
+> +	}
+> +
+> +	blkcg_bio_issue_init(split);
+> +	bio_chain(split, bio);
+> +	trace_block_split(split, bio->bi_iter.bi_sector);
+> +	WARN_ON_ONCE(bio_zone_write_plugging(bio));
+> +	submit_bio_noacct(bio);
+> +
+> +	return split;
+> +}
+> +EXPORT_SYMBOL_GPL(bio_submit_split_bioset);
+> +
+>   static struct bio *bio_submit_split(struct bio *bio, int split_sectors)
+>   {
+> -	if (unlikely(split_sectors < 0))
+> -		goto error;
+> +	if (unlikely(split_sectors < 0)) {
+> +		bio->bi_status = errno_to_blk_status(split_sectors);
+> +		bio_endio(bio);
+> +		return NULL;
+> +	}
+>   
+>   	if (split_sectors) {
+> -		struct bio *split;
+> -
+> -		split = bio_split(bio, split_sectors, GFP_NOIO,
+> -				&bio->bi_bdev->bd_disk->bio_split);
+> -		if (IS_ERR(split)) {
+> -			split_sectors = PTR_ERR(split);
+> -			goto error;
+> -		}
+> -		split->bi_opf |= REQ_NOMERGE;
+> -		blkcg_bio_issue_init(split);
+> -		bio_chain(split, bio);
+> -		trace_block_split(split, bio->bi_iter.bi_sector);
+> -		WARN_ON_ONCE(bio_zone_write_plugging(bio));
+> -		submit_bio_noacct(bio);
+> -		return split;
+> +		bio = bio_submit_split_bioset(bio, split_sectors,
+> +					 &bio->bi_bdev->bd_disk->bio_split);
+> +		if (bio)
+> +			bio->bi_opf |= REQ_NOMERGE;
+>   	}
 
-Semantically, linedisp_scroll should scroll=2E I think it's better to have=
- two
-distinct paths with their specific logic:
-1=2E Scroll: circular display and rearm the timer
-2=2E Static: padding and direct update
+This is a good opportunity to reduce the indentation level in this
+function by adding something like this above the
+bio_submit_split_bioset() call:
 
-But you're absolutely right=2E Given the explicit should_scroll() conditio=
-nal
-outside, the check inside linedisp_scroll() is now redundant=2E I'll remov=
-e it
-after testing to streamline the code paths and eliminate the duplication=
-=2E
+if (unlikely(split_sectors == 0))
+	return bio;
+
+Otherwise this patch looks good to me. Hence:
+
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+
 
 
 
