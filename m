@@ -1,97 +1,207 @@
-Return-Path: <linux-kernel+bounces-796013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4144DB3FAEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:43:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F86B3FAEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA6A84E252A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832221A86ACB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8352EC0AE;
-	Tue,  2 Sep 2025 09:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67FC2EC0AD;
+	Tue,  2 Sep 2025 09:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b="Apurbkx4"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IotGm6UW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vLOhaLTm";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IotGm6UW";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vLOhaLTm"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3632ECD19
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EDE2EC092
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756806167; cv=none; b=rjc36fAMdMdFsTRDsDcGaIGtJ+eyurvF1mxilcwFdgNFvwuVKUzwa5rRGOn8q/29v6csdB9gFxEsrNnTg30Cu+4uf56plYBOhmghXuwAsjq5ZC4aPFANoPAM38OUe1SmqYUWdkvf6k2F4WalCIodfdbw9T5Akq1o+2s1+TEegcY=
+	t=1756806187; cv=none; b=FpfzshyKllvBQVGIN/Bt5CJI4L+MQ3eE4sPmHY5A2SVCM43A/Z1CcEZ01+HrDfWiwju/6En3eoar8/mGstjxRfYx6S1DL5ZZjj2IuwLmTG9Nt5FykbvjA9Czpkg03GFxEK56sU2y9gfu8SX2U4UGsqCg1r6h5T3lv6fHwzSuLj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756806167; c=relaxed/simple;
-	bh=w/kB0L/mS4RazOgYXIAgfWJnp76C9nk6C6dF6x31lJs=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=N3SJMN3cDPD08iFpFvwidmKya7QsEJ9BCsSye1lpajyHYXim+RL3SsHpI0VVg0GSDazlGnyaOPC7VFfhDCxX6JiFYzc8m0x1RAVhnfdKi9H3u6ZRNT7ktuPMDBJyGstcUE0HDK9Ec9hIipb5MNvDXIoKT7w9uMcrXUuZCY9VySk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu; spf=pass smtp.mailfrom=bitology.eu; dkim=pass (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b=Apurbkx4; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitology.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitology.eu
-	; s=ds202506; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
-	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
-	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=uCwOdzPph8YoM9Ph6fA/nKd5I+RBcFo/TU/iOtQ657w=; b=Apurbkx40bzZVfmdGLI6YkN7Ir
-	V2Bl+uOWHQ3xPQHj+g8Ep+OG42RZpIFt0D4RoRZEOTpSeZDtzt3mNf865548HqnTQ/3lFrZAG4m/k
-	Tfkp4biCv1ipQsZLMVaF4ohKooISWKa0aHfTfuilkC2R6IsLuiwPnv4nHQEq5W23Bgqt1x1d9TAra
-	he1pf8Luxtq4RN1oKZgd9/2bRQRaMBQOXgYUBpfujrDaUxWh4C9nCUFrXA4KshN4Q0wAD9XTEJHO4
-	k57i5KtiP3sZX1i6dzpSCTV//REugSp1ugoEiUMZ909LacTTgrcJNFkNTU7k+V9YkJUnq+DvgXcBo
-	hVRWvg0A==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1utNXC-007Bv0-Dg
-	for linux-kernel@vger.kernel.org;
-	Tue, 02 Sep 2025 11:42:38 +0200
-Message-ID: <82e93828-0484-4929-b957-9dcf2180c527@bitology.eu>
-Date: Tue, 2 Sep 2025 11:42:37 +0200
+	s=arc-20240116; t=1756806187; c=relaxed/simple;
+	bh=+r79dL1gqrDNxRtTgrXMjVpAsgnr0cYz/E5/fOUW5xE=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=e5xvFxhiXUZbuZRiO5LkXEuHSs0XeGt3n5TeKI/yDpwA1GVS9214t+5F05ZdYbZHnhd8gzNEyZZeYKkY7liHUBCgQGWU1unXix2mWxL8KlGfunpcosRog1ZwQABUEZCdyAzVxfxGLB0juMP3u+fLO68KbxIAUyxZKJEn/yoV4UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IotGm6UW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vLOhaLTm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IotGm6UW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vLOhaLTm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B05361F44F;
+	Tue,  2 Sep 2025 09:43:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756806183; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=WLH6zNDi4TZ5ZXN34xoFWURtIQIyMoaxKpZcKw32eqA=;
+	b=IotGm6UWQmbdIdtnTsNMyyONacJWiXk8/xip7rMVHNt3+XJbwO+scDjWr/e4XjB/Wvy6jM
+	JYNd4gF2jeD6+AupycJXcUYAeawMib1zM6+575bWQJ5avbSuDTsI1SXGxxVCFSPlQOMbSb
+	XRynu1maG2it0YwmSGHC1wVqMBjA4CM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756806183;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=WLH6zNDi4TZ5ZXN34xoFWURtIQIyMoaxKpZcKw32eqA=;
+	b=vLOhaLTmo0EjHZv1e3HMdZqJggNIXV2GO6bHqBUJDziIElI9zJ4qBmqau/ZWM+a/o8gj2k
+	3YIC5OQrruLdldBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756806183; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=WLH6zNDi4TZ5ZXN34xoFWURtIQIyMoaxKpZcKw32eqA=;
+	b=IotGm6UWQmbdIdtnTsNMyyONacJWiXk8/xip7rMVHNt3+XJbwO+scDjWr/e4XjB/Wvy6jM
+	JYNd4gF2jeD6+AupycJXcUYAeawMib1zM6+575bWQJ5avbSuDTsI1SXGxxVCFSPlQOMbSb
+	XRynu1maG2it0YwmSGHC1wVqMBjA4CM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756806183;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=WLH6zNDi4TZ5ZXN34xoFWURtIQIyMoaxKpZcKw32eqA=;
+	b=vLOhaLTmo0EjHZv1e3HMdZqJggNIXV2GO6bHqBUJDziIElI9zJ4qBmqau/ZWM+a/o8gj2k
+	3YIC5OQrruLdldBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9895313882;
+	Tue,  2 Sep 2025 09:43:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qpl3JCe8tmj5EAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 02 Sep 2025 09:43:03 +0000
+Date: Tue, 02 Sep 2025 11:42:55 +0200
+Message-ID: <87frd59om8.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 6.17-rc5
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <bit-budi@bitology.eu>
-Subject: J Rewrite for Reality only basis, not rust / breakpoints outside
- scheduler etc
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-Seems morale is low some places. Rust (even with Germ symbolism) seems 
-to be about this, and breakpoints outside scheduler, etc.
+Linus,
 
-An optimal programming language would be J, that can run natively on CPU.
+please pull sound fixes for v6.17-rc5 from:
 
-It seems the JAVA CPU people want this to be taken over aswell, and is 
-OK with it becoming J aswell.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.17-rc5
 
-C really is based on BCPL, which again is based on the Bit concept.
+The topmost commit is bcd6659d4911c528381531472a0cefbd4003e29e
 
-I am about the Bit concept, my project Bit 01, states how to write an 
-operating system, and Unix is based on this. GNU is not Unix, is a coded 
-version of this aswell. And Git too. Mandrake was also this, and several 
-other distros. Red Hat easily being Bit Hat.
+----------------------------------------------------------------
 
-I have become a Budi for this, and I do believe nothing of this would 
-happen, if I did not aim for this.
+sound fixes for 6.17-rc5
 
-I approve only with basis in fact, that Bitstream OS, should be the 
-standardization of all this, with a J version rewrite.
+A collection of small changes including a few regression fixes.
 
-All of this symbolcorrect, as many like in the computer industry. Please 
-just continue with that.
+- Regression fix for Intel SKL/KBL HD-audio bindings
+- Regression fix for missing Nvidia HDMI codec entries after the
+  recent code reorganization
+- A few TAS2781 codec regression fixes
+- Fix for ASoC component lookup breakage
+- Usual HD-audio, USB-audio and SOF quirk entries
 
-Light,
-Ywe Cærlyn
-Budi, Bitstreams OS
-https://bitology.eu/
+----------------------------------------------------------------
 
+Aaron Erhardt (1):
+      ALSA: hda/realtek: Fix headset mic for TongFang X6[AF]R5xxY
+
+Ajye Huang (1):
+      ASoC: SOF: Intel: WCL: Add the sdw_process_wakeen op
+
+Brady Norander (1):
+      ALSA: hda: intel-dsp-config: Select SOF driver on MTL Chromebooks
+
+Cryolitia PukNgae (4):
+      ALSA: usb-audio: Add mute TLV for playback volumes on some devices
+      ASoC: codecs: idt821034: fix wrong log in idt821034_chip_direction_output()
+      ALSA: usb-audio: move mixer_quirks' min_mute into common quirk
+      ALSA: docs: Add documents for recently changes in snd-usb-audio
+
+Daniel Dadap (1):
+      ALSA: hda/hdmi: Restore missing HDMI codec entries
+
+Gergo Koteles (2):
+      ALSA: hda: tas2781: fix tas2563 EFI data endianness
+      ALSA: hda: tas2781: reorder tas2563 calibration variables
+
+Kuninori Morimoto (3):
+      ASoC: soc-core: care NULL dirver name on snd_soc_lookup_component_nolocked()
+      ASoC: soc-core: tidyup snd_soc_lookup_component_nolocked()
+      ASoC: rsnd: tidyup direction name on rsnd_dai_connect()
+
+Shenghao Ding (1):
+      ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
+
+Takashi Iwai (2):
+      ALSA: hda: Avoid binding with SOF for SKL/KBL platforms
+      ALSA: hda/hdmi: Add pin fix for another HP EliteDesk 800 G4 model
+
+Takashi Sakamoto (1):
+      ALSA: firewire-motu: drop EPOLLOUT from poll return values as write is not supported
+
+Tina Wuest (1):
+      ALSA: usb-audio: Allow Focusrite devices to use low samplerates
+
+qaqland (1):
+      ALSA: usb-audio: Add mute TLV for playback volumes on more devices
+
+---
+ Documentation/sound/alsa-configuration.rst     | 29 ++++++++++++++++++++++----
+ sound/firewire/motu/motu-hwdep.c               |  2 +-
+ sound/hda/codecs/hdmi/hdmi.c                   |  1 +
+ sound/hda/codecs/hdmi/nvhdmi.c                 | 17 +++++++++++++++
+ sound/hda/codecs/hdmi/tegrahdmi.c              |  2 ++
+ sound/hda/codecs/realtek/alc269.c              |  2 ++
+ sound/hda/codecs/side-codecs/tas2781_hda_i2c.c |  9 +++++---
+ sound/hda/core/intel-dsp-config.c              | 26 ++++++++++++++++++++---
+ sound/soc/codecs/idt821034.c                   |  2 +-
+ sound/soc/renesas/rcar/core.c                  |  2 +-
+ sound/soc/soc-core.c                           | 25 +++++++++++++---------
+ sound/soc/sof/intel/ptl.c                      |  1 +
+ sound/usb/format.c                             | 12 +++++++----
+ sound/usb/mixer_quirks.c                       |  8 +++----
+ sound/usb/quirks.c                             | 22 +++++++++++++++++--
+ sound/usb/usbaudio.h                           |  4 ++++
+ 16 files changed, 130 insertions(+), 34 deletions(-)
 
 
