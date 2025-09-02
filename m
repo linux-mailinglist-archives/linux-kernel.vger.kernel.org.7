@@ -1,144 +1,93 @@
-Return-Path: <linux-kernel+bounces-795696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599F8B3F695
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:25:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C79B3F697
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49ADA188B4F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A70117B645
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690F82E6CB3;
-	Tue,  2 Sep 2025 07:25:22 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C082BA4A;
+	Tue,  2 Sep 2025 07:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLx38X9B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C5332F74D;
-	Tue,  2 Sep 2025 07:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE60B257845;
+	Tue,  2 Sep 2025 07:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756797922; cv=none; b=pgzfhWU9HYZ1cUgRroFXDcYpImOSkYYHaZ5olsva1ksDO0K+znKSqJF9C4FZStKPezePC2PC2pImotOIcxBciNgMj5BEv+ev2tT0qad2P++eeTNePNHGcUiiNLz5cPtvAqYfuj5kVmNPTL+RBSvWMwC8fz1MHxEcLxh5Vn5VV7g=
+	t=1756797934; cv=none; b=HMFHW7eu5ZJe3Jii7s5KQw0zj+dCeKOynhTsPVpK/BOQlelE+gBGdBGGb7rckyKeELBDmQcXFVQPn4f+D6l/55S21HCbGnJ73ZFm4eCu+9aoQoSNjl20Nz/koP0GmEd0qCTtzsgK5tHkI/VYculK8r0ZSrGMth025dCRSyZhjKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756797922; c=relaxed/simple;
-	bh=Moyj5TcC9RHNgCT+wYqLEVDJYXrnohcgJQodjkzfmKU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=quTPD5PSIvflxx8N+/3ZficSK9W+XJZA9nwr8orBtFGegC8prAJeRnDo4jCp2DzvA5nJXakTyhVLKx/SyccFc1F/Ro4/aD6lbO3o5jzuHSz27bVCEO+/WclXg3b25rqWjbHPU51oGgjXG7JleooFR8WSH80Bt3yzFDG3K7+LhF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.12.217] (g217.RadioFreeInternet.molgen.mpg.de [141.14.12.217])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id F1F5360213ADA;
-	Tue, 02 Sep 2025 09:24:49 +0200 (CEST)
-Message-ID: <acf7a445-b58b-49dc-8d2c-1afe86805953@molgen.mpg.de>
-Date: Tue, 2 Sep 2025 09:24:49 +0200
+	s=arc-20240116; t=1756797934; c=relaxed/simple;
+	bh=v7TB70HJ+44v/bJ2UIPB2lLgM9SlwIWN6K5LRHr65Ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ikj5hcqdxtwZAU83j+eb9cflss11Lgl5MVin5CYQvdsi/IBZoxMhB9spxdD1P5WXkDMH1HLkY7/UjlRoEVVusA9oEJXqRFyu8850vbdTtn7i5AphBPom9gbs8s5419Sh/+gOqqSCqUtFf6+bvVvc1OEx+2WtB62CCxsHHHR6KaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLx38X9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9369C4CEED;
+	Tue,  2 Sep 2025 07:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756797933;
+	bh=v7TB70HJ+44v/bJ2UIPB2lLgM9SlwIWN6K5LRHr65Ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KLx38X9BgYROyoM2o6TMTJpZyHkj9TsWM2xDd1BXI6a9mmK1zPBbVWKgLn83qewqc
+	 bJdhNDlFtPEGLu7YrI+U10seQ5hiCWDsxHt/nhcmbToWMICZoMvAW3KvTOwFEoFC4b
+	 shlU1LJwF4/23enCexcUEVm800xwi2dg27KEIDlC0hzk8957HQHnydLJrJJllMXs2r
+	 AdZTxY8JeEabXFFLRFN5RrHYP3/M1LjTekGqYMZbWUuHBa8dlM+XBR0iZ3pAcD75oS
+	 IzIEClpGiRBsnpZoMDKRW2I99/BUp0F3rVu22hS1TEdhxYfppVUzn/q/3GpgauYqUH
+	 UCK6RAoj03dJA==
+Date: Tue, 2 Sep 2025 12:55:27 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Yi Sun <yi.sun@intel.com>
+Cc: vinicius.gomes@intel.com, dave.jiang@intel.com,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	gordon.jin@intel.com, fenghuay@nvidia.com, yi1.lai@intel.com,
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Subject: Re: [PATCH v3 1/2] dmaengine: idxd: Expose DSA3.0 capabilities
+ through sysfs
+Message-ID: <aLab55JCvLcbOm0S@vaman>
+References: <20250821085111.1430076-1-yi.sun@intel.com>
+ <20250821085111.1430076-2-yi.sun@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH v2] ixgbe: fix too early devlink_free()
- in ixgbe_remove()
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Koichiro Den <den@valinux.co.jp>
-Cc: intel-wired-lan@lists.osuosl.org, anthony.l.nguyen@intel.com,
- przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch,
- jedrzej.jagielski@intel.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250902003941.2561389-1-den@valinux.co.jp>
- <4f746e98-b81b-4632-a2f8-f14d66c71ced@molgen.mpg.de>
-Content-Language: en-US
-In-Reply-To: <4f746e98-b81b-4632-a2f8-f14d66c71ced@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821085111.1430076-2-yi.sun@intel.com>
 
-[Cc: Remove mateusz.polchlopek@intel.com (address rejected)]
+On 21-08-25, 16:51, Yi Sun wrote:
+> Introduce sysfs interfaces for 3 new Data Streaming Accelerator (DSA)
+> capability registers (dsacap0-2) to enable userspace awareness of hardware
+> features in DSA version 3 and later devices.
+> 
+> Userspace components (e.g. configure libraries, workload Apps) require this
+> information to:
+> 1. Select optimal data transfer strategies based on SGL capabilities
+> 2. Enable hardware-specific optimizations for floating-point operations
+> 3. Configure memory operations with proper numerical handling
+> 4. Verify compute operation compatibility before submitting jobs
+> 
+> The output format is <dsacap2>,<dsacap1>,<dsacap0>, where each DSA
+> capability value is a 64-bit hexadecimal number, separated by commas.
+> The ordering follows the DSA 3.0 specification layout:
+>  Offset:    0x190    0x188    0x180
+>  Reg:       dsacap2  dsacap1  dsacap0
+> 
+> Example:
+> cat /sys/bus/dsa/devices/dsa0/dsacaps
+>  000000000000f18d,0014000e000007aa,00fa01ff01ff03ff
 
-Am 02.09.25 um 07:08 schrieb Paul Menzel:
-> Dear Koichiro,
-> 
-> 
-> Thank you for your patch.
-> 
-> Am 02.09.25 um 02:39 schrieb Koichiro Den:
->> Since ixgbe_adapter is embedded in devlink, calling devlink_free()
->> prematurely in the ixgbe_remove() path can lead to UAF. Move devlink_free()
->> to the end.
->>
->> KASAN report:
->>
->>   BUG: KASAN: use-after-free in ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
->>   Read of size 8 at addr ffff0000adf813e0 by task bash/2095
->>   CPU: 1 UID: 0 PID: 2095 Comm: bash Tainted: G S  6.17.0-rc2-tnguy.net-queue+ #1 PREEMPT(full)
->>   [...]
->>   Call trace:
->>    show_stack+0x30/0x90 (C)
->>    dump_stack_lvl+0x9c/0xd0
->>    print_address_description.constprop.0+0x90/0x310
->>    print_report+0x104/0x1f0
->>    kasan_report+0x88/0x180
->>    __asan_report_load8_noabort+0x20/0x30
->>    ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
->>    ixgbe_clear_interrupt_scheme+0xf8/0x130 [ixgbe]
->>    ixgbe_remove+0x2d0/0x8c0 [ixgbe]
->>    pci_device_remove+0xa0/0x220
->>    device_remove+0xb8/0x170
->>    device_release_driver_internal+0x318/0x490
->>    device_driver_detach+0x40/0x68
->>    unbind_store+0xec/0x118
->>    drv_attr_store+0x64/0xb8
->>    sysfs_kf_write+0xcc/0x138
->>    kernfs_fop_write_iter+0x294/0x440
->>    new_sync_write+0x1fc/0x588
->>    vfs_write+0x480/0x6a0
->>    ksys_write+0xf0/0x1e0
->>    __arm64_sys_write+0x70/0xc0
->>    invoke_syscall.constprop.0+0xcc/0x280
->>    el0_svc_common.constprop.0+0xa8/0x248
->>    do_el0_svc+0x44/0x68
->>    el0_svc+0x54/0x160
->>    el0t_64_sync_handler+0xa0/0xe8
->>    el0t_64_sync+0x1b0/0x1b8
->>
->> Fixes: a0285236ab93 ("ixgbe: add initial devlink support")
->> Signed-off-by: Koichiro Den <den@valinux.co.jp>
->> ---
->> Changes in v2:
->> - Move only devlink_free()
->> ---
->>   drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/ 
->> net/ethernet/intel/ixgbe/ixgbe_main.c
->> index 80e6a2ef1350..b3822c229300 100644
->> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
->> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
->> @@ -12092,7 +12092,6 @@ static void ixgbe_remove(struct pci_dev *pdev)
->>       devl_port_unregister(&adapter->devlink_port);
->>       devl_unlock(adapter->devlink);
->> -    devlink_free(adapter->devlink);
->>       ixgbe_stop_ipsec_offload(adapter);
->>       ixgbe_clear_interrupt_scheme(adapter);
->> @@ -12125,6 +12124,8 @@ static void ixgbe_remove(struct pci_dev *pdev)
->>       if (disable_dev)
->>           pci_disable_device(pdev);
->> +
->> +    devlink_free(adapter->devlink);
->>   }
->>   /**
-> 
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> 
-> 
-> Kind regards,
-> 
-> Paul
+sysfs are supposed to be single values only, should we rather do per
+capability? Also in future if you have more than three...? what happens
+then?
+
+-- 
+~Vinod
 
