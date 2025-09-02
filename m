@@ -1,122 +1,125 @@
-Return-Path: <linux-kernel+bounces-797018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4067FB40AC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:38:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207EEB40ACA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF43A3AE396
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AC603B03D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030A83314C8;
-	Tue,  2 Sep 2025 16:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0202733A000;
+	Tue,  2 Sep 2025 16:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b="QtYwl8Dg"
-Received: from exactco.de (exactco.de [176.9.10.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLeTeQSb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567C72DCF70;
-	Tue,  2 Sep 2025 16:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.10.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563D72E92BB;
+	Tue,  2 Sep 2025 16:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831107; cv=none; b=m2cpFuqCdlMXcnygL7dbQ8ThorO16sbOg9jW8jxTb0M129T1BWljWd9K6SznFlCsxDqPmfqfRHeEldIqXqZ/NJOImdfltkRIA8/ZaxUg7e8cNk7pLFZjNUuJPos+GCo8FVLdLuQhkiTpgsZd7EUb+acZ9QIR1KBIh9JQ6xncTXE=
+	t=1756831130; cv=none; b=LVfzudwBY3Xhz4vP0UPAHFZ490qjIke8FoQzCQpAtro2wwwhqp13VfvxU7LAGwgROp3kkLUlrtN0y4gayB8PibAZyWxijtUAxLDFSDO3UtGEVqW9017pe+EJaNmVxW4lhXLQ6l6K8EsCyYbze+FjMUDmloaD57Nk/Lu0KM2mDrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831107; c=relaxed/simple;
-	bh=wRWMbZzwaiWrUO3MKkMmjAkflQVO4DecV9CwCrcPJqM=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Rrjd3VQQ2XEfwBx+u5dgPaqFvJEaAWzp30yoaLBPQPvYhNXXRfrGEeJ8jn8zR+5MqqCy0sRQVxVd4AM923iG0jpb1tlFmUZzAV37pdMKqFp5GvgZ/JeaO6Ij5BnPn42+/d3D1Z0CuWMPB2As4Tu4YjDEDbodOg42bjS0bfjh1y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com; spf=pass smtp.mailfrom=exactco.de; dkim=pass (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b=QtYwl8Dg; arc=none smtp.client-ip=176.9.10.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactco.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de;
-	s=x; h=Sender:Content-Transfer-Encoding:Content-Type:Mime-Version:References:
-	In-Reply-To:From:Subject:Cc:To:Message-Id:Date:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ZZz2JrcLiYuRx1hqGWQ3qNBjxiTxlP+uNOjhbIQMHJw=; b=QtYwl8Dg3qtTjOAxqkQFcPr7Ur
-	CC6s74tgk9Z5wUcqo9xDOL+IaVfCvgG5vP84vxMsYrAut+Atn4ljlzQVqR+IlRLGqkCR044NLXntO
-	wBdPHt8x2aS97vp6UJd1U0iuMju7Tnqhotg0RKWih+8DjrMEg0dbHjOt8XXyxruDVLZzTEo5dLaS8
-	cewN1LizISQI1eIBB32fJv64NDoxFhLhriJv/2s9tmeHHRYX3JVjXA/WcQsP5rdRrc8NGS0+EdLqc
-	A5wP/vQlbqwRmEQ/X1A2jZq8cF/1vo4GfZfuK51a0g4BrmOMYGXiM0u3+Z98Utk1u/BdK1dilBbaL
-	Qi5z6mng==;
-Date: Tue, 02 Sep 2025 18:38:22 +0200 (CEST)
-Message-Id: <20250902.183822.721197619957773341.rene@exactcode.com>
-To: kernel@mkarcher.dialup.fu-berlin.de
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
- andreas@gaisler.com, glaubitz@physik.fu-berlin.de,
- anthony.yznaga@oracle.com
-Subject: Re: [PATCH 2/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for UltraSPARC III
-From: Rene Rebe <rene@exactcode.com>
-In-Reply-To: <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
-	<20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
-X-Mailer: Mew version 6.10 on Emacs 30.2
+	s=arc-20240116; t=1756831130; c=relaxed/simple;
+	bh=SOwG/JggJkNLJ7PLQmoB7+r3ga5C1jVReif7jB291cU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QnP6oGvL2OoR9Rj3FkOGmZ7FwbsKDX/bfsG6eQYFZkngmO55Yy6SUzw3toSYFeoLhLP4FQAMB6CYzAn1RiuYB0u0O5DXJ/lSPlfUapn5NCekRoKj3ViOFw9DBfOZtFp3Z8sMOHgSvRuE5eFCSirocr+QOHfqEwNxmbpMk6OdflA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLeTeQSb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8D2C4CEED;
+	Tue,  2 Sep 2025 16:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756831129;
+	bh=SOwG/JggJkNLJ7PLQmoB7+r3ga5C1jVReif7jB291cU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MLeTeQSbDbxWwofKraRIxLA8TMJY5DKSbNCb8FZ0IBY5QNkB7ozq2DS9yJTzz2rQc
+	 KVPqViua/jWAMzHNFiggZ4v0O61XyT1DTX4u04muwo3mJOqvKg/4CALoypYOv9pK/H
+	 CcwCo2mcfgna2YoDzpOyF1VBnZRWXWczviWsgRgLu0CK4SXt5m0AiVUp0oSYssKQgi
+	 3mLTRtRHYy6z4n76zByagohFvyZwLZaoViuNCvZNNUW7qRFfeizqDjacRYF336wja1
+	 gxODHHYjQ/7Xrvcsw8keMoWTzyvo51anIGHeoZgCMmLve//mRX01I+WIQle9WbdKPX
+	 yOM4HPNkGNtng==
+Date: Tue, 2 Sep 2025 17:38:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Valentina.FernandezAlanis@microchip.com, Conor.Dooley@microchip.com,
+	Daire.McNamara@microchip.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, robh@kernel.org, krzk+dt@kernel.org,
+	aou@eecs.berkeley.edu, alex@ghiti.fr,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] riscv: dts: microchip: add a device tree for
+ Discovery Kit
+Message-ID: <20250902-crucial-hankering-193be936a139@spud>
+References: <20250825161952.3902672-1-valentina.fernandezalanis@microchip.com>
+ <20250825161952.3902672-6-valentina.fernandezalanis@microchip.com>
+ <2b1eb8fd-2a64-4745-ad93-abc53d240b69@kernel.org>
+ <bb5b0d71-41b1-48a0-82fc-bdb362cc3db1@microchip.com>
+ <0d90eeb4-e6ac-459c-a6b1-26368f102e0e@kernel.org>
+ <20250902-affair-scrambler-2771df16372e@spud>
+ <677aad27-66b9-4c4f-8fbe-6b9aabcd375a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cfy5KQiTquK7clHG"
+Content-Disposition: inline
+In-Reply-To: <677aad27-66b9-4c4f-8fbe-6b9aabcd375a@kernel.org>
+
+
+--cfy5KQiTquK7clHG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Sender: rene@exactco.de
 
-Hi,
+On Tue, Sep 02, 2025 at 03:47:56PM +0200, Krzysztof Kozlowski wrote:
+> On 02/09/2025 10:31, Conor Dooley wrote:
+> > On Tue, Sep 02, 2025 at 08:22:02AM +0200, Krzysztof Kozlowski wrote:
+> >=20
+> >>>>> +     refclk_ccc: cccrefclk {
+> >>>>
+> >>>> Please use name for all fixed clocks which matches current format
+> >>>> recommendation: 'clock-<freq>' (see also the pattern in the binding =
+for
+> >>>> any other options).
+> >>>>
+> >>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.g=
+it/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> >>> The fabric dtsi describes elements configured by the FPGA bitstream.=
+=20
+> >>> This node is named as such because the Clock Conditioner Circuit CCC'=
+s=20
+> >>> reference clock source is set by the FPGA bitstream, while its freque=
+ncy=20
+> >>> is determined by an on-board oscillator.
+> >>>
+> >>> Hope this clarifies the rationale behind the node name.
+> >> No, because there is no style naming clocks like this. Neither proper
+> >> suffix, nor prefix. Use standard naming.
+> >=20
+> > So you want all fixed frequency clocks to be named "clk-foo" when
+> > "clk-<freq>" is not suitable? Fine if you do, but I didn't realise that
+> > it was required and haven't been keeping an eye out for it.
+>=20
+> Recommended is to just use consistent suffixes or prefixes. Binding asks
+> for "clock-" so that's what I propose to use here.
 
-From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+Okay, I'll keep that in mind.=20
 
-> Based on a finding by Anthony Yznaga that the UltraSPARC III copy_fro=
-m_user
-> returns invalid values breaking other parts of the kernel in case of =
-a
-> fault, while the generic implementation is correct.
+--cfy5KQiTquK7clHG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tested-by: Ren=E9 Rebe <rene@exactcode.com> # UltraSparc III+ and Ultra=
-Sparc IIIi
+-----BEGIN PGP SIGNATURE-----
 
-> Fixes: ee841d0aff64 ("sparc64: Convert U3copy_{from,to}_user to accur=
-ate exception reporting.")
-> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-> ---
->  arch/sparc/lib/U3memcpy.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> =
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLcdlAAKCRB4tDGHoIJi
+0naiAQCA8RkE9d4x3vSDRj7Kp9DvNgViBknLJEn4NtKmLmp/LgD/QsstMwVI9pFE
+OMOYdXSwcCVahsURInTVKGD8lpIeqgk=
+=xt6D
+-----END PGP SIGNATURE-----
 
-> diff --git a/arch/sparc/lib/U3memcpy.S b/arch/sparc/lib/U3memcpy.S
-> index 9248d59c734c..bace3a18f836 100644
-> --- a/arch/sparc/lib/U3memcpy.S
-> +++ b/arch/sparc/lib/U3memcpy.S
-> @@ -267,6 +267,7 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
->  	faligndata	%f10, %f12, %f26
->  	EX_LD_FP(LOAD(ldd, %o1 + 0x040, %f0), U3_retl_o2)
->  =
-
-> +	and		%o2, 0x3f, %o2
->  	subcc		GLOBAL_SPARE, 0x80, GLOBAL_SPARE
->  	add		%o1, 0x40, %o1
->  	bgu,pt		%XCC, 1f
-> @@ -336,7 +337,6 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
->  	 * Also notice how this code is careful not to perform a
->  	 * load past the end of the src buffer.
->  	 */
-> -	and		%o2, 0x3f, %o2
->  	andcc		%o2, 0x38, %g2
->  	be,pn		%XCC, 2f
->  	 subcc		%g2, 0x8, %g2
-> -- =
-
-> 2.50.1
-> =
-
-> =
-
-
--- =
-
-  Ren=E9 Rebe, ExactCODE GmbH, Berlin, Germany
-  https://exactcode.com | https://t2linux.com | https://rene.rebe.de
+--cfy5KQiTquK7clHG--
 
