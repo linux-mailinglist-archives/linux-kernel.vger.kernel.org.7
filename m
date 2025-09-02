@@ -1,84 +1,97 @@
-Return-Path: <linux-kernel+bounces-797436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE64B41074
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:01:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F2AB41072
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86BA6484390
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66FCE561813
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8485427A476;
-	Tue,  2 Sep 2025 23:00:23 +0000 (UTC)
-Received: from mail.aperture-lab.de (mail.aperture-lab.de [116.203.183.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581F527F4E7;
+	Tue,  2 Sep 2025 23:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTWmlblZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1DC267B7F;
-	Tue,  2 Sep 2025 23:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.183.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9699532F743;
+	Tue,  2 Sep 2025 23:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756854023; cv=none; b=eF+QhP5Y9sGOng4kkfzBO9ZmRqI0y5J5iavRTg2KQjiDSEgu0RIm1hnsqirGuw39O2zgmWrR6CBqfDg700vDm9Z18/FJYd4OO7FFqQqRu3JZs1ATzDUtkg41jhDonCe1yXx4BKQrDXN8zkW0g7hNe/9PHvvWHj31Yna8Ys7+ehs=
+	t=1756854025; cv=none; b=D8zW7buiYJ0IyVZMNOYipp8be9K0aJ1N2amvmftlXsRxypEVf9j4lKPqjpEpYl4Ynw1sSkLNgCpdLezOANSn1dMPDWdE6KgR6MgLPZpzUar/jNJ2Ua1hSWjSJJQRnrKVfayVjpyOO4PZJL73VVKRoTOfJe5kgPw+ITIpljENYCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756854023; c=relaxed/simple;
-	bh=gIEbSBjlwdCsEUiAvY3BR8HPt+sMX6/SmnW/l9c2qyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LN65Sdd11sroNRq+GHZoTykNFnTtdhhcbRVnJXrKMDlgmiUxLrX6yPsq3i9hm22RpHV7hhtnY3zlWwKzkP+HOnbBRvBHaASfAvWfTv6zE+zbGnGQ8J5mW8KDvmNGqcUeOD9cY4pMZlS9Mfknuovpugc52UjFEg8V7CAIE38rY1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue; spf=pass smtp.mailfrom=c0d3.blue; arc=none smtp.client-ip=116.203.183.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c0d3.blue
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c0d3.blue
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8C25C54DCC8;
-	Wed,  3 Sep 2025 01:00:15 +0200 (CEST)
-Date: Wed, 3 Sep 2025 01:00:14 +0200
-From: Linus =?utf-8?Q?L=C3=BCssing?= <linus.luessing@c0d3.blue>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, bridge@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ido Schimmel <idosch@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH 0/9] net: bridge: reduce multicast checks in fast path
-Message-ID: <aLd2_um-oWhS23Md@sellars>
-References: <20250829085724.24230-1-linus.luessing@c0d3.blue>
- <20250829084747.55c6386f@kernel.org>
- <bfb11627-64d5-42a0-911e-8be99e222396@blackwall.org>
- <aLdQhJoViBzxcWYE@sellars>
+	s=arc-20240116; t=1756854025; c=relaxed/simple;
+	bh=dPIbJwWZvPXOY8sg69LKxX2OsJ+5HninbpyXwBaAb94=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ZEMSGTXmkXDbZfl1xNcb6G4elazd+TKQ2BcZd9IH1y4R44oyjXVn66k196eXLKhdOTGh8Z1infyXkPu7exFYp4adVcx5IPZ9MGlI1S3/yA0pvrKvqlw1a5iEWIplBH5Nwv/OXS5wpBvElgS3v/M+aovQA2KQqwrOLm8OfF8fWOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTWmlblZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2530EC4CEED;
+	Tue,  2 Sep 2025 23:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756854025;
+	bh=dPIbJwWZvPXOY8sg69LKxX2OsJ+5HninbpyXwBaAb94=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jTWmlblZUPiZDuIRxfo5imIFXY8Vpei65/RcxQ4LZR+6++RvU72uuJZr3nSlpTNpd
+	 Qe+flAWoj39Ir2bLWH+0UfjxdXAC/1tfPwNql2G5FqJJ/hDq084w44whf5nMOW8/kh
+	 qUeVrURa5XZXvMpVEk4//RP3gt8pB9hIsR3N14eBXBbjdxjD2g60V5IKzxwA56L4z2
+	 Zb2/rc13qTf2K5yJNfSLIe/D+g1fVze13DpK3AFIEEyB8lNU4T7Zq18bYWy4Zjblyv
+	 AzQLgKgKfT+5yi+CbyID4F4Kq2uLjfp6pkzABuFsz7TWk4T3grr60K0zhEd8h0LBzB
+	 LVVLbiIqOD23w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE01383BF64;
+	Tue,  2 Sep 2025 23:00:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aLdQhJoViBzxcWYE@sellars>
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: Re: [PATCH v2] net/smc: Replace use of strncpy on NUL-terminated
+ string
+ with strscpy
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175685403028.461360.5671454085115817029.git-patchwork-notify@kernel.org>
+Date: Tue, 02 Sep 2025 23:00:30 +0000
+References: <20250901030512.80099-1-bold.zone2373@fastmail.com>
+In-Reply-To: <20250901030512.80099-1-bold.zone2373@fastmail.com>
+To: James <bold.zone2373@fastmail.com>
+Cc: alibuda@linux.alibaba.com, dust.li@linux.alibaba.com,
+ sidraya@linux.ibm.com, wenjia@linux.ibm.com, mjambigi@linux.ibm.com,
+ tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ skhan@linuxfoundation.org, linux-rdma@vger.kernel.org,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
 
-On Tue, Sep 02, 2025 at 10:16:04PM +0200, Linus Lüssing wrote:
-> On the other hand, moving the spinlock out of / around
-> __br_multicast_stop() would lead to a sleeping-while-atomic bug
-> when calling timer_delete_sync() in there. And if I were to change
-> these to a timer_delete() I guess there is no way to do the sync
-> part after unlocking? There is no equivalent to something like the
-> flush_workqueue() / drain_workqueue() for workqueues, but for
-> simple timers instead, right?
+Hello:
 
-I'm wondering if it would be sufficient to use timer_del() on
-.ndo_stop->br_dev_stop()->br_multicast_stop().
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-And use timer_del_sync() only on
-.ndo_uninit->br_dev_uninit()-> br_multicast_dev_del()->
-br_multicast_ctx_deinit() and
-br_vlan_put_master()->br_multicast_ctx_deinit().
+On Sun, 31 Aug 2025 20:04:59 -0700 you wrote:
+> strncpy is deprecated for use on NUL-terminated strings, as indicated in
+> Documentation/process/deprecated.rst. strncpy NUL-pads the destination
+> buffer and doesn't guarantee the destination buffer will be NUL
+> terminated.
+> 
+> Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2] net/smc: Replace use of strncpy on NUL-terminated string with strscpy
+    https://git.kernel.org/netdev/net-next/c/d250f14f5f07
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-So basically only sync / wait for timer callbacks to finish if
-their context is about to be free'd, on bridge or VLAN destruction?
 
