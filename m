@@ -1,209 +1,96 @@
-Return-Path: <linux-kernel+bounces-795974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F3AB3FA36
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A24B3FA1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1F0B1B23354
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:23:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3891B201B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA7B2EAB76;
-	Tue,  2 Sep 2025 09:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081CA2EA464;
+	Tue,  2 Sep 2025 09:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NVOvCzGX"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eod2bVdZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8D42EAB85
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A7D2E9EA9;
+	Tue,  2 Sep 2025 09:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756804940; cv=none; b=XDyvmPWDbj1bYVPnd2vAXhas5em4/NlpXf8kz2GuKabGaw6RtT9Q6ktXeJUFhm38VRgBvdhLLzzNvukPYMOCwyHK+sdTuI1V9EeTxfgpI6m5KkggRmsiqIws9V9xpO1xedPsPL0QH32kIICeZh3YTTGHb3XdCYNE6bKSd7rvZD4=
+	t=1756804907; cv=none; b=JPLjs86HeTKOyP45b7YCJP1Jd+ut2RbBjMj03ms1X6R5jZjg/pmAmUS3KY/DQQh2JPA4bg2ODsvZkhLNpQyAf6ctRG2MhtxwXRTuFiDD+X+S8uvBS/2Xc07580gwWQysG8+uWIXeAI0Yjh3V20PuYjf1fg6Ka5cMgtN9yAHwAhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756804940; c=relaxed/simple;
-	bh=JfU+C/+WNXrTU6x82nBJAMdCHq7IaWEhD6JeQAiASiA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bSxaBeeT2nX4O7byoFCgM2bGqZEI0+sGge2qq7R9CvqAAaOEQTcaFuuV92qdsW9a28EcShJQFM5xzAmC2wPmGk/attMYiJnvfr+Xda7vwtllE0XmkvQl/mFzYsOi52/B6i7u+HIgh7clmLggVn0weCu52ybTuFX0B9LWIL5JzF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NVOvCzGX; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b327480fd0so849521cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:22:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756804937; x=1757409737; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UEJ7Ey14mWS9ux2fnI3lv4hByDSn+Z0hPpiKOiV6hv4=;
-        b=NVOvCzGXhNGXE0f8qvNnt46AZPm2dFHsdNCjOnnUIM51nDTV/UI/ESKLmDvoz6mCLE
-         qa1atM7WiODqN4mXPzwRndiYx7NJbphcMC3hHQxPx/9l33qESQsH/7/vnxGfAmT/dwfD
-         NVvXOf6rHRG7XGQ/dbm+2Vs60RqYx9kKMnSaz4MZwaCPUMdwsLkIJ+QELLX/Yezi/KCJ
-         ga46bUDbTidFFQO8iDChebbmGWwbL+HhV4iX38w82ZW1lQ8gxA6/nv2aBdGhqw2vxku8
-         vhXbdOkrCJt4SNVrMGo2AQ6Iy9EbnwyJK0/Noo4lK6bSVCWTRBLbzytbjEZLHAqgWyFu
-         Qc2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756804937; x=1757409737;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UEJ7Ey14mWS9ux2fnI3lv4hByDSn+Z0hPpiKOiV6hv4=;
-        b=FBj1bRvTbCj9ajuIWiycWinFEIMtTYXcUVwy2u065K1BUfTgaHSaRaNYdo+JWYUwAT
-         cA3hYt8Jba3CHxTbhtUtGloCBgofq2fcRU1IfvcoAY8n6OjoF8zadsZn3tqp819yYtAK
-         +GcewPX6HZ58bscE6GhklV9BbgPb4cJl+x8uD59RuIl1zI3epD3OU9vIYQoDRXnROj2i
-         VsEJqsGfuq930/+WoS/i/YeErr3eatlOJTI1JzdAB77iAfZhFFiQFPn2Shfsy/025Vav
-         WuAX2lZPKpBMpYnAM7FYKWwwMzd52lnswPl2bYwn+AZPyPINmfgj/ErP3IFzg5EBswWX
-         GVnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP5Teq3knAOc9FpllDF2Ok9TGpq+D6Dk7Uqqb/dUtjs25e6rrWtc8V5lbTEd0994A4bJsFb7OtrtCEJ1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLOrYH5orcTQ/3r8cVnJjrred/a3A9EH8Te3dEXriZdEx3rvey
-	emUFK+D2JBYR5sGyBG57Vxa2OblySit2usSTRUoAcOs6fhhFBOm4P4E3N2o/8DXszeGDwycwnq1
-	F60WUM/8VWz5k/2GJ3Cf0ZgSnqqH6r5E7bv02e6nM
-X-Gm-Gg: ASbGncuFJW+gNKRmkmBveBczq3eZEkuarHDVG18m/fHTMhQ5RAsMWEuT5Yu4WtusIFc
-	H8EvarK/YMEGmwhHAxKBNRylqbd46c19TldenpSLG+Bx5fxwvaM5lcT+2POKe8k5XCXiekhN17m
-	o8o3N7NXTERONkcjJCmwq8PsFvcSEhhbj/pX9155xpBYInd5xrKG3Esb2JVxjLSTyUjTu3Ew3Lj
-	qnXsyZX6f9G0zg=
-X-Google-Smtp-Source: AGHT+IE/365ZPa2na0I+61w5kSKHeQK2w8xYgvB2r/DuNmzeiSpIrPg40UHX6ZyJ0CzihYKx7admZMRUkLUk8hCwjvo=
-X-Received: by 2002:ac8:5a56:0:b0:4b3:8ee:521b with SMTP id
- d75a77b69052e-4b31b0e2753mr12638851cf.0.1756804936638; Tue, 02 Sep 2025
- 02:22:16 -0700 (PDT)
+	s=arc-20240116; t=1756804907; c=relaxed/simple;
+	bh=HUiiWQDITg8+MQmQcEFhCfgm6csIP75981a83wPC3pM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPVmmJYVm2K4AmBRpU1y6jq62GQpjfJvfvbTboxEVFxdsYpq1kQYjItRz5xV2jWjpgOpS/1GxsE2zk2WZ9o4jgfJVNbQX0l571xBNDTkh5DhfTHnIdE9lUz5fiMx3t8tHagRnJvWAWE/bg237NshLW8RfWKW5tF6m6nSNAa3rHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eod2bVdZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2624DC4CEF7;
+	Tue,  2 Sep 2025 09:21:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756804906;
+	bh=HUiiWQDITg8+MQmQcEFhCfgm6csIP75981a83wPC3pM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Eod2bVdZA1JoFnBpSlGb1uMtFbmpo/S/3ll6IHa3mIRnUT710Ldv3oYumW7C7bXp0
+	 X7ZQ7eeLbYKbuhvYxs0Tm5/o3C2Hc2NgdU6aFyIpgqXmxTA2Hstdwgx0Sd6JeY07pb
+	 QE97kDpMCLIWNZqiHPDHa1D6nvT8EJWhMdhKaYWMfy8e3xdi0LncKk83CrT1WGWYAB
+	 ZMW9eYATgQMhKpsi0Fow5oX+NDHBNSd1LMYZ4pJ5V96ii1Ov9wzeGTK9ndR3W3T8ia
+	 ExRT+VZC4Ed55yDJIVTF6IeSOok7n0XCfbClwBF0VtBM7NcGgJR2aAgLScmQ3hdC86
+	 kI9EhS6ixVPqg==
+Date: Tue, 2 Sep 2025 11:21:43 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] spi: atmel,quadspi: Document sam9x7 QSPI
+Message-ID: <20250902-macho-violet-orangutan-faac78@kuoka>
+References: <20250902-microchip-qspi-v1-0-37af59a0406a@microchip.com>
+ <20250902-microchip-qspi-v1-1-37af59a0406a@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+EHjTxymfya75KdOrUsSUhtfmxe180DedhJpLQAGeCjsum_nw@mail.gmail.com>
- <20250902091810.4854-1-roypat@amazon.co.uk>
-In-Reply-To: <20250902091810.4854-1-roypat@amazon.co.uk>
-From: Fuad Tabba <tabba@google.com>
-Date: Tue, 2 Sep 2025 10:21:40 +0100
-X-Gm-Features: Ac12FXxFB1Y6AnaQmou77bzNFiPMi0bpB9wRe5PhLp9QE0Dg7CKdLpI-R4eIPWU
-Message-ID: <CA+EHjTz1JxOy=E3p=So2q+k=UK3cDG6C8gOUgA9NQEpqRdhW5g@mail.gmail.com>
-Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-To: "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "ackerleytng@google.com" <ackerleytng@google.com>, "david@redhat.com" <david@redhat.com>, 
-	"Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack" <jackabt@amazon.co.uk>, 
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "rppt@kernel.org" <rppt@kernel.org>, 
-	"seanjc@google.com" <seanjc@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>, "will@kernel.org" <will@kernel.org>, 
-	"Cali, Marco" <xmarcalx@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250902-microchip-qspi-v1-1-37af59a0406a@microchip.com>
 
-On Tue, 2 Sept 2025 at 10:18, Roy, Patrick <roypat@amazon.co.uk> wrote:
->
-> On Tue, 2025-09-02 at 09:50 +0100, Fuad Tabba wrote:
-> > On Tue, 2 Sept 2025 at 09:46, David Hildenbrand <david@redhat.com> wrote:
-> >>
-> >> On 02.09.25 09:59, Fuad Tabba wrote:
-> >>> Hi Patrick,
-> >>>
-> >>> On Mon, 1 Sept 2025 at 15:56, Roy, Patrick <roypat@amazon.co.uk> wrote:
-> >>>>
-> >>>> On Mon, 2025-09-01 at 14:54 +0100, "Roy, Patrick" wrote:
-> >>>>>
-> >>>>> Hi Fuad!
-> >>>>>
-> >>>>> On Thu, 2025-08-28 at 11:21 +0100, Fuad Tabba wrote:
-> >>>>>> Hi Patrick,
-> >>>>>>
-> >>>>>> On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:
-> >>>>>>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> >>>>>>> index 12a12dae727d..b52b28ae4636 100644
-> >>>>>>> --- a/include/linux/pagemap.h
-> >>>>>>> +++ b/include/linux/pagemap.h
-> >>>>>>> @@ -211,6 +211,7 @@ enum mapping_flags {
-> >>>>>>>                                     folio contents */
-> >>>>>>>          AS_INACCESSIBLE = 8,    /* Do not attempt direct R/W access to the mapping */
-> >>>>>>>          AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
-> >>>>>>> +       AS_NO_DIRECT_MAP = 10,  /* Folios in the mapping are not in the direct map */
-> >>>>>>>          /* Bits 16-25 are used for FOLIO_ORDER */
-> >>>>>>>          AS_FOLIO_ORDER_BITS = 5,
-> >>>>>>>          AS_FOLIO_ORDER_MIN = 16,
-> >>>>>>> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_on_reclaim(struct address_spac
-> >>>>>>>          return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
-> >>>>>>>   }
-> >>>>>>>
-> >>>>>>> +static inline void mapping_set_no_direct_map(struct address_space *mapping)
-> >>>>>>> +{
-> >>>>>>> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);
-> >>>>>>> +}
-> >>>>>>> +
-> >>>>>>> +static inline bool mapping_no_direct_map(struct address_space *mapping)
-> >>>>>>> +{
-> >>>>>>> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);
-> >>>>>>> +}
-> >>>>>>> +
-> >>>>>>> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma)
-> >>>>>>> +{
-> >>>>>>> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapping);
-> >>>>>>> +}
-> >>>>>>> +
-> >>>>>> Any reason vma is const whereas mapping in the function that it calls
-> >>>>>> (defined above it) isn't?
-> >>>>>
-> >>>>> Ah, I cannot say that that was a conscious decision, but rather an artifact of
-> >>>>> the code that I looked at for reference when writing these two simply did it
-> >>>>> this way.  Are you saying both should be const, or neither (in my mind, both
-> >>>>> could be const, but the mapping_*() family of functions further up in this file
-> >>>>> dont take const arguments, so I'm a bit unsure now)?
-> >>>>
-> >>>> Hah, just saw
-> >>>> https://lore.kernel.org/linux-mm/20250901123028.3383461-3-max.kellermann@ionos.com/.
-> >>>> Guess that means "both should be const" then :D
-> >>>
-> >>> I don't have any strong preference regarding which way, as long as
-> >>> it's consistent. The thing that should be avoided is having one
-> >>> function with a parameter marked as const, pass that parameter (or
-> >>> something derived from it), to a non-const function.
-> >>
-> >> I think the compiler will tell you that that is not ok (and you'd have
-> >> to force-cast the const it away).
-> >
-> > Not for the scenario I'm worried about. The compiler didn't complain
-> > about this (from this patch):
-> >
-> > +static inline bool mapping_no_direct_map(struct address_space *mapping)
-> > +{
-> > +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);
-> > +}
-> > +
-> > +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma)
-> > +{
-> > +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapping);
-> > +}
-> >
-> > vma_is_no_direct_map() takes a const, but mapping_no_direct_map()
-> > doesn't. For now, mapping_no_direct_map() doesn't modify anything. But
-> > it could, and the compiler wouldn't complain.
->
-> Wouldn't this only be a problem if vma->vm_file->f_mapping was a 'const struct
-> address_space *const'? I thought const-ness doesn't leak into pointers (e.g.
-> even above, vma_is_no_direct_map isn't allowed to make vma point at something
-> else, but it could modify the pointed-to vm_area_struct).
+On Tue, Sep 02, 2025 at 11:22:18AM +0530, Dharma Balasubiramani wrote:
+> Document the sam9x75 quad spi that supports interface to serial memories
 
-That's the thing, constness checks don't carry over to pointers within
-a struct, but a person reading the code would assume that a function
-with a parameter marked as const wouldn't modify anything related to
-that parameter.
+9x75 here...
 
-Cheers,
-/fuad
+> operating in
+> 
+> - Single-bit SPI, Dual SPI, Quad SPI and Octal SPI
+> - Single Data Rate or Double Data Rate modes
+> 
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/spi/atmel,quadspi.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/atmel,quadspi.yaml b/Documentation/devicetree/bindings/spi/atmel,quadspi.yaml
+> index b0d99bc10535..c17114123034 100644
+> --- a/Documentation/devicetree/bindings/spi/atmel,quadspi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/atmel,quadspi.yaml
+> @@ -17,6 +17,7 @@ properties:
+>      enum:
+>        - atmel,sama5d2-qspi
+>        - microchip,sam9x60-qspi
+> +      - microchip,sam9x7-ospi
 
-> > Cheers,
-> > /fuad
-> >
-> >
-> >> Agreed that we should be using const * for these simple getter/test
-> >> functions.
-> >>
-> >> --
-> >> Cheers
-> >>
-> >> David / dhildenb
-> >>
->
+... but 9x7 here. Confusing.
+
+Best regards,
+Krzysztof
+
 
