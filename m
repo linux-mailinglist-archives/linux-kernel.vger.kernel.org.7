@@ -1,121 +1,181 @@
-Return-Path: <linux-kernel+bounces-796091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFEEB3FBD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:07:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31D32B3FBD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2613B1835
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A070B3B0E62
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB4F2EDD53;
-	Tue,  2 Sep 2025 10:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41B91A9F82;
+	Tue,  2 Sep 2025 10:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kj13A9HQ"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LA91XbgT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647062E9731
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192FA2EDD75;
+	Tue,  2 Sep 2025 10:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756807634; cv=none; b=ivHT4W3jbg8QSi2eG6bFhQHA3DS3ziHRqV+QdqYbMrdyyenVCpuTALjuxdlMmQyCgGi4Cl1O4po+OSM5g7kJKZInu6Gmqq1D9nYgnBS2X6YCM7yEQm2TNP470yrhGgS9phuJhfZp7Zc2Ajcdp0XtxnIh/qJAHAkjpkyRg/GiInk=
+	t=1756807642; cv=none; b=hiJPDZAmFVEYYU0bJjklHPr99qZ9eYT2ncyUy5CIz4gafOIs3XReSp01+SAU+mMSdU2YAW7LrTojydRr0HjZBSIn79Nqj9FmImiKQ78xpaSlw3HifAQ3dwSqVQ1Wrtr6nN0b1f0WCGpCGaUbkQqnG/wsPdG/nL+p+Ooy7wMHkCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756807634; c=relaxed/simple;
-	bh=jrAOpTnL363G+6BC29hgzUSrK5gRlkPfx59tzKZpZe8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uDkC6hKHC+whltH1+wG1rFqgC25SY9TT2bHV2076KPGU51621RMAgEo2EJS6ygvnzJDfkxnnOcJFrVWLS4n926x8PZw8jrn6xZ96PCKimURyyc9TY/qfwyYryBkSG8LdLdBCYIXK5HPSYFGkXAyy4pApUxNiv7X7aNakrhJvssg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kj13A9HQ; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-53b174ca9bdso3710390e0c.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756807631; x=1757412431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jrAOpTnL363G+6BC29hgzUSrK5gRlkPfx59tzKZpZe8=;
-        b=Kj13A9HQ15bF0izgO+799JCKvqbioSRjW+e4jqV+/IVcEbYkny35tGxO/nRN4B4SQa
-         RczE1mixuEvCgGTCCh21IFiomTwJr+LfFZQaNCAnuYOYz67iq1dtR0dtdBMxLEKHKVAn
-         8wiqWohVnHO9fPTz0U1PszbDCEQcY4utFZyDKpeYWL+GOfGQB3vv21e320GNf9mkXABG
-         q23DkLpAwZ9cxv0nZVRHgXT+JPjTdu2ii1D8zlD3uro4GId+ASrhNa1x3EoRjmDt/Azn
-         gmqhRAye429lGxc9h4Yt8BezVO6E8LnVGpO/XI+aVUdY5qbbggPFXPlurbysa+EvD1Cu
-         BCUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756807631; x=1757412431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jrAOpTnL363G+6BC29hgzUSrK5gRlkPfx59tzKZpZe8=;
-        b=sbwHLwD1n+GnCWd2++tjHtTbWq15WrRRhRcQArqpzNqqMqN04rnGQiekflcywSWbFO
-         JXUvIjNwz5vI4mLepFDLb88EV6mSTj1xXJrYjA68WJhJh79mJb7dMerwxpVVfqeMFjeu
-         uGen5yoP0aKPzjMHo6klgq7Z0FRV4ET6VZLwEV48uOMEK9y26p189Xsd3sT6/4+rCdxR
-         w9fTtUuts5UEEJicWIa0TltjAv5KLJy3srN8dzZuHk3g2LFuAn1QmZnJnhZbbkN04/I7
-         r1nzVQsMDX0Ip+xR+hSEOseHvinR8GATHGHGrcgXl+rBym0KnOHVEYsZps/bEFUUn667
-         PN3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCURfCw4iC1c/fHEgkcm+XDERThwpYXAozuH6ywYVsq3GETxhKpxMKyaFYOrHAWRCtEVtVURWmqgIycke40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfd6cewW64sakde5GZEXBKnRTxBaPzyJkFeIaaQ9snAac753FV
-	2AAHXoYsU1PVedoNxt7Vt+jJ4waWWmkMXNnZzu0rr75vG95czp1JJhizeJ15fCfxW4TooGP7EVM
-	yKUpTcfpfR+WWp80dBW1pYfSWOCtFrFo=
-X-Gm-Gg: ASbGncvC/8zqae/HuUxb0M1FqV5NVwCkx5rNi3THPrJ4dQIVt/q4j7cUVa5VtR2kbVZ
-	/60T1vFcd+QKEs+r3cqPmkolpjQXJZKb24BBtndH0nDerLYob7uc76WGklE0TDpVEoPB9Y8Znvd
-	ahF7MNXAR6vVt/KvyO8jNTo7WkfpgLsFyGEqqqmJuPVzK9wZt+u4Fu1jTtmJmKUn3PPgXqyFzAR
-	rEAEz894VUR/6sTbA==
-X-Google-Smtp-Source: AGHT+IFj6WTlzVmDMSvbDwsIF7zaKqomYaay4LaA2X4TYZ0wC13TBbd0pTml2AKOE5bBGAAX9jk0YV9AyGMxwXWAdtQ=
-X-Received: by 2002:a05:6122:459b:b0:544:79bd:f937 with SMTP id
- 71dfb90a1353d-544a032697cmr3707407e0c.15.1756807631529; Tue, 02 Sep 2025
- 03:07:11 -0700 (PDT)
+	s=arc-20240116; t=1756807642; c=relaxed/simple;
+	bh=n7Zz7ESKe5II1Hc9wcpMJplkj2h3aSHW/mqP+X4a2OE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFMDxV3MG/RQzzNLTmUgG4OY6hJ4Pq/B6eIOEdeIbu7aeFmSYYI3fL8UhNpav6dtxd3e3SEPZkEbpIbxPWo88W8qUPopxwwZFMjAJy2/y1Ysqx9Ip2bH2BhQHgzthizGnOaE9bqy2BfAe9UHjRv65XYQd0ZhM27/5D3t0MNGpZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LA91XbgT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A45C4CEF5;
+	Tue,  2 Sep 2025 10:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756807640;
+	bh=n7Zz7ESKe5II1Hc9wcpMJplkj2h3aSHW/mqP+X4a2OE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LA91XbgT4K2NDijDbGqZDA9oYV74S4KF428MgMtzcmWF0Dx8+7OMzNQk9aIeyrBB7
+	 +IhG/ynsQwLIoq+KF5nYJ9Jr5Bw55OKEpFavGXGrTt2++CS8rHpzhXPm941zHMTqa1
+	 skomXzPWgQ3roQukXTvQYUOZmARVKk7ny3cmbR8SaAYg9H8ydgBxRP+1FxO23zUgE/
+	 Hk+ts5DKvo4AWw6T8B77/FPP57iOFrIa2LTp72knO6hlC/ncgbkqOTITZV1jG01F3F
+	 XMU5Dhslw1GlpBxGGtU9d1gWOPBO50bTzHHxKlA1psgjoaN21llaupaubYnFp5cmf1
+	 lEcVLrDCOVunQ==
+Date: Tue, 2 Sep 2025 11:07:16 +0100
+From: Simon Horman <horms@kernel.org>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, kuniyu@google.com, kay.sievers@vrfy.org,
+	gregkh@suse.de, yuehaibing@huawei.com, zhangchangzhong@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: atm: fix memory leak in atm_register_sysfs when
+ device_register fail
+Message-ID: <20250902100716.GB15473@horms.kernel.org>
+References: <20250901063537.1472221-1-wangliang74@huawei.com>
+ <20250901190140.GO15473@horms.kernel.org>
+ <4ae3ca7b-dc64-4ab5-b1bf-e357ccc449b4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-8-ryncsn@gmail.com>
-In-Reply-To: <20250822192023.13477-8-ryncsn@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 2 Sep 2025 18:06:59 +0800
-X-Gm-Features: Ac12FXzr_QuDNQ1ketQVI0L0O2e5pn7ImaHsrDqHTF4iWbuQt0_ufzEsJP1Vm7g
-Message-ID: <CAGsJ_4xNydZqSx7GJ9GfUGaSVERZ2Nj82D5eefMN_Q-OUjnoyw@mail.gmail.com>
-Subject: Re: [PATCH 7/9] mm, swap: remove contention workaround for swap cache
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4ae3ca7b-dc64-4ab5-b1bf-e357ccc449b4@huawei.com>
 
-On Sat, Aug 23, 2025 at 3:21=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> Swap cluster setup will try to shuffle the clusters on initialization.
-> It was helpful to avoid contention for the swap cache space. The cluster
-> size (2M) was much smaller than each swap cache space (64M), so shuffling
-> the cluster means the allocator will try to allocate swap slots that are
-> in different swap cache spaces for each CPU, reducing the chance of two
-> CPUs using the same swap cache space, and hence reducing the contention.
->
-> Now, swap cache is managed by swap clusters, this shuffle is pointless.
-> Just remove it, and clean up related macros.
->
-> This should also improve the HDD swap performance as shuffling IO is a
-> bad idea for HDD, and now the shuffling is gone.
->
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202504241621.f27743ec-lkp@intel.co=
-m
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
+On Tue, Sep 02, 2025 at 09:41:33AM +0800, Wang Liang wrote:
+> 
+> 在 2025/9/2 3:01, Simon Horman 写道:
+> > On Mon, Sep 01, 2025 at 02:35:37PM +0800, Wang Liang wrote:
+> > > When device_register() return error in atm_register_sysfs(), which can be
+> > > triggered by kzalloc fail in device_private_init() or other reasons,
+> > > kmemleak reports the following memory leaks:
+> > > 
+> > > unreferenced object 0xffff88810182fb80 (size 8):
+> > >    comm "insmod", pid 504, jiffies 4294852464
+> > >    hex dump (first 8 bytes):
+> > >      61 64 75 6d 6d 79 30 00                          adummy0.
+> > >    backtrace (crc 14dfadaf):
+> > >      __kmalloc_node_track_caller_noprof+0x335/0x450
+> > >      kvasprintf+0xb3/0x130
+> > >      kobject_set_name_vargs+0x45/0x120
+> > >      dev_set_name+0xa9/0xe0
+> > >      atm_register_sysfs+0xf3/0x220
+> > >      atm_dev_register+0x40b/0x780
+> > >      0xffffffffa000b089
+> > >      do_one_initcall+0x89/0x300
+> > >      do_init_module+0x27b/0x7d0
+> > >      load_module+0x54cd/0x5ff0
+> > >      init_module_from_file+0xe4/0x150
+> > >      idempotent_init_module+0x32c/0x610
+> > >      __x64_sys_finit_module+0xbd/0x120
+> > >      do_syscall_64+0xa8/0x270
+> > >      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > 
+> > > When device_create_file() return error in atm_register_sysfs(), the same
+> > > issue also can be triggered.
+> > > 
+> > > Function put_device() should be called to release kobj->name memory and
+> > > other device resource, instead of kfree().
+> > > 
+> > > Fixes: 1fa5ae857bb1 ("driver core: get rid of struct device's bus_id string array")
+> > > Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> > Thanks Wang Liang,
+> > 
+> > I agree this is a bug.
+> > 
+> > I think that the guiding principle should be that on error functions
+> > unwind any resource allocations they have made, rather than leaving
+> > it up to callers to clean things up.
+> > 
+> > So, as the problem you describe seems to be due to atm_register_sysfs()
+> > leaking resources if it encounters an error, I think the problem would
+> > best be resolved there.
+> > 
+> > Perhaps something like this.
+> > (Compile tested only!)
+> > 
+> > diff --git a/net/atm/atm_sysfs.c b/net/atm/atm_sysfs.c
+> > index 54e7fb1a4ee5..62f3d520a80a 100644
+> > --- a/net/atm/atm_sysfs.c
+> > +++ b/net/atm/atm_sysfs.c
+> > @@ -148,20 +148,23 @@ int atm_register_sysfs(struct atm_dev *adev, struct device *parent)
+> >   	dev_set_name(cdev, "%s%d", adev->type, adev->number);
+> >   	err = device_register(cdev);
+> >   	if (err < 0)
+> > -		return err;
+> > +		goto err_put_dev;
+> >   	for (i = 0; atm_attrs[i]; i++) {
+> >   		err = device_create_file(cdev, atm_attrs[i]);
+> >   		if (err)
+> > -			goto err_out;
+> > +			goto err_remove_file;
+> >   	}
+> >   	return 0;
+> > -err_out:
+> > +err_remove_file:
+> >   	for (j = 0; j < i; j++)
+> >   		device_remove_file(cdev, atm_attrs[j]);
+> >   	device_del(cdev);
+> > +err_put_dev:
+> > +	put_device(cdev);
+> > +
+> >   	return err;
+> >   }
+> 
+> 
+> Thanks for your replies, it is very clear!
+> 
+> But the above code may introduce a use-after-free issue. If
+> device_register()
+> fails, put_device() call atm_release() to free atm_dev, and
+> atm_proc_dev_deregister() will visit it.
+> 
+> And kfree() should be removed in atm_dev_register() to avoid double-free.
 
-Reviewed-by: Barry Song <baohua@kernel.org>
+Thanks, I see that now.
+
+I do think that it would be nice to untangle the error handling here.
+But, as a but fix I now think your original approach is good.
+Because it addresses the issue in a minimal way.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+> > Looking over atm_dev_register, it seems to me that it will deadlock
+> > if it calls atm_proc_dev_deregister() if atm_register_sysfs() fails.
+> > This is because atm_dev_register() is holding atm_dev_mutex,
+> > and atm_proc_dev_deregister() tries to take atm_dev_mutex().
+> 
+> 
+> I cannot find somewhere tries to take atm_dev_mutex(), can you give some
+> hints?
+
+Sorry, my mistake. I was looking at atm_dev_deregister()
+rather than atm_proc_dev_deregister().
+
+...
+
+-- 
+pw-bot: under-review
 
