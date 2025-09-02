@@ -1,221 +1,240 @@
-Return-Path: <linux-kernel+bounces-796754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A7DB406C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:30:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4BBB406C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E90354267C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77283188DFD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DE730EF7C;
-	Tue,  2 Sep 2025 14:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BC830C36D;
+	Tue,  2 Sep 2025 14:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="d4RwbFT8"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jl7O/6eM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589FD30DD36
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91BD277026;
+	Tue,  2 Sep 2025 14:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756823350; cv=none; b=sIqmwL/Tz0GfqUEvohNPYwhbZ8QnYAkskWY2SBj1Fdhog9mOTmw4J9471dfdASR3JhQJInJx3f3XFC+/Cq9l8MQw5lpHDpZzKGOI4EzvjkaOj2P69QLMu9As2MWFsOAh1rCpPvsksm+KiPh0HPyjtUtO7Rpa07DjKc/yi5eE6YM=
+	t=1756823375; cv=none; b=c+0B+rQ9f7fAFtS52H2jogNkH+Pwb35EUu4j32ql/N/qE0nPwYydGbubO8DaAb5cxIS180jE4jzeqGi8LlIAplYlg4o1expK8PlFyb44UpwjpVy8d5bzjTmUXyCRBSxkYvtM1kXdSTJKjx5zcK5r6i9RrWABetwth3Im/m9oyDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756823350; c=relaxed/simple;
-	bh=Zh/esVOjxW9buYPgrg25ime4g5npaPosuL61f9Sd6lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qfiBlgINrFTbB3TJ8fBBEstBqbqv3RwwN1XtUzTLacGKdNJYwy4Vi3uEHgABWdvOZ7MsqA+u2pWu90LP3NLYRBbfX4SYaE2AMzEs/zAgyaGJg9yy123ov1p/jZ+FKDY9JknmkTY4h73lO/v2NKpW4ajp6vewouqrdaXiRsVF/js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=d4RwbFT8; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7438175d42aso3217848a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756823346; x=1757428146; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pp38Yvg3RiytProyc5t2mGqns6Lb9l3HNRoLbsNuGqs=;
-        b=d4RwbFT8GryJDSSfS/vvnQ5NYIUEncQQTaY0qPKyd22otXxkGl/RXepzlCAZlhetZd
-         2WNkXNwB7npWfxum7PvK605qGN2qcfiITRUiA2WU+P276RqaltQHmVxGCNP9CA0gct8W
-         CJ9Nm6gy/2Gk/ONx07/u3Wxo1zjifXYaGm8yQjM6EFD4LqdZKzsn+n4iw2GDTPoKsLBJ
-         Xm3eFlLf+3uPjcLAY5G0Hv56XgXOIdi2yfetiKOdQI9sVkC4DlnxRbuGR4Q8A4jrNkqb
-         JBUMeq+mqXgCOqyFFrKqzg8TY9xev/pr7IWS8+jZST5sLM4/NkZX4+uYckl1ZJPLC095
-         wAfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756823346; x=1757428146;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pp38Yvg3RiytProyc5t2mGqns6Lb9l3HNRoLbsNuGqs=;
-        b=HdJmREjgMCKmDnh+i+ZlF+y1aQjcJIfwyWXAzOxeQAeYpeBGAd8E98C1gW7/rlOGmt
-         XSGFgXkX9r/OfcxW/W2JOpdlYdmX/jskUf+CuLKUY19G3Q/5b7SfIEGSACLQoYXrEovQ
-         F24VLsvKfbNkeDQof7Vv16SMROJftq7qhkjJsJ+E8Xn09mIPSNHlLK2otSMOfwUZ7k6L
-         gGC3v+NkOnFC92ZtL+YDayICXKh2Ohi5JVgdF2q1tiwU+WroAYd3vrYp2nj7DSdsrO8z
-         GSMHIFivnwMvUNU960SZhutPwUS9XEsGdsu1FS7dDTJRBL8JtILeuIeLKlTyK438HBci
-         FVpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWycbfsJJMMB1PPxJpuAf21BPQhZmhcT6Y9qpIOtagrGWpRs3LLktrbZm76FCZA7vWYhTCs890+5JHUFMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWgqGkcm5KeeExp4O8qQ/mSplzxy23McsYDZhhQMEWCSROYHV7
-	IKc02sy5teUFogqSoRF9ZKpLQXoGdrUqPA8d9N+1yqKium6NtzZPINW7qTsBfVXybGM=
-X-Gm-Gg: ASbGnctd0d39GOpPQKErgq557iWXp4CFAXT5dj9WXUcHIPtpqPwOuq5uTppEG+6rEdH
-	UOnrlWAUNEvQCnOfYuGEYA30OCwC3dvzLfxNi5TYCNf/k+DuzZHz+eQNAuABgDwMeFZm8jLRsQj
-	5ohcWI21qoFo6A0gdUyBJ7GkTJBK6+PSNCiISxwDbf5/AoGLOhjZjLFkZ85wZRBItDWeH8PtOW4
-	DUQGaIS4B2BVmnuOX1/j56t/pEgbSs2SkBAtACjw7cgcp2QJLlYqM7gaxXQmbprqLmnwbvd9BKM
-	KnEGOzVke/b6/o3nFOe21lcYlxj2V7azpxb73Tj2PE7/rVD7vO+v+mKNJW5LWU9CflNxjsOD5jO
-	Hn35lt7ppY2ninwR/p1FshM5vCmprTBopjMRjsauFPieWx2VDeuH/OYYEnPG0P3p7eUlOlYF2
-X-Google-Smtp-Source: AGHT+IGLw6/8aesIjAkhpVEJeXPBKTkpcMtabs/+MAUeiJpSmdalTytyjetDUXmkZqhdD3fGgZrheA==
-X-Received: by 2002:a05:6830:7101:b0:73e:9fea:f2a5 with SMTP id 46e09a7af769-74569d9deb9mr8195564a34.4.1756823346157;
-        Tue, 02 Sep 2025 07:29:06 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b? ([2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-745743d0e97sm1581788a34.42.2025.09.02.07.29.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 07:29:05 -0700 (PDT)
-Message-ID: <89265de7-eeff-4eea-838b-6a810c069a20@baylibre.com>
-Date: Tue, 2 Sep 2025 09:29:04 -0500
+	s=arc-20240116; t=1756823375; c=relaxed/simple;
+	bh=/di9Z9Q2Z9WifwPEgJy+cghwk2Lex4IcvqCufSkxz1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Go3NrF4RoGvkq34CYCKAnQ5XY+Zj49tN2+6TY0pENG/Ol9lcIXugHCZQFcV1XQM1t/fE8nXqAzBxyOxNl1wpRZVv+97Lmqx48eDbORPWSuZe4gjjffyBnKQctEEU5zchRLb99gsSlZtsXpXx3L4/OhDmUXeBwGDufMR4xkpv5YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jl7O/6eM; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756823374; x=1788359374;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=/di9Z9Q2Z9WifwPEgJy+cghwk2Lex4IcvqCufSkxz1M=;
+  b=jl7O/6eMj0EYkH5A3C0sWvbOu9bcGii8IfSK8KMOkerqqByR7S3llwK7
+   vqSxqViQeE/cNChKfgoayR8YR5k6qbL/Acptp9KSHhf8ROfgn5VTOI+hI
+   cYbX8uxE8m0W2A0S3OmqwArqYky3WYBwZrjQjJeAEwDT+ZP++twUFY/HC
+   obSnFi+la1aqgzlrQv8wiv3PJrkCT53KCTLCcyRmBqTPNljcbJtSmZCL9
+   TrAGeNyVKqVumKwrYKX62shCoqwOQ9JjN6r4IOctT0D9PLt6L5Uq9o6Vx
+   UAiE4R5pNrNTkNP2nB7gL/5r1I7XFpH+qxjkhiOvsbTnfL1HSkpbzH7Tx
+   Q==;
+X-CSE-ConnectionGUID: aV0IQkAETCCmDP+AfxjtdQ==
+X-CSE-MsgGUID: BNXVL0NESNW8e6DoDLSmug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="70480971"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="70480971"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 07:29:33 -0700
+X-CSE-ConnectionGUID: KBB6d1l3TTe5YfjCkl77Bg==
+X-CSE-MsgGUID: HxnFVIFXRyiIXQcPIZR2Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="176602640"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO stinkbox) ([10.245.245.118])
+  by orviesa005.jf.intel.com with SMTP; 02 Sep 2025 07:29:15 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 02 Sep 2025 17:29:14 +0300
+Date: Tue, 2 Sep 2025 17:29:14 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Louis Chauvet <louis.chauvet@bootlin.com>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Dharma Balasubiramani <dharma.b@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org, Liu Ying <victor.liu@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Edmund Dea <edmund.j.dea@intel.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Sui Jingfeng <suijingfeng@loongson.cn>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica@web.codeaurora.org,
+	"Zhang <"@web.codeaurora.org
+Subject: Re: [PATCH v2 00/37] drm/atomic: Get rid of existing states (not
+ really)
+Message-ID: <aLb_OrVn6hK0Hf-F@intel.com>
+References: <20250902-drm-no-more-existing-state-v2-0-de98fc5f6d66@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/2] dt-bindings: iio: adc: add max14001
-To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Kim Seer Paller <kimseer.paller@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>,
- Jonathan Santos <Jonathan.Santos@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>
-References: <cover.1756816682.git.marilene.agarcia@gmail.com>
- <34b7cc7226e789acdc884d35927269aa5a0d5e14.1756816682.git.marilene.agarcia@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <34b7cc7226e789acdc884d35927269aa5a0d5e14.1756816682.git.marilene.agarcia@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250902-drm-no-more-existing-state-v2-0-de98fc5f6d66@kernel.org>
+X-Patchwork-Hint: comment
 
-On 9/2/25 8:15 AM, Marilene Andrade Garcia wrote:
-> Add device-tree documentation for MAX14001/MAX14002 ADCs.
-> The MAX14001/MAX14002 are isolated, single-channel analog-to-digital
-> converters with programmable voltage comparators and inrush current
-> control optimized for configurable binary input applications.
-
-When there are multiple devices, DT maintainers like to know
-what is the difference between the devices.
-
+On Tue, Sep 02, 2025 at 11:34:59AM +0200, Maxime Ripard wrote:
+> Hi,
 > 
-> Co-developed-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-> Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
+> accessors.
+> 
+> The initial intent was to remove the __drm_*_state->state pointer to
+> only rely on old and new states, but we still need it now to know which
+> of the two we need to free: if a state has not been committed (either
+> dropped or checked only), then we need to free the new one, if it has
+> been committed we need to free the old state. 
+> 
+> Thus, the state pointer is kept (and documented) only to point to the
+> state we should free eventually.
+> 
+> All users have been converted to the relevant old or new state
+> accessors.  
+> 
+> This was tested on tidss.
+> 
+> Let me know what you think,
+> Maxime
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-Sine the patch is From: M.A.G., according to [1], this should be:
+Other than the pre-existing ingenic private state issue that
+Dmitry spotted I didn't see anything obviously wrong.
 
-Co-developed-by: K.S.P.
-Signed-off-by: K.S.P.
-Signed-off-by: M.A.G.
-
-(hopefully obvious, but don't use the abbreviations - I just did
-that for brevity)
-
-[1]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
+So apart from that the series is
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
 > ---
->  .../bindings/iio/adc/adi,max14001.yaml        | 79 +++++++++++++++++++
->  MAINTAINERS                                   |  8 ++
->  2 files changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+> Changes in v2:
+> - Dropped the first and second patches
+> - Reworked the recipient list to be nicer with SMTPs
+> - Link to v1: https://lore.kernel.org/r/20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
-> new file mode 100644
-> index 000000000000..ff9a41f04300
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright 2023-2025 Analog Devices Inc.
-> +# Copyright 2023 Kim Seer Paller
-> +# Copyright 2025 Marilene Andrade Garcia
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,max14001.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices MAX14001-MAX14002 ADC
-> +
-> +maintainers:
-> +  - Kim Seer Paller <kimseer.paller@analog.com>
-> +  - Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-> +
-> +description: |
-> +    Single channel 10 bit ADC with SPI interface.
-> +    Datasheet can be found here
-> +      https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
-> +
-> +$ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,max14001
-> +      - adi,max14002
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    maximum: 5000000
-> +
-> +  vdd-supply:
-> +    description:
-> +      Isolated DC-DC power supply input voltage.
-> +
-> +  vddl-supply:
-> +    description:
-> +      Logic power supply.
-> +
-> +  vrefin-supply:
+> ---
+> Maxime Ripard (37):
+>       drm/atomic: Convert drm_atomic_get_connector_state() to use new connector state
+>       drm/atomic: Remove unused drm_atomic_get_existing_connector_state()
+>       drm/atomic: Document __drm_connectors_state state pointer
+>       drm/atomic: Convert __drm_atomic_get_current_plane_state() to modern accessor
+>       drm/atomic: Convert drm_atomic_get_plane_state() to use new plane state
+>       drm/vkms: Convert vkms_crtc_atomic_check() to use new plane state
+>       drm/tilcdc: crtc: Use drm_atomic_helper_check_crtc_primary_plane()
+>       drm/atomic: Remove unused drm_atomic_get_existing_plane_state()
+>       drm/atomic: Document __drm_planes_state state pointer
+>       drm/atomic: Convert drm_atomic_get_crtc_state() to use new connector state
+>       drm/ingenic: ipu: Switch to drm_atomic_get_new_crtc_state()
+>       drm/arm/malidp: Switch to drm_atomic_get_new_crtc_state()
+>       drm/armada: Switch to drm_atomic_get_new_crtc_state()
+>       drm/atmel-hlcdc: Switch to drm_atomic_get_new_crtc_state()
+>       drm/exynos: Switch to drm_atomic_get_new_crtc_state()
+>       drm/imx-dc: Switch to drm_atomic_get_new_crtc_state()
+>       drm/imx-dcss: Switch to drm_atomic_get_new_crtc_state()
+>       drm/imx-ipuv3: Switch to drm_atomic_get_new_crtc_state()
+>       drm/ingenic: Switch to drm_atomic_get_new_crtc_state()
+>       drm/kmb: Switch to drm_atomic_get_new_crtc_state()
+>       drm/logicvc: Switch to drm_atomic_get_new_crtc_state()
+>       drm/loongson: Switch to drm_atomic_get_new_crtc_state()
+>       drm/mediatek: Switch to drm_atomic_get_new_crtc_state()
+>       drm/msm/mdp5: Switch to drm_atomic_get_new_crtc_state()
+>       drm/omap: Switch to drm_atomic_get_new_crtc_state()
+>       drm/rockchip: Switch to drm_atomic_get_new_crtc_state()
+>       drm/sun4i: Switch to drm_atomic_get_new_crtc_state()
+>       drm/tegra: Switch to drm_atomic_get_new_crtc_state()
+>       drm/tilcdc: Switch to drm_atomic_get_new_crtc_state()
+>       drm/vboxvideo: Switch to drm_atomic_get_new_crtc_state()
+>       drm/vc4: Switch to drm_atomic_get_new_crtc_state()
+>       drm/atomic: Switch to drm_atomic_get_new_crtc_state()
+>       drm/framebuffer: Switch to drm_atomic_get_new_crtc_state()
+>       drm/atomic: Remove unused drm_atomic_get_existing_crtc_state()
+>       drm/atomic: Document __drm_crtcs_state state pointer
+>       drm/atomic: Convert drm_atomic_get_private_obj_state() to use new plane state
+>       drm/atomic: Document __drm_private_objs_state state pointer
+> 
+>  drivers/gpu/drm/arm/malidp_planes.c             |   2 +-
+>  drivers/gpu/drm/armada/armada_plane.c           |   3 +-
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |   2 +-
+>  drivers/gpu/drm/drm_atomic.c                    |  21 ++--
+>  drivers/gpu/drm/drm_framebuffer.c               |   2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c       |   2 +-
+>  drivers/gpu/drm/imx/dc/dc-plane.c               |   2 +-
+>  drivers/gpu/drm/imx/dcss/dcss-plane.c           |   4 +-
+>  drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c         |   3 +-
+>  drivers/gpu/drm/ingenic/ingenic-drm-drv.c       |   3 +-
+>  drivers/gpu/drm/ingenic/ingenic-ipu.c           |   4 +-
+>  drivers/gpu/drm/kmb/kmb_plane.c                 |   3 +-
+>  drivers/gpu/drm/logicvc/logicvc_layer.c         |   4 +-
+>  drivers/gpu/drm/loongson/lsdc_plane.c           |   2 +-
+>  drivers/gpu/drm/mediatek/mtk_plane.c            |   3 +-
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c      |   7 +-
+>  drivers/gpu/drm/omapdrm/omap_plane.c            |   2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c     |   6 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c    |   2 +-
+>  drivers/gpu/drm/sun4i/sun8i_ui_layer.c          |   3 +-
+>  drivers/gpu/drm/sun4i/sun8i_vi_layer.c          |   3 +-
+>  drivers/gpu/drm/tegra/dc.c                      |   2 +-
+>  drivers/gpu/drm/tilcdc/tilcdc_crtc.c            |   9 +-
+>  drivers/gpu/drm/tilcdc/tilcdc_plane.c           |   3 +-
+>  drivers/gpu/drm/vboxvideo/vbox_mode.c           |   8 +-
+>  drivers/gpu/drm/vc4/vc4_plane.c                 |   6 +-
+>  drivers/gpu/drm/vkms/vkms_crtc.c                |   4 +-
+>  include/drm/drm_atomic.h                        | 144 ++++++++++++------------
+>  28 files changed, 124 insertions(+), 135 deletions(-)
+> ---
+> base-commit: 7fa4d8dc380fbd81a9d702a855c50690c9c6442c
+> change-id: 20250825-drm-no-more-existing-state-9b3252c1a33b
+> 
+> Best regards,
+> -- 
+> Maxime Ripard <mripard@kernel.org>
 
-The actual pin name is REFIN, so refin-supply would make more sense.
-
-> +    description:
-> +      ADC voltage reference supply.
-> +
-> +  interrupts:
-
-Likely needs `minItems: 1` in case only one interrupt is wired.
-
-> +    items:
-> +      - description: |
-> +          Interrupt for signaling when conversion results exceed the configured
-> +          upper threshold for ADC readings or fall below the lower threshold for
-> +          them. Interrupt source must be attached to COUT pin.
-
-We could shorten these descriptions. The important part is which pin
-it is connected to.
-
-> +      - description: |
-> +          Alert output that asserts low during a number of different error
-> +          conditions. The interrupt source must be attached to FAULT pin.
-> +
-
-And also `interrupt-names:` makes sense so we know which one is
-is wired if only one is given.
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +  - vddl-supply
-> +
+-- 
+Ville Syrjälä
+Intel
 
