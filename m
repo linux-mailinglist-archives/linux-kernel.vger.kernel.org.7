@@ -1,484 +1,450 @@
-Return-Path: <linux-kernel+bounces-795649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A14B3F5E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:48:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FA4B3F2A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4846E1A8686D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:49:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05835484C10
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E6B2E54A2;
-	Tue,  2 Sep 2025 06:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E043A2E0411;
+	Tue,  2 Sep 2025 03:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b="HhmamiIH"
-Received: from mail-m49211.qiye.163.com (mail-m49211.qiye.163.com [45.254.49.211])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XUux2jUz"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF352AF1B;
-	Tue,  2 Sep 2025 06:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756795728; cv=none; b=KckKDIySGr4qMCL1EChh2lYvwLURsVRLxX39sRQYnQv7yNDu5Tp/X4ax8Y6asW8lzTGNkvyhOEiYYvXTguEP1cvtwgKkXTiTqX9mgYGZp0iJo4ruYI7hOb1mOi8QiZfpxp9/hJlu+Hdw7JeqPpn/oa1lDoN1VfwLtUwvjWWhMZA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756795728; c=relaxed/simple;
-	bh=Vqk4u5aiSb6hQfSRVBejkvhgqrTqyOSAY0HvzcEUkM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jn8LHn8Yfu4cKq6ztiWnJTASHep4no/6DdfnTzE4IkuPAUa1aj24Kg1d6TSREK/S1GhPHgxMusj9qJA/gJxsfGy6WfEyo9KyEDqeBm1rPWnDxE2eFDB9Y5tJ6ovj+aUzG/S00MXKP1mrha6sBdzJzMDkAlyl8vj3VijHtvfD1js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn; spf=pass smtp.mailfrom=cqsoftware.com.cn; dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b=HhmamiIH; arc=none smtp.client-ip=45.254.49.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cqsoftware.com.cn
-Received: from fedora.localdomain (unknown [123.53.36.111])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 215dc3bd6;
-	Tue, 2 Sep 2025 11:19:22 +0800 (GMT+08:00)
-From: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
-To: alexs@kernel.org,
-	si.yanteng@linux.dev,
-	corbet@lwn.net
-Cc: dzm91@hust.edu.cn,
-	zhaoshuo@cqsoftware.com.cn,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs/zh_CN: Add security ipe Chinese translation
-Date: Tue,  2 Sep 2025 11:19:16 +0800
-Message-ID: <20250902031918.591908-1-zhaoshuo@cqsoftware.com.cn>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F711A9F82;
+	Tue,  2 Sep 2025 03:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756783298; cv=fail; b=L7ZWserFWsFLj3RVrKC09ecC3hOs1eMZIqFJUzUbLWhEiWiEJJqY7Z3C8pLpDCEM15jK1KWp+n55uTSZUCL9vKHDZA3JLjg4d11w62oj/RsPx48A3i6NABR1COzUf+DevJE0DpaJjh9EvIFvpd3Kcrdk3wMyQxWRa43cOJ8On9Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756783298; c=relaxed/simple;
+	bh=M3G8Lx6E1TrawqT7f3umhYKkKxHtYQRoZXrzp58bSWE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=q5yQUvfttFEZQKDt+fnVwj2bcIyQN575eR4ovmToGatcqnRjQlDOlcK1jTGVmw/2av96oRzRWznf44QFe8W/XEkdTKbeItluz+Ty+nFtwTmefnFl7x4Ffgxlnxs4yd/PtP1B0A2zbty5BTccfX4Xk5TuSdNYtRIlHhxCmqhhZSs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XUux2jUz; arc=fail smtp.client-ip=40.107.93.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KLe0p3YI4CMiN8hOhAlEU6S/bJc49Jp43UJIf8F2kBEaml5rtXkS8XGpVFDHPjcfgj85rk1mzlr/4IPRY8r9u/rAaKPriTR2QFXZ/YLEbZIoxGXO6QgOjOMjeOpdpW3IHhtUu2wHxWVCZEDHpVbP8hr7xWaYKGH2sdRINLcjAldxPhG1HqKVZ70llWiX8UgCU9myGjNml8zyeb12NLU+US1qegt5D0InfclUHSOwyRWZXwvxrj432/l5ELO/oAlD0iQskMpxNXjNTOaeYjSr4sTNXyXLL6ZO29DMb7qpH1cxh72ytYBHFM3StBVdlszkdWb1M9AQuCxwdWDm71KMDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QDunZr+2JKaYYrxLWD372lfcRsqMLiP2rn3/OK8PDjc=;
+ b=KuXigCY/VhUdTLlaKUDwE2kEmSgFLz4v4OfGxsP1vb0Yam0AiYszZ+hrMXhY76Zu1TLRdftMPbwWrcPZ7lBO1sxbuH3oMOMYRiZUhh0sg9ElJIDzFj3dKHikNCfkynLkbeZTQ186mn0b9bz2AnGgwhT45ZI5lbP0lNgBdS9mZwhXL0AXnxnJqmRXXp/Z1Eyj3RjCcF1O+6UxU0KpnoLomIEB1qYmmnERLO8kN6UNDIFpWIdDGl9DJdOVSfPsQkrt4Xy3s20trv4NpwC3LOA3AckxWALN2Qr6JNDAQV6n9Oc3ReZKURnS0h6MwzkI3zlUS1RuE/MMGDArvnTqFbQF1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QDunZr+2JKaYYrxLWD372lfcRsqMLiP2rn3/OK8PDjc=;
+ b=XUux2jUzwOC1YzG26KsT+pWw4E8nyLQO6XIxV075DdrpPsUj8IG3Opi4GG6Bh8ewWG+i3sBgeU7F5jZYul0yy+IhV0N9h1xUEYPCAcV0y5C41Yc3/4dY4jtZgujSkNe4RqZTgkR6n5qc+ttBZh7vJbJ+8pwpSo4uDNIHhLC9S4Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
+ by PH7PR12MB6538.namprd12.prod.outlook.com (2603:10b6:510:1f1::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 03:21:32 +0000
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 03:21:32 +0000
+Message-ID: <a3502513-d085-413c-ac7f-1c924d66354b@amd.com>
+Date: Tue, 2 Sep 2025 11:21:23 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/7] Add AMD ISP4 driver
+To: "Limonciello, Mario" <Mario.Limonciello@amd.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+ "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
+ "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+ "prabhakar.mahadev-lad.rj@bp.renesas.com"
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "sultan@kerneltoast.com" <sultan@kerneltoast.com>,
+ "Nirujogi, Pratap" <Pratap.Nirujogi@amd.com>,
+ "Chan, Benjamin (Koon Pan)" <Benjamin.Chan@amd.com>,
+ "Li, King" <King.Li@amd.com>,
+ "Rosikopulos, Gjorgji" <Gjorgji.Rosikopulos@amd.com>,
+ "Jawich, Phil" <Phil.Jawich@amd.com>,
+ "Antony, Dominic" <Dominic.Antony@amd.com>,
+ "Gong, Richard" <Richard.Gong@amd.com>, "Tsao, Anson" <anson.tsao@amd.com>
+References: <20250828084507.94552-1-Bin.Du@amd.com>
+ <20250828165605.GA9916@pendragon.ideasonboard.com>
+ <13c5922f-a134-463a-87df-d7f4e4eeb880@amd.com>
+Content-Language: en-US
+From: "Du, Bin" <bin.du@amd.com>
+In-Reply-To: <13c5922f-a134-463a-87df-d7f4e4eeb880@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR04CA0015.apcprd04.prod.outlook.com
+ (2603:1096:4:197::21) To PH8PR12MB7446.namprd12.prod.outlook.com
+ (2603:10b6:510:216::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99086fb60009d0kunm47aa8d0c20b7d7
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCGB8ZVh9CT0NLSBhMHUxNT1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUhVTkhVSE1VSkpKWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
-	VKQktLWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=HhmamiIHgdANMhqWlOph+/B4kEDosg2a11HLRl+zyd1ywdtRSD074Ba8l1TqGFVnup1CFVoAUdgTUzuDRo85yjUnU4EiJ1pJgQwMat4u2EdpmlW9Njy+Yroa0UbKSYaWsEJ+t38k7yqz5dwmz748BRgKMJL/As38A7CYRjTywHE=; s=default; c=relaxed/relaxed; d=cqsoftware.com.cn; v=1;
-	bh=YI7lm9EdBU+ebhMsrfiwOO+KmB9/RQY9jUz6lPnAQdU=;
-	h=date:mime-version:subject:message-id:from;
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|PH7PR12MB6538:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9124277c-87fc-4912-b925-08dde9cfd053
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OXdnaHhIcUNnOVN5dW1OTTFpWFJmckJraHFpTmE4WURXSi9UT002MFJDSlk2?=
+ =?utf-8?B?YmRYcGVIV1diWEJESnc3cDF5L1pFeFYvVDNnc0ZHM2x6cEVnbGVGS214eTF4?=
+ =?utf-8?B?UzJvazNWTnFoclZ2V3M5Um14K2psSnV5UXZDdExBWHZTRk1mdnJqa0lXVm5S?=
+ =?utf-8?B?M094YjhrV1FxbjJySzRmMmxKT2FxU0Y3ZmI5RU5KaWJJQVJPZUpYVzBIUURR?=
+ =?utf-8?B?Q3dyZ3RnbExjNzBWVjAyUzE1dGRlcVB6MVJnMVRyakRiZkM1bmtLZWFsZHFi?=
+ =?utf-8?B?aFFYZVpJMUl3R0k5VGZ5RFkxdnUxOXBVVFVva254cFpqTGtjU2hUK1RJa1pz?=
+ =?utf-8?B?eDlzRmprSTcvVFhRY1AydFFNOXNLblJWeTNGaTNLMmFYSnJBTUNnZTJmOXJ2?=
+ =?utf-8?B?bDBTdzZtOFZTNTFjYy9ZQXdvcVF3c3BVeWFxbTNoOCtaNExPSkJkdll2NUFp?=
+ =?utf-8?B?NjNRV0ZyblVYUHVrVURSUWxLZWZWTXJXR2ltbG0rSmpJRG9vUzJwVm9OakdH?=
+ =?utf-8?B?ckZBa3V5aXlRdVlIeUFiS2c2RXFwbXBsSXcvS0J3S3NjemdkSDRSWnhWLysz?=
+ =?utf-8?B?NWRQaitWRGR1SDJLUkd2Lzl1T3YwaHUrMjBxazc2cENyNE9saGkrOFBJcXBC?=
+ =?utf-8?B?aDhVVVVMcFdXZTVwY3RvVENUWnZ4RlhQdTczV0lpS0Z4VkRCWmcyWlRFc241?=
+ =?utf-8?B?NkVUVTNVMnlPTVd2WnhwYXdXQ3k1L01YZGxSdjBaWEFYazRUdW1NTnB4cVJY?=
+ =?utf-8?B?S2JsZ3BiZFUyWUhPa0laTlNVM2FLcTVJSW9PcTMxQnJJenpTM1ZKcnpwZ1BF?=
+ =?utf-8?B?dC9xUGVST0ZiRHAwR3UwMnpISkhNaVN0aDdYZGdjbDZxR2ZBbzJuNC83R0dx?=
+ =?utf-8?B?QkFGZ1FEL2JIbmdXR1JQVlNpN1NFVVMraXphRnRHQXFKeXJNcXkzMTRrcGo3?=
+ =?utf-8?B?NjYvWGgvMFY1TU1ubWVsekdmYzl1azBndTMxcjVmMjQvSG9QejVXck1BUlUx?=
+ =?utf-8?B?Q3dDUFBTNERBWXByeldBbEswMVc4S1JIS0xaVUJOWm5YbXRldnYyMUh4a1Ux?=
+ =?utf-8?B?aFZoL04vbFYxVTVRTVAyeml3cXlJenVXcUNkWk5RWXh1QlI3Szc0dFJIaW95?=
+ =?utf-8?B?WENjd1dZc2E4L1NMSWMvNHdnSEdLODRoUzZCOWdtUUVFcEllZXBNK3dQc2FS?=
+ =?utf-8?B?Z0RqR1RWbzFyYk04cTJkTzZXbXYzSkNENTlkcGVYRndGR0RuQWpWNjBVQmdh?=
+ =?utf-8?B?ekl1dFhncEgvTC91UFZUYUxRV201YWtsblpST2wydUJtc056YzNia3h0Zlg3?=
+ =?utf-8?B?M0dGdnNnZFIySFJZWU1FcGdEUU5UZWYxUXFDZHhyL05ORFpncDhPOG52VDFR?=
+ =?utf-8?B?YjlNQnNIdWJvaHZwc0t0SWJHc2NpbFh0cnYxSE5jU0V3Y0xGTGdSNmZrcE5z?=
+ =?utf-8?B?QVd0alh2c1dVaXdEQ1FXV0RvUUNEb1RBbFFPWEcyc1dybjFrcmxOZnJDamtU?=
+ =?utf-8?B?bmlOVnZJRXZtdW1vQlhCTEovTmR4WENocDBrM3kzNy9EcFcxTGVOSm9BekEx?=
+ =?utf-8?B?UEZkdGtVTlgwemRFTXRpVGxmOHYwZ2g1K2VRS0VueEdXZzBmMXdSVUYxWmJ0?=
+ =?utf-8?B?SC9SR1hjK1lvM3prTkc3dzJRSUd4cW9kaEdiZ05vR2htUHNkMWgzNzBzWGRT?=
+ =?utf-8?B?a05lK00xV3F2R1Y4a2pUTkIvL2FocW1SMm1iYTVTQVlndDdmNW1rZXUzRTZt?=
+ =?utf-8?B?NmhTaXRmTjVxcnp4RG5EZEY2c0NXYng3M3RKV2F5TmRFZi9vaFFDTHo0R25v?=
+ =?utf-8?B?RGo0QUNDVXNWNlZ2S3BxbW04UWV5MllaakdibXcybUYvUXd0SXRnemQ2QVBC?=
+ =?utf-8?Q?7RCRv01L18Ple?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dklCNy9LcmpsSmxxTUF4eU5PcEtBejg4Y2dpN1VWUEEydTFQdWRnVUlCZCtC?=
+ =?utf-8?B?QjgyK1E2cFQrSm8rNER5NEJrd2RRcC9TYStlWFJ4WnNsbkp2U0ZTMUJhM0lv?=
+ =?utf-8?B?eGFhU2laVG5YcEVrYmRuYzZycXJHSm16UzBPVUlOL1J5UVRQcWIrRmVoTHAr?=
+ =?utf-8?B?aDZ1bWc4OGZBbHZoRjBhR243ZEhBczFrVXRzdVEvbGVkc2hDSjZPVnJpNXhk?=
+ =?utf-8?B?aVR3RHBCeEJadTFTWTQwZmdSNTdmT1JncEVnbkY1MFB1ZWRFa3RCOVJCaFhT?=
+ =?utf-8?B?Z1prWG15djNyM2ovMjdnZmdNOXFpOVAxMXNQKzluaXlMcFR3ckM0SVIyeFNu?=
+ =?utf-8?B?N2MvaTA3MUpUSFdzTTBKcHE4aGNFSWlpTFdHQ2Y1YjVlZ3RtUWlCZEY2MmF4?=
+ =?utf-8?B?NGU2aythQUVmVy9qRjJ5UlRmOEtpQ1ViNDRYQzRYSEtJY3R4RTFEbDh6QUtz?=
+ =?utf-8?B?czNVRWRvRUtJMUp2YzZHQlB6dmlRMjExMitndTVnMnBvMXlsdmhXU3V1bDhG?=
+ =?utf-8?B?OWxJdnc3SXl3emRmNVRXS2VaV0psNC82VEF6c3FCOFdRcHVIZkNQSXVJekNa?=
+ =?utf-8?B?UUlDb01qOWpsWThsS1c0RHAwZVFhZml1SGNOazFyTmN4QnY0MVM2cWN3M0FB?=
+ =?utf-8?B?aFVndFdmcG03WkpWNVF4OWdEeG5WdGFISnJDYnJMUEEyeUgwV0ZvNkdKNVgr?=
+ =?utf-8?B?SHNUK3VtZGYvRlNkalJBZHZhZVoxNHhaT3MwT1dXN0xua2pvSkwrczIreGVI?=
+ =?utf-8?B?VHREYithUU85MW9Yc0pvRUpMWVMwaEFLSGdnc0J6a2pxOCtaVERoaEdkSFo2?=
+ =?utf-8?B?THc2VDBLM21KcWVlWTNtMlZVV1R1YldKUmJiTlVqOEJIS1pDS1BOZEhqeDBk?=
+ =?utf-8?B?dlhsVWZuQVg1alkxK0lCeWpSYWFrOHA5Y2QzV2ZTREhsTEYrL3JIeFZ2bHN3?=
+ =?utf-8?B?RG1TeW44cHBQTlVwUWhYUzZWcGRSY1UybDhkNVdlclp0RFRURlVxUm1OYUZS?=
+ =?utf-8?B?KzdBZHg5bUJBYkFWQi9GWWZZK3oyTWtIRDgvRnlNVjc5OGducS9idXJDK29a?=
+ =?utf-8?B?clZjNUNoeFhyVEk2VW5IVFZpOW5QMklMS2I0N29nYkpwMjNRWDRLb3JkbGFI?=
+ =?utf-8?B?SnhmM3ZvemdBaHNMV2V3L2pDekhYd3hvbEl5dmQwdURUaFU5UVdoekgwTDlR?=
+ =?utf-8?B?N0wyemRMeFJ5TE0xclptSk0vSmU3blNya0dwRkF2NHQ4YmZjZXdrbWc0b1FF?=
+ =?utf-8?B?Q1ZpTWpRMlNXOFB1ejVUYWgzeFc4Z3RXWlBIUlhDUytWWjlBTm1iYkxYTm1W?=
+ =?utf-8?B?QkJQemYrNUk0Z0lSbkttSUxPMVZsYzhOVWxXc21Mcmx1RVFhMXRSUUo4R0tj?=
+ =?utf-8?B?WW9Jdkw2WHdXODZGTys0VUMyUDBoS1hRaWkxcnEzc1RjK0daZjhSaWczOGRZ?=
+ =?utf-8?B?UTV5OU95c0o3bXl3dWE1amx6SGg1ZWZtS2RHWitQMWtJNWtEWlJIb3ZROGRX?=
+ =?utf-8?B?bXlBclBhemJ4MTNoOXZzYWJ6cVBnMXh2Q0JaQ2ZzQVkxbjRobVFnR1BPanJr?=
+ =?utf-8?B?aW04RUY1MzBTM211ZGp3eWxvYlhOZi9nVVVGNDY0MHBkWWpYWHRtZW1wdHNH?=
+ =?utf-8?B?NzBTWWRGTGthMjZ6eE1QVUdQbFFCSHFnSTI1NWFOQkFCUDRaRFk3bFZ3bjc3?=
+ =?utf-8?B?M2RCREtqT3NuU3ZidDJNMGdjazl1VnA0NktWQzh1cDFMSjRWMVMyMm9lM0du?=
+ =?utf-8?B?TUw4M1RKYzlZY1dwYWtoYWlZTnVJVXhHdVhzTmNhbmpHZllBc205ZnY1QTFV?=
+ =?utf-8?B?VVA0SDdTRndwU0Q4WE9XQUNqT3lnUG9VcWl0Um1ndkVieWtzRzRXamRBQjk1?=
+ =?utf-8?B?MExDYkRkeTUwcitGaGQyTEpmOGlxS0xWYzNqcGloNEJIVDczZ2VNalZqeFdX?=
+ =?utf-8?B?ODdremorT1VBcy9NTFc2TCtGdDM0NzNEOXRhcDFHSWt1cVR0YmduQlY1WHV2?=
+ =?utf-8?B?NmxtUkV5TVdvRDE4Y0ZkakV0eEMrVUZaS3BIYkZ0dXJEYm03NXFlYXJXTkRI?=
+ =?utf-8?B?WkMyZlMyMkpSUmRyM1NrbWYweURkS0MxeHhLOEdqTTB5T2ZlWWJrRzVCUmFn?=
+ =?utf-8?Q?WiR4=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9124277c-87fc-4912-b925-08dde9cfd053
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 03:21:32.3262
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DDOcaIjclpNjGEaL0AV/k658pg4ExYksbK5PRD4pUxCcVm/6ZiklyEv8c8RvKlbg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6538
 
-Translate .../security/ipe.rst into Chinese.
+Thanks Laurent, and Mario for the clarification.
 
-Update the translation through commit ac6731870ed9
-("documentation: add IPE documentation")
+On 8/29/2025 12:58 AM, Limonciello, Mario wrote:
+> On 8/28/25 11:56 AM, Laurent Pinchart wrote:
+>> Hi Bin Bu,
+>>
+>> Have you sent out the cover letter only ? I haven't received the rest of
+>> the series, and it's not found on lore.kernel.org either.
+> 
+> Something seems wrong with the cover letter threading to the series.
+> Here's the rest of the series (which I did receive too).
+> 
+> https://lore.kernel.org/linux-media/20250828100811.95722-1-Bin.Du@amd.com/
+> 
+>>
+>> On Thu, Aug 28, 2025 at 04:45:00PM +0800, Bin Du wrote:
+>>> Hello,
+>>>
+>>> AMD ISP4 is the AMD image processing gen 4 which can be found in HP ZBook Ultra G1a 14 inch Mobile Workstation PC ( Ryzen AI Max 385)
+>>> (https://ubuntu.com/certified/202411-36043)
+>>> This patch series introduces the initial driver support for the AMD ISP4.
+>>>
+>>> Patch summary:
+>>> - Powers up/off and initializes ISP HW
+>>> - Configures and kicks off ISP FW
+>>> - Interacts with APP using standard V4l2 interface by video node
+>>> - Controls ISP HW and interacts with ISP FW to do image processing
+>>> - Support enum/set output image format and resolution
+>>> - Support queueing buffer from app and dequeueing ISP filled buffer to App
+>>> - It supports libcamera ver0.2 SimplePipeline
+>>> - It is verified on qv4l2, cheese and qcam
+>>> - It is verified together with following patches
+>>> 	platform/x86: Add AMD ISP platform config (https://lore.kernel.org/all/20250514215623.522746-1-pratap.nirujogi@amd.com/)
+>>> 	pinctrl: amd: isp411: Add amdisp GPIO pinctrl (https://github.com/torvalds/linux/commit/e97435ab09f3ad7b6a588dd7c4e45a96699bbb4a)
+>>> 	drm/amd/amdgpu: Add GPIO resources required for amdisp (https://gitlab.freedesktop.org/agd5f/linux/-/commit/ad0f5966ed8297aa47b3184192b00b7379ae0758)
+>>>
+>>> AMD ISP4 Key features:
+>>> - Processes bayer raw data from the connected sensor and output them to different YUV formats
+>>> - Downscale input image to different output image resolution
+>>> - Pipeline to do image processing on the input image including demosaic, denoise, 3A, etc
+>>>
+>>> ----------
+>>>
+>>> Changes v2 -> v3:
+>>>
+>>> - All the dependent patches in other modules (drm/amd/amdgpu, platform/x86, pinctrl/amd) merged on upstream mainline kernel (https://github.com/torvalds/linux) v6.17.
+>>> - Removed usage of amdgpu structs in ISP driver. Added helper functions in amdgpu accepting opaque params from ISP driver to allocate and release ISP GART buffers.
+>>> - Moved sensor and MIPI phy control entirely into ISP FW instead of the previous hybrid approach controlling sensor from both FW and x86 (sensor driver).
+>>> - Removed phy configuration and sensor binding as x86 (sensor driver) had relinquished the sensor control for ISP FW. With this approach the driver will be exposed as web camera like interface.
+>>> - New FW with built-in sensor driver is submitted on upstream linux-firmware repo (https://gitlab.com/kernel-firmware/linux-firmware/).
+>>> - Please note the new FW submitted is not directly compatible with OEM Kernel ISP4.0 (https://github.com/amd/Linux_ISP_Kernel/tree/4.0) and the previous ISP V2 patch series.
+>>> - If intend to use the new FW, please rebuild OEM ISP4.0 Kernel with CONFIG_VIDEO_OV05C10=N and CONFIG_PINCTRL_AMDISP=Y.
+>>> - Included critical fixes from Sultan Alsawaf branch (https://github.com/kerneltoast/kernel_x86_laptop.git) related to managing lifetime of isp buffers.
+>>>         media: amd: isp4: Add missing refcount tracking to mmap memop
+>>>         media: amd: isp4: Don't put or unmap the dmabuf when detaching
+>>>         media: amd: isp4: Don't increment refcount when dmabuf export fails
+>>>         media: amd: isp4: Fix possible use-after-free in isp4vid_vb2_put()
+>>>         media: amd: isp4: Always export a new dmabuf from get_dmabuf memop
+>>>         media: amd: isp4: Fix implicit dmabuf lifetime tracking
+>>>         media: amd: isp4: Fix possible use-after-free when putting implicit dmabuf
+>>>         media: amd: isp4: Simplify isp4vid_get_dmabuf() arguments
+>>>         media: amd: isp4: Move up buf->vaddr check in isp4vid_get_dmabuf()
+>>>         media: amd: isp4: Remove unused userptr memops
+>>>         media: amd: isp4: Add missing cleanup on error in isp4vid_vb2_alloc()
+>>>         media: amd: isp4: Release queued buffers on error in start_streaming
+>>> - Addressed all code related upstream comments
+>>> - Fix typo errors and other cosmetic issue.
+>>>
+>>>
+>>> Changes v1 -> v2:
+>>>
+>>> - Fix media CI test errors and valid warnings
+>>> - Reduce patch number in the series from 9 to 8 by merging MAINTAINERS adding patch to the first patch
+>>> - In patch 5
+>>> 	- do modification to use remote endpoint instead of local endpoint
+>>> 	- use link frequency and port number as start phy parameter instead of extra added phy-id and phy-bit-rate property of endpoint
+>>>
+>>> ----------
+>>>
+>>> It passes v4l2 compliance test, the test reports for:
+>>>
+>>> (a) amd_isp_capture device /dev/video0
+>>>
+>>> Compliance test for amd_isp_capture device /dev/video0:
+>>> -------------------------------------------------------
+>>>
+>>> atg@atg-HP-PV:~/bin$ ./v4l2-compliance -d /dev/video0
+>>> v4l2-compliance 1.29.0-5348, 64 bits, 64-bit time_t
+>>> v4l2-compliance SHA: 75e3f0e2c2cb 2025-03-17 18:12:17
+>>>
+>>> Compliance test for amd_isp_capture device /dev/video0:
+>>>
+>>> Driver Info:
+>>>           Driver name      : amd_isp_capture
+>>>           Card type        : amd_isp_capture
+>>>           Bus info         : platform:amd_isp_capture
+>>>           Driver version   : 6.14.0
+>>>           Capabilities     : 0xa4200001
+>>>                   Video Capture
+>>>                   I/O MC
+>>>                   Streaming
+>>>                   Extended Pix Format
+>>>                   Device Capabilities
+>>>           Device Caps      : 0x24200001
+>>>                   Video Capture
+>>>                   I/O MC
+>>>                   Streaming
+>>>                   Extended Pix Format
+>>> Media Driver Info:
+>>>           Driver name      : amd_isp_capture
+>>>           Model            : amd_isp41_mdev
+>>>           Serial           :
+>>>           Bus info         : platform:amd_isp_capture
+>>>           Media version    : 6.14.0
+>>>           Hardware revision: 0x00000000 (0)
+>>>           Driver version   : 6.14.0
+>>> Interface Info:
+>>>           ID               : 0x03000005
+>>>           Type             : V4L Video
+>>> Entity Info:
+>>>           ID               : 0x00000003 (3)
+>>>           Name             : Preview
+>>>           Function         : V4L2 I/O
+>>>           Pad 0x01000004   : 0: Sink
+>>>             Link 0x02000007: from remote pad 0x1000002 of entity 'amd isp4' (Image Signal Processor): Data, Enabled, Immutable
+>>>
+>>> Required ioctls:
+>>>           test MC information (see 'Media Driver Info' above): OK
+>>>           test VIDIOC_QUERYCAP: OK
+>>>           test invalid ioctls: OK
+>>>
+>>> Allow for multiple opens:
+>>>           test second /dev/video0 open: OK
+>>>           test VIDIOC_QUERYCAP: OK
+>>>           test VIDIOC_G/S_PRIORITY: OK
+>>>           test for unlimited opens: OK
+>>>
+>>> Debug ioctls:
+>>>           test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+>>>           test VIDIOC_LOG_STATUS: OK (Not Supported)
+>>>
+>>> Input ioctls:
+>>>           test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>>>           test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>>>           test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>>>           test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>>>           test VIDIOC_G/S/ENUMINPUT: OK
+>>>           test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>>>           Inputs: 1 Audio Inputs: 0 Tuners: 0
+>>>
+>>> Output ioctls:
+>>>           test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>>>           test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>>>           test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>>>           test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>>>           test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>>>           Outputs: 0 Audio Outputs: 0 Modulators: 0
+>>>
+>>> Input/Output configuration ioctls:
+>>>           test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>>>           test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>>>           test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>>>           test VIDIOC_G/S_EDID: OK (Not Supported)
+>>>
+>>> Control ioctls (Input 0):
+>>>           test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+>>>           test VIDIOC_QUERYCTRL: OK (Not Supported)
+>>>           test VIDIOC_G/S_CTRL: OK (Not Supported)
+>>>           test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+>>>           test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+>>>           test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>>>           Standard Controls: 0 Private Controls: 0
+>>>
+>>> Format ioctls (Input 0):
+>>>           test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>>>           test VIDIOC_G/S_PARM: OK
+>>>           test VIDIOC_G_FBUF: OK (Not Supported)
+>>>           test VIDIOC_G_FMT: OK
+>>>           test VIDIOC_TRY_FMT: OK
+>>>           test VIDIOC_S_FMT: OK
+>>>           test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>>>           test Cropping: OK (Not Supported)
+>>>           test Composing: OK (Not Supported)
+>>>           test Scaling: OK (Not Supported)
+>>>
+>>> Codec ioctls (Input 0):
+>>>           test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>>>           test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>>>           test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+>>>
+>>> Buffer ioctls (Input 0):
+>>>           test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>>>           test CREATE_BUFS maximum buffers: OK
+>>>           test VIDIOC_REMOVE_BUFS: OK
+>>>           test VIDIOC_EXPBUF: OK
+>>>           test Requests: OK (Not Supported)
+>>>           test blocking wait: OK
+>>>
+>>> Total for amd_isp_capture device /dev/video0: 49, Succeeded: 49, Failed: 0, Warnings: 0
+>>>
+>>> Please review and provide feedback.
+>>>
+>>> Many thanks,
+>>>
+>>> Bin Du (7):
+>>>     media: platform: amd: Introduce amd isp4 capture driver
+>>>     media: platform: amd: low level support for isp4 firmware
+>>>     media: platform: amd: Add isp4 fw and hw interface
+>>>     media: platform: amd: isp4 subdev and firmware loading handling added
+>>>     media: platform: amd: isp4 video node and buffers handling added
+>>>     media: platform: amd: isp4 debug fs logging and  more descriptive
+>>>       errors
+>>>     Documentation: add documentation of AMD isp 4 driver
+>>>
+>>>    Documentation/admin-guide/media/amdisp4-1.rst |   66 +
+>>>    Documentation/admin-guide/media/amdisp4.dot   |    8 +
+>>>    .../admin-guide/media/v4l-drivers.rst         |    1 +
+>>>    MAINTAINERS                                   |   25 +
+>>>    drivers/media/platform/Kconfig                |    1 +
+>>>    drivers/media/platform/Makefile               |    1 +
+>>>    drivers/media/platform/amd/Kconfig            |    3 +
+>>>    drivers/media/platform/amd/Makefile           |    3 +
+>>>    drivers/media/platform/amd/isp4/Kconfig       |   13 +
+>>>    drivers/media/platform/amd/isp4/Makefile      |   10 +
+>>>    drivers/media/platform/amd/isp4/isp4.c        |  237 ++++
+>>>    drivers/media/platform/amd/isp4/isp4.h        |   26 +
+>>>    drivers/media/platform/amd/isp4/isp4_debug.c  |  272 ++++
+>>>    drivers/media/platform/amd/isp4/isp4_debug.h  |   41 +
+>>>    .../platform/amd/isp4/isp4_fw_cmd_resp.h      |  314 +++++
+>>>    drivers/media/platform/amd/isp4/isp4_hw_reg.h |  125 ++
+>>>    .../media/platform/amd/isp4/isp4_interface.c  |  972 +++++++++++++
+>>>    .../media/platform/amd/isp4/isp4_interface.h  |  149 ++
+>>>    drivers/media/platform/amd/isp4/isp4_subdev.c | 1198 ++++++++++++++++
+>>>    drivers/media/platform/amd/isp4/isp4_subdev.h |  133 ++
+>>>    drivers/media/platform/amd/isp4/isp4_video.c  | 1213 +++++++++++++++++
+>>>    drivers/media/platform/amd/isp4/isp4_video.h  |   87 ++
+>>>    22 files changed, 4898 insertions(+)
+>>>    create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
+>>>    create mode 100644 Documentation/admin-guide/media/amdisp4.dot
+>>>    create mode 100644 drivers/media/platform/amd/Kconfig
+>>>    create mode 100644 drivers/media/platform/amd/Makefile
+>>>    create mode 100644 drivers/media/platform/amd/isp4/Kconfig
+>>>    create mode 100644 drivers/media/platform/amd/isp4/Makefile
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4.c
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4.h
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.c
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.h
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.c
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.h
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.c
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.h
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_video.c
+>>>    create mode 100644 drivers/media/platform/amd/isp4/isp4_video.h
+>>
+> 
 
-Signed-off-by: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
----
- .../translations/zh_CN/security/ipe.rst       | 398 ++++++++++++++++++
- 1 file changed, 398 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/security/ipe.rst
-
-diff --git a/Documentation/translations/zh_CN/security/ipe.rst b/Documentation/translations/zh_CN/security/ipe.rst
-new file mode 100644
-index 000000000000..55968f0c7ae3
---- /dev/null
-+++ b/Documentation/translations/zh_CN/security/ipe.rst
-@@ -0,0 +1,398 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/security/sak.rst
-+
-+:翻译:
-+ 赵硕 Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
-+
-+完整性策略执行（IPE）-内核文档
-+==============================
-+
-+.. NOTE::
-+
-+   这是针对开发人员而不是管理员的文档。如果您正在
-+   寻找有关IPE使用的文档，请参阅 :doc:`IPE admin
-+   guide </admin-guide/LSM/ipe>`。
-+
-+历史背景
-+--------
-+
-+最初促使IPE实施的原因，是需要创建一个锁定式系统。该系统将
-+从一开始就具备安全性，并且在可执行代码和系统功能关键的特定
-+数据文件上，提供强有力的完整性保障。只有当这些特定数据文件
-+符合完整性策略时，它们才可以被读取。系统中还将存在强制访问
-+控制机制，因此扩展属性（xattrs）也必须受到保护。这就引出了
-+需要选择能够提供完整性保证的机制。当时，有两种主要机制被考
-+虑，用以在满足这些要求的前提下保证系统完整性：
-+
-+  1. IMA + EVM Signatures
-+  2. DM-Verity
-+
-+这两个选项都经过了仔细考虑，然而在原始的IPE使用场景
-+中，最终选择DM-Verity而非IMA+EVM作为完整性机制，主
-+要有三个原因：
-+
-+  1. 防护额外的攻击途径
-+
-+    * 使用IMA+EVM时，如果没有加密解决方案，系统很容易受到
-+      离线攻击，特别是针对上述特定数据文件的攻击。
-+
-+      与可执行文件不同，读取操作（如对受保护数据文件的读
-+      取操作）无法强制性进行全局完整性验证。这意味着必须
-+      有一种选择机制来决定是否应对某个读取操作实施完整性
-+      策略。
-+
-+      在当时，这是通过强制访问控制标签来实现的，IMA策略会
-+      指定哪些标签需要进行完整性验证，这带来了一个问题：
-+      EVM虽然可以保护标签，但如果攻击者离线修改文件系统，
-+      那么攻击者就可以清除所有的扩展属性（xattrs）——包括
-+      用于确定文件是否应受完整性策略约束的SELinux标签。
-+
-+      使用DM-Verity，由于xattrs被保存为Merkel树的一部分，
-+      如果对由dm-verity保护的文件系统进行了离线挂载，校验
-+      和将不在匹配，文件将无法读取。
-+
-+    * 由于用户空间的二进制文件在Linux中是分页加载的，dm-
-+      verity同样提供了对抗恶意块设备的额外保护。在这样的
-+      攻击中，块设备最初报告适当的内容以供IMA哈希计算，通
-+      过所需的完整性检查。然后，在访问真实数据时发生的页面
-+      错误将报告攻击者的有效载荷。由于dm-verity会在页面错
-+      误发生时检查数据（以及磁盘访问），因此这种攻击得到了
-+      缓解。
-+
-+  2. 性能:
-+
-+    * dm-verity在块被读取时按需提供完整性验证，而不需要将整
-+      个文件读入内存进行验证。
-+
-+  3. 签名的简化性:
-+
-+    * 不需要两个签名（IMA 然后是 EVM）：一个签名可以覆盖整个
-+      块设备。
-+    * 签名可以存储在文件系统元数据之外。
-+    * 该签名支持基于 x.509 的签名基础设施。
-+
-+下一步是选择一个策略来执行完整性验证机制，该策略的最低
-+要求是：
-+
-+  1. 策略本身必须经过完整性验证（防止针对它的简单攻击）。
-+  2. 策略本身必须抵抗回滚攻击。
-+  3. 策略执行必须具有类似宽松模式的功能。
-+  4. 策略必须能够在不重启的情况下，完整地进行更新。
-+  5. 策略更新必须是原子性的。
-+  6. 策略必须支持撤销先前创建的组件。
-+  7. 策略必须在任何时间点都能进行审计。
-+
-+当时，IMA作为唯一的完整性策略机制，被用来与这些要求进行对比，
-+但未能满足所有最低要求。尽管考虑过扩展IMA以涵盖这些要求，但
-+最终因两个原因被放弃：
-+
-+  1. 回归风险；这其中许多变更将导致对已经存在于内核的IMA进行
-+     重大代码更改，因此可能会影响用户。
-+
-+  2. IMA在该系统中用于测量和证明；将测量策略与本地完整性策略
-+     的执行分离被认为是有利的。
-+
-+由于这些原因，决定创建一个新的LSM，其职责是仅限于本地完整性
-+策略的执行。
-+
-+职责和范围
-+----------
-+
-+IPE顾名思义，本质上是一种完整性策略执行解决方案；IPE并不强制规定
-+如何提供完整性保障，而是将这一决策权留给系统管理员，管理员根据自身
-+需求，选择符合的机制来设定安全标准。存在几种不同的完整性解决方案，
-+它们提供了不同程度的安全保障；而IPE允许系统管理员理论上为所有这些
-+解决方案制定策略。
-+
-+IPE自身没有内置确保完整性的固有机制。相反，在构建具备完整性保障能力
-+的系统时，存在更高效的分层方案可供使用。需要重点注意的是，用于证明完
-+整性的机制，与用于执行完整性声明的策略是相互独立的。
-+
-+因此，IPE依据以下方面进行设计：
-+
-+  1. 便于与完整性提供机制集成。
-+  2. 便于平台管理员/系统管理员使用。
-+
-+设计理由:
-+---------
-+
-+IPE是在评估其他操作系统和环境中的现有完整性策略解决方案后设计的。
-+在对其他实现的调查中，发现了一些缺陷：
-+
-+  1. 策略不易为人们读取，通常需要二进制中间格式。
-+  2. 默认情况下会隐式采取单一的、不可定制的操作。
-+  3. 调试策略需要手动来确定违反了哪个规则。
-+  4. 编写策略需要对更大系统或操作系统有深入的了解。
-+
-+IPE尝试避免所有这些缺陷。
-+
-+策略
-+~~~~
-+
-+纯文本
-+^^^^^^
-+
-+IPE的策略是纯文本格式的。相较于其他Linux安全模块（LSM），
-+策略文件体积略大，但能解决其他平台上部分完整性策略方案存在
-+的两个核心问题。
-+
-+第一个问题是代码维护和冗余的问题。为了编写策略，策略必须是
-+以某种形式的字符串形式呈现（无论是 XML、JSON、YAML 等结构化
-+格式，还是其他形式），以便策略编写者能够理解所写内容。在假设
-+的二进制策略设计中，需要一个序列化器将策略将可读的形式转换为
-+二进制形式，同时还需要一个反序列化器来将二进制形式转换为内核
-+中的数据结构。
-+
-+最终，还需要另一个反序列化器将是必要的，用于将二进制形式转换
-+为人类可读的形式，并尽可能保存所有信息，这是因为使用此访问控
-+制系统的用户必须维护一个校验表和原始文件，才能理解哪些策略已
-+经部署在该系统上，哪些没有。对于单个用户来说，这可能没问题，
-+因为旧的策略可以在更新生效后很快被丢弃。但对于管理成千上万、
-+甚至数十万台计算机的用户，且这些计算机有不同的操作系统和不同
-+的操作需求，这很快就成了一个问题，因为数年前的过时策略可能仍然
-+存在，从而导致需要快速恢复策略或投资大量基础设施来跟踪每个策略
-+的内容。
-+
-+有了这三个独立的序列化器/反序列化器，维护成本非常昂贵。如果策略
-+避免使用二进制格式，则只需要一个序列化器；将人类可读的形式转换
-+为内核中的数据结构。从而节省了代码维护成本，并保持了可操作性。
-+
-+第二个关于二进制格式的问题是透明性，由于IPE根据系统资源的可信度
-+来控制访问，因此其策略也必须可信，以便可以被更改。这是通过签名来
-+完成的，这就需要签名过程。签名过程通常具有很高的安全标准，因为
-+任何被签名的内容都可以被用来攻击完整性执行系统。签署时，签署者
-+必须知道他们在签署什么，二进制策略可能会导致这一点的模糊化；签署
-+者看到的只是一个不透明的二进制数据块。另一方面，对于纯文本策略中，
-+签署者看到的则是实际提交的策略。
-+
-+启动策略
-+~~~~~~~~
-+
-+如果配置得当，IPE能够在内核启动并进入用户模式时立即执行策略。
-+这意味着需要在用户模式开始的那一刻就存储一定的策略。通常，这种
-+存储可以通过一下三种方式之一来处理：
-+
-+  1. 策略文件存储在磁盘上，内核在进入可能需要做出执行决策的代码
-+     路径之前，先加载该策略。
-+  2. 策略文件由引导加载程序传递给内核，内核解析这些策略。
-+  3. 将一个策略文件编译到内核中，内核在初始化过程中对其进行解析并
-+     执行。
-+
-+第一种方式存在问题：内核从用户空间读取文件通常是不推荐的，并且在
-+内核中极为罕见。
-+
-+第二种选项同样存在问题：Linux在其整个生态系统中支持多种引导加载程序，
-+所有引导加载程序都必须支持这种新方法，或者需要有一个独立的来源，这
-+可能会导致内核启动过程发生不必要的重大变化。
-+
-+第三种选项是最佳选择，但需要注意的是，编译进内核的策略会占用磁盘空间。
-+重要的是要使这一策略足够通用，以便用户空间能够加载新的、更复杂的策略，
-+同时也要足够严格，以防止过度授权并避免引发安全问题。
-+
-+initramfs提供了一种建立此启动路径的方法。内核启动时以最小化的策略启动，
-+该策略仅信任initramfs。在initramfs内，当真实的根文件系统已挂载且尚未
-+切换时，它会部署并激活一个信任新根文件系统的策略。这种方法防止了在任何
-+步骤中出现过度授权，并保持内核策略的最小化。
-+
-+启动
-+^^^^
-+
-+然而，并不是每个系统都以initramfs启动，因此编译进内核的启动策略需要具备
-+一定的灵活性，以明确如何为启动的下一个阶段建立信任。为此，如果我们将编译
-+进内核的策略设计为一个完整的IPE策略，这样系统构建者便能合理定义第一阶段启
-+动的需求。
-+
-+可更新、无需重启的策略
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+随着时间的推移，系统需求发生变化（例如，之前信任的应用程序中发现漏洞、秘钥
-+轮换等）。更新内核以满足这些安全目标并非始终是一个合适的选择，因为内核更新并
-+非完全无风险的，而搁置安全更新会使系统处于脆弱状态。这意味着IPE需要一个可以
-+完全更新的策略（允许撤销现有的策略），并且这个更新来源必须是内核外部的（允许
-+再不更新内核的情况下更新策略）。
-+
-+此外，由于内核在调用之间是无状态的，并且从内核空间读取磁盘上的策略文件不是一
-+个好主意，因此策略更新必须能够在不重启的情况下完成。
-+
-+为了允许从外部来源进行更新，考虑到外部来源可能是恶意的，因此该策略需要具备可被
-+识别为可信的机制。这一机制通过签名链实现：策略的签名需与内核中的某个信任源相
-+关联。通常，这个信任源是 ``SYSTEM_TRUSTED_KEYRING`` ，这是一个在内核编译时就被
-+初始化填充的密钥环，因为这符合上述编译进来策略的制作者与能够部署策略更新的实体
-+相同的预期。
-+
-+防回滚 / 防重放
-+~~~~~~~~~~~~~~~
-+
-+随着时间的推移，系统可能会发现漏洞，曾经受信任的资源可能不再可信，IPE的
-+策略也不例外。可能会出现的情况是，策略制作者误部署了一个不安全的策略，
-+随后再用一个安全的策略进行修正。
-+
-+假设一旦不安全的策略被部署，攻击者获取了这个不安全的策略，IPE需要有一种
-+方式来防止从安全的策略更新回滚到不安全的策略。
-+
-+最初，IPE的策略可以包含一个policy_version字段，声明系统上所有可激活策略
-+所需的最低版本号。这将在系统运行期间防止回滚。
-+
-+.. WARNING::
-+
-+   然而，由于内核每次启动都是无状态的，因此该策略版本将在下次
-+   启动时被重置为0.0.0。系统构建者需要意识到这一点，并确保在启
-+   动后尽快部署新的安全策略，以确保攻击者部署不安全的策略的几
-+   率最小化。
-+
-+隐式操作:
-+~~~~~~~~~
-+
-+隐式操作的问题只有在考虑系统中多个操作具有不同级别时才会显现出来。
-+例如，考虑一个系统，该系统对可执行代码和系统中对其功能至关重要的
-+特定数据提供强大的完整性保障。在这个系统中，可能存在三种类型的
-+策略：
-+
-+  1. 一种策略，在这种策略中，如果操作未能匹配到任何规则，则该操
-+     作将被拒绝。
-+  2. 一种策略，在这种策略中，如果操作未能匹配到任何规则，则该操
-+     作将被允许。
-+  3. 一种策略，在这种策略中，如果操作未能匹配到任何规则，则执行
-+     操作由策略作者指定。
-+
-+第一种类型的策略示例如下::
-+
-+  op=EXECUTE integrity_verified=YES action=ALLOW
-+
-+在示例系统中，这对于可执行文件来说效果很好，因为所有可执行文件
-+都应该拥有完整性保障。但问题出现在第二个要求上，即关于特定数据
-+文件的要求。这将导致如下策略（假设策略按行依次执行）::
-+
-+  op=EXECUTE integrity_verified=YES action=ALLOW
-+
-+  op=READ integrity_verified=NO label=critical_t action=DENY
-+  op=READ action=ALLOW
-+
-+若阅读过文档，了解策略按顺序执行且默认动作是拒绝，那么这个策略的
-+逻辑还算清晰；但最后一行规则实际上将读取操作的默认动作改成了允许。
-+这种设计是必要的，因为在实际系统中，存在一些无需验证的读取操作（例
-+如向日志文件追加内容时的读取操作）。
-+
-+第二种策略类型（未匹配任何规则时默认允许）在管控特定数据文件时逻辑
-+更清晰，其策略可简化为::
-+
-+  op=READ integrity_verified=NO label=critical_t action=DENY
-+
-+但与第一种策略类似，这种默认允许的策略在管控执行操作时会存在缺陷，
-+因此仍需显式覆盖默认动作::
-+
-+  op=EXECUTE integrity_verified=YES action=ALLOW
-+  op=EXECUTE action=DENY
-+
-+  op=READ integrity_verified=NO label=critical_t action=DENY
-+
-+这就引出了第三种策略类型（自定义默认动作）。该类型无需让用户绞尽脑汁
-+通过空规则覆盖默认动作，而是强制用户根据自身场景思考合适的默认动作是
-+什么，并显式声明::
-+
-+  DEFAULT op=EXECUTE action=DENY
-+  op=EXECUTE integrity_verified=YES action=ALLOW
-+
-+  DEFAULT op=READ action=ALLOW
-+  op=READ integrity_verified=NO label=critical_t action=DENY
-+
-+策略调试:
-+~~~~~~~~~
-+
-+在开发策略时，知道策略违反了哪一行有助于减少调试成本；可以
-+将调查的范围缩小到导致该行为的确切行。有些完整性策略系统并
-+不提供这一信息，而是提供评估过程中使用的信息。这随后需要将
-+这些信息和策略进行关联，以分析哪里了问题。
-+
-+相反，IPE只会输出匹配到的规则。这将调查范围限制到确切到策略行
-+（在特定规则的情况下）或部分（在DEFAULT规则的情况下）。当在
-+评估策略时观察到策略失败时，这可以减少迭代和调查的时间。
-+
-+IPE的策略引擎还被设计成让人类容易理解如何调查策略失败。每一
-+行都会按编写顺序进行评估，因此算法非常简单，便于人类重现步
-+骤并找出可能导致失败的原因。而在调查其他的系统中，加载策略
-+时会进行优化（例如对规则排序）。在这些系统中，调试需要多个
-+步骤，而且没有先阅读代码的情况下，终端用户可能无法完全理解
-+该算法的原理。
-+
-+简化策略:
-+~~~~~~~~~
-+
-+最后，IPE的策略是为系统管理员设计的，而不是内核开发人员。
-+IPE不涉及单独的LSM钩子（或系统调用），而是涵盖操作。这
-+意味着，系统管理员不需要知道像 ``mmap`` 、 ``mprotect`` 、
-+``execve`` 和 ``uselib`` 这些系统调用必须有规则进行保护，
-+而只需要知道他们想要限制代码执行。这减少了由于缺乏对底层
-+系统的了解而可能导致的绕过情况；而IPE的维护者作为内核开发
-+人员，可以做出正确的选择，确定某些操作是否与这些操作匹配，
-+以及在什么条件下匹配。
-+
-+实现说明
-+--------
-+
-+匿名内存
-+~~~~~~~~
-+
-+在IPE中，匿名内存的处理方式与其他任何类型的访问没有区别。当匿
-+名内存使用 ``+X`` 映射时，它仍然会进入 ``file_mmp`` 或
-+``file_mprotect`` 钩子，但此时会带有一个 ``NULL`` 文件对象
-+这会像其他文件一样提交进行评估。然而，所有当前的信任属性都会
-+评估为假，因为它们都是基于文件的，而此次操作并不与任何文件相关联。
-+
-+.. WARNING::
-+
-+  这也适用于 ``kernel_load_data`` 钩子，当内核从一个没有文件
-+  支持的用户空间缓冲区加载数据时。在这种情况下，所有当前的信任
-+  属性也将评估为false。
-+
-+Securityfs接口
-+~~~~~~~~~~~~~~
-+
-+每个策略的对应的securityfs树是有些独特的。例如，对于一个标准的
-+securityfs策略树::
-+
-+  MyPolicy
-+    |- active
-+    |- delete
-+    |- name
-+    |- pkcs7
-+    |- policy
-+    |- update
-+    |- version
-+
-+策略存储在MyPolicy对应节点的 ``->i_private`` 数据中。
-+
-+测试
-+----
-+
-+IPE为策略解析器提供了KUnit测试。推荐kunitconfig::
-+
-+  CONFIG_KUNIT=y
-+  CONFIG_SECURITY=y
-+  CONFIG_SECURITYFS=y
-+  CONFIG_PKCS7_MESSAGE_PARSER=y
-+  CONFIG_SYSTEM_DATA_VERIFICATION=y
-+  CONFIG_FS_VERITY=y
-+  CONFIG_FS_VERITY_BUILTIN_SIGNATURES=y
-+  CONFIG_BLOCK=y
-+  CONFIG_MD=y
-+  CONFIG_BLK_DEV_DM=y
-+  CONFIG_DM_VERITY=y
-+  CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y
-+  CONFIG_NET=y
-+  CONFIG_AUDIT=y
-+  CONFIG_AUDITSYSCALL=y
-+  CONFIG_BLK_DEV_INITRD=y
-+
-+  CONFIG_SECURITY_IPE=y
-+  CONFIG_IPE_PROP_DM_VERITY=y
-+  CONFIG_IPE_PROP_DM_VERITY_SIGNATURE=y
-+  CONFIG_IPE_PROP_FS_VERITY=y
-+  CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG=y
-+  CONFIG_SECURITY_IPE_KUNIT_TEST=y
-+
-+此外，IPE 具有一个基于 Python 的集成
-+`测试套件 <https://github.com/microsoft/ipe/tree/test-suite>`_
-+可以测试用户界面和强制执行功能。
 -- 
-2.49.0
+Regards,
+Bin
 
 
