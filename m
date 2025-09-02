@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-795877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1A8B3F8DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:43:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3A2B3F8E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBE0516A57F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FCF83AF105
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1192E8E1F;
-	Tue,  2 Sep 2025 08:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801502E9ECA;
+	Tue,  2 Sep 2025 08:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h6oC9Khp"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y4QJEfV4"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492C72E7F1E
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568752E9EAC;
+	Tue,  2 Sep 2025 08:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802373; cv=none; b=pLztoY5o75RYjsO/SKT8pRcR3qfuQ0zGuJCLL3nAsFFdwngDqX8gF5XD0TLiagAUY0jbAD0hhMwM+XEFl1WyBH2mQyhLzUnN+FHn5oebJKJ4I6mJk+aOV4OogaIKEUwmV/9QnIiSzFkJX0brh3dlkzfO2PBabsUAYwpWOVbfG+w=
+	t=1756802415; cv=none; b=UT/+0z8gOS6RgYsHPcXXErJcLcM6qkcKkY0t30EvvCXofLfysy64oruv8BITtWThPId51i6BBcoqafI7wc2/nFcI0ouBP+nq1CDULr2uHfqJ/T5cYUB0+NitPQRkbH9BvSD9HQLxSjs5YgOtgm7oh9IW3xpjrGfF7Vco3sLKDyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802373; c=relaxed/simple;
-	bh=koiejtjJlpqtXarBrORI6mw99ruaARcVA9rvYu437aA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LWMI3UjS7VYzL23Euv43nNM72+MNyGEh1moQgGiRK2Aoj8RglTkzIHEMQGbdQD78/XZPxqowopRRS5yz2s/QlB1RuCZRL464cuyPKjVE9gB0DqZ1lZY+Y041zV0jXhfWm6oKL+7sq3gavTZEPnd11jQdoeeo/AG157HpuDHATE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h6oC9Khp; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b71fe31ffso30490115e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756802371; x=1757407171; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JP1QA+RZ7uMNnI6suXZ0G9wwt/IV21LJWjZMZ+MqgQ0=;
-        b=h6oC9KhpiwUUKYCOzmbv56LayJz0NqSQ6IwUPLc7kAcxc/HFDWeuM5B7neAtzmFAT1
-         dXY3QambcGqKShVt+hEy0TQ3tZHnefmj5QXRbBj7nrtWe82mBJv7+G9GBc5/WQvUj95A
-         pEMg078/8EpQCu8HzkC/lEu7Mj4piAl0JWeMjih6kdnlbHv/XqroJLAElYG93UkDrHld
-         q8ByyP819w6JW6ziguS4SOo6wi2dYD8KG3kT+51B9zBozUABgwn0UNR3KMamwqspdlpz
-         XEgUGy9sVL5PCrgbMpY+VzJWtKRpWY+k/XQzlJcciVxAvCSbXDcWTNtRJEdwV675ltms
-         asqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756802371; x=1757407171;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JP1QA+RZ7uMNnI6suXZ0G9wwt/IV21LJWjZMZ+MqgQ0=;
-        b=G5xPwkc8zSvFyL2pQI/u79TZhXhuXr11NWeAthHyMXox0/8UZx3nFoyZRgn5Wy78cB
-         IwRT0KCQlvTOgQkACMM2IYZxe4XOc2H1UpBTjC2/8cFG98QHsGBst9EG48BwDK1jlL07
-         5PC1kq6Gz5APBwp/B2t26W8l52GrgW6nLwCtTPBmQydhPiRoYVzHTCFDBjJ43XpRDfQP
-         A/hvizTj5EsThafDrFVZnwgVcG0ESN3FP27emslBqiqXCatY+LXsYlPWqMuyhKpEc06l
-         FgWmS+CVib7ZlegVoc5mWYuIYMpnNZnLUSNBzmPtEXgmQwaxdagQUI21C79z7Z25R7ao
-         yHlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXx0eKy8SOkcMCcL5xQpYuTxo6UHuw/Qxjs04VlpUINXl+fwql1w6G/tQha1u8bB2v4MLCQs8se5Y9iOL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgg19hEmSJEtSgVDtE+/kOfOFYQJYgCDDr2+dEbMUezd4cjkox
-	G89usccljHOJFAIOqu4cAAp4pNQRVtvFbMz1aB7psqQTtzwBK8vm1IVjIY1tsoM2sRTYGRwSuI9
-	rMQ64pN3Vo5ogZl5mug==
-X-Google-Smtp-Source: AGHT+IEJiBZvawIN2RgaGyQWpOpWEL1rOV3VDXt/kFR5FQk24WrYF7J15eKsT4qagQtBygvpi7Ak/mP13MhKKiw=
-X-Received: from wmti8.prod.google.com ([2002:a05:600c:8b88:b0:45b:732e:5a16])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1f94:b0:45b:772b:12b9 with SMTP id 5b1f17b1804b1-45b855336dcmr90049625e9.15.1756802370679;
- Tue, 02 Sep 2025 01:39:30 -0700 (PDT)
-Date: Tue, 2 Sep 2025 08:39:29 +0000
-In-Reply-To: <20250901202850.208116-1-dakr@kernel.org>
+	s=arc-20240116; t=1756802415; c=relaxed/simple;
+	bh=uW30a3YGTsj0W+a1T1uBxXtDwEFQcaARUE4pQoMLTho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vxd1ofCkRQXAfRMIVEwZSSbR95XMZN3nJimEHZoFgS71nxpDMHPxGH8sik6yAr3itqnXOkI0txgqx6+/4Vwktd1RbSt0evoOimOlO2FXD8gqOTPnr9aivVp1JzCMurcKOa6Uubu8W3EdB5J/RV/rXpGLnuTdjp65eIKlKF4/iQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Y4QJEfV4; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 16AAE8D4;
+	Tue,  2 Sep 2025 10:39:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756802345;
+	bh=uW30a3YGTsj0W+a1T1uBxXtDwEFQcaARUE4pQoMLTho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y4QJEfV44G6twamlObXx/YUAwG4jsdoQmQZ0+PVfIeC6qznJSEbkOUgh5TP82K8+b
+	 UwpKKOye4Z3lvjYOeQqzYHikdnDKSG33TVMIx+RPavpwIDV8wV3s+knDCyOJkenzoq
+	 7/OeHc9NAmbQ2L0duFwCNJGHXztiyUQ1oiQ51X3k=
+Date: Tue, 2 Sep 2025 10:39:52 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "G.N. Zhou" <guoniu.zhou@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <frank.li@nxp.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXT] Re: [PATCH v5 3/4] media: imx8mq-mipi-csi2: Explicitly
+ release reset
+Message-ID: <20250902083952.GE13448@pendragon.ideasonboard.com>
+References: <20250901-csi2_imx8ulp-v5-0-67964d1471f3@nxp.com>
+ <20250901-csi2_imx8ulp-v5-3-67964d1471f3@nxp.com>
+ <20250901153632.GA13448@pendragon.ideasonboard.com>
+ <AS8PR04MB9080AD8135277660ACE41FF0FA06A@AS8PR04MB9080.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250901202850.208116-1-dakr@kernel.org>
-Message-ID: <aLatQY1ea3on4n8I@google.com>
-Subject: Re: [PATCH] MAINTAINERS: Add drm-rust tree for Rust DRM drivers and infrastructure
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, acourbot@nvidia.com, 
-	daniel.almeida@collabora.com, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <AS8PR04MB9080AD8135277660ACE41FF0FA06A@AS8PR04MB9080.eurprd04.prod.outlook.com>
 
-On Mon, Sep 01, 2025 at 10:26:39PM +0200, Danilo Krummrich wrote:
-> Multiple DRM Rust drivers (e.g. nova-core, nova-drm, Tyr, rvkms) are in
-> development, with at least Nova and (soon) Tyr already upstream. Having a
-> shared tree will ease and accelerate development, since all drivers can
-> consume new infrastructure in the same release cycle.
+On Tue, Sep 02, 2025 at 02:21:58AM +0000, G.N. Zhou wrote:
+> On Monday, September 1, 2025 11:37 PM, Laurent Pinchart wrote:
+> > On Mon, Sep 01, 2025 at 02:25:31PM +0800, Guoniu Zhou wrote:
+> > > Call reset_control_deassert() to explicitly release reset to make sure
+> > > reset bits are cleared since platform like i.MX8ULP can't clear reset
+> > > bits automatically.
+> > >
+> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> > > ---
+> > >  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 8 ++------
+> > >  1 file changed, 2 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> > > index 2bf11984690af2e687a3217e465697333d9d995d..6b83aa85af42e1dac25cf29056863680c1f89402
+> > > 100644
+> > > --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> > > +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> > > @@ -337,18 +337,14 @@ static int imx8mq_mipi_csi_sw_reset(struct csi_state *state)  {
+> > >       int ret;
+> > >
+> > > -     /*
+> > > -      * these are most likely self-clearing reset bits. to make it
+> > > -      * more clear, the reset-imx7 driver should implement the
+> > > -      * .reset() operation.
+> > 
+> > What happened to this plan, would it be feasible to implement the
 > 
-> This includes infrastructure shared with other subsystem trees (e.g. Rust
-> or driver-core). By consolidating in drm-rust, we avoid adding extra
-> burden to drm-misc maintainers, e.g. dealing with cross-tree topic
-> branches.
+> Since reset in ULP isn't self-clearing, so need to release the reset before return.
+> And I think it's no side effect to call reset_control_deassert() here since it makes
+> more clear and readable about software reset implementation.
 > 
-> The drm-misc tree is not a good fit for this stage of development, since
-> its documented scope is small drivers with occasional large series.
+> > .reset() operation in the relevant drivers to be able to use
+> > reset_control_reset() here ?
 > 
-> Rust drivers in development upstream, however, regularly involve large
-> patch series, new infrastructure, and shared topic branches, which may
-> not align well with drm-misc at this stage.
-> 
-> The drm-rust tree may not be a permanent solution. Once the core Rust,
-> DRM, and KMS infrastructure have stabilized, drivers and infrastructure
-> changes are expected to transition into drm-misc or standalone driver
-> trees respectively. Until then, drm-rust provides a dedicated place to
-> coordinate development without disrupting existing workflows too much.
-> 
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Alexandre Courbot <acourbot@nvidia.com>
-> Cc: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Implement the .reset() operation in in the relevant drivers should have same effect
+> like here. If you agree, I prefer to use the patch here since less changes usually mean
+> low risk.
 
-Acked-by: Alice Ryhl <aliceryhl@google.com>
+I'm OK with that.
+
+> > > -      */
+> > >       ret = reset_control_assert(state->rst);
+> > >       if (ret < 0) {
+> > >               dev_err(state->dev, "Failed to assert resets: %d\n", ret);
+> > >               return ret;
+> > >       }
+> > >
+> > > -     return 0;
+> > > +     /* Explicitly release reset to make sure reset bits are cleared. */
+> > > +     return reset_control_deassert(state->rst);
+> > >  }
+> > >
+> > >  static void imx8mq_mipi_csi_set_params(struct csi_state *state)
+
+-- 
+Regards,
+
+Laurent Pinchart
 
