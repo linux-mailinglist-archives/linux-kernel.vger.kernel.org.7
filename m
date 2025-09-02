@@ -1,90 +1,191 @@
-Return-Path: <linux-kernel+bounces-796673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19896B405CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:58:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B068B405D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1090C3B6814
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42539174A91
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C7E2D4818;
-	Tue,  2 Sep 2025 13:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7173126DA;
+	Tue,  2 Sep 2025 13:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhSJElul"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eRgAjFqj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CE51F61C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F393212556;
+	Tue,  2 Sep 2025 13:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756821003; cv=none; b=nk0tqFIgXP3Senkpj7V1PBzc8FugP5TIPZBMwoGtLS5hCYGAGOB7xfK0M56N/h9H6OW2rCi76YuA2DrAfNtrR/b86FgjX9ll6N1FN7ahhbspnt35zQowXhr/86glvAF/UoggyJGP83FSMs8bHtK9JX3mx6mKgb/6IH+ElHyxmn8=
+	t=1756821039; cv=none; b=D0MhMCiaGBaogt0XtGKiGPEGRu//aOgjdmP0fnI4pLTp0mUfuC+rd4dod409b6PqXEpbh7hLbMkAbwBIrbRpI29761mheTDe7dVFgK8cr9VHItVn52h2tnWD2c600iE/viKiOXbm25muhlldwipvHsQbMrNZYkkoCtC4txjemEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756821003; c=relaxed/simple;
-	bh=+wPuKdc/Rol6aNMF8Od+YrhItlb5399wVfGd0zdb71M=;
+	s=arc-20240116; t=1756821039; c=relaxed/simple;
+	bh=pxx41/VBJwEQCpU5u+vMOlc6AdRXauTq/XBO/2b9BuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvOfhJh5eQaqFmb+8G8pOxQ0laZ9pGJh/coCstXKLUIHasqgRYHOt4HBvUwqBsy+06LCcCrDCs+Qy8J0/khM/G8l6qDpD+Vs+zdfHGIg2m6bNFrYrYGhlXtQYnI+iTIfOaxZCKcqRjvTszpmLJTa8IvkrtopvLp7t9j2eMP1sj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhSJElul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC65CC4CEED;
-	Tue,  2 Sep 2025 13:50:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756821003;
-	bh=+wPuKdc/Rol6aNMF8Od+YrhItlb5399wVfGd0zdb71M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nhSJElulfDzcfFS3Z+tB2Znyt8zlpD1RDZe3L3jQMNFF/VRc3ydd2EV0qMooFvPnN
-	 TnLdp8OiOWa15He0VlOjEhLY4FZ2NxzrYjbPxEMeBftom/qNxOSDvY3zIuH1PFB7mJ
-	 7UUmnZTAQnV75hmMFuC6FmaOWrBVyWU1kFftakafZKV423UwPcbxf5rLrGiqMQd6be
-	 yfXXZd2RJi1dgoXpnZiqH03ba58wNaK9n292nxpoV0lQ7G52F0qIkkx1kYelSoflgh
-	 Zpa57/Q0zq1s3MO8xCrCclT6ZVw4/l+JBHG0sHjLHENMlM4Wk5sgpMoebsmZIMz3WP
-	 Y/hcBqE+QIBYQ==
-Date: Tue, 2 Sep 2025 15:50:00 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tick: Remove unreasonable detached state set in
- tick_shutdown()
-Message-ID: <aLb2CIlAoaIsY4H8@localhost.localdomain>
-References: <20250807035954.2412399-1-maobibo@loongson.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=leGMOxLdK48Mvg48LLwHFnZM0figRKf4P68RRMQlMcPYzPUEJYBbaEhJi4fUZ0Dj//2HJVr2khUFTqCT3l6T0xuM+YIi52rmkFBslcnVxW1wrzfmEYBJDuue5O3XDa65imx6ZWDzS69tC6SpF2jrDcoPZQqEy7aSP4osexAVulg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eRgAjFqj; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756821038; x=1788357038;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=pxx41/VBJwEQCpU5u+vMOlc6AdRXauTq/XBO/2b9BuM=;
+  b=eRgAjFqjrvlk3rcCDhqI43ucdTkT/uOXlKMyRfYBSbsfxy7wKMiCYiU4
+   rRH6X5fWqrUvQSc6tyv0mZhHxPGjPLVLZd7iowQYgLqC/PPwXDi96UHQq
+   YmUA38gVUu5waT7H/8HpHvB+aNzX2xavUHd+ObEBZ5pAr5HSyu6IFqK7r
+   yUi14fqD5BlqhnklO+lBigcehHsn7YXZq5Z9jUfQTAD2E9WG0LpQLQ3ux
+   YfGbn4A6wfw5RGN1VMFlIZENAfKJVXzk1aYUWI/RL241J93Xd/2787EVi
+   3jDjd3EH8nZj1WCowwDa5vwdFubZEtufUfinT7tF+1aLKLnbXTCp8MXBG
+   g==;
+X-CSE-ConnectionGUID: pAVJrVGfSqSLaUBO+akCwg==
+X-CSE-MsgGUID: iVN9697HTdGfGFlrWT5emQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="62738133"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="62738133"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 06:50:37 -0700
+X-CSE-ConnectionGUID: ZHIE/dHOSB+FAZRCRRCs4Q==
+X-CSE-MsgGUID: 2IiLBKTERdG7VU87j86+iA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="176590815"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 06:50:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utROu-0000000AhyY-2NM3;
+	Tue, 02 Sep 2025 16:50:20 +0300
+Date: Tue, 2 Sep 2025 16:50:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v7 01/16] pinctrl: check the return value of
+ pinmux_ops::get_function_name()
+Message-ID: <aLb2HH5zgxdbDiPo@smile.fi.intel.com>
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-1-bb091daedc52@linaro.org>
+ <aLbrz5DYS5Yxx_UE@smile.fi.intel.com>
+ <CAMRc=Mfx5czDM=vfEYhFtVO3MviYaW4wKBYjGZ9ZnMbr-+T4mg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250807035954.2412399-1-maobibo@loongson.cn>
+In-Reply-To: <CAMRc=Mfx5czDM=vfEYhFtVO3MviYaW4wKBYjGZ9ZnMbr-+T4mg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Le Thu, Aug 07, 2025 at 11:59:54AM +0800, Bibo Mao a écrit :
-> Function clockevents_switch_state() will check whether it has already
-> switched to specified state, do nothing if it has.
+On Tue, Sep 02, 2025 at 03:29:31PM +0200, Bartosz Golaszewski wrote:
+> On Tue, Sep 2, 2025 at 3:06â€¯PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Tue, Sep 02, 2025 at 01:59:10PM +0200, Bartosz Golaszewski wrote:
+> > >
+> > > While the API contract in docs doesn't specify it explicitly,
+> >
+> > So, why not to amend the doc at the same time?
 > 
-> In function tick_shutdown(), it will set detached state at first and
-> call clockevents_switch_state() in clockevents_exchange_device(). The
-> function clockevents_switch_state() will do nothing since it is already
-> detached state. So the tick timer device will not be shutdown when CPU
-> is offline. In guest VM system, timer interrupt will prevent vCPU to sleep
-> if vCPU is hot removed.
-> 
-> Here remove state set before calling clockevents_exchange_device(),
-> its state will be set in function clockevents_switch_state() if it
-> succeeds to do so.
-> 
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> Because this series is already big as is. That would be another commit
+> that can be separate.
 
-Good catch. Looking back, it has been that way since the introduction
-of clockevents and tick. Therefore it's not a regression and probably
-not worth a Fixes: tag.
+I meant _in the same_ patch.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> > > the generic implementation of the get_function_name() callback from struct
+> > > pinmux_ops - pinmux_generic_get_function_name() - can fail and return
+> > > NULL. This is already checked in pinmux_check_ops() so add a similar
+> > > check in pinmux_func_name_to_selector() instead of passing the returned
+> > > pointer right down to strcmp() where the NULL can get dereferenced. This
+> > > is normal operation when adding new pinfunctions.
+
+> > Fixes?
+> 
+> This has always been like that.
+> 
+> > Reported?
+> 
+> I mean, technically Mark Brown reported my previous patch failing but
+> I don't think we do this if we're still within the same series just
+> another iteration?
+> 
+> > Closes?
+> 
+> Ditto.
+
+I meant that this fixes a potential issue disregard to your series, right?
+
+...
+
+> > >       while (selector < nfuncs) {
+> > >               const char *fname = ops->get_function_name(pctldev, selector);
+> > >
+> > > -             if (!strcmp(function, fname))
+> > > +             if (fname && !strcmp(function, fname))
+> > >                       return selector;
+> >
+> > I would slightly refactor this:
+> >
+> >                 const char *fname;
+> >
+> >                 fname = ops->get_function_name(pctldev, selector);
+> >                 if (fname && !strcmp(function, fname))
+> >                         return selector;
+> >
+> > >               selector++;
+> >
+> 
+> You can do this in a subsequent patch, I prefer a smaller diff personally.
+
+Sure.
 
 -- 
-Frederic Weisbecker
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
+
+
 
