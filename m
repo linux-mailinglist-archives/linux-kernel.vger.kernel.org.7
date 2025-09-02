@@ -1,469 +1,300 @@
-Return-Path: <linux-kernel+bounces-796925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C9EB4096E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:46:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B48AFB40968
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A72457AF60A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FD0482A7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DDD32ED3D;
-	Tue,  2 Sep 2025 15:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E1832ED50;
+	Tue,  2 Sep 2025 15:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yzXa+H9l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uRFzey+Q"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B35032ED25;
-	Tue,  2 Sep 2025 15:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F132ED20
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827869; cv=none; b=nqr3klc4i/BPPDM3XuREG0U753ybZaMX01c+jUniKZ5bUIFo3A6u4MuRcfB6CEIYF3Kmb+6DFtLIPwukkrEO1BBMVa8OQA5oG4/zfOdumEfizlGRQtnxAbF1PzjOVkg8fKcemGRowURHlaYZyLhz1Vo2vNvb2UZzwmB9XwVtr6U=
+	t=1756827875; cv=none; b=cLhWHO8l0xJStCmtFRv4HT1boKuDPHqkZib3fmlgIac5K46cpfk42T0zNMImhFS5zQ3g3LMg3FWSTA7/s238RSOagUBax3OQUoSxyn0sZ/vyeETTcGIUBvJmkhGjPLtPJC/8wh611VwtrwAaDIVfbslyFBhiV1P1GBbcMJCdby0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827869; c=relaxed/simple;
-	bh=Rom7YdnDC+ei+ZjVb5OSPCLqbUce5PefOBT5Bkxh3rw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KxciEvLgLSEk7grcERIrVzK+H3FdT85BaZf8zv4/gx7XB9UgIhXXLJPppLWRIZaSTil2UkppXmGuovooxAAtRdW3qTdOBrURVi1Bch0qiPQnVfGzFxtnrLCW9I4Aj2GSCNu0HSwXUzizq/cyfmZK/+EE9338dPwQwa5V8CaU7Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yzXa+H9l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D152C4CEF6;
-	Tue,  2 Sep 2025 15:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756827868;
-	bh=Rom7YdnDC+ei+ZjVb5OSPCLqbUce5PefOBT5Bkxh3rw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=yzXa+H9lkZ8AWV1opiBTpjYlEiMDa0E/rX1m73BonlvUAodt65Vu5VDUI3ABo0vxf
-	 +KAT9XNQRNRG85ZGAFI+XJn5R3IhNFIMBUureLtqgpty2RQ+j1tAQdS0IkxogliPLK
-	 EKEG2KxIrArGkeGN+z5uRhh4WV0wJ984FTiTqSX4=
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Date: Tue, 02 Sep 2025 11:44:19 -0400
-Subject: [PATCH] Documentation: update maintainer-pgp-guide for latest best
- practices
+	s=arc-20240116; t=1756827875; c=relaxed/simple;
+	bh=c/sOlfEq2OA3IZtcXh3gz5AiRMiBPf2jLUCCS2VdNXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mSnaAu9HZzWPvTdw3N++YZg25Tj29MTqnVtSL6lmKJoA7zl5NJdIhChyYOCPCXw6mZV/9vvlQc4jdftui2K/6MpI/Xtn4kVlvjSEk8cSg6ITYE2I58x57OZ+JXw0Bc0YmxM8jUWxyixiC2KCGUeSW/EiovEpbqxdOkyy6OYO0Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uRFzey+Q; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-315bab2917bso4013259fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756827871; x=1757432671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mLE488gYyvEzSAPfgpQZfVUn1BUOU/Tj59M3I7iYh5Q=;
+        b=uRFzey+Quh/Vij2k/PKpJgu6Hwrh/LmNdUdAByurAnTuX/yK1eW16ycYE40HIWu4OF
+         N4U/V2O+qf9r1CpxSBScAHDd680asMPP4jXmIAPQTzSUfmxHdFcrsZUGWYW+6ycnfnjH
+         EQCIZF9Pt4hpMts72wqDxzgAwvOXF4U8E+PHE2MSXIrayYbuNN96C0kMXb1zvZxqGWMZ
+         6T/tRFwdArLghZQbtobvUD+5fV/NC4uYCxVVGdo/HxLXSlm9R9eWPf10q4OqZPJiXHjB
+         +y/4eI0tRC7l4Q77XU/lg57tvoVbq6x1pR0D07TFMqeFX/n2aYVwybCN4I2NXEEc5UDO
+         px9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756827871; x=1757432671;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mLE488gYyvEzSAPfgpQZfVUn1BUOU/Tj59M3I7iYh5Q=;
+        b=LaFZ1UiHMgfeD/AMQ+DP1ob/CbRuAy0wbibGUYNYnjr7Njrpkuuu/SakU3SGLGfsxh
+         kyn7g3ljMv7XljcL52IiaUqyY6+ebVRlfzIXp/A1pHQRKu+5vrY5yPlpcZKAxxi2IjW6
+         9SsLrOV6zGxxERro3P4zj8sSaUf5X8xEsEXT/ANn/UxqZoKvcOjU11I2nQjERq0l3Y2g
+         c34IZxpP5DlHGfpEkcisRLlZ/qf0GaKOCqHz7HU8VL7tj9OqUl2VJH4xu0EpuB6noBcb
+         oGjr/HdvZ9lUmXDzwVLk/gewlRQhXt5rqWpZ3d5+79ZW1RBOB4h50ZFGytbTT5TkCmFN
+         KiQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkKf5xLblQq5DzxmxtcC8P7Cqhs9oEW4lXrsZ0JVNI+xAHyTtQsFdp4fdCsUDZZJFuePXs6UOKjkweWdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygXKr7cR4yk+oVCYRbdpsvQF/OsNI52ADgtug3+D1WxOKLjrpq
+	6ZHRr2QLLZZdLgs1GU7aktXnlMF5ujtfooStudsTFql7vsmrp0a2u52flshOiBYNAt0=
+X-Gm-Gg: ASbGncv5MDWOBoRXzmbAXxq9/BjF0/3jV8DWs7g5CnHAt8RSI1d3yjd0+aejS0mC99E
+	1mGY/CjqM1BMMXtRkl4cnKcag8/3UDjp6BvMbE4J3S6PPw/0G19gEG131AiV6tYxtB9Li4TaLOX
+	3IZDlD71l38nZZkHOMb70EiZEQ2YS59MKLplfbVLg9duZOdvGb1/7huIEQDlJVlwOOumtVmd/Eu
+	NjAzstZXDYXKx82nmqlXQad9aPixJzCCFHdnEBylKLPfO+xGoWAu76i7cju2iszsnGXB7abYNq1
+	Qc4qyXwbDEJ8bQEd+cKq4l40E6NpX+oBcH0mKXvlDwJpeUl2YX7Hzw64OKcJg/FiZrJ/z3PFu7s
+	eWZ6EhVrVlmN8QmH2kg1NOIpfaYGpJgVLS/v3/uEw0WOqqrgRDPpIH9KYePyViQOTwmFesNNB1y
+	comZMd+dc=
+X-Google-Smtp-Source: AGHT+IGtL7a3am4zTG/4YAPeXYQVmoWmJ+eC7Hp+pGX9UujQFStTTLUxDFQoIiZSxdI1evU/yAj3tg==
+X-Received: by 2002:a05:6871:5227:b0:30b:ae4c:2e82 with SMTP id 586e51a60fabf-31963364100mr5777995fac.12.1756827870648;
+        Tue, 02 Sep 2025 08:44:30 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b? ([2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7457428c153sm1634614a34.8.2025.09.02.08.44.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 08:44:30 -0700 (PDT)
+Message-ID: <525a44e7-8e38-48fd-af84-4c56a6a0ffe7@baylibre.com>
+Date: Tue, 2 Sep 2025 10:44:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 2/2] iio: adc: max14001: New driver
+To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Kim Seer Paller <kimseer.paller@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Jonathan Santos <Jonathan.Santos@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>
+References: <cover.1756816682.git.marilene.agarcia@gmail.com>
+ <f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-pgp-guide-updates-v1-1-62ac7312d3f9@linuxfoundation.org>
-X-B4-Tracking: v=1; b=H4sIANIQt2gC/x3MQQqAIBBA0avErBtQKaiuEi1ER5tNiZMRhHdPW
- r7F/y8IZSaBpXsh083C59Gg+w7cbo9IyL4ZjDKjmpXBFBPGwp6wJG8vEpymoAbtgtajg9alTIG
- f/7lutX4KajRsYwAAAA==
-X-Change-ID: 20250902-pgp-guide-updates-88f041cf115c
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-X-Mailer: b4 0.15-dev-dfb17
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19033;
- i=konstantin@linuxfoundation.org; h=from:subject:message-id;
- bh=Rom7YdnDC+ei+ZjVb5OSPCLqbUce5PefOBT5Bkxh3rw=;
- b=owGbwMvMwCW27YjM47CUmTmMp9WSGDK2C9zuXnr4ULKrzpMzLXeLZ1v7nrL65zb3jG5il5g14
- xPbaXdYOkpZGMS4GGTFFFnK9sVuCip86CGX3mMKM4eVCWQIAxenAExExpfhv0tKysLow1sf6Psb
- uh5PMp7SfW6X6/Er854f6rjl73719CVGho0HNIqd3jYmzeZ/6enOxsH/4LfyafFSW1mxxpqoEta
- HjAA=
-X-Developer-Key: i=konstantin@linuxfoundation.org; a=openpgp;
- fpr=DE0E66E32F1FDD0902666B96E63EDCA9329DD07E
 
-Freshen up the maintainer PGP guide:
+On 9/2/25 8:16 AM, Marilene Andrade Garcia wrote:
+> The MAX14001/MAX14002 is configurable, isolated 10-bit ADCs for multi-range 
+> binary inputs. In addition to ADC readings, the MAX14001/MAX14002 offers 
+> more features, like a binary comparator, a filtered reading that can 
+> provide the average of the last 2, 4, or 8 ADC readings, and an inrush 
+> comparator that triggers the inrush current. There is also a fault feature 
+> that can diagnose seven possible fault conditions. And an option to select 
+> an external or internal ADC voltage reference.
+> 
+> MAX14001/MAX14002 features implemented so far:
+> - Raw ADC reading.
+> - Filtered ADC average reading with the default configuration.
+> - MV fault disable.
+> - Selection of external or internal ADC voltage reference, depending on
+> whether it is declared in the device tree.
+> 
+> Co-developed-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+> Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> ---
+>  MAINTAINERS                |   1 +
+>  drivers/iio/adc/Kconfig    |  10 ++
+>  drivers/iio/adc/Makefile   |   1 +
+>  drivers/iio/adc/max14001.c | 355 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 367 insertions(+)
+>  create mode 100644 drivers/iio/adc/max14001.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f145f0204407..b6457063da6c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14976,6 +14976,7 @@ L:	linux-iio@vger.kernel.org
+>  S:	Maintained
+>  W:	https://ez.analog.com/linux-software-drivers
+>  F:	Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+> +F:	drivers/iio/adc/max14001.c
+>  
+>  MAXBOTIX ULTRASONIC RANGER IIO DRIVER
+>  M:	Andreas Klinger <ak@it-klinger.de>
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index e3d3826c3357..11e911ceab4c 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -958,6 +958,16 @@ config MAX11410
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called max11410.
+>  
+> +config MAX14001
+> +	tristate "Analog Devices MAX14001/MAX14002 ADC driver"
+> +	depends on SPI
+> +	help
+> +	  Say yes here to build support for Analog Devices MAX14001/MAX14002
+> +	  Configurable, Isolated 10-bit ADCs for Multi-Range Binary Inputs.
+> +
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called max14001.
+> +
+>  config MAX1241
+>  	tristate "Maxim max1241 ADC driver"
+>  	depends on SPI_MASTER
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index 89d72bf9ce70..569f2f5613d4 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -85,6 +85,7 @@ obj-$(CONFIG_MAX11100) += max11100.o
+>  obj-$(CONFIG_MAX1118) += max1118.o
+>  obj-$(CONFIG_MAX11205) += max11205.o
+>  obj-$(CONFIG_MAX11410) += max11410.o
+> +obj-$(CONFIG_MAX14001) += max14001.o
+>  obj-$(CONFIG_MAX1241) += max1241.o
+>  obj-$(CONFIG_MAX1363) += max1363.o
+>  obj-$(CONFIG_MAX34408) += max34408.o
+> diff --git a/drivers/iio/adc/max14001.c b/drivers/iio/adc/max14001.c
+> new file mode 100644
+> index 000000000000..6755df152976
+> --- /dev/null
+> +++ b/drivers/iio/adc/max14001.c
+> @@ -0,0 +1,355 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
+> +/*
+> + * Analog Devices MAX14001/MAX14002 ADC driver
+> + *
+> + * Copyright (C) 2023-2025 Analog Devices Inc.
+> + * Copyright (C) 2023 Kim Seer Paller <kimseer.paller@analog.com>
+> + * Copyright (c) 2025 Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+> + *
+> + * Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
+> + */
+> +
+> +#include <linux/array_size.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bitrev.h>
+> +#include <linux/bits.h>
+> +#include <linux/byteorder/generic.h>
+> +#include <linux/device.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/types.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/types.h>
+> +
+> +/* MAX14001 Registers Address */
+> +#define MAX14001_REG_ADC		0x00
+> +#define MAX14001_REG_FADC		0x01
+> +#define MAX14001_REG_FLAGS		0x02
+> +#define MAX14001_REG_FLTEN		0x03
+> +#define MAX14001_REG_THL		0x04
+> +#define MAX14001_REG_THU		0x05
+> +#define MAX14001_REG_INRR		0x06
+> +#define MAX14001_REG_INRT		0x07
+> +#define MAX14001_REG_INRP		0x08
+> +#define MAX14001_REG_CFG		0x09
+> +#define MAX14001_REG_ENBL		0x0A
+> +#define MAX14001_REG_ACT		0x0B
+> +#define MAX14001_REG_WEN		0x0C
+> +
+> +#define MAX14001_REG_VERIFICATION(x)	((x) + 0x10)
+> +
+> +#define MAX14001_REG_CFG_EXRF		BIT(5)
+> +
+> +#define MAX14001_MASK_ADDR		GENMASK(15, 11)
+> +#define MAX14001_MASK_DATA		GENMASK(9, 0)
+> +
+> +#define MAX14001_SET_WRITE_BIT		BIT(10)
+> +#define MAX14001_WRITE_WEN		0x294
+> +
+> +enum max14001_chip_model {
+> +	max14001,
+> +	max14002,
+> +};
+> +
+> +struct max14001_chip_info {
+> +	const char *name;
+> +};
+> +
+> +struct max14001_state {
+> +	const struct max14001_chip_info *chip_info;
+> +	struct spi_device *spi;
+> +	int vref_mv;
+> +	/*
+> +	 * lock protect against multiple concurrent accesses, RMW sequence,
+> +	 * and SPI transfer.
+> +	 */
+> +	struct mutex lock;
+> +	/*
+> +	 * The following buffers will be bit-reversed during device
+> +	 * communication, because the device transmits and receives data
+> +	 * LSB-first.
 
-- Bump minimum GnuPG version requirement from 2.2 to 2.4, since 2.2 is
-  no longer maintained
-- All major hardware tokens now support Curve25519, so remove outdated
-  ECC support callouts
-- Update hardware device recommendations (Nitrokey Pro 2 -> Nitrokey 3)
-- Broaden backup media terminology (USB thumb drive -> external media)
-- Update wording to follow vale's linter recommendations
-- Various minor wording improvements for clarity
+Some SPI controllers may be able to handle LSB first without us having
+to reverse things in the driver. Search the kernel for SPI_LSB_FIRST
+to see what I mean.
 
-Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
----
- Documentation/process/maintainer-pgp-guide.rst | 158 ++++++++++++-------------
- 1 file changed, 75 insertions(+), 83 deletions(-)
+By setting `spi-lsb-first;` in the devicetree, the core SPI code will
+check if the controller supports it and let the hardare handle everything
+so we don't need to reverse bits here in this driver.
 
-diff --git a/Documentation/process/maintainer-pgp-guide.rst b/Documentation/process/maintainer-pgp-guide.rst
-index f5277993b195..b6919bf606c3 100644
---- a/Documentation/process/maintainer-pgp-guide.rst
-+++ b/Documentation/process/maintainer-pgp-guide.rst
-@@ -49,7 +49,7 @@ hosting infrastructure, regardless of how good the security practices
- for the latter may be.
- 
- The above guiding principle is the reason why this guide is needed. We
--want to make sure that by placing trust into developers we do not simply
-+want to make sure that by placing trust into developers we do not merely
- shift the blame for potential future security incidents to someone else.
- The goal is to provide a set of guidelines developers can use to create
- a secure working environment and safeguard the PGP keys used to
-@@ -60,7 +60,7 @@ establish the integrity of the Linux kernel itself.
- PGP tools
- =========
- 
--Use GnuPG 2.2 or later
-+Use GnuPG 2.4 or later
- ----------------------
- 
- Your distro should already have GnuPG installed by default, you just
-@@ -69,9 +69,9 @@ To check, run::
- 
-     $ gpg --version | head -n1
- 
--If you have version 2.2 or above, then you are good to go. If you have a
--version that is prior than 2.2, then some commands from this guide may
--not work.
-+If you have version 2.4 or above, then you are good to go. If you have
-+an earlier version, then you are using a release of GnuPG that is no
-+longer maintained and some commands from this guide may not work.
- 
- Configure gpg-agent options
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@@ -199,13 +199,6 @@ separate signing subkey::
- 
-     $ gpg --quick-addkey [fpr] ed25519 sign
- 
--.. note:: ECC support in GnuPG
--
--    Note, that if you intend to use a hardware token that does not
--    support ED25519 ECC keys, you should choose "nistp256" instead or
--    "ed25519." See the section below on recommended hardware devices.
--
--
- Back up your Certify key for disaster recovery
- ----------------------------------------------
- 
-@@ -213,7 +206,7 @@ The more signatures you have on your PGP key from other developers, the
- more reasons you have to create a backup version that lives on something
- other than digital media, for disaster recovery reasons.
- 
--The best way to create a printable hardcopy of your private key is by
-+A good way to create a printable hardcopy of your private key is by
- using the ``paperkey`` software written for this very purpose. See ``man
- paperkey`` for more details on the output format and its benefits over
- other solutions. Paperkey should already be packaged for most
-@@ -224,11 +217,11 @@ key::
- 
-     $ gpg --export-secret-key [fpr] | paperkey -o /tmp/key-backup.txt
- 
--Print out that file (or pipe the output straight to lpr), then take a
--pen and write your passphrase on the margin of the paper. **This is
--strongly recommended** because the key printout is still encrypted with
--that passphrase, and if you ever change it you will not remember what it
--used to be when you had created the backup -- *guaranteed*.
-+Print out that file, then take a pen and write your passphrase on the
-+margin of the paper. **This is strongly recommended** because the key
-+printout is still encrypted with that passphrase, and if you ever change
-+it you will not remember what it used to be when you had created the
-+backup -- *guaranteed*.
- 
- Put the resulting printout and the hand-written passphrase into an envelope
- and store in a secure and well-protected place, preferably away from your
-@@ -236,10 +229,9 @@ home, such as your bank vault.
- 
- .. note::
- 
--    Your printer is probably no longer a simple dumb device connected to
--    your parallel port, but since the output is still encrypted with
--    your passphrase, printing out even to "cloud-integrated" modern
--    printers should remain a relatively safe operation.
-+    The key is still encrypted with your passphrase, so printing out
-+    even to "cloud-integrated" modern printers should remain a
-+    relatively safe operation.
- 
- Back up your whole GnuPG directory
- ----------------------------------
-@@ -255,16 +247,17 @@ on these external copies whenever you need to use your Certify key --
- such as when making changes to your own key or signing other people's
- keys after conferences and summits.
- 
--Start by getting a small USB "thumb" drive (preferably two!) that you
--will use for backup purposes. You will need to encrypt them using LUKS
---- refer to your distro's documentation on how to accomplish this.
-+Start by getting an external media card (preferably two!) that you will
-+use for backup purposes. You will need to create an encrypted partition
-+on this device using LUKS -- refer to your distro's documentation on how
-+to accomplish this.
- 
- For the encryption passphrase, you can use the same one as on your
- PGP key.
- 
--Once the encryption process is over, re-insert the USB drive and make
--sure it gets properly mounted. Copy your entire ``.gnupg`` directory
--over to the encrypted storage::
-+Once the encryption process is over, re-insert your device and make sure
-+it gets properly mounted. Copy your entire ``.gnupg`` directory over to
-+the encrypted storage::
- 
-     $ cp -a ~/.gnupg /media/disk/foo/gnupg-backup
- 
-@@ -273,11 +266,10 @@ You should now test to make sure everything still works::
-     $ gpg --homedir=/media/disk/foo/gnupg-backup --list-key [fpr]
- 
- If you don't get any errors, then you should be good to go. Unmount the
--USB drive, distinctly label it so you don't blow it away next time you
--need to use a random USB drive, and put in a safe place -- but not too
--far away, because you'll need to use it every now and again for things
--like editing identities, adding or revoking subkeys, or signing other
--people's keys.
-+device, distinctly label it so you don't overwrite it by accident, and
-+put in a safe place -- but not too far away, because you'll need to use
-+it every now and again for things like editing identities, adding or
-+revoking subkeys, or signing other people's keys.
- 
- Remove the Certify key from your homedir
- ----------------------------------------
-@@ -303,7 +295,7 @@ and store it on offline storage.
-     your GnuPG directory in its entirety. What we are about to do will
-     render your key useless if you do not have a usable backup!
- 
--First, identify the keygrip of your Certify key::
-+First, identify the "keygrip" of your Certify key::
- 
-     $ gpg --with-keygrip --list-key [fpr]
- 
-@@ -328,8 +320,8 @@ Certify key fingerprint). This will correspond directly to a file in your
-     2222000000000000000000000000000000000000.key
-     3333000000000000000000000000000000000000.key
- 
--All you have to do is simply remove the .key file that corresponds to
--the Certify key keygrip::
-+It is sufficient to remove the .key file that corresponds to the Certify
-+key keygrip::
- 
-     $ cd ~/.gnupg/private-keys-v1.d
-     $ rm 1111000000000000000000000000000000000000.key
-@@ -372,7 +364,7 @@ GnuPG operation is performed, the keys are loaded into system memory and
- can be stolen from there by sufficiently advanced malware (think
- Meltdown and Spectre).
- 
--The best way to completely protect your keys is to move them to a
-+A good way to completely protect your keys is to move them to a
- specialized hardware device that is capable of smartcard operations.
- 
- The benefits of smartcards
-@@ -383,11 +375,11 @@ private keys and performing crypto operations directly on the card
- itself. Because the key contents never leave the smartcard, the
- operating system of the computer into which you plug in the hardware
- device is not able to retrieve the private keys themselves. This is very
--different from the encrypted USB storage device we used earlier for
--backup purposes -- while that USB device is plugged in and mounted, the
-+different from the encrypted media storage device we used earlier for
-+backup purposes -- while that device is plugged in and mounted, the
- operating system is able to access the private key contents.
- 
--Using external encrypted USB media is not a substitute to having a
-+Using external encrypted media is not a substitute to having a
- smartcard-capable device.
- 
- Available smartcard devices
-@@ -398,17 +390,15 @@ easiest is to get a specialized USB device that implements smartcard
- functionality. There are several options available:
- 
- - `Nitrokey Start`_: Open hardware and Free Software, based on FSI
--  Japan's `Gnuk`_. One of the few available commercial devices that
--  support ED25519 ECC keys, but offer fewest security features (such as
--  resistance to tampering or some side-channel attacks).
--- `Nitrokey Pro 2`_: Similar to the Nitrokey Start, but more
--  tamper-resistant and offers more security features. Pro 2 supports ECC
--  cryptography (NISTP).
-+  Japan's `Gnuk`_. One of the cheapest options, but offers fewest
-+  security features (such as resistance to tampering or some
-+  side-channel attacks).
-+- `Nitrokey 3`_: Similar to the Nitrokey Start, but more
-+  tamper-resistant and offers more security features and USB
-+  form-factors. Supports ECC cryptography (ED25519 and NISTP).
- - `Yubikey 5`_: proprietary hardware and software, but cheaper than
--  Nitrokey Pro and comes available in the USB-C form that is more useful
--  with newer laptops. Offers additional security features such as FIDO
--  U2F, among others, and now finally supports NISTP and ED25519 ECC
--  keys.
-+  Nitrokey with a similar set of features. Supports ECC cryptography
-+  (ED25519 and NISTP).
- 
- Your choice will depend on cost, shipping availability in your
- geographical region, and open/proprietary hardware considerations.
-@@ -419,8 +409,8 @@ geographical region, and open/proprietary hardware considerations.
-     you `qualify for a free Nitrokey Start`_ courtesy of The Linux
-     Foundation.
- 
--.. _`Nitrokey Start`: https://shop.nitrokey.com/shop/product/nitrokey-start-6
--.. _`Nitrokey Pro 2`: https://shop.nitrokey.com/shop/product/nkpr2-nitrokey-pro-2-3
-+.. _`Nitrokey Start`: https://www.nitrokey.com/products/nitrokeys
-+.. _`Nitrokey 3`: https://www.nitrokey.com/products/nitrokeys
- .. _`Yubikey 5`: https://www.yubico.com/products/yubikey-5-overview/
- .. _Gnuk: https://www.fsij.org/doc-gnuk/
- .. _`qualify for a free Nitrokey Start`: https://www.kernel.org/nitrokey-digital-tokens-for-kernel-developers.html
-@@ -455,7 +445,7 @@ the smartcard). You so rarely need to use the Admin PIN, that you will
- inevitably forget what it is if you do not record it.
- 
- Getting back to the main card menu, you can also set other values (such
--as name, sex, login data, etc), but it's not necessary and will
-+as name, gender, login data, etc), but it's not necessary and will
- additionally leak information about your smartcard should you lose it.
- 
- .. note::
-@@ -615,7 +605,7 @@ run::
- You can also use a specific date if that is easier to remember (e.g.
- your birthday, January 1st, or Canada Day)::
- 
--    $ gpg --quick-set-expire [fpr] 2025-07-01
-+    $ gpg --quick-set-expire [fpr] 2038-07-01
- 
- Remember to send the updated key back to keyservers::
- 
-@@ -656,9 +646,9 @@ hundreds of cloned repositories floating around, how does anyone verify
- that their copy of linux.git has not been tampered with by a malicious
- third party?
- 
--Or what happens if a backdoor is discovered in the code and the "Author"
--line in the commit says it was done by you, while you're pretty sure you
--had `nothing to do with it`_?
-+Or what happens if malicious code is discovered in the kernel and the
-+"Author" line in the commit says it was done by you, while you're pretty
-+sure you had `nothing to do with it`_?
- 
- To address both of these issues, Git introduced PGP integration. Signed
- tags prove the repository integrity by assuring that its contents are
-@@ -681,8 +671,7 @@ should be used (``[fpr]`` is the fingerprint of your key)::
- How to work with signed tags
- ----------------------------
- 
--To create a signed tag, simply pass the ``-s`` switch to the tag
--command::
-+To create a signed tag, pass the ``-s`` switch to the tag command::
- 
-     $ git tag -s [tagname]
- 
-@@ -693,7 +682,7 @@ not been maliciously altered.
- How to verify signed tags
- ~~~~~~~~~~~~~~~~~~~~~~~~~
- 
--To verify a signed tag, simply use the ``verify-tag`` command::
-+To verify a signed tag, use the ``verify-tag`` command::
- 
-     $ git verify-tag [tagname]
- 
-@@ -712,9 +701,9 @@ The merge message will contain something like this::
-     # gpg: Signature made [...]
-     # gpg: Good signature from [...]
- 
--If you are verifying someone else's git tag, then you will need to
--import their PGP key. Please refer to the
--":ref:`verify_identities`" section below.
-+If you are verifying someone else's git tag, you will first need to
-+import their PGP key. Please refer to the ":ref:`verify_identities`"
-+section below.
- 
- Configure git to always sign annotated tags
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@@ -728,16 +717,16 @@ configuration option::
- How to work with signed commits
- -------------------------------
- 
--It is easy to create signed commits, but it is much more difficult to
--use them in Linux kernel development, since it relies on patches sent to
--the mailing list, and this workflow does not preserve PGP commit
--signatures. Furthermore, when rebasing your repository to match
--upstream, even your own PGP commit signatures will end up discarded. For
--this reason, most kernel developers don't bother signing their commits
--and will ignore signed commits in any external repositories that they
--rely upon in their work.
-+It is also possible to create signed commits, but they have limited
-+usefulness in Linux kernel development. The kernel contribution workflow
-+relies on sending in patches, and converting commits to patches does not
-+preserve git commit signatures. Furthermore, when rebasing your own
-+repository on a newer upstream, PGP commit signatures will end up
-+discarded. For this reason, most kernel developers don't bother signing
-+their commits and will ignore signed commits in any external
-+repositories that they rely upon in their work.
- 
--However, if you have your working git tree publicly available at some
-+That said, if you have your working git tree publicly available at some
- git hosting service (kernel.org, infradead.org, ozlabs.org, or others),
- then the recommendation is that you sign all your git commits even if
- upstream developers do not directly benefit from this practice.
-@@ -748,7 +737,7 @@ We recommend this for the following reasons:
-    provenance, even externally maintained trees carrying PGP commit
-    signatures will be valuable for such purposes.
- 2. If you ever need to re-clone your local repository (for example,
--   after a disk failure), this lets you easily verify the repository
-+   after reinstalling your system), this lets you verify the repository
-    integrity before resuming your work.
- 3. If someone needs to cherry-pick your commits, this allows them to
-    quickly verify their integrity before applying them.
-@@ -756,9 +745,8 @@ We recommend this for the following reasons:
- Creating signed commits
- ~~~~~~~~~~~~~~~~~~~~~~~
- 
--To create a signed commit, you just need to pass the ``-S`` flag to the
--``git commit`` command (it's capital ``-S`` due to collision with
--another flag)::
-+To create a signed commit, pass the ``-S`` flag to the ``git commit``
-+command (it's capital ``-S`` due to collision with another flag)::
- 
-     $ git commit -S
- 
-@@ -775,7 +763,6 @@ You can tell git to always sign commits::
- 
- .. _verify_identities:
- 
--
- How to work with signed patches
- -------------------------------
- 
-@@ -793,6 +780,11 @@ headers (a-la DKIM):
- Installing and configuring patatt
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
-+.. note::
-+
-+    If you use B4 to send in your patches, patatt is already installed
-+    and integrated into your workflow.
-+
- Patatt is packaged for many distributions already, so please check there
- first. You can also install it from pypi using "``pip install patatt``".
- 
-@@ -835,9 +827,9 @@ encounters, for example::
- How to verify kernel developer identities
- =========================================
- 
--Signing tags and commits is easy, but how does one go about verifying
--that the key used to sign something belongs to the actual kernel
--developer and not to a malicious imposter?
-+Signing tags and commits is straightforward, but how does one go about
-+verifying that the key used to sign something belongs to the actual
-+kernel developer and not to a malicious imposter?
- 
- Configure auto-key-retrieval using WKD and DANE
- -----------------------------------------------
-@@ -884,7 +876,7 @@ various software makers dictating who should be your trusted certifying
- entity, PGP leaves this responsibility to each user.
- 
- Unfortunately, very few people understand how the Web of Trust works.
--While it remains an important aspect of the OpenPGP specification,
-+While it is still an important part of the OpenPGP specification,
- recent versions of GnuPG (2.2 and above) have implemented an alternative
- mechanism called "Trust on First Use" (TOFU). You can think of TOFU as
- "the SSH-like approach to trust." With SSH, the first time you connect
-@@ -894,8 +886,8 @@ to connect, forcing you to make a decision on whether you choose to
- trust the changed key or not. Similarly, the first time you import
- someone's PGP key, it is assumed to be valid. If at any point in the
- future GnuPG comes across another key with the same identity, both the
--previously imported key and the new key will be marked as invalid and
--you will need to manually figure out which one to keep.
-+previously imported key and the new key will be marked for verification
-+and you will need to manually figure out which one to keep.
- 
- We recommend that you use the combined TOFU+PGP trust model (which is
- the new default in GnuPG v2). To set it, add (or modify) the
+If we need to make this work on a SPI controller that doesn't support
+SPI_LSB_FIRST, then we should add something in the core SPI code that
+does the reversing during __spi_optimize_message() so that every
+peripheral driver doesn't have to do this. For example, search spi.c
+for SPI_CS_WORD to see how it handles that flag for controllers that
+don't support it.
 
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250902-pgp-guide-updates-88f041cf115c
 
-Best regards,
---  
-Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+> +	 * DMA (thus cache coherency maintenance) requires the transfer
+> +	 * buffers to live in their own cache lines.
+> +	 */
+> +	__be16 spi_tx_buffer __aligned(IIO_DMA_MINALIGN);
+> +	__be16 spi_rx_buffer;
+> +};
+> +
 
+
+
+> +static int max14001_probe(struct spi_device *spi)
+> +{
+
+...
+
+> +	ret = devm_mutex_init(dev, &st->lock);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +			"Failed to init the mutex\n");
+> +
+
+The only possible error here is -ENOMEM, which we don't
+print messages for. So just `return ret;` on this one.
 
