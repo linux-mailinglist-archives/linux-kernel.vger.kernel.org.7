@@ -1,163 +1,182 @@
-Return-Path: <linux-kernel+bounces-796610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBE5B4035C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:32:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C23B4035D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5073A56C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:31:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5BDBD4E3BA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF833093CB;
-	Tue,  2 Sep 2025 13:27:34 +0000 (UTC)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E5A31E10F;
+	Tue,  2 Sep 2025 13:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="HfCLbDEe"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012035.outbound.protection.outlook.com [52.101.126.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C8E3081BE;
-	Tue,  2 Sep 2025 13:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819654; cv=none; b=Cdk3Ad3rm8Q3gX05rbW2pRoW1QdMJItgjo0WXsNwb7nGr2LZWkqOHr2XD0IlrQ2PZhwiTycHdQUbXklFm0dYAflePZD+635ka6iyvPy1bmcC2xnZO/cG+E084tce9vK2BlFnczSNEpgwdcJM0BqNk8x5bc3A88ITXE+XctMLPq8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819654; c=relaxed/simple;
-	bh=2v2OPO/bSxYdTs8lkjHpFf9k0dAktDUW78DNfxE1urc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DxrT3kWx1aFQ85KMzq6djeT0tHwlE6/RINldOhk3oM5G2e/ZA/pnH/FRzxVHnYJZVh/LfyurBg+cODDoJmg3cNa8TAbpRmmmDyf9bkLqnb8W/Qb8FsEX+rTJNQ1CAX1yZm2Zpg7RC7n+iCersGVSZuWOGlLz2ZTs6/u+/G20h+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5290c67854eso3303490137.3;
-        Tue, 02 Sep 2025 06:27:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756819651; x=1757424451;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hjg367ve14UB2eLFgEqGx8q70SaZsiZ2GUHWVuglP4c=;
-        b=pGMKWw3JYsCSJGvUfrF1y9NJIuLKR0Po+aqf086jNKJvaU4x677qHGPNUmHwAiz8LW
-         qvTAtMh9h1KfUmEUfNsTvsWYW4d0Vf06+ADcO0vgLiLzzKBQrYYB6bQvmJYolZgDIsUP
-         z51ZIBNZqnvztVeZ4FXnR51FJpGph53wsgKK5N6Gk7ALKNCRSyIS6xiBz359T1z4KbGM
-         ocvygk6SrkgJ9fZHurjT0+RgPVKsjUm/o174IQkgJQjv3Fyuvw/jkF6t7ER0oJy8+nMC
-         tBgilP7PHfoAju7w2xOUqGqAho5BYRQSvIBB/zBH3/corunSa0gaQxnwULjCAoVci2si
-         iKwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHLsVsY2bv0Yq2SaoruTAW7alvQpordaT/FweXQo85BpuWvY7gySiaY3PwYBvnGb9G2NuuIlgtRTioTQpo4CXYuwY=@vger.kernel.org, AJvYcCVW8kkgU24En4EaanTh1P7xSnyOa9EPMTKiXOwBnQwn3nFgSr7E8lEzEJ2/tyoEjeCqNmUs4HaMzVA=@vger.kernel.org, AJvYcCVhI/vAoJ8JQ2vZogkYkO9ePBbs4UciooRuymC8kVVzyejrjdPGQThJviHKGeHxtV6n3icmntvvaBEdz9Qh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBzB7F6IiNHqnPhwl2N1cc73ZmXrGjniRbEIBLPZByv6kzGAke
-	Qe8Pp+8t4mZAAaoob0MDQ74UUi/H35l1zE7mRuJ8QDOQK4/kMRUeJJBUVv18gNVE
-X-Gm-Gg: ASbGncu4V4uxbUnvgGLImySTFBGJdTZnR8JEcoey5aoAGfn1T8sMW3P68LTs5EOTqfi
-	yl73WtF2hRqtSXf0v2hmTSbtGlcvGqY1mKR2dJMosLNAhIR839z+Gy7dtBLVD6CkxqpRhZUq5CJ
-	6iyxEghRHQDEL5oGv3fYo5hlv86R4DEFQKNiXWtYXhJh2Vtp4gXkSaiWv00JyFmWxlyPgYkgTQi
-	93g3Xowhjx/yfBo6F/G2C1A5rNgW1wPzvkzk+6gGlF+LBvxjJWtuj0K/7c8ym1iDPSjEUws+NTv
-	wn+WvUg7kM6hi1t6ddWVhrKGSq5BT+e/WLxwIiLpUUcd6JNXdkLOdV7HNk/YUJQbSEZqezcsnHk
-	5Jk+i0fSBYcmdGXBjQAFq5hkD6Eem/8cnXtAd8SO5BZBe7oFokIsmO0EBLdL4+fBMsJ+ZyU4=
-X-Google-Smtp-Source: AGHT+IH17CO/IhKeNaCMaFmPJRwR/j9WC9CIvfFSlVLZzkcen91Nxo3x0EU08eb9FZBheEwEtpet/g==
-X-Received: by 2002:a67:e702:0:b0:527:cc44:3d79 with SMTP id ada2fe7eead31-52b197510d4mr3742216137.3.1756819651085;
-        Tue, 02 Sep 2025 06:27:31 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52aef458ebasm4287486137.4.2025.09.02.06.27.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 06:27:30 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-52aa9d0dd6eso2162357137.1;
-        Tue, 02 Sep 2025 06:27:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVaO5rbEMTit2C4s+yqSUbi+awaU4viPEeUTNuvE+oQHLSF7++hQgBCwol3QrEKQoD8+t3Z1Vx+eI3n89oL@vger.kernel.org, AJvYcCWAC3N8CFO5LkKnuSVKX1qv9WOCQ1mAKPyZm64E83Oft9oL52K15aGN0rHl9Ypcs/xfXhyR7BeyUTPl11lz3ewcNrI=@vger.kernel.org, AJvYcCWqJBLeJ3OpTzS7Y0e6JCTm/2N7Px0UElJuvU7iyNYf7FWRcixERxstdj/75tAh/u1oyTZkd/kfUsM=@vger.kernel.org
-X-Received: by 2002:a05:6102:5a92:b0:52a:45b4:7147 with SMTP id
- ada2fe7eead31-52b1b6fbdb3mr3511355137.21.1756819650188; Tue, 02 Sep 2025
- 06:27:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678EF2BE03E;
+	Tue,  2 Sep 2025 13:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756819655; cv=fail; b=BSxx3SBYApD8UHDSsLnUnMQ/JNUZHKlx999eD5FAA3VKA0gEVGwhqhQME0lDh62WaFR9UDc4EtQrLPlX6wq/GFXijMRaY0I1SG2LIEhgGVIn7tGekB/Muz8rrkbc/sRgFsMj/fnfi4V+cSfH3VzdIbRNe0bFN7gw4qwtmxK8BzI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756819655; c=relaxed/simple;
+	bh=YBrjAkBtFoFeT3eLsKiFLL+IdzWDQFWzT64D8B/T+Gs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=NV5pxgu030/017nv2qRNpTxqstcJD6XwMMkKKekRpFXxXAV4cFUsOims7BTWXDjMENvhkV9KkazYX0JFKJCw6gv5bLRuWWVrD9e8Xrx7oHehy+6FaEJPRv//BmSj/68dKhwRQFThoF+Kum7E35dpEU06nh0OxSnimNDMCmyDM6A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=HfCLbDEe; arc=fail smtp.client-ip=52.101.126.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TdIMsRuMzdEievjqcNQ3c0AUSdQK3uarkLKtcEkRL+nuIjCBX9qi0/4srHMn0W5RV7GnptnC1o/ppuZkHSR1/XhhbKaqu1PaejbYEsNnX8BteSIn7LD+aVe3t4UbxHKrQVGIgSEMLBa2in4jgzMYTfvEnpUNP6s2m+QBlQ5RxKDH9GsOCNWAzdcOygWriE3t3hkBUeA8PdTyYQdfygq4/qVOQY9mtSaJEaZYgoTsvVxScT5FX6auxBF47wxlnaHH+MQcw6dQUZf2hYLOUMB/ammIJUH3iXhc40klfQtxz7pkkocTUf6QYBJDBVZ6w/HX2kwnqA5FQAxXYtKPhaGvmA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hoXOx1e5Py713Cob5uM4DBgPp2kNOF07qPjIhccBvuM=;
+ b=uE4kZYEo/wbY5GVn6dq2V7aXD2mvtVZz1gZRzZUk+JpjzRkyXBUxpuPYblbmjmu4ToIudJVzkDAvsQUvK8FkDbzKrH0k6NZHzdJh2Q83n0WrkHMeDuMHE5djjAN8Edd05JQVcK0Q2dTPgOaiVLuz6LJq3brxqpe9WiddQy9TgnFlEBzhXUmNWpgb7D7iLhmZ/VyYSVHbPMVqPse8+YItCBGBCqu9sztHmN1zXIW40ZyGkVLL9Un327dP/Xq4oPiP5vVSb7AA5BuImAIkp1v7pT/blWNBxENOK3vQuSSzWo8v/Fhc4NRKwDJHmrqrjKaf1oaldpbNnOb8h8XpW9XR8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hoXOx1e5Py713Cob5uM4DBgPp2kNOF07qPjIhccBvuM=;
+ b=HfCLbDEea2X5Ki5ajbSxZPThTdEo3TgzHb5Ca2NwHtF+p4Ti/BfXBMiS0LNoxIxhs/GphARLQ9a7nO+XSbIiZreSRCwCxnuJy5Ck1+akoqiJVDGA44p5pC/3rmRbBdzg8l4Zc4k52BX/V9Pp/6YuLGoZjWZC/rqCRPYsobYeP8euZ6OIotVnpXwy15f6F4DrmQyTnpWhRyfhAZ7fz6GVkCgLOTgvSoVx4oTqOK9rFIDET/5zqS3EjSGN0xGMhjHEM18iZOLl8H7TEOCyEwzKGocrPe3GZHFpwgGxTQbEPz+O6tj35D/YjgbtFonqjnTRZWlv1zfeBl9MBnK98Za6MQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by TYZPR06MB6379.apcprd06.prod.outlook.com (2603:1096:400:424::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 13:27:30 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 13:27:30 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-usb@vger.kernel.org (open list:USB XHCI DRIVER),
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] usb: host: xhci-tegra: Remove redundant ternary operators
+Date: Tue,  2 Sep 2025 21:27:19 +0800
+Message-Id: <20250902132720.85504-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0355.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:7c::12) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820171812.402519-1-biju.das.jz@bp.renesas.com> <20250820171812.402519-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250820171812.402519-3-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Sep 2025 15:27:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUmi=pp10=_WNTwbuH-PYknbFyP9iBcQDB+tNKVEXgLpA@mail.gmail.com>
-X-Gm-Features: Ac12FXyVk2yOZVKjDiZ2w1NlLODExRAU-e_ztQQvAlGVHGSo3QSOuUlrCoAreR0
-Message-ID: <CAMuHMdUmi=pp10=_WNTwbuH-PYknbFyP9iBcQDB+tNKVEXgLpA@mail.gmail.com>
-Subject: Re: [PATCH 02/11] clk: renesas: r9a09g047: Add USB3.0 clocks/resets
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYZPR06MB6379:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2aae9a4-52e3-4f39-ce63-08ddea2477be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2gqv2OZLlRkkSuDeEoBdBkAY6zHIs12EODrgJsW5axRyWxP2/c7mcUndAuRf?=
+ =?us-ascii?Q?wzaQRwml/D487wHs4toABVMp+IXISh+HO+zDxNUUbV0aCR1NiGWdc2tX821N?=
+ =?us-ascii?Q?J9RXRSz9SDevpbkvMJhLz510FeiX9dGcffjLkcwpfOrBJR3HulH1rVbJ+nob?=
+ =?us-ascii?Q?7X9UA2VCfn0nIsnmKfm7tQVY8F49Wm7PyaYO9zRKplIGJlyCJ030HxE3+omD?=
+ =?us-ascii?Q?O2zh2EK+Ry0FvBtlcCDMSUdYxrEpiyJkPD7IDeZU+YjtG2Z07+0m39mwWizr?=
+ =?us-ascii?Q?C1JVgJ/Z5r2nInoQhCT9B9f4W150yQyIWpKiYXp/OD1YWWGqc43MUfK8cmPo?=
+ =?us-ascii?Q?jRwUNNoDE/jnDs2MSYXrS83LvhZZmLVla05yh79sNcrNUhHlIe86YlTHjxCe?=
+ =?us-ascii?Q?t3wiEbD3Be5DDPgBFWfXco29AT8X3HcV37ULExQBu6LZTtGRTF+uFFJV5xS/?=
+ =?us-ascii?Q?Inco7PVDRRoUP0x6hKoKRNrxtix1hVSASaek8OLquw0RzB/eVWPUkZIJUehz?=
+ =?us-ascii?Q?Y/fLRimtJTvzlSawwSMDFz12EiUiEODPEPfh8j1n2YlAbOzqFJlXoSp/UKUv?=
+ =?us-ascii?Q?gVK5FpJMgpBqZubc8tMrR4mfeWvMpub9HlGBTvjkOUuZ18KA0UYHTW6EtVIw?=
+ =?us-ascii?Q?UPf55+Wj8qHk+TfnV4AI5qJZrn6zGreqO6wFoNJe2ygf92lLO1ddLUW1xfHi?=
+ =?us-ascii?Q?UvMCYoQBmjPW7SgJhI18ZWweME07dQOTH1jms4nLXDzFeFZfjYSSCuEe+EuH?=
+ =?us-ascii?Q?r0S7OPIpf/7R/e7pdMlqcMWThoLs8m/Zknk3F6Pv7bwFJP1sa6sAEskVhgqH?=
+ =?us-ascii?Q?B67XF4AMC/UfwVedRViedvWh3CrIYA1KmXX1aL9pMt1PudUDXuO/Bp0xpNNu?=
+ =?us-ascii?Q?/D4VGE6IF9M9OQf9fJOVUN+xfgPxfvXU8p6FW/UGI9mqagZYob5odSELpHFm?=
+ =?us-ascii?Q?VRmYDrlK3KOP62b1S1SgNcJJhoIypd63UdV8VZwRrxT+4lBT1gazNKEBpBmV?=
+ =?us-ascii?Q?ZG0bcK7LczHGQj1CTBXEqyGiRbpR6/FQCPuwo9ODxdqTjHqASGR94xrSkBfY?=
+ =?us-ascii?Q?Jg8ZLd/Fee6EXSpG6SmHclPMDHiDeNUVCsEh7CSdd5dpm7DzLkp8XYBvT3+A?=
+ =?us-ascii?Q?9xF4Rm56ZL3z2MOsGnrx/+h/oHcZ6+czzs0jzX805pwTUTYetLL1bMDik2Uo?=
+ =?us-ascii?Q?YUbD2ooen/82n4OLEzGCoe8EPA7YXILHOzOgDfHB/tt1iDV3UdYgeQ4hA7jZ?=
+ =?us-ascii?Q?NmMb/2wDGf0dHLfSzH1o74sRJpqfQT4kAJqzG2GM9MCG/ktjEV5bxbbVtyU6?=
+ =?us-ascii?Q?UR60zcVIMmfuJpekCQReUh52GSh6vXk4UmzA1QtP1j/XBUQjL5kAT/wbHs/f?=
+ =?us-ascii?Q?4rWA4OWXzPHQguYt8Al7bBfPxVbS+YtVXhSvT1uei0VRA73BUHVsTm9pvUgR?=
+ =?us-ascii?Q?EEN/QpTYEkDPgKIRvjlP0GTAZeJh5noy6hff/K6/nCkMgt0L7tA96A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?X8bbpIxD03Pwyne/GPJ6AJELSPsvhC1XGN467ptP0okebikFO9IlNe8ce1JL?=
+ =?us-ascii?Q?DhUNEexygBIk3ZGwbySsn1EMx9LxbEtHUAL5NAQKqSOcak94Ai4G2Czooh2x?=
+ =?us-ascii?Q?fmNcHjSIQm+p4jc4eu6tvERGx1/7nETchCKXMbHEBksoCJ0CZaf2MmzHvF0E?=
+ =?us-ascii?Q?GAT+R0GLkp1kBBWI7CCacf++Cif05AclvcH0In87xx9ZJq6dpAPOHVGH0hDd?=
+ =?us-ascii?Q?S8clii+C4neWwWVTqmXs+xsGM4UJil5nuoAcnXA/MCDlT/OfRPwXh5GvLaQ6?=
+ =?us-ascii?Q?gcsopdJatdZUNT4A/zkMOHYJHevwE/MUqliswc3jSdWa3qDLoWiSRrUdCYOY?=
+ =?us-ascii?Q?5uO3XzjLgg+pN4SyvzyYw2023/K00vzYPKiCPCusl/DVkRJ5KFXvf4ncMw+8?=
+ =?us-ascii?Q?2aXV95bBjJL2ThEQ2D23mirNsN4h2i0j+K51CMZhTdeExPz0QHATnbG+zFPv?=
+ =?us-ascii?Q?BEUJ9e7AVC/DyeKXvHiLVhdYEWcZcfTtqnqc8KQGr8eYk1rsXwftlMtPGdpB?=
+ =?us-ascii?Q?CXq3yzY5proQcE8C0GPZK5wZxxaXCV14ML9Zg4JDStARRmIyYtsMLP2HLg1q?=
+ =?us-ascii?Q?S96MZXwbDiakN+SSaupWkyWS0Eh0kV6SUQlMS90UadThGBBDE5GBOO+huNfD?=
+ =?us-ascii?Q?EmoJgLPzK9fWZEmUn+1lXV13M4lHgRYQFmdsqkRbEG94BnRwuhrfGMSGTC3N?=
+ =?us-ascii?Q?LhlmCStX+ZmnAC7xnvYNljzdKkvcJvxg7RwUSjLY2nGJEWp2iCc+Nxait3u1?=
+ =?us-ascii?Q?1zzWVl+26vfINu6BZNpMFYT6hZKbEBhg9YkIXI2D1NHo+L4C2rZA1UJBtdPL?=
+ =?us-ascii?Q?T/kx30ksqtNTWrcXhhYxEZt3fnWREaMZYqywiY/ighE8G2wHMvOG+LDP/57s?=
+ =?us-ascii?Q?oYUju1p6UYIY2pzPc8clxHCjUUol95xiE40/ZmgH5Y1SHrSCCX2Lyy//CTWj?=
+ =?us-ascii?Q?q7iq2rMtei6DTTGxbh4N9bXdClCyhihbX9Pwuj34sB7eTngVg1XoGWL1eiKW?=
+ =?us-ascii?Q?A8P2MzADrgGjREeho3e7KYXfoBK0sEq4K3bmfEdWisQolZTK17N7cHOz/CzW?=
+ =?us-ascii?Q?zYX1hT2qi2MWuxv9ZCtYoh6E8UJVyJOTNz8Nb8Osn1J40CLxpfRXai2QJTrp?=
+ =?us-ascii?Q?RHVIATCIKhUeBI96haHETx0uUL4hlCMvuIpsRXfWxvmnj0wq381GbcKCSiCS?=
+ =?us-ascii?Q?jVGsNFlxkVMBXwBvqKOPwCzn4ixc7ryIzwV8YbrwmK6xzQ5MTJjvsHPVDhDB?=
+ =?us-ascii?Q?oi9cHmCxgdcOW5eTVmBBe4YKh7iPjke8V/CCAGDdgyma9wJrYcyJ5YGLda0D?=
+ =?us-ascii?Q?MCS0FVlo/weN55Md4JILLU1OBAIe0zVBzlGa0IZDvqPMrsgb+ZjH++19I3vG?=
+ =?us-ascii?Q?WixNPbjmk9+zEAnBoJTgKXbPJDgtj/kpsSkdBKYp2fP1BOOUeJgiZ1U4oHvI?=
+ =?us-ascii?Q?QIhxIg/TtTGhrVbnQJn9OGF07bfJVj9ET4txCF0l9bsu1D5x9ZpDm0YmUmHR?=
+ =?us-ascii?Q?LbWx6p7FB0dl8bDcJzapKJVMoH3msyn+T1a4TYjLH+0YGPt72fCuAK053gZk?=
+ =?us-ascii?Q?9n8f1AZBWwURjkAtG/PTWy8heiSflnNjY4xZr3iP?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2aae9a4-52e3-4f39-ce63-08ddea2477be
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 13:27:30.7731
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t7uQ+5r/xcUpwYGTkGLfbAixSRZNkJTZ0TeQRfNZ9jyttQkPatuwEdQUK89rMam0EamNuRqbRk4Y2MtHlRchng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6379
 
-Hi Biju,
+For ternary operators in the form of "a ? true : false", if 'a' itself
+returns a boolean result, the ternary operator can be omitted. Remove
+redundant ternary operators to clean up the code.
 
-On Wed, 20 Aug 2025 at 19:18, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Add USB3.0 clock and reset entries.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ drivers/usb/host/xhci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r9a09g047-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g047-cpg.c
-> @@ -16,7 +16,7 @@
->
->  enum clk_ids {
->         /* Core Clock Outputs exported to DT */
-> -       LAST_DT_CORE_CLK = R9A09G047_GBETH_1_CLK_PTP_REF_I,
-> +       LAST_DT_CORE_CLK = R9A09G047_USB3_0_CLKCORE,
->
->         /* External Input Clocks */
->         CLK_AUDIO_EXTAL,
-> @@ -181,6 +181,8 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
->                   CLK_PLLETH_DIV_125_FIX, 1, 1),
->         DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G047_GBETH_1_CLK_PTP_REF_I,
->                   CLK_PLLETH_DIV_125_FIX, 1, 1),
-> +       DEF_FIXED("usb30_ref_alt_clk_p", R9A09G047_USB3_0_REF_ALT_CLK_P, CLK_QEXTAL, 1, 1),
-> +       DEF_FIXED("usb30_core_clk", R9A09G047_USB3_0_CLKCORE, CLK_QEXTAL, 1, 1),
-
-"usb3_0_..." for both, to match the public define and the clock diagram.
-
->  };
->
->  static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
-> @@ -276,6 +278,10 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
->                                                 BUS_MSTOP(8, BIT(4))),
->         DEF_MOD("sdhi_2_aclk",                  CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
->                                                 BUS_MSTOP(8, BIT(4))),
-> +       DEF_MOD("usb30_aclk",                   CLK_PLLDTY_DIV8, 10, 15, 5, 15,
-> +                                               BUS_MSTOP(7, BIT(12))),
-> +       DEF_MOD("usb30_pclk_usbtst",            CLK_PLLDTY_ACPU_DIV4, 11, 0, 5, 16,
-> +                                               BUS_MSTOP(7, BIT(14))),
-
-"usb3_0_..." for both.
-I cannot verify the actual clock bits, but they do lie in the empty
-number space. And apparently the censor team forgot to scrub the
-MSTOP bits ;-)
-
->         DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_i", CLK_SMUX2_GBE0_TXCLK, 11, 8, 5, 24,
->                                                 BUS_MSTOP(8, BIT(5)), 1),
->         DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_i", CLK_SMUX2_GBE0_RXCLK, 11, 9, 5, 25,
-> @@ -352,6 +358,7 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
->         DEF_RST(10, 7, 4, 24),          /* SDHI_0_IXRST */
->         DEF_RST(10, 8, 4, 25),          /* SDHI_1_IXRST */
->         DEF_RST(10, 9, 4, 26),          /* SDHI_2_IXRST */
-> +       DEF_RST(10, 10, 4, 27),         /* USB30_ARESETN */
-
-I cannot verify the actual reset bits, but they do lie in the empty
-number space.
-USB3_0_ARESETN, for consistency with the clocks?
-
->         DEF_RST(11, 0, 5, 1),           /* GBETH_0_ARESETN_I */
->         DEF_RST(11, 1, 5, 2),           /* GBETH_1_ARESETN_I */
->         DEF_RST(12, 5, 5, 22),          /* CRU_0_PRESETN */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 0c7af44d4dae..460effa0e11e 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1482,7 +1482,7 @@ static int tegra_xhci_id_notify(struct notifier_block *nb,
+ 
+ 	tegra->otg_usb2_port = tegra_xusb_get_usb2_port(tegra, usbphy);
+ 
+-	tegra->host_mode = (usbphy->last_event == USB_EVENT_ID) ? true : false;
++	tegra->host_mode = usbphy->last_event == USB_EVENT_ID;
+ 
+ 	schedule_work(&tegra->id_work);
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
