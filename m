@@ -1,169 +1,109 @@
-Return-Path: <linux-kernel+bounces-797146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA60B40C6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:49:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DC3B40CF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F901B21A0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B951B64EF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DBE3469F6;
-	Tue,  2 Sep 2025 17:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293C134A33D;
+	Tue,  2 Sep 2025 18:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="skl7ea3t"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="annzOnK4"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A861732F761
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45F7199252;
+	Tue,  2 Sep 2025 18:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756835360; cv=none; b=tiuorJyD+Lb03rRov3XmDDTOMMboQqITg3DiB52motrR5AwmNEVkmAAozw6GAqCsYKFO9xkLOR5pKanyf54GIHzzBCF8JTJQJOLkKvt49ovGP+ekPfK/hM6bQaSw0ge8id13sYjl3JbDp1o08BY5qiQsti13Rd98054geswREks=
+	t=1756836849; cv=none; b=trU0xTOoN8O0vh3K/EW3S9oUcjXeSoCFMaGQ5Y6gmn6kU7tz7qmqvEgVA133jkZrohSmfICSNITI3mfa8HTFGwZ5QoikPiwUwnQ0jDIzAPG68iOQQ2EOzmsmpiRbSAMPkDzUVRSiUBMUXk+iNNYpNaVenogv3eHdW2GspD1xNng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756835360; c=relaxed/simple;
-	bh=hcbhKZ17EeJO3SWow8Okj30nk495SpAvxrMcWVans/k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AT0kR41YGMlhtG3STiQYb3lLrv87tErHDA9XSyirL9GzD3aBTSdOcUaHuOzTkTSRlPD4PwS/oKpBlbmAO1bTfQB6ayAYscn/9j/+M+EPSnqcVPA01Q0s7kBrin6aCD7fOFp6SkQYoCxX2CfYzFPF2xcRyrzhlnC73sD+6Y4wAhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=skl7ea3t; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-324e4c3af5fso6004767a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756835358; x=1757440158; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zSO7jaOk19fIWzcYW+aJjISQBTaLHOWQKWeX3X09SOM=;
-        b=skl7ea3tXZQriYa/S35ONs8IOePdhAhWzYiS1VWC+Su5Shl1Ede7INfT0KsuMZ6/SG
-         MtHeQZSX1gD6yQGx5Hs/Gazuk/iJuqNYccy/W6L3OSAHVfoq+DMEiwIff5vJ8NUq1ja1
-         IZNL2kn8tyC8bSxcELmeI2dAzr0t2x7D/JZsfwN5tJdzi/8ucaHBx/w6LTPfIRuIv1KD
-         NMcfRNURqqeEIg3e+5bIzImp5ff6XnojKxiz9FZJiGqlf8fVDqFkZx9Fj963rJmx4Bfn
-         dInLvZUo6Znc+fFbm2AxjXu7/irBIFZpnVMdbWu87iOhyoBeuIO5LVshwy7lYvLfVOto
-         ensA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756835358; x=1757440158;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zSO7jaOk19fIWzcYW+aJjISQBTaLHOWQKWeX3X09SOM=;
-        b=tbkYnjS50XQQg78EPLM+x88wiZtpF3nB+9p107zn1cGHr/GOCaG/oOrjV0BtSAgeWm
-         yVd1mvT4Jm/BAwneFmJPebnB5/U3bEdM2wyugYKnWxx4P1BINIZ3PIhbCcUXickgVl/9
-         5eQMHvHw51fesGwjQX8AgqgOorpRu2pOeNwSH04xFOz3TGZ03E9jGGRr29+g8r3LF1GT
-         qywc3qzFeYKNnBumjBobYFDokxZRPCsc6kTrTHW/SYCJZbQqq/4lIFx+d82qBCjZuAWl
-         wenProb8ENGSaRHDTsS8IUniakSEDUMmOc49Fztpw/9lnwm64Ag/7fSSg30yzN1UPUiQ
-         PkZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUI+rbbDh3Ii4vrjEMKc6QOvmf9uDBs7Coits5WvSffDDPgAIdu0Wc1jyGXP7O67p7+BoLMBVdapAxxQaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDZDqUHI6HW0ZGWiEGkqccj+xycN3pF5MknPuMbLn5Rcl/iS/P
-	xPHH0awaC1EzbpQFqh3BjbilXLmsQ+VX9QO6OJnsGMYXsAsp/jwg5uwO4WSb2hvgpiYkO8gan8p
-	GM0krJw==
-X-Google-Smtp-Source: AGHT+IHAPfrxcoNu7KEuhW+xGkd3lhV3j/aHSv9GnE32OYH26Xp7BsiPC3oWimbVRwOHdPeiqle1WA/KIsg=
-X-Received: from pjbsp14.prod.google.com ([2002:a17:90b:52ce:b0:30a:7da4:f075])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d08:b0:327:b01c:4fd4
- with SMTP id 98e67ed59e1d1-328154148demr13971862a91.2.1756835357893; Tue, 02
- Sep 2025 10:49:17 -0700 (PDT)
-Date: Tue, 2 Sep 2025 10:49:16 -0700
-In-Reply-To: <d74ff3c1c70f815a10b8743647008bd4081e7625.camel@infradead.org>
+	s=arc-20240116; t=1756836849; c=relaxed/simple;
+	bh=9FXlkRNezVVh36P6t+TaeP3d9O4CmaR5C7VkAHxWSBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GEHw09H8p0JtNJ68D2OzIk1sS922mTyT8aQ3ya5ooQfV3c7q07FbqMyfxY8asSxCHV1W/yuxqiCEbgXK9uaI71k2yTQnld/GG1k/zqsOQDaUcTq8jmClYd1eufSl2m16yLTosPm/bMOlowzUmYQxTo4f4GwgHQfZWcFBIhqqp5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=annzOnK4; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=prInBSTc958Smv0ZFj1+aRfjobzPNDuMLS/wI5zg1QA=; b=annzOnK4yKgF70nE
+	k0cEd0SooPPpXr13FzLO4tHBmS60iLrkntS6YIPuc9otL5H5aPzlmEEAJeGnuq+1lf4JaWoY0g4nu
+	gXPSIZW71/IXPOEoMK/vyUSNIrWlC+3fGY8ngBRadNLUy7uX6wfyKyrA/l1PPq5/+rzGaIgQnSIWL
+	N/0zKysgj3ahZmEQFUxvUZZjO2n5HZJf1mmuvm8p2w07Pu46KwRAM+MtptgkGF8MRr4D936gRuXMc
+	Mpy0v84U8UHj3GUgaWzzOmATCjZksdtS8ddNO1PbrJq8PRWl9fNs1nQbAMl7tVRfEeBP/oI7jDo59
+	lm6Xyf3M7podY2HFRg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1utV8A-0087xg-2k;
+	Tue, 02 Sep 2025 17:49:18 +0000
+Date: Tue, 2 Sep 2025 17:49:18 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
+	arnd@arndb.de, mchehab@kernel.org, lgirdwood@gmail.com,
+	perex@perex.cz, tiwai@suse.com, linux-media@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Remove the wl1273 FM Radio
+Message-ID: <aLcuHnj_h3Xf7DiK@gallifrey>
+References: <20250625133258.78133-1-linux@treblig.org>
+ <20250808154903.GB23187@pendragon.ideasonboard.com>
+ <20250902103249.GG2163762@google.com>
+ <20250902113527.GB1694@pendragon.ideasonboard.com>
+ <88042d72-b428-442e-ba3c-b15e587e12a7@sirena.org.uk>
+ <20250902121015.GI13448@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <fdcc635f13ddf5c6c2ce3d5376965c81ce4c1b70.camel@infradead.org>
- <01000198cf7ec03e-dfc78632-42ee-480b-8b51-3446fbb555d1-000000@email.amazonses.com>
- <aK4LamiDBhKb-Nm_@google.com> <e6dd6de527d2eb92f4a2b4df0be593e2cf7a44d3.camel@infradead.org>
- <aLDo3F3KKW0MzlcH@google.com> <ea0d7f43d910cee9600b254e303f468722fa355b.camel@infradead.org>
- <54BCC060-1C9B-4BE4-8057-0161E816A9A3@amazon.co.uk> <caf7b1ea18eb25e817af5ea907b2f6ea31ecc3e1.camel@infradead.org>
- <aLIPPxLt0acZJxYF@google.com> <d74ff3c1c70f815a10b8743647008bd4081e7625.camel@infradead.org>
-Message-ID: <aLcuHHfxOlaF5htL@google.com>
-Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
- and host
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Paul Durrant <pdurrant@amazon.co.uk>, Fred Griffoul <fgriffo@amazon.co.uk>, 
-	Colin Percival <cperciva@tarsnap.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Graf (AWS), Alexander" <graf@amazon.de>, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov <alexey.makhalov@broadcom.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20250902121015.GI13448@pendragon.ideasonboard.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 17:48:35 up 128 days,  2:02,  1 user,  load average: 0.01, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Tue, Sep 02, 2025, David Woodhouse wrote:
-> On Fri, 2025-08-29 at 13:36 -0700, Sean Christopherson wrote:
-> > =C2=A0
-> > > This does mean userspace would have to set the vCPU's TSC frequency a=
-nd
-> > > then query the kernel before setting up its CPUID. And in the absence
-> > > of scaling, this KVM API would report the hardware TSC frequency.
-> >=20
-> > Reporting the hardware TSC frequency on CPUs without scaling seems all =
-kinds of
-> > wrong (which another reason I don't like KVM shoving in the state).=C2=
-=A0 Of course,
-> > reporting the frequency KVM is trying to provide isn't great either, as=
- the guest
-> > will definitely observe something in between those two.
->=20
-> Yes, on CPUs that don't support TSC scaling, we should not attempt to
-> advertise a frequency.
->=20
-> Where I said 'in the absence of scaling' I meant modern CPUs but where
-> the VMM just didn't ask for TSC scaling.
->=20
-> > > I guess the API would have to return -EHARDWARETOOSTUPID if the TSC f=
-requency
-> > > *isn't* the same across all CPUs and all power states, etc.
-> >=20
-> > What if KVM advertises the flag in KVM_GET_SUPPORTED_CPUID if and only =
-if the
-> > TSC will be constant from the guest's perspective?=C2=A0 TSC scaling ha=
-s been supported
-> > by AMD and Intel for ~10 years, it doesn't seem at all unreasonable to =
-restrict
-> > the feature to somewhat modern hardware.=C2=A0 And if userspace or the =
-admin knows
-> > better than KVM, then userspace can always ignore KVM and report the fr=
-equency
-> > anyways.
->=20
-> I hadn't put it in KVM_GET_SUPPORTED_CPUID; I was following the lead of
-> the existing Xen leaf support, where *if* userspace provides that leaf,
-> KVM will dynamically correct the values in it.
->=20
-> The problem is that KVM_GET_SUPPORTED_CPUID is a *system* ioctl on the
-> bare /dev/kvm device, isn 't it?
+* Laurent Pinchart (laurent.pinchart@ideasonboard.com) wrote:
+> On Tue, Sep 02, 2025 at 12:47:39PM +0100, Mark Brown wrote:
+> > On Tue, Sep 02, 2025 at 01:35:27PM +0200, Laurent Pinchart wrote:
+> > 
+> > > Patch 1/4 has been queued in the media tree and should be in linux-next
+> > > as commit 103b0cfc9ab6. It is based straight on v6.17-rc1. Patch 2/4 is
+> > > also in linux-next, but is based on other ALSA patches. The simplest
+> > > course of action would be for you to merge 3/4 for v6.18, and 4/4 for
+> > > v6.19.
+> > 
+> > Or given that it's a driver removal we could just get a rebase of the
+> > series against the meda tree applied?  The conflicts with ASoC should be
+> > trivial to resolve.
+> 
+> I don't mind either way. I know Linus doesn't like having the same patch
+> merged with different commit IDs, but I don't know how strict the rule
+> is, especially when git should be able to resolve the conflict
+> transparently.
 
-Yep.
+I still think the easiest thing is to leave 1/4 and 2/4 as you currently
+have them; and let Lee take 3/4 and 4/4 next time around.
 
-> So even if a VMM has set the TSC frequency VM-wide with KVM_SET_TSC_KHZ
-> instead of doing it the old per- vCPU way, how can it get the results for=
- a
-> specific VM?
+Dave
 
-I don't see any need for userspace to query per-VM support.  What I'm propo=
-sing
-is that KVM advertise the feature if the bare metal TSC is constant and the=
- CPU
-supports TSC scaling.  Beyond that, _KVM_ doesn't need to do anything to en=
-sure
-the guest sees a constant frequency, it's userspace's responsibility to pro=
-vide
-a sane configuration.
-
-And strictly speaking, CPUID is per-CPU, i.e. it's architecturally legal to=
- set
-per-vCPU frequencies and then advertise a different frequency in CPUID for =
-each
-vCPU.  That's all but guaranteed to break guests as most/all kernels assume=
- that
-TSC operates at the same frequency on all CPUs, but as above, that's usersp=
-ace's
-responsibility to not screw up.
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
