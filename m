@@ -1,156 +1,158 @@
-Return-Path: <linux-kernel+bounces-795598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C21B3F510
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D726B3F511
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9787417F320
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:12:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93AA1A80045
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735C52E2EEF;
-	Tue,  2 Sep 2025 06:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742782E2850;
+	Tue,  2 Sep 2025 06:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7RttNuH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbbV19pM"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78001865FA;
-	Tue,  2 Sep 2025 06:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2114F1865FA
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756793528; cv=none; b=CWdxlSzPUOdcmZMOGLtVu0/haUbmAbqgPoMePmAV9ddDcxcbhoQgJp8XtpgIyclZ/kzw1cveHX7VQYZgVI6Zf38YzcEeg/mQq/qMx6v/+VpiF1CtyTrNGiXNa1lYctM/nlR9FqsgAIOSMbuq8nQtf7wW2FASJjDjY2/eicdT27s=
+	t=1756793617; cv=none; b=WyFAQM7FeDeddbVqtONIc4bZsf9UZE4Ii+ZLqpraG/TFteRrpJiLS1YMHHYDWEsolawkMtKZ5TBl9jcincoJKOy/kiBLGnBTpCXui78sXxeOeSKzyinJaLxn6CNk91wIOBd23j4K0DD1ruLLgGaiqoSfdCNzCXv1m6PQySGAfps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756793528; c=relaxed/simple;
-	bh=WHpET5CPM65c2mG2ZilHs/KpUufXou2ZaaMlzfygKF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H6ZopYe0ROS0EhcWaCsoeW9B+Foc1Y+M2N+mNK0HcHHzjCeBYWfYIAF5AWfOnAZ1PAhdOPGeFlHkN+vYiBfQi8/xbr7LTolxaoNDMaq6I5kooP8hj1yBTb8zWG+uRXFpFC/kph/KwMAu6CdxnZE18frl6JyAR9kjSFMyQkTKGGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7RttNuH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF7BC4CEED;
-	Tue,  2 Sep 2025 06:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756793528;
-	bh=WHpET5CPM65c2mG2ZilHs/KpUufXou2ZaaMlzfygKF4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S7RttNuHqhWajDoSd5i6k1zpzaSzBqmZFR8djPBMAqotaTeKVjYaVyExTOJytcNmL
-	 zismXcWn53pQ4bW219bay2CXcd1j6F1oPpmepEDsU4z/3DNiRmI6iOlEvlCZZeWZIL
-	 O/EY30K53M+biCe0GhaucVGQ6tH0Ig5Pilp4DMxWbF4lygiMdaHYipgh62yWHNTTQ/
-	 HDPZAQ46VyjlItlhbKvbO3Pzjt1vMpim7QfvCAlinw+631DWThh5h62Bjx9NxkzVTy
-	 sRVl2mfA8wtM91jvG5swzAU6HHlGij46A09buVXgnQylnyGu/cPPhWJtRXyz6aX7At
-	 Vjlb8DBftjdWg==
-Message-ID: <5cbfa653-03c3-41dd-a309-406eaf3b6033@kernel.org>
-Date: Tue, 2 Sep 2025 08:12:03 +0200
+	s=arc-20240116; t=1756793617; c=relaxed/simple;
+	bh=qWx6qbxNFIe0cbRbgv455FO8qIxpNH3ZD+wUr5HSfGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ifnuycAWnixAXzGtOHv1a822Fmoq9vEtKbtwSu9HBHbYauXMYUm6bQcbxzfl8FqHstPheV/JpUsWv4BhfoVGJEuOkjLF0iv/Us6gGG+k7lKsrUMTxHVPmaNeEUx/WzYBkdsvSt+Ket1J1tW28cRoKj/SVKn9728/rKOnZDRfs/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbbV19pM; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b04271cfc3eso222259566b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:13:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756793614; x=1757398414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DXpO31qXeYVn+ZP52IVAUF/F/TwtGC3fKI0WbpDerJE=;
+        b=gbbV19pMSsOyU7gVU7cj82SzUxxm9YMG4s4NUtIMoiW0YrCiuM6ahVw/Z+KcQNxxmF
+         qY+EIgoOitwq7S6TE2ffxU3yYnKm/AVXKqwmT0dOCZR9t1Zubk4Wz1mfzOoVnt/Y5qdc
+         x+AT7HQId6iiSG8FiTKk10lqrB5Qa7wVc7RJAy5tIfne+LyyrjrsTC5mAMqPM0F0e4V3
+         jEvayz9ijZF3emSGo+8AUJ9lWhEvBJ+0V5wuFNQB+HX62lqnLkWM8rxhx1xidSRxcuqU
+         HvBfeq3ZDGA2f5xAgFcihGi4v/Jjve4W/jO4wtm2Rg2otiNclyZc8GStQYQz1p7aJqcF
+         HY3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756793614; x=1757398414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DXpO31qXeYVn+ZP52IVAUF/F/TwtGC3fKI0WbpDerJE=;
+        b=KhMJnPkWblC8sjGMATyHqcO/exeuh8ErcUB4ilqsI0dI/bxrDG2hvURD1wgY+fPi9E
+         TTorHJYxp7S3mW/Q4JtPAYXJFhiBm8BSfp0Ty984thLSlecI0Sz+D6zGgmwJs+tcKC3b
+         ACS5F+mE1fIJRkDWFXJ+x599WmKXDaiwBeGQHbvkUFoEamXnX/uymHWeKjgGeElUTm/I
+         r2WPE+RnQzgOjvKfyGxFkhZTwXiaSU54Dt94dlty4lvZJxeUKoM79nzijPXiHVxI0QLi
+         6FHXJJcaMKtp/8PfC+EwWI+d9MXpNnMpQYOqxI061/2H076YnKg6+4NJ9KPyMWkAutC2
+         QFoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrSnH4oN2yz63SSYXuzZB+ZBcwuTCjYusjgKBqxiWeA0OULHBaT6to0cz4iwNCaETPmYL6nH12lSZCAjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdt2ULPxtBGw8hH7d7BDtcaQFCTxivVzn65iNMB3sGdyEQ2yid
+	nBDO165KqyCoHx0Uxj61ko5ItygyWP2cswiwYLEetflRw/MJpq7k86Jp21w/cvtqF8TxEW5kxO9
+	gCYOcvhJ1xLRBXuAnJR6voQlTfEcI0mA=
+X-Gm-Gg: ASbGncsFJYNXFwgfBvR42u9EJylOrk9ZXIR3GdwBIoDdVWu213BziU7qrQxhvBA/EjS
+	t3TQfredFRwvJaOSF3ObDvhiBgQVe9j6luE0kBMJeej7poTA5OMkgXGgHTVyWaboUxJe2VRiVtp
+	jN3KDuIFmVvKr3BokEGL1yJ3JMWBJhRzL00ez0JD2gs12/Ugp1zbn2yERhpzUX5AMYIOtJqTcHU
+	pGOQ1vgPLKEiQRCUcGMQg==
+X-Google-Smtp-Source: AGHT+IFditCyGR6d3RrnKjk54ELZjip4tSsePu5eIAfrFlKYOz3nmi1u2hedAsaela6WNYcSOUPTayCPxoWIfadjBDg=
+X-Received: by 2002:a17:907:bb8b:b0:b04:1d07:40de with SMTP id
+ a640c23a62f3a-b041d074816mr660378266b.23.1756793614053; Mon, 01 Sep 2025
+ 23:13:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 1/4] ufs: dt-bindings: Document gear and rate limit
- properties
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mani@kernel.org,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250901155801.26988-1-quic_rdwivedi@quicinc.com>
- <20250901155801.26988-2-quic_rdwivedi@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250901155801.26988-2-quic_rdwivedi@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-2-ryncsn@gmail.com>
+ <CAGsJ_4xoN35Av2H70o+dwGzhKrAnm7gppEseG0MgAUPQt2TygQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4xoN35Av2H70o+dwGzhKrAnm7gppEseG0MgAUPQt2TygQ@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 2 Sep 2025 14:12:57 +0800
+X-Gm-Features: Ac12FXzRHhSHkOm9GhOsn7XLeGu7L3HAsBD5D0dA66RleOcvQAaQbN42xrE1ngQ
+Message-ID: <CAMgjq7Au2n7PO6yb7wyCJbvFceGj6cpQCp+kVTewPjU=WhmXKQ@mail.gmail.com>
+Subject: Re: [PATCH 1/9] mm, swap: use unified helper for swap cache look up
+To: Barry Song <21cnbao@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/09/2025 17:57, Ram Kumar Dwivedi wrote:
-> Add optional "limit-hs-gear" and "limit-rate" properties to the
-> UFS controller common binding. These properties allow limiting
-> the maximum HS gear and rate.
-> 
-> This is useful in cases where the customer board may have signal
-> integrity, clock configuration or layout issues that prevent reliable
-> operation at higher gears. Such limitations are especially critical in
-> those platforms, where stability is prioritized over peak performance.
-> 
-> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> ---
->  .../devicetree/bindings/ufs/ufs-common.yaml      | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/ufs/ufs-common.yaml b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
-> index 31fe7f30ff5b..b4c99fee552f 100644
-> --- a/Documentation/devicetree/bindings/ufs/ufs-common.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
-> @@ -89,6 +89,22 @@ properties:
->  
->    msi-parent: true
->  
-> +  limit-hs-gear:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 5
+On Tue, Sep 2, 2025 at 9:14=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrote=
+:
+>
+> On Sat, Aug 23, 2025 at 3:20=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
+ote:
+> >
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Always use swap_cache_get_folio for swap cache folio look up. The reaso=
+n
+> > we are not using it in all places is that it also updates the readahead
+> > info, and some callsites want to avoid that.
+> >
+> > So decouple readahead update with swap cache lookup into a standalone
+> > helper, let the caller call the readahead update helper if that's
+> > needed. And convert all swap cache lookups to use swap_cache_get_folio.
+> >
+> > After this commit, there are only three special cases for accessing swa=
+p
+> > cache space now: huge memory splitting, migration and shmem replacing,
+> > because they need to lock the Xarray. Following commits will wrap their
+> > accesses to the swap cache too with special helpers.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+>
+> Nice! This has cleaned up the confusing mix of using
+> swap_cache_get_folio with VMA, filemap_get_entry,
+> swap_cache_get_folio without VMA, and filemap_get_folio.
+>
+> Reviewed-by: Barry Song <baohua@kernel.org>
 
-No improvements.
+Thanks!
 
-> +    default: 5
-> +    description:
-> +      Restricts the maximum HS gear used in both TX and RX directions.
-> +
-> +  limit-rate:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum: [Rate-A, Rate-B]
+>
+> Do we have any potential "dropbehind" cases for anonymous folios?
+> I guess not for now.
+>
 
-lowercase
+Right, dropbehind doesn't apply to anon yet.
 
-> +    default: Rate-B
+> __filemap_get_folio()
+> {
+>         if (folio_test_dropbehind(folio) && !(fgp_flags & FGP_DONTCACHE))
+>                 folio_clear_dropbehind(folio);
+> }
+>
+> Can we mention something about it in the changelog?
 
+I can add some words about it in the commit message. One can easily
+tell that if we want dropbehind for anon, swap_caceh_get_folio will be
+the right place to handle related logics.
 
-Best regards,
-Krzysztof
+Now with swap_cache_get_folio being the only place for swap cache
+lookup, and in the next phase we'll make the swap cache layer the
+unified way to do swap synchronization and never bypass it, maybe
+dropbehind will be easier to do too.
+
+>
+> Best regards
+> Barry
+>
 
