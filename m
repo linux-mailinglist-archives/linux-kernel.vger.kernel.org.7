@@ -1,120 +1,130 @@
-Return-Path: <linux-kernel+bounces-796154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88AF1B3FCA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:36:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B468B3FC9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D25188C8FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E0D20740F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D1C283FF1;
-	Tue,  2 Sep 2025 10:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF0D2EAB81;
+	Tue,  2 Sep 2025 10:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LGs1Jxi3"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJnHfgvn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3E828466E
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8F72E2825;
+	Tue,  2 Sep 2025 10:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756809326; cv=none; b=BWpSR0U/O/cldYYjOv/e8BIafNH7tIsGlilM4KafKRygmBRMXPxeaGwbfgrm1oX5JTMC4rfDrCndOdyc7pr9thNGIOeOr3jOkKWN2S4E4U7wbk60/q/9aEwNNvLVTu6yv8Wk/F8yz2PPdRwTNMcheG31eR7EP1dff5R3aIH0djU=
+	t=1756809339; cv=none; b=Faj+DvYPLqkehSfqUTpyyBNxN/bbuYcl11fuwRIgQxHDGBzN4iBpVIC5U1x5FqMy/Cdyjj0S55E+mqIqjIcoPZaGtPBnqx6FHvdax2Y2d/NoFhJXj9ooameznzMGvhRMoalO2CUj0RCv0FFwOz9mcrxBcIjibLuq/PC0xNq76zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756809326; c=relaxed/simple;
-	bh=Oy0+ZjgcUTHxI8IO6SmQY8/8YB65RaZy/XYvD1uhubU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V1F7gZ5tQS4Af/4cGYHOOGzUvpHqSLqpxm0fZmYxEb7YI3CtLH9Z84PQ29G1m9KrxGiVtibmpifo1204MGX/xpcjACuDoyL3bOW0AUuBOYx2rduSuhJibCHJz0rClWT1txmnodQYIYN38+dntJFX2JoS2jvbBvdL8R4syYFD8hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LGs1Jxi3; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77238a3101fso1978569b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:35:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756809324; x=1757414124; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Oy0+ZjgcUTHxI8IO6SmQY8/8YB65RaZy/XYvD1uhubU=;
-        b=LGs1Jxi3dBLQMHDh5vmstyv4CX7Fmpf8uNaFpjE9cHUd2fB1w9yDr4YxfRerz3HyEP
-         CDW14/pFtNT9Oqum8fnUCjE/0jAltzxyPlEx1XMfrpCtpWahHYSCsQ40vGFdVZnXnRMa
-         Y2RsY/Ei78CJ/u+2ECowiW23gS5//DawQK1WHn0Z+Ho1UAdMXnocFkyudOWLsJdW5pbJ
-         dyDDWsGSuCa0AdqYO+jUjxx0Yr/MtSGjmOsHqMQRsZx5qW9a6baa/fRi9vd1DdknkQ5A
-         lGmyq3eGhgg9RxhYsYhV2nmWeBkS18mj2apinHvpTsrFvIu9j0Kpli7m/hfAhuFmlcLV
-         lp5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756809324; x=1757414124;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Oy0+ZjgcUTHxI8IO6SmQY8/8YB65RaZy/XYvD1uhubU=;
-        b=fTRn6eNgY7TrurOURTiS6iylWsnYOBIejPhn83qCXrHsD07/E5hx1N638ydT89WYC0
-         fvoSLepfRfefGSlSdeSafIOKUwDUFQJqtW3qhI0dd9pvB6K38wYyGBMmRgqhpyoWZ1Cj
-         dBCpD438WnKnKtHLwplDhp7KWlqYebLKmoW/gvQTP642YWvy4O/MNxesDot0zfuGeVuY
-         /HQNDLL/FFjO68xc2BqA7OPZhdmR9SwzGWD88Us0OXDbRxzqZtfBQy8n7G9sxSPFpGjk
-         yNvRdjlZaxCa+mrY6KvCqgtwMfrzgQI4zKbQaqDHQYRJyj1g4WkBIh47QLth2CU/eAv/
-         2ZQg==
-X-Gm-Message-State: AOJu0Yy3Uwx2odm6T/DKtidaF0DUxeG64m5m3Tdz9iW7+/ea73N944dA
-	LJoQ9AFKDQmd2YcVA8FPUsU+BAfntmeOXkivXn/NLzx7tWs7v0lmB14W
-X-Gm-Gg: ASbGncssLo7gPND83zUYK748/eZ5ldJicqXQsyzD7MQyu+3uiaDOELgH0XSlyOVfKr2
-	X4FB+G6+xQucmxxY3yNL8Ki141CuA6X7GiV0zlq/g2qir67b2hgXTZLdtJ8HGedoKBFAbwuodbB
-	T69JmsXf2mE3RjHV4tek/vkQKiPLloKZV0IkPECq5D58keLk0GwN8gCPdbg3CgDMdW1YC5/bJpg
-	tfOh0AMt24yk5Bvpp+C0wXVANOxGzArdo7HYVC200m4IfmDCmGflsn2xGRhHXR2Kpc+9SVEQuEe
-	W0K/uxh8nb/LlGl5U09Zl5Ed+0m1wn7QFL/syuC8JjjqDZPhaHWbDGCuyVUBKs8oEsrYe0jZctV
-	B9kQMQLmfMhYFRfumVDbSPFhsDVN3gcxcTcDTJuA4ldgm/AuIgKvA25fU
-X-Google-Smtp-Source: AGHT+IHBEIcoAXiQBDvntsTjV/I1iMaCm8Wm6ePBm+ak/qeK1Wqgqu0CzitAXYtbtdQW05BUkEvq7g==
-X-Received: by 2002:a05:6a00:240c:b0:772:3aa4:226e with SMTP id d2e1a72fcca58-7723e33851amr11538796b3a.19.1756809324019;
-        Tue, 02 Sep 2025 03:35:24 -0700 (PDT)
-Received: from [10.0.2.15] (portal-nbc.netapp.com. [202.3.121.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26a4e5sm13363163b3a.19.2025.09.02.03.35.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 03:35:23 -0700 (PDT)
-Message-ID: <2841bd1b7910bd0e1b263b393152f2cb13dd3ae3.camel@gmail.com>
-Subject: Re: [PATCH] nvme: Use non zero KATO for persistent discovery
- connections
-From: Martin George <martinus.gpy@gmail.com>
-To: alistair23@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, 
-	sagi@grimberg.me, linux-nvme@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Alistair Francis <alistair.francis@wdc.com>
-Date: Tue, 02 Sep 2025 16:05:19 +0530
-In-Reply-To: <20250902035211.2953174-1-alistair.francis@wdc.com>
-References: <20250902035211.2953174-1-alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1756809339; c=relaxed/simple;
+	bh=7o9EZ2IlqJciSHRV4dsJOeLuben/WcNyWC+ailQ200Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WJMpxl5E+PgHkFri0nNoO9lSnhUN/2kuhD0OZfg2TidQKI9g+sqLH7r6G/sE8gDhZdbu34g2w7NfL9L+ylj7o61Mo71JeIsubbUiF/T7pPuCLhHz7OBNH7EuHIi4OubyhKOpcgjozkl6NSH52OlzuqsqFOLRxWu1GNjzjLtUGhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJnHfgvn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CD01C4CEED;
+	Tue,  2 Sep 2025 10:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756809338;
+	bh=7o9EZ2IlqJciSHRV4dsJOeLuben/WcNyWC+ailQ200Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aJnHfgvnSV2t+IZgdq07gRJePZTs2WdtS3Yfi4FISo1ZDHQiNWbm36PJDak9Xu3ZH
+	 Zc3rzt70+RQER5+keRl9/J/eZ6DVIceJ4ON0EDVPCKyOmD7n/pjWMQf/nMVFb5VAnO
+	 ITCr7xXPaDJ31VeQP3az4LXLOZX+0NV+X0svugTi8PeTRTU1gqLVQjZpAlpXpFGPKd
+	 WstfjG5qnKOlMTYuYRcm+uh+6+EWCD4ew7cWCg6F3g5B6Q2NcONKpb87dJSlTk7gFI
+	 YKYkaBFNG+af9iV3LMahY0eWzw+emxtVLbvtC6ZSH1XoJCVWWGlIV88xwZ7Vqn9rdO
+	 RiGMcWsvk7BdQ==
+Message-ID: <d620167b-ba52-4f80-82bc-1a35223f96e6@kernel.org>
+Date: Tue, 2 Sep 2025 12:35:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pasemi: fix PCI device reference leaks in
+ pas_setup_mce_regs
+To: Markus Elfring <Markus.Elfring@web.de>, Miaoqian Lin
+ <linmq006@gmail.com>, linuxppc-dev@lists.ozlabs.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Olof Johansson <olof@lixom.net>, Paul Mackerras <paulus@ozlabs.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20250902072156.2389727-1-linmq006@gmail.com>
+ <63be79a4-79e4-47f5-a756-aa55fe0d29ab@web.de>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <63be79a4-79e4-47f5-a756-aa55fe0d29ab@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-09-02 at 13:52 +1000, alistair23@gmail.com wrote:
-> From: Alistair Francis <alistair.francis@wdc.com>
->=20
-> The NVMe Base Specification 2.1 states that:
->=20
-> """
-> A host requests an explicit persistent connection ... by specifying a
-> non-zero Keep Alive Timer value in the Connect command.
-> """
->=20
-> As such if we are starting a persistent connection to a discovery
-> controller and the KATO is currently 0 we need to update KATO to a
-> non
-> zero value to avoid continuous timeouts on the target.
->=20
->=20
+On 02. 09. 25, 12:24, Markus Elfring wrote:
+> …
+>> Add missing pci_dev_put() calls to ensure all device references
+>> are properly released.
+> 
+> * See also:
+>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n658
 
-When would this ever happen? Won't nvme-cli & nvme/host/fabrics.c in
-the kernel ensure a PDC (persistent discovery controller) would always
-have the KATO either default set to NVMF_DEF_DISC_TMO (i.e. 30s) or any
-positive int value & not zero?
+?
 
-Do you have a test log for the above scenario where the KATO ends up
-being zero for a PDC?
+> * Would you like to increase the application of scope-based resource management?
+>    https://elixir.bootlin.com/linux/v6.17-rc4/source/include/linux/device.h#L1180
 
--Martin
+That won't work here at all.
+
+-- 
+js
+suse labs
 
