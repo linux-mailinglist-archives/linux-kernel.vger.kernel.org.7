@@ -1,93 +1,94 @@
-Return-Path: <linux-kernel+bounces-797374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EC7B40F8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:41:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC23B40F93
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1DBC5E5C81
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:41:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91DC616D245
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3459235AAB6;
-	Tue,  2 Sep 2025 21:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5E035AAC6;
+	Tue,  2 Sep 2025 21:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="qtswnzyL"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EoJlG6Jb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00300258EF0
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B51258EF0;
+	Tue,  2 Sep 2025 21:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756849274; cv=none; b=SYk9hC2t6ONTBXFDm3Ip6uyGgMBMW9qrQ620mhPnx87xcElBBHV56o+E5Hzmx31MJFj8ZETWJgz+3NpzlwIX/UeeX1TQOd9fUtyftCKx34uxN05pSbTBLyiFQs3lUJxWBH0Onmmu1XMf1AOpaZxDCQvs+Q1t8NjDF+9VQ+WqFHs=
+	t=1756849365; cv=none; b=Pj1rpCaSUdySxa2z4mbeMX9CyL9X1KSdn5OVC8rsGXDAGrAzOOPkQZ97SrhisC8e75kKTPEvchHgHPkya6mxmlz06XsSeE6gDixX6Rp69tDNjmCwMDgy2XEbvYhttxYkXNOr6J28mgk5eAZzUEZ89r/Kb5qIoH8OJ6xXzVkhTzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756849274; c=relaxed/simple;
-	bh=wS50MOhHWsnMiqonPW7eIOg6r3BfOfNZgJl6TjCqs5Q=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ickqKYkmo79QOOEF44KMwQUZ8/VpuQ0TqQgxWICplcuegFLoOed5L2+/a31haOjCRBAaMcnROgGTymra/oU/gWd96jR39m+ZjHet08DNnlb1iREoMOEsmjvbT+c41U4p3gMX4gBLl3D7nowvMKSi760gCMfwu9z5QKloD25EDqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=qtswnzyL; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1756849272;
-	bh=wS50MOhHWsnMiqonPW7eIOg6r3BfOfNZgJl6TjCqs5Q=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=qtswnzyLDTa4gDkPdnZ2SlsbCITviKO02+Ope2Po0zVZEP2SNdsf6LULlMADetO9M
-	 iSSIlodlZZT4FUxpv2WsgO/l1IxSS+U5aldV32yyepCgAkQykh0U0IeZhu4y3v/Nvd
-	 Dv2RiCr7nWASh1D7XaJ5rZHml1HTUnoeJ44MgJmc=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 3FDAA40398; Tue,  2 Sep 2025 14:41:12 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 3D8EF401EF;
-	Tue,  2 Sep 2025 14:41:12 -0700 (PDT)
-Date: Tue, 2 Sep 2025 14:41:12 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Vlad Dumitrescu <vdumitrescu@nvidia.com>
-cc: Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
-    Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] percpu: fix race on alloc failed warning limit
-In-Reply-To: <84bbc996-27c7-4f83-a8c2-4f88b439bd23@nvidia.com>
-Message-ID: <070d9527-0852-e71b-78db-bd9768ba7525@gentwo.org>
-References: <ab22061a-a62f-4429-945b-744e5cc4ba35@nvidia.com> <061405e5-8670-2873-9b6f-0f152863adfc@gentwo.org> <84bbc996-27c7-4f83-a8c2-4f88b439bd23@nvidia.com>
+	s=arc-20240116; t=1756849365; c=relaxed/simple;
+	bh=RjK40O1erbbu/Aaqtcd7wtn/XHEa2oLzQ1L+Jw/nrP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QkVjNL07X3kto/cGBzSuWDAc2ljFA4sXjYB6WLhQ7CM9DYIDPEFXLNJlzrG4N+isY0B+1/fEW/ldfzT6yo2FuJzLLE0/UUaZMv7sFbzat6+ozgmvi3jkMljhtcjVSLhmxE4yr4hVsNT32CGdnc8Ps7FQlY8H7U0PDSR8P7G05xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EoJlG6Jb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7949DC4CEED;
+	Tue,  2 Sep 2025 21:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756849364;
+	bh=RjK40O1erbbu/Aaqtcd7wtn/XHEa2oLzQ1L+Jw/nrP8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EoJlG6JbZMLwZp+m1BZbhMawCR/5RmCUTGA8njxZFmehPeIWW7JFgU3N3x+hw4LpG
+	 OFd8vAkhr0x8OLlVta9zD5wf8H3Ubjf8Jf3f1vtYzyRuprlUcFKOyEkPVbYKb5VeQH
+	 qbEXmxnF+sqcJQC3mdXguj0PYnkR+jPTfa6NbuU+/yBmjaAHHAcPZZ7CukyR/+/PNj
+	 olac12OyMTg+qwOCnlM7HvFzIAr3zGA6X6dx/l8Y7JVYdwCIROCjFl6dtK+RjNo3el
+	 bCQmg/ubnFasfzVUqGzpA8ydpEV513sGZfHTIC8E+3Ud0Tvou/MlqMu9K7CGaWuID9
+	 XQKE8ByoWqfEA==
+Date: Tue, 2 Sep 2025 16:42:43 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Mao Jinlong <jinlong.mao@oss.qualcomm.com>,
+	Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
+	James Clark <james.clark@linaro.org>,
+	Tao Zhang <tao.zhang@oss.qualcomm.com>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
+	devicetree@vger.kernel.org,
+	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>
+Subject: Re: [PATCH v1] dt-binding: Update oss email address for Coresight
+ documents
+Message-ID: <175684936304.1217220.3167248149687349464.robh@kernel.org>
+References: <20250902042143.1010-1-jie.gan@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902042143.1010-1-jie.gan@oss.qualcomm.com>
 
-On Tue, 2 Sep 2025, Vlad Dumitrescu wrote:
 
-> On 9/2/25 10:39, Christoph Lameter (Ampere) wrote:
-> > On Fri, 22 Aug 2025, Vlad Dumitrescu wrote:
-> >
-> >> +	if (do_warn && atomic_read(&warn_limit) > 0) {
-> >> +		int remaining = atomic_dec_return(&warn_limit);
-> >
-> >
-> > The code creates a race condition since another atomic_dec_return() can
-> > happen on another cpu between these two lines. warn_limit can go negative.
->
-> Yes, which is why I mentioned it in the description. But compared to before,
-> it should be benign.
->
-> > Use a single atomic operation instead?
->
-> Did you have something like this in mind?
->
-> -	if (do_warn && atomic_read(&warn_limit) > 0) {
-> -		int remaining = atomic_dec_return(&warn_limit);
-> +	if (do_warn) {
-> +		int remaining = atomic_dec_if_positive(&warn_limit);
+On Tue, 02 Sep 2025 12:21:43 +0800, Jie Gan wrote:
+> Update the OSS email addresses across all Coresight documents, as the
+> previous addresses have been deprecated.
+> 
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> ---
+>  .../sysfs-bus-coresight-devices-dummy-source  |  4 +-
+>  .../testing/sysfs-bus-coresight-devices-tpdm  | 56 +++++++++----------
+>  .../arm/arm,coresight-dummy-sink.yaml         |  2 +-
+>  .../arm/arm,coresight-dummy-source.yaml       |  2 +-
+>  .../bindings/arm/qcom,coresight-ctcu.yaml     |  6 +-
+>  .../arm/qcom,coresight-remote-etm.yaml        |  4 +-
+>  .../bindings/arm/qcom,coresight-tnoc.yaml     |  2 +-
+>  .../bindings/arm/qcom,coresight-tpda.yaml     |  4 +-
+>  .../bindings/arm/qcom,coresight-tpdm.yaml     |  4 +-
+>  9 files changed, 42 insertions(+), 42 deletions(-)
+> 
 
-Something like it... Maybe
-
-if (do_warn && (atomic_dec_if_positive(&warn_limit)) ) {
-  pr_warn  ...
-}
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
