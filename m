@@ -1,491 +1,231 @@
-Return-Path: <linux-kernel+bounces-795757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4655BB3F776
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:03:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10435B3F788
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3573A1B20346
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:03:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADEAD481418
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21992E8B64;
-	Tue,  2 Sep 2025 08:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C391D2E8DE1;
+	Tue,  2 Sep 2025 08:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iP9v70Az"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XhBnInmr"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2044.outbound.protection.outlook.com [40.107.95.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E9A2E8892
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800169; cv=none; b=urnZW/gn8YhZ23Oc8ieU1GRPdf0pcghf04MjzREucJrRDK6DYx/+cpwysfnLwrzvTcgQ/75seI2+B+aalVsCBfsbhbZn7jsFVHepkiL8EhgAAbDbnSOVHGdxg9WV8E3HVH0xAuoo/NmFErrxZg0lmFI1zrkRCOHfvpiaRtMBevk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800169; c=relaxed/simple;
-	bh=HxK1gbwi2CbGjb65q+s85dRWGBE8CixJNPvAdpG2zbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NB+2ak7kyZXtKSi1/A6dZsinrQFUJ3lHN0Pp8ZWlGGS0hxwqeTH4lk+HzZxKsJR4HvXt7drzOd5gF/1YeYk9NzifzcJpfOEDumPGhH5T3921JzyM4Txw+7LxeaSyUW6LowEW0ejnV8tBy9GJ7sPdHfhsJVqkIrdskgHuE2HSwq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iP9v70Az; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756800166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HXaSXI416tBr9Xt7SlviNqC21fFgH6dQWHigCHdg9IQ=;
-	b=iP9v70AzvpCtp0c7paJfiXupLY/q2ZnLBwarmNMExN+1kOGv7aRBT00GDHHxhcpz5iYdMW
-	2+TQjHg5EGrRjMBNEZdwFfxjMpje9YviHbWOk944gDtnSVpVqwAncAOv6hUlLZCpJ7f8wA
-	SlW93scbYqAIt6EH9x8XZmT8ET8yGiI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-pCD0YaEBMs6u0caM58a3zw-1; Tue, 02 Sep 2025 04:02:44 -0400
-X-MC-Unique: pCD0YaEBMs6u0caM58a3zw-1
-X-Mimecast-MFC-AGG-ID: pCD0YaEBMs6u0caM58a3zw_1756800163
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b8b7d66adso9460535e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:02:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756800163; x=1757404963;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HXaSXI416tBr9Xt7SlviNqC21fFgH6dQWHigCHdg9IQ=;
-        b=dWtipVqSeakv3d32AiDKhkW2IxG/IxhhIoa/LtBXTIHYAjntjZyPFW2OxPL2oD3MfI
-         17E9L40hMEjXoMUnEqCZ7rn8QkBbJV2ltfAYoKY/6EYD4uXORi/HHngUJI2SwyJQjo0b
-         oaNId1cQPLmSCvjI+aiJ0s8hrvSt5Q+7jY0UrlRujrkDWffGPrfd8/XWTTlwrDaN5hCA
-         yvbgXgiHle4PqEyDcUu7bLX7AW0lUmq8BN0TcnfVIEc/TvO23BrGnp977aWSNQSgefTA
-         8ymVDNdR14hBVFqtiswhtbDUym1dSvHK2hcP0T7UaGoJv8uVTsR4cZ+856kBUeLDHydR
-         0j8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVbeiwMghUtnhcj+NFa/eS6ocJPZdpxrJBMesX5K8TrqKbbiOWkuFll7DwNOLZMoS5eyE5Nr61C1Hr4SZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLrM2LX+xw5tqV8jq/VUcbv4kHQHEzCASkCFWUoF3FsZYsK83c
-	KG+YiBTAMmG4sTTuNdB5LzgDQ1nCuQFD3YlKZ08Csvz8ZWglOB+kfrKhYv6SilmhqQRpoGEE8+X
-	h4osHua6rowCj3Wc+DwjTEoTuituM7RK9xZUbXN+ct2Zpaiz05B860F64V7boycyuRQ==
-X-Gm-Gg: ASbGnct2u/J6XXrLpJjQ9BlcncFykl5QpJRVQiVQ8rtMt1zzXpNDWMx3ZeO18p3B/RY
-	ixndRvu0bgbMmowfGKuM7tDRETSPWyioV89UI8o3+iQEqZtCxyW4lC+2oXaJEXFPeOhxztRe1hO
-	m46f5v4XTTEQIeW6i9j7D8kExmWtJrjzTLnn9QnTR2K2teJS/hTH5n8O1GeZB0h1Z36mHXq8uJ8
-	PkS9DuycbvxUffCEziT76PnS0FrXNP18yf8rZWgeHgUlu9DAlH4yoHP+u3Ah3rfdPBN/ob5ZHAL
-	NgwMjgD9RWvfj8hMetdpGm+7FFxdAi7JyrEDgv4h9WvmUMUTjZUVS+VAOwZ07wQN8IKLvTyUU9t
-	vHb8=
-X-Received: by 2002:a05:600c:1c15:b0:456:1514:5b04 with SMTP id 5b1f17b1804b1-45b9353e825mr19998505e9.21.1756800162759;
-        Tue, 02 Sep 2025 01:02:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHU4ehjBdhj/JptIUXUiuh2hVBGm3VR2ta7Nmb28ZEQjgQYesv86/linYfTv/nHm/XXIlNODg==
-X-Received: by 2002:a05:600c:1c15:b0:456:1514:5b04 with SMTP id 5b1f17b1804b1-45b9353e825mr19998105e9.21.1756800162234;
-        Tue, 02 Sep 2025 01:02:42 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33add294sm19732844f8f.29.2025.09.02.01.02.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 01:02:41 -0700 (PDT)
-Message-ID: <0439749a-ed43-4dc8-8025-f7aa1eec10b7@redhat.com>
-Date: Tue, 2 Sep 2025 10:02:40 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508DE2E8B8C;
+	Tue,  2 Sep 2025 08:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756800235; cv=fail; b=EX037IMaIQQZKANdYHK88suj63kEGJQLgM5LRADJ9LqUXxTvfijF54eT9/atkKmDHkWNMrH926smKIF1T6H9e9f6Ep6rpdhSH98Q+Q7WLYq4aXy1G0HGG9BHceSu9YVxBygnQPVpCxrsj4Hz6R9WaxRZ7OsoMvIhS8oyZM7M28Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756800235; c=relaxed/simple;
+	bh=DTRC8baTVROgYcnW9yQ+xgWwXHi0DAwqI9im0M+sojg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CoAb1X7mV30Quw2z7ZWUZwNSDkmnt5SWS1kJXGwME9i+Xs6KcMaxXqbaFwGBfM6+a723P0WAfb/MdDxLSq+H9LI8k/bN7IWlYBSSxzB3NjYp3BPxu7aUQf2qD1xF/P9Eyv8idTl4s/VmFrwwenxNJY3aVHBWb5E3AZRG2n+9iaM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XhBnInmr; arc=fail smtp.client-ip=40.107.95.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QERlz2RLDO/C5/l6IRMffPJeQHUr3mX5ReeaFl699Hc128LD39oyklw/NeOXCEnDBr8U+j1YjHl1cbjT+anFNKkFXsci6J9P4CB9e86rW/4qYE0a+FWDhCFoXxjdABZOQYIID4LXfflnH6ggWYOsPY9PZUQDkN7WBUJuIYvt3Yop0GKq6o6dnFg0uKBIymN0Tj3lWW2nfNUOiOW420Az1MUugjaxJ518X0A6gH5LWxqlmxb8iW6hpOxDPwGtm2FrGX/iSGHC1TR+5Qt3BkIqjChMuW+n7sBxydcPr6LreXKwmcED3hM84rEx1/S4R4NqdV8azgmbmHWanDDqCrEJeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QUwRDQuF/MfCItz9I6B/voS4djqL4zjmGk1P4DPB2K4=;
+ b=QkbnQ50tGMb5Bi8OzEBpD5hWBmR/6D7oPRP9eJiCygy9Z2m7BD0XOBRGzUe2jVkBpG2uWtVvEwRA4uZQ6IvaR9My8w+vmUwYu2+E+TKF14hIH1cM93vYj2nmubemn5mH1S82L7na6+UX/esH5YuSorpeuxPCa83US06TfoeFgNVnadE2Ijo0+BleRl7+JY2ntATLoD3hhgLutKGkco0TabVzE5f9PfK+zSxdVL/4RE/poMqkjFPAxoiY4heHluOKF2WVlMi0wd0b1Lb540j7HigOfVfLUz2CAcR9pYrk2oriVxjvPoChiIHzOYjgIMsTe3V+6h+Yqmv6eeuZO5suYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QUwRDQuF/MfCItz9I6B/voS4djqL4zjmGk1P4DPB2K4=;
+ b=XhBnInmrTS5AS1Zk3+QCSaF4dpFv2lyRiXzgSgzPuZh1UuJygVCgpOUU5q4Gwa19GTl2lmePfj+k+SAqBrDCFqy8sCpZ8GvhDJX7hG6A7V4nf0KJ+whKx9gITOgeCBAWZX8HDwDvbnpGwrWSgc/hp2gHZIaIwWIdFNTGa1/5Ps0=
+Received: from CH2PR19CA0013.namprd19.prod.outlook.com (2603:10b6:610:4d::23)
+ by PH8PR12MB6747.namprd12.prod.outlook.com (2603:10b6:510:1c3::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 08:03:51 +0000
+Received: from CH3PEPF0000000F.namprd04.prod.outlook.com
+ (2603:10b6:610:4d:cafe::a8) by CH2PR19CA0013.outlook.office365.com
+ (2603:10b6:610:4d::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Tue,
+ 2 Sep 2025 08:03:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CH3PEPF0000000F.mail.protection.outlook.com (10.167.244.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Tue, 2 Sep 2025 08:03:51 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
+ 2025 03:03:50 -0500
+Received: from kaveri.amd.com (10.180.168.240) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Tue, 2 Sep
+ 2025 01:03:48 -0700
+From: Shivank Garg <shivankg@amd.com>
+To: <pbonzini@redhat.com>, <david@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>, <shivankg@amd.com>
+Subject: [PATCH V2 kvm-next] KVM: guest_memfd: use kvm_gmem_get_index() in more places and smaller cleanups
+Date: Tue, 2 Sep 2025 08:03:08 +0000
+Message-ID: <20250902080307.153171-2-shivankg@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH drm-misc-next 1/1] drm/vmwgfx: add drm_panic support for
- stdu
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>, zack.rusin@broadcom.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250901083701.32365-1-ryasuoka@redhat.com>
- <20250901083701.32365-2-ryasuoka@redhat.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20250901083701.32365-2-ryasuoka@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
+ (10.181.42.218)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000F:EE_|PH8PR12MB6747:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb6397a1-acb7-4ec6-0152-08dde9f74136
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vMzDU8A/UXWinBg0rsG6W4yjJbN8Se04U+7vakPDPnDWDZjW17jGHZm90ij+?=
+ =?us-ascii?Q?GiyBLQB5+rRQ7SKOtSwgoOgFTvbCxU3oXGrlZT5RdkhmGIE+gPenI+YM7ErZ?=
+ =?us-ascii?Q?/9FZGVOQ59iKlnEHBQBx9lWWS7fdPjzdsWqFmrlyKQr9yufyB88X2QRm1gst?=
+ =?us-ascii?Q?6sabpwoVLtokm/Nwrci6cQxR19Y6MXjrQ++LoOBR04z1rwM7IXXvo9DWAwPU?=
+ =?us-ascii?Q?BlAGOVcEv3MWWz3dyXYPvNBgdP91eREOHpB50oXMZG5sKSQN82jvSQESxAzu?=
+ =?us-ascii?Q?mWn7joUvqhDfdhycUR3TwlD2yeB37tyjPpnLtKOUqL4eSzjMNDiY2rTqrVzL?=
+ =?us-ascii?Q?bOj6wSvFkOdS6q/sk4mjPSr/ma4nBXWZiXvjswaIg7g1YA9K7W8IH3G/eExt?=
+ =?us-ascii?Q?REjlmP7ROxrymnfRK3Qvg8ImV35qHnznOTx6kGZ0OGtgEHV7aLFQR+H/y/w6?=
+ =?us-ascii?Q?MenVg2Kn+auohLGWFW2yQsu+xaSnXfLRCR4TSFDcnaP1Mk3PwtzhT/MgY1nA?=
+ =?us-ascii?Q?AlFu5bImNt9CbuUtsO4QhJ61GDMj102OuWPK1dYqFgvy9vumyL185LgR8Gcw?=
+ =?us-ascii?Q?SrCkEqwu3ZcCjmK+lNvzeoUqwAAeMaPYrKm3vz2CTggYeC2aYn+ncW4iq25Y?=
+ =?us-ascii?Q?vsK3He6/BwXNkzJ2P5ZqwL0aKC92pf/QTtkaSsyzkYWS45aZMJZXV82dYrdG?=
+ =?us-ascii?Q?8jh9kXgnX9cWYXg4aCDxLnM6hT+2rP5c0RCx5VldjpxSxYNQ45bw/qVRuMqM?=
+ =?us-ascii?Q?/Z7uyS8XlC2t8upwqijZjbAZF5fx1iClq0EFLEoL0K6sw4ZU/U6AI17wPjMI?=
+ =?us-ascii?Q?NKqbW9KQ0kpQcra8SoJGwcxja2yEzQM3oKZi5acRrbi3cFxnIFJADnSiTm/u?=
+ =?us-ascii?Q?e2wATmx35bhQAAavrje3Pc1Ga/ATRqHE4WXH0lW/uv+KXp7FgGXT6SvrdT6d?=
+ =?us-ascii?Q?bLUlEgtwkgJrRANfhHW83OvCA1/xnheyCBxWx6095t290bSl/wKVukET7pIt?=
+ =?us-ascii?Q?gwld/9CYeO1p9edywajfnjay2ZhQ2TVprbuqJftJJOpfCgCDw+CT/XLXdKm1?=
+ =?us-ascii?Q?0czls0hxaGZSDb1Bt0dSxzgVxc8RxmwA/SIZumcMRuaky4QSAvjlR2iIkHHl?=
+ =?us-ascii?Q?uyQ7Bvpn/OS0hwOnPJd81JonH8qF3cJKrSErvSS6o/nwi2gRKW+TP2QFwEQv?=
+ =?us-ascii?Q?5XlHLLVW6Klu2E2Lamvog/pHQBOYZ4mE4QSnjK5rsMAkj7Yoxnzhg667Obh/?=
+ =?us-ascii?Q?CKb+RKzG91SyCiZSho/7//WTwphHRpUiV/HA3E9GBYoYDPUbKzsQWu7fEXiC?=
+ =?us-ascii?Q?pLw1DVBfk4tNKDFAewdUegBfN7E41JIUSPDNZSOSby5d1tR2FPQUXibcPKwx?=
+ =?us-ascii?Q?ZNiSXEspDYfC3YmhRez3SwGP+vLxUJtCkJT/xWpBiU8tTUMd9U3RhBtBH7MG?=
+ =?us-ascii?Q?HwwonsEIhImjqr/hmi+OJFcpQQnpoBglfsTEZpsR0uotRKvQFSMtlOINCaYX?=
+ =?us-ascii?Q?0xtg4Fwz9IJIJfVq4RsgoYDgDnTM2Lg7iGs18QeNtMXCxLJjnkDsl0Ak2w?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 08:03:51.6192
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb6397a1-acb7-4ec6-0152-08dde9f74136
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF0000000F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6747
 
-On 01/09/2025 10:36, Ryosuke Yasuoka wrote:
-> Add drm_panic module for vmwgfx stdu so that panic screen can be
-> displayed on panic.
+Move kvm_gmem_get_index() to the top of the file and make it available for
+use in more places.
 
-Thanks for this work.
+Remove redundant initialization of the gmem variable because it's already
+initialized.
 
-If I understand correctly, this will draw the panic screen to the vfbo 
-buffer, and then in the panic_flush() function, use 
-vmw_panic_bo_cpu_blit() to copy that to the guest_memory_bo.
+Replace magic number -1UL with ULONG_MAX.
 
-I think it should be easier to directly write the panic screen to the 
-guest_memory_bo.
-To write to the guest_memory_bo, you can do something similar as 
-vmw_bo_cpu_blit_line(), but using kmap_local_page_try_from_panic() 
-instead of kmap_atomic_prot().
+No functional change intended.
 
-You will probably need a custom set_pixel() function, like what I've 
-done for i915
-https://elixir.bootlin.com/linux/v6.17-rc4/source/drivers/gpu/drm/xe/display/intel_bo.c#L98
+Signed-off-by: Shivank Garg <shivankg@amd.com>
+---
+Applies cleanly on kvm-next (a6ad54137) and guestmemfd-preview (3d23d4a27).
 
-Best regards,
+Changelog:
+V2: Incorporate David's suggestions.
+V1: https://lore.kernel.org/all/20250901051532.207874-3-shivankg@amd.com
 
+
+ virt/kvm/guest_memfd.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index b2d6ad80f54c..1299e5e50844 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -44,6 +44,11 @@ static inline kvm_pfn_t folio_file_pfn(struct folio *folio, pgoff_t index)
+ 	return folio_pfn(folio) + (index & (folio_nr_pages(folio) - 1));
+ }
+ 
++static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
++{
++	return gfn - slot->base_gfn + slot->gmem.pgoff;
++}
++
+ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 				    pgoff_t index, struct folio *folio)
+ {
+@@ -51,6 +56,7 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
+ 	kvm_pfn_t pfn = folio_file_pfn(folio, index);
+ 	gfn_t gfn = slot->base_gfn + index - slot->gmem.pgoff;
+ 	int rc = kvm_arch_gmem_prepare(kvm, gfn, pfn, folio_order(folio));
++
+ 	if (rc) {
+ 		pr_warn_ratelimited("gmem: Failed to prepare folio for index %lx GFN %llx PFN %llx error %d.\n",
+ 				    index, gfn, pfn, rc);
+@@ -107,7 +113,7 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	 * checked when creating memslots.
+ 	 */
+ 	WARN_ON(!IS_ALIGNED(slot->gmem.pgoff, 1 << folio_order(folio)));
+-	index = gfn - slot->base_gfn + slot->gmem.pgoff;
++	index = kvm_gmem_get_index(slot, gfn);
+ 	index = ALIGN_DOWN(index, 1 << folio_order(folio));
+ 	r = __kvm_gmem_prepare_folio(kvm, slot, index, folio);
+ 	if (!r)
+@@ -327,8 +333,8 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
+ 	 * Zap all SPTEs pointed at by this file.  Do not free the backing
+ 	 * memory, as its lifetime is associated with the inode, not the file.
+ 	 */
+-	kvm_gmem_invalidate_begin(gmem, 0, -1ul);
+-	kvm_gmem_invalidate_end(gmem, 0, -1ul);
++	kvm_gmem_invalidate_begin(gmem, 0, ULONG_MAX);
++	kvm_gmem_invalidate_end(gmem, 0, ULONG_MAX);
+ 
+ 	list_del(&gmem->entry);
+ 
+@@ -354,10 +360,6 @@ static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot)
+ 	return get_file_active(&slot->gmem.file);
+ }
+ 
+-static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
+-{
+-	return gfn - slot->base_gfn + slot->gmem.pgoff;
+-}
+ 
+ static bool kvm_gmem_supports_mmap(struct inode *inode)
+ {
+@@ -940,7 +942,6 @@ static struct folio *__kvm_gmem_get_pfn(struct file *file,
+ 		return ERR_PTR(-EFAULT);
+ 	}
+ 
+-	gmem = file->private_data;
+ 	if (xa_load(&gmem->bindings, index) != slot) {
+ 		WARN_ON_ONCE(xa_load(&gmem->bindings, index));
+ 		return ERR_PTR(-EIO);
 -- 
-
-Jocelyn
-
-> 
-> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
-> ---
->   drivers/gpu/drm/vmwgfx/vmwgfx_blit.c   |  43 ++++++++
->   drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c |  11 ++
->   drivers/gpu/drm/vmwgfx/vmwgfx_drv.h    |   4 +
->   drivers/gpu/drm/vmwgfx/vmwgfx_kms.c    |  48 +++++++++
->   drivers/gpu/drm/vmwgfx/vmwgfx_kms.h    |   1 +
->   drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c   | 139 +++++++++++++++++++++++++
->   6 files changed, 246 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-> index fa5841fda659..d7ed04531249 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
-> @@ -514,6 +514,49 @@ static int vmw_external_bo_copy(struct vmw_bo *dst, u32 dst_offset,
->   	return ret;
->   }
->   
-> +/* For drm_panic */
-> +void vmw_panic_bo_cpu_blit(struct vmw_bo *vmw_dst, u32 dst_stride,
-> +			   struct vmw_bo *vmw_src, u32 src_stride,
-> +			   u32 w, u32 h, struct vmw_diff_cpy *diff)
-> +{
-> +	struct ttm_buffer_object *src = &vmw_src->tbo;
-> +	struct ttm_buffer_object *dst = &vmw_dst->tbo;
-> +	u32 j;
-> +	u32 initial_line = 0;
-> +	u32 dst_offset = 0;
-> +	u32 src_offset = 0;
-> +	int ret = 0;
-> +	struct vmw_bo_blit_line_data d = {
-> +		.mapped_dst = 0,
-> +		.mapped_src = 0,
-> +		.dst_addr = NULL,
-> +		.src_addr = NULL,
-> +		.dst_pages = dst->ttm->pages,
-> +		.src_pages = src->ttm->pages,
-> +		.dst_num_pages = PFN_UP(dst->resource->size),
-> +		.src_num_pages = PFN_UP(src->resource->size),
-> +		.dst_prot = ttm_io_prot(dst, dst->resource, PAGE_KERNEL),
-> +		.src_prot = ttm_io_prot(src, src->resource, PAGE_KERNEL),
-> +		.diff = diff,
-> +	};
-> +
-> +	for (j = 0; j < h; ++j) {
-> +		diff->line = j + initial_line;
-> +		diff->line_offset = dst_offset % dst_stride;
-> +		ret = vmw_bo_cpu_blit_line(&d, dst_offset, src_offset, w);
-> +		if (ret)
-> +			goto out;
-> +
-> +		dst_offset += dst_stride;
-> +		src_offset += src_stride;
-> +	}
-> +out:
-> +	if (d.src_addr)
-> +		kunmap_atomic(d.src_addr);
-> +	if (d.dst_addr)
-> +		kunmap_atomic(d.dst_addr);
-> +}
-> +
->   /**
->    * vmw_bo_cpu_blit - in-kernel cpu blit.
->    *
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
-> index 94e8982f5616..e39cc2f214be 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
-> @@ -983,6 +983,17 @@ void *vmw_cmdbuf_alloc(struct vmw_cmdbuf_man *man,
->   	return header->cmd;
->   }
->   
-> +/* For drm_panic */
-> +char *vmw_panic_cmdbuf_reserve_cur(struct vmw_cmdbuf_man *man, size_t size)
-> +{
-> +	/* Refer to cur without cur_mutex since this func is called in panic handler */
-> +	struct vmw_cmdbuf_header *cur = man->cur;
-> +
-> +	cur->reserved = size;
-> +
-> +	return (char *) (man->cur->cmd + man->cur_pos);
-> +}
-> +
->   /**
->    * vmw_cmdbuf_reserve_cur - Reserve space for commands in the current
->    * command buffer.
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-> index eda5b6f8f4c4..c71ce975bf52 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
-> @@ -1271,6 +1271,7 @@ extern int vmw_cmdbuf_idle(struct vmw_cmdbuf_man *man, bool interruptible,
->   extern void *vmw_cmdbuf_reserve(struct vmw_cmdbuf_man *man, size_t size,
->   				int ctx_id, bool interruptible,
->   				struct vmw_cmdbuf_header *header);
-> +extern char *vmw_panic_cmdbuf_reserve_cur(struct vmw_cmdbuf_man *man, size_t size);
->   extern void vmw_cmdbuf_commit(struct vmw_cmdbuf_man *man, size_t size,
->   			      struct vmw_cmdbuf_header *header,
->   			      bool flush);
-> @@ -1329,6 +1330,9 @@ int vmw_bo_cpu_blit(struct vmw_bo *dst,
->   		    u32 src_offset, u32 src_stride,
->   		    u32 w, u32 h,
->   		    struct vmw_diff_cpy *diff);
-> +void vmw_panic_bo_cpu_blit(struct vmw_bo *dst, u32 dst_stride,
-> +			   struct vmw_bo *src, u32 src_stride,
-> +			   u32 w, u32 h, struct vmw_diff_cpy *diff);
->   
->   /* Host messaging -vmwgfx_msg.c: */
->   void vmw_disable_backdoor(void);
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-> index 54ea1b513950..160a4efbf342 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-> @@ -1717,6 +1717,54 @@ void vmw_kms_lost_device(struct drm_device *dev)
->   	drm_atomic_helper_shutdown(dev);
->   }
->   
-> +/* For drm_panic */
-> +int vmw_du_panic_helper_plane_update(struct vmw_du_update_plane *update)
-> +{
-> +	struct drm_plane_state *state = update->plane->state;
-> +	struct vmw_framebuffer_bo *vfbbo =
-> +		container_of(update->vfb, typeof(*vfbbo), base);
-> +	struct drm_rect src = drm_plane_state_src(state);
-> +	struct drm_rect clip = {
-> +		.x1 = 0,
-> +		.y1 = 0,
-> +		.x2 = (src.x2 >> 16) + !!(src.x2 & 0xFFFF),
-> +		.y2 = (src.y2 >> 16) + !!(src.y2 & 0xFFFF),
-> +	};
-> +	DECLARE_VAL_CONTEXT(val_ctx, NULL, 0);
-> +	uint32_t reserved_size = 0;
-> +	uint32_t submit_size = 0;
-> +	char *cmd;
-> +	int ret;
-> +
-> +	vmw_bo_placement_set(vfbbo->buffer,
-> +			     VMW_BO_DOMAIN_SYS | VMW_BO_DOMAIN_MOB | VMW_BO_DOMAIN_GMR,
-> +			     VMW_BO_DOMAIN_SYS | VMW_BO_DOMAIN_MOB | VMW_BO_DOMAIN_GMR);
-> +
-> +	ret = vmw_validation_add_bo(&val_ctx, vfbbo->buffer);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = vmw_validation_prepare(&val_ctx, NULL, false);
-> +	if (ret)
-> +		return ret;
-> +
-> +	reserved_size = update->calc_fifo_size(update, 1);
-> +	cmd = vmw_panic_cmdbuf_reserve_cur(update->dev_priv->cman, reserved_size);
-> +	if (!cmd)
-> +		return -ENOMEM;
-> +
-> +	vmw_du_translate_to_crtc(state, &clip);
-> +
-> +	update->clip(update, cmd, &clip, 0, 0);
-> +	submit_size = update->post_clip(update, cmd, &clip);
-> +
-> +	vmw_cmd_commit(update->dev_priv, submit_size);
-> +
-> +	vmw_kms_helper_validation_finish(update->dev_priv, NULL, &val_ctx,
-> +					 NULL, NULL);
-> +	return ret;
-> +}
-> +
->   /**
->    * vmw_du_helper_plane_update - Helper to do plane update on a display unit.
->    * @update: The closure structure.
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h
-> index 445471fe9be6..e6299390ffea 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h
-> @@ -499,6 +499,7 @@ int vmw_kms_stdu_readback(struct vmw_private *dev_priv,
->   			  struct drm_crtc *crtc);
->   
->   int vmw_du_helper_plane_update(struct vmw_du_update_plane *update);
-> +int vmw_du_panic_helper_plane_update(struct vmw_du_update_plane *update);
->   
->   /**
->    * vmw_du_translate_to_crtc - Translate a rect from framebuffer to crtc
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c b/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
-> index 20aab725e53a..65b41338c620 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
-> @@ -36,6 +36,7 @@
->   #include <drm/drm_atomic_helper.h>
->   #include <drm/drm_damage_helper.h>
->   #include <drm/drm_fourcc.h>
-> +#include <drm/drm_panic.h>
->   #include <drm/drm_vblank.h>
->   
->   #define vmw_crtc_to_stdu(x) \
-> @@ -1164,6 +1165,66 @@ static uint32_t vmw_stdu_bo_clip_cpu(struct vmw_du_update_plane  *update,
->   	return 0;
->   }
->   
-> +/* For drm_panic */
-> +static uint32_t
-> +vmw_stdu_panic_bo_populate_update_cpu(struct vmw_du_update_plane  *update, void *cmd,
-> +				      struct drm_rect *bb)
-> +{
-> +	struct vmw_du_update_plane_buffer *bo_update;
-> +	struct vmw_screen_target_display_unit *stdu;
-> +	struct vmw_framebuffer_bo *vfbbo;
-> +	struct vmw_diff_cpy diff = VMW_CPU_BLIT_DIFF_INITIALIZER(0);
-> +	struct vmw_stdu_update_gb_image *cmd_img = cmd;
-> +	struct vmw_stdu_update *cmd_update;
-> +	struct vmw_bo *src_bo, *dst_bo;
-> +	s32 src_pitch, dst_pitch;
-> +	s32 width, height;
-> +
-> +	bo_update = container_of(update, typeof(*bo_update), base);
-> +	stdu = container_of(update->du, typeof(*stdu), base);
-> +	vfbbo = container_of(update->vfb, typeof(*vfbbo), base);
-> +
-> +	width = bb->x2;
-> +	height = bb->y2;
-> +
-> +	diff.cpp = stdu->cpp;
-> +
-> +	dst_bo = stdu->display_srf->res.guest_memory_bo;
-> +	dst_pitch = stdu->display_srf->metadata.base_size.width * stdu->cpp;
-> +
-> +	src_bo = vfbbo->buffer;
-> +	src_pitch = update->vfb->base.pitches[0];
-> +
-> +	vmw_panic_bo_cpu_blit(dst_bo, dst_pitch, src_bo, src_pitch,
-> +			      width * stdu->cpp, height, &diff);
-> +
-> +	if (drm_rect_visible(&diff.rect)) {
-> +		SVGA3dBox *box = &cmd_img->body.box;
-> +
-> +		cmd_img->header.id = SVGA_3D_CMD_UPDATE_GB_IMAGE;
-> +		cmd_img->header.size = sizeof(cmd_img->body);
-> +		cmd_img->body.image.sid = stdu->display_srf->res.id;
-> +		cmd_img->body.image.face = 0;
-> +		cmd_img->body.image.mipmap = 0;
-> +
-> +		box->x = diff.rect.x1;
-> +		box->y = diff.rect.y1;
-> +		box->z = 0;
-> +		box->w = drm_rect_width(&diff.rect);
-> +		box->h = drm_rect_height(&diff.rect);
-> +		box->d = 1;
-> +
-> +		cmd_update = (struct vmw_stdu_update *)&cmd_img[1];
-> +		vmw_stdu_populate_update(cmd_update, stdu->base.unit,
-> +					 diff.rect.x1, diff.rect.x2,
-> +					 diff.rect.y1, diff.rect.y2);
-> +
-> +		return sizeof(*cmd_img) + sizeof(*cmd_update);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static uint32_t
->   vmw_stdu_bo_populate_update_cpu(struct vmw_du_update_plane  *update, void *cmd,
->   				struct drm_rect *bb)
-> @@ -1228,6 +1289,28 @@ vmw_stdu_bo_populate_update_cpu(struct vmw_du_update_plane  *update, void *cmd,
->   	return 0;
->   }
->   
-> +/* For drm_panic */
-> +static int vmw_stdu_panic_plane_update_bo(struct vmw_private *dev_priv,
-> +					  struct drm_plane *plane,
-> +					  struct vmw_framebuffer *vfb)
-> +{
-> +	struct vmw_du_update_plane_buffer bo_update;
-> +
-> +	memset(&bo_update, 0, sizeof(struct vmw_du_update_plane_buffer));
-> +	bo_update.base.plane = plane;
-> +	bo_update.base.old_state = plane->state;
-> +	bo_update.base.dev_priv = dev_priv;
-> +	bo_update.base.du = vmw_crtc_to_du(plane->state->crtc);
-> +	bo_update.base.vfb = vfb;
-> +
-> +	bo_update.base.calc_fifo_size = vmw_stdu_bo_fifo_size_cpu;
-> +	bo_update.base.pre_clip = vmw_stdu_bo_pre_clip_cpu;
-> +	bo_update.base.clip = vmw_stdu_bo_clip_cpu;
-> +	bo_update.base.post_clip = vmw_stdu_panic_bo_populate_update_cpu;
-> +
-> +	return vmw_du_panic_helper_plane_update(&bo_update.base);
-> +}
-> +
->   /**
->    * vmw_stdu_plane_update_bo - Update display unit for bo backed fb.
->    * @dev_priv: device private.
-> @@ -1458,6 +1541,60 @@ vmw_stdu_primary_plane_atomic_update(struct drm_plane *plane,
->   		vmw_fence_obj_unreference(&fence);
->   }
->   
-> +static int
-> +vmw_stdu_primary_plane_get_scanout_buffer(struct drm_plane *plane,
-> +					  struct drm_scanout_buffer *sb)
-> +{
-> +	struct vmw_framebuffer *vfb;
-> +	struct vmw_framebuffer_bo *vfbbo;
-> +	void *virtual;
-> +
-> +	if (!plane->state || !plane->state->fb || !plane->state->visible)
-> +		return -ENODEV;
-> +
-> +	vfb = vmw_framebuffer_to_vfb(plane->state->fb);
-> +
-> +	if (!vfb->bo)
-> +		return -ENODEV;
-> +
-> +	vfbbo = container_of(vfb, typeof(*vfbbo), base);
-> +	virtual = vmw_bo_map_and_cache(vfbbo->buffer);
-> +	if (!virtual)
-> +		return -ENODEV;
-> +	iosys_map_set_vaddr(&sb->map[0], virtual);
-> +
-> +	sb->format = plane->state->fb->format;
-> +	sb->width = plane->state->fb->width;
-> +	sb->height = plane->state->fb->height;
-> +	sb->pitch[0] = plane->state->fb->pitches[0];
-> +
-> +	return 0;
-> +}
-> +
-> +static void vmw_stdu_primary_plane_panic_flush(struct drm_plane *plane)
-> +{
-> +	struct drm_plane_state *state = plane->state;
-> +	struct vmw_plane_state *vps = vmw_plane_state_to_vps(state);
-> +	struct drm_crtc *crtc = state->crtc;
-> +	struct vmw_private *dev_priv = vmw_priv(crtc->dev);
-> +	struct vmw_framebuffer *vfb = vmw_framebuffer_to_vfb(state->fb);
-> +	struct vmw_screen_target_display_unit *stdu = vmw_crtc_to_stdu(crtc);
-> +	int ret;
-> +
-> +	stdu->display_srf = vmw_user_object_surface(&vps->uo);
-> +	stdu->content_fb_type = vps->content_fb_type;
-> +	stdu->cpp = vps->cpp;
-> +
-> +	ret = vmw_stdu_bind_st(dev_priv, stdu, &stdu->display_srf->res);
-> +	if (ret)
-> +		DRM_ERROR("Failed to bind surface to STDU.\n");
-> +
-> +	if (vfb->bo)
-> +		ret = vmw_stdu_panic_plane_update_bo(dev_priv, plane, vfb);
-> +	if (ret)
-> +		DRM_ERROR("Failed to update STDU.\n");
-> +}
-> +
->   static void
->   vmw_stdu_crtc_atomic_flush(struct drm_crtc *crtc,
->   			   struct drm_atomic_state *state)
-> @@ -1506,6 +1643,8 @@ drm_plane_helper_funcs vmw_stdu_primary_plane_helper_funcs = {
->   	.atomic_update = vmw_stdu_primary_plane_atomic_update,
->   	.prepare_fb = vmw_stdu_primary_plane_prepare_fb,
->   	.cleanup_fb = vmw_stdu_primary_plane_cleanup_fb,
-> +	.get_scanout_buffer = vmw_stdu_primary_plane_get_scanout_buffer,
-> +	.panic_flush = vmw_stdu_primary_plane_panic_flush,
->   };
->   
->   static const struct drm_crtc_helper_funcs vmw_stdu_crtc_helper_funcs = {
+2.43.0
 
 
