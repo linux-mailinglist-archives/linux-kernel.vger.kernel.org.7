@@ -1,159 +1,155 @@
-Return-Path: <linux-kernel+bounces-796890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB36B408E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:25:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021E3B408E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 789555431AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:25:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 984471895C0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E465A31CA69;
-	Tue,  2 Sep 2025 15:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5184A320A34;
+	Tue,  2 Sep 2025 15:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5erzpUr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FJDeognU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC552DECBF;
-	Tue,  2 Sep 2025 15:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D46320A02;
+	Tue,  2 Sep 2025 15:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826724; cv=none; b=nz8STClqCIbRGYHyfYWHR65uU9tbZyXm5FfKfIXNDVWktEV060KYGfQNyW3cBTnG3wFwxLqkv++klrPn07xBXuBg4tcGawlQwEAKbagARWTOKs3Xvfd2z5ZqEcakw70PEaoctMG9h0dBDJryKujUE5iO5iLWCJroUgHSkqFNhlo=
+	t=1756826874; cv=none; b=p+gw+nx0WsBIizlUYPtjYrzZFASkermjKreCgLCaD+7/Y8IJtJN1Tw3c8sgHrI+M8gWJvGj89s5X9n+89gUskn5YpxW7eqEymLvhe2AXrN8M3AbhAwU5MAsri2DfJGqSxFJ4DmVrg2RZWatyMshJfV+LWx0dO0lCf4VgpGFDncM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826724; c=relaxed/simple;
-	bh=l/nS55o1t/A9e4SaZ6nyh5QjR04WTvooR5oRakfTc+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PtvSB+ODDAES7hgJVP+8eTcDfTHWxvFGQ0LakTj94eZxVsSds/A4Xx707d8FrankCCSoZd+azqn6MlgnavujvgK33VsKFt1IujqXwY9R5S138Dt278P61PbpCEySNVlfCcduVKZRE2FA1PBPLQmVw6Giw8f/N5fmHWgJkVLfqP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5erzpUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17EE8C4CEF5;
-	Tue,  2 Sep 2025 15:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756826723;
-	bh=l/nS55o1t/A9e4SaZ6nyh5QjR04WTvooR5oRakfTc+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p5erzpUrIssF2EgMkfCi2998Dqdtqw9bJugMrhWgNbyUvWK39HQJHU7B1c22D/CNf
-	 oPySDfoRaSszCd6hwqRPbyNHatGHFcTFQJSOUdGVZX9g7hPJpUBJS5SE40Eor+XUeY
-	 5bjoWATTQZ4RqtxGPtL5TQwIKlvmNBdxgN9f/RGKBLMIIRHrsE0sE7BL5aga3LvGz6
-	 WX6FiLDcE3VG2gziPqAWMpUH6hyfON1OvxjHIGA1foP5iNwQ5+BY9pxGGAkOaQ0uIJ
-	 jRY20mOeLG20gFJwT2LnOe2AKaG+792J7ClaX3hC2Q8N6LkAM+Sk9R5ZCwYEUzTejB
-	 6h6n8cfxPc2gw==
-Message-ID: <5f33c919-571b-45b7-b2bb-c755b4195035@kernel.org>
-Date: Tue, 2 Sep 2025 10:25:20 -0500
+	s=arc-20240116; t=1756826874; c=relaxed/simple;
+	bh=pxDRyV6r3uWk5lkkZlh4n7lncpUrSzOFA8awI6XQfUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmuKoSeXV786JGOGUJ+KkjHX0JRezznitOMnOcuXkyqOHUTCA/kt+PUbR+lhrOIbVPuDuCZQJNrDUmeR6n13znP4ehiQrTrAWPxsqJ+sXJFmi1DShezbm0hK40bVvwPrK8t3znaLG76z1e2XQcY/pG2Pz0FIPJ7lZI32kETQHEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FJDeognU; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756826873; x=1788362873;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pxDRyV6r3uWk5lkkZlh4n7lncpUrSzOFA8awI6XQfUU=;
+  b=FJDeognU0Pi3EDW0Y1moH9T8qeMlFhmiC3T2NoYJ99D82V2KHNX2Zmmh
+   CMz6B4gjO58NY2ytxtrOB2KkgiTMa6EAsY36INhZr6/R/OYxhLmIWwkZn
+   HSpB0UGMkryeQRI7QE4Ai0YojB6VHNsxj9Uj03vsPAI0mHEA+8+FR5nF4
+   evNIVvYvRqeghvcPqCQP6zrAvmNUSvi3j6Yfycr9uEdR7xAVz5+Gjfr6U
+   oEy/kv3Ai1DdWlT/I32eXSMY6BzAs8rrQeqLKz3l1wKf0Cr8+ykWD+15c
+   EBfofLYMbBIqsLNAQZQo+NoqUhyMQgH4ntTkR58tJmo/CyId+Ddv/yKTd
+   Q==;
+X-CSE-ConnectionGUID: Po5pBkEzSveLxUccKekz3w==
+X-CSE-MsgGUID: GuI9qRMFT2WqYQ6s8pyjkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="58965293"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="58965293"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 08:27:52 -0700
+X-CSE-ConnectionGUID: Mff6GxWfTJyq2rWNK/1oVw==
+X-CSE-MsgGUID: caNsXPCtQ0WFMdHw7a+vaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="170562537"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 08:27:40 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utSv1-0000000AjNy-1oS6;
+	Tue, 02 Sep 2025 18:27:35 +0300
+Date: Tue, 2 Sep 2025 18:27:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v7 12/16] pinctrl: qcom: use generic pin function helpers
+Message-ID: <aLcM58IEH8hGYLnx@smile.fi.intel.com>
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-12-bb091daedc52@linaro.org>
+ <aLbt2euqYQM5xXuZ@smile.fi.intel.com>
+ <1034c70a-da67-4914-b23c-8d006b7611bf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86/amd/pmc: Add Stellaris Slim Gen6 AMD to
- spurious 8042 quirks list
-To: Werner Sembach <wse@tuxedocomputers.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Hans de Goede
- <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Christoffer Sandberg <cs@tuxedo.de>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250901164216.46740-1-wse@tuxedocomputers.com>
- <3830aeee-91d7-48ee-b67e-8aefbbd2124e@kernel.org>
- <c154022c-c00d-46ba-86fb-2030ccab0272@tuxedocomputers.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <c154022c-c00d-46ba-86fb-2030ccab0272@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1034c70a-da67-4914-b23c-8d006b7611bf@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 9/2/2025 9:37 AM, Werner Sembach wrote:
-> 
-> Am 02.09.25 um 16:15 schrieb Mario Limonciello:
->> On 9/1/2025 11:42 AM, Werner Sembach wrote:
->>> From: Christoffer Sandberg <cs@tuxedo.de>
->>>
->>> Prevents instant wakeup ~1s after suspend
->>>
->>> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
->>> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
->>> ---
->>>   drivers/platform/x86/amd/pmc/pmc-quirks.c | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>>
->>> diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/ 
->>> platform/x86/amd/pmc/pmc-quirks.c
->>> index 7ffc659b27944..8b8944483b859 100644
->>> --- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
->>> +++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
->>> @@ -248,6 +248,13 @@ static const struct dmi_system_id fwbug_list[] = {
->>>               DMI_MATCH(DMI_PRODUCT_NAME, "Lafite Pro V 14M"),
->>>           }
->>>       },
->>> +    {
->>> +        .ident = "TUXEDO Stellaris Slim 15 AMD Gen6",
->>> +        .driver_data = &quirk_spurious_8042,
->>> +        .matches = {
->>> +            DMI_MATCH(DMI_BOARD_NAME, "GMxHGxx"),
->>> +        }
->>> +    },
->>>       {}
->>>   };
->>
->> FYI - this seems to conflict with other changes on review-ilpo-fixes 
->> and fixes branches.
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform- 
->> drivers-x86.git/commit/drivers/platform/x86/amd/pmc/pmc-quirks.c? 
->> h=review-ilpo-fixes&id=c96f86217bb28e019403bb8f59eacd8ad5a7ad1a
-> Sorry, i will rebase and send a v2.
->>
->> Also - a few other comments.
->>
->> 1) Do you have line of sight to a firmware (BIOS or EC) fix?  If so; 
->> it would be better to specify a specific firmware release that is 
->> affected.
-> 
-> No
-> 
-> @Christoffer you have more knowledge of how realistic it is to get this 
-> fixed by the odm?
+On Tue, Sep 02, 2025 at 05:12:24PM +0200, Krzysztof Kozlowski wrote:
+> On 02/09/2025 15:15, Andy Shevchenko wrote:
+> > On Tue, Sep 02, 2025 at 01:59:21PM +0200, Bartosz Golaszewski wrote:
 
-OK, even if you don't get a solution in the firmware in this generation 
-it's good to understand this issue and root cause it so that you can 
-have it fixed properly next generation.
+...
 
-It's not always realistic but ideally bringing a new product to market 
-shouldn't require a quirk.
+> >> +	for (i = 0; i < soc_data->nfunctions; i++) {
+> >> +		func = &soc_data->functions[i];
+> >> +
+> >> +		ret = pinmux_generic_add_pinfunction(pctrl->pctrl, func, NULL);
+> >> +		if (ret < 0)
+> > 
+> > Why not simply
+> > 
+> > 		if (ret)
+> 
+> Because existing code is as readable?
 
-> 
-> But even then, we still don't have fwupd support to get the fw update 
-> out easily
-> 
+I don't agree on this. And Bart explained why. So, it's an API requirement
+after all.
 
-😢
+> This is just some serious
+> nitpicking which is not actually helping at all at v7.
 
->>
->> 2) Shouldn't you also have DMI_SYS_VENDOR or some other matching keys 
->> else set?  Or is it really all these boards with this specific name?
-> 
-> I was following the style of the i8042 quirk list where we also always 
-> only did boardnames
-> 
-> Ofc we only tested the boards the odm has sent to us
-> 
-> best regards,
-> 
-> Werner Sembach
-> 
+Agree, this comment is a nit-pick which can be ignored at v7 stage.
 
-But this isn't a hardware problem with the board itself, it's a firmware 
-problem.  The board ID you're using is just a convenient proxy for it.
-
-I've seen the debugging for a few issues like this and it can be all 
-across the board.  A few examples:
-
-* polarity issues
-* debounce issues
-* incorrectly set PCD (Kinda like a Kconfig for BIOS)
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
