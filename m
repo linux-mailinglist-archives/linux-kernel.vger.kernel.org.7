@@ -1,108 +1,107 @@
-Return-Path: <linux-kernel+bounces-796417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D5EB4005F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:26:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B369B4008D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61C9C7B500D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:23:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADA51684BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B462F4A11;
-	Tue,  2 Sep 2025 12:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5622C11D0;
+	Tue,  2 Sep 2025 12:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYkyzCKE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djOEfM6D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474FF2E172B;
-	Tue,  2 Sep 2025 12:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763602C11CE
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815885; cv=none; b=lvXfEv6O8H3PBF9eXjS4GR66RLkplU51xzVFisC66eFiqGLMo92VgoL8Dt2Wsbs+cZJm8r8CxQoH4nkxeWxiE1uS+FT8MEPaM7dhZfM7uyMIyPCA/bPUuA+LAOQp7V6c12BdmpLVN90D1ALPMp02kEgTE0D2vgLOhMROCkh2GBI=
+	t=1756815937; cv=none; b=hYMucZH7pvZ2GfBkjXV7hR/ticOqUJt3Piudw+pGaO/uveD8cWFYZJLYm/BAhD/myJBAgMh3EhttqF1uZEaBcpLRq7Ef+82gK2piK2AIxHuLeXfhLLV8SrJ06jk/67TEzmjDdeRKyqvXGaQYECk4+LL3QChYZSw50nve2aGWeIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815885; c=relaxed/simple;
-	bh=rZv4I7rYDL6YjF6t2ZcCqK5+V44EkkaBs7e289lpm0o=;
+	s=arc-20240116; t=1756815937; c=relaxed/simple;
+	bh=dFdjjL7xQSI+eLqyEvgNUo/LHERLhX1ZK3IiLvg6l70=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rUnstVM/nWx/vz3eiuB1vvZzUjbdzQOL1bcEH+n/oWEEi0OutGQeOkAn0q5ejhGLlT7ES9ecrEBwrQJJPvDwYCOJCqKtKJ/7cd8EkILc+j6R+dFMHb2iTAMa5X6ZBLpeAcerV5mj4+iJroYeE1NdE0ZDoqenQd0ljrHu+L7jXNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYkyzCKE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F21C4CEF9;
-	Tue,  2 Sep 2025 12:24:44 +0000 (UTC)
+	 To:Cc:Content-Type; b=qQrcmqvBbleQ5zQNoztgG3yrYCRovxHoieF8jFpSpXS1QCCER4fFPijyaUEF/UhjlT6xpxq5EFY95n+IGFPxwSlGpqlj30/0SPCRqQA8j2zAZe3NX82w3IxsAb7yy1Rsu7GSHUkatvmmTHHcKIb/BZ1gg3Z/tRwZeMa7esY5Hnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djOEfM6D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317E7C4CEF7
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756815884;
-	bh=rZv4I7rYDL6YjF6t2ZcCqK5+V44EkkaBs7e289lpm0o=;
+	s=k20201202; t=1756815937;
+	bh=dFdjjL7xQSI+eLqyEvgNUo/LHERLhX1ZK3IiLvg6l70=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SYkyzCKErj0vHjkXMlivm/3pjIAMMf+bJu4IguGNc9PCrlNXI8EWc/+oCJ5qUC19V
-	 r5gewW5fabaBzLS4JARkUN97m5KRMXNvM8gQkHPcc7LsXdgqv/Oc1RnFD3zII+0hYb
-	 FpVEcItMxDS/Nb3ao2ABT50/NdzohlieNABT9jiT40hk5IuarmOV50mXNw2vPkKNBR
-	 jxI4Wbe3eMGHJ/NoRWDKDhKq3LDOCKw10m9KF5H/ee59ukpSh2ZwbrQGCoqYsP/cpB
-	 hu4GOzm4wWWk0geazmrikNlJAqUP8LM7VK+7Od9UzkGEtMHw1co10xvMI+GRATcAND
-	 GpRYhi8eL8isg==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f7b6e4145so1896072e87.1;
-        Tue, 02 Sep 2025 05:24:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURVDuIgyne1nw4qnV4aTWj9cuJ9/TH43p7lK7KekvnVZNp80nc6ZNxDi3T3TsxbxZjM20wIEsFEZ4=@vger.kernel.org, AJvYcCXo9JhkcS8StE1tmIHT/1ytBQJD9ybjQNpRiuDziDmEoF2clU/DIiPVFJeR3pGkRHJwNObDMc/lgLQESNvy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqmRB5nTDk60lXiGrkAG4ITWCJ+CuBgZ1CLd4shz9Q/x09oAtM
-	Jls9Dz4vfWrneLY3X2Xpmrja5cKPEOcxknXU4tGOyotr1QZkNXmNV5fZKYq2rbDzelGJOCupkQv
-	L1aEC4P0RtKT7LDqEsyBFqgkw0F0flyw=
-X-Google-Smtp-Source: AGHT+IECiPX03/QZqNVE9rU0XP4OGNVxyVywxo2pznP31QhpZ58f7na947xSfCVTxS7TqssjQmTyHgB0ZmNH3EoiCZk=
-X-Received: by 2002:a05:6512:1095:b0:55f:6457:1931 with SMTP id
- 2adb3069b0e04-55f7089c6b9mr3850521e87.3.1756815883077; Tue, 02 Sep 2025
- 05:24:43 -0700 (PDT)
+	b=djOEfM6Dim1+5M3FJR+/EeqzVGt7HAmeXwYO3l6rBd1jADIpvuOoq6vXZGp4/qVET
+	 6ykjDP9JrzqtnwSgPBo33T3Q3gDzq9HyVU+9udi4mSgAtcYRCvai9e4Pfmv2QOfujB
+	 4kSpPpNGVxCrm+QlC9nUxUhJsbdLmdN/PgBzui/HkhMAXBZSAuKA0h2VP2iwiEtyfW
+	 gwyM4L8CkD3KUImLkTu5siorT8NGvsnjlkaVKUWSVL6e8p9rD7hfR/28CSNw0oOTBo
+	 JnPSDCwlk4hWq22NIT9hGe+J58n9hIN+CnaL2r1MclVOrJ6drp7krgxh8KN/rgWxMy
+	 2dJCa9wCaLYpQ==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7ace3baso334832866b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:25:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEIlsejIt/684ZTzHk7+CCygzI21XkYRFYTInp9klRBWg6UpmweHdO8jEpJ7HYFyvuXZrS1s2ZVYtoquw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOQ5YmCme4xpDB/+6gzMq9CuT5UfQG68bNUjVZ1ZZyneB0vhFu
+	Lk1hGdDb1TEbTFL/EyHJ6SYv74TWxqJ7m04WzGbabmyjwGLLsT6VECe8Tf19adIJPWlhB+6DJqU
+	1R7Yq8Phazvd9Tf7kqkKLJTfVXqGmkTY=
+X-Google-Smtp-Source: AGHT+IGuIJdLeS2OuL7zqorDh3x8gITiFTZFiewtlfRJ6GxHkCWuVRXNBZGcM6JCuO4UjDsddXOU/fUe8+ePgYIEbWg=
+X-Received: by 2002:a17:907:940c:b0:b04:5b47:8bd5 with SMTP id
+ a640c23a62f3a-b045b478ebfmr86320466b.25.1756815935699; Tue, 02 Sep 2025
+ 05:25:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828102202.1849035-24-ardb+git@google.com>
- <20250828102202.1849035-36-ardb+git@google.com> <20250902120648.GFaLbd2LyZYkQ4l8WV@fat_crate.local>
-In-Reply-To: <20250902120648.GFaLbd2LyZYkQ4l8WV@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 2 Sep 2025 14:24:31 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGiy4XU0nrPU9UL3C1KHDznim1gj=P-MabVu=D59k3Fww@mail.gmail.com>
-X-Gm-Features: Ac12FXxfKaD09GSFE_CDkKG9WW-EwtKXdsqZ9NQqW8brqgQpgDx6hB_TtdO8EuM
-Message-ID: <CAMj1kXGiy4XU0nrPU9UL3C1KHDznim1gj=P-MabVu=D59k3Fww@mail.gmail.com>
-Subject: Re: [PATCH v7 12/22] x86/sev: Provide PIC aliases for SEV related
- data objects
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nikunj A Dadhania <nikunj@amd.com>
+References: <20250902090258.1170896-1-cuitao@kylinos.cn>
+In-Reply-To: <20250902090258.1170896-1-cuitao@kylinos.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 2 Sep 2025 20:25:22 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4pVgYOQy-qEfTtpVb9bjY7VOeJkjWYBWRGVpSnoh=upQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyJDeIKv-SMyb6JuPadQ-KWCbuf3BWO4utLhL_QQoVBL8pT9cWu5ERLS6Y
+Message-ID: <CAAhV-H4pVgYOQy-qEfTtpVb9bjY7VOeJkjWYBWRGVpSnoh=upQ@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: replace sprintf() with sysfs_emit()
+To: cuitao <cuitao@kylinos.cn>
+Cc: loongarch@lists.linux.dev, kernel@xen0n.name, jiaxun.yang@flygoat.com, 
+	linmq006@gmail.com, ziyao@disroot.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2 Sept 2025 at 14:07, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Thu, Aug 28, 2025 at 12:22:15PM +0200, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Provide PIC aliases for data objects that are shared between the SEV
-> > startup code and the SEV code that executes later. This is needed so
-> > that the confined startup code is permitted to access them.
-> >
-> > This requires some of these variables to be moved into a source file
-> > that is not part of the startup code, as the PIC alias is already
-> > implied, and exporting variables in the opposite direction is not
-> > supported.
-> >
-> > Move ghcb_version as well, but don't provide a PIC alias as it is not
-> > actually needed.
->
-> I see
->
-> SYM_PIC_ALIAS(ghcb_version);
->
-> below.
->
-> Stale commit message?
->
+Queued, thanks.
 
-Yes, as a result of
+Huacai
 
-https://lore.kernel.org/all/20250530165507.GBaDni69NqgOi4mFNn@fat_crate.local/
-
-it was exported but I failed to update the commit log accordingly.
+On Tue, Sep 2, 2025 at 5:04=E2=80=AFPM cuitao <cuitao@kylinos.cn> wrote:
+>
+> As Documentation/filesystems/sysfs.rst suggested, show() should only use
+> sysfs_emit() or sysfs_emit_at() when formatting the value to be returned
+> to user space.
+>
+> No functional change intended.
+>
+> Signed-off-by: cuitao <cuitao@kylinos.cn>
+> ---
+>  arch/loongarch/kernel/env.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/kernel/env.c b/arch/loongarch/kernel/env.c
+> index c0a5dc9aeae2..19e30206b6e7 100644
+> --- a/arch/loongarch/kernel/env.c
+> +++ b/arch/loongarch/kernel/env.c
+> @@ -86,7 +86,7 @@ late_initcall(fdt_cpu_clk_init);
+>  static ssize_t boardinfo_show(struct kobject *kobj,
+>                               struct kobj_attribute *attr, char *buf)
+>  {
+> -       return sprintf(buf,
+> +       return sysfs_emit(buf,
+>                 "BIOS Information\n"
+>                 "Vendor\t\t\t: %s\n"
+>                 "Version\t\t\t: %s\n"
+> --
+> 2.33.0
+>
+>
 
