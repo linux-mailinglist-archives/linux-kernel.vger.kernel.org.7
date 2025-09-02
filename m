@@ -1,519 +1,352 @@
-Return-Path: <linux-kernel+bounces-797297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C23B40E8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:23:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D1BB40E93
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB01C3AC500
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107831A87A20
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881A434AB19;
-	Tue,  2 Sep 2025 20:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17982E763A;
+	Tue,  2 Sep 2025 20:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="B9uMA0y7"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="av5fM94m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8101D432D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 20:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66084212F89
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 20:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756844627; cv=none; b=ZB4co76QFiVeb8K7dlNtuTjKcHxCmXtFUgWV5ZT1ZDw24ZJ0+AmSBA2eRLJZZJ92zoEiNiirkxLu+B034kRE3V0Auf77Ukz8SzqsYOAq1u/k54TYf6Ql3+fahK9KVBQxs7piiUsYY8loHjYD9yHaN2hCq5s8wM+I4v+K2ID34C8=
+	t=1756845189; cv=none; b=bEEp+V70EP2ttuRZw1MZ13F7sAgbFeczYjxfS4Ae1cyhrO4YavPrSWLXf4JNxFnv46Q6cnvUJ+dnJo/3gJ/i/VA1dtT8nYbtnHOjyZAFhxy7jSg3fqYjsYVnpPvc1tONqCxbvYJIIF20lml760gucPwRHjjJwRo/M5HJh09XSjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756844627; c=relaxed/simple;
-	bh=dldwsN7JwF159qfL19SWMfGJuEIEBMeOJ/lW1xsfG64=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PbMQvWggeu3q3dETt2VC14/ISssXL5oT6qH7mxHNJPD/JFa3AU4mTev7Arw93GrJtQ4Z+bYgBnf6VmqTlPhtjngNn0iEGsiAZ36DveTJu6NRu46Z68o+eUFdXvIxNgJRceumUZf1nYVFDbpAU4niGOr3/POl/X8tP5aVq6ueeJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=B9uMA0y7; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b326b6c189so36678401cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 13:23:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1756844624; x=1757449424; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ti1dNaEX5RAgN5lpAttUlDndIhL/boOtgWoq584IIFM=;
-        b=B9uMA0y7ULitKSg4vCq9rcrnBaTKI2SOLqzi18WEIsspcPI7pytUjlP7GMDhClBPy6
-         Nw1dShQIvyXB8TatAp34klaDzs4kOgoOSdsHi5fiLvVQNucz0uJG7JnVOocQhWrRuxen
-         7BLAW4Xaa42s4CttJ321eIQEdQvfBSEGJek0W/9ArxlRmLAB8fVeIoH4j3zor5D54hMb
-         DSWNIzWRCZ5+F+1eHMZa9ncKsv4AY7QmxSO/HYT+l84urk/xr2g1osN0PAiFg8K/UYjA
-         c9ifi+k4fEIJHiRQXtEdS6o+aGGoM8xUk3kk2YPoL31SjLfRkivRpzSUyS4dNS4YLXbI
-         PT2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756844624; x=1757449424;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ti1dNaEX5RAgN5lpAttUlDndIhL/boOtgWoq584IIFM=;
-        b=Ru/RWTpK1I53/3KRkHLrjxMOUPt0INWGLYMe0q3vBBc/JyiN/xHIVJQfTINcN85chs
-         5Z+80LPkAn09l4JdNpk43Y0Xa7hL5rakaC7ZyBe/r3wtevM49HZOZAl/nloyR3RS/fbk
-         P8l+2J5h4p0miQgpaSRt5A0/iQrTp+8MHLeQi6teWx23nDfh/3Ta6HLz5Zzdi0jIOIP9
-         n0rPlBz936XNYKk4IVDu4skUZZzJT9dstBCeyBxeAxq87be70j994FRZ0EkcJKbnXmM7
-         hKM40dji3sXk7di9EbQNP/bf84Bj8+hien9HUQFyZSJfNalwZy8D+C+tTfiwd9EsJ8MK
-         +IQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYwOpHtgUTCv+PEV+/F+vcRkDJH4/4MZ8i8qA89QmieA/Y1uxKV2NRMfX4A9sioO7Dw6sH1Vj6tDmJQss=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl9gWKjF5Mkv783VxrZbsW0cbCd4Ksihox8evLw6zOeaOTYpOU
-	15hs+70uiHGCGdfWg+ckpIGy2MkkLSODQEkst6xhyNkKb9N/i1Q7b7VqxRY6Jo2t0ys=
-X-Gm-Gg: ASbGncs7HzswHg6NeLpDuOWq8sYo3tUDxjYA/q0hMLEAAFquy1DI837MyhbmS8NLWo5
-	GW24Uu9t2J9gv83erznieLnDi40K1g/hhnby5jGTbzPVvtZ+aea11DHBJ6cFGaBOCn630eDJS7Z
-	dG/9I3rQYF31cRHWqUoFJblb1OVr7NbKgaWgnwScTEoSN8yEOYTU5zzR3MYPODuH7EY8wD5HnfT
-	nxLA0vyfEsTYLubjReuHjONW5Jai73TBGCTAypwDsWrkqerxszZpOpG+lDzf3kd9k/CbaaDJ1SM
-	g9/owrLDAdPsSZK/INMfN8MZ6TSB97yabh8vDVX2zrRPgDXDfeAu4kUbYYAwraAGA/BbanXKdaY
-	1ONNSsc2lEbacrmCu0bxBMc7hkaAdhYWnOCiLwLIft6/sr7+e
-X-Google-Smtp-Source: AGHT+IHUsaSnoZSo/var0yLCu9AO/fvoiQsemCFj3Gw1dysdd2u/8NiVBo76Ya0LxI9XAMdMj2Fr8g==
-X-Received: by 2002:a05:622a:4d97:b0:4b3:c25:7280 with SMTP id d75a77b69052e-4b31dd5679cmr186031381cf.71.1756844624181;
-        Tue, 02 Sep 2025 13:23:44 -0700 (PDT)
-Received: from ethanf.zetier.com ([65.222.209.234])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f7a1738sm280951cf.46.2025.09.02.13.23.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 13:23:43 -0700 (PDT)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: yuezhang.mo@sony.com
-Cc: ethan.ferguson@zetier.com,
-	linkinjeon@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sj1557.seo@samsung.com
-Subject: RE: [PATCH v4 0/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-Date: Tue,  2 Sep 2025 16:23:06 -0400
-Message-Id: <20250902202306.86404-1-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <PUZPR04MB63160C89856D1164322B643E8106A@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References: <PUZPR04MB63160C89856D1164322B643E8106A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+	s=arc-20240116; t=1756845189; c=relaxed/simple;
+	bh=GoShCcC4zkp4YyNiPnlHqVA9/MAGDmqqoiUbCVRHKDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTobv6iMPrYlbWjaauxTRNIKAMZorekcn4VKEh9MHAM5QZA3eFvrIkeuNWqHoQxRoKjEOo97mYdGsW3IIJS+TU+gT7iduwcBUgeYXpO6mZAnHp7Obbnl6DVJQZsK16lunl1c813sX9v3gXzJ/9k+a7KW0196cfMWHyRpvI2E288=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=av5fM94m; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756845187; x=1788381187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GoShCcC4zkp4YyNiPnlHqVA9/MAGDmqqoiUbCVRHKDo=;
+  b=av5fM94mtDMYN1gMWedipqoHK7Gq4qaPV4L1r3ItSpJNP6k/M7C/zgla
+   K8HjNl1lYEZ0sFY9cL5dxfqNBR1VBPLCvEQJO8l/nnw8oAh3qvzQN12HW
+   qYxKxHzr5bayHreVehQWoNeVrJhcrEc+5LBht3Ugty28GRp/ht6wUZeu1
+   q+5Tb43mb1euFRuo2W5j0DybNScAEBqQtlAnA6/DdfZFJmQIhUWZX7ty/
+   nV2oYJ7Dr50k8ngjNdc+oiV2zDbWiumlRs29wAo+zg5YdmIR0/sUfUFL9
+   VDoPLgxV/nmT06ob3k6zGCVjrTRQom830tFQcxKNETUH/ntW35DuI9mMo
+   A==;
+X-CSE-ConnectionGUID: g0V1fQxwQzugkCicukXP8A==
+X-CSE-MsgGUID: 5AMFnNkZT3On1BcWEvtqkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62970454"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62970454"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 13:33:06 -0700
+X-CSE-ConnectionGUID: VxwCyw4fSY2VxTS1CCg/7w==
+X-CSE-MsgGUID: xy5zL5IoT3Wdp7/aK4bZFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="170937857"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 02 Sep 2025 13:33:04 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utXgJ-00030F-0W;
+	Tue, 02 Sep 2025 20:32:48 +0000
+Date: Wed, 3 Sep 2025 04:31:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org,
+	akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, david@redhat.com, osalvador@suse.de,
+	jgg@ziepe.ca, jhubbard@nvidia.com, peterx@redhat.com,
+	linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+	Alistair Popple <apopple@nvidia.com>
+Subject: Re: [PATCH 2/2] mm/memremap: Remove unused get_dev_pagemap()
+ parameter
+Message-ID: <202509030434.fEPVFkG4-lkp@intel.com>
+References: <20250902051421.162498-2-apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902051421.162498-2-apopple@nvidia.com>
 
-On 9/2/25 00:55, Yuezhang.Mo@sony.com wrote:
-> Hi,
-> 
-> I have 3 more comments.
-> 
->> Add support for reading / writing to the exfat volume label from the
->> FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
->>
->> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
->> ---
->>  fs/exfat/exfat_fs.h  |   5 +
->>  fs/exfat/exfat_raw.h |   6 ++
->>  fs/exfat/file.c      |  88 +++++++++++++++++
->>  fs/exfat/super.c     | 224 +++++++++++++++++++++++++++++++++++++++++++
->>  4 files changed, 323 insertions(+)
->>
->> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
->> index f8ead4d47ef0..ed4b5ecb952b 100644
->> --- a/fs/exfat/exfat_fs.h
->> +++ b/fs/exfat/exfat_fs.h
->> @@ -267,6 +267,7 @@ struct exfat_sb_info {
->>       struct buffer_head **vol_amap; /* allocation bitmap */
->>
->>       unsigned short *vol_utbl; /* upcase table */
->> +     unsigned short *volume_label; /* volume name */
->>
->>       unsigned int clu_srch_ptr; /* cluster search pointer */
->>       unsigned int used_clusters; /* number of used clusters */
->> @@ -431,6 +432,10 @@ static inline loff_t exfat_ondisk_size(const struct
->> inode *inode)
-> [snip]
->> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
->> index 538d2b6ac2ec..970e3ee57c43 100644
->> --- a/fs/exfat/file.c
->> +++ b/fs/exfat/file.c
->> @@ -12,6 +12,7 @@
->>  #include <linux/security.h>
->>  #include <linux/msdos_fs.h>
->>  #include <linux/writeback.h>
->> +#include "../nls/nls_ucs2_utils.h"
->>
->>  #include "exfat_raw.h"
->>  #include "exfat_fs.h"
->> @@ -486,10 +487,93 @@ static int exfat_ioctl_shutdown(struct super_block
->> *sb, unsigned long arg)
->>       return exfat_force_shutdown(sb, flags);
->>  }
->>
->> +static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned
->> long arg)
->> +{
->> +     int ret;
->> +     char utf8[FSLABEL_MAX] = {0};
->> +     struct exfat_uni_name *uniname;
->> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
->> +
->> +     uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
->> +     if (!uniname)
->> +             return -ENOMEM;
->> +
->> +     ret = exfat_read_volume_label(sb);
->> +     if (ret < 0)
->> +             goto cleanup;
->> +
->> +     memcpy(uniname->name, sbi->volume_label,
->> +            EXFAT_VOLUME_LABEL_LEN * sizeof(short));
->> +     uniname->name[EXFAT_VOLUME_LABEL_LEN] = 0x0000;
->> +     uniname->name_len = UniStrnlen(uniname->name,
->> EXFAT_VOLUME_LABEL_LEN);
->> +
->> +     ret = exfat_utf16_to_nls(sb, uniname, utf8, FSLABEL_MAX);
->> +     if (ret < 0)
->> +             goto cleanup;
->> +
->> +     if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX)) {
->> +             ret = -EFAULT;
->> +             goto cleanup;
->> +     }
->> +
->> +     ret = 0;
->> +
->> +cleanup:
->> +     kfree(uniname);
->> +     return ret;
->> +}
->> +
->> +static int exfat_ioctl_set_volume_label(struct super_block *sb,
->> +                                     unsigned long arg,
->> +                                     struct inode *root_inode)
->> +{
->> +     int ret, lossy;
->> +     char utf8[FSLABEL_MAX];
->> +     struct exfat_uni_name *uniname;
->> +
->> +     if (!capable(CAP_SYS_ADMIN))
->> +             return -EPERM;
->> +
->> +     uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
->> +     if (!uniname)
->> +             return -ENOMEM;
->> +
->> +     if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX)) {
->> +             ret = -EFAULT;
->> +             goto cleanup;
->> +     }
->> +
->> +     if (utf8[0]) {
->> +             ret = exfat_nls_to_utf16(sb, utf8, strnlen(utf8,
->> FSLABEL_MAX),
->> +                                      uniname, &lossy);
->> +             if (ret < 0)
->> +                     goto cleanup;
->> +             else if (lossy & NLS_NAME_LOSSY) {
->> +                     ret = -EINVAL;
->> +                     goto cleanup;
->> +             }
->> +     } else {
->> +             uniname->name[0] = 0x0000;
->> +             uniname->name_len = 0;
->> +     }
->> +
->> +     if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
->> +             exfat_info(sb, "Volume label length too long, truncating");
->> +             uniname->name_len = EXFAT_VOLUME_LABEL_LEN;
->> +     }
->> +
->> +     ret = exfat_write_volume_label(sb, uniname, root_inode);
->> +
->> +cleanup:
->> +     kfree(uniname);
->> +     return ret;
->> +}
->> +
->>  long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->>  {
->>       struct inode *inode = file_inode(filp);
->>       u32 __user *user_attr = (u32 __user *)arg;
->> +     struct inode *root_inode = filp->f_path.mnt->mnt_root->d_inode;
->>
->>       switch (cmd) {
->>       case FAT_IOCTL_GET_ATTRIBUTES:
->> @@ -500,6 +584,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd,
->> unsigned long arg)
->>               return exfat_ioctl_shutdown(inode->i_sb, arg);
->>       case FITRIM:
->>               return exfat_ioctl_fitrim(inode, arg);
->> +     case FS_IOC_GETFSLABEL:
->> +             return exfat_ioctl_get_volume_label(inode->i_sb, arg);
->> +     case FS_IOC_SETFSLABEL:
->> +             return exfat_ioctl_set_volume_label(inode->i_sb, arg,
->> root_inode);
->>       default:
->>               return -ENOTTY;
->>       }
->> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
->> index 8926e63f5bb7..7931cdb4a1d1 100644
->> --- a/fs/exfat/super.c
->> +++ b/fs/exfat/super.c
->> @@ -18,6 +18,7 @@
->>  #include <linux/nls.h>
->>  #include <linux/buffer_head.h>
->>  #include <linux/magic.h>
->> +#include "../nls/nls_ucs2_utils.h"
->>
->>  #include "exfat_raw.h"
->>  #include "exfat_fs.h"
->> @@ -573,6 +574,228 @@ static int exfat_verify_boot_region(struct
->> super_block *sb)
->>       return 0;
->>  }
->>
->> +static int exfat_get_volume_label_ptrs(struct super_block *sb,
->> +                                    struct buffer_head **out_bh,
->> +                                    struct exfat_dentry **out_dentry,
->> +                                    struct inode *root_inode)
->> +{
->> +     int i, ret;
->> +     unsigned int type, old_clu;
->> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
->> +     struct exfat_chain clu;
->> +     struct exfat_dentry *ep, *deleted_ep = NULL;
->> +     struct buffer_head *bh, *deleted_bh;
->> +
->> +     clu.dir = sbi->root_dir;
->> +     clu.flags = ALLOC_FAT_CHAIN;
->> +
->> +     while (clu.dir != EXFAT_EOF_CLUSTER) {
->> +             for (i = 0; i < sbi->dentries_per_clu; i++) {
->> +                     ep = exfat_get_dentry(sb, &clu, i, &bh);
->> +
->> +                     if (!ep) {
->> +                             ret = -EIO;
->> +                             goto end;
->> +                     }
->> +
->> +                     type = exfat_get_entry_type(ep);
->> +                     if (type == TYPE_DELETED && !deleted_ep && root_inode)
->> {
->> +                             deleted_ep = ep;
->> +                             deleted_bh = bh;
->> +                             continue;
->> +                     }
->> +
->> +                     if (type == TYPE_UNUSED) {
->> +                             if (!root_inode) {
->> +                                     brelse(bh);
->> +                                     ret = -ENOENT;
->> +                                     goto end;
->> +                             }
->> +
->> +                             if (deleted_ep) {
->> +                                     brelse(bh);
->> +                                     goto end;
->> +                             }
->> +
->> +                             if (i < sbi->dentries_per_clu - 1) {
->> +                                     deleted_ep = ep;
->> +                                     deleted_bh = bh;
->> +
->> +                                     ep = exfat_get_dentry(sb, &clu,
->> +                                                           i + 1, &bh);
->> +                                     memset(ep, 0,
->> +                                            sizeof(struct exfat_dentry));
->> +                                     ep->type = EXFAT_UNUSED;
->> +                                     exfat_update_bh(bh, true);
->> +                                     brelse(bh);
->> +
->> +                                     goto end;
->> +                             }
->> +
->> +                             // Last dentry in cluster
-> 
-> Please use /* */ to comment.
-> 
->> +                             clu.size = 0;
->> +                             old_clu = clu.dir;
->> +                             ret = exfat_alloc_cluster(root_inode, 1,
->> +                                                       &clu, true);
->> +                             if (ret < 0) {
->> +                                     brelse(bh);
->> +                                     goto end;
->> +                             }
-> 
-> In exFAT, directory size is limited to 256MB. Please add a check to return -ENOSPC
-> instead of allocating a new cluster if the root directory size had reached this limit. 
->
-Noted. I am switching over to using exfat_find_empty_entry, which
-checks for this.
->> +
->> +                             ret = exfat_ent_set(sb, old_clu, clu.dir);
->> +                             if (ret < 0) {
->> +                                     exfat_free_cluster(root_inode, &clu);
->> +                                     brelse(bh);
->> +                                     goto end;
->> +                             }
->> +
->> +                             ret = exfat_zeroed_cluster(root_inode, clu.dir);
->> +                             if (ret < 0) {
->> +                                     exfat_free_cluster(root_inode, &clu);
->> +                                     brelse(bh);
->> +                                     goto end;
->> +                             }
-> 
-> After allocating a new cluster for the root directory, its size needs to be updated.
->
-Where would I update the size? I don't think the root directory has a
-Stream Extension dentry, would I increment the exfat_inode_info.dir.size
-field?
->> +
->> +                             deleted_ep = ep;
->> +                             deleted_bh = bh;
->> +                             goto end;
->> +                     }
->> +
->> +                     if (type == TYPE_VOLUME) {
->> +                             *out_bh = bh;
->> +                             *out_dentry = ep;
->> +
->> +                             if (deleted_ep)
->> +                                     brelse(deleted_bh);
->> +
->> +                             return 0;
->> +                     }
->> +
->> +                     brelse(bh);
->> +             }
->> +
->> +             if (exfat_get_next_cluster(sb, &(clu.dir))) {
->> +                     ret = -EIO;
->> +                     goto end;
->> +             }
->> +     }
->> +
->> +     ret = -EIO;
->> +
->> +end:
->> +     if (deleted_ep) {
->> +             *out_bh = deleted_bh;
->> +             *out_dentry = deleted_ep;
->> +             memset((*out_dentry), 0, sizeof(struct exfat_dentry));
->> +             (*out_dentry)->type = EXFAT_VOLUME;
->> +             return 0;
->> +     }
->> +
->> +     *out_bh = NULL;
->> +     *out_dentry = NULL;
->> +     return ret;
->> +}
->> +
->> +static int exfat_alloc_volume_label(struct super_block *sb)
->> +{
->> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
->> +
->> +     if (sbi->volume_label)
->> +             return 0;
->> +
->> +
->> +     mutex_lock(&sbi->s_lock);
->> +     sbi->volume_label = kcalloc(EXFAT_VOLUME_LABEL_LEN,
->> +                                                  sizeof(short), GFP_KERNEL);
->> +     mutex_unlock(&sbi->s_lock);
->> +
->> +     if (!sbi->volume_label)
->> +             return -ENOMEM;
->> +
->> +     return 0;
->> +}
->> +
->> +int exfat_read_volume_label(struct super_block *sb)
->> +{
->> +     int ret, i;
->> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
->> +     struct buffer_head *bh = NULL;
->> +     struct exfat_dentry *ep = NULL;
->> +
->> +     ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, NULL);
->> +     // ENOENT signifies that a volume label dentry doesn't exist
->> +     // We will treat this as an empty volume label and not fail.
->> +     if (ret < 0 && ret != -ENOENT)
->> +             goto cleanup;
->> +
->> +     ret = exfat_alloc_volume_label(sb);
->> +     if (ret < 0)
->> +             goto cleanup;
->> +
->> +     mutex_lock(&sbi->s_lock);
->> +     if (!ep)
->> +             memset(sbi->volume_label, 0, EXFAT_VOLUME_LABEL_LEN);
->> +     else
->> +             for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
->> +                     sbi->volume_label[i] = le16_to_cpu(ep-
->>> dentry.volume_label.volume_label[i]);
->> +     mutex_unlock(&sbi->s_lock);
->> +
->> +     ret = 0;
->> +
->> +cleanup:
->> +     if (bh)
->> +             brelse(bh);
->> +
->> +     return ret;
->> +}
->> +
->> +int exfat_write_volume_label(struct super_block *sb,
->> +                          struct exfat_uni_name *uniname,
->> +                          struct inode *root_inode)
->> +{
->> +     int ret, i;
->> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
->> +     struct buffer_head *bh = NULL;
->> +     struct exfat_dentry *ep = NULL;
->> +
->> +     if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
->> +             ret = -EINVAL;
->> +             goto cleanup;
->> +     }
->> +
->> +     ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, root_inode);
->> +     if (ret < 0)
->> +             goto cleanup;
->> +
->> +     ret = exfat_alloc_volume_label(sb);
->> +     if (ret < 0)
->> +             goto cleanup;
->> +
->> +     memcpy(sbi->volume_label, uniname->name,
->> +            uniname->name_len * sizeof(short));
->> +
->> +     mutex_lock(&sbi->s_lock);
->> +     for (i = 0; i < uniname->name_len; i++)
->> +             ep->dentry.volume_label.volume_label[i] =
->> +                     cpu_to_le16(sbi->volume_label[i]);
->> +     // Fill the rest of the str with 0x0000
->> +     for (; i < EXFAT_VOLUME_LABEL_LEN; i++)
->> +             ep->dentry.volume_label.volume_label[i] = 0x0000;
->> +
->> +     ep->dentry.volume_label.char_count = uniname->name_len;
->> +     mutex_unlock(&sbi->s_lock);
->> +
->> +     ret = 0;
->> +
->> +cleanup:
->> +     if (bh) {
->> +             exfat_update_bh(bh, true);
->> +             brelse(bh);
->> +     }
->> +
->> +     return ret;
->> +}
->> +
->>  /* mount the file system volume */
->>  static int __exfat_fill_super(struct super_block *sb,
->>               struct exfat_chain *root_clu)
->> @@ -791,6 +1014,7 @@ static void delayed_free(struct rcu_head *p)
->>
->>       unload_nls(sbi->nls_io);
->>       exfat_free_upcase_table(sbi);
->> +     kfree(sbi->volume_label);
->>       exfat_free_sbi(sbi);
->>  }
->>
->> --
->> 2.34.1
+Hi Alistair,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Popple/mm-memremap-Remove-unused-get_dev_pagemap-parameter/20250902-131811
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250902051421.162498-2-apopple%40nvidia.com
+patch subject: [PATCH 2/2] mm/memremap: Remove unused get_dev_pagemap() parameter
+config: i386-buildonly-randconfig-001-20250903 (https://download.01.org/0day-ci/archive/20250903/202509030434.fEPVFkG4-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509030434.fEPVFkG4-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509030434.fEPVFkG4-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mm/memory-failure.c: In function 'memory_failure':
+>> mm/memory-failure.c:2269:33: error: too many arguments to function 'get_dev_pagemap'
+    2269 |                         pgmap = get_dev_pagemap(pfn, NULL);
+         |                                 ^~~~~~~~~~~~~~~
+   In file included from include/linux/mm.h:33,
+                    from mm/memory-failure.c:40:
+   include/linux/memremap.h:236:35: note: declared here
+     236 | static inline struct dev_pagemap *get_dev_pagemap(unsigned long pfn)
+         |                                   ^~~~~~~~~~~~~~~
+
+
+vim +/get_dev_pagemap +2269 mm/memory-failure.c
+
+1a3798dececa8c Jane Chu                2024-05-24  2218  
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2219  /**
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2220   * memory_failure - Handle memory failure of a page.
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2221   * @pfn: Page Number of the corrupted page
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2222   * @flags: fine tune action taken
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2223   *
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2224   * This function is called by the low level machine check code
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2225   * of an architecture when it detects hardware memory corruption
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2226   * of a page. It tries its best to recover, which includes
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2227   * dropping pages, killing processes etc.
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2228   *
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2229   * The function is primarily of use for corruptions that
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2230   * happen outside the current execution context (e.g. when
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2231   * detected by a background scrubber)
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2232   *
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2233   * Must run in process context (e.g. a work queue) with interrupts
+5885c6a62533cb Miaohe Lin              2023-07-11  2234   * enabled and no spinlocks held.
+d1fe111fb62a1c luofei                  2022-03-22  2235   *
+d2734f044f8483 Shuai Xue               2025-03-12  2236   * Return:
+d2734f044f8483 Shuai Xue               2025-03-12  2237   *   0             - success,
+d2734f044f8483 Shuai Xue               2025-03-12  2238   *   -ENXIO        - memory not managed by the kernel
+d2734f044f8483 Shuai Xue               2025-03-12  2239   *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
+d2734f044f8483 Shuai Xue               2025-03-12  2240   *   -EHWPOISON    - the page was already poisoned, potentially
+d2734f044f8483 Shuai Xue               2025-03-12  2241   *                   kill process,
+d2734f044f8483 Shuai Xue               2025-03-12  2242   *   other negative values - failure.
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2243   */
+83b57531c58f41 Eric W. Biederman       2017-07-09  2244  int memory_failure(unsigned long pfn, int flags)
+6a46079cf57a7f Andi Kleen              2009-09-16  2245  {
+6a46079cf57a7f Andi Kleen              2009-09-16  2246  	struct page *p;
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2247) 	struct folio *folio;
+6100e34b2526e1 Dan Williams            2018-07-13  2248  	struct dev_pagemap *pgmap;
+171936ddaf97e6 Tony Luck               2021-06-24  2249  	int res = 0;
+524fca1e7356f8 Naoya Horiguchi         2013-02-22  2250  	unsigned long page_flags;
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2251  	bool retry = true;
+405ce051236cc6 Naoya Horiguchi         2022-04-21  2252  	int hugetlb = 0;
+6a46079cf57a7f Andi Kleen              2009-09-16  2253  
+6a46079cf57a7f Andi Kleen              2009-09-16  2254  	if (!sysctl_memory_failure_recovery)
+83b57531c58f41 Eric W. Biederman       2017-07-09  2255  		panic("Memory failure on page %lx", pfn);
+6a46079cf57a7f Andi Kleen              2009-09-16  2256  
+03b122da74b22f Tony Luck               2021-10-26  2257  	mutex_lock(&mf_mutex);
+03b122da74b22f Tony Luck               2021-10-26  2258  
+67f22ba7750f94 zhenwei pi              2022-06-15  2259  	if (!(flags & MF_SW_SIMULATED))
+67f22ba7750f94 zhenwei pi              2022-06-15  2260  		hw_memory_failure = true;
+67f22ba7750f94 zhenwei pi              2022-06-15  2261  
+96c804a6ae8c59 David Hildenbrand       2019-10-18  2262  	p = pfn_to_online_page(pfn);
+96c804a6ae8c59 David Hildenbrand       2019-10-18  2263  	if (!p) {
+03b122da74b22f Tony Luck               2021-10-26  2264  		res = arch_memory_failure(pfn, flags);
+03b122da74b22f Tony Luck               2021-10-26  2265  		if (res == 0)
+03b122da74b22f Tony Luck               2021-10-26  2266  			goto unlock_mutex;
+03b122da74b22f Tony Luck               2021-10-26  2267  
+96c804a6ae8c59 David Hildenbrand       2019-10-18  2268  		if (pfn_valid(pfn)) {
+96c804a6ae8c59 David Hildenbrand       2019-10-18 @2269  			pgmap = get_dev_pagemap(pfn, NULL);
+d51b68469bc780 Miaohe Lin              2023-07-01  2270  			put_ref_page(pfn, flags);
+03b122da74b22f Tony Luck               2021-10-26  2271  			if (pgmap) {
+03b122da74b22f Tony Luck               2021-10-26  2272  				res = memory_failure_dev_pagemap(pfn, flags,
+96c804a6ae8c59 David Hildenbrand       2019-10-18  2273  								 pgmap);
+03b122da74b22f Tony Luck               2021-10-26  2274  				goto unlock_mutex;
+03b122da74b22f Tony Luck               2021-10-26  2275  			}
+96c804a6ae8c59 David Hildenbrand       2019-10-18  2276  		}
+96f96763de26d6 Kefeng Wang             2022-07-26  2277  		pr_err("%#lx: memory outside kernel control\n", pfn);
+03b122da74b22f Tony Luck               2021-10-26  2278  		res = -ENXIO;
+03b122da74b22f Tony Luck               2021-10-26  2279  		goto unlock_mutex;
+6a46079cf57a7f Andi Kleen              2009-09-16  2280  	}
+6a46079cf57a7f Andi Kleen              2009-09-16  2281  
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2282  try_again:
+405ce051236cc6 Naoya Horiguchi         2022-04-21  2283  	res = try_memory_failure_hugetlb(pfn, flags, &hugetlb);
+405ce051236cc6 Naoya Horiguchi         2022-04-21  2284  	if (hugetlb)
+171936ddaf97e6 Tony Luck               2021-06-24  2285  		goto unlock_mutex;
+171936ddaf97e6 Tony Luck               2021-06-24  2286  
+6a46079cf57a7f Andi Kleen              2009-09-16  2287  	if (TestSetPageHWPoison(p)) {
+47af12bae17f99 Aili Yao                2021-06-24  2288  		res = -EHWPOISON;
+a3f5d80ea401ac Naoya Horiguchi         2021-06-28  2289  		if (flags & MF_ACTION_REQUIRED)
+a3f5d80ea401ac Naoya Horiguchi         2021-06-28  2290  			res = kill_accessing_process(current, pfn, flags);
+f361e2462e8ccc Naoya Horiguchi         2022-04-28  2291  		if (flags & MF_COUNT_INCREASED)
+f361e2462e8ccc Naoya Horiguchi         2022-04-28  2292  			put_page(p);
+b8b9488d50b715 Jane Chu                2024-05-24  2293  		action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
+171936ddaf97e6 Tony Luck               2021-06-24  2294  		goto unlock_mutex;
+6a46079cf57a7f Andi Kleen              2009-09-16  2295  	}
+6a46079cf57a7f Andi Kleen              2009-09-16  2296  
+6a46079cf57a7f Andi Kleen              2009-09-16  2297  	/*
+6a46079cf57a7f Andi Kleen              2009-09-16  2298  	 * We need/can do nothing about count=0 pages.
+6a46079cf57a7f Andi Kleen              2009-09-16  2299  	 * 1) it's a free page, and therefore in safe hand:
+9cf2819159d5a3 Miaohe Lin              2022-08-30  2300  	 *    check_new_page() will be the gate keeper.
+761ad8d7c7b548 Naoya Horiguchi         2017-07-10  2301  	 * 2) it's part of a non-compound high order page.
+6a46079cf57a7f Andi Kleen              2009-09-16  2302  	 *    Implies some kernel user: cannot stop them from
+6a46079cf57a7f Andi Kleen              2009-09-16  2303  	 *    R/W the page; let's pray that the page has been
+6a46079cf57a7f Andi Kleen              2009-09-16  2304  	 *    used and will be freed some time later.
+6a46079cf57a7f Andi Kleen              2009-09-16  2305  	 * In fact it's dangerous to directly bump up page count from 0,
+1c4c3b99c03d3e Jiang Biao              2018-08-21  2306  	 * that may make page_ref_freeze()/page_ref_unfreeze() mismatch.
+6a46079cf57a7f Andi Kleen              2009-09-16  2307  	 */
+0ed950d1f28142 Naoya Horiguchi         2021-06-28  2308  	if (!(flags & MF_COUNT_INCREASED)) {
+0ed950d1f28142 Naoya Horiguchi         2021-06-28  2309  		res = get_hwpoison_page(p, flags);
+0ed950d1f28142 Naoya Horiguchi         2021-06-28  2310  		if (!res) {
+8d22ba1b74aa94 Wu Fengguang            2009-12-16  2311  			if (is_free_buddy_page(p)) {
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2312  				if (take_page_off_buddy(p)) {
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2313  					page_ref_inc(p);
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2314  					res = MF_RECOVERED;
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2315  				} else {
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2316  					/* We lost the race, try again */
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2317  					if (retry) {
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2318  						ClearPageHWPoison(p);
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2319  						retry = false;
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2320  						goto try_again;
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2321  					}
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2322  					res = MF_FAILED;
+a8b2c2ce89d4e0 Oscar Salvador          2020-12-14  2323  				}
+b66d00dfebe79e Kefeng Wang             2022-10-21  2324  				res = action_result(pfn, MF_MSG_BUDDY, res);
+8d22ba1b74aa94 Wu Fengguang            2009-12-16  2325  			} else {
+b66d00dfebe79e Kefeng Wang             2022-10-21  2326  				res = action_result(pfn, MF_MSG_KERNEL_HIGH_ORDER, MF_IGNORED);
+8d22ba1b74aa94 Wu Fengguang            2009-12-16  2327  			}
+171936ddaf97e6 Tony Luck               2021-06-24  2328  			goto unlock_mutex;
+0ed950d1f28142 Naoya Horiguchi         2021-06-28  2329  		} else if (res < 0) {
+b8b9488d50b715 Jane Chu                2024-05-24  2330  			res = action_result(pfn, MF_MSG_GET_HWPOISON, MF_IGNORED);
+0ed950d1f28142 Naoya Horiguchi         2021-06-28  2331  			goto unlock_mutex;
+0ed950d1f28142 Naoya Horiguchi         2021-06-28  2332  		}
+6a46079cf57a7f Andi Kleen              2009-09-16  2333  	}
+6a46079cf57a7f Andi Kleen              2009-09-16  2334  
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2335) 	folio = page_folio(p);
+9b0ab153d76972 Jane Chu                2024-05-24  2336  
+9b0ab153d76972 Jane Chu                2024-05-24  2337  	/* filter pages that are protected from hwpoison test by users */
+9b0ab153d76972 Jane Chu                2024-05-24  2338  	folio_lock(folio);
+9b0ab153d76972 Jane Chu                2024-05-24  2339  	if (hwpoison_filter(p)) {
+9b0ab153d76972 Jane Chu                2024-05-24  2340  		ClearPageHWPoison(p);
+9b0ab153d76972 Jane Chu                2024-05-24  2341  		folio_unlock(folio);
+9b0ab153d76972 Jane Chu                2024-05-24  2342  		folio_put(folio);
+9b0ab153d76972 Jane Chu                2024-05-24  2343  		res = -EOPNOTSUPP;
+9b0ab153d76972 Jane Chu                2024-05-24  2344  		goto unlock_mutex;
+9b0ab153d76972 Jane Chu                2024-05-24  2345  	}
+9b0ab153d76972 Jane Chu                2024-05-24  2346  	folio_unlock(folio);
+9b0ab153d76972 Jane Chu                2024-05-24  2347  
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2348) 	if (folio_test_large(folio)) {
+eac96c3efdb593 Yang Shi                2021-10-28  2349  		/*
+eac96c3efdb593 Yang Shi                2021-10-28  2350  		 * The flag must be set after the refcount is bumped
+eac96c3efdb593 Yang Shi                2021-10-28  2351  		 * otherwise it may race with THP split.
+eac96c3efdb593 Yang Shi                2021-10-28  2352  		 * And the flag can't be set in get_hwpoison_page() since
+eac96c3efdb593 Yang Shi                2021-10-28  2353  		 * it is called by soft offline too and it is just called
+5885c6a62533cb Miaohe Lin              2023-07-11  2354  		 * for !MF_COUNT_INCREASED.  So here seems to be the best
+eac96c3efdb593 Yang Shi                2021-10-28  2355  		 * place.
+eac96c3efdb593 Yang Shi                2021-10-28  2356  		 *
+eac96c3efdb593 Yang Shi                2021-10-28  2357  		 * Don't need care about the above error handling paths for
+eac96c3efdb593 Yang Shi                2021-10-28  2358  		 * get_hwpoison_page() since they handle either free page
+eac96c3efdb593 Yang Shi                2021-10-28  2359  		 * or unhandlable page.  The refcount is bumped iff the
+eac96c3efdb593 Yang Shi                2021-10-28  2360  		 * page is a valid handlable page.
+eac96c3efdb593 Yang Shi                2021-10-28  2361  		 */
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2362) 		folio_set_has_hwpoisoned(folio);
+1a3798dececa8c Jane Chu                2024-05-24  2363  		if (try_to_split_thp_page(p, false) < 0) {
+1a3798dececa8c Jane Chu                2024-05-24  2364  			res = -EHWPOISON;
+1a3798dececa8c Jane Chu                2024-05-24  2365  			kill_procs_now(p, pfn, flags, folio);
+1a3798dececa8c Jane Chu                2024-05-24  2366  			put_page(p);
+1a3798dececa8c Jane Chu                2024-05-24  2367  			action_result(pfn, MF_MSG_UNSPLIT_THP, MF_FAILED);
+171936ddaf97e6 Tony Luck               2021-06-24  2368  			goto unlock_mutex;
+5d1fd5dc877bc1 Naoya Horiguchi         2020-10-15  2369  		}
+415c64c1453aa2 Naoya Horiguchi         2015-06-24  2370  		VM_BUG_ON_PAGE(!page_count(p), p);
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2371) 		folio = page_folio(p);
+415c64c1453aa2 Naoya Horiguchi         2015-06-24  2372  	}
+415c64c1453aa2 Naoya Horiguchi         2015-06-24  2373  
+e43c3afb367112 Wu Fengguang            2009-09-29  2374  	/*
+e43c3afb367112 Wu Fengguang            2009-09-29  2375  	 * We ignore non-LRU pages for good reasons.
+e43c3afb367112 Wu Fengguang            2009-09-29  2376  	 * - PG_locked is only well defined for LRU pages and a few others
+48c935ad88f5be Kirill A. Shutemov      2016-01-15  2377  	 * - to avoid races with __SetPageLocked()
+e43c3afb367112 Wu Fengguang            2009-09-29  2378  	 * - to avoid races with __SetPageSlab*() (and more non-atomic ops)
+e43c3afb367112 Wu Fengguang            2009-09-29  2379  	 * The check (unnecessarily) ignores LRU pages being isolated and
+e43c3afb367112 Wu Fengguang            2009-09-29  2380  	 * walked by the page reclaim code, however that's not a big loss.
+e43c3afb367112 Wu Fengguang            2009-09-29  2381  	 */
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2382) 	shake_folio(folio);
+e43c3afb367112 Wu Fengguang            2009-09-29  2383  
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2384) 	folio_lock(folio);
+847ce401df392b Wu Fengguang            2009-12-16  2385  
+f37d4298aa7f8b Andi Kleen              2014-08-06  2386  	/*
+75ee64b3c9a969 Miaohe Lin              2022-03-22  2387  	 * We're only intended to deal with the non-Compound page here.
+8a78882dac1c8c Miaohe Lin              2024-07-08  2388  	 * The page cannot become compound pages again as folio has been
+8a78882dac1c8c Miaohe Lin              2024-07-08  2389  	 * splited and extra refcnt is held.
+f37d4298aa7f8b Andi Kleen              2014-08-06  2390  	 */
+8a78882dac1c8c Miaohe Lin              2024-07-08  2391  	WARN_ON(folio_test_large(folio));
+f37d4298aa7f8b Andi Kleen              2014-08-06  2392  
+524fca1e7356f8 Naoya Horiguchi         2013-02-22  2393  	/*
+524fca1e7356f8 Naoya Horiguchi         2013-02-22  2394  	 * We use page flags to determine what action should be taken, but
+524fca1e7356f8 Naoya Horiguchi         2013-02-22  2395  	 * the flags can be modified by the error containment action.  One
+524fca1e7356f8 Naoya Horiguchi         2013-02-22  2396  	 * example is an mlocked page, where PG_mlocked is cleared by
+4d8f7418e8ba36 David Hildenbrand       2023-12-20  2397  	 * folio_remove_rmap_*() in try_to_unmap_one(). So to determine page
+4d8f7418e8ba36 David Hildenbrand       2023-12-20  2398  	 * status correctly, we save a copy of the page flags at this time.
+524fca1e7356f8 Naoya Horiguchi         2013-02-22  2399  	 */
+378d05afc7b1bd Matthew Wilcox (Oracle  2025-08-05  2400) 	page_flags = folio->flags.f;
+524fca1e7356f8 Naoya Horiguchi         2013-02-22  2401  
+e8675d291ac007 yangerkun               2021-06-15  2402  	/*
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2403) 	 * __munlock_folio() may clear a writeback folio's LRU flag without
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2404) 	 * the folio lock. We need to wait for writeback completion for this
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2405) 	 * folio or it may trigger a vfs BUG while evicting inode.
+e8675d291ac007 yangerkun               2021-06-15  2406  	 */
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2407) 	if (!folio_test_lru(folio) && !folio_test_writeback(folio))
+0bc1f8b0682caa Chen Yucong             2014-07-02  2408  		goto identify_page_state;
+0bc1f8b0682caa Chen Yucong             2014-07-02  2409  
+6edd6cc66201e0 Naoya Horiguchi         2014-06-04  2410  	/*
+6edd6cc66201e0 Naoya Horiguchi         2014-06-04  2411  	 * It's very difficult to mess with pages currently under IO
+6edd6cc66201e0 Naoya Horiguchi         2014-06-04  2412  	 * and in many cases impossible, so we just avoid it here.
+6edd6cc66201e0 Naoya Horiguchi         2014-06-04  2413  	 */
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2414) 	folio_wait_writeback(folio);
+6a46079cf57a7f Andi Kleen              2009-09-16  2415  
+6a46079cf57a7f Andi Kleen              2009-09-16  2416  	/*
+6a46079cf57a7f Andi Kleen              2009-09-16  2417  	 * Now take care of user space mappings.
+6ffcd825e7d041 Matthew Wilcox (Oracle  2022-06-28  2418) 	 * Abort on fail: __filemap_remove_folio() assumes unmapped page.
+6a46079cf57a7f Andi Kleen              2009-09-16  2419  	 */
+03468a0f52893b Matthew Wilcox (Oracle  2024-04-12  2420) 	if (!hwpoison_user_mappings(folio, p, pfn, flags)) {
+b8b9488d50b715 Jane Chu                2024-05-24  2421  		res = action_result(pfn, MF_MSG_UNMAP_FAILED, MF_FAILED);
+171936ddaf97e6 Tony Luck               2021-06-24  2422  		goto unlock_page;
+1668bfd5be9d8a Wu Fengguang            2009-12-16  2423  	}
+6a46079cf57a7f Andi Kleen              2009-09-16  2424  
+6a46079cf57a7f Andi Kleen              2009-09-16  2425  	/*
+6a46079cf57a7f Andi Kleen              2009-09-16  2426  	 * Torn down by someone else?
+6a46079cf57a7f Andi Kleen              2009-09-16  2427  	 */
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2428) 	if (folio_test_lru(folio) && !folio_test_swapcache(folio) &&
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2429) 	    folio->mapping == NULL) {
+b66d00dfebe79e Kefeng Wang             2022-10-21  2430  		res = action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
+171936ddaf97e6 Tony Luck               2021-06-24  2431  		goto unlock_page;
+6a46079cf57a7f Andi Kleen              2009-09-16  2432  	}
+6a46079cf57a7f Andi Kleen              2009-09-16  2433  
+0bc1f8b0682caa Chen Yucong             2014-07-02  2434  identify_page_state:
+0348d2ebec9b00 Naoya Horiguchi         2017-07-10  2435  	res = identify_page_state(pfn, p, page_flags);
+ea6d0630100b28 Naoya Horiguchi         2021-06-24  2436  	mutex_unlock(&mf_mutex);
+ea6d0630100b28 Naoya Horiguchi         2021-06-24  2437  	return res;
+171936ddaf97e6 Tony Luck               2021-06-24  2438  unlock_page:
+5dba5c356ab3bb Matthew Wilcox (Oracle  2024-04-12  2439) 	folio_unlock(folio);
+171936ddaf97e6 Tony Luck               2021-06-24  2440  unlock_mutex:
+171936ddaf97e6 Tony Luck               2021-06-24  2441  	mutex_unlock(&mf_mutex);
+6a46079cf57a7f Andi Kleen              2009-09-16  2442  	return res;
+6a46079cf57a7f Andi Kleen              2009-09-16  2443  }
+cd42f4a3b2b1c4 Tony Luck               2011-12-15  2444  EXPORT_SYMBOL_GPL(memory_failure);
+847ce401df392b Wu Fengguang            2009-12-16  2445  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
