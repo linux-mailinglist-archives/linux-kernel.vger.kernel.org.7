@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-797264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81140B40E1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:50:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3931B40E21
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427154E4323
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C31F1B650A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DFC34F494;
-	Tue,  2 Sep 2025 19:50:04 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D491A34DCCA;
+	Tue,  2 Sep 2025 19:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p+WgA7Cv"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF6A2DF152;
-	Tue,  2 Sep 2025 19:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE64726C384
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756842604; cv=none; b=S7112C3HOhk95oruSMe12AdizSFGl/rjhkJeFxQqr58QNHy/drGGcWoZqEoQYzZiB5/GbX6UTnyhGMxUeOqVWTj7Oil+KCTjPvVsxIZs6n/OKXDkW1KPikfUE29F9+vupXAaIKEJc4McXMi1HgsmlECEg8QEj1/vnnI491PSQvY=
+	t=1756842770; cv=none; b=S0g7Um2ufsnHekXEzQC25zwWDpFFMy1SH2bLvtfD9VAsdxSn2GJwxFeLgq75KP8GDxrMAdVzhLxMsKcxD+pfxL6cMZJZvZ6ZkbY0MZzoNBN8uc9rFYItdPSOnnBgmGB2MpsVsZh6lUCvdRAjTD54a9fzg8ApAe7HnXzKYIPxmN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756842604; c=relaxed/simple;
-	bh=NdufQxzOZlWguBL9HwYXkIGe7xQ4IfzTq08st8ba+Vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TdZUrEil8BzQZLiWODhYAjmRmn4reXTbRvJ0BOZu1FOOEhEl5/MFTJNmdCg7Fv0jzqV/V6N8WwAgZo/NMwJp7zXfas44B4yqMLEIdOu1p+Pq/GMAkt4wAcylj5hrX16T9motKcpJlUtL+8FL/MeARJxc4yYWj18BeLqDHqsp8h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id E5862160383;
-	Tue,  2 Sep 2025 19:49:59 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 5553E20013;
-	Tue,  2 Sep 2025 19:49:58 +0000 (UTC)
-Date: Tue, 2 Sep 2025 15:49:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Xiaomeng Zhang <zhangxiaomeng13@huawei.com>
-Cc: <mhiramat@kernel.org>, <dhowells@redhat.com>, <wsa@kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: Fix OOB access in
- trace_event_raw_event_smbus_write
-Message-ID: <20250902154957.7987e5ff@batman.local.home>
-In-Reply-To: <20250821012312.3591166-1-zhangxiaomeng13@huawei.com>
-References: <20250821012312.3591166-1-zhangxiaomeng13@huawei.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756842770; c=relaxed/simple;
+	bh=y64uVsO1eZs6OzeU4OzgZTGsY5ypgEtXG72eVFAxEEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyGvpCTtfCC9UrEsLa4LmtbPB/vddoFNkTJyIZxP3robkKXp5F98BglKcJkYr1NsmOskJM72ur03jD78Mg0HerlSXwu1R23rDgBcjYZdQexv7XTTQtKrLlRX8hS6p+mHu3Q+6x1nUSlGlRX5LvkIEYsjLqoodtVOTeH3uHX3/h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p+WgA7Cv; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rlojIfTuIlTc8Wo9xot7aej39JoIWDQCWyib0x3FC3w=; b=p+WgA7CvNZSwF15FR4yWHDSRY5
+	tyFVdG1asANnYNi2TkrNonIZwLmemLm+gZmA9Om8bmOO8pTsSrp0yUXdQAJdM33GAhUsGEPjABq2x
+	N7c+4+0eV5eRomQ7xDtjslFzACXWtLPttzqpUNyZdAzvO4F4nxjRU5JpipP8aKEeALU5gQC66VyDh
+	BOZXLPwflxiYWHMg4NB51KnENKgKOzm3nQbV1CPivSJzIlt4qeO50NHb5WB4fQbBzIv53VEvcfCH6
+	mGhgyg53gHT1DkIsg4wO0PJgcmr8avjV5jN2qOV70CVDdxT04wfCf0v6F9/jVLNAXxSesaikZHlrR
+	bcRbIDiw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utX3c-0000000ArnQ-16hV;
+	Tue, 02 Sep 2025 19:52:44 +0000
+Date: Tue, 2 Sep 2025 20:52:44 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: tag kernel stack pages
+Message-ID: <aLdLDEW2d3hK4gUV@casper.infradead.org>
+References: <20250820202029.1909925-1-vishal.moola@gmail.com>
+ <96148baf-f008-449b-988b-ea4f07d18528@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 5553E20013
-X-Stat-Signature: mg7mrwaidbnnetu8tc6mdrjs59sgswc9
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+w6D8sT48f7HfE0tYL7qw3Yp0RncEh3AU=
-X-HE-Tag: 1756842598-367105
-X-HE-Meta: U2FsdGVkX1/Zwox4elp08vAurhM9a+8r1ZwMgqON4QB5V13NJBjg0ybR29Es+nnnph0YcG/ZrMJeqWcup+0ELcBGfqbbKPVH0Le9RruIdDrzFn8dTa3/JcMpBD2sNbVB3aIigB6YxdO5Jl4zJNteoF5i12/xLo6Ncpnko8/l45jR6YZawOQnNkMibbdqDlGWgGSmaZ8skhDZi0VhgoXrh6AE9QWUwQtHXI0qNC5FhQEq4FKouCKl5J7zWIsmzc8cGjWw7TbGSgb4YuAr3JijjSkg+mucQOvH77G+dGfxVcYRl/aPg+g10ZDJfbgTOOi4xu8CAgh1RPR9umFXWgHlnHXGVkZs+M5U
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96148baf-f008-449b-988b-ea4f07d18528@redhat.com>
 
-On Thu, 21 Aug 2025 01:23:12 +0000
-Xiaomeng Zhang <zhangxiaomeng13@huawei.com> wrote:
-
-> The smbus_write tracepoint copies __entry->len bytes into a fixed
-> I2C_SMBUS_BLOCK_MAX + 2 buffer. Oversized lengths (e.g., 46)
-> exceed the destination and over-read the source buffer, triggering
-> OOB warning:
+On Thu, Aug 21, 2025 at 02:44:31PM +0200, David Hildenbrand wrote:
+> On 20.08.25 22:20, Vishal Moola (Oracle) wrote:
+> > Currently, we have no way to distinguish a kernel stack page from an
+> > unidentified page. Being able to track this information can be
+> > beneficial for optimizing kernel memory usage (i.e. analyzing
+> > fragmentation, location etc.). Knowing a page is being used for a kernel
+> > stack gives us more insight about pages that are certainly immovable and
+> > important to kernel functionality.
 > 
-> memcpy: detected field-spanning write (size 48) of single field
-> "entry->buf" at include/trace/events/smbus.h:60 (size 34)
+> It's a very niche use case. Anything that's not clearly a folio or a special
+> movable_ops page is certainly immovable. So we can identify pretty reliable
+> what's movable and what's not.
 > 
-> Clamp the copy size to I2C_SMBUS_BLOCK_MAX + 2 before memcpy().
-> This only affects tracing and does not change I2C transfer behavior.
+> Happy to learn how you would want to use that knowledge to reduce
+> fragmentation. :)
 > 
-> Fixes: 8a325997d95d ("i2c: Add message transfer tracepoints for SMBUS [ver #2]")
-> Signed-off-by: Xiaomeng Zhang <zhangxiaomeng13@huawei.com>
-> ---
->  include/trace/events/smbus.h | 2 ++
->  1 file changed, 2 insertions(+)
+> So this reads a bit hand-wavy.
+
+I have a theory that we should always be attempting to do aligned
+allocations if we can, falling back to individual allocations if
+we can't.  This is an attempt to gather some data to inform us whether
+that theory is true, and to help us measure whether any effort we
+take to improve that situation is effective.
+
+Eyeballing the output of tools/testing/page-types certainly lends
+some credence to this.  On x86-64 with its 16KiB stacks and 4KiB
+page size, we often see four consecutive pages allocated as type
+KernelStack, and as you'd expect only about 25% of the time are they
+aligned to a 16KiB boundary.  That is, at least 75% of the time they
+prevent _two_ order-2 pages from being available.
+
+As you say, they're not movable.  I'm not sure if it makes sense to
+go to the effort of making them movable; it'd require interacting
+with the scheduler (to prevent the task we're relocating from
+being scheduled), and I don't think the realtime people would be
+terribly keen on that idea.  So that isn't one of the ideas we
+have on the table for improving matters.
+
+Ideas we have been batting around:
+
+ - Have kernel stacks try to do an order-N allocation and vmap()
+   the result, fall back to current implementation
+ - Have vmalloc try to do an order-N allocation, fall back down the
+   orders on failure to allocate
+ - Change the alloc_bulk implementation to do the order-N allocation
+   and fall back
+
+I'm sure other possibilities also exist.
+
+> staring at [1], we allocate from vmalloc, so I would assume that these will
+> be vmalloc-typed pages in the future and we cannot change the type later.
 > 
-> diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
-> index 71a87edfc46d..e306d8b928c3 100644
-> --- a/include/trace/events/smbus.h
-> +++ b/include/trace/events/smbus.h
-> @@ -57,6 +57,8 @@ TRACE_EVENT_CONDITION(smbus_write,
->  		case I2C_SMBUS_I2C_BLOCK_DATA:
->  			__entry->len = data->block[0] + 1;
->  		copy:
-> +			if (__entry->len > I2C_SMBUS_BLOCK_MAX + 2)
-> +				__entry->len = I2C_SMBUS_BLOCK_MAX + 2;
->  			memcpy(__entry->buf, data->block, __entry->len);
->  			break;
->  		case I2C_SMBUS_QUICK:
+> [1] https://kernelnewbies.org/MatthewWilcox/Memdescs
 
-The code has:
+I see the vmalloc subtype as being a "we don't know any better" type.
+We could allocate another subtype of type 0 to mean "kernel stacks"
+and have it be implicit that kernel stacks are allocated from vmalloc.
+This would probably require that we have a vmalloc interface that lets us
+specify a subtype, which I think is probably something we'd want anyway.
 
-                switch (protocol) {
-                case I2C_SMBUS_BYTE_DATA:
-                        __entry->len = 1;
-                        goto copy;
-                case I2C_SMBUS_WORD_DATA:
-                case I2C_SMBUS_PROC_CALL:
-                        __entry->len = 2;
-                        goto copy;
-                case I2C_SMBUS_BLOCK_DATA:
-                case I2C_SMBUS_BLOCK_PROC_CALL:
-                case I2C_SMBUS_I2C_BLOCK_DATA:
-                        __entry->len = data->block[0] + 1;
-                copy:   
-                        memcpy(__entry->buf, data->block, __entry->len);
-                        break;
-                case I2C_SMBUS_QUICK:
-                case I2C_SMBUS_BYTE:
-                case I2C_SMBUS_I2C_BLOCK_BROKEN:
-                default:
-                        __entry->len = 0;
-                }
-
-I only see two calls to the copy where one is len = 1 and the other is
-len = 2. Why not put the check before the copy label?
-
--- Steve
+I think it's fine to say "This doesn't add enough value to merge it
+upstream".  I will note one minor advantage which is that typing these
+pages as PGTY_kstack today prevents them from being inadvertently mapped
+to userspace (whether by malicious code or innocent bug).
 
