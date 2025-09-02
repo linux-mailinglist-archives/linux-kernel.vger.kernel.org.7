@@ -1,164 +1,115 @@
-Return-Path: <linux-kernel+bounces-796106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF0AB3FBFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:15:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8CFB3FC00
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085332C3BEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4802C2157
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797652F3629;
-	Tue,  2 Sep 2025 10:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HsTeJJPy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0C72F068A;
-	Tue,  2 Sep 2025 10:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8E627EFE3;
+	Tue,  2 Sep 2025 10:16:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB282BD11;
+	Tue,  2 Sep 2025 10:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808106; cv=none; b=pyQjl7bBBWiFmUgyJNQrMhS0sdvEOJ2lgHuv4R75pRdLIby6vJHe8dSUOu52IIZQojCUUsRA3AA/UySspCoFSy6+Ggi7qxk5KgJ8TQ9+kg0DeeP/GtFOowqN7TL2euAoFSvSO0DQpZeRMou2KCifOp57w7RcrGXpxwSdbmWFCKo=
+	t=1756808213; cv=none; b=HXb6nfYJQ+1ikaDoqCMcBJ04u2WUDCghJYlnusprPqgH/gKF74pJwvZ5HnwxCNInRKqjus+8igHvlDgeF4dXE/2d+yY1r9b5epotebySHqx326m6vwJYr+5bYYvgtfhYZEup7T6HSf1NmW/yVKK9JYJrfTJjI8vXEhUIqdIUh/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808106; c=relaxed/simple;
-	bh=7r0uYfWtBElvzR2QYMpdph3AQUnSm2BAWZWbcWhwkgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hneB2WyV9K3DsbvF7bExXVdvgm/FJ1BJXWZqA+kLApJA1/lII10/MNPj4ttuGPWjw6lecjH3YX24an5DISLuelJcldA8H2ttnMkEl64ULGgRx9HsBrE9c2AnPXbLGGewRDT3tjYsgnc/78yodMdKyY9Xdb1LDV31XhEhuy1xvI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HsTeJJPy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756808101;
-	bh=7r0uYfWtBElvzR2QYMpdph3AQUnSm2BAWZWbcWhwkgI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HsTeJJPy8nskxOEnWjhWT23hBDAhRZZC8BBmLa9+pYVZHN/1ephldEEputMinatHc
-	 8rhjPY/35EFw8KdZww8/CmeWOnDrqoELM4vGKhw0n2+fOwRZnteOQS9b86OEYVSKPh
-	 M78G/SargYwFcz8nzA9RJ8OY9FN4DF2bRez1O5t4QsM9/lCXuiyQNUXgu5gGJA8PC0
-	 7REujSKJS1o6pu7ugGg32yi3a6MqTYaNf8CnhVgAJYOwjeTA1hJjm9g1QcFYbw8c4Y
-	 Hi4xdn2xFl1kfA2MWOPOacriYYoMb/TPJyDY2rOU3zFnGRvXVQFP0fgfGUibMhk5nD
-	 gNO1gS409ySuA==
-Received: from [IPV6:2a05:1141:1fb:db00:ba27:6983:e3a5:2a47] (unknown [IPv6:2a05:1141:1fb:db00:ba27:6983:e3a5:2a47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 251BD17E0456;
-	Tue,  2 Sep 2025 12:15:00 +0200 (CEST)
-Message-ID: <b0cad1e8-8b02-4039-b1d2-b9056fd51318@collabora.com>
-Date: Tue, 2 Sep 2025 12:14:57 +0200
+	s=arc-20240116; t=1756808213; c=relaxed/simple;
+	bh=MiuVwlDkQpkcmg4SsiFuwfX5YZ5iFvnaXQsJoKawFBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtoGm8VKiEJ3lOkBsxez0XwZ5lStPc1HaNqJUj7zaHzxeRroI/F8TtqumSqwVczpNQUwABBaCT5KxTRpGkHMjCvW9vD4UmthmurBDtE6jBPHumhLawVfc0luSWEj7f8bdKfiIataqvl+0DkYYWar/vwUJ0YEQHFCA9Z0d+2+N38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 418FE169C;
+	Tue,  2 Sep 2025 03:16:42 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 305483F6A8;
+	Tue,  2 Sep 2025 03:16:49 -0700 (PDT)
+Date: Tue, 2 Sep 2025 11:16:46 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>, stable@vger.kernel.org,
+	Jan Palus <jpalus@fastmail.com>
+Subject: Re: [PATCH] firmware: arm_scmi: quirk: fix write to string constant
+Message-ID: <20250902-axiomatic-salamander-of-reputation-d70aa8@sudeepholla>
+References: <20250829132152.28218-1-johan@kernel.org>
+ <aLG5XFHXKgcBida8@hovoldconsulting.com>
+ <aLa__M_VJYqxb9mc@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] dt-bindings: phy: rockchip-inno-csi-dphy: add
- rk3588 variant
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Jagan Teki <jagan@amarulasolutions.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Collabora Kernel Team <kernel@collabora.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-References: <20250616-rk3588-csi-dphy-v3-0-a5ccd5f1f438@collabora.com>
- <20250616-rk3588-csi-dphy-v3-3-a5ccd5f1f438@collabora.com>
- <20250902-piquant-secret-moose-06c4b6@kuoka>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20250902-piquant-secret-moose-06c4b6@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLa__M_VJYqxb9mc@hovoldconsulting.com>
 
-Hi Krzysztof,
-
-Thanks for your comments.
-
-On 9/2/25 09:55, Krzysztof Kozlowski wrote:
-> On Mon, Sep 01, 2025 at 10:47:44PM +0200, Michael Riesch wrote:
->> The Rockchip RK3588 variant of the CSI-2 DPHY features two reset lines.
->> Add the variant and allow for the additional reset.
->>
->> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
->> ---
->>  .../bindings/phy/rockchip-inno-csi-dphy.yaml       | 50 +++++++++++++++++++++-
->>  1 file changed, 49 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
->> index 9ad72518e6da..e37c9fd74788 100644
->> --- a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
->> +++ b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
->> @@ -21,6 +21,7 @@ properties:
->>        - rockchip,rk3326-csi-dphy
->>        - rockchip,rk3368-csi-dphy
->>        - rockchip,rk3568-csi-dphy
->> +      - rockchip,rk3588-csi-dphy
->>  
->>    reg:
->>      maxItems: 1
->> @@ -40,11 +41,15 @@ properties:
->>  
->>    resets:
->>      items:
->> -      - description: exclusive PHY reset line
->> +      - description: APB reset line
->> +      - description: PHY reset line
+On Tue, Sep 02, 2025 at 11:59:24AM +0200, Johan Hovold wrote:
+> Hi Sudeep,
 > 
-> That's changing the order, before first was the phy....
+> On Fri, Aug 29, 2025 at 04:29:48PM +0200, Johan Hovold wrote:
+> > On Fri, Aug 29, 2025 at 03:21:52PM +0200, Johan Hovold wrote:
+> > > The quirk version range is typically a string constant and must not be
+> > > modified (e.g. as it may be stored in read-only memory):
+> > > 
+> > > 	Unable to handle kernel write to read-only memory at virtual
+> > > 	address ffffc036d998a947
+> > > 
+> > > Fix the range parsing so that it operates on a copy of the version range
+> > > string, and mark all the quirk strings as const to reduce the risk of
+> > > introducing similar future issues.
+> > 
+> > With Jan's permission, let's add:
+> > 
+> > Reported-by: Jan Palus <jpalus@fastmail.com>
+> > 
 
-See reset-names below...
+I was hoping to hear back, but I assume silence is kind of acceptance.
 
+> > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220437
+> > > Fixes: 487c407d57d6 ("firmware: arm_scmi: Add common framework to handle firmware quirks")
+> > > Cc: stable@vger.kernel.org	# 6.16
+> > > Cc: Cristian Marussi <cristian.marussi@arm.com>
+> > > Signed-off-by: Johan Hovold <johan@kernel.org>
 > 
->> +    minItems: 1
->>  
->>    reset-names:
->>      items:
->>        - const: apb
->> +      - const: phy
+> I noticed that you picked up this fix yesterday but also that you
+> rewrote the commit message and switched using cleanup helpers.
 > 
-> Although here first was apb? Quite confusing.
-
-Confusing indeed. IMHO the description "exclusive PHY reset line" is
-misleading. In the existing device trees there are hints that this is an
-APB related reset. These are only hints, of course, but they are the
-best info we have.
-
-I can add a remark that we are fixing the misleading description while
-at it.
-
+> Please don't do such (non-trivial) changes without making that clear
+> in the commit message before your Signed-off-by tag:
 > 
-> Anyway "phy" reset for "phy" is pretty non-informative, please give some
-> useful name.
-
-As far as the additional reset is concerned, I do not have any info at
-all what it is related to. Therefore, it is hard to give a useful name.
-Also, to be frank, I have no intention to haggle around with Rockchip
-support to find out a more meaningful name (I tried to do that in the
-past, only to find that the time spent on that is almost definitely wasted).
-
-Similar PHY blocks are using "phy" or "pipe" or simply "reset" as names,
-so I went for that.
-
-Any suggestions are warmly welcome. "aux"? "reset2"? ...?
-
-Best regards,
-Michael
-
-> 
->> +    minItems: 1
-> 
-> Best regards,
-> Krzysztof
+> 	[ sudeep: rewrite commit message; switch to cleanup helpers ]
 > 
 
+Sorry I meant to do that when I replied and asked you if you are OK
+with cleanup helpers. Also yes I planned to add a line like something
+above before finalizing.
+
+> In this case, you also changed the meaning so that the commit message
+> now reads like the sole reason that writing to string constants is wrong
+> is that they may reside in read-only memory.
+> 
+
+Ah, I didn't realise that it changes the meaning now.
+
+> I used "e.g." on purpose instead of listing further reasons like the
+> fact that string constants may be shared so that parsing of one quirk
+> can subtly break a later one.
+>
+
+I see your point, will revert to your commit message.
+
+-- 
+Regards,
+Sudeep
 
