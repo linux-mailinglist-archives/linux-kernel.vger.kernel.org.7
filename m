@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-795802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D249EB3F7FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 248B1B3F801
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F03117E3A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D20E16A844
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BEA2EA165;
-	Tue,  2 Sep 2025 08:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D812E7F27;
+	Tue,  2 Sep 2025 08:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvFlM7ZS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TiIr34RQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9CD2E974E;
-	Tue,  2 Sep 2025 08:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B82326E6E4;
+	Tue,  2 Sep 2025 08:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800841; cv=none; b=l9a9SIRtU6OC1Lkl7tZiAQkJX2TdbIO6WOqhmfjwmHY9WkhSb1JB5cmWwFTFrStujdx77BHJ00umPD6AncG/dxVTAO7IBOteQorTYsvo6j88jdkodsZMCcbmW9OUbYu4NQ7d1dcQHBTQzb8v6pFefudFcRo8LOYHvpbAw0skzu8=
+	t=1756800906; cv=none; b=fAxoxXZy8S/l8y7Zlr6fAh/pPM9KVRkU23FyJ0k5bu2D/bWwdx40/nUeTZmMkzkFek803bK15UTgJeR9GKjtQTRRjnJWFjkJwpgsh7Yza3W1TDE+rorZKntU6xgSteCURxMx6bBAWvJi2TyjXo3Qki9NA6V29HwNhXnuyaGIe54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800841; c=relaxed/simple;
-	bh=HWyqnnpUQ0RMOPKfJQXAPWxuH4TZHiX9DPbsyXAvzbI=;
+	s=arc-20240116; t=1756800906; c=relaxed/simple;
+	bh=eNj80VaVIJ6I8gAp2y6ustAHm15ycxpRRerpSvOHzWw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XGMgK79mA1p8+g8b2Pm7mvD+qpMo0o4JHNA0f5sd7v98abfhppeeiWFgLxXnt1tAOyOU11w9uI4tHqWd5sSRFeEgJupMZ2wIOgOODopWfrPU85WOjNeLBwrqezoLfn2QU5ObjzOBmc+pIyPso5x4s8kEiyie9EcDzLbT1xK4Ca0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvFlM7ZS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5639C4CEED;
-	Tue,  2 Sep 2025 08:13:59 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RDxYiS1gW+dmnt5oeRznLkJNeWI2q+ZVXmLh3WRz4qOEk43sKtIMR0i3M981tglKbwP/vWbsgqkA8zia/Gvo9JNv9ahEFrQI4MSR0TsIAPkCqDrQdO6yDLBtj1+ALcmzNIbXMuhOVdKxvbjTbMYuLBd2YpPmz+jgSSUiKDdZNq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TiIr34RQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1B63C4CEED;
+	Tue,  2 Sep 2025 08:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756800841;
-	bh=HWyqnnpUQ0RMOPKfJQXAPWxuH4TZHiX9DPbsyXAvzbI=;
+	s=k20201202; t=1756800905;
+	bh=eNj80VaVIJ6I8gAp2y6ustAHm15ycxpRRerpSvOHzWw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DvFlM7ZSYxpCGcYGhREx440CmfMmD26hWCb2Li88JwmndSOhT3akmsY32Rx6UCgfJ
-	 5y3JViivp3Nbvt2iuGys3uj//e6cOslQziAfarMbVgbxYh9t6+k1pPh2I/h3F/vaYh
-	 0oOEflXHBJbNTen6rRIhf+2tNrS4FtPBSrzj0MIReokz/UxUdeVpXz1M3ZFRkkrc3M
-	 G/A0E2QV2Nygu+4ZpD5MPqua//2Ty15mFOBOwWxFN9N7hXKqHkE4pbIVqPTssHZ3fz
-	 eM5lqva4fDEprJ65at5tG5QbCnY0rrvT3HgEPeZ29b4TYLeL5YdkcP2W9B6TQuPK4C
-	 /21F2Ag3/H53Q==
+	b=TiIr34RQZOcIAK/nZ/xiaMhqOWUpfNIVuBJmfeyn75dn9Nl/mDyG+tRLYsgTFyCqV
+	 y7fcmayzoEuhI9Ll2Ws3wdilsFsexXFta55sT0y8yKkzp8U/dYcPaDr1t1ub4XKJtp
+	 gBBGEc54w129rNDawqIudYF8cV7ekTvad0Qv/Or52IXq7cq7uj7OwMu3WJhKzZVdHL
+	 HU2RuXeanG74qsBCGvhzOKJt418ibx0vmRXbj5C+YgYCqkKEPnbj3PYZNrJPbUKlXg
+	 w2qB3Psbc+0WlMs+V2GMPdJV/4asE5LlkksCeSzpCQpO6hHZ929e7kiyDBeJ2OgAGC
+	 OLY2f8igTh21Q==
 From: Lee Jones <lee@kernel.org>
-To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
- Lee Jones <lee@kernel.org>, Waqar Hameed <waqar.hameed@axis.com>
-Cc: kernel@axis.com, asahi@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <pnd8qjym7td.a.out@axis.com>
-References: <pnd8qjym7td.a.out@axis.com>
-Subject: Re: (subset) [PATCH v2] mfd: macsmc: Remove error prints for
- devm_add_action_or_reset()
-Message-Id: <175680083942.2184860.11235957894379015646.b4-ty@kernel.org>
-Date: Tue, 02 Sep 2025 09:13:59 +0100
+To: Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, Lee Jones <lee@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+In-Reply-To: <20250807071932.4085458-1-arnd@kernel.org>
+References: <20250807071932.4085458-1-arnd@kernel.org>
+Subject: Re: (subset) [PATCH] mfd: madera: work around false-positive
+ -Wininitialized warning
+Message-Id: <175680090336.2185785.11760207261424041452.b4-ty@kernel.org>
+Date: Tue, 02 Sep 2025 09:15:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,20 +65,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-c81fc
 
-On Tue, 05 Aug 2025 11:33:34 +0200, Waqar Hameed wrote:
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
+On Thu, 07 Aug 2025 09:19:28 +0200, Arnd Bergmann wrote:
+> clang-21 warns about one uninitialized variable getting dereferenced
+> in madera_dev_init:
 > 
+> drivers/mfd/madera-core.c:739:10: error: variable 'mfd_devs' is uninitialized when used here [-Werror,-Wuninitialized]
+>   739 |                               mfd_devs, n_devs,
+>       |                               ^~~~~~~~
+> drivers/mfd/madera-core.c:459:33: note: initialize the variable 'mfd_devs' to silence this warning
+>   459 |         const struct mfd_cell *mfd_devs;
+>       |                                        ^
+>       |                                         = NULL
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] mfd: macsmc: Remove error prints for devm_add_action_or_reset()
-      commit: 342c84507bfc197a0a9fddd6f076befefd5e6c25
+[1/1] mfd: madera: work around false-positive -Wininitialized warning
+      commit: 3105933c2cf5e2e1908d31500fff72e28e0d94bf
 
 --
 Lee Jones [李琼斯]
