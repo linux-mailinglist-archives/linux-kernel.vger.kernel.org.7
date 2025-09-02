@@ -1,115 +1,141 @@
-Return-Path: <linux-kernel+bounces-797080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426C2B40B91
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:05:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596DCB40B89
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D647D1B63CC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:05:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AE734E81B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CF7343206;
-	Tue,  2 Sep 2025 17:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F241B340DA0;
+	Tue,  2 Sep 2025 17:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FNL4ppSl"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bjrPBcOr"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8CD342C95;
-	Tue,  2 Sep 2025 17:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA14B2E2846
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756832703; cv=none; b=ccRsFVAElZ9CU/GSTr9xLd0EX9nWRpi3/88NNYsHN3mNCH/nvpEYbxuefKRE8/AHdmqJbY2vuNe1/ylI/Ri7lRJig6Vrlc8IhE4hJByFWy00HQ1+02tTfzcMacECblL+KYaJEHBB08CqUfBGv0cyppZ/OF+i6I7+uFBnJflOGF8=
+	t=1756832682; cv=none; b=s//FH890sq+rtF6qCTMOTUawGDj4xZb/5hbMvmyWyzj8Xk2d9yDeMXkZ+5No6lGAOts1nDIBLmBuZtqnxAFB2F+xV4kZnvlKgFwc7g83EEkLSiJ0vecX06jTluNVI2CAcmyqTNFUwKkjUYefeE5j/Dy9cEm9ix5iKJDlGrWpUUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756832703; c=relaxed/simple;
-	bh=rzy8HDu/HKQD79DhM/v4aEPUamzNdqUSWHeSnavWUa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NpQ4kviRbSsigMFz+3zShScs7O1Wr861v81n4IabVZmJWqGoRcbC57XgOigxpxwGXnpkYmqw6hJksVgNgLflAdtERW4Z5miMxu5URwCfZIT7YN694MX93k8SxyPyK4xiXAqSsX7Awtt9AxaUH93KDEAApVt40XZKxnwaG+wGXcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FNL4ppSl; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DBD0840E01C9;
-	Tue,  2 Sep 2025 17:04:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id FGcDTYXnO16y; Tue,  2 Sep 2025 17:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756832695; bh=wRpxNiX9QRv5BU/SdbZjefeDFacLACtGPJAJoBJUUTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FNL4ppSl2+FvxoAangt091+Jvn2MguNFerG0T3uRKvcspqX1qr69crl93b5LmlBoK
-	 bjreTCvqKWjn7hkaCx2coSv7rPT40M3P4p3cU4VRGbGlTMeJIufEyIuljWLk5l2b/Z
-	 rsRyckg9VwAYUHKr7FmLFrv8w6GYtuAiYbHqdeHR2XwCjE1fo1lXcQeKfDhVkmpoBk
-	 NbNfxZ255vPFBo7iOCR4eP3XBK4/9pO11AfYUI04L/QNLebx7oCnoiXsQfqjnC0SnG
-	 vLjzFQYZ6ZnyeaLiwW1ZVtztIFewTopEBs40l5ETSMu+3L/du+PUkR5W05mgPHpkfY
-	 +x3iPmGFkDErc4CxqLt9RIJybe3eZ/ADI1m8WLa3tPNnon6lBvOrQQsMVJt7O1qeSl
-	 HNUP1fWpaG2MAHxkSfVCkkdmIEwDXzFGzisFgd6HXEiEfkRM/XpAACOamC3/SyzRjm
-	 n8kFXcmR5ce2ElfyDhSGM03TAAho9ae01348goq5ZpimEVYn4ClDRYAMEfv15BIM2V
-	 5qUouojRY7b2CiiZG+IiR90SSjLZgLKRVcek6NOui9YMa4eNil9AtxIOU1HtD5y3Ls
-	 jos0cGDwkhWhousxNgELtYfr/qxWanWktyCqG+iv5ESAyVXX5Xb/F8ujfs+2z6BSl8
-	 VlHjqqi97h+Yl8hcc55eRgCM=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id CA0F940E01B0;
-	Tue,  2 Sep 2025 17:04:44 +0000 (UTC)
-Date: Tue, 2 Sep 2025 19:04:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v5 13/20] x86/mce: Unify AMD THR handler with MCA Polling
-Message-ID: <20250902170438.GGaLcjpoEhdfAGtBph@fat_crate.local>
-References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
- <20250825-wip-mca-updates-v5-13-865768a2eef8@amd.com>
- <20250902111052.GDaLbQvA2A0b8Ii26k@fat_crate.local>
- <20250902133712.GB18483@yaz-khff2.amd.com>
+	s=arc-20240116; t=1756832682; c=relaxed/simple;
+	bh=SMUkP0mnR8ttMeYUrjJsKoDULZmiSRA+4BBJ8ckn9Z0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lCUneC/wchSYfylZJ/wR4MWRZrozyQMzSgp8+rME5MZt3ci02WyqKSA5bwpCEaxKnVlz8KH/VbUyQzfj0yQfwZjGLpDicPRwEkg9fVWJjJgXF2ZfNnAjFAXda6q7dzM6fKPpfncM825agU9u/44Xj7AJNgziao0alUFVu87rrPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bjrPBcOr; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-329e3db861eso944247a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756832680; x=1757437480; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2LMLEHyEbRIdXaggZuzXCIZ0dmnUQmlDXD9SxdiA60I=;
+        b=bjrPBcOrxDJnQ1eO21t+5swA18i+hi8HZL6y5g7dYBYlJq+Rf+Md2IgDVM82VoVCKS
+         1GdCNdSx0mWKS0tnXizOedk/C2n3xfRiHdmP6xeo62pro6kE94W9wnE8D3XP9fpSi+RH
+         3er9uIY+e+kTZ+Ry5uY6fTf5zmHhLkwF1BdN8VknLrgzMXUVAO/xAWFd0FL7qBIgQZMP
+         L/ezJydhvQsc2ZSFSlKCi+vyPKcZO72VPJXgDr5oK6S13vc8Q4ijtZzQ0tN4VHyy+5Xt
+         SzlhMN3x9PFpU0S5Y/VuAuaLAdE1k3hJDNCwhY/h0qSaZoNch4Hetvv42eAjPoblzcoB
+         a/8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756832680; x=1757437480;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2LMLEHyEbRIdXaggZuzXCIZ0dmnUQmlDXD9SxdiA60I=;
+        b=j4Rk+Dl/dVqQgBvdubzQDkNrmL3AQNf+B/sJIRGG454sZ93J7GUgS02N2YWQMH+CIj
+         EYgIF333rzfnZ+nYAM3mH4w0MfHLidg8fS0ToMM/ho0nSXM6v+Bu0YDWV7qtI+N+ploJ
+         +pRigRMU1wD57XmzyaWiqDDas+lEC4jvWU8TmIL5FMAw45jnRPjuui1QEJAHHEr2FjTN
+         GzvEDBBB/b3SMdvnQzweCqOyMw77L0n6x0AcfSl4gQ8DbrR7z7bzHbtzDFhw8XRzKgbt
+         +y+qytYBRsTepuy1hwQPOFDGVEbQJOXlDvh7VreqEOlZWUaiMMDudFoZKM17MsXixguj
+         CxHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCRrUVXMtDtUIap+ZjEfOY7SSFczn8On4gSkOWy3shDnzCFI5uVzBPZgVGbdxttgk0DzZQ9sq8QfPlVDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRe3lDMXI/fBHTKjZ9IN0zXD5yEcF11gBlRDEgX1Ek2gwy3+0W
+	o8OtK119RHkRJD5s9BpIHH3kWuSuu5WICAtOblLz/Kh6Hmlj2PQq4WIHDYaFE0YctzBg2OW3Eb1
+	/qgiepQ==
+X-Google-Smtp-Source: AGHT+IG8vQ2i+8u5m20u/+QD7Xbccgaeo/0vxgLTqeVP8u6AK0S/QWOHDA2bJ2dqkK9l8xruUzSgK+8OWYY=
+X-Received: from pjbsp16.prod.google.com ([2002:a17:90b:52d0:b0:329:e84e:1c50])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d0f:b0:329:e4d1:c20f
+ with SMTP id 98e67ed59e1d1-329e4d1c399mr3616187a91.9.1756832680152; Tue, 02
+ Sep 2025 10:04:40 -0700 (PDT)
+Date: Tue, 2 Sep 2025 10:04:38 -0700
+In-Reply-To: <aLa34QCJCXGLk/fl@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902133712.GB18483@yaz-khff2.amd.com>
+Mime-Version: 1.0
+References: <20250829000618.351013-1-seanjc@google.com> <20250829000618.351013-13-seanjc@google.com>
+ <aLFiPq1smdzN3Ary@yzhao56-desk.sh.intel.com> <8445ac8c96706ba1f079f4012584ef7631c60c8b.camel@intel.com>
+ <aLIJd7xpNfJvdMeT@google.com> <aLa34QCJCXGLk/fl@yzhao56-desk.sh.intel.com>
+Message-ID: <aLcjppW1eiCrxJPC@google.com>
+Subject: Re: [RFC PATCH v2 12/18] KVM: TDX: Bug the VM if extended the initial
+ measurement fails
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, Vishal Annapurve <vannapurve@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Sep 02, 2025 at 09:37:13AM -0400, Yazen Ghannam wrote:
-> This means we'd need to do another loop through the banks. Their
-> MCi_STATUS registers would be cleared. So they could log another error
-> before the limit is reset.
+On Tue, Sep 02, 2025, Yan Zhao wrote:
+> But during writing another concurrency test, I found a sad news :
 > 
-> Overall, the goal is to loop through the banks one time and log/reset
-> banks as we go through them.
+> SEAMCALL TDH_VP_INIT requires to hold exclusive lock for resource TDR when its
+> leaf_opcode.version > 0. So, when I use v1 (which is the current value in
+> upstream, for x2apic?) to test executing ioctl KVM_TDX_INIT_VCPU on different
+> vCPUs concurrently, the TDX_BUG_ON() following tdh_vp_init() will print error
+> "SEAMCALL TDH_VP_INIT failed: 0x8000020000000080".
+> 
+> If I switch to using v0 version of TDH_VP_INIT, the contention will be gone.
 
-Is there anything special about keeping this looping once? I might've missed
-the reason if there were any particular one...
+Uh, so that's exactly the type of breaking ABI change that isn't acceptable.  If
+it's really truly necessary, then we can can probably handle the change in KVM
+since TDX is so new, but generally speaking such changes simply must not happen.
 
-In any case, it sounds to me like you want a wrapper called
+> Note: this acquiring of exclusive lock was not previously present in the public
+> repo https://github.com/intel/tdx-module.git, branch tdx_1.5.
+> (The branch has been force-updated to new implementation now).
 
-	clear_bank(i)
+Lovely.
 
-which executes at the end of machine_check_poll() and hides in there all
-the possible MCA banks that need to be touched when done with the bank.
+> > Acquire kvm->lock to prevent VM-wide things from happening, slots_lock to prevent
+> > kvm_mmu_zap_all_fast(), and _all_ vCPU mutexes to prevent vCPUs from interefering.
+> Nit: we should have no worry to kvm_mmu_zap_all_fast(), since it only zaps
+> !mirror roots. The slots_lock should be for slots deletion.
 
-It'll still call back'n'forth through the code but at least all will be nicely
-abstracted and concentrated.
+Oof, I missed that.  We should have required nx_huge_pages=never for tdx=1.
+Probably too late for that now though :-/
 
-Thx.
+> > Doing that for a vCPU ioctl is a bit awkward, but not awful.  E.g. we can abuse
+> > kvm_arch_vcpu_async_ioctl().  In hindsight, a more clever approach would have
+> > been to make KVM_TDX_INIT_MEM_REGION a VM-scoped ioctl that takes a vCPU fd.  Oh
+> > well.
+> > 
+> > Anyways, I think we need to avoid the "synchronous" ioctl path anyways, because
+> > taking kvm->slots_lock inside vcpu->mutex is gross.  AFAICT it's not actively
+> > problematic today, but it feels like a deadlock waiting to happen.
+> Note: Looks kvm_inhibit_apic_access_page() also takes kvm->slots_lock inside
+> vcpu->mutex.
 
--- 
-Regards/Gruss,
-    Boris.
+Yikes.  As does kvm_alloc_apic_access_page(), which is likely why I thought it
+was ok to take slots_lock.  But while kvm_alloc_apic_access_page() appears to be
+called with vCPU scope, it's actually called from VM scope during vCPU creation.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I'll chew on this, though if someone has any ideas...
+
+> So, do we need to move KVM_TDX_INIT_VCPU to tdx_vcpu_async_ioctl() as well?
+
+If it's _just_ INIT_VCPU that can race (assuming the VM-scoped state transtitions
+take all vcpu->mutex locks, as proposed), then a dedicated mutex (spinlock?) would
+suffice, and probably would be preferable.  If INIT_VCPU needs to take kvm->lock
+to protect against other races, then I guess the big hammer approach could work?
 
