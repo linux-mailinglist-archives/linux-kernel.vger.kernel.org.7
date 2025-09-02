@@ -1,212 +1,219 @@
-Return-Path: <linux-kernel+bounces-796117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11721B3FC21
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:22:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7CE8B3FC1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DB447AD1DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A8B4805EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E0C2836B0;
-	Tue,  2 Sep 2025 10:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E441280CCE;
+	Tue,  2 Sep 2025 10:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oaa+ABHx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMvPnCkY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B2B283137
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B985816F265;
+	Tue,  2 Sep 2025 10:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808505; cv=none; b=XYPQTcRhHZv6hL+NspmdOf+cogypf3hMbc1jo7nJcq4NcDH6W40BvWXs47OPkeGgg+vHjTCt+igVkUDdTrD+TN/nR2fkH5wAupM3/lxOePd6JtfG7wghl+JDedjclNsQO8FiXtpCuiDXOXmfMF+eOmTh3iR2LS0OrBo1I5hFi30=
+	t=1756808501; cv=none; b=JZbds6UwBcGTrzeCrNLAVsWMfpKUzjucqjDq0DQ1FgJBy1W+237724LUHCrmJQTzEbUdrWiw+4dreU2E5xD5jsXEr9L5YZFkE5d5DTKOlKYg51I9DqGCFHfv4rZuxXfSO9FbQlEeZI/5J5miZO+TmnWVJApAcekKPVtha60duJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808505; c=relaxed/simple;
-	bh=B0GvfGsaTN63/+z5SFAeDk0Tfe6MILeF1i9ssD86acU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cpSI+eNyaubrOON8F7FskaIBRUkC17AM0MJ0HirlXkBEHoBsNEPvYpXFlQCe1iFWa6L5/opOjMbX2gV4ye35036Za3tWKr04cev3+u1Sh/Bdsd1uyfg4/W3InZ5Sw6EBil17FzgxugPYSzzeXFIipqeBiuormP/m+PwBWM++OzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oaa+ABHx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756808503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MGigtSodY2ufJETuQQ6JObO7ddBHNbjmaKCUTXaU8Xg=;
-	b=Oaa+ABHxRhdmN6p8TwhOif2LT/RIxq3EG87gWGOucihO1sXPHTBaMO2BFI0Wg+a6EC4KHU
-	ncpH92czL2IR15sQlvh6LuXuZBnTwgHhE4l6ZWW9fMxmWAFoJjGBDkGZ45R9YAYePqU6Cb
-	kwrHteHZyF3YCYorR1xCvJTeb7DI1XM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145-9G-EWlb5NUWPm25ZG-A9IA-1; Tue, 02 Sep 2025 06:21:42 -0400
-X-MC-Unique: 9G-EWlb5NUWPm25ZG-A9IA-1
-X-Mimecast-MFC-AGG-ID: 9G-EWlb5NUWPm25ZG-A9IA_1756808501
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3d2edf6af18so1383960f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:21:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756808501; x=1757413301;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MGigtSodY2ufJETuQQ6JObO7ddBHNbjmaKCUTXaU8Xg=;
-        b=CXQn2lE++6Is/AipuBeBuLK0PGo5HWbRTfksYC+eIz/5Dbt5e3M9P6eYcrBDFC1FYe
-         d0XOtQ/S1cLbMyChCYPSEPIADdW5fWZ+82YEH4daj3uXEE1CGyYX5D7/Y4R6Tv1sJRwe
-         nLMn7GjTn4pbKXav6cjYckuZ4Lt0bR2xnVlxea6i3PDK4/EpzvSTVaMIGcvbpE7xvIYR
-         tR9qi09zLMeWtMoVpHjz/GDqbviOIO2w0rHUMuHFHGJ3jDH1tHG/Soj+xRR0qwHPf480
-         GO0JLZXzTV4WazW2GESstYlg20iX8TivkhEXcjOBh3n4V0qOx6p8ZKlYcfynhXDW/uk1
-         hRPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDPo8gNaQbkWSnGF2dPUp454PkHz13y5PZ3B8anqbRdClO8qsUuNu4c1TJcBnfoKkCuilkWnLgycjo5F0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxSM6t6zxLtRCRwFIWcWPqMHeAH4Tjwe+FI1Xk+TdnbxtN3+Y/
-	lCzEAJPGmKl0lUbzCQKqHhEo1m7vhImhld34BYvv8Qt9VAmUaMMp1+hThFR7CHReZPWtjGifxgj
-	BFoK1TQEy3S5Rt2Zx2fgBf6D6HUFaTvAV87I4JalMlkALqL6U4I4fDCWtD2hfnlzVjQ==
-X-Gm-Gg: ASbGnctnpBE39PeT228Dsy1cb1CFDKpTtp4HQFkw9KD0iAy12IfJ56Zg4O6+Ek30IUp
-	nd9skTI0s8hysqeSrFScMEiACFn2ac3xUKOt3/SpGaJgt5YfRL83NKmTR3GaCjKr9hThAbuUE/d
-	MHutj7KpCRoS1sL1eTJyl7JCJxriGYLvvz1vku1rogihwGI/Kva/YEaHFJF+Lx1W5xWuW4saUnL
-	6Ra0SHuU/4G5IGZhFOXAvjzevW2KKy97yNHB1S4xWdGxsAgOXUQEsAwQRxTUg5UHVShxidFVQwc
-	/rjQl4wOkrDPIkKH5sxfecLi5MC2K2yYwxvUWT+7AkXTTT3pSAfgAMfvkSuVaRSZci3v76LnR/i
-	piNyLgCsrlo081f/h6T3on8UYr1FddQA5Rl64W5YDapUQP92iOpMSJFKxi2R3DY2klMw=
-X-Received: by 2002:a05:6000:2886:b0:3d7:7def:8424 with SMTP id ffacd0b85a97d-3d77def8cb3mr5101942f8f.24.1756808500772;
-        Tue, 02 Sep 2025 03:21:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFuwAQ5AtqvG7eXO2gkUyF/tXrtUAMsjJ9ZGj6VVfhIUzEBqb3ntAVaiYHv3ttfnME/tutQ5A==
-X-Received: by 2002:a05:6000:2886:b0:3d7:7def:8424 with SMTP id ffacd0b85a97d-3d77def8cb3mr5101917f8f.24.1756808500236;
-        Tue, 02 Sep 2025 03:21:40 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1f:3f00:731a:f5e5:774e:d40c? (p200300d82f1f3f00731af5e5774ed40c.dip0.t-ipconnect.de. [2003:d8:2f1f:3f00:731a:f5e5:774e:d40c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6dc1sm274580235e9.1.2025.09.02.03.21.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 03:21:39 -0700 (PDT)
-Message-ID: <387271d8-7ad3-4f56-b6da-b0deb0a6be6b@redhat.com>
-Date: Tue, 2 Sep 2025 12:21:38 +0200
+	s=arc-20240116; t=1756808501; c=relaxed/simple;
+	bh=NMauv3lFs+e6NrkScZ+h7NFXgCh5zFJMhnXfc3ROVvs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WeAKFvD7BDBTjsyxG+PzjOFoX0DVmz3Y1ljcuRHm9BhkHCLkrnglhV1nzr744CT9oq1hY49ClHiol4oTNCHOjrB39++jtL97lbONrTvMqaN2Zi9YLglpBpWG4jh75L+zWodha5cvFx4AQ4lESYSnEbaqVkoTUfW1LFBjeXBUslY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMvPnCkY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38041C4CEF5;
+	Tue,  2 Sep 2025 10:21:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756808501;
+	bh=NMauv3lFs+e6NrkScZ+h7NFXgCh5zFJMhnXfc3ROVvs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=aMvPnCkYitypShtWuIZQD2zhUbOMYaGL2/kVIyFVpymTVA5aWqbRaSwBByrYC7FK3
+	 /TkQPqu7Nmww/aVt1q4Ol3pfNVQ4IZpvtz8RQGu55fJ+bDybWQbafT0XQYSvjG2egS
+	 T+2f/VtIqM+5yJh5yK/f8T4M7iEqLkVo+LtyzQpSYH9fE8wAttdiRYTy+wHozOwoUj
+	 DyuY6LMxBSqN8BWYA9Ivfd7kWyHdgAlNdvM2GfBtLTt6mJMTYUQ/gXDzQIr0a7G5xB
+	 tz+wGnmkpyr6Mc48Gjhw6MHVGgpiL2wSjeYFPmpkwAKDyCmudqO7oRdQTak7PbT3Fy
+	 gt6LxpKM0AXrQ==
+Message-ID: <a103653bc0dd231b897ffcd074c1f15151562502.camel@kernel.org>
+Subject: Re: [PATCH] nfsd: remove long-standing revoked delegations by force
+From: Jeff Layton <jlayton@kernel.org>
+To: Li Lingfeng <lilingfeng3@huawei.com>, chuck.lever@oracle.com, 
+	neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, lilingfeng@huaweicloud.com, zhangjian496@huawei.com
+Date: Tue, 02 Sep 2025 06:21:39 -0400
+In-Reply-To: <20250902022237.1488709-1-lilingfeng3@huawei.com>
+References: <20250902022237.1488709-1-lilingfeng3@huawei.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] mm, swap: always lock and check the swap cache folio
- before use
-From: David Hildenbrand <david@redhat.com>
-To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
- Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
- Kemeng Shi <shikemeng@huaweicloud.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org
-References: <20250822192023.13477-1-ryncsn@gmail.com>
- <20250822192023.13477-3-ryncsn@gmail.com>
- <911dc3b4-c511-4ef2-a159-091780987965@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <911dc3b4-c511-4ef2-a159-091780987965@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 02.09.25 12:18, David Hildenbrand wrote:
-> On 22.08.25 21:20, Kairui Song wrote:
->> From: Kairui Song <kasong@tencent.com>
->>
->> Swap cache lookup is lockless, it only increases the reference count
->> of the returned folio. That's not enough to ensure a folio is stable in
->> the swap cache, so the folio could be removed from the swap cache at any
->> time. The caller always has to lock and check the folio before use.
->>
->> Document this as a comment, and introduce a helper for swap cache folio
->> verification with proper sanity checks.
->>
->> Also, sanitize all current users to use this convention, and use the new
->> helper when possible for easier debugging. Some existing callers won't
->> cause any major problem right now, only trivial issues like incorrect
->> readahead statistic (swapin) or wasted loop (swapoff). It's better to
->> always follow this convention to make things robust.
->>
->> Signed-off-by: Kairui Song <kasong@tencent.com>
->> ---
-> 
-> [...]
-> 
->> +/**
->> + * folio_contains_swap - Does this folio contain this swap entry?
->> + * @folio: The folio.
->> + * @entry: The swap entry to check against.
->> + *
->> + * Swap version of folio_contains()
->> + *
->> + * Context: The caller should have the folio locked to ensure
->> + * nothing will move it out of the swap cache.
->> + * Return: true or false.
->> + */
-> 
-> I appreciate the kerneldoc.
-> 
-> Intuitively, this should be called "..._swap_entry".
-> 
-> But I wonder if "contains" is really the right term to use here. It's
-> more like that a swap entry "belongs to" (was assigned to) a folio, right?
-> 
-> Sure, we store the information in the folio, but the "contains" is a bit
-> weird.
-> 
-> folio_matches_swp_entry() maybe?
+On Tue, 2025-09-02 at 10:22 +0800, Li Lingfeng wrote:
+> When file access conflicts occur between clients, the server recalls
+> delegations. If the client holding delegation fails to return it after
+> a recall, nfs4_laundromat adds the delegation to cl_revoked list.
+> This causes subsequent SEQUENCE operations to set the
+> SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
+> validate all delegations and return the revoked one.
+>=20
+> However, if the client fails to return the delegation due to a timeout
+> after receiving the recall or a server bug, the delegation remains in the
+> server's cl_revoked list. The client marks it revoked and won't find it
+> upon detecting SEQ4_STATUS_RECALLABLE_STATE_REVOKED. This leads to a loop=
+:
+> the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED, and th=
+e
+> client repeatedly tests all delegations, severely impacting performance
+> when numerous delegations exist.
+>=20
 
-folio_matches_swap_entry() is what I wanted to say :)
+It is a performance impact, but I don't get the "loop" here. Are you
+saying that this problem compounds itself? That testing all delegations
+causes others to be revoked?
 
--- 
-Cheers
+> Since abnormal delegations are removed from flc_lease via nfs4_laundromat
+> --> revoke_delegation --> destroy_unhashed_deleg -->
+> nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new open
+> requests indefinitely, retaining such a delegation on the server is
+> unnecessary.
+>=20
+> Reported-by: Zhang Jian <zhangjian496@huawei.com>
+> Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STATE_REVOK=
+ED")
+> Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@=
+huawei.com/
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+>  fs/nfsd/nfs4state.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>=20
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 88c347957da5..aa65a685dbb9 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -4326,6 +4326,8 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4=
+_compound_state *cstate,
+>  	int buflen;
+>  	struct net *net =3D SVC_NET(rqstp);
+>  	struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
+> +	struct list_head *pos, *next;
+> +	struct nfs4_delegation *dp;
+> =20
+>  	if (resp->opcnt !=3D 1)
+>  		return nfserr_sequence_pos;
+> @@ -4470,6 +4472,15 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd=
+4_compound_state *cstate,
+>  	default:
+>  		seq->status_flags =3D 0;
+>  	}
+> +	if (!list_empty(&clp->cl_revoked)) {
+> +		list_for_each_safe(pos, next, &clp->cl_revoked) {
+> +			dp =3D list_entry(pos, struct nfs4_delegation, dl_recall_lru);
+> +			if (dp->dl_time < (ktime_get_boottime_seconds() - 2 * nn->nfsd4_lease=
+)) {
+> +				list_del_init(&dp->dl_recall_lru);
+> +				nfs4_put_stid(&dp->dl_stid);
+> +			}
+> +		}
+> +	}
+>  	if (!list_empty(&clp->cl_revoked))
+>  		seq->status_flags |=3D SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
+>  	if (atomic_read(&clp->cl_admin_revoked))
 
-David / dhildenb
+This seems like a violation of the spec. AIUI, the server is required
+to hang onto a record of the delegation until the client does the
+TEST_STATEID/FREE_STATEID dance to remove it. Just discarding them like
+this seems wrong.
 
+Should we instead just administratively evict the client since it's
+clearly not behaving right in this case?
+--=20
+Jeff Layton <jlayton@kernel.org>
 
