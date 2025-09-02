@@ -1,199 +1,124 @@
-Return-Path: <linux-kernel+bounces-796372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76077B3FF80
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:11:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB5CB40002
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7603118875CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A84C545250
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2E82FC86B;
-	Tue,  2 Sep 2025 12:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB57B306D2B;
+	Tue,  2 Sep 2025 12:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPwP2jAc"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Sm+OdEfo"
+Received: from outbound.pv.icloud.com (p-west1-cluster2-host12-snip4-10.eps.apple.com [57.103.64.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E521254D;
-	Tue,  2 Sep 2025 12:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF32306D3F
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.64.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814701; cv=none; b=NpGmT5yWEvwCqL3OKJpwrXl4iXBK2Ph4c/qcMB5Lc/7WYeqUYKkj8yjToqA7Xfu57WNRSEndosvM2iAVdYG068ZeQ51skSdUwkCm/OaFE11NJ1jGxbJrE6ECxZ0hPPdm08EjTQ3HAuR0aEhFpjimgSRqmZhL82QrPjp9EU3cdfw=
+	t=1756814945; cv=none; b=Jcx928w0lthCUwhIxtd/NAenRdD+fARjfrYz0RVoZValoBNeW9yDWAziH8ngeLx5hd68KOsh5KoUxRKzxoFDSR+qg8iK0r28unlWWJzXhC657gj2i6M8cd0kXlc9N0B7ysuhIobB7lwMQAm6FLHYoxbiz21pRxy1xq8OjybuKbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814701; c=relaxed/simple;
-	bh=HadKKoTQkiYRYD+Q9STWCp5j2x3xfiz4EdMvkmL9Ksc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=pqSAogTHBqCwWIZS7zqN1LXd3MkaKjl9tJyLsMW9eJDG2BNSz2C7+Kx3V/Y86D4HvZvBALdKDuOynUMQ4VqDPGvdEpsExfU6l5eb4mzDEviSwa6XZIqYqw4ruu1udgUVhm98QeMLrGQtqwykeSM6QU3EMurJ7St4iuHqtXdm/Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPwP2jAc; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso4615185b3a.1;
-        Tue, 02 Sep 2025 05:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756814699; x=1757419499; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4zyhWquQv7Dc6WCsaXfcsUCBB8ZbCZwXcmEAVK37Drc=;
-        b=DPwP2jAcWR6AL5Gj8hldtQyqH3iYZ+EyymvOxiGQ8MPCP3nF696E2h/b4dqefZITEL
-         S1ATuYSdShpb2bN+DFOCdcTH0Qh//5djgZJsnBpdHqiNIFKK2FNFiWBKxtKExdpbZhPR
-         mqgQp09JWqU7MI9STLog9q7MjSfUO+Ip5t5BpGXj4gdKBEl7x6UB9H9RVEmuxfWyuCeP
-         iqNUfVIe3mR9C6ayZgIgDTFMuypp1UtdO6qYRKeJL1ZEWKO04QQUDGw241MuABR1rNK3
-         2JUP8OFW7nBiXAhCifyhwzQOYBeQtinliFL+42TQdpugANYU9CS/+44YiyrjlEslmsry
-         bODQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756814699; x=1757419499;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4zyhWquQv7Dc6WCsaXfcsUCBB8ZbCZwXcmEAVK37Drc=;
-        b=L+HFSGglfG5cPXv210S21lT8BuGHdWPhI92wNuG1Ww9btbctfYrDDimsKb9kBBYArK
-         a4R1NC/LYErYSTR95Mcl4ssfEqUS6jcTPOhZw8dHQvLYZMXq+LD79d18m+P7jSMLOjzf
-         bgklX54bGPexkaV/3URfshUusDoknxmjwlM3GR+dnLzIhmvjgDzuCoRyQ438U8hv0h+x
-         ah6qnFi22Td//kbHQGGFYFYcW3LmR8y8VMpqZ+Xxq5Cpqkcj8Wn6qixZ3y3rmFutivAu
-         7j7P6IdikcUWlam1fbbJPKGYsufQxC57YyP3Bq7UAzDn7wd7VnNtB3S+MDH+3xndezL8
-         WFKg==
-X-Forwarded-Encrypted: i=1; AJvYcCV71606lsNl0Skpynso2rOdH4QA4ufS6WMbgDDHWZn/eW0INuLyZ4UudUg+aw2AeTOJiB/C9kAa2Io=@vger.kernel.org, AJvYcCW3ZbjWrJhn5ZUnlad+oCrvOHsz56g1YpfGkwUCd1SgTXoQzyYs5s/xKMNQeKrL9SzOVomeUaA26zUbaCPV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTQOwHBvQmDfVQsvudvnDNO9UOh1tXueF2aZLD4G0r+e5uYXPx
-	cfih7cFcMLdlOnAdhlTSjAQSDzHnov4dPikn+MhG0w3Z94Xzqd669q98
-X-Gm-Gg: ASbGncudzdCKwRyoa24RClosDAZYeWBsgzHTp4faw+0JVs5wtqGW8bwf0uTwbbVyLU1
-	7h9mqiQkZqH9Znps8GUDBiLTfA3IBTteu3g8KMHRw8UPPrYgDS8+XGzPX90QGa+u/+mRjPAJA6q
-	JD0qHjoOLyyUnk3CBPR4MQOSZxKAPzjazBXbGF1fxHt4rKDZ+MWTxKjTHSIjs54JZPigPbhIcBs
-	6coMiztV1Ow/S1seFHYVETwOu4wmBXm/fzILrzno+6IFxqZIw7k8s9ZE6LRC0CJb+yiGmhSWNCM
-	9iiSBgWFzJSsILgt26lFAk/EHfT2OxIPtyHRQHBXrOU5h1RjPM+oGKhFkBsAXVC11rfCo01Tv66
-	LzKTPWdck4dXEhJMUXdBEA0T0gu8++OybNtf3+aPPuW9oBJPPEMixBg==
-X-Google-Smtp-Source: AGHT+IHDTJN6/dGfanBLyhoQz/HGvmBLWI9DLEll0zuer2Rccgcv+A9BtDmX0rUhwFaFbkTA+tF8UA==
-X-Received: by 2002:a05:6300:218a:b0:243:cb7b:4f5f with SMTP id adf61e73a8af0-243d6e60e70mr16594385637.25.1756814698736;
-        Tue, 02 Sep 2025 05:04:58 -0700 (PDT)
-Received: from localhost ([123.119.72.67])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4f8cc9091csm3736087a12.19.2025.09.02.05.04.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 05:04:58 -0700 (PDT)
+	s=arc-20240116; t=1756814945; c=relaxed/simple;
+	bh=dmGqJ/2goIx70WN+gIp5nRrIjfUbCkiwef8JojtxaDU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mx0dA05/IuQfAMOv1G0dyLcPMG3a3fDEfduMzFFlJmSAUbHKyoJSEa5c5BaDaU7b6wWS/LCA5j1KCLsLGN50GXQt+HHUiiCKYsCfKipyNJGeY1j3kWkKTpJxZ2UDNB7rDEsABNx1CsEcYGcPfwqxmGcuEZ1Cn/Le+JWg4dfQeA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Sm+OdEfo; arc=none smtp.client-ip=57.103.64.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-west-1a-100-percent-9 (Postfix) with ESMTPS id 0D2D91807F10;
+	Tue,  2 Sep 2025 12:08:57 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=ydfPInkQfhv4gPusJ78yunnLvCmXq86IJsY1DqpE5j0=; h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme; b=Sm+OdEforhqDqmfccsSwkm4eXyLx5ii2IdffbjQoGy7bZlKcIeeUB+ImKNMPzrbQCsyBq1Jfk5nR5C49nJe6tVKixgIn7/2ct4zKtzhrHkEXPt90ONNWeFDu4mZKNb35mZEzkX/CsBtcsoQ5O3UQMPESJAoF3F1Ks4ie8l53lPxKw1GCvep21YiYjP9KyKRHnn+sBbtnky3A3hU5hDs69PBUCDxoWN4OVSYrWhLk8xzgvKDgHuGiDTTwDJltjMCbsBsrNlmIZmE+RWgxSx8+somCn0qzjYRXu/ezyoC4J8vNXzpt+icwFnYriArXPP1mRd6bcZgTfm8kdNqX//4Now==
+Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by p00-icloudmta-asmtp-us-west-1a-100-percent-9 (Postfix) with ESMTPSA id 729501803657;
+	Tue,  2 Sep 2025 12:05:53 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Tue, 02 Sep 2025 20:05:32 +0800
+Subject: [PATCH] driver core: auxiliary bus: Optimize auxiliary_match_id()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 02 Sep 2025 20:04:53 +0800
-Message-Id: <DCIAU0EO8E0K.3JIXZ2XICP3YC@gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: humditiy: hdc3020: fix units for thresholds
- and hysteresis
-Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Chris Lesiak"
- <chris.lesiak@licorbio.com>
-To: <dimitri.fedrau@liebherr.com>, "Li peiyu" <579lpy@gmail.com>, "Jonathan
- Cameron" <jic23@kernel.org>, "David Lechner" <dlechner@baylibre.com>,
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
- <andy@kernel.org>, "Dimitri Fedrau" <dima.fedrau@gmail.com>
-From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
-X-Mailer: aerc 0.20.1-4-g02324e9d9cab
-References: <20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com>
- <20250901-hdc3020-units-fix-v2-2-082038a15917@liebherr.com>
-In-Reply-To: <20250901-hdc3020-units-fix-v2-2-082038a15917@liebherr.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250902-fix_auxbus-v1-1-9ba6d8aff027@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAIzdtmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwMj3bTMivjE0oqk0mJdc7Ok1GRLQ2Nzs5QkJaCGgqJUoCzYsOjY2lo
+ AqiMfBlwAAAA=
+X-Change-ID: 20250902-fix_auxbus-76bec91376db
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <zijun.hu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-ORIG-GUID: QfozRavpE5opzp4rHOce01VZ_eZI0UCr
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDEyMCBTYWx0ZWRfXz8UcbmDFjzEg
+ eBbNG2Ht0HhpjQkcr3r39WAZ+p1FMqtGQMJWfj2zCpxB5di6m3JwybgMVLqfeDMbghjSVdfWnWX
+ stwSMFn9AmG0fAMCzXAjccfyscyJi+ItFnsmRxQh3bCA3zKZiS+o7AYquwYDQks3VN5r7XWux+0
+ VchTpeZUNmaauR3zJdGP09dJVdsZkYKi8sVhtt9SWQYKCVfXAcV5fumBya+fTVx0zyH7saU0CUG
+ 5ON1x68Tv0KvJ+trLDKoMkBB+iOvLuI6DXK8gemm8I9oGcmsabF7oN5s0yLn9OW2SacmzLsDc=
+X-Proofpoint-GUID: QfozRavpE5opzp4rHOce01VZ_eZI0UCr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ malwarescore=0 clxscore=1011 mlxlogscore=957 spamscore=0 adultscore=0
+ mlxscore=0 phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506270000 definitions=main-2509020120
+X-JNJ: AAAAAAAB4XCQS8EUVh4rlHmiCAuCnCXXymW/hCdi1SmPxnkhV/xPDGvxDpP+s5FzIPhFooqyOOoUnpbHh7GQ98jXQFiX1L06c6WDCpFc72LrALE4mmDKgvnJFnRebin9SiY+blFJ7IIaD8LC+yMYG0VePGRPYW7oJMWCpLTwzGC/T6/Nkia/6zx/uP6Y9H5CXX1+kYc1Pc44r4p0nbnQdv0Q4mXLoo5/QbnQhXMPOxGOSUbXWQG8DKDJKGd+uhVHp6hr+T9JxdnUpkwJ9r2qRFNy+NA22yiF3zbXIj61OORUf3+5BcTi7l9hRhupt2yK+tA6dRdE2Q3drc3Z/P7KV80XEQl9+TAKyMyQagszH0e+pJvz4/Xm8azAyLlaX5DvWFxuJi79Hkv/KbMSh7Uezp7qRK76z+H1ERiGBs6EEoolyTpH3lfSpH+A9KeW+XK1ViSTBG1GJGGeVuC0LkYJqBpLeXbwz1vNW+uApPbOOXY//76bOsm9WZUV4pBp8kJoZ93bwxXZtRl7gTTPT5vIxFzK1LrUU3a9SlPMrTIp/zVZ0RvEH948E3zLlbVcPDd0ROlo6yfnpvMEYDEdYhKvv307M709ZhwDxURWX3nYKOg0oHV177w/Buw/dW7g4ApgZyeit7X2R91oEw==
 
-Hi Dimitri, thank you for your patch. A few comments inline.
+From: Zijun Hu <zijun.hu@oss.qualcomm.com>
 
-On Tue Sep 2, 2025 at 1:51 AM CST, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->
-> According to the ABI the units after application of scale and offset are
-> milli degree celsius for temperature thresholds and milli percent for
-> relative humidity thresholds. Currently the resulting units are degree
-> celsius for temperature thresholds and hysteresis and percent for relativ=
-e
-> humidity thresholds and hysteresis. Change scale factor to fix this issue=
-.
->
-> Fixes: 3ad0e7e5f0cb ("iio: humidity: hdc3020: add threshold events suppor=
-t")
-> Reported-by: Chris Lesiak <chris.lesiak@licorbio.com>
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> ---
->  drivers/iio/humidity/hdc3020.c | 69 +++++++++++++++++++++++++-----------=
-------
->  1 file changed, 41 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/iio/humidity/hdc3020.c b/drivers/iio/humidity/hdc302=
-0.c
-> index 8aa567d9aded9cab461f1f905b6b5ada721ba2f0..deb19e0291f7f820c5f8760fb=
-f0682379ab5f34b 100644
-> --- a/drivers/iio/humidity/hdc3020.c
-> +++ b/drivers/iio/humidity/hdc3020.c
-> @@ -72,6 +72,13 @@
->  #define HDC3020_MAX_TEMP_HYST_MICRO	164748607
->  #define HDC3020_MAX_HUM_MICRO		99220264
-> =20
-> +/*
-> + * In order to avoid overflows when returning thresholds and hysteresis =
-values,
-> + * the fraction of these is set to 13107, also the datasheet refers to 6=
-5535
-> + * this is not enough to prevent overflows. Dividing this value by 5 fix=
-es this.
-> + */
-> +#define HDC3020_THRESH_FRACTION		(65535 / 5)
-> +
+Variable @match_size is fixed in auxiliary_match_id().
 
-I think the comment is a bit too verbose. If you explain why the value
-has to be divided by 5, you probably don't need to tell the result of
-the division. Something as simple as "divide 65535 from the datasheet by
-5 to avoid overflows" could do.
+Optimize the function by moving the logic calculating the variable
+out of the for loop.
 
->  struct hdc3020_data {
->  	struct i2c_client *client;
->  	struct gpio_desc *reset_gpio;
-> @@ -376,15 +383,16 @@ static int hdc3020_thresh_get_temp(u16 thresh)
->  	int temp;
-> =20
->  	/*
-> -	 * Get the temperature threshold from 9 LSBs, shift them to get
-> -	 * the truncated temperature threshold representation and
-> -	 * calculate the threshold according to the formula in the
-> -	 * datasheet. Result is degree celsius scaled by 65535.
-> +	 * Get the temperature threshold from 9 LSBs, shift them to get the
-> +	 * truncated temperature threshold representation and calculate the
-> +	 * threshold according to the formula in the datasheet and additionally
-> +	 * scale by HDC3020_THRESH_FRACTION to avoid precision loss when
-> +	 * calculating threshold and hysteresis values.
+Signed-off-by: Zijun Hu <zijun.hu@oss.qualcomm.com>
+---
+ drivers/base/auxiliary.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-If I got it right, you are actually dividing by 5 and not by
-HDC3020_THRESH_FRACTION.
+diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+index 12ffdd8437567f282374bbf3775d9de7ca0dc4c7..9a53ada043045031e565ade57fd7ba781e7d20ea 100644
+--- a/drivers/base/auxiliary.c
++++ b/drivers/base/auxiliary.c
+@@ -171,14 +171,14 @@
+ static const struct auxiliary_device_id *auxiliary_match_id(const struct auxiliary_device_id *id,
+ 							    const struct auxiliary_device *auxdev)
+ {
+-	for (; id->name[0]; id++) {
+-		const char *p = strrchr(dev_name(&auxdev->dev), '.');
+-		int match_size;
++	const char *p = strrchr(dev_name(&auxdev->dev), '.');
++	int match_size;
+ 
+-		if (!p)
+-			continue;
+-		match_size = p - dev_name(&auxdev->dev);
++	if (!p)
++		return NULL;
++	match_size = p - dev_name(&auxdev->dev);
+ 
++	for (; id->name[0]; id++) {
+ 		/* use dev_name(&auxdev->dev) prefix before last '.' char to match to */
+ 		if (strlen(id->name) == match_size &&
+ 		    !strncmp(dev_name(&auxdev->dev), id->name, match_size))
 
->  	 */
->  	temp =3D FIELD_GET(HDC3020_THRESH_TEMP_MASK, thresh) <<
->  	       HDC3020_THRESH_TEMP_TRUNC_SHIFT;
-> =20
-> -	return -2949075 + (175 * temp);
-> +	return -589815 + (35 * temp);
->  }
-> =20
->  static int hdc3020_thresh_get_hum(u16 thresh)
-> @@ -394,13 +402,14 @@ static int hdc3020_thresh_get_hum(u16 thresh)
->  	/*
->  	 * Get the humidity threshold from 7 MSBs, shift them to get the
->  	 * truncated humidity threshold representation and calculate the
-> -	 * threshold according to the formula in the datasheet. Result is
-> -	 * percent scaled by 65535.
-> +	 * threshold according to the formula in the datasheet and additionally
-> +	 * scale by HDC3020_THRESH_FRACTION to avoid precision loss when
-> +	 * calculating threshold and hysteresis values.
-
-Same here?
-
->  	 */
->  	hum =3D FIELD_GET(HDC3020_THRESH_HUM_MASK, thresh) <<
->  	      HDC3020_THRESH_HUM_TRUNC_SHIFT;
-> =20
-> -	return hum * 100;
-> +	return hum * 20;
->  }
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250902-fix_auxbus-76bec91376db
 
 Best regards,
-Javier Carrasco
+-- 
+Zijun Hu <zijun.hu@oss.qualcomm.com>
+
 
