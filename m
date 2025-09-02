@@ -1,233 +1,232 @@
-Return-Path: <linux-kernel+bounces-796511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9447B401D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:03:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5646EB401CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465AA170105
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACB93A0FED
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FC12FDC43;
-	Tue,  2 Sep 2025 12:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB252FF15D;
+	Tue,  2 Sep 2025 12:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g0xL2ga0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PGgDN+h1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BE72D4811;
-	Tue,  2 Sep 2025 12:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E969A2D9ED0;
+	Tue,  2 Sep 2025 12:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817853; cv=none; b=Vi89FQ2FsUDc2SH4KvAuE+6j+goFM5wHkqPzdhltZf4kAX5zylv3OjJx9bBaWWV/iDMyZeAABJJXI3Fs5qACi7J/2Yzde8+VjmYxtH6xDmbyPaaC4I2fP9BM7q4dxgHJFHOfhOOw61mMR9iLTLxz1bRvms0Po9Dh2/u4mgzZesc=
+	t=1756817881; cv=none; b=LYsfa+CK9JlYCpIfveD9BYN/0Ng8zAuB6zvr+iRqeM/GIuSqeP64PXiLEx0BF26BRArqDF8ViYSdkVYriKrhfQ7HdXgofa+UthPt6moQTQ8y0ahIswoLHPoNsC+836koabTeZJWijW3U1Hzo0JLpcGOlQ0ODMDtBaVs+gA885Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817853; c=relaxed/simple;
-	bh=Ux70OlBfDVC0AXjbuaeye71og6QPGzazXgM2HPOosLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlvA8CFcIqD/QOPsUVT626I3Tt7V9eCHKZN+ZKVunDO7SH3igIfYcpq7N8z4+ygzzFkNpyBcartgsTprn8VrfiXQxD+2UYbv9KWbIS8fk1ZnJJFiY5KUwbIouLYp3OLsgTzkPegjXJlW+tYouhoyy+Yh4gfRZX1o8SMjrmp+RxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g0xL2ga0; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756817851; x=1788353851;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Ux70OlBfDVC0AXjbuaeye71og6QPGzazXgM2HPOosLY=;
-  b=g0xL2ga0Q5ej5Wg/8pndNFGOk1Dp+2Bpa/8Wf1bMU38uHxro1klX4p9e
-   hZC0keUjDZqCLEVZNgJBc/2Gld2RrRmUcxlPw7lVDafc/jEBMZV+HMidF
-   mvZBovtr+2UYUpPeeu4RzCjABgHu6TNoA34tlI0KDcxpDXpaXXAHgd0pe
-   g6Prc4E7YVzJMq9ROcgLlX8f7H5qjc14HFzxFjMjPQQ2g6hNdIuTczwVW
-   sugodGcTdHttfnhUrKr0dVWrpxtgpl91kkqDaJP9Gr5dghN3+Waa4WA8y
-   jg036JlOLW+/6lZLSI2anjm4e21tgzZo4eQOE+AwxGU1lVDorEWn+YS5y
-   Q==;
-X-CSE-ConnectionGUID: zd7ua96iRQawo1ZL/h8sQw==
-X-CSE-MsgGUID: msoN6+l2T8Waq8DsrmmzAg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="59026239"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="59026239"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:57:30 -0700
-X-CSE-ConnectionGUID: 2F68qreySbSGmYPNjfiS1Q==
-X-CSE-MsgGUID: P8mmQwg1RpifYb4gruurbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="171158072"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:57:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utQZg-0000000AhHp-4383;
-	Tue, 02 Sep 2025 15:57:24 +0300
-Date: Tue, 2 Sep 2025 15:57:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] iio: light: ltr390: Implement runtime PM support
-Message-ID: <aLbptFRh9ZvAVfLn@smile.fi.intel.com>
-References: <20250901184238.34335-1-akshayaj.lkd@gmail.com>
+	s=arc-20240116; t=1756817881; c=relaxed/simple;
+	bh=PU4Bzgg+nJ15hff/4hvbjW8eUcg1SWaXB9umh0D23so=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OdIhhdpV5k9fn9dAkSFpsG/jxXs1V2yUzRIRTVXWhkPOob73c7OEVF2VpBAjt6V7qhxFfa6aE93x7BGoC3LsRO41IRbbObKdo2Mn9uNKJcC+w9UaptMMALDG7Rwb2eaiQvrJgTcVmW54acaMdzdPhrVdBXcpMJ1p/PkHw32bBAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PGgDN+h1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756817877;
+	bh=PU4Bzgg+nJ15hff/4hvbjW8eUcg1SWaXB9umh0D23so=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=PGgDN+h1bZerGMRc1RYUUG48WwEewrEM9Bnz6867eTgQr1oT1hufzWJIFxM62vz1k
+	 NS1yLgW3taeEsty5lRDeNwoZUkvRIu/OZ+QDR6140UfEtJt/ZAMeLc2pUMwKI/tjPt
+	 HtTaftwpdmdscoCCzsUkxbt6Ul7sWC3OKUOjGSP0KZXjnFnhQtQ0h26Z/lLU+YAM6x
+	 KeDvVq0QZi02QGo9BEMGysevY/yp9wTmowGi8fzw6ahby/ieIiytl74tztvQxw8H1I
+	 Bp3csuNvWGzO35xfuqB/xkGBwab1jHeYq+vmZnQs/phoGb9sbk3hnIDMuAL2g+Yf5k
+	 L+XrYDbfx87KA==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9FBD317E129F;
+	Tue,  2 Sep 2025 14:57:55 +0200 (CEST)
+Message-ID: <005438a1d81a1d02d6c8659bd951ff65d3f39d85.camel@collabora.com>
+Subject: Re: [PATCH v2] media: mediatek: encoder: Fix uninitialized scalar
+ variable issue
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Irui Wang =?UTF-8?Q?=28=E7=8E=8B=E7=91=9E=29?= <Irui.Wang@mediatek.com>,
+  "rongqianfeng@vivo.com"	 <rongqianfeng@vivo.com>, "matthias.bgg@gmail.com"
+ <matthias.bgg@gmail.com>,  "mchehab@kernel.org"	 <mchehab@kernel.org>,
+ AngeloGioacchino Del Regno	 <angelogioacchino.delregno@collabora.com>,
+ "hverkuil-cisco@xs4all.nl"	 <hverkuil-cisco@xs4all.nl>
+Cc: "linux-arm-kernel@lists.infradead.org"
+	 <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org"
+	 <linux-media@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
+	 <linux-mediatek@lists.infradead.org>, Longfei Wang
+ =?UTF-8?Q?=28=E7=8E=8B=E9=BE=99=E9=A3=9E=29?=
+	 <Longfei.Wang@mediatek.com>, Project_Global_Chrome_Upstream_Group
+	 <Project_Global_Chrome_Upstream_Group@mediatek.com>, Yunfei Dong
+ =?UTF-8?Q?=28=E8=91=A3=E4=BA=91=E9=A3=9E=29?=
+	 <Yunfei.Dong@mediatek.com>
+Date: Tue, 02 Sep 2025 08:57:54 -0400
+In-Reply-To: <dbfac6888a2c77c302265df2f90bf4aec8bed686.camel@mediatek.com>
+References: <20250716071450.8214-1-irui.wang@mediatek.com>
+		 <c751e015c0a9fb2ab6514a45952e01424cfbb0cb.camel@collabora.com>
+	 <dbfac6888a2c77c302265df2f90bf4aec8bed686.camel@mediatek.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-F1/z1Y8k8JEbWKEC/4LA"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250901184238.34335-1-akshayaj.lkd@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Tue, Sep 02, 2025 at 12:12:36AM +0530, Akshay Jindal wrote:
-> Implement runtime power management for the LTR390 sensor. The device
-> autosuspends after 1s of idle time, reducing current consumption from
-> 100 µA in active mode to 1 µA in standby mode as per the datasheet.
-> 
-> Ensure that interrupts continue to be delivered with runtime PM.
-> Since the LTR390 cannot be used as a wakeup source during runtime
-> suspend, therefore increment the runtime PM refcount when enabling
-> events and decrement it when disabling events or powering down.
-> This prevents event loss while still allowing power savings when IRQs
-> are unused.
-
-...
-
-> -static int ltr390_read_raw(struct iio_dev *iio_device,
-> -			   struct iio_chan_spec const *chan, int *val,
-> -			   int *val2, long mask)
-> +
-> +static int __ltr390_read_raw(struct iio_dev *iio_device,
-> +			struct iio_chan_spec const *chan, int *val,
-> +			int *val2, long mask)
-
-Can we avoid using leading __ (double underscore)? Better name is
-ltr390_read_raw_no_pm(). But you may find even better one.
-
-...
-
-> -static int ltr390_write_event_config(struct iio_dev *indio_dev,
-> +static int __ltr390_write_event_config(struct iio_dev *indio_dev,
-
-Ditto.
-
-...
-
-> +static int ltr390_write_event_config(struct iio_dev *indio_dev,
-> +				const struct iio_chan_spec *chan,
-> +				enum iio_event_type type,
-> +				enum iio_event_direction dir,
-> +				bool state)
-> +{
-> +	int ret;
-> +	struct ltr390_data *data = iio_priv(indio_dev);
-> +	struct device *dev = &data->client->dev;
-
-^^^ (1) for the reference below.
-
-> +	guard(mutex)(&data->lock);
-> +
-> +	if (state && !data->irq_enabled) {
-> +		ret = pm_runtime_resume_and_get(dev);
-> +		if (ret < 0) {
-> +			dev_err(dev, "runtime PM failed to resume: %d\n", ret);
-> +			return ret;
-> +		}
-> +		data->irq_enabled = true;
-> +	}
-> +
-> +	ret = __ltr390_write_event_config(indio_dev, chan, type, dir, state);
-> +
-> +	if (!state && data->irq_enabled) {
-> +		data->irq_enabled = false;
-> +		pm_runtime_put_autosuspend(dev);
-> +	}
-> +
-> +	return ret;
-> +}
-
-...
-
->  	/* Ensure that power off and interrupts are disabled */
-> -	if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
-> -				LTR390_LS_INT_EN) < 0)
-> -		dev_err(&data->client->dev, "failed to disable interrupts\n");
-> +	if (data->irq_enabled) {
-> +		if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
-> +					LTR390_LS_INT_EN) < 0)
-
-Wrong indentation, hard to read line, either one line, or do better. Actually
-why not assign it to ret? The above not only simple style issue, but also makes
-readability much harder as the semantics of '0' is completely hidden. This style
-is discouraged.
-
-> +			dev_err(&data->client->dev,
-> +					"failed to disable interrupts\n");
-
-Why not doing (1) here as well and with that
-
-			dev_err(dev, "failed to disable interrupts\n");
-
-besides the fact of wrong indentation.
-
-> +		data->irq_enabled = false;
-> +
-> +		pm_runtime_put_autosuspend(&data->client->dev);
-> +	}
-
-...
-
-> +static int ltr390_pm_init(struct ltr390_data *data)
-> +{
-> +	int ret;
-> +	struct device *dev = &data->client->dev;
-> +
-> +	ret = devm_pm_runtime_set_active_enabled(dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +					"failed to enable runtime PM\n");
-
-Something wrong with your editor or so, please check and make proper
-indentation _everywhere_ (in your changes).
-
-> +	pm_runtime_set_autosuspend_delay(dev, 1000);
-> +	pm_runtime_use_autosuspend(dev);
-> +	return 0;
-> +}
-
-...
-
-> +static int ltr390_runtime_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ltr390_data *data = iio_priv(indio_dev);
-> +
-> +	return regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL,
-> +				LTR390_SENSOR_ENABLE);
-
-I would make it one line despite being 87 character long.
-
-> +}
-> +
-> +static int ltr390_runtime_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct ltr390_data *data = iio_priv(indio_dev);
-> +
-> +	return regmap_set_bits(data->regmap, LTR390_MAIN_CTRL,
-> +				LTR390_SENSOR_ENABLE);
-
-Ditto. (Here it's even shorter)
-
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
 
 
+--=-F1/z1Y8k8JEbWKEC/4LA
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Le lundi 01 septembre 2025 =C3=A0 02:37 +0000, Irui Wang (=E7=8E=8B=E7=91=
+=9E) a =C3=A9crit=C2=A0:
+> Dear Nicolas,
+>=20
+> Thanks for your comments.
+>=20
+> On Fri, 2025-08-29 at 15:10 -0400, Nicolas Dufresne wrote:
+> > Le mercredi 16 juillet 2025 =C3=A0 15:14 +0800, Irui Wang a =C3=A9crit =
+:
+> > > UNINIT checker finds some instances of variables that are used
+> > > without being initialized, for example using the uninitialized
+> > > value enc_result.is_key_frm can result in unpredictable behavior,
+> > > so initialize these variables after declaring.
+> > >=20
+> > > Fixes: 4e855a6efa54 ("[media] vcodec: mediatek: Add Mediatek V4L2
+> > > Video
+> > > Encoder Driver")
+> > >=20
+> > > Signed-off-by: Irui Wang <irui.wang@mediatek.com>
+> > > ---
+> > > v2:
+> > > =C2=A0- Add Fixes tag, update commit message
+> > > =C2=A0- Remove unnecessary memset
+> > > =C2=A0- Move memset to before the first usage
+> > > ---
+> > > =C2=A0.../media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c=C2=
+=A0=C2=A0 | 4
+> > > +++-
+> > > =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git
+> > > a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
+> > > b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
+> > > index a01dc25a7699..3065f3e66336 100644
+> > > ---
+> > > a/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
+> > > +++
+> > > b/drivers/media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc.c
+> > > @@ -865,7 +865,7 @@ static void vb2ops_venc_buf_queue(struct
+> > > vb2_buffer *vb)
+> > > =C2=A0static int vb2ops_venc_start_streaming(struct vb2_queue *q,
+> > > unsigned int
+> > > count)
+> > > =C2=A0{
+> > > =C2=A0	struct mtk_vcodec_enc_ctx *ctx =3D vb2_get_drv_priv(q);
+> > > -	struct venc_enc_param param;
+> > > +	struct venc_enc_param param =3D { 0 };
+> > > =C2=A0	int ret;
+> > > =C2=A0	int i;
+> > > =C2=A0
+> > > @@ -1036,6 +1036,7 @@ static int mtk_venc_encode_header(void *priv)
+> > > =C2=A0			=C2=A0 ctx->id, dst_buf->vb2_buf.index, bs_buf.va,
+> > > =C2=A0			=C2=A0 (u64)bs_buf.dma_addr, bs_buf.size);
+> > > =C2=A0
+> > > +	memset(&enc_result, 0, sizeof(enc_result));
+> >=20
+> > Please, apply review comment to all occurrence, so same here.
+> >=20
+> > > =C2=A0	ret =3D venc_if_encode(ctx,
+> > > =C2=A0			VENC_START_OPT_ENCODE_SEQUENCE_HEADER,
+> > > =C2=A0			NULL, &bs_buf, &enc_result);
+> > > @@ -1185,6 +1186,7 @@ static void mtk_venc_worker(struct
+> > > work_struct *work)
+> > > =C2=A0			=C2=A0 (u64)frm_buf.fb_addr[1].dma_addr,
+> > > frm_buf.fb_addr[1].size,
+> > > =C2=A0			=C2=A0 (u64)frm_buf.fb_addr[2].dma_addr,
+> > > frm_buf.fb_addr[2].size);
+> > > =C2=A0
+> > > +	memset(&enc_result, 0, sizeof(enc_result));
+> >=20
+> > Same here.
+> >=20
+> > > =C2=A0	ret =3D venc_if_encode(ctx, VENC_START_OPT_ENCODE_FRAME,
+> > > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 &frm_buf, &bs_buf, &enc_result);
+> > > =C2=A0
+> > >=20
+> >=20
+> >=20
+> > Would be nice to coordinate with Qianfeng Rong <rongqianfeng@vivo.com
+> > > [0], he
+> > ported the entire driver to this initialization method, which is
+> > clearly the way
+> > to go.
+> >=20
+> > - Patch 1 will port the driver to {} stack init
+> > - Patch 2 will add missing initializes
+> >=20
+> > Consistency is key for this type of things since developer usually
+> > follow the
+> > surrounding style.
+>=20
+> I have learned Qianfeng's patch and comments. I understand what you
+> mean is change my patch coding style to Qianfeng's, modify 'memset' to
+> '{}' for initialization, and amend Qianfeng's patch as patch-2, then
+> send this two patches together.
+
+Correct, and I don't mind who do that work, I'd like to see the code kept
+consistant. And I do agree memset() are error prone.
+
+cheers,
+Nicolas
+
+>=20
+> If I misunderstood your opinion, please correct me, thank you very
+> much.
+>=20
+> Best Regards
+> >=20
+> > regards
+> > Nicolas
+> >=20
+> > [0]=20
+> > https://patchwork.linuxtv.org/project/linux-media/patch/20250803135514.=
+118892-1-rongqianfeng@vivo.com/
+
+--=-F1/z1Y8k8JEbWKEC/4LA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLbp0gAKCRDZQZRRKWBy
+9AMIAP4l3zEJdQyeftn4RgftFIHQz0eEqpSztnAbK553WME3KgEAzYyheCs4BblM
+WmNV6SRGwHH6Q1/P7PRqOpIuIa1QNwc=
+=V/iG
+-----END PGP SIGNATURE-----
+
+--=-F1/z1Y8k8JEbWKEC/4LA--
 
