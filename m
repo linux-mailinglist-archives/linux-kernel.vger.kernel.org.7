@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-795991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495FCB3FA65
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57383B3FA6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 188662C28A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377B93ACF5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532282EA74D;
-	Tue,  2 Sep 2025 09:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE16D2EACE0;
+	Tue,  2 Sep 2025 09:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="kZ4iS3eu"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrEsmS4S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381532EA73F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1A8275AE4;
+	Tue,  2 Sep 2025 09:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756805405; cv=none; b=C7TgmggSRYS0i3SkQiVsDsEG3YD3Z3DcYsJ1JkznSCv3mjIaC6V5rkEO/L5lgran9ZBTxj4ALfdUNY3D5X/0azd6k9AR6/dNmkmsTebp8tMzSiTHmwMVQQA/h6OzuOg3sUbDUw5NWXrHqx2s48pcGj2HSXeLIoASlYkpM58Hg1E=
+	t=1756805409; cv=none; b=JuLXT1T1Bi34AEkiB1/vPmjU+AEqiMOCXbnAYUcTPBG9ozOaKrhmB68Gui7rJIIbgnv/MS9d+4+FlhMmGUtpAOzX1XU4BsoYWPVH+XzYBlBEwKZ8Ng+zzyWNf3eOXHuXaIWPehJsd8TQli7/4JYWCNNOqahYSgaeHB1UuguD89U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756805405; c=relaxed/simple;
-	bh=5UTLFe9Na1x/q+MvJizjhdPCvRgJqWqRho5nedRZ7Og=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EccaBnxL3SlX55NHOcGeL3Omrhlyz8Ckd1NXP/SdRhQo8dPVg4HPwD9KcLQEpu2rxAGOK/G8Ve8Dp0PkxFXo3oy863EebsVNFiIorPaRK331Mdc+VrH/Mp25WWmOX9J+HXoFZXWdknxe820shi5DSIUyP6UBW9nPzDBRnkfJl6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=kZ4iS3eu; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3d965477dc0so619930f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756805402; x=1757410202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=432khs7OCxGBblRoqEqWrfX2I6K5pnQLFbsVSHyt0Es=;
-        b=kZ4iS3eu7DEWmb59PItVJ+I0lMf/Vb0iABIHfY5mOxbAu3Ay/MNDUd2oiGfxrAa7WN
-         ZiTW0lzjDzTQlJU2Yc1xdgKWtfybjywinTDKeLS/2tkbRnRlm0kY846qUHXIFPQTc7wn
-         JjIdwuxkPhOgsVY/RDxvI5ZRVq3vcwHeJIUz0yuiSrUyfRCTXwEH502wQBkOru+D+PWG
-         6acGmh43b7Wq0y7hrHeIuvmhZjr3HCwuNN74BDuv/ItUsMiuFNKYJKP3aXpUEts+7C50
-         euhHCNnChl/1o9YeUor3UZS3YDIfKIjXGngehUINRGaZ5LNvbnamvgU1GV37h0EGz2KF
-         iRMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756805402; x=1757410202;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=432khs7OCxGBblRoqEqWrfX2I6K5pnQLFbsVSHyt0Es=;
-        b=IBZPtHbQEOSgPBLsZzdLISY2Cly5Gl29T2OXxmIvcdmw0yZSkOmQVJYAQESemrFBg+
-         pyy5E2n7pKUmzRwGo8QTIClErA37fSrcc9wHDSc7GapDfI6hC5vC45DoY6EpXE2iFo4g
-         T6IUideA98VtpeN0eKyxGDqNqRqLuY23K1Fs0koAPm64mRgD+0RkAG3raQPkZbErwq17
-         H/Qx/hGiM8ZehWYAlQUURDhhqBynqdyGUmbK/F9O68I0aGbpXJolDgG/qqGmojShWPi0
-         urnaFgLoUW9q+35cnb5+vz8J1x7m25d4eYYBmWVCW7WmRDVB8S74DBCTPD2Gk3tY7PvT
-         xN0g==
-X-Forwarded-Encrypted: i=1; AJvYcCV/PM6Zw4NlVxcUBuYnJbPHi7aVArXSMKllv1lRA6w7YweeEWdpKByCAgEzmDXAuGwOcvFfv/g2dDLCkRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi5ZlFfBATBACvoncS5vHm4gI/x8wZ04MCAyc2HTbk2ToozivL
-	0BIoM+1pKUumOTx0WX3GpJNrwL8lq27AwqZ97aJKUEeRLl4DvOwaXk9nL4n1XWmcMDs=
-X-Gm-Gg: ASbGncvC6X0hwORJqReAQkZOmtlDTq4XQCmZqkp179Tt940SFcsfilvABeD0aOWki/W
-	D5c+VClDw+q9Z8BFFsljuatBgzY3Ao8ug9y9eqLKXpMe9ksKegzh4rJqLFSYVhIGAFQqxCvG+UO
-	VG/CkBAMRD10aQq69bRay8aIoEVMp6W2AwvQzP/WvHK5BxA7mGQyANzhBR+Un0IdAlsolosy2V4
-	98+5ePwC0mV9ZOUxmuZNE/OFz/gFwrxTCbXcHlIFIWjOhkT8VMAGl3OURs7DGfiiWo3eaqKb/uU
-	JUPRRayK01KYnow/Iu4QI0RUU7vwZg5LdAqM2Qewr0+LoFortRhDdWh8dsOW5M4jH4V+1JSeCtU
-	s3PS0cCnjKwfVWRDbtxc76qFsdzwGlVBpTw==
-X-Google-Smtp-Source: AGHT+IG42W61HHIDR/rDhaz/55c/dQ4iA+jW2ueIWFUoOBDEHqYDk9qKbuROvLVBex1Isp3Sw8cvVg==
-X-Received: by 2002:a05:6000:2909:b0:3c9:4e1f:ef46 with SMTP id ffacd0b85a97d-3d1df349680mr8131402f8f.48.1756805402351;
-        Tue, 02 Sep 2025 02:30:02 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3327:447f:34e9:44f7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf270fbd01sm19307310f8f.13.2025.09.02.02.30.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 02:30:01 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] gpio: fix GPIO submenu in Kconfig
-Date: Tue,  2 Sep 2025 11:30:00 +0200
-Message-ID: <175680539717.52527.14627198705710165881.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250901125513.108691-1-brgl@bgdev.pl>
-References: <20250901125513.108691-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1756805409; c=relaxed/simple;
+	bh=aLweEdgVdtXKhjU2Dm0VS5DMHPmFRxoY7Gp6xg4UMnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=acovlMLPeyPxmgc7oH10so4HKsN2yyuNXCX1K8HHPxWIftgThC+vs1YvVPACuaPWVfEA+/NThwj5bpN4AeKK30GzYSGmDqTbeVelUDIwW3eGh38DOY9daamsuBmaenGy5Y/6B69qbOTYaWZk42IKH6LIVdpBBYSkrbINAJXgFYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrEsmS4S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19FEBC4CEF7;
+	Tue,  2 Sep 2025 09:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756805408;
+	bh=aLweEdgVdtXKhjU2Dm0VS5DMHPmFRxoY7Gp6xg4UMnc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IrEsmS4SJcBW4kwpziEUSQq8HfC2G+ftvwtZxv2r8gDapBrRk2eosUhiNxm0xrfQf
+	 EqZP9i4I9UuzHtGS9p8l7yXB3HL1sY43Y9wAhNyf0vS3P5lKnu1iAPQPe5ryKRaHnt
+	 e2qnZe8txMvJZNBV6olHXMRy8Yw/6sbHO5gkXaIzGKf/onlRJsn8HahaEtlT5hQDh7
+	 j5yekU3PlW4snc8thZ4GI257jH8OtawjUHkm47SHjTT0p9LKPgYqJ0GWATFOeubB3c
+	 /D68kVwshl7sOP/3UHAv5whbQOtrD4CPsbHm/uvDvAxKad/WibQXaEBY6fStzVribG
+	 akmOlpRmkfyyw==
+Message-ID: <3fc54ddb-3947-4c2b-825c-01c16d4c7dab@kernel.org>
+Date: Tue, 2 Sep 2025 11:30:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: exynosautov920: Add tmu hardware binding
+To: =?UTF-8?B?7IaQ7Iug?= <shin.son@samsung.com>,
+ 'Bartlomiej Zolnierkiewicz' <bzolnier@gmail.com>,
+ "'Rafael J . Wysocki'" <rafael@kernel.org>,
+ 'Daniel Lezcano' <daniel.lezcano@linaro.org>,
+ 'Zhang Rui' <rui.zhang@intel.com>, 'Lukasz Luba' <lukasz.luba@arm.com>,
+ 'Rob Herring' <robh@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250825064929.188101-1-shin.son@samsung.com>
+ <CGME20250825064933epcas2p40a7c491366097f90add675bc36822ef9@epcas2p4.samsung.com>
+ <20250825064929.188101-4-shin.son@samsung.com>
+ <e573cfc8-be9c-482c-9b06-4eedbb92d520@kernel.org>
+ <000501dc1be8$e9ac0640$bd0412c0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <000501dc1be8$e9ac0640$bd0412c0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Mon, 01 Sep 2025 14:55:13 +0200, Bartosz Golaszewski wrote:
-> Commit a86240a37d43 ("gpiolib: enable CONFIG_GPIOLIB_LEGACY even for
-> !GPIOLIB") accidentally pulled all items from within the GPIOLIB submenu
-> into the main driver menu. Put them back under the top-level GPIO entry.
+On 02/09/2025 11:06, 손신 wrote:
 > 
+>>
+>>> +		cpucl0right-thermal {
+>>
+>> It does not look like you tested the DTS against bindings. Please run
+>> `make dtbs_check W=1` (see Documentation/devicetree/bindings/writing-
+>> schema.rst or https://protect2.fireeye.com/v1/url?k=004c918d-61c784be-
+>> 004d1ac2-000babff9bb7-06e007e7dc12091d&q=1&e=d6a22592-2d45-41f5-b737-
+>> a90830cceaeb&u=https%3A%2F%2Fwww.linaro.org%2Fblog%2Ftips-and-tricks-for-
+>> validating-devicetree-sources-with-the-devicetree-schema%2F
+>> for instructions).
+>> Maybe you need to update your dtschema and yamllint. Don't rely on distro
+>> packages for dtschema and be sure you are using the latest released
+>> dtschema.
+>>
 > 
+> Actually, I also updated both dtschema and yamllint and ran "make CHECK_DTBS=y W=1 exynos/exynosautov920-sadk.dtb", but no other issues were detected.
 
-Applied, thanks!
+Thanks
 
-[1/1] gpio: fix GPIO submenu in Kconfig
-      https://git.kernel.org/brgl/linux/c/ef9f21c3f370bcd45688a3a573b788e39b364e80
+> I assume that the problem you mentioned about "cpucl0right-thermal" might be related to the regex.
+
+You actually fit exactly in the limit.
 
 Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Krzysztof
 
