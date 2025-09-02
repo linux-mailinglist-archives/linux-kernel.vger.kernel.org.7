@@ -1,152 +1,164 @@
-Return-Path: <linux-kernel+bounces-796349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02216B3FF55
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 533BAB3FF53
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 608303AC616
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B388B3A1FA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1447E2F7465;
-	Tue,  2 Sep 2025 11:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8152D46B1;
+	Tue,  2 Sep 2025 11:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRu5uo6M"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlfauluX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACAD2F4A18
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2E1288C36;
+	Tue,  2 Sep 2025 11:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814359; cv=none; b=KQ07y1PT4pa9SUX2gDBfv/83yvFvH1AL45/QRFucjrrt5C8+LWZld4K6SCUeFqyeoePHOfnlGTeBXkiD8s6waYtBg42jQeqxnvcH7EdtpjZ8cXBNKkcOFiCKhVNots/HbRofWmg+3C9xAv14/NrwDhNUWL7r3bbM4Gnp/Uw89L4=
+	t=1756814351; cv=none; b=meNUXO2Ay5WSBnuLUx4vejvK6y03N+ll18IiWkAGDkwrYYvqEEhJLq68rlcgbGKyGJKtrs6dMJ47KYBPYp3yM7jOyb6WO6uyXrvfBwE7zxxpsM9DT2JeoZeD/epwcc4RdZ8OjNXQk3AdT7aEjY3n88ZohwfEAetUPh6iCvSa+3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814359; c=relaxed/simple;
-	bh=aTeSGYrDCcpo0u9+UOoja+bqdImlK8vqFceEZiAkR98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eI1iXI3Os8ACpnOjnkxGtuu+LcBDdN+9WLn41yIJFMNZ0Z75XN7QORgcboH1R7BYuVfttw5zt0NKyiAOiK2zvc6bH+s0satsxiNTxCaDUj21z6d6+6Hv5HjXhYK90H+WVi8dA/XZ1zx9WQLAtFh//wrLrnrgFeEpk6wHilFI/sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRu5uo6M; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b00a9989633so548719066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 04:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756814354; x=1757419154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x/rRTNTgDeV7WZN8C7XdtIQtoR+krIiqqTl6aPopePc=;
-        b=eRu5uo6MqGSJ0w4vW/zp/xJbeHGarJ5GuUVCM/+di4xNkt9GDnrtu2oKDpC6W4iBZM
-         ntRRgWB06eIIMu3tqnkhQoJzv+Vmuj9Ol0btG/PEgqpfI5nh6GE5mEhZOZ8nDy9QjF03
-         UCERNeUloCcuNMRa/ZLgELLtwNiYyPH/69S2Koy8rj5nziGAzItvCDeBthAMbmnrBCaZ
-         teDIREsP/V4gC6uJuABIk2aKkUE73GRscps0NYwlq0hI2YNNBQ3X5TUmhc3eLHOHjvwF
-         4CA/Ts06Dbr7dE18S8ZAziDm+9WE8v2PCYE7kUqcFqu/ktx8hgy8SUdhYaiixhVXyplw
-         csVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756814354; x=1757419154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x/rRTNTgDeV7WZN8C7XdtIQtoR+krIiqqTl6aPopePc=;
-        b=V6WM8rdMuvXzJVgWu7EBN3mN/RhHBmcv4iGBLI5vMSEVP+kTLXuLlRudZYnITQHMJ7
-         MIznF/4YAAjFDAmMzxN5zs8U6iR7LqGBx2VN3UMDgTTQJE4JieBNLrxf5Gd/BSaHZQbq
-         WzfmIEvfGt/SRYh1Bi0WMINg8A0Mn1QajiUfzd5HFelhmtrJcIu2jHWD2cIUOYxpJ5CG
-         NoVWa8Hw9t1vyKyghsGR3gd8DoS4pseBKx5bbaDI8UqSEuv3YzFFhBoFhs8qRVdfgL5D
-         lgu7bb8vwSVNCat5rUFfFebp3z8OK8zt5tFRxuEtrUEpKeUSAx4Becn5Lu36bJ938vrJ
-         Remw==
-X-Forwarded-Encrypted: i=1; AJvYcCU16G8SmYF6ruObq4ZFUaMDQZXGzodIrFuENVBlfwLpzAzShAWQGOJFDCtLcuI+jRBD5f0T05SqTKDY10I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFLNj5B2CUEQRbKeqxwoXxnqmpoUSTu2zrzWdhaxWuB0W9j5VA
-	2qYUWtQcdsmwAv+Cs0dsrofpiO32Zd2Z1B2jvM6ep6avXtajtvd6bz/3VQVxpAmTByxCgZ16XZy
-	TvKj1ZxTkqGgUsmFY+DKhG/91r4PTN8k=
-X-Gm-Gg: ASbGncuzq/R1EjY8zUt4Jk4G4fCwk1eDMvZgxVlnmv2p1V+kormfKsDyOWDQd4WVUf1
-	A3sHd92dCuX+DtKGOs5qY6yZ0YmHakIb/UkNC7k5Dw3r9g80Y2YUP0YrNRxs3HmQGedpIGP9d74
-	T3v7C70AwRxhy0o64yCYjw/D4eOH4hC9Om0KRLH/Eplwn9L29+a/gFtKFvdqYFZROVG/HMrg6G5
-	orhDdtqdMbGrF6VYsl0Ig==
-X-Google-Smtp-Source: AGHT+IH96vNCRDYjRrmA8BrrQLQupz7l9Z3JuWlZeRrzq3CZkEVPsZwF1xPwnw1X52AfWmVbpiXurN+uWD1JeqFq2qY=
-X-Received: by 2002:a17:907:940a:b0:afe:159:14b1 with SMTP id
- a640c23a62f3a-b01d8a8b621mr1294060366b.9.1756814353782; Tue, 02 Sep 2025
- 04:59:13 -0700 (PDT)
+	s=arc-20240116; t=1756814351; c=relaxed/simple;
+	bh=L1nH0nXQSTmGQMPXIz8uvF0lJhnD30PA+J/QkPBeCK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H/twVAR2oOZfUfX8a0TG4AkciSZr2Itrzq0uot5Rzd3mbgA82mE+6mT7YOzFscy9wVuzIVqT7lsxKTqp49EE2IbzW/TIbqTL0sqNNkrPzVxf7xYCo+2r88Os8c9mRKa3MUGGBnL6ak0Gd0isQRyK3fLNNSBkvCUBLH4kYcGnO4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlfauluX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C02EC4CEED;
+	Tue,  2 Sep 2025 11:58:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756814351;
+	bh=L1nH0nXQSTmGQMPXIz8uvF0lJhnD30PA+J/QkPBeCK4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qlfauluXXRsFwdzO38odnlUZfYgoe1CFxonN5cpywYXv/xECjHvycDgDUatmFw6ia
+	 mUBDe5ELuiqS8LGCHYzjqgY9atl9gzcJssdfaXwr1lZtfNIX+aFH9UpdxKVWr2hY6o
+	 VDLCD80ua4Jz6DivTFtnW+4o83n4pkdiuavOJlynXYAeyflZipfyz6W8Oc25vrDK06
+	 V29Vfpbmwl5PHuDi2Rr+x1QhtvO48PuKGszUIh2E5zTCPTSEE1+2o43q4S0XKjtdNU
+	 JBHIBh4AmLL5ANN4WvPQ4ZSZLskhnZK0dslMn8n6iV2b6JEvBe14AOjuZFUh5A59jT
+	 OoRg1GK9oxOYA==
+Date: Tue, 2 Sep 2025 14:58:46 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, pratyush@kernel.org,
+	jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
+	witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+Message-ID: <aLbb9nOUnBo_ORT0@kernel.org>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com>
+ <20250826162019.GD2130239@nvidia.com>
+ <aLXIcUwt0HVzRpYW@kernel.org>
+ <CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-7-ryncsn@gmail.com>
- <CAGsJ_4yRa65ogB0d90LmtOigGTqQ9mM-eUU6VbmcX63j6vgHEg@mail.gmail.com>
-In-Reply-To: <CAGsJ_4yRa65ogB0d90LmtOigGTqQ9mM-eUU6VbmcX63j6vgHEg@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 2 Sep 2025 19:58:37 +0800
-X-Gm-Features: Ac12FXzMS08RqhaPgBLjPU1ESc3Sp741JjUDRDBoHqptC_mA9p4mUNoPzbg6dBo
-Message-ID: <CAMgjq7A5Gr2V9TDFg=_S+SjZ1r1gWXTtRGNofuzAgWNYLMW_DQ@mail.gmail.com>
-Subject: Re: [PATCH 6/9] mm, swap: use the swap table for the swap cache and
- switch API
-To: Barry Song <21cnbao@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bC96fxHBb78DvNhyfdjsDfPCLY5J5cN8W0hUDt9KAPBJQ@mail.gmail.com>
 
-On Tue, Sep 2, 2025 at 6:46=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> > +
-> > +/*
-> > + * Helpers for accessing or modifying the swap table of a cluster,
-> > + * the swap cluster must be locked.
-> > + */
-> > +static inline void __swap_table_set(struct swap_cluster_info *ci,
-> > +                                   unsigned int off, unsigned long swp=
-_tb)
-> > +{
-> > +       VM_WARN_ON_ONCE(off >=3D SWAPFILE_CLUSTER);
-> > +       atomic_long_set(&ci->table[off], swp_tb);
-> > +}
-> > +
-> > +static inline unsigned long __swap_table_get(struct swap_cluster_info =
-*ci,
-> > +                                            unsigned int off)
-> > +{
-> > +       VM_WARN_ON_ONCE(off >=3D SWAPFILE_CLUSTER);
-> > +       return atomic_long_read(&ci->table[off]);
-> > +}
-> > +
->
-> Why should this use atomic_long instead of just WRITE_ONCE and
-> READ_ONCE?
+On Mon, Sep 01, 2025 at 04:54:15PM +0000, Pasha Tatashin wrote:
+> On Mon, Sep 1, 2025 at 4:23 PM Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Tue, Aug 26, 2025 at 01:20:19PM -0300, Jason Gunthorpe wrote:
+> > > On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
+> > >
+> > > > +   /*
+> > > > +    * Most of the space should be taken by preserved folios. So take its
+> > > > +    * size, plus a page for other properties.
+> > > > +    */
+> > > > +   fdt = memfd_luo_create_fdt(PAGE_ALIGN(preserved_size) + PAGE_SIZE);
+> > > > +   if (!fdt) {
+> > > > +           err = -ENOMEM;
+> > > > +           goto err_unpin;
+> > > > +   }
+> > >
+> > > This doesn't seem to have any versioning scheme, it really should..
+> > >
+> > > > +   err = fdt_property_placeholder(fdt, "folios", preserved_size,
+> > > > +                                  (void **)&preserved_folios);
+> > > > +   if (err) {
+> > > > +           pr_err("Failed to reserve folios property in FDT: %s\n",
+> > > > +                  fdt_strerror(err));
+> > > > +           err = -ENOMEM;
+> > > > +           goto err_free_fdt;
+> > > > +   }
+> > >
+> > > Yuk.
+> > >
+> > > This really wants some luo helper
+> > >
+> > > 'luo alloc array'
+> > > 'luo restore array'
+> > > 'luo free array'
+> >
+> > We can just add kho_{preserve,restore}_vmalloc(). I've drafted it here:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=kho/vmalloc/v1
+> 
+> The patch looks okay to me, but it doesn't support holes in vmap
+> areas. While that is likely acceptable for vmalloc, it could be a
+> problem if we want to preserve memfd with holes and using vmap
+> preservation as a method, which would require a different approach.
+> Still, this would help with preserving memfd.
 
-Hi Barry,
+I can't say I understand what you mean by "holes in vmap areas". We anyway
+get an array of folios in memfd_pin_folios() and at that point we know
+exactly how many folios there is. So we can do something like
 
-That's a very good question. There are multiple reasons: I wanted to
-wrap all access to the swap table to ensure there is no non-atomic
-access, since it's almost always wrong to read a folio or shadow value
-non-atomically from it. And users should never access swap tables
-directly without the wrapper helpers. And in another reply, as Chris
-suggested, we can use atomic operations to catch potential issues
-easily too.
+	preserved_folios = vmalloc_array(nr_folios, sizeof(*preserved_folios));
+	memfd_luo_preserve_folios(preserved_folios, folios, nr_folios);
+	kho_preserve_vmalloc(preserved_folios, &folios_info);
 
-And most importantly, later phases can make use of things like
-atomic_cmpxchg as a fast path to update the swap count of a swap
-entry. That's a bit hard to explain for now, short summary is the swap
-table will be using a single atomic for both count and folio tracking,
-and we'll clean up the folio workflow with swap, so it should be
-possible to get an final consistency of swap count by simply locking
-the folio, and doing atomic_cmpxchg on swap table with folio locked
-will be safe.
+> However, I wonder if we should add a separate preservation library on
+> top of the kho and not as part of kho (or at least keep them in a
+> separate file from core logic). This would allow us to preserve more
+> advanced data structures such as this and define preservation version
+> control, similar to Jason's store_object/restore_object proposal.
 
-For now using atomic doesn't bring any overhead or complexity, only
-make it easier to implement other code. So I think it should be good.
+kho_preserve_vmalloc() seems quite basic and I don't think it should be
+separated from kho core. kho_array is already planned in a separate file :)
+ 
+> > Will wait for kbuild and then send proper patches.
+> >
+> >
+> > --
+> > Sincerely yours,
+> > Mike.
+> 
 
->
-> Thanks
-> Barry
->
+-- 
+Sincerely yours,
+Mike.
 
