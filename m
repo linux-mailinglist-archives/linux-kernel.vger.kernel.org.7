@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-796037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C74B3FB3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2132B3FB41
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 092F54E2E2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:52:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7054E3279
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7036B2EDD5A;
-	Tue,  2 Sep 2025 09:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75092F5332;
+	Tue,  2 Sep 2025 09:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbOy7aGv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNxoblO5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6572F3C2C;
-	Tue,  2 Sep 2025 09:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF2E2EDD75;
+	Tue,  2 Sep 2025 09:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756806612; cv=none; b=uxmM/GKg6BNosbkX6yWanqw55M0zwp2Bi3Tq3cIkuEg4GhjB4L7BJmzcC+fyUhdueU4zc1QyziF/vuY31k2hIYwP2lEnFGpncwt3ErDSs9HjqIMRa7cmIxV5LYucCRgpTt7tFP3ElCqW4zOakA5ChC4D+plb4tBOpCP9+/gHu4Q=
+	t=1756806618; cv=none; b=sgD07QZkId2ZD674kP1lQnxVLsBJluDODNhRMpqgqOLCCqcpTXs9l6eq9NGhXWuhRR3wGtuAZws/mCzMck/MBrlFxZvFbDIDeTnXoXA//LOcJk9gT0DwXdInr7XBXTrdYYxTSR0a+lsMG9vhykfCZeDJZW7CLtVTHgpQIQvqatc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756806612; c=relaxed/simple;
-	bh=OsDuyThZkTpzqoGBCcODTCng/th8ueS3c8m/804jTL8=;
+	s=arc-20240116; t=1756806618; c=relaxed/simple;
+	bh=ezKvsUrfP+7bg4ys751Ino9ZSoBxTPU7y+g2rK+k9u0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=L7O0JLwtrYan1anpUUDw6h3FaEIrfxTj3UDc/wxSi7gKwuKUGI2MfCUKTqDFBTcWJZVwNvI3dDCy45LedMiTodnYwgfoxjF6qtHul+DJP+/XE6ac46x8jHbaVgHe6Dj4r3qhzwlDutc/7n2jIVFH3AjdI8H763ikBOQgBbG+FMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbOy7aGv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B1E9C4CEF5;
-	Tue,  2 Sep 2025 09:50:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=X2qe/yKs4mnwt14WdPeVR5W90mNI4nB5dMjjHV+YGqBigNzDfpSaos07J2mmHg9kcquZsMzq1+84frhOZoec1xN/hn3RcuzdBpTUne8S2f4IxjdmNsvSNr+4h1+TeZviWjgw4t3tP9F+ngGc8/8FZThOltoOyJbZXQcsCtYG5Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNxoblO5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 132EAC4CEF7;
+	Tue,  2 Sep 2025 09:50:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756806612;
-	bh=OsDuyThZkTpzqoGBCcODTCng/th8ueS3c8m/804jTL8=;
+	s=k20201202; t=1756806616;
+	bh=ezKvsUrfP+7bg4ys751Ino9ZSoBxTPU7y+g2rK+k9u0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=nbOy7aGvNuuuJctuSdI5Z/5gsFoJgCvv7Q/BCxSGkXJ7rSEdSkDnWYibjkMW1UjmG
-	 Np2QemhsEZfJhfrpJzdCBib6Vkfy6QPThRhN167qHHctwckiIpabYAUBovFqQkMxxT
-	 99GqoXuJZMY6lxvdfI+njEFBILdTmK8/W/lAApI05pM2SSZaY+iq867r1TXHOGWxaF
-	 X7SnmcWBsrl1MaCZdS1gHdqmDdhr0hrbQoIV4L6vr4SSa1PThb04oZZtpKKNZpxSUc
-	 pufbJrUQ57+l5D50joUqpVJLM7V49ozKDJTNxnqJDib2gNbvRhSkoe0dJcvyo+egFY
-	 ucy5YyXMVGNIQ==
+	b=KNxoblO5Sx/ehSK0U2W9GiqHuVOzhJSb7kD3vaI70GyGceuKbG+KvE6ruqCgFklMw
+	 8zZyf1nfyYFw5LmN56iceCDpfS8d4Y67IG4IbTucGwV8MARhd0o1XIbZItCjhuaHi2
+	 OlgirLVDV8xX5UODlNDbwRuzgw66YoN0Da056zvV8wH1kISVDt9jAlbwYxXc1AhClo
+	 lgGkAi/2+IUGfiHn/mgKtIy7YaXUYDuweeBbwkmUb2efseyOgL1OfdY0yxUE00OMiO
+	 9XfPoyCDzoZ+8Bt4PmZcZKz5IjQW2LxFc9RErKY07NhfJA9pUao0U1+fnVtii/uHn2
+	 CziRlVHmKITAA==
 From: Vinod Koul <vkoul@kernel.org>
-To: mani@kernel.org, Devendra K Verma <devverma@amd.com>
-Cc: dmaengine@vger.kernel.org, michal.simek@amd.com, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250821121505.318179-1-devverma@amd.com>
-References: <20250821121505.318179-1-devverma@amd.com>
-Subject: Re: [RESEND PATCH] dmaengine: dw-edma: Set status for
- callback_result
-Message-Id: <175680660994.246694.16025926314639794595.b4-ty@kernel.org>
-Date: Tue, 02 Sep 2025 15:20:09 +0530
+To: tomm.merciai@gmail.com, 
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com, 
+ prabhakar.mahadev-lad.rj@bp.renesas.com, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com>
+References: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com>
+Subject: Re: (subset) [PATCH 0/3] Add DMAC support to the RZ/G3E
+Message-Id: <175680661258.246694.16970472340052106378.b4-ty@kernel.org>
+Date: Tue, 02 Sep 2025 15:20:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,20 +65,23 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Thu, 21 Aug 2025 17:45:05 +0530, Devendra K Verma wrote:
-> DMA Engine has support for the callback_result which provides
-> the status of the request and the residue. This helps in
-> determining the correct status of the request and in
-> efficient resource management of the request.
-> The 'callback_result' method is preferred over the deprecated
-> 'callback' method.
+On Fri, 01 Aug 2025 10:48:20 +0200, Tommaso Merciai wrote:
+> This series adds DMAC support to the Renesas RZ/G3E SoC.
+> 
+> Thanks & Regards,
+> Tommaso
+> 
+> Tommaso Merciai (3):
+>   clk: renesas: r9a09g047: Add entries for the DMACs
+>   dt-bindings: dma: rz-dmac: Document RZ/G3E family of SoCs
+>   arm64: dts: renesas: r9a09g047: Add DMAC nodes
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] dmaengine: dw-edma: Set status for callback_result
-      commit: 5e742de97c806a4048418237ef1283e7d71eaf4b
+[2/3] dt-bindings: dma: rz-dmac: Document RZ/G3E family of SoCs
+      commit: cc0bacac6de7763a038550cf43cb94634d8be9cd
 
 Best regards,
 -- 
