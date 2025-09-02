@@ -1,90 +1,72 @@
-Return-Path: <linux-kernel+bounces-795752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8149B3F76A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3875EB3F727
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9299F1A84188
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80E621A87365
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3272E8B94;
-	Tue,  2 Sep 2025 08:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC3A2E7F32;
+	Tue,  2 Sep 2025 07:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ZINgGH3v"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="q6PjMeKy"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91B52E7BA5;
-	Tue,  2 Sep 2025 08:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950C52E7BCF;
+	Tue,  2 Sep 2025 07:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800048; cv=none; b=XRgwaUbQtMxXDaxYX6++9804KExMs5nmgoRvA63MfK/dgaiZycBwt+/xIoB7TRY9pRz8ROGl8IpA8KTTdX5aCWgXLCCcsFr2iUl6dwshgLHzAK+xb5Myx2mnEiApahhnel97qhI2eTPi6WheD/fcv5rraVW7uLd1gamkBFTmEeY=
+	t=1756799792; cv=none; b=DvlYR+8fJ/in304r5Q2RvYS6Bs66dGFi6HajW9LUb5OAJyb+OSaY2XvKQbKZH0rkbyYLmUgloBiiPzRlmCG5xuVEfwUWVqBHzbVI6amqbfwJVSekx3iARVJ3U6mcgeixq649LFYt1aay/OJaI2MAKY1TVeAQRTNYXs1uddDt8Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800048; c=relaxed/simple;
-	bh=AnhWbFtadzDp+KVelZzMiEybBw+Cb3GyCRfsjMIZs84=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=QcC8NMkO8Ngi7B/t8/4md7Tkm1weVXD0/U8jdEda/9NwIryZXjah+oZ/XWx71MIzfg/CFwxa6HidU6vzxj0xbUyQGKVfqL4s2vztDkc1EiFvw/+oGRZEJqVTMjimw/zs3jkq6z04Gh0UGpC8pLdX7ICQoKeSY0kHHs+04Qwz6fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ZINgGH3v; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756799740;
-	bh=bCivpz+VqiYG4IHGqHshtomf2YaYzPPHc5KMtAgauvY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZINgGH3vNLM7Cx+bBrnF3czAx9A61lOmYJ6daQlkkpCbbU441/5MWXrAlorNmZ4/P
-	 c48bKJ3WOLR88t0v0dBN/Xj5r2ZbID+FILYGn39/e8vjjl0MvmifswPHnXOT/7nW1L
-	 pi6P/IBd2rd8/xyj6/fl8d5RDqn1ns/Z/k0yyy6E=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id DE41E213; Tue, 02 Sep 2025 15:55:36 +0800
-X-QQ-mid: xmsmtpt1756799736t6uu9cmny
-Message-ID: <tencent_8646158457D4511C447C833B21B3ACF6CB07@qq.com>
-X-QQ-XMAILINFO: N1JCMsqefaec/r8WWd6R0Q7caa5mpnhiJLlha23cEFJhuG0/Oe+O0/8X1Eb392
-	 GGa7MB74IJk7VNUYzGLAXF/lVYur74FmXMRjfm+cUE/0ID+gKzayfO2StoDiQEepP1VKmfR0xjaJ
-	 x7OfrgkLu2d/vjsct8/19cAGKboJB0eCanRoMDj3xR1vHCGF2lEu6xDa8GUWj/NyOtegeS6sg5bs
-	 u1WjLYRa3WOL8UmQdo7MkI4nzc4bWel6FiZfZhp5ymax+1Mlh9EoqJIT7iii+tkm+OafgZyf/QwX
-	 PylIj7ld23T72yIBFTDXN0bY2dLuim/BSzOKMIiTSpbzMh6dL7XuB4324VLKwviUp7+L1aXqI4i6
-	 uvQUs0XzuvOE21Tj9isnSvcBStYqCi72dC0fjO/D/AeUEXQ2StqQ5Vmex+g9AGGIJ6AGlmmxeljI
-	 sf63euQDNljMQp9dzs81z4222Pa6FfYr5s7uHEledJ89CO6CfDg0hasVYZYQGMLaeKz1oxaZsM0J
-	 Q8e1YGQ7QDKJpxuftZiZwZx0W+Wn0pqaN3eLC/HSNhUyok+9fNdzp7uhXi32QpYcvy/jsQRWtlq1
-	 aATIa5ipU04kJxyleUSAp9m+FyKeV2OPOz12WKYnILtMDu92d2gBeWur9lRrWBGtZQrAVe+n2/zI
-	 Upl7dvCm33+E9Rw4Xxi0NFuo+Uces+oVLBV66SE6zvyI1nkEVSkUQIWmCn5u17jmkQgb511JgCB0
-	 UjUUM3U37szNPtcWDv5DvFExqnsMi4Ondh50cJX7mzU4tPZ3mYV3DDQDsKICuAa4pl1+h6GT+drY
-	 G9AXJ8aDYDz0M7H4l0Xy6tpSz5R5RRVPeKPF+aGhVLIMKOfjHzEXhH6853yNQ6OdCsMluBg6xOxs
-	 uFdTOTO/6ezvYYhtXZifjP89HdxY9ZOW9XAqbYd34UpvUbAZxUbrUiLlzuewkRnhKHHcqBHdaIvV
-	 qdd+qZWLKQZjIZHemxb5pkY6StJlsnrRIG0ie7F9SFtHj5oQlUX9KIDs4rchbBf36+2oqwIom8EL
-	 2rn3D/K6ouu8e5o2OktrqtnTS6q9QP3Iqp8LSoJ2FXdIBps7/RPvH6kDLL778=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii@kernel.org,
-	ast@kernel.org,
-	vmalik@redhat.com
-Cc: rtoax@foxmail.com,
-	Rong Tao <rongtao@cestc.cn>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v2 1/2] bpf: add bpf_strcasecmp kfunc
-Date: Tue,  2 Sep 2025 15:55:09 +0800
-X-OQ-MSGID: <3dde314ef1772aa3ab9775bd3ca50518b5ba4cc3.1756798860.git.rtoax@foxmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756798860.git.rtoax@foxmail.com>
-References: <cover.1756798860.git.rtoax@foxmail.com>
+	s=arc-20240116; t=1756799792; c=relaxed/simple;
+	bh=EC93Sb135F1xNZElTaZSyyXghE/horvxRlKCzCtaL/g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rebmYIrYPqrf4Bgvxm+zLG9l6LNVuMvkctx6NWDjbuO6T2SupWkAFk7X1DU9/1Hkcl8/4ql3rpz04aL7zpDHDesDf+sc+NY40Tq4NUDqmaCX15yLmw5ID8IzaxNkz7oOjW1rxOd7wsdt4XHuIfS5htiinE7XSy4jz1hGuPncYBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=q6PjMeKy; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756799790; x=1788335790;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EC93Sb135F1xNZElTaZSyyXghE/horvxRlKCzCtaL/g=;
+  b=q6PjMeKyWfT/rgN2fWWJ0D5VikbuKM62MjRWf59FBQ7scsAyZTaI2taq
+   3k2x3L9ubzj6DtcVLE/k8AdKgBJRjmJyqmnIPh7A3Dvkp0dFuxZf6wwqN
+   vFi83I64IlWWJ+PA8uFntrkcU3FbmrunG+ZUYLuk6Roo6zuBlkB79hzSA
+   j9XrAB5HZen2soaN7zylwuwKSAX9Ny65op54FGMojM1IuiMhp7gcy5Sh2
+   dUvjXdWe79pe8aYCOI5PmMP7kK2R1/uXSK5hg8F7dc0+gf82LljJ86E/o
+   9uOzcefAZy23xAPFFhJwlhyN84PmylyrMj9i0WcoLquPrK75PnxmHfHXV
+   Q==;
+X-CSE-ConnectionGUID: Oo81X4TNRaaQSutmf5DBgg==
+X-CSE-MsgGUID: AbNInbwWREO2jvUj5x6Z8g==
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="46488625"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Sep 2025 00:56:24 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 2 Sep 2025 00:56:08 -0700
+Received: from valentina.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Tue, 2 Sep 2025 00:56:06 -0700
+From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+To: <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
+	<valentina.fernandezalanis@microchip.com>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH v2 0/5] Icicle Kit with prod device and Discovery Kit support
+Date: Tue, 2 Sep 2025 08:55:43 +0100
+Message-ID: <20250902075548.1967613-1-valentina.fernandezalanis@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,123 +74,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Rong Tao <rongtao@cestc.cn>
+Hi all,
 
-bpf_strcasecmp() function performs same like bpf_strcmp() except ignoring
-the case of the characters.
+With the introduction of the Icicle Kit with the production device
+(MPFS250T) to the market, it's necessary to distinguish it from the
+engineering sample (-es) variant. This is because engineering samples
+cannot write to flash from the MSS, as noted in the PolarFire SoC
+FPGA ES errata.
 
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- kernel/bpf/helpers.c | 68 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 48 insertions(+), 20 deletions(-)
+This series adds a common board DTSI for the Icicle Kit, containing
+hardware shared by both the engineering sample and production
+versions, as well as a DTS for each Icicle Kit variant.
 
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 401b4932cc49..238fd992c786 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -3349,45 +3349,72 @@ __bpf_kfunc void __bpf_trap(void)
-  * __get_kernel_nofault instead of plain dereference to make them safe.
-  */
- 
--/**
-- * bpf_strcmp - Compare two strings
-- * @s1__ign: One string
-- * @s2__ign: Another string
-- *
-- * Return:
-- * * %0       - Strings are equal
-- * * %-1      - @s1__ign is smaller
-- * * %1       - @s2__ign is smaller
-- * * %-EFAULT - Cannot read one of the strings
-- * * %-E2BIG  - One of strings is too large
-- * * %-ERANGE - One of strings is outside of kernel address space
-- */
--__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
-+int __bpf_strcasecmp(const char *s1, const char *s2, bool ignore_case)
- {
- 	char c1, c2;
- 	int i;
- 
--	if (!copy_from_kernel_nofault_allowed(s1__ign, 1) ||
--	    !copy_from_kernel_nofault_allowed(s2__ign, 1)) {
-+	if (!copy_from_kernel_nofault_allowed(s1, 1) ||
-+	    !copy_from_kernel_nofault_allowed(s2, 1)) {
- 		return -ERANGE;
- 	}
- 
- 	guard(pagefault)();
- 	for (i = 0; i < XATTR_SIZE_MAX; i++) {
--		__get_kernel_nofault(&c1, s1__ign, char, err_out);
--		__get_kernel_nofault(&c2, s2__ign, char, err_out);
-+		__get_kernel_nofault(&c1, s1, char, err_out);
-+		__get_kernel_nofault(&c2, s2, char, err_out);
-+		if (ignore_case) {
-+			c1 = tolower(c1);
-+			c2 = tolower(c2);
-+		}
- 		if (c1 != c2)
- 			return c1 < c2 ? -1 : 1;
- 		if (c1 == '\0')
- 			return 0;
--		s1__ign++;
--		s2__ign++;
-+		s1++;
-+		s2++;
- 	}
- 	return -E2BIG;
- err_out:
- 	return -EFAULT;
- }
- 
-+/**
-+ * bpf_strcmp - Compare two strings
-+ * @s1__ign: One string
-+ * @s2__ign: Another string
-+ *
-+ * Return:
-+ * * %0       - Strings are equal
-+ * * %-1      - @s1__ign is smaller
-+ * * %1       - @s2__ign is smaller
-+ * * %-EFAULT - Cannot read one of the strings
-+ * * %-E2BIG  - One of strings is too large
-+ * * %-ERANGE - One of strings is outside of kernel address space
-+ */
-+__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
-+{
-+	return __bpf_strcasecmp(s1__ign, s2__ign, false);
-+}
-+
-+/**
-+ * bpf_strcasecmp - Compare two strings, ignoring the case of the characters
-+ * @s1__ign: One string
-+ * @s2__ign: Another string
-+ *
-+ * Return:
-+ * * %0       - Strings are equal
-+ * * %-1      - @s1__ign is smaller
-+ * * %1       - @s2__ign is smaller
-+ * * %-EFAULT - Cannot read one of the strings
-+ * * %-E2BIG  - One of strings is too large
-+ * * %-ERANGE - One of strings is outside of kernel address space
-+ */
-+__bpf_kfunc int bpf_strcasecmp(const char *s1__ign, const char *s2__ign)
-+{
-+	return __bpf_strcasecmp(s1__ign, s2__ign, true);
-+}
-+
- /**
-  * bpf_strnchr - Find a character in a length limited string
-  * @s__ign: The string to be searched
-@@ -3832,6 +3859,7 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
- #endif
- BTF_ID_FLAGS(func, __bpf_trap)
- BTF_ID_FLAGS(func, bpf_strcmp);
-+BTF_ID_FLAGS(func, bpf_strcasecmp);
- BTF_ID_FLAGS(func, bpf_strchr);
- BTF_ID_FLAGS(func, bpf_strchrnul);
- BTF_ID_FLAGS(func, bpf_strnchr);
+The last two patches add support for the PolarFire SoC Discovery Kit
+board.
+
+Changes since v1:
+ - fix order of properties in mailbox nodes
+ - drop redundant status property from ddrc_cache nodes
+ - fix lowecase hex in reserved memory regions
+
+Thanks,
+Valentina
+
+Valentina Fernandez (5):
+  riscv: dts: microchip: add common board dtsi for icicle kit variants
+  dt-bindings: riscv: microchip: document icicle kit with production
+    device
+  riscv: dts: microchip: add icicle kit with production device
+  dt-bindings: riscv: microchip: document Discovery Kit
+  riscv: dts: microchip: add a device tree for Discovery Kit
+
+ .../devicetree/bindings/riscv/microchip.yaml  |  13 +
+ arch/riscv/boot/dts/microchip/Makefile        |   2 +
+ .../dts/microchip/mpfs-disco-kit-fabric.dtsi  |  58 ++++
+ .../boot/dts/microchip/mpfs-disco-kit.dts     | 190 +++++++++++++
+ .../dts/microchip/mpfs-icicle-kit-common.dtsi | 249 ++++++++++++++++++
+ .../dts/microchip/mpfs-icicle-kit-fabric.dtsi |  23 +-
+ .../dts/microchip/mpfs-icicle-kit-prod.dts    |  23 ++
+ .../boot/dts/microchip/mpfs-icicle-kit.dts    | 244 +----------------
+ 8 files changed, 558 insertions(+), 244 deletions(-)
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-disco-kit-fabric.dtsi
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-disco-kit.dts
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-icicle-kit-prod.dts
+
 -- 
-2.51.0
+2.34.1
 
 
