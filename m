@@ -1,154 +1,104 @@
-Return-Path: <linux-kernel+bounces-796896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C58B408F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:31:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1B3B408F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EF41B60587
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:31:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 692A51B6015F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3968D315767;
-	Tue,  2 Sep 2025 15:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F682D6E57;
+	Tue,  2 Sep 2025 15:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Pe+im1Di"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aw9jMbfM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34E305076
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F781B21BF;
+	Tue,  2 Sep 2025 15:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827077; cv=none; b=NO1n7zbafxdSbcQD9c1+023PIKp+RknrxIQUS+i/psykSYvQ8+AaN9qjQfj7AupsD6GsB1aD6zKbNHQjx5VS4Y8z5r0w+p8NVjSWWtBGeiNt6V5oG1MzgCdPXXb+uSItQA14gOERTW5+1vlF0g8Gh9rkCJectfxyupcw63Cuil8=
+	t=1756827112; cv=none; b=jWyfqNwaqwqNrc74+x5pqbNib2a0B5IODUMUozs8EzHDCk0RgqH/Jxca9NF4IqeqHYszcP5WxInHM297Q2knGzut+ynhLVIQUgs0cTYXIMvrHHqeXXyIRJe36teGec3XUi73pdzbmWlPcgpmYrJ2tAuEBJ/HyNgBFMTicgBj5ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827077; c=relaxed/simple;
-	bh=jBj+N/EIx366pIxKlDVWGntYHrjdw8xEwfU0BWbWz4Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z52W5567oF4z30I3xO96gip6/CZAxo7EJZ8vtchh8x1FplMx1IG9QZbKI1bh3lOFcGGsf+Vid2gGMnf5jMHkl08zlCSPGIGqQu6rLcvYHyI+g4y0JbeT4zEJixrdEU1Aa3iRTomudQJf2On6YDM7pESl8EPsLKRoTSrZZkAxCuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Pe+im1Di; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61cbfa32ebdso732607a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1756827073; x=1757431873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LcK0Vupw08S0kwUSmWzaPvW7Lg7imOqYDDKVTQ4jI1I=;
-        b=Pe+im1DiWe7i/uYAhCn57MA78AE5pdkV/T5W8CNyYznFF4lM2iTebm/fPCo8TU3wJD
-         cRz6Bpm4/7qhZQMnb4qJzF6fSVjMvriJ/eCh9WTLC+yLuYFRb4p6fqEU/WTdhJRsT42P
-         5L91y+bcK6phuQUqVvznNwdqPMzoCBiO+S/VqP5ojBX7SzHJJc6Yk11e5dniwU3Eh/xe
-         3M/m0//Cz3uFKVACs8b+xJegRHtC2kpJMmllnwRNutQCR+afAaINirmwvr5S68OmybPt
-         L+7oxiFsLLltM/xEsakBO7F3Ez7bu2Shtlo3SWuJz+BPsW1PqAjJhyMGqIPPNK8H4GM3
-         HRew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756827073; x=1757431873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LcK0Vupw08S0kwUSmWzaPvW7Lg7imOqYDDKVTQ4jI1I=;
-        b=Nz0Njyw/f5niphC5ImVBtnVadCSFpLMU+ovQG3HzwUdHHc5G1I6segRur15hknc/NN
-         MK4pxQS0uyuaJaMCFkCCH84RL7Bt6PmBZ3CksfvHOUrEYY0DH2o609n1wbpwLG8b4Lq6
-         mYn6UYfchNXRFJ5carjC602kX3FElj2vP7VO4dg9tDKc9nJLZkf+munfkJ6uLbKrDwD2
-         nIETJmZMGY0q4Q5cxWZN0TEsOrPohKT+/LqBcgMdlJbEmsXQ6DRFy+BMFFhN0G8alSNo
-         1+W9y04CufKcq5bqOY7mjmefPlyxQ5krt1rwiCmuBnW4j0YPDDxwg48HQnZ2fUj0+ESN
-         w5iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+1MNfwhwDAV/CLdYAFyBj2PD3T80TBRlSZZwWY8+l7eo42jeoA1uiXWxuxrDf7CMzzMftYWPd/aiphZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgOM1ShsLQjZdfNk28TIxE2eDSLklLNmXTh6lZYwzr5x7q34cE
-	mT6dmt1/tEL93JF/22rhWRfPcN+kSKy9r+uNuG2pD19Xa2jjTLYaw6w9M+MUvEVEphFjh8ArS1g
-	tzaZ0PVFEef4Ni4xsNxeZDpGp3Qe50rJtmwJU2xyeLw==
-X-Gm-Gg: ASbGncs8tZR1UcuSVfKhGT1JT1PYd9wzWGPKOyZxF2V0YsxHMPgPv3Gqpo1io1KSrSK
-	Ud0RSPXrlGo41ezFYuAEaSMOZyrixeQY4nO9ow+J0kePi1LR25wBI89L2nD++6SQ1Ng2aVm/xeO
-	Y1MdnXxHARmo1LT7yuvbzXaExuzIDeX+qCTKtQN8Qy5d19AQhkqRmbuESXev2JYIdepmo98PHUF
-	XvUe4iHVMX7jFdk3tz/ITc=
-X-Google-Smtp-Source: AGHT+IHfeh6Hqg2wuUr1T9ZIp5X19Sz1uiwreq0YZoqgSSMikAA7y1UBWPbvIhSjDISnUiui2xuROLxBU38/us5t+3Q=
-X-Received: by 2002:a05:6402:35c5:b0:61c:879f:a62 with SMTP id
- 4fb4d7f45d1cf-61d0d371418mr6643108a12.3.1756827072932; Tue, 02 Sep 2025
- 08:31:12 -0700 (PDT)
+	s=arc-20240116; t=1756827112; c=relaxed/simple;
+	bh=8NZMZNjbtp245s6IL9uaQhkZ2sXfxrtlX8J5YKgAfj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TH1rB1LqnAesuub1WRX3tKLewUep3iy4J/36micwcqmNMJAWoh8fK4/2YdMMAMig9km92JvRJ2izW4PZE4dqcj5A0TVbo/qtObnOaDVgWNTV+CMgbZFl7Sp0Wcf3oAb8QYX1Txs9PufQcwK5gcXTK29FyAnfbkfQHv8k0CX6o88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aw9jMbfM; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756827112; x=1788363112;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=8NZMZNjbtp245s6IL9uaQhkZ2sXfxrtlX8J5YKgAfj4=;
+  b=aw9jMbfMhCgVuCvrjKlaGRjqGtDzEJs9v7viDJ8gL0mdgUescS+v46Mv
+   ga1ZkJ6YCKm70O/tcR8ByLel9/rXQ37oUyxybX7kNOwzP6wruUbbzsqxf
+   +nOEhXU/sRrfhmaebohlQTebwOAkopf1mXU3aMV6HR7PCTjKqg2rEMfFx
+   ew6O6nmJWj67FDqEwHDxJ1VFPVz3HofbjOHI6Ol+FJCviXH+EG8Y8K1X0
+   dKWn2hk3vXVfUEB/ejVQRTALqobCSddpPKI0UYpzGkjKy+kKB+ZpJVO8B
+   gUFLOKcVRrtoN2FFgLKTBEyS1V+5n6gElUT7jRUOr2GRl0PrADdkuPaIb
+   A==;
+X-CSE-ConnectionGUID: eDsgh4ktTW29M7DZZ1bKlQ==
+X-CSE-MsgGUID: Gou2ymoOTeWQwhy5d4c+JQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="58806210"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="58806210"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 08:31:51 -0700
+X-CSE-ConnectionGUID: x3UzqLZLRTWYlXAH3ggxIA==
+X-CSE-MsgGUID: azBEhj9BQ8iE8iD7rTEZhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="170865090"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 08:31:48 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utSz3-0000000AjQp-3NKC;
+	Tue, 02 Sep 2025 18:31:45 +0300
+Date: Tue, 2 Sep 2025 18:31:45 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 3/3] staging: media: atomisp: Remove trailing comments
+Message-ID: <aLcN4c-tj5uPIaze@smile.fi.intel.com>
+References: <20250902071847.2330409-1-abarnas@google.com>
+ <20250902071847.2330409-4-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-3-sidong.yang@furiosa.ai>
- <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com> <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
-In-Reply-To: <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 2 Sep 2025 08:31:00 -0700
-X-Gm-Features: Ac12FXyLeKYXslC_9H_jnXi5qlR1DyFMS0jUeRzwyKLc83sHnrpgjFW25z8GvmY
-Message-ID: <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250902071847.2330409-4-abarnas@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai>=
- wrote:
->
-> On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
-> > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong.yang@furios=
-a.ai> wrote:
-> > >
-> > > The pdu field in io_uring_cmd may contain stale data when a request
-> > > object is recycled from the slab cache. Accessing uninitialized or
-> > > garbage memory can lead to undefined behavior in users of the pdu.
-> > >
-> > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
-> > > each command starts from a well-defined state. This avoids exposing
-> > > uninitialized memory and prevents potential misinterpretation of data
-> > > from previous requests.
-> > >
-> > > No functional change is intended other than guaranteeing that pdu is
-> > > always zero-initialized before use.
-> > >
-> > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > ---
-> > >  io_uring/uring_cmd.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > index 053bac89b6c0..2492525d4e43 100644
-> > > --- a/io_uring/uring_cmd.c
-> > > +++ b/io_uring/uring_cmd.c
-> > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const=
- struct io_uring_sqe *sqe)
-> > >         if (!ac)
-> > >                 return -ENOMEM;
-> > >         ioucmd->sqe =3D sqe;
-> > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> >
-> > Adding this overhead to every existing uring_cmd() implementation is
-> > unfortunate. Could we instead track the initialized/uninitialized
-> > state by using different types on the Rust side? The io_uring_cmd
-> > could start as an IoUringCmd, where the PDU field is MaybeUninit,
-> > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees the
-> > PDU has been initialized.
->
-> I've found a flag IORING_URING_CMD_REISSUE that we could initialize
-> the pdu. In uring_cmd callback, we can fill zero when it's not reissued.
-> But I don't know that we could call T::default() in miscdevice. If we
-> make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
->
-> How about assign a byte in pdu for checking initialized? In uring_cmd(),
-> We could set a byte flag that it's not initialized. And we could return
-> error that it's not initialized in read_pdu().
+On Tue, Sep 02, 2025 at 07:18:47AM +0000, Adrian Barnaś wrote:
+> Remove trailing comments in pci/hive_isp_css_common/host/vmem.c.
 
-Could we do the zero-initialization (or T::default()) in
-MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
-isn't set (i.e. on the initial issue)? That way, we avoid any
-performance penalty for the existing C uring_cmd() implementations.
-I'm not quite sure what you mean by "assign a byte in pdu for checking
-initialized".
+To avoid churn this should be patch 2 in a new series before current patch 2.
 
-Best,
-Caleb
+Otherwise the entire series LGTM.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
