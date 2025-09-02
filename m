@@ -1,207 +1,160 @@
-Return-Path: <linux-kernel+bounces-796014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F86B3FAEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:43:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C587B3FAF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832221A86ACB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB7921A8719B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67FC2EC0AD;
-	Tue,  2 Sep 2025 09:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C401E2EC0B7;
+	Tue,  2 Sep 2025 09:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IotGm6UW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vLOhaLTm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IotGm6UW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vLOhaLTm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HvS+sIhx"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EDE2EC092
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE1D22A80D;
+	Tue,  2 Sep 2025 09:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756806187; cv=none; b=FpfzshyKllvBQVGIN/Bt5CJI4L+MQ3eE4sPmHY5A2SVCM43A/Z1CcEZ01+HrDfWiwju/6En3eoar8/mGstjxRfYx6S1DL5ZZjj2IuwLmTG9Nt5FykbvjA9Czpkg03GFxEK56sU2y9gfu8SX2U4UGsqCg1r6h5T3lv6fHwzSuLj0=
+	t=1756806259; cv=none; b=rBF1VBNuXqOFhNHOafdQ2NiwfoEHQ74a0sZzO3qk8CG9kZpOaX0LXAaTjXeXVmCCRIJzVIyFWYBvAE9oO8+IwhSCZa8YdR9BUGu75l8cdZs9IiKVBdRy2Kzx8aqHkE/+gU9u16ybLZ12VMDyuVWKvS5sn19xL1MUjLVrW0OFS64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756806187; c=relaxed/simple;
-	bh=+r79dL1gqrDNxRtTgrXMjVpAsgnr0cYz/E5/fOUW5xE=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=e5xvFxhiXUZbuZRiO5LkXEuHSs0XeGt3n5TeKI/yDpwA1GVS9214t+5F05ZdYbZHnhd8gzNEyZZeYKkY7liHUBCgQGWU1unXix2mWxL8KlGfunpcosRog1ZwQABUEZCdyAzVxfxGLB0juMP3u+fLO68KbxIAUyxZKJEn/yoV4UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IotGm6UW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vLOhaLTm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IotGm6UW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vLOhaLTm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B05361F44F;
-	Tue,  2 Sep 2025 09:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756806183; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=WLH6zNDi4TZ5ZXN34xoFWURtIQIyMoaxKpZcKw32eqA=;
-	b=IotGm6UWQmbdIdtnTsNMyyONacJWiXk8/xip7rMVHNt3+XJbwO+scDjWr/e4XjB/Wvy6jM
-	JYNd4gF2jeD6+AupycJXcUYAeawMib1zM6+575bWQJ5avbSuDTsI1SXGxxVCFSPlQOMbSb
-	XRynu1maG2it0YwmSGHC1wVqMBjA4CM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756806183;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=WLH6zNDi4TZ5ZXN34xoFWURtIQIyMoaxKpZcKw32eqA=;
-	b=vLOhaLTmo0EjHZv1e3HMdZqJggNIXV2GO6bHqBUJDziIElI9zJ4qBmqau/ZWM+a/o8gj2k
-	3YIC5OQrruLdldBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756806183; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=WLH6zNDi4TZ5ZXN34xoFWURtIQIyMoaxKpZcKw32eqA=;
-	b=IotGm6UWQmbdIdtnTsNMyyONacJWiXk8/xip7rMVHNt3+XJbwO+scDjWr/e4XjB/Wvy6jM
-	JYNd4gF2jeD6+AupycJXcUYAeawMib1zM6+575bWQJ5avbSuDTsI1SXGxxVCFSPlQOMbSb
-	XRynu1maG2it0YwmSGHC1wVqMBjA4CM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756806183;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=WLH6zNDi4TZ5ZXN34xoFWURtIQIyMoaxKpZcKw32eqA=;
-	b=vLOhaLTmo0EjHZv1e3HMdZqJggNIXV2GO6bHqBUJDziIElI9zJ4qBmqau/ZWM+a/o8gj2k
-	3YIC5OQrruLdldBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9895313882;
-	Tue,  2 Sep 2025 09:43:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qpl3JCe8tmj5EAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 02 Sep 2025 09:43:03 +0000
-Date: Tue, 02 Sep 2025 11:42:55 +0200
-Message-ID: <87frd59om8.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sound fixes for 6.17-rc5
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1756806259; c=relaxed/simple;
+	bh=lGnjXOkn1C6NLSyAP8y0/XgunBF7nt5jXbHT3aE7N3A=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=N3nyPI4JuSoR6E5mKtQxYFtJRBoOVQiYdKbARmMHa8fmJA5qobxemLCH+CYgrzcfcmhqbJUNT8cwuL2DoVJezuTidYPc9yQKNku+j7VBzHx/QyCBeq5gFThEwB1xZkh52O+/Vwpk1OZ2Pl6W3OB1CEA0zY/v059awSO+9KD8yAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HvS+sIhx; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1756806252; x=1757411052; i=markus.elfring@web.de;
+	bh=F8B1yWdizJJfpSjkl+eTICo8nrCLYseuW1pRz1FscXY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HvS+sIhx/aZtecT9M8MyKpKg25L7DxkM4zX7sZOcEmzth19JTPIqmOFqycPpwzIy
+	 jpbfuzfRl4CbgiFxICwhO+awoS6SKFuoUq4q2iUMnYhLVc2vsQ4R1Plnoh1TWBjnO
+	 oxdDDlM6Yu9QwLYDGWVu3e5bHpVbOqy9vZJOJ5KT3CwUqEyT6bf5a2HttP7n8PJfq
+	 KKILql3++SepE/drpFXda50o4AKjcNzAcBabXnJ4UQwYUOUIvZHq0GL2lCtD8rkJO
+	 ni9P1f96ncdlzbMw+KC+0E+dyccyQebySi92FG5O1HrIdIg3tfh7bZ09dSvBXzVcF
+	 dDaOELZuMQ5ySK/34w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyO0u-1uYNjb3dUK-00wBsd; Tue, 02
+ Sep 2025 11:44:11 +0200
+Message-ID: <cbda4163-6211-4c81-be99-634b842a349a@web.de>
+Date: Tue, 2 Sep 2025 11:44:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Miaoqian Lin <linmq006@gmail.com>, kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Nicolas Pitre <nico@fluxnic.net>
+References: <20250902074353.2401060-1-linmq006@gmail.com>
+Subject: Re: [PATCH] drivers: bus: fix device node reference leak in
+ __cci_ace_get_port
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250902074353.2401060-1-linmq006@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:NSr2io1GhqKKijv4n//GlniSWihh47V6+b2pZ6anDYQzBbcLG6K
+ L7ZrNp1VFyvFDsSNjWRIwaiRPWgGqQLFgosnaTiqudyYMmNWLv5jn2z5f1CMBI8a03w2YMe
+ Rwp17XaVpdLFLkX+6XWlIBN0aooYocZ4Gk5AC/Qxivw/m+0eU1fTo/GwHkmD+C6bDrle30h
+ 6mfwVIHpOCGFDzW5G3++Q==
 X-Spam-Flag: NO
-X-Spam-Score: -3.30
+UI-OutboundReport: notjunk:1;M01:P0:919U8jMIOq0=;Z+lLCHp+ne5ZJPf2ysVLi6VXrSl
+ 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
 
-Linus,
+> Add missing of_node_put() call to release
+> the device node reference obtained via of_parse_phandle().
 
-please pull sound fixes for v6.17-rc5 from:
+1. You may occasionally put more than 58 characters into text lines
+   of such a change description.
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n638
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.17-rc5
+2. Would you like to increase the application of scope-based resource management?
+   https://elixir.bootlin.com/linux/v6.17-rc4/source/include/linux/of.h#L138
 
-The topmost commit is bcd6659d4911c528381531472a0cefbd4003e29e
+3. How do you think about to append parentheses to the function name
+   in the summary phrase?
 
-----------------------------------------------------------------
 
-sound fixes for 6.17-rc5
-
-A collection of small changes including a few regression fixes.
-
-- Regression fix for Intel SKL/KBL HD-audio bindings
-- Regression fix for missing Nvidia HDMI codec entries after the
-  recent code reorganization
-- A few TAS2781 codec regression fixes
-- Fix for ASoC component lookup breakage
-- Usual HD-audio, USB-audio and SOF quirk entries
-
-----------------------------------------------------------------
-
-Aaron Erhardt (1):
-      ALSA: hda/realtek: Fix headset mic for TongFang X6[AF]R5xxY
-
-Ajye Huang (1):
-      ASoC: SOF: Intel: WCL: Add the sdw_process_wakeen op
-
-Brady Norander (1):
-      ALSA: hda: intel-dsp-config: Select SOF driver on MTL Chromebooks
-
-Cryolitia PukNgae (4):
-      ALSA: usb-audio: Add mute TLV for playback volumes on some devices
-      ASoC: codecs: idt821034: fix wrong log in idt821034_chip_direction_output()
-      ALSA: usb-audio: move mixer_quirks' min_mute into common quirk
-      ALSA: docs: Add documents for recently changes in snd-usb-audio
-
-Daniel Dadap (1):
-      ALSA: hda/hdmi: Restore missing HDMI codec entries
-
-Gergo Koteles (2):
-      ALSA: hda: tas2781: fix tas2563 EFI data endianness
-      ALSA: hda: tas2781: reorder tas2563 calibration variables
-
-Kuninori Morimoto (3):
-      ASoC: soc-core: care NULL dirver name on snd_soc_lookup_component_nolocked()
-      ASoC: soc-core: tidyup snd_soc_lookup_component_nolocked()
-      ASoC: rsnd: tidyup direction name on rsnd_dai_connect()
-
-Shenghao Ding (1):
-      ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
-
-Takashi Iwai (2):
-      ALSA: hda: Avoid binding with SOF for SKL/KBL platforms
-      ALSA: hda/hdmi: Add pin fix for another HP EliteDesk 800 G4 model
-
-Takashi Sakamoto (1):
-      ALSA: firewire-motu: drop EPOLLOUT from poll return values as write is not supported
-
-Tina Wuest (1):
-      ALSA: usb-audio: Allow Focusrite devices to use low samplerates
-
-qaqland (1):
-      ALSA: usb-audio: Add mute TLV for playback volumes on more devices
-
----
- Documentation/sound/alsa-configuration.rst     | 29 ++++++++++++++++++++++----
- sound/firewire/motu/motu-hwdep.c               |  2 +-
- sound/hda/codecs/hdmi/hdmi.c                   |  1 +
- sound/hda/codecs/hdmi/nvhdmi.c                 | 17 +++++++++++++++
- sound/hda/codecs/hdmi/tegrahdmi.c              |  2 ++
- sound/hda/codecs/realtek/alc269.c              |  2 ++
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c |  9 +++++---
- sound/hda/core/intel-dsp-config.c              | 26 ++++++++++++++++++++---
- sound/soc/codecs/idt821034.c                   |  2 +-
- sound/soc/renesas/rcar/core.c                  |  2 +-
- sound/soc/soc-core.c                           | 25 +++++++++++++---------
- sound/soc/sof/intel/ptl.c                      |  1 +
- sound/usb/format.c                             | 12 +++++++----
- sound/usb/mixer_quirks.c                       |  8 +++----
- sound/usb/quirks.c                             | 22 +++++++++++++++++--
- sound/usb/usbaudio.h                           |  4 ++++
- 16 files changed, 130 insertions(+), 34 deletions(-)
-
+Regards,
+Markus
 
