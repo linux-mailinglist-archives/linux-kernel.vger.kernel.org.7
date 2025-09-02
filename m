@@ -1,182 +1,164 @@
-Return-Path: <linux-kernel+bounces-795808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC9DB3F829
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F323B3F82A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1CE07A1576
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:17:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8984F7A327B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BD632F74D;
-	Tue,  2 Sep 2025 08:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8632E27BF7C;
+	Tue,  2 Sep 2025 08:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rwpOpVzw"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l4xiHP0b"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AA61E5206
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4FA219E8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756801114; cv=none; b=JUsDvI7d6GVOfJfEQfGAhIp+40TW+OuPiZ+BY7cn+NDF0e+PflcghMhOylTDdjFyvQkf7FAc6W9t/nxjMdc/6KMl5O5s/YaEalSl/MsZM+V8X3F4Xv+vqfRO9teKz2xhJf+zXYsYeGVx/G0LcdmObXrXrkKTiF1OfWUd03GzzpM=
+	t=1756801163; cv=none; b=bHXcfbVBi5qON6PFJLGQlvS0yMCSCSa6IXaDUvMdlLfE//cyDmcie/7ts2x8MWDUttUO4cRVeqOTcUTBbqk2x81yqJBn3JM5T84/E5mkckLKqgw3ghig/oP62vNl8M6Sf5/3SDCq8OkCeds/6IG0k4r8I1O4trVqevgs53uxMxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756801114; c=relaxed/simple;
-	bh=7hNOa2noQ5Izpnr96iT+QmCCXgaHc/bvo5Cr+eQS+xU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Jv6furVe1HXWgOxkiB36sXxM6WyLibasXtHOWa5bYkdC4kqAZ4O1H2o70job39/B/Hg1PCE0KJh0lQxsrtjAFjkyjQREenFgseS07QDOJ16R6xe/gyRltB5ioSCPrBB0var+Y7cMI88/rxMcensw5NNfPRwyOkuyblflfEVlP0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rwpOpVzw; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cGJXf0519z9sJ2;
-	Tue,  2 Sep 2025 10:18:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756801106; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t6rP7L8rf7rviHy/ptheSNv1+SKNEK1+PoNnzmFAEeY=;
-	b=rwpOpVzwWkdh1DCkPE+bDeXSoO53jiGDALVPkVO9meitqvsPoXravDdFwE8EtySO73aHKs
-	00+iPOxduJxFC5tGyXE0nCa3IqAxmkuMtp7YklfuLEwRMKZGa8aQUF/flRC8W+0E7yjv2z
-	S6/K4DJHcUUKTTb8Bu2rTdVZMg8i5B2+mZhSVUtzSITNvckCfLVPpNoUF3uxTq/X6Qz5b+
-	WVmilTup8WbuKI7J3h88kCBuTIOQDiLrOCqqdEpzlQjRtJwuP1y570rGUhXhclpyk1QHy5
-	Wy8DzE1dhOZGC91llCcXJROzcx2SSZ8fuuaLPFKzJXrS134nNdEl0GvKvJ8CQA==
-Message-ID: <22e70ef7472310ad5147f934044a7ba0e02e02d6.camel@mailbox.org>
-Subject: Re: [PATCH v2] drm/sched: Fix racy access to
- drm_sched_entity.dependency
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, phasta@kernel.org, 
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Matthew
- Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Tue, 02 Sep 2025 10:18:21 +0200
-In-Reply-To: <b9f7a493-5611-4450-a26a-10b03d1dc313@igalia.com>
-References: <20250901124032.1955-1-pierre-eric.pelloux-prayer@amd.com>
-	 <da59f28c7d8b3d83833aa0494b3b198335cf588f.camel@mailbox.org>
-	 <b9f7a493-5611-4450-a26a-10b03d1dc313@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756801163; c=relaxed/simple;
+	bh=YjMsLc6RufmJViCjzbcj1o+DZxgRHG8U3dF4AJZolgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EvSYqpdzW9/KkethNXi5QBS6xoO7plxPcyOvzYCKkBdgtda0d6HqvFYUOuyQiKXA8Um2+Jlv1DlEcFQoRbRJ2D+4UbDiQeeUtSJovOKAfxk34AeEIYseAveUkzqMfU6NY1MmjKZB+dQR/PXE6ZfbZxZEl6H2Y994ts1TXGDCyWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l4xiHP0b; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5GOSNNpMehkJcGSwkYc7NNq14fJf5Y8+4HDmpTH/Ghw=; b=l4xiHP0bOQ4ANVIRzozbdr0Jkz
+	be64vVfQ+zYZ9ZDrzJqnndGv9XnU9UJ8P61BVxSCdoK9CKPmWosD+IivNhHE+/JmKPnHXmLMKJYUt
+	MdM2jKO52rL43GB1raGewm+73IyD4CU+LqCSbCqrUzu1EEpHyL6xuLH1TYUP/E70wBKBMy/FnQt6A
+	3X8vcd4AtKfie6j9L4MYfUpr6S2DMlgQBUeuZcOhbn5AjU7ndTXOA1WTwWJYi8DcwdMgjMFBJVLGb
+	Ae/XuddHYKlTh2sQizJLc8ZneVdEn5DxzG47wSTDPyWxuEHPgZRutC3A1OqING43dAVV7/c9nCMOm
+	WYqBhaKw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utMEW-00000003yAO-1Mnt;
+	Tue, 02 Sep 2025 08:19:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6215130039F; Tue, 02 Sep 2025 10:19:15 +0200 (CEST)
+Date: Tue, 2 Sep 2025 10:19:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc: kees@kernel.org, alyssa.milburn@intel.com, scott.d.constable@intel.com,
+	joao@overdrivepizza.com, andrew.cooper3@citrix.com,
+	samitolvanen@google.com, nathan@kernel.org,
+	alexei.starovoitov@gmail.com, mhiramat@kernel.org, ojeda@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86,ibt: Use UDB instead of 0xEA
+Message-ID: <20250902081915.GK3245006@noisy.programming.kicks-ass.net>
+References: <20250901191307.GI4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 1e7d9be332138bc4b68
-X-MBO-RS-META: shmzb1xi8nq9so5g49yijb78o1tf98bc
-
-On Tue, 2025-09-02 at 08:59 +0100, Tvrtko Ursulin wrote:
->=20
-> On 02/09/2025 08:27, Philipp Stanner wrote:
-> > On Mon, 2025-09-01 at 14:40 +0200, Pierre-Eric Pelloux-Prayer wrote:
-> > > The drm_sched_job_unschedulable trace point can access
-> > > entity->dependency after it was cleared by the callback
-> > > installed in drm_sched_entity_add_dependency_cb, causing:
-> > >=20
-> > > BUG: kernel NULL pointer dereference, address: 0000000000000020
-> > > [...]
-> > > Workqueue: comp_1.1.0 drm_sched_run_job_work [gpu_sched]
-> > > RIP: 0010:trace_event_raw_event_drm_sched_job_unschedulable+0x70/0xd0=
- [gpu_sched]
-> > >=20
-> > > To fix this we either need to keep a reference to the fence before
-> > > setting up the callbacks, or move the trace_drm_sched_job_unschedulab=
-le
-> > > calls into drm_sched_entity_add_dependency_cb where they can be
-> > > done earlier.
-> > >=20
-> > > Fixes: 76d97c870f29 ("drm/sched: Trace dependencies for GPU jobs")
-> > >=20
-> > > Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer=
-@amd.com>
-> > > Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-> >=20
-> > Applied to drm-misc-next
->=20
-> Shouldn't it have been drm-misc-fixes?
-
-I considered that, but thought not: the fixed commit is only in this rc
-(v6.17), and in this case the committer guidelines say it should go to
-misc-next:
-
-https://drm.pages.freedesktop.org/maintainer-tools/committer/committer-drm-=
-misc.html
-
-Same reason we don't need to +Cc stable.
-
-But correct me if I made a mistake.
-
-P.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901191307.GI4067720@noisy.programming.kicks-ass.net>
 
 
->=20
-> Regards,
->=20
-> Tvrtko
->=20
-> > > ---
-> > > =C2=A0=C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 11 +++++++----
-> > > =C2=A0=C2=A01 file changed, 7 insertions(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/d=
-rm/scheduler/sched_entity.c
-> > > index 8867b95ab089..3d06f72531ba 100644
-> > > --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> > > +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> > > @@ -391,7 +391,8 @@ EXPORT_SYMBOL(drm_sched_entity_set_priority);
-> > > =C2=A0=C2=A0 * Add a callback to the current dependency of the entity=
- to wake up the
-> > > =C2=A0=C2=A0 * scheduler when the entity becomes available.
-> > > =C2=A0=C2=A0 */
-> > > -static bool drm_sched_entity_add_dependency_cb(struct drm_sched_enti=
-ty *entity)
-> > > +static bool drm_sched_entity_add_dependency_cb(struct drm_sched_enti=
-ty *entity,
-> > > +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct drm_sched_job *sche=
-d_job)
-> > > =C2=A0=C2=A0{
-> > > =C2=A0=C2=A0	struct drm_gpu_scheduler *sched =3D entity->rq->sched;
-> > > =C2=A0=C2=A0	struct dma_fence *fence =3D entity->dependency;
-> > > @@ -421,6 +422,10 @@ static bool drm_sched_entity_add_dependency_cb(s=
-truct drm_sched_entity *entity)
-> > > =C2=A0=C2=A0		entity->dependency =3D fence;
-> > > =C2=A0=C2=A0	}
-> > > =C2=A0=20
-> > > +	if (trace_drm_sched_job_unschedulable_enabled() &&
-> > > +	=C2=A0=C2=A0=C2=A0 !test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &entity->=
-dependency->flags))
-> > > +		trace_drm_sched_job_unschedulable(sched_job, entity->dependency);
-> > > +
-> > > =C2=A0=C2=A0	if (!dma_fence_add_callback(entity->dependency, &entity-=
->cb,
-> > > =C2=A0=C2=A0				=C2=A0=C2=A0=C2=A0 drm_sched_entity_wakeup))
-> > > =C2=A0=C2=A0		return true;
-> > > @@ -461,10 +466,8 @@ struct drm_sched_job *drm_sched_entity_pop_job(s=
-truct drm_sched_entity *entity)
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	while ((entity->dependency =3D
-> > > =C2=A0=C2=A0			drm_sched_job_dependency(sched_job, entity))) {
-> > > -		if (drm_sched_entity_add_dependency_cb(entity)) {
-> > > -			trace_drm_sched_job_unschedulable(sched_job, entity->dependency);
-> > > +		if (drm_sched_entity_add_dependency_cb(entity, sched_job))
-> > > =C2=A0=C2=A0			return NULL;
-> > > -		}
-> > > =C2=A0=C2=A0	}
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	/* skip jobs from entity that marked guilty */
-> >=20
->=20
+Because this is all somewhat magical code, and this change is a little
+on the large side, it as been suggested I 'upgrade' the Changelog some.
+
+On Mon, Sep 01, 2025 at 09:13:07PM +0200, Peter Zijlstra wrote:
+> 
+> A while ago [0] FineIBT started using the 0xEA instruction to raise #UD.
+> All existing parts will generate #UD in 64bit mode on that instruction.
+> 
+> However; Intel/AMD have not blessed using this instruction, it is on
+> their 'reserved' opcode list for future use.
+> 
+> Peter Anvin worked the committees and got use of 0xD6 blessed, it
+> shall be called UDB (per the next SDM or so), and it being a single
+> byte instruction is easy to slip into a single byte immediate -- as
+> is done by this very patch.
+> 
+> Reworking the FineIBT code to use UDB wasn't entirely trivial. Notably
+> the FineIBT-BHI1 case ran out of bytes. In order to condense the
+> encoding some it was required to move the hash register from R10D to
+> EAX (thanks hpa!).
+> 
+> Per the x86_64 ABI, RAX is used to pass the number of vector registers
+> for vararg function calls -- something that should not happen in the
+> kernel. More so, the kernel is built with -mskip-rax-setup, which
+> should leave RAX completely unused, allowing its re-use.
+
+ [ For BPF; while the bpf2bpf tail-call uses RAX in its calling
+   convention, that does not use CFI and is unaffected. Only the
+   'regular' C->BPF transition is covered by CFI. ]
+
+The ENDBR poison value is changed from 'OSP NOP3' to 'NOPL -42(%RAX)',
+this is basically NOP4 but with UDB as its immediate. As such it is
+still a non-standard NOP value unique to prior ENDBR sites, but now
+also provides UDB.
+
+Per Agner Fog's optimization guide, Jcc is assumed not-taken. That is,
+the expected path should be the fallthrough case for improved
+throughput.
+
+Since the preamble now relies on the ENDBR poison to provide UDB, the
+code is changed to write the poison right along with the initial
+preamble -- this is possible because the ITS mitigation already
+disabled IBT over rewriting the CFI scheme.
+
+The scheme in detail:
+
+Preamble:
+
+  FineIBT                       FineIBT-BHI1                    FineIBT-BHI
+
+  __cfi_\func:                  __cfi_\func:                    __cfi_\func:
+    endbr                         endbr                           endbr
+    subl       $0x12345678, %eax  subl      $0x12345678, %eax     subl       $0x12345678, %eax
+    jcc.d32,np \func+3            cmovne    %rax, %rdi            cs cs call __bhi_args_N
+                                  jcc.d8,np \func+3
+  \func:                        \func:                          \func:
+    nopl       -42(%rax)          nopl      -42(%rax)             nopl       -42(%rax)
+
+Notably there are 7 bytes available after the SUBL; this enables the
+BHI-1 case to fit without the nasty overlapping case it had
+previously. The !BHI case uses Jcc.d32 to consume all 7 bytes without
+the need for an additional NOP, while the BHI case uses CS padding to
+align the CALL with the end of the preamble such that it returns to
+\func+0.
+
+Caller:
+
+  FineIBT                               Paranoid-FineIBT
+
+  fineibt_caller:                       fineibt_caller:
+    mov     $0x12345678, %eax             mov    $0x12345678, %eax
+    lea     -10(%r11), %r11               cmp    -0x11(%r11), %eax
+    nop5                                  cs lea -0x10(%r11), %r11
+  retpoline:                            retpoline:
+    cs call __x86_indirect_thunk_r11      jne    fineibt_caller+0xd
+                                          call   *%r11
+                                          nop
+
+Notably this is before apply_retpolines() which will fix up the
+retpoline call -- since all parts with IBT also have eIBRS (lets
+ignore ITS). Typically the retpoline site is rewritten (when still
+intact) into:
+
+    call *r11
+    nop3
+
+> [0] 06926c6cdb95 ("x86/ibt: Optimize the FineIBT instruction sequence")
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+And now I'm going to have to do a patch that makes apply_retpoline()
+do CS padding instead of NOP padding for CALL... 
 
 
