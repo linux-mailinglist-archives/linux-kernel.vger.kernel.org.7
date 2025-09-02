@@ -1,183 +1,142 @@
-Return-Path: <linux-kernel+bounces-797096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EF5B40BC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:13:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275D6B40BC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27341B63E2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:13:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8658A1B63DE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F229341ADC;
-	Tue,  2 Sep 2025 17:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED7634165E;
+	Tue,  2 Sep 2025 17:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kHCEQrgc"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGflFP54"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AF52DF125;
-	Tue,  2 Sep 2025 17:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17562DF125
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756833175; cv=none; b=XT2O76bT3vjr5s7Ds+IkRAfZQ8TEZfrSj5nXl2YRMLxL4HFnasPUDX6AWJLXv3brNQx2ZaQAlGCtnHBmi+kFSRTK0tselaHJV7UnS67ad8rgoQP5xuRmfPo+ckcT/JNVCTYHJK4dZwyVuDJjvv6I7WXGNCyTheWHnQoYBv8aIAI=
+	t=1756833277; cv=none; b=pkFmh/L+v4K0GRU4LTYDwD9DMhtk4fCu7rsSxhEY/1UNVQ8GjXq+y29PpC+/lkX4DsewpSe7pruoyNiO3cia+Yz7SlafbZ2/UaSQZssXVrQ5GwmXo0rMbBteKlTp1otryU+w1tcpEKJDbWCbHMzysEzm06/Sacl2SNC3+J3aQNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756833175; c=relaxed/simple;
-	bh=zzJ4wekw121HV+1LGlw+VZ9r4A+FYjx7cuGLxI/OQ4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N7ePue024oN1hD5sEG313rFrJK2wA6IPtH0oc3Ta4NiJ3CE/tk3UEyw40mqTUn3Mrr5rODAKVdYoFTfJirH2C+UHQbMl+mndXBR03XmEKDK0OKMC13NEyhslE1YEsQf/8QlG8hwA5xhrmE+5MhAYWBb0xBf59ViddMXWT6eovOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kHCEQrgc; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cGXPJ3h1MzlgqTx;
-	Tue,  2 Sep 2025 17:12:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756833161; x=1759425162; bh=XFMXx0YMZT0qYrjNa38S/JfC
-	/6Gh0XKHLMBx0IhJc3w=; b=kHCEQrgcHOP0cXGScxkRefH4RWBnvO1Pvl8WUZXa
-	EedK6qCuboEYrf/8uUzztnYX+aucyimV66B5cSmmONgJKjRVKUaoNnRyIF3D56qZ
-	MfOoJJiKtlPg3TadG6AUP2P/hId/imbpiSeecP0Aei82dy1T5appjOOtcMdNEaYo
-	maAylj64nfzIStGXoaT7ZxYnZfUBUekQ2VxLbciit6s2aZ9xi1s1jBsVC3xPTHbm
-	DRJXDuXHVyC0B/lSfVugKbXDJIri5daEa/x1aQ60hnTG3LMZJiNO86ZfGOOWpFCJ
-	5N0IJuzG0+Dkej1PvIAFM3fwiVkbHbG9IzsYOWCQFE8rdQ==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id mhqwayppvs84; Tue,  2 Sep 2025 17:12:41 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cGXNn2JDCzlgqTq;
-	Tue,  2 Sep 2025 17:12:24 +0000 (UTC)
-Message-ID: <4f54d81a-d330-44b2-b667-3b13d516c576@acm.org>
-Date: Tue, 2 Sep 2025 10:12:23 -0700
+	s=arc-20240116; t=1756833277; c=relaxed/simple;
+	bh=43jkeAMzXZfaBDRjnYuQWs0uMB6zqC5XvFEq6e1iOLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qzqc6pPBwJs98FdwvfGcDbs98Ocbl78TBr99nnTp5WcxWIUpLEYqVbtk32SctbprzsbIwieEfnhtk0MhBzrxCNBM5w6p6dDgYlTfOP9SI48uqU1XPYSoC7VpAM2j8g0Dimjqvr4IlMc5KY1g5ot8Odm7SedHWY5fwa6sB4W6SbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGflFP54; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61caf8fc422so9944367a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:14:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756833274; x=1757438074; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KzqnghrN1r+1VEkAjN5obE3DlhAu8tPALVKnOpzq7AE=;
+        b=FGflFP54KPedFOCUQDUsGpTA5kIyABNn/CJts3WW0kWrw59Rrr3RLmyGTKJhE4cgQn
+         WZn5WwdRcCftlDmqSNQUaPOnEZ6v6PNRFNuzqs56gE+byksTBP8P1q24WVfvEuc4b4vl
+         yVzUndvQlV/MYSOfuMHbWYNkwAtFQzpd8aWYQVGSfUwATW1/s10Jf8EzmketdQt5pUzM
+         Au3eAwIyDRhE2QlvS1kKmfY3RbTH4xTYKYd9+wiqMmctRVHDfU/95nRVFdbsuqYOMRy2
+         doWQmo89JEa0MYAh9wyNaGbMokNBUtlr6fSLtQNzw7m+BGmLKNuY7KNsPH2lXHWnIDa+
+         wK1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756833274; x=1757438074;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KzqnghrN1r+1VEkAjN5obE3DlhAu8tPALVKnOpzq7AE=;
+        b=PDL1l5+o7Ks508+8Ev7MrYkkDqo07CVQ6Se6wkD+XWW7qRoWjnoLqOccWDZXU0D0pM
+         XVZp+m0BOxW+lBNUHZkaX0KnNylZYLQk0rU/q5M+k4r4q47udQq33jIHy6MHjDLadXBS
+         qlVnBy1CtwsxrEVbpcU59U+4/JCSMcCaMKEVvgDv5z0O4p9OoP8WazdkCticrVcNQYiO
+         UzCK7MlZ277VX8tKOQsDCqOpsYb/pDyvM6qUAIT7YB762vn3LcP4pkdJ+m7VnJWwl4MF
+         H4D9Z7d4OlPrcBWXBPPXInOY7ZbcAZ3TK+8vyEoq7lnaoieKDuvXFm7MZ11WJo1HFuu4
+         b4rA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNhW9QnY8CrJ7ZYZRRT5mOOPii70zmFFSBV3/uQOw/yUSpB587yFAj2JZJazkTjKrK+tcvMGj9S07xfps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywui2afY0wVz6efOHl108uETBl6DZUYjMOHQHs2RSUimobAftKq
+	G84yZvdFVLCu0ewi8z9RdBUIxamWR3/2I2z5bC1/47pwJigpkON1rL7HJ4zRzsYuHZ0d6TFt53z
+	83xVlZelenPrUzmKKYfIobWQU/WP6NII=
+X-Gm-Gg: ASbGncv7w5QPgQS/qV4NEiG8qzJCVcOsviipDqL+xJjm9MrhGWH/LE8i4PBeiSY2E0t
+	d3RGb69SE7nDzIfyFo9VUrmu/Nhg4gVigI0N1yPG2k+iBFhLIlo5gMr7RP5CMk5l7nMLM1nZ1W6
+	CKaNnTWXGyrVincf993fqLlYpnoD8vUw2Zr2PsKP5pmUmlRobD8QoqMbiDYg68tIU+h23lDwq7U
+	XcBlSGx5xlRIqph0sOFBQ==
+X-Google-Smtp-Source: AGHT+IF0NGx8oVy2iJNx4drE5tFtZCJfWO9mL7z2enJS2tyiDJa5XKFbAOkTOsRGoBMQnxLhsnZ5IN1yxy9vDuIMZ0M=
+X-Received: by 2002:a05:6402:2742:b0:61d:1d16:19b4 with SMTP id
+ 4fb4d7f45d1cf-61d26997586mr10620645a12.2.1756833273971; Tue, 02 Sep 2025
+ 10:14:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 05/15] block: factor out a helper
- bio_submit_split_bioset()
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
- hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com, axboe@kernel.dk,
- tj@kernel.org, josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com,
- satyat@google.com, ebiggers@google.com, neil@brown.name,
- akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-6-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250901033220.42982-6-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-2-ryncsn@gmail.com>
+ <e22b8472-6d20-49b4-b49b-78f79f126294@redhat.com>
+In-Reply-To: <e22b8472-6d20-49b4-b49b-78f79f126294@redhat.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 3 Sep 2025 01:13:57 +0800
+X-Gm-Features: Ac12FXwxkC-P5aYCZJOxQozwt63VrhkLO_QpMo-3Ez5Wlog8Xkv16zhs2hfV23I
+Message-ID: <CAMgjq7Bqffjm3dTZ+bHALisCkw7ASao_1h4ZZVM6kd14YdKzmA@mail.gmail.com>
+Subject: Re: [PATCH 1/9] mm, swap: use unified helper for swap cache look up
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/31/25 8:32 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> No functional changes are intended, some drivers like mdraid will split
-> bio by internal processing, prepare to unify bio split codes.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   block/blk-merge.c      | 63 ++++++++++++++++++++++++++++--------------
->   include/linux/blkdev.h |  2 ++
->   2 files changed, 44 insertions(+), 21 deletions(-)
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 70d704615be5..e1afb07040c0 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -104,34 +104,55 @@ static unsigned int bio_allowed_max_sectors(const struct queue_limits *lim)
->   	return round_down(UINT_MAX, lim->logical_block_size) >> SECTOR_SHIFT;
->   }
->   
-> +/**
-> + * bio_submit_split_bioset - Submit a bio, splitting it at a designated sector
-> + * @bio:		the original bio to be submitted and split
-> + * @split_sectors:	the sector count at which to split
-> + * @bs:			the bio set used for allocating the new split bio
-> + *
-> + * The original bio is modified to contain the remaining sectors and submitted.
-> + * The caller is responsible for submitting the returned bio.
-> + *
-> + * If succeed, the newly allocated bio representing the initial part will be
-> + * returned, on failure NULL will be returned and original bio will fail.
-> + */
-> +struct bio *bio_submit_split_bioset(struct bio *bio, unsigned int split_sectors,
-> +				    struct bio_set *bs)
-> +{
-> +	struct bio *split = bio_split(bio, split_sectors, GFP_NOIO, bs);
-> +
-> +	if (IS_ERR(split)) {
-> +		bio->bi_status = errno_to_blk_status(PTR_ERR(split));
-> +		bio_endio(bio);
-> +		return NULL;
-> +	}
-> +
-> +	blkcg_bio_issue_init(split);
-> +	bio_chain(split, bio);
-> +	trace_block_split(split, bio->bi_iter.bi_sector);
-> +	WARN_ON_ONCE(bio_zone_write_plugging(bio));
-> +	submit_bio_noacct(bio);
-> +
-> +	return split;
-> +}
-> +EXPORT_SYMBOL_GPL(bio_submit_split_bioset);
-> +
->   static struct bio *bio_submit_split(struct bio *bio, int split_sectors)
->   {
-> -	if (unlikely(split_sectors < 0))
-> -		goto error;
-> +	if (unlikely(split_sectors < 0)) {
-> +		bio->bi_status = errno_to_blk_status(split_sectors);
-> +		bio_endio(bio);
-> +		return NULL;
-> +	}
->   
->   	if (split_sectors) {
-> -		struct bio *split;
-> -
-> -		split = bio_split(bio, split_sectors, GFP_NOIO,
-> -				&bio->bi_bdev->bd_disk->bio_split);
-> -		if (IS_ERR(split)) {
-> -			split_sectors = PTR_ERR(split);
-> -			goto error;
-> -		}
-> -		split->bi_opf |= REQ_NOMERGE;
-> -		blkcg_bio_issue_init(split);
-> -		bio_chain(split, bio);
-> -		trace_block_split(split, bio->bi_iter.bi_sector);
-> -		WARN_ON_ONCE(bio_zone_write_plugging(bio));
-> -		submit_bio_noacct(bio);
-> -		return split;
-> +		bio = bio_submit_split_bioset(bio, split_sectors,
-> +					 &bio->bi_bdev->bd_disk->bio_split);
-> +		if (bio)
-> +			bio->bi_opf |= REQ_NOMERGE;
->   	}
+On Tue, Sep 2, 2025 at 6:13=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 22.08.25 21:20, Kairui Song wrote:
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Always use swap_cache_get_folio for swap cache folio look up. The reaso=
+n
+> > we are not using it in all places is that it also updates the readahead
+> > info, and some callsites want to avoid that.
+> >
+> > So decouple readahead update with swap cache lookup into a standalone
+> > helper, let the caller call the readahead update helper if that's
+> > needed. And convert all swap cache lookups to use swap_cache_get_folio.
+> >
+> > After this commit, there are only three special cases for accessing swa=
+p
+> > cache space now: huge memory splitting, migration and shmem replacing,
+> > because they need to lock the Xarray. Following commits will wrap their
+> > accesses to the swap cache too with special helpers.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+>
+>
+>
+> > +void swap_update_readahead(struct folio *folio,
+> > +                        struct vm_area_struct *vma,
+> > +                        unsigned long addr)
+> >   {
+>
+> Oh, one thing. Regarding recent const-correctness discussions, "folio"
+> should probably be const here.
+>
 
-This is a good opportunity to reduce the indentation level in this
-function by adding something like this above the
-bio_submit_split_bioset() call:
+Not here, swap_update_readahead does folio_test_clear_readahead so...
 
-if (unlikely(split_sectors == 0))
-	return bio;
+I'll try add const to other places where I see the folio is const,
+thanks for the info!
 
-Otherwise this patch looks good to me. Hence:
-
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-
-
-
+> --
+> Cheers
+>
+> David / dhildenb
+>
+>
 
