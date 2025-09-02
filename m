@@ -1,157 +1,157 @@
-Return-Path: <linux-kernel+bounces-795640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5FC1B3F5BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:41:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7D8B3F5BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6D0B4E3625
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:41:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 605F62057F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D002E5430;
-	Tue,  2 Sep 2025 06:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672042E541E;
+	Tue,  2 Sep 2025 06:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCct6Rfg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="keYJIQTo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEE5202F93;
-	Tue,  2 Sep 2025 06:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB480202F93;
+	Tue,  2 Sep 2025 06:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756795300; cv=none; b=TWjZ10iVcF0YmL1upXhzi6cvEQ7vngEMKRr+R57TZ+cPMVvjWX0GX3xNb7vvoCSWvLKCyNK0MJpKUe+kCe1zAnvvH3VwHEgVVDBTBG2Yquvu7jP8zVB5tpZ4gem9r7wspTVJgrfIwKIAWt73kO49ITnm6PpecLexSZ/pSgrU7L4=
+	t=1756795371; cv=none; b=XfGvFMpHKm3HsVdbTlfzaGJ5fO1C/Nz4jqcAoZXvVERDjzMgpN9Rwr3cGGjme1pwmeoYwWHE6sEcydhnn0UM1C1PZ2/dYFte6zc5WXGNVhVB4+VHNmoAwGMp/u5vmxX1cTUxDJ/T2jyn9zqLoBv/MKTu0tIr9Rw0xlDwcoGwAkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756795300; c=relaxed/simple;
-	bh=f6UTfJAMNJFJrDoKhLj4RBGqPYuXncGxKfVvpmE4wpw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DVHMhuItVduNTDNasozEbaw3fkYafB1wUHQXkFWbPmd+/ivJmnKbUpv0brBmv1koBAiseVSCChcVYDgdzfGHpjjHEo34yKvuaJn0Hp3+PyzKBTpZxOEaPY8aphUEN2GUzgIEkCJKaFK+SMEAXymtLQhwLJbrm0DirfLtXRe2dXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCct6Rfg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05920C4CEED;
-	Tue,  2 Sep 2025 06:41:33 +0000 (UTC)
+	s=arc-20240116; t=1756795371; c=relaxed/simple;
+	bh=y7s8e1sMMgSXAhYXT1RwdXoiI3R/OI16P+7SfsNDucI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOKcxtxDMtvqK0atWFd4cGLPDum4nVa5D7SpC6PgBgxaHElANe4iz9/QMR0ZQ86AEs+tsteobcE6ecnzzdwkMFTxHjF1I4Ncsn2ctsfIV3sNJPQ1aHNzUGutbkVZu1/1E3MvOoKVBSw5hUHAiW2LdvOMAxO/Fvxmwt1WE8GJxlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=keYJIQTo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8506DC4CEED;
+	Tue,  2 Sep 2025 06:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756795299;
-	bh=f6UTfJAMNJFJrDoKhLj4RBGqPYuXncGxKfVvpmE4wpw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=tCct6RfgbVOv9p45ZejA8L8cjOPdEbgi7sIXcBapIHOL1NC9y1aQ2VXaLlcLMNNpg
-	 9EWH4nlFsfzCSrIBhHFHkOFwzxgF+cnTFsdYnkBx5G14Im+fmjWbb4hECG8HQRMSAx
-	 XH9yw/HxxR/wqzxguUzHC6HTcMeHaWQJJTTTKYSuJpMaSy9eS+RhJcXEYiREgxGNjN
-	 klK4n8e2OJ6/CJ61wQXNISQmIGTTcMYs05jrEOaVvRH76cJMxu3U6p9EQH9asF7GC/
-	 Bf5HqagnDTL0W+eDw8At7um/p9TOTvZ646hRv0/Xay6OOm3WJMrDqAe9GJUW7vaGG5
-	 nx7J7PmosFttg==
-Message-ID: <fe2867dd-50a6-42d8-92b0-0e29fa7691ee@kernel.org>
-Date: Tue, 2 Sep 2025 08:41:32 +0200
+	s=k20201202; t=1756795371;
+	bh=y7s8e1sMMgSXAhYXT1RwdXoiI3R/OI16P+7SfsNDucI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=keYJIQToD0aTRfLwaWLaM1SCTQ7lYH7nbDFRimcZPUTw/HZedUD4LEebvrazvdxDv
+	 E63omAIioz1NiNnSnqFHv3SRXXhYijPjqcL22psmRAHtAcslDf71YXST2HdQ4rZJ5r
+	 LKxD9QmM3POWIVhbVJDQJ4iYFyYx2mgOc8g77DeWJfIXWqXickk2SuEuTSijhACzda
+	 q2SofWoNU+8brT/Z8gF2+JeY+2/KTFZhCImPkyvbJB3dfrZ8suWqh4XtCyRbpptOiV
+	 8qmF1U6gWyT9r9K3mg9PInKS9lrQShrhDZNhT/8+Lw68qDOTVvzlS6/hEGwDzCs8Pi
+	 KlkrMz3++0fUw==
+Date: Tue, 2 Sep 2025 12:12:46 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: dmaengine@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv3 3/3] dmaengine: mv_xor: use devm for request_irq
+Message-ID: <aLaR5saI469MsgAT@vaman>
+References: <20250827220005.82899-1-rosenp@gmail.com>
+ <20250827220005.82899-4-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 2/6] dt-bindings: display/msm: dp-controller: document
- QCS8300 compatible
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250901-qcs8300_mdss-v10-0-87cab7e48479@oss.qualcomm.com>
- <20250901-qcs8300_mdss-v10-2-87cab7e48479@oss.qualcomm.com>
- <20250902-speedy-overjoyed-dove-edf2ee@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250902-speedy-overjoyed-dove-edf2ee@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827220005.82899-4-rosenp@gmail.com>
 
-On 02/09/2025 08:38, Krzysztof Kozlowski wrote:
-> On Mon, Sep 01, 2025 at 05:57:30PM +0800, Yongxing Mou wrote:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              # QCS8300 only has one DP controller that supports 4
->> +              # streams MST.
->> +              - qcom,qcs8300-dp
->> +    then:
->> +      properties:
->> +        reg:
->> +          minItems: 9
->> +          maxItems: 9
->> +        clocks:
->> +          minItems: 8
->> +          maxItems: 8
+On 27-08-25, 15:00, Rosen Penev wrote:
+> This is only called in _probe. Removes the need to manually free_irq.
+
+That can be intentional! We need to ensure the device is quiesced before
+teardown...
+
 > 
-> Clocks have only five items, reg has 5. At least in my next from few
-> days ago.
+> Same with irq_dispose_mapping.
 > 
-> Nothing explains any patchset dependencies, so this makes reviewing more
-> difficult than it should be.
-OK, I found the dependency in cover letter (I was looking at wrong cover
-letter), but the dependency does not have relevant clock changes, so
-this is still wrong.
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/dma/mv_xor.c | 21 +++++++--------------
+>  1 file changed, 7 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
+> index d15a1990534b..81799ac2f48b 100644
+> --- a/drivers/dma/mv_xor.c
+> +++ b/drivers/dma/mv_xor.c
+> @@ -1025,8 +1025,6 @@ static int mv_xor_channel_remove(struct mv_xor_chan *mv_chan)
+>  		list_del(&chan->device_node);
+>  	}
+>  
+> -	free_irq(mv_chan->irq, mv_chan);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -1112,8 +1110,9 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+>  	/* clear errors before enabling interrupts */
+>  	mv_chan_clear_err_status(mv_chan);
+>  
+> -	ret = request_irq(mv_chan->irq, mv_xor_interrupt_handler,
+> -			  0, dev_name(&pdev->dev), mv_chan);
+> +	ret = devm_request_irq(&pdev->dev, mv_chan->irq,
+> +			       mv_xor_interrupt_handler, 0,
+> +			       dev_name(&pdev->dev), mv_chan);
+>  	if (ret)
+>  		goto err_free_dma;
+>  
+> @@ -1138,14 +1137,14 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+>  		ret = mv_chan_memcpy_self_test(mv_chan);
+>  		dev_dbg(&pdev->dev, "memcpy self test returned %d\n", ret);
+>  		if (ret)
+> -			goto err_free_irq;
+> +			goto err_free_dma;
+>  	}
+>  
+>  	if (dma_has_cap(DMA_XOR, dma_dev->cap_mask)) {
+>  		ret = mv_chan_xor_self_test(mv_chan);
+>  		dev_dbg(&pdev->dev, "xor self test returned %d\n", ret);
+>  		if (ret)
+> -			goto err_free_irq;
+> +			goto err_free_dma;
+>  	}
+>  
+>  	dev_info(&pdev->dev, "Marvell XOR (%s): ( %s%s%s)\n",
+> @@ -1156,12 +1155,10 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+>  
+>  	ret = dma_async_device_register(dma_dev);
+>  	if (ret)
+> -		goto err_free_irq;
+> +		goto err_free_dma;
+>  
+>  	return mv_chan;
+>  
+> -err_free_irq:
+> -	free_irq(mv_chan->irq, mv_chan);
+>  err_free_dma:
+>  	dma_free_wc(&pdev->dev, MV_XOR_POOL_SIZE,
+>  			  mv_chan->dma_desc_pool_virt, mv_chan->dma_desc_pool);
+> @@ -1400,7 +1397,6 @@ static int mv_xor_probe(struct platform_device *pdev)
+>  						  cap_mask, irq);
+>  			if (IS_ERR(chan)) {
+>  				ret = PTR_ERR(chan);
+> -				irq_dispose_mapping(irq);
+>  				goto err_channel_add;
+>  			}
+>  
+> @@ -1435,11 +1431,8 @@ static int mv_xor_probe(struct platform_device *pdev)
+>  
+>  err_channel_add:
+>  	for (i = 0; i < MV_XOR_MAX_CHANNELS; i++)
+> -		if (xordev->channels[i]) {
+> +		if (xordev->channels[i])
+>  			mv_xor_channel_remove(xordev->channels[i]);
+> -			if (pdev->dev.of_node)
+> -				irq_dispose_mapping(xordev->channels[i]->irq);
+> -		}
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.51.0
 
-I suggest to slow down with this patchset. It's v10 already with
-simultaneous other changes and two (!!!) dependencies.
-
-I don't know how I am supposed to review this.
-
-Best regards,
-Krzysztof
+-- 
+~Vinod
 
