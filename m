@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-796515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0FC5B401D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:03:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20F4B401E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 683AB1881DA2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FE7D3B7C89
 	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555FC2D9ED8;
-	Tue,  2 Sep 2025 12:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CBF2DC35C;
+	Tue,  2 Sep 2025 12:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RH2p/s+9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TT5X9+es"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2E628489B;
-	Tue,  2 Sep 2025 12:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AAD2DBF7C;
+	Tue,  2 Sep 2025 12:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817926; cv=none; b=ThtvqwJsQvTaZXR9oFNFbuHRhYEYe+MiPwcFC3YHBNPRl7xhCEZIg6CoZKKQW0RhP1ykZcbKkcwEsAQnsP57odNAQaukyvMIZAHvyAmLNjk8Q3JmL0wN02uDGs2C+KgRGXdIcfqG7APOy5wVZvdGglx6j/nvsNOLFZlmJ1E8jzI=
+	t=1756817950; cv=none; b=Nxh64+enM6MbNpLK2HDIDzWbdXKcbL5vPakHXudq5sDqTe2Ks/3B54rfmuLjn8FAJ3J4bQ9pggK+EmyFMlfLGw8Psxyb+N+wf69zG2+Vu3O0cXSWNVLR4WAftnUJ36JEmjiK9UtDPr+Th6mjQMhhWToVFSBOuPdyDdwruk6aSlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817926; c=relaxed/simple;
-	bh=JbvKZYq/T9c+ex/qOUiFNhbDFAJ4YblHQurbSxyz1VA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NmAdTwZZ8RlDwEGzu3hmJyF5CjAy22eRBQjAV6qXkzj+nYIdjdPy6Whc8snPJxf2A6EihQIqRyA2ZHfDbq7waLgOL4b8B/bG/Vww3Gsjh4H6rRpn05A6v5CTBlH/XSryblJQIMUNvRRSP61SJxOURoEomKwtPFJAole9bDzVn8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RH2p/s+9; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756817925; x=1788353925;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JbvKZYq/T9c+ex/qOUiFNhbDFAJ4YblHQurbSxyz1VA=;
-  b=RH2p/s+9c0GVNoogMwXquql4CuddXQaPCsmUNSq9AMj+9//KpeITJot4
-   it5wc0xUzfqXM2Ewep7JiHeTbVLZD9zVRc+T9j0lnB5Q265Hz76bks+FF
-   uaV2I+WssBLiwRFRyj68ar1yBtvymlPbrm9iZRTZD8G6Z1hNaN0dTpHHz
-   /LWotSvCEApsDGZR6wVqmPXmpRg8uiLka73JJgeaqYdpww1rcUUr9wYYC
-   SgLKzgn53VxeaoptaZ1EFpCI+4Rk7UaVxc/nzk1u8KKfemBv8zaZWqHQB
-   1MkEhpYQVMNNcjLrva6oLCds8rB8iwT/2nK/FWw8RWZiEINYV4D1dLvHj
-   A==;
-X-CSE-ConnectionGUID: mbODwKUiRBGL+50WKrkb4w==
-X-CSE-MsgGUID: +bmSos0LT0O15j0XsDXADQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="58295409"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="58295409"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:58:44 -0700
-X-CSE-ConnectionGUID: m2TTrK6USFGW+SuBwk1Wmg==
-X-CSE-MsgGUID: 1cdbdKubTfm/vYWEHWTpkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="171713789"
-Received: from johunt-mobl9.ger.corp.intel.com (HELO [10.245.245.90]) ([10.245.245.90])
-  by fmviesa009.fm.intel.com with ESMTP; 02 Sep 2025 05:58:42 -0700
-Message-ID: <20baae05-167f-42bc-aa08-33df1aaa095a@linux.intel.com>
-Date: Tue, 2 Sep 2025 15:58:40 +0300
+	s=arc-20240116; t=1756817950; c=relaxed/simple;
+	bh=m+yAqPR7/o4k3p5s2GqkwwUJ/lttckZf0ppIGbB22Is=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=BzFpNb7gG9qVdZXwZr+Tg5kkBtTQ7ik0Xibmv7azkKxnBEIt8zJx2xSvdGWJI3UCL7HWRkY+JYopPVGh3stZruptFFmw+d6KrKkXOz4zzPCSFm42QyZW+A/Fo+RTF6I74L6ySR3DHvQeM/jk1lkwxQ90/tFXWdwstCx9rG6eSJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TT5X9+es; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582Ancqt016548;
+	Tue, 2 Sep 2025 12:58:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	faEL/orMJYn1h3sO4yVlQ1KRr8KMxwLo1N6sktjkMEQ=; b=TT5X9+esQFDZwx4X
+	kl4e1TQ2CLvfjSDIQiYy1owg3KLggbRGcnkhkh6k0QXKMvbMyi6DiUdKqYGgNnpX
+	9fP/S0CbyfTMfl6l7PjIJ2PKuL+LC8/EZTMMk3aepjLLxaYsDx07iJc3so3OwdO5
+	CoPd22PMgZ5kOhrwpU6s6jPSJkrN7Y/FmdIas57AwgdPm3R1zJVbGKvuR70vcAl3
+	39w95059iDx7usOqfm4Sgv9rz1Yzl53HupCTCesIur3jMhzvlemSnNuGMcjLPjnf
+	v+jqEUinuoYoryaUdMbb4reHDocgPPEFwPMSorduHeccO7NFHOhPw3JKEttRDjZT
+	vm4Seg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urvyyu81-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 12:58:55 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 582CwsI5006736
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Sep 2025 12:58:54 GMT
+Received: from [10.253.38.125] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 2 Sep
+ 2025 05:58:45 -0700
+Message-ID: <fbc9baa3-041d-4018-a23a-aa428fdcb45c@quicinc.com>
+Date: Tue, 2 Sep 2025 20:58:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,95 +64,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: xhci: Fix xhci_free_virt_devices_depth_first()
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-Cc: David Wang <00107082@163.com>, WeitaoWang-oc@zhaoxin.com,
- gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- surenb@google.com, kent.overstreet@linux.dev
-References: <20250829181354.4450-1-00107082@163.com>
- <20250830114828.3dd8ed56.michal.pecio@gmail.com>
- <5051e27a.2ba3.198fa7b5f31.Coremail.00107082@163.com>
- <f9476552-a6dc-4f1c-91da-b15c8f0d9844@linux.intel.com>
- <20250902093017.13d6c666.michal.pecio@gmail.com>
- <446082a4.7dbe.199098cd654.Coremail.00107082@163.com>
- <20250902104630.6a9f088a.michal.pecio@gmail.com>
- <20250902110730.723a48a0.michal.pecio@gmail.com>
- <6042295b-8dad-4816-8505-b9b6c6f6049d@linux.intel.com>
- <20250902125549.03f22bcf.michal.pecio@gmail.com>
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: Re: [PATCH v4 07/10] dt-bindings: clock: qcom: Add NSS clock
+ controller for IPQ5424 SoC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Varadarajan
+ Narayanan" <quic_varada@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        "Manikanta Mylavarapu" <quic_mmanikan@quicinc.com>,
+        Devi Priya
+	<quic_devipriy@quicinc.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Richard
+ Cochran" <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_leiwei@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_suruchia@quicinc.com>
+References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
+ <20250828-qcom_ipq5424_nsscc-v4-7-cb913b205bcb@quicinc.com>
+ <20250829-quick-green-pigeon-a15507@kuoka>
 Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20250902125549.03f22bcf.michal.pecio@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250829-quick-green-pigeon-a15507@kuoka>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: KdX-7E0jp7NDz_sEx4UwHAOWY9h8bKAl
+X-Proofpoint-ORIG-GUID: KdX-7E0jp7NDz_sEx4UwHAOWY9h8bKAl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfXz2LxEWqCFNFu
+ kzLviiRpVBuw7Mf1zBwk7nec8cNd2SNwmtfFbhQXtSO1fNr2VPe4y+UCXD+nNX7UtOV0fTtiLFE
+ wXSelzEyzQOROdhhTdz4yIfSu0zlOqiR+4+UnKkRNlbsC3eyn+6tiTOym3VLe8dC8DjRFCxdtwq
+ 75U+QKhk6cz53mkpkj0jvX9Hu0pUuFTDWj4NyZdfbxdJpt32r29VDDwvk1QHZdhR5jCRXT1dGCd
+ yIkdDwlCbUeeUwb1/qSoegF34WBiGlp1nteznHFc2iKnSQgUfeB5xocxicSLwb04prMVpCV/41W
+ qcMqCs0elBcEkZhOsD+99YBiirT2LRo3jw5Pxa4UXDsDoVnzP/AWDsE0pcA3uXduhEVhCNwHMPA
+ 8Uei693c
+X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b6ea0f cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
+ a=T-GtwWB8VZZ7glhfeBgA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300027
 
-On 2.9.2025 13.55, Michał Pecio wrote:
-> On Tue, 2 Sep 2025 13:13:12 +0300, Mathias Nyman wrote:
->> On 2.9.2025 12.07, Michał Pecio wrote:
->>> On Tue, 2 Sep 2025 10:46:30 +0200, Michał Pecio wrote:
->>>> On Tue, 2 Sep 2025 16:30:48 +0800 (CST), David Wang wrote:
->>>>> About the change from "<" to "<=", I did not observe any difference on my system. Is it because my system does not use up all slots?
->>>>
->>>> This too, you would need to fiddle with devices (or connect enough
->>>> of them) to reach Slot ID 255 (probably the highest on most systems),
->>>> depending on the xHCI controller and its ID allocation policy.
->>>
->>> This made me wonder what those policies are. I'm too lazy for thorough
->>> testing, but I plugged and unplugged the same device a few times.
->>>
->>> Most HCs kept assigning ID 1, so they likely always pick the lowest.
->>>
->>> My AMD chipset, two ASMedia USB 3.1 controllers and a Fresco FL1100
->>> kept assigning sequentially increasing IDs, so I suppose I could pump
->>> it up near the top, connect two high speed hubs and trigger this bug.
->>>    
->>>> But also as explained, this bug doesn't make things go boom just yet.
->>>>
->>>> Except if combined with your bug in an obscure edge case:
->>>>
->>>> 1. A high speed hub has slot ID HCS_MAX_SLOTS-1 and some TT children.
->>>> 2. Another high speed hub has slot ID HCS_MAX_SLOTS.
->>>> 3. We start with freeing the second hub.
->>>> 4. The loop is entered and leaves vdev pointing at the first hub.
->>>> 5. The first hub is freed instead of the second one.
->>>> 6. Then its children are freed and UAF its tt_info.
+
+
+On 8/29/2025 3:38 PM, Krzysztof Kozlowski wrote:
+> On Thu, Aug 28, 2025 at 06:32:20PM +0800, Luo Jie wrote:
+>> NSS clock controller provides the clocks and resets to the networking
+>> blocks such as PPE (Packet Process Engine) and UNIPHY (PCS) on IPQ5424
+>> devices.
 >>
->> I'm not sure I follow the above.
+>> Add support for the compatible string "qcom,ipq5424-nsscc" based on the
+>> existing IPQ9574 NSS clock controller Device Tree binding. Additionally,
+>> update the clock names for PPE and NSS for newer SoC additions like
+>> IPQ5424 to use generic and reusable identifiers "nss" and "ppe" without
+>> the clock rate suffix.
 >>
->> I agree that changing the "<" to "<=" makes sense, but fortunately for us there shouldn't be any
->> issue with current implementation as xhci_free_virt_devices_depth_first() is called with highest possible
->> slot_id value first:
+>> Also add master/slave ids for IPQ5424 networking interfaces, which is
+>> used by nss-ipq5424 driver for providing interconnect services using
+>> icc-clk framework.
 >>
->> in xhci-memm.c:
->>    for (i = HCS_MAX_SLOTS(xhci->hcs_params1); i > 0; i--)
->>                   xhci_free_virt_devices_depth_first(xhci, i);
->>
->> if HCS_MAX_SLOTS slot_id is a hs-hub then all its children have slot_id < HCS_MAX_SLOTS,
->> and loop works fine.
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
+>>   .../bindings/clock/qcom,ipq9574-nsscc.yaml         | 62 ++++++++++++++++++---
+>>   include/dt-bindings/clock/qcom,ipq5424-nsscc.h     | 65 ++++++++++++++++++++++
+>>   include/dt-bindings/interconnect/qcom,ipq5424.h    | 13 +++++
+>>   include/dt-bindings/reset/qcom,ipq5424-nsscc.h     | 46 +++++++++++++++
+>>   4 files changed, 178 insertions(+), 8 deletions(-)
 > 
-> The loop works fine, but it exists with vdev pointing at MAX_SLOTS-1
-> due to off by one and then this happens:
 > 
-> 	xhci_free_virt_device(xhci, vdev, slot_id);
-> 
-> which means:
-> 
-> 	xhci_free_virt_device(xhci, xhci->devs[MAX_SLOTS-1], MAX_SLOTS);
-> 
-> If MAX_SLOTS-1 is a high speed hub, it will be freed right now, without
-> freeing its children first.
-> 
-> And whatever this device is, it will be freed without nulling
-> xhci->devs[MAX_SLOTS-1], which might cause other UAF later (not sure).
-> 
-> I think it's possible, though I haven't tried actually triggering it.
-> The problem didn't exist before this recent patch.
+> Are you going to change the binding in next version?
 > 
 
-I see, yes with the slot_id regression the incorrect vdev will cause issues.
+As discussed in response to the comments in IPQ9574 bindings file, I am
+not planning to change the binding itself in the next version.
 
-Sent the patch to fix it forward
+> Best regards,
+> Krzysztof
+> 
 
-Thanks
-Mathias
 
