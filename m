@@ -1,305 +1,279 @@
-Return-Path: <linux-kernel+bounces-795431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6847AB3F1F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE20B3F1F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1832025B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DB0D202708
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF0B2E03FA;
-	Tue,  2 Sep 2025 01:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C0A2E03F5;
+	Tue,  2 Sep 2025 01:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ecTAvNWK"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="BkvtiDFF";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="ZQorFSy2"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CFB2DFF33
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 01:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756777366; cv=none; b=aK87S6fyildN5h1wXViKhvmX4mvqRLMIlGVAKh+WEPSRIpo4mu5h+9FGPrDoHWsQGh2S0Gi0uzCeBXu9bDggXDDLyGd8NcLSzG9iSJ8Yoe7vds9NFeSpmQRBZoANfTT6pzXnkzyFSQ0FTfPRcYvy/vLGFSEHJSobLJPRQ/FuYYI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756777366; c=relaxed/simple;
-	bh=4/Uhd8Znb9sZjcGcDPqLOzxQbIb6ppksBxHE4QsnWQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDztnPUXn6NzRDeowiJHwRj/lbFjGUNUX2VeHRY4fSoUdxNo+6Pd+vbBkToyQdZVr7vZbnvvgUNgUaD/aaViHlKVRidfJaxc0cNfQxi3/tkfylpjRLRta4tLTY4TtDaSatnOI/hcFhW89A73f/9PdutQeu0pjVNhb8JSajIW7XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ecTAvNWK; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2493798cd83so6212455ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 18:42:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BD126E17D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 01:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756777378; cv=fail; b=pgi63Xvr5amIWls78jz+eV113nZ013necRMz8O+4hVFvow9Z1dKOAY+b50lTtSjjAx9kn/uZ5fxTRWdChyiEn92sBeTPJC13OYYlI4YkGpkb56ydpB6SYJBIST0fazuNUFb1lVIEStJbiuIOxC+d/Bkcaq7fLhvEEKx+UmrNdCY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756777378; c=relaxed/simple;
+	bh=75hacSY3z7pYiu2JuJDWy3DupipC9zwELwhYZoNpwT4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XGGx3zCNMs3zNcIy8wIgCEOPruQNLom2MHx/dw8hoTL3FHUtTQSMJWTa7RjPAgz+Vxfea+F97RdMc3VfObODCYxMjD1gXjoiJ64m7vQwC+hsvbanqVUI5BwboALjWNF5TuZzU4Rp3YZxUWb2J60PpL3SBsTD8fS6rM5S7pykZGA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=BkvtiDFF; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=ZQorFSy2; arc=fail smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 226dd4d8879e11f0b33aeb1e7f16c2b6-20250902
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=75hacSY3z7pYiu2JuJDWy3DupipC9zwELwhYZoNpwT4=;
+	b=BkvtiDFFAH8BQV8TufhbMfLwAaGPYqUYR8SdEp3C+q/Nx4tqzkyMSBVeBI0oXmKNwIJaMtTXCn/wjbar2K0D7PEXoodlPQNZg5Z9V3GNd2tJRWoDQ0/gOnMusNO2WONM3weB/YEQdsRgWKST4qeYCKjpbDeeGaL3yF+nUse+wVk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:76d465e3-d485-4693-ab9f-b8e7102d5fb8,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:c1ee176c-8443-424b-b119-dc42e68239b0,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111,TC:-5,Conten
+	t:0|15|50,EDM:-3,IP:nil,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
+	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 226dd4d8879e11f0b33aeb1e7f16c2b6-20250902
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <xion.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 62875611; Tue, 02 Sep 2025 09:42:50 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Tue, 2 Sep 2025 09:42:48 +0800
+Received: from TYPPR03CU001.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Tue, 2 Sep 2025 09:42:48 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VLVmdCgDlJ61FxcmZ8sY7ggE5jBCmT6OTwcQRFlgwwbNa3HkvDXDSFY9pdhSLEyiuMa15g7Y6h3KlZQeLOZ+cLB2KK7287MMu4+thAd/vRRyPUZKjn2AelphDqi1eRKB5IVLA/+HHCZfJWy58gfficM4b0OPh3diyeSDX7KPIuEPuWRxfF8Y9QRTPq3B+RzOIeaidBJW0hwl+8xXUPl0OZmPn8qM0Yu/EePTqQH3m8rw6Q8oYPk2B4jEX1cztKLpBXmH/U4w0B0zKoE1LRtxN3J0pvDgcBc4JIO4BXf4Pwtnj8T6HDQBCalWrVihdByHdof9xxs0CjI4Czfho9lbTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=75hacSY3z7pYiu2JuJDWy3DupipC9zwELwhYZoNpwT4=;
+ b=MHF9mfLFSHfpPY4nIBwRgYHvY15K2QE/aC6x2kXSnPBsTLd51cs/L3urQWZ0KggoP7PTroBW6NbTa/6sQ96I0Gf/fHFZX1DjwdfDHuWTnIE0TWGIt4ZhS4EVVGBf3Kf5mYeAKxz/+gnR9We2qYljC7kMIvVnrgyp7kVSC6aCM4Z2bCATQDUBGS/xTlbP/99omkhPii7KRzIYJlBKVYL+NeDldASVgeb6LPdBipavDHg44q2LK/owbgVrfHwPkpFxh1NegdXOneuPSkxK3iFjihXgtUoZOaJJBTKOXblDzSRHHmwijdlXymuocJsMdIY2He/fr20g2o5Vw27TR4ZVlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1756777363; x=1757382163; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BfCifJrB2SLyWnEpCswsFOTC1RVMEBJVNSJK/ERFiaY=;
-        b=ecTAvNWKmsApE0GWkKM15tnLYJntjGFFrAfb5pdXfTbsxF4BVsGI5ttDmdFWxUFReK
-         Ojzn1DToUtGqv2x6Ey1J0DOcdtzdmuo8YZQwn2syTDWT8PxotoKE0KNCH/8X92S53ytR
-         goq3VTIih6c1kK5wTijdhUjJafwCDX4qkrhHSTBtlEe2j4WMOM64khlRsRuaM2PwMiwl
-         26pRR/qOyVpHcoWCzdv1Da7kIjyzd9q9PNLNM4qz+JWBBoaVbCjCg6rn1HQCaNpf/5JL
-         zQZnbqeSmYHLqLvuCFi4vjyR56Q1CElcLufkO5fRhu033jJqZnBqHWFJFmE/kQzXgvZ/
-         SEIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756777363; x=1757382163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BfCifJrB2SLyWnEpCswsFOTC1RVMEBJVNSJK/ERFiaY=;
-        b=I9zf6fbAU543UkHLNd3zUZl5WidKUXdRiPT6BFrfHNzZbqNOsUtXNvjE7HamQa0yau
-         m8wk95UWK5cZ0iZEcknEKXyJu0WZqWhVwsuw7e30jzktvkPeUnvE+p+GSVTj6vaphqfY
-         Px3laq34mDuAhoS1vB465EE6YrSiUXL06AxZtbwv4by7+oAcQVbJOclq8jUsfOK3kw+A
-         kLCNxczs+wTJZUecWMIUO36GuNMM6HdY0DrCZKKeLV0cPrNP2uc9/S5o1hdJQVNZiPBx
-         7CMkucjNSp2kPhAsL16N96bQMRM4GMSzXla0iJZ/wiNJG5xTPs07FY/+dxC5xa2NfK+y
-         JE9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXRnwB1gvBRSlUfhhdBuABHPjeQyY2a2BgLsNxB6JMxAcCR/84WX+n8AdrjidbDeQIgd0Nw2jwdt3kkeoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtzoU/WP9fnG/CelSpkkwf1J3dRSXR5uB7NC2OkdAJS126/K0k
-	ZrO4MdDPUpJiE4NhBARqwghbpkkRmdOy3Y6v1Kqv7VgnBIhmSiu6fwKRJ6aMb9k9sFphc7xepdQ
-	CLTH/MDdVTITf5SL585ZoQufxaQ6O6DXjY/XDeBl6JHwo9kzZGeZrCXolvQ==
-X-Gm-Gg: ASbGncvcrg8ZHYuUK62GdILDxIq3IOgW4LHsPkBsqwbUYUMTo3ky11DNNnn4VywJQj4
-	MYyM3IpWf0fQCl8OEhoe/+pJsR0chLgX2frPBcmsgKWV00jvJroX9Lgua6KU/7wfYSFyxAUc5q8
-	ejmgyS+CG/V8fJZIP7LvfrXEu5qGZKjCn9Xbn86DLuSqQfv2HTZA6CMPii5j94ypCYlL7s9qI9P
-	0ceTaqw9fcO
-X-Google-Smtp-Source: AGHT+IFNrCMV5JbVD/Utd+eFEPbj80kRL6MOqB3HvdE5Vm/AOFRuQOyvBR7oXZH7xIIJH4zyY7d9O43cXofgbAhdYXs=
-X-Received: by 2002:a17:903:186:b0:248:9afa:7bc3 with SMTP id
- d9443c01a7336-2491f246dc8mr81314945ad.8.1756777362921; Mon, 01 Sep 2025
- 18:42:42 -0700 (PDT)
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=75hacSY3z7pYiu2JuJDWy3DupipC9zwELwhYZoNpwT4=;
+ b=ZQorFSy2wJOVoleiHAISLd2koQbeURu4IJjm7777Qp8g0zx2oOsvKvpEET0aSN/it+K06ySTLL30TzxX+wiG9kn+FcAigI40GbDFf241+3Cf9eJptFsIwAaic+5xCXJC1zl69rU1Ub9A8igaWsQ0KKO+8/SxIHrk8+mVXo1INLI=
+Received: from SEZPR03MB8122.apcprd03.prod.outlook.com (2603:1096:101:183::7)
+ by JH0PR03MB7729.apcprd03.prod.outlook.com (2603:1096:990:12::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 01:42:45 +0000
+Received: from SEZPR03MB8122.apcprd03.prod.outlook.com
+ ([fe80::e130:f417:b0bb:f2b7]) by SEZPR03MB8122.apcprd03.prod.outlook.com
+ ([fe80::e130:f417:b0bb:f2b7%7]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 01:42:45 +0000
+From: =?utf-8?B?WGlvbiBXYW5nICjnjovpkasp?= <Xion.Wang@mediatek.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	wsd_upstream <wsd_upstream@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	=?utf-8?B?SHVhZGlhbiBMaXUgKOWImOWNjuWFuCk=?= <huadian.liu@mediatek.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "arnd@arndb.de"
+	<arnd@arndb.de>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 1/1] misc: Prevent double registration and deregistration
+ of miscdevice
+Thread-Topic: [PATCH 1/1] misc: Prevent double registration and deregistration
+ of miscdevice
+Thread-Index: AQHcFZwQOZEhJSUEf0OpnbqCU1Sn+bRz0oaAgABtc4CAAER0gIAAEBwAgAAsAICAABn3gIAAC08AgApGAYA=
+Date: Tue, 2 Sep 2025 01:42:44 +0000
+Message-ID: <836023cd8131e4fa63dc027a8fd6e47ec3d589ee.camel@mediatek.com>
+References: <20250825084556.10358-1-xion.wang@mediatek.com>
+	 <20250825084556.10358-2-xion.wang@mediatek.com>
+	 <2025082533-ranked-simply-4b63@gregkh>
+	 <d3d0fc0e19f939c093e6df1ff08ce23be71636a3.camel@mediatek.com>
+	 <2025082638-parlor-retreat-56ff@gregkh>
+	 <1ffa28bf6e3dcde83a6a6a5dde163596c4db639d.camel@mediatek.com>
+	 <2025082631-hypnotist-snazzy-147a@gregkh>
+	 <d3a780c367478868319064c27e0b41c69d4cc722.camel@mediatek.com>
+	 <2025082646-regalia-glass-951d@gregkh>
+In-Reply-To: <2025082646-regalia-glass-951d@gregkh>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEZPR03MB8122:EE_|JH0PR03MB7729:EE_
+x-ms-office365-filtering-correlation-id: 171be5fd-68fb-4b24-cdfc-08dde9c203ae
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|7053199007;
+x-microsoft-antispam-message-info: =?utf-8?B?TjI2SmZRUFB1Q0FqOHlPc1l0VkhVbElubUx1ejgwd1NOb2YxaWljOG40ODlB?=
+ =?utf-8?B?b1d4elgwVGhJWk13TXRiQm9LMmxqRnE1MjF3ZDBDUldsVjU2dHlOZXJWdDJO?=
+ =?utf-8?B?SU0wRlZYRFdqcHUrZjhqOElSUUNUM1VodC9CaThpcUJ1NTRiaXFsT0tQbGhS?=
+ =?utf-8?B?MHprQ1R6U1NXcXg5VUMxWkt3Z1ZsYjg2UEUrSVZSVWNKSk9KUGV4QTR3MjR5?=
+ =?utf-8?B?V0tNdm1wWXAzNVFPQm1ENnBJcnVzVnA1dzJGTWJjNzNkT1pzMThhRitFNUFx?=
+ =?utf-8?B?WnNLNDZ0bCtnMzNtdFk1YW9VR0lQR2ZBNVpNZG5EQmVtT1hhZjFNK2RWaXQ5?=
+ =?utf-8?B?dlBaVEU0T1RXa0ZWdmRXd2FpcFNqa3lHK0o4RE9La2xwYmEwa01SLy80cFZi?=
+ =?utf-8?B?RTF3Mkk2K1lFQzYxSjhPWjk0Z215Z1JETmJhV0RPMC9YRDRiUHJNZlRDY2h3?=
+ =?utf-8?B?OEErd0pLOEYxdG1QVnQrVDJ6RHUyRzdKR083OXZieDg2d1ZJOWFPZUxTYlgz?=
+ =?utf-8?B?WEQzWGp2d3o0Q3gyM3MrSUQ4MHlGMGtsUmJOY3o4dHZROURydkdZVmlEbGFP?=
+ =?utf-8?B?SlFycEZBdG9iaVFRWWNBa0tGeHY4RmR3Szd4RXdJTHlPZWRkRkxRcndvVEhD?=
+ =?utf-8?B?enFzNytQVDdnbW1kUUc2VXJsTmdLbzluVHYvWDBZUUFXRyswU1hJQXpuVmcy?=
+ =?utf-8?B?elpNaG5BRGdUNnJEVEZCWFAzMGMxOThTUDQ4Mmg2bmRGenhKUEhnL2ZseEph?=
+ =?utf-8?B?QkpHNHBEYloxLytoMHhJbzUwU1hLZVhiMWNmdjUyVjZaY0djYWlTTHdzNGdk?=
+ =?utf-8?B?UkttanJweFZ6SzZIVGpyTU1mYVVLUEN6ZVE5Q2NydGpvTUlEeEdGd0NXYzl5?=
+ =?utf-8?B?MDNpVXNUVDVNSUtoMWFrQVQ4Nkg3S3RjWk5DdnBOc21tTTQ4NVJ4Zy9ldXR2?=
+ =?utf-8?B?NURVVENmdy96d0Y2RERldzVkSXhQYVEyaDQ3KzlkMWhrKzhHSWsvTmsvNWlF?=
+ =?utf-8?B?SUtybFlyN2M2Z2c4MG9oYUFRcDVqSkE3Z1JDVVpieC9QY0JwaFVtWno2K0h0?=
+ =?utf-8?B?S2dKVXM2L0tUTUQram5SRDc3VlFtaXUvZlVxOUNFcWhiUVByMWhLam0yYXN5?=
+ =?utf-8?B?YUNWNVZMV1JZR1FRVWdkTjh3RXFnUStJSUtjdVY0RStHc2N5cTZLQnVCUE94?=
+ =?utf-8?B?QWlQaVZHM2FQclkybDNFZDlCeVNoc1Ryb3JNSWw0aUtGbHMrUUFucDdma3lK?=
+ =?utf-8?B?Sm5EZTc3bzJrVkhveWRKUmFHVTRQSWg5RHIxbVFVbGtIUTZrTUduN3pJQ2FF?=
+ =?utf-8?B?cFdWT2o5cll0ZG5hekVBU0hQTjVQVkZOWUNmK3dxeXVyQjdNZlBiWFdxNkY3?=
+ =?utf-8?B?UUlCZjlUVXQxRS9wek5XWW1mbk9nN1dieXQwWm9ISVAwNWNHdktMSlREWmIw?=
+ =?utf-8?B?MWc1WDNKWTZZa1JoSFdaU2Y3eHJEZG9lS1VHMFZWNXBWZTYweTdiRkhCVnJy?=
+ =?utf-8?B?NTllZGFCQnpMUkR6VmYyZWl6UWprNm9rNkxWWEhDYzNjYlJHMlZSR1ZoM2E2?=
+ =?utf-8?B?cGNQM29Kc0dEOVQ0a09PdUxsMXBMYnU0OFVMNlNwVWNjMmtoZlRnNlo3VDY1?=
+ =?utf-8?B?Ky92ZW91RExEZUFQMCtKUkxoVjhwWExrbk45TkxCTWRqckkzSmgzY3d1OE1R?=
+ =?utf-8?B?dEl0N25YamxINmVaMFR1V3FqYUtyZ0hzZS9jc240Z1p3VCsrZmptcUwra1B5?=
+ =?utf-8?B?NjMzS2N0MGFwRktDMEdzbTZjbUdFNHhFZkljTzNBTnNaNHRaSHVHdWI2Yk8w?=
+ =?utf-8?B?Uk0ySzkwWStLZVZxSEtSK2dmZDhSdmlOeTFVQ1lhZk9ydGVQaFVYTWxsSUJW?=
+ =?utf-8?B?Wmo0dXFRNzZxTktUVUhVY2JqZ2ZiWEJFMkt1NjBicTRUYjZFajRqbE42Tmpq?=
+ =?utf-8?Q?HUng6K4lAroISEAirHP68QixI4UVtG0Q?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR03MB8122.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cTBzTnVCMG5ZL1ZXN3I4c3lSZTBzdFNvK0tlcnZjNVFoUnN6Qm82S2NJSWhp?=
+ =?utf-8?B?Tk9Ta3V2cDVrVFBhVmdOU0p3bTZHbHUxQU5qdW5SOEE3djlJSHVnY3orcWd2?=
+ =?utf-8?B?MlRSd3lER09aRCtxOGR1NXd3dTBaMUd2WG5sTWRCL1ZZaER2ZVJSaDJ6NWNN?=
+ =?utf-8?B?SmVsUHdrN0FkUkYxZ0NzYjQ3WThZZlZnRDV1eXFPdmdPQUY0d1I2ZzEwRkFr?=
+ =?utf-8?B?YW1xNnBVbm1uVWE3dzZWeHgxUVVFQU5BWmNqckpPa3dKT0g4WlhNZEdUeUhL?=
+ =?utf-8?B?VGdEd0gwcEFXSnF6bnl1V05NSnFteXFrQTQ2dmRlU1BFQlZiSmNMb3p1UER2?=
+ =?utf-8?B?L2VTbllBUFhGK1NsR2ZWbnd1d2xPM0o4aTZDT3BMcFcvSGVKWHdXOGZkR1VF?=
+ =?utf-8?B?dHBmUFZDcThTL2lIdGhXUDk3ZGM4WFp5cmY0ekhhSktxYXdNK1VBS3dJbHlY?=
+ =?utf-8?B?dXNHRWJRWXlnSGt1R0pYaDhWd1JrdGd2UWdUK3JvNy9Qa05VaEIvbGM1U3Ax?=
+ =?utf-8?B?ZHlTMk9WSHJneng0YnM0Y0QxY0hsU05KR1dHVzQvSVJLQ05qZWRSb1ZZNGhZ?=
+ =?utf-8?B?cGVUOUNhbXNNUWt3TFFGWkJVQkVsTTAyOWIweU9xVjJLUkZUVlEwN2JNRitZ?=
+ =?utf-8?B?c1pjb1ovelgzY05qZVV0MloyZk5qL3pQbVBrcjNXeDZYWkpYZEkvczRzR3o0?=
+ =?utf-8?B?VHJlb2M2MHA3NkE5ZEVPamtXT0NJUUo5cEtYTS9VNzdBY3NVR0NNL1I2Ykxv?=
+ =?utf-8?B?RnYwWnFMeXVZMCtoLzdRRzNXRUVlVlFDZ2UzYmN2aHZQZG9RUGFlYUVZdjZE?=
+ =?utf-8?B?WStHRTZ6Z1A0c2pmT1RIMEcrYkdqVENYODU3aVFYYVFXajBoZ085WXdIUkYx?=
+ =?utf-8?B?TDhmSEJMUVY4QnFqajlXNENtODRhKzlQYTZjdk1NdTI5aUhnYldDeEJYWkM2?=
+ =?utf-8?B?di8rS2VQSDhwbUFHL2s0dXJlaGpXZzRrTzdONDU2bHhXblhrS0w0QitsSHNC?=
+ =?utf-8?B?WUpETERIVWdYRm45WWpMK2duZ3I2R1psYmlLSmVuZVNtMFI4SFZ6SDI0eHpC?=
+ =?utf-8?B?Q1pXSXczYkZNeHIwRjhNbjUyMDBqaXNYeXFlaDhvdkdLSFQ2aE5kcGtoWTd2?=
+ =?utf-8?B?TEFaMTJ0NzZRT1ZIS0xFVjdubXJpbGhQMk9tWWRFQ2xZd1phUnRmWkhTeUZW?=
+ =?utf-8?B?Ui9xdm9UOTR2cG1aTy9nWU9rVEVtcFpNVXRGZW9pMGl1dGNLY1hGdFlEUzNi?=
+ =?utf-8?B?ZTJHZCs3dUJHc000Q0R3anp5MUZMSWlLZFlKb3JqeEQ2Mmp5TE9OTTV5M3Fa?=
+ =?utf-8?B?Q090ald4ZzRxWkxQQ0JOVG9UTm5vVUtlWWZmcTJQbU9qVlFMNmk3ZEY1dWlw?=
+ =?utf-8?B?Nkd3SlVoVHRFRmJ5M2g1Wm9sd2QyZU9oZjIzWENUcGt4UkwrUVU0NVBKb2tJ?=
+ =?utf-8?B?ZDJ4bENOMUUyVmUrM0RDOFViY3k4YUZEa3NCSko5SEtaUzhsYU44d2FrNm1h?=
+ =?utf-8?B?dHVEa2dneUFPbEtVQUFhUHA2VVkrYnBFak9CNFJCeEpmSEFGWXNXUG9aTnds?=
+ =?utf-8?B?VHlMdnRLc2lBSk1rM3UreHVMOHd5ZVRHM0N4VUVMZk9wUll4RFZ1cWI3MnZF?=
+ =?utf-8?B?Vkl0VndxUzNYMTAvS1B6QVBwRml5ZmFBV3lieS9lZGtIZklQbW1KWXdYb21E?=
+ =?utf-8?B?cEhFTXV6SEFOSjBaYmkzcDlBdlNOaVV0YzFsdG5RUVFDMmpFcVhLV3RHZGIz?=
+ =?utf-8?B?aVpEWEIrVDZpWHlSZzdkTjBBcEw4bXQ4dzlzRTFtV3RmeXowUlFlRlRxWnZS?=
+ =?utf-8?B?SzRLMExoYVNnYWtZSlVYYmJQekxzV0ZsSkJxS0NWTnhXYTAxS3JHQnZHUVcy?=
+ =?utf-8?B?SlJkQXNRT2cwM3dDdXVOZys4bjcvRHpRbUo2S25GUWs4d3pCME5UcnZxbUs2?=
+ =?utf-8?B?ZlJlbU0vTVByMFFEaVJKa1VKbDZURnJ2Skl2cUR2UVdTN3N1SnR1QUZncFQ1?=
+ =?utf-8?B?Zml6UkdjU0pKWUVFZW9QSG1GNXN4eDgzL1EwSk5GMjk0ajR1QTFtMUREMjZF?=
+ =?utf-8?B?bk14djZ1NGF4ZzU4WnZ5MlhpSk55eW5DTjl1dmppNnVXTFBVV0FyVmtPdFoy?=
+ =?utf-8?B?VDd6bUFPOS9pbWpvTDltTFlHWlM5VS80TjN5UVdnSjE3aVpCN21KQjJTRzZV?=
+ =?utf-8?B?K3c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <229E42D37DD51C4485556503DECE0A23@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808153251.282107-1-csander@purestorage.com>
-In-Reply-To: <20250808153251.282107-1-csander@purestorage.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 1 Sep 2025 18:42:31 -0700
-X-Gm-Features: Ac12FXw8NS4EHlKpbA5KOiJ_5HMYwxKG21MH7DTOolyIr0tWM_P3gM76r_c3I2U
-Message-ID: <CADUfDZovEN1MouTGyWHC4ZuhuPPTZ6WCkrS=yqa18xuJifuvqw@mail.gmail.com>
-Subject: Re: [PATCH] ublk: inline __ublk_ch_uring_cmd()
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR03MB8122.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 171be5fd-68fb-4b24-cdfc-08dde9c203ae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2025 01:42:45.0984
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6pIUWtc1FoNBD5ENnt8lPjYSlMy8MhIUW2QfbYX8ub+m8b0Gz3wKDm1KU5ffgJnndD4sNBFjN+ZftRCvSNHlNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7729
 
-On Fri, Aug 8, 2025 at 8:32=E2=80=AFAM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> ublk_ch_uring_cmd_local() is a thin wrapper around __ublk_ch_uring_cmd()
-> that copies the ublksrv_io_cmd from user-mapped memory to the stack
-> using READ_ONCE(). This ublksrv_io_cmd is passed by pointer to
-> __ublk_ch_uring_cmd() and __ublk_ch_uring_cmd() is a large function
-> unlikely to be inlined, so __ublk_ch_uring_cmd() will have to load the
-> ublksrv_io_cmd fields back from the stack. Inline __ublk_ch_uring_cmd()
-> into ublk_ch_uring_cmd_local() and load the ublksrv_io_cmd fields into
-> local variables with READ_ONCE(). This allows the compiler to delay
-> loading the fields until they are needed and choose whether to store
-> them in registers or on the stack.
-
-Ming, thoughts on this patch? Do you see any value I'm missing in
-keeping ublk_ch_uring_cmd_local() and __ublk_ch_uring_cmd() as
-separate functions?
-
-Thanks,
-Caleb
-
->
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> ---
->  drivers/block/ublk_drv.c | 62 +++++++++++++++-------------------------
->  1 file changed, 23 insertions(+), 39 deletions(-)
->
-> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> index 6561d2a561fa..a0ac944ec965 100644
-> --- a/drivers/block/ublk_drv.c
-> +++ b/drivers/block/ublk_drv.c
-> @@ -2267,56 +2267,60 @@ static bool ublk_get_data(const struct ublk_queue=
- *ubq, struct ublk_io *io,
->                         ublk_get_iod(ubq, req->tag)->addr);
->
->         return ublk_start_io(ubq, req, io);
->  }
->
-> -static int __ublk_ch_uring_cmd(struct io_uring_cmd *cmd,
-> -                              unsigned int issue_flags,
-> -                              const struct ublksrv_io_cmd *ub_cmd)
-> +static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
-> +               unsigned int issue_flags)
->  {
-> +       /* May point to userspace-mapped memory */
-> +       const struct ublksrv_io_cmd *ub_src =3D io_uring_sqe_cmd(cmd->sqe=
-);
->         u16 buf_idx =3D UBLK_INVALID_BUF_IDX;
->         struct ublk_device *ub =3D cmd->file->private_data;
->         struct ublk_queue *ubq;
->         struct ublk_io *io;
->         u32 cmd_op =3D cmd->cmd_op;
-> -       unsigned tag =3D ub_cmd->tag;
-> +       u16 q_id =3D READ_ONCE(ub_src->q_id);
-> +       u16 tag =3D READ_ONCE(ub_src->tag);
-> +       s32 result =3D READ_ONCE(ub_src->result);
-> +       u64 addr =3D READ_ONCE(ub_src->addr); /* unioned with zone_append=
-_lba */
->         struct request *req;
->         int ret;
->         bool compl;
->
-> +       WARN_ON_ONCE(issue_flags & IO_URING_F_UNLOCKED);
-> +
->         pr_devel("%s: received: cmd op %d queue %d tag %d result %d\n",
-> -                       __func__, cmd->cmd_op, ub_cmd->q_id, tag,
-> -                       ub_cmd->result);
-> +                       __func__, cmd->cmd_op, q_id, tag, result);
->
->         ret =3D ublk_check_cmd_op(cmd_op);
->         if (ret)
->                 goto out;
->
->         /*
->          * io_buffer_unregister_bvec() doesn't access the ubq or io,
->          * so no need to validate the q_id, tag, or task
->          */
->         if (_IOC_NR(cmd_op) =3D=3D UBLK_IO_UNREGISTER_IO_BUF)
-> -               return ublk_unregister_io_buf(cmd, ub, ub_cmd->addr,
-> -                                             issue_flags);
-> +               return ublk_unregister_io_buf(cmd, ub, addr, issue_flags)=
-;
->
->         ret =3D -EINVAL;
-> -       if (ub_cmd->q_id >=3D ub->dev_info.nr_hw_queues)
-> +       if (q_id >=3D ub->dev_info.nr_hw_queues)
->                 goto out;
->
-> -       ubq =3D ublk_get_queue(ub, ub_cmd->q_id);
-> +       ubq =3D ublk_get_queue(ub, q_id);
->
->         if (tag >=3D ubq->q_depth)
->                 goto out;
->
->         io =3D &ubq->ios[tag];
->         /* UBLK_IO_FETCH_REQ can be handled on any task, which sets io->t=
-ask */
->         if (unlikely(_IOC_NR(cmd_op) =3D=3D UBLK_IO_FETCH_REQ)) {
-> -               ret =3D ublk_check_fetch_buf(ubq, ub_cmd->addr);
-> +               ret =3D ublk_check_fetch_buf(ubq, addr);
->                 if (ret)
->                         goto out;
-> -               ret =3D ublk_fetch(cmd, ubq, io, ub_cmd->addr);
-> +               ret =3D ublk_fetch(cmd, ubq, io, addr);
->                 if (ret)
->                         goto out;
->
->                 ublk_prep_cancel(cmd, issue_flags, ubq, tag);
->                 return -EIOCBQUEUED;
-> @@ -2326,11 +2330,11 @@ static int __ublk_ch_uring_cmd(struct io_uring_cm=
-d *cmd,
->                 /*
->                  * ublk_register_io_buf() accesses only the io's refcount=
-,
->                  * so can be handled on any task
->                  */
->                 if (_IOC_NR(cmd_op) =3D=3D UBLK_IO_REGISTER_IO_BUF)
-> -                       return ublk_register_io_buf(cmd, ubq, io, ub_cmd-=
->addr,
-> +                       return ublk_register_io_buf(cmd, ubq, io, addr,
->                                                     issue_flags);
->
->                 goto out;
->         }
->
-> @@ -2348,26 +2352,26 @@ static int __ublk_ch_uring_cmd(struct io_uring_cm=
-d *cmd,
->                         ^ (_IOC_NR(cmd_op) =3D=3D UBLK_IO_NEED_GET_DATA))
->                 goto out;
->
->         switch (_IOC_NR(cmd_op)) {
->         case UBLK_IO_REGISTER_IO_BUF:
-> -               return ublk_daemon_register_io_buf(cmd, ubq, io, ub_cmd->=
-addr,
-> +               return ublk_daemon_register_io_buf(cmd, ubq, io, addr,
->                                                    issue_flags);
->         case UBLK_IO_COMMIT_AND_FETCH_REQ:
-> -               ret =3D ublk_check_commit_and_fetch(ubq, io, ub_cmd->addr=
-);
-> +               ret =3D ublk_check_commit_and_fetch(ubq, io, addr);
->                 if (ret)
->                         goto out;
-> -               io->res =3D ub_cmd->result;
-> +               io->res =3D result;
->                 req =3D ublk_fill_io_cmd(io, cmd);
-> -               ret =3D ublk_config_io_buf(ubq, io, cmd, ub_cmd->addr, &b=
-uf_idx);
-> +               ret =3D ublk_config_io_buf(ubq, io, cmd, addr, &buf_idx);
->                 compl =3D ublk_need_complete_req(ubq, io);
->
->                 /* can't touch 'ublk_io' any more */
->                 if (buf_idx !=3D UBLK_INVALID_BUF_IDX)
->                         io_buffer_unregister_bvec(cmd, buf_idx, issue_fla=
-gs);
->                 if (req_op(req) =3D=3D REQ_OP_ZONE_APPEND)
-> -                       req->__sector =3D ub_cmd->zone_append_lba;
-> +                       req->__sector =3D addr;
->                 if (compl)
->                         __ublk_complete_rq(req);
->
->                 if (ret)
->                         goto out;
-> @@ -2377,11 +2381,11 @@ static int __ublk_ch_uring_cmd(struct io_uring_cm=
-d *cmd,
->                  * ublk_get_data() may fail and fallback to requeue, so k=
-eep
->                  * uring_cmd active first and prepare for handling new re=
-queued
->                  * request
->                  */
->                 req =3D ublk_fill_io_cmd(io, cmd);
-> -               ret =3D ublk_config_io_buf(ubq, io, cmd, ub_cmd->addr, NU=
-LL);
-> +               ret =3D ublk_config_io_buf(ubq, io, cmd, addr, NULL);
->                 WARN_ON_ONCE(ret);
->                 if (likely(ublk_get_data(ubq, io, req))) {
->                         __ublk_prep_compl_io_cmd(io, req);
->                         return UBLK_IO_RES_OK;
->                 }
-> @@ -2428,30 +2432,10 @@ static inline struct request *__ublk_check_and_ge=
-t_req(struct ublk_device *ub,
->  fail_put:
->         ublk_put_req_ref(io, req);
->         return NULL;
->  }
->
-> -static inline int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
-> -               unsigned int issue_flags)
-> -{
-> -       /*
-> -        * Not necessary for async retry, but let's keep it simple and al=
-ways
-> -        * copy the values to avoid any potential reuse.
-> -        */
-> -       const struct ublksrv_io_cmd *ub_src =3D io_uring_sqe_cmd(cmd->sqe=
-);
-> -       const struct ublksrv_io_cmd ub_cmd =3D {
-> -               .q_id =3D READ_ONCE(ub_src->q_id),
-> -               .tag =3D READ_ONCE(ub_src->tag),
-> -               .result =3D READ_ONCE(ub_src->result),
-> -               .addr =3D READ_ONCE(ub_src->addr)
-> -       };
-> -
-> -       WARN_ON_ONCE(issue_flags & IO_URING_F_UNLOCKED);
-> -
-> -       return __ublk_ch_uring_cmd(cmd, issue_flags, &ub_cmd);
-> -}
-> -
->  static void ublk_ch_uring_cmd_cb(struct io_uring_cmd *cmd,
->                 unsigned int issue_flags)
->  {
->         int ret =3D ublk_ch_uring_cmd_local(cmd, issue_flags);
->
-> --
-> 2.45.2
->
+T24gVHVlLCAyMDI1LTA4LTI2IGF0IDE0OjU0ICswMjAwLCBncmVna2hAbGludXhmb3VuZGF0aW9u
+Lm9yZyB3cm90ZToNCj4gRXh0ZXJuYWwgZW1haWwgOiBQbGVhc2UgZG8gbm90IGNsaWNrIGxpbmtz
+IG9yIG9wZW4gYXR0YWNobWVudHMgdW50aWwNCj4geW91IGhhdmUgdmVyaWZpZWQgdGhlIHNlbmRl
+ciBvciB0aGUgY29udGVudC4NCj4gDQo+IA0KPiBPbiBUdWUsIEF1ZyAyNiwgMjAyNSBhdCAxMjow
+OTowMVBNICswMDAwLCBYaW9uIFdhbmcgKOeOi+mRqykgd3JvdGU6DQo+ID4gT24gVHVlLCAyMDI1
+LTA4LTI2IGF0IDEyOjQwICswMjAwLCBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZw0KPiA+IHdy
+b3RlOg0KPiA+ID4gRXh0ZXJuYWwgZW1haWwgOiBQbGVhc2UgZG8gbm90IGNsaWNrIGxpbmtzIG9y
+IG9wZW4gYXR0YWNobWVudHMNCj4gPiA+IHVudGlsDQo+ID4gPiB5b3UgaGF2ZSB2ZXJpZmllZCB0
+aGUgc2VuZGVyIG9yIHRoZSBjb250ZW50Lg0KPiA+ID4gDQo+ID4gPiANCj4gPiA+IE9uIFR1ZSwg
+QXVnIDI2LCAyMDI1IGF0IDA3OjU4OjQ3QU0gKzAwMDAsIFhpb24gV2FuZyAo546L6ZGrKSB3cm90
+ZToNCj4gPiA+ID4gPiBBZ2FpbiwgdGhpcyBzaG91bGRuJ3QgYmUgc29tZXRoaW5nIHRoYXQgYW55
+IGRyaXZlciBzaG91bGQgaGl0DQo+ID4gPiA+ID4gYXMNCj4gPiA+ID4gPiB0aGlzDQo+ID4gPiA+
+ID4gdXNhZ2UgaXMgbm90IGluIHRoZSBrZXJuZWwgdHJlZSB0aGF0IEkgY2FuIHNlZS4gIEF0dGVt
+cHRpbmcNCj4gPiA+ID4gPiB0bw0KPiA+ID4gPiA+IHJlLXJlZ2lzdGVyIGEgZGV2aWNlIG11bHRp
+cGxlIHRpbWVzIGlzIG5vcm1hbGx5IG5ldmVyIGEgZ29vZA0KPiA+ID4gPiA+IGlkZWEuDQo+ID4g
+PiA+IA0KPiA+ID4gPiBUaGFuayB5b3UgZm9yIHlvdXIgY29tbWVudHMuDQo+ID4gPiA+IA0KPiA+
+ID4gPiBJIGFtIG5vdCB0aGUgb3duZXIgb2YgdGhlIFdpRmkgZHJpdmVyIGFuZCBkbyBub3QgaGF2
+ZSBmdWxsDQo+ID4gPiA+IGRldGFpbHMNCj4gPiA+ID4gb2YNCj4gPiA+ID4gaXRzIGludGVybmFs
+IGxvZ2ljLiBIb3dldmVyLCBkdXJpbmcgaW50ZXJuYWwgaW50ZWdyYXRpb24gYW5kDQo+ID4gPiA+
+IHN0cmVzcw0KPiA+ID4gPiB0ZXN0aW5nLCB3ZSBvYnNlcnZlZCBhbiBpc3N1ZSB3aGVyZSByZXBl
+YXRlZCByZWdpc3RyYXRpb24gYW5kDQo+ID4gPiA+IGRlcmVnaXN0cmF0aW9uIG9mIGEgbWlzYyBk
+ZXZpY2UgYnkgdGhlIFdpRmkgbW9kdWxlIGxlZCB0bw0KPiA+ID4gPiBjb3JydXB0aW9uIG9mDQo+
+ID4gPiA+IHRoZSBtaXNjX2xpc3QuIFdoaWxlIEkgY2Fubm90IHByb3ZpZGUgdGhlIGV4YWN0IHJl
+YXNvbmluZw0KPiA+ID4gPiBiZWhpbmQNCj4gPiA+ID4gdGhlDQo+ID4gPiA+IFdpRmkgZHJpdmVy
+J3MgZGVzaWduLCBJIHdhbnRlZCB0byByZXBvcnQgdGhlIHByb2JsZW0gYW5kIHNoYXJlDQo+ID4g
+PiA+IG91cg0KPiA+ID4gPiBmaW5kaW5ncyB3aXRoIHRoZSBjb21tdW5pdHkgaW4gY2FzZSBzaW1p
+bGFyIHBhdHRlcm5zIGV4aXN0DQo+ID4gPiA+IGVsc2V3aGVyZSwNCj4gPiA+ID4gaW5jbHVkaW5n
+IGluIHZlbmRvciBvciBvdXQtb2YtdHJlZSBkcml2ZXJzLg0KPiA+ID4gDQo+ID4gPiBXZSBkbyBu
+b3QgImhhcmRlbiIgb3VyIGludGVybmFsIGFwaXMgZm9yIGV4dGVybmFsIGRyaXZlcnMsIHdlIGZp
+eA0KPiA+ID4gZHJpdmVycyB0byBub3QgZG8gZm9vbGlzaCB0aGluZ3MgOikNCj4gPiA+IA0KPiA+
+ID4gUGxlYXNlIGZpeCB5b3VyIG91dC1vZi10cmVlIGNvZGUsIGl0IHNob3VsZCBub3QgYmUgZXZl
+biB0b3VjaGluZw0KPiA+ID4gdGhlDQo+ID4gPiBtaXNjZGV2IGFwaSwgYXMgdGhhdCBpcyBub3Qg
+c29tZXRoaW5nIGEgd2lmaSBkcml2ZXIgc2hvdWxkIGJlDQo+ID4gPiBpbnRlcmFjdGluZyB3aXRo
+LiAgUGxlYXNlIHVzZSB0aGUgY29ycmVjdCBvbmUgaW5zdGVhZCwgYW5kIHRoZW4NCj4gPiA+IHlv
+dQ0KPiA+ID4gd2lsbA0KPiA+ID4gbm90IGhhdmUgdGhpcyB0eXBlIG9mIGlzc3VlLg0KPiA+IA0K
+PiA+IFRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjay4NCj4gPiANCj4gPiBJIGFncmVlIHRoYXQg
+dGhlIGtlcm5lbCBzaG91bGQgbm90IGJlIGhhcmRlbmVkIGZvciBvdXQtb2YtdHJlZQ0KPiA+IGRy
+aXZlcnMNCj4gPiBtaXN1c2luZyBpbnRlcm5hbCBBUElzLiBXZSB3aWxsIHVwZGF0ZSBvdXIgaW50
+ZXJuYWwgY29kZSB0byBmb2xsb3cNCj4gPiBiZXN0DQo+ID4gcHJhY3RpY2VzIGFuZCBhdm9pZCBp
+bXByb3BlciB1c2Ugb2YgdGhlIG1pc2NkZXZpY2UgQVBJLg0KPiA+IA0KPiA+IE9uIGEgcmVsYXRl
+ZCBub3RlLCB0aGUgY3VycmVudCAnV0FSTl9PTihsaXN0X2VtcHR5KCZtaXNjLT5saXN0KSknDQo+
+ID4gY2hlY2sNCj4gPiBpbiBtaXNjX2RlcmVnaXN0ZXIoKSBkb2VzIG5vdCBjYXRjaCBhbnkgcHJh
+Y3RpY2FsIGVycm9yIGNvbmRpdGlvbnM6DQo+ID4gDQo+ID4gRm9yIHN0YXRpY2FsbHkgYWxsb2Nh
+dGVkIG1pc2NkZXZpY2Ugc3RydWN0cywgdGhlIGxpc3QgcG9pbnRlcnMgYXJlDQo+ID4gemVyby1p
+bml0aWFsaXplZCwgc28gbGlzdF9lbXB0eSgpIHdpbGwgcmV0dXJuIGZhbHNlLCBub3QgdHJ1ZS4N
+Cj4gPiBBZnRlciBsaXN0X2RlbCgpLCB0aGUgcG9pbnRlcnMgYXJlIHNldCB0byBMSVNUX1BPSVNP
+TjEvMiwgc28NCj4gPiByZXBlYXRlZA0KPiA+IGRlcmVnaXN0cmF0aW9uIGFsc28gZmFpbHMgdG8g
+dHJpZ2dlciB0aGUgY2hlY2suDQo+ID4gDQo+ID4gU2luY2UgdGhpcyBjb25kaXRpb24gZG9lcyBu
+b3QgcHJvdGVjdCBpbi10cmVlIGRyaXZlcnMgb3IgY2F0Y2ggcmVhbA0KPiA+IGVycm9ycywgd291
+bGQgaXQgYmUgcmVhc29uYWJsZSB0byByZW1vdmUgaXQ/DQo+IA0KPiBZZXMsIGlmIGl0IGNhbiBu
+ZXZlciBiZSBoaXQsIHdlIHNob3VsZCByZW1vdmUgaXQuDQo+IA0KPiA+IEkgY2FuIHN1Ym1pdCBh
+IHBhdGNoIGlmIHRoZSBjb21tdW5pdHkgYWdyZWVzLg0KPiANCj4gVGhhdCB3b3VsZCBiZSBncmVh
+dCwgdGhhbmsgeW91IQ0KPiANCg0KSGksDQoNClRoYW5rIHlvdSBmb3IgeW91ciBwcmV2aW91cyBm
+ZWVkYmFjay4NCg0KQXMgc3VnZ2VzdGVkLCBJIGhhdmUgc3VibWl0dGVkIGEgbmV3IHBhdGNoIHRv
+IHJlbW92ZSB0aGUgaW5lZmZlY3RpdmUNCldBUk5fT04oKSBjaGVjayBpbiBtaXNjX2RlcmVnaXN0
+ZXIoKSBpbiBhIHNlcGFyYXRlIGVtYWlsIHRocmVhZDoNCg0KCQ0KaHR0cHM6Ly9sb3JlLmtlcm5l
+bC5vcmcvbGttbC8yMDI1MDgyNzAyNDIwMS4yMTQwNy0xLXhpb24ud2FuZ0BtZWRpYXRlay5jb20v
+VC8jdA0KCVtQQVRDSCAxLzFdIG1pc2M6IHJlbW92ZSBpbmVmZmVjdGl2ZSBXQVJOX09OKCkgY2hl
+Y2sgZnJvbQ0KbWlzY19kZXJlZ2lzdGVyKCkNCg0KUGxlYXNlIGxldCBtZSBrbm93IGlmIHlvdSBo
+YXZlIGFueSBjb21tZW50cy4NCg0KVGhhbmtzLA0KWGlvbiBXYW5nDQo=
 
