@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-796105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA01B3FBF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:13:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF0AB3FBFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD792C2046
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:13:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085332C3BEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488222F0687;
-	Tue,  2 Sep 2025 10:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797652F3629;
+	Tue,  2 Sep 2025 10:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OgQTdjce"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HsTeJJPy"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D0B2EFD81;
-	Tue,  2 Sep 2025 10:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0C72F068A;
+	Tue,  2 Sep 2025 10:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808014; cv=none; b=KwxHnfDj5vllE5wusYt/S7Gjp4tkR6ftiQC7+Bq8YNC2K9YWTgXNe25HnZO+MWy/Sv9Ah7y3dKlqO7H6Ksxl72LnuRfKIypayj0t8EXdDBg078/L4lXVKJf7sy6R9DtBEmcl8HHj5Ph8ZUTvreBzPu4bpU03glAJb76PL23swCE=
+	t=1756808106; cv=none; b=pyQjl7bBBWiFmUgyJNQrMhS0sdvEOJ2lgHuv4R75pRdLIby6vJHe8dSUOu52IIZQojCUUsRA3AA/UySspCoFSy6+Ggi7qxk5KgJ8TQ9+kg0DeeP/GtFOowqN7TL2euAoFSvSO0DQpZeRMou2KCifOp57w7RcrGXpxwSdbmWFCKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808014; c=relaxed/simple;
-	bh=jIMRsGPvtdg9poTpwyfPNA5yMvawN69xdr5rcZYO6dQ=;
+	s=arc-20240116; t=1756808106; c=relaxed/simple;
+	bh=7r0uYfWtBElvzR2QYMpdph3AQUnSm2BAWZWbcWhwkgI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NR2dTVmtQwqz5HfP61IQK5H/t5uaZ+IoaGI4Kv1vIuxzNQqylea8xq1rZlDoIjZbWY+VeJRgr60c2Pw4TrTPZjm9t2r6f64H7EZvrT8tL30YukK+G6ryD3W53uVJ3dKOIrcUvQsa40FwOvWLStTCe8cEUfKtB2F/Uzpymj37Txo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OgQTdjce; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756808014; x=1788344014;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=jIMRsGPvtdg9poTpwyfPNA5yMvawN69xdr5rcZYO6dQ=;
-  b=OgQTdjcevTw8LSY+9LJeIQ8QSRjjE9QubyEBhLgDU57pt490aVq6TLbY
-   chWYbXniEC2Q+Tdel2YHbt+xOnWZXZaxRgQZoCzri7GF8yrs9uBQrq0+P
-   8dZZkdkQtXDhY3gJkaKc30AvVfXUfsr3exE2YCngtKIpHc/5d/7Zgk8Ph
-   2bocU7DWvvXw1QCyOQkXNK6Wgum8Z/HayT54eHEvSt0Cu4QcPemC8Nun2
-   wQexx93Ww5xPMik2/SlK0RPffsAfn6BLY4lt8THJFezGENxOWQL+dnj80
-   Dfw+zZ95D1nMDQYRh1e1VRDyYMD463TE3f5xKdrTwlMf471QZlP/+LpCu
-   g==;
-X-CSE-ConnectionGUID: Wxw8wKUIQLCk5xFiE3GxGQ==
-X-CSE-MsgGUID: Trfloa5ITj2vH6iaUoGYSQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="70177134"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="70177134"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:13:32 -0700
-X-CSE-ConnectionGUID: /aQH3nLpQ32N0ZuQwOFi/A==
-X-CSE-MsgGUID: Qy/RqTAfRvakCVQ5xlPenw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="171118685"
-Received: from carterle-desk.ger.corp.intel.com (HELO [10.245.246.183]) ([10.245.246.183])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:13:28 -0700
-Message-ID: <cb98f508-7ad1-4ed8-b366-7c2ed8951629@linux.intel.com>
-Date: Tue, 2 Sep 2025 13:14:11 +0300
+	 In-Reply-To:Content-Type; b=hneB2WyV9K3DsbvF7bExXVdvgm/FJ1BJXWZqA+kLApJA1/lII10/MNPj4ttuGPWjw6lecjH3YX24an5DISLuelJcldA8H2ttnMkEl64ULGgRx9HsBrE9c2AnPXbLGGewRDT3tjYsgnc/78yodMdKyY9Xdb1LDV31XhEhuy1xvI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HsTeJJPy; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756808101;
+	bh=7r0uYfWtBElvzR2QYMpdph3AQUnSm2BAWZWbcWhwkgI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HsTeJJPy8nskxOEnWjhWT23hBDAhRZZC8BBmLa9+pYVZHN/1ephldEEputMinatHc
+	 8rhjPY/35EFw8KdZww8/CmeWOnDrqoELM4vGKhw0n2+fOwRZnteOQS9b86OEYVSKPh
+	 M78G/SargYwFcz8nzA9RJ8OY9FN4DF2bRez1O5t4QsM9/lCXuiyQNUXgu5gGJA8PC0
+	 7REujSKJS1o6pu7ugGg32yi3a6MqTYaNf8CnhVgAJYOwjeTA1hJjm9g1QcFYbw8c4Y
+	 Hi4xdn2xFl1kfA2MWOPOacriYYoMb/TPJyDY2rOU3zFnGRvXVQFP0fgfGUibMhk5nD
+	 gNO1gS409ySuA==
+Received: from [IPV6:2a05:1141:1fb:db00:ba27:6983:e3a5:2a47] (unknown [IPv6:2a05:1141:1fb:db00:ba27:6983:e3a5:2a47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 251BD17E0456;
+	Tue,  2 Sep 2025 12:15:00 +0200 (CEST)
+Message-ID: <b0cad1e8-8b02-4039-b1d2-b9056fd51318@collabora.com>
+Date: Tue, 2 Sep 2025 12:14:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,63 +56,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] ASoC: SOF: ipc4-topology: Fix a less than zero
- check on a u32
-To: Colin Ian King <colin.i.king@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Daniel Baluta <daniel.baluta@nxp.com>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, sound-open-firmware@alsa-project.org,
- linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250902083213.2620124-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH v3 3/7] dt-bindings: phy: rockchip-inno-csi-dphy: add
+ rk3588 variant
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Jagan Teki <jagan@amarulasolutions.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Collabora Kernel Team <kernel@collabora.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+References: <20250616-rk3588-csi-dphy-v3-0-a5ccd5f1f438@collabora.com>
+ <20250616-rk3588-csi-dphy-v3-3-a5ccd5f1f438@collabora.com>
+ <20250902-piquant-secret-moose-06c4b6@kuoka>
 Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <20250902083213.2620124-1-colin.i.king@gmail.com>
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <20250902-piquant-secret-moose-06c4b6@kuoka>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Hi Krzysztof,
 
+Thanks for your comments.
 
-On 02/09/2025 11:32, Colin Ian King wrote:
-> Currently the error check from the call to sof_ipc4_get_sample_type
-> is always false because a u32 variable out_ref_type is being used
-> to perform the less than zero check. Fix this by using the int
-> variable ret to perform the check.
+On 9/2/25 09:55, Krzysztof Kozlowski wrote:
+> On Mon, Sep 01, 2025 at 10:47:44PM +0200, Michael Riesch wrote:
+>> The Rockchip RK3588 variant of the CSI-2 DPHY features two reset lines.
+>> Add the variant and allow for the additional reset.
+>>
+>> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+>> ---
+>>  .../bindings/phy/rockchip-inno-csi-dphy.yaml       | 50 +++++++++++++++++++++-
+>>  1 file changed, 49 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+>> index 9ad72518e6da..e37c9fd74788 100644
+>> --- a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+>> +++ b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+>> @@ -21,6 +21,7 @@ properties:
+>>        - rockchip,rk3326-csi-dphy
+>>        - rockchip,rk3368-csi-dphy
+>>        - rockchip,rk3568-csi-dphy
+>> +      - rockchip,rk3588-csi-dphy
+>>  
+>>    reg:
+>>      maxItems: 1
+>> @@ -40,11 +41,15 @@ properties:
+>>  
+>>    resets:
+>>      items:
+>> -      - description: exclusive PHY reset line
+>> +      - description: APB reset line
+>> +      - description: PHY reset line
 > 
-> Fixes: c04c2e829649 ("ASoC: SOF: ipc4-topology: Add support for 8-bit formats")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> That's changing the order, before first was the phy....
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+See reset-names below...
 
-> ---
->  sound/soc/sof/ipc4-topology.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
-> index f5e62cd8fc0c..b6a732d0adb4 100644
-> --- a/sound/soc/sof/ipc4-topology.c
-> +++ b/sound/soc/sof/ipc4-topology.c
-> @@ -2191,9 +2191,10 @@ sof_ipc4_prepare_copier_module(struct snd_sof_widget *swidget,
->  	case snd_soc_dapm_dai_in:
->  		out_ref_rate = params_rate(fe_params);
->  		out_ref_channels = params_channels(fe_params);
-> -		out_ref_type = sof_ipc4_get_sample_type(sdev, fe_params);
-> -		if (out_ref_type < 0)
-> -			return out_ref_type;
-> +		ret = sof_ipc4_get_sample_type(sdev, fe_params);
-> +		if (ret < 0)
-> +			return ret;
-> +		out_ref_type = (u32)ret;
->  
->  		if (!single_output_bitdepth) {
->  			out_ref_valid_bits = sof_ipc4_get_valid_bits(sdev, fe_params);
+>> +    minItems: 1
+>>  
+>>    reset-names:
+>>      items:
+>>        - const: apb
+>> +      - const: phy
+> 
+> Although here first was apb? Quite confusing.
 
--- 
-Péter
+Confusing indeed. IMHO the description "exclusive PHY reset line" is
+misleading. In the existing device trees there are hints that this is an
+APB related reset. These are only hints, of course, but they are the
+best info we have.
+
+I can add a remark that we are fixing the misleading description while
+at it.
+
+> 
+> Anyway "phy" reset for "phy" is pretty non-informative, please give some
+> useful name.
+
+As far as the additional reset is concerned, I do not have any info at
+all what it is related to. Therefore, it is hard to give a useful name.
+Also, to be frank, I have no intention to haggle around with Rockchip
+support to find out a more meaningful name (I tried to do that in the
+past, only to find that the time spent on that is almost definitely wasted).
+
+Similar PHY blocks are using "phy" or "pipe" or simply "reset" as names,
+so I went for that.
+
+Any suggestions are warmly welcome. "aux"? "reset2"? ...?
+
+Best regards,
+Michael
+
+> 
+>> +    minItems: 1
+> 
+> Best regards,
+> Krzysztof
+> 
 
 
