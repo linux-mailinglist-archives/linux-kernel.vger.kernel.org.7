@@ -1,147 +1,251 @@
-Return-Path: <linux-kernel+bounces-797034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8AB0B40AED
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDFBB40AEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C98327A961F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:44:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47EBD7AA41F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CA5338F51;
-	Tue,  2 Sep 2025 16:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB212DF70F;
+	Tue,  2 Sep 2025 16:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J4PKlm42"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HdQ9pQOD"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B653126A0
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831571; cv=none; b=RmaPMTEXJ0CuddKmzdmcWdWxODoCijQWWPWatiZ7s+JTAJnls5Nsjpusy/6CVkVXTDkFaXGEAYou2hz/dBqH5lZlLPmf7z5mIcbTSb5ptwTrEci3GdDINv8EqYNJh4uV9Kv/hR7RVTiR0Vnhjin2zGI02/W6iN/9FdIizgdtD14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831571; c=relaxed/simple;
-	bh=+pd5ibWIKyHRFFR0VYcPPSihlyE9oJC51HBCwcLMQas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HD7uIcKMtGsbU56oiFpHXdf30f0iB/ieDKWtDgxOqzKImDmtUu+cDfPnALwu7wwDzdWRy8x77Gi/5rQv4mFq4VcdW5qzWpVszvF7XM6h6ayfsd8tf4o205/mzsCrxKYpRqRrWv7oZhOxUdgnjg3OTPvddh23wPTPK5ZdCmApudc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J4PKlm42; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582EqHnE004244
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 16:46:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/X6rGdPxT1UiWkrcEgByQOjggZJJnyxAl0XI2p+tHJw=; b=J4PKlm422wVwPu4D
-	Mc2+lAOVFo9MKrDO5ujM4PiUEFzyZwkV+gGesR+qnpbJX23HOo+F2C5BU3RYQl5X
-	Kr31+FJJdxeViNchZ8mMelrxvx6dK6nD5rSi5C2pHD3qkdb0Acr0LaCjmthyXqwc
-	8nCX8akkRp8pTcbbAhe7UtoRxiXVf1mXKuUM+IUDliaUfnHI0J8RpEFlj/lYd1Ub
-	ODmRslmztdkaHpxAq9f0nKQEAl/QcwQnLmmopveajSt4B9zCllVcv3yKcuf9qIiU
-	XApT1/PdWplyo9BzjWqW+j1EkDeMew7uWYIEn2IDyWYOlLQ90imsPqs5pRJU0GcJ
-	TTmGmA==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjgjr5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 16:46:08 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e2e60221fso9199282b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:46:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756831568; x=1757436368;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/X6rGdPxT1UiWkrcEgByQOjggZJJnyxAl0XI2p+tHJw=;
-        b=K2qmFzu5/gEhEvXWzRp6TnYESYx5aF1BOSccsqyHTGZv6UkNcs+iQ8n9s7R/lZ+bV3
-         YVjxADcO+lnERsZlzGMJxf6eti7BkBwKz2OMWZYuiIe56yA1V3PM67tSfQENA7pihDWM
-         oJG3ODPatA+iZbnm3AZ1GAhewNvIRFMVRx4J2UlcviXROrj69CaEZ6Q0SP+cigBni3zh
-         74g0I3Gp1HUHaa8hT0BuDuAD9PKaj1C0kllPqTUwAW3flI07LUJ7KxC70ifiIth0qr8p
-         9UCti0rTaUfdymX9hsno9XxCiiLGhQy3qq02Pi0yJFNpdBLrInpzGZOXuvF2SmdonFew
-         APHw==
-X-Forwarded-Encrypted: i=1; AJvYcCULeNsNXmfik7DNmXlXFvp0CCTtgLcl32gVrtoDRVCXmCFkl5SUUbUnbr5UcV3YREyryGNsSvpPNprhwEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr/XFLk8CY8XIWRglTb+8tlh1dejl9KPLgJegdLSjQKQnftjFF
-	MouF18MlZkP3G3I09Ocjp7EAHKPA8sbvM8YdXAfCmGXcvcps1Avj3ntJqt13DDZH+eVBdh2hgD4
-	kmitDSyRkLHcsuRl92xLgHMSnbcBuSlGqCkq2TndLG+I0EiYaRh/FHIg+RKvmasj5m6s=
-X-Gm-Gg: ASbGncts3SM44juQcIQWD16oia3kQOgTY5plkSm0T3I5Vn97ELmpqmue351QKTdnmRb
-	JMO77ElD6jICJ52+HMVju+JAXmo6dV517RvGIZ3bg7sQvjM4+asGXiBGuAqAfGcg0MpMxhxkk/A
-	ADTcXuc5TtORyp29W1yZcF1Q+BKnkwVINSCQqlU4iBXeHzGywWPvO9YexYT2wP+VLHGIQ5KJveB
-	vPnYM5nnbxDGdO5p9EYzWP9xBW4JsckAxRTMXy3Qnfrpi/+GtLEI1L8RyseKt9VVtNVZcrbgNS+
-	BenbiXxx/f1Bl6a/oe8rMBfFKJ/IUDhw44+GwmnXkieJ2TBQUA4Kih4ITAvvf2PC6Q3F/+Q=
-X-Received: by 2002:a05:6a20:549d:b0:243:c5c7:1126 with SMTP id adf61e73a8af0-243d6f0324fmr17153214637.30.1756831567552;
-        Tue, 02 Sep 2025 09:46:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpXLMq++UENp17zgkzAVidoy/rMcBj+5w9Vi09jk3fctElIIy1kaIPr2lyaGmIxwQhJIRuaQ==
-X-Received: by 2002:a05:6a20:549d:b0:243:c5c7:1126 with SMTP id adf61e73a8af0-243d6f0324fmr17153173637.30.1756831567069;
-        Tue, 02 Sep 2025 09:46:07 -0700 (PDT)
-Received: from [192.168.29.198] ([49.37.133.120])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd366f95asm12393842a12.51.2025.09.02.09.46.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 09:46:06 -0700 (PDT)
-Message-ID: <0855853a-4b77-4bc8-9e78-bd4e8a211b65@oss.qualcomm.com>
-Date: Tue, 2 Sep 2025 22:16:02 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41F530E0F1;
+	Tue,  2 Sep 2025 16:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756831598; cv=fail; b=D/E8M0Z9dFVozMsuK/UYmnIV5kcuo+zNv47Bmc6Tu/UNhDCohAzyzgUaQoO7jLkdLKU3eCwIW4KtAsSolTDrW2/wZKXwOKThfwmr5GUpzRUXeL23KpGp/O4dePB7bwG4hOpQ+M9DR0Ye7clOfeiYSv7JqbqOWV0IKf1cC69+5/0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756831598; c=relaxed/simple;
+	bh=txOQQqLOyvmwJtHEgP5HAmSK2TuEg4Tw3QYpfC7ci8w=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=iMs+5GooeO+eG16uoB56jM5cGeI9jGfVLUL1vvvGHv2GBXWbMsAsFESeVSDlPpCNEWpph9ilWA6bI7G5sobxSJMGWJT9XRnslmbIkY6dBOCq0McNZeEerDEXu/nZ/mHJkBKwnFd1R1cuJgNzGDBK5TL5ZGAGu3DAWANFvHnMKCw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HdQ9pQOD; arc=fail smtp.client-ip=40.107.93.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rs0QLGscikOAi8Zu4WUT45yKtB5Hgclg4zF0u+t9YkxDnnP6Ne/28hmwLXNJdomTUFMfFD4Q0g3KUdgW6W3+Kn/utzD8Y58Ix+RqduwHR4au4u/UOZj9M+bOSxG11/rG2oGuSTV8XQjmHGxRT/xmuyKrggEvuhSeSN7wDsTVraBN4OonnI41fd62woZyAyAvRAyxRo9fUBemn3WXEQNMHxMb9/5Sc05IpccDX0yNxM/c41rgczl4/918ZChZsEQ7h/Vf8ZZIGCEp68MuUznpELJ37sE4kNh4N2kjCjnWI2TXJqqyOlen4WXvqgf94MxrCb7qa5fu/B7O+X5caeQ3ZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s8MTrRQ3wYOwYWqanX40mGoykrUG5ot4hkijNd6l1Fo=;
+ b=Bpr9st44sSdz0hbmuuVagmpbcloZgzcT7IEx3AFK2ZeoSLVTctjuJ0vdAeCqhoc75imIYM+uc9SlEy0k2BjsWefOsg11rvsSEDOmKk8GrWgS8LQEZ+lsL8J2l1rDSVGo9tiJVteH7aUPT8evdgjQLRtFKaTyw/WTh6qzjrHCMyP05QGKhVyICCSOBnnyLSaigOEI3D86/8FWDYcEqvdPW+jmgv+EawCmdhwLHKhI2YtxDhmTDkcdNLwST3epN+5yOov4LcZk7oFPUBTTjiFaIgz56xVofPPn39/j7Wa17CK+L7E9wYBVELUBYC53ht5a1TOBMdhSetB1m2j6e2eeoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=amarulasolutions.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s8MTrRQ3wYOwYWqanX40mGoykrUG5ot4hkijNd6l1Fo=;
+ b=HdQ9pQODRI94wQo8Yirmzv2TwGstzbyP6yOFEZd8PWesKnGf/ZazLcbYjfGlRh+FlFODemE7FUF3ts5/0msS4Iit++bN0hhLE80FdeDfteYyuHpRqp0xsn3TeGh7AS5eR/c/TadrkyBD+mFpOs2i0vfqiEL8vVK4aDlzG/oOQEQ=
+Received: from MW4PR04CA0095.namprd04.prod.outlook.com (2603:10b6:303:83::10)
+ by PH7PR12MB9073.namprd12.prod.outlook.com (2603:10b6:510:2eb::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Tue, 2 Sep
+ 2025 16:46:31 +0000
+Received: from SJ1PEPF00002325.namprd03.prod.outlook.com
+ (2603:10b6:303:83:cafe::d0) by MW4PR04CA0095.outlook.office365.com
+ (2603:10b6:303:83::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.16 via Frontend Transport; Tue,
+ 2 Sep 2025 16:46:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ1PEPF00002325.mail.protection.outlook.com (10.167.242.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Tue, 2 Sep 2025 16:46:30 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
+ 2025 11:46:28 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
+ 2025 11:46:28 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 2 Sep 2025 11:46:27 -0500
+Message-ID: <318ba0b9-a730-15b1-7573-db23c2cd9e32@amd.com>
+Date: Tue, 2 Sep 2025 09:46:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: common: Fix NULL vs IS_ERR() check in
- qcom_cc_icc_register()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <aLaPwL2gFS85WsfD@stanley.mountain>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2] dmaengine: xilinx: xdma: Fix regmap max_register
 Content-Language: en-US
-From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-In-Reply-To: <aLaPwL2gFS85WsfD@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b71f50 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=+KjSowhBs1waSO1ngDLaHg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=8T--ygq334zCgzS6G-IA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
- a=OpyuDcXvxspvyRM73sMx:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: _sGKymhEWWq59k3_HSojZ6VwbsBuPgEd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfXwIevFUBillry
- sehBH7CAtr/r1AJV+nAFX7z0Aw8GACJJBuAK6YsJMLu65cnUvAW++orcTzN9N2UgFiNNt1ZUN9p
- 69oP5zS1MpuvN4monQKM6cCfpe5TIdXkiyVTyYW2n7uTYn/MroIHM61MqFkw4+rYTsx9JNwXoJE
- ZIcyjL8TU3nQ2B9IZntXfYBplSX0zN9PmcTgH2hwY5aiYh0Md+FV6KI5nacLrDEQKApoOcYGKo5
- iOyQE6QJa/4W44hBsKP+KWY1NkwAOgVdSQcJ7J5I+xOaH/UUVgkgt9451NerXMzX8BfqPKR2y1Q
- Yzhpf1hlD11iqdT7L5VJ0NFgmJgdi5VO4WbSD/gopDHd7kzlgQMcLnvoYnr0bPl1ZEabxlTHdS/
- E/JQzUgB
-X-Proofpoint-ORIG-GUID: _sGKymhEWWq59k3_HSojZ6VwbsBuPgEd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_06,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <anthony@amarulasolutions.com>, Brian Xu <brian.xu@amd.com>, "Raj Kumar
+ Rampelli" <raj.kumar.rampelli@amd.com>, Vinod Koul <vkoul@kernel.org>, Michal
+ Simek <michal.simek@amd.com>
+CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com>
+ <423ef4b3-d92b-8833-e21e-88ac4153c87e@amd.com>
+In-Reply-To: <423ef4b3-d92b-8833-e21e-88ac4153c87e@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002325:EE_|PH7PR12MB9073:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1dedb09f-bf51-4a0d-7d13-08ddea4044d0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WG1IMEVMbG0vbC83MHZYWDllTnRKSUE1SFl2akdncHdyK3hRY0wzT2FRc0Vk?=
+ =?utf-8?B?eWdtRGxMUm84NnIzWFl2bzlSVHZLbTJ3ZWNNWXZndjc2ODBQbW9DM0pIUEp1?=
+ =?utf-8?B?TXpLM2xnbDJqaDZONERVZWp6SFRIQTl4NmgrTThETi9ZNUM0ZndrYkRhOGJ5?=
+ =?utf-8?B?eDBxR3dRRmRtSkZaOG83N2Y3RmxOYWVLcTZhald0WUxtSWx1SFRMZncrY2xk?=
+ =?utf-8?B?aG1lK2xSc01XKzB2ZGJuN2pTalVLZTBrcCtVY2xuQnBZUEtkSnBtNlcyYU1D?=
+ =?utf-8?B?WFphN3hoeHlwK1JRaStTN1A5QXlab3NRa2FvZGYrUklqcVZ2dFF6a2phamhs?=
+ =?utf-8?B?U2tlWjZPS01odlpjODY5SnJvZkNoS1ppa1VFRitBZHBNanh3NXd0NjhMbEtN?=
+ =?utf-8?B?ZVNGNFFPTWpWSnBHdkJ2d1EwRUFFQ2pCMVBycGs4dWRwME1HZUJJSVFNeGQv?=
+ =?utf-8?B?bDQ2M1RBNjdibytzc29TaEl1ZFNaUWNtRmFEWUVuK1Y1WXN1SUdncGZPRnQ4?=
+ =?utf-8?B?RXg4MGEwKyt1bXlmd2k3M05BUStyR2hyMXBSaE4rQnFtWktQQW1mb0ozRFNS?=
+ =?utf-8?B?YnZHNDJIS0dXK3E2NTZsRk9ScFQvdmMyclNpdk16bDNtNGM1cm4rNmxwV3Fk?=
+ =?utf-8?B?S2g2MWN3VzNGWCtDdSsrZUZjNG9wRTdDZkdBdFRCZXpkNGhBZk5WM3NWWk9w?=
+ =?utf-8?B?UXNBL3ZrTTIyS3FnN2EzcnV4NmdXUVlFMmM2WXRyRWxkVHRIbDl3K1pDVERn?=
+ =?utf-8?B?OE1hMW1hS2MxWFRQUUYvMWxkZGcydmtGZGdpOW9KMTVlZDc5VEt6RmVIRFcr?=
+ =?utf-8?B?Y3FwWkdySTVYSnJBZytXbFBuUkh3RTluUDlzNHZwcDdoZXJvMTFpNmJybzU1?=
+ =?utf-8?B?dnBkMzJxYllKcEVZMzcwZmpoa0o4dEtsT3lWUFZXeVBFZzhXbFlrdTQwcUpX?=
+ =?utf-8?B?RmdQZGxXd0NxWmlzUDRxM3pBQW9BMHYrS0UrQ2FPSVpjemdmQkgvcVRWdklu?=
+ =?utf-8?B?TStpamp5TGpUd3M4Qi9KR21OL0VVRmRla2VCK0h0RHhic1VoVXM5UVpZb1Qy?=
+ =?utf-8?B?eXc2a3NIbzNnaityR2UzejdDSnIvdzROZTJHYVZjZmpiai9kOVptOXRwUURQ?=
+ =?utf-8?B?MmFTQWt3cFlLc0lTc0VRajBhcFAyaUhMd2FzZTJuTFdoWlJYSnpDdkxPK2Ir?=
+ =?utf-8?B?WjJmNVIva0NUeTNEVXhsOERTYTJwZWRlWVRqcmtITElUeG5ZdXVCeFo4bEhO?=
+ =?utf-8?B?dDFvUnJFT2NNaEFmN1pVVTJrN0t1cUY3QnRDQVNva0wwUDRNSHdLRzZtTndS?=
+ =?utf-8?B?RmZtVTFzOVlSRk5KWFBBbGg4bm5FcmxWZSthQ1IwNFNOZmpPeXVkcFdpYnRE?=
+ =?utf-8?B?M2Q2RE5ObnBvdElsZGN5cU9XY1hYeTJMMjAwcDhJaHZCblJkcFI2Z2VKSkN6?=
+ =?utf-8?B?NjN2YXpMdDBRNHF1TncrVzhlcUdPdUx4MGNiRUNCczNjWjcxa1RQZWpOSTBs?=
+ =?utf-8?B?UDFnV2N4RnFIUGZlc0IvaHVTYXpIeExEL3NTaFVkSFNjM2R3ZnRKL3FjcGtO?=
+ =?utf-8?B?ZGR1NFRZbTVyZWZDODBpdEVpQUZYa0lPOStHL0RzVzZ1TE5makZQdzZRSkIx?=
+ =?utf-8?B?ZTFRbkQ0SmpnaXFJTnNod1ZXb25jMk0xM0M4aTd4U04xR1dxOTRqWkJzSE1r?=
+ =?utf-8?B?NFVNTDlZeDM5M3lNd0RSWU5jVFhiRDBXY1dmNFZYTGZheklxOHRYdHpnQzcx?=
+ =?utf-8?B?cytHNWw0ZlRRbXhpQll3KzliRWcxejJtRkEzdmFHZTVkS3N3QjdxN3oyTWc1?=
+ =?utf-8?B?ZWRvZzNuSDZnNFRsa0JRWVFNQzNpR0lBc1lYK2twMG5hOUQxUUpxeTUvay9x?=
+ =?utf-8?B?b3ZvVTNTSnVOZlFLaXJpaWZFcTFTb2FtWWZNS1JsQmU0c0thTXZDR1JyRGVG?=
+ =?utf-8?B?TGRVVVZsNG9XWm5vTkNHL09oUWpiMWxHWTNRNmFwWFIycWZvamR4Y2h1Y2tM?=
+ =?utf-8?B?QWRyd1ozOExRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 16:46:30.8457
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dedb09f-bf51-4a0d-7d13-08ddea4044d0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002325.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9073
 
+Forgot to mention that it needs a 'Fixes:' tag.
 
-
-On 9/2/2025 12:03 PM, Dan Carpenter wrote:
-> The devm_clk_hw_get_clk() function doesn't return NULL, it returns error
-> pointers.  Update the checking to match.
-> 
-> Fixes: 8737ec830ee3 ("clk: qcom: common: Add interconnect clocks support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/clk/qcom/common.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-
-Reviewed-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
-
-Thanks,
-Imran
+On 9/2/25 09:42, Lizhi Hou wrote:
+> Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
+>
+> On 9/1/25 14:30, Anthony Brandon via B4 Relay wrote:
+>> From: Anthony Brandon <anthony@amarulasolutions.com>
+>>
+>> The max_register field is assigned the size of the register memory
+>> region instead of the offset of the last register.
+>> The result is that reading from the regmap via debugfs can cause
+>> a segmentation fault:
+>>
+>> tail /sys/kernel/debug/regmap/xdma.1.auto/registers
+>> Unable to handle kernel paging request at virtual address 
+>> ffff800082f70000
+>> Mem abort info:
+>>    ESR = 0x0000000096000007
+>>    EC = 0x25: DABT (current EL), IL = 32 bits
+>>    SET = 0, FnV = 0
+>>    EA = 0, S1PTW = 0
+>>    FSC = 0x07: level 3 translation fault
+>> [...]
+>> Call trace:
+>>   regmap_mmio_read32le+0x10/0x30
+>>   _regmap_bus_reg_read+0x74/0xc0
+>>   _regmap_read+0x68/0x198
+>>   regmap_read+0x54/0x88
+>>   regmap_read_debugfs+0x140/0x380
+>>   regmap_map_read_file+0x30/0x48
+>>   full_proxy_read+0x68/0xc8
+>>   vfs_read+0xcc/0x310
+>>   ksys_read+0x7c/0x120
+>>   __arm64_sys_read+0x24/0x40
+>>   invoke_syscall.constprop.0+0x64/0x108
+>>   do_el0_svc+0xb0/0xd8
+>>   el0_svc+0x38/0x130
+>>   el0t_64_sync_handler+0x120/0x138
+>>   el0t_64_sync+0x194/0x198
+>> Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
+>> ---[ end trace 0000000000000000 ]---
+>> note: tail[1217] exited with irqs disabled
+>> note: tail[1217] exited with preempt_count 1
+>> Segmentation fault
+>>
+>> Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
+>> ---
+>> Changes in v2:
+>> - Define new constant XDMA_MAX_REG_OFFSET and use that.
+>> - Link to v1: 
+>> https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
+>> ---
+>>   drivers/dma/xilinx/xdma-regs.h | 1 +
+>>   drivers/dma/xilinx/xdma.c      | 2 +-
+>>   2 files changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma/xilinx/xdma-regs.h 
+>> b/drivers/dma/xilinx/xdma-regs.h
+>> index 
+>> 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 
+>> 100644
+>> --- a/drivers/dma/xilinx/xdma-regs.h
+>> +++ b/drivers/dma/xilinx/xdma-regs.h
+>> @@ -9,6 +9,7 @@
+>>     /* The length of register space exposed to host */
+>>   #define XDMA_REG_SPACE_LEN    65536
+>> +#define XDMA_MAX_REG_OFFSET    (XDMA_REG_SPACE_LEN - 4)
+>>     /*
+>>    * maximum number of DMA channels for each direction:
+>> diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
+>> index 
+>> 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 
+>> 100644
+>> --- a/drivers/dma/xilinx/xdma.c
+>> +++ b/drivers/dma/xilinx/xdma.c
+>> @@ -38,7 +38,7 @@ static const struct regmap_config 
+>> xdma_regmap_config = {
+>>       .reg_bits = 32,
+>>       .val_bits = 32,
+>>       .reg_stride = 4,
+>> -    .max_register = XDMA_REG_SPACE_LEN,
+>> +    .max_register = XDMA_MAX_REG_OFFSET,
+>>   };
+>>     /**
+>>
+>> ---
+>> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+>> change-id: 20250901-xdma-max-reg-1649c6459358
+>>
+>> Best regards,
 
