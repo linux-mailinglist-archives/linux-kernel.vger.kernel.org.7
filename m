@@ -1,122 +1,132 @@
-Return-Path: <linux-kernel+bounces-796924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0E5B4097C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:47:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3BCB4095C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDDF9543F07
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:45:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6BD1899995
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2763D322DCB;
-	Tue,  2 Sep 2025 15:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6F232A807;
+	Tue,  2 Sep 2025 15:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAX0SbfC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhEz28da"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810D230DEAE
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2462FC019;
+	Tue,  2 Sep 2025 15:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827866; cv=none; b=r6HGKWanw27mTf4BcWEf7SREhiJCrybZyRZwDnXR835U/ub6Bg2Ccc4NiLybBPFBP1RfPwZahaveWgfsRJ/iD9suWjwk0Hd7n35Qv8fHPobOYYl2JGIUB+TSmWGE9sOIk+BhJ0g6qVySqV5ymeTZQUc0nEw/zPKvHKSfuVlqLjA=
+	t=1756827841; cv=none; b=PGq++boUXqV4N8LCgBzwHTAIuwcJkj3JKi9hjkviYxdKuOBJY8UcdHFuxhMBUc7Ji9QQuga+p98wLgM+T9fVQzK8wpSxoY2p36y6RUuCS0O/YU41UFOH+KvBuOIv9G1CQUbg8gvhgioUtfMNKv1t0cSWr/tCxVJxwVjampAwRTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827866; c=relaxed/simple;
-	bh=tRuf/GDyIIArpeIiuGsBiOMQ7cIVqbvoG7nMpsSi53k=;
+	s=arc-20240116; t=1756827841; c=relaxed/simple;
+	bh=IPqqn0GnguGU5cSP0RswoQ1BZy2RQuhjSXsG1srLe9w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oPcFza33/0gFMvNOZdS4Hqs8K80h04zeG1F2GpX5TR9gFxW3Y7YsKOGCwPNCOL5QRA+ccJcAu7y5q2Z9F4LCY29M25dgBXNFTYVho8/ZcadRIJAR1NKUYH2Eh1LRkk8eoTqRJ9T0946eyOiBFzRRIlNhZ9YQDsVWNM98C+7k3c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAX0SbfC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29EABC4CEF6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756827866;
-	bh=tRuf/GDyIIArpeIiuGsBiOMQ7cIVqbvoG7nMpsSi53k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gAX0SbfCGmL2kk92IUNicUapOCeZeZbABa9LoFy/S7Fa2rRwHDeFupg2dRzJ/RW+L
-	 ubRqwavV7lirCTfbfhYvbPKpq8NMmJK1ujj9bGoimll3OGjHd7K/f3Kny3ujSel/4R
-	 VW7say78jC7AB0bv7PVc2e3CtrCk0kIrcteOWyFOXcsLuVHq3Xc+zRczJj3oS1Yj3y
-	 zfsjx7jgw77ShduBbX3ZQ/ut+yWRsXH4ZlQkR9HprsBkudASI/9iDVrXW7VeoFWr24
-	 I4kj45VxCzWuovoylvy4IpnW3UM4wUPIqeCJRrUcKbPdNb6QyMY/R7RPN7xK/JgXeQ
-	 hi/FS6MuEnp6w==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7a16441so869199766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:44:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVpXGmDAQjlhjEPDQd6NhU1YkH3RSWOmancVl/j4NoIAl1W/WR12tPR0eXFzsDjqp4zj+M0h6unLeFLWog=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2lzu8BU7qhizi+SA66SXmNDRRK/HdAXY5CRyITkWYFHStP//d
-	QJBcj9zcsSHjMmgs3U8zPP9wac5HFhgG3b1UMveVvM4QOVlXDJO8hq/TyDinOm1pLd7t6xzKord
-	3JC9NXN4V8l0JT1PvAnjpGWkFnBXQrzE=
-X-Google-Smtp-Source: AGHT+IFO70924iVFolgzUjIZaE0GLn7wGy/Aud1H3aa/R/fGPcETwNoCLZ0tk7y3JHUXV0aqFuX5gzk/udJutrbJioY=
-X-Received: by 2002:a17:907:86aa:b0:afe:b5fa:2adc with SMTP id
- a640c23a62f3a-b01d8c7d928mr1279558566b.24.1756827864719; Tue, 02 Sep 2025
- 08:44:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=tHi+Ng4a3Ut0r3vpBIgvWUAvPIN4mQG2nEqGud29P8yzuW4cv8zksnVhDsRVzEDwUyUxwRqLK+nDXgnNxXX6avIiHv+FalMPMZ3C0VjdDe11C4LrcknQvFuBVzR85rNlnWu+RijvVqAqZpgeemZlS4zfmiAnZOC+JDCKyijq1Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhEz28da; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afeec747e60so900257966b.0;
+        Tue, 02 Sep 2025 08:43:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756827838; x=1757432638; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IPqqn0GnguGU5cSP0RswoQ1BZy2RQuhjSXsG1srLe9w=;
+        b=DhEz28da4fpmOtTT7JX+H/lyUKvamNefxPs9yt5YT0z0ih1EPanbYtjJqsd/CAn1pz
+         UeXq6LGWz6mKmoYn7HSF15l66UjN9C3eTIvixNuSgLb6fgQjyx+wqjZvEoyTsb54kops
+         e2lr3bdbdp02F0rWS9iRMhIVGd5Ny6dZk+pfT61pmfEFpksJOjQEJOaOxwtJVvD/StWx
+         WKaoxoAxqT3BMC5JuicnBwsH8nsbM2PE2Gs2Pbg9mtQXINQi5Ww1Q1stek3vzbWhBV/H
+         1DbDDE54R+YxRiX9AHH8xVUMWyhA6R4mVx49AhaPk9QK7ppwCWxR2kwLyU7eZqfdYegW
+         lrzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756827838; x=1757432638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IPqqn0GnguGU5cSP0RswoQ1BZy2RQuhjSXsG1srLe9w=;
+        b=WohBhkI2O2GNE3Y0PwXu+0FururTBzBxhE+JTEedLkDHJuQk2EFHZEtbRbjvwzQ3Yp
+         m0K7yBgwr4kAg2g+joA+B/eOrMrg5BWdZL5s38ef6X/O40wldJ7bA9Ql4609k9BtZdBV
+         odjavXwasbItBu7uC/FBgLUR3xnu7TSefjCpLX4rvBEvoSO1zSuEOJsvXq/STSI0j+5N
+         Rv3eXLMWULmz9OmVrBvoACNF5gLo3oMvNKawjdPshrH3s/l3Gw95dhcps0jzbfZYfAGP
+         i3eN4vxD+nbm3IBEjdc0nIotgtCFWILFLsr76KvAjXUfj/lzYjMT+REWVxdv6idoTys7
+         3SKg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1paKepklpm/H0+4bdXoGjGXrivkhlssH3oaVOpqk7iFMVYlIE94Q3eivWa5R1aJAw5KK25DLeNQPh@vger.kernel.org, AJvYcCVqGvemTv1FfG1z3pRIB61mO5FPtI9Oqkp9YjCu2nOp+oQZT9K7cjhg1yvJaed0RhLeLn8AzlUlZNJuXhR1@vger.kernel.org, AJvYcCW9O+fgEMSMnJ9NNAPCvahpPddRfVWqXAUnGoVWeTFzrsEkm+lsybX+Wp66HJ1md4DEzxGoB2r++ColQml4P0i6/uQ=@vger.kernel.org, AJvYcCWAu0vW69ZK/B98eV/bwEJNFJjITRktHKDRcDmKiTVUENaRmZaYHaT488D256FrkwNouWN/lWWY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw21nHjPTHukP6yy0uKDTgcdNjH5oiMpWxY+P1qjT/QgYJ+XY9L
+	6XAEKSVhvdpJEzzKVwsSOc5Brr0pM3houmRWoC1MHuMSIIEEVF4hNbFJE9TajvwBC03G5kN1emI
+	KNLFGqiID/5Cnjyv0Qeug0/zdyqMPwic=
+X-Gm-Gg: ASbGncv2drg4iMTVaaWCuQtkIS8MnawZn3OOXyRTbWb92w7qO4ZfzYUzpC/KpT5Ok9L
+	5z87hUcOtb/5fA74BvQJ5zDpH1LOuQk2iLUUPEHetY9cwVCr+a0zNcMK2F7bBtZcK4Ha+EkXQCg
+	yRh7YmDiSFR1bc/eWhZHgv+LxAq/PtPfJ9knPA0R5GJWFt9Trv0NJ+oTIAA3qPWwlpORDdXuAJE
+	L/XPbWc7pX2HDRKh8M/MUju3L7CBLRL1pwf2Hy1KdCWADu7H80=
+X-Google-Smtp-Source: AGHT+IGjVz9zqn8BbtmRC26R4QSkX6A4Q84g3hbk2BHW4+6JnnTvFG+jS17Ww+dxP48t8AY/g3mKnA0lZtUe2mcohUY=
+X-Received: by 2002:a17:906:4786:b0:afe:e7f1:28a2 with SMTP id
+ a640c23a62f3a-b01d8c7835emr1258659066b.23.1756827837577; Tue, 02 Sep 2025
+ 08:43:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901072156.31361-1-yangtiezhu@loongson.cn>
-In-Reply-To: <20250901072156.31361-1-yangtiezhu@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 2 Sep 2025 23:43:24 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6Q7CPHjuvHns5OevW1DZ-jC30xtEQ5Ao=DYva-LZWStQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzky8itaIyvk-uerpxxb7YE4Vi6IRA9i6mbSOw_hcFwFsBBCvi-usHWc7E
-Message-ID: <CAAhV-H6Q7CPHjuvHns5OevW1DZ-jC30xtEQ5Ao=DYva-LZWStQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] Fix objtool warnings if LTO is enabled for
- LoongArch (Part 2)
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250902001302.3823418-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250902001302.3823418-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250902-spirited-congenial-stingray-f8aff7@kuoka>
+In-Reply-To: <20250902-spirited-congenial-stingray-f8aff7@kuoka>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 2 Sep 2025 16:43:31 +0100
+X-Gm-Features: Ac12FXzIsq1sQ-x5uMFEMxBzln58PfPIlzCTK000OG7RlVhFny-x7C12oPVK8qY
+Message-ID: <CA+V-a8uy++vzYh5956X2Dpv2Low5uAK+FRTONaP4Nc3FMty6Bw@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: dwmac: Increase 'maxItems'
+ for 'interrupts' and 'interrupt-names'
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Russell King <linux@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 1, 2025 at 3:22=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn>=
- wrote:
->
-> The previous patches [1] [2] are to fix most of the warnings (total 3030)=
-:
->
->   sibling call from callable instruction with modified stack frame
->
-> This series is a follow up to fix 2 kinds of warnings (total 24), it only
-> touches the objtool and LoongArch related code:
->
->   falls through to next function
->   unreachable instruction
-This series seems the best solution from my point of view. So if no
-one has objections, I will take it.
+Hi Krzysztof,
 
-Huacai
+Thank you for the review.
 
+On Tue, Sep 2, 2025 at 9:49=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
 >
-> With this series, there is only 1 kind of warning (total 3), it does not
-> only touch the objtool and LoongArch related code:
+> On Tue, Sep 02, 2025 at 01:12:59AM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Increase the `maxItems` value for the `interrupts` and `interrupt-names=
+`
+> > properties to 19 to support additional per-channel Tx/Rx completion
+> > interrupts on the Renesas RZ/T2H SoC, which features the
+> > `snps,dwmac-5.20` IP with 8 Rx queues and 8 Tx queues.
 >
->   missing __noreturn in .c/.h or NORETURN() in noreturns.h
+> This alone makes no sense. Why would we need more interrupts here if
+> there is no user of it at all? Squash patches.
 >
-> In order to silence the above warnings, it needs to change the related
-> code to give the functions __noreturn attribute, and have a NORETURN()
-> annotation in tools/objtool/noreturns.h. IMO, it will touch all of the
-> archs and the generic code, so this needs much more work to avoid the
-> side effect or regression, once it is done I will send out the patch.
+Ok, I will squash the changes.
+
+> You also need to constrain other devices, because now one Renesas
+> binding gets 19 interrupts without any explanation. Please rethink how
+> you split your patches...
 >
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-commit/?id=3Da47bc954cf0e [1]
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-commit/?id=3D5dfea6644d20 [2]
->
-> Tiezhu Yang (3):
->   objtool/LoongArch: Fix fall through warning about efi_boot_kernel()
->   objtool/LoongArch: Fix unreachable instruction warnings about EFISTUB
->   LoongArch: Fix unreachable instruction warnings about entry functions
->
->  arch/loongarch/kernel/Makefile | 2 --
->  arch/loongarch/kernel/head.S   | 6 ++----
->  tools/objtool/check.c          | 8 ++++++++
->  3 files changed, 10 insertions(+), 6 deletions(-)
->
-> --
-> 2.42.0
->
+I see you have already taken care of this, thank you.
+
+Cheers,
+Prabhakar
 
