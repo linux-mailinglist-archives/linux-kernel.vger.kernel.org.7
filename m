@@ -1,123 +1,144 @@
-Return-Path: <linux-kernel+bounces-795695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647F6B3F691
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:24:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599F8B3F695
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D6B189635A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49ADA188B4F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ACB2E62B1;
-	Tue,  2 Sep 2025 07:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WjE8oDue"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690F82E6CB3;
+	Tue,  2 Sep 2025 07:25:22 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159103398A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C5332F74D;
+	Tue,  2 Sep 2025 07:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756797878; cv=none; b=TPhdJbxJkH/JqL7ioplSKF+PLsAmx95Xo69fjD6WLcpa3t825OvEBbMFlHAYL7cIsAPtp4QKjZOalQC0nF6gITV2cpl5G0/YE4GeCQ6qs8Yn+2iyVAegaa/bzoBCyiSAANWfuqUdlT95ltE0NAyoZ1kB6axNSbvALIdzezMFogo=
+	t=1756797922; cv=none; b=pgzfhWU9HYZ1cUgRroFXDcYpImOSkYYHaZ5olsva1ksDO0K+znKSqJF9C4FZStKPezePC2PC2pImotOIcxBciNgMj5BEv+ev2tT0qad2P++eeTNePNHGcUiiNLz5cPtvAqYfuj5kVmNPTL+RBSvWMwC8fz1MHxEcLxh5Vn5VV7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756797878; c=relaxed/simple;
-	bh=eju1T8pCVvx89ZeKHN3PMLyReKD9Trk3dm/ZoDrU3XM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ByOHxptTYkL31KGnWAXOWEqz9lM8i0ZJY6qm7jmq9bXETCGWl4wVaPuKfjysDBCsrtcK9V8SAX+WVD6TGUQJgIHQFbdyLHUrxRdbjGxbPyngyPqw7CaiARujNHnW+8jRbkTEWXod59m0fNe79zApdxr386Ep5u50XYWHKw4cV5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WjE8oDue; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756797875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eju1T8pCVvx89ZeKHN3PMLyReKD9Trk3dm/ZoDrU3XM=;
-	b=WjE8oDueM7FrHlDlUquDnm6r5vnlShCA8sbjpVf2jiNHcc4yuO6k7qPrvD0I81p4dIfiJB
-	kVQYaHbrLoqLFJYyh3Y7YtutEzfiOIW3V/liysnT/fhBxXDhA778Rks/LjPRHF0uI7s9tr
-	9OItp9oYPt3Ggjid3xVLxJ09PMSa9A4=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-rSt5XtwvP3K9nkRDlQSmVA-1; Tue, 02 Sep 2025 03:24:34 -0400
-X-MC-Unique: rSt5XtwvP3K9nkRDlQSmVA-1
-X-Mimecast-MFC-AGG-ID: rSt5XtwvP3K9nkRDlQSmVA_1756797874
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b2f7851326so127109371cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 00:24:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756797874; x=1757402674;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eju1T8pCVvx89ZeKHN3PMLyReKD9Trk3dm/ZoDrU3XM=;
-        b=ebW2c9z9UqLsCQnEU80p4OJQCCYETpyQ2jvmytf0i8l45TQCSlBza7wLJ0NqETR3xM
-         AI/ipPejgqrq+Z77DisJumZu0KzI0P1Hb22chNLg3pK4RQ7vsK0Au/FrGCP/+bceyHld
-         bkUh+4FiY08ml72GSmqykQvMKUNJv+TYX2flQ2KWCGwlmPMb/lur87m0u0VCXFNqQ66l
-         01lIN6mmKMW+uOpgHRQ6xLG/nSXklRAvm+cUNvES7qCYAZIUbZjNd3rfVSn839NheAjb
-         fLdGYrYuFBGhChzkqNlJtxJ/gcqVEq5SPbqjebjdwkc4nvwnuHdejkoyMA5pzPfdsqAl
-         TwAw==
-X-Gm-Message-State: AOJu0YzYkpBy1wbiXyYb6xq+3PvR3Q+kzlhhoMoFqfJWXythLObufzpb
-	naUScx8y+uXTIjxEB72R6gqO1dKWutl05mxNV3IZ6107nGiIeXcc11DjCl0rAiHwaHzUacfb0GR
-	XGJLA84qE8njkEpjVSl122lcSeDgaqfdxR2Pb/iMmFPCkpB72rZzFrIjpZ1N2vj21Dw==
-X-Gm-Gg: ASbGncs5TdXk5fm+PzqdWLqgL+9FiW3Eu5yYnUgmzvhaWrOKm5tM+1dSDrRYq0V12CJ
-	KaoDXwe/Y+rQfRLKPQtcFlDnO8yCh8IyyfMYUPAmBgpdYqIl260V6552V/BXiEGi7jE98UoYU5y
-	bulK74rWE628Oa14fl8K0O30rZJ4sO4dyoysF2V5FMdzJSEqWCdLjg95sJeYWpkxnG2q03bxdTe
-	qEJB1RLxuSjXwXGqV3lJR06zF70omoWblsYQ8IcEr1y9CHj9X7KSzmKl8sBaDS0bufIzCHaYb7j
-	HzNyMkBxpujusRFgVRbmC08KD/X733poiYipqjO3l8cKqWn53OdX8+DWMU5aYA5NYrNCdvA=
-X-Received: by 2002:a05:620a:29cc:b0:7e8:23c1:f472 with SMTP id af79cd13be357-7ff26eab1ccmr994505685a.3.1756797873922;
-        Tue, 02 Sep 2025 00:24:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPg3hdu5JodFozpWkdD4pgt31QG7L5zOYnyAbFPu7ZX/efiTBjunMP1yXYo/JW79MBOL2yLA==
-X-Received: by 2002:a05:620a:29cc:b0:7e8:23c1:f472 with SMTP id af79cd13be357-7ff26eab1ccmr994504685a.3.1756797873553;
-        Tue, 02 Sep 2025 00:24:33 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8069cde2863sm90429085a.58.2025.09.02.00.24.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 00:24:32 -0700 (PDT)
-Date: Tue, 2 Sep 2025 09:24:28 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org,
-	Alejandro Colomar <alx@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 1/4] man/man7/sched.7: Update the real-time section
-Message-ID: <aLabrBwH4Mz8seCu@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250829160200.756194-1-bigeasy@linutronix.de>
- <20250829160200.756194-2-bigeasy@linutronix.de>
+	s=arc-20240116; t=1756797922; c=relaxed/simple;
+	bh=Moyj5TcC9RHNgCT+wYqLEVDJYXrnohcgJQodjkzfmKU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=quTPD5PSIvflxx8N+/3ZficSK9W+XJZA9nwr8orBtFGegC8prAJeRnDo4jCp2DzvA5nJXakTyhVLKx/SyccFc1F/Ro4/aD6lbO3o5jzuHSz27bVCEO+/WclXg3b25rqWjbHPU51oGgjXG7JleooFR8WSH80Bt3yzFDG3K7+LhF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.12.217] (g217.RadioFreeInternet.molgen.mpg.de [141.14.12.217])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id F1F5360213ADA;
+	Tue, 02 Sep 2025 09:24:49 +0200 (CEST)
+Message-ID: <acf7a445-b58b-49dc-8d2c-1afe86805953@molgen.mpg.de>
+Date: Tue, 2 Sep 2025 09:24:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829160200.756194-2-bigeasy@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH v2] ixgbe: fix too early devlink_free()
+ in ixgbe_remove()
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+To: Koichiro Den <den@valinux.co.jp>
+Cc: intel-wired-lan@lists.osuosl.org, anthony.l.nguyen@intel.com,
+ przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch,
+ jedrzej.jagielski@intel.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250902003941.2561389-1-den@valinux.co.jp>
+ <4f746e98-b81b-4632-a2f8-f14d66c71ced@molgen.mpg.de>
+Content-Language: en-US
+In-Reply-To: <4f746e98-b81b-4632-a2f8-f14d66c71ced@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi!
+[Cc: Remove mateusz.polchlopek@intel.com (address rejected)]
 
-On 29/08/25 18:01, Sebastian Andrzej Siewior wrote:
-
-...
-
-> -The FIFO and RR scheduling policies are then used to run a thread
-> +The
-> +.BR SCHED_FIFO ,
-> +.BR SCHED_RR ,
-> +and
-> +.B SCHED_DL
-
-I believe SCHED_DEADLINE would be more correct?
-
-Thanks,
-Juri
-
+Am 02.09.25 um 07:08 schrieb Paul Menzel:
+> Dear Koichiro,
+> 
+> 
+> Thank you for your patch.
+> 
+> Am 02.09.25 um 02:39 schrieb Koichiro Den:
+>> Since ixgbe_adapter is embedded in devlink, calling devlink_free()
+>> prematurely in the ixgbe_remove() path can lead to UAF. Move devlink_free()
+>> to the end.
+>>
+>> KASAN report:
+>>
+>>   BUG: KASAN: use-after-free in ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
+>>   Read of size 8 at addr ffff0000adf813e0 by task bash/2095
+>>   CPU: 1 UID: 0 PID: 2095 Comm: bash Tainted: G S  6.17.0-rc2-tnguy.net-queue+ #1 PREEMPT(full)
+>>   [...]
+>>   Call trace:
+>>    show_stack+0x30/0x90 (C)
+>>    dump_stack_lvl+0x9c/0xd0
+>>    print_address_description.constprop.0+0x90/0x310
+>>    print_report+0x104/0x1f0
+>>    kasan_report+0x88/0x180
+>>    __asan_report_load8_noabort+0x20/0x30
+>>    ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
+>>    ixgbe_clear_interrupt_scheme+0xf8/0x130 [ixgbe]
+>>    ixgbe_remove+0x2d0/0x8c0 [ixgbe]
+>>    pci_device_remove+0xa0/0x220
+>>    device_remove+0xb8/0x170
+>>    device_release_driver_internal+0x318/0x490
+>>    device_driver_detach+0x40/0x68
+>>    unbind_store+0xec/0x118
+>>    drv_attr_store+0x64/0xb8
+>>    sysfs_kf_write+0xcc/0x138
+>>    kernfs_fop_write_iter+0x294/0x440
+>>    new_sync_write+0x1fc/0x588
+>>    vfs_write+0x480/0x6a0
+>>    ksys_write+0xf0/0x1e0
+>>    __arm64_sys_write+0x70/0xc0
+>>    invoke_syscall.constprop.0+0xcc/0x280
+>>    el0_svc_common.constprop.0+0xa8/0x248
+>>    do_el0_svc+0x44/0x68
+>>    el0_svc+0x54/0x160
+>>    el0t_64_sync_handler+0xa0/0xe8
+>>    el0t_64_sync+0x1b0/0x1b8
+>>
+>> Fixes: a0285236ab93 ("ixgbe: add initial devlink support")
+>> Signed-off-by: Koichiro Den <den@valinux.co.jp>
+>> ---
+>> Changes in v2:
+>> - Move only devlink_free()
+>> ---
+>>   drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/ 
+>> net/ethernet/intel/ixgbe/ixgbe_main.c
+>> index 80e6a2ef1350..b3822c229300 100644
+>> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+>> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+>> @@ -12092,7 +12092,6 @@ static void ixgbe_remove(struct pci_dev *pdev)
+>>       devl_port_unregister(&adapter->devlink_port);
+>>       devl_unlock(adapter->devlink);
+>> -    devlink_free(adapter->devlink);
+>>       ixgbe_stop_ipsec_offload(adapter);
+>>       ixgbe_clear_interrupt_scheme(adapter);
+>> @@ -12125,6 +12124,8 @@ static void ixgbe_remove(struct pci_dev *pdev)
+>>       if (disable_dev)
+>>           pci_disable_device(pdev);
+>> +
+>> +    devlink_free(adapter->devlink);
+>>   }
+>>   /**
+> 
+> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> 
+> 
+> Kind regards,
+> 
+> Paul
 
