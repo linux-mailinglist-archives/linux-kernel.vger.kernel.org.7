@@ -1,127 +1,78 @@
-Return-Path: <linux-kernel+bounces-797464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E36B410CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:34:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52C7B410CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8281A8771F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC1903AE958
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1423927C84B;
-	Tue,  2 Sep 2025 23:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CA727FB1E;
+	Tue,  2 Sep 2025 23:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/RvA9YK"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hs7zH0ev"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07868205E25;
-	Tue,  2 Sep 2025 23:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE6920E00B;
+	Tue,  2 Sep 2025 23:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756856040; cv=none; b=RrV0NuU8bwBj2kxqfzcJRdXhIR+wlhoO9aYHh4gOYZMSt3toljfsyrFJzNokX08lvyvOwmIo9AUaXYHgfmsoypPSKeIIR2n5HWa2SO5fZb+QqPzbHCHegxUJ1j7eGQ/MmrV4gMuqyufX0WOFQBv1DpNCilpo2GX2aQf+snlgSag=
+	t=1756856113; cv=none; b=SP/qGWvAFQw9m8QnJBf2Re+6YM5T/K82epvkRFg7MW4zO1COb+FsBSaPoESByRTSIblDCHlQ8FuxRUa4OpqB8xrRDuY+llJW3NtJV3709PfTQp8FZDDkLMp6dqVzVeApMR+QzPjqG+5K9D5BTgrOh6ZtUHZA5NotBelKpNZja+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756856040; c=relaxed/simple;
-	bh=yW9w6vRtrpU9Evv7gLXIbiVMJouFZmAUYRkWdYh8tpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UwpJgl5vQkl+a6HD9S4yWgD+Tj8YHLazjlZfe6AgLlGkCAl0oiHYE6c8LXZUKDZJO7YhleTmjB+FJnx2OYKAM+13NF042ovNIRwE/jQsV7ix4woCJ4wxws3doepWM5YqeKjWvZr8XzaC/sIDvCB26lUS1iuWpQUZzgup4sKIWjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/RvA9YK; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7724cacc32bso2406898b3a.0;
-        Tue, 02 Sep 2025 16:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756856038; x=1757460838; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gAzJ/mYc64utzpgd4HFHI/h/o1xEjnEqOHUAiimbwZc=;
-        b=l/RvA9YKrNhXQj7SbEthra79k2CkuOhqoAUeicSkGFdPwjW/YT5YY8i3hfJpQMrus0
-         xffx58OVk+Tcj/0rjucO2DOgcU/oQ+jQh/W1czQqRpGh/+da0OAEMeSIW57haac45Smz
-         eK6iz4ltpaArhEWuYOdsA0Z6ngrg0B4mr0JusC1JikbFtPDD/q3ETJNvB/yPOhcrXJXi
-         ROVmVuP1JOiHLBm4Apxt43XqJoCl0xNbbTbcDiU3tN9Eu/GcamSFDOL2Na4PRvoxLu+v
-         Vbv02F64qjjSu6nOqyALOJIzlFtkLW5P6+bObFioO0PbPS8wrquvkjL4d29CE2ZDTrgu
-         vroA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756856038; x=1757460838;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gAzJ/mYc64utzpgd4HFHI/h/o1xEjnEqOHUAiimbwZc=;
-        b=Tqwpr0Ienb1hbawCsg5wFv+1nRKILq4M0VrNxkyYxUB4EtpJdOffpDBfYVYTCtL9ob
-         jV2nd+4Ct9O/IAo9kFu9l827TtAfpet8+07zJDDmwMLLihkO+cOmdQbP72B/NVg13Yy5
-         mvjcC8Ft1zS/XRaiUpzBxYxq7PPmkqa5vMbjI5cmK1xyky8yLSnmNZO9h0mwDH6YtDMY
-         b69RRxndXNBRN8Pd/tN74jU0bjH9jk3Wm43eMD++kbnpJAxju1lhUtjz/CFmSIj1Pjl5
-         sJ1swwmXXqmWWJGKvLNZb0aT4SPIzrHoM4LLdrdbLgvwdlgQ1MZUFlipfo9r31CV2Nj+
-         8LCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzdeQ8nSIuXXS2UXsRsQ/Bxl4/AcDZDUiFWwNJvIwTvcTBab2YiqICK+C4jBzuwkNrkipNACq7NWe8RL5y@vger.kernel.org, AJvYcCXvI5oTtl1whkMoDNHVUxjch6FSC3tfReVM7daK1bU/+GUoKvG7CqeBxFhcjblAdhOE5v4G8G99ieZPARBfESg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKys5ukDtoNHt7W2XsrbOqbVjkqvNddmYslR0gqKGKI82kAo+n
-	Z537xlr/FzAvOebtI2lGwv0TzL0DntiB02lGLZ+cZJLwKTSPDJ5iC1iQ
-X-Gm-Gg: ASbGnctpcqgDE9YCn19RHb5xvuL6oMcoJskKo82cvbe6/tL3kEqswz7p9aFyMmQoHVH
-	82MpB1aawNv9vqHbbjTFz2zMjK0WhMza3VMyDqLrhNM+P+VlQAo4PciMVrbRICG8a8nh+BBTw9+
-	AZN1XWM5lZYgnolw377xyd3no4gtS0reFNSVbuOp+YtFi7uYS2Zmdrs1arISu7SB6dUq/hnUBoU
-	tpNNzE2JXwWJGof1PSG24fXaNek7a9M0XSvzl9lAM3ffWJ7cPgZYBX0AKftZw1Uon5kRkEqba9Z
-	ClYXqoTxGJdK7diUWXvki3kvJyrfO1PYQjx+3ZnjwAb2/WU73HPAmmAezOU8VQlFwnChkSRnve2
-	JDW8p/1J8BPjO1SdWwKiPpBLoS5Lu3ytzyAzO91dkL68=
-X-Google-Smtp-Source: AGHT+IFCHMJgNxwzVBuhDPUnqfnXtX/OwqNEFGPPrk3w9dx8T8LeDIovgdyFLLPhOdAAuEUOE8aTtw==
-X-Received: by 2002:a17:902:f60a:b0:234:f4da:7eeb with SMTP id d9443c01a7336-249448709abmr175164745ad.7.1756856038045;
-        Tue, 02 Sep 2025 16:33:58 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490374412bsm142070755ad.51.2025.09.02.16.33.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 16:33:57 -0700 (PDT)
-Date: Tue, 2 Sep 2025 19:33:55 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Kees Cook <kees@kernel.org>
-Cc: kernel test robot <lkp@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Vineet Gupta <vgupta@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] arc: Fix __fls() const-foldability via
- __builtin_clzl()
-Message-ID: <aLd-40v-epEd1mi5@yury>
-References: <20250831022352.it.055-kees@kernel.org>
+	s=arc-20240116; t=1756856113; c=relaxed/simple;
+	bh=Yu0jVEodkPTvVFabct2RrrX/7iqVU1qZiWO7k25ZXzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PkTu8q5XgsBD07ntyO6n6WaSur88Cmrv7R1rUsmigFM9xAFzub9Dh9IHNBR4Y9E6ZpeCVGkXCyJsjyr6RKwoo8cJeGkXsU90K5bNA4tUONe7uXKAv9DAVhrPYtNerp667HUVGKw7geyMmSGdZ7RwizKKkSpAM86/8ZLVmhcmdtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hs7zH0ev; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B78EC4CEED;
+	Tue,  2 Sep 2025 23:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756856112;
+	bh=Yu0jVEodkPTvVFabct2RrrX/7iqVU1qZiWO7k25ZXzc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hs7zH0evhqV4ahtzKH6BZbEYbNGN/VLudXIgIXiJ9Rw0IpEURdoT0Bbpkev9sql0O
+	 XaWIhDU8HjBN7jHHvl9/KDIMG46gC8uSkp6m6oDV0Tq0Vvd0B/7IVgNasF1nLfjjMB
+	 KJilnTsZ0mUmpX1PBdJ43LT7hfmVPAJJyuNw20lSjzdwABzPrnnXlKyqinP5frRMwa
+	 qD7+4lo/pE+MDIZ4Chqz3sVhlqzcUs8HXp7fmCEa8H9Tag01SrHWuEJP093NGLwdUJ
+	 6+OVHbWml+V4vO75unL+LMiXztMq96jyJlAzFe10lLJC8fh93kNIIwFHPZMmYLsMQR
+	 VBnuxdjYRWSXA==
+Date: Tue, 2 Sep 2025 16:35:11 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Oleksij Rempel" <linux@rempel-privat.de>
+Cc: Hubert =?UTF-8?B?V2nFm25pZXdza2k=?= <hubert.wisniewski.25632@gmail.com>,
+ "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Paolo Abeni"
+ <pabeni@redhat.com>, <linux-usb@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <regressions@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [REGRESSION] net: usb: asix: deadlock on interface setup
+Message-ID: <20250902163511.181fa76a@kernel.org>
+In-Reply-To: <DCGHG5UJT9G3.2K1GHFZ3H87T0@gmail.com>
+References: <DCGHG5UJT9G3.2K1GHFZ3H87T0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250831022352.it.055-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 30, 2025 at 07:23:53PM -0700, Kees Cook wrote:
-> While tracking down a problem where constant expressions used by
-> BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
-> initializer was convincing the compiler that it couldn't track the state
-> of the prior statically initialized value. Tracing this down found that
-> ffs() was used in the initializer macro, but since it wasn't marked with
-> __attribute__const__, the compiler had to assume the function might
-> change variable states as a side-effect (which is not true for ffs(),
-> which provides deterministic math results).
-> 
-> For arc architecture with CONFIG_ISA_ARCV2=y, the __fls() function
-> uses __builtin_arc_fls() which lacks GCC's const attribute, preventing
-> compile-time constant folding, and KUnit testing of ffs/fls fails on
-> arc[3]. A patch[2] to GCC to solve this has been sent.
-> 
-> Add a fix for this by handling compile-time constants with the standard
-> __builtin_clzl() builtin (which has const attribute) while preserving
-> the optimized arc-specific builtin for runtime cases. This has the added
-> benefit of skipping runtime calculation of compile-time constant values.
-> Even with the GCC bug fixed (which is about "attribute const") this is a
-> good change to avoid needless runtime costs, and should be done
-> regardless of the state of GCC's bug.
-> 
-> Build tested ARCH=arc allyesconfig with GCC arc-linux 15.2.0.
-> 
-> Link: https://github.com/KSPP/linux/issues/364 [1]
-> Link: https://gcc.gnu.org/pipermail/gcc-patches/2025-August/693273.html
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508031025.doWxtzzc-lkp@intel.com/ [3]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+On Sun, 31 Aug 2025 10:50:35 +0200 Hubert Wi=C5=9Bniewski wrote:
+> Trying to bring an AX88772B-based USB-Ethernet adapter up results in a
+> deadlock if the adapter was suspended at the time. Most network-related
+> software hangs up indefinitely as a result. This can happen on systems
+> which configure USB power control to 'auto' by default, e.g. laptops
+> running `tlp`.
+=20
+Oleksij, this seems to date back to commit e0bffe3e6894 ("net: asix:
+ax88772: migrate to phylink"). Taking rtnl_lock in runtime resume
+callbacks is known to result in unhappiness :(
 
-Applied in bitmap-for-next, thanks!
+Could you check if commit e110bc825897 ("net: usb:
+lan78xx: Convert to PHYLINK for improved PHY and MAC management")
+isn't similarly flawed?
 
