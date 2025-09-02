@@ -1,225 +1,128 @@
-Return-Path: <linux-kernel+bounces-796544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96440B40222
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:11:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FB1B4024E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82547189D1B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A8A3BD55B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121822DE710;
-	Tue,  2 Sep 2025 13:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ED02DCF69;
+	Tue,  2 Sep 2025 13:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TjZz4Iqg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aKHmtreB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TjZz4Iqg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aKHmtreB"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WrwYiCTC"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847012DE704
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6F12D59F7
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818652; cv=none; b=akNvBg0FhaPDIgUE8P/cx3kMcjzFlUxBMvMTynHnXFZJ6wvdGdgIdfcI3sR0uki9uMJnURuGmCrzeIm378uV4CkYw7LvsGw+sMu7PTYookbgsFnt8g3CRA9HJnNp38nQsM9MVLBPKbcsvNEW0UNDJ1nMTKHda66fQd+POfk+Wos=
+	t=1756818669; cv=none; b=H8KGyTq9oyrQYhH2FAyUfdOqATiBAx5s+e3TYWW6FM7qosdJydE8VGY++eu5TN+o0/RVB025jgrluUQ65zEpDWHJ3VVZWOc0Tmv72GqhWPuZZ3xqor5CeIKto5V0aMfAoEaxUqFaMuWXyLj0vM6dhxY1W4GxnmAWpevGKixH7yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818652; c=relaxed/simple;
-	bh=GqYsCTP6AsR7Ji+m8iuAmRcXiSz9bKsaa1ECpTTNhSA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IArY1bsbrq6mHP63Yo98xzcQObUuDuHL+Pi7D6tSm42JcZ3W4p9B9BV1eTQ6XKyOqX/75rF/cjnXVIPRSXeeoQKi2FCOFZv0jQD65mUGaK6tyUGIuC4v7RW2TYg/5XLBDwFesQm4tTlf+FmMSBuDosPs9CWPdFgyezsl6MM7IEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TjZz4Iqg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aKHmtreB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TjZz4Iqg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aKHmtreB; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 70EA11F394;
-	Tue,  2 Sep 2025 13:10:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756818648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jV6EmMIqBKPBrwb8x6lWHZghJUtds/59uY5BNXWez+0=;
-	b=TjZz4IqgnqZ+LzVt8oAPtFqMqq4XcPNZl5uLtrjesYgbnQ1We//f+FGpBSQ+TuqQbkt6mJ
-	2NSBbvhMEME45Dh5PCyBA8nPUajDmDogoYxqAixy9t7zrw5O5LLq1mz8ewR4rmkA3ld2o1
-	jDroN+2FOSadFO7WdwYNGShB7tsp/Eg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756818648;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jV6EmMIqBKPBrwb8x6lWHZghJUtds/59uY5BNXWez+0=;
-	b=aKHmtreBDrktAtYbjqYbWL0Z9MIRk+luH1vaWZW6kcPvvHwTgXFGQydhOKWSJI9BV7bDEi
-	uLTJg3f3dRH+S+Dg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TjZz4Iqg;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=aKHmtreB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756818648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jV6EmMIqBKPBrwb8x6lWHZghJUtds/59uY5BNXWez+0=;
-	b=TjZz4IqgnqZ+LzVt8oAPtFqMqq4XcPNZl5uLtrjesYgbnQ1We//f+FGpBSQ+TuqQbkt6mJ
-	2NSBbvhMEME45Dh5PCyBA8nPUajDmDogoYxqAixy9t7zrw5O5LLq1mz8ewR4rmkA3ld2o1
-	jDroN+2FOSadFO7WdwYNGShB7tsp/Eg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756818648;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jV6EmMIqBKPBrwb8x6lWHZghJUtds/59uY5BNXWez+0=;
-	b=aKHmtreBDrktAtYbjqYbWL0Z9MIRk+luH1vaWZW6kcPvvHwTgXFGQydhOKWSJI9BV7bDEi
-	uLTJg3f3dRH+S+Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0323013888;
-	Tue,  2 Sep 2025 13:10:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TPgtO9fstmhaVgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 13:10:47 +0000
-Message-ID: <c76f914e-13ed-463f-be94-1a5c3d031986@suse.de>
-Date: Tue, 2 Sep 2025 15:10:47 +0200
+	s=arc-20240116; t=1756818669; c=relaxed/simple;
+	bh=a6+7H71onDG4ZfaCBC69FB5SY12ev/7tff0d25FMAG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kQbZz1hndvO2nFmPn3pOJtScM08o8vNeyIZMWCVKrT7EWFzBkHgef4XF1sExN5qbcH+Su4Bav8+n0Z4C49KTIzDVYu/nedn7lovhKMKcaE0/oLLle8M9jGBCteQkTHPzMwq6G6ptZcAonT7Rn6iVpE/Ra4tOi/X49X8nrXS8lCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WrwYiCTC; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2445824dc27so48895375ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:11:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756818667; x=1757423467; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rm8LYWgbBbSoxzsUxJyqmS94JWyK2thOVWLaY84JeS8=;
+        b=WrwYiCTCGAvJoqUkACxFSAvaOAK1GOH+8zPJFwD/tJD774Fw8WQwHKtDnm6akDx657
+         Dh7aFqvU/h1yOy+7b6+vEDQPDzvAVdF8RtiCpIBaLLFdUNTwr1EhjJAt6bN+dHoCRE63
+         h3nQHod5hLtAxcVId3lcuKv07lzqyvxC1tW610L5r0ZyoRdUsi+snlT0nY0RIF2xntU0
+         pWIj7CZMsYrCp1XG8mvg1RSk2ifF6zC6g/ckPzMXTIZ620hjfdC3Y5bJOqlC8r44qpt1
+         fvoD7Q4D/fGAWBHVhbo+euC7hIn6VoNsDM4CqUzlk+QraRDnuj68sngJC0z5IB+GNwfU
+         LTDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756818667; x=1757423467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rm8LYWgbBbSoxzsUxJyqmS94JWyK2thOVWLaY84JeS8=;
+        b=AshlfESsi0bzAzQgTpY/NIFHpmxwXy1l0yKwl8HE0Ej2+5xIGR3guo6uOLrDPhy1WY
+         iEXulK6ADIEoRENNCpVSAcn8PIzKWxPQon5u+LDVcmkivdvV5doqMoyeEUgey/cPG/FY
+         2yzwgT9x2LT23NbQuG7FkJUf6cEP+7+Zsjcz2C7C1pkvpUDT72KzqHXQjoHH/ikKwmhf
+         ZYMeZeJtcYmsXSzsPqwWwKYCe4tFw5sr7Y6VuH/0jRP66ve7ThNROQgDEPRgp5Lab5XS
+         TGSQcaiW0M5nei2jDjVdZQIhSxo56BYyFAwDKQQyGwchqA5tKuBojlBpYY1aKmNyocMF
+         Zy6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXbNqzsxoAVi0oJ5pSxzURtIYMS1Gs55VZoDpl6NyrtoSuUx9UCguatCv6/W5lIjRAPDoTuwvk1AXmH9V0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9lo1KoOFB4a3mkTtIpz4+RXO+Q0nKCBhfWO/tkxnXYrwPsWiR
+	vTiDNP+wIBELJ8pyKYKJYZNM5wmqfpcZFiNM8EAfI2yx1mzNSA1LiNv75ZzEupSUBdjk7Ah7H1B
+	ymJ7ljRNCNeTpZBnj2kHf8NF3XBU6EfTnDDQfoLKN
+X-Gm-Gg: ASbGncsTM+cgThvqUFAmfUAG4ug79ydrm7/BCq0FCE0/7NA+Zp0HL3aG9RfGJ6b4vRV
+	pOLnqiY9TNk6c42hege3lptMfk5F/5U3CEYs9yMWjnM+k78sJue0+mA8B907TkKFd6Ef+5zGk7q
+	8eGT6ux9oRutsQLWb6V5e+rJ9Gn/FfPsnKjjT/9axZ+JgkXj7wftHYr/rk1a19w6roeTFUByrrx
+	js9KF8uAQ2o3r4zIhcnsMph98SZgvfYB0a8
+X-Google-Smtp-Source: AGHT+IEajt5n7miuhpVNgaVc7Q6fAs6vdDGW7Ft6PJ5otEsVyTncI7dUQga6YoFZNasinGVO2qLjbv1bEw5pg8a7acU=
+X-Received: by 2002:a17:902:ce03:b0:248:cd0b:3454 with SMTP id
+ d9443c01a7336-24944873445mr133817985ad.9.1756818667376; Tue, 02 Sep 2025
+ 06:11:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/29] drm/atomic: Fix unused but set warning in
- for_each_old_private_obj_in_state
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-3-14ad5315da3f@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250902-drm-state-readout-v1-3-14ad5315da3f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 70EA11F394
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email]
-X-Spam-Score: -3.01
+References: <20250902073841.2338568-1-abarnas@google.com> <aLaypTjukJJloGuL@stanley.mountain>
+In-Reply-To: <aLaypTjukJJloGuL@stanley.mountain>
+From: =?UTF-8?Q?Adrian_Barna=C5=9B?= <abarnas@google.com>
+Date: Tue, 2 Sep 2025 15:10:55 +0200
+X-Gm-Features: Ac12FXwTsBas7UmElXIeqiXIRz_1zSROWnkOhZSndPGsKtOskJgJVh0CaFvpYhg
+Message-ID: <CAATBrPEsea2GfK26W5eg4ZFm=hJLO1pLNax85vvXZ8hb=iGaFQ@mail.gmail.com>
+Subject: Re: [RFC] staging: media: atomisp: Simplyfy masking bit logic
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+> These are supposed to be opposites, right?  Subword and inverse Subword.
+> You could dress them up to make them look more opposite.
 
+In fact this name is misleading as well. For me it should be named
+`clear_subword()`. It is zero-ing the "subword" provided with low and
+high bit boundary (start, end), to be then easily replaced with binary
+or operation.
+And this operation is not an inverse of extracting a subword using the
+subword function.
 
-Am 02.09.25 um 10:32 schrieb Maxime Ripard:
-> The for_each_old_private_obj_in_state() macro triggers a compiler
-> warning if the obj parameter passed to it isn't used in the code block.
->
-> Add a similar workaround than in most other macros.
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> The problem is (and actually with the (end-1, start) above that it might
+> generate a really bad code on some CPUs, so I really, really prefer the w=
+ay
+> when _at least_ one of the parameters is constant.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+It would be  easier to create a bitmask sing GENMASK_ULL and just
+reverse it but if it is not safe, this is what looks fine for me and
+works the same as previous function:
 
-> ---
->   include/drm/drm_atomic.h | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> index 689a29bdeb4a06672ab6fffecb513d58ff6e07f9..f13f926d21047e42bb9ac692c2dd4b88f2ebd91c 100644
-> --- a/include/drm/drm_atomic.h
-> +++ b/include/drm/drm_atomic.h
-> @@ -1112,10 +1112,11 @@ void drm_state_dump(struct drm_device *dev, struct drm_printer *p);
->    */
->   #define for_each_old_private_obj_in_state(__state, obj, old_obj_state, __i) \
->   	for ((__i) = 0; \
->   	     (__i) < (__state)->num_private_objs && \
->   		     ((obj) = (__state)->private_objs[__i].ptr, \
-> +		      (void)(obj) /* Only to avoid unused-but-set-variable warning */, \
->   		      (old_obj_state) = (__state)->private_objs[__i].old_state, 1); \
->   	     (__i)++)
->   
->   /**
->    * for_each_new_private_obj_in_state - iterate over all private objects in an atomic update
->
+// Added a helper to create a mask
+static inline unsigned long long subword_bitmask(unsigned int start,
+unsigned int end)
+{
+        return GENMASK_ULL(end - 1 , 0) & ~(GENMASK_ULL(start, 0) >> 1);
+}
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+/* inverse subword bits move like this: MSB[xxxx____xxxx]LSB ->
+MSB[xxxx0000xxxx]LSB */
+static inline unsigned long long
+clear_subword(unsigned long long w, unsigned int start, unsigned int end)
+{
+        return w & ~subword_bitmask(start, end);
+}
 
-
+Best regards
+Adrian Barna=C5=9B
 
