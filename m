@@ -1,111 +1,159 @@
-Return-Path: <linux-kernel+bounces-796483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B62AB40133
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEFDB40154
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF7E1B60B37
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851FB1B60E2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B512D2493;
-	Tue,  2 Sep 2025 12:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F6D2D543D;
+	Tue,  2 Sep 2025 12:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bm2AUXca"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="xhs0WtNR"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8E833E7;
-	Tue,  2 Sep 2025 12:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3763595B;
+	Tue,  2 Sep 2025 12:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817396; cv=none; b=g1bWg7HNhh7ktbSNh91oCnB3vtxx8ezBrLRfItdcBhIG6a31ejZLRmUuinpxpdrrNV8/wMupJM+SdQiHapFlyjU9bLCbAgkrWNtj65NtAuSWp0al+yPMu66ho8WUdE8zb7UKqPzcKMv8fHq9SfHiX2yiqj7DHbyqcAhXjf5tjao=
+	t=1756817625; cv=none; b=lviUiKQNW6kLrV3A9+UC2XlQRn8tS4dzwbqTdz/t6+B0M02FF4HRm2FtY2fmJAWqPCxfnp52BfoHWMnl9Fgn8rsroSYFPjOT4a1uFtiMhkKKkSBhecCtwz1ryKelADHQ8+Cy16klffdsRo0JLDUC157BOdNw43oYMpJUsAkbnxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817396; c=relaxed/simple;
-	bh=dWRXtDoYp5v4SRV2t3rxa+lHAX/qWDqfeEE7hmCL48M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mPDrgfjQUBplbOypXDZK3ewtpqchJcVgZOM6sozVyEeI2bdebZOe2J+IIVSfyDZXUltqsJwCkAqA6HXkDO8C8ZUkWigS6WYOwPh+e6uDHWyzBBWlQJzDsV/XbimiPAntJxLr24msTRlgmIKab/eYGzHhAKjGh12mFIERpUz+9QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bm2AUXca; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1070EC77;
-	Tue,  2 Sep 2025 14:48:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756817325;
-	bh=dWRXtDoYp5v4SRV2t3rxa+lHAX/qWDqfeEE7hmCL48M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bm2AUXcaTJlN71Rrq1DZvI4l+EZ4kJxV02RlMa5vDTqgtmO6pZooJ+SxV9iSNspAA
-	 G/siOXegP8fuWpavGgAKwGG2pGzupIPrAk7qqG4OO2rQSKtM/TrIjtpRIiLRcSbqRF
-	 ZmY3yql9XAmwbUoF2AIk/dUI4a5DQwslSRaYOhn4=
-Date: Tue, 2 Sep 2025 14:49:32 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Bin Du <Bin.Du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
-	sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sultan@kerneltoast.com, pratap.nirujogi@amd.com,
-	benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
-	Phil.Jawich@amd.com, Dominic.Antony@amd.com,
-	mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
-	Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-Subject: Re: [PATCH v3 1/7] media: platform: amd: Introduce amd isp4 capture
- driver
-Message-ID: <20250902124932.GN13448@pendragon.ideasonboard.com>
-References: <20250828100811.95722-1-Bin.Du@amd.com>
+	s=arc-20240116; t=1756817625; c=relaxed/simple;
+	bh=GMEf6EiSdX0vFH/h/bzrixMuPQlQqcPnUDYYGB2d/aw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=N538xtS85hy3nI/+ft7XsrMubInAjowQk7HIV0ybRn2uBOZ7GWkUBsQOBe/T84xiWyqrushrbHS7UtDXQ8Or4OiT59P23ya16UeJmQgW1+YtzY89R5ACU/EaW6U/BeXkzU3uiUqporapluuIdv/FM5ayty/uw8WywPEIYDP7KAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=xhs0WtNR; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 45C49C8EC66;
+	Tue,  2 Sep 2025 12:53:25 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0D3F860695;
+	Tue,  2 Sep 2025 12:53:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5D3FD1C228A25;
+	Tue,  2 Sep 2025 14:53:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756817618; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=xugUPbYWNv1VVbKMqmzqvQ4aFGqHbEziO/2FwF6oyHY=;
+	b=xhs0WtNR9DqwnwFiqh79+t4UOXdkSKWBliA7a2Jd4do/GpIV5gwl/Z371eD4OAMSFxg3+R
+	S0S5/X39kzEbxN4vsQI/zMwIiwn+nkzDzVQfHKzDrq0p7i2kSLf1Uu+e3QoW4HDHKElCu6
+	QWaJJEV9DLNMCDxD5c/nRGN4gkpI7JV39lidXh6Cxdr12JQ7zL6hez+xgaw4/8k9I97H75
+	mLu+uRsr4XP95wMfQE/IobBx7G12eDMkiBcYPfVBXu/++uH/CleUz5VR7dPSXo8ElxZKfK
+	Yq/p9F5kT8zsq2iaAZVJ58H+U7RY7Cbt+/Ip8wHtOkNQyiuvvULWiN4/4Kwqqg==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next v2 00/14] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+Date: Tue, 02 Sep 2025 14:49:50 +0200
+Message-Id: <20250902-xsk-v2-0-17c6345d5215@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250828100811.95722-1-Bin.Du@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO7ntmgC/x3MSwrDIBSF4a2EO67FR4K1o+6jZJCYm+bSVoMGs
+ QT3XnF4+A/fCREDYYR7d0LARJG8q0NeOrDb5F7IaKkbJJcDl+LGcnwzblfD0ehhET3U5x5wpdy
+ UJ8z7yhzmA8ZaNoqHD7/GJ9F6k5RQTUqCcaaV7rU0k1GzeczeHx9yV+u/MJZS/hYjf3iiAAAA
+X-Change-ID: 20250218-xsk-0cf90e975d14
+To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jonathan Lemon <jonathan.lemon@gmail.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Bin,
+Hi all,
 
-Could you please provide the v4l2-compliance report (please use the
-very latest version of v4l2-compliance), as well as the output of
-`media-ctl -p -d /dev/media0` (replacing media0 with the appropriate
-device) ?
+This is a second version of a series I sent some time ago, it continues
+the work of migrating the script tests into prog_tests.
 
-Generally speaking, you should include a cover letter in patch series,
-and that information can be included in the cover letter.
+The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+are defined in xksxceiver.c. Since this script is used to test real
+hardware, the goal here is to leave it as it is, and only integrate the
+tests that run on veth peers into the test_progs framework.
 
-On Thu, Aug 28, 2025 at 06:08:05PM +0800, Bin Du wrote:
-> AMD isp4 capture is a v4l2 media device which implements media controller
-> interface. It has one sub-device (AMD ISP4 sub-device) endpoint which can
-> be connected to a remote CSI2 TX endpoint. It supports only one physical
-> interface for now. Also add ISP4 driver related entry info into the
-> MAINTAINERS file
-> 
-> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> Signed-off-by: Bin Du <Bin.Du@amd.com>
-> ---
->  MAINTAINERS                              |  13 +++
->  drivers/media/platform/Kconfig           |   1 +
->  drivers/media/platform/Makefile          |   1 +
->  drivers/media/platform/amd/Kconfig       |   3 +
->  drivers/media/platform/amd/Makefile      |   3 +
->  drivers/media/platform/amd/isp4/Kconfig  |  13 +++
->  drivers/media/platform/amd/isp4/Makefile |   6 ++
->  drivers/media/platform/amd/isp4/isp4.c   | 121 +++++++++++++++++++++++
->  drivers/media/platform/amd/isp4/isp4.h   |  24 +++++
->  9 files changed, 185 insertions(+)
->  create mode 100644 drivers/media/platform/amd/Kconfig
->  create mode 100644 drivers/media/platform/amd/Makefile
->  create mode 100644 drivers/media/platform/amd/isp4/Kconfig
->  create mode 100644 drivers/media/platform/amd/isp4/Makefile
->  create mode 100644 drivers/media/platform/amd/isp4/isp4.c
->  create mode 100644 drivers/media/platform/amd/isp4/isp4.h
+Some tests are flaky so they can't be integrated in the CI as they are.
+I think that fixing their flakyness would require a significant amount of
+work. So, as first step, I've excluded them from the list of tests
+migrated to the CI (see PATCH 13). If these tests get fixed at some
+point, integrating them into the CI will be straightforward.
 
+PATCH 1 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
+tests available to test_progs.
+PATCH 2 to 5 fix small issues in the current test
+PATCH 7 to 12 handle all errors to release resources instead of calling
+exit() when any error occurs.
+PATCH 13 isolates some flaky tests
+PATCH 14 integrate the non-flaky tests to the test_progs framework
+
+Maciej, I've fixed the bug you found in the initial series. I've
+looked for any hardware able to run test_xsk.sh in my office, but I
+couldn't find one ... So here again, only the veth part has been tested,
+sorry about that.
+
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+---
+Changes in v2:
+- Rebase on the latest bpf-next_base and integrate the newly added tests
+  to the work (adjust_tail* and tx_queue_consumer tests)
+- Re-order patches to split xkxceiver sooner.
+- Fix the bug reported by Maciej.
+- Fix verbose mode in test_xsk.sh by keeping kselftest (remove PATCH 1,
+  7 and 8)
+- Link to v1: https://lore.kernel.org/r/20250313-xsk-v1-0-7374729a93b9@bootlin.com
+
+---
+Bastien Curutchet (eBPF Foundation) (14):
+      selftests/bpf: test_xsk: Split xskxceiver
+      selftests/bpf: test_xsk: Initialize bitmap before use
+      selftests/bpf: test_xsk: Fix memory leaks
+      selftests/bpf: test_xsk: Wrap test clean-up in functions
+      selftests/bpf: test_xsk: Release resources when swap fails
+      selftests/bpf: test_xsk: Add return value to init_iface()
+      selftests/bpf: test_xsk: Don't exit immediately when xsk_attach fails
+      selftests/bpf: test_xsk: Don't exit immediately when gettimeofday fails
+      selftests/bpf: test_xsk: Don't exit immediately when workers fail
+      selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
+      selftests/bpf: test_xsk: Don't exit immediately on allocation failures
+      selftests/bpf: test_xsk: Move exit_with_error to xskxceiver.c
+      selftests/bpf: test_xsk: Isolate flaky tests
+      selftests/bpf: test_xsk: Integrate test_xsk.c to test_progs framework
+
+ tools/testing/selftests/bpf/Makefile              |   11 +-
+ tools/testing/selftests/bpf/prog_tests/test_xsk.c | 2616 ++++++++++++++++++++
+ tools/testing/selftests/bpf/prog_tests/test_xsk.h |  294 +++
+ tools/testing/selftests/bpf/prog_tests/xsk.c      |  146 ++
+ tools/testing/selftests/bpf/xskxceiver.c          | 2698 +--------------------
+ tools/testing/selftests/bpf/xskxceiver.h          |  156 --
+ 6 files changed, 3183 insertions(+), 2738 deletions(-)
+---
+base-commit: 1e6c91221f429972767f073295e2dd0d372520e7
+change-id: 20250218-xsk-0cf90e975d14
+
+Best regards,
 -- 
-Regards,
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 
-Laurent Pinchart
 
