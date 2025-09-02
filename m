@@ -1,196 +1,150 @@
-Return-Path: <linux-kernel+bounces-796795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B76B40729
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:40:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8964FB4074C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6E97AECDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:38:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B930256776F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CB033EB12;
-	Tue,  2 Sep 2025 14:36:58 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB163126A0;
+	Tue,  2 Sep 2025 14:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VR913EFY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E046C3376AE;
-	Tue,  2 Sep 2025 14:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2449F3043C3
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756823818; cv=none; b=p3Vclmn8vBosBmCzsGhi75nkHrJVY8siz1uIk2fSBH7gN5XiJPJZTY/FqYEf8nI6kwjVFIAlUvF7ozA8xK+ZNibHrhHBqqPKqu49sb5oN4fmrMGGqdTOB6e784lD3TutJSSqocLIpJtsT1JTjEHbneQUseR/Dlw09oZ+QfPaUHo=
+	t=1756823934; cv=none; b=P2X5EcG8mNl9fAuruk/Q3TFOAWuGxtGsQpdqib2CGVJBga9ArfO/0bQeKfctrPGGCXcpIIKJy4cyp8e48ITr1LDLq1yY0zWFWMnLAA4a6iqBIhoFEGoQEPuugN0B2CzTcD0GlDIONkzigJLmPcDvNMNdw/X+VeoO25QNHcxOd2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756823818; c=relaxed/simple;
-	bh=QOwKb2hEwQaGFHvUWM1aHkkgzXtur1DMIlEfQlknmM4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Hgembdo3ev0j9zSr37teMutI5w/oHWQQ1UkqgwVb6aei1068sS4O4EcPkg4zJEXVHq7BtGlkvjQaqe+IxiiQwIeDdBncfvKf88nBY4W4iUbltWvmtmV4TgRF1m6PN7AP/AgakIxrMCKCC11M3decoQxCVRI8BThFq+uyg1xLd2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b02c719a117so338625666b.1;
-        Tue, 02 Sep 2025 07:36:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756823814; x=1757428614;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sGgQwclxV+InBl48sbLkPeBpWw53bOiCuvt5WtGZiTs=;
-        b=P8OVWSxee+HHjK5Rj/QB8Qgh83GS2KHFhuwLaI1lrCI/5I1766WAno/34XrtoP1KDK
-         bG0CBTOuzx5Z8ld+KzY6I5q8fUNS9HdC5B1SoTIhcjeEV8XOj60ptCzJFrR4K+bCrOw2
-         Ujo/9bdvZeLOwZNXRZWwrEVVwGCDxogAlTMyXBZbXlfS+JjGUh5SZqqjCz9WyZy3fGLa
-         HnskuyCKuxAPyfkc44RlqWftR6n4b3hVn4bDlPSFQcQtAjugk5xFCVX3zpwFvANqlgEW
-         hPWMinuNrrsZARs4WjCocpEjT2l7P3TMaLHo0xHclobJmLG2noXIl6Aku8y9dmNpd803
-         MbEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDUmQ3HDbVxwbsHQJJscI4yJ0h70Ph8O/Ba6NxFztzBdjRuEDD/7yzi8T8bIchQ0nQ+MhgATjAEk/62+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEy5+B3/o4vVaR9rhXPeg06x+BBE6Klo288AsNtxbDVt42IDPi
-	Vbr+BTNBi2uqZfVrBiyOxoz8GlftboqU8SUQJm477fkhaWAh96EvReIv
-X-Gm-Gg: ASbGncucwaAy9YwkPhLZqmSg1rrfQ+dE2zKnv6cWI2pBROkPUBYZ4xgUmPHor0lNTFv
-	4cAcid1jkTu3/r9PxTsowyOQHbm0nXbV7/trrd9Ru21bNGP2VfToECKWHYBdY6+tgjDVnXPyGQh
-	MWUlwidswTtQR6kH+SfE/Xwvy++RMHHTeerBPIdyKdbb9SAZsI0dquANShyg0LZMQhi05zspMpU
-	wq9qQK8kfjD8QZpA5UqcgRO0Y+0epSTY0qaAN6hpo9mq1XdYa0rADyqnuuGAst6se0W0OmsTyBw
-	LA8/O+xKIJjAG+1qMXn2Tfh7UafJc8GK2CI0eFMSLXtAqgxOJpMgum6YJqYXCOJE5MF+cTvdBhP
-	okVpuNcwsF2O85GIoLztosg==
-X-Google-Smtp-Source: AGHT+IEpSTMgUVxh+9BmW5H958NG8p75QgWGA7ru5f+izVOhd1AyXRzufdrpFBjNB8HWq480f8/7fg==
-X-Received: by 2002:a17:906:f588:b0:b04:3268:a6c8 with SMTP id a640c23a62f3a-b043268b4a0mr704297466b.43.1756823813778;
-        Tue, 02 Sep 2025 07:36:53 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:1::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b04129eccbfsm727728366b.7.2025.09.02.07.36.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 07:36:53 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Tue, 02 Sep 2025 07:36:29 -0700
-Subject: [PATCH 7/7] netpoll: Flush skb_pool as part of netconsole cleanup
+	s=arc-20240116; t=1756823934; c=relaxed/simple;
+	bh=B+bjGs0ahIjkuQh5AbaAzAbFKFrXHeStEYCujezPTSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jmJHESC6vSq+sjEGkIA9leWx1jUHcOfKZLXo8rXVAs5zL/HphpIlhzBbbd5eGJcmaZZqW4oBeMWFdqVmpvUc0vRJntWah6SZS6tAsAcEobX0IB4Nu/Ub+e1C00VD/FSx9ic39o9SdsPWH8W6wcdrpKJ21jMdMAPIvBYE0JAtWGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VR913EFY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756823931;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nDfb2mNQlYUJreeSqjEK8maAKMo/DjLg7OZ89XZP+PY=;
+	b=VR913EFYpQEZ8AMJjB8nrqiX+lVF1lFV20hnDPaQWXFBEp3+UX4xWtiqJMWEvO+Ex+KFfX
+	NGCj+1nVn00Hn7vNH7NL4QFwDrwtMLFOSXGB2i2P7lfMgJc848ErBxSuFlTYLTMjoY3B1z
+	cmHZ7pOti7cKXaO0gnBGwhjBQsoBFO0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-60-DWhYT4r-NnK5dMJXHPyIzw-1; Tue,
+ 02 Sep 2025 10:38:48 -0400
+X-MC-Unique: DWhYT4r-NnK5dMJXHPyIzw-1
+X-Mimecast-MFC-AGG-ID: DWhYT4r-NnK5dMJXHPyIzw_1756823925
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B869418002D0;
+	Tue,  2 Sep 2025 14:38:44 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.37])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3861318004D4;
+	Tue,  2 Sep 2025 14:38:39 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  2 Sep 2025 16:37:22 +0200 (CEST)
+Date: Tue, 2 Sep 2025 16:37:17 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Xiang Gao <gxxa03070307@gmail.com>, joel.granados@kernel.org,
+	lorenzo.stoakes@oracle.com, linux-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>, Liam.Howlett@oracle.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
+Message-ID: <20250902143716.GB23520@redhat.com>
+References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
+ <20250819-anbeginn-hinsehen-5cf59e5096d4@brauner>
+ <20250819142557.GA11345@redhat.com>
+ <20250901153054.GA5587@redhat.com>
+ <CAGudoHEoK9f=M6-iOL5yHqK=o4wiJW_78t88BEwsAksAW5HNqQ@mail.gmail.com>
+ <CAGudoHHY7dMmxAc7x0avSxpNz-MfitQa-Shv2MSisLm-r4GH-A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-netpoll_untangle_v3-v1-7-51a03d6411be@debian.org>
-References: <20250902-netpoll_untangle_v3-v1-0-51a03d6411be@debian.org>
-In-Reply-To: <20250902-netpoll_untangle_v3-v1-0-51a03d6411be@debian.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-rt-devel@lists.linux.dev, kernel-team@meta.com, efault@gmx.de, 
- calvin@wbinvd.org, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2533; i=leitao@debian.org;
- h=from:subject:message-id; bh=QOwKb2hEwQaGFHvUWM1aHkkgzXtur1DMIlEfQlknmM4=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBotwD5LX2SXM4Un8klcyCjqO4sv2Lht3xKRNhV5
- vbufV5MTXSJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaLcA+QAKCRA1o5Of/Hh3
- bTyGD/9YXblp9JM07zJx/HWzzAhbrtLXUMe4oIu02xOZ18sFDnDIANmRrJWl2rg72H6wIoRxt8Z
- aUg81x1PhyCTRZ709Mkqe5d5S+ewu1Bi/qie4INs6FSvFuIexD1pNG2FasJ1xmn7kEOUnwVO0kZ
- VTGrX+HbqwmqRAfDQRDOsX9ecyP5kVVfXQ2Xe7jcA6dddCgaSTIzND3VlTQbpegC/YsFJI4wAhT
- WAyn3w9Y+e/4CygORus/Q+QZMVrqI+QnQOK+8cWYDkhSisjwynUF/k9Wa7P10kz32uw09dCva6e
- m0WXbFDId/wE3hTMNcuemwGtJdtTQmrnRdxa9rSnJOC8qqd/gN8HiifT+Gtsx8e675V5bd/yl7W
- 2L7jGynwnfzQLQ2HIQi2DnauKpUfkW/YuAusTa01zhO/EtpdLgFEomxgTg/mLWihKNJZ97EQTBG
- FfXovDkqTM6FnUQumAR1Nj/A/8DM1wheKEQLRTGuJF6y0pKB93lZfL8gZ12MxSELb+tMJxSXDNN
- eWYs1Ab9DlDaOu9uedefYkyk/43CbAThJHlXfFNljNppV5dY38cnsDNYrV9dYz5CaxluTx/HnWR
- rHWE2mxf2heynoVGnIQb/clg49busTnUx2K2h2GMlj7MJTpsGYNGMLdd88PZhnilv76VIulRjiy
- jw3Ggs8CR5rb40w==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHHY7dMmxAc7x0avSxpNz-MfitQa-Shv2MSisLm-r4GH-A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Transfer the skb_pool_flush() function from netpoll to netconsole, and
-call it within netpoll_cleanup() to ensure skb pool resources are
-properly released once the device is down.
+On 09/01, Mateusz Guzik wrote:
+>
+> On Mon, Sep 1, 2025 at 5:44 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> > On Mon, Sep 1, 2025 at 5:32 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> > >
+> > > ping...
+> > >
+> > > We need either
+> > >
+> > >   [1/1] pid: Add a judgment for ns null in pid_nr_ns
+> > >   https://git.kernel.org/vfs/vfs/c/006568ab4c5c
+> > >
+> > > or
+> > >
+> > >   [1/4] pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers
+> > >   https://git.kernel.org/vfs/vfs/c/abdfd4948e45
+> > >
+> > > in any case imo the changelog should explain why do we care
+> > > to check ns != NUll, "Sometimes null is returned for task_active_pid_ns"
+> > > doesn't look like a good explanation...
+> > >
+> >
+> > Since I caught this a stray patchset I'll bite: given the totally
+> > arbitrary task struct in an irq handler, why even allow querying it
+> > from that level? The task is literally random, and even possibly dead
+> > as in this crash report.
 
-The invocation of skb_pool_flush() was removed from netpoll_setup(), as
-the pool is now only managed after successful allocation.
+I won't really argue. And initially I was going to "ignore" the original
+bug report. If nothing else, the code which triggered the crash was buggy.
+But then I changed my mind. People will do mistakes, I think it would be
+better to make this API a bit safer. See below.
 
-This complete the move of skb pool management from netpoll to
-netconsole.
+But in any case, at least one of the patches above should be removed from
+vfs-6.18.pidfs.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/netconsole.c | 10 ++++++++++
- net/core/netpoll.c       | 15 +--------------
- 2 files changed, 11 insertions(+), 14 deletions(-)
+OTOH, the trivial/cosmetic
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index bf7bab7a9c2f0..b9bfb78560b3c 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -300,12 +300,22 @@ static struct netconsole_target *alloc_and_init(void)
- 	return nt;
- }
- 
-+static void skb_pool_flush(struct netpoll *np)
-+{
-+	struct sk_buff_head *skb_pool;
-+
-+	cancel_work_sync(&np->refill_wq);
-+	skb_pool = &np->skb_pool;
-+	skb_queue_purge_reason(skb_pool, SKB_CONSUMED);
-+}
-+
- static void netpoll_cleanup(struct netpoll *np)
- {
- 	rtnl_lock();
- 	if (!np->dev)
- 		goto out;
- 	do_netpoll_cleanup(np);
-+	skb_pool_flush(np);
- out:
- 	rtnl_unlock();
- }
-diff --git a/net/core/netpoll.c b/net/core/netpoll.c
-index 5aa83c9c09e05..c0eeeb9ac3daf 100644
---- a/net/core/netpoll.c
-+++ b/net/core/netpoll.c
-@@ -326,15 +326,6 @@ netdev_tx_t netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
- }
- EXPORT_SYMBOL(netpoll_send_skb);
- 
--static void skb_pool_flush(struct netpoll *np)
--{
--	struct sk_buff_head *skb_pool;
--
--	cancel_work_sync(&np->refill_wq);
--	skb_pool = &np->skb_pool;
--	skb_queue_purge_reason(skb_pool, SKB_CONSUMED);
--}
--
- int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
- {
- 	struct netpoll_info *npinfo;
-@@ -547,7 +538,7 @@ int netpoll_setup(struct netpoll *np)
- 
- 	err = __netpoll_setup(np, ndev);
- 	if (err)
--		goto flush;
-+		goto put;
- 	rtnl_unlock();
- 
- 	/* Make sure all NAPI polls which started before dev->npinfo
-@@ -558,8 +549,6 @@ int netpoll_setup(struct netpoll *np)
- 
- 	return 0;
- 
--flush:
--	skb_pool_flush(np);
- put:
- 	DEBUG_NET_WARN_ON_ONCE(np->dev);
- 	if (ip_overwritten)
-@@ -607,8 +596,6 @@ static void __netpoll_cleanup(struct netpoll *np)
- 		call_rcu(&npinfo->rcu, rcu_cleanup_netpoll_info);
- 	} else
- 		RCU_INIT_POINTER(np->dev->npinfo, NULL);
--
--	skb_pool_flush(np);
- }
- 
- void __netpoll_free(struct netpoll *np)
+	[PATCH 2/4] pid: introduce task_ppid_vnr()
+	https://lore.kernel.org/all/20250810173610.GA19995@redhat.com/
 
--- 
-2.47.3
+makes sense imo, and it was missed.
+
+Now. I mostly agree about IRQ, but to me it would be better to avoid the
+crash if, say, task_pid_vnr(&init_task) is called from IRQ context.
+
+But lets forget about IRQ. Please look at the changelog in
+[PATCH 1/4] pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers
+
+Even task_ppid_nr_ns(current, NULL) is not safe if it is called by the
+exiting task after exit_notify() in the process context, and this is not
+immediately clear. This doesn't look good to me.
+
+> Maybe even go a little further and assert that the task at hand is
+> fully constructed and not exiting yet.
+
+So what do you suggest? Add the current->exit_state check somewhere?
+
+Oleg.
 
 
