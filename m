@@ -1,187 +1,119 @@
-Return-Path: <linux-kernel+bounces-797054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163FDB40B44
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:56:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C2DB40B47
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C7C356255F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131BD561F77
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C240533EAF3;
-	Tue,  2 Sep 2025 16:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEE8341AAD;
+	Tue,  2 Sep 2025 16:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jkyy2MsO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGOJOvCh"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A786D283C89;
-	Tue,  2 Sep 2025 16:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C0631B131;
+	Tue,  2 Sep 2025 16:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756832183; cv=none; b=oXRoxgQH3puomPzhAK5tgNx9d5SUqtDwh7vfSYjk9JuYVb+npup2pAuQWmeoYf0SuGId+hNh3PFKZfwPoU8W+EBrEhgeQPGDBOs7TssyPy/Q6olnnizKEt9b8/K5O8J//VcqLFNPyD1zssHYHA4D4403+S7jP0bepvFTgtOMiN8=
+	t=1756832191; cv=none; b=FkWcNlSDt49RtmZVul1wdX1IdVTa+3OQmozhhodb4SVvXEXPyaz2In01ypVxF1yF+UXX0HU8Ww39cn5VIUDiJs+a1xQWdPqN6//59rXe8/z0YsyNnvBhC84mWxghV1kJIoNcpwCCfrlLRQ7UiTzPaYAZcBcd0LTvdKpJ4uT4DPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756832183; c=relaxed/simple;
-	bh=M2vqCr5I7i3KfPqnsheMASeTdG7RiTSBtyebaD680CM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TBEV5rPLYLalJxSOvzgJ8kU/T2tcpkavpLfnVXjT+6gqfeJNgxZDY2A4wgTqOKd81OmTHnmQHt9J6VFeGnJZZSJ3y5gZvq65j83PxdFeZflvIPrk6DSaANwQu6oFQ6aUY7pk++ofsMDlKcN+E4IBNKCaHQGjZKg3z77epSVQHVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jkyy2MsO; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756832182; x=1788368182;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=M2vqCr5I7i3KfPqnsheMASeTdG7RiTSBtyebaD680CM=;
-  b=Jkyy2MsOSaYtOzI9ZdbOzeu8dgcoT1MppAkhgLmQs0USeTQJtpu1Ve5W
-   gowVzNJ+ddNTcoJ3PWZ2gGkfdRKCmZxnntBwr6WoCtSJJrTWcZ9P0tanr
-   v/6m3AMPFwLrj1poiRb/+lUcMbhs3r9x/g5T5uWErMMThMIVofPUnmad+
-   1wHOZNIFEJLfLlSf2bGZw+14IA2I1AdoRYx98H8hqpvWydC60UQKV7Qrt
-   hh2foMvSczo5JHMpL5XqU2d3aXx0I8T5afEvrFuIfibBoaM+CMrEmJQDn
-   EiCXqSGuZDVZRUVQgbTev4gxDyR4kbfutX7ca1i1znx0Q7FVot7mduONc
-   A==;
-X-CSE-ConnectionGUID: BY+DRahsS+WNyMHV00t6EA==
-X-CSE-MsgGUID: Ub3E1R7LSSqYSXBgxmZUCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69378994"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="69378994"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 09:56:21 -0700
-X-CSE-ConnectionGUID: fvnKOAPET8myKCVVkh9zhA==
-X-CSE-MsgGUID: UxbMA+rKQayHoMfsrZToQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
-   d="scan'208";a="176634926"
-Received: from tslove-mobl4.amr.corp.intel.com (HELO [10.125.109.202]) ([10.125.109.202])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 09:56:21 -0700
-Message-ID: <4f340f1e-1cbf-4b50-ae23-a0e50170146c@intel.com>
-Date: Tue, 2 Sep 2025 09:56:20 -0700
+	s=arc-20240116; t=1756832191; c=relaxed/simple;
+	bh=XZhOST3in1Xh8ve1QrJxOqFAH9pi0OKKxLTZu+yY+Q0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Mz+dJZH3DroCB/lWEKKPK3XpC7r1Ge6IiT7LxI0PQI4gFbSUO0w7dUutAqt9VGQ/WD9d+rlp/7/aXJ1a9lmYt4rNAW7PEKOBLfEKuYhiDdPsEuukuu7kzNgDsOgseLHxmYeNrrLgyJpQStK5f3eTghExJcyPaRgo0ZcqNNuK1BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGOJOvCh; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b109c59dc9so67819611cf.3;
+        Tue, 02 Sep 2025 09:56:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756832189; x=1757436989; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XZhOST3in1Xh8ve1QrJxOqFAH9pi0OKKxLTZu+yY+Q0=;
+        b=jGOJOvChzDRp6jagAoMqRYagnu/RywuYGjYiCIs9orfBeoxwgrm9VGfqmIFKeZXRmN
+         is9Q6WSjhUR24Mc8JtZcis9M/i5G6kDfdtkKffgwjn8nL4wVdmUFrYBrFEk4bWwI3zli
+         8Zozgs1bbe01/zzmvda3DkaeAC0CGgPc3iPJ1hnf3ZoaXdOZnfoG03Z4l/xh4IwkHQAF
+         VBoz5M82lU9jARSRbFNk1m+uRuXF0sWEhB435sd53yoQJ6p9Kg69dg+SKvZTFTlehRTj
+         7+29QRQdBcx7qB6LOOslIdsiaW/C/TB5aTseRY7kGqHBZRr+TBK2uH2IDF1Pc+KDN7Wq
+         /3Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756832189; x=1757436989;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XZhOST3in1Xh8ve1QrJxOqFAH9pi0OKKxLTZu+yY+Q0=;
+        b=lH/e5HICYEkEdQpXqYmW05vJJhKk2Zl03qBgrVF3grBYwijmKa8KpJj/20w7KmXDfP
+         d3Xtrh1Npj92ylOKu7BmXO6ZqKlUw8F0lsEUDu0B37fHvZ5BuycC542RmqQ84BmbBwhy
+         HoWamVi7tybXe6JvZUlb/kNA3kfK38nhirj266994M+irRTGmks6q6a4xZ5YfsKWHnTH
+         LruPeFd8KqadyXgmDzUTXewMwGeNjopGGMgVHZbmW+f/oDf3EAZL//z834QPnrVoD2dT
+         ZQ1kuktv2Yg/i4zoyRI/vKGTWDABugIP275KTVkB1278ZImpM2F25AO9dZb0LPaGzuru
+         P+EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJtgsXNUHuvWvXmeAlfJenyI06SEw7abmmROQR31CLkxse1nyY6QArSjTrSmJnHmX1DsMvI7ndek9r@vger.kernel.org, AJvYcCVTYsR9bg0kQ3rNMVIYRZIK5RH35Qqm0TlE6uphkNZMIah4fFrTM/W0Q59RjESAO8WfRYEzX6ZWiFIKdPpd@vger.kernel.org, AJvYcCX1xxjFAgu2dy4tnkBVShsIKP5BeH0BZXKHciyqFLrdfOXbh8wbjc2pyUU0NgY+6b4Iss+rwvjEmjh1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyANjOs+2+LKjXil76I+arg57pB0jfvgMy6UaK1mpWUqjA6h7ct
+	i+zNtMWZy7jkxOe7h/WFYP/Kewkp++0xqmtyPZq+wq82TVDmpZP6tFzkU+piXJtz
+X-Gm-Gg: ASbGncva+6zUXDDXlMvuqa0627b3JAXhmopVoppwHPiDgccj5LrowxZnrpWqeEom+dN
+	9BM0WhLGT2YN0XIW9ZakaPMjjcX4zu1QAcxI85vHG9khiZOOqmGF0WHiWFJDGFUoF1IFwemyitP
+	CGx6rQxllwd7OAkYjRpsUKV0LY7JlXW4gTwz+LZ9bXalpJOZAJftRcARTvG4DWMUhjIR3vMD/UM
+	v87IfToQ3MhIUan7vk93LfD6dSZtAwXHwByaO7sAOCZCBvBwpivqypDrJlJ2qmyMf6He3rqPy4q
+	rjFLQ+dafix83V/6KZRSkPHZk4iMQIjeRG6PxDC5RUbf2Fj6QyCUxkA3ez9InjKkEu/brCKwfsQ
+	YIb0PfgcR4o9flCrObWqVm0Psw+/jfCx9107+VLmCGzSAAh80XtxPVeIvIg0eLwUmS5LrBhd8Ml
+	rtPxL2NQ==
+X-Google-Smtp-Source: AGHT+IH454t1AZPaP8m+LXjREsgeHmzav/1L3lvMSqVzetI6UcC5vxu8zTEuLQ4bG13xXnbRUnZQGg==
+X-Received: by 2002:a05:622a:d4:b0:4b3:e973:272f with SMTP id d75a77b69052e-4b3e9732bd7mr13178961cf.5.1756832188688;
+        Tue, 02 Sep 2025 09:56:28 -0700 (PDT)
+Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b3462c7676sm14790891cf.33.2025.09.02.09.56.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 09:56:28 -0700 (PDT)
+Date: Tue, 02 Sep 2025 12:56:25 -0400
+From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] i2c: core: Use fwnode_for_each_child_node_scoped()
+User-Agent: Thunderbird for Android
+In-Reply-To: <aLa8lGxHvCd6nreg@smile.fi.intel.com>
+References: <20250901163648.82034-1-jefflessard3@gmail.com> <20250901163648.82034-3-jefflessard3@gmail.com> <aLa8lGxHvCd6nreg@smile.fi.intel.com>
+Message-ID: <AB7B668E-107D-43E6-A9F7-57F5F9FADD2A@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML
- <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Christian Loehle <christian.loehle@arm.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- the arch/x86 maintainers <x86@kernel.org>
-References: <12740505.O9o76ZdvQC@rafael.j.wysocki>
- <CAJZ5v0ik7fRKwH3CnXysvBJkkdJbWP-6iL=zBF0o92rR+nHTKg@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAJZ5v0ik7fRKwH3CnXysvBJkkdJbWP-6iL=zBF0o92rR+nHTKg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/2/25 08:05, Rafael J. Wysocki wrote:
-> On Fri, Aug 29, 2025 at 10:01 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> Christian has reported that commit a430c11f4015 ("intel_idle: Rescan
->> "dead" SMT siblings during initialization") broke the use case in
+Le 2 septembre 2025 05 h 44 min 52 s HAE, Andy Shevchenko <andriy=2Eshevche=
+nko@linux=2Eintel=2Ecom> a =C3=A9crit=C2=A0:
+>On Mon, Sep 01, 2025 at 12:36:45PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
+e:
+>> Replace the manual __free(fwnode_handle) iterator declaration with the
+>> new scoped iterator macro for cleaner, less error-prone code=2E
+>>=20
+>> This eliminates the need for explicit iterator variable declaration wit=
+h
+>> the cleanup attribute, making the code more consistent with other scope=
+d
+>> iterator usage patterns in the kernel=2E
+>
+>Reviewed-by: Andy Shevchenko <andriy=2Eshevchenko@linux=2Eintel=2Ecom>
+>
 
-Does "dead" here mean present but offline?
-
->> which both nosmt and maxcpus were added to the kernel command line
->> because it caused CPUs that were not SMT siblings to be brought
->> online during the intel_idle driver initialization in violation of the
->> maxcpus limit.
-
-How does intel_idle fit in here? I don't immediately see it calling
-cpuhp_smt_enable().
-
->> The underlying reason for this is a missing topology_is_primary_thread()
->> check in cpuhp_smt_enable() which causes that function to put online
->> more CPUs than just the SMT siblings that it is supposed to handle.
->>
->> Add the missing check to address the issue.
-
-We should probably add a bit more checking in cpuhp_smt_enable() to make
-sure that it's being called under expected conditions like a:
-
-	WARN_ON_ONCE(cpu_smt_control != CPU_SMT_DISABLED);
-
-and probably also some comments about how it is expected to work.
-
-cpuhp_smt_enable() doesn't _really_ enable SMT. It specifically takes it
-from DISABLED=>ENABLED. Thinking about it in that context, enabling
-_just_ the secondary (disabled) threads makes a lot of sense.
-
-But that can come later, after the bug fix.
-
->> --- a/kernel/cpu.c
->> +++ b/kernel/cpu.c
->> @@ -2710,6 +2710,12 @@
-
-No 'diff -p', eh?
-
->>         cpu_maps_update_begin();
->>         cpu_smt_control = CPU_SMT_ENABLED;
->>         for_each_present_cpu(cpu) {
->> +               /*
->> +                * Avoid accidentally onlining primary thread CPUs that have
->> +                * been taken offline.
->> +                */
->> +               if (topology_is_primary_thread(cpu))
->> +                       continue;
->>                 /* Skip online CPUs and CPUs on offline nodes */
->>                 if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
->>                         continue;
-Is there a more generic problem with this not respecting 'maxcpus'? If
-maxcpus had forced a primary thread offline, this would still online the
-secondary thread, even with the fix. Taking _that_ online might still
-bring you over the maxcpus limit.
-
-
+Acknowledged with thanks=2E Will add this tag in the next submission=2E
 
