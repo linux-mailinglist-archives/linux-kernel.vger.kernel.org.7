@@ -1,116 +1,87 @@
-Return-Path: <linux-kernel+bounces-795568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF079B3F4A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:40:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB9AB3F4AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C061E17F509
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:40:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A50A1A84FF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461EE2E1751;
-	Tue,  2 Sep 2025 05:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jbf45uF9"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0992E1EE1;
+	Tue,  2 Sep 2025 05:41:16 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6112E11C7
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 05:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783F71E5B71;
+	Tue,  2 Sep 2025 05:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756791632; cv=none; b=LyVAM4qUvRhmlG8dKBYn9dF6eQrKpOl1drkzve7kzeq/bH2m26EI8q4VlOjzsMsPHw/XQ6x8hBGWlyccbtlziixBzYWAyYerl+gCADa20OxV4m9BCfG0I8OMBgtCMfCzwkkhIsAVrYRrJYDh1KBY4oo2XhNvGvAF6rS1uhEsP7g=
+	t=1756791675; cv=none; b=kvNhLEzTAGbDE+Xsqr6ZoUQoDeuICC86ng69aLryEN85SWecUsIJqfy8CwJia4u6Bt+UAkaHModTSVEX8RjGxoSsO7zzTTXXoEI1jlfryMq5LRAM9ZSYo8CdzyamVEEunoD9lWIQg1IHEAqsoNWl419EnYrmpVIvkT5ReCXTYQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756791632; c=relaxed/simple;
-	bh=AM0nxi7EiA0SRGiZ1UELrcehodZqP/yvAeARJacY3Os=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s4NE36MFS8/5COWFTPacdxj4y55oIgQX+IAFAB5kYF1u4FtTd2jLtogcFlxypwKlrgIiTAfKIAOTeJmkqa+2gxf26fKoFwVf3h+3kEbMhPFyXZjnIdw7ta4x98nOEu2bqsqsZagS4Dv43Nm/wTDYjL5iNuM8tuZ98I3KbjpOjF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jbf45uF9; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b109c6b9fcso48770461cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 22:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756791630; x=1757396430; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7cMIMYJQfFGiekE60FGRLjgl1mruUZ9xHSw0rex8Y04=;
-        b=Jbf45uF9EDbtdfVcZoC9wb2ku5wUVrkBAHZItSYsybzhpxZtcenDlYc0xkze4E5OZy
-         9nwV63sjrYt9mNOyChJ54X0wmucETnryMYz/JOs9WLVdmQk5L2AoJMpm2b7dmAl9hsIG
-         Q5Hq5X26LnQ8wCj7JgI0857k8uF5RfxW8Yt3mlID7AwJrvqmEfEsu8/Z4An6+w+VFmrb
-         eUl9llNniCCULGHNJyPvXUJxeL4WCTEVpcRbjjjAIRuy99W5a5iSqMXCF5uQ8fdmGman
-         8O+Uiy1243ieV4f7pq/pTsJXR9dCfEeQuhptcXUYIFBsCR0SbnEEjRFnsnjLGB1xQ5JM
-         Wfbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756791630; x=1757396430;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7cMIMYJQfFGiekE60FGRLjgl1mruUZ9xHSw0rex8Y04=;
-        b=eh/uy+6cpW8GbtdR4ExpM+zeERP6i0hBI/WftLKbbS6OSR9FbsSCnGlAahZV3Gfnj7
-         k8BFJOKmdvMQASAKEtxLONLvZDMR468u+vGgWWM/EvvGLyOlU2ZwOGppPCD9niNKSQ4T
-         EPvLg4qSHkCVxZT5qINJYvMtOwlhtammREPo1zwQyS/1XjjTbBj+iQ65sTC7Q3uJ/DlN
-         e4Ei/ZOpGu1to0Bxr3MMu4masWdQwAV/uFuHKq25IFiodcAr09vEkfSgpSOEeH1pMTCz
-         VGfAsoG47GQloH6cY4Wq7ym9qh8Xf3eG4mVXnoKBvadF9OBfT3nuoslfL9hx/EmfjGet
-         /Hpw==
-X-Forwarded-Encrypted: i=1; AJvYcCXp4VofXlW5HxombacKZbYNG/5fNWwnenxDJlOIr2u3CcTwauPyqWUJ70+pyGNOQYxyn89LoAnG16/c++M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnItHF2PKBE0183ZHg343iZKyk5x2bHvBVRVmfSb7/2F2Z6tSe
-	/9sxxn5nHU20DTVeuU5KU2Q4Cq5kV05/Ljo+4ZCF6wcUKz6MBBt+GRZ8/6kRb/bwbDsgbFNY0AH
-	75UdU2cJLRJlBAHbRNQWDJZ71tBB5agA=
-X-Gm-Gg: ASbGnctzhX8wvuh+CoUkhuQRdxBNzTUfQ4e98E/W4WIPlhAsp4BtVCGJdrffefdxf8m
-	Pl9HNyyxLO5an3IQB1vjZJz0gbbbLWgai/3i4AbJfLm4+y01BnPnc3E2vBTqONz7JH/orWhjMpI
-	CJHMpP6luq1I87LKRmJv12unibTp9U0l057+o+kJ5f0mvfCKpFxPnA1jbV+9ytgpq/WkgTf+k8p
-	yxFD+dswRHQyjf8ZQ==
-X-Google-Smtp-Source: AGHT+IHuM1h51UhnlA/yxdASgBhPyYJPIAYIMlQ610qlfw2XDY3Jn8anY5Kxkxf21TbaAbOqt3gpgmcGZLfm0zhJ2z0=
-X-Received: by 2002:a05:622a:298e:b0:4b2:9461:58a7 with SMTP id
- d75a77b69052e-4b31d89da64mr112097321cf.4.1756791630032; Mon, 01 Sep 2025
- 22:40:30 -0700 (PDT)
+	s=arc-20240116; t=1756791675; c=relaxed/simple;
+	bh=wH2ymnAXFuW40ZLt9OwafaDmlYRW/cRWqDPmB8j1+d8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFJQmbqebkLwWUFZd4XSU8+sklgwF7c1MKfQzQaI81OqbJ0osmMfQf0fEslhSpcji1Ry5dEEaT7154r0ClzYcOHeqOZ3uNoHLxY/2dRmRPdEyNujInTZ1d3OysRAMlI58ZSR9ZFKYAdxFseT0xnIkTsb/vNCI8eMdcmhtNlOViU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5FDDC68AA6; Tue,  2 Sep 2025 07:41:09 +0200 (CEST)
+Date: Tue, 2 Sep 2025 07:41:09 +0200
+From: hch <hch@lst.de>
+To: Hans Holmberg <Hans.Holmberg@wdc.com>
+Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Bart Van Assche <bvanassche@acm.org>, axboe@kernel.dk
+Subject: Re: [PATCH 1/3] fs: add an enum for number of life time hints
+Message-ID: <20250902054108.GA11431@lst.de>
+References: <20250901105128.14987-1-hans.holmberg@wdc.com> <20250901105128.14987-2-hans.holmberg@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-3-ryncsn@gmail.com>
-In-Reply-To: <20250822192023.13477-3-ryncsn@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 2 Sep 2025 13:40:19 +0800
-X-Gm-Features: Ac12FXx7uTtHy0cUMFCpITeASjSt1GLFJr9Uq8Fm7KxX6iJV8A0j1aBTmHg3o7s
-Message-ID: <CAGsJ_4yMdzUOU6UZ+Ueo__wxHS3WPJoh6u3Lqo7iU05qBHc1fQ@mail.gmail.com>
-Subject: Re: [PATCH 2/9] mm, swap: always lock and check the swap cache folio
- before use
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901105128.14987-2-hans.holmberg@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-> +/**
-> + * folio_contains_swap - Does this folio contain this swap entry?
-> + * @folio: The folio.
-> + * @entry: The swap entry to check against.
-> + *
-> + * Swap version of folio_contains()
-> + *
-> + * Context: The caller should have the folio locked to ensure
-> + * nothing will move it out of the swap cache.
-> + * Return: true or false.
-> + */
-> +static inline bool folio_contains_swap(struct folio *folio, swp_entry_t entry)
-> +{
-> +       pgoff_t offset = swp_offset(entry);
-> +
-> +       VM_WARN_ON_ONCE(!folio_test_locked(folio));
+Looks good, but you probably want to add a few more folks that
+created this constant and the header to the Cc list.
 
-VM_WARN_ON_ONCE_FOLIO(!folio_test_locked(folio), folio);    ?
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Thanks
-Barry
+On Mon, Sep 01, 2025 at 10:52:04AM +0000, Hans Holmberg wrote:
+> Add WRITE_LIFE_HINT_NR into the rw_hint enum to define the number of
+> values write life time hints can be set to. This is useful for e.g.
+> file systems which may want to map these values to allocation groups.
+> 
+> Signed-off-by: Hans Holmberg <hans.holmberg@wdc.com>
+> ---
+>  include/linux/rw_hint.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
+> index 309ca72f2dfb..adcc43042c90 100644
+> --- a/include/linux/rw_hint.h
+> +++ b/include/linux/rw_hint.h
+> @@ -14,6 +14,7 @@ enum rw_hint {
+>  	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
+>  	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
+>  	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
+> +	WRITE_LIFE_HINT_NR,
+>  } __packed;
+>  
+>  /* Sparse ignores __packed annotations on enums, hence the #ifndef below. */
+> -- 
+> 2.34.1
+---end quoted text---
 
