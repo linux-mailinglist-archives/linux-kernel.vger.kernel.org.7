@@ -1,54 +1,85 @@
-Return-Path: <linux-kernel+bounces-796006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1193B3FAC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1350BB3FA5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C3C32C0BF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75BCA2C15D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBC22EAB81;
-	Tue,  2 Sep 2025 09:36:37 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513FF2EA175;
+	Tue,  2 Sep 2025 09:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4KpuJRj"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6242B2EBB86
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04CD2EA72B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756805796; cv=none; b=A89uSClgDnUk0DtgV1D1HpfVNyUp52Fix4PvKDfrC2LOgTm/98WTIy8gsFr8YDn/5x4tAM2a3KFD4T6kwawZ/k8Wa761FWOgldBlGWr4eUshhaBRqsOA26Mot6Qz4tpcEsVm6azRNiv1HXNszXdPWgBphKySk+FknHJwvowghMc=
+	t=1756805366; cv=none; b=HdX+fYc6Z2iIg43snaX+BLHWEubjZU+vFUbBd3r+eLNBg6tuzNULYSRodMUaYp0eT0ndlMkEQergC4X50LybWWbrnOmo9Ak2AErb6mLcJ0oKKR+iGZEN4mE0fVBVXc8VTMcuLh3NKpEgNjAx9kuRC0kQkWyliWbrh/ddp8hvPM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756805796; c=relaxed/simple;
-	bh=BTcpOOCrbW5VF2bYpKR9MMM4WJPreot90BbewPeRJbY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L04ZomFPn0yyh0rm/AO+nUN8mKTptLMqj75KSg461GxQCKx8xS3N7vxCHMlq/kyP16iagFUOH31+Xx/C+Krj0IXIz0vVJLrFY2ULImWSxYx4zrsMA2wtyKc1wRWiZM1Ee7Eu8uKgxzF/FXd6FZ2uys4/t1GJnbOfZCcEsmuqOgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cGLGm3zdzzYQvDZ
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:36:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 116661A10E0
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:36:31 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8IyburZob2GEBA--.23566S4;
-	Tue, 02 Sep 2025 17:36:28 +0800 (CST)
-From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com
-Cc: linux-mtd@lists.infradead.org,
+	s=arc-20240116; t=1756805366; c=relaxed/simple;
+	bh=3UJWS1FLF+q1oCYy6aZANoKsmaqSziLBRSNXraSp9cQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ShCfCFqlwX29kiPW8t5gGPGt1ZswMl1gQr3oOUYuSoBshR5l+ObDERg9kgOzPAfy5UBaqIZdUj1qpWVGYbJESrQ9Jt9qm+jzOFvmSlkcTcgnAUWrDp2IISZiDNLWDGR7ENdJKyL4JfpXpT3nrdgf/nfLSPn2ppMcLCr+xJIGn3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4KpuJRj; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3da4c14a5f9so271785f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756805363; x=1757410163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i4myXczSicKq6B3fSQvBxEXTuo9K7Q/Ustidy6FFEJ4=;
+        b=k4KpuJRj5kk8lANj59TuTF+gInjApn1Sgedb2il/HTjlKKDqcsCMoF/jrDok1dg0Pu
+         Yp3Of865VSsOWnQw74i4Tzn7ibBvnwS35yBSwjFFKYI+TyvU4S2rDZVROegAejPzIf+n
+         OE10zPz5hm/MbDyReWEPA/CNtB/AvgucKYUwWuKUO4thK2K3HDRUZtXMLfHdimO52/J2
+         vP/HBm5GxMkavO9KfAH3NoY4qdhFti6uCTwkBer11y+EgulEuOjBHTtJX8yJwLUSTgM9
+         NhIIhz2qvNbOJ2q8QlJ3noYwLz22dPTAaP2VqdUUCd9BHQkfSJ256kCZJHOhWDmo4aje
+         CJaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756805363; x=1757410163;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i4myXczSicKq6B3fSQvBxEXTuo9K7Q/Ustidy6FFEJ4=;
+        b=cxFYiI8qjYfJVyZTSXjCXTXbYkYZ793K4AZmmrPqsx+7ZdskAhcjfm3FnSZOuWVt03
+         jOY3jGA13qARk+EPAI9Cx4FhVm2NqvUg2049kZuXo3oDyvwKDL3Av/sletAjs4xFTB2N
+         //RAXKIkWen0rtOhMl5Ri53Ri44jjTXrHD80bpJy8zRTY+rLGUkwFlf+rw3heZ3fjaf+
+         Rxlm3EJw5wfrVQjHxenJLDCbe5MVPGlE3hKD6GUHaKG33g55bLEpimVIrOoVQyU3zJpS
+         ZOGN6//j5dhdXsIq3S9oL0auspA053KB01odie+mcv2eUKyzFEmJUypwJIpl45m2uXe+
+         7viA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqNS6rAVufySq7gkvVecFf1IJnGsiQXYPqJUVahtWLhrCxZulGxVqqutYXpFaamuP3CibQuVqP0LxUojA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5WGl9B05QxvVazmH0V/ve1b1LazmTZWHCK3x/LjmHMuC2GuuX
+	Cj8c/d4mMMYnLLdPdfiFo02GtjyUwc8X1M4C4hrLvWLIGhlWU2bv86o/ieO5VgXrsOc=
+X-Gm-Gg: ASbGnctxnfJMw97mP5fAlnPHygTuLW1RRexDBKtUrV/uu7coHRLtyhIdDzKf+aHKa7F
+	LThP+JEyWslZEXLhKJqyzOkigH7QujO8JG5lArE3nsPrKsf7XEDCdmz1CxB+g0a/qAj6+6Lyewp
+	kZjVZUHQWszai17arpfliVNeE3i/baVsu7pC2Uqo1bknPHy056XoTEhNKqruv0fpZEYJ/C2ijzz
+	KbbgxjCjwG2QOMm+JLBvDSnNUatYmHEM9lsmhvOiWYTZ5rZTN/UjS2vlafooXEGr5ADw9KsB/qK
+	iJblw2FZI0MTfvaMt5Amvt/XswM6jLBevY4kVe8CJOS7C4iZHPhb8YVYL18LcMXSr2qBX7YJF4o
+	8SNjxg0q04aqting6ZNs7Z67OPm6qpZZ2zl9X3iQfkY+Rp4klCPLOnjx3rfnUPV6IWpk=
+X-Google-Smtp-Source: AGHT+IGC4hT9ICf62eu235jqFNFWwvQk+Tf3QplcIoM4NxAqPnOWJP5AeU23BCKw8JNBgkf9eY2HAg==
+X-Received: by 2002:a5d:588d:0:b0:3d1:8458:cfcc with SMTP id ffacd0b85a97d-3d1df539e92mr9158217f8f.25.1756805362672;
+        Tue, 02 Sep 2025 02:29:22 -0700 (PDT)
+Received: from MacBookAir (78-80-81-163.customers.tmcz.cz. [78.80.81.163])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3da13041bcasm2535693f8f.35.2025.09.02.02.29.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 02 Sep 2025 02:29:22 -0700 (PDT)
+From: Aleksandr Shabelnikov <mistermidi@gmail.com>
+To: o-takashi@sakamocchi.jp
+Cc: linux1394-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	chengzhihao1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH V2] mtd: core: skip badblocks increment for blocks already known bad
-Date: Tue,  2 Sep 2025 17:27:32 +0800
-Message-Id: <20250902092732.2244544-1-wangzhaolong@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	gregkh@linuxfoundation.org,
+	Aleksandr Shabelnikov <mistermidi@gmail.com>
+Subject: [PATCH v2] firewire: core: bound traversal stack in read_config_rom()
+Date: Tue,  2 Sep 2025 11:27:45 +0200
+Message-ID: <20250902092745.8326-1-mistermidi@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,86 +87,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8IyburZob2GEBA--.23566S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw1kGw47Kw4UKryxuF1fXrb_yoW8ur4Up3
-	y5AryrCw4Fgw1Iq3ZrC3yxZa4fKwnagFy5KF4xGw15Cr98XF17Wrn5KF18Xr1IgFn2yFnI
-	grs5tayDWay0vrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-Repeatedly marking the same eraseblock bad inflates
-mtd->ecc_stats.badblocks because mtd_block_markbad() unconditionally
-increments the counter on success, while some implementations (e.g.
-NAND) return 0 both when the block was already bad and when it has just
-been marked[1].
+read_config_rom() walks Configuration ROM directories using an explicit
+stack but pushes new entries without a bound check:
 
-Fix by checking if the block is already bad before calling
-->_block_markbad() when _block_isbad is available. Only skip the counter
-increment when we can confirm the block was already bad. In all other
-cases continue incrementing the counter.
+    stack[sp++] = i + rom[i];
 
-This keeps the logic centralized in mtdcore without requiring driver
-changes.
+A malicious or malformed Configuration ROM can construct in-range cyclic
+directory references so that the traversal keeps enqueueing, growing the
+stack past its allocated depth. rom[] and stack[] are allocated adjacent
+in a single kmalloc() block, so this leads to a heap out-of-bounds write.
 
-Link: https://lore.kernel.org/all/ef573188-9815-4a6b-bad1-3d8ff7c9b16f@huaweicloud.com/ [1]
-Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+Add a hard bound check before every push. While this does not itself
+implement cycle detection, it prevents memory corruption and limits the
+impact to a clean failure (-EOVERFLOW).
+
+Signed-off-by: Aleksandr Shabelnikov <mistermidi@gmail.com>
 ---
+v2:
+  - Drop Reported-by / Suggested-by trailers (per Greg KH)
+---
+ drivers/firewire/core-device.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-V2:
-- Checks old state when _block_isbad exists and bails out early if already bad
-
- drivers/mtd/mtdcore.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 5ba9a741f5ac..096a3c94670f 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -2337,10 +2337,11 @@ int mtd_block_isbad(struct mtd_info *mtd, loff_t ofs)
- EXPORT_SYMBOL_GPL(mtd_block_isbad);
+diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
+index aeacd4cfd694..fdf15df977f0 100644
+--- a/drivers/firewire/core-device.c
++++ b/drivers/firewire/core-device.c
+@@ -581,6 +581,7 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 	const u32 *old_rom, *new_rom;
+ 	u32 *rom, *stack;
+ 	u32 sp, key;
++	u32 tgt; /* target index for referenced block */
+ 	int i, end, length, ret;
  
- int mtd_block_markbad(struct mtd_info *mtd, loff_t ofs)
- {
- 	struct mtd_info *master = mtd_get_master(mtd);
-+	loff_t moffs;
- 	int ret;
- 
- 	if (!master->_block_markbad)
- 		return -EOPNOTSUPP;
- 	if (ofs < 0 || ofs >= mtd->size)
-@@ -2349,11 +2350,19 @@ int mtd_block_markbad(struct mtd_info *mtd, loff_t ofs)
- 		return -EROFS;
- 
- 	if (mtd->flags & MTD_SLC_ON_MLC_EMULATION)
- 		ofs = (loff_t)mtd_div_by_eb(ofs, mtd) * master->erasesize;
- 
--	ret = master->_block_markbad(master, mtd_get_master_ofs(mtd, ofs));
-+	moffs = mtd_get_master_ofs(mtd, ofs);
-+
-+	if (master->_block_isbad) {
-+		ret = master->_block_isbad(master, moffs);
-+		if (ret > 0)
-+			return 0;
-+	}
-+
-+	ret = master->_block_markbad(master, moffs);
- 	if (ret)
- 		return ret;
- 
- 	while (mtd->parent) {
- 		mtd->ecc_stats.badblocks++;
+ 	rom = kmalloc(sizeof(*rom) * MAX_CONFIG_ROM_SIZE +
+@@ -702,7 +703,8 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 			 * fake immediate entry so that later iterators over
+ 			 * the ROM don't have to check offsets all the time.
+ 			 */
+-			if (i + (rom[i] & 0xffffff) >= MAX_CONFIG_ROM_SIZE) {
++			tgt = i + (rom[i] & 0xffffff);
++			if (tgt >= MAX_CONFIG_ROM_SIZE) {
+ 				fw_err(card,
+ 				       "skipped unsupported ROM entry %x at %llx\n",
+ 				       rom[i],
+@@ -710,7 +712,14 @@ static int read_config_rom(struct fw_device *device, int generation)
+ 				rom[i] = 0;
+ 				continue;
+ 			}
+-			stack[sp++] = i + rom[i];
++			/* Bound check to prevent traversal stack overflow
++			 * due to malformed cyclic ROM
++			 */
++			if (sp >= MAX_CONFIG_ROM_SIZE) {
++				ret = -EOVERFLOW;
++				goto out;
++			}
++			stack[sp++] = (rom[i] & 0xc0000000) | tgt;
+ 		}
+ 		if (length < i)
+ 			length = i;
 -- 
-2.39.2
+2.50.1 (Apple Git-155)
 
 
