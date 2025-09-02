@@ -1,113 +1,189 @@
-Return-Path: <linux-kernel+bounces-796508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78DE8B401BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:00:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B175B401C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B262F1892EFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565FD3AB8F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919882DC35B;
-	Tue,  2 Sep 2025 12:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE4D2F83D4;
+	Tue,  2 Sep 2025 12:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jl3Ir6pn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cSY2/Zxw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q2c039Ls"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2952DC341;
-	Tue,  2 Sep 2025 12:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7522D131A;
+	Tue,  2 Sep 2025 12:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817779; cv=none; b=Ri4zvouNwaA0bH7HLjXpgyD+qu3o03F0BNs7G8AojqWtV4GacGSUeZkHvzOOspVqZReyTkItwxKXauOWfNaI0M/8Nb/TPGg441/fcQ66hCFAAJ4270jfM6FvvcieeLbD+aBBMyo3PnIfyOvSxn4+7/8Vjc40J2g11vhKfn8uUMs=
+	t=1756817827; cv=none; b=okdZldANyUbx8NutFX23BHElA819rBZSMRydhk94GI5YYKbomkIawtt3rX6eWJUYjoXB1t+/eXM7EoQ61uObq+D02v+gGlBecfsPgz8W1mmsye1+x2rmG1Wxer/jyy4oZKkNLeaNajqhErrRpcel334mKnA43pnnJHj8paRPB98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817779; c=relaxed/simple;
-	bh=Z6vo3zFV1WLx2GO09f0w8l1Sx+D0tzXBaDo5dcw0fhY=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BefTZ2sk+KLEUL1Fg/hHyNIf5hQglG/oNUN2iayVepncTWXAYcXos0mMHV3r36sxWFZVSN+hzAGp9hbnn2/lgoryGFMr8ZUnpSGrOg/J6UyAYTwFUYzly0OpdpRz5+sBAmv/Hu+gcNWyoBB7wyriQO8QBLXHToKRQARmWzsf3WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jl3Ir6pn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cSY2/Zxw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756817773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fqaO+SeV+juuMOmuDP+CCM9/ezm8a+cuzkEOZBsIzaY=;
-	b=Jl3Ir6pnSxJZNrlzEafpDbybEzAsScYMj2qFx4iAZKmr8ZcHniinwHLqQDkswxZdZVwrkH
-	5TJRXTmcz57EvPHj07PBTrvCJaCEGuftAp+3rgQ14QaoTSXSxu2pyf09OnP9PC7+LX4MbZ
-	pQwN9gposebgqqLa4aLFRNqXgYFOdRtp+CKIn30FTYyvvsgQq6NUwVdqkgqYE+m4/8Rmu1
-	iihZDcz5qzDmpdQgKJMCMh9pVlcg9XvBKwujlRU3ep7YCsASiKAChlRfP3sWpCnFoGkof0
-	ZtDCtMl5DH4mL9cvIsD3CD7GndYOqN9OBv0vEvmDqSizBOTr4ViVXZ3rzoqu4A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756817773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fqaO+SeV+juuMOmuDP+CCM9/ezm8a+cuzkEOZBsIzaY=;
-	b=cSY2/ZxwSkTcM3n6h5dg0DWREVEm4aceh5FyNagu4bT+lojglO0U9ENF3AeFej8rv30yCv
-	HhNHiyDBYRxVUcBg==
-To: Ryan Chen <ryan_chen@aspeedtech.com>, ryan_chen
- <ryan_chen@aspeedtech.com>, Eddie James <eajames@linux.ibm.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew
- Jeffery <andrew@codeconstruct.com.au>, Lee Jones <lee@kernel.org>,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/4] irqchip/aspeed-scu-ic: Refactor driver to
- support variant-based initialization
-In-Reply-To: <20250831021438.976893-2-ryan_chen@aspeedtech.com>
-References: <20250831021438.976893-1-ryan_chen@aspeedtech.com>
- <20250831021438.976893-2-ryan_chen@aspeedtech.com>
-Date: Tue, 02 Sep 2025 14:56:12 +0200
-Message-ID: <871pop2etv.ffs@tglx>
+	s=arc-20240116; t=1756817827; c=relaxed/simple;
+	bh=ZhS5C7Da3pBb6sozmTWBjkVYvgvVjapDX3zVsymscIo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=g+tf/0BY5pw76LROqeHI5DhFXSKIZ5faflj6WDWYfF2k8djF5Yt+pL44BrCVthIOyu7r4zSBhe7ReY+Lp6B6LtghunEcq3ZLpLXuEocd4ptLBYKTr6IzIralYaqDxUG53TvLaYnG6AdkL+QJMLitQ9fBKKBGEqhs+J8d9MOOwwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q2c039Ls; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582B53Io027881;
+	Tue, 2 Sep 2025 12:56:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	86qW85Tc37g5BJVqaChVC8doy+h8rTyKf5jkJxK/O+c=; b=Q2c039LsglTS+4aW
+	6Vqv1ScjZGV9nPkzgGnbqbR6TTCuUchIFWSPxkb5+MM3Cdzvac46X5rpz9yDKQ2y
+	dchDxK0/NoJuZwKf9r6auIEiF1HAz44jtqDr+L9wn1h/uLMIDkPbFhaiMzsqBb+a
+	h6E0ev18ICokplWNEUbYsVD+Twl+6PMqWJkyDLTHKZb+93DH0Dh+5ennH9Mje3BB
+	re9WwKZvL6Nz/V4rpIk7trkPI8SF4QSe2qGTAGQdc4HZOr3PRx0WfabOGcCn+vu7
+	bxO7wCcWBAeF51zq29+Im7st6ojZ+DtYvl0ktJ6Vqi2paFe81sFG2U/Lh8C2dUDa
+	4Q6ZQA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48uscuyva4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 12:56:51 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 582Cuodr029185
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Sep 2025 12:56:50 GMT
+Received: from [10.253.38.125] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 2 Sep
+ 2025 05:56:43 -0700
+Message-ID: <335d6661-8719-46d7-89c6-3392fc13f396@quicinc.com>
+Date: Tue, 2 Sep 2025 20:56:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: Re: [PATCH v4 06/10] dt-bindings: clock: Add required
+ "interconnect-cells" property
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Varadarajan
+ Narayanan" <quic_varada@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        "Manikanta Mylavarapu" <quic_mmanikan@quicinc.com>,
+        Devi Priya
+	<quic_devipriy@quicinc.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Richard
+ Cochran" <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_leiwei@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_suruchia@quicinc.com>
+References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
+ <20250828-qcom_ipq5424_nsscc-v4-6-cb913b205bcb@quicinc.com>
+ <20250829-ubiquitous-imaginary-mammoth-d52bde@kuoka>
+Content-Language: en-US
+In-Reply-To: <20250829-ubiquitous-imaginary-mammoth-d52bde@kuoka>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMSBTYWx0ZWRfX58rUtrKpDeG6
+ 9nJEjs6cttA8dPwot1KSSZsLhRHpn3F/cZSyeZ62+jfg7dQfQpDBS0HzqE18XIcwVCjvB7WDesj
+ P/bHiOi7krhVPAGdA56ZxxurD7hG66MXS8P1VsfmZXsX+1L9JonlUsRtHQoSK6sWACYuJmQkXtu
+ d00vyLYQ7/GEUvI5LemFZAadZ68AV8l6aplytq89hiOVju+/EOUcso15Z9YymWFAaQKBJ5N0AYQ
+ N9cV+dUIVcoltdl81jpMxQ2tq7s7oEjyfnfCmGD5KZ7/IrDVXAfTHONRmMhtlxlWKL1k6lk38rk
+ cdvih+mRJ9HnEGz4X+tdSY6gCwj8iTgB9SkYqcg3TeTRAHb/bCFHzwAwlmd7ozwRsLkRIN6FtQ/
+ 7vSXolz4
+X-Authority-Analysis: v=2.4 cv=A8xsP7WG c=1 sm=1 tr=0 ts=68b6e994 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
+ a=g-MkapQZPYqtOJljyDYA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: SkBytaGhBcwz6UtUuAqgjW778_jLkguH
+X-Proofpoint-GUID: SkBytaGhBcwz6UtUuAqgjW778_jLkguH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 impostorscore=0 bulkscore=0 clxscore=1015
+ suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300031
 
-On Sun, Aug 31 2025 at 10:14, Ryan Chen wrote:
->  	scu_ic->irq_domain = irq_domain_create_linear(of_fwnode_handle(node), scu_ic->num_irqs,
-> -						   &aspeed_scu_ic_domain_ops,
-> -						   scu_ic);
-> +						      &aspeed_scu_ic_domain_ops,
-> +						      scu_ic);
 
-Please move scu_ic to the previous line.
 
-> +aspeed_scu_ic_find_variant(struct device_node *np)
->  {
-> -	struct aspeed_scu_ic *scu_ic = kzalloc(sizeof(*scu_ic), GFP_KERNEL);
-> -
-> -	if (!scu_ic)
-> -		return -ENOMEM;
-> +	for (int i = 0; i < ARRAY_SIZE(scu_ic_variants); i++)
-> +		if (of_device_is_compatible(np, scu_ic_variants[i].compatible))
-> +			return &scu_ic_variants[i];
+On 8/29/2025 3:37 PM, Krzysztof Kozlowski wrote:
+> On Thu, Aug 28, 2025 at 06:32:19PM +0800, Luo Jie wrote:
+>> ICC clocks are always provided by the NSS clock controller of IPQ9574,
+>> so add interconnect-cells as required DT property.
+> 
+> Does not make sense. If clocks are always, you require different
+> property?
 
-the for loop wants curly brackets.
+The '#interconnect-cells' property is mandatory in the DTS so that the
+client driver such as PPE driver can acquire the ICC clocks from the NSS
+CC provider. This is already part of the IPQ9574 DTS which is merged. We
+had missed adding it as 'Required' at that time and fixing it now.
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#bracket-rules
+I will update the commit message to describe this better in the next
+version to avoid confusion.
 
-> +	scu_ic->irq_enable    = variant->irq_enable;
-> +	scu_ic->irq_shift     = variant->irq_shift;
-> +	scu_ic->num_irqs      = variant->num_irqs;
+> 
+>>
+>> Fixes: 28300ecedce4 ("dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions")
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> 
+> Fixes cannot be in the middle of patchset.
+> 
+> See submitting patches and your internal guideline explaining it with
+> great details.
+> 
 
-Please use a TAB not spaces when you want to align things.
+I understand that fixes should not be placed in the middle of a
+patchset. I will reorder the patches to ensure that all fixes are at the
+beginning of the series.
 
-> +IRQCHIP_DECLARE(ast2600_scu_ic0, "aspeed,ast2600-scu-ic0", aspeed_scu_ic_of_init);
-> +IRQCHIP_DECLARE(ast2600_scu_ic1, "aspeed,ast2600-scu-ic1",     aspeed_scu_ic_of_init);
+>> ---
+>>   Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>> index 17252b6ea3be..fc604279114f 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>> @@ -57,6 +57,7 @@ required:
+>>     - compatible
+>>     - clocks
+>>     - clock-names
+>> +  - '#interconnect-cells'
+> 
+> ABI break without explanation.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Stray TAB in the last line.
+This property is already present in the current IPQ9574 SoC DTS file
+which is already merged, and hence no ABI break is introduced for
+IPQ9574. I will update the commit message in the next version to clarify
+this.
 
-Thanks,
-
-        tglx
 
