@@ -1,127 +1,336 @@
-Return-Path: <linux-kernel+bounces-796851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12C3B4084C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCA6B40851
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4F51888EE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:58:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5274A18843C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CF82E2EEE;
-	Tue,  2 Sep 2025 14:58:05 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D131E51D;
+	Tue,  2 Sep 2025 14:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O2Jiuv33"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413352AD31;
-	Tue,  2 Sep 2025 14:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C34134A8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756825085; cv=none; b=EOsFJjaZjl0K5cs3td87xYBuN/h2bEc26fcTwWVdQTGm3nVDUfGKlm6ucBUTZP27Oe4X4UfPLHL0t+Logvb7TPCdid2uiJA+L7DLbjheEYKoVxH7W+4n6CJbZL5D8Qpu7BY7aD+nOzikaBMX2ul6cXzEH3qQAxOgeBetfAs+bvI=
+	t=1756825181; cv=none; b=Mb7AAa6+UFkos7FbHaL84FgHPDbBydM+86B7OA0Ju0hZYAybY3qt0oW+ofVSbQDWOcqpL3vPYtMVFU60TOoKtUh0RwZGM9FC9sQPK4eZ+Rp7zPo3mYbmxBnQX2Gp2R5t5WPCsraD7kdElVVZZJ/Nky7Rrsgk6hjyP3wZZ7QGQwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756825085; c=relaxed/simple;
-	bh=xh+D3Otgus7FpZ6lCewwtO5uO4rsEfid5DjiL6LZ9hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FcrKx36emMGLkHZ8xGp0FBIeNRjttI9lcGFAhBnVbrECWazJfXVOj3vSdYQN1qigvWPC9bmeU7tZ4IsOhPZ5OcOiPqNs3ncTtzMdDIx+H25HfvoKz3CWIM2oAaPVLF6b5wxwQY9pn8x7NXG7C23uKqO8HGO+pkfQlVA292t0wqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id CF2D5838C8;
-	Tue,  2 Sep 2025 14:57:59 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 2C02519;
-	Tue,  2 Sep 2025 14:57:58 +0000 (UTC)
-Date: Tue, 2 Sep 2025 10:57:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Menglong Dong <dongml2@chinatelecom.cn>, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, oliver.sang@intel.com
-Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in
- fprobe_entry
-Message-ID: <20250902105757.16a78aea@batman.local.home>
-In-Reply-To: <aLa2D4It1Zxc7bs0@gondor.apana.org.au>
-References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
-	<aLa2D4It1Zxc7bs0@gondor.apana.org.au>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756825181; c=relaxed/simple;
+	bh=vDmXH55NIAF/iJDyxaMzr02S19+EYKdkSPtubaiyCyk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=R8o+b9S6EeD8A2acKIUhpMgORMB+k26NUYuNCVybE8wJ2gFV4T0NJeRYy2gfLnfy4aWLupFKhS8JT5WZ5gr5qOhAb9rSuN+xNdJTtV6jJKqqOuvXI9dz7blbOo3vbIoqXLxBg5Mjp7/6PeKNyJaKzcx3JPatSJFrBSFLSRRAQsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O2Jiuv33; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756825180; x=1788361180;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=vDmXH55NIAF/iJDyxaMzr02S19+EYKdkSPtubaiyCyk=;
+  b=O2Jiuv33q06UHfqhm09pPOXvLDhMOmXPXJm3Zt5zVeUXgegcTQHthGAM
+   kQ9WcdvoG3zGuTwytxYHXReuX4AjMuViPwuOEO9TS4Ymof8MJLgW86USA
+   XKLkSZ2qiuLTcbN7YFaqi20+YI8OlBvNd6xJyMXh/6y2QabgnGcgp7m0H
+   fKuqf/4U4BGScU5LrAsZM2Qal8Y7fi1usc4u3Q2biN/cBv+e58WNhKlsw
+   UZ4hZnOb82cAUTskEVPfeqC+hP8mGHDWK1eod3wUFc47pArBM+DV9R+5X
+   bEsr3mnd61l3U8zR2lnC9pAI+YIW25grmFw8cqki9dAIUHjoLOCtIwoyq
+   A==;
+X-CSE-ConnectionGUID: dIamRsm3SBGh+7ikguTOFQ==
+X-CSE-MsgGUID: 94abAtjwTJSIjN716Y3PCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59052448"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59052448"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 07:59:39 -0700
+X-CSE-ConnectionGUID: gnZHfUcPTo6N3QPQ0TAk6w==
+X-CSE-MsgGUID: 8fXfvuiMRWqfQqmhFXx7tQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="171451041"
+Received: from dhhellew-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.193])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 07:59:33 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, David
+ Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Christian Koenig
+ <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Matthew Auld
+ <matthew.auld@intel.com>, Matthew Brost <matthew.brost@intel.com>, Maxime
+ Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [PATCH v11 06/11] drm/i915: Add intel_bo_alloc_framebuffer()
+In-Reply-To: <20250624091501.257661-7-jfalempe@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250624091501.257661-1-jfalempe@redhat.com>
+ <20250624091501.257661-7-jfalempe@redhat.com>
+Date: Tue, 02 Sep 2025 17:59:30 +0300
+Message-ID: <508c32788930b591fdb578f4f406278a8818d771@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 2C02519
-X-Stat-Signature: kexuroswazy4anmpbiun1id7yeqi66t7
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+/Ny8/UnxoGIoq71DQSFmlT+LfizK97EE=
-X-HE-Tag: 1756825078-309006
-X-HE-Meta: U2FsdGVkX1/LQ1in0ngiEYGxxhNUy5fGrzzzAtyz208XAeFe+oEJM4lCaJDsqGNNY1jV5ehtRkmhgZyqCCSfyZaZ6WvJiZ7i9z6lKpaencayh1V5Z+abLn0OdXpmGOPv/JFLL2Step3ZmWyGGwpCDgOBRnNRHsmwKO8OdAK7dRhGSN45H7rGYHdnWLwZ2vgNSJqoXd8ToLZ0S0YixYnlWXDHgNzGRVycva536pljzVR5JvCA7V5/GN/REBoMOoZuJsrA/HpH+x661tHzj2I/d2VqhIvAUzbz0fqejzPBdVhnMGUpomH0JfdbqVt4BLdNWTHSToFCrzC0tlDB4TgChpxZY4KDeqz1V/Kpp9s/nUHnGK5s452jeMwfiNvy3Eyu
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2 Sep 2025 17:17:03 +0800
-Herbert Xu <herbert@gondor.apana.org.au> wrote:
+On Tue, 24 Jun 2025, Jocelyn Falempe <jfalempe@redhat.com> wrote:
+> Encapsulate the struct intel_framebuffer into an xe_framebuffer
+> or i915_framebuffer, and allow to add specific fields for each
+> variant for the panic use-case.
+> This is particularly needed to have a struct xe_res_cursor available
+> to support drm panic on discrete GPU.
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
+>
+> v11:
+>  * Added in v11
+>
+>  drivers/gpu/drm/i915/display/i9xx_plane.c     |  3 ++-
+>  drivers/gpu/drm/i915/display/intel_bo.c       |  6 +++++
+>  drivers/gpu/drm/i915/display/intel_bo.h       |  2 ++
+>  drivers/gpu/drm/i915/display/intel_fb.c       |  2 +-
+>  .../drm/i915/display/skl_universal_plane.c    |  2 +-
+>  drivers/gpu/drm/i915/gem/i915_gem_object.h    |  2 ++
+>  drivers/gpu/drm/i915/gem/i915_gem_pages.c     | 22 +++++++++++++++++
+>  drivers/gpu/drm/xe/display/intel_bo.c         | 24 +++++++++++++++++++
+>  8 files changed, 60 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/i9xx_plane.c b/drivers/gpu/drm/=
+i915/display/i9xx_plane.c
+> index e7e35fd4bdc3..f291ced989dc 100644
+> --- a/drivers/gpu/drm/i915/display/i9xx_plane.c
+> +++ b/drivers/gpu/drm/i915/display/i9xx_plane.c
+> @@ -15,6 +15,7 @@
+>  #include "i9xx_plane.h"
+>  #include "i9xx_plane_regs.h"
+>  #include "intel_atomic.h"
+> +#include "intel_bo.h"
+>  #include "intel_de.h"
+>  #include "intel_display_irq.h"
+>  #include "intel_display_regs.h"
+> @@ -1174,7 +1175,7 @@ i9xx_get_initial_plane_config(struct intel_crtc *cr=
+tc,
+>=20=20
+>  	drm_WARN_ON(display->drm, pipe !=3D crtc->pipe);
+>=20=20
+> -	intel_fb =3D kzalloc(sizeof(*intel_fb), GFP_KERNEL);
+> +	intel_fb =3D intel_bo_alloc_framebuffer();
+>  	if (!intel_fb) {
+>  		drm_dbg_kms(display->drm, "failed to alloc fb\n");
+>  		return;
+> diff --git a/drivers/gpu/drm/i915/display/intel_bo.c b/drivers/gpu/drm/i9=
+15/display/intel_bo.c
+> index fbd16d7b58d9..bcf2eded7469 100644
+> --- a/drivers/gpu/drm/i915/display/intel_bo.c
+> +++ b/drivers/gpu/drm/i915/display/intel_bo.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: MIT
+>  /* Copyright =C2=A9 2024 Intel Corporation */
+>=20=20
+> +#include "display/intel_display_types.h"
+>  #include "gem/i915_gem_mman.h"
+>  #include "gem/i915_gem_object.h"
+>  #include "gem/i915_gem_object_frontbuffer.h"
+> @@ -57,3 +58,8 @@ void intel_bo_describe(struct seq_file *m, struct drm_g=
+em_object *obj)
+>  {
+>  	i915_debugfs_describe_obj(m, to_intel_bo(obj));
+>  }
+> +
+> +struct intel_framebuffer *intel_bo_alloc_framebuffer(void)
+> +{
+> +	return i915_gem_object_alloc_framebuffer();
+> +}
+> diff --git a/drivers/gpu/drm/i915/display/intel_bo.h b/drivers/gpu/drm/i9=
+15/display/intel_bo.h
+> index ea7a2253aaa5..315a81768c73 100644
+> --- a/drivers/gpu/drm/i915/display/intel_bo.h
+> +++ b/drivers/gpu/drm/i915/display/intel_bo.h
+> @@ -7,6 +7,7 @@
+>  #include <linux/types.h>
+>=20=20
+>  struct drm_gem_object;
+> +struct intel_framebuffer;
+>  struct seq_file;
+>  struct vm_area_struct;
+>=20=20
+> @@ -23,5 +24,6 @@ struct intel_frontbuffer *intel_bo_set_frontbuffer(stru=
+ct drm_gem_object *obj,
+>  						   struct intel_frontbuffer *front);
+>=20=20
+>  void intel_bo_describe(struct seq_file *m, struct drm_gem_object *obj);
+> +struct intel_framebuffer *intel_bo_alloc_framebuffer(void);
+>=20=20
+>  #endif /* __INTEL_BO__ */
+> diff --git a/drivers/gpu/drm/i915/display/intel_fb.c b/drivers/gpu/drm/i9=
+15/display/intel_fb.c
+> index 763b36c4de10..6158031821fd 100644
+> --- a/drivers/gpu/drm/i915/display/intel_fb.c
+> +++ b/drivers/gpu/drm/i915/display/intel_fb.c
+> @@ -2346,7 +2346,7 @@ intel_framebuffer_create(struct drm_gem_object *obj,
+>  	struct intel_framebuffer *intel_fb;
+>  	int ret;
+>=20=20
+> -	intel_fb =3D kzalloc(sizeof(*intel_fb), GFP_KERNEL);
+> +	intel_fb =3D intel_bo_alloc_framebuffer();
+>  	if (!intel_fb)
+>  		return ERR_PTR(-ENOMEM);
+>=20=20
+> diff --git a/drivers/gpu/drm/i915/display/skl_universal_plane.c b/drivers=
+/gpu/drm/i915/display/skl_universal_plane.c
+> index 1ba04f1b3ec0..cbd0521a201c 100644
+> --- a/drivers/gpu/drm/i915/display/skl_universal_plane.c
+> +++ b/drivers/gpu/drm/i915/display/skl_universal_plane.c
+> @@ -3029,7 +3029,7 @@ skl_get_initial_plane_config(struct intel_crtc *crt=
+c,
+>  		return;
+>  	}
+>=20=20
+> -	intel_fb =3D kzalloc(sizeof(*intel_fb), GFP_KERNEL);
+> +	intel_fb =3D intel_bo_alloc_framebuffer();
+>  	if (!intel_fb) {
+>  		drm_dbg_kms(display->drm, "failed to alloc fb\n");
+>  		return;
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.h b/drivers/gpu/drm=
+/i915/gem/i915_gem_object.h
+> index c34f41605b46..364941444a0a 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.h
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.h
+> @@ -17,6 +17,7 @@
+>  #include "i915_vma_types.h"
+>=20=20
+>  enum intel_region_id;
+> +struct intel_framebuffer;
+>=20=20
+>  #define obj_to_i915(obj__) to_i915((obj__)->base.dev)
+>=20=20
+> @@ -691,6 +692,7 @@ i915_gem_object_unpin_pages(struct drm_i915_gem_objec=
+t *obj)
+>  int __i915_gem_object_put_pages(struct drm_i915_gem_object *obj);
+>  int i915_gem_object_truncate(struct drm_i915_gem_object *obj);
+>=20=20
+> +struct intel_framebuffer *i915_gem_object_alloc_framebuffer(void);
+>  /**
+>   * i915_gem_object_pin_map - return a contiguous mapping of the entire o=
+bject
+>   * @obj: the object to map into kernel address space
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_pages.c b/drivers/gpu/drm/=
+i915/gem/i915_gem_pages.c
+> index 7f83f8bdc8fb..10b84970f17f 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_pages.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_pages.c
+> @@ -6,6 +6,7 @@
+>  #include <drm/drm_cache.h>
+>  #include <linux/vmalloc.h>
+>=20=20
+> +#include "display/intel_display_types.h"
 
-> Menglong Dong <dongml2@chinatelecom.cn> wrote:
-> >
-> > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> > index fb127fa95f21..fece0f849c1c 100644
-> > --- a/kernel/trace/fprobe.c
-> > +++ b/kernel/trace/fprobe.c
-> > @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> >        if (WARN_ON_ONCE(!fregs))
-> >                return 0;
-> > 
-> > +       rcu_read_lock();
-> >        head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
-> > +       rcu_read_unlock();
-> >        reserved_words = 0;
-> >        rhl_for_each_entry_rcu(node, pos, head, hlist) {
-> >                if (node->addr != func)  
-> 
-> Actually this isn't quite right.  I know that it is a false-positive
-> so that it's actually safe, but if you're going to mark it with
-> rcu_read_lock, it should cover both the lookup as well as the
-> dereference which happens in the loop rhl_for_each_entry_rcu.
-> 
+This one slipped through... non-display parts of i915 should not be
+adding more display/ includes, and should not poke at display data
+types.
 
-I disagree. It's a false positive as RCU is actually enabled here
-because preemption is disabled. Now we are spreading the internals of
-rhltable into the fprobe code.
+>  #include "gt/intel_gt.h"
+>  #include "gt/intel_tlb.h"
+>=20=20
+> @@ -354,6 +355,27 @@ static void *i915_gem_object_map_pfn(struct drm_i915=
+_gem_object *obj,
+>  	return vaddr ?: ERR_PTR(-ENOMEM);
+>  }
+>=20=20
+> +struct i915_panic_data {
+> +	struct page **pages;
+> +	int page;
+> +	void *vaddr;
+> +};
+> +
+> +struct i915_framebuffer {
+> +	struct intel_framebuffer base;
+> +	struct i915_panic_data panic;
+> +};
+> +
+> +struct intel_framebuffer *i915_gem_object_alloc_framebuffer(void)
+> +{
+> +	struct i915_framebuffer *i915_fb;
+> +
+> +	i915_fb =3D kzalloc(sizeof(*i915_fb), GFP_KERNEL);
+> +	if (i915_fb)
+> +		return &i915_fb->base;
+> +	return NULL;
+> +}
+> +
+>  /* get, pin, and map the pages of the object into kernel space */
+>  void *i915_gem_object_pin_map(struct drm_i915_gem_object *obj,
+>  			      enum i915_map_type type)
+> diff --git a/drivers/gpu/drm/xe/display/intel_bo.c b/drivers/gpu/drm/xe/d=
+isplay/intel_bo.c
+> index 27437c22bd70..926fcd9c86e1 100644
+> --- a/drivers/gpu/drm/xe/display/intel_bo.c
+> +++ b/drivers/gpu/drm/xe/display/intel_bo.c
+> @@ -3,6 +3,8 @@
+>=20=20
+>  #include <drm/drm_gem.h>
+>=20=20
+> +#include "intel_display_types.h"
+> +
 
-We should just wrap it as is with a comment saying that currently RCU
-checking doesn't have a good way to know preemption is disabled in all
-config settings.
+This file is also supposed to be an abstraction layer, and should not be
+looking at intel framebuffer details.
 
-That is, I don't want rcu disabled here where people will think it's
-actually needed when it isn't. Wrapping the call with rcu_read_lock()
-with a comment that says it's to quiet a false positive is enough, as
-then we are not misrepresenting the code.
+*sad trombone*
 
-Maybe instead have:
+Jocelyn, not your fault, it's our fault, and it's also a bunch more todo
+items and refactoring for us. :(
 
-/*
- * fprobes calls rhltable_lookup() from a preempt_disabled location.
- * This is equivalent to rcu_read_lock(). But rcu_deferefernce_check()
- * will trigger a false positive when PREEMPT_COUNT is not defined.
- * Quiet the check.
- */
-#ifndef CONFIG_PREEMPT_COUNT
-# define quiet_rcu_lock_check() rcu_read_lock()
-# define quiet_rcu_unlock_check() rcu_read_unlock()
-#else
-# define quiet_rcu_lock_check()
-# define_quiet_rcu_unlock_check()
-#endif
+BR;
+Jani.
 
-And then have:
 
-       quiet_rcu_read_lock_check();
-       head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
-       quiet_rcu_read_unlock_check();
+>  #include "xe_bo.h"
+>  #include "intel_bo.h"
+>=20=20
+> @@ -59,3 +61,25 @@ void intel_bo_describe(struct seq_file *m, struct drm_=
+gem_object *obj)
+>  {
+>  	/* FIXME */
+>  }
+> +
+> +struct xe_panic_data {
+> +	struct page **pages;
+> +	int page;
+> +	void *vaddr;
+> +};
+> +
+> +struct xe_framebuffer {
+> +	struct intel_framebuffer base;
+> +	struct xe_panic_data panic;
+> +};
+> +
+> +struct intel_framebuffer *intel_bo_alloc_framebuffer(void)
+> +{
+> +	struct xe_framebuffer *xe_fb;
+> +
+> +	xe_fb =3D kzalloc(sizeof(*xe_fb), GFP_KERNEL);
+> +	if (xe_fb)
+> +		return &xe_fb->base;
+> +	return NULL;
+> +}
+> +
 
--- Steve
+--=20
+Jani Nikula, Intel
 
