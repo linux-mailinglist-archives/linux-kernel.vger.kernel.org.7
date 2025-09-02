@@ -1,182 +1,236 @@
-Return-Path: <linux-kernel+bounces-796898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1221EB408FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:33:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB540B40902
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6249540F40
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 450FC3A6BE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67DC311C30;
-	Tue,  2 Sep 2025 15:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BD53126DC;
+	Tue,  2 Sep 2025 15:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ape+KGLN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kgqXbrBz"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF85285C82;
-	Tue,  2 Sep 2025 15:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7102818EB0;
+	Tue,  2 Sep 2025 15:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827174; cv=none; b=ZDuni/afZfvCuLZ9+lyKWyJAJxjh90sKUZ/2oDceSVdka/LA8vUP3RJ7ZpC0l6GpiIX+Yi9cop4mSUGDbMbS16lMfhzbKKDk+RS/nTqxHuX7Gyh0ldXs6ZxeITZr3wwJmqSebnQoAKGv9xPqANiDOOPlTRdD16gyGsldJyRKnTc=
+	t=1756827298; cv=none; b=lsEA/ql7ZgeN3Mp6/QgKGnKdjO/yWayQDRqbKBjXBoP4K8MnbB0lQ54Nd+VJi5lbJwAZMEAH7Qf5VTvHld9ow3vrCNcHR4K/ZUuBgHRWXiH212izBzxlfi9zQNWWUN5m9GOzOPbgT8ySreKV7DCWRaZEu+rhVMM/aezvbgo/EWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827174; c=relaxed/simple;
-	bh=Aos/QCg7Lj1IAfu8pvGWWzQlXRO1YpKIi3zMC3xvobc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XobdeHbjeKfjQVVuqLOxcNlFnLlwVPPhRaxkeEduYL+zRWYqG+N1TsqgHwqDQb8QsJlkterbP/yzcqVxwhg1LdXGFTyhlACmreOKOFR64vRTmHBrRdFBgmEHY+GTFWp87e3MVAGNbEIUy912EI6t9BMljuu1DzslP2CRfb397Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ape+KGLN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396AAC4CEF5;
-	Tue,  2 Sep 2025 15:32:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756827173;
-	bh=Aos/QCg7Lj1IAfu8pvGWWzQlXRO1YpKIi3zMC3xvobc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ape+KGLN5Y1Di9l8aSoxQGrFWAike+YlCgGqOAu6UEXU6BidO3aM+TK2k0gjVy9/m
-	 FfnLi8KdSKx9zQ3U8tYipyh3oZv4CFvlbpTTeTL+jeiNSPBKv9fVx+sedc4LWd611e
-	 vfEBppWiQjWM44FAAta2o9zxQ954Y0QJdG/NxIJcmVfJ3Q3VAwWTW5n787jsTO+R4J
-	 kbV0rfquVQjgf+Iq76BNgfIUomzKK+W3R8lHmsLmrRq+MSvw79Wcmk0yvnKTcCRR2M
-	 agzIZH7Vj6Fw6uOstqkCmsJ4DgxAlLIwCbIfoSpRd14t4IZNVF42Xd24kNxkKjP39D
-	 oWTfGSHIh9K/w==
-Message-ID: <cf33b988-690f-48f4-a349-8db302bba02f@kernel.org>
-Date: Tue, 2 Sep 2025 17:32:47 +0200
+	s=arc-20240116; t=1756827298; c=relaxed/simple;
+	bh=Roq28Sqdr6qWqxoxgghG8s26s8sINSRwVKQCnlLgHnA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=aJRQj3i9UgV+cNI+hyRhGeyV/AOB9piijWOKhGHZjW2f6pRHxFQyUfr2zrLlQc6sVsED8ZeZQmw5OeNXrSLu2+O3KeB49dP7TUHkVzGEhMritonLzMbxYYgc0hkCoZ5fQYUQVpyUJlAIqe+KbNbnF9nAZbNNRuNeajgLz7scXtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kgqXbrBz; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582DM0JE023002;
+	Tue, 2 Sep 2025 15:34:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=EYUwda
+	Rxv5SqK/QJCgD88t3BD5f+bMRzZJ4qcmjolpY=; b=kgqXbrBz6tAQzM8rRqy2hQ
+	P9a1FARO9e74SLksndQJjsjuot7LWVyrO3XRTmzd4AfR0/WyMGT30+65fawVHvAR
+	hEROT7QJ9bdfJYPOb3py6DPbogTGEqD0450smmyy2D7JMnNAYdHBZpyk42HvAPK6
+	PNMkIMMI+Nvx3QEGKd7PkOy/XvMdkirUqCfDFWpX/dWt4TF2i/+/s45SKdNiZXbs
+	o1ZlNt8UaOPFUjPRtejMjLBgzmI0RLBSxkDNKXa/SDyOgqa4MMp+xR98Dkx6+z2W
+	hY1h5Zjxzg48KF0bv82uGzM1KKDEyzpb+jB8gEHrrxkf0sZHTj1WlzrB4CmJ6VHQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48uswd78ka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 15:34:07 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 582FLP2D014421;
+	Tue, 2 Sep 2025 15:34:07 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48uswd78k2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 15:34:06 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 582D069p021184;
+	Tue, 2 Sep 2025 15:34:05 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vcmpk8dt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 15:34:05 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 582FY4Yv32965092
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 2 Sep 2025 15:34:04 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E71CD58062;
+	Tue,  2 Sep 2025 15:34:03 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 85B355805C;
+	Tue,  2 Sep 2025 15:33:52 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.241.29])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  2 Sep 2025 15:33:52 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI
- TMDS181 and SN65DP159 bindings
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
- Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250901142958.843678-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.edc18686-244f-441e-a6ac-0b62492b96c8@emailsignatures365.codetwo.com>
- <20250901142958.843678-2-mike.looijmans@topic.nl>
- <20250902-hasty-spry-nautilus-c05c6a@kuoka>
- <e007ee80-2eff-4859-b2e3-402950081b4f@topic.nl>
- <ae28c7e0-6ea1-4a0a-b923-d3906d71141e@kernel.org>
- <fccbba0a-cb8f-4d71-9c91-7558cfaa8ef7@topic.nl>
- <dc073509-57d9-4b57-a53f-cd285bff8eae@topic.nl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <dc073509-57d9-4b57-a53f-cd285bff8eae@topic.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 02/09/2025 16:52, Mike Looijmans wrote:
->> if:
->>   properties:
->>     compatible:
->>       contains:
->>         const: ti,sn65dp159
->> then:
->>   properties:
->>     ti,sink-mode:
->>       type: boolean
->>       description:
->>         Force chip to operate in "sink" mode. Allows to use
->>         a DP159 chip (defaults to source) for incoming signals.
->>     ti,dvi-mode:
->>       type: boolean
->>       description: Makes the DP159 chip operate in DVI mode.
->>     slew-rate:
->>       $ref: /schemas/types.yaml#/definitions/uint32
->>       minimum: 0
->>       maximum: 3
->>       default: 3
->>       description: Set slew rate, 0 is slowest, 3 is fastest.
->> else:
->>   properties:
->>     ti,source-mode:
->>       type: boolean
->>       description:
->>         Force chip to operate in "source" mode. Allows to use
->>         a TMDS181 chip (which defaults to sink) as cable driver.
->>
-> Hmm, apparently one cannot "add" properties in the "if:" block? The 
-
-One can, but should not. Define properties in top level and disallow them.
-
-See also example-schema.
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [bpf-next v2 0/5] powerpc64/bpf: Add support for bpf arena and
+ arena atomics
+From: Venkat <venkat88@linux.ibm.com>
+In-Reply-To: <20250829165135.1273071-1-skb99@linux.ibm.com>
+Date: Tue, 2 Sep 2025 21:03:36 +0530
+Cc: bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Hari Bathini <hbathini@linux.ibm.com>, sachinpb@linux.ibm.com,
+        andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+        sdf@fomichev.me, haoluo@google.com, Jiri Olsa <jolsa@kernel.org>,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        memxor@gmail.com, iii@linux.ibm.com, shuah@kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7DC6CA27-C35F-4220-856A-48AC8BF45896@linux.ibm.com>
+References: <20250829165135.1273071-1-skb99@linux.ibm.com>
+To: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=PeP/hjhd c=1 sm=1 tr=0 ts=68b70e6f cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=odCaGXuriu-t99JO8RQA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX+ClQegpUb5Ao
+ 6YsY3/NxHnIZHtKNl+XPND9lNhVTgc1XyzfI4YUYzDPzhp5cWOLP17MLhDS+DSD3Cul7RnXL+ZJ
+ bFMbiXOkODVEcQCvTDbpBcpMuQLLx0nLX7C01fuzRJ473c2Pd0hcgMRXl8M6yyIFSHyqNspluNz
+ k9TtrEJ6XFgjB8zQcMCYDRG5UEpYI/jjpADKPMJKWXyzubf1ZJ00zzApYsnkbXWr4+gO6n3DC/U
+ 8NPg898BdhfefccVw6AJlzhAjF0Qz5s4FkAsS4/iq6fzokisNwYnIXMiST4XK4mD8UutoK+rGQ9
+ YErNaT0Hz/ajnJftxo4LuilGgtFDF+RNqUboF/j+iM3OgIOGVZAD5Bk7yIhXi3/Qw+Jr1a1mWBG
+ B1JgciKf
+X-Proofpoint-GUID: k68A7P1PeBruVwtl1_8P86pZypwcZgwk
+X-Proofpoint-ORIG-GUID: 0ig10undA1vhyCbAICB2CAVggi9lugps
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_05,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 spamscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300034
 
 
-> opposite approach, disallowing properties, works, e.g.:
-> 
-> if:
->    properties:
->      compatible:
->        contains:
->          const: ti,sn65dp159
-> then:
->    properties:
->      ti,source-mode: false
-> else:
->    properties:
->      ti,sink-mode: false
->      ti,dvi-mode: false
->      slew-rate: false
 
+> On 29 Aug 2025, at 10:21=E2=80=AFPM, Saket Kumar Bhaskar =
+<skb99@linux.ibm.com> wrote:
+>=20
+> This patch series introduces support for the PROBE_MEM32,
+> bpf_addr_space_cast and PROBE_ATOMIC instructions in the powerpc BPF =
+JIT,
+> facilitating the implementation of BPF arena and arena atomics.
+>=20
+> The last patch in the series has fix for arena spinlock selftest
+> failure.
+>=20
+> All selftests related to bpf_arena, bpf_arena_atomic(except
+> load_acquire/store_release) enablement are passing:
+>=20
+> # ./test_progs -t arena_list
+> #5/1     arena_list/arena_list_1:OK
+> #5/2     arena_list/arena_list_1000:OK
+> #5       arena_list:OK
+> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+>=20
+> # ./test_progs -t arena_htab
+> #4/1     arena_htab/arena_htab_llvm:OK
+> #4/2     arena_htab/arena_htab_asm:OK
+> #4       arena_htab:OK
+> Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+>=20
+> # ./test_progs -t verifier_arena
+> #464/1   verifier_arena/basic_alloc1:OK
+> #464/2   verifier_arena/basic_alloc2:OK
+> #464/3   verifier_arena/basic_alloc3:OK
+> #464/4   verifier_arena/iter_maps1:OK
+> #464/5   verifier_arena/iter_maps2:OK
+> #464/6   verifier_arena/iter_maps3:OK
+> #464     verifier_arena:OK
+> #465/1   verifier_arena_large/big_alloc1:OK
+> #465/2   verifier_arena_large/big_alloc2:OK
+> #465     verifier_arena_large:OK
+> Summary: 2/8 PASSED, 0 SKIPPED, 0 FAILED
+>=20
+> # ./test_progs -t arena_atomics
+> #3/1     arena_atomics/add:OK
+> #3/2     arena_atomics/sub:OK
+> #3/3     arena_atomics/and:OK
+> #3/4     arena_atomics/or:OK
+> #3/5     arena_atomics/xor:OK
+> #3/6     arena_atomics/cmpxchg:OK
+> #3/7     arena_atomics/xchg:OK
+> #3/8     arena_atomics/uaf:OK
+> #3/9     arena_atomics/load_acquire:SKIP
+> #3/10    arena_atomics/store_release:SKIP
+> #3       arena_atomics:OK (SKIP: 2/10)
+> Summary: 1/8 PASSED, 2 SKIPPED, 0 FAILED
+>=20
+> All selftests related to arena_spin_lock are passing:
+>=20
+> # ./test_progs -t arena_spin_lock
+> #6/1     arena_spin_lock/arena_spin_lock_1:OK
+> #6/2     arena_spin_lock/arena_spin_lock_1000:OK
+> #6/3     arena_spin_lock/arena_spin_lock_50000:OK
+> #6       arena_spin_lock:OK
+> Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
+>=20
+> Changes since v1:
+>=20
+> Addressed comments from Chris:
+> * Squashed introduction of bpf_jit_emit_probe_mem_store() and its =
+usage in
+>  one patch.
+> * Defined and used PPC_RAW_RLDICL_DOT to avoid the CMPDI.
+> * Removed conditional statement for fixup[0] =3D PPC_RAW_LI(dst_reg, =
+0);
+> * Indicated this change is limited to powerpc64 in subject.
+>=20
+> Addressed comments from Alexei:
+> * Removed skel->rodata->nr_cpus =3D get_nprocs() and its usage to get
+>  currently online cpus(as it needs to be updated from userspace).
+>=20
+> Saket Kumar Bhaskar (5):
+>  powerpc64/bpf: Implement PROBE_MEM32 pseudo instructions
+>  powerpc64/bpf: Implement bpf_addr_space_cast instruction
+>  powerpc64/bpf: Introduce bpf_jit_emit_atomic_ops() to emit atomic
+>    instructions
+>  powerpc64/bpf: Implement PROBE_ATOMIC instructions
+>  selftests/bpf: Fix arena_spin_lock selftest failure
+>=20
+> arch/powerpc/include/asm/ppc-opcode.h         |   1 +
+> arch/powerpc/net/bpf_jit.h                    |   6 +-
+> arch/powerpc/net/bpf_jit_comp.c               |  32 +-
+> arch/powerpc/net/bpf_jit_comp32.c             |   2 +-
+> arch/powerpc/net/bpf_jit_comp64.c             | 401 +++++++++++++-----
+> .../bpf/prog_tests/arena_spin_lock.c          |  13 +
+> .../selftests/bpf/progs/arena_spin_lock.c     |   5 +-
+> 7 files changed, 347 insertions(+), 113 deletions(-)
+>=20
+> --=20
+> 2.43.5
+>=20
 
-So any device can work in any mode? Then this should be just enum with
-different defaults.
+Tested this patch set by applying on top of bpd-next repo and it works =
+as expected. Hence, please add below tag for the series.
 
-Best regards,
-Krzysztof
+Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+
+Regards,
+Venkat.
+
 
