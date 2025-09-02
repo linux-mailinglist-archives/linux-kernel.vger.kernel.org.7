@@ -1,189 +1,236 @@
-Return-Path: <linux-kernel+bounces-796684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD45CB405E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:01:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F71B405E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDF0C17EEFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:56:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0851BA065E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA50307AEA;
-	Tue,  2 Sep 2025 13:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42E33093CB;
+	Tue,  2 Sep 2025 13:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsSaQf4y"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XPfuRCHH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PrSgB096";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XPfuRCHH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PrSgB096"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6084E28AB1E;
-	Tue,  2 Sep 2025 13:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A18247289
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756821250; cv=none; b=CExRXTV3CU33YTWHCcpUM7p//zvYMf4vj0AhZTrbmmj/U1Cpo6xmdb3sxd9y8n77ujYa09HCUXt0ZEDlYttyOCkGyNUarOX9v7AnJWlB1J/+LnVr9RR1mjWqc/OG0RI+gucSJK/54FZ8//vmq5Gj8nZb8bvzPFU7kLNrz3yrNbE=
+	t=1756821261; cv=none; b=gtKQy0Hoqa4qTo9vPitkddaidKnsMcL2rGV8BKyMwQ50OcaAj3m3M1MagHGwLUIPNQ8WajKkBBeI/ANlKZp7HKahbEYo1nPFPUvP2KxfoBT5HPFQyuR9APITifl395Nu18kUVtWtYBtCxQQcEtpKcsutCTZkc50pyq+1FQJErfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756821250; c=relaxed/simple;
-	bh=69wVv6bbvG6MEXiXXjr7hj29YgvfryWOViB465bVb8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZsIy1v21KGEmZiGN7kHGuU44REvca3wZRIRAGVVbQ+9CKAT6DcqsN3rVeq381+Y24qViXWcoHBpoqmXmOJ0y+msZPLYIQtskbgtcDerXsPFrNe47/iW405CtBIVw4FEFlOX+tBC8PHqPblf/KA2jGLe50XC6pxEBO7YOj79Zu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsSaQf4y; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b04163fe08dso411394466b.3;
-        Tue, 02 Sep 2025 06:54:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756821247; x=1757426047; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcxMe3QH1ctzyMJBWwg/0kpd4+pnYIbcDb1kDpHMe0U=;
-        b=TsSaQf4yMYI9xSZ1YXSlMbSF3ELwEikYNOTYx/B9kv9X9aHzY5XnIu/2Pzf2uTKHkn
-         jnBM26fWGbdUNak3IT4sWl1+c6nMr4LhtuR6wv8lR3KeOnR2JWhbmUHkxdZVErGuL33N
-         5NqSLX5RYLX7kjyfS6R3gs22k3PxrQQpXwKHZOFs/yvubImbAcw6MUvxRPdvuh1JwnyL
-         6Simr2QKnxsVqkpOWi+xQgtWtP12akCmXI9s0oRbgE3JEKzn6e5M5KVaLWZrZW+ujXJ5
-         kHoZXGKB/wUiwJqPpXosiRiUg2hPw7bzbrnO8zmdGn1iDgq9e0LeJvHMmaGTDXCBMEdc
-         +7fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756821247; x=1757426047;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZcxMe3QH1ctzyMJBWwg/0kpd4+pnYIbcDb1kDpHMe0U=;
-        b=NpYjRUpr/HdftdMaypvxr8JJ5nnYGH0dm2cpLWE3R6tocZljOhRE1cITPCIws7JXwP
-         qmKNz2PO9YeB9b4XlcYtDPyKmghStHdm6KgIp3msIUqk52WRAGR2MX7996CVfN2qfDzO
-         s2rBeVjM9X37kPmF/GqrbmOkMQdeRfrFdc9fmu2FKl66YYj8q4cBFgTfHKrzcB52jnIi
-         EEV7hekQ5rfD8wsjtorlAZHM9et9xevx3cR0nTtJB9tbFnFJaGY6THG1RkI7XYCiLqG7
-         evWtAthDBpt0FnJThvCSGojCT/6jWxSsbsg3ciDjvGgqgfQsMSpXcZ45RJMUtIlDHLvl
-         r7fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7ShZlw0dqr6fi1AmApkUBWY8llxVmh4vuTzzv4Rw7F0ZLufB7GAx+l2qPiCuMHkuQ/mSD7AKohzc=@vger.kernel.org, AJvYcCXVlLZpVVFMmV6MWyimoh0MM9H/PjMr/9Rbl3d9JRa/bJoL/xUNzKmERM6bC4Z6bpub3nMoOczu+p8hmdxh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvJHcOO4RE67wxkeMOubxvuwr0dMQGkMW6JT1KqEPMnVmTzfCh
-	Ow+d/QlVj+SYFJ/J4Jq16teKqPJsG8yE7P3Qb+65vl4cLJq7sxco6kft
-X-Gm-Gg: ASbGncvNtgrG7Fa6fco9tOIf6tJce+MmcZHEHaZFxniPc/hvJk3ch+nmXYkhqg9OnPM
-	H95Xa9aGDDFyuejVHlXGVehfymZrzcgrS34R1Pg7VOvIg91H4df1xH+OiRTkAEDCvguVVzy66lc
-	AiKvZKOqeKy5sA6yd8r/CSJo5EKSaE11wnItufSPSqL/jmM10BCVLQ4naGG/yTkPjHAYCBKWX8g
-	dYleUHp3wLHVo5VdW5+S9z9rpEovflSZMr6S9rzNcT3WzsDWJ8Xsbcf5vznZdGzn1Xg1/uKyW1K
-	7BQ5uQYmcxJmfCAVVg3P8gkpjeUNwDMcTwFK/BYHT7IybzXEkZOKu3jIuksIBEjl+CywXldoX2d
-	7YOa9wWsam9AT/W02O7xNpkXGL57ggPU=
-X-Google-Smtp-Source: AGHT+IGENRHM1Pz8hFEdjUOEOg5BzHynebxQ7yjCDQCZKi11h/lXs56X+WsaUOZOeNjIy9LnLTpGzQ==
-X-Received: by 2002:a17:907:94c9:b0:b04:2f81:5c35 with SMTP id a640c23a62f3a-b042f817f8cmr699512066b.34.1756821246348;
-        Tue, 02 Sep 2025 06:54:06 -0700 (PDT)
-Received: from legfed1 ([2a00:79c0:620:3f00:22ea:3d6a:5919:85f8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b01902d0e99sm836219566b.12.2025.09.02.06.54.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 06:54:05 -0700 (PDT)
-Date: Tue, 2 Sep 2025 15:54:04 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: dimitri.fedrau@liebherr.com,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Chris Lesiak <chris.lesiak@licorbio.com>
-Subject: Re: [PATCH v2 2/2] iio: humditiy: hdc3020: fix units for thresholds
- and hysteresis
-Message-ID: <20250902135404.GA145952@legfed1>
-References: <20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com>
- <20250901-hdc3020-units-fix-v2-2-082038a15917@liebherr.com>
- <aLbneKXFd7Nc711T@smile.fi.intel.com>
+	s=arc-20240116; t=1756821261; c=relaxed/simple;
+	bh=Arw9GJ85CeD7VsFqeAnGEKjY7nK2CfNROc3OwhNWeSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nyu/6SHINTUkGsUXqDqzGzw9YtlbyjHYNv/epuuu42hWIBlk8KvPZrj4dhGCZceEdMl/e/wQ2+ugcCaumGxfD6MqYAfawBSIA+yFVW11nkdd07I2zNk7/EBUqWKNukpfXzO8vt6y6KKRriSiA9K2oxW43YzoG2lKVQAR5trvdYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XPfuRCHH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PrSgB096; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XPfuRCHH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PrSgB096; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 793351F394;
+	Tue,  2 Sep 2025 13:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756821257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Nkrr4CabSOa9fp9TnVPSJ/KPE6ieQRdQScrwDdHBxCc=;
+	b=XPfuRCHHETy2nSyVI8RQt3iJUwbvSrAiVxG/bHtHEWPZbDZUDBk0hZwFJdIkZ70/QpDTSj
+	DsfSjgWUGd1eS3++IgDd4e51nzz4jR1abtCwQ2k1/bSOHjSlPYO490jFEoSKdDOWjNDE+4
+	oSDRUJl9CSHrU2VQ800SmMzy0Mg/6B0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756821257;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Nkrr4CabSOa9fp9TnVPSJ/KPE6ieQRdQScrwDdHBxCc=;
+	b=PrSgB096ZaF7Co0Y8J+9+1gfWQAMlzRa1MX01O8Dvgr3J+PFUxYn0x6YNoGjq5W2RU4LJm
+	lb1VNk+fbyLrjLDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XPfuRCHH;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=PrSgB096
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756821257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Nkrr4CabSOa9fp9TnVPSJ/KPE6ieQRdQScrwDdHBxCc=;
+	b=XPfuRCHHETy2nSyVI8RQt3iJUwbvSrAiVxG/bHtHEWPZbDZUDBk0hZwFJdIkZ70/QpDTSj
+	DsfSjgWUGd1eS3++IgDd4e51nzz4jR1abtCwQ2k1/bSOHjSlPYO490jFEoSKdDOWjNDE+4
+	oSDRUJl9CSHrU2VQ800SmMzy0Mg/6B0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756821257;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Nkrr4CabSOa9fp9TnVPSJ/KPE6ieQRdQScrwDdHBxCc=;
+	b=PrSgB096ZaF7Co0Y8J+9+1gfWQAMlzRa1MX01O8Dvgr3J+PFUxYn0x6YNoGjq5W2RU4LJm
+	lb1VNk+fbyLrjLDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1B86F13882;
+	Tue,  2 Sep 2025 13:54:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F01BBQn3tmh0ZQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 13:54:17 +0000
+Message-ID: <4dfb851d-cd13-47cf-9965-774396bb0071@suse.de>
+Date: Tue, 2 Sep 2025 15:54:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLbneKXFd7Nc711T@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 22/29] drm/tidss: crtc: Cleanup reset implementation
+To: Maxime Ripard <mripard@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-22-14ad5315da3f@kernel.org>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250902-drm-state-readout-v1-22-14ad5315da3f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	URIBL_BLOCKED(0.00)[suse.de:mid,suse.de:dkim,suse.de:email];
+	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 793351F394
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-Hi Andy,
 
-Am Tue, Sep 02, 2025 at 03:47:52PM +0300 schrieb Andy Shevchenko:
-> On Mon, Sep 01, 2025 at 07:51:59PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > 
-> > According to the ABI the units after application of scale and offset are
-> > milli degree celsius for temperature thresholds and milli percent for
-> > relative humidity thresholds. Currently the resulting units are degree
-> > celsius for temperature thresholds and hysteresis and percent for relative
-> > humidity thresholds and hysteresis. Change scale factor to fix this issue.
-> 
-> ...
-> 
-> >  	/*
-> > -	 * Get the temperature threshold from 9 LSBs, shift them to get
-> > -	 * the truncated temperature threshold representation and
-> > -	 * calculate the threshold according to the formula in the
-> > -	 * datasheet. Result is degree celsius scaled by 65535.
-> > +	 * Get the temperature threshold from 9 LSBs, shift them to get the
-> > +	 * truncated temperature threshold representation and calculate the
-> > +	 * threshold according to the formula in the datasheet and additionally
-> 
-> Replace "formula in the datasheet" by explicit formula
-> 
 
-Ok.
-> > +	 * scale by HDC3020_THRESH_FRACTION to avoid precision loss when
-> > +	 * calculating threshold and hysteresis values.
-> >  	 */
-> >  	temp = FIELD_GET(HDC3020_THRESH_TEMP_MASK, thresh) <<
-> >  	       HDC3020_THRESH_TEMP_TRUNC_SHIFT;
-> >  
-> > -	return -2949075 + (175 * temp);
-> > +	return -589815 + (35 * temp);
-> 
-> TBH, I prefer to have the proper units be mentioned in the comment along with
-> 
-> 	return -2949075 / 5 + ((175 / 5) * temp);
-> 
+Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+> The tidss_crtc_reset() function will (rightfully) destroy any
+> pre-existing state.
+>
+> However, the tidss CRTC driver has its own CRTC state structure that
+> subclasses drm_crtc_state, and yet will destroy the previous state
+> by calling __drm_atomic_helper_crtc_destroy_state() and kfree() on its
+> drm_crtc_state pointer.
+>
+> It works only because the drm_crtc_state is the first field in the
+> structure, and thus its offset is 0. It's incredibly fragile however, so
+> let's call our destroy implementation in such a case to deal with it
+> properly.
+>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-You are right, will add the units again.
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-> 5 itself can be a definition
-> 
-> #define ..._PRE_SCALE	5
-> 
-> and used everywhere.
-> 
-> ...
-> 
+> ---
+>   drivers/gpu/drm/tidss/tidss_crtc.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
+> index eb431a238b11d22349d61f0e17f05994f50d5f2f..8fcc6a2f94770ae825eeb2a3b09856a2bf2d6a1e 100644
+> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+> @@ -355,13 +355,11 @@ static void tidss_crtc_destroy_state(struct drm_crtc *crtc,
+>   static void tidss_crtc_reset(struct drm_crtc *crtc)
+>   {
+>   	struct tidss_crtc_state *tstate;
+>   
+>   	if (crtc->state)
+> -		__drm_atomic_helper_crtc_destroy_state(crtc->state);
+> -
+> -	kfree(crtc->state);
+> +		tidss_crtc_destroy_state(crtc, crtc->state);
+>   
+>   	tstate = kzalloc(sizeof(*tstate), GFP_KERNEL);
+>   	if (!tstate) {
+>   		crtc->state = NULL;
+>   		return;
+>
 
-The explicit formula in the datasheet:
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-T(degree celsius) = -45 + (175 * temp) / 65535
 
-The formula before the patch:
-
-T(degree celsius) * 65525 = -2949075 + (175 * temp)
-
-Adding the PRE_SCALE into the formula doesn't improve readability from
-my perspective. I would prefer to just scale the result as it has been
-done before.
-
-> >  	/*
-> >  	 * Get the humidity threshold from 7 MSBs, shift them to get the
-> >  	 * truncated humidity threshold representation and calculate the
-> > -	 * threshold according to the formula in the datasheet. Result is
-> > -	 * percent scaled by 65535.
-> > +	 * threshold according to the formula in the datasheet and additionally
-> > +	 * scale by HDC3020_THRESH_FRACTION to avoid precision loss when
-> > +	 * calculating threshold and hysteresis values.
-> >  	 */
-> 
-> Ditto. "percent scaled by ..." is much better to understand.
-> 
-
-Ok.
-> >  	hum = FIELD_GET(HDC3020_THRESH_HUM_MASK, thresh) <<
-> >  	      HDC3020_THRESH_HUM_TRUNC_SHIFT;
-> >  
-> > -	return hum * 100;
-> > +	return hum * 20;
-> >  }
-
-Best regards,
-Dimitri Fedrau
 
