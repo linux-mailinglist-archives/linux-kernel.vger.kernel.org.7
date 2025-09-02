@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-797017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43361B40AC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4067FB40AC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4CD84820B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF43A3AE396
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E282333A005;
-	Tue,  2 Sep 2025 16:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030A83314C8;
+	Tue,  2 Sep 2025 16:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBh3Pmjc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b="QtYwl8Dg"
+Received: from exactco.de (exactco.de [176.9.10.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F77826C384;
-	Tue,  2 Sep 2025 16:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567C72DCF70;
+	Tue,  2 Sep 2025 16:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.10.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756830954; cv=none; b=YFn1ymJuJvzc8otYHTdBiZxBk4KrrWBfMa8cPqM45Yl1gi0NniORJFQj8W0abhFTNiGljGDgYs92nSxxsQ7NYCUXmGEciOjOVzgL7Ip1jI5NUKWhIKZciUqkis551CpoljC76XPuv5te9IilzRv0/2VGwLX/D23+O0M7F/rz7a0=
+	t=1756831107; cv=none; b=m2cpFuqCdlMXcnygL7dbQ8ThorO16sbOg9jW8jxTb0M129T1BWljWd9K6SznFlCsxDqPmfqfRHeEldIqXqZ/NJOImdfltkRIA8/ZaxUg7e8cNk7pLFZjNUuJPos+GCo8FVLdLuQhkiTpgsZd7EUb+acZ9QIR1KBIh9JQ6xncTXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756830954; c=relaxed/simple;
-	bh=4dMCQTY93FDdn7ueR8Z2tcJ3/CtiSsSmu2HzPGOu/Z0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBa9bnlWl7GguzsSLZW7929djLaS00vjpAjBkAmW40npqnkEE5CHxaWsUWyT+KVxu+pPYS6yVN9BuIIijhDvnIDH7QJIRvVbMiX85y29ZS/PuiSy9+xEE72mZR890rdGX1Mnjcrvi+nNU7oLo9GJqd5/S8rWc76KENhkfkFKsBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBh3Pmjc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CCAEC4CEED;
-	Tue,  2 Sep 2025 16:35:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756830953;
-	bh=4dMCQTY93FDdn7ueR8Z2tcJ3/CtiSsSmu2HzPGOu/Z0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rBh3PmjcZuIEgrrElADaHH9xJIJUAI1t9Bk6cyJMewu7XYbg9zA1CaeEmGz+qtipd
-	 RNZlDjYi9KPC1zeQmwvRiKQ8lTfNaWlsrpU1KAMRZ4bkm1CNWp0GThlUm/fPJ8U/ef
-	 BsSPjZ1RB9m39VEWZ4BLO9AY5iwrokcWvaXLikixJk/aFZQ5m862kOg7s1ObYyK6g6
-	 EspIHiAp48J/5ZfpEPhy4pBonJx2/4kS1dkbMYn8Rpkrefk9HQgD9anbm/tEvFk3Kf
-	 ToZn5hB0Td9dLq/xAf91vB6dxGJ6qZ1Lpo5HXftZQx7mW0G3lXFmW78zg2tCUW3ZU6
-	 DNLjadeOIt0DQ==
-Date: Tue, 2 Sep 2025 17:35:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	kasan-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	Matthew Maurer <mmaurer@google.com>,
-	Sami Tolvanen <samitolvanen@google.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] rust: kasan/kbuild: fix missing flags on first build
-Message-ID: <20250902-gown-relapse-8fd3978c1ea0@spud>
-References: <20250408220311.1033475-1-ojeda@kernel.org>
- <20250901-shrimp-define-9d99cc2a012a@spud>
- <aLaq6TpUtLkqHg_o@google.com>
- <20250902-crablike-bountiful-eb1c127f024a@spud>
- <CAH5fLggmXaa9JJ-yGdyH06Um8FopvYh97=rANLcoLc+60_HGqA@mail.gmail.com>
+	s=arc-20240116; t=1756831107; c=relaxed/simple;
+	bh=wRWMbZzwaiWrUO3MKkMmjAkflQVO4DecV9CwCrcPJqM=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Rrjd3VQQ2XEfwBx+u5dgPaqFvJEaAWzp30yoaLBPQPvYhNXXRfrGEeJ8jn8zR+5MqqCy0sRQVxVd4AM923iG0jpb1tlFmUZzAV37pdMKqFp5GvgZ/JeaO6Ij5BnPn42+/d3D1Z0CuWMPB2As4Tu4YjDEDbodOg42bjS0bfjh1y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com; spf=pass smtp.mailfrom=exactco.de; dkim=pass (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b=QtYwl8Dg; arc=none smtp.client-ip=176.9.10.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactco.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de;
+	s=x; h=Sender:Content-Transfer-Encoding:Content-Type:Mime-Version:References:
+	In-Reply-To:From:Subject:Cc:To:Message-Id:Date:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ZZz2JrcLiYuRx1hqGWQ3qNBjxiTxlP+uNOjhbIQMHJw=; b=QtYwl8Dg3qtTjOAxqkQFcPr7Ur
+	CC6s74tgk9Z5wUcqo9xDOL+IaVfCvgG5vP84vxMsYrAut+Atn4ljlzQVqR+IlRLGqkCR044NLXntO
+	wBdPHt8x2aS97vp6UJd1U0iuMju7Tnqhotg0RKWih+8DjrMEg0dbHjOt8XXyxruDVLZzTEo5dLaS8
+	cewN1LizISQI1eIBB32fJv64NDoxFhLhriJv/2s9tmeHHRYX3JVjXA/WcQsP5rdRrc8NGS0+EdLqc
+	A5wP/vQlbqwRmEQ/X1A2jZq8cF/1vo4GfZfuK51a0g4BrmOMYGXiM0u3+Z98Utk1u/BdK1dilBbaL
+	Qi5z6mng==;
+Date: Tue, 02 Sep 2025 18:38:22 +0200 (CEST)
+Message-Id: <20250902.183822.721197619957773341.rene@exactcode.com>
+To: kernel@mkarcher.dialup.fu-berlin.de
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ andreas@gaisler.com, glaubitz@physik.fu-berlin.de,
+ anthony.yznaga@oracle.com
+Subject: Re: [PATCH 2/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+From: Rene Rebe <rene@exactcode.com>
+In-Reply-To: <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
+	<20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
+X-Mailer: Mew version 6.10 on Emacs 30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4EeWks93mszFnPWF"
-Content-Disposition: inline
-In-Reply-To: <CAH5fLggmXaa9JJ-yGdyH06Um8FopvYh97=rANLcoLc+60_HGqA@mail.gmail.com>
-
-
---4EeWks93mszFnPWF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
 Content-Transfer-Encoding: quoted-printable
+Sender: rene@exactco.de
 
-> > AFAICT. Then later on it'd become more like:
-> >
-> > config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
-> >         def_bool y
-> >         depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
-> >         depends on RISCV || ((ARM64 || x86_64) && RUSTC_VERSION >=3D 10=
-7900)
-> >         depends on (ARM64 || x86_64) || (RISCV && RUSTC_VERSION >=3D 99=
-9999)
-> >         # With GCOV/KASAN we need this fix: https://github.com/rust-lan=
-g/rust/pull/129373
-> >         depends on (RUSTC_LLVM_VERSION >=3D 190103 && RUSTC_VERSION >=
-=3D 108200) || \
-> >                 (!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
-> >
-> > but that exact sort of mess is what becomes unwieldy fast since that
-> > doesn't even cover 32-bit arm.
->=20
-> I think a better way of writing it is like this:
->=20
-> depends on ARCH1 || ARCH2 || ARCH3
-> depends on !ARCH1 || RUSTC_VERSION >=3D 000000
-> depends on !ARCH2 || RUSTC_VERSION >=3D 000000
-> depends on !ARCH3 || RUSTC_VERSION >=3D 000000
+Hi,
+
+From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+
+> Based on a finding by Anthony Yznaga that the UltraSPARC III copy_fro=
+m_user
+> returns invalid values breaking other parts of the kernel in case of =
+a
+> fault, while the generic implementation is correct.
+
+Tested-by: Ren=E9 Rebe <rene@exactcode.com> # UltraSparc III+ and Ultra=
+Sparc IIIi
+
+> Fixes: ee841d0aff64 ("sparc64: Convert U3copy_{from,to}_user to accur=
+ate exception reporting.")
+> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+> ---
+>  arch/sparc/lib/U3memcpy.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
+
+> diff --git a/arch/sparc/lib/U3memcpy.S b/arch/sparc/lib/U3memcpy.S
+> index 9248d59c734c..bace3a18f836 100644
+> --- a/arch/sparc/lib/U3memcpy.S
+> +++ b/arch/sparc/lib/U3memcpy.S
+> @@ -267,6 +267,7 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
+>  	faligndata	%f10, %f12, %f26
+>  	EX_LD_FP(LOAD(ldd, %o1 + 0x040, %f0), U3_retl_o2)
+>  =
+
+> +	and		%o2, 0x3f, %o2
+>  	subcc		GLOBAL_SPARE, 0x80, GLOBAL_SPARE
+>  	add		%o1, 0x40, %o1
+>  	bgu,pt		%XCC, 1f
+> @@ -336,7 +337,6 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
+>  	 * Also notice how this code is careful not to perform a
+>  	 * load past the end of the src buffer.
+>  	 */
+> -	and		%o2, 0x3f, %o2
+>  	andcc		%o2, 0x38, %g2
+>  	be,pn		%XCC, 2f
+>  	 subcc		%g2, 0x8, %g2
+> -- =
+
+> 2.50.1
+> =
+
+> =
 
 
-Ye, that's a lot more manageable than what I came up with, shoulda
-really done better since the option I used for a reference looks a lot
-more like this than what I had... Thanks.
+-- =
 
---4EeWks93mszFnPWF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLcc3gAKCRB4tDGHoIJi
-0jnKAP9LYjFVXcrh5zaOZUH0oAgMo/4x8LRtidC5WGVJnSFzRAEAwRmIFTqnghCO
-5eXDhlTuIMYMEiqkRoSEu+mM/OF6PwQ=
-=RGAX
------END PGP SIGNATURE-----
-
---4EeWks93mszFnPWF--
+  Ren=E9 Rebe, ExactCODE GmbH, Berlin, Germany
+  https://exactcode.com | https://t2linux.com | https://rene.rebe.de
 
