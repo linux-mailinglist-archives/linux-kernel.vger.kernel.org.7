@@ -1,544 +1,230 @@
-Return-Path: <linux-kernel+bounces-796557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32731B4028C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:19:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA6BB4026D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 045003B0BA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EBC01B21EF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9212BE65C;
-	Tue,  2 Sep 2025 13:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD53C304BA9;
+	Tue,  2 Sep 2025 13:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPXdyuRD"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nWrpJedp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F335F2DCBF7;
-	Tue,  2 Sep 2025 13:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B10304971
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818986; cv=none; b=mqYQ51rB4vZnHxAddVzZvWpGja8Pg7abmUnwpmi0idUIC/dVdHloTZSsdHn2HDb80lLQCutvlK/u2mlBqYNKTxpwxfZdNwcUIDCO+cXH46hucLFzuoSKfAhSlq6OshK96oKqAF9bLmC8xbtUohC0CToGJlHfmtr520yNKTZpio4=
+	t=1756818994; cv=none; b=FVLstTkORZCJTBdJl4wrchGm4ogn/0L2Sb4WF7wpw1ClpvIgfIfYydb1j/xBhM1bS9MRwyCWH8EMG3Qzrr1uHVxdkcr3RamAJppAHwBIJsWlNPJ8IBo+68jJaasuOOBi/d6b5wXJDyTi1+6dcZ14kPtTtZjrwtux5vsQgGneZoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818986; c=relaxed/simple;
-	bh=6eOE26bI65MsDQNpoFXFLrhR0ZKs9oOluZgE9AeAjYk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Id9Q0HNf0T0Tpp5SvkFGHkMQCJJssCPHg3dMrwMCosDd1oBQDBadRExXIiymbYqtw8GtBLguRZYU3xXKco9+l1pgpNT0iM/RfyI4L+a3ayARzSMqfzQ02fxXiKER0IouNRbV8VREctlrhKp3pZh9MFfsM+XjEJXxPcyWiPYLWdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPXdyuRD; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-248d5074ff7so35063255ad.0;
-        Tue, 02 Sep 2025 06:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756818984; x=1757423784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gohftFrtrVQCme5K59+N4VU+fitHE4I6hHU74UHi5eo=;
-        b=FPXdyuRD2FIjZzhkcQhFfiYejscFvyPlVqkApm4+tea35+B2xZVQx0UfdLx7D+GuFq
-         qlhp8zqKySi6jChJY10wu6v/vEwh7GENztJGCsjirrnO2zkf7EEaTUn+Yz485hb+kARN
-         yCxVox46FHSkjkgpYhip04O/U6A5HfDMlyiz2bcUJO0xCgM4KDaFIabn8q22q3eqcHug
-         qV7fXALcxi4DRqUxbhx7B7JVdRC83P+TJSFrJjAnXbd3+NHUkUCTzFlPogSAW/cWuafB
-         O8Iiq+xL+vibyiOOn9mg+lZLrJGdtc3OhmNGNBPUp7Y6bXTijsyCEkOykjg21hrIJwBn
-         B29Q==
+	s=arc-20240116; t=1756818994; c=relaxed/simple;
+	bh=865tUZhf1nCUXelVgr9M9ObPk5g+lULXtZF7b04MICE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TWGV6oRab2/Nkze+cdopmP1R9n5f5urQyaezRe1j5isvi0NBsURWeQm5Oowqx0dwYHCVWoK078vgSvdK1bXxs2F2/NlxZ8RGAX4j0FsuulrLcQUP7LJfJTAxQW2AdaXJhZgeT9nAa0pX6/efRap0L1CJlcBm+6bVAzQI/uphXDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nWrpJedp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582Aiqiv016289
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 13:16:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lD73ebiFfjAcSdwGcgODwG3ayziIi/umNKznbuOBrsc=; b=nWrpJedp4Xio8Y5X
+	iVy5kIuCc+bYttZiZRD9qHjiE536+9bbUZg6wOzoxLhEFI0EDQ+5R5glgJ7cs6sX
+	SWe4xSHLhhZR03C3tYnocEvok+qb+f1v4FhOLTuoi1MPG68pBSrLHgezLxg9e/pj
+	4/5Z25e6eybZ+nX/JAPj6PDPOqxYnv50UzqQCVLijqbha0IRbL5QhDbSmhfnsWof
+	zkmaNAAkb8ZWnlJEwxsHBH+OlVCE+eLZHQrt5Yi0YnOh2kS1ategYuxk0dOEPpDC
+	f1JCjhueCvhpRtoujzSRIksPTg34ODBl5enCbBIr3CepDVWJvc4k9HMI87NXphIH
+	IXfvkg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urvyyvxq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 13:16:31 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-77267239591so1880335b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:16:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756818984; x=1757423784;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gohftFrtrVQCme5K59+N4VU+fitHE4I6hHU74UHi5eo=;
-        b=QmCsJMGSFl8HeCjO8upcgSdEaVHIRwdyPgqIQgTTOJaALFfrFTdhGnuFKh7QSqZgWq
-         hGETuWknS4jJhhjgcZbB54nXIqotW24AcTwVJE1VUr755A9qFnBqffRFK+z6etkU0AWu
-         hZeSedJaQEtFM24EGLyfhwLYx3NRBlN4BV/O7TnTAZUHJyeZHTVq+lOcSSyB2f0HW+0J
-         VEiQ4UhD4MLe9+xz7K6GAcOD+ancFiET/NPBp3g9oSb2rbvO9WgxFpKVislr80+1L5VG
-         j54Oij6OuHJaBHvj2TgsyBSRV+w0l2Gvo4a6LdPNM06XEp+r0gcaXzSLZ5OxCcLNBrlV
-         y7vw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0eZU1Ywnt45kKawS/UEMVTJ0ris28bsjJ0bHLVjpecFjFfRDPmETCV+GPtCp9U7Jlb/Adw8ThvLM8Zdvs@vger.kernel.org, AJvYcCXmuj9nvlGfF0WMR8FkFKLzhW1LmZlRCYdlnF9K6w1YAIQSc6pBFaW/7zFDjdK7yRUtJS+ajiIG0Dh7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAG+0bGX08laFoWcoaoTQpVik97QYKnHrd9Nqdg8W4ipFHC9x1
-	+7E2kWwjzzCfjL7lQkOMQvHJONN1g67sxrbgRc0zGAU8vigaBzN9mDu4IY5issM8f22vbA==
-X-Gm-Gg: ASbGncsvbpb1ZWzr6rEyTCu+OKg+PWA2bUykWa1jqILt5yJ0lMkJQvKgrYit/cyZ+7P
-	8CvWMSUjGPU+R1htcLwKMN9/L/8R8gfInQgFH4DrEvp6ql8YNGx0urVAKyGHUd73HHjdFnfLva2
-	QFikIB0PYnYAJZEGmkkp0aph5jRLLq5JQqKkj7eJsgDIbsoTu0PV6noYC85U+lXQ+DWdCwQgKBE
-	T8nvnQa+IXco1DBOyGlALvu+fR0mzoU4+twsV4pAHlLcfoXJ+NRcSdwEWerfz5OdcK9D1EgODfJ
-	z3+KJtTX4LPcrJQNzASUH8dyULExCJePNmDZCWaUW2ICPmkdoFXD+9mquoqU/znTEyqTuPIYjmE
-	NKWAZCF/9RC3OGgDfyxW34fowk1l1+TnFlwSkmdBQB/7VxhbxoibNO7g=
-X-Google-Smtp-Source: AGHT+IEKJJfxOnzi8UjkWFq1lGAp6FixeFFDlpGOYwHIFGUh4ptBwTMVlU1sZURoeAC01sQ5VBA1Vg==
-X-Received: by 2002:a17:902:c950:b0:249:304c:dbbf with SMTP id d9443c01a7336-2493ef95429mr129291775ad.23.1756818983447;
-        Tue, 02 Sep 2025 06:16:23 -0700 (PDT)
-Received: from localhost.localdomain ([2804:7f5:b08b:bc66:1b1c:d88:2aac:2997])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f57ab9esm19900206a91.4.2025.09.02.06.16.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 06:16:23 -0700 (PDT)
-From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
-	Ceclan Dumitru <dumitru.ceclan@analog.com>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: [PATCH v10 2/2] iio: adc: max14001: New driver
-Date: Tue,  2 Sep 2025 10:16:12 -0300
-Message-Id: <f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1756816682.git.marilene.agarcia@gmail.com>
-References: <cover.1756816682.git.marilene.agarcia@gmail.com>
+        d=1e100.net; s=20230601; t=1756818990; x=1757423790;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lD73ebiFfjAcSdwGcgODwG3ayziIi/umNKznbuOBrsc=;
+        b=hVAGqCFH/Q6QhKh3CIU2gq8oeSOegv6HLqWVnz3sxvT/a7qQ7TC69wNFZS1ayC4XqY
+         SCKp2Dac5jxwMq51jEX63CHGDPdecIAemdQt+kSwvftfWDC5RksAOf8oHJ6A06kBGrE4
+         1z3j50Wos8SYcWGGqyEXNkBgPsRFzSqvOHA5Xorh6VmG7xW5NbsQY+oizOD8FkkMiw8O
+         Y6GdZGqcct53kLV9e9zYhso3V2XRCPiS/C8j8MYcXtZ7thJRv2eianJ3ElIGLXKawpep
+         zlNo4YfjOMceNl10maXO7KAwmaG6WbYOLNNGPZMW6donpKdStYYeMXWVFDM6WD0Ba0Ie
+         3iaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2iaWG4ncdGnGnmlTUTFCt5zUBZf+eribPzXHZaJxMU2ACSaaRZN7E1+LoUdI7QJw6PCSrwt1oCNoQe28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMgvaRWXhU1lfeLQHbSMhNjWs2BW/Q1TQ2mrlVFs48VEfYxlDo
+	NCJhkccJbkdYZLQVRSYCUZYAMsQI2t+lVruLCiCaDnA2vj7wy1AYIIeqyUXljpMu8rgdOdoWHep
+	8M0Upk7e/GffHiaGl5LoH92Dw2Vl6qF7Tyihf3PM3QLavH8OOalQZ3hsa6FfxxCzdJDU=
+X-Gm-Gg: ASbGnctwSon3Iy+E411UAPl3flVsb0XZCG71AUq3O8l5gBjY23KQXCkoY1clLxIeu++
+	AoehZsx7zKAzrQrirBF0HA78jznoeLqXoTk0956hl3EsVSlMycusEO8CxhOqxcibMZEQ6a+b1Da
+	7t2e/ewIH+fNDEEUgSAjd/v0lhVhcS4r/ZVTiE4tENUxY5QUKQGx6mOLc5jjHyK+73z1RjFl3X0
+	F5I2wmcPEPd5IAer0EnduhCKNfwHBA2L5Calkvc6LpF10bXFxUXyXNkaIa6Cr2i7clgdQZgex2l
+	YyI4MucxG5ouk7997xh0wep/Uft2U3UJBNN7gpmF8o4ZoxY0U7Sk9DNSz7ihYQ==
+X-Received: by 2002:a05:6a00:2194:b0:772:7251:7148 with SMTP id d2e1a72fcca58-772725173a8mr2742438b3a.27.1756818989563;
+        Tue, 02 Sep 2025 06:16:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFd4VwxuS1eGRypUe4kM4U6jYmO0Ezi3tIVq6bOYrcgkw40C61F2D+N3HvW7dh77+xCl7mZkA==
+X-Received: by 2002:a05:6a00:2194:b0:772:7251:7148 with SMTP id d2e1a72fcca58-772725173a8mr2742364b3a.27.1756818988929;
+        Tue, 02 Sep 2025 06:16:28 -0700 (PDT)
+Received: from [10.91.118.43] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26bc9csm13790790b3a.18.2025.09.02.06.16.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 06:16:28 -0700 (PDT)
+Message-ID: <d909d5ec-4223-4b9d-abbe-176672ff7f0a@oss.qualcomm.com>
+Date: Tue, 2 Sep 2025 18:46:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] drm/msm: Fix bootup splat with separate_gpu_drm
+ modparam
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        Jonathan Marek
+ <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20250902-assorted-sept-1-v1-0-f3ec9baed513@oss.qualcomm.com>
+ <20250902-assorted-sept-1-v1-1-f3ec9baed513@oss.qualcomm.com>
+ <2mhq73sckc3x7rqvllbmfk3qwla2lqqidchecogytxyramoeu5@66j7zupcni2i>
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <2mhq73sckc3x7rqvllbmfk3qwla2lqqidchecogytxyramoeu5@66j7zupcni2i>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: hoNWFKR9VrOrBH99qnX-RyBEW8RRo9I1
+X-Proofpoint-ORIG-GUID: hoNWFKR9VrOrBH99qnX-RyBEW8RRo9I1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfXxd5YjI8a8XZ/
+ vmE8SPL7GrfAa2E9ZHACoznP2H0sSUbli04DfT8PqgaHxETYS2WQqELRvNhrX9T0XhLA0cxCVV4
+ /2uMfwVjVBB+ru9zeE2s4XTeOpNEMXvSCGBBqCKs7GdIHxJ4lqko8yvoUIw0OxxNGC0LV+EwAGC
+ K7RBUmqFidTX2QrZFLD4RvMOeFG4M7BpwK/pE9hn3N6ewyFord/NOv4/3v075ZvanM0m5+blayj
+ bZseMJNyU1fUHCVO+aqw3TIHyQJoLlg+Kup1doPPcMIB4v9rXMNVZqoSFwMLcBw1hHy/RxfBlGh
+ ubvidyc5+427nNNjD3YzmoZEAdOcrMyHrSVxR3zPjGgmV15rOQz/ASU0ej7LB+nAOiYXFOPmePK
+ EL6Rkk5q
+X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b6ee2f cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=gUvfbfcqA5cecSJ7q00A:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300027
 
-The MAX14001/MAX14002 is configurable, isolated 10-bit ADCs for multi-range 
-binary inputs. In addition to ADC readings, the MAX14001/MAX14002 offers 
-more features, like a binary comparator, a filtered reading that can 
-provide the average of the last 2, 4, or 8 ADC readings, and an inrush 
-comparator that triggers the inrush current. There is also a fault feature 
-that can diagnose seven possible fault conditions. And an option to select 
-an external or internal ADC voltage reference.
+On 9/2/2025 5:57 PM, Dmitry Baryshkov wrote:
+> On Tue, Sep 02, 2025 at 05:20:00PM +0530, Akhil P Oommen wrote:
+>> The drm_gem_for_each_gpuvm_bo() call from lookup_vma() accesses
+>> drm_gem_obj.gpuva.list, which is not initialized when the drm driver
+>> does not support DRIVER_GEM_GPUVA feature. Enable it for msm_kms
+>> drm driver to fix the splat seen when msm.separate_gpu_drm=1 modparam
+>> is set:
+>>
+>> [    9.506020] Unable to handle kernel paging request at virtual address fffffffffffffff0
+>> [    9.523160] Mem abort info:
+>> [    9.523161]   ESR = 0x0000000096000006
+>> [    9.523163]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [    9.523165]   SET = 0, FnV = 0
+>> [    9.523166]   EA = 0, S1PTW = 0
+>> [    9.523167]   FSC = 0x06: level 2 translation fault
+>> [    9.523169] Data abort info:
+>> [    9.523170]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+>> [    9.523171]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>> [    9.523172]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> [    9.523174] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000ad370f000
+>> [    9.523176] [fffffffffffffff0] pgd=0000000000000000, p4d=0000000ad4787403, pud=0000000ad4788403, pmd=0000000000000000
+>> [    9.523184] Internal error: Oops: 0000000096000006 [#1]  SMP
+>> [    9.592968] CPU: 9 UID: 0 PID: 448 Comm: (udev-worker) Not tainted 6.17.0-rc4-assorted-fix-00005-g0e9bb53a2282-dirty #3 PREEMPT
+>> [    9.592970] Hardware name: Qualcomm CRD, BIOS 6.0.240718.BOOT.MXF.2.4-00515-HAMOA-1 07/18/2024
+>> [    9.592971] pstate: a1400005 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+>> [    9.592973] pc : lookup_vma+0x28/0xe0 [msm]
+>> [    9.592996] lr : get_vma_locked+0x2c/0x128 [msm]
+>> [    9.763632] sp : ffff800082dab460
+>> [    9.763666] Call trace:
+>> [    9.763668]  lookup_vma+0x28/0xe0 [msm] (P)
+>> [    9.763688]  get_vma_locked+0x2c/0x128 [msm]
+>> [    9.763706]  msm_gem_get_and_pin_iova_range+0x68/0x11c [msm]
+>> [    9.763723]  msm_gem_get_and_pin_iova+0x18/0x24 [msm]
+>> [    9.763740]  msm_fbdev_driver_fbdev_probe+0xd0/0x258 [msm]
+>> [    9.763760]  __drm_fb_helper_initial_config_and_unlock+0x288/0x528 [drm_kms_helper]
+>> [    9.763771]  drm_fb_helper_initial_config+0x44/0x54 [drm_kms_helper]
+>> [    9.763779]  drm_fbdev_client_hotplug+0x84/0xd4 [drm_client_lib]
+>> [    9.763782]  drm_client_register+0x58/0x9c [drm]
+>> [    9.763806]  drm_fbdev_client_setup+0xe8/0xcf0 [drm_client_lib]
+>> [    9.763809]  drm_client_setup+0xb4/0xd8 [drm_client_lib]
+>> [    9.763811]  msm_drm_kms_post_init+0x2c/0x3c [msm]
+>> [    9.763830]  msm_drm_init+0x1a8/0x22c [msm]
+>> [    9.763848]  msm_drm_bind+0x30/0x3c [msm]
+>> [    9.919273]  try_to_bring_up_aggregate_device+0x168/0x1d4
+>> [    9.919283]  __component_add+0xa4/0x170
+>> [    9.919286]  component_add+0x14/0x20
+>> [    9.919288]  msm_dp_display_probe_tail+0x4c/0xac [msm]
+>> [    9.919315]  msm_dp_auxbus_done_probe+0x14/0x20 [msm]
+>> [    9.919335]  dp_aux_ep_probe+0x4c/0xf0 [drm_dp_aux_bus]
+>> [    9.919341]  really_probe+0xbc/0x298
+>> [    9.919345]  __driver_probe_device+0x78/0x12c
+>> [    9.919348]  driver_probe_device+0x40/0x160
+>> [    9.919350]  __driver_attach+0x94/0x19c
+>> [    9.919353]  bus_for_each_dev+0x74/0xd4
+>> [    9.919355]  driver_attach+0x24/0x30
+>> [    9.919358]  bus_add_driver+0xe4/0x208
+>> [    9.919360]  driver_register+0x60/0x128
+>> [    9.919363]  __dp_aux_dp_driver_register+0x24/0x30 [drm_dp_aux_bus]
+>> [    9.919365]  atana33xc20_init+0x20/0x1000 [panel_samsung_atna33xc20]
+>> [    9.919370]  do_one_initcall+0x6c/0x1b0
+>> [    9.919374]  do_init_module+0x58/0x234
+>> [    9.919377]  load_module+0x19cc/0x1bd4
+>> [    9.919380]  init_module_from_file+0x84/0xc4
+>> [    9.919382]  __arm64_sys_finit_module+0x1b8/0x2cc
+>> [    9.919384]  invoke_syscall+0x48/0x110
+>> [    9.919389]  el0_svc_common.constprop.0+0xc8/0xe8
+>> [    9.919393]  do_el0_svc+0x20/0x2c
+>> [    9.919396]  el0_svc+0x34/0xf0
+>> [    9.919401]  el0t_64_sync_handler+0xa0/0xe4
+>> [    9.919403]  el0t_64_sync+0x198/0x19c
+>> [    9.919407] Code: eb0000bf 54000480 d100a003 aa0303e2 (f8418c44)
+>> [    9.919410] ---[ end trace 0000000000000000 ]---
+> 
+> Nit: usually you can drop timestamps from the kernel log.
 
-MAX14001/MAX14002 features implemented so far:
-- Raw ADC reading.
-- Filtered ADC average reading with the default configuration.
-- MV fault disable.
-- Selection of external or internal ADC voltage reference, depending on
-whether it is declared in the device tree.
+Missed my eyes. Will update in v2.
 
-Co-developed-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
----
- MAINTAINERS                |   1 +
- drivers/iio/adc/Kconfig    |  10 ++
- drivers/iio/adc/Makefile   |   1 +
- drivers/iio/adc/max14001.c | 355 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 367 insertions(+)
- create mode 100644 drivers/iio/adc/max14001.c
+-Akhil.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f145f0204407..b6457063da6c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14976,6 +14976,7 @@ L:	linux-iio@vger.kernel.org
- S:	Maintained
- W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
-+F:	drivers/iio/adc/max14001.c
- 
- MAXBOTIX ULTRASONIC RANGER IIO DRIVER
- M:	Andreas Klinger <ak@it-klinger.de>
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index e3d3826c3357..11e911ceab4c 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -958,6 +958,16 @@ config MAX11410
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called max11410.
- 
-+config MAX14001
-+	tristate "Analog Devices MAX14001/MAX14002 ADC driver"
-+	depends on SPI
-+	help
-+	  Say yes here to build support for Analog Devices MAX14001/MAX14002
-+	  Configurable, Isolated 10-bit ADCs for Multi-Range Binary Inputs.
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called max14001.
-+
- config MAX1241
- 	tristate "Maxim max1241 ADC driver"
- 	depends on SPI_MASTER
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index 89d72bf9ce70..569f2f5613d4 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_MAX11100) += max11100.o
- obj-$(CONFIG_MAX1118) += max1118.o
- obj-$(CONFIG_MAX11205) += max11205.o
- obj-$(CONFIG_MAX11410) += max11410.o
-+obj-$(CONFIG_MAX14001) += max14001.o
- obj-$(CONFIG_MAX1241) += max1241.o
- obj-$(CONFIG_MAX1363) += max1363.o
- obj-$(CONFIG_MAX34408) += max34408.o
-diff --git a/drivers/iio/adc/max14001.c b/drivers/iio/adc/max14001.c
-new file mode 100644
-index 000000000000..6755df152976
---- /dev/null
-+++ b/drivers/iio/adc/max14001.c
-@@ -0,0 +1,355 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
-+/*
-+ * Analog Devices MAX14001/MAX14002 ADC driver
-+ *
-+ * Copyright (C) 2023-2025 Analog Devices Inc.
-+ * Copyright (C) 2023 Kim Seer Paller <kimseer.paller@analog.com>
-+ * Copyright (c) 2025 Marilene Andrade Garcia <marilene.agarcia@gmail.com>
-+ *
-+ * Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
-+ */
-+
-+#include <linux/array_size.h>
-+#include <linux/bitfield.h>
-+#include <linux/bitrev.h>
-+#include <linux/bits.h>
-+#include <linux/byteorder/generic.h>
-+#include <linux/device.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/types.h>
-+#include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+#include <linux/types.h>
-+
-+/* MAX14001 Registers Address */
-+#define MAX14001_REG_ADC		0x00
-+#define MAX14001_REG_FADC		0x01
-+#define MAX14001_REG_FLAGS		0x02
-+#define MAX14001_REG_FLTEN		0x03
-+#define MAX14001_REG_THL		0x04
-+#define MAX14001_REG_THU		0x05
-+#define MAX14001_REG_INRR		0x06
-+#define MAX14001_REG_INRT		0x07
-+#define MAX14001_REG_INRP		0x08
-+#define MAX14001_REG_CFG		0x09
-+#define MAX14001_REG_ENBL		0x0A
-+#define MAX14001_REG_ACT		0x0B
-+#define MAX14001_REG_WEN		0x0C
-+
-+#define MAX14001_REG_VERIFICATION(x)	((x) + 0x10)
-+
-+#define MAX14001_REG_CFG_EXRF		BIT(5)
-+
-+#define MAX14001_MASK_ADDR		GENMASK(15, 11)
-+#define MAX14001_MASK_DATA		GENMASK(9, 0)
-+
-+#define MAX14001_SET_WRITE_BIT		BIT(10)
-+#define MAX14001_WRITE_WEN		0x294
-+
-+enum max14001_chip_model {
-+	max14001,
-+	max14002,
-+};
-+
-+struct max14001_chip_info {
-+	const char *name;
-+};
-+
-+struct max14001_state {
-+	const struct max14001_chip_info *chip_info;
-+	struct spi_device *spi;
-+	int vref_mv;
-+	/*
-+	 * lock protect against multiple concurrent accesses, RMW sequence,
-+	 * and SPI transfer.
-+	 */
-+	struct mutex lock;
-+	/*
-+	 * The following buffers will be bit-reversed during device
-+	 * communication, because the device transmits and receives data
-+	 * LSB-first.
-+	 * DMA (thus cache coherency maintenance) requires the transfer
-+	 * buffers to live in their own cache lines.
-+	 */
-+	__be16 spi_tx_buffer __aligned(IIO_DMA_MINALIGN);
-+	__be16 spi_rx_buffer;
-+};
-+
-+static struct max14001_chip_info max14001_chip_info_tbl[] = {
-+	[max14001] = {
-+		.name = "max14001",
-+	},
-+	[max14002] = {
-+		.name = "max14002",
-+	},
-+};
-+
-+static int max14001_read(struct max14001_state *st, u16 reg_addr, u16 *reg_data)
-+{
-+	struct spi_transfer xfers[] = {
-+		{
-+			.tx_buf = &st->spi_tx_buffer,
-+			.len = sizeof(st->spi_tx_buffer),
-+			.cs_change = 1,
-+		}, {
-+			.rx_buf = &st->spi_rx_buffer,
-+			.len = sizeof(st->spi_rx_buffer),
-+		},
-+	};
-+	int ret;
-+
-+	/*
-+	 * Prepare SPI transmit buffer 16 bit-value big-endian format and
-+	 * reverses bit order to align with the LSB-first input on SDI port
-+	 * in order to meet the device communication requirements.
-+	 */
-+	st->spi_tx_buffer = FIELD_PREP(MAX14001_MASK_ADDR, reg_addr);
-+	st->spi_tx_buffer = bitrev16(cpu_to_be16(st->spi_tx_buffer));
-+
-+	ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Convert received 16-bit value from big-endian to cpu-endian format
-+	 * and reverses bit order.
-+	 */
-+	st->spi_rx_buffer = bitrev16(be16_to_cpu(st->spi_rx_buffer));
-+	*reg_data = FIELD_GET(MAX14001_MASK_DATA, st->spi_rx_buffer);
-+
-+	return 0;
-+}
-+
-+static int max14001_write(struct max14001_state *st, u16 reg_addr, u16 reg_data)
-+{
-+	/*
-+	 * Prepare SPI transmit buffer 16 bit-value big-endian format and
-+	 * reverses bit order to align with the LSB-first input on SDI port
-+	 * in order to meet the device communication requirements.
-+	 */
-+	st->spi_tx_buffer = FIELD_PREP(MAX14001_MASK_ADDR, reg_addr) |
-+			    FIELD_PREP(MAX14001_SET_WRITE_BIT, 1) |
-+			    FIELD_PREP(MAX14001_MASK_DATA, reg_data);
-+	st->spi_tx_buffer = bitrev16(cpu_to_be16(st->spi_tx_buffer));
-+
-+	return spi_write(st->spi, &st->spi_tx_buffer, sizeof(st->spi_tx_buffer));
-+}
-+
-+static int max14001_write_single_reg(struct max14001_state *st, u16 reg_addr,
-+				     u16 reg_data)
-+{
-+	int ret;
-+
-+	/* Enable register write */
-+	ret = max14001_write(st, MAX14001_REG_WEN, MAX14001_WRITE_WEN);
-+	if (ret)
-+		return ret;
-+
-+	/* Write data into register */
-+	ret = max14001_write(st, reg_addr, reg_data);
-+	if (ret)
-+		return ret;
-+
-+	/* Disable register write */
-+	ret = max14001_write(st, MAX14001_REG_WEN, 0);
-+	if (ret)
-+		return ret;
-+
-+	return ret;
-+}
-+
-+static int max14001_write_verification_reg(struct max14001_state *st,
-+					   u16 reg_addr)
-+{
-+	u16 reg_data;
-+	int ret;
-+
-+	ret = max14001_read(st, reg_addr, &reg_data);
-+	if (ret)
-+		return ret;
-+
-+	return max14001_write(st, MAX14001_REG_VERIFICATION(reg_addr), reg_data);
-+}
-+
-+static int max14001_read_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     int *val, int *val2, long mask)
-+{
-+	struct max14001_state *st = iio_priv(indio_dev);
-+	u16 reg_data;
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		mutex_lock(&st->lock);
-+		ret = max14001_read(st, MAX14001_REG_ADC, &reg_data);
-+		mutex_unlock(&st->lock);
-+		if (ret)
-+			return ret;
-+
-+		*val = reg_data;
-+
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_AVERAGE_RAW:
-+		mutex_lock(&st->lock);
-+		ret = max14001_read(st, MAX14001_REG_FADC, &reg_data);
-+		mutex_unlock(&st->lock);
-+		if (ret)
-+			return ret;
-+
-+		*val = reg_data;
-+
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = st->vref_mv;
-+		*val2 = 10;
-+
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_info max14001_info = {
-+	.read_raw = max14001_read_raw,
-+};
-+
-+static const struct iio_chan_spec max14001_channel[] = {
-+	{
-+		.type = IIO_VOLTAGE,
-+		.indexed = 1,
-+		.channel = 0,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_AVERAGE_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE),
-+	}
-+};
-+
-+static int max14001_disable_mv_fault(struct max14001_state *st)
-+{
-+	u16 reg_addr;
-+	int ret;
-+
-+	/* Enable SPI Registers Write */
-+	ret = max14001_write(st, MAX14001_REG_WEN, MAX14001_WRITE_WEN);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Reads all registers and writes the values back to their appropriate
-+	 * verification registers to clear the Memory Validation fault.
-+	 */
-+	for (reg_addr = MAX14001_REG_FLTEN; reg_addr <= MAX14001_REG_ENBL; reg_addr++) {
-+		ret = max14001_write_verification_reg(st, reg_addr);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Disable SPI Registers Write */
-+	return max14001_write(st, MAX14001_REG_WEN, 0);
-+}
-+
-+static int max14001_probe(struct spi_device *spi)
-+{
-+	struct iio_dev *indio_dev;
-+	struct max14001_state *st;
-+	struct device *dev = &spi->dev;
-+	int ret, ext_vrefin = 0;
-+	u16 reg_data;
-+
-+	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	st = iio_priv(indio_dev);
-+	st->spi = spi;
-+	st->chip_info = spi_get_device_match_data(spi);
-+	if (!st->chip_info)
-+		return dev_err_probe(dev, -ENODEV, "Failed to get match data\n");
-+
-+	indio_dev->name = st->chip_info->name;
-+	indio_dev->info = &max14001_info;
-+	indio_dev->channels = max14001_channel;
-+	indio_dev->num_channels = ARRAY_SIZE(max14001_channel);
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+
-+	ret = devm_regulator_get_enable(dev, "vdd");
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+			"Failed to enable specified Vdd supply\n");
-+
-+	ret = devm_regulator_get_enable(dev, "vddl");
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+			"Failed to enable specified Vddl supply\n");
-+
-+	ret = devm_regulator_get_enable_read_voltage(dev, "vrefin");
-+	if (ret < 0) {
-+		st->vref_mv = 1250000 / 1000;
-+	} else {
-+		st->vref_mv = ret / 1000;
-+		ext_vrefin = 1;
-+	}
-+
-+	ret = devm_mutex_init(dev, &st->lock);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+			"Failed to init the mutex\n");
-+
-+	if (ext_vrefin) {
-+		/*
-+		 * Configure the MAX14001/MAX14002 to use an external voltage
-+		 * reference source for the ADC.
-+		 */
-+		ret = max14001_read(st, MAX14001_REG_CFG, &reg_data);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+				"Failed to read Configuration Register\n");
-+
-+		reg_data |= FIELD_PREP(MAX14001_REG_CFG_EXRF, 1);
-+		ret = max14001_write_single_reg(st, MAX14001_REG_CFG, reg_data);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+				"Failed to set Configuration Register\n");
-+	}
-+
-+	ret = max14001_disable_mv_fault(st);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+			"Failed to disable MV Fault\n");
-+
-+	return devm_iio_device_register(dev, indio_dev);
-+}
-+
-+static const struct spi_device_id max14001_id_table[] = {
-+	{ "max14001", (kernel_ulong_t)&max14001_chip_info_tbl[max14001] },
-+	{ "max14002", (kernel_ulong_t)&max14001_chip_info_tbl[max14002] },
-+	{ }
-+};
-+
-+static const struct of_device_id max14001_of_match[] = {
-+	{ .compatible = "adi,max14001",
-+	  .data = &max14001_chip_info_tbl[max14001], },
-+	{ .compatible = "adi,max14002",
-+	  .data = &max14001_chip_info_tbl[max14002], },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max14001_of_match);
-+
-+static struct spi_driver max14001_driver = {
-+	.driver = {
-+		.name = "max14001",
-+		.of_match_table = max14001_of_match,
-+	},
-+	.probe = max14001_probe,
-+	.id_table = max14001_id_table,
-+};
-+module_spi_driver(max14001_driver);
-+
-+MODULE_AUTHOR("Kim Seer Paller <kimseer.paller@analog.com>");
-+MODULE_AUTHOR("Marilene Andrade Garcia <marilene.agarcia@gmail.com>");
-+MODULE_DESCRIPTION("Analog Devices MAX14001/MAX14002 ADCs driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
+> 
+>>
+>> Fixes: 217ed15bd399 ("drm/msm: enable separate binding of GPU and display devices")
+>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>> ---
+>>  drivers/gpu/drm/msm/msm_drv.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> 
+> 
 
 
