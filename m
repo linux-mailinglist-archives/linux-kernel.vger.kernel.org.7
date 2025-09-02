@@ -1,174 +1,542 @@
-Return-Path: <linux-kernel+bounces-797148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C07B40C78
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA35B40C7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199D7188F64F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CC51B632B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1D4346A0F;
-	Tue,  2 Sep 2025 17:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696202E283E;
+	Tue,  2 Sep 2025 17:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0Eer1kR0"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XocVR4LU"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2053.outbound.protection.outlook.com [40.107.94.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A639342CB6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756835415; cv=none; b=frOEB37d7FkjdHvK4FLilC9fwc388J59y5GnjAfIuhCs2A1NL4kPA4HSlq1u0rwm2HLcPpSoRXU99k9SJ0kEpMP+BKEXg57KdKTTIMAp1IZwWTXCSsmih9TyNU+eiMQbVvkag7SNBx6pNaSPAI+GvNylBWC8gzpAhDGx+MPR6g0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756835415; c=relaxed/simple;
-	bh=Qq79ok73NgzUNSPN3ElH84ehBnROIulXyA0yyA4cddE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fq9cOjirY6G8SNSrJoRmFtaxWAjzw5LCJC0GO16Y1Q6dXME7iJoWQQ8EiUpQR9pIyr2ax37Bq0XwJLzHMKTKqbhekXyLzIzxqLUrWNGJl7s2hX3L276yvRSrVcWlTbW7m/33rIMwvLlkhncP+GlyEch2M4vmlx6UptjYs62hjFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0Eer1kR0; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-560888dc903so433268e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:50:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756835412; x=1757440212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qq79ok73NgzUNSPN3ElH84ehBnROIulXyA0yyA4cddE=;
-        b=0Eer1kR0WtKHGcMrO/7bSVfIYNsu9xRoEmIbCIYaLosSLtg3My9vqxz4PdqlxF/Zzj
-         kuODRv4VrTZHkI3/u6S4R6dt9yQCPoq+YJECvzOxCg2kt2AptOw0Gpvlfo12pNFzsFUw
-         9MhxOXd+T6H9pYGg5IsVSx4Ss6ITrM4IYzVTISKEZVS0JLZKIcVtY7v+G8drgmExGN1d
-         ZKd3T1Fp7aKLIoCy0CtI+Ga2rEbKU7RGRPMoQ5xv4vw+kYO0hPRN6FJp0Cb+XvS9hDEM
-         uWqkGH1aI8qktgfDq8cKwa6GTRBj57l+MuEnbAINhsQdgMfis1qIHkz6rFsiHqzFU2a9
-         Jxhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756835412; x=1757440212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qq79ok73NgzUNSPN3ElH84ehBnROIulXyA0yyA4cddE=;
-        b=mDmrjSJeyJEc3NX5uusZ/aNP8y+wP+FErxpUUi2UMHPYQH3GBylD2tUe+XFbYPC2Yj
-         LD/pug6jSR6/zeCklggNKMbsEfMGB+CGqnA9Vf8DMhptCP6vNl3TypEFgDsJwk7aoSXj
-         YE9nKXSAbJBY+yPyiaV4Up9djWt0Fo9dHakWWHax+eXvKgJWrROV7wK6iXD4I3KKzqdW
-         mjmjhnDhD9himU3mhpCXfgXhViAsulxb108e3IBS3LZzhrORrcQYnK3LgYKtKOnGMkdZ
-         6CdGuDCIsP5KK3Ql34uKnZS+gxU7eq9UbstT+ruz4Ow1tJRUZO2MiTvGmNjrxe9eZFBJ
-         IACw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyBep+5Udk0W8ZOmLIWyqkNlkUBYiblXLsO1KjS81qrhBFrTjRQUDmDUrm47H5lHqEE1wLOvK8/Jpdcrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkxRBntr6oA/AFYhSjPW+G13ZtvAwuf4deF/yy+/faAPCKq51b
-	Xkkq2E0qwwOWkGlLi+GyFaD6XdvU7Ysfo8pBm0Jft/e5/Dscy0rNdjUVq2dwTP9dV0/JrnPvdIm
-	8p/T6HNubcL4aX/lKgSAp9kxs8ci5/Ga81X73tlOwBQ==
-X-Gm-Gg: ASbGnctRWBXZ74wJqH/IoAMIpo6BVdPniVaz+FtPnLHiVgwsxAnCOr++yKVxCinTbS+
-	wLirBlPPZ65Uej+n94W0NmFpX9GN/p8qF7O7yDBAythw/7auX75ogA/KErjDTGHKDzq/WPmCRdR
-	kXXYrtZB6BfMrARLhn/+k0BQCoHXqvaL7WgILrW510UuQHNkOh9LAQ4zheeafFjdqIyPfqhvmjz
-	xZtzJ30oGd7nBI3zfFiUsF/qJSVhGo2li2w34+yssOrE6au/Q==
-X-Google-Smtp-Source: AGHT+IHWxMY/UX5pahdxyPomER2R5wCG7WJNOYIC76WLDnRgZXryLWeY1Ce628zgGwqGftmJqN1QawcJ1KuqTk6lVI8=
-X-Received: by 2002:a05:6512:3b12:b0:55f:4f99:f3c9 with SMTP id
- 2adb3069b0e04-55f708ec830mr4334057e87.32.1756835411674; Tue, 02 Sep 2025
- 10:50:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36209321F32
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756835444; cv=fail; b=PSzDPo+btSD+mBK2Y+dnIBoHgySHCi+cKJtA5VpIDRZXnJeGxqOhULXbup5BWM2cC5a4fbJkISURWpxtFtNugOXPHLLk5G7R4yINHOrtQF6P4goF2pECaD6t2nSLbKO/BbyYs6j9vcjbgCrd0fe4qE+CghyGTgfEjT7Xrdq3boI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756835444; c=relaxed/simple;
+	bh=vuJXl1U4sotYiOIpU4ATyf0h3lChiDDZ8O1tbV4qFfU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PGySypPNvi2wEN5W+mXo1O15JsrN05gojy6u9FSWkqmTVNfsmdauo+39+6uRwN7gmJAogoHjhA1tuBW2l7ZSulbFzLOHFU+AGzm0iUulD8CimlDqFFjLkDFlaF4ZCWrj2sriYEC5nA6FGUoBmYVVF09csScPInpu1qQ1qcHoptI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XocVR4LU; arc=fail smtp.client-ip=40.107.94.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pWTU4pQ7PsHhhmbQBsgCAvNbCwfG1VnZae6ljWWYQqgr18L2vw9OthzYzv/pyjYbagSFSqc22o9LoJdWnJw8Uz6JNSMnp7rcn724f+46uZOZqBvTwoXJEf2N675US053pJcg5ZozEmxYN7+eUY3yqSXzFRRqKUFB0nfoFWWpauYpOTc4QkLfMH5XOXEItlzm/b91186FA3YJTklz4dKYTOlwOWc8fO6kXuUoDzujAVM5002xpqgEf0gSP0BahvGfXG0E65ypP6o3Xfdlrafaqg1cKdInEhWlikUruUL0DBTngv/DjKQUwo1gYKzFUlrmpNuNeKouHM5sja/Umi4OAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gG5ujY6nHFvgOsXe86hyv1aL6jw0ZyMBqvZhG1AnMTw=;
+ b=FQQc9mCGjD3o36iVk1Geks5k//3mxAt0DDJ9xRkJEMEQvxm5jbdGLs3CD9wOeAWmtun5EKxy1m36YUzAC6gCZGTz6E5qDV8pem0mWjnTLt1mNsHzEzhPbvJ8WH2oG9tTn951BiR+DfE/Jt3fY/L+Axa0yo0XhTP8c84hW3OpUr69TSoArDOo/H2Fe7MJdeE6oO/48xYpl6VcGQ4Q/tUZ6NiiVzCOXcIa0bZ+fsx0Z2SmKhSORxr/X/eFEvATJfp7SNppB3h6rrhZL/pci4W+xGpIEW/urgdUkYQUjOUvo4z/nBe4exIY/c4JUGogoZ85MhbwfA97teDc6yFl+T8k5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gG5ujY6nHFvgOsXe86hyv1aL6jw0ZyMBqvZhG1AnMTw=;
+ b=XocVR4LUcYx/WBnMiDTpXuIZgQwSxzj6J0WQ0OIOaVd0e+1wxrti/YtevnWCwieUqHtNQrdEnh+Q1YFHkfuv3vJIU1xY+3V8/6ACRDI5IhmhF8B9/yULek34Hc5Df83+yauOV34bdRpIXiSSelzXZQB66t7Qy0CJM8IhfGLgOyg=
+Received: from MW4PR03CA0069.namprd03.prod.outlook.com (2603:10b6:303:b6::14)
+ by DS7PR12MB5909.namprd12.prod.outlook.com (2603:10b6:8:7a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.24; Tue, 2 Sep
+ 2025 17:50:39 +0000
+Received: from SA2PEPF000015C7.namprd03.prod.outlook.com
+ (2603:10b6:303:b6:cafe::58) by MW4PR03CA0069.outlook.office365.com
+ (2603:10b6:303:b6::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.26 via Frontend Transport; Tue,
+ 2 Sep 2025 17:50:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SA2PEPF000015C7.mail.protection.outlook.com (10.167.241.197) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Tue, 2 Sep 2025 17:50:38 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
+ 2025 12:50:37 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
+ 2025 12:50:37 -0500
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 2 Sep 2025 12:50:36 -0500
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<jacek.lawrynowicz@linux.intel.com>, <dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>,
+	<maciej.falkowski@linux.intel.com>
+Subject: [PATCH V3] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
+Date: Tue, 2 Sep 2025 10:50:34 -0700
+Message-ID: <20250902175034.2056708-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
- <20250902-pinctrl-gpio-pinfuncs-v7-13-bb091daedc52@linaro.org> <aLb_pOG-yc-CHoiY@smile.fi.intel.com>
-In-Reply-To: <aLb_pOG-yc-CHoiY@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 2 Sep 2025 19:50:00 +0200
-X-Gm-Features: Ac12FXzmJRg8_mGsvbk9kTYEAk6i5wfrx-8rp8gdl4L5LHxLn-6rA1BsDeyDmdo
-Message-ID: <CAMRc=Mc-NEFawz11Lr5JGStoe=PU7b91E-MVB3xkdBr_JoiStQ@mail.gmail.com>
-Subject: Re: [PATCH v7 13/16] pinctrl: allow to mark pin functions as
- requestable GPIOs
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015C7:EE_|DS7PR12MB5909:EE_
+X-MS-Office365-Filtering-Correlation-Id: f3024979-be0c-4d44-760b-08ddea493a71
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YWPyxU3G5pIBlLJHLh9IBmM77lzNlr5RJ2ILoAUfu3VtNayUVsNLRYkM8raN?=
+ =?us-ascii?Q?a+W9YYCc42D1quG8LJTCL+1jngDP6KvOsLnx8fe2+MLeU81WUOo1oeymGZTB?=
+ =?us-ascii?Q?krOrnng6cyYUsjZ/nYX9fDe4v8QbUqEIUCp42Qp0adSxvqUYPPcgYEDY7XPt?=
+ =?us-ascii?Q?d77L7d6OOxSwuGnl7G/880j0dTy0N8A5fXFGQUtDyr1Evnhy7CCH3E+Gf8uj?=
+ =?us-ascii?Q?4BH52/ACV51+SQkFS8CMmv39A87hA1Y4LlCFDY0II7Krp9zPIfL5+PaHdOXX?=
+ =?us-ascii?Q?zc6rUGRNOEHgKKMn4c1BHahrtKMCWoC50O6JxLPYZ0xWNaWPxZ0d/l6bCXri?=
+ =?us-ascii?Q?eTDsvT3BLYZ0GwubtF1X+F0NrGLOO0CcsuhNF/actgeM57LnnSUmde8OywOx?=
+ =?us-ascii?Q?260t6EW75fCn5w8wyB+f100DArG0qBSaYAJMb01IBU6Ty34Howq5dxssGL8v?=
+ =?us-ascii?Q?Fm33MpnmEsAXxyCf5sGguDcoAZqGdwmE9L4djctcC/ZPmXdhsWGVsBAv/fVD?=
+ =?us-ascii?Q?Hqj0IoCWrpHvcomg35t/OLD6S7DQtnO+p/i7hTltvzShweF+mq3a0ByxBaCS?=
+ =?us-ascii?Q?bGvZKsA/B6WWjQnAwtZ0v3vaMQnTiIl/WpCO9ZHQHeFht4di3YZw7I8Tc4xg?=
+ =?us-ascii?Q?N9RF7XFj6cVxTGKLqXHPeb3m2tHHQnSLGiUP7ArYa4f5WvJAtev7fpoHbaj4?=
+ =?us-ascii?Q?fdWyRK6g9kQKUfZ2p58nq/huJDQnvlFnntkKtpBwmLSRDMbn9iY+yTPR2ues?=
+ =?us-ascii?Q?Kl1+Rfmzd35QYJjP0JkgLd2CLkZyQkR82pzTe7QFEfIwqXgMT/nYNu+6bH/m?=
+ =?us-ascii?Q?FMJ06/L1ww+iOLIDiiUa5OjuXUBerrnKwNKH7Up8fBqMaHGCJMhhXmYgTyvb?=
+ =?us-ascii?Q?eIYiCOHCIIQcTmnUBapjTveGNticz25lMfcjUsdzfNulpVbgTuhJCKJ785tS?=
+ =?us-ascii?Q?XmiFSIh4LzEYPi1fw8+K9/F9VKyuVFteJp/xO5rkNEie7aXMpt/NhKox/trc?=
+ =?us-ascii?Q?OhItsppkmcEVIliVi50n81E4eXUACJ6XRuOdo+WxP40uSdmjlzW7l8Mqh82K?=
+ =?us-ascii?Q?dKnlfB8klrU+hsKquuM36VpPBV+kKhxAsCu6rGjl/eL0PqrHY5Jc1VLHUWA3?=
+ =?us-ascii?Q?6fM6LKZ9GIcg/jauEcG70hAZicXBAMbNiJpkYqBYZsRUQjuZk+CXRQSWngGg?=
+ =?us-ascii?Q?+NGZvDVDPLGIL4/yYryl9beZT9s1kvqJCaaPikztdxSzvLGj+P7qyPXYYdrt?=
+ =?us-ascii?Q?xCSuxukCsW6Zr7DzEiUqTiI6WfqPtznwr6nmPqFkHLndcOQRoo0196l270EP?=
+ =?us-ascii?Q?uO6zpY71PxnGwGC1zwbvsWECTIKD7VF1Ys8NueqxH6AbNMzDuWnlPClCuN95?=
+ =?us-ascii?Q?WeHWIQPjJD9Nmf4zc6YCn3HSm6SvH0K2pHYG+Lof8+a8AvkeLY5rVGV1AcXv?=
+ =?us-ascii?Q?RJcUNQeJiuBkfHrylaclKkXUWjain6JY2plNILSDTvkEvkPKlwT+tXbIJ286?=
+ =?us-ascii?Q?XIToW2LyZHk1fDmp52EYyhU6iTUEv35GJzK0Qy6DwYkqOL+bFO1OdpYwoQ?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 17:50:38.9876
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3024979-be0c-4d44-760b-08ddea493a71
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015C7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5909
 
-On Tue, Sep 2, 2025 at 4:31=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> On Tue, Sep 02, 2025 at 01:59:22PM +0200, Bartosz Golaszewski wrote:
-> >
-> > The name of the pin function has no real meaning to pinctrl core and is
-> > there only for human readability of device properties. Some pins are
-> > muxed as GPIOs but for "strict" pinmuxers it's impossible to request
-> > them as GPIOs if they're bound to a devide - even if their function nam=
-e
-> > explicitly says "gpio". Add a new field to struct pinfunction that
-> > allows to pass additional flags to pinctrl core.
->
-> Which I disagree with. The pin control _knows_ about itself. If one needs
-> to request a pin as GPIO it can be done differently (perhaps with a new,
-> special callback or with the existing ones, I need to dive to this).
+Add interface for applications to get information array. The application
+provides a buffer pointer along with information type, maximum number of
+entries and maximum size of each entry. The buffer may also contain match
+conditions based on the information type. After the ioctl completes, the
+actual number of entries and entry size are returned.
 
-What? Why? Makes no sense, there already is a function for requesting
-a pin as GPIO, it's called pinctrl_gpio_request(). And it's affected
-by this series because otherwise we fail as explained in the cover
-letter.
+Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+Link: https://lore.kernel.org/r/20250827203031.1512508-1-lizhi.hou@amd.com
+---
+ drivers/accel/amdxdna/aie2_pci.c        | 116 ++++++++++++++++++------
+ drivers/accel/amdxdna/amdxdna_pci_drv.c |  30 ++++++
+ drivers/accel/amdxdna/amdxdna_pci_drv.h |   1 +
+ include/uapi/drm/amdxdna_accel.h        | 111 +++++++++++++++++++++++
+ 4 files changed, 232 insertions(+), 26 deletions(-)
 
-> On a brief view this can be done in the same way as valid_mask in GPIO,
-> actually this is exactly what should be (re-)used in my opinion here.
->
+diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
+index 7a3449541107..87c425e3d2b9 100644
+--- a/drivers/accel/amdxdna/aie2_pci.c
++++ b/drivers/accel/amdxdna/aie2_pci.c
+@@ -785,11 +785,12 @@ static int aie2_get_clock_metadata(struct amdxdna_client *client,
+ 
+ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
+ {
+-	struct amdxdna_drm_query_hwctx *tmp __free(kfree) = NULL;
+-	struct amdxdna_drm_get_info *get_info_args = arg;
+-	struct amdxdna_drm_query_hwctx __user *buf;
++	struct amdxdna_drm_hwctx_entry *tmp __free(kfree) = NULL;
++	struct amdxdna_drm_get_array *array_args = arg;
++	struct amdxdna_drm_hwctx_entry __user *buf;
++	u32 size;
+ 
+-	if (get_info_args->buffer_size < sizeof(*tmp))
++	if (!array_args->num_element)
+ 		return -EINVAL;
+ 
+ 	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+@@ -802,14 +803,23 @@ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
+ 	tmp->num_col = hwctx->num_col;
+ 	tmp->command_submissions = hwctx->priv->seq;
+ 	tmp->command_completions = hwctx->priv->completed;
+-
+-	buf = u64_to_user_ptr(get_info_args->buffer);
+-
+-	if (copy_to_user(buf, tmp, sizeof(*tmp)))
++	tmp->pasid = hwctx->client->pasid;
++	tmp->priority = hwctx->qos.priority;
++	tmp->gops = hwctx->qos.gops;
++	tmp->fps = hwctx->qos.fps;
++	tmp->dma_bandwidth = hwctx->qos.dma_bandwidth;
++	tmp->latency = hwctx->qos.latency;
++	tmp->frame_exec_time = hwctx->qos.frame_exec_time;
++	tmp->state = AMDXDNA_HWCTX_STATE_ACTIVE;
++
++	buf = u64_to_user_ptr(array_args->buffer);
++	size = min(sizeof(*tmp), array_args->element_size);
++
++	if (copy_to_user(buf, tmp, size))
+ 		return -EFAULT;
+ 
+-	get_info_args->buffer += sizeof(*tmp);
+-	get_info_args->buffer_size -= sizeof(*tmp);
++	array_args->buffer += size;
++	array_args->num_element--;
+ 
+ 	return 0;
+ }
+@@ -817,23 +827,24 @@ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
+ static int aie2_get_hwctx_status(struct amdxdna_client *client,
+ 				 struct amdxdna_drm_get_info *args)
+ {
++	struct amdxdna_drm_get_array array_args;
+ 	struct amdxdna_dev *xdna = client->xdna;
+-	struct amdxdna_drm_get_info info_args;
+ 	struct amdxdna_client *tmp_client;
+ 	int ret;
+ 
+ 	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+ 
+-	info_args.buffer = args->buffer;
+-	info_args.buffer_size = args->buffer_size;
+-
++	array_args.element_size = sizeof(struct amdxdna_drm_query_hwctx);
++	array_args.buffer = args->buffer;
++	array_args.num_element = args->buffer_size / array_args.element_size;
+ 	list_for_each_entry(tmp_client, &xdna->client_list, node) {
+-		ret = amdxdna_hwctx_walk(tmp_client, &info_args, aie2_hwctx_status_cb);
++		ret = amdxdna_hwctx_walk(tmp_client, &array_args,
++					 aie2_hwctx_status_cb);
+ 		if (ret)
+ 			break;
+ 	}
+ 
+-	args->buffer_size = (u32)(info_args.buffer - args->buffer);
++	args->buffer_size -= (u32)(array_args.buffer - args->buffer);
+ 	return ret;
+ }
+ 
+@@ -877,6 +888,58 @@ static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_i
+ 	return ret;
+ }
+ 
++static int aie2_query_ctx_status_array(struct amdxdna_client *client,
++				       struct amdxdna_drm_get_array *args)
++{
++	struct amdxdna_drm_get_array array_args;
++	struct amdxdna_dev *xdna = client->xdna;
++	struct amdxdna_client *tmp_client;
++	int ret;
++
++	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
++
++	array_args.element_size = min(args->element_size,
++				      sizeof(struct amdxdna_drm_hwctx_entry));
++	array_args.buffer = args->buffer;
++	array_args.num_element = args->num_element * args->element_size /
++				array_args.element_size;
++	list_for_each_entry(tmp_client, &xdna->client_list, node) {
++		ret = amdxdna_hwctx_walk(tmp_client, &array_args,
++					 aie2_hwctx_status_cb);
++		if (ret)
++			break;
++	}
++
++	args->element_size = array_args.element_size;
++	args->num_element = (u32)((array_args.buffer - args->buffer) /
++				  args->element_size);
++
++	return ret;
++}
++
++static int aie2_get_array(struct amdxdna_client *client,
++			  struct amdxdna_drm_get_array *args)
++{
++	struct amdxdna_dev *xdna = client->xdna;
++	int ret, idx;
++
++	if (!drm_dev_enter(&xdna->ddev, &idx))
++		return -ENODEV;
++
++	switch (args->param) {
++	case DRM_AMDXDNA_HW_CONTEXT_ALL:
++		ret = aie2_query_ctx_status_array(client, args);
++		break;
++	default:
++		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
++		ret = -EOPNOTSUPP;
++	}
++	XDNA_DBG(xdna, "Got param %d", args->param);
++
++	drm_dev_exit(idx);
++	return ret;
++}
++
+ static int aie2_set_power_mode(struct amdxdna_client *client,
+ 			       struct amdxdna_drm_set_state *args)
+ {
+@@ -926,15 +989,16 @@ static int aie2_set_state(struct amdxdna_client *client,
+ }
+ 
+ const struct amdxdna_dev_ops aie2_ops = {
+-	.init           = aie2_init,
+-	.fini           = aie2_fini,
+-	.resume         = aie2_hw_resume,
+-	.suspend        = aie2_hw_suspend,
+-	.get_aie_info   = aie2_get_info,
+-	.set_aie_state	= aie2_set_state,
+-	.hwctx_init     = aie2_hwctx_init,
+-	.hwctx_fini     = aie2_hwctx_fini,
+-	.hwctx_config   = aie2_hwctx_config,
+-	.cmd_submit     = aie2_cmd_submit,
++	.init = aie2_init,
++	.fini = aie2_fini,
++	.resume = aie2_hw_resume,
++	.suspend = aie2_hw_suspend,
++	.get_aie_info = aie2_get_info,
++	.set_aie_state = aie2_set_state,
++	.hwctx_init = aie2_hwctx_init,
++	.hwctx_fini = aie2_hwctx_fini,
++	.hwctx_config = aie2_hwctx_config,
++	.cmd_submit = aie2_cmd_submit,
+ 	.hmm_invalidate = aie2_hmm_invalidate,
++	.get_array = aie2_get_array,
+ };
+diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+index 8ef5e4f27f5e..0a1fd55e745e 100644
+--- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
++++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+@@ -26,6 +26,13 @@ MODULE_FIRMWARE("amdnpu/17f0_10/npu.sbin");
+ MODULE_FIRMWARE("amdnpu/17f0_11/npu.sbin");
+ MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
+ 
++/*
++ * 0.0: Initial version
++ * 0.1: Support getting all hardware contexts by DRM_IOCTL_AMDXDNA_GET_ARRAY
++ */
++#define AMDXDNA_DRIVER_MAJOR		0
++#define AMDXDNA_DRIVER_MINOR		1
++
+ /*
+  * Bind the driver base on (vendor_id, device_id) pair and later use the
+  * (device_id, rev_id) pair as a key to select the devices. The devices with
+@@ -164,6 +171,26 @@ static int amdxdna_drm_get_info_ioctl(struct drm_device *dev, void *data, struct
+ 	return ret;
+ }
+ 
++static int amdxdna_drm_get_array_ioctl(struct drm_device *dev, void *data,
++				       struct drm_file *filp)
++{
++	struct amdxdna_client *client = filp->driver_priv;
++	struct amdxdna_dev *xdna = to_xdna_dev(dev);
++	struct amdxdna_drm_get_array *args = data;
++	int ret;
++
++	if (!xdna->dev_info->ops->get_array)
++		return -EOPNOTSUPP;
++
++	if (args->pad || !args->num_element || !args->element_size)
++		return -EINVAL;
++
++	mutex_lock(&xdna->dev_lock);
++	ret = xdna->dev_info->ops->get_array(client, args);
++	mutex_unlock(&xdna->dev_lock);
++	return ret;
++}
++
+ static int amdxdna_drm_set_state_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
+ {
+ 	struct amdxdna_client *client = filp->driver_priv;
+@@ -195,6 +222,7 @@ static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, amdxdna_drm_submit_cmd_ioctl, 0),
+ 	/* AIE hardware */
+ 	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 0),
++	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_ARRAY, amdxdna_drm_get_array_ioctl, 0),
+ 	DRM_IOCTL_DEF_DRV(AMDXDNA_SET_STATE, amdxdna_drm_set_state_ioctl, DRM_ROOT_ONLY),
+ };
+ 
+@@ -218,6 +246,8 @@ const struct drm_driver amdxdna_drm_drv = {
+ 	.fops = &amdxdna_fops,
+ 	.name = "amdxdna_accel_driver",
+ 	.desc = "AMD XDNA DRM implementation",
++	.major = AMDXDNA_DRIVER_MAJOR,
++	.minor = AMDXDNA_DRIVER_MINOR,
+ 	.open = amdxdna_drm_open,
+ 	.postclose = amdxdna_drm_close,
+ 	.ioctls = amdxdna_drm_ioctls,
+diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+index b6b3b424d1d5..72d6696d49da 100644
+--- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
++++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+@@ -58,6 +58,7 @@ struct amdxdna_dev_ops {
+ 	int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
+ 	int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
+ 	int (*set_aie_state)(struct amdxdna_client *client, struct amdxdna_drm_set_state *args);
++	int (*get_array)(struct amdxdna_client *client, struct amdxdna_drm_get_array *args);
+ };
+ 
+ /*
+diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
+index ce523e9ccc52..a1fb9785db77 100644
+--- a/include/uapi/drm/amdxdna_accel.h
++++ b/include/uapi/drm/amdxdna_accel.h
+@@ -34,6 +34,7 @@ enum amdxdna_drm_ioctl_id {
+ 	DRM_AMDXDNA_EXEC_CMD,
+ 	DRM_AMDXDNA_GET_INFO,
+ 	DRM_AMDXDNA_SET_STATE,
++	DRM_AMDXDNA_GET_ARRAY = 10,
+ };
+ 
+ /**
+@@ -455,6 +456,112 @@ struct amdxdna_drm_get_info {
+ 	__u64 buffer; /* in/out */
+ };
+ 
++#define AMDXDNA_HWCTX_STATE_IDLE	0
++#define AMDXDNA_HWCTX_STATE_ACTIVE	1
++
++/**
++ * struct amdxdna_drm_hwctx_entry - The hardware context array entry
++ */
++struct amdxdna_drm_hwctx_entry {
++	/** @context_id: Context ID. */
++	__u32 context_id;
++	/** @start_col: Start AIE array column assigned to context. */
++	__u32 start_col;
++	/** @num_col: Number of AIE array columns assigned to context. */
++	__u32 num_col;
++	/** @hwctx_id: The real hardware context id. */
++	__u32 hwctx_id;
++	/** @pid: ID of process which created this context. */
++	__s64 pid;
++	/** @command_submissions: Number of commands submitted. */
++	__u64 command_submissions;
++	/** @command_completions: Number of commands completed. */
++	__u64 command_completions;
++	/** @migrations: Number of times been migrated. */
++	__u64 migrations;
++	/** @preemptions: Number of times been preempted. */
++	__u64 preemptions;
++	/** @errors: Number of errors happened. */
++	__u64 errors;
++	/** @priority: Context priority. */
++	__u64 priority;
++	/** @heap_usage: Usage of device heap buffer. */
++	__u64 heap_usage;
++	/** @suspensions: Number of times been suspended. */
++	__u64 suspensions;
++	/**
++	 * @state: Context state.
++	 * %AMDXDNA_HWCTX_STATE_IDLE
++	 * %AMDXDNA_HWCTX_STATE_ACTIVE
++	 */
++	__u32 state;
++	/** @pasid: PASID been bound. */
++	__u32 pasid;
++	/** @gops: Giga operations per second. */
++	__u32 gops;
++	/** @fps: Frames per second. */
++	__u32 fps;
++	/** @dma_bandwidth: DMA bandwidth. */
++	__u32 dma_bandwidth;
++	/** @latency: Frame response latency. */
++	__u32 latency;
++	/** @frame_exec_time: Frame execution time. */
++	__u32 frame_exec_time;
++	/** @txn_op_idx: Index of last control code executed. */
++	__u32 txn_op_idx;
++	/** @ctx_pc: Program counter. */
++	__u32 ctx_pc;
++	/** @fatal_error_type: Fatal error type if context crashes. */
++	__u32 fatal_error_type;
++	/** @fatal_error_exception_type: Firmware exception type. */
++	__u32 fatal_error_exception_type;
++	/** @fatal_error_exception_pc: Firmware exception program counter. */
++	__u32 fatal_error_exception_pc;
++	/** @fatal_error_app_module: Exception module name. */
++	__u32 fatal_error_app_module;
++	/** @pad: Structure pad. */
++	__u32 pad;
++};
++
++#define DRM_AMDXDNA_HW_CONTEXT_ALL	0
++
++/**
++ * struct amdxdna_drm_get_array - Get information array.
++ */
++struct amdxdna_drm_get_array {
++	/**
++	 * @param:
++	 *
++	 * Supported params:
++	 *
++	 * %DRM_AMDXDNA_HW_CONTEXT_ALL:
++	 * Returns all created hardware contexts.
++	 */
++	__u32 param;
++	/**
++	 * @element_size:
++	 *
++	 * Specifies maximum element size and returns the actual element size.
++	 */
++	__u32 element_size;
++	/**
++	 * @num_element:
++	 *
++	 * Specifies maximum number of elements and returns the actual number
++	 * of elements.
++	 */
++	__u32 num_element; /* in/out */
++	/** @pad: MBZ */
++	__u32 pad;
++	/**
++	 * @buffer:
++	 *
++	 * Specifies the match conditions and returns the matched information
++	 * array.
++	 */
++	__u64 buffer;
++};
++
+ enum amdxdna_drm_set_param {
+ 	DRM_AMDXDNA_SET_POWER_MODE,
+ 	DRM_AMDXDNA_WRITE_AIE_MEM,
+@@ -519,6 +626,10 @@ struct amdxdna_drm_set_power_mode {
+ 	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SET_STATE, \
+ 		 struct amdxdna_drm_set_state)
+ 
++#define DRM_IOCTL_AMDXDNA_GET_ARRAY \
++	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_ARRAY, \
++		 struct amdxdna_drm_get_array)
++
+ #if defined(__cplusplus)
+ } /* extern c end */
+ #endif
+-- 
+2.34.1
 
-Except that the valid_mask is very unclear and IMO it's much cleaner
-to have a flag for that.
-
-> > While we could go with
-> > a boolean "is_gpio" field, a flags field is more future-proof.
->
-> This sentence is probably extra in the commit message and can be omitted.
->
-> > If the PINFUNCTION_FLAG_GPIO is set for a given function, the pin muxed
-> > to it can be requested as GPIO even on strict pin controllers.
->
-> So. this changes the contract between pin control (mux) core and drivers.
-
-Yes, that's allowed in the kernel. The current contract is wrong and
-the reason why we can for instance confuse debug UARTs by requesting
-its pins as GPIOs from user-space whereas a strict pinmuxer will not
-allow it. But to convert pinmuxers to "strict" we need to change the
-behavior.
-
-> Why? How is it supposed to work on the really strict controllers, please?
->
-
-Like what I explained several times? You have pins used by a device.
-User-space comes around and requests them and fiddles with them and
-now the state of your device is undefined/broken. With a strict
-pinmuxer user-space will fail to request the pins muxed to a non-GPIO
-function.
-
-> > Add a new callback to struct pinmux_ops - function_is_gpio() - that all=
-ows
-> > pinmux core to inspect a function and see if it's a GPIO one. Provide a
-> > generic implementation of this callback.
-
-Bartosz
 
