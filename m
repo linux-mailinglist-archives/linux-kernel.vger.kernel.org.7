@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-795439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52B6B3F212
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:01:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E1B3F217
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53CF91A85230
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:01:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12E01485696
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887E818D636;
-	Tue,  2 Sep 2025 02:01:22 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D143C198A11;
+	Tue,  2 Sep 2025 02:04:14 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0316FC3;
-	Tue,  2 Sep 2025 02:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D2F6FC3;
+	Tue,  2 Sep 2025 02:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756778482; cv=none; b=TEypCF/q5VoFNLKNf2CWdUyND/IenC80ip7xvj+re2OKzEE+fzLbY8tYpI+pbBkFmab6qUwfbpHTcfXIZmmZ5JnZbO/WVKeCzFAuJ/2gbvI7LY+Y0D9Y8B/LQS0bS/uRIKTOKwHAYZ3+IQfx62CgkX/Pokj+6yU1GNnwqopIUdM=
+	t=1756778654; cv=none; b=Si/j9gwbCkCjrPhp/Kl8p5SPDHGpP6tactMwDail4OIBOl/gKgS8LJUwLSOtaHagT9wCIkTAMqpnkQq5JxrCZ5r41OFEwfJL0BtNIivJbfXNIcUabPsNDxiiP2x7JkuFyUTE5afz1lcNouDZgrEGCjdbIEkyiVMgBAk1F6scTBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756778482; c=relaxed/simple;
-	bh=euhcNSxCNUd3eB/FwSOi1w9wqoBfz3GgiBLMXntU10c=;
+	s=arc-20240116; t=1756778654; c=relaxed/simple;
+	bh=yVkDJCBoZhjmkInVYNZZwsUydbWhTQzviNY/ujQT5r4=;
 	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=KIx/QuwO9MfmrmFUnocy9yGMyqER2Dau9PllPkayEPHxDXnaS0TUbUOF7+19ELRRp9sLfMPBV64ZJXfcAAdLgTdNQgFtAeh/h74c4RAhUFOlJ5gFjmyVjc5YK5F5m8+AZqez7ViFw7/zRqfWMA9IpCHNI2yZzE93uCUU8wB0buo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+	 Subject:Content-Type; b=R8UblIVWuhd4g8XLK2h/gONNRVW/D+MfEt976kWrQWtI0OLhSRqgbOOizGNIAaV9G1z/aNCEjO6jNWegDy6bTWvpQ4EInG25Ph7F2+a1lpIrV2mS+qm/VvoKPQU8AcCB/yjbKAfbzXKORaYsGW1bqQsSQI6IDuN1NQ6jPBbO+n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cG89R15cMz8Xs76;
-	Tue, 02 Sep 2025 10:01:15 +0800 (CST)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cG8Dn0VVHz5PM3D;
+	Tue, 02 Sep 2025 10:04:09 +0800 (CST)
 Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 58220Udv031365;
-	Tue, 2 Sep 2025 10:00:30 +0800 (+08)
+	by mse-fl1.zte.com.cn with SMTP id 58223qi4051390;
+	Tue, 2 Sep 2025 10:03:52 +0800 (+08)
 	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp04[null])
+Received: from mapi (xaxapp01[null])
 	by mapi (Zmail) with MAPI id mid32;
-	Tue, 2 Sep 2025 10:00:30 +0800 (CST)
-Date: Tue, 2 Sep 2025 10:00:30 +0800 (CST)
-X-Zmail-TransId: 2afb68b64fbe9e0-685a9
+	Tue, 2 Sep 2025 10:03:53 +0800 (CST)
+Date: Tue, 2 Sep 2025 10:03:53 +0800 (CST)
+X-Zmail-TransId: 2af968b65089775-7732f
 X-Mailer: Zmail v1.0
-Message-ID: <20250902100030967nPEcUoRRSnruExakQxAIm@zte.com.cn>
+Message-ID: <20250902100353835xyAecL45pVFk1sbaC16f4@zte.com.cn>
 In-Reply-To: <202509020957458514CMgUiaqPjTURNET_d-w0@zte.com.cn>
 References: 202509020957458514CMgUiaqPjTURNET_d-w0@zte.com.cn
 Precedence: bulk
@@ -55,218 +55,237 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 From: <fan.yu9@zte.com.cn>
 To: <akpm@linux-foundation.org>, <wang.yaxin@zte.com.cn>
-Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgMS8zXSB0b29scy9kZWxheXRvcDogYWRkIG1lbW9yeSB2ZXJib3NlIG1vZGUgc3VwcG9ydA==?=
+Cc: <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <xu.xin16@zte.com.cn>,
+        <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgMi8zXSB0b29scy9kZWxheXRvcDogYWRkIGZsZXhpYmxlIHNvcnRpbmcgYnkgZGVsYXkgZmllbGQ=?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 58220Udv031365
+X-MAIL:mse-fl1.zte.com.cn 58223qi4051390
 X-TLS: YES
 X-SPF-DOMAIN: zte.com.cn
 X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
 X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Tue, 02 Sep 2025 10:01:15 +0800
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 02 Sep 2025 10:04:09 +0800
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68B64FEB.000/4cG89R15cMz8Xs76
+X-Fangmail-MID-QID: 68B65099.000/4cG8Dn0VVHz5PM3D
 
 From: Fan Yu <fan.yu9@zte.com.cn>
 
-The original delaytop tool always displayed detailed memory
-subsystem breakdown, which could be overwhelming for users
-who only need high-level overview.
+The delaytop tool only supported sorting by CPU delay, which limited
+its usefulness when users needed to identify bottlenecks in other
+subsystems. Users had no way to sort processes by IO, memory, or
+other delay types to quickly pinpoint specific performance issues.
 
-Add flexible display control allowing users to choose their
-preferred information granularity.
+Add -s/--sort option to allow sorting by different delay types:
+1) Basic modes: cpu, io, irq, mem  
+2) Detailed modes (-M required): swap, reclaim, thrashing, compact, wpcopy
 
-The new flexibility provides:
-1) For quick monitoring: use normal mode to reduce visual clutter
-2) For deep analysis: use verbose mode to see all memory subsystem details
+Users can now quickly identify bottlenecks in specific subsystems
+by sorting processes by the relevant delay metric.
 
 Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
 ---
- tools/accounting/delaytop.c | 111 ++++++++++++++++++++++++++++--------
- 1 file changed, 87 insertions(+), 24 deletions(-)
+ tools/accounting/delaytop.c | 130 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 121 insertions(+), 9 deletions(-)
 
 diff --git a/tools/accounting/delaytop.c b/tools/accounting/delaytop.c
-index 9afb1ffc00ba..f1e2e1cca4b8 100644
+index f1e2e1cca4b8..39852cd70bdf 100644
 --- a/tools/accounting/delaytop.c
 +++ b/tools/accounting/delaytop.c
-@@ -68,6 +68,8 @@
- 	ret >= 0; \
- })
- #define PSI_LINE_FORMAT "%-12s %6.1f%%/%6.1f%%/%6.1f%%/%8llu(ms)\n"
-+#define FMT_NORMAL "%8.2f %8.2f %8.2f %8.2f\n"
-+#define FMT_MEMVERBOSE "%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n"
-
- /* Program settings structure */
- struct config {
-@@ -78,6 +80,7 @@ struct config {
- 	int output_one_time;	/* Output once and exit */
- 	int monitor_pid;		/* Monitor specific PID */
- 	char *container_path;	/* Path to container cgroup */
-+	int mem_verbose_mode;	/* Memory detailed display mode */
- };
-
- /* PSI statistics structure */
-@@ -163,13 +166,14 @@ static void usage(void)
- {
- 	printf("Usage: delaytop [Options]\n"
- 	"Options:\n"
--	"  -h, --help				Show this help message and exit\n"
--	"  -d, --delay=SECONDS	  Set refresh interval (default: 2 seconds, min: 1)\n"
--	"  -n, --iterations=COUNT	Set number of updates (default: 0 = infinite)\n"
--	"  -P, --processes=NUMBER	Set maximum number of processes to show (default: 20, max: 1000)\n"
--	"  -o, --once				Display once and exit\n"
--	"  -p, --pid=PID			Monitor only the specified PID\n"
--	"  -C, --container=PATH	 Monitor the container at specified cgroup path\n");
-+	"  -h, --help               Show this help message and exit\n"
-+	"  -d, --delay=SECONDS      Set refresh interval (default: 2 seconds, min: 1)\n"
-+	"  -n, --iterations=COUNT   Set number of updates (default: 0 = infinite)\n"
-+	"  -P, --processes=NUMBER   Set maximum number of processes to show (default: 20, max: 1000)\n"
-+	"  -o, --once               Display once and exit\n"
-+	"  -p, --pid=PID            Monitor only the specified PID\n"
-+	"  -C, --container=PATH     Monitor the container at specified cgroup path\n"
-+	"  -M, --memverbose         Display memory detailed information\n");
+@@ -173,7 +173,9 @@ static void usage(void)
+ 	"  -o, --once               Display once and exit\n"
+ 	"  -p, --pid=PID            Monitor only the specified PID\n"
+ 	"  -C, --container=PATH     Monitor the container at specified cgroup path\n"
+-	"  -M, --memverbose         Display memory detailed information\n");
++	"  -M, --memverbose         Display memory detailed information\n"
++	"  -s, --sort=FIELD         Sort by delay field (default: cpu)\n"
++	"                           Types: cpu|io|irq|mem|swap|reclaim|thrashing|compact|wpcopy\n");
  	exit(0);
  }
 
-@@ -185,6 +189,7 @@ static void parse_args(int argc, char **argv)
+@@ -188,6 +190,7 @@ static void parse_args(int argc, char **argv)
+ 		{"pid", required_argument, 0, 'p'},
  		{"once", no_argument, 0, 'o'},
  		{"processes", required_argument, 0, 'P'},
++		{"sort", required_argument, 0, 's'},
  		{"container", required_argument, 0, 'C'},
-+		{"memverbose", no_argument, 0, 'M'},
+ 		{"memverbose", no_argument, 0, 'M'},
  		{0, 0, 0, 0}
- 	};
-
-@@ -196,11 +201,12 @@ static void parse_args(int argc, char **argv)
- 	cfg.output_one_time = 0;
- 	cfg.monitor_pid = 0;	/* 0 means monitor all PIDs */
- 	cfg.container_path = NULL;
-+	cfg.mem_verbose_mode = 0;
-
+@@ -206,7 +209,7 @@ static void parse_args(int argc, char **argv)
  	while (1) {
  		int option_index = 0;
 
--		c = getopt_long(argc, argv, "hd:n:p:oP:C:", long_options, &option_index);
-+		c = getopt_long(argc, argv, "hd:n:p:oP:C:M", long_options, &option_index);
+-		c = getopt_long(argc, argv, "hd:n:p:oP:C:M", long_options, &option_index);
++		c = getopt_long(argc, argv, "hd:n:p:oP:C:Ms:", long_options, &option_index);
  		if (c == -1)
  			break;
 
-@@ -247,6 +253,9 @@ static void parse_args(int argc, char **argv)
- 		case 'C':
- 			cfg.container_path = strdup(optarg);
+@@ -256,11 +259,53 @@ static void parse_args(int argc, char **argv)
+ 		case 'M':
+ 			cfg.mem_verbose_mode = 1;
  			break;
-+		case 'M':
-+			cfg.mem_verbose_mode = 1;
++		case 's':
++			if (strlen(optarg) == 0) {
++				fprintf(stderr, "Error: empty sort field\n");
++				exit(1);
++			}
++
++			if (strncmp(optarg, "cpu", 3) == 0)
++				cfg.sort_field = 'c';
++			else if (strncmp(optarg, "io", 2) == 0)
++				cfg.sort_field = 'i';
++			else if (strncmp(optarg, "irq", 3) == 0)
++				cfg.sort_field = 'q';
++			else if (strncmp(optarg, "mem", 3) == 0)
++				cfg.sort_field = 'm';
++			else if (strncmp(optarg, "swap", 4) == 0)
++				cfg.sort_field = 's';
++			else if (strncmp(optarg, "reclaim", 7) == 0)
++				cfg.sort_field = 'r';
++			else if (strncmp(optarg, "thrashing", 9) == 0)
++				cfg.sort_field = 't';
++			else if (strncmp(optarg, "compact", 7) == 0)
++				cfg.sort_field = 'p';
++			else if (strncmp(optarg, "wpcopy", 7) == 0)
++				cfg.sort_field = 'w';
++			else {
++				fprintf(stderr, "Error: invalid sort field\n");
++				fprintf(stderr, "Try to use cpu|io|irq|mem|");
++				fprintf(stderr, "swap|reclaim|thrashing|compact|wpcopy\n");
++				exit(1);
++			}
 +			break;
  		default:
  			fprintf(stderr, "Try 'delaytop --help' for more information.\n");
  			exit(1);
-@@ -582,6 +591,25 @@ static double average_ms(unsigned long long total, unsigned long long count)
- 	return (double)total / 1000000.0 / count;
+ 		}
+ 	}
++
++	/* Validate sorting field compatibility with memory verbose mode */
++	if (cfg.mem_verbose_mode == 0 &&
++		cfg.sort_field == 's' ||
++		cfg.sort_field == 'r' ||
++		cfg.sort_field == 't' ||
++		cfg.sort_field == 'p' ||
++		cfg.sort_field == 'w') {
++		fprintf(stderr, "Error: mem verbose mode is off, try to use -M\n");
++		exit(1);
++	}
  }
 
-+/* Calculate average delay in milliseconds for memory */
-+static unsigned long long task_total_mem_delay(const struct task_info *t)
-+{
-+	return t->swapin_delay_total +
-+		t->freepages_delay_total +
-+		t->thrashing_delay_total +
-+		t->compact_delay_total +
-+		t->wpcopy_delay_total;
-+}
-+
-+static unsigned long long task_total_mem_count(const struct task_info *t)
-+{
-+	return t->swapin_count +
-+		t->freepages_count +
-+		t->thrashing_count +
-+		t->compact_count +
-+		t->wpcopy_count;
-+}
-+
- /* Comparison function for sorting tasks */
- static int compare_tasks(const void *a, const void *b)
- {
-@@ -740,27 +768,62 @@ static void display_results(void)
- 	}
- 	suc &= BOOL_FPRINT(out, "Top %d processes (sorted by CPU delay):\n",
- 			cfg.max_processes);
--	suc &= BOOL_FPRINT(out, "%5s  %5s  %-17s", "PID", "TGID", "COMMAND");
--	suc &= BOOL_FPRINT(out, "%7s %7s %7s %7s %7s %7s %7s %7s\n",
--		"CPU(ms)", "IO(ms)", "SWAP(ms)", "RCL(ms)",
--		"THR(ms)", "CMP(ms)", "WP(ms)", "IRQ(ms)");
-+	suc &= BOOL_FPRINT(out, "%8s  %8s  %-17s", "PID", "TGID", "COMMAND");
-+
-+	if (!cfg.mem_verbose_mode) {
-+		suc &= BOOL_FPRINT(out, "%8s %8s %8s %8s\n",
-+			"CPU(ms)", "IO(ms)", "IRQ(ms)", "MEM(ms)");
-+		suc &= BOOL_FPRINT(out, "-----------------------");
-+		suc &= BOOL_FPRINT(out, "-----------------------");
-+		suc &= BOOL_FPRINT(out, "--------------------------\n");
-+	} else {
-+		suc &= BOOL_FPRINT(out, "%8s %8s %8s %8s %8s %8s %8s %8s %8s\n",
-+			"CPU(ms)", "IO(ms)", "IRQ(ms)", "MEM(ms)",
-+			"SWAP(ms)", "RCL(ms)", "THR(ms)", "CMP(ms)", "WP(ms)");
-+		suc &= BOOL_FPRINT(out, "-----------------------");
-+		suc &= BOOL_FPRINT(out, "-----------------------");
-+		suc &= BOOL_FPRINT(out, "-----------------------");
-+		suc &= BOOL_FPRINT(out, "-----------------------");
-+		suc &= BOOL_FPRINT(out, "-------------------------\n");
+ /* Create a raw netlink socket and bind */
+@@ -621,12 +666,77 @@ static int compare_tasks(const void *a, const void *b)
+ 	case 'c': /* CPU */
+ 		avg1 = average_ms(t1->cpu_delay_total, t1->cpu_count);
+ 		avg2 = average_ms(t2->cpu_delay_total, t2->cpu_count);
+-		if (avg1 != avg2)
+-			return avg2 > avg1 ? 1 : -1;
+-		return t2->cpu_delay_total > t1->cpu_delay_total ? 1 : -1;
++		break;
++	case 'i': /* IO */
++		avg1 = average_ms(t1->blkio_delay_total, t1->blkio_count);
++		avg2 = average_ms(t2->blkio_delay_total, t2->blkio_count);
++		break;
++	case 'q': /* IRQ */
++		avg1 = average_ms(t1->irq_delay_total, t1->irq_count);
++		avg2 = average_ms(t2->irq_delay_total, t2->irq_count);
++		break;
++	case 'm': /* MEM(total) */
++		avg1 = average_ms(task_total_mem_delay(t1), task_total_mem_count(t1));
++		avg2 = average_ms(task_total_mem_delay(t2), task_total_mem_count(t2));
++		break;
++	/* Memory detailed display mode */
++	case 's': /* swapin (SWAP) */
++		avg1 = average_ms(t1->swapin_delay_total, t1->swapin_count);
++		avg2 = average_ms(t2->swapin_delay_total, t2->swapin_count);
++		break;
++	case 'r': /* freepages (RCL) */
++		avg1 = average_ms(t1->freepages_delay_total, t1->freepages_count);
++		avg2 = average_ms(t2->freepages_delay_total, t2->freepages_count);
++		break;
++	case 't': /* thrashing (THR) */
++		avg1 = average_ms(t1->thrashing_delay_total, t1->thrashing_count);
++		avg2 = average_ms(t2->thrashing_delay_total, t2->thrashing_count);
++		break;
++	case 'p': /* compact (CMP) */
++		avg1 = average_ms(t1->compact_delay_total, t1->compact_count);
++		avg2 = average_ms(t2->compact_delay_total, t2->compact_count);
++		break;
++	case 'w': /* wpcopy (WP) */
++		avg1 = average_ms(t1->wpcopy_delay_total, t1->wpcopy_count);
++		avg2 = average_ms(t2->wpcopy_delay_total, t2->wpcopy_count);
++		break;
++	default:
++		avg1 = average_ms(t1->cpu_delay_total, t1->cpu_count);
++		avg2 = average_ms(t2->cpu_delay_total, t2->cpu_count);
++		break;
 +	}
 +
++	if (avg1 != avg2)
++		return avg2 > avg1 ? 1 : -1;
++
++	return 0;
++}
 
--	suc &= BOOL_FPRINT(out, "-----------------------------------------------");
--	suc &= BOOL_FPRINT(out, "----------------------------------------------\n");
++static const char *get_sort_field(char sort_field)
++{
++	switch (sort_field) {
++	case 'c':
++		return "CPU";
++	case 'i':
++		return "IO";
++	case 'q':
++		return "IRQ";
++	/* MEM(total) */
++	case 'm':
++		return "MEM";
++	/* Memory detailed display mode */
++	case 's':
++		return "SWAP";
++	case 'r':
++		return "RCL";
++	case 't':
++		return "THR";
++	case 'p':
++		return "CMP";
++	case 'w':
++		return "WP";
+ 	default:
+-		return t2->cpu_delay_total > t1->cpu_delay_total ? 1 : -1;
++		return "UNKNOWN"; /* handle error */
+ 	}
+ }
+
+@@ -705,6 +815,7 @@ static void display_results(void)
+ {
+ 	time_t now = time(NULL);
+ 	struct tm *tm_now = localtime(&now);
++	const char *sort_field;
+ 	FILE *out = stdout;
+ 	char timestamp[32];
+ 	bool suc = true;
+@@ -766,8 +877,10 @@ static void display_results(void)
+ 			container_stats.nr_stopped, container_stats.nr_uninterruptible,
+ 			container_stats.nr_io_wait);
+ 	}
+-	suc &= BOOL_FPRINT(out, "Top %d processes (sorted by CPU delay):\n",
+-			cfg.max_processes);
++
++	/* Task delay output */
++	suc &= BOOL_FPRINT(out, "Top %d processes (sorted by %s delay):\n",
++			cfg.max_processes, get_sort_field(cfg.sort_field));
+ 	suc &= BOOL_FPRINT(out, "%8s  %8s  %-17s", "PID", "TGID", "COMMAND");
+
+ 	if (!cfg.mem_verbose_mode) {
+@@ -787,7 +900,6 @@ static void display_results(void)
+ 		suc &= BOOL_FPRINT(out, "-------------------------\n");
+ 	}
+
+-
  	count = task_count < cfg.max_processes ? task_count : cfg.max_processes;
 
  	for (i = 0; i < count; i++) {
--		suc &= BOOL_FPRINT(out, "%5d  %5d  %-15s",
-+		suc &= BOOL_FPRINT(out, "%8d  %8d  %-15s",
- 			tasks[i].pid, tasks[i].tgid, tasks[i].command);
--		suc &= BOOL_FPRINT(out, "%7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f %7.2f\n",
--			average_ms(tasks[i].cpu_delay_total, tasks[i].cpu_count),
--			average_ms(tasks[i].blkio_delay_total, tasks[i].blkio_count),
--			average_ms(tasks[i].swapin_delay_total, tasks[i].swapin_count),
--			average_ms(tasks[i].freepages_delay_total, tasks[i].freepages_count),
--			average_ms(tasks[i].thrashing_delay_total, tasks[i].thrashing_count),
--			average_ms(tasks[i].compact_delay_total, tasks[i].compact_count),
--			average_ms(tasks[i].wpcopy_delay_total, tasks[i].wpcopy_count),
--			average_ms(tasks[i].irq_delay_total, tasks[i].irq_count));
-+		if (!cfg.mem_verbose_mode) {
-+			suc &= BOOL_FPRINT(out, FMT_NORMAL,
-+				average_ms(tasks[i].cpu_delay_total,
-+						   tasks[i].cpu_count),
-+				average_ms(tasks[i].blkio_delay_total,
-+						   tasks[i].blkio_count),
-+				average_ms(tasks[i].irq_delay_total,
-+						   tasks[i].irq_count),
-+				average_ms(task_total_mem_delay(&tasks[i]),
-+						   task_total_mem_count(&tasks[i])));
-+		} else {
-+			suc &= BOOL_FPRINT(out, FMT_MEMVERBOSE,
-+				average_ms(tasks[i].cpu_delay_total,
-+						   tasks[i].cpu_count),
-+				average_ms(tasks[i].blkio_delay_total,
-+						   tasks[i].blkio_count),
-+				average_ms(tasks[i].irq_delay_total,
-+						   tasks[i].irq_count),
-+				average_ms(task_total_mem_delay(&tasks[i]),
-+						   task_total_mem_count(&tasks[i])),
-+				average_ms(tasks[i].swapin_delay_total,
-+						   tasks[i].swapin_count),
-+				average_ms(tasks[i].freepages_delay_total,
-+						   tasks[i].freepages_count),
-+				average_ms(tasks[i].thrashing_delay_total,
-+						   tasks[i].thrashing_count),
-+				average_ms(tasks[i].compact_delay_total,
-+						   tasks[i].compact_count),
-+				average_ms(tasks[i].wpcopy_delay_total,
-+						   tasks[i].wpcopy_count));
-+		}
- 	}
-
- 	suc &= BOOL_FPRINT(out, "\n");
 -- 
 2.25.1
 
