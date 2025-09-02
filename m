@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-795506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC0BB3F36B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:09:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3A9B3F370
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 109C54E1DDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:09:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8329920395E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A4F2E11A6;
-	Tue,  2 Sep 2025 04:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3D22E0B6C;
+	Tue,  2 Sep 2025 04:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dr5nYrtc"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTiOXP7A"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A16821C17D;
-	Tue,  2 Sep 2025 04:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E34D33991;
+	Tue,  2 Sep 2025 04:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756786169; cv=none; b=hhlq2GCpEM2LizJIziY1oHLS+Dubhybnvjp3Jm95Y919H6x6FSBWFjrvlaTz7NSnKLa2z2b3pn9z+K5JInbodMO8rPKfNfMEulc+hilSqhzqVDDUBJFSsYiAIAOwsgkkaM84Ruy3UVvw4fDmyyxWVPEGKLgs7tkDmtxVY7hLgVc=
+	t=1756786213; cv=none; b=BeOkGrWWxQyDMNFA/Zx1X1noYOtOqY16G3Y7iJG9pkRSbjmcpUbLJD9DTmrDVUU6uGhL1dYRGxzZP0MDE93GdQiNSFwkskvlRx3nqS7/pLn2Y6G7q0DDZfVBDv2MP4qg4aJNAoMcMgfHUqb+S61/e+lKjCXHdUvD0ZsaQPd3DIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756786169; c=relaxed/simple;
-	bh=5dI+o8+/VX8vNatbzWuIyuhVC2ZOzo6CI09Rjw6XzoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAEL1xTDGoiv7552tidUfxRyUQFWx82fVb5u4sqfZHXMAEzA4PJrG51xw8EwB4QzVB76SBExDZblLsqWAoR+CxIMsFfHtOcQ8y4gf4dFYKP2vWyEH7SyLVMsD+eMssdM5HZc9mWWSBVJw0beeTZG5X4ijVNfnjLiox7KmdnKiIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dr5nYrtc; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756786158; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=G+TTJZpvM1oLnn0O3P9/SPMdGWfxxUtCQSOzuT9UnIs=;
-	b=dr5nYrtc2QD1gsaTO+mc9PWWr3cQXGdo9tGY1Fg0bcYjaZCpw3/mB4FSAnkjOryC6b4IquliWdCP4JXeGbsvNbeDY3GWWSI9DMKmD6+X9Qthij5U7l2gJ2YKsmT4WTnjqHSB3PYSxtSwLQwtGORXfsf1xz2h/bMIXmJ4TtmB1MY=
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0Wn6ArLY_1756786156 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 02 Sep 2025 12:09:17 +0800
-Date: Tue, 2 Sep 2025 12:09:16 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: James Flowers <bold.zone2373@fastmail.com>, alibuda@linux.alibaba.com,
-	sidraya@linux.ibm.com, wenjia@linux.ibm.com, mjambigi@linux.ibm.com,
-	tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, skhan@linuxfoundation.org
-Cc: linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH v2] net/smc: Replace use of strncpy on NUL-terminated
- string with strscpy
-Message-ID: <aLZt7PLarvNIedau@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20250901030512.80099-1-bold.zone2373@fastmail.com>
+	s=arc-20240116; t=1756786213; c=relaxed/simple;
+	bh=vpfYScOjakMNy+nGuXLIrD0EA6DhL55xUbZ8RW8gSgI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g8MbUoXWhUmx7X2uJT8hRUDkZce5bKFw40RdCnxFMG7MEWyseTikX5YyBzvnb0LvDWo/UCYnbslc2fc13Qwd9j42YkNTg35byMDGnLMPy6BDOLk71dqir2ZCH/sd3Ez025ZDmcZsEBQnLaQF1oU0HYalm6Su6G8Cwvf2OIH5XsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTiOXP7A; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24b13313b1bso2795705ad.2;
+        Mon, 01 Sep 2025 21:10:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756786212; x=1757391012; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=19JVbPSSMfi36C+z91aIsE+9NN7e/Je8JVocDDvdxI8=;
+        b=CTiOXP7A4gDhvWCJ++L/CCx2fT6sPbN7zuHm1pylic6CIKgKwTgQV6P49TeT424q6d
+         tIsWoy9CaB5oLZWFCdBdLZAWDClcX2VUC11fbph7HE7CIbfSBklMeRIm1Qg9jV4YoVAJ
+         96g87IvhoRLvdodPWZ/HWip050/68apOpOR3gwSNdSsy3uR/fpRx9ZF+TW1pmx62vEul
+         0ItoM40QlfGCs66CVJRSSKpu8HpZBsqoR2tzB8FSbr90jWTP28msTSUF3lr4RV5jYz9P
+         OKIb+sziRWnAFI1Sv55iDI/1n1rJiY/zGdPtSzbyD3Q7sImPQ90nervno26L3VAnu5y0
+         2wGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756786212; x=1757391012;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=19JVbPSSMfi36C+z91aIsE+9NN7e/Je8JVocDDvdxI8=;
+        b=KRZedel0oof2n4y52MciTQ5o8qJ9q+Oe5KsdZX9f9czY63W2QYldiPl400V3dI/zgK
+         OzokEmIVf4siwDDtMvQA0Vx518fNn2M7KRM8wnB9+1D9et6bYo+wYe195V1fDF0PI/EQ
+         PQZjIr1SsjQo4pyHn8wb4hPzbqpGO5yuGDn6KpCZER9d82+YXA9HRSgK4qDmLwTC6WPt
+         DrTqwDPZYn+Ec6stbgs8O14yeF//f/6Y+JovKi/I7UAB6Tqkhv/v2E7H1TOCAiiilyRY
+         vuEwECA+ctGW0GrMrb/pkiKRWYk5fbmytjoGEr2gS2YE964ZspqNMPpgn7XUAozZ/UaR
+         g6sA==
+X-Forwarded-Encrypted: i=1; AJvYcCULVNztYoUvsqRqeK3nbZJYQ++ZK1NKF0WA1L6PxiRbm1whTn+ME4WaRdqz8whJzHHITWFyoTKeCtwVnfh25hE=@vger.kernel.org, AJvYcCW7ES5MpvAasPNbR1EkODpMEB7y7MNfXXwjQ0na8wk8nKGjrsehxg7eid5KBuz9yy59P8lSgCms@vger.kernel.org, AJvYcCWNqOeOAOgHam9OawGYZ3BP4dvxyHdPgcaVopnIwRuzrGEOSiIKopdHY+EGf2oRarvl2NgUUk8cLPVOFc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCNuoflz8DqeN7phNjbLhNEjb9HxbUBByk7Cy/vYe9UAChDMcY
+	9vrif80ad78SGaWXQ28ywcENqNiPT8fYF6p2KdV6bqC1S7vIGW/Gn5m9
+X-Gm-Gg: ASbGncsL9GBXi3l/2/gOfy3PZaxsfXwIOkv+gRBrVVx0urw+/QoXCxfR86KTWhcNm0e
+	4ICyCIkZO/PLY7lRmFFmxealEtxwr/YfSBnNrTTnLEiWzP3a5q9ncM+ni6LHBDF8Ai9DgxD4Z8D
+	i6choaN6VQE3XWzyUoKDVdVOXRXUbgEWRP07K0nquFiGinR8YDcqN7jnVFm/LkY4+pnRlQQya01
+	jOxBuEyjdfFWI/NNJQVpBEfdoOdoir5fz62PjrADTCNSW2FyF1Q1/V7PDUjFc46CvZ2OzYp6Ytg
+	1C9N+KH7gjVgLGnkrFwppTWZg1N/ZWEdQIp6fqdazWc7P6PubHNzfg5yRyhZuzrDjrZBoAj4kII
+	4soFAM7E5J90J7H4dwfWYzT4Jd0MHdXFvxSf1QpbisJr/IotUAtOdpo6gelZIyA1bb2DJ8Qnalb
+	JC2kkF1SrTXhWPAPZm1uW2eYwdI/b+4kkgo1uPk49RuGZt1YvSMtbNa1M=
+X-Google-Smtp-Source: AGHT+IHqWZSv9fVE2o9FpNUE/zchbO0kWXsmmJcbNEZcGV9RobrVJC1W6rztHbdML4czeSNJPdZUSQ==
+X-Received: by 2002:a17:902:e745:b0:246:e1f3:77b2 with SMTP id d9443c01a7336-24944b65071mr121741105ad.53.1756786211765;
+        Mon, 01 Sep 2025 21:10:11 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.165])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24af84de7a4sm21250635ad.7.2025.09.01.21.10.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 21:10:11 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	Benjamin Berg <benjamin.berg@intel.com>,
+	Avraham Stern <avraham.stern@intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Rotem Kerem <rotem.kerem@intel.com>,
+	Daniel Gabay <daniel.gabay@intel.com>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] wifi: iwlwifi: Fix dentry reference leak in iwl_mld_add_link_debugfs
+Date: Tue,  2 Sep 2025 12:09:49 +0800
+Message-Id: <20250902040955.2362472-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901030512.80099-1-bold.zone2373@fastmail.com>
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-31 20:04:59, James Flowers wrote:
->strncpy is deprecated for use on NUL-terminated strings, as indicated in
->Documentation/process/deprecated.rst. strncpy NUL-pads the destination
->buffer and doesn't guarantee the destination buffer will be NUL
->terminated.
->
->Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+The debugfs_lookup() function increases the dentry reference count.
+Add missing dput() call to release the reference when the "iwlmld"
+directory already exists.
 
-Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+Fixes: d1e879ec600f ("wifi: iwlwifi: add iwlmld sub-driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mld/debugfs.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Best regards,
-Dust
-
->---
->V1 -> V2: Replaced with two argument version of strscpy
->Note: this has only been compile tested.
->
-> net/smc/smc_pnet.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
->index 76ad29e31d60..b90337f86e83 100644
->--- a/net/smc/smc_pnet.c
->+++ b/net/smc/smc_pnet.c
->@@ -450,7 +450,7 @@ static int smc_pnet_add_ib(struct smc_pnettable *pnettable, char *ib_name,
-> 		return -ENOMEM;
-> 	new_pe->type = SMC_PNET_IB;
-> 	memcpy(new_pe->pnet_name, pnet_name, SMC_MAX_PNETID_LEN);
->-	strncpy(new_pe->ib_name, ib_name, IB_DEVICE_NAME_MAX);
->+	strscpy(new_pe->ib_name, ib_name);
-> 	new_pe->ib_port = ib_port;
-> 
-> 	new_ibdev = true;
->-- 
->2.50.1
+diff --git a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
+index cc052b0aa53f..372204bf8452 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
++++ b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
+@@ -1001,8 +1001,12 @@ void iwl_mld_add_link_debugfs(struct ieee80211_hw *hw,
+ 	 * If not, this is a per-link dir of a MLO vif, add in it the iwlmld
+ 	 * dir.
+ 	 */
+-	if (!mld_link_dir)
++	if (!mld_link_dir) {
+ 		mld_link_dir = debugfs_create_dir("iwlmld", dir);
++	} else {
++		/* Release the reference from debugfs_lookup */
++		dput(mld_link_dir);
++	}
+ }
+ 
+ static ssize_t _iwl_dbgfs_fixed_rate_write(struct iwl_mld *mld, char *buf,
+-- 
+2.35.1
 
