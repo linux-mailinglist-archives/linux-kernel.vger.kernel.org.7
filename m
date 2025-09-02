@@ -1,124 +1,184 @@
-Return-Path: <linux-kernel+bounces-796395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC02EB3FFE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:18:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBC5B40046
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BA81B27CE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:18:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A822204606
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F6D1ACECE;
-	Tue,  2 Sep 2025 12:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25E22459F7;
+	Tue,  2 Sep 2025 12:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="bJ7BFzoS"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kydl/mlD"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662511A08A4
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F601A9F88;
+	Tue,  2 Sep 2025 12:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815357; cv=none; b=NX4d/SEuG3AmY6K2IUTHnWyaYFGcNZVfFvRehAyyyxYghuwv2SVlHUlZZ38Rr9hGY07dNvHTQbh78S490GXOleYf0t9ahV0wc0PuRg7eFSm+cA0laJwa952F7F1jfrdS6Ttm6q8FJTpZbKnyDTwExSeAUMrfJDAR0RD5uvwkFik=
+	t=1756815360; cv=none; b=P/Rz63AujfdfQ/ypOC8Vt0RPSQwbyXWE7lKCu6Vu1n5wtxkcGmI1cGurb7vdnxz3C0Tl6/wI9qyF45360eL7PShOXY/oHm90NyuJ3TT2Mb81oETFa/5BOYQt4wMX73idjTgg/IonQAGAWD1dLpvReh2YHumB+NKYKU9ZfTTjaos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815357; c=relaxed/simple;
-	bh=h74inSWf+5MkQxxBHG2+/mAP2BznY7GSHYbKLV6VLdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V6NT/9PFtpEwTqZ1mHI6Wn6CxPfifa8E6F6ppVg6lLT4VN5vp0lwCGS5r957/iUAf3TgvarSo1Igy6osgckicuIiS9qgkuPPZtkzGO3l6l6t6ftAW46WoqCq0/ApdcA9oBnkRflrWiSgrLMZ2zBvrBuQcPb+D/zDwJJBYu9gcTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=bJ7BFzoS; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	s=arc-20240116; t=1756815360; c=relaxed/simple;
+	bh=wcgX/ND25g46C+3//qVJGQeuiEX4k18tJpZkfsw3LzA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YBOv/hy9wTDuUXiDHToHHFhQIAerKbP3+o6VjT1KCQL/PmdhVjiaLPM9XNdk1zC/pwnP86Lauu9wwGTbjVfaeVxqcKaLhmmt7lhOqhJVBRC2Vxv9pBhrKbnbiwP7AtN+4M8coXjttfrUD+7Qf0yi8Q/+gRuSGqxSZQTpNaFsZRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kydl/mlD; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756815356;
+	bh=wcgX/ND25g46C+3//qVJGQeuiEX4k18tJpZkfsw3LzA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=kydl/mlDHGjU3q9Ui0EeiX3+eXd/aIkSsiytK3TKiV4h95c6L7cG/uM87flEsLXC4
+	 aaxQJQ+cvYnhoaisiZERVO7tJ2yF3J/twQV1k8hv/Gg1qhTjhBa3c+6kS9lFwASOkq
+	 XQT0Yl+wXg5Sy4WWupNPDa3HQtRFssu+NfQz9DfhYjHHRlPu0CdrrwdiLqzGDHfawq
+	 Gmww8VNg16zybXVMKOtS+glItvleaeEDOpZWv4YUzd8a2dljNaB1Uc+xpevUw5Z37t
+	 lDAFQW3zYSRAj7R/DRJXBhCMTPW3/TZ/6nNBpASWoA0XgBa673i+ZOGrduPf78zXMm
+	 1FimqLdXCieGA==
+Received: from localhost (unknown [82.79.138.60])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cGPpZ3Ht5z9t74;
-	Tue,  2 Sep 2025 14:15:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1756815350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SseA8gH1Kt5WU32TGkwvv/o/YEcElQ+UmctNRMOZbf4=;
-	b=bJ7BFzoSsug4kI4qguV4eSNmegRBgMhTFTaDePTehN1gBpxgKpl3Yqwh72c4wseMXxTsRv
-	/cHuMiaNZVt20b7YlCLUUyWGX1DrBAlOLdDoWOwD+gXTLpvChtQWzzy03D5SpOBmYIVarb
-	F/CTivV/oy2RlB8jndZ2JM9sDj4nWZ5hbonUl5mKFZ8pFgZpaqEg7b+VfNo+pjzcx7UhNK
-	inW+W8vW0CbdzSDhPcfeAcmxDOzpfyPIpGDrs/Ezav5MmCAqbe/ET7yx4Nnll8pGeqO1zW
-	VScd3ZCRmZFzOndRzdn4cMstxSp9Fj8mqJ7A8JD4wU/q/wfnHg2h9MZaJ2WuQg==
-Message-ID: <90cd5be7-cbe6-42c5-b0eb-bf9613047097@pankajraghav.com>
-Date: Tue, 2 Sep 2025 14:15:42 +0200
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 069C417E12A2;
+	Tue,  2 Sep 2025 14:15:55 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Tue, 02 Sep 2025 15:15:46 +0300
+Subject: [PATCH v3] usb: vhci-hcd: Prevent suspending virtually attached
+ devices
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] huge_memory: return -EINVAL in folio split functions when
- THP is disabled
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: David Hildenbrand <david@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, mcgrof@kernel.org,
- gost.dev@samsung.com, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250902084036.208921-1-kernel@pankajraghav.com>
- <qh7s3j26aac3hyzgnr2ee6byjenstxhjnlwn4qxbvz2l32ohqc@qbhdxvpnuhtp>
-Content-Language: en-US
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <qh7s3j26aac3hyzgnr2ee6byjenstxhjnlwn4qxbvz2l32ohqc@qbhdxvpnuhtp>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250902-vhci-hcd-suspend-fix-v3-1-864e4e833559@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAPHftmgC/3XNQQrCMBCF4atI1o5MR9NaV95DXKST1ARqUxINS
+ undTQuCiC7/B/PNKKIJzkRxWI0imOSi832O7Xol2Kr+YsDp3IKQJFbFDpJlB5Y1xHscTK+hdQ+
+ odCOZJEustcinQzB5XtjTObd18ebDc/mSinl9g9VvMBWAQA0iskZZSzqy7zrV+KA27K9iRhN9Q
+ FT+gShDxb6mstStbpX6hqZpegHJgtV+BQEAAA==
+X-Change-ID: 20250714-vhci-hcd-suspend-fix-7db5c25c509d
+To: Valentina Manea <valentina.manea.m@gmail.com>, 
+ Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Brian G. Merrell" <bgmerrell@novell.com>
+Cc: kernel@collabora.com, Greg Kroah-Hartman <gregkh@suse.de>, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
+The VHCI platform driver aims to forbid entering system suspend when at
+least one of the virtual USB ports are bound to an active USB/IP
+connection.
 
-On 9/2/25 13:22, Kiryl Shutsemau wrote:
-> On Tue, Sep 02, 2025 at 10:40:36AM +0200, Pankaj Raghav (Samsung) wrote:
->> From: Pankaj Raghav <p.raghav@samsung.com>
->>
->> split_huge_page_to_list_[to_order](), split_huge_page() and
->> try_folio_split() return 0 on success and error codes on failure.
->>
->> When THP is disabled, these functions return 0 indicating success even
->> though an error code should be returned as it is not possible to split a
->> folio when THP is disabled.
-> 
-> Other view is that the page is already split therefore nop.
-> 
->> Make all these functions return -EINVAL to indicate failure instead of
->> 0.
->>
->> This issue was discovered while experimenting enabling large folios
->> without THP and found that returning 0 in these functions is resulting in
->> undefined behavior in truncate operations. This change fixes the issue.
-> 
-> Could you elaborate on the undefined behaviour? I don't see it.
-> 
-> If you argue that this code should not be reachable on !THP config, add
-> WARN() there. But I don't see a value.
+However, in some cases, the detection logic doesn't work reliably, i.e.
+when all devices attached to the virtual root hub have been already
+suspended, leading to a broken suspend state, with unrecoverable resume.
 
-Little bit of context:
+Ensure the virtually attached devices do not enter suspend by setting
+the syscore PM flag.  Note this is currently limited to the client side
+only, since the server side doesn't implement system suspend prevention.
 
-I started investigating what it takes to remove large folio dependency on THP[1][2]
+Fixes: 04679b3489e0 ("Staging: USB/IP: add client driver")
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+The USB/IP Virtual Host Controller (VHCI) platform driver is expected to
+prevent entering system suspend when at least one remote device is
+attached to the virtual USB root hub.
 
-I have some non-upstream changes which enables Large block size (therefore it uses large folios) on
-systems with !CONFIG_THP.
+However, in some cases, the detection logic for active USB/IP
+connections doesn't seem to work reliably, e.g. when all devices
+attached to the virtual hub have been already suspended.  This will
+normally lead to a broken suspend state, with unrecoverable resume.
 
-I was hitting a weird stale content read error and finally ended up with this fix.
+The first patch of the series provides a workaround to ensure the
+virtually attached devices do not enter suspend.  Note this is currently
+limited to the client side (vhci_hcd) only, since the server side
+(usbip_host) doesn't implement system suspend prevention.
 
-I thought this is a self-contained patch that can already be upstream. My argument is not that this
-should not be reachable, but returning -EINVAL will do the right thing instead of returning 0, which
-means success.
+IMPORTANT:
 
-I hope it clarifies a bit. Let me know what you think.
+Please note commit aa7a9275ab81 ("PM: sleep: Suspend async parents after
+suspending children") from v6.16-rc1 introduced a regression which
+breaks the suspend cancellation and hangs the system.
 
-[1] https://lore.kernel.org/linux-mm/731d8b44-1a45-40bc-a274-8f39a7ae0f7f@lucifer.local/
-[2] https://lore.kernel.org/all/aGfNKGBz9lhuK1AF@casper.infradead.org/
---
-Pankaj
+A fix [1] has been already provided, which also landed soon after in
+v6.16-rc7 under commit ebd6884167ea ("PM: sleep: Update power.completion
+for all devices on errors").
+
+[1] https://lore.kernel.org/all/6191258.lOV4Wx5bFT@rjwysocki.net/
+---
+Changes in v3:
+- Moved all driver cleanup patches to a separate series:
+  https://lore.kernel.org/all/20250902-vhci-hcd-cleanup-v1-0-1d46247cb234@collabora.com/
+- Replaced FIXME with NOTE in the new comment block, as it refers to a
+  potential cleanup of redundant code rather than addressing a
+  functional issue
+- Rebased remaining patch onto next-20250902
+- Link to v2: https://lore.kernel.org/r/20250726-vhci-hcd-suspend-fix-v2-0-189266dfdfaa@collabora.com
+
+Changes in v2:
+- Updated cover letter to indicate the PM core fix has landed in
+  v6.16-rc7
+- Also made it clear that the patch fixing up suspend prevention only
+  applies to the client side (vhci_hcd), since the server side
+  (usbip_host) doesn't implement this functionality
+- Documented the usage of dev_pm_syscore_device() in vhci_urb_enqueue()
+- Reworked most of the cleanup patches according to the feedback
+  received from Greg
+- Link to v1: https://lore.kernel.org/r/20250717-vhci-hcd-suspend-fix-v1-0-2b000cd05952@collabora.com
+---
+ drivers/usb/usbip/vhci_hcd.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+index e70fba9f55d6a0edf3c5fde56a614dd3799406a1..0d6c10a8490c0b3fdbebbc98c856a6c0c9b477cf 100644
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -765,6 +765,17 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+ 				 ctrlreq->wValue, vdev->rhport);
+ 
+ 			vdev->udev = usb_get_dev(urb->dev);
++			/*
++			 * NOTE: A similar operation has been done via
++			 * USB_REQ_GET_DESCRIPTOR handler below, which is
++			 * supposed to always precede USB_REQ_SET_ADDRESS.
++			 *
++			 * It's not entirely clear if operating on a different
++			 * usb_device instance here is a real possibility,
++			 * otherwise this call and vdev->udev assignment above
++			 * should be dropped.
++			 */
++			dev_pm_syscore_device(&vdev->udev->dev, true);
+ 			usb_put_dev(old);
+ 
+ 			spin_lock(&vdev->ud.lock);
+@@ -785,6 +796,17 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+ 					"Not yet?:Get_Descriptor to device 0 (get max pipe size)\n");
+ 
+ 			vdev->udev = usb_get_dev(urb->dev);
++			/*
++			 * Set syscore PM flag for the virtually attached
++			 * devices to ensure they will not enter suspend on
++			 * the client side.
++			 *
++			 * Note this doesn't have any impact on the physical
++			 * devices attached to the host system on the server
++			 * side, hence there is no need to undo the operation
++			 * on disconnect.
++			 */
++			dev_pm_syscore_device(&vdev->udev->dev, true);
+ 			usb_put_dev(old);
+ 			goto out;
+ 
+
+---
+base-commit: 3db46a82d467bd23d9ebc473d872a865785299d8
+change-id: 20250714-vhci-hcd-suspend-fix-7db5c25c509d
 
 
