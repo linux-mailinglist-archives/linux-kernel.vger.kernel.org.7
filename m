@@ -1,198 +1,526 @@
-Return-Path: <linux-kernel+bounces-796855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA06B4086F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:04:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481A1B40864
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFA3F546416
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:03:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956C01883CD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7BA2E0402;
-	Tue,  2 Sep 2025 15:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451EE313E04;
+	Tue,  2 Sep 2025 15:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtxF4UWV"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BdDt7jYl"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2084.outbound.protection.outlook.com [40.107.220.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA36A2EC098
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756825423; cv=none; b=haRcMqbrN7sJj3QEHRm1WsTi/hWOLNwrCRM3DSfkfQgoSUFhUUYg8KWKlGhTZVMdIiZ0uYFBFvzaZYQwQFG2qMp8DNFjiolW/k02ybGGaiFOMPM6m5mCRBOC0lT+dBVGZp+6FP1YVzUuJHXXoJ7K9Kx/ZlHAmA21bKyTeb36qqQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756825423; c=relaxed/simple;
-	bh=P2EDErnRMKsMMVV5N3TFtUBYfdCq51q/XvrALwUpe2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ke8weOgAITRUJHDFZ0EosEn2qDIyG2V6lTBilYk3xZ7Vvny1Q3hx0w/377O90hSJ4irFAB5hb9oYGKyAI/lpmAZek2FpcIj5R0I1oI5k0aa/M9oCMNqa8o197ube8tbyRriDeRGKauXEeo+OQ54iDVJnKehDqbRO7s26xPA7Xaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VtxF4UWV; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso3179049a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756825420; x=1757430220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P2EDErnRMKsMMVV5N3TFtUBYfdCq51q/XvrALwUpe2g=;
-        b=VtxF4UWVglgW8mMNIbvSOvP2SnaxzoV9wNtJJAK2AO3PD+DbCxovqP5QpOH8I6PS2i
-         Ic50d5W8dSaBc0pJUfHOFx05azHeivxVymh1osHB+wjyzwPixB7xRt0SWB7tAN/bsaWQ
-         7EyYxmtOB6pmskpZYN+m2OmGjUzzf7YVSJAaeQwOxujKjqNWtks806XQtXwrKQyJvJ7b
-         2O/Jmssq0pFQeIOtuGrtGKV7BFupH2r88Js4DMzUWbsQ3Hc3XM+VZhzdAMoyFm1bv6GK
-         xMgPJPwXo1PmQLQIbMEBHbithd7/ZEabyn7xkIRuQGKG8t1mhPxOUID4YEUcZH6eAoe2
-         7ubw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756825420; x=1757430220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P2EDErnRMKsMMVV5N3TFtUBYfdCq51q/XvrALwUpe2g=;
-        b=wZYC5rstXh9pC7eyMU0cd6puaYbAxsoS8WcvhdzmqVpwRj2xUaV+TXYFbqiQRAz+Nn
-         ehw5+tK2TEz3i55ZlWecvA5dKVqZreO9Ij9Gpeg4xesicqr6gfNpJ1mLx3z7kRCP1ubR
-         iwt7W30dnwwnCbXicB6h24AVSTwex7McECZzZsw7OCRLpfS3kbWgDJbnLcWMqub2Q8hL
-         qcaEzCFgChAPSxukHwxV1zsN5pJTAN4dyPd+U8Ev7RT19B0yyIddwx7x36H8Wd8VjC70
-         DscEmLAMvUBDPmVY2Mx7mhVvb6HnTg2XdBmtO/TxEWPH9cto9gI5OVh6A1vHtlrhPC8V
-         ye2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVPbNc2lzmBm3eMWqd3dbAh6ItQsrXgyo5QtEn084Bh2Q83qxyx/VRjBLr8iAacXhM08ZOfevx+dn+NM3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcJUufNOycmGnC3XfdWTSzv+ZkeYjVmgQor6jXi1dQ6IYNk6AN
-	rauu6kKBAHooVHx6RxY1N2NqZ5Mgui9j+QfLr5UqZXpqlofjSXkI0TL7PNPYc11dZHnUtQAauQu
-	wctOuPIwxqh87cjSKFgOlb5uqp5bcRk4=
-X-Gm-Gg: ASbGnctze7jLfQIcwnsSB+01BQRTg7+2TEMpRgQPKsfVCAvPOPttJmEBxGrhjhmoxcp
-	n8JsEH7WkFf/6dCsXYX3s+kDXMwq0hg3Iae+KdujVfycDl2iBKPE9Zsm2HjeJfe3O5pkP5NBDvI
-	8wJwIpXeIrXMB07qouprUHHFFN2ZSS2v0DqPuh8P/TfN9yCAQIIMBkin31WKGAKRwZBIaxwjX71
-	vWMMkuxQbI8Zxh5eEof5Q==
-X-Google-Smtp-Source: AGHT+IGic/23QC4PUaC2yRhDBJYKR3DZQxhhPkpq1/vUXqTgg/aJ0G3deqGBUo4Qbc3UlNDsDUlBss+j9wTnIEZqAls=
-X-Received: by 2002:a05:6402:1e8f:b0:61c:c034:10cd with SMTP id
- 4fb4d7f45d1cf-61d26d5bddcmr10375580a12.9.1756825419732; Tue, 02 Sep 2025
- 08:03:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482752DFA26;
+	Tue,  2 Sep 2025 15:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756825424; cv=fail; b=CxA90vTOFw+6UjdvvS3TklH0u/AjpILXSnNKwIWv5Y0MtfAJ1W0o4t1UA6fpZKNOaQUMArboyJG54LbKzYxeb9ElOu4f3MxVFnUbGIQ3QljmL1Cu2Fr8nEOeef4bspdQxXiOl8/Jam/MaUSkQfVGvge1OlXwic/H56Vd8ZuQSW0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756825424; c=relaxed/simple;
+	bh=ewz4w44qG8bsdtiUORF3cJqFxzCzReNDxhy/WSoGmhg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IVoErjOF1oaI2V7wVzRN8t/5Brttv9b7AibOIWxBL54OEAAP0Hgfru58dLQi5eaeQWVG4XdR0mIv0FGxGI74ppw0DTh8v2dxkBTJAlLf7ZFQ2Z7ldx+MJSLhsotFbwoGDuiMcjVJehmKoOGIl430zVQVxxJ1w1Kh92k5G9sDWls=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BdDt7jYl; arc=fail smtp.client-ip=40.107.220.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jbf8wdE+eXTaMum8nFxu5OJ8IWlApWDZuet1tYezbXEQGjR1dIzwtLMz4QVW1MfzqCmgnP0U5tWu0E4BsNwlzKxU/141BHBJWJkfJb2FsQceRqE3gmMw2bELCIdEj9KFib3OSipKIBqpI6MdDfgLjukPhj1OYrCQX3wNOwAAbR+QHo64451iCRqbeI8cSCZ2jXot5+OSsuxaD1GDKI+SAAPnoktP6m8diYOIezYSFLAXQmISh7yi7My5EkK5lw/fkVwyqIYYge4c+nItEJMrx7Oa8YAW6MM3T+gmKVRq1QvZJWJXn33es9NXfvSk3R2PsK8Qh8oYGySR8+AB41mNIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bQW3/aY2u9o1vyBBGFhdfMivnRKVOreRPGLjsgiFn70=;
+ b=fiLZsmXkWHGDojZY+8rrH0+DNTMiktJrjJVunxqjrc6TUPzwVA6Ei7cofaoLNVdqM9ktx/tcIOE2XFEdv1hS0oBQZroUXh+W02wNVQLSyN8g/inCYoCaiZQVGvoD4X61w8LuUkWMoTEK10t7lBQhRNRQ0ICYUZ9yzl/r0oSqYt1eBCvYMUqEntEn34PDPZCNN/Uc8AE8FCY676h3FCS5YXv47WljOGjwVmOMSVJ3dY019+ryKwQn5JSr57VoUozxWoIHjt6Z2vwnNw2C8Y97N1zPu6+zTkbA1uxI5NfNzHeAPY6VfSXk3vtAGoE/lVQXtRyLQM7+TfOhHjz+GTFOhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bQW3/aY2u9o1vyBBGFhdfMivnRKVOreRPGLjsgiFn70=;
+ b=BdDt7jYlGu2TjPTLdwfsYhRgDdqsj8SrYzlS1Esv6x/qAwBjzfu3wFtWibfVZxlue4+16CTIjXxNJcbs5XwflMK/VSpiOxqWmQlFwQxSt/XkmRsfokr3HSWzJPiuDIKeLU9uQmY+Us002VOmxqAen+iejD7S6Zk09ph4M0Yl0WE=
+Received: from MW4PR04CA0349.namprd04.prod.outlook.com (2603:10b6:303:8a::24)
+ by SN7PR12MB7274.namprd12.prod.outlook.com (2603:10b6:806:2ad::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.21; Tue, 2 Sep
+ 2025 15:03:39 +0000
+Received: from CO1PEPF000042AC.namprd03.prod.outlook.com
+ (2603:10b6:303:8a:cafe::b2) by MW4PR04CA0349.outlook.office365.com
+ (2603:10b6:303:8a::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Tue,
+ 2 Sep 2025 15:03:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000042AC.mail.protection.outlook.com (10.167.243.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.14 via Frontend Transport; Tue, 2 Sep 2025 15:03:39 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
+ 2025 10:03:25 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 2 Sep
+ 2025 10:03:24 -0500
+Received: from localhost (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
+ Transport; Tue, 2 Sep 2025 10:03:23 -0500
+From: Michal Simek <michal.simek@amd.com>
+To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
+	<michal.simek@xilinx.com>, <git@xilinx.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, "open list:OPEN FIRMWARE
+ AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated
+ list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] arm64: versal-net: Describe L2/L3/LLC caches
+Date: Tue, 2 Sep 2025 17:03:10 +0200
+Message-ID: <f2ee23526349a0674149c969a2176c906e529402.1756825388.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-5-ryncsn@gmail.com>
- <39087ce8-6f6a-4998-95e4-813e265318d0@redhat.com>
-In-Reply-To: <39087ce8-6f6a-4998-95e4-813e265318d0@redhat.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 2 Sep 2025 23:03:02 +0800
-X-Gm-Features: Ac12FXyLlzKHhttNr4D3KBMcouTB4kzGccaupNNYaebeIQscQX6NJ_SHFlbVOJc
-Message-ID: <CAMgjq7C+mChdnbcrYEkKyuuRN9-THXwBdFeCVwvW_m-_CWCzvw@mail.gmail.com>
-Subject: Re: [PATCH 4/9] mm, swap: tidy up swap device and cluster info helpers
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11258; i=michal.simek@amd.com; h=from:subject:message-id; bh=ewz4w44qG8bsdtiUORF3cJqFxzCzReNDxhy/WSoGmhg=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWRsZzeouOXzuZ7lXbOC2aF/Diypp5QDp6za4a/swlG89 P6TZTtmdpSyMIhxMMiKKbJMZ9JxWPPt2lKx5ZH5MHNYmUCGMHBxCsBEuk4yMjTvZQ1t2lE0p0ZS ap+kwMtDf66/bTpZsn3r0o2OBiwnxM4x/GY3OMUYnp1WnTDB+sdFQ1WfTJ83jk8EpT/Pj5t0sHF yNTcA
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042AC:EE_|SN7PR12MB7274:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c063834-9419-4146-dd5d-08ddea31e626
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4osb2w2oWeBQzTdJZRGwDo/egoQutaEdXrhTohYEhohtlleplM8xAF5U0VWX?=
+ =?us-ascii?Q?aCv93HeFGCUrU4hBT9f4WQGrze/aVCraB+JghDXsrNNVtWeWyyRFgJWYT3gn?=
+ =?us-ascii?Q?4CCOa9Ch3UhfLGLQbPdjXtGo05LgqXb86pAWa3zFnypI2NbsHnIfFo+neunA?=
+ =?us-ascii?Q?cO/zw8k6OaJ+2GyxgpFdN9enIBw0yfvwKH4Zn/dtVrqH5ReuP/K1nstEjWLA?=
+ =?us-ascii?Q?tqJz7R9CCATvaWDMUDxb0Q1S3DCT3k5V+wkQzgZnGMFXiLforRlCjCHIMwnh?=
+ =?us-ascii?Q?kSts5C7vKGsahJOeInM2kgUFplHJtxdjqgkFLd0uTRvZbIN7hQMepyN51dQm?=
+ =?us-ascii?Q?41+yf+0IMDpi+tXiaZpSPNQIKyqQfhcgH7g2O1xd18/5cl5FBSwnxYgPG794?=
+ =?us-ascii?Q?KqgrixzIR8FwqiVTb9dZixXUTZRbbUOM66C58StrWxgj2WY1oEvYJGdS7P80?=
+ =?us-ascii?Q?M/Bw38nixuNimvT/ryJvAOn+rYfyymTuWCaIcvkXv96hZEbektDeFhAQ8IYx?=
+ =?us-ascii?Q?uoLuKEEBFh2/RqhPx81LBi8h0bCqvoCfNdE43OGYna7d05iJ5dmj4JTyk29j?=
+ =?us-ascii?Q?s1zOT2jiFZL6Azn0hHOKZPKg5+FlVztgsrSaupKCijJzV3MkirnUvBFhrCDT?=
+ =?us-ascii?Q?20s1VOGDGzQG4xCSW1TaeUgzWIzaRphrvDyX6UB1gFlx7N4JCPPbCwqTVVSc?=
+ =?us-ascii?Q?NELJLa9bF6NToaJKAxciEJGPlcGM12EXf1TXABH58OcMyt8P+FTxx0iZ2Svq?=
+ =?us-ascii?Q?OBGozYVm9DIWjVi4ffFDGQ82dmdE4kh6cbSZ+uqFkKlhSHyrbPviavh/snQq?=
+ =?us-ascii?Q?taCPFsUy4OwoW0g1YLzy0EOXE1nRxZo23fpizEVdi2Vgbw1VwK1NE/gZQjvF?=
+ =?us-ascii?Q?P6YBPkTNLcwxeQ4cS3Z1dMhRJ2rVxJOkAel5QCFcwCKbZvlcHlC53A8ClTey?=
+ =?us-ascii?Q?/hXifz+JMWv49RGuA3LtI3/fSdjR2tv9/0It1tXiGOMYiSvGqCVWgubJ9FmK?=
+ =?us-ascii?Q?HNrkpY6zzyQn7H+/qr5rzT8Swc3ZccW0+e4o4q291YBcQJ0zuLA+YpzT0Jar?=
+ =?us-ascii?Q?xYhOlLOy19az3nq2W+CY17F5ziVJGLZv3/Tkb8VFk9EqtnWVdDYWZjmFtmyi?=
+ =?us-ascii?Q?vbVK/OWI4rija0qhpmjsNV5Fjb/XsP4KVj/ctP+ayUk+gXqYpRroZsQKE65d?=
+ =?us-ascii?Q?lfmhigmBhC18yz+L8Vt6LhNlV78ER52tU+43nq/XT/CnOlB0TDUCfvZKoBgj?=
+ =?us-ascii?Q?FqxhnbI6Y4Rr+M+8aWRioWbbrh4QyDG8Jq8U7pQI96shUFyFtz2xVuKL6+e1?=
+ =?us-ascii?Q?Lz0+cxXI4suAfcRVy88llAu44uBE9UVNqK+YNecIeRTzy/FQ457SOicAIR+o?=
+ =?us-ascii?Q?1eV/68YCCcBd/fcz+LDiEFUqehqSHwf4KGjaQzwLDv2kGrzwJL+tPX3INQ0a?=
+ =?us-ascii?Q?K7fgXBJGaoq2f7SqOAoo7F5uOoI4pa4gE9xfiFGVKfEOOaIdGZY3xDznZ5VH?=
+ =?us-ascii?Q?KelYk1xpuXH441k94owbxqldwCwj6rzzNd2t?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 15:03:39.0731
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c063834-9419-4146-dd5d-08ddea31e626
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042AC.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7274
 
-On Tue, Sep 2, 2025 at 10:14=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 22.08.25 21:20, Kairui Song wrote:
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > swp_swap_info is the most commonly used helper for retrieving swap info=
-.
-> > It has an internal check that may lead to a NULL return value, but
-> > almost none of its caller checks the return value, making the internal
-> > check pointless. In fact, most of these callers already ensured the
-> > entry is valid and never expect a NULL value.
-> >
-> > Tidy this up and shorten the name.
->
-> Shorter !=3D better. But yes, "swp_swap" was a mess.
->
-> > If the caller can make sure the
-> > swap entry/type is valid and the device is pinned, use the new introduc=
-ed
-> > swp_info/swp_type_info instead. They have more debug sanity checks and
-> > lower overhead as they are inlined.
-> >
-> > Callers that may expect a NULL value should use
-> > swp_get_info/swp_type_get_info instead.
->
-> High-level comments:
->
-> 1) I hate the "swp" vs. "swap". Is that a valuable distinction or could
-> we just convert it to "swap" as we touch it?
+Add missing cache layout description.
 
-Totally agree. I was just blindly following the old style. It's kind
-of confusing indeed.
+Signed-off-by: Michal Simek <michal.simek@amd.com>
+---
 
->
-> You're converting swap_type_to_swap_info() to swp_type_to_swap_info(),
-> and I am not sure if that is the right direction :)
->
->
-> 2) Can we just call it "swap_entry" when we work on a swap entry and
-> "swap_type" when we work on a swap type in the function name?
->
-> swp_info() is a rather bad function name.
->
->
-> 3) I am not sure about "to" -> "get". "to" is much more readable in that
-> context and consistent.
->
->
-> 4) swp_info[] vs. swap_info() gah.
->
->
-> I would just have done:
->
-> swap_type_to_info(int type)
-> __swap_type_to_info(int type)
-> swap_entry_to_info(swp_entry_t entry)
-> __swap_entry_to_info(swp_entry_t entry)
->
-> __ are the expert functions where we don't expect NULL.
->
+ arch/arm64/boot/dts/xilinx/versal-net.dtsi | 248 +++++++++++++++++++++
+ 1 file changed, 248 insertions(+)
 
-Thanks a lot for the suggestions! I also like the idea of using "__"
-to seperate the non-NULL version a lot and implis the caller have to
-careful.
+diff --git a/arch/arm64/boot/dts/xilinx/versal-net.dtsi b/arch/arm64/boot/dts/xilinx/versal-net.dtsi
+index c037a7819967..62861138c8f4 100644
+--- a/arch/arm64/boot/dts/xilinx/versal-net.dtsi
++++ b/arch/arm64/boot/dts/xilinx/versal-net.dtsi
+@@ -104,6 +104,18 @@ cpu0: cpu@0 {
+ 			reg = <0>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_00>;
++			l2_00: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_0>;
++			};
+ 		};
+ 		cpu100: cpu@100 {
+ 			compatible = "arm,cortex-a78";
+@@ -112,6 +124,18 @@ cpu100: cpu@100 {
+ 			reg = <0x100>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_01>;
++			l2_01: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_0>;
++			};
+ 		};
+ 		cpu200: cpu@200 {
+ 			compatible = "arm,cortex-a78";
+@@ -120,6 +144,18 @@ cpu200: cpu@200 {
+ 			reg = <0x200>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_02>;
++			l2_02: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_0>;
++			};
+ 		};
+ 		cpu300: cpu@300 {
+ 			compatible = "arm,cortex-a78";
+@@ -128,6 +164,18 @@ cpu300: cpu@300 {
+ 			reg = <0x300>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_03>;
++			l2_03: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_0>;
++			};
+ 		};
+ 		cpu10000: cpu@10000 {
+ 			compatible = "arm,cortex-a78";
+@@ -136,6 +184,18 @@ cpu10000: cpu@10000 {
+ 			reg = <0x10000>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_10>;
++			l2_10: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_1>;
++			};
+ 		};
+ 		cpu10100: cpu@10100 {
+ 			compatible = "arm,cortex-a78";
+@@ -144,6 +204,18 @@ cpu10100: cpu@10100 {
+ 			reg = <0x10100>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_11>;
++			l2_11: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_1>;
++			};
+ 		};
+ 		cpu10200: cpu@10200 {
+ 			compatible = "arm,cortex-a78";
+@@ -152,6 +224,18 @@ cpu10200: cpu@10200 {
+ 			reg = <0x10200>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_12>;
++			l2_12: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_1>;
++			};
+ 		};
+ 		cpu10300: cpu@10300 {
+ 			compatible = "arm,cortex-a78";
+@@ -160,6 +244,18 @@ cpu10300: cpu@10300 {
+ 			reg = <0x10300>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_13>;
++			l2_13: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_1>;
++			};
+ 		};
+ 		cpu20000: cpu@20000 {
+ 			compatible = "arm,cortex-a78";
+@@ -168,6 +264,18 @@ cpu20000: cpu@20000 {
+ 			reg = <0x20000>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_20>;
++			l2_20: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_2>;
++			};
+ 		};
+ 		cpu20100: cpu@20100 {
+ 			compatible = "arm,cortex-a78";
+@@ -176,6 +284,18 @@ cpu20100: cpu@20100 {
+ 			reg = <0x20100>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_21>;
++			l2_21: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_2>;
++			};
+ 		};
+ 		cpu20200: cpu@20200 {
+ 			compatible = "arm,cortex-a78";
+@@ -184,6 +304,18 @@ cpu20200: cpu@20200 {
+ 			reg = <0x20200>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_22>;
++			l2_22: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_2>;
++			};
+ 		};
+ 		cpu20300: cpu@20300 {
+ 			compatible = "arm,cortex-a78";
+@@ -192,6 +324,18 @@ cpu20300: cpu@20300 {
+ 			reg = <0x20300>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_23>;
++			l2_23: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_2>;
++			};
+ 		};
+ 		cpu30000: cpu@30000 {
+ 			compatible = "arm,cortex-a78";
+@@ -200,6 +344,18 @@ cpu30000: cpu@30000 {
+ 			reg = <0x30000>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_30>;
++			l2_30: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_3>;
++			};
+ 		};
+ 		cpu30100: cpu@30100 {
+ 			compatible = "arm,cortex-a78";
+@@ -208,6 +364,18 @@ cpu30100: cpu@30100 {
+ 			reg = <0x30100>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_31>;
++			l2_31: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_3>;
++			};
+ 		};
+ 		cpu30200: cpu@30200 {
+ 			compatible = "arm,cortex-a78";
+@@ -216,6 +384,18 @@ cpu30200: cpu@30200 {
+ 			reg = <0x30200>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_32>;
++			l2_32: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_3>;
++			};
+ 		};
+ 		cpu30300: cpu@30300 {
+ 			compatible = "arm,cortex-a78";
+@@ -224,7 +404,75 @@ cpu30300: cpu@30300 {
+ 			reg = <0x30300>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
++			next-level-cache = <&l2_33>;
++			l2_33: l2-cache {
++				compatible = "cache";
++				cache-level = <2>;
++				cache-size = <0x80000>; /* 512kB */
++				cache-line-size = <64>;
++				/* 8 ways set associativity */
++				/* cache_size / (line_size/associativity) */
++				cache-sets = <1024>;
++				cache-unified;
++				next-level-cache = <&l3_3>;
++			};
++		};
++
++		l3_0: l3-0-cache { /* cluster private */
++			compatible = "cache";
++			cache-level = <3>;
++			cache-size = <0x200000>; /* 2MB */
++			cache-line-size = <64>;
++			/* 16 ways set associativity */
++			/* cache_size / (line_size/associativity) */
++			cache-sets = <2048>;
++			cache-unified;
++			next-level-cache = <&llc>;
++		};
++
++		l3_1: l3-1-cache { /* cluster private */
++			compatible = "cache";
++			cache-level = <3>;
++			cache-size = <0x200000>; /* 2MB */
++			cache-line-size = <64>;
++			/* 16 ways set associativity */
++			/* cache_size / (line_size/associativity) */
++			cache-sets = <2048>;
++			cache-unified;
++			next-level-cache = <&llc>;
++		};
++
++		l3_2: l3-2-cache { /* cluster private */
++			compatible = "cache";
++			cache-level = <3>;
++			cache-size = <0x200000>; /* 2MB */
++			cache-line-size = <64>;
++			/* 16 ways set associativity */
++			/* cache_size / (line_size/associativity) */
++			cache-sets = <2048>;
++			cache-unified;
++			next-level-cache = <&llc>;
++		};
++
++		l3_3: l3-3-cache { /* cluster private */
++			compatible = "cache";
++			cache-level = <3>;
++			cache-size = <0x200000>; /* 2MB */
++			cache-line-size = <64>;
++			/* 16 ways set associativity */
++			/* cache_size / (line_size/associativity) */
++			cache-sets = <2048>;
++			cache-unified;
++			next-level-cache = <&llc>;
++		};
++
++		llc: l4-cache { /* LLC inside CMN */
++			compatible = "cache";
++			cache-level = <4>;
++			cache-size = <0x1000000>; /* 16MB */
++			cache-unified;
+ 		};
++
+ 		idle-states {
+ 			entry-method = "psci";
+ 
+-- 
+2.43.0
 
-My concern was that names will be getting very long in later commits
-following this convention. Which is also the reason I want to shorten
-them here.
-
-A lot of SWAP relate operations will be cluster based, so it will be
-very common to get offset or the swap cluster from a swap entry.
-We will end up having a really long name like
-__swap_entry_to_cluster_offset (convert swap entry to offset inside a
-cluster).
-
-Since we already have the swap entry type called `swp_entry_t` and
-helprs like `swp_offset` and 'swp_swap_info' that convert an entry to
-other swap things, so I thought that anything converts swap entry /
-offset to others are named `swp_*`.
-
-Maybe a bad practise here, we can fix it while at it, or at least no
-longer introduce more confusing names.
-
-I can follow this suggested style, will it be a good idea if we have
-following set of helpers?
-
-For swap cluster and swap device (swap_info_struct):
-swap_type_to_info(int)
-__swap_type_to_info(int)
-swap_entry_to_info(swp_entry_t)
-__swap_entry_to_info(swp_entry_t)
-__swap_offset_to_cluster(struct swap_info_struct *, pgoff_t)
-__swap_entry_to_cluster(swp_entry_t)
-
-And for offsets, we still use:
-swp_offset() (Existing helper)
-swp_cluster_offset()
-
-Now all swp_* helpers are pure arithmetic operations (we just renamed
-swp_swap_info which seems the only exception). Is this better?
-I'm open to suggestions as I'm really bad at naming things :)
+base-commit: 3160658ea2c4dd09a1d68918271177cf55437a8f
 
