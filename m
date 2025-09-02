@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-796960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE301B40A0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:01:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B31B40A10
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAF544CD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:01:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9874254518E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D915321F3F;
-	Tue,  2 Sep 2025 16:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4F0334380;
+	Tue,  2 Sep 2025 16:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="U/2B39No"
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F97Q3CjC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C5D2264C6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A6E3126DC;
+	Tue,  2 Sep 2025 16:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756828903; cv=none; b=LptK0hw9k3yzBX9Qp//3d24rjxL7NE5AJVzj6HoQgk96RGd00CHTKKQQesk7lOvkVXfkqEjCGmd+sWK5nmgqZJSy5oCx00Rq3tITPPJaRCdbuxpzqgAkIjFE4vrFYVlEGMAEigJzCqW6IfJtwJiHpNvZaUZomgRQkSAt/EnvUXo=
+	t=1756828946; cv=none; b=OQ63ltmXqU5OMzlL+r5e7Ci4WnP5hGjia20pJ8s3Q7td/WYrcPo30o2cojzlVdmGik3yuVdBFVpG2kv6Dqm4KxBrN4eLDugdN1UPyz+zsaCb9hRpZT3n5zEd1E3zo9N0mOr7+fxjcnDb9/0f79OXGovVUhJ7i43UgkEXrKBNbiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756828903; c=relaxed/simple;
-	bh=WPwnkCADAFqBZBB+NCarAyH2NuVqr+4VA69iZQddWaQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l830gYiKSmC6aQJKJP0M3apaiGkhhcoxc709Faj+XfzWGfYClMQAHcB9Y5B9+LpdGoNt3rAaaGC6WH3NSy4lFOhyeS8vsowzl8ZG8I/zZ5IYB5UBKvRW/nLeuHvCTH/f3EqXztkMkXoqR3q1SbkqRF9CR8jczW2jWk0Hs1plrcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=U/2B39No; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=ePrwZDq7iaPQ889D0c8BezIihziwKkN83oj/ujEEnJE=;
-	b=U/2B39NofmVI66J9TxMYYpzNFsjV4TTuudDhk1PnZ1o9JE3/h0emTwmaNPyjlTiwaPVMePSRD
-	c/2FxUyN0rRSTLTFP2M++O8NiydXUOk7w4A1fMmEG5fGXX2GAAOpDcgojy2VmHo+k4vZcNs8wId
-	pIELLP+z0qgSDKqo79rBOgw=
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cGVpl6f3gzYlSDN;
-	Wed,  3 Sep 2025 00:01:19 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
- 2025 00:01:34 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
- 2025 00:01:33 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <feng.han@honor.com>,
-	<fengbaopeng@honor.com>, <liam.howlett@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <liulu.liu@honor.com>,
-	<lorenzo.stoakes@oracle.com>, <rientjes@google.com>,
-	<shakeel.butt@linux.dev>, <surenb@google.com>, <tglx@linutronix.de>,
-	<tianxiaobin@honor.com>, <zhongjinji@honor.com>
-Subject: Re: [PATCH v6 1/2] mm/oom_kill: Do not delay oom reaper when the victim is frozen
-Date: Wed, 3 Sep 2025 00:01:29 +0800
-Message-ID: <20250902160129.13862-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <aLWmf6qZHTA0hMpU@tiehlicka>
-References: <aLWmf6qZHTA0hMpU@tiehlicka>
+	s=arc-20240116; t=1756828946; c=relaxed/simple;
+	bh=lB5D9KsRYs7OgNcYyTVZgRLKvveUEdtkvlhi3ouxmPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Io65Du0VVoSucUu+OOPRj5qh2hkxCLoZXhFoeBYA5G2EVvpmIbSarSagnUpwPbNc4bcn1YHqxuNg8AdIRtIJqNeaja2l3JaRZH8aI79fGOJCgI6O73DpBfOPhIEQcsHtRS260sg7qShZyY96ABsxkUoaRi5o7suiObS+Ic7L7CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F97Q3CjC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C8AC4CEED;
+	Tue,  2 Sep 2025 16:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756828945;
+	bh=lB5D9KsRYs7OgNcYyTVZgRLKvveUEdtkvlhi3ouxmPQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F97Q3CjCNHrjLkc3GoenPkugZEIaxXX9uHGFp12FamsDGTJNfPBdu27cqKcSHxB7U
+	 cXfSZJW/NxgsyZXijUvQZ6jByb4hxmen47YCp+gg5+UAtMdkaIHfbR/spG3AiaXMvQ
+	 JVa266jJh/yU2N+ejEnVOVG++SQsmojoVwp6EteNxU32OhegVQEhzGYcmKoWhBI2Yh
+	 f8RVRersUBQSJTDHNvX/WhBl9nrrpgYvlBRLHxhEAbVBRT32rfvGHVf8DgqoiX214h
+	 yOFBc8FbBremLDrp69OfnInvpoKlWrbcwGgha5kE+rLtl4y99Zm/PJAMPVXCO2xmlS
+	 KXRSkkl8f6QsA==
+Message-ID: <4806391a-1040-4baf-b996-91f1f79fbd70@kernel.org>
+Date: Tue, 2 Sep 2025 18:02:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a018.hihonor.com
- (10.68.17.250)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: dwmac: Increase 'maxItems'
+ for 'interrupts' and 'interrupt-names'
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+ Jose Abreu <joabreu@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250902001302.3823418-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250902001302.3823418-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250902-spirited-congenial-stingray-f8aff7@kuoka>
+ <CA+V-a8uy++vzYh5956X2Dpv2Low5uAK+FRTONaP4Nc3FMty6Bw@mail.gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CA+V-a8uy++vzYh5956X2Dpv2Low5uAK+FRTONaP4Nc3FMty6Bw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > Sorry, I found that it doesn't work now (because I previously tested it by
-> > simulating OOM, which made testing easier but also caused the mistake. I will
-> > re-run the new test). Calling __thaw_task in mark_oom_victim will change the
-> > victim's state to running. However, other threads are still in the frozen state,
-> > so the process still can't exit. We should update it again by moving __thaw_task
-> > to after frozen (this way, executing __thaw_task and frozen in the same function
-> > looks more reasonable). Since mark_oom_victim and queue_oom_reaper always appear
-> > in pairs, this won't introduce any risky changes.
+On 02/09/2025 17:43, Lad, Prabhakar wrote:
 > 
-> Hmm, I must have completely forgot that we are actually thawing the
-> frozen task! That means that the actual argument for not delaying the
-> oom reaper doesn't hold.
-> Now I do see why the existing implementation doesn't really work as you
-> would expect though. Is there any reason why we are not thawing the
-> whole process group? I guess I just didn't realize that __thaw_task is
-> per thread rather than per process back then when I have introduced it.
+>> You also need to constrain other devices, because now one Renesas
+>> binding gets 19 interrupts without any explanation. Please rethink how
+>> you split your patches...
+>>
+> I see you have already taken care of this, thank you.
 
-Previously, I didn't know why we needed to call __thaw_task() in 
-mark_oom_victim(). Now I understand.
+No, I am not talking about that. I am talking about
+renesas,rzv2h-gbeth.yaml, which with this patch gets 19 interrupts.
 
-> Because thread specific behavior makes very little sense to me TBH.
-> So rather than plaing with __thaw_task placement which doesn't really
-> make much sense wrt to delaying the reaper we should look into that
-> part.
-> 
-> Sorry, I should have realized earlier when proposing that.
-
-Is this modification acceptable?
-
-This change only thaws the process previously identified as the victim,
-and does not thaw the process being killed in for_each_process.
-
-The reason is that the process being killed in for_each_process is usually
-a vfork process, which is only temporary and rarely encountered.
-
-@@ -772,12 +773,18 @@ static void mark_oom_victim(struct task_struct *tsk)
-                mmgrab(tsk->signal->oom_mm);
-
-        /*
--        * Make sure that the task is woken up from uninterruptible sleep
-+        * Make sure that the process is woken up from uninterruptible sleep
-         * if it is frozen because OOM killer wouldn't be able to free
-         * any memory and livelock. freezing_slow_path will tell the freezer
--        * that TIF_MEMDIE tasks should be ignored.
-+        * that TIF_MEMDIE thread should be ignored.
-         */
--       __thaw_task(tsk);
-+       rcu_read_lock();
-+       for_each_thread(tsk, t) {
-+               set_tsk_thread_flag(t, TIF_MEMDIE);
-+               __thaw_task(t);
-+       }
-+       rcu_read_unlock();
-+
-        atomic_inc(&oom_victims);
-        cred = get_task_cred(tsk);
-        trace_mark_victim(tsk, cred->uid.val);
+Best regards,
+Krzysztof
 
