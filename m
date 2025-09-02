@@ -1,167 +1,164 @@
-Return-Path: <linux-kernel+bounces-796871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BC5B408A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:12:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CCAB408A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 596AB545208
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:11:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655FE1B63D2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D44731AF1A;
-	Tue,  2 Sep 2025 15:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383AD2DFF1D;
+	Tue,  2 Sep 2025 15:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpRwT66F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fha+upIT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C883148CD;
-	Tue,  2 Sep 2025 15:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EF5279DDD;
+	Tue,  2 Sep 2025 15:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756825897; cv=none; b=J8sw/TRROML6zoVL0uEjmmKkggp0TcrArhcxVqMLzV1OGqRaAB/ESpheFWT81q757SPbVHIJ6Wk8ChsqwBrmnHiUWtFobdoaNYPq42Ux8zelRgPJohz8+p2nmkYlLBKiAdMYiGfTu54+69ZB2FpckM4eZWefBBt7jsvDyA9JAW0=
+	t=1756825958; cv=none; b=Ptvdn4z4sQPZiX2tp1Ei8QeYtQWL1jG4SVt+DvAWX6GAnHL4Nr/f3xr5EYnethHE0ia/u1dO3oTarYTXDmfdNtiO7Hy/XbtmgEEVgUeFIAoeVV716F5WWsQ4R0G/jpAw+8X/Xwelq8G4YJ1CnSjdtsgdH40iFLowVBMW4z7WpV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756825897; c=relaxed/simple;
-	bh=+9HP5l15oB0iuIxiMajn5CQ9jjlvaMDVkmHUr0VRnPE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=RlplHV/dKq7PXiN0t/LVELX17FzWyRFB/+J+kQML+KkoD/hLfiorgh7Mu4gjYquNdKUm0FP55OqcJ/DLulZ3ntrxWpET13WG9u62DzvbKHznli8lW6wQb+e4mIOYWIvyVkM7I6lHgn5lbPEpC6lRbMQhoekPFHzg/sD/GE2Taks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpRwT66F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29226C4CEED;
-	Tue,  2 Sep 2025 15:11:35 +0000 (UTC)
+	s=arc-20240116; t=1756825958; c=relaxed/simple;
+	bh=Qm0MENDGoBpJreb7usssnkk4Erhkc9mDyI1kYmenU/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fnVME+YCRqmN9/6VQiCXCg2/43LkAZbCdrolclxuurwliIcPlUX68uPQp0qMZAo8nbvK9BRQ/Dz3wT8m/lQpwVgnl7B16ZTK/ufYJi6+JBXTcLQInZqvfjjeWj78WYE95xyF/+K7v3ngCGX2egeJnIHfqg/02gQAYEgN54C8IXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fha+upIT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB76CC4CEED;
+	Tue,  2 Sep 2025 15:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756825896;
-	bh=+9HP5l15oB0iuIxiMajn5CQ9jjlvaMDVkmHUr0VRnPE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IpRwT66FVpw1fiRZdgU1RMfO19xdpyqn8bSTkI6PIMtvG7dycONNDE/Hj5UllIENt
-	 t6vLb93qRvUYZX4SrQh3N3fXMoYrkRdo3prO2qDbEP32kebZV6o2saVtjSsFpoS5xh
-	 Vnltxi2p7JV8Nrz8twUDqAqlvWK/2P5+NO9IJWEFaHnCOkQx6ia4f40yhbtLQDKvoG
-	 5v9z136RTvBVms54J7DXV0hagCA2zHfJ7pfoFNIB6r9anPOVao7EMEHpNarLxtjQdj
-	 Ck8KZR19EvV7hbyfzwZZlJABS2UIL988ptmnFnqKtit1BO9BOO9xr3t2GSRZpCxfCB
-	 MvQYX0PruiYbg==
-Date: Wed, 3 Sep 2025 00:11:33 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
- <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo
- <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar
- <mingo@kernel.org>
-Subject: Re: [PATCH perf/core 01/11] uprobes: Add unique flag to uprobe
- consumer
-Message-Id: <20250903001133.8a02cf5db5ab4fd23c9a334f@kernel.org>
-In-Reply-To: <20250902143504.1224726-2-jolsa@kernel.org>
-References: <20250902143504.1224726-1-jolsa@kernel.org>
-	<20250902143504.1224726-2-jolsa@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756825957;
+	bh=Qm0MENDGoBpJreb7usssnkk4Erhkc9mDyI1kYmenU/k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fha+upITUjR1W0/UPbGo5pqDEYYHq2VFch/hzfP45Cc4DUFZMu/U1HZBKmEZDtzCu
+	 iBDx0UtAvG1Se/1xc+9eCfwZyjV/3B8QlHOzcSsDpxMRslOobnPh84NMMkD/x0Dv/g
+	 xRaeCkokcz/HiStL81OWybnmfeke8xbUFORD+3qh2QF881mhkN4aMXU+IZJA96/1Sp
+	 GT7K7ZaoP9kdQDHPvQM6s9ZrnoBcNhmkS02rGDVOVe7xI1V4vOYoP+D+XPHVNyGzze
+	 eB8+jAUjKEOBQZvHIRChGOBN8u5j/+qtdlLin+slLI13vbKI95OGhjjit3j4/QyXxt
+	 xBDYlmqE/1jCA==
+Message-ID: <1034c70a-da67-4914-b23c-8d006b7611bf@kernel.org>
+Date: Tue, 2 Sep 2025 17:12:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 12/16] pinctrl: qcom: use generic pin function helpers
+To: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Alexey Klimov <alexey.klimov@linaro.org>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ NXP S32 Linux Team <s32@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Tony Lindgren <tony@atomide.com>, Haojian Zhuang
+ <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Mark Brown <broonie@kernel.org>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev,
+ linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-12-bb091daedc52@linaro.org>
+ <aLbt2euqYQM5xXuZ@smile.fi.intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aLbt2euqYQM5xXuZ@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue,  2 Sep 2025 16:34:54 +0200
-Jiri Olsa <jolsa@kernel.org> wrote:
-
-> Adding unique flag to uprobe consumer to ensure it's the only consumer
-> attached on the uprobe.
+On 02/09/2025 15:15, Andy Shevchenko wrote:
+> On Tue, Sep 02, 2025 at 01:59:21PM +0200, Bartosz Golaszewski wrote:
+>>
+>> With the pinmux core no longer duplicating memory used to store the
+>> struct pinfunction objects in .rodata, we can now use the existing
+>> infrastructure for storing and looking up pin functions in qualcomm
+>> drivers. Remove hand-crafted callbacks.
 > 
-> This is helpful for use cases when consumer wants to change user space
-> registers, which might confuse other consumers. With this change we can
-> ensure there's only one consumer on specific uprobe.
-
-nit: Does this mean one callback (consumer) is exclusively attached?
-If so, "exclusive" will be better wording?
-
-The logic looks good to me.
-
-Thanks,
-
+> ...
 > 
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  include/linux/uprobes.h |  1 +
->  kernel/events/uprobes.c | 30 ++++++++++++++++++++++++++++--
->  2 files changed, 29 insertions(+), 2 deletions(-)
+>> +	for (i = 0; i < soc_data->nfunctions; i++) {
+>> +		func = &soc_data->functions[i];
+>> +
+>> +		ret = pinmux_generic_add_pinfunction(pctrl->pctrl, func, NULL);
+>> +		if (ret < 0)
 > 
-> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> index 08ef78439d0d..0df849dee720 100644
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -60,6 +60,7 @@ struct uprobe_consumer {
->  	struct list_head cons_node;
->  
->  	__u64 id;	/* set when uprobe_consumer is registered */
-> +	bool is_unique; /* the only consumer on uprobe */
->  };
->  
->  #ifdef CONFIG_UPROBES
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 996a81080d56..b9b088f7333a 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1024,14 +1024,35 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
->  	return uprobe;
->  }
->  
-> -static void consumer_add(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> +static bool consumer_can_add(struct list_head *head, struct uprobe_consumer *uc)
-> +{
-> +	/* Uprobe has no consumer, we can add any. */
-> +	if (list_empty(head))
-> +		return true;
-> +	/* Uprobe has consumer/s, we can't add unique one. */
-> +	if (uc->is_unique)
-> +		return false;
-> +	/*
-> +	 * Uprobe has consumer/s, we can add nother consumer only if the
-> +	 * current consumer is not unique.
-> +	 **/
-> +	return !list_first_entry(head, struct uprobe_consumer, cons_node)->is_unique;
-> +}
-> +
-> +static int consumer_add(struct uprobe *uprobe, struct uprobe_consumer *uc)
->  {
->  	static atomic64_t id;
-> +	int ret = -EBUSY;
->  
->  	down_write(&uprobe->consumer_rwsem);
-> +	if (!consumer_can_add(&uprobe->consumers, uc))
-> +		goto unlock;
->  	list_add_rcu(&uc->cons_node, &uprobe->consumers);
->  	uc->id = (__u64) atomic64_inc_return(&id);
-> +	ret = 0;
-> +unlock:
->  	up_write(&uprobe->consumer_rwsem);
-> +	return ret;
->  }
->  
->  /*
-> @@ -1420,7 +1441,12 @@ struct uprobe *uprobe_register(struct inode *inode,
->  		return uprobe;
->  
->  	down_write(&uprobe->register_rwsem);
-> -	consumer_add(uprobe, uc);
-> +	ret = consumer_add(uprobe, uc);
-> +	if (ret) {
-> +		put_uprobe(uprobe);
-> +		up_write(&uprobe->register_rwsem);
-> +		return ERR_PTR(ret);
-> +	}
->  	ret = register_for_each_vma(uprobe, uc);
->  	up_write(&uprobe->register_rwsem);
->  
-> -- 
-> 2.51.0
+> Why not simply
 > 
+> 		if (ret)
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Because existing code is as readable? This is just some serious
+nitpicking which is not actually helping at all at v7.
+
+Best regards,
+Krzysztof
+
 
