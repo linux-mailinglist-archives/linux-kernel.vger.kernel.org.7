@@ -1,120 +1,162 @@
-Return-Path: <linux-kernel+bounces-796185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A10B3FD01
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:50:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCD3B3FD06
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE321885147
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04231892DE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC4A2F5303;
-	Tue,  2 Sep 2025 10:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1F82F5332;
+	Tue,  2 Sep 2025 10:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="DE2kIVNo";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="i/3J7Uku"
-Received: from a7-19.smtp-out.eu-west-1.amazonses.com (a7-19.smtp-out.eu-west-1.amazonses.com [54.240.7.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BqjzIpA/"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A68A28031D;
-	Tue,  2 Sep 2025 10:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361272F5303;
+	Tue,  2 Sep 2025 10:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756810246; cv=none; b=ZKmXH4I+Gm96UWO21qbd6lKydRTEYXC1kuamAYAWABDW7NPP77r/Lzuluu0ne/eRGjELW7DPCVwLBjaSH8atoa2oo8rY0238zjYarMQXvleNKRfcBvqGj3/ZgGfCGUgn37heFYEemrhQliuqEofPbOUTFqPPxtMHEw7egpRsYwM=
+	t=1756810318; cv=none; b=Qn1Y5HV5GMZQhab5bsgSOX4yFI5VgJkJ/3jzJU19ZWC/GHZSLgT/XL41O+KRm85GD4RrGXckoxhSlaw+XzfhP4oMhcuD2KkUah2gYTdeiJo8c14aUiZUMVP1o57XUsjv03cImAWmCvjOVSubBR4iH+qsn7npj3HhifiBd2DxYkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756810246; c=relaxed/simple;
-	bh=1qckQvzwlWC/fKlkJTiN3ZnCnQ5EdaufHJeY89/pEVg=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:Cc; b=QuV09T9nPU8G8DD/ZipJ21x/8sIUt3wjoUa7p0CrKbV1Ff6JZZW1scfXdeTN6M4A/HRioc/Us1b24VOUhqa8LCKtt0Z46AQYgWF8AFyQgSKb5wcatHgRhaEUMgnevRuCQo+6qCob9B5JG8OpUepAqiGs8uGuh/Zxq+09Nhyacs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=eu-west-1.amazonses.com; dkim=pass (1024-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=DE2kIVNo; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=i/3J7Uku; arc=none smtp.client-ip=54.240.7.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinarskis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eu-west-1.amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=vuvznkywrn6u4jb2ozie3fqz3nbg6pps; d=vinarskis.com; t=1756810242;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:Cc;
-	bh=1qckQvzwlWC/fKlkJTiN3ZnCnQ5EdaufHJeY89/pEVg=;
-	b=DE2kIVNosmX/EqOD4unG5iNMelEHczdAFiXTmtIsUo9UNnTHK4VQXXXiDNtACiYJ
-	UbbPozl82m7Vt5N4QmF8tBjmbE5vrmmMgv9yXU8jdJ+MukhRVOa81nzdh/UyFjR2roQ
-	zr3HSA9xPyU1VZsMYqb4lJqiWDjN15Ddde9KgZao=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1756810242;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:Cc:Feedback-ID;
-	bh=1qckQvzwlWC/fKlkJTiN3ZnCnQ5EdaufHJeY89/pEVg=;
-	b=i/3J7Ukusy+Z75TwJwWF8hdZSuVDxSdjl2LHQP5Z2aH9cyRNBV380Snqj+mfV7xU
-	qENUl5ghwPxe/wAuRTVTVMnGLWsdQEaX0FfYb2p02ZVn18Hy0KZMA/NTG3LmAWdkx+V
-	s6mvzlIPrfD5h7EVLevesKydueZoUdID/7Zfwdr4=
-From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Subject: [PATCH 0/2] leds: privacy-led support for devicetree
-Date: Tue, 2 Sep 2025 10:50:42 +0000
-Message-ID: <010201990a0ce89c-70d011cb-b11e-4c66-a05b-02462389e8e3-000000@eu-west-1.amazonses.com>
+	s=arc-20240116; t=1756810318; c=relaxed/simple;
+	bh=5oCH/UAMV/Ow7I5KjhpkHLsSOUSZe/gM+gFWpbFwqd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CwyIhaPT7VEu8L6kfoM9qwBtlEt3ASUaoGjFd9G4U/271yxp10rDZh6NTrj9kogXITogPHoHsP2zLW2q/Iq7tH8ZIdPt2M3ly1e/A1DsGei0AGQRFEMfRYdHQB8jp94kWo4nE5PwYWhuKCqjdiRs2HKY4xL1NzEplFxwqBEMkgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BqjzIpA/; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1756810282; x=1757415082; i=markus.elfring@web.de;
+	bh=5oCH/UAMV/Ow7I5KjhpkHLsSOUSZe/gM+gFWpbFwqd0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=BqjzIpA/VWQeYLrTo2eWTcKg1Z+/fQUZ3+X8LxKIcpg1SvubA+ysNspSc+V2LIXC
+	 Pbc+D5glHCT1FRKg0ZP7o4cS9btSJ8wAenqBObrv5G0Vlww4XVNevqhd+QvkeqEJA
+	 HckWmj5/hYoKtJL5ehJfdOzn7gUAxeFXvs5jV634f8GmbIeansFz3se82WRQfORzB
+	 d+qWu1UW89GQwakA0ibAM+wPdPdnmaTWnBrF2YFO3fQkXb4zn9c3TSit6O6kNxjSi
+	 mdu0xPexlFAB+3IftzvrX/aAX46K1vrMVKw1r1JnN0InivtbQpPHWKpn2sDIpQtiF
+	 O1zuk9L2heXPLdDxkA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Melaj-1uJEVj1Agv-00c9xY; Tue, 02
+ Sep 2025 12:51:22 +0200
+Message-ID: <75284139-15f9-4cb6-8b6e-44b9f5312f54@web.de>
+Date: Tue, 2 Sep 2025 12:51:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPvLtmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDSwMj3ZzUlGLdZDPDZAtz88SUFAsDJaDSgqLUtMwKsDHRsbW1AHbbYLd
- WAAAA
-X-Change-ID: 20250902-leds-c61c877add80
-To: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Aleksandrs Vinarskis <alex@vinarskis.com>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Hans de Goede <hansg@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1243; i=alex@vinarskis.com;
- h=from:subject:message-id; bh=1qckQvzwlWC/fKlkJTiN3ZnCnQ5EdaufHJeY89/pEVg=;
- b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBnbTv/NK7i7he2F2Jel7Hl275i4N5r9M34vfab56q8yG
- +5J2TvedpSyMIhxMciKKbJ0//ma1rVo7lqG6xrfYOawMoEMYeDiFICJvL/CyLB2J1/8/Fw9Jw3b
- vKt38qbGrVn0IfhAUOmlhWarXF59djdjZNg9y312sPRy3etG13Wr5eMje+Zcsp47dRvz8ycmEzy
- VxFgB
-X-Developer-Key: i=alex@vinarskis.com; a=openpgp;
- fpr=8E21FAE2D2967BB123303E8C684FD4BA28133815
-Feedback-ID: ::1.eu-west-1.dmE2JeRFSagpgiG6D+fa+YE0PH7S+b7tab7/4kfDOU8=:AmazonSES
-X-SES-Outgoing: 2025.09.02-54.240.7.19
+User-Agent: Mozilla Thunderbird
+Subject: Re: pasemi: fix PCI device reference leaks in pas_setup_mce_regs
+To: Jiri Slaby <jirislaby@kernel.org>, Miaoqian Lin <linmq006@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Olof Johansson <olof@lixom.net>, Paul Mackerras <paulus@ozlabs.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20250902072156.2389727-1-linmq006@gmail.com>
+ <63be79a4-79e4-47f5-a756-aa55fe0d29ab@web.de>
+ <d620167b-ba52-4f80-82bc-1a35223f96e6@kernel.org>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <d620167b-ba52-4f80-82bc-1a35223f96e6@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qkJgSfUQRHDUBjKXTnPkIaQJnw4BApWlKae00poTjroIKXjD8Ih
+ 2lPfwJNfJJMCtwdBDBPOG5SnCrZ4ccMjBwkA/V0cbKohaXFFOvcio1AccLoK2X7JdKjNXFj
+ VqHPTFWhnanX1bcB5pnj4NaPKF9AhQpDo/U02alKCkRnqQ42oym1YeGoiFt9KBQs/SgbKNS
+ uGGmWClTTpQHpRpafSjgg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:O9SB3Lj683U=;QiORRqIzC0CLJ22Ht3pjTrAVGPw
+ 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
+ /AGeakanwk58ADqbDPT
 
-Re-spin of RFC patch from ~2.5 years ago [1]. v4l2 controls for privacy
-LEDs has landed, but the DT part was left out.
+>> *=C2=A0Would=C2=A0you=C2=A0like=C2=A0to=C2=A0increase=C2=A0the=C2=A0app=
+lication=C2=A0of=C2=A0scope-based=C2=A0resource=C2=A0management?
+>> =C2=A0=C2=A0https://elixir.bootlin.com/linux/v6.17-rc4/source/include/l=
+inux/device.h#L1180
+>=20
+> That=C2=A0won't=C2=A0work=C2=A0here=C2=A0at=C2=A0all.
 
-With recent inflow of arm64-power laptops (Snapdragon X1E/X1P) which
-mostly use MIPI cameras, this feature becomes more desired. Original
-rebased patch is still working as expected (with respective DT changes)
-on Dell XPS 9345.
+Why do you think in this direction here?
 
-Changelog to original series:
-- Pick RFC patch, pick R-by, drop RFC-related commit message part
-- Add new DT binding to describe generic LED consumer properties
-- Rebase and test on X1E laptop
-
-[1] https://lore.kernel.org/all/20230120114524.408368-6-hdegoede@redhat.com/
-
-Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
----
-Aleksandrs Vinarskis (1):
-      dt-bindings: leds: add generic LED consumer documentation
-
-Hans de Goede (1):
-      leds: led-class: Add devicetree support to led_get()
-
- .../devicetree/bindings/leds/leds-consumer.yaml    | 69 ++++++++++++++++++++++
- drivers/leds/led-class.c                           | 38 +++++++++---
- 2 files changed, 98 insertions(+), 9 deletions(-)
----
-base-commit: 3db46a82d467bd23d9ebc473d872a865785299d8
-change-id: 20250902-leds-c61c877add80
-
-Best regards,
--- 
-Aleksandrs Vinarskis <alex@vinarskis.com>
-
+Regards,
+Markus
 
