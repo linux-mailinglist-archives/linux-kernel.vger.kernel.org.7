@@ -1,251 +1,182 @@
-Return-Path: <linux-kernel+bounces-797483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E0EEB410F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:49:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD96B410F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544825E49E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204A91B240BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987882E6CCF;
-	Tue,  2 Sep 2025 23:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147882EAB60;
+	Tue,  2 Sep 2025 23:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fbnsFpk8"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A46A2EA475;
-	Tue,  2 Sep 2025 23:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="tp+8jCKf"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C39B2E9EBA;
+	Tue,  2 Sep 2025 23:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756856922; cv=none; b=M6kwPx8+tnNo7hE+Xo9CZ5n384cQhPt+8V2gHZ2n89oFFXNoGc6noCOvPHCSPcBotFnyS/tvbiQHL0RdnDqqTpSTwBcku4BiObOP/gU+YHF3vofKgKa2KkMfW8BGR2RTC86T9krxhsLrb2nlMRD0Go7Ay3JOE8CSbtYPqLutqFM=
+	t=1756856962; cv=none; b=KggZS8IdxxD1x5ZvEM6QFIMiojE0oilx1PVYzOLfJo2GgpsnVBun1iNGp/6orFzP2b06nMl8MMTWLPZHHmcxl1GGNNSxcNO8TSUymjx3MPVXCfkXDi9lAfx95he0AiOyPZwI2zgA6Ni8qXqg4CnhyXWx8sRb841LEUGLUeLf4NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756856922; c=relaxed/simple;
-	bh=ZfQO4dndmQC7J+3gLYrtp2NrcKGsCSxOnOBPtTLx9cY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=o3A+fqV9SyWRoSKUtCCTtUVhO36NS1nfVR+6e+yt1oJcn3lx+pxKJzNUjOp6sV6th6KdCPZ5Jnv2pxPTafupTrYhQKyVIikX37oZKQeh9HlP3W+3MKCQfnio62KP5f4RtmZGZS03tIh4fsPi5jgVuiJc8m8PoLeXQoFfndH2JrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fbnsFpk8; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1032)
-	id 3A41E211828B; Tue,  2 Sep 2025 16:48:35 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3A41E211828B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1756856915;
-	bh=3pPUL78pUcMAEVARbGI0M3+yKDS8s2jb8IBBidLtC5w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fbnsFpk8YRomQ8Atikj6J8dzkovoorUlQ9X/Sfo5eTlj6mCI8hFbU7mjWUfE6UvJ0
-	 S0EB0eeTNUhB0RMj5LxPJBy5fCqDUcoBDW3MT/fNIWOlOtwDJjs/KsoxoDkpOMi1H5
-	 vvW+hL4yyEUMAhMobJ2/HA4nNPND+7TP2VDB+V0o=
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	wei.liu@kernel.org,
-	mhklinux@outlook.com
-Cc: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	decui@microsoft.com,
-	arnd@arndb.de,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Subject: [PATCH v2] mshv: Add support for a new parent partition configuration
-Date: Tue,  2 Sep 2025 16:48:33 -0700
-Message-Id: <1756856913-27197-1-git-send-email-nunodasneves@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1756856962; c=relaxed/simple;
+	bh=GOf9LZLLQ2q5Q93T28kTqYJJclpPeEMzOpGWjHU5iZQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=jJw08V7UieaaIGqJenq/s4TIB+I7g35I7uQllW7Gn1XRbFu1HejBu/Wh0PJVdAzg1zGVEAQUURut7jFvFiCuiEDL+M4wFY5NcX93gCU4U2IW373ss/+O7CPx8tq3Lj5EK9uyzN/euMU7DAEmYUJe5Z2FuU6vJK6JDhagZBZDbrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=tp+8jCKf; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756856954;
+	bh=eui+lHKYd2DznXFc/Y0MXUOvULuqsgiVsJKZMCgi9rw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=tp+8jCKfV96TyXNU3gM1SeN8t0nhngjhyb2Wj5xecuMCOTJDBe1oNgU3ocSxgk5op
+	 K4QG5mSI66ukM8ON2fZYmDvQSdBF+78MYKvUUNyR3sBmc7w8piU0/5WdIf8WRQeXYl
+	 CFla/aqcVuPyGh5ufZsHAuPfclMq4cCLryhuBnz0=
+Received: from NUC10 ([39.156.73.10])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id C4A1EA5B; Wed, 03 Sep 2025 07:49:10 +0800
+X-QQ-mid: xmsmtpt1756856950tizblv9xh
+Message-ID: <tencent_81A1A0ACC04B68158C57C4D151C46A832B07@qq.com>
+X-QQ-XMAILINFO: NC/J3CrDtaBbKIsy3VxpTrKIJW8W98+rBshspiPLUzR2uyMbCRounbxMLhNClP
+	 nxqTpN+Ofe6yu9JNnoGISObPFKWUJKewUpp/bt3i14bBhnJmF8jH3pHwonRRZhotPFGg5+kfgPgX
+	 KUG8f5u/nb6Rhr+kzD82jx2tISZ+omolKlrn2RlYPewPFqIsIIuanPbRoWuhXKXZPY+tL1jp2nLk
+	 Zf+6seuPokFGuR6uZXzFuv9/V/TvztSsGkrZ8UsRbUx7/l829tq7SIa2G4zdGAFZKApy6swY0bag
+	 JsL6V3ZmzzdFnzxTRAK7R+1N90kfrrQECtRD2z/I4+vMqKD57KqM6aw9ManPbcpWrahX3mrHZjZk
+	 yZof3uLvZeClz20ij9HFxNgjn9NhoI+q+ItZ5AjmFr6BcGTPJgZHoKGoP4yDp4slV5sgoZ+IpV6/
+	 VqJ3KeJv+8KdKNjTJ8vSGLbGGmiauTSBCh7DgYr3oEnC0Td+wMwTfBbF2rUqR0m62ATM1owZPxUP
+	 OR0X4eLu2DwLYk0YHOR4gIj6K/qVV/sC2sBLbRZPd5+wW4g1U/olXTIow6JHlVSyLPi2JUvqE+em
+	 +TkrGoCcFlWKWd91/1sqxmYqESGxZji6LoSYkiPETqpN4iKkRz550V7QUXrZ6AeuTqAKEImH7Yzm
+	 2tZ5Czu3XDDn9toP3VP5JaqEWlO/BFJDY9NtiW+yVY4Ij2q3FqGlgqkJkDMNi+zji3ysqg+GBJGP
+	 D3D9ReRVWQp10QZ0/r8V2cwGRZF1o0XzVIYunfOBOXSUJhCkk+9+hHclBCrqcQxfLxZLg1jZ94nt
+	 Ok3qQV207sOil9jm6hQuS4TiPtHuhMVWDCJefjZDYVrZ8NInwCXKTwgDOXCaEpa1GNDNm0qPeHeI
+	 EVARb9eFl0CD/gBKuZTHJSH85q1cAHt+vxGpv3DPEK/eR9XUejOwCaJcZBiVDn+1zUFVIR3YYlbP
+	 E5UPjA+QB40nnUlvDj/CMFLt/WbBeftpdaGFRH52KtBemG183THPBEc3JpAdQg7AZ2FG0YN8953I
+	 A5MhzyeGtOXL99PHAIkKlyDESZ6mEJLAPenipxuQ==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Rong Tao <rtoax@foxmail.com>
+To: yonghong.song@linux.dev,
+	andrii@kernel.org,
+	ast@kernel.org,
+	vmalik@redhat.com
+Cc: rtoax@foxmail.com,
+	Rong Tao <rongtao@cestc.cn>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next v4 2/2] selftests/bpf: Test kfunc bpf_strcasecmp
+Date: Wed,  3 Sep 2025 07:48:36 +0800
+X-OQ-MSGID: <73ae449045d23c96dd1f0da9a694cb203659eb27.1756856613.git.rtoax@foxmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1756856613.git.rtoax@foxmail.com>
+References: <cover.1756856613.git.rtoax@foxmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Detect booting as an "L1VH" partition. This is a new scenario very
-similar to root partition where the mshv_root driver can be used to
-create and manage guest partitions.
+From: Rong Tao <rongtao@cestc.cn>
 
-It mostly works the same as root partition, but there are some
-differences in how various features are handled. hv_l1vh_partition()
-is introduced to handle these cases. Add hv_parent_partition()
-which returns true for either case, replacing some hv_root_partition()
-checks.
+Add testsuites for kfunc bpf_strcasecmp.
 
-Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Acked-by: Wei Liu <wei.liu@kernel.org>
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
 ---
-Changes since v1:
-- Fix hypercall output page not being allocated for L1VH
-- Clean up scheduler detection code to reduce repetition [Michael Kelley]
----
- drivers/hv/hv_common.c         | 22 +++++++++++++---------
- drivers/hv/mshv_root_main.c    | 26 +++++++++++++-------------
- include/asm-generic/mshyperv.h | 11 +++++++++++
- 3 files changed, 37 insertions(+), 22 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/string_kfuncs.c     | 1 +
+ tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c | 6 ++++++
+ tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c | 1 +
+ tools/testing/selftests/bpf/progs/string_kfuncs_success.c  | 5 +++++
+ 4 files changed, 13 insertions(+)
 
-diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-index 49898d10faff..e109a620c83f 100644
---- a/drivers/hv/hv_common.c
-+++ b/drivers/hv/hv_common.c
-@@ -257,7 +257,7 @@ static void hv_kmsg_dump_register(void)
+diff --git a/tools/testing/selftests/bpf/prog_tests/string_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/string_kfuncs.c
+index 35af8044d059..4d66fad3c8bd 100644
+--- a/tools/testing/selftests/bpf/prog_tests/string_kfuncs.c
++++ b/tools/testing/selftests/bpf/prog_tests/string_kfuncs.c
+@@ -8,6 +8,7 @@
  
- static inline bool hv_output_page_exists(void)
- {
--	return hv_root_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
-+	return hv_parent_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
- }
+ static const char * const test_cases[] = {
+ 	"strcmp",
++	"strcasecmp",
+ 	"strchr",
+ 	"strchrnul",
+ 	"strnchr",
+diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
+index 53af438bd998..99d72c68f76a 100644
+--- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
++++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
+@@ -31,6 +31,8 @@ char *invalid_kern_ptr = (char *)-1;
+ /* Passing NULL to string kfuncs (treated as a userspace ptr) */
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_null1(void *ctx) { return bpf_strcmp(NULL, "hello"); }
+ SEC("syscall")  __retval(USER_PTR_ERR)int test_strcmp_null2(void *ctx) { return bpf_strcmp("hello", NULL); }
++SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_null1(void *ctx) { return bpf_strcasecmp(NULL, "HELLO"); }
++SEC("syscall")  __retval(USER_PTR_ERR)int test_strcasecmp_null2(void *ctx) { return bpf_strcasecmp("HELLO", NULL); }
+ SEC("syscall")  __retval(USER_PTR_ERR)int test_strchr_null(void *ctx) { return bpf_strchr(NULL, 'a'); }
+ SEC("syscall")  __retval(USER_PTR_ERR)int test_strchrnul_null(void *ctx) { return bpf_strchrnul(NULL, 'a'); }
+ SEC("syscall")  __retval(USER_PTR_ERR)int test_strnchr_null(void *ctx) { return bpf_strnchr(NULL, 1, 'a'); }
+@@ -49,6 +51,8 @@ SEC("syscall")  __retval(USER_PTR_ERR)int test_strnstr_null2(void *ctx) { return
+ /* Passing userspace ptr to string kfuncs */
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr1(void *ctx) { return bpf_strcmp(user_ptr, "hello"); }
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr2(void *ctx) { return bpf_strcmp("hello", user_ptr); }
++SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr1(void *ctx) { return bpf_strcasecmp(user_ptr, "HELLO"); }
++SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr2(void *ctx) { return bpf_strcasecmp("HELLO", user_ptr); }
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strchr_user_ptr(void *ctx) { return bpf_strchr(user_ptr, 'a'); }
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strchrnul_user_ptr(void *ctx) { return bpf_strchrnul(user_ptr, 'a'); }
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strnchr_user_ptr(void *ctx) { return bpf_strnchr(user_ptr, 1, 'a'); }
+@@ -69,6 +73,8 @@ SEC("syscall") __retval(USER_PTR_ERR) int test_strnstr_user_ptr2(void *ctx) { re
+ /* Passing invalid kernel ptr to string kfuncs should always return -EFAULT */
+ SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault1(void *ctx) { return bpf_strcmp(invalid_kern_ptr, "hello"); }
+ SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault2(void *ctx) { return bpf_strcmp("hello", invalid_kern_ptr); }
++SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault1(void *ctx) { return bpf_strcasecmp(invalid_kern_ptr, "HELLO"); }
++SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault2(void *ctx) { return bpf_strcasecmp("HELLO", invalid_kern_ptr); }
+ SEC("syscall") __retval(-EFAULT) int test_strchr_pagefault(void *ctx) { return bpf_strchr(invalid_kern_ptr, 'a'); }
+ SEC("syscall") __retval(-EFAULT) int test_strchrnul_pagefault(void *ctx) { return bpf_strchrnul(invalid_kern_ptr, 'a'); }
+ SEC("syscall") __retval(-EFAULT) int test_strnchr_pagefault(void *ctx) { return bpf_strnchr(invalid_kern_ptr, 1, 'a'); }
+diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
+index 89fb4669b0e9..e41cc5601994 100644
+--- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
++++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
+@@ -7,6 +7,7 @@
+ char long_str[XATTR_SIZE_MAX + 1];
  
- void __init hv_get_partition_id(void)
-@@ -377,7 +377,7 @@ int __init hv_common_init(void)
- 		BUG_ON(!hyperv_pcpu_output_arg);
- 	}
- 
--	if (hv_root_partition()) {
-+	if (hv_parent_partition()) {
- 		hv_synic_eventring_tail = alloc_percpu(u8 *);
- 		BUG_ON(!hv_synic_eventring_tail);
- 	}
-@@ -531,7 +531,7 @@ int hv_common_cpu_init(unsigned int cpu)
- 	if (msr_vp_index > hv_max_vp_index)
- 		hv_max_vp_index = msr_vp_index;
- 
--	if (hv_root_partition()) {
-+	if (hv_parent_partition()) {
- 		synic_eventring_tail = (u8 **)this_cpu_ptr(hv_synic_eventring_tail);
- 		*synic_eventring_tail = kcalloc(HV_SYNIC_SINT_COUNT,
- 						sizeof(u8), flags);
-@@ -558,7 +558,7 @@ int hv_common_cpu_die(unsigned int cpu)
- 	 * originally allocated memory is reused in hv_common_cpu_init().
- 	 */
- 
--	if (hv_root_partition()) {
-+	if (hv_parent_partition()) {
- 		synic_eventring_tail = this_cpu_ptr(hv_synic_eventring_tail);
- 		kfree(*synic_eventring_tail);
- 		*synic_eventring_tail = NULL;
-@@ -729,13 +729,17 @@ void hv_identify_partition_type(void)
- 	 * the root partition setting if also a Confidential VM.
- 	 */
- 	if ((ms_hyperv.priv_high & HV_CREATE_PARTITIONS) &&
--	    (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) &&
- 	    !(ms_hyperv.priv_high & HV_ISOLATION)) {
--		pr_info("Hyper-V: running as root partition\n");
--		if (IS_ENABLED(CONFIG_MSHV_ROOT))
--			hv_curr_partition_type = HV_PARTITION_TYPE_ROOT;
--		else
-+
-+		if (!IS_ENABLED(CONFIG_MSHV_ROOT)) {
- 			pr_crit("Hyper-V: CONFIG_MSHV_ROOT not enabled!\n");
-+		} else if (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) {
-+			pr_info("Hyper-V: running as root partition\n");
-+			hv_curr_partition_type = HV_PARTITION_TYPE_ROOT;
-+		} else {
-+			pr_info("Hyper-V: running as L1VH partition\n");
-+			hv_curr_partition_type = HV_PARTITION_TYPE_L1VH;
-+		}
- 	}
- }
- 
-diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-index 72df774e410a..aa20a5c96afa 100644
---- a/drivers/hv/mshv_root_main.c
-+++ b/drivers/hv/mshv_root_main.c
-@@ -37,12 +37,6 @@ MODULE_AUTHOR("Microsoft");
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Microsoft Hyper-V root partition VMM interface /dev/mshv");
- 
--/* TODO move this to mshyperv.h when needed outside driver */
--static inline bool hv_parent_partition(void)
--{
--	return hv_root_partition();
--}
--
- /* TODO move this to another file when debugfs code is added */
- enum hv_stats_vp_counters {			/* HV_THREAD_COUNTER */
- #if defined(CONFIG_X86)
-@@ -2074,9 +2068,13 @@ static int __init hv_retrieve_scheduler_type(enum hv_scheduler_type *out)
- /* Retrieve and stash the supported scheduler type */
- static int __init mshv_retrieve_scheduler_type(struct device *dev)
- {
--	int ret;
-+	int ret = 0;
-+
-+	if (hv_l1vh_partition())
-+		hv_scheduler_type = HV_SCHEDULER_TYPE_CORE_SMT;
-+	else
-+		ret = hv_retrieve_scheduler_type(&hv_scheduler_type);
- 
--	ret = hv_retrieve_scheduler_type(&hv_scheduler_type);
- 	if (ret)
- 		return ret;
- 
-@@ -2203,9 +2201,6 @@ static int __init mshv_root_partition_init(struct device *dev)
- {
- 	int err;
- 
--	if (mshv_retrieve_scheduler_type(dev))
--		return -ENODEV;
--
- 	err = root_scheduler_init(dev);
- 	if (err)
- 		return err;
-@@ -2227,7 +2222,7 @@ static int __init mshv_parent_partition_init(void)
- 	struct device *dev;
- 	union hv_hypervisor_version_info version_info;
- 
--	if (!hv_root_partition() || is_kdump_kernel())
-+	if (!hv_parent_partition() || is_kdump_kernel())
- 		return -ENODEV;
- 
- 	if (hv_get_hypervisor_version(&version_info))
-@@ -2264,7 +2259,12 @@ static int __init mshv_parent_partition_init(void)
- 
- 	mshv_cpuhp_online = ret;
- 
--	ret = mshv_root_partition_init(dev);
-+	ret = mshv_retrieve_scheduler_type(dev);
-+	if (ret)
-+		goto remove_cpu_state;
-+
-+	if (hv_root_partition())
-+		ret = mshv_root_partition_init(dev);
- 	if (ret)
- 		goto remove_cpu_state;
- 
-diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-index a729b77983fa..dbd4c2f3aee3 100644
---- a/include/asm-generic/mshyperv.h
-+++ b/include/asm-generic/mshyperv.h
-@@ -31,6 +31,7 @@
- enum hv_partition_type {
- 	HV_PARTITION_TYPE_GUEST,
- 	HV_PARTITION_TYPE_ROOT,
-+	HV_PARTITION_TYPE_L1VH,
- };
- 
- struct ms_hyperv_info {
-@@ -354,12 +355,22 @@ static inline bool hv_root_partition(void)
- {
- 	return hv_curr_partition_type == HV_PARTITION_TYPE_ROOT;
- }
-+static inline bool hv_l1vh_partition(void)
-+{
-+	return hv_curr_partition_type == HV_PARTITION_TYPE_L1VH;
-+}
-+static inline bool hv_parent_partition(void)
-+{
-+	return hv_root_partition() || hv_l1vh_partition();
-+}
- int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages);
- int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id);
- int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags);
- 
- #else /* CONFIG_MSHV_ROOT */
- static inline bool hv_root_partition(void) { return false; }
-+static inline bool hv_l1vh_partition(void) { return false; }
-+static inline bool hv_parent_partition(void) { return false; }
- static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
- {
- 	return -EOPNOTSUPP;
+ SEC("syscall") int test_strcmp_too_long(void *ctx) { return bpf_strcmp(long_str, long_str); }
++SEC("syscall") int test_strcasecmp_too_long(void *ctx) { return bpf_strcasecmp(long_str, long_str); }
+ SEC("syscall") int test_strchr_too_long(void *ctx) { return bpf_strchr(long_str, 'b'); }
+ SEC("syscall") int test_strchrnul_too_long(void *ctx) { return bpf_strchrnul(long_str, 'b'); }
+ SEC("syscall") int test_strnchr_too_long(void *ctx) { return bpf_strnchr(long_str, sizeof(long_str), 'b'); }
+diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+index 46697f381878..67830456637b 100644
+--- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
++++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+@@ -12,6 +12,11 @@ char str[] = "hello world";
+ /* Functional tests */
+ __test(0) int test_strcmp_eq(void *ctx) { return bpf_strcmp(str, "hello world"); }
+ __test(1) int test_strcmp_neq(void *ctx) { return bpf_strcmp(str, "hello"); }
++__test(0) int test_strcasecmp_eq1(void *ctx) { return bpf_strcasecmp(str, "hello world"); }
++__test(0) int test_strcasecmp_eq2(void *ctx) { return bpf_strcasecmp(str, "HELLO WORLD"); }
++__test(0) int test_strcasecmp_eq3(void *ctx) { return bpf_strcasecmp(str, "HELLO world"); }
++__test(1) int test_strcasecmp_neq1(void *ctx) { return bpf_strcasecmp(str, "hello"); }
++__test(1) int test_strcasecmp_neq2(void *ctx) { return bpf_strcasecmp(str, "HELLO"); }
+ __test(1) int test_strchr_found(void *ctx) { return bpf_strchr(str, 'e'); }
+ __test(11) int test_strchr_null(void *ctx) { return bpf_strchr(str, '\0'); }
+ __test(-ENOENT) int test_strchr_notfound(void *ctx) { return bpf_strchr(str, 'x'); }
 -- 
-2.34.1
+2.51.0
 
 
