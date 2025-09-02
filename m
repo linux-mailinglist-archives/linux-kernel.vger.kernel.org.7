@@ -1,128 +1,120 @@
-Return-Path: <linux-kernel+bounces-796639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA4DB404F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:48:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD72B4048C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C4D91891CFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:44:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 87E604E3E1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B322430FF37;
-	Tue,  2 Sep 2025 13:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7683F3126C5;
+	Tue,  2 Sep 2025 13:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VeYAqq1F"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JRP3ci48";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jHjJaylY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23D630F533
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D637261593
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820380; cv=none; b=ubbpozqX/YKWFufzKxNv373mzDl3LabvoijRPNsBwnj9J4V9dng2y1o75zafU3frXtprOMNeYX80S3HvNuOovcMIaJ1aRYffPdW0w/DQMpl8Hbxm529FhNcLBhIz0AzFX6bkrR6c4wCt7BxABGfjB0F/B051eXWWpanWP10a7NM=
+	t=1756820367; cv=none; b=cltCVTgLnnTajRHr8ULKWBuuTyCe6T0yVqMC/xwd4GqRc6dVjLham6Y8Rki1awa4tK8owCWiHhSQnuAIUDoIiDz03MXkred9GaAycPLUW/FHkscfivG0kG4x33oupGfJpZZtTqo4XmgFCszQvMGD3ODfkdK7e7LJAMU1rmpmUt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820380; c=relaxed/simple;
-	bh=K/IIRX6cZqHveyVdK0XoeTwBR6D1RLXmC/fK5i3cAlQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iecDcbsn738SaKWt0xMvZ1j/GhzWeMaHy622DaDYGFzk8QXVKBwoH0tCA0YZBgi6LRjFNi8k2EqQA5ylh0X9jF5nF4KUDGWigNCqISisH2J0/mZcWTvGu5ZUNFHy7ht5xlcoKKS+YF7fYbKlwx2k/MYU/8ZMklXW2eAZQFDxa00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VeYAqq1F; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso4707765b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:39:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756820378; x=1757425178; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K/IIRX6cZqHveyVdK0XoeTwBR6D1RLXmC/fK5i3cAlQ=;
-        b=VeYAqq1FdYTkC4pKhOhfjoy8pcNczBdKvqs5ust4wTyQ50lKcB82hB7bSgVFC/jIjW
-         B9rHhsZisUu86MwymkfGZMF1JDCdPpvnD1fA3nKYzeDzDdi3Uo1W2bFIng17TBfXVejO
-         nfQUhWqLbwh8PKvJjhqtBr+yEXMlYmFU4xNw5jYYUQ6iErOEV8YN80H1AOy39YDCx2p3
-         Mg9hASfkkvyKrg/7dStBkij7RdMjz9URXItOwbE8L1V9MquLiABFjt4lGvk79GKqnx0W
-         INH8mPgUJE+YgQMPWRq8LFXbj1sjj64NlZi03VTzajlhm6GSIN3aY41sH816rdTDJPzr
-         utSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756820378; x=1757425178;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K/IIRX6cZqHveyVdK0XoeTwBR6D1RLXmC/fK5i3cAlQ=;
-        b=SgYgN2IzayRLRQEhohsjtZxHm2AuyZu2JMhYgSzhyWLskJ8YYYltC0B8NxF7UdsDbW
-         75Rg7gKJbZdPgARxWcycm+H0Sq/Cal2YbWkBYvpY0tttiWeDtAyvECbv0bNYxtDig/KU
-         3PM4I8PLtnztMimJBvOUUYcjQbARCmdi0HylpVXCw9REiQXUNy3ss/ZXY6rup5+1XRTO
-         cJQ/rp3aQo+3+pw8Ci5UCT9kEbIJzU/eBN7I4kVBOSk8DOfIP4i2QUiVzUcR/Hv/eopn
-         YZpegJ3ne8Iygregdg0ISO7Hg+5A1Jr3pllcoVYXtBJrCuyivGmbm2D4C9WKecpzCHY1
-         HViQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbm6JuNY15yqlSb8hD10NbSFtyqcefgZX49iYgKyYscg8MZgsS0vasdYuS3O/4ilEfdp1N5+xQB8pJZ4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1q5XPvBAalbwm4AopklLm89owc5uLc2Cx1Ejy+lp65M2hYMKb
-	KzMWayZAXu3bV0gTw1qGfay08GVTXXB53htUVAXUkv5FpPnpC253Obcg
-X-Gm-Gg: ASbGnctRllm10ApZp9V7BMhZqGacMvnE2UFMxPR3DLAL9Nq2fv3H1BFbDRSzSU51iaq
-	+wLbY1buLfiuERDC84BPky/EkBux7JczV3gTsEffSyd7WdBKRNrBtWZwF/Vyj0p0KexImhLvGIX
-	F4tFby3wERgt8S3g9klg9RXqFNiIcM7u/CHr8WkrKz4U7JYLBvyI0plK2r6+S1BF1vwxdYPkWUn
-	7Kj8V3DJjfVPKI6k10uepftXrQzX/4SbOxafv7BAYGy5KqpIxqTdq7PYFPxWDUxhxX5DGNrkyo4
-	uXpCjBjIgw3JQMva/O3sZ8tgO0I9nBYZaMcK89BI4y6+qKdnMrcAui4YaJxaWFzCUSpx+FA791a
-	K7g5XkO51I3y0FabtY0rTCqBgeevHxZ5ZowYGFWvJlLZQCaTRXA1AI/SU39YJbbaMbWkIPFFpMO
-	0=
-X-Google-Smtp-Source: AGHT+IHGByeGR+KKpc9TABQ8v/iqUMkl7uHkPzP2VMOjxHn4SHTGndfvld/gXSzjgYNEmT1WtaMBIg==
-X-Received: by 2002:a17:903:384b:b0:245:f7f3:6760 with SMTP id d9443c01a7336-24944b20cbdmr139026075ad.55.1756820377704;
-        Tue, 02 Sep 2025 06:39:37 -0700 (PDT)
-Received: from kaiwan-dell-7550.. ([205.254.163.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24afcbf0268sm33957805ad.8.2025.09.02.06.39.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 06:39:36 -0700 (PDT)
-From: Kaiwan N Billimoria <kaiwan.billimoria@gmail.com>
-To: tglx@linutronix.de
-Cc: Llillian@star-ark.net,
-	agordeev@linux.ibm.com,
-	akpm@linux-foundation.org,
-	alexander.shishkin@linux.intel.com,
-	anna-maria@linutronix.de,
-	bigeasy@linutronix.de,
-	catalin.marinas@arm.com,
-	chenhuacai@kernel.org,
-	francesco@valla.it,
-	frederic@kernel.org,
-	guoweikang.kernel@gmail.com,
-	jstultz@google.com,
-	kpsingh@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	maz@kernel.org,
-	mingo@kernel.org,
-	pmladek@suse.com,
-	rrangel@chromium.org,
-	sboyd@kernel.org,
-	urezki@gmail.com,
-	v-singh1@ti.com,
-	will@kernel.org,
-	peterz@infradead.org,
-	elver@google.com,
-	namcao@linutronix.de
-Subject: Re: [RFC PATCH] time: introduce BOOT_TIME_TRACKER and minimal boot timestamp
-Date: Tue,  2 Sep 2025 19:09:08 +0530
-Message-ID: <20250902133920.973210-1-kaiwan.billimoria@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <871pp14pkr.ffs@tglx>
-References: <871pp14pkr.ffs@tglx>
+	s=arc-20240116; t=1756820367; c=relaxed/simple;
+	bh=sCow4GCGOxOgvrD4ygMPvUZzAMhRoalVVPAcS3UImVM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HmPCN9bEBTD4kurR/1jcxZ1BlZb5jQzt80GNG3PEPA4rC8L8t4ai2p+wbf5I3ZW7ydVuY1TiuouCKQYII5bR/EMR4drXy1Z48kXAJTbThq4eA/BoCyWjrLKRz7yZKXvw4/TugF1pN42QfnW0mNuG64iQaJLhKUExOv1WBgaLoFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JRP3ci48; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jHjJaylY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756820364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DSfMqS9MQ8r+pru/P72e11/GlNeLydR+kxwfIp/qzKo=;
+	b=JRP3ci48u6sgRaAm+6PR5r6reugmCN7lv+o0li2f4JIpqpvUHEd4pC0HRGOj+6cOxVgMva
+	CeALBK23n832551YRMF7/9JfoOkAyH3/cOV0rNDuYK6UoHLYC/mjWotuX9c5SoHDHEWQh/
+	g8VKoSBB6CyluT7ucFMXwEt7JvL8oG/HjflMWNUypG+ciHCHiyAMNQsGsO29nEhMmOItVg
+	x3ltapjeBOY3aruel4XjrrmNWDEgr2JpuWjVKe5wsyqCcgv+q7ossRg9NSehn+xPhByPWW
+	fp4UCfrXQDwJNjXrqfzTzzKp/sJbvrl+eaoBQsD8/33g7OJ8UmqThbXjd3F4MA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756820364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DSfMqS9MQ8r+pru/P72e11/GlNeLydR+kxwfIp/qzKo=;
+	b=jHjJaylYSt2F5BCZ/alOfec34DpGFeAjJDnftTnseT3cQ0cWNSXodeq+P9Ec+PMiVg5Vej
+	/MApuesJVeGOaqCA==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Sean
+ Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>, Dexuan
+ Cui <decui@microsoft.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Huacai
+ Chen <chenhuacai@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V2 06/37] rseq: Simplify the event notification
+In-Reply-To: <9aa047e6-cea5-4f84-b763-36d8d5ad4731@efficios.com>
+References: <20250823161326.635281786@linutronix.de>
+ <20250823161653.644902433@linutronix.de>
+ <9aa047e6-cea5-4f84-b763-36d8d5ad4731@efficios.com>
+Date: Tue, 02 Sep 2025 15:39:22 +0200
+Message-ID: <87plc90y9h.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Subject: Re: [RFC PATCH] time: introduce BOOT_TIME_TRACKER and minimal boot timestamp
-> Under the assumption that nothing on the way resets the counter.
-Ah. Is there any known component - within ROM/BL stages/kernel code - that does
-this?
-Forgive my asking, but if fine, will this (above-mentioned) patch be taken? So,
-knowing that, we can proceed forward..
+On Mon, Aug 25 2025 at 13:36, Mathieu Desnoyers wrote:
+> On 2025-08-23 12:39, Thomas Gleixner wrote:
+>> Since commit 0190e4198e47 ("rseq: Deprecate RSEQ_CS_FLAG_NO_RESTART_ON_*
+>> flags") the bits in task::rseq_event_mask are meaningless and just extra
+>> work in terms of setting them individually.
+>> 
+>> Aside of that the only relevant point where an event has to be raised is
+>> context switch. Neither the CPU nor MM CID can change without going through
+>> a context switch.
+>
+> Note: we may want to include the numa node id field as well in this
+> list of fields.
+
+What for? The node to CPU relationship is not magically changing, so you
+can't have a situation where the task stays on the same CPU and suddenly
+runs on a different node.
+
+>> -	unsigned long rseq_event_mask;
+>> +	bool				rseq_event_pending;
+>
+> AFAIU, this rseq_event_pending field is now concurrently set from:
+>
+> - rseq_signal_deliver (without any preempt nor irqoff guard)
+> - rseq_sched_switch_event (with preemption disabled)
+>
+> Is it safe to concurrently store to a "bool" field within a structure
+> without any protection against concurrent stores ? Typically I've used
+> an integer field just to be on the safe side in that kind of situation.
+>
+> AFAIR, a bool type needs to be at least 1 byte. Do all architectures
+> supported by Linux have a single byte store instruction, or can we end
+> up incorrectly storing to other nearby fields ? (for instance, DEC
+> Alpha ?)
+
+All architectures which support RSEQ do and I really don't care about
+ALPHA, which has other problems than that.
 
 Thanks,
-Kaiwan.
+
+        tglx
 
