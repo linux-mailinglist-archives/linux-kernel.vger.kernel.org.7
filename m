@@ -1,98 +1,115 @@
-Return-Path: <linux-kernel+bounces-797472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA42B410DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:37:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AADB410DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD641A823D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4CE1A8374F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B69A284880;
-	Tue,  2 Sep 2025 23:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d7+z3KRj"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD27A2C17A8;
+	Tue,  2 Sep 2025 23:36:43 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA5C27702A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 23:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7154F283FD8;
+	Tue,  2 Sep 2025 23:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756856209; cv=none; b=R9pRvC9ZJZy++kJ4ZxmbnKT7L42IJghFUJvPGaH3t+CyNxp1lAbMfgiWGphzLUm4hSUKL8L4/yg6JlpBkXvTKyBmHI12CwMlUia7JvyVcFwgTGBdbpV6KwB6kKgMNFrUZCDh1j3XSb9ka0LhfCUYP0papCIgBTIa2S5HRkq3hFQ=
+	t=1756856203; cv=none; b=plBFEvM9KP7nnkWoEyse5bdpIGf26s1Hp7r7URkEWLh8AwuQMfC/IaXf48ZLLjXa3YL0nXeEWECTPhrhuwi4bSNvQNLmj7o0Mpk3ZNDZEwUR70S38pEdpjaHIMhkDjsEi/5i1Q+qbkLSyKe6DTkQOBs3huCkwPnU3rQuOJue+as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756856209; c=relaxed/simple;
-	bh=4VRotmPacgDSBhrhKHEwQvLwXAIZ2QzWSVjur4ooG6I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ISEuPx22nWCe+HTVtnuL7fQGyYbC6lbGpdYjJvxvMIc9fTFqinaw5NyEzW/z1vEYCtz2kRXLIf2rGeBJ23ZA9dfgm26YnUGj6+Uv/OgwBOjf6/hCGs+jNK2pjFKco1lWrYrhb3CRJPpnO6W1y7j4sSatN/4WcfW4UbHtS6E4rHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d7+z3KRj; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756856195;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4VRotmPacgDSBhrhKHEwQvLwXAIZ2QzWSVjur4ooG6I=;
-	b=d7+z3KRjKnYgIE8FVboMNcu7cNJ22o0DwNdthxu9cPcAnsobQBApJF/8cftXd51mtBvxBk
-	oNje22SYw/0i4sNoY4RKXd8pZxN4Yo2xT3ys5FFmFFvr41PRc8X6zPCH6lHOGwVv0PBKtI
-	CL58h7dU/uh1AGcCuCtqP1r4DrEqgQE=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,  Kumar Kartikeya
- Dwivedi <memxor@gmail.com>,  linux-mm <linux-mm@kvack.org>,  bpf
- <bpf@vger.kernel.org>,  Suren Baghdasaryan <surenb@google.com>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David
- Rientjes <rientjes@google.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
- Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-In-Reply-To: <a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev> (Martin KaFai
-	Lau's message of "Tue, 2 Sep 2025 15:30:04 -0700")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-2-roman.gushchin@linux.dev>
-	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
-	<87ms7tldwo.fsf@linux.dev>
-	<1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
-	<87wm6rwd4d.fsf@linux.dev>
-	<ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
-	<CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
-	<87iki0n4lm.fsf@linux.dev>
-	<a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev>
-Date: Tue, 02 Sep 2025 16:36:27 -0700
-Message-ID: <87ms7c5sw4.fsf@linux.dev>
+	s=arc-20240116; t=1756856203; c=relaxed/simple;
+	bh=SqW5rL6tPt8FEZ6wHBs4qEYofN3IQ+erQHIFkyk6/O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmR621UCtZ+KuK4q4Q6X5NoBVk3C0lI2G0r3rrIKVPv37aMdcpkFTTLJIcAiVBpUPCDKQPlk/fNw+zyhs9l4nNIzQzPHtv1WzCBTfprATmMWKiTEWFdiF2LqKDy8MbTOKGoqKvAacUF1vbF9yYiIFiPudeAl/zPS7MLMrupdrHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1utaYF-000000001J9-3i0s;
+	Tue, 02 Sep 2025 23:36:35 +0000
+Date: Wed, 3 Sep 2025 00:36:32 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [RFC PATCH net-next 5/6] net: dsa: lantiq_gswip: optimize
+ regmap_write_bits() statements
+Message-ID: <ae2183f4789db2ebac157dc1b99a90a55279bbea.1756855069.git.daniel@makrotopia.org>
+References: <cover.1756855069.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1756855069.git.daniel@makrotopia.org>
 
-Martin KaFai Lau <martin.lau@linux.dev> writes:
+Further optimize the previous naive conversion of the *_mask() accessor
+functions to regmap_write_bits by manually removing redundant mask
+operands.
 
-> On 9/2/25 10:31 AM, Roman Gushchin wrote:
->> Btw, what's the right way to attach struct ops to a cgroup, if there is
->> one? Add a cgroup_id field to the struct and use it in the .reg()
->
-> Adding a cgroup id/fd field to the struct bpf_oom_ops will be hard to
-> attach the same bpf_oom_ops to multiple cgroups.
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/net/dsa/lantiq/lantiq_gswip.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Yeah, this is what I thought too, it doesn't look as an attractive path.
-
->
->> callback? Or there is something better?
->
-> There is a link_create.target_fd in the "union bpf_attr". The
-> cgroup_bpf_link_attach() is using it as cgroup fd. May be it can be
-> used here also. This will limit it to link attach only. Meaning the
-> SEC(".struct_ops.link") is supported but not the older
-> SEC(".struct_ops"). I think this should be fine.
-
-I'll take a look, thank you!
+diff --git a/drivers/net/dsa/lantiq/lantiq_gswip.c b/drivers/net/dsa/lantiq/lantiq_gswip.c
+index 1fd18b3899b7..b26daf39d3d2 100644
+--- a/drivers/net/dsa/lantiq/lantiq_gswip.c
++++ b/drivers/net/dsa/lantiq/lantiq_gswip.c
+@@ -278,7 +278,7 @@ static int gswip_pce_table_entry_read(struct gswip_priv *priv,
+ 	regmap_write_bits(priv->gswip, GSWIP_PCE_TBL_CTRL,
+ 			  GSWIP_PCE_TBL_CTRL_ADDR_MASK |
+ 			  GSWIP_PCE_TBL_CTRL_OPMOD_MASK |
+-			  tbl->table | addr_mode | GSWIP_PCE_TBL_CTRL_BAS,
++			  GSWIP_PCE_TBL_CTRL_BAS,
+ 			  tbl->table | addr_mode | GSWIP_PCE_TBL_CTRL_BAS);
+ 
+ 	err = gswip_switch_r_timeout(priv, GSWIP_PCE_TBL_CTRL,
+@@ -342,8 +342,7 @@ static int gswip_pce_table_entry_write(struct gswip_priv *priv,
+ 	regmap_write(priv->gswip, GSWIP_PCE_TBL_ADDR, tbl->index);
+ 	regmap_write_bits(priv->gswip, GSWIP_PCE_TBL_CTRL,
+ 			  GSWIP_PCE_TBL_CTRL_ADDR_MASK |
+-			  GSWIP_PCE_TBL_CTRL_OPMOD_MASK |
+-			  tbl->table | addr_mode,
++			  GSWIP_PCE_TBL_CTRL_OPMOD_MASK,
+ 			  tbl->table | addr_mode);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tbl->key); i++)
+@@ -354,8 +353,7 @@ static int gswip_pce_table_entry_write(struct gswip_priv *priv,
+ 
+ 	regmap_write_bits(priv->gswip, GSWIP_PCE_TBL_CTRL,
+ 			  GSWIP_PCE_TBL_CTRL_ADDR_MASK |
+-			  GSWIP_PCE_TBL_CTRL_OPMOD_MASK |
+-			  tbl->table | addr_mode,
++			  GSWIP_PCE_TBL_CTRL_OPMOD_MASK,
+ 			  tbl->table | addr_mode);
+ 
+ 	regmap_write(priv->gswip, GSWIP_PCE_TBL_MASK, tbl->mask);
+-- 
+2.51.0
 
