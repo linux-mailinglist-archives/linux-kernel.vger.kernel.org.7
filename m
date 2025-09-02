@@ -1,272 +1,448 @@
-Return-Path: <linux-kernel+bounces-795545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C5DB3F440
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:13:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58C2B3F443
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2916848253F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:13:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E67E51A811A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C072E11BF;
-	Tue,  2 Sep 2025 05:13:32 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D892E1722;
+	Tue,  2 Sep 2025 05:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a4jChifV"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2072.outbound.protection.outlook.com [40.107.223.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6752E092B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 05:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756790012; cv=none; b=muJc57FoKZGNQYzehTPeWVDha+eLC2vAFy6U5mUFLrJQJ5tu2K/7P7OOqiXU69wleEUPzwyIiMgCj/FAVVLz+cLjKirClawgz8tujcNTxYU0ELeaxHnQudzWo8Kfjcxfu9Gpl6KtMNKcn8XV5G+vlEfMgUhCiaPremkzPs+BqJ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756790012; c=relaxed/simple;
-	bh=MT06K0h8Kc/KXuoX0+ZpF6PWQC8jK1LoGGhoTevKupo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RXygpfz7FV6bGqHaxVjOBUmkr0TXJH0axAtIIwBf+mOluCLG8lTg4z3L9WpJeMszvUwceuFMtL8wBAeSLh4W6WYCjR66sU6dLKRVoF+1F1ePAc8frzyjRBV/4pt6JcX7/lHCzG4arMDMotxwDJyRxRmbM4GpVemUVS799bPi+8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3f321907716so46174405ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 22:13:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756790009; x=1757394809;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ugY4OwDR6k/3TcECTl3vbOdh6mZW+BCABiGGf60cZW4=;
-        b=qD5KRfbvWxO7nw6jM1t30behwTvWX2i461bLoIx3D9Kzd+GtJtKCTzTqLidW6lh/mY
-         zMtj3hO4HKOb8K7QesjwlQN/vnDc4Ho7mmBRXFZHjK+Mx0RCoT15Su6dNtVyj36+blWt
-         WzAb1ui/f64tvPxRV/RXfsGNGR3ytzhFN6DjLa+B+15nmGqFzS60ydDtRr2sdYSzUghS
-         KUQHFZSAGOF885JrTS/UddNnBYCge2rdss9K6IJyuSFHnxlPFpMyWIkJyc5B2pTE6+N4
-         2VC/i277v+xA+C0pVljLSoBes8vo9Td+OcXBvYPgDr1bvMcLYKAhl664GOXm6Xv9PZxX
-         zTUA==
-X-Forwarded-Encrypted: i=1; AJvYcCV91MAppJE8+aq3VtWDN7AqyVEQMqIyI9o6b7baL3K1VxBq2zBOwEiGmGKpp1L9kYbflCwhel1EjSuEONI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmxl/fGbbtbgDk/7h23mWodIQAE7c3427Lby+2xmaisMz22ot4
-	pWzB9Sbkny20eMteXU+74p6v44ispztVmMxUfF9319A2JTZR33VfRSYdoo8ahT9NetqpF//+qSj
-	9uOK6oAhh/Ut1/EKC1CymqanRJ+t/Nz8c3dBmTKgEuVWZQWBVvpImUg2kGAE=
-X-Google-Smtp-Source: AGHT+IEiI7BFf52vOGv33nNZ5Eb/w7dDXWfb6QFMIw+ls59Utskb3Ckl8Ip89TtlBmWgae8JJlZktH7dpvjlznl7wPqM01kBGnx+
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D043E2DF15F
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 05:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756790079; cv=fail; b=jHfbEbeWylGZgF5zRJgelDgOAV4Z9EJXbxuhUDFCTlJE2ZdbjoeVoiFRrYbpWd8T8/RYH2dsvH6WQ59rysVrdeRLgJ6QGNJJ7LVoRpshmcDYtqUm8EVRYE7rExpWkEwYtY001KGlf/RcWgEYQlj2H1cK/3aO84M57Oa5EAToxlU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756790079; c=relaxed/simple;
+	bh=1y5Z9XymXNAepOxLsjOhrDTvOCMB1qz8rj2zYaoq8Z4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XHeXa52BAgKWn+t4JoKYuL+RLZ9cv/rKRyH5s5O0q5bfq9fZhzZ4coplj34fodEnqCVtnxSAB/CeWWpT9uwCXZ+uj6e119mKHI+RRO0hxM2rUipVRyyH5xYFafwZrzKeomxYRUUnQTeEqlZw5PPER0URnrM3xQRaDPAsAbyuRbI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a4jChifV; arc=fail smtp.client-ip=40.107.223.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HQhM/YRU26H5HAF515n8MHR0m+7AMSU3x95JXszAqlQJiUmY6shktYl2R1KtFAWXM9f8IQQGLct/3Z/7GO7dazPSzAG39zuqy7T0/qZGDolXWBfQ73CVGu57GhkufTkBvX0taZ90dlE9bAWEHx+MvvUihzxLgtUgJvrxsuTJlbpE+2+rS0fLpDMgVB5eNCb+Wb4RLTPWIHAG9/P4rFtexZeRyExg0QNZYi73TXz0nL00lDovAd9AuwhJJwNkzFSvY0YhfsBjXjLZvdydEy8DWuv0COujKAJTlXqD5wKhHj8TLqOlwtGgYWHdzF4UYozHeSz+1OdeRLnrlLjfjURWQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EYXip+wVckS2ZjQuUYONI7UXiOV+HjnnG1bZGwwWrRE=;
+ b=HS9m7PVqbUiEnbgKzVEXoV5i+XyKqDN4kWTOd3+m3jgAwKjff4+FuebJm/PLXADhrc6OjF3MJ4NWKvoIdcIFDOGZBRWX6pupajp30iytDezdY12m4+L/R6BSAwU2d5ytqKusSAYovX3trN1j+p166Dpu+24wTCbK+uSASlv41V0F/jGT+GVtmTpz/6D28S3Aw5XlWtx0enWxbEr0Dy1vZZTv1zq3RlHoXp2/NA0w+HFnCM//zybx8HZLP5kh28LuqHore45Reh9rp9wG+OM/YrTdGmYqUuMOB/l2LLgzIg3Ks+fNM3IdI8C08yo6iwU7JE3qiYpbsrLHojHbttYvDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EYXip+wVckS2ZjQuUYONI7UXiOV+HjnnG1bZGwwWrRE=;
+ b=a4jChifVbsJ7SuhquI+qOKbol14lu5lON5CcEVxMq9w710goMgT2ch9PJcJzE1i7+lOUJAaouQnHD4YnnzzH5LfgvbDgcv7V0Yuwd11bzrouB/2z//dvZALmxHQf6HPlGxoKSvsyE8yAS9D7WKbM5iDmURWguf8csntbCNna+NmHIS+gaCWWQCtibCSTkilUOJMI0mk/bAkGx81NetTksCdDKLZS0PwWttC4YVYCgUyJCzm2zQSusXWM6Ap59mX0F2lN48HH6n23KMacgBR1BTxskpC7SbM5HgUr8Rf1Ci7HfWsILXfuJwa8PmCsEPEyx0uqhZnb3/Vzb4V569pSRQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
+ by LV3PR12MB9409.namprd12.prod.outlook.com (2603:10b6:408:21d::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 05:14:32 +0000
+Received: from CY8PR12MB7705.namprd12.prod.outlook.com
+ ([fe80::4b06:5351:3db4:95f6]) by CY8PR12MB7705.namprd12.prod.outlook.com
+ ([fe80::4b06:5351:3db4:95f6%7]) with mapi id 15.20.9009.017; Tue, 2 Sep 2025
+ 05:14:32 +0000
+From: Alistair Popple <apopple@nvidia.com>
+To: linux-mm@kvack.org,
+	akpm@linux-foundation.org
+Cc: david@redhat.com,
+	osalvador@suse.de,
+	jgg@ziepe.ca,
+	jhubbard@nvidia.com,
+	peterx@redhat.com,
+	linux-kernel@vger.kernel.org,
+	dan.j.williams@intel.com,
+	Alistair Popple <apopple@nvidia.com>
+Subject: [PATCH 1/2] mm/gup: Remove dead pgmap refcounting code
+Date: Tue,  2 Sep 2025 15:14:20 +1000
+Message-ID: <20250902051421.162498-1-apopple@nvidia.com>
+X-Mailer: git-send-email 2.47.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SY6PR01CA0025.ausprd01.prod.outlook.com
+ (2603:10c6:10:eb::12) To CY8PR12MB7705.namprd12.prod.outlook.com
+ (2603:10b6:930:84::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd8e:0:b0:3f0:a056:e10f with SMTP id
- e9e14a558f8ab-3f40066c550mr178707975ab.5.1756790009392; Mon, 01 Sep 2025
- 22:13:29 -0700 (PDT)
-Date: Mon, 01 Sep 2025 22:13:29 -0700
-In-Reply-To: <6740795d.050a0220.363a1b.013a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b67cf9.a00a0220.1337b0.05cb.GAE@google.com>
-Subject: Re: [syzbot] [mm?] BUG: corrupted list in list_lru_add
-From: syzbot <syzbot+092ef2e75c24d23f33c4@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, david@fromorbit.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, muchun.song@linux.dev, roman.gushchin@linux.dev, 
-	syzkaller-bugs@googlegroups.com, zhengqi.arch@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|LV3PR12MB9409:EE_
+X-MS-Office365-Filtering-Correlation-Id: e24dc0d7-18ab-4d7b-64dd-08dde9df994e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?n5dyQDFNz/HHS12xZwFCsL0aqiq/gE/W0Xg1baqhJHS8qMRbDaU7/plc+gep?=
+ =?us-ascii?Q?k344xKArBmRPh/hZ6VBLph+OR0HqUGQOO5YCHnnypkmjsU8ywDenIhGAJCpK?=
+ =?us-ascii?Q?HSZqXwk5e1T410htGzU28O6iQfjNWZq2xCjMG+U1EjWgEW8P2/PWFzBBZsQF?=
+ =?us-ascii?Q?RuK+9VDK0WTFVtrMlIdUMwgYEPrM9qW77x//fQNOCZnP1jmDj0PKkdc8QgHm?=
+ =?us-ascii?Q?zvVUzxyCw9bfia5YUfKYGRKfvedlRNfTBU03iaBggsnx1g/Leh9hFak+iomv?=
+ =?us-ascii?Q?329iApG772KIonYWXNPDPez9Jwp3y0NVXvQsWC2LfiiYpE+ylN6djURMipr1?=
+ =?us-ascii?Q?SLs2Xf8fy2uZCtJU8b9lP5TkQBYCaj9Kr0WNlUR785vdSIU4ZtMRO4AiYiaK?=
+ =?us-ascii?Q?I7YlfFQO35/11Ih3caO5WNN9flV1z7I+zbRoMwej6iTY9kxzr1iFf71KxO+r?=
+ =?us-ascii?Q?VyNehHcTI9uUjcMGnt1433w9kZqu1W4l5Etk+qOO5pQOdfQuOApF2N3kBbLC?=
+ =?us-ascii?Q?19FCsdf2I6Aqy6g3yHgO1CbOayP/s0j3LcYfBnFW+hw9mGMhFszi1N+MmYnD?=
+ =?us-ascii?Q?OJ+kJjVeRDG0LoMrML5y/UfpN2PjP/B3I1wgbmwa9NSvT3BEKkUJz2qvmA3s?=
+ =?us-ascii?Q?UO/AHItxmwQ4cLfyqyjMKejfhYRoGPIJB59Oi3QSDI0cWg7tx8ufe/+p9jOG?=
+ =?us-ascii?Q?Y8HjK00s98JJROfjYaxvmeeNrJQK3uHRNo/B66lPvcMxmg4uy96cL0/4FK52?=
+ =?us-ascii?Q?qBWGQ9OI8d1YxU6Qw20DsBAmGCZe18MIyu+4UCuQmhYB+zYAZCiY1b+r0GqU?=
+ =?us-ascii?Q?Ft4m17kkggo+CQbQUzFJ5uJvcJvbNlsoRfxi0+tnWq0Ahye3jRAFcluJUNZY?=
+ =?us-ascii?Q?T25qr0aRRCMkmtB3koUWRiloJW4zDZsiG2iNJo5K/eRe4E3bEB54Ugvm3plc?=
+ =?us-ascii?Q?ELeyftck35bybKcCuJOVOYLRGR/cVnuWUcHqQk+0Z7LxbmTNDQsBZHTgvqiI?=
+ =?us-ascii?Q?YbrB3pzsTdcpPargU9/LPvyLvemxmB+IPWRv1tK0WQ3/xA57dkU8MvRvtVlc?=
+ =?us-ascii?Q?Kct0bWbGNZ5p3zSQN4k69tte1HcyrDJCPZZZSnGmiPiQ2rqnz10QFbNF5d6B?=
+ =?us-ascii?Q?2ATJh6NH3IcO1GcrJVWj3/DXgHBCSV+JA/NEHL1J+oOxssNiw0aOGCIX8t9o?=
+ =?us-ascii?Q?2EnM5ygwUb/rbmdJBn2aLoV0tXtyFzE+bAM4QiLhyQhbGelOP+wZKbohJffh?=
+ =?us-ascii?Q?4nl8COqjQFyADLkQ3u4opxVW18Ci3xm+WiAkumG3wBhEe8zfKehjHybsnomE?=
+ =?us-ascii?Q?jWkW5NgdupLqGtGT8rZab1Eg/a64yaDe9yFx4uFtmSbGQ15oLo1k/kxaaPxK?=
+ =?us-ascii?Q?ZKufJ/isvyWlas6AwN1Cz6UNQK6v3TXm2oTovET2z0t8Lcb7BoaVSEo77edN?=
+ =?us-ascii?Q?A+X7jd0ujLE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?K2HBw7eLflNzVlJ2BrFohA4Dg03DBUG9VzAOIBbw75WiTxwYs6lvcXjum+EV?=
+ =?us-ascii?Q?mcJaB7mZi2yKP8t9pn28q4ohiz649HDwHILHceJu6Jef29LP8p6Obxo2Z18F?=
+ =?us-ascii?Q?SwFBvHqEsk2YN8Bju0sgWUFLJGpNCOUO6erZ5XurJNe6hK5x1WeoVgy6bAhD?=
+ =?us-ascii?Q?Bq/N2scNgeRKQyRLUA4mR8xKyZS6MoC+j2wqUaK9FI6EJ+SPj8fmcalyGo3t?=
+ =?us-ascii?Q?nf+teFStPaYV3XL0VyOscXFhNK0psC6aDTwyrHEuoW/bJu1Pm+kfcUf329EP?=
+ =?us-ascii?Q?fnEx/VEU9/Nd/0vhQYlIK2q8zSeRZkGT1Ja2kQQjm99/JMzHMMbp6SHDbasS?=
+ =?us-ascii?Q?Te/RD7rOQary/PGVK6jlwHEw7Ncw3r9s3RhypibXpQHTjtjtcnhLR9o0rxZy?=
+ =?us-ascii?Q?rVKKTN6pqIswMg7Ua1TscLzVC+XOpFOIZTiG11yJaawQXgUkjP1i4RrfiaP5?=
+ =?us-ascii?Q?c3gAi4BGC7Y6uHOVheoTaounDhY0nmNXz/iNFcRwFM7n7DrDTH+RDWC8KY1D?=
+ =?us-ascii?Q?Iy6uwlKsOJJk4q83uVNx8nh2oFTP9CWLEG9z4PCkg///FgqU4y8IRkg1m+AX?=
+ =?us-ascii?Q?I1+U27axU7Sg2rjMTE40cYInu6Nn/I97K8MKY6I2VrQtJE3f5HDlYrM15phn?=
+ =?us-ascii?Q?D+UgVMkkNb2pTH6ulC7MiiVpH6fsvKmCw3GToUx3e5/1Mb3x/8kpIoYopruD?=
+ =?us-ascii?Q?dCzQ7wAy/vzzEl7fXfNeDSnNKLSC5zbeAolysfdQWvP/WxpJC80qcdyZZxu2?=
+ =?us-ascii?Q?GRKPeVSMSgz6BKQ2Bv3pWCnNWfaYgEQA2zXCuYnD5u4YFzPG4qrmMTfdGUZH?=
+ =?us-ascii?Q?B8HOBwz0va6dXOl9ulY0/Py+rgI73F9GchPETps77M6WcpHBfDOhj050jKmz?=
+ =?us-ascii?Q?MWfnMcuC+7R8qvXC0ndRZ3VRHI6UA5PcAWz67bpgONQzXPNGuCfZad3McQAB?=
+ =?us-ascii?Q?/eka5jmQoQ9R+5hwN31DKf9Z+5ujcj/AVmfdkNiPjx8XKJgYiW4+Ea8KRv7+?=
+ =?us-ascii?Q?g70ZhC27Uy6cn9TC73uBbe+k+/pF3RoA/6O2y9mWmtb9c/qRJUMSFF1K72+A?=
+ =?us-ascii?Q?5u2ynnppZFEJr4vn8QSVNQDsXtF7pOspBbGaDsjhKYARuyUfUulFiqWbIXkl?=
+ =?us-ascii?Q?gfDXcUx2YACHbJHP0fMtx3WmKae81LYkCHut+Q/45pxLhNrm+g6hQbwRd04V?=
+ =?us-ascii?Q?J0PSc2N4eeiuQGEqO3qlstD7Xnxz1iiQvkoKPI3PJSK92cq/rigeir1utzWx?=
+ =?us-ascii?Q?h7G/Iy7Nq15loOnkcQEgRTJ/XGAETIgHEmI/JbRPWG0bIpKXn9dKbRtMrMNu?=
+ =?us-ascii?Q?0ZSiHn0++gwIch4y6Sd8Eceu0PwLDpXkhOS7Z9qMwAhZyDZrEMH3HKN1ylqR?=
+ =?us-ascii?Q?ACRjoT8IBvps0FcXBt+6a+uMoAEtOAe8t0UGOu8wsC9xtbhmyY7jjUGyVoY6?=
+ =?us-ascii?Q?RRYf0dG0rW5mgXki/GTopERb3xrSX5r6bpMlVTTSuqosZUiD04Ff1tIyZqzo?=
+ =?us-ascii?Q?pA20jeLeyKPtYOFGIuRFGnKh8vZ5QKFrm5B/qucPoYfckeIR6aH1IYwqal9h?=
+ =?us-ascii?Q?fD1XYi0eXUh9REE/paYH2Rb8re1Icc4qWwRdYOE+?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e24dc0d7-18ab-4d7b-64dd-08dde9df994e
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 05:14:31.8931
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: A/TPlOas+juMls054yHgLf0oJxMyp2cEGJu5tJ3TXnnXCkW6cRDgzsG0gJyikTz06w/Ila7Ufq4UOZ8BpjeCXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9409
 
-syzbot has found a reproducer for the following issue on:
+Prior to aed877c2b425 ("device/dax: properly refcount device dax pages
+when mapping") ZONE_DEVICE pages were not fully reference counted when
+mapped into user page tables. Instead GUP would take a reference on the
+associated pgmap to ensure the results of pfn_to_page() remained valid.
 
-HEAD commit:    b320789d6883 Linux 6.17-rc4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=100d0312580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9c302bcfb26a48af
-dashboard link: https://syzkaller.appspot.com/bug?extid=092ef2e75c24d23f33c4
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156be662580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15230e62580000
+This is no longer required and most of the code was removed by
+fd2825b0760a ("mm/gup: remove pXX_devmap usage from get_user_pages()").
+Finish cleaning this up by removing the dead calls to put_dev_pagemap()
+and the temporary context struct.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/01625a78a66b/disk-b320789d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f8d91d48fc1b/vmlinux-b320789d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5cce19077de9/bzImage-b320789d.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/c616867486c6/mount_2.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=11230e62580000)
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/f5d9d153bd09/mount_5.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+092ef2e75c24d23f33c4@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in __list_add_valid_or_report+0x6a/0x130 lib/list_debug.c:32
-Read of size 8 at addr ffff888051ac9708 by task syz-executor/5975
-
-CPU: 1 UID: 0 PID: 5975 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- __list_add_valid_or_report+0x6a/0x130 lib/list_debug.c:32
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add_tail include/linux/list.h:183 [inline]
- list_lru_add+0xf2/0x270 mm/list_lru.c:171
- qd_put+0x114/0x190 fs/gfs2/quota.c:342
- do_qc+0x488/0x5e0 fs/gfs2/quota.c:719
- do_sync+0x88d/0xc60 fs/gfs2/quota.c:966
- gfs2_quota_sync+0x359/0x460 fs/gfs2/quota.c:1357
- gfs2_sync_fs+0x4c/0xb0 fs/gfs2/super.c:658
- sync_filesystem+0xee/0x230 fs/sync.c:56
- generic_shutdown_super+0x6f/0x2c0 fs/super.c:622
- kill_block_super+0x44/0x90 fs/super.c:1766
- deactivate_locked_super+0xbc/0x130 fs/super.c:474
- cleanup_mnt+0x425/0x4c0 fs/namespace.c:1375
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f04ff58ff17
-Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffe3b39e568 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00007f04ff611c05 RCX: 00007f04ff58ff17
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffe3b39e620
-RBP: 00007ffe3b39e620 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffe3b39f6b0
-R13: 00007f04ff611c05 R14: 000000000005a186 R15: 00007ffe3b39f6f0
- </TASK>
-
-Allocated by task 7054:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:330 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:356
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4180 [inline]
- slab_alloc_node mm/slub.c:4229 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4236
- qd_alloc+0x50/0x250 fs/gfs2/quota.c:234
- gfs2_quota_init+0x777/0x1230 fs/gfs2/quota.c:1448
- gfs2_make_fs_rw+0x181/0x2b0 fs/gfs2/super.c:149
- gfs2_fill_super+0x1a7b/0x20d0 fs/gfs2/ops_fstype.c:1278
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
- gfs2_get_tree+0x51/0x1e0 fs/gfs2/ops_fstype.c:1335
- vfs_get_tree+0x92/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 23:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2417 [inline]
- slab_free mm/slub.c:4680 [inline]
- kmem_cache_free+0x18f/0x400 mm/slub.c:4782
- gfs2_qd_dealloc+0x70/0xe0 fs/gfs2/quota.c:111
- rcu_do_batch kernel/rcu/tree.c:2605 [inline]
- rcu_core+0xcab/0x1770 kernel/rcu/tree.c:2861
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
- smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Last potentially related work creation:
- kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
- __call_rcu_common kernel/rcu/tree.c:3123 [inline]
- call_rcu+0x157/0x9c0 kernel/rcu/tree.c:3243
- gfs2_quota_sync+0x3c4/0x460 fs/gfs2/quota.c:1361
- gfs2_sync_fs+0x4c/0xb0 fs/gfs2/super.c:658
- sync_filesystem+0xee/0x230 fs/sync.c:56
- generic_shutdown_super+0x6f/0x2c0 fs/super.c:622
- kill_block_super+0x44/0x90 fs/super.c:1766
- deactivate_locked_super+0xbc/0x130 fs/super.c:474
- cleanup_mnt+0x425/0x4c0 fs/namespace.c:1375
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888051ac9690
- which belongs to the cache gfs2_quotad of size 272
-The buggy address is located 120 bytes inside of
- freed 272-byte region [ffff888051ac9690, ffff888051ac97a0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff888051ac9540 pfn:0x51ac9
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff8881405d6000 dead000000000122 0000000000000000
-raw: ffff888051ac9540 00000000800c0007 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Reclaimable, gfp_mask 0x52c50(GFP_NOFS|__GFP_RECLAIMABLE|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6304, tgid 6304 (syz.2.68), ts 167216429244, free_ts 31894484706
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2487 [inline]
- allocate_slab+0x8a/0x370 mm/slub.c:2655
- new_slab mm/slub.c:2709 [inline]
- ___slab_alloc+0xbeb/0x1410 mm/slub.c:3891
- __slab_alloc mm/slub.c:3981 [inline]
- __slab_alloc_node mm/slub.c:4056 [inline]
- slab_alloc_node mm/slub.c:4217 [inline]
- kmem_cache_alloc_noprof+0x283/0x3c0 mm/slub.c:4236
- qd_alloc+0x50/0x250 fs/gfs2/quota.c:234
- gfs2_quota_init+0x777/0x1230 fs/gfs2/quota.c:1448
- gfs2_make_fs_rw+0x181/0x2b0 fs/gfs2/super.c:149
- gfs2_fill_super+0x1a7b/0x20d0 fs/gfs2/ops_fstype.c:1278
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
- gfs2_get_tree+0x51/0x1e0 fs/gfs2/ops_fstype.c:1335
- vfs_get_tree+0x92/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4324
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
- __free_pages mm/page_alloc.c:5260 [inline]
- free_contig_range+0x1bd/0x4a0 mm/page_alloc.c:7091
- destroy_args+0x69/0x660 mm/debug_vm_pgtable.c:958
- debug_vm_pgtable+0x39f/0x3b0 mm/debug_vm_pgtable.c:1345
- do_one_initcall+0x236/0x820 init/main.c:1269
- do_initcall_level+0x104/0x190 init/main.c:1331
- do_initcalls+0x59/0xa0 init/main.c:1347
- kernel_init_freeable+0x334/0x4b0 init/main.c:1579
- kernel_init+0x1d/0x1d0 init/main.c:1469
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Memory state around the buggy address:
- ffff888051ac9600: fb fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc
- ffff888051ac9680: fc fc fa fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888051ac9700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                      ^
- ffff888051ac9780: fb fb fb fb fc fc fc fc fc fc fc fc 00 00 00 00
- ffff888051ac9800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
+Signed-off-by: Alistair Popple <apopple@nvidia.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ mm/gup.c | 67 ++++++++++++++++++++++----------------------------------
+ 1 file changed, 26 insertions(+), 41 deletions(-)
+
+diff --git a/mm/gup.c b/mm/gup.c
+index adffe663594dc..be5791a43c735 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -28,11 +28,6 @@
+ #include "internal.h"
+ #include "swap.h"
+ 
+-struct follow_page_context {
+-	struct dev_pagemap *pgmap;
+-	unsigned int page_mask;
+-};
+-
+ static inline void sanity_check_pinned_pages(struct page **pages,
+ 					     unsigned long npages)
+ {
+@@ -661,7 +656,7 @@ static inline bool can_follow_write_pud(pud_t pud, struct page *page,
+ 
+ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 				    unsigned long addr, pud_t *pudp,
+-				    int flags, struct follow_page_context *ctx)
++				    int flags, unsigned long *page_mask)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	struct page *page;
+@@ -688,7 +683,7 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 	if (ret)
+ 		page = ERR_PTR(ret);
+ 	else
+-		ctx->page_mask = HPAGE_PUD_NR - 1;
++		*page_mask = HPAGE_PUD_NR - 1;
+ 
+ 	return page;
+ }
+@@ -714,7 +709,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
+ static struct page *follow_huge_pmd(struct vm_area_struct *vma,
+ 				    unsigned long addr, pmd_t *pmd,
+ 				    unsigned int flags,
+-				    struct follow_page_context *ctx)
++				    unsigned long *page_mask)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	pmd_t pmdval = *pmd;
+@@ -751,7 +746,7 @@ static struct page *follow_huge_pmd(struct vm_area_struct *vma,
+ #endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+ 	page += (addr & ~HPAGE_PMD_MASK) >> PAGE_SHIFT;
+-	ctx->page_mask = HPAGE_PMD_NR - 1;
++	*page_mask = HPAGE_PMD_NR - 1;
+ 
+ 	return page;
+ }
+@@ -759,7 +754,7 @@ static struct page *follow_huge_pmd(struct vm_area_struct *vma,
+ #else  /* CONFIG_PGTABLE_HAS_HUGE_LEAVES */
+ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ 				    unsigned long addr, pud_t *pudp,
+-				    int flags, struct follow_page_context *ctx)
++				    int flags, unsigned long *page_mask)
+ {
+ 	return NULL;
+ }
+@@ -767,7 +762,7 @@ static struct page *follow_huge_pud(struct vm_area_struct *vma,
+ static struct page *follow_huge_pmd(struct vm_area_struct *vma,
+ 				    unsigned long addr, pmd_t *pmd,
+ 				    unsigned int flags,
+-				    struct follow_page_context *ctx)
++				    unsigned long *page_mask)
+ {
+ 	return NULL;
+ }
+@@ -813,8 +808,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
+ }
+ 
+ static struct page *follow_page_pte(struct vm_area_struct *vma,
+-		unsigned long address, pmd_t *pmd, unsigned int flags,
+-		struct dev_pagemap **pgmap)
++		unsigned long address, pmd_t *pmd, unsigned int flags)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	struct folio *folio;
+@@ -912,7 +906,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 				    unsigned long address, pud_t *pudp,
+ 				    unsigned int flags,
+-				    struct follow_page_context *ctx)
++				    unsigned long *page_mask)
+ {
+ 	pmd_t *pmd, pmdval;
+ 	spinlock_t *ptl;
+@@ -926,7 +920,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	if (!pmd_present(pmdval))
+ 		return no_page_table(vma, flags, address);
+ 	if (likely(!pmd_leaf(pmdval)))
+-		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
++		return follow_page_pte(vma, address, pmd, flags);
+ 
+ 	if (pmd_protnone(pmdval) && !gup_can_follow_protnone(vma, flags))
+ 		return no_page_table(vma, flags, address);
+@@ -939,16 +933,16 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	}
+ 	if (unlikely(!pmd_leaf(pmdval))) {
+ 		spin_unlock(ptl);
+-		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
++		return follow_page_pte(vma, address, pmd, flags);
+ 	}
+ 	if (pmd_trans_huge(pmdval) && (flags & FOLL_SPLIT_PMD)) {
+ 		spin_unlock(ptl);
+ 		split_huge_pmd(vma, pmd, address);
+ 		/* If pmd was left empty, stuff a page table in there quickly */
+ 		return pte_alloc(mm, pmd) ? ERR_PTR(-ENOMEM) :
+-			follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
++			follow_page_pte(vma, address, pmd, flags);
+ 	}
+-	page = follow_huge_pmd(vma, address, pmd, flags, ctx);
++	page = follow_huge_pmd(vma, address, pmd, flags, page_mask);
+ 	spin_unlock(ptl);
+ 	return page;
+ }
+@@ -956,7 +950,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ static struct page *follow_pud_mask(struct vm_area_struct *vma,
+ 				    unsigned long address, p4d_t *p4dp,
+ 				    unsigned int flags,
+-				    struct follow_page_context *ctx)
++				    unsigned long *page_mask)
+ {
+ 	pud_t *pudp, pud;
+ 	spinlock_t *ptl;
+@@ -969,7 +963,7 @@ static struct page *follow_pud_mask(struct vm_area_struct *vma,
+ 		return no_page_table(vma, flags, address);
+ 	if (pud_leaf(pud)) {
+ 		ptl = pud_lock(mm, pudp);
+-		page = follow_huge_pud(vma, address, pudp, flags, ctx);
++		page = follow_huge_pud(vma, address, pudp, flags, page_mask);
+ 		spin_unlock(ptl);
+ 		if (page)
+ 			return page;
+@@ -978,13 +972,13 @@ static struct page *follow_pud_mask(struct vm_area_struct *vma,
+ 	if (unlikely(pud_bad(pud)))
+ 		return no_page_table(vma, flags, address);
+ 
+-	return follow_pmd_mask(vma, address, pudp, flags, ctx);
++	return follow_pmd_mask(vma, address, pudp, flags, page_mask);
+ }
+ 
+ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
+ 				    unsigned long address, pgd_t *pgdp,
+ 				    unsigned int flags,
+-				    struct follow_page_context *ctx)
++				    unsigned long *page_mask)
+ {
+ 	p4d_t *p4dp, p4d;
+ 
+@@ -995,7 +989,7 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
+ 	if (!p4d_present(p4d) || p4d_bad(p4d))
+ 		return no_page_table(vma, flags, address);
+ 
+-	return follow_pud_mask(vma, address, p4dp, flags, ctx);
++	return follow_pud_mask(vma, address, p4dp, flags, page_mask);
+ }
+ 
+ /**
+@@ -1003,20 +997,16 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
+  * @vma: vm_area_struct mapping @address
+  * @address: virtual address to look up
+  * @flags: flags modifying lookup behaviour
+- * @ctx: contains dev_pagemap for %ZONE_DEVICE memory pinning and a
+- *       pointer to output page_mask
++ * @page_mask: a pointer to output page_mask
+  *
+  * @flags can have FOLL_ flags set, defined in <linux/mm.h>
+  *
+- * When getting pages from ZONE_DEVICE memory, the @ctx->pgmap caches
+- * the device's dev_pagemap metadata to avoid repeating expensive lookups.
+- *
+  * When getting an anonymous page and the caller has to trigger unsharing
+  * of a shared anonymous page first, -EMLINK is returned. The caller should
+  * trigger a fault with FAULT_FLAG_UNSHARE set. Note that unsharing is only
+  * relevant with FOLL_PIN and !FOLL_WRITE.
+  *
+- * On output, the @ctx->page_mask is set according to the size of the page.
++ * On output, @page_mask is set according to the size of the page.
+  *
+  * Return: the mapped (struct page *), %NULL if no mapping exists, or
+  * an error pointer if there is a mapping to something not represented
+@@ -1024,7 +1014,7 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
+  */
+ static struct page *follow_page_mask(struct vm_area_struct *vma,
+ 			      unsigned long address, unsigned int flags,
+-			      struct follow_page_context *ctx)
++			      unsigned long *page_mask)
+ {
+ 	pgd_t *pgd;
+ 	struct mm_struct *mm = vma->vm_mm;
+@@ -1032,13 +1022,13 @@ static struct page *follow_page_mask(struct vm_area_struct *vma,
+ 
+ 	vma_pgtable_walk_begin(vma);
+ 
+-	ctx->page_mask = 0;
++	*page_mask = 0;
+ 	pgd = pgd_offset(mm, address);
+ 
+ 	if (pgd_none(*pgd) || unlikely(pgd_bad(*pgd)))
+ 		page = no_page_table(vma, flags, address);
+ 	else
+-		page = follow_p4d_mask(vma, address, pgd, flags, ctx);
++		page = follow_p4d_mask(vma, address, pgd, flags, page_mask);
+ 
+ 	vma_pgtable_walk_end(vma);
+ 
+@@ -1376,7 +1366,7 @@ static long __get_user_pages(struct mm_struct *mm,
+ {
+ 	long ret = 0, i = 0;
+ 	struct vm_area_struct *vma = NULL;
+-	struct follow_page_context ctx = { NULL };
++	unsigned long page_mask = 0;
+ 
+ 	if (!nr_pages)
+ 		return 0;
+@@ -1418,7 +1408,7 @@ static long __get_user_pages(struct mm_struct *mm,
+ 						pages ? &page : NULL);
+ 				if (ret)
+ 					goto out;
+-				ctx.page_mask = 0;
++				page_mask = 0;
+ 				goto next_page;
+ 			}
+ 
+@@ -1441,7 +1431,7 @@ static long __get_user_pages(struct mm_struct *mm,
+ 		}
+ 		cond_resched();
+ 
+-		page = follow_page_mask(vma, start, gup_flags, &ctx);
++		page = follow_page_mask(vma, start, gup_flags, &page_mask);
+ 		if (!page || PTR_ERR(page) == -EMLINK) {
+ 			ret = faultin_page(vma, start, gup_flags,
+ 					   PTR_ERR(page) == -EMLINK, locked);
+@@ -1474,7 +1464,7 @@ static long __get_user_pages(struct mm_struct *mm,
+ 			goto out;
+ 		}
+ next_page:
+-		page_increm = 1 + (~(start >> PAGE_SHIFT) & ctx.page_mask);
++		page_increm = 1 + (~(start >> PAGE_SHIFT) & page_mask);
+ 		if (page_increm > nr_pages)
+ 			page_increm = nr_pages;
+ 
+@@ -1524,8 +1514,6 @@ static long __get_user_pages(struct mm_struct *mm,
+ 		nr_pages -= page_increm;
+ 	} while (nr_pages);
+ out:
+-	if (ctx.pgmap)
+-		put_dev_pagemap(ctx.pgmap);
+ 	return i ? i : ret;
+ }
+ 
+@@ -2853,7 +2841,6 @@ static int gup_fast_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
+ 		unsigned long end, unsigned int flags, struct page **pages,
+ 		int *nr)
+ {
+-	struct dev_pagemap *pgmap = NULL;
+ 	int ret = 0;
+ 	pte_t *ptep, *ptem;
+ 
+@@ -2926,8 +2913,6 @@ static int gup_fast_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
+ 	ret = 1;
+ 
+ pte_unmap:
+-	if (pgmap)
+-		put_dev_pagemap(pgmap);
+ 	pte_unmap(ptem);
+ 	return ret;
+ }
+-- 
+2.47.2
+
 
