@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-796885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CE8B408D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:22:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D9AB408DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5C7188F481
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:23:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489603B582A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E35A31DDBB;
-	Tue,  2 Sep 2025 15:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BC528489B;
+	Tue,  2 Sep 2025 15:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AnLLyO9V"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7e+2r+t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFB128489B;
-	Tue,  2 Sep 2025 15:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4422DA751;
+	Tue,  2 Sep 2025 15:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826570; cv=none; b=plUpk+3nXYDZUWmPiUuJgmOPXdTvAQ174lTV7TnOVV5u4mT4z5BcqOLiRAIbEgH+HJHWmTrDwDDyR1WyxPOqYj4rBIfveAF636a0aTAvQw5pBNuw7ZzEysvQ8Y2o6ECxmW3HR4liYxDmXr9pH2A277cjrjLmgtgXGl71O+uzfRA=
+	t=1756826594; cv=none; b=eq+i3J4g6zY9/YX2oG9IXdCEEDl3QtYarrRztrgS+Q9lXgJuqbhmS4Rz8EQMYjHOiQm0lCdTPi7vthEOLe9Tz6RLuqLdn2EkgPPj3Y4ymFrdSZWm9e3jQGqJYmxhw7MF98Dmv5hGBZkLE0DdsyYlcLJ6fXR1E7X8jrhb225tPOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826570; c=relaxed/simple;
-	bh=HaUYGzzb/C0ZDIqppBt972XneJxjm2FpucYUwJY3Mq0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kOoLk7b3XPvOfrmMg5w0/a/krP3tfW0Ciwv5ufYEvCOFnKVE6fZdy5uzl35VGK9PbOVnV4PYh1bq1T3L4Q81DuGTcrNXvWOIy5seYZO0dCPJ1N+PZgGwVxGWBCLVkemOfBh9YOJXOlkz6XUoobc3MJPq6068dLaJZbAcdjpL/4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AnLLyO9V; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=U0gQV6ybTFZGuryr56vx/u+MpC/277rOqkaUQrD8Who=; b=AnLLyO9VMFwCr2es3/frbxHCBC
-	JjlPP7n5z9ULDCVWr5AQzJ2l+5q8UR66ExwbJHr6BkB1jeIzNQMrNOxqEIPvli742kjWtQgd2zzCY
-	vMFTibF3LJcdJwQVNj22JNPUIL6brEeMOevh2LnJ3Fla/R2w5OyaEhlk8ekLJHdo9l4t0Gx5d9Qpt
-	wNMbh5xJ2zU7tA0gctkcN5r3o3ZtkeDmFSF1c196PEPJ1+SPEOHBPfKAB6q5WmO0HRoA5UMPeoaM2
-	cdJeEn7Q/ObGevUCQaRo+XaSlU61ZAy2B3RQbAmsUz/YQSV3qHJ55gQdj4H3qjFyKYnNPxsY187/W
-	SMJSM2hg==;
-Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1utSqH-005lLV-MA; Tue, 02 Sep 2025 17:22:41 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luis Henriques <luis@igalia.com>
-Subject: [PATCH] fuse: remove WARN_ON_ONCE() from fuse_iomap_writeback_{range,submit}()
-Date: Tue,  2 Sep 2025 16:22:34 +0100
-Message-ID: <20250902152234.35173-1-luis@igalia.com>
+	s=arc-20240116; t=1756826594; c=relaxed/simple;
+	bh=0k7XOc/MAWxBHAWe2nQltg0rfeGbxKlH0oH7p5vvKxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nEyEzc8Xvg29gqL78pu+EpT1EjLKz1weTVxXIFKS2yBawvYUo1GOEYDyve/6WfZoieVV0ye4lKRVVJw+GNGaz/Onus6QxkiyNejrWLzeF8UFlIF++RDBTNplf5Xu/Gb/cG1X/OT8g8U80IZF0U6nenWhGnowoYsJub0tpq6lESc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7e+2r+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27BC6C4CEED;
+	Tue,  2 Sep 2025 15:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756826593;
+	bh=0k7XOc/MAWxBHAWe2nQltg0rfeGbxKlH0oH7p5vvKxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l7e+2r+tgkWmKO2zrTo30FsU8aZv8IrCXZz60X5iMyD7MZTujB5nhhXxv3GC+LJJd
+	 s458S2UQCg3YMsgA+5NT1oFTuVwgMsjzXKmaxraBWieRLFU8outKdNAN8JkXbvH522
+	 X9vl0T+IVoQb0VxTsDq1MEYpk91XZvxhTJ6Zq5Y5SnpxDPOtHW+BN3guPA+053QlFB
+	 i+zrTN3RwHAU8qeoqMekA53Ae/tH9oXeVDmKq87v0COvVtwwOGrqs3GDckklnWUKlM
+	 BPv8PMGX9mGSVnkH5e6aNDYO0yST84eVSm4/y8qhyh/4yxhVWhPqdlGw7MifJvzfhT
+	 9tjfcIEwf0bKw==
+Date: Tue, 2 Sep 2025 16:23:06 +0100
+From: Lee Jones <lee@kernel.org>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	andriy.shevchenko@intel.com,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v14 00/10] Add support for MAX7360
+Message-ID: <20250902152306.GV2163762@google.com>
+References: <20250824-mdb-max7360-support-v14-0-435cfda2b1ea@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250824-mdb-max7360-support-v14-0-435cfda2b1ea@bootlin.com>
 
-The usage of WARN_ON_ONCE doesn't seem to be necessary in these functions.
-All fuse_iomap_writeback_submit() call sites already ensure that wpc->wb_ctx
-contains a valid fuse_fill_wb_data.
+On Sun, 24 Aug 2025, Mathieu Dubois-Briand wrote:
 
-Function fuse_iomap_writeback_range() also seems to always be called with a
-valid value.  But even if this wasn't the case, there would be a crash
-before this WARN_ON_ONCE() because ->wpa is being accessed before it.
+> This series implements a set of drivers allowing to support the Maxim
+> Integrated MAX7360 device.
+> 
+> The MAX7360 is an I2C key-switch and led controller, with following
+> functionalities:
+> - Keypad controller for a key matrix of up to 8 rows and 8 columns.
+> - Rotary encoder support, for a single rotary encoder.
+> - Up to 8 PWM outputs.
+> - Up to 8 GPIOs with support for interrupts and 6 GPOs.
 
-Signed-off-by: Luis Henriques <luis@igalia.com>
----
-As I'm saying above, I _think_ there's no need for these WARN_ON_ONCE().
-However, if I'm wrong and they are required, I believe there's a need for
-a different patch (I can send one) to actually prevent a kernel crash.
+MFD looks okay now, let me know when you have all Acks and I'll merge the set.
 
- fs/fuse/file.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 5525a4520b0f..fac52f9fb333 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2142,8 +2142,6 @@ static ssize_t fuse_iomap_writeback_range(struct iomap_writepage_ctx *wpc,
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	loff_t offset = offset_in_folio(folio, pos);
- 
--	WARN_ON_ONCE(!data);
--
- 	if (!data->ff) {
- 		data->ff = fuse_write_file_get(fi);
- 		if (!data->ff)
-@@ -2182,8 +2180,6 @@ static int fuse_iomap_writeback_submit(struct iomap_writepage_ctx *wpc,
- {
- 	struct fuse_fill_wb_data *data = wpc->wb_ctx;
- 
--	WARN_ON_ONCE(!data);
--
- 	if (data->wpa) {
- 		WARN_ON(!data->wpa->ia.ap.num_folios);
- 		fuse_writepages_send(wpc->inode, data);
+-- 
+Lee Jones [李琼斯]
 
