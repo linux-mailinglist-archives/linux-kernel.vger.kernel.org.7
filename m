@@ -1,81 +1,47 @@
-Return-Path: <linux-kernel+bounces-795639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E3EB3F5B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:40:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FC1B3F5BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5240448364F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:40:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6D0B4E3625
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29C42E54A8;
-	Tue,  2 Sep 2025 06:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D002E5430;
+	Tue,  2 Sep 2025 06:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="phmmLiln"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tCct6Rfg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985472DF15D;
-	Tue,  2 Sep 2025 06:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEE5202F93;
+	Tue,  2 Sep 2025 06:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756795224; cv=none; b=niEkKyVZKN62yZt+tFkLXDUqezKHh9YFG5AyZ9gdNEyVXDt4I9USfCFQo+FLDh8RPNLSfPWy/kDLvvZGORCN3Tz9ZLhja6YbhWL+FmYp/9qiUi0yF5SqngSm+hZye1xZmHH6+62awktyVeBd/S9vuAOgdPQg9Qa+U2lKF4r48PI=
+	t=1756795300; cv=none; b=TWjZ10iVcF0YmL1upXhzi6cvEQ7vngEMKRr+R57TZ+cPMVvjWX0GX3xNb7vvoCSWvLKCyNK0MJpKUe+kCe1zAnvvH3VwHEgVVDBTBG2Yquvu7jP8zVB5tpZ4gem9r7wspTVJgrfIwKIAWt73kO49ITnm6PpecLexSZ/pSgrU7L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756795224; c=relaxed/simple;
-	bh=NAGgal8RBero3MRCvjOxT3Rpb5VFZnYuL8Rb0yFeA3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=phuRo7usJoNpOwJ4ibhvXDvl5BAYHuoFJktGWGPwpe68XDNuUecMsSA/V3ylnLfaLuiXm0DIHHODVDCTmkoMFO0jZRkTFrh7zOjm6soYaz5ZTO0CzqYF3MuxGT+SfAbeV7POGmgh5uWFH9MjGrHgRug82pJTVYiEdKhk6/SBjMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=phmmLiln; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 581NpLCJ009463;
-	Tue, 2 Sep 2025 06:40:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=smH8Iv
-	Caai28BF62WFWYENlbU2adoO3gGfBik1qn5Jw=; b=phmmLiln2whz5z3tzD0H72
-	bSB6AzJEmmWDInxAmRixRaHp/c4BP3mzyyWZzpzlH3ggjmLy3s6eaNPBT03+sxK5
-	WTbAReYAmAACUNbms2xq7R5dEW67p+T/LgOy8K5UyAbtivX94iyn6VP1PIlV9P+C
-	9FtB8M4pVHcVc3ZBY0Vp5OOKZk/VzW9F65LodEhrZYRTELx/J/WeHDSy6iiW83g3
-	gimxiXX7gaDVfxSasMAo2qvU3F9fZY090DpaWAXLMhPhQPHhJ7AvjEaZRqxyf/gA
-	JxdHlFac90VIZttae9CYkW+VTtlqMA+KAC6BbX5pHNiTfok5Y7/bBJei0Et4SAVA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usvfmfda-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Sep 2025 06:40:11 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5826Zmrt029485;
-	Tue, 2 Sep 2025 06:40:10 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48usvfmfd5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Sep 2025 06:40:10 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58252UsA019390;
-	Tue, 2 Sep 2025 06:40:09 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48vd4ms60k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Sep 2025 06:40:09 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5826e8sk53739864
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 2 Sep 2025 06:40:08 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6934C58045;
-	Tue,  2 Sep 2025 06:40:08 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 77DB258050;
-	Tue,  2 Sep 2025 06:40:02 +0000 (GMT)
-Received: from [9.109.249.226] (unknown [9.109.249.226])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  2 Sep 2025 06:40:02 +0000 (GMT)
-Message-ID: <7bd60e6d-4b33-4a04-998b-0be163a6fdb0@linux.ibm.com>
-Date: Tue, 2 Sep 2025 12:10:01 +0530
+	s=arc-20240116; t=1756795300; c=relaxed/simple;
+	bh=f6UTfJAMNJFJrDoKhLj4RBGqPYuXncGxKfVvpmE4wpw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DVHMhuItVduNTDNasozEbaw3fkYafB1wUHQXkFWbPmd+/ivJmnKbUpv0brBmv1koBAiseVSCChcVYDgdzfGHpjjHEo34yKvuaJn0Hp3+PyzKBTpZxOEaPY8aphUEN2GUzgIEkCJKaFK+SMEAXymtLQhwLJbrm0DirfLtXRe2dXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tCct6Rfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05920C4CEED;
+	Tue,  2 Sep 2025 06:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756795299;
+	bh=f6UTfJAMNJFJrDoKhLj4RBGqPYuXncGxKfVvpmE4wpw=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=tCct6RfgbVOv9p45ZejA8L8cjOPdEbgi7sIXcBapIHOL1NC9y1aQ2VXaLlcLMNNpg
+	 9EWH4nlFsfzCSrIBhHFHkOFwzxgF+cnTFsdYnkBx5G14Im+fmjWbb4hECG8HQRMSAx
+	 XH9yw/HxxR/wqzxguUzHC6HTcMeHaWQJJTTTKYSuJpMaSy9eS+RhJcXEYiREgxGNjN
+	 klK4n8e2OJ6/CJ61wQXNISQmIGTTcMYs05jrEOaVvRH76cJMxu3U6p9EQH9asF7GC/
+	 Bf5HqagnDTL0W+eDw8At7um/p9TOTvZ646hRv0/Xay6OOm3WJMrDqAe9GJUW7vaGG5
+	 nx7J7PmosFttg==
+Message-ID: <fe2867dd-50a6-42d8-92b0-0e29fa7691ee@kernel.org>
+Date: Tue, 2 Sep 2025 08:41:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,81 +49,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net/smc: Replace use of strncpy on NUL-terminated
- string with strscpy
-To: James Flowers <bold.zone2373@fastmail.com>, alibuda@linux.alibaba.com,
-        dust.li@linux.alibaba.com, sidraya@linux.ibm.com, wenjia@linux.ibm.com,
-        tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        horms@kernel.org, skhan@linuxfoundation.org
-Cc: linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linux.dev
-References: <20250901030512.80099-1-bold.zone2373@fastmail.com>
+Subject: Re: [PATCH v10 2/6] dt-bindings: display/msm: dp-controller: document
+ QCS8300 compatible
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250901-qcs8300_mdss-v10-0-87cab7e48479@oss.qualcomm.com>
+ <20250901-qcs8300_mdss-v10-2-87cab7e48479@oss.qualcomm.com>
+ <20250902-speedy-overjoyed-dove-edf2ee@kuoka>
 Content-Language: en-US
-From: Mahanta Jambigi <mjambigi@linux.ibm.com>
-In-Reply-To: <20250901030512.80099-1-bold.zone2373@fastmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250902-speedy-overjoyed-dove-edf2ee@kuoka>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=behrUPPB c=1 sm=1 tr=0 ts=68b6914b cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=ZLGELXoPAAAA:8 a=VnNF1IyMAAAA:8
- a=sRZyJRDGTCvSbJG7FuwA:9 a=QEXdDO2ut3YA:10 a=CFiPc5v16LZhaT-MVE1c:22
-X-Proofpoint-ORIG-GUID: qFoqQJwTEhWngaDNxFh9_NbK6veFWD-H
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzNCBTYWx0ZWRfX+tpSirvNyrKD
- U7go02OKOYzuE28ig91Hi4h12iuG5B5vZUli47hI/KPsQltpN1zz4+j8HDML9zbLhZ8QuhtD5o/
- vz3R1yP/fdaOoPbZR5Hq25yiw6suqG1Y+ukOqGWGe4hsf/7f01poEOHDhAxLax7JZ1bUCTYv1Pi
- yMmaDhP23+lkUAFGqvDyzPsj43UcheN0R9+X41Ea7TStDzvPqFnBhTVtqIbkPa01cSWBKi/Ab1h
- DrqbFtkd3SUHs2uB9rk/3UxFzTzpGghsYlGcZuvEYAN3FPC6CQUbEwVsBQUuVAu0WtMbcqxrnpR
- liEZvHQLHf7oZSvLCEwHPGwIxIijkJDIo5ECy4gjBN3JGNAX25qr6BWSU8nuNitNhXdNL9J/Ta5
- vy5uIlPI
-X-Proofpoint-GUID: Kod15Y-6MTn7jlVkHQlYp0VZB3uqdvce
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_01,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 spamscore=0 clxscore=1011 phishscore=0
- priorityscore=1501 adultscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300034
 
-
-
-On 01/09/25 8:34 am, James Flowers wrote:
-> strncpy is deprecated for use on NUL-terminated strings, as indicated in
-> Documentation/process/deprecated.rst. strncpy NUL-pads the destination
-> buffer and doesn't guarantee the destination buffer will be NUL
-> terminated.
+On 02/09/2025 08:38, Krzysztof Kozlowski wrote:
+> On Mon, Sep 01, 2025 at 05:57:30PM +0800, Yongxing Mou wrote:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              # QCS8300 only has one DP controller that supports 4
+>> +              # streams MST.
+>> +              - qcom,qcs8300-dp
+>> +    then:
+>> +      properties:
+>> +        reg:
+>> +          minItems: 9
+>> +          maxItems: 9
+>> +        clocks:
+>> +          minItems: 8
+>> +          maxItems: 8
 > 
-> Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
-> ---
-> V1 -> V2: Replaced with two argument version of strscpy
-> Note: this has only been compile tested.
+> Clocks have only five items, reg has 5. At least in my next from few
+> days ago.
 > 
->  net/smc/smc_pnet.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
-> index 76ad29e31d60..b90337f86e83 100644
-> --- a/net/smc/smc_pnet.c
-> +++ b/net/smc/smc_pnet.c
-> @@ -450,7 +450,7 @@ static int smc_pnet_add_ib(struct smc_pnettable *pnettable, char *ib_name,
->  		return -ENOMEM;
->  	new_pe->type = SMC_PNET_IB;
->  	memcpy(new_pe->pnet_name, pnet_name, SMC_MAX_PNETID_LEN);
-> -	strncpy(new_pe->ib_name, ib_name, IB_DEVICE_NAME_MAX);
-> +	strscpy(new_pe->ib_name, ib_name);
+> Nothing explains any patchset dependencies, so this makes reviewing more
+> difficult than it should be.
+OK, I found the dependency in cover letter (I was looking at wrong cover
+letter), but the dependency does not have relevant clock changes, so
+this is still wrong.
 
-I tested your changes by creating a Software PNET ID using *smc_pnet*
-tool & it works fine. Your changes are similar to ae2402b(net/smc:
-replace strncpy with strscpy) commit.
+I suggest to slow down with this patchset. It's v10 already with
+simultaneous other changes and two (!!!) dependencies.
 
-Reviewed-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
+I don't know how I am supposed to review this.
 
->  	new_pe->ib_port = ib_port;
->  
->  	new_ibdev = true;
-
-
+Best regards,
+Krzysztof
 
