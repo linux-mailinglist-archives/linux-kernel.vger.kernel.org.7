@@ -1,242 +1,132 @@
-Return-Path: <linux-kernel+bounces-796857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32BAB40867
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:04:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDC4B40872
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF5D14E406F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:04:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D66693B4552
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1953128D8;
-	Tue,  2 Sep 2025 15:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96A330FC33;
+	Tue,  2 Sep 2025 15:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MMqlkOiR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3uHXcYN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A925E313558
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756825442; cv=fail; b=m9hBnbCMvttk3A2AxPtgClDXdsm6dn/PS/n0dxD0bw/BTB6nHJ6Uh8pVdt2FheW6JbFw2i/LFd0qSVCH8ATxOlpZu0mglnHXRfnqOzT0iGGfLiDbEwuoVIUDu+essdlXp5W8v3nRno70DjlchNe78CcGfad/m7/5UiI90+US900=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756825442; c=relaxed/simple;
-	bh=7CMT17eXlp+frvas6mRk50H6MNe2lh81VfATKhv6tAo=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=LSvfGZ3jNIhq0I37T9/EU2iL6KQv8kNjzfFtbIfEQNjMNc+6h8DVP/Qv9MBcjdLCc/61HIXlpTPPTHHBj+b0pRioa0Vi09LCRgoUEmkmri2pcfodlYfVUnlsmmDL/k4sbopHkL+1wKDxQNPUm5EaJfRsl5hdcgfPDz3hm7yYlnk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MMqlkOiR; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756825440; x=1788361440;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=7CMT17eXlp+frvas6mRk50H6MNe2lh81VfATKhv6tAo=;
-  b=MMqlkOiR/sLKwkDF0oPRZtOAoXtd2SbCtQswC0HDYiTOcnYbQxawUDH9
-   8S8v+h//4iUsTGMJJdY/sFzM6G7pAXZS1wW7uwUkOyXEwXUDdzG7ArzRh
-   /7zEsyIcNI76Gm/mM4h+WBixlmncdP4TsEtCUX2QGfcINxv1Bha5uQcuZ
-   xjWw9fSeF5vV7yXiiwXeCxDFFn1GmTGijrtb6iIalqbJ+pjFbtqAHFXkb
-   VjATmw28ZBj0NXEFfSfRnwtj3L7OvVN8vPrADPtoBE9d5dpWft9m438TH
-   kDpl1GxIsLBwoCXxVtHJDufvgxBemcQiz0ccNpHBop9FZmOG0Qs4gPG+f
-   g==;
-X-CSE-ConnectionGUID: 3aXGnSkZQVKyXXMp2OXE1g==
-X-CSE-MsgGUID: VJ1iYUiCQmihJ1avRmV0Yw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="84525502"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="84525502"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 08:04:00 -0700
-X-CSE-ConnectionGUID: QIpjTnxOSkWJ46QRA0sVww==
-X-CSE-MsgGUID: 3C65hDlaS/iWaTozN6cahA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="171269600"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 08:03:59 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 2 Sep 2025 08:03:58 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 2 Sep 2025 08:03:58 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.72)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 2 Sep 2025 08:03:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s5n2dhIBY1Hvece1LsEQmP3eclZkPtImqfowFoBDWUGyOjfiZ+qEQmFJ3b+MMc4OTP29BbVAR2Plnvw06lR1DFcoeO5Z4+QBkPSI/7qqq/XH7/hYG4qVOppNoRn/4g71Rk4j9zKuwe/73zMtTaMrhrd7XZeJ5pwXlGfTX4Oo2yzD91EdOUnp0ZsLJFmh/Y3z+w41ZjAo+ha0WjLl/kboG1PXor31+0uAc0NPtSF3Lk+U+zNOcKsNBe38pmeshQd2RMcyc0Rr1rdkGMIBV22zW8uW+dnU7mvk3ero18iimKazDamGmRKFwJ9UIpbWTUBpx15gub1LVd0F6cNT0B4QDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HdlGoehymYZ+lfQkr0y+0rdJ+1SvoS8Ay0F3F8eXnzo=;
- b=jJYFmBUTSIMDe1S0Z70Rdj95wCqOewr58vVUI9Zh/jV9sgYKoHM9CoycTyEPdfTSwCkKsrVt/+EERRN8P9f4UrjNe9CzxF6p+jKmwGV0omGz1+AJjBTJN9WDL/IbtyqdSAtV1Pf7TYzQnodeskdLuqiT4eFRYJIL+8aHJ4JNLzKzLh7Dp7hqidcWdB658Vvcma3mVTPO+AV4yl6UlIYnX8xn3GprLl5JpmAZQXRU5+bY93H8jbwiXgoiiJv2feve4MlSYzAxEISIcz6T7/kd7y/GdW1CDUU0GX9bfmXaM5gnbHfAMbNu/XpvsmPFkR29Eposs6KcVfAdeBna26aQxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by IA1PR11MB6537.namprd11.prod.outlook.com (2603:10b6:208:3a3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 2 Sep
- 2025 15:03:52 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 15:03:52 +0000
-Date: Tue, 2 Sep 2025 23:03:43 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	<xen-devel@lists.xenproject.org>, <oliver.sang@intel.com>
-Subject: [ardb:x86-startup-confine-v7] [x86/boot]  7d40dc256f:
- BUG:kernel_reboot-without-warning_in_test_stage
-Message-ID: <202509022207.56fd97f4-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SI1PR02CA0034.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::10) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F11E1DE8B5;
+	Tue,  2 Sep 2025 15:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756825516; cv=none; b=X05spgBEEZ8FUE+BgtGlbwHlk/0Fqw8vemX8B8kxyRwOsa4s0TXUKgtull2JJMHW0eKQB+UgIp56IUvlSqGcLnl9ZUVxbhy+mntBvFWqlkLPQAuHF0trqCu9t5J9jCWm74mrg0IjY/9MBF+46WslTcWVzVP7y/wMegPRJBdXvG4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756825516; c=relaxed/simple;
+	bh=atSYqlmoLPlLNDf3epkVZd1rTzeBqjTverCNmfZLeGs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QyCwtbLya0O7Jk+0fBGlhkytDzA9Zb96Y9fHeBYgEtV3d9g+/KdjkgWMd39JLdjNTAIPTruUpZoG7KWM9OiT/BTgoWcw54ug6MmzIC/WCLZF+UWQwMWLi3vyZ+v9AZngkZLUUEklm41JSyQklq49TzeBq3zD0n+8bVIgwcpHhcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3uHXcYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE6D0C4CEF6;
+	Tue,  2 Sep 2025 15:05:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756825515;
+	bh=atSYqlmoLPlLNDf3epkVZd1rTzeBqjTverCNmfZLeGs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=h3uHXcYNkujwHkkJTM59eY5kXN54YJHASW0uFjVi4QHs4vDCTA4kw/+4d7GaRHVmk
+	 v2n4QElhJRhdWRSoQvlxbTp7X5fhdOg02aMYKR72ueG8I1XQ/axLUnLOHO/DY182qW
+	 C/mtZ8H6LXxRgKkt0dMFJxp104coN5PfVuxDZsrN+uVJiGdRG1hwfGi2/Qsj+9EEe9
+	 AL2KfInAoGEjIgEebNBUG4kOxLd3469jzWlK6smYd3bjfSqVkdYyac0q+yVDlYFaDS
+	 mGnnBh8+iROgu+cOJ0+ciQ3koLo2wldpaByEXpqnAOv3cWVbH7PI7l5889Ypy+TegK
+	 6+fuTaVI1rLNQ==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61e567a9a36so705338eaf.1;
+        Tue, 02 Sep 2025 08:05:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVp5cH9qSyQf1OiI6DvsQLT12ma/qBcGDHeh6o82sbH8d56NlSDQzri9lebYLFoUQDD/lMqCmbYeQGIB/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGoXxkNwpVMogrrevKln8SlmcGVMiy7WXvIafVdmgR9gLMTYeW
+	SIVV0UQO8TidZYKzktgUmN+faABD2Or7/pV7TyEoJYDPfdAbsrF779hfUbV7VTYj96VHSEidVS3
+	Ufxn8Lr7ZMCwWfNu/k+OKkiOA2Mn+uos=
+X-Google-Smtp-Source: AGHT+IGtZPMbOaSX50TXcf/i+iizuNb0+v8UkBVUTB3loRQMTb6yN3QxBxBgM5TldjBDZRVZ44aMCsQyUtpozF+4IT0=
+X-Received: by 2002:a05:6820:61e:b0:61e:2ffb:e820 with SMTP id
+ 006d021491bc7-61e33791abamr5309568eaf.4.1756825515173; Tue, 02 Sep 2025
+ 08:05:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|IA1PR11MB6537:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38edb57c-b390-426f-b5d6-08ddea31eddc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3IN/QJDqXlml2Fj2DlHyj1Qi181FJGhHP6h9buFzcQppeQucKfFb0XRWV7KH?=
- =?us-ascii?Q?ilXdBnbfPKvKGLGAIQcFoGylBmD4RMSftqyESN4cEwebQKbch6BNiznxG5N5?=
- =?us-ascii?Q?8QEh3XRabBZqe3og7A+mYLGn8SGEBSn9t1D5W2BhXIKmYN5HrcVC65dlWpGJ?=
- =?us-ascii?Q?aYd13JwM6bDzWwcRopY6Yx59pFPm/j+3hxuJX0vG85fzxZ5fWES6RR3MfcWb?=
- =?us-ascii?Q?2W648ewlljnUP/4JTllJCS/4uSeuDp8zpvGzPWUDKritjgBTwcgGXcYmFQc3?=
- =?us-ascii?Q?CF3Usa2QRsm8iN1+e2a9pv1M78lXv/pL5apG5JVrd7mynS00YGQbozXKIhp/?=
- =?us-ascii?Q?2QKyR4YaFCHGqYhm+MFaus+e76VEjnd79L70OmkXb7aCii20GkG73o8QYQqP?=
- =?us-ascii?Q?cABh2HkQiwReIAESsbkBjRegaq7HnFotRRamFv8KkeVY19BBeu4Vy3EcS9RO?=
- =?us-ascii?Q?pj5/pMyduN+HEIduyfl/1VFZBFkwXy4dyMe2KwT4ksceSXHO61fPg6zxOyhK?=
- =?us-ascii?Q?MNljq7MZ4jRBQHdZcUV62XluyCu2niAWthQzlzDFUEgEKzV8b3itE1MG+UYe?=
- =?us-ascii?Q?n374wr6qTAueihM0CLp/OMvhwgNxdjLFYoKyP6t/BHYK8M6LRWAUEVxOyeM2?=
- =?us-ascii?Q?EQ2lnu8YLtwiQUp1OtmG8l8M0IXGZU3rOvC7TJRgh2kcP95KBeInx9FqKoch?=
- =?us-ascii?Q?Hh2S2FUddEuq5ussseG6i5yzpWJnGeopqdKDUvDlVDYXV21fJjwKwS2z0pOS?=
- =?us-ascii?Q?crz5ULhdc4HBfqWECwa/bIp3rrldyhxV2sU0591a0Q3JITleo5g30clZLp/t?=
- =?us-ascii?Q?2TsI4/nBTrIzDg5XnvNaLTgnGQsmOaBaseaGVjvwm0/1JGd0hYNSpKkqERE8?=
- =?us-ascii?Q?ooZAvkey/a7MtJTg/+G8lexVs8iT5oaocHxXHNXVoNnzc8L6Ptq198SxTd9X?=
- =?us-ascii?Q?EqUKKDrQrw2keseOmuXzxV+Hc1So4HMkeJPXUwWOir/4xwSiFMaA6p9RA6Ld?=
- =?us-ascii?Q?yebbelp8mukU0ANBX+/tbTDPr4SJT8VYKLVGJn2ilpVV3W6dlVloCwvGEoGF?=
- =?us-ascii?Q?Xkd4AFHNgwzDfG4XxvNdvbfsj+wYq6EYM8WBrga4Fh3LoH0qTd0t00to7CNj?=
- =?us-ascii?Q?WzCSofTGJ8k9rjGW0kuknXYAqxZohR4R1J5AhGK2iKQluPXaVNytHOEr7BF1?=
- =?us-ascii?Q?NJRqUfLvKD2MYMKJnEDxt1VACxMdIIvbLV8ZBXYs34UAW/tXOHj5Na2u58Fj?=
- =?us-ascii?Q?l+zycn/oX3P3WMTKUxi1xFUWQlkJfpgRI2YB/nPsgLUFHvajWvZMfYdwD81H?=
- =?us-ascii?Q?4Qr4dgc9NcTzWj86TvB/wYHik46T4fJ81yTt8QN3BXVizk+bsrtqy9mnqGxq?=
- =?us-ascii?Q?iyFuV8UC8P+8LqSxI/DNUuk8k5Du?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/DO3G0u4OsXcefxOlfaori53x5dLtHIqIWQvUJ0fiXOgiht+QChz3NBVJ4Y4?=
- =?us-ascii?Q?TyIJpuv1vht3wPP8MysdQKp62H7Cf4K09ezHRvgHZAOgCVFt6ZJYsw+VMaQD?=
- =?us-ascii?Q?ly3LenMv4Z/7NFBpoXob9jHOtUVA6quBi+TztIFoGi/5KfRRbl/uxSXhEzxr?=
- =?us-ascii?Q?KOPRfJFH0rjATNawbOmK1FQt3suRX+e6zoegJEmfXk7z6IOVmUDYOotBtq++?=
- =?us-ascii?Q?021vbmHT8IjfWLSmLP2DTa/zOmjB+4pYX0hnEXoiC4z/byWV8GIR0hPU+7CN?=
- =?us-ascii?Q?3RZ2a0RAsONdoNwAcQLl6+uxg0yss7agwTcxaGFXck9X7zxmpDPSf2SSrmsa?=
- =?us-ascii?Q?0p6i28NdH5pm879ZGA9uHEvJLJ/YRZDYmcDJJdDi4WYTlbLJrtYhdbh+0MSU?=
- =?us-ascii?Q?cYGR9ogNAJir7hbtcUjL24he51EQjFhwwI/52GHH1lMRYFZVcrjOwtaqwtQ+?=
- =?us-ascii?Q?Mo+H5kFjl01OPtvc4RJZCxLOpvRY0VtT65dwFdWpjSeE6ZXLXCfc805KgZnX?=
- =?us-ascii?Q?BHjhH3RfaJXhqv6txUZk67vrFscm9RYaxed8tWMLA2HlabBddH9zcxDB+WdZ?=
- =?us-ascii?Q?6Z4ZBgHVvirGgC2q4rMymobDut1u4MKJIG6KEcZBQI9zciEhO4t9G86KRlwZ?=
- =?us-ascii?Q?74iudT+/Wyw4JGIf8Mv1EFpOyZyn1tDOZDRc6UsOf7TMumxMFkUGOR+Z1gR8?=
- =?us-ascii?Q?drjHQPBtBN1L4eSVXQsSf0DH8iFi2waP1BqB0WbKZ1cnMiz957JxvZS1tLRF?=
- =?us-ascii?Q?HhF7V7MskyDHqAh7rtuq+r3dqQvPP3ost43McJ6qpsyUR5wfmbF9dpG0oZ+g?=
- =?us-ascii?Q?8cxak59kox5kkevogcfUmXfcg5sOqMkqGVjMwKVQgoZIlu4DdDZNvjcoP+5z?=
- =?us-ascii?Q?7OPjWpVYYcmqdtuOjNuX1n40NO4gpNROJBDxXq8XCYAZUPtH7Q7HCGZzyycD?=
- =?us-ascii?Q?xw8zwxdcdvtm6Bpd3saAMTwyJUAYszmYXyP4wiohT4MrRNfnVk48XODw2k7D?=
- =?us-ascii?Q?gPxM28pLGTUoKzGaFP8rl1OGYER2Ew/kL7ToWNljkVScP6QJjn+DzNC5OEVq?=
- =?us-ascii?Q?BRMnRMlfENyqnYnHI2wOPStoO4+SS+LKWDJ7kFTFU6S2TAWUNxAXS8hulagy?=
- =?us-ascii?Q?mzZu510FE2iQYReED/4mG+JH6xt54q6HhAq4FrgOQrUCxDFViyTqb8tVdWJF?=
- =?us-ascii?Q?rF17NRs/+fbz/mTas0NKULVWzkeujBC2rKlzu0bhfELkq6Ernf7MyloDlvHG?=
- =?us-ascii?Q?tgadxEeK4pzH1l5szt1AbBnh4llmIeqmTMHvF4Ca4YPFuOjO4AKFcOiQvPn+?=
- =?us-ascii?Q?QcILMU+Bpcdx6+I5DpXudBnO8LFjBt9dIKfm60p8Dl0tqwJCJeZbtDGFaU43?=
- =?us-ascii?Q?CQCMveov2de3dF6eTMf8N5NrNZ4+N/HSFL2N2FvwJ9lfLAaGAxxBGYUtVGMi?=
- =?us-ascii?Q?Ub4UCC0PY1mFKPrXs8SyUEEKGNtYvsk8+3K63aTZAhzZY1/Y319twc0PuKA0?=
- =?us-ascii?Q?qHWDPb5wy2LYqwUHMquTaVbJDkskf+VwVVhAwwlEkGpFyXxJTBi1PuuBsJNM?=
- =?us-ascii?Q?pzLJ353qszUg3yf3nouNn38HfMNCT/4CPOFpPP9n4S+uyWR4lFHja8WQRVw8?=
- =?us-ascii?Q?Ig=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38edb57c-b390-426f-b5d6-08ddea31eddc
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 15:03:52.6043
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WCKXbObgdLtPhyfJLoZUFKSVBlqvyoMreypb9bgKUn4rMRr6/kNeY4vzYBl4M0j1VElnzJrgiEKLC+C2geveEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6537
-X-OriginatorOrg: intel.com
+References: <12740505.O9o76ZdvQC@rafael.j.wysocki>
+In-Reply-To: <12740505.O9o76ZdvQC@rafael.j.wysocki>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 2 Sep 2025 17:05:04 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ik7fRKwH3CnXysvBJkkdJbWP-6iL=zBF0o92rR+nHTKg@mail.gmail.com>
+X-Gm-Features: Ac12FXzlCMyK4YQXZK3S7XIH4PNuqEnTDw345WkizX9kUHCkddbd9zhSxUI85ng
+Message-ID: <CAJZ5v0ik7fRKwH3CnXysvBJkkdJbWP-6iL=zBF0o92rR+nHTKg@mail.gmail.com>
+Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Christian Loehle <christian.loehle@arm.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 29, 2025 at 10:01=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
+rg> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Christian has reported that commit a430c11f4015 ("intel_idle: Rescan
+> "dead" SMT siblings during initialization") broke the use case in
+> which both nosmt and maxcpus were added to the kernel command line
+> because it caused CPUs that were not SMT siblings to be brought
+> online during the intel_idle driver initialization in violation of the
+> maxcpus limit.
+>
+> The underlying reason for this is a missing topology_is_primary_thread()
+> check in cpuhp_smt_enable() which causes that function to put online
+> more CPUs than just the SMT siblings that it is supposed to handle.
+>
+> Add the missing check to address the issue.
+>
+> Fixes: a430c11f4015 ("intel_idle: Rescan "dead" SMT siblings during initi=
+alization")
+> Fixes: f694481b1d31 ("ACPI: processor: Rescan "dead" SMT siblings during =
+initialization")
+> Closes: https://lore.kernel.org/linux-pm/724616a2-6374-4ba3-8ce3-ea9c45e2=
+ae3b@arm.com/
+> Reported-by: Christian Loehle <christian.loehle@arm.com>
+> Tested-by: Christian Loehle <christian.loehle@arm.com>
+> Cc: 6.16+ <stable@vger.kernel.org> # 6.16+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+I'm wondering if there are any objections or concerns.
 
-Hello,
+Since this is a regression in 6.16, it would be good to get it fixed in 6.1=
+7-rc.
 
-kernel test robot noticed "BUG:kernel_reboot-without-warning_in_test_stage" on:
-
-commit: 7d40dc256faa19a66045c7e3147f387e346d513c ("x86/boot: Move startup code out of __head section")
-https://git.kernel.org/cgit/linux/kernel/git/ardb/linux.git x86-startup-confine-v7
-
-in testcase: rcutorture
-version: 
-with following parameters:
-
-	runtime: 300s
-	test: cpuhotplug
-	torture_type: tasks
-
-
-
-config: i386-randconfig-017-20250829
-compiler: gcc-12
-test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-+-------------------------------------------------+------------+------------+
-|                                                 | 7ccec303a5 | 7d40dc256f |
-+-------------------------------------------------+------------+------------+
-| boot_successes                                  | 12         | 0          |
-| boot_failures                                   | 0          | 12         |
-| BUG:kernel_reboot-without-warning_in_test_stage | 0          | 12         |
-+-------------------------------------------------+------------+------------+
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202509022207.56fd97f4-lkp@intel.com
-
-
-[   46.638864][  T218] 2025-08-30 23:52:51 sleep 300
-[   46.638874][  T218]
-[   57.574765][  T460] tasks-torture: torture_onoff end holdoff
-[   57.634414][   T65] smpboot: CPU 1 is now offline
-[   57.663199][  T460] smpboot: Booting Node 0 Processor 1 APIC 0x1
-BUG: kernel reboot-without-warning in test stage
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20250902/202509022207.56fd97f4-lkp@intel.com
-
-
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+> ---
+>  kernel/cpu.c |    6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> --- a/kernel/cpu.c
+> +++ b/kernel/cpu.c
+> @@ -2710,6 +2710,12 @@
+>         cpu_maps_update_begin();
+>         cpu_smt_control =3D CPU_SMT_ENABLED;
+>         for_each_present_cpu(cpu) {
+> +               /*
+> +                * Avoid accidentally onlining primary thread CPUs that h=
+ave
+> +                * been taken offline.
+> +                */
+> +               if (topology_is_primary_thread(cpu))
+> +                       continue;
+>                 /* Skip online CPUs and CPUs on offline nodes */
+>                 if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
+>                         continue;
+>
+>
+>
+>
 
