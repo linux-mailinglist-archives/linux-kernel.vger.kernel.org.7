@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-795426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E28B3F1EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:32:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DBFB3F1EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4133E2009F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D078482762
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45E42DF71D;
-	Tue,  2 Sep 2025 01:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2584D2DF3EA;
+	Tue,  2 Sep 2025 01:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SDfo6bmw"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2064.outbound.protection.outlook.com [40.107.236.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="VvrkGPvZ"
+Received: from mail-pf1-f225.google.com (mail-pf1-f225.google.com [209.85.210.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CA61A288;
-	Tue,  2 Sep 2025 01:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756776745; cv=fail; b=cqFIusPGEnZVIeWeqtz+7Ih8JOhTWhAghB5Md0IKWk//dVfQrF3V1N3tfbvl9hzibn5UEO6KHL4aoASMFfJxqfoCTiVo2lxXi49S45QANof2hLyz0EY8ym/Cua+wjobWGBc6LnFwSjTwh1L935DscA4zSWlSJvXguxB9GNr2cqA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756776745; c=relaxed/simple;
-	bh=KO9GAkPxXG0vjRh0RpJg6t0gUOqGZRBK+TZh4+Wu+Wc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k9xZK5W+fI03N2OIGmiSijY6Rw7z9oxDPkuqQGC9CqUheLXFiGiwQnvwuk63oyB+apRbBo13TAhBm7V9/iLoIc4WlpBwQ63l2UOPmp5hiu3INCl24lDnGMVQoT56Ntc845Ps7bS4aI2hTlwvCcsqg3GIwXmbRhWFF3B9l+8FsrM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SDfo6bmw; arc=fail smtp.client-ip=40.107.236.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XiqGjJICPDKiUAYkW88lsWJXdSFjU2nXvDj/xPjkjo1U+oSCH1T0XGw8BOLBDMaHfSQLNXr9ax/SYtFefmGyRiBN0yxdykJg5RNl+jAJ2x6HaGl2s+3A15qtuAR+9EXpuSgoejV1nEHOaL5VAOrqZQ1bE2hjoTDTpGVUG9IkRekf+SmqNX5NcivDeJwBDKZPIYy1WC7bk3YJ9VtC4NI+TTdxR1vcTB6grpG+VHR+EiKLLtkgqOLtXXuzY/oxsacoRxBDdTmuTfpvd5xAF2e7YMCokLux6tqUdReuRsfrH1vH0xUIRKRjc25E1rHEq3oAIMmyPon8vUI7FVDxUIGG+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BVVNzRh8T8JLyCNoAZ79IEkQcS/VJTNo8wJjeji3QLI=;
- b=bQqcYbmUV7G4E6Klo0wU+NlupPzQdlAZ6k3iky3cgWJU+5lfpCG6O9TPRabjzvZmmBOU/qkDieRGK4BRdsoGD3jpTDlSlvIbKfnE16cfM3fE7yQdhe4UYlABLQzODRgIgODVl+Ui4JUGNCYL7yRvKh4nH1CKiXjEDFzGq3NVIDCNAkDczJ2czA/6qENwviNtkW+Eg4B6busb7FpApnAx6XHb0yZrbmZOU2LaEUCQLuSZnsnwZNZKawEf3naBAfkFbg/KTL2ux4J2pavzYrKRaYvxGse2EFisDFtW/9q7ShzIrBxgC6ue45SVwgsxD14mgklLuh32+8BxELuMtKzMZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BVVNzRh8T8JLyCNoAZ79IEkQcS/VJTNo8wJjeji3QLI=;
- b=SDfo6bmwUZsmD7INo1WTQlIT53v+3TFY9oXZfC4na2ubu/RDnRCIyi/cTlM1cb78oI4C/0rPqSKF5R+dOHiBMYHl1vvapeUSGka2DpqZdOZ9/3sC3qaPrd1Y7OWcrdyQ2EP/WIzRxIo5ts2Qn6dH9rEnzRnwe+RfNKjctaN3d3w=
-Received: from SA0PR11CA0117.namprd11.prod.outlook.com (2603:10b6:806:d1::32)
- by DM4PR12MB7598.namprd12.prod.outlook.com (2603:10b6:8:10a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Tue, 2 Sep
- 2025 01:32:20 +0000
-Received: from SA2PEPF00003F65.namprd04.prod.outlook.com
- (2603:10b6:806:d1:cafe::c8) by SA0PR11CA0117.outlook.office365.com
- (2603:10b6:806:d1::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Tue,
- 2 Sep 2025 01:32:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003F65.mail.protection.outlook.com (10.167.248.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9094.14 via Frontend Transport; Tue, 2 Sep 2025 01:32:19 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 1 Sep
- 2025 20:32:18 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 1 Sep
- 2025 20:32:17 -0500
-Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 1 Sep 2025 20:32:07 -0500
-From: Abin Joseph <abin.joseph@amd.com>
-To: <radhey.shyam.pandey@amd.com>, <andrew+netdev@lunn.ch>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <michal.simek@amd.com>
-CC: <git@amd.com>, <abin.joseph@amd.com>, <netdev@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: [PATCH net v2] net: xilinx: axienet: Add error handling for RX metadata pointer retrieval
-Date: Tue, 2 Sep 2025 07:02:05 +0530
-Message-ID: <20250902013205.2849707-1-abin.joseph@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1235C19E97B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 01:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.225
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756776813; cv=none; b=n1iokcUQJ9D6qZiaJpIdBj2dgW1Ef2z3zBSS+BONx8aNMtIHT5YO4WpA9boLzdM4qaXubxVfBYuGeXJ3SZrIk78spUnC3NJ7Z5SYBWbwsMc+R70VaMIkcazi8pWs/V9CGwolbJGnfKlWg5mTqZuLjiXOfhz6SVkVvM1iDeqtOMc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756776813; c=relaxed/simple;
+	bh=2YsAuU9Q6pFZYBD4YIVLPsPJ6+ZyQoKmksaP5ZOibHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mp+hdDcSHqmMF+5fVmoyKRNmFzazVXs2uXhugTKCc5MbBX5gIUzM82tShLjKCK2cAvtpqfGy8e3YomibKLnnICWQTVb3I541bo0UQB4Si2Ud1BPOZCdOHgqwDN96SG8UlZ6yJgKVQYfl6s1pJR0Rgw9qqAzdVlt4T++K2InuLs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=VvrkGPvZ; arc=none smtp.client-ip=209.85.210.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f225.google.com with SMTP id d2e1a72fcca58-771e6d0c140so90837b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 18:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1756776811; x=1757381611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tApxxDHtl1zCXhBCC76r6xxWiaU0tPGEcHjM+O4IQNw=;
+        b=VvrkGPvZNziWc27vjL0LKr+QFMmWC0Mic0iY7oKKgUNfFvWps8Hgk3QLb29iQGmToq
+         CBKIGUZ9R71MQEsheTOF9j1S4GkjYS8HB7UlxY56G7u3tq6ew9f8g2N/IGrUbTJ3HQ34
+         Rc8AFUfMtbK3HXh8Sn3YQ6RohG/rGPd/QCZfUqxWCvF0REUf3MxekwboJrT+ARpUnjsE
+         QXF1x+aAUfRYqYFWCm2K8rigeqGULioDaj9PbXdawrhpBN6VJ38Nq22BzpAD94sg4gsW
+         mmijf84AAnXoVUKqAhhFC30uPcOWF1Hg2DAw3cWeondMrc6wD1vlT4RBuSC+vGdEm3OZ
+         4P2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756776811; x=1757381611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tApxxDHtl1zCXhBCC76r6xxWiaU0tPGEcHjM+O4IQNw=;
+        b=uveCMYa70yx4/KhVzIndJK7tLFbz4MolNO12IrqoocAVB8ywvCqZTQnZiCqssrufKW
+         bYB4t87ZmFCT76u19iPxBA81nhY2Zqo/8+Ng5DMKEoBciQqXfdsHuLlWdsBmUX9ifP41
+         rn7J6ZI2qziiDx+2KiMCg5fx6d9SxJaRzOw+nbpNYilTcORuCd8Ts7dJ2g+J1ScXFvOz
+         qP9/K0UT1h+Zm3F45LAdiZy/jpkJvVYjp5PTFILRHMFMRPJGcWTqlJZLEflsd0GwmuoP
+         UV8Rzm/QPpJl6UCGoYKO1UBKAeIo6BRpS65m9xwMcy6YkFtPmknVa19oktLYUYqHKq4M
+         oV1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWAGsUto5gu3zsSdQfT1xVTcu9+c1eitl9rF/hxhdUUFdY/fMlwosf1TjLVjDQICSEIHDeTpqpfLjE8Qlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydO/QQ2aPa9uu67GGN0IQxCFJ9O88IGpE58yVSF9KHJT3C3QA3
+	u6b9pCdZHGZFw+aPfScbSEYxdb5hh3EYWQpTpyZ+AmwFd+0Dk6yripSA0jJkZTdk4Dl2yWTJ0QP
+	M3Va8yrSv3Rlz5N55BxY6jWRZ66pYVrisb62w
+X-Gm-Gg: ASbGncu4WXRvP6yNuLDY2hgtGlMTc1ceHK7+kpFlJ2Qf45mjymOL53s3fn0fvl4qf7U
+	1R6dz1IM58s3SyWwC/v+JVS31qTR4/TRR9N0PuPg4kt5v0uYrzyBX29A3eOPJpBhfF7K+ECGDKa
+	P4fDu1r36J+y1JdEUQP9JmFZp1hDlvO+T4arj2ujTasyB2WJQVRXNQ27it1fy8Ysf5BjRy7JK7F
+	cearoC1ZolzNus2VcBYuHEEBBcpyJdfC5ADeb7RNxrK9Xm3r7Ee6Tg/HueSpirJUkEFGavCO7r/
+	CKhVN/+g7D4crEkZ6YiyN1BVF2+I4e8JAOf24207/OPKt/cbsMWby9bKn6godjxzDIwvMfx4
+X-Google-Smtp-Source: AGHT+IHU1FqiL7D/IMH3xDzyGN84Oykg//qTxXsV/RSMqcFDXgJplTBnuFFO+SZlIBfrd/4KNCwO0v3MoUcT
+X-Received: by 2002:a05:6a00:2193:b0:772:5fb8:e398 with SMTP id d2e1a72fcca58-7725fb8edbcmr2836966b3a.6.1756776811206;
+        Mon, 01 Sep 2025 18:33:31 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id d2e1a72fcca58-7722a4c8d8asm666100b3a.14.2025.09.01.18.33.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 18:33:31 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 8A0EA3404C4;
+	Mon,  1 Sep 2025 19:33:30 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 87DA2E41A5E; Mon,  1 Sep 2025 19:33:30 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/cmd: remove unused io_uring_cmd_iopoll_done()
+Date: Mon,  1 Sep 2025 19:33:27 -0600
+Message-ID: <20250902013328.1517686-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,106 +92,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F65:EE_|DM4PR12MB7598:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d29c0bb-ae93-4a3f-50e9-08dde9c08ec7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+rQ+gKSEWeN5D3j20nuT2TmErrBsk7L2u05Pf6uUL4AIG6ygdR81HfvGqT1s?=
- =?us-ascii?Q?VxTeV5KpiXzZkJTIsqX0CqiK75fpgOk5T09QgQQ/HTxdl+9usRE2UBL9OVkZ?=
- =?us-ascii?Q?TgzF/qa5vjUQv8yS+6LWSeSFXtuOx/I0lMNzKbh0Q0UCEiZE44ecxWhuQVLt?=
- =?us-ascii?Q?A4FoMs44RFeGH07z7I61m2v2Bst/YyFBa9h1jbn/qfoLJEbveQ9Fe78udc87?=
- =?us-ascii?Q?4BKCgYzFPAwFJeN3meacylgNvPxQVHmfxp0dR9zh815xdAoE56kD2LCqLwV1?=
- =?us-ascii?Q?zKWmSLdhYEeYYRYsHH1VHs00nsJHg2T4yeCMwz1ElwLRn2QhKt6679T7zTy8?=
- =?us-ascii?Q?L2Yv7BWuKEzcsQM4fhgnLfAxDfh6TsGAzAqkNCvVI9DkZQoCUnkpTxjMcIVI?=
- =?us-ascii?Q?SIj30GeRmiM4DMhxTLRDGsi3BqYHVDT0Vc5ShbPldT8QRJzigwh4sxz/ek9R?=
- =?us-ascii?Q?L+DGLBG4BfDWGJO4zMyTsiZZeDGEKX2fR5rCerPKyQYffByma+i9Qt7atquH?=
- =?us-ascii?Q?0qg7GlJx1SorN0YtHodt2W7yQ7IRaCuAUe4Ay2pXxnUAe3eE1jePXtckm079?=
- =?us-ascii?Q?WrGBkiNOzTiNptLjeqgFCdBq290h3QusiyxwZQS3EBduSwEMcw9rmFHma0ou?=
- =?us-ascii?Q?EJv18HQpUv53UBQNcTLviCEv4LtmmQbCDZxZji/A5owZF0s88Ss4uAEVgo1z?=
- =?us-ascii?Q?o4WK6Z6c+jYtCYqujSwB5l5IbYfJNgPSGs9g2FS/W9aQayfOeTsmTQpnRtXN?=
- =?us-ascii?Q?e4Fzd4Nz70hDRdrEBeEgDxESmytK1L7bRFMsfxaqc8S+1Jjgbrv1nkyOh/UL?=
- =?us-ascii?Q?zUYU1+2bgxkm9MUNXWPn6efbAtoSzLstv4U3hLQJDSShvcgKRYYHUjlOXXpa?=
- =?us-ascii?Q?j+LY2yl+IQC4NxsA1lK2d4GyRcFArtlUbiSarxdo0qTl295fjO1vFu0AqlpH?=
- =?us-ascii?Q?dJN5qCH+nm+ZRnKjVo4gUiT3yUinB6VF9pQidiapBaSBptBEGxipNTb8KWEP?=
- =?us-ascii?Q?ZvkNe/YAqJ+nKfj4ljhJFTddTpDfQ6fjcY0d/xN/iu23yzku7Ey8qphLHTWa?=
- =?us-ascii?Q?QUqs7zr9HljkDhnUzo/jFsDUWL3pPYtSZPPgZSTG0DO/enVGQYckqQHoo/zB?=
- =?us-ascii?Q?vT4+ztLQ78n3xjOcdwPigpR1ZXPsmg00FpOC6Zv+7MPVczVhAMK6aZqd4ZBx?=
- =?us-ascii?Q?Uq7eLZ8eQPpBqUYbvtC2YrzcWwyasklS0fgEm3dXvNkrIyCDzcwWnudcLJKS?=
- =?us-ascii?Q?Am6IDakCURoOzH0ZRk3spoT5ykPPzUykFvO+yXyr45r2cmGbaYL7myHVMUCz?=
- =?us-ascii?Q?r8IkKTKhzCKMDOmpt2Wusu3XAu0oGFPdDidIp3YsgsL+D0FhOMOw2jgQEwYR?=
- =?us-ascii?Q?IQtELYYHgSeBxokqjsL3aUnWlF4CW3tYJWLANBUjIzJ5rjPLWg+9irFN0sm7?=
- =?us-ascii?Q?u/B1J1WEiCf8jkQEZdKEBMsn32t1O87SgXe4qu3BtegcOMrQgwqNfmUCkP8d?=
- =?us-ascii?Q?EpUQlcffVGbneCYW4l7U5wCxbAhuCMhUTCgM?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 01:32:19.4221
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d29c0bb-ae93-4a3f-50e9-08dde9c08ec7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F65.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7598
 
-Add proper error checking for dmaengine_desc_get_metadata_ptr() which
-can return an error pointer and lead to potential crashes or undefined
-behaviour if the pointer retrieval fails.
+io_uring_cmd_iopoll_done()'s only caller was removed in commit
+9ce6c9875f3e ("nvme: always punt polled uring_cmd end_io work to
+task_work"). So remove the unused function too.
 
-Properly handle the error by unmapping DMA buffer, freeing the skb and
-returning early to prevent further processing with invalid data.
-
-Fixes: 6a91b846af85 ("net: axienet: Introduce dmaengine support")
-Signed-off-by: Abin Joseph <abin.joseph@amd.com>
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
+ include/linux/io_uring/cmd.h | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-Changes in v2:
-Update the alias to net
-
----
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 0d8a05fe541a..83469f7f08d1 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1166,8 +1166,18 @@ static void axienet_dma_rx_cb(void *data, const struct dmaengine_result *result)
- 	skb = skbuf_dma->skb;
- 	app_metadata = dmaengine_desc_get_metadata_ptr(skbuf_dma->desc, &meta_len,
- 						       &meta_max_len);
-+
- 	dma_unmap_single(lp->dev, skbuf_dma->dma_address, lp->max_frm_size,
- 			 DMA_FROM_DEVICE);
-+
-+	if (IS_ERR(app_metadata)) {
-+		if (net_ratelimit())
-+			netdev_err(lp->ndev, "Failed to get RX metadata pointer\n");
-+		dev_kfree_skb_any(skb);
-+		lp->ndev->stats.rx_dropped++;
-+		goto rx_submit;
-+	}
-+
- 	/* TODO: Derive app word index programmatically */
- 	rx_len = (app_metadata[LEN_APP] & 0xFFFF);
- 	skb_put(skb, rx_len);
-@@ -1180,6 +1190,7 @@ static void axienet_dma_rx_cb(void *data, const struct dmaengine_result *result)
- 	u64_stats_add(&lp->rx_bytes, rx_len);
- 	u64_stats_update_end(&lp->rx_stat_sync);
+diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
+index 4bd3a7339243..7e38d4512b6a 100644
+--- a/include/linux/io_uring/cmd.h
++++ b/include/linux/io_uring/cmd.h
+@@ -128,21 +128,10 @@ static inline bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
+ {
+ 	return true;
+ }
+ #endif
  
-+rx_submit:
- 	for (i = 0; i < CIRC_SPACE(lp->rx_ring_head, lp->rx_ring_tail,
- 				   RX_BUF_NUM_DEFAULT); i++)
- 		axienet_rx_submit_desc(lp->ndev);
+-/*
+- * Polled completions must ensure they are coming from a poll queue, and
+- * hence are completed inside the usual poll handling loops.
+- */
+-static inline void io_uring_cmd_iopoll_done(struct io_uring_cmd *ioucmd,
+-					    ssize_t ret, ssize_t res2)
+-{
+-	lockdep_assert(in_task());
+-	io_uring_cmd_done(ioucmd, ret, res2, 0);
+-}
+-
+ /* users must follow the IOU_F_TWQ_LAZY_WAKE semantics */
+ static inline void io_uring_cmd_do_in_task_lazy(struct io_uring_cmd *ioucmd,
+ 			void (*task_work_cb)(struct io_uring_cmd *, unsigned))
+ {
+ 	__io_uring_cmd_do_in_task(ioucmd, task_work_cb, IOU_F_TWQ_LAZY_WAKE);
 -- 
-2.34.1
+2.45.2
 
 
