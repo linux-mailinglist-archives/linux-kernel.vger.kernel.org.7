@@ -1,237 +1,231 @@
-Return-Path: <linux-kernel+bounces-795450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789C3B3F232
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:21:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BF3B3F233
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ACC37ACAC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:19:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 399F17AE689
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F334284885;
-	Tue,  2 Sep 2025 02:20:57 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D604414;
-	Tue,  2 Sep 2025 02:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB15E226D17;
+	Tue,  2 Sep 2025 02:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPT/P+du"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE354414;
+	Tue,  2 Sep 2025 02:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756779656; cv=none; b=GuxFriylmtlER98PKjEMFu5bd66jQkxlgET183o/+WrpTMQHLPXw4MkClzsK0hsrKRibdBxxFrUiHb2BA0E3c2xCubDjYTHKsxUl1atsxGl20NUbeOCX56T4I9jEylBg+YooTGs3gngtzYnNmaI3EDykOTmtJcBoZHtfZcMUuzs=
+	t=1756779711; cv=none; b=F/Rd+PP0TJuJwQXz/0wUTID1Q981RIU7K+zB8EZzSz+6NsG9s6d4U3R0/Y986utycifsD/INUzMcN3xWKSAJ/CsJexPVIyZMRNvqHmjjutE6iDkC97yKw4WZ3zOOo9SZ1NQv26V/fGZs3nnwnaYCpTVQbExXabAkgnLCCpMe5v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756779656; c=relaxed/simple;
-	bh=7rf5WbNt3DQ4s7nyuBm1AITtcVXMlJB+hGf8lJvUucY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=onCQ7F5PNOk+gM4HZHCfb9hvMAANaI/IqIQzVc8EnaekuiwZhhWQjgMUxqSSQBHaeh3NBVliLAfPiRDRWgXF5jMjBN0L0Yv56bQC3jo11yVzFWNPaTLzlfNIgVeKb+nTZttfV6qa07YS3ONHPx/pW7kKmsFTh7w23A0zwBP+2wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from lizhi2$eswincomputing.com ( [10.11.96.26] ) by
- ajax-webmail-app1 (Coremail) ; Tue, 2 Sep 2025 10:20:12 +0800 (GMT+08:00)
-Date: Tue, 2 Sep 2025 10:20:12 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?5p2O5b+X?= <lizhi2@eswincomputing.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: weishangjuan@eswincomputing.com, devicetree@vger.kernel.org,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, yong.liang.choong@linux.intel.com,
-	vladimir.oltean@nxp.com, faizal.abdul.rahim@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-	jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
-	boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v4 2/2] ethernet: eswin: Add eic7700 ethernet driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <aK7A0-nYxBQM03zq@shell.armlinux.org.uk>
-References: <20250827081135.2243-1-weishangjuan@eswincomputing.com>
- <20250827081418.2347-1-weishangjuan@eswincomputing.com>
- <aK7A0-nYxBQM03zq@shell.armlinux.org.uk>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1756779711; c=relaxed/simple;
+	bh=QxyQmaWGUfjo1CyzoIwXOiE5z6bTP5jsQPqeFuE7b+k=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bnPMVwbt6ViNaVaPB57HrrmEcLFXkSiXQPpQIRws/XhDp/MWoX+IPiAzdhNXGiQTuyMQzRvZ2uTIDb8asAHHaNVyQBa0ErZupeHEOJiBVSD0avZ53XMk5aKf4y+f/K3qGJTsfSqjB9QRS0k37nBCS1XFomPr2cwQOrlkKJsZHKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPT/P+du; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68D9FC4CEF0;
+	Tue,  2 Sep 2025 02:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756779710;
+	bh=QxyQmaWGUfjo1CyzoIwXOiE5z6bTP5jsQPqeFuE7b+k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DPT/P+duW8tcFp+i7LVO2MJ6JAgZK7s5xGccAbSwin16/mMzRG2kZcaRNwrH+nB89
+	 XWE5gL+2wqzMFI3FPOHR/EL8uzkkFvX7ZNiBeMbgzTESOjZIZFMmOTKIwyiFcH8SJm
+	 glwMmdyqo2nO8hGh5L4xl4HTRZsggoNT7paQA1/B9fTlP2p9W65h3S2cIWND2Iw8yz
+	 96X7zNlXdHqMZzw+M9dumiKGVRkZnxWjObb94psK9Y9dxVpZ3VX+I4qotLNT9xwUlZ
+	 ijmOvQFg5jsZl2ne95aU0Nr4kgDNp9Tl5jt0PwsarcgQjQs+JlDlwfP+GSu0zR+OpC
+	 FqMK/8uO7AWfw==
+Date: Tue, 2 Sep 2025 11:21:47 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Ryan Chung <seokwoo.chung130@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] trace_fprobe.c: TODO: handle filter, nofilter or
+ symbol list
+Message-Id: <20250902112147.165c8030837b6b21cf402fd3@kernel.org>
+In-Reply-To: <20250829102050.232291-1-seokwoo.chung130@gmail.com>
+References: <20250829102050.232291-1-seokwoo.chung130@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <6b9ebb00.c8f.199083987e3.Coremail.lizhi2@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TAJkCgB3jg9cVLZoq7HGAA--.12095W
-X-CM-SenderInfo: xol2xx2s6h245lqf0zpsxwx03jof0z/1tbiAgENDGi1ytEKxwAAsJ
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-RGVhciBSdXNzZWxsIEtpbmcsCgpJbiBsYXN0IHdlZWvigJlzIHJlcGx5LCB3ZSBhZGRyZXNzZWQg
-dHdvIHF1ZXN0aW9ucy4KVGhlIG1haW4gcXVlc3Rpb24gbm93IGlzIHdoZXRoZXIgaXQgbWFrZXMg
-c2Vuc2UgdG8gdXNlCmRldm1fY2xrX2J1bGtfZ2V0X29wdGlvbmFsKCkgaW4gdGhlIG5leHQgcGF0
-Y2guCgpDb3VsZCB5b3UgcGxlYXNlIHNoYXJlIHlvdXIgdGhvdWdodHMgb3Igc3BlY2lmaWMgc3Vn
-Z2VzdGlvbnMgb24gdGhpcz8KVGhhbmtzIGZvciB5b3VyIHRpbWUgYW5kIGd1aWRhbmNlLgoKTGkg
-WmhpCkVzd2luIENvbXB1dGluZwoKCj4gLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQo+IOWPkeS7tuS6
-ujogIlJ1c3NlbGwgS2luZyAoT3JhY2xlKSIgPGxpbnV4QGFybWxpbnV4Lm9yZy51az4KPiDlj5Hp
-gIHml7bpl7Q6MjAyNS0wOC0yNyAxNjoyNDo1MSAo5pif5pyf5LiJKQo+IOaUtuS7tuS6ujogd2Vp
-c2hhbmdqdWFuQGVzd2luY29tcHV0aW5nLmNvbQo+IOaKhOmAgTogZGV2aWNldHJlZUB2Z2VyLmtl
-cm5lbC5vcmcsIGFuZHJldytuZXRkZXZAbHVubi5jaCwgZGF2ZW1AZGF2ZW1sb2Z0Lm5ldCwgZWR1
-bWF6ZXRAZ29vZ2xlLmNvbSwga3ViYUBrZXJuZWwub3JnLCBwYWJlbmlAcmVkaGF0LmNvbSwgcm9i
-aEBrZXJuZWwub3JnLCBrcnprK2R0QGtlcm5lbC5vcmcsIGNvbm9yK2R0QGtlcm5lbC5vcmcsIGxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZywgbWNvcXVlbGluLnN0bTMyQGdtYWls
-LmNvbSwgYWxleGFuZHJlLnRvcmd1ZUBmb3NzLnN0LmNvbSwgeW9uZy5saWFuZy5jaG9vbmdAbGlu
-dXguaW50ZWwuY29tLCB2bGFkaW1pci5vbHRlYW5AbnhwLmNvbSwgZmFpemFsLmFiZHVsLnJhaGlt
-QGxpbnV4LmludGVsLmNvbSwgcHJhYmhha2FyLm1haGFkZXYtbGFkLnJqQGJwLnJlbmVzYXMuY29t
-LCBpbm9jaGlhbWFAZ21haWwuY29tLCBqYW4ucGV0cm91c0Bvc3MubnhwLmNvbSwganN6aGFuZ0Br
-ZXJuZWwub3JnLCBwLnphYmVsQHBlbmd1dHJvbml4LmRlLCBib29uLmtoYWkubmdAYWx0ZXJhLmNv
-bSwgMHgxMjA3QGdtYWlsLmNvbSwgbmV0ZGV2QHZnZXIua2VybmVsLm9yZywgbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZywgbGludXgtc3RtMzJAc3QtbWQtbWFpbG1hbi5zdG9ybXJlcGx5LmNv
-bSwgbmluZ3l1QGVzd2luY29tcHV0aW5nLmNvbSwgbGlubWluQGVzd2luY29tcHV0aW5nLmNvbSwg
-bGl6aGkyQGVzd2luY29tcHV0aW5nLmNvbQo+IOS4u+mimDogUmU6IFtQQVRDSCB2NCAyLzJdIGV0
-aGVybmV0OiBlc3dpbjogQWRkIGVpYzc3MDAgZXRoZXJuZXQgZHJpdmVyCj4gCj4gT24gV2VkLCBB
-dWcgMjcsIDIwMjUgYXQgMDQ6MTQ6MTdQTSArMDgwMCwgd2Vpc2hhbmdqdWFuQGVzd2luY29tcHV0
-aW5nLmNvbSB3cm90ZToKPiA+ICtzdHJ1Y3QgZWljNzcwMF9xb3NfcHJpdiB7Cj4gPiArCXN0cnVj
-dCBkZXZpY2UgKmRldjsKPiA+ICsJc3RydWN0IHJlZ21hcCAqaHNwX3JlZ21hcDsKPiA+ICsJc3Ry
-dWN0IGNsayAqY2xrX3R4Owo+IAo+IENvbnNpZGVyIHB1dHRpbmcgYSBwb2ludGVyIHRvIHRoZSBw
-bGF0X2RhdCBoZXJlIGluc3RlYWQgb2YgY2xrX3R4Lgo+IAo+ID4gKwlzdHJ1Y3QgY2xrICpjbGtf
-YXhpOwo+ID4gKwlzdHJ1Y3QgY2xrICpjbGtfY2ZnOwo+IAo+IENvbnNpZGVyIG1vdmluZyB0aGVz
-ZSBpbnRvIHBsYXRfZGF0LT5jbGtzLgo+IAo+ID4gKwl1MzIgdHhfZGVsYXlfcHM7Cj4gPiArCXUz
-MiByeF9kZWxheV9wczsKPiA+ICt9Owo+ID4gKwo+ID4gKy8qKgo+ID4gKyAqIGVpYzc3MDBfYXBw
-bHlfZGVsYXkgLSBVcGRhdGUgVFggb3IgUlggZGVsYXkgYml0cyBpbiBkZWxheSBwYXJhbWV0ZXIg
-dmFsdWUuCj4gPiArICogQGRlbGF5X3BzOiBEZWxheSBpbiBwaWNvc2Vjb25kcyAoY2FwcGVkIGF0
-IDEyLjducykuCj4gPiArICogQHJlZzogICAgICBQb2ludGVyIHRvIHJlZ2lzdGVyIHZhbHVlIHRv
-IG1vZGlmeS4KPiA+ICsgKiBAaXNfcng6ICAgIFRydWUgZm9yIFJYIGRlbGF5IChiaXRzIDMwOjI0
-KSwgZmFsc2UgZm9yIFRYIGRlbGF5IChiaXRzIDE0OjgpLgo+ID4gKyAqCj4gPiArICogQ29udmVy
-dHMgZGVsYXkgdG8gMC4xbnMgdW5pdHMsIGNhcHMgYXQgMHg3RiwgYW5kIHNldHMgYXBwcm9wcmlh
-dGUgYml0cy4KPiA+ICsgKiBPbmx5IFJYIG9yIFRYIGJpdHMgYXJlIHVwZGF0ZWQ7IG90aGVyIGJp
-dHMgcmVtYWluIHVuY2hhbmdlZC4KPiA+ICsgKi8KPiA+ICtzdGF0aWMgaW5saW5lIHZvaWQgZWlj
-NzcwMF9hcHBseV9kZWxheSh1MzIgZGVsYXlfcHMsIHUzMiAqcmVnLCBib29sIGlzX3J4KQo+ID4g
-K3sKPiA+ICsJaWYgKCFyZWcpCj4gPiArCQlyZXR1cm47Cj4gPiArCj4gPiArCXUzMiB2YWwgPSBt
-aW4oZGVsYXlfcHMgLyAxMDAsIEVJQzc3MDBfTUFYX0RFTEFZX1VOSVQpOwo+ID4gKwo+ID4gKwlp
-ZiAoaXNfcngpIHsKPiA+ICsJCSpyZWcgJj0gfkVJQzc3MDBfRVRIX1JYX0FESl9ERUxBWTsKPiA+
-ICsJCSpyZWcgfD0gKHZhbCA8PCAyNCkgJiBFSUM3NzAwX0VUSF9SWF9BREpfREVMQVk7Cj4gPiAr
-CX0gZWxzZSB7Cj4gPiArCQkqcmVnICY9IH5FSUM3NzAwX0VUSF9UWF9BREpfREVMQVk7Cj4gPiAr
-CQkqcmVnIHw9ICh2YWwgPDwgOCkgJiBFSUM3NzAwX0VUSF9UWF9BREpfREVMQVk7Cj4gPiArCX0K
-PiA+ICt9Cj4gPiArCj4gPiArc3RhdGljIGludCBlaWM3NzAwX2Nsa3NfY29uZmlnKHZvaWQgKnBy
-aXYsIGJvb2wgZW5hYmxlZCkKPiA+ICt7Cj4gPiArCXN0cnVjdCBlaWM3NzAwX3Fvc19wcml2ICpk
-d2MgPSAoc3RydWN0IGVpYzc3MDBfcW9zX3ByaXYgKilwcml2Owo+ID4gKwlpbnQgcmV0ID0gMDsK
-PiA+ICsKPiA+ICsJaWYgKGVuYWJsZWQpIHsKPiA+ICsJCXJldCA9IGNsa19wcmVwYXJlX2VuYWJs
-ZShkd2MtPmNsa190eCk7Cj4gPiArCQlpZiAocmV0IDwgMCkgewo+ID4gKwkJCWRldl9lcnIoZHdj
-LT5kZXYsICJGYWlsZWQgdG8gZW5hYmxlIHR4IGNsb2NrOiAlZFxuIiwKPiA+ICsJCQkJcmV0KTsK
-PiA+ICsJCQlnb3RvIGVycjsKPiA+ICsJCX0KPiA+ICsKPiA+ICsJCXJldCA9IGNsa19wcmVwYXJl
-X2VuYWJsZShkd2MtPmNsa19heGkpOwo+ID4gKwkJaWYgKHJldCA8IDApIHsKPiA+ICsJCQlkZXZf
-ZXJyKGR3Yy0+ZGV2LCAiRmFpbGVkIHRvIGVuYWJsZSBheGkgY2xvY2s6ICVkXG4iLAo+ID4gKwkJ
-CQlyZXQpOwo+ID4gKwkJCWdvdG8gZXJyX3R4Owo+ID4gKwkJfQo+ID4gKwo+ID4gKwkJcmV0ID0g
-Y2xrX3ByZXBhcmVfZW5hYmxlKGR3Yy0+Y2xrX2NmZyk7Cj4gPiArCQlpZiAocmV0IDwgMCkgewo+
-ID4gKwkJCWRldl9lcnIoZHdjLT5kZXYsICJGYWlsZWQgdG8gZW5hYmxlIGNmZyBjbG9jazogJWRc
-biIsCj4gPiArCQkJCXJldCk7Cj4gPiArCQkJZ290byBlcnJfYXhpOwo+ID4gKwkJfQo+IAo+IFlv
-dSBjYW4gdGhlbiB1c2UgY2xrX2J1bGtfcHJlcGFyZV9lbmFibGUoKSBoZXJlIHdpdGhvdXQgdGhl
-IGNvbXBsZXgKPiB1bndpbmRpbmcgaWYgb25lIGVuYWJsZSBmYWlscy4KPiAKPiA+ICsJfSBlbHNl
-IHsKPiA+ICsJCWNsa19kaXNhYmxlX3VucHJlcGFyZShkd2MtPmNsa190eCk7Cj4gPiArCQljbGtf
-ZGlzYWJsZV91bnByZXBhcmUoZHdjLT5jbGtfYXhpKTsKPiA+ICsJCWNsa19kaXNhYmxlX3VucHJl
-cGFyZShkd2MtPmNsa19jZmcpOwo+IAo+IGFuZCBjbGtfYnVsa19kaXNhYmxlX3VucHJlcGFyZSgp
-IGhlcmUuCj4gCj4gPiArCX0KPiA+ICsJcmV0dXJuIHJldDsKPiA+ICsKPiA+ICtlcnJfYXhpOgo+
-ID4gKwljbGtfZGlzYWJsZV91bnByZXBhcmUoZHdjLT5jbGtfYXhpKTsKPiA+ICtlcnJfdHg6Cj4g
-PiArCWNsa19kaXNhYmxlX3VucHJlcGFyZShkd2MtPmNsa190eCk7Cj4gPiArZXJyOgo+ID4gKwly
-ZXR1cm4gcmV0Owo+ID4gK30KPiA+ICsKPiA+ICtzdGF0aWMgaW50IGVpYzc3MDBfZHdtYWNfcHJv
-YmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiA+ICt7Cj4gPiArCXN0cnVjdCBwbGF0
-X3N0bW1hY2VuZXRfZGF0YSAqcGxhdF9kYXQ7Cj4gPiArCXN0cnVjdCBzdG1tYWNfcmVzb3VyY2Vz
-IHN0bW1hY19yZXM7Cj4gPiArCXN0cnVjdCBlaWM3NzAwX3Fvc19wcml2ICpkd2NfcHJpdjsKPiA+
-ICsJdTMyIGV0aF9heGlfbHBfY3RybF9vZmZzZXQ7Cj4gPiArCXUzMiBldGhfcGh5X2N0cmxfb2Zm
-c2V0Owo+ID4gKwl1MzIgZXRoX3BoeV9jdHJsX3JlZ3NldDsKPiA+ICsJdTMyIGV0aF9yeGRfZGx5
-X29mZnNldDsKPiA+ICsJdTMyIGV0aF9kbHlfcGFyYW0gPSAwOwo+ID4gKwlpbnQgcmV0Owo+ID4g
-Kwo+ID4gKwlyZXQgPSBzdG1tYWNfZ2V0X3BsYXRmb3JtX3Jlc291cmNlcyhwZGV2LCAmc3RtbWFj
-X3Jlcyk7Cj4gPiArCWlmIChyZXQpCj4gPiArCQlyZXR1cm4gZGV2X2Vycl9wcm9iZSgmcGRldi0+
-ZGV2LCByZXQsCj4gPiArCQkJCSJmYWlsZWQgdG8gZ2V0IHJlc291cmNlc1xuIik7Cj4gPiArCj4g
-PiArCXBsYXRfZGF0ID0gZGV2bV9zdG1tYWNfcHJvYmVfY29uZmlnX2R0KHBkZXYsIHN0bW1hY19y
-ZXMubWFjKTsKPiA+ICsJaWYgKElTX0VSUihwbGF0X2RhdCkpCj4gPiArCQlyZXR1cm4gZGV2X2Vy
-cl9wcm9iZSgmcGRldi0+ZGV2LCBQVFJfRVJSKHBsYXRfZGF0KSwKPiA+ICsJCQkJImR0IGNvbmZp
-Z3VyYXRpb24gZmFpbGVkXG4iKTsKPiA+ICsKPiA+ICsJZHdjX3ByaXYgPSBkZXZtX2t6YWxsb2Mo
-JnBkZXYtPmRldiwgc2l6ZW9mKCpkd2NfcHJpdiksIEdGUF9LRVJORUwpOwo+ID4gKwlpZiAoIWR3
-Y19wcml2KQo+ID4gKwkJcmV0dXJuIC1FTk9NRU07Cj4gPiArCj4gPiArCWR3Y19wcml2LT5kZXYg
-PSAmcGRldi0+ZGV2Owo+ID4gKwo+ID4gKwkvKiBSZWFkIHJ4LWludGVybmFsLWRlbGF5LXBzIGFu
-ZCB1cGRhdGUgcnhfY2xrIGRlbGF5ICovCj4gPiArCWlmICghb2ZfcHJvcGVydHlfcmVhZF91MzIo
-cGRldi0+ZGV2Lm9mX25vZGUsCj4gPiArCQkJCSAgInJ4LWludGVybmFsLWRlbGF5LXBzIiwKPiA+
-ICsJCQkJICAmZHdjX3ByaXYtPnJ4X2RlbGF5X3BzKSkgewo+ID4gKwkJZWljNzcwMF9hcHBseV9k
-ZWxheShkd2NfcHJpdi0+cnhfZGVsYXlfcHMsCj4gPiArCQkJCSAgICAmZXRoX2RseV9wYXJhbSwg
-dHJ1ZSk7Cj4gPiArCX0gZWxzZSB7Cj4gPiArCQlkZXZfd2FybigmcGRldi0+ZGV2LCAiY2FuJ3Qg
-Z2V0IHJ4LWludGVybmFsLWRlbGF5LXBzXG4iKTsKPiA+ICsJfQo+ID4gKwo+ID4gKwkvKiBSZWFk
-IHR4LWludGVybmFsLWRlbGF5LXBzIGFuZCB1cGRhdGUgdHhfY2xrIGRlbGF5ICovCj4gPiArCWlm
-ICghb2ZfcHJvcGVydHlfcmVhZF91MzIocGRldi0+ZGV2Lm9mX25vZGUsCj4gPiArCQkJCSAgInR4
-LWludGVybmFsLWRlbGF5LXBzIiwKPiA+ICsJCQkJICAmZHdjX3ByaXYtPnR4X2RlbGF5X3BzKSkg
-ewo+ID4gKwkJZWljNzcwMF9hcHBseV9kZWxheShkd2NfcHJpdi0+dHhfZGVsYXlfcHMsCj4gPiAr
-CQkJCSAgICAmZXRoX2RseV9wYXJhbSwgZmFsc2UpOwo+ID4gKwl9IGVsc2Ugewo+ID4gKwkJZGV2
-X3dhcm4oJnBkZXYtPmRldiwgImNhbid0IGdldCB0eC1pbnRlcm5hbC1kZWxheS1wc1xuIik7Cj4g
-PiArCX0KPiA+ICsKPiA+ICsJZHdjX3ByaXYtPmhzcF9yZWdtYXAgPQo+ID4gKwkJc3lzY29uX3Jl
-Z21hcF9sb29rdXBfYnlfcGhhbmRsZShwZGV2LT5kZXYub2Zfbm9kZSwKPiA+ICsJCQkJCQkiZXN3
-aW4saHNwLXNwLWNzciIpOwo+ID4gKwlpZiAoSVNfRVJSKGR3Y19wcml2LT5oc3BfcmVnbWFwKSkK
-PiA+ICsJCXJldHVybiBkZXZfZXJyX3Byb2JlKCZwZGV2LT5kZXYsCj4gPiArCQkJCVBUUl9FUlIo
-ZHdjX3ByaXYtPmhzcF9yZWdtYXApLAo+ID4gKwkJCQkiRmFpbGVkIHRvIGdldCBoc3Atc3AtY3Ny
-IHJlZ21hcFxuIik7Cj4gPiArCj4gPiArCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyX2luZGV4
-KHBkZXYtPmRldi5vZl9ub2RlLAo+ID4gKwkJCQkJICJlc3dpbixoc3Atc3AtY3NyIiwKPiA+ICsJ
-CQkJCSAxLCAmZXRoX3BoeV9jdHJsX29mZnNldCk7Cj4gPiArCWlmIChyZXQpCj4gPiArCQlyZXR1
-cm4gZGV2X2Vycl9wcm9iZSgmcGRldi0+ZGV2LAo+ID4gKwkJCQlyZXQsCj4gPiArCQkJCSJjYW4n
-dCBnZXQgZXRoX3BoeV9jdHJsX29mZnNldFxuIik7Cj4gPiArCj4gPiArCXJlZ21hcF9yZWFkKGR3
-Y19wcml2LT5oc3BfcmVnbWFwLCBldGhfcGh5X2N0cmxfb2Zmc2V0LAo+ID4gKwkJICAgICZldGhf
-cGh5X2N0cmxfcmVnc2V0KTsKPiA+ICsJZXRoX3BoeV9jdHJsX3JlZ3NldCB8PQo+ID4gKwkJKEVJ
-Qzc3MDBfRVRIX1RYX0NMS19TRUwgfCBFSUM3NzAwX0VUSF9QSFlfSU5URl9TRUxJKTsKPiA+ICsJ
-cmVnbWFwX3dyaXRlKGR3Y19wcml2LT5oc3BfcmVnbWFwLCBldGhfcGh5X2N0cmxfb2Zmc2V0LAo+
-ID4gKwkJICAgICBldGhfcGh5X2N0cmxfcmVnc2V0KTsKPiA+ICsKPiA+ICsJcmV0ID0gb2ZfcHJv
-cGVydHlfcmVhZF91MzJfaW5kZXgocGRldi0+ZGV2Lm9mX25vZGUsCj4gPiArCQkJCQkgImVzd2lu
-LGhzcC1zcC1jc3IiLAo+ID4gKwkJCQkJIDIsICZldGhfYXhpX2xwX2N0cmxfb2Zmc2V0KTsKPiA+
-ICsJaWYgKHJldCkKPiA+ICsJCXJldHVybiBkZXZfZXJyX3Byb2JlKCZwZGV2LT5kZXYsCj4gPiAr
-CQkJCXJldCwKPiA+ICsJCQkJImNhbid0IGdldCBldGhfYXhpX2xwX2N0cmxfb2Zmc2V0XG4iKTsK
-PiA+ICsKPiA+ICsJcmVnbWFwX3dyaXRlKGR3Y19wcml2LT5oc3BfcmVnbWFwLCBldGhfYXhpX2xw
-X2N0cmxfb2Zmc2V0LAo+ID4gKwkJICAgICBFSUM3NzAwX0VUSF9DU1lTUkVRX1ZBTCk7Cj4gPiAr
-Cj4gPiArCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyX2luZGV4KHBkZXYtPmRldi5vZl9ub2Rl
-LAo+ID4gKwkJCQkJICJlc3dpbixoc3Atc3AtY3NyIiwKPiA+ICsJCQkJCSAzLCAmZXRoX3J4ZF9k
-bHlfb2Zmc2V0KTsKPiA+ICsJaWYgKHJldCkKPiA+ICsJCXJldHVybiBkZXZfZXJyX3Byb2JlKCZw
-ZGV2LT5kZXYsCj4gPiArCQkJCXJldCwKPiA+ICsJCQkJImNhbid0IGdldCBldGhfcnhkX2RseV9v
-ZmZzZXRcbiIpOwo+ID4gKwo+ID4gKwlyZWdtYXBfd3JpdGUoZHdjX3ByaXYtPmhzcF9yZWdtYXAs
-IGV0aF9yeGRfZGx5X29mZnNldCwKPiA+ICsJCSAgICAgZXRoX2RseV9wYXJhbSk7Cj4gPiArCj4g
-PiArCWR3Y19wcml2LT5jbGtfdHggPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgInR4Iik7Cj4g
-PiArCWlmIChJU19FUlIoZHdjX3ByaXYtPmNsa190eCkpCj4gPiArCQlyZXR1cm4gZGV2X2Vycl9w
-cm9iZSgmcGRldi0+ZGV2LAo+ID4gKwkJCQlQVFJfRVJSKGR3Y19wcml2LT5jbGtfdHgpLAo+ID4g
-KwkJCQkiZXJyb3IgZ2V0dGluZyB0eCBjbG9ja1xuIik7Cj4gPiArCj4gPiArCWR3Y19wcml2LT5j
-bGtfYXhpID0gZGV2bV9jbGtfZ2V0KCZwZGV2LT5kZXYsICJheGkiKTsKPiA+ICsJaWYgKElTX0VS
-Uihkd2NfcHJpdi0+Y2xrX2F4aSkpCj4gPiArCQlyZXR1cm4gZGV2X2Vycl9wcm9iZSgmcGRldi0+
-ZGV2LAo+ID4gKwkJCQlQVFJfRVJSKGR3Y19wcml2LT5jbGtfYXhpKSwKPiA+ICsJCQkJImVycm9y
-IGdldHRpbmcgYXhpIGNsb2NrXG4iKTsKPiA+ICsKPiA+ICsJZHdjX3ByaXYtPmNsa19jZmcgPSBk
-ZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgImNmZyIpOwo+ID4gKwlpZiAoSVNfRVJSKGR3Y19wcml2
-LT5jbGtfY2ZnKSkKPiA+ICsJCXJldHVybiBkZXZfZXJyX3Byb2JlKCZwZGV2LT5kZXYsCj4gPiAr
-CQkJCVBUUl9FUlIoZHdjX3ByaXYtPmNsa19jZmcpLAo+ID4gKwkJCQkiZXJyb3IgZ2V0dGluZyBj
-ZmcgY2xvY2tcbiIpOwo+IAo+IFRoZXNlIHRoZW4gYmVjb21lIGRldm1fY2xrX2J1bGtfZ2V0X2Fs
-bCgpLgo+IAo+ID4gKwo+ID4gKwlyZXQgPSBlaWM3NzAwX2Nsa3NfY29uZmlnKGR3Y19wcml2LCB0
-cnVlKTsKPiA+ICsJaWYgKHJldCkKPiA+ICsJCXJldHVybiBkZXZfZXJyX3Byb2JlKCZwZGV2LT5k
-ZXYsCj4gPiArCQkJCXJldCwKPiA+ICsJCQkJImVycm9yIGVuYWJsZSBjbG9ja1xuIik7Cj4gCj4g
-TWF5YmUgZXZlbiBkZXZtX2Nsa19idWxrX2dldF9hbGxfZW5hYmxlZCgpIHdoaWNoIHdpbGwgb21p
-dCB0aGlzCj4gc3RlcC4uLgo+IAo+ID4gKwo+ID4gKwlwbGF0X2RhdC0+Y2xrX3R4X2kgPSBkd2Nf
-cHJpdi0+Y2xrX3R4Owo+ID4gKwlwbGF0X2RhdC0+c2V0X2Nsa190eF9yYXRlID0gc3RtbWFjX3Nl
-dF9jbGtfdHhfcmF0ZTsKPiA+ICsJcGxhdF9kYXQtPmJzcF9wcml2ID0gZHdjX3ByaXY7Cj4gPiAr
-CXBsYXRfZGF0LT5jbGtzX2NvbmZpZyA9IGVpYzc3MDBfY2xrc19jb25maWc7Cj4gPiArCj4gPiAr
-CXJldCA9IHN0bW1hY19kdnJfcHJvYmUoJnBkZXYtPmRldiwgcGxhdF9kYXQsICZzdG1tYWNfcmVz
-KTsKPiA+ICsJaWYgKHJldCkgewo+ID4gKwkJZWljNzcwMF9jbGtzX2NvbmZpZyhkd2NfcHJpdiwg
-ZmFsc2UpOwo+IAo+IC4uLiBhbmQgbWVhbnMgeW91IGRvbid0IG5lZWQgdGhpcyBjYWxsLi4uCj4g
-Cj4gPiArCQlyZXR1cm4gZGV2X2Vycl9wcm9iZSgmcGRldi0+ZGV2LAo+ID4gKwkJCQlyZXQsCj4g
-PiArCQkJCSJGYWlsZWQgdG8gZHJpdmVyIHByb2JlXG4iKTsKPiA+ICsJfQo+ID4gKwo+ID4gKwly
-ZXR1cm4gcmV0Owo+ID4gK30KPiA+ICsKPiA+ICtzdGF0aWMgdm9pZCBlaWM3NzAwX2R3bWFjX3Jl
-bW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ID4gK3sKPiA+ICsJc3RydWN0IGVp
-Yzc3MDBfcW9zX3ByaXYgKmR3Y19wcml2ID0gZ2V0X3N0bW1hY19ic3BfcHJpdigmcGRldi0+ZGV2
-KTsKPiA+ICsKPiA+ICsJc3RtbWFjX3BsdGZyX3JlbW92ZShwZGV2KTsKPiA+ICsJZWljNzcwMF9j
-bGtzX2NvbmZpZyhkd2NfcHJpdiwgZmFsc2UpOwo+ID4gK30KPiAKPiAuLi4gYW5kIHlvdSBjYW4g
-cmVtb3ZlIHRoaXMgZnVuY3Rpb24gZW50aXJlbHkgLi4uCj4gCj4gPiArCj4gPiArc3RhdGljIGNv
-bnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgZWljNzcwMF9kd21hY19tYXRjaFtdID0gewo+ID4gKwl7
-IC5jb21wYXRpYmxlID0gImVzd2luLGVpYzc3MDAtcW9zLWV0aCIgfSwKPiA+ICsJeyB9Cj4gPiAr
-fTsKPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBlaWM3NzAwX2R3bWFjX21hdGNoKTsKPiA+
-ICsKPiA+ICtzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBlaWM3NzAwX2R3bWFjX2RyaXZl
-ciA9IHsKPiA+ICsJLnByb2JlICA9IGVpYzc3MDBfZHdtYWNfcHJvYmUsCj4gPiArCS5yZW1vdmUg
-PSBlaWM3NzAwX2R3bWFjX3JlbW92ZSwKPiAKPiAuLi4gcmVwbGFjaW5nIHRoaXMgd2l0aCBzdG1t
-YWNfcGx0ZnJfcmVtb3ZlKCkuCj4gCj4gVGhhbmtzLgo+IAo+IC0tIAo+IFJNSydzIFBhdGNoIHN5
-c3RlbTogaHR0cHM6Ly93d3cuYXJtbGludXgub3JnLnVrL2RldmVsb3Blci9wYXRjaGVzLwo+IEZU
-VFAgaXMgaGVyZSEgODBNYnBzIGRvd24gMTBNYnBzIHVwLiBEZWNlbnQgY29ubmVjdGl2aXR5IGF0
-IGxhc3QhCg==
+Hi Ryan,
+
+Thanks for update.
+
+On Fri, 29 Aug 2025 19:20:50 +0900
+Ryan Chung <seokwoo.chung130@gmail.com> wrote:
+
+> This v2 addresses the TODO in trace_fprobe to handle comma-separated
+> symbol lists and the '!' prefix. Tokens starting with '!' are collected
+> as "nofilter", and the others as "filter", then passed to
+> register_fprobe() accordingly. Empty tokens are rejected and errors are
+> reported with trace_probe_log_err().
+
+OK, can you describe how it changes the syntax. You may find more things
+to write it down.
+
+For example, fprobe is not only a function entry, but also it supports
+function return. How it is specified? Current "%return" suffix is introduced
+for single symbol (function), like schedule%return. If we introduce a list
+of symbols and filters, it looks more complicated.
+
+For example, "!funcAB,funcC,funcA*%return" seems like the exit of funcA*,
+the entry of funcC, but not covers funcAB. It is naturally misleading
+users. We have to check "funcA*%return,!funcAB,funcC" pattern.
+
+Thus, I think we should use another suffix, like ":exit" (I think the colon
+does strongly separate than comma, what do you think?), or just
+prohibit to use "%return" but user needs to specify "$retval" in fetcharg
+to specify it is the fprobe on function exit. (this maybe more natural)
+
+The reason why I talked about how to specify the exit point of a function
+so far, is because the variables that can be accessed at the entrance
+and exit are different.
+
+Also, fprobe supports event-name autogeneration from the symbol name,
+e.g. 'symbol__entry' or 'symbol__exit'. Recently I found the symbol
+already supports wildcards, so sanitize it from the event name [1]
+
+[1] https://lore.kernel.org/all/175535345114.282990.12294108192847938710.stgit@devnote2/
+
+To use this list-style filters, we may need to reject if there is no
+event name. Of cause we can generate event-name from the symbol list
+but you need to sanitize non alphabet-number characters.
+
+Ah, here is another one, symbol is used for ctx->funcname, and this is
+used for querying BTF. But obviously BTF context is unusable for this
+case. So we should set the ctx->funcname = NULL with listed filter.
+
+> 
+> Questions for maintainers (to confirm my understanding):
+>   * Parsing location: Masami suggested doing the parsing in the parse
+>     stage (e.g., via parse_symbol_and_return()). v2 keeps the logic in
+>     __register_trace_fprobe(), but I can move the call into the parsing
+>     path in v3 if that is the preferred place. Is that correct?
+
+Most of above processes have been done in parse_symbol_and_return(),
+thus the parsing it should be done around there.
+
+>   * Documentation: I plan to update the user-facing docs for fprobe
+>     syntax. Is Documentation/trace/ the right place (e.g., 
+>     Documentation/trace/fprobetrace.rst)?
+
+Yes, please explain it with examples.
+
+Also, can you add a testcase (in a sparate patch) for this syntax?)
+
+Thank you,
+
+> 
+> Link: https://lore.kernel.org/linux-trace-kernel/20250812162101.5981-1-seokwoo.chung130@gmail.com/
+> Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+
+> ---
+> 
+> Changes in v2:
+>   * Classify '!' tokens as nofilter, others as filter; pass both to
+>     register_fprobe().
+>   * Reject empty tokens; log errors with trace_probe_log_*().
+>   * Use __free(kfree) for temporary buffers.
+>   * Keep subject and style per "Submitting patches" (tabs, wrapping).
+>   * No manual dedup (leave to ftrace).
+> 
+>  kernel/trace/trace_fprobe.c | 48 +++++++++++++++++++++++++++++++++++--
+>  1 file changed, 46 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+> index b36ade43d4b3..d731d9754a39 100644
+> --- a/kernel/trace/trace_fprobe.c
+> +++ b/kernel/trace/trace_fprobe.c
+> @@ -815,6 +815,11 @@ static int trace_fprobe_verify_target(struct trace_fprobe *tf)
+>  static int __register_trace_fprobe(struct trace_fprobe *tf)
+
+This is not a good place to add anymore, because this change turned out
+not to meet the expected prerequisites. (when I commented TODO here,
+I didn't expected too.)
+
+Anyway, this is a good opportunity to review this TODO deeper.
+
+Thank you,
+
+>  {
+>  	int i, ret;
+> +	const char *p, *q;
+> +	size_t spec_len, flen = 0, nflen = 0, tlen;
+> +	bool have_f = false, have_nf = false;
+> +	char *filter __free(kfree) = NULL;
+> +	char *nofilter __free(kfree) = NULL;
+>  
+>  	/* Should we need new LOCKDOWN flag for fprobe? */
+>  	ret = security_locked_down(LOCKDOWN_KPROBES);
+> @@ -835,8 +840,47 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
+>  	if (trace_fprobe_is_tracepoint(tf))
+>  		return __regsiter_tracepoint_fprobe(tf);
+>  
+> -	/* TODO: handle filter, nofilter or symbol list */
+> -	return register_fprobe(&tf->fp, tf->symbol, NULL);
+> +	spec_len = strlen(tf->symbol);
+> +	filter = kzalloc(spec_len + 1, GFP_KERNEL);
+> +	nofilter = kzalloc(spec_len + 1, GFP_KERNEL);
+> +	if (!filter || !nofilter)
+> +		return -ENOMEM;
+> +
+> +	p = tf->symbol;
+> +	for (p = tf->symbol; p; p = q ? q + 1 : NULL) {
+> +		q = strchr(p, ',');
+> +		tlen = q ? (size_t)(q-p) : strlen(p);
+> +
+> +		/* reject empty token */
+> +		if (!tlen) {
+> +			trace_probe_log_set_index(1);
+> +			trace_probe_log_err(0, BAD_TP_NAME);
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (*p == '!') {
+> +			if (tlen == 1) {
+> +				trace_probe_log_set_index(1);
+> +				trace_probe_log_err(0, BAD_TP_NAME);
+> +				return -EINVAL;
+> +			}
+> +			if (have_nf)
+> +				nofilter[nflen++] = ',';
+> +			memcpy(nofilter + nflen, p + 1, tlen - 1);
+> +			nflen += tlen - 1;
+> +			have_nf = true;
+> +		} else {
+> +			if (have_f)
+> +				filter[flen++] = ',';
+> +			memcpy(filter + flen, p, tlen);
+> +			flen += tlen;
+> +			have_f = true;
+> +		}
+> +	}
+> +
+> +	return register_fprobe(&tf->fp,
+> +			have_f ? filter : NULL,
+> +			have_nf ? nofilter : NULL);
+>  }
+>  
+>  /* Internal unregister function - just handle fprobe and flags */
+> -- 
+> 2.43.0
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
