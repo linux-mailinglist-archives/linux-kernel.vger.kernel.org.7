@@ -1,100 +1,96 @@
-Return-Path: <linux-kernel+bounces-795514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B13FB3F3B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1073CB3F3BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217B0205289
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96F21A8586F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426972E0B4B;
-	Tue,  2 Sep 2025 04:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A03825C809;
+	Tue,  2 Sep 2025 04:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UKQFevt1"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YFM/4JbZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070F32E11BF
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 04:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68B421D3CD
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 04:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756787107; cv=none; b=KCb3e84dqvlfRidipkRBjDwmoc/P99US+D5b1tcWetXngWTddRPcPDpuyHZW27P7MPhTL++qANx9e7b5fYRl9JqJm+wARV7G3cNHw2/IXLOfK1b9UCIi9+45wbqoxg6PtLmiP00r67lFlJ1TYNlWnj5TVYCHb1ONpefIF1yJUL8=
+	t=1756787124; cv=none; b=iu3S74f2eSOv9ZlF5QrmHoI9tefDVcVg9X+A9lZBWwa/qotcROHqatvq4hgWP0bwfID1DKaPPYp9GzcCgoZA9xMYZIXt0HMRzx6antoLRyajX07uf/mlScx5m+BlJkXtNcQVEMnR1PkcEuWi/aWXf3HKsJcSXuRvSTFg2UZcjog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756787107; c=relaxed/simple;
-	bh=d3KdXT/c2Yk9m0PpM0HCDs6YwY7JVVIjaErZMTVmByc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MHza96QCpcyPprn+TQD0zqpKUyC3PNc0hu6Am65PiGU8FEbtHpLMMFPwTh57ec7AsqmWHss+6Hp3LlQK4maSKm3Rsm3sTY0YnFRaDftmXlJDfUV+UmW0Cq1iITW4pGL8GhuDAahILIMptZkijyyICNEHruNWau/PIbYdoBS4Dtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UKQFevt1; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-327ceef65afso4909165a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 21:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756787105; x=1757391905; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KsWJ8LfQ5pRsnjiKNBF8VnH1ORJpnctEr1VaNmcMPZo=;
-        b=UKQFevt1/gJ6QMDPw4+zG4ssrtHgIPPkvTaJcBthtF6bGLwhiiBTlb/6qwO606K9oc
-         udGtNPDWj12rzKfX+J2fOIHDlxuKI7cUoPJ4DiXFVY5BdNTOl5QfIEU0IAIKxKv+1sGU
-         A8fDa4b4B0NNcUTJwqeWfVc3nqXH79ABvsDpCpGKSoDVqfOg6ZyjBsEQgHpfVdrYcZQf
-         GeR25xyF8Zry73q83EyjatuX98XEZ2n07+bXH0RPAKINIkAqFoxUyGCt8o0vAWQS9XOs
-         FOmIYhTHqHrqvf0oz4REOtSIJmFcIbAzkQ/kPmS3CYi9dGrDAORZJbNXr1Ik8a0x0T4L
-         ToqA==
+	s=arc-20240116; t=1756787124; c=relaxed/simple;
+	bh=KGVqkd0oWHkbJ+ZQ3pjCuoMltYbH2zy2sVQQCrEM91U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KACXuuRiFE+82HcBGfdcNHsvFmB2gWYg+pWJxABt/+NL3G2i7ysLsxmEWTZ2q08ZJiyXDlBS60yYKMxch7BCrnGtQW2f5vRnYJkISI469vzm+0qvhMLnRKIrwt8SrC71wMkivrz8h1w297gT0AfqHVukeyLHBUc3CtCepg5jtGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YFM/4JbZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756787121;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yceXk2CDlZjXkspmIbhQrCudqcmdaHsA3xCQZcIxoPY=;
+	b=YFM/4JbZXLGb8uZsNcQK0sjGid36RSc6J2zAWSP9PtRaDa/V1Wb/bsMZmUiHPmDVbnnvIB
+	IvrQVecYPFFtQAHM6O67Osyu5jqdR3gQykXbmsmnxRWPiHDyYVec4OeDdZmQpHUmouVUck
+	F8i7Z3RMU0HoJI6Of7a9mIOGSf3SsoM=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-228-z2rYhFJ1MHOtV5v0CbwjGg-1; Tue, 02 Sep 2025 00:25:20 -0400
+X-MC-Unique: z2rYhFJ1MHOtV5v0CbwjGg-1
+X-Mimecast-MFC-AGG-ID: z2rYhFJ1MHOtV5v0CbwjGg_1756787119
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24b0e137484so3917515ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 21:25:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756787105; x=1757391905;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KsWJ8LfQ5pRsnjiKNBF8VnH1ORJpnctEr1VaNmcMPZo=;
-        b=RByoxBXX7MF+AqxQHgAq/8bPk71Fc0uult5vJc04lCk+h2BgIZLPoFrasOZz0oAudY
-         IdQ4sXVuaZ0wxzTdsnMQS9xxwscOVH+yGOZRsujnKBocXg0NYhshljBb8lJ8mDO+OTvd
-         scK5EH5dhYhzGDJTA2Y7Td/79eC1J3qiuuWtl9Uvq6r363g6GP6aFRSUiOLb4MC2oQoK
-         d9v1f7+W6R+Ekt6E1Wy61TYxmr60+ww9K/bvMY25NXAUSRhCMp4PWr/U8hVwTE6cJw0w
-         BGZhNZQ7QDhwhGYpxbKZpsSE6PwucPzSV1rG8AzgeXl9hw3ycI/IJpxWyrfRFKBpBjBv
-         H/xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZYRbqB9FwA+JMqbP9eTFN0nZPxmwWoOpuAKqr9IJRfhIWoawkAss2zdP2bD57ev0d2wOUnJZwjzO5yrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYf2nqYvnC7VjBtKDRzIYSwvIiMjppOe2Kuhku2WT6jDUmZgrh
-	tW25AcrABNVRhR0ZPWzFUtH+nV7hyuOdFjy9kJ56JwfzxFk5PKyv5p1TbclhkyLSVhc=
-X-Gm-Gg: ASbGnctCPXmC/uXeTU8qwE+ZqqWsUdaN43B2CecTW9Zoi7xgmuHYWFEl88aj4SQSnoA
-	AXIGdSNDqo9rhH3Q8iKaEQl/0tCU49PztYuvpyY/d4WQR1ftYE1kmIBWCpawXIba747RDWfpVGx
-	IHEv3QkPAh7/HqR5BsNhePUzOQ3uqlFhPNz5nSfym833fvdjYSc8S1hLXqzTmy8FHNEsRfYXF7/
-	CPxnc2aSIvIKlXdqnhlkMsH1TxYyvaIlJ5yzszOg+B9tvYEmdB6uC3BIVC4DIPQFoEBiJXKr4rP
-	8vU+e5PWc828raHVA4c1VDfViibtYGm6zgo7+cyeFNZMsFnhRCw5sR2tlPPHM8eTnP7IX6XgCg2
-	Cd+3KoXa50Xxm2u9pu+XjxJu0n68TPynQDZRCWw9JtlJcckOBm480LHI7g194epMFhlY5Z74Qdf
-	T1SXPWpNy8OXel9/jay8Y0F62OsTj8Cog9BIxgjagW3H4=
-X-Google-Smtp-Source: AGHT+IE5ILaPlbdaJvy0lHhCLMkEi7dV07tKF7N1W6t5v1Wvwl43pItJx8N4YHBrAE+BIEHm1Y1uhQ==
-X-Received: by 2002:a17:90a:d40b:b0:327:a04b:aac with SMTP id 98e67ed59e1d1-328156be03emr14100705a91.24.1756787105177;
-        Mon, 01 Sep 2025 21:25:05 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327e21d14a8sm12216706a91.2.2025.09.01.21.24.59
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 01 Sep 2025 21:25:04 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	ajones@ventanamicro.com,
-	brs@rivosinc.com
-Cc: devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	apw@canonical.com,
-	joe@perches.com,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH v2 4/4] riscv: Use Zalasr for smp_load_acquire/smp_store_release
-Date: Tue,  2 Sep 2025 12:24:32 +0800
-Message-Id: <20250902042432.78960-5-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250902042432.78960-1-luxu.kernel@bytedance.com>
-References: <20250902042432.78960-1-luxu.kernel@bytedance.com>
+        d=1e100.net; s=20230601; t=1756787119; x=1757391919;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yceXk2CDlZjXkspmIbhQrCudqcmdaHsA3xCQZcIxoPY=;
+        b=dzCFFP/0qyACyrj43m7VrYmQJgwghGJJpDqbHscw9bXYrjE/4BlFCztVoyncnxo1EL
+         S/9/dXyhEsEiz/1Q7KcONxo9Xj+UFe4mdF4rFgeiKhsTxCxv2jWf4jZz8VYK3+lVEEvG
+         STX3lzTPCdOCxN30KZdjCCANwCDxMOifJ2P/dQAQ+CbSzPwcdcj9/GHsfVLHQ/00OL6C
+         2CvJsWWOJkKJjymXAoL3fjSS6eemu9HW8B8OL+UlFf3YCBD+EcorBB7oj1Opvmjt+s1K
+         sqG4+rzn2DFLeGtD+74YDHHO2KMzKtqINt2qfeTgSjrL97rw1CHlXQzaOYzlM3A1EQhB
+         Am2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVuWxZrsrNdjFX3oezWnr+l5Mbe2F7d6k6P1mXjPvx9dYNq+gpHz1cKs08XzA5/z96UMzKSwcuC9IZHL90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQf2WwUNZc89vTghDy6LbAKBB6AkkGbMPkM/5ecMWKC3w2Q0I5
+	/3PPuQZkHe6ahzxJV+/ckPHCb5vbz6PPh4Nkw5WpAfJ3JQvnsqSYzSKqQLi+SF0fkLM26I9h2Cc
+	tcMZSKOUhmAvLapKuZE9WUEm/Q8+1YQGeKdKN121F2b1K0Z7FFND2fwQBuecouJ70Sw==
+X-Gm-Gg: ASbGnctSCU9ecqupfcxir6wYwhRJu3H/1Pi45LX9ymYrWbojUxhwMdByKDW/dKMyWa7
+	Ofa/L+Jgc18fvRMKs6RPWhzXfw1IJ8lV1Hqr37KzZUrAxYdfd+CJcln1fjPXcNCIIaUqMjj5p7N
+	yftMEnpBxsAGPajdB52kmYkiR33hoOP10u+leGsH2fLNL5UaQZDGO5k0D4ZKvKvgYnXXXRqxzSv
+	qMOrPrVVCLRpkGkFoNhLHxnrqY1Yqrw0+67iHrjzvfTx065bTGXv2eR99pEFO7Bk9a6Woy1qvbt
+	cBgbn9flRP4bWGhMSED1BjXEwh8S8nY=
+X-Received: by 2002:a17:903:ac8:b0:248:9b68:f522 with SMTP id d9443c01a7336-24944ac8802mr119741105ad.43.1756787119150;
+        Mon, 01 Sep 2025 21:25:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6qHS5CaJlgiiZHBDHXTwlaeAvO21OpILjrDjJxhf0jrDdLhZ4exXvJAzU8wyGG8a51R9XhA==
+X-Received: by 2002:a17:903:ac8:b0:248:9b68:f522 with SMTP id d9443c01a7336-24944ac8802mr119740845ad.43.1756787118749;
+        Mon, 01 Sep 2025 21:25:18 -0700 (PDT)
+Received: from localhost ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037285b9sm120009035ad.44.2025.09.01.21.25.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 21:25:18 -0700 (PDT)
+From: Coiby Xu <coxu@redhat.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ima: don't clear IMA_DIGSIG flag when setting non-IMA xattr
+Date: Tue,  2 Sep 2025 12:25:14 +0800
+Message-ID: <20250902042515.759750-1-coxu@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,107 +99,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace fence instructions with Zalasr instructions during acquire or
-release operations.
+Currently when both IMA and EVM are in fix mode, the IMA signature will
+be reset to IMA hash if a program first stores IMA signature in
+security.ima and then sets security.selinux for a file. For example, on
+Fedora, after booting the kernel with "ima_appraise=fix evm=fix
+ima_policy=appraise_tcb" and installing rpm-plugin-ima, reinstalling a
+package will not make good reference IMA signature generated. Instead
+IMA hash is generated,
+    # getfattr -m - -d -e hex /usr/bin/bash
+    # file: usr/bin/bash
+    security.ima=0x0404...
 
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+This happens because when setting selinux.selinux, the IMA_DIGSIG flag
+that had been set early was cleared. As a result, IMA hash is generated
+when the file is closed.
+
+Here's a minimal C reproducer,
+
+    #include <stdio.h>
+    #include <sys/xattr.h>
+    #include <fcntl.h>
+    #include <unistd.h>
+    #include <string.h>
+    #include <stdlib.h>
+
+    int main() {
+        const char* file_path = "/usr/sbin/test_binary";
+        const char* hex_string = "030204d33204490066306402304";
+        int length = strlen(hex_string);
+        char* ima_attr_value;
+        int fd;
+
+        fd = open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
+        if (fd == -1) {
+            perror("Error opening file");
+            return 1;
+        }
+
+        ima_attr_value = (char*)malloc(length / 2 );
+        for (int i = 0, j = 0; i < length; i += 2, j++) {
+            sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
+        }
+
+        if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) == -1) {
+            perror("Error setting extended attribute");
+            close(fd);
+            return 1;
+        }
+
+        const char* selinux_value= "system_u:object_r:bin_t:s0";
+        if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selinux_value), 0) == -1) {
+            perror("Error setting extended attribute");
+            close(fd);
+            return 1;
+        }
+
+        close(fd);
+
+        return 0;
+    }
+
+Signed-off-by: Coiby Xu <coxu@redhat.com>
 ---
- arch/riscv/include/asm/barrier.h | 79 +++++++++++++++++++++++++++-----
- 1 file changed, 68 insertions(+), 11 deletions(-)
+ security/integrity/ima/ima_appraise.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/include/asm/barrier.h b/arch/riscv/include/asm/barrier.h
-index b8c5726d86acb..b1d2a9a85256d 100644
---- a/arch/riscv/include/asm/barrier.h
-+++ b/arch/riscv/include/asm/barrier.h
-@@ -51,19 +51,76 @@
-  */
- #define smp_mb__after_spinlock()	RISCV_FENCE(iorw, iorw)
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index f435eff4667f..fc82161f8b30 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -708,7 +708,7 @@ static void ima_reset_appraise_flags(struct inode *inode, int digsig)
+ 	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
+ 	if (digsig)
+ 		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+-	else
++	else if (digsig != -1)
+ 		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+ }
  
--#define __smp_store_release(p, v)					\
--do {									\
--	compiletime_assert_atomic_type(*p);				\
--	RISCV_FENCE(rw, w);						\
--	WRITE_ONCE(*p, v);						\
-+extern void __bad_size_call_parameter(void);
-+
-+#define __smp_store_release(p, v)						\
-+do {										\
-+	compiletime_assert_atomic_type(*p);					\
-+	switch (sizeof(*p)) {							\
-+	case 1:									\
-+		asm volatile(ALTERNATIVE("fence rw, w;\t\nsb %0, 0(%1)\t\n",	\
-+					 SB_RL(%0, %1) "\t\nnop\t\n",		\
-+					 0, RISCV_ISA_EXT_ZALASR, 1)		\
-+					 : : "r" (v), "r" (p) : "memory");	\
-+		break;								\
-+	case 2:									\
-+		asm volatile(ALTERNATIVE("fence rw, w;\t\nsh %0, 0(%1)\t\n",	\
-+					 SH_RL(%0, %1) "\t\nnop\t\n",		\
-+					 0, RISCV_ISA_EXT_ZALASR, 1)		\
-+					 : : "r" (v), "r" (p) : "memory");	\
-+		break;								\
-+	case 4:									\
-+		asm volatile(ALTERNATIVE("fence rw, w;\t\nsw %0, 0(%1)\t\n",	\
-+					 SW_RL(%0, %1) "\t\nnop\t\n",		\
-+					 0, RISCV_ISA_EXT_ZALASR, 1)		\
-+					 : : "r" (v), "r" (p) : "memory");	\
-+		break;								\
-+	case 8:									\
-+		asm volatile(ALTERNATIVE("fence rw, w;\t\nsd %0, 0(%1)\t\n",	\
-+					 SD_RL(%0, %1) "\t\nnop\t\n",		\
-+					 0, RISCV_ISA_EXT_ZALASR, 1)		\
-+					 : : "r" (v), "r" (p) : "memory");	\
-+		break;								\
-+	default:								\
-+		__bad_size_call_parameter();					\
-+		break;								\
-+	}									\
- } while (0)
- 
--#define __smp_load_acquire(p)						\
--({									\
--	typeof(*p) ___p1 = READ_ONCE(*p);				\
--	compiletime_assert_atomic_type(*p);				\
--	RISCV_FENCE(r, rw);						\
--	___p1;								\
-+#define __smp_load_acquire(p)							\
-+({										\
-+	TYPEOF_UNQUAL(*p) val;							\
-+	compiletime_assert_atomic_type(*p);					\
-+	switch (sizeof(*p)) {							\
-+	case 1:									\
-+		asm volatile(ALTERNATIVE("lb %0, 0(%1)\t\nfence r, rw\t\n",	\
-+					 LB_AQ(%0, %1) "\t\nnop\t\n",		\
-+					 0, RISCV_ISA_EXT_ZALASR, 1)		\
-+					 : "=r" (val) : "r" (p) : "memory");	\
-+		break;								\
-+	case 2:									\
-+		asm volatile(ALTERNATIVE("lh %0, 0(%1)\t\nfence r, rw\t\n",	\
-+					 LH_AQ(%0, %1) "\t\nnop\t\n",		\
-+					 0, RISCV_ISA_EXT_ZALASR, 1)		\
-+					 : "=r" (val) : "r" (p) : "memory");	\
-+		break;								\
-+	case 4:									\
-+		asm volatile(ALTERNATIVE("lw %0, 0(%1)\t\nfence r, rw\t\n",	\
-+					 LW_AQ(%0, %1) "\t\nnop\t\n",		\
-+					 0, RISCV_ISA_EXT_ZALASR, 1)		\
-+					 : "=r" (val) : "r" (p) : "memory");	\
-+		break;								\
-+	case 8:									\
-+		asm volatile(ALTERNATIVE("ld %0, 0(%1)\t\nfence r, rw\t\n",	\
-+					 LD_AQ(%0, %1) "\t\nnop\t\n",		\
-+					 0, RISCV_ISA_EXT_ZALASR, 1)		\
-+					 : "=r" (val) : "r" (p) : "memory");	\
-+		break;								\
-+	default:								\
-+		__bad_size_call_parameter();					\
-+		break;								\
-+	}									\
-+	val;									\
- })
- 
- #ifdef CONFIG_RISCV_ISA_ZAWRS
+@@ -794,6 +794,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
+ 	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) {
+ 		digsig = (xvalue->type == EVM_XATTR_PORTABLE_DIGSIG);
++	} else if (result != 1) {
++		digsig = -1;
+ 	}
+ 	if (result == 1 || evm_revalidate_status(xattr_name)) {
+ 		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
 -- 
-2.20.1
+2.51.0
 
 
