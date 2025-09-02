@@ -1,159 +1,134 @@
-Return-Path: <linux-kernel+bounces-796716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C7DB40648
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:13:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25116B40637
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107C21689D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1AE6188753C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495E62DFF1D;
-	Tue,  2 Sep 2025 14:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEFB33997;
+	Tue,  2 Sep 2025 14:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wDvUDvro"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JX4SWZd6"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA71220F5E;
-	Tue,  2 Sep 2025 14:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B248C1DD9AD
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756822107; cv=none; b=lyxUTKRxwZb6OpH/w8NnIQgQXWdelnLJxX9MVfxCebeMky39pII7LP7958SsOIaX/q+TwB7GWZasBs7A/KMHQk+nU/5Hmz8JGMSOIVyJALWP2OAetX8l2aSFLzJ6Aob2MqdPZZsr+qNWQIZ1fv2hGTixeqrZmia+8NpoG8I+nYw=
+	t=1756821986; cv=none; b=RSxpUrxXd1Mw9yYaHNejtktEqHO1/VuP+/czlODZ0apiUCZUxE9EQMIIjONIgvDrtRbsADLGv21lMLX/E8hKXz3RqHgK0NExMx1V5765snFqD4IZt3KrrYDp7n0zw9Gw+/3kdGtD0ewhzLoAApMOPPXnkngfZ4EqjCpHzUCPcn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756822107; c=relaxed/simple;
-	bh=keU71mt+mL8ZC7oI2ryZm1aP/UrhHjOrirqvvxCZCIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NRjzgXAnXIQhzUM5fQudUZ/FdiS6at8yMku+NY6vUubWX2tN060RUP9ftbPCQ9sy7IExjCkGztccfpuyQD6+K41eVN0yq8egnhz1WmN0zFusaL1WkRx1dNmxDhry1A64Yyo+RHqxDWSDnRc4vfPh/QM2or0+W2jKuQyH0UUe59A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wDvUDvro; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582DHPqh021113;
-	Tue, 2 Sep 2025 16:08:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	OfsW8QTgbTdLP4DbkI1LhSpqxaBZQsvlgtJGzho+GHo=; b=wDvUDvro07WcbWVI
-	GSKHtFjhToKdMWBImiAgJUCkfdPfgWtxbpKjPNuX8DWIBmAN0BqyUzLhxbb1/lhh
-	Y4POLhNDo+hf7jd2oGzi49bG4xkpqsZ2Iqy4+SSO1QlqPxSEMN6eNS318/v/GRVQ
-	5jzEQ1qwlkGhtYBft9mIA38QWR92RV7RfO2ew1QvWyPQfwG2lu8CpeR6MggbfdJ6
-	ow2HFWqpIAl+bwqv/LuFM66Xs1JW+1JNbh0vofvuGJYoDKJIt3hMNSbuOjInBGwr
-	fyyszoeqUbuSPQThgjbZkTjKG+qUR1dO8B0P3uQqxFElWtWgtZlftU0eCRQScSrT
-	kErQSw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48upqkd2tn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Sep 2025 16:08:02 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6DF0B40045;
-	Tue,  2 Sep 2025 16:06:30 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0D83C3A874D;
-	Tue,  2 Sep 2025 16:05:23 +0200 (CEST)
-Received: from [10.48.87.121] (10.48.87.121) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Tue, 2 Sep
- 2025 16:05:22 +0200
-Message-ID: <9b669562-ee52-47b6-856e-3184b3e89d28@foss.st.com>
-Date: Tue, 2 Sep 2025 16:05:21 +0200
+	s=arc-20240116; t=1756821986; c=relaxed/simple;
+	bh=uLft5kRVu50U08OO/8BXcCGPsrG3pukiHLm/Fxycblc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MAxIxEbfbsXgkCjV+89TUScL2ir9Ijz+EB6WbjLLnx0TQTRg0qFcl7wuQ5DEkb/tlct+HXqSlUwsKMYq4s7l49NOI9DwtKsc8ceVuj/vfbx6OBR8Mma8Jf+F8gYRs6TYlQS/IL4eU6WHx9KP9RcCgdmGVOB6aGMjug8jifEd1Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JX4SWZd6; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7723cf6e4b6so2204008b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756821984; x=1757426784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G3vAMDDKCjzCh1ioreOxwAOGysxZFkQVkoExnnbmuyM=;
+        b=JX4SWZd6/IF4cM51tYU0NO/8M1zfb89DPhMYNcMXBVZQNtZ9R9slGoV+087a/5LiGh
+         TE7FTjy6hEt18iCxVh9v+zLCCk8yoaebdl22oLhg6+Sg+yXz6KrjfhKWVuIIyjVcPx7v
+         N21eYLyF43TplMTGTFV1YxwmBbvM19KmNZjjweuTcLq+QzsIEiTCxkxQjh1/bm+skAij
+         tCJ529C+OGdKwLFguDdv8UT8rweF/9wdeGkbVM1hrvsneVUeBjlL6HeeF9qQst9D2o1N
+         2Ds2bfOkbesdzl6uh2eAMcG4Hxs99cHnKVDPf4rnIKHotOJhnEBPikQVUwU+JlAzrDdb
+         lQcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756821984; x=1757426784;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G3vAMDDKCjzCh1ioreOxwAOGysxZFkQVkoExnnbmuyM=;
+        b=gbXxawCl4Dvlj2t4oMxhRJolKj8lNz4oi6YOJaOIhlWEeZSyZ6UOoR9IaIb5nK8fD4
+         w2kbGwylMPumsKnJZkprpF56xCa7Qq0GlQIun+RBwiBRe8EFgC1dNUpfNVHtUI60AGse
+         Lf99eFFuMZTfNfXun/ygEnLlZZ9Sh6ai7jbeBlvPkuvC+k3l/SerPVNb+wm1myDGhxlK
+         /6Aaml2Zi+HpIlTAnVXJiPD1E56MxhDYoI/Kl4ECW/bHbTySfuoCyLS2M0i30TELZ2Tl
+         uqvvslmjIW1uullyc7i9mky/6vQ3K1LxpnzE37LT9xdzQYtqmF0E0pArCEU40h89PJRQ
+         9dmQ==
+X-Gm-Message-State: AOJu0YyphH0FZLts95ZOCs6UoGbfbom/AAwz1w6+RsQuPgPs7KSLGZlB
+	mC/kITalKzWBM/5H+oZ4V9wG22jmLc1gZ/964DudoRQJnY1ZxcO7MWqzTc/K7Q==
+X-Gm-Gg: ASbGncu5K23t75SybIMfYfhBpChW7GZQK4lK4cCo9DRT+Fp8umOoita3+jMGaJVT+Tp
+	qV+Hvzq+eyef1m6AElMKVxx2ZWLH16LjQfDdhZAwet+uJQNLbjDe1dAIBi/QkxfYuPoUqPfxL00
+	6nYkJiQE+eJEvVyeqwFLNooHUO9n7rnYHn8Heb7v6LkY1QxClk1HR+kXTVVV0+vvUIv+oV7j7mj
+	ffghxK47OBhSa2hMWFHi3HyBbzmn2Ak/XQplOaOnzrnS+wipOF5tU1TlkDguEEjE03DgVYGVIFu
+	yycZ/PqtAW8NWWzfzqii9T2fmTeAFd7jB4rK9TMEaD3FEl+NBk3QnPw0Cy01rnqEAr4MAhK3MY2
+	xxsDwZV5cYx0pWHrGAcPDikPs6a8EFXqfhqL3vQ1e5WUGRD3K79GCKFrxyV+1unbNqDDmmjgnOi
+	TQkaW9Uw==
+X-Google-Smtp-Source: AGHT+IFsScJ15/QUZv60Zo2uHTm2UDdGGH2WIwQwZpn6zxGguEGAcChStYOSgmUQZBZg3Dn+Yt+tsQ==
+X-Received: by 2002:a05:6a21:3396:b0:243:b0fb:7086 with SMTP id adf61e73a8af0-243d6dc8084mr14285242637.4.1756821982032;
+        Tue, 02 Sep 2025 07:06:22 -0700 (PDT)
+Received: from localhost.localdomain (36-231-167-123.dynamic-ip.hinet.net. [36.231.167.123])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a269f27sm13927961b3a.12.2025.09.02.07.06.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 07:06:21 -0700 (PDT)
+From: Nick Huang <sef1548@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: kusogame68@gmail.com,
+	Nick Huang <sef1548@gmail.com>
+Subject: [PATCH] ipc/msg: Replace testmsg with  msg_matchs_type
+Date: Tue,  2 Sep 2025 22:05:48 +0800
+Message-ID: <20250902140548.110167-1-sef1548@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 8/9] clk: divider, gate: create regmap-backed copies of
- gate and divider clocks
-To: Conor Dooley <conor@kernel.org>, <sboyd@kernel.org>
-CC: Conor Dooley <conor.dooley@microchip.com>,
-        Daire McNamara
-	<daire.mcnamara@microchip.com>,
-        <pierre-henry.moussay@microchip.com>,
-        <valentina.fernandezalanis@microchip.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones
-	<lee@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt
-	<palmer@dabbelt.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <linux-riscv@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250901-rigid-sacrifice-0039c6e6234e@spud>
- <20250901-yearling-reconcile-99d06fe7868e@spud>
-Content-Language: en-US
-From: Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <20250901-yearling-reconcile-99d06fe7868e@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
 
+The function name testmsg is misleading, as its purpose is not to test a message
+but to check whether a message matches the given mode and type conditions.
 
-On 9/1/25 13:04, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->
-> Implement regmap-backed copies of gate and divider clocks by replacing
-> the iomem pointer to the clock registers with a regmap and offset
-> within.
->
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> v4:
-> - increase map_offset to a u32
-> - use a single Kconfig option for both divider and gate regmap
->    implementations
-> ---
->   drivers/clk/Kconfig              |   4 +
->   drivers/clk/Makefile             |   2 +
->   drivers/clk/clk-divider-regmap.c | 271 +++++++++++++++++++++++++++++++
->   drivers/clk/clk-gate-regmap.c    | 254 +++++++++++++++++++++++++++++
->   include/linux/clk-provider.h     | 119 ++++++++++++++
->   5 files changed, 650 insertions(+)
->   create mode 100644 drivers/clk/clk-divider-regmap.c
->   create mode 100644 drivers/clk/clk-gate-regmap.c
->
-Hi Conor,
+To more clearly convey its role in validating whether a message can be used for
+send or receive operations, it has been renamed to msg_matchs_type.
 
-i tested the clk_gate_remap part with my code, it works fine.
+Signed-off-by: Nick Huang <sef1548@gmail.com>
+---
+ ipc/msg.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Just a  minor remark concerning .round_rate, you can add my
-
-Reviewed-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-
-> +const struct clk_ops clk_divider_regmap_ops = {
-> +	.recalc_rate = clk_divider_regmap_recalc_rate,
-> +	.round_rate = clk_divider_regmap_round_rate,
-
-.round_rate could be removed ?
-
-
-> +	.determine_rate = clk_divider_regmap_determine_rate,
-> +	.set_rate = clk_divider_regmap_set_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_divider_regmap_ops);
-> +
-> +const struct clk_ops clk_divider_regmap_ro_ops = {
-> +	.recalc_rate = clk_divider_regmap_recalc_rate,
-> +	.round_rate = clk_divider_regmap_round_rate,
-
-dito
-
-
-> +	.determine_rate = clk_divider_regmap_determine_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_divider_regmap_ro_ops);
-> +
+diff --git a/ipc/msg.c b/ipc/msg.c
+index ee6af4fe52..0831a3589c 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -791,7 +791,7 @@ COMPAT_SYSCALL_DEFINE3(old_msgctl, int, msqid, int, cmd, void __user *, uptr)
+ #endif
+ #endif
+ 
+-static int testmsg(struct msg_msg *msg, long type, int mode)
++static int msg_matchs_type(struct msg_msg *msg, long type, int mode)
+ {
+ 	switch (mode) {
+ 	case SEARCH_ANY:
+@@ -819,7 +819,7 @@ static inline int pipelined_send(struct msg_queue *msq, struct msg_msg *msg,
+ 	struct msg_receiver *msr, *t;
+ 
+ 	list_for_each_entry_safe(msr, t, &msq->q_receivers, r_list) {
+-		if (testmsg(msg, msr->r_msgtype, msr->r_mode) &&
++		if (msg_matchs_type(msg, msr->r_msgtype, msr->r_mode) &&
+ 		    !security_msg_queue_msgrcv(&msq->q_perm, msg, msr->r_tsk,
+ 					       msr->r_msgtype, msr->r_mode)) {
+ 
+@@ -1077,7 +1077,7 @@ static struct msg_msg *find_msg(struct msg_queue *msq, long *msgtyp, int mode)
+ 	long count = 0;
+ 
+ 	list_for_each_entry(msg, &msq->q_messages, m_list) {
+-		if (testmsg(msg, *msgtyp, mode) &&
++		if (msg_matchs_type(msg, *msgtyp, mode) &&
+ 		    !security_msg_queue_msgrcv(&msq->q_perm, msg, current,
+ 					       *msgtyp, mode)) {
+ 			if (mode == SEARCH_LESSEQUAL && msg->m_type != 1) {
+-- 
+2.48.1
 
 
