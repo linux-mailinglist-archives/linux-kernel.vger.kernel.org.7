@@ -1,156 +1,169 @@
-Return-Path: <linux-kernel+bounces-795985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B11F0B3FA51
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:28:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33BDDB3FA50
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 799302C0F35
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:28:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9598B188C393
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA11C2EA740;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F29B2EA486;
 	Tue,  2 Sep 2025 09:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="plDeZ6Hr"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QpcK6Zzg"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7462E7160
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CE120297E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756805297; cv=none; b=l3zyOK3lJ6apoLbwi48LVvzqPiO6UdL7tPQxE0G4Hn34zNDbMGjurZpr5cQGnRWZhRcY8Fi47Xc6KQkFT5YUwa0rUQIwpeSQyY9sgTndrrOZrE9ncgl5cEyuqta6oWhH1djRrau5xM6rP3yCaRQMFSNchIsBRdaD3RBmyhpXUQk=
+	t=1756805296; cv=none; b=ZosJ5d06DLYll993cTyZAmoMDIxb9N7Uk2ZztLnuj1/89+BO/CqWASMMLHd7j4bwhd6MDdSqFdXglY8nxZNHyVhFi8p3qkv01lTzHH0Pem5EuUaNnrt7zoVb0IJKtSKk4hxMG1xu1fpyF7I3tswwJzfbz2RDfEnULDZxwL+AGNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756805297; c=relaxed/simple;
-	bh=DJEgTveXx+nh3X2zirS8evwV7Zg17ZJfI1XFceEOvsc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dGQFZWrbWaqngOIICa9XLKnNA6irkTFZ4ZLqmhg5nQZOnIAloLyQu9U8jvMzz66LZp73r2cg4vZDA3H59sH1hRWVq+feM8aSZsdKbowdIQ93ZeyBNczyPa8heU0A2VgjVvGb4KIqcLijw2UdMUnH2Q1aLPUpCL4YDaVKKBCpiVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=plDeZ6Hr; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756805288;
-	bh=DJEgTveXx+nh3X2zirS8evwV7Zg17ZJfI1XFceEOvsc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=plDeZ6HrxNX2C/q5p3BHe1TkPU0Lea5RU6czuNfLVhtknWSnjblE75hMrtLzwKu37
-	 Q8iKK/WW/a5j/KSQeD8wId5AEc6fgSQzo/oAAA2VxYAgR4L5SLrZdt94BtI1xHitz4
-	 6Lc9YjqACRsoZ2SfiXT+YF0Y6g3xc1AZuJ2d5ONR2GzLnvUa1l8q0TgQupJXa+1r1X
-	 VS3Izs8F7LsSdeMfm3rHMmkwdoTLoz53bywuTZq649dwf1Er6kQPtMPKCPNWypcee/
-	 cfanGtMIsLDj8e5DkDEOJMoSpKPWI/kcopLTXFdT3trXWpJPyeShcFngmS0j6c977N
-	 xgufOIwyjS+EA==
-Received: from localhost (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id D468417E1301;
-	Tue,  2 Sep 2025 11:28:07 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 02 Sep 2025 12:27:57 +0300
-Subject: [PATCH 2/2] drm/rockchip: vop2: Support setting custom background
- color
+	s=arc-20240116; t=1756805296; c=relaxed/simple;
+	bh=hDrwJYxWWqkrJIEuHuXjbmHLdUcSRCWVKLwVz7xz7mE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LL0OV3Y1kqM+F/WK+oFeu6vJxN11r6HUvFx1//fF7Kdm0rTobA7TmJnDCJ5cnv5fT2J1TYHNbCE5AR3xl4OhCzjlHFD5RpkH0POabzj6/dA9HkVMDpbpY1JwkKQABKY6cxV9+mX+/fvFr82kGv35qlyDwcCXDA+JOUekiWx4hTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QpcK6Zzg; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b9c1b756cso892765e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756805293; x=1757410093; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCJ5Pd5hSyUTTNVQBWxsmI+HwwsqepTaJK7vsUpGjOQ=;
+        b=QpcK6ZzgmV4uqR5BiChyerTMGPVQP3Hg2DGaXRIPIbofCGREBEoaeiTfSuI6Yq9uDF
+         PQUboLAc17mAsQr/HgcR16hMaItYknWoCxNPRYdkekwKIA3q/A5aL8ik+jlgTidgRUyL
+         QTuexbyl+sAZBotRyM/Nw8mlpHCuhpAKYZAwAKP6eFpUO1iSnvfaRKazTBjdo/8ckAzF
+         gJcfydvtaDjF3vCgfLVkoS5ZgOXUtLEkyGI34AYODJqRqsNAPUnmQnmbZxutjJQDU2Ht
+         KOvXUtjfwrboislcixu2m+8kbKgceAEVCiIWdQ7qfzgy2FadpnD0uqyF4gRwdmVcKOIH
+         jjCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756805293; x=1757410093;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCJ5Pd5hSyUTTNVQBWxsmI+HwwsqepTaJK7vsUpGjOQ=;
+        b=AH69i++35co0KjYoTqmxpevy3Xgb2vvt7nRVexmrdS62uRW7mOWY9jmvoOVNGQhHkT
+         oyx/adEkyDVdZ5luOaks7OYwDm1rgwrZbe+JAP+FtpzMienEhr6n/eAwV7eVupfGP1mT
+         s9hBJZEfa1mFOikkVtRiKf07Yu3wdwK8HFIjokX/u8BRpYVb+NOLlH+Mk9zA9sMWjpdx
+         cZYBz3Np0UG6xEv5zi27bqTBPcqyHXa/ZPkUaYvajQOoowUkCKim6pPKFHLtAFLcjN63
+         mEZnCwDuaELPnQkzWrdVirQdn/2ve31+ZTJmPHYmbTBkeQ+bT40A93EflnLx15ulV5/w
+         4Upw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvs5URTUloWEzqFYXC2mliyfbYn9K8g7gNSQLo1gO1tFRfgtAEqOoTXo/6COSOmus/nG1PPAR1ZEh6J1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO2ZYLFjAx4qLt+h7Ur4EtBRg5YB3Ezvcv02mIccz1NC5Nugqo
+	SUsKb2xoyK0RXdAks76L7NaUQGHA/L4FI1FdwSjT4Kf720MFMF9hwnXI0lPD5KsJM28xuWT9Y3h
+	2TDUO1CDMabcek1pmsQ==
+X-Google-Smtp-Source: AGHT+IEHQOyKU6+Ue9693mOKlMNG23uPJov9FA9k1toBo6GMI9ziGkGJK7zza0Cq4est0sUsZ8sgEdWMBaBwbSI=
+X-Received: from wmbji5.prod.google.com ([2002:a05:600c:a345:b0:45b:6337:ab6b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:8b22:b0:45b:4a98:91cf with SMTP id 5b1f17b1804b1-45b8554fa14mr103519015e9.15.1756805292964;
+ Tue, 02 Sep 2025 02:28:12 -0700 (PDT)
+Date: Tue, 2 Sep 2025 09:28:12 +0000
+In-Reply-To: <DCI6XGR65KH9.27TWYVKNZNGHV@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250902-maple-tree-v3-0-fb5c8958fb1e@google.com>
+ <20250902-maple-tree-v3-1-fb5c8958fb1e@google.com> <DCI6XGR65KH9.27TWYVKNZNGHV@kernel.org>
+Message-ID: <aLa4rNojDIeShIrw@google.com>
+Subject: Re: [PATCH v3 1/3] rust: maple_tree: add MapleTree
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andrew Ballance <andrewjballance@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	maple-tree@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+	linux-mm@kvack.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-rk3588-bgcolor-v1-2-fd97df91d89f@collabora.com>
-References: <20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com>
-In-Reply-To: <20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.14.2
 
-VOP2 allows configuring the background color of each video output port.
+On Tue, Sep 02, 2025 at 11:01:19AM +0200, Danilo Krummrich wrote:
+> On Tue Sep 2, 2025 at 10:35 AM CEST, Alice Ryhl wrote:
+> > The maple tree will be used in the Tyr driver to allocate and keep track
+> > of GPU allocations created internally (i.e. not by userspace). It will
+> > likely also be used in the Nova driver eventually.
+> >
+> > This adds the simplest methods for additional and removal that do not
+> > require any special care with respect to concurrency.
+> >
+> > This implementation is based on the RFC by Andrew but with significant
+> > changes to simplify the implementation.
+> >
+> > Co-developed-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> 
+> One nit below, otherwise:
+> 
+> 	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
-Since a previous patch introduced the BACKGROUND_COLOR CRTC property,
-which defaults to solid black, take it into account when programming the
-hardware.
+Thanks!
 
-Note that only the 10 least significant bits of each color component are
-used, as this is the maximum precision supported by the display
-controller.
+> > +    pub fn insert_range<R>(&self, range: R, value: T, gfp: Flags) -> Result<(), InsertError<T>>
+> > +    where
+> > +        R: RangeBounds<usize>,
+> > +    {
+> > +        let Some((first, last)) = to_maple_range(range) else {
+> > +            return Err(InsertError {
+> > +                value,
+> > +                cause: InsertErrorKind::InvalidRequest,
+> > +            });
+> > +        };
+> > +
+> > +        let ptr = T::into_foreign(value);
+> > +
+> > +        // SAFETY: The tree is valid, and we are passing a pointer to an owned instance of `T`.
+> > +        let res = to_result(unsafe {
+> > +            bindings::mtree_insert_range(self.tree.get(), first, last, ptr, gfp.as_raw())
+> > +        });
+> > +
+> > +        if let Err(err) = res {
+> > +            // SAFETY: As `mtree_insert_range` failed, it is safe to take back ownership.
+> > +            let value = unsafe { T::from_foreign(ptr) };
+> > +
+> > +            let cause = if err == ENOMEM {
+> > +                InsertErrorKind::AllocError(kernel::alloc::AllocError)
+> > +            } else if err == EEXIST {
+> > +                InsertErrorKind::Occupied
+> > +            } else {
+> > +                InsertErrorKind::InvalidRequest
+> > +            };
+> > +            Err(InsertError { value, cause })
+> > +        } else {
+> > +            Ok(())
+> > +        }
+> > +    }
+> 
+> 	// SAFETY: The tree is valid, and we are passing a pointer to an owned instance of `T`.
+> 	to_result(unsafe {
+> 	    bindings::mtree_insert_range(self.tree.get(), first, last, ptr, gfp.as_raw())
+> 	}).map_err(|err| {
+> 	    // SAFETY: As `mtree_insert_range` failed, it is safe to take back ownership.
+> 	    let value = unsafe { T::from_foreign(ptr) };
+> 	
+> 	    let cause = if err == ENOMEM {
+> 	        InsertErrorKind::AllocError(kernel::alloc::AllocError)
+> 	    } else if err == EEXIST {
+> 	        InsertErrorKind::Occupied
+> 	    } else {
+> 	        InsertErrorKind::InvalidRequest
+> 	    };
+> 	    Err(InsertError { value, cause })
+> 	})
+> 
+> I think that's a bit cleaner than the above (not compile tested).
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 13 ++++++++++++-
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.h |  4 ++++
- 2 files changed, 16 insertions(+), 1 deletion(-)
+I don't love it. How about a match instead of if/else?
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index b50927a824b4020a7ffd57974070ed202cd8b838..7fe060e7e58297d583b1396cf606b7ba580b8e79 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -1548,6 +1548,7 @@ static void vop2_post_config(struct drm_crtc *crtc)
- 	struct vop2_video_port *vp = to_vop2_video_port(crtc);
- 	struct vop2 *vop2 = vp->vop2;
- 	struct drm_display_mode *mode = &crtc->state->adjusted_mode;
-+	u64 bgcolor = crtc->state->background_color;
- 	u16 vtotal = mode->crtc_vtotal;
- 	u16 hdisplay = mode->crtc_hdisplay;
- 	u16 hact_st = mode->crtc_htotal - mode->crtc_hsync_start;
-@@ -1593,7 +1594,11 @@ static void vop2_post_config(struct drm_crtc *crtc)
- 		vop2_vp_write(vp, RK3568_VP_POST_DSP_VACT_INFO_F1, val);
- 	}
- 
--	vop2_vp_write(vp, RK3568_VP_DSP_BG, 0);
-+	/* Background color is programmed with 10 bits of precision */
-+	val = FIELD_PREP(RK3568_VP_DSP_BG__DSP_BG_RED, DRM_ARGB64_RED(bgcolor));
-+	val |= FIELD_PREP(RK3568_VP_DSP_BG__DSP_BG_GREEN, DRM_ARGB64_GREEN(bgcolor));
-+	val |= FIELD_PREP(RK3568_VP_DSP_BG__DSP_BG_BLUE, DRM_ARGB64_BLUE(bgcolor));
-+	vop2_vp_write(vp, RK3568_VP_DSP_BG, val);
- }
- 
- static int us_to_vertical_line(struct drm_display_mode *mode, int us)
-@@ -1972,6 +1977,10 @@ static int vop2_crtc_state_dump(struct drm_crtc *crtc, struct seq_file *s)
- 		   drm_get_bus_format_name(vcstate->bus_format));
- 	seq_printf(s, "\toutput_mode[%x]", vcstate->output_mode);
- 	seq_printf(s, " color_space[%d]\n", vcstate->color_space);
-+	seq_printf(s, "\tbackground color (10bpc): r=%x g=%x b=%x\n",
-+		   DRM_ARGB64_RED(cstate->background_color),
-+		   DRM_ARGB64_GREEN(cstate->background_color),
-+		   DRM_ARGB64_BLUE(cstate->background_color));
- 	seq_printf(s, "    Display mode: %dx%d%s%d\n",
- 		   mode->hdisplay, mode->vdisplay, interlaced ? "i" : "p",
- 		   drm_mode_vrefresh(mode));
-@@ -2461,6 +2470,8 @@ static int vop2_create_crtcs(struct vop2 *vop2)
- 			return dev_err_probe(drm->dev, ret,
- 					     "crtc init for video_port%d failed\n", i);
- 
-+		drm_crtc_attach_background_color_property(&vp->crtc);
-+
- 		drm_crtc_helper_add(&vp->crtc, &vop2_crtc_helper_funcs);
- 		if (vop2->lut_regs) {
- 			const struct vop2_video_port_data *vp_data = &vop2_data->vp[vp->id];
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-index fa5c56f16047e3493e82fbedaced221459696dcc..596558adc1207e837eb8eca49b35d7a55d693f88 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-@@ -659,6 +659,10 @@ enum dst_factor_mode {
- #define RK3588_VP_CLK_CTRL__DCLK_OUT_DIV		GENMASK(3, 2)
- #define RK3588_VP_CLK_CTRL__DCLK_CORE_DIV		GENMASK(1, 0)
- 
-+#define RK3568_VP_DSP_BG__DSP_BG_RED			GENMASK(29, 20)
-+#define RK3568_VP_DSP_BG__DSP_BG_GREEN			GENMASK(19, 10)
-+#define RK3568_VP_DSP_BG__DSP_BG_BLUE			GENMASK(9, 0)
-+
- #define RK3568_VP_POST_SCL_CTRL__VSCALEDOWN		BIT(1)
- #define RK3568_VP_POST_SCL_CTRL__HSCALEDOWN		BIT(0)
- 
-
--- 
-2.51.0
-
+Alice
 
