@@ -1,129 +1,194 @@
-Return-Path: <linux-kernel+bounces-795940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FBAB3F9AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A80ABB3F9C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E6EC3AC905
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2D23B0758
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD25B2EA46B;
-	Tue,  2 Sep 2025 09:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767C12EA754;
+	Tue,  2 Sep 2025 09:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJXOdan2"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YFZCdqdw"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C13E2E8B7A;
-	Tue,  2 Sep 2025 09:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC0D20E6E1;
+	Tue,  2 Sep 2025 09:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756804059; cv=none; b=QsjVNLoaEG1KBfP7JK7irxJf+gwzA2wBFKiHc0LPpnm5f8vrd3yW4ViX6bI5oZOm4L4RCHYfPY2YJa5PfdY4z75gt604KBzZleJDT5P03Aq/P8TvWv92QaQt0DcVrykh3wNYt0SAs2dLte8njnIRmtYoEf4wnmpxMrFieojG7QU=
+	t=1756804124; cv=none; b=GyH3jypbbxH9dl8UmVXUSqQoobRPoPdIe9xqdqITTdxYd7ooIS7x11V1qc6kwCBPNu/ZbMkw5Fkx2wMx/f20r99hnbuCLrvp/AJP4hdmyI2JKM5JDz2lngvjK9xaInLRCiFY+bjiiFVeOw3G9e4M3NM2eITEFsproj25SAJRiRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756804059; c=relaxed/simple;
-	bh=e00OUdT1mnCF6eVI0EFyPvJzgm4igqdrftik66PJbew=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fivyX/CZzzGgIORJ4RVPzEXdRxXl9w58lOu0XMJK/CEkTWGnqePlu+gjPMtIKGLqXCDPa4QwXWjwUD3WeTFc9JMitfXNPk6Z1tDyPBdjuQmc1MTyIqePVz3qBFO3r7um01AbcPWmlXNhF04lRx7oEFo9gWHbTs1RG6DibrislEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJXOdan2; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-336d2b0ea8dso15912721fa.3;
-        Tue, 02 Sep 2025 02:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756804055; x=1757408855; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e00OUdT1mnCF6eVI0EFyPvJzgm4igqdrftik66PJbew=;
-        b=nJXOdan2zSVgw+RnPfS+UEJuOLnbWtWKOtVCVZaERO8J4z2UOawQv/H2aFRmDyBIa7
-         2gQ5lKn/3cmAncqyBKmhRhklS62/w2Jiihiko3hkU2Wcwi+VxUEm2JxZb0FhGSdm6ZzF
-         ihE2UnQvRvZtlC5+D9bYnlH2OcbguxqKFGx3NyimCsHZ/u8qE9sTPq1T8xxmYEBUeccB
-         zh8yIpPd/vntYNbLcT4syN4cgmdC2RVDVsef+K4HnjYv+i3VZOvAhd63cISvIN2zBixZ
-         CMaogBADR+sSwLOkK50nGIdIJ+crMxv9B2oPJchAaN6zgq1Nw74kaKtAzqhQcL/1AKMv
-         MrCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756804055; x=1757408855;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e00OUdT1mnCF6eVI0EFyPvJzgm4igqdrftik66PJbew=;
-        b=OKJu7TYc/qDnGiPRv8VxCLZZnY5/FlMvwQedMFDrtUyNU5wzCGbMO1iDwVIqWuQzD6
-         EZDrHlqHbTFwR2T0xrc6a5iKe89o+HmNJiEtQ413Jy3ujsZiDGtMx+TE8WsT/Nk2GmZ4
-         hsBaiZ9BkUHVIlvgso5DdkKCL8fGSAAUtef2vBTYGjLXqSobwzdAC9+6i5Hm4AvMFfc4
-         HsRFw9BRXaDlTSSDN1QchbH2llwVKQLWwoZ85Q8hPqO7pe+9gP1K+fBoU0nEjFTr6lcK
-         rx2K/eEa4dBPjpp4FsjmOvS+s+1c3QQaSaDXHTJ2ndTuQjyHAq7ndRZ845Vjmnk2t3eJ
-         e1Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg80DoaubqnzuevdyQnH9s0n97vd/Bx/2uCtPzpgIiQsEfNQC8wHTnB02VhkikP0q3TzTF2sigMVnN@vger.kernel.org, AJvYcCUyBMxTRKNSXym3vuZmBf6gKlKGH+aeUcZHC2SrFkuwP0j9aWBLYH/V/UaHyEDOFF32YiTn08olTqaVANw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywcn5PPwJsEVyRM+F8NH+6+2laax16g9jBNHXh5Z5ynIVaHpae
-	osmPcuko4XwT/XT5lSsbOd0aBtEvY1JavjZSBIfiP25AzTcSboh3ihIL
-X-Gm-Gg: ASbGnct16LpJerS0Oe2SE8Yn1qX+6YOmgSQH9/4q4rSCMKvP+ZAKHUFA/rk55FFraRR
-	W73zbK5IVgV7dL9WTmwAGwS1R6zKwg56+NA6m1/wI4H6+mcfW2ghAS0Y5V7pr6EECH81+uo8phg
-	gphp+Os9TO+0B96N/1U5k63xxAePQL8OcE0QYBpiaBRWKXSgiL9zQ8SpEzmezyROLmOBMvi4PPN
-	CHy0JYTD08uZxC7GMEaDSNACDdX4ZMsohVwm31o6HGExNKnwcVnb+5Ulh5Bdyt92NyU7bhpVgq6
-	61m7vs1ZCyUAEXYYVgUDSRnJ64QSDd19ZBwNq7VslNyroGICAi1IG6AbD0sD2MQJeyCA2XaJ9lU
-	B8PquNeRilhIp045NUEl02wBVRIM5Acnr76I=
-X-Google-Smtp-Source: AGHT+IHD58ilwmPkhIhYFUWS4Wih4aWkYtPscZqFvQLCpLtyUtPO/FiEvUW/jiZcpPFZj0WebPje1g==
-X-Received: by 2002:a05:651c:50e:b0:336:8267:c1fa with SMTP id 38308e7fff4ca-336ca9b696emr26732971fa.19.1756804055195;
-        Tue, 02 Sep 2025 02:07:35 -0700 (PDT)
-Received: from foxbook (bey208.neoplus.adsl.tpnet.pl. [83.28.36.208])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-560827a020dsm530210e87.118.2025.09.02.02.07.34
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 02 Sep 2025 02:07:34 -0700 (PDT)
-Date: Tue, 2 Sep 2025 11:07:30 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: "David Wang" <00107082@163.com>
-Cc: "Mathias Nyman" <mathias.nyman@linux.intel.com>,
- WeitaoWang-oc@zhaoxin.com, gregkh@linuxfoundation.org,
- linux-usb@vger.kernel.org, regressions@lists.linux.dev,
- linux-kernel@vger.kernel.org, surenb@google.com, kent.overstreet@linux.dev
-Subject: Re: [PATCH] usb: xhci: Fix xhci_free_virt_devices_depth_first()
-Message-ID: <20250902110730.723a48a0.michal.pecio@gmail.com>
-In-Reply-To: <20250902104630.6a9f088a.michal.pecio@gmail.com>
-References: <20250829181354.4450-1-00107082@163.com>
-	<20250830114828.3dd8ed56.michal.pecio@gmail.com>
-	<5051e27a.2ba3.198fa7b5f31.Coremail.00107082@163.com>
-	<f9476552-a6dc-4f1c-91da-b15c8f0d9844@linux.intel.com>
-	<20250902093017.13d6c666.michal.pecio@gmail.com>
-	<446082a4.7dbe.199098cd654.Coremail.00107082@163.com>
-	<20250902104630.6a9f088a.michal.pecio@gmail.com>
+	s=arc-20240116; t=1756804124; c=relaxed/simple;
+	bh=THzX+EN7VTzLuUULbWMGm/unxefBSjJEmc+4sbmh/uU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bFrZV8s751N5qvm1m1IfgCsAskHp3/fa4ORx6f75gKjy+3o1uPDq+0HLVh/OyiNwGR2kPrhgruXiFKx0c9Rp8X2psm8nSfb+5jYaKbKjZjSAPYIDRuO3xnRW+7qGlVLv1CZBZp2k1IMDBfyAa9mjIKgXwcXhXzOE3pEb/92gxAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YFZCdqdw; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58297oXq2552615;
+	Tue, 2 Sep 2025 04:07:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756804070;
+	bh=nqogwPdlvq7AEEvwLHEeyKv2i7NgHAJdNmEi0OQOf7s=;
+	h=From:To:CC:Subject:Date;
+	b=YFZCdqdwq8yWUw0jYqrSif1z5Sq/uO4sktL2tGSXazw135W2ZJhfv+aADvNRBKR7E
+	 FMmuA0tTpaWL21CA5pZkOKq8QHstztcFJ9fNkhhryP/vQ/TJfK0I9F4yREHlXyy6VN
+	 r37/IiL51SdDKA6cbDrdE14X3vJcxQh2dJ5lrmL8=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58297ow52171631
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 2 Sep 2025 04:07:50 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 2
+ Sep 2025 04:07:49 -0500
+Received: from fllvem-mr08.itg.ti.com (10.64.41.88) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 2 Sep 2025 04:07:49 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvem-mr08.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58297nDR1001478;
+	Tue, 2 Sep 2025 04:07:49 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 58297mND020814;
+	Tue, 2 Sep 2025 04:07:48 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu
+ Poirier <mathieu.poirier@linaro.org>,
+        Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Nishanth Menon <nm@ti.com>, Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Mengyuan Lou <mengyuanlou@net-swift.com>,
+        MD
+ Danish Anwar <danishanwar@ti.com>, Xin Guo <guoxin09@huawei.com>,
+        Lei Wei
+	<quic_leiwei@quicinc.com>, Lee Trager <lee@trager.us>,
+        Michael Ellerman
+	<mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>,
+        Lorenzo Bianconi
+	<lorenzo@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lukas
+ Bulwahn <lukas.bulwahn@redhat.com>,
+        Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>,
+        Suman Anna <s-anna@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>
+Subject: [PATCH net-next v2 0/8] Add RPMSG Ethernet Driver
+Date: Tue, 2 Sep 2025 14:37:38 +0530
+Message-ID: <20250902090746.3221225-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, 2 Sep 2025 10:46:30 +0200, Micha=C5=82 Pecio wrote:
-> On Tue, 2 Sep 2025 16:30:48 +0800 (CST), David Wang wrote:
-> > About the change from "<" to "<=3D", I did not observe any difference o=
-n my system. Is it because my system does not use up all slots? =20
->=20
-> This too, you would need to fiddle with devices (or connect enough
-> of them) to reach Slot ID 255 (probably the highest on most systems),
-> depending on the xHCI controller and its ID allocation policy.
+This patch series introduces the RPMSG Ethernet driver, which provides a
+virtual Ethernet interface for communication between a host processor and
+a remote processor using the RPMSG framework. The driver enables
+Ethernet-like packet transmission and reception over shared memory,
+facilitating inter-core communication in systems with heterogeneous
+processors.
 
-This made me wonder what those policies are. I'm too lazy for thorough
-testing, but I plugged and unplugged the same device a few times.
+Key features of this driver:
 
-Most HCs kept assigning ID 1, so they likely always pick the lowest.
+1. Virtual Ethernet interface using RPMSG framework
+2. Shared memory-based packet transmission and reception
+3. Support for multicast address filtering
+4. Dynamic MAC address assignment
+5. NAPI support for efficient packet processing
+6. State machine for managing interface states
 
-My AMD chipset, two ASMedia USB 3.1 controllers and a Fresco FL1100
-kept assigning sequentially increasing IDs, so I suppose I could pump
-it up near the top, connect two high speed hubs and trigger this bug.
+The series begins by adding device tree binding documentation, continues
+with  core driver implementation, and concludes with platform-specific DTS
+changes for the TI K3 AM64 SoC. The driver is designed to be generic and
+can be used by any vendor that implements compatible firmware for their
+remote processors.
 
-> But also as explained, this bug doesn't make things go boom just yet.
->=20
-> Except if combined with your bug in an obscure edge case:
->=20
-> 1. A high speed hub has slot ID HCS_MAX_SLOTS-1 and some TT children.
-> 2. Another high speed hub has slot ID HCS_MAX_SLOTS.
-> 3. We start with freeing the second hub.
-> 4. The loop is entered and leaves vdev pointing at the first hub.
-> 5. The first hub is freed instead of the second one.
-> 6. Then its children are freed and UAF its tt_info.
+This driver is designed to be generic and vendor-agnostic. Vendors can
+develop firmware for the remote processor to make it compatible with this
+driver by adhering to the shared memory layout and communication protocol
+described in the documentation.
+
+This patch series has been tested on a TI AM64xx platform with a
+compatible remote processor firmware. Feedback and suggestions for
+improvement are welcome.
+
+Changes since v1:
+- Added dt binding for rpmsg-eth node similar to `qcom,glink-edge.yaml`
+  and `google,cros-ec.yaml`
+- Added phandle to rpmsg-eth node to dt binding `ti,k3-r5f-rproc.yaml`
+- In the driver, shared memory region is now obtained from the rpmsg-eth
+  node in device tree.
+- Dropped base address from rpmsg callback. Since base address is obtained
+  from device tree, no need for rpmsg callback to share this base address
+  again.
+- Dropped usage of pointers and strictly using only offsets while
+  communicating to firmware.
+- Updated documentation based on the changes in driver and bindings.
+- Added "Naming convention" section to documentation to clarify naming and
+  various terms used in the driver and documentation.
+- Kept the naming should be consistent throughout the documentation and
+  driver as suggested by Andrew Lunn <andrew@lunn.ch>
+- Added device tree patch in the series to clarify how the changes will be
+  done in device tree and how the driver will use device tree information.
+
+v1 https://lore.kernel.org/all/20250723080322.3047826-1-danishanwar@ti.com/
+
+MD Danish Anwar (8):
+  dt-bindings: net: ti,rpmsg-eth: Add DT binding for RPMSG ETH
+  dt-bindings: remoteproc: k3-r5f: Add rpmsg-eth subnode
+  net: rpmsg-eth: Add Documentation for RPMSG-ETH Driver
+  net: rpmsg-eth: Add basic rpmsg skeleton
+  net: rpmsg-eth: Register device as netdev
+  net: rpmsg-eth: Add netdev ops
+  net: rpmsg-eth: Add support for multicast filtering
+  arch: arm64: dts: k3-am64*: Add rpmsg-eth node
+
+ .../devicetree/bindings/net/ti,rpmsg-eth.yaml |  38 ++
+ .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  |   6 +
+ .../device_drivers/ethernet/index.rst         |   1 +
+ .../device_drivers/ethernet/rpmsg_eth.rst     | 368 ++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  11 +-
+ drivers/net/ethernet/Kconfig                  |  10 +
+ drivers/net/ethernet/Makefile                 |   1 +
+ drivers/net/ethernet/rpmsg_eth.c              | 639 ++++++++++++++++++
+ drivers/net/ethernet/rpmsg_eth.h              | 283 ++++++++
+ 9 files changed, 1356 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/net/ti,rpmsg-eth.yaml
+ create mode 100644 Documentation/networking/device_drivers/ethernet/rpmsg_eth.rst
+ create mode 100644 drivers/net/ethernet/rpmsg_eth.c
+ create mode 100644 drivers/net/ethernet/rpmsg_eth.h
+
+
+base-commit: 2fd4161d0d2547650d9559d57fc67b4e0a26a9e3
+-- 
+2.34.1
+
 
