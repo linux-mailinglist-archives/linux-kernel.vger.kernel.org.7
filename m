@@ -1,128 +1,96 @@
-Return-Path: <linux-kernel+bounces-796928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7278B40993
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:48:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CFEDB40990
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38DBF176B81
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:45:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7B137A4759
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A36324B15;
-	Tue,  2 Sep 2025 15:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A073375D7;
+	Tue,  2 Sep 2025 15:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hvvyrm+J"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="B9FSUsAy"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440AB2D9EFC
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3E0322C63;
+	Tue,  2 Sep 2025 15:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827942; cv=none; b=bV0vjpcjlPGF2bHvjBGZAk96tvt+z5bv6QCVfFYXwJb0JpIcgY7eF3jSZpnu71vvO5ZLKic4ceoFq1hI2+uw/34hhupABjyhD61zoAkoKA+k7/yOBE8AUtjhV9ycIHh1fFEYktCpsmzOgcvTEPpdnizFpGe0VjZJ4DPkTWH1HLU=
+	t=1756828026; cv=none; b=SsHMBoDRU5BJJHPHc8liy9zAu4UgR+aQDUSHzIoqPGqoFrp4N3CJTGuD4of1c1kSAGAUPNF49laGOxx002k5H+VvXlwa714fZb1UKKGgm87NcOs0nu1QhfASbszC1eHLs2h0LDuBtXAis/jKAliFluhxszUjdKAobRWQXt810tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827942; c=relaxed/simple;
-	bh=fAiEOoWGsgZVWnQszf7mSNgrn30l+x24N176m36Ke1A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ip7CXMVDP0JxxuKxiC7EuAnleHpccxMbY9Oe4Z5bqYSOJ474Zpt+t2XXIXWaCucT/md+btjSd614zVt63liTNt1xuqgcHIQPFLdDnyZviethMHKcyBhMM+HAkJdXGy4li5NnJ3xHzNI5vDv4ZrCCMo8yJVQ13d/wby2ss0HH5Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hvvyrm+J; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-329cb4c3f78so1482422a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756827940; x=1757432740; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=idXQYsgK/aGLRgfjtmw1Ddlh5JY9tGyYsy/t9zcVDwU=;
-        b=hvvyrm+J1TMO5zbc61g/N3cVDQtT/bB1etPMO7rZfKsbnGHXQxrGfj8Cu8uJpYbrxQ
-         muLDOaPOMqvOgmrU6VrTw6REgEz4r/yygluu9dzgXCDbMdug0NTq9g+MwXOFXBOzQKEq
-         IxXgNa4VeZYuGBMgnzmFrW4EEaYnVjk25KBkAdqzXrPi4izA3C53/ZN+OGiMvwkowx3/
-         4vAf52QieYAQ+cJeNJhHd43g0YUshJ0kHz4I7UmkFr1CWzKmmjAObC7Sbn55ZihoDmqG
-         E3ajNOcDvEmIj0KteCyGrH0EV7zqDAqKEUawZCnYvn9fbR1KZvtVr8OD1UwwioAbAtTS
-         EbQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756827940; x=1757432740;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=idXQYsgK/aGLRgfjtmw1Ddlh5JY9tGyYsy/t9zcVDwU=;
-        b=KMZAmC3GpUgKIKVgPU8e7kd+n8connG+WHG6/ssUK/JFEfI4Fu1Ne3KafMabszamOj
-         lZlyn0oCeuptWACNGxb4l4AQdf7ByxczwGXVfsA94KOiy+wEY1NLhu+SCu9BY3htlqoc
-         cvouRjMdfbaZLaoh+Fs10wxN4RlrvUN3BywtsXQcjkebvgO5AmSoCRtOoeXTzMkh0WZ8
-         b1q1wJJJ2ejzH58zhjoSn8FfRU/QPM6vcscTbwIyFmCENUPhzl6kwAR6tuzm/pXcX1DS
-         eD/881Bjtcmf3xyk4gbRp9wY/mIOOkoYZr7pTAarITEbLaTEnNzC5u1b/3j8vJeQ9FtY
-         QOog==
-X-Forwarded-Encrypted: i=1; AJvYcCVZDmqIAvSjXpY63KgB5yyaaC9jrWCemVMe5ldih+/FDUXPtMYsI6hTJBc7luEvJ5U0hRSuXA3/oX2+yMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm4MjZL7/8Sxfi65RKP6y/TpUvBQ2crYnwMSkE3Xng+QwuDdLW
-	RJvuV3lwINtppySnIZro2QGCqyBsI8v5nFNrRsyikzj8TAuE9oRBLWAZ2XC6Qe5Sp9U6YkNq/D+
-	RAouEoQ==
-X-Google-Smtp-Source: AGHT+IH0Sgo9kbsCPDPAvdw6SKo64i6IWn2JUynJKfEHeEJJqslJKt0/A4YOwdvbBZ9fik2siemSYLkR5vc=
-X-Received: from pjbsn4.prod.google.com ([2002:a17:90b:2e84:b0:329:cb7d:8057])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:16d7:b0:328:192:b7a0
- with SMTP id 98e67ed59e1d1-328156b6395mr11717001a91.19.1756827940533; Tue, 02
- Sep 2025 08:45:40 -0700 (PDT)
-Date: Tue, 2 Sep 2025 08:45:38 -0700
-In-Reply-To: <18bf858c-e135-4a9b-bda8-a70be3b3720e@linux.intel.com>
+	s=arc-20240116; t=1756828026; c=relaxed/simple;
+	bh=twE4laRUCmSJZyNrpq6rbKdacOzsbDwc1WIu8kLnCe8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QYQq/0fN9FtOQD8fmx852tXkaJM1b9/f48Wwm1BRnvCzQ++RK74aT8RKzPyMKE6PmfDA64Sj8n+HuBu+isjSwkwsPowZcoxQMTwJ6ktlzZTWJF2ZPDUdKuXva6zjJjONAF0uCVf8WbznnCxHwNU4RsjELTzQij+Z2/lc6vYA/cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=B9FSUsAy; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1756828014;
+	bh=twE4laRUCmSJZyNrpq6rbKdacOzsbDwc1WIu8kLnCe8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B9FSUsAyN/FMziKaefy5d7n28oy0pz03hirxqY7G+zYdakTS2Wdj/kNdfMXfE+NlE
+	 hn7xIvA++7EhD6eyhXgfi6ZljAUj6sRyxfZbEUiH3KmcsltOb8nyDLYnWTaggPEhDp
+	 cR/+h50APjB35LDuhrYpsvVoqro6wmNgHaDVak3lvffnULWW1j1Y+DH7ZMk/+knxvk
+	 KSS2kQMquIBvsNf6k3CBpn+GCNU2XgfmbkEDrovuv4qJ460v4xQ96qgtW9aclEhkfA
+	 +BpIy/3pNgeAOQy08VIeZk2KBrl670pUilxqziB+27OkKoKVnI5liBEXMtwhkWc8L3
+	 /yPzge1XMnnsA==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 3C0D460078;
+	Tue,  2 Sep 2025 15:46:53 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 305DC2021C5; Tue, 02 Sep 2025 15:46:42 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	"Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 0/3] tools: ynl-gen: misc changes
+Date: Tue,  2 Sep 2025 15:46:34 +0000
+Message-ID: <20250902154640.759815-1-ast@fiberby.net>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-19-sagis@google.com>
- <18bf858c-e135-4a9b-bda8-a70be3b3720e@linux.intel.com>
-Message-ID: <aLcRIn8ryB2kXWcD@google.com>
-Subject: Re: [PATCH v9 18/19] KVM: selftests: Add ucall support for TDX
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Sagi Shahar <sagis@google.com>, linux-kselftest@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025, Binbin Wu wrote:
-> On 8/21/2025 12:29 PM, Sagi Shahar wrote:
-> > @@ -46,11 +69,23 @@ void *ucall_arch_get_ucall(struct kvm_vcpu *vcpu)
-> >   {
-> >   	struct kvm_run *run = vcpu->run;
-> > -	if (run->exit_reason == KVM_EXIT_IO && run->io.port == UCALL_PIO_PORT) {
-> > -		struct kvm_regs regs;
-> > +	switch (vm_type) {
-> > +	case KVM_X86_TDX_VM:
-> > +		if (vcpu->run->exit_reason == KVM_EXIT_MMIO &&
-> > +		    vcpu->run->mmio.phys_addr == host_ucall_mmio_gpa &&
-> > +		    vcpu->run->mmio.len == 8 && vcpu->run->mmio.is_write) {
-> > +			uint64_t data = *(uint64_t *)vcpu->run->mmio.data;
-> > +
-> > +			return (void *)data;
-> > +		}
-> > +		return NULL;
-> 
-> My first thought was how did SEV_ES or SNP work for this since they are not
-> able to get RDI neither.
-> Then I had a check in sev_smoke_test.c, both guest_sev_es_code() and
-> guest_snp_code() call GUEST_ASSERT(), which finally calls ucall_assert(), but
-> in test_sev(), the code doesn't handle ucall for SEV_ES or SNP.
-> Does it mean GUEST_ASSERT() is currently not working and ignored for SEV_ES
-> and SNP? Or did I miss anything?
+Misc changes to ahead of wireguard ynl conversion, as
+announced in v1.
 
-GUEST_ASSERT() "works" for -ES and -SNP in the sense that it generates as test
-failure due to the #VC not being handled (leads to SHUTDOWN).  But you're correct
-that ucall isn't functional yet.  x86/sev_smoke_test.c fudges around lack of ucall
-by using the GHCB MSR protocol to signal "done".
+---
+v2:
+  - Rewrite commit messages for net-next
+v1: https://lore.kernel.org/netdev/20250901145034.525518-1-ast@fiberby.net
 
-        /*
-         * TODO: Add GHCB and ucall support for SEV-ES guests.  For now, simply
-         * force "termination" to signal "done" via the GHCB MSR protocol.
-         */
-        wrmsr(MSR_AMD64_SEV_ES_GHCB, GHCB_MSR_TERM_REQ);
-        vmgexit();
+Asbjørn Sloth Tønnesen (3):
+  netlink: specs: fou: change local-v6/peer-v6 check
+  tools: ynl-gen: use macro for binary min-len check
+  genetlink: fix typo in comment
+
+ Documentation/netlink/specs/fou.yaml | 4 ++--
+ include/net/genetlink.h              | 2 +-
+ net/ipv4/fou_nl.c                    | 4 ++--
+ tools/net/ynl/pyynl/ynl_gen_c.py     | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+
+-- 
+2.50.1
+
 
