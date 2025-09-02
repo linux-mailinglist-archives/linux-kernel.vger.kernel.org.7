@@ -1,214 +1,189 @@
-Return-Path: <linux-kernel+bounces-797487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002C5B41105
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83474B410E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 330097A3999
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EE903BD45D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99DB2EAB80;
-	Tue,  2 Sep 2025 23:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B422E92B4;
+	Tue,  2 Sep 2025 23:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="oLUQ6X3b"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQ15QeSX"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D682EA72B;
-	Tue,  2 Sep 2025 23:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E712E8DEF
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 23:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756857213; cv=none; b=lIvA70VNL/anXV/tub8Jmz0zgeglza5l0Qjbt9eWe0SZppLOZy4fk2qy/u5MGJAA3J1y8stMkBNIJWDk2neB78YKEhLHAvqGh24wLpcRCa9hnUTqjFV15MlUprMhpmXi6c5onh1BHwPUPTIPX+6Ux6coasbAaN7jSzWq71MGG1M=
+	t=1756856881; cv=none; b=W+Syt1ImumoTGFB1M89LYMQ+u9Y06pHeAryrJp0vPLuSnLYu0a5/E4/DpkSo2xvmTseqenO10UAmCcRxWDvINjUqCjiWTXBlmPptBmb9d+NXuRtRgMv6sb1NSroqXLntcmK4aMCGhdPTXuUf/HAzwB+gMULhOcC4jRV3sE7owls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756857213; c=relaxed/simple;
-	bh=aldUShrsK2P1VAYuHktKiMurKBf9YkhU7WH+HgIinBI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=hBM32DqJKSvIIQ2syHIsTfrgj/qdWUGhpTZhXMjV+l4+VPln1UsZeDdvIqwp4XDfK/f2RcbpCKug4Shaw3rS0sbmKH6KqHEAFDOKm5mrpFjn/q7/9NmqQeg9VlKe1wqB+6B12ge+e6jQqVmE90mCHQkhzb1ppfpGNiHETxMchbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=oLUQ6X3b; arc=none smtp.client-ip=43.163.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756856907;
-	bh=YdjLM4MjfViYc0wnccy7RBUzMk0kmcjZ1mAIcWaBwtI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=oLUQ6X3bSLoz8t/RbCA7PsuSAGuTuyOSPzV61UtDa2hDJlgvLyzEgjdft0l0onKqw
-	 oNfLI8Rr0lWSpgO1qiBMGCXlAAWywhKC7YZRdhteeU05fn+OqhjGcjAiEqQBOnt3W6
-	 mNSPgTzaiuFMjJJNzxbHxiow4B3L6vFtxNQZCtkM=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id C181CA03; Wed, 03 Sep 2025 07:48:24 +0800
-X-QQ-mid: xmsmtpt1756856904t4887zsxo
-Message-ID: <tencent_292BD3682A628581AA904996D8E59F4ACD06@qq.com>
-X-QQ-XMAILINFO: NbgegmlEc3JuMmx/RukVSPNjt651NOrVM4wsK7ctvREMS6Y948heKjWmxrfsbc
-	 SEzb6qJG811iYQLURS7TuamVhTFWqXK+q5sXqCpWk6i1Qv3aiRvocoWb/pAC7GXZIRPBEPkbvM2J
-	 YJr5G5trGvx6yo9EexDlQuWDjkkhTD0yf9EcQ0H6irhCjvqdAZoy6iG21FEWYPtpOwZ6Blf/C9kO
-	 u+bPscCb73MZAlqaWDyfqiFecpHzlDIZBelA+0ltQ7sELR3DUNEGcuCF3Q10dtuDq5Nh1Aq1OFtJ
-	 jFrOdhwg/hTKFNaxjOqIj4YCIpQmMhiAzbvhcCmg4I38hNgdNGWBhXwkSFtqQ09+rA2J3ThOsgsG
-	 zFUkomnyN4SPKO2KU33JGishfTI1XxAqBkOQCpdgufWHdJbMXSnNNQIByEIIkkaKJwt/TZAJ4UbW
-	 /ZakbjS6kcWBcy9h6G7mhdDJEVtDwpuaS9d/uHd2xUX9TaKk7mfl/2XpJW7N0mYqQj/0n+78/J46
-	 8GmD8jVXbKTpGrDn6GCiDMokoMHiiSprnOoMctUcVYyHRfA24qJEW3FlKwky4jP83Qn/NLqWXt4n
-	 fH/q6ZujenLxjCRCzhOb6xzdtrmWsTvqjmz96hV4hIbnFHmD7TSJzttPEbGeoy9FxNM+8ub7BL75
-	 TcGd9a6vZKboIkiNmjfzxwc4xjpeLTkd52BM5BNCXZtWoYcCUXSIAPz+hYpQexTRl57aJJ7jrs0o
-	 pQGuDj/1CFz2TEtdNzELEGJ7+Ju9pbbwazVdNkYHyMV7Z4RHlhwF82c0LqnhRFseDEwsav+j1Dmo
-	 owuUoLWKiAbfIcGM7rnCKaG04yGw4bMBIsdgWBErDW00WF2TSH/XVWdkfVE0L3yd5jNImw0BnmvU
-	 cJZjdJrEczjJOoYX13AJ2YvDht8bnY0h2pryiF0Hp7NnsPUgiU31ho0hFk2AuXbvkN3jgEAFwT7Z
-	 my2/KPbuIgNYsCMu5M2S4J7B2SSREvXhvJcU1ErnyWQt61hbPDlQzLTMnxsy8YFlbhs5UbfylouF
-	 rAcYCVlirBnxnJUQSATURNzPfE3qzaT5Qsr3lqEDLrI14beF7O0pWwDZiNApfsAuJXsTwgTQ==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Rong Tao <rtoax@foxmail.com>
-To: yonghong.song@linux.dev,
-	andrii@kernel.org,
-	ast@kernel.org,
-	vmalik@redhat.com
-Cc: rtoax@foxmail.com,
-	Rong Tao <rongtao@cestc.cn>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v4 1/2] bpf: add bpf_strcasecmp kfunc
-Date: Wed,  3 Sep 2025 07:47:10 +0800
-X-OQ-MSGID: <8eb8c67d07ec6f95497ae3b361cd60bfd722bbcc.1756856613.git.rtoax@foxmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756856613.git.rtoax@foxmail.com>
-References: <cover.1756856613.git.rtoax@foxmail.com>
+	s=arc-20240116; t=1756856881; c=relaxed/simple;
+	bh=vt1Y2MwF+QeM3YtKpKSzBRXW1V3QsYt0k1NWrKJnl34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lEQULoEad4FgPXO7WuuebUdN9LD3LCyZxHUgMXg/05xR5WLIyx9A140Puk6NKMtVz1diY2dsiU3gXi18KCrOJiUarmu0TZuqrdfmEU0c9qBY/lt9wTq/Et0kZWqb8IbhoyXi+eI5MQI1xpMN2yO7A8M7cqOVDXL05k1vV2zF2WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQ15QeSX; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-70fa0e37bc5so23080386d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 16:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756856879; x=1757461679; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=szsB+4hgBlzRtrPiLozcnRxVKaaAr56CpFo21AapQ/Y=;
+        b=FQ15QeSXlKqxPuZMn8WoxngkcL/4u7mi4/k6CjXrOW873YxtWL7CDv0aSm3x89N5+6
+         17pJVkoCl5nJxTjO9jE4LcJ3H02HqF/g+dqkp3EHHB1Lc7Vd+H1xqKgL8hKAmx5glyZG
+         pSMSlfombwmPBIQU9XQ510hQdsHj1oKXRGRbtZZR4JIckSm4otljKJ2UzQzmcL8bfE5o
+         5wl3G2VEzMDmtdb1VB1rU487hkvYVNlbVRFm4UjRP9DHWVp7rVLrOTJ6bu7nrvsf3UhI
+         LXrxA33yD6PBXOTgR50EV0ac6l8yfoGsFYLcIQ+6jCPtrZKEet1D++YnCyn9/192iUlF
+         tXeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756856879; x=1757461679;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=szsB+4hgBlzRtrPiLozcnRxVKaaAr56CpFo21AapQ/Y=;
+        b=L5aqP9PUygOrOUcasm3Ws7Yt0tXNo0dGXQ7baagaBaJAiD8qaL2r4p3SoYiqC/QgOn
+         NF+ku1+zcxvkxNyGNf0BaoPY0VWnlCiuObQrWGGItHZd1O9GXL8rjKzgdfWx8jxUONmI
+         zHy3h5Gig/5J5r4ValtPhPpj9FpJGPzcUj5OXqVcv+B/j7xI4/6zvDTFEbw8voob70g+
+         IyOqtOs/bcadu5/YTpQh4y/NmPODiWbBnYRODkiYC9GxZUuB6gXxmJ+JcbItqoX+s5dA
+         smZWcOqnlnYC8fH153o+8hc1duqauKhSRNbPNR0FU+b8cr12CW6X1yVu+pUNzVF+POWb
+         wwBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUi2Umd1Co987pDmiNM0nM3xeAaSHNDklOxGbnzfgph9TZvuDkYJD/S6JRQuqzMSdPwNgL3M/UE3NtjY+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnvu6PqLHXbTaI/WlmZl4IYg3IuLsirbSND10CkT2NpUymrgf8
+	6O3cZlHkQOp6Jm5lhvc8PIyZrbeiuVPq3u0wkBYABfeuD/3Ed7d2dpz0
+X-Gm-Gg: ASbGncvZkTk6giko5ZlcpkYSZiNqtEGDY2UaKV46yl/BqXit7HVTLixzITbdPpleLe7
+	Cuiu99A2Ec1g7bGRz2DCVrM0OzySbUz9uFaPiKltuIiGgxRx6h8rb5zz15NTkO1y4mQkN9nJbbL
+	BreeMjZLV4bpMTTFQwyJqo+uKNtaws6J6N0gk2IaeyT1KHCuaOBQXz9X9OX5e4td8H9xT2dbXmi
+	3OniA89Me1o3xtONLRFxim6EoLYQHL8i06sdbl0XhqrWaicbnWaM8PGNrBN76+86vN333f4g/Km
+	mWt3p57FRcJ4jgdNh/otbEX+kt3XRWypmMKvqaYxaKik1lMTXNjROtjiD+rGuckDv2seQ88mBB1
+	Y+2h2MdfWJCcAaMBVzL4QeSsgD8pF3OcY2ilyz+lJxBR/l2axuw==
+X-Google-Smtp-Source: AGHT+IE755rzDB4jnnSivyguFtLycu8yDivEdX3+zUsRfdttnPsQf5p1Etq1jGJ2c1W3sqXEWC7cgQ==
+X-Received: by 2002:a05:6214:2464:b0:71d:bc7d:4dbd with SMTP id 6a1803df08f44-71dbc7d5625mr77294846d6.55.1756856879106;
+        Tue, 02 Sep 2025 16:47:59 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b5b9ceb1sm19907686d6.57.2025.09.02.16.47.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 16:47:58 -0700 (PDT)
+Message-ID: <8c46a270-0e97-4c50-b5f3-ed58ee0c2d11@gmail.com>
+Date: Tue, 2 Sep 2025 16:47:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched/deadline: only set free_cpus for online
+ runqueues
+To: Juri Lelli <juri.lelli@redhat.com>, Doug Berger <opendmb@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-kernel@vger.kernel.org,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+References: <20250815012236.4053467-1-opendmb@gmail.com>
+ <aKMja4BvgQ5vFaNN@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <aKMja4BvgQ5vFaNN@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Rong Tao <rongtao@cestc.cn>
+On 8/18/25 05:58, Juri Lelli wrote:
+> Hello,
+> 
+> On 14/08/25 18:22, Doug Berger wrote:
+>> Commit 16b269436b72 ("sched/deadline: Modify cpudl::free_cpus
+>> to reflect rd->online") introduced the cpudl_set/clear_freecpu
+>> functions to allow the cpu_dl::free_cpus mask to be manipulated
+>> by the deadline scheduler class rq_on/offline callbacks so the
+>> mask would also reflect this state.
+>>
+>> Commit 9659e1eeee28 ("sched/deadline: Remove cpu_active_mask
+>> from cpudl_find()") removed the check of the cpu_active_mask to
+>> save some processing on the premise that the cpudl::free_cpus
+>> mask already reflected the runqueue online state.
+>>
+>> Unfortunately, there are cases where it is possible for the
+>> cpudl_clear function to set the free_cpus bit for a CPU when the
+>> deadline runqueue is offline. When this occurs while a CPU is
+>> connected to the default root domain the flag may retain the bad
+>> state after the CPU has been unplugged. Later, a different CPU
+>> that is transitioning through the default root domain may push a
+>> deadline task to the powered down CPU when cpudl_find sees its
+>> free_cpus bit is set. If this happens the task will not have the
+>> opportunity to run.
+>>
+>> One example is outlined here:
+>> https://lore.kernel.org/lkml/20250110233010.2339521-1-opendmb@gmail.com
+>>
+>> Another occurs when the last deadline task is migrated from a
+>> CPU that has an offlined runqueue. The dequeue_task member of
+>> the deadline scheduler class will eventually call cpudl_clear
+>> and set the free_cpus bit for the CPU.
+>>
+>> This commit modifies the cpudl_clear function to be aware of the
+>> online state of the deadline runqueue so that the free_cpus mask
+>> can be updated appropriately.
+>>
+>> It is no longer necessary to manage the mask outside of the
+>> cpudl_set/clear functions so the cpudl_set/clear_freecpu
+>> functions are removed. In addition, since the free_cpus mask is
+>> now only updated under the cpudl lock the code was changed to
+>> use the non-atomic __cpumask functions.
+>>
+>> Signed-off-by: Doug Berger <opendmb@gmail.com>
+>> ---
+> 
+> This looks now good to me.
+> 
+> Acked-by: Juri Lelli <juri.lelli@redhat.com>
 
-bpf_strcasecmp() function performs same like bpf_strcmp() except ignoring
-the case of the characters.
-
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- kernel/bpf/helpers.c | 68 +++++++++++++++++++++++++++++++-------------
- 1 file changed, 48 insertions(+), 20 deletions(-)
-
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 401b4932cc49..588bc7e36436 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -3349,45 +3349,72 @@ __bpf_kfunc void __bpf_trap(void)
-  * __get_kernel_nofault instead of plain dereference to make them safe.
-  */
- 
--/**
-- * bpf_strcmp - Compare two strings
-- * @s1__ign: One string
-- * @s2__ign: Another string
-- *
-- * Return:
-- * * %0       - Strings are equal
-- * * %-1      - @s1__ign is smaller
-- * * %1       - @s2__ign is smaller
-- * * %-EFAULT - Cannot read one of the strings
-- * * %-E2BIG  - One of strings is too large
-- * * %-ERANGE - One of strings is outside of kernel address space
-- */
--__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
-+static int __bpf_strcasecmp(const char *s1, const char *s2, bool ignore_case)
- {
- 	char c1, c2;
- 	int i;
- 
--	if (!copy_from_kernel_nofault_allowed(s1__ign, 1) ||
--	    !copy_from_kernel_nofault_allowed(s2__ign, 1)) {
-+	if (!copy_from_kernel_nofault_allowed(s1, 1) ||
-+	    !copy_from_kernel_nofault_allowed(s2, 1)) {
- 		return -ERANGE;
- 	}
- 
- 	guard(pagefault)();
- 	for (i = 0; i < XATTR_SIZE_MAX; i++) {
--		__get_kernel_nofault(&c1, s1__ign, char, err_out);
--		__get_kernel_nofault(&c2, s2__ign, char, err_out);
-+		__get_kernel_nofault(&c1, s1, char, err_out);
-+		__get_kernel_nofault(&c2, s2, char, err_out);
-+		if (ignore_case) {
-+			c1 = tolower(c1);
-+			c2 = tolower(c2);
-+		}
- 		if (c1 != c2)
- 			return c1 < c2 ? -1 : 1;
- 		if (c1 == '\0')
- 			return 0;
--		s1__ign++;
--		s2__ign++;
-+		s1++;
-+		s2++;
- 	}
- 	return -E2BIG;
- err_out:
- 	return -EFAULT;
- }
- 
-+/**
-+ * bpf_strcmp - Compare two strings
-+ * @s1__ign: One string
-+ * @s2__ign: Another string
-+ *
-+ * Return:
-+ * * %0       - Strings are equal
-+ * * %-1      - @s1__ign is smaller
-+ * * %1       - @s2__ign is smaller
-+ * * %-EFAULT - Cannot read one of the strings
-+ * * %-E2BIG  - One of strings is too large
-+ * * %-ERANGE - One of strings is outside of kernel address space
-+ */
-+__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
-+{
-+	return __bpf_strcasecmp(s1__ign, s2__ign, false);
-+}
-+
-+/**
-+ * bpf_strcasecmp - Compare two strings, ignoring the case of the characters
-+ * @s1__ign: One string
-+ * @s2__ign: Another string
-+ *
-+ * Return:
-+ * * %0       - Strings are equal
-+ * * %-1      - @s1__ign is smaller
-+ * * %1       - @s2__ign is smaller
-+ * * %-EFAULT - Cannot read one of the strings
-+ * * %-E2BIG  - One of strings is too large
-+ * * %-ERANGE - One of strings is outside of kernel address space
-+ */
-+__bpf_kfunc int bpf_strcasecmp(const char *s1__ign, const char *s2__ign)
-+{
-+	return __bpf_strcasecmp(s1__ign, s2__ign, true);
-+}
-+
- /**
-  * bpf_strnchr - Find a character in a length limited string
-  * @s__ign: The string to be searched
-@@ -3832,6 +3859,7 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
- #endif
- BTF_ID_FLAGS(func, __bpf_trap)
- BTF_ID_FLAGS(func, bpf_strcmp);
-+BTF_ID_FLAGS(func, bpf_strcasecmp);
- BTF_ID_FLAGS(func, bpf_strchr);
- BTF_ID_FLAGS(func, bpf_strchrnul);
- BTF_ID_FLAGS(func, bpf_strnchr);
+Thanks Juri, can we apply it?
 -- 
-2.51.0
-
+Florian
 
