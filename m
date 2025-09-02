@@ -1,181 +1,184 @@
-Return-Path: <linux-kernel+bounces-796092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D32B3FBD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:07:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 128C9B3FBD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A070B3B0E62
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:07:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1063D7A63D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41B91A9F82;
-	Tue,  2 Sep 2025 10:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0741E2F0687;
+	Tue,  2 Sep 2025 10:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LA91XbgT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SvgMUzYx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192FA2EDD75;
-	Tue,  2 Sep 2025 10:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BEF2EF640
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756807642; cv=none; b=hiJPDZAmFVEYYU0bJjklHPr99qZ9eYT2ncyUy5CIz4gafOIs3XReSp01+SAU+mMSdU2YAW7LrTojydRr0HjZBSIn79Nqj9FmImiKQ78xpaSlw3HifAQ3dwSqVQ1Wrtr6nN0b1f0WCGpCGaUbkQqnG/wsPdG/nL+p+Ooy7wMHkCY=
+	t=1756807644; cv=none; b=UV4xg0m+jnDjwDyVFVeKTzWhVYhjEBazYotY8tQljchQLeXrz2K3gCxmvRpLazX1C47lFKKWNvNd2DN95B8Yr8WaPxlYo/amwGYuEILgq2+EHagDDuDU4Yi781e2o++RRaNI3kHPiMeg/bn3T1Jd6+2uQloCJtHuy26QkT/Dn5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756807642; c=relaxed/simple;
-	bh=n7Zz7ESKe5II1Hc9wcpMJplkj2h3aSHW/mqP+X4a2OE=;
+	s=arc-20240116; t=1756807644; c=relaxed/simple;
+	bh=SH7iW9GAQZcbs1Y11U+SsJVQU2myZgWlogyzSHF5AvA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tFMDxV3MG/RQzzNLTmUgG4OY6hJ4Pq/B6eIOEdeIbu7aeFmSYYI3fL8UhNpav6dtxd3e3SEPZkEbpIbxPWo88W8qUPopxwwZFMjAJy2/y1Ysqx9Ip2bH2BhQHgzthizGnOaE9bqy2BfAe9UHjRv65XYQd0ZhM27/5D3t0MNGpZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LA91XbgT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A45C4CEF5;
-	Tue,  2 Sep 2025 10:07:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756807640;
-	bh=n7Zz7ESKe5II1Hc9wcpMJplkj2h3aSHW/mqP+X4a2OE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LA91XbgT4K2NDijDbGqZDA9oYV74S4KF428MgMtzcmWF0Dx8+7OMzNQk9aIeyrBB7
-	 +IhG/ynsQwLIoq+KF5nYJ9Jr5Bw55OKEpFavGXGrTt2++CS8rHpzhXPm941zHMTqa1
-	 skomXzPWgQ3roQukXTvQYUOZmARVKk7ny3cmbR8SaAYg9H8ydgBxRP+1FxO23zUgE/
-	 Hk+ts5DKvo4AWw6T8B77/FPP57iOFrIa2LTp72knO6hlC/ncgbkqOTITZV1jG01F3F
-	 XMU5Dhslw1GlpBxGGtU9d1gWOPBO50bTzHHxKlA1psgjoaN21llaupaubYnFp5cmf1
-	 lEcVLrDCOVunQ==
-Date: Tue, 2 Sep 2025 11:07:16 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, kuniyu@google.com, kay.sievers@vrfy.org,
-	gregkh@suse.de, yuehaibing@huawei.com, zhangchangzhong@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: atm: fix memory leak in atm_register_sysfs when
- device_register fail
-Message-ID: <20250902100716.GB15473@horms.kernel.org>
-References: <20250901063537.1472221-1-wangliang74@huawei.com>
- <20250901190140.GO15473@horms.kernel.org>
- <4ae3ca7b-dc64-4ab5-b1bf-e357ccc449b4@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=npr9uYvOhsgz+9r3MX1rIV7GrCqSq9gaIeRGDoCUslk3hj2UBeJyKbA6zB0Ic/Gri+MFxnw+yfVdxxBsvdai3tWQ5AqJC/gh/T8ZUxHoRKu32jTDF+xaD/kdLAOphnwmprhIrMMAvJcMNFQf0yy7lNaQf2A8O50NNgaX3QJJ6cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SvgMUzYx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822RtOO012437
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 10:07:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=lioLz+MVb+lNAwEehrq912Az
+	AcaUt5myxr/iYapOUHk=; b=SvgMUzYxGKdZZyKPhp1OwR6qTyNBlKhCOywOuZjT
+	m2PHwjCOpXk0RstPf8TVPfcw+I8DnE5FYwJH85mR8yL3WAGkdRdBAt3KZ0J8ff0X
+	tu3gOSYtQgcwXmwFu0SrG62EqNz9UlkzJ5jZecOdMJeNr/ilnazVs2rJV9HRUKNc
+	LB8eLtxrT77Vj0vnUb6rT7ipr51cDfdEQE0OCdCwt8NgFkYzIHN04CImk7Q0JhZ3
+	c4mmP3OOpAp3kmW39ju/kvvuC1l6KKP7R/yxAWLWmKESkC3jLmJ5uMCnJ1xh0VFu
+	JWmXuHIlQ/SNQsA9nXpYpIB4dIj81gu7jnnGgI7Sjr3pEg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ut2ffa0q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:07:21 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e86499748cso1413497985a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:07:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756807640; x=1757412440;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lioLz+MVb+lNAwEehrq912AzAcaUt5myxr/iYapOUHk=;
+        b=BcR6vXv7gK/6LZLuI0gkGg8l177YY4GlaUeaUci0KGIZzd1tpaPt1Gdq4WkFFRdc/S
+         tA27z0qFHnoAEvR6lv+uzU5X+2VcPIJc2pqurstJvhYVcB5XM1Ejgfke4YNW5m+e2WJ9
+         q2Mhowa6LVtwcfxWUZzK/C/aJUvpazpuw+pUQB/OfnvNRzlrmHEpctnix7LK1CeE+MtT
+         jE5kMQ3kbmsLmZ9ipIS9KFUZ+N6ISrYHCZytyJIVaaZrGjKC5WGlBaWIS8jHrkUx6SJX
+         ehoB0KP8e7hP0JHmymun/ZsegSer4s3Exr/37iMwx/uQTx0WeUtMNPTS+mVg7cuSMuDW
+         BQSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbC0SDZXu5Xyp1kgkcHXKHJyurZQ+rFpo5ZwS3u7rqrzToONnuWBx/57GPXtdc7cFHHFDU5JwMIswIC70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdMK2oUOyKd+lA8mWxRRZCmkGsZLkptJV+Zpz3WOiM48WjcALq
+	IdDhmi3io/imQGkL9d4bW2uilJOPCjMBrZQjj0Kq1FUCNmjtT0ARscnqJqJt4+TgtkmwRITQKiJ
+	/J/JzTfGkV1XU82EQqdu1w5J957g/pR7gKZ6K3MR00vTz/Hm3Fs1dLTvRG1BlYBne7f0=
+X-Gm-Gg: ASbGncuh/xh/tyivd0PvdJ17P2SmL70kVu2OMUuGECnU4NW6dZLG5ZuLT2xXHIXAPjH
+	cxBPuzmi8DL8WKGfwcACjuQgE/4LAh0pbEimJLXvmARyEN68LCIQJhqN7onWmlic+eAFf8+twYN
+	f/pkjNxnxs3w/RMQ+8JPbvuU/R6yAPnP2fGdwB1J+AnfLzU3U38rQt7934E2nNzmI9v2WRlYUpn
+	BbTdoL8IyiJDCWuD2l93umETWOhxfmwxJaBzR8aQmExblZNBbj/d3lkzcPZCj3J7cZ403PD6yAF
+	vpTrMhm1k2wpGNKDT4XDy8BqCUDSYPQqkUCAecml+xnBLs1kXbuL7zaKjpj6Sz1/55WIE81V6b4
+	5mrAJN7gG4plVOCPJY7dBOA0gk/2BwbG6PgAb26G1l+VVetsAFOZ8
+X-Received: by 2002:a05:6214:1d01:b0:70e:782e:b259 with SMTP id 6a1803df08f44-70fa99552edmr115899456d6.26.1756807640299;
+        Tue, 02 Sep 2025 03:07:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgdoQnMA6U5z0bGZ7Wuiih/B4hBhoB6kk4Yipx1tsvtcSQs2cJZx7DcWOnC6cpn/6Cs6Hvdw==
+X-Received: by 2002:a05:6214:1d01:b0:70e:782e:b259 with SMTP id 6a1803df08f44-70fa99552edmr115898976d6.26.1756807639672;
+        Tue, 02 Sep 2025 03:07:19 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f4c50317sm3922901fa.2.2025.09.02.03.07.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 03:07:18 -0700 (PDT)
+Date: Tue, 2 Sep 2025 13:07:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Abel Vesa <abel.vesa@linaro.org>, Mahadevan <quic_mahap@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 8/9] arm64: dts: qcom: sm6350: correct DP
+ compatibility strings
+Message-ID: <37ax7uhzopemvmz5fgtayzz3hmnxmfcbyjhwgfgkdglynuo5oj@fud24vsqodnj>
+References: <20250829-dp_mst_bindings-v7-0-2b268a43917b@oss.qualcomm.com>
+ <20250829-dp_mst_bindings-v7-8-2b268a43917b@oss.qualcomm.com>
+ <20250901-defiant-illegal-marmot-7ce0db@kuoka>
+ <abkkn4f7uca6tzjasltyysxecuuirxxvbjz6l6re5v4z6jlmuh@ugz6jtw6vo4n>
+ <ddd0f518-f9e1-49e8-bbaf-b810adcd35b3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4ae3ca7b-dc64-4ab5-b1bf-e357ccc449b4@huawei.com>
+In-Reply-To: <ddd0f518-f9e1-49e8-bbaf-b810adcd35b3@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzOCBTYWx0ZWRfX2ON05SYe+sdg
+ 8k1RFcZ14DkTFauGMyW3k63qZ189J1Z8xJI3UNQRX9ePL8u8d4NSGDTTB7kU+kG72Dqc8X5Q9VI
+ Ilt7xDN+ouNH+MF0Wphbt2m77EJUqku48hvcJu0yDbGvW5qh3mqQrdafmAv/bRf6P4KDWChJgjB
+ ZWrqZab51zluLn8Cu0892OkOULwani5eG9w8MN7o35Unx+T8RKqwPtneTv8knNYQuM3CoHaASoU
+ RyzItGTBhbfLL9Z8+GzBPrfMGSDqqXqPAe6G2OyHm3pLUPASESlCQG/I7wS+TSAWNmvh3A8yMSH
+ 8ICi9/ehLq0e1s3zpMivZt5ntZZZA6SO9UOd/JoW6aCaW/l7gN7GlSmjKruDnxYzuvDbM5Nmc9H
+ Zu+xFY9A
+X-Proofpoint-ORIG-GUID: i7Od2uM8L2jBZpT8gilB_Y3osDKRz7FT
+X-Proofpoint-GUID: i7Od2uM8L2jBZpT8gilB_Y3osDKRz7FT
+X-Authority-Analysis: v=2.4 cv=U7iSDfru c=1 sm=1 tr=0 ts=68b6c1d9 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=1RLsJLrTPffC7TqSMS0A:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300038
 
-On Tue, Sep 02, 2025 at 09:41:33AM +0800, Wang Liang wrote:
-> 
-> 在 2025/9/2 3:01, Simon Horman 写道:
-> > On Mon, Sep 01, 2025 at 02:35:37PM +0800, Wang Liang wrote:
-> > > When device_register() return error in atm_register_sysfs(), which can be
-> > > triggered by kzalloc fail in device_private_init() or other reasons,
-> > > kmemleak reports the following memory leaks:
-> > > 
-> > > unreferenced object 0xffff88810182fb80 (size 8):
-> > >    comm "insmod", pid 504, jiffies 4294852464
-> > >    hex dump (first 8 bytes):
-> > >      61 64 75 6d 6d 79 30 00                          adummy0.
-> > >    backtrace (crc 14dfadaf):
-> > >      __kmalloc_node_track_caller_noprof+0x335/0x450
-> > >      kvasprintf+0xb3/0x130
-> > >      kobject_set_name_vargs+0x45/0x120
-> > >      dev_set_name+0xa9/0xe0
-> > >      atm_register_sysfs+0xf3/0x220
-> > >      atm_dev_register+0x40b/0x780
-> > >      0xffffffffa000b089
-> > >      do_one_initcall+0x89/0x300
-> > >      do_init_module+0x27b/0x7d0
-> > >      load_module+0x54cd/0x5ff0
-> > >      init_module_from_file+0xe4/0x150
-> > >      idempotent_init_module+0x32c/0x610
-> > >      __x64_sys_finit_module+0xbd/0x120
-> > >      do_syscall_64+0xa8/0x270
-> > >      entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > 
-> > > When device_create_file() return error in atm_register_sysfs(), the same
-> > > issue also can be triggered.
-> > > 
-> > > Function put_device() should be called to release kobj->name memory and
-> > > other device resource, instead of kfree().
-> > > 
-> > > Fixes: 1fa5ae857bb1 ("driver core: get rid of struct device's bus_id string array")
-> > > Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> > Thanks Wang Liang,
+On Tue, Sep 02, 2025 at 08:07:22AM +0200, Krzysztof Kozlowski wrote:
+> On 02/09/2025 06:04, Dmitry Baryshkov wrote:
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+> >>> index 2493b9611dcb675f4c33794ecc0ee9e8823e24d4..8459b27cacc72a4827a2e289e669163ad6250059 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+> >>> @@ -2249,7 +2249,7 @@ opp-560000000 {
+> >>>  			};
+> >>>  
+> >>>  			mdss_dp: displayport-controller@ae90000 {
+> >>> -				compatible = "qcom,sm6350-dp", "qcom,sm8350-dp";
+> >>> +				compatible = "qcom,sm6350-dp", "qcom,sc7180-dp";
+> >>
+> >> No, that's breaking all the users.
 > > 
-> > I agree this is a bug.
-> > 
-> > I think that the guiding principle should be that on error functions
-> > unwind any resource allocations they have made, rather than leaving
-> > it up to callers to clean things up.
-> > 
-> > So, as the problem you describe seems to be due to atm_register_sysfs()
-> > leaking resources if it encounters an error, I think the problem would
-> > best be resolved there.
-> > 
-> > Perhaps something like this.
-> > (Compile tested only!)
-> > 
-> > diff --git a/net/atm/atm_sysfs.c b/net/atm/atm_sysfs.c
-> > index 54e7fb1a4ee5..62f3d520a80a 100644
-> > --- a/net/atm/atm_sysfs.c
-> > +++ b/net/atm/atm_sysfs.c
-> > @@ -148,20 +148,23 @@ int atm_register_sysfs(struct atm_dev *adev, struct device *parent)
-> >   	dev_set_name(cdev, "%s%d", adev->type, adev->number);
-> >   	err = device_register(cdev);
-> >   	if (err < 0)
-> > -		return err;
-> > +		goto err_put_dev;
-> >   	for (i = 0; atm_attrs[i]; i++) {
-> >   		err = device_create_file(cdev, atm_attrs[i]);
-> >   		if (err)
-> > -			goto err_out;
-> > +			goto err_remove_file;
-> >   	}
-> >   	return 0;
-> > -err_out:
-> > +err_remove_file:
-> >   	for (j = 0; j < i; j++)
-> >   		device_remove_file(cdev, atm_attrs[j]);
-> >   	device_del(cdev);
-> > +err_put_dev:
-> > +	put_device(cdev);
-> > +
-> >   	return err;
-> >   }
+> > WHy though? Both old and new lines are using fallbacks to bind the
+> > driver to the device.
 > 
+> Kernel has sc7180 fallback, but what if other DTS user does not and that
+> other user was relying on sm8350 fallback compatible? That other user
+> won't have sm6350 dedicated handling as well.
+
+Oh, a user which has SM8350 support, wants to support SM6350, but
+doesn't support SC7180 DP? How hypothetical should be our users?
+
 > 
-> Thanks for your replies, it is very clear!
+> That breaking of users I meant.
 > 
-> But the above code may introduce a use-after-free issue. If
-> device_register()
-> fails, put_device() call atm_release() to free atm_dev, and
-> atm_proc_dev_deregister() will visit it.
+> With the kernel it should work, assuming SC7180-dp was introduced
+> similar time as 8350-dp.
+
+SC7180 DP was introduced several years ahead of SM8350, if my memory
+doesn't deceive me.
+
 > 
-> And kfree() should be removed in atm_dev_register() to avoid double-free.
-
-Thanks, I see that now.
-
-I do think that it would be nice to untangle the error handling here.
-But, as a but fix I now think your original approach is good.
-Because it addresses the issue in a minimal way.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-> > Looking over atm_dev_register, it seems to me that it will deadlock
-> > if it calls atm_proc_dev_deregister() if atm_register_sysfs() fails.
-> > This is because atm_dev_register() is holding atm_dev_mutex,
-> > and atm_proc_dev_deregister() tries to take atm_dev_mutex().
-> 
-> 
-> I cannot find somewhere tries to take atm_dev_mutex(), can you give some
-> hints?
-
-Sorry, my mistake. I was looking at atm_dev_deregister()
-rather than atm_proc_dev_deregister().
-
-...
+> Best regards,
+> Krzysztof
 
 -- 
-pw-bot: under-review
+With best wishes
+Dmitry
 
