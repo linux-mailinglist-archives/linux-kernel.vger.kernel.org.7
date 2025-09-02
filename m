@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-796421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BBEB400A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:32:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42388B40071
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43FF13A7C00
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:27:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7684A188F03C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A802F745C;
-	Tue,  2 Sep 2025 12:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MPSYmRKr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B542F83D4;
+	Tue,  2 Sep 2025 12:27:30 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761E32C11D0;
-	Tue,  2 Sep 2025 12:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2AB2C11CE;
+	Tue,  2 Sep 2025 12:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816020; cv=none; b=my/OuRm70v5jgvU/4j6EgEV4HARrla6JyOhFjhzQpZiFDlHOO2j5Ym3ZxBJ0399Yj5yf6dqBOjdzpPgN1DCVpBofq6/g2Ay0LnMUHZdB77GfeCs5mUOyr8v7mQ2hn6hGqB0Seua07c4BQJQGuoIw9vl+hkNQvaKgEqVkJf/zOPY=
+	t=1756816050; cv=none; b=oJ50+JW08lSyw8QNJbs/7vRuL8Lue1sv40zHY81BZhqg7hNYc8f7R1+1GDNtnaGvWMYoV3GTEwUxQ6pzeRbXxXsX65baAZ7h+EsVZMRdPW7OjMzESaMqvVgANefIiQHtLaPa1WEc1+hfs7C3OLhfospBoSx5AkpgLVfyZOb0k2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816020; c=relaxed/simple;
-	bh=uy+9yT0OqxOwyvDOHi6skVuSOa8RvKqXi+oLTHQDSUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NvtTU6dMDUvhOrLh+9lxHe0BoY3kh5n8XXJQvoGde80CGMYpZErFwI/EDCLpN0F0qwzeH5SFAxFALRspHrrrRkAlSiU0OOtn5MmqoEsVY4mYjK3alirgZ0GUxqCbcxhYiQ7G1j8FNzE3Mn9MFTml2bTdGTuAS1H9a7k45dgg2OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MPSYmRKr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DAE6C4CEF4;
-	Tue,  2 Sep 2025 12:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756816020;
-	bh=uy+9yT0OqxOwyvDOHi6skVuSOa8RvKqXi+oLTHQDSUM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MPSYmRKriAme9P6tqUdJc15hqm7gOnffta4xko1zzU6tJERGTnbLIQVIZW8ELBogZ
-	 ugpVpP6/1g6OkkECCLPLIXIhcHIeYiTPhJ8RedPevIqPShff2FKF+3oj2PUpZolzw5
-	 BaH5cFKj86U8zBAXKtNRvfigcNANmYZqpzgJ6kZh+BIuO6CA6+rWnPZk21oMa3o2lD
-	 +D7QTajSFKcoGP4t0lM/RjTRsC96D3AAi+DSZ0xJHBbJ4PvihOfRsHixzD3SB7WRrN
-	 9isexyZCe5N8dDi9dqvp2otBhVbBLrMDxmK50LR50ubTE1zu8z+HCCi2/gTZLQHk8r
-	 5fiZrtNfkXtTg==
-Message-ID: <7c461931-3b04-4354-a892-52f469511c5a@kernel.org>
-Date: Tue, 2 Sep 2025 14:26:53 +0200
+	s=arc-20240116; t=1756816050; c=relaxed/simple;
+	bh=moNuE2PRSa0VOYC0+NmKIqSBqUotBU26lZOsdMAaqiU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iVW1Pe2vyhhg4fT0CYiQDk77X4NztYxE5U6Lo1Csh1VOeP1r9urEuLMxvMm1OSytwPlO3Khs0nvhJqOXuhymnSmXOHTrGroy7g7zy+Lpm3ZQzkCcJ0fDeTZQndjSPM33fZylEuKB7nArlUMCDbxDPSvTwFikbxnikgdRFZzhYcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [116.232.18.168])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id D8E4F3408F0;
+	Tue, 02 Sep 2025 12:27:22 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Date: Tue, 02 Sep 2025 20:26:58 +0800
+Subject: [PATCH v2] riscv: dts: spacemit: uart: remove sec_uart1 device
+ node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
- i.MX8ULP compatible string
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Frank Li <Frank.li@nxp.com>
-Cc: Guoniu Zhou <guoniu.zhou@nxp.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250901-csi2_imx8ulp-v5-0-67964d1471f3@nxp.com>
- <20250901-csi2_imx8ulp-v5-1-67964d1471f3@nxp.com>
- <20250901154610.GB13448@pendragon.ideasonboard.com>
- <aLZMQ7c8qr5XO88d@lizhi-Precision-Tower-5810>
- <20250902083554.GD13448@pendragon.ideasonboard.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250902083554.GD13448@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250902-02-k1-uart-clock-v2-1-f146918d44f6@gentoo.org>
+X-B4-Tracking: v=1; b=H4sIAJHitmgC/32NQQ6CMBBFr0Jm7ZhOo7a48h6GRcGhNBiGtJVoC
+ He3cgCX7yX//RUSx8AJrtUKkZeQgkwF9KGCbnCTZwyPwqCVPitDFpXGkfDlYsbuKd2IquW25p5
+ UzwrKbI7ch/eevDeFh5CyxM/+sNDP/okthISX2rK1J+cMmZvnKYscJXpotm37AlAzF0OxAAAA
+X-Change-ID: 20250718-02-k1-uart-clock-0beb9ef10fe0
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alex Elder <elder@riscstar.com>, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1621; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=moNuE2PRSa0VOYC0+NmKIqSBqUotBU26lZOsdMAaqiU=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBotuKnh7sGv+ULWyGalREl83uFZAXlNGwzlBtHB
+ u/qrvncND+JApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCaLbip18UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277SfYD/0Xisz07nPm6GOmWU
+ iXPneJjpAPADkmpIhwBkBn4Ey7DtRufKtK4jnZDtAQ2C7CEnPResJ3d+FzXf3TutIfAmmYwAm6F
+ msmovcYACCclKjPuHLnQP8j/e2ylroGqPnCGs5PeFo/kYgnz3AdGBTaikS+XcBEYSAReFUrn5/W
+ e7yTJJuBWd/4rqqe11gUMQ7fpta5vtbERkn/rs5EXnpqEpWG12w8ERFT7qKj5Rmf8ilIUVEjRbc
+ 1efbpuVyiQpilqyPBmfwHxTxJNmfnAgJrCNC5xDnxAsqNFCAjXRZqxOWzcg1VryGoW1Grc2zE6H
+ Gk5XH2+AwWmfgmA5cwfPSCgmaTaNh8M72VPPq1ZocowDlYyekfoamfKWdEuEC7+z04mB1dT5zQx
+ 3N4q45D8dXp2rFDikQ/2bT6P85o9Y7gJRSt6x73V3GVRcX6v6paYqxcuhj6EzemlctROdI7s/tg
+ YWp4NU9C/swS7PCg+FPluEw5IB0IIEpt59yOPFwo4AcMgI9RZSDmMmkvUMTbS9oPFateEpEsg2r
+ XIFDrDpzRlL5wVwA1KuLqSLNFzUp+3w0uwFf2DsZCl+2EVB8MvwJXLZ2+umwv0thXCBYBl1/zwy
+ Ne3JVLS/uKHuPU2VSZgCsToiyRSq3JMGxcD2ITzG33pzpW7QAb9xbWh2iuzUoSXRpvog==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-On 02/09/2025 10:35, Laurent Pinchart wrote:
->>>>          compatible:
->>>>            contains:
->>>>              enum:
->>>> -              - fsl,imx8qxp-mipi-csi2
->>>> +              - fsl,imx8ulp-mipi-csi2
->>>> +    then:
->>>> +      properties:
->>>> +        reg:
->>>> +          minItems: 2
->>>> +        resets:
->>>> +          minItems: 2
->>>> +          maxItems: 2
->>>> +        clocks:
->>>> +          minItems: 4
->>>> +        clock-names:
->>>> +          minItems: 4
->>>
->>> But according to this, the ULP version requires more clocks than the QXP
->>> version.
->>
->> If only clock number difference, generally, it is still compatible and can
->> be fallback, especialy driver use devm_bulk_clk_get_all().
-> 
-> That's a driver-specific implementation decision, so I don't think it
-> should be taken into account to decide on compatibility.
+sec_uart1 is not available from Linux, and no clock is implemented in
+CCF framework, thus 'make dtbs_check' will pop up this warning message:
 
-The clock inputs do not restrict compatibility. If Linux can use
-fallback to bind and operate properly, then it's a strong indication
-devices are compatible.
+  serial@f0612000: 'clock-names' is a required property
 
-Imagine exactly the same registers, so same programming interface, but
-one device takes one more clock which just needs to be enabled through
-its lifetime. Such devices are fully compatible, even though clock
-inputs differ.
+Removing the node from device tree to silence the DT check warning.
 
-I also wanted to express exactly that case on my slides from OSSE -
-slide 28:
-https://osseu2025.sched.com/event/25Vsl/dts-101-from-roots-to-trees-aka-devicetree-for-beginners-krzysztof-kozlowski-linaro
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+This patch try to resolve the DT check warning due to
+the clock for sec_uart1 is not implemented.
+---
+Changes in v2:
+- remove sec_uart1 node instead of marking it as reserved
+- Link to v1: https://lore.kernel.org/r/20250718-02-k1-uart-clock-v1-1-698e884aa717@gentoo.org
+---
+ arch/riscv/boot/dts/spacemit/k1.dtsi | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-(although I focused on reversed case when devices are not compatible,
-because that is decisive case).
+diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+index abde8bb07c95c5a745736a2dd6f0c0e0d7c696e4..3094f75ed13badfc3db333be2b3195c61f57fddf 100644
+--- a/arch/riscv/boot/dts/spacemit/k1.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+@@ -777,16 +777,7 @@ uart9: serial@d4017800 {
+ 				status = "disabled";
+ 			};
+ 
+-			sec_uart1: serial@f0612000 {
+-				compatible = "spacemit,k1-uart",
+-					     "intel,xscale-uart";
+-				reg = <0x0 0xf0612000 0x0 0x100>;
+-				interrupts = <43>;
+-				clock-frequency = <14857000>;
+-				reg-shift = <2>;
+-				reg-io-width = <4>;
+-				status = "reserved"; /* for TEE usage */
+-			};
++			/* sec_uart1: 0xf0612000, not available from Linux */
+ 		};
+ 
+ 		multimedia-bus {
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250718-02-k1-uart-clock-0beb9ef10fe0
 
 Best regards,
-Krzysztof
+-- 
+Yixun Lan
+
 
