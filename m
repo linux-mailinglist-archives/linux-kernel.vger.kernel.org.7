@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-797176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD7FB40CFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C29CB40CFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2BF1A88058
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C581A88130
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FC634DCD5;
-	Tue,  2 Sep 2025 18:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB5334DCCF;
+	Tue,  2 Sep 2025 18:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xEmAy7zB"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H4SkIzYB"
+Received: from mail-oo1-f74.google.com (mail-oo1-f74.google.com [209.85.161.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0783A341651
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 18:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0286434DCCA
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 18:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756837077; cv=none; b=okVJ2zLBV9RU9q4AlM8RXOm8qa6pwl+FbQJ5Rtzx2pGUkRLEHVAl4vAhng/HXsJhF8gniAyTDGOpAtVfpznojG7x7JdprOts0bpk2JY57kqWsENXAK420aE6AxnGOtJYTOs/o3gyYHVtHB4xNYLWosZ4DLtnUnjC9wiYwP3ECes=
+	t=1756837079; cv=none; b=AE8pMWvhWkUUA6YuVS4/2YjJvbLbQ0smHCFMUHMlbHeZgpQjqBbktA9xULP8EzPv+uhgT1JNnzDci5IV/xGp/ifNa0pcWU8mPuPv1JD2+1hmJEllH0TGoSC1jGDsMtLtwPnfq69wpniQroS9Ab60UET7RvI48bPmRxlrQ2GNIpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756837077; c=relaxed/simple;
-	bh=Y417faWxUdjMpY13VqIziiGZ5qRUWZrN43DhiAwSrlU=;
+	s=arc-20240116; t=1756837079; c=relaxed/simple;
+	bh=SW0b26VMfjHwsZ9uitQCtKd1Xk3hYByNXZLW5ZTvqTE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=lszEJSo1+r1gcdebMt7j3cjVGlRXYPIc+CdugoCE5iz/Ukt9N8R48kcHrYo6ZAusiQWNKmqG7KO/rBEuo6wbfua2JSLjlXMbKWdXCMrPTWIy/QRKYIV/j5RUwKt6dWpGdmB7uZgjhy4lUGkaMRaZRv4feriyA2X2zczgCxLuzYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xEmAy7zB; arc=none smtp.client-ip=209.85.210.202
+	 To:Content-Type; b=R8m7uhshX+gmIMn8WTyr/0ZmIDHP2DTIuFlUq08XZi7hRGaq53QLiSiP9zYF5YKx1/inTEH8cLtZnCNt95ltR6SslGGcsmAKh0kQyl3rAUoxv7/JJTjgZAWWaXtbf3sBfpT5bvDpMAYKPICK12QUuhKfPG/V5S73UcAqN+Z7VmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H4SkIzYB; arc=none smtp.client-ip=209.85.161.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77243618babso3184709b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 11:17:55 -0700 (PDT)
+Received: by mail-oo1-f74.google.com with SMTP id 006d021491bc7-61e3dc3be5fso1254654eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 11:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756837075; x=1757441875; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756837077; x=1757441877; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=X/J1GNcMtAJTXoNioUBkgQFYPG0R3g234Hk0goUCKGI=;
-        b=xEmAy7zBWFGbt14FqEvPeekYB3LiSh/R32Rm0tJPHAIi+1DjfHpUuKuLw9RqlZlK+K
-         K5z09Ag2isIoC85boUX/vY4nytLaCEY1DSFo76uKm5RNUDRk0sKQ2Dp1rJZBjo6SHygR
-         CwLvH1oL3cZ1S9EZizsECaGv1tfhP6yeadz7So0z/+peWjuBUui3MlybkMP+OqiveD8e
-         FY3i7qHB4PsBcFVV/PC/JHN4i0Cfjyu7Y0Zm+i+U2lc5PGm9F6mK/q0D7nk+SXfFBAkf
-         vwlj5x5Agbd9LvgjBkFbZgHE6Whey00fAmKgAbOdJuJcf6F2BxIqRIu9Mr+MXQ0OWO3z
-         bRlw==
+        bh=6fJ6F2Zo1Rl5YqU+YLRmyxNhHYiro+j86SsEqve7WLE=;
+        b=H4SkIzYBkepxl0Vrr6ntlofUbKOUz5Seal7sbYGtuZ2y0w0PBlDswffzNd99pc9/Gu
+         k4E0ygXuHJx6TQlKPrAPH3WIkB4RWw0F4Z2/f0i+BzJ1fVroYcyXEzVzvdqPDzLgNpz1
+         B+97BfSlRZxVg2y6zP2k9N4jQe7E7vetIYZe7hMh5GuR1jXcyr2tKs+BoQ2ggySfwhPy
+         kMrtQbCnN+5VsrnChfoibnGwfnHkL8WZA/OHIob4bLbp7I38quHj5qdIvxBmBSiQCG7E
+         hgvbQUIbK6/5U9VCz8UQt7O4Zto6upfnLgaCV1N1qxmJyhrLHAofIaGCl9pDBba5/YX9
+         g+OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756837075; x=1757441875;
+        d=1e100.net; s=20230601; t=1756837077; x=1757441877;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X/J1GNcMtAJTXoNioUBkgQFYPG0R3g234Hk0goUCKGI=;
-        b=T69r6m5QA3p0jUFlRhQJst9+PqTYD5DOJtIA3EBnM83L3IhwxMfK+Tyffa9/Lp1fxs
-         nEe6+wRV5GnFkDDpE0kOX6u9zgyUJnwPXU+v40r09aKq1+qlY1alLBSgD61DV1GuvQ4D
-         mGC0v3Eg0Fd0vdGKhyRcCAd1lHhd3E4b16gK3XQbGvhR7G9CndbsRaS3h9nR2gPvPNs/
-         GFNlbROwDmCmRmnKhKli+BMxcifn/hrZU0wsRXM1TrkzxIBGZ7I2g0MpcPdQDhVOwk0t
-         ZAeBc/8UaviVrTHRGXNzeWuYCmmLEMbswN/jLAzGf1AUg92wZGdkBYjjFwsgr1StLpFb
-         sEQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHWSbedLTz+AMSUnuap9mZp526gjUbBXIEoCBIhU6s4lRm8gZVfHgOUGQudx2PVyQUx4W+cFMy3GgTV/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD+jnTUrhMU8QBoplFoaXQlnKEd+1DyjGaes+8Tz9/grJch2sz
-	l4cCQppsYr4Szjx6WynCkpIMd+8/lfJcWx6VaIxLB9Cxuw9bW5XKIlbmzmssdAqkjkFaVUN6QTm
-	YlBBwznnXSg==
-X-Google-Smtp-Source: AGHT+IHxdObMrTQ2jlx0SwvK/uuzTbZa58P6MBTifkyUSqcIWeTIEok/hTK+8sVzhlfi1Ugp7eD1dabFwgpf
-X-Received: from pfbih20.prod.google.com ([2002:a05:6a00:8c14:b0:771:f406:9f46])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:b81:b0:772:301a:fbb6
- with SMTP id d2e1a72fcca58-7723e342758mr14698699b3a.19.1756837075293; Tue, 02
- Sep 2025 11:17:55 -0700 (PDT)
-Date: Tue,  2 Sep 2025 11:17:11 -0700
+        bh=6fJ6F2Zo1Rl5YqU+YLRmyxNhHYiro+j86SsEqve7WLE=;
+        b=D/8VhHddWP+4jayRHYGweCqw/ctutri/KeDJC8KTpoKsBqGwBm27R+4IbkFbf5hSk4
+         yHBng8TR+R0oggF4JCB7c5C0hbbBGT3bibwEtKtSTZW615mnc/M/grScqjf9OUVhJI1Y
+         7bRzG3853GWi7EEEgJNnRaQgu3fitRxPPT0QBrbO2XwKY6FR+buJ1jxMjDGR+VmZ0wnK
+         P5lRRMhyoYjtfWAIWbVzWlQkdqtx6psZX5rNntMdZOSBlxqAIVZPKwB4rrFn1Vyg+M1C
+         Vj7PT2PgqQxH4Iupi/Ftbsxk2p131IblW48iUvjNSBTuG8KJyrRIrG748jR0EPNEyOyD
+         1quQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHpFxDjJHZ6Vd2UwcGbAySlFS84r9vnZITRbz/VcyHyDh3tvz+Vw7b6XggVmK11OiZ0pBjJSO2tWgpWuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhPnFA19BN5mlfz6JDXyHCejJP34YaMaEeMF5oRCAoj2kSj0is
+	MLQDjYq86YvEto7E/PBE6eCjV2RwVTx+0D0DQzAxJ6sdTDregnzOp6DE1/XbgJ6W+kaEfD8iLPx
+	+r8e0Y2hAnQ==
+X-Google-Smtp-Source: AGHT+IEdTO+xqdEcvEbC6ccVCFQ9YfFZThHAwhuqZuFa4L5/g5yckG2owGfEDKDo1c1TEd1HPgbX3g81Z3qM
+X-Received: from oabpd23.prod.google.com ([2002:a05:6870:1f17:b0:302:431d:f0cc])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:ad03:b0:30b:a81d:b56
+ with SMTP id 586e51a60fabf-319633c847cmr6153004fac.38.1756837077033; Tue, 02
+ Sep 2025 11:17:57 -0700 (PDT)
+Date: Tue,  2 Sep 2025 11:17:12 -0700
 In-Reply-To: <20250902181713.309797-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250902181713.309797-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
-Message-ID: <20250902181713.309797-2-irogers@google.com>
-Subject: [PATCH v1 1/3] perf bpf-event: Fix use-after-free in synthesis
+Message-ID: <20250902181713.309797-3-irogers@google.com>
+Subject: [PATCH v1 2/3] perf bpf-utils: Constify bpil_array_desc
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -89,137 +89,101 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Yonghong Song <yonghong.song@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 
-Calls to perf_env__insert_bpf_prog_info may fail as a sideband thread
-may already have inserted the bpf_prog_info. Such failures may yield
-info_linear being freed which then causes use-after-free issues with
-the internal bpf_prog_info info struct. Make it so that
-perf_env__insert_bpf_prog_info trigger early non-error paths and fix
-the use-after-free in perf_event__synthesize_one_bpf_prog. Add proper
-return error handling to perf_env__add_bpf_info (that calls
-perf_env__insert_bpf_prog_info) and propagate the return value in its
-callers.
+The array's contents is a compile time constant. Constify to make the
+code more intention revealing and avoid unintended errors.
 
-Closes: https://lore.kernel.org/lkml/CAP-5=fWJQcmUOP7MuCA2ihKnDAHUCOBLkQFEkQES-1ZZTrgf8Q@mail.gmail.com/
-Fixes: 03edb7020bb9 ("perf bpf: Fix two memory leakages when calling perf_env__insert_bpf_prog_info()")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/bpf-event.c | 39 +++++++++++++++++++++++++------------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ tools/perf/util/bpf-utils.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-index 5b6d3e899e11..2298cd396c42 100644
---- a/tools/perf/util/bpf-event.c
-+++ b/tools/perf/util/bpf-event.c
-@@ -657,9 +657,15 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_session *session,
- 		info_node->info_linear = info_linear;
- 		info_node->metadata = NULL;
- 		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
--			free(info_linear);
-+			/*
-+			 * Insert failed, likely because of a duplicate event
-+			 * made by the sideband thread. Ignore synthesizing the
-+			 * metadata.
-+			 */
- 			free(info_node);
-+			goto out;
- 		}
-+		/* info_linear is now owned by info_node and shouldn't be freed below. */
- 		info_linear = NULL;
+diff --git a/tools/perf/util/bpf-utils.c b/tools/perf/util/bpf-utils.c
+index 80b1d2b3729b..64a558344696 100644
+--- a/tools/perf/util/bpf-utils.c
++++ b/tools/perf/util/bpf-utils.c
+@@ -20,7 +20,7 @@ struct bpil_array_desc {
+ 				 */
+ };
  
- 		/*
-@@ -827,18 +833,18 @@ int perf_event__synthesize_bpf_events(struct perf_session *session,
- 	return err;
- }
+-static struct bpil_array_desc bpil_array_desc[] = {
++static const struct bpil_array_desc bpil_array_desc[] = {
+ 	[PERF_BPIL_JITED_INSNS] = {
+ 		offsetof(struct bpf_prog_info, jited_prog_insns),
+ 		offsetof(struct bpf_prog_info, jited_prog_len),
+@@ -129,12 +129,10 @@ get_bpf_prog_info_linear(int fd, __u64 arrays)
  
--static void perf_env__add_bpf_info(struct perf_env *env, u32 id)
-+static int perf_env__add_bpf_info(struct perf_env *env, u32 id)
- {
- 	struct bpf_prog_info_node *info_node;
- 	struct perf_bpil *info_linear;
- 	struct btf *btf = NULL;
- 	u64 arrays;
- 	u32 btf_id;
--	int fd;
-+	int fd, err = 0;
+ 	/* step 2: calculate total size of all arrays */
+ 	for (i = PERF_BPIL_FIRST_ARRAY; i < PERF_BPIL_LAST_ARRAY; ++i) {
++		const struct bpil_array_desc *desc = &bpil_array_desc[i];
+ 		bool include_array = (arrays & (1UL << i)) > 0;
+-		struct bpil_array_desc *desc;
+ 		__u32 count, size;
  
- 	fd = bpf_prog_get_fd_by_id(id);
- 	if (fd < 0)
--		return;
-+		return -EINVAL;
+-		desc = bpil_array_desc + i;
+-
+ 		/* kernel is too old to support this field */
+ 		if (info_len < desc->array_offset + sizeof(__u32) ||
+ 		    info_len < desc->count_offset + sizeof(__u32) ||
+@@ -163,13 +161,12 @@ get_bpf_prog_info_linear(int fd, __u64 arrays)
+ 	ptr = info_linear->data;
  
- 	arrays = 1UL << PERF_BPIL_JITED_KSYMS;
- 	arrays |= 1UL << PERF_BPIL_JITED_FUNC_LENS;
-@@ -852,6 +858,7 @@ static void perf_env__add_bpf_info(struct perf_env *env, u32 id)
- 	info_linear = get_bpf_prog_info_linear(fd, arrays);
- 	if (IS_ERR_OR_NULL(info_linear)) {
- 		pr_debug("%s: failed to get BPF program info. aborting\n", __func__);
-+		err = PTR_ERR(info_linear);
- 		goto out;
- 	}
+ 	for (i = PERF_BPIL_FIRST_ARRAY; i < PERF_BPIL_LAST_ARRAY; ++i) {
+-		struct bpil_array_desc *desc;
++		const struct bpil_array_desc *desc = &bpil_array_desc[i];
+ 		__u32 count, size;
  
-@@ -862,38 +869,46 @@ static void perf_env__add_bpf_info(struct perf_env *env, u32 id)
- 		info_node->info_linear = info_linear;
- 		info_node->metadata = bpf_metadata_create(&info_linear->info);
- 		if (!perf_env__insert_bpf_prog_info(env, info_node)) {
-+			pr_debug("%s: duplicate add bpf info request for id %u\n",
-+				 __func__, btf_id);
- 			free(info_linear);
- 			free(info_node);
-+			goto out;
- 		}
--	} else
-+	} else {
- 		free(info_linear);
-+		err = -ENOMEM;
-+		goto out;
-+	}
+ 		if ((arrays & (1UL << i)) == 0)
+ 			continue;
  
- 	if (btf_id == 0)
- 		goto out;
+-		desc  = bpil_array_desc + i;
+ 		count = bpf_prog_info_read_offset_u32(&info, desc->count_offset);
+ 		size  = bpf_prog_info_read_offset_u32(&info, desc->size_offset);
+ 		bpf_prog_info_set_offset_u32(&info_linear->info,
+@@ -192,13 +189,12 @@ get_bpf_prog_info_linear(int fd, __u64 arrays)
  
- 	btf = btf__load_from_kernel_by_id(btf_id);
--	if (libbpf_get_error(btf)) {
--		pr_debug("%s: failed to get BTF of id %u, aborting\n",
--			 __func__, btf_id);
--		goto out;
-+	if (!btf) {
-+		err = -errno;
-+		pr_debug("%s: failed to get BTF of id %u %d\n", __func__, btf_id, err);
-+	} else {
-+		perf_env__fetch_btf(env, btf_id, btf);
- 	}
--	perf_env__fetch_btf(env, btf_id, btf);
+ 	/* step 6: verify the data */
+ 	for (i = PERF_BPIL_FIRST_ARRAY; i < PERF_BPIL_LAST_ARRAY; ++i) {
+-		struct bpil_array_desc *desc;
++		const struct bpil_array_desc *desc = &bpil_array_desc[i];
+ 		__u32 v1, v2;
  
- out:
- 	btf__free(btf);
- 	close(fd);
-+	return err;
- }
+ 		if ((arrays & (1UL << i)) == 0)
+ 			continue;
  
- static int bpf_event__sb_cb(union perf_event *event, void *data)
- {
- 	struct perf_env *env = data;
-+	int ret = 0;
+-		desc = bpil_array_desc + i;
+ 		v1 = bpf_prog_info_read_offset_u32(&info, desc->count_offset);
+ 		v2 = bpf_prog_info_read_offset_u32(&info_linear->info,
+ 						   desc->count_offset);
+@@ -224,13 +220,12 @@ void bpil_addr_to_offs(struct perf_bpil *info_linear)
+ 	int i;
  
- 	if (event->header.type != PERF_RECORD_BPF_EVENT)
- 		return -1;
+ 	for (i = PERF_BPIL_FIRST_ARRAY; i < PERF_BPIL_LAST_ARRAY; ++i) {
+-		struct bpil_array_desc *desc;
++		const struct bpil_array_desc *desc = &bpil_array_desc[i];
+ 		__u64 addr, offs;
  
- 	switch (event->bpf.type) {
- 	case PERF_BPF_EVENT_PROG_LOAD:
--		perf_env__add_bpf_info(env, event->bpf.id);
-+		ret = perf_env__add_bpf_info(env, event->bpf.id);
+ 		if ((info_linear->arrays & (1UL << i)) == 0)
+ 			continue;
  
- 	case PERF_BPF_EVENT_PROG_UNLOAD:
- 		/*
-@@ -907,7 +922,7 @@ static int bpf_event__sb_cb(union perf_event *event, void *data)
- 		break;
- 	}
+-		desc = bpil_array_desc + i;
+ 		addr = bpf_prog_info_read_offset_u64(&info_linear->info,
+ 						     desc->array_offset);
+ 		offs = addr - ptr_to_u64(info_linear->data);
+@@ -244,13 +239,12 @@ void bpil_offs_to_addr(struct perf_bpil *info_linear)
+ 	int i;
  
--	return 0;
-+	return ret;
- }
+ 	for (i = PERF_BPIL_FIRST_ARRAY; i < PERF_BPIL_LAST_ARRAY; ++i) {
+-		struct bpil_array_desc *desc;
++		const struct bpil_array_desc *desc = &bpil_array_desc[i];
+ 		__u64 addr, offs;
  
- int evlist__add_bpf_sb_event(struct evlist *evlist, struct perf_env *env)
+ 		if ((info_linear->arrays & (1UL << i)) == 0)
+ 			continue;
+ 
+-		desc = bpil_array_desc + i;
+ 		offs = bpf_prog_info_read_offset_u64(&info_linear->info,
+ 						     desc->array_offset);
+ 		addr = offs + ptr_to_u64(info_linear->data);
 -- 
 2.51.0.355.g5224444f11-goog
 
