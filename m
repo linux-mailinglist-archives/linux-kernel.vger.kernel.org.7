@@ -1,183 +1,134 @@
-Return-Path: <linux-kernel+bounces-795518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B62EB3F3CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:39:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B158EB3F3CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1EDF1A855D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75AF9484D22
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162F81DB15F;
-	Tue,  2 Sep 2025 04:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021FC267B89;
+	Tue,  2 Sep 2025 04:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRLXJ27T"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PyayqEme"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C84D22301;
-	Tue,  2 Sep 2025 04:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AA713B284
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 04:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756787955; cv=none; b=cHDXuAv8arUR0hNoKqf1tuZ8ITk6jTb6PdywQKgxlU4F8YkSMddUFhw+Q388pbqAZc5M/e8ZESbTkU0wkP+BtDrJCofQeV4vgHad6OSgAdN1FA4irPwzMi2awLBFss3eHyy5e3R1K5MWRBs9pDsGNLqlYhZWfo/UZSJrkkc2l3c=
+	t=1756788069; cv=none; b=SbnutTMruQqQFb0C+mJpaAezY8UUvkwnMJtNweArgjblKgkNVnnFrXd7salWT7UOJvy1mx3fZQvCdOiFOltJnph6+RPtbgl4OAG9dsoJaaWFFXXs7DFBtqSFDdHdg2dhkujk6RtzjnleQmALKF3O7P8ps9L3wYQREV2CuV8hsaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756787955; c=relaxed/simple;
-	bh=Uj4llZNFTHcTy9cJ7yoCbWpoxt2Zbuk+5mCNaChS8rE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CHMzfRcvwg0C1o0DuTCFO9ZkiAZmr71H346RmDD+MsU3ChDY6SPoJdka0/LGOyCeY1fiLe/yrMZLTekEm20h0ex0mSq+Y8gWY0ZAiBbfZy1pFV2DlZfFiMe8D/8dX9TPiNge50wou0F6NqSRnyJ6Fr6mZ64yeZxcArPOm5g94/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SRLXJ27T; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3276f46c1caso4575805a91.1;
-        Mon, 01 Sep 2025 21:39:13 -0700 (PDT)
+	s=arc-20240116; t=1756788069; c=relaxed/simple;
+	bh=1Jx/L8OpsghmoDgAgZ0IiHINfJhqlupQ4TZ2oteBB3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQfvPmKXBRBu4WUAzJGrkFoGeuKovv64lZxRJ9za4xDV2wfKRpMEtc0CHtQrN9989ceWBbE3NPmrAI4H52No2g709+xDC5gyahaGvOHthOxQcJYLZbKYZfchdwqn0SGRATE6z4UNkqLxYu8ji9TVHMSRgsAuleKfFCoiaNBM98Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PyayqEme; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24936b6f29bso361945ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 21:41:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756787953; x=1757392753; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uj4llZNFTHcTy9cJ7yoCbWpoxt2Zbuk+5mCNaChS8rE=;
-        b=SRLXJ27T7WMv4hcElPsToV02Pdif0EsmCqBDEPLJXbElszyyRZOJbe0TBmCKzQMrbU
-         YFAF9ufLG7Is1Vv5fotn8zES+0oqlATKvR/CUvhIdh71Pp/+Vm1vsyPczUHDQE9wK0J7
-         IWso87h//2Ma/MtFUdp+k/Ek71wMaMzm9z1yd5I5luj9px/O3VUKDX3NtWKwldW3gMXr
-         tfeN69J5wr8OUaHaeIpZOS7mxoQAKYenwNF6yzgJgzB39KVXF9RZLSGKGiqQNqDycSa3
-         t1x91JSFe/oH3SsNwl9A2fKcG30dpAvcbXA7eDphVCALKDlb/EFzvVDy+d7WhTrBKE6/
-         rbrw==
+        d=google.com; s=20230601; t=1756788067; x=1757392867; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OfbU5zwHO8TMKk8H4KZI6ekBVANo4WZXmivOoJvPB3k=;
+        b=PyayqEmedyhHcm7jTImvjn28pDoCwDeqMn3eEZa5lBDokDtSUYQ6BbZfG0qz7SaKtc
+         ULPwH8kLXO1FsbhiMkHIIOMueIMjF/dovh1ekUDPp5IIQrWmmGpKNymsoCBJn5R3jud2
+         8Ef0hH99VUDfME3dblpYg6M8tAv1PjhDKST1n/si+ZdA4g0znbCroipkAuQslIAnyL/4
+         giWPMblCRIXupDdV1Xeju9ogMYWyguCHnZWQCcEzMlgHFTR0Lkl46oJ/uxcFjLWwmrxz
+         qDtCg2E9VuFhAnMzlSMen4JvJPwieffGfVWKb3aZcGIo8paRrF1cT2pFmW1oXWQM1wiF
+         WuCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756787953; x=1757392753;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uj4llZNFTHcTy9cJ7yoCbWpoxt2Zbuk+5mCNaChS8rE=;
-        b=TzXCpfSbu5HcCU2azgSJ0Emp+ay07JTX3DUu1ZuXp9YFVs5+R3znW/2BlQED8JBW29
-         KVG1O6EY4n6E/jE/M/jvvsFSHFcy3HpVi0+Jvr2WYEnC0bPOc0XPkfuOnjIH4D4lLaU5
-         3aKfbVToWcGTUmPua32zxOLHycFn+F4db2HmY7BJ66r2FmTgFDVXzdD0bZNFqX2l7iIF
-         taJBh34BUaoMxLcMz91UQa/49bsjQlCpkZ7f6DFo/ibd6D5AjaTmB359HvJpZWnhAAGr
-         c6Xiv440EClmNoiZnx1Yg5AqDGRs1V3epIEddWabrAJnhvHM/wgjZLFm/POWdd3POIBC
-         6+vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvl5frjZ94yCLuo9OJy0+j48SK+z+gZrG2gKwZUC5oMptmKon9sAspQSbPSGFeQPWceICYgN8Nb42XeDI=@vger.kernel.org, AJvYcCXW3gqXjLF3kNxb7RUCDpSMQ23p71wYRPz/AcB4B+IGdespWZruybfaj9VbcmlRmB1pAzh2OCWBvt9JEj3RkZtvXa/tog==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN4l82yuLNeX9V3kS7KNO06QQqo8KMT9w+0xupdSf4u4GLc8+4
-	J4WuezKgcqCF68ERZv1dsDeJic+dahXkG1Oh7M9wlgMKIZSSIepMe+P0
-X-Gm-Gg: ASbGncthNQ0l4MGIGN4esTAW45frRpLKQFeUuiGV31E0w2Wn7oalhiarns2ihpZ/STv
-	dWAaeDrFPnyPAfAh2gxl3iaxc5lG09kToHYR2FzFyuZcqA/FHXrIQYplBeCRrtkSO7rrutslRcc
-	Vh6NgQRcVjEvg4s17L0RxC644kpZLyyC1D+TwpNOZ+GHeMXzZ5RSvMUX4zZF4c4J02Cr7MomX3y
-	D/C8HUSiqwAc9rlkfpnaJproYPdk2rO4Ex4yxoaAFteWqLWkCgT+vMkNkR2+G5jyW7jsuPwlOZq
-	4jSXj4T/2zXCyEsn4ZwnVkq+ckRKlhtA5DTct94j1SyI9O9Gd4xVg1X0vvRKUIfCvIQ9UBzsH2x
-	R0nHfeRTkjFXedPzvSo3tI1hxo/R+58lQ/J8r
-X-Google-Smtp-Source: AGHT+IEGNoaMYGpe1zjMENuHS4YoZHiS3pXmXy0cqbrMPjfcUXWgRA5FxJgRVChd2o+0OneLfEKUjQ==
-X-Received: by 2002:a17:90b:1a8e:b0:327:53f0:6368 with SMTP id 98e67ed59e1d1-32815412b74mr13049298a91.2.1756787953247;
-        Mon, 01 Sep 2025 21:39:13 -0700 (PDT)
-Received: from cacher.localnet ([111.94.119.234])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329e6d6d4b2sm286573a91.0.2025.09.01.21.39.10
+        d=1e100.net; s=20230601; t=1756788067; x=1757392867;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OfbU5zwHO8TMKk8H4KZI6ekBVANo4WZXmivOoJvPB3k=;
+        b=jFSxxZoQJm0EQjOkw2dKm010gsVOtYaP6bMNrMMbY0S2Ew4rTmWyOcRdumkB8ZWzMh
+         UA6j/MRwjVGevStXRq0j53itMEEhUGVvaZuepKCUnoWIJz66it7iX/umKMmsQ7gcyOoR
+         6kwHN7ujQJChxFT39O3aLdBXPn+ttRdSzaEhM80MIOFTHvQo2EkdZ+RlgnTJfBBr4Ozx
+         X28wn2ZXSXw5oAYi/iebogR4iUxELKLPBx5rPu6BJsghN7JczUFTXY7f13f/g6f4K2O7
+         jWfDjXpb9Wu50i1UmYC8JUo7t74D+ilpZ5XoB+17ehmhCD61Q+vHZ3k2DKq9mC/wFaWJ
+         rzXQ==
+X-Gm-Message-State: AOJu0YwQSdHqGq/b6my6IrmdFgHeJkonBeW0JmD2GUtV+TruxaNyWLek
+	J1BP66hZe11CP7fYwGFyUcXWsbicweuz4g+Dgt04NnetGu5OnKu9YcAjxrJ7XRPnJw==
+X-Gm-Gg: ASbGncuS6PTfug00pIZaN6iUSTkMEOKaSkXgX1YrtrShTT815gLGODq5uJ0r4MmTnYj
+	AJ10oMGwPN+zjZwv5qQLbMdAFe8f8LXIOl8vQA9wm3IW7fWJ+aT3ud7sPGxfGFhlPkVMCfx0ye1
+	qGxzSZKAWslFuaeLU8vbKOdyL7K1ZGI4mwjX5/MjAlxdDUih1Qcexh0JPL4PjA0jLmnDB+EA3g8
+	wblMnB/kWOqOH5JiasNECy2o0A0igsCAKr2T4kUxCKIG9RizJqgagNgvCMp5VanD8WOtq9Mh8te
+	oxPLJ6qVZ2H7ePIR3Uac29ZE7yk3Ls6Ri0Q5eawuNm+pG03paB33BwFjUTXKjsX5IU11Yuq9VFB
+	nzKaAApvfDbDEbyK/JYO1Zx/KyzIvS3KjMXaLnui0XOI0Z9k7TPZiZnJhJtYrhjBsGxGyw5TWZC
+	jKUdmCJqRg
+X-Google-Smtp-Source: AGHT+IEEfndQLlDi9IB5a/JDWcrq7ZqI98suhIFYMQANbBZ0bPkpVvj3T0Lf3RlFfnHy6G7ysA+YlA==
+X-Received: by 2002:a17:902:ced2:b0:231:f6bc:5c84 with SMTP id d9443c01a7336-2493e9224f5mr8091025ad.8.1756788066869;
+        Mon, 01 Sep 2025 21:41:06 -0700 (PDT)
+Received: from google.com (23.178.142.34.bc.googleusercontent.com. [34.142.178.23])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b12faf558sm8663235ad.69.2025.09.01.21.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 21:39:12 -0700 (PDT)
-From: Fa-Iz Faadhillah Ibrahim <faiz.faadhillah@gmail.com>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: basak.sb2006@gmail.com, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, jlee@suse.com, kuurtb@gmail.com,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- rayanmargham4@gmail.com
-Subject:
- Re: [RFC PATCH v2 0/3] platform/x86: acer-wmi: Add fan control support
-Date: Tue, 02 Sep 2025 11:39:09 +0700
-Message-ID: <5007139.GXAFRqVoOG@cacher>
-In-Reply-To: <5b7f6b40-8d4f-470e-ae84-b51d4177af39@gmx.de>
-References:
- <f5d8b82d-c711-4611-b257-b4297f172bb1@gmx.de>
- <1bb3edd6-405f-4615-831f-301dba525bc3@gmail.com>
- <5b7f6b40-8d4f-470e-ae84-b51d4177af39@gmx.de>
+        Mon, 01 Sep 2025 21:41:06 -0700 (PDT)
+Date: Tue, 2 Sep 2025 04:41:00 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Eric Auger <eric.auger@redhat.com>, clg@redhat.com,
+	Mostafa Saleh <smostafa@google.com>
+Subject: Re: [PATCH] MAINTAINERS: Add myself as VFIO-platform reviewer
+Message-ID: <aLZ1XFbMngov-UBd@google.com>
+References: <20250901191619.183116-1-praan@google.com>
+ <20250901144043.122f70bb.alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901144043.122f70bb.alex.williamson@redhat.com>
 
-On Monday, September 1, 2025 2:33:53=E2=80=AFAM Western Indonesia Time Armi=
-n Wolf=20
-wrote:
-> Am 23.08.25 um 03:27 schrieb Fa-Iz Faadhillah Ibrahim:
-> > On 8/22/25 7:02 PM, Armin Wolf wrote:
-> >> Am 15.08.25 um 08:17 schrieb Fa-Iz Faadhillah Ibrahim:
-> >>>> > This experimental patch series aims to add fan control support to
-> >>>>=20
-> >>>> the > acer-wmi driver. The patches are compile-tested only and need
-> >>>> to be > tested on real hardware to verify that they actually work.
-> >>>>=20
-> >>>> > > I CCed two users who requested support for this feature. I
-> >>>>=20
-> >>>> would be > very happy if both of you could test those patches and
-> >>>> report back. > > I am ready to help you both with compiling a
-> >>>> custom linux kernel for > testing this series.
-> >>>> Any updates from the two people with Acer hardware?
-> >>>>=20
-> >>>> Thanks,
-> >>>> Armin Wolf
-> >>>=20
-> >>> Hello, I've tried your patch on my Predator Helios Neo 16 (PHN16-72)
-> >>> using quirks from PH16-72 and it looks like fan control works just
-> >>> fine.
-> >>> On other note, can you please add PHN16-72 to the quirk table?
-> >>> if you need anything to test please do notify.
-> >>>=20
-> >>> Thanks,
-> >>> Fa-Iz Faadhillah Ibrahim
-> >>=20
-> >> Hi,
-> >>=20
-> >> sorry for taking a bit long to respond, i am currently on vacation.
-> >> Nice to know that the experimental patches work :).
-> >> Can you send me the output of "acpidump" on your machine?
-> >=20
-> > Hello,
-> >=20
-> > Sorry for disturbing your vacation, hope you're having a great time :).
-> > Output of "acpidump" attached below.
-> >=20
-> > P.S. Sorry for the messed up formatting before, first time here so I'm
-> > still learning how this works, hopefully it'll be okay now.
-> >=20
-> > Thanks,
-> > Fa-Iz Faadhillah Ibrahim
->=20
-> Thanks.
->=20
-> Would it be OK for you if i send the non-RFC patches once i am back home
-> (around 15.09.)? The reason for this is that i made some improvements to
-> the RFC patches, but those improved patches are only stored on my develop
-> machine at home.
-Of course, I'll try it once you send the patches.
-I'm wondering, where should I send a feature request and a bug report? it=20
-would be nice to have the battery limit function upstreamed, and I discover=
-ed=20
-some bugs here and there as well.=20
+On Mon, Sep 01, 2025 at 02:40:43PM -0600, Alex Williamson wrote:
+> On Mon,  1 Sep 2025 19:16:19 +0000
+> Pranjal Shrivastava <praan@google.com> wrote:
+> 
+> > While my work at Google Cloud focuses on various areas of the kernel,
+> > my background in IOMMU and the VFIO subsystem motivates me to help with
+> > the maintenance effort for vfio-platform (based on the discussion [1])
+> > and ensure its continued health.
+> > 
+> > Link: https://lore.kernel.org/all/aKxpyyKvYcd84Ayi@google.com/ [1]
+> > Signed-off-by: Pranjal Shrivastava <praan@google.com>
+> > ---
+> >  MAINTAINERS | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 840da132c835..eebda43caffa 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -26464,6 +26464,7 @@ F:	drivers/vfio/pci/pds/
+> >  VFIO PLATFORM DRIVER
+> >  M:	Eric Auger <eric.auger@redhat.com>
+> >  R:	Mostafa Saleh <smostafa@google.com>
+> > +R:	Pranjal Shrivastava <praan@google.com>
+> >  L:	kvm@vger.kernel.org
+> >  S:	Maintained
+> >  F:	drivers/vfio/platform/
+> 
+> This would be all the more convincing if either of the proposed new
+> reviewers were to actually review the outstanding series[1] touching
+> drivers/vfio/platform/.  Thanks,
+> 
+
+I was catching up after being away and just got to this.
+I've reviewed the series [1].
 
 Thanks,
-=46a-Iz Faadhillah Ibrahim
->=20
-> Thanks,
-> Armin Wolf
->=20
-> >> Thanks,
-> >> Armin Wolf
-> >>=20
-> >>>> > Changes since v2: > - remove duplicate include and replace
-> >>>>=20
-> >>>> hwmon_pwm_mode with > hwmon_pwm_enable in second patch > > Armin
-> >>>> Wolf (3): > platform/x86: acer-wmi: Fix setting of fan behavior >
-> >>>> platform/x86: acer-wmi: Add fan control support > platform/x86:
-> >>>> acer-wmi: Enable fan control for PH16-72 and PT14-51 > >
-> >>>> drivers/platform/x86/acer-wmi.c | 298
-> >>>> +++++++++++++++++++++++++++++--- > 1 file changed, 273
-> >>>> insertions(+), 25 deletions(-) > > -- > 2.39.5 > >
-> >>>> --------------------------------------------------------------------=
-=2D--
-> >>>> -
+Praan
 
-
-
-
+[1] https://lore.kernel.org/all/aLYYvURhjGmJ__Fx@google.com/
 
