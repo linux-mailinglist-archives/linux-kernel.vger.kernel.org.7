@@ -1,236 +1,123 @@
-Return-Path: <linux-kernel+bounces-796741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95421B4068E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:22:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8937FB4069F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3418188B6CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:22:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DA7C547B34
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D68307ACE;
-	Tue,  2 Sep 2025 14:21:45 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E772DF15B;
+	Tue,  2 Sep 2025 14:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UgbO1pKT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F9F307AD7;
-	Tue,  2 Sep 2025 14:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EBD307ADD;
+	Tue,  2 Sep 2025 14:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756822904; cv=none; b=qTY1sJe3QlPV4V3+WVh0Izuf/7v6dSM3PU9Noysh79RKFLuPOwTlCHHbQxGp56hEPNUAF1XVxnQ7h1e6mINzoQE+AS0O8JebFQlHR8cI9U7eTkupz/WbpqCJhtExWvzi4oVm77z8knS1S+dknqt6hcfJdiJhu/jNBx7nS2EdA8o=
+	t=1756822945; cv=none; b=htuJMUMT96o9tZgyizBEeDQtpXB/HXaUzaN4A8U4cVyJaBd7QHGgzFzJHjY1bSSdSImKARLv5WUNlRscNTsI7pTpwveOkRkl2PrqqQPjJqPi2B3gUZFFlPIbwOhu/EcWrcZhY+MK7jL3b6iO/jG9I8mKepY/U82Osf5HDax+YqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756822904; c=relaxed/simple;
-	bh=DkTnSQvy/EE4OQO+08Hs50mxKf3HXYnhPH7uddPQ+yw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BLVXurKoiEoYtbURecsDI0IYKSIU2Jpf0JWzdFYR8V/pczfVm7YyoxY9iE6HKXwoeZlvhC2RLEI1n7qaCOLdvX/rliLUW8ziX2p45ZoHvKKDesEpQNLtow4bW5S9QbDba2ClYAqbEYoqpcZvFhbcoffW8A2dIZd73WJdHT6jlkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cGSXG4mHxz1R8yL;
-	Tue,  2 Sep 2025 22:18:38 +0800 (CST)
-Received: from kwepemj200013.china.huawei.com (unknown [7.202.194.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id AB60814011B;
-	Tue,  2 Sep 2025 22:21:37 +0800 (CST)
-Received: from [10.174.179.155] (10.174.179.155) by
- kwepemj200013.china.huawei.com (7.202.194.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 2 Sep 2025 22:21:36 +0800
-Message-ID: <c5869e23-5294-4757-a757-868748b3bc65@huawei.com>
-Date: Tue, 2 Sep 2025 22:21:36 +0800
+	s=arc-20240116; t=1756822945; c=relaxed/simple;
+	bh=7vPtWCYBihfuIcyr+VnOlDRJLOdaMo4FCXxk1kuZ4pM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyj7jHOzG17GN7VjvQQezNbLRq9/u2K3O0VLz7JVaEXz/sYPgdb4U3hxwSjx/Liv2bvT2k1d+tdqPVWt5xlsr177A0/rrNfmO/L+UNFqscSpVvMzU6o/0MGGHVz3jQp4kRpsEaKvpq7yQNoQIinuWl4aju0SQjxKcS32Aa90i7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UgbO1pKT; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756822943; x=1788358943;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7vPtWCYBihfuIcyr+VnOlDRJLOdaMo4FCXxk1kuZ4pM=;
+  b=UgbO1pKTQD4GCqUoukIhUxxmqeXICC10dH1InbCZ3GUj9suj5uwTl+EJ
+   sq6RV+dwVDwpJ2emvXnutCacqhDEa5PbLK0K+10mZx9dHiZyBB4JOxeIA
+   vcRfwf59MNHwxndM34mq7x+vEyh6xq/NPpIIJRS3qQ0aOh6SMbVohF+6Q
+   VlTboM+JgC4iQc/b9wOO0OyG3WCjURneAu2Ue7l15MaC/tN4bqOdxkr5x
+   Z6ef744osK49h1N5zcT17wQqCgc9qHvFE2UPdILP364S0TIchvf1u6Tzi
+   fl8slSqEt/3XAMEg8pd6x5Fp7PIMYCsb53879eOMiA7PORuzQClKtq3Mt
+   w==;
+X-CSE-ConnectionGUID: PaOCY/qLQxaUN40FNM59wQ==
+X-CSE-MsgGUID: wCl2dNWPSSuBKn/zSlvD7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="59210785"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="59210785"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 07:22:18 -0700
+X-CSE-ConnectionGUID: IJM4YOD1QaCKr9bXeVH8qw==
+X-CSE-MsgGUID: Ik+RFGegSs6RrXqQtW+0aA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="171668838"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 07:22:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utRtl-0000000AiMd-09Mg;
+	Tue, 02 Sep 2025 17:22:13 +0300
+Date: Tue, 2 Sep 2025 17:22:12 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: dimitri.fedrau@liebherr.com,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chris Lesiak <chris.lesiak@licorbio.com>
+Subject: Re: [PATCH v2 2/2] iio: humditiy: hdc3020: fix units for thresholds
+ and hysteresis
+Message-ID: <aLb9lDzilIvkF-oZ@smile.fi.intel.com>
+References: <20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com>
+ <20250901-hdc3020-units-fix-v2-2-082038a15917@liebherr.com>
+ <aLbneKXFd7Nc711T@smile.fi.intel.com>
+ <20250902135404.GA145952@legfed1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
-Subject: Re: [PATCH] nfsd: remove long-standing revoked delegations by force
-To: Jeff Layton <jlayton@kernel.org>, <chuck.lever@oracle.com>,
-	<neil@brown.name>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
-	<zhangjian496@huawei.com>
-References: <20250902022237.1488709-1-lilingfeng3@huawei.com>
- <a103653bc0dd231b897ffcd074c1f15151562502.camel@kernel.org>
- <1ece2978-239c-4939-bb16-0c7c64614c66@huawei.com>
- <d12ffd7c35e84b2d09bd91644bee8d88ce08cd2d.camel@kernel.org>
-From: Li Lingfeng <lilingfeng3@huawei.com>
-In-Reply-To: <d12ffd7c35e84b2d09bd91644bee8d88ce08cd2d.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemj200013.china.huawei.com (7.202.194.25)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902135404.GA145952@legfed1>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Tue, Sep 02, 2025 at 03:54:04PM +0200, Dimitri Fedrau wrote:
+> Am Tue, Sep 02, 2025 at 03:47:52PM +0300 schrieb Andy Shevchenko:
+> > On Mon, Sep 01, 2025 at 07:51:59PM +0200, Dimitri Fedrau via B4 Relay wrote:
+
+...
+
+> The explicit formula in the datasheet:
+> 
+> T(degree celsius) = -45 + (175 * temp) / 65535
+> 
+> The formula before the patch:
+> 
+> T(degree celsius) * 65525 = -2949075 + (175 * temp)
+
+Then embed it into the comment.
+
+> Adding the PRE_SCALE into the formula doesn't improve readability from
+> my perspective. I would prefer to just scale the result as it has been
+> done before.
+
+Up to you, it was just an idea. But in any case that 5 should be explicit (and
+not hidden in the precalculated values).
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-在 2025/9/2 21:40, Jeff Layton 写道:
-> On Tue, 2025-09-02 at 20:10 +0800, Li Lingfeng wrote:
->> Hi,
->>
->> 在 2025/9/2 18:21, Jeff Layton 写道:
->>> On Tue, 2025-09-02 at 10:22 +0800, Li Lingfeng wrote:
->>>> When file access conflicts occur between clients, the server recalls
->>>> delegations. If the client holding delegation fails to return it after
->>>> a recall, nfs4_laundromat adds the delegation to cl_revoked list.
->>>> This causes subsequent SEQUENCE operations to set the
->>>> SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
->>>> validate all delegations and return the revoked one.
->>>>
->>>> However, if the client fails to return the delegation due to a timeout
->>>> after receiving the recall or a server bug, the delegation remains in the
->>>> server's cl_revoked list. The client marks it revoked and won't find it
->>>> upon detecting SEQ4_STATUS_RECALLABLE_STATE_REVOKED. This leads to a loop:
->>>> the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED, and the
->>>> client repeatedly tests all delegations, severely impacting performance
->>>> when numerous delegations exist.
->>>>
->>> It is a performance impact, but I don't get the "loop" here. Are you
->>> saying that this problem compounds itself? That testing all delegations
->>> causes others to be revoked?
->> The delegation will be removed from server->delegations in client after
->> NFSPROC4_CLNT_DELEGRETURN is performed.
->> nfs4_delegreturn_done
->>    nfs_delegation_mark_returned
->>     nfs_detach_delegation
->>      nfs_detach_delegation_locked
->>       list_del_rcu // remove delegation from server->delegations
->>
->>   From the client's perspective, the delegation has been returned, but on
->> the server side, it is left in the cl_revoked list.[1].
->>
->> Subsequently, every sequence from the client will be flagged with
->> SEQ4_STATUS_RECALLABLE_STATE_REVOKED as long as cl_revoked remains
->> non-empty.
->> nfsd4_sequence
->>    seq->status_flags |= SEQ4_STATUS_RECALLABLE_STATE_REVOKED
->>
->> When the client detects SEQ4_STATUS_RECALLABLE_STATE_REVOKED while
->> processing a sequence result, it sets NFS_DELEGATION_TEST_EXPIRED for all
->> delegations and wakes up the state manager for handling.
->> nfs41_sequence_done
->>    nfs41_sequence_process
->>     nfs41_handle_sequence_flag_errors
->>      nfs41_handle_recallable_state_revoked
->>       nfs_test_expired_all_delegations
->>        nfs_mark_test_expired_all_delegations
->>         nfs_delegation_mark_test_expired_server
->>          // set NFS_DELEGATION_TEST_EXPIRED for delegations in
->> server->delegations
->>        nfs4_schedule_state_manager
->>
->> The state manager tests all delegations except the one that was returned,
->> as it is no longer in server->delegations.
->> nfs4_state_manager
->>    nfs4_begin_drain_session
->>    nfs_reap_expired_delegations
->>     nfs_server_reap_expired_delegations
->>      // test delegations in server->delegations
->>
->> There may be a loop:
->> 1) send a sequence(client)
->> 2) return SEQ4_STATUS_RECALLABLE_STATE_REVOKED(server)
->> 3) set NFS_DELEGATION_TEST_EXPIRED for all delegations(client)
->> 4) test all delegations by state manager(client)
->> 5) send another sequence(client)
->>
->> The state manager's traversal of delegations occurs between
->> nfs4_begin_drain_session and nfs4_end_drain_session. Non-privileged requests
->> will be blocked because the NFS4_SLOT_TBL_DRAINING flag is set. If there are
->> many delegations to traverse, this blocking time can be relatively long.
->>>> Since abnormal delegations are removed from flc_lease via nfs4_laundromat
->>>> --> revoke_delegation --> destroy_unhashed_deleg -->
->>>> nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new open
->>>> requests indefinitely, retaining such a delegation on the server is
->>>> unnecessary.
->>>>
->>>> Reported-by: Zhang Jian <zhangjian496@huawei.com>
->>>> Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STATE_REVOKED")
->>>> Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com/
->>>> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
->>>> ---
->>>>    fs/nfsd/nfs4state.c | 11 +++++++++++
->>>>    1 file changed, 11 insertions(+)
->>>>
->>>> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
->>>> index 88c347957da5..aa65a685dbb9 100644
->>>> --- a/fs/nfsd/nfs4state.c
->>>> +++ b/fs/nfsd/nfs4state.c
->>>> @@ -4326,6 +4326,8 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
->>>>    	int buflen;
->>>>    	struct net *net = SVC_NET(rqstp);
->>>>    	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
->>>> +	struct list_head *pos, *next;
->>>> +	struct nfs4_delegation *dp;
->>>>    
->>>>    	if (resp->opcnt != 1)
->>>>    		return nfserr_sequence_pos;
->>>> @@ -4470,6 +4472,15 @@ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
->>>>    	default:
->>>>    		seq->status_flags = 0;
->>>>    	}
->>>> +	if (!list_empty(&clp->cl_revoked)) {
->>>> +		list_for_each_safe(pos, next, &clp->cl_revoked) {
->>>> +			dp = list_entry(pos, struct nfs4_delegation, dl_recall_lru);
->>>> +			if (dp->dl_time < (ktime_get_boottime_seconds() - 2 * nn->nfsd4_lease)) {
->>>> +				list_del_init(&dp->dl_recall_lru);
->>>> +				nfs4_put_stid(&dp->dl_stid);
->>>> +			}
->>>> +		}
-> FYI: this list is protected by the clp->cl_lock. You need to hold it to
-> do this list walk.
->
->>>> +	}
->>>>    	if (!list_empty(&clp->cl_revoked))
->>>>    		seq->status_flags |= SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
->>>>    	if (atomic_read(&clp->cl_admin_revoked))
->>> This seems like a violation of the spec. AIUI, the server is required
->>> to hang onto a record of the delegation until the client does the
->>> TEST_STATEID/FREE_STATEID dance to remove it. Just discarding them like
->>> this seems wrong.
->> Our expected outcome was that the client would release the abnormal
->> delegation via TEST_STATEID/FREE_STATEID upon detecting its invalidity.
->> However, this problematic delegation is no longer present in the
->> client's server->delegations list—whether due to client-side timeouts or
->> the server-side bug [1].
->>> Should we instead just administratively evict the client since it's
->>> clearly not behaving right in this case?
->> Thanks for the suggestion. While administratively evicting the client would
->> certainly resolve the immediate delegation issue, I'm concerned that
->> approach
->> might be a bit heavy-handed.
->> The problematic behavior seems isolated to a single delegation. Meanwhile,
->> the client itself likely has numerous other open files and active state on
->> the server. Forcing a complete client reconnect would tear down all that
->> state, which could cause significant application disruption and be perceived
->> as a service outage from the client's perspective.
->>
->> [1]
->> https://lore.kernel.org/all/de669327-c93a-49e5-a53b-bda9e67d34a2@huawei.com/
->>
->> Thanks,
->> Lingfeng
-> Ok, I get the problem, but I still disagree with the solution. I don't
-> think we can just time these things out. Ideally we'd close the race
-> window, but the sc_status field is protected by the global state_lock
-> and I don't think we want to take it in revoke_delegation.
->
-> The best solution I can see is to have destroy_delegation()
-> unconditionally set SC_STATUS_CLOSED, and then you can do the list walk
-> above, but checking for that flag instead of testing for a timeout.
-This might potentially affect the normal TEST_STATEID/FREE_STATEID flow,
-as nfsd4_free_stateid() branches differently based on whether
-SC_STATUS_CLOSED is set. Alternatively, I was wondering if you could
-suggest a workaround to avoid this issue?
-
-Thanks,
-Lingfeng
-
->
-> I'm still not thrilled with this solution though. It makes SEQUENCE a
-> bit more heavyweight than I'd like. I'm starting to think that we need
-> to rework the overall delegation locking, but that's an ugly problem to
-> tackle.
 
