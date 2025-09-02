@@ -1,151 +1,230 @@
-Return-Path: <linux-kernel+bounces-796813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9483DB40773
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134EEB40778
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0093B413C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117B21A82B92
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFA531CA61;
-	Tue,  2 Sep 2025 14:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AC0322775;
+	Tue,  2 Sep 2025 14:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GpjeFl/v"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GG4F4Zrv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AED3126B8
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9414131E0FD;
+	Tue,  2 Sep 2025 14:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756824238; cv=none; b=qJMj72FPDD90/mWM5RHopY+j8B+M3xFyDncfD5y/8sSCXJ2paoU98QPxp7ZrWUQ3xQO+/8AxO7ROYp7aOYpn3Y+FjW1eSrmWGhZwFT+QhcFW60L01JQuRgec7pAlUNgZWxdMmfL+UKOxOj/6qQqVDPtnBWUBCziVnPCIlRD+L/s=
+	t=1756824240; cv=none; b=gkFdQYR2XP1kaLWjvHDAIzXr9YRCFh4Mf9hA56iIiTtZq8jsxSj0Wf9IwEFusaZz/PaXSaWMCIV0zZkphAC7LxCHpN2Vdlxe9FKEUvVZIAzTpGcDxoNx4WYwLwtEMpMa/pblxcf7zsf5LqarpW2XyKQh+qkq4HUUYxPWqrbmXlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756824238; c=relaxed/simple;
-	bh=HcQchtRslDyRXYgw4RtewbOf6/LJsYueNE8Laf4FCKc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M/EmFLPtmQ5RMtkXS0UR/BdjIjDehucpUpbjCAmDdLSK9tOMuMUlo7myJOmoZFW1vF0NpNQm+EAQ0dp4KWejnIi3Ar3veUNhsUaS9SLPuv7ej3X9TflbuSQ5ItLhQp41uUZfRPup9XWWr88qoWsYU+rJpiUyzR1Ii7caOwa2ijM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GpjeFl/v; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45b8b7ac427so14387255e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756824234; x=1757429034; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IH9KVtMgBsrkYXH8nnFecmz5YKaJj3+GxgiEXc+y1YA=;
-        b=GpjeFl/vTUDELKh06rwoJmtkj2VnNfzEjcmCd6InQq3Hqvln1JQi6z9wRyiuMW1Dde
-         YGKIWQfIp2iFQGlJA5a0XYCETTEIJ91ADzRyvnU38M5/VZ2SbhuUwYld3vWPLbszLHZY
-         CRqLYkNkFKDE1lsdudak9xlU86jgXMawusFBmqrTqjZaRmwRzbiSGSVVNZbRHJ/G1tUB
-         Bhgi/ulvjEJE2wPwuxqNJvjBels2vulXESSNBGr3TA5LFTXui4YZPv7HIkh8c0IOqGxF
-         ghvlpii2+GB+A2VNjnzLJmM+MIt+9vq40BLJcr2HprOjxIKY6SXNks2YciZPpdXWFrto
-         KWzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756824234; x=1757429034;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IH9KVtMgBsrkYXH8nnFecmz5YKaJj3+GxgiEXc+y1YA=;
-        b=fsq6GI5ux3ynYQ5dHHw8g6NJWJIl8ITeOuwtDzY5RMWOkjsnvmkxxyhzrG+irJPvE9
-         nHDrQAtFka12VxV5nZ7XPsutsjSVIe8S6HNGgZqHhaLdOzn3IXMNyUX+emnVFn9Mu+sO
-         3LE7cr6KA7NxvyIFiuAdY28ECgq4r4D56zkJEeq80x2WNwzjU5+I3RwYmR3jUUV28xSi
-         WldGlQ0Dc8OEr4N4r2RTV2vnxI72ICwiHjw0mgOWkZSTaCTTZj7m8Rc0PE5TjiDswRRR
-         uSc+jaYzFPuEMQ1VgbyJk4oSRZp/ZWGWb1FI8/cBJhm91keeZ1FRrRHyb7XSZcnXzNnY
-         yjXQ==
-X-Gm-Message-State: AOJu0Yzbqv7SHcXL+0CaLn/Q1oKHFwljzgXYyZKLIb8kN1kF8MjLR6jJ
-	eyiraEpomngPRzYZFRx9GDhBu76EQOuuqI8nHxzI4ISYb6yZ6mPzD21cQsxFxcXLPNn13w1Uv69
-	QYoSs+iE=
-X-Gm-Gg: ASbGncvQpkv9oyQiu89ycdFkGdEubeK4nxARJ0Q8eJ1XlgXfzwqdp7N36KRQrzTe0D4
-	Tj9p0lTzQvyDjJS6Ju02tywikol8sSNM/lA/r0o2163/MDD24yLbJaEBjAiztKluI4FcckN0pzN
-	+Wt71kK7CoEuz9AJEmUDHTebZ1ZCDEzH+4Jpm/JUmC1FHF0u7R6847y4gckWOtjSEZvXj5/bM4R
-	tF8CmiEURmhZ7GieHk1oVCMf0DbwyHFrlYIMkN7/L1mnuQIt9nvXggstRpmxpJz8HeOQawV0Nk0
-	9dF/ZIC7bCzra7gipNqxFJA02n8GbYu7zuc7YSny2hPNvTaDTjBdIaxxOpb1FGzG7H+AojynUjn
-	hGJmMHYmp4+4CE8l4nCTFqCN+HAxLpVqGdoon
-X-Google-Smtp-Source: AGHT+IGpupBT6EHFzOMLYCsL7LBAOUDN4k39dYPwyyUTNOojUsQ7qqzMe2eWw9e30BaKnja3qYWcIA==
-X-Received: by 2002:a05:600c:1c96:b0:459:e466:1bec with SMTP id 5b1f17b1804b1-45b979f4207mr21840595e9.2.1756824234329;
-        Tue, 02 Sep 2025 07:43:54 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:e0a:e50:3860:5982:3242:38ad:8b12])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e8ab093sm209604635e9.22.2025.09.02.07.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 07:43:53 -0700 (PDT)
-From: Guillaume La Roque <glaroque@baylibre.com>
-Date: Tue, 02 Sep 2025 16:43:50 +0200
-Subject: [PATCH RESEND v2 2/2] soc: ti: ti_sci_inta_msi: Enable module
- compilation support
+	s=arc-20240116; t=1756824240; c=relaxed/simple;
+	bh=TvLmx2t15DCYplk5aWh9TQgIG8CqvqbsaQU4DvFndfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ol8YmDTJJwk4TgfeXQF9WmkeCxtHaaoi7HRzWMhn/ly7HOqxutfdnRXUurtMXSi2cJIEHQsk7j3LdUAda7FrQtza1C+7oUg0ghKyIwhUYdCOxRW9Ue6meRgB4yS5qnMHBA56V0cSOACO366MVNc+YbDDtVnwjmdha4Hn1PkmbII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GG4F4Zrv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE6FC4CEF5;
+	Tue,  2 Sep 2025 14:43:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756824240;
+	bh=TvLmx2t15DCYplk5aWh9TQgIG8CqvqbsaQU4DvFndfw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GG4F4ZrvjgPWwH6BLpgtnVdKDAqbl7kDKWLTVwpGTe230qpgrspewf0Gf+Vw0048p
+	 Wj2BwLZRP4N7DZE3BmzFeUo61XquTiwr8Js5rdVb3KFCsxL//8RfkAc0CtfbNrFfgr
+	 OrxQZXZrcqHD/oyloG3SYjRF/bDdNkrRmIJUnkVaIb6PV+htv8XOK+bCITNw0XXrIJ
+	 VkAbfzT0tUK18d30I4aN2FHfEzYfOPLEcF8yvUGgzvOMWIW46fjuPvmte6EAqF/r80
+	 mVrPv0rGG1sOMbQ0LwdZLxMK2KluhLIz3xhvK2Cmh0h4P6WMSs/m1ijFmCyL9oanqt
+	 MWcinHnDbCTXA==
+Date: Tue, 2 Sep 2025 09:43:57 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, kernel@oss.qualcomm.com, 
+	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v8 1/9] arm64: dts: qcom: qcs6490-audioreach: Add gpr node
+Message-ID: <4yo7v7whxffebzhoxkbpm226vsj2twc56xuf7etwwcyfrf2lzh@x2udmlhvdiwu>
+References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
+ <20250821044914.710044-2-quic_pkumpatl@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-timsi-v2-2-a5bf0f32905b@baylibre.com>
-References: <20250902-timsi-v2-0-a5bf0f32905b@baylibre.com>
-In-Reply-To: <20250902-timsi-v2-0-a5bf0f32905b@baylibre.com>
-To: Thomas Gleixner <tglx@linutronix.de>, vigneshr@ti.com, 
- Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, 
- Tero Kristo <kristo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Guillaume La Roque <glaroque@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821044914.710044-2-quic_pkumpatl@quicinc.com>
 
-Add module support to the TI SCI INTA MSI driver:
-- Change Kconfig from bool to tristate to allow module compilation
-- Add linux/module.h include for module functionality
-- Add MODULE_LICENSE, MODULE_DESCRIPTION, and MODULE_AUTHOR macros
+On Thu, Aug 21, 2025 at 10:19:06AM +0530, Prasad Kumpatla wrote:
+> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
 
-This allows the driver to be compiled as a loadable kernel module
-named ti_sci_inta_msi.
+Subject says "add gpr node", that sounds insignificant, but the patch
+actually introduces the structure for how to model audioreach - and will
+set a precedence that others will follow.
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
- drivers/soc/ti/Kconfig           | 5 ++++-
- drivers/soc/ti/ti_sci_inta_msi.c | 5 +++++
- 2 files changed, 9 insertions(+), 1 deletion(-)
+It must be clear from the commit message why this is a separate file, so
+that others will understand, now and in the future.
 
-diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-index 1a93001c9e36..0a9eb5ac264b 100644
---- a/drivers/soc/ti/Kconfig
-+++ b/drivers/soc/ti/Kconfig
-@@ -85,7 +85,10 @@ config TI_PRUSS
- endif # SOC_TI
- 
- config TI_SCI_INTA_MSI_DOMAIN
--	bool
-+	tristate "TI SCI INTA MSI Domain driver"
- 	select GENERIC_MSI_IRQ
- 	help
- 	  Driver to enable Interrupt Aggregator specific MSI Domain.
-+
-+	  Say Y here to compile it into the kernel or M to compile it as a
-+	  module. The module will be called ti_sci_inta_msi.
-diff --git a/drivers/soc/ti/ti_sci_inta_msi.c b/drivers/soc/ti/ti_sci_inta_msi.c
-index 193266f5e3f9..d92cab319d57 100644
---- a/drivers/soc/ti/ti_sci_inta_msi.c
-+++ b/drivers/soc/ti/ti_sci_inta_msi.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/irq.h>
- #include <linux/irqdomain.h>
-+#include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -115,3 +116,7 @@ int ti_sci_inta_msi_domain_alloc_irqs(struct device *dev,
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(ti_sci_inta_msi_domain_alloc_irqs);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Texas Instruments K3 Interrupt Aggregator MSI bus");
-+MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ti.com>");
+> 
+> Add GPR(Generic Pack router) node along with
+> APM(Audio Process Manager) and PRM(Proxy resource
+> Manager) audio services.
 
--- 
-2.34.1
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+says to start your commit message with a problem statement, that makes
+the reviewer understand which problem you're trying to solve. "Adding
+GPR node" is not the problem, that is part of the solution, it should
+come last.
 
+> 
+> A new qcs6490-audioreach.dtsi file has been added to
+> update AudioReach specific device tree configurations.
+
+"Has been added"? When?
+
+> The existing audio nodes in sc7280.dtsi, which were designed
+> for the ADSP Bypass solution.
+
+Please complete this sentence.
+
+> The audio nodes now being updated
+> in qcs6490-audioreach.dtsi to support the ADSP-based AudioReach
+> architecture.
+
+No, you're not updating qcs6490-audioreach.dtsi, you're adding that
+file.
+
+Please start your commit message with a description of what exists
+today and why that doesn't fit your need, explain why we need a separate
+file to carry these things. Make it clear why the bypass solution should
+be kept in sc7280.dtsi (isn't that design only used in
+sc7280-herobrine?).
+
+Also, is qcs6490 the only variant of this SoC that comes with
+AudioReach, what about QCM6490 and SM7325 devices?
+
+> 
+> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  .../boot/dts/qcom/qcs6490-audioreach.dtsi     | 54 +++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi          |  2 +-
+>  2 files changed, 55 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+> new file mode 100644
+> index 000000000000..282938c042f7
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
+> @@ -0,0 +1,54 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * qcs6490 device tree source for Audioreach Solution.
+
+That's pretty much what the file name says as well. It might make sense
+to leave a comment here, but if so make it useful.
+
+> + * This file will configure and manage nodes from sc7280.dtsi to
+> + * support the AudioReach solution.
+
+So far it's only adding things, not configuring and managing (which
+isn't something DT does anyways).
+
+Also "This file will" implies that in the future something will be added
+here to deliver something. We don't communicate intent like this, and
+once you add that thing you intend to add in the future this comment
+won't be useful.
+
+Something like this would be better:
+"Common definitions for SC7280-based boards with AudioReach"
+
+But I think that too can be derived from the file name. So, let's make
+sure the commit message for the change that introduces the file has a
+good explanation.
+
+> + *
+> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+
+I think this would look better above the comment. But please use the
+right copyright statement.
+
+Regards,
+Bjorn
+
+> + */
+> +
+> +#include <dt-bindings/clock/qcom,lpass-sc7280.h>
+> +#include <dt-bindings/soc/qcom,gpr.h>
+> +#include <dt-bindings/sound/qcom,q6afe.h>
+> +#include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
+> +
+> +&remoteproc_adsp_glink {
+> +	/delete-node/ apr;
+> +
+> +	gpr {
+> +		compatible = "qcom,gpr";
+> +		qcom,glink-channels = "adsp_apps";
+> +		qcom,domain = <GPR_DOMAIN_ID_ADSP>;
+> +		qcom,intents = <512 20>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		q6apm: service@1 {
+> +			compatible = "qcom,q6apm";
+> +			reg = <GPR_APM_MODULE_IID>;
+> +			#sound-dai-cells = <0>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +
+> +			q6apmdai: dais {
+> +				compatible = "qcom,q6apm-dais";
+> +				iommus = <&apps_smmu 0x1801 0x0>;
+> +			};
+> +
+> +			q6apmbedai: bedais {
+> +				compatible = "qcom,q6apm-lpass-dais";
+> +				#sound-dai-cells = <1>;
+> +			};
+> +		};
+> +
+> +		q6prm: service@2 {
+> +			compatible = "qcom,q6prm";
+> +			reg = <GPR_PRM_MODULE_IID>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +
+> +			q6prmcc: clock-controller {
+> +				compatible = "qcom,q6prm-lpass-clocks";
+> +				#clock-cells = <2>;
+> +			};
+> +		};
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index 0dd6a5c91d10..18e959806a13 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -3944,7 +3944,7 @@ remoteproc_adsp: remoteproc@3700000 {
+>  
+>  			status = "disabled";
+>  
+> -			glink-edge {
+> +			remoteproc_adsp_glink: glink-edge {
+>  				interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
+>  							     IPCC_MPROC_SIGNAL_GLINK_QMP
+>  							     IRQ_TYPE_EDGE_RISING>;
+> -- 
+> 2.34.1
+> 
 
