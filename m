@@ -1,107 +1,144 @@
-Return-Path: <linux-kernel+bounces-796517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94546B401F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:06:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6C6B401EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA831659DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 209C23BFE52
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401F32DCF77;
-	Tue,  2 Sep 2025 12:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249352D9784;
+	Tue,  2 Sep 2025 12:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RvNq3hDF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GuYL5+Wz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417882C11D4;
-	Tue,  2 Sep 2025 12:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393852D595B;
+	Tue,  2 Sep 2025 12:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817964; cv=none; b=rk6CYU53lybBFexvTHgryHsQ5/aQxFbMirOdIjUgeepIbsXW7buGERK1OQ88ZFCxTE+O6j6OiNpGpp5P7v7rwo7mKir0uYc5MMUjxkYJkZkc+M3g1wY0cSdoQJ71+lNmcNrA+OpYDIdOAhpbno+3RK+UeCkDMK0UJ/f7MobKZro=
+	t=1756817996; cv=none; b=ZMk5LRRf2WapScqLU4IPLY/EN8x1niQvO6VSBZyYszMn0LgvhzB4KqATkQ0XbycjE488LOF+rjKvo7yVQWHjuJbY4V1Ey5BRQa/HxFx1tMyJCKzSO73ACGvnxHQSMpVr2ZC886uFzkAiGRuOvJZS+Qv+9PaVmu+3Af8vO2GZ6AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817964; c=relaxed/simple;
-	bh=lrXuJGoew7/20DuMI3I4U1Q/blFgeVjzOk5OW4cyrDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMzQi6fmEdqk8IgBpENMJ4RCHfxJzzCanjUKG9bKiBR3GxSLGrEmHuu0xa09VUUFxotxp+vW3FtwRff1j9Zew9RMWWXV5QV22kA0gJs5mbp25B6ElN3c/wM4smnYSRaV1wcN1ISgkvqfqEHELHa7GumCGehPHq1w0cwRwaDFe6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RvNq3hDF; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756817964; x=1788353964;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lrXuJGoew7/20DuMI3I4U1Q/blFgeVjzOk5OW4cyrDQ=;
-  b=RvNq3hDFsebsEXmd14+ODfE7fKPJ6WyoPHqoWNFmCwQAKHhNoJGCW0wj
-   S6APph8l5DB+F0Qb9T9kZmAHXbWoQJTagYTuXu6mhS9tN2f/1+NDETFA/
-   RLLLsz89EU+PsoDGXhzB6ljdP5nEfX3ian6K1+Lg/nt4go6ctDhsOvg41
-   PFTNeiWeGDw9UQwJmRY9pi75Z3IELPOlMixf8Sw1qmaqGeAJPqGU2LOkn
-   +Dp5ozTEbWhbbG5GjNNizHnLhP/SnPO73mVbTu57LvoDDHo82aen4SeGm
-   wclVF2l63VCAHoyYUg3+ax76qLROwnbaEu/nkKQnzIXSST3dlTzOc/lwD
-   Q==;
-X-CSE-ConnectionGUID: vQqJ8SW8TQqCN8HQnQr2ww==
-X-CSE-MsgGUID: 0PNILCZpREihsothrUAzvQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81673155"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="81673155"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:59:23 -0700
-X-CSE-ConnectionGUID: lAds/XvmQ/msUDGur/e9rA==
-X-CSE-MsgGUID: 1bwSlHvrSweky9brJC8f9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="172110180"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:59:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utQbV-0000000AhJh-3mx3;
-	Tue, 02 Sep 2025 15:59:17 +0300
-Date: Tue, 2 Sep 2025 15:59:17 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] iio: light: ltr390: Implement runtime PM support
-Message-ID: <aLbqJfGiHWNhXfgx@smile.fi.intel.com>
-References: <20250901184238.34335-1-akshayaj.lkd@gmail.com>
- <aLbptFRh9ZvAVfLn@smile.fi.intel.com>
+	s=arc-20240116; t=1756817996; c=relaxed/simple;
+	bh=0XSzGHyxrlHY0R+vVgbyhveuiGA7Q39+JTLE1lisLH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OB/i1T5G3o1gKLM/cNvr6+AxBICiHRctHtb4XOzlZ8MlhZMvkSSA79w+JPrc4J2KACMypzdcmFFp0LevCq9twPLpRQsqMWNJR3XvGeoFV/PQP9KEnBO9Ocu3WNOJFjGVZRwOk03M54tpqYOaYv/+mDr9VYCYjnvZMrblH2DND+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GuYL5+Wz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA087C4CEED;
+	Tue,  2 Sep 2025 12:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756817995;
+	bh=0XSzGHyxrlHY0R+vVgbyhveuiGA7Q39+JTLE1lisLH0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GuYL5+Wz2w8bUCyce8AOvsQH/Sgd0mYOjdV7UhOUWmw4uqljpV13dKq1QNwBhfgFi
+	 TicDSY5yK6wmE4CucZVNPxAyNsphqOIIU9/XaXQHXg/QNmmHOIu8ue6GV6GZ359Ndv
+	 KYna7n8Uqz88uo4y6t/oVWhCYWQv229xMnoMt4BMhHYQG+NMZmdZcWTGvgirjkbg/c
+	 29fwOoeSM94zmmCCMMncLNehQH3KC/1s/dtrH9fCB/akkbqXebD8vjPvEwhnqvaPf1
+	 Vr3dT7MDNvY5Eo72CK/iE+3AqI15LfSOKMmYKdm3veY0L/a/qP/2b7BHIqHhlsooVH
+	 sh0dhiMZ0143Q==
+Message-ID: <55fa6d7f-392d-4acd-b354-330848b43d41@kernel.org>
+Date: Tue, 2 Sep 2025 14:59:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLbptFRh9ZvAVfLn@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andre.draszik@linaro.org, peter.griffin@linaro.org,
+ kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
+ igor.belwon@mentallysanemainliners.org, johan@kernel.org,
+ m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
+ <CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
+ <20250822093845.1179395-6-pritam.sutar@samsung.com>
+ <20250824-rough-fresh-orangutan-eecb2f@kuoka>
+ <007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
+ <83dc9435-5850-425d-b345-52e84ef9262c@kernel.org>
+ <000401dc18cd$ec02a1b0$c407e510$@samsung.com>
+ <e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
+ <263801dc18d3$d1e20950$75a61bf0$@samsung.com>
+ <6b5f20ed-4e88-441e-8f61-20866e2b39c7@kernel.org>
+ <000001dc1c02$cc89fda0$659df8e0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <000001dc1c02$cc89fda0$659df8e0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 02, 2025 at 03:57:24PM +0300, Andy Shevchenko wrote:
-> On Tue, Sep 02, 2025 at 12:12:36AM +0530, Akshay Jindal wrote:
-
-...
-
-> > +		if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
-> > +					LTR390_LS_INT_EN) < 0)
+On 02/09/2025 14:12, Pritam Manohar Sutar wrote:
+>>>
+>>
+>> Thank you for the pointers, will refer the examples and update the commit
+>> messages accordingly.
 > 
-> Wrong indentation, hard to read line, either one line, or do better. Actually
-> why not assign it to ret? The above not only simple style issue, but also makes
-> readability much harder as the semantics of '0' is completely hidden. This style
-> is discouraged.
+> Can you please confirm, if below message looks fine?
+> 
+> " 
+> dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo ssphy
+> 
+> The USBDRD31 5nm controller consists of Synopsys USB20 phy and 
+> USB31 SSP+ combophy. Document support for the USB31 SSP+ phy found
+> on combophy of the ExynosAutov920 SoC.
+Yes, that's fine.
 
-Noticing that this is existing style I recommend to have a precursor patch to
-fix this and any other place like this first.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+Krzysztof
 
