@@ -1,111 +1,178 @@
-Return-Path: <linux-kernel+bounces-797113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5825DB40BFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:26:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D761B40C00
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C10937B209C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC1B564007
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6137034320C;
-	Tue,  2 Sep 2025 17:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF4834320D;
+	Tue,  2 Sep 2025 17:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="h3hp6qOw"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FB3fEbGx"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03EB2FE599;
-	Tue,  2 Sep 2025 17:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AD1341667
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756834003; cv=none; b=XJKDHNYnR1t4GIhQtWNLXRPZDHyJ3N1w+lMWOeqxXV2QSVKNZmXbDM6WkcpY9Fv8Y9IldT6A1c19HhRx73uBQYMmg2IA4/hyMactq5e25DsuBd/zmLhaFw7ZdtKihdb6lf/pzI/H/H2yIWSkq/RgHHoLtvSrsvEU8n4NAZQS0lI=
+	t=1756834025; cv=none; b=gTu4aTUCgUvNPEukmgrEk8xmSwN0boJ+44XcD3JBd/kXbHtuGww6Nl5X9MiPnwDE+/EWp4izjFHUkEoKCAxLv6V6erwK98zVdvC8q+cTocdf82eCOFgv5OS/ei1+7wO5y84Hb9BsMtBj9vGVVDniLZdxGAovzIICRvBe0Pd6rMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756834003; c=relaxed/simple;
-	bh=yQUsr4Z+mfsLxbLmx4Ar1fy8Ps09eItMkf+hi1MXtYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fq+HMLBXikCmvsgkw4Qs7Il3VGTkxrbHs38oZkm2zIt6HZGpKzp905GgFPZBf95yyUfrGWU2YFAl1fNmbkMoG5XPqbke1zSlbbCMQtENe5jIQs8TVivSyraXRlrLa4awAtd88UngzvVl+1Wfs0rhTtO7jRp1jxIIJv2io0aduEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=h3hp6qOw; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
-	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
-	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
-	List-Owner:List-Archive; bh=TmVSFScaNbrRGyjqLpq02kRepZR1s+gbvl964ZLcX34=; b=h
-	3hp6qOwcdfG53jG7Ppv4h6gbY/qCaehLSo/wcnLYXx712IsN1kXXweyz6xPpWNcVzCHSTWQdzY6Zh
-	YB3debFPXYG+FwxefGe+df2iAaSJ09kKK56sr0JOTXljLEoFqpeQIdmBbxQdR30uB8tE6QzLUMc63
-	wFTNOR2XxShQdd7YXnLbpbXXWfbS3+x2OoThZuLgc4W6joJYWLkwUIh4fde3LIQoMJUkKP+J7aKhR
-	n/ajfVGoIJ4KKvVaEAreZdiau2sSYQcQC3l23WYmd/gyvAvUbexE8l2HRPy5Ed7GKKFoaarX6GL92
-	zTEh6bQ+nztjakRqaUByAtAgEKDUp6OEQ==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1utUm8-002QVl-1A;
-	Tue, 02 Sep 2025 18:26:32 +0100
-Date: Tue, 2 Sep 2025 18:26:32 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/4] Re-establish ability for exclusive TPM access to
- userspace
-Message-ID: <cover.1756833527.git.noodles@meta.com>
+	s=arc-20240116; t=1756834025; c=relaxed/simple;
+	bh=R+vzI8/XRAisFFEKfXyULKg1mw6j6BVTtSv7WOtjwOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jyv6Cldocg7iELhvq7CAZTxJrqI93PUIuu1t//wVLsmEo493dHL2aKaPmi5YIMFiD6q6c7bWSU3Y7F27GpxyIdvqhBeVWjNP3WNMDEO6xQxRnRBSfNsQ3GEIilFLUW3AWRqZolT9u1gwbV47UEZFWp3rfcGRis/KEsqO0WItzQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FB3fEbGx; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7724df82cabso2893781b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1756834022; x=1757438822; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R+vzI8/XRAisFFEKfXyULKg1mw6j6BVTtSv7WOtjwOo=;
+        b=FB3fEbGxxAPV0b8G/55KOhqhbucDtDEQDw6RSiM1zlPPyNPwGKhDYyovIu3SY61kA3
+         1/ZB1y+GSgClAwNtPuoasG5swE4rN/+xctL4q17B8jqiYTx2yr5Xjm+tYeBLgAax4Ci9
+         EAOpqPnyUjH7ffUWce74sEf769pe2ieLf9QZc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756834022; x=1757438822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R+vzI8/XRAisFFEKfXyULKg1mw6j6BVTtSv7WOtjwOo=;
+        b=RaKazvcgKPhFEsCQovcaoMF3xaU/2XaXdP77YjY3xlFHRHNaI8DYbCpkQwCFwuhhsM
+         kphGbR5TlV52BRmWN2mi4VWUptyR8DQwaeLu+GLisK1pOBjmDmYqxisPMxSCz/75PNww
+         McXSPhq3IiX90DHbd/9Hcwa3hpRYNXx/aMufEMi4VNFkKQ9tglnBB7YSFJOei43nTMgf
+         uuDG6ejOD71pGvpM4rkus7CSVrrkLIKVZYs3S7Dp0pgLgefq7w7MeXAuodjmFIZUt4wP
+         Bzipm5s6mf15IEmGfhvwDQc9keUDCWODVEKfaXl9LRsMAQm54jIqR/VTtk/wBf3Ox6RY
+         fJgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVXn08JTPTba4x1VulfRc4yc0+nj6p5P193kXFX8HiTgx5oi6ZGG6ShRY1j3rtvzN2T3pSD0xHgj4qvqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKtrw8QJpkWFjdMZqcvIFe7ipwvu6oudu1ETSzAS4teB3w+7VD
+	vBHr9nd3N8vuV1OlbJ66ID0LOe8IZTpNc3181+oKbik367rbVd7iU4wXV2hX1pyk1li2A+1Wzsq
+	x7uA=
+X-Gm-Gg: ASbGncu9xpPf2LGZBaM41JJiZG3PLE+3VIMkfjbXtGGwxgMi1qBuxoe//fy48wQnPbw
+	2wylVgQIoTPjZN4E7YKcUYuCq8cbFb5UUP5Exb8gu69UfXtJo9LTdlMQELedSfsNCS+RbAszPrs
+	rcAquqswxabNba1AXGCO6z+Fhqxj1PtNsHpJjYNUNEFWyCrnuINsBsSe30qypQDydBI4UEcW4/G
+	QtQHpZlOVHg0NA+izGYNUnOkYJLoV0nm2goFbQtaewH3+BLundvgTOPEmPuKtPsa4n8U3nbJoqc
+	wWo7bSlxRn69Woo8TPziTKLxT74gZ+StnGueEQIlVJgU13MaG+uOCEojTJLS3TkBGki+Tt3vfDr
+	nYx2OrYC4hLCHOfllWqPQF3C3rKiqkQagykZILtYHY4dv7VCbyOSWf6Q5fMjbfgyZcw==
+X-Google-Smtp-Source: AGHT+IHSWqnZuSll688OIPf7F1eJbybak480Ys0iZDlg9FnymwfXIQzfYZTeF0CcPXRJcC18wrr7Cg==
+X-Received: by 2002:a05:6a20:6a08:b0:243:9824:26e3 with SMTP id adf61e73a8af0-243d6dfed79mr18442531637.15.1756834022429;
+        Tue, 02 Sep 2025 10:27:02 -0700 (PDT)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com. [209.85.215.176])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a269f27sm14336371b3a.12.2025.09.02.10.27.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 10:27:01 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4c8bee055cso4172509a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:27:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXfi3UlrPUpgqdAPIETGXAinFR/4Bc10pMvz6B002sDtl1HiU7ESDi4s2wAFoS1EsnYUBsPTcnBPSHJtpU=@vger.kernel.org
+X-Received: by 2002:a17:903:19e3:b0:245:f002:d67c with SMTP id
+ d9443c01a7336-24944b19dbemr145156225ad.30.1756834020690; Tue, 02 Sep 2025
+ 10:27:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAD=FV=VfCWFViDE1a5-_KtH0Pfo2EnCJeo2k8MaWuRHhmMPMMA@mail.gmail.com>
+ <20250902162246.4143785-1-john.ripple@keysight.com>
+In-Reply-To: <20250902162246.4143785-1-john.ripple@keysight.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 2 Sep 2025 10:26:48 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XyM0WHB8kpirqfnV2CY2KTrHd14pi5qeS+Sq7mjPphsA@mail.gmail.com>
+X-Gm-Features: Ac12FXzoK6a2pOM7UM9T1UG-G9CD1NZjmPlNlNUAg32e3wNBEbg9ufNPfoYnvbs
+Message-ID: <CAD=FV=XyM0WHB8kpirqfnV2CY2KTrHd14pi5qeS+Sq7mjPphsA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi86: break probe dependency loop
+To: John Ripple <john.ripple@keysight.com>
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com, 
+	andrzej.hajda@intel.com, dri-devel@lists.freedesktop.org, 
+	jernej.skrabec@gmail.com, jonas@kwiboo.se, linux-kernel@vger.kernel.org, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch, 
+	tzimmermann@suse.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I hit a problem last week were ~ 1% of TPM firmware upgrades were
-failing. Investigating revealed the issue was that although the upgrade
-tool uses /dev/tpm0 this does not actually prevent access via
-/dev/tpmrm0, nor internal kernel users. It *does* prevent access to
-others via /dev/tpm0
+Hi,
 
-So the upgrade process started, the HW RNG came in to get some
-randomness in the middle, did the HMAC context dance, and confused
-everything to the point the TPM was no longer visible to the OS even
-after a reboot.
+On Tue, Sep 2, 2025 at 9:23=E2=80=AFAM John Ripple <john.ripple@keysight.co=
+m> wrote:
+>
+> Hi,
+>
+> >Which i2c bridge are you talking about? You mean the one created by
+> >i2c_add_adapter() in drm_dp_aux_register()? I guess I'm confused about
+> >why the DSI probe routine would even be looking for that adapter.
+>
+> The i2c bridge I was seeing was created by the drm_bridge_add() function
+> in the ti_sn_bridge_probe() function. Without moving the ti_sn_attach_hos=
+t()
+> function out of the ti_sn_bridge_probe() function I kept getting stuck in=
+ a
+> loop during boot where the bridge would never come up. It's possible this
+> could be a unique interaction with the hardware I'm using and the nwl-dsi
+> driver.
 
-Thankfully I've been able to recover those devices, but really what I'd
-like is the ability for a userspace tool to exclusively access the TPM
-without something coming in behind it. Given the lightweight attempt at
-locking that already exists I think this was the original intention.
+Sorry, I still don't really know what i2c bridge you're talking about
+here. At this point there are a number of different MIPI hosts that
+are using ti-sn65dsi86 and they don't seem to run into this, so
+probably digging into your MIPI host to see exactly what it's doing
+makes sense. Where exactly is the nwl-dsi driver trying to acquire
+this bridge and failing?
 
-As an initial approach I propose this patch set; I don't think the first
-2 patches are controversial, but the blocking of kernel access + switch
-to O_EXCEL in patches 3 + 4 might be. I'm open to alternative
-suggestions about how to achieve this.
 
-(I've sent a separate standalone patch that allows the TPM HW RNG to be
-disabled at run time, but even with that I think something like this is
-a good idea as well.)
+> >In any case, I don't _think_ your patch is valid. Specifically, if you
+> >notice ti_sn_attach_host() can return "-EPROBE_DEFER". That's a valid
+> >error code to return from a probe routine but I don't think it's a
+> >valid error code to return from a bridge attach function, is it?
+>
+> What error code would you suggest?
 
-Jonathan McDowell (4):
-  tpm: Ensure exclusive userspace access when using /dev/tpm<n>
-  tpm: Remove tpm_find_get_ops
-  tpm: Allow for exclusive TPM access when using /dev/tpm<n>
-  tpm: Require O_EXCL for exclusive /dev/tpm access
+You can't just change the error code. The problem here is that, in
+general, there is no guarantee of the order that devices are probed in
+Linux. The general solution for this in Linux is for drivers to find
+all the devices that they depend on during their probe routine. If any
+are missing then they return -EPROBE_DEFER and the system will try
+again once more things are loaded. In the case of ti-sn65dsi86 we need
+the MIPI host device so we find it at probe time. If it's not there
+then we want to try again later.
 
- drivers/char/tpm/tpm-chip.c       | 90 +++++++++++++++----------------
- drivers/char/tpm/tpm-dev-common.c |  8 +--
- drivers/char/tpm/tpm-dev.c        | 27 +++++++---
- drivers/char/tpm/tpm-dev.h        |  1 +
- drivers/char/tpm/tpm-interface.c  | 20 +++++--
- drivers/char/tpm/tpm.h            |  3 +-
- drivers/char/tpm/tpm2-space.c     |  5 +-
- drivers/char/tpm/tpm_tis_core.c   |  3 +-
- drivers/char/tpm/tpmrm-dev.c      | 20 ++++++-
- include/linux/tpm.h               |  3 +-
- 10 files changed, 112 insertions(+), 68 deletions(-)
+The whole "try again" logic for -EPROBE_DEFER is only guaranteed in
+certain contexts. Generally it's reserved for probe. ...but that logic
+_could_ be extended to other contexts. It's possible it could be
+extended to bridge attach, but one would have to make sure it actually
+is (I haven't checked) and, as Maxime says, it should be documented.
 
--- 
-2.51.0
+I suppose it's also possible that when ti_sn_bridge_attach() is
+called, it's guaranteed that of_find_mipi_dsi_host_by_node() won't
+return NULL. If you can prove this by looking through the DRM code
+_then_ you could probably make your change and just change the error
+code.
 
+
+To sum it up
+
+1. Ideally you can fix the nwl-dsi driver to work however everyone
+else is working.
+
+2. If you can't then your commit message needs to prove that it's safe
+to move the code to the "attach" routine. You either need to prove
+that it's guaranteed that of_find_mipi_dsi_host_by_node() won't return
+NULL when called from ti_sn_bridge_attach() or you need to prove that
+returning -EPROBE_DEFER in this case is safe.
+
+3. In either case, updating the docs that Maxime pointed to would be useful=
+.
+
+
+-Doug
 
