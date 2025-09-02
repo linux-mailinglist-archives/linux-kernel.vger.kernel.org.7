@@ -1,141 +1,98 @@
-Return-Path: <linux-kernel+bounces-797121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA075B40C1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:32:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E62B40C1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFC037A7118
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D62F3BA49C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C184345723;
-	Tue,  2 Sep 2025 17:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4224934575D;
+	Tue,  2 Sep 2025 17:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fqON5YJR"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="tspr7NYt"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8556233A03A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BAC345753
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756834315; cv=none; b=GFKZVkk3VJdk7O6+CuXUEp0Pr0d+t7YAgSIDVUIT8REvVobDyCIyuSU9vRAdOaRvkn1fAoaDApErT2Vm1AnSpc1R5ux7gtk+05aAyQZvIWYXeXap+ycw3+oqdHgJoxrIzCkQgp6ijxvEXC4uyyAFET3bo/NtVOozcH5cqec09y0=
+	t=1756834321; cv=none; b=A8Qa/AJ+D6hZ+eSZ751TYIlhVKospg+DuoDe3R1Q87BtWEGmB/47UTEtp/1D6QW25zoGMTVjAWNpkmtnrK7W4ce39wQhSGBlALpfNyKJ+asFq/Srl+npE16RH4n7rESaXoCXGuKw5+vkGE1aDrQZR5sk2HDQnFtG5xLDXmUicPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756834315; c=relaxed/simple;
-	bh=Xsrqc2vC8VESUbe3k7UKRQ6yvLNYP0SL9eBgq0WXcbI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AiZvevg3ExNoa69I2YyiH2gaBgPK8lpyCAEk0wj/6IWkPTlzOPkvt/Isxo1RDu77Y93l5IyzDR+YqPJRrGvSHP/gvaMzyM9yrxLBUp7zxnAdAGWLnt5WjP3fAYcPVvgk6BES6v2GyVjsInwQ4hhlVgqeBsn2/KAowOhJ2PVR2UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fqON5YJR; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756834301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xsrqc2vC8VESUbe3k7UKRQ6yvLNYP0SL9eBgq0WXcbI=;
-	b=fqON5YJR9E0oOY9zChFa3RECMh+tJpKRTxbIJKC6PYarEHIcZ/QfF00nZEOrSZSvDKTvdc
-	MVRKu4TLEfaFng6AOs31aFvFMefbLXePeDkmFJCO51pU+Pfe55/BscBU4Z5BnfwRfKFyrx
-	9dZhuK6N4gU7tY2IGHXHeeJenShmVZA=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,  Kumar Kartikeya Dwivedi
- <memxor@gmail.com>,  linux-mm <linux-mm@kvack.org>,  bpf
- <bpf@vger.kernel.org>,  Suren Baghdasaryan <surenb@google.com>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David
- Rientjes <rientjes@google.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
- Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-In-Reply-To: <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
-	(Alexei Starovoitov's message of "Tue, 26 Aug 2025 12:52:26 -0700")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-2-roman.gushchin@linux.dev>
-	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
-	<87ms7tldwo.fsf@linux.dev>
-	<1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
-	<87wm6rwd4d.fsf@linux.dev>
-	<ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
-	<CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
-Date: Tue, 02 Sep 2025 10:31:33 -0700
-Message-ID: <87iki0n4lm.fsf@linux.dev>
+	s=arc-20240116; t=1756834321; c=relaxed/simple;
+	bh=fyhvFcpbjARgFVrpZiyVBsf0zhuVsLRUp086qBgwZ1o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BpxcqZnVikxHyjaVBhs+Ct0+bpsnFF292AurWZl3MiVP2I+8i8LBbtdMB7BcRKDwRkgl16lijIsLIdWC2Zch+EWO4sv89Tz5Xv/DuJaXkb18XzCE5xAIO4ggxqeL/uPl8nZQyn+/155wZeA7xb7KNBhHdJERWZ3jRKw46yp/BLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=tspr7NYt; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 582Ehwfi3376448
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 10:31:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=fyhvFcpbjARgFVrpZiyV
+	Bsf0zhuVsLRUp086qBgwZ1o=; b=tspr7NYtRRiQvcHbnxghNDXIIPdapc3PUnIk
+	cIDQaHktD/MKuD8HnUT7Ttvh72+h4PlmLypco/r5D6WHXidKm43ZnZTrl4H9CtLZ
+	707CWn7ShgeIRGwdG4ZreMs+6OF60bmACL0nfNrVmryMKTClBaJ1sXEE+qfpu+Ru
+	uiyd6h5RMlnQtGFUjFzrXc7Hui4QPJHCio6ungeJMKYg9pLg16BOFglbHnRp5GAg
+	ruRKfLPsUoEjC46MDc17JP5WIDxUakG7cwav/W2TbdiSvBpDmghspLR2XCI3O+7a
+	ZKNlj+iQlVZAC/RJmDNKkCK5JdA7AuBzED3vS3EDTJXdC6r9XQ==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 48x2km1j4n-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:31:58 -0700 (PDT)
+Received: from twshared28243.32.prn2.facebook.com (2620:10d:c0a8:1b::30) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.17; Tue, 2 Sep 2025 17:31:56 +0000
+Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
+	id 29DFD7609C4; Tue,  2 Sep 2025 10:31:45 -0700 (PDT)
+Date: Tue, 2 Sep 2025 10:31:45 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Stephen
+ Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] docs: proc.rst: Fix VFIO Device title formatting
+Message-ID: <aLcqAXrrYz8McAfs@devgpu015.cco6.facebook.com>
+References: <20250828203629.283418-1-alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250828203629.283418-1-alex.williamson@redhat.com>
+X-FB-Internal: Safe
+X-Proofpoint-GUID: lGM24rPo6sAu_ul7m8FuI9TtL570CxJO
+X-Proofpoint-ORIG-GUID: lGM24rPo6sAu_ul7m8FuI9TtL570CxJO
+X-Authority-Analysis: v=2.4 cv=Z4fsHGRA c=1 sm=1 tr=0 ts=68b72a0e cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=FOH2dFAWAAAA:8 a=AqKOC74haZqJEwbFGksA:9
+ a=CjuIK1q_8ugA:10 a=Qzt0FRFQUfIA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDE3MyBTYWx0ZWRfX3071TYyT+R4O
+ m09pbwCcHfuDc9MP/axXTn5F8BeV0reOiuodN8/UBu3Jwbdjmq03CoGWJfTeh2DR70nkCcGtHzp
+ /gtraG/yl8ay/fr76GsRsJQxrHF2oWZPRvQVoTc3G8OD52g3Af0M2T/W5FFlJqQEGBpB+F+92W4
+ hOVoVBW+NgI0DT8zKqLWx0y62n/tXc3Y4SQRGr3q9xvbHpx88HkcVxtGXAwGkSjl2fs5gYLsZ6u
+ B4Uz2MouK4P8rlodwE9yALDUvxEKSBsyHOtkAwQX+3rPc1fcqquCLlkYnbof1vEmcJWwUKq7W5p
+ 45BFfIha33pwtRaEmNVJF9qE3HUezVoHMrb0gBZ1bL1wXq/hN0M27aBw9rE9p8=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_06,2025-08-28_01,2025-03-28_01
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+On Thu, Aug 28, 2025 at 02:36:24PM -0600, Alex Williamson wrote:
+> Title underline is one character too short.
 
-> On Tue, Aug 26, 2025 at 11:01=E2=80=AFAM Martin KaFai Lau <martin.lau@lin=
-ux.dev> wrote:
->>
->> On 8/25/25 10:00 AM, Roman Gushchin wrote:
->> > Martin KaFai Lau <martin.lau@linux.dev> writes:
->> >
->> >> On 8/20/25 5:24 PM, Roman Gushchin wrote:
->> >>>> How is it decided who gets to run before the other? Is it based on
->> >>>> order of attachment (which can be non-deterministic)?
->> >>> Yeah, now it's the order of attachment.
->> >>>
->> >>>> There was a lot of discussion on something similar for tc progs, and
->> >>>> we went with specific flags that capture partial ordering constrain=
-ts
->> >>>> (instead of priorities that may collide).
->> >>>> https://lore.kernel.org/all/20230719140858.13224-2-daniel@iogearbox=
-.net
->> >>>> It would be nice if we can find a way of making this consistent.
->> >>
->> >> +1
->> >>
->> >> The cgroup bpf prog has recently added the mprog api support also. If
->> >> the simple order of attachment is not enough and needs to have
->> >> specific ordering, we should make the bpf struct_ops support the same
->> >> mprog api instead of asking each subsystem creating its own.
->> >>
->> >> fyi, another need for struct_ops ordering is to upgrade the
->> >> BPF_PROG_TYPE_SOCK_OPS api to struct_ops for easier extension in the
->> >> future. Slide 13 in
->> >> https://drive.google.com/file/d/1wjKZth6T0llLJ_ONPAL_6Q_jbxbAjByp/view
->> >
->> > Does it mean it's better now to keep it simple in the context of oom
->> > patches with the plan to later reuse the generic struct_ops
->> > infrastructure?
->> >
->> > Honestly, I believe that the simple order of attachment should be
->> > good enough for quite a while, so I'd not over-complicate this,
->> > unless it's not fixable later.
->>
->> I think the simple attachment ordering is fine. Presumably the current l=
-ink list
->> in patch 1 can be replaced by the mprog in the future. Other experts can=
- chime
->> in if I have missed things.
->
-> I don't think the proposed approach of:
-> list_for_each_entry_srcu(bpf_oom, &bpf_oom_handlers, node, false) {
-> is extensible without breaking things.
-> Sooner or later people will want bpf-oom handlers to be per
-> container, so we have to think upfront how to do it.
-> I would start with one bpf-oom prog per memcg and extend with mprog later.
-> Effectively placing 'struct bpf_oom_ops *' into oc->memcg,
-> and having one global bpf_oom_ops when oc->memcg =3D=3D NULL.
-> I'm sure other designs are possible, but lets make sure container scope
-> is designed from the beginning.
-> mprog-like multi prog behavior per container can be added later.
+Shoot. Apologies for missing this, and thanks for the fix. I should have run a
+`make *docs` flavor as part of validating this.
 
-Btw, what's the right way to attach struct ops to a cgroup, if there is
-one? Add a cgroup_id field to the struct and use it in the .reg()
-callback? Or there is something better?
-
-Thanks
+Reviewed-by: Alex Mastro <amastro@fb.com>
 
