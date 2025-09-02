@@ -1,114 +1,167 @@
-Return-Path: <linux-kernel+bounces-797046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD88B40B1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:51:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7893BB40B20
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525A31B25FF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200D1561896
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA36A337697;
-	Tue,  2 Sep 2025 16:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5168A33EB01;
+	Tue,  2 Sep 2025 16:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J94iLqyw"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WePLZTkW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A6332BF49;
-	Tue,  2 Sep 2025 16:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8ED4414;
+	Tue,  2 Sep 2025 16:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831887; cv=none; b=V1S1hu5i/Q9DGzdwprS0I3fjvNAOGPYx7R7CsO05mEN2w8ErjVvz4HtCYO8cxaYK0B+9E8NubtAZLPKSjt9iVMDKeX5+/IQJNUxOUkLjxylX4vZqn9q6iUGZYiM6Tc12ZN1FSUuUu08smrdskICZBcUuXB33dOTMuGXDn6tZtMU=
+	t=1756831957; cv=none; b=LbuTezHw3IrQvwpmG/Q7LAUEXyExmX8BUx0oyGYhlgFoohI8NzcQI64aVmBbT/ZKFChbOagXTMVi1vQWAIVq62er1xReZzxX+dpsa1C2JXoX9+PkCvVdRrtet8mAYBT50V2SjUhgIj5SbHC9oRQGvoPGEobcD9mIrcdNVxEThuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831887; c=relaxed/simple;
-	bh=lIbE/1Aoqm4Jo61r+hMyagD0H71z3BwYFHkhUMeX9zQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tWewmGiZoVi4M9gN+87wBMskL9NJvlp2S2xAgIWJ99O2iS2MmEBboBz281kXQrPvjrK+w1Qm5atkECA6TpEbBYIplxo4/QX/GBRvA6jE9yw+GVKU9YyZle2o4xNwOUnAXurytuIUvLKgbPwsdThdobxJrOUJtYpz1MA8niMXel4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J94iLqyw; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f78e3cdf9so3196563e87.1;
-        Tue, 02 Sep 2025 09:51:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756831884; x=1757436684; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lIbE/1Aoqm4Jo61r+hMyagD0H71z3BwYFHkhUMeX9zQ=;
-        b=J94iLqyw4Y9xEGaAYce2nV2xlgusHZkx3vXA+gWWWEFukU2iVPAffTfEsX+a9Gohvp
-         Qm/+aOHNEQgqJEqnZyyQwHswH5ZCqGEjtjUZKjKJ9Zw5AUNcXKsPNW14DVCD2aAaFdkr
-         K+tvWRCFr+ROgw9u4BhY2v0FRZRN/cn+n20c+CMOltfhGI6obIayE3JXR400KngOFGQS
-         OkGXWhEkOuB+u32JXdpT38cgrpbTLDCmzrXB6jQejYfqQiMbonGw8R8DHVKaFFg6TLUp
-         GJP+yymOel3pDRcez8bnBEyhtLtxPBPtjtVj4hd+fIb/pDJK8FyL306zb6nFbMhr79m9
-         bQKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756831884; x=1757436684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lIbE/1Aoqm4Jo61r+hMyagD0H71z3BwYFHkhUMeX9zQ=;
-        b=rsZpnUSRNTe8Y4SB7TdhHqoA/HbTpKGnoTBDwoy0lyGDHk5kUe12caJZITmMq07XWc
-         xa0WnWFmjCfec4e0MttPUs9XJWR6CpT7eEElrwCfHD+iyKpy6jXt5s5NUu/jfOvnROr/
-         n1ekf7RQpi2710Bv+I6Dx47dAkUW1CyyvabA/VEN2p1g2ZGC9GAFN+Hm2Nxmf01mE14B
-         X2VnHgApj0ysYKdwVrg39AXHAWNnL2EGNKrFZypw9MZUTEOkDFcWTv6mMxStb5pYPiu8
-         iaSk65bWhvdc9BfJ43D1vLQ2qMK23gOUOgUtOJ0OdrN5G4pEDl5mjWK16mdmx/Hynhl4
-         V3jA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1l67AkcN8T1D7qtyC1T8tKkBgiX7qwS3vIYU2ut069kfQFzDhfXf1Bz6dAVe2uAz1OaZ8BeBkMDt+@vger.kernel.org, AJvYcCV7o3GvJkhOArEqfXduCVEdQB5pvSEmCcnGdAHN2BUJL8eY9ArD9CTRg9lqxRW36peahp/a4gQZQWvSrQo=@vger.kernel.org, AJvYcCWYQOMSmiH/Yv60T6NsWj1c5maZ9fPR0JI4odxV3ZY5e/muOcSmOC9vNruWWGLmTpoH2tzdxYR2pZiJ8IAR@vger.kernel.org, AJvYcCXt1meYzWYxfW8K6sDzV13FPyQvvIXAphyLoUog2pJb0E9LK3U1V83jrqbr0+5d8hSqCJmAvcCdCFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU+RF5QNAypOGrouilOVevSUH/Yze/zy4rkKpgMVo8JHu7eqUt
-	z9S8eF0PfO/rGQXAnFzXKk6lUMA/LTeAeRJmP1gJUcKwe5ZRsow1C26ZwUMveIPtPC16v1pNhpx
-	vSHFThnAxXSvnk/zh3GxsKh1tbWkkeQU=
-X-Gm-Gg: ASbGncuaaT/AeTqEsaQ3Mc7yIBH+mg98TjIZTsmGEBq30MrVQ7gJK+vb0t8PyjKVQEj
-	LFo9ZNydQrto7wliim7gbBFZsVd30fnaBg+PE7nVnQT8LS4VsNMNcNCQxNPHUIMKKuCrBtDCSCh
-	DLUn17VAJnSpaONq/fyp6A9haZxlH++BrfG54DbcRFVMsauA5yiQzyfKo+dUZWTcHRbNMax4riX
-	EVYrH8=
-X-Google-Smtp-Source: AGHT+IEChupoSD+9y1BXRKDMPiEUXXbCpO5UGzRaQ31kMw0aqronmTkKMHnTV+chIoZjNTqShh3rv+672NAMniN+Xf8=
-X-Received: by 2002:a05:6512:448e:b0:55f:645a:7146 with SMTP id
- 2adb3069b0e04-55f70968d9dmr3182922e87.46.1756831883361; Tue, 02 Sep 2025
- 09:51:23 -0700 (PDT)
+	s=arc-20240116; t=1756831957; c=relaxed/simple;
+	bh=vUXypJ18lQCM+xP/e8NI3zmL2F363vWlFGuHjpHKdRE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T+dJAituzdf5g0+9nRfeUinTHefbbB3L0ZkaAIUKt37orEOMIRzGmt3/bMrShvPoIQUlb0X7qy/llyX79oLz9QK1qpYM9byDO8upYuOxS4wOPB/C8D2uFtW9jBeyXJVHZuMOEMIwk9c1FYS3pn+g+1hxaXUPjpzDpQLbktIjcNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WePLZTkW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582EqAXX023418;
+	Tue, 2 Sep 2025 16:52:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EfhDgAtwv6P38F7QKMGTLu24j05KdSW6kvsh3bBpKnk=; b=WePLZTkWJYnZlMxZ
+	QJkjPjlsrySr+yl+jDp1uRUhBqWx6XhIV5IJ3dmqoXXYKtvDeB9mSb3ehaLePfjd
+	GokNgqIb8Ead/bj9U580qlkFveSZJKmCbE4Ib68BKC2DRe2ZkeGTh0YBp3Qch7CI
+	2xiMvhFLsKXMALwgvWVXPqzdBO+543l9w9eoRbcaO4+uA0gWnrwBx5M3YvDUo2Q4
+	kUzhSyPnUL3CjGijshOcvvktLpmPh/DoB6HhofDIcf7MbULUoR7dh+WIakE7WEGl
+	tYiZts29TY4bTjv7hx/pzopztycwls6SJBnDyykiqFia2+0IN7QBTuVC9jNH0DiA
+	KEXySA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnp8s5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 16:52:22 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 582GqLlf003891
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Sep 2025 16:52:21 GMT
+Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 2 Sep
+ 2025 09:52:16 -0700
+Message-ID: <0107dcce-45cb-419f-814b-3eccbbbe628d@quicinc.com>
+Date: Tue, 2 Sep 2025 22:22:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com> <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
-In-Reply-To: <20250902-glittering-toucan-of-feminism-95fd9f@kuoka>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 2 Sep 2025 11:51:11 -0500
-X-Gm-Features: Ac12FXwYWaxQZ7C2fCm_0oyX8iaPoPZ0amPC4H_SBlrNsaYfoKZf6cjuvVA16aA
-Message-ID: <CALHNRZ_CNvq_srzBZytrO6ZReg81Z6g_-Sa+=26kBEHx_c8WQA@mail.gmail.com>
-Subject: Re: [PATCH 0/8] Support dynamic EMC frequency scaling on Tegra186/Tegra194
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-pm@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/4] ufs: dt-bindings: Document gear and rate limit
+ properties
+To: Krzysztof Kozlowski <krzk@kernel.org>, <alim.akhtar@samsung.com>,
+        <avri.altman@wdc.com>, <bvanassche@acm.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mani@kernel.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20250901155801.26988-1-quic_rdwivedi@quicinc.com>
+ <20250901155801.26988-2-quic_rdwivedi@quicinc.com>
+ <5cbfa653-03c3-41dd-a309-406eaf3b6033@kernel.org>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <5cbfa653-03c3-41dd-a309-406eaf3b6033@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jmrf0Wd2ZfccECOcCgtmPPvkmmJAsBOd
+X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b720c6 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
+ a=hsxNhXGD_D1a_R53JcAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: jmrf0Wd2ZfccECOcCgtmPPvkmmJAsBOd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX5YGkezkKtL+t
+ 19eaxxyMb+aTPAaRP6PaCXCVx6R/KHzsVxzxG7q4hsXPnBlmIQS3jevRal3jEwGBAqp3MWk92lE
+ mRwMz+lQnFuw+oLRjFThWP659IpcgDnT9GAnkIYbtrfGGmaGmeLV4KaJAS4iZpZ3CF+x6faV5uI
+ /Hb0EedfjLD8ZiSv4t4ljVpiIxjkP/iHnZtDeCeLU2545t9a2w7yOxRpAL272xYC3apIc+TMEHn
+ DGnVDgAOHQ24g4mRybnePHWSnyFjL2YE51KW/kVX6J0aQK0hXlz0Lbi46n6J3+09EdgSIm4nCl9
+ yNzdV5O8gl3C8KBQDdjkv0xv+0HoJebCNG9Di2q0GH4GzsUQ8LabcGjeTk60RgygoJKs9F1Dg45
+ 5ewyXtbL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
+ spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300001
 
-On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On Sun, Aug 31, 2025 at 10:33:48PM -0500, Aaron Kling wrote:
-> > This series borrows the concept used on Tegra234 to scale EMC based on
-> > CPU frequency and applies it to Tegra186 and Tegra194. Except that the
-> > bpmp on those archs does not support bandwidth manager, so the scaling
-> > iteself is handled similar to how Tegra124 currently works.
-> >
->
-> Three different subsystems and no single explanation of dependencies and
-> how this can be merged.
 
-The only cross-subsystem hard dependency is that patches 5 and 6 need
-patches 1 and 2 respectively. Patch 5 logically needs patch 3 to
-operate as expected, but there should not be compile compile or probe
-failures if those are out of order. How would you expect this to be
-presented in a cover letter?
 
-Aaron
+On 02-Sep-25 11:42 AM, Krzysztof Kozlowski wrote:
+> On 01/09/2025 17:57, Ram Kumar Dwivedi wrote:
+>> Add optional "limit-hs-gear" and "limit-rate" properties to the
+>> UFS controller common binding. These properties allow limiting
+>> the maximum HS gear and rate.
+>>
+>> This is useful in cases where the customer board may have signal
+>> integrity, clock configuration or layout issues that prevent reliable
+>> operation at higher gears. Such limitations are especially critical in
+>> those platforms, where stability is prioritized over peak performance.
+>>
+>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> ---
+>>  .../devicetree/bindings/ufs/ufs-common.yaml      | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/ufs/ufs-common.yaml b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+>> index 31fe7f30ff5b..b4c99fee552f 100644
+>> --- a/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+>> +++ b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+>> @@ -89,6 +89,22 @@ properties:
+>>  
+>>    msi-parent: true
+>>  
+>> +  limit-hs-gear:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    minimum: 1
+>> +    maximum: 5
+> 
+> No improvements.
+
+Hi Krzysztof,
+
+I have updated it in the next patchset.
+
+Thanks,
+Ram.> 
+>> +    default: 5
+>> +    description:
+>> +      Restricts the maximum HS gear used in both TX and RX directions.
+>> +
+>> +  limit-rate:
+>> +    $ref: /schemas/types.yaml#/definitions/string
+>> +    enum: [Rate-A, Rate-B]
+> 
+> lowercase
+I have updated it in the next patchset.
+
+Thanks,
+Ram.> 
+>> +    default: Rate-B
+> 
+> 
+> Best regards,
+> Krzysztof
+
 
