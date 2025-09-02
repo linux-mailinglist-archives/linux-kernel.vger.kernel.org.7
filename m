@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-796047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B8CB3FB57
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:54:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F408B3FB5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71CDE4E32FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CDA14E3445
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9B42ED86B;
-	Tue,  2 Sep 2025 09:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C061C2EDD73;
+	Tue,  2 Sep 2025 09:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q38/ydlY"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SxJOqnhu"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7745E27702A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B492E6CCF
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756806718; cv=none; b=M7CJgKlRIRZztruERjd8dNIi5Mf66b/9qQ/5zGxXBP71TgifAAPR343sg8A7Badb6PAhp6iApnaJLszVmONag5kOqCxTGieWpPSXf+gVsfWTCpVjgRciEBTslnEnLXq/vHaSJ6oWywsn4ooCAm//ziIt2t4yyUUg/GQZeNEitQI=
+	t=1756806776; cv=none; b=V0uTzN8nGsWbUygYIdhcZ7TqiQZlnoOmnZG7Qwu3DbkmlhL9f9lRH285CAKBd5F1fT1nN7q+3KQuyA+TI/fRwDx7/MoMrJoESeOwHislWh2xozF/Wm8XFWusowcAIVlDs46OBmHTPJWYv1nYZdtb/MpO6MRo4YSRVsdoRnNTaiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756806718; c=relaxed/simple;
-	bh=OPuQMxOUMKmtd74yhuH3+ZoGiXX/Ej1X/m4lb4FXzBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cx+Ssu9D4wmypho3tA6xOZbTZl6Vu825JmMFwZr8BC/RT11FT9dCrOvr9VwHGXrDO6RoK3+x443H0XTWzAoKNtG3eyI5klv9TGjHBpoZuAT0L2HVwthnBimn4sayC0D8/aeVr6YbYoWelM/I/8N+9t7mWGt+6jPnnksW09l44cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q38/ydlY; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b87bc67a4so16879815e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:51:56 -0700 (PDT)
+	s=arc-20240116; t=1756806776; c=relaxed/simple;
+	bh=yJqygFJu86p3VvxR+K/6POaTs2Vw+d8nYAcptRFojbE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=miBC+5O5QQYXQzi2Hae0K/luMXFKdamAAmdqcR0ggJKaOnFppjvtQgtPgg/xmxgYqsDqwXetmEuphwa5iL2b4jfisAIN4hhsVxgyot/N8+GBRhMtkQk0kPEVB7UIBiV0h5fKltkWEakR2y6Wpy5eU0g/s5lrE6AhK8SV2Ri9fiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--nogikh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SxJOqnhu; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--nogikh.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45b8af0b8deso11684555e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:52:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756806715; x=1757411515; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0TFEg4KYcJYl/xMrj917lNsi+q1ru1ge+qdtty/yQZg=;
-        b=Q38/ydlYzKPI84Xh7ggCDW4asKio8ouJrqHPCYErJ6gLYbkIfezrxwXpO5KCoMBQFb
-         FXTdY0ZdYh7w4WzfIWJJuPomyjYoUuK0MSxav5kr7ZXZhnJC9FyndqnT8vKkGnlxserB
-         TGY3A6LpFRBLqH5bu6k/WhDTKR7OG7OljYuS1feyhIP3SKLOELiAzmmaoJCOY8AEV8Ha
-         gUDg4yK5VDuKqRAMFbaIQhGH1dfQ4lJ/FX0FkPVbgxrSWLEjtWN9M/DIj+dXZCY0iehU
-         Job0s8C9bc6PWPvkw/l04LgfCXQx8iMj/mlM7lzaYcXUpeHes+yo+RpoLLsyxW96TO+b
-         1Zfg==
+        d=google.com; s=20230601; t=1756806773; x=1757411573; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCSyoQoZCHpnltai8AjxVufHZRb5HZc6ehbijicV91c=;
+        b=SxJOqnhuOY69i68atrPbmLIH1rJ7wGsjFmq0Xc0dvy/CwgPe7hGs2ys6KwtR0L518e
+         2kPrOOjyirRwdqEF1VYCl4syCxqTtjB6e4t5c87iWkM8LAAltVMD3CXHwkUdLTlID4p5
+         4uyfn4vn+WCVmkPobe+MKTt9pC3pxhFeA4dYuoejglBNfMg3YYAlemdgA2HfrzBlPVj8
+         JwyCpkkXSM2XBAzYZcjqtAycOjobwqLmAPLRkpFmd4aRS/1Gb0LxIJ8FCYfaN5DUUzoe
+         kNKYu4+2i12+H8O0kTLKxFPXIa1LV1zo3WyLjdvpEqFGX6k517c+s4s/2BSUAfbZxuDH
+         fDkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756806715; x=1757411515;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0TFEg4KYcJYl/xMrj917lNsi+q1ru1ge+qdtty/yQZg=;
-        b=kveCVZ4vnh1eaHN900qNOo+h2AoyYniJXaNOw0xDwWEBgR0JhCGeIK9LK1XP+rJ/E/
-         KtcR7hVyGy/Ve9vzsM+Fevd92c51cjKPu3OpSR8XNZL7qrErjjCp3+FNf7lWJ4zFQq0a
-         mSKv4QGetPKb3gLPeLSO1NDC3scssvJsa7z4UCr2Q3KE61Aj28IcfNo355JFVDv5zeLY
-         kN/R/xnO5SXWTfRwx9if8mJuytphfGrW+I3/M9VkD0Hn/mbxyIlcoirgrw9kowIk+NyO
-         YBrx9meI8Gj5geUzonbOAi2JzG5KeS1/YQiUTaejL1TTXOCeR9pL4dZCPslSHkZmqhHi
-         wxzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZixakefdLspFi9QlMLMYcuGVYaW1JphqdQyiBwoHWIWNP8RukJSBxiRJyTRfNzyAUXQH/1OJOnmSzaMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBXpzFjtz+wACkTIc+ova8MUB08A2n3rslHr7BtFUhe1d9qJxc
-	HmId+rxmFzD/vCuc8D+NjjAzxLy+p1BR23ZYCbAW8UISGkLMBp9Q90E6FjE4PyQ4aXcMyFVxYbK
-	rEkAZ
-X-Gm-Gg: ASbGnctcMVKFf3T7y/qOfwtvn+KuXB4QMRVxF3DB90ssMPtbUD5WkwFAe9D2Y8lTGwV
-	CxYfiDk3y65iunmwv68CfOd9Vwxl2Vn8COJcmUiX2J2dQfUYUTEasKi1gf4wUkN4YZr93pd3DbZ
-	TSLzEAcq7KWLq59bQL6h0HDRdektRwb+7L+NpdVUmGreQ/3MqV4s6/zd4JqTw0xP/ujev96XkuV
-	kmQGTZ7KRpRT3rvO2RE5X0wO5SyYQ9fMOMLvnKUfjqPZeDCA5HMeejiQx60v97eZrrai5iJC2tp
-	LTaJy0sZv149OguZ3STC2x83yrnBaxj7PjMI4redHN/DfmcMot/ROtPSQVIk/WLaDLjH8uSf/nZ
-	xL9Xlv/gphRDPkGv8TPSwrpDaHUDlDVlzyCiS9junBQo=
-X-Google-Smtp-Source: AGHT+IGL74M/gnuKC4FyY3FBT30oTjIIJaIupFLaAOJ2PpkyzBPc3t2EA4S/LVebXzK30uxba3n03Q==
-X-Received: by 2002:a05:600c:c48f:b0:45b:71ac:b45a with SMTP id 5b1f17b1804b1-45b85533650mr84695395e9.11.1756806714687;
-        Tue, 02 Sep 2025 02:51:54 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0d32a2sm295101005e9.9.2025.09.02.02.51.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 02:51:53 -0700 (PDT)
-Date: Tue, 2 Sep 2025 11:51:52 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Ashay Jaiswal <quic_ashayj@quicinc.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] cpuset: prevent freeing unallocated cpumask in hotplug
- handling
-Message-ID: <wndxi6qoq6bq6lsovlpfutgx7jfummvipx7hhuu4khrdm35ls2@65nymtjs2q7w>
-References: <20250902-cpuset-free-on-condition-v1-1-f46ffab53eac@quicinc.com>
+        d=1e100.net; s=20230601; t=1756806773; x=1757411573;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCSyoQoZCHpnltai8AjxVufHZRb5HZc6ehbijicV91c=;
+        b=ucS1cmg9XYuMIrXz47wNYdiz8gAK0KJp/mfxSLk34d2JF6aqHI6CwmoUiKv6cw3vq4
+         eD8QPMH2UCaKdfdqkfJVc+rT5rXJNkwA7iYEjgAWxSbjzJ/JKjnuPMu4vE1MU3LJd6FO
+         EotljszGv1YAI0HLsMZjsCE1MydAnOjDJMIXdDT82afzlE9dzL/N+YmKAuQSrC4/C85t
+         d2Bq5CJGOJ0hj7wqeF5X7OrNbIMpedQNyu2EwmvE4Ln2FhsGvQDDS7tn6aCEWOVVCjoB
+         X8Gll2woQZvFIuuXMT0TgvFGepLRTsQdEJEiIWH0CBj2ZUUkKV9G5XJUOOnNwf4JiWAk
+         WtAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfeRfBCzxQqSP4OWNEW7R7JZTwEv/4SniIHdiRNf7e+NnLUpQyeR/BtcMXmKP/VUd1EaXnqpIbfod2Uvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRk7dwCr/7vP90fLgAScR6G2qkqSC0gDHoWc0IGHcF3waRhWX9
+	oRsW0bsOz6GrV/76YQyftTM4t5tpmLTvpf1XdrmWpEzIgqzaA1bCh4ebjCLMBONOZ67eNTswcW8
+	MbTRWGg==
+X-Google-Smtp-Source: AGHT+IFhVx6/fp9bQrLU2+COALc3WyAOQyYyAQ0ATCo0PnkqRHubwOfZgEMWzw4a3O8baNUfr2wInNKraIA=
+X-Received: from wmsz16.prod.google.com ([2002:a05:600c:c170:b0:45b:883d:4704])
+ (user=nogikh job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1994:b0:456:18f3:b951
+ with SMTP id 5b1f17b1804b1-45b85575580mr90608915e9.15.1756806772777; Tue, 02
+ Sep 2025 02:52:52 -0700 (PDT)
+Date: Tue,  2 Sep 2025 11:52:50 +0200
+In-Reply-To: <345d49d2-5b6b-4307-824b-5167db737ad2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z5d55kat4d54zghq"
-Content-Disposition: inline
-In-Reply-To: <20250902-cpuset-free-on-condition-v1-1-f46ffab53eac@quicinc.com>
+Mime-Version: 1.0
+References: <345d49d2-5b6b-4307-824b-5167db737ad2@redhat.com>
+X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
+Message-ID: <20250902095250.1319807-1-nogikh@google.com>
+Subject: Re: Re: [PATCH] mm: fix lockdep issues in writeback handling
+From: Aleksandr Nogikh <nogikh@google.com>
+To: david@redhat.com
+Cc: akpm@linux-foundation.org, joannelkoong@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, m.szyprowski@samsung.com, mszeredi@redhat.com, 
+	willy@infradead.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hi,
 
---z5d55kat4d54zghq
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] cpuset: prevent freeing unallocated cpumask in hotplug
- handling
-MIME-Version: 1.0
+When can the patch be expected to reach linux-next?
+Syzbot can't build/boot the tree for more than 12 days already :(
 
-On Tue, Sep 02, 2025 at 09:56:17AM +0530, Ashay Jaiswal <quic_ashayj@quicin=
-c.com> wrote:
-> In cpuset hotplug handling, temporary cpumasks are allocated only when
-> running under cgroup v2. The current code unconditionally frees these
-> masks, which can lead to a crash on cgroup v1 case.
->=20
-> Free the temporary cpumasks only when they were actually allocated.
->=20
-> Fixes: 4b842da276a8 ("cpuset: Make CPU hotplug work with partition")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ashay Jaiswal <quic_ashayj@quicinc.com>
-> ---
->  kernel/cgroup/cpuset.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index a78ccd11ce9b43c2e8b0e2c454a8ee845ebdc808..a4f908024f3c0a22628a32f8a=
-5b0ae96c7dccbb9 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -4019,7 +4019,8 @@ static void cpuset_handle_hotplug(void)
->  	if (force_sd_rebuild)
->  		rebuild_sched_domains_cpuslocked();
-> =20
-> -	free_tmpmasks(ptmp);
-> +	if (on_dfl && ptmp)
-> +		free_tmpmasks(ptmp);
->  }
+-- 
+Aleksandr
 
-Can you do=20
-	if (ptmp)
-		free_tmpmasks(ptmp);
-
-so that v2 check in concentrated in one place only?
-
-Thanks,
-Michal
-
---z5d55kat4d54zghq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaLa+KBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+Ah3/wD/d3gKmwBoKu8zYX6KDBEq
-a2AnLu103Jhxtbr7ASDeO10BANTgH2wmfZE7r24LBPVJCATLBptAqRmzsnsxgRKf
-/n4F
-=zZFz
------END PGP SIGNATURE-----
-
---z5d55kat4d54zghq--
+On 27.08.25, David Hildenbrand wrote:
+> On 26.08.25 15:09, Marek Szyprowski wrote:
+> > Commit 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT") removed
+> > BDI_CAP_WRITEBACK_ACCT flag and refactored code that depend on it.
+> > Unfortunately it also moved some variable intialization out of guarded
+> > scope in writeback handling, what triggers a true lockdep warning. Fix
+> > this by moving initialization to the proper place.
+> 
+> Nasty
+> 
+> > 
+> > Fixes: 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT")
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> -- 
+> Cheers
+> 
+> David / dhildenb
 
