@@ -1,319 +1,178 @@
-Return-Path: <linux-kernel+bounces-796714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFBCB40643
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:12:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89368B40714
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435F317212E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:06:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E8BC4E176C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4A5286433;
-	Tue,  2 Sep 2025 14:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06DA31DD9A;
+	Tue,  2 Sep 2025 14:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NowuO1XU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qJvO2GVB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NowuO1XU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qJvO2GVB"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="pXeUr5xJ"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2285616FF37
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA483126C8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756822010; cv=none; b=jJfR/zyygEnkb8qtrt7pKE6oc/ucB3RdyiTtKf/dY+B2b0dd3lrAYX2Q74YGuudGhC3GN2rk6Ms1yfu3xJd+jSTrNN/NHv/4/sjT4TygFyHavr0EgHleE2JPN/1edkgpSKk1bZaf/JjiXSnFpQ7P6K2yfeXl61i4A2YirNo2RKo=
+	t=1756823800; cv=none; b=LlgBJhFvJnXdz03HVBTs2qRWtBcheRv6v9HeDkREETHLLPlBROsdsV7tRnNDVT/87WOJnYkXMDPGb8lw7sQ7cWUH8Lx1vMetyQicbnT/YJxq7z8uIVr1ThcZsPROPKrpCHYvzX72c81EcBRgc5mmglIuCDlkbM7efQgd/qoH7zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756822010; c=relaxed/simple;
-	bh=GVUgnan1LosCVj07j3WEjaZ5OMCe/Lnq4hUFvl7uQo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nvo4TCBs8kIbXjweGgRkvGCGKMdwYM7EpaKZOUTcrCe3X5h2fqmEromjTBkf9xoHzhJFqKj/Uy18V2RT/7grhbkgBSinLYRirmHhkF4DcZ1e08hXgTv2/EbW8S7qDs3Nv/Dg0S9lSw3W+HGeKpSqRKxOd2YZEg6ULYiV06+zFFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NowuO1XU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qJvO2GVB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NowuO1XU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qJvO2GVB; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 57F0D211D0;
-	Tue,  2 Sep 2025 14:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756822006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pCeyRXDjeXdIYPa2EpXAmE++weae5wnHDPz0vJ1nNwI=;
-	b=NowuO1XU6pCdFMxyzfVwCM1NVTRvLoMLTMno+dzrAQb415IHogH4B7aBOu4eNUly5QqDI5
-	5kd6OlDY5NnSRVMgtpTuSL/MI/PGOEDdyPSUxJVn3oMLDPyZ087tRNWFt9lRGrYa/cfG6I
-	fvz8tfGTSrXOrReF5FClCJ6WzNRO0T4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756822006;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pCeyRXDjeXdIYPa2EpXAmE++weae5wnHDPz0vJ1nNwI=;
-	b=qJvO2GVB8bhj1tslii9DcANIwb2ZqQIJBjpFScu7IfvOlu6Zkad9i/0ig5gQ24R8e+O2Mk
-	sEXdiotHFFhOFkCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756822006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pCeyRXDjeXdIYPa2EpXAmE++weae5wnHDPz0vJ1nNwI=;
-	b=NowuO1XU6pCdFMxyzfVwCM1NVTRvLoMLTMno+dzrAQb415IHogH4B7aBOu4eNUly5QqDI5
-	5kd6OlDY5NnSRVMgtpTuSL/MI/PGOEDdyPSUxJVn3oMLDPyZ087tRNWFt9lRGrYa/cfG6I
-	fvz8tfGTSrXOrReF5FClCJ6WzNRO0T4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756822006;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pCeyRXDjeXdIYPa2EpXAmE++weae5wnHDPz0vJ1nNwI=;
-	b=qJvO2GVB8bhj1tslii9DcANIwb2ZqQIJBjpFScu7IfvOlu6Zkad9i/0ig5gQ24R8e+O2Mk
-	sEXdiotHFFhOFkCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E4BF113882;
-	Tue,  2 Sep 2025 14:06:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uC4uNvX5tmjvaQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 14:06:45 +0000
-Message-ID: <3a73aada-48ad-45ad-8144-b58760113d6f@suse.de>
-Date: Tue, 2 Sep 2025 16:06:45 +0200
+	s=arc-20240116; t=1756823800; c=relaxed/simple;
+	bh=A+LsaK/8DhB/sQF9unOwV9CCW5H3/KtzVBQyYx2LaUI=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=qYnbV3wF2eu4EN+zp/V8x65OIDRCODwlJbD0DGpdM6WMU4QlzfyFUM12oPmUWpiryHTYDXBRyFM9svAjxJk1AGZLsdDUCv8+4mQ+5M6XSXMtsx3sGSdU9ou6kN04rvUr2fjvDaqm7F7Y5xvAMXoP+QtHthCGON8odGvs9VH2HmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=pXeUr5xJ; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:Date:Cc:To:From:Subject:Message-ID:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=zRxrYvACY0BtKprr4DU8AfTF+qXgwquqVx2ViwvSgsA=; b=pXeUr5xJO5BtyFYyH49zLb7ZWH
+	hG0iLLsHuZ9/VTNU2VPoT6dxNw4eCSbNJ464oMUQQoJUgIsjqSMy1awKeZWC7SXbIe4uVAg1tUEw5
+	2zuKORgbkOfF4UpLBmX8hBccvslqHQL6iDeFCV76/2ra2VFZZ+PkhrTjRhkteAbDbEjwHk7XnOB9S
+	L3qgD4uH+3CmEwRp7RTk5kgTftNeKV3cgSpiCF+2hvHrrsy6bdZlGNwVO8NwO+ufNMWJ3ZQhGKorx
+	jq1HwLVRz8FrCJYOIcS/gBAG5IRwFP4g2tOGaCKK+zUkmQosoucaYDWh1ZAo613SOGwPPQTSHjG+f
+	IMBQ4Ceg==;
+Received: from [213.55.222.174] (helo=[10.155.49.253])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1utRev-007C5B-MG; Tue, 02 Sep 2025 15:06:54 +0100
+Message-ID: <a90ee087c4dc21bbd548c933256d6b4a877a9fd9.camel@codethink.co.uk>
+Subject: SCHED_DEADLINE tasks causing WARNING at kernel/sched/sched.h message
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, Vineeth Pillai
+ <vineeth@bitbyteword.org>, Daniel Bristot de Oliveira <bristot@kernel.org>,
+ Luca Abeni <luca.abeni@santannapisa.it>
+Date: Tue, 02 Sep 2025 16:06:52 +0200
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 24/29] drm/tidss: dispc: Improve mode checking logs
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-24-14ad5315da3f@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250902-drm-state-readout-v1-24-14ad5315da3f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Sender: marcel.ziswiler@codethink.co.uk
 
+Hi
 
+As part of our trustable work [1], we also run a lot of real time scheduler=
+ (SCHED_DEADLINE) tests on the
+mainline Linux kernel (v6.16.2 in below reported case). Apart from some reg=
+ression identified which recently
+got fixed [2], the Linux scheduler proves quite capable of scheduling deadl=
+ine tasks down to a granularity of
+5ms on both of our test systems (amd64-based Intel NUCs and aarch64-based R=
+ADXA ROCK5Bs).
 
-Am 02.09.25 um 10:32 schrieb Maxime Ripard:
-> The dispc_vp_mode_valid() function checks whether a mode can be handled
-> by the display controller.
->
-> There's a whole bunch of criteria, and it's not clear when a rejection
-> happens why it did. Let's add a bunch of logs on error to make it
-> clearer.
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->   drivers/gpu/drm/tidss/tidss_dispc.c | 47 +++++++++++++++++++++++++++++--------
->   1 file changed, 37 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index 32248b5f71b7566dc33d7a7db0efb26d3a9ed1c3..ef948e3041e10bc65cf2c4794a4e4cffa7e3fb3a 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -1349,47 +1349,63 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
->   
->   enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
->   					 u32 hw_videoport,
->   					 const struct drm_display_mode *mode)
->   {
-> +	struct tidss_device *tidss = dispc->tidss;
-> +	struct drm_device *dev = &tidss->ddev;
->   	u32 hsw, hfp, hbp, vsw, vfp, vbp;
->   	enum dispc_vp_bus_type bus_type;
->   	int max_pclk;
->   
->   	bus_type = dispc->feat->vp_bus_type[hw_videoport];
->   
->   	max_pclk = dispc->feat->max_pclk_khz[bus_type];
->   
-> -	if (WARN_ON(max_pclk == 0))
-> +	if (WARN_ON(max_pclk == 0)) {
+However, very rarely (e.g. only once over the course of the 2.4 billion tes=
+ts we ran last week on ROCK5B), we
+do get the following message in the logs.
 
-Better remove this WARN_ON(). User-space could trigger it and spam the 
-kernel logs. It's also a driver bug, I think.
+Aug 23 18:09:37 localhost kernel: ------------[ cut here ]------------
+Aug 23 18:09:37 localhost kernel: WARNING: CPU: 7 PID: 259143 at kernel/sch=
+ed/sched.h:1787
+__task_rq_lock+0xac/0xfc
+Aug 23 18:09:37 localhost kernel: Modules linked in: ghash_generic overlay =
+snd_soc_hdmi_codec panthor
+rockchipdrm pwm_fan rfkill_gpio phy_rockchip_usbdp cdc_ether typec synopsys=
+_hdmirx display_connector
+snd_soc_simple_card hantro_vpu usbnet phy_rockchip_naneng_combphy phy_rockc=
+hip_samsung_hdptx rockchip_thermal
+snd_soc_es8316 drm_gpuvm rtc_hym8563 rk805_pwrkey rockchip_saradc drm_exec =
+industrialio_triggered_buffer
+drm_shmem_helper kfifo_buf dw_hdmi_qp spi_rockchip_sfc analogix_dp gpu_sche=
+d dw_mipi_dsi drm_dp_aux_bus dw_hdmi
+cec drm_display_helper snd_soc_rockchip_i2s_tdm cfg80211 drm_client_lib r81=
+52 drm_dma_helper drm_kms_helper
+v4l2_vp9 mii v4l2_h264 v4l2_jpeg v4l2_mem2mem snd_soc_audio_graph_card snd_=
+soc_simple_card_utils rfkill
+pci_endpoint_test drm dm_mod snd_aloop backlight dax
+Aug 23 18:09:37 localhost kernel: CPU: 7 UID: 0 PID: 259143 Comm: stress-ng=
+-cpu-s Not tainted 6.16.2-dirty #1
+PREEMPT_RT=20
+Aug 23 18:09:37 localhost kernel: Hardware name: radxa Radxa ROCK 5 Model B=
+/Radxa ROCK 5 Model B, BIOS 2024.07-
+00925-g459560000736 07/01/2024
+Aug 23 18:09:37 localhost kernel: pstate: 804000c9 (Nzcv daIF +PAN -UAO -TC=
+O -DIT -SSBS BTYPE=3D--)
+Aug 23 18:09:37 localhost kernel: pc : __task_rq_lock+0xac/0xfc
+Aug 23 18:09:37 localhost kernel: lr : __task_rq_lock+0x54/0xfc
+Aug 23 18:09:37 localhost kernel: sp : ffff80009dd83b80
+Aug 23 18:09:37 localhost kernel: x29: ffff80009dd83b80 x28: ffff0001e48557=
+80 x27: 0000000000000000
+Aug 23 18:09:37 localhost kernel: x26: 0000000000000000 x25: 00000000000000=
+00 x24: ffffb2e0b0d37c60
+Aug 23 18:09:37 localhost kernel: x23: ffff80009dd83bc8 x22: ffff0001e48557=
+80 x21: ffff0001e4855780
+Aug 23 18:09:37 localhost kernel: x20: ffffb2e0b0c2fe40 x19: ffff0002fef2ae=
+40 x18: 0000000000000000
+Aug 23 18:09:37 localhost kernel: x17: 0000000000000000 x16: 00000000000000=
+00 x15: 0000ffffd2453db8
+Aug 23 18:09:37 localhost kernel: x14: ffff0001e4855800 x13: 00000000000000=
+00 x12: 0000000000000000
+Aug 23 18:09:37 localhost kernel: x11: 0000000000000165 x10: ffff000100a5fc=
+e8 x9 : 0000000000000000
+Aug 23 18:09:37 localhost kernel: x8 : 0000000000000000 x7 : ffff0001e48558=
+00 x6 : 000000000000008f
+Aug 23 18:09:37 localhost kernel: x5 : 0000000000000000 x4 : 00000000000000=
+00 x3 : 0000000000000000
+Aug 23 18:09:37 localhost kernel: x2 : 0000000000000001 x1 : ffff0002fef172=
+58 x0 : ffffb2e0b0d5bfb0
+Aug 23 18:09:37 localhost kernel: Call trace:
+Aug 23 18:09:37 localhost kernel:  __task_rq_lock+0xac/0xfc (P)
+Aug 23 18:09:37 localhost kernel:  rt_mutex_setprio+0x6c/0x498
+Aug 23 18:09:37 localhost kernel:  rt_mutex_slowunlock+0x17c/0x310
+Aug 23 18:09:37 localhost kernel:  rt_spin_unlock+0x7c/0x90
+Aug 23 18:09:37 localhost kernel:  cpuset_cpus_allowed+0xd8/0x10c
+Aug 23 18:09:37 localhost kernel:  __sched_setaffinity+0xb0/0x194
+Aug 23 18:09:37 localhost kernel:  sched_setaffinity+0x140/0x27c
+Aug 23 18:09:37 localhost kernel:  __arm64_sys_sched_setaffinity+0xb8/0x180
+Aug 23 18:09:37 localhost kernel:  invoke_syscall+0x48/0x104
+Aug 23 18:09:37 localhost kernel:  el0_svc_common.constprop.0+0xc0/0xe0
+Aug 23 18:09:37 localhost kernel:  do_el0_svc+0x1c/0x28
+Aug 23 18:09:37 localhost kernel:  el0_svc+0x34/0x104
+Aug 23 18:09:37 localhost kernel:  el0t_64_sync_handler+0x10c/0x138
+Aug 23 18:09:37 localhost kernel:  el0t_64_sync+0x198/0x19c
+Aug 23 18:09:37 localhost kernel: ---[ end trace 0000000000000000 ]---
 
-> +		drm_dbg(dev, "Invalid maximum pixel clock");
->   		return MODE_BAD;
-> +	}
->   
-> -	if (mode->clock < dispc->feat->min_pclk_khz)
-> +	if (mode->clock < dispc->feat->min_pclk_khz) {
-> +		drm_dbg(dev, "Mode pixel clock below hardware minimum pixel clock");
->   		return MODE_CLOCK_LOW;
-> +	}
->   
-> -	if (mode->clock > max_pclk)
-> +	if (mode->clock > max_pclk) {
-> +		drm_dbg(dev, "Mode pixel clock above hardware maximum pixel clock");
->   		return MODE_CLOCK_HIGH;
-> +	}
->   
-> -	if (mode->hdisplay > 4096)
-> +	if (mode->hdisplay > 4096) {
-> +		drm_dbg(dev, "Number of active horizontal pixels above hardware limits.");
->   		return MODE_BAD;
-> +	}
->   
-> -	if (mode->vdisplay > 4096)
-> +	if (mode->vdisplay > 4096) {
-> +		drm_dbg(dev, "Number of active vertical lines above hardware limits.");
->   		return MODE_BAD;
-> +	}
->   
->   	/* TODO: add interlace support */
-> -	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
-> +	if (mode->flags & DRM_MODE_FLAG_INTERLACE) {
-> +		drm_dbg(dev, "Interlace modes not suppported.");
->   		return MODE_NO_INTERLACE;
-> +	}
->   
->   	/*
->   	 * Enforce the output width is divisible by 2. Actually this
->   	 * is only needed in following cases:
->   	 * - YUV output selected (BT656, BT1120)
->   	 * - Dithering enabled
->   	 * - TDM with TDMCycleFormat == 3
->   	 * But for simplicity we enforce that always.
->   	 */
-> -	if ((mode->hdisplay % 2) != 0)
-> +	if ((mode->hdisplay % 2) != 0) {
-> +		drm_dbg(dev, "Number of active horizontal pixels must be even.");
->   		return MODE_BAD_HVALUE;
-> +	}
->   
->   	hfp = mode->hsync_start - mode->hdisplay;
->   	hsw = mode->hsync_end - mode->hsync_start;
->   	hbp = mode->htotal - mode->hsync_end;
->   
-> @@ -1397,29 +1413,40 @@ enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
->   	vsw = mode->vsync_end - mode->vsync_start;
->   	vbp = mode->vtotal - mode->vsync_end;
->   
->   	if (hsw < 1 || hsw > 256 ||
->   	    hfp < 1 || hfp > 4096 ||
-> -	    hbp < 1 || hbp > 4096)
-> +	    hbp < 1 || hbp > 4096) {
-> +		drm_dbg(dev,
-> +			"Horizontal blanking or sync outside of hardware limits (fp: %u, sw: %u, bp: %u).",
-> +			hfp, hsw, hbp);
->   		return MODE_BAD_HVALUE;
-> +	}
->   
->   	if (vsw < 1 || vsw > 256 ||
-> -	    vfp > 4095 || vbp > 4095)
-> +	    vfp > 4095 || vbp > 4095) {
-> +		drm_dbg(dev,
-> +			"Vertical blanking or sync outside of hardware limits (fp: %u, sw: %u, bp: %u).",
-> +			vfp, vsw, vbp);
->   		return MODE_BAD_VVALUE;
-> +	}
->   
->   	if (dispc->memory_bandwidth_limit) {
->   		const unsigned int bpp = 4;
->   		u64 bandwidth;
->   
->   		bandwidth = 1000 * mode->clock;
->   		bandwidth = bandwidth * mode->hdisplay * mode->vdisplay * bpp;
->   		bandwidth = div_u64(bandwidth, mode->htotal * mode->vtotal);
->   
-> -		if (dispc->memory_bandwidth_limit < bandwidth)
-> +		if (dispc->memory_bandwidth_limit < bandwidth) {
-> +			drm_dbg(dev, "Required memory bandwidth outside of hardware limits.");
->   			return MODE_BAD;
-> +		}
->   	}
->   
-> +	drm_dbg(dev, "Mode is valid.");
->   	return MODE_OK;
->   }
->   
->   int dispc_vp_enable_clk(struct dispc_device *dispc, u32 hw_videoport)
->   {
->
+Usually, this is accompanied by our test workload process also getting the =
+SIGXCPU signal, despite it not
+overrunning its allocated runtime, at least not on purpose.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+We are wondering what exactly could cause this or what exactly could be the=
+ issue.
 
+We are happy to provide more detailed debugging information (however, full =
+journal logs are usually a couple
+hundred MB in size), but are looking for suggestions on how/what exactly to=
+ look at.
 
+Any help is much appreciated. Thanks!
+
+Cheers
+
+Marcel
+
+[1] https://projects.eclipse.org/projects/technology.tsf
+[2] https://lore.kernel.org/all/ce8469c4fb2f3e2ada74add22cce4bfe61fd5bab.ca=
+mel@codethink.co.uk
+[3] https://lore.kernel.org/all/20250715071658.267-1-ziqianlu@bytedance.com
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/k=
+ernel/sched/sched.h?h=3Dv6.16.2#n1785
+
+BTW: due to us having applied this patch set on top of v6.16.2 [3] the line=
+ number moved by 2 lines so the
+WARN_ON line in questions is actually the following [4].
 
