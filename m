@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-796965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C210AB40A1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:05:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0AECB40A1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EB147B236E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:03:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E677B63AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2DB324B0C;
-	Tue,  2 Sep 2025 16:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99D732A81A;
+	Tue,  2 Sep 2025 16:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FUUfI3WX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVHxZHZV"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003C62D5C8B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BBA2D5C8B
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756829095; cv=none; b=UUnbPumJAaGh5wmeTGSXjYPCfOby2WVjaTJSbF5+721KozmYc7wkzkSeTlk8TObKZy5LEJz01EEWHDN+7SFHGl47YFWtklxnNBUxDNoFWRTWXw4vS0Y8xjcvW7lrlcPnx/jvVNnzOB6MP7nXZrL7lrIFMX8RzYqqhOLBN58767s=
+	t=1756829107; cv=none; b=gHsW2MyklJxYeM2JCnrDAXwrdbd5RY/xGTcD+X8WJlBuYo7rP37ethqVRyf8tRGCxgcya/GWNakODBFUiLsAjJRJ+9cDjGetlLbbM2fwFyZHanErHCpAscWE9QsCiYjyfac3hM6w/JGoaYaVAaC3gi1PU24ss7ilipmnaRJ7+qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756829095; c=relaxed/simple;
-	bh=ovWdbmcLBmA33JBDYg84OE2PqHzIKb6iNt+T6eoF2kw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QB7AxXn0eBsyGeoMT5EqqFd5C1eUf9ba7bV1zKYG/oX9RKGszIuLW0T75CMbpHbRRgbkv6tEHbs070Vnm25JQpf8ceuJ7/Ykct2gHwDQEmjauaH9gHCe4v+xgnluWTXSxiKOvZit0Wh05LnAEolSszFEYPw2VwBYS5oxNpvXNfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FUUfI3WX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756829092;
-	bh=ovWdbmcLBmA33JBDYg84OE2PqHzIKb6iNt+T6eoF2kw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FUUfI3WXYc1B8QJ6WeBpPvR0+1cMVN778Sl29SAmhAoSko8l+RH/Bxm0WuqqyJJW1
-	 lrMAWYbfZ80CGBKTAcbSG/5phmbYDtRElhkRWQsS9uubdqJ8wRB8MMfG+ZuqR0EuH5
-	 cc4hQYsR8yFJX4o5sAEOP2F17NHZFKm/Loaa7WpvuUrKY1fNLRA9RgbCkxZUyWSGld
-	 ZMvRimQ+t3ZM3ANHSvPz18MV+Wjp08FasY9xoJR+TY+A4eE9FUKLI9OF72e5kPK8jO
-	 J7wJyFTpc76oxwxhQbs+xMKsWOMZ1oUXQNvGMP9PG9O5KdeNyGwlOdVxEehCPDsBh3
-	 4dG8NXOEAcTIg==
-Received: from [192.168.1.90] (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5E63E17E131D;
-	Tue,  2 Sep 2025 18:04:51 +0200 (CEST)
-Message-ID: <fc9baa6d-ed38-478b-9338-8a76986639da@collabora.com>
-Date: Tue, 2 Sep 2025 19:04:50 +0300
+	s=arc-20240116; t=1756829107; c=relaxed/simple;
+	bh=z50NzjcKlPivT1ks2KKwNwrjRHBj8L5rO2tH8V9fz1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FnqGqf5sSY6VzzSDWxdtVVjHU+Q0a7RID9KdKcNNFeZtAOhuXjrseyf0oP2Wh2ORsbufbNhB+ApobI1uw7oL9Qq9okRkj/dDtiPVBKyOmrZA5SaXjzr1hF2HWDR3AHiajzr3hIEA2kh2oKHoAiGgNPsvZc6T3bmF4Z/Pdxs6Ta8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVHxZHZV; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b87bc67a4so20176355e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756829104; x=1757433904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+3rIC2TE2Lyn58cUZrFIvfw/WbAh8YL+TOd39koE7a4=;
+        b=ZVHxZHZVKRexzSUMsT0t+rr33EokETt0o75gpSLsoSo0OXKV2nJgr1r8H6LZ2t/R4y
+         3EeMh2zx8mu08CDlc+gXtHuDGilDqL1Rc1QAUAyr5/fgTDNSNUWBAmApB66YkjY+h8kG
+         SgDLteQqymS9r3kOnpd52TSmBNQQuAG9VcFqRy7+JbezIIXdUgXSOgcODY95oH2lQCDd
+         pGL/FLzKYf0pDROm+Pbb2X1uyPDyQxDNIG5EOJ43ZkJiH9DzfvsK9PPjrYz1Kerd7IHK
+         mFKdVi1Cy5xvhOwAkiQdaZ8e8goQUvTNAtoHoALxWmNlHOhqoqQV5Suruu4GE2KGrnt6
+         ls7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756829104; x=1757433904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+3rIC2TE2Lyn58cUZrFIvfw/WbAh8YL+TOd39koE7a4=;
+        b=vcNCw+E+x5OKNKRc8FzRIO9xSr/gwSJrd6JcCcmHQJn95HQB92jP7C3AZ7MzV3hTLB
+         tEJ2YM1Xe4kTfULu/ncjhcA5yVrpSm4FF5l3cTyPM2jHl5hzW9xKpWYwSu6GNrgamOjr
+         /0YRBddauzQZaXs+UMH9AAy6PRlevfHRXL+6pSXcSZG9uO3ucCitro0F+1DXFhRWa1tb
+         L/junPMkLvabTqcblok1GZj4IsUeURfz82QgE9tq85uHhWcavZ4G1bcgwyl/Bi3hxpod
+         2MYNnlf/VQU04oPjPfC7G3dafVc1nvefTGsVbxZKoeb8ZsMM5ETKAes44t+kkruG/z0E
+         5F4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUQaTIB4IE0egr/a66vHAgP1l41m/48JEotRkXRB1WigJpI51lkwuhmaxaoyZuU0JFebB1YdPEBJO8zmJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6eRyx7fGGkP1CDTl1ocaQcqq1fApQmlnZw5wnYf8XE06dlmKH
+	aDKoM1Whsi7PUDC2eqVhZZT20N7ZZE8wGWrPSw1SPm1/YW8ATaXIFdLMJwl1V7LsA7m2NwtSmos
+	Rp71v8n2wTsHs4QdeZ1pIEDCInuAKhKU=
+X-Gm-Gg: ASbGnctm0NUQH1OdONkGqXQUmE0JBlK1HLRkzUwIuudcKW6trO4F4auKY7+roon1Zey
+	yZt8uf8Ld9oIFk/+ot9ZJytlXiucVIo5BFLtCvXnBbpvu3uICMy0K1rC69hResVPRxMQgweY4CW
+	sPRBP+MOxrCTFIZNhEClYtrAIGY6F/obLGFIvCQz+kngT4Xms3z5ypJotlsnq82XqKgvxlcGFoq
+	8qVAdQF50dRCCK8Y0WxRws=
+X-Google-Smtp-Source: AGHT+IGVdYfyHeOQlWseAO6wwVyx+XSvElrXvSZ8VCvcISgW3WvbxYWlotIaV/UMbovpIf+YYKVvaG8TmiV/16XZfPs=
+X-Received: by 2002:a05:600c:4515:b0:45b:8078:b31d with SMTP id
+ 5b1f17b1804b1-45b85525d8dmr96717845e9.6.1756829103761; Tue, 02 Sep 2025
+ 09:05:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Introduce BACKGROUND_COLOR DRM CRTC property
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, Matt Roper <matthew.d.roper@intel.com>
-References: <20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com>
- <50e3f25c-f4e1-40f6-8e36-23193863f1ee@foss.st.com>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <50e3f25c-f4e1-40f6-8e36-23193863f1ee@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250901191307.GI4067720@noisy.programming.kicks-ass.net> <20250902081915.GK3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250902081915.GK3245006@noisy.programming.kicks-ass.net>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 2 Sep 2025 09:04:51 -0700
+X-Gm-Features: Ac12FXzbsndI341Y_g4qCBycCZgZoQBBkF7KK3sMlRUSsTRJyiFZllL9SL-mdEQ
+Message-ID: <CAADnVQJ2zm7BRb3SuwcmCQ5SBULznbUq777vMCHkm9UbPkaAbQ@mail.gmail.com>
+Subject: Re: [PATCH v2] x86,ibt: Use UDB instead of 0xEA
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>, 
+	alyssa.milburn@intel.com, scott.d.constable@intel.com, 
+	Joao Moreira <joao@overdrivepizza.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, ojeda@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Raphael,
+On Tue, Sep 2, 2025 at 1:19=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+>
+> Because this is all somewhat magical code, and this change is a little
+> on the large side, it as been suggested I 'upgrade' the Changelog some.
+>
+> On Mon, Sep 01, 2025 at 09:13:07PM +0200, Peter Zijlstra wrote:
+> >
+> > A while ago [0] FineIBT started using the 0xEA instruction to raise #UD=
+.
+> > All existing parts will generate #UD in 64bit mode on that instruction.
+> >
+> > However; Intel/AMD have not blessed using this instruction, it is on
+> > their 'reserved' opcode list for future use.
+> >
+> > Peter Anvin worked the committees and got use of 0xD6 blessed, it
+> > shall be called UDB (per the next SDM or so), and it being a single
+> > byte instruction is easy to slip into a single byte immediate -- as
+> > is done by this very patch.
+> >
+> > Reworking the FineIBT code to use UDB wasn't entirely trivial. Notably
+> > the FineIBT-BHI1 case ran out of bytes. In order to condense the
+> > encoding some it was required to move the hash register from R10D to
+> > EAX (thanks hpa!).
+> >
+> > Per the x86_64 ABI, RAX is used to pass the number of vector registers
+> > for vararg function calls -- something that should not happen in the
+> > kernel. More so, the kernel is built with -mskip-rax-setup, which
+> > should leave RAX completely unused, allowing its re-use.
+>
+>  [ For BPF; while the bpf2bpf tail-call uses RAX in its calling
+>    convention, that does not use CFI and is unaffected. Only the
+>    'regular' C->BPF transition is covered by CFI. ]
 
-On 9/2/25 4:19 PM, Raphael Gallais-Pou wrote:
-> 
-> 
-> On 9/2/25 11:27, Cristian Ciocaltea wrote:
->> Some display controllers can be hardware-configured to present non-black
->> colors for pixels which are not covered by any plane (or are exposed
->> through transparent regions of higher planes).
->>
->> The first patch of the series introduces the BACKGROUND_COLOR DRM
->> property that can be attached to a CRTC via a dedicated helper function.
->> A 64-bit ARGB color value format is also defined and can be manipulated
->> with the help of a few utility macros.
-> 
-> Hi Cristian,
-> 
-> Thanks for this work ! :)
-> 
-> FWIW I sent a series also based on Matt's work four years ago:
-> https://lore.kernel.org/dri-devel/20210707084557.22443-2-raphael.gallais-pou@foss.st.com/
-> 
-> IIRC at the time there was some questions around the pixel format used for the
-> property, and non-opaque color vs alpha pre-multiplication.
-> Mind that on STM32MP platforms alpha channel for the background color is not
-> supported.
-> 
-> Hope the thread can bring some insights.
-
-Thanks for pointing this out, I will consider it for v2.
-
-Regards,
-Cristian
+I cannot comprehend the new scheme, but thanks for heads up.
 
