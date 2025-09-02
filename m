@@ -1,109 +1,98 @@
-Return-Path: <linux-kernel+bounces-795975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF25B3FA3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:24:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE30B3FA40
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0733A7B1530
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:22:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951EA4E202D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55F02E8E0A;
-	Tue,  2 Sep 2025 09:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DAF2E7BA5;
+	Tue,  2 Sep 2025 09:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iifSQy9p"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HHKWzOqZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C747527466D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CAA1684B4
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756805016; cv=none; b=njT/Bp3eLRXlehscmXNZdG2TGJlAM0v5W5Z+1w7P02PdY/wWiUMf3EvZJa82xI/vD6dNspZKbiaI/JSreq/WKk7DvyQGGe1BY9X7q1Pwhbu3ps7cSBUqAlDgVrW+fe7Vn/2BLIkn3KT+HjXrgUD+BMUoaQCeFa98yF3phhQKj6E=
+	t=1756805077; cv=none; b=jUWrM4iI+pL2xAlAfOB0zRMZ/ytlNoG3RgeAcqI+N9we424BSp3J/FRJl9a45f8XiAIrEijWt2VG9OhXpkuOnHioal9NyTRGUACE/NNR5Fz/8lIoD7OSNtVnU8LfFJlgYzFP+eLVlmZW3m5/jPBf258RofCZWVhGvQnBYtSVkO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756805016; c=relaxed/simple;
-	bh=tX3BCUzFmHYIg0myhvow09MB4ccfm98eYBIQHxNimfA=;
+	s=arc-20240116; t=1756805077; c=relaxed/simple;
+	bh=uzBs+Qui2RRPDhdSVqAOWMcbu+hUwsfTpSzL8NvRnCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hviapveNRhZIsP1ogkMGN765r3UZ3dccPRiXCdjxiAY37aUFCAN5t0AZiC+xbmafUpZObBp9hshJaem6qYWZ4JP//Lo4h7ua6xmYBJvh64fIyZCX3MunroL9GpElqSCFsAQeKqd/peIgFEZ5oPMucgOOaPMWkNUPEaMrVqLLPBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iifSQy9p; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822Rlvg021618
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 09:23:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Ch/LhY4Ftoj00uev1yGdlcFF
-	tJHZQ9xg8w0D9kgtUtE=; b=iifSQy9p3IEu5hNQ/ysGtvHwuEFAAtMxJbSFFxCS
-	1HDtjhOMn4NA5Wwok95SBz9wNOiakQBHMMAtX9eObaDZT7dnRahZoOHXnTrMyVQD
-	+zKZ7DKnPxghc4nF5imAfu1x+SY6qI6m3CBSh7V0QqIMgWeOJhFBFqUWUBmN/chX
-	vRCgSRsi6u0n6lXU9UbuO+Iyz8cw/xKJg2lNUscGlabDJlZt9Va4jKcW3u/TO6ow
-	d/MAq2L9C+wAXlY2vU5r3M+bj3qmjfb0oDEEDJdGRWvmbt8olJacHDFZCYwB6oLS
-	Oh3G0mT8xmIm9jo3HG/t305jCNRGdvOVrvyBdH/7+KGb5A==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnp7e0d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:23:33 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b32a58c3f9so49296121cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:23:33 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PyGCUmGtjxSHF/CDH0QBVTmRPOtGUgD6XZf8+tv8i6wvyxKa8JZGJHKpcUFFUPGjrkZLDpTzYurBICFtD3Nyt05xuihkO69AwGvXY1QwEgl7EWLESgWDxFBFGLnOu0UM9Kp+JSWs9EVwZ2g8/zekszzBZmPQcyK0FKhMIslg7Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HHKWzOqZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756805074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uzBs+Qui2RRPDhdSVqAOWMcbu+hUwsfTpSzL8NvRnCQ=;
+	b=HHKWzOqZvXj+gsdLOUE18xUkrUxw1mHzWJ5grSMQi0S/QrDzcLfcTRzt2Tq214LORC1LnH
+	PLsYmw2wzRyOJcxuMG52r6Mc5Fd/fpRjGL1P04+CLSsn7L6qzohgH1/do9/XImJtbnhrxk
+	1rqmNMlFDLWg79SZUn4In13s243qbSU=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-296-eUlHUXqZPtyGvK2rC1k4bw-1; Tue, 02 Sep 2025 05:24:33 -0400
+X-MC-Unique: eUlHUXqZPtyGvK2rC1k4bw-1
+X-Mimecast-MFC-AGG-ID: eUlHUXqZPtyGvK2rC1k4bw_1756805073
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3db4cfcc23eso103457f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:24:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756805013; x=1757409813;
+        d=1e100.net; s=20230601; t=1756805072; x=1757409872;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ch/LhY4Ftoj00uev1yGdlcFFtJHZQ9xg8w0D9kgtUtE=;
-        b=UCxwAn/vtl3G9d2NFPTGLgjgH7AOcFrOpU79txYoWIg5XDJ8w7d86bsHqaU53hlDF4
-         5XeD0cVk1KBtVeWvVlEUpoIo9bd9vdlzManyK9VvjDzVY/NcrAmnQDM9AKMOJBtm5cMx
-         vb108/qfFLIfmyl3PPgCfRZ6z+wKQyVGf9ap2pmjeQBVG1MP5BZkUr0NkhgaZZnmlnL8
-         QvKEbyle7S8BA8IAqV4KxIfbWai0DpchVHve+HqY6vFS+6M7HTI/YNaKNq6Tkt1bI6Kq
-         /xKEPZ88xjoAegG/XKsDhimr7wiSmZMKAbeTIVeTLgIjARrqdycRSTCigsyeZoBXxK2k
-         7Vog==
-X-Forwarded-Encrypted: i=1; AJvYcCUjkfjjf0xeATbzLXb2kgFFsSHbP34SKgVhGDeMRJobf/zxcBgx558CNNoMkBnNQBERDJIlpN+OPJNQ5lY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLro3pFHCshizhY4/tYEmdhqLry/kz3gE2M/LCFEFZM/u68HC2
-	io38wwbcDjGNAnfQFkdf0Vv7RqFfj2EB0cUTsNiY+Rp7Co5GklaqbNL3/TfF3v707oTE0s7hdyX
-	SLBEaKl7iBaZ6DRRDVcXWBA7KQqgf0YZhrid+sjany8niDJ0A550w758hXTR9GXAOOZU=
-X-Gm-Gg: ASbGncuJsDmHKEauT3s5B/KyQPOPR/ESyfuXDmxahHXbKQGz6WTNPDVo1x4PIFWTRjD
-	xEQFCcomQ6sOFPlsrwjcQyFxCXZlYO5YDW+9WdCsRuEpcicO2WBwYCkJhdrQZTRK4ZqG2nmTZOz
-	Z13PhLdFTxGKW7mx4jdKOy8Li10H6/9GKdCBnsEgPkPt4KKjG7nLXAI0Ee3dFIwYCmOmLH2hLFT
-	5vToSgLqlRHsWVaIEMGuv3l8fcoK7/SrrxTqf3VLzEyuYacaQKlTen8mB7G6goy5fQZWEOEB/7u
-	FKEFqlBC+t5K0sQWyWF+H4Gr/NLLCQoHhAtR2Gi0QVhWh/hJWg1cfKUxMzF2UMyHBd+aikEk21F
-	5g96nnJ6N943FU9c9495ozwpmWGlYQzbfc73HqLb6+5yL6//ZlVXL
-X-Received: by 2002:a05:622a:104:b0:4b2:9bd2:8176 with SMTP id d75a77b69052e-4b31d84444emr121691081cf.27.1756805012781;
-        Tue, 02 Sep 2025 02:23:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECcy5unw6WFIHBHq5iOWTGUfamDps6b170cwBunY645CsFBbNJrcuVd5piaxYGqW0iNZ5IXg==
-X-Received: by 2002:a05:622a:104:b0:4b2:9bd2:8176 with SMTP id d75a77b69052e-4b31d84444emr121690831cf.27.1756805012345;
-        Tue, 02 Sep 2025 02:23:32 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608279ceb6sm546116e87.100.2025.09.02.02.23.31
+        bh=uzBs+Qui2RRPDhdSVqAOWMcbu+hUwsfTpSzL8NvRnCQ=;
+        b=ByC8SGDrWN1E56G6XEK/+Em/dUZaqFiTpu3uU2INM+x+nCEdK5PS5elsjDqNVhb6KD
+         MFvqNYTmpHzKpj5G9XfGWIQYGTaQ8m+D6z78JfIIQUloZqc8BFJ6LSHfpGdKxbTORM4w
+         M1v4xQ6gPEmyWegZJc9piS9P95gMfCk/axu/HaxKvNOyuaRDNQ3Xs2UV7Pe4IH1xEbUE
+         ZtmRro3xBKsDd8SPX22np2Giby0g7/LYAegLXKxMNjNp0vxB6pJGWstP7+dm3aR0k0Nb
+         Gq8nm2dNEbIZEKZy28viRfRU6mQc3I7e72yXgCDEMsKkj7r9taISlstPBD6gWHXjax3N
+         Xbvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhZmPQFRgUDVLv9Oy1dV95Zie9lMl8cMp3LdoFh8zsTDO9ottkjelq6vQpotxbfyfQLpjeToN0u/1WWQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUaaPNasqDxZkCht3yh8Nyxiz2/aFSFSJL3q+uFGCcb4qePEA3
+	sDZbMYBGhH0SSOcNRb52EexBzgkEs03QTq3/2kFCvTp//0xH8BLz21RoxO4X4MQ+igMY/27usHr
+	HI2W8oH8evHjJSb/SHteyyZOO3+z2rg1+PCE2AXDPsge3t14O+a7wefQAx5L5d9FH9w==
+X-Gm-Gg: ASbGnctFp7eF4OUSoq38ITLT1vF9knMrL+z9iZYCssmaf/3aIX1adHr2gg6Xyr2nF3u
+	8xHusQF9+qQfMvSRzdP0zu88Sq07PClaM/i6a7suyRDFnPH6Wmo8os+3rsULvCoelZwgagyzqRz
+	a+lNtbHIVEPACOk99wgiu4zXIWB8xNRD+ZHRrZjoiK59J5lXCVd5c2JX8EcB4teOjYnHbAOd1P0
+	e8snhnbyKCZdN7DETTAYHq+8DWLLvldhP3e57vTjFSv6Zy24zRAzQ2/DR+r/nIBWnFxaAdQG4qX
+	bknlIxzgOPca1z0a0zBzJ0Zc2de0A7Pfbf3fKbGukAuf4Q+cgDsOR96Q3iCLSTyIzY7VI8o=
+X-Received: by 2002:a05:6000:178f:b0:3d6:fe34:1178 with SMTP id ffacd0b85a97d-3d6fe3416c6mr4492388f8f.27.1756805072532;
+        Tue, 02 Sep 2025 02:24:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJeHhRqRvctjBk0CPN84447EeQQk5RRdkOyMZFbvN/DASY9WsTZPMvuvpr+NeesoSAtc65FA==
+X-Received: by 2002:a05:6000:178f:b0:3d6:fe34:1178 with SMTP id ffacd0b85a97d-3d6fe3416c6mr4492369f8f.27.1756805072056;
+        Tue, 02 Sep 2025 02:24:32 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3da9a6470f4sm1750487f8f.36.2025.09.02.02.24.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 02:23:31 -0700 (PDT)
-Date: Tue, 2 Sep 2025 12:23:29 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org
-Subject: Re: [PATCH v2 2/5] drm/bridge: simple: add Realtek RTD2171
- DP-to-HDMI bridge
-Message-ID: <w7lf26lyltduionxhckld76xhi4dsxzhmyfzz5notzt7cu3ixi@xns65dvdejb6>
-References: <20250902-topic-x1e80100-hdmi-v2-0-f4ccf0ef79ab@linaro.org>
- <20250902-topic-x1e80100-hdmi-v2-2-f4ccf0ef79ab@linaro.org>
+        Tue, 02 Sep 2025 02:24:31 -0700 (PDT)
+Date: Tue, 2 Sep 2025 11:24:29 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [PATCH v3] sched/deadline: Remove fair-servers from real-time
+ task's bandwidth accounting
+Message-ID: <aLa3zdmyKuRMy3bm@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250901113103.601085-1-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,42 +101,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250902-topic-x1e80100-hdmi-v2-2-f4ccf0ef79ab@linaro.org>
-X-Proofpoint-GUID: r43HOOMQpCMHWGq03y2R0b7-1U5HPvEj
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b6b795 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=eHZZoxIKThfaNsFTWoEA:9
- a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: r43HOOMQpCMHWGq03y2R0b7-1U5HPvEj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfXxKGwmA7A4p7c
- UcfsEzADtxh5L7Cx0mPeI8ppjb5r/tYNJUKRgU1yZEWBXmpL43BK/gVH8irqt2fT9ZEUiJzYFqZ
- HYEqEAaWi6jmitJcfHCVwqKZLkDnriRvZ4FnnvXcCzqGOj0Pgyn7bpepSpluULrDlhQTTt5bPq6
- ZTgCG0G8BgWTSUprrUfhbFtH9RXqkq++AVNADUiz5ctDDryXHbCRTNHN44ocOzw7mDeLOvN/mcs
- I7JzV5rRZoN2/p2/myCeVOnIWLc/S0iL+vaetzcbya3kqH61ff5rKY6iBbRLkDviI/JmS9Qbz6Q
- tYbJAaySofS7bahWJBeQV+Phj6vUbIJ5ZlxbUtfHV1BmUbnaaeW30DqwJ6csgvWjv3v3AGna1nz
- j/MkSkNE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+In-Reply-To: <20250901113103.601085-1-yurand2000@gmail.com>
 
-On Tue, Sep 02, 2025 at 11:00:29AM +0200, Neil Armstrong wrote:
-> Add support for the transparent Realtek RTD2171 DP-to-HDMI bridge.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+Hi,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+On 01/09/25 13:31, Yuri Andriaccio wrote:
 
+...
 
--- 
-With best wishes
-Dmitry
+> This also means that in order to increase the maximum bandwidth for real-time
+> tasks, the bw of fair-servers must be first decreased through debugfs otherwise
+> admission tests will fail, and viceversa, to increase the bw of fair-servers,
+> the bw of real-time tasks must be reduced beforehand.
+
+Hummm, but now I get an error when trying to do the latter?
+
+# echo 855000 >/proc/sys/kernel/sched_rt_runtime_us
+bash: echo: write error: Device or resource busy
+
+Thanks,
+Juri
+
 
