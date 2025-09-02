@@ -1,129 +1,149 @@
-Return-Path: <linux-kernel+bounces-796966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AECB40A1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFDCB40A1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E677B63AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:03:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 572917B637E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99D732A81A;
-	Tue,  2 Sep 2025 16:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2960C322775;
+	Tue,  2 Sep 2025 16:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVHxZHZV"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f0Kb/z85"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BBA2D5C8B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A6C30AADA
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756829107; cv=none; b=gHsW2MyklJxYeM2JCnrDAXwrdbd5RY/xGTcD+X8WJlBuYo7rP37ethqVRyf8tRGCxgcya/GWNakODBFUiLsAjJRJ+9cDjGetlLbbM2fwFyZHanErHCpAscWE9QsCiYjyfac3hM6w/JGoaYaVAaC3gi1PU24ss7ilipmnaRJ7+qA=
+	t=1756829182; cv=none; b=IJzSCOiEeE0Tg4nGiePeG+HE1jrx1jfoq/yKoLmIUgySTFPU+G5qepsCoSZDURz7V7gNisi/ECyULSdz+HVtPRRGh5LZ7dpMEb+GEBdeDibqBrc1XOHb3H7bDjzXbSsgghG0NioMW+60HRv6LB6aCQCUGqeNMuh0wrI7f6vvcsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756829107; c=relaxed/simple;
-	bh=z50NzjcKlPivT1ks2KKwNwrjRHBj8L5rO2tH8V9fz1g=;
+	s=arc-20240116; t=1756829182; c=relaxed/simple;
+	bh=5VuJ2i9/jC7ksUTZP07b2sTU5J6JZN0KY6kjI0VYiHk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FnqGqf5sSY6VzzSDWxdtVVjHU+Q0a7RID9KdKcNNFeZtAOhuXjrseyf0oP2Wh2ORsbufbNhB+ApobI1uw7oL9Qq9okRkj/dDtiPVBKyOmrZA5SaXjzr1hF2HWDR3AHiajzr3hIEA2kh2oKHoAiGgNPsvZc6T3bmF4Z/Pdxs6Ta8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVHxZHZV; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b87bc67a4so20176355e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:05:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=cHOC3qUQGy7+DTc3FPFKNfBpAP1ov0p3ufWLLezzCeZUNFMFVf/bN1iEN24OeRAG9L6GZToUTFXfJuRtqWwQBgMfoPWXV+60vNSB+vCkPn82T+8E75pTMuzFVF3uoXKN/r3lsRi15SyOjpSl5wuWnw4Gn5UBx18HmmJ9nm04YxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f0Kb/z85; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61ed395ba46so2576a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:06:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756829104; x=1757433904; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756829179; x=1757433979; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+3rIC2TE2Lyn58cUZrFIvfw/WbAh8YL+TOd39koE7a4=;
-        b=ZVHxZHZVKRexzSUMsT0t+rr33EokETt0o75gpSLsoSo0OXKV2nJgr1r8H6LZ2t/R4y
-         3EeMh2zx8mu08CDlc+gXtHuDGilDqL1Rc1QAUAyr5/fgTDNSNUWBAmApB66YkjY+h8kG
-         SgDLteQqymS9r3kOnpd52TSmBNQQuAG9VcFqRy7+JbezIIXdUgXSOgcODY95oH2lQCDd
-         pGL/FLzKYf0pDROm+Pbb2X1uyPDyQxDNIG5EOJ43ZkJiH9DzfvsK9PPjrYz1Kerd7IHK
-         mFKdVi1Cy5xvhOwAkiQdaZ8e8goQUvTNAtoHoALxWmNlHOhqoqQV5Suruu4GE2KGrnt6
-         ls7A==
+        bh=IzANuyEuI1RP0uICgM6hjPd4IH6cBKzDDVGFb2HLC+A=;
+        b=f0Kb/z85AOu8Rcl9bz1iid++/pIpSTWGRrcBwKFi9TnGnBqSRp456wkRMqZx36BSvo
+         +ZYBz5SqzDOr8xjMp+PCEdrg9lKDxHeCOqyEKxUwlI4v1B+dKFUTgy39Q6NKEEbpZBZc
+         mZLH4ut3u/hICAbcM0BHxPLv2BBvqlwy+g0exMxSc6qbSSlJd5Sonnv+AKs74C0LcT+N
+         v7ACB6VsJ0+Kz0F1w/IHdjmHdPxeTO5K2ilpGoaQJMJaWcxNuuPXV//hWfWujxmRT6ho
+         e0HvHpNGvrDs5TwNQp/e+7pYfM60DABmuDPQbGMTYb8n6XdGcdzWo7oTUerIJCXmly/k
+         lDLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756829104; x=1757433904;
+        d=1e100.net; s=20230601; t=1756829179; x=1757433979;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+3rIC2TE2Lyn58cUZrFIvfw/WbAh8YL+TOd39koE7a4=;
-        b=vcNCw+E+x5OKNKRc8FzRIO9xSr/gwSJrd6JcCcmHQJn95HQB92jP7C3AZ7MzV3hTLB
-         tEJ2YM1Xe4kTfULu/ncjhcA5yVrpSm4FF5l3cTyPM2jHl5hzW9xKpWYwSu6GNrgamOjr
-         /0YRBddauzQZaXs+UMH9AAy6PRlevfHRXL+6pSXcSZG9uO3ucCitro0F+1DXFhRWa1tb
-         L/junPMkLvabTqcblok1GZj4IsUeURfz82QgE9tq85uHhWcavZ4G1bcgwyl/Bi3hxpod
-         2MYNnlf/VQU04oPjPfC7G3dafVc1nvefTGsVbxZKoeb8ZsMM5ETKAes44t+kkruG/z0E
-         5F4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUQaTIB4IE0egr/a66vHAgP1l41m/48JEotRkXRB1WigJpI51lkwuhmaxaoyZuU0JFebB1YdPEBJO8zmJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6eRyx7fGGkP1CDTl1ocaQcqq1fApQmlnZw5wnYf8XE06dlmKH
-	aDKoM1Whsi7PUDC2eqVhZZT20N7ZZE8wGWrPSw1SPm1/YW8ATaXIFdLMJwl1V7LsA7m2NwtSmos
-	Rp71v8n2wTsHs4QdeZ1pIEDCInuAKhKU=
-X-Gm-Gg: ASbGnctm0NUQH1OdONkGqXQUmE0JBlK1HLRkzUwIuudcKW6trO4F4auKY7+roon1Zey
-	yZt8uf8Ld9oIFk/+ot9ZJytlXiucVIo5BFLtCvXnBbpvu3uICMy0K1rC69hResVPRxMQgweY4CW
-	sPRBP+MOxrCTFIZNhEClYtrAIGY6F/obLGFIvCQz+kngT4Xms3z5ypJotlsnq82XqKgvxlcGFoq
-	8qVAdQF50dRCCK8Y0WxRws=
-X-Google-Smtp-Source: AGHT+IGVdYfyHeOQlWseAO6wwVyx+XSvElrXvSZ8VCvcISgW3WvbxYWlotIaV/UMbovpIf+YYKVvaG8TmiV/16XZfPs=
-X-Received: by 2002:a05:600c:4515:b0:45b:8078:b31d with SMTP id
- 5b1f17b1804b1-45b85525d8dmr96717845e9.6.1756829103761; Tue, 02 Sep 2025
- 09:05:03 -0700 (PDT)
+        bh=IzANuyEuI1RP0uICgM6hjPd4IH6cBKzDDVGFb2HLC+A=;
+        b=QiWifWepugrytP6HKF0JyzQeqa/BzXdJpXG3tgdHaVXXnYe073UcrvOfob89hEowhv
+         0w/DHB3E4hMyNgRIQaIXjvzuw9CNrKLU/SJ02iTJwdKFLnXBAMbK3ktYJ4GIwrGusA5b
+         I8K8xaYwGWLUet8d0ZpmEMSiQSAYun8YKn6y6varL8hmD6sv/BG+pmGHFgtKbZCj3pG5
+         XZI1DraX148DLd5yxAspJT4FoiJuTmdqzf7HDOMtplW+qmYEvgRF3k38diwnhi1WQctt
+         DKHuM+Ti413wUF05atXm+3g9e13qJwupfSr/1KlPdTF/G6CkZ5UC4JemZEAXi+CNugWE
+         u9yg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3RjdXXhzg7S+2cm+DfgBXIHwyikbmJv+SaMp3UFT6okbZPNmSzyQeJN0HqjpATAIvRaSh0Uw3MD9LQP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0iEj4KWH0Tw1Tdk/nqIaK8czDTqmn1Rur9cR0OA9bYbvneZsb
+	yhpfTPv4/Xt5GiUSx4y3jW8JTt2fpwBOhsSNMfyLGNiWEVyf8GdO67YffZeY5RL7/O2RqkilFvv
+	KYs5VvwVRWnZAzZ6HCReoCb75sMN9MbW/OoZmgtzW
+X-Gm-Gg: ASbGncsIxJEnSZ1ueXz7OiGiQtou8BwocxkZxxdDqNYa8uoovE/5qVONIkTwNKLxlVg
+	rxWrAveTWd/6x+QOtFwvxEN7l3bF/mfgZxM4ldelPDDgCJMp8a9n3QFfDpHmr4u77gjWT015OQ0
+	UbeA/T4cG1ofFDr9u+0mervkXGYmpxjDM05rDarRACwD53krIwXylvzE35S65rLZmccsLizcyM6
+	KeBS5gRcKsmYYE2pTlRjs1vTQwzLTY50Wg+4jHXrk36WIeHrf9p
+X-Google-Smtp-Source: AGHT+IFVjdQ+2T7/LXpZCpOfk33GaA9SF6xBIIl71Fs9cHt3AeFCESliSAH3aiD8Kxte9Rt8Kym9K8NUgZg1oMEq0VE=
+X-Received: by 2002:aa7:df92:0:b0:61c:ab1b:1828 with SMTP id
+ 4fb4d7f45d1cf-61d21f9fc51mr262090a12.7.1756829178846; Tue, 02 Sep 2025
+ 09:06:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901191307.GI4067720@noisy.programming.kicks-ass.net> <20250902081915.GK3245006@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250902081915.GK3245006@noisy.programming.kicks-ass.net>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 2 Sep 2025 09:04:51 -0700
-X-Gm-Features: Ac12FXzbsndI341Y_g4qCBycCZgZoQBBkF7KK3sMlRUSsTRJyiFZllL9SL-mdEQ
-Message-ID: <CAADnVQJ2zm7BRb3SuwcmCQ5SBULznbUq777vMCHkm9UbPkaAbQ@mail.gmail.com>
-Subject: Re: [PATCH v2] x86,ibt: Use UDB instead of 0xEA
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>, 
-	alyssa.milburn@intel.com, scott.d.constable@intel.com, 
-	Joao Moreira <joao@overdrivepizza.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, ojeda@kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20250226030129.530345-1-riel@surriel.com> <20250226030129.530345-2-riel@surriel.com>
+ <aLcQ3UCXXNcByW1O@gcabiddu-mobl.ger.corp.intel.com>
+In-Reply-To: <aLcQ3UCXXNcByW1O@gcabiddu-mobl.ger.corp.intel.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 2 Sep 2025 18:05:42 +0200
+X-Gm-Features: Ac12FXwEw7Qk0kLzRMa95Y1yUaklA4c8qD40uRP3S8PLdE1A0rat-HccquoTMss
+Message-ID: <CAG48ez1q_Sgk5nr7Bngyt0UB3FkYb6e0cHv18wqD=sLEdrZkmw@mail.gmail.com>
+Subject: Re: [BUG] x86/mm: regression after 4a02ed8e1cc3
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	bp@alien8.de, peterz@infradead.org, dave.hansen@linux.intel.com, 
+	zhengqi.arch@bytedance.com, nadav.amit@gmail.com, thomas.lendacky@amd.com, 
+	kernel-team@meta.com, linux-mm@kvack.org, akpm@linux-foundation.org, 
+	jackmanb@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com, 
+	Manali.Shukla@amd.com, mingo@kernel.org, Dave Hansen <dave.hansen@intel.com>, 
+	baolu.lu@intel.com, david.guckian@intel.com, damian.muszynski@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 2, 2025 at 1:19=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
+On Tue, Sep 2, 2025 at 5:44=E2=80=AFPM Giovanni Cabiddu
+<giovanni.cabiddu@intel.com> wrote:
+> On Tue, Feb 25, 2025 at 10:00:36PM -0500, Rik van Riel wrote:
+> > Reduce code duplication by consolidating the decision point
+> > for whether to do individual invalidations or a full flush
+> > inside get_flush_tlb_info.
+> >
+> > Signed-off-by: Rik van Riel <riel@surriel.com>
+> > Suggested-by: Dave Hansen <dave.hansen@intel.com>
+> > Tested-by: Michael Kelley <mhklinux@outlook.com>
+> > Acked-by: Dave Hansen <dave.hansen@intel.com>
+> > Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+> > ---
+> After 4a02ed8e1cc3 ("x86/mm: Consolidate full flush threshold
+> decision"), we've seen data corruption in DMAd buffers when testing SVA.
 >
+> From our preliminary analysis, it appears that get_flush_tlb_info()
+> modifies the start and end parameters for full TLB flushes (setting
+> start=3D0, end=3DTLB_FLUSH_ALL). However, the MMU notifier call at the en=
+d
+> of the function still uses the original parameters instead of the
+> updated info->start and info->end.
 >
-> Because this is all somewhat magical code, and this change is a little
-> on the large side, it as been suggested I 'upgrade' the Changelog some.
+> The change below appears to solve the problem, however we are not sure if
+> this is the right way to fix the problem.
 >
-> On Mon, Sep 01, 2025 at 09:13:07PM +0200, Peter Zijlstra wrote:
-> >
-> > A while ago [0] FineIBT started using the 0xEA instruction to raise #UD=
-.
-> > All existing parts will generate #UD in 64bit mode on that instruction.
-> >
-> > However; Intel/AMD have not blessed using this instruction, it is on
-> > their 'reserved' opcode list for future use.
-> >
-> > Peter Anvin worked the committees and got use of 0xD6 blessed, it
-> > shall be called UDB (per the next SDM or so), and it being a single
-> > byte instruction is easy to slip into a single byte immediate -- as
-> > is done by this very patch.
-> >
-> > Reworking the FineIBT code to use UDB wasn't entirely trivial. Notably
-> > the FineIBT-BHI1 case ran out of bytes. In order to condense the
-> > encoding some it was required to move the hash register from R10D to
-> > EAX (thanks hpa!).
-> >
-> > Per the x86_64 ABI, RAX is used to pass the number of vector registers
-> > for vararg function calls -- something that should not happen in the
-> > kernel. More so, the kernel is built with -mskip-rax-setup, which
-> > should leave RAX completely unused, allowing its re-use.
+> ----8<----
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index 39f80111e6f1..e66c7662c254 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -1459,7 +1459,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsig=
+ned long start,
 >
->  [ For BPF; while the bpf2bpf tail-call uses RAX in its calling
->    convention, that does not use CFI and is unaffected. Only the
->    'regular' C->BPF transition is covered by CFI. ]
+>         put_flush_tlb_info();
+>         put_cpu();
+> -       mmu_notifier_arch_invalidate_secondary_tlbs(mm, start, end);
+> +       mmu_notifier_arch_invalidate_secondary_tlbs(mm, info->start, info=
+->end);
+>  }
 
-I cannot comprehend the new scheme, but thanks for heads up.
+I don't see why the IOMMU flush should be broadened just because the
+CPU flush got broadened.
+
+On x86, IOMMU flushes happen from arch_tlbbatch_add_pending() and
+flush_tlb_mm_range(); the IOMMU folks might know better, but as far as
+I know, there is nothing that elides IOMMU flushes depending on the
+state of X86-internal flush generation tracking or such.
+
+To me this looks like a change that is correct but makes it easier to
+hit IOMMU flushing issues in other places.
+
+Are you encountering these issues on an Intel system or an AMD system?
 
