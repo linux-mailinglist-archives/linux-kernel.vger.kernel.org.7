@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-796736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABD3B4068D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:22:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB0CB4067F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EAA8200C04
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495893B9D6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF661306496;
-	Tue,  2 Sep 2025 14:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98C6307AF0;
+	Tue,  2 Sep 2025 14:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W16qivub"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5WhcC+f"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87574305E04;
-	Tue,  2 Sep 2025 14:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DAE2D6E4C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756822785; cv=none; b=CFH0uMvFJSf5jHgMHR4Tgxn7M5Os6a39elHtutYBIkxqusUayHv1FAg2y4Gk6IIg3LFSFJ1EAIvn7JRpRDHvKuoHeJ3kk0Yhdz6KruehSl08jL8/nqkor8JtQXN/h7khn0tn4uDCj1GKfr1Dzb0IK79AZtXf4J8IX4VFc7HvsoI=
+	t=1756822786; cv=none; b=Dnt3M/S7uy9nwQ4VXme/O4dsHUoP+QatSdk1AeYQg3ug/DAEIm7Ddjtd1dxbGtByDgULeOIVSQ6wW403xNfJwuyYJgi+W2pwxBvWE7Q8AbjA0FxBcuMym02TNECDGF+H+dqawOch8sBD4Ud68YPYdSa+6/gPb9TkbsDSboZXRyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756822785; c=relaxed/simple;
-	bh=cKittXnQFm9HgXD3AmyGM99Tj/ZL60OZ7IaIGVEIRys=;
+	s=arc-20240116; t=1756822786; c=relaxed/simple;
+	bh=2r/d/DXkCCqfUiqYh4pT8N//8c5NvbXpQA4IUEu+M7w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R5icpr7ZNpUi8RmQ0B0O0TOvQP+x+fSabKDF8JtlLdPjmEx3zSkn2EOBfVaHwHhYLvEyYzr0NvLw/2XRyn90/Ydt9hm9tcfCWIps27W/QurxeiAkn1csPMPa8++2ebLg5VgD3zhY8o1qITUNORBscvkj70crfL7dhGO2WfdQZ6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W16qivub; arc=none smtp.client-ip=209.85.218.48
+	 To:Cc:Content-Type; b=M7XPTFmzAdObdyRpMW8OIIIETaTjOYyRQRkx0MjzqtHJprAAZRCyNwE3Xz0+aeH8nwcsNMoOuF23pkqobPEInLRFU42oMNtmHfDRyd2AY0cQKT9eWUA0N3w/NpMSFne9fNCvNZE7sWW03te6f3hhNybSMwZYsfFejoWvaaCsFbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O5WhcC+f; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0411b83aafso412500766b.1;
-        Tue, 02 Sep 2025 07:19:43 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71d6083cc69so46698927b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756822782; x=1757427582; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756822780; x=1757427580; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l7PwLZpdNDUC1VnlOAO9Pz/59D4P6tjjZBVB+LA8u3s=;
-        b=W16qivubj2uGrczY+SSnKq5wGDyidSG+M/ivfzvGYxP+AokEWrHkYD579u0E+p3RMl
-         QAI8hqPGCCHR4vXfhTtwl399IM3wquPipBEHg8RSPFMXPV1aCN4ku/rrfPm9MFmXVrso
-         KVznmuVasqwqLXtbG4zema/MjUeTYA2CvPPSFTNXMfF8Te3QHeRMEIgjo7FGepcneYqE
-         TvBhUxqApjbQGHIQ62D/+YANP95VdjlzMtN4JteA/6VYjtQTEriKb9AJQEcWMyt/k7GL
-         PMOYB0YEp31Bvqi4G7vqI97yjNrbyeCWbpvY9HIm+/A7BhEwE7We+q/B97GpxGNgGdFs
-         es+A==
+        bh=W60ago5VW57dbfLZcJC+4/A9yeK1QqRMxCl2bII8T1A=;
+        b=O5WhcC+f69oG790b5/fyv3aBAKA6jH7TOtfjPFMqXK2VlaI25shbYNUpuVPsjsbwd5
+         PCuQ2n87SrPkgfgP7K39vkZ25/+aQlr9LALvxOH4e/JvL6iq2ALOrOP4nKup/fSMNPkx
+         UZSf3erJtzVvyCFJKwsAVSc3Qva+eu309Py3KOVsOGFQZh1lCPh2wXKFjnCABT5aPOn7
+         wOoM2XSOa/pZaiPFfY5zdyQYb9zd6NTsRfSFTxP6MCNdM6Fe7mj0OsJFKjB0oyfEyuI1
+         g2gSS7FG6zJ9g9UegiRfDmXCz7/8rg1heh+6V4rpmfuWZPITjEzUWcb/C8vAn3E34YGE
+         vAQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756822782; x=1757427582;
+        d=1e100.net; s=20230601; t=1756822780; x=1757427580;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l7PwLZpdNDUC1VnlOAO9Pz/59D4P6tjjZBVB+LA8u3s=;
-        b=bfnQ2Oqu786E0HogxJcB/PwCEEAv8u9ZDYEBBiWUiEOGeCs/SIHJpg4KTiXi46JJl7
-         /wmw1q2/W1ZBswbd5h+u1RTrVqFGZnf+CoFmIyKBzkbMx2sBvDZGAcm25rWhA/YJRB/z
-         SN6qqPcoOFa/Q2nBrD1qYiGVqPuqFFxUsHhvdu1htH1+0eSPShyqWDM1OzlNUfebtl2w
-         aUjgEeYx0yFT5AkHI4EQa/L6ep3McIcsvNdUkgPBMjWoPWBR3HbVrbLFb6CrrvuQh6xA
-         PGxDDGIgbIIS4YodG4/UMN3M+f7xYKr0JdCx+Y6eMKg96gD5+gRcj7qyY0wFEfNJZLmq
-         xSZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU96/eKU+fGF6wuorCqbzZ8n8/e9AQLrlnEPSuAVAV0BefYsBA7romm9HNwhZCqM7iA5kAgKl3C@vger.kernel.org, AJvYcCUNiScQGX5rMsnvrClbZ5ndg/fCvEFsLMAtaOhQ4VeA8ZKbEkw2P2ervSuynN6Q0ezRRLdjkZ+Bbwe8cik7@vger.kernel.org, AJvYcCVbVC1J59wdrAxfdxH0tugnHLDMpnfgGcfCUPpnwOg97NaoV0rmns13NsFT5fg4NhK3lfJ8fxDzGLN9TUZCtwvsb4s=@vger.kernel.org, AJvYcCW3orhn8k9knIN6UubNhBmhDrPCEHP1cBTFv5pxBIfJQYvPEQv3lb4tTZJMoDXMw9+3ecCCprGzY5ZF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7ZxSs1Q/mgrTnL7Mvvyva1/cgF2LT1ZOL86AqywpuST+EfIq6
-	Z8nd8HvNOPps+KY9LMiPUuhyaDTgCPTrbHaOUXPDWVni3n5L3FPcSQ7NeEGMAXcphQ5x49cl5uI
-	ATeVbnaLhT8rN0++G/FqDhJCKFLHRWqU=
-X-Gm-Gg: ASbGncsDdW76lA22f5Gg1m5rCtnRUJu+3gxs8qG3X2FPayCndOReONLq+gPVfNfaoDI
-	8eZlruEV5wu1oP0JeAfCw/IOOK2O/q6Em/DiRbb7BuUjjpzjaLQILLhjcDmFH4qQLKI7RAI8ThR
-	ZdCXZHvQW4kNjQU6s9/zFLxu5dJQdnC68iUuWrXFd/0CeHL5+aN/FfyOyFaG0h0A1dqHRIACTOd
-	kvSPci5xsdKWlo4KjbwWrsgcp6Zt04VPIs3xuMMleCYd3nP/cQ=
-X-Google-Smtp-Source: AGHT+IGrboGfKgTi+NH84TUA1B3uD5e0lPBqZ3DmRhCqCMFGcoWKrI1dg8Km/+cUzqCDrl6XWcKCCLy0LJj/iOhSDwU=
-X-Received: by 2002:a17:907:3d0c:b0:afe:c099:aea8 with SMTP id
- a640c23a62f3a-b01d8a266abmr1111765066b.9.1756822781645; Tue, 02 Sep 2025
- 07:19:41 -0700 (PDT)
+        bh=W60ago5VW57dbfLZcJC+4/A9yeK1QqRMxCl2bII8T1A=;
+        b=fbgImFtTeMXv2xXOSFT+So+ZbrrjHH6QDQUgNFpibE5lSWjvFhorQgahOARUVRHlXK
+         XOfXQ32RWYqfSUALO1imn/3lzlbmkdxaz2V1mW8IyZ2pN1ab8AJ4iSqtCcb/FUc/BRfn
+         ASYco9JdNuafMyd38nKnJJDb0QiTH6Cl9ACKn5B+qzdsl68KY722rpfhZBkvB7uQ4XhK
+         O7e5vQdd5razstUTUOenwCh2jSsOqm33YnZV4wla7VAadWS+cdvCFoBWdYqhOv+H5nCx
+         U02UyAZiDjvGqEmnbvaW67YlqiiobZTc9abt2UBNeg0S/OyndRpGHXsF288B8YkAgtkt
+         qI0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVvlEykvoV2HwMhAQzGIQMXuT0gDh6XhT2wkovQjmJY+yDLYo3hfEwNLrFrwwfWOfIVBRVefO1PJ4nY2bE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWX9Vevrt2aXqP+RQ2j3Cgl8Zg1Rk3iZXp3YdPCLeObYGp20bM
+	sFoPoDECAM+FTo/MeyRvShlcGvsTiDed29CAV431GsnT5eSHygucbSph8te7Mv6eeFwC9WaHRwD
+	e6jWYyHXGs6TXbMjNBuWY6QxbEmy3QNs=
+X-Gm-Gg: ASbGncu9SaQubRtPO49uZePQwKrQdeBklWNxpHRP1dh684QTdv+EpCpdra+1wYNUcGh
+	NLjMKlBKlKJzCFGMOwzZ9Ub21SqACsyXPIqhNJ07pgj401zurO/iayVvLSmDJrAZOncrVWHfvEh
+	U2UWdO87Yf/WIePYKPe7YH80xcahyOIXoB4TKd67Gmw1ihmNRpaMfyS/+YV+OqgvW79jHnxop50
+	335V22QOy9W0SJR+vnauXdIDVUQgySBv1xQ1HPp2g+xPsCRU8jXZtzhGNVj1i+J3C2JbG5A018Y
+	oioinI3y7hI1HEDluA==
+X-Google-Smtp-Source: AGHT+IGa1EaDaFDmxnfeNJKhDTCxo8us1/bV8cd/W3/t0GnTRNqnMGNTnVcOOCSr3xfi66UPFbHGj1g+7yrfeYrrX7M=
+X-Received: by 2002:a05:690c:d88:b0:721:1649:b05b with SMTP id
+ 00721157ae682-72276361de9mr136212497b3.13.1756822779444; Tue, 02 Sep 2025
+ 07:19:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901224327.3429099-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250901224327.3429099-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250902-enlightened-hidden-copperhead-4eefdf@kuoka> <CA+V-a8sSiNQ6W-ggmL8PP_G1sFq170DS1LJLFJs_WW0RC+XVEw@mail.gmail.com>
- <5ec3efce-653c-46c5-977f-5a46391e675f@kernel.org>
-In-Reply-To: <5ec3efce-653c-46c5-977f-5a46391e675f@kernel.org>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 2 Sep 2025 15:19:14 +0100
-X-Gm-Features: Ac12FXyk3vuxA97T31qPqwWJO_EeAZlrRjZHxzovyZOhR_qt_-3LfD3odd8Qv_g
-Message-ID: <CA+V-a8uQ44AXYoGuPtioKC7wObdz7vQHYniJyD=MRdW8vomqQQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 01/10] dt-bindings: net: pcs: renesas,rzn1-miic:
- Document RZ/T2H and RZ/N2H SoCs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250901163811.963326-1-bigeasy@linutronix.de>
+ <20250901163811.963326-2-bigeasy@linutronix.de> <CAJhGHyBaqn_HOoHX+YinKW5YSy1rncfbvYXktkEtmFgK44E9wg@mail.gmail.com>
+ <20250902111740.hwMmUu4T@linutronix.de>
+In-Reply-To: <20250902111740.hwMmUu4T@linutronix.de>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Tue, 2 Sep 2025 22:19:26 +0800
+X-Gm-Features: Ac12FXxwiQL3_AxCPmxMyQd-juJULME8fi7RYO-LDay-Lw6Fm6cBtgOGJ8vZawo
+Message-ID: <CAJhGHyD7x9QLJ+uoRnbh4qOhphdxJU4c384D1Ph2tn5ktR_=kw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] workqueue: Provide a handshake for canceling BH workers
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Clark Williams <clrkwllms@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hello, Sebastian
 
-On Tue, Sep 2, 2025 at 1:21=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 02/09/2025 14:17, Lad, Prabhakar wrote:
-> >>>    power-domains:
-> >>>      maxItems: 1
-> >>> @@ -60,11 +77,11 @@ patternProperties:
-> >>>      properties:
-> >>>        reg:
-> >>>          description: MII Converter port number.
-> >>> -        enum: [1, 2, 3, 4, 5]
-> >>
-> >> Why?
-> >>
-> > If I keep this here and just adjust the below for RZ/T2H case I do get =
-errors:
-> >
-> > reg:
-> >   enum: [0, 1, 2, 3]
-> >
-> >
-> > arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: ethss@80110000
-> > (renesas,r9a09g077-miic): mii-conv@0:reg:0:0: 0 is not one of [1, 2,
-> > 3, 4, 5]
-> >     from schema $id:
-> > http://devicetree.org/schemas/net/pcs/renesas,rzn1-miic.yaml#
-> >
-> > Any pointers on how to handle this case?
->
-> So please grow this with '0' to cover the widest choices, which you then
-> narrow in individual if:then:.
->
-Got you, thank you for the clarification.
+On Tue, Sep 2, 2025 at 7:17=E2=80=AFPM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
 
-> The trouble with your if:then: is that they are huge and they also nest
-> patterns and if:then:.
+> >
+> > Is it possible to use rt_mutex_init_proxy_locked(), rt_mutex_proxy_unlo=
+ck()
+> > and rt_mutex_wait_proxy_lock()?
+> >
+> > Or is it possible to add something like rt_spinlock_init_proxy_locked()=
+,
+> > rt_spinlock_proxy_unlock() and rt_spinlock_wait_proxy_lock() which work
+> > the same as the rt_mutex's proxy lock primitives but for non-sleep cont=
+ext?
 >
-> This often is less maintainable, so maybe you should consider having two
-> separate binding files? You can have also common-shared properties.
-> Anyway, I am fine with current approach of one binding as well, so up to
-> you folks.
+> I don't think so. I think non-sleep context is the killer part. Those
+> are for PI and this works by assigning waiter's priority, going to sleep
+> until "it" is done. Now if you want non-sleep then you would have to
+> remain on the CPU and spin until the "work" is done. This spinning would
+> work if the other task is on a remote CPU. But if both are on the same
+> CPU then spinning is not working.
 >
-Ok, I will stay with the current approach.
 
-Cheers,
-Prabhakar
+I meant to say that the supposed rt_spinlock_wait_proxy_lock() would
+work similarly to the rt_mutex proxy lock, which would wait until the
+boosted task (in this case, the kthread running the BH work) calls
+rt_spinlock_proxy_unlock(). It would also behave like the PREEMPT_RT
+version of spin_lock, where the task blocked  on a spin_lock has a
+special style of blocked/sleep instead of spinning on the CPU and this
+is what the prefix "rt_spinlock" means.
+
+
+By the way, I=E2=80=99m not objecting to this patch =E2=80=94 I just want t=
+o explore
+whether there might be other options.
+
+Thanks
+Lai
 
