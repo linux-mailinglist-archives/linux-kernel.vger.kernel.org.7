@@ -1,148 +1,175 @@
-Return-Path: <linux-kernel+bounces-796524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FEEB40201
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:08:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FE7B40200
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A94D43A85F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:03:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25F18543197
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A452E88B1;
-	Tue,  2 Sep 2025 13:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="heWvlY09"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925E22DBF78;
+	Tue,  2 Sep 2025 13:01:30 +0000 (UTC)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758432D47F9;
-	Tue,  2 Sep 2025 13:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B5D28489B;
+	Tue,  2 Sep 2025 13:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818105; cv=none; b=OW7KTNhNQEGeH4NE3+m2Zk8w4XFdUNb+VGmOoRehn7FYuoSONkB+PG2yi7peE3QdsHq00vXPvnD4o+RP9pWFp20ohZ9ELi2w9uj3hXv881bJMYGDY1rcAGJaHCjsmOZJTtrHdBcQkgKrz48Inu/qcRwUeuiS5UNoZajKQviurh8=
+	t=1756818090; cv=none; b=WEJT0JzIg6gJk7dDrIodJ6lg7XSuGyATKHu1Z9pooZaqIQBWXgMt4ZvEmYcsvFF3T/a6t8tbUHwFPR+NhpKZKVepFmxZvGZ7410bSU7gqjIAM47dWqqS927HnD8a2DfcxdpzIcAvwqGnT87w4uf6TEb/12HAvauVu2jdaAFCiPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818105; c=relaxed/simple;
-	bh=BY8096YPuK69wizXU6JTN0dL6/NRKYI/+4IoiskxuHs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=UrHOzN81Cyd/eW1B/PjXaqMtt26KAmfX1qm3s/ht5pRsf+3SCqtMwFmYa8RJtMgRCz8rEoQIouq1DjNjLpILpm6I4SjRrOJoplMRYLcRSHPr2J7F2EUSdVWlAGJBSN0UsUkEb5royJ8OH1SP+k4RBoM80z9u7MNIOCCAKbAUVXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=heWvlY09; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582AlBAt020481;
-	Tue, 2 Sep 2025 13:01:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	q/ZMfLGs7bSbR/zLo9REdb0DGA2A9TTnVxIecXKcFpU=; b=heWvlY09TS8Dodcj
-	nDk1axW8WKeKESl3t7YB57gIJl02SHSstPuUElQGK0bO3hNDMPVnWck5iAyy1UZD
-	5P732GpB1+1zQ9B9Dmg4HMFENXcUvWsKJeb5FMR+t6ZHfqUCh0feSR6IaJ50szS2
-	FgslHdsDSqN4AcUcQlYdFNHqOii3RdbDAsOdi8ooPKJ6luBd9rAnJYP1dlZtyNki
-	W83/HBHjei/tUnqmD6InohdanoKKtXReS/rgTf2a8xGtrkgXx+UaXED/e7ciUHk9
-	yxK9ptGLgVM/Wht31Awsp5evF0QG/1uXjBTgvPtnBKxqaB3rQrULLxv8nllKdA0r
-	OUBwqw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8ryx05-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Sep 2025 13:01:22 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 582D1JZk032156
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Sep 2025 13:01:19 GMT
-Received: from [10.253.38.125] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 2 Sep
- 2025 06:01:11 -0700
-Message-ID: <245522c7-f1ee-4e49-a08e-b23580b06939@quicinc.com>
-Date: Tue, 2 Sep 2025 21:01:09 +0800
+	s=arc-20240116; t=1756818090; c=relaxed/simple;
+	bh=HN+nMcYPoksRrGAHVUWlYcHpXEDY8JS8DIy7EzngbU8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=luTHjUVnCCvs/NG8jwu627hq8Rvn5CJAVIz5P8X8tGeqM89cv9XQC4BvuOZw0y8WOiYqiGHOJBXaOJv2UvlYQx2Fw40grPzvXcyIGNB0nTBBVl/nVw5QqLKB8LuT4+/pMICDRN4qHmqxBQYmj1Ckt4edTgNxlpIVW1JmpQB+dyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-89018e97232so1476579241.0;
+        Tue, 02 Sep 2025 06:01:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756818087; x=1757422887;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0ipUT4LuA3Uq+03zAJhzQACV0/Bh2/IfW3yvD+DhtEs=;
+        b=KySn/fb/+/FqG7KmglWzA+gLk8+a95u3T3m2/Nj0HK4TsU4Z+jYxbpIi5LTwg/56Pu
+         PAVnKJ5SExsiTNV2HI8VAruwPa2WHb2qttptsH7gZ71dnFAjeB9ReuWd3V7ZQPaP1USz
+         FPhg5WTDJPF1SYihIxKmS5rWv9ENQvrecOwN+EQ/YVY5zHIjmJKWL+h1AafIu/y8FoEy
+         yhTXn2U8HBVentAotlQmFWfMuwbo7a07P9QLsAM60iDXLVT0wkoexgXKROBaF868J8kh
+         nWFN6KMbSvwr23U1+tjAGbh++raPFnJZwkXu94XfrZnoFlsCiWPJs8S5Rvx1yy9u9ZTf
+         lpmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbSJBwDXvH5ruO+aQKJjzyI6EvJ7Dx1gMQcJ2nYI+GQ/ACOLCbfVa+GQKRH9Qk7QVU4NH3u23E/mpSUpyNKgqD6Yw=@vger.kernel.org, AJvYcCUwtUiL403lbPwQxEPF8BlI6Aq+Jy9tvKrpfTDwjFcqThOZ0aVdjHg/+odjmLuXg3jemrOVOJXMa/J1@vger.kernel.org, AJvYcCX1sUXQ9x1BiOsByD9UWYGWhO5x7Yl2wkDELeKmqT3DlSRrF/8tXm6CwWkOtZHQPRGEuQX92NVIPgzY@vger.kernel.org, AJvYcCXuaVViOAAkSU3U9Chl62MRzR/hNuabYQ2hZ9MuBpaZkd2ZGpnxUeJtiWd3BOR1Hn9W+MoVmYc+ShWBXFG+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhxdcVWZKdIrBkSTJfQpHCQiAoWrDESGm4fE/PO4swYDHNs4gT
+	QzUGiMwzf1bi3RIO2oiv27o6anRlm1h5y3iDHUSfi+qONVvKfHT3u5qkGJ1i6LQC
+X-Gm-Gg: ASbGncv2tzi7RoSOb0XQUbSl6v2xHPyHRxja21gzuwx32dv7GGEaUT/28Wa/YqRMbA4
+	cduq+ZupGbuJ16SqylpsNEi18wAK/Kl4D3/rZDXxLSYclJfGNLcmCS9Y18lFlMst83jOxeT7OeW
+	JEkhQM/iZCT+R/SA6CejubM/WQGHNKp+pd/dfaEb07EBx7KIfJb85yMqHXAcnaEKbzpoROYLbuZ
+	k75KJlOnO81BVFjWPki+mmc3ZLLZnSsriJKHoZNvwhX9THKapFdtlX3gFnS6FJWSyrjCt0t3iDM
+	SFUzb0+0N73xp9uhAxa5I61yUD2a3EXDs6akNgfSpM+WCdnVgkeDPXJK/9+fT7zkLNTCgfWBbr4
+	kbmZkl6ILSemu6UnGsqn9H6MPlJbMKySKGHvsm727V0N9t0i4JGGnG5hmYM0egeKddY301kI=
+X-Google-Smtp-Source: AGHT+IEDDNim0mhLlvIjVt2siNgv/QtHXeypnRx6Wuqh6seNOZUp3lmNqR4BALbh8w93GzWLWSyerw==
+X-Received: by 2002:a05:6102:44c4:20b0:52d:a7d9:b5d2 with SMTP id ada2fe7eead31-52da7e8fcdfmr2486960137.10.1756818086638;
+        Tue, 02 Sep 2025 06:01:26 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-89608759c3bsm2344957241.9.2025.09.02.06.01.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 06:01:26 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-89a079e029bso117995241.1;
+        Tue, 02 Sep 2025 06:01:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1LMkaWA4/vInKNFm5ADaCjIgPvK/b0Rslahvn91q6bJSiidsYjZ8lMEhLBkWTny+ZrKYZ7j+I1hNJ@vger.kernel.org, AJvYcCVZmpExeFoMho6P3xhPAbUL1BHpehbka6IKOheKXHkd0JKe/wgQDHxc61g5EU+fz2m91CB/DdAZhCws@vger.kernel.org, AJvYcCVzQmziZHFaR224pqyRyECQvzuOlcxGfXPnGH5WEh5CUd15WiDmuSOmfnBQ7ROnxRsSkAcUxnThGwp8zY8E@vger.kernel.org, AJvYcCXVIKOQPl1IUjQdy9injBkXbZi13AT6F3b3PeE/mLNaMP0rOUpkn4+QSUaVILfCKfPCMGHSzATLyCvzNhue3p+rWVU=@vger.kernel.org
+X-Received: by 2002:a05:6102:5127:b0:525:df9e:9365 with SMTP id
+ ada2fe7eead31-52b1b4eb9e6mr3639297137.16.1756818084823; Tue, 02 Sep 2025
+ 06:01:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Luo Jie <quic_luoj@quicinc.com>
-Subject: Re: [PATCH v4 00/10] Add Network Subsystem (NSS) clock controller
- support for IPQ5424 SoC
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Varadarajan
- Narayanan" <quic_varada@quicinc.com>,
-        Georgi Djakov <djakov@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        "Manikanta Mylavarapu" <quic_mmanikan@quicinc.com>,
-        Devi Priya
-	<quic_devipriy@quicinc.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Richard
- Cochran" <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_suruchia@quicinc.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
- <20250829-versed-gazelle-of-tempest-edfbf1@kuoka>
-Content-Language: en-US
-In-Reply-To: <20250829-versed-gazelle-of-tempest-edfbf1@kuoka>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfX1SN8rVCyPQ7R
- F3UgAARSuC2l6oJiDKHLASUcXlk4yTM7FtZed1OHGuaZnYy80VpBcCHlsyOUStQwfdcwB7/+084
- iaT9KrBvwvEHhLrxcrnHPJlR2GC9m5oFK8qbY21CyL7ORqMucQTx4qD93dklYmZKLyezMyX1vco
- TVtBQcx+DbH/hongVxkZIqY+OImQsc83SX8/tHee2MYYVkXt/Bh8iJ++wOLsa6PET5/8X4B+MMy
- D0bf6QZk0aLlTK8ua+r3nmijEq0efmKQMfQQMOpvQvEat9IgHussWT7iVtiyOKvWnEKszxDy1H7
- dxlLjIho1kpXpCn823hsow8SerynUyoCY48MvNVcfeY8BqXwpyUbEXgfvoVAsqdOklUCwPJo9EQ
- KhIqWd0w
-X-Proofpoint-GUID: ejD3hXgXCiC0sQfAFAvD2HL84P8N7eIO
-X-Proofpoint-ORIG-GUID: ejD3hXgXCiC0sQfAFAvD2HL84P8N7eIO
-X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68b6eaa2 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=cUcCN6izRAiZHZspSPUA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
+References: <20250901183000.1357758-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250901183000.1357758-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250901183000.1357758-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 Sep 2025 15:01:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWARu=9__pqcHXUq92LYuxAQPZNJ6Fn_b7Z6x78i4twDw@mail.gmail.com>
+X-Gm-Features: Ac12FXzZPa2GVjpzvF9yIAcXM1iwq6wK-qbmTfdCcNVih-2ufoqsXBW2Vj2qGg8
+Message-ID: <CAMuHMdWARu=9__pqcHXUq92LYuxAQPZNJ6Fn_b7Z6x78i4twDw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: renesas: r9a09g077: Add Ethernet Subsystem
+ core and module clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Prabhakar,
 
+On Mon, 1 Sept 2025 at 20:30, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add module and core clocks used by Ethernet Subsystem (Ethernet_SS),
+> Ethernet MAC (GMAC), Ethernet Switch (ETHSW).
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 8/29/2025 3:34 PM, Krzysztof Kozlowski wrote:
-> On Thu, Aug 28, 2025 at 06:32:13PM +0800, Luo Jie wrote:
->> - Remove the Acked-by tag from the "Add Qualcomm IPQ5424 NSSNOC IDs" patch"
->>    as the new NOC IDs are added.
-> 
-> So let's wait for v6 with acking :/
+Thanks for your patch!
 
-OK. The next version should be V5.
+> --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
+> @@ -72,7 +72,7 @@ enum rzt2h_clk_types {
+>
+>  enum clk_ids {
+>         /* Core Clock Outputs exported to DT */
+> -       LAST_DT_CORE_CLK = R9A09G077_USB_CLK,
+> +       LAST_DT_CORE_CLK = R9A09G077_GMAC2_PCLKAH,
+>
+>         /* External Input Clocks */
+>         CLK_EXTAL,
+> @@ -166,11 +166,21 @@ static const struct cpg_core_clk r9a09g077_core_clks[] __initconst = {
+>         DEF_DIV("CA55S", R9A09G077_CLK_CA55S, CLK_SEL_CLK_PLL0, DIVCA55S,
+>                 dtable_1_2),
+>         DEF_FIXED("PCLKGPTL", R9A09G077_CLK_PCLKGPTL, CLK_SEL_CLK_PLL1, 2, 1),
+> +       DEF_FIXED("PCLKH", R9A09G077_CLK_PCLKH, CLK_SEL_CLK_PLL1, 4, 1),
+>         DEF_FIXED("PCLKM", R9A09G077_CLK_PCLKM, CLK_SEL_CLK_PLL1, 8, 1),
+>         DEF_FIXED("PCLKL", R9A09G077_CLK_PCLKL, CLK_SEL_CLK_PLL1, 16, 1),
+> +       DEF_FIXED("PCLKAH", R9A09G077_CLK_PCLKAH, CLK_PLL4D1, 6, 1),
+>         DEF_FIXED("PCLKAM", R9A09G077_CLK_PCLKAM, CLK_PLL4D1, 12, 1),
+>         DEF_FIXED("SDHI_CLKHS", R9A09G077_SDHI_CLKHS, CLK_SEL_CLK_PLL2, 1, 1),
+>         DEF_FIXED("USB_CLK", R9A09G077_USB_CLK, CLK_PLL4D1, 48, 1),
+> +       DEF_FIXED("ETCLKA", R9A09G077_ETCLKA, CLK_SEL_CLK_PLL1, 5, 1),
+> +       DEF_FIXED("ETCLKB", R9A09G077_ETCLKB, CLK_SEL_CLK_PLL1, 8, 1),
+> +       DEF_FIXED("ETCLKC", R9A09G077_ETCLKC, CLK_SEL_CLK_PLL1, 10, 1),
+> +       DEF_FIXED("ETCLKD", R9A09G077_ETCLKD, CLK_SEL_CLK_PLL1, 20, 1),
+> +       DEF_FIXED("ETCLKE", R9A09G077_ETCLKE, CLK_SEL_CLK_PLL1, 40, 1),
+> +       DEF_FIXED("GMAC0_PCLKH", R9A09G077_GMAC0_PCLKH, R9A09G077_CLK_PCLKH, 1, 1),
+> +       DEF_FIXED("GMAC1_PCLKH", R9A09G077_GMAC1_PCLKAH, R9A09G077_CLK_PCLKAH, 1, 1),
+> +       DEF_FIXED("GMAC2_PCLKH", R9A09G077_GMAC2_PCLKAH, R9A09G077_CLK_PCLKAH, 1, 1),
 
-> 
-> Best regards,
-> Krzysztof
-> 
+Do you need these? I can't seem to find them in the documentation,
+so they are not just for aiding the casual reader.  As their
+multipliers/dividers are 1/1, you can just use R9A09G077_CLK_PCLKH
+resp. R9A09G077_CLK_PCLKAH in the DTS?
 
+>  };
+>
+>  static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+> @@ -181,7 +191,12 @@ static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst = {
+>         DEF_MOD("sci4fck", 12, CLK_SCI4ASYNC),
+>         DEF_MOD("iic0", 100, R9A09G077_CLK_PCLKL),
+>         DEF_MOD("iic1", 101, R9A09G077_CLK_PCLKL),
+> +       DEF_MOD("gmac0", 400, R9A09G077_CLK_PCLKM),
+> +       DEF_MOD("ethsw", 401, R9A09G077_CLK_PCLKM),
+
+According to Table 7.13 ("Overview of Clock Generation Circuit
+Specifications (Internal Clock)"), ETCLKA is used as the operating
+clock for ETHSW?
+
+> +       DEF_MOD("ethss", 403, R9A09G077_CLK_PCLKM),
+>         DEF_MOD("usb", 408, R9A09G077_CLK_PCLKAM),
+> +       DEF_MOD("gmac1", 416, R9A09G077_CLK_PCLKAM),
+> +       DEF_MOD("gmac2", 417, R9A09G077_CLK_PCLKAM),
+>         DEF_MOD("sci5fck", 600, CLK_SCI5ASYNC),
+>         DEF_MOD("iic2", 601, R9A09G077_CLK_PCLKL),
+>         DEF_MOD("sdhi0", 1212, R9A09G077_CLK_PCLKAM),
+
+The rest LGTM.  But as the full wiring is not clear to me, I guess
+I'll have to wait for the DTS...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
