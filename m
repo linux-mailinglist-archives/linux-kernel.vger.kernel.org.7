@@ -1,283 +1,203 @@
-Return-Path: <linux-kernel+bounces-796633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694C9B404C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:46:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0040B404A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E34A18864AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD5D55E4EAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D352DF15B;
-	Tue,  2 Sep 2025 13:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBD733EAF5;
+	Tue,  2 Sep 2025 13:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="A28hkARL";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="A28hkARL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CEnfDRkv"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2061.outbound.protection.outlook.com [40.107.237.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01743305E02
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820226; cv=none; b=oPMcUd0ITCLS2B/Kys2fsIo2vTpEl0T04uVUL9tEdjg6MTv+0g4FjFdWAc+K93wjTdvqf2GLEQsxn+QBS2YITa7jRI1oZrlqBJ2lqM/4C0ZuatASQ5Tw732JKGuIHxsa7B9JtJWsG/mNRd1AduJO/sbi0L0O27hap9FpSbpdoGM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820226; c=relaxed/simple;
-	bh=SzeDgycto1XOoMcreGQSCS0wPlbWCFH7nGuPBL83p7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E+5Gax3ibAf/WvQN+7+uhXWCoNn59V/5x2Z4C67EpQTyldvM0z6UYwG3PU3hFrOf4RWv/jOukY/exHbc6qaRXVdSGL19dW/pbXPecPlFs31/yZlAmdjEvSJ0t5+IbJatPhYO/xS87gbOniBQi4j/2kvXcIEqnRuas/PSugA0NLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=A28hkARL; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=A28hkARL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 283B3211A1;
-	Tue,  2 Sep 2025 13:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1756820223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SzeDgycto1XOoMcreGQSCS0wPlbWCFH7nGuPBL83p7U=;
-	b=A28hkARLiL12iS5mPhCBk51miWvaaR0cOAv8NbqjkuPWahMeCehE0ODUwWQCSxil7MR8GO
-	7yAppSDUKfr6cOJ2m1QxNGX6GbUbNCLnlkekP7YV42aTjRMjWax6ndXzvo5hi4HxNaBZk3
-	fBPU2x7zyrslSQU5K7xHQqA74LU4TMs=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=A28hkARL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1756820223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SzeDgycto1XOoMcreGQSCS0wPlbWCFH7nGuPBL83p7U=;
-	b=A28hkARLiL12iS5mPhCBk51miWvaaR0cOAv8NbqjkuPWahMeCehE0ODUwWQCSxil7MR8GO
-	7yAppSDUKfr6cOJ2m1QxNGX6GbUbNCLnlkekP7YV42aTjRMjWax6ndXzvo5hi4HxNaBZk3
-	fBPU2x7zyrslSQU5K7xHQqA74LU4TMs=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B61C213882;
-	Tue,  2 Sep 2025 13:37:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id J0zdKf7ytmgGXwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 02 Sep 2025 13:37:02 +0000
-Message-ID: <f251c17f-7500-4c84-a796-4ea7fc400bf7@suse.com>
-Date: Tue, 2 Sep 2025 15:37:01 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024B833CEB1;
+	Tue,  2 Sep 2025 13:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756820244; cv=fail; b=MWMrJyk6MkrD/af9WT0r0CyzhVJ7EZ7ABpPcPHheVje85iyQ95aJOZFrSQhW9OqxtyigQWPrQQUjx8PQU3I6hkUkSVAO5a5IC3WdMl2/GgdpcNB2kZoV+MZ2ElB8hix7tVV2pM+6DkofFv0V2N5jqtHC0NiwT39aKvtzHSBFHaI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756820244; c=relaxed/simple;
+	bh=iBheGswDiH+2oKSX7zFNpISh+JXQ8jNAmlZHw8tJyms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qD+YjBooPwRvPn8F7zQp3xJKEBVLfP44eaO3v/dNSH+OFhnVEOcwGLc3rY/KGMS3v5NJrYHqD8eTkWAOn5A+FjGvTq0l/KB6NJDZS1WYDo1t7k/ZWn5AS3NReIFlTqhEtpuPo9pmW7hKhUWTx3mWEPybGNNI+jjJdsgHZ/5mc/o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CEnfDRkv; arc=fail smtp.client-ip=40.107.237.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SwIzdh/Dc6YTZLbHJXCIVCROzrczxroFe/AEfhsrnbRFm6peggC4/fpCCfL9nLg8LfROQZ9YRqTee7PXhWfNBpilbSr9g/FjKzaV9vTIgp09aal1pSEqIqNxeJDzRqNji73XPvWFneQtuAZBmkTix5dmPVv1ekS0nS6bqD1E1rlVn/Jdk2dgdGfvKBE1x3tjlcUWeiYNNVEddJC3TrpbB9bGqC8emaS8CMna0C7tX0xuY2rBcUpoqdO8+m9kBnAZ6i2jQM2zIJ22rNm6Ic/ipr9PmM43xPzjnN/vOqnAVNBEvFUbR+pAsZTzmUxW+GEFWG48lUAxTExBlEA1YshYqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=csxxnR/bWcbUB74lys09IHo53uexc0mnepHLsVzZUt0=;
+ b=pYiKMr87GlqEUYr9PauSswYDOJdqeuYyC5RbwenzfJ/qYcTIt+YudGtoYRJO27hxafHU1F4Jga4Y9wRy6raugukyajLCeAFkwzNRkJDP0m35vA53j7nA3fBW6567TVknLFTZGUF7dk3Onrf8kSh0LM9jEHMMjxNTSynathZ8AfzSYr6wPrNYwzAf2VdOW1zza7aFmtxcWrrwMY0JsCudEiioCkuqg0UxOXjBm6Hc9JmO5tDgo2TOfMQewkT02QwK1EMBBqwZWpfGhn2AMNdk+A7FAx0V3KUsm42588j87THwybwEsFA8JPoc5e9MYqC1xc8vpUIRPzRAwuulvdLLSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=csxxnR/bWcbUB74lys09IHo53uexc0mnepHLsVzZUt0=;
+ b=CEnfDRkvdNMyP1Y64Z7Us2+keW97fTcIKUNNCXEMwDBLiU5j6XsN1RjM9z9LXYltsfJ+CeuZPkWgAQ7J4q5nq94Bk0DoWj/9R1od60qiWl0Fx1Zs3nwUB6XaSkiJkssXfhltoI1watiIhP5byLm2gnuznnkvKRXTmAodiHT15XE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ MW4PR12MB7333.namprd12.prod.outlook.com (2603:10b6:303:21b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Tue, 2 Sep
+ 2025 13:37:18 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%4]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 13:37:17 +0000
+Date: Tue, 2 Sep 2025 09:37:13 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v5 13/20] x86/mce: Unify AMD THR handler with MCA Polling
+Message-ID: <20250902133712.GB18483@yaz-khff2.amd.com>
+References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
+ <20250825-wip-mca-updates-v5-13-865768a2eef8@amd.com>
+ <20250902111052.GDaLbQvA2A0b8Ii26k@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902111052.GDaLbQvA2A0b8Ii26k@fat_crate.local>
+X-ClientProxiedBy: BN0PR04CA0134.namprd04.prod.outlook.com
+ (2603:10b6:408:ed::19) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] xen/events: Update virq_to_irq on migration
-To: Jason Andryuk <jason.andryuk@amd.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Jeremy Fitzhardinge <jeremy@xensource.com>,
- Chris Wright <chrisw@sous-sol.org>
-Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org
-References: <20250828003604.8949-1-jason.andryuk@amd.com>
- <20250828003604.8949-4-jason.andryuk@amd.com>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20250828003604.8949-4-jason.andryuk@amd.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------3qXKDxEArtgBvx45yQgBsyqv"
-X-Spamd-Result: default: False [-5.41 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_BASE64_TEXT(0.10)[];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	HAS_ATTACHMENT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email,suse.com:mid,suse.com:dkim,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 283B3211A1
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.41
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|MW4PR12MB7333:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c1aca9a-987d-440b-7b18-08ddea25d5ad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?eOWihuEeKMGmPOfUOF6miM/jbYTIqZfLnnGg1zOwlaFwlHeHEqgiSQepgMUJ?=
+ =?us-ascii?Q?Gylv0ds+K9cFJ+QThE+NJiH7ACrpoLYVb43fX0AgdAeZ/eFBXjQPrJXX37XW?=
+ =?us-ascii?Q?AtB+oc4cLD5hRZDvipZyPkSfXT0LwFepa0sK8u2DvyyCVmVzDbrcZbvCxSCK?=
+ =?us-ascii?Q?FTP9I+PH2e65VyLQbUvJmOq3VuaDf1//hrdg9+VpNa/jRIjERY58th+hJAJW?=
+ =?us-ascii?Q?fEQAPZulWRthotzMmEDjvjLhpcPw+8J2+ZVgNg3mLHfKA4asOgpXSjXGJcpn?=
+ =?us-ascii?Q?Le1U57fqL4YTovTAyhCYHMsuw3+38hDLwp/kz+mQ/Id/W2pFO91iZoopdl9y?=
+ =?us-ascii?Q?BivWCTt4ufdmaTQEAORZJnOBfhfS2fU9nS3YeO+wDTwEVqrJeDQrHs+ES7d4?=
+ =?us-ascii?Q?QUuJnTIh1hQr8nSxZjwNctHOrY8Y5WMnk1IuEL19PnAFm0mYkz6sMHyKNm09?=
+ =?us-ascii?Q?E/uMtiLAk2faAU89GPiRzDeaFT9OcmfzADaiEPnl9mhDgoXJpD2onqibqW1Y?=
+ =?us-ascii?Q?uaQskbdelINwaWmcwoGQqpP/72aCCeqxoIPK9KaSRkkcpxOKLe10wMOXcK7k?=
+ =?us-ascii?Q?wjiP2mpYP2iGefpKdRHz91JivcypLbB7VNHoxvGbHRQUksfI8xhH4OnJHV+o?=
+ =?us-ascii?Q?Rdm5jVZ16ReJ7K6VVNdLGgH+M6iK5+iaPfvMy4NSe7HOXjHHtH5aEwGt1Qiu?=
+ =?us-ascii?Q?2m6VA/e344VxUDf0fnR8DT6G4dpi5p0OhnSxb2jMZ/frJcB2kCzyJyrN74ne?=
+ =?us-ascii?Q?fG31/2+In9ArvwLJONsjlQalXjoiIfHmpYaKn3JdnQWuePn/B5T6VxXSkm+9?=
+ =?us-ascii?Q?gSX3kWxWNpX/bwGzDHAF6MhyztAChAzX+d1GEwgwzfqF8pEBGFb22GR9DlzD?=
+ =?us-ascii?Q?KFJ5UlC8gmiRbBb6G6HuYnrqLypxEPawPMQwfTjNowTnDDzps9PyvBnTCEh8?=
+ =?us-ascii?Q?nNU0XKDjjxgiGimijt4YFk+MiqFj2IMMf0gC9qEhf7xwn4d3nN+4cDlW06il?=
+ =?us-ascii?Q?469+MiBpP2ZeGSRoBfjd+iq19Hc8llkGjI2Im58o8D4Lryv1MwWKV3KGVUTg?=
+ =?us-ascii?Q?VQWROYIlhjdgIZoB/vRdaxatb0DujXmTvVrSr+fmsljkBi/9+iiRnDdwL8sO?=
+ =?us-ascii?Q?/OYlj/4GVB7pjJDJ9m2w7XzJpSn8O1VmsVmumBu+uFrdKZzo8d4ZoYvIknUq?=
+ =?us-ascii?Q?0xY8Hd7FeGMQW/5GKqOz9PiuNlA9L97d+DMycOcxxfMqydAK9fUTjWaB1Q4x?=
+ =?us-ascii?Q?b+YN/9u6FbVy2xxXQHSbBqTRhVCBK3JVuh5ShpwMyH9K2e8rZHgCGfi1zGR0?=
+ =?us-ascii?Q?fvEjGTt845KkTc7oPljCDv6thW/PDO+MMJeBLWx9u10cX05rBORRNXRcuq3w?=
+ =?us-ascii?Q?16TDHMHsew/VpWwRmFUBOIlzlWTyBF9IbV9elA4SKVnVBJWLdQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Fz76JfI8Wy3UhKrimfPrWJM0KQDmvRe2vqLt07qDpj37K+nPJOp3G92ktW9R?=
+ =?us-ascii?Q?Ok2OC07Bwav1wWgSmODW8dI2KTEEpJfjdbZj4ywi91QC9BaVQ6J1uBOrEZNN?=
+ =?us-ascii?Q?bNt2o5deLTr+5IqrZYPm+hzB75sNOicbkTO0++Y8pZrjtEOgHLFI3KAs/Rln?=
+ =?us-ascii?Q?PIiVjtIb8KIwTH9tihRSpU2NcQSPfM+KspbWcBuiD3d/AQdO4CPXDkCfOQTh?=
+ =?us-ascii?Q?8qELbFkyxIBGrfbvaRzPI8DmTXDA1bajr3POAO0pTdSH8wVGqXqIQRbSbMRi?=
+ =?us-ascii?Q?fy/w7vHG3oAjl1RrQSwmaZ0N7RanhiCnIYTucvvm6FYrP89ljBMWD6OdEbCc?=
+ =?us-ascii?Q?aqe9q8d1MFigGdk+wTOf6IZLEr2hB2L9yoyhPkT3Rfl2HP0HPCmhlcrqHfaL?=
+ =?us-ascii?Q?pE0vjGRbTZ0qK/SG7RyDB+tMSs2iBU8O7FlFGLE+Oe/JIvhEMX68liR97KbZ?=
+ =?us-ascii?Q?gS2O7ZQsx0alCTuOrIUzKpf+uldCilZ2nVETVg34UP3SSnTNoSFKBl69S+dO?=
+ =?us-ascii?Q?QqfJxHLvaUSqkMt75rbjGP6ubfiSfpZyDx8tGEjYG62tCeyTA0VgA6MEBgcg?=
+ =?us-ascii?Q?rwhoEUhu9L0gIOI0R4LeFEJsJ7X9YTPn67s4+RhIg4Ri1Opayfn2MsnBwb8L?=
+ =?us-ascii?Q?NEE4pBW20yEPYeUZ3kxTvm/HOo2hjvKvTxTsllvm7aheoe/PEPol6/tWw22I?=
+ =?us-ascii?Q?FU4NSiFrQseyp3aQGUWVIeeZNodgq+qWV326nF4KG1wDSTCYg+8k6T/RWZqw?=
+ =?us-ascii?Q?atGCW917/zlESe/oM3cC5QEA9aLj+5b4B8F6H937lO4fYtyzLCGZv2mZkeJH?=
+ =?us-ascii?Q?W7c5QynRwlg4kx0gODMmCb9XvG5kc3RIWCNDRO6woLbLThna0YA1SY5bk4AS?=
+ =?us-ascii?Q?bJBDpTG28mg2SP6L5urXIaOEWItucjzNff3ZqOw2jaGc03TygfUJGUUwxuZf?=
+ =?us-ascii?Q?BihRY1zowGb9DTfMmRsxYqCNyDLg1nOhOAKS5/JOJOIRUqJtCFfs3derQQgo?=
+ =?us-ascii?Q?GD8rhf6JxSk+zhGR4qR8vSNcKiQeqYny2IYqfeJ9w0vLgAzhmlkUnIy2HYUM?=
+ =?us-ascii?Q?AMjjbT9sF9EEJ/jRqC4il1V8iPjo3Mkpws39EFz6GQPqV6njt85PUce9f4rT?=
+ =?us-ascii?Q?HJh2hyOhxB33S8hqKT3fnD+CzzoxciBjTDKO7ZQ8UiraqnPr4TMuqMEDxBWH?=
+ =?us-ascii?Q?LICi7DNty3TiPzBN2wChPEgeo4HZOzJvI/IgWimVNg2mnOE4vIE2kGqqRNWI?=
+ =?us-ascii?Q?pbbwAmB2L5M9VnIJw3PiwfJNQ3Q21xbv/lvsn0+EIp6N7d8pXrKuZstoFYYG?=
+ =?us-ascii?Q?lpU8VzRPmyZ+x5Vtv2q32jWT1mNYeYjKKxPfxQh7zwFPQoGNt6XVd74jhn1U?=
+ =?us-ascii?Q?VEbR1aMWxBBOm0GSeptw1DdWMxbd2BIzud86GpaSAX+Nap+deHGAcOpiUTU2?=
+ =?us-ascii?Q?xjc7/T+spQIEABv7exMdGisuxWkRggYpWurNWcso/VIMeU4aPXV5tq5HhJ/8?=
+ =?us-ascii?Q?xeerDRV74YNnKY+eQ7/VZiAy6T+ufLej6ZS++b2J5W8C/Es1rr5GZJvGn3et?=
+ =?us-ascii?Q?4i/6ToBvpLH50r3fAHQ+W0A8SrcopgE+LTkqP7Q8?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c1aca9a-987d-440b-7b18-08ddea25d5ad
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 13:37:17.8623
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OnvtJbgtW1dSKPB2dv7flgnrjVAs8mhhu+z8QlT/XThoMkeyXhWAVeUUz2KKnwBuI5JvcRVFgHsMw7+1O5wWIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7333
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------3qXKDxEArtgBvx45yQgBsyqv
-Content-Type: multipart/mixed; boundary="------------XFxTLX7XzbIorwGI3WtEKT5w";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: Jason Andryuk <jason.andryuk@amd.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Jeremy Fitzhardinge <jeremy@xensource.com>,
- Chris Wright <chrisw@sous-sol.org>
-Cc: stable@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org
-Message-ID: <f251c17f-7500-4c84-a796-4ea7fc400bf7@suse.com>
-Subject: Re: [PATCH v3 3/3] xen/events: Update virq_to_irq on migration
-References: <20250828003604.8949-1-jason.andryuk@amd.com>
- <20250828003604.8949-4-jason.andryuk@amd.com>
-In-Reply-To: <20250828003604.8949-4-jason.andryuk@amd.com>
+On Tue, Sep 02, 2025 at 01:10:52PM +0200, Borislav Petkov wrote:
+> On Mon, Aug 25, 2025 at 05:33:10PM +0000, Yazen Ghannam wrote:
+> > +/*
+> > + * Threshold interrupt handler will service THRESHOLD_APIC_VECTOR. The interrupt
+> > + * goes off when error_count reaches threshold_limit.
+> > + */
+> > +static void amd_threshold_interrupt(void)
+> > +{
+> > +	machine_check_poll(MCP_TIMESTAMP, &this_cpu_ptr(&mce_amd_data)->thr_intr_banks);
+> >  }
+> 
+> So the thresholding interrupt will fire.
+> 
+> It'll call machine_check_poll().
+> 
+> That thing will do something and eventually call back into amd.c again:
+> 
+>                 if (mce_flags.amd_threshold)
+>                         amd_reset_thr_limit(i);
 
---------------XFxTLX7XzbIorwGI3WtEKT5w
-Content-Type: multipart/mixed; boundary="------------xZxaHUgdgWZCFnPgopKkQz49"
+This resets only a bank with a valid error.
 
---------------xZxaHUgdgWZCFnPgopKkQz49
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Also, it resets the limit *before* clearing MCi_STATUS which should be
+the last step.
 
-T24gMjguMDguMjUgMDI6MzYsIEphc29uIEFuZHJ5dWsgd3JvdGU6DQo+IFZJUlFzIGNvbWUg
-aW4gMyBmbGF2b3JzLCBwZXItVlBVLCBwZXItZG9tYWluLCBhbmQgZ2xvYmFsLCBhbmQgdGhl
-IFZJUlFzDQo+IGFyZSB0cmFja2VkIGluIHBlci1jcHUgdmlycV90b19pcnEgYXJyYXlzLg0K
-PiANCj4gUGVyLWRvbWFpbiBhbmQgZ2xvYmFsIFZJUlFzIG11c3QgYmUgYm91bmQgb24gQ1BV
-IDAsIGFuZA0KPiBiaW5kX3ZpcnFfdG9faXJxKCkgc2V0cyB0aGUgcGVyX2NwdSB2aXJxX3Rv
-X2lycSBhdCByZWdpc3RyYXRpb24gdGltZQ0KPiBMYXRlciwgdGhlIGludGVycnVwdCBjYW4g
-bWlncmF0ZSwgYW5kIGluZm8tPmNwdSBpcyB1cGRhdGVkLiAgV2hlbg0KPiBjYWxsaW5nIF9f
-dW5iaW5kX2Zyb21faXJxKCksIHRoZSBwZXItY3B1IHZpcnFfdG9faXJxIGlzIGNsZWFyZWQg
-Zm9yIGENCj4gZGlmZmVyZW50IGNwdS4gIElmIGJpbmRfdmlycV90b19pcnEoKSBpcyBjYWxs
-ZWQgYWdhaW4gd2l0aCBDUFUgMCwgdGhlDQo+IHN0YWxlIGlycSBpcyByZXR1cm5lZC4gIFRo
-ZXJlIHdvbid0IGJlIGFueSBpcnFfaW5mbyBmb3IgdGhlIGlycSwgc28NCj4gdGhpbmdzIGJy
-ZWFrLg0KPiANCj4gTWFrZSB4ZW5fcmViaW5kX2V2dGNobl90b19jcHUoKSB1cGRhdGUgdGhl
-IHBlcl9jcHUgdmlycV90b19pcnEgbWFwcGluZ3MNCj4gdG8ga2VlcCB0aGVtIHVwZGF0ZSB0
-byBkYXRlIHdpdGggdGhlIGN1cnJlbnQgY3B1LiAgVGhpcyBlbnN1cmVzIHRoZQ0KPiBjb3Jy
-ZWN0IHZpcnFfdG9faXJxIGlzIGNsZWFyZWQgaW4gX191bmJpbmRfZnJvbV9pcnEoKS4NCj4g
-DQo+IEZpeGVzOiBlNDZjZGI2NmM4ZmMgKCJ4ZW46IGV2ZW50IGNoYW5uZWxzIikNCj4gQ2M6
-IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gU2lnbmVkLW9mZi1ieTogSmFzb24gQW5kcnl1
-ayA8amFzb24uYW5kcnl1a0BhbWQuY29tPg0KDQpSZXZpZXdlZC1ieTogSnVlcmdlbiBHcm9z
-cyA8amdyb3NzQHN1c2UuY29tPg0KDQoNCkp1ZXJnZW4NCg==
---------------xZxaHUgdgWZCFnPgopKkQz49
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+> 
+> Why the back'n'forth?
+> 
+> Why not:
+> 
+> static void amd_threshold_interrupt(void)
+> {
+> 	machine_check_poll(MCP_TIMESTAMP, &this_cpu_ptr(&mce_amd_data)->thr_intr_banks);
+> 	amd_reset_thr_limit();
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+This means we'd need to do another loop through the banks. Their
+MCi_STATUS registers would be cleared. So they could log another error
+before the limit is reset.
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+Overall, the goal is to loop through the banks one time and log/reset
+banks as we go through them.
 
---------------xZxaHUgdgWZCFnPgopKkQz49--
+Thanks,
+Yazen
 
---------------XFxTLX7XzbIorwGI3WtEKT5w--
-
---------------3qXKDxEArtgBvx45yQgBsyqv
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmi28v4FAwAAAAAACgkQsN6d1ii/Ey84
-9Qf6A2F3JG2SW93MO8A9bklox+jBDaxzI9DJ3S8LH0WNEkhBZm2cSa9LJ1pj50PBIIDLl2hPDBEB
-KHfFpAg/9FKBlyvLpmscDvIOL3vzZqLOqoIyqeHWWsSd9Z26XthnZedBT1K7FnhwUimzNvgd3992
-GpCjox8Rs5k7baagpDjOx5owmBFLb/j7fADesYsWum1nAu747JXyazRoLF4Q84ofVrigkOICG8ut
-Jjk4HvgqfrSoycIsD2ZvQKYKTNv4SAN3xXHIVW+fhiXJQ7wgVQUc49csvdivpnFhuiYsOvdA8qan
-W6bmPbcur5rtdm6VCkE/gha9BwcT3kf4Up6xqTLEOQ==
-=6ykr
------END PGP SIGNATURE-----
-
---------------3qXKDxEArtgBvx45yQgBsyqv--
 
