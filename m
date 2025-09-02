@@ -1,114 +1,78 @@
-Return-Path: <linux-kernel+bounces-797301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0670B40E9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:42:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E040DB40E9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0AF9207B59
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92AF31B26B24
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1F72E88AE;
-	Tue,  2 Sep 2025 20:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4482E7647;
+	Tue,  2 Sep 2025 20:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m82HAgK1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p29jjoBA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73CD4A2D;
-	Tue,  2 Sep 2025 20:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010472E8B66;
+	Tue,  2 Sep 2025 20:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756845735; cv=none; b=RgyT0V7tYBGVpCbDeOSSZpn0TZT23iIFBr1RkWpn4ZHzxP+qk0cTf0RuVlqeBjCnOygybf7uiJJR7Eni+PIYSXLQI3rmY+uLrZjRhbzLSfEdUlelPfF3SLBXhjA5sqX0qQWSF2FAvJpyUWy50byWnruqPvJNIqLayMaWaiPzfmU=
+	t=1756845759; cv=none; b=Y9quECwrMms1KtFiG7yNBiEQ6SoZfQ+bUISc9GFzHTLY8lbWhpDidLYk7i+Jofowgyh+G+WPMRLFwWXVbmNJEQvutdCVL/G4/CydyiAr+ucxuD3wytSApvyToC6OVF9+Z2fb5aQOr1XOnAgR+H9rtuTuXTFcyiGWrGLpB/s4hTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756845735; c=relaxed/simple;
-	bh=B06/borCoaX5DNnRHbLpFGdTIUxuU9TOZCZ4Dl6LKTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cfgl+/Dkp6p+NROZDT5IxauO6/E5HViat/YEPSBP9LIN8B3j+6DriVUvLyDNsJ+ad+GvmUtJ1DbzNRprGvsXQr5He4TPtGVrgPMJ5/dplOt96uY1Wmzk3KPTDG3R8x9buZ1M6RUwLTBsKTrXZbhj6qlS3hElCwB+XzuDA/5UwSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m82HAgK1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD03C4CEED;
-	Tue,  2 Sep 2025 20:42:13 +0000 (UTC)
+	s=arc-20240116; t=1756845759; c=relaxed/simple;
+	bh=EY3Ros8ui1AxqpqZefjCgk4LjTsOIk6qAWtxKeex6fU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mW6tgayX6xUKnx5037K2oV4sscQBGsjYqxvN8aNvYsL6QuScYjEvw7N0xb1vOmcjm45Q62OUov1O995Ry5tjFY1KI6B49u3+i5OWhaX4hrP/2EPMEUNYUlrY5cganx6iQDqqmi1E8EjKqWtTZ1qTS3it8KBOTggY/pg49WIWq5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p29jjoBA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC493C4CEED;
+	Tue,  2 Sep 2025 20:42:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756845734;
-	bh=B06/borCoaX5DNnRHbLpFGdTIUxuU9TOZCZ4Dl6LKTs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m82HAgK1tXQQL1I9oyf4N9S2PAOCCB1/2d+kAaoVSPnvtY0iZH/TacVcIFzdMYzuJ
-	 eKHA4NrrZxv5G/Ag3DK1QUpVCMvREuP3fVIzEojoBuGs/U69231VUMAPgs+eRk7skE
-	 WoVluF2kLWNlj5KS3jE+OWzoN5DDBu+0/TLEcnU0llzz8/u4jbEDRKrYSYKr21M3Ye
-	 fxukbd/4CvPJsuEIr6yGpnfrtqA3XPS2vKsExpZ6u9H1pSmK7aovkFdT3VJPOfUbwj
-	 rxQ6Hu/wdlvJpk1jkvEjxp0Ph0fUz2S4x9bsC8inZO33mtApAAvdZ4whL1quPPrGtx
-	 f9aRs2gudTGFg==
-Date: Tue, 2 Sep 2025 13:42:12 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
- <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, kernel@pengutronix.de, Dent Project
- <dentproject@linuxfoundation.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v2 4/4] net: pse-pd: pd692x0: Add devlink
- interface for configuration save/reset
-Message-ID: <20250902134212.4ceb5bc3@kernel.org>
-In-Reply-To: <20250902164314.12ce43b4@kmaincent-XPS-13-7390>
-References: <20250829-feature_poe_permanent_conf-v2-0-8bb6f073ec23@bootlin.com>
-	<20250829-feature_poe_permanent_conf-v2-4-8bb6f073ec23@bootlin.com>
-	<20250901133100.3108c817@kernel.org>
-	<20250902164314.12ce43b4@kmaincent-XPS-13-7390>
+	s=k20201202; t=1756845758;
+	bh=EY3Ros8ui1AxqpqZefjCgk4LjTsOIk6qAWtxKeex6fU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=p29jjoBAJe6T0O7UThks1cmcjI8SwiFvWaxZKkHmZDYW+zegGZ+hP7E1ddt6qE5Mf
+	 cTWXmxdr2FFrkYBwpp0gY0ofH3mAgU6Awrm56ogJI/LhYXeFNSwdUg5H22EFX0UcLV
+	 XpkohuD27GjAgrQLodQ+hyo6F+1x8RZ0HqAhPzmyYUe1UuV/bBs6i+gDr8nscdXlSn
+	 9otq/HIICPl47kenbfXhrMXtj1n/aYYoUDeag+sTGpfSFjtI3Y3oTdd2wJ1Exyb776
+	 7LgKNtE7pKL105d+816ek+fl35NjgiCLIufI5Zo65vE7/S59HUgTGZAjAtqnxf+BB5
+	 ZoooU9lR3s5pQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7146E383BF64;
+	Tue,  2 Sep 2025 20:42:45 +0000 (UTC)
+Subject: Re: [GIT PULL] hotfixes for 6.17-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250901172234.3a74524a97b595a5a81d1697@linux-foundation.org>
+References: <20250901172234.3a74524a97b595a5a81d1697@linux-foundation.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250901172234.3a74524a97b595a5a81d1697@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-09-01-17-20
+X-PR-Tracked-Commit-Id: c873ccbb2f8db46ad9b4a989ea924b6d8f19abf1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8026aed072e1221f0a61e5acc48c64546341bd4d
+Message-Id: <175684576405.430647.5772922228170674151.pr-tracker-bot@kernel.org>
+Date: Tue, 02 Sep 2025 20:42:44 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue, 2 Sep 2025 16:43:14 +0200 Kory Maincent wrote:
-> > On Fri, 29 Aug 2025 18:28:46 +0200 Kory Maincent wrote:  
-> > > +The ``PD692x0`` drivers implement the following driver-specific parameters.
-> > > +
-> > > +.. list-table:: Driver-specific parameters implemented
-> > > +   :widths: 5 5 5 85
-> > > +
-> > > +   * - Name
-> > > +     - Type
-> > > +     - Mode
-> > > +     - Description
-> > > +   * - ``save_conf``
-> > > +     - bool
-> > > +     - runtime
-> > > +     - Save the current configuration to non-volatile memory using ``1``
-> > > +       attribute value.
-> > > +   * - ``reset_conf``
-> > > +     - bool
-> > > +     - runtime
-> > > +     - Reset the current and saved configuration using ``1`` attribute
-> > > +       value.    
-> > 
-> > Sorry for not offering a clear alternative, but I'm not aware of any
-> > precedent for treating devlink params as action triggers. devlink params
-> > should be values that can be set and read, which is clearly not
-> > the case here:  
-> 
-> Ok.
-> We could save the configuration for every config change and add a reset-conf
-> action to devlink reload uAPI? The drawback it that it will bring a bit of
-> latency (about 110ms) for every config change.
-> 
-> Or adding a new devlink uAPI like a devlink conf but maybe we don't have enough
-> cases to add such generic new uAPI.
-> Or get back to the first proposition to use sysfs. 
-> 
-> What do you think?
+The pull request you sent on Mon, 1 Sep 2025 17:22:34 -0700:
 
-If you are asking for my real preference, abstracting away whether it's
-doable and justifiable amount of effort for you -- I'd explore using
-flags in the ethtool header to control whether setting is written to
-the flash.
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-09-01-17-20
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8026aed072e1221f0a61e5acc48c64546341bd4d
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
