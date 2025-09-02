@@ -1,107 +1,226 @@
-Return-Path: <linux-kernel+bounces-796971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D43B40A28
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:09:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCC3B40A2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 555227A4641
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:08:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D2618983A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E6032ED2E;
-	Tue,  2 Sep 2025 16:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50B32A83C;
+	Tue,  2 Sep 2025 16:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgPF+Dk6"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="auDW1mT3"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ABC2652A4;
-	Tue,  2 Sep 2025 16:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A93F30EF6E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756829388; cv=none; b=k2nH+kd/2sDZCTRo326x0T7pEjiHys+R5NSs59ExtTIHM957ci0rbjw1HWzQsKrXwEIwppWwLq99loJX540DDqK0CMTSPeNW/bsWbDK+RjmzJHAfAA++liR9ksLbfZg3gQ8g/ZlcGWZbWpqq1oPZBP6o6UDDJc2P1M2sfoV+xII=
+	t=1756829408; cv=none; b=taisf80uUriFfuTYjB8um/c5SADNEZHauzPJPsDjSHo2v0wJpTqI5ITQXkdAd52++Q9l1SBsWHthZKbOyTEYH9BRma/5SajGsMUdRau6bLy4lpYZIs7M3v9J8CltLhNbnZMLCI3ysQRdBew6YaAL1pamShrJ/WVl26Ky5MRWuPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756829388; c=relaxed/simple;
-	bh=syoayViFHo42fQnL1EzEylq68IIyUIb8xC90SmvePNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgzGhJ3C1FYawmFvMVCSh6EYfJMAwWnCHUQDokGSNxNvxMy1g0JvuqFcLXbLLA3TfWGylTdm7YHitSiuqg2FuBTkcpGvPUqortLrTTe7pzIgEpTCROz30zCjZ1iNrGETxFYsmBQuYhyb+D5KFAUv0CKLmQBrShNhXnUTwIPStOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgPF+Dk6; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-248a61a27acso252975ad.1;
-        Tue, 02 Sep 2025 09:09:46 -0700 (PDT)
+	s=arc-20240116; t=1756829408; c=relaxed/simple;
+	bh=VrSQSITn9gd9lscxj+R2V/u4A3x4Is4GeujBk9+skZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cyXOJnYPauHvvIhCn0bvWVF4yWA13iQkGdNp9WYJDUKDitgI8hpQykFUWziUypevCD25PvPPQyJi7Kohsvmq4adTmqF61QTlV+WI9OIRyN5J14XVP5gDmHeVeiF18GV4ndAdbQ8Y6fzuYDDjdo63vbojXdb2Nvdai1qgw5hW6BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=auDW1mT3; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30cce5be7d0so2313732fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:10:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756829386; x=1757434186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=05TUzW7tah/Dlcw/gEUwu44u6+noGwNwdDyA66QPm9w=;
-        b=FgPF+Dk6glHoLW4vIWZu1BYEP0aGHJ20VW4lvySvO17W0kaee2kEYMoYQ0Qy4OkE9t
-         aB8QXvoEzVaXRMhrl/St8uJ3XzSwVYy3Bd3ix8LI8P8E0UwaQy6u2F3WoGxYmmKrK+gb
-         fOtGUzQdduSM/wnutzuIO1CpnH1kklQ95oXqNIWynGtn5CHppGXUfX0SBGwJubXQPf2p
-         Yfu02ScPwm3nnNjPRIQL4HD67bwJGz+GgLEk+DAktRKLMujMVoYEo+pVuNzjgD6yXuTq
-         wvLsoEMutiBVHyIisgsDkU50kHVKBl193dnUs6Oc/4AAWgk14Kq3mrWghNO9JJhlqkx3
-         kRvg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756829405; x=1757434205; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1b2HBJLNyTHgHAemvhv7VSSr8vGG9gIZU3t67hKMHJo=;
+        b=auDW1mT3OtaOt61wVvByNPhtnR7bdjL5+0xhF+mmGS/nf+IL+64r/Rgk/tfAlORyuZ
+         rsyWqpUC4afDdpjiIWwihkYy1RjbqW4D/2HOVBabPbt2zieAHtiX51OtfTa/i0TMwNfH
+         bWWuibWZNGyw8Wvg3aMRkBPrL4rczuOSWcCipnf0ELP5Hio3G/CHWi/CsxErJIrYXsYA
+         5oH2hqavktPFFA5Vr2TShuaYpXr0QxtifcceuN6TcyHg4tvH9sQ4b5c2sfU7ngfI2UZl
+         f1HQtc6F0Hs7rJt1pjbhT6SzWoMWp4LDB+IswiZiJoe7s76d/eQjiSLhTZlWkwCzbasl
+         xnhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756829386; x=1757434186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=05TUzW7tah/Dlcw/gEUwu44u6+noGwNwdDyA66QPm9w=;
-        b=X4dN1zgQf2sSmHDeOcF+ObO/16nFkDUNITdu1Dgozb+x4q5HsDU6Rhc6fQ+fqt7GB+
-         dBTicZqj89OQJn5F/RIKiiR6A6DwTI6PbRsU0AGytvx8iFoMDGZAdTtD3Nwc25w05A4g
-         P4/PmzA+edsnoTpCIi2C9W/SJ9Qowhn4JKlOYUpZEW/mvU/fDmYUSVbEeb4D7aVCHuUl
-         eFO2CX1gWuBDSQynI81VyT2vrH4niJ7m9/vGoh2Pkd7TnjWYxsCPJMa4pLT9+8iEJ0Dd
-         2Qp5hrdhysax8QM8vI9wRVGkzWQamnY1y0NtmLwWLD6Dk+NmNoGsIda9Su1Iv4sAG394
-         949g==
-X-Forwarded-Encrypted: i=1; AJvYcCU59m1IJpRN3opLSR0bBbav/GTiZ5ngl96PfDo3ydxL47xwKKVEIdACN0f4/kJUr6Al9Gv5x1PlU2o=@vger.kernel.org, AJvYcCWjgBNZTtUqxhfXqQ87OCJAPHIB8RYPN6tjKDEbrAxX1kja/uJyF2PFEhgl8x6vfCkcOMJ4p1GilvCU/ZeF@vger.kernel.org, AJvYcCWwe9T+SYUEtChFHyG0q1YjbdNepjf19WHsgnH4Jg8rCvtgeaNk0muCvqKN/DV3QmHcYh1wBJbgO/palBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV4XdLWeuxtKnS7RGB3QqLV2Q65C8jAEcuzlzqpcB6KQSZccPq
-	Svcja3UICi+YfiUXoVSXsMCgQs60w1AWkPxkRQWjCryBAVbkQ5PgQLlE0RpogA==
-X-Gm-Gg: ASbGncvy5bPPUEGQJl7Na7eVrbuT7dsfuYYb0+lbsHjz/sGfC4/O2XQnTloyWdddIwk
-	qM7Mdz3eLAymplMsUfjsJzEQie5F+XVwJzLij4UNBIXgbWIhB2d7J4wC68ESsVEY6y7Sj/IJtdA
-	oax32D/4EUfPIO1Pn3u57Mio++mX2GA/S2YQ5DMH3yOkIVpKtkI7zllTgJIjcPr4fmnyiwIsJfh
-	5Wv4VL1JElUwBDQ+oW79OwSrTMR76Hk416bWmpznM6PFOYVJxDmqdNYMjDEOoukHB9Fg04JGR0X
-	n619VdtfEV3OleNtoY7Hyz0llqEf1v+9mzwju14izOqopZp7xgxvgCa7z6wBD65Nuiyqveq5mqj
-	4WyhjoPhELwNaTZ3YTBB41fE+Mm7Jsdgc8sc=
-X-Google-Smtp-Source: AGHT+IHOtqWhi3a61BAAa2IW9pPnlO9A2DZ2gtvg7S0md20STwQ196nuIK9lsAOhd1DlgKe8tStYdw==
-X-Received: by 2002:a17:903:32c6:b0:249:37b2:8629 with SMTP id d9443c01a7336-249448d70efmr142762655ad.9.1756829385899;
-        Tue, 02 Sep 2025 09:09:45 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490370298dsm137765755ad.4.2025.09.02.09.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 09:09:44 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 2 Sep 2025 09:09:43 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Tom Ingleby <tom@ewsting.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Eugene Shalygin <eugene.shalygin@gmail.com>,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (asus-ec-sensors) add ROG STRIX Z690-E GAMING WIFI
-Message-ID: <58dd3ee5-e68d-4931-8ad6-3102cf353288@roeck-us.net>
-References: <20250902051603.35633-1-tom@ewsting.com>
+        d=1e100.net; s=20230601; t=1756829405; x=1757434205;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1b2HBJLNyTHgHAemvhv7VSSr8vGG9gIZU3t67hKMHJo=;
+        b=g57WNvOkLCE3V5zueHJnHYHDODqa67COsxunn+2TkAnYcFA9TBEvxJQkOJkGO1cJ6w
+         RsxYYR6+UxTrKUsTfM1YXvAehzV4ID3I+Imdk8qboWa/n7hslXu5WETIGKTLeXeTRCNK
+         s9THqoYzRNVlPzpDNjhU7x4/7vZDP3YVhmQqugtHRv/oSXGGzhEK1IZCXfr4pfTZq8xy
+         kKaiOV6BAMkKBkgR7pEsM74lFLys6zcCZbwaaQU6hpKXgO9bC1AoBp+QYtiEN9iJrfn+
+         OKPESUvBz9pdgHShzK6ob6BbD5ixT5aqkSjDyQAcF7XfKdBWYVvSqChaShTP3NxV39YT
+         FMig==
+X-Forwarded-Encrypted: i=1; AJvYcCVLufX/h52VlFVCInfskcTjSGEvTRMMiTyX9DuOSt77DCudj8po2bat4z+QUrWmQAbytF5xS3slalQVmUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhObRnBUyqxFxjNmUH7b/P5u3FEgkZajfmmez0fzr8quPIoMH3
+	gqkuHAW56COX2+zTJvt5/vKd1p92fLGYCm1+l7rxiOIyUlwFb5wKO560Y6ZhAQIVzBw=
+X-Gm-Gg: ASbGncu31FqOW/PpbkHODOeDEZb+bGQfDEIFCUfbUancrldleQLqTfrllUvFh3p2RGr
+	Cx9eOoFMqgMkqgGY0gPGR+QOVY5+MlsMwToQWSlNBpf3LDQB+NArMKc+GPrRd36lOudVf0Dh2ta
+	RRL8DYiETLrZT4Kwixb0LIrQiF+u3bAAjY7w9+j3oy68jMIJrOq/mg+4KODUp4r5bBek2Z5t24j
+	7Vb0kLt8SYbWhXLqOs2XcMnMcY1g+nLxf0lolwjefFnvkl1euvzJG1Wa2DbijZ7wIRSZEQXWMyV
+	yYGqKuWZUWMZx3TEsjQJ6RbILzUhWAMTzoKSzxgJRU63BZGY9/6iSOQSWU7P6pNG4hv1YaUHI1h
+	5aXKMGEbXv5lheCDyiF2p25dy2r5/RAvaKY8Q+fQiKmkUxEE3kG+TJbkmtfjbHIFByV8stABh
+X-Google-Smtp-Source: AGHT+IGCpDnc9d4PjivPmjMidb+t/OFLW+acaBEBwQEHGbDKfC55P2vhw0JnuNYoQRu6pKg0KePVow==
+X-Received: by 2002:a05:6870:f626:b0:30b:cd02:297c with SMTP id 586e51a60fabf-319633cc746mr5946257fac.35.1756829405500;
+        Tue, 02 Sep 2025 09:10:05 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b? ([2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-319b60c5240sm567642fac.32.2025.09.02.09.10.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 09:10:05 -0700 (PDT)
+Message-ID: <dfcdaf9a-1980-4059-9268-2e9ae96831e8@baylibre.com>
+Date: Tue, 2 Sep 2025 11:10:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902051603.35633-1-tom@ewsting.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 0/2] Add MAX14001/MAX14002 support
+To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Kim Seer Paller <kimseer.paller@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Jonathan Santos <Jonathan.Santos@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>
+References: <cover.1756816682.git.marilene.agarcia@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <cover.1756816682.git.marilene.agarcia@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 01, 2025 at 10:15:58PM -0700, Tom Ingleby wrote:
-> Add support for the ASUS ROG STRIX Z690-E GAMING WIFI
+On 9/2/25 8:14 AM, Marilene Andrade Garcia wrote:
+> Hello everyone,
 > 
-> Signed-off-by: Tom Ingleby <tom@ewsting.com>
+> Thank you for your input on how to handle the situation with the driver code. 
+> Kim, I also apologize for the unexpected situation involving your previous 
+> code.
+> 
+> Based on the suggestions, I applied my v1 code changes to v9 of Kim’s code, 
+> resulting in this v10 version that combines both. 
+> Compared to v9, the updates are:
+> 
+> - Added support for max14002.
+> - Added a function to write a single register, since the write enable 
+> register must be updated before writing to any others and updated again 
+> afterward.
+> - Renamed the init function to better reflect its purpose, which is to 
+> disable the memory verification fault. I also replaced the one-by-one 
+> handling of registers verification values with a loop, since they are in 
+> sequential ascending order.
+> - Replaced the old regulator APIs with the new ones.
+> - Updated the device tree documentation to align with the datasheet 
+> nomenclature for voltage suppliers.
+> - Used IIO_CHAN_INFO_AVERAGE_RAW to return the filtered average of ADC 
+> readings.
+> 
+> One of the reviews I received about my v1 version suggested using a custom 
+> regmap. I attempted to implement that, but I feel that most of the default 
+> regmap functions (e.g., regmap_update_bits) would need to be overridden 
 
-There have been other recent changes to the driver, resulting in conflicts
-when I try to apply this patch. Please rebase on top of the hwmon-next
-branch and resubmit.
+Usually, you only need to implement one read and one write function for
+a custom regmap bus and the core code regmap code will use those for
+all of it's function calls. Since you already have a read and write
+function, it shouldn't be too hard to adapt them to the regmap bus
+callback signatures.
 
-Thanks,
-Guenter
+> because of the unique way this device handles communication, such as 
+> inverting bits before sending a message, updating the write enable register 
+> before writing any other register, and updating it again afterward. However, 
+> as I am still new to the IIO kernel code, I may be missing something. If you 
+> could provide further explanation or an example, I would be grateful.
+> 
+> Regarding locking, Kim’s original code implemented it, and it remains in 
+> the driver.
+> 
+> I still have a question about using _mean_raw (IIO_CHAN_INFO_AVERAGE_RAW) 
+> to read the register containing the latest filtered average ADC readings. 
+> Should I create a v11 version with a patch to include in_voltageY_mean_raw 
+> in the file /linux/Documentation/ABI/testing/sysfs-bus-iio? 
+
+There is already "/sys/bus/iio/devices/iio:deviceX/in_Y_mean_raw" which
+I think is intended to cover that.
+
+> The idea is to use in_voltageY_mean_raw to return the filtered average and 
+> also to set how many ADC readings (0, 2, 4, or 8) are included in the mean 
+> calculation. Any feedback on using IIO_CHAN_INFO_AVERAGE_RAW this way would 
+> be appreciated.
+> 
+> The v10 changes were tested on a Raspberry Pi 5 using a modified kernel 
+> (rpi-6.12). The MAX14001PMB evaluation board, which contains two MAX14001 
+> devices, was used for testing. One device measures current, and the other 
+> measures voltage. The evaluation board introduces an offset to allow 
+> measuring negative values. These board-specific characteristics were not 
+> included in the driver code (neither the offset nor the current channel 
+> capability), but they were considered in the calculation of the values read 
+> by the devices. Should the code that applies these board configuration 
+> parameters be added as an additional driver file inside the IIO subsystem, 
+> or should it remain only in a user application?
+
+These features are provided by extra analog frontend (AFE) circuitry
+so the are outside of the scope of this driver.
+
+There is an iio/afe/iio-rescale.c driver that can be used to handle this
+kind of circuitry. It has "current-sense-amplifier" and "current-sense-shunt".
+I didn't look at the eval board schematic in detail to see which one is
+the right one for this case. There isn't one for the voltage offset case
+though. So if you have some extra time, you could consider adding that.
+
+You will need to add #io-cells to the DT bindings for the MAX chips
+so that we can connect it in the devcie tree to the frontend.
+
+    amplifier {
+        compatible = "current-sense-amplifier";
+        io-channels = <&eval_adc_1>;
+
+        sense-resistor-micro-ohms = <?>;
+        sense-gain-mult = <?>;
+    };
+
+> 
+> I plan to continue sending patches to cover all the features of the device. 
+> This includes adding interrupt handling for faults and for when the signal 
+> exceeds the upper or lower threshold, implementing the inrush current 
+> feature, and completing the filtered average reading functionality by 
+> adding the ability to set the number of readings used in the mean 
+> calculation.
+> 
+> And I would like to thank again my GSoC mentors Marcelo Schmitt, Ceclan 
+> Dumitru, Jonathan Santos and Dragos Bogdan for their help with the code.
+> 
+> Thank you for your time,
+> Best regards,
+> Marilene Andrade Garcia.
+> 
+> Marilene Andrade Garcia (2):
+>   dt-bindings: iio: adc: add max14001
+>   iio: adc: max14001: New driver
+> 
+>  .../bindings/iio/adc/adi,max14001.yaml        |  79 ++++
+>  MAINTAINERS                                   |   9 +
+>  drivers/iio/adc/Kconfig                       |  10 +
+>  drivers/iio/adc/Makefile                      |   1 +
+>  drivers/iio/adc/max14001.c                    | 355 ++++++++++++++++++
+>  5 files changed, 454 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+>  create mode 100644 drivers/iio/adc/max14001.c
+> 
+> 
+> base-commit: d1487b0b78720b86ec2a2ac7acc683ec90627e5b
+
 
