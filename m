@@ -1,173 +1,209 @@
-Return-Path: <linux-kernel+bounces-795970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042CCB3FA1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:21:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F3AB3FA36
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F174E1402
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1F0B1B23354
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063742E92BB;
-	Tue,  2 Sep 2025 09:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA7B2EAB76;
+	Tue,  2 Sep 2025 09:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="SkjgygrE"
-Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NVOvCzGX"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E051127466D;
-	Tue,  2 Sep 2025 09:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8D42EAB85
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756804903; cv=none; b=ftJGn4cFrhPmjUnFn5Ko4ZrFFpvliY8WYPZurNLOaCQ/aLJ8FXWvxJ7N1jenF3toMkqB7CSZbLo5gQIhbJrlny5AH/AOgS2zHuyjOsMQwOD/3V5qJMO161R9PhVFYUtVmnEWwtfsKf75uogQkmyKHCeg3mLNi90nCLXh9kjr4CQ=
+	t=1756804940; cv=none; b=XDyvmPWDbj1bYVPnd2vAXhas5em4/NlpXf8kz2GuKabGaw6RtT9Q6ktXeJUFhm38VRgBvdhLLzzNvukPYMOCwyHK+sdTuI1V9EeTxfgpI6m5KkggRmsiqIws9V9xpO1xedPsPL0QH32kIICeZh3YTTGHb3XdCYNE6bKSd7rvZD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756804903; c=relaxed/simple;
-	bh=fJ+8zjPxcFduC8vpbJmpStNAHjNkgFzRwt6qlypCTVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AfOO+/GNkerEu22/WUx8jWN2vVtjOou1KZX3NSFeM5Kf9TImFkLvQMCab4RoK7VWUUOP0aoTKrojFHNgbkMHPPNgUROpsVGleoYvtvEH3CJCY5fYjF7LmMG6B39RK/60Pgu1ioQl72jS8wJpLCDfK8fiwR8F1Hmn6JPi80dQSUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=SkjgygrE; arc=none smtp.client-ip=203.205.221.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756804898;
-	bh=OxpOJmhECTdLgWfX9uIafSF9DcEyP9WjBjiAh0oefRo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=SkjgygrEtp/z3arybBz0wD8TZ9nJJVFCskkBxKWTV4Ucl+viBHNQ6fEFhgnUGCkb0
-	 43MkSXwYN1sEz4lC0VfGTuurpOl9OFvKfhn0XXAHsJxLQu4OdlEPbYGX7fcfivANFw
-	 71QO72QSUN2oLVfAcV2uZQRe5MQgw+uLzX/z2Kac=
-Received: from [10.56.52.9] ([39.156.73.10])
-	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
-	id 56221432; Tue, 02 Sep 2025 17:21:34 +0800
-X-QQ-mid: xmsmtpt1756804894t1p04q3ox
-Message-ID: <tencent_A364CD5CCEAA68BD7E8CAA2092180409150A@qq.com>
-X-QQ-XMAILINFO: NwU6Bou9okj/tbdOQoNWWLVwvWA8HB3wvWH6M8x+KFoP19lo9jLr+KYnags3Dx
-	 0SBm2+jH32YP8CngseKDGiIXeqNrBC7JVCTwwTShVUHDzd7d0t7QC57O/sPXUPNnNiNotl329G4y
-	 G900N+YePazTIfBf9bj+kybeVIVEqJnn15wq/75NMzn5nOv97E4IhfR1/dL2VvfgsZ7I7TY5NtXG
-	 QFKZ+hlY42JK9MP459rkbBHAVu/Geh/OmQMRViAA/7dsmclgBuIdw/71hQ8ztxM3Lj56AF4rwJIS
-	 l9WKiK1NYIL1lKoAcSe3KxDeBGsMhQ6aVgn4X7oaVVhUqMoxwKyX9UyvjK66cybHwDaBC31n5Xh2
-	 JF3nUXv06/O7tYZWXJ2T/Uop4/sywRVWxySf/ShV7/rH3FswuRtjTg0ZR7SL5frT7vmfTUldyqWo
-	 hmLT/3c6tRWjTvFlG40NGib5l/yS9Xe6o3h2h0Jt73eFIqMPy6LH9Rt75zW9rAvw5ROfnAB/COZh
-	 SHG/lFGWNpgQ0Qqa2n6NI5MYBhmBlmKgb3C6nQiVR3dk+xdnJ/gmUpu4Ah8XeaMXzsJi3RFDqtWw
-	 aQUDQ/6q0aHgDPLiebE474Efik6bTu9WpyWFlYgazp/wbHA52hwqVefo3Xi26sYPPgGE9Qj+D5w5
-	 bIcAoE0irshIZVsgmL5EqHtCexFwz7jNK7xJH0rGGr5u38Do7e5MI/5elapTWUMGyhlxzIWzaRJC
-	 t7PVuBr+vL1JlOhQTCe95zRwfELp4TWihUQtAzMlNhbEvZuYOxL89s//W/REc+mh0AdLG3SVwIvC
-	 6ABODXpbNokYC4YazA+4prY+aqtM2FxeFmpp2jApjr3mq5fdb3JBQmQYKQtKNyU5SyMSJEYKFwMI
-	 05JSGWsslwHS0pC2Jbo52MFSG4iCc/5Jmdg5C3Wx8gh7W42rN5BEviukGTTFJt4JVQAhR6uKfIZ0
-	 Xg9ljZgzOMQUDHFhnZQ408SUqdcM/yjtW/QJEGsKaVJvKb+kYQEV0bDxEXBfi742ETtXOuNxeN+j
-	 8dl4Gz1Wbq356nqOpPZukMIlo6THP38migzckgqkJDzR6X2VK8t6k0KLz6y7Y=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-OQ-MSGID: <4e5f23c2-32f8-4c6a-a4f3-f92b52007fbb@foxmail.com>
-Date: Tue, 2 Sep 2025 17:21:33 +0800
+	s=arc-20240116; t=1756804940; c=relaxed/simple;
+	bh=JfU+C/+WNXrTU6x82nBJAMdCHq7IaWEhD6JeQAiASiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bSxaBeeT2nX4O7byoFCgM2bGqZEI0+sGge2qq7R9CvqAAaOEQTcaFuuV92qdsW9a28EcShJQFM5xzAmC2wPmGk/attMYiJnvfr+Xda7vwtllE0XmkvQl/mFzYsOi52/B6i7u+HIgh7clmLggVn0weCu52ybTuFX0B9LWIL5JzF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NVOvCzGX; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b327480fd0so849521cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756804937; x=1757409737; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEJ7Ey14mWS9ux2fnI3lv4hByDSn+Z0hPpiKOiV6hv4=;
+        b=NVOvCzGXhNGXE0f8qvNnt46AZPm2dFHsdNCjOnnUIM51nDTV/UI/ESKLmDvoz6mCLE
+         qa1atM7WiODqN4mXPzwRndiYx7NJbphcMC3hHQxPx/9l33qESQsH/7/vnxGfAmT/dwfD
+         NVvXOf6rHRG7XGQ/dbm+2Vs60RqYx9kKMnSaz4MZwaCPUMdwsLkIJ+QELLX/Yezi/KCJ
+         ga46bUDbTidFFQO8iDChebbmGWwbL+HhV4iX38w82ZW1lQ8gxA6/nv2aBdGhqw2vxku8
+         vhXbdOkrCJt4SNVrMGo2AQ6Iy9EbnwyJK0/Noo4lK6bSVCWTRBLbzytbjEZLHAqgWyFu
+         Qc2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756804937; x=1757409737;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UEJ7Ey14mWS9ux2fnI3lv4hByDSn+Z0hPpiKOiV6hv4=;
+        b=FBj1bRvTbCj9ajuIWiycWinFEIMtTYXcUVwy2u065K1BUfTgaHSaRaNYdo+JWYUwAT
+         cA3hYt8Jba3CHxTbhtUtGloCBgofq2fcRU1IfvcoAY8n6OjoF8zadsZn3tqp819yYtAK
+         +GcewPX6HZ58bscE6GhklV9BbgPb4cJl+x8uD59RuIl1zI3epD3OU9vIYQoDRXnROj2i
+         VsEJqsGfuq930/+WoS/i/YeErr3eatlOJTI1JzdAB77iAfZhFFiQFPn2Shfsy/025Vav
+         WuAX2lZPKpBMpYnAM7FYKWwwMzd52lnswPl2bYwn+AZPyPINmfgj/ErP3IFzg5EBswWX
+         GVnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP5Teq3knAOc9FpllDF2Ok9TGpq+D6Dk7Uqqb/dUtjs25e6rrWtc8V5lbTEd0994A4bJsFb7OtrtCEJ1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLOrYH5orcTQ/3r8cVnJjrred/a3A9EH8Te3dEXriZdEx3rvey
+	emUFK+D2JBYR5sGyBG57Vxa2OblySit2usSTRUoAcOs6fhhFBOm4P4E3N2o/8DXszeGDwycwnq1
+	F60WUM/8VWz5k/2GJ3Cf0ZgSnqqH6r5E7bv02e6nM
+X-Gm-Gg: ASbGncuFJW+gNKRmkmBveBczq3eZEkuarHDVG18m/fHTMhQ5RAsMWEuT5Yu4WtusIFc
+	H8EvarK/YMEGmwhHAxKBNRylqbd46c19TldenpSLG+Bx5fxwvaM5lcT+2POKe8k5XCXiekhN17m
+	o8o3N7NXTERONkcjJCmwq8PsFvcSEhhbj/pX9155xpBYInd5xrKG3Esb2JVxjLSTyUjTu3Ew3Lj
+	qnXsyZX6f9G0zg=
+X-Google-Smtp-Source: AGHT+IE/365ZPa2na0I+61w5kSKHeQK2w8xYgvB2r/DuNmzeiSpIrPg40UHX6ZyJ0CzihYKx7admZMRUkLUk8hCwjvo=
+X-Received: by 2002:ac8:5a56:0:b0:4b3:8ee:521b with SMTP id
+ d75a77b69052e-4b31b0e2753mr12638851cf.0.1756804936638; Tue, 02 Sep 2025
+ 02:22:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 2/2] selftests/bpf: Test kfunc bpf_strcasecmp
-To: Viktor Malik <vmalik@redhat.com>, andrii@kernel.org, ast@kernel.org
-Cc: Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>,
- "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
- <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <cover.1756798860.git.rtoax@foxmail.com>
- <tencent_00107416F7259ACAC62BF8681F22B5C19D06@qq.com>
- <76f6ed83-48a2-4dad-9229-1169050e9552@redhat.com>
-Content-Language: en-US
-From: Rong Tao <rtoax@foxmail.com>
-In-Reply-To: <76f6ed83-48a2-4dad-9229-1169050e9552@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CA+EHjTxymfya75KdOrUsSUhtfmxe180DedhJpLQAGeCjsum_nw@mail.gmail.com>
+ <20250902091810.4854-1-roypat@amazon.co.uk>
+In-Reply-To: <20250902091810.4854-1-roypat@amazon.co.uk>
+From: Fuad Tabba <tabba@google.com>
+Date: Tue, 2 Sep 2025 10:21:40 +0100
+X-Gm-Features: Ac12FXxFB1Y6AnaQmou77bzNFiPMi0bpB9wRe5PhLp9QE0Dg7CKdLpI-R4eIPWU
+Message-ID: <CA+EHjTz1JxOy=E3p=So2q+k=UK3cDG6C8gOUgA9NQEpqRdhW5g@mail.gmail.com>
+Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "ackerleytng@google.com" <ackerleytng@google.com>, "david@redhat.com" <david@redhat.com>, 
+	"Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack" <jackabt@amazon.co.uk>, 
+	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "rppt@kernel.org" <rppt@kernel.org>, 
+	"seanjc@google.com" <seanjc@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>, "will@kernel.org" <will@kernel.org>, 
+	"Cali, Marco" <xmarcalx@amazon.co.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 9/2/25 16:56, Viktor Malik wrote:
-> On 9/2/25 09:55, Rong Tao wrote:
->> From: Rong Tao <rongtao@cestc.cn>
->>
->> Add testsuites for kfunc bpf_strcasecmp.
->>
->> Signed-off-by: Rong Tao <rongtao@cestc.cn>
->> ---
->>   tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c | 6 ++++++
->>   tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c | 1 +
->>   tools/testing/selftests/bpf/progs/string_kfuncs_success.c  | 5 +++++
->>   3 files changed, 12 insertions(+)
->>
->> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
->> index 53af438bd998..99d72c68f76a 100644
->> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
->> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
->> @@ -31,6 +31,8 @@ char *invalid_kern_ptr = (char *)-1;
->>   /* Passing NULL to string kfuncs (treated as a userspace ptr) */
->>   SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_null1(void *ctx) { return bpf_strcmp(NULL, "hello"); }
->>   SEC("syscall")  __retval(USER_PTR_ERR)int test_strcmp_null2(void *ctx) { return bpf_strcmp("hello", NULL); }
->> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_null1(void *ctx) { return bpf_strcasecmp(NULL, "HELLO"); }
->> +SEC("syscall")  __retval(USER_PTR_ERR)int test_strcasecmp_null2(void *ctx) { return bpf_strcasecmp("HELLO", NULL); }
->>   SEC("syscall")  __retval(USER_PTR_ERR)int test_strchr_null(void *ctx) { return bpf_strchr(NULL, 'a'); }
->>   SEC("syscall")  __retval(USER_PTR_ERR)int test_strchrnul_null(void *ctx) { return bpf_strchrnul(NULL, 'a'); }
->>   SEC("syscall")  __retval(USER_PTR_ERR)int test_strnchr_null(void *ctx) { return bpf_strnchr(NULL, 1, 'a'); }
->> @@ -49,6 +51,8 @@ SEC("syscall")  __retval(USER_PTR_ERR)int test_strnstr_null2(void *ctx) { return
->>   /* Passing userspace ptr to string kfuncs */
->>   SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr1(void *ctx) { return bpf_strcmp(user_ptr, "hello"); }
->>   SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr2(void *ctx) { return bpf_strcmp("hello", user_ptr); }
->> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr1(void *ctx) { return bpf_strcasecmp(user_ptr, "HELLO"); }
->> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr2(void *ctx) { return bpf_strcasecmp("HELLO", user_ptr); }
->>   SEC("syscall") __retval(USER_PTR_ERR) int test_strchr_user_ptr(void *ctx) { return bpf_strchr(user_ptr, 'a'); }
->>   SEC("syscall") __retval(USER_PTR_ERR) int test_strchrnul_user_ptr(void *ctx) { return bpf_strchrnul(user_ptr, 'a'); }
->>   SEC("syscall") __retval(USER_PTR_ERR) int test_strnchr_user_ptr(void *ctx) { return bpf_strnchr(user_ptr, 1, 'a'); }
->> @@ -69,6 +73,8 @@ SEC("syscall") __retval(USER_PTR_ERR) int test_strnstr_user_ptr2(void *ctx) { re
->>   /* Passing invalid kernel ptr to string kfuncs should always return -EFAULT */
->>   SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault1(void *ctx) { return bpf_strcmp(invalid_kern_ptr, "hello"); }
->>   SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault2(void *ctx) { return bpf_strcmp("hello", invalid_kern_ptr); }
->> +SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault1(void *ctx) { return bpf_strcasecmp(invalid_kern_ptr, "HELLO"); }
->> +SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault2(void *ctx) { return bpf_strcasecmp("HELLO", invalid_kern_ptr); }
->>   SEC("syscall") __retval(-EFAULT) int test_strchr_pagefault(void *ctx) { return bpf_strchr(invalid_kern_ptr, 'a'); }
->>   SEC("syscall") __retval(-EFAULT) int test_strchrnul_pagefault(void *ctx) { return bpf_strchrnul(invalid_kern_ptr, 'a'); }
->>   SEC("syscall") __retval(-EFAULT) int test_strnchr_pagefault(void *ctx) { return bpf_strnchr(invalid_kern_ptr, 1, 'a'); }
->> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
->> index 89fb4669b0e9..e41cc5601994 100644
->> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
->> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
->> @@ -7,6 +7,7 @@
->>   char long_str[XATTR_SIZE_MAX + 1];
->>   
->>   SEC("syscall") int test_strcmp_too_long(void *ctx) { return bpf_strcmp(long_str, long_str); }
->> +SEC("syscall") int test_strcasecmp_too_long(void *ctx) { return bpf_strcasecmp(long_str, long_str); }
-> This is not sufficient, you also need to update
-> prog_tests/string_kfuncs.c so that the test case is actually triggered.
-Thanks Viktor, sorry about that, I just submit v3, please review.
-Rong Tao
+On Tue, 2 Sept 2025 at 10:18, Roy, Patrick <roypat@amazon.co.uk> wrote:
 >
-> Viktor
+> On Tue, 2025-09-02 at 09:50 +0100, Fuad Tabba wrote:
+> > On Tue, 2 Sept 2025 at 09:46, David Hildenbrand <david@redhat.com> wrote:
+> >>
+> >> On 02.09.25 09:59, Fuad Tabba wrote:
+> >>> Hi Patrick,
+> >>>
+> >>> On Mon, 1 Sept 2025 at 15:56, Roy, Patrick <roypat@amazon.co.uk> wrote:
+> >>>>
+> >>>> On Mon, 2025-09-01 at 14:54 +0100, "Roy, Patrick" wrote:
+> >>>>>
+> >>>>> Hi Fuad!
+> >>>>>
+> >>>>> On Thu, 2025-08-28 at 11:21 +0100, Fuad Tabba wrote:
+> >>>>>> Hi Patrick,
+> >>>>>>
+> >>>>>> On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:
+> >>>>>>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> >>>>>>> index 12a12dae727d..b52b28ae4636 100644
+> >>>>>>> --- a/include/linux/pagemap.h
+> >>>>>>> +++ b/include/linux/pagemap.h
+> >>>>>>> @@ -211,6 +211,7 @@ enum mapping_flags {
+> >>>>>>>                                     folio contents */
+> >>>>>>>          AS_INACCESSIBLE = 8,    /* Do not attempt direct R/W access to the mapping */
+> >>>>>>>          AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
+> >>>>>>> +       AS_NO_DIRECT_MAP = 10,  /* Folios in the mapping are not in the direct map */
+> >>>>>>>          /* Bits 16-25 are used for FOLIO_ORDER */
+> >>>>>>>          AS_FOLIO_ORDER_BITS = 5,
+> >>>>>>>          AS_FOLIO_ORDER_MIN = 16,
+> >>>>>>> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_on_reclaim(struct address_spac
+> >>>>>>>          return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
+> >>>>>>>   }
+> >>>>>>>
+> >>>>>>> +static inline void mapping_set_no_direct_map(struct address_space *mapping)
+> >>>>>>> +{
+> >>>>>>> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);
+> >>>>>>> +}
+> >>>>>>> +
+> >>>>>>> +static inline bool mapping_no_direct_map(struct address_space *mapping)
+> >>>>>>> +{
+> >>>>>>> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);
+> >>>>>>> +}
+> >>>>>>> +
+> >>>>>>> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma)
+> >>>>>>> +{
+> >>>>>>> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapping);
+> >>>>>>> +}
+> >>>>>>> +
+> >>>>>> Any reason vma is const whereas mapping in the function that it calls
+> >>>>>> (defined above it) isn't?
+> >>>>>
+> >>>>> Ah, I cannot say that that was a conscious decision, but rather an artifact of
+> >>>>> the code that I looked at for reference when writing these two simply did it
+> >>>>> this way.  Are you saying both should be const, or neither (in my mind, both
+> >>>>> could be const, but the mapping_*() family of functions further up in this file
+> >>>>> dont take const arguments, so I'm a bit unsure now)?
+> >>>>
+> >>>> Hah, just saw
+> >>>> https://lore.kernel.org/linux-mm/20250901123028.3383461-3-max.kellermann@ionos.com/.
+> >>>> Guess that means "both should be const" then :D
+> >>>
+> >>> I don't have any strong preference regarding which way, as long as
+> >>> it's consistent. The thing that should be avoided is having one
+> >>> function with a parameter marked as const, pass that parameter (or
+> >>> something derived from it), to a non-const function.
+> >>
+> >> I think the compiler will tell you that that is not ok (and you'd have
+> >> to force-cast the const it away).
+> >
+> > Not for the scenario I'm worried about. The compiler didn't complain
+> > about this (from this patch):
+> >
+> > +static inline bool mapping_no_direct_map(struct address_space *mapping)
+> > +{
+> > +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);
+> > +}
+> > +
+> > +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma)
+> > +{
+> > +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapping);
+> > +}
+> >
+> > vma_is_no_direct_map() takes a const, but mapping_no_direct_map()
+> > doesn't. For now, mapping_no_direct_map() doesn't modify anything. But
+> > it could, and the compiler wouldn't complain.
 >
->>   SEC("syscall") int test_strchr_too_long(void *ctx) { return bpf_strchr(long_str, 'b'); }
->>   SEC("syscall") int test_strchrnul_too_long(void *ctx) { return bpf_strchrnul(long_str, 'b'); }
->>   SEC("syscall") int test_strnchr_too_long(void *ctx) { return bpf_strnchr(long_str, sizeof(long_str), 'b'); }
->> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
->> index 46697f381878..67830456637b 100644
->> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
->> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
->> @@ -12,6 +12,11 @@ char str[] = "hello world";
->>   /* Functional tests */
->>   __test(0) int test_strcmp_eq(void *ctx) { return bpf_strcmp(str, "hello world"); }
->>   __test(1) int test_strcmp_neq(void *ctx) { return bpf_strcmp(str, "hello"); }
->> +__test(0) int test_strcasecmp_eq1(void *ctx) { return bpf_strcasecmp(str, "hello world"); }
->> +__test(0) int test_strcasecmp_eq2(void *ctx) { return bpf_strcasecmp(str, "HELLO WORLD"); }
->> +__test(0) int test_strcasecmp_eq3(void *ctx) { return bpf_strcasecmp(str, "HELLO world"); }
->> +__test(1) int test_strcasecmp_neq1(void *ctx) { return bpf_strcasecmp(str, "hello"); }
->> +__test(1) int test_strcasecmp_neq2(void *ctx) { return bpf_strcasecmp(str, "HELLO"); }
->>   __test(1) int test_strchr_found(void *ctx) { return bpf_strchr(str, 'e'); }
->>   __test(11) int test_strchr_null(void *ctx) { return bpf_strchr(str, '\0'); }
->>   __test(-ENOENT) int test_strchr_notfound(void *ctx) { return bpf_strchr(str, 'x'); }
+> Wouldn't this only be a problem if vma->vm_file->f_mapping was a 'const struct
+> address_space *const'? I thought const-ness doesn't leak into pointers (e.g.
+> even above, vma_is_no_direct_map isn't allowed to make vma point at something
+> else, but it could modify the pointed-to vm_area_struct).
 
+That's the thing, constness checks don't carry over to pointers within
+a struct, but a person reading the code would assume that a function
+with a parameter marked as const wouldn't modify anything related to
+that parameter.
+
+Cheers,
+/fuad
+
+> > Cheers,
+> > /fuad
+> >
+> >
+> >> Agreed that we should be using const * for these simple getter/test
+> >> functions.
+> >>
+> >> --
+> >> Cheers
+> >>
+> >> David / dhildenb
+> >>
+>
 
