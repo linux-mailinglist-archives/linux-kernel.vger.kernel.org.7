@@ -1,173 +1,188 @@
-Return-Path: <linux-kernel+bounces-795866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1A4B3F8C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:39:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C98BB3F88F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4E418819B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C524F1A84046
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8A82ED873;
-	Tue,  2 Sep 2025 08:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D242E92D9;
+	Tue,  2 Sep 2025 08:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5PU6oYp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlVFgOpZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E3D2ECEB9
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45CB2E8E0D;
+	Tue,  2 Sep 2025 08:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802066; cv=none; b=VHwcjm1mtZeFRnH5w1Er4mZ92o9coWNTikO5Fi9VciiashWa5Ks5rB0aM9BugPcEO2n+kYUFE2SyVpL7/13/O1dxOr1GxQXQ/DSEhApwecMAlNDKV7/pMYiLpBHhoiBrn1T6GrI78SnqY0+I3aGCc/Kt2Iqzj5SEnJPn1ifqEC0=
+	t=1756802000; cv=none; b=tOHZCOn1oSzPHcE2uMhHrGbqULPn5Gzfs7EtmkikKKvj2uq6SP4DVEGEahM8hx/HQD2ofrggx8BC5UmLy1LAZtDr2IcfEXcLukEyborO/vBt2J2oM9ZAZw1998/fDWhfxbDTSKteIOQ3QKFY2E37p+z8tYWpt2wqABiiGjUtS4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802066; c=relaxed/simple;
-	bh=nreBoH6ThRerXR2wNJa5hb8U1Wgw8f5LJn4gcdb2KpY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xt7zkCqP/vHUuTdTLWFSPIeIJq8zVpLS5Cdmn9rCYow4SY41f3uH1diNDj00byhk/enq0WfClYEagXRehHlQlVDnVwcs0yYMRgo3glZadvv/xAq9902XecFRI3oZmj3Aa17uv2VVmdxmRVkYGcaFAx0sAzijVzjFZnlIUCHukeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5PU6oYp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6186DC4CEF5;
-	Tue,  2 Sep 2025 08:34:26 +0000 (UTC)
+	s=arc-20240116; t=1756802000; c=relaxed/simple;
+	bh=IAUToj+bzLErcKE3mkfZFwKR6ru5C17HBgUlEv7h524=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwesCpyDvp+VT5huHLp1mtxpzvLhDSQmMYbyWqhbqb0aILEZJGX4LR5bH9h+2vZwKJnt0xZidAfWRsPfsf1gSuPFnlzdC4Y+J75AL8a4fl9mlWlE8NziRLWlPDqjuB5w75XobQPT7clzQ4Nu75Z+WaKouH+la/nZ1IGuAcoktdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlVFgOpZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF06C4CEED;
+	Tue,  2 Sep 2025 08:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756802066;
-	bh=nreBoH6ThRerXR2wNJa5hb8U1Wgw8f5LJn4gcdb2KpY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=b5PU6oYphv9O+QNCyshbf1R2+dTpKQkl8jJqMnC38IA+GupA1IZGeAP6v6ydv1VuS
-	 i1iK8w+x/GFYmWQzQlmJ3eRzCIqyK6iua9GZARjfIzmqXW7m5hHNW2CHKfvHgwQ2uo
-	 r5/qxjFZ8oY+XFTxmQnxYBjyMa9FwAmzDXO26WJXDn+VCOw9A2NWlT5oKdz16RSs8j
-	 mneyfwSydEia0VoIV+1KDLq7Defdk3xBtKU6hcf40oqlIVrqOSrBcWZJHRJYIY7+2C
-	 vyMyIRPn6AVJwsm6XBtEHOO/sfAka4TWKXKakm6uTv9pbQwMZDjXvo7MhoX+6alcpG
-	 /0cGUygBbNo+A==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Tue, 02 Sep 2025 10:32:57 +0200
-Subject: [PATCH 29/29] drm/bridge: sii902x: Implement hw state readout
+	s=k20201202; t=1756801999;
+	bh=IAUToj+bzLErcKE3mkfZFwKR6ru5C17HBgUlEv7h524=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NlVFgOpZffJVaiNWHDtCuP9h2C1LdZr68pJ+nFz1v7zWjlVSFhy9yCyvOb0DTeAob
+	 97Ct9BSVDNjn5I1cVmECCE6tej1XCHhRygYQyt/M4m1iK/18LY+kgC3Fap6dtdK8nf
+	 zKdlcRFhz2Diaa0QpOzjaTtCWmVkmik/MBJnJdenOIoncIIM4ntaaUD7c7QshWhyP/
+	 NkswXxixqUyfY8768oSXee0V5RKxVYtbACynze6z7YSiy89+744eAxp3MUB0b8jqNr
+	 jdBhx2/JQR6g7kLcyJjKLjPf9eUZJ+LkCDT8ehbCLbDC+AC230h55MhR2M3zub+qTQ
+	 OQ1+PphzUBt3A==
+Date: Tue, 2 Sep 2025 10:33:15 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Alexander Monakov <amonakov@ispras.ru>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+Message-ID: <20250902-faust-kolibri-0898c1980de8@brauner>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <u4vg6vh4myt5wuytwiif72hlgdnp2xmwu6mdmgarbx677sv6uf@dnr6x7epvddl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-drm-state-readout-v1-29-14ad5315da3f@kernel.org>
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
-In-Reply-To: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Jyri Sarha <jyri.sarha@iki.fi>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3469; i=mripard@kernel.org;
- h=from:subject:message-id; bh=nreBoH6ThRerXR2wNJa5hb8U1Wgw8f5LJn4gcdb2KpY=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBnbVh/U9Zm/efutmxbKefuehdkHG+67+WPnq8gv176u6
- vd/Jyor2zGVhUGYk0FWTJHliUzY6eXti6sc7Ff+gJnDygQyhIGLUwAmovCLsaHv0nqvrh1bpsUv
- qfryTEkj5ESnoil/xqKlTDtl7y45ZffZYV6BcG1o9awAVznDDieHHMaGxtBjSjxGyefzmS6tPj5
- RRmyL+aQw0c1PuNdEv5pipXJaeamOaMb5hmyWnB8PbGt2eD8FAA==
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <u4vg6vh4myt5wuytwiif72hlgdnp2xmwu6mdmgarbx677sv6uf@dnr6x7epvddl>
 
-Let's implement the hardware state readout for the sii902x bridge now
-that we have all the infrastructure in place.
+On Mon, Sep 01, 2025 at 08:39:27PM +0200, Mateusz Guzik wrote:
+> On Wed, Aug 27, 2025 at 12:05:38AM +0300, Alexander Monakov wrote:
+> > Dear fs hackers,
+> > 
+> > I suspect there's an unfortunate race window in __fput where file locks are
+> > dropped (locks_remove_file) prior to decreasing writer refcount
+> > (put_file_access). If I'm not mistaken, this window is observable and it
+> > breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
+> > in more detail below.
+> > 
+> > The program demonstrating the problem is attached (a slightly modified version
+> > of the demo given by Russ Cox on the Go issue tracker, see URL in first line).
+> > It makes 20 threads, each executing an infinite loop doing the following:
+> > 
+> > 1) open an fd for writing with O_CLOEXEC
+> > 2) write executable code into it
+> > 3) close it
+> > 4) fork
+> > 5) in the child, attempt to execve the just-written file
+> > 
+> > If you compile it with -DNOWAIT, you'll see that execve often fails with
+> > ETXTBSY.
+> 
+> This problem was reported a few times and is quite ancient by now.
+> 
+> While acknowleding the resulting behavior needs to be fixed, I find the
+> proposed solutions are merely trying to put more lipstick or a wig on a
+> pig.
+> 
+> The age of the problem suggests it is not *urgent* to fix it.
+> 
+> The O_CLOFORM idea was accepted into POSIX and recent-ish implemented in
+> all the BSDs (no, really) and illumos, but got NAKed in Linux. It's also
+> a part of pig's attire so I think that's the right call.
+> 
+> Not denying execs of files open for writing had to get reverted as
+> apparently some software depends on it, so that's a no-go either.
+> 
+> The flag proposed by Christian elsewhere in the thread would sort this
+> out, but it's just another hack which would serve no purpose if the
+> issue stopped showing up.
+> 
+> The real problem is fork()+execve() combo being crap syscalls with crap
+> semantics, perpetuating the unix tradition of screwing you over unless
+> you explicitly ask it not to (e.g., with O_CLOEXEC so that the new proc
+> does not hang out with surprise fds).
+> 
+> While I don't have anything fleshed out nor have any interest in putting
+> any work in the area, I would suggest anyone looking to solve the ETXTBSY
+> went after the real culprit instead of damage-controlling the current
+> API.
+> 
+> To that end, my sketch of a suggestion boils down to a new API which
+> allows you to construct a new process one step at a time explicitly
+> spelling out resources which are going to get passed on, finally doing
+> an actual exec. You would start with getting a file descriptor to a new
+> task_struct which you gradually populate and eventually exec something
+> on. There would be no forking.
+> 
+> It could look like this (ignore specific naming):
+> 
+> /* get a file descriptor for the new process. there is no *fork* here,
+>  * but task_struct & related get allocated
+>  * clean slate, no sigmask bullshit and similar
+>  */
+> pfd = proc_new();
+> 
+> nullfd = open("/dev/null", O_RDONLY);
+> 
+> /* map /dev/null as 0/1/2 in the new proc */
+> proc_install_fd(pfd, nullfd, 0); 
+> proc_install_fd(pfd, nullfd, 2); 
+> proc_install_fd(pfd, nullfd, 2); 
+> 
+> /* if we can run the proc as someone else, set it up here */
+> proc_install_cred(pfd, uid, gid, groups, ...);
+> 
+> proc_set_umask(pfd, ...);
+> 
+> /* finally exec */
+> proc_exec_by_path("/bin/sh", argp, envp);
 
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- drivers/gpu/drm/bridge/sii902x.c | 51 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
+You can trivially build this API on top of pidfs. Like:
 
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index d537b1d036fb09ce55a690a0809dcc28fc0f41be..5ffceb9131540d2cb1b82a74b4f7cec9bc7fd8ca 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -540,17 +540,66 @@ sii902x_bridge_mode_valid(struct drm_bridge *bridge,
- 		return MODE_CLOCK_HIGH;
- 
- 	return MODE_OK;
- }
- 
-+static int sii902x_bridge_connector_hw_readout(struct drm_bridge *bridge,
-+					       struct drm_atomic_state *state,
-+					       struct drm_connector_state *conn_state)
-+{
-+	struct sii902x *sii902x = bridge_to_sii902x(bridge);
-+	struct drm_connector *connector = conn_state->connector;
-+	struct drm_crtc_state *crtc_state;
-+	struct drm_encoder *encoder;
-+	struct drm_crtc *crtc;
-+
-+	if (regmap_test_bits(sii902x->regmap, SII902X_SYS_CTRL_DATA, SII902X_SYS_CTRL_PWR_DWN))
-+		return 0;
-+
-+	encoder = bridge->encoder;
-+	crtc = encoder->funcs->get_current_crtc(encoder);
-+	if (!crtc)
-+		return -ENODEV;
-+
-+	crtc_state = drm_atomic_get_old_crtc_state(state, crtc);
-+	if (!crtc_state)
-+		return -ENODEV;
-+
-+	crtc_state->encoder_mask |= drm_encoder_mask(encoder);
-+	crtc_state->connector_mask |= drm_connector_mask(connector);
-+
-+	conn_state->crtc = crtc;
-+	conn_state->best_encoder = encoder;
-+
-+	return 0;
-+}
-+
-+static int sii902x_bridge_readout_state(struct drm_bridge *bridge,
-+					struct drm_bridge_state *bridge_state,
-+					struct drm_crtc_state *crtc_state,
-+					struct drm_connector_state *conn_state)
-+{
-+	struct sii902x *sii902x = bridge_to_sii902x(bridge);
-+
-+	if (regmap_test_bits(sii902x->regmap, SII902X_SYS_CTRL_DATA, SII902X_SYS_CTRL_PWR_DWN))
-+		return 0;
-+
-+	/* bridge_state is pretty trivial, we don't have anything to do here */
-+
-+	return 0;
-+}
-+
- static const struct drm_bridge_funcs sii902x_bridge_funcs = {
- 	.attach = sii902x_bridge_attach,
- 	.mode_set = sii902x_bridge_mode_set,
- 	.atomic_disable = sii902x_bridge_atomic_disable,
- 	.atomic_enable = sii902x_bridge_atomic_enable,
-+	.connector_hw_readout = sii902x_bridge_connector_hw_readout,
- 	.detect = sii902x_bridge_detect,
- 	.edid_read = sii902x_bridge_edid_read,
-+	.atomic_compare_state = drm_atomic_helper_bridge_compare_state,
-+	.atomic_readout_state = sii902x_bridge_readout_state,
- 	.atomic_reset = drm_atomic_helper_bridge_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
- 	.atomic_get_input_bus_fmts = sii902x_bridge_atomic_get_input_bus_fmts,
- 	.atomic_check = sii902x_bridge_atomic_check,
-@@ -1136,11 +1185,11 @@ static int sii902x_init(struct sii902x *sii902x)
- 	if (ret)
- 		goto err_unreg_audio;
- 
- 	sii902x->bridge.of_node = dev->of_node;
- 	sii902x->bridge.timings = &default_sii902x_timings;
--	sii902x->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID;
-+	sii902x->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_CONNECTOR_HW_READOUT;
- 	sii902x->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
- 
- 	if (sii902x->i2c->irq > 0)
- 		sii902x->bridge.ops |= DRM_BRIDGE_OP_HPD;
- 
+pidfd_empty = pidfd_open(FD_PIDFS_ROOT/FD_INVALID, PIDFD_EMPTY)
 
--- 
-2.50.1
+where FD_PIDFS_ROOT and FD_INVALID are things we already have in the
+uapi headers.
 
+Then either just add a new system call like pidfd_config() or just use
+ioctls() on that empty pidfd.
+
+With pidfs you have the complete freedom to implement that api however
+you want.
+
+I had a prototype for that as well but I can't find it anymore. Other
+VFS work took priority and so I never finished it but I remember it
+wasn't very difficult.
+
+I would definitely merge a patch series like that.
+
+> 
+> Notice how not once at any point random-ass file descriptors popped into
+> the new task, which has a side effect of completely avoiding the
+> problem.
+> 
+> you may also notice this should be faster to execute as it does not have
+> to pay the mm overhead.
+> 
+> While proc_install_fd is spelled out as singular syscalls, this can be
+> batched to accept an array of <from, to> pairs etc.
+> 
+> Also notice the thread executing it is not shackled by any of vfork
+> limitations.
+> 
+> So... if someone is serious about the transient ETXTBSY, I would really
+> hope you will consider solving the source of the problem, even if you
+> come up with someting other than I did (hopefully better). It would be a
+> damn shame to add even more hacks to pacify this problem (like the O_
+> stuff).
+> 
+> What to do in the meantime? There is a lol hack you can do in userspace
+> which so ugly I'm not even going to spell it out, but given the
+> temporary nature of ETXTBSY I'm sure you can guess what it is.
+> 
+> Something to ponder, cheers.
 
