@@ -1,116 +1,82 @@
-Return-Path: <linux-kernel+bounces-795606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C88B3F52E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0273B3F525
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 701957A2ADE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37D617AF9C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0072D2E1F10;
-	Tue,  2 Sep 2025 06:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3562E2EF5;
+	Tue,  2 Sep 2025 06:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NvGXBScK";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="l9u+F8mC"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HQ0azmIN"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2087.outbound.protection.outlook.com [40.107.92.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334182561AF;
-	Tue,  2 Sep 2025 06:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E1D2BE7CD;
+	Tue,  2 Sep 2025 06:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.87
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756793826; cv=fail; b=En2BIutGt/WlMHDX7eMm5Cv4a24N2ls4XeL4DIdq27fuM7h2Xk4bbfI3EKAIDMmHTEhjBSGlt80UvgUlWlCEc0+8Vbg4+GxHeqsTRxbJIKeoeH6DqQ8YV5A69NNSRTlPe3YUlpQ29RsWe5v+/BVihEIeTwfEOQaYY9uc5MIV1bU=
+	t=1756793784; cv=fail; b=i6fAogqVKbm5DtHxqrrPY5Xub9kyeMP+Ds4G3seKwMfyC18Gv/ICryW1tbG5lqau5fWsVUeesg+rutHkT7rr209xYXrjtl6HqHXidjtw3JEWtGLODKbS9EH5d+qMWJixAmgxWExLlY7nFrkdq8s+4dF+0uaCBHzrdT0EDzuKIUA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756793826; c=relaxed/simple;
-	bh=V5km1gZ+b9mFodIY0BXuh/kETq+mRsv0GZX9D4FgKEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=h2FqiTFaq8FiV/a2/hRpboixSaUhXm0x3ppH/xtpRt/ib6OjqzwL/Bcoy7DcJ4Jmqkx5dLDhVRx5jUJd40lwSJKvacYC7L43+uWHEyX7J3M29nr85lPcn1wTy68xo1+yFN3kfnlr1Js/6MOYp9gOeuzmEbo032NTkb0prGLSPxk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NvGXBScK; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=l9u+F8mC; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5824g2ca020142;
-	Tue, 2 Sep 2025 06:16:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=Mg6IzuLcA7RiyzFXGN
-	ULMvYs/qhJwArFm1wJEGaE4wc=; b=NvGXBScKlqd0iP21++DPF2ovF7mqTjhr9m
-	Hrj8pJpsGF8rNVsEFQqP2PngLc3IK7WCSikche2fy3s0fqqur/F7YCBMHzFf+8W4
-	dEEcR5kiPzYJwir66Mv4XzjUCvlJjJtfnuH5xDhXuRaNdjPlgQI4Gz/Koiosmsdn
-	prsb/+RjBPP8PJyH5+YEVks7f0xlMaUCDdBDRsKe8+XADaU7QgeqY3cv505fdYcr
-	MPnfYLNf+NyVgyXgCMI688690bCufaLwXPHnl2+O6fTOe+KPBOfzkzAmbjDmqM0+
-	IBXt70EtGYcTx/IUevmQG/Bc4lCD5PvS95uGNm0rGVuJZNBuOZvQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usmbb9h6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 02 Sep 2025 06:16:15 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58260XPC004294;
-	Tue, 2 Sep 2025 06:16:14 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02on2070.outbound.protection.outlook.com [40.107.95.70])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48uqr8ptp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 02 Sep 2025 06:16:14 +0000
+	s=arc-20240116; t=1756793784; c=relaxed/simple;
+	bh=u0khCI4sqfuBhmIsLP+rx/mElJ6ogegFojWez2Xl7jM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jF4NlHO3YfCxYNYgDqet9X6CaT1rhHkAv5yY+jbIQLsckLKh6QzQA2hCqNNRfHAFu1SVM/y6/htNBX5anA/c5Jiy2LDM4rOZlthWLop+vxKNCWDEUUlNGqSSqAmKi9i9Qiph3n5a9leViyfONQLvyoBt2qIRtbuQ73CxgFJn7Ns=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HQ0azmIN; arc=fail smtp.client-ip=40.107.92.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U0EA3mQ5Z/29Ek++TKUQu5HrBxsk86ViJzqXfDmToGot6n11aRPoN6da/MJGMsMwt3XO+DugcfXENgFVeftSNx+i/ymEdU2n6uRFASBDeVxh45fFFI9BfY4TPdsNQpBwcBKu2Rrqya79YttoCD3c2NgfWwAc0SWReFeqy00dhbLh0PyCyIfVMf0mYdIMv092LhIuQV0ZHOghQC0lJskq7D2P8Xdu8phiUSH22pdEmA5WXLJnPH+KbWe6pHN3DG84WXv7Mv2K1BB7Oqd51hepuTa9DKBCRRus++QeHVTg5voE9kG7pFzIadvo8DkPq9nVmbT/1dAo1AkiSwvYqLsnHQ==
+ b=vKoMBc5EKStkUf10q8lVoxcuapjFo/Oa0zLK4OIXjJZAKaDRqzRltbku6l+kCh7zhUayg1Md9uG11Fxks5NsON9kOYzs1ROSFCR9SWt5FjSSCUY1CdQXu9gvSJGv5qi+aIQvFtp5iBuDUh6lgHszOQkDo5DAK5bmn3+kWLf4hXi0bdVNLNrJH+ipi6XpgxAuJp9vXLTUiP7lQHTFzGGxNq5aP0tK02Co9y1ZlTBF2ztMzDTnjILU5VkUuXdUwAANLsW0VUofYH+7iCQQRlEygHnNM1roWcdUBL9MlpFYJDnB54JTfG1GCm3Tk9o+RrTYMQv6OfNeblS+fR28x+SE9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mg6IzuLcA7RiyzFXGNULMvYs/qhJwArFm1wJEGaE4wc=;
- b=ZvSOVEJPe4lW/eMfWnxNrzyU5JYnv+nkiXBpPZonZJaD4Aoipy2F5jXOO1YAh87jLbjz8qMqg/OPI26Cc1mVz1dRtNZJjveijJjXram6okrJbz2Uz9jbu7CS01EMJ+b3Lozhi1jaKHGnB/ATxO7yb8KllXVd6RHrDpqRmi9VgFPbYSvDdz6sAyVtg1jIDVQ+G/BI+U4LmDcTdX+qDgwnKEZ+emnwfmO38+mlm/QJSirvgyT7Wf1xUWOUwwSey327oDAQ8jHi4rzTvfdlGpK1Yzq4xRCWzLX2rXkGmCpjgflF11SQ7QWNSw0CCK1SnfdY1+W+O33AA8wxFl16yPeTOw==
+ bh=vW1CrxDTlSxZ2RhD9M/05qn/xmnA/jU33z/m66YGvFI=;
+ b=nBd0SR4rGayMY24h5yXBfx8Rpzwi/TGjqmr3xL+tI0NV95NYSmkVsNhWZwENWMFaFT4VqM4p8dIkGkYK1nHa96VhJMkGMIBgW/IGUIhhxzcZI5OeZxa5/f5mBLDUgo3uP5mbEgC+gm0wplABzNd00yf3egf5MkYHDuijWV8SbLifZQ67aLucDpNgdqWqjIXSYv/Pg4469YNzXqip5GegQMz6WlJ11bWJpDjl47m9OzS4jQQqz8tWqpHlI+lIUNz2GU4LKbfdVzT4WuFm2BtzPWmkotIPcu0chRUBa5U1tn9+hYW3aaXePjSk13+X//uk2b4Vq9MDF9S5jkbpsb7vEQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mg6IzuLcA7RiyzFXGNULMvYs/qhJwArFm1wJEGaE4wc=;
- b=l9u+F8mCUjZfT68kSS7w9DQ14m+eyuMHq5TM4poI6+XS9M+/F+rxCS4OrN/nePYSB9vQNmj2UpoDjrsjy1BTM9I7HVNP5zBSx4YUdu0vNNUxctM85muxSokntKGkKgyWv1FqqpFxEoG32vcnyn/CH8gqJNZ0zZ+RRvi+iLhp3bo=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DS7PR10MB5928.namprd10.prod.outlook.com (2603:10b6:8:84::12) with
+ bh=vW1CrxDTlSxZ2RhD9M/05qn/xmnA/jU33z/m66YGvFI=;
+ b=HQ0azmINNFVtu8ktKpZ5oIfq0z4tJQisOgO1h3S2D0+rkLrqPFK6GhgxwHhUkeKmOdaQLadR5qiawA4fJMz/9M9BszQ1bMMMVviP/VIhbfkkcZ07kDK5s61LB4gJ3s7pjj/1aYj283d1EysDhp9MA7Dd4zeo6bVBRjs2o1KGSLk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
+ by PH7PR12MB9104.namprd12.prod.outlook.com (2603:10b6:510:2f3::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Tue, 2 Sep
- 2025 06:16:10 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 06:16:10 +0000
-Date: Tue, 2 Sep 2025 07:16:06 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com,
-        yuanchu@google.com, willy@infradead.org, hughd@google.com,
-        mhocko@suse.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-        surenb@google.com, vishal.moola@gmail.com, linux@armlinux.org.uk,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com,
-        hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-        weixugc@google.com, baolin.wang@linux.alibaba.com, rientjes@google.com,
-        shakeel.butt@linux.dev, thuth@redhat.com, broonie@kernel.org,
-        osalvador@suse.de, jfalempe@redhat.com, mpe@ellerman.id.au,
-        nysal@linux.ibm.com, linux-arm-kernel@lists.infradead.org,
-        linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 10/12] mm: constify various inline functions for
- improved const-correctness
-Message-ID: <5ba768c1-5c23-4d3e-ae76-5f2d31483793@lucifer.local>
-References: <20250901205021.3573313-1-max.kellermann@ionos.com>
- <20250901205021.3573313-11-max.kellermann@ionos.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901205021.3573313-11-max.kellermann@ionos.com>
-X-ClientProxiedBy: LO2P123CA0011.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:a6::23) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 06:16:18 +0000
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 06:16:18 +0000
+Message-ID: <e1260d3b-1404-44fa-8085-ccbd34a84003@amd.com>
+Date: Tue, 2 Sep 2025 14:16:09 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/7] Add AMD ISP4 driver
+To: Alexey Zagorodnikov <xglooom@gmail.com>, mchehab@kernel.org,
+ hverkuil@xs4all.nl, laurent.pinchart+renesas@ideasonboard.com,
+ bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sultan@kerneltoast.com
+Cc: pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+ gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
+ mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com
+References: <20250828084507.94552-1-Bin.Du@amd.com>
+ <5f0a5f6b-a84b-414d-a028-1e65833f0d22@gmail.com>
+Content-Language: en-US
+From: "Du, Bin" <bin.du@amd.com>
+In-Reply-To: <5f0a5f6b-a84b-414d-a028-1e65833f0d22@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0114.apcprd02.prod.outlook.com
+ (2603:1096:4:92::30) To PH8PR12MB7446.namprd12.prod.outlook.com
+ (2603:10b6:510:216::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -118,243 +84,395 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS7PR10MB5928:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2921e06a-73ef-4e0e-59bd-08dde9e835ea
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|PH7PR12MB9104:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae651695-e8c7-4e1f-0026-08dde9e83a94
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UdS4BmPdECIFIXhDcD5k5I7EWRvZlVXFV4IUmeTJjqajjZ0227bGdAzwO8sN?=
- =?us-ascii?Q?LM7b1Pwwe5EexkYcb3H86bx0tiv7fJfpyZqm0TU++cljMhVG/A0HIKDJF3dW?=
- =?us-ascii?Q?CHsTb54rnjiRbCVI5giDVRjWqUaofK80Eg770bBdz+hV8TwxxFm6ccaSgZxt?=
- =?us-ascii?Q?4JdYtCagJO0xrBoIFJ4xlezNTYQ/mOVaTrD085X1Eu9OkAK5yxKKsbaq7YAs?=
- =?us-ascii?Q?Raoi0AVazZyCioC7p84exGC8ShusHn87nY+XeQAiDOUn6U1rPtKDXgIsatGz?=
- =?us-ascii?Q?EvlCwJnYSOLvhaWWiCO7aMHszPd+O3J6S2Hh6ufbkJEn4E8h0QIaSE7anBnp?=
- =?us-ascii?Q?LmFfpqtl3HA1P4UBmLh0X7w9ZVLvhaUt5MhusZ17ncMwC8+5ra6MM3XgsmIr?=
- =?us-ascii?Q?FgnZL9puX6YDr+SYRvB5R0Ld2clFlWapMLJ1Ew2xdSC55awgH4xfvh4Lm5AA?=
- =?us-ascii?Q?h/qZlfW4ZGf7d8cTqyPqE7Sn3FTw+WsGgzeCCCXFJ5/jne/1JVVglzxSS+lY?=
- =?us-ascii?Q?pVilZVP03N2LBFWZQNlBU4k2r0ta9siqjPNsOyTv56Rm4xM9WX+gi1swiZYG?=
- =?us-ascii?Q?lCdYdtMl0YSBRyrYS2lxMjcn4lsLNfVAtphioz2CnTPrmUicZsMMp9eSE9OF?=
- =?us-ascii?Q?/uZO+txLFZw59i3QYusziPWhl36rAlM5EyusWb9O8lIhI8Z7+7oOXdJ92rVD?=
- =?us-ascii?Q?ZAI9Pokf8nF82s/JLcxq9iC/rtIokUIXdBigDvSd5b8HT9eJ1cWRi1NpdEsJ?=
- =?us-ascii?Q?OjDIuaAif/KA+daO4i8gdiyfVCVBr8yHte3j4pC/6fziywntAgjyFUQjIggJ?=
- =?us-ascii?Q?CVjy4VbUdISsjWNGy5PclpQ78pV5f/Mdf4cai3zuaPs512Kl653L3uENx+0N?=
- =?us-ascii?Q?B7uIvSVNJ7u5NrUGCdiPAMOsWT/ix7nEoeNlVo8Hk2iLvosp6SIKqfw3sJxD?=
- =?us-ascii?Q?Bj5sTFylAmJrysj34rlj6Fz+BKFNtShz2ZJyqGWL4Xn939IfubRucCC6zaef?=
- =?us-ascii?Q?5EI33iNmc30N0r6dddAC6O4bXq2OeysYyMKv6zzevuzOT7oZi6goAu0KKuzd?=
- =?us-ascii?Q?XA7s/KiR1YO+bIWZ1L0YXrHjYbcoW2EnnAFtTzl8Z5pk6R1Y9fB3Cnv5X4KQ?=
- =?us-ascii?Q?UFMgwfbu5ZQCIDDKhPYIBiJt78+adugX1Ir2IA7Gm26RXZxnY120Nov+tZPM?=
- =?us-ascii?Q?qOLQ9I04a4Y0CdcgjmxstLhaYsk0mL0Xrm8NerDtV9isWdoExERnl/FN7y/i?=
- =?us-ascii?Q?UJmtNU5Q9lCpEzEC/GThKO824gyGO2n2wRlJVuLM8LIgu3ZH5AvYLfHYks+/?=
- =?us-ascii?Q?GgXHlUpI3VOnwwW7lu8z2rDnV5KTbP34P0/vLyCPZYJuuZcZ3HKFXYYDnK04?=
- =?us-ascii?Q?9bBD3tD1ZCdhfv5V/kS8RCDDO2wsMT2LiNL1Wr3zq+WlJPAAdYqQfkazLmNE?=
- =?us-ascii?Q?Wy1jnRINK4o=3D?=
+	=?utf-8?B?V2dkVzJPOGlZNjdTNEcwMGZYZWc0QW5PRGxQM0JzRmxYOHJlNlVmeFdPRmdm?=
+ =?utf-8?B?VkFCZUhVZjZ2MmI0NllHODlPQzBiTThBVlJ4SlZkSE9ueHcxN0Z1dk5nK3FO?=
+ =?utf-8?B?bm5kN0ZlZVN6bEI3aWNadWFiSUJWOWdla2QxbjNmbEpHTFdqbmsyOVN4UkpQ?=
+ =?utf-8?B?bmhVdThiem4vRmtTMG5hMmhBL0ZQemlzWitzZ2xaVmVkSnFHNUtENXNScUkz?=
+ =?utf-8?B?MWlOMnlPTXZxcDBRMXltK1BtSVZRVXVHNWU4dGhIREdkSGMwcjYyNU1FSGxq?=
+ =?utf-8?B?ZzVwTmhDSnZKbUVMbGtwNkN4dlIyT0RHZWFObWNvNEw1bjF1V0FWMHUyeWRs?=
+ =?utf-8?B?VmY0THNjSW1IQTJ2UjAzWUxuTlNUcUhsMTFoR1NyN3ZsOVB6NW02bXZ0MmtS?=
+ =?utf-8?B?VkN4V2FvQTZsL1NlZ1BBV3RUdUNRVm5McTR3dndoSXd1R1dqWnFhOVVFUWdP?=
+ =?utf-8?B?b1M5SWpFVmdZaWVpTzFpcXJzb2pERDdmTzlwSTFQZktIWkFtVzZTeFEyaElK?=
+ =?utf-8?B?MldBMmtUb2dtWk1xSmE5c3FIMFlFcHowamRXdFZvS1llVndLVGptcEJBUXFF?=
+ =?utf-8?B?dnpZc1dreEJQOGRHamRucnpPclBKelpsQ3Z1QWlZcjNoWWdob1o3TEZHQzZX?=
+ =?utf-8?B?N1dwUGVFREI1Yk5yOW14c0JYbXdoMlhycEV3VTZyVzVtbWVpSk1neWJNVXFY?=
+ =?utf-8?B?ai9WVWtwcUVMUENIVHJMbnhPKy9NeFM3TVo1V2R2My8xaTVqZmQyNDgxaDM3?=
+ =?utf-8?B?M0gvQU04Qkl5MzFXMGVzK1d3YlF4NVp1U00zaytZazZwWENFVTh0aWhiR0kw?=
+ =?utf-8?B?d21ERnZHaW1KUEMybXJRYXBGSGVPTUhVK3lyUytORXU5UjdiVjZpb1ZHRzZI?=
+ =?utf-8?B?dXUvam13SjZYL0RkdWEzZW13blhLbVpETmh4eTRWaWg4ZHFTY1puQlJSRytz?=
+ =?utf-8?B?K3AveEJmbDQ5MXlyTDhOL29sZGtINC9yRVpXeXJUUHdIc3M2ZTN0cWZFMlY2?=
+ =?utf-8?B?OE91bFhyVHJuemVuelNoTk1pQ1MzVDNya1JFSWt6ZGMyVWZ3MWIrVFNqekx2?=
+ =?utf-8?B?ZDZoc0U2cW5zWDlMMDVyU3JCQTJOQXl3MVVPV0RwQlBxUDVOQUN3UzdDNVVZ?=
+ =?utf-8?B?ZXVDQU93Q1pjYnFZSU5mcXZZOGp1SmdOWE1peHI2cjFQb0lyWHJRYWVvMWtX?=
+ =?utf-8?B?dW5PV1dYN0JMc2JFUEdMUkw4RVYvNFJBQUpJZWx5dk9kRVV3S3VjRkd0YnNr?=
+ =?utf-8?B?MmxTVmtjLzBGdFR6dm12VDYveFp4WmFNd3UraUcwdUFkSU00Mm4wKzA3WU80?=
+ =?utf-8?B?S0ZDcG00N2RkZmZWYlZEekU1Y2JDMld0Y0w3ZUdWR25UQ09WUmp6WVdTVFly?=
+ =?utf-8?B?WFFLTHZMNGVjSEhsa205UzF0MkNraGkrVzZ6dnZGUWJJd3pLeW96T2ttdTJz?=
+ =?utf-8?B?U1crRFJXU29IRUpaWC9jVUd1NUVmTkp0OHd6cHl5VmNLNlI1ZFpHQ1VUaVo4?=
+ =?utf-8?B?dmF1UjcrWmtmbHpBNk1uNUhNK3dqUTUrN21HTG93blNRcHB0WDRWempnZmpx?=
+ =?utf-8?B?bFBWUThOcXFWZ1AxY0owaVhHSkcvV2ZPTGZEcUtHVlNZLy83UXFNWGtwTE5R?=
+ =?utf-8?B?T2VyQ1l0eUJuY3J4dzg3TTNiVE5BMVFmOVV5aHM2YXlSWE5VTWpFOHYrbG9l?=
+ =?utf-8?B?YnlRY1hyTmZpM1NRRlNnMjBQc0hITllsQjJPeGx4dXdqNjcveWJ4S0Q5ZFUr?=
+ =?utf-8?B?bHNabmIrVzFZV3FzZWpnMTVTZy91ZUZSSG5WR2phSzJuRXVuQjg0SWVyd1lT?=
+ =?utf-8?B?NDVIOENBd0tpUHViRTNGcHJ3QmpDUGl2YnFUdG1sOFpKbEkyNDhmWjlWRDA2?=
+ =?utf-8?B?RloyZnJhZUdMT2F3M0ViNnNBenFNQzFaK1Jpb1dObHhSbkt2UWRzY25JdjFB?=
+ =?utf-8?Q?f30MePN+jWA=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?h1akrbL8cyUqukNYPgj46XFdwgp/ZjJx+nRd91KydL97dE+cfAtrszY11CuZ?=
- =?us-ascii?Q?wHe60Gfxc9y3BoKqaGDZXiCCStt1ZEP1UxSxIfPgohPDeGmhZmwQiWyetLCV?=
- =?us-ascii?Q?B1mvsahKga6K0lVz4n4uG6Bto4Ticpd2mtLdEeo38SEWq5xbbPCyL2scfUqe?=
- =?us-ascii?Q?4Rze2GNPAscnOu1H3GQ2TyMErXA0rjoA1ozUPnDa9XVUScmLTijx3mxu5WTK?=
- =?us-ascii?Q?bym5m0y0imnGZmIqAtJjx1e33windZaB63spOrjrkGVvaFV8/+I/os+2pVBx?=
- =?us-ascii?Q?WfXsxLLktefpCvoOfROC+5PyRus/GAJp+WyWDipjQxst1Uvfy0AyY8UVck2N?=
- =?us-ascii?Q?FkkGjQ1ycwmfewSqx8Mnfln4aei+utCAMuqrzJSMmakvKnTa1UNqk7ZjVZIo?=
- =?us-ascii?Q?cuPLav7XQbpEv1wPtTQRkUYLcX263yylmGKafouXOQkZ51UcIh5ZiIgKcEKV?=
- =?us-ascii?Q?KfETQAwdqikS8Wrmdf8GrsP7/p7BnWT7BVYe0nvsq2MZKfSnw52V6rvNtM7L?=
- =?us-ascii?Q?OhbX7uRQ8UB92X7/Lu07HUvVXMeZieuKR+9m8bncNr+eaCtTT4G/VeoqtC4g?=
- =?us-ascii?Q?s7r/TUd+yCqT9kg5oDrN2HTMB9ikn4kZ/0+HzX8Hd9JVa/U2TPmWyn/UwTkE?=
- =?us-ascii?Q?pWBlFIAvBoQNNg6dPMKR3jy/0E0l0L5Z3+gikE9Lz7e0xRvzzDkykunX471X?=
- =?us-ascii?Q?ZZ3PtgM16ff95aRW0DqP2BzH6NcK3Yd5L0TsLpIX06Y7Flw3h5nYEhTDRSz9?=
- =?us-ascii?Q?hyNMyRdNfmB062PdYPp97kJo5F1nPsBsyJJ6TrbfiMEvIg/37zCqUscandO2?=
- =?us-ascii?Q?yUMK9io+jglY/xfhXN0T/b0jM1caSEEP1qGy1Fcz4nGpqqA/msTtJLyRFH40?=
- =?us-ascii?Q?XLliaALRiN8h9RCzf4WZhsUmpq1N0Rcm1x6wG4jimOx4Gr8oj1zs8VPh7Qnv?=
- =?us-ascii?Q?VbQyP4rOqN68IGWOkbd9oVa4OnxtkvXpguL3jiFrVSice6WVJgymbBsj/Qu8?=
- =?us-ascii?Q?qww3SsQv08fKd5r8CImEgdgdv0e7+2nUISi6sYogKmC2AP8fvHfaAtyKhquC?=
- =?us-ascii?Q?0y3EiIW3S4kvE7520FUeD/HYmDHKCFOQFzL6gAvDlJ6sr/90vvdrjKyjuD+k?=
- =?us-ascii?Q?Ka1D24Nt0vj4PDYJd4QSq7NfwXeNsOgGf0F8L383kHuVabyikqCa9TIOyXy+?=
- =?us-ascii?Q?A0mX5T56/t6BJbSb3qYnzusqi4pJj+z6H7IYA/aB6ARIkkkLlJuMnl0ZAWO2?=
- =?us-ascii?Q?CW5uu2+1pMp6ff8/x98c4Hs344kQ0y2vQ9HRrFvbH+lt4vBR3rZQDZDVooQ5?=
- =?us-ascii?Q?WWgbWYf5uMaXyLwuco8xfhENHNo506/KBeVOrieNdrKQvB392B3S0Snesj8A?=
- =?us-ascii?Q?ZTf6jDYf8YE/IGClmOucQGP+OTPqZqvWdd8B5MeyUXvydnS6g+6/JUhtdndK?=
- =?us-ascii?Q?T/nmIkjH59oFCmG4uFG3SeZJq48zCodfXiqvbRO8OVB1xO01jcoj9pD+zUwI?=
- =?us-ascii?Q?WBzvBTGsTUB/Nnzn6vBE8U1xl/HPWR0EG4u3neG0s7ZuaGj5Qj+L8TK0nTwx?=
- =?us-ascii?Q?VIrSBUIMIMZqjgBL3VNboQqzNBIUknZjuVpB7woOOQfEJaFOTW8KkXod/xoO?=
- =?us-ascii?Q?vA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	JMYNyBthVd3F7jN1A000emoqKFrLpCuPX6HytGLGpyTIhd/4IJTIXPN2KyTzMY0SOVzZz4Qumle+2eoElgPPuJtHo6Hqop/U5IRqdD49BwEGs+1FvF2jx2Ahphv1wUFe7wYQvw5d5BV9SMb+6lXRai6HkM+swyIgTmb9qVUaRHNG+7bRidl7KKSrEgycg3cl7JzrN34kU9V5N6O/0Oj4MpDZyjMbu1QNjAQrHe9zAMzZlkJp7O/kkRkIiA3UlaY38yZvwNlSv6b0aqBQ2QwVOLjO/AbNcgUP9r/m0/mSVugVuS1AM0yWBcnO+W/c1PDtoB+GIAa8cqmxpMswx2Kcw5z/jBiIUWvQeSTOWrJrgQwYRkT9KLn0A8/JdWNMdohmHNjPRaLHjKO6e6/20M0LrnDSTb3FBtnkaURXLBkFdmg4itSR5qGJ+Ls9ksLrnZxr9Z+C2ImuC7M08bJoY5EMIggQuLPgIBgbKWRgwySxRPlz3LBOXH843YL8mrf/AJGqEwqv3/UmbuQPttAteez7QYggh7EHDlsSWnHHTYx2deIvJ7dziUiLbRiHlwFXgFzjSFy+MRyQUk/yiT2feO7Y5YrCf35nTfK6EQwfTRZEHbo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2921e06a-73ef-4e0e-59bd-08dde9e835ea
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+	=?utf-8?B?YXQ0dXVVVFo3Sk44L0lDQkphakRkREFFMzdwSjhSVTZaVFpwYWJtVUV3V2lt?=
+ =?utf-8?B?bWh3RlVlMGI0YUNuc2JoaHlUYnMvbnIvRGRkZFQ4Qjg5WTc4TFllRFlteGtB?=
+ =?utf-8?B?VXZYekNwTkttbEk3WFBieDQvRFVRblZqMC80OXFLajB2aU1kZDVCNlllTnkv?=
+ =?utf-8?B?dTZMU1Vla1dTU1ZCaXc4VzJuSmpNbEpXMStrOW9KYU9vcXlNTGNQQjdXYkxR?=
+ =?utf-8?B?MFE3N3RiSmxpOXE1S3MwV2JOcVdxemJPV29qLzNYSXdOaDdyQzVGZzkwaXFq?=
+ =?utf-8?B?dk1JaUpLS21RM1h5NGNYRGpKNXZ0bWtkUURsckgvclJmU0p4U0FxS0hzYnlL?=
+ =?utf-8?B?anU5K3Bic1VnVlBKbkw3c1R4ME5mRzFPbDFCK3d1cjdDTU1zNHhmdml2bHlQ?=
+ =?utf-8?B?Q3ZzbUJvK1BFcHNtd1NiTkNMQU5ZVEIxWStMS2pnVnJ0TEdTWVd0dy9vSEpI?=
+ =?utf-8?B?Ni9mUkRLVk16SVk0ZjBFb2RRWVVyU1JpQTE1dzhOWU84RHdDZ1lJUlh2MmNh?=
+ =?utf-8?B?S1AxUHcxd1NETVJDY2phZzAxTU9vcndjNUQ0RFlsZVBCWEZjYjBqWEtJZEd5?=
+ =?utf-8?B?cHlYckxTc05DYUdHV3RhK2hlSjh2dFZEVUgzVFQrNjJ4eWJOVlNqNlk3MFhj?=
+ =?utf-8?B?b1VxL3BPMXd6anJXcUlqODVPQjJ1WGtaOG51U2NiQnlGTUlkbDRlSGs2YjQ3?=
+ =?utf-8?B?SG1wODJJQ3VaWHd1U0pQMUNIbk96UWpEd0NUdHA4S3RzM2daNmNrSEVPUXF6?=
+ =?utf-8?B?cDNpQXJjVE4rUzFpRlZEME11TUY1NFpuM05CNjVhbXU2TE41dllyQjNwK2dv?=
+ =?utf-8?B?ckh5VFlEcURKdllHZFNIU0VLYWRPU1h0Y1V0KzVPUFlSamEvbWpzaDNHZGpF?=
+ =?utf-8?B?dlFoRVNldFRXRlZNU3Y4bThuUjdlbmpSdjFDbUFVWVczVDQxNTAwOVBrM0gw?=
+ =?utf-8?B?d2xEUFBGRUlPbENwZmZmZWxVU0RyZkhiaFZ2TXlqTE9WbmhPdSs4ei9Za0Ft?=
+ =?utf-8?B?dGxtdEEydG5XRGFUcm50M0Qvb0NDS2svM1o4RHhxR3dqSFdmdEFUNFZGSnRF?=
+ =?utf-8?B?cUh3blFzMHplQndQalcrZzFvRGs4T1VZSDNaaGhSb3NpWHo5MUdrSGZpOEJP?=
+ =?utf-8?B?d0NGVHFoZUhhY3EzRjBhUkRFSlVsWmtFY1F0emV3Y1BXUmtxVmlhSUJid3RM?=
+ =?utf-8?B?M3NNajdNTUk0NTNyNUo5SVA4SGI3Z3ZFWGtEUUhsZUJFSXh4ejdMMmQ5YU95?=
+ =?utf-8?B?TTRLTEVBdVhqWUIvcEFla3AvZEFxSXZ5UE1ZZ0haRi9FL2c2WUpaU1EycVZq?=
+ =?utf-8?B?a2JUeW16a0hOaXcwdElnSW5Ic1RZLy81c09mSWJ4RmJmN2tLUGdlYTZDZEVR?=
+ =?utf-8?B?Z2dhaklmSG4vR0lBYmUzZUtMWGRtL3dYZkhPYjhzMmMwc0tYazVqRGtYQUpC?=
+ =?utf-8?B?V3h4STJqQlpTOG1IM3dzcm03ckw4UHo2VDVYZnVOQ1laZjcrS1JyUDhXek5M?=
+ =?utf-8?B?SCtGeW52MHFuSEdoK25BUUpDcVpGNlYyL0YrOHZYUWgwWkNxVWFMa0VCOGpO?=
+ =?utf-8?B?Yi9YcllJbVAwNURQV0M4NFRibVhSMWYvcFVpQXU0YmVzT3hZTlNmWXJFdmdN?=
+ =?utf-8?B?VVdlamRCTnpyakQ1Q25vVFdXRDlHcERZdDRvRmRzek5nbjVkRDRheEtuVUk2?=
+ =?utf-8?B?WG5mNFNzMzMxY2x4N1VZZXJQR3Y2KzBrNGxzSE9obThGcFl3VENGYXdMK0NL?=
+ =?utf-8?B?dG8renFWckcrOGhnck1tdElPRGhLUVF5RXFvQU9jNUEzWURaT1RrRDE0SUtP?=
+ =?utf-8?B?Rm1wbk1Vdjd1VXR5N0FVWnVSOTJOVmhkUUtpQWNrRmV5bzVyMVpod1F2NDZ3?=
+ =?utf-8?B?WlUzQWxBdDNWWVVsUmRKblMybDhEY1JLQXBUeHllSE00QjBrTmlYNU1GcWZt?=
+ =?utf-8?B?eVlYd0NDZStyQ0Zud1NkSHZzNnptR1RJL3ZWeE1VOGFhcTNVM2NFOUlyWVJ0?=
+ =?utf-8?B?dTROMXFXd0hOS1I3U0VLQm9sVGgrSG95aUZMck1aT2FaNmM4Mm1wdTgreGJL?=
+ =?utf-8?B?TTlETlYrOWVqb28rTGhmSTdYNVQ0ZmJKdUFhS1I2d2pZbFc3eUpqOWVzNTZZ?=
+ =?utf-8?Q?oB8M=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae651695-e8c7-4e1f-0026-08dde9e83a94
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 06:16:10.3334
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 06:16:18.4550
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LCsVH3C3hNcAnDzTc3wVqpbT1KyVy3j1WXISoi9TWKFmzeEO5wUWFe4PHZ4UXZ3qBK1myLiymKSPkQjOx0kcKMCiJs7r/of+RvuYMERdtUU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5928
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_01,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509020060
-X-Proofpoint-ORIG-GUID: ZFvndPntAQX1ZL-2eu0VucqNIFivXutc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX2a1xqVpVgxF9
- BgV4+X49boLkczvElXRRftYBAMjPYK/2yXSwvnxdQLq8tnFp5il0XjwiyeYVcYParmxOc90dQ32
- JdX34mYqce13KhbWsWFJUig2CoMXBzHNkqO5cDbdsEzKgG/rXnwMfM+CndAg9pzTcdOUk6dYduE
- OdUERt/ND7gF8MH8nTdSvJxURhgfoTf9xwQVm9dP6esK6e+8CV5WPjqd7TOs0BvQBQo3moumMlB
- 7u++Ov5BqRRWKAFBJ+g5kKM0m6dVOSEDYvuXKi19mQ92jjBdZdrdL+A/kPR8spBmhtcPtFJkRkq
- TrUokGK5Lc+sHIlamiseOj05H8TZlmJ2u4cOUbfdAcQQglAK6JcZwQ6JiXnbn04erF2tNR0Ouqk
- TRVIzeKM
-X-Authority-Analysis: v=2.4 cv=KORaDEFo c=1 sm=1 tr=0 ts=68b68bb0 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=UgJECxHJAAAA:8 a=pGLkceISAAAA:8
- a=yPCof4ZbAAAA:8 a=52u9k6-QHIpcbhxlR9sA:9 a=CjuIK1q_8ugA:10
- a=-El7cUbtino8hM1DCn8D:22
-X-Proofpoint-GUID: ZFvndPntAQX1ZL-2eu0VucqNIFivXutc
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qs9Q6bL+gCrh9OGfRgYqLQjyVmI0909y55MUZjXmVKwWhm5CEC0R2zMp6E/DoFQt
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9104
 
-On Mon, Sep 01, 2025 at 10:50:19PM +0200, Max Kellermann wrote:
-> We select certain test functions plus folio_migrate_refs() from
-> mm_inline.h which either invoke each other, functions that are already
-> const-ified, or no further functions.
->
-> It is therefore relatively trivial to const-ify them, which
-> provides a basis for further const-ification further up the call
-> stack.
->
-> One exception is the function folio_migrate_refs() which does write to
-> the "new" folio pointer; there, only the "old" folio pointer is being
-> constified; only its "flags" field is read, but nothing written.
->
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Hi Alexey Zagorodnikov.
 
-LGTM, so:
+On 8/31/2025 9:41 PM, Alexey Zagorodnikov wrote:
+> Hello,
+> 
+> I have tested this patch on my HP ZBook Ultra G1a, and webcam now works 
+> great, thank you!
+> 
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Thanks for the verification, really glad it works.
 
-> ---
->  include/linux/mm_inline.h | 25 +++++++++++++------------
->  1 file changed, 13 insertions(+), 12 deletions(-)
->
-> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-> index 150302b4a905..d6c1011b38f2 100644
-> --- a/include/linux/mm_inline.h
-> +++ b/include/linux/mm_inline.h
-> @@ -25,7 +25,7 @@
->   * 0 if @folio is a normal anonymous folio, a tmpfs folio or otherwise
->   * ram or swap backed folio.
->   */
-> -static inline int folio_is_file_lru(struct folio *folio)
-> +static inline int folio_is_file_lru(const struct folio *folio)
->  {
->  	return !folio_test_swapbacked(folio);
->  }
-> @@ -84,7 +84,7 @@ static __always_inline void __folio_clear_lru_flags(struct folio *folio)
->   * Return: The LRU list a folio should be on, as an index
->   * into the array of LRU lists.
->   */
-> -static __always_inline enum lru_list folio_lru_list(struct folio *folio)
-> +static __always_inline enum lru_list folio_lru_list(const struct folio *folio)
->  {
->  	enum lru_list lru;
->
-> @@ -141,7 +141,7 @@ static inline int lru_tier_from_refs(int refs, bool workingset)
->  	return workingset ? MAX_NR_TIERS - 1 : order_base_2(refs);
->  }
->
-> -static inline int folio_lru_refs(struct folio *folio)
-> +static inline int folio_lru_refs(const struct folio *folio)
->  {
->  	unsigned long flags = READ_ONCE(folio->flags.f);
->
-> @@ -154,14 +154,14 @@ static inline int folio_lru_refs(struct folio *folio)
->  	return ((flags & LRU_REFS_MASK) >> LRU_REFS_PGOFF) + 1;
->  }
->
-> -static inline int folio_lru_gen(struct folio *folio)
-> +static inline int folio_lru_gen(const struct folio *folio)
->  {
->  	unsigned long flags = READ_ONCE(folio->flags.f);
->
->  	return ((flags & LRU_GEN_MASK) >> LRU_GEN_PGOFF) - 1;
->  }
->
-> -static inline bool lru_gen_is_active(struct lruvec *lruvec, int gen)
-> +static inline bool lru_gen_is_active(const struct lruvec *lruvec, int gen)
->  {
->  	unsigned long max_seq = lruvec->lrugen.max_seq;
->
-> @@ -217,12 +217,13 @@ static inline void lru_gen_update_size(struct lruvec *lruvec, struct folio *foli
->  	VM_WARN_ON_ONCE(lru_gen_is_active(lruvec, old_gen) && !lru_gen_is_active(lruvec, new_gen));
->  }
->
-> -static inline unsigned long lru_gen_folio_seq(struct lruvec *lruvec, struct folio *folio,
-> +static inline unsigned long lru_gen_folio_seq(const struct lruvec *lruvec,
-> +					      const struct folio *folio,
->  					      bool reclaiming)
->  {
->  	int gen;
->  	int type = folio_is_file_lru(folio);
-> -	struct lru_gen_folio *lrugen = &lruvec->lrugen;
-> +	const struct lru_gen_folio *lrugen = &lruvec->lrugen;
->
->  	/*
->  	 * +-----------------------------------+-----------------------------------+
-> @@ -302,7 +303,7 @@ static inline bool lru_gen_del_folio(struct lruvec *lruvec, struct folio *folio,
->  	return true;
->  }
->
-> -static inline void folio_migrate_refs(struct folio *new, struct folio *old)
-> +static inline void folio_migrate_refs(struct folio *new, const struct folio *old)
->  {
->  	unsigned long refs = READ_ONCE(old->flags.f) & LRU_REFS_MASK;
->
-> @@ -330,7 +331,7 @@ static inline bool lru_gen_del_folio(struct lruvec *lruvec, struct folio *folio,
->  	return false;
->  }
->
-> -static inline void folio_migrate_refs(struct folio *new, struct folio *old)
-> +static inline void folio_migrate_refs(struct folio *new, const struct folio *old)
->  {
->
->  }
-> @@ -508,7 +509,7 @@ static inline void dec_tlb_flush_pending(struct mm_struct *mm)
->  	atomic_dec(&mm->tlb_flush_pending);
->  }
->
-> -static inline bool mm_tlb_flush_pending(struct mm_struct *mm)
-> +static inline bool mm_tlb_flush_pending(const struct mm_struct *mm)
->  {
->  	/*
->  	 * Must be called after having acquired the PTL; orders against that
-> @@ -521,7 +522,7 @@ static inline bool mm_tlb_flush_pending(struct mm_struct *mm)
->  	return atomic_read(&mm->tlb_flush_pending);
->  }
->
-> -static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
-> +static inline bool mm_tlb_flush_nested(const struct mm_struct *mm)
->  {
->  	/*
->  	 * Similar to mm_tlb_flush_pending(), we must have acquired the PTL
-> @@ -605,7 +606,7 @@ pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
->  	return false;
->  }
->
-> -static inline bool vma_has_recency(struct vm_area_struct *vma)
-> +static inline bool vma_has_recency(const struct vm_area_struct *vma)
->  {
->  	if (vma->vm_flags & (VM_SEQ_READ | VM_RAND_READ))
->  		return false;
-> --
-> 2.47.2
->
+> One trick that I noticed, mkinitcpio does not include isp_4_1_1.bin 
+> firmware inside the image, however, other amdgpu firmware files are 
+> present. So I need to manually add via config.
+> 
+> Should be "MODULE_FIRMWARE("amdgpu/isp_4_1_1.bin");" added in 
+> isp_v4_1_1.c like other firmware, for work right out of the box?
+> 
+
+Many thank for the fix, yes MODULE_FIRMWARE("amdgpu/isp_4_1_1.bin") 
+should be added, maybe amdgpu_isp.c is a better place. Will follow up 
+with separated amdgpu patch.
+
+> On 8/28/25 13:45, Bin Du wrote:
+>> Hello,
+>>
+>> AMD ISP4 is the AMD image processing gen 4 which can be found in HP 
+>> ZBook Ultra G1a 14 inch Mobile Workstation PC ( Ryzen AI Max 385)
+>> (https://ubuntu.com/certified/202411-36043)
+>> This patch series introduces the initial driver support for the AMD ISP4.
+>>
+>> Patch summary:
+>> - Powers up/off and initializes ISP HW
+>> - Configures and kicks off ISP FW
+>> - Interacts with APP using standard V4l2 interface by video node
+>> - Controls ISP HW and interacts with ISP FW to do image processing
+>> - Support enum/set output image format and resolution
+>> - Support queueing buffer from app and dequeueing ISP filled buffer to 
+>> App
+>> - It supports libcamera ver0.2 SimplePipeline
+>> - It is verified on qv4l2, cheese and qcam
+>> - It is verified together with following patches
+>>     platform/x86: Add AMD ISP platform config (https:// 
+>> lore.kernel.org/all/20250514215623.522746-1-pratap.nirujogi@amd.com/)
+>>     pinctrl: amd: isp411: Add amdisp GPIO pinctrl (https://github.com/ 
+>> torvalds/linux/commit/e97435ab09f3ad7b6a588dd7c4e45a96699bbb4a)
+>>     drm/amd/amdgpu: Add GPIO resources required for amdisp (https:// 
+>> gitlab.freedesktop.org/agd5f/linux/-/commit/ 
+>> ad0f5966ed8297aa47b3184192b00b7379ae0758)
+>>
+>> AMD ISP4 Key features:
+>> - Processes bayer raw data from the connected sensor and output them 
+>> to different YUV formats
+>> - Downscale input image to different output image resolution
+>> - Pipeline to do image processing on the input image including 
+>> demosaic, denoise, 3A, etc
+>>
+>> ----------
+>>
+>> Changes v2 -> v3:
+>>
+>> - All the dependent patches in other modules (drm/amd/amdgpu, 
+>> platform/x86, pinctrl/amd) merged on upstream mainline kernel 
+>> (https://github.com/torvalds/linux) v6.17.
+>> - Removed usage of amdgpu structs in ISP driver. Added helper 
+>> functions in amdgpu accepting opaque params from ISP driver to 
+>> allocate and release ISP GART buffers.
+>> - Moved sensor and MIPI phy control entirely into ISP FW instead of 
+>> the previous hybrid approach controlling sensor from both FW and x86 
+>> (sensor driver).
+>> - Removed phy configuration and sensor binding as x86 (sensor driver) 
+>> had relinquished the sensor control for ISP FW. With this approach the 
+>> driver will be exposed as web camera like interface.
+>> - New FW with built-in sensor driver is submitted on upstream linux- 
+>> firmware repo (https://gitlab.com/kernel-firmware/linux-firmware/).
+>> - Please note the new FW submitted is not directly compatible with OEM 
+>> Kernel ISP4.0 (https://github.com/amd/Linux_ISP_Kernel/tree/4.0) and 
+>> the previous ISP V2 patch series.
+>> - If intend to use the new FW, please rebuild OEM ISP4.0 Kernel with 
+>> CONFIG_VIDEO_OV05C10=N and CONFIG_PINCTRL_AMDISP=Y.
+>> - Included critical fixes from Sultan Alsawaf branch (https:// 
+>> github.com/kerneltoast/kernel_x86_laptop.git) related to managing 
+>> lifetime of isp buffers.
+>>        media: amd: isp4: Add missing refcount tracking to mmap memop
+>>        media: amd: isp4: Don't put or unmap the dmabuf when detaching
+>>        media: amd: isp4: Don't increment refcount when dmabuf export 
+>> fails
+>>        media: amd: isp4: Fix possible use-after-free in isp4vid_vb2_put()
+>>        media: amd: isp4: Always export a new dmabuf from get_dmabuf memop
+>>        media: amd: isp4: Fix implicit dmabuf lifetime tracking
+>>        media: amd: isp4: Fix possible use-after-free when putting 
+>> implicit dmabuf
+>>        media: amd: isp4: Simplify isp4vid_get_dmabuf() arguments
+>>        media: amd: isp4: Move up buf->vaddr check in isp4vid_get_dmabuf()
+>>        media: amd: isp4: Remove unused userptr memops
+>>        media: amd: isp4: Add missing cleanup on error in 
+>> isp4vid_vb2_alloc()
+>>        media: amd: isp4: Release queued buffers on error in 
+>> start_streaming
+>> - Addressed all code related upstream comments
+>> - Fix typo errors and other cosmetic issue.
+>>
+>>
+>> Changes v1 -> v2:
+>>
+>> - Fix media CI test errors and valid warnings
+>> - Reduce patch number in the series from 9 to 8 by merging MAINTAINERS 
+>> adding patch to the first patch
+>> - In patch 5
+>>     - do modification to use remote endpoint instead of local endpoint
+>>     - use link frequency and port number as start phy parameter 
+>> instead of extra added phy-id and phy-bit-rate property of endpoint
+>>
+>> ----------
+>>
+>> It passes v4l2 compliance test, the test reports for:
+>>
+>> (a) amd_isp_capture device /dev/video0
+>>
+>> Compliance test for amd_isp_capture device /dev/video0:
+>> -------------------------------------------------------
+>>
+>> atg@atg-HP-PV:~/bin$ ./v4l2-compliance -d /dev/video0
+>> v4l2-compliance 1.29.0-5348, 64 bits, 64-bit time_t
+>> v4l2-compliance SHA: 75e3f0e2c2cb 2025-03-17 18:12:17
+>>
+>> Compliance test for amd_isp_capture device /dev/video0:
+>>
+>> Driver Info:
+>>          Driver name      : amd_isp_capture
+>>          Card type        : amd_isp_capture
+>>          Bus info         : platform:amd_isp_capture
+>>          Driver version   : 6.14.0
+>>          Capabilities     : 0xa4200001
+>>                  Video Capture
+>>                  I/O MC
+>>                  Streaming
+>>                  Extended Pix Format
+>>                  Device Capabilities
+>>          Device Caps      : 0x24200001
+>>                  Video Capture
+>>                  I/O MC
+>>                  Streaming
+>>                  Extended Pix Format
+>> Media Driver Info:
+>>          Driver name      : amd_isp_capture
+>>          Model            : amd_isp41_mdev
+>>          Serial           :
+>>          Bus info         : platform:amd_isp_capture
+>>          Media version    : 6.14.0
+>>          Hardware revision: 0x00000000 (0)
+>>          Driver version   : 6.14.0
+>> Interface Info:
+>>          ID               : 0x03000005
+>>          Type             : V4L Video
+>> Entity Info:
+>>          ID               : 0x00000003 (3)
+>>          Name             : Preview
+>>          Function         : V4L2 I/O
+>>          Pad 0x01000004   : 0: Sink
+>>            Link 0x02000007: from remote pad 0x1000002 of entity 'amd 
+>> isp4' (Image Signal Processor): Data, Enabled, Immutable
+>>
+>> Required ioctls:
+>>          test MC information (see 'Media Driver Info' above): OK
+>>          test VIDIOC_QUERYCAP: OK
+>>          test invalid ioctls: OK
+>>
+>> Allow for multiple opens:
+>>          test second /dev/video0 open: OK
+>>          test VIDIOC_QUERYCAP: OK
+>>          test VIDIOC_G/S_PRIORITY: OK
+>>          test for unlimited opens: OK
+>>
+>> Debug ioctls:
+>>          test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+>>          test VIDIOC_LOG_STATUS: OK (Not Supported)
+>>
+>> Input ioctls:
+>>          test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>>          test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>>          test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>>          test VIDIOC_G/S/ENUMINPUT: OK
+>>          test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>>          Inputs: 1 Audio Inputs: 0 Tuners: 0
+>>
+>> Output ioctls:
+>>          test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>>          test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>>          test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>>          test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>>          test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>>          Outputs: 0 Audio Outputs: 0 Modulators: 0
+>>
+>> Input/Output configuration ioctls:
+>>          test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>>          test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>>          test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>>          test VIDIOC_G/S_EDID: OK (Not Supported)
+>>
+>> Control ioctls (Input 0):
+>>          test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+>>          test VIDIOC_QUERYCTRL: OK (Not Supported)
+>>          test VIDIOC_G/S_CTRL: OK (Not Supported)
+>>          test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+>>          test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+>>          test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>>          Standard Controls: 0 Private Controls: 0
+>>
+>> Format ioctls (Input 0):
+>>          test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>>          test VIDIOC_G/S_PARM: OK
+>>          test VIDIOC_G_FBUF: OK (Not Supported)
+>>          test VIDIOC_G_FMT: OK
+>>          test VIDIOC_TRY_FMT: OK
+>>          test VIDIOC_S_FMT: OK
+>>          test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>>          test Cropping: OK (Not Supported)
+>>          test Composing: OK (Not Supported)
+>>          test Scaling: OK (Not Supported)
+>>
+>> Codec ioctls (Input 0):
+>>          test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>>          test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>>          test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+>>
+>> Buffer ioctls (Input 0):
+>>          test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>>          test CREATE_BUFS maximum buffers: OK
+>>          test VIDIOC_REMOVE_BUFS: OK
+>>          test VIDIOC_EXPBUF: OK
+>>          test Requests: OK (Not Supported)
+>>          test blocking wait: OK
+>>
+>> Total for amd_isp_capture device /dev/video0: 49, Succeeded: 49, 
+>> Failed: 0, Warnings: 0
+>>
+>> Please review and provide feedback.
+>>
+>> Many thanks,
+>>
+>> Bin Du (7):
+>>    media: platform: amd: Introduce amd isp4 capture driver
+>>    media: platform: amd: low level support for isp4 firmware
+>>    media: platform: amd: Add isp4 fw and hw interface
+>>    media: platform: amd: isp4 subdev and firmware loading handling added
+>>    media: platform: amd: isp4 video node and buffers handling added
+>>    media: platform: amd: isp4 debug fs logging and  more descriptive
+>>      errors
+>>    Documentation: add documentation of AMD isp 4 driver
+>>
+>>   Documentation/admin-guide/media/amdisp4-1.rst |   66 +
+>>   Documentation/admin-guide/media/amdisp4.dot   |    8 +
+>>   .../admin-guide/media/v4l-drivers.rst         |    1 +
+>>   MAINTAINERS                                   |   25 +
+>>   drivers/media/platform/Kconfig                |    1 +
+>>   drivers/media/platform/Makefile               |    1 +
+>>   drivers/media/platform/amd/Kconfig            |    3 +
+>>   drivers/media/platform/amd/Makefile           |    3 +
+>>   drivers/media/platform/amd/isp4/Kconfig       |   13 +
+>>   drivers/media/platform/amd/isp4/Makefile      |   10 +
+>>   drivers/media/platform/amd/isp4/isp4.c        |  237 ++++
+>>   drivers/media/platform/amd/isp4/isp4.h        |   26 +
+>>   drivers/media/platform/amd/isp4/isp4_debug.c  |  272 ++++
+>>   drivers/media/platform/amd/isp4/isp4_debug.h  |   41 +
+>>   .../platform/amd/isp4/isp4_fw_cmd_resp.h      |  314 +++++
+>>   drivers/media/platform/amd/isp4/isp4_hw_reg.h |  125 ++
+>>   .../media/platform/amd/isp4/isp4_interface.c  |  972 +++++++++++++
+>>   .../media/platform/amd/isp4/isp4_interface.h  |  149 ++
+>>   drivers/media/platform/amd/isp4/isp4_subdev.c | 1198 ++++++++++++++++
+>>   drivers/media/platform/amd/isp4/isp4_subdev.h |  133 ++
+>>   drivers/media/platform/amd/isp4/isp4_video.c  | 1213 +++++++++++++++++
+>>   drivers/media/platform/amd/isp4/isp4_video.h  |   87 ++
+>>   22 files changed, 4898 insertions(+)
+>>   create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
+>>   create mode 100644 Documentation/admin-guide/media/amdisp4.dot
+>>   create mode 100644 drivers/media/platform/amd/Kconfig
+>>   create mode 100644 drivers/media/platform/amd/Makefile
+>>   create mode 100644 drivers/media/platform/amd/isp4/Kconfig
+>>   create mode 100644 drivers/media/platform/amd/isp4/Makefile
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4.c
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4.h
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.c
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.h
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.c
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.h
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.c
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.h
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_video.c
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4_video.h
+>>
+
+-- 
+Regards,
+Bin
+
 
