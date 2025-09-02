@@ -1,284 +1,120 @@
-Return-Path: <linux-kernel+bounces-796213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BEAB3FD61
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:10:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2BCB3FD66
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F7862C3271
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D58A3AC04F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF1C2F6183;
-	Tue,  2 Sep 2025 11:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CD52F6183;
+	Tue,  2 Sep 2025 11:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilRqU59C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="iuWeJ7IM";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="XCStTNbG"
+Received: from a7-18.smtp-out.eu-west-1.amazonses.com (a7-18.smtp-out.eu-west-1.amazonses.com [54.240.7.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F7D279DA6;
-	Tue,  2 Sep 2025 11:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1682765C5;
+	Tue,  2 Sep 2025 11:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756811404; cv=none; b=p4lDYsn4Htgi3E2xmV6CyITRJ7WgkZ9hzAZuWGSoNjxbpZM5OCjl7Em9jPHNXvhYrujpsIaQBR/i2UmlVouI0Ic5aAFFAGHym6MTwHtNujDrp070u9F+w3eR+p3HyboZj6ss7hddH1bncHfUFNCEwPUuVKhv+/frayTGMnH1qnk=
+	t=1756811452; cv=none; b=SIxtDcDbFhnbdzylIz+eE7feClnuvI5wwEbDb/tdNoiaUgUs8vtizjO75L4QG/FlD76tOTuMc3oUydEaFlbLmM4Eq2mEAwic23BUphpMozcveUayBurUTxwtio3rFiEd+5/LsJvYEnf00MUoah25tKPaCrtcwPjNo2JiP8giQz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756811404; c=relaxed/simple;
-	bh=aekmsuo4DYTq3fjI6yMhWLLWs+yu4Y3O3M4fmojBK7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SUkXQMuiDsGDeF9zke63EvZZx94TGdACt4r0zRl+raKBHQK+Q5VpVXagY0Pnyod3HjHNYTHUMROQR8UKCKJusnU+AGas/K3pKQDyEGsMRKGJPpudFkS/kIpfxklQI+iqNYL/ugEL8z3Z00KSrB6EjkUBOeI2uUZKiL9EKTNcXFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ilRqU59C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7535CC4CEED;
-	Tue,  2 Sep 2025 11:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756811403;
-	bh=aekmsuo4DYTq3fjI6yMhWLLWs+yu4Y3O3M4fmojBK7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ilRqU59CIPr3TT5edP4S6yd9uHnB2jfenfsrgEzCnRIfDAMweT4Nq007YBhdSPwm+
-	 riUp0t1INxa4FHJZewJrIhsLcmNg1GqCQXf/DenhPmjVmJWPfPbeHAl/zCvaGlIJIp
-	 P8QKvgdAan3kg0xeZ8EGwmm5Yrg4bnrijGk8qAqtPjr+aaFqB9qy4sajaKOA33ncyb
-	 uKAsEowXQKjlyVFD2DqSQ0iQszxUHmxTJHkoRXStLQLrZaFyDAVU9p3LzE3c17x8Zk
-	 36fLkbrWKT0BGuLG8YKxRSLQbqZjmsPfECh9SlRl+pZ9+iL9oz3hVY1DuW6qkwa9Ng
-	 X5vY1HviFFeug==
-Date: Tue, 2 Sep 2025 13:09:57 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: do not assume file == vma->vm_file in
- compat_vma_mmap_prepare()
-Message-ID: <20250902-kapital-waghalsige-7e043061b0a3@brauner>
-References: <20250902104533.222730-1-lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1756811452; c=relaxed/simple;
+	bh=1qckQvzwlWC/fKlkJTiN3ZnCnQ5EdaufHJeY89/pEVg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:Cc; b=Oniyk7auEQHEAqxUFhfMDhlDrd1GmARP6T5TBZy/wXQ0+3TgwUfdbFRFlABeL0b74YCD4bpF2Wx0/Fb3hrGGR+R7teAcaOHW/xZfrr0PC9A1nIn29b4kRTQIHrgGnsqE+5AIq+mLgiTDtCDpTTgZIoxb923bZ9ieXVYGwvmZU+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=eu-west-1.amazonses.com; dkim=pass (1024-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=iuWeJ7IM; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=XCStTNbG; arc=none smtp.client-ip=54.240.7.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinarskis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eu-west-1.amazonses.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=vuvznkywrn6u4jb2ozie3fqz3nbg6pps; d=vinarskis.com; t=1756811448;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:Cc;
+	bh=1qckQvzwlWC/fKlkJTiN3ZnCnQ5EdaufHJeY89/pEVg=;
+	b=iuWeJ7IM/awOX6TDNMaryJmdvwXLy8orSrP7IU4HhbFfu6hTU+ljBy6TqwlX9VH0
+	WYFb0ooIXs2hcsdh7zTcZnrMbEYUwp+me71Z0bxiwb25y6lXobfdVYK9iFRC6eFInHj
+	qjsNqxJBKM8ayiQbm1dUuAG38Y3lWRSLuOO5FfCg=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1756811448;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:Cc:Feedback-ID;
+	bh=1qckQvzwlWC/fKlkJTiN3ZnCnQ5EdaufHJeY89/pEVg=;
+	b=XCStTNbG72BbnL66aW4tFnwWKuUcLHnEtADvC1jhwkNjNCGosrQfKeGrmmtbYXld
+	gW0QTfGcDS5gFJUbuZWOivtP0sV1ivSOHNTG0utT8XJ1O3g/GzrbszsZ/rdQs0hxHPS
+	vMttAk6EwGiCXYtMjfc1Iop8tjv4bXdFfQjH4nZ4=
+From: Aleksandrs Vinarskis <alex@vinarskis.com>
+Subject: [PATCH 0/2] leds: privacy-led support for devicetree
+Date: Tue, 2 Sep 2025 11:10:48 +0000
+Message-ID: <010201990a1f5100-d47d26c3-6bbf-4119-8410-b5040e080dbf-000000@eu-west-1.amazonses.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250902104533.222730-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK/QtmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSwMj3ZzUlGLdZDPDZAtz88SUFAsDJaDSgqLUtMwKsDHRsbW1AHbbYLd
+ WAAAA
+X-Change-ID: 20250902-leds-c61c877add80
+To: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Aleksandrs Vinarskis <alex@vinarskis.com>, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	Hans de Goede <hansg@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1243; i=alex@vinarskis.com;
+ h=from:subject:message-id; bh=1qckQvzwlWC/fKlkJTiN3ZnCnQ5EdaufHJeY89/pEVg=;
+ b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBnbLmzeL7J1X3rO/LBaMYbgQ/u35WTu+PnTTWPfrdy4q
+ xv3SDJt7ihlYRDjYpAVU2Tp/vM1rWvR3LUM1zW+wcxhZQIZwsDFKQATWXyA4TfrzqMF96YFcdhe
+ Xp6je9msYaHF/86T6+axbVjBoPkiqzqX4X/5ivvrWD/43GnLjVzUadXY7Xd4/bHup+nNF8yde95
+ cfsULAA==
+X-Developer-Key: i=alex@vinarskis.com; a=openpgp;
+ fpr=8E21FAE2D2967BB123303E8C684FD4BA28133815
+Feedback-ID: ::1.eu-west-1.dmE2JeRFSagpgiG6D+fa+YE0PH7S+b7tab7/4kfDOU8=:AmazonSES
+X-SES-Outgoing: 2025.09.02-54.240.7.18
 
-On Tue, Sep 02, 2025 at 11:45:33AM +0100, Lorenzo Stoakes wrote:
-> In commit bb666b7c2707 ("mm: add mmap_prepare() compatibility layer for
-> nested file systems") we introduced the ability for 'nested' drivers and
+Re-spin of RFC patch from ~2.5 years ago [1]. v4l2 controls for privacy
+LEDs has landed, but the DT part was left out.
 
-Fwiw, they're called "stacked filesystems" or "stacking filesystems" such
-as overlayfs. I would recommend you use that terminology going forward
-so we don't confuse each other.
+With recent inflow of arm64-power laptops (Snapdragon X1E/X1P) which
+mostly use MIPI cameras, this feature becomes more desired. Original
+rebased patch is still working as expected (with respective DT changes)
+on Dell XPS 9345.
 
-You've used "nested" here and in the code doc for
-compat_vma_mmap_prepare() you used "'wrapper' file systems".
+Changelog to original series:
+- Pick RFC patch, pick R-by, drop RFC-related commit message part
+- Add new DT binding to describe generic LED consumer properties
+- Rebase and test on X1E laptop
 
-Otherwise seems fine,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+[1] https://lore.kernel.org/all/20230120114524.408368-6-hdegoede@redhat.com/
 
-> file systems to correctly invoke the f_op->mmap_prepare() handler from an
-> f_op->mmap() handler via a compatibility layer implemented in
-> compat_vma_mmap_prepare().
-> 
-> This invokes vma_to_desc() to populate vm_area_desc fields according to
-> those found in the (not yet fully initialised) VMA passed to f_op->mmap().
-> 
-> However this function implicitly assumes that the struct file which we are
-> operating upon is equal to vma->vm_file. This is not a safe assumption in
-> all cases.
-> 
-> This is not an issue currently, as so far we have only implemented
-> f_op->mmap_prepare() handlers for some file systems and internal mm uses,
-> and the only nested f_op->mmap() operations that can be performed upon
-> these are those in backing_file_mmap() and coda_file_mmap(), both of which
-> use vma->vm_file.
-> 
-> However, moving forward, as we convert drivers to using
-> f_op->mmap_prepare(), this will become a problem.
-> 
-> Resolve this issue by explicitly setting desc->file to the provided file
-> parameter and update callers accordingly.
-> 
-> We also need to adjust set_vma_from_desc() to account for this fact, and
-> only update the vma->vm_file field if the f_op->mmap_prepare() caller
-> reassigns it.
-> 
-> We may in future wish to add a new field to struct vm_area_desc to account
-> for this 'nested mmap invocation' case, but for now it seems unnecessary.
-> 
-> While we are here, also provide a variant of compat_vma_mmap_prepare() that
-> operates against a pointer to any file_operations struct and does not
-> assume that the file_operations struct we are interested in is file->f_op.
-> 
-> This function is __compat_vma_mmap_prepare() and we invoke it from
-> compat_vma_mmap_prepare() so that we share code between the two functions.
-> 
-> This is important, because some drivers provide hooks in a separate struct,
-> for instance struct drm_device provides an fops field for this purpose.
-> 
-> Also update the VMA selftests accordingly.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  include/linux/fs.h               |  2 ++
->  mm/util.c                        | 33 +++++++++++++++++++++++---------
->  mm/vma.h                         | 14 ++++++++++----
->  tools/testing/vma/vma_internal.h | 19 +++++++++++-------
->  4 files changed, 48 insertions(+), 20 deletions(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index d7ab4f96d705..3e7160415066 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2279,6 +2279,8 @@ static inline bool can_mmap_file(struct file *file)
->  	return true;
->  }
->  
-> +int __compat_vma_mmap_prepare(const struct file_operations *f_op,
-> +		struct file *file, struct vm_area_struct *vma);
->  int compat_vma_mmap_prepare(struct file *file, struct vm_area_struct *vma);
->  
->  static inline int vfs_mmap(struct file *file, struct vm_area_struct *vma)
-> diff --git a/mm/util.c b/mm/util.c
-> index bb4b47cd6709..83fe15e4483a 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -1133,6 +1133,29 @@ void flush_dcache_folio(struct folio *folio)
->  EXPORT_SYMBOL(flush_dcache_folio);
->  #endif
->  
-> +/**
-> + * __compat_vma_mmap_prepare() - See description for compat_vma_mmap_prepare()
-> + * for details. This is the same operation, only with a specific file operations
-> + * struct which may or may not be the same as vma->vm_file->f_op.
-> + * @f_op - The file operations whose .mmap_prepare() hook is specified.
-> + * @vma: The VMA to apply the .mmap_prepare() hook to.
-> + * Returns: 0 on success or error.
-> + */
-> +int __compat_vma_mmap_prepare(const struct file_operations *f_op,
-> +		struct file *file, struct vm_area_struct *vma)
-> +{
-> +	struct vm_area_desc desc;
-> +	int err;
-> +
-> +	err = f_op->mmap_prepare(vma_to_desc(vma, file, &desc));
-> +	if (err)
-> +		return err;
-> +	set_vma_from_desc(vma, file, &desc);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(__compat_vma_mmap_prepare);
-> +
->  /**
->   * compat_vma_mmap_prepare() - Apply the file's .mmap_prepare() hook to an
->   * existing VMA
-> @@ -1161,15 +1184,7 @@ EXPORT_SYMBOL(flush_dcache_folio);
->   */
->  int compat_vma_mmap_prepare(struct file *file, struct vm_area_struct *vma)
->  {
-> -	struct vm_area_desc desc;
-> -	int err;
-> -
-> -	err = file->f_op->mmap_prepare(vma_to_desc(vma, &desc));
-> -	if (err)
-> -		return err;
-> -	set_vma_from_desc(vma, &desc);
-> -
-> -	return 0;
-> +	return __compat_vma_mmap_prepare(file->f_op, file, vma);
->  }
->  EXPORT_SYMBOL(compat_vma_mmap_prepare);
->  
-> diff --git a/mm/vma.h b/mm/vma.h
-> index bcdc261c5b15..9b21d47ba630 100644
-> --- a/mm/vma.h
-> +++ b/mm/vma.h
-> @@ -230,14 +230,14 @@ static inline int vma_iter_store_gfp(struct vma_iterator *vmi,
->   */
->  
->  static inline struct vm_area_desc *vma_to_desc(struct vm_area_struct *vma,
-> -		struct vm_area_desc *desc)
-> +		struct file *file, struct vm_area_desc *desc)
->  {
->  	desc->mm = vma->vm_mm;
->  	desc->start = vma->vm_start;
->  	desc->end = vma->vm_end;
->  
->  	desc->pgoff = vma->vm_pgoff;
-> -	desc->file = vma->vm_file;
-> +	desc->file = file;
->  	desc->vm_flags = vma->vm_flags;
->  	desc->page_prot = vma->vm_page_prot;
->  
-> @@ -248,7 +248,7 @@ static inline struct vm_area_desc *vma_to_desc(struct vm_area_struct *vma,
->  }
->  
->  static inline void set_vma_from_desc(struct vm_area_struct *vma,
-> -		struct vm_area_desc *desc)
-> +		struct file *orig_file, struct vm_area_desc *desc)
->  {
->  	/*
->  	 * Since we're invoking .mmap_prepare() despite having a partially
-> @@ -258,7 +258,13 @@ static inline void set_vma_from_desc(struct vm_area_struct *vma,
->  
->  	/* Mutable fields. Populated with initial state. */
->  	vma->vm_pgoff = desc->pgoff;
-> -	if (vma->vm_file != desc->file)
-> +	/*
-> +	 * The desc->file may not be the same as vma->vm_file, but if the
-> +	 * f_op->mmap_prepare() handler is setting this parameter to something
-> +	 * different, it indicates that it wishes the VMA to have its file
-> +	 * assigned to this.
-> +	 */
-> +	if (orig_file != desc->file && vma->vm_file != desc->file)
->  		vma_set_file(vma, desc->file);
->  	if (vma->vm_flags != desc->vm_flags)
->  		vm_flags_set(vma, desc->vm_flags);
-> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-> index 6f95ec14974f..4ceb4284b6b9 100644
-> --- a/tools/testing/vma/vma_internal.h
-> +++ b/tools/testing/vma/vma_internal.h
-> @@ -1411,25 +1411,30 @@ static inline void free_anon_vma_name(struct vm_area_struct *vma)
->  
->  /* Declared in vma.h. */
->  static inline void set_vma_from_desc(struct vm_area_struct *vma,
-> -		struct vm_area_desc *desc);
-> -
-> +		struct file *orig_file, struct vm_area_desc *desc);
->  static inline struct vm_area_desc *vma_to_desc(struct vm_area_struct *vma,
-> -		struct vm_area_desc *desc);
-> +		struct file *file, struct vm_area_desc *desc);
->  
-> -static int compat_vma_mmap_prepare(struct file *file,
-> -		struct vm_area_struct *vma)
-> +static inline int __compat_vma_mmap_prepare(const struct file_operations *f_op,
-> +		struct file *file, struct vm_area_struct *vma)
->  {
->  	struct vm_area_desc desc;
->  	int err;
->  
-> -	err = file->f_op->mmap_prepare(vma_to_desc(vma, &desc));
-> +	err = f_op->mmap_prepare(vma_to_desc(vma, file, &desc));
->  	if (err)
->  		return err;
-> -	set_vma_from_desc(vma, &desc);
-> +	set_vma_from_desc(vma, file, &desc);
->  
->  	return 0;
->  }
->  
-> +static inline int compat_vma_mmap_prepare(struct file *file,
-> +		struct vm_area_struct *vma)
-> +{
-> +	return __compat_vma_mmap_prepare(file->f_op, file, vma);
-> +}
-> +
->  /* Did the driver provide valid mmap hook configuration? */
->  static inline bool can_mmap_file(struct file *file)
->  {
-> -- 
-> 2.50.1
-> 
+Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+---
+Aleksandrs Vinarskis (1):
+      dt-bindings: leds: add generic LED consumer documentation
+
+Hans de Goede (1):
+      leds: led-class: Add devicetree support to led_get()
+
+ .../devicetree/bindings/leds/leds-consumer.yaml    | 69 ++++++++++++++++++++++
+ drivers/leds/led-class.c                           | 38 +++++++++---
+ 2 files changed, 98 insertions(+), 9 deletions(-)
+---
+base-commit: 3db46a82d467bd23d9ebc473d872a865785299d8
+change-id: 20250902-leds-c61c877add80
+
+Best regards,
+-- 
+Aleksandrs Vinarskis <alex@vinarskis.com>
+
 
