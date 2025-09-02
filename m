@@ -1,288 +1,519 @@
-Return-Path: <linux-kernel+bounces-797296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD626B40E89
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:23:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C23B40E8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9460F3AF0A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:23:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB01C3AC500
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B1C34AAFB;
-	Tue,  2 Sep 2025 20:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881A434AB19;
+	Tue,  2 Sep 2025 20:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH1YwEXB"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="B9uMA0y7"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DA61D432D;
-	Tue,  2 Sep 2025 20:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8101D432D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 20:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756844592; cv=none; b=gZnNJmoPno3jqFpDgMXT43EYQksltXnP7mItpXg7CU4ckA+HyxOb0IJvj2/yZsBvRwpa3rhb0axK/OXIKH8ODTnVBb1sLnL0yh5sC+CELNz4EqeLua1mKFuJ4l4tfk8JF8V3aN90+8dhFxZDid5ODCdPMgaNKOxt67jnaEcvzU8=
+	t=1756844627; cv=none; b=ZB4co76QFiVeb8K7dlNtuTjKcHxCmXtFUgWV5ZT1ZDw24ZJ0+AmSBA2eRLJZZJ92zoEiNiirkxLu+B034kRE3V0Auf77Ukz8SzqsYOAq1u/k54TYf6Ql3+fahK9KVBQxs7piiUsYY8loHjYD9yHaN2hCq5s8wM+I4v+K2ID34C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756844592; c=relaxed/simple;
-	bh=z953w8TuT0ty1DvPPbTbg449UoKFmMOev6TWCrYF5aQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LD7cZ7Ui5RSQA8Hbb6jXJsJgPq3crPILv+ST51jXG3xiV5k/YjiX3cIG1PwENw4NDXRVUlcvDHHtBmOF7jbStuhV0UJSdrlDfxax481y/qaPXRdkif12iAHWP/UZHct75UCJs21Vblk5+CqtsiaKswgxo274Jhx+9BbFvDsUE6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lH1YwEXB; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b7da4101fso17019605e9.3;
-        Tue, 02 Sep 2025 13:23:10 -0700 (PDT)
+	s=arc-20240116; t=1756844627; c=relaxed/simple;
+	bh=dldwsN7JwF159qfL19SWMfGJuEIEBMeOJ/lW1xsfG64=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PbMQvWggeu3q3dETt2VC14/ISssXL5oT6qH7mxHNJPD/JFa3AU4mTev7Arw93GrJtQ4Z+bYgBnf6VmqTlPhtjngNn0iEGsiAZ36DveTJu6NRu46Z68o+eUFdXvIxNgJRceumUZf1nYVFDbpAU4niGOr3/POl/X8tP5aVq6ueeJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=B9uMA0y7; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b326b6c189so36678401cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 13:23:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756844589; x=1757449389; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e3kOiwL5zqleYtylmerMclyHJqoKO1uL5DJ0d9m4VY4=;
-        b=lH1YwEXB2F6GrwGQ2R7NsCAQpXekevJ2WdvZsrcErxjrnO92sFbF7FB7I9MaUSYRQa
-         RuCjisQ8QPgySMOmEHLC452aZfkriU2/NjNdrZw84ejA+jfBFBGVGbygjl6BDqgBz3Ek
-         Hh7FvDzbv/4Wk5XPrD7CoG5ZE/TIPuh5+rlv0zLxxNxIbjUPr46KF/BxP6Ns3hAJA6LA
-         /mxkznGrMusWgA5p6aacoGQfPxznmSUHY+dB+/QtSu7TXxmv3Tu+zsHsFY4m9EElmR7Y
-         pCDwLbogGzoDOUSMeg4wdY055KgN9Pee0TKRaQHYt32eIBFnbnkjxcjmojikUz8ZYU9q
-         NJNQ==
+        d=zetier.com; s=gm; t=1756844624; x=1757449424; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ti1dNaEX5RAgN5lpAttUlDndIhL/boOtgWoq584IIFM=;
+        b=B9uMA0y7ULitKSg4vCq9rcrnBaTKI2SOLqzi18WEIsspcPI7pytUjlP7GMDhClBPy6
+         Nw1dShQIvyXB8TatAp34klaDzs4kOgoOSdsHi5fiLvVQNucz0uJG7JnVOocQhWrRuxen
+         7BLAW4Xaa42s4CttJ321eIQEdQvfBSEGJek0W/9ArxlRmLAB8fVeIoH4j3zor5D54hMb
+         DSWNIzWRCZ5+F+1eHMZa9ncKsv4AY7QmxSO/HYT+l84urk/xr2g1osN0PAiFg8K/UYjA
+         c9ifi+k4fEIJHiRQXtEdS6o+aGGoM8xUk3kk2YPoL31SjLfRkivRpzSUyS4dNS4YLXbI
+         PT2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756844589; x=1757449389;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e3kOiwL5zqleYtylmerMclyHJqoKO1uL5DJ0d9m4VY4=;
-        b=kSCVGkCi84qZvdb3cZWUA3b+OZDUOAooxISr6Pxr2I8/e3m8zHRx+JpNJ5X/utJuy+
-         IYkPXhncySdxnEH5Z6sHo90GUTE1qbFa3UHxKKcszdeUluVDqLfz+PompYv7X5o10ecp
-         RuN4goOCMwnnj5hbs4LrdsbABEnCgiRwr02dqg7RxTnfsxFgTGwXmfrSusn0l+vNC56u
-         yavOQedUgpTWeGvffk1BgjQffxvgGpCfTop8nKWfum8O9bMFP9nC1Epvz72L7FuixCar
-         NS9l2MWTYYl3/tX2axnz0dhZmAF7zEY44ZJrkIwyAMmzR6XIwGN30RXQzgjRtvKY+Ltz
-         8Mew==
-X-Forwarded-Encrypted: i=1; AJvYcCVQvGPJ2k10+oEYdqs42skeGlOa2H8bPTK1yfi34j+1iASR/avgPiJAW2vCKgPapvgSIlXQjHQHzWWMzRZWptH/Z6fj@vger.kernel.org, AJvYcCX7/x67ZX8RV71cnyAZDixmjj+IZbs3VxzAvNAQbioNFKMxpplhOxJcDzz23cRkOa5ksPJPmqsybyA=@vger.kernel.org, AJvYcCXi8SO7cEIDAtrM+XdSWC0UPEO5+2pKfgx1AX9FO4vZCxsy3ZOBrhzPW7H6JyBAFNPw+3OZuWSqJqNZQd8k@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUiNq44Oi3k8gN5+E848V1Ap2Sgc2X0+DfMlDN/oZp2Ms0kqpc
-	VNPv9zuIb9rJoy0vH9IcPjCTXrKx/xhegJJbAWSK6u93EQ5DVNMIi03+
-X-Gm-Gg: ASbGncs7PGzIcUQ5bjgZgWua7scPCUF0JVK8kzZEUZV4U3yw6zXtM51ibkQQf6oAqk1
-	jKgALY2LKqNQbyhsrf6u5aR0w8oAXngUVDW16YKVGSD0ld31H+rJuAqP7MlY7ZVh5K1ZIIQs4Tj
-	/TPVet7jL7PI3jFlBJLkfSgvWXtT1xZY8UNA0uFVAE7MUlp2q6oR7XWjnGzz2rWj0jLuN2HDap1
-	RKGWsw+NYqwzu1FxSd8u34A3TYXBl8+CrXzQ3iCUxxM2Ryy17woOLsvEVYWOAKpi5cjVoCq0YFW
-	3ewFAbqRR3UelKidfRmwJBolzGVcs9/3p/qLORbe5HfgNdGjxg945um1Zzb/+sKqtGRsTfp9A5X
-	iXDh+GodBaxOpfjZtxYf0aBDq/gd19vUX7Wop7eTXs89ir3+Q8CGdgJayRp1ZTerI+E/VgyzcLB
-	/4vxclw5M5PlWRaqhjrrl2UHhkP961
-X-Google-Smtp-Source: AGHT+IEh5zVEDLWkkm40Gzc0xQdpKMazKhJsQrIOonj4uGsn8SXP4VX6pG/odlqnt8wetWFbUq75gQ==
-X-Received: by 2002:a05:600c:4705:b0:45b:74fc:d6ec with SMTP id 5b1f17b1804b1-45b8553f1e8mr116428895e9.8.1756844588788;
-        Tue, 02 Sep 2025 13:23:08 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23? ([2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b81a9e971sm211259005e9.18.2025.09.02.13.23.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 13:23:08 -0700 (PDT)
-Message-ID: <ad6ed55e-2471-46be-b123-5272f3052e01@gmail.com>
-Date: Tue, 2 Sep 2025 21:23:04 +0100
+        d=1e100.net; s=20230601; t=1756844624; x=1757449424;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ti1dNaEX5RAgN5lpAttUlDndIhL/boOtgWoq584IIFM=;
+        b=Ru/RWTpK1I53/3KRkHLrjxMOUPt0INWGLYMe0q3vBBc/JyiN/xHIVJQfTINcN85chs
+         5Z+80LPkAn09l4JdNpk43Y0Xa7hL5rakaC7ZyBe/r3wtevM49HZOZAl/nloyR3RS/fbk
+         P8l+2J5h4p0miQgpaSRt5A0/iQrTp+8MHLeQi6teWx23nDfh/3Ta6HLz5Zzdi0jIOIP9
+         n0rPlBz936XNYKk4IVDu4skUZZzJT9dstBCeyBxeAxq87be70j994FRZ0EkcJKbnXmM7
+         hKM40dji3sXk7di9EbQNP/bf84Bj8+hien9HUQFyZSJfNalwZy8D+C+tTfiwd9EsJ8MK
+         +IQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwOpHtgUTCv+PEV+/F+vcRkDJH4/4MZ8i8qA89QmieA/Y1uxKV2NRMfX4A9sioO7Dw6sH1Vj6tDmJQss=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl9gWKjF5Mkv783VxrZbsW0cbCd4Ksihox8evLw6zOeaOTYpOU
+	15hs+70uiHGCGdfWg+ckpIGy2MkkLSODQEkst6xhyNkKb9N/i1Q7b7VqxRY6Jo2t0ys=
+X-Gm-Gg: ASbGncs7HzswHg6NeLpDuOWq8sYo3tUDxjYA/q0hMLEAAFquy1DI837MyhbmS8NLWo5
+	GW24Uu9t2J9gv83erznieLnDi40K1g/hhnby5jGTbzPVvtZ+aea11DHBJ6cFGaBOCn630eDJS7Z
+	dG/9I3rQYF31cRHWqUoFJblb1OVr7NbKgaWgnwScTEoSN8yEOYTU5zzR3MYPODuH7EY8wD5HnfT
+	nxLA0vyfEsTYLubjReuHjONW5Jai73TBGCTAypwDsWrkqerxszZpOpG+lDzf3kd9k/CbaaDJ1SM
+	g9/owrLDAdPsSZK/INMfN8MZ6TSB97yabh8vDVX2zrRPgDXDfeAu4kUbYYAwraAGA/BbanXKdaY
+	1ONNSsc2lEbacrmCu0bxBMc7hkaAdhYWnOCiLwLIft6/sr7+e
+X-Google-Smtp-Source: AGHT+IHUsaSnoZSo/var0yLCu9AO/fvoiQsemCFj3Gw1dysdd2u/8NiVBo76Ya0LxI9XAMdMj2Fr8g==
+X-Received: by 2002:a05:622a:4d97:b0:4b3:c25:7280 with SMTP id d75a77b69052e-4b31dd5679cmr186031381cf.71.1756844624181;
+        Tue, 02 Sep 2025 13:23:44 -0700 (PDT)
+Received: from ethanf.zetier.com ([65.222.209.234])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b48f7a1738sm280951cf.46.2025.09.02.13.23.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 13:23:43 -0700 (PDT)
+From: Ethan Ferguson <ethan.ferguson@zetier.com>
+To: yuezhang.mo@sony.com
+Cc: ethan.ferguson@zetier.com,
+	linkinjeon@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sj1557.seo@samsung.com
+Subject: RE: [PATCH v4 0/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
+Date: Tue,  2 Sep 2025 16:23:06 -0400
+Message-Id: <20250902202306.86404-1-ethan.ferguson@zetier.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <PUZPR04MB63160C89856D1164322B643E8106A@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <PUZPR04MB63160C89856D1164322B643E8106A@PUZPR04MB6316.apcprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
- peterx@redhat.com, wangkefeng.wang@huawei.com, sunnanyong@huawei.com,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- yang@os.amperecomputing.com, kirill.shutemov@linux.intel.com,
- aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com
-References: <20250819134205.622806-1-npache@redhat.com>
- <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
- <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
- <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
- <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
- <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
- <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
- <95012dfc-d82d-4ae2-b4cd-1e8dcf15e44b@redhat.com>
- <bdbb5168-7657-4f11-a42d-b75cce7e0bca@lucifer.local>
- <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
- <db2320ee-6bd4-49c1-8fce-0468f48e1842@linux.alibaba.com>
- <c8c5e818-536a-4d72-b8dc-36aeb1b61800@arm.com>
- <2a141eef-46e2-46e1-9b0f-066ec537600d@linux.alibaba.com>
- <f34b5fcb-6a97-4d97-86a8-906083b53be6@redhat.com>
- <eb02c281-6d41-44af-8eaf-8ffc29153a3a@linux.alibaba.com>
- <286e2cb3-6beb-4d21-b28a-2f99bb2f759b@redhat.com>
- <17075d6a-a209-4636-ae42-2f8944aea745@gmail.com>
- <287f3b64-bc34-48d9-9778-c519260c3dba@redhat.com>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <287f3b64-bc34-48d9-9778-c519260c3dba@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-On 02/09/2025 12:03, David Hildenbrand wrote:
-> On 02.09.25 12:34, Usama Arif wrote:
+On 9/2/25 00:55, Yuezhang.Mo@sony.com wrote:
+> Hi,
+> 
+> I have 3 more comments.
+> 
+>> Add support for reading / writing to the exfat volume label from the
+>> FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
 >>
+>> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+>> ---
+>>  fs/exfat/exfat_fs.h  |   5 +
+>>  fs/exfat/exfat_raw.h |   6 ++
+>>  fs/exfat/file.c      |  88 +++++++++++++++++
+>>  fs/exfat/super.c     | 224 +++++++++++++++++++++++++++++++++++++++++++
+>>  4 files changed, 323 insertions(+)
 >>
->> On 02/09/2025 10:03, David Hildenbrand wrote:
->>> On 02.09.25 04:28, Baolin Wang wrote:
->>>>
->>>>
->>>> On 2025/9/2 00:46, David Hildenbrand wrote:
->>>>> On 29.08.25 03:55, Baolin Wang wrote:
->>>>>>
->>>>>>
->>>>>> On 2025/8/28 18:48, Dev Jain wrote:
->>>>>>>
->>>>>>> On 28/08/25 3:16 pm, Baolin Wang wrote:
->>>>>>>> (Sorry for chiming in late)
->>>>>>>>
->>>>>>>> On 2025/8/22 22:10, David Hildenbrand wrote:
->>>>>>>>>>> Once could also easily support the value 255 (HPAGE_PMD_NR / 2- 1),
->>>>>>>>>>> but not sure
->>>>>>>>>>> if we have to add that for now.
->>>>>>>>>>
->>>>>>>>>> Yeah not so sure about this, this is a 'just have to know' too, and
->>>>>>>>>> yes you
->>>>>>>>>> might add it to the docs, but people are going to be mightily
->>>>>>>>>> confused, esp if
->>>>>>>>>> it's a calculated value.
->>>>>>>>>>
->>>>>>>>>> I don't see any other way around having a separate tunable if we
->>>>>>>>>> don't just have
->>>>>>>>>> something VERY simple like on/off.
->>>>>>>>>
->>>>>>>>> Yeah, not advocating that we add support for other values than 0/511,
->>>>>>>>> really.
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Also the mentioned issue sounds like something that needs to be
->>>>>>>>>> fixed elsewhere
->>>>>>>>>> honestly in the algorithm used to figure out mTHP ranges (I may be
->>>>>>>>>> wrong - and
->>>>>>>>>> happy to stand corrected if this is somehow inherent, but reallly
->>>>>>>>>> feels that
->>>>>>>>>> way).
->>>>>>>>>
->>>>>>>>> I think the creep is unavoidable for certain values.
->>>>>>>>>
->>>>>>>>> If you have the first two pages of a PMD area populated, and you
->>>>>>>>> allow for at least half of the #PTEs to be non/zero, you'd collapse
->>>>>>>>> first a
->>>>>>>>> order-2 folio, then and order-3 ... until you reached PMD order.
->>>>>>>>>
->>>>>>>>> So for now we really should just support 0 / 511 to say "don't
->>>>>>>>> collapse if there are holes" vs. "always collapse if there is at
->>>>>>>>> least one pte used".
->>>>>>>>
->>>>>>>> If we only allow setting 0 or 511, as Nico mentioned before, "At 511,
->>>>>>>> no mTHP collapses would ever occur anyway, unless you have 2MB
->>>>>>>> disabled and other mTHP sizes enabled. Technically, at 511, only the
->>>>>>>> highest enabled order would ever be collapsed."
->>>>>>> I didn't understand this statement. At 511, mTHP collapses will occur if
->>>>>>> khugepaged cannot get a PMD folio. Our goal is to collapse to the
->>>>>>> highest order folio.
->>>>>>
->>>>>> Yes, I’m not saying that it’s incorrect behavior when set to 511. What I
->>>>>> mean is, as in the example I gave below, users may only want to allow a
->>>>>> large order collapse when the number of present PTEs reaches half of the
->>>>>> large folio, in order to avoid RSS bloat.
->>>>>
->>>>> How do these users control allocation at fault time where this parameter
->>>>> is completely ignored?
->>>>
->>>> Sorry, I did not get your point. Why does the 'max_pte_none' need to
->>>> control allocation at fault time? Could you be more specific? Thanks.
->>>
->>> The comment over khugepaged_max_ptes_none gives a hint:
->>>
->>> /*
->>>   * default collapse hugepages if there is at least one pte mapped like
->>>   * it would have happened if the vma was large enough during page
->>>   * fault.
->>>   *
->>>   * Note that these are only respected if collapse was initiated by khugepaged.
->>>   */
->>>
->>> In the common case (for anything that really cares about RSS bloat) you will just a
->>> get a THP during page fault and consequently RSS bloat.
->>>
->>> As raised in my other reply, the only documented reason to set max_ptes_none=0 seems
->>> to be when an application later (after once possibly getting a THP already during
->>> page faults) did some MADV_DONTNEED and wants to control the usage of THPs itself using
->>> MADV_COLLAPSE.
->>>
->>> It's a questionable use case, that already got more problematic with mTHP and page
->>> table reclaim.
->>>
->>> Let me explain:
->>>
->>> Before mTHP, if someone would MADV_DONTNEED (resulting in
->>> a page table with at least one pte_none entry), there would have been no way we would
->>> get memory over-allocated afterwards with max_ptes_none=0.
->>>
->>> (1) Page faults would spot "there is a page table" and just fallback to order-0 pages.
->>> (2) khugepaged was told to not collapse through max_ptes_none=0.
->>>
->>> But now:
->>>
->>> (A) With mTHP during page-faults, we can just end up over-allocating memory in such
->>>      an area again: page faults will simply spot a bunch of pte_nones around the fault area
->>>      and install an mTHP.
->>>
->>> (B) With page table reclaim (when zapping all PTEs in a table at once), we will reclaim the
->>>      page table. The next page fault will just try installing a PMD THP again, because there is
->>>      no PTE table anymore.
->>>
->>> So I question the utility of max_ptes_none. If you can't tame page faults, then there is only
->>> limited sense in taming khugepaged. I think there is vale in setting max_ptes_none=0 for some
->>> corner cases, but I am yet to learn why max_ptes_none=123 would make any sense.
->>>
->>>
+>> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+>> index f8ead4d47ef0..ed4b5ecb952b 100644
+>> --- a/fs/exfat/exfat_fs.h
+>> +++ b/fs/exfat/exfat_fs.h
+>> @@ -267,6 +267,7 @@ struct exfat_sb_info {
+>>       struct buffer_head **vol_amap; /* allocation bitmap */
 >>
->> For PMD mapped THPs with THP shrinker, this has changed. You can basically tame pagefaults, as when you encounter
->> memory pressure, the shrinker kicks in if the value is less than HPAGE_PMD_NR -1 (i.e. 511 for x86), and
->> will break down those hugepages and free up zero-filled memory.
-> 
-> You are not really taming page faults, though, you are undoing what page faults might have messed up :)
-> 
-> I have seen in our prod workloads where
->> the memory usage and THP usage can spike (usually when the workload starts), but with memory pressure,
->> the memory usage is lower compared to with max_ptes_none = 511, while still still keeping the benefits
->> of THPs like lower TLB misses.
-> 
-> Thanks for raising that: I think the current behavior is in place such that you don't bounce back-and-forth between khugepaged collapse and shrinker-split.
-> 
-
-Yes, both collapse and shrinker split hinge on max_ptes_none to prevent one of these things thrashing the effect of the other.
-
-> There are likely other ways to achieve that, when we have in mind that the thp shrinker will install zero pages and max_ptes_none includes
-> zero pages.
-> 
+>>       unsigned short *vol_utbl; /* upcase table */
+>> +     unsigned short *volume_label; /* volume name */
 >>
->> I do agree that the value of max_ptes_none is magical and different workloads can react very differently
->> to it. The relationship is definitely not linear. i.e. if I use max_ptes_none = 256, it does not mean
->> that the memory regression of using THP=always vs THP=madvise is halved.
+>>       unsigned int clu_srch_ptr; /* cluster search pointer */
+>>       unsigned int used_clusters; /* number of used clusters */
+>> @@ -431,6 +432,10 @@ static inline loff_t exfat_ondisk_size(const struct
+>> inode *inode)
+> [snip]
+>> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+>> index 538d2b6ac2ec..970e3ee57c43 100644
+>> --- a/fs/exfat/file.c
+>> +++ b/fs/exfat/file.c
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/security.h>
+>>  #include <linux/msdos_fs.h>
+>>  #include <linux/writeback.h>
+>> +#include "../nls/nls_ucs2_utils.h"
+>>
+>>  #include "exfat_raw.h"
+>>  #include "exfat_fs.h"
+>> @@ -486,10 +487,93 @@ static int exfat_ioctl_shutdown(struct super_block
+>> *sb, unsigned long arg)
+>>       return exfat_force_shutdown(sb, flags);
+>>  }
+>>
+>> +static int exfat_ioctl_get_volume_label(struct super_block *sb, unsigned
+>> long arg)
+>> +{
+>> +     int ret;
+>> +     char utf8[FSLABEL_MAX] = {0};
+>> +     struct exfat_uni_name *uniname;
+>> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>> +
+>> +     uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
+>> +     if (!uniname)
+>> +             return -ENOMEM;
+>> +
+>> +     ret = exfat_read_volume_label(sb);
+>> +     if (ret < 0)
+>> +             goto cleanup;
+>> +
+>> +     memcpy(uniname->name, sbi->volume_label,
+>> +            EXFAT_VOLUME_LABEL_LEN * sizeof(short));
+>> +     uniname->name[EXFAT_VOLUME_LABEL_LEN] = 0x0000;
+>> +     uniname->name_len = UniStrnlen(uniname->name,
+>> EXFAT_VOLUME_LABEL_LEN);
+>> +
+>> +     ret = exfat_utf16_to_nls(sb, uniname, utf8, FSLABEL_MAX);
+>> +     if (ret < 0)
+>> +             goto cleanup;
+>> +
+>> +     if (copy_to_user((char __user *)arg, utf8, FSLABEL_MAX)) {
+>> +             ret = -EFAULT;
+>> +             goto cleanup;
+>> +     }
+>> +
+>> +     ret = 0;
+>> +
+>> +cleanup:
+>> +     kfree(uniname);
+>> +     return ret;
+>> +}
+>> +
+>> +static int exfat_ioctl_set_volume_label(struct super_block *sb,
+>> +                                     unsigned long arg,
+>> +                                     struct inode *root_inode)
+>> +{
+>> +     int ret, lossy;
+>> +     char utf8[FSLABEL_MAX];
+>> +     struct exfat_uni_name *uniname;
+>> +
+>> +     if (!capable(CAP_SYS_ADMIN))
+>> +             return -EPERM;
+>> +
+>> +     uniname = kmalloc(sizeof(struct exfat_uni_name), GFP_KERNEL);
+>> +     if (!uniname)
+>> +             return -ENOMEM;
+>> +
+>> +     if (copy_from_user(utf8, (char __user *)arg, FSLABEL_MAX)) {
+>> +             ret = -EFAULT;
+>> +             goto cleanup;
+>> +     }
+>> +
+>> +     if (utf8[0]) {
+>> +             ret = exfat_nls_to_utf16(sb, utf8, strnlen(utf8,
+>> FSLABEL_MAX),
+>> +                                      uniname, &lossy);
+>> +             if (ret < 0)
+>> +                     goto cleanup;
+>> +             else if (lossy & NLS_NAME_LOSSY) {
+>> +                     ret = -EINVAL;
+>> +                     goto cleanup;
+>> +             }
+>> +     } else {
+>> +             uniname->name[0] = 0x0000;
+>> +             uniname->name_len = 0;
+>> +     }
+>> +
+>> +     if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
+>> +             exfat_info(sb, "Volume label length too long, truncating");
+>> +             uniname->name_len = EXFAT_VOLUME_LABEL_LEN;
+>> +     }
+>> +
+>> +     ret = exfat_write_volume_label(sb, uniname, root_inode);
+>> +
+>> +cleanup:
+>> +     kfree(uniname);
+>> +     return ret;
+>> +}
+>> +
+>>  long exfat_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>>  {
+>>       struct inode *inode = file_inode(filp);
+>>       u32 __user *user_attr = (u32 __user *)arg;
+>> +     struct inode *root_inode = filp->f_path.mnt->mnt_root->d_inode;
+>>
+>>       switch (cmd) {
+>>       case FAT_IOCTL_GET_ATTRIBUTES:
+>> @@ -500,6 +584,10 @@ long exfat_ioctl(struct file *filp, unsigned int cmd,
+>> unsigned long arg)
+>>               return exfat_ioctl_shutdown(inode->i_sb, arg);
+>>       case FITRIM:
+>>               return exfat_ioctl_fitrim(inode, arg);
+>> +     case FS_IOC_GETFSLABEL:
+>> +             return exfat_ioctl_get_volume_label(inode->i_sb, arg);
+>> +     case FS_IOC_SETFSLABEL:
+>> +             return exfat_ioctl_set_volume_label(inode->i_sb, arg,
+>> root_inode);
+>>       default:
+>>               return -ENOTTY;
+>>       }
+>> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+>> index 8926e63f5bb7..7931cdb4a1d1 100644
+>> --- a/fs/exfat/super.c
+>> +++ b/fs/exfat/super.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/nls.h>
+>>  #include <linux/buffer_head.h>
+>>  #include <linux/magic.h>
+>> +#include "../nls/nls_ucs2_utils.h"
+>>
+>>  #include "exfat_raw.h"
+>>  #include "exfat_fs.h"
+>> @@ -573,6 +574,228 @@ static int exfat_verify_boot_region(struct
+>> super_block *sb)
+>>       return 0;
+>>  }
+>>
+>> +static int exfat_get_volume_label_ptrs(struct super_block *sb,
+>> +                                    struct buffer_head **out_bh,
+>> +                                    struct exfat_dentry **out_dentry,
+>> +                                    struct inode *root_inode)
+>> +{
+>> +     int i, ret;
+>> +     unsigned int type, old_clu;
+>> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>> +     struct exfat_chain clu;
+>> +     struct exfat_dentry *ep, *deleted_ep = NULL;
+>> +     struct buffer_head *bh, *deleted_bh;
+>> +
+>> +     clu.dir = sbi->root_dir;
+>> +     clu.flags = ALLOC_FAT_CHAIN;
+>> +
+>> +     while (clu.dir != EXFAT_EOF_CLUSTER) {
+>> +             for (i = 0; i < sbi->dentries_per_clu; i++) {
+>> +                     ep = exfat_get_dentry(sb, &clu, i, &bh);
+>> +
+>> +                     if (!ep) {
+>> +                             ret = -EIO;
+>> +                             goto end;
+>> +                     }
+>> +
+>> +                     type = exfat_get_entry_type(ep);
+>> +                     if (type == TYPE_DELETED && !deleted_ep && root_inode)
+>> {
+>> +                             deleted_ep = ep;
+>> +                             deleted_bh = bh;
+>> +                             continue;
+>> +                     }
+>> +
+>> +                     if (type == TYPE_UNUSED) {
+>> +                             if (!root_inode) {
+>> +                                     brelse(bh);
+>> +                                     ret = -ENOENT;
+>> +                                     goto end;
+>> +                             }
+>> +
+>> +                             if (deleted_ep) {
+>> +                                     brelse(bh);
+>> +                                     goto end;
+>> +                             }
+>> +
+>> +                             if (i < sbi->dentries_per_clu - 1) {
+>> +                                     deleted_ep = ep;
+>> +                                     deleted_bh = bh;
+>> +
+>> +                                     ep = exfat_get_dentry(sb, &clu,
+>> +                                                           i + 1, &bh);
+>> +                                     memset(ep, 0,
+>> +                                            sizeof(struct exfat_dentry));
+>> +                                     ep->type = EXFAT_UNUSED;
+>> +                                     exfat_update_bh(bh, true);
+>> +                                     brelse(bh);
+>> +
+>> +                                     goto end;
+>> +                             }
+>> +
+>> +                             // Last dentry in cluster
 > 
-> To which value would you set it? Just 510? 0?
+> Please use /* */ to comment.
 > 
-
-There are some very large workloads in the meta fleet that I experimented with and found that having
-a small value works out. I experimented with 0, 51 (10%) and 256 (50%). 51 was found to be an optimal
-comprimise in terms of application metrics improving, having an acceptable amount of memory regression and
-improved system level metrics (lower TLB misses, lower page faults). I am sure there was a better value out
-there for these workloads, but not possible to experiment with every value.
-
-In terms of wider rollout across the fleet, we are going to target 0 (or a very very small value)
-when moving from THP=madvise to always. Mainly because it is the least likely to cause a memory regression as
-THP shrinker will deal with page faults faulting in mostly zero-filled pages and khugepaged wont collapse
-pages that are dominated by 4K zero-filled chunks. 
-
+>> +                             clu.size = 0;
+>> +                             old_clu = clu.dir;
+>> +                             ret = exfat_alloc_cluster(root_inode, 1,
+>> +                                                       &clu, true);
+>> +                             if (ret < 0) {
+>> +                                     brelse(bh);
+>> +                                     goto end;
+>> +                             }
+> 
+> In exFAT, directory size is limited to 256MB. Please add a check to return -ENOSPC
+> instead of allocating a new cluster if the root directory size had reached this limit. 
+>
+Noted. I am switching over to using exfat_find_empty_entry, which
+checks for this.
+>> +
+>> +                             ret = exfat_ent_set(sb, old_clu, clu.dir);
+>> +                             if (ret < 0) {
+>> +                                     exfat_free_cluster(root_inode, &clu);
+>> +                                     brelse(bh);
+>> +                                     goto end;
+>> +                             }
+>> +
+>> +                             ret = exfat_zeroed_cluster(root_inode, clu.dir);
+>> +                             if (ret < 0) {
+>> +                                     exfat_free_cluster(root_inode, &clu);
+>> +                                     brelse(bh);
+>> +                                     goto end;
+>> +                             }
+> 
+> After allocating a new cluster for the root directory, its size needs to be updated.
+>
+Where would I update the size? I don't think the root directory has a
+Stream Extension dentry, would I increment the exfat_inode_info.dir.size
+field?
+>> +
+>> +                             deleted_ep = ep;
+>> +                             deleted_bh = bh;
+>> +                             goto end;
+>> +                     }
+>> +
+>> +                     if (type == TYPE_VOLUME) {
+>> +                             *out_bh = bh;
+>> +                             *out_dentry = ep;
+>> +
+>> +                             if (deleted_ep)
+>> +                                     brelse(deleted_bh);
+>> +
+>> +                             return 0;
+>> +                     }
+>> +
+>> +                     brelse(bh);
+>> +             }
+>> +
+>> +             if (exfat_get_next_cluster(sb, &(clu.dir))) {
+>> +                     ret = -EIO;
+>> +                     goto end;
+>> +             }
+>> +     }
+>> +
+>> +     ret = -EIO;
+>> +
+>> +end:
+>> +     if (deleted_ep) {
+>> +             *out_bh = deleted_bh;
+>> +             *out_dentry = deleted_ep;
+>> +             memset((*out_dentry), 0, sizeof(struct exfat_dentry));
+>> +             (*out_dentry)->type = EXFAT_VOLUME;
+>> +             return 0;
+>> +     }
+>> +
+>> +     *out_bh = NULL;
+>> +     *out_dentry = NULL;
+>> +     return ret;
+>> +}
+>> +
+>> +static int exfat_alloc_volume_label(struct super_block *sb)
+>> +{
+>> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>> +
+>> +     if (sbi->volume_label)
+>> +             return 0;
+>> +
+>> +
+>> +     mutex_lock(&sbi->s_lock);
+>> +     sbi->volume_label = kcalloc(EXFAT_VOLUME_LABEL_LEN,
+>> +                                                  sizeof(short), GFP_KERNEL);
+>> +     mutex_unlock(&sbi->s_lock);
+>> +
+>> +     if (!sbi->volume_label)
+>> +             return -ENOMEM;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +int exfat_read_volume_label(struct super_block *sb)
+>> +{
+>> +     int ret, i;
+>> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>> +     struct buffer_head *bh = NULL;
+>> +     struct exfat_dentry *ep = NULL;
+>> +
+>> +     ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, NULL);
+>> +     // ENOENT signifies that a volume label dentry doesn't exist
+>> +     // We will treat this as an empty volume label and not fail.
+>> +     if (ret < 0 && ret != -ENOENT)
+>> +             goto cleanup;
+>> +
+>> +     ret = exfat_alloc_volume_label(sb);
+>> +     if (ret < 0)
+>> +             goto cleanup;
+>> +
+>> +     mutex_lock(&sbi->s_lock);
+>> +     if (!ep)
+>> +             memset(sbi->volume_label, 0, EXFAT_VOLUME_LABEL_LEN);
+>> +     else
+>> +             for (i = 0; i < EXFAT_VOLUME_LABEL_LEN; i++)
+>> +                     sbi->volume_label[i] = le16_to_cpu(ep-
+>>> dentry.volume_label.volume_label[i]);
+>> +     mutex_unlock(&sbi->s_lock);
+>> +
+>> +     ret = 0;
+>> +
+>> +cleanup:
+>> +     if (bh)
+>> +             brelse(bh);
+>> +
+>> +     return ret;
+>> +}
+>> +
+>> +int exfat_write_volume_label(struct super_block *sb,
+>> +                          struct exfat_uni_name *uniname,
+>> +                          struct inode *root_inode)
+>> +{
+>> +     int ret, i;
+>> +     struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>> +     struct buffer_head *bh = NULL;
+>> +     struct exfat_dentry *ep = NULL;
+>> +
+>> +     if (uniname->name_len > EXFAT_VOLUME_LABEL_LEN) {
+>> +             ret = -EINVAL;
+>> +             goto cleanup;
+>> +     }
+>> +
+>> +     ret = exfat_get_volume_label_ptrs(sb, &bh, &ep, root_inode);
+>> +     if (ret < 0)
+>> +             goto cleanup;
+>> +
+>> +     ret = exfat_alloc_volume_label(sb);
+>> +     if (ret < 0)
+>> +             goto cleanup;
+>> +
+>> +     memcpy(sbi->volume_label, uniname->name,
+>> +            uniname->name_len * sizeof(short));
+>> +
+>> +     mutex_lock(&sbi->s_lock);
+>> +     for (i = 0; i < uniname->name_len; i++)
+>> +             ep->dentry.volume_label.volume_label[i] =
+>> +                     cpu_to_le16(sbi->volume_label[i]);
+>> +     // Fill the rest of the str with 0x0000
+>> +     for (; i < EXFAT_VOLUME_LABEL_LEN; i++)
+>> +             ep->dentry.volume_label.volume_label[i] = 0x0000;
+>> +
+>> +     ep->dentry.volume_label.char_count = uniname->name_len;
+>> +     mutex_unlock(&sbi->s_lock);
+>> +
+>> +     ret = 0;
+>> +
+>> +cleanup:
+>> +     if (bh) {
+>> +             exfat_update_bh(bh, true);
+>> +             brelse(bh);
+>> +     }
+>> +
+>> +     return ret;
+>> +}
+>> +
+>>  /* mount the file system volume */
+>>  static int __exfat_fill_super(struct super_block *sb,
+>>               struct exfat_chain *root_clu)
+>> @@ -791,6 +1014,7 @@ static void delayed_free(struct rcu_head *p)
+>>
+>>       unload_nls(sbi->nls_io);
+>>       exfat_free_upcase_table(sbi);
+>> +     kfree(sbi->volume_label);
+>>       exfat_free_sbi(sbi);
+>>  }
+>>
+>> --
+>> 2.34.1
 
