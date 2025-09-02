@@ -1,236 +1,251 @@
-Return-Path: <linux-kernel+bounces-797229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBADCB40DB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:14:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 687B7B40DB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A536B16AE9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:14:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 163E77AB4AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4933130F526;
-	Tue,  2 Sep 2025 19:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5D434A31B;
+	Tue,  2 Sep 2025 19:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fMVhBLfJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="ef55wGw4"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2115.outbound.protection.outlook.com [40.107.220.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D197334DCF3
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756840491; cv=none; b=sxobE5qVcffGq9G8ELFQ6rSMAlLXrfS6FoPQMhK0ehqmtwYMr4rPGJUWAPLj5AtXGbilpMs/I+FXoTYGZdX3UO5reQipVUkuJBhk3R1QpKP6Uf7E/NlYcKlnMCm5+pu80EY+svJQbrbbLtyFouDmv8QCX6Pn5z+Emk3tXcSkfBw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756840491; c=relaxed/simple;
-	bh=RSBAgdoMOKm5IwqWsYjIIPQnJ9uikA97s63dOsl+8Ig=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
-	 In-Reply-To:Content-Type; b=rml4BI0X4k09l9DoNM8K338DEtjno2NL3Ze6+q8XZZR1lXBkhh6TIsvzXoYggd4VNHP1rXXIItzOUlApmYHS66QJvJwMoCH0h3iuWl+tbmAAaTQrJ4MEsc9L7KLyReUO17iZ0dojZxEO+ezDoijMFW816B0hEpWLvHzAmq1ORHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fMVhBLfJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756840488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aSqqhn9oIstClK6Qhb6siZxNdxq9o+AJbsb/fcLxCA4=;
-	b=fMVhBLfJdDl6sRV5au5rhiIeWVSixCn7uZqPj/aIaShle0FKVPLg7sky8T9k4T1OWmbOHy
-	n4Z7YhIhAP63a0ni00118iO+DZTDmA0BCk7FYtSHys0mxPJ29tkbiMMNOidWG6YKSSiPht
-	ALhI+Ldq8dxEEUuMEp0cAYkod7DtD0A=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-122-xEGyx4ABPGiav292FeI8HQ-1; Tue, 02 Sep 2025 15:14:47 -0400
-X-MC-Unique: xEGyx4ABPGiav292FeI8HQ-1
-X-Mimecast-MFC-AGG-ID: xEGyx4ABPGiav292FeI8HQ_1756840486
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7fc5584a2e5so1317705685a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:14:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756840486; x=1757445286;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aSqqhn9oIstClK6Qhb6siZxNdxq9o+AJbsb/fcLxCA4=;
-        b=k5691WqyBI69sK6qhF5FuiTwx3/OozYw5GkOXUhn+y0mV4EMVtn6HPtXzbWMEEI9ZD
-         QSJIOJViJr+K/LLRl9H66JWHghaeiymLrIFilwmE4ZYXgUswnSF5IxB9KxevQ9hjBHIR
-         c+31ot8OMggKAw/gq4hME493XRA+SZLo0i3c52/+3x+QrLYs7MXvo1l0zm94Y5F3gSK2
-         u0JetW8UoO1ZbD2aZujxuWISOoFfhryeFwP9dv3xGWu/GvI2HEE/ROKnkoOGYG8VrV1t
-         itb0uCxkeD51qQ3H4yvW2nXzK5sT81mD37kqgBrmAgRdAydX1GS//3zbrjCGdGbcr1rL
-         YBbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfHT6MqMPqtbHR5Yn7RU0yTvME+RC4uJlhYJNgHDECAHhNUhLCbKiIMx+23xcN9zOYAEcbo7ADbRdmsqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywstwb7NE0rFVsOkSADgU/FqbAHR/4CIMrf6YJaKWlnDRcnV/cR
-	gaVnLqih6FWe8a3aOWOVUh/W+3E9g9ot2BfedLwoELK3rCESlEo+pHjDNa87+iBtpRrkiSFNKLL
-	uL4WP9fKWwZe/XDqFdv9fHhKStKUX7hGPNjOIm0pAb+Y3+2Fzp4XpniskEVh9HwamZQ==
-X-Gm-Gg: ASbGnct1GxRJGi4tKwt0qXAQJTPnGTBAadcDYzVQw4JNuy9jNE+oead7hghb2W7dFEv
-	dIFLnLR8Bs1KD6n17WdtiDUOIrkv0Xixo5jMtmg33b5AhzgbZzqcmhkf9mQfaV/QCS83lXDW6gJ
-	FhzH1z1SFQBYNB+7LcVVj0+nsPCbUII1grXLclSYLX63dDFeMpB/8cSqhqEZHkx6T8dLcu2JwZn
-	gHjIVKCzFk9fiy/lN1E8gwvcr6bLzTSlDhX+Yql0ufbWqLaGP5A63b76UH6EUQ0AF0qStjDNs7F
-	Tw0pJX75rj/kjhFxB2ftuDpKRtldR3I3KmcFhFSdn4Rf6jO7pcydaBfTkEsSzYLeSCwqX1VjXG7
-	5JKlWHnfVpQ==
-X-Received: by 2002:a05:620a:f03:b0:7f9:9316:7c63 with SMTP id af79cd13be357-7ff26eab2c7mr1352506885a.11.1756840486361;
-        Tue, 02 Sep 2025 12:14:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmIDUJmNn5Qtveg0UWNVlNv97TGdVHQoxewI6Rs8BIOE+5hr43bWk82pZRuzSgc62dNl+9CA==
-X-Received: by 2002:a05:620a:f03:b0:7f9:9316:7c63 with SMTP id af79cd13be357-7ff26eab2c7mr1352503485a.11.1756840485929;
-        Tue, 02 Sep 2025 12:14:45 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8081076843csm88708785a.0.2025.09.02.12.14.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 12:14:45 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <647dabe8-f2ee-4b7c-87c3-b96db79cce7c@redhat.com>
-Date: Tue, 2 Sep 2025 15:14:44 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F99C20C038;
+	Tue,  2 Sep 2025 19:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.115
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756840601; cv=fail; b=ubEHh81QloO/sgPvDxyZP8CIhU0uk0zGRjXMfuiZrX4Bs9gC8BBsl8fjyuBRibwgBl8EviQzgsH50UJ8uwx8uWVaf4MmHDcwfY6QaC/LGeWSZuwIFtq7mJCSCoeD/HZMF4H92AKLD1BCELB04j2be7C9lP+HwaJWjTGHpJRJlII=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756840601; c=relaxed/simple;
+	bh=MX5KAO6csZFsbFEVKZWy3Y/sxP1r7U2UlJeUV+2RLdU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tp/NzDDK5wrdSf9WhWBQcS4z15edSAXq7S4x5WYvZ8ysVhOAXUo8Rer6x8J6xh+dl6jO1+ZO4AXZs4gwINchGeR9GhV63uzyi5KrXv1ZETcPmENGX4cvBrQ1n2U2U8LRQpuNOW6XmPdBocq4L7sL1L1THT2e7fdXZVzQ271NJJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=ef55wGw4; arc=fail smtp.client-ip=40.107.220.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jQYH4a3Qpcf7R/Fp2gt0jwSBiZ5d9lJQqOKKFxbhaxnspBrWauvDmN6k+56/+REBV5SjmpcohRFYIrCWf7WlRb03i6HkHFIJrJeRGKinEorGEeI+yylG5B+aztp/7gKVyFazEit3TB3QF/OpWjZJo8d+PQI9UK7MixmDI3Gq1N13KcK9ZWINfidgiqKqFuZgEZNjc8yBD7f2sAkQZAXbTGEYAiGsILpmcSGKJgJqWmaW64IuFXaO4FpFbTEZ+OPXKbhJ2SeKdA90obhLGBmK1IsFqfmuZ25FBRr8tnJ/QBp9qAATOgAhA7dnJ77Tvv2Lyj/ry7S1dmZZCmlJDaGlOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9PNhWdZKvKC5QLQoG1SafrTDK+g/nY/6NgLl7hc3w5o=;
+ b=VaZcJgF8xXs4pRVbXmp66vOQ3yC9MyJMCZGQ2RVW4lLaSQuWY2HVUoeG+nDjoiAMFzmlw4LVj1Bs5zgwnjm/n2/Q1vuDui5U4hpdYGbK4hwfeynyoudC+5xa4uxFG7YNQ4Yz7pTuRm0iwgOgRxc5s1AlRVYlElPBUU7aGPKbMp4bF9qPxOUFKTYAJAYB12l3cwXB1HVXp6cwkBQpCI/7pM4Djy29piXJc7iPVxlT3puutPSg2R+CMDrv/4aBDWA5MBtlu36a1TTyCcBNmLwaxk3v0tm5ovHOysLrvO6b+n1qF+TVx3I9uhxqXnHSy9lTqi/mX9SMqsj6jEClh+pB5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 50.233.182.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axiado.com;
+ dmarc=none action=none header.from=axiado.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9PNhWdZKvKC5QLQoG1SafrTDK+g/nY/6NgLl7hc3w5o=;
+ b=ef55wGw4pErQ1/0CSRPbK9ZA+Aheo125ONAzaUQl9iMeeqB6xBF1ylxdME9fQ6G+Ywy6IU4JMLLv+DDiKTKCDIymus4JjFPCkvQtoV/GS6jitQmOtC+/5ZO0gQMvWHTt2HWXvP1+9YqdWlDl9VxsiT1/cXqaECIV4DyeOkw+6RPkRtL+SwUOOIaqjVu81sMIGS5nNSRII1i5Wr7oU7j72Pw1DT9xgWDocMJ3zCsbfj+zOldCsX2xiEXOAilKJNUvzj9X8WRlXX/Vrx7tNtk43jqIvPGWQHUotjwyvvLh/MLAJ1fViQAkMMxTTfgiOd3TIB10y4JUD7G4sesEM6eQnQ==
+Received: from CH0PR03CA0345.namprd03.prod.outlook.com (2603:10b6:610:11a::29)
+ by DS0PR18MB5395.namprd18.prod.outlook.com (2603:10b6:8:12a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 19:16:37 +0000
+Received: from CH2PEPF00000141.namprd02.prod.outlook.com
+ (2603:10b6:610:11a:cafe::68) by CH0PR03CA0345.outlook.office365.com
+ (2603:10b6:610:11a::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.16 via Frontend Transport; Tue,
+ 2 Sep 2025 19:16:37 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
+ smtp.mailfrom=axiado.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axiado.com;
+Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
+ designate 50.233.182.194 as permitted sender)
+ receiver=protection.outlook.com; client-ip=50.233.182.194; helo=[127.0.1.1];
+Received: from [127.0.1.1] (50.233.182.194) by
+ CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.14
+ via Frontend Transport; Tue, 2 Sep 2025 19:16:36 +0000
+From: Harshit Shah <hshah@axiado.com>
+Date: Tue, 02 Sep 2025 12:16:29 -0700
+Subject: [PATCH RESEND v3] serial: xilinx_uartps: read reg size from DTS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 7/8] cgroup/cpuset: Fail if isolated and nohz_full
- don't leave any housekeeping
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20250806093855.86469-1-gmonaco@redhat.com>
- <20250806093855.86469-8-gmonaco@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20250806093855.86469-8-gmonaco@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250902-xilinx-uartps-reg-size-v3-1-d11cfa7258e3@axiado.com>
+X-B4-Tracking: v=1; b=H4sIAIxCt2gC/32OPRMBMRRF/4pJLWaTrCRUCloFpVHk44U3w65J2
+ FnM/nexFBSU97055947SRAREpkO7iRCgwnrKgcxHBC3N9UOKPqcCS/4uNBM0BYPWLX0YuL5lGi
+ EHU14A+qEBam81lY5kuFThIBtL96Q1WK9WM7JNt/3mM51vPZ9Deu/b/Xkl7phlNEiWCVKVnAR7
+ My0aHw9cvXxWfXiOf/LK23GTgpnpQ+f/HNTIz528PKnR2SPlloFWRrFPXx5uq57AJNBRIlNAQA
+ A
+X-Change-ID: 20250813-xilinx-uartps-reg-size-c3be67d88b7c
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Harshit Shah <hshah@axiado.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3389; i=hshah@axiado.com;
+ h=from:subject:message-id; bh=MX5KAO6csZFsbFEVKZWy3Y/sxP1r7U2UlJeUV+2RLdU=;
+ b=owEB7QES/pANAwAKAfFYcxGhMtX7AcsmYgBot0KTsgbPW0No1Xw0qQfokaBFKs/8Ai+KvJkkX
+ y+nevha8VaJAbMEAAEKAB0WIQRO3pC/7SkLS2viWOvxWHMRoTLV+wUCaLdCkwAKCRDxWHMRoTLV
+ +w0IDACf98gRR3BoRdbE+0NtUC1QqXHK4xTxJMlUhWv+6gn+DgzvkVMKjyhhnytW4ev48ywaxKB
+ xmkyoYHFKQFOzNKMbee3r3++tPNfG6WA9yDxZCUCo+SRj79kfs/Lyt39FnObVOXYY3U+1uae78B
+ LS1WGgYhd1ho+4Xs64ekH5to/kfAu8fiXRdD8/ubkj6pPAdUraHe1+ULDlRkJIktMOL2w9NIpY2
+ tvbj+C4+MhmUhr21hbaAux3nEJtGBjKcbnGgpDUiPEIx6/npRcIAZ0JlOWjDoSxwLtyMatqe9Mp
+ D5G0qTPxbwNxZl7z7YFw16sOre61dtvYf1iih7QL55ga/5okHwU3QefO6+QW39Gmk9c2+D1u+gU
+ nMDmr4iYi7kHvXZxvLV6CV65v0EKZYQx+bFffR19UDyWfMXv0GNZ6y6zdFxtS+oHxrxDP0cIH+q
+ Ffl2aUzppknOvq8NA1F/T/ctixb8MxbkbyC5zSWlim/hw/lbnJmRh3xpquvSWcyIJb/1w=
+X-Developer-Key: i=hshah@axiado.com; a=openpgp;
+ fpr=4EDE90BFED290B4B6BE258EBF1587311A132D5FB
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|DS0PR18MB5395:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8517f98e-54d4-43a3-2228-08ddea553cd5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?KzNqNTVKNHJqaXJ4M1VCV01wbCtsNVZBR1F4bldNL1ZXQmtDQ29oYkx1SHRX?=
+ =?utf-8?B?dUE3VXFuUGlVNnV6UitsVjFIUzBSS2RHL0t5OGJaK1h1U1BOUlZZSHBCNUY0?=
+ =?utf-8?B?VEM2OXlzUUoyTitMSFR2YWRSdzlQdTlIQk1jT2JYSE5pS2lFYWZEelI5Z2tX?=
+ =?utf-8?B?amJaN29jSUpyRjhWVEpvM1IwaXBXR0R0UWttSnd6azFnbnVod2Z3dU1GU0Ry?=
+ =?utf-8?B?a3RoOC9WV0pnaTBrdFdaNHVEb1dkZHNWTVZTME0wQ0Z1ZzlmVGJPQjJGTkd3?=
+ =?utf-8?B?bWlJbzdxTFZxVW9zNFlmdkd6VzUzWHdEdkkwU01ObnVPYkE5UUZGUUZMUVZB?=
+ =?utf-8?B?VnpnR2h2REtFQTA2ZHJNSVczWmhueHlHeGVUc0xieFQxRFJubmtzYk9WL3kr?=
+ =?utf-8?B?Q1ZJeEZNbzFqRndQQkUxM2hIRmhaZDNWOGh0RjQ0RVozNmtiZXVTdFVxUGpa?=
+ =?utf-8?B?anliZUkwS29QcmxUMm44VGZrUW9jd09TUU9Gamp2T3pUTThWV0FVNDRXakZP?=
+ =?utf-8?B?RE92aWxKMzBXak5HdTNWMVFkTkZoL0RoR3RhU01lUlpRbkpFUW9uOUVRZVdo?=
+ =?utf-8?B?aHpXMkVlOUdGeHV5UHBCbVZaM1VXSWNZUEZHa1BKUDVFWnpUaXgzaXlHbEQ3?=
+ =?utf-8?B?enRWYTVHbFBaemtqK2cvOG9TaEM2aGpuYWVMSmNOTnJSQUlOVjhpeHF5dzhL?=
+ =?utf-8?B?a2V3S0RITG81WkFhd3ZKdjFoT3I2VzBBaFFJd2RPYzYwcWVMblNMRktVMUIz?=
+ =?utf-8?B?d3lGczFwQWJrNms4ZGUvNkJ5Y3o1M1NqNythdUMzVHBGMGpyanh4azZTbnE2?=
+ =?utf-8?B?aEd6aDEzZnBFZXgxQUUyeXlVd2hPRVVvcXhBQ3lWUU0zVWJhK2Y3WFhBcXFM?=
+ =?utf-8?B?eXhzSnVWRlRXV25iWTB1U0xtZ3YwSGJFWFRoVFZjWncxNmMrVzFHQytJRnY0?=
+ =?utf-8?B?cWkyRENkcE91T24rSFZWb0hJdXBZM3Z4V1F3VEtLcDVZa2hSNzR6bUo0U1dv?=
+ =?utf-8?B?djh0Wk41MFB5ZXh5NkI1QlNRYTUyTVdhQUZoWDRTcTJNemwxOFh0ZHVQNDFn?=
+ =?utf-8?B?eCtmYUN4TGVHcmE0bDVPZ2ZKdmtNL2U3Q1d3MXRpaHNyd293aUczMGJQUk5k?=
+ =?utf-8?B?d2lIRG15UHVsQ1hXMHd0VTZpck5vbHdrVnJZYndRazl2SFU5Z0xHdy9SQkFy?=
+ =?utf-8?B?WjlpTDA5QUgrWUtlMzYyMXVsQTZKWlpndGQzL3R4N3BXT2l4ZnlkR3VwZkgw?=
+ =?utf-8?B?dUxWN2w3TzJQVTVJV2l5MTBxUEVYN2ROR3ZBTkt2Z1ZRUU4xY2RZMzN1ei94?=
+ =?utf-8?B?S3hJd2duRXFldlJSeWovY1dWdU9jTkh1SmZuYndpRHdwUkpFMHptM21IU095?=
+ =?utf-8?B?YlVWL1ZEcnlGZnpRMzRYbG9BN1lpbzdubnByVk5NdVdLbmJrMVFqNm5pQllK?=
+ =?utf-8?B?YWw5MVU1T2ZTeHo1cVhjVjVyM2hkb2FYSDUzc0JJTUJXd2RocG45VkFTYVpM?=
+ =?utf-8?B?Y1Z1TjNRTmd4MG15YkJqUXg0QS96b3FkYjk1R2hNak5JNmMvRjZWSHNsSHFr?=
+ =?utf-8?B?U0xoZzFVYUFYelVqYUQwck9nSjR3V25tUEc1a2VtTkJ4cVFyQ0JMK1lDd2lZ?=
+ =?utf-8?B?Ri9MbHloS3RRTXQxeFVzUE83TnZZS1E1YlpXQ3RpMzlHSHhRL1djbWkvV2p0?=
+ =?utf-8?B?MWxubUYwRGhkdjZVVTBZbTdwZlkxOHF3WUhUZEF0TURXdHk4S1g3UURNN2NX?=
+ =?utf-8?B?UkZCWEVzK0Fub0w5V29ZMWNGa0kwOTdSMTlwTW9lSnFTNEQySnFGcWtaMVhG?=
+ =?utf-8?B?QXdMUW9HNVJnSjluT2JiWWd0emd5cTRPcng4ZnRIVCtCajlYZndlOVdVdW4x?=
+ =?utf-8?B?bVpDR1g2YW1WY0xyd2xEQWlsZmx6VUwvYXhTTEdUTGlPOVUvRm9CVHlYVFgv?=
+ =?utf-8?B?ZUpUOTJ2Ny84cThmVHd4SW9ZVGNNSStWdHhtVXRxQmRyVjBwSDJJaEVZbnZr?=
+ =?utf-8?B?UXFFUmdIdmV3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.1.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: axiado.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 19:16:36.5306
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8517f98e-54d4-43a3-2228-08ddea553cd5
+X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[[127.0.1.1]]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000141.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR18MB5395
 
-On 8/6/25 5:38 AM, Gabriele Monaco wrote:
-> Currently the user can set up isolated cpus via cpuset and nohz_full in
-> such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
-> domain isolated nor nohz full). This can be a problem for other
-> subsystems (e.g. the timer wheel imgration).
->
-> Prevent this configuration by blocking any assignation that would cause
-> the union of domain isolated cpus and nohz_full to covers all CPUs.
->
-> Acked-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->   kernel/cgroup/cpuset.c | 57 ++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 57 insertions(+)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 6e3f44ffaa21..7b66ccedbc53 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1275,6 +1275,19 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
->   		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
->   }
->   
-> +/*
-> + * isolated_cpus_should_update - Returns if the isolated_cpus mask needs update
-> + * @prs: new or old partition_root_state
-> + * @parent: parent cpuset
-> + * Return: true if isolated_cpus needs modification, false otherwise
-> + */
-> +static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
-> +{
-> +	if (!parent)
-> +		parent = &top_cpuset;
-> +	return prs != parent->partition_root_state;
-> +}
-> +
->   /*
->    * partition_xcpus_add - Add new exclusive CPUs to partition
->    * @new_prs: new partition_root_state
-> @@ -1339,6 +1352,36 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
->   	return isolcpus_updated;
->   }
->   
-> +/*
-> + * isolcpus_nohz_conflict - check for isolated & nohz_full conflicts
-> + * @new_cpus: cpu mask for cpus that are going to be isolated
-> + * Return: true if there is conflict, false otherwise
-> + *
-> + * If nohz_full is enabled and we have isolated CPUs, their combination must
-> + * still leave housekeeping CPUs.
-> + */
-> +static bool isolcpus_nohz_conflict(struct cpumask *new_cpus)
-> +{
-> +	cpumask_var_t full_hk_cpus;
-> +	int res = false;
-> +
-> +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
-> +		return false;
-> +
-> +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
-> +		return true;
-> +
-> +	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
-> +		    housekeeping_cpumask(HK_TYPE_DOMAIN));
-> +	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
-> +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_online_mask);
-> +	if (!cpumask_weight_andnot(full_hk_cpus, new_cpus))
-> +		res = true;
-> +
-> +	free_cpumask_var(full_hk_cpus);
-> +	return res;
-> +}
-> +
->   static void update_exclusion_cpumasks(bool isolcpus_updated)
->   {
->   	int ret;
-> @@ -1464,6 +1507,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->   	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
->   	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
->   		return PERR_INVCPUS;
-> +	if (isolated_cpus_should_update(new_prs, NULL) &&
-> +	    isolcpus_nohz_conflict(tmp->new_cpus))
-> +		return PERR_HKEEPING;
->   
->   	spin_lock_irq(&callback_lock);
->   	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
-> @@ -1563,6 +1609,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->   		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
->   			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
->   			cs->prs_err = PERR_NOCPUS;
-> +		else if (isolated_cpus_should_update(prs, NULL) &&
-> +			 isolcpus_nohz_conflict(tmp->addmask))
-> +			cs->prs_err = PERR_HKEEPING;
->   		if (cs->prs_err)
->   			goto invalidate;
->   	}
-> @@ -1914,6 +1963,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->   			return err;
->   	}
->   
-> +	if (deleting && isolated_cpus_should_update(new_prs, parent) &&
-> +	    isolcpus_nohz_conflict(tmp->delmask)) {
-> +		cs->prs_err = PERR_HKEEPING;
-> +		return PERR_HKEEPING;
-> +	}
-> +
->   	/*
->   	 * Change the parent's effective_cpus & effective_xcpus (top cpuset
->   	 * only).
-> @@ -2934,6 +2989,8 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->   		 * Need to update isolated_cpus.
->   		 */
->   		isolcpus_updated = true;
-> +		if (isolcpus_nohz_conflict(cs->effective_xcpus))
-> +			err = PERR_HKEEPING;
->   	} else {
->   		/*
->   		 * Switching back to member is always allowed even if it
+Current implementation uses `CDNS_UART_REGISTER_SPACE(0x1000)`
+for request_mem_region() and ioremap() in cdns_uart_request_port() API.
 
-As I said in my comment to Frederic patch series that in both 
-remote_cpus_update() and update_parent_effective_cpumask(), some new 
-CPUs can be added to the isolation list while other CPUs can be removed 
-from it. So isolcpus_nohz_conflict() should include both set in its 
-analysis to avoid false positive. Essentally, if the CPUs removed from 
-the isolated_cpus intersect with the nohz_full housekeeping mask, there 
-is no conflict.
+The cadence/xilinx IP has register space defined from offset 0x0 to 0x48.
+It also mentions that the register map is defined as [6:0]. So, the upper
+region may/maynot be used based on the IP integration.
 
-Cheers,
-Longman
+In Axiado AX3000 SoC two UART instances are defined
+0x100 apart. That is creating issue in some other instance due to overlap
+with addresses.
+
+Since, this address space is already being defined in the
+devicetree, use the same when requesting the register space.
+
+Fixes: 1f7055779001 ("arm64: dts: axiado: Add initial support for AX3000 SoC and eval board")
+Acked-by: Michal Simek <michal.simek@amd.com>
+Signed-off-by: Harshit Shah <hshah@axiado.com>
+---
+- Link to v3: https://lore.kernel.org/r/20250824-xilinx-uartps-reg-size-v3-1-8687f64a72de@axiado.com
+
+Changes in v3:
+- move Fixes: tag before Acked-by (Greg)
+- Link to v2: https://lore.kernel.org/r/20250819-xilinx-uartps-reg-size-v1-1-0fb7341023fb@axiado.com
+
+Changes in v2:
+- Add fixes tag in commit msg
+- Link to v1: https://lore.kernel.org/r/20250822-xilinx-uartps-reg-size-v1-1-78a5c63cb6df@axiado.com
+---
+
+---
+ drivers/tty/serial/xilinx_uartps.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index fe457bf1e15bb4fc77a5c7de2aea8bfbdbaa643a..a66b44d21fba2558d0b2a62864d86d3b73152e26 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -33,7 +33,6 @@
+ #define CDNS_UART_MINOR		0	/* works best with devtmpfs */
+ #define CDNS_UART_NR_PORTS	16
+ #define CDNS_UART_FIFO_SIZE	64	/* FIFO size */
+-#define CDNS_UART_REGISTER_SPACE	0x1000
+ #define TX_TIMEOUT		500000
+ 
+ /* Rx Trigger level */
+@@ -1098,15 +1097,15 @@ static int cdns_uart_verify_port(struct uart_port *port,
+  */
+ static int cdns_uart_request_port(struct uart_port *port)
+ {
+-	if (!request_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE,
++	if (!request_mem_region(port->mapbase, port->mapsize,
+ 					 CDNS_UART_NAME)) {
+ 		return -ENOMEM;
+ 	}
+ 
+-	port->membase = ioremap(port->mapbase, CDNS_UART_REGISTER_SPACE);
++	port->membase = ioremap(port->mapbase, port->mapsize);
+ 	if (!port->membase) {
+ 		dev_err(port->dev, "Unable to map registers\n");
+-		release_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE);
++		release_mem_region(port->mapbase, port->mapsize);
+ 		return -ENOMEM;
+ 	}
+ 	return 0;
+@@ -1121,7 +1120,7 @@ static int cdns_uart_request_port(struct uart_port *port)
+  */
+ static void cdns_uart_release_port(struct uart_port *port)
+ {
+-	release_mem_region(port->mapbase, CDNS_UART_REGISTER_SPACE);
++	release_mem_region(port->mapbase, port->mapsize);
+ 	iounmap(port->membase);
+ 	port->membase = NULL;
+ }
+@@ -1780,6 +1779,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
+ 	 * and triggers invocation of the config_port() entry point.
+ 	 */
+ 	port->mapbase = res->start;
++	port->mapsize = resource_size(res);
+ 	port->irq = irq;
+ 	port->dev = &pdev->dev;
+ 	port->uartclk = clk_get_rate(cdns_uart_data->uartclk);
+
+---
+base-commit: 8742b2d8935f476449ef37e263bc4da3295c7b58
+change-id: 20250813-xilinx-uartps-reg-size-c3be67d88b7c
+
+Best regards,
+-- 
+Harshit Shah <hshah@axiado.com>
 
 
