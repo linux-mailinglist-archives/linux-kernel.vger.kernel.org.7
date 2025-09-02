@@ -1,168 +1,170 @@
-Return-Path: <linux-kernel+bounces-796580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623FAB402C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:23:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2824B402E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99144175073
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:22:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C96516EFE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1543054E7;
-	Tue,  2 Sep 2025 13:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCA030BF62;
+	Tue,  2 Sep 2025 13:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="krjuJKed";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kv7tc5Zl"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F30gZqHu"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9527B305057
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5923090FD;
+	Tue,  2 Sep 2025 13:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819296; cv=none; b=e4LQCgpycFpgwkBQJP4t0dr9IOnUUlKXWUrZfxMzmRyuU27o+gvdbwR3VBDG4MqVdcEW2SV0Yunqdh9h8N+ktJN/UYNfwlO2e1+b11+BvX7we/8GHm493snBawJeDhUOo/bQWmUfQXxFttWh9xJqreQFmAvXjn3efNMu+GVjX2o=
+	t=1756819384; cv=none; b=nh1QbY58ywZHl14fZFnI6+0zGhoxxkSAPDqDuNBKUcpxijoTtQAaV6haNxsF7g+TEP2txp88Ug3lKcThHm4cC/mdH/kCZidFMFJS+FSKu05cEy0o9FYXdaEJ3aL1faPIezOPq0iQngmp6vBnAUfVCTIMvWXBOmrtJm+X1slHiWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819296; c=relaxed/simple;
-	bh=4/Fjff2cjH92o3ZuNQmlWkEvWmmi75J/xPgut/CQq2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZT+82qn35ULYYzsbCszW2vk/h05fJidtipblp8paJOdgGP771LUo+4P8/oC1Fqp7vLJmW4hSvQ0aWNpkaUwPOseqCNuI8SpnA0o5umCmBARzg+RjNdKi4qVIUpJtoEk0YIFtFaMfabNkHB8+9M3rLQET8YoB8l1uNk5FPel7Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=krjuJKed; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kv7tc5Zl; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id BD37DEC0462;
-	Tue,  2 Sep 2025 09:21:33 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 02 Sep 2025 09:21:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1756819293; x=
-	1756905693; bh=nJeUVlALNdS28seLiy00VvLxk+MhX14VjWVeCWs5TeE=; b=k
-	rjuJKedvnaeNqhn4Kmqjwnwtd96NVNwXtHdov0Udh6nASk5Jgy9g6owJbgMkKp5x
-	AGGDn4PwvzvHoVLJg8pJHAN/zSk9MSodwJAAlXxzZTG5UnagoG7ByvAU8h8TFZFf
-	KM3UuKhT0K2nmd9XdRA5p0Tee68WromgZ5rwdoo89/FIYBfJBT4OqEDq2pK91xon
-	nG5BZW+w+LVEnEtlf8rcwPFag2rgAW6tAwCHKGJKfEOfM3EH17AsIP7wCvBgwtQO
-	qfJ1iXLD35HEqSPNd9fbcXY1pmmb02NBk2usBmIycT1dnS1W8r7CjMDGgKP8DM29
-	5n1oN16Y2gao3NxjEQw6g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756819293; x=1756905693; bh=nJeUVlALNdS28seLiy00VvLxk+MhX14VjWV
-	eCWs5TeE=; b=Kv7tc5ZlsT/vS4+f+LAOEtlMomwc8TPylM+i36u17BukeMBjM5i
-	fu6gg/A8n6qzwQm3kpaRbr6xTqAZE4jlifNYV81wwkkeI9Bn1M7fGIadUUAxuWgi
-	mi8aonUx2qSLldmeFaPQ5lsF0WKBy5n1hNCOOd71Scn2GXfFgymo4dyOkv4bMfZw
-	zkHnwYWX/ZzSmRWvcsSViXc9M5I9Zv08ZGLEAw/OlxQP972FH0FNB73U9X57fgBC
-	a7BlbtY4CuFIiZoKu6Y3OuFx0GiQi6ETThh9wlxboSNjI5cFNMpaC9NcD04GCtZa
-	gyqF6mvxswKx4db4dYkcuNsSZ89dW/6hHLA==
-X-ME-Sender: <xms:XO-2aCNU_Fxda-TrRptuSpIMIbgBIKL-6zZKdfcTpAXtjor3TmTHqg>
-    <xme:XO-2aLzWgwRfCZiqhXddAp2QhyfYd58usf-F2KQTXWVDIqWUPWl3_Fym2ffbKDJzS
-    LdTk-M2YQiB1WIFZm0>
-X-ME-Received: <xmr:XO-2aHgihy4R2mKQig-rV6-mdWuixFAXgmpq4FuxN6jIzf1ECN5TEwh0T3xH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
-    ohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpe
-    ffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfuhhhu
-    thhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrg
-    htthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtleduhfef
-    feffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeegpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehkvghrnhgvlhesphgrnhhkrghjrhgrgh
-    hhrghvrdgtohhmpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghp
-    thhtoheprhihrghnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtoheplhhorh
-    gvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepsggrohhl
-    ihhnrdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopeguvg
-    hvrdhjrghinhesrghrmhdrtghomhdprhgtphhtthhopegsrghohhhurgeskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdroh
-    hrghdprhgtphhtthhopehnphgrtghhvgesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:XO-2aCQ1CRmyNf7IJSOz8SfvlJfJ4glq7nMIEC-QhiFbIPEHofWZoA>
-    <xmx:XO-2aEN5aQdKvgQj8sPeSophDhTeyzKBO5bQf6mt0yxgxw9iyyGIjA>
-    <xmx:XO-2aHEefdlTziFsvPcBkhW9aW1UZNL-xh-p1gLTICBAW4--s3_ciw>
-    <xmx:XO-2aEiYIM_kwTObNz8DEqQWcG7Yxbh8JfrWB603WzF5K63b1xYUcA>
-    <xmx:Xe-2aFqkMbENbYRl7810LXgoMO-OJERlGvRYplzs4Y2Af-4uOtPuv87J>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Sep 2025 09:21:31 -0400 (EDT)
-Date: Tue, 2 Sep 2025 14:21:28 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Pankaj Raghav <kernel@pankajraghav.com>
-Cc: David Hildenbrand <david@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	willy@infradead.org, mcgrof@kernel.org, gost.dev@samsung.com, 
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] huge_memory: return -EINVAL in folio split functions
- when THP is disabled
-Message-ID: <h7pqst5vvkahposrvf2iy5qz53t4crrujold2ky4ssrpawaefv@yaqaj3so2hxi>
-References: <20250902084036.208921-1-kernel@pankajraghav.com>
- <qh7s3j26aac3hyzgnr2ee6byjenstxhjnlwn4qxbvz2l32ohqc@qbhdxvpnuhtp>
- <90cd5be7-cbe6-42c5-b0eb-bf9613047097@pankajraghav.com>
- <6l6f5idkqebpai6qn6n3phbnydz55typdwmvp3eexwnhk4qr54@otcgssegyqke>
- <519df8fd-b02d-4b4b-bf47-79070e3d2c9e@pankajraghav.com>
+	s=arc-20240116; t=1756819384; c=relaxed/simple;
+	bh=NuYFEKMaNu1hQjN2Md5xNm1r7h0CNUWlhKkPh3zc5MU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GSxKG7FXTnlNRDcoSggs5W/52ug1vJpvSpJXidDu6w2NvD2bnzimidROeyAAG46e90lLGA784kGWdUJRn4EXkgSYOUZN63BSWhT06JvMM9WaBxdwwGerICLRTBdLtIy2yj0ICGXRSTjwYWJZ6npaCS9JuXbpEXFMVJkQply3lYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F30gZqHu; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b82a21e6bso25412425e9.2;
+        Tue, 02 Sep 2025 06:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756819380; x=1757424180; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qolo47kLruRZDje5v7puvJiYv8DgcRb8St2Hs5XCLlg=;
+        b=F30gZqHuULH4MaUitG25AfyQTZaZi7OS5i+/GHn2tfVDzael5+Pb2wk91yqK9DyQuf
+         QzReF9plrgcT61Cl5HfNFFi+KA0KvopbFgeAOM02ysR/WhlmGvJNNMvfZpdqSvj5r+ND
+         Y0IAEH6WrHHew0TdYINySSK6VcVLapRIkg8KrCQI4WOTufpNpLAdiZK8RHoTx4REz5jW
+         EDphb9ubj8bLqyBmMiOFDrUqOi/cS+ZKUoKQgnCnp4RiMS2pDcJgaeedAMwx0zBoouvX
+         Q6vAukeuplcdwYGiclWPCzhxz2Hxk9QDZ0wsqTTx3atDCRU6qrIOt7y0d8XAPMCp7bDK
+         nxwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756819380; x=1757424180;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qolo47kLruRZDje5v7puvJiYv8DgcRb8St2Hs5XCLlg=;
+        b=HIv3PmSY9SOG/d79lsbGfPxwcYAM//rLKKSd9uadwxsjBbbzAA/5p+gKuPNJF4ffoq
+         HhzTQRsR+vECnONxRKClt6FXalFJq+B95pjORKbO/M4HkJz0WyK8Di2OxizYhKkzpuqb
+         IMtN4unzS5XvHvL+FoP/7aYqic9lbRVzzu2vOcitYwy8axCRxLUjX1J9A/porvo2L838
+         rFvKfkhCOizdjx8VhJ1KdsTmT4LFhoQKvyNtvCb7ftvFzf6kqDCeSdHAdjQsY1TY4GV1
+         Og+jZ4i2SNGp3eDfCac4T7W7GHwEDuA+dp6EYJ/cXeM/sZ/PFtK5RlqfC3KqYv92YeVp
+         uLKg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+R5A2N6OUWkyYfsK0Kgb1HWxutt6Gh6igpJS0P+j9MmmNyvRu/k50laPk2usnENqLL8QuDl43Zr9XZDk=@vger.kernel.org, AJvYcCXnM/9KvJfKpvI/4K3LG4ebDwWqMbytC847B1QexHDw6OIsXNTtjAwWlep50L2u41NBdsrPth5oGbpgqmTl@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhhQnRcf75ZvXcKA8CZ2hpwzls4iYl9qBwUHESNKuGf1lPOECY
+	HBSs4qEEunZxMNdEWCDYs+sdJLZnDZJ3fXQDgQcLiI0Bs540ffaD9+O/
+X-Gm-Gg: ASbGncuXDdnWhxaEfAQ/JqTLopqE/8tNfWDwiBWnJzts1NiHRxB+r/jbjvM45yLhy8c
+	x5K5koPD88CrhVm4Qo1uNFnV+1+cbp6cU+mCi+opa7RVVXFxjpIMxXmEkm+lF0JVWBciUSB63hq
+	UnZkOrJGF1R76EdYE9TLFFtsQ2YXP0+VBj9cQHpkDMOIgE6t/0gHMS6afjngTqIjaF14q+aY7zT
+	vKRQYbhdgQTC7oPoUqfNRac0c1xnUU4XqK/I+QGKQJy+nH3g/wblOFI0VTJRy9mVZ3cwPXrRC6x
+	lcqiyj8ojO1i+Vh1YahwOeNWGrW8sxnnktohJfNj9/w1cdJOS6UhtMPLZkpb+zUcHoqU7AGpmMl
+	0y+zm+vku1vxWE/YoTuJGb/jCkinqWa+NX+EUIvG8VJCi
+X-Google-Smtp-Source: AGHT+IFVMpRzBsmi4JxaTIrSD5qdn6LF3a/HZb80zXbTgRnBpIOBBAGYwh5jd/sYemoWSplteKfu3A==
+X-Received: by 2002:a05:600c:3b28:b0:456:201a:99f with SMTP id 5b1f17b1804b1-45b8730d443mr85114285e9.18.1756819380078;
+        Tue, 02 Sep 2025 06:23:00 -0700 (PDT)
+Received: from ws-linux01 ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b945332adsm44452155e9.4.2025.09.02.06.22.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:22:59 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: clabbe.montjoie@gmail.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	linux-crypto@vger.kernel.org
+Cc: wens@csie.org,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Subject: [PATCH v3 4/9] crypto: sun8i-ce - add a new function for dumping task descriptors
+Date: Tue,  2 Sep 2025 16:21:29 +0300
+Message-ID: <20250902132134.3287515-5-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250902132134.3287515-1-ovidiu.panait.oss@gmail.com>
+References: <20250902132134.3287515-1-ovidiu.panait.oss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <519df8fd-b02d-4b4b-bf47-79070e3d2c9e@pankajraghav.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 02, 2025 at 03:02:23PM +0200, Pankaj Raghav wrote:
-> >> I was hitting a weird stale content read error and finally ended up with this fix.
-> >>
-> >> I thought this is a self-contained patch that can already be upstream. My argument is not that this
-> >> should not be reachable, but returning -EINVAL will do the right thing instead of returning 0, which
-> >> means success.
-> > 
-> > Okay, makes sense.
-> > 
-> > In THP=y case, __folio_split() also returns -EINVAL for !large folios,
-> > but it is not very explicit:
-> > 
-> > 	if (new_order >= folio_order(folio))
-> > 		return -EINVAL;
-> > 
-> > In THP=y, we also issue warning:
-> > 
-> > 	VM_WARN_ON_ONCE_FOLIO(!folio_test_locked(folio), folio);
-> > 
-> You mean:
-> 
-> VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
+In order to remove code duplication, factor out task descriptor dumping to
+a new function sun8i_ce_dump_task_descriptors().
 
-Yeah, copied wrong line.
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+---
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-core.c    | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-> > Makes sense to do the same here for THP=n. It might help to catch cases
-> > we do not see with THP=y, like getting non-THP large folios here.
-> > 
-> 
-> Yeah, I think that is a good idea. Something like this:
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 48c4f91c5b13..4ddf9e87db91 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -588,21 +588,29 @@ static inline int
->  split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->                 unsigned int new_order)
->  {
-> +       struct folio *folio = page_folio(page);
-> +
-> +       VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
-
-No. Make it unconditional. The point is we don't expect to see any
-splitable folios, so no reason to get here at all.
-
-You can try to use BUILD_BUG(), but it can be too messy.
-
+diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+index ba30859e749c..b7093fbb8e9d 100644
+--- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
++++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
+@@ -169,6 +169,12 @@ static const struct ce_variant ce_r40_variant = {
+ 	.trng = CE_ID_NOTSUPP,
+ };
+ 
++static void sun8i_ce_dump_task_descriptors(struct sun8i_ce_flow *chan)
++{
++	print_hex_dump(KERN_INFO, "TASK: ", DUMP_PREFIX_NONE, 16, 4,
++		       chan->tl, sizeof(struct ce_task), false);
++}
++
+ /*
+  * sun8i_ce_get_engine_number() get the next channel slot
+  * This is a simple round-robin way of getting the next channel
+@@ -183,7 +189,6 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
+ {
+ 	u32 v;
+ 	int err = 0;
+-	struct ce_task *cet = ce->chanlist[flow].tl;
+ 
+ #ifdef CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG
+ 	ce->chanlist[flow].stat_req++;
+@@ -225,9 +230,8 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
+ 		/* Sadly, the error bit is not per flow */
+ 		if (v) {
+ 			dev_err(ce->dev, "CE ERROR: %x for flow %x\n", v, flow);
++			sun8i_ce_dump_task_descriptors(&ce->chanlist[flow]);
+ 			err = -EFAULT;
+-			print_hex_dump(KERN_INFO, "TASK: ", DUMP_PREFIX_NONE, 16, 4,
+-				       cet, sizeof(struct ce_task), false);
+ 		}
+ 		if (v & CE_ERR_ALGO_NOTSUP)
+ 			dev_err(ce->dev, "CE ERROR: algorithm not supported\n");
+@@ -244,9 +248,8 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
+ 		v &= 0xF;
+ 		if (v) {
+ 			dev_err(ce->dev, "CE ERROR: %x for flow %x\n", v, flow);
++			sun8i_ce_dump_task_descriptors(&ce->chanlist[flow]);
+ 			err = -EFAULT;
+-			print_hex_dump(KERN_INFO, "TASK: ", DUMP_PREFIX_NONE, 16, 4,
+-				       cet, sizeof(struct ce_task), false);
+ 		}
+ 		if (v & CE_ERR_ALGO_NOTSUP)
+ 			dev_err(ce->dev, "CE ERROR: algorithm not supported\n");
+@@ -260,9 +263,8 @@ int sun8i_ce_run_task(struct sun8i_ce_dev *ce, int flow, const char *name)
+ 		v &= 0xFF;
+ 		if (v) {
+ 			dev_err(ce->dev, "CE ERROR: %x for flow %x\n", v, flow);
++			sun8i_ce_dump_task_descriptors(&ce->chanlist[flow]);
+ 			err = -EFAULT;
+-			print_hex_dump(KERN_INFO, "TASK: ", DUMP_PREFIX_NONE, 16, 4,
+-				       cet, sizeof(struct ce_task), false);
+ 		}
+ 		if (v & CE_ERR_ALGO_NOTSUP)
+ 			dev_err(ce->dev, "CE ERROR: algorithm not supported\n");
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.50.0
+
 
