@@ -1,62 +1,80 @@
-Return-Path: <linux-kernel+bounces-797105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04509B40BE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04715B40BDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D5CC480725
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:20:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAE48204696
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7F8343D66;
-	Tue,  2 Sep 2025 17:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4F5341ACE;
+	Tue,  2 Sep 2025 17:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kuv6Z+LX"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7H0Lm7N"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC99A341ACA;
-	Tue,  2 Sep 2025 17:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756833633; cv=none; b=YscCKgrSvEdF8lfvZYuts5QHjlARa+Gzbov55uMTL/RAMv8z3dcbR27P18duguK94MvrAK7+6UyJheqK5g8+5ePnoMTvQrp//AHefPqAa7CN3hECEYADQHMQXdB+EZTfQFu+azIwol5hCO2ghz2dLaNpccmdqw6Uy8kfYOqh0p4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756833633; c=relaxed/simple;
-	bh=qFgUF1osgygwZFYC4PkjJp8wVytK5yqc9LO2RtSM53I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AvaFI8U63RRrxsuTpDsLo9fBF3pzZIZX5HEdAUYoHp0Va92N6t5GTzFaGtsn+RpV1CAlEaGMnKlVVi3vGZ2saMVtnIh08u47Sxf7F0vsnSTozna1ISDVq6SGVa7RchhIKQmakJHxQTl5aZKeM0x5VB8cq3ZsXhb/BIEcViqEQPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kuv6Z+LX; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cGXZ55w6fzlgqTy;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD4A4C9D;
 	Tue,  2 Sep 2025 17:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756833619; x=1759425620; bh=rcSijRL9UwJ1dqStpHuM/dG4
-	cStBkvWYCMMHl+1+Cng=; b=kuv6Z+LXNqYSNDJyvl7uARidzAC19sCPS6KL6G1p
-	M8fhGmlrK2Z49g3QBos4UVN2YoLuej2iYl5UsvkDjhx2GXD3pq7hFgNvar5F4UPC
-	6qWExCu8zuds5EdbkrKfQ0IzEWiHTwwWZG0wqYH0jy7W0LasbDKCfjWR464ED2dI
-	NM7mfNxseG8tqAYTkN8z+yrNxVaAtaZoWzeiIl2nUAuqdNKPrT7GLhri6m+jyTYY
-	x6NbsMi+m5aU4PwM65iOWeUEIU/Nw4xJwc0huuHzQJ/VyWuX1Azn7jAjRSEW6/xg
-	B/gTSQoxwoNQAXNBIF6prjeukG26kEOXWL5z/Lou8sfyIA==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 1Ok1mpBqzuq7; Tue,  2 Sep 2025 17:20:19 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cGXYb0pNTzlgqyB;
-	Tue,  2 Sep 2025 17:20:02 +0000 (UTC)
-Message-ID: <e40b076d-583d-406b-b223-005910a9f46f@acm.org>
-Date: Tue, 2 Sep 2025 10:20:01 -0700
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756833631; cv=none; b=o4dxW5i5nJfYkx/F+2Bn4NRMGeeMH1EMnT9hA9SGdWCL3JGgd73++kYenxa6ug+nYotei20HXfF5p9VgGHJ3baPtDBfw9k+7J9Kg1niwMNbbfRC8l3yzIUxd2j6FoaZ2tQyrkdOX0sQSfu0E763Mqb0YYfYUE3qef+ulMyOMXTc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756833631; c=relaxed/simple;
+	bh=aAIA/74ykFG0qSe/yOMdbXjAvsrrRajO6wp0FuGkyIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=smjMseoU2ug8GDLogoVmTesNt6ynWJao4nK4XFMzFui/+6hejwO3jQODrszcsiSTxea/+6NfsgqcsZg0mK+RRcCTSMVLtqFIolUGxmXbwsObo/YPEgDsOnTajpsWYootVthWzmlkCGT3pBAFeiEmUbaq1Q0BVm4xc2F8kRX+J0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k7H0Lm7N; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b30f73ca19so28518701cf.0;
+        Tue, 02 Sep 2025 10:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756833628; x=1757438428; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9UcAoezJikf05g2UoojgkOql9xoE6wdqt1xJrbbCb4g=;
+        b=k7H0Lm7NoGVDF1kd8SF5uWoECd2n/pTpxZ7WAB941/8WCroN+eklyGB3ujD/IIYx7v
+         x3oRnLkrDYjsfusC62KKp5xP0O9U3EeZ/+c/d9Bo5ei+hMg5hkL1+fYqBKStLF3LBcYP
+         U/+uNKwlRBcwII/yAvnzgEe3qMs4/jlbJJGevkepB0geC+aFCzZ/AiL1LXuigz7V2xhM
+         k5P7wEAp81wFSpEXyuJ4kh11PvDvNCEAa9sD8pWxot/YhOtK6mu2+A58EnvXyJEhYiRi
+         DTyLcgBYY1rCSCiG73CTVTaNEB9jhUVkcOAwCPynLbZny1lcgw5yr0bQx6ro5DwxwbE4
+         X8Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756833628; x=1757438428;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9UcAoezJikf05g2UoojgkOql9xoE6wdqt1xJrbbCb4g=;
+        b=Z/d0TaJpDd6++P+4KdxRCAkz7TIrsxwbnRzxZrecwqp+3StyKmo3mRJmjr/y4EJSPJ
+         /MfABbJ/JFjnDPEXw+pAuqIYduFDBTPvHegTklx9rp5/+YfA9DDkFH47eTOPnpBI+qNX
+         FUZJZ43HO4XvM8hAd3BltUCSAst44Qo1G3xDOoM+me5WI11LvyRjlNZhjFmEPXLhRPId
+         Pi/ylCLE3H02MUKSK/VJxZfUG/vV8IAVdQb1MdZoenicz306mITbsVCniSTEcvexO8z2
+         2A1kZqBWlsb7zk9LGq6l2U6y0RssWi3IynyBKVdUR7JJSZz50aqZw4bcxi1VXV4xuZsm
+         CaXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV53vRDGrEC8hcyg1jSjmxlWDH7YS4UBoRgBrYVWc07mY0ewVYfsScdJbvUh/PGhhcrczsC1n1alBlf9zg=@vger.kernel.org, AJvYcCVGXZHfkfL6oV/nLZxPmM0ML57Ie9qUybm+Oi78WlwM1I+2QZhgAH4Ushi0QwSVJJuMgqDHrme+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYDdUGdR9lGSTBw9HvxRmBIj7SdaQDa9cyQrDA85oNNKuvfpNO
+	Y5BE2CGfpV6kIcsqPNHncrdWAubumo9hsu9/rsLIYDum5yg3or9xou0l
+X-Gm-Gg: ASbGncuT1poob88eSIG+Gqij3W0lkI2QQopkgmouUcZjOmMbmhEfOc1asvvPODVLIlI
+	g6f0XKxwvSsSSty9VIiNjPj07jB0zvcwErwhibLb3XvcVLdbQpyHCNkZGC7Wg7WAiVPvew0m7Qg
+	J9erqRhs8dSErfuS/jpveHc7WZndtzUOHJlzEEa02HUSC8izpLZlGrFUgDjrSXY/280019iOsmJ
+	tDz+Vzzk6inUTkHEvVp12z6BkDyv+hZbaB9gMaVkIuX7GHpmhSG72OZNtEq8p8pQLnkl01jBlgJ
+	FkLKzGduw64nPTOX+54q7MZWusilWG5/uYuVhg95tlbii15gCQdvkrvGTsXrq7HeqUlTMoIY6xb
+	74hZw3y+Q+K593wBzADcO6GFYhUFP3x9qXDsmEsws0MJQq2Pp24DTtfM6cd6a
+X-Google-Smtp-Source: AGHT+IEYQHz3uH6yvGi4Ms/HZ2DRPyjwin79idavp89EMunKhbND7hmID6a/w+sfeYcDIjyfLR1mWQ==
+X-Received: by 2002:a05:622a:a18:b0:4b3:1230:f6e4 with SMTP id d75a77b69052e-4b31da1803bmr131402531cf.54.1756833628275;
+        Tue, 02 Sep 2025 10:20:28 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-80698a04af4sm170640285a.28.2025.09.02.10.20.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 10:20:27 -0700 (PDT)
+Message-ID: <b546967f-d347-473b-bf57-901a63abe292@gmail.com>
+Date: Tue, 2 Sep 2025 10:20:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,51 +82,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 14/15] block: fix disordered IO in the case
- recursive split
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
- hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com, axboe@kernel.dk,
- tj@kernel.org, josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com,
- satyat@google.com, ebiggers@google.com, neil@brown.name,
- akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <20250901033220.42982-15-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH 5.10 00/34] 5.10.242-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250902131926.607219059@linuxfoundation.org>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250901033220.42982-15-yukuai1@huaweicloud.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250902131926.607219059@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/31/25 8:32 PM, Yu Kuai wrote:
-> -void submit_bio_noacct_nocheck(struct bio *bio)
-> +void submit_bio_noacct_nocheck(struct bio *bio, bool split)
->   {
->   	blk_cgroup_bio_start(bio);
->   	blkcg_bio_issue_init(bio);
-> @@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
->   	 * to collect a list of requests submited by a ->submit_bio method while
->   	 * it is active, and then process them after it returned.
->   	 */
-> -	if (current->bio_list)
-> -		bio_list_add(&current->bio_list[0], bio);
-> -	else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
-> +	if (current->bio_list) {
-> +		if (split && !bdev_is_zoned(bio->bi_bdev))
-> +			bio_list_add_head(&current->bio_list[0], bio);
-> +		else
-> +			bio_list_add(&current->bio_list[0], bio);
+On 9/2/25 06:21, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.242 release.
+> There are 34 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.242-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The above change will cause write errors for zoned block devices. As I
-have shown before, also for zoned block devices, if a bio is split
-insertion must happen at the head of the list. See e.g.
-"Re: [PATCH 1/2] block: Make __submit_bio_noacct() preserve the bio 
-submission order"
-(https://lore.kernel.org/linux-block/a0c89df8-4b33-409c-ba43-f9543fb1b091@acm.org/)
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Thanks,
-
-Bart.
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
