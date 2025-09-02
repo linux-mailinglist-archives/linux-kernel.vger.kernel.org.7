@@ -1,182 +1,173 @@
-Return-Path: <linux-kernel+bounces-796611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C23B4035D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:32:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C025FB403AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5BDBD4E3BA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5D01B63AC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E5A31E10F;
-	Tue,  2 Sep 2025 13:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7732877FC;
+	Tue,  2 Sep 2025 13:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="HfCLbDEe"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012035.outbound.protection.outlook.com [52.101.126.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkxM8Tdg"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678EF2BE03E;
-	Tue,  2 Sep 2025 13:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819655; cv=fail; b=BSxx3SBYApD8UHDSsLnUnMQ/JNUZHKlx999eD5FAA3VKA0gEVGwhqhQME0lDh62WaFR9UDc4EtQrLPlX6wq/GFXijMRaY0I1SG2LIEhgGVIn7tGekB/Muz8rrkbc/sRgFsMj/fnfi4V+cSfH3VzdIbRNe0bFN7gw4qwtmxK8BzI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819655; c=relaxed/simple;
-	bh=YBrjAkBtFoFeT3eLsKiFLL+IdzWDQFWzT64D8B/T+Gs=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=NV5pxgu030/017nv2qRNpTxqstcJD6XwMMkKKekRpFXxXAV4cFUsOims7BTWXDjMENvhkV9KkazYX0JFKJCw6gv5bLRuWWVrD9e8Xrx7oHehy+6FaEJPRv//BmSj/68dKhwRQFThoF+Kum7E35dpEU06nh0OxSnimNDMCmyDM6A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=HfCLbDEe; arc=fail smtp.client-ip=52.101.126.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TdIMsRuMzdEievjqcNQ3c0AUSdQK3uarkLKtcEkRL+nuIjCBX9qi0/4srHMn0W5RV7GnptnC1o/ppuZkHSR1/XhhbKaqu1PaejbYEsNnX8BteSIn7LD+aVe3t4UbxHKrQVGIgSEMLBa2in4jgzMYTfvEnpUNP6s2m+QBlQ5RxKDH9GsOCNWAzdcOygWriE3t3hkBUeA8PdTyYQdfygq4/qVOQY9mtSaJEaZYgoTsvVxScT5FX6auxBF47wxlnaHH+MQcw6dQUZf2hYLOUMB/ammIJUH3iXhc40klfQtxz7pkkocTUf6QYBJDBVZ6w/HX2kwnqA5FQAxXYtKPhaGvmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hoXOx1e5Py713Cob5uM4DBgPp2kNOF07qPjIhccBvuM=;
- b=uE4kZYEo/wbY5GVn6dq2V7aXD2mvtVZz1gZRzZUk+JpjzRkyXBUxpuPYblbmjmu4ToIudJVzkDAvsQUvK8FkDbzKrH0k6NZHzdJh2Q83n0WrkHMeDuMHE5djjAN8Edd05JQVcK0Q2dTPgOaiVLuz6LJq3brxqpe9WiddQy9TgnFlEBzhXUmNWpgb7D7iLhmZ/VyYSVHbPMVqPse8+YItCBGBCqu9sztHmN1zXIW40ZyGkVLL9Un327dP/Xq4oPiP5vVSb7AA5BuImAIkp1v7pT/blWNBxENOK3vQuSSzWo8v/Fhc4NRKwDJHmrqrjKaf1oaldpbNnOb8h8XpW9XR8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hoXOx1e5Py713Cob5uM4DBgPp2kNOF07qPjIhccBvuM=;
- b=HfCLbDEea2X5Ki5ajbSxZPThTdEo3TgzHb5Ca2NwHtF+p4Ti/BfXBMiS0LNoxIxhs/GphARLQ9a7nO+XSbIiZreSRCwCxnuJy5Ck1+akoqiJVDGA44p5pC/3rmRbBdzg8l4Zc4k52BX/V9Pp/6YuLGoZjWZC/rqCRPYsobYeP8euZ6OIotVnpXwy15f6F4DrmQyTnpWhRyfhAZ7fz6GVkCgLOTgvSoVx4oTqOK9rFIDET/5zqS3EjSGN0xGMhjHEM18iZOLl8H7TEOCyEwzKGocrPe3GZHFpwgGxTQbEPz+O6tj35D/YjgbtFonqjnTRZWlv1zfeBl9MBnK98Za6MQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TYZPR06MB6379.apcprd06.prod.outlook.com (2603:1096:400:424::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 13:27:30 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 13:27:30 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-usb@vger.kernel.org (open list:USB XHCI DRIVER),
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] usb: host: xhci-tegra: Remove redundant ternary operators
-Date: Tue,  2 Sep 2025 21:27:19 +0800
-Message-Id: <20250902132720.85504-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0355.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:7c::12) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF7730BF54
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756819687; cv=none; b=O86nAaCsoDrVAQc9V3si2cYU//BXbfyuyimXCEuXReljtYs0fIpOAFac8xGVAyyreUTc+lFA/YMkNc2Ec6mgzMjoEtakRb+r3Ul6N81EiRKZxgeIXpSiQ5r8aLJQpVZPVsqBaBtZyDrP9LVVWMslT1BBWpFCS072xarsYBjPAts=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756819687; c=relaxed/simple;
+	bh=R2r/mpeKTSsbIAfnQRXWi3fdzeWa6D7xfutpiWD5Rhs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V0Y2W5Yim5SaoLMxCAQl8kVEz473MpQ1gmSJgyRqgRklAUI2v6cUQNZlIx6Aqu0GqgWL5JIxZv7Ei1bbQiRtcNKNTEQsqJ6ovRHiieawo4m3fj+D3gmHVQlsfqKTb0BH0ML9LVjJlD69yl9hCJlckSIrOR2sI0j0cRpjja924Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkxM8Tdg; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6188b6f501cso6222487a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756819684; x=1757424484; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R2r/mpeKTSsbIAfnQRXWi3fdzeWa6D7xfutpiWD5Rhs=;
+        b=EkxM8TdgQoyc5y/DSQ6daJTJ4rc5YL3JpCSsM5EmFv2Qu0AfeLkZxVuYGdN7wpUntf
+         qbYkRiTPoE1wTz2Ir1U3mmNy5oCPx4msLNbYj/LD/8qMDraTwSVP1JSGX7ffJkHDx1pN
+         26wUpqZSt9LLyCvhITmAISt0+D2Ry8iMg2va/NZ0hEAdFlwB4u8OR7YW4E/KHEFL1E30
+         2GAIsb6tZDLK7tqBTkA63NWmPyWPhwafXr6Z9/O+ixp2ZkAKV2flL5LLaa71EhtmVJkw
+         EA+5/33fMOW9RS5haEHOcU6XowhWuJmJdEjSxuhJ5rBON0xXK+eSblg9xDdwFgtQvnq9
+         OHsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756819684; x=1757424484;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R2r/mpeKTSsbIAfnQRXWi3fdzeWa6D7xfutpiWD5Rhs=;
+        b=IQi7UynX7VfS/zCNB7A5uvOfdXRVU8ifQ1kzYQ0Ndce6DNnKGYnuMWGC8WSkLaa+a6
+         rocrCjCGpp9s0aRIu0/kGt+w/awCK/IwUnTu2/9AY8RMBUQ8orl7CgY1SXhiXpLBtM3X
+         XMdmzv35FACZdlG42JgPsZW8f9G/plfi0cumETpJGSVHSiKl2TegOUATt9AAzx5uHbJB
+         Rk4xaRbsPGtil3EjdZoy1zToteRfAXQH4b6uyE3g25yU6/oMkmn+itdata8VuVYxDxDh
+         Cx74IZJmQI4+UhnUSIIbtIBfLrmcKtA/nZ2Nmt3QEqLrb/v4posH1cVWyz5Dg+fJJIWk
+         Lmzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJuF1ZP0z+QZ7gqy1mkXExG+P1e30FDeXodX0gcLho+6+AZdtZaIC44fHpuBqnVbZCylQeGkWaYaNXdcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynzY++Z60WDXjMiC8cekYjOiKCsbThchxpPTyjpp4WCvQc3mnT
+	q1bA/cwap0btuGmBQXmlypc6GZGW4LHKSfQ3zHitqIQNH77HFcMCQTEf+/ewhgCn83HRbcj+6I3
+	Bla4LTBxxoBgzeurqnVTgdKlIBEWRG54=
+X-Gm-Gg: ASbGncsQtyu8N0dsXaUP70B58lWAwJXS7T6yX4SAmqtIidnMhEAytzM5yf1ZvTh4E9s
+	YS7hvd4Krrp0PsjSMR7RW36slzsgJazYoV0MjbhjXh3hdrjczKQ8QveEUb+wgpplmWlU0eJR68e
+	deflcCp/QbboR7ecZxnVzNZv7VzBkIXFuquPfujuyWXrrM/aNeOUvAN5WihtCwc1zV7R94O8Bb5
+	so55wVko6JRPE5Homq1xA==
+X-Google-Smtp-Source: AGHT+IG8WM3LN3n+vs8UfaZfhyKrh9NOM79dhQApSdhBW99EaIXb2eKvjvaDXdwBWeu8xJOM+PNHoMyKJvxujvcsD7k=
+X-Received: by 2002:a05:6402:3589:b0:61e:9307:702b with SMTP id
+ 4fb4d7f45d1cf-61e93077153mr7144821a12.9.1756819683920; Tue, 02 Sep 2025
+ 06:28:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYZPR06MB6379:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2aae9a4-52e3-4f39-ce63-08ddea2477be
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2gqv2OZLlRkkSuDeEoBdBkAY6zHIs12EODrgJsW5axRyWxP2/c7mcUndAuRf?=
- =?us-ascii?Q?wzaQRwml/D487wHs4toABVMp+IXISh+HO+zDxNUUbV0aCR1NiGWdc2tX821N?=
- =?us-ascii?Q?J9RXRSz9SDevpbkvMJhLz510FeiX9dGcffjLkcwpfOrBJR3HulH1rVbJ+nob?=
- =?us-ascii?Q?7X9UA2VCfn0nIsnmKfm7tQVY8F49Wm7PyaYO9zRKplIGJlyCJ030HxE3+omD?=
- =?us-ascii?Q?O2zh2EK+Ry0FvBtlcCDMSUdYxrEpiyJkPD7IDeZU+YjtG2Z07+0m39mwWizr?=
- =?us-ascii?Q?C1JVgJ/Z5r2nInoQhCT9B9f4W150yQyIWpKiYXp/OD1YWWGqc43MUfK8cmPo?=
- =?us-ascii?Q?jRwUNNoDE/jnDs2MSYXrS83LvhZZmLVla05yh79sNcrNUhHlIe86YlTHjxCe?=
- =?us-ascii?Q?t3wiEbD3Be5DDPgBFWfXco29AT8X3HcV37ULExQBu6LZTtGRTF+uFFJV5xS/?=
- =?us-ascii?Q?Inco7PVDRRoUP0x6hKoKRNrxtix1hVSASaek8OLquw0RzB/eVWPUkZIJUehz?=
- =?us-ascii?Q?Y/fLRimtJTvzlSawwSMDFz12EiUiEODPEPfh8j1n2YlAbOzqFJlXoSp/UKUv?=
- =?us-ascii?Q?gVK5FpJMgpBqZubc8tMrR4mfeWvMpub9HlGBTvjkOUuZ18KA0UYHTW6EtVIw?=
- =?us-ascii?Q?UPf55+Wj8qHk+TfnV4AI5qJZrn6zGreqO6wFoNJe2ygf92lLO1ddLUW1xfHi?=
- =?us-ascii?Q?UvMCYoQBmjPW7SgJhI18ZWweME07dQOTH1jms4nLXDzFeFZfjYSSCuEe+EuH?=
- =?us-ascii?Q?r0S7OPIpf/7R/e7pdMlqcMWThoLs8m/Zknk3F6Pv7bwFJP1sa6sAEskVhgqH?=
- =?us-ascii?Q?B67XF4AMC/UfwVedRViedvWh3CrIYA1KmXX1aL9pMt1PudUDXuO/Bp0xpNNu?=
- =?us-ascii?Q?/D4VGE6IF9M9OQf9fJOVUN+xfgPxfvXU8p6FW/UGI9mqagZYob5odSELpHFm?=
- =?us-ascii?Q?VRmYDrlK3KOP62b1S1SgNcJJhoIypd63UdV8VZwRrxT+4lBT1gazNKEBpBmV?=
- =?us-ascii?Q?ZG0bcK7LczHGQj1CTBXEqyGiRbpR6/FQCPuwo9ODxdqTjHqASGR94xrSkBfY?=
- =?us-ascii?Q?Jg8ZLd/Fee6EXSpG6SmHclPMDHiDeNUVCsEh7CSdd5dpm7DzLkp8XYBvT3+A?=
- =?us-ascii?Q?9xF4Rm56ZL3z2MOsGnrx/+h/oHcZ6+czzs0jzX805pwTUTYetLL1bMDik2Uo?=
- =?us-ascii?Q?YUbD2ooen/82n4OLEzGCoe8EPA7YXILHOzOgDfHB/tt1iDV3UdYgeQ4hA7jZ?=
- =?us-ascii?Q?NmMb/2wDGf0dHLfSzH1o74sRJpqfQT4kAJqzG2GM9MCG/ktjEV5bxbbVtyU6?=
- =?us-ascii?Q?UR60zcVIMmfuJpekCQReUh52GSh6vXk4UmzA1QtP1j/XBUQjL5kAT/wbHs/f?=
- =?us-ascii?Q?4rWA4OWXzPHQguYt8Al7bBfPxVbS+YtVXhSvT1uei0VRA73BUHVsTm9pvUgR?=
- =?us-ascii?Q?EEN/QpTYEkDPgKIRvjlP0GTAZeJh5noy6hff/K6/nCkMgt0L7tA96A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?X8bbpIxD03Pwyne/GPJ6AJELSPsvhC1XGN467ptP0okebikFO9IlNe8ce1JL?=
- =?us-ascii?Q?DhUNEexygBIk3ZGwbySsn1EMx9LxbEtHUAL5NAQKqSOcak94Ai4G2Czooh2x?=
- =?us-ascii?Q?fmNcHjSIQm+p4jc4eu6tvERGx1/7nETchCKXMbHEBksoCJ0CZaf2MmzHvF0E?=
- =?us-ascii?Q?GAT+R0GLkp1kBBWI7CCacf++Cif05AclvcH0In87xx9ZJq6dpAPOHVGH0hDd?=
- =?us-ascii?Q?S8clii+C4neWwWVTqmXs+xsGM4UJil5nuoAcnXA/MCDlT/OfRPwXh5GvLaQ6?=
- =?us-ascii?Q?gcsopdJatdZUNT4A/zkMOHYJHevwE/MUqliswc3jSdWa3qDLoWiSRrUdCYOY?=
- =?us-ascii?Q?5uO3XzjLgg+pN4SyvzyYw2023/K00vzYPKiCPCusl/DVkRJ5KFXvf4ncMw+8?=
- =?us-ascii?Q?2aXV95bBjJL2ThEQ2D23mirNsN4h2i0j+K51CMZhTdeExPz0QHATnbG+zFPv?=
- =?us-ascii?Q?BEUJ9e7AVC/DyeKXvHiLVhdYEWcZcfTtqnqc8KQGr8eYk1rsXwftlMtPGdpB?=
- =?us-ascii?Q?CXq3yzY5proQcE8C0GPZK5wZxxaXCV14ML9Zg4JDStARRmIyYtsMLP2HLg1q?=
- =?us-ascii?Q?S96MZXwbDiakN+SSaupWkyWS0Eh0kV6SUQlMS90UadThGBBDE5GBOO+huNfD?=
- =?us-ascii?Q?EmoJgLPzK9fWZEmUn+1lXV13M4lHgRYQFmdsqkRbEG94BnRwuhrfGMSGTC3N?=
- =?us-ascii?Q?LhlmCStX+ZmnAC7xnvYNljzdKkvcJvxg7RwUSjLY2nGJEWp2iCc+Nxait3u1?=
- =?us-ascii?Q?1zzWVl+26vfINu6BZNpMFYT6hZKbEBhg9YkIXI2D1NHo+L4C2rZA1UJBtdPL?=
- =?us-ascii?Q?T/kx30ksqtNTWrcXhhYxEZt3fnWREaMZYqywiY/ighE8G2wHMvOG+LDP/57s?=
- =?us-ascii?Q?oYUju1p6UYIY2pzPc8clxHCjUUol95xiE40/ZmgH5Y1SHrSCCX2Lyy//CTWj?=
- =?us-ascii?Q?q7iq2rMtei6DTTGxbh4N9bXdClCyhihbX9Pwuj34sB7eTngVg1XoGWL1eiKW?=
- =?us-ascii?Q?A8P2MzADrgGjREeho3e7KYXfoBK0sEq4K3bmfEdWisQolZTK17N7cHOz/CzW?=
- =?us-ascii?Q?zYX1hT2qi2MWuxv9ZCtYoh6E8UJVyJOTNz8Nb8Osn1J40CLxpfRXai2QJTrp?=
- =?us-ascii?Q?RHVIATCIKhUeBI96haHETx0uUL4hlCMvuIpsRXfWxvmnj0wq381GbcKCSiCS?=
- =?us-ascii?Q?jVGsNFlxkVMBXwBvqKOPwCzn4ixc7ryIzwV8YbrwmK6xzQ5MTJjvsHPVDhDB?=
- =?us-ascii?Q?oi9cHmCxgdcOW5eTVmBBe4YKh7iPjke8V/CCAGDdgyma9wJrYcyJ5YGLda0D?=
- =?us-ascii?Q?MCS0FVlo/weN55Md4JILLU1OBAIe0zVBzlGa0IZDvqPMrsgb+ZjH++19I3vG?=
- =?us-ascii?Q?WixNPbjmk9+zEAnBoJTgKXbPJDgtj/kpsSkdBKYp2fP1BOOUeJgiZ1U4oHvI?=
- =?us-ascii?Q?QIhxIg/TtTGhrVbnQJn9OGF07bfJVj9ET4txCF0l9bsu1D5x9ZpDm0YmUmHR?=
- =?us-ascii?Q?LbWx6p7FB0dl8bDcJzapKJVMoH3msyn+T1a4TYjLH+0YGPt72fCuAK053gZk?=
- =?us-ascii?Q?9n8f1AZBWwURjkAtG/PTWy8heiSflnNjY4xZr3iP?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2aae9a4-52e3-4f39-ce63-08ddea2477be
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 13:27:30.7731
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t7uQ+5r/xcUpwYGTkGLfbAixSRZNkJTZ0TeQRfNZ9jyttQkPatuwEdQUK89rMam0EamNuRqbRk4Y2MtHlRchng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6379
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-3-ryncsn@gmail.com>
+ <911dc3b4-c511-4ef2-a159-091780987965@redhat.com> <CACePvbXs3J6qYWFycVW8rGjiaOw9iTFLdWq1Lq4HyaDkSY45uA@mail.gmail.com>
+In-Reply-To: <CACePvbXs3J6qYWFycVW8rGjiaOw9iTFLdWq1Lq4HyaDkSY45uA@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 2 Sep 2025 21:27:27 +0800
+X-Gm-Features: Ac12FXyXH_eAyWYE5C0gX0GODJQwF_Wg6FYFg7CcBoXlApyBiT4JHidtNY6X7ho
+Message-ID: <CAMgjq7BPUE_+AhF_Nm98k6hbVPpLkQcwPGGMqA3yZuKmMR6xZw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] mm, swap: always lock and check the swap cache folio
+ before use
+To: Chris Li <chrisl@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For ternary operators in the form of "a ? true : false", if 'a' itself
-returns a boolean result, the ternary operator can be omitted. Remove
-redundant ternary operators to clean up the code.
+On Tue, Sep 2, 2025 at 9:03=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+>
+> On Tue, Sep 2, 2025 at 3:18=E2=80=AFAM David Hildenbrand <david@redhat.co=
+m> wrote:
+> >
+> > On 22.08.25 21:20, Kairui Song wrote:
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > Swap cache lookup is lockless, it only increases the reference count
+> > > of the returned folio. That's not enough to ensure a folio is stable =
+in
+> > > the swap cache, so the folio could be removed from the swap cache at =
+any
+> > > time. The caller always has to lock and check the folio before use.
+> > >
+> > > Document this as a comment, and introduce a helper for swap cache fol=
+io
+> > > verification with proper sanity checks.
+> > >
+> > > Also, sanitize all current users to use this convention, and use the =
+new
+> > > helper when possible for easier debugging. Some existing callers won'=
+t
+> > > cause any major problem right now, only trivial issues like incorrect
+> > > readahead statistic (swapin) or wasted loop (swapoff). It's better to
+> > > always follow this convention to make things robust.
+> > >
+> > > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > > ---
+> >
+> > [...]
+> >
+> > > +/**
+> > > + * folio_contains_swap - Does this folio contain this swap entry?
+> > > + * @folio: The folio.
+> > > + * @entry: The swap entry to check against.
+> > > + *
+> > > + * Swap version of folio_contains()
+> > > + *
+> > > + * Context: The caller should have the folio locked to ensure
+> > > + * nothing will move it out of the swap cache.
+> > > + * Return: true or false.
+> > > + */
+> >
+> > I appreciate the kerneldoc.
+> >
+> > Intuitively, this should be called "..._swap_entry".
+> >
+> > But I wonder if "contains" is really the right term to use here. It's
+> > more like that a swap entry "belongs to" (was assigned to) a folio, rig=
+ht?
+>
+> Right, in the other design doc I use the word "binding" for the
+> relationship between folio and swap entry. As if it is a binding
+> contract, your folio data goes and only goes here. There is no owning
+> relationship. Other folios might want to compete and win over the
+> binding contract as well (the race in swap in).
+>
+> > Sure, we store the information in the folio, but the "contains" is a bi=
+t
+> > weird.
+> >
+> > folio_matches_swp_entry() maybe?
+>
+> Yes, I like the name folio_match_swap_entry() you suggested in the
+> other email as well.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/usb/host/xhci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I like this name too. The `folio_contains_swap` name comes from
+`folio_contains` as it's just like a swap version of it. But I also
+found the name a bit strange as they are different things, but had no
+better idea. Thanks for the suggestion.
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 0c7af44d4dae..460effa0e11e 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1482,7 +1482,7 @@ static int tegra_xhci_id_notify(struct notifier_block *nb,
- 
- 	tegra->otg_usb2_port = tegra_xusb_get_usb2_port(tegra, usbphy);
- 
--	tegra->host_mode = (usbphy->last_event == USB_EVENT_ID) ? true : false;
-+	tegra->host_mode = usbphy->last_event == USB_EVENT_ID;
- 
- 	schedule_work(&tegra->id_work);
- 
--- 
-2.34.1
-
+>
+> Chris
+>
 
