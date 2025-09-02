@@ -1,88 +1,57 @@
-Return-Path: <linux-kernel+bounces-797084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354E3B40B9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:06:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC923B40B9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D611B27D3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:06:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 968B87B4E5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEEB341667;
-	Tue,  2 Sep 2025 17:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508F5340D80;
+	Tue,  2 Sep 2025 17:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y7emYfrv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="EcVjAz9/"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C592BE048
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756832773; cv=none; b=QkeIVch4eUkMMYepIxg5p+t0idW4Taa6yjTnSlqM4tqhTciFKffKymISuynOk4RHgiscwl9CnQF2DZ344pVoJ7H4sV0n1N6ns38ECNvxnHoEgSCwEZ1d2audYchENBQi8jRtxKttyFY7rhM206gronYKg5MpYsdCRDzS/OeBDdU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756832773; c=relaxed/simple;
-	bh=wlZH8lhbscxC9THCQ4kinck0ZuzPLO1Tm5yhuN/XkRU=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KOKelNGM7bcqFLwt5PoQ0jpejLqrCyWwHabTDlmtZRpi3LdvlxReLIuXeL6rBu3ZasKl/UZUcOsV4dEo1m48JtGNSwQ965MfDruU5wWQvMrox3TulSx0AiJ2Tqc/cxr8uXydbvjG9kpCag0lEYG/jMPwGTXSBj8drhF6op8xgkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y7emYfrv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756832769;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHu4aCUA0D1nulKzC9Dqv0LHGBHTxw2XXtYWx9Xi0Pk=;
-	b=Y7emYfrvd+Z6Ak1ZzcZkvEJ+PFt2WOB8/5zTkOPfMBod7v3Kzpfj97pc+ywcabJrGnaY8Z
-	LgiMHY/Mh9fuXk9/VTMmoI2O9UBPwvMIYshHlgncNpHHGVhtQ6eezDd+46oamt2uNmcwJ2
-	UGTdbGEONOW1TOvlx1Ztk6QELmA3gwY=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-207-78spwFpBP0-b15tTHTiScw-1; Tue, 02 Sep 2025 13:06:07 -0400
-X-MC-Unique: 78spwFpBP0-b15tTHTiScw-1
-X-Mimecast-MFC-AGG-ID: 78spwFpBP0-b15tTHTiScw_1756832767
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70deaa19e05so144468156d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:06:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756832767; x=1757437567;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aHu4aCUA0D1nulKzC9Dqv0LHGBHTxw2XXtYWx9Xi0Pk=;
-        b=GYJSxXj9oUtbVHxfk1S31roPKHNHnHOkv6Tt/saePfeStZkeeQJQimTJKPfbfOyO/N
-         n++x7hCgd+xLurbpCqS1xfPX5oZ0s2ZPH/KPpA/MQtIkUOjugw5AhEbIUqG8ynA0zvZ4
-         yqPPgXLVWthok9cwQ85TZzhsqsVgMtZrz+DAcmMFbU/vrBACLcSbEgKJLCwDl+ZSS9n3
-         QIJLYGBv/awjLdpkAvxTHTUakPTvzHPmmWsmlN0jeeoJe/KRlq5BiMmOJ9/Zyj0rcBMD
-         0cJyy0ioCO78fYG458HTqiO5B/gH84yUrZQ4IuKctZ6yptHdoKONN6IPwafS0dVJRWgZ
-         B2sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSLXx5NtNKNMR1eWm6uLV7G8nkerYnhUWuZMW3Y8bU5ap/GqhMRkYevNTVVytwntCu4DCrs37VL3uoJD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPkLkTY9BLTYfIfmnE2B16fnJgH63SXSQ2zvhHzBHU3GhNQ86c
-	uozxTGqJWi8V6O1zt/mTHMTu0YAPM3HQ+dA11HECKvmeBhWPzsvk0i+YFe3FktG+0A8N2yjzJM2
-	hGcP+GWqe9kAkrlQG4DqVBDQd0RUvVQHY+FykYnIyQ6zVPH0WE0tGcPXZnonaxNhBsA==
-X-Gm-Gg: ASbGncu8fGop7OADqiJs2PWnlz431USSNuRkqSNZ0DmfQySEJy54gJysEbtc77vhYVq
-	mV0P6t9Snb8L69lXGN3cEIp1TLWa4UXSbhI46zQtS2KECbUWH3snY8VFXpAyOa9x0rPH8pel29Y
-	/vuDWOgGUMvLMpbQLjmRX0pH6WRMIshgFJTvZ6wKGIKZCj3a0B481grIQMibbDShxLMli+JHRIx
-	dzjj41PsLD1JGF4p8u5TXqPvgXid8+Dj5A7awBv+Vb5LC3H/Tkb/FSisSw9wCHHoDLoKEltqvoq
-	26gI9w2pIK4f8+OmsJ4VfeKNM+ZyL4uHXe25MmlvkEPtEHz7sQI4IExYXyw3+jSoVJO+YLN6sNj
-	exzvxRDKCEw==
-X-Received: by 2002:a05:6214:21e8:b0:722:2301:324 with SMTP id 6a1803df08f44-722230112a1mr12129316d6.23.1756832766928;
-        Tue, 02 Sep 2025 10:06:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1pydDCKXIedyuxkEgwpPTsJFeOHTh1mDJMxMHZOWHQTWsHU1k0rC0R+/XBlYtwjeZ8QWeuw==
-X-Received: by 2002:a05:6214:21e8:b0:722:2301:324 with SMTP id 6a1803df08f44-722230112a1mr12128756d6.23.1756832766297;
-        Tue, 02 Sep 2025 10:06:06 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ac16de30sm15073986d6.7.2025.09.02.10.06.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 10:06:05 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <ef0e91b7-be44-4d5d-a556-240709c80fcb@redhat.com>
-Date: Tue, 2 Sep 2025 13:06:04 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E60F2F532D;
+	Tue,  2 Sep 2025 17:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756832797; cv=pass; b=e8Se9wzieok1iCSYkvg0MQO3FzPUPby6J84UE0CPdGTfV09bCVZtWUdRGIqmLQkECzms6xlaK2U6Uq0aQem3tnM0TUmYPB3sr2phS1nHmD8AeUj67Cw7OAuVYwryHOoYJFms1D5xU3f+Axl/tjRKpBNhAoD4GysEJg9kpOvYcRA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756832797; c=relaxed/simple;
+	bh=LsSwBEqBg8wDoOXM3KCaeTXSSXXwqmFlVcHTO7XMbqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eib+QLQPQ/NQZOL+pAH2I/wbAJAC3LvOmo0TsL/QXX2ZoeHwbddmVMJjSY53sKcPGOrNlvG+sfLbjfDrhJSdMBsyKWHmBK/hbwDbX6k6dI1RTWzye8c0C5TuqU81hcMmxDfeEFm+FVK8eF4GXwiaUwd8MRGLaiGe4fQnIlxtea0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=EcVjAz9/; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
+ARC-Seal: i=1; a=rsa-sha256; t=1756832776; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XTY4usUn/PgTlHHjleZLXrrcxt74FtUvas8T/RxfyMryMO5lqj+K8gkTVERpJeZmaKPOCZNF79cT+fqnKjTH/R73v3akYEGu8s9zBlrCzkmWHrSb78DJR++1wRv+hJTxUuyPi+PDltaXJlVHwR/jBIuJ/IYI0EXlemnOwbhI2h8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756832776; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NzVP+zUryRLDdvJz9XOCb9M4nvPv514WoofrpXOZnDs=; 
+	b=IJ+XDtRu2E/krS1SjdLoVoHsSHpI2tnpmJdqh9YVpnIKxrpE0krkffzcPQTbHYfCiLY3PxF/jMHDUmtdG8+dQt8550hy3Kj3I2In/4l9tWmCHv/5870G6yVnMt1NSXxBgmwYbyIzEDVmn5L84MiHmZozrIUvGJaUv0MeExXVye8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=yukuai.org.cn;
+	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
+	dmarc=pass header.from=<hailan@yukuai.org.cn>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756832776;
+	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=NzVP+zUryRLDdvJz9XOCb9M4nvPv514WoofrpXOZnDs=;
+	b=EcVjAz9/mroRMmCrNvdKeekckKT+ADPkbaoRfq7AvdQKydc/74gFRinvcQIib8na
+	2mI/j9iJH77pMl1KbWJAIVcCSLLcds4fR9y3LopgzCBK1tC1AtC92kes4NMz02Wm5yG
+	6pHUYg/X6Fl2si6inX89++pzcYLfxziYuziwoZ/M=
+Received: by mx.zohomail.com with SMTPS id 1756832773969782.1350344792148;
+	Tue, 2 Sep 2025 10:06:13 -0700 (PDT)
+Message-ID: <59464ad0-856c-4ec3-b5b7-e7799c337a84@yukuai.org.cn>
+Date: Wed, 3 Sep 2025 01:06:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,55 +59,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpuset: prevent freeing unallocated cpumask in hotplug
- handling
-To: Ashay Jaiswal <quic_ashayj@quicinc.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250902-cpuset-free-on-condition-v1-1-f46ffab53eac@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20250902-cpuset-free-on-condition-v1-1-f46ffab53eac@quicinc.com>
+Subject: Re: [PATCH] blk-throttle: check policy bit in blk_throtl_activated()
+To: gj.han@foxmail.com, Jens Axboe <axboe@kernel.dk>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: hanguangjiang@lixiang.com, fanggeng@lixiang.com, yangchen11@lixiang.com,
+ liangjie@lixiang.com
+References: <tencent_E4C0C41415118E05F82833A1453A097DD10A@qq.com>
+From: Yu Kuai <hailan@yukuai.org.cn>
+In-Reply-To: <tencent_E4C0C41415118E05F82833A1453A097DD10A@qq.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On 9/2/25 12:26 AM, Ashay Jaiswal wrote:
-> In cpuset hotplug handling, temporary cpumasks are allocated only when
-> running under cgroup v2. The current code unconditionally frees these
-> masks, which can lead to a crash on cgroup v1 case.
+Hi,
+
+在 2025/9/2 20:39, gj.han@foxmail.com 写道:
+> From: Han Guangjiang <hanguangjiang@lixiang.com>
 >
-> Free the temporary cpumasks only when they were actually allocated.
+> On repeated cold boots we occasionally hit a NULL pointer crash in
+> blk_should_throtl() when throttling is consulted before the throttle
+> policy is fully enabled for the queue. Checking only q->td != NULL is
+> insufficient during early initialization, so blkg_to_pd() for the
+> throttle policy can still return NULL and blkg_to_tg() becomes NULL,
+> which later gets dereferenced.
 >
-> Fixes: 4b842da276a8 ("cpuset: Make CPU hotplug work with partition")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ashay Jaiswal <quic_ashayj@quicinc.com>
+>   Unable to handle kernel NULL pointer dereference
+>   at virtual address 0000000000000156
+>   ...
+>   pc : submit_bio_noacct+0x14c/0x4c8
+>   lr : submit_bio_noacct+0x48/0x4c8
+>   sp : ffff800087f0b690
+>   x29: ffff800087f0b690 x28: 0000000000005f90 x27: ffff00068af393c0
+>   x26: 0000000000080000 x25: 000000000002fbc0 x24: ffff000684ddcc70
+>   x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
+>   x20: 0000000000080000 x19: ffff000684ddcd08 x18: ffffffffffffffff
+>   x17: 0000000000000000 x16: ffff80008132a550 x15: 0000ffff98020fff
+>   x14: 0000000000000000 x13: 1fffe000d11d7021 x12: ffff000688eb810c
+>   x11: ffff00077ec4bb80 x10: ffff000688dcb720 x9 : ffff80008068ef60
+>   x8 : 00000a6fb8a86e85 x7 : 000000000000111e x6 : 0000000000000002
+>   x5 : 0000000000000246 x4 : 0000000000015cff x3 : 0000000000394500
+>   x2 : ffff000682e35e40 x1 : 0000000000364940 x0 : 000000000000001a
+>   Call trace:
+>    submit_bio_noacct+0x14c/0x4c8
+>    verity_map+0x178/0x2c8
+>    __map_bio+0x228/0x250
+>    dm_submit_bio+0x1c4/0x678
+>    __submit_bio+0x170/0x230
+>    submit_bio_noacct_nocheck+0x16c/0x388
+>    submit_bio_noacct+0x16c/0x4c8
+>    submit_bio+0xb4/0x210
+>    f2fs_submit_read_bio+0x4c/0xf0
+>    f2fs_mpage_readpages+0x3b0/0x5f0
+>    f2fs_readahead+0x90/0xe8
+>
+> Tighten blk_throtl_activated() to also require that the throttle policy
+> bit is set on the queue:
+>
+>    return q->td != NULL &&
+>           test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
+>
+> This prevents blk_should_throtl() from accessing throttle group state
+> until policy data has been attached to blkgs.
+>
+> Fixes: a3166c51702b ("blk-throttle: delay initialization until configuration")
+> Co-developed-by: Liang Jie <liangjie@lixiang.com>
+> Signed-off-by: Liang Jie <liangjie@lixiang.com>
+> Signed-off-by: Han Guangjiang <hanguangjiang@lixiang.com>
 > ---
->   kernel/cgroup/cpuset.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>   block/blk-throttle.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index a78ccd11ce9b43c2e8b0e2c454a8ee845ebdc808..a4f908024f3c0a22628a32f8a5b0ae96c7dccbb9 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -4019,7 +4019,8 @@ static void cpuset_handle_hotplug(void)
->   	if (force_sd_rebuild)
->   		rebuild_sched_domains_cpuslocked();
+> diff --git a/block/blk-throttle.h b/block/blk-throttle.h
+> index 3b27755bfbff..9ca43dc56eda 100644
+> --- a/block/blk-throttle.h
+> +++ b/block/blk-throttle.h
+> @@ -156,7 +156,7 @@ void blk_throtl_cancel_bios(struct gendisk *disk);
 >   
-> -	free_tmpmasks(ptmp);
-> +	if (on_dfl && ptmp)
-> +		free_tmpmasks(ptmp);
+>   static inline bool blk_throtl_activated(struct request_queue *q)
+>   {
+> -	return q->td != NULL;
+> +	return q->td != NULL && test_bit(blkcg_policy_throtl.plid, q->blkcg_pols);
 >   }
+
+Instead of add checking from hot path, do you consider delaying setting q->td
+until policy is activated from the slow path? I think this is better solution.
+
+Thanks,
+Kuai
+
 >   
->   void cpuset_update_active_cpus(void)
-
-The patch that introduces the bug is actually commit 5806b3d05165 
-("cpuset: decouple tmpmasks and cpumasks freeing in cgroup") which 
-removes the NULL check. The on_dfl check is not necessary and I would 
-suggest adding the NULL check in free_tmpmasks().
-
-Cheers,
-Longman
-
-
+>   static inline bool blk_should_throtl(struct bio *bio)
 
