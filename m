@@ -1,193 +1,237 @@
-Return-Path: <linux-kernel+bounces-797197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F54B40D3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:35:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F71B40D3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C737563367
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:35:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E1A27B0079
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5945C34DCC9;
-	Tue,  2 Sep 2025 18:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7259D34F476;
+	Tue,  2 Sep 2025 18:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fYEzzByO"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LY7Op3vq"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AAC350857
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 18:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B94734DCE2;
+	Tue,  2 Sep 2025 18:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756838065; cv=none; b=iWubGCBhKZe3UFyppi2NGLKAVtOkRryFZOLHHP+heoywMob+eNa1bUKoJnZvYgEWBykrOEVLmE6ZFetkzeiLVW1pvYcunov94XHKkG/Jm6gXJRbQu9/QQCxilG1FbEhAJO0WLKUnAU6GRdCMUDNTF6iX85jYvG09a30GYrEMzN8=
+	t=1756838080; cv=none; b=BsuEL9RicHjeJaRYXHijspd9xdDpUsIBGlcTd84Se1gYNv87S4fhtHowOLHVZuI6sB7HvdpAP2Thb9/uvudJiIERpadfqHzgp3Gwez0O8v+A7OLBZIQ4TPvg5r8Pe+hfLGP24c+t5rCvDIq2HmP2HAM0ZNe32rCp8HpNw+VtsHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756838065; c=relaxed/simple;
-	bh=+UwyHLjdFrZY6eKJLE4ZxlJyjFoWSa4EScBE6ysnaVI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rxnmekfgPGPzfNKP3t3q7crekLspxHBeojzyJE5sIUoX8a2fMcRQkFM14URKRW0I5oUNORovhzd6anLv80QOMgl8bgehw3vfVomuZU41qw7vmKURq2AIEDEkpXGyynNe0ikW2ftjA/9rV5WqqZ/gQFC5VYNTDVnnMf3PzBIjXC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fYEzzByO; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b79ec2fbeso38846965e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 11:34:22 -0700 (PDT)
+	s=arc-20240116; t=1756838080; c=relaxed/simple;
+	bh=9JzRUZl22vn+LFcHlLO4ve2rAfiXHxmhG6RUTTHx5VE=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=b9UnDabDoVChAXgxj1o0MiVpsI/ub/V8MKQvuaMFzpGeGJBNCBDRGQLR+uaHbD7uM3vq+x4EydRVs8TRZD514EtaL6cQoVXdVdMuRLon3JzJW5Wj1/Eg9j+30BHgGQ/H1eBNsJM6etr3HxLTbsiqIwP3yRPvbtZ/ZAdJDpTvpoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LY7Op3vq; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-544ad727d19so144158e0c.0;
+        Tue, 02 Sep 2025 11:34:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756838061; x=1757442861; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xcq4igIAw5t5SC0KyrVI7uzqX4joQRvngrbWP1St/kY=;
-        b=fYEzzByO4ryzG6guf31cGmYrw/yOkfuksZ+9pwAIsKl9syvI9HW+KzVaxCCWZNR0qO
-         zFjV/rtfsK6VAaG3WjRz8BRG8vgEbjJt6q6eToscIO6TKbGj7dBnc9el3oreq7vPQ0YH
-         fctnBda4B0AouyrGt01oXLJQSyfOy/vr7k2amRhfmWmpJnUarOsBSGLf147Aq+fljbel
-         NKJ+elTezGzRqoPiJ/9VzgJ6IJU0wrjNp9zWSgAPXU6a2zxH7al8K+mXxpJ4sBT6bKyD
-         lH5h54QbVNLGb+QdWiRBwBbtiR6sv62Xmu00cIUV3luc4NBKMx3G98sT+TzSWENlF3eA
-         CR6w==
+        d=gmail.com; s=20230601; t=1756838078; x=1757442878; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VbtzSrb2IcrKkwEGNPn/q1GAJEnc3LDOQZtiITLxNXk=;
+        b=LY7Op3vqvdgl2/RH4plF9iHKbs+FVt4XhF2CYLTuMxExMgEgpJZt1FLs8ZfZ2ft+or
+         19nDsNDtBHwgFQhv+VR+cBJ6zrPnqX+XOh1gF9LmEW29yPBCQFZdAnf+Y2m6maQ1EoFj
+         PUL/jzbki3ugDEiuY7cXuCQMHLTcno/Sjg2hYVZ0kQxqTK3YVeUhAm7BXotLvu4ZJ0iV
+         RKfrYHTXjpWwE7jKcHkNN6dWpwU6yL378H1rjHXeM/KrPs2wCuyxx90MbYUq3aUTy/35
+         JiTxPnpzQBtuvIUkmYBm3qsj8TyxUKlwMWJH7IHhPn/aWP/UU3IZWve6YV0TrXPuiI4K
+         pPTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756838061; x=1757442861;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xcq4igIAw5t5SC0KyrVI7uzqX4joQRvngrbWP1St/kY=;
-        b=qlcwn9+B8VvUna4z3mTD78NsQkGnuMuyA0SkxeGlQmuIFoN54FMzGHF+ugCDHnEOTL
-         QyconXSXWh2fe6JHDZVEbf4zl9m9/Cv2wEF7U6FdhlO4tPcVOc4DHo8QsUi4fz2O2DUp
-         zxPzpspy46gkc3xU1SgkJocTA0SUhguoKpMm9rxFG6NC3qYH8DhGPOpwChs0oxx8oqOI
-         7ilcieMx8C+znvEcWcnf1ikhdu/UmSw4JirfwFSjF66NAlqAuVRoKSAxSdY0R8AN0jkl
-         MHM4UMTDKt63i96IDHCSQOxj0WivMiFJXUf2LzTIHq7DKHTfAq5Lpa801+ShWv3kIsRn
-         i2gg==
-X-Gm-Message-State: AOJu0YzKhcXT/s5q+F8SuxqmhaP73aJZ3WmsB2jS31FWHLzuc/5twk3Y
-	RYuOfwZfM8gaDvOuFyIXdGfKmDqHh1cvY5DecgzNCvAlcGbaQammBByKlX9rOdmd1c0=
-X-Gm-Gg: ASbGncs21Mj3RRclzUU9ydiLY5JwP6cs1m7mGN5eYFmaZ4jUS4Ps7qLZqZr3pYWBK5j
-	AGxt/uhTi4G1Tt0jeZqxuKQdu0k/CgjZwIjVA5AL+j4DftT47d3vb9YgVGcSFTCqsT3cdM+ynwH
-	HGJ4Gc9vKwwKHt7M4wRkVaIReM1fGj/7eoYFTQJR49jvtHae5mR9gHK1F7Qx5Z+KYJKb+gll56p
-	eTFB0655YxGYmsJVv9J+RNU3FtWDGexXFglZWQG2KL+o9tKRUXD0KsWaUUYAJawWq6C26ah5JwQ
-	jr0XaUhsfaG+98mx8ZMrrJ9VM/oTwo0dhvGewDK0HhdVKwag8iq5NE/l9K9uZcfPxj+IBBDCns3
-	MhWHH/HdeROA0bkkZcaJxmLvrz93Klg==
-X-Google-Smtp-Source: AGHT+IHWvfa1MfnXxCv92+LKAfoxq9DlDGk2apmD5Gzp1xX7ZsE3yezBngl0biLHukmFmhP6HVgmWA==
-X-Received: by 2002:a05:6000:1888:b0:3ce:a06e:f24e with SMTP id ffacd0b85a97d-3d1e05b6b69mr7933860f8f.52.1756838060800;
-        Tue, 02 Sep 2025 11:34:20 -0700 (PDT)
-Received: from [127.0.0.1] ([2804:5078:9a0:f000:58f2:fc97:371f:2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e1d4fsm14028477b3a.73.2025.09.02.11.34.17
+        d=1e100.net; s=20230601; t=1756838078; x=1757442878;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VbtzSrb2IcrKkwEGNPn/q1GAJEnc3LDOQZtiITLxNXk=;
+        b=CGpMckgnUVLH+kHUcBx0J08rQ3C+LWJnVDYCTMMh5xc9Kao+wRVZlZT4pcKjPNCdjl
+         1MLhBXVwq+jbGDtBlCQAW9esFmP+pkXeb1BNtwokqyxFCQvgOhjgBEUEVeAoL72a6RQM
+         FlBktNSmPw20G9NbSD/TQ0Xvku51ctW+zGnyULicB7TtjyPQK4uZKCy51ZzacOjl+DxT
+         SAJmyk1st7TCuyfo/BBvSpjbua2GwFUwA64Aqu6Q0FDxxk+2zmy4lXy5pR9sFB6LS/Vg
+         vWUwbmM7E6eaRW9fpnmADFZGcDfzzjuQeljUDT9s7wCleCe5O1pQU4R36YDYSdHhxbB6
+         ICUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbRS4pCfwtZqnfzP6zzn2r3SLie8MZHak+NrGGIs9NfwoowJm2iNld2GTQ7Rin0oOYwwWiklw1HjQFu2Q=@vger.kernel.org, AJvYcCXKmR+T+zNU1fjrrWNuWsP++AaAalELJkdANITshe7ue9RqEKANCaqfqBc++akpRl/TRQ9yS7SI@vger.kernel.org
+X-Gm-Message-State: AOJu0YydWI21lEVmzPzj3NsfcDb7XAs8o++SComz9l5Hr2GazjiGKCVg
+	9ozeS4QbK0uUfjhsfT2pIDtTQH5OEkLGiPoF6K4pH6xJwKLllpyOA/Rd1nWiEg==
+X-Gm-Gg: ASbGncuqYdmWSen/Sjhk7qViq+YA8ftlEx2+0e38RJCvON6NW/fNikbVNIMChFU5hnU
+	rccCCQegbWlgT2KPIwfdl9Ls8TM6Wv9owBTwUs1cpywO2cY7nhvzOl8f65Ni3TVqJ5+vmKwnngr
+	+5pQAgxvlmRPNIr/jF2/UBXuVGWU5kC3RmgeQyIMtr3zq/NQFJVW2nkbezIVYuxXod8CSwSQpn9
+	dM0HVnazoCQ/6V/W4ms3QL/kaMEo2oh4dMJxsTbOhCphAwWQubK6XL0gRDhm0f5SIP6v/8Zi2zj
+	1Spr9xnqCzt2KFQq7JxrKmtUFCDf7lMrdA9mjMHs2OI/fwMne8pOjqZWFJ21AtsBWJHHGpPpDJ7
+	mHFUIU2u010IM4AcjaT2qcRbDFWw3lhvRsObLt77o8+EGL3/UvJn80ZpPEVTospGsyJGuzekYje
+	jkub4yXflDpt4o
+X-Google-Smtp-Source: AGHT+IETfZjHtGAfi8ECh1uuzCfxcgFSe2Z65Cm/9zkkA9f12Dt9QxUQYVsA3ykCkgM9C5xSD0lOsQ==
+X-Received: by 2002:a05:6122:3c4a:b0:544:87e2:12d1 with SMTP id 71dfb90a1353d-544a031f627mr4741726e0c.7.1756838077727;
+        Tue, 02 Sep 2025 11:34:37 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-544912c7cbcsm6010677e0c.2.2025.09.02.11.34.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 11:34:20 -0700 (PDT)
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Tue, 02 Sep 2025 15:33:55 -0300
-Subject: [PATCH v3 4/4] kdb: Adapt kdb_msg_write to work with NBCON
- consoles
+        Tue, 02 Sep 2025 11:34:37 -0700 (PDT)
+Date: Tue, 02 Sep 2025 14:34:36 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Richard Gobert <richardbgobert@gmail.com>, 
+ netdev@vger.kernel.org
+Cc: davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ corbet@lwn.net, 
+ saeedm@nvidia.com, 
+ tariqt@nvidia.com, 
+ mbloch@nvidia.com, 
+ leon@kernel.org, 
+ ecree.xilinx@gmail.com, 
+ dsahern@kernel.org, 
+ ncardwell@google.com, 
+ kuniyu@google.com, 
+ shuah@kernel.org, 
+ sdf@fomichev.me, 
+ aleksander.lobakin@intel.com, 
+ florian.fainelli@broadcom.com, 
+ willemdebruijn.kernel@gmail.com, 
+ alexander.duyck@gmail.com, 
+ linux-kernel@vger.kernel.org, 
+ linux-net-drivers@amd.com, 
+ Richard Gobert <richardbgobert@gmail.com>
+Message-ID: <willemdebruijn.kernel.2bc58f76bed9b@gmail.com>
+In-Reply-To: <20250901113826.6508-6-richardbgobert@gmail.com>
+References: <20250901113826.6508-1-richardbgobert@gmail.com>
+ <20250901113826.6508-6-richardbgobert@gmail.com>
+Subject: Re: [PATCH net-next v4 5/5] selftests/net: test ipip packets in
+ gro.sh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-nbcon-kgdboc-v3-4-cd30a8106f1c@suse.com>
-References: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
-In-Reply-To: <20250902-nbcon-kgdboc-v3-0-cd30a8106f1c@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
- John Ogness <john.ogness@linutronix.de>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Jason Wessel <jason.wessel@windriver.com>, 
- Daniel Thompson <danielt@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
- Marcos Paulo de Souza <mpdesouza@suse.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756838042; l=3211;
- i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=+UwyHLjdFrZY6eKJLE4ZxlJyjFoWSa4EScBE6ysnaVI=;
- b=lzYUMPYu2PLlg3gPvl+ogk+PEjpIYL3DTt0nd9nwcAKyg8F5UiKDXV5FZhydCLA1LLurdiii+
- qJiBTPCmsZICSMPLq2lXvZ6UqfFRvqPjmtLz9muRoX0jMUIqyOGY28T
-X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
- pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
 
-Function kdb_msg_write was calling con->write for any found console,
-but it won't work on NBCON ones. In this case we should acquire the
-ownership of the console using NBCON_PRIO_EMERGENCY, since printing
-kdb messages should only be interrupted by a panic in the case it was
-triggered by sysrq debug option. This is done by the
-nbcon_kdb_{acquire,release} functions.
+Richard Gobert wrote:
+> Add IPIP test-cases to the GRO selftest.
+> 
+> This selftest already contains IP ID test-cases. They are now
+> also tested for encapsulated packets.
+> 
+> This commit also fixes ipip packet generation in the test.
+> 
+> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+> ---
+>  tools/testing/selftests/net/gro.c  | 49 ++++++++++++++++++++++++------
+>  tools/testing/selftests/net/gro.sh |  5 +--
+>  2 files changed, 42 insertions(+), 12 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
+> index 3d4a82a2607c..451dc1c1eac5 100644
+> --- a/tools/testing/selftests/net/gro.c
+> +++ b/tools/testing/selftests/net/gro.c
+> @@ -93,6 +93,7 @@ static bool tx_socket = true;
+>  static int tcp_offset = -1;
+>  static int total_hdr_len = -1;
+>  static int ethhdr_proto = -1;
+> +static bool ipip;
+>  static const int num_flush_id_cases = 6;
+>  
+>  static void vlog(const char *fmt, ...)
+> @@ -114,7 +115,9 @@ static void setup_sock_filter(int fd)
+>  	int ipproto_off, opt_ipproto_off;
+>  	int next_off;
+>  
+> -	if (proto == PF_INET)
+> +	if (ipip)
+> +		next_off = sizeof(struct iphdr) + offsetof(struct iphdr, protocol);
+> +	else if (proto == PF_INET)
+>  		next_off = offsetof(struct iphdr, protocol);
+>  	else
+>  		next_off = offsetof(struct ipv6hdr, nexthdr);
+> @@ -244,7 +247,7 @@ static void fill_datalinklayer(void *buf)
+>  	eth->h_proto = ethhdr_proto;
+>  }
+>  
+> -static void fill_networklayer(void *buf, int payload_len)
+> +static void fill_networklayer(void *buf, int payload_len, int protocol)
+>  {
+>  	struct ipv6hdr *ip6h = buf;
+>  	struct iphdr *iph = buf;
+> @@ -254,7 +257,7 @@ static void fill_networklayer(void *buf, int payload_len)
+>  
+>  		ip6h->version = 6;
+>  		ip6h->payload_len = htons(sizeof(struct tcphdr) + payload_len);
+> -		ip6h->nexthdr = IPPROTO_TCP;
+> +		ip6h->nexthdr = protocol;
+>  		ip6h->hop_limit = 8;
+>  		if (inet_pton(AF_INET6, addr6_src, &ip6h->saddr) != 1)
+>  			error(1, errno, "inet_pton source ip6");
+> @@ -266,7 +269,7 @@ static void fill_networklayer(void *buf, int payload_len)
+>  		iph->version = 4;
+>  		iph->ihl = 5;
+>  		iph->ttl = 8;
+> -		iph->protocol	= IPPROTO_TCP;
+> +		iph->protocol	= protocol;
+>  		iph->tot_len = htons(sizeof(struct tcphdr) +
+>  				payload_len + sizeof(struct iphdr));
+>  		iph->frag_off = htons(0x4000); /* DF = 1, MF = 0 */
+> @@ -313,9 +316,19 @@ static void create_packet(void *buf, int seq_offset, int ack_offset,
+>  {
+>  	memset(buf, 0, total_hdr_len);
+>  	memset(buf + total_hdr_len, 'a', payload_len);
+> +
+>  	fill_transportlayer(buf + tcp_offset, seq_offset, ack_offset,
+>  			    payload_len, fin);
+> -	fill_networklayer(buf + ETH_HLEN, payload_len);
+> +
+> +	if (ipip) {
+> +		fill_networklayer(buf + ETH_HLEN + sizeof(struct iphdr),
+> +				  payload_len, IPPROTO_TCP);
+> +		fill_networklayer(buf + ETH_HLEN, payload_len + sizeof(struct iphdr),
+> +				  IPPROTO_IPIP);
 
-At this point, the console is required to use the atomic callback. The
-console is skipped if the write_atomic callback is not set or if the
-context could not be acquired. The validation of NBCON is done by the
-console_is_usable helper. The context is released right after
-write_atomic finishes.
+if respinning, minor request to insert in the order of the headers,
+so IPIP first.
 
-The oops_in_progress handling is only needed in the legacy consoles,
-so it was moved around the con->write callback.
+> +	} else {
+> +		fill_networklayer(buf + ETH_HLEN, payload_len, IPPROTO_TCP);
+> +	}
+> +
+>  	fill_datalinklayer(buf);
+>  }
+>  
 
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
----
- kernel/debug/kdb/kdb_io.c | 46 +++++++++++++++++++++++++++++++---------------
- 1 file changed, 31 insertions(+), 15 deletions(-)
+> diff --git a/tools/testing/selftests/net/gro.sh b/tools/testing/selftests/net/gro.sh
+> index 9e3f186bc2a1..d16ec365b3cf 100755
+> --- a/tools/testing/selftests/net/gro.sh
+> +++ b/tools/testing/selftests/net/gro.sh
+> @@ -4,7 +4,7 @@
+>  readonly SERVER_MAC="aa:00:00:00:00:02"
+>  readonly CLIENT_MAC="aa:00:00:00:00:01"
+>  readonly TESTS=("data" "ack" "flags" "tcp" "ip" "large")
+> -readonly PROTOS=("ipv4" "ipv6")
+> +readonly PROTOS=("ipv4" "ipv6" "ipip")
+>  dev=""
+>  test="all"
+>  proto="ipv4"
+> @@ -31,7 +31,8 @@ run_test() {
+>        1>>log.txt
+>      wait "${server_pid}"
+>      exit_code=$?
+> -    if [[ ${test} == "large" && -n "${KSFT_MACHINE_SLOW}" && \
+> +    if [[ ( ${test} == "large" || ${protocol} == "ipip" ) && \
+> +          -n "${KSFT_MACHINE_SLOW}" && \
+>            ${exit_code} -ne 0 ]]; then
+>          echo "Ignoring errors due to slow environment" 1>&2
+>          exit_code=0
 
-diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index 9b11b10b120cf07e451a7a4d92ce50f9a6c066b2..47bc31cc71bc84750db5d9304ed75a113cd382bf 100644
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -589,24 +589,40 @@ static void kdb_msg_write(const char *msg, int msg_len)
- 	 */
- 	cookie = console_srcu_read_lock();
- 	for_each_console_srcu(c) {
--		if (!(console_srcu_read_flags(c) & CON_ENABLED))
-+		struct nbcon_write_context wctxt = { };
-+		short flags = console_srcu_read_flags(c);
-+
-+		if (!console_is_usable(c, flags, true))
- 			continue;
- 		if (c == dbg_io_ops->cons)
- 			continue;
--		if (!c->write)
--			continue;
--		/*
--		 * Set oops_in_progress to encourage the console drivers to
--		 * disregard their internal spin locks: in the current calling
--		 * context the risk of deadlock is a bigger problem than risks
--		 * due to re-entering the console driver. We operate directly on
--		 * oops_in_progress rather than using bust_spinlocks() because
--		 * the calls bust_spinlocks() makes on exit are not appropriate
--		 * for this calling context.
--		 */
--		++oops_in_progress;
--		c->write(c, msg, msg_len);
--		--oops_in_progress;
-+
-+		if (flags & CON_NBCON) {
-+			/*
-+			 * Do not continue if the console is NBCON and the context
-+			 * can't be acquired.
-+			 */
-+			if (!nbcon_kdb_try_acquire(c, &wctxt))
-+				continue;
-+
-+			wctxt.outbuf = (char *)msg;
-+			wctxt.len = msg_len;
-+			c->write_atomic(c, &wctxt);
-+			nbcon_kdb_release(&wctxt);
-+		} else {
-+			/*
-+			 * Set oops_in_progress to encourage the console drivers to
-+			 * disregard their internal spin locks: in the current calling
-+			 * context the risk of deadlock is a bigger problem than risks
-+			 * due to re-entering the console driver. We operate directly on
-+			 * oops_in_progress rather than using bust_spinlocks() because
-+			 * the calls bust_spinlocks() makes on exit are not appropriate
-+			 * for this calling context.
-+			 */
-+			++oops_in_progress;
-+			c->write(c, msg, msg_len);
-+			--oops_in_progress;
-+		}
- 		touch_nmi_watchdog();
- 	}
- 	console_srcu_read_unlock(cookie);
-
--- 
-2.50.0
-
+If you can no longer reproduce the need for this, and we see no
+reason analytically why ipip would be more flaky than ipv4, then
+please drop this. Else some future time we'll be scratching our heads
+why this is here but will be afraid to touch it.
 
