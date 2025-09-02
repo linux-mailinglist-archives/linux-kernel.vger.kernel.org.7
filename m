@@ -1,85 +1,133 @@
-Return-Path: <linux-kernel+bounces-795523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2C8B3F3D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:50:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D828EB3F3DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1CB917F5AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:50:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5DA1894E89
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDAE2D594E;
-	Tue,  2 Sep 2025 04:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0590C2676C9;
+	Tue,  2 Sep 2025 04:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dIYO+Gc4"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Jo8zwzPN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A822A253359
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 04:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA0235962;
+	Tue,  2 Sep 2025 04:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756788589; cv=none; b=M0f5yQ5gwxYfwi2V3SnrqoTC4HyygCO8MFU/8acRxqog7jOv3JPShCUrDxoxrluktCYA2EOdGQ+dHMPqlrOL36xO4Zliv8tnz7h3nXBBqgZF2k3v6A8eKsVkn8PAp4QoKm/+b7B32VcwyITNRK+E/7DFP+qfZvNvEpVedFlfGRM=
+	t=1756788612; cv=none; b=XFd+DSy2jRWAyw7rff4nofebZg4Cf+Kssug8EjhqbkQehwWVvlj6utR+a6yu7pBUyyXhp4YQXH5BdT0gOzxOQoxFnd3yS+9cVWlB97/8g5mROgzs6atwlErZOXKxKyTvZQSsiPEcv86XgwhOJyXgFnZVjwXZdpTvc0FcYQHEP64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756788589; c=relaxed/simple;
-	bh=JdbI9aDNXEDZVPGEZv+pByx8hHx3yUXm3BlvcdFBDRs=;
+	s=arc-20240116; t=1756788612; c=relaxed/simple;
+	bh=KdiFK2Ork7cB/7cMeg2MKhqauepVuvl0glmbgl2tmd8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNOr93N3qQm4SDy2qddz1HzKUtPfe/tPsGlCVOn5BlJ0QicCgbAA0z90LZ40Lub1MxL7Gdb+Hy5pzo762BfkUIlCUelVcVyM3QcUYIRITBNZ+OLfvH31EGp0WQKIv4Xb4+S+po2Dat1RZM2QHsJRmqjohAJBbXJ2/O3KMQF/Nu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dIYO+Gc4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1542C4CEED;
-	Tue,  2 Sep 2025 04:49:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVXUyRBzEPHsiqizmFLSHQSavdkvOU3J6LpOqLZxxOId7p2Z2GLMQw2lVnFYoDpB+m55JtdhWsCzPwnF77Q1phiFaStMFB/gWWwwJodwzHP638EXGbSsuKZ3Evm/osZh6JyR7kXZ/TCJoKYuy9wE+9zKtsxy4uWfMzPkr0wIcVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Jo8zwzPN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55BC4C4CEED;
+	Tue,  2 Sep 2025 04:50:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756788589;
-	bh=JdbI9aDNXEDZVPGEZv+pByx8hHx3yUXm3BlvcdFBDRs=;
+	s=korg; t=1756788611;
+	bh=KdiFK2Ork7cB/7cMeg2MKhqauepVuvl0glmbgl2tmd8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dIYO+Gc4sWILncYjnQ/1DCT2h85291mceZrPlzocTzq0jfv34Fi2hmVV/iff7XBoM
-	 yJh7zg09yyPsW92viukWPRMfcxlWS1tQVHvdCIfTxZv7XUeN7KQs8/mX8QIQoPTIv+
-	 in+AytZ1YGT7A3w7OUaohdtEsbf3jLnQZ9O1ym0o=
-Date: Tue, 2 Sep 2025 06:49:45 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Aleksandr Shabelnikov <mistermidi@gmail.com>
-Cc: o-takashi@sakamocchi.jp, linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firewire: core: bound traversal stack in
- read_config_rom()
-Message-ID: <2025090237-undocked-reopen-7ce6@gregkh>
-References: <20250901171547.47065-1-mistermidi@gmail.com>
+	b=Jo8zwzPNbW5L0G145Y4mzNg/3Zg+f4NhaV2umMAj2Ql0l/3IMP/3oW0qHpBBBYbvx
+	 2MK9poRRdfmnYcdMVxOkX+By2FV+zH8H42YhPk3kY5Frhe25cytmCCwgiBAH9G9u8p
+	 +I14CysGpuYfkrB0/mCof1PVDC1GXGES8og9As/0=
+Date: Tue, 2 Sep 2025 06:50:08 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] device property: Add scoped fwnode child node
+ iterators
+Message-ID: <2025090203-epiphany-antsy-bf45@gregkh>
+References: <20250901163648.82034-1-jefflessard3@gmail.com>
+ <20250901163648.82034-2-jefflessard3@gmail.com>
+ <9ed3743b-4f86-42d3-94e0-8a720526dce4@kernel.org>
+ <85D46ECF-B4A6-4C78-A4DD-0785FE58B2A3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250901171547.47065-1-mistermidi@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85D46ECF-B4A6-4C78-A4DD-0785FE58B2A3@gmail.com>
 
-On Mon, Sep 01, 2025 at 07:15:47PM +0200, Aleksandr Shabelnikov wrote:
-> read_config_rom() walks Configuration ROM directories using an explicit
-> stack but pushes new entries without a bound check:
+On Mon, Sep 01, 2025 at 02:16:35PM -0400, Jean-François Lessard wrote:
+> Le 1 septembre 2025 13 h 48 min 14 s HAE, Danilo Krummrich <dakr@kernel.org> a écrit :
+> >On 9/1/25 6:36 PM, Jean-François Lessard wrote:
+> >> Add scoped versions of fwnode child node iterators that automatically
+> >> handle reference counting cleanup using the __free() attribute:
+> >> 
+> >> - fwnode_for_each_child_node_scoped()
+> >> - fwnode_for_each_named_child_node_scoped()
+> >> - fwnode_for_each_available_child_node_scoped()
+> >> 
+> >> These macros follow the same pattern as existing scoped iterators in the
+> >> kernel, ensuring fwnode references are automatically released when the
+> >> iterator variable goes out of scope. This prevents resource leaks and
+> >> eliminates the need for manual cleanup in error paths.
+> >> 
+> >> The implementation mirrors the non-scoped variants but uses
+> >> __free(fwnode_handle) for automatic resource management, providing a
+> >> safer and more convenient interface for drivers iterating over firmware
+> >> node children.
+> >> 
+> >> Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
+> >
+> >Thanks for adding a user and splitting it up (Andy was a bit faster than me :).
+> >
 > 
->     stack[sp++] = i + rom[i];
+> Very welcome! Thanks for reviewing.
 > 
-> A malicious or malformed Configuration ROM can construct in-range cyclic
-> directory references so that the traversal keeps enqueueing, growing the
-> stack past its allocated depth. rom[] and stack[] are allocated adjacent
-> in a single kmalloc() block, so this leads to a heap out-of-bounds write.
+> >> diff --git a/include/linux/property.h b/include/linux/property.h
+> >> index 82f0cb3ab..279c244db 100644
+> >> --- a/include/linux/property.h
+> >> +++ b/include/linux/property.h
+> >> @@ -176,6 +176,20 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
+> >>   	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
+> >>   	     child = fwnode_get_next_available_child_node(fwnode, child))
+> >>   +#define fwnode_for_each_child_node_scoped(fwnode, child)		\
+> >> +	for (struct fwnode_handle *child __free(fwnode_handle) =	\
+> >> +		fwnode_get_next_child_node(fwnode, NULL);		\
+> >> +	     child; child = fwnode_get_next_child_node(fwnode, child))
+> >> +
+> >> +#define fwnode_for_each_named_child_node_scoped(fwnode, child, name)	\
+> >> +	fwnode_for_each_child_node_scoped(fwnode, child)		\
+> >> +		for_each_if(fwnode_name_eq(child, name))
+> >
+> >IIRC, your first patch mentioned that your driver series would only use
+> >fwnode_for_each_available_child_node_scoped().
 > 
-> Add a hard bound check before every push. While this does not itself
-> implement cycle detection, it prevents memory corruption and limits the
-> impact to a clean failure (-EOVERFLOW).
+> You are correct. Next version of TM16XX driver patch series will use
+> fwnode_for_each_available_child_node_scoped()
 > 
-> Reported-by: Aleksandr Shabelnikov <mistermidi@gmail.com>
-> Suggested-by: Aleksandr Shabelnikov <mistermidi@gmail.com>
+> >
+> >And this series adds a user for fwnode_for_each_child_node_scoped(); do you also have a user for fwnode_for_each_named_child_node_scoped()?
 > 
-> Signed-off-by: Aleksandr Shabelnikov <mistermidi@gmail.com>
+> No, I haven't found an existing user that requires the scoped version. The only
+> usage I found of the non-scoped fwnode_for_each_named_child_node() is in 
+> drivers/base/property.c in fwnode_get_named_child_node_count(), which doesn't
+> need to put the fwnode.
+> 
+> I included it for consistency since the header defines all three non-scoped
+> variants, but I understand the "no dead code" policy concern.
+> 
+> Would you prefer I drop the fwnode_for_each_named_child_node_scoped() 
+> variant and submit a v4 with only the two variants that have real users?
 
-Nit, you only need the last one "reported-by" and "suggested-by" don't
-mean anything when it is you as the author and signed-off-by line :)
-
-thanks,
-
-greg k-h
+Yes please.
 
