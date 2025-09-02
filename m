@@ -1,184 +1,423 @@
-Return-Path: <linux-kernel+bounces-796396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBC5B40046
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:24:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B714B40052
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A822204606
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:18:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75EE5402EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25E22459F7;
-	Tue,  2 Sep 2025 12:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD58D2FD1DA;
+	Tue,  2 Sep 2025 12:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kydl/mlD"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSVWNYDv"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F601A9F88;
-	Tue,  2 Sep 2025 12:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71892C11C9;
+	Tue,  2 Sep 2025 12:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815360; cv=none; b=P/Rz63AujfdfQ/ypOC8Vt0RPSQwbyXWE7lKCu6Vu1n5wtxkcGmI1cGurb7vdnxz3C0Tl6/wI9qyF45360eL7PShOXY/oHm90NyuJ3TT2Mb81oETFa/5BOYQt4wMX73idjTgg/IonQAGAWD1dLpvReh2YHumB+NKYKU9ZfTTjaos=
+	t=1756815456; cv=none; b=aPz1/97cZd/ZvvbxLJCEOmdWwu4+wg7Ekv9dlR1w/HUZffZmcPH/x/qox6Zw1GiuiPXe0O/JareCtBlxaNwJ6frcMKR41gjTC/nLrUHqEJjevDtBrRoGF0dV6y58YL/OIRjrUsbOAWts8StjMK3QsKWxd8Reiqm5RB+1y0UhKPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815360; c=relaxed/simple;
-	bh=wcgX/ND25g46C+3//qVJGQeuiEX4k18tJpZkfsw3LzA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YBOv/hy9wTDuUXiDHToHHFhQIAerKbP3+o6VjT1KCQL/PmdhVjiaLPM9XNdk1zC/pwnP86Lauu9wwGTbjVfaeVxqcKaLhmmt7lhOqhJVBRC2Vxv9pBhrKbnbiwP7AtN+4M8coXjttfrUD+7Qf0yi8Q/+gRuSGqxSZQTpNaFsZRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kydl/mlD; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756815356;
-	bh=wcgX/ND25g46C+3//qVJGQeuiEX4k18tJpZkfsw3LzA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=kydl/mlDHGjU3q9Ui0EeiX3+eXd/aIkSsiytK3TKiV4h95c6L7cG/uM87flEsLXC4
-	 aaxQJQ+cvYnhoaisiZERVO7tJ2yF3J/twQV1k8hv/Gg1qhTjhBa3c+6kS9lFwASOkq
-	 XQT0Yl+wXg5Sy4WWupNPDa3HQtRFssu+NfQz9DfhYjHHRlPu0CdrrwdiLqzGDHfawq
-	 Gmww8VNg16zybXVMKOtS+glItvleaeEDOpZWv4YUzd8a2dljNaB1Uc+xpevUw5Z37t
-	 lDAFQW3zYSRAj7R/DRJXBhCMTPW3/TZ/6nNBpASWoA0XgBa673i+ZOGrduPf78zXMm
-	 1FimqLdXCieGA==
-Received: from localhost (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 069C417E12A2;
-	Tue,  2 Sep 2025 14:15:55 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 02 Sep 2025 15:15:46 +0300
-Subject: [PATCH v3] usb: vhci-hcd: Prevent suspending virtually attached
- devices
+	s=arc-20240116; t=1756815456; c=relaxed/simple;
+	bh=3/mypePnJRDUzhOvndfzVAOYSe0h2vW0Tvh9JFz0G0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WSLvHDJBHHyozkHQobpCVk1z0piPrnQsk6uO+p/shuvrRb9SeYxb6N3p0aaiS4DGegTZzGfMK+uih/dfMMLZkpvZVyMk4Ri7ERBpIQKGfRoZelRNqNlKpizGfW8v0WfoA5q78QJ19Z6ND0gX3DTHJ24LnCJf7DLlzM8vHqAVLAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kSVWNYDv; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so5559399a12.0;
+        Tue, 02 Sep 2025 05:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756815453; x=1757420253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=42U15/348cdGUsar34UpC/0xXX4VsKca7Fk0wm1luRs=;
+        b=kSVWNYDvOVub/DhWgVqsu0F6bRSJuc8n2aniyhXAAhi3iVdiYMkfvftOFFhreN2taP
+         yjOmt0IAQWOi5GLH3G6oyCy39c+QEuLMH7puAfJ1MnD6EaWqcl0843c+zinsBaRiYmiz
+         zmSWG0t39q6GYBxK1vPE0+P8i7pSgBMe5jpqNw5Q+MElVPeW0sVVob4ZuI4DZFy9qLc6
+         4EQGO5w01ZAKXJBuTlGs59MZODkTMnrmkHQjmdht7tHoTEus5n5+Wj26daBOsYBp/oGh
+         b6ChZK0sj5RSpr/ZmpZXJFRWquhLW1CLhiMLZhBBEohu0m4bbS3Kaosn2n4Du6gG1FS6
+         axKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756815453; x=1757420253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=42U15/348cdGUsar34UpC/0xXX4VsKca7Fk0wm1luRs=;
+        b=gKyZzPV4dC2KLRAIAPx/MbnpTHTPThScxlNDoQIZmcm3yK9oxLlKPtpLoJmNCHZOYP
+         PXDj0yFHJmdrwGXipoOt/JU/HsljanCSeqVFEhmulgnrar7kzycoQtL/Ma/Kz0r3Wt/A
+         R/lqIWD5BSMOXv4kMnuGSspN6uhQhohS+udDCFP9s4z/8ibhCh7e1qM/35ZYLqrNPxtM
+         I24d4aSpXKmQ/LXRtDKMjv4lVHtNBUse2rnr4NiezXI50WvCM2NN4JMjzBKuZcVf/V6G
+         AxL2Z2H88kVcvLf0l6cd+07kyMp8L/oixPlvCkkIpdVuSbEFZbfxZA7nD+1uxYLObMoO
+         eHAg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+nP+t46J5fnam6X3RRbeZepRaBCmgcU6aIJk7rdS4M6AGt3S9X/+8zTduaFQUrv5py04Q/eeUUauwl51e@vger.kernel.org, AJvYcCVKZyiX3ll6n2l41v5+RGWnMA2mkC1oyGE7agcpek2js5LQkFhpqKJBUl7KOEZlwcNI0jzbUgb2/2Wm@vger.kernel.org, AJvYcCVivb2Ibq3AudN7iwVoORswlZ2Ouo7eCUJY6GYLIfr9rx9hKDcnHA2Mv0cyVJ0Dbv+zpA2d5DMHkVOP9+G6bRbWDMQ=@vger.kernel.org, AJvYcCXVW7GskPgP2T4fSBXkbj8JUG++fYENA7Z6ESDUjMWsrDP6X4tVP5zty0B4oD+X9CZLEPBC2YJr@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmj4bYo5Bkk0XViWXy0ZPrMHBCP1UALkANARsF1qncrdrDglPr
+	VyEE3hv1wlAlQl4C9AX+oglFn9A6OTqFqvkS6pv4GsDvOoJyS0tW4yqgJceIAyGpFGV2PbZ2EkI
+	+j1jIVJXGeOBN4wIR4RJBQWD9C8bTxW8=
+X-Gm-Gg: ASbGncv9K96IA7s12D9qFfcS0BpvBWoJo07iEwJKNuCNz0BKqybLMnWlE+0/cXLPKa9
+	zHkNk2GnZa6QvGQr6cv74cfjLCoQ6HrCRgPv5O22seCEqIJHPSs7Z+B5r3VlK1TssI4BeiGajEp
+	BdKgEpiCw7iMJDTooQbPsirEGwq7oOxhDXCgzuvnNfGSWUXatJ2hvKGFKWBo226F0M6+RJcZvvW
+	cQ3Z3lejUUBUVj17iC5elvJJs0poqqGMIjG45mpqByybVV8jCs=
+X-Google-Smtp-Source: AGHT+IEY6ifRLT0JiWdPcioO0Hkm95EYxod8iArKpPf75fvBrdryW7qlJWrp5KlqLLS4W+5vCXQxFZlsc8+QUu2qk1s=
+X-Received: by 2002:a17:906:2692:b0:b04:1896:1236 with SMTP id
+ a640c23a62f3a-b0418961257mr708211166b.22.1756815452790; Tue, 02 Sep 2025
+ 05:17:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-vhci-hcd-suspend-fix-v3-1-864e4e833559@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAPHftmgC/3XNQQrCMBCF4atI1o5MR9NaV95DXKST1ARqUxINS
- undTQuCiC7/B/PNKKIJzkRxWI0imOSi832O7Xol2Kr+YsDp3IKQJFbFDpJlB5Y1xHscTK+hdQ+
- odCOZJEustcinQzB5XtjTObd18ebDc/mSinl9g9VvMBWAQA0iskZZSzqy7zrV+KA27K9iRhN9Q
- FT+gShDxb6mstStbpX6hqZpegHJgtV+BQEAAA==
-X-Change-ID: 20250714-vhci-hcd-suspend-fix-7db5c25c509d
-To: Valentina Manea <valentina.manea.m@gmail.com>, 
- Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Brian G. Merrell" <bgmerrell@novell.com>
-Cc: kernel@collabora.com, Greg Kroah-Hartman <gregkh@suse.de>, 
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+References: <20250901224327.3429099-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250901224327.3429099-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250902-enlightened-hidden-copperhead-4eefdf@kuoka>
+In-Reply-To: <20250902-enlightened-hidden-copperhead-4eefdf@kuoka>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 2 Sep 2025 13:17:06 +0100
+X-Gm-Features: Ac12FXy9DVpjObuZ3-ixuDeS5Kbpg__4JszfuiG4LvJTm1hlGpANpZzv3qTq1To
+Message-ID: <CA+V-a8sSiNQ6W-ggmL8PP_G1sFq170DS1LJLFJs_WW0RC+XVEw@mail.gmail.com>
+Subject: Re: [PATCH net-next 01/10] dt-bindings: net: pcs: renesas,rzn1-miic:
+ Document RZ/T2H and RZ/N2H SoCs
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The VHCI platform driver aims to forbid entering system suspend when at
-least one of the virtual USB ports are bound to an active USB/IP
-connection.
+Hi Krzysztof,
 
-However, in some cases, the detection logic doesn't work reliably, i.e.
-when all devices attached to the virtual root hub have been already
-suspended, leading to a broken suspend state, with unrecoverable resume.
+Thank you for the review.
 
-Ensure the virtually attached devices do not enter suspend by setting
-the syscore PM flag.  Note this is currently limited to the client side
-only, since the server side doesn't implement system suspend prevention.
+On Tue, Sep 2, 2025 at 9:45=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Mon, Sep 01, 2025 at 11:43:14PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Extend the RZN1 MIIC device-tree binding schema to cover the RZ/T2H
+> > and RZ/N2H SoCs. These SoCs have a MIIC converter similar to RZ/N1, but
+> > with some differences:
+> >
+> > - RZ/T2H has two reset lines; RZ/N1 has none.
+> > - RZ/N1 supports 5 MIIC ports, whereas RZ/T2H supports 4 ports.
+> > - On RZ/N1, MIIC ports can be mapped to various endpoints such as RTOS
+> >   MAC ports, switch ports, EtherCAT ports, SERCOS ports, HSR ports, or
+> >   fixed PHY ports (covering PHY input indices 0-13). On RZ/T2H, ports
+> >   can connect to EtherCAT slave ports, Ethernet switch ports, or GMAC
+> >   ports (mapped to PHY input indices 0-8).
+> > - There are register bit differences between the SoCs, and RZ/N1 has
+> >   additional registers currently unused by the driver.
+> > - On RZ/T2H, the switch is connected to GMAC0 whereas on RZ/N1 the
+> >   switch can be connected to GMAC2/HW-RTOS GMAC.
+> >
+> > To accommodate these differences, a new generic compatible string
+> > `renesas,rzt2h-miic` is introduced for both RZ/T2H and RZ/N2H variants.
+> >
+> > The DT schema is updated to validate these differences and ensure prope=
+r
+> > port and reset configurations per SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../bindings/net/pcs/renesas,rzn1-miic.yaml   | 171 +++++++++++++-----
+> >  include/dt-bindings/net/pcs-rzt2h-miic.h      |  23 +++
+> >  2 files changed, 148 insertions(+), 46 deletions(-)
+> >  create mode 100644 include/dt-bindings/net/pcs-rzt2h-miic.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-mii=
+c.yaml b/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+> > index 2d33bbab7163..832a49877a29 100644
+> > --- a/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+> > +++ b/Documentation/devicetree/bindings/net/pcs/renesas,rzn1-miic.yaml
+> > @@ -4,13 +4,14 @@
+> >  $id: http://devicetree.org/schemas/net/pcs/renesas,rzn1-miic.yaml#
+> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> >
+> > -title: Renesas RZ/N1 MII converter
+> > +title: Renesas RZ/{N1, N2H, T2H} MII converter
+>
+> Don't use regex here. RZ/N1, RZ/N2H and TZ/T2H....
+>
+Ok, I will use it as above (s/TZ/T2H/RZ/T2H).
 
-Fixes: 04679b3489e0 ("Staging: USB/IP: add client driver")
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
-The USB/IP Virtual Host Controller (VHCI) platform driver is expected to
-prevent entering system suspend when at least one remote device is
-attached to the virtual USB root hub.
+> >
+> >  maintainers:
+> >    - Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+> > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> >  description: |
+> > -  This MII converter is present on the Renesas RZ/N1 SoC family. It is
+> > +  This MII converter is present on the Renesas RZ/{N1, N2H, T2H} SoC f=
+amilies. It is
+>
+> Just list the soc families, so people can grep for it.
+>
+Ok.
 
-However, in some cases, the detection logic for active USB/IP
-connections doesn't seem to work reliably, e.g. when all devices
-attached to the virtual hub have been already suspended.  This will
-normally lead to a broken suspend state, with unrecoverable resume.
+> >    responsible to do MII passthrough or convert it to RMII/RGMII.
+> >
+> >  properties:
+> > @@ -21,10 +22,17 @@ properties:
+> >      const: 0
+> >
+> >    compatible:
+> > -    items:
+> > -      - enum:
+> > -          - renesas,r9a06g032-miic
+> > -      - const: renesas,rzn1-miic
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - renesas,r9a06g032-miic
+> > +          - const: renesas,rzn1-miic
+> > +
+> > +      - items:
+> > +          - enum:
+> > +              - renesas,r9a09g077-miic # RZ/T2H
+> > +              - renesas,r9a09g087-miic # RZ/N2H
+> > +          - const: renesas,rzt2h-miic
+> >
+> >    reg:
+> >      maxItems: 1
+> > @@ -43,11 +51,20 @@ properties:
+> >        - const: rmii_ref
+> >        - const: hclk
+> >
+> > +  resets:
+> > +    items:
+> > +      - description: Converter register reset
+> > +      - description: Converter reset
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: rst
+> > +      - const: crst
+> > +
+> >    renesas,miic-switch-portin:
+> >      description: MII Switch PORTIN configuration. This value should us=
+e one of
+> >        the values defined in dt-bindings/net/pcs-rzn1-miic.h.
+> >      $ref: /schemas/types.yaml#/definitions/uint32
+> > -    enum: [1, 2]
+>
+> Why? Widest constraints should be here.
+>
+Ok, I will keep this as is and just adjust for RZ/T2H SoC.
 
-The first patch of the series provides a workaround to ensure the
-virtually attached devices do not enter suspend.  Note this is currently
-limited to the client side (vhci_hcd) only, since the server side
-(usbip_host) doesn't implement system suspend prevention.
+> >
+> >    power-domains:
+> >      maxItems: 1
+> > @@ -60,11 +77,11 @@ patternProperties:
+> >      properties:
+> >        reg:
+> >          description: MII Converter port number.
+> > -        enum: [1, 2, 3, 4, 5]
+>
+> Why?
+>
+If I keep this here and just adjust the below for RZ/T2H case I do get erro=
+rs:
 
-IMPORTANT:
+reg:
+  enum: [0, 1, 2, 3]
 
-Please note commit aa7a9275ab81 ("PM: sleep: Suspend async parents after
-suspending children") from v6.16-rc1 introduced a regression which
-breaks the suspend cancellation and hangs the system.
 
-A fix [1] has been already provided, which also landed soon after in
-v6.16-rc7 under commit ebd6884167ea ("PM: sleep: Update power.completion
-for all devices on errors").
+arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: ethss@80110000
+(renesas,r9a09g077-miic): mii-conv@0:reg:0:0: 0 is not one of [1, 2,
+3, 4, 5]
+    from schema $id:
+http://devicetree.org/schemas/net/pcs/renesas,rzn1-miic.yaml#
 
-[1] https://lore.kernel.org/all/6191258.lOV4Wx5bFT@rjwysocki.net/
----
-Changes in v3:
-- Moved all driver cleanup patches to a separate series:
-  https://lore.kernel.org/all/20250902-vhci-hcd-cleanup-v1-0-1d46247cb234@collabora.com/
-- Replaced FIXME with NOTE in the new comment block, as it refers to a
-  potential cleanup of redundant code rather than addressing a
-  functional issue
-- Rebased remaining patch onto next-20250902
-- Link to v2: https://lore.kernel.org/r/20250726-vhci-hcd-suspend-fix-v2-0-189266dfdfaa@collabora.com
+Any pointers on how to handle this case?
 
-Changes in v2:
-- Updated cover letter to indicate the PM core fix has landed in
-  v6.16-rc7
-- Also made it clear that the patch fixing up suspend prevention only
-  applies to the client side (vhci_hcd), since the server side
-  (usbip_host) doesn't implement this functionality
-- Documented the usage of dev_pm_syscore_device() in vhci_urb_enqueue()
-- Reworked most of the cleanup patches according to the feedback
-  received from Greg
-- Link to v1: https://lore.kernel.org/r/20250717-vhci-hcd-suspend-fix-v1-0-2b000cd05952@collabora.com
----
- drivers/usb/usbip/vhci_hcd.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> >
+> >        renesas,miic-input:
+> >          description: Converter input port configuration. This value sh=
+ould use
+> > -          one of the values defined in dt-bindings/net/pcs-rzn1-miic.h=
+.
+> > +          one of the values defined in dt-bindings/net/pcs-rzn1-miic.h=
+ for RZ/N1 SoC
+> > +          and include/dt-bindings/net/pcs-rzt2h-miic.h for RZ/{T2H, N2=
+H} SoCs.
+> >          $ref: /schemas/types.yaml#/definitions/uint32
+> >
+> >      required:
+> > @@ -73,47 +90,109 @@ patternProperties:
+> >
+> >      additionalProperties: false
+> >
+> > -    allOf:
+> > -      - if:
+> > -          properties:
+> > -            reg:
+> > -              const: 1
+> > -        then:
+> > -          properties:
+> > -            renesas,miic-input:
+> > -              const: 0
+> > -      - if:
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: renesas,rzn1-miic
+> > +    then:
+> > +      properties:
+> > +        renesas,miic-switch-portin:
+> > +          enum: [1, 2]
+> > +      patternProperties:
+> > +        "^mii-conv@[0-5]$":
+> >            properties:
+> >              reg:
+> > -              const: 2
+> > -        then:
+> > -          properties:
+> > -            renesas,miic-input:
+> > -              enum: [1, 11]
+> > -      - if:
+> > -          properties:
+> > -            reg:
+> > -              const: 3
+> > -        then:
+> > -          properties:
+> > -            renesas,miic-input:
+> > -              enum: [7, 10]
+> > -      - if:
+> > +              enum: [1, 2, 3, 4, 5]
+> > +            resets: false
+> > +            reset-names: false
+> > +          allOf:
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 1
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    const: 0
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 2
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    enum: [1, 11]
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 3
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    enum: [7, 10]
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 4
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    enum: [4, 6, 9, 13]
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 5
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    enum: [3, 5, 8, 12]
+> > +    else:
+> > +      properties:
+> > +        renesas,miic-switch-portin:
+> > +          const: 0
+> > +      required:
+> > +        - resets
+> > +        - reset-names
+> > +      patternProperties:
+> > +        "^mii-conv@[0-5]$":
+> >            properties:
+> >              reg:
+> > -              const: 4
+> > -        then:
+> > -          properties:
+> > -            renesas,miic-input:
+> > -              enum: [4, 6, 9, 13]
+> > -      - if:
+> > -          properties:
+> > -            reg:
+> > -              const: 5
+> > -        then:
+> > -          properties:
+> > -            renesas,miic-input:
+> > -              enum: [3, 5, 8, 12]
+> > +              enum: [0, 1, 2, 3]
+> > +          allOf:
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 0
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    enum: [0, 3, 6]
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 1
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    enum: [1, 4, 7]
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 2
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    enum: [2, 5, 8]
+> > +            - if:
+> > +                properties:
+> > +                  reg:
+> > +                    const: 3
+> > +              then:
+> > +                properties:
+> > +                  renesas,miic-input:
+> > +                    const: 1
+> >
+> >  required:
+> >    - '#address-cells'
+> > diff --git a/include/dt-bindings/net/pcs-rzt2h-miic.h b/include/dt-bind=
+ings/net/pcs-rzt2h-miic.h
+> > new file mode 100644
+> > index 000000000000..c1f35fc0f1cd
+> > --- /dev/null
+> > +++ b/include/dt-bindings/net/pcs-rzt2h-miic.h
+>
+> Missing vendor prefix. Filename based on compatible, unless this is not
+> for Renesas?
+>
+Agreed, I missed that I will add the vendor prefix and name it to
+`renesas,r9a09g077-pcs-miic.h`.
 
-diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-index e70fba9f55d6a0edf3c5fde56a614dd3799406a1..0d6c10a8490c0b3fdbebbc98c856a6c0c9b477cf 100644
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -765,6 +765,17 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
- 				 ctrlreq->wValue, vdev->rhport);
- 
- 			vdev->udev = usb_get_dev(urb->dev);
-+			/*
-+			 * NOTE: A similar operation has been done via
-+			 * USB_REQ_GET_DESCRIPTOR handler below, which is
-+			 * supposed to always precede USB_REQ_SET_ADDRESS.
-+			 *
-+			 * It's not entirely clear if operating on a different
-+			 * usb_device instance here is a real possibility,
-+			 * otherwise this call and vdev->udev assignment above
-+			 * should be dropped.
-+			 */
-+			dev_pm_syscore_device(&vdev->udev->dev, true);
- 			usb_put_dev(old);
- 
- 			spin_lock(&vdev->ud.lock);
-@@ -785,6 +796,17 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
- 					"Not yet?:Get_Descriptor to device 0 (get max pipe size)\n");
- 
- 			vdev->udev = usb_get_dev(urb->dev);
-+			/*
-+			 * Set syscore PM flag for the virtually attached
-+			 * devices to ensure they will not enter suspend on
-+			 * the client side.
-+			 *
-+			 * Note this doesn't have any impact on the physical
-+			 * devices attached to the host system on the server
-+			 * side, hence there is no need to undo the operation
-+			 * on disconnect.
-+			 */
-+			dev_pm_syscore_device(&vdev->udev->dev, true);
- 			usb_put_dev(old);
- 			goto out;
- 
-
----
-base-commit: 3db46a82d467bd23d9ebc473d872a865785299d8
-change-id: 20250714-vhci-hcd-suspend-fix-7db5c25c509d
-
+Cheers,
+Prabhakar
 
