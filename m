@@ -1,102 +1,113 @@
-Return-Path: <linux-kernel+bounces-795725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D55CB3F71A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:54:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD0FB3F7A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858D81A86124
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC9D486556
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA462E7BAD;
-	Tue,  2 Sep 2025 07:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378962E7620;
+	Tue,  2 Sep 2025 08:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+9aQw9u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="OKAc/ubq"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F002DF158;
-	Tue,  2 Sep 2025 07:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097B52BF016;
+	Tue,  2 Sep 2025 08:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799657; cv=none; b=T3MFVPL27VBhDxtev4pZ0CCb3Kcg8/h76Y3cYC4ZWIR1p4n65GLkyHV9GCItjFgkAZlXpO0ZJJaNUCw+K8oyq8ZwaOtpmn1QFXKwrTsbcmPpn7LspaCwjtfRKEnll3C62OzT6W7VwUbYEgI3TU1DgUyE3cBT6VzxqUjh8OCMLiI=
+	t=1756800389; cv=none; b=O/Nrd9mF+2ATrK7J9vdHOHPMTAbouBlsk3lI4kjU/AU/ivtFWvBFTgHvQvcm3+0qFeO8TpNLbenbc2SrYQ/RHdMyuHBA4W1pPYBF/W0er2fgxigjkS634ce4rCMtalY/IJxRhAqooYua3dZk+ATMYcwneB7eNFo+EV24bAXHBb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799657; c=relaxed/simple;
-	bh=3nc/wkBY2bIc1bkSOsEmjMvNtgdGFa44cp61YSHyt68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sn+cxgaP8vQH1pRRlNdq05JGfT2HyjXcMAyMnkyP5VlLqPxtJ9zYJnc5DwRmin5vLbUnHjLztleE5KadZvlYFVpevHvHVdwNkBk7kNdLysWXAgw5h3EwHNxbxbHzbOZQWnW9SzrCn8FBA2amPLi9FrRH/XGgbAxdlXH+/f6eVuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+9aQw9u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDD7C4CEF7;
-	Tue,  2 Sep 2025 07:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756799654;
-	bh=3nc/wkBY2bIc1bkSOsEmjMvNtgdGFa44cp61YSHyt68=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J+9aQw9ulXkFfxweHD0usIU9tUka6m/saOX7lfURvNS73/s+vZUjXpPiwvIF0aPs9
-	 kMLLegURfcv+TrpfzoGri1z3EELyoDPZTwLlumruzT4Fg+71EWCh3/KqtjQM+nO+5O
-	 WA39kPdE4IiGiY/L1BCXWnJ6etZuDIqW3nZ27GXvyUGBAjbKtYmDWY02Lj+OteWC/+
-	 UTmSurQWJz12coiGLFdRx21aeS1Zu61/y8B5sgauy4bW/kXhH6rf5GliYRFALACxP7
-	 gWN+LYta+UqsP667bGMEMOzWMGDIofIa1g12JVsHTsdlx2kpD/IO9C6Ps14ZUVIiSC
-	 UztVm3kqf4aCA==
-Date: Tue, 2 Sep 2025 09:54:11 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michael Riesch <michael.riesch@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Kever Yang <kever.yang@rock-chips.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Diederik de Haas <didi.debian@cknow.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Collabora Kernel Team <kernel@collabora.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	stable@kernel.org
-Subject: Re: [PATCH v3 2/7] dt-bindings: phy: rockchip-inno-csi-dphy: make
- power-domains non-required
-Message-ID: <20250902-diligent-satisfied-oxpecker-10ea0e@kuoka>
-References: <20250616-rk3588-csi-dphy-v3-0-a5ccd5f1f438@collabora.com>
- <20250616-rk3588-csi-dphy-v3-2-a5ccd5f1f438@collabora.com>
+	s=arc-20240116; t=1756800389; c=relaxed/simple;
+	bh=0SOyxXX/qHl6SqSRp+x310BDxgQvjz3hk6Ncj8gXeAQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=tBHoe26TqSHXUIXMbTkuHwQPX1e+9qANrP827rLw603A7+YRsG7BB7EYWmMmGw8kRL6fknX6ZFpIM2l0Wa+OuItJfH/5vIAoACYLXNivGgjeETRdEHpV5zGJy1IqxAY4Zc4Hj1u59d9U4sG2/ptLdnT3OyXRvJbWLyt7AZha+iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=OKAc/ubq; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756800075;
+	bh=3zr6kbZjRQWUoOO88Q989Lx+h+cd8L+5MKlTJNAOsq0=;
+	h=From:To:Cc:Subject:Date;
+	b=OKAc/ubqji+YYCcA+KxqbqYap4/DS+qqBdoXVYR0yT/ccqZ0FsNCCz7cnvPpkIVXZ
+	 R/SvIUMd+HZh/MAr25MRUAhcyx995OYppm84SAeLWdV4YgW94JAv+/hmYhJX+VmYd3
+	 11m0BA6QpTce3BVRmn2QnLGe9DsTIpRTsD7ND3hk=
+Received: from NUC10 ([39.156.73.10])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id DC2344B2; Tue, 02 Sep 2025 15:55:02 +0800
+X-QQ-mid: xmsmtpt1756799702t8g2gddqa
+Message-ID: <tencent_B2594897022A82AF3AA370885B06A9421808@qq.com>
+X-QQ-XMAILINFO: Mm/8i8/T4yneWrhmr66C58xAgvc1xkJ6CihZB/SaNhmWsSGRtzzpfg0BmI5knl
+	 lw8eSoX4YxONSL7VuhnWskaRAg4LTrxyQXzzVg5hMi5OEfDoulQWLUmfXPLCA7EfYdFCrY/IKr2K
+	 IP5qqD5UN9maxrYBl9A018ShcodWqucL7EYn+7i+IiAjyvYasaMo262yhgbLErvCJCimHGWofWpz
+	 DyEHPUnHcdsrQzODfDNz2A+7rBuTOKMyWyDqGQuMbkojiiEDPP7JiS8t20ox2qhlL4obAG78u7h0
+	 ftUWJQBJRxp5kC/daMSFI33LcSKOmjwPqgwoXphLCVC3bc1jbO+Rhk53akoS0GeS4WKXmd3cmqqN
+	 nlHQIdoY+vh393IXo/yvXsAmakTvgQ82lF0n05DNCxXCb0c7rUfRQdWb4lBOIht+Z7pJ5IvfJMox
+	 93NuEqrPVpH4hu3Gnt+MkYxNJLvjU8ReKd+T9yTAdksGe8p0OAKMR/svdebFmEo86+bCipsrmLcP
+	 ErOxtW4tp5cgW0Vn7/IuWuT2gNqvecS8/YxBciLNX31ZnjtgCwQpTEIsIJNyn1ECqMyfmj7A0Qij
+	 IMtoGLdyvi5FsS0gqmIhqjFiDFoRWECIuQw10Q+2C98Ou/78aguu8ivzxXupKV4WRtxjFok+YrZ2
+	 rMSyiy1kR5kMU3K2F6wXKJKBCiMria4wBSsgVc8+LsKrbLQO4zsE3/Cbeh+B9Pyk7qW/ahDOQOna
+	 klVvz/iK91RXhqSQPRJa5OctUgGWloDVAIUAY5qelIQrqX5QIG8iTaaTAdmmXHSY6WpLwoywc9NF
+	 6ICtC63hz/HsfA2pMw1ugeQPJ/Xv0gEgWnGAiZ2iq74w6NiRLTLH30Kl1SzPb5u4zQag3nOe3VGE
+	 ediofonOog8yy/UNSD56hZJkp3Ghq2zH+sIOPoL9uGR3NBxx1R21vxbptWsDqHAImooUE2sBFB2m
+	 uhMNFcj7mB9bqS11g3aYv42WJtsad3Mc/Lz2j92eSR9MqI72JaHo7ijYFWuNIWDq36Fktycdc7hS
+	 67Fh0QlFkvDlqCPUihgI/8Gs4hrciNTFu7FdF2Ww==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Rong Tao <rtoax@foxmail.com>
+To: andrii@kernel.org,
+	ast@kernel.org,
+	vmalik@redhat.com
+Cc: rtoax@foxmail.com,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Rong Tao <rongtao@cestc.cn>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next v2 0/2] bpf: Add kfunc bpf_strcasecmp()
+Date: Tue,  2 Sep 2025 15:54:27 +0800
+X-OQ-MSGID: <cover.1756798860.git.rtoax@foxmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250616-rk3588-csi-dphy-v3-2-a5ccd5f1f438@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 01, 2025 at 10:47:43PM +0200, Michael Riesch wrote:
-> There are variants of the Rockchip Innosilicon CSI DPHY (e.g., the RK3568
-> variant) that are powered on by default as they are part of the ALIVE power
-> domain.
-> Remove 'power-domains' from the required properties in order to avoid false
-> negatives.
-> 
-> Fixes: 22c8e0a69b7f ("dt-bindings: phy: add compatible for rk356x to rockchip-inno-csi-dphy")
-> Cc: stable@kernel.org
-> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
-> ---
->  .../devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml   | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
-> index 5ac994b3c0aa..9ad72518e6da 100644
-> --- a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
-> @@ -51,13 +51,26 @@ properties:
->      description:
->        Some additional phy settings are access through GRF regs.
->  
-> +allOf:
+Kfunc already support bpf_strcmp, this patchset introduce bpf_strcasecmp
+and add some selftests.
 
-Please move it after required: block.
+Rong Tao (2):
+  bpf: add bpf_strcasecmp kfunc
+  selftests/bpf: Test kfunc bpf_strcasecmp
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ kernel/bpf/helpers.c                          | 68 +++++++++++++------
+ .../bpf/progs/string_kfuncs_failure1.c        |  6 ++
+ .../bpf/progs/string_kfuncs_failure2.c        |  1 +
+ .../bpf/progs/string_kfuncs_success.c         |  5 ++
+ 4 files changed, 60 insertions(+), 20 deletions(-)
 
-Best regards,
-Krzysztof
+
+---
+v2: Remove __ign prefix from __bpf_strcasecmp and add E2BIG failure test;
+v1: https://lore.kernel.org/lkml/tencent_5AE811A28781BE106AD6CDE59F4ADD2BFA06@qq.com/
+-- 
+2.51.0
 
 
