@@ -1,216 +1,194 @@
-Return-Path: <linux-kernel+bounces-796551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CF1B40266
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:16:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB07EB40261
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84D13A7582
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:13:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07A357A5474
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D0B2DE70A;
-	Tue,  2 Sep 2025 13:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE212BE053;
+	Tue,  2 Sep 2025 13:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ggil2a3K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="m/VfEM78";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UDzg500S";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eEkkJom6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lm1X+raz"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0358B26563F
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6673002D7;
+	Tue,  2 Sep 2025 13:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818814; cv=none; b=ojpoa57yoOBuaEa86woMAbkECCu/QBGSYv8lRkvBActxgKlcGGU3tkfqhuRlvqCRseG9+ctioRunb7OKSICPcKXUNIA7CLdyywplkZAAUYVXh0PmAHKacUEan9GG9PoJcb+MRBCDSdzn3FrunN+24Nn7u9Zy8HXLGy9N9PieDoA=
+	t=1756818944; cv=none; b=AzoUwfrP2WUnEKTaakutNTdeSA2iqj9Ynk8ZPIe5XFLMvjJL3sjs6CeisilApvdtEpbuTz+smVtlu65SRlO07958LK6i6tmq1m1u5laOYWg4mwXO8YBJAUwohU8S6T5gwnh2IQ3LVUgT1/JrP9sc2VzPTPIYev8HYdwCEmbq02E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818814; c=relaxed/simple;
-	bh=FSlcxlfp5nbtu/AdY42bHkGzGvfKp4/yRnTmKxs0ocM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QtlUkMXD3oZFpGCPfinl4OeVlSG58TdPwCJifJB1YtXqeAoca9DsegZswiusgzYaRgdJ6wPKmtc6fE4vYF9HYkxcsz1DyJBySHbXFbOEMZsQu8ePuKI+G4v9fYF8d7CG4KgsioTqJ0dPUU1jT+s2rDp+q9LxaQfnFOz+uYAIuvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ggil2a3K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=m/VfEM78; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UDzg500S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eEkkJom6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E9A451F394;
-	Tue,  2 Sep 2025 13:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756818811; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rTb+Q/dVzDNCGCjD2nKbYyYukWWjwnPhLkl3U3vSUEk=;
-	b=ggil2a3KFs4QEFh0y4vEgHx0wWs2GSsFD5mAJgn8cxAFe2ul+Xc3s4DTeLHrKK8kPs14Pf
-	9A1VvNiQSrS+UtMMN97fqU72fL6DYJ5LHPrk0vGynrqLyPbsM9WUrHX9XIfauBsW5tjZk/
-	o8eQdRUAVc4Tf6e8eK4kcxHiILesjdM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756818811;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rTb+Q/dVzDNCGCjD2nKbYyYukWWjwnPhLkl3U3vSUEk=;
-	b=m/VfEM78Xc3iN6jClrpPiRGdWhJziOfCImbPazjT17GJ8x6gE+kRFU53MohQ/1t5wmtkTY
-	N/Jop0IxDJ8GfyBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756818810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rTb+Q/dVzDNCGCjD2nKbYyYukWWjwnPhLkl3U3vSUEk=;
-	b=UDzg500SyJv7POUUjrGeUnHqI1O4qDT2eWy7WIWI3uNMSE+tmQQPUWtTu0hRFLeH3PrOwA
-	7G1D/sjeeCpx5CF0vb1snoCIoKa9w9AEVI7JmWu82VMwWcXMfaNLrVFjUy4AxtO5OnM7JH
-	dkeAQRE/yhYDGpD2hgeHLffMnIh4ktI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756818810;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rTb+Q/dVzDNCGCjD2nKbYyYukWWjwnPhLkl3U3vSUEk=;
-	b=eEkkJom6NwrZtj+f29/cuhm5Kk1Wjb8L7SQnLmFD/ustDuzzhr9AwEvQHhs57KlPMkOip8
-	pSh5xMj86Rv+tkDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8160D13888;
-	Tue,  2 Sep 2025 13:13:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wrbwHXrttmg2VwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 13:13:30 +0000
-Message-ID: <adba0c39-228b-4311-83d1-09aa71ddb911@suse.de>
-Date: Tue, 2 Sep 2025 15:13:30 +0200
+	s=arc-20240116; t=1756818944; c=relaxed/simple;
+	bh=ztgLBSMDBFH/NfDqoN8XI5dCzKqff6wHVIL7v1u+0jI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=q4dt5AQhbk13E5uyKIikFyh33GDkiOlMEtk2ww7IEia+fpmfHp/vxQ88QJcei4y4A/KWBa7S8Rj7YvUU9FwvtMe5mWb8FlOUIOGcCXRJafb2LXgA2aOu8XVOqi9KE8y3bHS1cd4X+CeMEfJA+p5cuoUvghWCsdXdfIXvV4fpWzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lm1X+raz; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24457f581aeso49438425ad.0;
+        Tue, 02 Sep 2025 06:15:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756818941; x=1757423741; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dNZsl58PvCfPstuNsgLSDaFhV+BtUsYO95KUUiejAeQ=;
+        b=Lm1X+razSn/gnLhkakKeMVPpdn0iIbvhuuLpRj9tjfNXSSbD8mvw7rfWJ/Q0323+5y
+         rkopSpjy+wBiuz5V8NUymfVyAbTx/SNphYchhQT27rws7EMWUVcPKsx7qf+5M62mgW63
+         25QRphUcJGPa1Wdv2bL4U8PQVWlC6k+SBq1xpvZ7+Yk0Nsi/JBpwcxhBFH8OY71NRNNv
+         gVeS8WwrbTRPJEM0gt36J8ASGt2jfzh5+SugrFuENDetzZqYAFmxJC1ai/erUrqaX0qV
+         kr5p+RmjZG8nxxHpXGLu5hW0VJ0iTZErtGYLQ0gHHSJi31j0GANzAF+Rb6enZTD1xJxl
+         Rl8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756818941; x=1757423741;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dNZsl58PvCfPstuNsgLSDaFhV+BtUsYO95KUUiejAeQ=;
+        b=h8maSRbYuvYTzZkIbHBnGf2WDF8fYDIhatu0n7KeVi4dX4mOzQ5quf5N5w5GQ1nQZ/
+         g9125EMdloQBjAXucQmT9iip1SZnntWHpQMjcGvhVufPPL3i2+GWhkBGUNEJNQgHfWaX
+         0jURLy101cVbBBBGv9PAec9thOuW7/oadh/SJI+YDpA8Rdqbw8tRldvknOd3jG1b3neh
+         vwo17p82pFnnAikpOED6iUaYxW5GebNEIJkfZPXqMCUkWs9QRT/aMqd2n8D+5QPlbxru
+         Kt0gz7gj2JTRvBfwHttMgAYRvTimqETBIwW4Zy9kO803CNHdPj9Rp4lL6bsghtd/pBGk
+         PBhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA7XOHRV7zDmHTFnh2zNczqpanFgleq7uDqCTBJ8ufyfUaZuXiRpv7S0hRshXER0NZRK5RZkm3veAg2Agp@vger.kernel.org, AJvYcCXrcw/u7APis1v/Red8i7IYym8f9qjUUiG68b4fGslgbsig0SB1WypGU3Nu5Jz9FuIWbMv2fGm+O0zH@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzjikyp7IVzA05j0emKbTFexQ8jV5avgw/4TexEBrEwRGfwBCj
+	53VbFym7ch4kPMnHIS7z2IyP/NhBSgkymAe3Cc8cc1THHMUyqixjEI09mYZolewspuU8Yg==
+X-Gm-Gg: ASbGncuvZb3d4B/pXTaBmzckgmervjpf5KuGztSd4vfKolk7/3KrwF94TrYUDIUjNKX
+	BdElXKS1zj4T6TybIT2NAVeInFzr996jE6Yg74mzMMZLfNk8O6aBcqbBiVHqBLiyNnlBnsFU6Jq
+	iCYoEaM/6t5yAT8tTRfZ+Yznruxi+LbK1jo/YjyTxFQtwckNdjiV9uDfzpoUiBSbMCz6g/1Vk3N
+	Vo2sdaRYssUNWmBoxoGKUooY09X3YC1bzAtHzMaqueKRL9VPLj/DVApj5+Pbx3CaG9EyemyLTNq
+	TYdKc8fhdxPTiSrsHRd/ShJ4NIzBTdkgl1dFCQ3JWxgud9jEa7A6ZqcqzvyYuFUBw+QarjLIE3l
+	BdDe3FohutyXb5+TRS+7eJCGP9Po5qhF7LuQ7SLYMEO69
+X-Google-Smtp-Source: AGHT+IHVnGMjOLn8pJNcVq7jmxqNTU4XuXIpfk1DNWBYLWSKmRPo4B3uQKgLKkdyi4hI9q2Hksu6QQ==
+X-Received: by 2002:a17:903:28c:b0:248:fbec:7c99 with SMTP id d9443c01a7336-24944a7728bmr150182145ad.26.1756818941234;
+        Tue, 02 Sep 2025 06:15:41 -0700 (PDT)
+Received: from localhost.localdomain ([2804:7f5:b08b:bc66:1b1c:d88:2aac:2997])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24905da4d44sm133710355ad.83.2025.09.02.06.15.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:15:40 -0700 (PDT)
+From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: [PATCH v10 0/2] Add MAX14001/MAX14002 support
+Date: Tue,  2 Sep 2025 10:14:39 -0300
+Message-Id: <cover.1756816682.git.marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/29] drm/atomic_helper: Skip over NULL private_obj
- pointers
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-4-14ad5315da3f@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250902-drm-state-readout-v1-4-14ad5315da3f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hello everyone,
+
+Thank you for your input on how to handle the situation with the driver code. 
+Kim, I also apologize for the unexpected situation involving your previous 
+code.
+
+Based on the suggestions, I applied my v1 code changes to v9 of Kim’s code, 
+resulting in this v10 version that combines both. 
+Compared to v9, the updates are:
+
+- Added support for max14002.
+- Added a function to write a single register, since the write enable 
+register must be updated before writing to any others and updated again 
+afterward.
+- Renamed the init function to better reflect its purpose, which is to 
+disable the memory verification fault. I also replaced the one-by-one 
+handling of registers verification values with a loop, since they are in 
+sequential ascending order.
+- Replaced the old regulator APIs with the new ones.
+- Updated the device tree documentation to align with the datasheet 
+nomenclature for voltage suppliers.
+- Used IIO_CHAN_INFO_AVERAGE_RAW to return the filtered average of ADC 
+readings.
+
+One of the reviews I received about my v1 version suggested using a custom 
+regmap. I attempted to implement that, but I feel that most of the default 
+regmap functions (e.g., regmap_update_bits) would need to be overridden 
+because of the unique way this device handles communication, such as 
+inverting bits before sending a message, updating the write enable register 
+before writing any other register, and updating it again afterward. However, 
+as I am still new to the IIO kernel code, I may be missing something. If you 
+could provide further explanation or an example, I would be grateful.
+
+Regarding locking, Kim’s original code implemented it, and it remains in 
+the driver.
+
+I still have a question about using _mean_raw (IIO_CHAN_INFO_AVERAGE_RAW) 
+to read the register containing the latest filtered average ADC readings. 
+Should I create a v11 version with a patch to include in_voltageY_mean_raw 
+in the file /linux/Documentation/ABI/testing/sysfs-bus-iio? 
+The idea is to use in_voltageY_mean_raw to return the filtered average and 
+also to set how many ADC readings (0, 2, 4, or 8) are included in the mean 
+calculation. Any feedback on using IIO_CHAN_INFO_AVERAGE_RAW this way would 
+be appreciated.
+
+The v10 changes were tested on a Raspberry Pi 5 using a modified kernel 
+(rpi-6.12). The MAX14001PMB evaluation board, which contains two MAX14001 
+devices, was used for testing. One device measures current, and the other 
+measures voltage. The evaluation board introduces an offset to allow 
+measuring negative values. These board-specific characteristics were not 
+included in the driver code (neither the offset nor the current channel 
+capability), but they were considered in the calculation of the values read 
+by the devices. Should the code that applies these board configuration 
+parameters be added as an additional driver file inside the IIO subsystem, 
+or should it remain only in a user application?
+
+I plan to continue sending patches to cover all the features of the device. 
+This includes adding interrupt handling for faults and for when the signal 
+exceeds the upper or lower threshold, implementing the inrush current 
+feature, and completing the filtered average reading functionality by 
+adding the ability to set the number of readings used in the mean 
+calculation.
+
+And I would like to thank again my GSoC mentors Marcelo Schmitt, Ceclan 
+Dumitru, Jonathan Santos and Dragos Bogdan for their help with the code.
+
+Thank you for your time,
+Best regards,
+Marilene Andrade Garcia.
+
+Marilene Andrade Garcia (2):
+  dt-bindings: iio: adc: add max14001
+  iio: adc: max14001: New driver
+
+ .../bindings/iio/adc/adi,max14001.yaml        |  79 ++++
+ MAINTAINERS                                   |   9 +
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/max14001.c                    | 355 ++++++++++++++++++
+ 5 files changed, 454 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+ create mode 100644 drivers/iio/adc/max14001.c
 
 
-
-Am 02.09.25 um 10:32 schrieb Maxime Ripard:
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-However, can this happen? Private state objects without state data?
-
-Best regards
-Thomas
-
-> ---
->   drivers/gpu/drm/drm_atomic.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index b356d26faad4acaa25c1fe6f9bd5043b6364ce87..9b198610791d19c7fd276ca59264a961d21caf43 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -295,10 +295,13 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
->   	}
->   
->   	for (i = 0; i < state->num_private_objs; i++) {
->   		struct drm_private_obj *obj = state->private_objs[i].ptr;
->   
-> +		if (!obj)
-> +			continue;
-> +
->   		obj->funcs->atomic_destroy_state(obj,
->   						 state->private_objs[i].state);
->   		state->private_objs[i].ptr = NULL;
->   		state->private_objs[i].state = NULL;
->   		state->private_objs[i].old_state = NULL;
->
-
+base-commit: d1487b0b78720b86ec2a2ac7acc683ec90627e5b
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+2.34.1
 
 
