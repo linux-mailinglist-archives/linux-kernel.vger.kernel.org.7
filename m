@@ -1,137 +1,104 @@
-Return-Path: <linux-kernel+bounces-796884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B23B408D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05CE8B408D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697DE188F31A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5C7188F481
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB831DD8D;
-	Tue,  2 Sep 2025 15:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E35A31DDBB;
+	Tue,  2 Sep 2025 15:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjmqJuu1"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AnLLyO9V"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAD12FE068;
-	Tue,  2 Sep 2025 15:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFB128489B;
+	Tue,  2 Sep 2025 15:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826514; cv=none; b=qS5JRRftIbDI5OK2+FyyAcVxn/NvI9O8KW7ks3Hdkj4BCHjEpRBeelITFJ1Co3JCWTACAug9hBBKRrXqmRezDWyk4EdTTRFgMOzJXFtBVEGw4fDeTOLxLxXFVDXJ6/3VOb03GDO3rdJYNGlY1H2Zswl1OJAyDKBGcEezlhxxCyA=
+	t=1756826570; cv=none; b=plUpk+3nXYDZUWmPiUuJgmOPXdTvAQ174lTV7TnOVV5u4mT4z5BcqOLiRAIbEgH+HJHWmTrDwDDyR1WyxPOqYj4rBIfveAF636a0aTAvQw5pBNuw7ZzEysvQ8Y2o6ECxmW3HR4liYxDmXr9pH2A277cjrjLmgtgXGl71O+uzfRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826514; c=relaxed/simple;
-	bh=rhmHOETPUB80MeODBzKkC4z8z37xTyz2AMhtaliS4hI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HkH6T7tykk6dd/GbfBq2bAqOuQMHOWYH7CBluhD0OSkLc9aJYE8LDlgVhR9Vt42PTSKSNGrti8R0QtR4/qYf8L6WPs1ReUsnx/gHDfHa21fqYtkh/o1iTEQ31UVXtt4m5LV0SkuhqZ5DDhuFSd3jCuR/pbLWtGTUsCK7N9RTq4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjmqJuu1; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77238cb3cbbso3014270b3a.0;
-        Tue, 02 Sep 2025 08:21:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756826512; x=1757431312; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gw3ssi4bmma7i1rZNi65std+RGG6lQ5EditfjZ933j4=;
-        b=kjmqJuu1wnVz9SCd9faDNDyQJZrtaiMCLZ7RW71pmMRo1bvvkozcnfevaZ7xFNpBvd
-         d2bjM3YuH7Aq5mZG4zQHV8thNM9wvgaWLjqRssJJjY9accs9wlf60e6uig7/ra1q8VwN
-         gEhKfjsvvyMwxvcuNOl1E+TJo2i5QRSgAQ7EKt62r57HAWAU+dR3pAedlMPdXorx0xS6
-         gZzP60QlKfN4Z2vPJlJlf8zkaTY1lwdSLG1yU2yKHDQxeXwx0Dw3dtctoOofPALv8OIp
-         xXO7HSyOXmb273K6WQnR8AvFkVyLsnoeqIqIhskfRPM8knZMBilKyVJaMinbmzW5E+bu
-         jY0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756826513; x=1757431313;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gw3ssi4bmma7i1rZNi65std+RGG6lQ5EditfjZ933j4=;
-        b=jVAv52OVsTlA4TGoI/doR6nNXVkY3dAeZH6GCyzmpIsYDuw/f+eJAv7HusExz6RWS2
-         3dmMTJWHdI7EjldOE5xX1r/lZIaFYtyF0XFV7mbfMhEOWIeBb+7IqNcPJ6lBdjTaF2U7
-         vHS1aEMGnzQojbxHbZfmXwgOoh6vRTLMj0XvFH9K66md2Hv1nJosYt6CcCmsTC9l95Rh
-         NQRPcIZF+4mMRBe/8wRYGqj57Nu6zxOTroz5QUvqN6jLrUHV7P9IswEQZKuheJihDdN0
-         AnGlk8yKEjNXqv8iGvTbLE4qy4lsxveD/jLcEpwva3fQjp+OQcwVz1V0AQOIEybynbfX
-         O+LA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYOM3RieJ8SNAoHHEMW/EwhR4xDearMeNqMkP+y/nc0zrTYnTrpOBMtYa7uOIWxWp7aiIoqyboUbFl@vger.kernel.org, AJvYcCWWSVFxK30HqOMUOki+oXBp/F1HIV7RxndEzWz6X7StL8Uu8Cf+KS/PB+G/OXKxg5NMbNHVfw/eLzc3@vger.kernel.org, AJvYcCWhzskM8Vt4HYnrugDLPqRpHYzXg4GeAVoT5PAcrRR9N02PTPDdBHTYcwPLNTyqWQG19SUhFi01USaA@vger.kernel.org, AJvYcCWp/SCdOivxU+YRvFmUxNHeJypVgOBLpk1kCXxYdGSBjsdcFoPQMGmPfOrKFefh2pHHOFFg24iL2lkJ@vger.kernel.org, AJvYcCWwFZiHahKQ5yCZvQolsmaW6gmv/b4gtulnS9BpOWFR43YTj4Fg919mWRboKaG4jxUnfrqE4gOmibCCrQ7d@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDzPLxISE+Yr9G5k8sU38xkSpcXuMzdGyLgaN9GrJ41Gr4xQIW
-	9WqWj8A+gIJU4kvUagx2ZG0IAPrPQUNuqcWGT9VNdG9FVBrxZtde6ifp
-X-Gm-Gg: ASbGncupPEbc2f9nx0kD4aZRisxtBJmReSTJLfOWN7gujFnGzOcOznumLCVnl7HqAFD
-	8boNzY7nc1dAvF0VxDrgTEAk0/bgu0g6tXq1lhqbXjX0Sn1x3YKcmW6nYPfcFZ/MzicuWcSz4mp
-	+FNQO7b6iQ0VFvF4tI+Wy/H08Xw/s4mDxuuJzZpoabwzD4WGmYPH4OY+KVkETla8RFO4+RDjD2E
-	ssiH7irgLcRb5WPgYOiBZutY19O1LOnUmnOZlYiRmRSpuai7cRD1l+EJQwsGCEMzYeY6VVyi7eR
-	bs+0bfQMnugDqy++5UrXXVaDq5Bh8sx5pGhCvvhd/ynixaSO9H00Hv0nsb+cKXCt6G95d+LSCoE
-	1M3ayVo5xRZ+p0SWk0BzTUGGy/CkBu+E=
-X-Google-Smtp-Source: AGHT+IF/e24Rcl4OaU3SdP4MK+Vzqmqenz5g+ZRwy+5rwpsp7l+XLoGC3ieQOzGmDmipIH0UtCwd+A==
-X-Received: by 2002:a05:6a20:3d07:b0:243:c2e8:f4d1 with SMTP id adf61e73a8af0-243d6e6d928mr18303803637.26.1756826512533;
-        Tue, 02 Sep 2025 08:21:52 -0700 (PDT)
-Received: from localhost ([2804:30c:1f77:e900:8ef5:b053:b8a:9345])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b4cd073c1fasm12063938a12.15.2025.09.02.08.21.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 08:21:51 -0700 (PDT)
-Date: Tue, 2 Sep 2025 12:22:23 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	jic23@kernel.org, Michael.Hennerich@analog.com, nuno.sa@analog.com,
-	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
-	corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, broonie@kernel.org,
-	Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
-	ahaslam@baylibre.com
-Subject: Re: [PATCH 15/15] iio: adc: ad4030: Add support for ADAQ4216 and
- ADAQ4224
-Message-ID: <aLcLr8H3QbL_A565@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1756511030.git.marcelo.schmitt@analog.com>
- <006ac88a667ce0d2c751946b562af83d0f27a44f.1756511030.git.marcelo.schmitt@analog.com>
- <CAHp75VdeSqwVecJHx+jXn9++zgN+CBH56OGUYX5kBbdc0AFKSA@mail.gmail.com>
+	s=arc-20240116; t=1756826570; c=relaxed/simple;
+	bh=HaUYGzzb/C0ZDIqppBt972XneJxjm2FpucYUwJY3Mq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kOoLk7b3XPvOfrmMg5w0/a/krP3tfW0Ciwv5ufYEvCOFnKVE6fZdy5uzl35VGK9PbOVnV4PYh1bq1T3L4Q81DuGTcrNXvWOIy5seYZO0dCPJ1N+PZgGwVxGWBCLVkemOfBh9YOJXOlkz6XUoobc3MJPq6068dLaJZbAcdjpL/4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AnLLyO9V; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=U0gQV6ybTFZGuryr56vx/u+MpC/277rOqkaUQrD8Who=; b=AnLLyO9VMFwCr2es3/frbxHCBC
+	JjlPP7n5z9ULDCVWr5AQzJ2l+5q8UR66ExwbJHr6BkB1jeIzNQMrNOxqEIPvli742kjWtQgd2zzCY
+	vMFTibF3LJcdJwQVNj22JNPUIL6brEeMOevh2LnJ3Fla/R2w5OyaEhlk8ekLJHdo9l4t0Gx5d9Qpt
+	wNMbh5xJ2zU7tA0gctkcN5r3o3ZtkeDmFSF1c196PEPJ1+SPEOHBPfKAB6q5WmO0HRoA5UMPeoaM2
+	cdJeEn7Q/ObGevUCQaRo+XaSlU61ZAy2B3RQbAmsUz/YQSV3qHJ55gQdj4H3qjFyKYnNPxsY187/W
+	SMJSM2hg==;
+Received: from bl17-145-117.dsl.telepac.pt ([188.82.145.117] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1utSqH-005lLV-MA; Tue, 02 Sep 2025 17:22:41 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luis Henriques <luis@igalia.com>
+Subject: [PATCH] fuse: remove WARN_ON_ONCE() from fuse_iomap_writeback_{range,submit}()
+Date: Tue,  2 Sep 2025 16:22:34 +0100
+Message-ID: <20250902152234.35173-1-luis@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VdeSqwVecJHx+jXn9++zgN+CBH56OGUYX5kBbdc0AFKSA@mail.gmail.com>
 
-Hi Andy, thank you for your review.
+The usage of WARN_ON_ONCE doesn't seem to be necessary in these functions.
+All fuse_iomap_writeback_submit() call sites already ensure that wpc->wb_ctx
+contains a valid fuse_fill_wb_data.
 
-On 08/30, Andy Shevchenko wrote:
-> On Sat, Aug 30, 2025 at 3:46 AM Marcelo Schmitt
-> <marcelo.schmitt@analog.com> wrote:
-> >
-> > ADAQ4216 and ADAQ4224 are similar to AD4030, but feature a PGA circuitry
-> > that scales the analog input signal prior to it reaching the ADC. The PGA
-> > is controlled through a pair of pins (A0 and A1) whose state define the
-> > gain that is applied to the input signal.
-> >
-> > Add support for ADAQ4216 and ADAQ4224. Provide a list of PGA options
-> > through the IIO device channel scale available interface and enable control
-> > of the PGA through the channel scale interface.
-> 
-...
-> 
-> > +/* HARDWARE_GAIN */
-> > +#define ADAQ4616_PGA_PINS              2
-> > +#define ADAQ4616_GAIN_MAX_NANO         6666666667
-> 
-> Can we use calculus instead (people can't count properly after 3 :-)?
-> Something like this
-> 
-> (NANO * 2 / 3) // whoever in the above it's 20 and this puzzles me how
-> something with _NANO can be so big :-)
-> 
-Yeah, the max gain could be expressed in MILLI, but maybe I'll just do 20000 / 9
-(or equivalent) as you suggested below and drop ADAQ4616_GAIN_MAX_NANO.
-I'll also comply with your suggestions to this and other patches.  
+Function fuse_iomap_writeback_range() also seems to always be called with a
+valid value.  But even if this wasn't the case, there would be a crash
+before this WARN_ON_ONCE() because ->wpa is being accessed before it.
 
-Thanks,
-Marcelo
+Signed-off-by: Luis Henriques <luis@igalia.com>
+---
+As I'm saying above, I _think_ there's no need for these WARN_ON_ONCE().
+However, if I'm wrong and they are required, I believe there's a need for
+a different patch (I can send one) to actually prevent a kernel crash.
+
+ fs/fuse/file.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 5525a4520b0f..fac52f9fb333 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2142,8 +2142,6 @@ static ssize_t fuse_iomap_writeback_range(struct iomap_writepage_ctx *wpc,
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	loff_t offset = offset_in_folio(folio, pos);
+ 
+-	WARN_ON_ONCE(!data);
+-
+ 	if (!data->ff) {
+ 		data->ff = fuse_write_file_get(fi);
+ 		if (!data->ff)
+@@ -2182,8 +2180,6 @@ static int fuse_iomap_writeback_submit(struct iomap_writepage_ctx *wpc,
+ {
+ 	struct fuse_fill_wb_data *data = wpc->wb_ctx;
+ 
+-	WARN_ON_ONCE(!data);
+-
+ 	if (data->wpa) {
+ 		WARN_ON(!data->wpa->ia.ap.num_folios);
+ 		fuse_writepages_send(wpc->inode, data);
 
