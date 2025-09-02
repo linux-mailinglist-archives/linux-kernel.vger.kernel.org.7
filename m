@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-797233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3923B40DCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64571B40DCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F271B61D87
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115E71B622C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781B33128C8;
-	Tue,  2 Sep 2025 19:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CF434DCDB;
+	Tue,  2 Sep 2025 19:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyyC2kLZ"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3kvVtWK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C3B33EB17
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6479320C038;
+	Tue,  2 Sep 2025 19:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756840808; cv=none; b=IkopOBYvFDdtoZXoZNi/WvbPgE+kDyERYpngWIzgat6NvITYidMdBKRW0saMYRzWJdum2S+/iyTkt+LuskIcNvJSA1J/XGMKlGHIsKR28q8hB932Y+MwGok6WUC3GxgSiajBAkRsb/cjbElfxjOP2EWkOVmT2VWuka9Mb2lrdLo=
+	t=1756840952; cv=none; b=i59zj/QhY6Xw8F5OT5fgYfTngy4gA7k7xnA7fThBMRys1w+bLBC2cZf+emwuy3iekeyrxxlv97JCYIwVvH5+hhcvpeQHSinKsUTxXCqoMaECpc6qJRMigm6YWkrG58DN5eljSUnivZt3eJRHXh+eS2BPOcXAY/KGeL8uXAuIDCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756840808; c=relaxed/simple;
-	bh=6pZyzZHsYKZxl2sXOCFCxJglvK7bZM2znWDlWQs/tNk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=mE1oOL6wfhhyQKGoKIqBWsql0kkjSklmh5yVvtpKmMOzKTgv2L4K1MPT7kITq0w8lrwd+fLK0KBZkmdnJIsvqhTPq2FSmvKuCZcyt4LJIMdhXI6luik7lLHE63msQqQ/aG7DnIB5l2iBDjhl9krH6oJbIdWbMwL1LP4Ul/V/3kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SyyC2kLZ; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4c72e4f1b6so162259a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756840807; x=1757445607; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lqk5Vefs2rKeCe+6cqHNXCOBv4Tg9GxL1mkV6VFNW7I=;
-        b=SyyC2kLZCMzy3yqMMKsBW1WrUJqZHAZr6dtQ4AEfyGCuyol5ThKbjLrVQNRlKnuQqo
-         B0eeMWjLInwX25tlmGBNKOXGHbLREEN3RjK+XOzN3wJAILwPHQcf6h90/DUz5eo6YBYb
-         tqtQMQuFusdSk2duEIE6jSicF7WqAyZCYub1Ivqiu5d/nmVBTgbwt+vA6IZk47DhBoDD
-         4ui6wLV2o+EAa6PXgHVYCPpHSXzw76A3AGHooi7cjSAMNhqm1GGWuoEV/wpA5TlP5e9R
-         3uBls3TZxCnVSbIHNB9tPXgPbuRPgI9UoppX+5ihovB/CAfmMwYJ0NMQcbIuOvhBW1Ia
-         FROQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756840807; x=1757445607;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lqk5Vefs2rKeCe+6cqHNXCOBv4Tg9GxL1mkV6VFNW7I=;
-        b=nw1fDBDeOUJfKpBm71wDx3xOLKl3rrmXQrmyUKVlC0meBzFyzYrkiXPN9A/tLLwgQT
-         mHYpFevNWiDccMSOso2/C/pxEZzdphr1hQHlQOKDz8k3kxyBAykHjInA0OyiRNVIEult
-         wlo0Ab61qBG/pxwNRToJwaNnOFvv2eu0ygC0G9lc7keZ0F/ff/ASGHDnrYTnnZa8UrD4
-         17pQVHH81Cah90USNlw711d3a2im7/Aoez6PgMlM/L2xJB5TLANcvLVzNq64EEK2tBSY
-         K3l0tHtt7CtF6healR58UOTioq89tEGQo5Flltc3brRiJb3iYh9h2DNmAQrqqg+bnocf
-         FpIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNkzEvUgYsijiC1os9j/XzAI+zCmoer310hnIkvK+Rk0Be6o71+0pTTUP1WGCdVpfyCqdYSc2s+qj0X2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaazWnFyydJqMsbpe7DUlDMTnzJn7r3e/NaM3OYdVWU/iTmHXt
-	+0rHKjuWGiUXyhyuHi1pyb/0vuhOHOngbC0vHtrXS29J3SXPD6AVw3+6
-X-Gm-Gg: ASbGncu55d0x+tVfEjxqPXEk9NdrxgOPr5TWz3Vmv65T3v24IPr1hSCYgFZ0EO46XsW
-	3jIQaMoJLz4U9khTN7sJW0a98XCg6ihbphxvMk05o5UgMC7kwxd+2vuU71AgBgP+trQKaZRmhI4
-	HGX2FCZjFYnBlhLsw/S4Y7MgnW+PKTP9zPXyxR6q9U0SW3WtBRwFilHhBLKDITk53qy2qgwtg1Y
-	O14QBYE6idrWTfMb+GAwcKqm+0ZslmnVpYtHXgOzhvqMLorZH2vya8hwSIl4jSp3GWHQn3+vOoI
-	E1L6X61KV8saIc4CRJEa6ZVCMzjSeNGDQB2tfl85rR6ZfQbLE8z9aVIJ255d2ThZkvVfeF2LroQ
-	WydI7QgyLjnBpXR69Q8P9kxhssp6FWkS0+T959LjV4tZIzJJxm/HVWu5p2FgJrFJnxtdja5QFdY
-	PBmfjIC+O3UT+s2P0TXRKV
-X-Google-Smtp-Source: AGHT+IHVRhUinMr0NXVSOtf58/Vog13sqczgF9BAwS+1PRiZbHywe42DldsFcFwUkyLLrJ/DQcf1Kg==
-X-Received: by 2002:a17:902:d50c:b0:248:a642:eeeb with SMTP id d9443c01a7336-2493ef4dc88mr177979855ad.15.1756840806409;
-        Tue, 02 Sep 2025 12:20:06 -0700 (PDT)
-Received: from localhost (185.3.125.34.bc.googleusercontent.com. [34.125.3.185])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2490359f808sm140966515ad.0.2025.09.02.12.20.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 12:20:06 -0700 (PDT)
-From: Chia-I Wu <olvaffe@gmail.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panthor: validate group queue count
-Date: Tue,  2 Sep 2025 12:20:01 -0700
-Message-ID: <20250902192001.409738-1-olvaffe@gmail.com>
-X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
+	s=arc-20240116; t=1756840952; c=relaxed/simple;
+	bh=v+SLu0WG0Uzn0tEFRxmTRyLECD6vspuHFbJXwXJfk0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ajPZYAirLBktuVo72k5f++AK1zZztkVuLrYdCM0baoXYncdQ15vmH0TafnFXhMG/KdUDqERv78Z4C1qXndYEHEzIxBAoYLgMuf7YQtlNsdF/vFqv/jmYuqSMIA1VliGsYwlPIkZ/AZITbh5vHFgtBraulwzV9kIErmnwC3QBiTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3kvVtWK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83090C4CEED;
+	Tue,  2 Sep 2025 19:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756840951;
+	bh=v+SLu0WG0Uzn0tEFRxmTRyLECD6vspuHFbJXwXJfk0c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q3kvVtWKuhObJx20C4QJ5hRY2Ib+5tD/tHI6uDyPRStPRw6oOGwdhtTAPeI4m3+WK
+	 NJdNwm586E9W2aJyXqP/8cag0t1bYQTMLe2JF6OFp/cqpM2SOAMWPAUciMQK+z7RuD
+	 Z8PqWqavfVnVmCcAsxUHYyb5xC+Viu345x3Sy7pU6CksRSX3ay4PXV79AmLHiwImbQ
+	 z7QgUkk6uCOf18pfixbkRmLZ2VVOSM71wpnYWRL0hTSsaa4lkV+CNtdX2AW3P+ZnGe
+	 8Qo2FhMjYV0L8GMzlqjj9+XZe3k1JBszp8gOHAyhjT3BCMy2c1a6HgTaznRf5qOgXf
+	 XmuUhKXPhULuA==
+Message-ID: <ffc5c163-95d4-4463-8d46-542cb1d4cd97@kernel.org>
+Date: Tue, 2 Sep 2025 21:22:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] dt-bindings: iio: accel: bosch,BMA220 improvements
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
+ <20250901194742.11599-2-petre.rodan@subdimension.ro>
+ <9b5bb45d-75ba-4674-9c4d-b04766496447@kernel.org> <aLcVK-YzlcqaKV_M@lipo>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aLcVK-YzlcqaKV_M@lipo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-A panthor group can have at most MAX_CS_PER_CSG panthor queues.
+On 02/09/2025 18:02, Petre Rodan wrote:
+> 
+> hello,
+> 
+> On Tue, Sep 02, 2025 at 07:57:03AM +0200, Krzysztof Kozlowski wrote:
+>> <form letter>
+>> Please use scripts/get_maintainers.pl to get a list of necessary people
+>> and lists to CC. It might happen, that command when run on an older
+>> kernel, gives you outdated entries. Therefore please be sure you base
+>> your patches on recent Linux kernel.
+> 
+> I'm using the bleeding edge togreg branch of the iio tree, git pulled yesterday.
+> I indeed missed devicetree@ while manually copy-pasting from get_maintainer.pl on the bindings patch. I wish that script would provide a valid rfc822 email header instead of it's current verbose output.
 
-Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
----
- drivers/gpu/drm/panthor/panthor_sched.c | 3 +++
- 1 file changed, 3 insertions(+)
+Recommended is to use b4. Simple wrapper like git_send_email() also
+would work:
+https://lore.kernel.org/all/?q=git_send_email
 
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index ba5dc3e443d9c..249ab889ca91f 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -3473,6 +3473,9 @@ int panthor_group_create(struct panthor_file *pfile,
- 	    hweight64(group_args->tiler_core_mask) < group_args->max_tiler_cores)
- 		return -EINVAL;
- 
-+	if (group_args->queues.count > MAX_CS_PER_CSG)
-+		return -EINVAL;
-+
- 	group = kzalloc(sizeof(*group), GFP_KERNEL);
- 	if (!group)
- 		return -ENOMEM;
--- 
-2.51.0.338.gd7d06c2dae-goog
 
+Best regards,
+Krzysztof
 
