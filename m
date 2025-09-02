@@ -1,134 +1,168 @@
-Return-Path: <linux-kernel+bounces-796737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB0CB4067F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:20:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E56B40695
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495893B9D6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC96320536B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98C6307AF0;
-	Tue,  2 Sep 2025 14:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D473093AD;
+	Tue,  2 Sep 2025 14:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5WhcC+f"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZvutZJQr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DAE2D6E4C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520B2305E28;
+	Tue,  2 Sep 2025 14:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756822786; cv=none; b=Dnt3M/S7uy9nwQ4VXme/O4dsHUoP+QatSdk1AeYQg3ug/DAEIm7Ddjtd1dxbGtByDgULeOIVSQ6wW403xNfJwuyYJgi+W2pwxBvWE7Q8AbjA0FxBcuMym02TNECDGF+H+dqawOch8sBD4Ud68YPYdSa+6/gPb9TkbsDSboZXRyU=
+	t=1756822827; cv=none; b=oLXC8SImqN9q1ZLUFInncEdGgrPU3wohr+lAUPilkcHxFnxy1csYdnT0iFtVMeHGSCyL6sCIXmL/aXN1eHx0BTwBVuChKzpubIsQaT+/dpMtrhEXjqukgGNRTIPqoazpERNRfBXrVjn22DRr94EX/Hh9IykWdJtKy+xu5vIYDbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756822786; c=relaxed/simple;
-	bh=2r/d/DXkCCqfUiqYh4pT8N//8c5NvbXpQA4IUEu+M7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M7XPTFmzAdObdyRpMW8OIIIETaTjOYyRQRkx0MjzqtHJprAAZRCyNwE3Xz0+aeH8nwcsNMoOuF23pkqobPEInLRFU42oMNtmHfDRyd2AY0cQKT9eWUA0N3w/NpMSFne9fNCvNZE7sWW03te6f3hhNybSMwZYsfFejoWvaaCsFbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O5WhcC+f; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71d6083cc69so46698927b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756822780; x=1757427580; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W60ago5VW57dbfLZcJC+4/A9yeK1QqRMxCl2bII8T1A=;
-        b=O5WhcC+f69oG790b5/fyv3aBAKA6jH7TOtfjPFMqXK2VlaI25shbYNUpuVPsjsbwd5
-         PCuQ2n87SrPkgfgP7K39vkZ25/+aQlr9LALvxOH4e/JvL6iq2ALOrOP4nKup/fSMNPkx
-         UZSf3erJtzVvyCFJKwsAVSc3Qva+eu309Py3KOVsOGFQZh1lCPh2wXKFjnCABT5aPOn7
-         wOoM2XSOa/pZaiPFfY5zdyQYb9zd6NTsRfSFTxP6MCNdM6Fe7mj0OsJFKjB0oyfEyuI1
-         g2gSS7FG6zJ9g9UegiRfDmXCz7/8rg1heh+6V4rpmfuWZPITjEzUWcb/C8vAn3E34YGE
-         vAQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756822780; x=1757427580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W60ago5VW57dbfLZcJC+4/A9yeK1QqRMxCl2bII8T1A=;
-        b=fbgImFtTeMXv2xXOSFT+So+ZbrrjHH6QDQUgNFpibE5lSWjvFhorQgahOARUVRHlXK
-         XOfXQ32RWYqfSUALO1imn/3lzlbmkdxaz2V1mW8IyZ2pN1ab8AJ4iSqtCcb/FUc/BRfn
-         ASYco9JdNuafMyd38nKnJJDb0QiTH6Cl9ACKn5B+qzdsl68KY722rpfhZBkvB7uQ4XhK
-         O7e5vQdd5razstUTUOenwCh2jSsOqm33YnZV4wla7VAadWS+cdvCFoBWdYqhOv+H5nCx
-         U02UyAZiDjvGqEmnbvaW67YlqiiobZTc9abt2UBNeg0S/OyndRpGHXsF288B8YkAgtkt
-         qI0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVvlEykvoV2HwMhAQzGIQMXuT0gDh6XhT2wkovQjmJY+yDLYo3hfEwNLrFrwwfWOfIVBRVefO1PJ4nY2bE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWX9Vevrt2aXqP+RQ2j3Cgl8Zg1Rk3iZXp3YdPCLeObYGp20bM
-	sFoPoDECAM+FTo/MeyRvShlcGvsTiDed29CAV431GsnT5eSHygucbSph8te7Mv6eeFwC9WaHRwD
-	e6jWYyHXGs6TXbMjNBuWY6QxbEmy3QNs=
-X-Gm-Gg: ASbGncu9SaQubRtPO49uZePQwKrQdeBklWNxpHRP1dh684QTdv+EpCpdra+1wYNUcGh
-	NLjMKlBKlKJzCFGMOwzZ9Ub21SqACsyXPIqhNJ07pgj401zurO/iayVvLSmDJrAZOncrVWHfvEh
-	U2UWdO87Yf/WIePYKPe7YH80xcahyOIXoB4TKd67Gmw1ihmNRpaMfyS/+YV+OqgvW79jHnxop50
-	335V22QOy9W0SJR+vnauXdIDVUQgySBv1xQ1HPp2g+xPsCRU8jXZtzhGNVj1i+J3C2JbG5A018Y
-	oioinI3y7hI1HEDluA==
-X-Google-Smtp-Source: AGHT+IGa1EaDaFDmxnfeNJKhDTCxo8us1/bV8cd/W3/t0GnTRNqnMGNTnVcOOCSr3xfi66UPFbHGj1g+7yrfeYrrX7M=
-X-Received: by 2002:a05:690c:d88:b0:721:1649:b05b with SMTP id
- 00721157ae682-72276361de9mr136212497b3.13.1756822779444; Tue, 02 Sep 2025
- 07:19:39 -0700 (PDT)
+	s=arc-20240116; t=1756822827; c=relaxed/simple;
+	bh=iAXUSwwbvwiZC9bhMY6s6lbOEzUht7j1jWcYwHXsu+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nh6YJMdSEJl+jGl7LssHGMpIzo9AnkzCOGyXXl9ddhgVRRtG33w8uiviJNHfid4o9XJX9zwoiF+ucabCb5eBC/ZYIGBVUmKrgby88CxP4XbjSovzUy4FvQs4W97FHooE1BDVVj3/j8YHuo7NTBlVVAgXdqvFy+JzsRC2zMi/XmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZvutZJQr; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756822825; x=1788358825;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=iAXUSwwbvwiZC9bhMY6s6lbOEzUht7j1jWcYwHXsu+I=;
+  b=ZvutZJQr84oFZMCEmQWsuxcDvoOqPDwWfkU+VkqPpP4dDXOw9te4WgG8
+   H2YlG7vB1YOQRPcNgCgy/OfZNCCGjgdBV4kSKJdzKJyVoOnavATFWRHG8
+   x6hMbVi+JLc38iVKStQ1CjSVEC/jcwG9YAA0An/2gUZ1DkbumadxG4Fhc
+   JsyvI5F/z9EyeD+q6LqOnO1Xer04EYkdcH9TdDVs6fXxiGN36j4km+EwX
+   EMayxGn+N9UtgelVvkdmrYykRxuucT+PQ9St4BddYRK6d69DR+9pvw6W1
+   VtB23yw1Qxgqf8s+4y9fp2Z3Zlj1Z174Y9FMv5y0bxORF9ptjw7V/cCbK
+   w==;
+X-CSE-ConnectionGUID: IXCpUvLwR9qZeLIqvv/kmw==
+X-CSE-MsgGUID: szdYMZd+RKWDcMZWWNGAOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="58305917"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="58305917"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 07:20:24 -0700
+X-CSE-ConnectionGUID: MsrrCbkESHiLoR6gD4wQng==
+X-CSE-MsgGUID: WARwoctoTZupLE1EBSrbfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="202237611"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 07:20:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1utRrk-0000000AiLA-3gUk;
+	Tue, 02 Sep 2025 17:20:08 +0300
+Date: Tue, 2 Sep 2025 17:20:08 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v7 01/16] pinctrl: check the return value of
+ pinmux_ops::get_function_name()
+Message-ID: <aLb9GKnQkAiayqpD@smile.fi.intel.com>
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-1-bb091daedc52@linaro.org>
+ <aLbrz5DYS5Yxx_UE@smile.fi.intel.com>
+ <CAMRc=Mfx5czDM=vfEYhFtVO3MviYaW4wKBYjGZ9ZnMbr-+T4mg@mail.gmail.com>
+ <aLb2HH5zgxdbDiPo@smile.fi.intel.com>
+ <CAMRc=Mdp2djgGbgu_uwLSkrtRPomAU=6-SRdzCdSbrHWzS2c2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901163811.963326-1-bigeasy@linutronix.de>
- <20250901163811.963326-2-bigeasy@linutronix.de> <CAJhGHyBaqn_HOoHX+YinKW5YSy1rncfbvYXktkEtmFgK44E9wg@mail.gmail.com>
- <20250902111740.hwMmUu4T@linutronix.de>
-In-Reply-To: <20250902111740.hwMmUu4T@linutronix.de>
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Tue, 2 Sep 2025 22:19:26 +0800
-X-Gm-Features: Ac12FXxwiQL3_AxCPmxMyQd-juJULME8fi7RYO-LDay-Lw6Fm6cBtgOGJ8vZawo
-Message-ID: <CAJhGHyD7x9QLJ+uoRnbh4qOhphdxJU4c384D1Ph2tn5ktR_=kw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] workqueue: Provide a handshake for canceling BH workers
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Clark Williams <clrkwllms@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mdp2djgGbgu_uwLSkrtRPomAU=6-SRdzCdSbrHWzS2c2A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hello, Sebastian
+On Tue, Sep 02, 2025 at 04:02:27PM +0200, Bartosz Golaszewski wrote:
+> On Tue, Sep 2, 2025 at 3:50 PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Tue, Sep 02, 2025 at 03:29:31PM +0200, Bartosz Golaszewski wrote:
+> > > On Tue, Sep 2, 2025 at 3:06 PM Andy Shevchenko
+> > > <andriy.shevchenko@intel.com> wrote:
+> > > > On Tue, Sep 02, 2025 at 01:59:10PM +0200, Bartosz Golaszewski wrote:
 
-On Tue, Sep 2, 2025 at 7:17=E2=80=AFPM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
+...
 
+> > > > Fixes?
+> > >
+> > > This has always been like that.
+> > >
+> > > > Reported?
+> > >
+> > > I mean, technically Mark Brown reported my previous patch failing but
+> > > I don't think we do this if we're still within the same series just
+> > > another iteration?
+> > >
+> > > > Closes?
+> > >
+> > > Ditto.
 > >
-> > Is it possible to use rt_mutex_init_proxy_locked(), rt_mutex_proxy_unlo=
-ck()
-> > and rt_mutex_wait_proxy_lock()?
-> >
-> > Or is it possible to add something like rt_spinlock_init_proxy_locked()=
-,
-> > rt_spinlock_proxy_unlock() and rt_spinlock_wait_proxy_lock() which work
-> > the same as the rt_mutex's proxy lock primitives but for non-sleep cont=
-ext?
->
-> I don't think so. I think non-sleep context is the killer part. Those
-> are for PI and this works by assigning waiter's priority, going to sleep
-> until "it" is done. Now if you want non-sleep then you would have to
-> remain on the CPU and spin until the "work" is done. This spinning would
-> work if the other task is on a remote CPU. But if both are on the same
-> CPU then spinning is not working.
->
+> > I meant that this fixes a potential issue disregard to your series, right?
+> 
+> No, as long as the imx driver keeps putting stuff into the pin
+> function radix tree directly, this cannot happen. The issue was
+> triggered by the discrepancy between the number of added selectors and
+> the hardcoded number of functions (we started at 0 which was not in
+> the radix tree and crashed before we got to 1).
 
-I meant to say that the supposed rt_spinlock_wait_proxy_lock() would
-work similarly to the rt_mutex proxy lock, which would wait until the
-boosted task (in this case, the kthread running the BH work) calls
-rt_spinlock_proxy_unlock(). It would also behave like the PREEMPT_RT
-version of spin_lock, where the task blocked  on a spin_lock has a
-special style of blocked/sleep instead of spinning on the CPU and this
-is what the prefix "rt_spinlock" means.
+Ah, thanks for the explanation. The problem is that current commit message
+implies a (potential) but lurking somewhere (regardless IMX case). Can you
+amend it to make more explicit that there is no bug right now.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-By the way, I=E2=80=99m not objecting to this patch =E2=80=94 I just want t=
-o explore
-whether there might be other options.
-
-Thanks
-Lai
 
