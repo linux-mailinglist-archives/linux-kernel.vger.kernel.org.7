@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-795595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B31DB3F505
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:07:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7DDB3F507
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D4B189F302
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:07:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D9594E27BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50292E2667;
-	Tue,  2 Sep 2025 06:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818112E172B;
+	Tue,  2 Sep 2025 06:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eq4Fo0OB"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhNiLz8g"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431C02E1751
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1A62DF158
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756793248; cv=none; b=iMFHgZJwVXzAK6g4clPogXC8mzmc+dzoNzzxskWU3dP80HzGBmI9JAnizLm/dCXayL7IcKItilVKmSGEBFczdsuF+3iENU7YFfvKV9RvVP7dPrvhL2iijuEmLf6ZSMoCDoVNUUBkWQNOQbJVs+czeMWkieYiJu3y9WM387NqiVU=
+	t=1756793315; cv=none; b=skAiWsnQFwaE8kEHVo2QJYKyrb84UdOTblK8QIVENeXDnuB4kAA4C8ixSkOqIqOw3NmAez2UitgUhYt5Yvz2Xr/rH1TxGnNyhzhuu4PGZhPtdPPSwjWqwGzLZoRNgMNlGcZCLGjGgQe/N6Zof07nn8EyW3k3MixBue5R6Qwy5Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756793248; c=relaxed/simple;
-	bh=lcRKGuBTIwV8aVWzCNRgaz6ffqBzMJw3nBGepR5YPBk=;
+	s=arc-20240116; t=1756793315; c=relaxed/simple;
+	bh=QLmvwmUq5h9swX0zLB+DgvjIevRVWS9QWn5BkMcxYSY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CEIWfukXTT3LU6CPvBjJxjqrAIQzF6TzX5cVQWxuXKlXZEdpA+LWhokGMY/v4GzMjRhH3Kgcn0ygc7bWcqgFP2lIenaob9JfS6H8Ely15tSXQg0QQBhO0xWSuBD18inBJiJd7pdPqKWCIK9JmLLnF9fL0wbO3r1R3uo1BJlvFlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eq4Fo0OB; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=i73Euhq4845qqkbhf6DDAnj47Per02sVeWwMFfUzIUl9t1ai5w72WQv9q1jyeBqoqtG/6hsYzemrbySzPs/GGM52Hc0UfjlFx3JREUdb/FupbXiL2qolkzXKqrByrwekj1Y6gcAtWdaXtB7IVkzM1PuHcLsFnjeVxqDySyzeMLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QhNiLz8g; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b9aae45c7so24375e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:07:25 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0ce15fso6005765e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756793244; x=1757398044; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756793312; x=1757398112; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=t/B1FaoD/CzixDmOU5vubVEgdSvYSaE5OyF1FY9TFP8=;
-        b=eq4Fo0OB48ug0o42blUy1TViLJd+GzMSgN+8DH2C/hOMuIRebDXsv2BqZZqXxGRa/5
-         zFXFcdODNkSlMhE6m2hf7yxsMmUc0gWjmFTBqtpUWEo3otBFUWgXmN331lNSLx2thxs+
-         UTScoh1dJu/XZHOTw7TN3+fpmGdE7ehfXNVInmG9Lcper/9RgqaDXzRE1DR1EbiMQTmD
-         fLHnClYL3IgSM4KpgKgNbq+wy2n0OsepaNdE3XrAJkuTq8V+/JLEdYc+yaYQoc0lxqYL
-         XgZPpqceiU6YyHB9NcOD46McvsMvf/h/Ao7r1Dc08TQ4aos1pcx8H/9FMamaPvtZwpZ2
-         WbaA==
+        bh=aHeN40gFm9aSbsJ2megLoxDLeCwIuUbaDBPA1LSwj44=;
+        b=QhNiLz8g0TrScz4X7OJPwJIH7hmIE/Oj0Ta2PJqrXafUpkHMyz4CVopN6y8cwXB/8m
+         DhkabecL/PUpfASzzvtYW1cZwZuQ50QKjVRVJ7xMqnkX7GKfuonvp4f4MX5PK7OFAAzn
+         z/fX9sOgGM/ZcbZB4NY0jF0DlQ6+NzzAFoB8Pxt5R3o/HOs1oLRBLvgypv3hi+jc5U+K
+         zZmeUVzimdCJAYFl8HKCzL5BPt7Wt2jbs9cng+zEGmQcN0iVLJ0rJgSvNh85viJrKYPB
+         6Vi3SjTn4qlbpSes3xlFPD9l38d463D973q5r4s+2NY0Z9URb71c6FCoGyCW8jH82Hsh
+         iwZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756793244; x=1757398044;
+        d=1e100.net; s=20230601; t=1756793312; x=1757398112;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=t/B1FaoD/CzixDmOU5vubVEgdSvYSaE5OyF1FY9TFP8=;
-        b=BwNLHNNTKtyrLndl2sayxORDKRIg3dFhCq7LLvwtKS4YeRlZzjkhIYKwQhEqB7dxjm
-         qzi0/9+cPheeFG6cKv4/XuCg05pbF2mMURsDROVGI2i806/cBZTX8LXEWoGGtW+8bE9c
-         qqYSQ+fduuo2vVUfSlxl3hOhztG6eBypI9dsb+iJUQ8I6p1hCZ8ZoGlPi49SIag85DMY
-         zmahTipq7FCocM1+G2detEkssYaOmBZSWs4bAP4Du4QOPpaBdrc2i8JMQq2wJEYEyw1L
-         DUSW6N2XNLovp9gGzttc4sfuIxmnY1usr7oFxE1d5Sz6pkK8OiheGfs4ii2AyItXOWJX
-         PTgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrTSGtpyIaHZ+yjWMxfu2vQH5udZDqF2L9lUKvQrxXF1XcxrUeOgkv7yggGShmWYn0DwTkzq0WAfD1eEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyro/HuFqmZFeyTnmQTxfxc7vYWTF1Anipnki1uYaIlNC/88HSi
-	A2X+vOJgmsOoQ1CrZRxqd07OoGJef0bdiJ04ZW0hs0Q98v4KlCYAuAZ/DOruWqL7r/A=
-X-Gm-Gg: ASbGncu+BLqh/4d8grROf99l9nXoFu8kVHlokXmwJIo25G6R+lMofkytWK1xCq6gzdL
-	5faeKLSs4PljD9v1QfvwrSFv261AF/abEI4i0s8uUl9TRrLSqweOJFC/5hXTsufiAh/g4V49tUm
-	dgqyORDEhohjtC/KqNCcVAvYwTvJ31jikg7SdGe7l3DVRk0Mbb16gTb2XXjmAqrKmfUov60C/jr
-	DDS7TWWnrzf20yYSKmmw6EKyTlHdq2OfqnYSrNi2nDP2FsmmSK6SBEOFf2/ZSvm0vg2LLvGte3q
-	D0d/42cLEDNGHn8L6+jAb7kdDJSg+h7fBSsCjJ3cxsLZBaxvZR5fwJ8vbQXQ/xKzUnUGxdfVQJ8
-	wM1tdVW1Rshe+lv2D5Ze5/MgqLion9HpUU3L/EMBggiRCz2tJxpJdoA==
-X-Google-Smtp-Source: AGHT+IHlJQa2ozPDy4pXB3L1qvYBOkak8WzZG+cqww52jrlmExUNErZsn4LdUbYEor0rhiu5nFzizw==
-X-Received: by 2002:a05:600c:4f8b:b0:455:f12f:e3fc with SMTP id 5b1f17b1804b1-45b81e92f7fmr56974255e9.2.1756793244503;
-        Mon, 01 Sep 2025 23:07:24 -0700 (PDT)
+        bh=aHeN40gFm9aSbsJ2megLoxDLeCwIuUbaDBPA1LSwj44=;
+        b=sH6o/OkqPOH+BiB45a6rxQZ+Z3PX3542wXzGMnCANKKHg5+NXwfG+xecLcu9/kt7ZC
+         xngxWGyBOV4jNkTc58jzD4tJstYPsnNaMcqKjqMM99gcWH0sZJ5K/vWV3DF1Onm8poNJ
+         qX1mHzUF5fAIXeDDhBSBTHa7U+sSz3IcqkttEbzACcwBfIRaKNw1S90Q+k9WWHJzYkxm
+         HbRj8JGyg+8lofDSjt848Ox6sSpwSYgZevorK4epsd1ddP3dHWic395OrrLNwnpONWiJ
+         ExQ+CfRu/3WG5vmUMP7NZAdWJiw50S40x8WSnxLrYUFk158v1topO24JPlPGXpR7PzZJ
+         POAg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5wxko1f6Kd1CLYzjAXvJ9Igi/0QUj8NzCWswn5AElEKEnC+tY6DUlky8wOldr0PB4ceOezL3OxUnhRqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaU5mZeRJ0uIFzFXDQyhg6KyD4KxiSmY/njRf/VE1X0YSwyfoE
+	2jxWqBFkiQyRDG2UgTt69VkR2CkYQ9KnPmJsb9F/jPquqvySRvznj16qQT92VPB10Wo=
+X-Gm-Gg: ASbGncsNnQXkUtPIgDXSbyvZ3Q4O5hhjZpjThUF2nG1lXTtktEDnRZu/PbpZuXhzayg
+	Wg05UO8dk/PaSDoiBnnJ9kkl6Kk+C7TQ0LWhDB/O4G3kd6F8b+FDZ8vDhH1WPzI+Q33/dillKEc
+	gkrngc0sW2MnEqMhpdC+/Ssb2pEwUQpUjUFgakcUtciGspG3egEsTkBR6JZMuhkZhZlHTCBGjP5
+	ZIkZt2KZJPKWaBGx9cKHsFM+UewrSezeKA5wox8OCPnyBJa54VpjwI1AmY6joph4Umt50hBLgJ6
+	RaYz+GnF8kyE6BkSMiqgi8D1q0ncSOs4WaEyGmCDrjpXxzS3IoPNhExMAPepcDRGWmRzxlLWIlo
+	FRXWMB4a8IKhH7HVmJNZnV4LI1hDtK2UyLamIJ8H1iBYQOJQCF1Jb2Q==
+X-Google-Smtp-Source: AGHT+IEB5wuckpDue9hE5Qf/P4F7Pt5W6ZlSWYjEWe35YrVRkFYFEWEYhjdcJ24PGqJvwq+T4CniLA==
+X-Received: by 2002:a05:600c:37ce:b0:450:d5ed:3c20 with SMTP id 5b1f17b1804b1-45b81f23e6cmr60632745e9.6.1756793312438;
+        Mon, 01 Sep 2025 23:08:32 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e74b72esm186726245e9.0.2025.09.01.23.07.22
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e380b77sm187960455e9.11.2025.09.01.23.08.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 23:07:23 -0700 (PDT)
-Message-ID: <ddd0f518-f9e1-49e8-bbaf-b810adcd35b3@linaro.org>
-Date: Tue, 2 Sep 2025 08:07:22 +0200
+        Mon, 01 Sep 2025 23:08:31 -0700 (PDT)
+Message-ID: <6889f493-f37b-43a5-add8-8e170e295492@linaro.org>
+Date: Tue, 2 Sep 2025 08:08:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,27 +82,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 8/9] arm64: dts: qcom: sm6350: correct DP compatibility
- strings
+Subject: Re: [PATCH] ASoC: codecs: lpass-rx-macro: Fix playback quality
+ distortion
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Abel Vesa <abel.vesa@linaro.org>, Mahadevan <quic_mahap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250829-dp_mst_bindings-v7-0-2b268a43917b@oss.qualcomm.com>
- <20250829-dp_mst_bindings-v7-8-2b268a43917b@oss.qualcomm.com>
- <20250901-defiant-illegal-marmot-7ce0db@kuoka>
- <abkkn4f7uca6tzjasltyysxecuuirxxvbjz6l6re5v4z6jlmuh@ugz6jtw6vo4n>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alexey Klimov <alexey.klimov@linaro.org>
+References: <20250901074403.137263-2-krzysztof.kozlowski@linaro.org>
+ <bect6bxzxmxguqsrxkchbkhhxgz5lmnzzkwwjyvaca7qtlfz4r@lxmmfto2qkm4>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -149,36 +138,35 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <abkkn4f7uca6tzjasltyysxecuuirxxvbjz6l6re5v4z6jlmuh@ugz6jtw6vo4n>
+In-Reply-To: <bect6bxzxmxguqsrxkchbkhhxgz5lmnzzkwwjyvaca7qtlfz4r@lxmmfto2qkm4>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/09/2025 06:04, Dmitry Baryshkov wrote:
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
->>> index 2493b9611dcb675f4c33794ecc0ee9e8823e24d4..8459b27cacc72a4827a2e289e669163ad6250059 100644
->>> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
->>> @@ -2249,7 +2249,7 @@ opp-560000000 {
->>>  			};
->>>  
->>>  			mdss_dp: displayport-controller@ae90000 {
->>> -				compatible = "qcom,sm6350-dp", "qcom,sm8350-dp";
->>> +				compatible = "qcom,sm6350-dp", "qcom,sc7180-dp";
+On 02/09/2025 04:40, Dmitry Baryshkov wrote:
+> On Mon, Sep 01, 2025 at 09:44:04AM +0200, Krzysztof Kozlowski wrote:
+>> Commit bb4a0f497bc1 ("ASoC: codecs: lpass: Drop unused
+>> AIF_INVALID first DAI identifier") removed first entry in enum with DAI
+>> identifiers, because it looked unused.  Turns out that there is a
+>> relation between DAI ID and "RX_MACRO RX0 MUX"-like kcontrols which use
+>> "rx_macro_mux_text" array.  That "rx_macro_mux_text" array used first
+>> three entries of DAI IDs enum, with value '0' being invalid.
 >>
->> No, that's breaking all the users.
+>> The value passed tp "RX_MACRO RX0 MUX"-like kcontrols was used as DAI ID
+>> and set to configure active channel count and mask, which are arrays
+>> indexed by DAI ID.
+>>
+>> After removal of first AIF_INVALID DAI identifier, this kcontrol was
+>> updating wrong entries in active channel count and mask arrays which was
+>> visible in reduced quality (distortions) during headset playback on the
+>> Qualcomm SM8750 MTP8750 board.  It seems it also fixes recording silence
+>> (instead of actual sound) via headset, even though that's different
+>> macro codec.
 > 
-> WHy though? Both old and new lines are using fallbacks to bind the
-> driver to the device.
+> Wouldn't it be easier to assign 1 to RX_MACRO_AIF1_PB,
+> TX_MACRO_AIF1_CAP, etc.?
 
-Kernel has sc7180 fallback, but what if other DTS user does not and that
-other user was relying on sm8350 fallback compatible? That other user
-won't have sm6350 dedicated handling as well.
-
-That breaking of users I meant.
-
-With the kernel it should work, assuming SC7180-dp was introduced
-similar time as 8350-dp.
+That would be basically revert of mentioned commit, so same arguments as
+I used in that commit.
 
 Best regards,
 Krzysztof
