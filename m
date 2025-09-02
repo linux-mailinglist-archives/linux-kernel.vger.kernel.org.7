@@ -1,412 +1,335 @@
-Return-Path: <linux-kernel+bounces-797020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F9AB40ACD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:39:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26E5B40ACF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446FB2080CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB412207599
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978FF338F22;
-	Tue,  2 Sep 2025 16:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574B733A005;
+	Tue,  2 Sep 2025 16:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nwaqhQ3q"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIcwXU8R"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9468433EAF9
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9702DCF70
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831135; cv=none; b=gRyNbz0JxjSbZo2+57MVH655/mj4OBWrBpI/M5xL86RmoLKry8fvQad/x1sYNoozlNDpn4bz0PLszulkO6x1UV2cL2EGk0Y/ghXwQ/3rNDaIFJB7/2jJsM0aNuPGse1TEWc+EhIMhoZckyBaTCiPRFJm4pUB2vsso4Xk0fmzW7g=
+	t=1756831172; cv=none; b=f9AthVITPgwQnxxHvBnhGf3VlDAtgwGscJ3PnRQ+jkDbENBZm2h1Z8wbRv0pN2J1vLWDCaQXHjmUkLAh64OkVJ1yjCgA02dUN8P28vUh0FMIyvVpHcHwsjdYxdBnvNh8N+o9W+rlDzBH8MYxFIx2NTzgxPYZiWYHIJbZ73jRKEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831135; c=relaxed/simple;
-	bh=2hiLXTYOUv7ZT+8Xe0OHkx15c5hqbSE6YBNNLMdNdyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQgEmkYf637fZ38mj6ABn4hUmeqXJSvUS1W+KBz+E8u6Iyn6Sbm5R9wSTfYR4dzZFmiy6mTIK37+07VpGr8sJ69GqV2uj6IVaqSitdWiPicrdTNLMVOu65Kao3kGfqRQnRMrlU46RT3WmFfIEhbGUYhuU9DyRmjpa00L/VZ4WkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nwaqhQ3q; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-772627dd50aso66206b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:38:53 -0700 (PDT)
+	s=arc-20240116; t=1756831172; c=relaxed/simple;
+	bh=V2RT9c+Qh2Ovmwrfm8ch57L+ljt3Lulyp2wInlnTI58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MKoqGauk2F3TY4lV6UEW+pFnUr6aYHLC5FNQFdpkFV5e/ZQVEJXYdcDCaPclOzV4yQ0KAtJPhOr7mQe8QI3Ot73OEMtFojCqpNc/jjRAcM+WP6VNmexHonJ1i4U0pT4oY98GQMf/W3Mo4FbFD2hky3HPz4Gr0OEsMo4mzyhQLNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MIcwXU8R; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b04163fe08dso447743766b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 09:39:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756831133; x=1757435933; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXBUwB6riv6anGuWowZRcLSzUYer/ZJs0DMzJRXqBAA=;
-        b=nwaqhQ3qQNtjCuYu7Cz6PCbC5E5VimZj07JI7C1V7qAfpR8RC0q5gcuilmid2OYuRJ
-         uOTGBffv/Qw5tpphfUFIkrKTP3x6DFrLZFH6ZOh/+MD8fM6A9fNxut6QkQtzEQ/oFLZ9
-         x/TO+6smqPiUhqpFsIwvi6b4UrxcjY3QsPZosxmlzTsAUrtyjnsW+9Qche5aNmVo+UM6
-         7CEzHp8nhzqPjJzPisL+xyG5rTrRjutlMxXm50eCUhnSO1L3uUhHkas9aQOYmRY98D2m
-         0lF2+KJBnbk3JMoa2PT8S6xygtdw4ulX2md7JivV3+2Bpsz4OYd26aO5bQIbI4dCvWui
-         PI6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756831133; x=1757435933;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756831169; x=1757435969; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DXBUwB6riv6anGuWowZRcLSzUYer/ZJs0DMzJRXqBAA=;
-        b=Q7ByzFziMBBbdjN+rPekiFo4c0Bx/XMj2D9GXmnSwE2Zk2GiCCjku/ijIX1dRLxxR3
-         oIh0nTy7ZFEFTbjULuQyJ+u46N9tV+mpjtLO0bxHghYfNHuuxdYTp8JzTmVJxAE7gdFN
-         wZkq+ni88hPlfoOlESc2r+SQF6fJBLefC3VeQdKFXO8mxvKycOTAOMb21MrkD/we0yoD
-         yzkdSd4z18O8hmudYewCU3EtUv1I5xj9yNC9r8AX6ljoe87ew9rz1kuLTT257zbI1v2V
-         BxadHUT+dWK2iGcfAc+leTVgWgHEfdPH205/NXtAT6CI9NCC4OR4QV/btMm2I1OW8zy/
-         kXxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKIi+GAt9ot/TI42iMj6AvYrwZ6cOjk5cqkGkhpcu8wmlgdBLv3nruOiVk71odVrQQE1YZeb2Ku92KMog=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwecKEKbBOaNWO/BQaY/iK4B9EtUVBM0y5R9HQt7aWkPucXfktk
-	gzQXr/DV1jCsz5QraLdz2ZqCTM5Rd4fROr5Abw7aOC1djM2YQk31xMGYCSdgfFXXh4A=
-X-Gm-Gg: ASbGncuQ4UbykGwM3aWT2rbvc0Ac/toOw4KzInHSrdS1PhZcTCkkZ30t5muHPPbO5ZY
-	Ec80E/vArjlgAnWPh/13OV47qZuVfuOfEFbCh8GjEabmYSqwhDZgVVpjRMFK88NIzpVsv1Hrwk5
-	b7HNIOv/Ooz8U8ArX8XATO1oMgq2+oPT7F93CRcTDmsk6JNDW1gdrcBccDiI3MINp1ewAsM2XKH
-	jbSTRsnMv3rYFKLrxdmBK6mRcxg9NBM0ly+FRKLBXLn1vWGkTOpRTlab15oD6rfaKFesEaG2GlL
-	Qz1IbHiGpyRllZgnvu350+jPTxwnqwQtg06UFRp58Onbc+/TPNbiehuc14RF2tH1AV+A9Im7Ilf
-	gw3/tyH2jsvCsIRiwx4Vt5pNYsMf0AhpEwk7iG6OPMaCxExgI3gd7ucOeKFIHWKNi4q2jM4HPmS
-	PZqhKwxMHl1UYGGRjK6OC2aVYRuILvbnzs14o=
-X-Google-Smtp-Source: AGHT+IEeDLgFOBjXxbJ/YLJ/SF9khStqJW4YrZ8PIFvkVTEmJPvZRH8PlrIDW8LLNusvSklsV66ErA==
-X-Received: by 2002:a05:6a20:244c:b0:243:6f68:a2f6 with SMTP id adf61e73a8af0-243d51b0c03mr14553396637.20.1756831132641;
-        Tue, 02 Sep 2025 09:38:52 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:9b21:5c26:1409:23e9])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd28aecd0sm12394758a12.30.2025.09.02.09.38.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 09:38:51 -0700 (PDT)
-Date: Tue, 2 Sep 2025 10:38:49 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] remoteproc: imx_rproc: Add support for System
- Manager API
-Message-ID: <aLcdmY-gqd5cFOYc@p14s>
-References: <20250821-imx95-rproc-1-v5-0-e93191dfac51@nxp.com>
- <20250821-imx95-rproc-1-v5-2-e93191dfac51@nxp.com>
- <aLHOhKpAQbVCC76-@p14s>
- <20250830125208.GA22718@nxa18884-linux.ap.freescale.net>
+        bh=KULDNgiYHmmPCuUqyY0RJ/0WhWSbFCxPKKLg6IajuDI=;
+        b=MIcwXU8ROFoye8NieNTUGGciqc6FkOMheUWyhBTwQvdwrwaQgZ6yq83ZNr7VXzLQL5
+         pwOqMrV8YyaibVOeN565g4vk8wH7ty9zk9zWAJTQnsbfvnIHXfJUpsRk+q9ePIB5UTkk
+         nE8M1Zch7XfsjT9NdRLUiM57VZmjRBCEqOUusTsnn70uh1Sh7ker9NpujEboDUgXuzvk
+         CcePyJ6nweBTt6oGYJGzyjY0Nnl6Mh42LYWVnG98a/Y36tVRmMyGMcVZsd16YeWme+gq
+         u7eOZlVtUaFxGrcIH5ePTv/Ej8gIm2fRXodYbEDW5uz9NIRZFrd95e9bjVOf+J7yQORF
+         9IPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756831169; x=1757435969;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KULDNgiYHmmPCuUqyY0RJ/0WhWSbFCxPKKLg6IajuDI=;
+        b=lDpdJemnadyQ1Lhi0XUaQFZvxiSRaXXx5kHCXGnEbU85qvBOP8VXvtRPGJWs0QDT8k
+         DloGIjf3+3JZjVOCOFWSoKFc1piiFAW/6aLBWXReVKY8T2FEc/g7cascAv8x36TjPs6Y
+         YjxgTj2ep53h86zO5GZTMFwFROHCn13Km3mXQXTfzNT0uqRlcy5o+fcPS8oNDVunpKA1
+         7ahFNlcUWek2WISLSgi+CmWNqu3RpoV3fv17rz0P+RgWc1wL8f7y6tf6wwN4I9/6/5JQ
+         2QRoHt3VB2KX/so9ryqpYlVF0tjnmHx4G+6dPa0rgHJnrG7j2fFe9PyPxGL3iYNZjN5D
+         BmDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZX9SrrF3UgVdpl6NbyyEcM5oohULo1jMTR0E9az0J5WAnOX4BqVaWoYvxF9MtrOwlr5xn3a5G1j3zZV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX7oBJm/Q+TlmehlTtHsqIFiZH0vw237TACFwfbdoavGCbhxdr
+	vhIs0fm+glQp5gJQRHEZozAKrlg+xttTEwcmFRD/hd1Orxs7TdSFSKmnYyWuXBx370vPhIEE0kp
+	jsIyNytXWeJvbZOeaUEf1Z5uhas5tUko=
+X-Gm-Gg: ASbGnct+uxNB2wNUXZFgr+6EDQBUwQNw3LJLu8iM2yx6RLjPcnsQBQjW/0PvEBB8IlF
+	i9sPxWkpG23+SeYu6knfNStyuncLd3HjYH+ojmIK2iMrSrFqW+h5558xGzUtqkRCMOzqRVmgw1b
+	4YVOU9+73VPDjdrofuXHNrtXjMairIA3bfi48ZL4osh5RFG8aidm8YKsgO2XOUOOvLAKrAVAk1w
+	DVJygJI6i8=
+X-Google-Smtp-Source: AGHT+IFRf7sPflJDkEdO/QSYtWCkjAgoR/6FK9Cto6Nj1y7bD9WdS6dLt7SGBpbWPpBvR6Vc9rlOJOqThfz0PWW7O/0=
+X-Received: by 2002:a17:907:94d6:b0:afe:d590:b6af with SMTP id
+ a640c23a62f3a-b01d8a8b60bmr1159614066b.20.1756831168587; Tue, 02 Sep 2025
+ 09:39:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250830125208.GA22718@nxa18884-linux.ap.freescale.net>
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-2-ryncsn@gmail.com>
+ <c4a729b8-be9e-4005-aab6-91723fcf0080@redhat.com>
+In-Reply-To: <c4a729b8-be9e-4005-aab6-91723fcf0080@redhat.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 3 Sep 2025 00:38:52 +0800
+X-Gm-Features: Ac12FXwuchJT2yLVFLgtl3lm-EW28Pq9-K675kfkDbUYK12I5RGhC7MPXRDFURI
+Message-ID: <CAMgjq7D9uO58213Shb5sHx=ebvUdvO1mOnaVdb=dOY2Zr1QoEg@mail.gmail.com>
+Subject: Re: [PATCH 1/9] mm, swap: use unified helper for swap cache look up
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 30, 2025 at 08:52:09PM +0800, Peng Fan wrote:
-> On Fri, Aug 29, 2025 at 10:00:04AM -0600, Mathieu Poirier wrote:
-> >Good day,
+On Tue, Sep 2, 2025 at 7:22=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 22.08.25 21:20, Kairui Song wrote:
+> > From: Kairui Song <kasong@tencent.com>
 > >
-> >On Thu, Aug 21, 2025 at 05:05:05PM +0800, Peng Fan wrote:
-> >> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
-> >> one Cortex-M7 core. The System Control Management Interface(SCMI)
-> >> firmware runs on the M33 core. The i.MX95 SCMI firmware named System
-> >> Manager(SM) includes vendor extension protocols, Logical Machine
-> >> Management(LMM) protocol and CPU protocol and etc.
-> >> 
-> >> There are three cases for M7:
-> >>  (1) M7 in a separate Logical Machine(LM) that Linux can't control it.
-> >>  (2) M7 in a separate Logical Machine that Linux can control it using
-> >>      LMM protocol
-> >>  (3) M7 runs in same Logical Machine as A55, so Linux can control it
-> >>      using CPU protocol
-> >> 
-> >> So extend the driver to using LMM and CPU protocol to manage the M7 core.
-> >>  - Add IMX_RPROC_SM to indicate the remote core runs on a SoC that
-> >>    has System Manager.
-> >>  - Compare linux LM ID(got using scmi_imx_lmm_info) and M7 LM ID(the ID
-> >>    is fixed as 1 in SM firmware if M7 is in a seprate LM),
-> >>    if Linux LM ID equals M7 LM ID(linux and M7 in same LM), use CPU
-> >>    protocol to start/stop. Otherwise, use LMM protocol to start/stop.
-> >>    Whether using CPU or LMM protocol to start/stop, the M7 status
-> >>    detection could use CPU protocol to detect started or not. So
-> >>    in imx_rproc_detect_mode, use scmi_imx_cpu_started to check the
-> >>    status of M7.
-> >>  - For above case 1 and 2, Use SCMI_IMX_LMM_POWER_ON to detect whether
-> >>    the M7 LM is under control of A55 LM.
-> >> 
-> >> Current setup relies on pre-Linux software(U-Boot) to do
-> >> M7 TCM ECC initialization. In future, we could add the support in Linux
-> >> to decouple U-Boot and Linux.
-> >> 
-> >> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> >> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> >> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> >> ---
-> >>  drivers/remoteproc/Kconfig     |   2 +
-> >>  drivers/remoteproc/imx_rproc.c | 123 ++++++++++++++++++++++++++++++++++++++++-
-> >>  drivers/remoteproc/imx_rproc.h |   5 ++
-> >>  3 files changed, 127 insertions(+), 3 deletions(-)
-> >> 
-> >> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> >> index 48a0d3a69ed08057716f1e7ea950899f60bbe0cf..ee54436fea5ad08a9c198ce74d44ce7a9aa206de 100644
-> >> --- a/drivers/remoteproc/Kconfig
-> >> +++ b/drivers/remoteproc/Kconfig
-> >> @@ -27,6 +27,8 @@ config IMX_REMOTEPROC
-> >>  	tristate "i.MX remoteproc support"
-> >>  	depends on ARCH_MXC
-> >>  	depends on HAVE_ARM_SMCCC
-> >> +	depends on IMX_SCMI_CPU_DRV || !IMX_SCMI_CPU_DRV
-> >> +	depends on IMX_SCMI_LMM_DRV || !IMX_SCMI_LMM_DRV
-> >>  	select MAILBOX
-> >>  	help
-> >>  	  Say y here to support iMX's remote processors via the remote
-> >> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> >> index a6eef0080ca9e46efe60dcb3878b9efdbdc0f08e..151b9ca34bac2dac9df0ed873f493791f2d1466e 100644
-> >> --- a/drivers/remoteproc/imx_rproc.c
-> >> +++ b/drivers/remoteproc/imx_rproc.c
-> >> @@ -8,6 +8,7 @@
-> >>  #include <linux/clk.h>
-> >>  #include <linux/err.h>
-> >>  #include <linux/firmware/imx/sci.h>
-> >> +#include <linux/firmware/imx/sm.h>
-> >>  #include <linux/interrupt.h>
-> >>  #include <linux/kernel.h>
-> >>  #include <linux/mailbox_client.h>
-> >> @@ -22,6 +23,7 @@
-> >>  #include <linux/reboot.h>
-> >>  #include <linux/regmap.h>
-> >>  #include <linux/remoteproc.h>
-> >> +#include <linux/scmi_imx_protocol.h>
-> >>  #include <linux/workqueue.h>
-> >>  
-> >>  #include "imx_rproc.h"
-> >> @@ -92,6 +94,11 @@ struct imx_rproc_mem {
-> >>  #define ATT_CORE_MASK   0xffff
-> >>  #define ATT_CORE(I)     BIT((I))
-> >>  
-> >> +/* Logical Machine Operation */
-> >> +#define IMX_RPROC_FLAGS_SM_LMM_OP	BIT(0)
-> >> +/* Linux has permission to handle the Logical Machine of remote cores */
-> >> +#define IMX_RPROC_FLAGS_SM_LMM_AVAIL	BIT(1)
-> >> +
-> >>  static int imx_rproc_xtr_mbox_init(struct rproc *rproc, bool tx_block);
-> >>  static void imx_rproc_free_mbox(struct rproc *rproc);
-> >>  
-> >> @@ -116,6 +123,8 @@ struct imx_rproc {
-> >>  	u32				entry;		/* cpu start address */
-> >>  	u32				core_index;
-> >>  	struct dev_pm_domain_list	*pd_list;
-> >> +	/* For i.MX System Manager based systems */
-> >> +	u32				flags;
-> >>  };
-> >>  
-> >>  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
-> >> @@ -394,6 +403,30 @@ static int imx_rproc_start(struct rproc *rproc)
-> >>  	case IMX_RPROC_SCU_API:
-> >>  		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, true, priv->entry);
-> >>  		break;
-> >> +	case IMX_RPROC_SM:
-> >> +		if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP) {
-> >> +			if (!(priv->flags & IMX_RPROC_FLAGS_SM_LMM_AVAIL))
-> >> +				return -EACCES;
-> >> +
-> >> +			ret = scmi_imx_lmm_reset_vector_set(dcfg->lmid, dcfg->cpuid, 0, 0);
-> >> +			if (ret) {
-> >> +				dev_err(dev, "Failed to set reset vector lmid(%u), cpuid(%u): %d\n",
-> >> +					dcfg->lmid, dcfg->cpuid, ret);
-> >> +			}
-> >> +
-> >> +			ret = scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_BOOT, 0);
-> >> +			if (ret)
-> >> +				dev_err(dev, "Failed to boot lmm(%d): %d\n", ret, dcfg->lmid);
-> >> +		} else {
-> >> +			ret = scmi_imx_cpu_reset_vector_set(dcfg->cpuid, 0, true, false, false);
-> >> +			if (ret) {
-> >> +				dev_err(dev, "Failed to set reset vector cpuid(%u): %d\n",
-> >> +					dcfg->cpuid, ret);
-> >> +			}
-> >> +
-> >> +			ret = scmi_imx_cpu_start(dcfg->cpuid, true);
-> >> +		}
-> >> +		break;
-> >>  	default:
-> >>  		return -EOPNOTSUPP;
-> >>  	}
-> >> @@ -436,6 +469,16 @@ static int imx_rproc_stop(struct rproc *rproc)
-> >>  	case IMX_RPROC_SCU_API:
-> >>  		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, false, priv->entry);
-> >>  		break;
-> >> +	case IMX_RPROC_SM:
-> >> +		if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP) {
-> >> +			if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_AVAIL)
-> >> +				ret = scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_SHUTDOWN, 0);
-> >> +			else
-> >> +				ret = -EACCES;
-> >> +		} else {
-> >> +			ret = scmi_imx_cpu_start(dcfg->cpuid, false);
-> >> +		}
-> >> +		break;
-> >>  	default:
-> >>  		return -EOPNOTSUPP;
-> >>  	}
-> >> @@ -546,10 +589,48 @@ static int imx_rproc_mem_release(struct rproc *rproc,
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +static int imx_rproc_sm_lmm_prepare(struct rproc *rproc)
-> >> +{
-> >> +	struct imx_rproc *priv = rproc->priv;
-> >> +	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
-> >> +	int ret;
-> >> +
-> >> +	if (!(priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP))
-> >> +		return 0;
-> >> +
-> >> +	/*
-> >> +	 * Power on the Logical Machine to make sure TCM is available.
-> >> +	 * Also serve as permission check. If in different Logical
-> >> +	 * Machine, and linux has permission to handle the Logical
-> >> +	 * Machine, set IMX_RPROC_FLAGS_SM_LMM_AVAIL.
-> >> +	 */
-> >> +	ret = scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_POWER_ON, 0);
-> >> +	if (ret == 0) {
-> >> +		dev_info(priv->dev, "lmm(%d) powered on\n", dcfg->lmid);
-> >> +		priv->flags |= IMX_RPROC_FLAGS_SM_LMM_AVAIL;
+> > Always use swap_cache_get_folio for swap cache folio look up. The reaso=
+n
+> > we are not using it in all places is that it also updates the readahead
+> > info, and some callsites want to avoid that.
 > >
-> >Why is setting this flag needed?  The check that is done on it in
-> >imx_rproc_{start|stop} should be done here.  If there is an error then we don't
-> >move forward.
-> 
-> The flag is to indicate M7 LM could be controlled by Linux LM(to save SCMI
-> calls. without this flag, heavy SCMI calls will be runs into). The reason
-> on why set it here:
-> The prepare function will be invoked in two path: rproc_attach and rproc_fw_boot.
-> When M7 LM works in detached state and not under control of Linux LM, rproc_stop
-> could still be invoked, so we need to avoid Linux runs into scmi calls to
-> stop M7 LM(even if scmi firmware will return -EACCESS, but with a flag, we could
-> save a SCMI call), so there is a check in imx_rproc_stop and this is why
-> we need a flag there.
-> 
-> The flag check in start might be redundant, but to keep safe, I still keep
-> it there.
+> > So decouple readahead update with swap cache lookup into a standalone
+> > helper, let the caller call the readahead update helper if that's
+> > needed. And convert all swap cache lookups to use swap_cache_get_folio.
+> >
+> > After this commit, there are only three special cases for accessing swa=
+p
+> > cache space now: huge memory splitting, migration and shmem replacing,
+> > because they need to lock the Xarray. Following commits will wrap their
+> > accesses to the swap cache too with special helpers.
+> >
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> >   mm/memory.c      |  6 ++-
+> >   mm/mincore.c     |  3 +-
+> >   mm/shmem.c       |  4 +-
+> >   mm/swap.h        | 13 +++++--
+> >   mm/swap_state.c  | 99 +++++++++++++++++++++++------------------------=
+-
+> >   mm/swapfile.c    | 11 +++---
+> >   mm/userfaultfd.c |  5 +--
+> >   7 files changed, 72 insertions(+), 69 deletions(-)
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index d9de6c056179..10ef528a5f44 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -4660,9 +4660,11 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       if (unlikely(!si))
+> >               goto out;
+> >
+> > -     folio =3D swap_cache_get_folio(entry, vma, vmf->address);
+> > -     if (folio)
+> > +     folio =3D swap_cache_get_folio(entry);
+> > +     if (folio) {
+> > +             swap_update_readahead(folio, vma, vmf->address);
+> >               page =3D folio_file_page(folio, swp_offset(entry));
+> > +     }
+> >       swapcache =3D folio;
+> >
+> >       if (!folio) {
+> > diff --git a/mm/mincore.c b/mm/mincore.c
+> > index 2f3e1816a30d..8ec4719370e1 100644
+> > --- a/mm/mincore.c
+> > +++ b/mm/mincore.c
+> > @@ -76,8 +76,7 @@ static unsigned char mincore_swap(swp_entry_t entry, =
+bool shmem)
+> >               if (!si)
+> >                       return 0;
+> >       }
+> > -     folio =3D filemap_get_entry(swap_address_space(entry),
+> > -                               swap_cache_index(entry));
+> > +     folio =3D swap_cache_get_folio(entry);
+> >       if (shmem)
+> >               put_swap_device(si);
+> >       /* The swap cache space contains either folio, shadow or NULL */
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index 13cc51df3893..e9d0d2784cd5 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -2354,7 +2354,7 @@ static int shmem_swapin_folio(struct inode *inode=
+, pgoff_t index,
+> >       }
+> >
+> >       /* Look it up and read it in.. */
+> > -     folio =3D swap_cache_get_folio(swap, NULL, 0);
+> > +     folio =3D swap_cache_get_folio(swap);
+> >       if (!folio) {
+> >               if (data_race(si->flags & SWP_SYNCHRONOUS_IO)) {
+> >                       /* Direct swapin skipping swap cache & readahead =
+*/
+> > @@ -2379,6 +2379,8 @@ static int shmem_swapin_folio(struct inode *inode=
+, pgoff_t index,
+> >                       count_vm_event(PGMAJFAULT);
+> >                       count_memcg_event_mm(fault_mm, PGMAJFAULT);
+> >               }
+> > +     } else {
+> > +             swap_update_readahead(folio, NULL, 0);
+> >       }
+> >
+> >       if (order > folio_order(folio)) {
+> > diff --git a/mm/swap.h b/mm/swap.h
+> > index 1ae44d4193b1..efb6d7ff9f30 100644
+> > --- a/mm/swap.h
+> > +++ b/mm/swap.h
+> > @@ -62,8 +62,7 @@ void delete_from_swap_cache(struct folio *folio);
+> >   void clear_shadow_from_swap_cache(int type, unsigned long begin,
+> >                                 unsigned long end);
+> >   void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, =
+int nr);
+> > -struct folio *swap_cache_get_folio(swp_entry_t entry,
+> > -             struct vm_area_struct *vma, unsigned long addr);
+> > +struct folio *swap_cache_get_folio(swp_entry_t entry);
+> >   struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask=
+,
+> >               struct vm_area_struct *vma, unsigned long addr,
+> >               struct swap_iocb **plug);
+> > @@ -74,6 +73,8 @@ struct folio *swap_cluster_readahead(swp_entry_t entr=
+y, gfp_t flag,
+> >               struct mempolicy *mpol, pgoff_t ilx);
+> >   struct folio *swapin_readahead(swp_entry_t entry, gfp_t flag,
+> >               struct vm_fault *vmf);
+> > +void swap_update_readahead(struct folio *folio, struct vm_area_struct =
+*vma,
+> > +                        unsigned long addr);
+> >
+> >   static inline unsigned int folio_swap_flags(struct folio *folio)
+> >   {
+> > @@ -159,6 +160,11 @@ static inline struct folio *swapin_readahead(swp_e=
+ntry_t swp, gfp_t gfp_mask,
+> >       return NULL;
+> >   }
+> >
+> > +static inline void swap_update_readahead(struct folio *folio,
+> > +             struct vm_area_struct *vma, unsigned long addr)
+> > +{
+> > +}
+> > +
+> >   static inline int swap_writeout(struct folio *folio,
+> >               struct swap_iocb **swap_plug)
+> >   {
+> > @@ -169,8 +175,7 @@ static inline void swapcache_clear(struct swap_info=
+_struct *si, swp_entry_t entr
+> >   {
+> >   }
+> >
+> > -static inline struct folio *swap_cache_get_folio(swp_entry_t entry,
+> > -             struct vm_area_struct *vma, unsigned long addr)
+> > +static inline struct folio *swap_cache_get_folio(swp_entry_t entry)
+> >   {
+> >       return NULL;
+> >   }
+> > diff --git a/mm/swap_state.c b/mm/swap_state.c
+> > index 99513b74b5d8..ff9eb761a103 100644
+> > --- a/mm/swap_state.c
+> > +++ b/mm/swap_state.c
+> > @@ -69,6 +69,21 @@ void show_swap_cache_info(void)
+> >       printk("Total swap =3D %lukB\n", K(total_swap_pages));
+> >   }
+> >
+> > +/*
+>
+> While at it, proper kerneldoc?
+>
+> /**
+>
+> etc.
+>
+> Also documenting that it will only return a valid folio pointer or NULL
 
-One of the (many) problem I see with this patch is that there is no
-IMX_RPROC_FLAGS_SM_CPU_OP to complement IMX_RPROC_FLAGS_SM_LMM_OP in
-imx_rproc_detect_mode(), leading to if/else statements that are hard to follow.
+Good suggestion. I added some kerneldoc in later commit for this
+function, do it earlier here is better.
 
-In imx_rproc_sm_lmm_prepare(), if scmi_imx_lmm_operation() is successful, return
-0 immediately.  If -EACCESS the LMM method is unavailable in both normal and
-detached mode, so priv->flags &= ~IMX_RPROC_FLAGS_SM_LMM_OP.
+>
+> > + * Lookup a swap entry in the swap cache. A found folio will be return=
+ed
+> > + * unlocked and with its refcount incremented.
+> > + *
+> > + * Caller must lock the swap device or hold a reference to keep it val=
+id.
+> > + */
+> > +struct folio *swap_cache_get_folio(swp_entry_t entry)
+> > +{
+> > +     struct folio *folio =3D filemap_get_folio(swap_address_space(entr=
+y),
+> > +                                             swap_cache_index(entry));
+> > +     if (!IS_ERR(folio))
+> > +             return folio;
+> > +     return NULL;
+>
+> Maybe better as (avoid one !)
+>
+> if (IS_ERR(folio))
+>         return NULL;
+> return folio;
+>
+> or simply
+>
+> return IS_ERR(folio) ? NULL : folio.
+>
+> > +}
+> > +
+> >   void *get_shadow_from_swap_cache(swp_entry_t entry)
+> >   {
+> >       struct address_space *address_space =3D swap_address_space(entry)=
+;
+> > @@ -273,54 +288,40 @@ static inline bool swap_use_vma_readahead(void)
+> >   }
+> >
+> >   /*
+> > - * Lookup a swap entry in the swap cache. A found folio will be return=
+ed
+> > - * unlocked and with its refcount incremented - we rely on the kernel
+> > - * lock getting page table operations atomic even if we drop the folio
+> > - * lock before returning.
+> > - *
+> > - * Caller must lock the swap device or hold a reference to keep it val=
+id.
+> > + * Update the readahead statistics of a vma or globally.
+> >    */
+> > -struct folio *swap_cache_get_folio(swp_entry_t entry,
+> > -             struct vm_area_struct *vma, unsigned long addr)
+>
+> This also sounds like a good kerneldoc candidate :)
+>
+> In particular, documenting that it is valid to pass in vma =3D=3D NULL (i=
+n
+> which case the addr is ignored).
 
-The main takeaway here is that the code introduced by this patch is difficult to
-understand and maintain.  I suggest you find a way to make things simpler.
+Agree, I forgot this one, will add some doc.
 
-> 
-> >
-> >> +	} else if (ret == -EACCES) {
-> >> +		dev_info(priv->dev, "lmm(%d) not under Linux Control\n", dcfg->lmid);
-> >> +		/*
-> >> +		 * If remote cores boots up in detached mode, continue;
-> >> +		 * else linux has no permission, return -EACCES.
-> >> +		 */
-> >> +		if (priv->rproc->state != RPROC_DETACHED)
-> >> +			return -EACCES;
-> >
-> >The comment above scmi_imx_lmm_operation() mentions that calling
-> >scmi_imx_lmm_operation() is done to make sure TCMs are available.  Is there a
-> >point in calling scmi_imx_lmm_operation() if ->state == RPROC_DETACHED?  If not,
-> >can't that check be move to the beginning of imx_rproc_sm_lmm_prepare()?  
-> 
-> scmi_imx_lmm_operation also serves as permission check.
-> 
-> If ->state is RPROC_DETACHED, we still need to know M7 LM is or is not
-> under control of Linux LM.
-> 
-> 
-> >
-> >> +
-> >> +		/* work in state RPROC_DETACHED */
-> >> +		ret = 0;
-> >> +	} else if (ret) {
-> >> +		dev_err(priv->dev, "Failed to power on lmm(%d): %d\n", ret, dcfg->lmid);
-> >> +	}
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +
-> >>  static int imx_rproc_prepare(struct rproc *rproc)
-> >>  {
-> >>  	struct imx_rproc *priv = rproc->priv;
-> >>  	struct device_node *np = priv->dev->of_node;
-> >> +	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
-> >>  	struct of_phandle_iterator it;
-> >>  	struct rproc_mem_entry *mem;
-> >>  	struct reserved_mem *rmem;
-> >> @@ -593,7 +674,10 @@ static int imx_rproc_prepare(struct rproc *rproc)
-> >>  		rproc_add_carveout(rproc, mem);
-> >>  	}
-> >>  
-> >> -	return  0;
-> >> +	if (dcfg->method == IMX_RPROC_SM)
-> >> +		return imx_rproc_sm_lmm_prepare(rproc);
-> >> +
-> >> +	return 0;
-> >>  }
-> >>  
-> >>  static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> >> @@ -927,13 +1011,41 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
-> >>  	struct regmap_config config = { .name = "imx-rproc" };
-> >>  	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
-> >>  	struct device *dev = priv->dev;
-> >> +	struct scmi_imx_lmm_info info;
-> >>  	struct regmap *regmap;
-> >>  	struct arm_smccc_res res;
-> >> +	bool started = false;
-> >>  	int ret;
-> >>  	u32 val;
-> >>  	u8 pt;
-> >>  
-> >>  	switch (dcfg->method) {
-> >> +	case IMX_RPROC_SM:
-> >> +		/* Get current Linux Logical Machine ID */
-> >> +		ret = scmi_imx_lmm_info(LMM_ID_DISCOVER, &info);
-> >> +		if (ret) {
-> >> +			dev_err(dev, "Failed to get current LMM ID err: %d\n", ret);
-> >> +			return ret;
-> >> +		}
-> >> +
-> >> +		/*
-> >> +		 * Check whether remote processor is in same Logical Machine as Linux.
-> >> +		 * If no, need use Logical Machine API to manage remote processor, and
-> >> +		 * set IMX_RPROC_FLAGS_SM_LMM_OP.
-> >> +		 * If yes, use CPU protocol API to manage remote processor.
-> >> +		 */
-> >> +		if (dcfg->lmid != info.lmid) {
-> >> +			priv->flags |= IMX_RPROC_FLAGS_SM_LMM_OP;
-> >> +			dev_info(dev, "Using LMM Protocol OPS\n");
-> >> +		} else {
-> >> +			dev_info(dev, "Using CPU Protocol OPS\n");
-> >> +		}
-> >> +
-> >> +		ret = scmi_imx_cpu_started(dcfg->cpuid, &started);
-> >> +		if (ret || started)
-> >> +			priv->rproc->state = RPROC_DETACHED;
-> >
-> >An error should be reported and the initialization process aborted if an error
-> >occurs rather than defaulting to the default mode.  This will lead to additional
-> >error conditions that will have to be handled elsewhere.
-> 
-> ok. I could update to
-> if (ret)
-> 	return ret;
-> if (started)
-> 	priv->rproc->state = RPROC_DETACHED;
-> 
-> 
-> 
-> Thanks,
-> Peng
-> 
+>
+> > +void swap_update_readahead(struct folio *folio,
+> > +                        struct vm_area_struct *vma,
+> > +                        unsigned long addr)
+> >   {
+>
+>
+> Apart from that LGTM.
+
+Thanks!
+
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
+>
 
