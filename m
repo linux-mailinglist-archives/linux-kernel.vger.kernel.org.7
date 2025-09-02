@@ -1,227 +1,115 @@
-Return-Path: <linux-kernel+bounces-795964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2333B3FA0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A7CB3FA3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9D64E0019
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:18:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18352168B87
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62C9274FCB;
-	Tue,  2 Sep 2025 09:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488D0221F09;
+	Tue,  2 Sep 2025 09:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="tt6loFxe"
-Received: from fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.156.205.64])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="Q5BTvG0A"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBFA23D289;
-	Tue,  2 Sep 2025 09:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.156.205.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7663D987;
+	Tue,  2 Sep 2025 09:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756804706; cv=none; b=HjTC2sy7OuMjeTGI+/+OVNrZJMvFmJC9+CNmSpkBXRvQHgUiAK3tlG+E6G6MpHAloyQ2ElB8p53Ux5ausSjsErEU27KQcSxF7tDTOMqaaJFckvG1ahDuUEPNL19RKVL0r469I16CbyWH0+huScDiUyrZTZnTaPK3/oIooZ0viIA=
+	t=1756805050; cv=none; b=czyg8caX7weW0HYD/srftTTEhv4hN0a3GhX0suUZcD2vjZJ/q/4Z0LY3ypd++HSvOe8JNRtyatkC5u53Lvb4XFtfUQUFfh3j/Dw0NU80KX/WCuzGe7ydHewmomAxOUpBufeIQEIyqgFTcBNR3HiHlDoRWWw+ZbszDgA5f1B5/EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756804706; c=relaxed/simple;
-	bh=TCPKWsfZFQGu30LRVjrNcQr0GmwDdYlTXVIAbCm7qMc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qbvG6lMLXTqFI5tC7nr20H+ARNjs3HlUV5/KoJ21Rg8DPrp0VmH609NuTtpAD9bXXCwzfUHPXv2PEfyPWZn8vqEb2WB5F11Jf78P1Nh+YJKGdwG46Mz402dcWCm9kHQa86KPp5yFTn5kuNYGehQwMoSoBjB4XFtfN+i3JTowxJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=tt6loFxe; arc=none smtp.client-ip=18.156.205.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1756804704; x=1788340704;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=b3121Ksby9vgseoaEWxEHU4vRAFZeQ1OVILTcsYl54A=;
-  b=tt6loFxeZG3wZ6xuQteyCwou4ZsFnbAEZBnxT0vlkE/rv/AMbaz9eLN+
-   j7/2rvhD9WFiLa67grWPOPVQR70EWGMCVRIIisQMIm/a7R5o6TnvFiS/w
-   YZO6We4Xs+hWVrn1JDi5YtxDhZdWGMhT/7kFSq8EJCaAntiTQO1sjsU1e
-   8BEHeoHakSPQ0k+VRV2UnDhWv+sLzBeTknqEcfVKhkCrqufLa47UQJ8h5
-   ysXMJpFUluzN9G4fBPgw97iJ57KRnvNe5s/V4jc1HcV3/mlZPf1aOkDYb
-   tqM9eRKjLKPG+f7G09NetfESyRpd3uWvjUXnCl7Wkh5gMAtxw/BkQIAbh
-   g==;
-X-CSE-ConnectionGUID: 857AEqg7QrqTm9k0lMss/A==
-X-CSE-MsgGUID: VIb4ccPwT16IyAIE1hvYkg==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
-   d="scan'208";a="1502449"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 09:18:13 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.234:10410]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.3.140:2525] with esmtp (Farcaster)
- id 250cd30a-1333-458c-a5c1-5df8fd2d5adc; Tue, 2 Sep 2025 09:18:13 +0000 (UTC)
-X-Farcaster-Flow-ID: 250cd30a-1333-458c-a5c1-5df8fd2d5adc
-Received: from EX19D015EUB002.ant.amazon.com (10.252.51.123) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Tue, 2 Sep 2025 09:18:12 +0000
-Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
- EX19D015EUB002.ant.amazon.com (10.252.51.123) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 2 Sep 2025 09:18:12 +0000
-Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
- EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
- 15.02.2562.020; Tue, 2 Sep 2025 09:18:12 +0000
-From: "Roy, Patrick" <roypat@amazon.co.uk>
-To: "tabba@google.com" <tabba@google.com>
-CC: "ackerleytng@google.com" <ackerleytng@google.com>, "david@redhat.com"
-	<david@redhat.com>, "Manwaring, Derek" <derekmn@amazon.com>, "Thomson, Jack"
-	<jackabt@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "Roy, Patrick"
-	<roypat@amazon.co.uk>, "rppt@kernel.org" <rppt@kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"will@kernel.org" <will@kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>
-Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-Thread-Topic: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-Thread-Index: AQHcG+qBqyZs7keLDUCAS7X1QtiGSg==
-Date: Tue, 2 Sep 2025 09:18:12 +0000
-Message-ID: <20250902091810.4854-1-roypat@amazon.co.uk>
-References: <CA+EHjTxymfya75KdOrUsSUhtfmxe180DedhJpLQAGeCjsum_nw@mail.gmail.com>
-In-Reply-To: <CA+EHjTxymfya75KdOrUsSUhtfmxe180DedhJpLQAGeCjsum_nw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756805050; c=relaxed/simple;
+	bh=pPTR2DPjWLZI78Um/TK9fffQxLMetALz3OjN/SJclL8=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=mlK5LRNUlIS5Tg+S91xgvnM+5otgW08LIkWUQACsrar1qQMByB2dpk2HIa+BdwjN2QIMwrKqIfMKxT0vlaRFUh6Cn6BrlCmA72sHUo2Xrien/Rv5vPrm3Q7BxR6rgMlLCZ2BMiU66AhQ0uMSZkhwtkWUXvjhRd6kQiW0b+M8WjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=Q5BTvG0A; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756804739;
+	bh=EpAarfKxM9Xf2n5id5G25GoKghSsP58gEeX99TV+bR4=;
+	h=From:To:Cc:Subject:Date;
+	b=Q5BTvG0AHk+LlRDP/VDDrPzYzeGvTV/OcbJL1FvpxBSXtLTRggnP3gCJPzeEITBt2
+	 Hcqt7ZO5FRzYTUBDjvz2d5/KZzy+HS3g9+EkProBoxvFXOpE1p14QfaAD75gIJe+Iz
+	 C3gZ+lzbBUIa/aGvKU40pDlFuQoVXn/JH+OohwuU=
+Received: from NUC10 ([39.156.73.10])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id 4B722280; Tue, 02 Sep 2025 17:18:55 +0800
+X-QQ-mid: xmsmtpt1756804735tlq9vma9p
+Message-ID: <tencent_E3598F975B2A13AFC3A3E08837062E42A908@qq.com>
+X-QQ-XMAILINFO: NMGzQWUSIfvTYId8edV+Tl6aZmURxcRHFXImvr8PRps3rdF3p9vcMWW80VYG5G
+	 D81vFsFzsDVjC1LTGHQXYV4SH5riK/L5cfIoTJ+rDitDc2jqcIeSC+CwcTdNU3W0O6t2mO0BxSFQ
+	 +irP8PtmoVN3xZngDZBHO10e2fZGCEdU6tI54g4irRcRKLguaRGE8ROp6dbVcKoVibtOmc8NVYDR
+	 NIlx9S9riUWX8FXS3vjtfdums/y0tEj3oX62FcH4rA4FUaVTMmCGDfQ+Ez4QGhn9OJIGd4OhesJt
+	 n8F5WCtgGf3L0LdmN9C1V+3kWEhXqIN8Hk6vc5wOLbcq+FT9LLsOiks35hDd8Ppu//6TWDAoRUH3
+	 MKR9WZwjm+laioU/WWi0MfpD85QYQrR+rEf6c6eNxK4oWbly+vv+DF7h2CldLoot6xW/ghAUlPEX
+	 1YxAkf90xlWxsk1gytTOAY/cnvF0zfbBhC7HWVyWaRi4NZhWqfsv0xvykpJ31S71I/C/n2hMolib
+	 yPh94okuoYaM1BUiMudTKhuNCPUX8wdoqlX2T0MJR38/Bl9rT6StgD3NYmpH+EaSYbhaAwfYWGY8
+	 tatgGSe+5sB2FscRADUd83uIJkL8ry8ckjgcnTMZdCcWel0BLfOvYIV/7MLraPMfLgKZJlcVGjKx
+	 BBHkVqYmrj7OQUNFBJ+SCHTWys2tlRZA2GFKUo9t4+QgkQRhdo0/B1Og2KPaCpga1s/LGVW80zd0
+	 gXSysHNqJZq5HlVlSWZhlggX6p9fbnr/0+ZIdhI8wwm43KpjV2SwvStSbwAhBiWXORLe/kRabCZI
+	 m1c2cibIz9ixfoMVJqsYn5BCc2S4OLvKpva9Izi7bWzIaES3WmqKpDFNY7RjQdnos/7K0uBHVEw8
+	 tOrLR2j41cSqvMoQHQM+OEVpyWQQAnjXBgQq6S2dClyA310HypC4UEMK8/EjpuOFUZXBqDvffv9m
+	 uVNSjBNrfELbzk1Rpgzme+SFBkwHgfKDqLbc6va0JJCmn5PHnwBVBSAGe5NDHTo3fkgcjKHcbZ5R
+	 O/1UNBP82EJMn0hVNOzI85LwhuV8/64FF/ttNUwgULGsrOhoatAWHLnJIGJvTXPzgyggDAUQ==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Rong Tao <rtoax@foxmail.com>
+To: andrii@kernel.org,
+	ast@kernel.org,
+	vmalik@redhat.com
+Cc: rtoax@foxmail.com,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Rong Tao <rongtao@cestc.cn>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next v3 0/2] bpf: Add kfunc bpf_strcasecmp()
+Date: Tue,  2 Sep 2025 17:18:25 +0800
+X-OQ-MSGID: <cover.1756804522.git.rtoax@foxmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-09-02 at 09:50 +0100, Fuad Tabba wrote:=0A=
-> On Tue, 2 Sept 2025 at 09:46, David Hildenbrand <david@redhat.com> wrote:=
-=0A=
->>=0A=
->> On 02.09.25 09:59, Fuad Tabba wrote:=0A=
->>> Hi Patrick,=0A=
->>>=0A=
->>> On Mon, 1 Sept 2025 at 15:56, Roy, Patrick <roypat@amazon.co.uk> wrote:=
-=0A=
->>>>=0A=
->>>> On Mon, 2025-09-01 at 14:54 +0100, "Roy, Patrick" wrote:=0A=
->>>>>=0A=
->>>>> Hi Fuad!=0A=
->>>>>=0A=
->>>>> On Thu, 2025-08-28 at 11:21 +0100, Fuad Tabba wrote:=0A=
->>>>>> Hi Patrick,=0A=
->>>>>>=0A=
->>>>>> On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wro=
-te:=0A=
->>>>>>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h=0A=
->>>>>>> index 12a12dae727d..b52b28ae4636 100644=0A=
->>>>>>> --- a/include/linux/pagemap.h=0A=
->>>>>>> +++ b/include/linux/pagemap.h=0A=
->>>>>>> @@ -211,6 +211,7 @@ enum mapping_flags {=0A=
->>>>>>>                                     folio contents */=0A=
->>>>>>>          AS_INACCESSIBLE =3D 8,    /* Do not attempt direct R/W acc=
-ess to the mapping */=0A=
->>>>>>>          AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM =3D 9,=0A=
->>>>>>> +       AS_NO_DIRECT_MAP =3D 10,  /* Folios in the mapping are not =
-in the direct map */=0A=
->>>>>>>          /* Bits 16-25 are used for FOLIO_ORDER */=0A=
->>>>>>>          AS_FOLIO_ORDER_BITS =3D 5,=0A=
->>>>>>>          AS_FOLIO_ORDER_MIN =3D 16,=0A=
->>>>>>> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadl=
-ock_on_reclaim(struct address_spac=0A=
->>>>>>>          return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &map=
-ping->flags);=0A=
->>>>>>>   }=0A=
->>>>>>>=0A=
->>>>>>> +static inline void mapping_set_no_direct_map(struct address_space =
-*mapping)=0A=
->>>>>>> +{=0A=
->>>>>>> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
->>>>>>> +}=0A=
->>>>>>> +=0A=
->>>>>>> +static inline bool mapping_no_direct_map(struct address_space *map=
-ping)=0A=
->>>>>>> +{=0A=
->>>>>>> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
->>>>>>> +}=0A=
->>>>>>> +=0A=
->>>>>>> +static inline bool vma_is_no_direct_map(const struct vm_area_struc=
-t *vma)=0A=
->>>>>>> +{=0A=
->>>>>>> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->=
-f_mapping);=0A=
->>>>>>> +}=0A=
->>>>>>> +=0A=
->>>>>> Any reason vma is const whereas mapping in the function that it call=
-s=0A=
->>>>>> (defined above it) isn't?=0A=
->>>>>=0A=
->>>>> Ah, I cannot say that that was a conscious decision, but rather an ar=
-tifact of=0A=
->>>>> the code that I looked at for reference when writing these two simply=
- did it=0A=
->>>>> this way.  Are you saying both should be const, or neither (in my min=
-d, both=0A=
->>>>> could be const, but the mapping_*() family of functions further up in=
- this file=0A=
->>>>> dont take const arguments, so I'm a bit unsure now)?=0A=
->>>>=0A=
->>>> Hah, just saw=0A=
->>>> https://lore.kernel.org/linux-mm/20250901123028.3383461-3-max.kellerma=
-nn@ionos.com/.=0A=
->>>> Guess that means "both should be const" then :D=0A=
->>>=0A=
->>> I don't have any strong preference regarding which way, as long as=0A=
->>> it's consistent. The thing that should be avoided is having one=0A=
->>> function with a parameter marked as const, pass that parameter (or=0A=
->>> something derived from it), to a non-const function.=0A=
->>=0A=
->> I think the compiler will tell you that that is not ok (and you'd have=
-=0A=
->> to force-cast the const it away).=0A=
-> =0A=
-> Not for the scenario I'm worried about. The compiler didn't complain=0A=
-> about this (from this patch):=0A=
-> =0A=
-> +static inline bool mapping_no_direct_map(struct address_space *mapping)=
-=0A=
-> +{=0A=
-> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);=0A=
-> +}=0A=
-> +=0A=
-> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma=
-)=0A=
-> +{=0A=
-> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapp=
-ing);=0A=
-> +}=0A=
-> =0A=
-> vma_is_no_direct_map() takes a const, but mapping_no_direct_map()=0A=
-> doesn't. For now, mapping_no_direct_map() doesn't modify anything. But=0A=
-> it could, and the compiler wouldn't complain.=0A=
-=0A=
-Wouldn't this only be a problem if vma->vm_file->f_mapping was a 'const str=
-uct=0A=
-address_space *const'? I thought const-ness doesn't leak into pointers (e.g=
-.=0A=
-even above, vma_is_no_direct_map isn't allowed to make vma point at somethi=
-ng=0A=
-else, but it could modify the pointed-to vm_area_struct).=0A=
-=0A=
-> Cheers,=0A=
-> /fuad=0A=
-> =0A=
-> =0A=
->> Agreed that we should be using const * for these simple getter/test=0A=
->> functions.=0A=
->>=0A=
->> --=0A=
->> Cheers=0A=
->>=0A=
->> David / dhildenb=0A=
->>=0A=
-=0A=
+Kfunc already support bpf_strcmp, this patchset introduce bpf_strcasecmp
+and add some selftests.
+
+Rong Tao (2):
+  bpf: add bpf_strcasecmp kfunc
+  selftests/bpf: Test kfunc bpf_strcasecmp
+
+ kernel/bpf/helpers.c                          | 68 +++++++++++++------
+ .../selftests/bpf/prog_tests/string_kfuncs.c  |  1 +
+ .../bpf/progs/string_kfuncs_failure1.c        |  6 ++
+ .../bpf/progs/string_kfuncs_failure2.c        |  1 +
+ .../bpf/progs/string_kfuncs_success.c         |  5 ++
+ 5 files changed, 61 insertions(+), 20 deletions(-)
+
+---
+v3: Update prog_tests/string_kfuncs.c for "strcasecmp";
+v2: Remove __ign prefix from __bpf_strcasecmp and add E2BIG failure test;
+    https://lore.kernel.org/lkml/tencent_8646158457D4511C447C833B21B3ACF6CB07@qq.com/
+v1: https://lore.kernel.org/lkml/tencent_5AE811A28781BE106AD6CDE59F4ADD2BFA06@qq.com/
+-- 
+2.51.0
+
 
