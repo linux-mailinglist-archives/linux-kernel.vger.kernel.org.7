@@ -1,164 +1,123 @@
-Return-Path: <linux-kernel+bounces-795809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F323B3F82A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:20:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E37B3F823
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8984F7A327B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:17:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF480163895
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8632E27BF7C;
-	Tue,  2 Sep 2025 08:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFF62DE709;
+	Tue,  2 Sep 2025 08:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l4xiHP0b"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WitJJlvb"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4FA219E8
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9B42E718E;
+	Tue,  2 Sep 2025 08:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756801163; cv=none; b=bHXcfbVBi5qON6PFJLGQlvS0yMCSCSa6IXaDUvMdlLfE//cyDmcie/7ts2x8MWDUttUO4cRVeqOTcUTBbqk2x81yqJBn3JM5T84/E5mkckLKqgw3ghig/oP62vNl8M6Sf5/3SDCq8OkCeds/6IG0k4r8I1O4trVqevgs53uxMxA=
+	t=1756801180; cv=none; b=l9KqbHEe+Wvi3HkkPwMTMLsYlmoB4aRzP/pCR7e4TEtkxgdEd2hlQ7QoolJLhd+ifNNFVNC6uDLLUYsWxIT1wSqYcuOQNlsOP2O1vTcjbqPoFEBRFBtmKl6kFdwXtY8Z7WiA1tEYRNBS7+jMVBIBkh5EFnM4NxwS7tMLbMefACs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756801163; c=relaxed/simple;
-	bh=YjMsLc6RufmJViCjzbcj1o+DZxgRHG8U3dF4AJZolgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EvSYqpdzW9/KkethNXi5QBS6xoO7plxPcyOvzYCKkBdgtda0d6HqvFYUOuyQiKXA8Um2+Jlv1DlEcFQoRbRJ2D+4UbDiQeeUtSJovOKAfxk34AeEIYseAveUkzqMfU6NY1MmjKZB+dQR/PXE6ZfbZxZEl6H2Y994ts1TXGDCyWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=l4xiHP0b; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5GOSNNpMehkJcGSwkYc7NNq14fJf5Y8+4HDmpTH/Ghw=; b=l4xiHP0bOQ4ANVIRzozbdr0Jkz
-	be64vVfQ+zYZ9ZDrzJqnndGv9XnU9UJ8P61BVxSCdoK9CKPmWosD+IivNhHE+/JmKPnHXmLMKJYUt
-	MdM2jKO52rL43GB1raGewm+73IyD4CU+LqCSbCqrUzu1EEpHyL6xuLH1TYUP/E70wBKBMy/FnQt6A
-	3X8vcd4AtKfie6j9L4MYfUpr6S2DMlgQBUeuZcOhbn5AjU7ndTXOA1WTwWJYi8DcwdMgjMFBJVLGb
-	Ae/XuddHYKlTh2sQizJLc8ZneVdEn5DxzG47wSTDPyWxuEHPgZRutC3A1OqING43dAVV7/c9nCMOm
-	WYqBhaKw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1utMEW-00000003yAO-1Mnt;
-	Tue, 02 Sep 2025 08:19:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6215130039F; Tue, 02 Sep 2025 10:19:15 +0200 (CEST)
-Date: Tue, 2 Sep 2025 10:19:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: kees@kernel.org, alyssa.milburn@intel.com, scott.d.constable@intel.com,
-	joao@overdrivepizza.com, andrew.cooper3@citrix.com,
-	samitolvanen@google.com, nathan@kernel.org,
-	alexei.starovoitov@gmail.com, mhiramat@kernel.org, ojeda@kernel.org,
+	s=arc-20240116; t=1756801180; c=relaxed/simple;
+	bh=yCmgzYi8sdjyZvAEQPWw4LrdqTw3EaZ52PuJmV/5otg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mupYz9ZGmXgfN/TnsTCYt+trwgZuwp9DM9SNB1WxQKul7qLHi9+lFYOE61bqv85LJreKlFsh9qogKHMSlOmp6PmXX+9fQD0M8dxaFTfxl/8RAFF7gCJgZ9QUo0cAudkc53jKGKQglk7glH7YQz62gPWlLLOWb2cXKpqgbUTa6bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WitJJlvb; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77252278757so1338987b3a.3;
+        Tue, 02 Sep 2025 01:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756801177; x=1757405977; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZpTL+8UAJAvc2e731Ib5tRm4izD0s+sqQLOdVQdO65Q=;
+        b=WitJJlvblODKrjNs0THoejWgcXab/n9043Jnp1Z0+11xJFFQKdg6ivtY84qBtMIEIZ
+         67gPttESOzl/GL+XOShecUp64N4giZYQrYwyffL2zmHPQSQQY1vfRjd1t/O1ZXxU/Vyy
+         3lRGnl6/w2lh+wS4zk0fzvpn2O6/yzxXjTFk5te/uEvmwc+6NXhtgjI9sPbqspahTT3a
+         Sq64jC2yhDKijNzKug8Te45yzOER/zTUwAG6MRALKElfR4FKZlxJ0WEFSPEVB6Gr5hsw
+         OEcKLYMNVK2NxhFVKmT3zoDdgtQ8t4sa3AIGsEAFGT7eZMKeKJshUdXuNeQ0JAIbfzcl
+         GQgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756801177; x=1757405977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZpTL+8UAJAvc2e731Ib5tRm4izD0s+sqQLOdVQdO65Q=;
+        b=JFNc2cSEjfj9rYJFC4VagBJ7SdHMCbLKCPGkhTtqLfE12bCudH5zuRwJObzvNJ05Eq
+         +LnHEiyNnyBUB6G1BAlc5VmOmVyRcdc1cZ6oupRl3ijQYiXZrGZ0NitKqhifp1Wc4oGl
+         kLMiVUTlRIux1y0QXnSZrEW9K8CFAMP24I+d57pxxcGLWpXPZL0Brqi3pAqXAdI25hZ1
+         k7gHRYfLHxrJAEJ+gqKs1ZXDN0Uch3uC6aYk7imJ+RbmYGKiIv/4BNz+fsMDXD7Kl7fo
+         A/TG1g/lRspdRrkfn4RDQEC8tE08kpRiiPG+Z1Wx/Wikich/msGHAZQnSDL3JzgjXxqo
+         TyMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWM7XjqQ9PH3/HkiJcFkjf2JlgVrqmw4uKvm+tEB0GBpyTx/JWcryxEdjfDoY9jNPXgZJUfasV8E8W1E9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMCY+iMhFl7kCVr5yUUiRr54uISZ6sHS72OQgKkWW9j2fE1m6h
+	RllCSfM1JcJoL1txD/RwSVKnRt3wF0fnX+pKkU/LHdKBEyIu+HKfApjn
+X-Gm-Gg: ASbGnctU8mlQ33jfaxb+s+k1iVU0EJ7MruGbYZG/HAd/qX6P+zqr3sdEZHNzzflVXRd
+	mHirLVo2y4fOPHiXnDxLQ8cvJEPJSWB+sGkIZz3GrPHI0058CqLfbOVuWjFoDemh5aHNGWFPRaq
+	hNI2gvIBzAl0z69OMSjqeQj7DHVmgHGTKvFdEVnu2SGb43MB4jxDvP2aZGIX3owT/y/ts3hmi8e
+	/pBHQLfJ5SJM6gZQydT2CK7/y45wAy8lKvCNtkR7q3He3a1FY2p9veRFjGpOriVBHAIy1hwg0rB
+	sI2gdBHYGvRdp0YG102FKJijpmJ3aUQqE3Wm0vhIrB1ww+fbzVtZH79Om9QcVq8tNTdrDYJhxnd
+	0RlCsPoMp2SgZfRPqqk9oKx10cN3iRwBxb7qMnJr+R07mIbzyQHKtZ2AthJlI74fhhp9EHN5AY4
+	Lt/PC8B7PAPHYK+VJoz8GqRZY3fidriDFIkOKZ1RZIxnkNcL9D9PfWNj4l
+X-Google-Smtp-Source: AGHT+IHMn0mX5CJ0vwSNBKSDg7gEeatnObxmLvDcjQ8QncO3GhezbOnpScCrxUanP00/q7WT9RoRCQ==
+X-Received: by 2002:a05:6a00:1828:b0:772:499e:99c4 with SMTP id d2e1a72fcca58-772499e9e23mr13221266b3a.18.1756801177271;
+        Tue, 02 Sep 2025 01:19:37 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.116.239.34])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-77236d7eb7fsm10930193b3a.54.2025.09.02.01.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 01:19:36 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Miaoqian Lin <linmq006@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86,ibt: Use UDB instead of 0xEA
-Message-ID: <20250902081915.GK3245006@noisy.programming.kicks-ass.net>
-References: <20250901191307.GI4067720@noisy.programming.kicks-ass.net>
+Cc: stable@vger.kernel.org
+Subject: [PATCH] bus: vexpress-config: fix device node reference leak in vexpress_syscfg_probe
+Date: Tue,  2 Sep 2025 16:19:27 +0800
+Message-Id: <20250902081929.2411971-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901191307.GI4067720@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
+Add missing of_node_put() call to release
+the device node reference obtained via of_parse_phandle().
 
-Because this is all somewhat magical code, and this change is a little
-on the large side, it as been suggested I 'upgrade' the Changelog some.
+Since we don't actually use the node, decrement the
+reference count immediately after obtaining it.
 
-On Mon, Sep 01, 2025 at 09:13:07PM +0200, Peter Zijlstra wrote:
-> 
-> A while ago [0] FineIBT started using the 0xEA instruction to raise #UD.
-> All existing parts will generate #UD in 64bit mode on that instruction.
-> 
-> However; Intel/AMD have not blessed using this instruction, it is on
-> their 'reserved' opcode list for future use.
-> 
-> Peter Anvin worked the committees and got use of 0xD6 blessed, it
-> shall be called UDB (per the next SDM or so), and it being a single
-> byte instruction is easy to slip into a single byte immediate -- as
-> is done by this very patch.
-> 
-> Reworking the FineIBT code to use UDB wasn't entirely trivial. Notably
-> the FineIBT-BHI1 case ran out of bytes. In order to condense the
-> encoding some it was required to move the hash register from R10D to
-> EAX (thanks hpa!).
-> 
-> Per the x86_64 ABI, RAX is used to pass the number of vector registers
-> for vararg function calls -- something that should not happen in the
-> kernel. More so, the kernel is built with -mskip-rax-setup, which
-> should leave RAX completely unused, allowing its re-use.
+Fixes: a5a38765ac79 ("bus: vexpress-config: simplify config bus probing")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/bus/vexpress-config.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- [ For BPF; while the bpf2bpf tail-call uses RAX in its calling
-   convention, that does not use CFI and is unaffected. Only the
-   'regular' C->BPF transition is covered by CFI. ]
-
-The ENDBR poison value is changed from 'OSP NOP3' to 'NOPL -42(%RAX)',
-this is basically NOP4 but with UDB as its immediate. As such it is
-still a non-standard NOP value unique to prior ENDBR sites, but now
-also provides UDB.
-
-Per Agner Fog's optimization guide, Jcc is assumed not-taken. That is,
-the expected path should be the fallthrough case for improved
-throughput.
-
-Since the preamble now relies on the ENDBR poison to provide UDB, the
-code is changed to write the poison right along with the initial
-preamble -- this is possible because the ITS mitigation already
-disabled IBT over rewriting the CFI scheme.
-
-The scheme in detail:
-
-Preamble:
-
-  FineIBT                       FineIBT-BHI1                    FineIBT-BHI
-
-  __cfi_\func:                  __cfi_\func:                    __cfi_\func:
-    endbr                         endbr                           endbr
-    subl       $0x12345678, %eax  subl      $0x12345678, %eax     subl       $0x12345678, %eax
-    jcc.d32,np \func+3            cmovne    %rax, %rdi            cs cs call __bhi_args_N
-                                  jcc.d8,np \func+3
-  \func:                        \func:                          \func:
-    nopl       -42(%rax)          nopl      -42(%rax)             nopl       -42(%rax)
-
-Notably there are 7 bytes available after the SUBL; this enables the
-BHI-1 case to fit without the nasty overlapping case it had
-previously. The !BHI case uses Jcc.d32 to consume all 7 bytes without
-the need for an additional NOP, while the BHI case uses CS padding to
-align the CALL with the end of the preamble such that it returns to
-\func+0.
-
-Caller:
-
-  FineIBT                               Paranoid-FineIBT
-
-  fineibt_caller:                       fineibt_caller:
-    mov     $0x12345678, %eax             mov    $0x12345678, %eax
-    lea     -10(%r11), %r11               cmp    -0x11(%r11), %eax
-    nop5                                  cs lea -0x10(%r11), %r11
-  retpoline:                            retpoline:
-    cs call __x86_indirect_thunk_r11      jne    fineibt_caller+0xd
-                                          call   *%r11
-                                          nop
-
-Notably this is before apply_retpolines() which will fix up the
-retpoline call -- since all parts with IBT also have eIBRS (lets
-ignore ITS). Typically the retpoline site is rewritten (when still
-intact) into:
-
-    call *r11
-    nop3
-
-> [0] 06926c6cdb95 ("x86/ibt: Optimize the FineIBT instruction sequence")
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-And now I'm going to have to do a patch that makes apply_retpoline()
-do CS padding instead of NOP padding for CALL... 
+diff --git a/drivers/bus/vexpress-config.c b/drivers/bus/vexpress-config.c
+index 64ee920721ee..aa17f819dfc9 100644
+--- a/drivers/bus/vexpress-config.c
++++ b/drivers/bus/vexpress-config.c
+@@ -393,6 +393,7 @@ static int vexpress_syscfg_probe(struct platform_device *pdev)
+ 		struct device_node *bridge_np;
+ 
+ 		bridge_np = of_parse_phandle(node, "arm,vexpress,config-bridge", 0);
++		of_node_put(bridge_np);
+ 		if (bridge_np != pdev->dev.parent->of_node)
+ 			continue;
+ 
+-- 
+2.35.1
 
 
