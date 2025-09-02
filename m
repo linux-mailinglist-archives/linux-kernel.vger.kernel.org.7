@@ -1,240 +1,110 @@
-Return-Path: <linux-kernel+bounces-796237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67511B3FDA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE785B3FDAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE7A3AAE1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4DA4E2F32
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C902F617D;
-	Tue,  2 Sep 2025 11:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0002F745F;
+	Tue,  2 Sep 2025 11:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="lsFmIzzh"
-Received: from fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.72.182.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQliHrdH"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE252F83D0;
-	Tue,  2 Sep 2025 11:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.72.182.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE98B2F3C0E;
+	Tue,  2 Sep 2025 11:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756812029; cv=none; b=Xe0TSPnDL3418oGoDUekeoSkAhXbJs1Zu9AzQjrQAxp9lGsBTgqhXPhaPxGhMxzpJdTM1C6PL4DN7Ndn5k0EIpzt6AaWOuHPnjO8g8A/smjTb5NnfD4aO7gNdogQVKSqGv5cX+IoVOOho1dT0wGBcaDMRWYwLbHQSqb7YUDp+4g=
+	t=1756812052; cv=none; b=FDNZVE0EiyvTBP913aAkT7RlWB7KoE2BmxZRuMRjHhM70R4sCffiA2ri2vyVNS4po3/YUj4rwCvi/YZfB7GaPu8jZTI/0EQFFLhyXHgF0J5SDyxtOfeA1JtYKvQkn5N5qiVgJtXmWyZ4UFtyf7LpVHD9pHd46UFckNFuorRytus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756812029; c=relaxed/simple;
-	bh=wLPqkcrFWC90MjY5sTrKjuELe2hth0wbMagtCKtQeEM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JJWUxEkBv1H4j3/HX2xakvX+EfGVbC1aoozhdlftwiXeK/A3e4pn3GRp+8aSGByfJr3IEuzG1OWz+WSpnVeBRkr9QtNtbzOGCcykgQ8rvocHfcmiUCWqdTdM1JCqQWi+XV6i+NULKrrZu5CtjfpRde6ifFkHCIuSEYtU0az7Md8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=lsFmIzzh; arc=none smtp.client-ip=3.72.182.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1756812052; c=relaxed/simple;
+	bh=BoGw017JV6MDafm2pfGD3s91i69iqGZ66miMlmTbOQc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sirqWacCgHGVQDGlTJtc2ikWwVSqKihglN88V36l83zFjtgcK9CP0bREgFhdihDBOZgFdh681H35/L4Y9/9nOgYjMeqn2Q+KXjgWZzMvN5E2RpwZIB650v3HonTAM7b6KNjPR+qRIVFJ8XQywrpklMww0cd1+DaOFRHeg+ujifw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQliHrdH; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3297a168470so1861090a91.3;
+        Tue, 02 Sep 2025 04:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1756812027; x=1788348027;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=4U/GLmw/FZs2LtG2FoqidgM1jKHBj0dCkKYDbjnXvsY=;
-  b=lsFmIzzhuWwEkaeVhlhqS7kh3HWWO5wh6OqLoAePCCfAC3CaTF4uBRX7
-   rEOPLR4X3zKiWGXXE31SVX/smaopj4/PmvfBgA/LGu1GDZolU5ajZKXDG
-   eefi88HT2AmUMVoX1uAMoCpz1nBwPI6KXB+HKoB0c3Kl+ej4uXguQyuCI
-   gQE5XslA6RPZgqYvnBqPwu+8ABN4KH8flVOUaFOCjOeEAMAJhNAG/dCx4
-   1gQXfZ2LV7NmjQgD3lbxdTKo5CmTbpyZnnfsA8XPrwlgOt0HhC7U7O8ft
-   0W02WCzookzNn3zgbZAf8wLsuJfs5sRXTWVC5JuXL/60t+r/BbBEn4/NN
-   g==;
-X-CSE-ConnectionGUID: RPbfGhQvT7SDDE89GnEZoQ==
-X-CSE-MsgGUID: ix4JFTmkRaGaeMwIGDEllw==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
-   d="scan'208";a="1511844"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-003.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 11:20:16 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.224:28163]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.43.161:2525] with esmtp (Farcaster)
- id 0dc98258-151a-46cc-81b3-dce1ed47247b; Tue, 2 Sep 2025 11:20:16 +0000 (UTC)
-X-Farcaster-Flow-ID: 0dc98258-151a-46cc-81b3-dce1ed47247b
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Tue, 2 Sep 2025 11:20:16 +0000
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19D022EUC002.ant.amazon.com (10.252.51.137) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 2 Sep 2025 11:20:15 +0000
-Received: from EX19D022EUC002.ant.amazon.com ([fe80::bd:307b:4d3a:7d80]) by
- EX19D022EUC002.ant.amazon.com ([fe80::bd:307b:4d3a:7d80%3]) with mapi id
- 15.02.2562.020; Tue, 2 Sep 2025 11:20:15 +0000
-From: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "shuah@kernel.org"
-	<shuah@kernel.org>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"michael.day@amd.com" <michael.day@amd.com>, "david@redhat.com"
-	<david@redhat.com>, "jthoughton@google.com" <jthoughton@google.com>, "Roy,
- Patrick" <roypat@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>,
-	"Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
-	<xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-Subject: [PATCH v5 2/2] KVM: selftests: update guest_memfd write tests
-Thread-Topic: [PATCH v5 2/2] KVM: selftests: update guest_memfd write tests
-Thread-Index: AQHcG/uOPOuTx3pVLkmJVq9l2Ktv1Q==
-Date: Tue, 2 Sep 2025 11:20:15 +0000
-Message-ID: <20250902111951.58315-3-kalyazin@amazon.com>
-References: <20250902111951.58315-1-kalyazin@amazon.com>
-In-Reply-To: <20250902111951.58315-1-kalyazin@amazon.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20230601; t=1756812050; x=1757416850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x2rcHOEeIqXUh6SmijH737wtMIpFUvfl+GtBU3P4v8I=;
+        b=BQliHrdHii46EnToP6//OMsJb2TUfvutiMSy9RD0YSwBi0fbpnF1blYj3zvBbGLtN7
+         b8kN6UxMoKJt0bJzL+JyraEgpalAN76H2IQK4uLzdL2Gzs3E+mbHrMTrL3eywPZY2M1+
+         gN4auh97JUtY5Oz6zbD5ogF3H5vxktCQbpaQXYq3eTrpc1ASQo4YdQrY8Vq03bbzntFe
+         QfypF/jc3gV9nkIJpBf2q2DwHfaa/9JkStWdb/iFk/9GgN7ro7mpwAqXhJWpjE9G75C8
+         8uhiacRCcM00pXYnbRFqDPmbLOHuh8Xgq2k9SI+4mZmuHv74vZhwhol8OsHzWp6weEST
+         svsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756812050; x=1757416850;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x2rcHOEeIqXUh6SmijH737wtMIpFUvfl+GtBU3P4v8I=;
+        b=RqVLInb2WlWTVo1X6V8vvch42y0/Swht55WpsMBATBsptsD/iZRUdg+cCb7cQd1tyV
+         ZoxvcBgLHQkiwOAKCG0k+QEql8/j4aTZfKAQDPHwf10vlk1vz6WH4OdZed4zrt8RKDMk
+         hfEqeXHW1QUbEPhks0B+Wzt0h0JHmVk7vO3w7sovyNVH0iQhWzA/iUTbZbVPTYeqPsO5
+         8BCBSBHtkpL15mXSs7xSU0GEOhROH0VldrNmATl9sQ/rbKiw1dsl3Mj82kzIBHLKrj+p
+         P+00yWqczSdQxDS7+MMWe7MJO6ywlaIWHk+eYNWWIrb8VdVSNFj54CJEh0YlReJ73UXe
+         TS/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVGi+5JHTZzDdaJhcn8mxwDEty2geZjU6Zx9KhA4HELKlXma63J2N5mKhccLo+V4njWZzyBC5oLA8VPHQ4VJuVGhrI=@vger.kernel.org, AJvYcCWZn7LHAbmP+8S+J5XuRtUMPUxeg1Mjp35qN5puhhBXPhQqpSw4Iu9erXgPrPKfgTeWH7W+R+q+AviBGQs=@vger.kernel.org, AJvYcCXnUqT3gtoQRjaGl/mgt89f72cjowpdJ18E3eluxbwK7ZWG8lReQBttpZJr2uCa7EuGWf8BXt8n@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr8IAUbLq8v0caaj6QYJLHe+OOriRsrXF6CsF2rIecosolETQe
+	urO7rVC1a/sOmg5ufegP5SSGRmcB6WVMRzIW90dCy/lHx7W30yDABZcQ
+X-Gm-Gg: ASbGncv3qGEO/oCjC2NZuvf0EpGeAPXX0O6mcVoGi5XJv92q24/MA9CroE1oSTUcbFi
+	oMcjFVUU9CiptzYqIIEktpNPFvU/UlYrRw+bj3/WxJj8EVTif75eTJlSomPPaDmj5sMmOdwM5sQ
+	tyUJRP9SZCSNp0rT2ql5abtSd4Xl0UxkSAw47o4cvt8uzK9P5GUSpWcTxBCXFB2vucYIOmHMCkB
+	xjubflXiXEsYvdwLAvQKee4x+F3wDLId4IpyLpTwMKlXONpA2Lq5y0tHSf4ePdiMjFLBb1JTJjp
+	TD4GI40vhwr9Pi4NtA3PToZW2sOIB9JO3Ac9sW5bPL0sPu95HtVmNE/IfTiTu3VqzjULMk9bwHJ
+	ln3PNO9vDl6lI1U7+VfZsbGHJ2jdruxgLTt6COHQ/I8IPKNWKJbfUTwHWMeRk
+X-Google-Smtp-Source: AGHT+IHqll56l5WwIcczcNekaKIeM8kqWc+lVcX2zUeUW87kRMBHk1t9A7NrrAy+78FiIbnJ09AbDg==
+X-Received: by 2002:a17:90b:1c06:b0:321:9366:5865 with SMTP id 98e67ed59e1d1-328156e3774mr14270847a91.33.1756812049828;
+        Tue, 02 Sep 2025 04:20:49 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e27d1sm13140645b3a.81.2025.09.02.04.20.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 04:20:49 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	aha310510@gmail.com
+Subject: [PATCH 0/3] drm/exynos: vidi: fix various memory corruption bugs
+Date: Tue,  2 Sep 2025 20:20:40 +0900
+Message-Id: <20250902112043.3525123-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Nikita Kalyazin <kalyazin@amazon.com>=0A=
-=0A=
-This is to reflect that the write syscall is now implemented for=0A=
-guest_memfd.=0A=
-=0A=
-Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>=0A=
----=0A=
- .../testing/selftests/kvm/guest_memfd_test.c  | 86 +++++++++++++++++--=0A=
- 1 file changed, 80 insertions(+), 6 deletions(-)=0A=
-=0A=
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing=
-/selftests/kvm/guest_memfd_test.c=0A=
-index b3ca6737f304..1236e31f5041 100644=0A=
---- a/tools/testing/selftests/kvm/guest_memfd_test.c=0A=
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c=0A=
-@@ -24,18 +24,91 @@=0A=
- #include "test_util.h"=0A=
- #include "ucall_common.h"=0A=
- =0A=
--static void test_file_read_write(int fd)=0A=
-+static void test_file_read(int fd)=0A=
- {=0A=
- 	char buf[64];=0A=
- =0A=
- 	TEST_ASSERT(read(fd, buf, sizeof(buf)) < 0,=0A=
- 		    "read on a guest_mem fd should fail");=0A=
--	TEST_ASSERT(write(fd, buf, sizeof(buf)) < 0,=0A=
--		    "write on a guest_mem fd should fail");=0A=
- 	TEST_ASSERT(pread(fd, buf, sizeof(buf), 0) < 0,=0A=
- 		    "pread on a guest_mem fd should fail");=0A=
--	TEST_ASSERT(pwrite(fd, buf, sizeof(buf), 0) < 0,=0A=
--		    "pwrite on a guest_mem fd should fail");=0A=
-+}=0A=
-+=0A=
-+static void test_file_write(int fd, size_t total_size)=0A=
-+{=0A=
-+	size_t page_size =3D getpagesize();=0A=
-+	void *buf =3D NULL;=0A=
-+	int ret;=0A=
-+=0A=
-+	ret =3D posix_memalign(&buf, page_size, total_size);=0A=
-+	TEST_ASSERT_EQ(ret, 0);=0A=
-+=0A=
-+	/* Check arguments correctness checks work as expected */=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size - 1, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "write unaligned count on a guest_mem fd shoul=
-d fail");=0A=
-+	TEST_ASSERT_EQ(errno, EINVAL);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 1);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "write unaligned offset on a guest_mem fd shou=
-ld fail");=0A=
-+	TEST_ASSERT_EQ(errno, EINVAL);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, total_size);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "writing past the file size on a guest_mem fd =
-should fail");=0A=
-+	TEST_ASSERT_EQ(errno, EINVAL);=0A=
-+=0A=
-+	ret =3D pwrite(fd, NULL, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "supplying a NULL buffer when writing a guest_=
-mem fd should fail");=0A=
-+	TEST_ASSERT_EQ(errno, EFAULT);=0A=
-+=0A=
-+	/* Check double population is not allowed */=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size, "page-aligned write on a guest_mem fd s=
-hould succeed");=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "write on already populated guest_mem fd shoul=
-d fail");=0A=
-+	TEST_ASSERT_EQ(errno, ENOSPC);=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	/* Check population is allowed again after punching a hole */=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size,=0A=
-+		"page-aligned write on a punched guest_mem fd should succeed");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	/* Check population of already allocated memory is allowed */=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE, 0, page_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate with aligned offset and size should succeed"=
-);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size, "write on a preallocated guest_mem fd s=
-hould succeed");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	/* Check population works until an already populated page is encountered =
-*/=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, total_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D total_size, "page-aligned write on a guest_mem fd =
-should succeed");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, total_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size, "write on a guest_mem fd should not ove=
-rwrite data");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, tota=
-l_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+=0A=
-+	free(buf);=0A=
- }=0A=
- =0A=
- static void test_mmap_supported(int fd, size_t page_size, size_t total_siz=
-e)=0A=
-@@ -281,7 +354,8 @@ static void test_guest_memfd(unsigned long vm_type)=0A=
- =0A=
- 	fd =3D vm_create_guest_memfd(vm, total_size, flags);=0A=
- =0A=
--	test_file_read_write(fd);=0A=
-+	test_file_read(fd);=0A=
-+	test_file_write(fd, total_size);=0A=
- =0A=
- 	if (flags & GUEST_MEMFD_FLAG_MMAP) {=0A=
- 		test_mmap_supported(fd, page_size, total_size);=0A=
--- =0A=
-2.50.1=0A=
-=0A=
+This is a series of patches that address several memory bugs that occur
+in the Exynos Virtual Display driver.
+
+Jeongjun Park (3):
+  drm/exynos: vidi: use priv->vidi_dev for ctx lookup in vidi_connection_ioctl()
+  drm/exynos: vidi: fix to avoid directly dereferencing user pointer
+  drm/exynos: vidi: use ctx->lock to protect struct vidi_context member variables related to memory alloc/free
+
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 74 ++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 64 insertions(+), 11 deletions(-)
 
