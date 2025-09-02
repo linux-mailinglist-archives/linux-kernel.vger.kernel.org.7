@@ -1,205 +1,186 @@
-Return-Path: <linux-kernel+bounces-795680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76557B3F658
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:15:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5A1B3F668
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF64D3A4AD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E318A3B302A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5AA2E6CAD;
-	Tue,  2 Sep 2025 07:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30982E284B;
+	Tue,  2 Sep 2025 07:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="be9OdOMp"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.44])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="gX4kZ3KI"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A2E1E868;
-	Tue,  2 Sep 2025 07:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6192D282E1
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756797293; cv=none; b=lIzoULCA6cg0/UBVgG8ategExfM1lhAYyyPShKAPTxdk45H2eRqjgmE10nGeTV8kiR5jORhsfiJg6H53sLuTXpTbifhlMQHK9Dg4wMQSnMnkZKWq+rDV1zk9auKAEbyn0hAbWTewER/mlxzslieZGOdEfaj8wjly3IKYobfQ0V4=
+	t=1756797372; cv=none; b=Vi20fHTNSXwP/YxLVuasa+Ru84F9Pn6lBCn+5FqOH7pmFTngnkAPrts1eK0GLrP9WPOnDTXFC0pjoSc5JhawbxM6tgzAeTZkL7Gj6+RD7WFrcNLI8jKtFOr620U1UxtPr2UpVeVicWlnX32Ighr2RH3GJhRSchoX4SBd9eL2g98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756797293; c=relaxed/simple;
-	bh=5m4wuX0ixnq+slRI1bqds2dMb7HFvtC25MMn9M8I97A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IUIKysr7Uk7zQuhANXBtvIaqaAHATRVmmlZCMd2zfs2dJqHlBmVpIRKKGD36kl/Iye/aWWwiQ661t/Qkg33gwQiCvgXChWlhLSu/0BjStZZrIk/+TqSHLrmJOJcQFgAk9xwiD9ON2rHd+I9nZSWKZRA5/nJKV+DIgWyLN9BgMeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=be9OdOMp; arc=none smtp.client-ip=43.163.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756797287;
-	bh=vkRxsIhq4dcGKVqQeGmjXbG+Rq+X2vu/ATof8Ui5CQk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=be9OdOMpgR+q3S/45tqc41rjN2Um1nZjL44WjlcCJ2ktM6AZ3cNX8s4Hpfz5FcQlM
-	 ZJkTivOnbao1gMto9syQJF54ThBTeS7LY0dSyxSqXElXDy1tWj8cH7pm+14I0K1I9F
-	 fF+2cN4m2zSjIiwoZVa6Lv0lGpIASGbh/US0IxWY=
-Received: from [10.56.52.9] ([39.156.73.10])
-	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
-	id 3ABB3CC5; Tue, 02 Sep 2025 15:14:43 +0800
-X-QQ-mid: xmsmtpt1756797283tzhqdj16h
-Message-ID: <tencent_AC7510F30CC28482B2982E5155905F634609@qq.com>
-X-QQ-XMAILINFO: NhUkPfKlCtQwe9m5YIvRivMiHRdlMMnyPKmQre95qFh77h8Op8e/pUczjzqXjd
-	 fpuL7Nr8Vm4SJ0FdvQgLrW4wVBzqdQ2TDpvo03Sfhq0VFpWx/+FuXX3VTpHB+6tnFw38TlJsdu4X
-	 GK3A8eyF+KLgc9fTyYPF+piiMF1A2kEwAffUcHkDOcWdBHvZ2NHp1r+AOyb146yTwgxPFFwASCqx
-	 v4xvul6uW6jU4yRrea2i5qooVXRNma/MPju8u1lspoHKvODH+C1O/ftJ1HV51wqaxCJL0RgUyVDB
-	 7iNDUS32cJcTkeRcoyW2EuakvIhlnR1xAIMrW2x0r3LN+aMjBGL9GfWGEKcU/Gh58656/Bg6MZCM
-	 PY0BIEfBuIbpEjTaS2B5WXd4srOo3FQGdbDQxGnrpPN1H/2D4B0XirGX7ntlIcbssy+CnxJ4VvtL
-	 nutGHn+67i6U3RIZFElSaWfc24PhNHXFv54MvdLDEoS/5Hh4qtPGJlNLWP+2woIgj8cjgFBkvLM6
-	 N6OI8wOz7ScMeu4WZdYqBdCROkFmHB/oP/RIqL5E1rn1rtdBjpHj3GC5vTQtQVF75ZwzYZBnBggR
-	 tf74sQoGLbOJZ8nxHKVbS4FOYvr96OCNrFRVcbP1WYYY4hCGCidBYYlXHlbrY7Rhb74ZwDgbn3W8
-	 ExQrw/iUkDLynJPf094YyQxOPdqznc9dbgJ8tA3MvNQOnEbmrAz8SL7CS6bqledT2xsTsOX/tXkv
-	 y8SY6a5nujuq8b8x+8bQVgBcsFtQ+1KhZ1NEZM7dJ5jCPOIZL2xwbqtcL/mmHY+nWAYXMGiFsMng
-	 CkueBhKs3tbGMdKQYJBcD3LYISZhub6FIA4akdHa0bbnuh7J+oI6Kn1EYIu4PEofH+GZtyjyP3TZ
-	 OaBWy3R2xClLVWvjpiK22+eavB+4ZFC8JQlMph8yEt9E/M3GfrIsr33520o3Co8ScgvSgWmAUKuk
-	 JUAZq4AbxHCHK2uHQvMN3jZI7AHZj6UUuLkpEB5IWqMCnFzGv7FGKkrOD/AwjJZyd0326V/Ffzcc
-	 5bX0mEiw==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-OQ-MSGID: <9e482067-14c0-48c5-87d2-8aedf2128d66@foxmail.com>
-Date: Tue, 2 Sep 2025 15:14:43 +0800
+	s=arc-20240116; t=1756797372; c=relaxed/simple;
+	bh=63Ypg42QVZ06s8ykliKTqwl+/W5CTIpV8b7Xr3N12cs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JnTgeEIl3Se4USk+IXZ54KdXDlpO9bSGBuRQsjQ/MpQ7Y8y1PTtwy6IY2UNMydnzEghph4ZswhNDghFtYBmNkuJ3NV8mN9dMkED3YsRhhQR6dBtuRCzjqCXxStlqgVSeppCddo0LtXVegdUGNhgDA0wsWHZCScFwBFWiFWKQM0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=gX4kZ3KI; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=75QsosR73EP7Bhx5dXwnnBiSrQlTSAdKIHehZonw/2s=; t=1756797367;
+	x=1757402167; b=gX4kZ3KIb945a6DwCnubr2xnZ1HVsbg+b6Fo+l4nYmZE7F+CwludM092b6T8f
+	jMfYj++AvWFVM7dGycQwhM3Q6K8IuVhG9suWCfWBsu6IL9QKmGgNnP3MnnP0SmhKQgtokGggeVciX
+	tkJmSSilHO3NhzI58g2EkiJBMaRFKSlnzR0u+w2XEJ38eI39aJtu6Z3CguvMvitbeel9pZcWET6bR
+	dwRHbHaOchLrznHTRL0zw/pyV3/eMUBG/+O4W3HG3JJc6OFNidaxgFrvIyTGuep7sAIbuD1F9U0vF
+	HzunGiXMoh21i/PULwRhT5wtlYxJvNV8J+XxsPWd24C5LV5n4Q==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1utLEY-00000000Jm4-13FP; Tue, 02 Sep 2025 09:15:14 +0200
+Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1utLEX-00000002jxi-2pMt; Tue, 02 Sep 2025 09:15:13 +0200
+Message-ID: <11a4d0a953e3a9405177d67f287c69379a2b2f8f.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2 3/4] arch: copy_thread: pass clone_flags as u64
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Andreas Larsson <andreas@gaisler.com>,
+ schuster.simon@siemens-energy.com,  Dinh Nguyen <dinguyen@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand
+ <david@redhat.com>, Lorenzo Stoakes	 <lorenzo.stoakes@oracle.com>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>,  Vlastimil Babka	 <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan	 <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Ingo Molnar	 <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli	 <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,  Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
+ Segall <bsegall@google.com>,  Mel Gorman <mgorman@suse.de>, Valentin
+ Schneider <vschneid@redhat.com>, Kees Cook <kees@kernel.org>,  Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,  Alexandre Ghiti	 <alex@ghiti.fr>, Guo
+ Ren <guoren@kernel.org>, Oleg Nesterov <oleg@redhat.com>,  Jens Axboe
+ <axboe@kernel.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara
+ <jack@suse.cz>, Tejun Heo <tj@kernel.org>, Johannes Weiner
+ <hannes@cmpxchg.org>, Michal =?ISO-8859-1?Q?Koutn=FD?=	 <mkoutny@suse.com>,
+ Paul Moore <paul@paul-moore.com>, Serge Hallyn	 <sergeh@kernel.org>, James
+ Morris <jmorris@namei.org>, "Serge E. Hallyn"	 <serge@hallyn.com>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Masami
+ Hiramatsu	 <mhiramat@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet	 <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni	 <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Mathieu
+ Desnoyers	 <mathieu.desnoyers@efficios.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>,  Namhyung Kim <namhyung@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Alexander Shishkin	
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers	 <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, John
+ Johansen	 <john.johansen@canonical.com>, Stephen Smalley
+ <stephen.smalley.work@gmail.com>,  Ondrej Mosnacek <omosnace@redhat.com>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>, Tetsuo Handa	
+ <penguin-kernel@I-love.SAKURA.ne.jp>, Richard Henderson	
+ <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, Vineet
+ Gupta	 <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, Catalin
+ Marinas	 <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Brian
+ Cain	 <bcain@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui	
+ <kernel@xen0n.name>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal
+ Simek	 <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Jonas Bonn	 <jonas@southpole.se>, Stefan Kristiansson
+ <stefan.kristiansson@saunalahti.fi>,  Stafford Horne <shorne@gmail.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge
+ Deller	 <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael
+ Ellerman	 <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy	 <christophe.leroy@csgroup.eu>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger	
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Yoshinori
+ Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Richard
+ Weinberger	 <richard@nod.at>, Anton Ivanov
+ <anton.ivanov@cambridgegreys.com>, Johannes Berg	
+ <johannes@sipsolutions.net>, Borislav Petkov <bp@alien8.de>, Dave Hansen	
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>,  Chris Zankel <chris@zankel.net>, Max Filippov
+ <jcmvbkbc@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-csky@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	selinux@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-um@lists.infradead.org
+Date: Tue, 02 Sep 2025 09:15:08 +0200
+In-Reply-To: <f2371539-cd4e-4d70-9576-4bb1c677104c@gaisler.com>
+References: 
+	<20250901-nios2-implement-clone3-v2-0-53fcf5577d57@siemens-energy.com>
+	 <20250901-nios2-implement-clone3-v2-3-53fcf5577d57@siemens-energy.com>
+	 <f2371539-cd4e-4d70-9576-4bb1c677104c@gaisler.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 1/2] bpf: add bpf_strcasecmp kfunc
-To: Viktor Malik <vmalik@redhat.com>, andrii@kernel.org, ast@kernel.org
-Cc: Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>,
- "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
- <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <cover.1756793624.git.rongtao@cestc.cn>
- <tencent_5AE811A28781BE106AD6CDE59F4ADD2BFA06@qq.com>
- <f0194235-19ae-43de-b73d-b2d8b7f77035@redhat.com>
-Content-Language: en-US
-From: Rong Tao <rtoax@foxmail.com>
-In-Reply-To: <f0194235-19ae-43de-b73d-b2d8b7f77035@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+Hi Andreas,
 
-On 9/2/25 15:08, Viktor Malik wrote:
-> On 9/2/25 08:17, Rong Tao wrote:
->> From: Rong Tao <rongtao@cestc.cn>
->>
->> bpf_strcasecmp() function performs same like bpf_strcmp() except ignoring
->> the case of the characters.
->>
->> Signed-off-by: Rong Tao <rongtao@cestc.cn>
->> ---
->>   kernel/bpf/helpers.c | 56 +++++++++++++++++++++++++++++++++-----------
->>   1 file changed, 42 insertions(+), 14 deletions(-)
->>
->> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
->> index 401b4932cc49..e807a708e5fc 100644
->> --- a/kernel/bpf/helpers.c
->> +++ b/kernel/bpf/helpers.c
->> @@ -3349,20 +3349,7 @@ __bpf_kfunc void __bpf_trap(void)
->>    * __get_kernel_nofault instead of plain dereference to make them safe.
->>    */
->>   
->> -/**
->> - * bpf_strcmp - Compare two strings
->> - * @s1__ign: One string
->> - * @s2__ign: Another string
->> - *
->> - * Return:
->> - * * %0       - Strings are equal
->> - * * %-1      - @s1__ign is smaller
->> - * * %1       - @s2__ign is smaller
->> - * * %-EFAULT - Cannot read one of the strings
->> - * * %-E2BIG  - One of strings is too large
->> - * * %-ERANGE - One of strings is outside of kernel address space
->> - */
->> -__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
->> +int __bpf_strcasecmp(const char *s1__ign, const char *s2__ign, bool ignore_case)
-> No need to use the `__ign` suffix here.
+On Tue, 2025-09-02 at 09:02 +0200, Andreas Larsson wrote:
+> On 2025-09-01 15:09, Simon Schuster via B4 Relay wrote:
+> > From: Simon Schuster <schuster.simon@siemens-energy.com>
+> >=20
+> > With the introduction of clone3 in commit 7f192e3cd316 ("fork: add
+> > clone3") the effective bit width of clone_flags on all architectures wa=
+s
+> > increased from 32-bit to 64-bit, with a new type of u64 for the flags.
+> > However, for most consumers of clone_flags the interface was not
+> > changed from the previous type of unsigned long.
+> >=20
+> > While this works fine as long as none of the new 64-bit flag bits
+> > (CLONE_CLEAR_SIGHAND and CLONE_INTO_CGROUP) are evaluated, this is stil=
+l
+> > undesirable in terms of the principle of least surprise.
+> >=20
+> > Thus, this commit fixes all relevant interfaces of the copy_thread
+> > function that is called from copy_process to consistently pass
+> > clone_flags as u64, so that no truncation to 32-bit integers occurs on
+> > 32-bit architectures.
+> >=20
+> > Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
+> > ---
+>=20
+> Thanks for this and for the whole series! Needed foundation for a
+> sparc32 clone3 implementation as well.
 
-Viktor, Thanks for your review, i'll submit v2 soon.
+Can you implement clone3 for sparc64 as well?
 
-Rong Tao
+Adrian
 
->
-> Otherwise LGTM. I guess that it could be useful in some applications.
->
-> Viktor
->
->>   {
->>   	char c1, c2;
->>   	int i;
->> @@ -3376,6 +3363,10 @@ __bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
->>   	for (i = 0; i < XATTR_SIZE_MAX; i++) {
->>   		__get_kernel_nofault(&c1, s1__ign, char, err_out);
->>   		__get_kernel_nofault(&c2, s2__ign, char, err_out);
->> +		if (ignore_case) {
->> +			c1 = tolower(c1);
->> +			c2 = tolower(c2);
->> +		}
->>   		if (c1 != c2)
->>   			return c1 < c2 ? -1 : 1;
->>   		if (c1 == '\0')
->> @@ -3388,6 +3379,42 @@ __bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
->>   	return -EFAULT;
->>   }
->>   
->> +/**
->> + * bpf_strcmp - Compare two strings
->> + * @s1__ign: One string
->> + * @s2__ign: Another string
->> + *
->> + * Return:
->> + * * %0       - Strings are equal
->> + * * %-1      - @s1__ign is smaller
->> + * * %1       - @s2__ign is smaller
->> + * * %-EFAULT - Cannot read one of the strings
->> + * * %-E2BIG  - One of strings is too large
->> + * * %-ERANGE - One of strings is outside of kernel address space
->> + */
->> +__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
->> +{
->> +	return __bpf_strcasecmp(s1__ign, s2__ign, false);
->> +}
->> +
->> +/**
->> + * bpf_strcasecmp - Compare two strings, ignoring the case of the characters
->> + * @s1__ign: One string
->> + * @s2__ign: Another string
->> + *
->> + * Return:
->> + * * %0       - Strings are equal
->> + * * %-1      - @s1__ign is smaller
->> + * * %1       - @s2__ign is smaller
->> + * * %-EFAULT - Cannot read one of the strings
->> + * * %-E2BIG  - One of strings is too large
->> + * * %-ERANGE - One of strings is outside of kernel address space
->> + */
->> +__bpf_kfunc int bpf_strcasecmp(const char *s1__ign, const char *s2__ign)
->> +{
->> +	return __bpf_strcasecmp(s1__ign, s2__ign, true);
->> +}
->> +
->>   /**
->>    * bpf_strnchr - Find a character in a length limited string
->>    * @s__ign: The string to be searched
->> @@ -3832,6 +3859,7 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
->>   #endif
->>   BTF_ID_FLAGS(func, __bpf_trap)
->>   BTF_ID_FLAGS(func, bpf_strcmp);
->> +BTF_ID_FLAGS(func, bpf_strcasecmp);
->>   BTF_ID_FLAGS(func, bpf_strchr);
->>   BTF_ID_FLAGS(func, bpf_strchrnul);
->>   BTF_ID_FLAGS(func, bpf_strnchr);
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
