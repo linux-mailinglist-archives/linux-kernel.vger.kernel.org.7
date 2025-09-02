@@ -1,156 +1,132 @@
-Return-Path: <linux-kernel+bounces-795460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F399B3F249
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:28:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FCBBB3F250
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29C547A11F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:27:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF43189C846
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5DA2DF14A;
-	Tue,  2 Sep 2025 02:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6C52DEA99;
+	Tue,  2 Sep 2025 02:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Kbq59YfF"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIcfPaSL"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD01B18C933;
-	Tue,  2 Sep 2025 02:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B920125E448;
+	Tue,  2 Sep 2025 02:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756780111; cv=none; b=Thbkk6zO/eYt44wq24LMPjhlR6fY9dhK448wdvOa3HfsUidrZYfdbFUgspUrYNGPHvF33hVbukeahDT7h28ZBjlLOeZ0udYHKycjYQQY714/0n5H+NEWu1Cq7EBlSWnm2q3CSLGhMoHYlBtnVMsqG98RwuOmLq+1qWKaRlEb6Js=
+	t=1756780253; cv=none; b=sw7ETClst9dvwxoNfsRXXkNehy2E5iU9+CBe/UZYnle5EDglzG6VCt5rbLbi6jd+yGHrGiqLwqAhTORJyxyvtifBVUa+VgbZNuY9f6knLjOtV84CzVS8Hf8b0V5WiTYkU8HLnAikUMHyGbPlIfuTkv0OZA0+12HNz0isqwEfBFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756780111; c=relaxed/simple;
-	bh=2g9YOUmV6qRtVY8H9r9NTwL2f/S147r7pTuKS6omoZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vGwEqRk0VSB4VCf9tDX80IKvoMfT7SbffM8XvmfTOcZC7Qf0M7rcTGflKNK3BGhpsNP/qDf04PwADC8giVqxPOhgYig5Dp53hxM48gRiPqa+yv+5223bzERLvq9QIhXDBQLz/BJfnpFr3V0Hmf327OV3MK3Zs3PHIOMJJoz2Mos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Kbq59YfF; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756780099; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=6NbI4kzFCdnbgFqsQU3j3woE9OiOn/2nBz2NzNgD994=;
-	b=Kbq59YfFR+jJHrcPBSBT+lcut0VxAY9rNdNuIN2bnHEGGULfm/P6t3xUo3tcb4umVXMY8GrSZzjiw9/BAbcExgsZwtAokRgGPgZeuBg3jeB5cXlqD6BINLF4/iBdur6Cnly9LO2VOFsIlT1FDdSBu1NJ4J7gGn/NH1mhOdcYbWI=
-Received: from 30.74.144.117(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wn5svZT_1756780095 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 02 Sep 2025 10:28:16 +0800
-Message-ID: <eb02c281-6d41-44af-8eaf-8ffc29153a3a@linux.alibaba.com>
-Date: Tue, 2 Sep 2025 10:28:14 +0800
+	s=arc-20240116; t=1756780253; c=relaxed/simple;
+	bh=mHT53JVN9Ci3GvpQ0ExO1K2jSfu+ElC9HU9dSyVxay8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rwJ93VQ52yfqGJN4mXWWQI6g6/P05hhkmn2XSx6xdsg0euITZG0AB/YmeRd5jTLV6PYgLgJI9lz7V4h2g4wpKo38ZbHHiIVmJo2q4skurV8G1yd7cLUVA87RSRRbbrvXmKP9MkWbTYw+JZPwFuJ7l6hSo+zUhBVG1rHVODpk9HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIcfPaSL; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-772488c78bcso2049067b3a.1;
+        Mon, 01 Sep 2025 19:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756780251; x=1757385051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ThUdZnbiRPt96sw8IfEZHJZbZVUgMhl4/a+w2ohiuBk=;
+        b=HIcfPaSL4rkgjR3PRqwyaHotklXEiAvlQ63L5WZZ03k99iNa/2je2qjEjf0nzpj1u7
+         A16EJge9pcZgVVIqlD9cVIreuad8d+i4q+55Uql9wOnrQShWJlx4LOQITDdEK0smFoSP
+         RkYAWVbE3kBcnIt6Z3P0RvRgaT+iRSYRKKBB/jSJAeUQ3KZARnibpOCM66pCs0sSHqJr
+         SnXpEP9fqPEBzizZLx1OfFYUbHHy++U+s16fO+jJSNifHQX7XAITIzJ3YjSIAlQmTWrB
+         aXS0HLOgKE7E758z/tjwHAVEaUcuJFaJ+IuJ7tfWpKbPWQWk6T5gydp3WPjNh6ns1wkY
+         4E6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756780251; x=1757385051;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ThUdZnbiRPt96sw8IfEZHJZbZVUgMhl4/a+w2ohiuBk=;
+        b=Q9aLDVQAOtsdmHIUEQb8CKVhLtHdp5tImx/SuBpsaSXoQNOj/WNEEWQhEEUCb9jNtc
+         3cywEttqH69BmaupaOYqj6aFc6sQnb1zlrAsICqje5QDBvDaY7/pQHLue35x8K9AJmMz
+         IT2oykRN3CHGHrf0GPbK5a31J0jfF3OJm9AqXK+GmYiiCdVxzDvXkxQLEzF8VT6+w3oT
+         ruzxUbbe6BxgI/iti3XIhOx1KuWThjU3UaA7Ic/dADxNyr1XIlnTBnBc2cbmyZ8vCctQ
+         ymPNDfo2VA2skWi/pD4yn4lYnjCIEznLTmnbBrlry/NNMzS4hZyAVwhd0ceCo/3AL52B
+         Gg0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVotY5OGeF3qmpgV2ofo9uKZEPeVfI/2jHN9vt5zCqanV8vME4Bo/mnfr8Ve3PNzWeNWH8c21cDE8dEUCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEzxTIHOhH5gjytKPzQCQ+V3vXm74x3Y48aSj/McYY/3lfjVXF
+	et1hkACAXlmh6Y0qr06tR3nK2khyFncJAm8N0lTdd7GXDYZ0rm4IjC5s
+X-Gm-Gg: ASbGncsQcmFQlwq50kVkGzpiyN/gPK1G3x9riAM97uFc4S45V7HyKUULw7YFw1wjda6
+	F+wYDNHuk2frwt1CuALZwjjeifUjKNvd9tDGMQkSGUjaaBOX+oS0UpyY1J6c0/2G6c+16B1ALl/
+	hzU+qoB6dXVAoEj8c00lmaeRr/cJRPYbEUbt/gDW+5YENop0SwaLuOCHs5qq894Qe0JNApg4cUC
+	xyykVyrXt/xq2wKfoAHk/CKRhO//GVgxhzExm6pwfppP/cg/FLWwDgQ6ox8SZgbuXDna3BrwJVM
+	w1vacaRiYzCdnhw0SnGvQO+e4liIcpc52vb5zbn5Y0x7xN69N+fyUn10bBKmB+WCJ+LQTR2TNYJ
+	PfXg4jgDJ8YLLeQJNV/7C1rAj/LMHzJdXkCz35NM2iaRiZIZmSs1aEgHCU3tDeVM=
+X-Google-Smtp-Source: AGHT+IFa8NXB1mC7KGG39VT/B2/glDU4bhzW4DlJ6Hm9O6ZaJt/veUexbm+G9yeXNMhVfkWqORsdAQ==
+X-Received: by 2002:a05:6a20:3d85:b0:243:c6a1:7a24 with SMTP id adf61e73a8af0-243d6f85e08mr14282186637.58.1756780250864;
+        Mon, 01 Sep 2025 19:30:50 -0700 (PDT)
+Received: from fedora ([172.59.162.44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2bf5e0sm11973278b3a.36.2025.09.01.19.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 19:30:50 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH v1 3/3] docs: filesystems: sysfs: add remaining top level sysfs directory descriptions
+Date: Mon,  1 Sep 2025 19:30:37 -0700
+Message-ID: <20250902023039.1351270-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
-To: David Hildenbrand <david@redhat.com>, Dev Jain <dev.jain@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
- peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com
-References: <20250819134205.622806-1-npache@redhat.com>
- <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
- <38b37195-28c8-4471-bd06-951083118efd@arm.com>
- <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
- <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
- <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
- <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
- <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
- <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
- <95012dfc-d82d-4ae2-b4cd-1e8dcf15e44b@redhat.com>
- <bdbb5168-7657-4f11-a42d-b75cce7e0bca@lucifer.local>
- <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
- <db2320ee-6bd4-49c1-8fce-0468f48e1842@linux.alibaba.com>
- <c8c5e818-536a-4d72-b8dc-36aeb1b61800@arm.com>
- <2a141eef-46e2-46e1-9b0f-066ec537600d@linux.alibaba.com>
- <f34b5fcb-6a97-4d97-86a8-906083b53be6@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <f34b5fcb-6a97-4d97-86a8-906083b53be6@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Finish top level sysfs directory descriptions for block, class, firmware,
+hypervisor, kernel, and power. Did not write one for net directory. See
+commit bc3a88431672 ("docs: filesystems: sysfs: remove top level sysfs net
+ directory")
 
 
-On 2025/9/2 00:46, David Hildenbrand wrote:
-> On 29.08.25 03:55, Baolin Wang wrote:
->>
->>
->> On 2025/8/28 18:48, Dev Jain wrote:
->>>
->>> On 28/08/25 3:16 pm, Baolin Wang wrote:
->>>> (Sorry for chiming in late)
->>>>
->>>> On 2025/8/22 22:10, David Hildenbrand wrote:
->>>>>>> Once could also easily support the value 255 (HPAGE_PMD_NR / 2- 1),
->>>>>>> but not sure
->>>>>>> if we have to add that for now.
->>>>>>
->>>>>> Yeah not so sure about this, this is a 'just have to know' too, and
->>>>>> yes you
->>>>>> might add it to the docs, but people are going to be mightily
->>>>>> confused, esp if
->>>>>> it's a calculated value.
->>>>>>
->>>>>> I don't see any other way around having a separate tunable if we
->>>>>> don't just have
->>>>>> something VERY simple like on/off.
->>>>>
->>>>> Yeah, not advocating that we add support for other values than 0/511,
->>>>> really.
->>>>>
->>>>>>
->>>>>> Also the mentioned issue sounds like something that needs to be
->>>>>> fixed elsewhere
->>>>>> honestly in the algorithm used to figure out mTHP ranges (I may be
->>>>>> wrong - and
->>>>>> happy to stand corrected if this is somehow inherent, but reallly
->>>>>> feels that
->>>>>> way).
->>>>>
->>>>> I think the creep is unavoidable for certain values.
->>>>>
->>>>> If you have the first two pages of a PMD area populated, and you
->>>>> allow for at least half of the #PTEs to be non/zero, you'd collapse
->>>>> first a
->>>>> order-2 folio, then and order-3 ... until you reached PMD order.
->>>>>
->>>>> So for now we really should just support 0 / 511 to say "don't
->>>>> collapse if there are holes" vs. "always collapse if there is at
->>>>> least one pte used".
->>>>
->>>> If we only allow setting 0 or 511, as Nico mentioned before, "At 511,
->>>> no mTHP collapses would ever occur anyway, unless you have 2MB
->>>> disabled and other mTHP sizes enabled. Technically, at 511, only the
->>>> highest enabled order would ever be collapsed."
->>> I didn't understand this statement. At 511, mTHP collapses will occur if
->>> khugepaged cannot get a PMD folio. Our goal is to collapse to the
->>> highest order folio.
->>
->> Yes, I’m not saying that it’s incorrect behavior when set to 511. What I
->> mean is, as in the example I gave below, users may only want to allow a
->> large order collapse when the number of present PTEs reaches half of the
->> large folio, in order to avoid RSS bloat.
-> 
-> How do these users control allocation at fault time where this parameter 
-> is completely ignored?
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+---
+ Documentation/filesystems/sysfs.rst | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-Sorry, I did not get your point. Why does the 'max_pte_none' need to 
-control allocation at fault time? Could you be more specific? Thanks.
+diff --git a/Documentation/filesystems/sysfs.rst b/Documentation/filesystems/sysfs.rst
+index b562cfcda3d5..4b44b6af0688 100644
+--- a/Documentation/filesystems/sysfs.rst
++++ b/Documentation/filesystems/sysfs.rst
+@@ -334,8 +334,22 @@ a stat(2) operation.
+ More information on driver-model specific features can be found in
+ Documentation/driver-api/driver-model/.
+ 
++block/ contains symlinks to all the block devices discovered on the system.
++These symlinks point to directories under /sys/devices.
+ 
+-TODO: Finish this section.
++class/ contains a directory for each device class, grouped by functional type.
++Each directory in class/ contains symlinks to devices in the /sys/devices directory.
++
++firmware/ contains system firmware data and configuration such as firmware tables,
++ACPI information, and device tree data.
++
++hypervisor/ contains virtualization platform information and provides an interface to
++the underlying hypervisor.  It is only present when running on a virtual machine.
++
++kernel/ contains runtime kernel parameters, configuration settings, and status.
++
++power/ contains power management subsystem information including
++sleep states, suspend/resume capabilities, and policies.
+ 
+ 
+ Current Interfaces
+-- 
+2.51.0
+
 
