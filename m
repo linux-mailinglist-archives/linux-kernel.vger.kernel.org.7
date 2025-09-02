@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-796082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AFAB3FBAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:04:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A65FB3FBAE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF112C1839
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EFD3A122A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E752C2EF643;
-	Tue,  2 Sep 2025 10:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C4D2F3C32;
+	Tue,  2 Sep 2025 10:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpTNeKRR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8g6WRWj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAC81A288;
-	Tue,  2 Sep 2025 10:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B0D2EFDB1;
+	Tue,  2 Sep 2025 10:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756807379; cv=none; b=H5CzJm2sBqV7I0xxafsDwIliAx2jKwU3I/kJwxZkPF54IuP8SRcEvcmIfXQKhAyinB14ABLlQQmxJHr1fninyJ1QnkcisalUcOeebsHF1P8+b5lYmaL8cF01JqmIcwddkJtgRh/eImc/C4Ukawrdz6qGp5m6Sw/eMaQ1lhY7G30=
+	t=1756807381; cv=none; b=pzrL4dKyBwMtCc5rbUvwSRw2tIqRz2rVxYyWAW92XxJJBKwUMkkIs6V7dPf9VMZ11TXrDBfqqS7vHzGGAnVldqrzrL5uIf2nEHPsYvi/rNlMc44yqiEgJbFV1pEx8ibDGy1HhvcKw3iQW3T8Wwv1YHIqERvMY8R5QfzNQgo+olQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756807379; c=relaxed/simple;
-	bh=//nqL4lLAfIxW165Zpqicim1COFnjYI7FmXj/nwXVQc=;
+	s=arc-20240116; t=1756807381; c=relaxed/simple;
+	bh=6GGN+vSC6nAw0rmyQPYra2aimD8RCfZCmVauB2qSJ0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZClzRzy6ruqB2OS6QSicUz0UPboqp8YLHJyHcbvK2E5MC+nMpx71p/rJV8ti+JGW2HMqms4v6tHOimc4pVKOn2v4+QiWC3zKzN1DzTAkoL+tLYgRwk6Sam8Qq2wF99wYkU6ivdNKglr4xKgtw2AlvCIEfHx1wdc5eZukp3Erqnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpTNeKRR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC650C4CEED;
-	Tue,  2 Sep 2025 10:02:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MxI7YOwQIyWT6OCAS+9giv9wKBWUhDJ8CXgS+Dl+IAwGe7HuqqNodrqZXEnpJQQ+apBz1iuQrv+ApxSSJ2AGVdPT4tSN+GZtazC/f/rXSoOUvvT6Vp2tN1uOQJHCzoPlkAJOH1o8s7N/jJZdA1tuwme+Yr/KGe7l2+a+WD7qOcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8g6WRWj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E52EFC4CEF5;
+	Tue,  2 Sep 2025 10:02:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756807378;
-	bh=//nqL4lLAfIxW165Zpqicim1COFnjYI7FmXj/nwXVQc=;
+	s=k20201202; t=1756807381;
+	bh=6GGN+vSC6nAw0rmyQPYra2aimD8RCfZCmVauB2qSJ0A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bpTNeKRRpbEq4VuZA9LmqaueKiOGvizEA67DPfZXhNaue0n/VbK9mwN3yewtEUkhj
-	 dwTHEzsYV8K0ilq+2qseVmZk2UnB64cBZkyS1Iadme1heTJtZAlzOCNkgOKbkF9ZvQ
-	 CA43Jp0zfvu4rCxXoCKnZY5uNz80FEF5O1VO6f/iCq1h31bqeuvoEWrq+KwgCAY+Sw
-	 TpBmawNe922+sDtauzRHPr4bqBQ8W00Q0ISUYAJkJXhdDAZwhB/x+V1+KssIBTIniF
-	 0cOlfXlkNDfqZTneuG/Qkoh0h3IvtkKaFNSGcP4sPWy72/mfvsnGFSHWV4F8Jzz/Ss
-	 nG5OfZbpoatPA==
-Date: Tue, 2 Sep 2025 13:02:38 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, axelrasmussen@google.com,
-	yuanchu@google.com, willy@infradead.org, hughd@google.com,
-	mhocko@suse.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	surenb@google.com, vishal.moola@gmail.com, linux@armlinux.org.uk,
-	James.Bottomley@hansenpartnership.com, deller@gmx.de,
-	agordeev@linux.ibm.com, gerald.schaefer@linux.ibm.com,
-	hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com,
-	svens@linux.ibm.com, davem@davemloft.net, andreas@gaisler.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-	hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	weixugc@google.com, baolin.wang@linux.alibaba.com,
-	rientjes@google.com, shakeel.butt@linux.dev, thuth@redhat.com,
-	broonie@kernel.org, osalvador@suse.de, jfalempe@redhat.com,
-	mpe@ellerman.id.au, nysal@linux.ibm.com,
-	linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
-	linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 00/12] mm: establish const-correctness for pointer
- parameters
-Message-ID: <aLbAvirCgCfpXaVK@kernel.org>
-References: <20250901205021.3573313-1-max.kellermann@ionos.com>
+	b=O8g6WRWjnz00IdBM+0NXEGJFvekqwjMUPlmGg9KMT2A+XuL5Ng9/WXfAc8BOeqRHe
+	 wGzkfrgy0RVox5f2jPjW6AvGD47VgGow9LPKn7VetMcjSQfK4iNX2zv81QHCX7/QDl
+	 1Cuks4Y3lPUEwH6GDZ5NJbtfwrz60fBFVWBYmzAIjLZg91ynUig6PI0lBAnbiBauPi
+	 AO3U3NKeiJmr7h53HrKOOY6BGf4/zQoQpwV3Dr8QGm05RSUbwrMFY2MAPfkkIWFMuk
+	 VNOFLgMs2AWCBJNBMpNq3rKsTLL0jmottWFueh5OtiFL2HKTELwPI+MMPwAdPuSoSs
+	 cl3IIs1qBlzMw==
+Date: Tue, 2 Sep 2025 11:02:54 +0100
+From: Lee Jones <lee@kernel.org>
+To: Robert Marko <robert.marko@sartura.hr>
+Cc: linux@armlinux.org.uk, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	catalin.marinas@arm.com, will@kernel.org, olivia@selenic.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	andi.shyti@kernel.org, broonie@kernel.org,
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, arnd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+	o.rempel@pengutronix.de, daniel.machon@microchip.com,
+	luka.perkov@sartura.hr
+Subject: Re: [PATCH v9 4/9] mfd: at91-usart: Make it selectable for
+ ARCH_MICROCHIP
+Message-ID: <20250902100254.GD2163762@google.com>
+References: <20250813174720.540015-1-robert.marko@sartura.hr>
+ <20250813174720.540015-5-robert.marko@sartura.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250901205021.3573313-1-max.kellermann@ionos.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250813174720.540015-5-robert.marko@sartura.hr>
 
-On Mon, Sep 01, 2025 at 10:50:09PM +0200, Max Kellermann wrote:
-> For improved const-correctness in the low-level memory-management
-> subsystem, which provides a basis for further const-ification further
-> up the call stack (e.g. filesystems).
-> 
-> This patch series splitted into smaller patches was initially posted
-> as a single large patch:
-> 
->  https://lore.kernel.org/lkml/20250827192233.447920-1-max.kellermann@ionos.com/
-> 
-> I started this work when I tried to constify the Ceph filesystem code,
-> but found that to be impossible because many "mm" functions accept
-> non-const pointer, even though they modify nothing.
-> 
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+On Wed, 13 Aug 2025, Robert Marko wrote:
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> LAN969x uses the Atmel USART, so make it selectable for ARCH_MICROCHIP to
+> avoid needing to update depends in future if other Microchip SoC-s use it
+> as well.
+> 
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> ---
+>  drivers/mfd/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 425c5fba6cb1..8f11b2df1470 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -138,7 +138,7 @@ config MFD_AAT2870_CORE
+>  config MFD_AT91_USART
+>  	tristate "AT91 USART Driver"
+>  	select MFD_CORE
+> -	depends on ARCH_AT91 || ARCH_LAN969X || COMPILE_TEST
+> +	depends on ARCH_MICROCHIP || COMPILE_TEST
+>  	help
+>  	  Select this to get support for AT91 USART IP. This is a wrapper
+>  	  over at91-usart-serial driver and usart-spi-driver. Only one function
+
+Let me know when the deps are in Mainline.
 
 -- 
-Sincerely yours,
-Mike.
+Lee Jones [李琼斯]
 
