@@ -1,209 +1,154 @@
-Return-Path: <linux-kernel+bounces-796895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A36BB408F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:31:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C58B408F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A26DE1B27C52
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:31:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EF41B60587
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF42C30C341;
-	Tue,  2 Sep 2025 15:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3968D315767;
+	Tue,  2 Sep 2025 15:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Qo5pXRib"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Pe+im1Di"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA04D231A23
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34E305076
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827054; cv=none; b=dvpqTZPT6uRZuVKmT6EZ0+JFlsaJsyUff2Af5eMj4m2/M51MHNmpPgOYT0Y8WbqvwHwMNUVe7LdGyXl4bMZplQ2iBY4P3GCrHyIhveLKKYka2btGZROaiXFaV4PQJn0mQhQ7A6kW5CDGByWbcgT++123bJ5vnHCthqyzsUd3JOY=
+	t=1756827077; cv=none; b=NO1n7zbafxdSbcQD9c1+023PIKp+RknrxIQUS+i/psykSYvQ8+AaN9qjQfj7AupsD6GsB1aD6zKbNHQjx5VS4Y8z5r0w+p8NVjSWWtBGeiNt6V5oG1MzgCdPXXb+uSItQA14gOERTW5+1vlF0g8Gh9rkCJectfxyupcw63Cuil8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827054; c=relaxed/simple;
-	bh=H5D1mB92sVGC6p9xvxd1ycfmo/pkWqLUN1RRpbx9IGk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kCkjTXlTklpNeI4392661Q0nFHfhHH0BMgl+ixtODS+Waazvc7s/ljIzmtb1KnhdVLiRwt726OsEEACeXJWajUOUfluS4WIiO6KK/yqRRKmpi+YplQPzj9iyB+eodN2t/Q9/0SKS8h0MSMeZ9dhOnMsZ5tnGGQYAy5TixGKhBHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Qo5pXRib; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30ccebab736so4807638fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:30:51 -0700 (PDT)
+	s=arc-20240116; t=1756827077; c=relaxed/simple;
+	bh=jBj+N/EIx366pIxKlDVWGntYHrjdw8xEwfU0BWbWz4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z52W5567oF4z30I3xO96gip6/CZAxo7EJZ8vtchh8x1FplMx1IG9QZbKI1bh3lOFcGGsf+Vid2gGMnf5jMHkl08zlCSPGIGqQu6rLcvYHyI+g4y0JbeT4zEJixrdEU1Aa3iRTomudQJf2On6YDM7pESl8EPsLKRoTSrZZkAxCuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Pe+im1Di; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61cbfa32ebdso732607a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:31:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756827051; x=1757431851; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cqQ4WPvFOC/zDvh2F7EYF1aCNsNr1wJdA0MPmR/NX3o=;
-        b=Qo5pXRibrGRLi9tNUDaGyfy5b4tRNvPTawufsk3Ukd+ISmJjI8jRB1QyNkV0T+R6ry
-         tVdg1OgGD7eCC6IdP5+ueDaPTeYRpzfDSEBRajKjKYo0LDOdp6GQWD+Z/md+rkAqYy1J
-         +39OUts3NO7mkZ18HYEtuMsVnHAbMOxCp9utsQ42ZuvDJQXgqx6aY42mePUPs6zaWMc2
-         OkryK9gvpfQwfejEiOPIYq29GO3+r3+RIuw0xJGTJnndsNXpmXl7a8VC2hPzNod2x6YN
-         KCP1dkKjMv7wrFMu2887Ut7VtEzyu6dz692WaqTZIwpNSOgLTWww9tqVC0drY8pv35mM
-         Na8Q==
+        d=purestorage.com; s=google2022; t=1756827073; x=1757431873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LcK0Vupw08S0kwUSmWzaPvW7Lg7imOqYDDKVTQ4jI1I=;
+        b=Pe+im1DiWe7i/uYAhCn57MA78AE5pdkV/T5W8CNyYznFF4lM2iTebm/fPCo8TU3wJD
+         cRz6Bpm4/7qhZQMnb4qJzF6fSVjMvriJ/eCh9WTLC+yLuYFRb4p6fqEU/WTdhJRsT42P
+         5L91y+bcK6phuQUqVvznNwdqPMzoCBiO+S/VqP5ojBX7SzHJJc6Yk11e5dniwU3Eh/xe
+         3M/m0//Cz3uFKVACs8b+xJegRHtC2kpJMmllnwRNutQCR+afAaINirmwvr5S68OmybPt
+         L+7oxiFsLLltM/xEsakBO7F3Ez7bu2Shtlo3SWuJz+BPsW1PqAjJhyMGqIPPNK8H4GM3
+         HRew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756827051; x=1757431851;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cqQ4WPvFOC/zDvh2F7EYF1aCNsNr1wJdA0MPmR/NX3o=;
-        b=PAMMvyBeDUVmPUleoGvFVxW+hBAKx9ttbcGuN8RfKMwmp9c0KNCG8cNJE6WIvfg7Qu
-         HuA0Fjr8K7Jn5Bk/nVX2YQ5elIMQrWI1BqmZ4xKOiXNqUVhCd1BNwFqTZNkAOnpfQp0U
-         2MCyPD4s2dvEFKUC+NtQ/2lVbsIPUDxMZUwVHir3g76MOcVZD0ep9tNtnof4IXOT+MLG
-         l8vS0K5AVAevuHvQMMkCm2xVzGE5sb0PCTF82fUt2l+DGCrPHXRNTxXpvbagi2z4Zf27
-         OBvy0rxA7pFR7k5NTt7VvjeIjDOGVDqk6mvyf6BfunCgmyU2cxu36dznn/LHx0T6xxoM
-         Ixrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRN4xmiTIT47CucrXw38MBnSpN1E5vf2E2mvVZN08f+dfz5Dl4Y47IJCaur4cjIrI9NnpCS6Qy/uCmRLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHK2K/TZ/bWFWv/2NXe0t5Y5WsLOKxqwTjFegePzIcY7c54QqP
-	iyvdhlcuk04qqMs5w/2FUMDZssyNPhPqdGXNOraY71eXz/Y9kPor8nrdeIoHwlTP2cN4cAyN3gq
-	ad9ku
-X-Gm-Gg: ASbGncvzYg8H4yXbTq8hIy89i/CoaJF75DKPMg5BvbJ9nsVWhW4WH0jkrLZ1gr88Syi
-	h1TZVMG+l5N2cj/3oUDIoEFPqLUetsYgEXPMj15sg8ywaZ0IHQv2iRiiilA0CeZ++xxD3z050hK
-	ypyqnmE1MZsOtIv8DLmhd5MQDgWxLZb+fcoMtpQeHYc/59k9EmZD2OF7Y5kmUzwfuR3nAwvqS+9
-	5JtAvxLd+cJrbAQnXCXldQS1rxrLrBHHmINSuE4QBf5iwuNAoumUQ3m87kEC8YeE9wlqI+1ZYVJ
-	T7gwLUWxiTgSNhB6kl3CHmZj1z2FQHPQqfa1fLSmkCzbgUOtNjmfLIfYJNBZOqA0faagV3wQfsv
-	ifuARGWWZ1QaQIyB7lQzJqHaPZhQkmjVRBy3jSglD0tNlUgsh1B8a6Cq1nUdNgyBCUHFQ8oEp
-X-Google-Smtp-Source: AGHT+IHT8XwRiHCN75IMWkHExPEmJnsitMmA0YzWNkodLNJRcwmanY0UNlPygOc7Bc7GtosZ+wqf2w==
-X-Received: by 2002:a05:6870:e0d4:b0:315:7456:1ec2 with SMTP id 586e51a60fabf-3196337628emr4327586fac.24.1756827049391;
-        Tue, 02 Sep 2025 08:30:49 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b? ([2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-745742a6716sm1644969a34.14.2025.09.02.08.30.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 08:30:48 -0700 (PDT)
-Message-ID: <7176887b-d406-46e4-b43a-7924c36ddb78@baylibre.com>
-Date: Tue, 2 Sep 2025 10:30:47 -0500
+        d=1e100.net; s=20230601; t=1756827073; x=1757431873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LcK0Vupw08S0kwUSmWzaPvW7Lg7imOqYDDKVTQ4jI1I=;
+        b=Nz0Njyw/f5niphC5ImVBtnVadCSFpLMU+ovQG3HzwUdHHc5G1I6segRur15hknc/NN
+         MK4pxQS0uyuaJaMCFkCCH84RL7Bt6PmBZ3CksfvHOUrEYY0DH2o609n1wbpwLG8b4Lq6
+         mYn6UYfchNXRFJ5carjC602kX3FElj2vP7VO4dg9tDKc9nJLZkf+munfkJ6uLbKrDwD2
+         nIETJmZMGY0q4Q5cxWZN0TEsOrPohKT+/LqBcgMdlJbEmsXQ6DRFy+BMFFhN0G8alSNo
+         1+W9y04CufKcq5bqOY7mjmefPlyxQ5krt1rwiCmuBnW4j0YPDDxwg48HQnZ2fUj0+ESN
+         w5iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+1MNfwhwDAV/CLdYAFyBj2PD3T80TBRlSZZwWY8+l7eo42jeoA1uiXWxuxrDf7CMzzMftYWPd/aiphZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgOM1ShsLQjZdfNk28TIxE2eDSLklLNmXTh6lZYwzr5x7q34cE
+	mT6dmt1/tEL93JF/22rhWRfPcN+kSKy9r+uNuG2pD19Xa2jjTLYaw6w9M+MUvEVEphFjh8ArS1g
+	tzaZ0PVFEef4Ni4xsNxeZDpGp3Qe50rJtmwJU2xyeLw==
+X-Gm-Gg: ASbGncs8tZR1UcuSVfKhGT1JT1PYd9wzWGPKOyZxF2V0YsxHMPgPv3Gqpo1io1KSrSK
+	Ud0RSPXrlGo41ezFYuAEaSMOZyrixeQY4nO9ow+J0kePi1LR25wBI89L2nD++6SQ1Ng2aVm/xeO
+	Y1MdnXxHARmo1LT7yuvbzXaExuzIDeX+qCTKtQN8Qy5d19AQhkqRmbuESXev2JYIdepmo98PHUF
+	XvUe4iHVMX7jFdk3tz/ITc=
+X-Google-Smtp-Source: AGHT+IHfeh6Hqg2wuUr1T9ZIp5X19Sz1uiwreq0YZoqgSSMikAA7y1UBWPbvIhSjDISnUiui2xuROLxBU38/us5t+3Q=
+X-Received: by 2002:a05:6402:35c5:b0:61c:879f:a62 with SMTP id
+ 4fb4d7f45d1cf-61d0d371418mr6643108a12.3.1756827072932; Tue, 02 Sep 2025
+ 08:31:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/2] dt-bindings: iio: adc: add max14001
-From: David Lechner <dlechner@baylibre.com>
-To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Kim Seer Paller <kimseer.paller@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
- Ceclan Dumitru <dumitru.ceclan@analog.com>,
- Jonathan Santos <Jonathan.Santos@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>
-References: <cover.1756816682.git.marilene.agarcia@gmail.com>
- <34b7cc7226e789acdc884d35927269aa5a0d5e14.1756816682.git.marilene.agarcia@gmail.com>
- <89265de7-eeff-4eea-838b-6a810c069a20@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <89265de7-eeff-4eea-838b-6a810c069a20@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-3-sidong.yang@furiosa.ai>
+ <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com> <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
+In-Reply-To: <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 2 Sep 2025 08:31:00 -0700
+X-Gm-Features: Ac12FXyLeKYXslC_9H_jnXi5qlR1DyFMS0jUeRzwyKLc83sHnrpgjFW25z8GvmY
+Message-ID: <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
+ io_uring_cmd_prep() to avoid UB
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/2/25 9:29 AM, David Lechner wrote:
-> On 9/2/25 8:15 AM, Marilene Andrade Garcia wrote:
->> Add device-tree documentation for MAX14001/MAX14002 ADCs.
->> The MAX14001/MAX14002 are isolated, single-channel analog-to-digital
->> converters with programmable voltage comparators and inrush current
->> control optimized for configurable binary input applications.
-> 
-> When there are multiple devices, DT maintainers like to know
-> what is the difference between the devices.
-> 
->>
->> Co-developed-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
->> Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
->> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> 
-> Sine the patch is From: M.A.G., according to [1], this should be:
-> 
-> Co-developed-by: K.S.P.
-> Signed-off-by: K.S.P.
-> Signed-off-by: M.A.G.
-> 
-> (hopefully obvious, but don't use the abbreviations - I just did
-> that for brevity)
-> 
-> [1]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
-> 
->> ---
->>  .../bindings/iio/adc/adi,max14001.yaml        | 79 +++++++++++++++++++
->>  MAINTAINERS                                   |  8 ++
->>  2 files changed, 87 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
->> new file mode 100644
->> index 000000000000..ff9a41f04300
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
->> @@ -0,0 +1,79 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +# Copyright 2023-2025 Analog Devices Inc.
->> +# Copyright 2023 Kim Seer Paller
->> +# Copyright 2025 Marilene Andrade Garcia
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/adi,max14001.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Analog Devices MAX14001-MAX14002 ADC
->> +
->> +maintainers:
->> +  - Kim Seer Paller <kimseer.paller@analog.com>
->> +  - Marilene Andrade Garcia <marilene.agarcia@gmail.com>
->> +
->> +description: |
->> +    Single channel 10 bit ADC with SPI interface.
->> +    Datasheet can be found here
->> +      https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
->> +
->> +$ref: /schemas/spi/spi-peripheral-props.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - adi,max14001
->> +      - adi,max14002
+On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai>=
+ wrote:
+>
+> On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
+> > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong.yang@furios=
+a.ai> wrote:
+> > >
+> > > The pdu field in io_uring_cmd may contain stale data when a request
+> > > object is recycled from the slab cache. Accessing uninitialized or
+> > > garbage memory can lead to undefined behavior in users of the pdu.
+> > >
+> > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
+> > > each command starts from a well-defined state. This avoids exposing
+> > > uninitialized memory and prevents potential misinterpretation of data
+> > > from previous requests.
+> > >
+> > > No functional change is intended other than guaranteeing that pdu is
+> > > always zero-initialized before use.
+> > >
+> > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > > ---
+> > >  io_uring/uring_cmd.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> > > index 053bac89b6c0..2492525d4e43 100644
+> > > --- a/io_uring/uring_cmd.c
+> > > +++ b/io_uring/uring_cmd.c
+> > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const=
+ struct io_uring_sqe *sqe)
+> > >         if (!ac)
+> > >                 return -ENOMEM;
+> > >         ioucmd->sqe =3D sqe;
+> > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
+> >
+> > Adding this overhead to every existing uring_cmd() implementation is
+> > unfortunate. Could we instead track the initialized/uninitialized
+> > state by using different types on the Rust side? The io_uring_cmd
+> > could start as an IoUringCmd, where the PDU field is MaybeUninit,
+> > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees the
+> > PDU has been initialized.
+>
+> I've found a flag IORING_URING_CMD_REISSUE that we could initialize
+> the pdu. In uring_cmd callback, we can fill zero when it's not reissued.
+> But I don't know that we could call T::default() in miscdevice. If we
+> make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
+>
+> How about assign a byte in pdu for checking initialized? In uring_cmd(),
+> We could set a byte flag that it's not initialized. And we could return
+> error that it's not initialized in read_pdu().
 
-It looks like we could have a fallback here since it looks like
-the only difference between the chips is:
+Could we do the zero-initialization (or T::default()) in
+MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
+isn't set (i.e. on the initial issue)? That way, we avoid any
+performance penalty for the existing C uring_cmd() implementations.
+I'm not quite sure what you mean by "assign a byte in pdu for checking
+initialized".
 
-	The inrush trigger threshold, current magnitude, and
-	current duration are all programmable in the MAX14001
-	but are fixed in the MAX14002.
-
-Which would look like this:
-
-    compatible:
-      oneOf:
-        - const: adi,max14002
-        - items:
-            - const: adi,max14001
-            - const: adi,max14002
-
-And
-
-	compatible = "adi,max14001", "adi,max14002";
-
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  spi-max-frequency:
->> +    maximum: 5000000
-
-After reading the driver, I see that we should also have:
-
-	spi-lsb-first: true
-
-as a required property.
-
+Best,
+Caleb
 
