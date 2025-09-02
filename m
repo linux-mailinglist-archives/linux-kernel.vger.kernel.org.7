@@ -1,157 +1,132 @@
-Return-Path: <linux-kernel+bounces-797118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AE2B40C09
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:27:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CD0B40C0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9FCF564343
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:27:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BCD04E463C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA340345721;
-	Tue,  2 Sep 2025 17:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A850F343216;
+	Tue,  2 Sep 2025 17:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="PcGb4HNQ"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzTJ3i2Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744AC343D84;
-	Tue,  2 Sep 2025 17:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05162FE599;
+	Tue,  2 Sep 2025 17:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756834042; cv=none; b=V0v+DdWoYSdUPLQPv7XaSh0LutisU46mwIIRcgmT2S3Qn7Mz/4O0Xv3YW7TXc0d0S5TcpJ8Au1cZQH57GWiYDhBRIhq2XFLlk3lxU5H3UnjnuRShxNjc6m+eLlkasFs8MACbZ7xT/NJqu9zzgaAYXmr0c3l2OW6+VnFqxf2yYxg=
+	t=1756834193; cv=none; b=SI7NGBSLVolYQgpJCOiuxj2yllqQ3UaTJQoF3Ez4yGRkQxrlAlDS4Eo28waCeQpc6MgOiz+3gHMNhGU6T5Y68u7wYq7bJeDMXqRIkQbJ5iAWfwRTwcthMXmiRR9gxqGEqdKEkGLP9BCric8ZutRf61eA3vFFbjR51nfWubY7qVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756834042; c=relaxed/simple;
-	bh=epzen24Lm8XzZMpzLT7sc1zAzVAnYPLwQkRE282JBxU=;
+	s=arc-20240116; t=1756834193; c=relaxed/simple;
+	bh=QF6rJk+d+yRLqK+RoVOoN40zim7c43Q5kej5dXa9QoQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yd6CVy0ZLJjPrjXrBh49Jgvxx0ICqZvoPuAaXgGpPQ8Up9fJnnsMg85Muku/k65q13/zLUR57Vn7896qPuZgLciKTwK9afiURCBJDTCxx1VxjhHXinGgLkcgytGXf9hb/bbsoprdMXMsoiUZ66oN465G3txIaS0SdVrjuB0FgKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=PcGb4HNQ; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=/AClO5jmdv6vuid5xiiEBjr0hK793sZbq2gbKxWSDR0=; b=PcGb4HNQPHs+M9mf19zJECnsZw
-	DarBiCOIAExFMyW6wicgZKajx5KGdQEdRYMvgdNQ+E1kpEdcHKmIRqTR4SIxze98NGAooQSMtPUHR
-	eDf/eCWbrFp2UPgx5KbtZI2jz4vVCHR56VTPife3OjkMbqxFUvGIzs0J8pjreBKBwGkpZmiMwpnAI
-	iUPPzlPqV8ZtpZv38I/Kq/+5qYKMCAUpLZpwoJb5GFnb0JMa03gP9auTiLejYMMregT6g0EfgSMEF
-	YtiSG30B8z1cMM94VGRRz5b7nzvjarwHlTtOjUoxW/+W4MExO/aSbB0jsPXSS+3PAg7ixdCKzdGIu
-	kDy9F9Bg==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1utUmr-002QbR-2z;
-	Tue, 02 Sep 2025 18:27:17 +0100
-Date: Tue, 2 Sep 2025 18:27:17 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 4/4] tpm: Require O_EXCL for exclusive /dev/tpm access
-Message-ID: <aad903683a912d6e36904c2d4ad1230a224e0780.1756833527.git.noodles@meta.com>
-References: <cover.1756833527.git.noodles@meta.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dNZBj3Rc5PZw7+rT2ZxcTKg/3pwOM1ZYOm41SitDGrp+dr4WFJj0fMfCW2A7xc122bkOQadgDyEHyMkfDZKFtFcJB9JKf1piXu1Lnta+kDWl0sA8jr11+B81+l6obRs1Q/DUF2OXjFQe6dqhubLnDbJBBkilzR2ISrlIVqmogow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzTJ3i2Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4258C4CEED;
+	Tue,  2 Sep 2025 17:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756834192;
+	bh=QF6rJk+d+yRLqK+RoVOoN40zim7c43Q5kej5dXa9QoQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JzTJ3i2QQXTGUw+LwTXV6C0mU7snxe1Z6pJIjDyAbiEIijtpjboMwwpnPMhWLkgXn
+	 xmueJgwRfEJ+Jfksjurb8MDmu4mhF6qEmsez7cQb4bwDq1rk6/YoTWhcCcCKfhyivV
+	 nClsrvEZ2zAMfRVKBRlnWqKhgD/w112wpHA/H6dmjPUqIrwkfNsYClHo5ISO751MDK
+	 s66oq0KyoDP0f+GJb8faogaGBFGFoVrd1ZRuor8BynKDtkUkb+ToQl3Lkny1Fkaudp
+	 ez0eHzcbDioIrTIPVgebp2dERuj/GxnPi+4ZB86xjuRsOmIntpXBPFaY+E8copEnKx
+	 r5cCM4r4AtJiQ==
+Date: Tue, 2 Sep 2025 19:29:48 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: dri-devel@lists.freedesktop.org, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Conor Dooley <conor+dt@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+	Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI
+ TMDS181 and SN65DP159 bindings
+Message-ID: <pml7rfbkerzkx5df26x7kxn3tk2o7oqrkqnx26tzikeg53djn5@islb4hlm4ks7>
+References: <20250901142958.843678-1-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.edc18686-244f-441e-a6ac-0b62492b96c8@emailsignatures365.codetwo.com>
+ <20250901142958.843678-2-mike.looijmans@topic.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="en5n6wehjgdxg5aa"
 Content-Disposition: inline
-In-Reply-To: <cover.1756833527.git.noodles@meta.com>
+In-Reply-To: <20250901142958.843678-2-mike.looijmans@topic.nl>
 
-From: Jonathan McDowell <noodles@meta.com>
 
-Given that /dev/tpm has not had exclusive access to the TPM since the
-existence of the kernel resource broker and other internal users, stop
-defaulted to exclusive access to the first client that opens the device.
-Continue to support exclusive access, but only with the use of the
-O_EXCL flag on device open.
+--en5n6wehjgdxg5aa
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v4 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI
+ TMDS181 and SN65DP159 bindings
+MIME-Version: 1.0
 
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
----
- drivers/char/tpm/tpm-dev.c | 25 +++++++++++++++++++------
- drivers/char/tpm/tpm-dev.h |  1 +
- 2 files changed, 20 insertions(+), 6 deletions(-)
+On Mon, Sep 01, 2025 at 04:29:01PM +0200, Mike Looijmans wrote:
+> +  ti,retimer-threshold-hz:
+> +    minimum: 25000000
+> +    maximum: 600000000
+> +    default: 200000000
+> +    description:
+> +      Cross-over point. Up until this pixel clock frequency
+> +      the chip remains in the low-power redriver mode. Above
+> +      the threshold the chip should operate in retimer mode.
 
-diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-index 80c4b3f3ad18..8921bbb541c1 100644
---- a/drivers/char/tpm/tpm-dev.c
-+++ b/drivers/char/tpm/tpm-dev.c
-@@ -19,15 +19,21 @@ static int tpm_open(struct inode *inode, struct file *file)
- {
- 	struct tpm_chip *chip;
- 	struct file_priv *priv;
-+	int rc;
- 
- 	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
- 
- 	/*
--	 * Only one client is allowed to have /dev/tpm0 open at a time, so we
--	 * treat it as a write lock. The shared /dev/tpmrm0 is treated as a
--	 * read lock.
-+	 * If a client uses the O_EXCL flag then it expects to be the only TPM
-+	 * user, so we treat it as a write lock. Otherwise we do as /dev/tpmrm
-+	 * and use a read lock.
- 	 */
--	if (!down_write_trylock(&chip->open_lock)) {
-+	if (file->f_flags & O_EXCL)
-+		rc = down_write_trylock(&chip->open_lock);
-+	else
-+		rc = down_read_trylock(&chip->open_lock);
-+
-+	if (!rc) {
- 		dev_dbg(&chip->dev, "Another process owns this TPM\n");
- 		return -EBUSY;
- 	}
-@@ -35,13 +41,17 @@ static int tpm_open(struct inode *inode, struct file *file)
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (priv == NULL)
- 		goto out;
-+	priv->exclusive = (file->f_flags & O_EXCL);
- 
- 	tpm_common_open(file, chip, priv, NULL);
- 
- 	return 0;
- 
-  out:
--	up_write(&chip->open_lock);
-+	if (file->f_flags & O_EXCL)
-+		up_write(&chip->open_lock);
-+	else
-+		up_read(&chip->open_lock);
- 	return -ENOMEM;
- }
- 
-@@ -53,7 +63,10 @@ static int tpm_release(struct inode *inode, struct file *file)
- 	struct file_priv *priv = file->private_data;
- 
- 	tpm_common_release(file, priv);
--	up_write(&priv->chip->open_lock);
-+	if (priv->exclusive)
-+		up_write(&priv->chip->open_lock);
-+	else
-+		up_read(&priv->chip->open_lock);
- 	kfree(priv);
- 
- 	return 0;
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index f3742bcc73e3..0ad8504c73e4 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -17,6 +17,7 @@ struct file_priv {
- 	ssize_t response_length;
- 	bool response_read;
- 	bool command_enqueued;
-+	bool exclusive;
- 
- 	u8 data_buffer[TPM_BUFSIZE];
- };
--- 
-2.51.0
+Why should anyone want to tune this at the firmware level?
 
+> +  ti,dvi-mode:
+> +    type: boolean
+> +    description: Makes the DP159 chip operate in DVI mode.
+
+Ditto. Both describe policy, not hardware.
+
+> +  ti,slew-rate:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 3
+> +    default: 3
+> +    description: Set slew rate, 0 is slowest, 3 is fastest.
+> +
+> +  ti,disable-equalizer:
+> +    type: boolean
+> +    description: Disable the equalizer (to save power).
+
+Why shouldn't we disable all the time then? Again, it looks like a
+policy, and not something that should be set in stone in the firmware.
+
+> +  ti,adaptive-equalizer:
+> +    type: boolean
+> +    description: Set the equalizer to adaptive mode.
+
+Ditto.
+
+Maxime
+
+--en5n6wehjgdxg5aa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLcpjAAKCRAnX84Zoj2+
+du5lAYCVEKByvBzuxFqjgUSVXaGA3CZ+VD10s9iZr871K1qm5IlhwpjWlIzrTpUM
+n3KXj/IBgLwh3Fikc4FJpI7Rs+Lexry9cSG/dGO+e1hzbPEVUfBONtOdTWvpqTED
+QTwwoWD8Vg==
+=LfXL
+-----END PGP SIGNATURE-----
+
+--en5n6wehjgdxg5aa--
 
