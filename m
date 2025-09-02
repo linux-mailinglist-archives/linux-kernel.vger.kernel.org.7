@@ -1,186 +1,149 @@
-Return-Path: <linux-kernel+bounces-797081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E71B40B94
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:06:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED4AB40B8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD97189DF13
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:06:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF3C1B61AAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3E1340DA0;
-	Tue,  2 Sep 2025 17:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9B1342C99;
+	Tue,  2 Sep 2025 17:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G2Ic9cWT"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2045.outbound.protection.outlook.com [40.107.93.45])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b="KE93m39F"
+Received: from exactco.de (exactco.de [176.9.10.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05136320CA0;
-	Tue,  2 Sep 2025 17:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756832708; cv=fail; b=GDbRuqyxmzYYZqKHpcSBJIDjia7w2gKm6MmY2lHK9qYmzHCAWld2Zkw9pePGK5u2YQdwC0ONzeSHlSqJkPW9GfTimYOvHmVW3+LVfSO8Y0nPe1f4qOahlC1MMEk68ztZqVMK07tu3Exr1Hl/Bxr23IYsz338sD/xmLlnU+7uW2U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756832708; c=relaxed/simple;
-	bh=M0yVcjXuCmqpTzEX3hNQlHpGjRh/owL1gm5eiDIEbj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cb6WqmnkKDeMEH0hVbKlO7XniJHmwFmxv1ogyFyhqo3+5xC2CPDoapdOSuY/lAhYqSdrAzpkdK+FFgkRJRe2VyOjXKA5WVpLTzU+kOyc58JXTgVFsFy4pf8zZG19X5aGnqMQEl0XuJRatUHPx6gFyRQ1ZE8tV6o691a6IXIHkaI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G2Ic9cWT; arc=fail smtp.client-ip=40.107.93.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k8Y1sGKxGcvqfsgpUJDERFEq5Gx62oCbeuoJ9gQjtY5wN2yjpsQNm9UQBwc00e9ctlM2wm3EhZUpRRtWvUnLAXw8U+xVX8MywS6JKxq83qBEGQtfZWTElmpWNefEX6/m/A+HMMx5vrnwzQVRDshKb79k1jJOw7ldKwjnKsnLblACXd4XTF7pnM/C4gi8KLBkw9d09D4if22NKY62az6WjXy6e0svs1AQS1cUQ231rxX9mwbg7x+JL5EAwJxhuoPAuG+duHhwbUgTOkUyiZkKkJwMEYxmhAS81F9U5FWkshc2/wMzxmjRhxUQL5RUUREZrB344o4jeR/KkQVdHqSKSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OQrGQtxobVX4aBf+rHw8zNyiL5D9mcLGar6Bs1dcgcM=;
- b=DLep7roYVJDdcidqS+/xeBk5mYKKT9RI8k2zRQ/3mwt/BPRwDLdzhPwE5U9jrc/eedVKHkN5QxkQa9oJS5fvNce7JrLbmGPKaDYcDEkNycVUaWL/zh/jIZhKFTfGnhbfsS3aq5u/yXlx9ULFIdA41UT3pDWXY6pLhUVfmBoApXpDk7c2vGUQrzoyyIhuz6xQBi1G0tIbntV+ycJGk4RMEpyELipgBnoK/QJFb30oLhZmnwnsCUMi2ZDlj9ft8HnBOOeQ4atvbIhn+18Y71fhDyrOWcTWf6wh8d+FHbJhwc9/++W5RvpF5QMg1vs6iCHyn5b1sGrECmZQH9UpU8rN2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OQrGQtxobVX4aBf+rHw8zNyiL5D9mcLGar6Bs1dcgcM=;
- b=G2Ic9cWT9HHE2EcTuttXPt2zcKxmKdtV3a9iBpwu4LVup3tvKNF9mAy2uESdeRsWCSb+6pglhR8L0YQ8/jJb2Idms5Eal2/bHYG1oaVhnOX2a5a7LIHJ0BAEC1L31NGKewdV/w2zWsePqslz6n5M3nC9m3VTixPsxzyDewWbWhksaoh4CYgGQDUclSg6s7IO4P0mlnYLkOdrXqJu6FqYngacfWTLsnoa5T50HXfVGGvHoHV34nTNeumiaHbW0eSGD+NhmHMEq6vCmHANrWPfFz0t17p7eMjCx7SzE/ev9LncIfY6oQ3PshekAVg0+FsunhbfGC9Ue8dmP8jP1Dinrg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- CH3PR12MB8904.namprd12.prod.outlook.com (2603:10b6:610:167::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.26; Tue, 2 Sep 2025 17:05:01 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9073.021; Tue, 2 Sep 2025
- 17:05:01 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] selftests/mm: split_huge_page_test: fix occasional
- is_backed_by_folio() wrong results
-Date: Tue, 02 Sep 2025 13:04:58 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <789664CF-2350-4E31-ADA3-BD08FAFC496B@nvidia.com>
-In-Reply-To: <20250902162536.956465-2-david@redhat.com>
-References: <20250902162536.956465-1-david@redhat.com>
- <20250902162536.956465-2-david@redhat.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL1PR13CA0168.namprd13.prod.outlook.com
- (2603:10b6:208:2bd::23) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46684341ACA;
+	Tue,  2 Sep 2025 17:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.10.151
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756832700; cv=none; b=FjF31Mxf0pj2jcyVIsn1r5Pm0wQyMqUWMdI5Lqt7zzr9CsbPJo3Q2S+uHK8mOctZFZLjtGOKoiXb0yFB1TvGQ5w8NRkmTcX0cGxjvHzu7smetFauJ6qBcvEkocm1xaU4To2db0Ql36Ij2xtoQcdHIKEjgKR2OgE36QDN632UzRo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756832700; c=relaxed/simple;
+	bh=FgitMAAoOhA5lo7QdDI/SWtzNreexFtLTd0/+ORe/0E=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=I5W7ZDvnAU6B0ZR2s1Prr2J1KVk1J8aLHjD+iq1nBQ/sLSSpomVbRVbldVjVSY/bct+JzAdANK5tq6YvmIJ03FpI2wd6zfD7dgQ8Oh2vwQucXwAcvG9hc8KtqgFiSFu5Qv2kgtiqAF//YhfwnToZSUHL15e1h3cQ45lI7D0g74w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com; spf=pass smtp.mailfrom=exactco.de; dkim=pass (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b=KE93m39F; arc=none smtp.client-ip=176.9.10.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactco.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de;
+	s=x; h=Sender:Content-Transfer-Encoding:Content-Type:Mime-Version:References:
+	In-Reply-To:From:Subject:Cc:To:Message-Id:Date:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Xyvh4aBmlBZr6bvS2J/XyOahxkkf4YdZmzZ2T9a1nPY=; b=KE93m39FoALcvuOMPakjdLeJoU
+	Chzys3iGNuqT9DS+BmnZh7ymWrLwA977nzgorwr4QEjKlqDILeD5xT7VPUHM4c9xkOo62VSFIRbEa
+	+LVL5jfyhWK0pwitXXOvhhybMcU9XYigyMNr35xfKbK0oFt39lW3KGh9f2+UJXDiLbpcEpUxQIMrW
+	v9kMZqpDcuG0c6404GmD1gxhA1JaVbaP/auh5Yd2NLW0jQtqv+m9jPNx7x1zE8e84zEReYi9Lwu4n
+	ws204hRtUmujyA3PZMn3KOq4bayWql8q7tb9bsUiWQmVwmtqKbiiew1GTk0vSquuskOjJckFpOF5t
+	IgC8zXrQ==;
+Date: Tue, 02 Sep 2025 19:04:59 +0200 (CEST)
+Message-Id: <20250902.190459.1097165280513668946.rene@exactcode.com>
+To: glaubitz@physik.fu-berlin.de
+Cc: kernel@mkarcher.dialup.fu-berlin.de, linux-kernel@vger.kernel.org,
+ sparclinux@vger.kernel.org, andreas@gaisler.com, anthony.yznaga@oracle.com
+Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for Niagara
+From: Rene Rebe <rene@exactcode.com>
+In-Reply-To: <1d32418278ac11e4a2f65c8b6bcd4c90143a1451.camel@physik.fu-berlin.de>
+References: <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
+	<20250902.185101.101005511917098882.rene@exactcode.com>
+	<1d32418278ac11e4a2f65c8b6bcd4c90143a1451.camel@physik.fu-berlin.de>
+X-Mailer: Mew version 6.10 on Emacs 30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CH3PR12MB8904:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95b2c6cd-cf08-4bb4-de84-08ddea42da55
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nrsYMDKhoubgcnAqYxeIxwqOgK63dkw16URCvcDrSbobh1DiM7dSdfFlvvJI?=
- =?us-ascii?Q?qfdXrkRpF6HMV/A/Lnu2FE5A+wl3OgbPbsfO2r+Ms5rFxBTMWG+VgJz3v0L5?=
- =?us-ascii?Q?UzqTCQW+ewOqb3EqUh8ngmpCk8GjpxAa+WF52ZxLS3O8qVdk6i0jczVsIQAa?=
- =?us-ascii?Q?+ujuHQYVTiClKF8h11wKaHV3ffoeHjfiWqU1JuJy8nnTh3Gj0vH0dQIwSW+B?=
- =?us-ascii?Q?thslpLqhC21agumdapfKC4bf+1jodquBmP4SP4pRLgUMmW6h54YpLKIm3wLE?=
- =?us-ascii?Q?r7jAl3cfX9vrjd98bxq7nJkFJ88SpKhvEBT0jM9zl0d/wKquYR7wDT4WIdrG?=
- =?us-ascii?Q?DMQufsV3CKNod+S0qgcWPo5pjpx3nvULnRK0STSBS+hCgf7PwX3G0SAbGweF?=
- =?us-ascii?Q?CC5yvpq+03akZcG8vwndwIkZe46oponf1A989r4ZtpKtVFgqtOwbmyawXwMP?=
- =?us-ascii?Q?eQ9EksjDMlCfTZhmaq1OEOXS4P8IUSX+AlTyc3MZyQtvGBnTVF2uRE4i1ayw?=
- =?us-ascii?Q?iz6aF9rjmkXBMCTeudmzX+ucVhFC0kDpFLZRM6/Dn5wZEpr8PaoI+G0nlJ3X?=
- =?us-ascii?Q?/pP5pEBr+lYEALScUN1EtdyafxAVbx/hp3SMcJ/MFiW/+c8aJZVOHdBGe9cb?=
- =?us-ascii?Q?hoEGZfZTA7VJtJz6gy/jAJAJ52R4YrKbgkaoPpyLLx3JGSCfoKxKCYghmxAi?=
- =?us-ascii?Q?SPsMr/cNgoenOh7sM4DYWfh0n2bmXxR9m5oW54TKVIFhEXfDxW4c89btcqV8?=
- =?us-ascii?Q?GflzezhMuqtpldOzSKCzwX1fRfabuaNQX2a58rTDO/YYM92RTF6szuuHAZE5?=
- =?us-ascii?Q?PIzEVLgku/pt75Gl33J8phJkp9+h5FlobCP0YjRPt9f73U1MJVkkrjv/tH1v?=
- =?us-ascii?Q?+DN6qv/MqslXWvpapcBCir627Nqu3EUGrD67mGp760SAB6ZQM3PS2MmpC6BJ?=
- =?us-ascii?Q?WYIWwizwDeP/1SE9G+Hc/yq1HcZKaZr5Ezz2pxtUktvNGILcbPzactsGDU37?=
- =?us-ascii?Q?8S7HyuUsg8OFu4lyW0Z5bpRi7NocW61LN3LfETfXk1SSGVCB+5KL9OP3XAHR?=
- =?us-ascii?Q?ICOO5JFbp6rsa3L/JDNPIupdVxLWen47X7zypBNmaKoCAFpZfRA04QPcroBn?=
- =?us-ascii?Q?867chaubp9KaCn9nfbGCBExtgvF0tcWPpIQuIcuAk1WdfYTsoi63r94QA0qK?=
- =?us-ascii?Q?XWwSrclbUhVlI4af1A+Umb0iCadJQGyiFLbatzEBhoxMV9/8rN5ueWS3twq/?=
- =?us-ascii?Q?XHkRFOQiXKRkfZzCMgghueUaHDKWgsdP92CBXXawDaT0pmS+KAH9VhFVgEj/?=
- =?us-ascii?Q?PVUWaQV7z0rGWQY2wnQ6DUetkJzvCTPTZV5ETzvKGPwS77kwbpQ29DvXlpkz?=
- =?us-ascii?Q?xM9R+aMqb5wcI72iwepcSIvJ4TcUky23C9l5ytSX0E7j2qS/F2GtPVlUCrdE?=
- =?us-ascii?Q?2HapHKLJal4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xDbinSbv7FdrGIyT+q+LaSTa95mvcemK7kO5ZrpkP6J9kUQt0i44dwntzgOA?=
- =?us-ascii?Q?ReCDZ7iQ6fGfzF/oW69CFCLSpnASm5GIF2rM9u8uU94+Bxdx1UIj2ljoC8Wd?=
- =?us-ascii?Q?93nNKrjhxFSq1hWcq8Xt003ysGyYejE7gR2JszPi9KJRJhqR/fzFUq193znq?=
- =?us-ascii?Q?6w2uL2iWyy8kEXb2pvHlWt6wkFvjOj+UiFabmMjhGXIe/SUrvGXaGIqAvHMJ?=
- =?us-ascii?Q?DiBo4A89IW2xqltoEXQchppV6fkJ0eANDbQWU13JpuZI9xY7Nz2RChm8TyuD?=
- =?us-ascii?Q?ogT42MefNYIcb80yUoeOX4thBkIDnf5rB8roOc1XB2lvPqyGs++2X0UYSNsj?=
- =?us-ascii?Q?+Ek46Omvbi08eaHiNsfyse/ojRkrEneX8sP6KXStxjnRlujNqpVGINBnv5ga?=
- =?us-ascii?Q?EOwUcfFZgGojc27AAC6+BFKybaP5PkJWYkZTFy/bSjvftBo7IDTZgTPtjWPJ?=
- =?us-ascii?Q?S+7PkpUWY0ZzBoPUcWWsHxBCl3qZ9e93ajWsoIGzRYoyh/AzrzhqtoQbj8vw?=
- =?us-ascii?Q?VpJ9iL3Stj5fNy7TBz4RbzRKUuVhmG2RogWFYlh8x7UgO6i0sVYXvNPZPDJU?=
- =?us-ascii?Q?P2gq2YfHBxxws48OV4YZG8FPjHf5D0b98m2w0rnsR5CkYJGPaHTjjzbU2QsC?=
- =?us-ascii?Q?WdYUtQ0PlgVLfgIGNxhNipnLeaAIjgb76NZTItza9gYyZizhIlQsOuhX6nf5?=
- =?us-ascii?Q?edQAIXddWjedkv1smR/M9n4bU70iEtA65J9Fg/Q2NYGTShaXSpv1+FPaUItG?=
- =?us-ascii?Q?GsV3P7NOy1Bp+ZvTKUNVGpnoCPlFFDN9kCfKttPq6tp6Z3gfWRm/1+lXXhqb?=
- =?us-ascii?Q?jotwuz6+hoX4CEID6mkjnd5WJe7nx8gBIGf5Rm/0jJEiAhA6w4U2QzPiOuHS?=
- =?us-ascii?Q?G5gHOhgGSseti1iZ/WtMhDsHyDACuv44mxJIDxbUd0bZ1laMtPbh9GcsbZp6?=
- =?us-ascii?Q?cTBgfG/9NvN65UB9XLxRAasUn0O9WjTeY96C2B6yY+nLGN8jtneDnF5hBUDn?=
- =?us-ascii?Q?Xf3XC2KtCrHPGt54YaCYK2wyOp2nsbhOKwY1P+w3xEvV9HXPAS9mZf1ewZ4+?=
- =?us-ascii?Q?yW+40fda2pVTO32h/Bl7Ad35WTUcdTXI1/c3Tk2FtNNvOKltY8F9O1aU9jkL?=
- =?us-ascii?Q?1Ig5zcLUj5ehra2O1iJ+6AeJnMq1iJotxuMUWnZn2KD1wZInKIRMQ/XzwNZi?=
- =?us-ascii?Q?H6H6RNzG0aqRNV4Tpd1AAw87zRu6Jk+vr/bRS6gjhoH8PjqUm4QcqGiu77NT?=
- =?us-ascii?Q?2ZJonqb+3OnX/JXhh0ZmtOORvnKyjoyChjgG8U5+Mt9RIK2/hM8034ydaaWj?=
- =?us-ascii?Q?otqdpSGNylyQ1xAXarucN35l2sKw8LXlmW5BqXO3lk4Tvix0YwhfO/YKrws8?=
- =?us-ascii?Q?6mTn7hruQZSQJiF/SRr+GtP2frm4wHWJwMeciNwUTlG5hKwR036p+PeG4AeO?=
- =?us-ascii?Q?hFyRSHuiOlfevYNgJADi1O80UY+aXho0IiNdRkpLsmZQhkJmRIFnx73k/J1w?=
- =?us-ascii?Q?QiiB1YkgsWSRx5Lk6KxOeVvDnXUcaHSVWqJdPCp5zxTzI5B3NkB80xyKNCUn?=
- =?us-ascii?Q?KWFl8FLb5hjhHi5fZTwlTuQ7wpjQOb2ySPEZElYF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95b2c6cd-cf08-4bb4-de84-08ddea42da55
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 17:05:00.9838
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0K2b5f121PxcR833qz+mmdpQVq7RmzfmP8ZvghqhRGwjf6SmhnIU8lYr5bM7w/uX
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8904
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+Sender: rene@exactco.de
 
-On 2 Sep 2025, at 12:25, David Hildenbrand wrote:
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-> When checking for actual tail or head pages of a folio, we must make
-> sure that the KPF_COMPOUND_HEAD/KPF_COMPOUND_TAIL flag is paired with
-> KPF_THP.
->
-> For example, if we have another large folio after our large folio in
-> physical memory, our "pfn_flags & (KPF_THP | KPF_COMPOUND_TAIL" would
-> trigger even though it's actually a head page of the next folio.
->
-> If is_backed_by_folio() returns a wrong result, split_pte_mapped_thp()
-> can fail with "Some THPs are missing during mremap".
->
-> Fix it by checking for head/tail pages of folios properly. Add
-> folio_tail_flags/folio_head_flags to improve readability and use these
-> masks also when just testing for any compound page.
->
-> Fixes: 169b456b0162 ("selftests/mm: reimplement is_backed_by_thp() with=
- more precise check")
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  tools/testing/selftests/mm/split_huge_page_test.c | 15 +++++++--------=
+> On Tue, 2025-09-02 at 18:51 +0200, Rene Rebe wrote:
+> > From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> > =
 
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
+> > > Hi Rene,
+> > > =
 
-LGTM. Thanks for fixing it. Reviewed-by: Zi Yan <ziy@nvidia.com>
+> > > On Tue, 2025-09-02 at 18:40 +0200, Rene Rebe wrote:
+> > > > Hi,
+> > > > =
 
-Best Regards,
-Yan, Zi
+> > > > From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+> > > > =
+
+> > > > > Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user =
+to accurate exception reporting.")
+> > > > > Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-ber=
+lin.de>
+> > > > =
+
+> > > > Tested-by: Ren=E9 Rebe <rene@exactcode.com> # UltraSparc T4 SPA=
+RC T4-1 Server
+> > > =
+
+> > > Thanks for the testing! However, this actually needs to be tested=
+ on a SPARC T1
+> > > as both T2 and T4 have their own implementation that is being use=
+d. Testing on a
+> > > T4 will therefore not invoke this particular code unless you modi=
+fy the kernel in
+> > > head_64.S to employ the Niagara 1 code on Niagara 4.
+> > =
+
+> > Ah right, sorry, IIRC you wrote that :-/
+> > =
+
+> > > Do you happen to have a SPARC T1?
+> > =
+
+> > Unfortuantely not. A T2 user might have one, but I could also modif=
+y
+> > the kernel and use the less optimized T1 code if that helps, ...
+> =
+
+> I have done that already to test the Niagara 1 code on Niagara 4.
+> =
+
+> However, it would be nice to test on a real T1. Unfortunately, I have=
+n't found
+> anyone yet who got one. If you could ask your users, that would be gr=
+eat.
+
+someone in our Discord probably has one in the basement or attic, but
+the chances of them turning just that system on the next days or weeks
+is probably rather slim.
+
+I guess testing all the "popular" systems: vintage collected
+workstations and affortable more modern higher performance T4 servers
+is all we got for the near future for this patches.
+
+       Ren=E9
+
+> Otherwise, we will have to go with the current level of testing.
+> =
+
+> Adrian
+> =
+
+> -- =
+
+>  .''`.  John Paul Adrian Glaubitz
+> : :' :  Debian Developer
+> `. `'   Physicist
+>   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+
+-- =
+
+  Ren=E9 Rebe, ExactCODE GmbH, Berlin, Germany
+  https://exactcode.com | https://t2linux.com | https://rene.rebe.de
 
