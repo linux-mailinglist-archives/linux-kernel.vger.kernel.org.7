@@ -1,151 +1,108 @@
-Return-Path: <linux-kernel+bounces-795686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2395B3F675
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:20:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DA7B3F679
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4553A06B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F03188B1A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2EC2E7BAA;
-	Tue,  2 Sep 2025 07:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CFB2E6CD3;
+	Tue,  2 Sep 2025 07:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Eo0OeJED"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SFsIIt1E"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D742874FE
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B013398A;
+	Tue,  2 Sep 2025 07:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756797564; cv=none; b=A124J78B0yCq8Rj5JmNQsylMdDxp+CFT1FvyTNfFM/hi7rQJBVCZSWsqTGtWCs666oYDh0V4qG+rO9XDW26pYQs+bZ84TP/s25IlrDMhtKbmkiYOpfwlwUSvRj7h2BCjaba7zaBprewe7ozQBXnSWaKNwVmmPydr/HNXDEGnqMQ=
+	t=1756797573; cv=none; b=edx9XV+4HLb1B6wIHFuzZXLeTMDmyVfr6hJ+YsicQPJ2SCLUDXKqhKX3cN6lLrAEP3KRH2suranFRLjOJHF298xjc8jACwnTIVBegYTczfre5Y79KLFbqT99NvIIJf/vex46KPW9PNgBeDSVfO1koRXTIn0H1eevQ7zryfsgXZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756797564; c=relaxed/simple;
-	bh=740BcyIhKfKfRRxyo0ai5JUQmNTeZhlHh8EQv6Fx4lY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UA3EhDkszKQsLsxaATmD8BwnicN+oPyy0+Vb4KiVcrLsfqfx62uAWuW2yuA92zL7rbmYgPq9yeFxC58RQ2UnMFo5TyU+mVv3/+6Fa0aKD8Ztv8pf9LFhxSePpxz0riygiZfD6rAmfQPVkfHozgrOZm7SI5d6AuFCltLDddzb7UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Eo0OeJED; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-61d0976931aso4629402a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 00:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756797561; x=1757402361; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W/K4EAZLbBVfhRbNqsGgmHLXOOZw/G+x8hknE2VHBmo=;
-        b=Eo0OeJED2liFTBqkMuJV4XF3t+NRZZcZ/usN1BizoUyWtcXg4MiwSe9eGD2Ubyge/y
-         TJCaM+19v50LKyvKAlW8WfUJWXvXfI2hm/wak9DVPXcl+RkAZc30F5/IjFuX7L+HF59e
-         2Rl1+A63C1SPEEImAGWBqUZQb0tUdCsDZ2rUf3sAroT2vSa2OzP0kCLIUClgMyhR30HF
-         8px9pJ+DHY7VhujdpJvCP4NTSYYUR9ScDMC0Zp5fE5jAQgo/5AJUsEr9ZdqtAJ9ODfXU
-         GFEK0c914YsfXM65CaSCj0eHpJHA60osNCDq1KCkosiTHwMo5d1BHO4nIBgjyOtPl8hB
-         /8mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756797561; x=1757402361;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W/K4EAZLbBVfhRbNqsGgmHLXOOZw/G+x8hknE2VHBmo=;
-        b=U5Tr6P0uvINZuzi2Yh/F7QP9C8nwiFxmkblutHKKmbttq+LaBjAbkZQ69yNuFbN9jO
-         qqCAs6MCtG7jmzUG9gUFq46LPebfdrHQgK0RCvk0igLhbEFpTR3+aZfN1s+L89nD1RP9
-         OhxU6XuFhX8zIg4WaNJufSVJ/8gq28gfHD+42i0i/km68ginkIf/OJEaQ4CtY6LO45mf
-         Mh68gf24erAm+wn8dVaWxGU1U2dQpLYidrx+GRL9OX3VxwWFF/9eOgEMLegOnNSY95jE
-         TyfIpQPgXYxgeP7Jr9JHozhYCBwdN47toUQQXxcK7hvwzu4iNOlrBSeEWM6kagNS69Tw
-         4SOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIVoMj7W3Q4CcX6jN1Do3CuXVmJUJvnft0UFzrWgKIICpkAwhSwTCd6WjxhsZ4dqcxA1NzeTDrOC5Hz1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCuaSpoewEaBRmSDiH0pV0u3tNWqIIt9yD2e1NlBtiXq8bG0T9
-	PGybJsNihkcwiu8GUbCm6zQN7a76phIACIJbv/oYoTDWea/DRlKvFAAB1KvCznH+k5LHsIG1V0k
-	DgDvzJnmXug==
-X-Google-Smtp-Source: AGHT+IHu2RMCHU3NLYzXEdHLc3fvO1cupuIIfSxhMcWwMgEIP0sFksi/5BBq6DCJB2k0Nf4r8SmzBphWIWRX
-X-Received: from edbfi13.prod.google.com ([2002:a05:6402:550d:b0:61c:5514:9cb7])
- (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:90a:b0:61c:e9b5:74af
- with SMTP id 4fb4d7f45d1cf-61d270e811amr9136642a12.36.1756797561020; Tue, 02
- Sep 2025 00:19:21 -0700 (PDT)
-Date: Tue,  2 Sep 2025 07:18:47 +0000
-In-Reply-To: <20250902071847.2330409-1-abarnas@google.com>
+	s=arc-20240116; t=1756797573; c=relaxed/simple;
+	bh=vVgwgVzEMWlikUJECSfpRUa84C1idq6eOOvLSGoLov0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yq00sJfVxXUDVHUC1+cYhzz57l2Ru9Vwdmhpvnqv8hMvURgjII8Jn0Ia3Xv6rAuKL6g9wTo+wIWIRCTPZ51hgl9ZNVt6eBB9JGgt28iy18GPLgkACxVWSdqJemhjwRf7aBNLw5uhoAEeVo7zbGsRGzfr2gkkqT/yDR7nwb6sy4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SFsIIt1E; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5827JP5I2532518;
+	Tue, 2 Sep 2025 02:19:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756797565;
+	bh=KT7JicJZRiu8apATeQx77YRG8k9V3czfM8WH2/QK/0A=;
+	h=From:To:CC:Subject:Date;
+	b=SFsIIt1EbUA0jhoMOpNFn+41Tp6+HMai7gXZRAKPtYyO7j2wjKQzhQk2Z+3wmObKz
+	 Jy8BvVqxIJ7HzLoGeqVk7qB/kgrT9ceHnTGB/aYWVapMA6V9kNp0kQtYpR527hbs+g
+	 I321BG3PPSv4L1dEznqDuBnc6W8wTG93VdrNZy6k=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5827JP7G2558467
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 2 Sep 2025 02:19:25 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 2
+ Sep 2025 02:19:24 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 2 Sep 2025 02:19:24 -0500
+Received: from akashdeep-HP-Z2-Tower-G5-Workstation.dhcp.ti.com (akashdeep-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.177])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5827JJgZ3689199;
+	Tue, 2 Sep 2025 02:19:20 -0500
+From: Akashdeep Kaur <a-kaur@ti.com>
+To: <praneeth@ti.com>, <nm@ti.com>, <afd@ti.com>, <vigneshr@ti.com>,
+        <d-gole@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <vishalm@ti.com>, <sebin.francis@ti.com>
+Subject: [PATCH v3 0/3] Remove unused bits from dts and add support for remaining pinctrl macros 
+Date: Tue, 2 Sep 2025 12:49:14 +0530
+Message-ID: <20250902071917.1616729-1-a-kaur@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250902071847.2330409-1-abarnas@google.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250902071847.2330409-4-abarnas@google.com>
-Subject: [PATCH v2 3/3] staging: media: atomisp: Remove trailing comments
-From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
-To: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Remove trailing comments in pci/hive_isp_css_common/host/vmem.c.
+This patch series cleans up the dts files to remove the pin control 
+DeepSleep configuration that does not take effect in hardware.
+This series also adds the remaining macros in the pin control file 
+supported by SoC so that any configuration can be used as per requirement 
+in dts files.
 
-Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
----
- .../media/atomisp/pci/hive_isp_css_common/host/vmem.c     | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Change Log:
+V1-> V2:
+  -Added the macros that were removed earlier for backward compatibility
+  -Fixed the indentation 
+  -Added documentation references in commit message
 
-diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vme=
-m.c b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
-index aa67638a09a5..547cc480c105 100644
---- a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
-+++ b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
-@@ -161,7 +161,7 @@ static void store_vector(const isp_ID_t ID, t_vmem_elem=
- *to, const t_vmem_elem *
- }
-=20
- void isp_vmem_load(const isp_ID_t ID, const t_vmem_elem *from, t_vmem_elem=
- *to,
--		   unsigned int elems) /* In t_vmem_elem */
-+		   unsigned int elems)
- {
- 	unsigned int c;
- 	const t_vmem_elem *vp =3D from;
-@@ -176,7 +176,7 @@ void isp_vmem_load(const isp_ID_t ID, const t_vmem_elem=
- *from, t_vmem_elem *to,
- }
-=20
- void isp_vmem_store(const isp_ID_t ID, t_vmem_elem *to, const t_vmem_elem =
-*from,
--		    unsigned int elems) /* In t_vmem_elem */
-+		    unsigned int elems)
- {
- 	unsigned int c;
- 	t_vmem_elem *vp =3D to;
-@@ -192,7 +192,7 @@ void isp_vmem_store(const isp_ID_t ID, t_vmem_elem *to,=
- const t_vmem_elem *from,
-=20
- void isp_vmem_2d_load(const isp_ID_t ID, const t_vmem_elem *from, t_vmem_e=
-lem *to,
- 		      unsigned int height, unsigned int width,
--		      unsigned int stride_to, unsigned int stride_from) /* In t_vmem_ele=
-m */
-+		      unsigned int stride_to, unsigned int stride_from)
- {
- 	unsigned int h;
-=20
-@@ -215,7 +215,7 @@ void isp_vmem_2d_load(const isp_ID_t ID, const t_vmem_e=
-lem *from, t_vmem_elem *t
-=20
- void isp_vmem_2d_store(const isp_ID_t ID, t_vmem_elem *to, const t_vmem_el=
-em *from,
- 		       unsigned int height, unsigned int width,
--		       unsigned int stride_to, unsigned int stride_from) /* In t_vmem_el=
-em */
-+		       unsigned int stride_to, unsigned int stride_from)
- {
- 	unsigned int h;
-=20
---=20
-2.51.0.318.gd7df087d1a-goog
+V2-> V3:
+  -Updated the commit message to be more descriptive and Clear
+  -Fixed errors introduced in previous version
+
+Akashdeep Kaur (3):
+  arm64: dts: ti: k3-am62p5-sk: Remove the unused cfg in USB1_DRVVBUS
+  arm64: dts: ti: k3-am62x-sk-common: Remove the unused cfg in
+    USB1_DRVVBUS
+  arm64: dts: ti: k3-pinctrl: Add the remaining macros
+
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts       |  2 +-
+ .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  2 +-
+ arch/arm64/boot/dts/ti/k3-pinctrl.h           | 55 ++++++++++++++++++-
+ 3 files changed, 54 insertions(+), 5 deletions(-)
+
+-- 
+2.34.1
 
 
