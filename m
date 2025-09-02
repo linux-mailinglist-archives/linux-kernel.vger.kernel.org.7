@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-796721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C6AB40645
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:12:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F89B4064B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A9B93BACE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:11:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8468E481508
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB702E0909;
-	Tue,  2 Sep 2025 14:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGGOM86H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCA82D978B;
+	Tue,  2 Sep 2025 14:12:05 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF99E226CF1;
-	Tue,  2 Sep 2025 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95B52E03FF;
+	Tue,  2 Sep 2025 14:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756822298; cv=none; b=GHBq8UoOwJaqcZTT5aOxmSEwPIo7vjnKvrPNhOGj4JmlXo79rwbOyuORRYW9lvIoEA98jhU0rVsK1tVs8mH6OJAGRnLyEj0WAD7G4idDNPGVXLsscSYsZ258ty1aFsXNt2kqbG34TcVwFMu+AfGI51zBuGgAHQbf7eKFDwr2mtQ=
+	t=1756822325; cv=none; b=i9egcJG3AT33IEhv+p1O4TU7Cg8pGLURj0YJY53uNGh+l2kZ1ja1aVLaMpTH2HhnRdtKHczsRNxAwfKojQIevXswwhhQO7RtnH66fyXCdGD8h96gs/8Ph1xWbLcCUAMrww1V/qpFUyzhwbW/4Kn6KA/qkKDIYf1+0tjSJKnjlk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756822298; c=relaxed/simple;
-	bh=T3wyZ6jtecqFDOGjVL1fyOX/b7Gmqgj53Psy+nVhaxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TnQ3wrmQCNCZXB0veX2/D6vEWtj3Z83aeSOxoktlA81DmNbPaIySidsD7R5NoOCPcLM6tW9D/xb2xnTI6tYOJtabiBKZbXCpoAPqpep2g+McCD2ZPZYAoetI1h60MI4XdYugNhQipjJPIIQC5/y/iWMIysE2SftZLHNw9oZlV1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGGOM86H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1832C4CEED;
-	Tue,  2 Sep 2025 14:11:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756822298;
-	bh=T3wyZ6jtecqFDOGjVL1fyOX/b7Gmqgj53Psy+nVhaxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PGGOM86HcFpJ3YVUjeAOSaRCxRnk6EAQ2f9GFx0xl2YwcXWNHKEAJVJ+lRasFvNEo
-	 z6HTyRa9bLS8/m8dWbDjncohPJhC6GhJL6VWIA762BxoY3L7/CbCnl6RZ9Qhlqu/Yx
-	 64PeucOP6FW6oiDD6kzJMuUaGwETnec1ChpGjbODt0C+85o8nea6e8T7EsbfVgysSY
-	 1Pv5bbO+g9W/E+zOwqsKrf3Lm676SKYj3soWjgdy4EM0a+8vz4wyZynCuTda//V8Rj
-	 qOwRGcwlm9N2cYeMRlvDwk6M8YPJ1zoCmcrFKzMSjLmhLlrdACcj6bz42+tDl08JGl
-	 SziNxYvIE6v7w==
-Date: Tue, 2 Sep 2025 16:11:34 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Conley Lee <conleylee@foxmail.com>
-Cc: andrew@lunn.ch, kuba@kernel.org, davem@davemloft.net, wens@csie.org, 
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH] arm: dts: add nand device in
- sun7i-a20-haoyu-marsboard.dts
-Message-ID: <stdtaaoxpnwbinjk72nutik4dsh77iywfqpoogtgxhebkuxcl3@yhnu5u2wvtsb>
-References: <tencent_57056C4B1E98EF5C0517A5685B2E4D060508@qq.com>
+	s=arc-20240116; t=1756822325; c=relaxed/simple;
+	bh=vFk4wZIKLTuP9VFeA1gxmxb/hgZzlz38yZUVJ/2FXd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AKLllRj0vxl2WHTltxRFdhSzlhJkFiGwCiYo1j8To/Ea9G9mhlbY3+f5dYJMGoMdgRr+O2hsQ81WUQqgmAKPzXl4zfjSof/Ij35Q/vxiQEL3A4LgEfMyBg5LK6wTZQi0USl/YCkT4/DwKobDcIKbhclOuAlWKetTeFoYVZj+X6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 38965B6B60;
+	Tue,  2 Sep 2025 14:11:54 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 404B720025;
+	Tue,  2 Sep 2025 14:11:52 +0000 (UTC)
+Date: Tue, 2 Sep 2025 10:11:51 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Luo Gengkun
+ <luogengkun@huaweicloud.com>, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault
+ during preempt_disable
+Message-ID: <20250902101151.7b6bfabb@batman.local.home>
+In-Reply-To: <aLVqyEGoHKVCFGFR@J2N7QTR9R3>
+References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
+	<20250819135008.5f1ba00e@gandalf.local.home>
+	<436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
+	<20250829082604.1e3fd06e@gandalf.local.home>
+	<20250829083655.3d38d02b@gandalf.local.home>
+	<aLIFRHcsEo2e2GE7@arm.com>
+	<20250829181311.079f33bf@gandalf.local.home>
+	<aLVqyEGoHKVCFGFR@J2N7QTR9R3>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="zip2peffqy3jbkf7"
-Content-Disposition: inline
-In-Reply-To: <tencent_57056C4B1E98EF5C0517A5685B2E4D060508@qq.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: yfdqd1rqmcrdaxngseijdutusixhu8z3
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 404B720025
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/3a4ZlCJqnzjOJTHcJTR8oy/SOfj8p6YY=
+X-HE-Tag: 1756822312-777584
+X-HE-Meta: U2FsdGVkX1//P+0V3cvSYifPjfQTtkjYA3kwKM05QyUhd38/lHcPSo2h/lta995pbi6WwAdjmyuSvNRcAQsD+hL5ESmOEB5mv/qd53yLYb1p6qvs0wiQYvakljuWB/zDPPzSBmB8oUJlf4gQ3Y41+2g7armRU8zyjPg3RdFnYs87QO4MYtihj2V+61TAZk8OPbCCi0IiCH42iaRK2MY7PWspIgcDxkfFj8gpYMhkqzHYKTNOpAMp4LZv2duSryOYi7OlaXm31KgYo0WBZxl8YClJNNLoaTJg3WHoaSNDZP3P2qUPcfiQBuHUlS0za9z0BOM7c6V0RNjIYwm1tIHYYzPk6Gqunk0cY4xhbjUaUxQpVC/DmJcnV9K7jnlg3dLD
 
+On Mon, 1 Sep 2025 10:43:36 +0100
+Mark Rutland <mark.rutland@arm.com> wrote:
 
---zip2peffqy3jbkf7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] arm: dts: add nand device in
- sun7i-a20-haoyu-marsboard.dts
-MIME-Version: 1.0
+> > So, __copy_from_user_inatomic() is supposed to be called if
+> > pagefault_disable() has already been called? If this is the case, can we
+> > add more comments to this code?  
+> 
+> Just to check, you're asking for better comments in <linux/uaccess.h>,
+> right?
 
-On Mon, Sep 01, 2025 at 05:05:21PM +0800, Conley Lee wrote:
-> The Haoyu MarsBoard-A20 comes with an 8G Hynix NAND flash,
-> and this commit adds this NAND device in the device tree.
->=20
-> Signed-off-by: Conley Lee <conleylee@foxmail.com>
+Yes.
 
-MLC NANDs are very unreliable, we must not enable them by default in the
-current state of UBI / UBIFS.
+> 
+> > I've been using the inatomic() version this
+> > way in preempt disabled locations since 2016.
+> > 
+> > Looks like it needs to be converted to copy_from_user_nofault().
+> > 
+> > Luo, this version of the patch looks legit, no need for a v2.
+> > 
+> > I just wanted to figure out why __copy_from_user_inatomic() wasn't atomic.
+> > If anything, it needs to be better documented.  
+> 
+> If that had roughly the same kerneldoc comment as for
+> __copy_to_user_inatomic(), would that be sufficient, or do you think
+> both need to be made more explicit?
 
-Maxime
+Yeah, it would have been very helpful to have that. Note, my use of
+__copy_from_user_inatomic() was added before copy_from_user_nofault()
+existed. So it would likely not have been helpful back then ;-)
 
---zip2peffqy3jbkf7
-Content-Type: application/pgp-signature; name="signature.asc"
+I think even adding a comment to the kerneldoc of these functions with
+something like:
 
------BEGIN PGP SIGNATURE-----
+  You probably want to use copy_from/to_user_nofault(). These are more
+  for internal handling, and should be avoided unless you really know
+  what you are doing.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLb7BwAKCRAnX84Zoj2+
-dguyAX9u3yR4AN55O69wO/UyeI+BKx82ca33p0QxRMC9v3A6uvffoiSuhq3FxYFT
-tauF1e0Bf2nxCJpegHoktTqCPgJG1BXoVvCkL7sJHt0f6IDGzK+M5LJLOSLE7qap
-ur39lheVPw==
-=Z7CA
------END PGP SIGNATURE-----
+-- Steve
 
---zip2peffqy3jbkf7--
 
