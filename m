@@ -1,87 +1,136 @@
-Return-Path: <linux-kernel+bounces-795448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6162CB3F226
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:10:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69906B3F22D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ECE92048AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:10:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4241A85C7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A197526A0C7;
-	Tue,  2 Sep 2025 02:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A370A26E703;
+	Tue,  2 Sep 2025 02:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZVlNej93"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdlHmDdd"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04501189BB6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 02:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732924414;
+	Tue,  2 Sep 2025 02:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756779014; cv=none; b=uIKDO9bYditOt1r5NMbrvgT0xNo7mG7fJcT3qa4st15actGgKMU+mRZ6eZLcCajm3CK+cL29TPjKpJ7lDGoNFErfHe21/Y092TKMbUsLrXL6Zl3/jV3BVX+fPgQKOYMq6NHB+jGwgcJDdVXMJ3AZl4csppvV3jElEFGrITPexVk=
+	t=1756779513; cv=none; b=KFAld2ahQzSZce0k0rFCckP7BEtHZrIgJfDUX5L41n8jyGLWPW6tbqHbOP12maAuqtje+CnGSlyEXHg3uVkv+9qxjl1J2gByv53WBEJPy+ClJIQb2e8UmPfNZTbKLjDt4zWZnLo3scu4JMWBuzynvOmUPlWRTKeitFPeKkjEtic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756779014; c=relaxed/simple;
-	bh=M/1zDnriG8ilm2H7iQwKqlgOR9ONJObBvnbqBpDcnsw=;
+	s=arc-20240116; t=1756779513; c=relaxed/simple;
+	bh=jWj77n90lpscowBKxGnKxCSWqltp4ZyNo+bBpxvz3sQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCE2FtHiDSj45TdvYI1JSVKzJa8JJSy2BmSAGGLfjhah0u6CXzZeYBAghBsVM5OQGzUrHg7I1YUkusag/h4ZmVkmV1U569pe7YsJWrHlU36+rJSsRMlEwtKNbERtsUVu7UWWBVM0yxQ3R46v7zCIYLHjbcroCrGPqqNoI/OBg6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZVlNej93; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4d1e7d5036so2256985a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 19:10:11 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JvTLNH5Vl5OFHrSn+cYwyW0XZO1kreZ8xcdWIHazCe66iZiBHvxulRhx5XrWbI6yUBqJSakShmW91f9+5FiCz0rgKMtEje5Npjlt5rR+lRDUIc8JutJGMXWKtDYkemvinud3R2rrVDAh/viM7nBOEVqf+rZLDK67/LRtlviC08U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jdlHmDdd; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-70dfa0a9701so50934866d6.2;
+        Mon, 01 Sep 2025 19:18:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756779011; x=1757383811; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756779511; x=1757384311; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xMToDNcwi+JjPobVyHU6qbfn2l8RCkFP2dBoE6EGpl0=;
-        b=ZVlNej939gxr09q0GM+YkdQbts4n+A7/WDy6lQGMTe+CSgevjctOJWFRmo9K+8B3Vb
-         bzvKKJjCW4SXgU+F51r0IX305wWapSdNGjvuSDmBpyjSqU9NnVw3BVEvcwkjD6GgxX6F
-         ghQZ4eUznJNHG8B1AJgGfl/HKuJeIIYcRaw3I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756779011; x=1757383811;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xMToDNcwi+JjPobVyHU6qbfn2l8RCkFP2dBoE6EGpl0=;
-        b=CkwHSRu6zm6pJCv4SfreFVGSzlF9SajKgAF2eJfpK2ntc02Eu7GPUnNMBjiXHF6QLL
-         NQDav8dtZqS7CzyUH2zcPWF5u0kyXvf6tE0Xmwk4SOHUuy8yi8NyiVYsjN7BxuePc19o
-         DGqaByDEmIRdV5ETqtqWdVGBZ9Wp1DEtDPnrM1E7mXAV/AGKGtpKU1gzmssMawJaiFVO
-         /PH+D8QhPtrIJ1uGBMvXjNpw6Vq2onoCUPeHu3gG0uTsHZ7fA2BQQc7kqsvYrvAZWthw
-         Y8V2q2dsAIErxN5LFG1i+6quUn4SVPOBZEglBrimxmYzxkDI6vS1+ZpQ2smdRTVlN1/A
-         90Eg==
-X-Gm-Message-State: AOJu0YzppPDGiScPfDoxbs+Wm6RimFgGk1HOQZ1n1wxFLKmMn9mGfufo
-	WaIRihf2iL4xwz7t3wrLypCOCGa6xIYyo2tGrahCOnrDmJsRbCuXUnmECs+VdSXLBw==
-X-Gm-Gg: ASbGncuM+Nb4isWxOV7prdfyBAD3CrjKTHOO0wxnC9/i+Z0MbY8Bv7VYUXr2dPeYnxT
-	R1D5iLqckF8iY7BDNjTEf3zig6QWscIaRGQrm+QbAcFYAThmhwPiuxVzMft04bLtDjExJASonVu
-	tKxg/wvjRgfQmEvkJD9CJNVvmHRbHk3FJSmpbPjziPDGmTEMBRrT3KYEidz/S8Awdv1bkbdg4qE
-	gokHOOo52B+XIjrvT4Q0XRa2yvyT8hCUt76fMN8Lk76ngfgJmJVVSfb+IIxtNWYD2qHe98Wckw0
-	mSLRa6vDIvE9g1eW9/QtSLA7i/QEPMEMqzaG5OJR1aU1iQ03ccuCuUgmQBNFFzA2y6ChTwxgWEU
-	fIcIvtISI7XS882R+g03guk8s+A==
-X-Google-Smtp-Source: AGHT+IFFsgaUMNmStaw7X17phzd3lUhWjfR+pBLqnu11jIGmAdr9OFQevWfZTFcfLRVDyRy4wJSiFA==
-X-Received: by 2002:a17:903:28c:b0:248:fbec:7c99 with SMTP id d9443c01a7336-24944a7728bmr128727935ad.26.1756779011223;
-        Mon, 01 Sep 2025 19:10:11 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:52df:d776:7862:776f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b0d881afasm9754075ad.47.2025.09.01.19.10.07
+        bh=UWBJ11Qq2wI4UtNYw2ns787DwY45sHPfRhY5E7/GIKg=;
+        b=jdlHmDdd0pjGUuSFsUhb1Ff9PJZLkfybLQeBLUkaFHpyvt9FsfTC8WXIbk/OL20183
+         He7QRLEBufHB6D5gPlVm0tWSQNaSWWMLKldXZdgxRIGVoxMrfs3PYhT21YbNHeAN68Wb
+         +50FbeMxHl0TcVdE4S2HH5jtSgaUO12o3WuWTs/Ee4EdbSOqmulk6ZE74jBMUjD2QfKD
+         MaPplKyQN7JUwcytTKizWrxS/96SjvELvhWHQuRx44XMWJUJ2apGJUS4keb5uwt4PSCY
+         HrJI+bW+qyUN7uLJv5DlMSsYchagsjYAZlZQkMRqzti54839cATWmCRqymVRPfjpDrGe
+         lwjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756779511; x=1757384311;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UWBJ11Qq2wI4UtNYw2ns787DwY45sHPfRhY5E7/GIKg=;
+        b=AOO8LK1/lMdwufp1GIO4UFMxlfc8BEeGbThasavDLRCqB9ovMSvzEWXe59y9e/4neb
+         DpPO7OjgvyRLz5FNRTVKeXfH8HKH6pTHn7sadvjwbx893MiI5trUSFYw1AcbVxmGuJ4a
+         NgDbHURBo994NksLERRuH3K9uy3h4omozZLFV4Xe1ELfk9OfMp5pwkjTaGuSuuymJjIE
+         ZTZCDidGHiLhfndYA/aKCDh5Dj8DizgCdLrIH0CYhcxoaIkSdp1dwmWhMmBVsZToJ0CL
+         k76jKtrCbp38dj5m1advdq9UbBivmUdcP05Q+lHHW2E3I38sQaCsJcwKNck7XyxUoKkj
+         fTHA==
+X-Forwarded-Encrypted: i=1; AJvYcCU301uqu1MdMLICjSc1kQYFmVuWQihBAFvAL0OtE8DAQ3anNG/JFZ/qZTvajjbBG0V6SKI6RRMhTiDDRtV6vCQ=@vger.kernel.org, AJvYcCUnbo+n0LNSQo+KyU/vzU3LUGHzrum6VaOyFeW1Ayn2mNuB3WMCPL6dFZk4D2YxWWsnyuiPS125J943sFq+@vger.kernel.org, AJvYcCXYPGEwijfcE6FyZ698F4oeaQ2aRbzUztSiLOzvr1ka802HofXbxnLfF0eDiBtbn0NoQUCCuOu3SHXubg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YymVVQM66HBo93YYNFF4Jn02s0q7Qokt0defF5W4nOhT04r7obL
+	Gsp5dA7QbAguk6p0yccRHlhWIi/A2OPMJtXcOusE35fixBi+boaK5xYe
+X-Gm-Gg: ASbGnctysCZ71dr3hM9bQgnTN7hTcZO6hNQr0VcJTyp4eQeLsBCxW80K9Z7BcdGsP53
+	ef5RZImdX+tlo/4YQgP4gntYYeWXLAlG/w9yT4d0VzCkJHLbIbYyMayPsVcmhT13Q6hfk2SlEG2
+	llQ3B5vEjO6zpyOfOLrGwFj8G7F0OYZxB4kIpywAfY0QA/9QB1VEhVXcC60euoMc4p4J/ctAPaf
+	1EywSikweLTuJ9H7e6SQ4ix8xX75Olbs82ZZDUUXdJ95XM5Te65APdKQStrPUhQJ+svW9gQMiVz
+	sT/YAXmveY+2XkUP5LElP2sKn7wxKKikWSP/IKjJS3WO2mQNjz0pIqBtO8AE7s/IGDWVV3AF9fb
+	VPshaGPR77A7dT1K1Bvl80tN/GrX2v2/E+zGA5JVrPKeFYIB9IKmC6wgQmcx32/o/PC6d1owv3v
+	9jcR8KPjebibpLEk2mRQYxegE=
+X-Google-Smtp-Source: AGHT+IG6behPS/qlT6YHslNmsEgfGWxFdm9Wdo1jFvdwOEInGgJroYZc+1zppQUWObXRDWoWBR3kkQ==
+X-Received: by 2002:a05:6214:c4f:b0:713:8ede:6143 with SMTP id 6a1803df08f44-7138ede838dmr82846946d6.39.1756779511019;
+        Mon, 01 Sep 2025 19:18:31 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720ada83b25sm4354766d6.27.2025.09.01.19.18.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 19:10:10 -0700 (PDT)
-Date: Tue, 2 Sep 2025 11:10:05 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Vlastimil Babka <vbabka@suse.cz>, 
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Brendan Jackman <jackmanb@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, kernel-dev@igalia.com, 
-	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>
-Subject: Re: [PATCH] mm: show_mem: show number of zspages in show_free_areas
-Message-ID: <ypp4byiagmgmdaaq3wskjxwxvub7pxhhqlvwsrhsyqlapqp5v2@rbfidxth3z6z>
-References: <20250901183729.3900578-1-cascardo@igalia.com>
- <f25b1ad3-c2d9-4267-bf7d-f48c78beebc7@suse.cz>
+        Mon, 01 Sep 2025 19:18:30 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id DAACAF40066;
+	Mon,  1 Sep 2025 22:18:29 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 01 Sep 2025 22:18:29 -0400
+X-ME-Sender: <xms:9VO2aEww9VI41cJQVBm7aX72hP0vx3zTOCKuu7wTz1Mxg8QJTIHI-w>
+    <xme:9VO2aOv5oxMejQ0wU7QI-tHsP6xf_313EET_Nhsr9IAkZDLcm6V-uWCBynpmqxxeq
+    FgA6-gT0MniimtGtg>
+X-ME-Received: <xmr:9VO2aD0_DahIfT-FIbpPACdjcLEgVRqD_igdAByZbKhwse_iwMbhM8X1k_Puabh5PHR6xtZOY0YEiNan9BuvHagm4nGN0-4E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduleefkeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffei
+    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
+    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
+    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
+    gvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehlohhsshhinheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgrrhihse
+    hgrghrhihguhhordhnvghtpdhrtghpthhtohepghgrrhihsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgi
+    drghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghjohhrnhefpghghhes
+    phhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtgho
+    mhdprhgtphhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
+X-ME-Proxy: <xmx:9VO2aK7IaiUmU6tIPyLw9Udp70s0onsFCmygs1-yJIxA8WfZRmDrvg>
+    <xmx:9VO2aFN3_WAm99DwRrG_RwUY4WAVLUedsZ8_i0JldkC4ee_QC3p0zw>
+    <xmx:9VO2aOFk05rsPrn33QqccGDD8t3Uwc_xOuRamn55BJbFRBjXQDT_pw>
+    <xmx:9VO2aJ3By6C7U50F4sCStNGdvj5miFB0j-angsniLUubhUzlJFfidg>
+    <xmx:9VO2aFEblm-SL7iYjIk3JSsRFU8PJngeVXxP_TCH2LiYwTMeuGb03vyE>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 1 Sep 2025 22:18:29 -0400 (EDT)
+Date: Mon, 1 Sep 2025 19:18:28 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Gary Guo <gary@garyguo.net>, Gary Guo <gary@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Francesco Zardi <frazar00@gmail.com>,
+	Antonio Hickey <contact@antoniohickey.com>,
+	rust-for-linux@vger.kernel.org, David Gow <davidgow@google.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/5] rust: block: convert `block::mq` to use `Refcount`
+Message-ID: <aLZT9PQQyREAZuCm@tardis-2.local>
+References: <20250723233312.3304339-1-gary@kernel.org>
+ <20250723233312.3304339-5-gary@kernel.org>
+ <DC0AUNNAKGJI.4KX0TW6LG83Y@kernel.org>
+ <20250827205121.59e4cc32.gary@garyguo.net>
+ <DCDVM56I5WPT.2L24NI3SBBIHU@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,27 +139,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f25b1ad3-c2d9-4267-bf7d-f48c78beebc7@suse.cz>
+In-Reply-To: <DCDVM56I5WPT.2L24NI3SBBIHU@kernel.org>
 
-On (25/09/01 20:54), Vlastimil Babka wrote:
-> On 9/1/25 20:37, Thadeu Lima de Souza Cascardo wrote:
-> > When OOM is triggered, it will show where the pages might be for each zone.
-> > When using zram, it might look like lots of pages are missing. After this
-> > patch, zspages are shown as below.
+On Thu, Aug 28, 2025 at 09:18:40AM +0200, Benno Lossin wrote:
+> On Wed Aug 27, 2025 at 9:51 PM CEST, Gary Guo wrote:
+> > On Tue, 12 Aug 2025 10:17:44 +0200
+> > "Benno Lossin" <lossin@kernel.org> wrote:
+> >> On Thu Jul 24, 2025 at 1:32 AM CEST, Gary Guo wrote:
+> >> > @@ -34,6 +36,18 @@ fn as_ptr(&self) -> *mut bindings::refcount_t {
+> >> >          self.0.get()
+> >> >      }
+> >> >  
+> >> > +    /// Get the underlying atomic counter that backs the refcount.
+> >> > +    ///
+> >> > +    /// NOTE: This will be changed to LKMM atomic in the future.  
+> >> 
+> >> Can we discourage using this function a bit more in the docs? At least
+> >> point people to try other ways before reaching for this, since it allows
+> >> overflowing & doesn't warn on saturate etc.
+> >
+> > Would this additional doc comment be good enough for you?
+> >
+> > /// NOTE: usage of this function is discouraged unless there is no way
+> > /// to achieve the desired result using APIs in `refcount.h`. If an API
+> > /// in `refcount.h` does not currently contain a binding, please
+> > /// consider adding a binding for it instead.
 > 
-> AFAIK zswap can also use zsmalloc so this would be reported for zswap with
-> the same effect too, right?
-
-Correct.
-
-> > [   48.792859] Node 0 DMA free:2812kB boost:0kB min:60kB low:72kB high:84kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB zspages:11160kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-> > [   48.792962] lowmem_reserve[]: 0 956 956 956 956
-> > [   48.792988] Node 0 DMA32 free:3512kB boost:0kB min:3912kB low:4888kB high:5864kB reserved_highatomic:0KB free_highatomic:0KB active_anon:0kB inactive_anon:28kB active_file:8kB inactive_file:16kB unevictable:0kB writepending:0kB zspages:916780kB present:1032064kB managed:978944kB mlocked:0kB bounce:0kB free_pcp:500kB local_pcp:248kB free_cma:0kB
-> > [   48.793118] lowmem_reserve[]: 0 0 0 0 0
-> > 
-> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> I'd like to stress that the atomic doesn't have the same protections as
+> the refcount type, how about:
 > 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>     /// NOTE: usage of this function is discouraged as it can circumvent the protections offered by
+>     /// `refcount.h`. If there is no way to achieve the result using APIs in `refcount.h`, then this
+>     /// function can be used. Otherwise consider adding a binding for the required API.
+> 
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Looks good to me. I will apply this and some adjustment against my
+atomic patchset, and queue this whole series for v6.18, thanks!
+
+Regards,
+Boqun
+
+> ---
+> Cheers,
+> Benno
 
