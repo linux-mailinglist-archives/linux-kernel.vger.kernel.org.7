@@ -1,172 +1,114 @@
-Return-Path: <linux-kernel+bounces-797103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C17B40BD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04509B40BE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180974E0BDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:19:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D5CC480725
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D12341649;
-	Tue,  2 Sep 2025 17:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7F8343D66;
+	Tue,  2 Sep 2025 17:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+lsjhki"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kuv6Z+LX"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1687E2D239A;
-	Tue,  2 Sep 2025 17:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC99A341ACA;
+	Tue,  2 Sep 2025 17:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756833569; cv=none; b=uSfsEqS8nABs9I1VNlOIfNsxFHUF0D/4ZAezrQqDXhdWe4cbay7adLn6FsOYe5gDDcgr8N2diVsXnBxQpKvjbU8eil7WaZB/K2RL8DjtH+MRU2AY+N3ejCCWas37HOP1psmoyco3Nc3jTxBlPQVbShvBKY5XP3XlnfvlDkAt4Zg=
+	t=1756833633; cv=none; b=YscCKgrSvEdF8lfvZYuts5QHjlARa+Gzbov55uMTL/RAMv8z3dcbR27P18duguK94MvrAK7+6UyJheqK5g8+5ePnoMTvQrp//AHefPqAa7CN3hECEYADQHMQXdB+EZTfQFu+azIwol5hCO2ghz2dLaNpccmdqw6Uy8kfYOqh0p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756833569; c=relaxed/simple;
-	bh=HpkXJYlU3KxliNdCAuU+x9yMGw6xejBlZCkOpmaJSX8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BUn02SrQyzQAp34x4j0XHU8kIy+Vq3Bh7+E7kw5DpSGfV30MlPZway3BGrBgJeiBJKSpJJGCUlFZo7mDwVJ9ZIH1gGmMTRkorYOSqsyX62oExKLazbrBw4VHFRDr6UTV2qXiievXrIHVf7/89YaQxLCPPwCdw5WRWlZa9on1Xug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+lsjhki; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 953F3C4CEED;
-	Tue,  2 Sep 2025 17:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756833568;
-	bh=HpkXJYlU3KxliNdCAuU+x9yMGw6xejBlZCkOpmaJSX8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=K+lsjhkiuVCel0yGpRoQlPkb5BKVV1HrSoE9pNqKNGX/0yQqZCcjJRK6YIS+gg0bD
-	 yhrSEDC9jMg4CkRdmehR2CZpXGpqkL2dgwjMVvD9JNlFPSl0Viu0Ma2dwFd0tJ9xJI
-	 hV27pX7L95NSy+T67QGTBvtNH2HI2r8yOArjN9d1Y4hh4UNIe4l5LcRomOySbz+jwq
-	 Kb9VD2irbbJQ3nuO8hiFwDl77I8ctH4myexOee9rKD6yuFjvcnslzdIFie8JRt3VUC
-	 yGv+CXQn5vRA4jARjMcc5xtOhc81W6HoJNlX0O5l8SZqWautWzYx0u5UL2u7uoDG1Y
-	 GAbvI3YZ2qCmQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8295ACA1007;
-	Tue,  2 Sep 2025 17:19:28 +0000 (UTC)
-From: Anthony Brandon via B4 Relay <devnull+anthony.amarulasolutions.com@kernel.org>
-Date: Tue, 02 Sep 2025 19:19:08 +0200
-Subject: [PATCH v3] dmaengine: xilinx: xdma: Fix regmap max_register
+	s=arc-20240116; t=1756833633; c=relaxed/simple;
+	bh=qFgUF1osgygwZFYC4PkjJp8wVytK5yqc9LO2RtSM53I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AvaFI8U63RRrxsuTpDsLo9fBF3pzZIZX5HEdAUYoHp0Va92N6t5GTzFaGtsn+RpV1CAlEaGMnKlVVi3vGZ2saMVtnIh08u47Sxf7F0vsnSTozna1ISDVq6SGVa7RchhIKQmakJHxQTl5aZKeM0x5VB8cq3ZsXhb/BIEcViqEQPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kuv6Z+LX; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cGXZ55w6fzlgqTy;
+	Tue,  2 Sep 2025 17:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756833619; x=1759425620; bh=rcSijRL9UwJ1dqStpHuM/dG4
+	cStBkvWYCMMHl+1+Cng=; b=kuv6Z+LXNqYSNDJyvl7uARidzAC19sCPS6KL6G1p
+	M8fhGmlrK2Z49g3QBos4UVN2YoLuej2iYl5UsvkDjhx2GXD3pq7hFgNvar5F4UPC
+	6qWExCu8zuds5EdbkrKfQ0IzEWiHTwwWZG0wqYH0jy7W0LasbDKCfjWR464ED2dI
+	NM7mfNxseG8tqAYTkN8z+yrNxVaAtaZoWzeiIl2nUAuqdNKPrT7GLhri6m+jyTYY
+	x6NbsMi+m5aU4PwM65iOWeUEIU/Nw4xJwc0huuHzQJ/VyWuX1Azn7jAjRSEW6/xg
+	B/gTSQoxwoNQAXNBIF6prjeukG26kEOXWL5z/Lou8sfyIA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 1Ok1mpBqzuq7; Tue,  2 Sep 2025 17:20:19 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cGXYb0pNTzlgqyB;
+	Tue,  2 Sep 2025 17:20:02 +0000 (UTC)
+Message-ID: <e40b076d-583d-406b-b223-005910a9f46f@acm.org>
+Date: Tue, 2 Sep 2025 10:20:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 14/15] block: fix disordered IO in the case
+ recursive split
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
+ hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com, axboe@kernel.dk,
+ tj@kernel.org, josef@toxicpanda.com, song@kernel.org, kmo@daterainc.com,
+ satyat@google.com, ebiggers@google.com, neil@brown.name,
+ akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-15-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250901033220.42982-15-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250902-xdma-max-reg-v3-1-5fa37b8d2b15@amarulasolutions.com>
-X-B4-Tracking: v=1; b=H4sIAAsnt2gC/33OTQ6DIBCG4asY1qXhR1C76j2aLkZAJRFpQImN8
- e5F93b5fsk8mQ1FE6yJ6FFsKJhko/VTDn4rkBpg6g22OjdihAnSEIpX7QA7WHEwPaaybJQsRcN
- FjfLJJ5jOrif3eucebJx9+J56osd6ASWKKW4lkFJIanRLn+AgLCNEPy5z/inelXfoMBP757Dsd
- MArxqGitdIXzr7vP5y9ZwP7AAAA
-X-Change-ID: 20250901-xdma-max-reg-1649c6459358
-To: Lizhi Hou <lizhi.hou@amd.com>, Brian Xu <brian.xu@amd.com>, 
- Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>, 
- Vinod Koul <vkoul@kernel.org>, Michal Simek <michal.simek@amd.com>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Anthony Brandon <anthony@amarulasolutions.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2916;
- i=anthony@amarulasolutions.com; h=from:subject:message-id;
- bh=RXW5CKC0f3s39M0SO5bLPVh0482yL+nz0tdpgoq7TKU=;
- b=owGbwMvMwCUWIi5b4HjluATjabUkhozt6vJT3T+IRyk+FS/t+zKd0+9zxrw96yOMjUTfNtiLx
- 7ntUJLrKGVhEONikBVTZCnXkef1UK4rV5r5xBhmDisTyBAGLk4BmMgbb0aGPydEFERjPZZpfez2
- a1cXOvrz1Z/+j1Zqp16f/8h96GywCMP/ahtnt8clNz3rnVqZ9DaUxkuf9V/37NmZd45JjtI7q1I
- ZAQ==
-X-Developer-Key: i=anthony@amarulasolutions.com; a=openpgp;
- fpr=772C1F0D48237E772299E43354171D7041D4C718
-X-Endpoint-Received: by B4 Relay for anthony@amarulasolutions.com/default
- with auth_id=505
-X-Original-From: Anthony Brandon <anthony@amarulasolutions.com>
-Reply-To: anthony@amarulasolutions.com
 
-From: Anthony Brandon <anthony@amarulasolutions.com>
+On 8/31/25 8:32 PM, Yu Kuai wrote:
+> -void submit_bio_noacct_nocheck(struct bio *bio)
+> +void submit_bio_noacct_nocheck(struct bio *bio, bool split)
+>   {
+>   	blk_cgroup_bio_start(bio);
+>   	blkcg_bio_issue_init(bio);
+> @@ -745,12 +745,16 @@ void submit_bio_noacct_nocheck(struct bio *bio)
+>   	 * to collect a list of requests submited by a ->submit_bio method while
+>   	 * it is active, and then process them after it returned.
+>   	 */
+> -	if (current->bio_list)
+> -		bio_list_add(&current->bio_list[0], bio);
+> -	else if (!bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
+> +	if (current->bio_list) {
+> +		if (split && !bdev_is_zoned(bio->bi_bdev))
+> +			bio_list_add_head(&current->bio_list[0], bio);
+> +		else
+> +			bio_list_add(&current->bio_list[0], bio);
 
-The max_register field is assigned the size of the register memory
-region instead of the offset of the last register.
-The result is that reading from the regmap via debugfs can cause
-a segmentation fault:
+The above change will cause write errors for zoned block devices. As I
+have shown before, also for zoned block devices, if a bio is split
+insertion must happen at the head of the list. See e.g.
+"Re: [PATCH 1/2] block: Make __submit_bio_noacct() preserve the bio 
+submission order"
+(https://lore.kernel.org/linux-block/a0c89df8-4b33-409c-ba43-f9543fb1b091@acm.org/)
 
-tail /sys/kernel/debug/regmap/xdma.1.auto/registers
-Unable to handle kernel paging request at virtual address ffff800082f70000
-Mem abort info:
-  ESR = 0x0000000096000007
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x07: level 3 translation fault
-[...]
-Call trace:
- regmap_mmio_read32le+0x10/0x30
- _regmap_bus_reg_read+0x74/0xc0
- _regmap_read+0x68/0x198
- regmap_read+0x54/0x88
- regmap_read_debugfs+0x140/0x380
- regmap_map_read_file+0x30/0x48
- full_proxy_read+0x68/0xc8
- vfs_read+0xcc/0x310
- ksys_read+0x7c/0x120
- __arm64_sys_read+0x24/0x40
- invoke_syscall.constprop.0+0x64/0x108
- do_el0_svc+0xb0/0xd8
- el0_svc+0x38/0x130
- el0t_64_sync_handler+0x120/0x138
- el0t_64_sync+0x194/0x198
-Code: aa1e03e9 d503201f f9400000 8b214000 (b9400000)
----[ end trace 0000000000000000 ]---
-note: tail[1217] exited with irqs disabled
-note: tail[1217] exited with preempt_count 1
-Segmentation fault
+Thanks,
 
-Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
-Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
-Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
----
-Changes in v3:
-- Add Fixes tag
-- Link to v2: https://lore.kernel.org/r/20250901-xdma-max-reg-v2-1-fa3723a718cd@amarulasolutions.com
-
-Changes in v2:
-- Define new constant XDMA_MAX_REG_OFFSET and use that.
-- Link to v1: https://lore.kernel.org/r/20250901-xdma-max-reg-v1-1-b6a04561edb1@amarulasolutions.com
----
- drivers/dma/xilinx/xdma-regs.h | 1 +
- drivers/dma/xilinx/xdma.c      | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
-index 6ad08878e93862b770febb71b8bc85e66813428e..70bca92621aa41b0367d1e236b3e276344a26320 100644
---- a/drivers/dma/xilinx/xdma-regs.h
-+++ b/drivers/dma/xilinx/xdma-regs.h
-@@ -9,6 +9,7 @@
- 
- /* The length of register space exposed to host */
- #define XDMA_REG_SPACE_LEN	65536
-+#define XDMA_MAX_REG_OFFSET	(XDMA_REG_SPACE_LEN - 4)
- 
- /*
-  * maximum number of DMA channels for each direction:
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index 0d88b1a670e142dac90d09c515809faa2476a816..5ecf8223c112e468c79ce635398ba393a535b9e0 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -38,7 +38,7 @@ static const struct regmap_config xdma_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--	.max_register = XDMA_REG_SPACE_LEN,
-+	.max_register = XDMA_MAX_REG_OFFSET,
- };
- 
- /**
-
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250901-xdma-max-reg-1649c6459358
-
-Best regards,
--- 
-Anthony Brandon <anthony@amarulasolutions.com>
-
-
+Bart.
 
