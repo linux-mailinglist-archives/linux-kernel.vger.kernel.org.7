@@ -1,212 +1,164 @@
-Return-Path: <linux-kernel+bounces-797397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E1AB40FF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:19:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87DEB40FF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C7A55624F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A060B5E3C22
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996BE2765DC;
-	Tue,  2 Sep 2025 22:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8BD2773EA;
+	Tue,  2 Sep 2025 22:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YD1WzfPb"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (1024-bit key) header.d=openai.com header.i=@openai.com header.b="YZXeCm/7"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D068258CF1
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 22:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098C12550BA
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 22:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756851533; cv=none; b=qhgtROx0T92KJxOrhs9F0OwR7XYU3liPBhrQeEAt/MsFXEddIEV853IWdfY8MrqUTkgrkfmjpXATOJA4YpBeKajJwi7Cu7zVssuWV+m39hUi+Hh5evpPsptyDn2jR69F8o9RT67EJKTGlFsoQ+oybnuIo1GqEwoNvtUKN6pCrzs=
+	t=1756851680; cv=none; b=gclzZmsFkYThvvR3g+LndFGwG1HBwWNKPfTQAgV/F3hWMHJQocOXm91XryOgZb25YH4RMXlMfoOC7ompDu5pzvk39OnrSuFq4V4J9SvfeiDL2xi5yZY7jbbnliBaSLY4kLF1MVxSNAYMYxFFO4iFurQI8nO09qvkpRsATSpJXv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756851533; c=relaxed/simple;
-	bh=LFMNs2f11salGKakRkwUCy3h9YxD320vvtitkLmtiDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nl6jIaptBsfnf3xy9fSBPbHRH4+sZGQ/B1JiXHagkTm6no9tmvX4aSK8RGUKvmItvQzsmxfJEAJAwAKT+KTxpno1YB6S3du/Oyn/N1CUYkWNPC3WGFbxX1zuq6Pa1PqejjFZ5nzYmoaQRZrj/lLHihdpiiNk+bkt4N63wgLq1RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YD1WzfPb; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b8b25296fso19796225e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 15:18:50 -0700 (PDT)
+	s=arc-20240116; t=1756851680; c=relaxed/simple;
+	bh=uhrGdUwtX0TRrHmzp18ffizdjSUfmH13xn/mmFzf3K0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=scbQzWKQPdp7FfXsMNw3B6xhfagQPxcI/vM+8Ijdd2Mz3NlUk8vpIyd8bWSN8wfYoEMa6VSZ79muSyiDqBhmMSf16URZH06ggf2WF8ZzQCWYObukscLlCqFFdCMjmOkBPUqo9RK9cD5Nh435e0pMa6UcjTDrF4AYQ2V7L4zY31U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=openai.com; spf=pass smtp.mailfrom=openai.com; dkim=pass (1024-bit key) header.d=openai.com header.i=@openai.com header.b=YZXeCm/7; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=openai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openai.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f6f434c96so3714786e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 15:21:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756851529; x=1757456329; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sXt/asDYq3TH0BdNCcvYeBRn6iTRyQGujHraDlSoCSw=;
-        b=YD1WzfPb0XRgyEWM7PKx3LyjWLnUur4NW83nrJ3tUpQtjE8ruziMYP8s2ww2UYf8IT
-         /Qt94QIbCzI2q7mCa9ngsRX+O09V/EWwi1643oRucXXKw3qjNDSb2FY7KmGbcCrVEiW1
-         ruDvRndetLBbAjH2N2KVt7OgXto7g2sVSDWr1clluGfXWnAGepStHfnQ1hhYnFpgR7fs
-         GHNtZ5Ll6q+02XyRbAWr2hplCO0xRShiT0L3XNLWpJEJT1IpOkroyzYrXaCV7T7Pvmfi
-         ZbBDAxa52sEtr1tXIVryWoiPxD5VWgqQtDQq+DbZqgGF3wh6e7J/mwyPBoS7n4y8sKxJ
-         7pDw==
+        d=openai.com; s=google; t=1756851677; x=1757456477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uhrGdUwtX0TRrHmzp18ffizdjSUfmH13xn/mmFzf3K0=;
+        b=YZXeCm/7GBFRBljfCnajK0LOK+eFyDX8BLB+D9ZwyBVU55xyJcMli4pnmsUrRsloty
+         +ZZGtCu3Y6cU/UpJOWsMDRssPDdMbAEQrnGixIZG6ApzEZfIhJVMJMv47pyAM6luug30
+         QmpihjkjU80vv3XeIYuGlLUITmjutbOw34LBY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756851529; x=1757456329;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sXt/asDYq3TH0BdNCcvYeBRn6iTRyQGujHraDlSoCSw=;
-        b=wNunheCnG25hQRwpXOFq7Bw61p6SjdLh4UfmwsjBnXyuLz5nNv28SmH7vQVy6cO5Jn
-         6XCATaBX9zhyOOf517FjImikWk0DgdoSIaNY0jXgLFnUwRPe02MSatYOPQI38lZWBtus
-         3X6l/WZxJpacMTGFfRnu9ofYVtoaNXPFz7MeAM4ORSrWYaUqNI8uKNZT5SdGdQspX6i8
-         42YdKbvDKkAhmfgg/Bd06e/O7sh37jJ8ZtSQW3k0+nR1vZp87x7DytQPYatmTl3dXVIW
-         Xu6XXuFeYszFu3lGssh6MnHs0oT9A5Gv1Lyb4bLlxM5JXU8n/DpD/pOzpfU6kNSYgPB2
-         SC1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVf3tZxHDmrTLIsDf6mG69S21KthMyWGTFkATKBAjZbhei1cmfUuT0rzjh+M1c2Wr4lWXZph0KbbN6OZbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZgU0OCQg3qDm+YAkd4KaRCKU5SBCq/gDl/wAgwCfMz03ikRLn
-	Z74FNk7112Ve51wZRJmnTsWu6ijJoRERuaFSKxyizs/gMJUmiVo0+pbPMV9qm2sjF2w=
-X-Gm-Gg: ASbGncv/Tg/84sFBCcO+7oVW8G68mgou7ixwtXZm5KP3XL3TqBLxJQpwsIiDt1eD1py
-	mZtfSPhVOslCYm97oFwLH+AgYf3R4sK/Ra5MO2KsjYPGIm35T8XFcx9/g5d88j+WZv8z8vIBo+V
-	i5Gfm7GOf0oPCAI6crnE+ZNg5+fLc0JaUFnQyT/3PmiYeZhqZ8YksD3TzzBTcMJrqmyt2cBqb9V
-	v3guPH8VlcDlP0QNUkc4eYMzB0q296vJdpKDV8qsbTbOHeH0pnSEoYNv+p77T76xQ9CplnzhycJ
-	Dq/EyUJMEQCa2e8vsgsTITbFgfPHOVWPsZLIde+sHK1SaT7RE0F+u/4ZMTOuecqToPR7dN47wcy
-	jHv8rfg2MCekzhBWMPzY0vWGZinbbSOc7T09KqdKIvmREFzuGmVXqpc0D1B3/kPr4fDQx+sgF1m
-	sXxlV9avs754DfefhcVHUv
-X-Google-Smtp-Source: AGHT+IEv98rJqJ2A4oCVv+NELsk8v/jt/2Wf6G4aJXvzDZjrvT8K/3C3HFkWNuYtV6VM7Zam4DOwyw==
-X-Received: by 2002:a05:600c:a0a:b0:456:1824:4808 with SMTP id 5b1f17b1804b1-45b855aeb67mr98417305e9.32.1756851529334;
-        Tue, 02 Sep 2025 15:18:49 -0700 (PDT)
-Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d701622b92sm9842168f8f.58.2025.09.02.15.18.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 15:18:48 -0700 (PDT)
-Message-ID: <896d8e1c-b761-4111-aa28-e78836d22352@linaro.org>
-Date: Tue, 2 Sep 2025 23:18:47 +0100
+        d=1e100.net; s=20230601; t=1756851677; x=1757456477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uhrGdUwtX0TRrHmzp18ffizdjSUfmH13xn/mmFzf3K0=;
+        b=nSUK317Vfpzg/1rPM0VEuU8IrcpJC4iuWKw6ajGqTnDbLzk9hnLs7omLLp94JUfJnk
+         Dyd8Fioq1VAuvMm+dbkksyCKce0aEjLrykkYuvsrDghbwpx9GkydV3//g5hpSteMsSkD
+         9z1RVy90yCYuf4Se3RxZ6kbMaSciLOJiKPTNPE40xR4O6dXJQDhDfOZoov9pF7KHAj/y
+         idp/qM1Pe5ol6qLIWkuRdve05OAfNsFVhdDCliFgqW1G93OjakfRFFKHjbX9mxHrefDF
+         yDx11noTMyv7OyZ7iNXO3cOZm9MUEtSCaenvmeMG1m3pUcF8MIGwbGFgacYky0zDRq1Y
+         ncVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTlRsOTvge1QcVJG3xasQmKLcS0Na8oI+JAMtTJ3RTYMgUbfW1DIH157oueyE86IN8EpcdTB2dNqNmZuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnPrcxt3H6uVSe4ISZ1Xx7ITEelruE/Ko4RwcSSjsenHQViEmy
+	7gzXYOrkxrJDMb/D+cW6dK0mOcnXqen+eIYc12Q4J3/YJTXVey0+iy9dYz3hc2Wqd3n9nTyryZX
+	YmZVlB7nu9rnTbQqn2SuYjsuPg6HMdP6qzEC6+yv4+A==
+X-Gm-Gg: ASbGnctRWPG6GwsEYQmbk4qeVgrBifhyL7NCQDvM48UoqiqaNaFY7jimsLgHycimKN6
+	zjkaR0AC4tu7tdLWPjAKahewVmXtsqHbp7XdyI8nwLAYdF4pfNAwXCDMD5fpAqmoNX5A7Gc4DBH
+	P0yqqWMGffcHwClAcRA4XdyQKbf/KvTNfOlAznD/F2g68ikqDNBEVdjt9VrRUsSrgPq9ZVYDW1/
+	HJQHN+lSitNMwVc9M95mHu8CoKUjJK/+cGetIR4aZqCTyNm5FC2peA=
+X-Google-Smtp-Source: AGHT+IFBza3hqagc0puDleD+Unkl9olkJ3klet94+JtsC9LdhtggFejId/AtdG7cn9nz3QYINpZRSm2wOlqELxCKl/Q=
+X-Received: by 2002:a05:6512:1389:b0:55f:6fcc:6f4e with SMTP id
+ 2adb3069b0e04-55f7089c3a6mr4162223e87.7.1756851677166; Tue, 02 Sep 2025
+ 15:21:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] media: iris: Split power on per variants
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250902-sm8750-iris-v3-0-564488b412d2@linaro.org>
- <20250902-sm8750-iris-v3-2-564488b412d2@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250902-sm8750-iris-v3-2-564488b412d2@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250901-net-next-mptcp-misc-feat-6-18-v1-0-80ae80d2b903@kernel.org>
+ <20250902072600.2a9be439@kernel.org> <834238b4-3549-4062-a29b-bf9c5aefa30f@kernel.org>
+ <20250902082759.1e7813b8@kernel.org> <aLc2hyFAH9kxlNEg@arm.com>
+ <d4205818-e283-4862-946d-4e51bf180158@kernel.org> <aLdfOrQ4O4rnD5M9@arm.com> <739c86b1-5cf5-4525-919f-1ca13683b77f@kernel.org>
+In-Reply-To: <739c86b1-5cf5-4525-919f-1ca13683b77f@kernel.org>
+From: Christoph Paasch <cpaasch@openai.com>
+Date: Tue, 2 Sep 2025 15:21:06 -0700
+X-Gm-Features: Ac12FXxOi9AsViKZtjtWxiVRlAl5eHnNmsfESqGUjGTMg6KF47joBlOhH8IUoMY
+Message-ID: <CADg4-L-5f3a=3XCv5UaZG+47DHaO3NTk5+4mp-nWJ2rFXx-5WQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/6] mptcp: misc. features for v6.18
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Jakub Kicinski <kuba@kernel.org>, mptcp@lists.linux.dev, 
+	Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Eric Biggers <ebiggers@kernel.org>, Gang Yan <yangang@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/09/2025 13:45, Krzysztof Kozlowski wrote:
-> Current devices use same power up sequence, but starting with Qualcomm
-> SM8750 (VPU v3.5) the sequence will grow quite a bit, so allow
-> customizing it.  No functional change so far for existing devices.
-> 
-> Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   drivers/media/platform/qcom/iris/iris_vpu2.c       | 2 ++
->   drivers/media/platform/qcom/iris/iris_vpu3x.c      | 4 ++++
->   drivers/media/platform/qcom/iris/iris_vpu_common.c | 8 ++++----
->   drivers/media/platform/qcom/iris/iris_vpu_common.h | 4 ++++
->   4 files changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media/platform/qcom/iris/iris_vpu2.c
-> index 7cf1bfc352d34b897451061b5c14fbe90276433d..de7d142316d2dc9ab0c4ad9cc8161c87ac949b4c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
-> @@ -34,6 +34,8 @@ static u64 iris_vpu2_calc_freq(struct iris_inst *inst, size_t data_size)
->   
->   const struct vpu_ops iris_vpu2_ops = {
->   	.power_off_hw = iris_vpu_power_off_hw,
-> +	.power_on_hw = iris_vpu_power_on_hw,
->   	.power_off_controller = iris_vpu_power_off_controller,
-> +	.power_on_controller = iris_vpu_power_on_controller,
->   	.calc_freq = iris_vpu2_calc_freq,
->   };
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> index bfc52eb04ed0e1c88efe74a8d27bb95e8a0ca331..27b8589afe6d1196d7486b1307787e4adca8c2aa 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> @@ -292,12 +292,16 @@ static u64 iris_vpu3x_calculate_frequency(struct iris_inst *inst, size_t data_si
->   
->   const struct vpu_ops iris_vpu3_ops = {
->   	.power_off_hw = iris_vpu3_power_off_hardware,
-> +	.power_on_hw = iris_vpu_power_on_hw,
->   	.power_off_controller = iris_vpu_power_off_controller,
-> +	.power_on_controller = iris_vpu_power_on_controller,
->   	.calc_freq = iris_vpu3x_calculate_frequency,
->   };
->   
->   const struct vpu_ops iris_vpu33_ops = {
->   	.power_off_hw = iris_vpu33_power_off_hardware,
-> +	.power_on_hw = iris_vpu_power_on_hw,
->   	.power_off_controller = iris_vpu33_power_off_controller,
-> +	.power_on_controller = iris_vpu_power_on_controller,
->   	.calc_freq = iris_vpu3x_calculate_frequency,
->   };
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> index 42a7c53ce48eb56a4210c7e25c707a1b0881a8ce..6c51002f72ab3d9e16d5a2a50ac712fac91ae25c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> @@ -271,7 +271,7 @@ void iris_vpu_power_off(struct iris_core *core)
->   		disable_irq_nosync(core->irq);
->   }
->   
-> -static int iris_vpu_power_on_controller(struct iris_core *core)
-> +int iris_vpu_power_on_controller(struct iris_core *core)
->   {
->   	u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
->   	int ret;
-> @@ -302,7 +302,7 @@ static int iris_vpu_power_on_controller(struct iris_core *core)
->   	return ret;
->   }
->   
-> -static int iris_vpu_power_on_hw(struct iris_core *core)
-> +int iris_vpu_power_on_hw(struct iris_core *core)
->   {
->   	int ret;
->   
-> @@ -337,11 +337,11 @@ int iris_vpu_power_on(struct iris_core *core)
->   	if (ret)
->   		goto err;
->   
-> -	ret = iris_vpu_power_on_controller(core);
-> +	ret = core->iris_platform_data->vpu_ops->power_on_controller(core);
->   	if (ret)
->   		goto err_unvote_icc;
->   
-> -	ret = iris_vpu_power_on_hw(core);
-> +	ret = core->iris_platform_data->vpu_ops->power_on_hw(core);
->   	if (ret)
->   		goto err_power_off_ctrl;
->   
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-> index 93b7fa27be3bfa1cf6a3e83cc192cdb89d63575f..d95b305ca5a89ba8f08aefb6e6acd9ea4a721a8b 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-> @@ -14,7 +14,9 @@ extern const struct vpu_ops iris_vpu33_ops;
->   
->   struct vpu_ops {
->   	void (*power_off_hw)(struct iris_core *core);
-> +	int (*power_on_hw)(struct iris_core *core);
->   	int (*power_off_controller)(struct iris_core *core);
-> +	int (*power_on_controller)(struct iris_core *core);
->   	u64 (*calc_freq)(struct iris_inst *inst, size_t data_size);
->   };
->   
-> @@ -23,6 +25,8 @@ void iris_vpu_raise_interrupt(struct iris_core *core);
->   void iris_vpu_clear_interrupt(struct iris_core *core);
->   int iris_vpu_watchdog(struct iris_core *core, u32 intr_status);
->   int iris_vpu_prepare_pc(struct iris_core *core);
-> +int iris_vpu_power_on_controller(struct iris_core *core);
-> +int iris_vpu_power_on_hw(struct iris_core *core);
->   int iris_vpu_power_on(struct iris_core *core);
->   int iris_vpu_power_off_controller(struct iris_core *core);
->   void iris_vpu_power_off_hw(struct iris_core *core);
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On Tue, Sep 2, 2025 at 2:38=E2=80=AFPM Matthieu Baerts <matttbe@kernel.org>=
+ wrote:
+>
+> 2 Sept 2025 23:18:56 Catalin Marinas <catalin.marinas@arm.com>:
+>
+> > On Tue, Sep 02, 2025 at 08:50:19PM +0200, Matthieu Baerts wrote:
+> >> Hi Catalin,
+> >>
+> >> 2 Sept 2025 20:25:19 Catalin Marinas <catalin.marinas@arm.com>:
+> >>
+> >>> On Tue, Sep 02, 2025 at 08:27:59AM -0700, Jakub Kicinski wrote:
+> >>>> On Tue, 2 Sep 2025 16:51:47 +0200 Matthieu Baerts wrote:
+> >>>>> It is unclear why a second scan is needed and only the second one c=
+aught
+> >>>>> something. Was it the same with the strange issues you mentioned in
+> >>>>> driver tests? Do you think I should re-add the second scan + cat?
+> >>>>
+> >>>> Not sure, cc: Catalin, from experience it seems like second scan oft=
+en
+> >>>> surfaces issues the first scan missed.
+> >>>
+> >>> It's some of the kmemleak heuristics to reduce false positives. It do=
+es
+> >>> a checksum of the object during scanning and only reports a leak if t=
+he
+> >>> checksum is the same in two consecutive scans.
+> >>
+> >> Thank you for the explanation!
+> >>
+> >> Does that mean a scan should be triggered at the end of the tests,
+> >> then wait 5 second for the grace period, then trigger another scan
+> >> and check the results?
+> >>
+> >> Or wait 5 seconds, then trigger two consecutive scans?
+> >
+> > The 5 seconds is the minimum age of an object before it gets reported a=
+s
+> > a leak. It's not related to the scanning process. So you could do two
+> > scans in succession and wait 5 seconds before checking for leaks.
+> >
+> > However, I'd go with the first option - do a scan, wait 5 seconds and d=
+o
+> > another. That's mostly because at the end of the scan kmemleak prints i=
+f
+> > it found new unreferenced objects. It might not print the message if a
+> > leaked object is younger than 5 seconds. In practice, though, the scan
+> > may take longer, depending on how loaded your system is.
+> >
+> > The second option works as well but waiting between them has a better
+> > chance of removing false positives if, say, some objects are moved
+> > between lists and two consecutive scans do not detect the list_head
+> > change (and update the object's checksum).
+>
+> Thank you for this very nice reply, that's very clear!
+>
+> I will then adapt our CI having CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF
+> to do a manual scan at the very end, wait 5 seconds and do another.
+
+FWIW - I am able to pretty reliably reproduce the kmemleak. However, I
+also tried adding an inline kmemleak scan to the test harness (did it
+once with, once without a sleep). When I do that the kmemleak
+disappears :-)
+
+(not saying that adding the scan isn't useful, just pointing out that
+this particular leak seems to be related to how quickly we iterate
+over the testcases)
+
+
+Christoph
 
