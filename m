@@ -1,191 +1,153 @@
-Return-Path: <linux-kernel+bounces-796440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751B3B400BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB44B400CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517551A83DCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:35:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9803AEBE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEF423C8D5;
-	Tue,  2 Sep 2025 12:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A58C258CDA;
+	Tue,  2 Sep 2025 12:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AOUDiaID"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Jt0/hwhJ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0342236430
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660DD24A069;
+	Tue,  2 Sep 2025 12:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816507; cv=none; b=rk8XLPFuDxV13gVAu8UnfOpubDvJsuNANzN/KQH0GrhMo6PgUpyLVBHMpCDoIqdU5ovCnHgDkp/f6H4ZLl9L9tQVKNXdUU3KWgwRiBlNkfZxS/ZwdaEd/YHctByi4pmUun/Bi5eQDUGO0luFX8xrmIWtpegbXqMwy+B0Fl2fb2c=
+	t=1756816547; cv=none; b=ESmyGq+bcivUSyuNlr4x2N75NAvllsp4oBXRvHvfS8hBQbrFo8sbruULJDDV2m48nTHl/DnPn47pPM4wEMeing7QHWx7hgzLlET6Q2vetqE6wYBH6mbpNRxin/T5Xrb9WVlZU3toJwlmsfRbIafLlo/8Yb5lOez+UdnoF+ebxMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816507; c=relaxed/simple;
-	bh=LsELzEw8Q8N1hec1/lB7lSUYwB0wSGJsbCJHldjKkD8=;
+	s=arc-20240116; t=1756816547; c=relaxed/simple;
+	bh=rgeAkaerMuo7pPYf7CTpR6admWuQ1J9uhjoEpdbvc5o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XsgrVo9/lemB/JPTdClQzMIxFYDszSDmxJi6nv2g+V7Wt4v+d43xZrxpsx+xhf0jQaDBWIfGr3fejoDeLOsULJyM4por499DbmGu3WXP/92XlM7WXbGxZIRYwldKHVv+vYfXtH2N7J8gpqB7orJKlIbj8qtPpt1HGhCHnwJZ9YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AOUDiaID; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582B6DMi022015
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 12:35:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=B4rVQpxPPO+FQPgP3B3UuvMg
-	XoWmixIq4Cskx+zX+jI=; b=AOUDiaIDOm5Fthrt+eQBaDoLAMOABN3sm7UL2qPI
-	aZWN6UlGTDdR/90xc5qKg3qwW1RNpaDUwKQg8b+5iXIbOLHkLElDTkD4pOZJNVm+
-	I91o5Zoa6Od63CX4a0F+4hwKGx9IXX5l3BauAwj+G4KRcKkaa9TPYYIcnZ9osNeU
-	4TfcMruhuwyghHnfw1F957otT+rOHSr7RqETecK1kds0tLWiwMl2EF0bLZjoV1v6
-	Ffu1QKlH7D2axvr0YSaUIkGADq5HgsgYljt0ZG2wrHmgtZdeYjnld7wjA7WAWalt
-	YhiinRjnYyxmreETv1UTnpD/qdja/yJt4BmoIEH7SrCeOQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnp7x55-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:35:03 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b327a79a30so65091911cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756816503; x=1757421303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B4rVQpxPPO+FQPgP3B3UuvMgXoWmixIq4Cskx+zX+jI=;
-        b=BzsUWlOdCn7aZmgXQbA+5tYl93xFAqThO75+NHOC9rddUKJ+vk1HYiexemPiFgON0R
-         AmFloXpgu9wN5fsP9HffajTHV7FCwGVY3F2m/8iek6brBknKdnPZwgICQJmwUhfLa367
-         zhpvkuoGItTh0zBH7yir4a7Dv4jQjIuXaffkr3EmI+qld4uGNwfIw4Esh1rJDB78iFNs
-         0ueYMU4+/nYrBR/lnVKxhR1wcsViywgbORVZzG1Na5REddeRcgFXurp/yGvmYYc6WEao
-         yOD/G1BORceoPwWQbfcFt5oFyIfSH5UR4Q6JzOLEdLxms+ExWQX5pEmYTJTXv6szYB4L
-         hWrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpWWXQobOrB39EmH5UI3beBVtptZoUEzPkobX/8tbAskNV5W2usJgvmJfGbmn6XyUGhf1WfQbM6WL23Ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3MNjO1xlrFi1HCaEcbRgL8tcX6kOYSvIUzK75sWVYISnga4r6
-	vT0Zb2n68WQTV6B0YqOzV+qMygPB7JAcnWg8q0HfDzBbthBqKRuMEtw7avce8PDo6JfRArXti0R
-	fYfrsCGjU6m196mMzuB1IQ5QV+sMSDnI8Fd++cDJ7BbnOPe3kkWcOYxbU4livG2WT9RU=
-X-Gm-Gg: ASbGncvF59ovnw3vfcYqDNs/BfTVzjIDRw/umliOwz+6q30WyN2/LxaSBUQ/29/N/qA
-	83FjoUuZslAYnJlW3AyDTg/W+JMb+zUkf2ZW5fzN5xmTt4aZmZCe3K8Zmfie/T7hVMGQ+j6A6M8
-	tbKnsPIR9drn5qCsDJ+sPY94aVEtVv7oVtdL5epZRCrqL4UdrFnWVmKehiAgt5hfOc4QRy1HLwC
-	4UnhvMz/Xm3iBVZOw8V7HXdwyp1g/QDFIlWAqLoYeLMFS6QBMlXaZPNBg0d1OjAbrIYgvzksf8f
-	fbbaObllx9SC+K2yHkDLtAXGp25zClR0B4+IGn2uhQqGK2K6uH0Sfx3FEHncAIryLiJNsZIaVwc
-	mYAVCA4JglzLEvjqNcNlYY5NOCwHvbw4HiVJRxvu1VtTi/wpUPXMB
-X-Received: by 2002:ac8:5d49:0:b0:4b2:8ac4:ef72 with SMTP id d75a77b69052e-4b31dcd0d89mr141080101cf.65.1756816502568;
-        Tue, 02 Sep 2025 05:35:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGU/aLTJMFsLAMJ+zNuNGOEzmGzhvygt22y0Or38v41tO37Dhmnsn2U9YWvwA5+Rbfi+EGYqg==
-X-Received: by 2002:ac8:5d49:0:b0:4b2:8ac4:ef72 with SMTP id d75a77b69052e-4b31dcd0d89mr141079651cf.65.1756816501921;
-        Tue, 02 Sep 2025 05:35:01 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-560827a71bfsm672243e87.129.2025.09.02.05.35.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 05:35:01 -0700 (PDT)
-Date: Tue, 2 Sep 2025 15:34:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/38] drm/msm/dp: remove cached drm_edid from panel
-Message-ID: <z3erghqmjodsqbkkzzxtdt7ca3xw2esj3jqsshouipqu2mqvx2@kwxqs6d2ntuu>
-References: <20250825-msm-dp-mst-v3-0-01faacfcdedd@oss.qualcomm.com>
- <20250825-msm-dp-mst-v3-1-01faacfcdedd@oss.qualcomm.com>
- <otmy4kttxflsxkvacwdsqynck4nqeww7jsxaq2xwjtlooxnhvx@gmpezdliskck>
- <5b142910-81e7-462d-8933-70705334ef0a@oss.qualcomm.com>
- <yarnaujunszlfrbduakodv7n63wjgh6og3t4qowhu3n6tz6fmn@4kb4crd5rqq7>
- <d7141b57-fa3c-49ce-9830-8310a58b9581@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sc8uIAe+u/lDy8Sw8WObH5ma+0/OO6nqmbgu9Se8r0F59i4Q7WYq1+auPJ+882xlC4P+13UKbpLePNABgIGJahmqJx8gS+MyJWtU/XVIvsIKU1PUrV8B7zVXfQVxMbVzjqyAtnbXH8mQUHWtaXv7i5TDMCSTKdD0eFg7je7DUes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Jt0/hwhJ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 07E00C77;
+	Tue,  2 Sep 2025 14:34:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756816477;
+	bh=rgeAkaerMuo7pPYf7CTpR6admWuQ1J9uhjoEpdbvc5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jt0/hwhJAsbh9xgjvpHX8ZlaNZWIqk8ZIYHl74D/RpN1aB5NiuYJ4sbekghmfQRpw
+	 +Fd9A/vmmT2nwwMUYmeRtG4iUHsePTSDC6VPwjWx/jvbSLPcmsnu1qiKBY/+y+WTvx
+	 YvS/mGTYyrZxv2mBisLcvTFnx0vJHCWg7VeZxaaQ=
+Date: Tue, 2 Sep 2025 14:35:24 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Frank Li <Frank.li@nxp.com>, Guoniu Zhou <guoniu.zhou@nxp.com>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] media: dt-bindings: nxp,imx8mq-mipi-csi2: Add
+ i.MX8ULP compatible string
+Message-ID: <20250902123524.GK13448@pendragon.ideasonboard.com>
+References: <20250901-csi2_imx8ulp-v5-0-67964d1471f3@nxp.com>
+ <20250901-csi2_imx8ulp-v5-1-67964d1471f3@nxp.com>
+ <20250901154610.GB13448@pendragon.ideasonboard.com>
+ <aLZMQ7c8qr5XO88d@lizhi-Precision-Tower-5810>
+ <20250902083554.GD13448@pendragon.ideasonboard.com>
+ <7c461931-3b04-4354-a892-52f469511c5a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d7141b57-fa3c-49ce-9830-8310a58b9581@oss.qualcomm.com>
-X-Proofpoint-GUID: MVaE0Jhcyk4f5jD3BPpnsyz3khHTGOQi
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b6e477 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=pUvFZNViTmPBewPdAa8A:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-ORIG-GUID: MVaE0Jhcyk4f5jD3BPpnsyz3khHTGOQi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfX3tIOhhO6wssK
- GdGRUayooS35CXZEEuIvvP66tf3hlpZ7VROBX5H1JaAuLQ645EaL8c5naIgE18cWBtcA/YpgKhc
- G/zwrqvEKYw70UeK+/er5m4/+xqPiXsXtoagNlfJi2EY+Pb15FOCNVy7HCrf+LL1ZNMK/6tFu66
- XUSWKikwlsm7cSGJu3BuokUoMGHVI6Miz6OAhR/OTg9f9SUwejG7Gkx9M5ewRpfXS31QDQ4Il/p
- ZMwIpVlmc4S6tL0/a3qQqwbWbJMTs331bwfq7yqzihtrMGqmexJJl5JtUGNb85ID0nmbeH30LUd
- Bc8SKQ41mqmb1CP/JQMgWiTNRC8XQNo1MugoHKLiYI82dgKKBnPliK1Duv30B6xy9AHcRE/bzNH
- dQsc4DdE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+In-Reply-To: <7c461931-3b04-4354-a892-52f469511c5a@kernel.org>
 
-On Tue, Sep 02, 2025 at 06:19:11PM +0800, Yongxing Mou wrote:
-> 
-> 
-> On 9/2/2025 5:36 PM, Dmitry Baryshkov wrote:
-> > On Tue, Sep 02, 2025 at 04:42:18PM +0800, Yongxing Mou wrote:
-> > > 
-> > > 
-> > > On 8/26/2025 12:41 AM, Dmitry Baryshkov wrote:
-> > > > On Mon, Aug 25, 2025 at 10:15:47PM +0800, Yongxing Mou wrote:
-> > > > > The cached drm_edid in msm_dp_panel was redundant and led to unnecessary
-> > > > > state management complexity. This change removes the drm_edid member from
-> > > > 
-> > > > Please see Documentation/process/submitting-patches.rst on how to write
-> > > > commit messages. Please use imperative language instead of describing
-> > > > the changes.
-> > > > 
-> > > > THe patch LGTM.
-> > > > 
-> > > Thanks, will update it in next version. Since the HPD refactor series are
-> > > unlikely to be merged soon. Can I separate out some patches from the MST
-> > > series that don't have dependencies and send them individually to make it
-> > > get applied? This would help reduce the number of the MST series.
+On Tue, Sep 02, 2025 at 02:26:53PM +0200, Krzysztof Kozlowski wrote:
+> On 02/09/2025 10:35, Laurent Pinchart wrote:
+> >>>>          compatible:
+> >>>>            contains:
+> >>>>              enum:
+> >>>> -              - fsl,imx8qxp-mipi-csi2
+> >>>> +              - fsl,imx8ulp-mipi-csi2
+> >>>> +    then:
+> >>>> +      properties:
+> >>>> +        reg:
+> >>>> +          minItems: 2
+> >>>> +        resets:
+> >>>> +          minItems: 2
+> >>>> +          maxItems: 2
+> >>>> +        clocks:
+> >>>> +          minItems: 4
+> >>>> +        clock-names:
+> >>>> +          minItems: 4
+> >>>
+> >>> But according to this, the ULP version requires more clocks than the QXP
+> >>> version.
+> >>
+> >> If only clock number difference, generally, it is still compatible and can
+> >> be fallback, especialy driver use devm_bulk_clk_get_all().
 > > 
-> > Yes, of course. Please keep version number monothonic for those patches
-> > (e.g. by telling b4 that it should start from v4).
-> > 
-> Sure. Thanks,  I want to confirm whether the patches should be sent
-> individually or grouped into a series? They seem to be logically unrelated.
-> I was originally planning to send each one separately.>>
+> > That's a driver-specific implementation decision, so I don't think it
+> > should be taken into account to decide on compatibility.
+> 
+> The clock inputs do not restrict compatibility. If Linux can use
+> fallback to bind and operate properly, then it's a strong indication
+> devices are compatible.
+> 
+> Imagine exactly the same registers, so same programming interface, but
+> one device takes one more clock which just needs to be enabled through
+> its lifetime. Such devices are fully compatible, even though clock
+> inputs differ.
 
-You can send them separately.
+That's only the case if someone enables the clock, isn't it ? From a DT
+binding point of view, how can we know that the extra clock will be
+enabled by a component separate from the driver (in this case by the
+fact that the devm_bulk_clk_get_all() function gets all clocks) ?
 
-> > > > > the panel structure and refactors related functions to use locally read
-> > > > > EDID data instead.
-> > > > > 
-> > > > > - Replaces msm_dp_panel_read_sink_caps() with msm_dp_panel_read_link_caps()
-> > > > > - Updates msm_dp_panel_handle_sink_request() to accept drm_edid as input
-> > > > > - Removes msm_dp_panel_get_modes() and drm_edid caching logic
-> > > > > - Cleans up unused drm_edid_free() calls
-> > > > > 
-> > > > > This simplifies EDID handling and avoids stale data issues.
-> > > > > 
-> > > > > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > > > > ---
-> > > > >    drivers/gpu/drm/msm/dp/dp_display.c | 28 +++++++++++++++-------
-> > > > >    drivers/gpu/drm/msm/dp/dp_panel.c   | 47 ++++---------------------------------
-> > > > >    drivers/gpu/drm/msm/dp/dp_panel.h   |  9 +++----
-> > > > >    3 files changed, 26 insertions(+), 58 deletions(-)
-> > > > > 
-> > > > 
-> > > 
-> > > 
-> > 
-> 
+> I also wanted to express exactly that case on my slides from OSSE -
+> slide 28:
+> https://osseu2025.sched.com/event/25Vsl/dts-101-from-roots-to-trees-aka-devicetree-for-beginners-krzysztof-kozlowski-linaro
+
+Quoting that slide, you wrote
+
+"Two devices are compatible when the new device works with Linux drivers
+bound via fallback (old) compatible".
+
+That is clearly the case here for the existing *Linux* driver. But what
+if the driver called devm_bulkd_clk_get() with a device-specific list of
+clocks ? Or what if the same DT bindings are used on an OS that has no
+clk_get_all() equivalent ? This is my concern with declaring those two
+devices as compatible: they may be from the point of view of the current
+implementation of the corresponding Linux kernel driver, but DT bindings
+are not Linux-specific.
+
+Or do DT bindings assume that drivers have to always enable all clocks
+declared in DT, even if they don't know what those clocks are ? That
+seems error-prone, in quite a few cases drivers need to handle separate
+clocks in a device-specific way, with for instance a particular
+ordering, preventing them from using devm_bulk_clk_get_all(). If all
+drivers are required to manage all clocks declared in DT, this would get
+messy quite quickly.
+
+> (although I focused on reversed case when devices are not compatible,
+> because that is decisive case).
 
 -- 
-With best wishes
-Dmitry
+Regards,
+
+Laurent Pinchart
 
