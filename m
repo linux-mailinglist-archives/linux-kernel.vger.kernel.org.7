@@ -1,196 +1,187 @@
-Return-Path: <linux-kernel+bounces-797052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BBFB40B3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:55:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163FDB40B44
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701C21881562
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:55:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C7C356255F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E456340D8A;
-	Tue,  2 Sep 2025 16:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C240533EAF3;
+	Tue,  2 Sep 2025 16:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AFEF74jY"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jkyy2MsO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749532DFA40
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A786D283C89;
+	Tue,  2 Sep 2025 16:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756832122; cv=none; b=pUG5HPkurwS+jyd84BLzJw2Nznegcawb98MU6TF36u/9DyPHkP97N6ONc5glKoQ12GWm/em4YHhB1mpm6hAv4R2lFgzY5NPZnjuR1anbWZZY0jwmdH1VSg2AdnT1gOLd7+TfES64OuD/QvHPIllSvRXtxYiW+JWX5jVD7rQDnGc=
+	t=1756832183; cv=none; b=oXRoxgQH3puomPzhAK5tgNx9d5SUqtDwh7vfSYjk9JuYVb+npup2pAuQWmeoYf0SuGId+hNh3PFKZfwPoU8W+EBrEhgeQPGDBOs7TssyPy/Q6olnnizKEt9b8/K5O8J//VcqLFNPyD1zssHYHA4D4403+S7jP0bepvFTgtOMiN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756832122; c=relaxed/simple;
-	bh=dUzqaLLsvlk+kHmoFCR7c9Yn4zMIi9+At7mA5hjlXVk=;
+	s=arc-20240116; t=1756832183; c=relaxed/simple;
+	bh=M2vqCr5I7i3KfPqnsheMASeTdG7RiTSBtyebaD680CM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GmGrqddt2nj8d9Jvb/zeu/GilBbj6wCylBXiz9nqR+OANBdZv6M9Q3Av996Nj5MEJLcQJ3KlKEeZxxi1/51KucheiVY3jICfMsLUElWDBD/RMSI93IrpKQv3pgIsZIyXcCnuiojKndgntZgSq5r6tAbJfqIBH3PaQ+9qPyUZ0xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AFEF74jY; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e960900d-3811-4b8b-b4b3-bb23048ef5d6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756832105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hDmFle6NNRHHxvk9SFX7P01CsUfGYQB8JSdA3p8i0w4=;
-	b=AFEF74jY87dxIniW/EuXY7tPRDaxdUOHDklysZdySYCT7Rmui0QN2XWgPC435v1gJyxvRw
-	976FU1oNrsvWB/BVoG9sYG/8Qe1ERdgKRbB0LDqKkgKqJSUafovOJHulLL4doCDXGaUDqz
-	immszZilaVgVhgf8lxPTf5PBL4GHRjc=
-Date: Tue, 2 Sep 2025 09:54:54 -0700
+	 In-Reply-To:Content-Type; b=TBEV5rPLYLalJxSOvzgJ8kU/T2tcpkavpLfnVXjT+6gqfeJNgxZDY2A4wgTqOKd81OmTHnmQHt9J6VFeGnJZZSJ3y5gZvq65j83PxdFeZflvIPrk6DSaANwQu6oFQ6aUY7pk++ofsMDlKcN+E4IBNKCaHQGjZKg3z77epSVQHVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jkyy2MsO; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756832182; x=1788368182;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=M2vqCr5I7i3KfPqnsheMASeTdG7RiTSBtyebaD680CM=;
+  b=Jkyy2MsOSaYtOzI9ZdbOzeu8dgcoT1MppAkhgLmQs0USeTQJtpu1Ve5W
+   gowVzNJ+ddNTcoJ3PWZ2gGkfdRKCmZxnntBwr6WoCtSJJrTWcZ9P0tanr
+   v/6m3AMPFwLrj1poiRb/+lUcMbhs3r9x/g5T5uWErMMThMIVofPUnmad+
+   1wHOZNIFEJLfLlSf2bGZw+14IA2I1AdoRYx98H8hqpvWydC60UQKV7Qrt
+   hh2foMvSczo5JHMpL5XqU2d3aXx0I8T5afEvrFuIfibBoaM+CMrEmJQDn
+   EiCXqSGuZDVZRUVQgbTev4gxDyR4kbfutX7ca1i1znx0Q7FVot7mduONc
+   A==;
+X-CSE-ConnectionGUID: BY+DRahsS+WNyMHV00t6EA==
+X-CSE-MsgGUID: Ub3E1R7LSSqYSXBgxmZUCg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69378994"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="69378994"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 09:56:21 -0700
+X-CSE-ConnectionGUID: fvnKOAPET8myKCVVkh9zhA==
+X-CSE-MsgGUID: UxbMA+rKQayHoMfsrZToQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="176634926"
+Received: from tslove-mobl4.amr.corp.intel.com (HELO [10.125.109.202]) ([10.125.109.202])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 09:56:21 -0700
+Message-ID: <4f340f1e-1cbf-4b50-ae23-a0e50170146c@intel.com>
+Date: Tue, 2 Sep 2025 09:56:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: add bpf_strcasecmp kfunc
-Content-Language: en-GB
-To: Rong Tao <rtoax@foxmail.com>, andrii@kernel.org, ast@kernel.org,
- vmalik@redhat.com
-Cc: Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>,
- "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
- <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <cover.1756804522.git.rtoax@foxmail.com>
- <tencent_0E0C830021A02CBCCB6D95AE57CFD100C407@qq.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <tencent_0E0C830021A02CBCCB6D95AE57CFD100C407@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML
+ <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ the arch/x86 maintainers <x86@kernel.org>
+References: <12740505.O9o76ZdvQC@rafael.j.wysocki>
+ <CAJZ5v0ik7fRKwH3CnXysvBJkkdJbWP-6iL=zBF0o92rR+nHTKg@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CAJZ5v0ik7fRKwH3CnXysvBJkkdJbWP-6iL=zBF0o92rR+nHTKg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 9/2/25 08:05, Rafael J. Wysocki wrote:
+> On Fri, Aug 29, 2025 at 10:01 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> Christian has reported that commit a430c11f4015 ("intel_idle: Rescan
+>> "dead" SMT siblings during initialization") broke the use case in
 
+Does "dead" here mean present but offline?
 
-On 9/2/25 2:19 AM, Rong Tao wrote:
-> From: Rong Tao <rongtao@cestc.cn>
->
-> bpf_strcasecmp() function performs same like bpf_strcmp() except ignoring
-> the case of the characters.
->
-> Signed-off-by: Rong Tao <rongtao@cestc.cn>
-> ---
->   kernel/bpf/helpers.c | 68 +++++++++++++++++++++++++++++++-------------
->   1 file changed, 48 insertions(+), 20 deletions(-)
->
-> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> index 401b4932cc49..238fd992c786 100644
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -3349,45 +3349,72 @@ __bpf_kfunc void __bpf_trap(void)
->    * __get_kernel_nofault instead of plain dereference to make them safe.
->    */
->   
-> -/**
-> - * bpf_strcmp - Compare two strings
-> - * @s1__ign: One string
-> - * @s2__ign: Another string
-> - *
-> - * Return:
-> - * * %0       - Strings are equal
-> - * * %-1      - @s1__ign is smaller
-> - * * %1       - @s2__ign is smaller
-> - * * %-EFAULT - Cannot read one of the strings
-> - * * %-E2BIG  - One of strings is too large
-> - * * %-ERANGE - One of strings is outside of kernel address space
-> - */
-> -__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
-> +int __bpf_strcasecmp(const char *s1, const char *s2, bool ignore_case)
+>> which both nosmt and maxcpus were added to the kernel command line
+>> because it caused CPUs that were not SMT siblings to be brought
+>> online during the intel_idle driver initialization in violation of the
+>> maxcpus limit.
 
-The function __bpf_strcasecmp should be a static function.
+How does intel_idle fit in here? I don't immediately see it calling
+cpuhp_smt_enable().
 
->   {
->   	char c1, c2;
->   	int i;
->   
-> -	if (!copy_from_kernel_nofault_allowed(s1__ign, 1) ||
-> -	    !copy_from_kernel_nofault_allowed(s2__ign, 1)) {
-> +	if (!copy_from_kernel_nofault_allowed(s1, 1) ||
-> +	    !copy_from_kernel_nofault_allowed(s2, 1)) {
->   		return -ERANGE;
->   	}
->   
->   	guard(pagefault)();
->   	for (i = 0; i < XATTR_SIZE_MAX; i++) {
-> -		__get_kernel_nofault(&c1, s1__ign, char, err_out);
-> -		__get_kernel_nofault(&c2, s2__ign, char, err_out);
-> +		__get_kernel_nofault(&c1, s1, char, err_out);
-> +		__get_kernel_nofault(&c2, s2, char, err_out);
-> +		if (ignore_case) {
-> +			c1 = tolower(c1);
-> +			c2 = tolower(c2);
-> +		}
->   		if (c1 != c2)
->   			return c1 < c2 ? -1 : 1;
->   		if (c1 == '\0')
->   			return 0;
-> -		s1__ign++;
-> -		s2__ign++;
-> +		s1++;
-> +		s2++;
->   	}
->   	return -E2BIG;
->   err_out:
->   	return -EFAULT;
->   }
->   
-> +/**
-> + * bpf_strcmp - Compare two strings
-> + * @s1__ign: One string
-> + * @s2__ign: Another string
-> + *
-> + * Return:
-> + * * %0       - Strings are equal
-> + * * %-1      - @s1__ign is smaller
-> + * * %1       - @s2__ign is smaller
-> + * * %-EFAULT - Cannot read one of the strings
-> + * * %-E2BIG  - One of strings is too large
-> + * * %-ERANGE - One of strings is outside of kernel address space
-> + */
-> +__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
-> +{
-> +	return __bpf_strcasecmp(s1__ign, s2__ign, false);
-> +}
-> +
-> +/**
-> + * bpf_strcasecmp - Compare two strings, ignoring the case of the characters
-> + * @s1__ign: One string
-> + * @s2__ign: Another string
-> + *
-> + * Return:
-> + * * %0       - Strings are equal
-> + * * %-1      - @s1__ign is smaller
-> + * * %1       - @s2__ign is smaller
-> + * * %-EFAULT - Cannot read one of the strings
-> + * * %-E2BIG  - One of strings is too large
-> + * * %-ERANGE - One of strings is outside of kernel address space
-> + */
-> +__bpf_kfunc int bpf_strcasecmp(const char *s1__ign, const char *s2__ign)
-> +{
-> +	return __bpf_strcasecmp(s1__ign, s2__ign, true);
-> +}
-> +
->   /**
->    * bpf_strnchr - Find a character in a length limited string
->    * @s__ign: The string to be searched
-> @@ -3832,6 +3859,7 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
->   #endif
->   BTF_ID_FLAGS(func, __bpf_trap)
->   BTF_ID_FLAGS(func, bpf_strcmp);
-> +BTF_ID_FLAGS(func, bpf_strcasecmp);
->   BTF_ID_FLAGS(func, bpf_strchr);
->   BTF_ID_FLAGS(func, bpf_strchrnul);
->   BTF_ID_FLAGS(func, bpf_strnchr);
+>> The underlying reason for this is a missing topology_is_primary_thread()
+>> check in cpuhp_smt_enable() which causes that function to put online
+>> more CPUs than just the SMT siblings that it is supposed to handle.
+>>
+>> Add the missing check to address the issue.
+
+We should probably add a bit more checking in cpuhp_smt_enable() to make
+sure that it's being called under expected conditions like a:
+
+	WARN_ON_ONCE(cpu_smt_control != CPU_SMT_DISABLED);
+
+and probably also some comments about how it is expected to work.
+
+cpuhp_smt_enable() doesn't _really_ enable SMT. It specifically takes it
+from DISABLED=>ENABLED. Thinking about it in that context, enabling
+_just_ the secondary (disabled) threads makes a lot of sense.
+
+But that can come later, after the bug fix.
+
+>> --- a/kernel/cpu.c
+>> +++ b/kernel/cpu.c
+>> @@ -2710,6 +2710,12 @@
+
+No 'diff -p', eh?
+
+>>         cpu_maps_update_begin();
+>>         cpu_smt_control = CPU_SMT_ENABLED;
+>>         for_each_present_cpu(cpu) {
+>> +               /*
+>> +                * Avoid accidentally onlining primary thread CPUs that have
+>> +                * been taken offline.
+>> +                */
+>> +               if (topology_is_primary_thread(cpu))
+>> +                       continue;
+>>                 /* Skip online CPUs and CPUs on offline nodes */
+>>                 if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
+>>                         continue;
+Is there a more generic problem with this not respecting 'maxcpus'? If
+maxcpus had forced a primary thread offline, this would still online the
+secondary thread, even with the fix. Taking _that_ online might still
+bring you over the maxcpus limit.
+
 
 
