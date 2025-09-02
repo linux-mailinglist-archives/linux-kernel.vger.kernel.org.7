@@ -1,212 +1,180 @@
-Return-Path: <linux-kernel+bounces-796842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9445CB40821
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B76CEB40828
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFCD1A817F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84DE1B636D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5543148D5;
-	Tue,  2 Sep 2025 14:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBADC324B0E;
+	Tue,  2 Sep 2025 14:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcFWa8vW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqNTHpn2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373342DFA26;
-	Tue,  2 Sep 2025 14:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25E42DFA26;
+	Tue,  2 Sep 2025 14:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756824700; cv=none; b=kuVOAilCEOw3Hwf6lYtjbyp0k/lcdyxdXHtFHk4Nabi8u3wFVG2QWLvLRuwDWSU+zX4gmdgdzJVEQUYLRCRrcZi9nXs8XZnxs09tKJ3IAKDGCIMDNIg4Ey3ChvH5m/ZgNubaDEPqBBYC956BcaUUY3VAiswJ5K6o910psxAOkFw=
+	t=1756824715; cv=none; b=CYduf4cQduJL/R8Cc+zM699jtNGAqkQXzRpGeGyE73jdbwJvD3ZkczsZdJh497bp1aOmbG8C9fD9mKis/JaIeiyernIfUBw7W2A6dR+Hfk6nWJGaZUFiMVx+GyXvgyZaWwXY+xXvK2LHE+vM2jWDVL6wFUaoMB9ejs4xMhhCqbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756824700; c=relaxed/simple;
-	bh=b37E1Q+N23pT46YkYY9IK/lkNbzMf3Zsz7EbTF3ctUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVuSpEoiRpCSo16Ctm2yYPdT8gJrtodHnnj/dAKkehkWYwPTygiqOuxqcuAC8k5C4lOX0qk8V1oaVRm96QOu9RORapO38vimk53q5aIMkGaqUOPgz/PK3xCu6drVxt0YrnJqJ/hNOs2nfoZTkB5UOxqoNcNR37ZgTPgwXfA2M7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcFWa8vW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EABCC4CEED;
-	Tue,  2 Sep 2025 14:51:38 +0000 (UTC)
+	s=arc-20240116; t=1756824715; c=relaxed/simple;
+	bh=U+dxRjSf6jIW2bglfWLHV6i6zgwzXBdE8U7BUJ6+/nY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HNKx7OJC5fC6NmFFq2mUvPX5uFTNAAhpk5kpKPks/7/KBeMc/6ORWgx4OGz8CI0i5MhKwIX4TcnTuLBaPIGkTL7seMb5fBABlyJC99kyKLXeuRag68a8/1I4hBN/zPe9pJc20ECyJI7yO6uFwGCQpt6GGkAGhKGSwl+VBqzd7AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqNTHpn2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ADD5C4CEF5;
+	Tue,  2 Sep 2025 14:51:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756824699;
-	bh=b37E1Q+N23pT46YkYY9IK/lkNbzMf3Zsz7EbTF3ctUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KcFWa8vW9lALcC7oUDIaDCey6FU/dJsGePh6HZmfYNSbspr2ff70qozIZ2dqC7Ify
-	 q0PkmZjGtCoaoERqG1sRqPe2RwKBL6COWXn6KT5gI1QZGAv2GmgpZeFSv1aQbe1opU
-	 ooslCd146AS/52XtoLFC+57IEaxRk/w3gi1LbYrp09X8XVFqde3Z/DMBFMKQ6JMlpD
-	 nmGNcjp93gFzTNLEXGx7BJiwYFkKixXtoXcOOYUScenFps6poenJ2ZUVRiwbk/axM5
-	 PTcuXnY8xTrGTJ1DQ6Cn2qo7nyWWpXbeOAEC2hruc6ehWgWbwzoPbvigZWm4PsfwEn
-	 /dPkegQhfR4UA==
-Date: Tue, 2 Sep 2025 09:51:36 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, kernel@oss.qualcomm.com, 
-	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Subject: Re: [PATCH v8 6/9] arm64: dts: qcom: qcs6490-rb3gen2: Add WSA8830
- speakers amplifier
-Message-ID: <arjgotmhd6b3ip2cvyvl74nanapqxleeeyxg63m6ike7osrjw7@gqp44che72gn>
-References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
- <20250821044914.710044-7-quic_pkumpatl@quicinc.com>
+	s=k20201202; t=1756824714;
+	bh=U+dxRjSf6jIW2bglfWLHV6i6zgwzXBdE8U7BUJ6+/nY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aqNTHpn2ALOkuwXUyFyXWzRj7T5Z772S3TGgmk88SHljW6MWxiMTRxpj9+K9+ZB4F
+	 7MGSxFm3pb/hzUFcFjxJ7YI7sERVFODsz7TGm7fUaiWQtcgSsXuSxdHwhNQkQXFaDU
+	 cUTJKKiMOZ4/P+i19WcWhpqneZ7c3eIp15vPYm9rk9TMQtTh7JPynHVUIncqwJEGCq
+	 bqcpCFWQ7qS1zRfyxV86Uy2NpcCu6ABpLcsq5v8o0UxTUwH/eMauDRjgFf1Az+j+MD
+	 JW0QmIHSHfsr+s20IL7D6N9CNw8L8iACANdknVTpPpkckpxe3huqi2FCagdc2yfGAZ
+	 A4sIrBPN/MoBA==
+Message-ID: <834238b4-3549-4062-a29b-bf9c5aefa30f@kernel.org>
+Date: Tue, 2 Sep 2025 16:51:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821044914.710044-7-quic_pkumpatl@quicinc.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next 0/6] mptcp: misc. features for v6.18
+Content-Language: en-GB, fr-BE
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+ Christoph Paasch <cpaasch@openai.com>, Gang Yan <yangang@kylinos.cn>
+References: <20250901-net-next-mptcp-misc-feat-6-18-v1-0-80ae80d2b903@kernel.org>
+ <20250902072600.2a9be439@kernel.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ xsFNBFXj+ekBEADxVr99p2guPcqHFeI/JcFxls6KibzyZD5TQTyfuYlzEp7C7A9swoK5iCvf
+ YBNdx5Xl74NLSgx6y/1NiMQGuKeu+2BmtnkiGxBNanfXcnl4L4Lzz+iXBvvbtCbynnnqDDqU
+ c7SPFMpMesgpcu1xFt0F6bcxE+0ojRtSCZ5HDElKlHJNYtD1uwY4UYVGWUGCF/+cY1YLmtfb
+ WdNb/SFo+Mp0HItfBC12qtDIXYvbfNUGVnA5jXeWMEyYhSNktLnpDL2gBUCsdbkov5VjiOX7
+ CRTkX0UgNWRjyFZwThaZADEvAOo12M5uSBk7h07yJ97gqvBtcx45IsJwfUJE4hy8qZqsA62A
+ nTRflBvp647IXAiCcwWsEgE5AXKwA3aL6dcpVR17JXJ6nwHHnslVi8WesiqzUI9sbO/hXeXw
+ TDSB+YhErbNOxvHqCzZEnGAAFf6ges26fRVyuU119AzO40sjdLV0l6LE7GshddyazWZf0iac
+ nEhX9NKxGnuhMu5SXmo2poIQttJuYAvTVUNwQVEx/0yY5xmiuyqvXa+XT7NKJkOZSiAPlNt6
+ VffjgOP62S7M9wDShUghN3F7CPOrrRsOHWO/l6I/qJdUMW+MHSFYPfYiFXoLUZyPvNVCYSgs
+ 3oQaFhHapq1f345XBtfG3fOYp1K2wTXd4ThFraTLl8PHxCn4ywARAQABzSRNYXR0aGlldSBC
+ YWVydHMgPG1hdHR0YmVAa2VybmVsLm9yZz7CwZEEEwEIADsCGwMFCwkIBwIGFQoJCAsCBBYC
+ AwECHgECF4AWIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZUDpDAIZAQAKCRD2t4JPQmmgcz33
+ EACjROM3nj9FGclR5AlyPUbAq/txEX7E0EFQCDtdLPrjBcLAoaYJIQUV8IDCcPjZMJy2ADp7
+ /zSwYba2rE2C9vRgjXZJNt21mySvKnnkPbNQGkNRl3TZAinO1Ddq3fp2c/GmYaW1NWFSfOmw
+ MvB5CJaN0UK5l0/drnaA6Hxsu62V5UnpvxWgexqDuo0wfpEeP1PEqMNzyiVPvJ8bJxgM8qoC
+ cpXLp1Rq/jq7pbUycY8GeYw2j+FVZJHlhL0w0Zm9CFHThHxRAm1tsIPc+oTorx7haXP+nN0J
+ iqBXVAxLK2KxrHtMygim50xk2QpUotWYfZpRRv8dMygEPIB3f1Vi5JMwP4M47NZNdpqVkHrm
+ jvcNuLfDgf/vqUvuXs2eA2/BkIHcOuAAbsvreX1WX1rTHmx5ud3OhsWQQRVL2rt+0p1DpROI
+ 3Ob8F78W5rKr4HYvjX2Inpy3WahAm7FzUY184OyfPO/2zadKCqg8n01mWA9PXxs84bFEV2mP
+ VzC5j6K8U3RNA6cb9bpE5bzXut6T2gxj6j+7TsgMQFhbyH/tZgpDjWvAiPZHb3sV29t8XaOF
+ BwzqiI2AEkiWMySiHwCCMsIH9WUH7r7vpwROko89Tk+InpEbiphPjd7qAkyJ+tNIEWd1+MlX
+ ZPtOaFLVHhLQ3PLFLkrU3+Yi3tXqpvLE3gO3LM7BTQRV4/npARAA5+u/Sx1n9anIqcgHpA7l
+ 5SUCP1e/qF7n5DK8LiM10gYglgY0XHOBi0S7vHppH8hrtpizx+7t5DBdPJgVtR6SilyK0/mp
+ 9nWHDhc9rwU3KmHYgFFsnX58eEmZxz2qsIY8juFor5r7kpcM5dRR9aB+HjlOOJJgyDxcJTwM
+ 1ey4L/79P72wuXRhMibN14SX6TZzf+/XIOrM6TsULVJEIv1+NdczQbs6pBTpEK/G2apME7vf
+ mjTsZU26Ezn+LDMX16lHTmIJi7Hlh7eifCGGM+g/AlDV6aWKFS+sBbwy+YoS0Zc3Yz8zrdbi
+ Kzn3kbKd+99//mysSVsHaekQYyVvO0KD2KPKBs1S/ImrBb6XecqxGy/y/3HWHdngGEY2v2IP
+ Qox7mAPznyKyXEfG+0rrVseZSEssKmY01IsgwwbmN9ZcqUKYNhjv67WMX7tNwiVbSrGLZoqf
+ Xlgw4aAdnIMQyTW8nE6hH/Iwqay4S2str4HZtWwyWLitk7N+e+vxuK5qto4AxtB7VdimvKUs
+ x6kQO5F3YWcC3vCXCgPwyV8133+fIR2L81R1L1q3swaEuh95vWj6iskxeNWSTyFAVKYYVskG
+ V+OTtB71P1XCnb6AJCW9cKpC25+zxQqD2Zy0dK3u2RuKErajKBa/YWzuSaKAOkneFxG3LJIv
+ Hl7iqPF+JDCjB5sAEQEAAcLBXwQYAQIACQUCVeP56QIbDAAKCRD2t4JPQmmgc5VnD/9YgbCr
+ HR1FbMbm7td54UrYvZV/i7m3dIQNXK2e+Cbv5PXf19ce3XluaE+wA8D+vnIW5mbAAiojt3Mb
+ 6p0WJS3QzbObzHNgAp3zy/L4lXwc6WW5vnpWAzqXFHP8D9PTpqvBALbXqL06smP47JqbyQxj
+ Xf7D2rrPeIqbYmVY9da1KzMOVf3gReazYa89zZSdVkMojfWsbq05zwYU+SCWS3NiyF6QghbW
+ voxbFwX1i/0xRwJiX9NNbRj1huVKQuS4W7rbWA87TrVQPXUAdkyd7FRYICNW+0gddysIwPoa
+ KrLfx3Ba6Rpx0JznbrVOtXlihjl4KV8mtOPjYDY9u+8x412xXnlGl6AC4HLu2F3ECkamY4G6
+ UxejX+E6vW6Xe4n7H+rEX5UFgPRdYkS1TA/X3nMen9bouxNsvIJv7C6adZmMHqu/2azX7S7I
+ vrxxySzOw9GxjoVTuzWMKWpDGP8n71IFeOot8JuPZtJ8omz+DZel+WCNZMVdVNLPOd5frqOv
+ mpz0VhFAlNTjU1Vy0CnuxX3AM51J8dpdNyG0S8rADh6C8AKCDOfUstpq28/6oTaQv7QZdge0
+ JY6dglzGKnCi/zsmp2+1w559frz4+IC7j/igvJGX4KDDKUs0mlld8J2u2sBXv7CGxdzQoHaz
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20250902072600.2a9be439@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 21, 2025 at 10:19:11AM +0530, Prasad Kumpatla wrote:
-> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Hi Jakub,
+
+On 02/09/2025 16:26, Jakub Kicinski wrote:
+> On Mon, 01 Sep 2025 11:39:09 +0200 Matthieu Baerts (NGI0) wrote:
+>> This series contains 4 independent new features:
+>>
+>> - Patch 1: use HMAC-SHA256 library instead of open-coded HMAC.
+>>
+>> - Patches 2-3: make ADD_ADDR retransmission timeout adaptive + simplify
+>>   selftests.
+>>
+>> - Patch 4: selftests: check for unexpected fallback counter increments.
+>>
+>> - Patches 5-6: record subflows in RPS table, for aRFS support.
 > 
-> Add nodes for WSA8830 speakers amplifier on qcs6490-rb3gen2 board.
+> I don't see why, but kmemleak started to hit this with the join test
+> 2 branches ago :\ Have you seen any kmemleak issues on your side?
+> We also see occasional leaked skb in driver tests which makes no sense.
 > 
-> Enable lpass_wsa and lpass_va macros along with pinctrl settings
-> for audio.
-> 
-> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> ---
->  .../boot/dts/qcom/qcs6490-audioreach.dtsi     |  6 ++++
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 35 +++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sc7280.dtsi          |  8 +++++
->  3 files changed, 49 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> index 6d3a9e171066..078936237e20 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> @@ -58,6 +58,12 @@ &lpass_va_macro {
->  	clock-names = "mclk",
->  		      "macro",
->  		      "dcodec";
-> +
-> +	pinctrl-0 = <&lpass_dmic01_clk>, <&lpass_dmic01_data>,
-> +		    <&lpass_dmic23_clk>, <&lpass_dmic23_data>;
+> unreferenced object 0xffff8880029d3340 (size 3016):
+>   comm "softirq", pid 0, jiffies 4297316940
+>   hex dump (first 32 bytes):
+>     0a 00 01 02 0a 00 01 01 00 00 00 00 9e b8 7d 27  ..............}'
+>     0a 00 07 41 00 00 00 00 00 00 00 00 00 00 00 00  ...A............
+>   backtrace (crc 3653d88c):
+>     kmem_cache_alloc_noprof+0x284/0x330
+>     sk_prot_alloc.constprop.0+0x4e/0x1b0
+>     sk_clone_lock+0x4b/0x10d0
+>     mptcp_sk_clone_init+0x2e/0x10d0
+>     subflow_syn_recv_sock+0x9d1/0x1680
+>     tcp_check_req+0x3a4/0x1910
+>     tcp_v4_rcv+0x1004/0x30a0
+>     ip_protocol_deliver_rcu+0x82/0x350
+>     ip_local_deliver_finish+0x35d/0x620
+>     ip_local_deliver+0x19c/0x470
+>     ip_rcv+0xc2/0x370
+>     __netif_receive_skb_one_core+0x108/0x180
+>     process_backlog+0x3c1/0x13e0
+>     __napi_poll.constprop.0+0x9f/0x460
+>     net_rx_action+0x54f/0xda0
+>     handle_softirqs+0x215/0x610
 
-Does all QCS6490 boards with AudioReach have these two (4?) DMICs? Is
-this board-specific or generic?
+Thank you for this notification!
 
-> +	pinctrl-names = "default";
-> +
-> +	qcom,dmic-sample-rate = <4800000>;
->  };
->  
->  &lpass_wsa_macro {
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> index 7509c27bd3f8..09e2cb9053a6 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> @@ -19,6 +19,7 @@
->  #include "pm7325.dtsi"
->  #include "pm8350c.dtsi"
->  #include "pmk8350.dtsi"
-> +#include "qcs6490-audioreach.dtsi"
->  
->  /delete-node/ &ipa_fw_mem;
->  /delete-node/ &rmtfs_mem;
-> @@ -765,6 +766,14 @@ redriver_usb_con_sbu: endpoint {
->  	};
->  };
->  
-> +&lpass_va_macro {
-> +	status = "okay";
-> +};
-> +
-> +&lpass_wsa_macro {
-> +	status = "okay";
-> +};
-> +
->  &mdss {
->  	status = "okay";
->  };
-> @@ -1039,6 +1048,32 @@ &sdhc_2 {
->  	status = "okay";
->  };
->  
-> +&swr2 {
-> +	status = "okay";
-> +
-> +	left_spkr: speaker@0,1 {
-> +		compatible = "sdw10217020200";
-> +		reg = <0 1>;
-> +		reset-gpios = <&tlmm 158 GPIO_ACTIVE_LOW>;
-> +		#sound-dai-cells = <0>;
-> +		sound-name-prefix = "SpkrLeft";
-> +		#thermal-sensor-cells = <0>;
-> +		vdd-supply = <&vreg_l18b_1p8>;
-> +		qcom,port-mapping = <1 2 3 7>;
-> +	};
-> +
-> +	right_spkr: speaker@0,2 {
-> +		compatible = "sdw10217020200";
-> +		reg = <0 2>;
-> +		reset-gpios = <&tlmm 158 GPIO_ACTIVE_LOW>;
-> +		#sound-dai-cells = <0>;
-> +		sound-name-prefix = "SpkrRight";
-> +		#thermal-sensor-cells = <0>;
-> +		vdd-supply = <&vreg_l18b_1p8>;
-> +		qcom,port-mapping = <4 5 6 8>;
-> +	};
-> +};
-> +
->  &tlmm {
->  	gpio-reserved-ranges = <32 2>, /* ADSP */
->  			       <48 4>; /* NFC */
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> index c51c38cf147a..d472de18296b 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-> @@ -3001,21 +3001,29 @@ lpass_tlmm: pinctrl@33c0000 {
->  			lpass_dmic01_clk: dmic01-clk-state {
->  				pins = "gpio6";
->  				function = "dmic1_clk";
-> +				drive-strength = <8>;
-> +				bias-disable;
+No, I didn't notice that on our side. For KMemLeak, now I'm waiting 5
+seconds, then I force the scan, and check for issues once. On NIPA, I
+see that there are still 2 scans + cat, and apparently, the issue was
+always visible during the 2nd scan:
 
-Does these settings belong in the SoC description? Are they fixed for
-all targets of sc7280, or are there any board-specific variations? Any
-variations based on which audio solution the board implements?
 
-Regards,
-Bjorn
+https://netdev-3.bots.linux.dev/vmksft-mptcp-dbg/results/279881/1-mptcp-join-sh/stdout
 
->  			};
->  
->  			lpass_dmic01_data: dmic01-data-state {
->  				pins = "gpio7";
->  				function = "dmic1_data";
-> +				drive-strength = <8>;
-> +				bias-pull-down;
->  			};
->  
->  			lpass_dmic23_clk: dmic23-clk-state {
->  				pins = "gpio8";
->  				function = "dmic2_clk";
-> +				drive-strength = <8>;
-> +				bias-disable;
->  			};
->  
->  			lpass_dmic23_data: dmic23-data-state {
->  				pins = "gpio9";
->  				function = "dmic2_data";
-> +				drive-strength = <8>;
-> +				bias-pull-down;
->  			};
->  
->  			lpass_rx_swr_clk: rx-swr-clk-state {
-> -- 
-> 2.34.1
-> 
+https://netdev-3.bots.linux.dev/vmksft-mptcp-dbg/results/280062/1-mptcp-join-sh/stdout
+
+It is unclear why a second scan is needed and only the second one caught
+something. Was it the same with the strange issues you mentioned in
+driver tests? Do you think I should re-add the second scan + cat?
+
+When looking at the modifications of this series, it is unclear what
+could cause that.
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
