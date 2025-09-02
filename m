@@ -1,259 +1,174 @@
-Return-Path: <linux-kernel+bounces-795521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1360BB3F3D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:45:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12A7B3F3D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C66181633CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7656A3A8CD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915B725394A;
-	Tue,  2 Sep 2025 04:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95832DF15E;
+	Tue,  2 Sep 2025 04:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akhQRcxv"
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KhEEdg5+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF1B72618
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 04:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E0A35962;
+	Tue,  2 Sep 2025 04:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756788340; cv=none; b=Xl4NqdXyH5+MkJdCSsm3rOSl1F7WNslZ53hsw07m7azaA2r8ysPG26CJrmDEuGADAgLM2QOYsfZ74hq1+Slry2jlEgg+sRAiGqIOpzNBS6ftLY6eOZzldEIMdrzx/DxgflHLOgUhtIkaUetfktekNjJXMAIIBWM4ES1pHay141E=
+	t=1756788580; cv=none; b=r11w0r6Id7Z258ipt5YQh0hxtxGmVScRuyishjX/spRo2RweDQjQeG/eOm2JNSCtJWMGYU1QL4Zfi81wHLs/N2INTATnufr+TZNbbaZfYPEZJQzq6hO6ZvOM55dLrLQJzD8Bg3tOSHFsfsGUn0LHYsMZmXgitASoVhsSHpp8pyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756788340; c=relaxed/simple;
-	bh=/OogJwtAjxwiLwi3I6AQ9o4DEBQ8vK1okBLRmMLSjuQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HtLeZVjULwPg1115S3Tx7I7IzYMJIFGV1tzOl1y1eb7kDya7+CROcbF4edO9gocISHMOT00aRB8QtS/umtZarKE1dARCeqDDwImlRPCat2soehDXixlpZQqlCeyqAxZk8Vs/2PGI7mJeplhoGu4jbkrEeeTMSqaYAZFN1upQ9Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=akhQRcxv; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-893c2b58374so924418241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 21:45:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756788338; x=1757393138; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2czLyRPqV1NqQm/ya0rQGCoiUl7QzZi3DhinlOw81cc=;
-        b=akhQRcxvjp9wuubncxqB/IIPFRLz5al4qUKhbutXC7niy0RwHNx1PW25aZqQk/t5Q7
-         CwHAgd2WcbeNRTDoDvG83vhyD0kp2FpuzBE4XzGkqcBQLoUNT1GYpkPcwjnq9XPEoADP
-         291JKNS6vOslHsRDZHRbZjazkDW7X/fnbR3Qbb6JiX7zmasD44KLUDMBdOFWvfold+69
-         tCDPVch9D1iabDSX87SYLxKpRHq45BPUPC2rl0RN15HMClGY+d1JpKJdZ6fwm5lyugr6
-         3+Nn4K12lusbivmcyUfSF+iBKqJ+N5ZvzhXsXHS3sU+TQ8WYRB/5qJ/5s+bm9zSq1nmO
-         DXbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756788338; x=1757393138;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2czLyRPqV1NqQm/ya0rQGCoiUl7QzZi3DhinlOw81cc=;
-        b=H2D69RbHmQNJnOwreekmg5gHsLpvZI3NH2+IqFn0wO1addKOpPtX9h7beT2CoTI5pR
-         lEYdMVtdHNFLoMWLWjJwWT8pDqnrMHJ4bVVViL2svRxYTNERZPx+C2tMHivTrEF4pYFH
-         heIoiNEGQvEIw6cLH1hCJ6WSxB+FEqxi2Hof6q1RtUMWfupGaZw0e6lqMr+xYCBl6osH
-         Hu31Pexu7azE1EHHoUpv/zxdWGcryvkbfMIB5LDj1AuKWUCO7UEryvO8n8vJWLq35SeO
-         /ad3AmxfTPxFzIOhoDaT1rOWWHp9B3hrRRUdWR5iy/vgq1SqXarNKfTLMTcnRFhH0FWg
-         ZW1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWg0oTzpCo0Z2smKWNKhKzjsBm52V2We8u7WgUmGunXiwk7D7Rd+x5AkkrAr1kC8H8NI/BD6Sq4HaLtP8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9ey05EqIC2+S/cUXmvx7AWHgDU9RDtORET0C41p6xv2l/gNkF
-	M4ATLNu91CJ39ERk76UWi+XWZeTQtgKY4GS7ZdDn3zB/wTTyL5X73JUCDWfk5JQYsVo5W92yJ+A
-	ty9FUvPqGh3I8MNwp+r67QIfTmzeMQAI=
-X-Gm-Gg: ASbGncs187g+9WezvqNA+M5myDleJSxs8zUNNBbt6R4T1JfoXld7tOrSu+V6Sl0L7m/
-	ohMC06P969wzh8Pcg4qFSBdkoOZtPkBmeBmk7a2CbVOX7J9jqCAMKsToAyvDxjhbLgd1wiFeffr
-	Vc+S/QKhR/09RTZOaKKzzoUsaejyjqK6nYBg5tJ1VKFuF07OES21zH/ldCshgCS9eBBUq4DBa8v
-	WzE+iBVtYvb58GFaw==
-X-Google-Smtp-Source: AGHT+IH32X2dcrCeBnz40TFdhgHrUG0jWvU6TsYGviMku5+2IuEc3XdnFN6o2hSnzeQl+EMQGqpLYhQ2tzlqQmqE9cc=
-X-Received: by 2002:a05:6102:688c:b0:52a:fd2e:ef91 with SMTP id
- ada2fe7eead31-52b1985a08emr2669319137.8.1756788337992; Mon, 01 Sep 2025
- 21:45:37 -0700 (PDT)
+	s=arc-20240116; t=1756788580; c=relaxed/simple;
+	bh=co5/+M2x17Vp4JI0Nnsgv8KfR8isXh2gWlTdZsU5Wmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGodFr4gjMSu5iimaWPN5SnMs+fzbhRo30Xugfql3Kzig7aL89Rb0eUESTKWNXH1dt7SVZHj55SlZu+Mulp9R5sZ4U5EHDiFAWOoVaD5RzJvYdZ2aCjPFKfc004vxpxszuFWAeleT/aR+lqZBjRwzNciQxfRiDhDG4BOQJOv9Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KhEEdg5+; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756788579; x=1788324579;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=co5/+M2x17Vp4JI0Nnsgv8KfR8isXh2gWlTdZsU5Wmk=;
+  b=KhEEdg5+z7dB+XToWhCcvn1x7lEiGb7Ycn9Uqpvgt+oqhgBbRjblI8ah
+   VCXruBuDiVqPD5WANpGhXBV7Af9Ct/6OXDHJIQIpmXZ2v96pbMRWIIFhU
+   vE8fDMrNeeS7lL27aHpwqTZQnP0dRcFN9tFWyGitihqO4ZbNdf+45Y2Wy
+   Y3+SXxRtdNGFISjfgnM/SMBcpYoLfiwdLtk+shtHWxoAJ194xpppy7jvt
+   oD377MPg2cGzJcjTz4y8ClbxEe7k1uriAhhNo2aMWv/s8G1WzGtxs+W2s
+   DlzqHbMoCPYhDXSetnFq+fwpS1pEnACdmRQT1sShwskbYMhFLnVsWV/Sa
+   g==;
+X-CSE-ConnectionGUID: /J1RX24/Rn2bosr/fx7+Vg==
+X-CSE-MsgGUID: fTUtqvbzT6WZQv6B03WWmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="70474622"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="70474622"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2025 21:49:38 -0700
+X-CSE-ConnectionGUID: J0pPkm4aSAyao86W6u2e1w==
+X-CSE-MsgGUID: F7mg/D50T5Oas6FREGmd8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="202094696"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 01 Sep 2025 21:49:34 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utIxX-0001RL-1G;
+	Tue, 02 Sep 2025 04:49:31 +0000
+Date: Tue, 2 Sep 2025 12:49:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mani@kernel.org,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-scsi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: Re: [PATCH V4 3/4] ufs: pltfrm: Allow limiting HS gear and rate via
+ DT
+Message-ID: <202509021257.jIDXzoS6-lkp@intel.com>
+References: <20250901155801.26988-4-quic_rdwivedi@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814133527.2679261-1-xiaqinxin@huawei.com>
- <20250814133527.2679261-2-xiaqinxin@huawei.com> <CAGsJ_4wbgqGavjQNXtbFVeMw8j8oSCEVSdL4BrBVWEuNHzomPg@mail.gmail.com>
- <8db50f47-9295-4c7c-8bbc-dbbbd3fb5f79@huawei.com> <CAGsJ_4xXt2uEtAohcq+3XF_cKdsZiWsRaRh+ZK4nj0-Zw-yWYw@mail.gmail.com>
- <ca162322-b97e-4ec1-828e-dad7b09f4735@huawei.com> <CAGsJ_4yTOPoO98TTh3oQ4t6rag==yqeYP8HQ1wKvYdvg4e1RTQ@mail.gmail.com>
- <e0584468-ca8e-4a3e-944d-c0bff8569a83@huawei.com> <CAGsJ_4y+J9uaj=h6JfmKeq5SM5ic9ZKwgDONBP+JbUm6SJtzNg@mail.gmail.com>
- <751409ee-86e6-4322-a14b-1387a845be79@huawei.com>
-In-Reply-To: <751409ee-86e6-4322-a14b-1387a845be79@huawei.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 2 Sep 2025 12:45:26 +0800
-X-Gm-Features: Ac12FXy7ks01z8PRhSzjdgKzMUPQ_nBHMfdpLGXgW50awCE-h9UZit1hzD586j4
-Message-ID: <CAGsJ_4yAoqkmsjeVLT8A9c=jQ0aggWBNmo51B4M37rHpQj2WSw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] tools/dma: move dma_map_benchmark from selftests to tools/dma
-To: Qinxin Xia <xiaqinxin@huawei.com>
-Cc: m.szyprowski@samsung.com, robin.murphy@arm.com, 
-	jonathan.cameron@huawei.com, prime.zeng@huawei.com, fanghao11@huawei.com, 
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com, yangyicong@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901155801.26988-4-quic_rdwivedi@quicinc.com>
 
-On Tue, Sep 2, 2025 at 12:08=E2=80=AFPM Qinxin Xia <xiaqinxin@huawei.com> w=
-rote:
->
->
->
-> On 2025/8/29 05:22:21, Barry Song <21cnbao@gmail.com> wrote:
-> > On Thu, Aug 28, 2025 at 12:07=E2=80=AFAM Qinxin Xia <xiaqinxin@huawei.c=
-om> wrote:
-> >>
-> >>
-> >>
-> >> On 2025/8/22 09:12:07, Barry Song <21cnbao@gmail.com> wrote:
-> >>>>
-> >>>> Does usr/include have header files? Did you run make headers_install
-> >>>> before make?
-> >>>> [xiaqinxin@localhost linux]$ make headers_install
-> >>>>      HOSTCC  scripts/basic/fixdep
-> >>>>      HOSTCC  scripts/unifdef
-> >>>>      WRAP    arch/arm64/include/generated/uapi/asm/socket.h
-> >>>>      SYSHDR  arch/arm64/include/generated/uapi/asm/unistd_64.h
-> >>>>      HDRINST usr/include/asm-generic/mman.h
-> >>>>      HDRINST usr/include/asm-generic/stat.h
-> >>>>      HDRINST usr/include/asm-generic/ucontext.h
-> >>>>      HDRINST usr/include/asm-generic/int-ll64.h
-> >>>>      HDRINST usr/include/asm-generic/unistd.h
-> >>>>      HDRINST usr/include/asm-generic/kvm_para.h
-> >>>>      HDRINST usr/include/asm-generic/types.h
-> >>>>      HDRINST usr/include/asm-generic/ipcbuf.h
-> >>>>      HDRINST usr/include/asm-generic/termbits-common.h
-> >>>> ...
-> >>>> [xiaqinxin@localhost linux]$ cd tools/dma/
-> >>>> [xiaqinxin@localhost dma]$ make
-> >>>> cc -I../../usr/include -I../../include dma_map_benchmark.c -o
-> >>>> dma_map_benchmark
-> >>>
-> >>> This is really frustrating. Why do other parts not need this, but
-> >>> dma_map_benchmark does? It is also not acceptable to hardcode the
-> >>> path to usr/include.
-> >>>
-> >>> It is also not good practice to access a kernel header directly from =
-a
-> >>> userspace tool - such as -I../../include.
-> >>>
-> >>> Shouldn't map_benchmark.h be a proper UAPI header that gets installed
-> >>> into the toolchain like the others?
-> >>>
-> >> Hello Barry :
-> >>
-> >> This include file is inherited from the original version, and there ar=
-e
-> >> similar
-> >>
-> >> method in other parts =EF=BC=9A
-> >>
-> >> pcmcia/Makefile:CFLAGS :=3D -I../../usr/include
-> >> laptop/dslm/Makefile:CFLAGS :=3D -I../../usr/include
-> >> accounting/Makefile:CFLAGS :=3D -I../../usr/include
-> >>
-> >> During compilation, the system searches for header files from
-> >> ../../usr/include first.
-> >>
-> >> If no header file is found in ../../usr/include, the system attempts t=
-o
-> >> get header files
-> >
-> > The difference is that, for them, the build still passes even without
-> > running `header_install` (and thus without `../../usr/include`).
-> >
-> > tools/laptop/dslm$ make
-> > gcc -I../../usr/include    dslm.c   -o dslm
-> >
-> > tools/pcmcia$ make
-> > gcc -I../../usr/include    crc32hash.c   -o crc32hash
-> >
-> > For tools/accounting, the build fails mainly because the UAPI header
-> > files in the toolchain may be older than those in the latest kernel. so
-> > we need make headers_install to update.
-> >
-> > But I don=E2=80=99t really understand why we need it. My guess is that =
-the
-> > "-I../../include" option overrides the system header files, which then
-> > causes type conflicts.
-> >
-> > cc -I../../include dma_map_benchmark.c -o dma_map_benchmark
-> > In file included from dma_map_benchmark.c:13:
-> > ../../include/linux/types.h:20:33: error: conflicting types for
-> > =E2=80=98fd_set=E2=80=99; have =E2=80=98__kernel_fd_set=E2=80=99
-> >     20 | typedef __kernel_fd_set         fd_set;
-> >        |                                 ^~~~~~
-> > In file included from /usr/include/x86_64-linux-gnu/sys/types.h:179,
-> >                   from /usr/include/stdlib.h:395,
-> >                   from dma_map_benchmark.c:8:
-> > /usr/include/x86_64-linux-gnu/sys/select.h:70:5: note: previous
-> > declaration of =E2=80=98fd_set=E2=80=99 with type =E2=80=98fd_set=E2=80=
-=99
-> >     70 |   } fd_set;
-> >        |     ^~~~~~
-> > In file included from dma_map_benchmark.c:13:
-> > ../../include/linux/types.h:21:33: error: conflicting types for
-> > =E2=80=98dev_t=E2=80=99; have =E2=80=98__kernel_dev_t=E2=80=99 {aka =E2=
-=80=98unsigned int=E2=80=99}
-> >     21 | typedef __kernel_dev_t          dev_t;
-> >        |                                 ^~~~~
-> >
-> > You should be referring to the system types.h, but the -I../../include
-> > option makes you pick up the wrong kernel types.h. However, when you
-> > do have "../../usr/include", you end up with the correct types.h from U=
-API.
-> >
-> > I really dislike all this *mess*. You can fix it by doing the following=
-:
-> >
-> > diff --git a/tools/dma/Makefile b/tools/dma/Makefile
-> > index 841b54896288..cec09abf47cd 100644
-> > --- a/tools/dma/Makefile
-> > +++ b/tools/dma/Makefile
-> > @@ -1,7 +1,7 @@
-> >   # SPDX-License-Identifier: GPL-2.0
-> >   bindir ?=3D /usr/bin
-> >
-> > -CFLAGS +=3D -I../../include -I../../usr/include
-> > +CFLAGS +=3D -idirafter ../../include
-> >
-> Hello, Barry:
->
-> Let me see... 'make headers_install' installs the UAPI header files to
-> the usr/include directory in the kernel source tree by default, rather
-> than directly to the system's /usr/include directory.
->
-> This means that when 'map_benchmark.h' is moved to uapi/include,
-> compilation tool chain cannot get the header file from the system path.
-> Users need to install the UAPI header file to the system directory or
-> set environment variables to reference it from the environment variables.
->
-> Could this get a little complex?  Should we keep ' -I ../../usr/include
-> ' ?>>
-> >> from the system directory of the compilation environment. So maybe in
-> >> some compilation
-> >>
-> >> environments, compiling these modules might have the same problem...
+Hi Ram,
 
-This is also true for any Linux application if the toolchain=E2=80=99s UAPI
-headers lag behind the kernel version.
+kernel test robot noticed the following build warnings:
 
-> >>
-> >> 'struct map_benchmark' is defined in map_benchmark.h which is used by
-> >> map_benchmark.c
-> >>
-> >> Do we need to define them separately in the kernel and uapi header fil=
-es?>>
+[auto build test WARNING on mkp-scsi/for-next]
+[also build test WARNING on jejb-scsi/for-next robh/for-next linus/master v6.17-rc4 next-20250901]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-No, just move it to UAPI. When the Linux distribution is upgraded,
-GCC will include this header automatically, like any other UAPI header.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ram-Kumar-Dwivedi/ufs-dt-bindings-Document-gear-and-rate-limit-properties/20250902-000038
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20250901155801.26988-4-quic_rdwivedi%40quicinc.com
+patch subject: [PATCH V4 3/4] ufs: pltfrm: Allow limiting HS gear and rate via DT
+config: arc-randconfig-002-20250902 (https://download.01.org/0day-ci/archive/20250902/202509021257.jIDXzoS6-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250902/202509021257.jIDXzoS6-lkp@intel.com/reproduce)
 
-If you don't move it to UAPI, please remove  -I ../../usr/include.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509021257.jIDXzoS6-lkp@intel.com/
 
-> >
-> > Ideally, yes=E2=80=94then the -I../../include option would no longer be=
- necessary.
-> >
+All warnings (new ones prefixed by >>):
 
-Thanks
-Barry
+   In file included from include/linux/device.h:15,
+                    from include/linux/platform_device.h:13,
+                    from drivers/ufs/host/ufshcd-pltfrm.c:13:
+   drivers/ufs/host/ufshcd-pltfrm.c: In function 'ufshcd_parse_limits':
+>> drivers/ufs/host/ufshcd-pltfrm.c:464:23: warning: too many arguments for format [-Wformat-extra-args]
+     464 |    dev_warn(hba->dev, "Invalid limit-rate value\n", hs_rate);
+         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:110:16: note: in definition of macro 'dev_printk_index_wrap'
+     110 |   _p_func(dev, fmt, ##__VA_ARGS__);   \
+         |                ^~~
+   include/linux/dev_printk.h:156:54: note: in expansion of macro 'dev_fmt'
+     156 |  dev_printk_index_wrap(_dev_warn, KERN_WARNING, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                      ^~~~~~~
+   drivers/ufs/host/ufshcd-pltfrm.c:464:4: note: in expansion of macro 'dev_warn'
+     464 |    dev_warn(hba->dev, "Invalid limit-rate value\n", hs_rate);
+         |    ^~~~~~~~
+
+
+vim +464 drivers/ufs/host/ufshcd-pltfrm.c
+
+   432	
+   433	/**
+   434	 * ufshcd_parse_limits - Parse DT-based gear and rate limits for UFS
+   435	 * @hba: Pointer to UFS host bus adapter instance
+   436	 * @host_params: Pointer to UFS host parameters structure to be updated
+   437	 *
+   438	 * This function reads optional device tree properties to apply
+   439	 * platform-specific constraints.
+   440	 *
+   441	 * "limit-hs-gear": Specifies the max HS gear.
+   442	 * "limit-rate": Specifies the max High-Speed rate.
+   443	 */
+   444	void ufshcd_parse_limits(struct ufs_hba *hba, struct ufs_host_params *host_params)
+   445	{
+   446		struct device_node *np = hba->dev->of_node;
+   447		u32 hs_gear;
+   448		const char *hs_rate;
+   449	
+   450		if (!np)
+   451			return;
+   452	
+   453		if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
+   454			host_params->hs_tx_gear = hs_gear;
+   455			host_params->hs_rx_gear = hs_gear;
+   456		}
+   457	
+   458		if (!of_property_read_string(np, "limit-rate", &hs_rate)) {
+   459			if (!strcmp(hs_rate, "Rate-A"))
+   460				host_params->hs_rate = PA_HS_MODE_A;
+   461			else if (!strcmp(hs_rate, "Rate-B"))
+   462				host_params->hs_rate = PA_HS_MODE_B;
+   463			else
+ > 464				dev_warn(hba->dev, "Invalid limit-rate value\n", hs_rate);
+   465		}
+   466	}
+   467	EXPORT_SYMBOL_GPL(ufshcd_parse_limits);
+   468	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
