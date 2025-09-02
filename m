@@ -1,112 +1,230 @@
-Return-Path: <linux-kernel+bounces-795619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F36CB3F563
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CC7B3F56E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037F020373C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:24:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37E22204239
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD802E3AE3;
-	Tue,  2 Sep 2025 06:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F0D2E3AEA;
+	Tue,  2 Sep 2025 06:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lGrZfnDt"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qK7f/sLn"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63822D5955
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C612E36E9
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756794234; cv=none; b=DGuJTYlIpBKRW0inzS3jmzhxfzFg0IRBXyqrC1aC2l/NY2ZSpAHH3VFtrPBrJY3kSDQF6Oaz0wmf1EuLmLdYPhc3mz4kq5kS6jyDrGS/rrD8RiUnG7qNaOCru0uBugJ0jTlWmNgnbcBwid0OXb1StaZFHuadJOgjKcSOrnfRvbg=
+	t=1756794299; cv=none; b=XX54uN0wWr1QUHFufEGoBlamZzFP7Tvrq5jLaa7c3C2Y61Vrqw0O5UDUP/+MaFtjQPr4wllYt3tHEAuCEppV1GeFhOSQ4e4lBaK6keSEiLj1mkKxAnr7C1SELfq7sPkTwiFeqR7K/Vps4u9MYhrhQBEIG7p2wrkU9AKLw4giPP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756794234; c=relaxed/simple;
-	bh=BfMqR1lpaXjunNeu/f0O3MEaWJtI9f+ZecBRwP2xSJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rDvovciDpCa5aH3jmavhGgNIn/gmW3+d5UWYb4xoOx1bgYEIsfVnQfbr0h5GFzmXqkAlWZZp5Uej0vnnEm6nbaNCbVu1J1eOWruQwMY2UmEKyA653B4yPXbJJx0F0utFXn/ZU0iVBNKI9qsFt18AHbrSU5AVbPGHE7T9Sngwj3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lGrZfnDt; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4df220483fso2107277a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:23:52 -0700 (PDT)
+	s=arc-20240116; t=1756794299; c=relaxed/simple;
+	bh=/X5tvcuJAxWn3JDYkNwSrjpsesfg6FURaUkJpV2ccGw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pyX5aSlwIyYWGMxukUs7ssrAoqnRbLfDR+VYk6sImowf2Di6LH+pkBoLaj3FPU90BCRikpgMmE6Ewkw4mb3A8v4sa+AMLnPmdzNJQj5wFcJVUZTego3mAZgfx0S6YfqJ3FlcN9Amm0BToPeUU3TIYYHtiaDawR9xsSHrcmmqIFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=qK7f/sLn; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e96f401c478so4613574276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756794232; x=1757399032; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Giav7j027e4My3B5JV6e08IP7F2a03l4dML9+8XzWV8=;
-        b=lGrZfnDt1m2PthetHfXKM4BUxTBc3xnU67xeAXjry087HL0LBf0HPxKhI1QxVCKnPD
-         vH6eH/h/y7btmYpvwKSG3lyE+u/t0acx1tstuYs4OqvOk43qxcfamQg8dvih8mHr/2+7
-         urgrROQDufmsjXFFvDNX5Mmpdl+i6DXPl8mHY8oJ8tpTb3uiXvKiLn6StuhKT4Pw4P0I
-         AG6cMKPuNaFqpfPhuO3PXB4ldERQS/sEyte/WJooL92sv4hNIgoMh6VJLsYc7XeDdjaV
-         N2j8eZ14wrBrZKRXeItIAI301W/kvwqricwvXKy69PxAdkIKk2M3NGvOWMLWDcfM3MJO
-         3U5w==
+        d=amarulasolutions.com; s=google; t=1756794295; x=1757399095; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T7vWWxNzseg54QZAjivUxxK0pnJ4DlOhxfw0ykDICyI=;
+        b=qK7f/sLnPoJeVQTd9FElwAA0Tl0UFyDF1bQ3sZBHacOoeGdsYb4Luai+0J+OTwpbSo
+         JzAFychWDM2JZkQ0Fz6jMcEqvhesOXKBgivD7UCxyF0JcaeQxWNqpccxc8fPBCnDGZNH
+         9Q68kGAWOAX/oc4yvr7gAi4FcQ/RgA1vot/hg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756794232; x=1757399032;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Giav7j027e4My3B5JV6e08IP7F2a03l4dML9+8XzWV8=;
-        b=Wx+fKajgnkIqW2IHtPHlpm9UAaXUe5d9sh009s5t9BOw4D3YZ+sFftvi0tMYipVjhC
-         asRBP+qIJLIUup0IzxtCYS9iu/dDSp/uSavfijR6FVLWUJPw5Y47AWLApDzfMJznOnmx
-         a36uzhzzocqKaK2al+8ZiEwvjtniVB1oBzv2jkQpZeRk+ctvSW7460tTUNPRB2PeMFi3
-         IKEr8DdUOlfy52AjNJRMYBEuG4J++QrNKSWptRhlj+34VqzIhZhZ97MH+DDi6XWhd2vo
-         130HRbwqp7Xtf3mUchRFE8K3Qx3MVJUaqtuLYC4Xxv7c5rW3irUgvEK+rm14XwKm3pe9
-         jvEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDgVVeJdHEVu3DvBO5iyfNwmcV4bm2L+5G2TxbnQmUMvvkiE08qRxPI8Ra8BqGurvopj7H4U3Os8oH0nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxf5N0Hq+GtfdlPagRDGQQi+AElF1Hc1wJqh/Q9zCNRyXPNv6Z
-	4FHIZg6MBN/WFai82StrxRxvIoYSKjXqeJZAgKrUUn1G2cIafgltgcOaj6QdnMJfI+M=
-X-Gm-Gg: ASbGnctFUoo9Iz5MfjzedBufLB/zZIj3CNhCOv5MyLBke/ZGwfTY4VlgPEQMhAv+cRH
-	534QTTUrb4taRzjMLYcmVktpBR/y45RAn1KSu/2391BXEB5WdCBOzlJJlnc5kp+rbFDcFlEGDlX
-	qg2EJbbVVguDv/4G7ut47mZT0yN7IUGiQPK73cMc+0H2va84c9aZ5f9f1fURwNXo9OIR/HhOd74
-	uTFIb9YaZMZui4X9gCLaoozOjTPGn6R5p0gxv6dbDOnLndqLuxNTC53HYtvbweXEEVsC9US1+7k
-	6F7Uux7i6SH3Ctc9BjWf77NkTevgElkr8bBe4htjjvevWLqXXNf1GJOc9/0xHtKqDE9Pqf7H16G
-	PSM84SrNRuB2zjl3tb8stGA4DbGJigEcDSnU=
-X-Google-Smtp-Source: AGHT+IGRPZAvPZasiyY1AtGkY5yYDRJ7Hy2NGyIACxAlh42J8TV0WWag3m8xK4lM8awcR5hl6BmDUw==
-X-Received: by 2002:a17:902:e847:b0:248:9c98:2cf4 with SMTP id d9443c01a7336-24944aeebf8mr150113135ad.46.1756794232129;
-        Mon, 01 Sep 2025 23:23:52 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906390b6bsm121750735ad.99.2025.09.01.23.23.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Sep 2025 23:23:51 -0700 (PDT)
-Date: Tue, 2 Sep 2025 11:53:49 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] cpufreq: sh: drop redundant freq_table argument
-Message-ID: <20250902062349.cxg5377chzqtb76r@vireshk-i7>
-References: <20250901112551.35534-1-zhangzihuan@kylinos.cn>
- <20250901112551.35534-3-zhangzihuan@kylinos.cn>
- <20250902054009.rhqu4ki3bl4kr5a7@vireshk-i7>
- <34092883-c04d-4dbb-a756-eac89fbe6f3e@kylinos.cn>
+        d=1e100.net; s=20230601; t=1756794295; x=1757399095;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T7vWWxNzseg54QZAjivUxxK0pnJ4DlOhxfw0ykDICyI=;
+        b=xEAu+0jG+aeK8IvVmqkUSfSmn6J6iekoDlda7ZXmz51ux/skwl7/iq1lv28jt3ytBx
+         FOyHglK2K//4QgbmacbzVYYvpxxro7vBbBwHSmwGDXdDAD6t271dOScjHBbRdllhuaCa
+         jkqLHareuMQgJJpWbCSMdY2qA81YobJDaXUizumTgZI3RnMWLmG1W1mTW0eDv+Fi2J0X
+         ubvDGqj2ieK1Jpbu+Zz6E93Mdq5k41EgNKyjr7I9uT/Wm9zjxDe4CK55qocoKa7Ohol6
+         O0sv7fnpJzUdS6geQjqeUzeM5G8tqKG1DKUT0SrPWeS4K13pvlhB2y6Q+2kxZmLmFe8Y
+         x0nA==
+X-Gm-Message-State: AOJu0YzQfYfsKRAHCkjWSDxnDRqYnwtOSHctNJ8YD8FDS+P8WXJMnK+R
+	Yw8icNue5tgNc0G3GfnEJhCj63jHBqitLUcNOlY/5cjgGR09pMedgd7+Oz263+fGcsAbuhWb+4A
+	DEp9D/kkEDwkdDa1m+IcPhk26X2NyNFAq0yySZFQVbw==
+X-Gm-Gg: ASbGnct0VBMFYC+B4CnvjPKle19A0i1Zq1b3ugxKYz9EnLGfx3zQzZXDJRYCcvIRrdD
+	MFPiaj//PxzvopZdYJwuh0sfkKJ2nztdHah3LZ/qCmn/RpflFA3i6lohBKzB04Rg8t8fAjz4GtI
+	hyPmtjOfcHlz99rTwSpizJK6KKd06RP4oPpCFe4o8GzD8cOI137SMJoJNi54kBBAK9qNkSk3ICS
+	ac4proa5qXp7aSL
+X-Google-Smtp-Source: AGHT+IEC+bhwfIsYKYd4OXHEYbsF24ESl19VnrU0Lm+wzyoJZpbOTOeMhCWWexm/yC9IvNQdZvyYLuGaB9Amv1jSkRs=
+X-Received: by 2002:a05:6902:e03:b0:e96:ec6a:26c7 with SMTP id
+ 3f1490d57ef6-e98a567eea7mr11493602276.0.1756794295489; Mon, 01 Sep 2025
+ 23:24:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <34092883-c04d-4dbb-a756-eac89fbe6f3e@kylinos.cn>
+References: <20250722103706.3440777-1-dario.binacchi@amarulasolutions.com>
+ <20250722103706.3440777-3-dario.binacchi@amarulasolutions.com>
+ <20250723050319.GA1239529-robh@kernel.org> <CABGWkvpWPXz8bFPC3OgqY+C6cgu6hHGh6muCQkoCOEVK048fSA@mail.gmail.com>
+In-Reply-To: <CABGWkvpWPXz8bFPC3OgqY+C6cgu6hHGh6muCQkoCOEVK048fSA@mail.gmail.com>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Tue, 2 Sep 2025 08:24:44 +0200
+X-Gm-Features: Ac12FXxEccgAI8M5f9oOb9ii1ya7raF_SCejPp9-Hl3t92BIFWLzJIdX2D6ZhXo
+Message-ID: <CABGWkvqazpyra=n5Jswon576pGG7yEOQg=_qdpTM+X6WmHP43g@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: input: touchscreen: fsl,imx6ul-tsc: add fsl,glitch-threshold
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02-09-25, 14:06, Zihuan Zhang wrote:
-> I also noticed that in some drivers like acpi-cpufreq.c, if freq_table
-> allocation fails, the driver won’t be registered at all.
-> 
-> In such cases,
-> 
-> should the NULL check be done inside the core helper functions, or should it
-> be left to the drivers?
+Hello Rob,
 
-Not all drivers need a freq-table and so it is fine for them to not
-have one. This driver looks like can work without a freq table too.
+just a gentle ping =E2=80=94 I=E2=80=99ve replied to your comments on this =
+patch, but
+I haven=E2=80=99t seen any further feedback.
 
--- 
-viresh
+Thanks and regards,
+Dario
+
+On Wed, Jul 23, 2025 at 8:25=E2=80=AFAM Dario Binacchi
+<dario.binacchi@amarulasolutions.com> wrote:
+>
+> On Wed, Jul 23, 2025 at 7:03=E2=80=AFAM Rob Herring <robh@kernel.org> wro=
+te:
+> >
+> > On Tue, Jul 22, 2025 at 12:36:16PM +0200, Dario Binacchi wrote:
+> > > Add support for glitch threshold configuration. A detected signal is =
+valid
+> > > only if it lasts longer than the set threshold; otherwise, it is rega=
+rded
+> > > as a glitch.
+> > >
+> > > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> > > ---
+> > >
+> > >  .../input/touchscreen/fsl,imx6ul-tsc.yaml      | 18 ++++++++++++++++=
+++
+> > >  1 file changed, 18 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/fsl,=
+imx6ul-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/fsl,i=
+mx6ul-tsc.yaml
+> > > index 678756ad0f92..2fee2940213f 100644
+> > > --- a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-=
+tsc.yaml
+> > > +++ b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-=
+tsc.yaml
+> > > @@ -62,6 +62,23 @@ properties:
+> > >      description: Number of data samples which are averaged for each =
+read.
+> > >      enum: [ 1, 4, 8, 16, 32 ]
+> > >
+> > > +  fsl,glitch-threshold:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    default: 0
+> > > +    enum: [ 0, 1, 2, 3 ]
+> > > +    description: |
+> > > +      Indicates the glitch threshold. The threshold is defined by nu=
+mber
+> > > +      of clock cycles. A detect signal is only valid if it is exist =
+longer
+> > > +      than threshold; otherwise, it is regarded as a glitch.
+> > > +      0: Normal function: 8191 clock cycles
+> > > +         Low power mode: 9 clock cycles
+> > > +      1: Normal function: 4095 clock cycles
+> > > +         Low power mode: 7 clock cycles
+> > > +      2: Normal function: 2047 clock cycles
+> > > +         Low power mode: 5 clock cycles
+> > > +      3: Normal function: 1023 clock cycles
+> > > +         Low power mode: 3 clock cycles
+> >
+> > Don't we have common properties for this expressed in time? Debounce
+> > time IIRC.
+>
+> I tried checking in
+> Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml,
+> but I didn't find anything about it.
+>
+> It exists in some specific touchscreen bindings:
+> - azoteq,iqs7211.yaml
+> - brcm,iproc-touchscreen.txt
+> - fsl-mx25-tcq.txt,
+> - ti,ads7843.yaml.
+>
+> Only fsl-mx25-tcq.txt expresses it in terms of time (ns).
+>
+> Thanks and regards,
+> Dario
+>
+> >
+> > > +
+> > >  required:
+> > >    - compatible
+> > >    - reg
+> > > @@ -94,4 +111,5 @@ examples:
+> > >          measure-delay-time =3D <0xfff>;
+> > >          pre-charge-time =3D <0xffff>;
+> > >          touchscreen-average-samples =3D <32>;
+> > > +        fsl,glitch-threshold =3D <2>;
+> > >      };
+> > > --
+> > > 2.43.0
+> > >
+>
+>
+>
+> --
+>
+> Dario Binacchi
+>
+> Senior Embedded Linux Developer
+>
+> dario.binacchi@amarulasolutions.com
+>
+> __________________________________
+>
+>
+> Amarula Solutions SRL
+>
+> Via Le Canevare 30, 31100 Treviso, Veneto, IT
+>
+> T. +39 042 243 5310
+> info@amarulasolutions.com
+>
+> www.amarulasolutions.com
+
+
+
+--=20
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
