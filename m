@@ -1,248 +1,307 @@
-Return-Path: <linux-kernel+bounces-796094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB3BB3FBDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:08:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A4FB3FBDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 689BD172FD0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4C03BEC8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D237F280338;
-	Tue,  2 Sep 2025 10:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32FA2EDD75;
+	Tue,  2 Sep 2025 10:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SLoFAmas"
-Received: from mail-qv1-f99.google.com (mail-qv1-f99.google.com [209.85.219.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="a3PmcGRF"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724EA2EDD53
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.99
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756807723; cv=none; b=Go04HzwjCQa7HUMye2wOxytgXGnsq5CYoI6HChGeje5AlfegV/ZQb0T0UJ8zo754Qt2L7ZTII82aXjg6wrlZ4GwZnpLYNYoZIB9UdxtVupBSPYifq9eEEhblwk1BzIpjvjg5i8ypEYyoKvmQ2BBBgMPZcdTUASWeRW7mC4ctn0w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756807723; c=relaxed/simple;
-	bh=BhUk989/7l1kvOFYE18fvkT3vOVdaISsdfIQctgGM68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SkvMiMT9NW6z6LrlxP8Juxjg0Xd2EaOnEgvHVLdvWOWkd7EiSMQU9+J/lvRG/0h3EaYhL+JtOEFAP7NVqV3GUiDqrtLs0y/uRxwoZ1AaO1WD6kuFDrEBYTlwuBu6HS0TxxpEE/4E65tidkV749kCNDm5UpZEjqyPXE9FQIY04qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=SLoFAmas; arc=none smtp.client-ip=209.85.219.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f99.google.com with SMTP id 6a1803df08f44-71241d44792so26749446d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:08:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756807719; x=1757412519;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UmCH1Yy1rqEOVFDE+rXQqYrH6TcQHQoJ1clsR5rUSYA=;
-        b=PwztKZSb71OFB5353exF+bCAkL9YbU7KRO0Uyinx+oa4Psf4xM0Oe+yEB+uvHEiaFX
-         aSk9EfT2MbqGPtqQRqAEydn0U+y1GzBgHhD6MKZQVYXpKz9f9hHPwzKdC0NjXQU2ewuC
-         MHMoq7GVmzviIAd0vukt25h+w6ErUcHu7ym+3S4wHViSjgG8WSN7dziTR4K8Yit/DT0b
-         YDAw6xDWuNzmUOxuMUih2EXZ8XmxvoHIQs+yghmJYdpMLTg9ZFu2uA63nwTBK28MTezT
-         MzanwofM/OrXI7d/6hYGqm0VOHNUPdmfcoOKQ9CVwm8qJ0NMr8IfBkcvGihUyzJMaAf8
-         7tUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjakJKaM9NxbwDXLrwmDOtpdkEgZdnm8I1IYXxUoskk4KCFIRp1RJrA1gA2VrQGAqrMZmRdQIPxr0XtPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTTOqbELmxbMq9TnYLTSETVV3ult7DWT3iJ7Z460aDCQGiVn+g
-	LSuuYWnIoMpr/1r7Gn6Yqmnsh5gsH0ee/FOFZ5FY1wR2TvH1urBQSQQLERXwfDCbzBbP2Z72kuJ
-	it4gRBsYpnmhVo6vYV8cm8Fvu/dj3zCnj8nnLIXomV5Q+vZFtnPvrdml6M2whOjlz59fOwLVRtb
-	9glbQa/cPacASi9NDDURXDV4mYUhJgEcwgtcVc7t8y6tMUYQSwrB4DOMXyyTvAuc7NryFZ3ALc+
-	3ROWI4EAUn9oDi6
-X-Gm-Gg: ASbGncvVpzxz49GZlYkiehGQ9U7dCB/5M6z/QH43sHB2CuEEuULPFNf9QMTPr8OXp8p
-	LaB1vrYiw9TJO0u370u5bdLss18DB8vXnRO/z5Dd+LKRDZAmYbV5cFQLX4tm2gwehViHi87Tpti
-	KAkKmcbOs4KQgCkC9TYSIQesXJVFE6hm8TdI1XGnw9DIzEBbwjLbuCoo/A8vI6IXpXi0BCEx0Cq
-	MAiTze2cUnN7JHPyIBWj1y9jHXpOCNXzid00WvZFFOgbzAGGt3FXyYXvSppbNQGiAt45+ao5+I3
-	Zgi7YSieNwwZOWs0D6Dxf++lcBYSmWdmkRjWGNJSGeb7iw8HHRi/HRSqL4YY2zlv1Z1raaOZgBp
-	Gbkant8te0bMXLA0aNyU9PNz2uwRB+vkByA6AplJQ6oPwhQ0N6lAjTIc/Jo3Fh6quER2a58yy
-X-Google-Smtp-Source: AGHT+IF8m+II3xk9lKpcTI8ZJo/y4jWYzLbosbyqcLSgq8+Li7WUEBr9np2YZg9r5OvXm6+xKFsLz/epS32T
-X-Received: by 2002:a05:6214:1310:b0:70d:b315:beb5 with SMTP id 6a1803df08f44-70fac6fff3cmr127673296d6.14.1756807719178;
-        Tue, 02 Sep 2025 03:08:39 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-16.dlp.protect.broadcom.com. [144.49.247.16])
-        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-720b3bcc01csm932496d6.24.2025.09.02.03.08.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Sep 2025 03:08:39 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-544b0ac7eb9so377994e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1756807718; x=1757412518; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UmCH1Yy1rqEOVFDE+rXQqYrH6TcQHQoJ1clsR5rUSYA=;
-        b=SLoFAmas89p9PVlH5/pHqkLq6PxLU0yJjZL1tVaq0kdg2Vjl4hwYaFe/brgvmxI8qw
-         TbvK1sscGCTPJawqK4lPco/Xqb+hanGDT938e3RotL/u6k2+ZmumKvW/7PzUSik6Lv61
-         C8aGLf27NuDnxEFiztiegvb67Ci8mR0GdROcY=
-X-Forwarded-Encrypted: i=1; AJvYcCVNjuNS9eFemlqR2WdvFMOpNP6jnGNI2/Ge7GOA7dMmUNj5B/n19SNNYJkA3LTluwhABwu+qQOCUBOmYl0=@vger.kernel.org
-X-Received: by 2002:a05:6102:441e:b0:4e6:a338:a421 with SMTP id ada2fe7eead31-52b19534c68mr2533045137.6.1756807718605;
-        Tue, 02 Sep 2025 03:08:38 -0700 (PDT)
-X-Received: by 2002:a05:6102:441e:b0:4e6:a338:a421 with SMTP id
- ada2fe7eead31-52b19534c68mr2533032137.6.1756807718044; Tue, 02 Sep 2025
- 03:08:38 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BD42EDD74;
+	Tue,  2 Sep 2025 10:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756807749; cv=fail; b=dYgbu938K4KfzotGVGknV1RfVXUYzSiwVNZytmSFOT716owmz+2lloInWkygY60G3Zs/0oFRu+OUXpglbrZ99v1t7pttoZaSS8G0KtIHUwQKO3Y88THuuM6w0fqewZSs2EzVrmyCj6vA5QckyMSeOLCgpSWTvrDs4iGsKhjWhdE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756807749; c=relaxed/simple;
+	bh=o55uBt2raUgIMUzeZmDfWmInczYlwnzPz4m9LmpY4/U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=AWBXxRvWEmter6Io6mwHut/7A5qNAsWkBQlpUQv+Al5OMICPzXplh8wyPODr2Jxpg2KkPRDJNTInyRpS+AR66Vgs+8ylhDrU4dkxEjKWYp8MOIpemrKM3aBJIvgjZI5b37PAtGsVzKAWMcZlUXLArWiVLh4wyAWZ0aQz0a9Bxsc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=a3PmcGRF; arc=fail smtp.client-ip=40.107.94.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VBomYgAXPEeEDjIjSKYI+zqegJxx48RIuFxGJICdzNqOcLlqr7qnbWtOE3Mqwf9l7C25R15lG6P4cBJVKTwxDggZYXbfaD5IqtmU360quwlHU6lV0sjvGSFRMi/EZJG5Xjfnvd5vtQRyndYRVlgJdemHM836HM/YPHOz+vtCrHVURovAwkeMv4V5z7uUc+wasqkxGT4r3oUEkxMwmfx25DqQEOLeAjdjQS9nDRTNCq/slgdl6eOBzAS6LQ6Ckm6Wzfq9vyxoVglCAKdE0yqJMm7W7UEX/HeW/0gdyeL7/RqLBG7OEGvM0NuLdyVvooHMqtWzG3eMAzGMfYfyfSf7JQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DHg1qFM01tJMigCatbQ+jjFvJMdZedaGTTL7b9UwAVs=;
+ b=lAs/xc3w0308srQvvgtQOc8lN6sKWfSB22LFEvgrDJoE//l5AI/MXf9bOwpQfa7joHKI1aWVqLaUfOH6vhXHIhbo7WpjGCLEXLEbSbipS/Fe4GbIE8VbzItqTrvzAhNHT5V7YXybLW/YiAHrxH8F0vuQ/EhXymSjDZTdjYvWtyG2KysxJRq+hzz7Aihhpa8x/SgAUgFn9x382Yw0VIre24NbQETxTAm4MA2Rtq5YaDk2ST3rXm/TAwNhAZQ+Z7KhpUQzpm8R7Bz5q6PjwxuIqFDNOX1MO7dt7m6rxvjXflZBWH6Ckc1Q48uph4WB+C8V8vx1RnKapGMjjtt5iyxf9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DHg1qFM01tJMigCatbQ+jjFvJMdZedaGTTL7b9UwAVs=;
+ b=a3PmcGRFcM4xbEGXuxHpGDgdTVKro4H2QHbllYOK7lNHFk/Ld5m1U3jUVqanR1rB+T9hdWJBe4ceTbOOIc2/rtTb11BaoPHHCmVSNEvZn/qTkXv0jGFzao0nY6qDtBpic67ChmXQQVHDItGbFV1b9zDAX9ZY+NQwGWuBfNzEaOuEuiWyP6JFaefNGCCLwkgz/bZJG7ZAAAUeQOxWQU8LW81Wt7ZsqLBEAoSaQVeDb3GGftwGfsJ5sNvFCcjy4nu3NfempHNFIxJ2sWedk2htr3x4utL8XOLA6/y2C7rixNYVbCCbdU+K0w4BP2Ow4xX8o0qn6MSbvoXNTXqfS4xOSA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from BN9PR03MB6201.namprd03.prod.outlook.com (2603:10b6:408:11e::20)
+ by SJ0PR03MB5582.namprd03.prod.outlook.com (2603:10b6:a03:281::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Tue, 2 Sep
+ 2025 10:09:05 +0000
+Received: from BN9PR03MB6201.namprd03.prod.outlook.com
+ ([fe80::6b16:5fd0:112:ab8e]) by BN9PR03MB6201.namprd03.prod.outlook.com
+ ([fe80::6b16:5fd0:112:ab8e%2]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 10:09:05 +0000
+Message-ID: <1d26bcf4-ac25-4161-ab5e-2f823099cfb7@altera.com>
+Date: Tue, 2 Sep 2025 15:38:58 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2 4/4] firmware: stratix10-svc: Add for SDM
+ mailbox doorbell interrupt
+To: Dinh Nguyen <dinguyen@kernel.og>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Matthew Gerlach <matthew.gerlach@altera.com>
+References: <20250812-sip_svc_irq-v2-0-53098e11705a@altera.com>
+ <20250812-sip_svc_irq-v2-4-53098e11705a@altera.com>
+ <f2411365-9443-43cf-8420-3afd2c5bf6e2@kernel.og>
+Content-Language: en-US
+From: Mahesh Rao <mahesh.rao@altera.com>
+In-Reply-To: <f2411365-9443-43cf-8420-3afd2c5bf6e2@kernel.og>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0029.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:b8::11) To BN9PR03MB6201.namprd03.prod.outlook.com
+ (2603:10b6:408:11e::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821110323.974367-1-ajay.kaher@broadcom.com>
-In-Reply-To: <20250821110323.974367-1-ajay.kaher@broadcom.com>
-From: Ajay Kaher <ajay.kaher@broadcom.com>
-Date: Tue, 2 Sep 2025 15:38:24 +0530
-X-Gm-Features: Ac12FXzRcQynGFneSwr3u3LMGdh8rUGfSYYsMLtnKHkHQr1Rvj5PZHOTc_Pf4L0
-Message-ID: <CAD2QZ9YtE-cEFCu5-uEv4qs8UO5wAVyRPU5gonpR53DW=F8r-A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] ptp/ptp_vmw: enhancements to ptp_vmw
-To: davem@davemloft.net, nick.shi@broadcom.com, alexey.makhalov@broadcom.com, 
-	richardcochran@gmail.com, andrew+netdev@lunn.ch, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, jacob.e.keller@intel.com, 
-	krzysztof.kozlowski@linaro.org, rafael.j.wysocki@intel.com, 
-	Borislav Petkov <bp@alien8.de>
-Cc: netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, 
-	linux-kernel@vger.kernel.org, florian.fainelli@broadcom.com, 
-	vamsi-krishna.brahmajosyula@broadcom.com, tapas.kundu@broadcom.com, 
-	shubham-sg.gupta@broadcom.com, karen.wang@broadcom.com, 
-	hari-krishna.ginka@broadcom.com
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000064bc2063dceac2b"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR03MB6201:EE_|SJ0PR03MB5582:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c642ecd-d292-4697-4df0-08ddea08bf59
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d1dqRElxYmRQclBqUHZ1TEdqUWxoV1VBYmtzQnI5NmNmdmc0aWNCMW1xL1lZ?=
+ =?utf-8?B?bmlTZjJ1ZzFmTTIvMnBUSVo2T0Z2ZGYyOUJITGdBd3I0eG4xL2tXRGxSTU1v?=
+ =?utf-8?B?YXJ5QWdRdXJpek9EUVJldktMZDlLNG5XbENkTTlKT3pNZU5rdDIxRncyTHhT?=
+ =?utf-8?B?OE02dEhqK2tUNStxcWpKMGRrL1UwdXVUbEFaMUJ0Slg3UGJGNUJubjdXdk5N?=
+ =?utf-8?B?Vm15MTk2NEl3NGM1NHNlellUODREQy80VkZCM2k1YTlTbXpaWXpMaDJlRjNT?=
+ =?utf-8?B?VlAxNFZ3VjkwdUloWEVSVmlOZ3RsMXUzcHVtbk9uQWhML2pvQ0lXZGpWVW1j?=
+ =?utf-8?B?cTZ0OW1JZVIwdERXSFA3dDBaVjJSNmlrZWpnTCtIaU9NUlJmRjBoQ0djc2Q2?=
+ =?utf-8?B?Y1FiR05KL2pJcWlDMzRYVTlJcFlybmtLZUNhZGFybnQrc0tLSU11NWFiZXRH?=
+ =?utf-8?B?SnJ1S0UzRkc0VEdpU09XUmFxYzhsbm9hdkpWT3pUdDFEOE1kRWd2ays4dklT?=
+ =?utf-8?B?eW1JcGRlSzRUc3hZdHJycnNCQ0hySXFzQTNSYnphcTh2SWV1U0FlVXEvYkxs?=
+ =?utf-8?B?ckNSQ1htWG82UVJiMG96RzNxRnU2LzZIeE5zY0E1bmNsazVEZ3RPZjRWL3ZI?=
+ =?utf-8?B?eDdtOVdqbkVPYnVicTZtekEzVUVQYXlocFgwZVpNV1Y1U2l2VnFreWZFUGtI?=
+ =?utf-8?B?WHo1aFJFM1FQcWg0UTFxaCszWi9Qamk2Lzk1NWVta3ErNThmVnp3TkUxYVN5?=
+ =?utf-8?B?NmF2aU1PTEhZa2JQODQrSGpENnFLT21wNE9BdkdZdU92cHREcFU4cndBSitn?=
+ =?utf-8?B?NnVRVTBzWkt3SUl0N1BXQlJSczhBMXZOV1NWZStiTmEvY1UrY0NXZWJNNkNU?=
+ =?utf-8?B?ZUdCV2RJRWRwT1FvbnQ3dTl1bHpXdFV5bUw1dmNESXFZVitjMTJYS0RzL21Q?=
+ =?utf-8?B?MVRjWTkxaDlrRktTM3p6QUZRTHFTajUxKzhOV2RmRGFiZHNJbTVJRitDTTcw?=
+ =?utf-8?B?RjZneTNNVHRuNFgrdzhoSW1GWEhBWlNGbkhueW9FSzhEdjE4QWo2RXA3R2Ni?=
+ =?utf-8?B?dys0WjBjVHlWKzBzcFQzMWRDenJ0aXZCZTdxZXB6UFNpNDRVdk5BNjlXelJ2?=
+ =?utf-8?B?Mlh6RElhUXU5ajVNVE5LNFdEM1JERnJEdEFoRHR2bXBxQk5tUGQwRmJDcUdo?=
+ =?utf-8?B?eHZoNnNrTjAyWlR4eXJHd290RWNJVm4xdXIxVEx0RGc2SXFlQTR1RURlRVRr?=
+ =?utf-8?B?REI2Z1ozSExHcjh1UDUvKzMxWWdhYnZjRWJ0S1o5bExHcmNMcnNCRGVYclQw?=
+ =?utf-8?B?eVp6QzFzbkEwUDhCR1Z4dVVVT3k3NEkrQzJxTEJ5aGJEMjJ1UmRXd2tRai9a?=
+ =?utf-8?B?czJpMXkyUHU0amZoS3JpUjIzQ1Fib2tja2hBSGxubG0rc2swUkR1eDFET29j?=
+ =?utf-8?B?V1krZGRndE1sVW1hZDBjbnBBcEwxalc2ZnYrODZxZFdtYjIzQnBWU1BMNHR6?=
+ =?utf-8?B?NVI3WDFIN091ZC82RjhuUDZyenM3ZnZuTmlwdmtNK094SFNweE1nTG5lSk9R?=
+ =?utf-8?B?UlhqRlJwV2VYN1dlN2N6eVRZcnMxelpvTWprSk0weHA0dWxuNVlqYkdqbzVS?=
+ =?utf-8?B?amxHZ3IycmRGZWhkZy8zMTJ0MFBSUTl3dDgzdTN3OTJETlJVMDV4QllPc2VT?=
+ =?utf-8?B?bUpwMDh5bVU2eXI0YTJpTExGekNEUGpTZzF1SUpGcXFSdzBMR2R3czFHR0po?=
+ =?utf-8?B?UHFaWE5vMkZOMTN2ZS82Q0ZzOGZDTGVYWmlRN3VMdU8wRGhFdGhYYnNIampV?=
+ =?utf-8?B?NjNIaHN3YTJFRWFOckhXMkJDSmx4NVEzblN5eHhrU0ZhZUFDWTFRRW5jaUEr?=
+ =?utf-8?B?Z090V0s1UXBEc2pXdktZM2Y1MzEvYjBzWFNpZkZkUHlmWDJSTlZqYm0xT20r?=
+ =?utf-8?Q?QSKDuWEBeG8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR03MB6201.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c3c1SlJrUlVqcHBFakM3eEhUb3pwUVlSVTlpbFVDVzIwUjVqMHdCOFdmZVoy?=
+ =?utf-8?B?cExpSVI1dHlYYlRFZklGR1Q3aVA1UTV2RlVaVldhOUF2ZThlWCtFUWJPSHc4?=
+ =?utf-8?B?T0JpZ1BjMXRhcEkwNlVzK1hIWW1mZ2JKZGdSRm42MXYvMUdaNTZiS1Vjcmxl?=
+ =?utf-8?B?RzI4Z043UGNBZjNVZFNLdlFjZ2VrVWNHTXU5VGM3TERyeFVZeTNWOFdLZndY?=
+ =?utf-8?B?Zm0yTHFBNVg3M2YyUGdEcjd3dnJZSzBrNEQ3Qk5TTndsUUZ1RUc4L2d1L2Fn?=
+ =?utf-8?B?UlZrZzBodzJ3T0JWSDlXOTlTYzJPWlV6amNCTUNDR2lETEF1dC9EcVFFalNO?=
+ =?utf-8?B?b0E1cUxTbUdLUlNDYWhhMHhEaW9rTi95cDNTc3BROTdkbVlVZzRVbFFWdWVE?=
+ =?utf-8?B?bUNDMWl3QXhBaVJaSzlYUkNGRXQ5dVVVRWlTakhhV3pOTDl3QWJEMk1ZMVBV?=
+ =?utf-8?B?bitHdy9ueHNNTFJTeG5PWnNFYjN2WlF5N1Y1VUIwbDBRSHc2NWF6V1BaNDZV?=
+ =?utf-8?B?QkRMSldnRGhxRk1UWXloT2g2QXhaRHRGcE9Cd1pxMVdtMEhsbE1qYUNiejlv?=
+ =?utf-8?B?YXFvaFNXMDlmMXh1Q3FoeWNXZ3NwbGtKNGdhRk9xZDhKNkw5MzNQbzVCMmJq?=
+ =?utf-8?B?NjczWVBIT0hYNDZWN0NPMWZ3UWxrbk03ZnhtWGExRUpUZGVMWU45U3U5WjFw?=
+ =?utf-8?B?Q2RicXJDL1ViNHBpdkF4Uzk1WFBxb0E1ZlpucnF0a3Njc2ZpTytMbWxJWGdW?=
+ =?utf-8?B?c2YxMmdJNVoxQmpzZWtLQ1RCdnBZRTIzR0pTRHBDNHYzNEhQdUpxL3BTa09H?=
+ =?utf-8?B?VXBpdmE3MmxJTmxDQ3Y2ZjA0RTJpYXhvTWhQZTFUbEFscG1yOUlpNFJUUDhX?=
+ =?utf-8?B?Ylp2RFNZSi8renpvdVFSclRtRnFZeFlRaG5vUmtvemEwMVZkK0xtM2NRNjVJ?=
+ =?utf-8?B?a2o5OG00bXNFWmd6bGpkSkRFQ00vVDdLRFQ2dXdscXZnTFhxNXRtV1ZhQ3Yz?=
+ =?utf-8?B?dkw3R1VKeHFaQnovVmwxTldtb1RBYlBUaVFKYm9DS1d4OURld3BJaWYwblJv?=
+ =?utf-8?B?SFNzOU9LVkxTUzRXSEl1T2tqVTNKZ0dJYityTXZFek5PKzBCS1AwalJHWTYw?=
+ =?utf-8?B?QjZvREVkNGw2azNQWmNXOGkyZmFLc0ZPSGV2TTNWbmJpSGx6cmN3SmJMQWRW?=
+ =?utf-8?B?MkdjL1Q2R3p1cEVrOGFsY0lQTk91VXUvSWlGZ1dvVFFsU0xsNW1pSFRVZy9K?=
+ =?utf-8?B?UktDMEg5UEZvZjIvcWM1cTNqSW9JOFMvUGhlYzA3dFNldUlaZzNJVVl2TTVm?=
+ =?utf-8?B?cjhSRkpNa0ZtZGplYWxwcVJXTE5VTlYydEo3bXBTMjhJZVdsZkw1ZW1Mc0M4?=
+ =?utf-8?B?YXBiZVIzdWN4dlRBcS9ERmtYdithRmhHZ0pEbXlSZklqRmY3Q1NpUlBnOHRC?=
+ =?utf-8?B?TmZDeFlzYVdGWXpTK3ByMFFYTmpnSGErbkFDeDhta3R0NjJmUXYzekREVzdh?=
+ =?utf-8?B?QWVydksyVHQ1ZnB5WjViZ3dLQ0JaaFNPTU5oZFNMSVpUbGZJSWhkVENWVDhS?=
+ =?utf-8?B?bHNlK1hsZ3MyMGdGZmNZSktnb0NwSlA0d2lvRjlaOFlpWlRxaXVWbHE0K1lt?=
+ =?utf-8?B?dU1QR1IwTVBKZWgrdlZIaGRFc2k4RmkzeWx6U1BkbjdYV1RMMy9heTNEbVh2?=
+ =?utf-8?B?cHc0eTN5c0NWOW1KNEY2Q3M2OTg5dFkzbkVUZjRxdkRJV3Q2M0xjcWNQQVAy?=
+ =?utf-8?B?QmZwaFJUK1BvcnFBcFNSa1kwN0l5RWxiNzBKTG4xZXJOSjFHYjJaanBBOEtv?=
+ =?utf-8?B?TWJGME05SGRvSVRUckVtaGcxVDZ2cU1EY0Z4RlNGT3N6SEFQbWRsb05QTG5E?=
+ =?utf-8?B?QWJQNy9LYk43TXI3VVNDbjJlK0tqUWVwTUVuOTJDQXhReXlhZGMwc3BqNlNL?=
+ =?utf-8?B?cDJLN25CbXR0ZTJVY0QwTjNvODJ6Y0JubW91VEFpZkc1UVc5VnhmbFJRRER3?=
+ =?utf-8?B?QkxvZWdTSG9FSFhndUY0dGc4bVVhN3Y5eWtrbnVoc1VJaU1XMWF5cndqQlJS?=
+ =?utf-8?B?OW1WdGJsdllKMUo2Z0ZpTUlrSlFUUmZ0VUF4ZFJSdXBTdndpVGxKbU42TGta?=
+ =?utf-8?Q?ekv2AFcy3khajegPY83TLiLD4?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c642ecd-d292-4697-4df0-08ddea08bf59
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR03MB6201.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 10:09:05.2956
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wrYN5l2zH1vu4aCr5KJBhVmC/6n39PZ+RGyH6A1nQlNjRats+S27FxNEHWhy/mH5DPSxXqgZdxc1FoWSoa/cLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB5582
 
---000000000000064bc2063dceac2b
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Dinh,
 
-David, It would be helpful if you could take some time to review these patc=
-hes
-and share your feedback.
+On 01-09-2025 08:46 pm, Dinh Nguyen wrote:
+> 
+> 
+> On 8/12/25 07:59, Mahesh Rao via B4 Relay wrote:
+>> From: Mahesh Rao <mahesh.rao@altera.com>
+>>
+>> Add support for SDM (Secure Device Manager) mailbox
+>> doorbell interrupt for async transactions. On interrupt,
+>> a workqueue is triggered which polls the ATF for
+>> pending responses and retrieves the bitmap of all
+>> retrieved and unprocessed transaction ids of mailbox
+>> responses from SDM. It then triggers the corresponding
+>> registered callbacks.
+> 
+> You should configure your editor to use a full 80-char width. Why stop
+> at ~50? When you're unsure, look at that other commit logs from other
+> developers. If yours doesn't look similar, its probably a problem. For
+> example:
+> 
+> "Add support for SDM (Secure Device Manager) mailbox doorbell interrupt
+> for async transactions. On interrupt, a workqueue is triggered which
+> polls the ATF for pending responses and retrieves the bitmap of all
+> retrieved and unprocessed transaction ids of mailbox responses from SDM.
+> It then triggers the corresponding registered callbacks."
 
-- Ajay
+ok, will do.
 
-On Thu, Aug 21, 2025 at 4:46=E2=80=AFPM Ajay Kaher <ajay.kaher@broadcom.com=
-> wrote:
->
-> This series provides:
->
-> - implementation of PTP clock adjustments ops for ptp_vmw driver to
-> adjust its time and frequency, allowing time transfer from a virtual
-> machine to the underlying hypervisor.
->
-> - add a module parameter probe_hv_port that allows ptp_vmw driver to
-> be loaded even when ACPI is disabled, by directly probing for the
-> device using VMware hypervisor port commands.
->
-> Ajay Kaher (2):
->   ptp/ptp_vmw: Implement PTP clock adjustments ops
->   ptp/ptp_vmw: load ptp_vmw driver by directly probing the device
->
->  drivers/ptp/ptp_vmw.c | 110 +++++++++++++++++++++++++++++++++---------
->  1 file changed, 88 insertions(+), 22 deletions(-)
->
-> --
-> 2.40.4
->
+> 
+>>
+>> Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
+>> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+>> ---
+>>   drivers/firmware/stratix10-svc.c             | 117 +++++++++++++++++ 
+>> +++++++---
+>>   include/linux/firmware/intel/stratix10-smc.h |  23 ++++++
+>>   2 files changed, 130 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/ 
+>> stratix10-svc.c
+>> index 
 
---000000000000064bc2063dceac2b
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
 
-MIIVIgYJKoZIhvcNAQcCoIIVEzCCFQ8CAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghKPMIIGqDCCBJCgAwIBAgIQfofDCS7XZu8vIeKo0KeY9DANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNTNaFw0yOTA0MTkwMDAwMDBaMFIxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBS
-NiBTTUlNRSBDQSAyMDIzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwjAEbSkPcSyn
-26Zn9VtoE/xBvzYmNW29bW1pJZ7jrzKwPJm/GakCvy0IIgObMsx9bpFaq30X1kEJZnLUzuE1/hlc
-hatYqyORVBeHlv5V0QRSXY4faR0dCkIhXhoGknZ2O0bUJithcN1IsEADNizZ1AJIaWsWbQ4tYEYj
-ytEdvfkxz1WtX3SjtecZR+9wLJLt6HNa4sC//QKdjyfr/NhDCzYrdIzAssoXFnp4t+HcMyQTrj0r
-pD8KkPj96sy9axzegLbzte7wgTHbWBeJGp0sKg7BAu+G0Rk6teO1yPd75arbCvfY/NaRRQHk6tmG
-71gpLdB1ZhP9IcNYyeTKXIgfMh2tVK9DnXGaksYCyi6WisJa1Oa+poUroX2ESXO6o03lVxiA1xyf
-G8lUzpUNZonGVrUjhG5+MdY16/6b0uKejZCLbgu6HLPvIyqdTb9XqF4XWWKu+OMDs/rWyQ64v3mv
-Sa0te5Q5tchm4m9K0Pe9LlIKBk/gsgfaOHJDp4hYx4wocDr8DeCZe5d5wCFkxoGc1ckM8ZoMgpUc
-4pgkQE5ShxYMmKbPvNRPa5YFzbFtcFn5RMr1Mju8gt8J0c+dxYco2hi7dEW391KKxGhv7MJBcc+0
-x3FFTnmhU+5t6+CnkKMlrmzyaoeVryRTvOiH4FnTNHtVKUYDsCM0CLDdMNgoxgkCAwEAAaOCAX4w
-ggF6MA4GA1UdDwEB/wQEAwIBhjBMBgNVHSUERTBDBggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQB
-gjcUAgIGCisGAQQBgjcKAwwGCisGAQQBgjcKAwQGCSsGAQQBgjcVBjASBgNVHRMBAf8ECDAGAQH/
-AgEAMB0GA1UdDgQWBBQAKTaeXHq6D68tUC3boCOFGLCgkjAfBgNVHSMEGDAWgBSubAWjkxPioufi
-1xzWx/B/yGdToDB7BggrBgEFBQcBAQRvMG0wLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9i
-YWxzaWduLmNvbS9yb290cjYwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjYuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yNi5jcmwwEQYDVR0gBAowCDAGBgRVHSAAMA0GCSqGSIb3DQEBDAUAA4IC
-AQCRkUdr1aIDRmkNI5jx5ggapGUThq0KcM2dzpMu314mJne8yKVXwzfKBtqbBjbUNMODnBkhvZcn
-bHUStur2/nt1tP3ee8KyNhYxzv4DkI0NbV93JChXipfsan7YjdfEk5vI2Fq+wpbGALyyWBgfy79Y
-IgbYWATB158tvEh5UO8kpGpjY95xv+070X3FYuGyeZyIvao26mN872FuxRxYhNLwGHIy38N9ASa1
-Q3BTNKSrHrZngadofHglG5W3TMFR11JOEOAUHhUgpbVVvgCYgGA6dSX0y5z7k3rXVyjFOs7KBSXr
-dJPKadpl4vqYphH7+P40nzBRcxJHrv5FeXlTrb+drjyXNjZSCmzfkOuCqPspBuJ7vab0/9oeNERg
-nz6SLCjLKcDXbMbKcRXgNhFBlzN4OUBqieSBXk80w2Nzx12KvNj758WavxOsXIbX0Zxwo1h3uw75
-AI2v8qwFWXNclO8qW2VXoq6kihWpeiuvDmFfSAwRLxwwIjgUuzG9SaQ+pOomuaC7QTKWMI0hL0b4
-mEPq9GsPPQq1UmwkcYFJ/Z4I93DZuKcXmKMmuANTS6wxwIEw8Q5MQ6y9fbJxGEOgOgYL4QIqNULb
-5CYPnt2LeiIiEnh8Uuh8tawqSjnR0h7Bv5q4mgo3L1Z9QQuexUntWD96t4o0q1jXWLyrpgP7Zcnu
-CzCCBYMwggNroAMCAQICDkXmuwODM8OFZUjm/0VRMA0GCSqGSIb3DQEBDAUAMEwxIDAeBgNVBAsT
-F0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpH
-bG9iYWxTaWduMB4XDTE0MTIxMDAwMDAwMFoXDTM0MTIxMDAwMDAwMFowTDEgMB4GA1UECxMXR2xv
-YmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2Jh
-bFNpZ24wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCVB+hzymb57BTKezz3DQjxtEUL
-LIK0SMbrWzyug7hBkjMUpG9/6SrMxrCIa8W2idHGsv8UzlEUIexK3RtaxtaH7k06FQbtZGYLkoDK
-RN5zlE7zp4l/T3hjCMgSUG1CZi9NuXkoTVIaihqAtxmBDn7EirxkTCEcQ2jXPTyKxbJm1ZCatzEG
-xb7ibTIGph75ueuqo7i/voJjUNDwGInf5A959eqiHyrScC5757yTu21T4kh8jBAHOP9msndhfuDq
-jDyqtKT285VKEgdt/Yyyic/QoGF3yFh0sNQjOvddOsqi250J3l1ELZDxgc1Xkvp+vFAEYzTfa5MY
-vms2sjnkrCQ2t/DvthwTV5O23rL44oW3c6K4NapF8uCdNqFvVIrxclZuLojFUUJEFZTuo8U4lptO
-TloLR/MGNkl3MLxxN+Wm7CEIdfzmYRY/d9XZkZeECmzUAk10wBTt/Tn7g/JeFKEEsAvp/u6P4W4L
-sgizYWYJarEGOmWWWcDwNf3J2iiNGhGHcIEKqJp1HZ46hgUAntuA1iX53AWeJ1lMdjlb6vmlodiD
-D9H/3zAR+YXPM0j1ym1kFCx6WE/TSwhJxZVkGmMOeT31s4zKWK2cQkV5bg6HGVxUsWW2v4yb3BPp
-DW+4LtxnbsmLEbWEFIoAGXCDeZGXkdQaJ783HjIH2BRjPChMrwIDAQABo2MwYTAOBgNVHQ8BAf8E
-BAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUrmwFo5MT4qLn4tcc1sfwf8hnU6AwHwYD
-VR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwDQYJKoZIhvcNAQEMBQADggIBAIMl7ejR/ZVS
-zZ7ABKCRaeZc0ITe3K2iT+hHeNZlmKlbqDyHfAKK0W63FnPmX8BUmNV0vsHN4hGRrSMYPd3hckSW
-tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
-2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
-phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
-a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
-ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
-07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
-SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
-rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGWDCCBECg
-AwIBAgIMHOhjveZz4dA4V1RmMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
-ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
-MDIzMB4XDTI0MTEyODA2NDMyN1oXDTI2MTEyOTA2NDMyN1owgaUxCzAJBgNVBAYTAlVTMRMwEQYD
-VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
-MDExNzEWMBQGA1UEChMNQlJPQURDT00gSU5DLjETMBEGA1UEAxMKQWpheSBLYWhlcjEmMCQGCSqG
-SIb3DQEJARYXYWpheS5rYWhlckBicm9hZGNvbS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDNjZ3Y5dkTHTpancPgQZJHA3hrjS7nBOzbl31D5MWPeqvdiD2kLd2OtAVVJ2KYTV/Z
-n6ikyYwG/G+SKf4lxmPRf1DBBPlosoYz/d4UUIHO9I7Lw9hTtDlbqmOrFR7BL1vCYKXxM4ByLGzS
-fEfjRz/Z5b6J+pnCj2dzb2Wir3qx4rt1/aShjQasncmTZ0r8rOk2G3RmKolDmTmWPMeCgzL2KeQs
-QRXTsKFFi0np4iUyWo+MDCofsswor1HkoXwlmoIAdrFL+cw3qvOowpOB0pe3+G1rWNvJvYsOAzG6
-2a8X0kwMSTEGjJgAX+jQjqwdP8C4ZxmE7n236E9GiM8kfhFFAgMBAAGjggHYMIIB1DAOBgNVHQ8B
-Af8EBAMCBaAwgZMGCCsGAQUFBwEBBIGGMIGDMEYGCCsGAQUFBzAChjpodHRwOi8vc2VjdXJlLmds
-b2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3I2c21pbWVjYTIwMjMuY3J0MDkGCCsGAQUFBzABhi1o
-dHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVjYTIwMjMwZQYDVR0gBF4wXDAJ
-BgdngQwBBQMBMAsGCSsGAQQBoDIBKDBCBgorBgEEAaAyCgMCMDQwMgYIKwYBBQUHAgEWJmh0dHBz
-Oi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwQQYDVR0fBDowODA2
-oDSgMoYwaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVjYTIwMjMuY3JsMCIG
-A1UdEQQbMBmBF2FqYXkua2FoZXJAYnJvYWRjb20uY29tMBMGA1UdJQQMMAoGCCsGAQUFBwMEMB8G
-A1UdIwQYMBaAFAApNp5ceroPry1QLdugI4UYsKCSMB0GA1UdDgQWBBQkdXtSp1Dzqn1C33ctprG/
-nnkbNDANBgkqhkiG9w0BAQsFAAOCAgEAQbg6h5rEci8mKF65wFYkl7cvu+zaAia4d24Ef/05x2/P
-WAuBmkkDNwevol3iJzQNwlOuR4yR0sZchzw7mXSsqBhq1dgSNbReQ0qJU0YWze48y5rGlyZvCB1Q
-Z8FbyfrHGx4ZQJcjB1zeXJqqW6DPE5O8XOw+xTEKzIQxJFLgBF71RT5Jg4kJIY560kzMLBYKzS1f
-7fRmy20PR3frP6J2SwKPhNCsXVDP3t0KC5dUnlUf/1Ux2sVe/6G8+G7lBCG3A1TaN4j9woYHN7Y/
-U0LCVM46Gf7bFsu7RzwcrKtSOnfJ3Fs7V+IWCrTMvbCSQylAy3+BMkMGFZ0WwtXNLxbYIEhKAZmH
-npugOtDKS6j4LkLxkHr/dTYZvfdOXZXTIlz8qTfkTKw4ES4KW3EGzfnRZCL2VD27/GAtt0hwPWrY
-HL087+VQLA9RUVdfnigRjZOPWo//78ZaDd9PPWbLKqa6EIboR2nSV5miF9fQinDnxToBGplQEcXG
-WwCF8syc/0n0xzLlb/IOwxmkzMizN/3/vVp5eGh64OGdhSwzZDBQuVS08Wgfd3nVHT6zh1F0jBgZ
-ACv82jjjtABB+Tg1VZ0vcRr5ZzTC1WylB7ik6soemgWAgbrQfhNh0uHr9jq+NAbTA4wqUK6gA5LP
-kPwzH0/UqVP+eM3EQII1r4Uiee8YifwxggJXMIICUwIBATBiMFIxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBD
-QSAyMDIzAgwc6GO95nPh0DhXVGYwDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEILcQ
-0Q1DO+Q3eXcf6awvPDyEPsgJWkBo4xt1qCTc/8AOMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEw
-HAYJKoZIhvcNAQkFMQ8XDTI1MDkwMjEwMDgzOFowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQME
-ASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJ
-YIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAETR07p8KX7gzPzKz13YK9RKSW+44q/0oqEGLOZG
-M530ZxQ9S+iB6iuBTVPaiTVoCEBooDuCDBgOMCJS/Rp+T7DwUEmwygs+LlXePZ7z6Ep2bFkaep51
-A2/ccFASrJZs2Ts4ZMG7a+sjYIN1R8zvmZNQPR5ROcyl6zPwvG4eGeiHe3sVi2BG0VcB2n9auJln
-vIA2z0FXTnmJukiLELUdNQNNO3g57cyWpIQEaigBMveI6nPfZSLfCeO3/9dyiMDUo6+RvFWqOj9Y
-LnTw0or6fwjAlq2moauYMnXEsjTWOHSXGAJonBR62u+ClwpVVYRXJBKEF09PA4QHAQErIFpH/gQ=
---000000000000064bc2063dceac2b--
+>> +    struct work_struct async_work;
+>>       DECLARE_HASHTABLE(trx_list, ASYNC_TRX_HASH_BITS);
+>>   };
+>> @@ -1709,14 +1716,81 @@ static inline void stratix10_smc_1_2(struct 
+>> stratix10_async_ctrl *actrl,
+>>       arm_smccc_1_2_smc(args, res);
+>>   }
+>> +static irqreturn_t stratix10_svc_async_irq_handler(int irq, void 
+>> *dev_id)
+>> +{
+>> +    struct stratix10_svc_controller *ctrl = dev_id;
+>> +    struct stratix10_async_ctrl *actrl = &ctrl->actrl;
+>> +
+>> +    queue_work(system_bh_wq, &actrl->async_work);
+>> +    disable_irq_nosync(actrl->irq);
+>> +    return IRQ_HANDLED;
+>> +}
+> 
+> Add a newline here.
+ok, will make this change.
+
+> 
+>> +/**
+>> + * stratix10_async_workqueue_handler - Handler for the asynchronous
+>> + * workqueue in Stratix10 service controller.
+>> + * @work: Pointer to the work structure that contains the asynchronous
+>> + *        workqueue handler.
+>> + * This function is the handler for the asynchronous workqueue. It 
+>> performs
+>> + * the following tasks:
+>> + * - Invokes the asynchronous polling on interrupt supervisory call.
+>> + * - On success,it retrieves the bitmap of pending transactions from 
+>> mailbox
+>> + *   fifo in ATF.
+>> + * - It processes each pending transaction by calling the corresponding
+>> + *   callback function.
+>> + *
+>> + * The function ensures that the IRQ is enabled after processing the 
+>> transactions
+>> + * and logs the total time taken to handle the transactions along 
+>> with the number
+>> + * of transactions handled and the CPU on which the handler ran.
+
+
+>> -    int ret;
+>> +    int ret, irq;
+>>       if (!controller)
+>>           return -EINVAL;
+>> @@ -1775,6 +1849,22 @@ static int stratix10_svc_async_init(struct 
+>> stratix10_svc_controller *controller)
+>>       hash_init(actrl->trx_list);
+>>       atomic_set(&actrl->common_achan_refcount, 0);
+>> +    irq = of_irq_get(dev_of_node(dev), 0);
+>> +    if (irq < 0) {
+> 
+> 0 is a failing value as well.
+
+will add this.
+
+> 
+>> +        dev_warn(dev, "Failed to get IRQ, falling back to polling 
+>> mode\n");
+>> +    } else {
+
+
+>> - * the asynchronous ID pool and invoke function pointers to NULL.
+>> + * This function performs the necessary cleanup for the asynchronous 
+>> service
+>> + * controller. It checks if the controller is valid and if it has been
+>> + * initialized. Also If the controller has an IRQ assigned, it frees 
+>> the IRQ
+>> + * and flushes any pending asynchronous work. It then locks the 
+>> transaction
+>> + * list and safely removes and deallocates each handler in the list.
+>> + * The function also removes any asynchronous clients associated with 
+>> the
+>> + * controller's channels and destroys the asynchronous ID pool. 
+>> Finally, it
+>> + * resets the asynchronous ID pool and invoke function pointers to NULL.
+> 
+> Did you mean to repeat the same paragraph twice?
+> 
+> Dinh
+
 
