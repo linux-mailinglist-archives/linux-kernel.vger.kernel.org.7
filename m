@@ -1,157 +1,226 @@
-Return-Path: <linux-kernel+bounces-796664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A1AB405B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:57:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946C8B405BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F401B643E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E279A1B65642
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1469E320A16;
-	Tue,  2 Sep 2025 13:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B783333991;
+	Tue,  2 Sep 2025 13:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b0K2JpJE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hmwtlyoD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r+uD5WzL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hmwtlyoD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r+uD5WzL"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636F330507B;
-	Tue,  2 Sep 2025 13:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24476307AC0
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820821; cv=none; b=N3W2rJ8HLie+KxVfgSIWcveKarM4XP6zV5aCUnxsdDoBBhjWlUVNzmqMktxW2tAPaoPjDkCDDvYMUy8rQyFjXl3Rs7Wst8DeCtTj/4c931+qIgGR6qIUGHq5QipFcdyosQgfMvnC7l7hEh/h0DhxQa7o8jPC5ICpfjU7WsHABQ4=
+	t=1756820846; cv=none; b=JduHgP7/5RgEal54EqvRjlpoLdBbdjfetWDadI61a/pZXnFG10IP9KU3gn5/dDhUcp1yqNkXIBdt97UCZeSn3W+s7RlBq4qhzRFMKmUNXiQzJvoyxWI6dkXO3TEvWtzOH8wjFdql48K/resA2jBK6xf5rEtUD1h3zZWAaMMMCH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820821; c=relaxed/simple;
-	bh=Q4QPfzUu47P42YnLK4UGAtQJRVnRQmt3A3IZWY3kIKg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C1COrzK9M51vSWQCHgs2K4NDsIf30rVwmyiQ8art/0Q1OzltJ8uoyQwjmzA4AVEWQQSDyFbkmLHPbLrbbvjDaMj2zbLmo4aQkh5cFx3lYvJRwXZnW/5Lbo2P6sntAeuiOBhV50ATZWtvJDvcO4odAEy992LB1ZtSb9aUikAII8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b0K2JpJE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C3EC4CEED;
-	Tue,  2 Sep 2025 13:46:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756820821;
-	bh=Q4QPfzUu47P42YnLK4UGAtQJRVnRQmt3A3IZWY3kIKg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b0K2JpJElFazhN6vuww9wILU4MYelAbbwmwdZb1Wx6AVoULLto89hPXxIIHwGFCxb
-	 uJhfAitlxM+Vim8s6sDA0F/lA/RtkBkHxiLViiCp01emwYcwFwWYfHXBpPHTTL32g/
-	 l55s/WwvMp4aU9w7a9YcCh5xvO4AXGHsRHx0xUBaC/xkpn+lzvq0CntvWQXwihJwOv
-	 hLgziYuRmIGPSVKrdNNHSPTBfmNgwr2skQG65KIPxAc7G5Xb1kq3jlaRB++mtwaWmV
-	 lzWCbewovyO9sDhk7HAPee8/CElsaTu4SxMDc3ksEnbMPV5fLzBX+PsE4M0aqHoWOG
-	 z5Mj2m76PTzLQ==
-Message-ID: <ae28c7e0-6ea1-4a0a-b923-d3906d71141e@kernel.org>
-Date: Tue, 2 Sep 2025 15:46:55 +0200
+	s=arc-20240116; t=1756820846; c=relaxed/simple;
+	bh=E1iDV2jdVHvYPW6AbnlI+lsQWvIiTGOi+hZjLgN3oWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iVTlz/aI3+TEh4RomKPiedh0QNRdxeFvJ6sm2686FBKqamZ+kfQbqFXzGcUtrwuuYLcDAg5f1J2vnbxRwQHdRTAYIDHqpA7hCLzw61LHIFOnyhtOvHraxbwD6oIJo+IHko+oMlGY83Dt+ElnuhmAzYD7lvfQg+kH4FlUxNh454c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hmwtlyoD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r+uD5WzL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hmwtlyoD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r+uD5WzL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6F6D71F452;
+	Tue,  2 Sep 2025 13:47:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756820842; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DUP+jDkLYAcvHMZoNfo3+aWkCxWsUnenhaP136B6SY8=;
+	b=hmwtlyoDxf9IyGtzbkq2encQug20a8icIyopGBfWgdw7tG9O6ofRyNJ41iZZayfnDtQIS8
+	T4X1bLmPprkZrUG7YsKLp0qyC8tfv2Dh8xnmnZFxiyUBPxq9zdDp2gxgpf5/f/RHEswobT
+	bBM1jJ6pfQK7dWDSWk2uAhfa8zorxzM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756820842;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DUP+jDkLYAcvHMZoNfo3+aWkCxWsUnenhaP136B6SY8=;
+	b=r+uD5WzLCNjOHuF/UQGoxvcwKA2TBdBg2/f2iFZT29a3lF91XbPwzzGpyoDJewENpSkRCe
+	wbfdT2/4qqPDHYAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756820842; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DUP+jDkLYAcvHMZoNfo3+aWkCxWsUnenhaP136B6SY8=;
+	b=hmwtlyoDxf9IyGtzbkq2encQug20a8icIyopGBfWgdw7tG9O6ofRyNJ41iZZayfnDtQIS8
+	T4X1bLmPprkZrUG7YsKLp0qyC8tfv2Dh8xnmnZFxiyUBPxq9zdDp2gxgpf5/f/RHEswobT
+	bBM1jJ6pfQK7dWDSWk2uAhfa8zorxzM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756820842;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DUP+jDkLYAcvHMZoNfo3+aWkCxWsUnenhaP136B6SY8=;
+	b=r+uD5WzLCNjOHuF/UQGoxvcwKA2TBdBg2/f2iFZT29a3lF91XbPwzzGpyoDJewENpSkRCe
+	wbfdT2/4qqPDHYAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62C9113882;
+	Tue,  2 Sep 2025 13:47:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Lck9GGr1tmjPYgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 02 Sep 2025 13:47:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0D584A0A9F; Tue,  2 Sep 2025 15:47:18 +0200 (CEST)
+Date: Tue, 2 Sep 2025 15:47:18 +0200
+From: Jan Kara <jack@suse.cz>
+To: Shashank A P <shashank.ap@samsung.com>
+Cc: jack@suse.com, linux-kernel@vger.kernel.org, shadakshar.i@samsung.com, 
+	thiagu.r@samsung.com, hy50.seo@samsung.com, kwangwon.min@samsung.com, 
+	alim.akhtar@samsung.com, h10.kim@samsung.com, kwmad.kim@samsung.com, 
+	selvarasu.g@samsung.com, stable@vger.kernel.org
+Subject: Re: [PATCH] fs: quota: create dedicated workqueue for
+ quota_release_work
+Message-ID: <ufb72d6p54cxyzcy5glrfzaz7xm3inzp44k6rdff5on3daua4s@u2rf7xt4hdie>
+References: <CGME20250901092950epcas5p35accdcb60fe3ba58772289058a12f8a1@epcas5p3.samsung.com>
+ <20250901092905.2115-1-shashank.ap@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI
- TMDS181 and SN65DP159 bindings
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
- Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250901142958.843678-1-mike.looijmans@topic.nl>
- <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.edc18686-244f-441e-a6ac-0b62492b96c8@emailsignatures365.codetwo.com>
- <20250901142958.843678-2-mike.looijmans@topic.nl>
- <20250902-hasty-spry-nautilus-c05c6a@kuoka>
- <e007ee80-2eff-4859-b2e3-402950081b4f@topic.nl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <e007ee80-2eff-4859-b2e3-402950081b4f@topic.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901092905.2115-1-shashank.ap@samsung.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On 02/09/2025 10:46, Mike Looijmans wrote:
->>> +          endpoint:
->>> +            $ref: /schemas/media/video-interfaces.yaml#
->>> +            unevaluatedProperties: false
->>> +
->>> +      port@1:
->>> +        $ref: /schemas/graph.yaml#/$defs/port-base
->>> +        unevaluatedProperties: false
->>> +        description: Video port for HDMI output (panel or bridge)
->>> +
->>> +        properties:
->>> +          endpoint:
->>> +            $ref: /schemas/media/video-interfaces.yaml#
->>> +            unevaluatedProperties: false
->>> +
->>> +    required:
->>> +      - port@0
->>> +      - port@1
->>> +
->>> +  ti,source-mode:
->>> +    type: boolean
->>> +    description:
->>> +      Force chip to operate in "source" mode. Allows to use
->>> +      a TMDS181 chip (which defaults to sink) as cable driver.
->>> +
->>> +  ti,sink-mode:
->> Aren't these two mutually exclusive? Can same device operate in source
->> and in sink mode simultaneously?
+On Mon 01-09-25 14:59:00, Shashank A P wrote:
+> There is a kernel panic due to WARN_ONCE when panic_on_warn is set.
 > 
-> They're exclusive, yes. Will add that.
+> This issue occurs when writeback is triggered due to sync call for an
+> opened file(ie, writeback reason is WB_REASON_SYNC). When f2fs balance
+> is needed at sync path, flush for quota_release_work is triggered.
+> By default quota_release_work is queued to "events_unbound" queue which
+> does not have WQ_MEM_RECLAIM flag. During f2fs balance "writeback"
+> workqueue tries to flush quota_release_work causing kernel panic due to
+> MEM_RECLAIM flag mismatch errors.
+> 
+> This patch creates dedicated workqueue with WQ_MEM_RECLAIM flag
+> for work quota_release_work.
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 4 PID: 14867 at kernel/workqueue.c:3721 check_flush_dependency+0x13c/0x148
+> Call trace:
+>  check_flush_dependency+0x13c/0x148
+>  __flush_work+0xd0/0x398
+>  flush_delayed_work+0x44/0x5c
+>  dquot_writeback_dquots+0x54/0x318
+>  f2fs_do_quota_sync+0xb8/0x1a8
+>  f2fs_write_checkpoint+0x3cc/0x99c
+>  f2fs_gc+0x190/0x750
+>  f2fs_balance_fs+0x110/0x168
+>  f2fs_write_single_data_page+0x474/0x7dc
+>  f2fs_write_data_pages+0x7d0/0xd0c
+>  do_writepages+0xe0/0x2f4
+>  __writeback_single_inode+0x44/0x4ac
+>  writeback_sb_inodes+0x30c/0x538
+>  wb_writeback+0xf4/0x440
+>  wb_workfn+0x128/0x5d4
+>  process_scheduled_works+0x1c4/0x45c
+>  worker_thread+0x32c/0x3e8
+>  kthread+0x11c/0x1b0
+>  ret_from_fork+0x10/0x20
+> Kernel panic - not syncing: kernel: panic_on_warn set ...
+> 
+> Fixes: ac6f420291b3 ("quota: flush quota_release_work upon quota writeback")
+> CC: stable@vger.kernel.org
+> Signed-off-by: Shashank A P <shashank.ap@samsung.com>
 
-Then either define constraints per variant in if:then: or maybe better
-use string enum. Not sure what applies where, so tricky to say which
-choice is better.
+Thanks. It seems a bit unfortunate that we have to create a separate
+workqueue just for this but I don't see a different easy solution. So I've
+added your patch to my tree.
 
-Best regards,
-Krzysztof
+								Honza
+
+> ---
+>  fs/quota/dquot.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index df4a9b348769..d0f83a0c42df 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -162,6 +162,9 @@ static struct quota_module_name module_names[] = INIT_QUOTA_MODULE_NAMES;
+>  /* SLAB cache for dquot structures */
+>  static struct kmem_cache *dquot_cachep;
+>  
+> +/* workqueue for work quota_release_work*/
+> +struct workqueue_struct *quota_unbound_wq;
+> +
+>  void register_quota_format(struct quota_format_type *fmt)
+>  {
+>  	spin_lock(&dq_list_lock);
+> @@ -881,7 +884,7 @@ void dqput(struct dquot *dquot)
+>  	put_releasing_dquots(dquot);
+>  	atomic_dec(&dquot->dq_count);
+>  	spin_unlock(&dq_list_lock);
+> -	queue_delayed_work(system_unbound_wq, &quota_release_work, 1);
+> +	queue_delayed_work(quota_unbound_wq, &quota_release_work, 1);
+>  }
+>  EXPORT_SYMBOL(dqput);
+>  
+> @@ -3041,6 +3044,11 @@ static int __init dquot_init(void)
+>  
+>  	shrinker_register(dqcache_shrinker);
+>  
+> +	quota_unbound_wq = alloc_workqueue("quota_events_unbound",
+> +					   WQ_UNBOUND | WQ_MEM_RECLAIM, WQ_MAX_ACTIVE);
+> +	if (!quota_unbound_wq)
+> +		panic("Cannot create quota_unbound_wq\n");
+> +
+>  	return 0;
+>  }
+>  fs_initcall(dquot_init);
+> -- 
+> 2.34.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
