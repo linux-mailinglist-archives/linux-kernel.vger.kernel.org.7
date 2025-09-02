@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-795609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3DAAB3F53F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:18:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFF6B3F567
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D95F1A84301
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:19:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B95567A3C1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19B72E540B;
-	Tue,  2 Sep 2025 06:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23C32E3AF5;
+	Tue,  2 Sep 2025 06:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4SpTO5H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="tkzdtSHF"
+Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9212E3B12;
-	Tue,  2 Sep 2025 06:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02682E3373;
+	Tue,  2 Sep 2025 06:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756793899; cv=none; b=K4K8bKl4IXqs7b7frKAa4U3W3O5ZNqX5WhKsT5xLctr2ucwIsa+r5OqjquC9N4YCInj8FUuzZF2pdWa/jzl9ooICONn4kuuj2DxH6TZQejl087WYbURu0dnaWg5hvOv1/k629tG0VwxqZEC2m6E6d1+rnAu7oxzs3H9/8RmX468=
+	t=1756794247; cv=none; b=QcpT2BcWmW9G9eFtY79WnZyxDV0dMBVOhY+VBZoJd05EE8Jfc6Zt8NFoT5zTQ5O1+38k6CvZnGVykdkGINdAP0ALmiIkaLKHTqj8gmSzYX02kOZ4tFUVXyQOn4IWADZ9c1Wy5lmVWNgETdh9i+ov1DH6KtoEakhTiFMbAdP+sxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756793899; c=relaxed/simple;
-	bh=fCCieUa2bOrYzWEYwRiPHXPLqo498Xg5NLm++31//28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NbndypuOLsMNdhiLK73782n7QLVOrSRcXel77+BZ3/1Vs1vV052pu8EdZY8TVNAYIl4nfEGXFggKLNXKvjsgO4N+6lfuyuDSBX2WGR3LNuxSiZFChiSV0t905eYpmOsfe9MfcC6MtCmvvIVcO+oW9Trvy7wO6BLG0EhkeuzAjXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4SpTO5H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B427BC4CEF6;
-	Tue,  2 Sep 2025 06:18:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756793898;
-	bh=fCCieUa2bOrYzWEYwRiPHXPLqo498Xg5NLm++31//28=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f4SpTO5HbRtl7Xi3xwi8h9tTRsTDr/hJDP6knv0cso5gBMYkfhcoUf95iAd9UJ/GW
-	 pEHAuNQoNfdzTa8g3jUWSkTx3S6j6SWPRIq01YiDpVyT7oV9nB6okj61kBiUI2iAXJ
-	 yUHnc9WM5iPtWyNpkDsB/aDgAY0RsrT8ZOHU7f79M50ts0hX72u4U8px7IFerwMYI7
-	 P8o8jxCwaTQ1FUvAXTViK/RrudPro5cttYm2Adeikk1MK27oR7FK6jiGu57CeOIZ08
-	 tIiEqid2BaOqGe9CM1ah1Y1wFIFzcN5+i8rj8qncG0ydH2jhJqYHXfwG97R5pnGm3S
-	 nGKzVIwgqDAcA==
-Message-ID: <79555a86-d434-414f-bafc-be311a92482c@kernel.org>
-Date: Tue, 2 Sep 2025 08:18:12 +0200
+	s=arc-20240116; t=1756794247; c=relaxed/simple;
+	bh=LVB94l7OIqO0HP/kAtDPp8pMZNK+I+FVVI6efuDsYHA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=THEehUh72RluneL+ZSvJKBoW5dbmV8cqlw6hBUEsb3DGzkRV/ggY88SNrF0r94WmxhW91tmqMawdSND5fnoDrQH9XfNPS1Fbm0pKEt2BFlSm/SmcaZBBlUQFlYUstWePMUo3GMWDX5AnB+6nrE2XU69KYn6YVMPqTKynhUubowA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=tkzdtSHF; arc=none smtp.client-ip=203.205.221.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756793941;
+	bh=GI0eUTf/hMdcFnYu4tIUQhlf6BEb4nTzRS3IPbwEns4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=tkzdtSHFrpfsG82Z9QibZ5JBdmeFgCyrjGlHWEV3nFkaY0eNa6y625gQzg97Cl6A+
+	 01rwzYKdI8h3I67ptkMw43kNcQbLfR2mW/SjPzH+8pCoFjLFDCrXQvH41u624YWkPr
+	 S+gyuaOCtgiIHolT5S9oClYQyuckAunVRgU4kRt0=
+Received: from NUC10 ([39.156.73.10])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 4B9200C5; Tue, 02 Sep 2025 14:18:57 +0800
+X-QQ-mid: xmsmtpt1756793937t9zzjdmof
+Message-ID: <tencent_4142FE591497F42A5FAF5EA36A8861068708@qq.com>
+X-QQ-XMAILINFO: Nwl7PuG5jlSkoyEuDKoEHKe/JOaSucJxIXrvzTSn3T2JafyMErWHfroOgk8ykX
+	 TSzbqiYvemk3nLO7nDgk6pAlHV3BJreRjmGVieJC/x7uFAw7qZodQdo6iSOFhoGpb1/z+bhmoo5c
+	 E148nDhTTIVFEpFtTVsnseRYmEbxnL29RHNTmZqm0tDopO2Jbed9EzxjVKNPVHeHhMXc4sd0d+lr
+	 61Uc4PpwAUJl8xrwjpdR0kJHe1UryTBkeuEwgL15ueb9p3epHxYXJa/UxxM/6YzyQ+87t2qYyBzg
+	 rXoM3yt6AxaDxWs8FqdwfvqpKIypWQWkdf57yMeizW3aovkZfyzlLD6SN480uj3yof7KecY2h31Z
+	 XFNcyIconvUKhy4pUx5HaOhCmeEKR5B8HNdhk5cB1SMAID/9EziGH/y8bLcrgLOK9psafRzGFm0J
+	 uEmo7XqDkbb4g49LqacB7wuHUp1SiPO1q6MWWBnkjbyY9T1vMEm6JTUmsX3gBOAkcaWs370ziE63
+	 2an6f4yi1hlPYruSr5EgCXhEaHw7ufHiPbg/j3vDDAnstXgA1V2O8SLjWZhyQG8no0nZ67E4iio/
+	 J1YwYoivNRgZOxYI2pctkHHPirMNmbsYv4H78wyt/AAOY8yYuXuu25BvwaB2nkOHYCUr0zMjqPEx
+	 JfUCkUhZB4AGoH2eVCr9/tlZyN+6pDv6HMZ2r6CZnSNcwAddnxtKu4sLXluyAq5seLUc9JIHQSf8
+	 Btp84paL0P4EpqpaDZPud0q8FfRGCrj7iFAcdcNeNPeWK9PPiXcLJM6sNYVgqJevulMuIAO6R4dG
+	 J/gGnQCuGv6s/3c+sdHlkrf1/w1DTtv/1jz8pivKruV60TF4dXWs6HpPfxXVpgBRY8XubvqJAJhm
+	 L+5HAdnjus8Qm8daOVljlueKa3zzmS8wpNatpQ3AcOo3Lfs3Gf3yLGgc+ZOiMEETyUA3IEUvn6g3
+	 tTIMPUs5W95dEI9EKvK6KVwvLepyPq/iFtwM378/F3UguckWJVShUd0a2gvZpfJ4AXREmYZxw5Yx
+	 yRmRRN3GCK8hL6C7oIuXaWBVnCxk7j3PSRf2l3yQ==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Rong Tao <rtoax@foxmail.com>
+To: andrii@kernel.org,
+	ast@kernel.org,
+	vmalik@redhat.com
+Cc: rtoax@foxmail.com,
+	Rong Tao <rongtao@cestc.cn>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next 2/2] selftests/bpf: Test kfunc bpf_strcasecmp
+Date: Tue,  2 Sep 2025 14:18:34 +0800
+X-OQ-MSGID: <7b7ace1a1b57c21e4ab92b1828397e7d0dd84200.1756793624.git.rongtao@cestc.cn>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1756793624.git.rongtao@cestc.cn>
+References: <cover.1756793624.git.rongtao@cestc.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 3/5] scsi: ufs: core: Remove unused ufshcd_res_info
- structure
-To: Nitin Rawat <quic_nitirawa@quicinc.com>,
- Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mani@kernel.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
- <20250821112403.12078-4-quic_rdwivedi@quicinc.com>
- <1ccecf69-0bd8-4156-945d-e5876b6dea01@kernel.org>
- <1efa429d-7576-49da-a769-b1eba9345958@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1efa429d-7576-49da-a769-b1eba9345958@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01/09/2025 18:08, Nitin Rawat wrote:
-> 
-> 
-> On 8/21/2025 5:18 PM, Krzysztof Kozlowski wrote:
->> On 21/08/2025 13:24, Ram Kumar Dwivedi wrote:
->>> From: Nitin Rawat <quic_nitirawa@quicinc.com>
->>>
->>> Remove the ufshcd_res_info structure and associated enum ufshcd_res
->>> definitions from the UFS host controller header. These were previously
->>> used for MCQ resource mapping but are no longer needed following recent
->>> refactoring to use direct base addresses instead of multiple separate
->>> resource regions
->>>
->>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->>
->> Incomplete SoB chain.
->>
->> But anyway this makes no sense as independent patch. First you remove
->> users of it making it redundant... and then you remove it? No.
-> 
-> Hi Krzysztof,
-> 
-> The driver changes are in the UFS Qualcomm platform driver, which uses 
-> the definitions, while ufshcd.h is part of the UFS core driver. Hence 
-> kept in 2 separate patch.
-Don't explain the obvious but address the comment. I am going to repeat
-since you just respond whatever:
+From: Rong Tao <rongtao@cestc.cn>
 
-This makes no sense as independent patch. First you remove
-users of it making it redundant... and then you remove it? No.
+Add testsuites for kfunc bpf_strcasecmp.
 
-Best regards,
-Krzysztof
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
+---
+ tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c | 6 ++++++
+ tools/testing/selftests/bpf/progs/string_kfuncs_success.c  | 5 +++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
+index 53af438bd998..99d72c68f76a 100644
+--- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
++++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
+@@ -31,6 +31,8 @@ char *invalid_kern_ptr = (char *)-1;
+ /* Passing NULL to string kfuncs (treated as a userspace ptr) */
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_null1(void *ctx) { return bpf_strcmp(NULL, "hello"); }
+ SEC("syscall")  __retval(USER_PTR_ERR)int test_strcmp_null2(void *ctx) { return bpf_strcmp("hello", NULL); }
++SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_null1(void *ctx) { return bpf_strcasecmp(NULL, "HELLO"); }
++SEC("syscall")  __retval(USER_PTR_ERR)int test_strcasecmp_null2(void *ctx) { return bpf_strcasecmp("HELLO", NULL); }
+ SEC("syscall")  __retval(USER_PTR_ERR)int test_strchr_null(void *ctx) { return bpf_strchr(NULL, 'a'); }
+ SEC("syscall")  __retval(USER_PTR_ERR)int test_strchrnul_null(void *ctx) { return bpf_strchrnul(NULL, 'a'); }
+ SEC("syscall")  __retval(USER_PTR_ERR)int test_strnchr_null(void *ctx) { return bpf_strnchr(NULL, 1, 'a'); }
+@@ -49,6 +51,8 @@ SEC("syscall")  __retval(USER_PTR_ERR)int test_strnstr_null2(void *ctx) { return
+ /* Passing userspace ptr to string kfuncs */
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr1(void *ctx) { return bpf_strcmp(user_ptr, "hello"); }
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr2(void *ctx) { return bpf_strcmp("hello", user_ptr); }
++SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr1(void *ctx) { return bpf_strcasecmp(user_ptr, "HELLO"); }
++SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr2(void *ctx) { return bpf_strcasecmp("HELLO", user_ptr); }
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strchr_user_ptr(void *ctx) { return bpf_strchr(user_ptr, 'a'); }
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strchrnul_user_ptr(void *ctx) { return bpf_strchrnul(user_ptr, 'a'); }
+ SEC("syscall") __retval(USER_PTR_ERR) int test_strnchr_user_ptr(void *ctx) { return bpf_strnchr(user_ptr, 1, 'a'); }
+@@ -69,6 +73,8 @@ SEC("syscall") __retval(USER_PTR_ERR) int test_strnstr_user_ptr2(void *ctx) { re
+ /* Passing invalid kernel ptr to string kfuncs should always return -EFAULT */
+ SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault1(void *ctx) { return bpf_strcmp(invalid_kern_ptr, "hello"); }
+ SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault2(void *ctx) { return bpf_strcmp("hello", invalid_kern_ptr); }
++SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault1(void *ctx) { return bpf_strcasecmp(invalid_kern_ptr, "HELLO"); }
++SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault2(void *ctx) { return bpf_strcasecmp("HELLO", invalid_kern_ptr); }
+ SEC("syscall") __retval(-EFAULT) int test_strchr_pagefault(void *ctx) { return bpf_strchr(invalid_kern_ptr, 'a'); }
+ SEC("syscall") __retval(-EFAULT) int test_strchrnul_pagefault(void *ctx) { return bpf_strchrnul(invalid_kern_ptr, 'a'); }
+ SEC("syscall") __retval(-EFAULT) int test_strnchr_pagefault(void *ctx) { return bpf_strnchr(invalid_kern_ptr, 1, 'a'); }
+diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+index 46697f381878..67830456637b 100644
+--- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
++++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+@@ -12,6 +12,11 @@ char str[] = "hello world";
+ /* Functional tests */
+ __test(0) int test_strcmp_eq(void *ctx) { return bpf_strcmp(str, "hello world"); }
+ __test(1) int test_strcmp_neq(void *ctx) { return bpf_strcmp(str, "hello"); }
++__test(0) int test_strcasecmp_eq1(void *ctx) { return bpf_strcasecmp(str, "hello world"); }
++__test(0) int test_strcasecmp_eq2(void *ctx) { return bpf_strcasecmp(str, "HELLO WORLD"); }
++__test(0) int test_strcasecmp_eq3(void *ctx) { return bpf_strcasecmp(str, "HELLO world"); }
++__test(1) int test_strcasecmp_neq1(void *ctx) { return bpf_strcasecmp(str, "hello"); }
++__test(1) int test_strcasecmp_neq2(void *ctx) { return bpf_strcasecmp(str, "HELLO"); }
+ __test(1) int test_strchr_found(void *ctx) { return bpf_strchr(str, 'e'); }
+ __test(11) int test_strchr_null(void *ctx) { return bpf_strchr(str, '\0'); }
+ __test(-ENOENT) int test_strchr_notfound(void *ctx) { return bpf_strchr(str, 'x'); }
+-- 
+2.51.0
+
 
