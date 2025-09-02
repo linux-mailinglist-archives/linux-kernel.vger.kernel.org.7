@@ -1,210 +1,179 @@
-Return-Path: <linux-kernel+bounces-796533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B74B4021F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:11:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC3BB40224
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B583A93D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC83E163E5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110C62DAFA5;
-	Tue,  2 Sep 2025 13:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057512DAFBB;
+	Tue,  2 Sep 2025 13:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0MpqbOb0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AKhUPcae"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RoV9D4tT"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2070.outbound.protection.outlook.com [40.107.92.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB802D9EF5;
-	Tue,  2 Sep 2025 13:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818449; cv=none; b=BjauCARCVn9WoM2N8YLViab2j7a//fwkYTOG3Vdv1n78ztKNqr2vnq9AI3N3mB1tel28hh2+AihCOhWEGNSZ52lA6TIA05bDBaGslRDHtW/HQIUYARxc9+qwRpYji9svpPE0fJJoeA8PYkitqEYz7mZrcXPHMzeOt8yMmaKNkV8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818449; c=relaxed/simple;
-	bh=Bnr83H+4c3bTpZALd1MpNvFAul+hyMgBztlopn63ooE=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CmmEgELMTgRUYHh4hnnS2YQqtVmrlpXbLQ7+AXpJ4PJIsdzUBFYi2szZJVf00qkhvRQVm2gNV2DujYEuf/3P41rQO8plVTmTnuLu7huf297UWYHaAf7PFLw+UqObZJ/L6OhLfD++QWi/M9DfVTX4RKO67jzMWvQOY0WwiuB97Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0MpqbOb0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AKhUPcae; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756818444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+IOP6KQgl7sg4RNv1HB15N9tnpQImYkfB9yocklRZDY=;
-	b=0MpqbOb0MmctHgGLQpEoK7RvCrWqhe11k7zTcy8rW2Qfo7mEGcPn5YRQkw8nA/4UE4khMk
-	qVglqTWaaErQgvpR6lBTxWvoGi008hP0GLsPHU7H/pp+UX2aUaLx1+7feoS6miXFyPEg9Z
-	iqBXxrZmrXN+K4gbv0NKs1+w3YlIfGOPH2Uk/IWlXPSXd83ArVwnQB3A+coNOQYY0xi91a
-	EQqlpauvguqFqYMV0d3U09qWOkil3jRoUezBM+Ji7uhtq2xn8/ZdOw0STltaDV+3yXvIiL
-	w+eONQLePF81UOj2KAyLncrk+TWHd7+J8U4A22FRez4iuwC+eMkgWjBEaJfnHg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756818444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+IOP6KQgl7sg4RNv1HB15N9tnpQImYkfB9yocklRZDY=;
-	b=AKhUPcaeUUqBybjPoJeHUXRY72ygfIw8wlfOfdrh1iP5zgu2ytXtU3whmTaefPi79pOvkS
-	oV/Hg036JfwXYfDg==
-To: Ryan Chen <ryan_chen@aspeedtech.com>, ryan_chen
- <ryan_chen@aspeedtech.com>, Eddie James <eajames@linux.ibm.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew
- Jeffery <andrew@codeconstruct.com.au>, Lee Jones <lee@kernel.org>,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/4] irqchip/aspeed-scu-ic: Add support AST2700 SCU
- interrupt controllers
-In-Reply-To: <20250831021438.976893-5-ryan_chen@aspeedtech.com>
-References: <20250831021438.976893-1-ryan_chen@aspeedtech.com>
- <20250831021438.976893-5-ryan_chen@aspeedtech.com>
-Date: Tue, 02 Sep 2025 15:07:21 +0200
-Message-ID: <87y0qx0zqu.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ABE2D9EF8
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756818479; cv=fail; b=bsQLVgcUL/an9V3Lutj7Kf9Fz0Z6f3F4hMEUX22cC1kXtxUb3/TPhK2t/Z59uXRZzM1zSxY4tZlQHkWnk6ldXcD3lkVDc8PeNDiI6UDiU81EiLWq6PoSd8ZkD0gveSI0IBfLy1dHQ2Wf3ZQ9g+TKlB2U5T5Z5NSDg8FyMcUkRno=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756818479; c=relaxed/simple;
+	bh=TrcK1Eo68YfAqO92I6vLkqt9acS/bP0zNGKdD8zcLeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uqlWzkLXGuImkosHbfC1AYqp/hRPAiVX0XjjFqteWV4NjI52IHXRFdbe6zh5U+503l+8oKQoWCAYHbNE8/5hOUjpKJF8+CYqSnDOtkdcRShGlGA0zXzsWzwsnqFtP+4fGHxgOdX5HpYYt9l0nAaBvWJMMRt6A2lJg35OTxE29kM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RoV9D4tT; arc=fail smtp.client-ip=40.107.92.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L/GVTY5WWuIwL4lU1nZh4XR75nTm0mY8N4YiwOKXxUxECWXzmfadJUw4FMCR8vSdYXajcvyObeyBGs57ncmNkX05RGvy48Z7XZjsXxqSeHCIJzPwWNfNXOOqA6h5/zFi+YuQ9v8JNsnD6PEwYRovGKPvzCiaCjy0ooduaDo1XU0aXu/YJqNAHHnmEpzxD09N7ncS9DzI+wIE2JnDwzf0pAuGaIOuyT8ilp0YVMxe6ebzYVMQYNzi+euEdoKQKsyaC9odO/m8Wxc+ga6on/A6MFRA55Ctu19PVCgY8VyhisMFAq9lBI4tTYM1MVBsRh4Vx6QJk48HCpfF26lBvhLKKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DrJ7ECRgcJNqOGjpzuK/5xl0TvDfIKv9hv47ZbnhMMQ=;
+ b=CdpSNehb0dQQNqoD77g0Z3Mgr7GAQVwBAcSy2UtpdeyamZMhiCCEH+UBVd5inoSf6kZ8lFWZG0Eam6aoXY1kM+A7L0AqOUCder8dSA4WtFhqYJC3CH0zKd9873cdluCbnpHxtu5Qi+WiF74UjcuM6b9py/xRz5okHARB1E2sc7htXlBW73A9vWucZpI5AKYzsEhuXW7MAZHCmgQEiE5E4zVAO7shx2mm/tKIIdUMj2kg64MfhimcVR245JfxIvT4AAmTtUCEMjU/TqPEfpX//rVkK/kVZtuRcfT/w563EXOd9awtbpSMKBwBcqMHH4fTLbKMPcmnsKX07yxc9xpWFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DrJ7ECRgcJNqOGjpzuK/5xl0TvDfIKv9hv47ZbnhMMQ=;
+ b=RoV9D4tTo1uK0iwtl3IMgsJzXKtyX19si3dfi0JjvQ2r0BpqBycL6lk1fi3pBj/bQUKY9y9wdjbJPI6UfNQDu6qDzD/Gs5bMh9xdy+qpkq6hHPTb8d1Yw424Z9fO7yRNm2ZKEBUXH4LXAh9Y2wOKmOHIrWXF0ghvfz1vUPxxLZoi8tw/7vQ1fgDcZLlyotJDElwbhOZELzHnHZ1KlOfLsxk+mhllMIuA6D1Qp285Ohs/10Dh+As/blbvKUqIykxXhU/lVzvWt1X/HZBQlqaNhQaZBt0zOawXqbo3Dh6IWtKQESnuCRrkal077aNsoLjTp8yEBqFFet64NKlxZPc3Mg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SN7PR12MB6765.namprd12.prod.outlook.com (2603:10b6:806:26b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 2 Sep
+ 2025 13:07:51 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
+ 13:07:51 +0000
+Date: Tue, 2 Sep 2025 10:07:50 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+	will@kernel.org, joro@8bytes.org, kevin.tian@intel.com,
+	jsnitsel@redhat.com, vasant.hegde@amd.com, iommu@lists.linux.dev,
+	santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+	jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+	wnliu@google.com, gptran@google.com, kpsingh@google.com
+Subject: Re: [PATCH 4/8] iommu/amd: Introduce struct gcr3_tbl_info.giov
+Message-ID: <20250902130750.GG186519@nvidia.com>
+References: <20250820113009.5233-1-suravee.suthikulpanit@amd.com>
+ <20250820113009.5233-5-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820113009.5233-5-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: YT4P288CA0017.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d4::28) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SN7PR12MB6765:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6860f57e-05e4-4fac-4b13-08ddea21b8d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?klcmKXDQbe6wCIqMicg9HgqoPE9KpAeh2fOATLHZfyOuCxVSFUfQJObbl1EU?=
+ =?us-ascii?Q?O1C12FLYPkdWYdTCXHlEM11GuTfGRe/6OiEwNHgtBLnZAfbneQtbpbRAk/CR?=
+ =?us-ascii?Q?wLifhT5IoBpZQWjT6m7PO+n2fzjEGSVtnVwhjyslXuE2PuVYbaxXmvaL/DKH?=
+ =?us-ascii?Q?H98HnL9uVad7QCKnlait83r2GvGh9mkovAaBqCtZcJGtvhVHWPECRDT1v3FK?=
+ =?us-ascii?Q?VLxeYTPmQSM9bwmqbgHk1xKVo8t6FxloaS5tEd4p7RB5kIM9TgZwjlv6av1N?=
+ =?us-ascii?Q?oYDDGV5OhE1tzqQS+XpEi0u/o5s7xV75gmIiyUhmkWpiRLbUcKsaACdq4664?=
+ =?us-ascii?Q?e5Js9I8AVQwtB2xS3Rn+2jgwudNwQOhJ5IipTXM0gJlj7DUXGh5flv7MyaYe?=
+ =?us-ascii?Q?46VclvJZ/FSU/5o52fOYa3V8IJhy0dAcWtNSW/4/0+RfPtTXeXPF8TKsV1aV?=
+ =?us-ascii?Q?PovCPVcy+9kJefNUXztArhao9TZBEBH+sTLURT1fMQjX08FPuu21aYd4tIh4?=
+ =?us-ascii?Q?1PeUJIj70uW4PDTZIsDDomiwyb+4ej1FGmXd82gmAxPCqdX1suVVj/b85TmD?=
+ =?us-ascii?Q?agZMEAw9VDnJsmzyJBQKp9wCnJMkx+Jjx4/22XC5uSw6DpdWDoene+RrnSNP?=
+ =?us-ascii?Q?iS1YbHTghKkUtKwF8VqgntChHzvqTEYjlcnNWOi1eIOakQY3+0I21UzHjGhq?=
+ =?us-ascii?Q?pZQhwqOpe3bw+j/VxtFGS86bqEyJ3v0+EBpV+YLaw82wmaabYDQFeVFv+LTt?=
+ =?us-ascii?Q?tsqOFYzgDuowKe/WIJ/BDqw4hEjmt8zNetHmmTIgOLCMMhjXa28QhJybUIyq?=
+ =?us-ascii?Q?njCizkXDRcMtt2mn7SfKctq2mNB9OKaHQAzwum026CSjTK8yWxS3TInSICZb?=
+ =?us-ascii?Q?63D8zcbZlWaZyBNLw+JrHkLe80CI+XJCrLsjsWUD4u2e6ZP7eqeCAs6vAuMC?=
+ =?us-ascii?Q?3VtKQuMa7rbKUDdIT/FFb4237Cq9T+u8lRCvigVoZ3CoJNozMvUnxEx0r3JV?=
+ =?us-ascii?Q?qlFGZr1HsEbASlYR16jqA+gppHhiPdQFmiOm5vS/49eFOg8IBvbJNr/4jQI2?=
+ =?us-ascii?Q?HfEejTLamuJcPF00QFUMavps2d/zr4bXuqmiabdXALflhbxAXVuJvhqc9RVR?=
+ =?us-ascii?Q?rtC3QAnXXMflNbT15XCEfjwjaTuWwqe8MzWKsZEyJSm9MXADlB0yTpcjJWA8?=
+ =?us-ascii?Q?cbb+uO4ldKL9LzXFGOGEu05DhM/4mmEDJZvsIlAVfPPSK6gHsxgBtTSpQeFz?=
+ =?us-ascii?Q?TnOKNDVFtN6t04wJiyL2t4Ow8tlj8e0WSuI9LWlefyCkY4Wfs9gM/SWcyijq?=
+ =?us-ascii?Q?/tnLRX1z2E/YkpBQMTyhyzaMugszOql9M47xUSTjhtWnUz2qBsmY6xv/stlF?=
+ =?us-ascii?Q?xTI784qWQMO1AZnRUtC1OUKpdYSUmrMctVfiFigLvYGWB8rUSbE6V2S5BNT0?=
+ =?us-ascii?Q?yOge+qXm4VA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PyIlL9r5ZwTpHpQp87Pijo4Ld5FIKpzR7pjn9ukzqu2bplAVA/rmOWPOqSKj?=
+ =?us-ascii?Q?FCjPAQEpDrzKcf2Iuah2Oh8QpODI6JvQDTTJGVyU5PD37fW7hg+A4HdVSQ7P?=
+ =?us-ascii?Q?eU0sdiVM1ykPzzMBTOUQlT87lvX1gujQm33goLp2BsiWMUxncgfjNahF2SR5?=
+ =?us-ascii?Q?PoG9rJ9VmwjNvtkS17lJcEolJ+wkkdyN2rtrDflC79UYQVuVn4ZCIn1zOtjB?=
+ =?us-ascii?Q?D51dgWgXVnLGjxJnX/nuFF5YVFA1k3KdfjzNmhsxga1VCqErLf7id6l5qC47?=
+ =?us-ascii?Q?QguOp5XLbrixEMY18+hXWp60LlRDrTCShSiqV3v0eCyU6ynvTWb/LzMCSC7V?=
+ =?us-ascii?Q?u10KHhGzSQRRXAhGlA8pIgXhheeTnVqEUtc3NjCrmrpq3ygfOj1eKGolkC4M?=
+ =?us-ascii?Q?EDDcA3yRnmfOjZ5/SfVoUnzV3nK9r/o72qdqd2N5OcBP9xZtRNfsEJLJeasA?=
+ =?us-ascii?Q?2Ies8Yb6ZJOsna7H50Y4uzS0pdXZKS8wMsGkhrJ1LUtq/aoGLBQH9xJeGrs+?=
+ =?us-ascii?Q?dq8h1Bf97+entTFbrFjpLSyf0TGi2+Wsqy8vdYq2UtZtIP2DckYXiJTSjmwG?=
+ =?us-ascii?Q?OK1JVMZYzDu+bRS1VG8lJlNB6q0pkp0EaKRR4jOLAEHj3J3NTnTfgpNE7d8A?=
+ =?us-ascii?Q?w7A2eg+SyiqdOiVBJ8LZk0i8uw3WI/vS4MtOCXCFh9eJzJQqAVF5vWYazGpF?=
+ =?us-ascii?Q?1Mnd1ZmqzOHNmMJosQeFIiznMB51e3XqOWZfchlW7lcsoXdiKOOstlUDMijj?=
+ =?us-ascii?Q?3tInvvTRzziaqk8Dwd44keq4q85oKqNVtxMRsZkSMFw3i5qQHs6sQblea/Zq?=
+ =?us-ascii?Q?0+/an1pumhEq5WR2wdEztZ+p0VVs+VE7wZ3o5QM360irkL8rXqM5ts9GXboy?=
+ =?us-ascii?Q?N8552f71VmZnTTzhB30/Sd1b6sYKQBoMFTSEAKUdgq5ItgSxRalM6UF46DJG?=
+ =?us-ascii?Q?A6BK7l6Lik/RyC3VZPQjEr7xIUq+wssZbMIvTCRUjeePHTXqivjaop1tyAI1?=
+ =?us-ascii?Q?dBzBLtukVVRGd2vreM3rVMOEqM7HM8IQvtQQKRHBzA986BNUdFr6hSbTo+f1?=
+ =?us-ascii?Q?d+8B8r5wVDNC18jXlKXKPredB6+G4NkCy3xJJjhmirH7+Wn+fqDKSrXeVkUS?=
+ =?us-ascii?Q?WV0Htf8WEBCoT6b/COH554Cxsjr3hw1StUIb2Er7tseeSYnaU3poYrIO/dl2?=
+ =?us-ascii?Q?lmsAAnoGJd0i2pRf5h0MP4ZBboXWMk7/ZBM4Q+pwrRJFb6dhCLU2pamGholq?=
+ =?us-ascii?Q?sflj0Fnx4pkpz9BCtG+AlT1svICgDahwVPwiqfbKYUwgRwaWC6+oR+8qIGNp?=
+ =?us-ascii?Q?mzrwONexR9peDW2agIkn7cgN2BVpCSF5yXNsfQTzJrJ4wkOA4M6RGksL2RJl?=
+ =?us-ascii?Q?PMWGq59ZVEXujtXL/ClJa8R/yLDZBgNgyO423oxGnczbfFebbRt51G3jEwRa?=
+ =?us-ascii?Q?COsITyO9WKAVgNuBixV7c/goLsgvm/jcjMKrOx+U8v/IYlUNwJI4Csd7L4aE?=
+ =?us-ascii?Q?xvRbMHNglYReKCWsHAHKl1ztW6rWYbaNI+V/XNhRiSIePneluDDcgbP3nFTH?=
+ =?us-ascii?Q?8Fl6FeKk6Jkpe8ir0SY=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6860f57e-05e4-4fac-4b13-08ddea21b8d6
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 13:07:51.4690
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4GtgJ7yVcJBTOsljJsLL3EItuce9QR4aF+7/sMg/KzsG3hLCd0dJE4QNjHoLtIM5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6765
 
-On Sun, Aug 31 2025 at 10:14, Ryan Chen wrote:
+On Wed, Aug 20, 2025 at 11:30:05AM +0000, Suravee Suthikulpanit wrote:
 
-> The AST2700 continues the multi-instance SCU interrupt controller model
-> introduced in the AST2600, with four independent interrupt domains
-> (scu-ic0 to 3).
->
-> Unlike earlier generations that combine interrupt enable and status bits
-> into a single register, the AST2700 separates these into distinct IER and
-> ISR registers. Support for this layout is implemented by using register
-> offsets and separate chained IRQ handlers.
->
-> The variant table is extended to cover AST2700 IC instances, enabling
-> shared initialization logic while preserving support for previous SoCs.
->
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  drivers/irqchip/irq-aspeed-scu-ic.c | 123 +++++++++++++++++++++-------
->  1 file changed, 95 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-aspeed-scu-ic.c b/drivers/irqchip/irq-aspeed-scu-ic.c
-> index cbfc35919281..ffdd9b4e44c1 100644
-> --- a/drivers/irqchip/irq-aspeed-scu-ic.c
-> +++ b/drivers/irqchip/irq-aspeed-scu-ic.c
-> @@ -17,12 +17,16 @@
+> @@ -2036,7 +2037,7 @@ static void set_dte_gcr3_table(struct amd_iommu *iommu,
+>  	target->data[0] |= DTE_FLAG_GV |
+>  			   FIELD_PREP(DTE_GLX, gcr3_info->glx) |
+>  			   FIELD_PREP(DTE_GCR3_14_12, gcr3 >> 12);
+> -	if (pdom_is_v2_pgtbl_mode(dev_data->domain))
+> +	if (gcr3_info->giov)
+>  		target->data[0] |= DTE_FLAG_GIOV;
 >  
->  #define ASPEED_SCU_IC_STATUS		GENMASK(28, 16)
->  #define ASPEED_SCU_IC_STATUS_SHIFT	16
-> +#define AST2700_SCU_IC_STATUS		GENMASK(15, 0)
->  
->  struct aspeed_scu_ic_variant {
->  	const char		*compatible;
->  	unsigned long	irq_enable;
->  	unsigned long	irq_shift;
->  	unsigned int	num_irqs;
-> +	bool			split_ier_isr;
+>  	target->data[1] |= FIELD_PREP(DTE_GCR3_30_15, gcr3 >> 15) |
 
-How does that end up aligned?
+Can we please fix this properly as I've asked many times now and given
+sample code :\
 
-> +	unsigned long	ier;
-> +	unsigned long	isr;
->  };
->  
->  #define SCU_VARIANT(_compat, _shift, _enable, _num) { \
-> @@ -30,13 +34,20 @@ struct aspeed_scu_ic_variant {
->  	.irq_shift		=	_shift,		\
->  	.irq_enable		=	_enable,	\
->  	.num_irqs		=	_num,		\
-> +	.split_ier_isr	=	_split,		\
+Building the DTE for nested should be done with a more natural
+connection to the provided vDTE fragment, not by trying to squeeze it
+through this existing function by re-using gcr3_info.
 
-Ditto.
-
-> +	.ier			=	_ier,		\
-> +	.isr			=	_isr,		\
-
-But what's worse is that '_split, _ier and _isr' come out of thin air as
-SCU_VARIANT does not have corresponding arguments. So how is that
-supposed to work?
-
->  }
->  
->  struct aspeed_scu_ic {
-> @@ -45,9 +56,12 @@ struct aspeed_scu_ic {
->  	unsigned int		num_irqs;
->  	void __iomem		*base;
->  	struct irq_domain	*irq_domain;
-> +	bool				split_ier_isr;
-
-Sigh...
-
-> +	unsigned long		ier;
-> +	unsigned long		isr;
->  };
->  
-> -static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
-> +static void aspeed_scu_ic_irq_handler_combined(struct irq_desc *desc)
->  {
->  	struct aspeed_scu_ic *scu_ic = irq_desc_get_handler_data(desc);
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> @@ -84,33 +98,69 @@ static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
->  	chained_irq_exit(chip, desc);
->  }
->  
-> +static void aspeed_scu_ic_irq_handler_split(struct irq_desc *desc)
-> +{
-
-...
-
->  static void aspeed_scu_ic_irq_mask(struct irq_data *data)
->  {
->  	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
-> -	unsigned int mask = BIT(data->hwirq + scu_ic->irq_shift) |
-> -		(scu_ic->irq_enable << ASPEED_SCU_IC_STATUS_SHIFT);
->  
-> -	/*
-> -	 * Status bits are cleared by writing 1. In order to prevent the mask
-> -	 * operation from clearing the status bits, they should be under the
-> -	 * mask and written with 0.
-> -	 */
-> -	writel(readl(scu_ic->base) & ~mask, scu_ic->base);
-> +	if (scu_ic->split_ier_isr) {
-> +		writel(readl(scu_ic->base) & ~BIT(data->hwirq + scu_ic->irq_shift),
-> +		       scu_ic->base + scu_ic->ier);
-> +	} else {
-> +		unsigned int mask = BIT(data->hwirq + scu_ic->irq_shift) |
-> +			(scu_ic->irq_enable << ASPEED_SCU_IC_STATUS_SHIFT);
-> +
-> +		/*
-> +		 * Status bits are cleared by writing 1. In order to prevent the mask
-> +		 * operation from clearing the status bits, they should be under the
-> +		 * mask and written with 0.
-> +		 */
-> +		writel(readl(scu_ic->base) & ~mask, scu_ic->base);
-> +	}
-
-So you have two different handlers. Why can't you provide two different
-mask/unmask/ functions along with a seperate irq chip instead of
-cluttering the code with conditionals. Thes two variants share no code
-at all.
-
-> -	irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler,
-> -					 scu_ic);
-> +	if (scu_ic->split_ier_isr)
-> +		irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler_split,
-> +						 scu_ic);
-> +	else
-> +		irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler_combined,
-> +						 scu_ic);
->
-
-Please get rid of the line break. You have 100 characters....
-
-Thanks,
-
-        tglx
+Jason
 
