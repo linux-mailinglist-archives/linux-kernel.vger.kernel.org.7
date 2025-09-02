@@ -1,158 +1,132 @@
-Return-Path: <linux-kernel+bounces-797126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD68B40C27
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:33:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4910AB40C21
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7EB85E3DBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19068563366
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F25C3451DA;
-	Tue,  2 Sep 2025 17:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111723451B4;
+	Tue,  2 Sep 2025 17:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuxqRRm5"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r/WsGZa4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1R5Ud52C"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F98E21CC59;
-	Tue,  2 Sep 2025 17:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042752E0919
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756834419; cv=none; b=rSAOFdLDcOKJ1IFVfRLxzBmkAk9kIw8ObE/1rbCUXdKvKrmODwKbNzwkAyd6KtDjSDyBiQI2Sj1R1EbZ8657W6rjT87Rtv9I8ZF3H5Pv6xtn6bLjLnPmJOl4CaKaKA/gIINWVwIrHFONItH3GbgVhQ9tbLTAi1+WH+LbI/vwk4I=
+	t=1756834367; cv=none; b=s9XgLLOSnF/mFLfaBIja1O1jnTfmAKZMaaYCILqeKzOKQ3xHp/5iQuvsSzVDncaS6aJbWJBr6eetwKxvvlsytXFL6OUvqNSPmGIBbhc7U4WAcw9lDddfebtmws1wonWK2WymMj7IVJJR+7HlLQy7jE2bISFKsu1m71xKn++zKto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756834419; c=relaxed/simple;
-	bh=1sb4mNzJKiBNJOkSjHwyzDcm6obJKevfcRIBh9I3Y9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IlxykomXS6QQaL7zP6DfUrgBmnqQaOuKmtZA/IyFZ/1vFJ4HWimhTWlHKc1o39AA/FbbwHb15MKzmaIgjzCyauqV8935M89Hm6tz4pepx9TDvL8Ib3X4tNTnhw3vk8b5LAbkhnnxmYlWm25VgbsSvDX3UX4N6BFwMWJNWxGRriI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuxqRRm5; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-71241d44792so31415946d6.0;
-        Tue, 02 Sep 2025 10:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756834417; x=1757439217; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6qN69cGhCW4JcQNOQzKp6W5d08xWFi2OKORK99dzBII=;
-        b=PuxqRRm51yB7CI+GvbkDH7DfT9RVZksNrmS+wZCYVjbZHVi/9ZVea6v7vEcqO2qBJo
-         VlhIAiRZxvKqRZHQjBp0tuPweXwhBiy2z1Hr3bt7zodpnBP44eIP6x1ncClNf54t3jMH
-         t62LMAWM0RjhHfzzoO0FMPrQxkNbJagTJBq/DXvnrS2D0o00tcQTlTOqQQ37VsAVL5DC
-         xYFHhTBvEZCaXtlYLPFEtGJr02E9t7ftvV3ts0yh7VvNINM9pEvPnsDEpZGQGjkbT3uB
-         G3ct5FEtoIfNWC//iy9M4uxM406PSg0Qyk3FdYYx6o654Wy2J/1lDqFJzRjz2m5CUkt4
-         drtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756834417; x=1757439217;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6qN69cGhCW4JcQNOQzKp6W5d08xWFi2OKORK99dzBII=;
-        b=BSyA4Yf/IWCcyBKYyFtRuzgvuns+GNDXTyflfE++Ej6RPqbpS+NnwDqod6wcPbweDe
-         UUB2lt6dmVe7JG2aTgpYyy7pmjRNUIccK+7h/PSXQKdc6KTib85Cd3oEMWgxZ6oLp4mL
-         +SLM57sNuf6KWYCS2XwysbXK9VlV4u+8mN6WnJXM+C0IEOBYxqUP3LJ3BXv1wPai7Jvs
-         P41EwvLvabLCict0u6tmdadwpNQDpjNOBG1qO1FfJFx5DnA73YB/JsYS5IieFGTyZkc7
-         LVJATddMNdy5C/Kn/sOcfk6seaPwfsdTg9bYZ2fNZSbv7HYEFeGC9jiOiQkQbMKSu//U
-         wk6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWYvJbREVV1OAINU6qw+WjphZSOkNpJI/nJuvIYRXyS5fg7z9cACPNzsC4yAlPeAp+g+F148jpa8LeSXTc=@vger.kernel.org, AJvYcCXEBaGhr5NlFqyGp7OxU/xkxR2b31HQyOLpRpOJ05Mm26AkWgXYJNKoxhQZbO2EpW0jKxiKKz5d@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsLAgs7uZLn/2csX0+4Vxx5HGM9ujyTCNuRXfvCYvsRwEfAYXc
-	9ygsre7MQNraVAcz1Rn/odyTWzwHTdJBtdQUtf+Efnv6baltGHNRZSZY
-X-Gm-Gg: ASbGncsfSVWrE1CwpFrkdXXAEKL/HWZcRC0RHdmhv0LjGaK7VKXTlx1niutIWXfWp7S
-	bM51VOEKMsN7ZPKbwyI3SuSGpGpsn81QwX9aDAgHVQa3CswTsZaTgasjwYF0hfa9fBxsktyJcAZ
-	6a3pfe9Ktijfvp1lVC09rgs/p/ArJhtva9oAe5bgajga3YEPbHsf0HUhBorJKQwULjapKLF6tMI
-	bHFWaz6L43E5+fSgP52LJVOwR9piGDDXA0UzfXIzV1ngDyms5IjcKABrDBg/jZDoRyEL901ZG5d
-	DNHeEk7qRgGdBU/lD9T6gsfeW0NPsVfvRpQW9i6o1ulsAkF+dsX1MOJz90vHzjKSQaT3jIMYRK/
-	RLUVCNju8USmcSRi93wEvNtNSncOsMV4a6A887oOO3RszLmmieMnajcM7hcPT
-X-Google-Smtp-Source: AGHT+IFgSFSvZEOW6oqviYgs/lS2mqs3G5IXLNF5/g52GWc526Espn4quku/UgYDjQAhamCPVdnpJw==
-X-Received: by 2002:a05:6214:cc3:b0:722:48f8:66a with SMTP id 6a1803df08f44-72248f806bemr8840036d6.28.1756834361702;
-        Tue, 02 Sep 2025 10:32:41 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720acdff0dbsm15143366d6.18.2025.09.02.10.32.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 10:32:41 -0700 (PDT)
-Message-ID: <7a44540c-198c-4e15-bc87-f93c7e3a3deb@gmail.com>
-Date: Tue, 2 Sep 2025 10:32:35 -0700
+	s=arc-20240116; t=1756834367; c=relaxed/simple;
+	bh=t+fHihyGu3KCbChPFlZcoznzCcilj+lA4bQr5OWn2ME=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NJQakkVW1OhPdVabXBdBDnyHjqGFNgxJoKc+IdNx4rufLVadzw5+2fOokktXOF0va0XcBM2pspG0yQnvDRjET8+tUzMM1VdLWQ0CjB+AQvZ5FhXZ4P67HUMJqJtN1OXkQWHxfoKefuGlMZiyrgh6r1WiGFf+lqHhWrzHvItrh30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r/WsGZa4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1R5Ud52C; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756834364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H0cW7II2MIUrhNTSRyYVPIclUd2zrwbpxV7RNbGinWg=;
+	b=r/WsGZa42/7fn+olSOkkASXPruY2/l3s0ALLTVrlLaHHEVpmbrV8kVIMM0S46SCTGe/tIM
+	xnY34sjnPIfbLLc1/89ZFoZHgw1nVuDGs0C1gHR6Man9U1ItKYjXGsb0k43nTcvCzqsBMu
+	b2ktQTr+/SFw0JLPFamPkjXzu/rnKT/WiHBL47iqA6GPgCAGs6JbaotKmClIs5sYb5ucZH
+	pSHzz/mcbAYBuD+xcv4Az1odjs/da8o2fu2ql7SZ3CSH2zeA2FN9emisB3iau+RZ6EC90T
+	CDpaWeVt4oX3qrEqFYIYB7vzsG0UroSDDnXzXr/NEIu9HrLd08yTd3UYfjnCDA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756834364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H0cW7II2MIUrhNTSRyYVPIclUd2zrwbpxV7RNbGinWg=;
+	b=1R5Ud52Cjz7ZigdMqoWcWFGX9ETOtaCSurFuFrHb1XME3rHJMd+Qb3Aeow5MA4dFwshcIA
+	W4vQhC7+7OcZ8qAg==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Sean
+ Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>, Dexuan
+ Cui <decui@microsoft.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Huacai
+ Chen <chenhuacai@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V2 25/37] rseq: Rework the TIF_NOTIFY handler
+In-Reply-To: <0610d1be-15b4-40a6-8bec-307e62f810bb@efficios.com>
+References: <20250823161326.635281786@linutronix.de>
+ <20250823161654.869197102@linutronix.de>
+ <0610d1be-15b4-40a6-8bec-307e62f810bb@efficios.com>
+Date: Tue, 02 Sep 2025 19:32:42 +0200
+Message-ID: <87o6rszrnp.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 00/33] 5.15.191-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250902131927.045875971@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250902131927.045875971@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 9/2/25 06:21, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.191 release.
-> There are 33 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.191-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Tue, Aug 26 2025 at 11:12, Mathieu Desnoyers wrote:
+> On 2025-08-23 12:40, Thomas Gleixner wrote:
+>> +void __rseq_handle_notify_resume(struct pt_regs *regs)
+>> +{
+>> +	/*
+>> +	 * If invoked from hypervisors before entering the guest via
+>> +	 * resume_user_mode_work(), then @regs is a NULL pointer.
+>> +	 *
+>> +	 * resume_user_mode_work() clears TIF_NOTIFY_RESUME and re-raises
+>> +	 * it before returning from the ioctl() to user space when
+>> +	 * rseq_event.sched_switch is set.
+>> +	 *
+>> +	 * So it's safe to ignore here instead of pointlessly updating it
+>> +	 * in the vcpu_run() loop.
+>
+> I don't think any virt user should expect the userspace fields to be
+> updated on the host process while running in guest mode, but it's good
+> to clarify that we intend to change this user-visible behavior within
+> this series, to spare any unwelcome surprise.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Actually it is not really a user-visible change.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+TLS::rseq is thread local and any update to it becomes only visible to
+user space once the vCPU thread actually returns to user space. Arguably
+no guest has legitimately access to the hosts VCPU thread's TLS.
+
+You might argue, that GDB might look at the thread's TLS::rseq while the
+task runs in VCPUs guest mode. But that's completely irrelevant because
+once a task enters the kernel the RSEQ CPU/NODE/MM ids have no meaning
+anymore. They are only valid as long as the task runs in user space.
+When a task hits a breakpoint GDB can only look at the state _before_
+that and that's all what it can see when it looks at the TLS of a
+thread, which voluntarily went into the kernel via the KVM ioctl.
+
+That update is truly a kernel internal implementation detail and it got
+introduced way _after_ the initial RSEQ implementation.
+
+Before 5.9 KVM ignored most of the pending TIF work including
+TIF_NOTIFY_RESUME. Once that got fixed it turned out that handling the
+other TIF_NOTIFY_RESUME work could result in losing an RSEQ update. To
+cure that the rseq handler got pulled in to that TIF_NOTIFY_RESUME
+demultiplexing function and gained that NULL pointer check inside to
+exclude the critical section check.
+
+In hindsight RSEQ should have used a separate TIF bit right from the
+beginning, but that's water under the bridge...
+
+Thanks,
+
+        tglx
+
+
 
