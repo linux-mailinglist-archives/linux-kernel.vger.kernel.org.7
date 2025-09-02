@@ -1,56 +1,53 @@
-Return-Path: <linux-kernel+bounces-795720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DADEB3F6FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:50:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B300B3F6FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0F8E1A85A24
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C47D94846E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8822E7622;
-	Tue,  2 Sep 2025 07:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247912E7185;
+	Tue,  2 Sep 2025 07:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipBE2LIi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgJuaZNu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E24A2E62D4;
-	Tue,  2 Sep 2025 07:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94FA2E7166
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799442; cv=none; b=q0fnTAjCs735FQvHShX2mfdhabjiDtbwBKzDLu79eO/odJhC7A9Go8FOPaVoMWoXx7anEOdxdxILqKyhQfst9DJ8AbT8XmsEoilwXz6o5RRAi9l9STef9Ov6InXKVvIMri98+yVO1G/UgkUiRJvnCfx3ggVjqGVWFdfdQ1fta4Q=
+	t=1756799461; cv=none; b=tbOdpi41i03cN0Q3QZ8ABqW7tVKEMzOzEoLClZyWvYJaiTxIt2tOx4VA15A6WtqOirFw5tIFSh7wPHpznwhVDwVstacDbbB8J0BIWRaYiz5PUMWM0FYYlWE9eLVeEG5KqQWF43EsRDO6xSfHLzhBQD16q4R6sHkSNFi/xnPBAxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799442; c=relaxed/simple;
-	bh=jUwejSsgbLEFI49DnF07gNccecyfLLhAlz1wMXuHxfY=;
+	s=arc-20240116; t=1756799461; c=relaxed/simple;
+	bh=oFhmwJCogXzCj23dY50vshQpMNSXtPEEdpWQaZbC3v8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1YGyPAq7xxc9JZJ0BZJYdKeUT5Gn391gyWpvwGoTG3Mc9odO5ws8hwPOhwY2UQCAw+zF76wYU3XjBF+7SBwJEcTdCXSXMy4Z7t0jOuwlLagMqm2ZLadcmiAH1nBcN8Cz8gbDt7xyMzKxklii0PE8W4aQVWRM4jCk8h0rlPsRnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipBE2LIi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E399CC4CEED;
-	Tue,  2 Sep 2025 07:50:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEiCwtnC7rPG3f4HX5rHIBSl9Rkq7ZeICX6OSNmdxVVDU568dfgbhVa3xoD/y6gO8Mg8DYsoTdThGtdt9o5mf8RzmE3X6Pawf21VsFHamT8+gdLoU2heH7yR4VeEo+GAPnyHPLrqU88kd62ojgUSuEIW8laeV34u1colI3Y+J0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgJuaZNu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30138C4CEED;
+	Tue,  2 Sep 2025 07:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756799441;
-	bh=jUwejSsgbLEFI49DnF07gNccecyfLLhAlz1wMXuHxfY=;
+	s=k20201202; t=1756799461;
+	bh=oFhmwJCogXzCj23dY50vshQpMNSXtPEEdpWQaZbC3v8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ipBE2LIiSRLAcl0gv0asq3SiQvlpOF1ddHiCKBld7CAiMsYG8MfHPParsrUnz4Ieq
-	 JxVivqSp1UQKVwx7c8bA+6qOIuZsyiu61Bzk5ABtXUxs5M3GJtfHOhc66J4tQwiHIF
-	 PWFyVcq+Z0robyml+z/YszmRQRnk87kagkvoRITsSMKPrwyK3Bjma0NNnHFRxOqpOr
-	 tbjZdWPoe8/S6tIjn2ktREdmm/VqbF+TVKBvtTccLJmLMSiHPy5AgvWtmZeQ1hc0rb
-	 Wq0EpyBWOVQiqqd+O4jAKYlN72zooKkaFxcKhhcbosWLUFr7qfoX4Ju67vrhfHKDdL
-	 Z62/tZjYyyN7g==
-Date: Tue, 2 Sep 2025 08:50:37 +0100
+	b=CgJuaZNu8jymztNkBMe1kXKWNUu/aCRt6A+BRI3Uh/8/fjMQsxJfWP7q1nEPD1wKP
+	 uXXCvd+y6rPA1kaLsBU9UReB1tFZJv4wghD8VFo5hdIj1Rx8k2J1klYZXTi/uKjp0I
+	 Ai7ZLBgQX64St5hIk734WlbE6dXI+q06nyiZpr5RMFqDx8I1W6uF/JY1Py1J7XGMCY
+	 7FjUyYKPNqk2fXKEXN9V1lGYYQriGyExIxMQcIgsloGesvCIw3KNWhCLxgFBHcy2l3
+	 5ZcF63MHHLJby46Juj4UPUCTwTfGsZDjgmGn8kbs3awGz1Uk4yWDC4Lb4gCAXW+XdY
+	 I25HFVFPWBbUg==
+Date: Tue, 2 Sep 2025 08:50:57 +0100
 From: Lee Jones <lee@kernel.org>
-To: Lukas Timmermann <linux@timmermann.space>
-Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/2] leds: as3668: Driver for the ams Osram 4-channel
- i2c LED driver
-Message-ID: <20250902075037.GA2163762@google.com>
-References: <20250808213143.146732-1-linux@timmermann.space>
- <20250808213143.146732-3-linux@timmermann.space>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	Stanislav Jakubek <stano.jakubek@gmail.com>
+Subject: Re: [PATCH] mfd: bcm590xx: Add support for interrupt handling
+Message-ID: <20250902075057.GB2163762@google.com>
+References: <20250816-bcm590xx-irq-v1-1-ccbb490628dd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,341 +57,647 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250808213143.146732-3-linux@timmermann.space>
+In-Reply-To: <20250816-bcm590xx-irq-v1-1-ccbb490628dd@gmail.com>
 
-On Fri, 08 Aug 2025, Lukas Timmermann wrote:
+On Sat, 16 Aug 2025, Artur Weber wrote:
 
-> Since there were no existing drivers for the AS3668 or related devices,
-> a new driver was introduced in a separate file. Similar devices were
-> reviewed, but none shared enough characteristics to justify code reuse.
-> As a result, this driver is written specifically for the AS3668.
+> The BCM590XX supports up to 128 internal interrupts, which are used by
+> various parts of the chip. Add regmap_irq-based interrupt handling and
+> helper functions to allow subdevice drivers to easily use the interrupts.
 > 
-> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
->  MAINTAINERS                |   1 +
->  drivers/leds/Kconfig       |  13 +++
->  drivers/leds/Makefile      |   1 +
->  drivers/leds/leds-as3668.c | 202 +++++++++++++++++++++++++++++++++++++
->  4 files changed, 217 insertions(+)
->  create mode 100644 drivers/leds/leds-as3668.c
+> This patch is a prerequisite for future subdevice additions, since
+> many of them rely on the interrupts; I have a power-on key driver and
+> an RTC driver ready which both use the IRQ data/helper functions included
+> in this patch (they will be sent in subsequent patch series), and more
+> are on the way.
+> ---
+>  drivers/mfd/Kconfig          |   1 +
+>  drivers/mfd/bcm590xx.c       | 281 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/bcm590xx.h | 231 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 513 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 091206c54c63..945d78fef380 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3511,6 +3511,7 @@ M:	Lukas Timmermann <linux@timmermann.space>
->  L:	linux-leds@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/leds/ams,as3668.yaml
-> +F:	drivers/leds/leds-as3668.c
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 6fb3768e3d71cbb5c81f63de36cdb2d27a0a7726..e76b18e29dbc6ba40f162276cb19b89806b326a6 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -175,6 +175,7 @@ config MFD_BCM590XX
+>  	tristate "Broadcom BCM590xx PMUs"
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+> +	select REGMAP_IRQ
+>  	depends on I2C
+>  	help
+>  	  Support for the BCM590xx PMUs from Broadcom
+> diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
+> index 5a8456bbd63f65b9260f05ef6546c026bf822bae..d688abd08c12b621a38586650843e55bd71ca715 100644
+> --- a/drivers/mfd/bcm590xx.c
+> +++ b/drivers/mfd/bcm590xx.c
+> @@ -26,16 +26,30 @@
+>  #define BCM590XX_PMUREV_ANA_MASK	0xF0
+>  #define BCM590XX_PMUREV_ANA_SHIFT	4
 >  
->  ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
->  M:	Tianshu Qiu <tian.shu.qiu@intel.com>
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index a104cbb0a001..8cfb423ddf82 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -100,6 +100,19 @@ config LEDS_ARIEL
+> +#define BCM590XX_REG_IRQ1		0x20
+> +#define BCM590XX_REG_IRQ1_MASK		0x30
+
+REG and MASK mean different things.  What is it?
+
+> +
+>  static const struct mfd_cell bcm590xx_devs[] = {
+>  	{
+>  		.name = "bcm590xx-vregs",
+>  	},
+>  };
 >  
->  	  Say Y to if your machine is a Dell Wyse 3020 thin client.
->  
-> +config LEDS_AS3668
-> +	tristate "LED support for AMS AS3668"
-> +	depends on LEDS_CLASS
-> +	depends on I2C
-> +	help
-> +	  This option enables support for the AMS AS3668 LED controller.
-> +	  The AS3668 provides up to four LED channels and is controlled via
-> +	  the I2C bus. This driver offers basic brightness control for each
-> +	  channel, without support for blinking or other advanced features.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called leds-as3668.
-> +
->  config LEDS_AW200XX
->  	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
->  	depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 2f170d69dcbf..983811384fec 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
->  obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
->  obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
->  obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
-> +obj-$(CONFIG_LEDS_AS3668)		+= leds-as3668.o
->  obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
->  obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
->  obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
-> diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
-> new file mode 100644
-> index 000000000000..0cfd3b68f90c
-> --- /dev/null
-> +++ b/drivers/leds/leds-as3668.c
-> @@ -0,0 +1,202 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + *  Osram AMS AS3668 LED Driver IC
-> + *
-> + *  Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/i2c.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/uleds.h>
-> +
-> +#define AS3668_MAX_LEDS 4
-> +#define AS3668_EXPECTED_I2C_ADDR 0x42
-> +
-> +/* Chip Ident */
-> +
-> +#define AS3668_CHIP_ID1_REG 0x3e
+> +static bool bcm590xx_volatile_pri(struct device *dev, unsigned int reg)
 
-Can you tab out all of the values please.
+What does pri mean?
 
-> +#define AS3668_CHIP_ID2_REG 0x3f
-> +#define AS3668_CHIP_ID1_EXPECTED_IDENTIFIER 0xa5
-
-This is odd.  What do you mean by expected?
-
-What kind of ID is this?  Board ID, platform ID, Chip ID?
-
-Call it that instead.
-
-> +#define AS3668_CHIP_ID2_SERIAL_MASK GENMASK(7, 4)
-> +#define AS3668_CHIP_ID2_REV_MASK GENMASK(3, 0)
-> +
-> +/* Current Control */
-> +
-
-The X thing (below) is weirding me out.
-
-> +#define AS3668_CURRX_CONTROL_REG 0x01
-
-Drop the X.
-
-> +#define AS3668_CURR1_REG 0x02
-> +#define AS3668_CURR2_REG 0x03
-> +#define AS3668_CURR3_REG 0x04
-> +#define AS3668_CURR4_REG 0x05
-
-Are these not also a 'CONTROL' regs?
-
-If not, what kind of regs are they?
-
-> +#define AS3668_CURRX_MODE_ON 0x1
-> +#define AS3668_CURRX_CURR1_MASK GENMASK(1, 0)
-> +#define AS3668_CURRX_CURR2_MASK GENMASK(3, 2)
-> +#define AS3668_CURRX_CURR3_MASK GENMASK(5, 4)
-> +#define AS3668_CURRX_CURR4_MASK GENMASK(7, 6)
-
-Drop the CURRX from each of these?
-
-> +
-> +struct as3668_led {
-> +	struct led_classdev cdev;
-> +	struct as3668 *chip;
-> +	struct fwnode_handle *fwnode;
-> +
-
-The new line seems unnecessary.
-
-> +	int led_id;
-> +};
-> +
-> +struct as3668 {
-> +	struct i2c_client *client;
-> +	struct as3668_led leds[AS3668_MAX_LEDS];
-> +};
-> +
-> +static enum led_brightness as3668_brightness_get(struct led_classdev *cdev)
 > +{
-> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
-> +
-> +	return i2c_smbus_read_byte_data(led->chip->client, AS3668_CURR1_REG + led->led_id);
+> +	/*
+> +	 * IRQ registers are clear-on-read, make sure we don't cache them
+> +	 * so that they get read/cleared correctly
+> +	 */
+> +	return (reg >= BCM590XX_REG_IRQ1 &&
+> +		reg <= (BCM590XX_REG_IRQ1 + 15));
+
+Use up to 100-chars to prevent these line feeds.
+
 > +}
 > +
-> +static void as3668_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
+>  static const struct regmap_config bcm590xx_regmap_config_pri = {
+>  	.reg_bits	= 8,
+>  	.val_bits	= 8,
+>  	.max_register	= BCM590XX_MAX_REGISTER_PRI,
+> +	.volatile_reg	= bcm590xx_volatile_pri,
+>  	.cache_type	= REGCACHE_MAPLE,
+>  };
+>  
+> @@ -46,6 +60,268 @@ static const struct regmap_config bcm590xx_regmap_config_sec = {
+>  	.cache_type	= REGCACHE_MAPLE,
+>  };
+>  
+> +/** Interrupt handling **/
+
+This is obvious with the alerting header comment.
+
+> +/* IRQ IDs in the MFD header follow the IRQ order in hardware. */
+
+Not sure I the helpfulness of this comment.
+
+> +#define BCM590XX_REGMAP_IRQ_REG(id)	REGMAP_IRQ_REG_LINE(id, 8)
+
+What does the 8 mean?
+
+> +
+> +/* BCM59054 IRQs */
+
+We can see this by the nomenclature.
+
+> +static const struct regmap_irq bcm59054_regmap_irqs[] = {
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBINS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBRM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BATINS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BATRM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_CV_LOOP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_CV_TMR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_EOC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RESUME_VBUS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBTEMPLOW),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBTEMPHIGH),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBOV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBOV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGERRDIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBOV_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBOV_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_TF),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_HW_TTR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_HW_TCH_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_SW_TMR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_TCH_1MIN_BF_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USB_PORT_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USB_CC_REDUCE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUSLOWBND),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_UBPD_CHG_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUS_VALID_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_OTG_SESS_VALID_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VB_SESS_END_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ID_RM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUS_VALID_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VA_SESS_VALID_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VB_SESS_END_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ID_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IDCHG),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RIC_C_TO_FLOAT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGDET_LATCH),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGDET_TO),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_CHANGE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_SNS_END),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_PROB),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_PRB_ERR),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_PRESSED),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_RELEASED),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_WAKEUP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_BIT_VLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_RESTART),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T1),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T2),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T3),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_I2C_RESTART),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GBAT_PLUG_IN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SMPL_INT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUX_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUX_RM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_XTAL_FAILURE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBWV_R_10S_WAIT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBWV_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_ALARM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_SEC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_MIN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTCADJ),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_FGC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BBLOW),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_DIE_OT_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_DIE_OT_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_DATA_RDY),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_IN_CON_MEAS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_UPPER),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_IGNORE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_OVERRIDDEN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUD_HSAB_SHCKT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUD_IHFD_SHCKT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_NOP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_LEN_ERR),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_RCV_ERR),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_BUSQ_RESP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_BUSQ_POS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_EOT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_XMT_END),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_INT_POS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LOWBAT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CSROVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VSROVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MSROVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDSR1OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDSR2OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IOSR1OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IOSR2OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RESERVED),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RFLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUDLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBLDO_OVR),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDXLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MICLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VIBLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO3_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RFLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUDLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDXLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MICLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VIBLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO3_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_TCXLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_TCXLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBOVRV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBOVRI),
+> +};
+> +
+> +static const struct regmap_irq_chip bcm59054_irq_chip = {
+> +	.name = "bcm59054-irq",
+> +	.irqs = bcm59054_regmap_irqs,
+> +	.num_irqs = BCM59054_IRQ_MAX,
+> +	.num_regs = 16,
+> +	.status_base = BCM590XX_REG_IRQ1,
+> +	.mask_base = BCM590XX_REG_IRQ1_MASK,
+> +	.clear_on_unmask = true,
+> +};
+> +
+> +/* BCM59056 IRQs */
+
+As above.
+
+> +static const struct regmap_irq bcm59056_regmap_irqs[] = {
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_ALARM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_SEC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_MIN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTCADJ),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BATINS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BATRM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_GBAT_PLUG_IN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SMPL_INT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBINS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBRM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBOV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_EOC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RESUME_VBUS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_HW_TTR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_HW_TCH_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_SW_TMR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGDET_LATCH),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGDET_TO),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBTEMPLOW),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBTEMPHIGH),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBOV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBOV_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBOV_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGERRDIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_1V5_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_4V5_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_1V5_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_4V5_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBWV_R_10S_WAIT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BBLOW),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_LOWBAT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VERYLOWBAT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_DATA_RDY),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_IN_CON_MEAS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_UPPER),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_IGNORE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_OVERRIDDEN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_AUD_HSAB_SHCKT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_AUD_IHFD_SHCKT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBC_TF),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CSROVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_IOSROVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SDSROVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ASROVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_UBPD_CHG_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ACD_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ACD_RM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_HOLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_OFFHOLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_RESTART),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_IDCHG),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_JIG_USB_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_UART_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ID_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ID_RM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ADP_CHANGE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ADP_SNS_END),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SESSION_END_VLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SESSION_END_INVLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_OVERCURRENT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_FGC),
+> +};
+> +
+> +static const struct regmap_irq_chip bcm59056_irq_chip = {
+> +	.name = "bcm59056-irq",
+> +	.irqs = bcm59056_regmap_irqs,
+> +	.num_irqs = BCM59056_IRQ_MAX,
+> +	.num_regs = 16,
+> +	.status_base = BCM590XX_REG_IRQ1,
+> +	.mask_base = BCM590XX_REG_IRQ1_MASK,
+> +	.clear_on_unmask = true,
+> +};
+> +
+> +static int bcm590xx_irq_init(struct bcm590xx *bcm590xx)
 > +{
-> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
+> +	const struct regmap_irq_chip *irq_chip;
+> +	int ret;
 > +
-> +	int err = i2c_smbus_write_byte_data(led->chip->client,
-> +					    AS3668_CURR1_REG + led->led_id,
-> +					    brightness);
+> +	if (!bcm590xx->irq) {
+> +		dev_err(bcm590xx->dev, "No IRQ configured\n");
+> +		return -EINVAL;
+> +	}
 > +
-> +	if (err)
-> +		dev_err(&led->chip->client->dev, "error writing to reg 0x%02x, returned %d\n",
-> +			AS3668_CURR1_REG + led->led_id, err);
-> +}
+> +	switch (bcm590xx->pmu_id) {
+> +	case BCM590XX_PMUID_BCM59054:
+> +		irq_chip = &bcm59054_irq_chip;
+> +		break;
+> +	case BCM590XX_PMUID_BCM59056:
+> +		irq_chip = &bcm59056_irq_chip;
+> +		break;
+> +	default:
+> +		dev_err(bcm590xx->dev,
+> +			"Unknown device type, this is a driver bug!\n");
+
+Prevent the wrap here.
+
+No, this is not a driver bug.
+
+Just "Unsupported device type %d" will be fine.
+
+> +		return -EINVAL;
+> +	}
 > +
-> +static int as3668_dt_init(struct as3668 *as3668)
-> +{
-> +	struct device *dev = &as3668->client->dev;
-> +	struct as3668_led *led;
-> +	struct led_init_data init_data = {};
-> +	int err;
-> +	u32 reg;
-> +
-> +	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
-> +		err = of_property_read_u32(child, "reg", &reg);
-> +		if (err)
-> +			return dev_err_probe(dev, err, "'reg' property missing from %s\n",
-> +					     child->name);
-> +
-> +		if (reg < 0 || reg > AS3668_MAX_LEDS)
-> +			return dev_err_probe(dev, -EOPNOTSUPP,
-> +					     "'reg' property in %s is out of scope: %d\n",
-> +					     child->name, reg);
-> +
-> +		led = &as3668->leds[reg];
-> +		led->fwnode = of_fwnode_handle(child);
-> +
-> +		led->led_id = reg;
-> +		led->chip = as3668;
-> +
-> +		led->cdev.max_brightness = U8_MAX;
-> +		led->cdev.brightness_get = as3668_brightness_get;
-> +		led->cdev.brightness_set = as3668_brightness_set;
-> +
-> +		init_data.fwnode = led->fwnode;
-> +		init_data.default_label = ":";
-> +
-> +		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
-> +		if (err)
-> +			return dev_err_probe(dev, err, "failed to register LED %d\n", reg);
+> +	ret = devm_regmap_add_irq_chip(bcm590xx->dev, bcm590xx->regmap_pri,
+> +			bcm590xx->irq, IRQF_TRIGGER_FALLING, 0,
+> +			irq_chip, &bcm590xx->irq_data);
+> +	if (ret) {
+> +		dev_err(bcm590xx->dev, "Failed to reguest IRQ %d: %d\n",
+
+"Failed to add IRQ Chip for IRQ: %d (%d)"
+
+> +			bcm590xx->irq, ret);
+> +		return ret;
 > +	}
 > +
 > +	return 0;
 > +}
 > +
-> +static int as3668_probe(struct i2c_client *client)
+> +/** Chip version parsing **/
+
+Not needed.
+
+>  /* Map PMU ID value to model name string */
+>  static const char * const bcm590xx_names[] = {
+>  	[BCM590XX_PMUID_BCM59054] = "BCM59054",
+> @@ -98,6 +374,7 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+>  
+>  	i2c_set_clientdata(i2c_pri, bcm590xx);
+>  	bcm590xx->dev = &i2c_pri->dev;
+> +	bcm590xx->irq = i2c_pri->irq;
+>  	bcm590xx->i2c_pri = i2c_pri;
+>  
+>  	bcm590xx->pmu_id = (uintptr_t) of_device_get_match_data(bcm590xx->dev);
+> @@ -132,6 +409,10 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+>  	if (ret)
+>  		goto err;
+>  
+> +	ret = bcm590xx_irq_init(bcm590xx);
+> +	if (ret)
+> +		goto err;
+> +
+>  	ret = devm_mfd_add_devices(&i2c_pri->dev, -1, bcm590xx_devs,
+>  				   ARRAY_SIZE(bcm590xx_devs), NULL, 0, NULL);
+>  	if (ret < 0) {
+> diff --git a/include/linux/mfd/bcm590xx.h b/include/linux/mfd/bcm590xx.h
+> index 5a5783abd47b9a6bb6f9bb3a8cafddbd01aa7fcc..e6ea643766ab1a9d579c94605b54c53dc1d742d7 100644
+> --- a/include/linux/mfd/bcm590xx.h
+> +++ b/include/linux/mfd/bcm590xx.h
+> @@ -50,6 +50,237 @@ struct bcm590xx {
+>  	/* Chip revision, read from PMUREV reg */
+>  	u8 rev_digital;
+>  	u8 rev_analog;
+> +
+> +	/* Interrupts */
+> +	int irq;
+> +	struct regmap_irq_chip_data *irq_data;
+> +};
+> +
+> +/* Interrupt handling helper functions */
+> +
+> +static inline int
+> +bcm590xx_devm_request_irq(struct device *dev, struct bcm590xx *bcm590xx, int irq,
+> +			  irq_handler_t handler, unsigned long flags,
+> +			  const char *name, void *data)
 > +{
-> +	struct as3668 *as3668;
-> +	int err;
-> +	u8 chip_ident, chip_subident, chip_serial, chip_rev;
+> +	if (!bcm590xx->irq_data)
+> +		return -EINVAL;
 > +
-> +	/* Check for sensible i2c address */
-
-I2C
-
-"sensible" probably isn't the correct term here.
-
-Actually, do we really need this comment?  What does it add?
-
-> +	if (client->addr != AS3668_EXPECTED_I2C_ADDR)
-> +		return dev_err_probe(&client->dev, -EFAULT,
-> +				     "expected i2c address 0x%02x, got 0x%02x\n",
-
-I2C
-
-If we already know the I2C address - why is it being set elsewhere?
-
-> +				     AS3668_EXPECTED_I2C_ADDR, client->addr);
-> +
-> +	/* Read identifier from chip */
-> +	chip_ident = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID1_REG);
-> +
-> +	if (chip_ident != AS3668_CHIP_ID1_EXPECTED_IDENTIFIER)
-> +		return dev_err_probe(&client->dev, -ENODEV,
-> +				     "expected chip identifier 0x%02x, got 0x%02x\n",
-> +				     AS3668_CHIP_ID1_EXPECTED_IDENTIFIER, chip_ident);
-> +
-> +	chip_subident = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID2_REG);
-> +	chip_serial = FIELD_GET(AS3668_CHIP_ID2_SERIAL_MASK, chip_subident);
-> +	chip_rev = FIELD_GET(AS3668_CHIP_ID2_REV_MASK, chip_subident);
-> +
-> +	/* Print out information about the chip */
-
-This is definitely superfluous.
-
-> +	dev_dbg(&client->dev,
-> +		"chip_ident: 0x%02x | chip_subident: 0x%02x | chip_serial: 0x%02x | chip_rev: 0x%02x\n",
-> +		chip_ident, chip_subident, chip_serial, chip_rev);
-
-Does this have a role now that development is over?
-
-Is the user going to care about all this stuff?
-
-> +
-> +	as3668 = devm_kzalloc(&client->dev, sizeof(*as3668), GFP_KERNEL);
-> +	if (!as3668)
-> +		return -ENOMEM;
-> +
-> +	as3668->client = client;
-> +
-> +	err = as3668_dt_init(as3668);
-> +	if (err)
-> +		return err;
-> +
-> +	/* Set all four channel modes to 'on' */
-> +	err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG,
-> +					FIELD_PREP(AS3668_CURRX_CURR1_MASK, AS3668_CURRX_MODE_ON) |
-> +					FIELD_PREP(AS3668_CURRX_CURR2_MASK, AS3668_CURRX_MODE_ON) |
-> +					FIELD_PREP(AS3668_CURRX_CURR3_MASK, AS3668_CURRX_MODE_ON) |
-> +					FIELD_PREP(AS3668_CURRX_CURR4_MASK, AS3668_CURRX_MODE_ON));
-> +
-> +	/* Set initial currents to 0mA */
-> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR1_REG, 0);
-> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR2_REG, 0);
-> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR3_REG, 0);
-> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR4_REG, 0);
-> +
-> +	if (err)
-> +		return dev_err_probe(&client->dev, -EIO, "error during hardware initialization\n");
-
-"Failed to write to the device"?
-
-> +
-> +	return 0;
+> +	return devm_request_threaded_irq(dev,
+> +				regmap_irq_get_virq(bcm590xx->irq_data, irq),
+> +				NULL, handler, flags, name, data);
 > +}
 > +
-> +static void as3668_remove(struct i2c_client *client)
+> +static inline void
+> +bcm590xx_devm_free_irq(struct device *dev, struct bcm590xx *bcm590xx, int irq,
+> +		       void *data)
 > +{
-> +	int err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG, 0);
-
-Do this after declaration please.
-
+> +	if (!bcm590xx->irq_data)
+> +		return;
 > +
-> +	if (err)
-> +		dev_err(&client->dev, "couldn't deinit device\n");
-
-"deinit" is not a word.
-
-Please expand slang and shortened words in comments and user-facing messages.
-
+> +	devm_free_irq(dev, regmap_irq_get_virq(bcm590xx->irq_data, irq), data);
 > +}
+
+These functions are abstracted for the sake of abstraction.  Please remove.
+
+> +/* BCM59054 IRQs */
 > +
-> +static const struct i2c_device_id as3668_idtable[] = {
-> +	{ "as3668" },
-> +	{ }
+> +enum bcm59054_irq {
+> +	BCM59054_IRQ_USBINS = 0,
+> +	BCM59054_IRQ_USBRM,
+> +	BCM59054_IRQ_BATINS,
+> +	BCM59054_IRQ_BATRM,
+> +	BCM59054_IRQ_MBC_CV_LOOP,
+> +	BCM59054_IRQ_MBC_CV_TMR_EXP,
+> +	BCM59054_IRQ_EOC,
+> +	BCM59054_IRQ_RESUME_VBUS,
+> +	BCM59054_IRQ_MBTEMPLOW,
+> +	BCM59054_IRQ_MBTEMPHIGH,
+> +	BCM59054_IRQ_USBOV,
+> +	BCM59054_IRQ_MBOV,
+> +	BCM59054_IRQ_CHGERRDIS,
+> +	BCM59054_IRQ_MBOV_DIS,
+> +	BCM59054_IRQ_USBOV_DIS,
+> +	BCM59054_IRQ_MBC_TF,
+> +	BCM59054_IRQ_CHG_HW_TTR_EXP,
+> +	BCM59054_IRQ_CHG_HW_TCH_EXP,
+> +	BCM59054_IRQ_CHG_SW_TMR_EXP,
+> +	BCM59054_IRQ_CHG_TCH_1MIN_BF_EXP,
+> +	BCM59054_IRQ_USB_PORT_DIS,
+> +	BCM59054_IRQ_USB_CC_REDUCE,
+> +	BCM59054_IRQ_VBUSLOWBND,
+> +	BCM59054_IRQ_UBPD_CHG_F,
+> +	BCM59054_IRQ_VBUS_VALID_F,
+> +	BCM59054_IRQ_OTG_SESS_VALID_F,
+> +	BCM59054_IRQ_VB_SESS_END_F,
+> +	BCM59054_IRQ_ID_RM,
+> +	BCM59054_IRQ_VBUS_VALID_R,
+> +	BCM59054_IRQ_VA_SESS_VALID_R,
+> +	BCM59054_IRQ_VB_SESS_END_R,
+> +	BCM59054_IRQ_ID_INS,
+> +	BCM59054_IRQ_IDCHG,
+> +	BCM59054_IRQ_RIC_C_TO_FLOAT,
+> +	BCM59054_IRQ_CHGDET_LATCH,
+> +	BCM59054_IRQ_CHGDET_TO,
+> +	BCM59054_IRQ_ADP_CHANGE,
+> +	BCM59054_IRQ_ADP_SNS_END,
+> +	BCM59054_IRQ_ADP_PROB,
+> +	BCM59054_IRQ_ADP_PRB_ERR,
+> +	BCM59054_IRQ_POK_PRESSED,
+> +	BCM59054_IRQ_POK_RELEASED,
+> +	BCM59054_IRQ_POK_WAKEUP,
+> +	BCM59054_IRQ_POK_BIT_VLD,
+> +	BCM59054_IRQ_POK_RESTART,
+> +	BCM59054_IRQ_POK_T1,
+> +	BCM59054_IRQ_POK_T2,
+> +	BCM59054_IRQ_POK_T3,
+> +	BCM59054_IRQ_I2C_RESTART,
+> +	BCM59054_IRQ_GBAT_PLUG_IN,
+> +	BCM59054_IRQ_SMPL_INT,
+> +	BCM59054_IRQ_AUX_INS,
+> +	BCM59054_IRQ_AUX_RM,
+> +	BCM59054_IRQ_XTAL_FAILURE,
+> +	BCM59054_IRQ_MBWV_R_10S_WAIT,
+> +	BCM59054_IRQ_MBWV_F,
+> +	BCM59054_IRQ_RTC_ALARM,
+> +	BCM59054_IRQ_RTC_SEC,
+> +	BCM59054_IRQ_RTC_MIN,
+> +	BCM59054_IRQ_RTCADJ,
+> +	BCM59054_IRQ_FGC,
+> +	BCM59054_IRQ_BBLOW,
+> +	BCM59054_IRQ_DIE_OT_R,
+> +	BCM59054_IRQ_DIE_OT_F,
+> +	BCM59054_IRQ_RTM_DATA_RDY,
+> +	BCM59054_IRQ_RTM_IN_CON_MEAS,
+> +	BCM59054_IRQ_RTM_UPPER,
+> +	BCM59054_IRQ_RTM_IGNORE,
+> +	BCM59054_IRQ_RTM_OVERRIDDEN,
+> +	BCM59054_IRQ_AUD_HSAB_SHCKT,
+> +	BCM59054_IRQ_AUD_IHFD_SHCKT,
+> +	BCM59054_IRQ_POK_NOP,
+> +	BCM59054_IRQ_MIPI_LEN_ERR,
+> +	BCM59054_IRQ_MIPI_RCV_ERR,
+> +	BCM59054_IRQ_MIPI_BUSQ_RESP,
+> +	BCM59054_IRQ_MIPI_BUSQ_POS,
+> +	BCM59054_IRQ_MIPI_EOT,
+> +	BCM59054_IRQ_MIPI_XMT_END,
+> +	BCM59054_IRQ_MIPI_INT_POS,
+> +	BCM59054_IRQ_LOWBAT,
+> +	BCM59054_IRQ_CSROVRI,
+> +	BCM59054_IRQ_VSROVRI,
+> +	BCM59054_IRQ_MSROVRI,
+> +	BCM59054_IRQ_SDSR1OVRI,
+> +	BCM59054_IRQ_SDSR2OVRI,
+> +	BCM59054_IRQ_IOSR1OVRI,
+> +	BCM59054_IRQ_IOSR2OVRI,
+> +	BCM59054_IRQ_RESERVED,
+> +	BCM59054_IRQ_RFLDO_OVRI,
+> +	BCM59054_IRQ_AUDLDO_OVRI,
+> +	BCM59054_IRQ_USBLDO_OVR,
+> +	BCM59054_IRQ_SDXLDO_OVRI,
+> +	BCM59054_IRQ_MICLDO_OVRI,
+> +	BCM59054_IRQ_SIMLDO1_OVRI,
+> +	BCM59054_IRQ_SIMLDO2_OVRI,
+> +	BCM59054_IRQ_MMCLDO1_OVRI,
+> +	BCM59054_IRQ_CAMLDO1_OVRI,
+> +	BCM59054_IRQ_CAMLDO2_OVRI,
+> +	BCM59054_IRQ_VIBLDO_OVRI,
+> +	BCM59054_IRQ_SDLDO_OVRI,
+> +	BCM59054_IRQ_GPLDO1_OVRI,
+> +	BCM59054_IRQ_GPLDO2_OVRI,
+> +	BCM59054_IRQ_GPLDO3_OVRI,
+> +	BCM59054_IRQ_RFLDO_SHD,
+> +	BCM59054_IRQ_AUDLDO_SHD,
+> +	BCM59054_IRQ_USBLDO_SHD,
+> +	BCM59054_IRQ_SDXLDO_SHD,
+> +	BCM59054_IRQ_MICLDO_SHD,
+> +	BCM59054_IRQ_SIMLDO1_SHD,
+> +	BCM59054_IRQ_SIMLDO2_SHD,
+> +	BCM59054_IRQ_MMCLDO1_SHD,
+> +	BCM59054_IRQ_MMCLDO2_SHD,
+> +	BCM59054_IRQ_CAMLDO1_SHD,
+> +	BCM59054_IRQ_CAMLDO2_SHD,
+> +	BCM59054_IRQ_VIBLDO_SHD,
+> +	BCM59054_IRQ_SDLDO_SHD,
+> +	BCM59054_IRQ_GPLDO1_SHD,
+> +	BCM59054_IRQ_GPLDO2_SHD,
+> +	BCM59054_IRQ_GPLDO3_SHD,
+> +	BCM59054_IRQ_TCXLDO_OVRI,
+> +	BCM59054_IRQ_LVLDO1_OVRI,
+> +	BCM59054_IRQ_LVLDO2_OVRI,
+> +	BCM59054_IRQ_TCXLDO_SHD,
+> +	BCM59054_IRQ_LVLDO1_SHD,
+> +	BCM59054_IRQ_LVLDO2_SHD,
+> +	BCM59054_IRQ_VBOVRV,
+> +	BCM59054_IRQ_VBOVRI,
+> +	BCM59054_IRQ_MAX,
 > +};
-> +MODULE_DEVICE_TABLE(i2c, as3668_idtable);
 > +
-> +static const struct of_device_id as3668_match_table[] = {
-> +	{ .compatible = "ams,as3668" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, as3668_match_table);
+> +/* BCM59056 IRQs */
 > +
-> +static struct i2c_driver as3668_driver = {
-> +	.driver = {
-> +		.name = "leds_as3668",
-> +		.of_match_table = as3668_match_table,
-> +	},
-> +	.probe = as3668_probe,
-> +	.remove = as3668_remove,
-> +	.id_table = as3668_idtable,
-> +};
-> +module_i2c_driver(as3668_driver);
-> +
-> +MODULE_AUTHOR("Lukas Timmermann <linux@timmermann.space>");
-> +MODULE_DESCRIPTION("AS3668 LED driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.50.1
+> +enum bcm59056_irq {
+> +	BCM59056_IRQ_RTC_ALARM = 0,
+> +	BCM59056_IRQ_RTC_SEC,
+> +	BCM59056_IRQ_RTC_MIN,
+> +	BCM59056_IRQ_RTCADJ,
+> +	BCM59056_IRQ_BATINS,
+> +	BCM59056_IRQ_BATRM,
+> +	BCM59056_IRQ_GBAT_PLUG_IN,
+> +	BCM59056_IRQ_SMPL_INT,
+> +	BCM59056_IRQ_USBINS,
+> +	BCM59056_IRQ_USBRM,
+> +	BCM59056_IRQ_USBOV,
+> +	BCM59056_IRQ_EOC,
+> +	BCM59056_IRQ_RESUME_VBUS,
+> +	BCM59056_IRQ_CHG_HW_TTR_EXP,
+> +	BCM59056_IRQ_CHG_HW_TCH_EXP,
+> +	BCM59056_IRQ_CHG_SW_TMR_EXP,
+> +	BCM59056_IRQ_CHGDET_LATCH,
+> +	BCM59056_IRQ_CHGDET_TO,
+> +	BCM59056_IRQ_MBTEMPLOW,
+> +	BCM59056_IRQ_MBTEMPHIGH,
+> +	BCM59056_IRQ_MBOV,
+> +	BCM59056_IRQ_MBOV_DIS,
+> +	BCM59056_IRQ_USBOV_DIS,
+> +	BCM59056_IRQ_CHGERRDIS,
+> +	BCM59056_IRQ_VBUS_1V5_R,
+> +	BCM59056_IRQ_VBUS_4V5_R,
+> +	BCM59056_IRQ_VBUS_1V5_F,
+> +	BCM59056_IRQ_VBUS_4V5_F,
+> +	BCM59056_IRQ_MBWV_R_10S_WAIT,
+> +	BCM59056_IRQ_BBLOW,
+> +	BCM59056_IRQ_LOWBAT,
+> +	BCM59056_IRQ_VERYLOWBAT,
+> +	BCM59056_IRQ_RTM_DATA_RDY,
+> +	BCM59056_IRQ_RTM_IN_CON_MEAS,
+> +	BCM59056_IRQ_RTM_UPPER,
+> +	BCM59056_IRQ_RTM_IGNORE,
+> +	BCM59056_IRQ_RTM_OVERRIDDEN,
+> +	BCM59056_IRQ_AUD_HSAB_SHCKT,
+> +	BCM59056_IRQ_AUD_IHFD_SHCKT,
+> +	BCM59056_IRQ_MBC_TF,
+> +	BCM59056_IRQ_CSROVRI,
+> +	BCM59056_IRQ_IOSROVRI,
+> +	BCM59056_IRQ_SDSROVRI,
+> +	BCM59056_IRQ_ASROVRI,
+> +	BCM59056_IRQ_UBPD_CHG_F,
+> +	BCM59056_IRQ_ACD_INS,
+> +	BCM59056_IRQ_ACD_RM,
+> +	BCM59056_IRQ_PONKEYB_HOLD,
+> +	BCM59056_IRQ_PONKEYB_F,
+> +	BCM59056_IRQ_PONKEYB_R,
+> +	BCM59056_IRQ_PONKEYB_OFFHOLD,
+> +	BCM59056_IRQ_PONKEYB_RESTART,
+> +	BCM59056_IRQ_IDCHG,
+> +	BCM59056_IRQ_JIG_USB_INS,
+> +	BCM59056_IRQ_UART_INS,
+> +	BCM59056_IRQ_ID_INS,
+> +	BCM59056_IRQ_ID_RM,
+> +	BCM59056_IRQ_ADP_CHANGE,
+> +	BCM59056_IRQ_ADP_SNS_END,
+> +	BCM59056_IRQ_SESSION_END_VLD,
+> +	BCM59056_IRQ_SESSION_END_INVLD,
+> +	BCM59056_IRQ_VBUS_OVERCURRENT,
+> +	BCM59056_IRQ_FGC,
+> +	BCM59056_IRQ_MAX,
+>  };
+>  
+>  #endif /*  __LINUX_MFD_BCM590XX_H */
 > 
+> ---
+> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+> change-id: 20250816-bcm590xx-irq-2d4c1cbe00b1
+> 
+> Best regards,
+> -- 
+> Artur Weber <aweber.kernel@gmail.com>
 > 
 
 -- 
