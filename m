@@ -1,88 +1,79 @@
-Return-Path: <linux-kernel+bounces-796753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8AC2B406BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A7DB406C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888105409C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:29:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E90354267C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D2730C341;
-	Tue,  2 Sep 2025 14:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DE730EF7C;
+	Tue,  2 Sep 2025 14:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7MfJkRM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="d4RwbFT8"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4082F277026
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589FD30DD36
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 14:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756823344; cv=none; b=M3d7DK+T2paQQ3tvBNJSedDm5cPh9UYIFuPs+FI99tRtAb7+RW5c6z9OrQGM2laC2k8E//s0/LPgwYGW8wLM7NiuLv/U/ywQ5PZMBiCie4hHTm9Ll8p7OsOS3JcZ7nu3DI1h4pT8eLkj9fEITaGSDLiKUvkWoQ5ExwraQoS+hpw=
+	t=1756823350; cv=none; b=sIqmwL/Tz0GfqUEvohNPYwhbZ8QnYAkskWY2SBj1Fdhog9mOTmw4J9471dfdASR3JhQJInJx3f3XFC+/Cq9l8MQw5lpHDpZzKGOI4EzvjkaOj2P69QLMu9As2MWFsOAh1rCpPvsksm+KiPh0HPyjtUtO7Rpa07DjKc/yi5eE6YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756823344; c=relaxed/simple;
-	bh=0uD3fgepSvnzef4qtRkCstzfFO2Qw51MoEU770j8axY=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ClnBB6nnO14IrsGS6LUEQ94t83rChGErNQR5nvJuoW0pJgl606XCDhdkV/UOnH697PDP+mCp4bawNgXuMw4jSWBRhmpRFP3XQXlyFf7oqf5pBLx3N3rOSDMtnfEBsBPvAtgS+RZ2352cqacBGU569DPjTV/lcpp4ozaiJtkZjKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7MfJkRM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756823342;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jMm2hqFJ33GpaPZEoSKZeivNw1uggEmRUJPe/aLNhzw=;
-	b=h7MfJkRMtClPJ+y3TAXGTNEG4DiLz+7qnqkUbYRVyY2cqYl0zgbk074e7Krev7P6KW8l0U
-	Yh7Sg1M5Bbv6Ho3JMMAKCAiCNGMgVWU4AM0TsVTX9QviVDX2PuHSn41+Qb3OFOinXLOF4a
-	oYkACn/KPi5EqsdpL3yi9ZYPNcJiQnc=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-571-fck0o72tP1uiha-tMphs3A-1; Tue, 02 Sep 2025 10:29:01 -0400
-X-MC-Unique: fck0o72tP1uiha-tMphs3A-1
-X-Mimecast-MFC-AGG-ID: fck0o72tP1uiha-tMphs3A_1756823340
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b3415ddb6aso23230711cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:29:00 -0700 (PDT)
+	s=arc-20240116; t=1756823350; c=relaxed/simple;
+	bh=Zh/esVOjxW9buYPgrg25ime4g5npaPosuL61f9Sd6lc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qfiBlgINrFTbB3TJ8fBBEstBqbqv3RwwN1XtUzTLacGKdNJYwy4Vi3uEHgABWdvOZ7MsqA+u2pWu90LP3NLYRBbfX4SYaE2AMzEs/zAgyaGJg9yy123ov1p/jZ+FKDY9JknmkTY4h73lO/v2NKpW4ajp6vewouqrdaXiRsVF/js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=d4RwbFT8; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7438175d42aso3217848a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 07:29:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756823346; x=1757428146; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pp38Yvg3RiytProyc5t2mGqns6Lb9l3HNRoLbsNuGqs=;
+        b=d4RwbFT8GryJDSSfS/vvnQ5NYIUEncQQTaY0qPKyd22otXxkGl/RXepzlCAZlhetZd
+         2WNkXNwB7npWfxum7PvK605qGN2qcfiITRUiA2WU+P276RqaltQHmVxGCNP9CA0gct8W
+         CJ9Nm6gy/2Gk/ONx07/u3Wxo1zjifXYaGm8yQjM6EFD4LqdZKzsn+n4iw2GDTPoKsLBJ
+         Xm3eFlLf+3uPjcLAY5G0Hv56XgXOIdi2yfetiKOdQI9sVkC4DlnxRbuGR4Q8A4jrNkqb
+         JBUMeq+mqXgCOqyFFrKqzg8TY9xev/pr7IWS8+jZST5sLM4/NkZX4+uYckl1ZJPLC095
+         wAfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756823340; x=1757428140;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
+        d=1e100.net; s=20230601; t=1756823346; x=1757428146;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jMm2hqFJ33GpaPZEoSKZeivNw1uggEmRUJPe/aLNhzw=;
-        b=X5rPUbfBmHBLHZBGHjcx9LtlK88q0D2goPVeD/NoQ6lo8KS7nTUzyEZ5UgOnEiX6Z1
-         5qHJ7ae68d11koKqJoe3PPzMZifZ3BqHjElOrgsHl5f0yEO22P/dXL6OOtd14aU2BbNo
-         nk3XxXz4N1n2jZjXkvvjMXNer/5vk32mU4O2j/fPvzKftBYW5dW0uUQixLo1uAlkHN4a
-         KLc/P821jxkdtj1jAZ/61xjAwQ2i4g2MP0jnJ7dfQBFjo2TGsZO5t7qSlGCCiHEAuQGw
-         +Zn9KaJuHKr2fRMNU0/70eM12IBIn+3fcbwcEaqXSjlKtbtZYTQsPGvEqlb4PJ6YEkQC
-         S1xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxWeVMNXI2gTdfKZ3dVmOyJb9cetp2bjC+4y6Gb5jKczsCPqt2Y3wCzd18yrUqwFFzb7kxT8ADgglvJJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKYkqx6heqsBEdG4VDCzNQcNx9/RAWq1MI2Buu2ryz99U2qg88
-	PlU9O8nr4phP2wduy4qfxgK55UNoMpF3moNVbVuB3P581mNDvZJFq3meWWdQsNhmX2XTw3uJTzS
-	XKxrz7FJ5y05KtY2V6+9q11oxb55aVGmfRLsGL/NTsTk0Eyt91FOXFz9YIWalExReBA==
-X-Gm-Gg: ASbGncvU0ELypRG2buhMBc5kAcz75r3K59jgtfcxoENwUzWOo4HG2hAISj0UNLMk343
-	zLHiPSTAHBYqTCb8JIaaM1nqWr6XeKUElkMZTfeMJmA+p2oTaT43zNNAKxq7orAj3Ss7NpJFr4/
-	W3E/51eqfH4TEiI48ls6SEk1Fg1EpZnKtXHpYOw5MtdrVNHQ2uPtQgzm6Ro48WQZ8dTxbu7Eyp5
-	WS4LNiHLPVdGyxYBpU6/9kpGX+N+z2kC/VlgmiTr4DzXRSfMNn2uPgnsBkCjjn4TFl0s1JMMmRz
-	6V6aqQXSZUebwvSdKYNV3wDC6Qav2lfmCvvmzPlkgk5IoaoBRI5XdsZ67k1z16zob77x8GgiV2D
-	37Z+IT8IF/w==
-X-Received: by 2002:a05:622a:1449:b0:4b3:1861:f0bb with SMTP id d75a77b69052e-4b31ba1dfbbmr134483031cf.42.1756823340261;
-        Tue, 02 Sep 2025 07:29:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElo7xfrDWGtiqXJTwSgGuzEGYT7Smn/96zcSvEGWsQ7xtIrTZuKmhG2yXFRCYDs0xsZGT64w==
-X-Received: by 2002:a05:622a:1449:b0:4b3:1861:f0bb with SMTP id d75a77b69052e-4b31ba1dfbbmr134482611cf.42.1756823339844;
-        Tue, 02 Sep 2025 07:28:59 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b3462c9646sm12961021cf.25.2025.09.02.07.28.58
+        bh=pp38Yvg3RiytProyc5t2mGqns6Lb9l3HNRoLbsNuGqs=;
+        b=HdJmREjgMCKmDnh+i+ZlF+y1aQjcJIfwyWXAzOxeQAeYpeBGAd8E98C1gW7/rlOGmt
+         XSGFgXkX9r/OfcxW/W2JOpdlYdmX/jskUf+CuLKUY19G3Q/5b7SfIEGSACLQoYXrEovQ
+         F24VLsvKfbNkeDQof7Vv16SMROJftq7qhkjJsJ+E8Xn09mIPSNHlLK2otSMOfwUZ7k6L
+         gGC3v+NkOnFC92ZtL+YDayICXKh2Ohi5JVgdF2q1tiwU+WroAYd3vrYp2nj7DSdsrO8z
+         GSMHIFivnwMvUNU960SZhutPwUS9XEsGdsu1FS7dDTJRBL8JtILeuIeLKlTyK438HBci
+         FVpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWycbfsJJMMB1PPxJpuAf21BPQhZmhcT6Y9qpIOtagrGWpRs3LLktrbZm76FCZA7vWYhTCs890+5JHUFMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWgqGkcm5KeeExp4O8qQ/mSplzxy23McsYDZhhQMEWCSROYHV7
+	IKc02sy5teUFogqSoRF9ZKpLQXoGdrUqPA8d9N+1yqKium6NtzZPINW7qTsBfVXybGM=
+X-Gm-Gg: ASbGnctd0d39GOpPQKErgq557iWXp4CFAXT5dj9WXUcHIPtpqPwOuq5uTppEG+6rEdH
+	UOnrlWAUNEvQCnOfYuGEYA30OCwC3dvzLfxNi5TYCNf/k+DuzZHz+eQNAuABgDwMeFZm8jLRsQj
+	5ohcWI21qoFo6A0gdUyBJ7GkTJBK6+PSNCiISxwDbf5/AoGLOhjZjLFkZ85wZRBItDWeH8PtOW4
+	DUQGaIS4B2BVmnuOX1/j56t/pEgbSs2SkBAtACjw7cgcp2QJLlYqM7gaxXQmbprqLmnwbvd9BKM
+	KnEGOzVke/b6/o3nFOe21lcYlxj2V7azpxb73Tj2PE7/rVD7vO+v+mKNJW5LWU9CflNxjsOD5jO
+	Hn35lt7ppY2ninwR/p1FshM5vCmprTBopjMRjsauFPieWx2VDeuH/OYYEnPG0P3p7eUlOlYF2
+X-Google-Smtp-Source: AGHT+IGLw6/8aesIjAkhpVEJeXPBKTkpcMtabs/+MAUeiJpSmdalTytyjetDUXmkZqhdD3fGgZrheA==
+X-Received: by 2002:a05:6830:7101:b0:73e:9fea:f2a5 with SMTP id 46e09a7af769-74569d9deb9mr8195564a34.4.1756823346157;
+        Tue, 02 Sep 2025 07:29:06 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b? ([2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-745743d0e97sm1581788a34.42.2025.09.02.07.29.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 07:28:59 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <dc75acab-36c1-4340-9cf2-35a35361c32b@redhat.com>
-Date: Tue, 2 Sep 2025 10:28:58 -0400
+        Tue, 02 Sep 2025 07:29:05 -0700 (PDT)
+Message-ID: <89265de7-eeff-4eea-838b-6a810c069a20@baylibre.com>
+Date: Tue, 2 Sep 2025 09:29:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,64 +81,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/33] sched/isolation: Remove HK_TYPE_TICK test from
- cpu_is_isolated()
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
- Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
- <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>
-References: <20250829154814.47015-1-frederic@kernel.org>
- <20250829154814.47015-20-frederic@kernel.org>
+Subject: Re: [PATCH v10 1/2] dt-bindings: iio: adc: add max14001
+To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Kim Seer Paller <kimseer.paller@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Jonathan Santos <Jonathan.Santos@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>
+References: <cover.1756816682.git.marilene.agarcia@gmail.com>
+ <34b7cc7226e789acdc884d35927269aa5a0d5e14.1756816682.git.marilene.agarcia@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20250829154814.47015-20-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <34b7cc7226e789acdc884d35927269aa5a0d5e14.1756816682.git.marilene.agarcia@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 9/2/25 8:15 AM, Marilene Andrade Garcia wrote:
+> Add device-tree documentation for MAX14001/MAX14002 ADCs.
+> The MAX14001/MAX14002 are isolated, single-channel analog-to-digital
+> converters with programmable voltage comparators and inrush current
+> control optimized for configurable binary input applications.
 
-On 8/29/25 11:48 AM, Frederic Weisbecker wrote:
-> It doesn't make sense to use nohz_full without also isolating the
-> related CPUs from the domain topology, either through the use of
-> isolcpus= or cpuset isolated partitions.
->
-> And now HK_TYPE_DOMAIN includes all kinds of domain isolated CPUs.
->
-> This means that HK_TYPE_KERNEL_NOISE (of which HK_TYPE_TICK is only an
-> alias) is always a superset of HK_TYPE_DOMAIN.
+When there are multiple devices, DT maintainers like to know
+what is the difference between the devices.
 
-That may not be true. Users can still set "isolcpus=" and "nohz_full=" 
-with disjoint set of CPUs whether cpuset is used for additional isolated 
-CPUs or not.
+> 
+> Co-developed-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+> Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 
-Cheers,
-Longman
+Sine the patch is From: M.A.G., according to [1], this should be:
 
->
-> Therefore if a CPU is not HK_TYPE_KERNEL_NOISE, it can't be
-> HK_TYPE_DOMAIN either. Testing the latter is then enough.
->
-> Simplify cpu_is_isolated() accordingly.
->
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Co-developed-by: K.S.P.
+Signed-off-by: K.S.P.
+Signed-off-by: M.A.G.
+
+(hopefully obvious, but don't use the abbreviations - I just did
+that for brevity)
+
+[1]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
+
 > ---
->   include/linux/sched/isolation.h | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-> index c02923ed4cbe..8d6d26d3fdf5 100644
-> --- a/include/linux/sched/isolation.h
-> +++ b/include/linux/sched/isolation.h
-> @@ -82,8 +82,7 @@ static inline void housekeeping_init(void) { }
->   
->   static inline bool cpu_is_isolated(int cpu)
->   {
-> -	return !housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN) ||
-> -	       !housekeeping_test_cpu(cpu, HK_TYPE_TICK);
-> +	return !housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN);
->   }
->   
->   #endif /* _LINUX_SCHED_ISOLATION_H */
+>  .../bindings/iio/adc/adi,max14001.yaml        | 79 +++++++++++++++++++
+>  MAINTAINERS                                   |  8 ++
+>  2 files changed, 87 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+> new file mode 100644
+> index 000000000000..ff9a41f04300
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright 2023-2025 Analog Devices Inc.
+> +# Copyright 2023 Kim Seer Paller
+> +# Copyright 2025 Marilene Andrade Garcia
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,max14001.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices MAX14001-MAX14002 ADC
+> +
+> +maintainers:
+> +  - Kim Seer Paller <kimseer.paller@analog.com>
+> +  - Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+> +
+> +description: |
+> +    Single channel 10 bit ADC with SPI interface.
+> +    Datasheet can be found here
+> +      https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
+> +
+> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,max14001
+> +      - adi,max14002
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 5000000
+> +
+> +  vdd-supply:
+> +    description:
+> +      Isolated DC-DC power supply input voltage.
+> +
+> +  vddl-supply:
+> +    description:
+> +      Logic power supply.
+> +
+> +  vrefin-supply:
 
+The actual pin name is REFIN, so refin-supply would make more sense.
+
+> +    description:
+> +      ADC voltage reference supply.
+> +
+> +  interrupts:
+
+Likely needs `minItems: 1` in case only one interrupt is wired.
+
+> +    items:
+> +      - description: |
+> +          Interrupt for signaling when conversion results exceed the configured
+> +          upper threshold for ADC readings or fall below the lower threshold for
+> +          them. Interrupt source must be attached to COUT pin.
+
+We could shorten these descriptions. The important part is which pin
+it is connected to.
+
+> +      - description: |
+> +          Alert output that asserts low during a number of different error
+> +          conditions. The interrupt source must be attached to FAULT pin.
+> +
+
+And also `interrupt-names:` makes sense so we know which one is
+is wired if only one is given.
+
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +  - vddl-supply
+> +
 
