@@ -1,88 +1,106 @@
-Return-Path: <linux-kernel+bounces-797321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32710B40EC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:48:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32DCB40ECE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70855487BDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:48:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15BD61B65C05
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB032DECB4;
-	Tue,  2 Sep 2025 20:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D692E8B64;
+	Tue,  2 Sep 2025 20:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgwxF5eb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUiOR0cb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080D01E5724;
-	Tue,  2 Sep 2025 20:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B7F26C3A4;
+	Tue,  2 Sep 2025 20:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756846105; cv=none; b=Oaa11fS3578+OF5y5Mi0DOR56stvQQDcMdEapgrBqsQU5KkyO26l7BWX65PjM9+eiYCQHtQp7CfqNaok0ItR3LiyJiPgRwW0lr8KLzROo4sP7o9oH8Flkwsl3DyNkuCJtAsxl5El1iay5Or7jB8/2LFmmGjUj35YNNxOe6sIp0U=
+	t=1756846126; cv=none; b=a5R45yTvE7FAn2fiUpQIdATHSbtdL0KBaxF8drU2stAJPthP02grdnimA5rDqZ2JxWd1rnxUg9qd0qB4+spQ6aSAt0PBb+7mIgr84R7kBM/OgyE8Tyf67gmKyqcPv/OQU+Cs62lRjZO8cJD7krE/ceaQHYm8SYkhNWjKdl6ZyU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756846105; c=relaxed/simple;
-	bh=BF1UlRBfAXJ+COkhQanN4akh+w1lkpAsK5URZNqoz6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fT7D8JtIgVpUk9mR85BtkjsZ78jQ8SvTZaZU0ExnmPyUE/MeBmst0oXIVfQgXBT+2D3HakXfbfM9jaN3bBxNTB+ONMapdH+H4t/kqTjXRzuS3L/kTElcaHFN7AxDtcuA4A3h7+vU6wRZPt7mTpEvOpGVc0oKAV5hOaW5tOETzzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgwxF5eb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F0E2C4CEED;
-	Tue,  2 Sep 2025 20:48:24 +0000 (UTC)
+	s=arc-20240116; t=1756846126; c=relaxed/simple;
+	bh=Ko89yqThQbtEVD/Z6qOUqkc0NWxBpqJX4NF3Pv6PF3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i/wZV9Vn12KXbHLIXZgj7Kc6YM1Mq5yaaL6LqP1U5UVqP+xC/dxQ8FIsgvbQqPp+lEjghfkTZZT+lPkZ+GUc1UcJWe/PXRUYTzlR0uC9wycY5jHJvob9B8SSS5lYeTeKwZq83sQjmUCd+unRyqJdP3fydjIZGeVBb4+k1Sdzk3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUiOR0cb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81B7EC4CEED;
+	Tue,  2 Sep 2025 20:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756846104;
-	bh=BF1UlRBfAXJ+COkhQanN4akh+w1lkpAsK5URZNqoz6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hgwxF5eb1fMVlEEoLgJpaDREc/OBP7rjPjhpXHZ7pLVodPfhUQMfemaA/kPiZD636
-	 AAeJCFMFQzvgBVSR3+CccixPKOjmqEmzbD4Sj+sJUW3zZAUnJyLNr24nicevgYTM6+
-	 UoCgqcGo38y5Q+u7/fc4ZwtotWShbGm+E3bRbRVlvyPJGqYicyELtxMz0/RKEybzS0
-	 RAkB0BB+6NswY0W7yN4X7NhOkpTgzEHtWMPoW490tdW1f4TJiBY0j2ttM19eMp/lce
-	 6fDLeOeTJP7I8XonSnxnH2zZ0cVvP6Q5xrtdMxh5YDAPNohbhL9IrnZPoTcE0XIEMT
-	 SSp+AZOpRP8+w==
-Date: Tue, 2 Sep 2025 15:48:23 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alexander Kurz <akurz@blala.de>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org,
-	Dzmitry Sankouski <dsankouski@gmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Lee Jones <lee@kernel.org>
-Subject: Re: [PATCH v3 5/7] dt-bindings: mfd: fsl,mc13xxx: convert txt to DT
- schema
-Message-ID: <175684610314.1158432.9313523448163469756.robh@kernel.org>
-References: <20250829201517.15374-1-akurz@blala.de>
- <20250829201517.15374-6-akurz@blala.de>
+	s=k20201202; t=1756846126;
+	bh=Ko89yqThQbtEVD/Z6qOUqkc0NWxBpqJX4NF3Pv6PF3c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nUiOR0cbn66EUQdHnk6+dq9j3saxVLgS4v+jfDCG4UNDl5JhNL+YaW+Yx9WQtyBho
+	 NqRTwW19embFDgLRAFUj484i/somimOZYvffPVHB+LjgjBMkZrG923xUcaJ/ErqtOd
+	 L0b8S/gx/58nEPVbSAAtHvk1BDmaHP0tOHzCg6ccimSVAs1vT4DJjgaXVqEiQDnxY0
+	 HLlvDGz6PGaT3HV1CcSlA062QgzUkqx+De4oUQTN/iUEexf47B1PNw0Wy2F5DVWj8F
+	 rSIgiibW6wWozZX3P4rTIakAUSbwcRgBI8PQFaRkNWK978zceJAGNPIf+tG/l0qn4v
+	 eD/XOtKxs80kg==
+Date: Tue, 2 Sep 2025 13:48:44 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
+ <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, kernel@pengutronix.de, Dent Project
+ <dentproject@linuxfoundation.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v2 4/4] net: pse-pd: pd692x0: Add devlink
+ interface for configuration save/reset
+Message-ID: <20250902134844.7e3593b9@kernel.org>
+In-Reply-To: <20250902134212.4ceb5bc3@kernel.org>
+References: <20250829-feature_poe_permanent_conf-v2-0-8bb6f073ec23@bootlin.com>
+	<20250829-feature_poe_permanent_conf-v2-4-8bb6f073ec23@bootlin.com>
+	<20250901133100.3108c817@kernel.org>
+	<20250902164314.12ce43b4@kmaincent-XPS-13-7390>
+	<20250902134212.4ceb5bc3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829201517.15374-6-akurz@blala.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 29 Aug 2025 20:15:15 +0000, Alexander Kurz wrote:
-> Convert the txt mc13xxx bindings to DT schema attempting to keep most
-> information. The nodes codec and touchscreen are not part of the new
-> schema since it was only briefly mentioned before.
-> Following the convention, rename led-control to fsl,led-control.
+On Tue, 2 Sep 2025 13:42:12 -0700 Jakub Kicinski wrote:
+> On Tue, 2 Sep 2025 16:43:14 +0200 Kory Maincent wrote:
+> > > Sorry for not offering a clear alternative, but I'm not aware of any
+> > > precedent for treating devlink params as action triggers. devlink params
+> > > should be values that can be set and read, which is clearly not
+> > > the case here:    
+> > 
+> > Ok.
+> > We could save the configuration for every config change and add a reset-conf
+> > action to devlink reload uAPI? The drawback it that it will bring a bit of
+> > latency (about 110ms) for every config change.
+> > 
+> > Or adding a new devlink uAPI like a devlink conf but maybe we don't have enough
+> > cases to add such generic new uAPI.
+> > Or get back to the first proposition to use sysfs. 
+> > 
+> > What do you think?  
 > 
-> Signed-off-by: Alexander Kurz <akurz@blala.de>
-> ---
->  .../devicetree/bindings/mfd/fsl,mc13xxx.yaml  | 218 ++++++++++++++++++
->  .../devicetree/bindings/mfd/mc13xxx.txt       | 156 -------------
->  2 files changed, 218 insertions(+), 156 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mfd/mc13xxx.txt
-> 
+> If you are asking for my real preference, abstracting away whether it's
+> doable and justifiable amount of effort for you -- I'd explore using
+> flags in the ethtool header to control whether setting is written to
+> the flash.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+PS. failing that the less uAPI the better. Tho, given that the whole
+point here is giving user the ability to write the flash -- asking for
+uAPI-light approach feels contradictory.
 
+Taking a step back -- the "save to flash" is something that OEM FW
+often supports. But for Linux-based control the "save to flash" should
+really be equivalent to updating some user space config. When user
+configures interfaces in OpenWRT we're not flashing them into the
+device tree... Could you perhaps explain what makes updating the
+in-flash config a high-priority requirement for PoE?
 
