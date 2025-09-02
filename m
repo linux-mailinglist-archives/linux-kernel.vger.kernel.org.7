@@ -1,180 +1,251 @@
-Return-Path: <linux-kernel+bounces-797482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43210B410ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:49:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E0EEB410F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD55F7A4A4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544825E49E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5B02EAB94;
-	Tue,  2 Sep 2025 23:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987882E6CCF;
+	Tue,  2 Sep 2025 23:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgllXmHb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE352EAB78
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 23:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fbnsFpk8"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A46A2EA475;
+	Tue,  2 Sep 2025 23:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756856905; cv=none; b=OqBj3iO5pB5cj24ug/19LIZPZnanl0z+71I8SXxJ6Ds8JLw+3MADfYFv16pLwCvXLMgbuJ9Y86W7Ahr+3oIOUMOtQN6QYT5taAulLTv6yCU4rgyTAMQdv8lZs3yrsqYi1mWC8AYeq84D5x3/rNAn6zFMYNHP8TV2yxiRBfRyJsE=
+	t=1756856922; cv=none; b=M6kwPx8+tnNo7hE+Xo9CZ5n384cQhPt+8V2gHZ2n89oFFXNoGc6noCOvPHCSPcBotFnyS/tvbiQHL0RdnDqqTpSTwBcku4BiObOP/gU+YHF3vofKgKa2KkMfW8BGR2RTC86T9krxhsLrb2nlMRD0Go7Ay3JOE8CSbtYPqLutqFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756856905; c=relaxed/simple;
-	bh=xDv6vhrL7sxcYjlEEI4BmfE07NKbTZVzlronQFUOBfM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pjGemr7avizVrpZWxr7Ot8WC97c/aKV2INCIf0DN44/RMLjtMxPLG4NHYvnthmkJ66C4BIJJmbSgkaZO57B6L1Lj00iLGlZIAmtPKw6yfTNGQsuhd6tf7935DfGKrCZXa2O2knU2LSu7/W/XZv7tGyfoWQsmwEMQvXCrPfwpyKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgllXmHb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ABE6C4CEED;
-	Tue,  2 Sep 2025 23:48:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756856905;
-	bh=xDv6vhrL7sxcYjlEEI4BmfE07NKbTZVzlronQFUOBfM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XgllXmHbX6D7KRo5bH4pG06Y/CwJHkjhKDf8a1caRORlEkVcmwAP/9lnQcN8Q/hXt
-	 ibJ5//TwrcOnyXpJkHyMVWBXG/IrIpe4woJvN8/6+3qgvpeT1F1WQmMc7LoaG6462v
-	 7JnS4LoGacvQX0wn+HP9Gb5Au+Qhq76QCqDQjNnyUFbUOVllYky4bdir8nskaoE6gO
-	 44nlPSY9iHzzvFFPjclcV2+olDGbw/mY6dfzzbLaP9w4/LeSD60nUbTtlxx0++O/xS
-	 vSV92k9KV0duysD3y137ifGnlo3p3lXAxmxC16OGLm0yNpZfacaKNqS+6/POnPq0Yt
-	 4FJxgzfSZfWcQ==
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com,
-	arighi@nvidia.com,
-	multics69@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	sched-ext@meta.com,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4/4] sched_ext: Put event_stats_cpu in struct scx_sched_pcpu
-Date: Tue,  2 Sep 2025 13:48:06 -1000
-Message-ID: <20250902234817.279206-5-tj@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250902234817.279206-1-tj@kernel.org>
-References: <20250902234817.279206-1-tj@kernel.org>
+	s=arc-20240116; t=1756856922; c=relaxed/simple;
+	bh=ZfQO4dndmQC7J+3gLYrtp2NrcKGsCSxOnOBPtTLx9cY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=o3A+fqV9SyWRoSKUtCCTtUVhO36NS1nfVR+6e+yt1oJcn3lx+pxKJzNUjOp6sV6th6KdCPZ5Jnv2pxPTafupTrYhQKyVIikX37oZKQeh9HlP3W+3MKCQfnio62KP5f4RtmZGZS03tIh4fsPi5jgVuiJc8m8PoLeXQoFfndH2JrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fbnsFpk8; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1032)
+	id 3A41E211828B; Tue,  2 Sep 2025 16:48:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3A41E211828B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1756856915;
+	bh=3pPUL78pUcMAEVARbGI0M3+yKDS8s2jb8IBBidLtC5w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fbnsFpk8YRomQ8Atikj6J8dzkovoorUlQ9X/Sfo5eTlj6mCI8hFbU7mjWUfE6UvJ0
+	 S0EB0eeTNUhB0RMj5LxPJBy5fCqDUcoBDW3MT/fNIWOlOtwDJjs/KsoxoDkpOMi1H5
+	 vvW+hL4yyEUMAhMobJ2/HA4nNPND+7TP2VDB+V0o=
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	wei.liu@kernel.org,
+	mhklinux@outlook.com
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	decui@microsoft.com,
+	arnd@arndb.de,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Subject: [PATCH v2] mshv: Add support for a new parent partition configuration
+Date: Tue,  2 Sep 2025 16:48:33 -0700
+Message-Id: <1756856913-27197-1-git-send-email-nunodasneves@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-scx_sched.event_stats_cpu is the percpu counters that are used to track
-stats. Introduce struct scx_sched_pcpu and move the counters inside. This
-will ease adding more per-cpu fields. No functional changes.
+Detect booting as an "L1VH" partition. This is a new scenario very
+similar to root partition where the mshv_root driver can be used to
+create and manage guest partitions.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
+It mostly works the same as root partition, but there are some
+differences in how various features are handled. hv_l1vh_partition()
+is introduced to handle these cases. Add hv_parent_partition()
+which returns true for either case, replacing some hv_root_partition()
+checks.
+
+Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Acked-by: Wei Liu <wei.liu@kernel.org>
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 ---
- kernel/sched/ext.c          | 18 +++++++++---------
- kernel/sched/ext_internal.h | 17 ++++++++++-------
- 2 files changed, 19 insertions(+), 16 deletions(-)
+Changes since v1:
+- Fix hypercall output page not being allocated for L1VH
+- Clean up scheduler detection code to reduce repetition [Michael Kelley]
+---
+ drivers/hv/hv_common.c         | 22 +++++++++++++---------
+ drivers/hv/mshv_root_main.c    | 26 +++++++++++++-------------
+ include/asm-generic/mshyperv.h | 11 +++++++++++
+ 3 files changed, 37 insertions(+), 22 deletions(-)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 7e15e852370c..701ca239ad00 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -635,7 +635,7 @@ static struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
-  * This can be used when preemption is not disabled.
-  */
- #define scx_add_event(sch, name, cnt) do {					\
--	this_cpu_add((sch)->event_stats_cpu->name, (cnt));			\
-+	this_cpu_add((sch)->pcpu->event_stats.name, (cnt));			\
- 	trace_sched_ext_event(#name, (cnt));					\
- } while(0)
+diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+index 49898d10faff..e109a620c83f 100644
+--- a/drivers/hv/hv_common.c
++++ b/drivers/hv/hv_common.c
+@@ -257,7 +257,7 @@ static void hv_kmsg_dump_register(void)
  
-@@ -648,7 +648,7 @@ static struct task_struct *scx_task_iter_next_locked(struct scx_task_iter *iter)
-  * This should be used only when preemption is disabled.
-  */
- #define __scx_add_event(sch, name, cnt) do {					\
--	__this_cpu_add((sch)->event_stats_cpu->name, (cnt));			\
-+	__this_cpu_add((sch)->pcpu->event_stats.name, (cnt));			\
- 	trace_sched_ext_event(#name, cnt);					\
- } while(0)
+ static inline bool hv_output_page_exists(void)
+ {
+-	return hv_root_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
++	return hv_parent_partition() || IS_ENABLED(CONFIG_HYPERV_VTL_MODE);
+ }
  
-@@ -3543,7 +3543,7 @@ static void scx_sched_free_rcu_work(struct work_struct *work)
- 	int node;
- 
- 	kthread_stop(sch->helper->task);
--	free_percpu(sch->event_stats_cpu);
-+	free_percpu(sch->pcpu);
- 
- 	for_each_node_state(node, N_POSSIBLE)
- 		kfree(sch->global_dsqs[node]);
-@@ -4444,13 +4444,13 @@ static struct scx_sched *scx_alloc_and_add_sched(struct sched_ext_ops *ops)
- 		sch->global_dsqs[node] = dsq;
+ void __init hv_get_partition_id(void)
+@@ -377,7 +377,7 @@ int __init hv_common_init(void)
+ 		BUG_ON(!hyperv_pcpu_output_arg);
  	}
  
--	sch->event_stats_cpu = alloc_percpu(struct scx_event_stats);
--	if (!sch->event_stats_cpu)
-+	sch->pcpu = alloc_percpu(struct scx_sched_pcpu);
-+	if (!sch->pcpu)
- 		goto err_free_gdsqs;
+-	if (hv_root_partition()) {
++	if (hv_parent_partition()) {
+ 		hv_synic_eventring_tail = alloc_percpu(u8 *);
+ 		BUG_ON(!hv_synic_eventring_tail);
+ 	}
+@@ -531,7 +531,7 @@ int hv_common_cpu_init(unsigned int cpu)
+ 	if (msr_vp_index > hv_max_vp_index)
+ 		hv_max_vp_index = msr_vp_index;
  
- 	sch->helper = kthread_run_worker(0, "sched_ext_helper");
- 	if (!sch->helper)
--		goto err_free_event_stats;
-+		goto err_free_pcpu;
- 	sched_set_fifo(sch->helper->task);
+-	if (hv_root_partition()) {
++	if (hv_parent_partition()) {
+ 		synic_eventring_tail = (u8 **)this_cpu_ptr(hv_synic_eventring_tail);
+ 		*synic_eventring_tail = kcalloc(HV_SYNIC_SINT_COUNT,
+ 						sizeof(u8), flags);
+@@ -558,7 +558,7 @@ int hv_common_cpu_die(unsigned int cpu)
+ 	 * originally allocated memory is reused in hv_common_cpu_init().
+ 	 */
  
- 	atomic_set(&sch->exit_kind, SCX_EXIT_NONE);
-@@ -4468,8 +4468,8 @@ static struct scx_sched *scx_alloc_and_add_sched(struct sched_ext_ops *ops)
+-	if (hv_root_partition()) {
++	if (hv_parent_partition()) {
+ 		synic_eventring_tail = this_cpu_ptr(hv_synic_eventring_tail);
+ 		kfree(*synic_eventring_tail);
+ 		*synic_eventring_tail = NULL;
+@@ -729,13 +729,17 @@ void hv_identify_partition_type(void)
+ 	 * the root partition setting if also a Confidential VM.
+ 	 */
+ 	if ((ms_hyperv.priv_high & HV_CREATE_PARTITIONS) &&
+-	    (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) &&
+ 	    !(ms_hyperv.priv_high & HV_ISOLATION)) {
+-		pr_info("Hyper-V: running as root partition\n");
+-		if (IS_ENABLED(CONFIG_MSHV_ROOT))
+-			hv_curr_partition_type = HV_PARTITION_TYPE_ROOT;
+-		else
++
++		if (!IS_ENABLED(CONFIG_MSHV_ROOT)) {
+ 			pr_crit("Hyper-V: CONFIG_MSHV_ROOT not enabled!\n");
++		} else if (ms_hyperv.priv_high & HV_CPU_MANAGEMENT) {
++			pr_info("Hyper-V: running as root partition\n");
++			hv_curr_partition_type = HV_PARTITION_TYPE_ROOT;
++		} else {
++			pr_info("Hyper-V: running as L1VH partition\n");
++			hv_curr_partition_type = HV_PARTITION_TYPE_L1VH;
++		}
+ 	}
+ }
  
- err_stop_helper:
- 	kthread_stop(sch->helper->task);
--err_free_event_stats:
--	free_percpu(sch->event_stats_cpu);
-+err_free_pcpu:
-+	free_percpu(sch->pcpu);
- err_free_gdsqs:
- 	for_each_node_state(node, N_POSSIBLE)
- 		kfree(sch->global_dsqs[node]);
-@@ -6493,7 +6493,7 @@ static void scx_read_events(struct scx_sched *sch, struct scx_event_stats *event
- 	/* Aggregate per-CPU event counters into @events. */
- 	memset(events, 0, sizeof(*events));
- 	for_each_possible_cpu(cpu) {
--		e_cpu = per_cpu_ptr(sch->event_stats_cpu, cpu);
-+		e_cpu = &per_cpu_ptr(sch->pcpu, cpu)->event_stats;
- 		scx_agg_event(events, e_cpu, SCX_EV_SELECT_CPU_FALLBACK);
- 		scx_agg_event(events, e_cpu, SCX_EV_DISPATCH_LOCAL_DSQ_OFFLINE);
- 		scx_agg_event(events, e_cpu, SCX_EV_DISPATCH_KEEP_LAST);
-diff --git a/kernel/sched/ext_internal.h b/kernel/sched/ext_internal.h
-index 76690ede8700..af4c054fb6f8 100644
---- a/kernel/sched/ext_internal.h
-+++ b/kernel/sched/ext_internal.h
-@@ -846,6 +846,15 @@ struct scx_event_stats {
- 	s64		SCX_EV_BYPASS_ACTIVATE;
+diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+index 72df774e410a..aa20a5c96afa 100644
+--- a/drivers/hv/mshv_root_main.c
++++ b/drivers/hv/mshv_root_main.c
+@@ -37,12 +37,6 @@ MODULE_AUTHOR("Microsoft");
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("Microsoft Hyper-V root partition VMM interface /dev/mshv");
+ 
+-/* TODO move this to mshyperv.h when needed outside driver */
+-static inline bool hv_parent_partition(void)
+-{
+-	return hv_root_partition();
+-}
+-
+ /* TODO move this to another file when debugfs code is added */
+ enum hv_stats_vp_counters {			/* HV_THREAD_COUNTER */
+ #if defined(CONFIG_X86)
+@@ -2074,9 +2068,13 @@ static int __init hv_retrieve_scheduler_type(enum hv_scheduler_type *out)
+ /* Retrieve and stash the supported scheduler type */
+ static int __init mshv_retrieve_scheduler_type(struct device *dev)
+ {
+-	int ret;
++	int ret = 0;
++
++	if (hv_l1vh_partition())
++		hv_scheduler_type = HV_SCHEDULER_TYPE_CORE_SMT;
++	else
++		ret = hv_retrieve_scheduler_type(&hv_scheduler_type);
+ 
+-	ret = hv_retrieve_scheduler_type(&hv_scheduler_type);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2203,9 +2201,6 @@ static int __init mshv_root_partition_init(struct device *dev)
+ {
+ 	int err;
+ 
+-	if (mshv_retrieve_scheduler_type(dev))
+-		return -ENODEV;
+-
+ 	err = root_scheduler_init(dev);
+ 	if (err)
+ 		return err;
+@@ -2227,7 +2222,7 @@ static int __init mshv_parent_partition_init(void)
+ 	struct device *dev;
+ 	union hv_hypervisor_version_info version_info;
+ 
+-	if (!hv_root_partition() || is_kdump_kernel())
++	if (!hv_parent_partition() || is_kdump_kernel())
+ 		return -ENODEV;
+ 
+ 	if (hv_get_hypervisor_version(&version_info))
+@@ -2264,7 +2259,12 @@ static int __init mshv_parent_partition_init(void)
+ 
+ 	mshv_cpuhp_online = ret;
+ 
+-	ret = mshv_root_partition_init(dev);
++	ret = mshv_retrieve_scheduler_type(dev);
++	if (ret)
++		goto remove_cpu_state;
++
++	if (hv_root_partition())
++		ret = mshv_root_partition_init(dev);
+ 	if (ret)
+ 		goto remove_cpu_state;
+ 
+diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+index a729b77983fa..dbd4c2f3aee3 100644
+--- a/include/asm-generic/mshyperv.h
++++ b/include/asm-generic/mshyperv.h
+@@ -31,6 +31,7 @@
+ enum hv_partition_type {
+ 	HV_PARTITION_TYPE_GUEST,
+ 	HV_PARTITION_TYPE_ROOT,
++	HV_PARTITION_TYPE_L1VH,
  };
  
-+struct scx_sched_pcpu {
-+	/*
-+	 * The event counters are in a per-CPU variable to minimize the
-+	 * accounting overhead. A system-wide view on the event counter is
-+	 * constructed when requested by scx_bpf_events().
-+	 */
-+	struct scx_event_stats	event_stats;
-+};
-+
- struct scx_sched {
- 	struct sched_ext_ops	ops;
- 	DECLARE_BITMAP(has_op, SCX_OPI_END);
-@@ -860,13 +869,7 @@ struct scx_sched {
- 	 */
- 	struct rhashtable	dsq_hash;
- 	struct scx_dispatch_q	**global_dsqs;
--
--	/*
--	 * The event counters are in a per-CPU variable to minimize the
--	 * accounting overhead. A system-wide view on the event counter is
--	 * constructed when requested by scx_bpf_events().
--	 */
--	struct scx_event_stats __percpu *event_stats_cpu;
-+	struct scx_sched_pcpu __percpu *pcpu;
+ struct ms_hyperv_info {
+@@ -354,12 +355,22 @@ static inline bool hv_root_partition(void)
+ {
+ 	return hv_curr_partition_type == HV_PARTITION_TYPE_ROOT;
+ }
++static inline bool hv_l1vh_partition(void)
++{
++	return hv_curr_partition_type == HV_PARTITION_TYPE_L1VH;
++}
++static inline bool hv_parent_partition(void)
++{
++	return hv_root_partition() || hv_l1vh_partition();
++}
+ int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages);
+ int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id);
+ int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags);
  
- 	bool			warned_zero_slice;
- 
+ #else /* CONFIG_MSHV_ROOT */
+ static inline bool hv_root_partition(void) { return false; }
++static inline bool hv_l1vh_partition(void) { return false; }
++static inline bool hv_parent_partition(void) { return false; }
+ static inline int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
+ {
+ 	return -EOPNOTSUPP;
 -- 
-2.51.0
+2.34.1
 
 
