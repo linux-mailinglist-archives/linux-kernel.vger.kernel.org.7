@@ -1,115 +1,84 @@
-Return-Path: <linux-kernel+bounces-795587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F44AB3F4E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:54:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE07B3F479
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E860E48552A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:54:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4011F1A826EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AC32E1EFD;
-	Tue,  2 Sep 2025 05:54:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006272E11B0;
+	Tue,  2 Sep 2025 05:25:53 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E970155A4E;
-	Tue,  2 Sep 2025 05:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1E354652;
+	Tue,  2 Sep 2025 05:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756792481; cv=none; b=SvGwGO46oeEH0lcqSqDnxcIxJIkPnjFw/nqYwV1zbIFzpVy46GnycFElKeOT9pIF7F14jnDhcPKI7EVQaYW6FLSVeWYE+tOrKdX29MVcpvjnueNls51ho5vGbwzrX4i8s93iu1tXM+MvkCnZVVjkc3H18F7Rpn/AWdNQXdNn3m8=
+	t=1756790752; cv=none; b=ShgEL2UUnBfD1iiIkU5Tjfxz+W67B/qyIcxYYKWsOyKY75Ch35oLBVwKmc6xRNDBFk02lVymhUvV+81RUL9OLbk0DHGF5IfPcuuBjN+Kb+jxnaAOFfgx9hPkvUG+Z80VaIACyrAdPtW1EWF1GuKJYB/QMpUptIknvVhpMlWlV/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756792481; c=relaxed/simple;
-	bh=5k4Pf0S95BYVV6TxbTYRd0U91VaIZdGIHUN+s3ul00c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iHUpmhxqwGZEoOJO4VODGyyzCofF2gb1nQ12zTgOYx+e9dyF7jiHOGCG1KJis0ofdwQQ2RlA8W1URPDXs9oR/hVUMdlDqTpLRkqu/W740jI13MX/CiCX8ymaJbKBFLw1inARmQgiucV7gDCmBBsbioAPNpsSL+cZOOAC6suCUos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4c7b2d7a87c111f0b29709d653e92f7d-20250902
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:a776418d-9bf0-42b2-ad91-acbccc124229,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:51ae38d66cd7331b4ada42ace9655337,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 4c7b2d7a87c111f0b29709d653e92f7d-20250902
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1587702374; Tue, 02 Sep 2025 13:54:33 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id C2450E008FA3;
-	Tue,  2 Sep 2025 13:54:32 +0800 (CST)
-X-ns-mid: postfix-68B68698-70541356
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 2F0B2E008FA2;
-	Tue,  2 Sep 2025 13:54:32 +0800 (CST)
-Message-ID: <180ab822-16d3-4d08-974c-5f8109dc8c82@kylinos.cn>
-Date: Tue, 2 Sep 2025 13:54:31 +0800
+	s=arc-20240116; t=1756790752; c=relaxed/simple;
+	bh=Edb5dwU4QvcqbknGt64YIP/IHrA1tAFqQjzkUztbUx4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lzwMJGCB7rMY1vd1CyYJXSb3Ku4NvwY3bDN6Ee/tRgd8SOcG2Nb7L73RP1Zqx8t9m9a14PQGj14GymIssl7GsPV48T/G3dSenthXDjIS+l5A3c4+6heiUCq35hE4DsWUbRbcsGxoin5bZdiw29VtcXL/bLdg1DmjgbKaSvrmXCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cGDc75zW0zdclP;
+	Tue,  2 Sep 2025 13:21:11 +0800 (CST)
+Received: from kwepemk500001.china.huawei.com (unknown [7.202.194.86])
+	by mail.maildlp.com (Postfix) with ESMTPS id 92153180490;
+	Tue,  2 Sep 2025 13:25:40 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.170) by
+ kwepemk500001.china.huawei.com (7.202.194.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 2 Sep 2025 13:25:39 +0800
+From: JiangJianJun <jiangjianjun3@huawei.com>
+To: <hare@suse.de>, <linux-scsi@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <hewenliang4@huawei.com>,
+	<yangyun50@huawei.com>, <wuyifeng10@huawei.com>, <yangxingui@h-partners.com>
+Subject: [PATCH 00/14] scsi: scsi_error: Introduce new error handle mechanism
+Date: Tue, 2 Sep 2025 13:56:28 +0800
+Message-ID: <20250902055628.2524926-1-jiangjianjun3@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <17230842-0a7a-403e-abc7-a15e3aa5d424@suse.de>
+References: <17230842-0a7a-403e-abc7-a15e3aa5d424@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] cpufreq: drop redundant freq_table argument in
- helpers
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
- zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250901112551.35534-1-zhangzihuan@kylinos.cn>
- <20250902054207.zke5xg3su2vpdob3@vireshk-i7>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250902054207.zke5xg3su2vpdob3@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk500001.china.huawei.com (7.202.194.86)
 
+>I fully agree that SCSI EH is in need of reworking. But adding 
+>another layer of complexity on top of the existing one ... not sure.
 
-=E5=9C=A8 2025/9/2 13:42, Viresh Kumar =E5=86=99=E9=81=93:
-> On 01-09-25, 19:25, Zihuan Zhang wrote:
->> This patchset updates the cpufreq core and drivers to fully adopt
->> the new policy->freq_table approach introduced in commit
->> e0b3165ba521 ("cpufreq: add 'freq_table' in struct cpufreq_policy").
->>
->> Motivation:
->> - The frequency table is per-policy, not per-CPU, so redundant
->>    freq_table arguments in core helpers and drivers are no longer need=
-ed.
->> - Removing the extra argument reduces confusion and potential mistakes=
-.
->>
->> Patch details:
->>
->> 1. cpufreq: core: drop redundant freq_table argument in helpers
->>     - Remove freq_table parameters in core helper functions.
->>     - All helper functions now use policy directly.
->>
->> 2. cpufreq: drivers: remove redundant freq_table argument
->>     - Update cpufreq drivers to match the new core API.
->>     - Calls that previously passed a separate freq_table argument
->>     - No behavior changes, only API consistency.
->>
->> Zihuan Zhang (3):
->>    cpufreq: Drop redundant freq_table parameter
->>    cpufreq: sh: drop redundant freq_table argument
->>    cpufreq: virtual: drop redundant freq_table argument
-> Individual patches must not break kernel compilation, but compilation
-> breaks after the first patch itself in your series as you have not
-> updated all the users.
->
-> Merge all three into a single patch.
->
-Got it. I wasn=E2=80=99t sure if core and driver changes should be split,=
- but=20
-yes, merging them into a single patch is better.
+Perhaps it would have been better to use only the error handler on the
+device from the start. Users might wonder why a single disk failure
+could cause other disks to become blocking.
+
+>Additionally: TARGET RESET TMF is dead, and has been removed from SAM
+>since several years. It really is not worthwhile implementing.
+
+Hmm.
+
+>Can't we take a simple step, and just try to have a non-blocking version
+>of device reset?
+>I think that should cover quite some issues already.
+
+Do you think it's necessary to escalate the issue after the device reset
+fails? Should we reset the bus or the host? 
+Moreover, a failed device reset does not necessarily indicate a fault
+with the target or host. 
+And what means of "non-blocking"?
+
 
