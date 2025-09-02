@@ -1,95 +1,157 @@
-Return-Path: <linux-kernel+bounces-795753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86846B3F76D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:02:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CFDB3F7DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51EBF1B2172F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:01:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D6E04877C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114DC2E540B;
-	Tue,  2 Sep 2025 08:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeTFCFyy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93892EA755;
+	Tue,  2 Sep 2025 08:10:22 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E16120297E
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA5932F757
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800059; cv=none; b=EEjwF5EspZWfMLT/gavEDskvCZZu0xwAK+yqoRshkc9bAK2NXROjgzq0kIAqWaqugwcfDq87PO5IYi5Z7FurxbgjiQYpZxiXeCnaT5hA5U7xKfemQAZxPwr0kUYy0r/hrBAm4VKThXdxwD5LQrEXXf2qXoft8GD16+8I1qcIJJE=
+	t=1756800622; cv=none; b=JY8UNmTTuN5vTyWTqk9Yo2Y9Xtmh7hrJ53q5JEKCuC6R5gOStmps+mcnRdWho91bRsa/dXtndtlk3W5JNMTmJPBbQrYtC64k5xaMdm+p5PgApEqXZ41fQhLKzT287QEuW/cOWnDjwIs9Bf3uJxGcq4UjpNx+Jj7/B+6D0EgokxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800059; c=relaxed/simple;
-	bh=U+MvfhFa9jg/7JowvKdjixRXmxepRFfHPp4jEN1XWpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swPD6UcjEuF5rHygsq5yJayDjm+sFOoQg0lSFXILBGIvaNBdA3RlqkmexM8nrodIzwJ5vUKBYTLnbrv5gTpiZR3Zb34o5q3jQ4QWYQBbHXA7hwRrj02EhgOLFIA9N0MABjzXgpjXDuYMNQEAaIB5b1zIPS1W0EHsRuAgFUKdrR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HeTFCFyy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D5BC4CEED;
-	Tue,  2 Sep 2025 08:00:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756800059;
-	bh=U+MvfhFa9jg/7JowvKdjixRXmxepRFfHPp4jEN1XWpo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HeTFCFyyt1v+jGbQdLyEfvQbNDKnpabyXEmBRCkFv1/Mca0UL7RZwf64w5Wda4YBE
-	 tvjPj/2yvDHMTBxXLRQV7yDPk57wHi+Rd1Ctd0lQxJXzL8YmCjMjvMMfq4N0/5MegI
-	 TRQErpLbxqUnKAHliKPb7f4JNyuWIMgpoCbUAnkhYh3YJRGrbeUtIz+J31Y/mKQ2Hk
-	 Li9u63kYKlgc2+KHH/cwYq39t/CR/v62KISitxE2QDbKpvVbyoQBFZLAhIEfkapwrC
-	 Idjv9wx40LqWcV6qFjKqpo2Xse7XyBtO/mb7C7Q1UjfDM3HK0Qtl18nfWkNqab2WCE
-	 O2Owzj6Etg+Cg==
-Date: Tue, 2 Sep 2025 09:00:55 +0100
-From: Lee Jones <lee@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] mfd: qnap-mcu: Some fixes / improvements
-Message-ID: <20250902080055.GC2163762@google.com>
-References: <20250804130726.3180806-1-heiko@sntech.de>
- <175679988816.2174534.8796703637805096491.b4-ty@kernel.org>
+	s=arc-20240116; t=1756800622; c=relaxed/simple;
+	bh=VUsbJf13eTWHHzO6E1Tbng496k0TXqy2c0B2KcPX72E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rXpHTFNaPmLDuGMw950UALpnyiiwOV+46sjyXeGPtfi6Z4jhmhE13paMcdB/pkkznDdZq0BWuozWri+ceX0JlEUkCmzD0DFVJWDmfZ6dWBnPIzy4k9jZa1GvX4GGbnjLUZGb5fSQgNjW14Pjp1qg/akEl3S715J+MDAiUhL/lCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cGJMB18b1zKHNS1
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:10:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 07BEA1A1912
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:10:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgB3wY1jprZoh4x9BA--.23817S4;
+	Tue, 02 Sep 2025 16:10:13 +0800 (CST)
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+To: miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	chengzhihao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] mtd: core: only increment ecc_stats.badblocks on confirmed good->bad transition
+Date: Tue,  2 Sep 2025 16:01:17 +0800
+Message-Id: <20250902080117.3658372-1-wangzhaolong@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <175679988816.2174534.8796703637805096491.b4-ty@kernel.org>
+X-CM-TRANSID:gCh0CgB3wY1jprZoh4x9BA--.23817S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr48Aw1UZF17Cr4UGFy8Krg_yoW5Jw1fpa
+	15JryrGw4UWw1Iq3ZrAryIgwnag34fWFyUGF4xA3s8CF98Wa13Wrn5KFy8Xr12gF12yFnr
+	Wr45t3yUWay09rDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-On Tue, 02 Sep 2025, Lee Jones wrote:
+Repeatedly marking the same eraseblock bad inflates
+mtd->ecc_stats.badblocks because mtd_block_markbad() unconditionally
+increments the counter on success, while some implementations (e.g.
+NAND) return 0 both when the block was already bad and when it has just
+been marked[1].
 
-> On Mon, 04 Aug 2025 15:07:22 +0200, Heiko Stuebner wrote:
-> > While digging through the mcu functions, I came across some deficits I
-> > introduced with the initial driver submission, so trying to make that
-> > a bit nicer with this series.
-> > 
-> > 
-> > I struggled a bit with the ordering of qnap_mcu_write error-check
-> > and conversion to guard(mutex). Converting to guard before the
-> > error check would need dropping the ret variable, just to re-add it
-> > one patch later - to not cause unused variable warning.
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/4] mfd: qnap-mcu: include linux/types.h in qnap-mcu.h shared header
->       commit: f7ef7c03d8599a0d86b2a05929da73358cd56dcf
-> [2/4] mfd: qnap-mcu: handle errors returned from qnap_mcu_write
->       commit: 3d02c538ec5337b66750d83ce6f861aef263fbff
-> [3/4] mfd: qnap-mcu: convert to guard(mutex) in qnap_mcu_exec
->       commit: 5fd101541c6d0f0ad3b14d86dfcf9347c3f3bffd
-> [4/4] mfd: qnap-mcu: improve structure in qnap_mcu_exec
->       commit: 6cdb0fbe090be966432db041d5650907a4dceac4
+Fix by probing the bad-block state before and after calling
+->_block_markbad() (when _block_isbad is available) and only increment
+the counter on a confirmed good->bad transition. If _block_isbad is not
+implemented, be conservative and do not increment.
 
-I fixed some issues in the commit messages for you pertaining to
-spelling mistakes and expected format.  Please not that in future, MFD
-and LED (the submissions I've seen from you recently) take a capitalised
-word as the start of the subject description.
+Keep the logic centralized in mtdcore; the markbad path is not a hot
+path, so the extra IO is acceptable.
 
+Link: https://lore.kernel.org/all/ef573188-9815-4a6b-bad1-3d8ff7c9b16f@huaweicloud.com/ [1]
+Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+---
+ drivers/mtd/mtdcore.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 5ba9a741f5ac..a6d38da651e9 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -2338,10 +2338,12 @@ EXPORT_SYMBOL_GPL(mtd_block_isbad);
+ 
+ int mtd_block_markbad(struct mtd_info *mtd, loff_t ofs)
+ {
+ 	struct mtd_info *master = mtd_get_master(mtd);
+ 	int ret;
++	loff_t moffs;
++	int oldbad = -1;
+ 
+ 	if (!master->_block_markbad)
+ 		return -EOPNOTSUPP;
+ 	if (ofs < 0 || ofs >= mtd->size)
+ 		return -EINVAL;
+@@ -2349,17 +2351,35 @@ int mtd_block_markbad(struct mtd_info *mtd, loff_t ofs)
+ 		return -EROFS;
+ 
+ 	if (mtd->flags & MTD_SLC_ON_MLC_EMULATION)
+ 		ofs = (loff_t)mtd_div_by_eb(ofs, mtd) * master->erasesize;
+ 
+-	ret = master->_block_markbad(master, mtd_get_master_ofs(mtd, ofs));
++	moffs = mtd_get_master_ofs(mtd, ofs);
++
++	/* Pre-check: remember current state if available. */
++	if (master->_block_isbad)
++		oldbad = master->_block_isbad(master, moffs);
++
++	ret = master->_block_markbad(master, moffs);
+ 	if (ret)
+ 		return ret;
+ 
+-	while (mtd->parent) {
+-		mtd->ecc_stats.badblocks++;
+-		mtd = mtd->parent;
++	/*
++	 * Post-check and bump stats only on a confirmed good->bad transition.
++	 * If _block_isbad is not implemented, be conservative and do not bump.
++	 */
++	if (master->_block_isbad) {
++		/* If it was already bad, nothing to do. */
++		if (oldbad > 0)
++			return 0;
++
++		if (master->_block_isbad(master, moffs) > 0) {
++			while (mtd->parent) {
++				mtd->ecc_stats.badblocks++;
++				mtd = mtd->parent;
++			}
++		}
+ 	}
+ 
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(mtd_block_markbad);
 -- 
-Lee Jones [李琼斯]
+2.39.2
+
 
