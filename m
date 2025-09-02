@@ -1,226 +1,106 @@
-Return-Path: <linux-kernel+bounces-796232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7CBB3FD99
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:18:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3F9B3FD98
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0DBA2C3184
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 645742C2CAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFD82F745C;
-	Tue,  2 Sep 2025 11:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="Fk7PXV/v"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3F027FD5B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97C02F619D;
+	Tue,  2 Sep 2025 11:18:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA632765C1;
+	Tue,  2 Sep 2025 11:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756811923; cv=none; b=Vcy4IjGUew8mXqJLaBVWlKi2Nh60AP+oB386blMC2nn8E0BMe7HLjevTKo5AhHlXl2bYbpUCVeJDQAQox/6cVe0kpFplEtJWZYpkDQb1SzgFoGaG2UC9PPhdlx1e5xw23FBzPeKvGKNcIM14l/v7EIZTyEJ7PwjGBa41do+63/U=
+	t=1756811923; cv=none; b=UVfsOFcz2t4fQ9w/pE7DaQsmK50YXjLLWXu+XPWMTeAN4b+9v0BWoAyQdzfPhnwZHun+b7CVfirf5DLyualoPS1mV3DJ91h8E+89TX2gm/dDqa4Tm0Vji6+Rl1m1wW/2kbduO6beyd2pmm+RDqLhtkZWqKZhntsCd9DB+jz9bmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756811923; c=relaxed/simple;
-	bh=gGRmi9BKNmESEIGIYdP+7B9F6iwTVze0fleAiVXwmco=;
+	bh=2YPGDIOlFICYdjgkf8GTamhWOiDyyLdTUT3dN1r6r5w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YtqRhEyfRnWsRAkmX3QDN1YPhQWnijWC8Wwu5zVLuzLczvHllZgWoCiSuGAf0KxV+cfZDs1n1uLIFurbC5Z/pMeTtEptrL2QyIe1SnbowH7PVKVpcRN2nhnOqys9yH5miouV35zLT3rVgp2l6i8si/hu2arACQE2k3p8uaia83M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=Fk7PXV/v; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77246079bc9so2712698b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 04:18:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1756811921; x=1757416721; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0nWMjohz4DV5AHDo374fac7S+dpBXMCA8tWWrP1vlQY=;
-        b=Fk7PXV/v32yuwhr9INs8+JHQ3Oqp02NdzJUbhj55qZ0WolrgyfZ9WIdkdEw5KtFuwt
-         cBxlXyP4BZMjcMzbkaZinfN3lNVI8JDs1gRZiSvpLr9jz3GAZAyMjoKSNEGPFmKuds7o
-         yYhobuESqB5vjhrSS2MA6SJJ0+sLjkxLt4Vu8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756811921; x=1757416721;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0nWMjohz4DV5AHDo374fac7S+dpBXMCA8tWWrP1vlQY=;
-        b=CNbTHOn+YSwldeXNH4Fq9LvqYtTM9V3MrCUSroMNWd72wSIK8FH4I7np1A/C9Y4iEb
-         yQ9DyDHThdM5U367ARPhW5cgazull6zWzwd1lP5wvNjjFB+r2DVGEgegA7mYklBLaEgJ
-         cLKkUW1DZcakIiN8VE12BZWsDE+PMIue84s/gTI8p09yJP8N/5UZREqQ+t5yq2vHwLX7
-         MnImYM2KeGnJEv0ycVD/pVkmgzHAEgSiP0WQuxU730mLXX4Nv5ehWXQ0WUyl/F8n768n
-         SAxpmyQ4PCTan/ers+6RB3GhCcrEk2WFPmEg/KvETUd6Hjkq5ZONJm2nVZFWcYdEwRp/
-         vGnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBAcK7bwhBW8vnCzL1JzVLXEhem6/Xn4LWF1spoo5gmpTv/RH9NtZybhsZlxe1zt2n2/QqLDdck4nBR0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzzCLnKKX3OkXuXAOPuM24g+5ZLy92yNA/w2EgG10lP6uYCYUs
-	9ZGZR5wr5xb8pS4ejgJrieylkVByr8bMiDtd5rMXDSH4MHsl/5o6UrItOtW59SB1FPU=
-X-Gm-Gg: ASbGncuAZl67Gll7SBqTgC7MGRyH420ae4OODP3GVVqi9QQ66gsEkqAav0/T4sLhh4J
-	AFfbj7cSRV8mRF8yAllDZHEGALdBRnb7kpXa0ww5YvOCTIIA+zf2CVAy0hdqXfaeCsHUDeFBnX+
-	kPf+gHubiCLb5j0Je+8xs7v0bsWGYDQDQJU6hCWQCLpOW8uUJRebcIiI5iWFcV5eVaQagseMheE
-	5QRCPcko0Jbbhu0VGynSYgDz6nwsZyM0BTDQe4W0Mc9edX3qKORQ65LeEdJNSjnYlYRIgK83oO3
-	64lyPsKB2cuy2Nx6VIOHjzSxfqA1tmDFl9ZeiGKYgLnno21x80KmSy52+VwrVB28lJfxoXnuvuk
-	MBRcLiuUgIDAvlLZzMRFXvAgTODDF97ubRkbmrC29WlPfXQqaA8XAPH8sYOLAZaJL
-X-Google-Smtp-Source: AGHT+IE+I2Gk8VSrnS6eFFPIKGMhJEZoHV5J500ITPlIHjfERnr0mfn/YxRU4ImwyNpSqSmp4jInyg==
-X-Received: by 2002:a05:6a20:6a27:b0:246:17b:3577 with SMTP id adf61e73a8af0-246017b37d1mr908910637.58.1756811921381;
-        Tue, 02 Sep 2025 04:18:41 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26bc9csm13471707b3a.18.2025.09.02.04.18.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 04:18:41 -0700 (PDT)
-Date: Tue, 2 Sep 2025 20:18:35 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v3 4/5] rust: miscdevice: Add `uring_cmd` support
-Message-ID: <aLbSi5-a67i78BHl@sidongui-MacBookPro.local>
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
- <20250822125555.8620-5-sidong.yang@furiosa.ai>
- <CADUfDZoDvAp1yqFyB_SQiynqQfOQPkO_mnQ_pWAXpZJESecFFw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6YbNdHWEVzpQX2LsWQuR0xyPKZ3w9OXQNowo7b28dkDPvTq4D5HesvqSQs9ZohUU+bqTRwJPQ2CAMb8BolWTbzSuqtK/3uN3njb7LmuCu6SZRhQPDsjMfNBTEd1sBrRfduKDv9/QvPtm3I8DijE/XMT0zgVRey1mqGKR5K9S2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3735726BE;
+	Tue,  2 Sep 2025 04:18:33 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D25C3F694;
+	Tue,  2 Sep 2025 04:18:40 -0700 (PDT)
+Date: Tue, 2 Sep 2025 12:18:37 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Jan Palus <jpalus@fastmail.com>
+Subject: Re: [PATCH] firmware: arm_scmi: quirk: fix write to string constant
+Message-ID: <20250902-original-hallowed-robin-d030bf@sudeepholla>
+References: <20250829132152.28218-1-johan@kernel.org>
+ <aLG5XFHXKgcBida8@hovoldconsulting.com>
+ <aLa__M_VJYqxb9mc@hovoldconsulting.com>
+ <20250902-axiomatic-salamander-of-reputation-d70aa8@sudeepholla>
+ <aLbGoctnA-Ad-Hxv@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZoDvAp1yqFyB_SQiynqQfOQPkO_mnQ_pWAXpZJESecFFw@mail.gmail.com>
+In-Reply-To: <aLbGoctnA-Ad-Hxv@hovoldconsulting.com>
 
-On Mon, Sep 01, 2025 at 06:12:44PM -0700, Caleb Sander Mateos wrote:
-> On Fri, Aug 22, 2025 at 5:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > This patch introduces support for `uring_cmd` to the `miscdevice`
-> > framework. This is achieved by adding a new `uring_cmd` method to the
-> > `MiscDevice` trait and wiring it up to the corresponding
-> > `file_operations` entry.
-> >
-> > The `uring_cmd` function provides a mechanism for `io_uring` to issue
-> > commands to a device driver.
-> >
-> > The new `uring_cmd` method takes the device, an `IoUringCmd` object,
-> > and issue flags as arguments. The `IoUringCmd` object is a safe Rust
-> > abstraction around the raw `io_uring_cmd` struct.
-> >
-> > To enable `uring_cmd` for a specific misc device, the `HAS_URING_CMD`
-> > constant must be set to `true` in the `MiscDevice` implementation.
-> >
-> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > ---
-> >  rust/kernel/miscdevice.rs | 53 ++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 52 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > index 6373fe183b27..fcef579218ba 100644
-> > --- a/rust/kernel/miscdevice.rs
-> > +++ b/rust/kernel/miscdevice.rs
-> > @@ -11,9 +11,10 @@
-> >  use crate::{
-> >      bindings,
-> >      device::Device,
-> > -    error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-> > +    error::{from_result, to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-> >      ffi::{c_int, c_long, c_uint, c_ulong},
-> >      fs::File,
-> > +    io_uring::IoUringCmd,
-> >      mm::virt::VmaNew,
-> >      prelude::*,
-> >      seq_file::SeqFile,
-> > @@ -180,6 +181,21 @@ fn show_fdinfo(
-> >      ) {
-> >          build_error!(VTABLE_DEFAULT_ERROR)
-> >      }
-> > +
-> > +    /// Handler for uring_cmd.
-> > +    ///
-> > +    /// This function is invoked when userspace process submits an uring_cmd op
-> > +    /// on io-uring submission queue. The `device` is borrowed instance defined
-> > +    /// by `Ptr`. The `io_uring_cmd` would be used for get arguments cmd_op, sqe,
-> > +    /// cmd_data. The `issue_flags` is the flags includes options for uring_cmd.
-> > +    /// The options are listed in `kernel::io_uring::cmd_flags`.
-> > +    fn uring_cmd(
-> > +        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-> > +        _io_uring_cmd: Pin<&mut IoUringCmd>,
+On Tue, Sep 02, 2025 at 12:27:45PM +0200, Johan Hovold wrote:
+> On Tue, Sep 02, 2025 at 11:16:46AM +0100, Sudeep Holla wrote:
+> > On Tue, Sep 02, 2025 at 11:59:24AM +0200, Johan Hovold wrote:
+> > > On Fri, Aug 29, 2025 at 04:29:48PM +0200, Johan Hovold wrote:
+> > > > On Fri, Aug 29, 2025 at 03:21:52PM +0200, Johan Hovold wrote:
 > 
-> Passing the IoUringCmd by reference doesn't allow the uring_cmd()
-> implementation to store it beyond the function return. That precludes
-> any asynchronous uring_cmd() implementation, which is kind of the
-> whole point of uring_cmd. I think uring_cmd() needs to transfer
-> ownership of the IoUringCmd so the implementation can complete it
-> asynchronously.
+> > > > > The quirk version range is typically a string constant and must not be
+> > > > > modified (e.g. as it may be stored in read-only memory):
+> > > > > 
+> > > > > 	Unable to handle kernel write to read-only memory at virtual
+> > > > > 	address ffffc036d998a947
+> > > > > 
+> > > > > Fix the range parsing so that it operates on a copy of the version range
+> > > > > string, and mark all the quirk strings as const to reduce the risk of
+> > > > > introducing similar future issues.
+> > > > 
+> > > > With Jan's permission, let's add:
+> > > > 
+> > > > Reported-by: Jan Palus <jpalus@fastmail.com>
+> > > > 
+> > 
+> > I was hoping to hear back, but I assume silence is kind of acceptance.
+> 
+> I sent the reply with the tag after making sure off-list that Jan was OK
+> with it. Sorry if that was not clear.
+> 
+> > > Please don't do such (non-trivial) changes without making that clear
+> > > in the commit message before your Signed-off-by tag:
+> > > 
+> > > 	[ sudeep: rewrite commit message; switch to cleanup helpers ]
+> > > 
+> > 
+> > Sorry I meant to do that when I replied and asked you if you are OK
+> > with cleanup helpers. Also yes I planned to add a line like something
+> > above before finalizing.
+> 
+> Sounds like a mail has gotten lost since I never saw that question from
+> you.
+>
 
-I didn't know that I can take IoUringCmd ownership and calling done(). 
-In C implementation, is it safe to call `io_uring_cmd_done()` in any context?
+No I hadn't sent it yet, generally wait for builder report to finalise
+the commit. Sometimes -next integration happens before build sends build
+report for my branch and that happened this time.
 
-> 
-> Best,
-> Caleb
-> 
-> > +        _issue_flags: u32,
-> > +    ) -> Result<i32> {
-> > +        build_error!(VTABLE_DEFAULT_ERROR)
-> > +    }
-> >  }
-> >
-> >  /// A vtable for the file operations of a Rust miscdevice.
-> > @@ -337,6 +353,36 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-> >          T::show_fdinfo(device, m, file);
-> >      }
-> >
-> > +    /// # Safety
-> > +    ///
-> > +    /// The caller must ensure that:
-> > +    /// - The pointer `ioucmd` is not null and points to a valid `bindings::io_uring_cmd`.
-> > +    unsafe extern "C" fn uring_cmd(
-> > +        ioucmd: *mut bindings::io_uring_cmd,
-> > +        issue_flags: ffi::c_uint,
-> > +    ) -> c_int {
-> > +        // SAFETY: `file` referenced by `ioucmd` is valid pointer. It's assigned in
-> > +        // uring cmd preparation. So dereferencing is safe.
-> > +        let raw_file = unsafe { (*ioucmd).file };
-> > +
-> > +        // SAFETY: `private_data` is guaranteed that it has valid pointer after
-> > +        // this file opened. So dereferencing is safe.
-> > +        let private = unsafe { (*raw_file).private_data }.cast();
-> > +
-> > +        // SAFETY: `ioucmd` is not null and points to valid memory `bindings::io_uring_cmd`
-> > +        // and the memory pointed by `ioucmd` is valid and will not be moved or
-> > +        // freed for the lifetime of returned value `ioucmd`
-> > +        let ioucmd = unsafe { IoUringCmd::from_raw(ioucmd) };
-> > +
-> > +        // SAFETY: This call is safe because `private` is returned by
-> > +        // `into_foreign` in [`open`]. And it's guaranteed
-> > +        // that `from_foreign` is called by [`release`] after the end of
-> > +        // the lifetime of `device`
-> > +        let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-> > +
-> > +        from_result(|| T::uring_cmd(device, ioucmd, issue_flags))
-> > +    }
-> > +
-> >      const VTABLE: bindings::file_operations = bindings::file_operations {
-> >          open: Some(Self::open),
-> >          release: Some(Self::release),
-> > @@ -359,6 +405,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-> >          } else {
-> >              None
-> >          },
-> > +        uring_cmd: if T::HAS_URING_CMD {
-> > +            Some(Self::uring_cmd)
-> > +        } else {
-> > +            None
-> > +        },
-> >          // SAFETY: All zeros is a valid value for `bindings::file_operations`.
-> >          ..unsafe { MaybeUninit::zeroed().assume_init() }
-> >      };
-> > --
-> > 2.43.0
-> >
+-- 
+Regards,
+Sudeep
 
