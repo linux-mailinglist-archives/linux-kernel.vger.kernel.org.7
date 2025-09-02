@@ -1,244 +1,160 @@
-Return-Path: <linux-kernel+bounces-796376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3406B3FF90
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:12:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A1BB3FFDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7B91885BCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:12:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A1C17B8B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291422FABE9;
-	Tue,  2 Sep 2025 12:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E87D301030;
+	Tue,  2 Sep 2025 12:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iekwy2bZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C+/dY4wK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3002F3C12;
-	Tue,  2 Sep 2025 12:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515EA2877D5
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814829; cv=none; b=vFJQl4xzEHrXM4zW41L9kUs2k88+9SpuA5Hrf6/vLBuDL8TgBaPW2PDEWlBz4ZlAfq8En5xx5rVeL/fh2/8nVQIe7+Rp3ouGCRfJ7/obvF2lgooF76c9so0ia1dhkJ7gxHFqKrP+S38/8Gz1/BuVJ6skXtNnpQjZbIsvOfDAQG8=
+	t=1756814839; cv=none; b=Xm3WpHNHZvzL5v2E7kYvWfdAQlQQVxSQ8AjoGWTPhNXb6ZubO7sHpLJeHaDqluaOEsY5OLUEOdXxOjTaETMb8x4v1FFKj084x/l7cq9fBxubeA3blES+B4uKlQXNLC1WWZURWusg2JFPPqjhPqf4hwl8GSqzyOpVvIRHv7SWc5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814829; c=relaxed/simple;
-	bh=D6qJALJ72rYjadWcVJQkmqDt0zTWZuBg/EKiaR4fjeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HiyfoJiK9BnL8TUER8MXYjq8g2rhP/dthf//ne+jOUS2umcR706wZBw5B9/AelsIJSYPwGwHELNd/xOC0x1ifFDn7aH/e4k2F49zykM6+bMO2AW8S5lQmew6z7KfIs1PZPMMU70LOdOODzpCknYWjcCJSs2Zoqjr5YxDfW0lJ24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iekwy2bZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A0B9B40E01CD;
-	Tue,  2 Sep 2025 12:07:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mY44Bz8hlKKw; Tue,  2 Sep 2025 12:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756814820; bh=+Ci97lgH9Q/96lnHUBZnJ6/A0GQqo2s3yBOxDRZTOo0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iekwy2bZwnUEREzT2Xzzu2NqfR/TsBKrPMXOPem2yMAF3v49QJHLG16df67wXlO65
-	 9xQTOaW/143RUAEmewLveQP/1B4JiYWVgdTr9ebYed7yDyFeWKoDtUTkw2DLzL7lOU
-	 dfo/1bpRtL2b3UzBVDb9xIw6IKcf5D8cWPwE7CpqqsVj+ITvve+yYWsKxcZ8bgwh4J
-	 i/iW9W799jWMDhvmVq17HQn44N4NbIh3tILTF8Cr6IPdGX6b/IeA3PBgBgbSAPdb1v
-	 JuGizQ1hbNrrh+yGtzfXgD2Fc3UsbpN/R7knlb/HYT3x+edLpSDqfQTg4Y8EpqHlx/
-	 qq9UkmzP9McY1I1VODET5cVNVwWX1YouoWtu1oh5FYz/+XpVknD7qp7mRCjBl/kuZJ
-	 mjk/RASP8a4L4LBGKo55yhIIUT8OL63EQdbOuqXpHaAcA+DVV23RgQb36UXbgNiFe8
-	 taGDukwjYvn5uBDpA34bxE/+dHEaqa+KxCT449m9vHixmsY2iT3I4PH28FDPgrKXv1
-	 tMe+tvDNVwh/zc9PYG7+ah/cKheu4VTZDV5q3wOy4oEDfmKwjKnZtjFnjv6f9YsDja
-	 XdfVfaZf5ebXeJd3LxAY3CjWSLA+hdmqU2nlwwIOxBIk4KXztAbUs8G6QaP+jThYGz
-	 W61G+gjBo5qqgSLT6rtT1SwI=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 9FE6440E015D;
-	Tue,  2 Sep 2025 12:06:49 +0000 (UTC)
-Date: Tue, 2 Sep 2025 14:06:48 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH v7 12/22] x86/sev: Provide PIC aliases for SEV related
- data objects
-Message-ID: <20250902120648.GFaLbd2LyZYkQ4l8WV@fat_crate.local>
-References: <20250828102202.1849035-24-ardb+git@google.com>
- <20250828102202.1849035-36-ardb+git@google.com>
+	s=arc-20240116; t=1756814839; c=relaxed/simple;
+	bh=xt2M/EYFY5LLWVrahB1ctY3E6iHAceS7dO6dEG4T8u0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i/7io+IInDLbAJ7K5JZEdygN4BX05QLIS9ibrYDnMjYOyK5678FiOFOYumW+4Yvp/ZeXvuAkOJ4D7Cxp0zB/pxgswxXa0fpgHo1PT0V69IBbgsZT8U6NKmCQX3U1IwaGguFsb2VV0nbStU49H+QzayzD12pwVn2yte1jcTiMZD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C+/dY4wK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582AnclM016548
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 12:07:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ooAgjRpTHNP8kFwOiUKb9Yh/50coU4iyP/eWLaeMM00=; b=C+/dY4wK+FzU9XOb
+	4osh6w2fl+WAynCdo5SXzupLhtwkiwRNhcT3l6gtaar/Z3+ZahQMR39JtpSBSuG3
+	gxQuAdzeJGV+Ju501Y5mEcDtJPK/cHL3vmZ5W1RBIGUEwEbvgI88sOoXcayivoX7
+	wh4Z30+NyS1+BBhYBZj/RSmJA2+02EKmu/rZ0SpnDPeaEAZoqts7cXRdEAuPVuaV
+	79xq3DTGKMPsbhnCubvOers1owdLoI9touOy0qusIc1eyPTfhfIc9s1wmc0QnigM
+	6G37eyGQyuE9MTejZwjgz/pE/p7uYyCAy6OS3K/x42roEsPi54Y3boGKZb17KOSx
+	IROvKA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urvyyprs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 12:07:17 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b2d1c2a205so15957671cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:07:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756814836; x=1757419636;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ooAgjRpTHNP8kFwOiUKb9Yh/50coU4iyP/eWLaeMM00=;
+        b=GHWJv58qk3zO4NeeParCXWfBqI5L4kAUqaWc07Bosz8CLBXKUMnLt/PeuA45ZZxVQM
+         MrcZuq/DNp09oXh5Gn5Tes6jXc3kSQzGxiXs/fFzDW4RHYPnANcWqMfp37tPeJt8emOE
+         v9zFcu64J05w/3JUIkbXwFNyj3VVoAmkAXajzBh+kx2QUIyBOvCFTw0VJgUYlIRjDYnb
+         GuWkqLOf6Jwxp71xpxZrX9PcoSIosuX41sxBz4Pd7pCWg5/o3xcVLtcFa0DEiGPAu1AT
+         c9Au32rtt3qJdQFvVz7h3bk3nutf2h+KCWnwZS/MnrxWcQCcrrmVZBMZMejsYInUos7N
+         rKKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKXwcI5fEtDBumC3+XXeb2u1MwE8QhXSv6K7/4iSm9tkGlHsWHBjdWe3kUIEOQAb/3Wd0IGzpnD1x17ZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhVRiE7lT9SHSTcIGOBVWB9XDxTde03JdrrOlSLGKlvaWoLZKV
+	UT0Zf7+80t+fN6JrzwnWk0j0AXuBcrffr50SJ0dEtqnuinwvbqnphBTcQW00Aw4SXb2khh5M5mv
+	czLpFYMNYo+zVIAUlKaVh2/jy8/yfmiOwwVwJd0FNKDxXFpAT8vha3NMeJdUfcPF6E6w=
+X-Gm-Gg: ASbGncskMlp6rz5mf2au6REKB9qlt+M1msbwOsGoOR1tnSZS2s0HGNOb21LIRqO7ugm
+	NUm77/ANmI1EN1A9A/sBwVdhey0QRQhnBfOsnMvuEdj2aufhBurZNKeacgru7lHP5lwhD/QzS5q
+	1ama5YbhmLhC0fznfuKHf101eu87zFFPwLwqGj4MHJtlnfivNy7idUK0RYdnz/ZlA305WdYCYok
+	l74bBHIVkKR8Shy+OqR3Yiez0Ql/SytvWK0kqb4Sc06tgQWGL48YO5n1pvVSRSiGUfcWbynfeCZ
+	q4GBJZLDhPqOZcCeTNms1z96jk0u+WVRra2AMuKrJiZKZVKu+Se+txrRDFB/Snk9XbGzkiISCBd
+	nvg7d0VukDDdr1H/pfFv7kA==
+X-Received: by 2002:a05:622a:164d:b0:4b3:d90:7b6f with SMTP id d75a77b69052e-4b313e6f3aamr104880871cf.6.1756814836110;
+        Tue, 02 Sep 2025 05:07:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGi7UgyhFAah0VP0bJeUSU1wMpek7APbVlPpwHN7xSB0N6vFLNU7Pjd9+3uvDbCoDIOTsYYeg==
+X-Received: by 2002:a05:622a:164d:b0:4b3:d90:7b6f with SMTP id d75a77b69052e-4b313e6f3aamr104880181cf.6.1756814835494;
+        Tue, 02 Sep 2025 05:07:15 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc52ae40sm9249215a12.44.2025.09.02.05.07.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 05:07:15 -0700 (PDT)
+Message-ID: <e9c70483-8538-4f9c-9dd0-b4136b34a667@oss.qualcomm.com>
+Date: Tue, 2 Sep 2025 14:07:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250828102202.1849035-36-ardb+git@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/10] clk: qcom: gcc-ipq5424: Correct the
+ icc_first_node_id
+To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        Devi Priya <quic_devipriy@quicinc.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+        quic_suruchia@quicinc.com
+References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
+ <20250828-qcom_ipq5424_nsscc-v4-1-cb913b205bcb@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250828-qcom_ipq5424_nsscc-v4-1-cb913b205bcb@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: w8t-UvWk_rd1sFuMdpoo05gFTJhENxUy
+X-Proofpoint-ORIG-GUID: w8t-UvWk_rd1sFuMdpoo05gFTJhENxUy
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX7+y6bU71NOn7
+ d2NPTx7+Aa4tK/N6WGKg0KDVd3CJpfNH4rB9DiOUO3icJ7IWgMTtswm0FKHCS27l/20kge62813
+ GIv/MJabrqFfHck6lt8LnasUpqAhlFtmPCHlDbKsWqyJyKHbvcr9NvbGaHn8pYk0Cf/VrwD+ott
+ /7ZWdOsjq/L0Jf+Q+7hrWLyozYXgFu2fSvIzftj/QGCr6efiA2GEY6aUMm6Cc+NAHLGMX80oILo
+ 0UQze0mNCsYvj/IwaJ5FC8+Dain7BgCGicEiycwDyg40aV8uix/sP8dRNDJ2sJgRE9hhNVjZLkx
+ jQit8gbU7NP9cjr7HmDlIR3K9daNFbdLxMF15lxVak+biY06ZRLlbqDN7MocpfF/xUdBAxj40gL
+ 9ZVWgIKc
+X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b6ddf5 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=5e-Oaz1CA7JNmZ_uPyAA:9 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300027
 
-On Thu, Aug 28, 2025 at 12:22:15PM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
+On 8/28/25 12:32 PM, Luo Jie wrote:
+> Update to use the expected icc_first_node_id for registering the icc
+> clocks, ensuring correct association of clocks with interconnect nodes.
 > 
-> Provide PIC aliases for data objects that are shared between the SEV
-> startup code and the SEV code that executes later. This is needed so
-> that the confined startup code is permitted to access them.
-> 
-> This requires some of these variables to be moved into a source file
-> that is not part of the startup code, as the PIC alias is already
-> implied, and exporting variables in the opposite direction is not
-> supported.
-> 
-> Move ghcb_version as well, but don't provide a PIC alias as it is not
-> actually needed.
-
-I see
-
-SYM_PIC_ALIAS(ghcb_version);
-
-below.
-
-Stale commit message?
-
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> Fixes: 170f3d2c065e ("clk: qcom: ipq5424: Use icc-clk for enabling NoC related clocks")
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 > ---
->  arch/x86/boot/compressed/sev.c      |  3 ++
->  arch/x86/boot/startup/sev-shared.c  | 19 -----------
->  arch/x86/boot/startup/sev-startup.c |  9 ------
->  arch/x86/coco/sev/core.c            | 34 ++++++++++++++++++++
->  4 files changed, 37 insertions(+), 28 deletions(-)
-> 
-> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-> index d650a314143b..6822eb4b9152 100644
-> --- a/arch/x86/boot/compressed/sev.c
-> +++ b/arch/x86/boot/compressed/sev.c
-> @@ -38,6 +38,9 @@ struct ghcb *boot_ghcb;
->  #define __BOOT_COMPRESSED
->  
->  u8 snp_vmpl;
-> +u16 ghcb_version;
-> +
-> +u64 boot_svsm_caa_pa;
->  
->  /* Include code for early handlers */
->  #include "../../boot/startup/sev-shared.c"
-> diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-shared.c
-> index b86027d9a968..180f54570022 100644
-> --- a/arch/x86/boot/startup/sev-shared.c
-> +++ b/arch/x86/boot/startup/sev-shared.c
-> @@ -19,25 +19,6 @@
->  #define WARN(condition, format...) (!!(condition))
->  #endif
->  
-> -/*
-> - * SVSM related information:
-> - *   During boot, the page tables are set up as identity mapped and later
-> - *   changed to use kernel virtual addresses. Maintain separate virtual and
-> - *   physical addresses for the CAA to allow SVSM functions to be used during
-> - *   early boot, both with identity mapped virtual addresses and proper kernel
-> - *   virtual addresses.
-> - */
-> -u64 boot_svsm_caa_pa __ro_after_init;
-> -
-> -/*
-> - * Since feature negotiation related variables are set early in the boot
-> - * process they must reside in the .data section so as not to be zeroed
-> - * out when the .bss section is later cleared.
-> - *
-> - * GHCB protocol version negotiated with the hypervisor.
-> - */
-> -u16 ghcb_version __ro_after_init;
-> -
->  /* Copy of the SNP firmware's CPUID page. */
->  static struct snp_cpuid_table cpuid_table_copy __ro_after_init;
->  
-> diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
-> index b0fc63f8dee1..138b26f14ff1 100644
-> --- a/arch/x86/boot/startup/sev-startup.c
-> +++ b/arch/x86/boot/startup/sev-startup.c
-> @@ -41,15 +41,6 @@
->  #include <asm/cpuid/api.h>
->  #include <asm/cmdline.h>
->  
-> -/* Bitmap of SEV features supported by the hypervisor */
-> -u64 sev_hv_features __ro_after_init;
-> -
-> -/* Secrets page physical address from the CC blob */
-> -u64 sev_secrets_pa __ro_after_init;
-> -
-> -/* For early boot SVSM communication */
-> -struct svsm_ca boot_svsm_ca_page __aligned(PAGE_SIZE);
-> -
->  /*
->   * Nothing shall interrupt this code path while holding the per-CPU
->   * GHCB. The backup GHCB is only for NMIs interrupting this path.
-> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> index 9782ebe30675..b9133c825f90 100644
-> --- a/arch/x86/coco/sev/core.c
-> +++ b/arch/x86/coco/sev/core.c
-> @@ -46,6 +46,29 @@
->  #include <asm/cmdline.h>
->  #include <asm/msr.h>
->  
-> +/* Bitmap of SEV features supported by the hypervisor */
-> +u64 sev_hv_features __ro_after_init;
-> +SYM_PIC_ALIAS(sev_hv_features);
-> +
-> +/* Secrets page physical address from the CC blob */
-> +u64 sev_secrets_pa __ro_after_init;
-> +SYM_PIC_ALIAS(sev_secrets_pa);
-> +
-> +/* For early boot SVSM communication */
-> +struct svsm_ca boot_svsm_ca_page __aligned(PAGE_SIZE);
-> +SYM_PIC_ALIAS(boot_svsm_ca_page);
-> +
-> +/*
-> + * SVSM related information:
-> + *   During boot, the page tables are set up as identity mapped and later
-> + *   changed to use kernel virtual addresses. Maintain separate virtual and
-> + *   physical addresses for the CAA to allow SVSM functions to be used during
-> + *   early boot, both with identity mapped virtual addresses and proper kernel
-> + *   virtual addresses.
-> + */
-> +u64 boot_svsm_caa_pa __ro_after_init;
-> +SYM_PIC_ALIAS(boot_svsm_caa_pa);
-> +
->  DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
->  DEFINE_PER_CPU(u64, svsm_caa_pa);
->  
-> @@ -119,6 +142,17 @@ DEFINE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
->   */
->  u8 snp_vmpl __ro_after_init;
->  EXPORT_SYMBOL_GPL(snp_vmpl);
-> +SYM_PIC_ALIAS(snp_vmpl);
-> +
-> +/*
-> + * Since feature negotiation related variables are set early in the boot
-> + * process they must reside in the .data section so as not to be zeroed
-> + * out when the .bss section is later cleared.
-> + *
-> + * GHCB protocol version negotiated with the hypervisor.
-> + */
-> +u16 ghcb_version __ro_after_init;
-> +SYM_PIC_ALIAS(ghcb_version);
->  
->  /* For early boot hypervisor communication in SEV-ES enabled guests */
->  static struct ghcb boot_ghcb_page __bss_decrypted __aligned(PAGE_SIZE);
-> -- 
-> 2.51.0.268.g9569e192d0-goog
-> 
 
--- 
-Regards/Gruss,
-    Boris.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Konrad
 
