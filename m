@@ -1,143 +1,269 @@
-Return-Path: <linux-kernel+bounces-795542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF23B3F42F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFF4B3F437
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77F0D20103E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:09:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A9B8200BF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1573F2E0B5F;
-	Tue,  2 Sep 2025 05:09:33 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E4F2E1F1C;
+	Tue,  2 Sep 2025 05:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsMHzg2p"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB057BA4A;
-	Tue,  2 Sep 2025 05:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4DF2DF15F;
+	Tue,  2 Sep 2025 05:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756789772; cv=none; b=UXI595cBPfGHVvmYMYI/7qcSvf4iPU1wgyZUTu5pOhN5CTmMvQvwUns6o/mk1Z9IEuKuqwKbjUfvn/RHhmSjmy1cV6STZsCiHJGjINHz+LRd/rnj52MNASOSnmzn8vvKIluTKpd+VkKNgnSw2f2Ogx1EjhpnvzsAs8cJdOaa+WE=
+	t=1756789902; cv=none; b=O8sRfgl/YAn5peMPVHiTAwp+mMdyeA5mdvxsH6Xj/Yrm4nuVOcqNUsJHSTpKtVk9osJHWW5DAqb27rfgKf7ELOvUiIVHmLIq57I3db8sjnY5lLUOTxk/0PlXf7cZhIIXbWo+fWI3LjV4flhMUKFDuP6geJfpNkxYQfanml11CrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756789772; c=relaxed/simple;
-	bh=rKCIPKzawr9c9rbkUtSKJObEOaagZquXS9K9Ng9+rgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fuQnGgEJ04bgdDzOPliWDkdwJrCwNHBQhMTB1emPTXYvUzCHqIm+42VSey8npuxzfcrCLZWIHrcHrH0hGLm+DrLji72XrPxDSjRsdf6RAHAVhUVOlVwRpQ9yGvQvs2iTvar1zex8AdpxkytGV5Z4enkQ+MtiiHgrTmD4EktELO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.2.205] (p5dc55ed2.dip0.t-ipconnect.de [93.197.94.210])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8008D60213AC3;
-	Tue, 02 Sep 2025 07:08:51 +0200 (CEST)
-Message-ID: <4f746e98-b81b-4632-a2f8-f14d66c71ced@molgen.mpg.de>
-Date: Tue, 2 Sep 2025 07:08:46 +0200
+	s=arc-20240116; t=1756789902; c=relaxed/simple;
+	bh=8rS0LIP0u53ptk9V+ACTPr8p9/DgftmEoayF11LgyCo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l1ObKghPCOoKH6Kq3v64XCbAEC8vMbO8XK7SS4oQfAUolnxklF0B2i/qZQq0fqzAjkHtCVk+EArpNlpNqxiEMvDDZNDP199NqE7q7JYgOp79ivuMG062qwQmr1KIHSQ1OL2VV1oGrnkQhL8omAUq6wa0LZrfmF1W2aUA6PDLkQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MsMHzg2p; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3dad6252eacso35441f8f.1;
+        Mon, 01 Sep 2025 22:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756789899; x=1757394699; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TTCTGbNV0A/hFnSRRaapGnfqcH++dszehZn/PYcxf4U=;
+        b=MsMHzg2pClQlK21qR3YlSVADY9b/vUeaZLujPOLaQLugvFmkT+GjUTXwwwmGnGSM2M
+         3JqYRyVlFmOlScgZua1JBat4JylV87s/u492INKJKP5kFyECM606NUwoc9bqwjlgrVlr
+         A2QpK+27IUysgmpShGhf7VjQeofl3GjvDkl2cQKLM0nHh4mQ4t6RWOs2Ag+Vmam7w9sg
+         oAU4jvE/IOzDHkDJAXvvrp3mUjehzA+D0wP7BbOXcHc2sVQ+8Of4jcLRkRUnkhe8A9Yn
+         VytrYBJQOcu9F0Q2ee1Z2/1YFB4iOEFUgM4VH6jMFndRblBs92b8ZGV7KKqfM4paEXQI
+         9YmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756789899; x=1757394699;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TTCTGbNV0A/hFnSRRaapGnfqcH++dszehZn/PYcxf4U=;
+        b=T5fpc6mVbseF6HF606UDN3UTHqsE8WwY87eYBAj8AaHF4FYabIzXdY2rEMHm7Clf0x
+         ZtPVR+akB8CMOV7GZLP6f469ieqzQaDFt40xPJEu3hRE8Ytqur/U7z7oYku+mUtXPOyV
+         9l5dQF+lRIjKOdvjCIszd6AFf+F4kHR6hP24RK2Xwizi6s5G/C78EP+0/lPiRXwLbYW9
+         cn8Syu9YhheeJZYIBq5j7eDcQozMsOTN16dVA7yjgwbOsm5dvxWjX5JaZUa0Acs//9gP
+         Fd9bI8nRhSdRKT4MG6zlXmaAufe6O/tRAt6jkKEhab7v0yp245eIoSHiCM97xB0tPTEC
+         1x1A==
+X-Forwarded-Encrypted: i=1; AJvYcCU691HcVK3G1F09fwa/2XqXjf4rqiouM+76Sfedx5ihD+jiRphLiTnEG5p9DdHdTehHsIGCAzA8Sx19@vger.kernel.org, AJvYcCVjGuP/0E4L/aPAhB7zpHv6wEFYMUCHKMi/cmccceVhcZhZRZ2AWPKBVJyYjykRiZRnzhhyXvsNbg7L@vger.kernel.org, AJvYcCVjjCPZUk3wYNg9z0LlMONEw9QdKBEKiLEb6OuG5BRuj6mZl2O1D1yOMiYs169ohOUYQeENG/nw6kLrEdM=@vger.kernel.org, AJvYcCVyoqLcdovXsxpAaKd5Ka3E+LXgy8BG8+nD4Otj7IcQY1wd6Vm7c4zzOislITEMRPL68ltGxkAdsfCyYaI5@vger.kernel.org, AJvYcCWVp46WO68cgoy0zyLgVc/2/Ao6ERBm96fS/yzAestk5FoQw9tS8+cHZT/w0oV7fqnWHr5WJp1kqToVFaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS15/QUwFMaDQ7C8NCNTfjI8uWSvlO+8NE8vR8zG+oXbH+3QW0
+	LePqNL+OL0QszTXWsXztXTbi/A8a90fw2bAajfn6gTn/er1ysxZjrfOdJA1o0fAQ1epQ7PjRwrf
+	m4DBaQ2ZC8YAth7MCqdtFUFCu6DsCCaA=
+X-Gm-Gg: ASbGncvMTj3aNcOO7nXId46XSnLjuP2/blVvwbbjCWdZzPCi0w6oAsI660SYc/EErol
+	Uut+7zydqPdcTjp+0jXLUPPI6GYRj2tpLmG1xKkUOpfLdqR6x136+Dg5w1mZ4ua75GolBTPXMRI
+	0sGmz98EiWdAkQEKSVlwfqmtLAo2EuBQyEHZGfZa4xTALevGb9OlvVYBQVTuybwIGORuEqbdGw+
+	6jEa1qKwUA2RKdeWus=
+X-Google-Smtp-Source: AGHT+IGa3PRa1/gPaTBOeY7kLDsRJnMljXOD1O/8RwlykLwiecvwVwe6PtEAfF2dKWb9ZplPBeb9IGmICuTGLrkPfCk=
+X-Received: by 2002:a05:6000:290f:b0:3b7:8914:cd94 with SMTP id
+ ffacd0b85a97d-3d1de5b0a87mr5975119f8f.41.1756789898968; Mon, 01 Sep 2025
+ 22:11:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH v2] ixgbe: fix too early devlink_free()
- in ixgbe_remove()
-To: Koichiro Den <den@valinux.co.jp>
-Cc: intel-wired-lan@lists.osuosl.org, anthony.l.nguyen@intel.com,
- przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch,
- jedrzej.jagielski@intel.com, mateusz.polchlopek@intel.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250902003941.2561389-1-den@valinux.co.jp>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250902003941.2561389-1-den@valinux.co.jp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250819121631.84280-1-clamor95@gmail.com> <20250819121631.84280-16-clamor95@gmail.com>
+ <3765586.e9J7NaK4W3@senjougahara>
+In-Reply-To: <3765586.e9J7NaK4W3@senjougahara>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 2 Sep 2025 08:11:27 +0300
+X-Gm-Features: Ac12FXwYaklM9dfwRJGJ0niOGEaCaWCMSJaDJ1qiJ-WWQceVJ49LceOdwSONuvs
+Message-ID: <CAPVz0n2Qo97fcshY=pCUzXn2zNe-akbtgsmhFA=vqvQ28ppZ5A@mail.gmail.com>
+Subject: Re: [PATCH v1 15/19] staging: media: tegra-video: tegra20: expand
+ format support with RAW8/10 and YUV422 1X16
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Koichiro,
+=D0=B2=D1=82, 2 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 04:10 Mikko=
+ Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
+> > Add support for Bayer formats (RAW8 and RAW10) and YUV422_8 1X16 versio=
+ns
+> > of existing YUV422_8 2X8.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  drivers/staging/media/tegra-video/tegra20.c | 71 ++++++++++++++++++++-
+> >  1 file changed, 69 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/staging/media/tegra-video/tegra20.c
+> > b/drivers/staging/media/tegra-video/tegra20.c index
+> > 67631e0c9ffc..b466fe7f4504 100644
+> > --- a/drivers/staging/media/tegra-video/tegra20.c
+> > +++ b/drivers/staging/media/tegra-video/tegra20.c
+> > @@ -186,6 +186,18 @@ static void tegra20_vi_get_input_formats(struct
+> > tegra_vi_channel *chan, case MEDIA_BUS_FMT_YVYU8_2X8:
+> >               (*yuv_input_format) =3D VI_INPUT_YUV_INPUT_FORMAT_YVYU;
+> >               break;
+> > +     /* RAW8 */
+> > +     case MEDIA_BUS_FMT_SBGGR8_1X8:
+> > +     case MEDIA_BUS_FMT_SGBRG8_1X8:
+> > +     case MEDIA_BUS_FMT_SGRBG8_1X8:
+> > +     case MEDIA_BUS_FMT_SRGGB8_1X8:
+> > +     /* RAW10 */
+> > +     case MEDIA_BUS_FMT_SBGGR10_1X10:
+> > +     case MEDIA_BUS_FMT_SGBRG10_1X10:
+> > +     case MEDIA_BUS_FMT_SGRBG10_1X10:
+> > +     case MEDIA_BUS_FMT_SRGGB10_1X10:
+> > +             (*yuv_input_format) =3D VI_INPUT_INPUT_FORMAT_BAYER;
+>
+> Should this be main_input_format instead of yuv_input_format?
+>
 
+Yes, it should be main_input_format, you are correct. Thank you.
 
-Thank you for your patch.
-
-Am 02.09.25 um 02:39 schrieb Koichiro Den:
-> Since ixgbe_adapter is embedded in devlink, calling devlink_free()
-> prematurely in the ixgbe_remove() path can lead to UAF. Move devlink_free()
-> to the end.
-> 
-> KASAN report:
-> 
->   BUG: KASAN: use-after-free in ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
->   Read of size 8 at addr ffff0000adf813e0 by task bash/2095
->   CPU: 1 UID: 0 PID: 2095 Comm: bash Tainted: G S  6.17.0-rc2-tnguy.net-queue+ #1 PREEMPT(full)
->   [...]
->   Call trace:
->    show_stack+0x30/0x90 (C)
->    dump_stack_lvl+0x9c/0xd0
->    print_address_description.constprop.0+0x90/0x310
->    print_report+0x104/0x1f0
->    kasan_report+0x88/0x180
->    __asan_report_load8_noabort+0x20/0x30
->    ixgbe_reset_interrupt_capability+0x140/0x180 [ixgbe]
->    ixgbe_clear_interrupt_scheme+0xf8/0x130 [ixgbe]
->    ixgbe_remove+0x2d0/0x8c0 [ixgbe]
->    pci_device_remove+0xa0/0x220
->    device_remove+0xb8/0x170
->    device_release_driver_internal+0x318/0x490
->    device_driver_detach+0x40/0x68
->    unbind_store+0xec/0x118
->    drv_attr_store+0x64/0xb8
->    sysfs_kf_write+0xcc/0x138
->    kernfs_fop_write_iter+0x294/0x440
->    new_sync_write+0x1fc/0x588
->    vfs_write+0x480/0x6a0
->    ksys_write+0xf0/0x1e0
->    __arm64_sys_write+0x70/0xc0
->    invoke_syscall.constprop.0+0xcc/0x280
->    el0_svc_common.constprop.0+0xa8/0x248
->    do_el0_svc+0x44/0x68
->    el0_svc+0x54/0x160
->    el0t_64_sync_handler+0xa0/0xe8
->    el0t_64_sync+0x1b0/0x1b8
-> 
-> Fixes: a0285236ab93 ("ixgbe: add initial devlink support")
-> Signed-off-by: Koichiro Den <den@valinux.co.jp>
-> ---
-> Changes in v2:
-> - Move only devlink_free()
-> ---
->   drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-> index 80e6a2ef1350..b3822c229300 100644
-> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-> @@ -12092,7 +12092,6 @@ static void ixgbe_remove(struct pci_dev *pdev)
->   
->   	devl_port_unregister(&adapter->devlink_port);
->   	devl_unlock(adapter->devlink);
-> -	devlink_free(adapter->devlink);
->   
->   	ixgbe_stop_ipsec_offload(adapter);
->   	ixgbe_clear_interrupt_scheme(adapter);
-> @@ -12125,6 +12124,8 @@ static void ixgbe_remove(struct pci_dev *pdev)
->   
->   	if (disable_dev)
->   		pci_disable_device(pdev);
-> +
-> +	devlink_free(adapter->devlink);
->   }
->   
->   /**
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
+> > +             break;
+> >       }
+> >  }
+> >
+> > @@ -220,6 +232,18 @@ static void tegra20_vi_get_output_formats(struct
+> > tegra_vi_channel *chan, case V4L2_PIX_FMT_YVU420:
+> >               (*main_output_format) =3D
+> VI_OUTPUT_OUTPUT_FORMAT_YUV420PLANAR;
+> >               break;
+> > +     /* RAW8 */
+> > +     case V4L2_PIX_FMT_SBGGR8:
+> > +     case V4L2_PIX_FMT_SGBRG8:
+> > +     case V4L2_PIX_FMT_SGRBG8:
+> > +     case V4L2_PIX_FMT_SRGGB8:
+> > +     /* RAW10 */
+> > +     case V4L2_PIX_FMT_SBGGR10:
+> > +     case V4L2_PIX_FMT_SGBRG10:
+> > +     case V4L2_PIX_FMT_SGRBG10:
+> > +     case V4L2_PIX_FMT_SRGGB10:
+> > +             (*main_output_format) =3D
+> VI_OUTPUT_OUTPUT_FORMAT_VIP_BAYER_DIRECT;
+> > +             break;
+> >       }
+> >  }
+> >
+> > @@ -300,6 +324,16 @@ static void tegra20_channel_queue_setup(struct
+> > tegra_vi_channel *chan) case V4L2_PIX_FMT_VYUY:
+> >       case V4L2_PIX_FMT_YUYV:
+> >       case V4L2_PIX_FMT_YVYU:
+> > +     /* RAW8 */
+> > +     case V4L2_PIX_FMT_SRGGB8:
+> > +     case V4L2_PIX_FMT_SGRBG8:
+> > +     case V4L2_PIX_FMT_SGBRG8:
+> > +     case V4L2_PIX_FMT_SBGGR8:
+> > +     /* RAW10 */
+> > +     case V4L2_PIX_FMT_SRGGB10:
+> > +     case V4L2_PIX_FMT_SGRBG10:
+> > +     case V4L2_PIX_FMT_SGBRG10:
+> > +     case V4L2_PIX_FMT_SBGGR10:
+> >               if (chan->vflip)
+> >                       chan->start_offset +=3D stride * (height - 1);
+> >               if (chan->hflip)
+> > @@ -365,6 +399,19 @@ static void tegra20_channel_vi_buffer_setup(struct
+> > tegra_vi_channel *chan, tegra20_vi_write(chan,
+> > TEGRA_VI_VB0_BASE_ADDRESS(OUT_1),  base); tegra20_vi_write(chan,
+> > TEGRA_VI_VB0_START_ADDRESS(OUT_1), base + chan->start_offset); break;
+> > +     /* RAW8 */
+> > +     case V4L2_PIX_FMT_SRGGB8:
+> > +     case V4L2_PIX_FMT_SGRBG8:
+> > +     case V4L2_PIX_FMT_SGBRG8:
+> > +     case V4L2_PIX_FMT_SBGGR8:
+> > +     /* RAW10 */
+> > +     case V4L2_PIX_FMT_SRGGB10:
+> > +     case V4L2_PIX_FMT_SGRBG10:
+> > +     case V4L2_PIX_FMT_SGBRG10:
+> > +     case V4L2_PIX_FMT_SBGGR10:
+> > +             tegra20_vi_write(chan, TEGRA_VI_VB0_BASE_ADDRESS(OUT_2),
+> base);
+> > +             tegra20_vi_write(chan, TEGRA_VI_VB0_START_ADDRESS(OUT_2),
+> base +
+> > chan->start_offset); +                break;
+> >       }
+> >  }
+> >
+> > @@ -446,12 +493,15 @@ static int tegra20_chan_capture_kthread_start(voi=
+d
+> > *data) static void tegra20_camera_capture_setup(struct tegra_vi_channel
+> > *chan) {
+> >       u32 output_fourcc =3D chan->format.pixelformat;
+> > +     u32 data_type =3D chan->fmtinfo->img_dt;
+> >       int width  =3D chan->format.width;
+> >       int height =3D chan->format.height;
+> >       int stride_l =3D chan->format.bytesperline;
+> >       int stride_c =3D (output_fourcc =3D=3D V4L2_PIX_FMT_YUV420 ||
+> >                       output_fourcc =3D=3D V4L2_PIX_FMT_YVU420) ? 1 : 0=
+;
+> > -     int output_channel =3D OUT_1;
+> > +     int output_channel =3D (data_type =3D=3D TEGRA_IMAGE_DT_RAW8 ||
+> > +                           data_type =3D=3D TEGRA_IMAGE_DT_RAW10) ?
+> > +                           OUT_2 : OUT_1;
+> >       int main_output_format;
+> >       int yuv_output_format;
+> >
+> > @@ -580,6 +630,20 @@ static const struct tegra_video_format
+> > tegra20_video_formats[] =3D { TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8=
+, 16,
+> > YVYU),
+> >       TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),
+> >       TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420),
+> > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_1X16, 16, UYVY),
+> > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_1X16, 16, VYUY),
+> > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_1X16, 16, YUYV),
+> > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_1X16, 16, YVYU),
+> > +     /* RAW 8 */
+> > +     TEGRA20_VIDEO_FMT(RAW8, 8, SRGGB8_1X8, 16, SRGGB8),
+> > +     TEGRA20_VIDEO_FMT(RAW8, 8, SGRBG8_1X8, 16, SGRBG8),
+> > +     TEGRA20_VIDEO_FMT(RAW8, 8, SGBRG8_1X8, 16, SGBRG8),
+> > +     TEGRA20_VIDEO_FMT(RAW8, 8, SBGGR8_1X8, 16, SBGGR8),
+> > +     /* RAW 10 */
+> > +     TEGRA20_VIDEO_FMT(RAW10, 10, SRGGB10_1X10, 16, SRGGB10),
+> > +     TEGRA20_VIDEO_FMT(RAW10, 10, SGRBG10_1X10, 16, SGRBG10),
+> > +     TEGRA20_VIDEO_FMT(RAW10, 10, SGBRG10_1X10, 16, SGBRG10),
+> > +     TEGRA20_VIDEO_FMT(RAW10, 10, SBGGR10_1X10, 16, SBGGR10),
+> >  };
+> >
+> >  const struct tegra_vi_soc tegra20_vi_soc =3D {
+> > @@ -606,9 +670,12 @@ const struct tegra_vi_soc tegra20_vi_soc =3D {
+> >  static int tegra20_vip_start_streaming(struct tegra_vip_channel *vip_c=
+han)
+> >  {
+> >       struct tegra_vi_channel *vi_chan =3D
+> > v4l2_get_subdev_hostdata(&vip_chan->subdev); +        u32 data_type =3D
+> > vi_chan->fmtinfo->img_dt;
+> >       int width  =3D vi_chan->format.width;
+> >       int height =3D vi_chan->format.height;
+> > -     int output_channel =3D OUT_1;
+> > +     int output_channel =3D (data_type =3D=3D TEGRA_IMAGE_DT_RAW8 ||
+> > +                           data_type =3D=3D TEGRA_IMAGE_DT_RAW10) ?
+> > +                           OUT_2 : OUT_1;
+> >
+> >       unsigned int main_input_format;
+> >       unsigned int yuv_input_format;
+>
+>
+>
+>
 
