@@ -1,291 +1,393 @@
-Return-Path: <linux-kernel+bounces-795890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5A2B3F903
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:46:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FE4B3F905
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D67D1889AB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:46:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ECB34E10DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE86232F77A;
-	Tue,  2 Sep 2025 08:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E319A32F742;
+	Tue,  2 Sep 2025 08:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dx1XUi+l"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b="sceZqI/q"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023130.outbound.protection.outlook.com [52.101.83.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BA826CE39
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802769; cv=none; b=Xn+9s7OvsoHA/Ms9QxB1WrTOo/xM4kbQVJpxMt9YiiSjiDMj3XGzCMtl8140VzKpNFtOuH3MGniUNTvfYrxU8C6npRA/d+xPp4vZ1ggeMykzqpsVNnTFkqtkNZpj3QsME5s06ni3USSmp43+nBok0Kv1pr0ieJtcZv91cLu1BFo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802769; c=relaxed/simple;
-	bh=IU5KSuERKFOff7YoeQFlF/eDIiUCS3ER4x7/uJbGcaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dUPG01qhGpUWeBHH/Vm0LNiY2Tf+rNwH1Ys9k1/nhqyng+X1pYTN+ZnxlJTVgH3YcxvKFFurpkgCeZ1gUvoAei8ArlWhVGwPCDBd5lSti68f9QDU2rMt+sWCT79WBcs68pn+n7fRaoeVysfzXOG+nDKsFU9Wiu6f6ImkyCIGaOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dx1XUi+l; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822Rx0N029702
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 08:46:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9DdypEXonIxbTZgmqW/GG/QjXoKUlrEkhIPatpNasJY=; b=Dx1XUi+l4Q9OfwF1
-	7uWYmq8bXAY7isKIJb/5WqKDMxNpgb795bb530b0V0oplDYsRiu7v3feV1cVep76
-	RaTbYmbhA9w9Pam07InUUtwRX2yJa0WwiHqhMfwkHirmidNn0YToiCNmz4f1h2eg
-	MP0EkZtd0nArQ876ZxybTl/mx0w1/FjY97Jdnu0ApPCC9waMfAjXj94Fe1V3NwbC
-	gzhpSfbYgETbio/rTvT9lYgJsHlE10IiHJ9uD5/QoGXnM11Z3k5IeZ3ez0Qj8F5F
-	K9cdQaTuxUoOG5xZsKyH8VYjAc3YuZnwwCDTN6XlId1xWpMzori+NZr5JMyNlr4k
-	M+M/Rg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8q4gy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:46:05 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24b0e137484so5877355ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:46:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756802764; x=1757407564;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9DdypEXonIxbTZgmqW/GG/QjXoKUlrEkhIPatpNasJY=;
-        b=miL7xM20M2s02HVilyeVkcPYaQGjrkf0yM7UG79esDM1H61BjJ7tFSy2cZMZFJdsKX
-         1swAjOofoyIxflt2vWuQJug3cd6K0DYKMvoiwYfVkVsbCIiz+J/WgKmMQcm4a8xcRddr
-         ri15CWibO59W1mNHtYs0XV7mbWvJcHpnR68tF/IxMhPfKi4p0Aq3etC2ycdtrPQoNRQt
-         Ns/QgP6u8h9K4aCnmTzdkFXdOFN5KRgsRfJn6Mzta5/804Pc1484zN1A2PmXHIOjSkbF
-         Y+6QHD3K46sMBb6wyMqqykResIamUq2ZL9sxuaE1ZCeuMuNYeole4WmMVqVP0AbbrtTH
-         ywsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxaUHipR3XMQJv6u/dmsAQwvhvLTKWDoQW0FSSnGZUxUnLx0LTF3PIg18POqnMc02pQJUyEscU7hO7RZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzWlwXEXg/DheeUwSABIaXOZgCqdmg4pkZ7w+9KdUrmSfljdPa
-	Gp/gyADaAy3UBE7AnddGn10UnOtdsHNPk3/tbLmupIdV/UHxSNVPADXiSHKbx1k7twKxpRFRDmS
-	od3lfA3ZaVx4Gj9G+UI5RHUZ7c+BItEV8lc2XwerT7Y/FthrH8HaPayNsMvw7iLVuzo8=
-X-Gm-Gg: ASbGnct5FEDfXcLHHALBg9HyTftKhH9uha6zvy8tcYSF6ajZeewOIv3qIRIn5PF27mD
-	wmgfIUcdYyOCfUh0aP9V3iUI5GlQzpoXre8pxveaSTqDmh4DRvpb55N6LFKHSnsAtgguMU+DVte
-	YUyQMvsLNdU+7xQV5JWUXNjMdaNqFJPBJiG1QKk7tkGkJjLLf/Kcf0kYFZqdh2FK0Fo4z/8CbqC
-	llmVmbFnFNTaGTtSJbHc1E4Zt//lZLZHCQHjBVRQn9t9H4WsReg/HgOvIoI33/izMRbRUf9FwfU
-	2IKUPDc1EbO1yJ5Oo92WUeGFzcMiPJ1k4RUPvIO2ImhmaKFYhCUChC5lIWKJ6zKuFDtA4JhR+1c
-	5xWzBry3UnuhasxYJR8R0udue//ES
-X-Received: by 2002:a17:903:198b:b0:248:e716:9892 with SMTP id d9443c01a7336-24944b22091mr134500095ad.59.1756802764447;
-        Tue, 02 Sep 2025 01:46:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNIgt7obz4JURxVGJHkvnfA881OlV+TX+JH491+i3sFtiyAGB0czxK7st5H/fPfL/f3sPRww==
-X-Received: by 2002:a17:903:198b:b0:248:e716:9892 with SMTP id d9443c01a7336-24944b22091mr134499845ad.59.1756802763900;
-        Tue, 02 Sep 2025 01:46:03 -0700 (PDT)
-Received: from [10.133.33.19] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037285b9sm127053325ad.44.2025.09.02.01.45.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 01:46:03 -0700 (PDT)
-Message-ID: <c79814ed-3e97-48c0-9ad9-cf5337967fd8@oss.qualcomm.com>
-Date: Tue, 2 Sep 2025 16:45:59 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCD82E88AB;
+	Tue,  2 Sep 2025 08:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756802781; cv=fail; b=d1h0d+HfYvhRNYb5epl4kxkLB4Xm4EElrWEqxyz3iNjOJ7IFDIoAdRRteuRqIO9ldx5b1WUcWR3OKIsMfBaddSUWA6awGigS7mw6GSGUvSOhPOZ65edUIHxUpZinTQGqu+/S5G0w2UfTbgicCjuJfe1S7XFoc5Z2XvHLTyL1iCw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756802781; c=relaxed/simple;
+	bh=0LDehNWHYgx4mBJIRdEJBdvHctX3NVkwypiWsgmYNpk=;
+	h=Message-ID:Date:From:Subject:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QEwUHvZSRihm2JsTkwniYG9k9X5rIJsLVGj9MQwetGobsLPOGCeylJEFPxmNxXqEvy21EtVUMXvt9JsfmbRUYn96Wp0Y0Qudd8MiIPa9qgGipZ1VFom8ZUgPb3MdjAV5gGSSLB+mZRQioIw7WQHwhWBw/O+oXj97i53oeAe1bXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=topic.nl; spf=pass smtp.mailfrom=topic.nl; dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b=sceZqI/q; arc=fail smtp.client-ip=52.101.83.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=topic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=topic.nl
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R8+aF7a9+mBt4bVYy/v7lSkji27+r7IEyMc/LDiHqKle0IVFefFb2q3EuuYpU8BN+Om9UIrlVsyl/RVCiqcA92lX+E3NIU6m+lXovEeEGqOeOZ2E2SMjm0K8xumoiLYylP9M5gHIrzdB5IMzsUEvCyw46kZn3evr5ciZUxhvIyvL+eG9snxv3cGE+KBnAYFRndj5f19t7R3mRU/atnKrj3WbOzAFQIMl0GeVt1LqVVc4bZymgdVFzBIcA0Ol1KI+2iOXUjUbj8NMcbf2P4zIqguXZbnPDMIMiemoJNUD4RQfD9L7x88BpBckz2z+J+ZHLUFVLZtz2M9F1VDfp8aQ/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KWA5U4RAP7oI2oUdKp40/LRvm5Xz+4PuBHlcuyayZCw=;
+ b=a2ulvDX3IE79eUpDdywezppgSG42c2y+kfbiDNyweaZiaMWQ29OS6oezW6Dnfh5ZMMWM5u1ccCYD6/vYLc8wfQMXk+iKh9LXJUem3GjY6LzFea0JSqHypnfPcojo7zMFRSvIHgoU1xODjfLIr3sAheS2Y5z2bWoukc7O5XPmgCB07svSBRU9XCgOzuQMYpd7lqSfacTdZAlmZxekQ4BWHH1QUKu/+CZdM1ejq7eqcBjBvhN/bDUCekxb7QAGivliu2LCPIIkjbFFEF7ZVGU22ykZaSbVRMdnGJtv0xivki4si9Q0oJ0Jwe+hIKsEvSoWtiYjdOcQgru7u13s2vHLSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 20.93.157.195) smtp.rcpttodomain=kernel.org smtp.mailfrom=topic.nl;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=topic.nl; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KWA5U4RAP7oI2oUdKp40/LRvm5Xz+4PuBHlcuyayZCw=;
+ b=sceZqI/qyBI6Uzr+BV1Q/kVsneE8i3nUWzdCGnQOQL9IfLkOFKqpdCT1TIuA25u3SswB0qRxNGE0vzCxH6aosDicgzOhPpC0Gj3op7kKaOtqGtA1RhHPfcL3Ne8VNnNKwMvnN8tAP4xWI7KHRAUOPSSTkVx3Grppb92SXXwiH9mWb48kQEbLzARYYv0qVy5Ff+Qw6Hh9i1d6AGiUzYhT6A2IO7hBkgym9tNe107o/6j5JLYUabYa4g2dTvtv0GdgtNOojcXrQzesgPts1idOBY7EMNsnKYaLwsQWMpQOMv1WVlEVfybdZ+pk7s2rwjX+xvMgCsQSWK3OSw0eYCsYlg==
+Received: from AS9PR06CA0105.eurprd06.prod.outlook.com (2603:10a6:20b:465::27)
+ by DU4PR04MB11055.eurprd04.prod.outlook.com (2603:10a6:10:58f::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.21; Tue, 2 Sep
+ 2025 08:46:13 +0000
+Received: from AMS0EPF0000019E.eurprd05.prod.outlook.com
+ (2603:10a6:20b:465:cafe::35) by AS9PR06CA0105.outlook.office365.com
+ (2603:10a6:20b:465::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.27 via Frontend Transport; Tue,
+ 2 Sep 2025 08:46:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.93.157.195)
+ smtp.mailfrom=topic.nl; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=topic.nl;
+Received-SPF: Pass (protection.outlook.com: domain of topic.nl designates
+ 20.93.157.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=20.93.157.195; helo=westeu11-emailsignatures-cloud.codetwo.com;
+ pr=C
+Received: from westeu11-emailsignatures-cloud.codetwo.com (20.93.157.195) by
+ AMS0EPF0000019E.mail.protection.outlook.com (10.167.16.250) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.14 via Frontend Transport; Tue, 2 Sep 2025 08:46:13 +0000
+Received: from GVXPR05CU001.outbound.protection.outlook.com (40.93.214.75) by westeu11-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Tue, 02 Sep 2025 08:46:12 +0000
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=topic.nl;
+Received: from PA4PR04MB7790.eurprd04.prod.outlook.com (2603:10a6:102:cc::8)
+ by GVXPR04MB11017.eurprd04.prod.outlook.com (2603:10a6:150:21c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Tue, 2 Sep
+ 2025 08:46:07 +0000
+Received: from PA4PR04MB7790.eurprd04.prod.outlook.com
+ ([fe80::6861:40f7:98b3:c2bc]) by PA4PR04MB7790.eurprd04.prod.outlook.com
+ ([fe80::6861:40f7:98b3:c2bc%4]) with mapi id 15.20.9094.015; Tue, 2 Sep 2025
+ 08:46:06 +0000
+Message-ID: <e007ee80-2eff-4859-b2e3-402950081b4f@topic.nl>
+Date: Tue, 2 Sep 2025 10:46:05 +0200
+User-Agent: Mozilla Thunderbird
+From: Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [PATCH v4 1/2] dt-bindings: drm/bridge: ti-tmds181: Add TI
+ TMDS181 and SN65DP159 bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: dri-devel@lists.freedesktop.org, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+ Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250901142958.843678-1-mike.looijmans@topic.nl>
+ <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.edc18686-244f-441e-a6ac-0b62492b96c8@emailsignatures365.codetwo.com>
+ <20250901142958.843678-2-mike.looijmans@topic.nl>
+ <20250902-hasty-spry-nautilus-c05c6a@kuoka>
+Content-Language: en-US, nl
+Organization: Topic
+In-Reply-To: <20250902-hasty-spry-nautilus-c05c6a@kuoka>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: AS4P251CA0030.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d3::18) To PA4PR04MB7790.eurprd04.prod.outlook.com
+ (2603:10a6:102:cc::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: core: Fix data race in CPU latency PM QoS
- request handling
-To: Ziqi Chen <ziqi.chen@oss.qualcomm.com>, alim.akhtar@samsung.com,
-        avri.altman@wdc.com, bvanassche@acm.org,
-        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
-        quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
-        adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
-        neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
-        quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nitin.rawat@oss.qualcomm.com, zhongqiu.han@oss.qualcomm.com
-References: <20250901085117.86160-1-zhongqiu.han@oss.qualcomm.com>
- <1174ecf9-b806-4c2d-b755-8a3cd594d337@oss.qualcomm.com>
-Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <1174ecf9-b806-4c2d-b755-8a3cd594d337@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 2FQht2W2VCNJZD_gxtoDRxgXQZCl3xd1
-X-Proofpoint-GUID: 2FQht2W2VCNJZD_gxtoDRxgXQZCl3xd1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfX3WsyEXD+wBFB
- fNSQRXelWLJxhoGAr52p3vAmVjPydHnY0PySJAtgoH6NBo6vp+oRuSw3sDUJT2x+vjE+GFGq6AC
- N/u1kC0oRr24CcaUFLGpK++GZUuMGKDfNXSAkBrj4GwuYixduyr7GYFSIVXPCXf4R1amIppHOBs
- az3TTfqsVvE+kN+uLQxw8o50ipOKuF2XbK1zgpB8AXONL6WZIRuA3P3lg2e9FGCccSce9zvPGP9
- gTqcge6TD3LdoUU9aYD3/Wm+MV98KdpIpLqg/ceh2VknW1bbcBH1ZGyBv+8J2B1RPKePJuwTqGk
- oIphQy1X3t6EsfOa+UAr3+Ahpor8gqz3xPOweyufMrZRLxCwWrFgq2GKOGgds0yhsK8n7HLqJES
- NP5DPX/u
-X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b6aecd cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=JS0ieFr0-Jg96Rwx31IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
+X-MS-TrafficTypeDiagnostic:
+	PA4PR04MB7790:EE_|GVXPR04MB11017:EE_|AMS0EPF0000019E:EE_|DU4PR04MB11055:EE_
+X-MS-Office365-Filtering-Correlation-Id: 371105ed-9371-4ec7-8659-08dde9fd2c15
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|7416014|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?MlNVY2tQK0loUXJoa3JBazRsQXQyTFk1bnMvL0haNkM0bVl1b3pTMzI2YlFE?=
+ =?utf-8?B?MUpuNW5zaUMwV0ZtRXBaMXhQYlFyNXAwSzREOXROVFoyRFo5YmFoS3JGTnQz?=
+ =?utf-8?B?ZTduVm9PeU5iTWxkYWVuL0ZNNUFKaGFOMVpnS1dOdUVmM0Q5c1JEUHVKemVC?=
+ =?utf-8?B?YWZyNXNOZ25Hb2tpeHh1M3NGRmN3d09odUxOcDh4YlA3V0lrSk9jYVZNT0xG?=
+ =?utf-8?B?M3d3eTdIUjBFb0xrbm9FT2Y5VDNuSlRXSGVlK0t3bCtiRG1FS1QxMmxPZ1Mz?=
+ =?utf-8?B?M2Z5dXdLb3RmRUFqdzhwTDVMM1ZjSjBLTjRpUTZENzdsTm05bFZva3J1Ri80?=
+ =?utf-8?B?NmZxbURwek1Jc1g1WHdDb0xFWkRNd09HQVVYb3cyd2Zic25USUVpcWpsaXh1?=
+ =?utf-8?B?cTFuVkdrK0Q4M0x6VG1RZnpoVmQrUDF0MFZsYW9DWTMvZjdDZjQyejY2RHY3?=
+ =?utf-8?B?Y001czZmMFQybklZNWdZUFByUFJ5VGM1S2toRDNyQldrNms0U1JyVnUxM1dY?=
+ =?utf-8?B?RlBRcjZKYkwwaWZvNkNJTmNlUDJ0eTRZNElRRUNmUFBVZk9wV2lER2IvSkFL?=
+ =?utf-8?B?U2laZVVqY3VuVXl2N0J1eG82L3MrWW5lNitXMWZzanY1aVQ0R2hqT0NFVGN1?=
+ =?utf-8?B?Z2w5cmpTZ1UzaGdkOC9GeEtzV05TaVRYMk95d0hmaDFBS0dhb3pIL3pZSEc1?=
+ =?utf-8?B?blZRZWo3cDM0T245WTE2WDUzeGxITjhKeEVTeDFaUVlCRENsSzdqMEFQWWRo?=
+ =?utf-8?B?Z21BbERjZzh1RnIwRHdtQlpHeEhjYm9SYnJlWHROSTIyVGZsbXZDV0lqZHdn?=
+ =?utf-8?B?aWdPejJha1puek56aTFkRUlRQzJpSk4rUEtTRWcvaTU0eitsM0RQYnhXQjV3?=
+ =?utf-8?B?Z1ZUblZ6MjV1OFlyV1hReTBlRTE0SEhNRkdaZGRHb1EzYjVVcmZrVStQS3Rh?=
+ =?utf-8?B?dkN5S24zSS9rK1pvUDFHL211Zngvdk1NWWIzSUhZUTNIbHd5SktZY0NkTnBG?=
+ =?utf-8?B?MnRsMzZyMk1jcXVZVVVVRnJhTHh2NjBLUlZjMTdwRktkZEhWVGpUYWpjcmlj?=
+ =?utf-8?B?SW01VEdIOTB4cStEWjEvenhyVTdDQXdiOEZDbHFKWGxOT2FmbklqajR4cmV2?=
+ =?utf-8?B?cjN5WEJhZ2FTdHlvQWxQVEJXYkxxeENkTmcwZ1I4YnFTSjNIUzA3TXNWVzNF?=
+ =?utf-8?B?b1NjUEFTL2lyUmpwbkZKMmpQNzVXdWZUeVRLQ2d5QlZSY3pxSDNzc0VCUVFE?=
+ =?utf-8?B?V1lCVk1SdXhRcTlZTm1Tc0xxYkRPRGFNTGN3M2tEWXlEeC9FS1BVbndEbXlG?=
+ =?utf-8?B?SVJkU0NXK0NJd2tuRVV4V3NDTVk2VkQrM21NeDEyZzdUWmp1NFNTSkhiYTQ3?=
+ =?utf-8?B?c29sTWRBenVBYUFuVjRHNlFUSU1aNmpuek9vS2dXNEY1aGhoTzVNQ3JGOWNO?=
+ =?utf-8?B?NGtrdEJWanQ2VWZtYWVPUVd1a21IWGJQUFNhNmxaQzc2VWNPamJMLzVuZGtR?=
+ =?utf-8?B?SmNuWDg3dGo0bzFWVGhyY2ZmYUE5aVJ3MFBwemYzT21yUTlGbFgwcVpwSHFX?=
+ =?utf-8?B?bDE5TTQ1bnVYMVFPVEF4N0QzdTZxeTRVQ0xMSUZJVzZBMTNPenU1cWJLVDZw?=
+ =?utf-8?B?ajlQYytTQU9hZngzMVhYSmFlQlVtSzdXVkxsMHQxbkJpVGI2dDBSaDJkbkFn?=
+ =?utf-8?B?dG1vZHBLOENqbW9jRk1oQUVtYmFjSitHcXRqYlk2TjBHa0pWbWNYM281b3dD?=
+ =?utf-8?B?YVdGd2V2Yk5NS2ZhUzQvcHcxZkVBR3dGTTVRZHFnNHdZM1RsK0xpbGtwcmNs?=
+ =?utf-8?B?aVkwZVZlTWJla2tuTTFUTUI4bmt4T0ZKZEJmQ2Q5WjdNcS9BMmFIV205YkN3?=
+ =?utf-8?B?TWNMdC9Lc2pLM1BqUHhmaXFkSGREdG9yVUs5N1Q2ZmYwVTJSbEVTcGxQSUN1?=
+ =?utf-8?Q?m6R9xyYW+SY=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7790.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB11017
+X-CodeTwo-MessageID: 69748bbc-0ac9-4853-ad6b-a7f652ea34af.20250902084612@westeu11-emailsignatures-cloud.codetwo.com
+X-CodeTwoProcessed: true
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF0000019E.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	5fd844a7-7364-448a-5d07-08dde9fd2812
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|35042699022|1800799024|376014|7416014|14060799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wkc2OEc2ZjB2YU1OVmVoT3VPdGVFcERCaEpUWFgxSUdweVByNit6NlYxcC9y?=
+ =?utf-8?B?cEp0Vms1N1o3OTZjK2F4N2Qrdlk1ZmJIVWU3L2FYcE9zVFh5RHdWaG9na3RS?=
+ =?utf-8?B?RHlxYXZYSDhTd25jRzR0dktZdlFBejhrVjRKS2ROTXA5RlRqMENxUEQwWkVz?=
+ =?utf-8?B?SlpYM092dEgrK1VtcDNLS3hIeVpmaWRJWFVZeDIxT3FTM2Y2K3ZUSnE3Zmd5?=
+ =?utf-8?B?TGh1RHlqMUpWZWgwMkhURFZCMmlqbGprdHB3NVYwTHpjZkowQVBLU2xuTzMw?=
+ =?utf-8?B?NG9mcmlVTklHT3dHZDRta09Sd3BJdWpuTitDejhTaStsa0lmcFVPYmhCYmZu?=
+ =?utf-8?B?azEzYXRUUWwxM2RTazNBNHFMQ3lrRHhYWllvbFhjanBveFhOcjk0TzltN2Rk?=
+ =?utf-8?B?VDNLS25EQWNrT2UzZ0x3bjVwdHQ5dFA0c1ZhOVZGZGo0VW82OUZmKzVIc0Zx?=
+ =?utf-8?B?d0MySjBEeVNhTlpvcUpMdVErcXVDZ1d3QU5tYzAzajdFdHFhbFRvR24vZzVI?=
+ =?utf-8?B?NWZtVU1DMXMwWFFUcUlCRCtrM2JCZ1Q2b2dyeGJ6VThiZEFpM05hbDR5d2Z5?=
+ =?utf-8?B?cjMxYW96N0wwTFhQeHZQNWtvT2ROeWUxLzhRRVJVbEFqR1JSSjIwcWU2UXhR?=
+ =?utf-8?B?ZElmS2t5U2pxU2hCTVBoUXhKaGV2TWlUa2xMUmVwYkwrYUtYSnBhYjZkT25H?=
+ =?utf-8?B?S2MzSFFKcXRKbFBVMitHQjd6U3hMQVdyN3g4ODNISU9VYlRKRVdpcm9tWkk2?=
+ =?utf-8?B?TFl1R2cra05VdlJxaVdFWWV0a0tQTjNtWWdPUmJ1c2lYV1E4Q3JveWJRMUhE?=
+ =?utf-8?B?d3p3ZW5zMVA1aHVyejNnVUpPNlA5SUpXeFA5VkFPR2JSM2lnMnozY1FmVjJQ?=
+ =?utf-8?B?Z1Q0UmN4R1E1emZveTlBbE5tNzlhSC9mZGFOckNVc0ZKL1dVYlFDUmtFZUxT?=
+ =?utf-8?B?cWY0dVVuekVWWnRHZTU2WWtURnljKzFqeWdDMWNPNTM5aDA0ZkYyU3NUbEhj?=
+ =?utf-8?B?MUhaMi9HdVlkT2xsVit6eGt0eEZjbWNjRW1wajdZcjdjMHRMUkJzSFYwQkV6?=
+ =?utf-8?B?dTU0TlR5bTFrdzlaK1EwVlZMS21Zak05WkpZdGp6eE9WSnBCanVRY21SbmJ5?=
+ =?utf-8?B?cW5USGhQMks1Mm5KeGtIYjlQZVJaNzQ2Y1pVYlVqbWJnV2dYMWNiakVJRWdD?=
+ =?utf-8?B?aEpVbXZ5VnByWTFVTCtJaTV6dklTa0Npd253UGF0WjAySW4zVDBsU29ncnB3?=
+ =?utf-8?B?aEZ4VVRjSHlMN3NMNGJvMXdKRGJ2U2xmYksyRGV5UGpsNUVoNFV1UHRUSXEy?=
+ =?utf-8?B?UjZGRERJWGs3aHVndnJZL3ArcWhPRU9WT3JqWjhpOWNUOG55K3BTeFdHaU5n?=
+ =?utf-8?B?eTB6K2p3QTNKNkhlZXNSUDFWbUQwTUdjanA5b05zVkNiT1hIVW4zUFlaYTZ3?=
+ =?utf-8?B?RDBoaSsxbU12eEd1NFhPL1lNT0ZYS2FVdVVhMERlL1BRTUNhWUJMc1h2TWdW?=
+ =?utf-8?B?TzBMUE1SaTdaTDAxTTdkaEY3ckVnTndCTW9UYVVBMFpiODZ2MkhxeGlSTXd3?=
+ =?utf-8?B?T2xlSHVwekFCL0VTam1UVkhNWXJqa3BNT1dRQmQ2WlBJM2tHZy8yY1dzN09p?=
+ =?utf-8?B?eWdDUElpaUxzWms1Yk5raFIwM3ZGVTFsQkI0VWJvZWs5Q0ZDOXRLZHY1eDQ5?=
+ =?utf-8?B?S2ZvQ1E1cGJYVHdPS3lhN2hPV25tTXZFSlk1bFVQdW9VNm9vZFgrV3Zmdys4?=
+ =?utf-8?B?aVpmWlA5Q0paT2VEeUQvdFplTHNYcklCRFhKeXovYmx6enNwWWsrS1Fub0h4?=
+ =?utf-8?B?VEhvZGM1Uk5tdU1PTXNmSGNzZG5PSlpDcXcwYVRoMTFpbklsUWhtMkE3dGhx?=
+ =?utf-8?B?UCtFSjgvZlRBb3RoM1pnb3FmU2RmRngxYi8zRkw0aVordDlTOWp3VytXUXRD?=
+ =?utf-8?B?c0FDYjlFOUhPaUZLNWNIZ1cxZlFwM2p1VnFiSlVBUGtzblBqblh2bnc4UFJZ?=
+ =?utf-8?B?MGY0VlJVVk1BPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:20.93.157.195;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu11-emailsignatures-cloud.codetwo.com;PTR:westeu11-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(35042699022)(1800799024)(376014)(7416014)(14060799003);DIR:OUT;SFP:1102;
+X-OriginatorOrg: topic.nl
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 08:46:13.1472
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 371105ed-9371-4ec7-8659-08dde9fd2c15
+X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[20.93.157.195];Helo=[westeu11-emailsignatures-cloud.codetwo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF0000019E.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11055
 
-On 9/2/2025 2:43 PM, Ziqi Chen wrote:
+On 9/2/25 08:53, Krzysztof Kozlowski wrote:
+> On Mon, Sep 01, 2025 at 04:29:01PM +0200, Mike Looijmans wrote:
+>>   .../bindings/display/bridge/ti,tmds181.yaml   | 152 ++++++++++++++++++
+>>   1 file changed, 152 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/display/bridge/ti=
+,tmds181.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/bridge/ti,tmds181=
+.yaml b/Documentation/devicetree/bindings/display/bridge/ti,tmds181.yaml
+>> new file mode 100644
+>> index 000000000000..c6387c482431
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/bridge/ti,tmds181.yaml
+>> @@ -0,0 +1,152 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/bridge/ti,tmds181.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: TMDS181 and SN65DP159 HDMI retimer/redriver chips
+>> +
+>> +maintainers:
+>> +  - Mike Looijmans <mike.looijmans@topic.nl>
+>> +
+>> +description: |
+>> +  Texas Instruments TMDS181 and SN65DP159 retimer and redriver chips.
+>> +  https://www.ti.com/product/TMDS181
+>> +  https://www.ti.com/product/SN65DP159
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - const: ti,tmds181
+>> +      - items:
+>> +          - const: ti,sn65dp159
+>> +          - const: ti,tmds181
+>> +
+>> +  reg:
+>> +    enum:
+>> +      - 0x5b
+>> +      - 0x5c
+>> +      - 0x5d
+>> +      - 0x5e
+>> +
+>> +  oe-gpios:
+>> +    maxItems: 1
+>> +    description: GPIO specifier for OE pin (active high).
+> So that's reset-gpios or powerdown-gpios (see gpio-consumer-common). At
+> least datasheet calls them that in one place.
+
+reset-gpios fits reasonably. Though the pin is labeled "OE".
+
+(Our experience: The pin must be driven low until the power supplies are=20
+up. Failure to do so may put the chip in an error state, pulling the I2C=20
+lines low, that only a power cycle may resolve. So it's close enough to=20
+"reset")
+
+>> +
+>> +  vdd-supply:
+>> +    description: Core power supply, 1.1V
+>> +
+>> +  vcc-supply:
+>> +    description: IO power supply, 3.3V
+>> +
+>> +  ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +
+>> +    properties:
+>> +      port@0:
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +        description: Video port for HDMI (ish) input
+>> +
+>> +        properties:
+>> +          endpoint:
+>> +            $ref: /schemas/media/video-interfaces.yaml#
+>> +            unevaluatedProperties: false
+>> +
+>> +      port@1:
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +        description: Video port for HDMI output (panel or bridge)
+>> +
+>> +        properties:
+>> +          endpoint:
+>> +            $ref: /schemas/media/video-interfaces.yaml#
+>> +            unevaluatedProperties: false
+>> +
+>> +    required:
+>> +      - port@0
+>> +      - port@1
+>> +
+>> +  ti,source-mode:
+>> +    type: boolean
+>> +    description:
+>> +      Force chip to operate in "source" mode. Allows to use
+>> +      a TMDS181 chip (which defaults to sink) as cable driver.
+>> +
+>> +  ti,sink-mode:
+> Aren't these two mutually exclusive? Can same device operate in source
+> and in sink mode simultaneously?
+
+They're exclusive, yes. Will add that.
+
+
+>> +    type: boolean
+>> +    description:
+>> +      Force chip to operate in "sink" mode. Allows to use
+>> +      a DP159 chip (defaults to source) for incoming signals.
+>> +
+>> +  ti,retimer-threshold-hz:
+>> +    minimum: 25000000
+>> +    maximum: 600000000
+>> +    default: 200000000
+>> +    description:
+>> +      Cross-over point. Up until this pixel clock frequency
+>> +      the chip remains in the low-power redriver mode. Above
+>> +      the threshold the chip should operate in retimer mode.
+>> +
+>> +  ti,dvi-mode:
+>> +    type: boolean
+>> +    description: Makes the DP159 chip operate in DVI mode.
+> This suggest it is not applicable to TMDS, so you need to restrict it to
+> disallow it there (see example-schema).
 >
-> On 9/1/2025 4:51 PM, Zhongqiu Han wrote:
->> The cpu_latency_qos_add/remove/update_request interfaces lack internal
->> synchronization by design, requiring the caller to ensure thread safety.
->> The current implementation relies on the `pm_qos_enabled` flag, which is
->> insufficient to prevent concurrent access and cannot serve as a proper
->> synchronization mechanism. This has led to data races and list 
->> corruption
->> issues.
->>
->> A typical race condition call trace is:
->>
->> [Thread A]
->> ufshcd_pm_qos_exit()
->>    --> cpu_latency_qos_remove_request()
->>      --> cpu_latency_qos_apply();
->>        --> pm_qos_update_target()
->>          --> plist_del              <--(1) delete plist node
->>      --> memset(req, 0, sizeof(*req));
->>    --> hba->pm_qos_enabled = false;
->>
->> [Thread B]
->> ufshcd_devfreq_target
->>    --> ufshcd_devfreq_scale
->>      --> ufshcd_scale_clks
->>        --> ufshcd_pm_qos_update     <--(2) pm_qos_enabled is true
->>          --> cpu_latency_qos_update_request
->>            --> pm_qos_update_target
->>              --> plist_del          <--(3) plist node use-after-free
->>
->> This patch introduces a dedicated mutex to serialize PM QoS operations,
->> preventing data races and ensuring safe access to PM QoS resources.
->> Additionally, READ_ONCE is used in the sysfs interface to ensure atomic
->> read access to pm_qos_enabled flag.
->>
->> Fixes: 2777e73fc154 ("scsi: ufs: core: Add CPU latency QoS support 
->> for UFS driver")
->> Signed-off-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
->> ---
->>   drivers/ufs/core/ufs-sysfs.c |  2 +-
->>   drivers/ufs/core/ufshcd.c    | 16 ++++++++++++++++
->>   include/ufs/ufshcd.h         |  2 ++
->>   3 files changed, 19 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
->> index 4bd7d491e3c5..8f7975010513 100644
->> --- a/drivers/ufs/core/ufs-sysfs.c
->> +++ b/drivers/ufs/core/ufs-sysfs.c
->> @@ -512,7 +512,7 @@ static ssize_t pm_qos_enable_show(struct device 
->> *dev,
->>   {
->>       struct ufs_hba *hba = dev_get_drvdata(dev);
->>   -    return sysfs_emit(buf, "%d\n", hba->pm_qos_enabled);
->> +    return sysfs_emit(buf, "%d\n", READ_ONCE(hba->pm_qos_enabled));
->>   }
->>     /**
->> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
->> index 926650412eaa..f259fb1790fa 100644
->> --- a/drivers/ufs/core/ufshcd.c
->> +++ b/drivers/ufs/core/ufshcd.c
->> @@ -1047,14 +1047,18 @@ EXPORT_SYMBOL_GPL(ufshcd_is_hba_active);
->>    */
->>   void ufshcd_pm_qos_init(struct ufs_hba *hba)
->>   {
->> +    mutex_lock(&hba->pm_qos_mutex);
->>         if (hba->pm_qos_enabled)
->> +        mutex_unlock(&hba->pm_qos_mutex);
->>           return;
-> Missing the curly braces for this If statement.
+> Actually several other properties say they are applicable only to DP159.
 
-Hi Ziqi,
-Thanks for the review, yes, i will fix it on v2
-https://lore.kernel.org/all/20250902074829.657343-1-zhongqiu.han@oss.qualcomm.com/
-  
-The internal test version does not contain this bug; in fact,
-the internal test version is correct.
+Will do.
 
->> cpu_latency_qos_add_request(&hba->pm_qos_req, PM_QOS_DEFAULT_VALUE);
->>         if (cpu_latency_qos_request_active(&hba->pm_qos_req))
->>           hba->pm_qos_enabled = true;
+
+>
 >> +
->> +    mutex_unlock(&hba->pm_qos_mutex);
->>   }
->>     /**
->> @@ -1063,11 +1067,15 @@ void ufshcd_pm_qos_init(struct ufs_hba *hba)
->>    */
->>   void ufshcd_pm_qos_exit(struct ufs_hba *hba)
->>   {
->> +    mutex_lock(&hba->pm_qos_mutex);
+>> +  ti,slew-rate:
+> Common property is "slew-rate" - see pincfg-node.yaml
+
+Will change to slew-rate.
+
+
+>
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    minimum: 0
+>> +    maximum: 3
+>> +    default: 3
+>> +    description: Set slew rate, 0 is slowest, 3 is fastest.
 >> +
->>       if (!hba->pm_qos_enabled)
->> +        mutex_unlock(&hba->pm_qos_mutex);
->>           return;
-> Same here.
-
-Acked.
-
->> cpu_latency_qos_remove_request(&hba->pm_qos_req);
->>       hba->pm_qos_enabled = false;
->> +    mutex_unlock(&hba->pm_qos_mutex);
->>   }
->>     /**
->> @@ -1077,10 +1085,14 @@ void ufshcd_pm_qos_exit(struct ufs_hba *hba)
->>    */
->>   static void ufshcd_pm_qos_update(struct ufs_hba *hba, bool on)
->>   {
->> +    mutex_lock(&hba->pm_qos_mutex);
+>> +  ti,disable-equalizer:
+>> +    type: boolean
+>> +    description: Disable the equalizer (to save power).
 >> +
->>       if (!hba->pm_qos_enabled)
->> +        mutex_unlock(&hba->pm_qos_mutex);
->>           return;
-> Same here.
+>> +  ti,adaptive-equalizer:
+>> +    type: boolean
+>> +    description: Set the equalizer to adaptive mode.
+> Can equalizer be disabled and adaptive the same time?
 
-Acked.
+No, since "adaptive" is the default, I'll just remove that option.
 
->> cpu_latency_qos_update_request(&hba->pm_qos_req, on ? 0 : 
->> PM_QOS_DEFAULT_VALUE);
->> +    mutex_unlock(&hba->pm_qos_mutex);
->>   }
->>     /**
->> @@ -10764,6 +10776,10 @@ int ufshcd_init(struct ufs_hba *hba, void 
->> __iomem *mmio_base, unsigned int irq)
->>       mutex_init(&hba->ee_ctrl_mutex);
->>         mutex_init(&hba->wb_mutex);
+
 >> +
->> +    /* Initialize mutex for PM QoS request synchronization */
->> +    mutex_init(&hba->pm_qos_mutex);
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - ports
 >> +
->>       init_rwsem(&hba->clk_scaling_lock);
->>         ufshcd_init_clk_gating(hba);
->> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
->> index 30ff169878dc..e81f4346f168 100644
->> --- a/include/ufs/ufshcd.h
->> +++ b/include/ufs/ufshcd.h
->> @@ -962,6 +962,7 @@ enum ufshcd_mcq_opr {
->>    * @ufs_rtc_update_work: A work for UFS RTC periodic update
->>    * @pm_qos_req: PM QoS request handle
->>    * @pm_qos_enabled: flag to check if pm qos is enabled
->> + * @pm_qos_mutex: synchronizes PM QoS request and status updates
->>    * @critical_health_count: count of critical health exceptions
->>    * @dev_lvl_exception_count: count of device level exceptions since 
->> last reset
->>    * @dev_lvl_exception_id: vendor specific information about the
->> @@ -1135,6 +1136,7 @@ struct ufs_hba {
->>       struct delayed_work ufs_rtc_update_work;
->>       struct pm_qos_request pm_qos_req;
->>       bool pm_qos_enabled;
->> +    struct mutex pm_qos_mutex;
->>         int critical_health_count;
->>       atomic_t dev_lvl_exception_count;
+>> +additionalProperties: false
+> Best regards,
+> Krzysztof
+>
 
+--=20
+Mike Looijmans
 
--- 
-Thx and BRs,
-Zhongqiu Han
 
 
