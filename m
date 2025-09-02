@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-795931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30AA4B3F99D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:05:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76007B3F9A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A712C2DF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9C3F1A880C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FECB2EAD0A;
-	Tue,  2 Sep 2025 09:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0616820E6E1;
+	Tue,  2 Sep 2025 09:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HNOrsB3z"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="NHMqfsAH"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEDB2EA15B;
-	Tue,  2 Sep 2025 09:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811D5221F09;
+	Tue,  2 Sep 2025 09:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756803849; cv=none; b=Z05KtUYV9AKAnFA6ZHiP7f7DeKKOdL4xXq7FJDQy5Dz+kQLQxSw+kUVDLmwtTsK+a27dHyARMDZYWW2r0/F4Od5buxDItuV1AA8+hkdyLlh7l3zEeiUSY/4Yudpop2633svl3140I8W3tNMSyyvLCSkrU8TCLJSotNjU0YxUU0Q=
+	t=1756803880; cv=none; b=baxP8y25zuUMYXMHinI7NzJ1jhCGS7aQRYZrD3p65LFA3Qi6nDLaSdm060/anLfFE2I739F4+OiI+TfNd0TOHL0G96zzGA3r8cb0+T8Y2CSmTZD/i1/de2o179HYemCqHA2081d5qpqjuXqHuPmTNd0Z1HOOsEE7C+PmAHFbGbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756803849; c=relaxed/simple;
-	bh=9/4dSQil6gCNmsV1F2nLp74J56kfb9oNf3kGFxP6zZY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fDCyTLH+qHJuQyYsHbqliNb1DxSid+yiS5/SK7CZ22Xjs9DDHUyxQaF8pCm5sCLtmBunj5OB4PUej0hCkSv8J4U6nlnp/YcVQoG2DXMTry47T2mNPd0fg7k3oHGuVXlzCPuEGKLW2vIL5esP62BGv0pocOQ3PSnq3VW0T84LN7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HNOrsB3z; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4c9a6d3fc7so2880950a12.3;
-        Tue, 02 Sep 2025 02:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756803847; x=1757408647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Q0TdqGH+SedUbO0icaQXU5WTMKI4ygvvuC7x3PRRyI=;
-        b=HNOrsB3zqdTQbm1QPR1FaUxIJr0XWqIrzXRGnGoR8tR0t1ET+QB0aavWyuIlGjARLA
-         0Ca3wdzgPmITKSCLQRvW8vwBnv0UuD5utxGdH0cid3NY25fKFUqZu/5J3IPRvlGfJWkI
-         IsQwDIv7lF/4I4IV1PvJk/Bh+5Dvx4UBlIT7GcLtqN8axHBiNTxzUB609pNjYFFGdZqc
-         gMpF/cv2AJNpf2awmhEsXRgwzphUj86OU7fiu4+gvlNJwAHKyWUmURDOwW1ba6er3v5W
-         4aEn1hw2c2aQs6OMBK313H9ZAsmqHbP7c5kznVmaSX140BLpF9bkxCSSVvN2ZBoA3z5T
-         W0vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756803847; x=1757408647;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Q0TdqGH+SedUbO0icaQXU5WTMKI4ygvvuC7x3PRRyI=;
-        b=pcSTfF7G6Mz5SeyQoyoJn1bPQqvTb0r1i1Tsg9C/qeK8wRcAYRrLuP6qcOLmI4J2RZ
-         wsT0Eh9mKUKKZBJxf+8Brv95HjFqhxhiWAa7zP9CL8NvSGrqifZvC5JNIcndYbT5EGno
-         XEHphOyNIxKO69hoAyjlAnT7hobxUL+trmzvtO8JfyFSJpR7rqQJyslA+I6gbI4oDHL4
-         /xR2US1vTwzawqug0ZsixiENhD2l2c5YrnVvrmIQx+tJq1upIbLCM64hrG+/YZcuYR0O
-         boHYEEhpTUQSV25zJNSpAWByzIICfACvc3G1+NKf21vW6NuOghGExNRak1AX/kEy/ZTB
-         VhTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzum1GW7Y298fHTsMa/Yw+lqNkzptBXd+R0A14yeK8U9WlsIb+dAQBbLf+rxCyLKaw9u0LuRl9914P3RbN@vger.kernel.org, AJvYcCWBmNeqkVAJE4Js5JMoB+4y3dB+qp1XTDqK3Wgc18PKaAZ7nctyCHs2qumqQdxoeQrCC5IEQCJV@vger.kernel.org, AJvYcCXilPxtF8Iu6qi2KlYvVKmfAQLQWUTK3CzYcabDrTY4uNdEgmmhrdsVXIo5zJ+SQX+MMMQVLTGngMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi1WLnlsBXkC1gwn1KV+hzVUO+froXgj2LHWv2d9xZTGe+2ICG
-	XqEdBrhxuZ6HXR0d8Pa9umBQVCTftCC2kSE41zwuo1/9e+SJJl57bIPo
-X-Gm-Gg: ASbGncs0Qg9ZOWbnmnypIrWsaamUxRsFTWoTXlzkxBvmCjariihu4CNRi/II36mecGL
-	Vr1nHJjW+ydXDJCC0pVP8Cpv5BTL+GVPbNsF2iJvizMCRvxP5Ek9tcoKASFCXTjn4DsmkyY2TLt
-	OZeJ62aN3ii6EEGXY2sXKzgsxxAXdIlx1J/XQffatHYWXdxqRt4oNJW6hha1uPES+CvaZPLjpA5
-	7a1yzXOrdnAQqQ54lWuKHhfc1S9eWXEwNjsDpccGhgFrPZhFW1La0ULZdjvuZsO29N3WtVCXjXl
-	EFkXlpCN5p3GOKGmqxHazSqLMlFp7+B9Wcv/QW5FDOUO0xBmEtz2EntpoudFqafqjnVDFhMQ2Zq
-	fRBAb26VIQ4Ep/7tLZEyVgBbJrOTv6ul30F+pEfuFtvyRMpVufV0Xjl8FCt6+7IGkQllCMk+VOX
-	mruutx+Eerrmout6MjqTH13v5I2jOQv5oCVidS4OYQs6/rKQ==
-X-Google-Smtp-Source: AGHT+IFyanZcjAkF9HeLJ3lRjhUkpz4bCvq5ZgbnJtfm7KF29FCpEsN59SsHPIhpiuAbEi1lvHyW4w==
-X-Received: by 2002:a17:902:e745:b0:246:e1f3:77b2 with SMTP id d9443c01a7336-24944b65071mr130427125ad.53.1756803847329;
-        Tue, 02 Sep 2025 02:04:07 -0700 (PDT)
-Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.116.239.34])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24b2570cfc8sm6300135ad.76.2025.09.02.02.04.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 02:04:06 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] dmaengine: dw: dmamux: Fix device reference leak in rzn1_dmamux_route_allocate
-Date: Tue,  2 Sep 2025 17:03:58 +0800
-Message-Id: <20250902090358.2423285-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.35.1
+	s=arc-20240116; t=1756803880; c=relaxed/simple;
+	bh=VybVW/M85O06EpGLQb8cA55azBhCKHa2SYmQOC/9wUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G0AMuRUWw/O0tgHumdRxl6xNzWmU6Fh7FNR9J8hgr/tQ8+SfdRQEVKNAR/uEtTJTZ47hhKS7qKepLSyYbblFR6HHox1EIaeds8x9BNn4K3kRbFdHFh5SSgcBTxjNPOt3PiQi42VAz2T/E6zmr0CIW9mgjR3cEN54aTVmYvG5cHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=NHMqfsAH; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id CDC1520D9F;
+	Tue,  2 Sep 2025 11:04:36 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 0zhnfERamph4; Tue,  2 Sep 2025 11:04:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1756803876; bh=VybVW/M85O06EpGLQb8cA55azBhCKHa2SYmQOC/9wUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NHMqfsAHt7DlunZl4h/nCBHuASSBKTn0YNZDRIE3yx9wEbO0F1jqgwPpOmxhHnbfW
+	 HkIFjXqE/4PN7dO5gsxXEDiCly149PLq6eO6JNB12kbqdUXfHYnXfH38baWmp0BWEl
+	 TjexwQ0IjANJcdG6qkfNpAGLjt//r1GgAYZxwkC1KaJHXA78TFmLdnN8fxhpNhPw1W
+	 kNATLPwI4sQ3buNG5L7EZmWdyC3XQxM/b7SGA2LQBzD6nFT9RrLd9R3T8Whqj4A//6
+	 TvZO8ZAu14tWQHx0I+Z1/1iwcg5YrwkBpLVFyGNpPTK+k46uDxwHGxzXrwtOazxPtf
+	 jAY03cl38QaVg==
+Date: Tue, 2 Sep 2025 09:04:23 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>,
+	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
+Subject: Re: [PATCH 1/4] dt-bindings: reset: thead,th1520-reset: Add
+ controllers for more subsys
+Message-ID: <aLazFzq2l7s66IqS@pie>
+References: <20250901042320.22865-1-ziyao@disroot.org>
+ <20250901042320.22865-2-ziyao@disroot.org>
+ <20250902-peach-jackal-of-judgment-8aee13@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902-peach-jackal-of-judgment-8aee13@kuoka>
 
-The reference taken by of_find_device_by_node()
-must be released when not needed anymore.
-Add missing put_device() call to fix device reference leaks.
+On Tue, Sep 02, 2025 at 10:27:53AM +0200, Krzysztof Kozlowski wrote:
+> On Mon, Sep 01, 2025 at 04:23:17AM +0000, Yao Zi wrote:
+> > +/* VO Subsystem */
+> >  #define TH1520_RESET_ID_GPU		0
+> >  #define TH1520_RESET_ID_GPU_CLKGEN	1
+> > -#define TH1520_RESET_ID_NPU		2
+> > -#define TH1520_RESET_ID_WDT0		3
+> > -#define TH1520_RESET_ID_WDT1		4
+> 
+> This is ABI break and deserves explanation and its own patchset.
 
-Fixes: 134d9c52fca2 ("dmaengine: dw: dmamux: Introduce RZN1 DMA router support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/dma/dw/rzn1-dmamux.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+The registers in control of TH1520_RESET_ID_{NPU,WDT0,WDT1} don't belong
+to the VO reset controller (documented as "thead,th1520-reset"), and
+thus cannot be implemented by it. They're in fact AP subsystem resets,
+which gets supported in Linux with this series.
 
-diff --git a/drivers/dma/dw/rzn1-dmamux.c b/drivers/dma/dw/rzn1-dmamux.c
-index 4fb8508419db..deadf135681b 100644
---- a/drivers/dma/dw/rzn1-dmamux.c
-+++ b/drivers/dma/dw/rzn1-dmamux.c
-@@ -48,12 +48,16 @@ static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_spec,
- 	u32 mask;
- 	int ret;
- 
--	if (dma_spec->args_count != RNZ1_DMAMUX_NCELLS)
--		return ERR_PTR(-EINVAL);
-+	if (dma_spec->args_count != RNZ1_DMAMUX_NCELLS) {
-+		ret = -EINVAL;
-+		goto put_device;
-+	}
- 
- 	map = kzalloc(sizeof(*map), GFP_KERNEL);
--	if (!map)
--		return ERR_PTR(-ENOMEM);
-+	if (!map) {
-+		ret = -ENOMEM;
-+		goto put_device;
-+	}
- 
- 	chan = dma_spec->args[0];
- 	map->req_idx = dma_spec->args[4];
-@@ -94,12 +98,15 @@ static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_spec,
- 	if (ret)
- 		goto clear_bitmap;
- 
-+	put_device(&pdev->dev);
- 	return map;
- 
- clear_bitmap:
- 	clear_bit(map->req_idx, dmamux->used_chans);
- free_map:
- 	kfree(map);
-+put_device:
-+	put_device(&pdev->dev);
- 
- 	return ERR_PTR(ret);
- }
--- 
-2.35.1
+Is it okay for you to separate a patch to delete these wrong IDs and add
+them back for the AP reset controller latter? Anyway, I should have
+provided more information about these three resets. Thanks for catching
+this.
 
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+Yao Zi
 
