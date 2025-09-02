@@ -1,106 +1,108 @@
-Return-Path: <linux-kernel+bounces-796231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3F9B3FD98
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:18:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2B5B3FD9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 645742C2CAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F391B24607
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97C02F619D;
-	Tue,  2 Sep 2025 11:18:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA632765C1;
-	Tue,  2 Sep 2025 11:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30532ED15C;
+	Tue,  2 Sep 2025 11:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a8wP8rNA"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0151C274FCB;
+	Tue,  2 Sep 2025 11:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756811923; cv=none; b=UVfsOFcz2t4fQ9w/pE7DaQsmK50YXjLLWXu+XPWMTeAN4b+9v0BWoAyQdzfPhnwZHun+b7CVfirf5DLyualoPS1mV3DJ91h8E+89TX2gm/dDqa4Tm0Vji6+Rl1m1wW/2kbduO6beyd2pmm+RDqLhtkZWqKZhntsCd9DB+jz9bmA=
+	t=1756811968; cv=none; b=r4vKq75Zpie5IYxO7F9ZwoZotVY45rvlW1nZiXIO8Biz8czEzlyj52tef+Ttn+W215HRPuUG9WKUF4ebC2fkaC9eMJe5KU4Wr2QkOqcYaGzomFAYfQn6rfewmZyphCCYquVrkJqbJzbKg2tgldkyv0U2AXcU+ZPVvzKz2xEQznE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756811923; c=relaxed/simple;
-	bh=2YPGDIOlFICYdjgkf8GTamhWOiDyyLdTUT3dN1r6r5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6YbNdHWEVzpQX2LsWQuR0xyPKZ3w9OXQNowo7b28dkDPvTq4D5HesvqSQs9ZohUU+bqTRwJPQ2CAMb8BolWTbzSuqtK/3uN3njb7LmuCu6SZRhQPDsjMfNBTEd1sBrRfduKDv9/QvPtm3I8DijE/XMT0zgVRey1mqGKR5K9S2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3735726BE;
-	Tue,  2 Sep 2025 04:18:33 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D25C3F694;
-	Tue,  2 Sep 2025 04:18:40 -0700 (PDT)
-Date: Tue, 2 Sep 2025 12:18:37 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Jan Palus <jpalus@fastmail.com>
-Subject: Re: [PATCH] firmware: arm_scmi: quirk: fix write to string constant
-Message-ID: <20250902-original-hallowed-robin-d030bf@sudeepholla>
-References: <20250829132152.28218-1-johan@kernel.org>
- <aLG5XFHXKgcBida8@hovoldconsulting.com>
- <aLa__M_VJYqxb9mc@hovoldconsulting.com>
- <20250902-axiomatic-salamander-of-reputation-d70aa8@sudeepholla>
- <aLbGoctnA-Ad-Hxv@hovoldconsulting.com>
+	s=arc-20240116; t=1756811968; c=relaxed/simple;
+	bh=BoGw017JV6MDafm2pfGD3s91i69iqGZ66miMlmTbOQc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hyHqR52Tg0QNmRq99788hVRpAYnWBAz9uLY59OWa342i/i/nDwJ/tsuS5GGh74A0J77wlErj/b9ybZxEchmPorcEGUQk/UbzliPDU4GTdZF9bjMopE7FGEK9od/tbkhYE5QBoMrxGpBoq8DiK33r1XOzfb5/P+9hdGp2FFlplNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a8wP8rNA; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24b13313b1bso5455425ad.2;
+        Tue, 02 Sep 2025 04:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756811966; x=1757416766; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x2rcHOEeIqXUh6SmijH737wtMIpFUvfl+GtBU3P4v8I=;
+        b=a8wP8rNANVN8WaOdj/T+UUEcDSR6k26dT3AM3Vu5GMpY+921m8ngcWG70zdAltOa55
+         lSv9Pfv0EiALOD3y7qaR6CNprOiL02+BDKqr/H+wxtaIy2Gzi2d1M/U5KyceX0nHGXi7
+         UCe/CrDrzla0w+Of9iUNSUqksSuXzIrZyetmKFlztAswMYOfOHIXL4TTRgTSO1TvGG7A
+         VJkYUeNonjU2AqVrIsaWvU5ykcPnpvZKxTN2TjgveMF7Yr5V3BiO3BfHeJu4ZDFFOZik
+         7Habsh+ijgPcLm9ZoXYHDAJ/IhAL9xxB9bciMnKgtSoWRPJbIDTcM82xqVvlPMSxS9o7
+         xK7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756811966; x=1757416766;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x2rcHOEeIqXUh6SmijH737wtMIpFUvfl+GtBU3P4v8I=;
+        b=exn0BSsAV2ccZtOTXOJ+DD8N73KdgsyyaebNUJbfaPbgff0julSLqytsU/taPiRvvT
+         IsFDN30BtA9ymKza+jUXP2aVDLrBxJVWkwJp0YTLGU6q/rV4GbP22KksHu+6dkwhWEqm
+         rG5/wq0UfYBMMFEcOrn9Mz18AeGbOI9Z9k51MSuuw+BizhRQjU1OBC9RzrTjFr4lMR9/
+         S7E2OWwSzQ28sdytFe2TskLnsYdskY/zUyrE/8/tuxCZ/0q3igciQ5ma9IeKRUvvbzNe
+         fO6RBYCoi3fNxVYKXq1pMhZ46ulbQOuhdX0GiI6knORgkLBd6fXJA9jzVl+lNalbBBWk
+         BULg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0nCvVZdyg1zbSQwi66njSS/3tmA+pvgVuUN/9jTBFzAKT9Q4kn80cy9QDKD6SuY/cxVYVAIbzPVavFYCUOQMR8Vk=@vger.kernel.org, AJvYcCXQUM3tmkwisPwAPG3Zo4APPdSxx+3PzsO4DkGKbSik9qrwqrSiWsLsdEQ+B8ImbRwEqt9Z3YPrVIhv0js=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/RsPp4Cs34vGH2Nu1O2daVCXGjmf5sVjAvKQ6BJlVxpNc/w/d
+	cBSC2YChVzVnhUkJdQ2mAeG9x6+HgM36MyV/pTZ8LPAZPiorF6bV0WVV
+X-Gm-Gg: ASbGncs6LNP5dxuKo+6zoLRqXuNBBnTqfQc7toM8T3YrPp8QF0Zpx4VMg1AfVAvoCKl
+	n/wL9uxSqZ7zK3ISOPG/2SXquzOhIYHbjvHd8ZlXEHlJ//oukn2RhMQ7ZJnX973AqSvwjRivogY
+	B89fD8CD0fXwFwquxE4CrfgJuku5g3pQk+7z3QAefHCaZEewIlgc1DuyG2lCJGL1eMvtc8LkFEx
+	9aDvDSIj29MLDf1s5U9sZnn75Ze0nw30l8ldRcnnqA7fZf2Q4R/GfJ5xTyJc6KpNY58mvPgm/wd
+	0q6fMNE3xTCXKFWsHcsrILeFDcSK2t7Av74VTK7/1SfR5B0yVgT25h2ud6QYSKhefo5TBIxJ5gU
+	xSvKzRqxl774vqsyZCKQtMuiWUtr68aMH76OnPWxi0gsky+B6mg==
+X-Google-Smtp-Source: AGHT+IGxnHS6Z8WCWgDFUeDJb6KIIEv4c0pLQBKyRBYltrfE2IaLwrI592U+lXunhDHTgiqlRjBU3w==
+X-Received: by 2002:a17:903:ac8:b0:248:93f4:fe14 with SMTP id d9443c01a7336-24944b1b1f2mr128729525ad.33.1756811966169;
+        Tue, 02 Sep 2025 04:19:26 -0700 (PDT)
+Received: from name2965-Precision-7820-Tower.. ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903705be3sm131325835ad.18.2025.09.02.04.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 04:19:25 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] drm/exynos: vidi: fix various memory corruption bugs
+Date: Tue,  2 Sep 2025 20:19:16 +0900
+Message-Id: <20250902111919.3524799-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLbGoctnA-Ad-Hxv@hovoldconsulting.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 02, 2025 at 12:27:45PM +0200, Johan Hovold wrote:
-> On Tue, Sep 02, 2025 at 11:16:46AM +0100, Sudeep Holla wrote:
-> > On Tue, Sep 02, 2025 at 11:59:24AM +0200, Johan Hovold wrote:
-> > > On Fri, Aug 29, 2025 at 04:29:48PM +0200, Johan Hovold wrote:
-> > > > On Fri, Aug 29, 2025 at 03:21:52PM +0200, Johan Hovold wrote:
-> 
-> > > > > The quirk version range is typically a string constant and must not be
-> > > > > modified (e.g. as it may be stored in read-only memory):
-> > > > > 
-> > > > > 	Unable to handle kernel write to read-only memory at virtual
-> > > > > 	address ffffc036d998a947
-> > > > > 
-> > > > > Fix the range parsing so that it operates on a copy of the version range
-> > > > > string, and mark all the quirk strings as const to reduce the risk of
-> > > > > introducing similar future issues.
-> > > > 
-> > > > With Jan's permission, let's add:
-> > > > 
-> > > > Reported-by: Jan Palus <jpalus@fastmail.com>
-> > > > 
-> > 
-> > I was hoping to hear back, but I assume silence is kind of acceptance.
-> 
-> I sent the reply with the tag after making sure off-list that Jan was OK
-> with it. Sorry if that was not clear.
-> 
-> > > Please don't do such (non-trivial) changes without making that clear
-> > > in the commit message before your Signed-off-by tag:
-> > > 
-> > > 	[ sudeep: rewrite commit message; switch to cleanup helpers ]
-> > > 
-> > 
-> > Sorry I meant to do that when I replied and asked you if you are OK
-> > with cleanup helpers. Also yes I planned to add a line like something
-> > above before finalizing.
-> 
-> Sounds like a mail has gotten lost since I never saw that question from
-> you.
->
+This is a series of patches that address several memory bugs that occur
+in the Exynos Virtual Display driver.
 
-No I hadn't sent it yet, generally wait for builder report to finalise
-the commit. Sometimes -next integration happens before build sends build
-report for my branch and that happened this time.
+Jeongjun Park (3):
+  drm/exynos: vidi: use priv->vidi_dev for ctx lookup in vidi_connection_ioctl()
+  drm/exynos: vidi: fix to avoid directly dereferencing user pointer
+  drm/exynos: vidi: use ctx->lock to protect struct vidi_context member variables related to memory alloc/free
 
--- 
-Regards,
-Sudeep
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |  1 +
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 74 ++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 64 insertions(+), 11 deletions(-)
 
