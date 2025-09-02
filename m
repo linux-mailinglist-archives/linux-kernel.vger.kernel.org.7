@@ -1,95 +1,87 @@
-Return-Path: <linux-kernel+bounces-796674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D5DB405D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:59:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A405B405D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96B6F1B242F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2754E3BD7FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF2630496B;
-	Tue,  2 Sep 2025 13:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44868313E1D;
+	Tue,  2 Sep 2025 13:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Peu0JOjg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9gVKmqkX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Peu0JOjg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9gVKmqkX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DQbDyaDu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DC62DFF0D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C36A31352C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756821038; cv=none; b=p19bOQZxx1jBIs/I52xWw1lVg8h3kKH5yYOUrJizJ6g4iEAn2mWtdLuFohnN0XBBZr/vweFzHLt4XGqyHwpJspjCnsTpcEnTZS80cvgXih8nfTXxYH68EzrNkTBwA5X/LKL9RDYNGufDigOIxPQWvmh5FQUxzKRjO7Iohqy29/g=
+	t=1756821058; cv=none; b=Y0kZ68vKgQZAIdz/pBxTUDOH9j+hfYaeq2VehO1p3/tyqIiCJ+ekyety0cJkwS26WYpSdHuYkLVURAPnfm2+nE/kfaoNPuJwoSqc9855EMWz+blu+KZ6TkJlClznT7srM5/vKvqc9BShKrdrRefwtsgs8LkS/yyBQbkQhzMyzT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756821038; c=relaxed/simple;
-	bh=QIFRbK9YbFSFNwod2xxtOyBdviKtc+6RZnPGatPRJ9U=;
+	s=arc-20240116; t=1756821058; c=relaxed/simple;
+	bh=caUygkLX29UctzzHFfy3myEeOqF1S6aaPwgrFfajd2A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D4Tz9t0FlPv8jB3xj7nTQXZyPhB7j3cIKmESnqQTLNfwJqJiCKIBrvxqHbv6JEic1hMZ+/vdm7ZLCwLdcOyYEblQKd+DBfSv6QZF09e5rDp8G7SxzrdxWSK0oP45oGzOG4USaTOoVoivofEVGSzUXDMPQFP1h4gItq9ORsLbbIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Peu0JOjg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9gVKmqkX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Peu0JOjg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9gVKmqkX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5AE531F391;
-	Tue,  2 Sep 2025 13:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756821034; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=A0wLap34TPUw1H9/KlLA4/uC45l1qQtAzjwebhCQF4SyWY/JQF5X2qn/Il+5kmu+bp9EplYSm4/clghXc7JR7EnGvg+xscGRas6N0FozL8kwdUF6dsySw3/SwEZop73j+Wvwgdme7ChOfvvf1uCNGMr5+vthEYUBG7QkWpa3pN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DQbDyaDu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756821055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lGeceZYpzOse2vczvYxbbZAoWpm8L9ZnY42QIUVo8yE=;
-	b=Peu0JOjgEGpD/12LOxEF+jGXLK+5iOb0k8Fvp1NfOgZIWl91pqXszOwMrlJ22mMe0WAl09
-	hhLEdGl59mTaMM5iHeO/p/XB140G7cRzJyCHBW8N73A5xa6HoNI2+yLi/JIojSkM0Y1jGJ
-	GX7Xin/FaW3bGrsblBUfdbL/M1cqCpg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756821034;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lGeceZYpzOse2vczvYxbbZAoWpm8L9ZnY42QIUVo8yE=;
-	b=9gVKmqkXpVPFLBA7vdB+yQqhpQQde6eYBSmX6eLl9hXnAVPgc9T7xjAE2DPu3yk3lICar0
-	cQjI0jk3eQkHeSCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Peu0JOjg;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9gVKmqkX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756821034; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lGeceZYpzOse2vczvYxbbZAoWpm8L9ZnY42QIUVo8yE=;
-	b=Peu0JOjgEGpD/12LOxEF+jGXLK+5iOb0k8Fvp1NfOgZIWl91pqXszOwMrlJ22mMe0WAl09
-	hhLEdGl59mTaMM5iHeO/p/XB140G7cRzJyCHBW8N73A5xa6HoNI2+yLi/JIojSkM0Y1jGJ
-	GX7Xin/FaW3bGrsblBUfdbL/M1cqCpg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756821034;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lGeceZYpzOse2vczvYxbbZAoWpm8L9ZnY42QIUVo8yE=;
-	b=9gVKmqkXpVPFLBA7vdB+yQqhpQQde6eYBSmX6eLl9hXnAVPgc9T7xjAE2DPu3yk3lICar0
-	cQjI0jk3eQkHeSCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F17D513882;
-	Tue,  2 Sep 2025 13:50:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id c/+GOSn2tmgnZAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 13:50:33 +0000
-Message-ID: <8527ee39-6933-4d2f-b834-af628bbadd22@suse.de>
-Date: Tue, 2 Sep 2025 15:50:33 +0200
+	bh=gjIO8VOEjJ/H4tg0OoEy8m/wse6tQSWY2ahEW3Ut7lc=;
+	b=DQbDyaDunOcJsKacoQ5dU5YtQdbB3wm/lB92bwD4Tch7Qar6MFXj1A9NE+QTuHXnw6FZtm
+	IZBEPtfewq6PthZqAPmvWq8etvF7d0jBuT/bAJjJipNLTp2tUIEZ49iSnPsOkCqLu9/Qg0
+	fyw2hThotDgPQZOXbdGoQeOrK80GFHU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668-mg3XfJyVOMOiwTnjRrJysQ-1; Tue, 02 Sep 2025 09:50:53 -0400
+X-MC-Unique: mg3XfJyVOMOiwTnjRrJysQ-1
+X-Mimecast-MFC-AGG-ID: mg3XfJyVOMOiwTnjRrJysQ_1756821052
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b8af0b8deso13081375e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:50:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756821052; x=1757425852;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gjIO8VOEjJ/H4tg0OoEy8m/wse6tQSWY2ahEW3Ut7lc=;
+        b=jZRVw1zOSBu3pU7YKCSdWGUzjxfxmghABLfqYeDk7+HJfwIvtahI1jyWYRAfVMGkQd
+         NQb2OLRvmDxnzAJXxt/8tPa2P+fByAbN9KWU2eRF1Vs0BJZGNOz6ito6BOTHl9/5RGv5
+         3p04EFbSCYh2fkhnqkWZRam/NTvvZqgGa3y7qb9vVgF5a64tTxL7V+sAlomIUGXClGXq
+         SrvS6pEGcTnjgcJ+utM/D8xzfqNf93S+8IHEYTc867hAqTfIgULxTNUWUbJqLFqNRVYH
+         F8ruKQ351NVazAlfil1oi+R07F3aQfVAuUIe34RtrKKMANwdR0yz7PgEGXbCGCy4zrct
+         ltUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVk2bnycgiihBSiqsAQMW0hcS7oLbrlg84580D8sj+kc5XUXIhbx/8w8LNdtyqyfY3fGjUrzffjfMQ7vnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU1pBHhW1h0sCpSujBYrmMPKPAC8tqUcf3JjVyDL+PRHBJHAbv
+	1p52eaQR9flEprJOpR2La+QWhGPdoqxQbolVEBJFdZeEqrcFepUorEkR/MIv8Jx+plnunJAdv9G
+	G7l0O0KMsb76a+GhCSjXQ59tizpSNQpVAEBQqe7CxMQzXAMQG5NlubBXNdKKZiMKdug==
+X-Gm-Gg: ASbGncs1T9ntDCNyAA7zFVMdH60Fw7hZSSNjTAjOymcJBgVjLIgRUsK+dx3V0iSnsFf
+	wk8K1wrC2hbWwRAU/kFYE/x/n2UdMsroV29t0PwDyrLZb/chSd8ZQ3okpG2IVaHaC2818+PjD53
+	RjyZAqVHJMoVYMbRWBvOsoD3CR0l5Cp3M93yT39ZazBLfMpLIIBiMnjpEoGubpZ5B/IQPnR+6xF
+	tvLDIuPIhWA1UwBsz7P+t37Ik3grzLZHuimH6Z3BdwwD4jT0sbso7wiUCyJ3X33RfiFt/U6brC2
+	MRllY5vhf66Bh4NMh4WzII1K5S2f2rVLVqmcT+vI2R5oOKg9XIjk3i1ghNmsiJY9tMrB3u2+RrS
+	O7m1hXAoXN6Q67wQc7M2YDhk4GPxDUJAEuLXrojrk6IVFIy7yIsw4gRvDLbU11XpYuPE=
+X-Received: by 2002:a05:600c:1f1a:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-45b8554eb75mr86986555e9.13.1756821052430;
+        Tue, 02 Sep 2025 06:50:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGE5rw3XcMK3gm1igeQlOk7pSVENRSC5jy18vid34H5lOCgcV+oH6uu2ahStX5eCwpxOESuPQ==
+X-Received: by 2002:a05:600c:1f1a:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-45b8554eb75mr86986345e9.13.1756821051980;
+        Tue, 02 Sep 2025 06:50:51 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1f:3f00:731a:f5e5:774e:d40c? (p200300d82f1f3f00731af5e5774ed40c.dip0.t-ipconnect.de. [2003:d8:2f1f:3f00:731a:f5e5:774e:d40c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b98e77231sm27328225e9.12.2025.09.02.06.50.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 06:50:51 -0700 (PDT)
+Message-ID: <516d445f-eac0-4ad0-a337-6c669f1ec191@redhat.com>
+Date: Tue, 2 Sep 2025 15:50:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,369 +89,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/29] drm/tidss: Remove ftrace-like logs
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-19-14ad5315da3f@kernel.org>
+Subject: Re: [PATCH] huge_memory: return -EINVAL in folio split functions when
+ THP is disabled
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, willy@infradead.org, mcgrof@kernel.org,
+ gost.dev@samsung.com, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250902084036.208921-1-kernel@pankajraghav.com>
+ <qh7s3j26aac3hyzgnr2ee6byjenstxhjnlwn4qxbvz2l32ohqc@qbhdxvpnuhtp>
+ <90cd5be7-cbe6-42c5-b0eb-bf9613047097@pankajraghav.com>
+ <6l6f5idkqebpai6qn6n3phbnydz55typdwmvp3eexwnhk4qr54@otcgssegyqke>
+ <519df8fd-b02d-4b4b-bf47-79070e3d2c9e@pankajraghav.com>
+ <h7pqst5vvkahposrvf2iy5qz53t4crrujold2ky4ssrpawaefv@yaqaj3so2hxi>
+ <ic5kobuxfm4zi6agfvosjxs325mdgrfpjz52mi3zn27epbuvef@z5dmowge6uyb>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250902-drm-state-readout-v1-19-14ad5315da3f@kernel.org>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <ic5kobuxfm4zi6agfvosjxs325mdgrfpjz52mi3zn27epbuvef@z5dmowge6uyb>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 5AE531F391
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
 
-
-
-Am 02.09.25 um 10:32 schrieb Maxime Ripard:
-> These logs don't really log any information and create checkpatch
-> warnings. Remove them.
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Most of this output should be available from DRM's atomic helpers already.
-
-> ---
->   drivers/gpu/drm/tidss/tidss_crtc.c  |  6 ------
->   drivers/gpu/drm/tidss/tidss_dispc.c |  4 ----
->   drivers/gpu/drm/tidss/tidss_drv.c   | 16 ----------------
->   drivers/gpu/drm/tidss/tidss_kms.c   |  4 ----
->   drivers/gpu/drm/tidss/tidss_plane.c |  8 --------
->   5 files changed, 38 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
-> index f497138ad053ed4be207e12eeee6c304e1c949bd..091f82c86f53bc76c572de4723746af2e35ce1c1 100644
-> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-> @@ -92,12 +92,10 @@ static int tidss_crtc_atomic_check(struct drm_crtc *crtc,
->   	struct tidss_crtc *tcrtc = to_tidss_crtc(crtc);
->   	u32 hw_videoport = tcrtc->hw_videoport;
->   	struct drm_display_mode *mode;
->   	enum drm_mode_status ok;
->   
-> -	dev_dbg(ddev->dev, "%s\n", __func__);
-> -
->   	if (!crtc_state->enable)
->   		return 0;
->   
->   	mode = &crtc_state->adjusted_mode;
->   
-> @@ -326,12 +324,10 @@ static const struct drm_crtc_helper_funcs tidss_crtc_helper_funcs = {
->   static int tidss_crtc_enable_vblank(struct drm_crtc *crtc)
->   {
->   	struct drm_device *ddev = crtc->dev;
->   	struct tidss_device *tidss = to_tidss(ddev);
->   
-> -	dev_dbg(ddev->dev, "%s\n", __func__);
-> -
->   	tidss_runtime_get(tidss);
->   
->   	tidss_irq_enable_vblank(crtc);
->   
->   	return 0;
-> @@ -340,12 +336,10 @@ static int tidss_crtc_enable_vblank(struct drm_crtc *crtc)
->   static void tidss_crtc_disable_vblank(struct drm_crtc *crtc)
->   {
->   	struct drm_device *ddev = crtc->dev;
->   	struct tidss_device *tidss = to_tidss(ddev);
->   
-> -	dev_dbg(ddev->dev, "%s\n", __func__);
-> -
->   	tidss_irq_disable_vblank(crtc);
->   
->   	tidss_runtime_put(tidss);
->   }
->   
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index 8b1d6b72f303b91fbf86f7d0e351800804757126..7d94c1142e8083dab00fcf5c652ae40f98baeabf 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -2863,12 +2863,10 @@ int dispc_runtime_resume(struct dispc_device *dispc)
->   	return 0;
->   }
->   
->   void dispc_remove(struct tidss_device *tidss)
->   {
-> -	dev_dbg(tidss->dev, "%s\n", __func__);
-> -
->   	tidss->dispc = NULL;
->   }
->   
->   static int dispc_iomap_resource(struct platform_device *pdev, const char *name,
->   				void __iomem **base)
-> @@ -3006,12 +3004,10 @@ int dispc_init(struct tidss_device *tidss)
->   	struct dispc_device *dispc;
->   	const struct dispc_features *feat;
->   	unsigned int i, num_fourccs;
->   	int r = 0;
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	feat = tidss->feat;
->   
->   	if (feat->subrev != DISPC_K2G) {
->   		r = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(48));
->   		if (r)
-> diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
-> index 27d9a8fd541fc164f2fb2535f148432bd7895f46..1c8cc18bc53c3ea3c50368b9f55ab02a0a02fc77 100644
-> --- a/drivers/gpu/drm/tidss/tidss_drv.c
-> +++ b/drivers/gpu/drm/tidss/tidss_drv.c
-> @@ -31,45 +31,37 @@
->   
->   int tidss_runtime_get(struct tidss_device *tidss)
->   {
->   	int r;
->   
-> -	dev_dbg(tidss->dev, "%s\n", __func__);
-> -
->   	r = pm_runtime_resume_and_get(tidss->dev);
->   	WARN_ON(r < 0);
->   	return r;
->   }
->   
->   void tidss_runtime_put(struct tidss_device *tidss)
->   {
->   	int r;
->   
-> -	dev_dbg(tidss->dev, "%s\n", __func__);
-> -
->   	pm_runtime_mark_last_busy(tidss->dev);
->   
->   	r = pm_runtime_put_autosuspend(tidss->dev);
->   	WARN_ON(r < 0);
->   }
->   
->   static int __maybe_unused tidss_pm_runtime_suspend(struct device *dev)
->   {
->   	struct tidss_device *tidss = dev_get_drvdata(dev);
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	return dispc_runtime_suspend(tidss->dispc);
->   }
->   
->   static int __maybe_unused tidss_pm_runtime_resume(struct device *dev)
->   {
->   	struct tidss_device *tidss = dev_get_drvdata(dev);
->   	int r;
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	r = dispc_runtime_resume(tidss->dispc);
->   	if (r)
->   		return r;
->   
->   	return 0;
-> @@ -77,21 +69,17 @@ static int __maybe_unused tidss_pm_runtime_resume(struct device *dev)
->   
->   static int __maybe_unused tidss_suspend(struct device *dev)
->   {
->   	struct tidss_device *tidss = dev_get_drvdata(dev);
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	return drm_mode_config_helper_suspend(&tidss->ddev);
->   }
->   
->   static int __maybe_unused tidss_resume(struct device *dev)
->   {
->   	struct tidss_device *tidss = dev_get_drvdata(dev);
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	return drm_mode_config_helper_resume(&tidss->ddev);
->   }
->   
->   static __maybe_unused const struct dev_pm_ops tidss_pm_ops = {
->   	SET_SYSTEM_SLEEP_PM_OPS(tidss_suspend, tidss_resume)
-> @@ -125,12 +113,10 @@ static int tidss_probe(struct platform_device *pdev)
->   	struct tidss_device *tidss;
->   	struct drm_device *ddev;
->   	int ret;
->   	int irq;
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	tidss = devm_drm_dev_alloc(&pdev->dev, &tidss_driver,
->   				   struct tidss_device, ddev);
->   	if (IS_ERR(tidss))
->   		return PTR_ERR(tidss);
->   
-> @@ -226,12 +212,10 @@ static void tidss_remove(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct tidss_device *tidss = platform_get_drvdata(pdev);
->   	struct drm_device *ddev = &tidss->ddev;
->   
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->   	drm_dev_unregister(ddev);
->   
->   	drm_atomic_helper_shutdown(ddev);
->   
->   	tidss_irq_uninstall(ddev);
-> diff --git a/drivers/gpu/drm/tidss/tidss_kms.c b/drivers/gpu/drm/tidss/tidss_kms.c
-> index c34eb90cddbeac634f281cf163d493ba75b7ea29..86eb5d97410bedced57129c2bbcd35f1719424c2 100644
-> --- a/drivers/gpu/drm/tidss/tidss_kms.c
-> +++ b/drivers/gpu/drm/tidss/tidss_kms.c
-> @@ -22,12 +22,10 @@
->   static void tidss_atomic_commit_tail(struct drm_atomic_state *old_state)
->   {
->   	struct drm_device *ddev = old_state->dev;
->   	struct tidss_device *tidss = to_tidss(ddev);
->   
-> -	dev_dbg(ddev->dev, "%s\n", __func__);
-> -
->   	tidss_runtime_get(tidss);
->   
->   	drm_atomic_helper_commit_modeset_disables(ddev, old_state);
->   	drm_atomic_helper_commit_planes(ddev, old_state, DRM_PLANE_COMMIT_ACTIVE_ONLY);
->   	drm_atomic_helper_commit_modeset_enables(ddev, old_state);
-> @@ -243,12 +241,10 @@ static int tidss_dispc_modeset_init(struct tidss_device *tidss)
->   int tidss_modeset_init(struct tidss_device *tidss)
->   {
->   	struct drm_device *ddev = &tidss->ddev;
->   	int ret;
->   
-> -	dev_dbg(tidss->dev, "%s\n", __func__);
-> -
->   	ret = drmm_mode_config_init(ddev);
->   	if (ret)
->   		return ret;
->   
->   	ddev->mode_config.min_width = 8;
-> diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
-> index 142ae81951a0916ccf7d3add1b83b011eca7f6b9..bd10bc1b9961571e6c6dee26698149fc9dd135b0 100644
-> --- a/drivers/gpu/drm/tidss/tidss_plane.c
-> +++ b/drivers/gpu/drm/tidss/tidss_plane.c
-> @@ -40,12 +40,10 @@ static int tidss_plane_atomic_check(struct drm_plane *plane,
->   	struct drm_crtc_state *crtc_state;
->   	u32 hw_plane = tplane->hw_plane_id;
->   	u32 hw_videoport;
->   	int ret;
->   
-> -	dev_dbg(ddev->dev, "%s\n", __func__);
-> -
->   	if (!new_plane_state->crtc) {
->   		/*
->   		 * The visible field is not reset by the DRM core but only
->   		 * updated by drm_atomic_helper_check_plane_state(), set it
->   		 * manually.
-> @@ -122,12 +120,10 @@ static void tidss_plane_atomic_update(struct drm_plane *plane,
->   	struct tidss_plane *tplane = to_tidss_plane(plane);
->   	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(state,
->   									   plane);
->   	u32 hw_videoport;
->   
-> -	dev_dbg(ddev->dev, "%s\n", __func__);
-> -
->   	if (!new_state->visible) {
->   		dispc_plane_enable(tidss->dispc, tplane->hw_plane_id, false);
->   		return;
->   	}
->   
-> @@ -141,24 +137,20 @@ static void tidss_plane_atomic_enable(struct drm_plane *plane,
->   {
->   	struct drm_device *ddev = plane->dev;
->   	struct tidss_device *tidss = to_tidss(ddev);
->   	struct tidss_plane *tplane = to_tidss_plane(plane);
->   
-> -	dev_dbg(ddev->dev, "%s\n", __func__);
-> -
->   	dispc_plane_enable(tidss->dispc, tplane->hw_plane_id, true);
->   }
->   
->   static void tidss_plane_atomic_disable(struct drm_plane *plane,
->   				       struct drm_atomic_state *state)
->   {
->   	struct drm_device *ddev = plane->dev;
->   	struct tidss_device *tidss = to_tidss(ddev);
->   	struct tidss_plane *tplane = to_tidss_plane(plane);
->   
-> -	dev_dbg(ddev->dev, "%s\n", __func__);
-> -
->   	dispc_plane_enable(tidss->dispc, tplane->hw_plane_id, false);
->   }
->   
->   static void drm_plane_destroy(struct drm_plane *plane)
->   {
->
+On 02.09.25 15:40, Pankaj Raghav (Samsung) wrote:
+>>>
+>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>> index 48c4f91c5b13..4ddf9e87db91 100644
+>>> --- a/include/linux/huge_mm.h
+>>> +++ b/include/linux/huge_mm.h
+>>> @@ -588,21 +588,29 @@ static inline int
+>>>   split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>>>                  unsigned int new_order)
+>>>   {
+>>> +       struct folio *folio = page_folio(page);
+>>> +
+>>> +       VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
+>>
+>> No. Make it unconditional. The point is we don't expect to see any
+>> splitable folios, so no reason to get here at all.
+>>
+> 
+> Got it.
+> 
+> Just one question though, in a future world where we remove the
+> dependency between large folios and THP, then we can revert back
+> this change to do a conditional WARN_ON?
+I think we would never expect to get called to split something that is 
+small. Calling code should be fixed.
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Cheers
 
+David / dhildenb
 
 
