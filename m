@@ -1,153 +1,97 @@
-Return-Path: <linux-kernel+bounces-797030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB84B40AE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:43:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD603B40ABD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3FB31683AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDEFE188B3B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3012FD1CB;
-	Tue,  2 Sep 2025 16:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C3633CE8E;
+	Tue,  2 Sep 2025 16:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b="Hgt9I1aF"
-Received: from exactco.de (exactco.de [176.9.10.151])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="se378+Ml"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CABC26C386;
-	Tue,  2 Sep 2025 16:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.10.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125662E0938;
+	Tue,  2 Sep 2025 16:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756831388; cv=none; b=RNo8q5c254ryHb/K/XwoY2GcdjsrixcjTUSbnKX4ovRvuG/yzwh6Wp4mANxCSlAZfhI+HF4ReA46WAsoYZn8SKztMEMpA4Iq7lURoqh+9D3KxKLuFw8MEl69pELZ9s3yH3fx3IzVm+U5lNV90Rr3tkr0THXI70rr/YZQbM96Z3w=
+	t=1756830899; cv=none; b=l17QwmDfaha5fHVWUfah8BURrqzSnVBSGCWAuwkaA0x1SbgeHLFiaaRNVUz1nxhAtXFmOBE9cOKPQnMDBFa7+NoesAIoxPygBm7OIWExynbZMPVBPzUyiKe12cXx58dcxCdL+mxJPhMtEbACKQYDeIzJWf5j+dhBu6sHQXWCrKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756831388; c=relaxed/simple;
-	bh=rfktqMLqj/HEGtTA/vFQSSXSbayE7EEksa3KKdX8Sys=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=PM73qqYshTBhDfrSpS+kIAqdH6ip8Wwx0qyekVCZr4YsxG18MLuiRJq3dY0MPRzvWVqQIZrT66b4z1OYGJouIZn0cF0kd6N/hvJEs/GXBDEXXgpoe74Gq0aBT+cqwt3H5vdTQfuCA4PV+1wQld3EaFZHgewBVy6EqXOAKhBYFZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com; spf=pass smtp.mailfrom=exactco.de; dkim=pass (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b=Hgt9I1aF; arc=none smtp.client-ip=176.9.10.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactco.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de;
-	s=x; h=Sender:Content-Transfer-Encoding:Content-Type:Mime-Version:References:
-	In-Reply-To:From:Subject:Cc:To:Message-Id:Date:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=RpNQu/7GD6lqrNXUZUK8qxSjAj2abH8bPyt1t+uavUA=; b=Hgt9I1aFicE8R0GhIkCOEzvVRb
-	czOdL56txGDEXeR9MS8XIkYK926hESg6gN2SwNzsiP4lHSEfaJx6oGAsj2dryC+ia4akjPJRUAoGD
-	06JtI3RU4PSiQzeDxVV4iu68FtbRTeVufGdcy37Zjn6OS58PYjOzO0pn9WWP90puNIGI9gleghtyJ
-	MWMk+a9WfLeV92ml6rPR6QFiMDvf1tXw8wAduXFRdK6oHNCqjAjvb3MLRdjwYvAKoifeTn+CQTE4G
-	pCT9C0B4rjjBBm8rMtUXZfBKym9KElzuRUKWMUUU/iu2QmPH3jTLo4Veg73LGH1/iJUt1039zKAIu
-	evcHIkZQ==;
-Date: Tue, 02 Sep 2025 18:33:48 +0200 (CEST)
-Message-Id: <20250902.183348.7850037982207673.rene@exactcode.com>
-To: kernel@mkarcher.dialup.fu-berlin.de
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
- andreas@gaisler.com, glaubitz@physik.fu-berlin.de,
- anthony.yznaga@oracle.com
-Subject: Re: [PATCH 1/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for UltraSPARC
-From: Rene Rebe <rene@exactcode.com>
-In-Reply-To: <20250826160312.2070-2-kernel@mkarcher.dialup.fu-berlin.de>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
-	<20250826160312.2070-2-kernel@mkarcher.dialup.fu-berlin.de>
-X-Mailer: Mew version 6.10 on Emacs 30.2
+	s=arc-20240116; t=1756830899; c=relaxed/simple;
+	bh=WKE5YWde9vUZoAR/YE6COM2HF0cSOqVSYHHws5xDHyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hx7EcLYp4zLTCVv9Gy2wp7od2aqjToGu1qf7Au+2/ZUIKzsmp0QXL8GKMprzA8WNWTjP4mWSfMDpsg8AeW9kSSqpDOj8x1Uitsrv3q8WSzDG+hjb+G+X0IxVvntYKVlFpNubOg9IAjIL/J5u1at42xJgsJ0NoZYdLoFSTo3mdQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=se378+Ml; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cGWYY0nNqzlgqTx;
+	Tue,  2 Sep 2025 16:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756830889; x=1759422890; bh=WKE5YWde9vUZoAR/YE6COM2H
+	F0cSOqVSYHHws5xDHyk=; b=se378+Ml1jVW4IIN1cr95WhNBuCixzsa0pFwo2Ym
+	JYcwfUfqpNLKnL6G46EisGaEQgJUmKAymeMTVpOaQS2owrWwOldYrxY6zPnoTYsp
+	bPxXFhktCOeQXU3Onz+ErkAIAPYkZpXpXFmgkFYEd7kKmp+loxgQpbiXbluk2ANb
+	kGV/DgnmcY1vkg19OYFo5MpOAGfFFbuZPoDrxIsr8vhjTFfxDoGPYw4L9H+f40o2
+	gknZNMvo0iz7HLIv1LwtUpTEpow3s4ilmwXRNFfN3Pxc0yzptchvyxBEMbBwmo0O
+	LMNpvDhDGB1u574KdejdD5nC5nwaNYdb6jb5fbbFqAEoJA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 5HmvpwhRwGtA; Tue,  2 Sep 2025 16:34:49 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cGWY55XqyzlgqV7;
+	Tue,  2 Sep 2025 16:34:32 +0000 (UTC)
+Message-ID: <6e854090-a071-416a-b7a5-cc8ee0122a90@acm.org>
+Date: Tue, 2 Sep 2025 09:34:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
-Sender: rene@exactco.de
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] scsi: ufs: Add an enum for ufs_trace to check ufs cmd
+ error
+To: DooHyun Hwang <dh0421.hwang@samsung.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ peter.wang@mediatek.com, manivannan.sadhasivam@linaro.org,
+ quic_mnaresh@quicinc.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
+ jangsub.yi@samsung.com, sh043.lee@samsung.com, cw9316.lee@samsung.com,
+ sh8267.baek@samsung.com, wkon.kim@samsung.com
+References: <20250417023405.6954-1-dh0421.hwang@samsung.com>
+ <CGME20250417023417epcas1p31338c05e70e61b0a5e96d0ac0910713d@epcas1p3.samsung.com>
+ <20250417023405.6954-2-dh0421.hwang@samsung.com>
+ <239ea120-841f-478d-b6b4-9627aa453795@acm.org>
+ <093601dc1ae0$2389c460$6a9d4d20$@samsung.com>
+ <27882582-58b8-4ac2-9596-3602098e7c1d@acm.org>
+ <17db01dc1ba6$41d37350$c57a59f0$@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <17db01dc1ba6$41d37350$c57a59f0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Michael, Adrian,
+On 9/1/25 6:09 PM, DooHyun Hwang wrote:
+> The UFS_CMD_ERR stands for "command completion error."
 
-thank you so much for doing this work and dropping me a note to test!
-I had bisected that last year, too, but due to lack of further time
-only ended up reverting d563d678aa0 "fs: Handle intra-page faults in
-copy_mount_options()". I also did not suspect copy_{from,to}_user be
-that regressed and broken on sparc64, ... :-/
+I've never before seen anyone abbreviating "completion" as "CMD".
+Please choose a better enumeration label name.
 
-Tested-by: Ren=E9 Rebe <rene@exactcode.com> # on Ultra 5 UltraSparc IIi=
-
-
-> Fixes: cb736fdbb208 ("sparc64: Convert U1copy_{from,to}_user to accur=
-ate exception reporting.")
-> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-> ---
->  arch/sparc/lib/U1memcpy.S | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
-> =
-
-> diff --git a/arch/sparc/lib/U1memcpy.S b/arch/sparc/lib/U1memcpy.S
-> index 635398ec7540..154fbd35400c 100644
-> --- a/arch/sparc/lib/U1memcpy.S
-> +++ b/arch/sparc/lib/U1memcpy.S
-> @@ -164,17 +164,18 @@ ENTRY(U1_gs_40_fp)
->  	retl
->  	 add		%o0, %o2, %o0
->  ENDPROC(U1_gs_40_fp)
-> -ENTRY(U1_g3_0_fp)
-> -	VISExitHalf
-> -	retl
-> -	 add		%g3, %o2, %o0
-> -ENDPROC(U1_g3_0_fp)
->  ENTRY(U1_g3_8_fp)
->  	VISExitHalf
->  	add		%g3, 8, %g3
->  	retl
->  	 add		%g3, %o2, %o0
->  ENDPROC(U1_g3_8_fp)
-> +ENTRY(U1_g3_16_fp)
-> +	VISExitHalf
-> +	add		%g3, 16, %g3
-> +	retl
-> +	 add		%g3, %o2, %o0
-> +ENDPROC(U1_g3_16_fp)
->  ENTRY(U1_o2_0_fp)
->  	VISExitHalf
->  	retl
-> @@ -547,18 +548,18 @@ FUNC_NAME:		/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen =
-*/
->  62:	FINISH_VISCHUNK(o0, f44, f46)
->  63:	UNEVEN_VISCHUNK_LAST(o0, f46, f0)
->  =
-
-> -93:	EX_LD_FP(LOAD(ldd, %o1, %f2), U1_g3_0_fp)
-> +93:	EX_LD_FP(LOAD(ldd, %o1, %f2), U1_g3_8_fp)
->  	add		%o1, 8, %o1
->  	subcc		%g3, 8, %g3
->  	faligndata	%f0, %f2, %f8
-> -	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_8_fp)
-> +	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_16_fp)
->  	bl,pn		%xcc, 95f
->  	 add		%o0, 8, %o0
-> -	EX_LD_FP(LOAD(ldd, %o1, %f0), U1_g3_0_fp)
-> +	EX_LD_FP(LOAD(ldd, %o1, %f0), U1_g3_8_fp)
->  	add		%o1, 8, %o1
->  	subcc		%g3, 8, %g3
->  	faligndata	%f2, %f0, %f8
-> -	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_8_fp)
-> +	EX_ST_FP(STORE(std, %f8, %o0), U1_g3_16_fp)
->  	bge,pt		%xcc, 93b
->  	 add		%o0, 8, %o0
->  =
-
-> -- =
-
-> 2.50.1
-> =
-
-> =
-
-
--- =
-
-  Ren=E9 Rebe, ExactCODE GmbH, Berlin, Germany.
-  https://exactcode.com | https://t2linux.com | https://rene.rebe.de
+Bart.
 
