@@ -1,155 +1,544 @@
-Return-Path: <linux-kernel+bounces-796556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD4FB40267
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:16:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32731B4028C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101511B20F25
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 045003B0BA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B207B301471;
-	Tue,  2 Sep 2025 13:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9212BE65C;
+	Tue,  2 Sep 2025 13:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QDnB1fl6"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPXdyuRD"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C95303C87;
-	Tue,  2 Sep 2025 13:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F335F2DCBF7;
+	Tue,  2 Sep 2025 13:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818974; cv=none; b=IPVvWJNA5AOQuQocCj9hkRtEfGQ6tUJx3motS46CDtEI9VezBIOb9fZjGcuypwi6RMzqkLVxRg0pdqIKSZsXskMwxqczmqa6qY+7xprWz7lPlV3w0NVspxYf3uSp1DvmnnmacV7hD/CQevLe54AuZ7vF/zdWA5d4wbM25Ka4szM=
+	t=1756818986; cv=none; b=mqYQ51rB4vZnHxAddVzZvWpGja8Pg7abmUnwpmi0idUIC/dVdHloTZSsdHn2HDb80lLQCutvlK/u2mlBqYNKTxpwxfZdNwcUIDCO+cXH46hucLFzuoSKfAhSlq6OshK96oKqAF9bLmC8xbtUohC0CToGJlHfmtr520yNKTZpio4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818974; c=relaxed/simple;
-	bh=3aVcmt7GxFD55IhIXydC+ZcF773ciy1n9s0YIuvYRZQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=r49Me0+CRLXjXTBEVW/Fvuu+SVqPdQDhRoP+nKY4QUCoG9+o7VKy5dn9NLm4pzzj2Pm3EmDD1RGrbEGmR0ItJvhHw8kZsl2CfEUtflwBlKf5mFLOlFEv87wdFQJoQhkPsl0em264mXCACwBMeQCfn5B3fA1mctFPBPTykn0vhlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QDnB1fl6; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1756818967; x=1757423767; i=markus.elfring@web.de;
-	bh=3aVcmt7GxFD55IhIXydC+ZcF773ciy1n9s0YIuvYRZQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=QDnB1fl6a0tRhOogKEOjyyvCqMigBdVOXzXn6YjVuZrlpNvpudqDrGh10RF/9nGp
-	 E7ijyjZtARYXKst/TDI4Vtn+bnVRJP48I7HW47BI85ISVQpMT2Jybm2N/IReJqKLv
-	 QLsENrfbGPVxv7ou1Ciw9qoQcNtgpussFrL+ECc8S63uRH2qQBaYBFQy/YmCmBOrN
-	 HfOwsZ/r67/XTUbTL6DywR7X7UZ6SPWBILXsnRK3orJDuEI2kddM8iN6CXGqJBZuq
-	 MsNpHKaxQoK1PgoSA3yt2QOyF1rx73UKd7p/n079XRQIDgHM6WYNWAesOs8u/vltU
-	 HndvX4Y8qtRGFJBx4w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.184]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MXGOI-1uyHVY3kis-00V8QP; Tue, 02
- Sep 2025 15:16:06 +0200
-Message-ID: <91b13729-7b5c-48a2-acb0-9f23822dcf3a@web.de>
-Date: Tue, 2 Sep 2025 15:15:59 +0200
+	s=arc-20240116; t=1756818986; c=relaxed/simple;
+	bh=6eOE26bI65MsDQNpoFXFLrhR0ZKs9oOluZgE9AeAjYk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Id9Q0HNf0T0Tpp5SvkFGHkMQCJJssCPHg3dMrwMCosDd1oBQDBadRExXIiymbYqtw8GtBLguRZYU3xXKco9+l1pgpNT0iM/RfyI4L+a3ayARzSMqfzQ02fxXiKER0IouNRbV8VREctlrhKp3pZh9MFfsM+XjEJXxPcyWiPYLWdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPXdyuRD; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-248d5074ff7so35063255ad.0;
+        Tue, 02 Sep 2025 06:16:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756818984; x=1757423784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gohftFrtrVQCme5K59+N4VU+fitHE4I6hHU74UHi5eo=;
+        b=FPXdyuRD2FIjZzhkcQhFfiYejscFvyPlVqkApm4+tea35+B2xZVQx0UfdLx7D+GuFq
+         qlhp8zqKySi6jChJY10wu6v/vEwh7GENztJGCsjirrnO2zkf7EEaTUn+Yz485hb+kARN
+         yCxVox46FHSkjkgpYhip04O/U6A5HfDMlyiz2bcUJO0xCgM4KDaFIabn8q22q3eqcHug
+         qV7fXALcxi4DRqUxbhx7B7JVdRC83P+TJSFrJjAnXbd3+NHUkUCTzFlPogSAW/cWuafB
+         O8Iiq+xL+vibyiOOn9mg+lZLrJGdtc3OhmNGNBPUp7Y6bXTijsyCEkOykjg21hrIJwBn
+         B29Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756818984; x=1757423784;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gohftFrtrVQCme5K59+N4VU+fitHE4I6hHU74UHi5eo=;
+        b=QmCsJMGSFl8HeCjO8upcgSdEaVHIRwdyPgqIQgTTOJaALFfrFTdhGnuFKh7QSqZgWq
+         hGETuWknS4jJhhjgcZbB54nXIqotW24AcTwVJE1VUr755A9qFnBqffRFK+z6etkU0AWu
+         hZeSedJaQEtFM24EGLyfhwLYx3NRBlN4BV/O7TnTAZUHJyeZHTVq+lOcSSyB2f0HW+0J
+         VEiQ4UhD4MLe9+xz7K6GAcOD+ancFiET/NPBp3g9oSb2rbvO9WgxFpKVislr80+1L5VG
+         j54Oij6OuHJaBHvj2TgsyBSRV+w0l2Gvo4a6LdPNM06XEp+r0gcaXzSLZ5OxCcLNBrlV
+         y7vw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0eZU1Ywnt45kKawS/UEMVTJ0ris28bsjJ0bHLVjpecFjFfRDPmETCV+GPtCp9U7Jlb/Adw8ThvLM8Zdvs@vger.kernel.org, AJvYcCXmuj9nvlGfF0WMR8FkFKLzhW1LmZlRCYdlnF9K6w1YAIQSc6pBFaW/7zFDjdK7yRUtJS+ajiIG0Dh7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAG+0bGX08laFoWcoaoTQpVik97QYKnHrd9Nqdg8W4ipFHC9x1
+	+7E2kWwjzzCfjL7lQkOMQvHJONN1g67sxrbgRc0zGAU8vigaBzN9mDu4IY5issM8f22vbA==
+X-Gm-Gg: ASbGncsvbpb1ZWzr6rEyTCu+OKg+PWA2bUykWa1jqILt5yJ0lMkJQvKgrYit/cyZ+7P
+	8CvWMSUjGPU+R1htcLwKMN9/L/8R8gfInQgFH4DrEvp6ql8YNGx0urVAKyGHUd73HHjdFnfLva2
+	QFikIB0PYnYAJZEGmkkp0aph5jRLLq5JQqKkj7eJsgDIbsoTu0PV6noYC85U+lXQ+DWdCwQgKBE
+	T8nvnQa+IXco1DBOyGlALvu+fR0mzoU4+twsV4pAHlLcfoXJ+NRcSdwEWerfz5OdcK9D1EgODfJ
+	z3+KJtTX4LPcrJQNzASUH8dyULExCJePNmDZCWaUW2ICPmkdoFXD+9mquoqU/znTEyqTuPIYjmE
+	NKWAZCF/9RC3OGgDfyxW34fowk1l1+TnFlwSkmdBQB/7VxhbxoibNO7g=
+X-Google-Smtp-Source: AGHT+IEKJJfxOnzi8UjkWFq1lGAp6FixeFFDlpGOYwHIFGUh4ptBwTMVlU1sZURoeAC01sQ5VBA1Vg==
+X-Received: by 2002:a17:902:c950:b0:249:304c:dbbf with SMTP id d9443c01a7336-2493ef95429mr129291775ad.23.1756818983447;
+        Tue, 02 Sep 2025 06:16:23 -0700 (PDT)
+Received: from localhost.localdomain ([2804:7f5:b08b:bc66:1b1c:d88:2aac:2997])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f57ab9esm19900206a91.4.2025.09.02.06.16.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:16:23 -0700 (PDT)
+From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: [PATCH v10 2/2] iio: adc: max14001: New driver
+Date: Tue,  2 Sep 2025 10:16:12 -0300
+Message-Id: <f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1756816682.git.marilene.agarcia@gmail.com>
+References: <cover.1756816682.git.marilene.agarcia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: chuguangqing@inspur.com, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Antonio Quartulli <antonio@openvpn.net>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Sabrina Dubroca <sd@queasysnail.net>, Simon Horman <horms@kernel.org>
-References: <20250902090051.1451-2-chuguangqing@inspur.com>
-Subject: Re: [PATCH v2 1/1] ovpn: use kmalloc_array() for array space
- allocation
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250902090051.1451-2-chuguangqing@inspur.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ZKl/rp3ICt7nvYxkwREESYA2KpK9lRxzHp+sbSqPemGa3WOI6xT
- MYIt6nvA/tnBdopNp9xVVQtDG0bViZ5vCiZx/xL28ttGPB9wZWtGMuLQ/xDawN42+8s+mJ/
- fqFSM+QxFdZgTOxVfNyWoQDhRy/HuikB85Cla3FMY9Uxz/mK7iHBFFrJoQ8LQReuUjanC6Q
- eCw6twXCPC1mSGdsKvrdQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6jNkmipa6v4=;bm2i8/vTQeKi0dqeZDs4mfItTAQ
- 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
+Content-Transfer-Encoding: 8bit
 
-> Signed-off-by: chuguangqing <chuguangqing@inspur.com>
+The MAX14001/MAX14002 is configurable, isolated 10-bit ADCs for multi-range 
+binary inputs. In addition to ADC readings, the MAX14001/MAX14002 offers 
+more features, like a binary comparator, a filtered reading that can 
+provide the average of the last 2, 4, or 8 ADC readings, and an inrush 
+comparator that triggers the inrush current. There is also a fault feature 
+that can diagnose seven possible fault conditions. And an option to select 
+an external or internal ADC voltage reference.
 
-Would the personal name usually deviate a bit from the email identifier
-according to the Developer's Certificate of Origin?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc4#n436
+MAX14001/MAX14002 features implemented so far:
+- Raw ADC reading.
+- Filtered ADC average reading with the default configuration.
+- MV fault disable.
+- Selection of external or internal ADC voltage reference, depending on
+whether it is declared in the device tree.
 
-Regards,
-Markus
+Co-developed-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+---
+ MAINTAINERS                |   1 +
+ drivers/iio/adc/Kconfig    |  10 ++
+ drivers/iio/adc/Makefile   |   1 +
+ drivers/iio/adc/max14001.c | 355 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 367 insertions(+)
+ create mode 100644 drivers/iio/adc/max14001.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f145f0204407..b6457063da6c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14976,6 +14976,7 @@ L:	linux-iio@vger.kernel.org
+ S:	Maintained
+ W:	https://ez.analog.com/linux-software-drivers
+ F:	Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
++F:	drivers/iio/adc/max14001.c
+ 
+ MAXBOTIX ULTRASONIC RANGER IIO DRIVER
+ M:	Andreas Klinger <ak@it-klinger.de>
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index e3d3826c3357..11e911ceab4c 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -958,6 +958,16 @@ config MAX11410
+ 	  To compile this driver as a module, choose M here: the module will be
+ 	  called max11410.
+ 
++config MAX14001
++	tristate "Analog Devices MAX14001/MAX14002 ADC driver"
++	depends on SPI
++	help
++	  Say yes here to build support for Analog Devices MAX14001/MAX14002
++	  Configurable, Isolated 10-bit ADCs for Multi-Range Binary Inputs.
++
++	  To compile this driver as a module, choose M here: the module will be
++	  called max14001.
++
+ config MAX1241
+ 	tristate "Maxim max1241 ADC driver"
+ 	depends on SPI_MASTER
+diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+index 89d72bf9ce70..569f2f5613d4 100644
+--- a/drivers/iio/adc/Makefile
++++ b/drivers/iio/adc/Makefile
+@@ -85,6 +85,7 @@ obj-$(CONFIG_MAX11100) += max11100.o
+ obj-$(CONFIG_MAX1118) += max1118.o
+ obj-$(CONFIG_MAX11205) += max11205.o
+ obj-$(CONFIG_MAX11410) += max11410.o
++obj-$(CONFIG_MAX14001) += max14001.o
+ obj-$(CONFIG_MAX1241) += max1241.o
+ obj-$(CONFIG_MAX1363) += max1363.o
+ obj-$(CONFIG_MAX34408) += max34408.o
+diff --git a/drivers/iio/adc/max14001.c b/drivers/iio/adc/max14001.c
+new file mode 100644
+index 000000000000..6755df152976
+--- /dev/null
++++ b/drivers/iio/adc/max14001.c
+@@ -0,0 +1,355 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-3-Clause)
++/*
++ * Analog Devices MAX14001/MAX14002 ADC driver
++ *
++ * Copyright (C) 2023-2025 Analog Devices Inc.
++ * Copyright (C) 2023 Kim Seer Paller <kimseer.paller@analog.com>
++ * Copyright (c) 2025 Marilene Andrade Garcia <marilene.agarcia@gmail.com>
++ *
++ * Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
++ */
++
++#include <linux/array_size.h>
++#include <linux/bitfield.h>
++#include <linux/bitrev.h>
++#include <linux/bits.h>
++#include <linux/byteorder/generic.h>
++#include <linux/device.h>
++#include <linux/iio/iio.h>
++#include <linux/iio/types.h>
++#include <linux/kernel.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/regulator/consumer.h>
++#include <linux/spi/spi.h>
++#include <linux/types.h>
++
++/* MAX14001 Registers Address */
++#define MAX14001_REG_ADC		0x00
++#define MAX14001_REG_FADC		0x01
++#define MAX14001_REG_FLAGS		0x02
++#define MAX14001_REG_FLTEN		0x03
++#define MAX14001_REG_THL		0x04
++#define MAX14001_REG_THU		0x05
++#define MAX14001_REG_INRR		0x06
++#define MAX14001_REG_INRT		0x07
++#define MAX14001_REG_INRP		0x08
++#define MAX14001_REG_CFG		0x09
++#define MAX14001_REG_ENBL		0x0A
++#define MAX14001_REG_ACT		0x0B
++#define MAX14001_REG_WEN		0x0C
++
++#define MAX14001_REG_VERIFICATION(x)	((x) + 0x10)
++
++#define MAX14001_REG_CFG_EXRF		BIT(5)
++
++#define MAX14001_MASK_ADDR		GENMASK(15, 11)
++#define MAX14001_MASK_DATA		GENMASK(9, 0)
++
++#define MAX14001_SET_WRITE_BIT		BIT(10)
++#define MAX14001_WRITE_WEN		0x294
++
++enum max14001_chip_model {
++	max14001,
++	max14002,
++};
++
++struct max14001_chip_info {
++	const char *name;
++};
++
++struct max14001_state {
++	const struct max14001_chip_info *chip_info;
++	struct spi_device *spi;
++	int vref_mv;
++	/*
++	 * lock protect against multiple concurrent accesses, RMW sequence,
++	 * and SPI transfer.
++	 */
++	struct mutex lock;
++	/*
++	 * The following buffers will be bit-reversed during device
++	 * communication, because the device transmits and receives data
++	 * LSB-first.
++	 * DMA (thus cache coherency maintenance) requires the transfer
++	 * buffers to live in their own cache lines.
++	 */
++	__be16 spi_tx_buffer __aligned(IIO_DMA_MINALIGN);
++	__be16 spi_rx_buffer;
++};
++
++static struct max14001_chip_info max14001_chip_info_tbl[] = {
++	[max14001] = {
++		.name = "max14001",
++	},
++	[max14002] = {
++		.name = "max14002",
++	},
++};
++
++static int max14001_read(struct max14001_state *st, u16 reg_addr, u16 *reg_data)
++{
++	struct spi_transfer xfers[] = {
++		{
++			.tx_buf = &st->spi_tx_buffer,
++			.len = sizeof(st->spi_tx_buffer),
++			.cs_change = 1,
++		}, {
++			.rx_buf = &st->spi_rx_buffer,
++			.len = sizeof(st->spi_rx_buffer),
++		},
++	};
++	int ret;
++
++	/*
++	 * Prepare SPI transmit buffer 16 bit-value big-endian format and
++	 * reverses bit order to align with the LSB-first input on SDI port
++	 * in order to meet the device communication requirements.
++	 */
++	st->spi_tx_buffer = FIELD_PREP(MAX14001_MASK_ADDR, reg_addr);
++	st->spi_tx_buffer = bitrev16(cpu_to_be16(st->spi_tx_buffer));
++
++	ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
++	if (ret)
++		return ret;
++
++	/*
++	 * Convert received 16-bit value from big-endian to cpu-endian format
++	 * and reverses bit order.
++	 */
++	st->spi_rx_buffer = bitrev16(be16_to_cpu(st->spi_rx_buffer));
++	*reg_data = FIELD_GET(MAX14001_MASK_DATA, st->spi_rx_buffer);
++
++	return 0;
++}
++
++static int max14001_write(struct max14001_state *st, u16 reg_addr, u16 reg_data)
++{
++	/*
++	 * Prepare SPI transmit buffer 16 bit-value big-endian format and
++	 * reverses bit order to align with the LSB-first input on SDI port
++	 * in order to meet the device communication requirements.
++	 */
++	st->spi_tx_buffer = FIELD_PREP(MAX14001_MASK_ADDR, reg_addr) |
++			    FIELD_PREP(MAX14001_SET_WRITE_BIT, 1) |
++			    FIELD_PREP(MAX14001_MASK_DATA, reg_data);
++	st->spi_tx_buffer = bitrev16(cpu_to_be16(st->spi_tx_buffer));
++
++	return spi_write(st->spi, &st->spi_tx_buffer, sizeof(st->spi_tx_buffer));
++}
++
++static int max14001_write_single_reg(struct max14001_state *st, u16 reg_addr,
++				     u16 reg_data)
++{
++	int ret;
++
++	/* Enable register write */
++	ret = max14001_write(st, MAX14001_REG_WEN, MAX14001_WRITE_WEN);
++	if (ret)
++		return ret;
++
++	/* Write data into register */
++	ret = max14001_write(st, reg_addr, reg_data);
++	if (ret)
++		return ret;
++
++	/* Disable register write */
++	ret = max14001_write(st, MAX14001_REG_WEN, 0);
++	if (ret)
++		return ret;
++
++	return ret;
++}
++
++static int max14001_write_verification_reg(struct max14001_state *st,
++					   u16 reg_addr)
++{
++	u16 reg_data;
++	int ret;
++
++	ret = max14001_read(st, reg_addr, &reg_data);
++	if (ret)
++		return ret;
++
++	return max14001_write(st, MAX14001_REG_VERIFICATION(reg_addr), reg_data);
++}
++
++static int max14001_read_raw(struct iio_dev *indio_dev,
++			     struct iio_chan_spec const *chan,
++			     int *val, int *val2, long mask)
++{
++	struct max14001_state *st = iio_priv(indio_dev);
++	u16 reg_data;
++	int ret;
++
++	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		mutex_lock(&st->lock);
++		ret = max14001_read(st, MAX14001_REG_ADC, &reg_data);
++		mutex_unlock(&st->lock);
++		if (ret)
++			return ret;
++
++		*val = reg_data;
++
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_AVERAGE_RAW:
++		mutex_lock(&st->lock);
++		ret = max14001_read(st, MAX14001_REG_FADC, &reg_data);
++		mutex_unlock(&st->lock);
++		if (ret)
++			return ret;
++
++		*val = reg_data;
++
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SCALE:
++		*val = st->vref_mv;
++		*val2 = 10;
++
++		return IIO_VAL_FRACTIONAL_LOG2;
++	default:
++		return -EINVAL;
++	}
++}
++
++static const struct iio_info max14001_info = {
++	.read_raw = max14001_read_raw,
++};
++
++static const struct iio_chan_spec max14001_channel[] = {
++	{
++		.type = IIO_VOLTAGE,
++		.indexed = 1,
++		.channel = 0,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
++				      BIT(IIO_CHAN_INFO_AVERAGE_RAW) |
++				      BIT(IIO_CHAN_INFO_SCALE),
++	}
++};
++
++static int max14001_disable_mv_fault(struct max14001_state *st)
++{
++	u16 reg_addr;
++	int ret;
++
++	/* Enable SPI Registers Write */
++	ret = max14001_write(st, MAX14001_REG_WEN, MAX14001_WRITE_WEN);
++	if (ret)
++		return ret;
++
++	/*
++	 * Reads all registers and writes the values back to their appropriate
++	 * verification registers to clear the Memory Validation fault.
++	 */
++	for (reg_addr = MAX14001_REG_FLTEN; reg_addr <= MAX14001_REG_ENBL; reg_addr++) {
++		ret = max14001_write_verification_reg(st, reg_addr);
++		if (ret)
++			return ret;
++	}
++
++	/* Disable SPI Registers Write */
++	return max14001_write(st, MAX14001_REG_WEN, 0);
++}
++
++static int max14001_probe(struct spi_device *spi)
++{
++	struct iio_dev *indio_dev;
++	struct max14001_state *st;
++	struct device *dev = &spi->dev;
++	int ret, ext_vrefin = 0;
++	u16 reg_data;
++
++	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	st = iio_priv(indio_dev);
++	st->spi = spi;
++	st->chip_info = spi_get_device_match_data(spi);
++	if (!st->chip_info)
++		return dev_err_probe(dev, -ENODEV, "Failed to get match data\n");
++
++	indio_dev->name = st->chip_info->name;
++	indio_dev->info = &max14001_info;
++	indio_dev->channels = max14001_channel;
++	indio_dev->num_channels = ARRAY_SIZE(max14001_channel);
++	indio_dev->modes = INDIO_DIRECT_MODE;
++
++	ret = devm_regulator_get_enable(dev, "vdd");
++	if (ret)
++		return dev_err_probe(dev, ret,
++			"Failed to enable specified Vdd supply\n");
++
++	ret = devm_regulator_get_enable(dev, "vddl");
++	if (ret)
++		return dev_err_probe(dev, ret,
++			"Failed to enable specified Vddl supply\n");
++
++	ret = devm_regulator_get_enable_read_voltage(dev, "vrefin");
++	if (ret < 0) {
++		st->vref_mv = 1250000 / 1000;
++	} else {
++		st->vref_mv = ret / 1000;
++		ext_vrefin = 1;
++	}
++
++	ret = devm_mutex_init(dev, &st->lock);
++	if (ret)
++		return dev_err_probe(dev, ret,
++			"Failed to init the mutex\n");
++
++	if (ext_vrefin) {
++		/*
++		 * Configure the MAX14001/MAX14002 to use an external voltage
++		 * reference source for the ADC.
++		 */
++		ret = max14001_read(st, MAX14001_REG_CFG, &reg_data);
++		if (ret)
++			return dev_err_probe(dev, ret,
++				"Failed to read Configuration Register\n");
++
++		reg_data |= FIELD_PREP(MAX14001_REG_CFG_EXRF, 1);
++		ret = max14001_write_single_reg(st, MAX14001_REG_CFG, reg_data);
++		if (ret)
++			return dev_err_probe(dev, ret,
++				"Failed to set Configuration Register\n");
++	}
++
++	ret = max14001_disable_mv_fault(st);
++	if (ret)
++		return dev_err_probe(dev, ret,
++			"Failed to disable MV Fault\n");
++
++	return devm_iio_device_register(dev, indio_dev);
++}
++
++static const struct spi_device_id max14001_id_table[] = {
++	{ "max14001", (kernel_ulong_t)&max14001_chip_info_tbl[max14001] },
++	{ "max14002", (kernel_ulong_t)&max14001_chip_info_tbl[max14002] },
++	{ }
++};
++
++static const struct of_device_id max14001_of_match[] = {
++	{ .compatible = "adi,max14001",
++	  .data = &max14001_chip_info_tbl[max14001], },
++	{ .compatible = "adi,max14002",
++	  .data = &max14001_chip_info_tbl[max14002], },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, max14001_of_match);
++
++static struct spi_driver max14001_driver = {
++	.driver = {
++		.name = "max14001",
++		.of_match_table = max14001_of_match,
++	},
++	.probe = max14001_probe,
++	.id_table = max14001_id_table,
++};
++module_spi_driver(max14001_driver);
++
++MODULE_AUTHOR("Kim Seer Paller <kimseer.paller@analog.com>");
++MODULE_AUTHOR("Marilene Andrade Garcia <marilene.agarcia@gmail.com>");
++MODULE_DESCRIPTION("Analog Devices MAX14001/MAX14002 ADCs driver");
++MODULE_LICENSE("GPL");
+-- 
+2.34.1
+
 
