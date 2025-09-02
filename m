@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-796635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AACCB4049B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F0FB404E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690663BBE44
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D527D189300A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2451033A009;
-	Tue,  2 Sep 2025 13:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6E930DD04;
+	Tue,  2 Sep 2025 13:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCfrnnuV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="zmIrKbm0";
+	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="cfPTZzGb"
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B4C2848A1;
-	Tue,  2 Sep 2025 13:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF392EFDB1
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820238; cv=none; b=diW1vXCwUDGSesfpoVcGubBwWbmz3RqXjYO9rTReuaqv4r63pAExl8sMVnkglCXf6nsTQkj959paUyTHkbMy4CRrzHTJegpVL7Hg1I4KoW4fPt3qPV4EJNjzKdM4w5diQAgn/+X4UcI3MLAflWMy4l2IP2aTxTIS2V5g0J5njYE=
+	t=1756820322; cv=none; b=tTrGfFlVbI/AgQOZEUDwh9oV29DMJffq9zh2cOYBnywTqiC5OcvSO+uXszGsBdSsC/sFHz/+sgVx1cFMdHNRUh4Z3kVwIohX6r6PgU6Mub6o5vYGg6OPIcU3fFfR9ATYejh5NfQJY184sSQnY4D4gqX8ftqg6fcOOGNE0OmvzCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820238; c=relaxed/simple;
-	bh=Te5CzzpMDl9FuNFcIn3BKuG3FhHEU09OQccy0nOcUCg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=oGdySdhaCEfZWdb506VaIgBxYDbet4HxRNHgcCngaaCoaLYCNf14a2wVYt2NESoIrf8yhwKz6PpxvmSAJRSUGviMG/pclWyysJXoUO1iOFGLuw/b4EE36ofuJQBLPLfSnLRK9AwhYAjpo9UVjez9p9z1X/dbGJtfgepEvXzYJlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OCfrnnuV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EEE4C4CEF4;
-	Tue,  2 Sep 2025 13:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756820238;
-	bh=Te5CzzpMDl9FuNFcIn3BKuG3FhHEU09OQccy0nOcUCg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=OCfrnnuVO6Hqtk3HsgT5RqYeJdejCqT1KSw3xGO8sYcRtd9rOSWqtpmkFHwYD+lue
-	 oERs3Tq8oX2VIh0EAQdLfF85GWRbNPMXqu3zQ4344EfEVtk57adySD+e+4ZhhznpqA
-	 j9t3+LB05FwIuTaEpEu/bmwV5zwaThP0MHoaz9BTGgaR/11N4J6rxIyZviOG2fkN+e
-	 RrsfD0qH4TVAQdou0KU5KAhvKjGXv1vQEeNcPRjQvLSv9lBaw6peVESh0FzA/H+wmU
-	 Ne7DEBARMdATGDm5DGBsvQXSartHRZrSdALI3TO70ynDHgId8Ge1W3a0AFi4b+EKyW
-	 DVQLipU/nOF7Q==
-From: Mark Brown <broonie@kernel.org>
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: linux-sound@vger.kernel.org, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Frank.Li@nxp.com, robh@kernel.org, 
- laurentiu.mihalcea@nxp.com, dan.carpenter@linaro.org, waqar.hameed@axis.com, 
- festevam@gmail.com, kernel@pengutronix.de, lgirdwood@gmail.com, 
- peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com, 
- ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com
-In-Reply-To: <20250902102101.378809-1-daniel.baluta@nxp.com>
-References: <20250902102101.378809-1-daniel.baluta@nxp.com>
-Subject: Re: [PATCH v2] ASoC: SOF: imx: Fix devm_ioremap_resource check
-Message-Id: <175682023505.513793.6818545507364756748.b4-ty@kernel.org>
-Date: Tue, 02 Sep 2025 14:37:15 +0100
+	s=arc-20240116; t=1756820322; c=relaxed/simple;
+	bh=U97gCFM6ANujxQVgOCJfSlGc8qJN502EHtLIHZ6ldhs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q4NZhDsE1sPCZiQ3MIgGonOKINfj1QVdnHVp9ia3tLTFcROcFw59Fsw4i5gR/v3dQzkG/h/2ZWNcUmYaJjOdtiibVK92LDTKev8fMsS01sR4yjZzas17kYEi9DobNb82/8nj1cQdErLFFBs/iHZrYOlN5nXjrWdhuMg6Icqe5E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=zmIrKbm0; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=cfPTZzGb; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id B1945209655A;
+	Tue,  2 Sep 2025 22:38:37 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114; t=1756820318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YwZdEDPvJgcmmCDousSc06KCvVKrry4Hq4hZoOWt70U=;
+	b=zmIrKbm0gnyBRlFKcBs9U2U61ims95FtdEecrH2833ite0FSdJIzyvGoJQDiBphmU2Ymwq
+	bSmaCFPORNkCSNEVQy4AY8RLy1GHptHVLL0NKUo6twfbwhz8VtlWuvppK327XVTmdH4jvM
+	mi6RghBFwYF3pkkCs43HNFTqcp+ikMQhR0ir6rHFnAbr4HHJdYLZB2T39WfvSXTd49pwl/
+	Z5aixLqxwX91FRIrmlBc5cqaaPbAk2HV4sXECYuV85QdV3XJcLUYm3esAcrrA7JH5w5KHy
+	O6TI9GmKXCwmelcg8PGa7zpA/JDEXn9XeG98NyPq4LDiSKHElWU6IjiPzLRoRA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
+	s=20250114-ed25519; t=1756820318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YwZdEDPvJgcmmCDousSc06KCvVKrry4Hq4hZoOWt70U=;
+	b=cfPTZzGbDF6z8dmKfhnKzlflPXxZ8Vr+01jnc7IISXRkOX4pgD0+Jb1Gpc8eB245gJ+cbr
+	YShqDyxRH2I9IeBA==
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 582DcaWg171354
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 2 Sep 2025 22:38:37 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-7) with ESMTPS id 582DcagU418750
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 2 Sep 2025 22:38:36 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 582Dcav6418749;
+	Tue, 2 Sep 2025 22:38:36 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: YangWen <anmuxixixi@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fat: fix data-race between fat12_ent_put() and
+ fat_mirror_bhs()
+In-Reply-To: <20250902132459.44-1-anmuxixixi@gmail.com>
+References: <87tt1lowqd.fsf@mail.parknet.co.jp>
+	<20250902132459.44-1-anmuxixixi@gmail.com>
+Date: Tue, 02 Sep 2025 22:38:36 +0900
+Message-ID: <87ecsp0yar.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Type: text/plain
 
-On Tue, 02 Sep 2025 13:21:00 +0300, Daniel Baluta wrote:
-> devm_ioremap_resource does not return NULL on error
-> but an error pointer so we need to use IS_ERR to check
-> the return code.
-> 
-> While at it also pass the error code to dev_err_probe
-> to improve logging.
-> 
-> [...]
+YangWen <anmuxixixi@gmail.com> writes:
 
-Applied to
+> OGAWA Hirofumi wrote:
+>> Sounds like strange. FAT driver never read the mirror FAT area in
+>> runtime. Why did you think the mirror FAT affect to it?
+>
+> Thanks for raising this point.
+>
+> FAT driver itself never reads the mirror FAT at
+> runtime, so this race does not directly cause runtime corruption.
+>
+> However, if the primary FAT on disk becomes damaged, user-space tools
+> such as fsck_msdos will consult the backup FAT copies in order to
+> repair it.  In that scenario, keeping the primary and backup FAT copies
+> consistent is important.  If they diverge due to a race between
+> fat12_ent_put() and fat_mirror_bhs(), recovery by fsck_msdos
+> may become unreliable.
+>
+> So my intention was not to fix a runtime problem, but rather to prevent
+> unnecessary inconsistencies between the primary and backup FAT copies,
+> which can help later recovery tools work as expected.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+You are forgetting what I said first. I said, this should be temporary
+inconsistent. When unmount, temporary inconsistent should be fixed by
+later write out.
 
-Thanks!
+IOW, I can't see why you claim this race can be the cause of permanent
+inconsistent.
 
-[1/1] ASoC: SOF: imx: Fix devm_ioremap_resource check
-      commit: 0c28431f6fe13f3a3be0978f79c1a7ae8a93d028
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
