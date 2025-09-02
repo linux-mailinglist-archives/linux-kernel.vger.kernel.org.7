@@ -1,121 +1,159 @@
-Return-Path: <linux-kernel+bounces-796889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410F1B408E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:25:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB36B408E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 542EF3A9D73
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 789555431AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013B831E0EF;
-	Tue,  2 Sep 2025 15:25:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E465A31CA69;
+	Tue,  2 Sep 2025 15:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5erzpUr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C01623D7C4;
-	Tue,  2 Sep 2025 15:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC552DECBF;
+	Tue,  2 Sep 2025 15:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826699; cv=none; b=T2Qi7AV+7sH5y1cNKs0hHd4uGKFm68qTdwuk80r5gjfGu9rJyvPt2xsoSvdkkt+SwNje2dFd2zQqW8qkKUtg7QxAQaHBunYpcYc8XajDFxBWj312NruzUPphShjGeYSG0avZa1Di/d6XqgGHSwzFSvcjTq0K0sBbh94c0NP0G1I=
+	t=1756826724; cv=none; b=nz8STClqCIbRGYHyfYWHR65uU9tbZyXm5FfKfIXNDVWktEV060KYGfQNyW3cBTnG3wFwxLqkv++klrPn07xBXuBg4tcGawlQwEAKbagARWTOKs3Xvfd2z5ZqEcakw70PEaoctMG9h0dBDJryKujUE5iO5iLWCJroUgHSkqFNhlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826699; c=relaxed/simple;
-	bh=08WLGYvIs6DHBHZWmf9vElYib+z/jFkZCljxRkJotHw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bv3JVIXpQi2eDbNqKgfZe6FJFj7TPfx0UQsys2zQyxsnmlXob0NPzO8lFuf9qAta6+yFZOGFvzALtofoRA3oMo+IurM//oFeffQnih6mks2aajywc0y28mSQjn/iFsgA0BLGHcTwh0G71x621a4nbN56v0QpeS2RG5hLDodcoLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cGTxt08Cmz6M4ZQ;
-	Tue,  2 Sep 2025 23:22:26 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E5D40140136;
-	Tue,  2 Sep 2025 23:24:52 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 2 Sep
- 2025 17:24:52 +0200
-Date: Tue, 2 Sep 2025 16:24:50 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Dave Jiang <dave.jiang@intel.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-	<rafael@kernel.org>, <dakr@kernel.org>, <dave@stgolabs.net>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dan.j.williams@intel.com>,
-	<marc.herbert@linux.intel.com>, <akpm@linux-foundation.org>,
-	<david@redhat.com>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 3/4] cxl, acpi/hmat: Update CXL access coordinates
- directly instead of through HMAT
-Message-ID: <20250902162450.00002684@huawei.com>
-In-Reply-To: <20250829222907.1290912-4-dave.jiang@intel.com>
-References: <20250829222907.1290912-1-dave.jiang@intel.com>
-	<20250829222907.1290912-4-dave.jiang@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1756826724; c=relaxed/simple;
+	bh=l/nS55o1t/A9e4SaZ6nyh5QjR04WTvooR5oRakfTc+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PtvSB+ODDAES7hgJVP+8eTcDfTHWxvFGQ0LakTj94eZxVsSds/A4Xx707d8FrankCCSoZd+azqn6MlgnavujvgK33VsKFt1IujqXwY9R5S138Dt278P61PbpCEySNVlfCcduVKZRE2FA1PBPLQmVw6Giw8f/N5fmHWgJkVLfqP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5erzpUr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17EE8C4CEF5;
+	Tue,  2 Sep 2025 15:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756826723;
+	bh=l/nS55o1t/A9e4SaZ6nyh5QjR04WTvooR5oRakfTc+g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=p5erzpUrIssF2EgMkfCi2998Dqdtqw9bJugMrhWgNbyUvWK39HQJHU7B1c22D/CNf
+	 oPySDfoRaSszCd6hwqRPbyNHatGHFcTFQJSOUdGVZX9g7hPJpUBJS5SE40Eor+XUeY
+	 5bjoWATTQZ4RqtxGPtL5TQwIKlvmNBdxgN9f/RGKBLMIIRHrsE0sE7BL5aga3LvGz6
+	 WX6FiLDcE3VG2gziPqAWMpUH6hyfON1OvxjHIGA1foP5iNwQ5+BY9pxGGAkOaQ0uIJ
+	 jRY20mOeLG20gFJwT2LnOe2AKaG+792J7ClaX3hC2Q8N6LkAM+Sk9R5ZCwYEUzTejB
+	 6h6n8cfxPc2gw==
+Message-ID: <5f33c919-571b-45b7-b2bb-c755b4195035@kernel.org>
+Date: Tue, 2 Sep 2025 10:25:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86/amd/pmc: Add Stellaris Slim Gen6 AMD to
+ spurious 8042 quirks list
+To: Werner Sembach <wse@tuxedocomputers.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Hans de Goede
+ <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Christoffer Sandberg <cs@tuxedo.de>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250901164216.46740-1-wse@tuxedocomputers.com>
+ <3830aeee-91d7-48ee-b67e-8aefbbd2124e@kernel.org>
+ <c154022c-c00d-46ba-86fb-2030ccab0272@tuxedocomputers.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <c154022c-c00d-46ba-86fb-2030ccab0272@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 29 Aug 2025 15:29:06 -0700
-Dave Jiang <dave.jiang@intel.com> wrote:
+On 9/2/2025 9:37 AM, Werner Sembach wrote:
+> 
+> Am 02.09.25 um 16:15 schrieb Mario Limonciello:
+>> On 9/1/2025 11:42 AM, Werner Sembach wrote:
+>>> From: Christoffer Sandberg <cs@tuxedo.de>
+>>>
+>>> Prevents instant wakeup ~1s after suspend
+>>>
+>>> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
+>>> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+>>> ---
+>>>   drivers/platform/x86/amd/pmc/pmc-quirks.c | 7 +++++++
+>>>   1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/ 
+>>> platform/x86/amd/pmc/pmc-quirks.c
+>>> index 7ffc659b27944..8b8944483b859 100644
+>>> --- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
+>>> +++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+>>> @@ -248,6 +248,13 @@ static const struct dmi_system_id fwbug_list[] = {
+>>>               DMI_MATCH(DMI_PRODUCT_NAME, "Lafite Pro V 14M"),
+>>>           }
+>>>       },
+>>> +    {
+>>> +        .ident = "TUXEDO Stellaris Slim 15 AMD Gen6",
+>>> +        .driver_data = &quirk_spurious_8042,
+>>> +        .matches = {
+>>> +            DMI_MATCH(DMI_BOARD_NAME, "GMxHGxx"),
+>>> +        }
+>>> +    },
+>>>       {}
+>>>   };
+>>
+>> FYI - this seems to conflict with other changes on review-ilpo-fixes 
+>> and fixes branches.
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform- 
+>> drivers-x86.git/commit/drivers/platform/x86/amd/pmc/pmc-quirks.c? 
+>> h=review-ilpo-fixes&id=c96f86217bb28e019403bb8f59eacd8ad5a7ad1a
+> Sorry, i will rebase and send a v2.
+>>
+>> Also - a few other comments.
+>>
+>> 1) Do you have line of sight to a firmware (BIOS or EC) fix?  If so; 
+>> it would be better to specify a specific firmware release that is 
+>> affected.
+> 
+> No
+> 
+> @Christoffer you have more knowledge of how realistic it is to get this 
+> fixed by the odm?
 
-> The current implementation of CXL memory hotplug notifier gets called
-> before the HMAT memory hotplug notifier. The CXL driver calculates the
-> access coordinates (bandwidth and latency values) for the CXL end to
-> end path (i.e. CPU to endpoint). When the CXL region is onlined, the CXL
-> memory hotplug notifier writes the access coordinates to the HMAT target
-> structs. Then the HMAT memory hotplug notifier is called and it creates
-> the access coordinates for the node sysfs attributes.
-> 
-> During testing on an Intel platform, it was found that although the
-> newly calculated coordinates were pushed to sysfs, the sysfs attributes for
-> the access coordinates showed up with the wrong initiator. The system has
-> 4 nodes (0, 1, 2, 3) where node 0 and 1 are CPU nodes and node 2 and 3 are
-> CXL nodes. The expectation is that node 2 would show up as a target to node
-> 0:
-> /sys/devices/system/node/node2/access0/initiators/node0
-> 
-> However it was observed that node 2 showed up as a target under node 1:
-> /sys/devices/system/node/node2/access0/initiators/node1
-> 
-> The original intent of the 'ext_updated' flag in HMAT handling code was to
-> stop HMAT memory hotplug callback from clobbering the access coordinates
-> after CXL has injected its calculated coordinates and replaced the generic
-> target access coordinates provided by the HMAT table in the HMAT target
-> structs. However the flag is hacky at best and blocks the updates from
-> other CXL regions that are onlined in the same node later on. Remove the
-> 'ext_updated' flag usage and just update the access coordinates for the
-> nodes directly without touching HMAT target data.
-> 
-> The hotplug memory callback ordering is changed. Instead of changing CXL,
-> move HMAT back so there's room for the levels rather than have CXL share
-> the same level as SLAB_CALLBACK_PRI. The change will resulting in the CXL
-> callback to be executed after the HMAT callback.
-> 
-> With the change, the CXL hotplug memory notifier runs after the HMAT
-> callback. The HMAT callback will create the node sysfs attributes for
-> access coordinates. The CXL callback will write the access coordinates to
-> the now created node sysfs attributes directly and will not pollute the
-> HMAT target values.
-> 
-> A nodemask is introduced to keep track if a node has been updated and
-> prevents further updates.
-> 
-> Fixes: 067353a46d8c ("cxl/region: Add memory hotplug notifier for cxl region")
-> Cc: stable@vger.kernel.org
-> Tested-by: Marc Herbert <marc.herbert@linux.intel.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+OK, even if you don't get a solution in the firmware in this generation 
+it's good to understand this issue and root cause it so that you can 
+have it fixed properly next generation.
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+It's not always realistic but ideally bringing a new product to market 
+shouldn't require a quirk.
+
+> 
+> But even then, we still don't have fwupd support to get the fw update 
+> out easily
+> 
+
+😢
+
+>>
+>> 2) Shouldn't you also have DMI_SYS_VENDOR or some other matching keys 
+>> else set?  Or is it really all these boards with this specific name?
+> 
+> I was following the style of the i8042 quirk list where we also always 
+> only did boardnames
+> 
+> Ofc we only tested the boards the odm has sent to us
+> 
+> best regards,
+> 
+> Werner Sembach
+> 
+
+But this isn't a hardware problem with the board itself, it's a firmware 
+problem.  The board ID you're using is just a convenient proxy for it.
+
+I've seen the debugging for a few issues like this and it can be all 
+across the board.  A few examples:
+
+* polarity issues
+* debounce issues
+* incorrectly set PCD (Kinda like a Kconfig for BIOS)
+
+
 
