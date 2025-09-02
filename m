@@ -1,268 +1,90 @@
-Return-Path: <linux-kernel+bounces-796672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D8DB405CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:58:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19896B405CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57F8A4840D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:53:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1090C3B6814
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FAA30F923;
-	Tue,  2 Sep 2025 13:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C7E2D4818;
+	Tue,  2 Sep 2025 13:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1GwldwiP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4Zb+rStK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1GwldwiP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4Zb+rStK"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhSJElul"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5C0305E32
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CE51F61C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820954; cv=none; b=PnSka+rx6IZ6qfpSqoFyHGjcnzl/fk4I+8MJV+yTDQlgtTRwAr6PcOUOpslINojAZdCR1bnm+By7BpJREtyQBQDEI6Wi+OOTXZXQ7HSjfXnb9rbY3dxF4e6vBLFW1CbrNehbOtSe0Sx1onmicZmmMRyiq2bJbOKcwvpKEB2D198=
+	t=1756821003; cv=none; b=nk0tqFIgXP3Senkpj7V1PBzc8FugP5TIPZBMwoGtLS5hCYGAGOB7xfK0M56N/h9H6OW2rCi76YuA2DrAfNtrR/b86FgjX9ll6N1FN7ahhbspnt35zQowXhr/86glvAF/UoggyJGP83FSMs8bHtK9JX3mx6mKgb/6IH+ElHyxmn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820954; c=relaxed/simple;
-	bh=Ix7OEBIHozTYC65R674Whjbhl/SJJhLb2+6kTcI7jHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OBqD7MT3fx359MPzJHPdAKzAZAPDMAEUYqnchMMOZoO/UPIxNQC/6kmVMzsatocxuBob56WzFgLKBSz80pYCqsDqq4a5uLsj5uM11rQNcVXGMOCBVkHFpZmMYKEmQwJr7eEykxpU9ioqSdZzXLv41lHWzS7JyqBraMXuMMbMVWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1GwldwiP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4Zb+rStK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1GwldwiP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4Zb+rStK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BEF1721180;
-	Tue,  2 Sep 2025 13:49:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756820949; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wxz0Uc1f5kvFEmB6USJleWbSh5FczLUIrK4UKqBhp+g=;
-	b=1GwldwiPUXZ0RgiJeG0WoLOQnC41/0OQ/Dw4E7w9fb0lInbRPHb6YTfEZWTmIVor6zStoP
-	kF9PLp6x2nLiH3pACuI8OLh71jQgO6AIjGtZZCCRjWoZSXsqmrUSxXrYuViBP9TPjzSjo0
-	A6BkLhYrWf+Db/O6V8qJyP/woccbLCI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756820949;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wxz0Uc1f5kvFEmB6USJleWbSh5FczLUIrK4UKqBhp+g=;
-	b=4Zb+rStKlqZBh5gn9803WpbHXniFuCoAEsOf5zHcTvR//xHRphhh/N0OzRvo8fMuntY979
-	nHyaVtSq1zx6v1Aw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1GwldwiP;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4Zb+rStK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756820949; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wxz0Uc1f5kvFEmB6USJleWbSh5FczLUIrK4UKqBhp+g=;
-	b=1GwldwiPUXZ0RgiJeG0WoLOQnC41/0OQ/Dw4E7w9fb0lInbRPHb6YTfEZWTmIVor6zStoP
-	kF9PLp6x2nLiH3pACuI8OLh71jQgO6AIjGtZZCCRjWoZSXsqmrUSxXrYuViBP9TPjzSjo0
-	A6BkLhYrWf+Db/O6V8qJyP/woccbLCI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756820949;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wxz0Uc1f5kvFEmB6USJleWbSh5FczLUIrK4UKqBhp+g=;
-	b=4Zb+rStKlqZBh5gn9803WpbHXniFuCoAEsOf5zHcTvR//xHRphhh/N0OzRvo8fMuntY979
-	nHyaVtSq1zx6v1Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B2A913882;
-	Tue,  2 Sep 2025 13:49:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UY7nDNX1tmhbYwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 02 Sep 2025 13:49:09 +0000
-Message-ID: <c24cd299-388a-4223-9409-5a882b25c2f6@suse.de>
-Date: Tue, 2 Sep 2025 15:49:08 +0200
+	s=arc-20240116; t=1756821003; c=relaxed/simple;
+	bh=+wPuKdc/Rol6aNMF8Od+YrhItlb5399wVfGd0zdb71M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvOfhJh5eQaqFmb+8G8pOxQ0laZ9pGJh/coCstXKLUIHasqgRYHOt4HBvUwqBsy+06LCcCrDCs+Qy8J0/khM/G8l6qDpD+Vs+zdfHGIg2m6bNFrYrYGhlXtQYnI+iTIfOaxZCKcqRjvTszpmLJTa8IvkrtopvLp7t9j2eMP1sj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhSJElul; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC65CC4CEED;
+	Tue,  2 Sep 2025 13:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756821003;
+	bh=+wPuKdc/Rol6aNMF8Od+YrhItlb5399wVfGd0zdb71M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nhSJElulfDzcfFS3Z+tB2Znyt8zlpD1RDZe3L3jQMNFF/VRc3ydd2EV0qMooFvPnN
+	 TnLdp8OiOWa15He0VlOjEhLY4FZ2NxzrYjbPxEMeBftom/qNxOSDvY3zIuH1PFB7mJ
+	 7UUmnZTAQnV75hmMFuC6FmaOWrBVyWU1kFftakafZKV423UwPcbxf5rLrGiqMQd6be
+	 yfXXZd2RJi1dgoXpnZiqH03ba58wNaK9n292nxpoV0lQ7G52F0qIkkx1kYelSoflgh
+	 Zpa57/Q0zq1s3MO8xCrCclT6ZVw4/l+JBHG0sHjLHENMlM4Wk5sgpMoebsmZIMz3WP
+	 Y/hcBqE+QIBYQ==
+Date: Tue, 2 Sep 2025 15:50:00 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tick: Remove unreasonable detached state set in
+ tick_shutdown()
+Message-ID: <aLb2CIlAoaIsY4H8@localhost.localdomain>
+References: <20250807035954.2412399-1-maobibo@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/29] drm/tidss: Convert to drm logging
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-18-14ad5315da3f@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250902-drm-state-readout-v1-18-14ad5315da3f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: BEF1721180
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,ideasonboard.com,kwiboo.se,iki.fi];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250807035954.2412399-1-maobibo@loongson.cn>
 
-Hi
+Le Thu, Aug 07, 2025 at 11:59:54AM +0800, Bibo Mao a écrit :
+> Function clockevents_switch_state() will check whether it has already
+> switched to specified state, do nothing if it has.
+> 
+> In function tick_shutdown(), it will set detached state at first and
+> call clockevents_switch_state() in clockevents_exchange_device(). The
+> function clockevents_switch_state() will do nothing since it is already
+> detached state. So the tick timer device will not be shutdown when CPU
+> is offline. In guest VM system, timer interrupt will prevent vCPU to sleep
+> if vCPU is hot removed.
+> 
+> Here remove state set before calling clockevents_exchange_device(),
+> its state will be set in function clockevents_switch_state() if it
+> succeeds to do so.
+> 
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
 
-Am 02.09.25 um 10:32 schrieb Maxime Ripard:
-> DRM drivers should prefer the drm logging functions to the dev logging
-> ones when possible. Let's convert the existing dev_* logs to their drm
-> counterparts.
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Good catch. Looking back, it has been that way since the introduction
+of clockevents and tick. Therefore it's not a regression and probably
+not worth a Fixes: tag.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-> ---
->   drivers/gpu/drm/tidss/tidss_crtc.c  | 4 ++--
->   drivers/gpu/drm/tidss/tidss_dispc.c | 6 ++++--
->   2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
-> index da89fd01c3376352840185cd4ac355dd41fd5bb1..f497138ad053ed4be207e12eeee6c304e1c949bd 100644
-> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
-> @@ -101,11 +101,11 @@ static int tidss_crtc_atomic_check(struct drm_crtc *crtc,
->   
->   	mode = &crtc_state->adjusted_mode;
->   
->   	ok = dispc_vp_mode_valid(dispc, hw_videoport, mode);
->   	if (ok != MODE_OK) {
-> -		dev_dbg(ddev->dev, "%s: bad mode: %ux%u pclk %u kHz\n",
-> +		drm_dbg(ddev, "%s: bad mode: %ux%u pclk %u kHz\n",
->   			__func__, mode->hdisplay, mode->vdisplay, mode->clock);
->   		return -EINVAL;
->   	}
->   
->   	if (drm_atomic_crtc_needs_modeset(crtc_state))
-> @@ -170,11 +170,11 @@ static void tidss_crtc_atomic_flush(struct drm_crtc *crtc,
->   	struct tidss_crtc *tcrtc = to_tidss_crtc(crtc);
->   	struct drm_device *ddev = crtc->dev;
->   	struct tidss_device *tidss = to_tidss(ddev);
->   	unsigned long flags;
->   
-> -	dev_dbg(ddev->dev, "%s: %s is %sactive, %s modeset, event %p\n",
-> +	drm_dbg(ddev, "%s: %s is %sactive, %s modeset, event %p\n",
->   		__func__, crtc->name, crtc->state->active ? "" : "not ",
->   		drm_atomic_crtc_needs_modeset(crtc->state) ? "needs" : "doesn't need",
->   		crtc->state->event);
->   
->   	/*
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index 190d32ed53f84371456ccb997d1898ed5cef9db1..8b1d6b72f303b91fbf86f7d0e351800804757126 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -1063,24 +1063,26 @@ struct dispc_bus_format *dispc_vp_find_bus_fmt(struct dispc_device *dispc,
->   }
->   
->   int dispc_vp_bus_check(struct dispc_device *dispc, u32 hw_videoport,
->   		       const struct drm_crtc_state *state)
->   {
-> +	struct tidss_device *tidss = dispc->tidss;
-> +	struct drm_device *dev = &tidss->ddev;
->   	const struct tidss_crtc_state *tstate = to_tidss_crtc_state(state);
->   	const struct dispc_bus_format *fmt;
->   
->   	fmt = dispc_vp_find_bus_fmt(dispc, hw_videoport, tstate->bus_format,
->   				    tstate->bus_flags);
->   	if (!fmt) {
-> -		dev_dbg(dispc->dev, "%s: Unsupported bus format: %u\n",
-> +		drm_dbg(dev, "%s: Unsupported bus format: %u\n",
->   			__func__, tstate->bus_format);
->   		return -EINVAL;
->   	}
->   
->   	if (dispc->feat->vp_bus_type[hw_videoport] != DISPC_VP_OLDI_AM65X &&
->   	    fmt->is_oldi_fmt) {
-> -		dev_dbg(dispc->dev, "%s: %s is not OLDI-port\n",
-> +		drm_dbg(dev, "%s: %s is not OLDI-port\n",
->   			__func__, dispc->feat->vp_name[hw_videoport]);
->   		return -EINVAL;
->   	}
->   
->   	return 0;
->
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Frederic Weisbecker
+SUSE Labs
 
