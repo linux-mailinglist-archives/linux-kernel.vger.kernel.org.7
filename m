@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-796085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F79B3FBB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:04:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D753B3FBB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF8D18883E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9253AAB17
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E962F532C;
-	Tue,  2 Sep 2025 10:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CC82F360F;
+	Tue,  2 Sep 2025 10:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9fj0Aew"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JKPL8Nvr"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5CF2F530E
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249B82F1FF1
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756807386; cv=none; b=VcGp22PE8tPJ72978gymDRetc07tjgp2XifPHa5rBbzPGko/niC+3TevnTLJpqNcvt2Kzlg0tO8eM7oHJnB+xBfcpsTIsJ8G3U+uXy9rJz/ik5eU2hI+OVpLbmAjy4MTDD3ijEeaG/wo9o4jNiwx9dXF1XUSVHoOdRGGLeWKEAQ=
+	t=1756807411; cv=none; b=SskCSXs0sxIZNFDjrVC9y/KSOe4AdxR9RUnS6+RXoBsFxxsbIkUtVWd69F+2pKW7mu8xNxON8QzTRPgYjApRLNeD9tJyHIguvPet2VvW5+w4U5qESAdL+Swga5JsaiXYPimZ6+CS9eaqtSRiYtTkJFCTqm2vDIJ1K2v1Ifmxx+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756807386; c=relaxed/simple;
-	bh=A+NdCy/QTI3Llqx/OkTYqGnHtrRvbIuwpqve0iQTbaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bdwfk0eky/+I92xswQdkbuE/IHlKQJSJ5KSqjQkG7/Ay/ED3U4bp1uemyyMo8SFQshtMZpUCZiH9Tx7Y9qzaIYHGNaG2bQFa19wXuOZLt1ngbh+QrChGvVsuHM3GXpDrzxDThB3bAARt260j0R/Z2zJvzkbBmU5ac9WfjIJAIHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9fj0Aew; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756807386; x=1788343386;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=A+NdCy/QTI3Llqx/OkTYqGnHtrRvbIuwpqve0iQTbaU=;
-  b=S9fj0Aewvg7u48s4DTxLCxkUh18bnF1c0rLjqNVYKfLi+ZA4KvIk19OI
-   un+s5rX0p5N7BXMUfjtpnS5taNULSkkoTdOJX+ITAm4Iy9oW81imT2y9N
-   7WLMxW6hEF1bFawPqyu+YaIBAruwvNhHY+GxaPlVoTAYYW9Yd6zmYvXQk
-   dIkK6kdsXFRQJAw0zHn8oZBiDd4nktFM7pPwJj8Tm1FFdayyfk80nz1lt
-   NTtj8ygq1IZ1+F/VvwAMb3WGgbQHUepHexxgKPjzAkaaJJ7wrst78dBru
-   d9TD/x6yhUymsPk6dNeU8MLXyFGofjqTxlR5ryoOAn2/vvQrGbW9wGgfX
-   A==;
-X-CSE-ConnectionGUID: DIcEz/iJQluavX8VPyvhcA==
-X-CSE-MsgGUID: WWFNB2IqTLKj5OXJ8OBHKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="69334095"
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="69334095"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:03:05 -0700
-X-CSE-ConnectionGUID: ZSKzDkOZSwOxV7XTN38zLw==
-X-CSE-MsgGUID: SjYyc/jyRvihbBLIjXhWlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="175599919"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 03:03:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utNqu-0000000Af4t-3FIf;
-	Tue, 02 Sep 2025 13:03:00 +0300
-Date: Tue, 2 Sep 2025 13:03:00 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] auxdisplay: linedisp: display static message when
- length <= display size
-Message-ID: <aLbA1Ma9Cig3gbWV@smile.fi.intel.com>
-References: <20250901020033.60196-1-jefflessard3@gmail.com>
- <20250901020033.60196-3-jefflessard3@gmail.com>
+	s=arc-20240116; t=1756807411; c=relaxed/simple;
+	bh=lMt8f1svkhZE33FXRLY0yAkh9fTWrIdcWz2YobDS3hs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SHhCQbKfNAGs2PiBXqb0eRXnu8KtM+4PmAQ1TAc291OtUu5bdC7gdgTjdKeHqj8RgW9Ee1lcy3foxflK6vndFDWru21mn7v9Q7Zml7ZYLWMOI7v3VLGGRb8S76hbri87ZUA/UI+cI8QWdp0CgMN8huks/w88Bl52AbRNaEi2OdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JKPL8Nvr; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-337cc414358so11511581fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:03:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756807407; x=1757412207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lMt8f1svkhZE33FXRLY0yAkh9fTWrIdcWz2YobDS3hs=;
+        b=JKPL8Nvr1t8aJ1PNt/35It7dkYt5pQZa023xPSAvyWqItoR3lwVnz4nF5tna3rs+Ou
+         1k5JQ8bqK9W/rMsW0zhEBjQW67g5JAeSne/NDhiYZY6UOxYVI+nYg5deydTeU++UHbE6
+         yzHEzRlieXIMiONQv2ovW1LrVMp3Q4+MZTxTwGrclhqNQ/Hj6HEq3OWbBlAzqzwGkSzQ
+         VQ0PdczWInkY/ZYRF0gVtPXmBUsPeataa3qrcs9cGzcU1m5TN3OrCHGI9ey5SR2FUhJh
+         LyZ4GaYecdcd4imEENmNQwoz12omr598xDlC13d7zaLotnjyE0ZcFC0RmmdlLVgUK3Tp
+         t6Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756807407; x=1757412207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lMt8f1svkhZE33FXRLY0yAkh9fTWrIdcWz2YobDS3hs=;
+        b=jts61f6uqQoGlBScrGKl25jsTlVSSfPZrCmLdDe0rhL7hMzb09axgriGwCce1XfEvG
+         nDH4DExLdxGXJVTF4q2qUwY6d8gn5NcMvGUsEmZqG7OVhOum36dfLaiP/rgp5tecbtj1
+         olI8wfF2qLoaZXw9YJXUSqNRrIp/yyzAkSwnurOYi0nG0ur1KMgjSaM3a4D8OwFmzQES
+         bf/OXHI1+ghoVvnVXP/2QdVn0bJG4kV9W6+eipUmSZ+irIkTMCshBU/itPtgY8OxURQT
+         KTC9aPzQWT0kSsm/tty8sxL0ZXcb0inI0ZOFoL/uu01/UwQTnulXojJ4ZUm3AIQ4h12t
+         FnhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwZe7EFXx2bLDMKhi53eE+20sbciFKi0KOeYQI6MflxFI8bX0d3OAnJfmgEt4Lrml5JqJRxwpx5N+J0dU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVfMM6hoigTuU5ya4aS65l2OW68aQ+RupymxpGw4b5C5sgjJNG
+	y94U2iCQLuSncvTyi9OS8lYnmWrHOkEJwQMsovNbJVOAQwJNJOBeUwoN2+2t9S31xyYilByyg6f
+	tgdywH33wt1PyfRWQQLblDUgUVe3HhwbQTkjAgAzjKw==
+X-Gm-Gg: ASbGncswMPDyp4yWtmc1G0DBTk5d7Ej/XWwsGfLQE4YAWQ6KDZFYNFTU99rPffx3xOG
+	fb5pCsRIeONmxzBjPHshJM4Fbl/kaXaZfapBcYhewlmkWDeh5wG03aOlVXWo1PwpuQugZJ9749C
+	tixGtwI+iU4j6E+HbEe3L2wUt6bvP6IJgv6RT7G+H6+mIdTZ7TG/c8o//ih/uLavsZv+i+xIXVo
+	Za85NnLwFNduddmAQ==
+X-Google-Smtp-Source: AGHT+IFdHvcUVxSylVwD2vnKLU9FQTJFLwj42u6Z7wlm3bxT33e3D2bu+wc3U3jlI6g8xaBcDAr/McPTMKQVI/EszFU=
+X-Received: by 2002:a2e:b8d4:0:b0:336:7121:525a with SMTP id
+ 38308e7fff4ca-336cab0981bmr32752001fa.25.1756807407065; Tue, 02 Sep 2025
+ 03:03:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250901020033.60196-3-jefflessard3@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250811-gpio-mmio-mfd-conv-v1-0-68c5c958cf80@linaro.org> <20250811-gpio-mmio-mfd-conv-v1-1-68c5c958cf80@linaro.org>
+In-Reply-To: <20250811-gpio-mmio-mfd-conv-v1-1-68c5c958cf80@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 2 Sep 2025 12:03:15 +0200
+X-Gm-Features: Ac12FXx83c_FhzzXPFUThYNZRpQMbuI8Pyqd_lvAWb4e0eyemL5lMdz-E0s3cCM
+Message-ID: <CACRpkdbLoa518Nu6UqFcqgx5fvqv9Uj5o_etybO+sxZpDQ3_Mw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mfd: vexpress-sysreg: check the return value of devm_gpiochip_add_data()
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lee Jones <lee@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Pawel Moll <pawel.moll@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 31, 2025 at 10:00:26PM -0400, Jean-François Lessard wrote:
-> Currently, when a message shorter than the display size is written, the
-> content wraps around (e.g., "123" on a 4-digit display shows "1231")
-> without scrolling, which is confusing and unintuitive.
-> 
-> Change behavior to display short messages statically with space padding
-> (e.g. "123 ") while only scrolling messages longer than the display width.
-> This provides more natural behavior that aligns with user expectations
-> and current linedisp_display() kernel-doc.
-> 
-> The scroll logic is also consolidated into a helper function for clarity.
-> 
-> No API changes are introduced.
+On Mon, Aug 11, 2025 at 3:36=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-...
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Commit 974cc7b93441 ("mfd: vexpress: Define the device as MFD cells")
+> removed the return value check from the call to gpiochip_add_data() (or
+> rather gpiochip_add() back then and later converted to devres) with no
+> explanation. This function however can still fail, so check the return
+> value and bail-out if it does.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 974cc7b93441 ("mfd: vexpress: Define the device as MFD cells")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
->  /**
->   * linedisp_scroll() - scroll the display by a character
->   * @t: really a pointer to the private data structure
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
->  	linedisp->scroll_pos %= linedisp->message_len;
->  
->  	/* rearm the timer */
-> -	if (linedisp->message_len > num_chars && linedisp->scroll_rate)
-> +	if (should_scroll(linedisp))
->  		mod_timer(&linedisp->timer, jiffies + linedisp->scroll_rate);
->  }
->  
-
-...
-
->  	linedisp->message_len = count;
->  	linedisp->scroll_pos = 0;
->  
-> -	/* update the display */
-> -	linedisp_scroll(&linedisp->timer);
-> +	if (should_scroll(linedisp)) {
-> +		/* display scrolling message */
-> +		linedisp_scroll(&linedisp->timer);
-> +	} else {
-> +		/* display static message */
-> +		memset(linedisp->buf, ' ', linedisp->num_chars);
-> +		memcpy(linedisp->buf, linedisp->message,
-> +		       umin(linedisp->num_chars, linedisp->message_len));
-> +		linedisp->ops->update(linedisp);
-> +	}
-
-Hmm... But it seems the linedisp_scroll already has a check, why do we need
-an additional one here? Perhaps we need to pad a message somewhere else and
-guarantee it won't ever be less than num_chars?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
 
