@@ -1,247 +1,249 @@
-Return-Path: <linux-kernel+bounces-795614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4E4B3F555
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:21:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE977B3F559
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AA9C1A80C9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:22:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBE5200925
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605742E3AEA;
-	Tue,  2 Sep 2025 06:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6114B2E3B1C;
+	Tue,  2 Sep 2025 06:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jXBo7p4q"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t/mnyW06";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FvUyXBp+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7502E36FB
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0292E3AEA;
+	Tue,  2 Sep 2025 06:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756794095; cv=none; b=gj0KN6J0Qwq6jVAG1Nwgo55qvptbvkDWpZBxSROj51MG7197EvJfucrtqKh/Tl86BF/r6UrjM7MtmcYTrIRMmJMO0qHkQHda+QXXXC90i5pCLqjcmHJJkcbKogxNGMnb3dobxJiRDAArBUo/wN/AG4gWe8USkUjDfREIws6czZg=
+	t=1756794133; cv=none; b=b7jT4RHRHHa9QnNSm0l+7Ys3E9ddfF1AGdlOfEtsFI+1wA6ntM498KFYTtSZgZhNHxFsgtsBgK7M7Ku8RfJCPIVx0ooQIHG7Jk+pRBbW+bHBN6UuCLRYipvbE42UAd6YYAKBuHpaOnaJ8h4glMbH19NpYqKCW2NDWrNDJEsJdOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756794095; c=relaxed/simple;
-	bh=EqvLtaFIwclgSkhnswpNFmZMD0hvjvVOL0SIhEx1NnQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YLNBVfSr4wE/dmomzh1mMM24pceAwSv8Yl7AWfVQBIKkYNZBqryZB6PgEITf1u0Z44lKB3FxKGo7AjZOSzjECVvrv9dZWg8L2DFCqm7pSwgQAhuOgkz+v7+w3FYfiFv6e2KRE2ksOHzZL6KfinLdXVaqKykSLzqNvNnELNrE7TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jXBo7p4q; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cGFxj4xgTz9tcV;
-	Tue,  2 Sep 2025 08:21:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756794089; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1756794133; c=relaxed/simple;
+	bh=/JzarLfnO10vwcVCjWPLp9g0mslhv6ZlQ4oNdQEkKrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRL/ChvZyYF41vd8BPNv4AgmlYUBeH0WIF3XIJK5gT0kESpOcXWBQ3ts4iNxi9cJh+vaLmOYY+B9Wu02sfmgwt5Tk4IKAFz/JqjACjlKXjPD8tpnEQBFGG4/1UtwduQOUP/Xe30lib29p2zVptP0x5G6qBK8TL+E+hQifh15urQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t/mnyW06; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FvUyXBp+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 2 Sep 2025 08:21:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756794120;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BDU8VIQ6SobHvzSlfhP+Kl00GVG7uP7EX/bvCh9vkOQ=;
-	b=jXBo7p4qp33hbbcf3p18oyC1hZ2sAcHGykqGpJwqK4+OXVlVnaif30ej2h2EjfiW0zTqPC
-	arTWtWGIsYOPYVXBNBMQBin4BcfEykvVIY1uFu5Bk0u3oV2vnoV+G3La+D5hokty1Vybyq
-	e4zB1ABK2Bp9QgnQGj5BOM82xb1JrB434pr8HeQi+ciJIW8YEe5QLVSRuaHN4Fis4rbHY6
-	pGEWvqGWze6NyGC4kMnSQkp1sTLm01QnY7XeWSw5ym/GJ2fw3CWo6Af2xLAyDeVAR5EUgF
-	UEHdXM6Xw+pFkHW1waYsaG5nSP/ytT6nBLsz8DK0oPKSU5D7VPblg4MFs0NkKA==
-Message-ID: <d2cda90644e717a781b98a90b85b1464cbd0b11e.camel@mailbox.org>
-Subject: Re: [PATCH v1 2/2] drm/sched: limit sched score update to jobs
- change
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>, phasta@kernel.org, 
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Matthew
- Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Christian =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Tue, 02 Sep 2025 08:21:25 +0200
-In-Reply-To: <b1a8f459-93dd-4b6c-b29e-c68fba19f6fc@damsy.net>
-References: <20250822134348.6819-1-pierre-eric.pelloux-prayer@amd.com>
-	 <20250822134348.6819-2-pierre-eric.pelloux-prayer@amd.com>
-	 <9b68898ca34483b52d7f4510747a20bce52751c7.camel@mailbox.org>
-	 <b1a8f459-93dd-4b6c-b29e-c68fba19f6fc@damsy.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	bh=OXZ4NFZST9k9eCqT7GnCjhCmIr6XUYHHjmpA9MGgNoA=;
+	b=t/mnyW069WDZdYSg1nT6BNAUY4fXh3FNfp/XAK3xQwLYLYj6HoeGPfCNzmZMZ7oReEoBEp
+	DZDoEhPdYML98ymWgf54Z8iJIvtiZU6Bdt5SpGoajpqnnnyVjphOcDCDeKoXyty8ZNjaTO
+	F19lrSSyf2xWFL5Lvgz0STFNTIKUiAaYW3fBKC9zPz5eiX+o9BeAXHXHNKenGYYvWaRd8c
+	SQ+vTCmAJfiYPNujN0Gt58LHVV+X4uEibbFSzSWUXf+/OzTXjjUdZ18oavIjhigKnp5ukZ
+	z1ZKEBrwe7Z1R+q0a+HJeRahyLeT37Y/5rsV/wwvHJPaFHD7IzpGXjcIyAtL4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756794120;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OXZ4NFZST9k9eCqT7GnCjhCmIr6XUYHHjmpA9MGgNoA=;
+	b=FvUyXBp+pWllf4tyaqMG7VZrEVqzZLT81k8wrvlKRbd8zvo2jnAgChYNIaEpLHVH0yGIr9
+	kVK3Ac8hgxflnnDw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	"David S . Miller" <davem@davemloft.net>, Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, 
+	Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
+ library
+Message-ID: <20250902074631-2f608b5c-ae1d-46a1-9849-15c4543855af@linutronix.de>
+References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
+ <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
+ <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
+ <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
+ <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
+ <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
+ <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
+ <b7ab1bdca349208532804d0d5e5af56817cd25c6.camel@physik.fu-berlin.de>
+ <20250829124314-288d0445-a744-4022-93bf-7da255182411@linutronix.de>
+ <6390486f-ccc7-4f77-8126-1e0b3b67bc75@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 8d19b804591be1ca437
-X-MBO-RS-META: x7qorwjpbq8ntcegqsedzanb697ym7mr
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6390486f-ccc7-4f77-8126-1e0b3b67bc75@app.fastmail.com>
 
-On Mon, 2025-09-01 at 15:14 +0200, Pierre-Eric Pelloux-Prayer wrote:
->=20
->=20
-> Le 25/08/2025 =C3=A0 15:13, Philipp Stanner a =C3=A9crit=C2=A0:
-> > On Fri, 2025-08-22 at 15:43 +0200, Pierre-Eric Pelloux-Prayer wrote:
-> > > Currently, the scheduler score is incremented when a job is pushed to=
- an
-> > > entity and when an entity is attached to the scheduler.
-> >=20
-> > It's indeed awkward why attaching is treated equivalently to job
-> > submission.
-> >=20
-> > Can you expand the documentation for drm_sched_init_args a bit so that
-> > it gets clearer what the score is supposed to do?
->=20
->=20
-> drm_sched_init_args.score is the feature allowing multiple schedulers to =
-share a=20
-> score so I suppose you meant drm_gpu_scheduler.score?
+On Mon, Sep 01, 2025 at 05:17:13PM +0200, Arnd Bergmann wrote:
+> On Fri, Aug 29, 2025, at 12:52, Thomas Weißschuh wrote:
+> > On Fri, Aug 29, 2025 at 12:40:59PM +0200, John Paul Adrian Glaubitz wrote:
+> >> On Fri, 2025-08-29 at 12:37 +0200, Thomas Weißschuh wrote:
+> >> > In the meantime I installed a full Debian, but the bug is still not
+> >> > reproducible in QEMU.
+> >> 
+> >> Please keep in mind that QEMU emulates sun4u (on UltraSPARC II) while
+> >> Andreas was testing on sun4v (on Niagara 4). There might be differences.
+> >
+> > I am aware. Unfortuntely I don't have anything else available.
+> > If anybody could test this on real sun4u that would be great.
+> > Or teach me how to use sun4v QEMU without it crashing on me.
+> > In the past you offered access to a physical machine.
+> > Does this offer still stand? Does it also run into the bug?
+> 
+> It should be enough to set the cpu to a different type. As far
+> as I can tell, the three different cases are all determined by the
+> MMU/CPU ID, not the platform type (sun4u/sun4v).
+> 
+> As far as I can tell, the options are:
+> 
+> - JPS1 (UltraSPARCIII, SPARC64 V) and later use modern 'stick' operations
+> - UltraSparc IIe (Hummingbird) uses 'hbtick' without VDSO
+> - All other plain V9 implementations use 'tick'
+> 
+> To test all three cases, it should be enough to run qemu with e.g.
+> "-cpu Sun-UltraSparc-IV", "-cpu TI-UltraSparc-IIe", and
+> "-cpu TI-UltraSparc-II", respectively.
 
-I mean both.
-
-struct drm_sched_init_args has a @score which is passed by the driver
-during init and will then be stored in drm_gpu_scheduler.score
-
-The docu should be improved for both.
-
->=20
-> The doc currently says "score to help loadbalancer pick a idle sched" whi=
-ch is a=20
-> bit vague. It could be modified to become:
->=20
-> =C2=A0=C2=A0 @score: holds the number of yet-to-be-completed jobs pushed =
-to each scheduler.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 It's used wh=
-en load balancing between different schedulers.
-
-"to each scheduler" reads a bit as if each scheduler has an individual
-score. Is it used that way, though? I think it's a pointer because all
-schedulers share this atomic. Thus, it "holds the total number of yet-
-to-be-completed jobs for all schedulers sharing this atomic", right?
-
->=20
-> What do you think?
->=20
-> >=20
-> > >=20
-> > > This leads to some bad scheduling decision where the score value is
-> > > largely made of idle entities.
-> > >=20
-> > > For instance, a scenario with 2 schedulers and where 10 entities subm=
-it
-> > > a single job, then do nothing, each scheduler will probably end up wi=
-th
-> > > a score of 5.
-> > > Now, 5 userspace apps exit, so their entities will be dropped.
-> > >=20
-> >=20
-> > "entities will be dropped" =3D=3D "drm_sched_entity_kill() gets called"=
-,
-> > right?
->=20
-> Yes.
-
-then nit: better say "their entities will be killed" instead of
-dropped.
-
->=20
-> > > In
-> > > the worst case, these apps' entities where all attached to the same
-> >=20
-> > s/where/were
-> >=20
-> > or better yet: "could be"
->=20
-> Will fix, thanks.
->=20
-> >=20
-> > > scheduler and we end up with score=3D5 (the 5 remaining entities) and
-> > > score=3D0, despite the 2 schedulers being idle.
-> >=20
-> > Sounds indeed like a (small) problem to me.
-> >=20
-> >=20
-> > > When new entities show up, they will all select the second scheduler
-> > > based on its low score value, instead of alternating between the 2.
-> > >=20
-> > > Some amdgpu rings depended on this feature, but the previous commit
-> > > implemented the same thing in amdgpu directly so it can be safely
-> > > removed from drm/sched.
-> >=20
-> > Can we be that sure that other drivers don't depend on it, though? I
-> > suspect it's likely that it's just amdgpu, but=E2=80=A6
-> >=20
->=20
-> Aside from the new "rocket" as pointed out by Tvrtko, amdgpu is the only =
-driver=20
-> passing more than one schedulers to entities so they're the only ones tha=
-t could=20
-> be affected.
->=20
-> I verified amdgpu and Tvrtko pinged the rocket maintainers in the other t=
-hread.
-
-Very good! Then let's give those guys a few days to jump into the
-discussion.
-
->=20
-> >=20
-> >=20
-> > BTW, since you're cleaning up related stuff currently: I saw that it
-> > seems that the only driver that sets &struct drm_sched_init_args.score
-> > is amdgpu. Would be cool if you can take a look whether that's still
-> > needed.
->=20
-> It cannot really be removed yet as it's useful when a single hardware blo=
-ck is=20
-> exposed through different schedulers (so pushing jobs to one of the sched=
-ulers=20
-> should increase the load of the underlying hw).
-
-OK.
+Sun-UltraSparc-IV and TI-UltraSparc-IIe don't boot for me with either my
+Debian-derived config nor sparc64_defconfig, for details see below.
+But looking at Andreas' reports, the issue is not in the tick reading but my
+asm implementation of __arch_get_vdso_u_time_data().
 
 
-Thx
-P.
+Sun-UltraSparc-IV dies in the second instruction of cheetah_generic_boot:
 
->=20
-> Thanks,
-> Pierre-Eric
->=20
-> >=20
-> >=20
-> > P.
-> >=20
-> > >=20
-> > > Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer=
-@amd.com>
-> > > ---
-> > > =C2=A0=C2=A0drivers/gpu/drm/scheduler/sched_main.c | 2 --
-> > > =C2=A0=C2=A01 file changed, 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm=
-/scheduler/sched_main.c
-> > > index 5a550fd76bf0..e6d232a8ec58 100644
-> > > --- a/drivers/gpu/drm/scheduler/sched_main.c
-> > > +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> > > @@ -206,7 +206,6 @@ void drm_sched_rq_add_entity(struct drm_sched_rq =
-*rq,
-> > > =C2=A0=C2=A0	if (!list_empty(&entity->list))
-> > > =C2=A0=C2=A0		return;
-> > > =C2=A0=20
-> > > -	atomic_inc(rq->sched->score);
-> > > =C2=A0=C2=A0	list_add_tail(&entity->list, &rq->entities);
-> > > =C2=A0=C2=A0}
-> > > =C2=A0=20
-> > > @@ -228,7 +227,6 @@ void drm_sched_rq_remove_entity(struct drm_sched_=
-rq *rq,
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	spin_lock(&rq->lock);
-> > > =C2=A0=20
-> > > -	atomic_dec(rq->sched->score);
-> > > =C2=A0=C2=A0	list_del_init(&entity->list);
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	if (rq->current_entity =3D=3D entity)
+	OpenBIOS for Sparc64
+	Configuration device id QEMU version 1 machine id 0
+	kernel phys 404000 virt 40004000 size 0x1358650
+	initrd phys 175a000 virt 40c00000 size 0x1727675
+	kernel cmdline root=UUID=ac350b43-e843-40ad-bd55-ec4c2eaeb468
+	CPUs: 1 x SUNW,UltraSPARC-IV
+	UUID: 00000000-0000-0000-0000-000000000000
+	Welcome to OpenBIOS v1.1 built on Sep 24 2024 19:56
+	  Type 'help' for detailed information
+	[sparc64] Kernel already loaded
+	Unhandled Exception 0x0000000000000032
+	PC = 0x0000000040004654 NPC = 0x0000000040004658
+	Stopping execution
 
+QEMU debugging:
+
+	   533: Data Access Error (v=0032)
+	pc: 0000000040004654  npc: 0000000040004658
+	%g0-3: 0000000000000000 0018310005070000 0000000000000076 0000000000000048
+	%g4-7: 0000000000000075 00000000ffe81000 0000000000000000 0000000000000018
+	%o0-3: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+	%o4-7: 00000000ffd0d904 00000000ffecb5e0 00000000ffecafc1 0000000040004398 
+	%l0-3: 0000000040004190 0000000000000036 0000000000000000 0000000000400000 
+	%l4-7: 00000000003fffff 00000000fef84930 0000000000000000 00000000ffd0d904 
+	%i0-3: 0000000000000000 0000000000000000 0000000000000000 00000000ffeb5400 
+	%i4-7: 00000000ffd85800 0000000000000000 00000000ffecb071 00000000ffd0e8c8 
+	pstate: 00000016 ccr: 00 (icc: ---- xcc: ----) asi: 00 tl: 0 pil: 0 gl: 2
+	tbr: 00000000ffd00000 hpstate: 0000000000000000 htba: 0000000000000000
+	cansave: 6 canrestore: 0 otherwin: 0 wstate: 0 cleanwin: 7 cwp: 5
+	fsr: 0000000000000000 y: 0000000000000000 fprs: 0000000000000000
+
+Disassembly:
+
+	0000000000404650 <cheetah_generic_boot>:
+	;       mov     TSB_EXTENSION_P, %g3
+	  404650: 86 10 20 48   mov     72, %g3
+	;       stxa    %g0, [%g3] ASI_DMMU
+	  404654: c0 f0 cb 00   stxa %g0, [%g3] 88
+	;       stxa    %g0, [%g3] ASI_IMMU
+	  404658: c0 f0 ca 00   stxa %g0, [%g3] 80
+	;       membar  #Sync
+	  40465c: 81 43 e0 40   membar #Sync
+	;       mov     TSB_EXTENSION_S, %g3
+	  404660: 86 10 20 50   mov     80, %g3
+	;       stxa    %g0, [%g3] ASI_DMMU
+	  404664: c0 f0 cb 00   stxa %g0, [%g3] 88
+	;       membar  #Sync
+	  404668: 81 43 e0 40   membar #Sync
+	;       mov     TSB_EXTENSION_N, %g3
+	  40466c: 86 10 20 58   mov     88, %g3
+	;       stxa    %g0, [%g3] ASI_DMMU
+	  404670: c0 f0 cb 00   stxa %g0, [%g3] 88
+	;       stxa    %g0, [%g3] ASI_IMMU
+	  404674: c0 f0 ca 00   stxa %g0, [%g3] 80
+	;       membar  #Sync
+	  404678: 81 43 e0 40   membar #Sync
+	;       ba,a,pt %xcc, jump_to_sun4u_init
+	  40467c: 30 68 00 04   ba,a %xcc, 4
+
+
+TI-UltraSparc-IIe dies in a division by zero in init_tick_ops:
+
+	OpenBIOS for Sparc64
+	Configuration device id QEMU version 1 machine id 0
+	kernel phys 404000 virt 40004000 size 0x1358650
+	initrd phys 175a000 virt 40c00000 size 0x1727675
+	kernel cmdline root=UUID=ac350b43-e843-40ad-bd55-ec4c2eaeb468
+	CPUs: 1 x SUNW,UltraSPARC-IIe
+	UUID: 00000000-0000-0000-0000-000000000000
+	Welcome to OpenBIOS v1.1 built on Sep 24 2024 19:56
+	  Type 'help' for detailed information
+	[sparc64] Kernel already loaded
+
+	Unhandled Exception 0x0000000000000028
+	PC = 0x00000000015f4444 NPC = 0x00000000015f4448
+	Stopping execution
+
+QEMU debugging:
+
+	   892: Division By Zero (v=0028)
+	pc: 00000000015f4444  npc: 00000000015f4448
+	%g0-3: 0000000000000000 00000000ffffffff 000000ee6b280000 0000000000441400
+	%g4-7: 0000000001456280 0000000000000000 0000000001434000 0000000000000000
+	%o0-3: 0000000000000000 0000000000000000 ffffffffffffffff 00000000012c2d08 
+	%o4-7: 0000000000000000 0000000001757c00 0000000001437491 00000000015f4418 
+	%l0-3: 0000000001757c00 00000000ffe80dc8 00000000ffd84c00 00000000ffecb7bb 
+	%l4-7: 0000000000000000 00000000ffeb5400 000000000000ffff 0000000000000000 
+	%i0-3: 0000000001444c98 000000000000000d 0000000001757c00 0000000000000000 
+	%i4-7: 0000000000000000 000000ee6b280000 0000000001437541 00000000015f4610 
+	pstate: 00000016 ccr: 44 (icc: -Z-- xcc: -Z--) asi: 80 tl: 0 pil: 0 gl: 2
+	tbr: 00000000ffd00000 hpstate: 0000000000000000 htba: 0000000000000000
+	cansave: 6 canrestore: 0 otherwin: 0 wstate: 0 cleanwin: 7 cwp: 0
+	fsr: 0000000000000000 y: 0000000000000000 fprs: 0000000000000000
+
+Disassembly:
+
+	00000000015f4410 <init_tick_ops>:
+	; {
+	 15f4410: 9d e3 bf 50   save %sp, -176, %sp
+	;       freq = ops->get_frequency();
+	 15f4414: c2 5e 20 40   ldx [%i0+64], %g1
+	 15f4418: 9f c0 40 00   call %g1
+	 15f441c: 01 00 00 00   nop
+	;       do_div(tmp, freq);
+	 15f4420: 82 10 3f ff   mov     -1, %g1
+	;       tmp += freq/2; /* round for do_div */
+	 15f4424: 05 1d cd 65   sethi 1953125, %g2
+	;       tick = ops->get_tick();
+	 15f4428: c6 5e 20 10   ldx [%i0+16], %g3
+	;       do_div(tmp, freq);
+	 15f442c: 83 30 70 20   srlx %g1, 32, %g1
+	;       tmp += freq/2; /* round for do_div */
+	 15f4430: 85 28 b0 09   sllx %g2, 9, %g2
+	 15f4434: bb 32 20 01   srl %o0, 1, %i5
+	;       do_div(tmp, freq);
+	 15f4438: 8e 0a 00 01   and %o0, %g1, %g7
+	;       tmp += freq/2; /* round for do_div */
+	 15f443c: ba 07 40 02   add %i5, %g2, %i5
+	;       freq = ops->get_frequency();
+	 15f4440: b8 10 00 08   mov     %o0, %i4
+	;       do_div(tmp, freq);
+	 15f4444: ba 6f 40 07   udivx %i5, %g7, %i5
+	...
 
