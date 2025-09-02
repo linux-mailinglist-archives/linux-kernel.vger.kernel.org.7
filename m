@@ -1,481 +1,331 @@
-Return-Path: <linux-kernel+bounces-795476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A7DB3F294
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:11:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1164B3F299
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97C9A1A84BA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:11:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A731A84D33
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0624C2E03FD;
-	Tue,  2 Sep 2025 03:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871A62E03F8;
+	Tue,  2 Sep 2025 03:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0lWz3yFB"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2043.outbound.protection.outlook.com [40.107.243.43])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HALbmYUS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8FC248F66;
-	Tue,  2 Sep 2025 03:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756782682; cv=fail; b=gjBHKn3ge8JaOvcSpI1C0eDfcmlzSKUuUbBYh4ihd6NLhwiIfvV2RRPwQJMq7OXcbL6yivejajb23iybOihMzi/kG7LOlQ3SFMqul1gu0lhmj6ORP2WZ4j3/xE9MUEXr/ipE5n+Tnz1xdYseBPIYTuHrmnibDqkwWyaGnFjY30w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756782682; c=relaxed/simple;
-	bh=zvJ20exs1Q76Qi2VMBO3jlVkkh++hpGcK12yz/PzZm8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PPJcwh+PlzR79gOsDytNa1kbd9UvEJqToEKzi6XLiNkaQb96kwCjXqYjqWMaLkQqQ8LpWVM98vOC9Gr1eRu9e7puskMfLiYMkVr5DRBoF9VA2dE2khkoB2Gfj82Uo0ecC9Mfqemng5Z97dnosSzRdElrRZbU5rzqjgGdArLXbLI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0lWz3yFB; arc=fail smtp.client-ip=40.107.243.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V91biFta6ai2+LiKdEoKI/GxPsf2u/46B9IQA1+c+SR8/fTfEgh+e6Fk1HNd5N04DiKyuGUeZMepW/pwcIOLPT4M1EyABSd0XZtGcmCChwfngYBKseMg7ehJzq4IpQfn2aPsbtkRKvXKYDGRanlNGrS+m0rDFd1w46F4564ooBSX7XmRHSp+gWRrcLXQo+jm3e5ftfGli40eVMnkhU7outldQUc1UGqxVp3zaHBw0Z1wp6LgQ9jM8et+q788wDCMArT1ls72ozUcaG19edBc/L9G2Vd/pM3f6jmiYDE6/5jBTDGAWg/ribYJ8wKyBMEk9QcoOtMgpzfEhHznZj9XZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jmF+/X2JT0+RUul16hFMltyWinNoXv8tTEfLMFtsnnQ=;
- b=VxxtEd1Bw9esHvFP8tReHT5iq/yJGWu3vBe1qC5iqUu+24dvD0GqprgWq7fbZ1tp8FuEPempb30/9LhtzGbPoWPp62SbIjwypMR1+QbN41Q0vuT/e+eCnMH7NNGAE/EsV8hYWtU1eQtNSPd4jIXUHkS7np8tktZZFDzJTcI/lgZmTQd1wh1WXKXhahKD5P1kpLl5iZh+MKmMNqMWaI5FTCi1t7/jjkD68wOp+rHBQgpw+OJQ6FKtXwMa29UX/xlCiLMOpapEeyHrueY0K5MfYV6qipwWD3kuIFJLy2zNROyF2Ot40D031+FU7kGwxb6I46uzkS9aLp5t/iFbFw/OWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jmF+/X2JT0+RUul16hFMltyWinNoXv8tTEfLMFtsnnQ=;
- b=0lWz3yFB8v4L7z9I0QH8EUjU+PVPGRM5UNhpphoBJaDMjlTWHjyX4qHU4uo6WYj2VQyEvVJI9oKfPGJE5ZKIWz1a283zcYQYp6rXZN3alPLHCO/+n30gF+LDiUMVrDnxZxwZ9wNNtzQpdiOBqLK+xK6C1k4ttdQjzVCbzYWm/8Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
- by SN7PR12MB8027.namprd12.prod.outlook.com (2603:10b6:806:32a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 2 Sep
- 2025 03:11:18 +0000
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 03:11:18 +0000
-Message-ID: <7627ca50-ab5b-46bd-9711-83718e3dd269@amd.com>
-Date: Tue, 2 Sep 2025 11:11:09 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/7] media: platform: amd: Introduce amd isp4 capture
- driver
-To: Mario Limonciello <superm1@kernel.org>, mchehab@kernel.org,
- hverkuil@xs4all.nl, laurent.pinchart+renesas@ideasonboard.com,
- bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, sultan@kerneltoast.com
-Cc: pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- richard.gong@amd.com, anson.tsao@amd.com,
- Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-References: <20250828100811.95722-1-Bin.Du@amd.com>
- <062b36df-2fc6-43ba-9f71-25f8fe786b7a@kernel.org>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <062b36df-2fc6-43ba-9f71-25f8fe786b7a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0035.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::8) To PH8PR12MB7446.namprd12.prod.outlook.com
- (2603:10b6:510:216::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FF52DECB1
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 03:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756782767; cv=none; b=r0HIbErtPMhWvRxmNIav3nnRpbBzmP3xzFXeerdyUL0bAKdXkOSHHeo1balPZgaBZJ0995eOqWfvjDVl3RJE5iwJnzfYlSp1ti33NTTJqoVN8qdDpcle+oCK10N0mTKaEIWIF8Dn1a5DUtVTlEcVHhtDJna2lZFtvSf7swJeOaI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756782767; c=relaxed/simple;
+	bh=LyuCkfkvJ9T5+4mAYiEMVBipa2WkizYSRznZnXQiFYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E40lZnTTw34u1qkcyOyMARc9pYzcRQ2LWX+W8WALPD1MH/S0VAjW3RG1A00V7kfJfcHxXS71+Pcib4j5PVTb8j0ENCVNHF/kHdlINUHfn/ZXDnxln0PReWodkTAXYW28ilkesREW3zxlBMEJfLMVHZbjGAIrc4cwwALDpC0lrcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HALbmYUS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822Rk2g020481
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 03:12:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=6lbDWXEgEqXhch4D00V6FHkz
+	octzi7I+pGhatlsXg5g=; b=HALbmYUSYmfADHj+OKudStXby6SIFOf0cIKkYT1A
+	vn8vl33kl3VesRmBYBfRvj3vwjbZ+UeGt/Cg0VL4mBi+IIoX2+ECFdyg85saPcMj
+	GKtufC5IsBWP1NK1f7m8d/X7s69F85SVPZmUqUkAFtFaG5Il+fxzIs49pFkC0u8e
+	aREgMEIzTwTMY31L7uxBvyfv/qFZzm7VFMIG+NK8EfhaKi8NhnyEnhMJxxQp0+Gj
+	FALG/CoNAXhTtivgdFblA5APkrXERWH5r3SscEaEK2FTr3hlB3IcW4gpQPWrkuJ0
+	vG70vmAbR65rSGd4AuDp2MQHgMULihwax3e3yYpcI+yGKA==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ur8rxcuc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:12:45 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70dfd87a495so84928746d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 20:12:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756782764; x=1757387564;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6lbDWXEgEqXhch4D00V6FHkzoctzi7I+pGhatlsXg5g=;
+        b=MhGITibIQnO9k1XtmPzRlyqI27CkYMMEYTipKagaEL49hiURGnT1Yv5jQoZKKYOrkG
+         yBpy7On8QgGHFoF/3jk/grMfkaeOv2wlMVWTTtTfLsrltt6rt1zGDZhBzyjVyPptoA47
+         3gAnhCG6Y+tsWLm/TJvfTsBGdd72YcAWZWMF5+qOlP7kcFkfif06TCp2Y+eTrdaKmO5e
+         bOq3tmGbSMGtw0OtvXeOGh84RYYLfkoyushc6o2OUN7wjnraIKzN3L0lFhwhzGMR9TVn
+         kEkaPB1uOa8jsjoJuPAbDJs5+zzTrOJGiRX7Fax63FDY7qHdBTeHbnbCXrRm4Ac8vG0F
+         QwkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgiWadJW+SH+E4lGug6XMWvJzsGbMiIkopUZ/o4A02ClUJgJPAgs9jbUthlJl8qsYS8Tkqyr15lm7lUPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPCcB1nQXN4zOBOp7LMwz/LieOJOEwRMgYWreGaWQ3qksl/1GW
+	lTjswzHAmdhlFjzrnjqV7JugFjEF9aY80aqrJJmA8pMYGLMZImn0oIfCIKt7cLG8Ou47deO9LBT
+	yOHmNTRDs5tKl9JP6fl/1/n/ugfzs6ttTKlq1hcuIAB7lJ3ht9DJe/G/l9U8eie0abJU=
+X-Gm-Gg: ASbGncv1uVRF28fa2xtLPSdQeIwksrcpyqQxMNpwtDynQMacMeGzB0wshh/AHd/IqNH
+	laBixKYCs9SEv1ddx81iFrXu6CJwWnD75qIOMZyvwbIRTAg2bD+b9B6rPzBjAnxw3LG+D1NDBnE
+	YvpomXSou9cB/7vTWqxku50qgmmGlDvOkajcuIAmNwn2a6riQlsDcfKsOV7VqELtT2gAgGs2yXS
+	GIvtTSa8cSOww+BfpYU9BrUM/AbN9/BRqybOIk26ZqsATuM9KATsHia5ayLK4EplVMirv0sFIcT
+	g9uuBzbvxt4vD3lafnm4zqUW50PhoIJAIE6Uym0B8JNi6kYhBx2aginHhmmwaYubyyoHRQWHZen
+	DARVfs2mUUPCWdwePDP6E4Q+8F3Lf3V9nmFTretfxlLq7gxlhRHhI
+X-Received: by 2002:a05:6214:5195:b0:70d:f30d:926e with SMTP id 6a1803df08f44-70fac75a8d4mr95814786d6.15.1756782763446;
+        Mon, 01 Sep 2025 20:12:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGh+aJ/m5oTiwm+rskkcePX5cAOyjDOxdmOvAbEJz1ZfqKko/eqgSi/7Mh11qb5m3SqAxkBDw==
+X-Received: by 2002:a05:6214:5195:b0:70d:f30d:926e with SMTP id 6a1803df08f44-70fac75a8d4mr95814496d6.15.1756782762755;
+        Mon, 01 Sep 2025 20:12:42 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-560827b3dd5sm312381e87.148.2025.09.01.20.12.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Sep 2025 20:12:41 -0700 (PDT)
+Date: Tue, 2 Sep 2025 06:12:39 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+        Liu Ying <victor.liu@nxp.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/8] drm/connector: let drivers declare infoframes as
+ unsupported
+Message-ID: <rkxdyzm4uwvq5nxw5q25qv2xqqqvirgn77u54jydebm6a2wrk3@m2y3y3zcjb4j>
+References: <20250819-drm-limit-infoframes-v2-0-7595dda24fbd@oss.qualcomm.com>
+ <20250819-drm-limit-infoframes-v2-1-7595dda24fbd@oss.qualcomm.com>
+ <20250820-artichoke-silkworm-of-election-521b5e@houat>
+ <v7w7xkefm6ap7delx7wsvxmc76fwptqhe4ehokzfh4baueb7hr@acrx36exv42v>
+ <20250827-adorable-ocelot-of-adventure-ba88b7@houat>
+ <jrvjvayhjczgb4yx3xshbv3e6ndzkmb7uu3ynoes2maniwjg37@hamxu5mzqmf7>
+ <20250901-illustrious-dark-kagu-f4ef76@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|SN7PR12MB8027:EE_
-X-MS-Office365-Filtering-Correlation-Id: 190e0152-b513-40fd-abeb-08dde9ce6245
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dzVGbGFpa2ZTU0dKYTIxSEJsMnkycUQvVG85aVhPR2xaQzhVeDA1M0xub0gy?=
- =?utf-8?B?S1Q2ZnBaWEhrRHpmdy9qTTNHUVFWNElQOTJnMko2eWJJcUJVcFpXOHd1STJL?=
- =?utf-8?B?VTdBTTFuQTN6Z1gwWWxOUWp2eEZRNWFNa3NVS2lHTm5vRDluNTRGbWk1WUJQ?=
- =?utf-8?B?b2Y3bGljMU4ydmpNcm4wMmdZUWlxSUtrTzhiMEdrMXhTOEVLck56cDh0NzNL?=
- =?utf-8?B?NjNlM0xjT1ZmanBGZjNZd0FhVjZBbTA5Sm1DVU9VVlE1VXBJRlNOTGp6djN6?=
- =?utf-8?B?RG5QNHk3N2FQOUVXUFc5ei9GVjJZQldHN3M1SjNXWkFBVTdYMGo3T2FTMk9M?=
- =?utf-8?B?RENyajl5M2NSOVJkQkVOQ1l2SDlWQ0l1aUtOekl0Z0t2QldvZjZLMjVRWlZz?=
- =?utf-8?B?MzUxOC9rR1p4NmFMU3NnK1ZkcUxXanBabDNtUURoVjdacnNpaXJkSDhOaDBw?=
- =?utf-8?B?SGw0UlE4WjBublE0SXFEVmJ2V1ZJYVgwU1JEL1lPWmppNGVJc1p6ZGNWV2Zi?=
- =?utf-8?B?RU1NK1RFUitCdExldVhmd0hkQTNFVmEzek9mZnJEOWFCbEZ0OGVlamFYT0xj?=
- =?utf-8?B?Mk8xMzJoV0U1a2dlaVEwc2RHbkJaZFlMM0xZMGN0ejk3eTdNUVdvOGhKM00r?=
- =?utf-8?B?dEMxN0J6SkF2TU5pVUt0Vk5JcXdrODRxQmdIYzFQMmlFOW1xb1RjVkhYV1hG?=
- =?utf-8?B?dGsyNW5tbWxPVk9ZTm5BYjVpcGpTTjJNenIxSzlHVnJ2bFBpbTBZdEhVMFdJ?=
- =?utf-8?B?c214dW14UmliRXVsNU9BRWd4S3NLdXF2dEVUSWNKSXVScmlBVWc5V0x6ZS9I?=
- =?utf-8?B?OE1vckJ0SGFOTVpxclgxbHdYV2JiemI2UUpuTDUzYjc5MUFhdFBsTXVNbUpz?=
- =?utf-8?B?NnhQdUpZT1VsaXJPODUydHgxa3F2Vkk0UHVTdEpXQzVRQXFicnl3Zkpsd0ti?=
- =?utf-8?B?MWpiUVpGMkxrb0hyaTNTWW5VclQ5eHBqYVI3V3BBTGFBYnR5MTdXK2hrT1RL?=
- =?utf-8?B?SWl0WkZtTEsxaUF4Yzl2dGlHR2h6Y3R5NThva2pTdUF1THlpYzl3L1liMmRC?=
- =?utf-8?B?QUh5NnN1YU5OSDRWRERZN0QvVEpkSUlKZ0tKS1Y4ZnlISzVxUStrSm5ZTHdQ?=
- =?utf-8?B?Ui9QVkpRN0MzMGM0YlhwVktVSjVMbzBuSDVqZ1lKekhRem9OZ1hMT2V6K2ky?=
- =?utf-8?B?ZUw1eTAzbjRLL0N6ZE9nOXdIQ0dmTHYyVmdVNEUvaHVSa3hwVzVEYTlyZW1X?=
- =?utf-8?B?QVMrdVZVRWRzWVlMeDRGQWxUeTNYTFhQN2JNTS9OcGxpc1BoSjVpQUFCTzU1?=
- =?utf-8?B?VTBGNXRTT21KY1RpZ0h5WW4rcEhsU3hVaGN2Z2FXcUJ5Y01tdGkrSHJPb2Nz?=
- =?utf-8?B?cGVDOXlFWXZ2cjRwNHlsdy9lL3pFWnQzdzIwQlUwR3hqalUrNk9DQ2ZYU2Mw?=
- =?utf-8?B?Z2J4YnJWbnhhR1BKYUF2d282OGxaQ2J4ek5CVWtYYUYrTGNmUU5kSTMyYlA4?=
- =?utf-8?B?QWJoVVVIOWwwczRCam9DNWJBak5PZElVY2REcTFmbWEwYXV5anpQdmcrN3Ar?=
- =?utf-8?B?TnhBTW9zMy8xR3plQU5PL1VIMk40alVkTHFOMEJ6SldvQkZoVlUyQ1dRd1J0?=
- =?utf-8?B?dnRlaXdDN2JhaDlONi82S2ZpVm1LeUNWdFY1UElnZGJUY2lEck5kUmxxWGls?=
- =?utf-8?B?Zm9NZnhzelh5aGhhOHA2NmloZzVwV2gwb0E5OE9MZVlXcWtXdHkwVXUzUHNJ?=
- =?utf-8?B?NkxFTDR4ckNudlhDNldSNkZMR2pPRVE0UDZObGdQd2RyamsyV0VMZjFVZ3k2?=
- =?utf-8?B?OFlrT09oVHVIbFRFOHJvOXBUeDFzeUY0akJVeWdoYnBxMTUrQ3U4WUZHOXpB?=
- =?utf-8?B?MHdzdks5cnU1N0d6ZHExVmNNL250V3dKeHU4OWVwL0l5SXJUQmpGQkJFWlFj?=
- =?utf-8?B?YnN3UjFZYkxCRGZvK0JnUVlRODhXRUFsWjRBQ0dnN2JMZUdrNGp0MzlOc2xk?=
- =?utf-8?B?d1MrM2p0ZVhnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YWQ2SHNOeEZZb2dxVnlOZnNySFVvbExlcms4bVNValhyZ0pBR0lGbkVyNEZM?=
- =?utf-8?B?RDI5MGtiZmthN2pheGpIOEVDbDdDelp2MTI2amZrQ1hyN0RXOTJNNEtOWG1p?=
- =?utf-8?B?Qy92NTFOWHdMR2VLZmxNQkJtc2hsZUE1cXV2NXhJZG9lQ2VXazQvSUtSWnBR?=
- =?utf-8?B?Q29VNU1ITzY5dm9TcmtFdWo2RDk0N2xkSHNHRDFTWXFJUjBUZm1uT3kvQTIw?=
- =?utf-8?B?a3FrWFNEWjZKSjVvYWFwYVEzM0pkQm93eVpqN2dLSUVuTXdKa1ZsVWR5WkI5?=
- =?utf-8?B?bDZlWXVndUo5SzBkRHoxNS9yUFAzSHhMa0lXdDVzcEIrWHNreCtHeFhrK0Jt?=
- =?utf-8?B?cTdtZmt5S1pnZFZMYy9NU1EwZk9ad2QyVGNvMTVWaWxnVnhhWUtqTCtJRlNW?=
- =?utf-8?B?aWJraWMvWUdMTWlrdUExcmtOaFdtcWNtVGhFM3orS3l3bVRRcjhaWWNNY1lu?=
- =?utf-8?B?bEt4d3h1anVZeER4L2s3MXZyMW9IWCsrTmdYdVNKcHBKVEtvOHdvSHNVWGpz?=
- =?utf-8?B?M2hzWlNUMHNyRis1ZjBjUlE2NVpoZjJURk85VkNhaXdpOVJ3RXZVdXEzK0NR?=
- =?utf-8?B?TmdDK0N1ZkpOQ25LQjRrUjBnQlFoeVdpM3BGbTNDaitHeEw1eFVTbDI5S3lS?=
- =?utf-8?B?ZnlzMFVRdXZ6NWVveXQzUnR4dmNJSERsb0U3V0ZjOEhkWU9iUmhEUXlTNVha?=
- =?utf-8?B?VmdiZVZNMXVEd2tDOUpwWjFVQWJSVDRMNW0xUUp2bFViUDZ2czlHRnhoVGFU?=
- =?utf-8?B?UHlZTTR2Q3l5MDRJQk54TWszY3VwaW42SHNxcXNpaTZjaXcyVnJXR1VzUUln?=
- =?utf-8?B?dHJ6b0NlN2JkVmdSZFlmdFBobkx2bllFSThzQmVxbDFUR2F3QUlZTVlwNlJN?=
- =?utf-8?B?REU0VjBncXlSYzFzREs5Q3VTa2RvdnJQcXZtc0RhQnNDY1cwV2I5MXFUbi81?=
- =?utf-8?B?WHFRYk5DcC9sQlRQemRqdWoxck1QRWVoUC9rZ0JPQ2lCaE5GSjB6Qm1XM2ps?=
- =?utf-8?B?S09rUnVLeUNuNzlMbU4xWFBIenZVZVM5MW93aEt5cnBaK3hTd21tSnhraVVa?=
- =?utf-8?B?SWxOODkzenAwYW9jMWV3TGk4cGtTVnc2Mjh5ZndwbE9GeWxaRDhTUEYrUUQ3?=
- =?utf-8?B?ZWdteWVTR2x2amRETmxmVGN6aHN3UFNVbi9Vc2ZVbXlQVzJJdVFydkJ0TWYz?=
- =?utf-8?B?eDdGY1NSeW40ZmdkZTI4RFdQMmVQeXpPa3UwQ3RORVRuSyswSEdTZ2pkUEox?=
- =?utf-8?B?WjhyTXczcWlIeG9YTTJpVjZDZUkrNEJaL0YzZVFaZGpTVmJFR3A5L0g0cnF4?=
- =?utf-8?B?aDZqZjBLQVRyZ3dqRTZncE01RDhkMTFNSXU5TjdyRy9ScTNqanBLMWt3cFFE?=
- =?utf-8?B?ekVYc2lvZ1BoSEllUktHdWJvaW45c1lYVnpCME1EMHVrRFdVUEZGWGpHSE9r?=
- =?utf-8?B?RGlPdzhISVFwRzVEOWdZdGJRS0V6YklpdWZZY21xNUMyWlFRKzZYeG5vamxV?=
- =?utf-8?B?SHNGV04xZnhZczRaZnpKRnVYRTcwSUlEcXlEdHNINGhqVVR5WHNVb2xFTW1i?=
- =?utf-8?B?cUx1Q0lrckpkc3NST2VnU3dXNHVOWHFRZ283Y2ZUM0JlSjJsNDhMTGFYRUFW?=
- =?utf-8?B?UEZRRmZESDlqaW04NXF0bVhXSUJqakFYSVhOZjhpNnRmMTZkMFg3bFZNV3pz?=
- =?utf-8?B?eGRYR3VzRXhkS0pqVGpKa0ZoK1piYlFVeSt1QTFrS0NKMXFDaDQvL3kzWnB5?=
- =?utf-8?B?a0lhMGxZd3cyVkFKalpsZWljU0h1NDV3ZmRqWnRkZnhVQlhWMk5mbGJIbXNZ?=
- =?utf-8?B?QXRLcGo1YXdXaUo3WndwQzJWRFZ3QTdHQVN3Q09kdEFTaDlZQS9TRUs5cXFD?=
- =?utf-8?B?S0xFRHdDSzZrWW5FYkNpMk5SRmpCRXF1ek5WZTZlRkIrWlk0RW5RSEdYWEgx?=
- =?utf-8?B?WUJCbkdjRWdyc01YM25RaTA0aERoM1JuZ3YyYmUva1A5MDZzajhyM2VFdmNF?=
- =?utf-8?B?QldRVHVSS1Q2YU9QZC8yOWZpTFRWVER5V0FyZFhFYjZ2Vll2QlJjNWlPRkw4?=
- =?utf-8?B?ZWFQSzZDYmhNWG5KekV3bE8vNXBxM1ZoVzZJd1p4ajRvVDA3SmoyNUErL2tY?=
- =?utf-8?Q?TUIM=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 190e0152-b513-40fd-abeb-08dde9ce6245
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 03:11:18.1383
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dSq6lPJF0fU4tICSCsEqHB8PQLkYhtCwdP+7IQVC1B2XzELHUHJihwrTmeN7hQwy
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8027
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901-illustrious-dark-kagu-f4ef76@houat>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAxOSBTYWx0ZWRfXwe2/3HCyQWNB
+ tBAuwkRj1cXspXF78oCWoo3pTN5j2ircqQT7Kr+mZBvEGZaXaP2mOCoDEXu+GuVzcD4Bekfuc5y
+ CdWy6bK+yuuLOSPuHX+H6OQ2xEAn7glbXIC8sIHUcaCC7oGpZHOrThAmgq2XRXassjvqGWdjg1q
+ j1k50sG/3VkdD0k7SDxUP3gGeSid63rZJ7o3MZDe9Qz/Db4JdieYtMjxbzeHje+8pKwVau2bR2N
+ fuzV+lLdSTK4uOUpuU5QctMQ4oI8rdYZCd7u2yF4S/jBx/yTS7R5Bz5QVNtuehzhyAZOH2UounU
+ ozuQP7lpYXWGShdJLSxVyaEvPUmP0M5uYUlHSuATNuEhwLCmDO0OCbfstN2wKT2mFQNFMkCSTJS
+ bVC65Vo2
+X-Proofpoint-GUID: XfxbgxO7umhTwMrlADfZPlEI7VrKgLKF
+X-Proofpoint-ORIG-GUID: XfxbgxO7umhTwMrlADfZPlEI7VrKgLKF
+X-Authority-Analysis: v=2.4 cv=PNkP+eqC c=1 sm=1 tr=0 ts=68b660ad cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=ZZMQJF9JEhsP1qjey_MA:9 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_01,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300019
 
-Many thanks Mario for the review.
-
-On 8/29/2025 12:54 AM, Mario Limonciello wrote:
-> On 8/28/25 5:08 AM, Du, Bin wrote:
->> AMD isp4 capture is a v4l2 media device which implements media controller
->> interface. It has one sub-device (AMD ISP4 sub-device) endpoint which can
->> be connected to a remote CSI2 TX endpoint. It supports only one physical
->> interface for now. Also add ISP4 driver related entry info into the
->> MAINTAINERS file
->>
->> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
->> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
->> Signed-off-by: Bin Du <Bin.Du@amd.com>
-> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>> ---
->>   MAINTAINERS                              |  13 +++
->>   drivers/media/platform/Kconfig           |   1 +
->>   drivers/media/platform/Makefile          |   1 +
->>   drivers/media/platform/amd/Kconfig       |   3 +
->>   drivers/media/platform/amd/Makefile      |   3 +
->>   drivers/media/platform/amd/isp4/Kconfig  |  13 +++
->>   drivers/media/platform/amd/isp4/Makefile |   6 ++
->>   drivers/media/platform/amd/isp4/isp4.c   | 121 +++++++++++++++++++++++
->>   drivers/media/platform/amd/isp4/isp4.h   |  24 +++++
->>   9 files changed, 185 insertions(+)
->>   create mode 100644 drivers/media/platform/amd/Kconfig
->>   create mode 100644 drivers/media/platform/amd/Makefile
->>   create mode 100644 drivers/media/platform/amd/isp4/Kconfig
->>   create mode 100644 drivers/media/platform/amd/isp4/Makefile
->>   create mode 100644 drivers/media/platform/amd/isp4/isp4.c
->>   create mode 100644 drivers/media/platform/amd/isp4/isp4.h
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index fe168477caa4..3ad845f1511b 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -1133,6 +1133,19 @@ T:    git git://git.kernel.org/pub/scm/linux/ 
->> kernel/git/iommu/linux.git
->>   F:    drivers/iommu/amd/
->>   F:    include/linux/amd-iommu.h
->> +AMD ISP4 DRIVER
->> +M:    Bin Du <bin.du@amd.com>
->> +M:    Nirujogi Pratap <pratap.nirujogi@amd.com>
->> +L:    linux-media@vger.kernel.org
->> +S:    Maintained
->> +T:    git git://linuxtv.org/media.git
->> +F:    drivers/media/platform/amd/Kconfig
->> +F:    drivers/media/platform/amd/Makefile
->> +F:    drivers/media/platform/amd/isp4/Kconfig
->> +F:    drivers/media/platform/amd/isp4/Makefile
->> +F:    drivers/media/platform/amd/isp4/isp4.c
->> +F:    drivers/media/platform/amd/isp4/isp4.h
->> +
->>   AMD KFD
->>   M:    Felix Kuehling <Felix.Kuehling@amd.com>
->>   L:    amd-gfx@lists.freedesktop.org
->> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/ 
->> Kconfig
->> index 9287faafdce5..772c70665510 100644
->> --- a/drivers/media/platform/Kconfig
->> +++ b/drivers/media/platform/Kconfig
->> @@ -63,6 +63,7 @@ config VIDEO_MUX
->>   # Platform drivers - Please keep it alphabetically sorted
->>   source "drivers/media/platform/allegro-dvt/Kconfig"
->> +source "drivers/media/platform/amd/Kconfig"
->>   source "drivers/media/platform/amlogic/Kconfig"
->>   source "drivers/media/platform/amphion/Kconfig"
->>   source "drivers/media/platform/aspeed/Kconfig"
->> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/ 
->> Makefile
->> index 6fd7db0541c7..b207bd8d8022 100644
->> --- a/drivers/media/platform/Makefile
->> +++ b/drivers/media/platform/Makefile
->> @@ -6,6 +6,7 @@
->>   # Place here, alphabetically sorted by directory
->>   # (e. g. LC_ALL=C sort Makefile)
->>   obj-y += allegro-dvt/
->> +obj-y += amd/
->>   obj-y += amlogic/
->>   obj-y += amphion/
->>   obj-y += aspeed/
->> diff --git a/drivers/media/platform/amd/Kconfig b/drivers/media/ 
->> platform/amd/Kconfig
->> new file mode 100644
->> index 000000000000..25af49f246b2
->> --- /dev/null
->> +++ b/drivers/media/platform/amd/Kconfig
->> @@ -0,0 +1,3 @@
->> +# SPDX-License-Identifier: GPL-2.0+
->> +
->> +source "drivers/media/platform/amd/isp4/Kconfig"
->> diff --git a/drivers/media/platform/amd/Makefile b/drivers/media/ 
->> platform/amd/Makefile
->> new file mode 100644
->> index 000000000000..8bfc1955f22e
->> --- /dev/null
->> +++ b/drivers/media/platform/amd/Makefile
->> @@ -0,0 +1,3 @@
->> +# SPDX-License-Identifier: GPL-2.0+
->> +
->> +obj-y += isp4/
->> diff --git a/drivers/media/platform/amd/isp4/Kconfig b/drivers/media/ 
->> platform/amd/isp4/Kconfig
->> new file mode 100644
->> index 000000000000..0268060c2dae
->> --- /dev/null
->> +++ b/drivers/media/platform/amd/isp4/Kconfig
->> @@ -0,0 +1,13 @@
->> +# SPDX-License-Identifier: GPL-2.0+
->> +
->> +config AMD_ISP4
->> +    tristate "AMD ISP4 and camera driver"
->> +    depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
->> +    select VIDEOBUF2_CORE
->> +    select VIDEOBUF2_V4L2
->> +    select VIDEOBUF2_MEMOPS
->> +    help
->> +      This is support for AMD ISP4 and camera subsystem driver.
->> +      Say Y here to enable the ISP4 and camera device for video capture.
->> +      To compile this driver as a module, choose M here. The module will
->> +      be called amd_capture.
->> diff --git a/drivers/media/platform/amd/isp4/Makefile b/drivers/media/ 
->> platform/amd/isp4/Makefile
->> new file mode 100644
->> index 000000000000..de0092dad26f
->> --- /dev/null
->> +++ b/drivers/media/platform/amd/isp4/Makefile
->> @@ -0,0 +1,6 @@
->> +# SPDX-License-Identifier: GPL-2.0+
->> +#
->> +# Copyright (C) 2025 Advanced Micro Devices, Inc.
->> +
->> +obj-$(CONFIG_AMD_ISP4) += amd_capture.o
->> +amd_capture-objs := isp4.o
->> diff --git a/drivers/media/platform/amd/isp4/isp4.c b/drivers/media/ 
->> platform/amd/isp4/isp4.c
->> new file mode 100644
->> index 000000000000..6ff3ded4310a
->> --- /dev/null
->> +++ b/drivers/media/platform/amd/isp4/isp4.c
->> @@ -0,0 +1,121 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
->> + */
->> +
->> +#include <linux/pm_runtime.h>
->> +#include <linux/vmalloc.h>
->> +#include <media/v4l2-ioctl.h>
->> +
->> +#include "isp4.h"
->> +
->> +#define VIDEO_BUF_NUM 5
->> +
->> +#define ISP4_DRV_NAME "amd_isp_capture"
->> +
->> +/* interrupt num */
->> +static const u32 isp4_ringbuf_interrupt_num[] = {
->> +    0, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT9 */
->> +    1, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT10 */
->> +    3, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT11 */
->> +    4, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT12 */
->> +};
->> +
->> +#define to_isp4_device(dev) \
->> +    ((struct isp4_device *)container_of(dev, struct isp4_device, 
->> v4l2_dev))
->> +
->> +static irqreturn_t isp4_irq_handler(int irq, void *arg)
->> +{
->> +    return IRQ_HANDLED;
->> +}
->> +
->> +static int isp4_capture_probe(struct platform_device *pdev)
->> +{
->> +    struct device *dev = &pdev->dev;
->> +    struct isp4_device *isp_dev;
->> +    int i, irq, ret;
->> +
->> +    isp_dev = devm_kzalloc(&pdev->dev, sizeof(*isp_dev), GFP_KERNEL);
->> +    if (!isp_dev)
->> +        return -ENOMEM;
->> +
->> +    isp_dev->pdev = pdev;
->> +    dev->init_name = ISP4_DRV_NAME;
->> +
->> +    for (i = 0; i < ARRAY_SIZE(isp4_ringbuf_interrupt_num); i++) {
->> +        irq = platform_get_irq(pdev, isp4_ringbuf_interrupt_num[i]);
->> +        if (irq < 0)
->> +            return dev_err_probe(dev, -ENODEV,
->> +                         "fail to get irq %d\n",
->> +                         isp4_ringbuf_interrupt_num[i]);
->> +        ret = devm_request_irq(&pdev->dev, irq, isp4_irq_handler, 0,
->> +                       "ISP_IRQ", &pdev->dev);
->> +        if (ret)
->> +            return dev_err_probe(dev, ret, "fail to req irq %d\n",
->> +                         irq);
->> +    }
->> +
->> +    /* Link the media device within the v4l2_device */
->> +    isp_dev->v4l2_dev.mdev = &isp_dev->mdev;
->> +
->> +    /* Initialize media device */
->> +    strscpy(isp_dev->mdev.model, "amd_isp41_mdev",
->> +        sizeof(isp_dev->mdev.model));
->> +    snprintf(isp_dev->mdev.bus_info, sizeof(isp_dev->mdev.bus_info),
->> +         "platform:%s", ISP4_DRV_NAME);
->> +    isp_dev->mdev.dev = &pdev->dev;
->> +    media_device_init(&isp_dev->mdev);
->> +
->> +    /* register v4l2 device */
->> +    snprintf(isp_dev->v4l2_dev.name, sizeof(isp_dev->v4l2_dev.name),
->> +         "AMD-V4L2-ROOT");
->> +    ret = v4l2_device_register(&pdev->dev, &isp_dev->v4l2_dev);
->> +    if (ret)
->> +        return dev_err_probe(dev, ret,
->> +                     "fail register v4l2 device\n");
->> +
->> +    ret = media_device_register(&isp_dev->mdev);
->> +    if (ret) {
->> +        dev_err(dev, "fail to register media device %d\n", ret);
->> +        goto err_unreg_v4l2;
->> +    }
->> +
->> +    platform_set_drvdata(pdev, isp_dev);
->> +
->> +    pm_runtime_set_suspended(dev);
->> +    pm_runtime_enable(dev);
->> +
->> +    return 0;
->> +
->> +err_unreg_v4l2:
->> +    v4l2_device_unregister(&isp_dev->v4l2_dev);
->> +
->> +    return dev_err_probe(dev, ret, "isp probe fail\n");
->> +}
->> +
->> +static void isp4_capture_remove(struct platform_device *pdev)
->> +{
->> +    struct isp4_device *isp_dev = platform_get_drvdata(pdev);
->> +
->> +    media_device_unregister(&isp_dev->mdev);
->> +    v4l2_device_unregister(&isp_dev->v4l2_dev);
->> +}
->> +
->> +static struct platform_driver isp4_capture_drv = {
->> +    .probe = isp4_capture_probe,
->> +    .remove = isp4_capture_remove,
->> +    .driver = {
->> +        .name = ISP4_DRV_NAME,
->> +        .owner = THIS_MODULE,
->> +    }
->> +};
->> +
->> +module_platform_driver(isp4_capture_drv);
->> +
->> +MODULE_ALIAS("platform:" ISP4_DRV_NAME);
->> +MODULE_IMPORT_NS("DMA_BUF");
->> +
->> +MODULE_DESCRIPTION("AMD ISP4 Driver");
->> +MODULE_AUTHOR("Bin Du <bin.du@amd.com>");
->> +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
->> +MODULE_LICENSE("GPL");
->> diff --git a/drivers/media/platform/amd/isp4/isp4.h b/drivers/media/ 
->> platform/amd/isp4/isp4.h
->> new file mode 100644
->> index 000000000000..8535f662ab49
->> --- /dev/null
->> +++ b/drivers/media/platform/amd/isp4/isp4.h
->> @@ -0,0 +1,24 @@
->> +/* SPDX-License-Identifier: GPL-2.0+ */
->> +/*
->> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
->> + */
->> +
->> +#ifndef _ISP4_H_
->> +#define _ISP4_H_
->> +
->> +#include <linux/mutex.h>
->> +#include <media/v4l2-device.h>
->> +#include <media/videobuf2-memops.h>
->> +#include <media/videobuf2-vmalloc.h>
->> +
->> +#define ISP4_GET_ISP_REG_BASE(isp4sd) (((isp4sd))->mmio)
->> +
->> +struct isp4_device {
->> +    struct v4l2_device v4l2_dev;
->> +    struct media_device mdev;
->> +
->> +    struct platform_device *pdev;
->> +    struct notifier_block i2c_nb;
->> +};
->> +
->> +#endif /* _ISP4_H_ */
+On Mon, Sep 01, 2025 at 08:54:18AM +0200, Maxime Ripard wrote:
+> On Wed, Aug 27, 2025 at 05:04:53PM +0300, Dmitry Baryshkov wrote:
+> > On Wed, Aug 27, 2025 at 09:30:20AM +0200, Maxime Ripard wrote:
+> > > On Wed, Aug 20, 2025 at 12:52:44PM +0300, Dmitry Baryshkov wrote:
+> > > > On Wed, Aug 20, 2025 at 09:15:36AM +0200, Maxime Ripard wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > On Tue, Aug 19, 2025 at 09:57:30PM +0300, Dmitry Baryshkov wrote:
+> > > > > > Currently DRM framework expects that the HDMI connector driver supports
+> > > > > > all infoframe types: it generates the data as required and calls into
+> > > > > > the driver to program all of them, letting the driver to soft-fail if
+> > > > > > the infoframe is unsupported. This has a major drawback on userspace
+> > > > > > API: the framework also registers debugfs files for all Infoframe types,
+> > > > > > possibly surprising the users when infoframe is visible in the debugfs
+> > > > > > file, but it is not visible on the wire.
+> > > > > > 
+> > > > > > Let drivers declare that they support only a subset of infoframes,
+> > > > > > creating a more consistent interface.
+> > > > > > 
+> > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > > > > 
+> > > > > I'm not really convinced. Infoframes aren't really something you should
+> > > > > ignore, AVI is effectively mandatory, HDMI kind of is too, AUDIO is if
+> > > > > audio support is enabled, DRM is mandatory if HDR is used.
+> > > > 
+> > > > Nevertheless, sun4i, innohdmi, adv7511, it6263 and rk3066 drivers
+> > > > provide support only for the AVI infoframe.
+> > > 
+> > > Yes, but it's still something we shouldn't paper over. The spec mandates
+> > > it, if drivers want to deviate from it it's something we should warn
+> > > about, not silence.
+> > > 
+> > > sun4i is a good example, to me at least since I have the doc. The
+> > > hardware supports AVI, Audio, ACP, and SPD. HDR isn't supported, so DRM
+> > > isn't either. The only missing one is HDMI, but the documentation isn't
+> > > the best so it might still be supported. In short, it's a driver issue.
+> > > 
+> > > adv7511 supports AVI, Audio, ACP, SPD, ACP, and looks to have a
+> > > mechanism to send any infoframe as is. So, again, driver issue.
+> > 
+> > I've send a patch, enabling SPD and VSI (HDMI) InfoFrames on ADV7511.
+> > 
+> > > 
+> > > I couldn't find the other datasheet, but I'd be very surprised if it
+> > > wasn't the case for these too.
+> > > 
+> > > > Some of them can be extended to support other infoframe kinds (e.g.
+> > > > ADV7511 has two spare infoframes which can be used for HDMI and SPD).
+> > > > 
+> > > > > SPD is indeed optional though.
+> > > > > 
+> > > > > So, it's really dynamic in essence, and not really something we should
+> > > > > expect drivers to ignore.
+> > > > > 
+> > > > > I do acknowledge that a lot of drivers just silently ignore the
+> > > > > infoframes they don't support at the moment, which isn't great either.
+> > > > > 
+> > > > > Maybe we should standardize and document what drivers should do when
+> > > > > they don't support a given infoframe type?
+> > > > 
+> > > > The chips might be generating infoframes internally. This series was
+> > > > triggered by LT9611UXC, which does all HDMI work under the hood in the
+> > > > firmware. See [1]. The series I posted hooks HDMI audio directly into
+> > > > the bridge driver, but I'd really prefer to be able to use
+> > > > drm_atomic_helper_connector_hdmi_hotplug(), especially if I ever get to
+> > > > implementing CEC support for it.
+> > > > 
+> > > > ADV7511 likewise generates audio infoframe without Linux
+> > > > help (audio-related fields are programmed, but it's not the
+> > > > infoframe itself).
+> > > 
+> > > Implementing the write_infoframe hooks as a nop with a comment in those
+> > > case is totally reasonable to me.
+> > > 
+> > > I'd still like to document that drivers should only return 0 if they
+> > > programmed the infoframe, and -ENOTSUPP (and the core logging a warning)
+> > > otherwise.
+> > > 
+> > > That way, we would be able to differentiate between the legimitate
+> > > LT9611UXC case, and the "driver is broken" sun4i (and others) case.
+> > 
+> > I don't want to end up in a sitation where userspace has a different
+> > idea of the InfoFrame being sent than the actual one being present on
+> > the wire.
 > 
+> It's not ideal, sure, but also, what's wrong with it? We're doing it
+> *all the time*. Modes programmed by userspace are adjusted for the
+> hardware, and thus the mode reported by the CRTC turns out different
+> than the one actually used in hardware. Audio sampling rates might not
+> match exactly what we're doing. The quirks infrastructure disables part
+> of the EDID the userspace has access to, etc.
+> 
+> And all those are under the userspace control, which the infoframes
+> aren't.
+
+I think there is a differnece between 'change userspace input',
+'knowingly mangle data' and 'lie to userspace because the driver doesn't
+care'. This is especially important e.g. if a user is trying to debug
+AV issues which can be caused by wrong information in the infoframe.
+
+> 
+> > It seems, we need several states per the infoframe:
+> > 
+> > - Not supported
+> 
+> Honestly, I'm not sure we need a state for that one. If that infoframe
+> was set by the framework, then the driver must support it. And if it
+> wasn't, then there's nothing in debugfs.
+
+Yes, I ended up dropping this and having two separate flags.
+
+> 
+> > - Autogenerated
+> 
+> Do we have any way to read them back on those?
+
+Usually not. E.g. I don't think I can read back Audio InfoFrame on
+ADV7511. Nor can I read InfoFrames on LT9611UXC.
+
+> 
+> > - Generated by software
+> > 
+> > E.g. in case of ADV7511 we can declare that Audio InfofFrame is
+> > autogenerated, AVI, HDMI and SPD as 'software-generated' and DRM (HDR)
+> > as unsupported. LT9611UXC will declare all (need to check) frame types
+> > as auto.
+> > 
+> > This way we can implement the checks and still keep userspace from
+> > having irrelevant data in debugfs.
+> 
+> If the only thing you're after is to prevent inconsistent data in
+> userpace for devices that can generate it automatically, then I guess we
+> could just implement an (optional) callback to read an infoframe from
+> the hardware when reading from debugfs. Would that work?
+
+As I wrote, this is not always possible, so I'd skip this.
+
+> 
+> > I will update my patchset to implement this, but I have another question
+> > beforehand: should we just declare VSI support or should it be more exact,
+> > specifying that the driver support HVS (00:0c:03), HVFS (c4:5d:d8), etc?
+> 
+> I guess you're talking about HDMI 1.4 Vendor specific Infoframe vs HDMI
+> 2.0 HF-VSIF here?
+
+Yes. H14v-VSIF vs HF-VSIF.
+
+> 
+> If so, the toggle should be HDMI 2.0 support. We'll need that toggle for
+> other things anyway (scrambler, YUV420, etc.)
+> 
+> > I'm asking, because e.g. MSM HDMI controller has hardware support for
+> > generating HVS frames (but only HVS, the OUI is not programmed, register
+> > format doesn't match 1:1 frame contents, etc). I instead ended up using
+> > GENERIC0, because it was more flexible (it's like SPARE packets on
+> > ADV7511, the contents is being sent as is). However if we ever need to
+> > send DRM infoframes, we might need to switch from GENERIC0 to HVS, for
+> > the price of being unable to send HVFS frames.
+> 
+> Section 10.2 of the HDMI 2.0 states:
+> 
+>   Transmission of the HF-VSIF by Source Devices is optional unless one (or
+>   more) of the features listed in Table 10-1 is active 1. If such features
+>   are active, transmission of the HF-VSIF is mandatory.
+> 
+> The features in question being 3d.
+
+Or ALLM. It's not on my todo list though.
+
+> So unless you're supporting 3d, suppporting VSI only seems ok to me.
+
+MSM HDMI controllers can support some bits and pieces of 3D. Nobody
+bothered to implement that though. Maybe I should try getting a monitor
+which supports stereo output.
 
 -- 
-Regards,
-Bin
-
+With best wishes
+Dmitry
 
