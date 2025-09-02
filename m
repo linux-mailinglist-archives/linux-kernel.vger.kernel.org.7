@@ -1,146 +1,150 @@
-Return-Path: <linux-kernel+bounces-796900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318E7B40904
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA50B40909
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17BBF1B60DE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696A91B61462
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF7E31E0FB;
-	Tue,  2 Sep 2025 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B886320A33;
+	Tue,  2 Sep 2025 15:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQHjMSHM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMednwyC"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253F82EF669;
-	Tue,  2 Sep 2025 15:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF72825EFBF;
+	Tue,  2 Sep 2025 15:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756827320; cv=none; b=oGYdcf6mWcVSYuqpwIxFC/LT6Low1gtejVMCeTPX9bxQsFMDvTOZDK78XjEGiQwun01AhaRpo4UpncMqIqqtDYyLln+HTOtlOTZ/mADnmu16MT4/0iVdV8eV6RYfrAZpV8tiUpDddp60ThmZv/GJgwPaIBSOcN38/XQn0+Rz/z8=
+	t=1756827371; cv=none; b=gaspPLphEKwqndvrgYKvE5bfC2C+pKRoV84x/4PtWSFPZvTklPVmMO0/g5qlmQIhq2LWlJ/DjiIZxWe5NSOETNVxfaOGsUV9LwsxeY7yFcLJsqa8DQQpZNYpPUCO7RghQGTi48ga7ucT7UZIXDbRAwEzFISnAESJD8K2w3kC23E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756827320; c=relaxed/simple;
-	bh=kzYKGVadSPv9NME2aJItAScHQKnKboMO69iumtu+g7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lx3jzdZcfynRPRUsRhxXWVCp65e7sIemGZNiKarIF4ESdmZfxG6v46Pz1QTjNgLXsQrbDzQOeXyMkxU+1LcKEHtkvexZrgHKswIwB12Js/T0USguIXnLvNaX2NsuxZCrtfkG1fAhGBt4EB7iO6wucDQMhheIQJ/2kZoQz8xyq6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HQHjMSHM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD86C4CEF5;
-	Tue,  2 Sep 2025 15:35:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756827320;
-	bh=kzYKGVadSPv9NME2aJItAScHQKnKboMO69iumtu+g7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HQHjMSHMoSkGigOCLVQnJxNXj5QNvpKbBfznH62inZWwfFDFVp9PrfOfO42PXjf3V
-	 HBy4F/pQUciXmHqluZgcSBOvbEGsDIDPNvQaW5SRy0jl3QdR69VDmYDUQ/cYKJzJzJ
-	 eryE1wC5lIxqm5A5DQxxK+3RKarkSO04n7fEV3ip8S5I/JIXKI1dsJBLWwMR2a10US
-	 NbNjwzkgoiLZ6XVOOhYi7D+GHzWgS1BWAobQrqqVoTGH7dBZ+A10zQ86LuwYySQpzs
-	 9pZ5XRr9y4rZu6IKNkuYrR0tBpmrwKLLIJLnku3F81uMA22UuGJgmGoTxP9hPueQ6C
-	 ovSeGGMEwit3w==
-Date: Tue, 2 Sep 2025 18:35:12 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
-Cc: Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, jane.chu@oracle.com,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: Re: [PATCH 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM DIMM
- devices
-Message-ID: <aLcOsDa2K7qMcXtU@kernel.org>
-References: <20250826080430.1952982-1-rppt@kernel.org>
- <20250826080430.1952982-2-rppt@kernel.org>
- <68b0f8a31a2b8_293b3294ae@iweiny-mobl.notmuch>
- <aLFdVX4eXrDnDD25@kernel.org>
- <CAAi7L5eWB33dKTuNQ26Dtna9fq2ihiVCP_4NoTFjmFFrJzWtGQ@mail.gmail.com>
+	s=arc-20240116; t=1756827371; c=relaxed/simple;
+	bh=sMiDdjyy6ydcJt2oQenHph+e3YVv96W8mqksnm03lZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qXC5xCuk/AYiOPCK5zqJCwUng8c4/ik7VtFhVe6wXihHh2GtxvhjHF8QlnyqOZD+D1FKnAxYVXu3pfYJDmNRZRazbhnm3n+9GHJZWuS73cxtFMQf/q8kfQ8TdQnx8BI1INXjRP5xMEdYd7zfe2/1gxfVWW0o/ZLQ2fBfGzqIQsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMednwyC; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b03fa5c5a89so463663066b.2;
+        Tue, 02 Sep 2025 08:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756827368; x=1757432168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Y4Hmeaj9zYXIvPRM6itRd7hBEHF7uK4IZavdf0P3hE=;
+        b=FMednwyClEyNngB8OKJ1kWSnqmnupcVP+uRFeEVpR3Z+fRKSaDvSMLJtEakU7VLrsA
+         gY+7yUawBF6IytHzqyAzHjVD1hMb++AnkYrhR5uNYlG8tNTwVPB2Cf9zvA+m1Xy0qt5Q
+         46JYPIAzclNe+XhLAHWVaTB0qouxBylZynYY/xdbk84jXhc67GTMvGpkyXv6y+QdaBOo
+         J4E6WWxAuL39RpZAWiYHcETaAAPIqx6NluJP5ARbjjpCDaAf4Za1eNCbBzgcKYV2jSci
+         WYIZCu5y7qC0blfj0pGWphWKCwPIt8r2q/KM4oBswqQln6PjYRBLe01GYAkP9imUI/CK
+         iWNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756827368; x=1757432168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Y4Hmeaj9zYXIvPRM6itRd7hBEHF7uK4IZavdf0P3hE=;
+        b=gQFUB3/kYvZ+yW8sbngqNrIvXrTdj9FxcDumSYnxbCa1FwNa9yb/rL1bJW5tFOsKyS
+         shIigCqjqV1U/hZrZG7p3+o7L6gS+dkE3u+eRiTAmag3JlcdPq21Hp7URvTXo6WjPg0w
+         mNwxd+58OQkyDZ3sba5DJNaY3a1A2+8tzLhhLcNCRtpZxewK0qgwxLlnZtTkvv0T+gYw
+         xwidvfUA9hdhSakyLWEdyF8KaeBM892C/bhmd2htrelCjHn1r/Vq3PGaBdGAMNyGSTtP
+         D59kzzl7T611Jx9ZONKOIjkFnGGgpFT3aa1xE9AcqgGrfYqz+Ij6+Dp2YItaevhjRmk4
+         mvgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgB7lVVQp3TXZ3ToTFVUM/xZvtr6eBWf33/5Vysqx2PQIkgxc9kg0Qlokl5lBQU6SDIS1kWYWkI9+3@vger.kernel.org, AJvYcCUra4T8quEIh42aaqnEg/9NGvgJy1I5sxZgoQ2nJLJlhaCR+Xpdtsjtd3G81MMUlVb5OgpX71iPze5GVU95O/1QFq8=@vger.kernel.org, AJvYcCVB8NteUtXtg3fHag/OWIxIx569HVK3P4eKehC9Zv9+iPl13T2I7fQ7AWIjSiDW869PaIxks2zkYUdO4i+/@vger.kernel.org, AJvYcCVUJ9mjpaijXI0zqUf+3e6DxkYpzIjiceZ22YLk5UnzO06e/2CdFbNF7XnHpDdi8mq0wE+HZgKe@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcXRklzh9xHy0ija3bdeMEr4p8FN5eO5Kg5W/m/NczKyv0pqGH
+	pAFlvGaZBNHfe1jPsm6Oi300yHspd0W4poNPE8ZN3Cmn/sZypGgNOaeEpVxzM0Vznuvm7GhmJmc
+	8BqhPfsVHgDz9dj0qwRrX3CM+uT0igfs=
+X-Gm-Gg: ASbGncsXShv8lVw7VDk8d+797vgfEDE7f8MzmP1b5omarwmNZL2i+QXIZmHZo5e45n0
+	eV+9ucr4qrkdArvw2HCDIxLDG/rD/ju10nO/CXZteysLZBoKZZItyRPhgL3G9LzlCQXHNfC8hat
+	plu2nmjyzQCBWj5VJYYq0JhPy0z1C2/4tnxBxji5+j0DCAmSZ72Xa26oKw1j4T0kIBG90sqWzJr
+	298uJqn64ypZfxCu3HbxZTKoBjrdlZWqMugeNoM
+X-Google-Smtp-Source: AGHT+IGvRWgNdy0fihhRjw06pq2Hs9JGdwVs/5subwnKQbYsRHg2GMq+oZlBiYJwTVV3dKdKs8PeQUmCZrUBILuRg+I=
+X-Received: by 2002:a17:907:6090:b0:b04:2cc2:e495 with SMTP id
+ a640c23a62f3a-b042cc31af3mr770379366b.14.1756827367715; Tue, 02 Sep 2025
+ 08:36:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAi7L5eWB33dKTuNQ26Dtna9fq2ihiVCP_4NoTFjmFFrJzWtGQ@mail.gmail.com>
+References: <20250902091526.105905-3-krzysztof.kozlowski@linaro.org> <20250902091526.105905-4-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250902091526.105905-4-krzysztof.kozlowski@linaro.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 2 Sep 2025 16:35:40 +0100
+X-Gm-Features: Ac12FXxX3Y3vXxhmR1yHN5IR8o_v2hNrvGyoSHzsymFzxbirriBpH1NCmvMkVvk
+Message-ID: <CA+V-a8s2H4UzovMqYJ15nWu1X55dL+7qJWifHxMEkqjtTzigzg@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/2] dt-bindings: net: renesas,rzn1-gmac:
+ Constrain interrupts
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Matthew Gerlach <matthew.gerlach@altera.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Romain Gantois <romain.gantois@bootlin.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Michał,
+Hi Krzysztof,
 
-On Mon, Sep 01, 2025 at 06:01:25PM +0200, Michał Cłapiński wrote:
-> On Fri, Aug 29, 2025 at 9:57 AM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > Hi Ira,
-> >
-> > On Thu, Aug 28, 2025 at 07:47:31PM -0500, Ira Weiny wrote:
-> > > + Michal
-> > >
-> > > Mike Rapoport wrote:
-> > > > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> > > >
-> > > > There are use cases, for example virtual machine hosts, that create
-> > > > "persistent" memory regions using memmap= option on x86 or dummy
-> > > > pmem-region device tree nodes on DT based systems.
-> > > >
-> > > > Both these options are inflexible because they create static regions and
-> > > > the layout of the "persistent" memory cannot be adjusted without reboot
-> > > > and sometimes they even require firmware update.
-> > > >
-> > > > Add a ramdax driver that allows creation of DIMM devices on top of
-> > > > E820_TYPE_PRAM regions and devicetree pmem-region nodes.
-> > >
-> > > While I recognize this driver and the e820 driver are mutually
-> > > exclusive[1][2].  I do wonder if the use cases are the same?
-> >
-> > They are mutually exclusive in the sense that they cannot be loaded
-> > together so I had this in Kconfig in RFC posting
-> >
-> > config RAMDAX
-> >         tristate "Support persistent memory interfaces on RAM carveouts"
-> >         depends on OF || (X86 && X86_PMEM_LEGACY=n)
-> >
-> > (somehow my rebase lost Makefile and Kconfig changes :( )
-> >
-> > As Pasha said in the other thread [1] the use-cases are different. My goal
-> > is to achieve flexibility in managing carved out "PMEM" regions and
-> > Michal's patches aim to optimize boot time by autoconfiguring multiple PMEM
-> > regions in the kernel without upcalls to ndctl.
-> >
-> > > From a high level I don't like the idea of adding kernel parameters.  So
-> > > if this could solve Michal's problem I'm inclined to go this direction.
-> >
-> > I think it could help with optimizing the reboot times. On the first boot
-> > the PMEM is partitioned using ndctl and then the partitioning remains there
-> > so that on subsequent reboots kernel recreates dax devices without upcalls
-> > to userspace.
-> 
-> Using this patch, if I want to divide 500GB of memory into 1GB chunks,
-> the last 128kB of every chunk would be taken by the label, right?
+Thank you for the patch.
 
-No, there will be a single 128kB namespace label area in the end of 500GB.
-It's easy to add an option to put this area in the beginning.
+On Tue, Sep 2, 2025 at 10:16=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Renesas RZN1 GMAC uses exactly one interrupt in in-kernel DTS and common
+commit message needs updating as we are describing 3 interrupts.
 
-Using dimm device with namespace labels instead of region device for e820
-memory allows to partition a single memmap= region and it is similar to
-patch 1 in your series.
+> snps,dwmac.yaml binding is flexible, so define precise constrain for
+> this device.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/net/renesas,rzn1-gmac.yaml       | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml=
+ b/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
+> index d9a8d586e260..16dd7a2631ab 100644
+> --- a/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/renesas,rzn1-gmac.yaml
+> @@ -30,6 +30,15 @@ properties:
+>        - const: renesas,rzn1-gmac
+>        - const: snps,dwmac
+>
+> +  interrupts:
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: macirq
+> +      - const: eth_wake_irq
+> +      - const: eth_lpi
+> +
 
-> My patch disables labels, so we can divide the memory into 1GB chunks
-> without any losses and they all remain aligned to the 1GB boundary. I
-> think this is necessary for vmemmap dax optimization.
- 
-My understanding is that you mean info-block reserved in each devdax device
-and AFAIU it's different from namespace labels. 
+Changes LGTM,
 
-My patch does not deal with it, but I believe it also can be addressed
-with a small "on device" structure outside the actual "partitions".
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> > [1] https://lore.kernel.org/all/CA+CK2bAPJR00j3eFZtF7WgvgXuqmmOtqjc8xO70bGyQUSKTKGg@mail.gmail.com/
+Cheers,
+Prabhakar
 
--- 
-Sincerely yours,
-Mike.
+>    pcs-handle:
+>      description:
+>        phandle pointing to a PCS sub-node compatible with
+> --
+> 2.48.1
+>
+>
 
