@@ -1,357 +1,271 @@
-Return-Path: <linux-kernel+bounces-796757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F28B406CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:31:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1DEB406CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1014541891
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C94189FA66
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8966B3115AF;
-	Tue,  2 Sep 2025 14:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujlO/tZD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A521231195B;
+	Tue,  2 Sep 2025 14:30:46 +0000 (UTC)
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazon11020117.outbound.protection.outlook.com [52.101.225.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6848B30BB8E;
-	Tue,  2 Sep 2025 14:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756823380; cv=none; b=Q2CWBghupFrTpUVx1Tj+pjhWErlyrnukddx6kKJP5Gqs0izZLgufbMnKmr+hV7NtyIur6pr/IUHELYVKsLnAbSyRFI1ZBbrBypy8LR1YL4h6CzpAlaBQVz+7Z1rN2hBMfXJRsosQxw2ZKzsRdSkNanZ4NK4S78+VVQ1+rQZenKU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756823380; c=relaxed/simple;
-	bh=1zyqOsWCpBHLp7tk2b1nYjE1/RsNnyOSL4BtknCMfxU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JhZ/ifLBoIU8wDqEWA+8E2vKUTKoOcH/plOfWQRxUK5x7tFlDaMzJ1r8dXG8TTAfAvUWE0K+aCcabdmqHX9iXO+5VBsTbRzEHte8Lj/HR1o+8QBi+361ouJR4jnKtgNMaCFI3kCqzS92IBiOhUno4RllxGKfNsoQ5Z43b3jl7eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujlO/tZD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA1EC4CEED;
-	Tue,  2 Sep 2025 14:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756823379;
-	bh=1zyqOsWCpBHLp7tk2b1nYjE1/RsNnyOSL4BtknCMfxU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ujlO/tZD/1299PYiYmgRwQZewByu4dUpPkYU5WVaafGsmseZz70JiWSei0NKZvL/+
-	 3THiQActmBSnyamODa9k4Cm2qKX3e3Cc1YwY1fpSClKnCR5/AFI0t9YQ+E4Qs965eG
-	 K8fQil50jNomzGPb7tfGpEU91RyY/E/I1WLG1YzQpLLCRYyrJgFHsF3yXyVz3v1F19
-	 fSqJjbk4jzDhdkbwWxH6c0W2pSZ7GjIbY1d9xlyh29lD4x/1J5pjhh1ftkQIDKTZ+9
-	 CQGfiVJWykj0ZjMbcspXLDQriKrMZdMDAkprTxYfUZVgFzJ5FrBHKxKbrY2y/lfocH
-	 ULuPEf8wzwcXg==
-Message-ID: <7f0c2dfbcebcacef8afa0b8d7cbdd6d84296cbcb.camel@kernel.org>
-Subject: Re: [PATCH] nfsd: remove long-standing revoked delegations by force
-From: Jeff Layton <jlayton@kernel.org>
-To: Li Lingfeng <lilingfeng3@huawei.com>, chuck.lever@oracle.com, 
-	neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, lilingfeng@huaweicloud.com, zhangjian496@huawei.com
-Date: Tue, 02 Sep 2025 10:29:37 -0400
-In-Reply-To: <c5869e23-5294-4757-a757-868748b3bc65@huawei.com>
-References: <20250902022237.1488709-1-lilingfeng3@huawei.com>
-	 <a103653bc0dd231b897ffcd074c1f15151562502.camel@kernel.org>
-	 <1ece2978-239c-4939-bb16-0c7c64614c66@huawei.com>
-	 <d12ffd7c35e84b2d09bd91644bee8d88ce08cd2d.camel@kernel.org>
-	 <c5869e23-5294-4757-a757-868748b3bc65@huawei.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377D12D9EF0;
+	Tue,  2 Sep 2025 14:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.225.117
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756823445; cv=fail; b=qpAyy7wOqCSNwXGOZwZ/rkVHeAtQk47WqzbWAaIsRZRZKsK/TUMWCQCEIZc2wH6MQHJ0OdXv8C+M3zybxujAZUxgbtnO5ZrSNRzEJjuSlz7LjDAS4baFAgVg+pZucF/egrA62hZlKrQDYKEa1kSeQZ+pb5LWg+8p5x7MAZf+dyc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756823445; c=relaxed/simple;
+	bh=mxRIvw8HsKTpXd110u8zN9wHG8N0sj9l0hjCJroqaJ8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RtwYMQAQfjMRuyYfrfgdDecUVI0/a6x0PDBDWjIyfw6lPzs0uM+0BJXzdoidVqIdHxlpQoA11DJZvmJWwVlxLo/tBDhOzt4XzvdXrZVBoq9uMwbiXRFevTOlGjmsVKUjiAtVk87109vr+619vJB8TL7s1RVpiWRO10OQjfDhJ5U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.225.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VjtgqmCk2cyWsA9boPVBb1HOnWC+1+2yscFire45Fdp4Vvw55IsJEMrFyC2M+4QKzouJZ7gJ7M4vqC/g7wDyifZwTKrXwtvXocMCv45kGCdZARYecRYyKaoDX43nZNtElltlvT88Wf99qygZNBy9OzdEL/Mo4N/UnUNSWneTwZk7L7FF7P11kCQAEN8pMUnp4d+qGIB1kaEde2ChITJFhcwsNGlLVQVHTfUpj1SVfdomf5T6XmZlvJeGAskMQuVoO7zXIAlNWqPk2zKVuPZKYteISLy+scpcca3BILgiN2FSLow1pLrv0aGSfASxclvuIGwBbxSbgWfQw0yDTFuh1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mxRIvw8HsKTpXd110u8zN9wHG8N0sj9l0hjCJroqaJ8=;
+ b=kv+qqmdZdrSi9v6wLO575i9CY7XqT5sg0755UBupo3o283DTiWsnE/KCORUiPRXJH0euVxN4pY7dAzs9GftTG8z9pb2CpKDgvi8LGkpO+MDj5YxLPxz4C0HTW0YKaBGflva+u7FlD1SGSB94uAF6OMhMR2DWy4yyGegQ886hZvz0KHum1XJf9JYetqkikimLMvrBhdcoCN2AwKzE1JjQID1LKyPjgZL8M+gBnHyAXIe1nUmjDIO9Mk0UnmZHV/K02fL5N3uHOG15WRWL6l2uCMfarc8as8HZ/y6ARUmPSfz5No4p8T6/yUgabfTjae+T659peBmwFs3pz1t6AiMbDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:229::21)
+ by PN2P287MB1165.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:154::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 14:30:39 +0000
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418]) by PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418%6]) with mapi id 15.20.9094.015; Tue, 2 Sep 2025
+ 14:30:39 +0000
+From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+To: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
+CC: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho
+ Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans
+ Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, Bryan
+ O'Donoghue <bryan.odonoghue@linaro.org>, =?iso-8859-1?Q?Andr=E9_Apitzsch?=
+	<git@apitzsch.eu>, Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Matthias Fend
+	<matthias.fend@emfend.at>, Dongcheng Yan <dongcheng.yan@intel.com>, Sylvain
+ Petinot <sylvain.petinot@foss.st.com>, Arnd Bergmann <arnd@arndb.de>, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede
+	<hansg@kernel.org>, Jingjing Xiong <jingjing.xiong@intel.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tarang Raval
+	<tarang.raval@siliconsignals.io>
+Subject: Re: [PATCH v9 2/2] media: i2c: add ov2735 image sensor driver
+Thread-Topic: [PATCH v9 2/2] media: i2c: add ov2735 image sensor driver
+Thread-Index: AQHcGMTYgOUZQjHc5UmWpQKIK5ImzrR95kUAgAGlZ4CAAG0SMw==
+Date: Tue, 2 Sep 2025 14:30:38 +0000
+Message-ID:
+ <PN3P287MB35195F77DB9C8690ED553E1BFF06A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+References: <20250829090959.82966-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250829090959.82966-3-hardevsinh.palaniya@siliconsignals.io>
+ <PN3P287MB18298FB93EDC498572742B2A8B07A@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+ <aLaiXTw2cieUCzn_@kekkonen.localdomain>
+In-Reply-To: <aLaiXTw2cieUCzn_@kekkonen.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3P287MB3519:EE_|PN2P287MB1165:EE_
+x-ms-office365-filtering-correlation-id: c589b224-05f8-4a2c-18e2-08ddea2d49d4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?JDiWxKC2O6VMr1NQpdLvNfY26QB5kDm45n4UqqTUBJH6azk4g+dozpEOCg?=
+ =?iso-8859-1?Q?aNIikMxrQTUo/Ksg9wpvut1MYxAbDpMxDaexuwo/kTdgSXzfcCIQqGr7X5?=
+ =?iso-8859-1?Q?o7NcyOIZw6S009smt8Jq8tRUckDtfs6DZdOb1NKVS454XNE8pkJdlupCG8?=
+ =?iso-8859-1?Q?GrNZMK08S/es1IZDimsId6APwHhh5+F/bY3lKC+PcDSu57vRHaXQEMLFBP?=
+ =?iso-8859-1?Q?CuorsPvr8B5Og6GnShnOeRjysh+yYepVmk6lmQSD3VsfPa2OyrX+GHm0XG?=
+ =?iso-8859-1?Q?KdAOdNYeOl8aOHtctMw1LqquwVsdKMPNZHbTBmWFAqXpKDVRLzThIK/04m?=
+ =?iso-8859-1?Q?Gkfrnn0vF6tI4IZefAxMsGA0LToRTR6jhRFQTjf/hXVz2LLNvGBRqofSHf?=
+ =?iso-8859-1?Q?rpW59jx29PJ198qRnj87tNlDPn3UkjbdEaNHFMUoVskDiaTPPXOZZ2JzN+?=
+ =?iso-8859-1?Q?MUoWq2OjTT0Qdsc6RkX76Dv3ZrcUM8uOR8J5+17FDNhOzVRd8wtaW6DV/L?=
+ =?iso-8859-1?Q?SuKEyb2aL1WBJBxXc7RFKETYTtzngEw75EyEb9GrRzLv2z0PjnGBlOLlkl?=
+ =?iso-8859-1?Q?hyc2dvbcSxqnvQzRonrPbmiqyLau3kNXq6FKSqb3EdLCrbOCbfo/O0RdEl?=
+ =?iso-8859-1?Q?WUHukaQRT0FqKygzhSTfHGP+lEg69cneky7sIXuFe/aCsHHWdnlH9ggFXh?=
+ =?iso-8859-1?Q?zakhp86Hgaqve4zDukJ5kV9DAwWt+053xtN+X78R996FQcOo7fv/esaFtJ?=
+ =?iso-8859-1?Q?nVPa3xf/aLCqpnfeeQNsiwAinCLzf0W2VFQP0rm/ClDStip5KFCAOJMq0J?=
+ =?iso-8859-1?Q?IBl2jIYoqy3zeKsx9EzGBvZLv8uE3DibeGuiiq3wteTalXOS+L68xhET3O?=
+ =?iso-8859-1?Q?WfMafqonr4/oe47bpnU0HqnVS3Ua3bW4OUvTJnJObJ9qT9w7hKXpvjS8+z?=
+ =?iso-8859-1?Q?YWbVNXirizWKMJOvWP1ulz5qlawmVB84Gr/B7cP43bLyKKiivtAhHDN1Se?=
+ =?iso-8859-1?Q?2qf+JOV6D1/ziXl6LksXBz8LGk73yjPEnailtPor2DvWqDkijy3tCKN4Vq?=
+ =?iso-8859-1?Q?VnA7OirH+vYjSQyizTObnq428bWR10YkTsgYEfl9yq8ifV5aKigNtGvslj?=
+ =?iso-8859-1?Q?9kZxpDoPf/VBH8SWvGfCYGnHfQZUDvE6mnWiPcBWFaMImF2I1oR39sR6Hb?=
+ =?iso-8859-1?Q?0bDyWwzpDY4iT1mQwgE5hbkCj3yZsG97Wuxmoccm3rNLk0YBQ3ju/mV2mR?=
+ =?iso-8859-1?Q?fEe1WyGAkbZfslj8dmQrYP4wewdHzGyEMyrdTekfZMOWqrYrWI2QKz9kJE?=
+ =?iso-8859-1?Q?C2kBXuHL7pSsXio16QcKjDnG2qvWv666+WqNwcYJtB6XRg7LiZqTD5drjx?=
+ =?iso-8859-1?Q?xcV6wcLe9RZfb/zoDGGC2BVIBACj/re5t+vuARTEUQ/bP4tXYpjwev2AQU?=
+ =?iso-8859-1?Q?eQcoY5krTZB7/BKJEMOVEuT6Hau5KdPwu195gqq3C1J9WKwkMqSWGIV83f?=
+ =?iso-8859-1?Q?tzMKNRul6dk9gOpIm0CG6GcYob9mXD8v2kSqxXAEOeYQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB3519.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?yIGkZuQuBcbRrcHbCh45zlXoouE8KH2+YeMX06Ujdn0TcGCJJpW6g4oysQ?=
+ =?iso-8859-1?Q?sY3TxGfWO9j57IfxAQW97kB84QzW+EZA/FglJsR2coaGG0ArQOicge6rYs?=
+ =?iso-8859-1?Q?QMskCu4v0qFQE+Y4PoYLnymkEUVxgi7GCP1z0DBit0rbCtDywT4MfnLdzr?=
+ =?iso-8859-1?Q?S5Pi55sr4QgZTXMM772vtIuMk97XC6hDV4kOqN/9cfM+GMA9pP40ud1tcX?=
+ =?iso-8859-1?Q?prZcoiVcK3B8zHFFs1LcM/HWIwUEVIRXkE9W/UzRy6M07UC5yWLl1n5yFT?=
+ =?iso-8859-1?Q?t6quBnls0fALhEceMvTKeEsVfuJwmhLwXvHzxDk0eICm7hJ/vEqipEWkFq?=
+ =?iso-8859-1?Q?NveMIhIfeEjimq7gPKeR/Uw/dXbV9gKnODsv5hcb7HY+LlKGabvW2qCeEx?=
+ =?iso-8859-1?Q?TGi1i2GZcxJR1xfNribJNplcg7hWXpoiRzygL099VGm0m77ZA6UM9i3JRF?=
+ =?iso-8859-1?Q?/wclvQJjfk8yGpfCciBcV+/ILg6t2WkYuPN+bqCG0X5ey9+ZkcFouzDusI?=
+ =?iso-8859-1?Q?NP2Hn+97Rpw14wgXKFxBO6XdF27fxyoYyPHrpWf0ARPpigq71jqsHm0X6M?=
+ =?iso-8859-1?Q?2AESY85NlONd20gIHH15CUN/EJ5qep6j24ROWGjcc5h5p21cqxeaSjmhUz?=
+ =?iso-8859-1?Q?kqy1WXBdLRW73j1GRDSagxsjbRGKw6h8CgqHfZIvoeoHqpbzPi6HVLkljB?=
+ =?iso-8859-1?Q?49P/QdTALcdX7oH0DJNaRCS9ZKUAyA4wABdXmyUV4ckmyBd1jAGPXet8MI?=
+ =?iso-8859-1?Q?vm8AzjogWT3PaKr0oiEQrI3B2xKbwWi+70xmPdJNU347iWCyljsFycdZ3D?=
+ =?iso-8859-1?Q?4Y24WeMa/Rbk6cJRgIunuGxJfzpg6d+zP1uH2BNtGXaa5YNhSLZrPiF8Am?=
+ =?iso-8859-1?Q?R9lx6VPW5RkfVrwGK9nZOmb9STJFVEx5zL84FI3ZCYagYTCNUND9+cf9Gz?=
+ =?iso-8859-1?Q?rbKiAs2jR7Sx1/W0jrLRSuDAiuVl3EnLIJrMRIEwbxoz8TqCblq6GX2FaG?=
+ =?iso-8859-1?Q?Gf+kBXHFLdPs9y8ZKVb0jSsgBidleEfq+TtaCPF07q6Oe4CPEql4qxY44K?=
+ =?iso-8859-1?Q?vWz3RBbhic9iOmNDqgUklm6KfVZ6uF4RVP96V7EuaABMFVAPt+PxbcX2Eq?=
+ =?iso-8859-1?Q?UBfF+R1/YQquG1k+ZDg3C8kb6BvyOaUFs96mpQyPebpatM3Mc7VlR9Fc/U?=
+ =?iso-8859-1?Q?aPPTziQSth9iaQgZtlUgEEkyPhtouvngTqnWLY5bnpbkYY1W0IMCapj8xG?=
+ =?iso-8859-1?Q?rX4b6H5OmDuxuUdtrGZSI5lzH+r9SpbDMptuHINTHaXUaMXzluxakD0AyT?=
+ =?iso-8859-1?Q?6fK6Vei7jcP4xkO47CnC6ukRf2q+0RaemY3O6SvBG5DfmqdrwIDNxdiOrV?=
+ =?iso-8859-1?Q?e70TT/4bexuN/kViTqrxXg3pgsTuOuCwwFak/YwEN9uhp1yMbTyZjbzRQu?=
+ =?iso-8859-1?Q?hktKh6ZB5GlqNCpdXRSD6hBR9BjuMsgQyz258cFOAZIS4qPwz2e2J1V0Ml?=
+ =?iso-8859-1?Q?LcV4YBrzXos5zN8+KCmckCqwrP4oTGloIhJNturEwlK8aC/0/0zEAh15JH?=
+ =?iso-8859-1?Q?8nqcvEBReEoQxda8kGa02PTLQzymHwE6Aedwo4MVHN7p8sAVQhFnKDqDoa?=
+ =?iso-8859-1?Q?ZefH8/PwWDImEPnRqb77pTVfmZ2ba9FfLiym7vDjRhk1By0q4mJnIZxg?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: c589b224-05f8-4a2c-18e2-08ddea2d49d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2025 14:30:38.9100
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8kwOJd6+dSd2Jc5G/lP0fslidwXq+qgS/OHZFcmxp0hKPbDcfDP9NHRD8WMFLd9/wQ+mXFVIsgEG0wCmf28MZla5+YT7FUo72E6JBZ8rp9K4wY5RqyN2wYyb3N6O6gkO
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB1165
 
-On Tue, 2025-09-02 at 22:21 +0800, Li Lingfeng wrote:
-> =E5=9C=A8 2025/9/2 21:40, Jeff Layton =E5=86=99=E9=81=93:
-> > On Tue, 2025-09-02 at 20:10 +0800, Li Lingfeng wrote:
-> > > Hi,
-> > >=20
-> > > =E5=9C=A8 2025/9/2 18:21, Jeff Layton =E5=86=99=E9=81=93:
-> > > > On Tue, 2025-09-02 at 10:22 +0800, Li Lingfeng wrote:
-> > > > > When file access conflicts occur between clients, the server reca=
-lls
-> > > > > delegations. If the client holding delegation fails to return it =
-after
-> > > > > a recall, nfs4_laundromat adds the delegation to cl_revoked list.
-> > > > > This causes subsequent SEQUENCE operations to set the
-> > > > > SEQ4_STATUS_RECALLABLE_STATE_REVOKED flag, forcing the client to
-> > > > > validate all delegations and return the revoked one.
-> > > > >=20
-> > > > > However, if the client fails to return the delegation due to a ti=
-meout
-> > > > > after receiving the recall or a server bug, the delegation remain=
-s in the
-> > > > > server's cl_revoked list. The client marks it revoked and won't f=
-ind it
-> > > > > upon detecting SEQ4_STATUS_RECALLABLE_STATE_REVOKED. This leads t=
-o a loop:
-> > > > > the server persistently sets SEQ4_STATUS_RECALLABLE_STATE_REVOKED=
-, and the
-> > > > > client repeatedly tests all delegations, severely impacting perfo=
-rmance
-> > > > > when numerous delegations exist.
-> > > > >=20
-> > > > It is a performance impact, but I don't get the "loop" here. Are yo=
-u
-> > > > saying that this problem compounds itself? That testing all delegat=
-ions
-> > > > causes others to be revoked?
-> > > The delegation will be removed from server->delegations in client aft=
-er
-> > > NFSPROC4_CLNT_DELEGRETURN is performed.
-> > > nfs4_delegreturn_done
-> > >   =C2=A0nfs_delegation_mark_returned
-> > >   =C2=A0 nfs_detach_delegation
-> > >   =C2=A0 =C2=A0nfs_detach_delegation_locked
-> > >   =C2=A0 =C2=A0 list_del_rcu // remove delegation from server->delega=
-tions
-> > >=20
-> > >   From the client's perspective, the delegation has been returned, bu=
-t on
-> > > the server side, it is left in the cl_revoked list.[1].
-> > >=20
-> > > Subsequently, every sequence from the client will be flagged with
-> > > SEQ4_STATUS_RECALLABLE_STATE_REVOKED as long as cl_revoked remains
-> > > non-empty.
-> > > nfsd4_sequence
-> > >   =C2=A0seq->status_flags |=3D SEQ4_STATUS_RECALLABLE_STATE_REVOKED
-> > >=20
-> > > When the client detects SEQ4_STATUS_RECALLABLE_STATE_REVOKED while
-> > > processing a sequence result, it sets NFS_DELEGATION_TEST_EXPIRED for=
- all
-> > > delegations and wakes up the state manager for handling.
-> > > nfs41_sequence_done
-> > >   =C2=A0nfs41_sequence_process
-> > >   =C2=A0 nfs41_handle_sequence_flag_errors
-> > >   =C2=A0 =C2=A0nfs41_handle_recallable_state_revoked
-> > >   =C2=A0 =C2=A0 nfs_test_expired_all_delegations
-> > >   =C2=A0 =C2=A0 =C2=A0nfs_mark_test_expired_all_delegations
-> > >   =C2=A0 =C2=A0 =C2=A0 nfs_delegation_mark_test_expired_server
-> > >   =C2=A0 =C2=A0 =C2=A0 =C2=A0// set NFS_DELEGATION_TEST_EXPIRED for d=
-elegations in
-> > > server->delegations
-> > >   =C2=A0 =C2=A0 =C2=A0nfs4_schedule_state_manager
-> > >=20
-> > > The state manager tests all delegations except the one that was retur=
-ned,
-> > > as it is no longer in server->delegations.
-> > > nfs4_state_manager
-> > >   =C2=A0nfs4_begin_drain_session
-> > >   =C2=A0nfs_reap_expired_delegations
-> > >   =C2=A0 nfs_server_reap_expired_delegations
-> > >   =C2=A0 =C2=A0// test delegations in server->delegations
-> > >=20
-> > > There may be a loop:
-> > > 1) send a sequence(client)
-> > > 2) return SEQ4_STATUS_RECALLABLE_STATE_REVOKED(server)
-> > > 3) set NFS_DELEGATION_TEST_EXPIRED for all delegations(client)
-> > > 4) test all delegations by state manager(client)
-> > > 5) send another sequence(client)
-> > >=20
-> > > The state manager's traversal of delegations occurs between
-> > > nfs4_begin_drain_session and nfs4_end_drain_session. Non-privileged r=
-equests
-> > > will be blocked because the NFS4_SLOT_TBL_DRAINING flag is set. If th=
-ere are
-> > > many delegations to traverse, this blocking time can be relatively lo=
-ng.
-> > > > > Since abnormal delegations are removed from flc_lease via nfs4_la=
-undromat
-> > > > > --> revoke_delegation --> destroy_unhashed_deleg -->
-> > > > > nfs4_unlock_deleg_lease --> kernel_setlease, and do not block new=
- open
-> > > > > requests indefinitely, retaining such a delegation on the server =
-is
-> > > > > unnecessary.
-> > > > >=20
-> > > > > Reported-by: Zhang Jian <zhangjian496@huawei.com>
-> > > > > Fixes: 3bd64a5ba171 ("nfsd4: implement SEQ4_STATUS_RECALLABLE_STA=
-TE_REVOKED")
-> > > > > Closes: https://lore.kernel.org/all/ff8debe9-6877-4cf7-ba29-fc98e=
-ae0ffa0@huawei.com/
-> > > > > Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> > > > > ---
-> > > > >    fs/nfsd/nfs4state.c | 11 +++++++++++
-> > > > >    1 file changed, 11 insertions(+)
-> > > > >=20
-> > > > > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> > > > > index 88c347957da5..aa65a685dbb9 100644
-> > > > > --- a/fs/nfsd/nfs4state.c
-> > > > > +++ b/fs/nfsd/nfs4state.c
-> > > > > @@ -4326,6 +4326,8 @@ nfsd4_sequence(struct svc_rqst *rqstp, stru=
-ct nfsd4_compound_state *cstate,
-> > > > >    	int buflen;
-> > > > >    	struct net *net =3D SVC_NET(rqstp);
-> > > > >    	struct nfsd_net *nn =3D net_generic(net, nfsd_net_id);
-> > > > > +	struct list_head *pos, *next;
-> > > > > +	struct nfs4_delegation *dp;
-> > > > >   =20
-> > > > >    	if (resp->opcnt !=3D 1)
-> > > > >    		return nfserr_sequence_pos;
-> > > > > @@ -4470,6 +4472,15 @@ nfsd4_sequence(struct svc_rqst *rqstp, str=
-uct nfsd4_compound_state *cstate,
-> > > > >    	default:
-> > > > >    		seq->status_flags =3D 0;
-> > > > >    	}
-> > > > > +	if (!list_empty(&clp->cl_revoked)) {
-> > > > > +		list_for_each_safe(pos, next, &clp->cl_revoked) {
-> > > > > +			dp =3D list_entry(pos, struct nfs4_delegation, dl_recall_lru)=
-;
-> > > > > +			if (dp->dl_time < (ktime_get_boottime_seconds() - 2 * nn->nfs=
-d4_lease)) {
-> > > > > +				list_del_init(&dp->dl_recall_lru);
-> > > > > +				nfs4_put_stid(&dp->dl_stid);
-> > > > > +			}
-> > > > > +		}
-> > FYI: this list is protected by the clp->cl_lock. You need to hold it to
-> > do this list walk.
-> >=20
-> > > > > +	}
-> > > > >    	if (!list_empty(&clp->cl_revoked))
-> > > > >    		seq->status_flags |=3D SEQ4_STATUS_RECALLABLE_STATE_REVOKED;
-> > > > >    	if (atomic_read(&clp->cl_admin_revoked))
-> > > > This seems like a violation of the spec. AIUI, the server is requir=
-ed
-> > > > to hang onto a record of the delegation until the client does the
-> > > > TEST_STATEID/FREE_STATEID dance to remove it. Just discarding them =
-like
-> > > > this seems wrong.
-> > > Our expected outcome was that the client would release the abnormal
-> > > delegation via TEST_STATEID/FREE_STATEID upon detecting its invalidit=
-y.
-> > > However, this problematic delegation is no longer present in the
-> > > client's server->delegations list=E2=80=94whether due to client-side =
-timeouts or
-> > > the server-side bug [1].
-> > > > Should we instead just administratively evict the client since it's
-> > > > clearly not behaving right in this case?
-> > > Thanks for the suggestion. While administratively evicting the client=
- would
-> > > certainly resolve the immediate delegation issue, I'm concerned that
-> > > approach
-> > > might be a bit heavy-handed.
-> > > The problematic behavior seems isolated to a single delegation. Meanw=
-hile,
-> > > the client itself likely has numerous other open files and active sta=
-te on
-> > > the server. Forcing a complete client reconnect would tear down all t=
-hat
-> > > state, which could cause significant application disruption and be pe=
-rceived
-> > > as a service outage from the client's perspective.
-> > >=20
-> > > [1]
-> > > https://lore.kernel.org/all/de669327-c93a-49e5-a53b-bda9e67d34a2@huaw=
-ei.com/
-> > >=20
-> > > Thanks,
-> > > Lingfeng
-> > Ok, I get the problem, but I still disagree with the solution. I don't
-> > think we can just time these things out. Ideally we'd close the race
-> > window, but the sc_status field is protected by the global state_lock
-> > and I don't think we want to take it in revoke_delegation.
-> >=20
-> > The best solution I can see is to have destroy_delegation()
-> > unconditionally set SC_STATUS_CLOSED, and then you can do the list walk
-> > above, but checking for that flag instead of testing for a timeout.
-> This might potentially affect the normal TEST_STATEID/FREE_STATEID flow,
-> as nfsd4_free_stateid() branches differently based on whether
-> SC_STATUS_CLOSED is set. Alternatively, I was wondering if you could
-> suggest a workaround to avoid this issue?
->=20
-
-I can't think of any workarounds other than turning off delegations
-altogether.
-
-I guess your concern is that TEST_STATEID and FREE_STATEID would return
-BAD_STATEID in this case, even though the entry was still (technically)
-on the cl_revoked list? That seems like correct behavior. The client
-did send DELEGRETURN, after all.
-
-> >=20
-> > I'm still not thrilled with this solution though. It makes SEQUENCE a
-> > bit more heavyweight than I'd like. I'm starting to think that we need
-> > to rework the overall delegation locking, but that's an ugly problem to
-> > tackle.
-
---=20
-Jeff Layton <jlayton@kernel.org>
+Hi Sakari,=0A=
+=0A=
+> On Mon, Sep 01, 2025 at 06:44:46AM +0000, Tarang Raval wrote:=0A=
+> > Hi Hardev, Sakari=0A=
+> >=0A=
+> > > Add a v4l2 subdevice driver for the Omnivision OV2735 sensor.=0A=
+> > >=0A=
+> > > The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an=0A=
+> > > active array size of 1920 x 1080.=0A=
+> > >=0A=
+> > > The following features are supported:=0A=
+> > > - Manual exposure an gain control support=0A=
+> > > - vblank/hblank control support=0A=
+> > > - Test pattern support control=0A=
+> > > - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10)=0A=
+> > >=0A=
+> > > Co-developed-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io=
+>=0A=
+> > > Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>=
+=0A=
+> > > Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignal=
+s.io>=0A=
+> > > ---=0A=
+> > >=A0 MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0=
+=A0 1 +=0A=
+> > >=A0 drivers/media/i2c/Kconfig=A0 |=A0=A0 10 +=0A=
+> > >=A0 drivers/media/i2c/Makefile |=A0=A0=A0 1 +=0A=
+> > >=A0 drivers/media/i2c/ov2735.c | 1109 ++++++++++++++++++++++++++++++++=
+++++=0A=
+> > >=A0 4 files changed, 1121 insertions(+)=0A=
+> > >=A0 create mode 100644 drivers/media/i2c/ov2735.c=0A=
+> >=0A=
+> > ...=0A=
+> >=0A=
+> > > +static int ov2735_enum_mbus_code(struct v4l2_subdev *sd,=0A=
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct v4l2_subdev_state *sd_state,=0A=
+> > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct v4l2_subdev_mbus_code_enum *code)=0A=
+> > > +{=0A=
+> > > +=A0=A0=A0=A0=A0=A0 if (code->index >=3D 0)=0A=
+> >=0A=
+> > Hardev, I believe this condition is always true.=0A=
+> >=0A=
+> > You should write:=0A=
+> > if (code->index > 0)=0A=
+> >=0A=
+> > Sakari, Could you please remove the equals sign when you apply the patc=
+h?=0A=
+> =0A=
+> Done. I also switched it to container_of_const(); the diff is:=0A=
+> =0A=
+> diff --git a/drivers/media/i2c/ov2735.c b/drivers/media/i2c/ov2735.c=0A=
+> index da5978b96146..b96600204141 100644=0A=
+> --- a/drivers/media/i2c/ov2735.c=0A=
+> +++ b/drivers/media/i2c/ov2735.c=0A=
+> @@ -402,7 +402,7 @@ static int ov2735_multi_reg_write(struct ov2735 *ov27=
+35,=0A=
+> =0A=
+> =A0static inline struct ov2735 *to_ov2735(struct v4l2_subdev *_sd)=0A=
+> =A0{=0A=
+> -=A0=A0=A0=A0=A0=A0 return container_of(_sd, struct ov2735, sd);=0A=
+> +=A0=A0=A0=A0=A0=A0 return container_of_const(_sd, struct ov2735, sd);=0A=
+> =A0}=0A=
+> =0A=
+> =A0static int ov2735_enable_test_pattern(struct ov2735 *ov2735, u32 patte=
+rn)=0A=
+> @@ -428,8 +428,8 @@ static int ov2735_enable_test_pattern(struct ov2735 *=
+ov2735, u32 pattern)=0A=
+> =0A=
+> =A0static int ov2735_set_ctrl(struct v4l2_ctrl *ctrl)=0A=
+> =A0{=0A=
+> -=A0=A0=A0=A0=A0=A0 struct ov2735 *ov2735 =3D container_of(ctrl->handler,=
+ struct ov2735,=0A=
+> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 handler);=0A=
+> +=A0=A0=A0=A0=A0=A0 struct ov2735 *ov2735 =3D=0A=
+> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 container_of_const(ctrl->hand=
+ler, struct ov2735, handler);=0A=
+> =A0=A0=A0=A0=A0=A0=A0 struct v4l2_mbus_framefmt *fmt;=0A=
+> =A0=A0=A0=A0=A0=A0=A0 struct v4l2_subdev_state *state;=0A=
+> =A0=A0=A0=A0=A0=A0=A0 u64 vts;=0A=
+> @@ -697,7 +697,7 @@ static int ov2735_enum_mbus_code(struct v4l2_subdev *=
+sd,=0A=
+> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0 struct v4l2_subdev_state *sd_state,=0A=
+> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0 struct v4l2_subdev_mbus_code_enum *code)=0A=
+> =A0{=0A=
+> -=A0=A0=A0=A0=A0=A0 if (code->index >=3D 0)=0A=
+> +=A0=A0=A0=A0=A0=A0 if (code->index)=0A=
+> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return -EINVAL;=0A=
+> =0A=
+> =A0=A0=A0=A0=A0=A0=A0 code->code =3D MEDIA_BUS_FMT_SGRBG10_1X10;=0A=
+=0A=
+Thanks for your help.=0A=
+=0A=
+Best Regards,=0A=
+Hardev=0A=
 
