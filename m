@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-796564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3433DB402A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:20:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4981CB4028A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A08616B110
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:18:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CDE27A8093
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3162E3043BA;
-	Tue,  2 Sep 2025 13:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38270305E14;
+	Tue,  2 Sep 2025 13:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ov/uQ46s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nm+RopLs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751972E1F1C;
-	Tue,  2 Sep 2025 13:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803A13054E9;
+	Tue,  2 Sep 2025 13:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819072; cv=none; b=sm4/ml5rb8dCnP+GSSAx8NRDc/I006N7rR3+O8u+k2jJD0699kGlyL1hiA9eohucFauJP7jhcrHDxC9qmJLms0BzKCdg5+7XByQ2KUbe+J6XcCHKvoKc9J4+qTACGAQqJA1mU3kVLFem6+dZqbIqRpQMSryDMw0iAPPGhKyw8s4=
+	t=1756819076; cv=none; b=daRpy/Sxgzpn+JlQ9lVNVtgbOWaLQrM2iP7TQCQMWquq9VzVzfp0M1qIhCgMub9T8ZsZRvIXWZ1ZyjwpsNuxfshvzEPgEB0vniyXNSgWcPJMKBr9YquPvzJWPvI1K+MbIbKxR7/1PKPW5wrOvIA7RbT/x9BOFAn97HUw+Gs7h6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819072; c=relaxed/simple;
-	bh=0xocXOa6y0rnRdA2Z5T9f2V5CZOoroCxOVuasw3Mk80=;
+	s=arc-20240116; t=1756819076; c=relaxed/simple;
+	bh=7dCOweu/9WQU6ZMZ3GowAd2CrPNf7/Tdxndk6cm5lVE=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=DJcTsq6YJDC3yuw8yFhFGy4NDATSg4nWsmX4ZRbHXfQDu2rgPdaobbUot+bWkAoul5wi40nobGUV32m1EIDJNhbGQIOSlqp2peG1vJT71ousOVefk+B7v++gq7RUM4A+eWnNochkCbCwjeePEjy38JYgeBVdP/zHIRK4a70Fbcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ov/uQ46s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D28A0C4CEED;
-	Tue,  2 Sep 2025 13:17:51 +0000 (UTC)
+	 Message-Id:Subject; b=bT70WYL3FoG3zqsxaihEwbjxL0oi1v/EotPyfi8d1OhYDjaBzhsZ/S3TQy8DsIKa9qQuh4qfFKSh9pyzyu5p3+gGXYqGWs2WkFkk4ZyLVZQy94br0jIXK1X/JL1bfwjqrTmf7Kp8gYtgUoJ7q6E6UZWLrLvYwwPwjIipBYzveHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nm+RopLs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EFC7C4CEF5;
+	Tue,  2 Sep 2025 13:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756819072;
-	bh=0xocXOa6y0rnRdA2Z5T9f2V5CZOoroCxOVuasw3Mk80=;
+	s=k20201202; t=1756819076;
+	bh=7dCOweu/9WQU6ZMZ3GowAd2CrPNf7/Tdxndk6cm5lVE=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ov/uQ46s6uLHRT28cJtvqU4C1PYT6pAHKmdPbhEkLxQlRXtMtWdx3n/NT86WxYUNQ
-	 /QemBJckw/cd0Kl7IM9F6QuvSHXE1xkDjxkNDX1RU6bzAnw8GvZJBFagAMj7t9RJ9M
-	 5irkdLBSAGWfn56K8XDFA+9HD217jMMXhBD2QmxEd7NxHslC4kVXBuMX3tbaYS1okJ
-	 c5IpMkelGqNn2SlB3WCRqMLWKbBNSHiG+m//O67IJcgJWMMILEBtsIIEfO04POm8Ps
-	 fsbG2OdRJEAMGPNcPbHwfNMVJuRY6k0ECarHwiOlaL1DmrRVkHAeqE5HfoW+7mKXhC
-	 YZCNwUpN9YqYw==
-Date: Tue, 02 Sep 2025 08:17:49 -0500
+	b=nm+RopLsIuExN744nl2jgbFsP2RAJ+7HknmsT+tkCNDTsEZ33hhSv19qSvlC2GWWy
+	 arz0MewOSmQWPFU220YzH+W67D5342Z+eAVfk7OS91aE0E4yYuLaytIxbd+OUOKa1s
+	 WzrjXWDEhdJuln5qo/8uaZbAHOj5cHtR2/Bp6SaCxlijgzuxFRomEqv+KQ3QjFHAZX
+	 boRqDTwQChBfgPXv1Xcd4U8sNwy8+o5ZZn/JYuPJZjAY7aJPxxUnPJHaARBgYiySUI
+	 kez5z1RGglVDoP0Ee/Y4xNCgv3zh/4kMohYCtYLJGg4USSRgzWx2yAchQ7kY0nMlQG
+	 B22BLBQjUPcQg==
+Date: Tue, 02 Sep 2025 08:17:52 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,93 +50,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-riscv@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, devicetree@vger.kernel.org, 
- Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev, 
- Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Alexandre Ghiti <alex@ghiti.fr>, 
- Samuel Holland <samuel@sholland.org>
-To: Lukas Schmid <lukas.schmid@netcube.li>
-In-Reply-To: <20250831162536.2380589-1-lukas.schmid@netcube.li>
-References: <20250831162536.2380589-1-lukas.schmid@netcube.li>
-Message-Id: <175678730955.877897.3145791714848835564.robh@kernel.org>
-Subject: Re: [PATCH v8 0/5] Add support for NetCube Systems Nagami SoM and
- its carrier boards
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+In-Reply-To: <20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com>
+References: <20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com>
+Message-Id: <175678731004.877933.17610642849252704344.robh@kernel.org>
+Subject: Re: [PATCH 0/2] starqltechn: fix max77705 device irqs
 
 
-On Sun, 31 Aug 2025 18:25:29 +0200, Lukas Schmid wrote:
-> This series adds support for the NetCube Systems Nagami SoM and its
-> associated carrier boards, the Nagami Basic Carrier and the Nagami Keypad
-> Carrier.
+On Sun, 31 Aug 2025 01:21:20 +0300, Dzmitry Sankouski wrote:
+> For max77705 charger and fuelgauge subdevice, use max77705 interrupt
+> controller.
 > 
-> Changes in v8:
->   - Use a gpio-mux instead of the gpio-hog for the USB0_SEC_EN signal
->   - Fix the dt-schema issues
-> 
-> Changes in v7:
->   - Fix the gpio numbering for the USB_SEC_EN gpio hog
->   - Fix the gpio-line-names for the keypad carrier
-> 
-> Changes in v6:
->   - Add 'usb0-enable-hog' to the som to enable the USB-OTG port by default
->   - Update the keypad carrier dts to match actual board revision
-> 
-> Changes in v5:
->   - Re-add the non-removable property to the ESP32 interface
->   - Add the mmc-pwrseq node for the ESP32 to initialize the ESP32 correctly
->   - Remove the unused ehci0 and ohci0 nodes from the Keypad Carrier since
->     USB port is peripheral only
-> 
-> Changes in v4:
->   - Disable the default interfaces on the card-edge but keep the pinctrl
->     definitions for them
->   - Split the pinctrl definitions for the SPI interface into the basic spi
->     pins and the hold/wp pins
->   - Move some mmc0 properties to the Basic Carrier dts
->   - Remove non-removable property from the ESP32 interface
->   - Fix typo in the keypad matrix definition
-> 
-> Changes in v3:
->   - Add missing dcxo node to the SoM dtsi
->   - Rename the multi-led node
->   - Change dr_mode to "peripheral" for the Keypad Carrier
-> 
-> Changes in v2:
->  - Squash the binding patches into one patch
->  - Fix formatting of the phy node in the SoM dtsi
->  - Add description on where the phy is located in the SoM dtsi
->  - Fix the phy address in the SoM dtsi
->  - Move the carrier bindings into the same description as enums
-> 
-> Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
-> Lukas Schmid (5):
->   dt-bindings: arm: sunxi: Add NetCube Systems Nagami SoM and carrier
->     board bindings
->   riscv: dts: allwinner: d1s-t113: Add pinctrl's required by NetCube
->     Systems Nagami SoM
->   ARM: dts: sunxi: add support for NetCube Systems Nagami SoM
->   ARM: dts: sunxi: add support for NetCube Systems Nagami Basic Carrier
->   ARM: dts: sunxi: add support for NetCube Systems Nagami Keypad Carrier
+> Dzmitry Sankouski (2):
+>       dt-bindings: add mfd/max77705 definitions
+>       arch: arm64: sdm845: starqltechn: fix max77705 interrupts
 > 
->  .../devicetree/bindings/arm/sunxi.yaml        |   8 +
->  arch/arm/boot/dts/allwinner/Makefile          |   3 +
->  ...n8i-t113s-netcube-nagami-basic-carrier.dts |  67 +++++
->  ...8i-t113s-netcube-nagami-keypad-carrier.dts | 129 +++++++++
->  .../allwinner/sun8i-t113s-netcube-nagami.dtsi | 250 ++++++++++++++++++
->  .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    |  48 ++++
->  6 files changed, 505 insertions(+)
->  create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-basic-carrier.dts
->  create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dts
->  create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
+>  MAINTAINERS                                             |  1 +
+>  arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts | 13 ++++++++-----
+>  include/dt-bindings/mfd/max77705.h                      | 16 ++++++++++++++++
+>  3 files changed, 25 insertions(+), 5 deletions(-)
+> ---
+> base-commit: 3cace99d63192a7250461b058279a42d91075d0c
+> change-id: 20250830-starqltechn-correct_max77705_nodes-1162dc2d9fe7
+> prerequisite-change-id: 20250830-max77705_77976_charger_improvement-e3f417bfaa56:v1
+> prerequisite-patch-id: 534eff3c30a7b998f90f7be9537ff54c7f68543b
+> prerequisite-patch-id: 60362587901a812e50ab0e9a2cf25eeea769ef9c
+> prerequisite-patch-id: 09e302f4c28ec741f2985f858d72627d15e197f0
+> prerequisite-patch-id: 195796a157978c67980cdd3e1bacbd0ae677e3a3
+> prerequisite-patch-id: efdf7936ffca1f97fc550118ae9a2a0795828f88
+> prerequisite-patch-id: bc2ce3683ecab7a91fe2ca00d35798d0f4ea5f80
+> prerequisite-patch-id: 2547b245dce99798d36835b1d729b21b6d1906e5
+> prerequisite-patch-id: 30d3ca50e1b09abd360ddf33982223cce24c6859
+> prerequisite-patch-id: deac1d76b95764903b7b6c937d7d4b43ed9f74ed
+> prerequisite-change-id: 20250831-max77705-fix_interrupt_handling-0889cee6936d:v1
+> prerequisite-patch-id: f2f0ada814ee906cdc40b88427650d08b89a5d1a
 > 
+> Best regards,
 > --
-> 2.39.5
-> 
+> Dzmitry Sankouski <dsankouski@gmail.com>
 > 
 > 
 > 
@@ -157,15 +116,26 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250829 (best guess, 2/3 blobs matched)
+ Base: using specified base-commit 3cace99d63192a7250461b058279a42d91075d0c
+ Deps: looking for dependencies matching 10 patch-ids
+ Deps: Applying prerequisite patch: [PATCH 1/9] power: supply: max77705_charger: move active discharge setting to mfd parent
+ Deps: Applying prerequisite patch: [PATCH 2/9] power: supply: max77705_charger: refactoring: rename charger to chg
+ Deps: Applying prerequisite patch: [PATCH 3/9] power: supply: max77705_charger: use regfields for config registers
+ Deps: Applying prerequisite patch: [PATCH 4/9] power: supply: max77705_charger: return error when config fails
+ Deps: Applying prerequisite patch: [PATCH 5/9] power: supply: max77705_charger: add writable properties
+ Deps: Applying prerequisite patch: [PATCH 6/9] power: supply: max77705_charger: rework interrupts
+ Deps: Applying prerequisite patch: [PATCH 7/9] power: supply: max77705_charger: use REGMAP_IRQ_REG_LINE macro
+ Deps: Applying prerequisite patch: [PATCH 8/9] power: supply: max77705_charger: implement aicl feature
+ Deps: Applying prerequisite patch: [PATCH 9/9] power: supply: max77976_charger: fix constant current reporting
+ Deps: Applying prerequisite patch: [PATCH] mfd: max77705: rework interrupts
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/allwinner/' for 20250831162536.2380589-1-lukas.schmid@netcube.li:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com:
 
-arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami-keypad-carrier.dtb: /soc/i2c@2502800/keypad@34: failed to match any schema with compatible: ['ti,tca8418']
+arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dtb: pmic@66 (maxim,max77705): '#address-cells', '#interrupt-cells', '#size-cells', 'interrupt-controller' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
 
 
 
