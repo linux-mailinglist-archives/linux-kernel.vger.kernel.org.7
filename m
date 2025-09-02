@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-796375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224A2B3FF88
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:12:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B83B3FFEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40281886A26
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:12:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C04555E3258
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6352EBB9D;
-	Tue,  2 Sep 2025 12:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CA1302CA4;
+	Tue,  2 Sep 2025 12:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="JSzNqk/4"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPbbPB5i"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89484283FF1
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96933019BA;
+	Tue,  2 Sep 2025 12:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814802; cv=none; b=odzRna6n8Sybc1xLS/BfY8lk2pXoCBSOrmSTj6uv0ib9XNVvVAy5xkKKkuxsl/LmZBrGs9MqGro9PeSF7Vr6tG1ASfAexADfZDFK3/NfP6tvdLcsy1/1kI3s4Bsp+lk6ejkitQsyJ11+FKJq8KZW61lRTHYOQ3GbPb0WswyZhcI=
+	t=1756814850; cv=none; b=tpatGmUShmvXDtAqYPbyCIgoDJe38JEykmOwLP/Ggd49UpSaub+KU7Gw1UKzBvYMxCS2Eh5V5zQWIT+rEoX34l+iVi0LndlVI0N5REuiZthJ09kJ+5NkO/LvPKSln6iefbFsPhkxQjsAUgwoAAtIrQOJUD5RCZPJ2S/NiQgL4Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814802; c=relaxed/simple;
-	bh=sE9g5D2PTbD7MwH1etdxQEgOaOD4qLLhrkoy3zGRsSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h8/1+d43cbCSl5UA9xSm4fkmO9GS8ivbcE8SWwkTRs1iMnyyCImFrhQSOTmpdapLkaV2pD1oPKyofJ9i63o6Tws6Pzm/2K/MJvaUieqN/oxl8HUBhAyFGewp9XWd34SPTrbrptCAXQ1qFwWGKvFiD22jbvCSK0JEvyCV4iV2w70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=JSzNqk/4; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b33945989bso28573871cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:06:40 -0700 (PDT)
+	s=arc-20240116; t=1756814850; c=relaxed/simple;
+	bh=REVUoomLAJZclmtWiP2XudXja6GJhV9CKjtUpJ+tR9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=njb1QeNQINEhJmCQdSu9/eryFF0InkNobAChLzpG+b/cexzdcuxlax45udLix0bBGaeu6024FU5CwJeVkYY28g8Z4pdvPqOlVw90vGpKtt8AVpQwZM7LWIf4D1tXnTC0GHrbPbSYlHB4hec2aRDpT00raOOsj/7YW1KpD4dTXXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPbbPB5i; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3dae49b1293so335795f8f.1;
+        Tue, 02 Sep 2025 05:07:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1756814799; x=1757419599; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lwHlTuko8/bhLBNZDswXiYJz77BS3zzuPZs0VGUvgtI=;
-        b=JSzNqk/4wJnV6eXtap+esc1VCfnCmN0GbdqfWrgjq7DB+HIeFARltiACDmgvgZNltG
-         naODe0983kOQzwpDZDceNcD7li7SwnwGJdUxEoMzpUyyBVykivr1VlE+anRSvT3zOEhq
-         bLzlJZGTXoWd5g+x8tGKb07F3etodxpx1aIHY2Nq4Asgb6P9d8WGHzJ01S5p86hzVdtn
-         m1JcvFACYhGcKrBfPHjui8+qzn8T1/Y6Hk6WgASbh8MV67ty7yB2gzpgdi8PmT03ecqi
-         wwokO/MqZjo5dc6USDkKukT1CgEu3xZzkKD2OR1zLC3CTvO0OLgz3CsfU/fcJWvj2qSo
-         a0Mw==
+        d=gmail.com; s=20230601; t=1756814847; x=1757419647; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yHi6esc6xWnHBFPt5kmv45QR9np7D0h5gaBaysBxNhw=;
+        b=CPbbPB5iIq86NU539E7cYZ2SxAtxuEzYfleQkhA/2M7Cq4QSMovOg3TAQ0DdUeRaOm
+         JeKses+zfTdoLEX7ziw/UUVRET6F1c8i3TLbWIJmTuFsGDwMF948OGd5pNk3OBtjdi8X
+         4Of0astpWkY74hACjajmdbmCLNEgFNVq2to2/kX777Q6Aa+d65wgHzddGZmS75Y4h2cA
+         CKOMgL3zxseSBpieOu1i9oHud43Thw9dBEOzUdmfAj9JSEOI4cbhzSNyZlSe8BcCEIuL
+         MGphzjVYlPTDyChUCSdls6Bp4RpSeLmC228sxusD/vS2m5H4prQR6cVs/ZIO/AIbIhfm
+         Z6wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756814799; x=1757419599;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lwHlTuko8/bhLBNZDswXiYJz77BS3zzuPZs0VGUvgtI=;
-        b=NSyGplSOImUVawEaY5YN7RxmEwRzZz7nDv/jkqo+4c9u7yLDjHvkBOzpriB0VIK0mI
-         D7PsoA3g03WK25D2OZ+xYfmlSKiHft8N6wYxzUUSMtASWUbHNtMqRf7Re88C1bSqbiMs
-         ghPOaC/lomfGivByntEXlt9K9MMaG+jiqRPy9EbOCNXfiD2KJKOwelRzWu8ftuemaJm6
-         TQz3JdnBA1Inpq/oZQgQdrTo5hrY0amMvjF/1T6fzA0vCvxJ/Yc6JRtOF1fzh6z9AzBh
-         lMPXQZdyoF4PKTc+ur/gbbpue4WG8M6juedzVt8gtnSduC0pwrioGw49OwIjybJ47Nuz
-         yKRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUT2jah+YgPMV12y9ABqvlUcyHmwL7vh7IrNNVy5uf4vcFs0BbenRzpTO0hZENZflHtutVwaIUVnDH1CY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr3PkJWKGVv+ett0Y5ksVe2amxjFwhkQzCaoQ4rKLKKhUSBkV/
-	TUawjDzRmAs/BpPP5AzulCL5vOCMG/9phg1O2+wAEKdRBwQGIduCOWDxsZAkN8ftgyo=
-X-Gm-Gg: ASbGncvsIzsMokf9v+jXxGO9Yfogs7lhdlo4DASlOTg3C4LlyIKJ1ZbmpMPiooPyET3
-	UsqiSX6DQiAok94ErJhekxf/YED6Eq/vNJrQaPiTDjYHSRtj2gyaXJp5jp4YwuKIL7hUmjnl0Ql
-	1vgWWD6X6oBMHBzc2QZ8L1iMQ+3F4MPR8LtyCzzZt2cuHljiLy9mkhCJbfkuiTOAX7npNsqDfAA
-	GX0+qvBM+VM6PZj7YbPXTwBkmAguI07f4QvJFj6mIHWluf/Wgwf7qQfGL/DWIIWkPmBwXiUDvo3
-	Df15FZVAxQvqswr1u5lz7/ISyjB+8/xqNm4Nkh2MMKKNVLj4fvRzdkChKmGfmlug4pqbOp5jJH5
-	aXXQZMDFhn3SjX/G3WNQjQbtsGBSaTqFSfZk1lJcAjLsXZBB2owkRFZYbZD4zcDM0o8oQnChLgX
-	16ZNbH+BAUoRFOQw==
-X-Google-Smtp-Source: AGHT+IGQLTdGvLivSrgS3C3MjhD9R4PvmhmRB9ObwWSZqFcL5LLR25foDK+15fQJoFTFNVOh7BgXng==
-X-Received: by 2002:ad4:4eeb:0:b0:70d:961c:bb0e with SMTP id 6a1803df08f44-70fac9202d8mr131625216d6.58.1756814799288;
-        Tue, 02 Sep 2025 05:06:39 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720add66632sm10527126d6.32.2025.09.02.05.06.38
+        d=1e100.net; s=20230601; t=1756814847; x=1757419647;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yHi6esc6xWnHBFPt5kmv45QR9np7D0h5gaBaysBxNhw=;
+        b=Ey1JUprvenBo9yB+j9VHy4zPkxYALSnYkpsoddN2OwiVA3wAsIqd7fZUSI68p+ukmp
+         wab0PG0KEKjfkeuIa74dMYKeGAMJ4bjzTHMG5OG5E0f55pHYXTF1sjpeA1lZxfs+F8ae
+         G0MLfcNW31ximGBJdyNt6IHthCeLGZc3JRmq2ZJKpn0bO55CQssMtHDFDneP3ooTkJpW
+         vNXWAisJe2g2osFpevuxY/I/sYLF8uGrGN8u+uDXTQMh7fcGfchCNwiNtmrjzISznWOr
+         e7sa/j4gk4iLL5dB+GujS7sRSdqqPbT5E4reUZM1CuFQYLATvOOtk99+oDHYKGUBRcC4
+         EYJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoS5kalyOGdhUKR/RYqOfU8bQsj6ai/HlHJCsYxCGruDnTSMwfG+MSjSd59tpoKqqx0dp1rwY90oxWqyk=@vger.kernel.org, AJvYcCXwqXEZiL5g0qZr+J3PN80J5WS+h4wDC10Pw2FXyskOHcvo2W6VE1qUIkjyBrV/fWpuQWoFVKgqQ+emZjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/pg7jtemz6t+Ik0fLjTQLrf5c8P9ECc6ZMwsRl8lSXugfQ9WX
+	ROBX6+JlwGYRH95nLmOS4hItCPgEWX+yPFUzgVSIaFUH3fJAlh90eOR0
+X-Gm-Gg: ASbGncsGhbcTK+Sy2etljKZcqQnEbgcHjmO6kuTrotK5DEsorbwgqLwh02Yyfk55v/t
+	ZRoy0eGGeCRMec0Q+IQ0iGDnq9XEq1jqIMCv0t0RTcbn0UYVnxnSNGuZ02bBVWb1pLHNitLFQf3
+	Ccrpu+SvL1ff/heWrmgT2zx6IlAJ4x5ETguCFxu8AyXzDuADrsD1g7dyv6c06BG705VJ/S7Aj/I
+	Gq5MFgbYInaLmOAnDdSseCeACGQRy0MF8lp5UdPmL32O7NcIazED4Odg1AtE0sMPnpqzAvdm1vH
+	O3ckJFG3d6JWKjuHVh8308PrQQdidnO9cKKOu4Y3lyNoJWXlOsUTqrn5um605or2npubfQhr8tz
+	59/349mEk1KSjCoZ9ek/d
+X-Google-Smtp-Source: AGHT+IEC1qGVZIGdFWWUaDmFj3WEpMRuFaZo0xUy7X1JITS1B2cpohTDvt28I9fETEUvVtQ2zjiNXA==
+X-Received: by 2002:a05:6000:1a8a:b0:3c7:308e:4dff with SMTP id ffacd0b85a97d-3d1e07a9d97mr7395781f8f.57.1756814846650;
+        Tue, 02 Sep 2025 05:07:26 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3d701622b92sm8136088f8f.58.2025.09.02.05.07.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 05:06:38 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1utPmY-00000000sb1-0r1P;
-	Tue, 02 Sep 2025 09:06:38 -0300
-Date: Tue, 2 Sep 2025 09:06:38 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, david@redhat.com,
-	osalvador@suse.de, jhubbard@nvidia.com, peterx@redhat.com,
-	linux-kernel@vger.kernel.org, dan.j.williams@intel.com
-Subject: Re: [PATCH 2/2] mm/memremap: Remove unused get_dev_pagemap()
- parameter
-Message-ID: <20250902120638.GB184112@ziepe.ca>
-References: <20250902051421.162498-1-apopple@nvidia.com>
- <20250902051421.162498-2-apopple@nvidia.com>
+        Tue, 02 Sep 2025 05:07:25 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Keyon Jie <yang.jie@linux.intel.com>,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: SOF: Intel: hda-stream: Fix incorrect variable used in error message
+Date: Tue,  2 Sep 2025 13:06:39 +0100
+Message-ID: <20250902120639.2626861-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902051421.162498-2-apopple@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 02, 2025 at 03:14:21PM +1000, Alistair Popple wrote:
-> GUP no longer uses get_dev_pagemap(). As it was the only user of the
-> get_dev_pagemap() pgmap caching feature it can be removed.
-> 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> ---
->  include/linux/memremap.h |  6 ++----
->  mm/memory_hotplug.c      |  2 +-
->  mm/memremap.c            | 22 ++++------------------
->  3 files changed, 7 insertions(+), 23 deletions(-)
+The dev_err message is reporting an error about capture streams however
+it is using the incorrect variable num_playback instead of num_capture.
+Fix this by using the correct variable num_capture.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Fixes: a1d1e266b445 ("ASoC: SOF: Intel: Add Intel specific HDA stream operations")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/sof/intel/hda-stream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jason
+diff --git a/sound/soc/sof/intel/hda-stream.c b/sound/soc/sof/intel/hda-stream.c
+index aa6b0247d5c9..a34f472ef175 100644
+--- a/sound/soc/sof/intel/hda-stream.c
++++ b/sound/soc/sof/intel/hda-stream.c
+@@ -890,7 +890,7 @@ int hda_dsp_stream_init(struct snd_sof_dev *sdev)
+ 
+ 	if (num_capture >= SOF_HDA_CAPTURE_STREAMS) {
+ 		dev_err(sdev->dev, "error: too many capture streams %d\n",
+-			num_playback);
++			num_capture);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.51.0
+
 
