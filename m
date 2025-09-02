@@ -1,97 +1,343 @@
-Return-Path: <linux-kernel+bounces-796631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC169B40492
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:44:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0A1B404B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6921162330
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A341B6387A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4127B334710;
-	Tue,  2 Sep 2025 13:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE69532ED25;
+	Tue,  2 Sep 2025 13:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYah2HEM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ejdpA3L6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B5732A81D;
-	Tue,  2 Sep 2025 13:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2314632ED30
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756820203; cv=none; b=k5+8eJsMlTC8jnFn/g71Y1mo97MHLFH6LoZCP5l6qlUSEv2m8rDB8r2KAV06tvtXcPLZoAUp0NCDJ5NQNkCG8dRqwkto2kDgVagdJa3qn2bahnfscFOVHymD2PYNJjKJHLPmYmR1Gzq4Rwyd9Eq93QwfgVWpdYl9U1n/VfHFLHg=
+	t=1756820210; cv=none; b=Y7X/qGGiIRutSUIdOam/e9mgoAFxBX1DqWumvUwJFT6WdOqawnLO5gqtPOVDbQlwAPM/CJOY1PrwA1C00FQX0bb4Xh+Adg2MNA7YIw+cN21jbN8IoIMDKjtcehnpdK4L15W2dXefRepvI+TZ/7E7TQ69WjoCkytCd/1P5bQkaPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756820203; c=relaxed/simple;
-	bh=Z7VRLkLIaiLIAa6wk9u2fF+pQfwD1XWt+K4SKpchlgc=;
+	s=arc-20240116; t=1756820210; c=relaxed/simple;
+	bh=+O16tDhDhrBpLyMgsU885nrQA5KR/KrCl+HJfM6/ItA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KIpohNKytOGj2gIidYsq9uSiU9M8nw29i/a4Azfck40QUo+qCEPxh1i7HlDZwEvgvuh7EbeAwXuhGzd6AuM1tMQjGzDXe7vaC1cLx/QGR1R0hPLKiSpwVx0nvFSzUDUD4IMIwr+ERDeYTfGHv9vUB2zNtKGaRRdB7I/rQWJywSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYah2HEM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C556FC4CEED;
-	Tue,  2 Sep 2025 13:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756820203;
-	bh=Z7VRLkLIaiLIAa6wk9u2fF+pQfwD1XWt+K4SKpchlgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GYah2HEMyor8pWpo2GMyFsi4vh2wZRtT6cruQJ2Gs1oevj6Hb/zM08qzMEwGlNyU4
-	 MGKhgAyFacLfWBd8AgX9O1Y/OGhErCdzrIXKk1quu18LStSuRdaAfzWj+pRSrFKjjP
-	 jaOS7SMTesZdAZklPYcxkyGRQOYNsLUCpy5WJYzsbykKSwhPFDYazJJDlQZcTHJ3CK
-	 figXHRDxIApc/uHxlvqarzaJw7+v9qreTYUrb0YsDGRKrnAZ7731ORGPoIiGt6ZdOs
-	 0XnHUbypoUL00Nlh0rm4rSHePDhwcVXnM2EwWU1lqVINTRPJGPCaGB+lAJv13eWxZQ
-	 gJD78fh6wstVA==
-Date: Tue, 2 Sep 2025 14:36:38 +0100
-From: Lee Jones <lee@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] mfd: axp20x: Add support for AXP318W PMIC
-Message-ID: <20250902133638.GO2163762@google.com>
-References: <20250813235330.24263-1-andre.przywara@arm.com>
- <20250813235330.24263-3-andre.przywara@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gRLGr0GqNFTzs0BRw4+CjTEDMgnoQnZ4RYI3Dzwz5exB9k2+4Kun9sb96WEmoXvslIv9h7Bqdf5vo5gdHTwsRZ3Y8SYxJLPNHYlvjT0BSgajgKG739lxoFBtknZQ7aDfhWwmxMtf6GlPDPuVAD8oFg4RaHqD4YUGs94bmbHiKBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ejdpA3L6; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756820208; x=1788356208;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=+O16tDhDhrBpLyMgsU885nrQA5KR/KrCl+HJfM6/ItA=;
+  b=ejdpA3L6RxyaDxImQEZ/wVsMJAT0mC58tWxd9E4GTGtNovqL554RqMs/
+   9iSOEx6OobdHK8v9SRaA3n+sxztSTMXxH9eotiL4K6G5Sqa05TXuvNe/V
+   uhgOPt2dPR44Teys3Svw8HBMYN9R6audCnYPhebSrqi1MXw2t2NFrAzdF
+   CZj+shjnEEknZroIYJo4r11jhfZVsJ0Y9BfoOR/9/OrB7L2ea8UEeY1Bk
+   hVkDyH3HFCQVDhDyYej7nVmZkX2+soXna5AkMEByMy/uTPrivjk5jC+FZ
+   CUNyy/bsgJnXItVmcYDtLIMAvzb/XuarvzWnU8FD1EPzmWsX04LjAZNvf
+   w==;
+X-CSE-ConnectionGUID: gahppeebTS6Ft7l+odCzyQ==
+X-CSE-MsgGUID: 1+820xRqRfCQK0XAWM6+Wg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="62736793"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="62736793"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 06:36:47 -0700
+X-CSE-ConnectionGUID: 8YzlxvkSQIC3enT5Sui24w==
+X-CSE-MsgGUID: 5KRLd1wDT0iPdDWuEkyafw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="176588402"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO stinkbox) ([10.245.245.118])
+  by orviesa005.jf.intel.com with SMTP; 02 Sep 2025 06:36:42 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 02 Sep 2025 16:36:40 +0300
+Date: Tue, 2 Sep 2025 16:36:40 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, kernel@collabora.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH 1/2] drm: Add CRTC background color property
+Message-ID: <aLby6OPxgubt7kd_@intel.com>
+References: <20250902-rk3588-bgcolor-v1-0-fd97df91d89f@collabora.com>
+ <20250902-rk3588-bgcolor-v1-1-fd97df91d89f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250813235330.24263-3-andre.przywara@arm.com>
+In-Reply-To: <20250902-rk3588-bgcolor-v1-1-fd97df91d89f@collabora.com>
+X-Patchwork-Hint: comment
 
-On Thu, 14 Aug 2025, Andre Przywara wrote:
-
-> The AXP318W is a PMIC chip produced by X-Powers, it can be connected to
-> an I2C bus.
+On Tue, Sep 02, 2025 at 12:27:56PM +0300, Cristian Ciocaltea wrote:
+> Some display controllers can be hardware programmed to show non-black
+> colors for pixels that are either not covered by any plane or are
+> exposed through transparent regions of higher planes.  This feature can
+> help reduce memory bandwidth usage, e.g. in compositors managing a UI
+> with a solid background color while using smaller planes to render the
+> remaining content.
 > 
-> It has a large number of regulators: 9(!) DCDC buck converters, and 28
-> LDOs, also some ADCs, interrupts, and a power key.
+> To support this capability, introduce the BACKGROUND_COLOR standard DRM
+> mode property, which can be attached to a CRTC through the
+> drm_crtc_attach_background_color_property() helper function.
 > 
-> Describe the regmap and the MFD bits, along with the registers exposed
-> via I2C only. This covers the regulator, interrupts and power key
-> devices for now.
-> Advertise the device using the new compatible string.
+> Additionally, define a 64-bit ARGB format value to be built with the
+> help of a dedicated drm_argb64() utility macro.  Individual color
+> components can be extracted with desired precision using the
+> corresponding DRM_ARGB64_*() macros.
 > 
-> We use just "318" for the internal identifiers, for easier typing and
-> less churn, but use "318W" for anything externally visible. If something
-> else other than the "AXP318W" shows up, that's an easy change then.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Co-developed-by: Matt Roper <matthew.d.roper@intel.com>
+> Signed-off-by: Matt Roper <matthew.d.roper@intel.com>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 > ---
->  drivers/mfd/axp20x-i2c.c   |  2 +
->  drivers/mfd/axp20x.c       | 84 +++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/axp20x.h | 86 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 172 insertions(+)
+>  drivers/gpu/drm/drm_atomic_state_helper.c |  1 +
+>  drivers/gpu/drm/drm_atomic_uapi.c         |  4 ++++
+>  drivers/gpu/drm/drm_blend.c               | 37 +++++++++++++++++++++++++++----
+>  drivers/gpu/drm/drm_mode_config.c         |  6 +++++
+>  include/drm/drm_blend.h                   |  4 +++-
+>  include/drm/drm_crtc.h                    | 12 ++++++++++
+>  include/drm/drm_mode_config.h             |  5 +++++
+>  include/uapi/drm/drm_mode.h               | 30 +++++++++++++++++++++++++
+>  8 files changed, 94 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
+> index 7142e163e618ea0d7d9d828e1bd9ff2a6ec0dfeb..359264cf467c5270b77f0b04548073bc92cb812e 100644
+> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+> @@ -75,6 +75,7 @@ __drm_atomic_helper_crtc_state_reset(struct drm_crtc_state *crtc_state,
+>  				     struct drm_crtc *crtc)
+>  {
+>  	crtc_state->crtc = crtc;
+> +	crtc_state->background_color = drm_argb64(0xffff, 0, 0, 0);
+>  }
+>  EXPORT_SYMBOL(__drm_atomic_helper_crtc_state_reset);
+>  
+> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
+> index 85dbdaa4a2e25878c953b9b41539c8566d55c6d9..a447cb119aaa6cd11348be77b39f342a1386836d 100644
+> --- a/drivers/gpu/drm/drm_atomic_uapi.c
+> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
+> @@ -407,6 +407,8 @@ static int drm_atomic_crtc_set_property(struct drm_crtc *crtc,
+>  					&replaced);
+>  		state->color_mgmt_changed |= replaced;
+>  		return ret;
+> +	} else if (property == config->background_color_property) {
+> +		state->background_color = val;
+>  	} else if (property == config->prop_out_fence_ptr) {
+>  		s32 __user *fence_ptr = u64_to_user_ptr(val);
+>  
+> @@ -452,6 +454,8 @@ drm_atomic_crtc_get_property(struct drm_crtc *crtc,
+>  		*val = (state->ctm) ? state->ctm->base.id : 0;
+>  	else if (property == config->gamma_lut_property)
+>  		*val = (state->gamma_lut) ? state->gamma_lut->base.id : 0;
+> +	else if (property == config->background_color_property)
+> +		*val = state->background_color;
+>  	else if (property == config->prop_out_fence_ptr)
+>  		*val = 0;
+>  	else if (property == crtc->scaling_filter_property)
+> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+> index 6852d73c931ce32e62062e2b8f8c5e38612d5210..5a287d12685b007a2732f510f62675f500e53727 100644
+> --- a/drivers/gpu/drm/drm_blend.c
+> +++ b/drivers/gpu/drm/drm_blend.c
+> @@ -191,10 +191,6 @@
+>   *		 plane does not expose the "alpha" property, then this is
+>   *		 assumed to be 1.0
+>   *
+> - * Note that all the property extensions described here apply either to the
+> - * plane or the CRTC (e.g. for the background color, which currently is not
+> - * exposed and assumed to be black).
+> - *
+>   * SCALING_FILTER:
+>   *     Indicates scaling filter to be used for plane scaler
+>   *
+> @@ -207,6 +203,23 @@
+>   *
+>   * Drivers can set up this property for a plane by calling
+>   * drm_plane_create_scaling_filter_property
+> + *
+> + * The property extensions described above all apply to the plane.  Drivers
+> + * may also expose the following crtc property extension:
+> + *
+> + * BACKGROUND_COLOR:
+> + *	Background color is set via drm_crtc_attach_background_color_property().
+> + *	It controls the ARGB color of a full-screen layer that exists below all
+> + *	planes.  This color will be used for pixels not covered by any plane and
+> + *	may also be blended with plane contents as allowed by a plane's alpha
+> + *	values.  The background color defaults to black, and is assumed to be
+> + *	black for drivers that do not expose this property.  Although background
+> + *	color isn't a plane, it is assumed that the color provided here
+> + *	undergoes the same pipe-level degamma/CSC/gamma transformations that
+> + *	planes undergo.  Note that the color value provided here includes an
+> + *	alpha channel, hence non-opaque background color values are allowed, but
+> + *	are generally only honored in special cases (e.g. when a memory
+> + *	writeback connector is in use).
+>   */
+>  
+>  /**
+> @@ -621,3 +634,19 @@ int drm_plane_create_blend_mode_property(struct drm_plane *plane,
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(drm_plane_create_blend_mode_property);
+> +
+> +/**
+> + * drm_crtc_attach_background_color_property - attach background color property
+> + * @crtc: drm crtc
+> + *
+> + * Attaches the background color property to @crtc.  The property defaults to
+> + * solid black and will accept 64-bit ARGB values in the format generated by
+> + * drm_argb64().
+> + */
+> +void drm_crtc_attach_background_color_property(struct drm_crtc *crtc)
+> +{
+> +	drm_object_attach_property(&crtc->base,
+> +				   crtc->dev->mode_config.background_color_property,
+> +				   drm_argb64(0xffff, 0, 0, 0));
+> +}
+> +EXPORT_SYMBOL(drm_crtc_attach_background_color_property);
+> diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
+> index 25f376869b3a41d47bbe72b0df3e35cad142f3e6..6d70bfab45ca2bb81ed3ca1940fd1cd85e8cc58e 100644
+> --- a/drivers/gpu/drm/drm_mode_config.c
+> +++ b/drivers/gpu/drm/drm_mode_config.c
+> @@ -375,6 +375,12 @@ static int drm_mode_create_standard_properties(struct drm_device *dev)
+>  		return -ENOMEM;
+>  	dev->mode_config.gamma_lut_size_property = prop;
+>  
+> +	prop = drm_property_create_range(dev, 0,
+> +					 "BACKGROUND_COLOR", 0, U64_MAX);
+> +	if (!prop)
+> +		return -ENOMEM;
+> +	dev->mode_config.background_color_property = prop;
+> +
+>  	prop = drm_property_create(dev,
+>  				   DRM_MODE_PROP_IMMUTABLE | DRM_MODE_PROP_BLOB,
+>  				   "IN_FORMATS", 0);
+> diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
+> index 88bdfec3bd8848acd1ef5742aaaa23483b332a2e..c7e888767c81c2745cd3cce88c10db4bbe305d1e 100644
+> --- a/include/drm/drm_blend.h
+> +++ b/include/drm/drm_blend.h
+> @@ -31,8 +31,9 @@
+>  #define DRM_MODE_BLEND_COVERAGE		1
+>  #define DRM_MODE_BLEND_PIXEL_NONE	2
+>  
+> -struct drm_device;
+>  struct drm_atomic_state;
+> +struct drm_crtc;
+> +struct drm_device;
+>  struct drm_plane;
+>  
+>  static inline bool drm_rotation_90_or_270(unsigned int rotation)
+> @@ -58,4 +59,5 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+>  			      struct drm_atomic_state *state);
+>  int drm_plane_create_blend_mode_property(struct drm_plane *plane,
+>  					 unsigned int supported_modes);
+> +void drm_crtc_attach_background_color_property(struct drm_crtc *crtc);
+>  #endif
+> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> index caa56e039da2a748cf40ebf45b37158acda439d9..4653dacc1077b9ed8fb4cf27cc84530ba1706f6a 100644
+> --- a/include/drm/drm_crtc.h
+> +++ b/include/drm/drm_crtc.h
+> @@ -274,6 +274,18 @@ struct drm_crtc_state {
+>  	 */
+>  	struct drm_property_blob *gamma_lut;
+>  
+> +	/**
+> +	 * @background_color:
+> +	 *
+> +	 * RGB value representing the pipe's background color.  The background
+> +	 * color (aka "canvas color") of a pipe is the color that will be used
+> +	 * for pixels not covered by a plane, or covered by transparent pixels
+> +	 * of a plane.  The value here should be built using drm_argb64(), while
+> +	 * the individual color components can be extracted with desired
+> +	 * precision via the DRM_ARGB64_*() macros.
+> +	 */
+> +	u64 background_color;
+> +
+>  	/**
+>  	 * @target_vblank:
+>  	 *
+> diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.h
+> index 2e848b816218584eb077ed887bf97705f012a622..ea422afec5c4108a223dc872e1b6835ffc596cc3 100644
+> --- a/include/drm/drm_mode_config.h
+> +++ b/include/drm/drm_mode_config.h
+> @@ -814,6 +814,11 @@ struct drm_mode_config {
+>  	 * gamma LUT as supported by the driver (read-only).
+>  	 */
+>  	struct drm_property *gamma_lut_size_property;
+> +	/**
+> +	 * @background_color_property: Optional CRTC property to set the
+> +	 * background color.
+> +	 */
+> +	struct drm_property *background_color_property;
+>  
+>  	/**
+>  	 * @suggested_x_property: Optional connector property with a hint for
+> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> index a122bea2559387576150236e3a88f99c24ad3138..4bd6a8ca8868109bcbe21f9f6e9864519c9d03ec 100644
+> --- a/include/uapi/drm/drm_mode.h
+> +++ b/include/uapi/drm/drm_mode.h
+> @@ -1363,6 +1363,36 @@ struct drm_mode_closefb {
+>  	__u32 pad;
+>  };
+>  
+> +/*
+> + * Put 16-bit ARGB values into a standard 64-bit representation that
+> + * can be used for ioctl parameters, inter-driver communication, etc.
+> + */
+> +static inline __u64
+> +drm_argb64(__u16 alpha, __u16 red, __u16 green, __u16 blue)
+> +{
+> +	return (__u64)alpha << 48 | (__u64)red << 32 | (__u64)green << 16 | blue;
+> +}
+> +
+> +/*
+> + * Extract the specified number of least-significant bits of a specific
+> + * color component from a standard 64-bit ARGB value.
 
-Looks okay.  Let me know when you're !RFC.
+Why would you ever want the least significant bits?
+
+> + */
+> +#define DRM_ARGB64_COMP(c, shift, numlsb) \
+> +	((__u16)(((c) >> (shift)) & ((1UL << (numlsb) % 17) - 1)))
+> +#define DRM_ARGB64_ALPHA_LSB(c, numlsb) DRM_ARGB64_COMP(c, 48, numlsb)
+> +#define DRM_ARGB64_RED_LSB(c, numlsb)   DRM_ARGB64_COMP(c, 32, numlsb)
+> +#define DRM_ARGB64_GREEN_LSB(c, numlsb) DRM_ARGB64_COMP(c, 16, numlsb)
+> +#define DRM_ARGB64_BLUE_LSB(c, numlsb)  DRM_ARGB64_COMP(c, 0, numlsb)
+> +
+> +/*
+> + * Convenience wrappers to extract all 16 bits of a specific color
+> + * component from a standard 64-bit ARGB value.
+> + */
+> +#define DRM_ARGB64_ALPHA(c)		DRM_ARGB64_ALPHA_LSB(c, 16)
+> +#define DRM_ARGB64_RED(c)		DRM_ARGB64_RED_LSB(c, 16)
+> +#define DRM_ARGB64_GREEN(c)		DRM_ARGB64_GREEN_LSB(c, 16)
+> +#define DRM_ARGB64_BLUE(c)		DRM_ARGB64_BLUE_LSB(c, 16)
+> +
+>  #if defined(__cplusplus)
+>  }
+>  #endif
+> 
+> -- 
+> 2.51.0
 
 -- 
-Lee Jones [ÊùéÁêºÊñØ]
+Ville Syrj‰l‰
+Intel
 
