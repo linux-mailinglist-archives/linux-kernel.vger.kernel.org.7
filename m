@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-797392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F944B40FDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:08:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0360B40FDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC1087A5D95
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:07:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B1370132F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577752E6CAD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FEA274FD7;
 	Tue,  2 Sep 2025 22:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RhuKxL3W"
-Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com [209.85.219.100])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="QQaikoks"
+Received: from mail-pl1-f228.google.com (mail-pl1-f228.google.com [209.85.214.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720052749D6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93994277804
 	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 22:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.100
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756850894; cv=none; b=Ha4RRXw8Cz2c7BlzdvpuotuPYqRP2BX4ESYOZ+JkmhvYp3/N//wq/Srpv5WhFGIgctEMX+6YrfJ7Xkpb9zU5aiEEC2kMGu6Q7WPkFh6Hcd2BWHt/wAybS8kTGixvpvAkxgkhUch5o4qOGVNHIY8YyORJSkLxhwGaTnjbdkfExVk=
+	t=1756850896; cv=none; b=tKYzA1iD+Mcwaciox6mQhvEny/7WBlNDSLtIBAd6ASZCXNchuy/TBhBixQavilik261S2n7K8zJAlq6o8rQYZVMEFYRlrK0uvyf1YOpOjpP7xgQVdrJZp/H41WHjq7tLmjNINnH73N4yk6BrjAqaINXfxfG13QUZpTwsNOehNVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756850894; c=relaxed/simple;
-	bh=VGhRdcgIPamkVki4XU7NEO9Cf8tfJP+zcLBPTF0R5ZY=;
+	s=arc-20240116; t=1756850896; c=relaxed/simple;
+	bh=ImgJ+08fKEjfMojQOkHQFAmBOTeJebqjPQWHFiTfvp0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MvU7yxbVXVefeZoJlGkr9ci7SXSIT7+02GiC9ukdZmPz583wS4O4742KkxJDq4OqjwZ58/E44csu3IRjgvTel9/kEDNbdQpJ6j0qxSDOthr+Mowj194hIMFrZPVsJ1EZ1IqLIGSFEMythomEJuHT+Jj5F/rk9Ga+Ao5tgsFfV9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RhuKxL3W; arc=none smtp.client-ip=209.85.219.100
+	 MIME-Version; b=dp7FXq0CU82niSy43INw3v7ZVe7Z0nkbIxFL+Eo2jzJn/4lJqb8643g4rVDyueZazrBy67k+G5g1X8Q5KrQaDyed0pDF98h5vYUIaxsfaKfV+Sus/TmDQN+8GQGc3MbbSIFv4OVkX6g1xu7UnBF1vnmeV3s5gt/KRB6IBidvSkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=QQaikoks; arc=none smtp.client-ip=209.85.214.228
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-qv1-f100.google.com with SMTP id 6a1803df08f44-71ec78d0c18so2760786d6.0
+Received: by mail-pl1-f228.google.com with SMTP id d9443c01a7336-24aacdf40a2so8070945ad.1
         for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 15:08:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1756850891; x=1757455691; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1756850892; x=1757455692; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uQvmwor8x7PnbCSbpEzXCUbcOnrK52uWsyerHQsV0X4=;
-        b=RhuKxL3W5uo2npzYfiiLz6g+Ee/XYT23e5L3mrOlGNT6blkK9PA6BW/382mDpCDwm8
-         mRjpvKsQOR81pmCuWAtVl8pa7OTG81EY+oaycQOHA/38PARZhBlkGyhty1e3NTebFPPK
-         VigO5dxC0trU2bdyp0KI6wHfdYUhmP1IrfFQ15yffhSSw61XtjJyoTlx/WFMLFoQ3Fr8
-         4ovS5fWtzJazsqOJylOG8os/QOEmEVStMdkFiEAu0QxEGE7mPiQGT3fjEZsjRG5t61hI
-         kTdzk/6l0t2tVc2pLDwn/ww+LmdKZIDcSoll1Mqlkj5piKhEO8N6OBXyzZ0M2f6RKiaf
-         4GLA==
+        bh=KAonx/bmXDCVaViB1VqlrTFlzUKjezpOhMXA1F7pd6Y=;
+        b=QQaikokstTjCJ8oOoljWgxGWN0C1oy5avFKJ9aJ9tdPrFp0dzGY0ajWvGufUlRBjUP
+         okO5P6JHwKk6GEaI647Ke9F5zKqRVuorqiNW7K80c/w+f/17J+wBsSvwDnS+XNrxlbF9
+         PEs6tbjYcn92am8m7Iv/637sS3s6fAErRzhPWaPeCkMAtJiHouOAdV+IlDsJDU+xK1Ic
+         5ZwUO5V9101tbB1EDzaSCe3LVdWYECFmkFmLx2QwoARp2Ri1qQgL1Z0rfulqoLhUtvfn
+         NsK26rtb0wxZqQnHs7qXDi8mojYO2Xw7FHPVyl9dhzBmU6ZnAvhsjG4oSiAh3m8x/ICZ
+         qUnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756850891; x=1757455691;
+        d=1e100.net; s=20230601; t=1756850892; x=1757455692;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uQvmwor8x7PnbCSbpEzXCUbcOnrK52uWsyerHQsV0X4=;
-        b=vvat8UPNXz0KASe/u7Q7B6csUtSU7S6mW3FX8QLp1T22NrQBFI6aieJmqr4QuIai1x
-         ZskOMptw4IHzDegKK1ftcD+71k+30KvegUpeMBCOaPznd36s3dH5BWhhYpzX3XuScDxw
-         wEQ9lDAfOp2LFJ08MzSLbvT5H6rLoXUDSYwMNpRRfVGp4FCXr5DDCfojkmXTiiU2pLPY
-         i9/CdPOn2U9mT8epBL4hGmlzzYQDo5NI2xXmcaGM/ptrg48ipaGzt9oHO0DohnIuNw42
-         u+7KlMewj4bcLVTEANrDJWuwKbkM1PhECH8yQrndDhFcMS/Beb57vHJc/LNgBhI0ISix
-         dC6g==
-X-Gm-Message-State: AOJu0Yyua/ECZdZ/PDq7QPsP8KTdgRiKqlqxZ0+UE3JaYREFeQZEOdDV
-	uR9wYx+V6ukd7gV56m90mSjh6lF/4IE9aVCcn+0wGHyMOPH4hDVOdNCMHEv+QIBoAtK6X6Sm1l6
-	G/umUbjvSm1MI2f6jig2pOBiUD0H23S9XQ/jYjyWtxustqWQrx6i8
-X-Gm-Gg: ASbGncuDcgpttTcWsDtmI5GHYNr6XLtoZCn/hFzgP5JdxB4cARGNCJeZvSrfjXE/w0d
-	PjCCSxXz9gYPmi4rR7dV7xOPgabPpNmNQCNWFCAk+zdnP/dqfTj4E9QHE/rUvELyghw5FZTTdf3
-	VqNXOB/1xjakOMQfHakPbhFYARAkQuxfKJso8f0HeHOnA6flvU1UiYuRXV+j9qumg7D3ZKmk5pg
-	V+mCjAIljoZkihmZ0x8NlobhwKXkj6w1ahwmgq8DU8uHDP22YpxugqmEn/Fdaf+mx1DcmNZOUtf
-	X6gquaf8kp6U65fhLI6JY30jBxYbXmaYeVdOAYnygrbwDxord16Z0GtuRA==
-X-Google-Smtp-Source: AGHT+IGF/uaY+/VxDguS9/Qq4KEqApYeI161UYAUik1TA95p59CYuUi3YprIe9ahQHJdwz44diPKpNicmFv7
-X-Received: by 2002:a05:622a:1ba4:b0:4b3:2c2:8843 with SMTP id d75a77b69052e-4b30e98a161mr127527121cf.10.1756850891067;
+        bh=KAonx/bmXDCVaViB1VqlrTFlzUKjezpOhMXA1F7pd6Y=;
+        b=edWpp8qqIwoUT4Hf9KiKLk5yNOVXlQ935JKjSzfTNZBsOYi0Cud54sP/oAK64+mByg
+         za3NnWJU38tgRLzKkZVn8NcGlTbY4ISUIBgDvAWGVfmBMeVQDIglsYrMOhK4C1vGA7jE
+         rjNH4U3ULIuAa5jWu5WkLxHHyVgN6dDGbTw0p6JANAdHhyfit2fkrbbV5Bu8jlHy2Ujx
+         4CFGUO4L1LBSpN4R61pmEMMzzSANiKFhnOaMRRogapAUvQwqJdkb2A9h8nDELT72FdZH
+         fHQEtCXDSMTQ+fb+55BncAG0Du50LWI2TRUi7KqN2YWVdAaOWTYv94xhyT0NkOI4aaDd
+         Y0Mg==
+X-Gm-Message-State: AOJu0YyB8SqIjGidSYqJnNmK6seDm8vXNTlZZZWB283+MjH5nLyGoSmD
+	ieNIW/YyKnr6tifh0caPbajzQIisfpL7btRfoi7vF4X0GDwblL+obr5+FwHeR2eZlzqo1ShrENe
+	AwR0mbR333p4HOonX3nQZIs1PEkdyP8C3hvjv
+X-Gm-Gg: ASbGncvRbYl6xFn+4byA1hSHjyuMPw6vLbZ6iWYxKCT54hovSGr1r/9NGjHo+3VlmCV
+	lJD0NxTNJ4Tn/xi0q0yguOBnUmQXHCbqM04fBsiTHE8lzHk6wDKscuxR/EwMlFO6EoNU+eYlml0
+	uUed6i/lXN/o1Q8aw9pmEbX/ypM4yGeazXqt0/ORqhVAGY8RVsYB5wl//aMkb7u6v1hqGiKB4i6
+	Ll/0b9E+r6K4kRIVYb5L22zrfrAOJq4KtgyPrEXgV3dbcjzY7qgFnOxfqgkgMHvzaNky28GZLIz
+	FRMhM/agmq/gINn5VJ9jF1t0yie0T8VOXcC5l/SbidAUFH5Y/c3/Ygb3FyJkRhr3KV39DGB1
+X-Google-Smtp-Source: AGHT+IF/g0AccOfET3Or6k/aBakS7qHo8JlE7t80RUk3unbjuaC3XImG1wdJPl+5EjoBGr7CHTvpx3hyvnhD
+X-Received: by 2002:a17:90b:38c3:b0:327:956b:fd49 with SMTP id 98e67ed59e1d1-327e664ff1emr11912104a91.6.1756850891787;
         Tue, 02 Sep 2025 15:08:11 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-720ac16e425sm1944976d6.2.2025.09.02.15.08.10
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id 98e67ed59e1d1-329ca196b98sm358097a91.3.2025.09.02.15.08.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 02 Sep 2025 15:08:11 -0700 (PDT)
 X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 65D2D34049A;
-	Tue,  2 Sep 2025 16:08:10 -0600 (MDT)
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 07F69340214;
+	Tue,  2 Sep 2025 16:08:11 -0600 (MDT)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 6393BE41920; Tue,  2 Sep 2025 16:08:10 -0600 (MDT)
+	id 05D25E41920; Tue,  2 Sep 2025 16:08:11 -0600 (MDT)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 3/4] io_uring: factor out uring_lock helpers
-Date: Tue,  2 Sep 2025 16:08:02 -0600
-Message-ID: <20250902220803.1932692-4-csander@purestorage.com>
+Subject: [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+Date: Tue,  2 Sep 2025 16:08:03 -0600
+Message-ID: <20250902220803.1932692-5-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250902220803.1932692-1-csander@purestorage.com>
 References: <20250902220803.1932692-1-csander@purestorage.com>
@@ -95,650 +95,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A subsequent commit will skip acquiring the io_ring_ctx uring_lock in
-io_uring_enter() and io_handle_tw_list() for IORING_SETUP_SINGLE_ISSUER.
-Prepare for this change by factoring out the uring_lock accesses under
-these functions into helper functions:
-- io_ring_ctx_lock() for mutex_lock(&ctx->uring_lock)
-- io_ring_ctx_unlock() for mutex_unlock(&ctx->uring_lock)
-- io_ring_ctx_assert_locked() for lockdep_assert_held(&ctx->uring_lock)
-
-For now, the helpers unconditionally call the mutex functions. But a
-subsequent commit will condition them on !IORING_SETUP_SINGLE_ISSUER.
+io_ring_ctx's mutex uring_lock can be quite expensive in high-IOPS
+workloads. Even when only one thread pinned to a single CPU is accessing
+the io_ring_ctx, the atomic CAS required to lock and unlock the mutex is
+a very hot instruction. The mutex's primary purpose is to prevent
+concurrent io_uring system calls on the same io_ring_ctx. However, there
+is already a flag IORING_SETUP_SINGLE_ISSUER that promises only one
+task will make io_uring_enter() and io_uring_register() system calls on
+the io_ring_ctx once it's enabled.
+So if the io_ring_ctx is setup with IORING_SETUP_SINGLE_ISSUER, skip the
+uring_lock mutex_lock() and mutex_unlock() for the io_uring_enter()
+submission as well as for io_handle_tw_list(). io_uring_enter()
+submission calls __io_uring_add_tctx_node_from_submit() to verify the
+current task matches submitter_task for IORING_SETUP_SINGLE_ISSUER. And
+task work can only be scheduled on tasks that submit io_uring requests,
+so io_handle_tw_list() will also only be called on submitter_task.
+There is a goto from the io_uring_enter() submission to the middle of
+the IOPOLL block which assumed the uring_lock would already be held.
+This is no longer the case for IORING_SETUP_SINGLE_ISSUER, so goto the
+preceding mutex_lock() in that case.
+It may be possible to avoid taking uring_lock in other places too for
+IORING_SETUP_SINGLE_ISSUER, but these two cover the primary hot paths.
+The uring_lock in io_uring_register() is necessary at least before the
+io_uring is enabled because submitter_task isn't set yet. uring_lock is
+also used to synchronize IOPOLL on submitting tasks with io_uring worker
+tasks, so it's still needed there. But in principle, it should be
+possible to remove the mutex entirely for IORING_SETUP_SINGLE_ISSUER by
+running any code needing exclusive access to the io_ring_ctx in task
+work context on submitter_task.
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- io_uring/filetable.c |  3 ++-
- io_uring/io_uring.c  | 51 ++++++++++++++++++++++++++------------------
- io_uring/io_uring.h  | 28 ++++++++++++++++++------
- io_uring/kbuf.c      |  6 +++---
- io_uring/notif.c     |  5 +++--
- io_uring/notif.h     |  3 ++-
- io_uring/poll.c      |  2 +-
- io_uring/rsrc.c      |  2 +-
- io_uring/rsrc.h      |  3 ++-
- io_uring/rw.c        |  2 +-
- io_uring/waitid.c    |  2 +-
- 11 files changed, 67 insertions(+), 40 deletions(-)
+ io_uring/io_uring.c |  6 +++++-
+ io_uring/io_uring.h | 14 ++++++++++++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index a21660e3145a..aae283e77856 100644
---- a/io_uring/filetable.c
-+++ b/io_uring/filetable.c
-@@ -55,14 +55,15 @@ void io_free_file_tables(struct io_ring_ctx *ctx, struct io_file_table *table)
- 	table->bitmap = NULL;
- }
- 
- static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
- 				 u32 slot_index)
--	__must_hold(&req->ctx->uring_lock)
- {
- 	struct io_rsrc_node *node;
- 
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	if (io_is_uring_fops(file))
- 		return -EBADF;
- 	if (!ctx->file_table.data.nr)
- 		return -ENXIO;
- 	if (slot_index >= ctx->file_table.data.nr)
 diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 9c1190b19adf..7f19b6da5d3d 100644
+index 7f19b6da5d3d..5793f6122159 100644
 --- a/io_uring/io_uring.c
 +++ b/io_uring/io_uring.c
-@@ -554,11 +554,11 @@ static unsigned io_linked_nr(struct io_kiocb *req)
- 
- static __cold noinline void io_queue_deferred(struct io_ring_ctx *ctx)
- {
- 	bool drain_seen = false, first = true;
- 
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 	__io_req_caches_free(ctx);
- 
- 	while (!list_empty(&ctx->defer_list)) {
- 		struct io_defer_entry *de = list_first_entry(&ctx->defer_list,
- 						struct io_defer_entry, list);
-@@ -925,11 +925,11 @@ bool io_post_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags
-  * Must be called from inline task_work so we now a flush will happen later,
-  * and obviously with ctx->uring_lock held (tw always has that).
-  */
- void io_add_aux_cqe(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 cflags)
- {
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 	lockdep_assert(ctx->lockless_cq);
- 
- 	if (!io_fill_cqe_aux(ctx, user_data, res, cflags)) {
- 		struct io_cqe cqe = io_init_cqe(user_data, res, cflags);
- 
-@@ -954,11 +954,11 @@ bool io_req_post_cqe(struct io_kiocb *req, s32 res, u32 cflags)
- 	 */
- 	if (!wq_list_empty(&ctx->submit_state.compl_reqs))
- 		__io_submit_flush_completions(ctx);
- 
- 	lockdep_assert(!io_wq_current_is_worker());
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 
- 	if (!ctx->lockless_cq) {
- 		spin_lock(&ctx->completion_lock);
- 		posted = io_fill_cqe_aux(ctx, req->cqe.user_data, res, cflags);
- 		spin_unlock(&ctx->completion_lock);
-@@ -978,11 +978,11 @@ bool io_req_post_cqe32(struct io_kiocb *req, struct io_uring_cqe cqe[2])
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	bool posted;
- 
- 	lockdep_assert(!io_wq_current_is_worker());
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 
- 	cqe[0].user_data = req->cqe.user_data;
- 	if (!ctx->lockless_cq) {
- 		spin_lock(&ctx->completion_lock);
- 		posted = io_fill_cqe_aux32(ctx, cqe);
-@@ -1032,15 +1032,14 @@ static void io_req_complete_post(struct io_kiocb *req, unsigned issue_flags)
- 	 */
- 	req_ref_put(req);
- }
- 
- void io_req_defer_failed(struct io_kiocb *req, s32 res)
--	__must_hold(&ctx->uring_lock)
- {
- 	const struct io_cold_def *def = &io_cold_defs[req->opcode];
- 
--	lockdep_assert_held(&req->ctx->uring_lock);
-+	io_ring_ctx_assert_locked(req->ctx);
- 
- 	req_set_fail(req);
- 	io_req_set_res(req, res, io_put_kbuf(req, res, NULL));
- 	if (def->fail)
- 		def->fail(req);
-@@ -1052,16 +1051,17 @@ void io_req_defer_failed(struct io_kiocb *req, s32 res)
-  * handlers and io_issue_sqe() are done with it, e.g. inline completion path.
-  * Because of that, io_alloc_req() should be called only under ->uring_lock
-  * and with extra caution to not get a request that is still worked on.
-  */
- __cold bool __io_alloc_req_refill(struct io_ring_ctx *ctx)
--	__must_hold(&ctx->uring_lock)
- {
- 	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO;
- 	void *reqs[IO_REQ_ALLOC_BATCH];
- 	int ret;
- 
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	ret = kmem_cache_alloc_bulk(req_cachep, gfp, ARRAY_SIZE(reqs), reqs);
- 
- 	/*
- 	 * Bulk alloc is all-or-nothing. If we fail to get a batch,
- 	 * retry single alloc to be on the safe side.
-@@ -1126,11 +1126,11 @@ static void ctx_flush_and_put(struct io_ring_ctx *ctx, io_tw_token_t tw)
- 		return;
- 	if (ctx->flags & IORING_SETUP_TASKRUN_FLAG)
- 		atomic_andnot(IORING_SQ_TASKRUN, &ctx->rings->sq_flags);
- 
- 	io_submit_flush_completions(ctx);
--	mutex_unlock(&ctx->uring_lock);
-+	io_ring_ctx_unlock(ctx);
- 	percpu_ref_put(&ctx->refs);
- }
- 
- /*
-  * Run queued task_work, returning the number of entries processed in *count.
-@@ -1150,11 +1150,11 @@ struct llist_node *io_handle_tw_list(struct llist_node *node,
- 						    io_task_work.node);
- 
- 		if (req->ctx != ctx) {
- 			ctx_flush_and_put(ctx, ts);
- 			ctx = req->ctx;
--			mutex_lock(&ctx->uring_lock);
-+			io_ring_ctx_lock(ctx);
- 			percpu_ref_get(&ctx->refs);
- 		}
- 		INDIRECT_CALL_2(req->io_task_work.func,
- 				io_poll_task_func, io_req_rw_complete,
- 				req, ts);
-@@ -1502,12 +1502,13 @@ static inline void io_req_put_rsrc_nodes(struct io_kiocb *req)
- 		io_put_rsrc_node(req->ctx, req->buf_node);
- }
- 
- static void io_free_batch_list(struct io_ring_ctx *ctx,
- 			       struct io_wq_work_node *node)
--	__must_hold(&ctx->uring_lock)
- {
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	do {
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
- 						    comp_list);
- 
- 		if (unlikely(req->flags & IO_REQ_CLEAN_SLOW_FLAGS)) {
-@@ -1543,15 +1544,16 @@ static void io_free_batch_list(struct io_ring_ctx *ctx,
- 		io_req_add_to_cache(req, ctx);
- 	} while (node);
- }
- 
- void __io_submit_flush_completions(struct io_ring_ctx *ctx)
--	__must_hold(&ctx->uring_lock)
- {
- 	struct io_submit_state *state = &ctx->submit_state;
- 	struct io_wq_work_node *node;
- 
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	__io_cq_lock(ctx);
- 	__wq_list_for_each(node, &state->compl_reqs) {
- 		struct io_kiocb *req = container_of(node, struct io_kiocb,
- 					    comp_list);
- 
-@@ -1767,16 +1769,17 @@ io_req_flags_t io_file_get_flags(struct file *file)
- 		res |= REQ_F_SUPPORT_NOWAIT;
- 	return res;
- }
- 
- static __cold void io_drain_req(struct io_kiocb *req)
--	__must_hold(&ctx->uring_lock)
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	bool drain = req->flags & IOSQE_IO_DRAIN;
- 	struct io_defer_entry *de;
- 
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	de = kmalloc(sizeof(*de), GFP_KERNEL_ACCOUNT);
- 	if (!de) {
- 		io_req_defer_failed(req, -ENOMEM);
- 		return;
- 	}
-@@ -2043,12 +2046,13 @@ static int io_req_sqe_copy(struct io_kiocb *req, unsigned int issue_flags)
- 	def->sqe_copy(req);
- 	return 0;
- }
- 
- static void io_queue_async(struct io_kiocb *req, unsigned int issue_flags, int ret)
--	__must_hold(&req->ctx->uring_lock)
- {
-+	io_ring_ctx_assert_locked(req->ctx);
-+
- 	if (ret != -EAGAIN || (req->flags & REQ_F_NOWAIT)) {
- fail:
- 		io_req_defer_failed(req, ret);
- 		return;
- 	}
-@@ -2068,16 +2072,17 @@ static void io_queue_async(struct io_kiocb *req, unsigned int issue_flags, int r
- 		break;
- 	}
- }
- 
- static inline void io_queue_sqe(struct io_kiocb *req, unsigned int extra_flags)
--	__must_hold(&req->ctx->uring_lock)
- {
- 	unsigned int issue_flags = IO_URING_F_NONBLOCK |
- 				   IO_URING_F_COMPLETE_DEFER | extra_flags;
- 	int ret;
- 
-+	io_ring_ctx_assert_locked(req->ctx);
-+
- 	ret = io_issue_sqe(req, issue_flags);
- 
- 	/*
- 	 * We async punt it if the file wasn't marked NOWAIT, or if the file
- 	 * doesn't support non-blocking read/write attempts
-@@ -2085,12 +2090,13 @@ static inline void io_queue_sqe(struct io_kiocb *req, unsigned int extra_flags)
- 	if (unlikely(ret))
- 		io_queue_async(req, issue_flags, ret);
- }
- 
- static void io_queue_sqe_fallback(struct io_kiocb *req)
--	__must_hold(&req->ctx->uring_lock)
- {
-+	io_ring_ctx_assert_locked(req->ctx);
-+
- 	if (unlikely(req->flags & REQ_F_FAIL)) {
- 		/*
- 		 * We don't submit, fail them all, for that replace hardlinks
- 		 * with normal links. Extra REQ_F_LINK is tolerated.
- 		 */
-@@ -2155,17 +2161,18 @@ static __cold int io_init_fail_req(struct io_kiocb *req, int err)
- 	return err;
- }
- 
- static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		       const struct io_uring_sqe *sqe)
--	__must_hold(&ctx->uring_lock)
- {
- 	const struct io_issue_def *def;
- 	unsigned int sqe_flags;
- 	int personality;
- 	u8 opcode;
- 
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	req->ctx = ctx;
- 	req->opcode = opcode = READ_ONCE(sqe->opcode);
- 	/* same numerical values with corresponding REQ_F_*, safe to copy */
- 	sqe_flags = READ_ONCE(sqe->flags);
- 	req->flags = (__force io_req_flags_t) sqe_flags;
-@@ -2290,15 +2297,16 @@ static __cold int io_submit_fail_init(const struct io_uring_sqe *sqe,
- 	return 0;
- }
- 
- static inline int io_submit_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 			 const struct io_uring_sqe *sqe)
--	__must_hold(&ctx->uring_lock)
- {
- 	struct io_submit_link *link = &ctx->submit_state.link;
- 	int ret;
- 
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	ret = io_init_req(ctx, req, sqe);
- 	if (unlikely(ret))
- 		return io_submit_fail_init(sqe, req, ret);
- 
- 	trace_io_uring_submit_req(req);
-@@ -2419,16 +2427,17 @@ static bool io_get_sqe(struct io_ring_ctx *ctx, const struct io_uring_sqe **sqe)
- 	*sqe = &ctx->sq_sqes[head];
- 	return true;
- }
- 
- int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr)
--	__must_hold(&ctx->uring_lock)
- {
- 	unsigned int entries = io_sqring_entries(ctx);
- 	unsigned int left;
- 	int ret;
- 
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	if (unlikely(!entries))
- 		return 0;
- 	/* make sure SQ entry isn't read before tail */
- 	ret = left = min(nr, entries);
- 	io_get_task_refs(left);
-@@ -3518,14 +3527,14 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	} else if (to_submit) {
- 		ret = io_uring_add_tctx_node(ctx);
- 		if (unlikely(ret))
- 			goto out;
- 
--		mutex_lock(&ctx->uring_lock);
-+		io_ring_ctx_lock(ctx);
- 		ret = io_submit_sqes(ctx, to_submit);
+@@ -3534,12 +3534,15 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
  		if (ret != to_submit) {
--			mutex_unlock(&ctx->uring_lock);
-+			io_ring_ctx_unlock(ctx);
+ 			io_ring_ctx_unlock(ctx);
  			goto out;
  		}
  		if (flags & IORING_ENTER_GETEVENTS) {
- 			if (ctx->syscall_iopoll)
+-			if (ctx->syscall_iopoll)
++			if (ctx->syscall_iopoll) {
++				if (ctx->flags & IORING_SETUP_SINGLE_ISSUER)
++					goto iopoll;
  				goto iopoll_locked;
-@@ -3534,11 +3543,11 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
++			}
+ 			/*
+ 			 * Ignore errors, we'll soon call io_cqring_wait() and
  			 * it should handle ownership problems if any.
  			 */
  			if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
- 				(void)io_run_local_work_locked(ctx, min_complete);
- 		}
--		mutex_unlock(&ctx->uring_lock);
-+		io_ring_ctx_unlock(ctx);
- 	}
- 
- 	if (flags & IORING_ENTER_GETEVENTS) {
- 		int ret2;
- 
+@@ -3556,10 +3559,11 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 			 * We disallow the app entering submit/complete with
+ 			 * polling, but we still need to lock the ring to
+ 			 * prevent racing with polled issue that got punted to
+ 			 * a workqueue.
+ 			 */
++iopoll:
+ 			mutex_lock(&ctx->uring_lock);
+ iopoll_locked:
+ 			ret2 = io_validate_ext_arg(ctx, flags, argp, argsz);
+ 			if (likely(!ret2))
+ 				ret2 = io_iopoll_check(ctx, min_complete);
 diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index d62b7d9fafed..a0580a1bf6b5 100644
+index a0580a1bf6b5..7296b12b0897 100644
 --- a/io_uring/io_uring.h
 +++ b/io_uring/io_uring.h
-@@ -119,20 +119,35 @@ bool __io_alloc_req_refill(struct io_ring_ctx *ctx);
- bool io_match_task_safe(struct io_kiocb *head, struct io_uring_task *tctx,
- 			bool cancel_all);
+@@ -121,20 +121,34 @@ bool io_match_task_safe(struct io_kiocb *head, struct io_uring_task *tctx,
  
  void io_activate_pollwq(struct io_ring_ctx *ctx);
  
-+static inline void io_ring_ctx_lock(struct io_ring_ctx *ctx)
-+{
-+	mutex_lock(&ctx->uring_lock);
-+}
+ static inline void io_ring_ctx_lock(struct io_ring_ctx *ctx)
+ {
++	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER) {
++		WARN_ON_ONCE(current != ctx->submitter_task);
++		return;
++	}
 +
-+static inline void io_ring_ctx_unlock(struct io_ring_ctx *ctx)
-+{
-+	mutex_unlock(&ctx->uring_lock);
-+}
+ 	mutex_lock(&ctx->uring_lock);
+ }
+ 
+ static inline void io_ring_ctx_unlock(struct io_ring_ctx *ctx)
+ {
++	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER) {
++		WARN_ON_ONCE(current != ctx->submitter_task);
++		return;
++	}
 +
-+static inline void io_ring_ctx_assert_locked(const struct io_ring_ctx *ctx)
-+{
-+	lockdep_assert_held(&ctx->uring_lock);
-+}
+ 	mutex_unlock(&ctx->uring_lock);
+ }
+ 
+ static inline void io_ring_ctx_assert_locked(const struct io_ring_ctx *ctx)
+ {
++	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER &&
++	    current == ctx->submitter_task)
++		return;
 +
+ 	lockdep_assert_held(&ctx->uring_lock);
+ }
+ 
  static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
  {
- #if defined(CONFIG_PROVE_LOCKING)
- 	lockdep_assert(in_task());
- 
- 	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
--		lockdep_assert_held(&ctx->uring_lock);
-+		io_ring_ctx_assert_locked(ctx);
- 
- 	if (ctx->flags & IORING_SETUP_IOPOLL) {
--		lockdep_assert_held(&ctx->uring_lock);
-+		io_ring_ctx_assert_locked(ctx);
- 	} else if (!ctx->task_complete) {
- 		lockdep_assert_held(&ctx->completion_lock);
- 	} else if (ctx->submitter_task) {
- 		/*
- 		 * ->submitter_task may be NULL and we can still post a CQE,
-@@ -300,11 +315,11 @@ static inline void io_put_file(struct io_kiocb *req)
- }
- 
- static inline void io_ring_submit_unlock(struct io_ring_ctx *ctx,
- 					 unsigned issue_flags)
- {
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 	if (unlikely(issue_flags & IO_URING_F_UNLOCKED))
- 		mutex_unlock(&ctx->uring_lock);
- }
- 
- static inline void io_ring_submit_lock(struct io_ring_ctx *ctx,
-@@ -316,11 +331,11 @@ static inline void io_ring_submit_lock(struct io_ring_ctx *ctx,
- 	 * The only exception is when we've detached the request and issue it
- 	 * from an async worker thread, grab the lock for that case.
- 	 */
- 	if (unlikely(issue_flags & IO_URING_F_UNLOCKED))
- 		mutex_lock(&ctx->uring_lock);
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- }
- 
- static inline void io_commit_cqring(struct io_ring_ctx *ctx)
- {
- 	/* order cqe stores with ring update */
-@@ -428,24 +443,23 @@ static inline bool io_task_work_pending(struct io_ring_ctx *ctx)
- 	return task_work_pending(current) || io_local_work_pending(ctx);
- }
- 
- static inline void io_tw_lock(struct io_ring_ctx *ctx, io_tw_token_t tw)
- {
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- }
- 
- /*
-  * Don't complete immediately but use deferred completion infrastructure.
-  * Protected by ->uring_lock and can only be used either with
-  * IO_URING_F_COMPLETE_DEFER or inside a tw handler holding the mutex.
-  */
- static inline void io_req_complete_defer(struct io_kiocb *req)
--	__must_hold(&req->ctx->uring_lock)
- {
- 	struct io_submit_state *state = &req->ctx->submit_state;
- 
--	lockdep_assert_held(&req->ctx->uring_lock);
-+	io_ring_ctx_assert_locked(req->ctx);
- 
- 	wq_list_add_tail(&req->comp_list, &state->compl_reqs);
- }
- 
- static inline void io_commit_cqring_flush(struct io_ring_ctx *ctx)
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 3e9aab21af9d..ea6f3588d875 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -68,11 +68,11 @@ bool io_kbuf_commit(struct io_kiocb *req,
- }
- 
- static inline struct io_buffer_list *io_buffer_get_list(struct io_ring_ctx *ctx,
- 							unsigned int bgid)
- {
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 
- 	return xa_load(&ctx->io_bl_xa, bgid);
- }
- 
- static int io_buffer_add_list(struct io_ring_ctx *ctx,
-@@ -337,11 +337,11 @@ int io_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
- {
- 	struct io_ring_ctx *ctx = req->ctx;
- 	struct io_buffer_list *bl;
- 	int ret;
- 
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 
- 	bl = io_buffer_get_list(ctx, arg->buf_group);
- 	if (unlikely(!bl))
- 		return -ENOENT;
- 
-@@ -393,11 +393,11 @@ static int io_remove_buffers_legacy(struct io_ring_ctx *ctx,
- {
- 	unsigned long i = 0;
- 	struct io_buffer *nxt;
- 
- 	/* protects io_buffers_cache */
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 	WARN_ON_ONCE(bl->flags & IOBL_BUF_RING);
- 
- 	for (i = 0; i < nbufs && !list_empty(&bl->buf_list); i++) {
- 		nxt = list_first_entry(&bl->buf_list, struct io_buffer, list);
- 		list_del(&nxt->list);
-diff --git a/io_uring/notif.c b/io_uring/notif.c
-index 8c92e9cde2c6..9dd248fcb213 100644
---- a/io_uring/notif.c
-+++ b/io_uring/notif.c
-@@ -14,11 +14,11 @@ static const struct ubuf_info_ops io_ubuf_ops;
- static void io_notif_tw_complete(struct io_kiocb *notif, io_tw_token_t tw)
- {
- 	struct io_notif_data *nd = io_notif_to_data(notif);
- 	struct io_ring_ctx *ctx = notif->ctx;
- 
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 
- 	do {
- 		notif = cmd_to_io_kiocb(nd);
- 
- 		if (WARN_ON_ONCE(ctx != notif->ctx))
-@@ -108,15 +108,16 @@ static const struct ubuf_info_ops io_ubuf_ops = {
- 	.complete = io_tx_ubuf_complete,
- 	.link_skb = io_link_skb,
- };
- 
- struct io_kiocb *io_alloc_notif(struct io_ring_ctx *ctx)
--	__must_hold(&ctx->uring_lock)
- {
- 	struct io_kiocb *notif;
- 	struct io_notif_data *nd;
- 
-+	io_ring_ctx_assert_locked(ctx);
-+
- 	if (unlikely(!io_alloc_req(ctx, &notif)))
- 		return NULL;
- 	notif->ctx = ctx;
- 	notif->opcode = IORING_OP_NOP;
- 	notif->flags = 0;
-diff --git a/io_uring/notif.h b/io_uring/notif.h
-index f3589cfef4a9..c33c9a1179c9 100644
---- a/io_uring/notif.h
-+++ b/io_uring/notif.h
-@@ -31,14 +31,15 @@ static inline struct io_notif_data *io_notif_to_data(struct io_kiocb *notif)
- {
- 	return io_kiocb_to_cmd(notif, struct io_notif_data);
- }
- 
- static inline void io_notif_flush(struct io_kiocb *notif)
--	__must_hold(&notif->ctx->uring_lock)
- {
- 	struct io_notif_data *nd = io_notif_to_data(notif);
- 
-+	io_ring_ctx_assert_locked(notif->ctx);
-+
- 	io_tx_ubuf_complete(NULL, &nd->uarg, true);
- }
- 
- static inline int io_notif_account_mem(struct io_kiocb *notif, unsigned len)
- {
-diff --git a/io_uring/poll.c b/io_uring/poll.c
-index ea75c5cd81a0..ba71403c8fd8 100644
---- a/io_uring/poll.c
-+++ b/io_uring/poll.c
-@@ -121,11 +121,11 @@ static struct io_poll *io_poll_get_single(struct io_kiocb *req)
- static void io_poll_req_insert(struct io_kiocb *req)
- {
- 	struct io_hash_table *table = &req->ctx->cancel_table;
- 	u32 index = hash_long(req->cqe.user_data, table->hash_bits);
- 
--	lockdep_assert_held(&req->ctx->uring_lock);
-+	io_ring_ctx_assert_locked(req->ctx);
- 
- 	hlist_add_head(&req->hash_node, &table->hbs[index].list);
- }
- 
- static void io_init_poll_iocb(struct io_poll *poll, __poll_t events)
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 1e5b7833076a..1c1753de7340 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -347,11 +347,11 @@ static int __io_register_rsrc_update(struct io_ring_ctx *ctx, unsigned type,
- 				     struct io_uring_rsrc_update2 *up,
- 				     unsigned nr_args)
- {
- 	__u32 tmp;
- 
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 
- 	if (check_add_overflow(up->offset, nr_args, &tmp))
- 		return -EOVERFLOW;
- 
- 	switch (type) {
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index a3ca6ba66596..d537a3b895d6 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -2,10 +2,11 @@
- #ifndef IOU_RSRC_H
- #define IOU_RSRC_H
- 
- #include <linux/io_uring_types.h>
- #include <linux/lockdep.h>
-+#include "io_uring.h"
- 
- #define IO_VEC_CACHE_SOFT_CAP		256
- 
- enum {
- 	IORING_RSRC_FILE		= 0,
-@@ -97,11 +98,11 @@ static inline struct io_rsrc_node *io_rsrc_node_lookup(struct io_rsrc_data *data
- 	return NULL;
- }
- 
- static inline void io_put_rsrc_node(struct io_ring_ctx *ctx, struct io_rsrc_node *node)
- {
--	lockdep_assert_held(&ctx->uring_lock);
-+	io_ring_ctx_assert_locked(ctx);
- 	if (!--node->refs)
- 		io_free_rsrc_node(ctx, node);
- }
- 
- static inline bool io_reset_rsrc_node(struct io_ring_ctx *ctx,
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index ab6b4afccec3..f00e02a02dc7 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -461,11 +461,11 @@ int io_read_mshot_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	return 0;
- }
- 
- void io_readv_writev_cleanup(struct io_kiocb *req)
- {
--	lockdep_assert_held(&req->ctx->uring_lock);
-+	io_ring_ctx_assert_locked(req->ctx);
- 	io_rw_recycle(req, 0);
- }
- 
- static inline loff_t *io_kiocb_update_pos(struct io_kiocb *req)
- {
-diff --git a/io_uring/waitid.c b/io_uring/waitid.c
-index 26c118f3918d..f7a5054d4d81 100644
---- a/io_uring/waitid.c
-+++ b/io_uring/waitid.c
-@@ -114,11 +114,11 @@ static void io_waitid_complete(struct io_kiocb *req, int ret)
- 	struct io_waitid *iw = io_kiocb_to_cmd(req, struct io_waitid);
- 
- 	/* anyone completing better be holding a reference */
- 	WARN_ON_ONCE(!(atomic_read(&iw->refs) & IO_WAITID_REF_MASK));
- 
--	lockdep_assert_held(&req->ctx->uring_lock);
-+	io_ring_ctx_assert_locked(req->ctx);
- 
- 	hlist_del_init(&req->hash_node);
- 
- 	ret = io_waitid_finish(req, ret);
- 	if (ret < 0)
 -- 
 2.45.2
 
