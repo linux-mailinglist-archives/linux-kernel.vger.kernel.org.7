@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-797055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C2DB40B47
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:56:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8735CB40B48
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131BD561F77
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479803B3F83
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEE8341AAD;
-	Tue,  2 Sep 2025 16:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGOJOvCh"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C0631B131;
-	Tue,  2 Sep 2025 16:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7154342C92;
+	Tue,  2 Sep 2025 16:56:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4E5341ABA
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 16:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756832191; cv=none; b=FkWcNlSDt49RtmZVul1wdX1IdVTa+3OQmozhhodb4SVvXEXPyaz2In01ypVxF1yF+UXX0HU8Ww39cn5VIUDiJs+a1xQWdPqN6//59rXe8/z0YsyNnvBhC84mWxghV1kJIoNcpwCCfrlLRQ7UiTzPaYAZcBcd0LTvdKpJ4uT4DPI=
+	t=1756832194; cv=none; b=IqvAWuR8eez91wLP9g+KdrT15vP1Ly8d5vxePaXXpBbnIRlENastQKzg3vgKl6O4nB2jb9WhxOr2oeS3lot2a1SIhKk8Pi7PZgJB7cEMY10WN13TlW0t+upZOpPCLmAFVASAdz+LJivBdGnFSw5TERMuDSzi7QdaYOVVJRtsCw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756832191; c=relaxed/simple;
-	bh=XZhOST3in1Xh8ve1QrJxOqFAH9pi0OKKxLTZu+yY+Q0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Mz+dJZH3DroCB/lWEKKPK3XpC7r1Ge6IiT7LxI0PQI4gFbSUO0w7dUutAqt9VGQ/WD9d+rlp/7/aXJ1a9lmYt4rNAW7PEKOBLfEKuYhiDdPsEuukuu7kzNgDsOgseLHxmYeNrrLgyJpQStK5f3eTghExJcyPaRgo0ZcqNNuK1BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGOJOvCh; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b109c59dc9so67819611cf.3;
-        Tue, 02 Sep 2025 09:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756832189; x=1757436989; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XZhOST3in1Xh8ve1QrJxOqFAH9pi0OKKxLTZu+yY+Q0=;
-        b=jGOJOvChzDRp6jagAoMqRYagnu/RywuYGjYiCIs9orfBeoxwgrm9VGfqmIFKeZXRmN
-         is9Q6WSjhUR24Mc8JtZcis9M/i5G6kDfdtkKffgwjn8nL4wVdmUFrYBrFEk4bWwI3zli
-         8Zozgs1bbe01/zzmvda3DkaeAC0CGgPc3iPJ1hnf3ZoaXdOZnfoG03Z4l/xh4IwkHQAF
-         VBoz5M82lU9jARSRbFNk1m+uRuXF0sWEhB435sd53yoQJ6p9Kg69dg+SKvZTFTlehRTj
-         7+29QRQdBcx7qB6LOOslIdsiaW/C/TB5aTseRY7kGqHBZRr+TBK2uH2IDF1Pc+KDN7Wq
-         /3Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756832189; x=1757436989;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XZhOST3in1Xh8ve1QrJxOqFAH9pi0OKKxLTZu+yY+Q0=;
-        b=lH/e5HICYEkEdQpXqYmW05vJJhKk2Zl03qBgrVF3grBYwijmKa8KpJj/20w7KmXDfP
-         d3Xtrh1Npj92ylOKu7BmXO6ZqKlUw8F0lsEUDu0B37fHvZ5BuycC542RmqQ84BmbBwhy
-         HoWamVi7tybXe6JvZUlb/kNA3kfK38nhirj266994M+irRTGmks6q6a4xZ5YfsKWHnTH
-         LruPeFd8KqadyXgmDzUTXewMwGeNjopGGMgVHZbmW+f/oDf3EAZL//z834QPnrVoD2dT
-         ZQ1kuktv2Yg/i4zoyRI/vKGTWDABugIP275KTVkB1278ZImpM2F25AO9dZb0LPaGzuru
-         P+EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJtgsXNUHuvWvXmeAlfJenyI06SEw7abmmROQR31CLkxse1nyY6QArSjTrSmJnHmX1DsMvI7ndek9r@vger.kernel.org, AJvYcCVTYsR9bg0kQ3rNMVIYRZIK5RH35Qqm0TlE6uphkNZMIah4fFrTM/W0Q59RjESAO8WfRYEzX6ZWiFIKdPpd@vger.kernel.org, AJvYcCX1xxjFAgu2dy4tnkBVShsIKP5BeH0BZXKHciyqFLrdfOXbh8wbjc2pyUU0NgY+6b4Iss+rwvjEmjh1@vger.kernel.org
-X-Gm-Message-State: AOJu0YyANjOs+2+LKjXil76I+arg57pB0jfvgMy6UaK1mpWUqjA6h7ct
-	i+zNtMWZy7jkxOe7h/WFYP/Kewkp++0xqmtyPZq+wq82TVDmpZP6tFzkU+piXJtz
-X-Gm-Gg: ASbGncva+6zUXDDXlMvuqa0627b3JAXhmopVoppwHPiDgccj5LrowxZnrpWqeEom+dN
-	9BM0WhLGT2YN0XIW9ZakaPMjjcX4zu1QAcxI85vHG9khiZOOqmGF0WHiWFJDGFUoF1IFwemyitP
-	CGx6rQxllwd7OAkYjRpsUKV0LY7JlXW4gTwz+LZ9bXalpJOZAJftRcARTvG4DWMUhjIR3vMD/UM
-	v87IfToQ3MhIUan7vk93LfD6dSZtAwXHwByaO7sAOCZCBvBwpivqypDrJlJ2qmyMf6He3rqPy4q
-	rjFLQ+dafix83V/6KZRSkPHZk4iMQIjeRG6PxDC5RUbf2Fj6QyCUxkA3ez9InjKkEu/brCKwfsQ
-	YIb0PfgcR4o9flCrObWqVm0Psw+/jfCx9107+VLmCGzSAAh80XtxPVeIvIg0eLwUmS5LrBhd8Ml
-	rtPxL2NQ==
-X-Google-Smtp-Source: AGHT+IH454t1AZPaP8m+LXjREsgeHmzav/1L3lvMSqVzetI6UcC5vxu8zTEuLQ4bG13xXnbRUnZQGg==
-X-Received: by 2002:a05:622a:d4:b0:4b3:e973:272f with SMTP id d75a77b69052e-4b3e9732bd7mr13178961cf.5.1756832188688;
-        Tue, 02 Sep 2025 09:56:28 -0700 (PDT)
-Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b3462c7676sm14790891cf.33.2025.09.02.09.56.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 09:56:28 -0700 (PDT)
-Date: Tue, 02 Sep 2025 12:56:25 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] i2c: core: Use fwnode_for_each_child_node_scoped()
-User-Agent: Thunderbird for Android
-In-Reply-To: <aLa8lGxHvCd6nreg@smile.fi.intel.com>
-References: <20250901163648.82034-1-jefflessard3@gmail.com> <20250901163648.82034-3-jefflessard3@gmail.com> <aLa8lGxHvCd6nreg@smile.fi.intel.com>
-Message-ID: <AB7B668E-107D-43E6-A9F7-57F5F9FADD2A@gmail.com>
+	s=arc-20240116; t=1756832194; c=relaxed/simple;
+	bh=VrVUYskoNxsEogVez72kB6K6V9e/1NCO8ZxTegVp+/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SpY+a9sAmSfIQuYFbRXWdrKzd5lZGOXDt5ki1FH/qKiAceuj/4IwWdeE3wzEJ70TSTtOlFRYa3UKluM2ISF+2e6iJI+JzNxLnLdOAEPtWEuzRA9WazwpbFUunmLZdy+rUrOGOhVE8qLkTYAGEtdvHF47B+0i1fpBB5gv8I3ZYVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EFE326BE;
+	Tue,  2 Sep 2025 09:56:23 -0700 (PDT)
+Received: from [10.1.36.209] (unknown [10.1.36.209])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 893283F694;
+	Tue,  2 Sep 2025 09:56:30 -0700 (PDT)
+Message-ID: <06ca976e-03ff-4376-a29d-24993282dda0@arm.com>
+Date: Tue, 2 Sep 2025 17:56:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 0/2] Don't broadcast TLBI if mm was only active on
+ local CPU
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ James Morse <james.morse@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250829153510.2401161-1-ryan.roberts@arm.com>
+ <aLcfvIfFb6xD-NXp@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <aLcfvIfFb6xD-NXp@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 2 septembre 2025 05 h 44 min 52 s HAE, Andy Shevchenko <andriy=2Eshevche=
-nko@linux=2Eintel=2Ecom> a =C3=A9crit=C2=A0:
->On Mon, Sep 01, 2025 at 12:36:45PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Replace the manual __free(fwnode_handle) iterator declaration with the
->> new scoped iterator macro for cleaner, less error-prone code=2E
->>=20
->> This eliminates the need for explicit iterator variable declaration wit=
-h
->> the cleanup attribute, making the code more consistent with other scope=
-d
->> iterator usage patterns in the kernel=2E
->
->Reviewed-by: Andy Shevchenko <andriy=2Eshevchenko@linux=2Eintel=2Ecom>
->
+On 02/09/2025 17:47, Catalin Marinas wrote:
+> On Fri, Aug 29, 2025 at 04:35:06PM +0100, Ryan Roberts wrote:
+>> Beyond that, the next question is; does it actually improve performance?
+>> stress-ng's --tlb-shootdown stressor suggests yes; as concurrency increases, we
+>> do a much better job of sustaining the overall number of "tlb shootdowns per
+>> second" after the change:
+>>
+>> +------------+--------------------------+--------------------------+--------------------------+
+>> |            |     Baseline (v6.15)     |        tlbi local        |        Improvement       |
+>> +------------+-------------+------------+-------------+------------+-------------+------------+
+>> | nr_threads |     ops/sec |    ops/sec |     ops/sec |    ops/sec |     ops/sec |    ops/sec |
+>> |            | (real time) | (cpu time) | (real time) | (cpu time) | (real time) | (cpu time) |
+>> +------------+-------------+------------+-------------+------------+-------------+------------+
+>> |          1 |        9109 |       2573 |        8903 |       3653 |         -2% |        42% |
+>> |          4 |        8115 |       1299 |        9892 |       1059 |         22% |       -18% |
+>> |          8 |        5119 |        477 |       11854 |       1265 |        132% |       165% |
+>> |         16 |        4796 |        286 |       14176 |        821 |        196% |       187% |
+>> |         32 |        1593 |         38 |       15328 |        474 |        862% |      1147% |
+>> |         64 |        1486 |         19 |        8096 |        131 |        445% |       589% |
+>> |        128 |        1315 |         16 |        8257 |        145 |        528% |       806% |
+>> +------------+-------------+------------+-------------+------------+-------------+------------+
+>>
+>> But looking at real-world benchmarks, I haven't yet found anything where it
+>> makes a huge difference; When compiling the kernel, it reduces kernel time by
+>> ~2.2%, but overall wall time remains the same. I'd be interested in any
+>> suggestions for workloads where this might prove valuable.
+> 
+> I suspect it's highly dependent on hardware and how it handles the DVM
+> messages. There were some old proposals from Fujitsu:
+> 
+> https://lore.kernel.org/linux-arm-kernel/20190617143255.10462-1-indou.takao@jp.fujitsu.com/
+> 
+> Christoph Lameter (Ampere) also followed with some refactoring in this
+> area to allow a boot-configurable way to do TLBI via IS ops or IPI:
+> 
+> https://lore.kernel.org/linux-arm-kernel/20231207035703.158053467@gentwo.org/
+> 
+> (for some reason, the patches did not make it to the list, I have them
+> in my inbox if you are interested)
+> 
+> I don't remember any real-world workload, more like hand-crafted
+> mprotect() loops.
+> 
+> Anyway, I think the approach in your series doesn't have downsides, it's
+> fairly clean and addresses some low-hanging fruits. For multi-threaded
+> workloads where a flush_tlb_mm() is cheaper than a series of per-page
+> TLBIs, I think we can wait for that hardware to be phased out. The TLBI
+> range operations should significantly reduce the DVM messages between
+> CPUs.
 
-Acknowledged with thanks=2E Will add this tag in the next submission=2E
+I'll gather some more numbers and try to make a case for merging it then. I
+don't really want to add complexity if there is no clear value.
+
+Thanks for the review.
+
+Thanks,
+Ryan
+
+
+
 
