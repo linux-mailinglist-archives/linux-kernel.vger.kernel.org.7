@@ -1,272 +1,178 @@
-Return-Path: <linux-kernel+bounces-795643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AD5B3F5C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:43:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7847FB3F5C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D42B205CDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:43:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90EF1A8674B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3D02E543B;
-	Tue,  2 Sep 2025 06:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ToHadPwI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351DF2E54AA;
+	Tue,  2 Sep 2025 06:44:45 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260FE2E1F0A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3EF2E06C9;
+	Tue,  2 Sep 2025 06:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756795412; cv=none; b=tK5hoGmZalFvk1f3JkhRc+PdYboRsSvps6pb2Fc7OWhNuQ9bROBjFDgtKq9tY3Pr0CjJYH+ALYzxz+H2ViBCsXAKzgNiXm8pAPw4GCsuArBAxEJYdIwkV3aHHtVbaYE/HeBoFRrUcbPuIeJnb2E0LV745dueJFIQQ84EF8+R+ac=
+	t=1756795484; cv=none; b=qQItXyYYs5SW+ummgQWlFNJPPpzhzRw/ciALgQTlnR0EeH/WK/CDjLlQmOvAmNUbjLaH8S+sF3zPwhmMqjRlac3q4GaLC5g0SpIz02NwZ8L4oHE+kjEm9H4dedg8x8oB+AKs3Xn3V7/HNWWNz7dFUu2A6ILn5aMXQA2lp1UU2jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756795412; c=relaxed/simple;
-	bh=eQHkJIMj4GLSh/E8+eAhQ3z9EzguvaN1cFQ4hEnsI1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QmjDTdMgSOhv2upXxIQ6WRYSDcT2dtEZk09XjkkDVYWkv43j4IAuLtFtzXCY+hZ8gg30k1zwtPYq3DnKZJF6tnfOcn0ra4rXsIZy72n7rUNVgLk6kt/RjhLRABLGubKudQDzcDdEE8KeyjjDGV39SSVNUdWjM/bv6WFPwuBiWOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ToHadPwI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822RlUM021655
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 06:43:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Wqwzz7vQBwmgJDGDQ5Zr46ApYXaYEYSR8DBAfoF7V9s=; b=ToHadPwIeajG0O8E
-	+uFvCWqi7NDZKSqIGlVWiq3+HXwZo0xV8yfDAS2lyczpn6wEOrc4qCAFYTV34giQ
-	9GpXZgutJbLVX8jfCsl9nRvAiXpkeunhY1ZkLOGg5d8QCiY1El6UoL5xINKbhqIX
-	0v+3AYna71sa3V/zromdrcuHQql97mYjE3RV9RGYhEqUXACPZ3zvmgkxY/5SJAsw
-	dafv/bnc/LR2xpNRJAq3zAJtLz/9Osa37V1yJ9mzE7Kjlkr4XQtWakSyxGArwa9E
-	+AKGtdB4+syUb+nAVJYJjJne1HF8ls7eDAJi8BXi0PuFk6NnalAEJptHtO0DyU4i
-	923yWw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48upnp6xsv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:43:29 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b4f93fe3831so955100a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 01 Sep 2025 23:43:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756795408; x=1757400208;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wqwzz7vQBwmgJDGDQ5Zr46ApYXaYEYSR8DBAfoF7V9s=;
-        b=KmZpqxOmT5/65EjuUFA8DVA2TLFTEGQZz0+U6d346rz9maSHFbzZqLePjDVuv6TqMS
-         PJFKBy3eeHs39RWIIVV4JDhuJrL6dclI3LkgsmOGh3494IZwPc5LEbEy6TFLt5fwJFnP
-         pD/pDOqvludpPvB5hnV/mBmwmeplhVVQ8hFJSsO0vVdLRXMaQHHsAB+/1LcVHHd5UrMo
-         wvMlrfH8EX7//X1PRslJLY9jZU70CVfQpmLjKVLsFELVAaDoqWRz19ZpsWq/oo4pCGki
-         QEUjrBkH6SOXS1TVA7pw5xN7RaTVGCmPy4xym0esRVguLPAKu+v55+hhKCczP3egwxy1
-         ir0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUGixxTsu8uvcc/V883QVjXHYKbu5r4X1WMlBzF7mpuSVVjkJdaf8CX0DZfV5E9T8f0KNOEPwdDSU1pSgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3AyWG4j2aSdxMPtEUiRWPQ/GECzH2Dfc5gT+ntogCfXnIx2UZ
-	k70YHjlaGMGWlIs29e1VbQ0OyZncFHsHJTVezCBwJrKBS9L6QLzCCjAURqA5ebZXOE4OOQSg56g
-	jHq3TWEWl51tDy8gdgAMwghVk7Fcp7HwOXYNYyB7XgC4aFznEIM/AlRM77jhtVWmt9OM=
-X-Gm-Gg: ASbGncvkNt9+jQAg3ZiLQxaq5EWPcMtql23gbrxlYXx+IYGYx/YfvY5Ph2gQ3u/Il/0
-	biC7I0yKGaqDfcsmjVNFB0vOOraLNwcihBKhxaUq/45Yw1IedFbhxdzYLtpdHV/gtzQDzjAA9ht
-	YGcXjM5FRw8KHNlsJpgoYg0f4y0zTaT9IylpxGZFAYTEzoH/sRnakuNxWuo6/r1rFoSaGzrIry3
-	32v/oLqEZtjatXhvadot7YJnpRN7ejKz57N42IZGODcSun/qNPwOz+zg+5L3T4Jyo5iI98bdVcS
-	An3eh0Pg0DUfn0VQL7PRUwgTahdSu1bIGaMfQgt+D3Qb51LGmkZo3icYNs8PTZWi
-X-Received: by 2002:a05:6a20:939d:b0:243:d432:3d50 with SMTP id adf61e73a8af0-243d6f885bbmr14010550637.56.1756795408524;
-        Mon, 01 Sep 2025 23:43:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfc90fOfbafaS1yPL+ADGfwHyRWbfJVbN9Bw1aOX+e9aSn/HDowpEl4WyiFudM3cxJ1cYlhQ==
-X-Received: by 2002:a05:6a20:939d:b0:243:d432:3d50 with SMTP id adf61e73a8af0-243d6f885bbmr14010499637.56.1756795407978;
-        Mon, 01 Sep 2025 23:43:27 -0700 (PDT)
-Received: from [10.239.155.136] ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcf0567sm18729666a91.27.2025.09.01.23.43.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Sep 2025 23:43:27 -0700 (PDT)
-Message-ID: <1174ecf9-b806-4c2d-b755-8a3cd594d337@oss.qualcomm.com>
-Date: Tue, 2 Sep 2025 14:43:19 +0800
+	s=arc-20240116; t=1756795484; c=relaxed/simple;
+	bh=fk+OzkC4BhovNz0xJglq9M+q6OOOPg8PO/HWfOaT4PM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cjmdV0Ys2c/w9x8TuJ8TTG6vK99vR8g0Xrax5KVgPW5iAW3KgfuxOwclSX3wfmLgicQ8qeiBehgl7vuaRAfPiH0FMXrKIofehR8Urt0IIrgNVHlx7XjLqMCcI0tOz50ePn/TlqvMmrswgVdYQ3vp6n5wpDM5RDIdXK0qZbzpTcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9BB0C4CEED;
+	Tue,  2 Sep 2025 06:44:43 +0000 (UTC)
+Date: Tue, 2 Sep 2025 08:44:41 +0200
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Abel Vesa <abel.vesa@linaro.org>, Mahadevan <quic_mahap@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>
+Subject: Re: [PATCH v7 7/9] dt-bindings: display/msm: expand to support MST
+Message-ID: <20250902-fast-hissing-sturgeon-cafdac@kuoka>
+References: <20250829-dp_mst_bindings-v7-0-2b268a43917b@oss.qualcomm.com>
+ <20250829-dp_mst_bindings-v7-7-2b268a43917b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: core: Fix data race in CPU latency PM QoS
- request handling
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>, alim.akhtar@samsung.com,
-        avri.altman@wdc.com, bvanassche@acm.org,
-        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
-        quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
-        adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
-        neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
-        quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nitin.rawat@oss.qualcomm.com
-References: <20250901085117.86160-1-zhongqiu.han@oss.qualcomm.com>
-Content-Language: en-US
-From: Ziqi Chen <ziqi.chen@oss.qualcomm.com>
-In-Reply-To: <20250901085117.86160-1-zhongqiu.han@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: vYO0HnS8qNwSqEslqgYx4flte-TYvBAt
-X-Authority-Analysis: v=2.4 cv=Jt/xrN4C c=1 sm=1 tr=0 ts=68b69211 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=6LOm9izlHsDA83q8FugA:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-ORIG-GUID: vYO0HnS8qNwSqEslqgYx4flte-TYvBAt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAwMSBTYWx0ZWRfXwNlUVx4Fwtx6
- M480U5NnSd4zFUQySdD69SbfTGYpdBV5H9xA+B/8fRSTGFGFwtDiPTJ1OnpzOtPmiHaz6jizsZi
- 8Za32hSobglDLiUcKJmzECLigFCyub/SyVi8PU3xhvXQWRX2Qwov+DYLCdPRHZzXcpd+k3OTWGC
- s+psOVp7yDPxss8rmJVLzTGefNAs0AZVYZrjdYBFfMrMTUOooHXaZNYFTPEuXKKrbBDqIewncZw
- Mfmh5ZNe7oqyxuJV855TadfVqAtqKTCLqsLAcl6NqIAFg3+ukBUFcoZ5mm+JCPqC5laXshtkanG
- vEDVydoKcoU/DWLlK2IfbySHqBl8skH9LZfA9iO4B6iu8oARK4t5w+z10z7eo5YIbFFTZCXeVS+
- ya6hyl3z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_01,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 clxscore=1011 bulkscore=0 impostorscore=0
- spamscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250829-dp_mst_bindings-v7-7-2b268a43917b@oss.qualcomm.com>
 
-
-On 9/1/2025 4:51 PM, Zhongqiu Han wrote:
-> The cpu_latency_qos_add/remove/update_request interfaces lack internal
-> synchronization by design, requiring the caller to ensure thread safety.
-> The current implementation relies on the `pm_qos_enabled` flag, which is
-> insufficient to prevent concurrent access and cannot serve as a proper
-> synchronization mechanism. This has led to data races and list corruption
-> issues.
->
-> A typical race condition call trace is:
->
-> [Thread A]
-> ufshcd_pm_qos_exit()
->    --> cpu_latency_qos_remove_request()
->      --> cpu_latency_qos_apply();
->        --> pm_qos_update_target()
->          --> plist_del              <--(1) delete plist node
->      --> memset(req, 0, sizeof(*req));
->    --> hba->pm_qos_enabled = false;
->
-> [Thread B]
-> ufshcd_devfreq_target
->    --> ufshcd_devfreq_scale
->      --> ufshcd_scale_clks
->        --> ufshcd_pm_qos_update     <--(2) pm_qos_enabled is true
->          --> cpu_latency_qos_update_request
->            --> pm_qos_update_target
->              --> plist_del          <--(3) plist node use-after-free
->
-> This patch introduces a dedicated mutex to serialize PM QoS operations,
-> preventing data races and ensuring safe access to PM QoS resources.
-> Additionally, READ_ONCE is used in the sysfs interface to ensure atomic
-> read access to pm_qos_enabled flag.
->
-> Fixes: 2777e73fc154 ("scsi: ufs: core: Add CPU latency QoS support for UFS driver")
-> Signed-off-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+On Fri, Aug 29, 2025 at 01:48:20AM +0300, Dmitry Baryshkov wrote:
+> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
+> On a vast majority of Qualcomm chipsets DisplayPort controller can
+> support several MST streams (up to 4x). To support MST these chipsets
+> use up to 4 stream pixel clocks for the DisplayPort controller and
+> several extra register regions. Expand corresponding region and clock
+> bindings for these platforms and fix example schema files to follow
+> updated bindings.
+> 
+> Note: On chipsets that support MST, the number of streams supported
+> can vary between controllers. For example, SA8775P supports 4 MST
+> streams on mdss_dp0 but only 2 streams on mdss_dp1.
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->   drivers/ufs/core/ufs-sysfs.c |  2 +-
->   drivers/ufs/core/ufshcd.c    | 16 ++++++++++++++++
->   include/ufs/ufshcd.h         |  2 ++
->   3 files changed, 19 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-> index 4bd7d491e3c5..8f7975010513 100644
-> --- a/drivers/ufs/core/ufs-sysfs.c
-> +++ b/drivers/ufs/core/ufs-sysfs.c
-> @@ -512,7 +512,7 @@ static ssize_t pm_qos_enable_show(struct device *dev,
->   {
->   	struct ufs_hba *hba = dev_get_drvdata(dev);
->   
-> -	return sysfs_emit(buf, "%d\n", hba->pm_qos_enabled);
-> +	return sysfs_emit(buf, "%d\n", READ_ONCE(hba->pm_qos_enabled));
->   }
->   
->   /**
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 926650412eaa..f259fb1790fa 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -1047,14 +1047,18 @@ EXPORT_SYMBOL_GPL(ufshcd_is_hba_active);
->    */
->   void ufshcd_pm_qos_init(struct ufs_hba *hba)
->   {
-> +	mutex_lock(&hba->pm_qos_mutex);
->   
->   	if (hba->pm_qos_enabled)
-> +		mutex_unlock(&hba->pm_qos_mutex);
->   		return;
-Missing the curly braces for this If statement.
->   
->   	cpu_latency_qos_add_request(&hba->pm_qos_req, PM_QOS_DEFAULT_VALUE);
->   
->   	if (cpu_latency_qos_request_active(&hba->pm_qos_req))
->   		hba->pm_qos_enabled = true;
-> +
-> +	mutex_unlock(&hba->pm_qos_mutex);
->   }
->   
->   /**
-> @@ -1063,11 +1067,15 @@ void ufshcd_pm_qos_init(struct ufs_hba *hba)
->    */
->   void ufshcd_pm_qos_exit(struct ufs_hba *hba)
->   {
-> +	mutex_lock(&hba->pm_qos_mutex);
-> +
->   	if (!hba->pm_qos_enabled)
-> +		mutex_unlock(&hba->pm_qos_mutex);
->   		return;
-Same here.
->   	cpu_latency_qos_remove_request(&hba->pm_qos_req);
->   	hba->pm_qos_enabled = false;
-> +	mutex_unlock(&hba->pm_qos_mutex);
->   }
->   
->   /**
-> @@ -1077,10 +1085,14 @@ void ufshcd_pm_qos_exit(struct ufs_hba *hba)
->    */
->   static void ufshcd_pm_qos_update(struct ufs_hba *hba, bool on)
->   {
-> +	mutex_lock(&hba->pm_qos_mutex);
-> +
->   	if (!hba->pm_qos_enabled)
-> +		mutex_unlock(&hba->pm_qos_mutex);
->   		return;
-Same here.
->   	cpu_latency_qos_update_request(&hba->pm_qos_req, on ? 0 : PM_QOS_DEFAULT_VALUE);
-> +	mutex_unlock(&hba->pm_qos_mutex);
->   }
->   
->   /**
-> @@ -10764,6 +10776,10 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
->   	mutex_init(&hba->ee_ctrl_mutex);
->   
->   	mutex_init(&hba->wb_mutex);
-> +
-> +	/* Initialize mutex for PM QoS request synchronization */
-> +	mutex_init(&hba->pm_qos_mutex);
-> +
->   	init_rwsem(&hba->clk_scaling_lock);
->   
->   	ufshcd_init_clk_gating(hba);
-> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-> index 30ff169878dc..e81f4346f168 100644
-> --- a/include/ufs/ufshcd.h
-> +++ b/include/ufs/ufshcd.h
-> @@ -962,6 +962,7 @@ enum ufshcd_mcq_opr {
->    * @ufs_rtc_update_work: A work for UFS RTC periodic update
->    * @pm_qos_req: PM QoS request handle
->    * @pm_qos_enabled: flag to check if pm qos is enabled
-> + * @pm_qos_mutex: synchronizes PM QoS request and status updates
->    * @critical_health_count: count of critical health exceptions
->    * @dev_lvl_exception_count: count of device level exceptions since last reset
->    * @dev_lvl_exception_id: vendor specific information about the
-> @@ -1135,6 +1136,7 @@ struct ufs_hba {
->   	struct delayed_work ufs_rtc_update_work;
->   	struct pm_qos_request pm_qos_req;
->   	bool pm_qos_enabled;
-> +	struct mutex pm_qos_mutex;
->   
->   	int critical_health_count;
->   	atomic_t dev_lvl_exception_count;
+>  .../bindings/display/msm/dp-controller.yaml        | 91 +++++++++++++++++++++-
+>  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 26 +++++--
+>  .../bindings/display/msm/qcom,sar2130p-mdss.yaml   | 10 ++-
+>  .../bindings/display/msm/qcom,sc7280-mdss.yaml     |  3 +-
+>  .../bindings/display/msm/qcom,sm7150-mdss.yaml     | 10 ++-
+>  .../bindings/display/msm/qcom,sm8750-mdss.yaml     | 10 ++-
+>  .../bindings/display/msm/qcom,x1e80100-mdss.yaml   | 10 ++-
+>  7 files changed, 138 insertions(+), 22 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> index afe01332d66c3c2e6e5848ce3d864079ce71f3cd..8282f3ca45c8b18f159670a7d8c4d9515cdb62ca 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> @@ -66,25 +66,37 @@ properties:
+>        - description: link register block
+>        - description: p0 register block
+>        - description: p1 register block
+> +      - description: p2 register block
+> +      - description: p3 register block
+> +      - description: mst2link register block
+> +      - description: mst3link register block
+>  
+>    interrupts:
+>      maxItems: 1
+>  
+>    clocks:
+> +    minItems: 5
+>      items:
+>        - description: AHB clock to enable register access
+>        - description: Display Port AUX clock
+>        - description: Display Port Link clock
+>        - description: Link interface clock between DP and PHY
+> -      - description: Display Port Pixel clock
+> +      - description: Display Port stream 0 Pixel clock
+> +      - description: Display Port stream 1 Pixel clock
+> +      - description: Display Port stream 2 Pixel clock
+> +      - description: Display Port stream 3 Pixel clock
+>  
+>    clock-names:
+> +    minItems: 5
+>      items:
+>        - const: core_iface
+>        - const: core_aux
+>        - const: ctrl_link
+>        - const: ctrl_link_iface
+>        - const: stream_pixel
+> +      - const: stream_1_pixel
+> +      - const: stream_2_pixel
+> +      - const: stream_3_pixel
+
+So this changes explain dependency in "Display enablement changes for
+Qualcomm QCS8300 platform". Well, heh, I already marked other one as
+changes requested. It's way too many  patches touching the same file.
+
+>  
+>    phys:
+>      maxItems: 1
+> @@ -166,7 +178,6 @@ required:
+>  allOf:
+>    # AUX BUS does not exist on DP controllers
+>    # Audio output also is present only on DP output
+> -  # p1 regions is present on DP, but not on eDP
+>    - if:
+>        properties:
+>          compatible:
+> @@ -195,11 +206,83 @@ allOf:
+>        else:
+>          properties:
+>            aux-bus: false
+> -          reg:
+> -            minItems: 5
+>          required:
+>            - "#sound-dai-cells"
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              # these platforms support SST only
+> +              - qcom,sc7180-dp
+> +              - qcom,sc7280-dp
+> +              - qcom,sc7280-edp
+> +              - qcom,sc8180x-edp
+> +              - qcom,sc8280xp-edp
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 5
+> +          maxItems: 5
+> +        clocks:
+> +          minItems: 5
+> +          maxItems: 5
+
+You need to restrict clock-names. Same in other places.
+
+Best regards,
+Krzysztof
+
 
