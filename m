@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-796613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9668EB40396
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:34:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF03DB403CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BCBE16EB46
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9FE1896E71
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A510C31282C;
-	Tue,  2 Sep 2025 13:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F4D314A60;
+	Tue,  2 Sep 2025 13:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQO4sYX+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8WjY/OV"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA82230C60E
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1391130DD30;
+	Tue,  2 Sep 2025 13:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819745; cv=none; b=OWWCnUFBIrDeGfrOAaKZ9X32RUEWf8vegdSJsNK2rk+KTToMPibEPBx2Lf7ycxUQRh3OqWjvJ4OQCi2ejcuDqbERLLyNKh6XSLOV/FJ2amqgnxuBOtiPjQpXe/1XxrC+rdnWWX5i0d412k1X6H92VpT4AjhP+oUOFFBjB800LdE=
+	t=1756819772; cv=none; b=GNrGUVjrr9gXwMpKTHkCHu1TnIl+A48esACEjuiWwjI2GE4KzTO0qThF9914Ccr1+Xi1+CBRKz0/8hh0NFhbIkc7TG7Rd9ii0L7w5LYXbhfyD7aPMt0+bscOghaEChWoyWTo2NH44GF/8vryWikXwGMpvPpDgzMzuyTGpcHSrs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819745; c=relaxed/simple;
-	bh=bKrc/KNUiIl5AH4P6O9OJQIOcy/lafk6ZY3UafCRKkY=;
+	s=arc-20240116; t=1756819772; c=relaxed/simple;
+	bh=+qnsGe+tD6ybWDl00Ihi4djJ37mafLqwtURRx0yItGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLF5D58SGM1Xgilz99fUdsyX4mskr9+o0IonY+pmuU0DTkd01U6PPdXhAXOtRjkIgwtP2OuPdlfsTnHzb5m0byEdaTBNo1GPRR32k1g/kRVSqGMzInbPfrVd85XcTs60hVUHPBKSRsXOARrzOStaAOUdg5ZyOQiCNaGwvgPvJpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQO4sYX+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF81C4CEED;
-	Tue,  2 Sep 2025 13:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756819744;
-	bh=bKrc/KNUiIl5AH4P6O9OJQIOcy/lafk6ZY3UafCRKkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQO4sYX+sDkXTDqEKyopX3kGTqxEUhPDbQA8eqEBMgWXWSDSCKIs2ymNL74TT5Uy0
-	 A6FMtu3tnU8k4yaiXgZ1+em1FsFIg+s5+OJer+SjQifLOD29ArNAOzWSuxsi4I4qeu
-	 qbnAgiEVNNjuCLeqckeXP55aTBFREBrINcNyh6USVakHHFt0iZi/Wol+uxiFerHG6r
-	 PtXEnquMaOSisaI0Ll0wwzjnVLb9cEGHsvvjqAK4WYQWpcHhn+Sev2KopkggBxBcJM
-	 aVh1ODS2n7IkjxiT4SSLmROy0Dp9gwU1Tp/XrJC/h9ZD8KGArJLW1XtlJF9dM9A7ET
-	 XKscJKZc5Nq2A==
-Date: Tue, 2 Sep 2025 14:29:00 +0100
-From: Lee Jones <lee@kernel.org>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-	Cheng Ming Lin <linchengming884@gmail.com>,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: core: Increment of_node's refcount before linking
- it to the platform device
-Message-ID: <20250902132900.GN2163762@google.com>
-References: <20250820-mfd-refcount-v1-1-6dcb5eb41756@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p3uWg1iz1mpZkvXLBXXta5hefWNk/HS8FUcclB7ZD46fauNc3EKSkhYznFl3yMuSj4YTcN7XI2Dm5RIKFFmyVXSdSILzMCDLtwuSr4AP84BVBU/uFF+y9ZTsHPCshdLZmhds222OeeVPuvIiOMP+ZhNYovuKWxtJz028ggvmDnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R8WjY/OV; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61e8fe26614so4316215a12.1;
+        Tue, 02 Sep 2025 06:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756819768; x=1757424568; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fGm7QHNO1eNDAPTjJ+w42zov3+cLbPVeyZw3a1UIkog=;
+        b=R8WjY/OVRqbvgncjV9f43QtYUvop+secLCz1EcwzHp4v8paB5thUoDQfg475zIc+6u
+         vIemoub4ru8nQ2bZ8HDqaqjiorDNELeha4RgxtkE/FYp1Z7L3Ko4sgS47L548wgirZ2N
+         DkqY0TlUluYXM2eYtUZ/tjxwdlpoHeBOMAAUBa2594cYIwAEKJ3bh425jmQ7XZmiBnFb
+         IBXi6zm2urEDN41pQ+KUkF+vdeY7o0wYi0m6IE/ZXX7AVWkrS/OQmhXf8XseqBMrKVZf
+         U8VZDgL7zA4kF5783tKFv9gK53V4ULpJG72AnSAcdPNHUIjCJYKR9Ew+hx60obNnxdov
+         /eWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756819768; x=1757424568;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fGm7QHNO1eNDAPTjJ+w42zov3+cLbPVeyZw3a1UIkog=;
+        b=e7hSAcBG47B1kNwaWFZMokiDzoiZYe9osFPp2TBFq/4Y27Vt+4pGvTNcSABjq/Kd+d
+         a9FqK9n4jaSoupQGe/zCy0Ga/pohvY79iFfSmlVpIjHdSa5eOq3ILgVow/BFL9ZvjLHv
+         mrhgEHSCOdgDHSfAhyVltZ2EoO7w5PoI5TCS/WD+cXh5XiO8bqjKeSI8bccgbrkO7pR3
+         5D7YHouHfkn2wYXCiyTFiaisGJdBHvnrmGlXpSegTVn8s7Cz0mZpSCDWKV/Eup5CtOy9
+         tT7LVbu0RD6/vrxokMRGxd9X8ayVY0a1hi53tekJShm2PX8g1XvyjG6Joy1BCZ40OMJ8
+         vNxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9m4UTevQQs2GvPHkxFjxxEorN3NGiNjx4s0SH5WAD2Ev02fKa4WOSx+iB/tpnVKxtiIw94QRIlMLlMi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyui2WHW0fbwbjQ0HcCDx3gmy6urwXo0yoZKkybcgm+DQmDDfYB
+	EzXdhGzeCeMLAXXGeyrygT4+jyUb/qlAC/FChcHOv5e1gYnUczd+2LG6
+X-Gm-Gg: ASbGncvos/JtwLU6UTo5CEZZiDp2O0902CBBqByiD7viGtAu05DcXCx9Xpj4WW6XkTl
+	uWzZDxmG9BVjAzHdAOg0FKMQuq66Zn+Jq4ov8b1uTW/AQ3x5SyL3cbH4993FUvuN5zHrI/5Jg0H
+	MMFLtp1DjrBXC58RKPi4yPCH3oVsvFHH2i8ASkWoGfo1buRDeZdtQNWUtvMDaWxnxpm0tvecRQU
+	tSppDYM0+GPZ9aJdxAwSLc9FTO1CVn1++vHkfikSyShc2iMGFqSXjgcMfGLpsC6+INEl/m85vZ7
+	10HdCqSRXStCT6GCF2fMpVXtyruMRE3xI3s2kLgoDwuFbwod24pXUyB0nrMNbn/mqBOt6fIdvUy
+	I0KCMJB5386LC0CK5+/TA9kIoe4Gp1INXU+x2H/Bg8CubrVHvIknGkDjDe8rV3g1TVKx5OGTNH/
+	oS
+X-Google-Smtp-Source: AGHT+IEUQJWqqcjNrnEJCh5XmySlOY4g2F2iO77onI5FlsaxvRv2O6pfIuRwF5B32E+ufZXFTLk3Hw==
+X-Received: by 2002:a05:6402:540e:b0:615:5bec:1df with SMTP id 4fb4d7f45d1cf-61d26d5e7b2mr9549028a12.25.1756819768238;
+        Tue, 02 Sep 2025 06:29:28 -0700 (PDT)
+Received: from XPS ([2a02:908:1b0:afe0:a26d:192:8cf5:7a0d])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cfc5315c7sm9404959a12.46.2025.09.02.06.29.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:29:27 -0700 (PDT)
+Date: Tue, 2 Sep 2025 15:29:25 +0200
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mips: math-emu: replace deprecated strcpy() in me-debugfs
+Message-ID: <aLbxNfo9Y0QkF1fC@XPS>
+References: <20250901133920.94022-1-osama.abdelkader@gmail.com>
+ <aLbbQ1vwnXYwU6JJ@alpha.franken.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250820-mfd-refcount-v1-1-6dcb5eb41756@bootlin.com>
+In-Reply-To: <aLbbQ1vwnXYwU6JJ@alpha.franken.de>
 
-On Wed, 20 Aug 2025, Bastien Curutchet wrote:
+On Tue, Sep 02, 2025 at 01:55:47PM +0200, Thomas Bogendoerfer wrote:
+> On Mon, Sep 01, 2025 at 03:39:19PM +0200, Osama Abdelkader wrote:
+> > use strscpy() instead of deprecated strcpy().
+> > 
+> > Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+> > ---
+> >  arch/mips/math-emu/me-debugfs.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/mips/math-emu/me-debugfs.c b/arch/mips/math-emu/me-debugfs.c
+> > index d5ad76b2bb67..94667cbe18e7 100644
+> > --- a/arch/mips/math-emu/me-debugfs.c
+> > +++ b/arch/mips/math-emu/me-debugfs.c
+> > @@ -41,7 +41,7 @@ static void adjust_instruction_counter_name(char *out_name, char *in_name)
+> >  {
+> >  	int i = 0;
+> >  
+> > -	strcpy(out_name, in_name);
+> > +	strscpy(out_name, in_name, sizeof(out_name));
+> 
+> this is wrong. sizeof(out_name) is the size of the pointer, but not the
+> size of the storage behind it. To be able to use strscpy() here you
+> need to pass in the size of the given buffer and use that.
+> 
+> Thomas.
+> 
 
-> When an MFD device is added, a platform_device is allocated. If this
-> device is linked to a DT description, the corresponding OF node is linked
-> to the new platform device but the OF node's refcount isn't incremented.
-> As of_node_put() is called during the platform device release, it leads
-> to a refcount underflow.
-> 
-> Call of_node_get() to increment the OF node's refcount when the node is
-> linked to the newly created platform device.
-> 
-> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
-> ---
-> Hi all,
-> 
-> I'm currently working on a new MFD driver and I encountered some
-> underflow errors with the of_node refcount. As you can see in the logs
-> below, I reproduced the issue on a mainline driver (atmel-hlcdc):
-> 
-> > # modprobe atmel-hlcdc
-> > # modprobe -r atmel-hlcdc
-> > # modprobe atmel-hlcdc
-> > # modprobe -r atmel-hlcdc
-> > [   22.932128] OF: ERROR: of_node_release() detected bad of_node_put() on /amba_pl/atmel_sama5@43a00000/dc
-> > [   22.941586] CPU: 1 UID: 0 PID: 103 Comm: modprobe Not tainted 6.17.0-rc2-00053-gb19a97d57c15-dirty #81 NONE
-> > [   22.941608] Hardware name: Xilinx Zynq Platform
-> > [   22.941615] Call trace:
-> > [   22.941626]  unwind_backtrace from show_stack+0x10/0x14
-> > [   22.941660]  show_stack from dump_stack_lvl+0x54/0x68
-> > [   22.941680]  dump_stack_lvl from of_node_release+0x140/0x16c
-> > [   22.941707]  of_node_release from kobject_put+0x110/0x130
-> > [   22.941745]  kobject_put from platform_device_release+0x10/0x3c
-> > [   22.941782]  platform_device_release from device_release+0x30/0xa0
-> > [   22.941814]  device_release from kobject_put+0x88/0x130
-> > [   22.941845]  kobject_put from klist_prev+0xd4/0x16c
-> > [   22.941879]  klist_prev from device_for_each_child_reverse+0x88/0xc8
-> > [   22.941911]  device_for_each_child_reverse from devm_mfd_dev_release+0x30/0x54
-> > [   22.941941]  devm_mfd_dev_release from devres_release_all+0xb0/0x114
-> > [   22.941974]  devres_release_all from device_unbind_cleanup+0xc/0x58
-> > [   22.942003]  device_unbind_cleanup from device_release_driver_internal+0x190/0x1c4
-> > [   22.942025]  device_release_driver_internal from driver_detach+0x54/0xa0
-> > [   22.942046]  driver_detach from bus_remove_driver+0x58/0xa4
-> > [   22.942066]  bus_remove_driver from sys_delete_module+0x178/0x25c
-> > [   22.942094]  sys_delete_module from ret_fast_syscall+0x0/0x54
-> > [   22.942116] Exception stack(0xf0a1dfa8 to 0xf0a1dff0)
-> > [   22.942130] dfa0:                   004ec438 005a0870 005a0d40 00000080 00000000 005a0d18
-> > [   22.942144] dfc0: 004ec438 005a0870 005a0190 00000081 005a0d60 005a0870 00000001 0059f6bc
-> > [   22.942155] dfe0: beccdb20 beccdb10 004ed1f4 b6e9eb40
-> > [   22.942163] OF: ERROR: next of_node_put() on this node will result in a kobject warning 'refcount_t: underflow; use-after-free.'
-> > [   23.098617] OF: ERROR: of_node_release() detected bad of_node_put() on /amba_pl/atmel_sama5@43a00000/pwm
-> > [   23.108137] CPU: 1 UID: 0 PID: 103 Comm: modprobe Not tainted 6.17.0-rc2-00053-gb19a97d57c15-dirty #81 NONE
-> > [   23.108159] Hardware name: Xilinx Zynq Platform
-> > [   23.108166] Call trace:
-> > [   23.108173]  unwind_backtrace from show_stack+0x10/0x14
-> > [   23.108206]  show_stack from dump_stack_lvl+0x54/0x68
-> > [   23.108227]  dump_stack_lvl from of_node_release+0x140/0x16c
-> > [   23.108252]  of_node_release from kobject_put+0x110/0x130
-> > [   23.108288]  kobject_put from platform_device_release+0x10/0x3c
-> > [   23.108324]  platform_device_release from device_release+0x30/0xa0
-> > [   23.108354]  device_release from kobject_put+0x88/0x130
-> > [   23.108384]  kobject_put from klist_prev+0xd4/0x16c
-> > [   23.108418]  klist_prev from device_for_each_child_reverse+0x88/0xc8
-> > [   23.108450]  device_for_each_child_reverse from devm_mfd_dev_release+0x30/0x54
-> > [   23.108479]  devm_mfd_dev_release from devres_release_all+0xb0/0x114
-> > [   23.108513]  devres_release_all from device_unbind_cleanup+0xc/0x58
-> > [   23.108541]  device_unbind_cleanup from device_release_driver_internal+0x190/0x1c4
-> > [   23.108563]  device_release_driver_internal from driver_detach+0x54/0xa0
-> > [   23.108585]  driver_detach from bus_remove_driver+0x58/0xa4
-> > [   23.108605]  bus_remove_driver from sys_delete_module+0x178/0x25c
-> > [   23.108631]  sys_delete_module from ret_fast_syscall+0x0/0x54
-> > [   23.108653] Exception stack(0xf0a1dfa8 to 0xf0a1dff0)
-> > [   23.108667] dfa0:                   004ec438 005a0870 005a0d40 00000080 00000000 005a0d18
-> > [   23.108681] dfc0: 004ec438 005a0870 005a0190 00000081 005a0d60 005a0870 00000001 0059f6bc
-> > [   23.108691] dfe0: beccdb20 beccdb10 004ed1f4 b6e9eb40
-> > [   23.108698] OF: ERROR: next of_node_put() on this node will result in a kobject warning 'refcount_t: underflow; use-after-free.'
-> ---
->  drivers/mfd/mfd-core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> index 76bd316a50afc5c07ff2a3303c4363b16d0bc023..7d14a1e7631ee8d5e91b228a07b2d05695e41b6e 100644
-> --- a/drivers/mfd/mfd-core.c
-> +++ b/drivers/mfd/mfd-core.c
-> @@ -131,6 +131,7 @@ static int mfd_match_of_node_to_dev(struct platform_device *pdev,
->  	of_entry->np = np;
->  	list_add_tail(&of_entry->list, &mfd_of_node_list);
->  
-> +	of_node_get(np);
+Thanks Thomas, I just sent v2.
 
-Looks okay at first blush.
+Regards,
+Osama
 
-My question would be, why isn't this required for all calls to device_set_node()?
-
->  	device_set_node(&pdev->dev, of_fwnode_handle(np));
->  #endif
->  	return 0;
-> 
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250820-mfd-refcount-0d561c25b10b
-> 
-> Best regards,
 > -- 
-> Bastien Curutchet <bastien.curutchet@bootlin.com>
-> 
-
--- 
-Lee Jones [李琼斯]
+> Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+> good idea.                                                [ RFC1925, 2.3 ]
 
