@@ -1,325 +1,141 @@
-Return-Path: <linux-kernel+bounces-797395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E723B40FE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:17:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99939B40FED
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92E151B64CB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:18:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 921CE5624AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F687275AFA;
-	Tue,  2 Sep 2025 22:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88297270541;
+	Tue,  2 Sep 2025 22:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NQCaPVv+"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tV1oCHyr"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F22C258EC1
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 22:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0858D26E161
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 22:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756851460; cv=none; b=rMgCUOFzanUhyTwcqacAMP8m8kzjYNMnJUkaCejMj7mU6aVD6IXrtcBrY7l4x3nNp2+42x8Wh2LfhfwUPFd3uCbPiuTYLe0WNk2B0ff2j4egmtCZ6i/zXqrdQlspCLI1q04ylg4mTNnt0LG3X/81nN95VXs9hJUdyBQtnJJmgkk=
+	t=1756851513; cv=none; b=Gosp3IELEx5p2TkKlRQYeRK4DTyRyEgoxun/SD7nj77Qkfiw7NduHrlARBIavGgp74DqMCMjUNz/TOhKbyKqABS7sc78oVxTgQdJwPZREyKI3l8uLhbR45s/wGgogB2hcApHz/nCtv2MwqtcgayL4oTIE9FvQQRUPZ/M2xRKBQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756851460; c=relaxed/simple;
-	bh=YEIc194Ao5yrfy9fw80PwIuIjisIq6gf8KDaB/zh1tw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u2gxRPvwJ3EbhTjmYq+7gj21esG0yMZe8UHay0XVxsVTlxFF4mUyvrOTmR60bQrjirNGHsgZcMQ2EN+qmpbu/CxXdO0oW09vQNT20UUbhhi6d2ngRyRV5rocmlib6zsC6Xdowoo05k3TAw/lwZ9tuaiagzq1DgsBQsn7gFcPK6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NQCaPVv+; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1756851513; c=relaxed/simple;
+	bh=li67uZ6xqKQCADV810jgcapd5oaTXRr3DZZuD3FIP0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eU/MWUxLG0sf5u4Ja4B6jK90fd3wAqkOu/vm8uR1IghnfPS485qPwXIgClO/wZQu+cuPCGAikVjLHHyZosfbzw8BTIZsE87NGK2rjVIHo4ETknU8Iyyzemvv1LYaVIUQAKnrKLEtqCqIic9RsmU6TNnO2cVPLU3mFG7VAQ6A3Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tV1oCHyr; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b8b2712d8so29666205e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 15:17:38 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f76277413so3342735e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 15:18:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756851457; x=1757456257; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Odc+SKaLkvuOl8Zr1Krcde+q8Sa9570C7V06vYvfBtQ=;
-        b=NQCaPVv+QuqGlQ3snW2yZBTfOnYt2jhf3sFYE6JTQ7b5HFlK8xGhlFet0L+RSkgVST
-         YKxXWnm3OI+ZQAEw2GznTLEibGWlzZo2aU5Nt5McVMhg+KmKIfJeeB8zVrBXuuZ4wiPr
-         MpZvm2CN0dGOZeflnTHzzkjFeRNp16iKyvi2duQ2fSJy1l/GNEQTQgWOG42+47Ne0bQS
-         mUgzxGMcxlHkX+sj7F3mPmTDPdq+WJTPEreI81MhkkKCUFDOmphQHGMvzhA5LrlmDZjB
-         iZTYMhyP0qEkxipD9CFk1MabQRFDV+EWHWGyCM1vwCKu5bCDT1KaEIysXQWcyrm2CJPy
-         WwAw==
+        d=linaro.org; s=google; t=1756851510; x=1757456310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=li67uZ6xqKQCADV810jgcapd5oaTXRr3DZZuD3FIP0o=;
+        b=tV1oCHyrfYmjhrmPLH533BARsrpxRbaJMmIKMNpiBU+cBcoAjdS61zjvYBmxUNSWSE
+         aLQlV49Fpv/lyTrHOgiCRClCVrQmVfAYwYrPsVja3Cz8n6w5wQljG6AStH2AXIaaAkWh
+         357LGU4MIEiI1ubmGF0VLgK+FaxVBli9M0d3co6QlJKjUJrgHwHnL9NEZVuUznqwc9CP
+         S+j1UgUlrXACUZa1nKRyhUNvDBnwf3uB1+8Wthz8opS0iYw7ry0PGN1Vq3T9FzCoyRaj
+         PFlMqIw9ZZCGI6EFQ/qIAeNKWYnpnLly2XhKcY6P5fOUspO4X9L4qxrNK5K6r/0qV1ZY
+         GXOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756851457; x=1757456257;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Odc+SKaLkvuOl8Zr1Krcde+q8Sa9570C7V06vYvfBtQ=;
-        b=lqU5rK/KZyp92W5mtVSgUE+wrDczWiB0RkQr+Y43wCdNVDDLhj8ZQvgy6KmhWGEosV
-         4d90LGAoqffN4hhHvixT2ayiveWfuw11UF/uCX9gOq/urCHb/j1cscREGDgYMmkOIXl/
-         jWumGhpOL0FZEkB4DhN3BfZe/uolxMGXI1TiWOm9I98r+Hk6DTpXOt94Jmo0iiuPoThB
-         ugST/1sCd1pP/V2R7hYeZ0pJv47SamW0VBZuxHP2fuTFIvCav3llplXExArgZo8sQdXU
-         BfctR8xErVQKrDLxLOyVnhXtampgMTBtGPPfnj+wNLfNUEz4mm2n2rjzeYSaEEYEKhu3
-         +OgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyd/0I9zAEglKxumV2oSYRY59FQ9wMDsWMFMgu9KIfvHW8REkTyTTuYAyk69Hsg1kkCP1oV+1DbT5F6Yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhpENXDNOnPMmDZ4cw782KOeJC2RguRH01tLds1i+JKdrBVS6w
-	Oei5gGMKaF45i7vTZRDKtZ3WgQclSGnhqkft5r+YoqPFTeBbTI00gH8CBEks5LhM4ao=
-X-Gm-Gg: ASbGncumw4ioX0O+lorGGOIPWd4IYi+CXH+/0OE4maOeT1ZlgPHWqB85g2tfdocGIqw
-	4KzhDyyR5/d1XvR0oSqkhgkVPYNtfmYPy8ay7DkqfUWLOaEhmHi4aEPnnOn0baJ/7WSeqWis18I
-	uNLdSjR4x5FxIdj7qGWfoDfzx2zAjxRanyVuH2wAexVmEZqy/sRZTGENKeciQ6JKZFgmmh2j4P7
-	E5WHoqdPJyO6sox2v9iFVgNadgWqA2pUMP/4k1pQrbnAv974dXXQ5aAVgkDZgYdmdiPBvyvX1n7
-	KP4XwMMGKvrSQ6wtNnq4CkCAydNxHyyalT0ZbvMkQqnPqzg5b8RltlJE5OL6E+KJO5togdY0hUu
-	TDJBvlMbLOx9V5pSsXSTikh47RomGTV7kKemCdA3y6r+8ko3sBMmwpWbDebiJlEcL98tSymIvjN
-	BPT9JKumgWCwJ5Z4cM3Pi2cgsVLg0nGJA=
-X-Google-Smtp-Source: AGHT+IEcfnYXz+ii1oNYKNXIttKMgpo4bfd3Q7jINqKFuzP2Jas3kpGopgl+yDLGBteadORdYJEmQA==
-X-Received: by 2002:a05:600c:3153:b0:458:bda4:43df with SMTP id 5b1f17b1804b1-45b85570996mr137042635e9.17.1756851456607;
-        Tue, 02 Sep 2025 15:17:36 -0700 (PDT)
-Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45c447244c4sm15302105e9.6.2025.09.02.15.17.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 15:17:36 -0700 (PDT)
-Message-ID: <80bc915b-16fa-4cab-b461-b18b9a124d0e@linaro.org>
-Date: Tue, 2 Sep 2025 23:17:35 +0100
+        d=1e100.net; s=20230601; t=1756851510; x=1757456310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=li67uZ6xqKQCADV810jgcapd5oaTXRr3DZZuD3FIP0o=;
+        b=WsryqP7XBGSRK57lVCgHZSKH8zQSiJyCFJQcIdfBnkUYukwlO2xhlwjytS22D7ivLW
+         Ih7Cv13B0tOzyPiD3ZlgA0sp8ia0rBVXek3uX9f3GfNUAEbNj7QgrU2EXdANPG+F3h5d
+         jP6/cyAqeauAj/+nV7UkuBKwdbdONGSNh1zLljHOfyOC9h5yL/5zSHY1A4A8tiKizzqy
+         9W8IpvAcnC3mUA7pAbj9LCPn9IZqoeq53so1na3rYIsUpu7G3Qko57JnBEtJPCQqCctV
+         eGZw+3o3+I1zjDn6XENXz9soLpfFtpUs980WQTUN6JNCnTmcyYEuLfYM/MODL9ZD5Kp5
+         t6CA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGxLRly0aImKfkIkZZ8Vx1MhknkzXKrZqr95Px0ua8ZdQHgoJAUnc3qfxnKhh+Xu6DpgvosqtKzW0qGNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp23rmtX0+XBRvzcT3MogCU0Bwg/phgY+0Nd+BcE/yzow2lJqg
+	7SF8pTcVD/GAJLL32SzZKWj3jZGQR7hLVt1TaTX3HrnZf2sLRsNao/h68PW7274sSnEeuAZaiYs
+	6w6zRf2saKY3UhbziXXFQqbALGr7bMzNBLzPwApsoxw==
+X-Gm-Gg: ASbGncvuadI/CpoWdxgVVRaTPZOortCbmOuAcpDz+/W7YFJ8LTMLXnWg7AqcGpfY+xN
+	leG6FMDj1d4nxLifv024/iwIdhktPKtnSQ4Yp7kIb7PME3svqQGlKS7zlU7jgvoEU+s744ms8PZ
+	YIYXoyv0pYOFzQ+3uHRv/3KHc2mAVXCPpqixQ7T4XtLvxdsunW3odUkn6aSulfOOHZJT2EADGwv
+	2jv4LlmkqdynGfXlA==
+X-Google-Smtp-Source: AGHT+IFb5FJ4SVuaW/MZYjqlxiCtjVdy/Gs9hCmULK5gWsYMbnHTDsvg0XfXKbqBDAFJs9xAYF0giEeS6uNYA+ao+FQ=
+X-Received: by 2002:a05:6512:3d11:b0:55f:65fc:8db5 with SMTP id
+ 2adb3069b0e04-55f708b9c56mr3711945e87.23.1756851510074; Tue, 02 Sep 2025
+ 15:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
- video codec
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250902-sm8750-iris-v3-0-564488b412d2@linaro.org>
- <20250902-sm8750-iris-v3-1-564488b412d2@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250902-sm8750-iris-v3-1-564488b412d2@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+In-Reply-To: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 3 Sep 2025 00:18:18 +0200
+X-Gm-Features: Ac12FXw-1tPuaZxU9kVS8RfwbL5AeZ_YF1A5IdRwoR4crjvnC6JAL_oHeKPOKoA
+Message-ID: <CACRpkdZ-Toq9MziPisZCcT7zcL3rosQYZ1Jw=RWCH1KZTbeBug@mail.gmail.com>
+Subject: Re: [PATCH v7 00/16] pinctrl: introduce the concept of a GPIO pin
+ function category
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/09/2025 13:45, Krzysztof Kozlowski wrote:
-> Add binding for Qualcom SM8750 Iris video codec, which comes with
-> significantly different powering up sequence than previous SM8650, thus
-> different clocks and resets.  For consistency keep existing clock and
-> clock-names naming, so the list shares common part.
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   .../bindings/media/qcom,sm8750-iris.yaml           | 201 +++++++++++++++++++++
->   1 file changed, 201 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8750-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8750-iris.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..1d9e8479a4b04eaf571cfd022725dc0b397e4947
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,sm8750-iris.yaml
-> @@ -0,0 +1,201 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,sm8750-iris.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SM8750 SoC Iris video encoder and decoder
-> +
-> +maintainers:
-> +  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> +
-> +description:
-> +  The Iris video processing unit on Qualcomm SM8750 SoC is a video encode and
-> +  decode accelerator.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sm8750-iris
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 6
-> +
-> +  clock-names:
-> +    items:
-> +      - const: iface          # AXI0
-> +      - const: core
-> +      - const: vcodec0_core
-> +      - const: iface1         # AXI1
-> +      - const: core_freerun
-> +      - const: vcodec0_core_freerun
-> +
-> +  dma-coherent: true
-> +
-> +  firmware-name:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interconnects:
-> +    maxItems: 2
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: cpu-cfg
-> +      - const: video-mem
-> +
-> +  iommus:
-> +    maxItems: 2
-> +
-> +  memory-region:
-> +    maxItems: 1
-> +
-> +  operating-points-v2: true
-> +  opp-table:
-> +    type: object
-> +
-> +  power-domains:
-> +    maxItems: 4
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: venus
-> +      - const: vcodec0
-> +      - const: mxc
-> +      - const: mmcx
-> +
-> +  resets:
-> +    maxItems: 4
-> +
-> +  reset-names:
-> +    items:
-> +      - const: bus0
-> +      - const: bus1
-> +      - const: core
-> +      - const: vcodec0_core
-> +
-> +required:
-> +  - compatible
-> +  - dma-coherent
-> +  - interconnects
-> +  - interconnect-names
-> +  - iommus
-> +  - power-domain-names
-> +  - resets
-> +  - reset-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    #include <dt-bindings/clock/qcom,sm8750-gcc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interconnect/qcom,icc.h>
-> +    #include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +
-> +    video-codec@aa00000 {
-> +        compatible = "qcom,sm8750-iris";
-> +        reg = <0x0aa00000 0xf0000>;
-> +
-> +        clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
-> +                 <&videocc_mvs0c_clk>,
-> +                 <&videocc_mvs0_clk>,
-> +                 <&gcc GCC_VIDEO_AXI1_CLK>,
-> +                 <&videocc_mvs0c_freerun_clk>,
-> +                 <&videocc_mvs0_freerun_clk>;
-> +        clock-names = "iface",
-> +                      "core",
-> +                      "vcodec0_core",
-> +                      "iface1",
-> +                      "core_freerun",
-> +                      "vcodec0_core_freerun";
-> +
-> +        dma-coherent;
-> +        iommus = <&apps_smmu 0x1940 0>,
-> +                 <&apps_smmu 0x1947 0>;
-> +
-> +        interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +                         &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +                        <&mmss_noc MASTER_VIDEO_MVP QCOM_ICC_TAG_ALWAYS
-> +                         &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +        interconnect-names = "cpu-cfg",
-> +                             "video-mem";
-> +
-> +        interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +        operating-points-v2 = <&iris_opp_table>;
-> +
-> +        memory-region = <&video_mem>;
-> +
-> +        power-domains = <&videocc_mvs0c_gdsc>,
-> +                        <&videocc_mvs0_gdsc>,
-> +                        <&rpmhpd RPMHPD_MXC>,
-> +                        <&rpmhpd RPMHPD_MMCX>;
-> +        power-domain-names = "venus",
-> +                             "vcodec0",
-> +                             "mxc",
-> +                             "mmcx";
-> +
-> +        resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>,
-> +                 <&gcc GCC_VIDEO_AXI1_CLK_ARES>,
-> +                 <&videocc_mvs0c_freerun_clk_ares>,
-> +                 <&videocc_mvs0_freerun_clk_ares>;
-> +        reset-names = "bus0",
-> +                      "bus1",
-> +                      "core",
-> +                      "vcodec0_core";
-> +
-> +        iris_opp_table: opp-table {
-> +            compatible = "operating-points-v2";
-> +
-> +            opp-240000000 {
-> +                opp-hz = /bits/ 64 <240000000>;
-> +                required-opps = <&rpmhpd_opp_low_svs_d1>,
-> +                                <&rpmhpd_opp_low_svs_d1>;
-> +            };
-> +
-> +            opp-338000000 {
-> +                opp-hz = /bits/ 64 <338000000>;
-> +                required-opps = <&rpmhpd_opp_low_svs>,
-> +                                <&rpmhpd_opp_low_svs>;
-> +            };
-> +
-> +            opp-420000000 {
-> +                opp-hz = /bits/ 64 <420000000>;
-> +                required-opps = <&rpmhpd_opp_svs>,
-> +                                <&rpmhpd_opp_svs>;
-> +            };
-> +
-> +            opp-444000000 {
-> +                opp-hz = /bits/ 64 <444000000>;
-> +                required-opps = <&rpmhpd_opp_svs_l1>,
-> +                                <&rpmhpd_opp_svs_l1>;
-> +            };
-> +
-> +            opp-533333334 {
-> +                opp-hz = /bits/ 64 <533333334>;
-> +                required-opps = <&rpmhpd_opp_nom>,
-> +                                <&rpmhpd_opp_nom>;
-> +            };
-> +
-> +            opp-570000000 {
-> +                opp-hz = /bits/ 64 <570000000>;
-> +                required-opps = <&rpmhpd_opp_nom_l1>,
-> +                                <&rpmhpd_opp_nom_l1>;
-> +            };
-> +
-> +            opp-630000000 {
-> +                opp-hz = /bits/ 64 <630000000>;
-> +                required-opps = <&rpmhpd_opp_turbo>,
-> +                                <&rpmhpd_opp_turbo>;
-> +            };
-> +        };
-> +    };
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On Tue, Sep 2, 2025 at 1:59=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
+
+> We have many Qualcomm SoCs (and I can imagine it's a common pattern in
+> other platforms as well) where we mux a pin to "gpio" function using the
+> `pinctrl-X` property in order to configure bias or drive-strength and
+> then access it using the gpiod API. This makes it impossible to mark the
+> pin controller module as "strict".
+>
+> This series proposes to introduce a concept of a sub-category of
+> pinfunctions: GPIO functions where the above is not true and the pin
+> muxed as a GPIO can still be accessed via the GPIO consumer API even for
+> strict pinmuxers.
+
+This is what I want for pin control, and fixes an ages old issue
+that pin control has no intrinsic awareness of if a pin is muxed
+to a function providing GPIO.
+So patches applied!
+
+Any remaining code nitpicks can be fixed in-tree, I need this
+to be able to apply the much desired Broadcom STB driver,
+so this needs to go into -next now for cooking.
+
+I also want to strictify some drivers using this, bringing GPIO
+function awareness into them, which is a good thing!
+
+Yours,
+Linus Walleij
 
