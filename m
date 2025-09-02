@@ -1,88 +1,112 @@
-Return-Path: <linux-kernel+bounces-795743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBD8B3F741
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:59:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87716B3F7AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18F1E4E2E03
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A1C3B2B2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076112E7F3C;
-	Tue,  2 Sep 2025 07:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C512E8B61;
+	Tue,  2 Sep 2025 07:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffFZXkUr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mtYLoEvD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659FA2E7BC7
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBE42E7F01;
+	Tue,  2 Sep 2025 07:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756799889; cv=none; b=FBQdzrmTz/+sBpGmTChu2f+VGAEOOHH1mIMwMqv210hct5xCzZbwofkEbciwLB/eWf9aJhGtN6G/jn8UNoiquvR5ka2EXrOeuW/fZ0fhxwLQxGyzpU1gX58Jl4r09DzLlvk524jvpEm73IFNT1WROS7oFSP00E2WnYwFuDVRFF0=
+	t=1756799932; cv=none; b=bYp2BqOiTDzT3Zz209xHWNrKDhgMADtAfgK+zp78fAf/XrjbsSCixavdu3N6Zr9SRMajyQZ0qVGRzJ9rxfcB1khnmbCGvQxUcGKkXpjJxYfm9f8tUE3xyvfexjIGP3G+S9WE2Sk0Id/K+QHhOTrKcHJ3dr/BrPxgLYrrCqqYw2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756799889; c=relaxed/simple;
-	bh=riOnAUL1YikSHM62NdMXH51YihXKSKw+RyHmow1WIxk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XEXTmbSWEMvGeH+vTQVjOTJezAimoxu+kJeWc4vWuhh7phQ+CqWHYM1v52diU0X+VJvg0lZ/CbFuFnKKzf7wSKUAU3+ZZQo7N5DwJRiyk92dafC1T/f0ewsd0xVTZLDz8AqK8gXZ9A+9dA0BSxrlwVW67DnEJmJ5EJpxXJWxK0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffFZXkUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A8DCC4CEF5;
-	Tue,  2 Sep 2025 07:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756799889;
-	bh=riOnAUL1YikSHM62NdMXH51YihXKSKw+RyHmow1WIxk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ffFZXkUrM2n6p0P5TVZjq/FqCHhPooh5t3XbJsFtxYG8u6PptaqCntQSYAWvu3cHt
-	 32CzNSsXbhVi0xHnBhVGYciL1LQVjetcGSbBGoTXaoM3S2/SsaeCA9Y0sL+kr7TBbn
-	 /98mMCTVxmnU7kpMbXKF9mJ4ET4k+TP3wzq3l9bUVKKNUTkcTcPMvpo6+nPd4RBinr
-	 Wd60hoAPRjpdHB9v7/iVzeNGNEQyuGTa2JB2tg22mbnzbx8l3guLNQe36MpEHV5uiX
-	 zmsrlBN32PItAZI39j/QfV+T79EVsEzFPnJbhxaDxftRsB1BSjPYtk+/KKQJl0pucD
-	 WqnM421cnaM1w==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250804130726.3180806-1-heiko@sntech.de>
-References: <20250804130726.3180806-1-heiko@sntech.de>
-Subject: Re: [PATCH 0/4] mfd: qnap-mcu: Some fixes / improvements
-Message-Id: <175679988816.2174534.8796703637805096491.b4-ty@kernel.org>
-Date: Tue, 02 Sep 2025 08:58:08 +0100
+	s=arc-20240116; t=1756799932; c=relaxed/simple;
+	bh=cbq8MF9eGEnnphMQ9wc4BMUt4Hu+h2jsqpOJa5W4udU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HY4EK4EaM9NqGr0ZYTmwEKg9svAi6arpTJu1pdrudbOjtwWmvNESlex7zB2U6XS0gw9kR5sKnLfVz668etlp2JU7SQdw6IgMFBKSIFdLu+5Xy2L7yALISc2RzSlzTtxMdFTIreFipc9DQFEOgFRALHBYL2f9YMOj2U1albT+eDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mtYLoEvD; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756799931; x=1788335931;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cbq8MF9eGEnnphMQ9wc4BMUt4Hu+h2jsqpOJa5W4udU=;
+  b=mtYLoEvD8LCtrJ6KWO+ADI+9owmEo0xKaYgQIB72xo+Zl4zDQJZbIcHe
+   Qr72onyO8kYBjWhUe8mPVoe+s7L8SBA0NNsShiJxW5ImM00/9cpIhe6t1
+   wRQYTTUUopkmMnKLf03s/oJ8IgOST1Sw5RRRa/4Qi9CBxBAG4zEeshmx/
+   6jtDfbu1dvcp9tSA2pAL9Z+9QJmmHJFBTNs7lx73wYEyXp+4lds4EiCfs
+   1QJHswfwnz1Ti3H50AQOgRWxdokJgIgrOlQy25toaOllCyvCjWlzqO9eg
+   dZII2puqx+FrWd7J5S+HD+/ZAQbAYInZrLAjt+tlqLFTJdqa6v9ElPFsa
+   A==;
+X-CSE-ConnectionGUID: bEN/JYy3Qs+OSJRwjaMK7w==
+X-CSE-MsgGUID: 2AEsStArTK65cp+Qq5Ap0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11540"; a="70489944"
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="70489944"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 00:58:48 -0700
+X-CSE-ConnectionGUID: OmTL4EdoQVyoBmeICbyc9A==
+X-CSE-MsgGUID: l04QEiHiTeyRgGLknydhHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="170464617"
+Received: from agladkov-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.32])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 00:58:39 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id C88FA121F49;
+	Tue, 02 Sep 2025 10:58:36 +0300 (EEST)
+Date: Tue, 2 Sep 2025 10:58:36 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Bin Du <Bin.Du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+	laurent.pinchart+renesas@ideasonboard.com,
+	bryan.odonoghue@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sultan@kerneltoast.com, pratap.nirujogi@amd.com,
+	benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
+	Phil.Jawich@amd.com, Dominic.Antony@amd.com,
+	mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
+	Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+Subject: Re: [PATCH v3 1/7] media: platform: amd: Introduce amd isp4 capture
+ driver
+Message-ID: <aLajrP6ANpCZl-0n@kekkonen.localdomain>
+References: <20250828100811.95722-1-Bin.Du@amd.com>
+ <aLaTRwNp_SmHc4K3@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLaTRwNp_SmHc4K3@kekkonen.localdomain>
 
-On Mon, 04 Aug 2025 15:07:22 +0200, Heiko Stuebner wrote:
-> While digging through the mcu functions, I came across some deficits I
-> introduced with the initial driver submission, so trying to make that
-> a bit nicer with this series.
+On Tue, Sep 02, 2025 at 09:48:41AM +0300, Sakari Ailus wrote:
+> Hi Bin,
 > 
+> On Thu, Aug 28, 2025 at 06:08:05PM +0800, Bin Du wrote:
+> > AMD isp4 capture is a v4l2 media device which implements media controller
+> > interface. It has one sub-device (AMD ISP4 sub-device) endpoint which can
+> > be connected to a remote CSI2 TX endpoint. It supports only one physical
+> > interface for now. Also add ISP4 driver related entry info into the
+> > MAINTAINERS file
+> > 
+> > Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+> > Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+> > Signed-off-by: Bin Du <Bin.Du@amd.com>
 > 
-> I struggled a bit with the ordering of qnap_mcu_write error-check
-> and conversion to guard(mutex). Converting to guard before the
-> error check would need dropping the ret variable, just to re-add it
-> one patch later - to not cause unused variable warning.
-> 
-> [...]
+> Could you elaborate what are the changes in this version compared to the
+> previous one, please?
 
-Applied, thanks!
+Ah, I missed there was a cover page in a different thread. Please ignore.
 
-[1/4] mfd: qnap-mcu: include linux/types.h in qnap-mcu.h shared header
-      commit: f7ef7c03d8599a0d86b2a05929da73358cd56dcf
-[2/4] mfd: qnap-mcu: handle errors returned from qnap_mcu_write
-      commit: 3d02c538ec5337b66750d83ce6f861aef263fbff
-[3/4] mfd: qnap-mcu: convert to guard(mutex) in qnap_mcu_exec
-      commit: 5fd101541c6d0f0ad3b14d86dfcf9347c3f3bffd
-[4/4] mfd: qnap-mcu: improve structure in qnap_mcu_exec
-      commit: 6cdb0fbe090be966432db041d5650907a4dceac4
-
---
-Lee Jones [李琼斯]
-
+-- 
+Sakari Ailus
 
