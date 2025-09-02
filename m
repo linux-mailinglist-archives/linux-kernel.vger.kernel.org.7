@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-795876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4398B3F8D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:42:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1A8B3F8DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CA0D7B18EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBE0516A57F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09182EB5C0;
-	Tue,  2 Sep 2025 08:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1192E8E1F;
+	Tue,  2 Sep 2025 08:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhUVE8Je"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h6oC9Khp"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677592EAD16;
-	Tue,  2 Sep 2025 08:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492C72E7F1E
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802201; cv=none; b=R9rMB2UDVdBjAvBVDcwd+OmBwkqnJizQ/6eqdNpSLnBBx5l6BVvFDWQ4i8uP+iR1hwQxZZhjecpNjMIA3GScrd8iOXnQd2WDwTkgshND7/0szWvt3FJvusx2OhnZfduGEy/iZI3x2d6ykKAf51bVOpIfmdF3xbW7xv0TL/LfsaM=
+	t=1756802373; cv=none; b=pLztoY5o75RYjsO/SKT8pRcR3qfuQ0zGuJCLL3nAsFFdwngDqX8gF5XD0TLiagAUY0jbAD0hhMwM+XEFl1WyBH2mQyhLzUnN+FHn5oebJKJ4I6mJk+aOV4OogaIKEUwmV/9QnIiSzFkJX0brh3dlkzfO2PBabsUAYwpWOVbfG+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802201; c=relaxed/simple;
-	bh=Ub+UvkB9betFxoCuZ51G0L+ar17mRVAqrJJNS3Uh67w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Czdp1INGXUUuWmLGoHaLL41bXAFO0HHK2HzvsfihNOzTlbzI2HVBob3rGH15msLWeqjzNJplQKA4s85vd45Zqpv60++Tcjszn9l+cHQd4Tg6pPsJDdWaXdH4BKj1myPTveWyK83C1/pUeQU7fUpN7Rw9n10lQR9XNaqu17A1rWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhUVE8Je; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b627ea685so43424525e9.1;
-        Tue, 02 Sep 2025 01:36:39 -0700 (PDT)
+	s=arc-20240116; t=1756802373; c=relaxed/simple;
+	bh=koiejtjJlpqtXarBrORI6mw99ruaARcVA9rvYu437aA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LWMI3UjS7VYzL23Euv43nNM72+MNyGEh1moQgGiRK2Aoj8RglTkzIHEMQGbdQD78/XZPxqowopRRS5yz2s/QlB1RuCZRL464cuyPKjVE9gB0DqZ1lZY+Y041zV0jXhfWm6oKL+7sq3gavTZEPnd11jQdoeeo/AG157HpuDHATE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h6oC9Khp; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b71fe31ffso30490115e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756802198; x=1757406998; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pd0HNMyoa7GX2rFqQ+9Q5g/is+Fz+zmtx6GmLNHbP0k=;
-        b=DhUVE8Jegp77DUwJ2DElbjHxcE6F42Td6qnxMM0DFQm7ZayWwAoBtxvn6PoVTP+7p3
-         yH5yN1IYLr5/Cn/qhyXeXvXc7QXoCl1+PnXx6ghE56eMITj3qEqGGFtmpMNSu5kDD8uZ
-         weKK9wFZxX6hwSg6xwXMbrddiX3sl4edZFgDE96dhaf/JpQFu3sKXV25qvv7NvEXCgBL
-         oE85sqKL7cVIpJbLZtKc0exVPM4ychkcYdpRuNwFrIZ4Qdn3vBVwGUd2QVXWKi2rUYUH
-         yRv7cPbhfMbiUJmcSZOdkrkpFozd48Wgb5YIGK7QHGpkHvrkAvlTmIM7ALye2UgQBSqP
-         D4xg==
+        d=google.com; s=20230601; t=1756802371; x=1757407171; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JP1QA+RZ7uMNnI6suXZ0G9wwt/IV21LJWjZMZ+MqgQ0=;
+        b=h6oC9KhpiwUUKYCOzmbv56LayJz0NqSQ6IwUPLc7kAcxc/HFDWeuM5B7neAtzmFAT1
+         dXY3QambcGqKShVt+hEy0TQ3tZHnefmj5QXRbBj7nrtWe82mBJv7+G9GBc5/WQvUj95A
+         pEMg078/8EpQCu8HzkC/lEu7Mj4piAl0JWeMjih6kdnlbHv/XqroJLAElYG93UkDrHld
+         q8ByyP819w6JW6ziguS4SOo6wi2dYD8KG3kT+51B9zBozUABgwn0UNR3KMamwqspdlpz
+         XEgUGy9sVL5PCrgbMpY+VzJWtKRpWY+k/XQzlJcciVxAvCSbXDcWTNtRJEdwV675ltms
+         asqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756802198; x=1757406998;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pd0HNMyoa7GX2rFqQ+9Q5g/is+Fz+zmtx6GmLNHbP0k=;
-        b=jEcoLHk4L/68EHuqQtEqJtAOj/SIFlYaC2aWGdw41EAiy099jcrQEOe0jCV5KGOI3p
-         ouqyOP6mA/qIvZNG7Hf1rkUEwKf9NWJ7Q9K2C7HGSFbNrU5Dslt6MhALqhEs7sastc/l
-         huaNZkqjKZ6ol+dboZyM4zKmit3+YTUz9d6dxxO6T49NSSj9aJHno+usn/XpS4/wNDwv
-         AdexElCdvGVVysBaoxOi4r5iWYqbsSwmdPw24fl65r7h3NmmgY2EFnicSm4LMT/TYXaQ
-         RlOseHC2l7V9au0995QFsWGwQKcLZHpCoC7Xt17WMhwt6dYHBfPBj5MjGT0fu5znmEXM
-         08/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXVPgOKDdN9dBvN52g1i5wiFE2gZd/IVbXiXProHAjHZ90RtunW94FEVHpG1b/tZ5O43e6H28wsZkisvQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykymnb0FJG0HGjKy1gffRnmaQJ1E/xUPTaXecfDPJ94QsimFNC
-	uFClQrt0o+dfOd6VPw0/i6/KlrUB4fw2g4E3OYFIqn2fnOjVv9ua+voU
-X-Gm-Gg: ASbGncvyJjY4eUpxCMrQBgYnXyXeNy6ps90mbfJNIZdxYNzbu59Ah5PRfawcSLrhcnf
-	1r4SwuXgCg1GziilMJGxvLUHcVyq49q71ZwzQOnLu3Hmxs9tcNvVrlwApALejlJvXwMSYnEHfQs
-	kFTmC9f6/JP/Tg9ID71IzUH4ZoBp49fHzo+ay87gISVMrgonnMdrg+PZ0eoviFyoeqkQd1fNcd1
-	Mcv9cTXNXgpymrWlZ1Wpm+MGKIXEmkf/r7HdHqMPF1s+lBd6CulFcEi7UvNXpjAK/D0XxLajxzV
-	nYs5bGUtGJ26afSIOIsxIHFyDIimFGrQf5FQ2uIc6OT/+kv7xXl0SjWY3KbJ9DO/83JY/IOFalc
-	dHzZoByuN2dzzAl4AXDvUHzx4EoOzpGGmZm4guE7NCQIPqozZlmliQ3hY+nV8Mkqh5/mIygTaC0
-	RFzTmRe+L9Taufh5FQj/6Py06rLg==
-X-Google-Smtp-Source: AGHT+IFredUcE0J703UP17d/yQu6vaZQmOwLi0akdJ9z4SKK8eYSX+Xw5FrpRNpvS8MeSaTTMfCMZQ==
-X-Received: by 2002:a05:600c:4454:b0:459:dfde:3324 with SMTP id 5b1f17b1804b1-45b855b34f8mr79542435e9.29.1756802197404;
-        Tue, 02 Sep 2025 01:36:37 -0700 (PDT)
-Received: from ?IPV6:2a02:2f0e:c207:b600:978:f6fa:583e:b091? ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e380b77sm193355795e9.11.2025.09.02.01.36.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 01:36:36 -0700 (PDT)
-Message-ID: <ed2b6a23-4369-4b38-8ae1-7dd7fc763191@gmail.com>
-Date: Tue, 2 Sep 2025 11:36:35 +0300
+        d=1e100.net; s=20230601; t=1756802371; x=1757407171;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JP1QA+RZ7uMNnI6suXZ0G9wwt/IV21LJWjZMZ+MqgQ0=;
+        b=G5xPwkc8zSvFyL2pQI/u79TZhXhuXr11NWeAthHyMXox0/8UZx3nFoyZRgn5Wy78cB
+         IwRT0KCQlvTOgQkACMM2IYZxe4XOc2H1UpBTjC2/8cFG98QHsGBst9EG48BwDK1jlL07
+         5PC1kq6Gz5APBwp/B2t26W8l52GrgW6nLwCtTPBmQydhPiRoYVzHTCFDBjJ43XpRDfQP
+         A/hvizTj5EsThafDrFVZnwgVcG0ESN3FP27emslBqiqXCatY+LXsYlPWqMuyhKpEc06l
+         FgWmS+CVib7ZlegVoc5mWYuIYMpnNZnLUSNBzmPtEXgmQwaxdagQUI21C79z7Z25R7ao
+         yHlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXx0eKy8SOkcMCcL5xQpYuTxo6UHuw/Qxjs04VlpUINXl+fwql1w6G/tQha1u8bB2v4MLCQs8se5Y9iOL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgg19hEmSJEtSgVDtE+/kOfOFYQJYgCDDr2+dEbMUezd4cjkox
+	G89usccljHOJFAIOqu4cAAp4pNQRVtvFbMz1aB7psqQTtzwBK8vm1IVjIY1tsoM2sRTYGRwSuI9
+	rMQ64pN3Vo5ogZl5mug==
+X-Google-Smtp-Source: AGHT+IEJiBZvawIN2RgaGyQWpOpWEL1rOV3VDXt/kFR5FQk24WrYF7J15eKsT4qagQtBygvpi7Ak/mP13MhKKiw=
+X-Received: from wmti8.prod.google.com ([2002:a05:600c:8b88:b0:45b:732e:5a16])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1f94:b0:45b:772b:12b9 with SMTP id 5b1f17b1804b1-45b855336dcmr90049625e9.15.1756802370679;
+ Tue, 02 Sep 2025 01:39:30 -0700 (PDT)
+Date: Tue, 2 Sep 2025 08:39:29 +0000
+In-Reply-To: <20250901202850.208116-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] crypto: sha512 - Implement export_core() and
- import_core()
-To: Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, qat-linux@intel.com,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-References: <20250901165013.48649-1-ebiggers@kernel.org>
- <20250901165013.48649-4-ebiggers@kernel.org>
-Content-Language: en-US
-From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-In-Reply-To: <20250901165013.48649-4-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250901202850.208116-1-dakr@kernel.org>
+Message-ID: <aLatQY1ea3on4n8I@google.com>
+Subject: Re: [PATCH] MAINTAINERS: Add drm-rust tree for Rust DRM drivers and infrastructure
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, acourbot@nvidia.com, 
+	daniel.almeida@collabora.com, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-
-
-On 9/1/25 7:50 PM, Eric Biggers wrote:
-> Since commit 9d7a0ab1c753 ("crypto: ahash - Handle partial blocks in
-> API"), the recently-added export_core() and import_core() methods in
-> struct shash_alg have effectively become mandatory (even though it is
-> not tested or enforced), since legacy drivers that need a fallback
-> depend on them.  Make crypto/sha512.c compatible with these legacy
-> drivers by adding export_core() and import_core() methods to it.
+On Mon, Sep 01, 2025 at 10:26:39PM +0200, Danilo Krummrich wrote:
+> Multiple DRM Rust drivers (e.g. nova-core, nova-drm, Tyr, rvkms) are in
+> development, with at least Nova and (soon) Tyr already upstream. Having a
+> shared tree will ease and accelerate development, since all drivers can
+> consume new infrastructure in the same release cycle.
 > 
-> Reported-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-> Reported-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-> Closes: https://lore.kernel.org/r/aLSnCc9Ws5L9y+8X@gcabiddu-mobl.ger.corp.intel.com
-> Fixes: 4bc7f7b687a2 ("crypto: sha512 - Use same state format as legacy drivers")
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> This includes infrastructure shared with other subsystem trees (e.g. Rust
+> or driver-core). By consolidating in drm-rust, we avoid adding extra
+> burden to drm-misc maintainers, e.g. dealing with cross-tree topic
+> branches.
+> 
+> The drm-misc tree is not a good fit for this stage of development, since
+> its documented scope is small drivers with occasional large series.
+> 
+> Rust drivers in development upstream, however, regularly involve large
+> patch series, new infrastructure, and shared topic branches, which may
+> not align well with drm-misc at this stage.
+> 
+> The drm-rust tree may not be a permanent solution. Once the core Rust,
+> DRM, and KMS infrastructure have stabilized, drivers and infrastructure
+> changes are expected to transition into drm-misc or standalone driver
+> trees respectively. Until then, drm-rust provides a dedicated place to
+> coordinate development without disrupting existing workflows too much.
+> 
+> Cc: Alice Ryhl <aliceryhl@google.com>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Daniel Almeida <daniel.almeida@collabora.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Tested-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-
-Thanks,
-Ovidiu
-
+Acked-by: Alice Ryhl <aliceryhl@google.com>
 
