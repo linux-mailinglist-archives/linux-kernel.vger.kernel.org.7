@@ -1,85 +1,95 @@
-Return-Path: <linux-kernel+bounces-795907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226B2B3F93E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4507B3F940
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB76F17B5D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8B6417965E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1512E6CD6;
-	Tue,  2 Sep 2025 08:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472102E8DE5;
+	Tue,  2 Sep 2025 08:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OOSj8Sdb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fSn0lV+v";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="to4iaZIt";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fSn0lV+v";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="to4iaZIt"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26A12E8B9A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C50923AB9C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756803400; cv=none; b=i9F/NLjnM4t9smTq51yDNoJuM/y6Ql02kVMfhgULu+7kQijZnwcmiTS+aZ06HFkJ94KXBeNKqRSP41Y8n7JffViuwqlpX72Hja2DkCGBoXPJhDcebmj8O15BuANItTw23zRRSjLeNH2Nfq3hKIfNSwj7qUQ5Hja/4m1KOTLJS0Y=
+	t=1756803415; cv=none; b=fHblUfiO/AjcLGgujDbrSvcUez2YJj0xmQileo1WZwxJM6BjZmnA0skTtby4EmxFA92buc21qCNztNDKunU8l2qjOEU8xsYFqeMET07Z97h5jKqhNJZpoJx+0xaF7vd4MVGLHAYUElqs7YqWOA+HMBNtlgI2HKNCWDOHDId2UM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756803400; c=relaxed/simple;
-	bh=A6K88WcChbCNhfKxt/hC71H+aKecDXN0yZaU+lUMOEI=;
+	s=arc-20240116; t=1756803415; c=relaxed/simple;
+	bh=6ku4duxWUTG+MXg+SqIV0p88CEbMnlYAU84xRMwvwHY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RzvPLCGKSp4MkrdoGlE4GFOdt2UfzG6Qh7oUpsPzROZfcI0hhbmSnsHBT8n9TvemstuVFchjflUg6/yrTspFzSnMrKWxdFQI87SjP/5MEs8X2xbtSaNkAEhnEts79Ln/MAmGmQtHHlYQafFQBkKPK4X0XPRK0Zal9lhQkD1WkbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OOSj8Sdb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756803398;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=bzdOmp4sFq1ybiTXUcNePVs1I6tHkJOjF4Zw7o6El1zFRLgMmfT3XQILKGl152dCTAfQ8i8ZG+AIi5nBHIK0aGoDwnImFAlKD1k6GUowSZDSosryHlfPxRcKdUFid6d4+GztnzoOfpCzdY8TxaB1gshzBooU2NsUQ/chfOUAJv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fSn0lV+v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=to4iaZIt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fSn0lV+v; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=to4iaZIt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3928E211D4;
+	Tue,  2 Sep 2025 08:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756803412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lImTkCvs1XMwtayZpeMnD+gBReBeYA5Sp6xX4F8BQTI=;
-	b=OOSj8Sdbc/sXvr0uDgGXF078Lzjvym0EySROqlfSpGrGbf9/flQXsJmRFW5QAZ4JoIix8R
-	W4ruY+YEJCHf7hF50xwOcf/5fHJuLCsENbT17F5C9iFv36cvdEMiD+dDaUHJBJSo8BzVt6
-	zkl30J7TdtiNtnp0QfAgHn3glfMuW/g=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-fJowkMpZPpmWui_S5BDwQQ-1; Tue, 02 Sep 2025 04:56:36 -0400
-X-MC-Unique: fJowkMpZPpmWui_S5BDwQQ-1
-X-Mimecast-MFC-AGG-ID: fJowkMpZPpmWui_S5BDwQQ_1756803396
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70deaa19e05so133756366d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:56:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756803396; x=1757408196;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lImTkCvs1XMwtayZpeMnD+gBReBeYA5Sp6xX4F8BQTI=;
-        b=eklfqApp6zttY+0rzgVOkx7iZuphZ/i7pFU1CQNfBaMLjqBQGsSUd7GfyvekEf6JfO
-         bG7B5Fk9sr9WDiOcz5NTAAc3IJnIKsMIFjjFOy1vdzJwIVONpFov31k1WVIBvTa+RYQL
-         Gx07oD7nWwqusFSv1FlQe3X7AlfGpaK0JfWmmgqya8ofbixmRDjVNKQeA4oIfv9Ut3Oj
-         ZXBQj87KAZH5c9bcF6qwMbijeHj9ECuz3MHPyD+B9RzPuoX4rHeBDtbJYVfIN8hkBmFp
-         ieYvdjeGVK/VAWe4mEaP1S2+Cw3HqBxDwRWIPYe2p5HUoVKKFVjkPf4wHwo96AgTAbJs
-         6DUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpqHrFIlMGUlMZBAkN4mrvyHsJbo6BPfEtbjrijS+hM4y+gkHVWPt78p5UHFNO4Uq28r5CscDCRllAh3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWo02QJ/bXGKJbs84JgIY4GHo+bYDm+tSIQ+617dRpgEI6o45h
-	PyocZmxKzPi0V93tQ2KpT/ehPt9XGNQKeGiSPGwbAnTml/LGH+2suC7jEWich881198f4Ti8i5v
-	GpTCnJrgzJZRSZB/kL7/Y4/aV0Uf0ueGwfarsfdfVXGirJUGkAjDrVgbPKpboI2uw
-X-Gm-Gg: ASbGncvuICXNHAEh3kFbnLR2VMjt4wLdJ9p9EOH3lpJ27mLz4Y34Ngd/y/NC1ytGQqw
-	G5eYfhgeLosNX8txDMMY9bxtVcf84T4eAO7vhJwlc0Ulr1G/xvDkW8NMDq7VYC/kTQZsXAId8a3
-	pJpVqLFtXNxSuHTf+olJCqzdJe9CsuPT6ka/HQS5Wa4v7Zc1kkI9/O5nPQzO5jjQdoixmMEaCpW
-	PSeWs3RKme0oxsv5FyD8ftOKlWesyy8E8DDmSVCbd0hez7Bz8kqVwgTrQs17Ab8oZPBhUB8jIm0
-	/oP7Fo+pPJcpwIhBrUfrcjIb64PA7aPcNYM=
-X-Received: by 2002:ad4:5c4c:0:b0:718:ee5e:a360 with SMTP id 6a1803df08f44-718ee5ea558mr69268726d6.30.1756803396246;
-        Tue, 02 Sep 2025 01:56:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6gmfnqL14RyPQXyc1ORuNcdh31l1y3psF0bOrlARcUXY0vC+jQr5wYcNzKa22lIpYqk2Gbg==
-X-Received: by 2002:ad4:5c4c:0:b0:718:ee5e:a360 with SMTP id 6a1803df08f44-718ee5ea558mr69268596d6.30.1756803395793;
-        Tue, 02 Sep 2025 01:56:35 -0700 (PDT)
-Received: from [10.43.17.17] ([85.93.96.130])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b5b9c7e1sm8312216d6.58.2025.09.02.01.56.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 01:56:35 -0700 (PDT)
-Message-ID: <76f6ed83-48a2-4dad-9229-1169050e9552@redhat.com>
-Date: Tue, 2 Sep 2025 10:56:31 +0200
+	bh=zdMXL3DzKbrzQgK9ln4DLjJYTZxHYiLh+LFuN3jZqs4=;
+	b=fSn0lV+vhTvXYKT+kD4ZyziJBVp7q+SehdYBkgq+7jrf2t39zlGRkFJTurVMypbNMraYKu
+	dseZ6hlTMY43fMJzH1y3xTYO4xobbuHyh6MKavrY284XYs4JWik9zcyNlv9B/lAjyMb605
+	Iw6qG8DxRmLkgLrYrUkDrDJ0Bzk4c1Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756803412;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zdMXL3DzKbrzQgK9ln4DLjJYTZxHYiLh+LFuN3jZqs4=;
+	b=to4iaZItr7iDPbXlXgl2ChP1eeHKmKKsNAvNU96SNQRJ5W4lEemypFfemIFg2sQVCDPrbi
+	FJ6ki7KeH0ST7TBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=fSn0lV+v;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=to4iaZIt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756803412; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zdMXL3DzKbrzQgK9ln4DLjJYTZxHYiLh+LFuN3jZqs4=;
+	b=fSn0lV+vhTvXYKT+kD4ZyziJBVp7q+SehdYBkgq+7jrf2t39zlGRkFJTurVMypbNMraYKu
+	dseZ6hlTMY43fMJzH1y3xTYO4xobbuHyh6MKavrY284XYs4JWik9zcyNlv9B/lAjyMb605
+	Iw6qG8DxRmLkgLrYrUkDrDJ0Bzk4c1Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756803412;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zdMXL3DzKbrzQgK9ln4DLjJYTZxHYiLh+LFuN3jZqs4=;
+	b=to4iaZItr7iDPbXlXgl2ChP1eeHKmKKsNAvNU96SNQRJ5W4lEemypFfemIFg2sQVCDPrbi
+	FJ6ki7KeH0ST7TBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 222CC13888;
+	Tue,  2 Sep 2025 08:56:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id s66vBFSxtmjMAQAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 02 Sep 2025 08:56:52 +0000
+Message-ID: <8bf6c91a-18c5-4236-8176-d03aab8286f4@suse.de>
+Date: Tue, 2 Sep 2025 10:56:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,103 +97,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 2/2] selftests/bpf: Test kfunc bpf_strcasecmp
-To: Rong Tao <rtoax@foxmail.com>, andrii@kernel.org, ast@kernel.org
-Cc: Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>,
- "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
- <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <cover.1756798860.git.rtoax@foxmail.com>
- <tencent_00107416F7259ACAC62BF8681F22B5C19D06@qq.com>
-From: Viktor Malik <vmalik@redhat.com>
+Subject: Re: [PATCH] nvme: Use non zero KATO for persistent discovery
+ connections
+To: alistair23@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+ sagi@grimberg.me, linux-nvme@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Alistair Francis <alistair.francis@wdc.com>
+References: <20250902035211.2953174-1-alistair.francis@wdc.com>
 Content-Language: en-US
-In-Reply-To: <tencent_00107416F7259ACAC62BF8681F22B5C19D06@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250902035211.2953174-1-alistair.francis@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com,kernel.org,kernel.dk,lst.de,grimberg.me,lists.infradead.org];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 3928E211D4
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-On 9/2/25 09:55, Rong Tao wrote:
-> From: Rong Tao <rongtao@cestc.cn>
+On 9/2/25 05:52, alistair23@gmail.com wrote:
+> From: Alistair Francis <alistair.francis@wdc.com>
 > 
-> Add testsuites for kfunc bpf_strcasecmp.
+> The NVMe Base Specification 2.1 states that:
 > 
-> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+> """
+> A host requests an explicit persistent connection ... by specifying a
+> non-zero Keep Alive Timer value in the Connect command.
+> """
+> 
+> As such if we are starting a persistent connection to a discovery
+> controller and the KATO is currently 0 we need to update KATO to a non
+> zero value to avoid continuous timeouts on the target.
+> 
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
 > ---
->  tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c | 6 ++++++
->  tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c | 1 +
->  tools/testing/selftests/bpf/progs/string_kfuncs_success.c  | 5 +++++
->  3 files changed, 12 insertions(+)
+>   drivers/nvme/host/core.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
-> index 53af438bd998..99d72c68f76a 100644
-> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
-> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure1.c
-> @@ -31,6 +31,8 @@ char *invalid_kern_ptr = (char *)-1;
->  /* Passing NULL to string kfuncs (treated as a userspace ptr) */
->  SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_null1(void *ctx) { return bpf_strcmp(NULL, "hello"); }
->  SEC("syscall")  __retval(USER_PTR_ERR)int test_strcmp_null2(void *ctx) { return bpf_strcmp("hello", NULL); }
-> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_null1(void *ctx) { return bpf_strcasecmp(NULL, "HELLO"); }
-> +SEC("syscall")  __retval(USER_PTR_ERR)int test_strcasecmp_null2(void *ctx) { return bpf_strcasecmp("HELLO", NULL); }
->  SEC("syscall")  __retval(USER_PTR_ERR)int test_strchr_null(void *ctx) { return bpf_strchr(NULL, 'a'); }
->  SEC("syscall")  __retval(USER_PTR_ERR)int test_strchrnul_null(void *ctx) { return bpf_strchrnul(NULL, 'a'); }
->  SEC("syscall")  __retval(USER_PTR_ERR)int test_strnchr_null(void *ctx) { return bpf_strnchr(NULL, 1, 'a'); }
-> @@ -49,6 +51,8 @@ SEC("syscall")  __retval(USER_PTR_ERR)int test_strnstr_null2(void *ctx) { return
->  /* Passing userspace ptr to string kfuncs */
->  SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr1(void *ctx) { return bpf_strcmp(user_ptr, "hello"); }
->  SEC("syscall") __retval(USER_PTR_ERR) int test_strcmp_user_ptr2(void *ctx) { return bpf_strcmp("hello", user_ptr); }
-> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr1(void *ctx) { return bpf_strcasecmp(user_ptr, "HELLO"); }
-> +SEC("syscall") __retval(USER_PTR_ERR) int test_strcasecmp_user_ptr2(void *ctx) { return bpf_strcasecmp("HELLO", user_ptr); }
->  SEC("syscall") __retval(USER_PTR_ERR) int test_strchr_user_ptr(void *ctx) { return bpf_strchr(user_ptr, 'a'); }
->  SEC("syscall") __retval(USER_PTR_ERR) int test_strchrnul_user_ptr(void *ctx) { return bpf_strchrnul(user_ptr, 'a'); }
->  SEC("syscall") __retval(USER_PTR_ERR) int test_strnchr_user_ptr(void *ctx) { return bpf_strnchr(user_ptr, 1, 'a'); }
-> @@ -69,6 +73,8 @@ SEC("syscall") __retval(USER_PTR_ERR) int test_strnstr_user_ptr2(void *ctx) { re
->  /* Passing invalid kernel ptr to string kfuncs should always return -EFAULT */
->  SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault1(void *ctx) { return bpf_strcmp(invalid_kern_ptr, "hello"); }
->  SEC("syscall") __retval(-EFAULT) int test_strcmp_pagefault2(void *ctx) { return bpf_strcmp("hello", invalid_kern_ptr); }
-> +SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault1(void *ctx) { return bpf_strcasecmp(invalid_kern_ptr, "HELLO"); }
-> +SEC("syscall") __retval(-EFAULT) int test_strcasecmp_pagefault2(void *ctx) { return bpf_strcasecmp("HELLO", invalid_kern_ptr); }
->  SEC("syscall") __retval(-EFAULT) int test_strchr_pagefault(void *ctx) { return bpf_strchr(invalid_kern_ptr, 'a'); }
->  SEC("syscall") __retval(-EFAULT) int test_strchrnul_pagefault(void *ctx) { return bpf_strchrnul(invalid_kern_ptr, 'a'); }
->  SEC("syscall") __retval(-EFAULT) int test_strnchr_pagefault(void *ctx) { return bpf_strnchr(invalid_kern_ptr, 1, 'a'); }
-> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c b/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
-> index 89fb4669b0e9..e41cc5601994 100644
-> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
-> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_failure2.c
-> @@ -7,6 +7,7 @@
->  char long_str[XATTR_SIZE_MAX + 1];
->  
->  SEC("syscall") int test_strcmp_too_long(void *ctx) { return bpf_strcmp(long_str, long_str); }
-> +SEC("syscall") int test_strcasecmp_too_long(void *ctx) { return bpf_strcasecmp(long_str, long_str); }
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-This is not sufficient, you also need to update
-prog_tests/string_kfuncs.c so that the test case is actually triggered.
+Cheers,
 
-Viktor
-
->  SEC("syscall") int test_strchr_too_long(void *ctx) { return bpf_strchr(long_str, 'b'); }
->  SEC("syscall") int test_strchrnul_too_long(void *ctx) { return bpf_strchrnul(long_str, 'b'); }
->  SEC("syscall") int test_strnchr_too_long(void *ctx) { return bpf_strnchr(long_str, sizeof(long_str), 'b'); }
-> diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-> index 46697f381878..67830456637b 100644
-> --- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-> +++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-> @@ -12,6 +12,11 @@ char str[] = "hello world";
->  /* Functional tests */
->  __test(0) int test_strcmp_eq(void *ctx) { return bpf_strcmp(str, "hello world"); }
->  __test(1) int test_strcmp_neq(void *ctx) { return bpf_strcmp(str, "hello"); }
-> +__test(0) int test_strcasecmp_eq1(void *ctx) { return bpf_strcasecmp(str, "hello world"); }
-> +__test(0) int test_strcasecmp_eq2(void *ctx) { return bpf_strcasecmp(str, "HELLO WORLD"); }
-> +__test(0) int test_strcasecmp_eq3(void *ctx) { return bpf_strcasecmp(str, "HELLO world"); }
-> +__test(1) int test_strcasecmp_neq1(void *ctx) { return bpf_strcasecmp(str, "hello"); }
-> +__test(1) int test_strcasecmp_neq2(void *ctx) { return bpf_strcasecmp(str, "HELLO"); }
->  __test(1) int test_strchr_found(void *ctx) { return bpf_strchr(str, 'e'); }
->  __test(11) int test_strchr_null(void *ctx) { return bpf_strchr(str, '\0'); }
->  __test(-ENOENT) int test_strchr_notfound(void *ctx) { return bpf_strchr(str, 'x'); }
-
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
