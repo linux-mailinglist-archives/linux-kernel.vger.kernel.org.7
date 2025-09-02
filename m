@@ -1,96 +1,151 @@
-Return-Path: <linux-kernel+bounces-795962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC6EB3FA07
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:17:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7178B3FA0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BA91B20219
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:17:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838B01B20365
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5770B19D06B;
-	Tue,  2 Sep 2025 09:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A727272E4E;
+	Tue,  2 Sep 2025 09:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="kWNUjHso"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THq8h8va"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131CB242D98;
-	Tue,  2 Sep 2025 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B3A19D06B;
+	Tue,  2 Sep 2025 09:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756804642; cv=none; b=qCVhHrhfIF2A5hHXoTveX3ZrvR/giB3HZYXraairoz4rdj+vK9a7rYegfhwjygqwVkvHkcXTD6N2haAM886xdy34dLoOC2OF2NkmVqujlmiNMcKORa2kZj9oOnzJ5QMxerVzliJ4EDmaneRYUJ+jJO+7AeiQvrwsVT13KG5/2z8=
+	t=1756804695; cv=none; b=t0U7IkZDWKp2ogwkFcUVS1muVaj8oSNUM/rwqNM6Ag8vUQdJHELnUqKG4ZRXThWFraOdUpdcJ0JLTMBml0fFvsSDXZBlFRlDjl3pSvUmuSY3djbqLLawl4YIIVBjxWkhHP/S51L48EPLEQW1zOqOwAjZBqwSpZ8ztkXc0d//wZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756804642; c=relaxed/simple;
-	bh=u/gpzFc54E7Qkui3Rf+FQee8DH7Jl2fl0v2tnQNBejs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=mI+bIWXjt7zO6tA2VqT13z3xa5cXNCQOOyNQu+qIiWZdgNo+/PcQKx45e8LMjPZCzGcpzzO7JoT7l+UH860qPJ4gDHNCoK172+3+Y1si6eFLzWsYupn+EiL/Lwy7bpbFIPHwTKH4QBlyy1VCYVBCvhiIBtFWjeBrmm2737UgxVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=kWNUjHso; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
-	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2Dmf2HsAjLA9aMcC0oK5XbhwP0WeOH0TUSdhNSFuoWg=; b=kWNUjHso6SRKfHUaQV0X1yfbm0
-	fdGdpbbUrng21bwO4DHcKE2NjzYFD0RDzw4CYke6Y7od3AKYiCJthROr7U4SJkJm8KO7SPw3QfAwy
-	1WRWtJ8MiKS94qm0OZIF7kF4sVAH7tfiEAITMJ7SU1PuVQ2rDsTJNdicyvlUxnGyyAWSl6r1arbPS
-	n/bbJQiCpmCWbrH42wGlDI+OuKy3n/izvdnSXHmhdoPVNo7Vj3h7oh4H0ZHbp23BSnD02t1ONd/zY
-	URPWEI8rmJdSoqwskcX7uV2VMMCOTqC7rqtbXrSLdlvTzyq7VsZuD02gFcyJyazBEZNR/OYHrGjgM
-	tPICuk9g==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1utMt1-001wj9-1v;
-	Tue, 02 Sep 2025 17:17:05 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 02 Sep 2025 17:17:03 +0800
-Date: Tue, 2 Sep 2025 17:17:03 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Menglong Dong <dongml2@chinatelecom.cn>
-Cc: mhiramat@kernel.org, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, oliver.sang@intel.com
-Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
-Message-ID: <aLa2D4It1Zxc7bs0@gondor.apana.org.au>
+	s=arc-20240116; t=1756804695; c=relaxed/simple;
+	bh=KzynnCtc6KsPATtu42bbVpiDOPZ6i24SIoDI5SdZ76I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FzcvOg4veckAnE52CldTdK9nRpFZ2SKWlKYLXu3TgJqZZxaV9YdB2F0Jxu6XZEdYgazlRCUUR2lHFCdJTnw4b4V/yA6HsreLonCtgs6SvRIgzPWZaTcf6K7NGXyN1P+1liYIeSl6p/VGsh7RzM/p5tv+qWR7AKuSQCBuBaSC3gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THq8h8va; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b4c29d2ea05so4331434a12.0;
+        Tue, 02 Sep 2025 02:18:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756804694; x=1757409494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=235DukVi/odAW5HS9zePltJ2aaH8f1ongwAUAlWuUsA=;
+        b=THq8h8va3qAqoSM254+YvoH5Ph9W57QFmCN543NT4Ge4KwdY3dT38+lTsx7KiJB4Lb
+         RN3Ry68NM0Rgsoof7dlV/GvBMZiTtAMGopxaUDLwkeHLMT/qMVVzjpAD12G1R/2S/SMM
+         bi96HeyapZPrB038bzyp2syOfLUj9C/apth5rm/cOsqZhXir4SEJufT2jt35QYqTpzX7
+         0cl0fGvy3lYPPcyuBktEumbfsHAa6n/RhDk/QEkZZ3iOcgArqVTnLHsL0FyquJg9QQGj
+         o/cgSeDG8eV7NUUxTb5AO1q3EfrNUT/57Ry/zhPw/YXnV7DHAuesgE7c/jkHe6UcHG46
+         KDXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756804694; x=1757409494;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=235DukVi/odAW5HS9zePltJ2aaH8f1ongwAUAlWuUsA=;
+        b=eerRUMwUOxp8PDgLoS+cbN5oY7iq5Y7zIGzDuxvMEV8CvDy2bYIrQLTSj0aenkDjT0
+         E2gN4fSU9roZsrlmyyfxBUu8fNMkJQXctkixZVV0Flj9tVuSJKnEsa/M9yFMFpxihKXC
+         osCI+r47+PQEbR7qDaxN5zZJW7apnANKbD1FBh4+89IcqW6B/KW1RNJk441VLl+TABOo
+         DJ/XtBAUMhnH0TK9b/X1q8zKnVvoIgyO+rFZny+S25PdFkCcGw3eEKUTpLpItznwa19h
+         dnfIDSVgwX4q2n6leT5Fb34Lr7uqf60a3hKY8kC8dumC/dlXlQrFn3HidkLHthwtD93w
+         IanQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFwXJW5uc/rZV0aA9mzIK1TJ6dDhGN6nMUQ4240eXJOv19Rr9967y61ZOUXcp9LqrVSYKq5w95GMEJg8zXp8Ng@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJBTo93uIwh1asWo5KT5mzQ1DFppkAIfoGTbuJLVBIjxp+z8Us
+	pAMt8OFWg3bXjP6w3cqvxZzrR3UGYxS3YZOG4qpU7E7BTdWVXiroPFqJ
+X-Gm-Gg: ASbGnctz2dju5J88x3RtQ+EeccDimGahCZEuUq/VrWejvwIEkuCmwBMaNrkS9F0jdgj
+	bLRqE2Bx2EHoXSIB3k6yJy5k+rEzjzogKfHE4GfFFf+od+IYMvpOfIMdzwvV/Ijv5rnlkk21Vhz
+	3FKch613i22VJoYLQFuQXhdmdi3yBeMURB1RHfPWYI4yAcG5UdgNUOurF3d5Ib4bCu3FirSklQI
+	zz9saWLaFsKTDAY/PkM9S9RN6MB9wBxM215f815qp0JQhz7gP6moUCPrYGqO+1vYuE4pOmnV7mC
+	rztqJ4ILvwQAUyZYg0TS1S2FmRxf/I9t5GcAEWcE+8LI2OIsSyC2DwFArRFxujGRyXmwIvFTPfE
+	lWaI0RmBp8Eqp0XroFFt8azCmCOTu
+X-Google-Smtp-Source: AGHT+IGBeKZLBfXLYmTkzsnz0xi33MJlBsEkLGLSg1Yp51p1CUvTny6kyUwXb5PEGfYmYrgKXLrPuA==
+X-Received: by 2002:a17:902:ea0e:b0:249:274f:84a8 with SMTP id d9443c01a7336-2493efe0734mr138788665ad.25.1756804693526;
+        Tue, 02 Sep 2025 02:18:13 -0700 (PDT)
+Received: from localhost.localdomain ([2a12:a305:4::30f3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903705be3sm128032695ad.18.2025.09.02.02.18.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 02:18:13 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jinchao Wang <wangjinchao600@gmail.com>
+Subject: [PATCH] perf/HWBP: Optimize __modify_bp_slot() handling
+Date: Tue,  2 Sep 2025 17:17:54 +0800
+Message-ID: <20250902091759.590664-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829021436.19982-1-dongml2@chinatelecom.cn>
-X-Newsgroups: apana.lists.os.linux.kernel
+Content-Transfer-Encoding: 8bit
 
-Menglong Dong <dongml2@chinatelecom.cn> wrote:
->
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index fb127fa95f21..fece0f849c1c 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
->        if (WARN_ON_ONCE(!fregs))
->                return 0;
-> 
-> +       rcu_read_lock();
->        head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
-> +       rcu_read_unlock();
->        reserved_words = 0;
->        rhl_for_each_entry_rcu(node, pos, head, hlist) {
->                if (node->addr != func)
+Skip unnecessary release/reserve when old and new types share the same
+slot.
 
-Actually this isn't quite right.  I know that it is a false-positive
-so that it's actually safe, but if you're going to mark it with
-rcu_read_lock, it should cover both the lookup as well as the
-dereference which happens in the loop rhl_for_each_entry_rcu.
+Reserve the new slot first, then release the old one to maintain
+consistency and avoid transient failures.
 
-Thanks,
+Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+---
+ kernel/events/hw_breakpoint.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
+
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 8ec2cb688903..1cc9cb32ceb4 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -625,23 +625,20 @@ void release_bp_slot(struct perf_event *bp)
+ static int __modify_bp_slot(struct perf_event *bp, u64 old_type, u64 new_type)
+ {
+ 	int err;
++	enum bp_type_idx old_type_idx, new_type_idx;
+ 
+-	__release_bp_slot(bp, old_type);
++	old_type_idx = find_slot_idx(old_type);
++	new_type_idx = find_slot_idx(new_type);
++	if (old_type_idx == new_type_idx)
++		return 0;
+ 
+ 	err = __reserve_bp_slot(bp, new_type);
+-	if (err) {
+-		/*
+-		 * Reserve the old_type slot back in case
+-		 * there's no space for the new type.
+-		 *
+-		 * This must succeed, because we just released
+-		 * the old_type slot in the __release_bp_slot
+-		 * call above. If not, something is broken.
+-		 */
+-		WARN_ON(__reserve_bp_slot(bp, old_type));
+-	}
++	if (err)
++		return err;
+ 
+-	return err;
++	__release_bp_slot(bp, old_type);
++
++	return 0;
+ }
+ 
+ static int modify_bp_slot(struct perf_event *bp, u64 old_type, u64 new_type)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.43.0
+
 
