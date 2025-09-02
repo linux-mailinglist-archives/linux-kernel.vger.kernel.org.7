@@ -1,215 +1,269 @@
-Return-Path: <linux-kernel+bounces-796304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536F4B3FEC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:57:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66596B3FEDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48FCE7B5C56
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:54:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24BC3201CB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6572F5303;
-	Tue,  2 Sep 2025 11:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83C72FCC16;
+	Tue,  2 Sep 2025 11:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nybMVs+E"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AFoBhU+l"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD81B2F8BF9
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1D827A456
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756813840; cv=none; b=u7f2/fCbZlb5PgLkJMx9WwS6hMwjzN7AIJ0qlY1NZanG7Y0cJgIh5ZoX+Uwmoj8aJBNhTp/FPqTyKdRYZXn4cKhTcta0pl+MWQImD8X9EjlkAte/fEjtw2bv89oP1V9SbT/H/KZB8ZZY78me9HWo0e62zGQY8Xkf0K8SNHOBTYA=
+	t=1756813905; cv=none; b=HT5Xy8vrstz18W58Qp1QeFjqNc9HUHwK9Z1Lc0mS99JOaNJHXLayOI5YtnIJmrktU5KbWjujNWKMgHWHiAYftb6ewVXTFdNJn0YyYhbl++s6Q+qwm9YGlrQPqkxaptUbV8bX8x0QeQn1SasixTqK8+6jI3cSpsa2G/aQLXsAUAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756813840; c=relaxed/simple;
-	bh=6PHHebMlrd9cTBVjOtA5XSpV+1kfwCmgVSvtWwrAOyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NmAEU9QxybsS+IInHc231GSL8AxFTkDQB3/MxBB1j7mSBRwaREiH0y0+jM/1nSQpufWoLimakQD1dPHV6Njj8XgUcOL59DZPlXbQTMD775jQzmvlwkea1w0BkbxXdUHq6xg49oqhY8QG3WkVZ2X9QNP4J0MN46QELB+Tk+gqjYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nybMVs+E; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582AiKc7015191
-	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 11:50:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5EB/XrOSwrBg61UCKv90VdlyE8eMUv62GQ7Noo3Ndow=; b=nybMVs+EeKRJq3LU
-	bPFyv0XreWU751FtGKaUNSSqfxImrsxXGm4HO76Rs8IjceRiN/7h1BfWakmZhaMW
-	ik3zINYG+NTEQPwfetg2GfiA18kcbVoNTKxE8b50RWjPZGZ28QKZqqHr4gahKllq
-	qXFnBR02M7R2ksQyqUwFVjQA5ASDMJbYVNMrHdcjxejP6ogAKHXU6Ot+Mj7ghEqe
-	UOMNbwX4bgnM2n80mbKA7spzXNa97mkMgE7HHybsXNuwBpbSPZYXAsydbcfIdvWI
-	Cky99Dw1803sPo7Z89Ps/TubwD1L+wTkm5qFuo7rx+Pisn49zb+De5Qcc1jGiFBo
-	TZGceg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urvyyna4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 11:50:37 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b3037bd983so28881361cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 04:50:37 -0700 (PDT)
+	s=arc-20240116; t=1756813905; c=relaxed/simple;
+	bh=stkzb5qZmNxd/2kejaNDGWHHRB9X+fqeYD+0GtMHhTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KbCRdUtoMYrSbK+pUKELl73DZguPt/5mHRXuP4B+oKAtRPPU9LdICFAP0KabEuvnMbpd3JUPRJKJviZd0eVBGSB4EJ0346rJKzmfOxvflRhZEj+QdF134JyJL9Y4NiE04ufVjja8YUSlkWdQM8NQZGhkz3Mqv5PtfnC8ZlARUBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AFoBhU+l; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb7322da8so1029422866b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 04:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756813901; x=1757418701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lSvS5Dw8cbSzTPFTeTjrx7vGtggJfEg2AXxdD6ZOy9M=;
+        b=AFoBhU+lmC1VsPAAOtuCE9YEWnxUymQiaHntZhr7ltkulwpI7pLJaKOO/67eGzDCmq
+         zJizc2w1XcJWRVJTQHUXqks1XLWC/TziaU0qUuOG0nsqlqje+mqDLupm/HUXKtJa5paK
+         8bRoTOA4Qew8WKPvqapURl87FGUEpcIPN8W/296NYBWlQzsFTe5gFQfMUu0Jdmffm8/N
+         mfZS+ToOeBXmUeJ1WY3rNWZYMGKOl9M2oegAsQKdrYSeq2A5x5MOMHHgKsfkstdPA88P
+         gPkjL0x4EH2Y1vfiVjw5y3hkt1k+QVuHvqHNTexhLzJgbfPAFE5iZm0hmtTVESeJSayc
+         B7dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756813836; x=1757418636;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5EB/XrOSwrBg61UCKv90VdlyE8eMUv62GQ7Noo3Ndow=;
-        b=kPpZBpG/FKV23K/ryQxWfo66p8ktwgDZoqMBL0RX5i67FpBlOTpkxn/iN0ptdl9Ix1
-         V2yD+MoSNZGDG62Jv2CYf9FQZ2RZWo9NoEBNzO+w/ekp4u6w0iTILTpSvXlbGcCndEn3
-         VdhhZGYHvOqwu+YKVpLYMcUn5bSa+453wfjWlj0wDMtHgcBbl1+JLBNxXLXcp1NJjh7c
-         H+Tn6hdt5ZWLVH2ejfT/m4jZ6JihdWRtsFB6qrIIBBOQZFoKlBt5KRvE7oP9tjhk9/eB
-         Oc0pJkRNNNz9wwss/6War5DnrLH36FBYI7YLYARZj7kiHgmTHvf9AUGm+8DSk/nwZZ7A
-         BVoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfp7FngqVXc7b8/lbZcYvDzJ6cJvCsUjyph5/jaZ0tD0Y8UrTmkNpijD80wRexGN+Zef+jC6ugVEnTwDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ7Ng0mLECzFdIjuuPAmJ8diGbFEHjnQUm/y/Sluyhlkm/7FwB
-	/OaNrqMZ7UVkNbht1lAlmELCakxUcrtnhDYPpEUwm0wVE6/u3FusK2dljMF20INjfZ3mUcF9SuN
-	hhGn1K9yzQW48CCwgYT0FOfuH1KdsP5Ys6JqnSTfMqJ9i80vUEA3F2PVxJc9widCB0OA=
-X-Gm-Gg: ASbGncubGbaEpolRLNLf8gLld9RFoM2V/9w7r9gTiXX371QjJGtkUfRV8J/UNrynu4l
-	9FLj+am/XSAr6saZswrVUfjAz4UTRHyeKcIt+LAcNEzWa0/4fAQMVGm5aL+Kz7MRF/RVaW/hVKS
-	X/wZNVYwXXUxY9qHQ2RnXaYuj9CLHfgXyu5uVIUFfHCyabyiYQiGB/dLZPMBwU0Hjl43H0aXQBy
-	egUSP66nPDMrF8p5Y/kZUEEmdiHC68cV9Uiax83yRXXhZl+SUaXoCnaSNUS+EMPTk9xpcq3UTpi
-	P2IvQrm91KTZJjYFlNm1M3hCRSM4wtBbq+y2smJc9+6KYP78fDm/qwF8/lCNnhJZc0+TAcz2ccX
-	CRCAi0baFGjmkeuk9p+EuCA==
-X-Received: by 2002:ac8:5ad3:0:b0:494:b722:141a with SMTP id d75a77b69052e-4b313fb8f60mr107758141cf.13.1756813836168;
-        Tue, 02 Sep 2025 04:50:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE+rzTco+7fQp7WZWydorG6/Vw8s23rOxW1SECVccT+ronOW4dFkZRBskA4ygd4Rv1M9i7TYQ==
-X-Received: by 2002:ac8:5ad3:0:b0:494:b722:141a with SMTP id d75a77b69052e-4b313fb8f60mr107757911cf.13.1756813835705;
-        Tue, 02 Sep 2025 04:50:35 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b04132c77d9sm665564666b.20.2025.09.02.04.50.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 04:50:35 -0700 (PDT)
-Message-ID: <4dff9cc2-2152-48a0-b8ab-eea57ce2ace2@oss.qualcomm.com>
-Date: Tue, 2 Sep 2025 13:50:31 +0200
+        d=1e100.net; s=20230601; t=1756813901; x=1757418701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lSvS5Dw8cbSzTPFTeTjrx7vGtggJfEg2AXxdD6ZOy9M=;
+        b=fSIwPq7B0CyOtB6c0gErpEBvJ9YgjTjJ5tSw1tG6LRlsbpaJ31F71RAQ/Qsub6DU3V
+         AhB5XpfFmP1kG897TVd7RY+1DLcbkSQ5zXw78d0Jlj2oZHwqzzFtjLf98mnNo8bv/ItR
+         ucyicFYXh0PAHoCJRABLvSA9yflWeqx/2D3wpsFvyd/t/JFJoWJJ0cQyBiJa/c20vWkB
+         P+1fMB0T/p13L6+7AhKq9clEypfOFwixC+q7rnF62NhCDCyWYDjAZ3s/xuJOiUoZNwcm
+         3t7biPoYfBs/ZJPeVrxJ9DAOEY80Lofyi425+RHsu5wTKsJRk9YKUEPsuegV7yQb6IDk
+         xFcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUR9btv+jn6y5bCnH5bfRmBkj873DttJFAFmPKMJw+k1zMx+zNkPsxQ0UvX3Idu8imSiKjLNdVjXfssQH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMNJZaibVBuMsogUowYArKtWPxAxxwvy8eYa0S3ahi0CM89tjn
+	uaZqERL3eVlAvfwmHwUkrWz9KusyxhCGtts1C6AYX1ibZGsjjTujtU7NcGacLRAxDgqJHGB4e0j
+	ugTpOQECqxicNdv0vJrHuOBsjkLRiklA=
+X-Gm-Gg: ASbGncvr9qFvtBY7mWAeLx+Q2s3PX9VhHmb6jz1exC2NeLWts2klc0CFXJQX84yKQbP
+	JKDRu6cXBn9+JXCkEC3JznJRWWrM2Zy/NkcMYFVHYOY8ygEZpHL/zM+R/LsM+SYs6bgGutQgsQ7
+	2T9bs8dL5p0/hzbzE6PTDUdzeQv3YLCEdH6EqzIPxwo0r7u9Bk1VG5lUxJgjhd7/9++9WUM2ZrN
+	P+IeVA9q/Q0mi+7grCs3w==
+X-Google-Smtp-Source: AGHT+IEx3B21oLYPOIdFxDMDtY3rkvLZ5XDzFg7HBKdAm9QNvZitc4dm3sU8EHJLhha4a/khNoeUbmWYmy6zPKCIeHw=
+X-Received: by 2002:a17:907:7ea8:b0:b04:53cc:441c with SMTP id
+ a640c23a62f3a-b0453cc4688mr191417766b.28.1756813901119; Tue, 02 Sep 2025
+ 04:51:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
- Document static lanes mapping
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org
-References: <20250902-topic-x1e80100-hdmi-v2-0-f4ccf0ef79ab@linaro.org>
- <20250902-topic-x1e80100-hdmi-v2-3-f4ccf0ef79ab@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250902-topic-x1e80100-hdmi-v2-3-f4ccf0ef79ab@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: J5RETuLSM3h3m63_2UiLkAydfIlHCfLD
-X-Proofpoint-ORIG-GUID: J5RETuLSM3h3m63_2UiLkAydfIlHCfLD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX/q+EnFFNb6gr
- XKhgwiC3tfy4KG//oJeewCsFjVXZyKIj1rLzdtYqHjV5IAKFhsj3DysramZZ66wr+/QSnjTCH/x
- ci6xk9lU8xA374Fpc6DHvlSlZSD5nMxwflyj/lCvLLn3Dg5KU2bX5zBIa+44l2r7yyvb6N7ivLO
- HPZxhD6weJ4DJ5agKhzvhY4+kbhMZ0A4GvT4cJdC1MeA6mF7VgaeOeUqdW5debCKyrEfj37ZqKi
- kL9f0xk6AvJIzyuLGAWm1g8/9MqHbg5VtTCxnFkK18J831ysh95sZ2T7Mq644K+6/6O+yagCGVs
- dGxE+0ZRcHPD9BI8odkmHOunfVcZ1N3V9lOKoabFh+dUnUHPM8sx3Zsnfy1s1fBRZZlMFGgWF7A
- vDp4u2Kx
-X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b6da0d cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=TNrL9Qa0OoqJGZUcVMkA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508300027
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-7-ryncsn@gmail.com>
+ <CACePvbVVz5G9mC=Od3Uhw9Dkkgz-_jMg9R5EzNxUwx0adKKPQw@mail.gmail.com>
+ <CAMgjq7BjsuooaHr=6cYTzGsj1nm+xG7jzCVdEsFgxyBHwq4GXw@mail.gmail.com> <CANeU7Q=_TveYGa2OK93YCRyJRYBc7QVi1pTTfQM7vm4Qh9tNbA@mail.gmail.com>
+In-Reply-To: <CANeU7Q=_TveYGa2OK93YCRyJRYBc7QVi1pTTfQM7vm4Qh9tNbA@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 2 Sep 2025 19:51:04 +0800
+X-Gm-Features: Ac12FXxYKyC5qWDDx3xJPXEBEpk0d9wlxb__9hhFkPyO3auILUM2eu8faNXvPQ8
+Message-ID: <CAMgjq7CWPt8Ue7AjkfwAtFEtsZx8wk3Ge4LcFHx9=ur9vUCEyA@mail.gmail.com>
+Subject: Re: [PATCH 6/9] mm, swap: use the swap table for the swap cache and
+ switch API
+To: Chris Li <chrisl@kernel.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/2/25 11:00 AM, Neil Armstrong wrote:
-> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
-> of a combo glue to route either lanes to the 4 shared physical lanes.
-> 
-> The routing of the lanes can be:
-> - 2 DP + 2 USB3
-> - 4 DP
-> - 2 USB3
-> 
-> The layout of the lanes was designed to be mapped and swapped
-> related to the USB-C Power Delivery negociation, so it supports
-> a finite set of mappings inherited by the USB-C Altmode layouts.
-> 
-> Nevertheless those QMP Comby PHY can be statically used to
-> drive a DisplayPort connector, DP->HDMI bridge, USB3 A Connector,
-> etc... without an USB-C connector and no PD events.
-> 
-> Add a property that documents the static lanes mapping to
-> each underlying PHY to allow supporting boards directly
-> connecting USB3 and DisplayPort lanes to the QMP Combo
-> lanes.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         | 29 ++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-> index c8bc512df08b5694c8599f475de78679a4438449..12511a462bc6245e0b82726d053d8605148c5047 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-> @@ -76,6 +76,35 @@ properties:
->    mode-switch: true
->    orientation-switch: true
->  
-> +  qcom,static-lanes-mapping:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 4
-> +    items:
-> +      enum:
-> +        - 0 # Unconnected (PHY_NONE)
-> +        - 4 # USB3 (PHY_TYPE_USB3)
-> +        - 6 # DisplayPort (PHY_TYPE_DP)
-> +    description:
-> +      Describes the static mapping of the Combo PHY lanes, when not used
-> +      a in a Type-C dynamic setup using USB-C PD Events to change the mapping.
-> +      The 4 lanes can either routed to the underlying DP PHY or the USB3 PHY.
-> +      Only 2 of the lanes can be connected to the USB3 PHY, but the 4 lanes can
-> +      be connected to the DP PHY.
-> +      The numbers corresponds to the PHY Type the lanes are connected to.
-> +      The possible combinations are
-> +        <0 0 0 0> when none are connected
-> +        <4 4 0 6> USB3 and DP single lane
-> +        <4 4 6 6> USB3 and DP
-> +        <6 6 4 4> DP and USB3
-> +        <6 0 4 4> DP and USB3 single lane
-> +        <4 4 0 0> USB3 Only
-> +        <0 0 4 4> USB3 Only
-> +        <6 0 0 0> DP single lane
-> +        <0 0 0 6> DP single lane
-> +        <6 6 0 0> DP 2 lanes
-> +        <0 0 6 6> DP 2 lanes
-> +        <6 6 6 6> DP 4 lanes
+On Sun, Aug 31, 2025 at 9:00=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
+>
+> On Sat, Aug 30, 2025 at 9:53=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
+ote:
+> >
+> > On Sat, Aug 30, 2025 at 11:43=E2=80=AFAM Chris Li <chrisl@kernel.org> w=
+rote:
+> > >
+> > > On Fri, Aug 22, 2025 at 12:21=E2=80=AFPM Kairui Song <ryncsn@gmail.co=
+m> wrote:
+> > > >
+> > > > From: Kairui Song <kasong@tencent.com>
+> > > >
+> > > > Introduce basic swap table infrastructures, which are now just a
+> > > > fixed-sized flat array inside each swap cluster, with access wrappe=
+rs.
+> > > >
+> > > > Each cluster contains a swap table of 512 entries. Each table entry=
+ is
+> > > > an opaque atomic long. It could be in 3 types: a shadow type (XA_VA=
+LUE),
+> > > > a folio type (pointer), or NULL.
+> > > >
+> > > > In this first step, it only supports storing a folio or shadow, and=
+ it
+> > > > is a drop-in replacement for the current swap cache. Convert all sw=
+ap
+> > > > cache users to use the new sets of APIs. Chris Li has been suggesti=
+ng
+> > > > using a new infrastructure for swap cache for better performance, a=
+nd
+> > > > that idea combined well with the swap table as the new backing
+> > > > structure. Now the lock contention range is reduced to 2M clusters,
+> > > > which is much smaller than the 64M address_space. And we can also d=
+rop
+> > > > the multiple address_space design.
+> > > >
+> > > > All the internal works are done with swap_cache_get_* helpers. Swap
+> > > > cache lookup is still lock-less like before, and the helper's conte=
+xts
+> > > > are same with original swap cache helpers. They still require a pin
+> > > > on the swap device to prevent the backing data from being freed.
+> > > >
+> > > > Swap cache updates are now protected by the swap cluster lock
+> > > > instead of the Xarray lock. This is mostly handled internally, but =
+new
+> > > > __swap_cache_* helpers require the caller to lock the cluster. So, =
+a
+> > > > few new cluster access and locking helpers are also introduced.
+> > > >
+> > > > A fully cluster-based unified swap table can be implemented on top
+> > > > of this to take care of all count tracking and synchronization work=
+,
+> > > > with dynamic allocation. It should reduce the memory usage while
+> > > > making the performance even better.
+> > > >
+> > > > Co-developed-by: Chris Li <chrisl@kernel.org>
+> > > > Signed-off-by: Chris Li <chrisl@kernel.org>
+> > > > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > > > ---
+> > > >  /*
+> > > > - * This must be called only on folios that have
+> > > > - * been verified to be in the swap cache and locked.
+> > > > - * It will never put the folio into the free list,
+> > > > - * the caller has a reference on the folio.
+> > > > + * Replace an old folio in the swap cache with a new one. The call=
+er must
+> > > > + * hold the cluster lock and set the new folio's entry and flags.
+> > > >   */
+> > > > -void delete_from_swap_cache(struct folio *folio)
+> > > > +void __swap_cache_replace_folio(struct swap_cluster_info *ci, swp_=
+entry_t entry,
+> > > > +                               struct folio *old, struct folio *ne=
+w)
+> > > > +{
+> > > > +       unsigned int ci_off =3D swp_cluster_offset(entry);
+> > > > +       unsigned long nr_pages =3D folio_nr_pages(new);
+> > > > +       unsigned int ci_end =3D ci_off + nr_pages;
+> > > > +
+> > > > +       VM_WARN_ON_ONCE(entry.val !=3D new->swap.val);
+> > > > +       VM_WARN_ON_ONCE(!folio_test_locked(old) || !folio_test_lock=
+ed(new));
+> > > > +       VM_WARN_ON_ONCE(!folio_test_swapcache(old) || !folio_test_s=
+wapcache(new));
+> > > > +       do {
+> > > > +               WARN_ON_ONCE(swp_tb_to_folio(__swap_table_get(ci, c=
+i_off)) !=3D old);
+> > > > +               __swap_table_set_folio(ci, ci_off, new);
+> > >
+> > > I recall in my original experiment swap cache replacement patch I use=
+d
+> > > atomic compare exchange somewhere. It has been a while. Is there a
+> > > reason to not use atomic cmpexchg() or that is in the later part of
+> > > the series?
+> >
+> > For now all swap table modifications are protected by ci lock, extra
+> > atomic / cmpxchg is not needed.
+> >
+> > We might be able to make use of cmpxchg in later phases. e.g. when
+> > locking a folio is enough to ensure the final consistency of swap
+> > count, cmpxchg can be used as a fast path to increase the swap count.
+>
+> You did not get what I am asking. Let me clarify.
+>
+> I mean even if we keep the ci lock, not change that locking
+> requirement part. In the above code. Why can't we use cmpexchge to
+> make sure that we only overwrite the form "old" -> "new".
+> I am not saying we need to do the lockless part here.
+>
+> I mean in the possible sequence
+> WARN_ON_ONCE(swp_tb_to_folio(__swap_table_get(ci, ci_off)) !=3D old); //
+> still "old" here, not warning issued
+> /// another CPU race writes "old" to "old2" because of a bug.
+> __swap_table_set_folio(ci, ci_off, new); // now "new" overwrites
+> "old2" without warning.
+>
+> Has the typical race that you check the value old, then you overwrite
+> value new. But what if the old changes to "old2" before you overwrite
+> it with "new"?
+> You overwrite "old2" silently.
+>
+> I mean to catch that.
+>
+> Using cmpxchg will make sure we only change "old" -> "new". We can
+> catch the buggy situation above by overwriting "old2" -> "new".
+> Also when we find out the entry is "old2" not "old" there, is WARN_ONCE e=
+nough?
+>
+> I also want to discuss what we should do if we did catch the "old2"
+> there in the swap cache instead of "old".
+> I feel that continuing with WARN_ONCE might not be good enough. It
+> will make data corruption popergate.
+>
+> Should we roll back the new value and fail the swap cache folio set
+> function to avoid the possible data corruption?
+> if we found "old2", The new guy can't set the folio to the new value.
+> Deal with that error. Will that avoid data corruption? Not being able
+> to make forward progress is still much better than forward progress
+> with data corruption.
+>
+> I just don't want silent overwritten values we aren't expecting.
 
-Would
+Right, I just think-through about this. If we are super cautious
+during the early phase, we can have more non-debug checks for
+potential bugs.
 
-oneOf:
-  - [0, 0, 0, 0]
-  - ...
+There are currently three places modifying the swap table: replace
+(huge_mm, migration, shmem) / insert (swapin / swapout) / del. I
+checked the details, basically in all cases, there is no way to
+rollback. Once the data is somehow corrupted, any operation could be
+in the wrong direction.
 
-or something similar work here?
+So yeah, let me add some more checks.
 
-Konrad
+I'll slightly adjust swap_cache_add_folio too. In this V1,
+swap_cache_add_folio is designed to allow races and returns an int for
+potential conflict. But , it should never fail in V1, cause there is
+currently no racing caller: we still rely on the SWAP_HAS_CACHE to pin
+slots before installing the swap cache. We will kill this ugly dance
+very soon in phase 3. (phase 2 removes SYNC_IO swapin is an important
+step). I used this version of swap_cache_add_folio from later phases,
+just to make it easier later. So in V1 let's make it WARN/BUG if any
+conflict folio exists and always return void, that's safer for
+catching potential bugs. I'll change swap_cache_add_folio to allow the
+race again in a later phase.
+
+For other places, I think a relaxed xchg with WARN/BUG should be just fine.
+
+Later phases can also use something like a CONFIG_DEBUG_VM_SWAP to
+wrap these, after things are verified to be stable.
 
