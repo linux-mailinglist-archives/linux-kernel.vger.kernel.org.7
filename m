@@ -1,142 +1,166 @@
-Return-Path: <linux-kernel+bounces-795588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B33CB3F4E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:57:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9122BB3F4E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B902F4E2D0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FAF63A9096
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D345B2E1F1F;
-	Tue,  2 Sep 2025 05:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5709D2E2850;
+	Tue,  2 Sep 2025 06:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2YogYFA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MefpEwNl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C2C21C9F1;
-	Tue,  2 Sep 2025 05:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF64C2E264D;
+	Tue,  2 Sep 2025 06:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756792628; cv=none; b=FVIQ6gU/X/QrTQVyhQNafUDbYXhSDfe/dTC80poBhIV6/WLsly4c5Kh7TeEvfDLEizlU4OhFNeVoEFDrjb5j4JpkG//ZZVCiUnsL7j2UJpAgOFpWHwLUDeQUPjYXkwXFGw+0B5HKdIFXCJibNXlb/kOxc8dS6pOf7vBCcd3xD84=
+	t=1756792805; cv=none; b=JfICCn4TLm+s/F75OMsYhn7LvN0WNuijj/r4pJawAp4S5jiTDrej+AjFOwr/0XBT1p9JvTMRwLt175q6VagMaDhprY+yfvI0r4T72ROQwiQ2zTCPb1WqxAFXF07t6ss2Qw4vFtrmEKoV1/wOnobykQokeM0bHEp9Wph+XQbES9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756792628; c=relaxed/simple;
-	bh=jJtSaBN9ADP6YY6RppBQcMRR9U3lbAd3preWtYC9MN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AOkMKHFiIyv8tDLHidaXdn0G3HkUthXHxQjdMohL0HuKzACkyO+fkAiChQJjJAay7gB1pMKZuEgD0KKBzK8HDg+ga2L1+oG2YanTicOIRxbZsLOGHumOaVoSEO1QKfA5Qmq29TYR9tjFLm6ali2zBn8v8frJe6hUxIyOPkjRJ7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2YogYFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 330C5C4CEED;
-	Tue,  2 Sep 2025 05:57:04 +0000 (UTC)
+	s=arc-20240116; t=1756792805; c=relaxed/simple;
+	bh=b7omN1BWe25O8EiNt+XfatAiHy9vm6h6D0V38Wn/hc0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZSbjHDDpfx6w1iRlqWjFEpjHZb3fH+gNieNjAlf3/tZdTo8O9lj1c2HUxUI5GXQGtJh8nqgf9W5zJGgkByK7677MeqCpAK6+pHoZdIvXqNlW8e1tBTkZaqu9FFYEw1QLHGDtM7VgRz+MhYpO/yWrInwWgb9g9DotxMlE0YWrWwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MefpEwNl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 38AC8C4CEED;
+	Tue,  2 Sep 2025 06:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756792627;
-	bh=jJtSaBN9ADP6YY6RppBQcMRR9U3lbAd3preWtYC9MN8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W2YogYFAuyUQf94+eqivUS9MqWS7tdyD6KWJMkQUxHNuhw2gV1ebtyoJd27WK9GYR
-	 jV51XSXyjOXa7b2ToZLQwe2XI6CnweJt8loKt0UhltSQaE7gmMN9d4DxDb6Jpi/Ryu
-	 z0bczuWoKviPt6gPyU5uLRa6F6YDZxM4CpPPGzFFxmV/h4YxihtkIi9Mt2rejD8sMl
-	 TAlMv7WFJcN4K1xxWmj9nm2LhWRfWSCyEBM8IMUooCVaoGgWjm/4EovnrY924mxs27
-	 DztSMRVwq2gn5GVsLybgbBC47KoPy47RiKz1w8hRk82kpHV0ymSjFEUuNVeH6m+3Uk
-	 NlhBnta5Lin2g==
-Message-ID: <9b5bb45d-75ba-4674-9c4d-b04766496447@kernel.org>
-Date: Tue, 2 Sep 2025 07:57:03 +0200
+	s=k20201202; t=1756792805;
+	bh=b7omN1BWe25O8EiNt+XfatAiHy9vm6h6D0V38Wn/hc0=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=MefpEwNlVyxBkzK5wTHcDkKI+ZoIeiqWxZBLTFSN+4mXmIKZ2BdT+JYiafZL5OGrN
+	 gusRVeLnzLcEnPX7OaQyiw7Iic/c0ZaN0/w2PRJmf/57hF4AkNUJbUEff/0hEyczw4
+	 cki8mQKLHccEylevFxP2CQj9JaWA6vgS8nQiLy8p1CnaqUbiJvOTdbZ/eyawdoCrs2
+	 jIGc95qhh4JpTZDvFFOEkvQsdgSrWR+LW3UDc45XoCB4QZoa7NiZjOmlJWTrCzwX3+
+	 X4KfOFnp9Jc0hLTmAUW9FjBDw1xfCuvkjzg8DNHOzFu8tZV7IaY7VpaAzbvF13M7ob
+	 JbJBYcXLqEM7w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE0CCA1005;
+	Tue,  2 Sep 2025 06:00:05 +0000 (UTC)
+From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
+Date: Tue, 02 Sep 2025 13:59:57 +0800
+Subject: [PATCH net-next] net: phy: marvell: Fix 88e1510 downshift counter
+ errata
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] dt-bindings: iio: accel: bosch,BMA220 improvements
-To: Petre Rodan <petre.rodan@subdimension.ro>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
- <20250901194742.11599-2-petre.rodan@subdimension.ro>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250901194742.11599-2-petre.rodan@subdimension.ro>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250902-marvell_fix-v1-1-9fba7a6147dd@altera.com>
+X-B4-Tracking: v=1; b=H4sIAN2HtmgC/x2MQQqAIBQFrxJ/nWBKi7pKRIg960NZqIgQ3T1pO
+ QMzD0UERqSxeSggc+TLV+jahuxu/AbBa2VSUvVykEqcJmQcx+K4CO2U0WsP6ayhWtwBVf+3iTy
+ S8CiJ5vf9AOhgeoRnAAAA
+X-Change-ID: 20250902-marvell_fix-3f2a3d5e0fca
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Rohan G Thomas <rohan.g.thomas@altera.com>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756792803; l=2646;
+ i=rohan.g.thomas@altera.com; s=20250815; h=from:subject:message-id;
+ bh=/9cNSJY6gnJZYFo+nEpuOiNNB+K1eP0M3YiSlb3Nkvo=;
+ b=JSG/f/wctkfekTnyLxeAFMxREMqyGGGJJr0B2r/e64+6r5sDWh33vmccuzRuN57rKuD/JFdTV
+ bnhnwGOb/CBAiQs+7PnrQozE5tPfptL0MXcM5H8ZEnOHZ613RSErQY/
+X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
+ pk=5yZXkXswhfUILKAQwoIn7m6uSblwgV5oppxqde4g4TY=
+X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250815
+ with auth_id=494
+X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+Reply-To: rohan.g.thomas@altera.com
 
-On 01/09/2025 21:47, Petre Rodan wrote:
->  - fix title typo
->  - add optional watchdog setting that recovers the sensor from a stuck-low
->  SDA condition
->  - set correct SPI phase and polarity
->  - interrupt on rising edge. the level-based interrupt that is being
+From: Rohan G Thomas <rohan.g.thomas@altera.com>
 
-Cleanup and new features must never be mixed together.
+The 88e1510 PHY has an erratum where the phy downshift counter is not
+cleared on a link power down/up. This can cause the gigabit link to
+intermittently downshift to a lower speed.
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+Disabling and re-enabling the downshift feature clears the counter,
+allowing the PHY to retry gigabit link negotiation up to the programmed
+retry count times before downshifting. This behavior has been observed
+on copper links.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+---
+ drivers/net/phy/marvell.c | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index 623292948fa706a2b0d8b98919ead8b609bbd949..4c3d5fbcfda0a960f6c1284f07f16061d9fa0229 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -1902,6 +1902,43 @@ static int marvell_resume(struct phy_device *phydev)
+ 	return err;
+ }
+ 
++/* m88e1510_resume
++ *
++ * The 88e1510 PHY has an erratum where the phy downshift counter is not cleared
++ * during a link power down/up. This can cause the link to intermittently
++ * downshift to a lower speed.
++ *
++ * Disabling and re-enabling the downshift feature clears the counter, allowing
++ * the PHY to retry gigabit link negotiation up to the programmed retry count
++ * before downshifting. This behavior has been observed on copper links.
++ */
++static int m88e1510_resume(struct phy_device *phydev)
++{
++	int err;
++	u8 cnt = 0;
++
++	err = marvell_resume(phydev);
++	if (err < 0)
++		return err;
++
++	/* read downshift counter value */
++	err = m88e1011_get_downshift(phydev, &cnt);
++	if (err < 0)
++		return err;
++
++	if (cnt) {
++		/* downshift disabled */
++		err = m88e1011_set_downshift(phydev, 0);
++		if (err < 0)
++			return err;
++
++		/* downshift enabled, with previous counter value */
++		err = m88e1011_set_downshift(phydev, cnt);
++	}
++
++	return err;
++}
++
+ static int marvell_aneg_done(struct phy_device *phydev)
+ {
+ 	int retval = phy_read(phydev, MII_M1011_PHY_STATUS);
+@@ -3923,7 +3960,7 @@ static struct phy_driver marvell_drivers[] = {
+ 		.handle_interrupt = marvell_handle_interrupt,
+ 		.get_wol = m88e1318_get_wol,
+ 		.set_wol = m88e1318_set_wol,
+-		.resume = marvell_resume,
++		.resume = m88e1510_resume,
+ 		.suspend = marvell_suspend,
+ 		.read_page = marvell_read_page,
+ 		.write_page = marvell_write_page,
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
+---
+base-commit: 2fd4161d0d2547650d9559d57fc67b4e0a26a9e3
+change-id: 20250902-marvell_fix-3f2a3d5e0fca
 
 Best regards,
-Krzysztof
+-- 
+Rohan G Thomas <rohan.g.thomas@altera.com>
+
+
 
