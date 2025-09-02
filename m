@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-795555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DA0B3F480
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:30:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB22B3F485
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 395C37A5888
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:28:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C6297AEA66
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 05:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F712DF15C;
-	Tue,  2 Sep 2025 05:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F7E2E284B;
+	Tue,  2 Sep 2025 05:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fVzsgIzV"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="by4bClOc"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D172F32F76A;
-	Tue,  2 Sep 2025 05:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4081F32F751;
+	Tue,  2 Sep 2025 05:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756791026; cv=none; b=dAr7TLTPn3Zs46QLin2BPzR4dodGwtmv+T+MPCx7Im2jxrYV59Agda5nNjTnzLnJY5dOHcXsfk750/VWIAKqwJgJE+HhLGi4audS6d1g6X++tLhfeP0NSORR0dmi6IhM0eaW7Svh9mGKi9ePsKzqaZ/xlwzJOdlLisG0/vhUIe0=
+	t=1756791033; cv=none; b=urpjQP37Hfm6AEbKc1Bom5YVa8ZRqG7gOdKVKwtCjDXWck5qPwZYNot42PCmp7pit7LEGev5H7QYEL4MtkfZ0EWkZd63mRZPPfVAyamKClzzby2Q/GbXrmaH4L1CCPDXEHy23maSlKb+FscuJ3Te9jFUTZOIv/UgbC7b0K4b5FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756791026; c=relaxed/simple;
-	bh=kGGaIyE41e6rs4l+FJMEZ7tS8DugX7ZNdyKMo3bP4zo=;
+	s=arc-20240116; t=1756791033; c=relaxed/simple;
+	bh=4gWufUOCoFrNwiZ+yhS1w9Ie/+lG1JLAiMZFWDyqX4k=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kabley4TWC04ZY+Pw0JPsHDh0nhy0z8oivBwPJqnJr07zkMI+RStaAYDiqPXNAXVTX9BN//SSzpJxmAKTUNP8kD4LATnrEYbFfR9DiqnBdYGa2Cx1G8u+Uxt9wPAJ9sbCSQT1uWhLUXE9sesv6IgLbpZ7PumS51iRiPurTueMIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fVzsgIzV; arc=none smtp.client-ip=198.47.19.246
+	 MIME-Version:Content-Type; b=sbh8f+XRV7YAdbUZKn6NVRGYirwrhHBNbqtUkQ6wx9Xgf3wBt+GvvsYIMvI64QqMeKEGWBfJQJJDqypK8uCRGpJRegCw1JRPw2RfLewspH2GzLf9ZEVLYFOowxU5lbr+k+ijXHGykFv6VnotEjssT3ZEy03bpEfvLVyvvifbjJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=by4bClOc; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5825UIge2911397;
-	Tue, 2 Sep 2025 00:30:18 -0500
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5825UMH72947801;
+	Tue, 2 Sep 2025 00:30:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756791018;
-	bh=XVXxGdziaoxBeUwaXlwKAqEmpVy7Hr7kZxhdiqzCnVI=;
+	s=ti-com-17Q1; t=1756791022;
+	bh=H5nbL/l98g1pHtQE59r8sDNdSX1a0LDiNJsSpW5LKDM=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=fVzsgIzV8p1Nhrxbv1vwZPx4XgEwwFFZNNiXRvnUfF2OtRKxaec9V2q/OYaenOJvp
-	 YXAtoAiFrWMm+hhObfoITPcuKgzJJmApTBI2IVPOglMWQdcSEjWh90UWpIdGDgDsVS
-	 gaf+xpNHpbWpUY64OZOHwCFNIyhvdC/gILk6yPY8=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5825UIN63247813
+	b=by4bClOcHqKF7OTI1ypaEDF6sQUs8masYTgf90nMt0qWyha7epBUDvQzGA85Jowwb
+	 /P2lIQKJmZlzZjdGR3o0BXsOseWvpIidHksVria915zCBnY7n5Vr0Ntc3yRJbe8f05
+	 NmLQk9Bta+ZR2Ov8lADT561MiLKKMEyh9rfZ7RhQ=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5825UMH72049180
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 2 Sep 2025 00:30:18 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 2 Sep 2025 00:30:22 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 2
- Sep 2025 00:30:18 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2025 00:30:22 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 2 Sep 2025 00:30:18 -0500
+ Frontend Transport; Tue, 2 Sep 2025 00:30:21 -0500
 Received: from hp-z2-tower.dhcp.ti.com (hp-z2-tower.dhcp.ti.com [172.24.231.157])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5825UAWo3551148;
-	Tue, 2 Sep 2025 00:30:14 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5825UAWp3551148;
+	Tue, 2 Sep 2025 00:30:18 -0500
 From: Hrushikesh Salunke <h-salunke@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>
 CC: <s-vadapalli@ti.com>, <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <h-salunke@ti.com>, <danishanwar@ti.com>
-Subject: [PATCH v2 1/4] arm64: dts: ti: k3-am62a7-sk: Add bootph-all tag to usb0_phy_ctrl node
-Date: Tue, 2 Sep 2025 11:00:06 +0530
-Message-ID: <20250902053009.1732607-2-h-salunke@ti.com>
+Subject: [PATCH v2 2/4] arm64: dts: ti: k3-am62p5-sk: Add bootph-all tag to usb0_phy_ctrl node
+Date: Tue, 2 Sep 2025 11:00:07 +0530
+Message-ID: <20250902053009.1732607-3-h-salunke@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250902053009.1732607-1-h-salunke@ti.com>
 References: <20250902053009.1732607-1-h-salunke@ti.com>
@@ -82,14 +82,14 @@ available during all boot phases. This is required for USB DFU boot.
 
 Signed-off-by: Hrushikesh Salunke <h-salunke@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 4 ++++
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index bceead5e288e..434d30ce8916 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -734,6 +734,10 @@ usb0_hs_ep: endpoint {
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+index 899da7896563..57808e36dae0 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+@@ -607,6 +607,10 @@ usb0_hs_ep: endpoint {
  	};
  };
  
@@ -97,9 +97,9 @@ index bceead5e288e..434d30ce8916 100644
 +	bootph-all;
 +};
 +
- &usbss1 {
- 	status = "okay";
- };
+ &usb1 {
+ 	dr_mode = "host";
+ 	pinctrl-names = "default";
 -- 
 2.34.1
 
