@@ -1,164 +1,200 @@
-Return-Path: <linux-kernel+bounces-797155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD48B40CA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:59:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE49B40CAC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1552D1B63990
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49A005E16C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA972308F1A;
-	Tue,  2 Sep 2025 17:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0E6306484;
+	Tue,  2 Sep 2025 18:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMmmN/hS"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mshRRTUl"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6F33594B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756835977; cv=none; b=EmlUeSAVeyzT4bwrNySUfoWVtflD6OeGIQnkEVcoQ90HmTU0rGR9uwaGMq280umRyzLa2NJu5o3JxBeZvz0ZF8EzNNd5OXvfcsyLarHvOH8zPn86ffAWNMLt+4yi5sUOrPO0uoDtMXgdO+qoqzjBuMhK/6RcjVz3VvomEA/SYDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756835977; c=relaxed/simple;
-	bh=ff8WKSKB1O9TVRrfMWl0CREYtluWZ/Sl+GMmIX8c1zQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V21LYSEgcAWXDQd11NnotaVcVGDF3/CguQBKc8GjyZc5f3hMEI5yrPrvElMP7U74+ZHts3KEG9+Sge1l7TUW0gufAy4VKgl5vB+8LH8GRRS2fJ8MD6ExdkjlN2Ss1mw5bRwydYBuBnP5NnvF/yU4DiU6Kyh6+Pj5Jtm4hA5brhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMmmN/hS; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b47475cf8ecso3741524a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756835974; x=1757440774; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xAH4RbURzzHRpIvpNMqt11PG9TMIAwCZWf6ncjCc04w=;
-        b=BMmmN/hSbAD5c5B6eYb8tXHEZwx9VSEjpbJ9AIqrq1VD22Akp30PW8ASr5PQXKDA3B
-         4JKE1bCYMqQVSVAAPQdXI5e0xhXE6AtTecxf2Gudj5dImOMBNmkBoN0Tk3D3FUViDE/e
-         DtWRQW4Z8secA0dlYEDxR+nu5IpRrl4YwmA5Pepo49kGGE/5ymcuBnVcdZ0JKbYU7wlt
-         Mob/hyyUC4C6/1ecQesnXQygZXss43tInU4HsKcn3jzzw0AkleR9FU8OoZ5FSGQ5LWge
-         WBtZITt8bVd9fVVN2CsI163i2DDrDIXajecYgRSQTOmeyr8hgFzjfFYBxojCxi88EVoC
-         koLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756835974; x=1757440774;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xAH4RbURzzHRpIvpNMqt11PG9TMIAwCZWf6ncjCc04w=;
-        b=jSeM4n80eLZiFArRIqI5iFTyN8rJ/+cLoUnjOWRC3OGGmOqguIYJPdlaiyBBuoV/ju
-         IIV5B27GIek3zPaE3qrwlui5RR5LcwRMtdzNNI76EV9eHbBOkWC002i2gTCwR3C6koIY
-         +Ol6Nbyk4PsBgNL7yhrlybfobJZXaUNFuCZwz9REoKz7b3iv5DCGGUlnc07CYa6YmNSy
-         4zaD9EnRo3rxzeEE/DNL//nVlzNGsYx9NStk2hKgQVYZ0Dbxm4rGyPDTbMBPkc7K8nyv
-         s+M9pWwwGy4mu+YH4otBd98mFSpyooZTefaIOr1uoJxLKQ5EqwLYzQc72nNHqDjNXopN
-         hQ4g==
-X-Gm-Message-State: AOJu0YwFiHPlok3NLi7G01vXsX1RUiMSwPajDIzXXYi0BcloMzqSA0zm
-	wZNk+XfTLAYeKPX2yVdUbT1sL9gcxNYK6je/JS2NXqIhJAj0OA6y7f51L0vpAA==
-X-Gm-Gg: ASbGncu+AwgBZVNj84m8gHE3gx7z+6/S0C+X7yxKrowteqY91+9olZdPUPkTaLkP/YS
-	qhTHGLoa1J6Om3SBLlmedPSf47+RegFOVeq+rFXn72hoP0fltzj2szItk7S0xu4Q1sPkmV62Ak1
-	zvK6z9LwlSJKLJaBbrRZHiFKeLxqgCMYZZbrZohCqwp32hBn7tUjXQnWI9xwEqZ7UO549nMC1kJ
-	XXmE51LgzcXFwC3PNl0CFU4ELHRBDj2ojZ0jSOeVY1lTxiEfljUoFWG3lVGvhkKUJIseH5BJElJ
-	6qnq3D/HTmZMmyKPzdwo/7yTTyUByAFhQZYr3QBMySr7s9whTN7+CG1MXlzd0eIxBWPLsXaTWJQ
-	j0CXzadLoLEb3a8kmWyHS52yXNaJP6gE0mJp/MSTnw4XqbEFM+qSdBgoWWjlBYmwf
-X-Google-Smtp-Source: AGHT+IE69QSW4qvs9ks5N2BD/7L6YYxrDKxFR+dkOnLAl+rVNC07mTwlZHlby7K2v2qk1lnap3nZ0A==
-X-Received: by 2002:a17:903:2412:b0:249:c2ee:af2a with SMTP id d9443c01a7336-249c2eeb25fmr158523805ad.11.1756835974450;
-        Tue, 02 Sep 2025 10:59:34 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-24a92f89809sm98463435ad.2.2025.09.02.10.59.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 10:59:33 -0700 (PDT)
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Kees Cook <kees@kernel.org>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] mm: Fix kernel stack tagging for certain configs
-Date: Tue,  2 Sep 2025 10:59:03 -0700
-Message-ID: <20250902175903.1124555-1-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D51E2877FC;
+	Tue,  2 Sep 2025 18:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756836221; cv=fail; b=bTOQhznJ3RCk+LvOCge3D+qnMch+cggzLZbo9AsSPDWos2Aua/RkQxxdCa6qyB2CUe7E6hXU0OGE4B186enkFoVHVkoKcrFCPYOtdHPALthZt/wBQjWm5hi3Eu6uh/zZUtff+4hZFE8+iCVyGc2CW1sdptYv4+7lgsOaeSvXzr8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756836221; c=relaxed/simple;
+	bh=0kRA5n7f9cJp7F/+I4ngtBsc2U3klDMDkTAynw/wg6A=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=OIDYvI/b69FP4BsFDsWwhGar28zZvBdYDP/CZm2EHKo4ge7PkYRSTgEKaxLa9tBDsPbBac0fCApp8JovX7jPiC2oDC9eocWn/TepnGxzkXCPUprdcz9q0P8+mrwyBqejneyMymMfBRuSLgeFSlqGCtts00zLJeDf6D0M0ql+9FM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mshRRTUl; arc=fail smtp.client-ip=40.107.237.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dip0BAacTznx7C/q0arv1zAzLrbjrSFFs4a6K2ED5AFKgUOL5xzkUOscJNfyv9b4IZ7oh0sbH96j9QAUrn4Ri1r4DJBWCDaBZYV5jYGgEWf16yF1ikaBVK7IAng4qfsU/3f7sIl2sIfMR53HwBkbPQnmUbmVlEwRgOwn1yqoEeA6M3TFwtirCpQn248uKbt29MS2fynFgnpbHpTIHdnz+xmxvbBqBgUM0ixoVjFGUNrUeV/nIJKFYnXdW8s1jyGruEo9vUxU8My/9pBL9hOV5cdTe42cr3C/+KBoNRVdorj66YmOyIiJX1jFd+UMF/RbynhOzXnhvMEiAAWj248yDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O9Dt/3xeNC+H2Y2HML4RENFmYeCRbTw8Jt4jpZPIEF4=;
+ b=U1BmfhAx9eX8Au1yx32P9FZrpQaqznKRQQhT3x3ar978t3PCm+mNmdUbHgfv2pT4hSPc0gNYb/SsSTPa9gbVjOqIWrmzgl+BeI/jg3hQr3+uVK/8VmVkdIXBXFA/BFVG8oCr/LYhjTSn6AU6TK3egHREvD1sVXdTYgA8aSGFhT9gTNmpZ7g8G56BSElUwfUsE+5Olmlq44iR4uQnqBZRsTZOePjbgSWCh+c4H6+AT3Fgk1GXtFVVXrDs4KPibqLYVd9EUWvbNlVBW03nA4YmGS7IJDWsccdfaqtrvLHIjhOiHWQLV14GaiH3G4nGQEDbBpoe2bY34n9+7JC1n6KKCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O9Dt/3xeNC+H2Y2HML4RENFmYeCRbTw8Jt4jpZPIEF4=;
+ b=mshRRTUlVKM4yEi3sftyKkiyEiqogKzlnirduzq5C8mMKPkTL/8c/YFcVeeXvOvrYN0yzClctrPZ7RK+vzFT0/KfJI0EsIBackxh2Mf0sEpqXAf05w+rrGG/ishklWLFRulvGfElJqJxU4HrdzjwspGCVis4WxNShJrpqbGnT2KmAc2pCx12roKatL890UXQ44KcU1e9SNSKSOUeA7cVNtiXnfjcN+UeMBf5WcO2MMUrrOV3gruw3AUfpceHkkoLaL1BcFCKgxRAaz84RrBo8CDT9FGqSFE0d9Ddajov2fh6iSV65m19pjiy/9AyKC28GSsW+62YFBNFTG4UpWm3wg==
+Received: from BN1PR14CA0003.namprd14.prod.outlook.com (2603:10b6:408:e3::8)
+ by BY5PR12MB4035.namprd12.prod.outlook.com (2603:10b6:a03:206::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 18:03:30 +0000
+Received: from BN2PEPF000044AA.namprd04.prod.outlook.com
+ (2603:10b6:408:e3:cafe::a5) by BN1PR14CA0003.outlook.office365.com
+ (2603:10b6:408:e3::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.16 via Frontend Transport; Tue,
+ 2 Sep 2025 18:03:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN2PEPF000044AA.mail.protection.outlook.com (10.167.243.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.11 via Frontend Transport; Tue, 2 Sep 2025 18:03:29 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 2 Sep
+ 2025 11:03:10 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 2 Sep 2025 11:03:09 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 2 Sep 2025 11:03:09 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <achill@achill.org>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/23] 5.4.298-rc1 review
+In-Reply-To: <20250902131924.720400762@linuxfoundation.org>
+References: <20250902131924.720400762@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <e20e2f9a-560c-4b0f-82a5-bf96642130a6@drhqmail202.nvidia.com>
+Date: Tue, 2 Sep 2025 11:03:09 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044AA:EE_|BY5PR12MB4035:EE_
+X-MS-Office365-Filtering-Correlation-Id: fefc5c0b-fad5-46f5-1497-08ddea4b05fa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QnFqbWdQeWIrUUpYU0RpTnhlV2pIMElJK2xGcmNnVnRkazk3Z0VrYU1GaHpi?=
+ =?utf-8?B?aUw1QWFLcitBR3dlTDBPTmcyMTBZMlNiNmNzQWhXU2VML0Y4TitPMjVORURB?=
+ =?utf-8?B?SEliOFdVU0JIK0pndGZDcGdtZDUzR3hlcHNhK3VzTFI5aytsVUE5Sy9uVUx1?=
+ =?utf-8?B?K0RFR0Y3QnM4RC8yb2V0dlprTGhib1pyWFpjeGNzTjFETDJaekRZWTJzZlRk?=
+ =?utf-8?B?aDJKZXhteW0zTGFWMndjV3hpeUJiNGxKUGlsMDBCZFo1U1ZsZHJTMzFXOC9T?=
+ =?utf-8?B?Z2J3MTgxZHp4cDErcDEzQ3ovbTBEanlZY09pWHVyUFlqejUveU51MUJPeUc1?=
+ =?utf-8?B?UGhyTlRGYXlzSEY3dWdCYXRNaHhEM0swa1M2RTFmQkpmc0U1eXlmY2JZcytD?=
+ =?utf-8?B?RTRrbEZjdlZacmoyaUErTFpKSDRNcXA4VnkxSUw2dkdXcW1VWmZGNG4waVRG?=
+ =?utf-8?B?SEI2RlBuWVBVWmliY2k2YlY3ejVER2RNVEhrbTVBZ2ExSlJ6UVdpZlVLSTlj?=
+ =?utf-8?B?VXZpQklBWTBGS0t4THNGVWY4dERob2RkT09sTGN5U2ZXczUzeUhRQy82TjBu?=
+ =?utf-8?B?M2xPUFgwVHFsVTNHb0Y0d1FIVG9nUFFxSGJrQjYrQUV1K0pZS2l2NDRzWjR5?=
+ =?utf-8?B?RDlNaEZUM0pBNnpNbklGVHc5UDZEc3lNT05BL0xKbW5ocFcyWE0yaFBtdUNx?=
+ =?utf-8?B?QUlpdjJvS21jKzVjbzZOY0dEUXlEcC9tb1dITnhCZUZlRzJ2bkRIQVQ1ZGRS?=
+ =?utf-8?B?WHNqdnl4WnBhZktjTUdwYzE4RFEyK2RVNHR4Z1dwYlVCdkI3Q2VheUtlZEVX?=
+ =?utf-8?B?NWhaV0xCVE96bTNQaW84M0ZOanZwaG9QcDI4Z1NZYW9ZQlBIWG0wbWNiY3N2?=
+ =?utf-8?B?dlFGR2ZNcFFiMjI4LzNwRjVEZS81eWhoNUgra0MrczdXOWk2bm5EbHJyRGRH?=
+ =?utf-8?B?eG5wK2NrT1ZEczF1emNuMEV6NGo4dmJCbDlWdHJJUlpwQkR2NzBIeGZPdGE0?=
+ =?utf-8?B?eW9WaURIcC9ISlA5b3o5UE1xUHJoenFjd1hqNDRXcWVsdHFtc1dFK2tGTjR2?=
+ =?utf-8?B?dUQxU0l1RDE2MTd5Z1J0MlNjc3d5dnJxY0F0eTdmQUF3QXZTdUVUUWVnaE1O?=
+ =?utf-8?B?eWhMaitsRk1ZTVVhWHA0YlJEMHAwSTR1dWdrcHlmeGMvOHQ4dXlOZ2lrNVkv?=
+ =?utf-8?B?UXVpNit3RHNHcHVqSTFSQlBxd1RIS2JZNVNsMGVzSHBlTytLYmMwSDNEcS9u?=
+ =?utf-8?B?TXI2UVFXN1BOUldIYVE2YTgxUWl1TW9UbFV6eGhEQStzdmJxR3NtbWZQM2xW?=
+ =?utf-8?B?OEN3WWtDT3VUVjdVaVByVWx1a3pPdDJxSmh3QkNvKzN2OWd6ZGVtNWNYcG1K?=
+ =?utf-8?B?ZjNGQm0rcldTS2Y5L2pyMmUzQ25Ea2NGREFTdnVIWWdNVFZ4VnhLZXEzcmh4?=
+ =?utf-8?B?WGRxN2RRUmVRR2RoTW9EcGhQOVY5UXowbFlnMUVDTW1jMXA1M1B1ZWlWRXk2?=
+ =?utf-8?B?eDNHaUNrRDRQSWJ0K3pPWW9BbUJsd2U3Qnc5UkZhbittd1dpeERGanNxdGtq?=
+ =?utf-8?B?TnRTTUIvVkNYdHVIZU1mSGh2eVora3hrOXlQTEh2NHpTTEFBYldVNHUwRlpC?=
+ =?utf-8?B?Z2pkNnFGOGY3ZURwSDcwRDA2MVJwdGVHTjNGRnZldVBzUFIxRUZSY01RMmd2?=
+ =?utf-8?B?c1RIL2hKd05mUjNQS3JYWUo4NGZjT0E2eVN3MFpFMlR6R2cyNXovd2h2WW9u?=
+ =?utf-8?B?ZjdieiswN0FXbmNyM2xwbVpoaVNPRGRhRFROVFZKNkQyaEVQS0FFNEg4Qm9F?=
+ =?utf-8?B?dkE4aTYybDRHTjdRK0NKNDBjQ1BuTFhLN1djTzlZWFBsMWVCdWpyeDV3SU8w?=
+ =?utf-8?B?MmFRekZTZ3I5WE9JUFc4by9TRzE4VGRGUEIxTzFNbnJjeDJLdEdvWXVPcWRX?=
+ =?utf-8?B?THFYZ1FCSEhFWThHWmQ1cGdJYmlWdTM4ZEx2K21pRUtLY2VXUkxJTE1UT3dC?=
+ =?utf-8?B?Q3FHVFFCd2lNamU5ZjYvQlU4cUNVU2FPdnQvSHBKYVRwb0QwRTRBMVVEV2Rk?=
+ =?utf-8?Q?jqw2dr?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 18:03:29.8309
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fefc5c0b-fad5-46f5-1497-08ddea4b05fa
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044AA.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4035
 
-Commit 4ef905bda61f ("mm: tag kernel stack pages") began marking pages
-that were being used for the kernel stack.
+On Tue, 02 Sep 2025 15:21:46 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.298 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.298-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-There are 3 cases where kernel pages are allocated for kernel stacks:
-CONFIG_VMAP_STACK, THREAD_SIZE >= PAGE_SIZE, THREAD_SIZE < PAGE_SIZE.
-These cases use vmalloc(), alloc_pages() and kmem_cache_alloc()
-respectively.
+All tests passing for Tegra ...
 
-In the first 2 cases, THREAD_SIZE / PAGE_SIZE will always be greater
-than 0, and pages are tagged as expected. In the third case,
-THREAD_SIZE / PAGE_SIZE evaluates to 0 and doesn't tag any pages at all.
-This meant that in those configs, the stack tagging was a no-op, and led
-to smatch build warnings.
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    24 boots:	24 pass, 0 fail
+    54 tests:	54 pass, 0 fail
 
-We definitely have at least 1 page we want tagged at this point, so fix
-it by using a do {} while loop instead of a for loop.
+Linux version:	5.4.298-rc1-g79c1b3cebd7a
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-Fixes: 4ef905bda61f ("mm: tag kernel stack pages")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202508300929.TrRovUMu-lkp@intel.com/
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- kernel/fork.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 1b394426ab4a..9b13cb83e1c6 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -448,14 +448,15 @@ static void account_kernel_stack(struct task_struct *tsk, int account)
- 	} else {
- 		void *stack = task_stack_page(tsk);
- 		struct page *page = virt_to_head_page(stack);
--		int i;
-+		int i = 0;
- 
- 		/* All stack pages are in the same node. */
- 		mod_lruvec_kmem_state(stack, NR_KERNEL_STACK_KB,
- 				      account * (THREAD_SIZE / 1024));
- 
--		for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++, page++)
--			__SetPageStack(page);
-+		do {
-+			__SetPageStack(page++);
-+		} while (++i < THREAD_SIZE / PAGE_SIZE);
- 	}
- }
- 
-@@ -474,10 +475,11 @@ void exit_task_stack_account(struct task_struct *tsk)
- 		}
- 	} else {
- 		struct page *page = virt_to_head_page(task_stack_page(tsk));
--		int i;
-+		int i = 0;
- 
--		for (i = 0; i < THREAD_SIZE / PAGE_SIZE; i++, page++)
--			__ClearPageStack(page);
-+		do {
-+			__ClearPageStack(page++);
-+		} while (++i < THREAD_SIZE / PAGE_SIZE);
- 	}
- }
- 
--- 
-2.51.0
-
+Jon
 
