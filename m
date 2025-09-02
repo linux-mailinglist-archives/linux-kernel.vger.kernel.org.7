@@ -1,107 +1,197 @@
-Return-Path: <linux-kernel+bounces-796418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B369B4008D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:30:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2DBB4005C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADA51684BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:25:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8611882C09
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5622C11D0;
-	Tue,  2 Sep 2025 12:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED0F220F5E;
+	Tue,  2 Sep 2025 12:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djOEfM6D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFEwkyub"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763602C11CE
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20832EE61D;
+	Tue,  2 Sep 2025 12:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756815937; cv=none; b=hYMucZH7pvZ2GfBkjXV7hR/ticOqUJt3Piudw+pGaO/uveD8cWFYZJLYm/BAhD/myJBAgMh3EhttqF1uZEaBcpLRq7Ef+82gK2piK2AIxHuLeXfhLLV8SrJ06jk/67TEzmjDdeRKyqvXGaQYECk4+LL3QChYZSw50nve2aGWeIk=
+	t=1756815941; cv=none; b=m4oJV+GgqIZqWkDu6MRMOcmn1FC9qUXp6cUhl+Nqal/eRKXvXLyB4w9l37bw8lCnmvn17P4F3PlrOp+3eFeJkPG1KrGsmY/i8fnnqRQqjzic8xew/dhnH5JwnRaSq9M+4qpYJq8AR0AFVQFdws564WgggS6kW5RTlqIi65XZMlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756815937; c=relaxed/simple;
-	bh=dFdjjL7xQSI+eLqyEvgNUo/LHERLhX1ZK3IiLvg6l70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qQrcmqvBbleQ5zQNoztgG3yrYCRovxHoieF8jFpSpXS1QCCER4fFPijyaUEF/UhjlT6xpxq5EFY95n+IGFPxwSlGpqlj30/0SPCRqQA8j2zAZe3NX82w3IxsAb7yy1Rsu7GSHUkatvmmTHHcKIb/BZ1gg3Z/tRwZeMa7esY5Hnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djOEfM6D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 317E7C4CEF7
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:25:37 +0000 (UTC)
+	s=arc-20240116; t=1756815941; c=relaxed/simple;
+	bh=tOTGeZnjx47VyjcWDHmS3VXQ7wa/IfFBajWPok1nLyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZuNejhC5/EH2NGm9NoJB9XbNhNNrgKarkOKWH7pKWg1pMtzEz/DMR1aHyLNV3yjtNGe+KmbyKO3vsIRsQS5HuJ3RHP+Reqq9Vm8LqJzXAC84HL5FwXOFqveAdISIPaM4RiogeACQy9c2izyBSkYgsEZMzNcMdCj7IJn69WmjYeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFEwkyub; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 360DFC4AF09;
+	Tue,  2 Sep 2025 12:25:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756815937;
-	bh=dFdjjL7xQSI+eLqyEvgNUo/LHERLhX1ZK3IiLvg6l70=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=djOEfM6Dim1+5M3FJR+/EeqzVGt7HAmeXwYO3l6rBd1jADIpvuOoq6vXZGp4/qVET
-	 6ykjDP9JrzqtnwSgPBo33T3Q3gDzq9HyVU+9udi4mSgAtcYRCvai9e4Pfmv2QOfujB
-	 4kSpPpNGVxCrm+QlC9nUxUhJsbdLmdN/PgBzui/HkhMAXBZSAuKA0h2VP2iwiEtyfW
-	 gwyM4L8CkD3KUImLkTu5siorT8NGvsnjlkaVKUWSVL6e8p9rD7hfR/28CSNw0oOTBo
-	 JnPSDCwlk4hWq22NIT9hGe+J58n9hIN+CnaL2r1MclVOrJ6drp7krgxh8KN/rgWxMy
-	 2dJCa9wCaLYpQ==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7ace3baso334832866b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 05:25:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEIlsejIt/684ZTzHk7+CCygzI21XkYRFYTInp9klRBWg6UpmweHdO8jEpJ7HYFyvuXZrS1s2ZVYtoquw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOQ5YmCme4xpDB/+6gzMq9CuT5UfQG68bNUjVZ1ZZyneB0vhFu
-	Lk1hGdDb1TEbTFL/EyHJ6SYv74TWxqJ7m04WzGbabmyjwGLLsT6VECe8Tf19adIJPWlhB+6DJqU
-	1R7Yq8Phazvd9Tf7kqkKLJTfVXqGmkTY=
-X-Google-Smtp-Source: AGHT+IGuIJdLeS2OuL7zqorDh3x8gITiFTZFiewtlfRJ6GxHkCWuVRXNBZGcM6JCuO4UjDsddXOU/fUe8+ePgYIEbWg=
-X-Received: by 2002:a17:907:940c:b0:b04:5b47:8bd5 with SMTP id
- a640c23a62f3a-b045b478ebfmr86320466b.25.1756815935699; Tue, 02 Sep 2025
- 05:25:35 -0700 (PDT)
+	s=k20201202; t=1756815941;
+	bh=tOTGeZnjx47VyjcWDHmS3VXQ7wa/IfFBajWPok1nLyw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aFEwkyubPT/9oxZGfR7M4SHfY5Ch+0PNEJKtANHaDwc9Zjf/FNNAeWzER6JrxhxhT
+	 dLEWZ/0spxUlX9WELfi7Ej7l8/mZuk28UbWJ6Ycj3xzmM8NhCWZ2Iuu5JUFuAGOkMr
+	 FimmpWpLjzBeI27/eZQ/Z71HfZdAtpi7GJRntte0nd+ql5D0SgTyXDI65G/nEYkXtC
+	 ugdc1iCZ+Kf8eprOTFpgAruyoe3E+3Hl4ICosJ/JBIkZq52Rl6VK18r9eeskKHNMzS
+	 UPNVHYZiCP6CqKKxolCJ+y26mH+igvjwXEr4EheiNJooXrLDp2r/5i/Drh04Rg/AVV
+	 5A+alTh4zUXWQ==
+Message-ID: <8aa9dfc5-5e77-48af-b2f4-f1964d20d6d1@kernel.org>
+Date: Tue, 2 Sep 2025 14:25:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902090258.1170896-1-cuitao@kylinos.cn>
-In-Reply-To: <20250902090258.1170896-1-cuitao@kylinos.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 2 Sep 2025 20:25:22 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4pVgYOQy-qEfTtpVb9bjY7VOeJkjWYBWRGVpSnoh=upQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyJDeIKv-SMyb6JuPadQ-KWCbuf3BWO4utLhL_QQoVBL8pT9cWu5ERLS6Y
-Message-ID: <CAAhV-H4pVgYOQy-qEfTtpVb9bjY7VOeJkjWYBWRGVpSnoh=upQ@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: replace sprintf() with sysfs_emit()
-To: cuitao <cuitao@kylinos.cn>
-Cc: loongarch@lists.linux.dev, kernel@xen0n.name, jiaxun.yang@flygoat.com, 
-	linmq006@gmail.com, ziyao@disroot.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] leds: led-class: Add devicetree support to led_get()
+To: Aleksandrs Vinarskis <alex@vinarskis.com>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+References: <20250902-leds-v1-0-4a31e125276b@vinarskis.com>
+ <010201990a1f6559-9e836a40-f534-4535-bd59-5e967d80559a-000000@eu-west-1.amazonses.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <010201990a1f6559-9e836a40-f534-4535-bd59-5e967d80559a-000000@eu-west-1.amazonses.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Queued, thanks.
+Hi Aleksandrs,
 
-Huacai
+Thank you for working on this.
 
-On Tue, Sep 2, 2025 at 5:04=E2=80=AFPM cuitao <cuitao@kylinos.cn> wrote:
->
-> As Documentation/filesystems/sysfs.rst suggested, show() should only use
-> sysfs_emit() or sysfs_emit_at() when formatting the value to be returned
-> to user space.
->
-> No functional change intended.
->
-> Signed-off-by: cuitao <cuitao@kylinos.cn>
+On 2-Sep-25 1:10 PM, Aleksandrs Vinarskis wrote:
+> From: Hans de Goede <hansg@kernel.org>
+> 
+> Turn of_led_get() into a more generic __of_led_get() helper function,
+> which can lookup LEDs in devicetree by either name or index.
+> 
+> And use this new helper to add devicetree support to the generic
+> (non devicetree specific) [devm_]led_get() function.
+> 
+> This uses the standard devicetree pattern of adding a -names string array
+> to map names to the indexes for an array of resources.
+> 
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Reviewed-by: Lee Jones <lee@kernel.org>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+
+Please update this to:
+
+Reviewed-by: Hans de Goede <hansg@kernel.org>
+
+to match the update of the author which you already did.
+
+Also note that checkpatch should complain about the mismatch,
+please ensure to run checkpatch before posting v2.
+
+> Tested-by: Aleksandrs Vinarskis <alex@vinarskis.com>
 > ---
->  arch/loongarch/kernel/env.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/kernel/env.c b/arch/loongarch/kernel/env.c
-> index c0a5dc9aeae2..19e30206b6e7 100644
-> --- a/arch/loongarch/kernel/env.c
-> +++ b/arch/loongarch/kernel/env.c
-> @@ -86,7 +86,7 @@ late_initcall(fdt_cpu_clk_init);
->  static ssize_t boardinfo_show(struct kobject *kobj,
->                               struct kobj_attribute *attr, char *buf)
+>  drivers/leds/led-class.c | 38 +++++++++++++++++++++++++++++---------
+>  1 file changed, 29 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 15633fbf3c166aa4f521774d245f6399a642bced..6f2ef4fa556b44ed3bf69dff556ae16fd2b7652b 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -248,19 +248,18 @@ static const struct class leds_class = {
+>  	.pm = &leds_class_dev_pm_ops,
+>  };
+>  
+> -/**
+> - * of_led_get() - request a LED device via the LED framework
+> - * @np: device node to get the LED device from
+> - * @index: the index of the LED
+> - *
+> - * Returns the LED device parsed from the phandle specified in the "leds"
+> - * property of a device tree node or a negative error-code on failure.
+> - */
+> -static struct led_classdev *of_led_get(struct device_node *np, int index)
+> +static struct led_classdev *__of_led_get(struct device_node *np, int index,
+> +					 const char *name)
 >  {
-> -       return sprintf(buf,
-> +       return sysfs_emit(buf,
->                 "BIOS Information\n"
->                 "Vendor\t\t\t: %s\n"
->                 "Version\t\t\t: %s\n"
-> --
-> 2.33.0
->
->
+>  	struct device *led_dev;
+>  	struct device_node *led_node;
+>  
+> +	/*
+> +	 * For named LEDs, first look up the name in the "led-names" property.
+> +	 * If it cannot be found, then of_parse_phandle() will propagate the error.
+> +	 */
+> +	if (name)
+> +		index = of_property_match_string(np, "led-names", name);
+>  	led_node = of_parse_phandle(np, "leds", index);
+>  	if (!led_node)
+>  		return ERR_PTR(-ENOENT);
+> @@ -271,6 +270,20 @@ static struct led_classdev *of_led_get(struct device_node *np, int index)
+>  	return led_module_get(led_dev);
+>  }
+>  
+> +/**
+> + * of_led_get() - request a LED device via the LED framework
+> + * @np: device node to get the LED device from
+> + * @index: the index of the LED
+> + *
+> + * Returns the LED device parsed from the phandle specified in the "leds"
+> + * property of a device tree node or a negative error-code on failure.
+> + */
+> +struct led_classdev *of_led_get(struct device_node *np, int index)
+> +{
+> +	return __of_led_get(np, index, NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(of_led_get);
+
+I probably did this myself, but since of_led_get() is private now
+(I guess it was not private before?) and since we are moving away from
+"of" specific functions to using generic dev_xxxx functions in the kernel
+in general, I think this just should be a static helper.
+
+Or probably even better: just add the name argument to of_led_get()
+before without renaming it, update the existing callers to pass
+an extra NULL arg and completely drop this wrapper.
+
+Also notice that adding the EXPORT_SYMBOL_GPL() while there was
+none before should go hand in hand with adding a prototype to
+a relevant .h file. However please just keep this private and
+drop the wrapper.
+
+Regards,
+
+Hans
+
+
+
+
+> +
+>  /**
+>   * led_put() - release a LED device
+>   * @led_cdev: LED device
+> @@ -342,9 +355,16 @@ EXPORT_SYMBOL_GPL(devm_of_led_get);
+>  struct led_classdev *led_get(struct device *dev, char *con_id)
+>  {
+>  	struct led_lookup_data *lookup;
+> +	struct led_classdev *led_cdev;
+>  	const char *provider = NULL;
+>  	struct device *led_dev;
+>  
+> +	if (dev->of_node) {
+> +		led_cdev = __of_led_get(dev->of_node, -1, con_id);
+> +		if (!IS_ERR(led_cdev) || PTR_ERR(led_cdev) != -ENOENT)
+> +			return led_cdev;
+> +	}
+> +
+>  	mutex_lock(&leds_lookup_lock);
+>  	list_for_each_entry(lookup, &leds_lookup_list, list) {
+>  		if (!strcmp(lookup->dev_id, dev_name(dev)) &&
+> 
+
 
