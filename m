@@ -1,108 +1,122 @@
-Return-Path: <linux-kernel+bounces-795708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C6BB3F6C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:37:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B5EB3F6CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2F83BF175
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E0E1A841B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 07:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659C22E3703;
-	Tue,  2 Sep 2025 07:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EF42E7166;
+	Tue,  2 Sep 2025 07:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="Jx528d/6"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RXmtI/tR"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D96B266580
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8032E2DDD
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 07:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756798644; cv=none; b=F6s5jhoUXmcHHiaAAyScf2x/vjjMUV+/H16OuveDRTW7ca6tpvl9nMaPSkVo/VJyLhYbDQIcp1azWHcpxniwpZ3yK0HVHf/ZOkJg6kJCmIfzqrAaJQa4Y/XiC+oeAWM981Wr85l9uZp7ZBBUs6weJwpmKAkx6Jh1yPXg4yyW4Yc=
+	t=1756798742; cv=none; b=Jo5X7O5bxCpApLtEFzS/fbPbo9K2M9xn42gQAKT8GIpmtvpmgc5JnNzg4g5j21i7jdukLpCN1mpscGZOQ6VDB/Mb3QRuI30TQo3EQfMcdIFBezc+BTdsvyHcBtOJRBi7qc3uXB/au8kaFqVuN5uKiSCJ94EwErXdFVCZEEcbClQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756798644; c=relaxed/simple;
-	bh=oMjXeyB4iI6Dmg26BM3e9rBlxLJ4xrOoViQErPfNlV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMOtDqBAo8xnt6vRHC+AWHF/2CjyeHwPIKIaGNEPsCroi9a8LfqSP+Xl3Wddi8KH42pa517ttHJL3kgI3PkUpI0W9+ZJR4PijWSN1kXlZ62gBwjuZw+6FDiyd+TDqfreZOcwE9SwjbFAfnq6HwxHWzYoqnntGQZUQuqQH3Q91bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=Jx528d/6; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7EB0B14807F6;
-	Tue,  2 Sep 2025 09:37:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1756798640; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=BN5rmZ3Xmdnj4GOMlRZw4tipJjzFnAUUFeXUaKQC9SI=;
-	b=Jx528d/6GSON+C1FFzFQKq75vxXgJYj1aSooP3r6s4/coLwQUfKbT17XELsKIxTpjWvdOr
-	LO8nOh6z5UnpmjWHUCc/6Hr8hcxYXP/N/2LhU7YhJcGd7EMMkSdLbq2M1jK/AAb+uCYPDN
-	u0fTIvBiQIg+dqTOKuYvqjFnCXI6xzaUUjuCIrMcq/ILtbfiKwztXtm8sHWf1hFuSSsJsa
-	gmjysuUCcBZAWIZMPgvOqXEs0zCt7bIAfgUAaOi59b+CnzoR/jWZIJRGenw6eNtb0U3peS
-	qJ3XXO6jLsSG1TqMDiUNH5puNC6s1mis4mkd9UIHK+EBWBP4Wi5foRh0UrILnQ==
-Date: Tue, 2 Sep 2025 09:37:17 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: State of the UBI fastmap feature
-Message-ID: <20250902-life-domestic-c341a8992cac@thorsis.com>
-Mail-Followup-To: Richard Weinberger <richard.weinberger@gmail.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250902-yarn-from-020874b4da63@thorsis.com>
- <CAFLxGvzO2yszspJtd_A3BSTCRNSF+ts_5+2aMkNksxM48DYEwA@mail.gmail.com>
+	s=arc-20240116; t=1756798742; c=relaxed/simple;
+	bh=qxr+CREui4pE7rWTCWj6E45p0I+6Etq/aCUmmlsx7ok=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=e1NOcAqhJaafHkPgOc8p12JC6obo67pf0pT/ySspRbRuW5EDeAm+9rXiKkOA1lGRHqRZnTA9Vau4TUYSap5+LQf2tn6wDn6CWBTHg9VyUI22yjSDdYZ0K3eTNFx42Xf7dw4+farmHCPQ7u5pzjtb3Nvq0TJCrOr06h7TEY+OnUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RXmtI/tR; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3cef6debe96so2628478f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 00:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756798739; x=1757403539; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WE7v0z7TzjZvPVfK4+4Sp1UwAsOZUOttl1hBOuNjNnw=;
+        b=RXmtI/tREvYorkHCf4d6iMF84kM8El9u92b3F9C3SL6kXV02xf81nAlAxqSSILTeSx
+         MdGdC90i8eMYOs5s3/37tY7kEvGPzycBFPVHLTY8yrhXdjq4NIDZ6bOddHofdqC7WYq8
+         Y1jq6/MFRQ9Byja3MEK3G24cSuPERpq4Qhrvqd9liz0HXcg6pSmgNLIoBotmELb5lgxB
+         aAsEkSScEiynhEpm1J3EII6hYzLNBYaPv2bKMwhi1fgopcUYQUqHHn+3IoIshcS1w/N8
+         tn1jxyOOkcCyW2dcKCXEPtgXkiXsATHgi2J4xcmNRiVLg+WvnZkGl5/vvWqZzb5lODwA
+         RfCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756798739; x=1757403539;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WE7v0z7TzjZvPVfK4+4Sp1UwAsOZUOttl1hBOuNjNnw=;
+        b=g9rL0MfZqBA8c6UvroGYjYAIF14KnVut1sM8SD05bjk7RNBPCjdVm9A7LzfAxgLZ8v
+         OW2dtpz4cchdqxCuchHr375cgSebJO9Fj2HgyRfyaJa5pD88LgmDk+eCUWBHk0YCCtQJ
+         xSN7faFkbaGQfeZYQhtOu9mcpZ14ngmyOiL/Nxjhxx7eEFO4TvDEItfH5uagNWq1ZBIj
+         CTg+9z8eVxmXYx9zja2ScFhcgpHDemwMswWOO6AfVK/9toSHk2e6AMeQqKH8HUBGD1HA
+         ZNF7nqzRFAFQ5tGlVPMouT4/srpiWr3pm+vBq2zoPDo2eqNWjpIpduZZAuOMHkCEaNYU
+         E43A==
+X-Forwarded-Encrypted: i=1; AJvYcCWGH195NKOoyk/0Q0/D+OZX2P5JIjkwMJ9To/v56ZyYSIVjANA+ubEw8k2HRXQ2cbFt6lw7wOhOEfuVDGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGmhRpzZEhwsBquFq6gOaZwGF2Y5hDAQ3/c/cSkpcdH0v63ebg
+	9y2Gqf7BUSzUFiFECpy3jABjEywwdXlL+a8fPAJlqkt6BL+dGejiaKOXFTPC2fhRm65K/UqJU7N
+	4u9iSuOrW4g==
+X-Google-Smtp-Source: AGHT+IGtOLqgwO0BX/6Sg5J5mhZ2KciPQ7kiO1dkbcPPy47bP+WENUmn6cded6JsjNVS6Jfarr14pjp35Rl5
+X-Received: from wmsd13.prod.google.com ([2002:a05:600c:3acd:b0:459:dcf5:1b54])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2d82:b0:3d7:38a7:35dc
+ with SMTP id ffacd0b85a97d-3d738a739a7mr3158803f8f.12.1756798739364; Tue, 02
+ Sep 2025 00:38:59 -0700 (PDT)
+Date: Tue,  2 Sep 2025 07:38:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFLxGvzO2yszspJtd_A3BSTCRNSF+ts_5+2aMkNksxM48DYEwA@mail.gmail.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+Message-ID: <20250902073841.2338568-1-abarnas@google.com>
+Subject: [RFC] staging: media: atomisp: Simplyfy masking bit logic
+From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+To: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Richard,
+Simplified masking logic in pci/hive_isp_css_common/host/vmem.c.
 
-Am Tue, Sep 02, 2025 at 09:23:04AM +0200 schrieb Richard Weinberger:
-> On Tue, Sep 2, 2025 at 8:00 AM Alexander Dahl <ada@thorsis.com> wrote:
-> > Hello everyone,
-> >
-> > after using UBI for almost 15 years now without fastmap, I'm currently
-> > experimenting with that feature.  The help text in Kconfig menu
-> > (drivers/mtd/ubi/Kconfig) still says "Experimental feature" and
-> > further down:
-> >
-> > > Important: this feature is experimental so far and the on-flash
-> > > format for fastmap may change in the next kernel versions
-> >
-> > Is this still the current state?  I can not remember seing any patches
-> > touching fastmap in the last time.  Are there plans to stabilize this?
-> > Will there be changes in the on-flash format?  Do folks even use this
-> > feature?  In production?
-> 
-> I don’t expect changes to the on-disk format, but the number of new raw NAND
-> devices being introduced is now close to zero. As a result, the user
-> base is very small,
-> and subtle bugs are likely to remain undiscovered.
+---
 
-We are still using it in cost-sensitive products.  Those raw NAND
-flash chips are a lot cheaper than eMMC or even NOR flashs of the same
-size.
+I have tested this change on whole range of *valid* inputs, and it gives
+the same results as before, but this function seems to be little
+counter-intuitive as far as start is a (bit index) but end is
+(bit index + 1).
 
-> Fastmap does have users, including in production,
-> but I don’t have concrete numbers. And I don't know their workload.
-> That said, Fastmap should work but I still anticipate performance and
-> runtime issues.
-> 
-> I guess your motivation is reducing the attach time?
+It is follow up to: https://lore.kernel.org/linux-staging/20250901091050.1935505-1-abarnas@google.com/
+---
+ .../staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Indeed.  Need to reduce boot time here, and UBI is attached twice.
-Once in U-Boot to read the kernel image and then again in Linux.
-
-Greets
-Alex
+diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
+index 722b684fbc37..9703e39b7497 100644
+--- a/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
++++ b/drivers/staging/media/atomisp/pci/hive_isp_css_common/host/vmem.c
+@@ -22,14 +22,14 @@ typedef hive_uedge *hive_wide;
+ static inline hive_uedge
+ subword(hive_uedge w, unsigned int start, unsigned int end)
+ {
+-	return (w & (((1ULL << (end - 1)) - 1) << 1 | 1)) >> start;
++	return (w & __GENMASK_ULL(end-1, 0)) >> start;
+ }
+ 
+ /* inverse subword bits move like this: MSB[xxxx____xxxx]LSB -> MSB[xxxx0000xxxx]LSB */
+ static inline hive_uedge
+ inv_subword(hive_uedge w, unsigned int start, unsigned int end)
+ {
+-	return w & (~(((1ULL << (end - 1)) - 1) << 1 | 1) | ((1ULL << start) - 1));
++	return w & (~__GENMASK_ULL(end-1, start));
+ }
+ 
+ #define uedge_bits (8 * sizeof(hive_uedge))
+-- 
+2.51.0.318.gd7df087d1a-goog
 
 
