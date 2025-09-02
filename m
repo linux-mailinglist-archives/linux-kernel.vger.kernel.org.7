@@ -1,129 +1,233 @@
-Return-Path: <linux-kernel+bounces-796017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF6BB3FAF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:45:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C1BB3FAF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D9AD3BE62F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6761A87AD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CB52E8E11;
-	Tue,  2 Sep 2025 09:45:32 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0670A2E8DEF;
-	Tue,  2 Sep 2025 09:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ADC2ECD23;
+	Tue,  2 Sep 2025 09:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bSJMcf0s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2992F2EC547
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756806332; cv=none; b=d74LTBOWjEF7V8WW2qsM1SMknPntlQm4WsFNpYwfsjwvQiT8JDnT6ncLUtWc0NhzrU0icpTDgRPOA32VUrs7U+2e/4YB63fM/pG3yhgoT+WwVfyyODbn6h2+LP2V2ofJT54nKSVqzd1jjRbmM9+2YPyIcllyIt2PmH04/4GD2MI=
+	t=1756806348; cv=none; b=LCKx7H1RpNSicF0nHdgZzx04QG6Uvj9wXRBBUDyknas6KDE7e9ZzW1xQkYtFzQwMSk49PnD5GzwaBMFLq34zjPg5YHeXmdPu8ksa8yqomEj54xIYLJtXcvEh5JtSjScGlDB6nkh+jxNgGec3rQPTWFu1zQYN9khVB3ck2NOrsrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756806332; c=relaxed/simple;
-	bh=ql+elIt0KJIijNej8diArkCswhobJITiTSz7FP9wt0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j05sLALiLEwcNmDQWOh+o85oCNa9rpshAB9FO/CHuRMBxZE/UkiQgGKOlMFLUFAHFL0uaANB0wY/lgPWRnH5qKI1SAJa06NRvgsr+OdQJJK2vEa9DO1dU/YmEh9Ur9fIvgQzpprJi9YnimOHIFP6pmqP+SWIHrVLTNbQoe2r2yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.142.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
-	by app2 (Coremail) with SMTP id TQJkCgB3FpWpvLZoXuPGAA--.49929S2;
-	Tue, 02 Sep 2025 17:45:17 +0800 (CST)
-From: Yulin Lu <luyulin@eswincomputing.com>
-To: linus.walleij@linaro.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com,
-	lianghujun@eswincomputing.com,
-	Yulin Lu <luyulin@eswincomputing.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] pinctrl: eswin: Fix regulator error check and Kconfig dependency
-Date: Tue,  2 Sep 2025 17:45:08 +0800
-Message-Id: <20250902094508.288-1-luyulin@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
+	s=arc-20240116; t=1756806348; c=relaxed/simple;
+	bh=bmdHYgxlrSJ4C+/l7uub89+wrMG6ofKMt8evfvkO93g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tm74sVN2H2BCL9Qg+1gGTucEnJetvlmmNzwruwsYOGTWTz25mC/ym6x7aLNdFjhctMIkkkC/EqGfXKFX/GLZqSF3bELuHclvOZrn3YwdEwmMCZosVmHNHrD5JAqUXzCylmEIWNK//VY06JsUxTb2NSzlw1i09gKx4l2VYP3cKyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bSJMcf0s; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756806346;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C2Ve4CgS6Jqh9ORpRtoAAIe0w/LUc4ir/s41Tz+S/dE=;
+	b=bSJMcf0siIUmz4LWRF60tE3ps7OlPiKqPci3o79iSw+2N4clLIjm3ThSb5LLJteMC5+P73
+	/b3O9EfDulkjTw0TvCmvGkdbi5dClKnjyuZvdnnU6sO/MA46tFf3C8A/rn3o29pFqntTnd
+	xVI7lcX3MG79U5EpPi/N4pggU3FUWdY=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-zDMNXxcaO0m724NnD0wczA-1; Tue, 02 Sep 2025 05:45:45 -0400
+X-MC-Unique: zDMNXxcaO0m724NnD0wczA-1
+X-Mimecast-MFC-AGG-ID: zDMNXxcaO0m724NnD0wczA_1756806345
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b3200a05dfso45826341cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:45:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756806345; x=1757411145;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C2Ve4CgS6Jqh9ORpRtoAAIe0w/LUc4ir/s41Tz+S/dE=;
+        b=gidWy6iwunKgl0NHnB6GCa/uVOrPlCVTO3XvqTets2ZwjK6ndN54Sn4fgjG77xr8R4
+         PUTNksKtTnrwmhn5pApeGE+gyDF86Y6hTOKOE6sWK9ZUgnEQLikoT7XGlRw/fNOBU6PF
+         DGIpQRyz38LL9skltAYvmhVdU0R0W8Llb+5W5M/9DPmXaGOUviCGNvpyRo63dJiedkaa
+         9mCnUeIWjybx3HrutO5tJ7n3pD5zAOqTxYQxUXf9YTxDWe6ClOPvlpDuGKzHdV3jmmfI
+         abjAGB4Pr1xRNF/g6qtdEL3LeT4cdOnjeFXrxwPSOSAGPyQO6WiMYiqWL+0WPw7t9jUV
+         GPcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXviQvChEh7goLj7AIcOgE6cs6O1R2FNPoAD42Xr7U2lRPuCJrYIvzjdCkMcCmqc1S0MhGKzsB0Lk6xyDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk+Yf5Q0Z+2jAMRqf1Lu7xPkgPdwX09vhkmh2K6MNd4fGYlQ+J
+	c5XUc1HOLbxUz+k/FwucaL20gNZuJcLlwHYRBd8Qm19mimpzASATGPBlJgrwKyA6khzTzNbP3eO
+	338vJ4vGb/e0BIXp+Nh88pcFRI8nBQAp3famJ+mVJ+sY7caS1BhNgB2k1mwN29MZ/
+X-Gm-Gg: ASbGncvzDS78KlW0xGfyuV/Bw9NA5REw44pocNyE7SQ1UQSIRn012ApnVsi0IZrxqWX
+	+twdJPJTQ7tkrOoRFD5HlYVk6xh3loDs5goxYZgBnYHG6Oc420+LRrGtm+5nnPTYxWQXEbqLvSc
+	2JQS8pXF7w8zUJGY2CNYfYEAJEZTMgRgrSWdLPAbvEUdYzghota1718PB+fB3ZoLqow9oBL4/Kt
+	CYlHvf6SuB2YDr5FnZc3z5uLVICTl/RS4Rkp6cXCoo+2ASSBeD2kjohmG0v3xqdP7uXFIqMy+8V
+	kl0IfTdRmbPQeWbLSaL/70BV2alyQ1bTIqs=
+X-Received: by 2002:ac8:5dc8:0:b0:4b0:71e7:2d7e with SMTP id d75a77b69052e-4b31b85ea03mr128189551cf.8.1756806344647;
+        Tue, 02 Sep 2025 02:45:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrXB5u8zkFeeKDAOLeeb1BWItMmJbWssZqtK3k4jcmoOb1/w6NiXzFGMOyMKcLcHSLWa38dA==
+X-Received: by 2002:ac8:5dc8:0:b0:4b0:71e7:2d7e with SMTP id d75a77b69052e-4b31b85ea03mr128189311cf.8.1756806344112;
+        Tue, 02 Sep 2025 02:45:44 -0700 (PDT)
+Received: from [10.43.17.17] ([85.93.96.130])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b3461e04f5sm9734241cf.19.2025.09.02.02.45.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 02:45:43 -0700 (PDT)
+Message-ID: <3c75ce2b-a863-40e0-9280-120cafc3542e@redhat.com>
+Date: Tue, 2 Sep 2025 11:45:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgB3FpWpvLZoXuPGAA--.49929S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF4fCry3Jr1fZw47WF4kJFb_yoW8uFW5pF
-	Z3GFyfAr1UJF4xJryUJ34I9Fy3Gan7GrW7Cw48K39xXFs8AFyDA3s0qFW5AFWvkr4kJr1Y
-	y345tFyUWF17ZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 1/2] bpf: add bpf_strcasecmp kfunc
+To: Rong Tao <rtoax@foxmail.com>, andrii@kernel.org, ast@kernel.org
+Cc: Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>,
+ "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
+ <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+References: <cover.1756804522.git.rtoax@foxmail.com>
+ <tencent_0E0C830021A02CBCCB6D95AE57CFD100C407@qq.com>
+From: Viktor Malik <vmalik@redhat.com>
+Content-Language: en-US
+In-Reply-To: <tencent_0E0C830021A02CBCCB6D95AE57CFD100C407@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Smatch reported the following warning in eic7700_pinctrl_probe():
+On 9/2/25 11:19, Rong Tao wrote:
+> From: Rong Tao <rongtao@cestc.cn>
+> 
+> bpf_strcasecmp() function performs same like bpf_strcmp() except ignoring
+> the case of the characters.
+> 
+> Signed-off-by: Rong Tao <rongtao@cestc.cn>
 
-  drivers/pinctrl/pinctrl-eic7700.c:638 eic7700_pinctrl_probe()
-  warn: passing zero to 'PTR_ERR'
+For the series:
 
-The root cause is that devm_regulator_get() may return NULL when
-CONFIG_REGULATOR is disabled. In such case, IS_ERR_OR_NULL() triggers
-PTR_ERR(NULL) which evaluates to 0, leading to passing a success code
-as an error.
+Acked-by: Viktor Malik <vmalik@redhat.com>
 
-However, this driver cannot work without a regulator. To fix this:
-
- - Change the check from IS_ERR_OR_NULL() to IS_ERR()
- - Update Kconfig to explicitly select REGULATOR and
-   REGULATOR_FIXED_VOLTAGE, ensuring that the regulator framework is
-   always available.
-
-This resolves the Smatch warning and enforces the correct dependency.
-
-Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
-Fixes: 5b797bcc00ef ("pinctrl: eswin: Add EIC7700 pinctrl driver")
-Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
----
- drivers/pinctrl/Kconfig           | 2 ++
- drivers/pinctrl/pinctrl-eic7700.c | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index be1ca8e85754..0402626c4b98 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -211,6 +211,8 @@ config PINCTRL_EIC7700
- 	depends on ARCH_ESWIN || COMPILE_TEST
- 	select PINMUX
- 	select GENERIC_PINCONF
-+	select REGULATOR
-+	select REGULATOR_FIXED_VOLTAGE
- 	help
- 	  This driver support for the pin controller in ESWIN's EIC7700 SoC,
- 	  which supports pin multiplexing, pin configuration,and rgmii voltage
-diff --git a/drivers/pinctrl/pinctrl-eic7700.c b/drivers/pinctrl/pinctrl-eic7700.c
-index 4874b5532343..ffcd0ec5c2dc 100644
---- a/drivers/pinctrl/pinctrl-eic7700.c
-+++ b/drivers/pinctrl/pinctrl-eic7700.c
-@@ -634,7 +634,7 @@ static int eic7700_pinctrl_probe(struct platform_device *pdev)
- 		return PTR_ERR(pc->base);
- 
- 	regulator = devm_regulator_get(dev, "vrgmii");
--	if (IS_ERR_OR_NULL(regulator)) {
-+	if (IS_ERR(regulator)) {
- 		return dev_err_probe(dev, PTR_ERR(regulator),
- 					 "failed to get vrgmii regulator\n");
- 	}
--- 
-2.25.1
+> ---
+>  kernel/bpf/helpers.c | 68 +++++++++++++++++++++++++++++++-------------
+>  1 file changed, 48 insertions(+), 20 deletions(-)
+> 
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index 401b4932cc49..238fd992c786 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -3349,45 +3349,72 @@ __bpf_kfunc void __bpf_trap(void)
+>   * __get_kernel_nofault instead of plain dereference to make them safe.
+>   */
+>  
+> -/**
+> - * bpf_strcmp - Compare two strings
+> - * @s1__ign: One string
+> - * @s2__ign: Another string
+> - *
+> - * Return:
+> - * * %0       - Strings are equal
+> - * * %-1      - @s1__ign is smaller
+> - * * %1       - @s2__ign is smaller
+> - * * %-EFAULT - Cannot read one of the strings
+> - * * %-E2BIG  - One of strings is too large
+> - * * %-ERANGE - One of strings is outside of kernel address space
+> - */
+> -__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
+> +int __bpf_strcasecmp(const char *s1, const char *s2, bool ignore_case)
+>  {
+>  	char c1, c2;
+>  	int i;
+>  
+> -	if (!copy_from_kernel_nofault_allowed(s1__ign, 1) ||
+> -	    !copy_from_kernel_nofault_allowed(s2__ign, 1)) {
+> +	if (!copy_from_kernel_nofault_allowed(s1, 1) ||
+> +	    !copy_from_kernel_nofault_allowed(s2, 1)) {
+>  		return -ERANGE;
+>  	}
+>  
+>  	guard(pagefault)();
+>  	for (i = 0; i < XATTR_SIZE_MAX; i++) {
+> -		__get_kernel_nofault(&c1, s1__ign, char, err_out);
+> -		__get_kernel_nofault(&c2, s2__ign, char, err_out);
+> +		__get_kernel_nofault(&c1, s1, char, err_out);
+> +		__get_kernel_nofault(&c2, s2, char, err_out);
+> +		if (ignore_case) {
+> +			c1 = tolower(c1);
+> +			c2 = tolower(c2);
+> +		}
+>  		if (c1 != c2)
+>  			return c1 < c2 ? -1 : 1;
+>  		if (c1 == '\0')
+>  			return 0;
+> -		s1__ign++;
+> -		s2__ign++;
+> +		s1++;
+> +		s2++;
+>  	}
+>  	return -E2BIG;
+>  err_out:
+>  	return -EFAULT;
+>  }
+>  
+> +/**
+> + * bpf_strcmp - Compare two strings
+> + * @s1__ign: One string
+> + * @s2__ign: Another string
+> + *
+> + * Return:
+> + * * %0       - Strings are equal
+> + * * %-1      - @s1__ign is smaller
+> + * * %1       - @s2__ign is smaller
+> + * * %-EFAULT - Cannot read one of the strings
+> + * * %-E2BIG  - One of strings is too large
+> + * * %-ERANGE - One of strings is outside of kernel address space
+> + */
+> +__bpf_kfunc int bpf_strcmp(const char *s1__ign, const char *s2__ign)
+> +{
+> +	return __bpf_strcasecmp(s1__ign, s2__ign, false);
+> +}
+> +
+> +/**
+> + * bpf_strcasecmp - Compare two strings, ignoring the case of the characters
+> + * @s1__ign: One string
+> + * @s2__ign: Another string
+> + *
+> + * Return:
+> + * * %0       - Strings are equal
+> + * * %-1      - @s1__ign is smaller
+> + * * %1       - @s2__ign is smaller
+> + * * %-EFAULT - Cannot read one of the strings
+> + * * %-E2BIG  - One of strings is too large
+> + * * %-ERANGE - One of strings is outside of kernel address space
+> + */
+> +__bpf_kfunc int bpf_strcasecmp(const char *s1__ign, const char *s2__ign)
+> +{
+> +	return __bpf_strcasecmp(s1__ign, s2__ign, true);
+> +}
+> +
+>  /**
+>   * bpf_strnchr - Find a character in a length limited string
+>   * @s__ign: The string to be searched
+> @@ -3832,6 +3859,7 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+>  #endif
+>  BTF_ID_FLAGS(func, __bpf_trap)
+>  BTF_ID_FLAGS(func, bpf_strcmp);
+> +BTF_ID_FLAGS(func, bpf_strcasecmp);
+>  BTF_ID_FLAGS(func, bpf_strchr);
+>  BTF_ID_FLAGS(func, bpf_strchrnul);
+>  BTF_ID_FLAGS(func, bpf_strnchr);
 
 
