@@ -1,325 +1,107 @@
-Return-Path: <linux-kernel+bounces-796880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C57B408C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:18:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D86B408C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878883B0FD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:18:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7BE45606A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630A231AF1B;
-	Tue,  2 Sep 2025 15:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C262330507B;
+	Tue,  2 Sep 2025 15:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApjN4+wd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bR2xLFPe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ImtitBwc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E089279DDD;
-	Tue,  2 Sep 2025 15:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2F32DE6F3
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826313; cv=none; b=QftH8Gom7USmmTPsTXV375Mj8NO34q6BJxSpvTRdfgPihymnwYeFoRjpfnZRZjKLourp7G2IMOZgLlRIaF6FTbawetznCcBB5pfn6VbHFtLJfnBEJhl3zIuguNQAI+MFJNHdJjnBwUU+m28ADctswn674XuQnN4jTGsIQRdwNqA=
+	t=1756826389; cv=none; b=QyI5vefwDHA0v4up6TxoareWSs2LFhHc7LAPfshfBGuLi766jiQsKWgcxj+xfZqPUC7q9fcBnjUjyMOQ+1LiLzcmsEULACXiWgjWQDcymnhOe/8RoYw/IZZFY9g+gRlhHNzKqIIftHYajGRz7snkP5a9HgAs9JuwDb8GpPoyFBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826313; c=relaxed/simple;
-	bh=vMshstqno7vuVDuvUK1zYuB6lswlHvvEGV9RJecyEus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lS9th+Wh1sL6Py9yyZDVONjjZwHRPiLyOWEtnPPB/NVXfi9ZUsCN/gJPuDCI0TQcghFnTnDGAZyQun81k4ii+mzIjhQxtbE1UvR/bkf5vVQD7BYSoe6zmZYNatUJp6lJvouk1jynjZXTBbY9U5sztaxFBYtYC6lC6F7dBfr4DXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApjN4+wd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66778C4CEED;
-	Tue,  2 Sep 2025 15:18:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756826313;
-	bh=vMshstqno7vuVDuvUK1zYuB6lswlHvvEGV9RJecyEus=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ApjN4+wdgsoXdBsc7MpBBbC2cSgReIZ1ngEEzAmCPNBjOUv1q8mJJiJyg28pIJd7s
-	 MQkdM9gMjmx3+NAzWP6DQyZzUiNIre750NEFFAGQHD3Uix3M0zAgNoSOFEXpc+OGJ0
-	 6NdGqIO1/OlHve7LktMmSWsSIybuj6jS6swKmgSVd+SL9+QYeoA1bZpC9HbrMylSRx
-	 bCaDBiYw0jZDAVAiNb1JULsapE6yLzH4bBkgHYImQU6g1ywGb1wimMv5TqK4nT1tUS
-	 gAtKxl6NaKfDprSLf7VombO8Q7/sjhMc6e7atnCrJqk8Xe4txelD/cmsGWcznbkuta
-	 sQjgzPFaTjL7g==
-Date: Tue, 2 Sep 2025 16:18:28 +0100
-From: Lee Jones <lee@kernel.org>
-To: Marcos Del Sol Vives <marcos@orca.pet>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Michael Walle <mwalle@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
- southbridges
-Message-ID: <20250902151828.GU2163762@google.com>
-References: <20250822135816.739582-1-marcos@orca.pet>
- <20250822135816.739582-4-marcos@orca.pet>
+	s=arc-20240116; t=1756826389; c=relaxed/simple;
+	bh=IGplCY3XY7BL6dryWwO22D33kkmTSdbfZcyxUX7njCE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GxKIbnHtB2cXEFamkala4PzvWvlry4LqFLfUhZ/Ps/sfkZ6NkjqZR9BmKq0+COteE98BEmVskRW2m/kdNfbrk/mCCO7nVmZldQYKFE32fnbwyzJ0QAMCogxmFf2N/BXpkfQFvJOM3JHQqtYIzywvZgDQMzPy92HdNoCgtpEVfJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bR2xLFPe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ImtitBwc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756826385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PoT00wtkWbjRAKe7iGpzKuH4cK69DTQcB1A+qYRyAI0=;
+	b=bR2xLFPeSRrhRDIlnBGJCUBdYMnJJFzaqzWnykvbhrp2T2k54L5WdlKviry3o1W3g8TF3S
+	Ar8ruiL39yAvqV+vy3XBSlcXBqKbmzBivFxPD85q55/ujY8f8tRkEyYz9f/WJa6ZUk6GPo
+	sGCWDOeL/fpwMTvwfh0z+svOBdC0cKqEQneOH8EdKzfCehxqhYNjYyJA4sNwJ8nVHuHXO4
+	sWR1sHOR/EMnKhKCyCOQtyiXx5P/+x/xW4kJL/nqWiYpAxo0Jz8kGu7F2EIPBeNC4w4ard
+	MU3zA5L/ydox5Ii1tzGYbhFWUgx1UvOLAX0UApw85rEQO7pnOrhlL+3ObL7+4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756826385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PoT00wtkWbjRAKe7iGpzKuH4cK69DTQcB1A+qYRyAI0=;
+	b=ImtitBwcodhH5VLaBRKrAlb9OFLgPPNNsaNuuY4a4/z1CXS2jcYujrueWBw+nk3NnqyfYi
+	w6IKS5BZL7EjeLDg==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Sean
+ Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>, Dexuan
+ Cui <decui@microsoft.com>, x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Huacai
+ Chen <chenhuacai@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V2 19/37] rseq: Provide and use rseq_update_user_cs()
+In-Reply-To: <c1eaedb5-0d38-4b32-be27-b0e91bb24752@efficios.com>
+References: <20250823161326.635281786@linutronix.de>
+ <20250823161654.485063556@linutronix.de>
+ <c1eaedb5-0d38-4b32-be27-b0e91bb24752@efficios.com>
+Date: Tue, 02 Sep 2025 17:19:44 +0200
+Message-ID: <873494286n.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250822135816.739582-4-marcos@orca.pet>
+Content-Type: text/plain
 
-On Fri, 22 Aug 2025, Marcos Del Sol Vives wrote:
+On Mon, Aug 25 2025 at 15:16, Mathieu Desnoyers wrote:
+> On 2025-08-23 12:39, Thomas Gleixner wrote:
+>> If user space truly cares about
+>> the security of the critical section descriptors, then it should set them
+>> up once and map the descriptor memory read only.
+>
+> AFAIR, the attack pattern we are trying to tackle here is:
 
-> This new driver loads resources related to southbridges available in DM&P
-> Vortex devices, currently only the GPIO pins.
-> 
-> Signed-off-by: Marcos Del Sol Vives <marcos@orca.pet>
-> ---
->  MAINTAINERS             |   1 +
->  drivers/mfd/Kconfig     |   9 +++
->  drivers/mfd/Makefile    |   1 +
->  drivers/mfd/vortex-sb.c | 135 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/pci_ids.h |   3 +
->  5 files changed, 149 insertions(+)
->  create mode 100644 drivers/mfd/vortex-sb.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index afa88f446630..63e410e23e95 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -26957,6 +26957,7 @@ VORTEX HARDWARE SUPPORT
->  R:	Marcos Del Sol Vives <marcos@orca.pet>
->  S:	Maintained
->  F:	drivers/gpio/gpio-vortex.c
-> +F:	drivers/mfd/vortex-sb.c
->  
->  VRF
->  M:	David Ahern <dsahern@kernel.org>
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 425c5fba6cb1..fe54bb22687d 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -2008,6 +2008,15 @@ config MFD_VX855
->  	  VIA VX855/VX875 south bridge. You will need to enable the vx855_spi
->  	  and/or vx855_gpio drivers for this to do anything useful.
->  
-> +config MFD_VORTEX_SB
-> +	tristate "Vortex southbridge"
-> +	select MFD_CORE
-> +	depends on PCI
-> +	help
-> +	  Say yes here if you want to have support for the southbridge
-> +	  present on Vortex SoCs. You will need to enable the vortex-gpio
-> +	  driver for this to do anything useful.
-> +
->  config MFD_ARIZONA
->  	select REGMAP
->  	select REGMAP_IRQ
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index f7bdedd5a66d..2504ba311f1a 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -202,6 +202,7 @@ obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
->  obj-$(CONFIG_MFD_TPS6586X)	+= tps6586x.o
->  obj-$(CONFIG_MFD_VX855)		+= vx855.o
->  obj-$(CONFIG_MFD_WL1273_CORE)	+= wl1273-core.o
-> +obj-$(CONFIG_MFD_VORTEX_SB)	+= vortex-sb.o
->  
->  si476x-core-y := si476x-cmd.o si476x-prop.o si476x-i2c.o
->  obj-$(CONFIG_MFD_SI476X_CORE)	+= si476x-core.o
-> diff --git a/drivers/mfd/vortex-sb.c b/drivers/mfd/vortex-sb.c
-> new file mode 100644
-> index 000000000000..141fa19773e2
-> --- /dev/null
-> +++ b/drivers/mfd/vortex-sb.c
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + *  MFD southbridge driver for Vortex SoCs
+  ^^^^^ - so I'm not the only one who struggles to find some explanation
+          for that in code, change logs etc. :)
 
-Drop references to MFD.
+> The attacker has write access to some memory (e.g. stack or heap) and
+> uses his area to craft a custom rseq_cs descriptor. Using this home-made
+> descriptor and storing to rseq->rseq_cs, it can set an abort_ip to e.g.
+> glibc system(3) and easily call any library function through an aborting
+> rseq critical section, thus bypassing ROP prevention mechanisms.
+>
+> Requiring the signature prior to the abort ip target prevents using rseq
+> to bypass ROP prevention, because those ROP gadget targets don't have
+> the signature.
 
-Call it "Core southbridge ..."
+Fair enough. Let me see how to integrate this properly along with a big
+fat comment explaining what it actually does.
 
-> + *
-> + *  Author: Marcos Del Sol Vives <marcos@orca.pet>
-> + *
-> + *  Based on the RDC321x MFD driver by Florian Fainelli and Bernhard Loos
+Thanks,
 
-Drop this.
-
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pci.h>
-> +#include <linux/mfd/core.h>
-
-Alphabetical.
-
-> +
-> +struct vortex_southbridge {
-> +	const struct mfd_cell *cells;
-> +	int n_cells;
-> +};
-
-Why is this needed?
-
-> +/* Layout for Vortex86DX/MX */
-> +static const struct resource vortex_dx_gpio_resources[] = {
-> +	{
-> +		.name	= "dat1",
-> +		.start	= 0x78,
-
-Define _all_ magic numbers.
-
-
-> +		.end	= 0x7C,
-> +		.flags	= IORESOURCE_IO,
-> +	}, {
-> +		.name	= "dir1",
-> +		.start	= 0x98,
-> +		.end	= 0x9C,
-> +		.flags	= IORESOURCE_IO,
-> +	}
-
-Use DEFINE_RES_*() macros.
-
-> +};
-> +
-> +static const struct mfd_cell vortex_dx_sb_cells[] = {
-> +	{
-> +		.name		= "vortex-gpio",
-> +		.resources	= vortex_dx_gpio_resources,
-> +		.num_resources	= ARRAY_SIZE(vortex_dx_gpio_resources),
-> +	},
-> +};
-
-It's not an MFD until you have more than one device.
-
-> +static const struct vortex_southbridge vortex_dx_sb = {
-> +	.cells = vortex_dx_sb_cells,
-> +	.n_cells = ARRAY_SIZE(vortex_dx_sb_cells),
-> +};
-> +
-> +/* Layout for Vortex86DX2/DX3 */
-> +static const struct resource vortex_dx2_gpio_resources[] = {
-> +	{
-> +		.name	= "dat1",
-> +		.start	= 0x78,
-> +		.end	= 0x7C,
-> +		.flags	= IORESOURCE_IO,
-> +	}, {
-> +		.name	= "dat2",
-> +		.start	= 0x100,
-> +		.end	= 0x105,
-> +		.flags	= IORESOURCE_IO,
-> +	}, {
-> +		.name	= "dir1",
-> +		.start	= 0x98,
-> +		.end	= 0x9D,
-> +		.flags	= IORESOURCE_IO,
-> +	}, {
-> +		.name	= "dir2",
-> +		.start	= 0x93,
-> +		.end	= 0x97,
-> +		.flags	= IORESOURCE_IO,
-> +	}
-> +};
-
-As above.
-
-> +static const struct mfd_cell vortex_dx2_sb_cells[] = {
-> +	{
-> +		.name		= "vortex-gpio",
-> +		.resources	= vortex_dx2_gpio_resources,
-> +		.num_resources	= ARRAY_SIZE(vortex_dx2_gpio_resources),
-> +	},
-> +};
-> +
-> +static const struct vortex_southbridge vortex_dx2_sb = {
-> +	.cells = vortex_dx2_sb_cells,
-> +	.n_cells = ARRAY_SIZE(vortex_dx2_sb_cells),
-> +};
-> +
-> +static int vortex_sb_probe(struct pci_dev *pdev,
-> +			   const struct pci_device_id *ent)
-
-Why line-feed here and not 2 lines down?
-
-> +{
-> +	struct vortex_southbridge *priv = (struct vortex_southbridge *) ent->driver_data;
-
-s/priv/ddata/
-
-> +	int err;
-> +
-> +	/*
-> +	 * In the Vortex86DX3, the southbridge appears twice (on both 00:07.0
-> +	 * and 00:07.1). Register only once for .0.
-> +	 *
-> +	 * Other Vortex boards (eg Vortex86MX+) have the southbridge exposed
-> +	 * only once, also at 00:07.0.
-> +	 */
-> +	if (PCI_FUNC(pdev->devfn) != 0)
-> +		return -ENODEV;
-> +
-> +	err = pci_enable_device(pdev);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "failed to enable device\n");
-> +		return err;
-> +	}
-> +
-> +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
-> +				    priv->cells, priv->n_cells,
-> +				    NULL, 0, NULL);
-> +}
-> +
-> +static const struct pci_device_id vortex_sb_table[] = {
-> +	/* Vortex86DX */
-> +	{ PCI_DEVICE_DATA(RDC, R6031, &vortex_dx_sb) },
-
-We're not passing one initialisation API's data (MFD) through another (PCI).
-
-Pass a device ID (if you don't already have one) and match on that instead.
-
-> +	/* Vortex86DX2/DX3 */
-> +	{ PCI_DEVICE_DATA(RDC, R6035, &vortex_dx2_sb) },
-> +	/* Vortex86MX */
-> +	{ PCI_DEVICE_DATA(RDC, R6036, &vortex_dx_sb) },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(pci, vortex_sb_table);
-> +
-> +static struct pci_driver vortex_sb_driver = {
-> +	.name		= "vortex-sb",
-> +	.id_table	= vortex_sb_table,
-> +	.probe		= vortex_sb_probe,
-> +};
-> +
-
-Remove this line.
-
-> +module_pci_driver(vortex_sb_driver);
-> +
-> +MODULE_AUTHOR("Marcos Del Sol Vives <marcos@orca.pet>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Vortex MFD southbridge driver");
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 92ffc4373f6d..2c7afebd94ea 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2412,6 +2412,9 @@
->  #define PCI_VENDOR_ID_RDC		0x17f3
->  #define PCI_DEVICE_ID_RDC_R6020		0x6020
->  #define PCI_DEVICE_ID_RDC_R6030		0x6030
-> +#define PCI_DEVICE_ID_RDC_R6031		0x6031
-> +#define PCI_DEVICE_ID_RDC_R6035		0x6035
-> +#define PCI_DEVICE_ID_RDC_R6036		0x6036
->  #define PCI_DEVICE_ID_RDC_R6040		0x6040
->  #define PCI_DEVICE_ID_RDC_R6060		0x6060
->  #define PCI_DEVICE_ID_RDC_R6061		0x6061
-> -- 
-> 2.34.1
-> 
-
--- 
-Lee Jones [李琼斯]
+        tglx
 
