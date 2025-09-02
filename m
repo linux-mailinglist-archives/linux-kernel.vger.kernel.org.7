@@ -1,133 +1,121 @@
-Return-Path: <linux-kernel+bounces-795434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF82B3F200
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:49:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CDBB3F204
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641F21A82C6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:50:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79437B0448
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59941F91F6;
-	Tue,  2 Sep 2025 01:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRN7Gou4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC852E0407;
+	Tue,  2 Sep 2025 01:51:05 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F6115539A
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 01:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C071E47CA;
+	Tue,  2 Sep 2025 01:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756777776; cv=none; b=p6vd5juf35oS4fBA8tcUAdVxIiBNSN9f/3ddfRPIK2Kwh/SNHY8F1fUD154ySOO3HJ2OIR09bL/Xbuxj4PJWljoKnA0Ujdn8dwiiOUegtUOhKUxMlvLhZrbwwDqgbMfN49nSEoEIrIy7R/vwvwtRe3RprqobccTN6voWUSDkhTA=
+	t=1756777864; cv=none; b=OWL3klHRSUBdp3Om2FB9s8TpT+Oc+WSD/AOMcsF6MdiMy1QK01fQkEoKtkAEkBm0HE18GfcOjOf15r+QWCcCzR4HJEpZFQyoHmsZR136iAeG2IkyREQ3l214o/ibN7P7J9XXqhtGGmqlBEUOBZe/hv/dqWJi1bqsOER1QOmxSF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756777776; c=relaxed/simple;
-	bh=8M8wnjRYNPa0jtbL/Noba8HTd/cqzH4ui9hKV/F7loU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sj2940tR/lMKDZTJ1dnICqTdUJu3FgYux5XIOorV1jsyY6QzD3KlhB6vhAjPNK0OeQgFAMD2NpABuKD2KTQUBy9+ljG/zuXwidIMhURCzV7tYqc3iaHpsFeIlCQdhaRba4O4dXkrK3t/wqpQpWDWs9CCMKgGkxKEmcCS5UxZHc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRN7Gou4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC59C4CEF0;
-	Tue,  2 Sep 2025 01:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756777775;
-	bh=8M8wnjRYNPa0jtbL/Noba8HTd/cqzH4ui9hKV/F7loU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pRN7Gou4OABBn9mlDaRLEp4VCeCBzahudyrXnvcxU+/TZyHLuurlIkuuCJ3OHoQTu
-	 kWWlP+ote19hsy/oahskqXVB5hbctkXkeQr0GwxhWP8+JyaZgBRAckKISLJ5Hock/1
-	 Emo+mpZsOo58573gxzfPov1buzoG/xBdV4TEnNKd/TXTA6zlD6LAnA0Ss0WmYiOxm6
-	 K0JK9op2UJ1McsiMhyef7muPqGCxwAx4IxiQhsjBB6yg1BZ8QOajFdgvfl4u1Nh0QA
-	 hFMkpifOKnD8C2WcYQU+e0BH4tdnRVbukkEAr15B4rMmOogpp74cjAV8+WD1ov/BEc
-	 lWz3d3DLYJRIg==
-From: SeongJae Park <sj@kernel.org>
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Zi Yan <ziy@nvidia.com>,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH] mm: show_mem: show number of zspages in show_free_areas
-Date: Mon,  1 Sep 2025 18:49:33 -0700
-Message-Id: <20250902014933.93741-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250901183729.3900578-1-cascardo@igalia.com>
-References: 
+	s=arc-20240116; t=1756777864; c=relaxed/simple;
+	bh=eZHqbM0sZ45R7Sy9LTRYFYVLH5mQq+QL7Px/R1t57XQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eRFslI4CrsU0PvaFiDPtYIPeK13Qv/fvuVZ5gB6nvpDHl3SqL7theoiKXNBj5NPAFbj3bItlqRV6KmorObHB7ynwJSo7Wti0Lub844wQGF/Md8wz/SxX3RWQTvPVJrWnJPp3McS6fwuPlk3/vyRvC3cZFu9Q+JkpjB20StHYZsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cG7xX5VrVzYQvJ1;
+	Tue,  2 Sep 2025 09:50:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 434AA1A0ADF;
+	Tue,  2 Sep 2025 09:50:55 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCn8Y16TbZoqjtfBA--.16323S3;
+	Tue, 02 Sep 2025 09:50:52 +0800 (CST)
+Subject: Re: [PATCH RFC v3 00/15] block: fix disordered IO in the case
+ recursive split
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
+ tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
+ song@kernel.org, kmo@daterainc.com, satyat@google.com, ebiggers@google.com,
+ neil@brown.name, akpm@linux-foundation.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <5b3a5bed-939f-4402-aafd-f7381cd46975@acm.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <130482e9-8363-6051-5fc6-549cf9aad57b@huaweicloud.com>
+Date: Tue, 2 Sep 2025 09:50:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <5b3a5bed-939f-4402-aafd-f7381cd46975@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCn8Y16TbZoqjtfBA--.16323S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruFyrKF1fKFWrtryxWr1UAwb_yoWfXwb_Cw
+	s8Aa4DtrWxJanaka1xCF1rArWrKFy5Xr4jq34Utr1xWw13JF90qa18ursay3W3GFyxCrnx
+	X3y7u39Yy3yIqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hello,
+Hi,
 
-On Mon,  1 Sep 2025 15:37:28 -0300 Thadeu Lima de Souza Cascardo <cascardo@igalia.com> wrote:
-
-> When OOM is triggered, it will show where the pages might be for each zone.
-> When using zram, it might look like lots of pages are missing. After this
-> patch, zspages are shown as below.
-[...]
-> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> ---
->  mm/show_mem.c | 2 ++
->  1 file changed, 2 insertions(+)
+在 2025/09/01 22:09, Bart Van Assche 写道:
+> On 8/31/25 8:32 PM, Yu Kuai wrote:
+>> This set is just test for raid5 for now, see details in patch 9;
 > 
-> diff --git a/mm/show_mem.c b/mm/show_mem.c
-> index 41999e94a56d..ecf20a93ea54 100644
-> --- a/mm/show_mem.c
-> +++ b/mm/show_mem.c
-> @@ -310,6 +310,7 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
->  			" inactive_file:%lukB"
->  			" unevictable:%lukB"
->  			" writepending:%lukB"
-> +			" zspages:%lukB"
->  			" present:%lukB"
->  			" managed:%lukB"
->  			" mlocked:%lukB"
-> @@ -332,6 +333,7 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
->  			K(zone_page_state(zone, NR_ZONE_INACTIVE_FILE)),
->  			K(zone_page_state(zone, NR_ZONE_UNEVICTABLE)),
->  			K(zone_page_state(zone, NR_ZONE_WRITE_PENDING)),
-> +			K(zone_page_state(zone, NR_ZSPAGES)),
+> Does this mean that this patch series doesn't fix reordering caused by
+> recursive splitting for zoned block devices? A test case that triggers
+> an I/O error is available here:
+> https://lore.kernel.org/linux-block/a8a714c7-de3d-4cc9-8c23-38b8dc06f5bb@acm.org/ 
+> 
+I'll try this test.
 
-I found latest mm-new fails kunit's um build as below, and 'git bisect' points
-this patch.
+zoned block device is bypassed in patch 14 by:
 
-    $ make all compile_commands.json scripts_gdb ARCH=um O=.kunit --jobs=40
-    ERROR:root:In file included from ../mm/show_mem.c:18:
-    ../mm/show_mem.c: In function ‘show_free_areas’:
-    ../mm/show_mem.c:336:49: error: ‘NR_ZSPAGES’ undeclared (first use in this function); did you mean ‘NR_STATS’?
-      336 |                         K(zone_page_state(zone, NR_ZSPAGES)),
-          |                                                 ^~~~~~~~~~
-    [...]
++		if (split && !bdev_is_zoned(bio->bi_bdev))
++			bio_list_add_head(&current->bio_list[0], bio);
 
-Maybe some CONFIG_ZSMALLOC undeclard case handling, like below, is needed?
-
-    --- a/mm/show_mem.c
-    +++ b/mm/show_mem.c
-    @@ -333,7 +333,9 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
-                            K(zone_page_state(zone, NR_ZONE_INACTIVE_FILE)),
-                            K(zone_page_state(zone, NR_ZONE_UNEVICTABLE)),
-                            K(zone_page_state(zone, NR_ZONE_WRITE_PENDING)),
-    +#if IS_ENABLED(CONFIG_ZSMALLOC)
-                            K(zone_page_state(zone, NR_ZSPAGES)),
-    +#endif
-                            K(zone->present_pages),
-                            K(zone_managed_pages(zone)),
-                            K(zone_page_state(zone, NR_MLOCK)),
-
+If I can find a reporducer for zoned block, and verify that recursive
+split can be fixed as well, I can remove the checking for zoned devices
+in the next verison.
 
 Thanks,
-SJ
+Kuai
 
-[...]
+> 
+> I have not yet had the time to review this patch series but plan to take
+> a look soon.
+> 
+> Thanks,
+> 
+> Bart.
+> .
+> 
+
 
