@@ -1,160 +1,215 @@
-Return-Path: <linux-kernel+bounces-796480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F37FB40137
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:50:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FB5B40128
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EF4C178C8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC855E0EF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB5A2D6E4C;
-	Tue,  2 Sep 2025 12:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B0B2D3A83;
+	Tue,  2 Sep 2025 12:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GJEXki9K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="epj6UPXK";
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="oD7/YPfr"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442522D47FD;
-	Tue,  2 Sep 2025 12:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756817280; cv=none; b=gGcDieBxnrOvr90YNYQRmQHTsNDmZ3az9mtpfyQSTz1oDCnNc3kObL5Gm8XEshtD+BBZj/Ma3Tvz7JEnbbcF5Q5o2AAV7UMfS+3qCMpEUV8LeCiysjOxJzNTyTvQur79BFyujcTfshoOM5EdYwg+KZCkPeObNSzum4FaTtAcGPU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756817280; c=relaxed/simple;
-	bh=Kpa+Tue6cWwu0ubpWnl7iNvs6jWo/rXsL77LDSyUY58=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBA81419A9;
+	Tue,  2 Sep 2025 12:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756817320; cv=pass; b=eFRQ7xUPdJ1VJ7Iy78dvClBxwU5vv1bAX6FG1DIC5aMaweAtf1gc14AULAB7yqDq28VHAFpokDDFzjUGjKa8uMKxx9OV312pwvsOdgKCxt47/dyZqqxPB8zSZpvwc8uaQISxaNoXDn4OKEw7iWk/1TiHqhYnTJDICfsdNfytDcA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756817320; c=relaxed/simple;
+	bh=wU7qWEPyst9Ftq4pRRZe+bFJYDPPTs9iuZXC5uioKWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBlpAZrf/1hOU1nlk35dtJC04xMTMklpD38MlMpCuDraTlC7IGR6A+JX6WO48lcXlDXt75BJyzMWrxZBJcvFmvxFxsiAyt0W185uc34Lv6VAUPurgwIbcAbKoc2XHAlM0EgtvfgL85++K5zDWzMEk6L0MDGyaevYsYoHrPozSnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GJEXki9K; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756817279; x=1788353279;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Kpa+Tue6cWwu0ubpWnl7iNvs6jWo/rXsL77LDSyUY58=;
-  b=GJEXki9KPsMDHx5EH9QAw1mDnIvGRVf6s6hVUyHTu3vDtiq6a3q6+zBQ
-   IjQdCOiYcHYw4/+is+gAIGZAIlUu0VaZ5iCInW8wKo7AcCK/jesK0h9dX
-   +PmjoMNwCCVVOien1nzrdsUJACAEyzlqtWIpi70J/uGLUUgop180g0/Cq
-   Kz/m1x42mNwd6JUEog0dE3SAdq7q76ewOsN4lHhrofwIdxGWcbqQAnera
-   SVBeQfrSS0/E+h+zU6kwwc+itWVO9UhJn4pP1DTirq8wU1hqALZYvim2v
-   aImv9uJ7aLZVzl97OSkeeh7YZ2GW/hbjumhwr8+h/2naIaF8HwiWO8QLo
-   w==;
-X-CSE-ConnectionGUID: 5q+FacOlSTeFdgOBZq2EuQ==
-X-CSE-MsgGUID: TVs3ppmQTfOHgyhHgC7fNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59154434"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="59154434"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:47:58 -0700
-X-CSE-ConnectionGUID: 1I3nBDPWRwWpfGQS2oXKgw==
-X-CSE-MsgGUID: u8BSr4fyQG+xfSrLRH2RhQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
-   d="scan'208";a="175631961"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 05:47:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1utQQS-0000000AhBo-1lM6;
-	Tue, 02 Sep 2025 15:47:52 +0300
-Date: Tue, 2 Sep 2025 15:47:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: dimitri.fedrau@liebherr.com
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Li peiyu <579lpy@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Chris Lesiak <chris.lesiak@licorbio.com>
-Subject: Re: [PATCH v2 2/2] iio: humditiy: hdc3020: fix units for thresholds
- and hysteresis
-Message-ID: <aLbneKXFd7Nc711T@smile.fi.intel.com>
-References: <20250901-hdc3020-units-fix-v2-0-082038a15917@liebherr.com>
- <20250901-hdc3020-units-fix-v2-2-082038a15917@liebherr.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OBPl7soAmhe/kYstBY4xMVudqx/JrXkyKbvfUiBoDBZkRLpUhFuvf0ZVdhM4U5W+EQCrcrGg6DTLz294GW4lucmSdmFYdhOHzgWDC9c3HV4PfFT4j055dZ5trBrsAUgIOSd5NS+l/8so4dBLUMHtCAkhR4Cl4EjXRbQG8lnv4fs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=epj6UPXK; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=oD7/YPfr; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPS id 4cGQX92xwlz49Pxd;
+	Tue,  2 Sep 2025 15:48:25 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1756817305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2m0AdmzVx62ppePfQnYhxMw6RCz/hoGAXew6yRRziDg=;
+	b=epj6UPXKkvHVikHqclwf/x1VwxUQe4BcLSg8BTYN4QDvgYnY7FXijn3AESULDsnc02KCgg
+	9hrma22GPbk1ezurFBnxYtszE4H5gycpN7oEcv5OElgYOWztJeP+cGT0uK1eYiDzd4LBm1
+	YxOhdyvv8ZuwmWgxqByFUap2DduMdHpUo2a9CVCoScv171PCTPMoEJyU4DrMRBv6euCLAr
+	VkgBR8MEQHBk5PF6SAcfKu2AUr+b0KEuifOB1yY04vvhGDlCNyjpX53G1Fu12kxpK2SC0o
+	Dx3BPDIJ+7m+kcgX70N1KG2twyVTFOR2rs4XJbQnAoO4lYhDZHsoxD6oanqCww==
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4cGQWx2kLbzyRp;
+	Tue,  2 Sep 2025 15:48:13 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1756817296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2m0AdmzVx62ppePfQnYhxMw6RCz/hoGAXew6yRRziDg=;
+	b=oD7/YPfrsYF7PqocSEKmT0mRJYjbdf0f+hJIpls01m/zB7brfUZRxI3iZ6H6juIFF9vR5b
+	I5ij7AQaKok6tXEhHwoUOjVy3MZXQ+bm4T/rcJWYyK92+81ZhrvNr/F3C/W1ARspXTYsbt
+	7EE5UnkBi/bV2iOMHKREoS+JUv9j5Ss=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1756817296; a=rsa-sha256; cv=none;
+	b=inniAaeJ3cVCOuLXCrrmGOkUPS8+/0QrPFZyvGS7PBqY5RdBqdOvoW+fgPRqFDwDaozrNk
+	bcWaq7Jrq28xHUaeYry4EduTtrMNoFRtd+JL3rzPyCObHiJCdoDv3+l/+k1ZQLIRskOMTW
+	cBjV10vQK05w1wWvX8dK1U8KRoROsD4=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1756817296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2m0AdmzVx62ppePfQnYhxMw6RCz/hoGAXew6yRRziDg=;
+	b=TVokqAm9YtsAIJtOLvtXvL6q0rWppmcxEl99Jjp/YiRh+BBysDbQUpd7zcxuO5WEpfO3Dh
+	FFT1A6u11PRC4KxaDmLVGBJXY0TXVplpyfQutYI1JWuV1sHcrFSb9ftx/eoctgdeGDAwLS
+	Z6wsX1x19hjcQxJ5NF9ES2tSJ1y6now=
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 9C9C8634C93;
+	Tue,  2 Sep 2025 15:48:12 +0300 (EEST)
+Date: Tue, 2 Sep 2025 15:48:12 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Isaac Scott <isaac.scott@ideasonboard.com>, linux-media@vger.kernel.org,
+	rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
+	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] imx-mipi-csis: Get the number of active lanes from
+ mbus_config
+Message-ID: <aLbnjLapJXlCe67R@valkosipuli.retiisi.eu>
+References: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
+ <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
+ <20250815103205.GJ6201@pendragon.ideasonboard.com>
+ <aJ8ZJFSn5Wxhj2Aj@valkosipuli.retiisi.eu>
+ <20250815113633.GM6201@pendragon.ideasonboard.com>
+ <aJ8pKs_6YpAiPjlq@valkosipuli.retiisi.eu>
+ <20250819024413.GJ5862@pendragon.ideasonboard.com>
+ <175681611736.1349241.9877873145029586025@isaac-ThinkPad-T16-Gen-2>
+ <20250902123805.GL13448@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250901-hdc3020-units-fix-v2-2-082038a15917@liebherr.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250902123805.GL13448@pendragon.ideasonboard.com>
 
-On Mon, Sep 01, 2025 at 07:51:59PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Hi Laurent, Isaac,
+
+On Tue, Sep 02, 2025 at 02:38:05PM +0200, Laurent Pinchart wrote:
+> On Tue, Sep 02, 2025 at 01:28:37PM +0100, Isaac Scott wrote:
+> > Quoting Laurent Pinchart (2025-08-19 03:44:13)
+> > <snip>
+> > > > > > > That would need to parse the endpoint every time we start streaming, it
+> > > > > > > doesn't sound ideal.
+> > > > > > 
+> > > > > > Perhaps not, but does that matter in practice? Parsing the endpoint is,
+> > > > > > after all, fairly trivial. The advantage would be simplifying drivers.
+> > > > > 
+> > > > > It's trivial from a code point of view, but it's not a cheap operation.
+> > > > > I'd like to avoid making starting streaming more expensive.
+> > > > 
+> > > > How cheap is "not cheap"? I'd be surprised if parsing an endpoint took more
+> > > > time than e.g. an I²C register write. Of course it depends on the CPU...
+> > > 
+> > > Still, it's not cheap, and I think it can easily be avoided.
+> > > 
+> > > > > > Alternatively we could think of caching this information somewhere but I
+> > > > > > don't think it's worth it.
+> > > > > 
+> > > > > Drivers likely need to parse endpoints for other reasons. I'd cache the
+> > > > > value in drivers, like done today, and pass it to a get_active_lanes
+> > > > > helper.
+> > > > 
+> > > > Then drivers presumably would also validate this against the endpoint
+> > > > configuration, wouldn't they? That's extra code in every CSI-2 receiver
+> > > > driver.
+> > > 
+> > > Why so ? The number of connected lanes can be passed to the helper
+> > > function, which can use it to validate the number of lanes reported by
+> > > the source subdev.
+> > 
+> > Apologies if I'm interpreting this wrong, but it seems that the main
+> > thing I'm reading is that this is not the correct place to implement
+> > this, and it should be implemented at a higher level (e.g. in v4l2) that
+> > lets all MIPI CSI reciever drivers use it?
+> > 
+> > I have noticed that similar functionality has been implemented as part
+> > of __v4l2_get_link_freq_pad. Are you suggesting that I take a similar
+> > approach and resubmit as a new series?
 > 
-> According to the ABI the units after application of scale and offset are
-> milli degree celsius for temperature thresholds and milli percent for
-> relative humidity thresholds. Currently the resulting units are degree
-> celsius for temperature thresholds and hysteresis and percent for relative
-> humidity thresholds and hysteresis. Change scale factor to fix this issue.
+> As far as iI understand, Sakari would like a helper function that will
+> query the remote subdev for the number of data lanes it uses, and
+> validates that against the number of connected data lanes as described
+> by DT. I don't like the idea of parsing the endpoint properties every
+> time we do so, so I think the number of connected data lanes should be
+> passed by the driver to the helper instead. The helper would still query
+> the remote subdev, and validate the value.
 
-...
+As long as the bulk of the work is done by the helper, I'm fine. This is a
+fairly specific need but still in principle every CSI-2 receiver driver
+needs it, so ease of use does count.
 
->  	/*
-> -	 * Get the temperature threshold from 9 LSBs, shift them to get
-> -	 * the truncated temperature threshold representation and
-> -	 * calculate the threshold according to the formula in the
-> -	 * datasheet. Result is degree celsius scaled by 65535.
-> +	 * Get the temperature threshold from 9 LSBs, shift them to get the
-> +	 * truncated temperature threshold representation and calculate the
-> +	 * threshold according to the formula in the datasheet and additionally
+The helper could e.g. take the number of lanes in the endpoint as an
+additional argument and just return the value if the sub-device doesn't
+implement get_mbus_config() pad op. That'd be fairly trivial to use in a
+driver.
 
-Replace "formula in the datasheet" by explicit formula
-
-> +	 * scale by HDC3020_THRESH_FRACTION to avoid precision loss when
-> +	 * calculating threshold and hysteresis values.
->  	 */
->  	temp = FIELD_GET(HDC3020_THRESH_TEMP_MASK, thresh) <<
->  	       HDC3020_THRESH_TEMP_TRUNC_SHIFT;
->  
-> -	return -2949075 + (175 * temp);
-> +	return -589815 + (35 * temp);
-
-TBH, I prefer to have the proper units be mentioned in the comment along with
-
-	return -2949075 / 5 + ((175 / 5) * temp);
-
-5 itself can be a definition
-
-#define ..._PRE_SCALE	5
-
-and used everywhere.
-
-...
-
->  	/*
->  	 * Get the humidity threshold from 7 MSBs, shift them to get the
->  	 * truncated humidity threshold representation and calculate the
-> -	 * threshold according to the formula in the datasheet. Result is
-> -	 * percent scaled by 65535.
-> +	 * threshold according to the formula in the datasheet and additionally
-> +	 * scale by HDC3020_THRESH_FRACTION to avoid precision loss when
-> +	 * calculating threshold and hysteresis values.
->  	 */
-
-Ditto. "percent scaled by ..." is much better to understand.
-
->  	hum = FIELD_GET(HDC3020_THRESH_HUM_MASK, thresh) <<
->  	      HDC3020_THRESH_HUM_TRUNC_SHIFT;
->  
-> -	return hum * 100;
-> +	return hum * 20;
->  }
+> 
+> > > > > > > > The function could take struct media_pad pointer as an argument, or struct
+> > > > > > > > v4l2_subdev pointer and the pad number.
+> > > > > > > > 
+> > > > > > > > I wonder if any other parameters could change dynamically but I can't think
+> > > > > > > > of that now, so perhaps just the number of lanes is what the function
+> > > > > > > > should indeed return.
+> > > > > > > > 
+> > > > > > > > > +
+> > > > > > > > > +   return 0;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >  static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> > > > > > > > >  {
+> > > > > > > > >     struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
+> > > > > > > > > @@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> > > > > > > > >     format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
+> > > > > > > > >     csis_fmt = find_csis_format(format->code);
+> > > > > > > > >  
+> > > > > > > > > +   ret = mipi_csis_get_active_lanes(sd);
+> > > > > > > > > +   if (ret < 0)
+> > > > > > > > > +           dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
+> > > > > > > > > +
+> > > > > > > > >     ret = mipi_csis_calculate_params(csis, csis_fmt);
+> > > > > > > > >     if (ret < 0)
+> > > > > > > > >             goto err_unlock;
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Kind regards,
 
-
+Sakari Ailus
 
