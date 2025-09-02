@@ -1,391 +1,179 @@
-Return-Path: <linux-kernel+bounces-797367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FBDB40F79
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:35:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C9FB40F7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E13DE16C658
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AB71B60B15
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BBC35A2BB;
-	Tue,  2 Sep 2025 21:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D139A35AAC2;
+	Tue,  2 Sep 2025 21:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PuVLn4tB";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZCIFMBW1"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="myVExmJC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909D021ADA3;
-	Tue,  2 Sep 2025 21:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756848909; cv=fail; b=TYsUSwG9+ef78REii0yJY/Av/aHWLekmGxt31vOQmWAe9qPH3qcs4mYAOBZrNzsQqNsGIHwNPXF66vm4CCSDePd1/VmS/anX5JJ30E7fN3kNLhwYMZxOygqqvkGPiCcZjf1YShFrqwou4frgRwsGXh6cALnE0gTnsygGiP9ONw0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756848909; c=relaxed/simple;
-	bh=+ihNNpWTFgmwUrAY7n+/o/x5DTJ3GSFCxo0P87uoujU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hy/EznmYDrQj9NcduYQGt0Itg41+guU7/flE7AUIJPNO9Wj2MEYK8f3kecm4rQwgKh1JME5Ww1nR8lPpAf4XuPC3rbG5q6/QEca9cM5/B+iT3tJ7Kxs7Q9fFZuO8d5cH6pXmlJNVbSJ72my/u9YYNVBnYf1v4E21oVa0Hq45Ob0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PuVLn4tB; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZCIFMBW1; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582Ki04p001934;
-	Tue, 2 Sep 2025 21:34:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=w8psx//NEJ3J40Cvk6nBFbm0P+DfDk1CPN/nqZsMF2M=; b=
-	PuVLn4tBC5+NvcrCruvyQQQY3Cj/OGitjJ3S/7A7lct3HD/pY/uFrSNBXVj/1dmP
-	SSmpSHd7CAFQIlyf+CuzQ+lPSruuWxChNlhRPhiz2JKDXJP7TA2YXzgzTsRYWLUd
-	uNjU8kp1N/pWgyEsPoxaiARdo8mzm9jFiYsg1AC4ynLc3ZTq1CCJiv2TVNIg7rKb
-	IgmatrzbDqgnrbxplL8UXaPGrCPk/V/eYmaJjguqrFmvAzHwTNc/apDaHPueZqrw
-	VBwwA6gFgWLjm+KEiFvIrYcEj6BDaEYctPc0DI/Ei/yGgJltbAYDDUPGJ0X4HO9+
-	i8cKCbnQRsd+Tqtky2ACZw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usmbd1h8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 02 Sep 2025 21:34:51 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 582KPSpg015825;
-	Tue, 2 Sep 2025 21:34:50 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2065.outbound.protection.outlook.com [40.107.93.65])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48v01nvwbq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 02 Sep 2025 21:34:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d2v+SvL2kqSrp2IYGSnd3oENvqNn7/n8f02UEVOMUkQuyXL+MnTelQXcaXhv/FmJ9omZRF1S4A+n3hA9uio6AKe6XX6EoMeZeOyp5hszBu9+0SspWdnUVq1M7G2MXKIqwZQwMUHO16QxXFJc3lzk09zePPJFLHlbEZCxQsemFVvJvqqS9nC9R86rF6KBW8n7bY/Rjg9pwGM2/Lnd4OW6hyfHWr5PrM+Xive+uLP5nQOWuzILCkmnIZ9QJHpQ2JYW4pEV8eV9+JqtruWlhOpRbVCTKKE2KWWAawritYV+0jbf+Ph1CBzeUPD1CBk+3rJWmPYKjMOCB0RjCaCZEEqWDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w8psx//NEJ3J40Cvk6nBFbm0P+DfDk1CPN/nqZsMF2M=;
- b=WLNVZAVHolj+GOz0c/qe7ldB8mV1/XmXTdIIndp3Si54K0f02u6kJoE17meQm/geYEf4J8yjbHnhscodqU2y7Sb3uNN0Lis++tOhhYFpJYLSA8bsw/y0KS23LNOzXIF6iZpgP3+rj3EF36XV/uDY9mBi3StODkLWlQkYhgJX+seeLTZRdvRoo/Gzm0YG4m+iLmftNkDCpyJUTnBWbR9nNutJHDHYRdakBeBy6aWsjlXvzerufrLNN9A/r0yFzLIEMOKnCJ0t/IFT/UQXGf6QGunyfV12zjRpNBC3LyPBrthBx01Jmvmtc0qhYmmYTsjQwWA9CK8scqtq/MgGPJuJ7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w8psx//NEJ3J40Cvk6nBFbm0P+DfDk1CPN/nqZsMF2M=;
- b=ZCIFMBW1QL6Wfmtn+Xa/C4zBbfZ0I4wv7zPrcY6fvkKo1ZCsMle6m5dY/gWFkglKCYkgGobF3LrpYOskRoAGIqt5/pxyEAcD1LIvm7l+ADNmAw7vXukZVx9PKbAS6nan3Vxd5onBpe9fyBBV00zuoi3sOhgelMbOswjNvrh/+aI=
-Received: from SJ2PR10MB7653.namprd10.prod.outlook.com (2603:10b6:a03:542::22)
- by PH0PR10MB5626.namprd10.prod.outlook.com (2603:10b6:510:f9::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 21:34:42 +0000
-Received: from SJ2PR10MB7653.namprd10.prod.outlook.com
- ([fe80::47d7:5812:ea42:38bb]) by SJ2PR10MB7653.namprd10.prod.outlook.com
- ([fe80::47d7:5812:ea42:38bb%4]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 21:34:42 +0000
-Message-ID: <7d61c6b9-fef7-4b70-9172-effdd7e69457@oracle.com>
-Date: Tue, 2 Sep 2025 14:34:37 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH 4/8] mshare: selftests: Add test case
- shared memory
-To: Yongting Lin <linyongting@bytedance.com>
-Cc: khalid@kernel.org, shuah@kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
-        linux-mm@kvack.org
-References: <20250825145719.29455-1-linyongting@bytedance.com>
- <20250825145719.29455-5-linyongting@bytedance.com>
- <18530429-cac2-42a4-891e-24033dc54461@oracle.com>
- <CAFuXZ_UY6RrOVmTayW-DdxQX9TE978LPx7ad=Pzr01j1cZ4o2Q@mail.gmail.com>
-Content-Language: en-US
-From: Anthony Yznaga <anthony.yznaga@oracle.com>
-In-Reply-To: <CAFuXZ_UY6RrOVmTayW-DdxQX9TE978LPx7ad=Pzr01j1cZ4o2Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PH8PR02CA0020.namprd02.prod.outlook.com
- (2603:10b6:510:2d0::9) To SJ2PR10MB7653.namprd10.prod.outlook.com
- (2603:10b6:a03:542::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5B135A2AB;
+	Tue,  2 Sep 2025 21:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756848934; cv=none; b=IoDTgvU6UKeYZxxi2h5BEF4/1b6s/M6ZzIoWkl2U4m8LH7+FDBL/I6LRNLdumVoRl/EVQkA+GKe9NiL/H7vg9s8Mo8w+s6cxGjoWgmA6E1iwuzfkMt6eW6j734VVfh1yLQjJKf0iMKq0BqLeYm3kcxsAPuntMV2w6AQ/yEAEtMA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756848934; c=relaxed/simple;
+	bh=feSylG8v5RU948ye3Aa4+gNuJQDlGa8ABq1tWoE+Wc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJeYnxyQEmGti5wsPtk840C80Qr0CYUioSshI26dQB1s+b1GQhllXoBLb3htX/raQfaJXKdnS3yTpzdI7VG0++AzT82q1wV/rH3Cec8+LHNgqoInZ2kbRV8TwrgO/Uj5Wf5VCMi8fYQC82p0PaJspC4D22EWtciu8sox+d4uF7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=myVExmJC; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756848932; x=1788384932;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=feSylG8v5RU948ye3Aa4+gNuJQDlGa8ABq1tWoE+Wc4=;
+  b=myVExmJCtRlQa9BLigploF8dXYoWhF0hquDnaKgMyxiR3gs6ZdqC5Qdn
+   hdeNusuwggDCFmNBQh186vId1U6+C86a8rsiOEpykbkgQAAMQxfPMnJ9n
+   MQarhV5LjiF/9y4Md+9OzJNzeLPIyhG3nFNAyXzh0CgWhREnz+F2HJKgW
+   sshVt+EmdQPEfpFYAZqHrSldz85DRXjhu2HjsyCTp/TfpFNP9IAEhItiR
+   wBblUG3ovWHW0dv0GuTkZxpl5EEpQmwk2r9+EF6AttyteTXw4B5nrpq4l
+   CNAiwi6/iO5uw1+4w8WGb+XWoA3K5svydvMSpwLi4RzR82bA9tGAbZ4o/
+   Q==;
+X-CSE-ConnectionGUID: YODi9FJ7TWCqPMRRspZmVg==
+X-CSE-MsgGUID: EzIEfTMiQw69/1mcWmrN5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="59001789"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="59001789"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 14:35:32 -0700
+X-CSE-ConnectionGUID: DLHUacnhR3mqLdlPaKYduA==
+X-CSE-MsgGUID: /Bh1eTHdThyfOCxrG7T+XA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="171553507"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 02 Sep 2025 14:35:15 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utYeh-00033D-0S;
+	Tue, 02 Sep 2025 21:35:07 +0000
+Date: Wed, 3 Sep 2025 05:35:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Apurupa Pattapu <quic_apurupa@quicinc.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, Harshal Dev <quic_hdev@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	linux-doc@vger.kernel.org,
+	Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v9 06/11] firmware: qcom: scm: add support for object
+ invocation
+Message-ID: <202509030554.WR3MNpCE-lkp@intel.com>
+References: <20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-6-a2af23f132d5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR10MB7653:EE_|PH0PR10MB5626:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e130a3b-3bd7-429a-a967-08ddea688724
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SGRVQWRDSGdtaEdCZlJXWlJaN1VNNEpEMHZtUkxkMG5rWnMwVCtqcG1ieVg1?=
- =?utf-8?B?VTBrNnhFVEVScW1SSDVXZXdKQ0ozL25hditFVG5qMnp1UUxralVVaHArbEVJ?=
- =?utf-8?B?SVBsZzBDMGpaTEZsWlBNTE9WWTV5YXVZVnNuMGdWTXZvcVpDMytudnRKbG1G?=
- =?utf-8?B?ays5cHBoODlMd3FwTUNzZjRuMzAwTkZJS2NwUTZFeDhvQlhIM2dGeEJ2SWVR?=
- =?utf-8?B?N0J5NDZwS1c4elp0Yk1hUC81Zm5MSXpWeW8yYVpyTlBEUUU3OUZ6Wk9nQm5M?=
- =?utf-8?B?SStkWVppRjFzZXcyYnl1VjFOSkJBSXVKdEJUUDJtRGhzMXJTdlZqTUNLY1FQ?=
- =?utf-8?B?a3N1Y0xONDhNMFNYMFdxNThnREllMEpLNVE4cURmOUdLbGdCVWVza0dEU0h2?=
- =?utf-8?B?VEdVcGo4K2NvUTZFeFlkYkxReTA5c2ppSWxlY1N5aURqeTBLYkhmUndZL0dn?=
- =?utf-8?B?Qm5mZ0J2U1FVdUtRNXNQSnJncHRLSXUwUGV0NDBoVU10K0UxZjZucVR1dFk2?=
- =?utf-8?B?K2FtYUNlVkhzYW5VMHVLTFEzQVg4MHRLUFArSU1uRHZQZ2pENnBCOXpUS2dR?=
- =?utf-8?B?cEFZQkZvTFNZQkc3WlJZNHZvTXNack1CejVLNlFiMlAvdTlxelVJMXZwMkVH?=
- =?utf-8?B?eW5ydFhoSUdRSVRlaXJDYndLNXdvOVRDMVUySkRkc2dmclkwMXBmOXhSY0hv?=
- =?utf-8?B?VHgrUzQrMGcrWjBaazlsY05meDhPOC9FcWoreVFhdTNBWUdmWjVVa0RqMVh3?=
- =?utf-8?B?aVZGWDRTZGRQNC9aVVhHUHNxRXZNeWhuU2J0b1FPTmd5REVuM2JhZE5PUHZn?=
- =?utf-8?B?bnhmaHo4R1dRSnRBaXVzY1FIY0RNcGJvWThub3oxSi9uMGdzMWpGbHJuMWwv?=
- =?utf-8?B?dysrWUZVNzBhSi9oT1FOOC9hU3pqN0VUQ05sT2d5eEhsNHA1TFVnZ0dzYU1O?=
- =?utf-8?B?SVFERVltdUVRVytqMW9mTXcwdzJ1SHluNDFOWHI1MTlwSUpUdTAvYU5HSnlj?=
- =?utf-8?B?Y3JSM1RkOWJsR3NpbzZNSnlGVDVkMjNtbTlBdzZSREdIcUJiVXB6K01vZlZS?=
- =?utf-8?B?ZU02WTVUT2ZUZEpDeWJzeXRLQWh2RzgvQVBLOXRaUUhyYno1TmROVGVEbVB0?=
- =?utf-8?B?SFNxcVZ3bi84c21hd0hzZWo0SCtCK001ZTZuTFFnZFZWVzNsOXRzUmFPUDVV?=
- =?utf-8?B?N3ZCRkwrQjN0cGpPck1Xd0RZTGlpSzhEUUNaSEI3MHYwdlUveHAvcmtVZzB2?=
- =?utf-8?B?SDlZbXlWbTMvV2IvcWtHSTgyTkJUM3Yxb0dwcnlzNEc1bEtORjJZVkRlZVV4?=
- =?utf-8?B?aDQxQURsVEIzL2h0SVlpUTgzdXAwdG4xMW5IeGdjVmRrMHVYTlZ4MWlnWTJM?=
- =?utf-8?B?K2RrNmpkMlZxTTE3L1lwclNIMEQvUTNzNzg1c3hKZ0xnZkVUVDAvdlh5RlNK?=
- =?utf-8?B?SjYzOFBNSk1rbkVzVFFmUjVtT2Fldmo0VnBaVXZSRXFVUTROMzg0ZGUzNmRy?=
- =?utf-8?B?VTJGTEV2cWhyMEhRWEVSZkhWUU5TakRob3NZazUxTm1MMjRjWVRGQzdrbjNJ?=
- =?utf-8?B?bUJtcFpNTDMwejRwRGFGdHFJSCs1NnFNWklwMzhNQ1E0SjQvRzhHbDF4YldK?=
- =?utf-8?B?V0JlaStTamZscVgrMW5QOTBPVHlQclZiVkhIdWsxb1p2WlJ6MUN0ekdpTFBI?=
- =?utf-8?B?d25NcTRwZUZ2a21TMkluSUsxZS9FdkZuem1LdGcrVG1PRkQrSit1emc4Vnox?=
- =?utf-8?B?M3BJZUlodU1NZ0pvV0FxQUtDaE0vdDVtZHo3UlNpME1TdmczZU1hcVJIRlBh?=
- =?utf-8?B?TysxZWMxQ3BKa3dRd20xWlNJeXI1V1lxMnB2RmVSVnk0b0F3UXBJd3B1OUlx?=
- =?utf-8?B?RUh2R21jTFAvbHJPOGJDYzZpRWtCZTBiVCtsV00xRUkxbTN1Ym1DQ0l4ZHQ3?=
- =?utf-8?Q?6CGyoNxDvKg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR10MB7653.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cEVCWjBmWGxvNk9YTkU3MDlsRkxKZjIvakJPcFhYdlRUdGpUVVI3UXlBSXRl?=
- =?utf-8?B?Z1Y1cVlSdWVtVXV3NzBKcThFMmhqODA0ZWRuaUQvdXRGZHF6ckxPanlueDJY?=
- =?utf-8?B?MDJVVVNKelJuN2FHYzN2VXFINy8xbHdCMVdKNW9WQnEwWG91QWY0MVcrZkNH?=
- =?utf-8?B?SnVNdWMwVExvRlB4UjY1dXFtRUNGb3NPZEI2TUl3RzdXWmJBWU1BVEEzV3Fy?=
- =?utf-8?B?Q2x6dWpXQ0VmK3pnelo1NHhDenJVKy9NWXY5Y1oxSHNLenE5OXNka1lISGlC?=
- =?utf-8?B?cFJiUFVka2t6UFJCbnJWaWVLTVJ3WTh4K0cxLzdwK1VtL3NPR2VVQ1dCdVZm?=
- =?utf-8?B?TFNsWnk0WlVQckpIeUhXbGhic1N3RmlnZFFwcGZGTVFvYWRvZ0ZlbTN0K08z?=
- =?utf-8?B?Uzc4aWcyaGtSZXpkRUZXMnorcVg5V3NFaHFtREVtcGxhcXFhM3FXZUNBVXVn?=
- =?utf-8?B?VG93YWZoTjU1VzI0cFdIVkVQeC83TWhuQTNEOTAyOTBEOUU5Z0V2VjhpSHZN?=
- =?utf-8?B?cWRRVTM5VWk5cXVKWFB1d1lTbjIvbzdURjZOaVBoQzB4WDBCbWx2V2NSSk5M?=
- =?utf-8?B?TFB6anZacHdQRldWSlIxamtUaU5zUG81d2lDMHJoaS8wd1dSdVUvUVFhbTJw?=
- =?utf-8?B?MjVGcVpZYkR3anU4c00zbnJiSG42QldaWGc3RGdUZDR2N1plMlJHdG1VOTZI?=
- =?utf-8?B?Q3BGdy9KK1R6dmlvUk9SQ05BRkFWTk5LQzl1amlFOFpJR2R3VCtPUzladXQ3?=
- =?utf-8?B?NjBhSUxSaGErcW1MYmNVU25kR1pTNytYanh6TTlZRW8vWVE5WnVvbTRGVC9z?=
- =?utf-8?B?YTFwK3NzRDNLY1dnZlBiSEE4cGswclR2UDQ3bTVjTjRVZ205enNTb1lkemlD?=
- =?utf-8?B?M1c3ZG9jMmZjZjRBWElTNWNhWmppeHdWbzhIZFpIN2xySW9hQTJnS2VHdldZ?=
- =?utf-8?B?VzU1V3BJcDhJQVhoSXBnMUswNTNieG1tYTJZZDhFS1pMbUF2Ry9NNk0yVUlm?=
- =?utf-8?B?UDVEMk0zQkdycGpsY3hRbXZCQ2dHN1VQMXNDVGUrMnZWOSsrNnp1VkNtL3px?=
- =?utf-8?B?T1NNa21YK2VXUHdybkx0RTdLR1hDUFZDSldxSjVpWmlCZ2xJTXc2RHJ3Y0F6?=
- =?utf-8?B?RlQ1aHY1aWF3aXpiWklhREpMclY4aWQ2cTVUL3hMYVIzZkFRSnhRZjVWNWJQ?=
- =?utf-8?B?eWdzOC9EQlJNY08ydVRTZ3oydWZ1L3dJbWhuNW9IbFB3bE41N2pTdDZPVFdl?=
- =?utf-8?B?UTR1ZitNM2RNLzJYdnhTNi9KaGx2TFBnQitzOTNGcmhlUjdzc0k5M1pXTnVV?=
- =?utf-8?B?NGY4bXNBV0JaMkRUY0hmSEdNWStTOHpEWElkZFlSR3FsaUp1dzFnOW9lQ0Vt?=
- =?utf-8?B?TFdFeTkwZUFtT24vUm9PRUdjc3ZoZ0Jtcnkra3BJTU1GK08rNThEdmJqWk9m?=
- =?utf-8?B?cFJYYkczNU9yYS9yWDdFaUJQUmZXM1IyMzhEYVgxTE1HdU9hTUlidk9ZZEtU?=
- =?utf-8?B?clBCQ0xKelFPbmxvT2F4NG1jMG5MV2o5eG0vQjJuclAxNHhScHJMYjBXK3Nk?=
- =?utf-8?B?cHJxT3RPclhaaGJWT3dMQndtaVMvK0dNVFdZcXhkN3lEcDlEdGY5NXV4TzR0?=
- =?utf-8?B?R1I3U2NCSG11TGxUbzF0c0daakw5SUQ2aFZITEhWcFNSeFBkcGdhOTN5MVNx?=
- =?utf-8?B?Rm5KODJ6WmFIYlJzNTRRalhQM0k0SkxweDVnSjhuTzd4TDRiRTVhNlFsWmVz?=
- =?utf-8?B?ejl3NUYwTzdqUENrTG84NkFLbXdqdXR0ME5QdGtxQ3RYZjI5R0VtclN0am1B?=
- =?utf-8?B?YVhRNjVlRUFMeDY4NnVqZFoyOVdVRFFIeis0TXVsR3g2aTUwRE0va0Vtd0ZL?=
- =?utf-8?B?emN4dGNlaW1nMit3ZTh1ZDBHTEFxeTlaVXFVRmJ1Q04ycmZjYVlqSjV2TCtw?=
- =?utf-8?B?OHZrUWN4bk9wUEVBbGpSckhnanY3RER3OXJZTGdEN2dLdVpJemJLaXNKMTdZ?=
- =?utf-8?B?NkVUVHFVS2hqRTJFNit2QlNyMFFnZkR4ZVNHS3NpRXR5NHN5NTB4QkhNUWFk?=
- =?utf-8?B?MWRuWDNMNGRkdnlaZDVPcVYxQmYyWnhIamx5dzhpRWxmK28xU1cxcVZHdis0?=
- =?utf-8?B?bE0vVllQUUZweUxndXAyemNuNmlQd0JyYlk4d09UU3FQRzVyRXBsTm12ejMw?=
- =?utf-8?B?Y1E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	nxzGsMy13/EkB0Pa56C50sj7k16P5tY0PZbKy/CXDpDfmiR+ERqI5s1nOOO61Tm8DYwhjcDi3pPnFXjD3Td+NYuSyZbnxeEYrMcYepjr4KhUn1FnOYgMwzksHEKm7CtV4Pyuf3CHvMpPbNLJcxOXE24l66FQaWuftiz+Gvb+w1ElgjNTo/RwYZeFNgKhkMOLf3lmB6R15sjG/L97hgfebTOWcaebWSrND28B7l/zNgbqAJxFD5s3tq8j8+Yck1LGfqLuB3xZdD8k2jBu/E9tX4025hzUA8LgmEHS6qwZCTT55QyKZOV/59/1Kjku8kPPAZocAJCHcx6jtTqVTjyAZLT5Bry+52cv6w3t0i8f91S+Sy4XgkaYK8MJrPtHUAZrMXo777zZC5L09u0nHn4KbKlHTK2rGBhK79h27XaHVxaGiu4kpFvo3JRKS0e7EzyAsv32wnHCgS2YyWYIZ/koS/9zFHlIT0egT1LTUoM1Gh59sBO6fQh+J+NCrOAfZeZovhKR3Jh3yG1luMjoZQfnNfGYT+rcBxyZJWEw+sPbZUxVMmVlVY3BqeOn2Ct9O+JfYPs7rxXou3Agq7YHfc2A1U8rSKyKVnkpiONCB+0RNKI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e130a3b-3bd7-429a-a967-08ddea688724
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR10MB7653.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 21:34:42.3033
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yA04epUqbdHyuZHxY/PcWKZTqFHXgaTkH01ZlLQfiKYT4V1LwS7abAl7Zk4L4F5KzlDZq7WstoCERUUPdLzH+vyu/BI5bIElQZ8G+TPx4BI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5626
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_08,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509020214
-X-Proofpoint-ORIG-GUID: o_yyNUTiXEndCE2t99q34dVw93qp6cIj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX1PdFfEgJPgBW
- 4D8bcNIRDsazIKn/0YZlS8stvzEvAczcxGD3KnUFHX7PZ96jgJEEWxmANQsInretMAmrn7CDxuy
- z1SouOaw6o8+5wEELDCdtAFb5zXP1eJIwe1x1JwdM4VY+We+dxCntTbVGKqK115OLXx/lRp6I0B
- xoJZip++exDOLAjmQ9WRfT9kTnHeI2Khum7/oOACaTFj5ND+Cab74l1Ap96UNQjr4NfaUUfmJJl
- Woq7YMRFOum1u7qBRPQv2Ma3IQcaPJWDX5W2mzGauUiz0W1jJZg9buo792U1C27Rl3wXrt9I/gJ
- B8paV3Zq31jymqD8rYWL9mfS5vZBVbsXGODfdudxUIpJ8yCQwyzjvZWW/Ejtnd062jR6Gbby3k2
- QFOHseMp
-X-Authority-Analysis: v=2.4 cv=KORaDEFo c=1 sm=1 tr=0 ts=68b762fb cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=968KyxNXAAAA:8
- a=lQHjxRLVID5O1YWMZxkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: o_yyNUTiXEndCE2t99q34dVw93qp6cIj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-6-a2af23f132d5@oss.qualcomm.com>
+
+Hi Amirreza,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 33bcf93b9a6b028758105680f8b538a31bc563cf]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Amirreza-Zarrabi/tee-allow-a-driver-to-allocate-a-tee_device-without-a-pool/20250902-125821
+base:   33bcf93b9a6b028758105680f8b538a31bc563cf
+patch link:    https://lore.kernel.org/r/20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-6-a2af23f132d5%40oss.qualcomm.com
+patch subject: [PATCH v9 06/11] firmware: qcom: scm: add support for object invocation
+config: i386-buildonly-randconfig-001-20250903 (https://download.01.org/0day-ci/archive/20250903/202509030554.WR3MNpCE-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509030554.WR3MNpCE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509030554.WR3MNpCE-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/device.h:15,
+                    from include/linux/dma-mapping.h:5,
+                    from drivers/firmware/qcom/qcom_scm.c:13:
+   drivers/firmware/qcom/qcom_scm.c: In function 'qcom_scm_qtee_init':
+>> drivers/firmware/qcom/qcom_scm.c:2208:35: warning: format '%d' expects argument of type 'int', but argument 3 has type 'long int' [-Wformat=]
+    2208 |                 dev_err(scm->dev, "qcomtee: register failed: %d\n",
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                              ^~~
+   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
+     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                        ^~~~~~~
+   drivers/firmware/qcom/qcom_scm.c:2208:17: note: in expansion of macro 'dev_err'
+    2208 |                 dev_err(scm->dev, "qcomtee: register failed: %d\n",
+         |                 ^~~~~~~
+   drivers/firmware/qcom/qcom_scm.c:2208:63: note: format string is defined here
+    2208 |                 dev_err(scm->dev, "qcomtee: register failed: %d\n",
+         |                                                              ~^
+         |                                                               |
+         |                                                               int
+         |                                                              %ld
 
 
+vim +2208 drivers/firmware/qcom/qcom_scm.c
 
-On 9/1/25 5:50 AM, Yongting Lin wrote:
-> On Fri, Aug 29, 2025 at 9:00 AM Anthony Yznaga
-> <anthony.yznaga@oracle.com> wrote:
->>
->> Hi Yongting,
->>
->> Thank you for doing this. This is a great start for testing mshare.
->> I do have some comments below.
->>
->> On 8/25/25 7:57 AM, Yongting Lin wrote:
->>> This test case aims to verify the basic functionalities of mshare.
->>>
->>> Create a mshare file and use ioctl to create mapping for host mm
->>> with supportive flags, then create two processes to map mshare file
->>> to their memory spaces, and eventually verify the correctiness
->>> of sharing memory.
->>>
->>> Signed-off-by: Yongting Lin <linyongting@bytedance.com>
->>> ---
->>>    tools/testing/selftests/mshare/basic.c | 81 +++++++++++++++++++++++++-
->>>    1 file changed, 79 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/mshare/basic.c b/tools/testing/selftests/mshare/basic.c
->>> index 35739b1133f7..2347d30adfee 100644
->>> --- a/tools/testing/selftests/mshare/basic.c
->>> +++ b/tools/testing/selftests/mshare/basic.c
->>> @@ -3,9 +3,86 @@
->>>    #include "../kselftest_harness.h"
->>>    #include "util.c"
->>>
->>> -TEST(basic)
->>> +#define STRING "I am Msharefs"
->>> +
->>> +FIXTURE(basic)
->>> +{
->>> +     char filename[128];
->>> +     size_t align_size;
->>> +     size_t allocate_size;
->>> +};
->>> +
->>> +FIXTURE_VARIANT(basic) {
->>> +     /* decide the time of real mapping size besed on align_size */
->>> +     size_t map_size_time;
->>> +     /* flags for ioctl */
->>> +     int map_flags;
->>> +};
->>> +
->>> +FIXTURE_VARIANT_ADD(basic, ANON_512G) {
->>> +     .map_size_time = 1,
->>> +     .map_flags = MAP_ANONYMOUS | MAP_SHARED | MAP_FIXED,
->>> +};
->>> +
->>> +FIXTURE_VARIANT_ADD(basic, HUGETLB_512G) {
->>> +     .map_size_time = 1,
->>> +     .map_flags = MAP_ANONYMOUS | MAP_HUGETLB | MAP_SHARED | MAP_FIXED,
->>> +};
->>> +
->>> +FIXTURE_VARIANT_ADD(basic, ANON_1T) {
->>> +     .map_size_time = 2,
->>> +     .map_flags = MAP_ANONYMOUS | MAP_SHARED | MAP_FIXED,
->>> +};
->>> +
->>> +FIXTURE_VARIANT_ADD(basic, HUGETLB_1T) {
->>> +     .map_size_time = 2,
->>> +     .map_flags = MAP_ANONYMOUS | MAP_HUGETLB | MAP_SHARED | MAP_FIXED,
->>> +};
->>> +
->>> +FIXTURE_SETUP(basic)
->>>    {
->>> -     printf("Hello mshare\n");
->>> +     int fd;
->>> +
->>> +     self->align_size = mshare_get_info();
->>> +     self->allocate_size = self->align_size * variant->map_size_time;
->>> +
->>> +     fd = create_mshare_file(self->filename, sizeof(self->filename));
->>> +     ftruncate(fd, self->allocate_size);
->>> +
->>> +     ASSERT_EQ(mshare_ioctl_mapping(fd, self->allocate_size, variant->map_flags), 0);
->>
->> The tests should differentiate between how much VA space is allocated to
->> an mshare region (i.e with ftruncate()) and how much memory is allocated
->> within an mshare region through the ioctl. While the bounds of an mshare
->> region need to be aligned to 512 GB, the memory allocated within it does
->> not. Right now the tests will try to map 512 GB or 1 TB of anon or
->> hugetlb memory in an mshare region which will fail on smaller systems to
->> due to insufficient memory. Better to allocate smaller amounts so the
->> tests can run on more systems.
->>
->> Anthony
-> 
-> I Changed my code to allocate a smaller chunk of memory (i.e.
-> 4K/8K/2M/4M), and these tests are passed.
-> 
-> But I found something different:
-> step1:  ftruncate a mshare file to 512G
-> step2:  ioctl map 8K
-> step3: but after that, I am going to mmap 8K to a process but it
-> fails, then I have up to mmap 512G memory to process.
+  2188	
+  2189	static void qcom_scm_qtee_init(struct qcom_scm *scm)
+  2190	{
+  2191		struct platform_device *qtee_dev;
+  2192		u64 result, response_type;
+  2193		int ret;
+  2194	
+  2195		/*
+  2196		 * Probe for smcinvoke support. This will fail due to invalid buffers,
+  2197		 * but first, it checks whether the call is supported in QTEE syscall
+  2198		 * handler. If it is not supported, -EIO is returned.
+  2199		 */
+  2200		ret = qcom_scm_qtee_invoke_smc(0, 0, 0, 0, &result, &response_type);
+  2201		if (ret == -EIO)
+  2202			return;
+  2203	
+  2204		/* Setup QTEE interface device. */
+  2205		qtee_dev = platform_device_register_data(scm->dev, "qcomtee",
+  2206							 PLATFORM_DEVID_NONE, NULL, 0);
+  2207		if (IS_ERR(qtee_dev)) {
+> 2208			dev_err(scm->dev, "qcomtee: register failed: %d\n",
+  2209				PTR_ERR(qtee_dev));
+  2210			return;
+  2211		}
+  2212	
+  2213		ret = devm_add_action_or_reset(scm->dev, qcom_scm_qtee_free, qtee_dev);
+  2214		if (ret)
+  2215			dev_err(scm->dev, "qcomtee: add action failed: %d\n", ret);
+  2216	}
+  2217	
 
-This is correct. For page table sharing to work correctly the entire 
-range of the mshare region must be mmap'd into the process even though 
-the amount of memory actually mapped within the region via ioctl() may 
-be much smaller.
-
-> step4: Accessing the memory within the 8K boundary is fine but get
-> segfault after exceling the boundary (as the vma of host mm only holds
-> a memory region of 8K)
-> 
-> Should the mmap region keep consistent with the ioctl map region in
-> size? (currently, ioctl map region is 8K, but mmap region is 512G)
-
-It might help to think of the 512G mmap region as a window that gives 
-the process visbility or access to the actual memory that is mapped 
-within the mshare region.
-
-Anthony
-
-
-> 
-> Yongting
->>
->>> +     close(fd);
->>> +}
->>> +
->>> +FIXTURE_TEARDOWN(basic)
->>> +{
->>> +     ASSERT_EQ(unlink(self->filename), 0);
->>> +}
->>> +
->>> +TEST_F(basic, shared_mem)
->>> +{
->>> +     int fd;
->>> +     void *addr;
->>> +     pid_t pid = fork();
->>> +
->>> +     ASSERT_NE(pid, -1);
->>> +
->>> +     fd = open(self->filename, O_RDWR, 0600);
->>> +     ASSERT_NE(fd, -1);
->>> +
->>> +     addr = mmap(NULL, self->allocate_size, PROT_READ | PROT_WRITE,
->>> +                    MAP_SHARED, fd, 0);
->>> +     ASSERT_NE(addr, MAP_FAILED);
->>> +
->>> +     if (pid == 0) {
->>> +             /* Child process write date the shared memory */
->>> +             memcpy(addr, STRING, sizeof(STRING));
->>> +             exit(0);
->>> +     }
->>> +
->>> +     ASSERT_NE(waitpid(pid, NULL, 0), -1);
->>> +
->>> +     /* Parent process should retrieve the data from the shared memory */
->>> +     ASSERT_EQ(memcmp(addr, STRING, sizeof(STRING)), 0);
->>>    }
->>>
->>>    TEST_HARNESS_MAIN
->>
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
