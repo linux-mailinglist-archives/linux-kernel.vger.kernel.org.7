@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-797234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64571B40DCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A7AB40DD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115E71B622C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6FF1B62389
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CF434DCDB;
-	Tue,  2 Sep 2025 19:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7A234DCF8;
+	Tue,  2 Sep 2025 19:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3kvVtWK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXsvfV+N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6479320C038;
-	Tue,  2 Sep 2025 19:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94001EA6F;
+	Tue,  2 Sep 2025 19:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756840952; cv=none; b=i59zj/QhY6Xw8F5OT5fgYfTngy4gA7k7xnA7fThBMRys1w+bLBC2cZf+emwuy3iekeyrxxlv97JCYIwVvH5+hhcvpeQHSinKsUTxXCqoMaECpc6qJRMigm6YWkrG58DN5eljSUnivZt3eJRHXh+eS2BPOcXAY/KGeL8uXAuIDCw=
+	t=1756841046; cv=none; b=ixWBxxfumGM1FGYqkmKIJcq87dEyrULjQVMlfuezqaosXDGUEK02ZFxmaWa6bxQTaPd3B29lZtT/HOyQgkB47FIz18kdHzq7NUm7GagDlR0dHQ0wQLxVsCH1kigCpKS4mLcwBGBWSdJJr7E3ZnTQLiNMoqh6nsf49sxrF35MipM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756840952; c=relaxed/simple;
-	bh=v+SLu0WG0Uzn0tEFRxmTRyLECD6vspuHFbJXwXJfk0c=;
+	s=arc-20240116; t=1756841046; c=relaxed/simple;
+	bh=PrZQF7DqB4WBGDbfe5rYBm3EXfW8hqYfhzp4dywtRUc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ajPZYAirLBktuVo72k5f++AK1zZztkVuLrYdCM0baoXYncdQ15vmH0TafnFXhMG/KdUDqERv78Z4C1qXndYEHEzIxBAoYLgMuf7YQtlNsdF/vFqv/jmYuqSMIA1VliGsYwlPIkZ/AZITbh5vHFgtBraulwzV9kIErmnwC3QBiTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3kvVtWK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83090C4CEED;
-	Tue,  2 Sep 2025 19:22:29 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=thU2kRkY6ks8a+8BqAlsjEdA0nn++VbsQwloMYXL2zDnlJ7xOEgVugFgaHeMRvZWyea9ouddcUEoR6QaFz5AYD9BYp1L4dI2/2bqx03/JYmrY1HiCwgoHDVwhD2JbjE5eM055hbSYc74dyfXt2WAANulqMzu0Wf8Bh1py1Mup1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXsvfV+N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC7A3C4CEED;
+	Tue,  2 Sep 2025 19:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756840951;
-	bh=v+SLu0WG0Uzn0tEFRxmTRyLECD6vspuHFbJXwXJfk0c=;
+	s=k20201202; t=1756841045;
+	bh=PrZQF7DqB4WBGDbfe5rYBm3EXfW8hqYfhzp4dywtRUc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q3kvVtWKuhObJx20C4QJ5hRY2Ib+5tD/tHI6uDyPRStPRw6oOGwdhtTAPeI4m3+WK
-	 NJdNwm586E9W2aJyXqP/8cag0t1bYQTMLe2JF6OFp/cqpM2SOAMWPAUciMQK+z7RuD
-	 Z8PqWqavfVnVmCcAsxUHYyb5xC+Viu345x3Sy7pU6CksRSX3ay4PXV79AmLHiwImbQ
-	 z7QgUkk6uCOf18pfixbkRmLZ2VVOSM71wpnYWRL0hTSsaa4lkV+CNtdX2AW3P+ZnGe
-	 8Qo2FhMjYV0L8GMzlqjj9+XZe3k1JBszp8gOHAyhjT3BCMy2c1a6HgTaznRf5qOgXf
-	 XmuUhKXPhULuA==
-Message-ID: <ffc5c163-95d4-4463-8d46-542cb1d4cd97@kernel.org>
-Date: Tue, 2 Sep 2025 21:22:28 +0200
+	b=EXsvfV+Ne7vgcn5U5Fc1+XxrWxVoYYaW29WTNVPML1WFeSc/1I8o2pQa7ehxasEXQ
+	 UipAW0puLRedbEhatK49RsbW5qQn/VoB871BJ98eqp7/Y2WugHv8iirge3vn6cVdvs
+	 HU04+bYBixr8aTOMI0fYgEmKzkKs9tCAcMucugNu2pB4ngBfpOAAbmIt/c8rueOj1p
+	 SBwEVwDt5sO0+iDZCSIIcatxlnqvM/bni8v7Je26DCHc/wxXJrf9FLqY7c0KjIbLgA
+	 PNzSyYTVG+j+zEyp2Kt4sqVErFYfr7ByvgObDmYgkxVVZLqG6tLeKd2WXUtoiguC+p
+	 UzmlxkYVRgIRQ==
+Message-ID: <893dff7a-2a31-4054-bc93-38544b1d6576@kernel.org>
+Date: Tue, 2 Sep 2025 21:24:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] dt-bindings: iio: accel: bosch,BMA220 improvements
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
- <20250901194742.11599-2-petre.rodan@subdimension.ro>
- <9b5bb45d-75ba-4674-9c4d-b04766496447@kernel.org> <aLcVK-YzlcqaKV_M@lipo>
+Subject: Re: [PATCH] pinctrl: eswin: Fix regulator error check and Kconfig
+ dependency
+To: Yulin Lu <luyulin@eswincomputing.com>, linus.walleij@linaro.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com, zhengyu@eswincomputing.com,
+ linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
+ fenglin@eswincomputing.com, lianghujun@eswincomputing.com,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20250902094508.288-1-luyulin@eswincomputing.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,27 +103,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <aLcVK-YzlcqaKV_M@lipo>
+In-Reply-To: <20250902094508.288-1-luyulin@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/09/2025 18:02, Petre Rodan wrote:
+On 02/09/2025 11:45, Yulin Lu wrote:
+> Smatch reported the following warning in eic7700_pinctrl_probe():
 > 
-> hello,
+>   drivers/pinctrl/pinctrl-eic7700.c:638 eic7700_pinctrl_probe()
+>   warn: passing zero to 'PTR_ERR'
 > 
-> On Tue, Sep 02, 2025 at 07:57:03AM +0200, Krzysztof Kozlowski wrote:
->> <form letter>
->> Please use scripts/get_maintainers.pl to get a list of necessary people
->> and lists to CC. It might happen, that command when run on an older
->> kernel, gives you outdated entries. Therefore please be sure you base
->> your patches on recent Linux kernel.
+> The root cause is that devm_regulator_get() may return NULL when
+> CONFIG_REGULATOR is disabled. In such case, IS_ERR_OR_NULL() triggers
+> PTR_ERR(NULL) which evaluates to 0, leading to passing a success code
+> as an error.
 > 
-> I'm using the bleeding edge togreg branch of the iio tree, git pulled yesterday.
-> I indeed missed devicetree@ while manually copy-pasting from get_maintainer.pl on the bindings patch. I wish that script would provide a valid rfc822 email header instead of it's current verbose output.
+> However, this driver cannot work without a regulator. To fix this:
+> 
+>  - Change the check from IS_ERR_OR_NULL() to IS_ERR()
+>  - Update Kconfig to explicitly select REGULATOR and
+>    REGULATOR_FIXED_VOLTAGE, ensuring that the regulator framework is
+>    always available.
+> 
+> This resolves the Smatch warning and enforces the correct dependency.
+> 
+> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Recommended is to use b4. Simple wrapper like git_send_email() also
-would work:
-https://lore.kernel.org/all/?q=git_send_email
+Wrong tag. Didn't Dan give you proper way to attribute reported? See
+submitting-patches. You need Reported-by with Closes.
 
 
 Best regards,
