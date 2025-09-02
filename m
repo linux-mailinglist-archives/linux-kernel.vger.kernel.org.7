@@ -1,475 +1,275 @@
-Return-Path: <linux-kernel+bounces-797247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA660B40DF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:36:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BD6B40DF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48C3A7A4B2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD265E16CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03FD2E6116;
-	Tue,  2 Sep 2025 19:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0C629BDBC;
+	Tue,  2 Sep 2025 19:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPqQl38A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VRSQxfPk";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oRIXwirS"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1951261B75
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 19:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756841772; cv=none; b=L2hAcmc2fn01wzspxfC5UoFjkMsV5t7tBJsIygIEHZ/IWekaQRFVst4HjXnDGd7NjLvGJ0DpGICrpy0y/cR4rv0pt8ZCXWmVwwKd0De2EA0AbYVxjq0hX/gr6ZUk/wRVU+VmoufGZJBeUqGsDowEQ9aXTWZdxq5UIrGPZa5iKCY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756841772; c=relaxed/simple;
-	bh=OWGMbnOMsLhobslV9fuuGOZdGb/bNHz7tP2p4NqInFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z6nmBTViLpyCsPjRg5VGh39bTFlKZS9qWUH3NFbQhOU8d05toaOzgJAqUya2i7CXcdaE5gwtnmYDELG9N93iH+KcnQAzVmhZ8ISfq4zPlBjm8zRqQsRWMcg6AdI+a9h33AEwYYK85L0D2c1jZLE3X66mRfGKijHjAuDmCZ0d+FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPqQl38A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFEF9C4CEED;
-	Tue,  2 Sep 2025 19:36:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756841771;
-	bh=OWGMbnOMsLhobslV9fuuGOZdGb/bNHz7tP2p4NqInFg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lPqQl38AnJSJcaG/nLFLmlAs/HwHreuLRiPJAIDvwxtHe/95jNLHbSOqlS5VGBoQv
-	 rxhFuR5wbmUUe6fXzPcBWtX+3QvQOI9vkpNDswzmotWBGavgkNSwT2jkKC+RN46kir
-	 DvP5qKVANipunvHuwJgqb1nJnmw+n9LaFa6SZCLxi8SyHC1T3LGVS/E9Z3xZVPcvmB
-	 0CLKPBNDPASS/FkCDrumDX3w6QqlpkcpDJGg1LDK4A2jC9zSvzwZaTlRELDJR+y37a
-	 CEj11d9gxEdJFmJiQqkvja77gxJcLIo1155SDZXcvKViSMDCniE/gozpQweIP60362
-	 tky2SNp4gkaIQ==
-Message-ID: <c6394a1e-5f89-41eb-b98e-e5b6fccba106@kernel.org>
-Date: Tue, 2 Sep 2025 14:36:07 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C722DF152;
+	Tue,  2 Sep 2025 19:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756841810; cv=fail; b=ZFYpC8Sq9zrynV4DhgPLWqbrKu0xaSFPsEEkw/h2/9qxpWxPog67RDLNhQ2INvNVkagsWVggNAU8OjN/rNHu/6j0opw9uAdeqOT5s/qny1Xw9q1YDAvm1HLjgWSviaGaYAZn+B8I9J+IiV6LGjLBvYuXSb2oW1/AuP0RwQsaf4E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756841810; c=relaxed/simple;
+	bh=RdFvVV+vkZmKEi5KdI6OnkLbv9UQLCGeQfTWzetUMEM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PKUTgLocrnopq951FdxJiu+gnXKdxbcG3pGLRWnwYg0smfJAnUcGkD6hXGZ5a3DdWXEXL+61J91vu37pdUEBWH8/aXK2dqMuUrYu5ionJh1ZJM9LoDS2uuTzt/+VEpz2bctM+kpEZ3dtWgMrEuwKUbXffDh1sAUSoo1XbXUOeFM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VRSQxfPk; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oRIXwirS; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582JNRk7007557;
+	Tue, 2 Sep 2025 19:36:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=QBSlJkxCw9Ey+W8WdaR8UWWRF1A9uZiZRBWROigzzD0=; b=
+	VRSQxfPkY6EOlYqKTURQ4bjlFGE/W0xYgKy8R/gp5cqS1hTwS89fCBeSlQShNHei
+	+uj/VBwp04clbcU5QTdU1pcATd//FYNX0PxZjFh0l5xM9IFb9hEnUUe4RvnGAS5p
+	KEVMEElEHoXHFN8f9ViqSY7CZCiRyh0El5aQEVy8Rgyl2mbah6zZg2cIsHYkvszl
+	b9xOND43lMs0FAROIOJBsgKtEy+8I2nwNLUZfBZaA93xx+oVrUENUIiAWN2qw60F
+	4+Bg5vvH5UbAYncQ8DPnDz7wq9Xin/efKOjEnPyVHo1GKERvba+aZbjv4C1+/n8Z
+	evOwlrej2pd0GLovv0GVPg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usmnctqk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Sep 2025 19:36:30 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 582IVII3040758;
+	Tue, 2 Sep 2025 19:36:29 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2069.outbound.protection.outlook.com [40.107.93.69])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48uqr997fq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 02 Sep 2025 19:36:29 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yo1S70j2/hT8PKwsm8b0CCOLU+AEwtnmHQTf6k8fmj1UMXE0OLdwbx/onRtD4+evoL9yQ8oVlG46hS+z/0uecT3ZQ23PgGZ6KskQNbmaf9PhaulFhhryAXFnQ5j3IURfx6KZdWgcBzRPXNvxLOtt0M34cf3IuOrA1YlX5g8VSO5QWqvXdhR5fWH08Nq/mxdsUaTJ4W380rRjCBp6tfuI0cwRDiudvFN1g1z/gRNMu1rQ5ZtXF9PNyTVHQIKCn91mZPRZ3ba+kZzOmiMQwnm+E7m5r9fLOdVb7UatZ68K7DoWnp7l0e9ZpmTjXQ0yKiZ9fB8yavOmf6nJTam+bV8GtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QBSlJkxCw9Ey+W8WdaR8UWWRF1A9uZiZRBWROigzzD0=;
+ b=ulaWgCMpDVGVLrzP6sV4fI8I91AuTui49ZkEVgUbccQdydr5QTHeEbKn5npEC7hoD+XoyC8s2E5122MbjtyJZUi6DQBeffeDSAypbWmtKD7IfBKunSH5sDL7F+1w5neoywxF7qJUwQSvZ5f00ipZE0P6VxVmDkxAMN3oIB4uhQqYvn1fYExfYK+E3Sjv/a1ypmuMxJo3i9ueAXI7fPCbU2zvv/3wbWr4T5y92msosVt714FdNM4NGn27qQrUiVKnn4Bv+cWpMhyPPFV/PxgWn6b2OP9ba4ke+Vp8OI4cMcyUpF3oG54feJMVH5m23textG861I6ZZU3gspGdCQsWkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QBSlJkxCw9Ey+W8WdaR8UWWRF1A9uZiZRBWROigzzD0=;
+ b=oRIXwirSSd1/CSm7UPoB0LlUaaDgUWBX+vIBHzZO+EAemhMui0uMe2Aa0JmReTBGMtf0s2HEkywy5VFglgMIOyZGXpE0qjoFoZsWPJdhF7nqkH1XwtoeKOc0LzvRIV9jW2IwhHhaPpkhltLRdLGuDrX8i+RKSremM+XWcScE4ng=
+Received: from CH0PR10MB5113.namprd10.prod.outlook.com (2603:10b6:610:c9::8)
+ by SA2PR10MB4649.namprd10.prod.outlook.com (2603:10b6:806:119::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
+ 2025 19:36:26 +0000
+Received: from CH0PR10MB5113.namprd10.prod.outlook.com
+ ([fe80::eab6:6dcc:f05f:5cb2]) by CH0PR10MB5113.namprd10.prod.outlook.com
+ ([fe80::eab6:6dcc:f05f:5cb2%5]) with mapi id 15.20.9073.021; Tue, 2 Sep 2025
+ 19:36:26 +0000
+Message-ID: <bd2804ce-2d81-4a39-9623-32fb2fbf5351@oracle.com>
+Date: Tue, 2 Sep 2025 15:36:22 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/12] maple_tree: Fix check_bulk_rebalance() test locks
+To: Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        Suren Baghdasaryan <surenb@google.com>
+Cc: Harry Yoo <harry.yoo@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        maple-tree@lists.infradead.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250901-maple-sheaves-v1-0-d6a1166b53f2@suse.cz>
+ <20250901-maple-sheaves-v1-1-d6a1166b53f2@suse.cz>
+Content-Language: en-US
+From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+In-Reply-To: <20250901-maple-sheaves-v1-1-d6a1166b53f2@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PH7PR02CA0002.namprd02.prod.outlook.com
+ (2603:10b6:510:33d::33) To CH0PR10MB5113.namprd10.prod.outlook.com
+ (2603:10b6:610:c9::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, jacek.lawrynowicz@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com,
- maciej.falkowski@linux.intel.com
-References: <20250902175034.2056708-1-lizhi.hou@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250902175034.2056708-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5113:EE_|SA2PR10MB4649:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ac08a5b-1fa6-48be-5572-08ddea580180
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NWxIVlZ1VGtTM21xZmhxbDVpTjBkbFR2N1VWYVd0ZXgzUE1udFlYbTc5YTdT?=
+ =?utf-8?B?VFJ1UStSelBCbkx6dXhxNFMzblBSRkVyajdpT3JPby96RmRPZjF3OFpkRHhr?=
+ =?utf-8?B?QUtvcmhZYmZ5SjVsOThpUjZVT2hscDdFNFluOFhHSElDd0ZtQ0QyRktoZXhO?=
+ =?utf-8?B?aHdNdU9XZnlYRzBFN0JhSW5nTndzTTZpWFcrK0ZCa1hreUl2NjlSd2UxNjNF?=
+ =?utf-8?B?dWtDSXpXSStUNDhtVEdRbnA3eGxhM0I0eEtsVklEOXhLL1BMN2hoR0hzM3NK?=
+ =?utf-8?B?RTRXdGNnV2hsQXlYZjRvVndlVWVUNkZEdVNoR1dlalVhMlRhZWl0NHBTVFJ5?=
+ =?utf-8?B?RDEvNmNHZTM0azcwNmNTNlViTmhNc3p2b2FnTFV2OG1tdDYyRDk4OThMa3c3?=
+ =?utf-8?B?RjNIK0xzdUxHbzZTbno4eGxjUVF1dmRUOERpdDhoK3RVNHV6eDI3WVc4VWRt?=
+ =?utf-8?B?TjhJcnJ3TktQNHhDRmN2NmhENG5yalZlamtKRSt1VWdDcmRMMkh3SVZnVXlU?=
+ =?utf-8?B?MXcvZUxXeEV0bGVjUXVtazZWVTcwVmEvVFNTZXhTYTVPNzNTWGFTc0p3cFJZ?=
+ =?utf-8?B?aGhGRk1rdk85cnpQblhKeC9XY2pIN2gyaXIvZEVtQnhEczgrL2ZjMkl5MkNU?=
+ =?utf-8?B?QXFubGpNYlBPUVFXV3ZXTDh0T1Zxc3hTUzAvbmdzdkJ3RUUwSnhXcmJRQ0Ns?=
+ =?utf-8?B?SDlVQnlrdTBGVU5Ra2FoSllIUUMyZnZxZkIvSzBiRFpsK2xYbS8rbENoRUtt?=
+ =?utf-8?B?UjNyMmcvTTlBSzRRTEQ2RW5PRU9xYW9zL1U1YzJlTVFkRVVHZDc1NmlLTkhO?=
+ =?utf-8?B?SEdveTZIbVhIbUNlZW5RanEzWVFra0JmUjRTSzgyZklrTUJxSUc3VzlKcTJ1?=
+ =?utf-8?B?c2FheGFjcFVVRmRKanp0RjZ0Vms2Qmh1SHUvOVVsa2UwVTd0K2FrTnliVDZH?=
+ =?utf-8?B?Z3ZERWIvbGk4REJwdStsY1p6UkdPQm9Hcjg1cVlLMmJCbjFkZm5jVnU3cDFv?=
+ =?utf-8?B?ZW5xOGgrQy9tM2NBTkUxamF0eFdkR0FqMXAvSGVTS3NDM3ZQd1ZZV3ZSTE55?=
+ =?utf-8?B?RGlTQUhWNElPam5xV0phRmpuV3k1bTNFTndib21UaUJYWFRvRi90NTI1cUhu?=
+ =?utf-8?B?emRjbU1pc2QzQVQxTXBscUNWb2ZiL3FhNk9CU3JoZHhvdkg3M21NbjRTYTJ3?=
+ =?utf-8?B?MkhuSkROb211QnJBTGVTUTRNQW5LeGFUVGdCbUF5WitjdXhIK0VEQTF0bDMr?=
+ =?utf-8?B?SE1TdHE4WGdYTllwazdjLzZhaDF2SW0rUU1wd2VvWXNkZ0JEd05SZDM2alhQ?=
+ =?utf-8?B?anJrRmZhb2F6VzdTWU5mclRZWmpCZkh3a0NBUjFkVldiWnhZZ25xcEUwck55?=
+ =?utf-8?B?K1pYbFhVUEgvY0JBTTl4WEcydVRQS2haUTVmeTlzbUt1L09zSlZSVEc4OVY2?=
+ =?utf-8?B?WnR2NDdpd3ZuSFlZSkt1S0lBait1YXhDeS8yWXZJUFNSSHRDTVNuK1YveEVC?=
+ =?utf-8?B?a3N2T0dNU1RXTEVaTGlMOHYraVJZZDlpWC9XYUVmYnhKVWdLeUVTWTBEMDB4?=
+ =?utf-8?B?VmFrYU1zZHNuT1MrVXMvUE5LbkhOVVN1YXFOeC9TQ1p1WE5hSHpVT2Z3KzJq?=
+ =?utf-8?B?OUUyMGFGWGJ5UVlybE01RkVvYlN1b0ZxbmtpVURabHZWUkE2UkJNNzF4Lzgy?=
+ =?utf-8?B?TzlLdFJVWXhmM2Jqa2Ftbjd2Sjc4MElTTG1MYWQzZTlJZ3VKSG1nMzFxTTZt?=
+ =?utf-8?B?a1Mxc3ZPMnUvdzZ2ZXZ3Sll0RmZ4RkNNUk5VemZES2VCdGZvdHAyRmJVYzFl?=
+ =?utf-8?B?UzdUVGttSHI3RkRXeFVsamtFRWFPV3pPWkZMR2RsOGJ1Vm8rd2dlSitJU1Fu?=
+ =?utf-8?B?anFqdTVZSjZQdWhRRDNjeGhDNVJDMTdTSERHWnRreEpYei9acm5KbjFWZE92?=
+ =?utf-8?Q?XG9QrUVjmqw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5113.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dHh0czdLQTloZGY1S1ZMZG5WL2E2c3dyRzdJMVA2N2dTbWJUNzRwVW50bnFz?=
+ =?utf-8?B?QVJSTElJcVNRMjBwN29RSlNZNEFOa1dZMklicTkzWnJReFpxSENjODRScyty?=
+ =?utf-8?B?dkdGcStTRGZMblU5Z1lKQ3cvRHY4NElXNDE1MmJFK1NlRjE2SUIzZDZMVEN1?=
+ =?utf-8?B?ZmhvM08wMEFDZFlqSjFyanduMVNtZ3g1YUhqdmxSL1VTRkR4Y3phNDRoNnUy?=
+ =?utf-8?B?MDhoeHh6UE9WcExwVGJUVE10TVFLSWdFakRyUmhNVWlRVWhvN3Q3MXh2RnAw?=
+ =?utf-8?B?L3Yrc1lqbnpOZG44YzVab3k5aXB2WTZ3d2o2WWl6Wkc3dVljd0FPZVJKZG96?=
+ =?utf-8?B?Znl4eHJVNHFFeUdUUWoySjhLV3pPUFFLZVE1aFZBd0FUaGdzdURYY0FuU3VL?=
+ =?utf-8?B?emJSRE0xS0JPRmVteFNFY0t5SlNtOXlMVXVESU9SUDRLUEdxaXVYR0xva215?=
+ =?utf-8?B?N0hXd1VkZ1BuWkE2NXQ5cG5vSmpEU1lHQW5jL1FZcXc1REFlOGV0YXFQSFRm?=
+ =?utf-8?B?SnQ3WTFOVFUzQUxPQk5VclhEVkQxeStXYkRFNm4yT2tqbGNUVVpiVlFlcWF3?=
+ =?utf-8?B?WHN1UERkdjF2Q25GYXhuQWF1TEs1TjBKazlaQkl2UVNnSkxrK3NGeWVjbEw5?=
+ =?utf-8?B?cnVqRnBxTWY5OEIxYUFxRnlyQVZlcUlxZmgwYXF6WnVDaWdRcyt1ckdBUXFC?=
+ =?utf-8?B?WkpwUmlCbDRoOUdTUG5JTzFWSEdQTVNRQnR1Vmk5MUlsdkoyUnZManlXSG9K?=
+ =?utf-8?B?T09tTjF2U0NTUEFTM1NUV25IR2ZFS3E3a21DeXJUZ000enB3eDMwYTJrcWVw?=
+ =?utf-8?B?OWFRTndNYzhpNS9SU25qSklick81cmlZcGpQaHJtdTFPekRiNlNpNHBlR1Fm?=
+ =?utf-8?B?UmREdUJleC9keDZqckJYZEp6MTRsemVZby9RS1A1YndVR29qZE5MY0h4c21R?=
+ =?utf-8?B?NXFJMFZPU2VhNWtoY056bURGQVM3Q0ptcHRLeloyV1JsaVZGeXZhWWwrQ0xX?=
+ =?utf-8?B?ZWRHMkVPNnR6ZFZ4U0RHN1ZaNlJmQ093cDF4U2NDWjMraVBjREVzWTcrUlRq?=
+ =?utf-8?B?Z2NJSDJRa1ByakZQeXI1VjRjSi9IWEhORUZsaUZhWW1teHJ5Smk2M3N1dUxT?=
+ =?utf-8?B?b01zeE8zOTRXaVdXMCtrS1oxUVBrNUY3SVJCcDR0VERxN1VkNVNlRm1LZkpt?=
+ =?utf-8?B?bjJaRFBpT1VsTG84aVM3WE1VK3pZaThldzZ5dnQyZDZLV1RWbGwxaHlLd3o4?=
+ =?utf-8?B?Q0JpbGtrRC9MaFd1L2hKamlRZERiZVA1OFdEb1VLMGhtMTBDWGppejVGWDk1?=
+ =?utf-8?B?b3dDVnB2dEg3TzFnOGVwRVcyRE1vcXlJM2FJSTQycG5Na3NZbzVqVm8zVzZT?=
+ =?utf-8?B?QVptODJMZnVDbzZkZTZhSFNCWHNrZ0t1MXZnL1R1eXlVd2JQSzdCdy9laGRt?=
+ =?utf-8?B?T1RQSWsrK2VXRXM2b3hySkFLMVE5SGZGYUNRVDdmd3luM3VxYzhVV3J6S1BL?=
+ =?utf-8?B?NGdVV25UYlh3UHRtVTlYeVJDRVAwRmY2clJnYnN6NHh6S0dOSnNmZ1JCalFF?=
+ =?utf-8?B?V21mNXJUeEp2WkV3dXU1MUxrb3M3OTZ1ZXJTTVRTRFp1eXBQaXRIcjhkZDhv?=
+ =?utf-8?B?a2diSmZtaUVXeXJwUGwrZjc1Mmh1OEVHMkxRUGRvZ0JTTzBwWnIvQXlHQlhr?=
+ =?utf-8?B?bXFURnBhYWI5TWNWSTZyTXZJcUFzTFA0VklxRnBXemtKRjFMYlVDRk5BTktx?=
+ =?utf-8?B?aFQ2YlpPTWxheUM0VEFSeG9zSlNxWGlBc3lrVm9pT3RpdHlsWWdOOTVxQ2dX?=
+ =?utf-8?B?K3BhcmVQbHZGczVjNld4WjhDSW40b1ZXc2Zvd2dKRFRMc2VqWmgzSWJtNFdH?=
+ =?utf-8?B?R3BXYktnaGpER2FCajhTSjBHNm9uUzRWZGg3UkcwWUJnUUFVN0VEeXd0Slp2?=
+ =?utf-8?B?enlleC9pSllYZVZBaThzY2NsM2U4dzczVjIxZEZzb2VKOWlqWTJzeDlwcTdt?=
+ =?utf-8?B?cTFsYzJQRGJ1Z3ZpVUFQeVBnTFBSMTlhUVFaY09sNCtRSWp0dzF5T2s0Zm5J?=
+ =?utf-8?B?aWlORzRSaVNOQ0ErTzVKbWpvR3B2RFo0K2k5OU1JZHlyVDFNM21FdXVzdEZC?=
+ =?utf-8?B?OElCdlBLeWg0TXlvOHpYR1dQVnlmU3dwVnNGQlMrRE14KzhGYTFaZlNNbUNm?=
+ =?utf-8?B?MXc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	q5mHVTyiMHXZtrV5KYNMZ/GkJoLPUzQppaak/gE9StCfjUgy2BwWjtFIbPpfwzSHlMNBCveasXWioKyHL9Ob6qPEhQCfzKG6XCbZ1oEZ5Nvs2U45sK8nDkaj28ZJfoVmI8H84SNO+sXH9HGS2TZAelZucOI+7EgQmLIwUikDZdC8tsv6WRsirt79msXZAQ6RexglqXSbn3bbi/hS0GZYAJcS3Pjm5KQVkUDyL4ZwR1vA0hhVn80IwOBJZwUiSw2jtzu890hVc4SKbCPdmD5xEyYte/zbEnavT0p2H9SXGNgWPlGmhBxpDeqagbV5jdXjZxfzEW+pTST+uq9+qnD+TwOu1ir9AoMeeo0Stj6Ii5dRzWP3nGuPq2xAe5ApCH4QhixopAw/XGpcdMjzd/LqUrfEosgLAPk/dskqL6d0rSORqgbr8BdEPMWgqKN6wleTY4iTE+8QdlV1W9ovhdygo9OckLoPIDZRdbT1EKMC7acY9kSZlpdsbl+nA7bY5IXyUrrQDJJBdkuyIn/4EMINPeApoT05wDOz6PMECy39CmqUCditTX8HSUzTN949GcMKMUVoo+FKvBGWROf9+V6THDc1rH7RHtldA2nBDT+UPE0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ac08a5b-1fa6-48be-5572-08ddea580180
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5113.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 19:36:26.4156
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F7ZnTJh7bn9T/gssMNPkWs8MY6AV6VEY2ky20iFUmgj44IByX6hAeIdL1cK9cMjtfzeDfIh5yRYQ6bE+JCKIRKOPim6OYpidEmb2ac0u5gs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4649
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_06,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 mlxlogscore=999 phishscore=0 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509020194
+X-Authority-Analysis: v=2.4 cv=D8xHKuRj c=1 sm=1 tr=0 ts=68b7473e cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=j-QNOd_GMMRpenwY-0kA:9
+ a=NqO74GWdXPXpGKcKHaDJD/ajO6k=:19 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: HY7aQTC3skS70qsccKsZDl4SpExdFjLG
+X-Proofpoint-ORIG-GUID: HY7aQTC3skS70qsccKsZDl4SpExdFjLG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfXxeun3ffYDXcX
+ ZCL3+KJvjIP3mJqTf1zCaFzJU8+8sUE9nXato1aSOEaAepF1812bO+Z7Gq9IUIEmy7ZUP0Eml4i
+ MRplXWXC9FiPHHFXa6dlkMleigNuF0sSRLT6BVxSeKfYHE7ZEVewxlbUF3Y14jeMcwiugXgXGFE
+ wozOh7JxstYbRJSDecM2wNeq99LYZaRQe47sQdBy5qOIz40KMF5He9dZ0J2NgdcV42bXYB4wHuV
+ p0+5+dH4v1hhTJeUZqTDJKg+uUVClvCBARIfIE7KdTWBFtc1zZN6i6GAsKVLOigaiAwNGI/ULaM
+ vppFOLusR5G5ZoTAyGROtp2KFMbN3CCCG4WQ5L7sLyE3ybJ42cNzToVou//8qe9DftH8DRT/N8S
+ 0ksbJoYA
 
-On 9/2/2025 12:50 PM, Lizhi Hou wrote:
-> Add interface for applications to get information array. The application
-> provides a buffer pointer along with information type, maximum number of
-> entries and maximum size of each entry. The buffer may also contain match
-> conditions based on the information type. After the ioctl completes, the
-> actual number of entries and entry size are returned.
+On 9/1/25 7:08 AM, Vlastimil Babka wrote:
+> From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
 > 
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> Link: https://lore.kernel.org/r/20250827203031.1512508-1-lizhi.hou@amd.com
+> The check_bulk_rebalance() test was not correctly locking the tree which
+> caused issues with the sheaves testing in later patches.  Adding the
+> missing locks fixed the issue.
+> 
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+If needed,
 
-One nit below, if no other feedback feel free to just incorporate it 
-when committing.
+Fixes: a6e0ceb7bf48 ("maple_tree: check for MA_STATE_BULK on setting 
+wr_rebalance")
+
+Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 
 > ---
->   drivers/accel/amdxdna/aie2_pci.c        | 116 ++++++++++++++++++------
->   drivers/accel/amdxdna/amdxdna_pci_drv.c |  30 ++++++
->   drivers/accel/amdxdna/amdxdna_pci_drv.h |   1 +
->   include/uapi/drm/amdxdna_accel.h        | 111 +++++++++++++++++++++++
->   4 files changed, 232 insertions(+), 26 deletions(-)
+>   tools/testing/radix-tree/maple.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-> index 7a3449541107..87c425e3d2b9 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.c
-> +++ b/drivers/accel/amdxdna/aie2_pci.c
-> @@ -785,11 +785,12 @@ static int aie2_get_clock_metadata(struct amdxdna_client *client,
+> diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+> index 172700fb7784d29f9403003b4484a5ebd7aa316b..159d5307b30a4b37e6cf2941848b8718e1b891d9 100644
+> --- a/tools/testing/radix-tree/maple.c
+> +++ b/tools/testing/radix-tree/maple.c
+> @@ -36465,6 +36465,7 @@ static inline void check_bulk_rebalance(struct maple_tree *mt)
 >   
->   static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
->   {
-> -	struct amdxdna_drm_query_hwctx *tmp __free(kfree) = NULL;
-> -	struct amdxdna_drm_get_info *get_info_args = arg;
-> -	struct amdxdna_drm_query_hwctx __user *buf;
-> +	struct amdxdna_drm_hwctx_entry *tmp __free(kfree) = NULL;
-> +	struct amdxdna_drm_get_array *array_args = arg;
-> +	struct amdxdna_drm_hwctx_entry __user *buf;
-> +	u32 size;
+>   	build_full_tree(mt, 0, 2);
 >   
-> -	if (get_info_args->buffer_size < sizeof(*tmp))
-> +	if (!array_args->num_element)
->   		return -EINVAL;
+> +	mas_lock(&mas);
+>   	/* erase every entry in the tree */
+>   	do {
+>   		/* set up bulk store mode */
+> @@ -36474,6 +36475,7 @@ static inline void check_bulk_rebalance(struct maple_tree *mt)
+>   	} while (mas_prev(&mas, 0) != NULL);
 >   
->   	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
-> @@ -802,14 +803,23 @@ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
->   	tmp->num_col = hwctx->num_col;
->   	tmp->command_submissions = hwctx->priv->seq;
->   	tmp->command_completions = hwctx->priv->completed;
-> -
-> -	buf = u64_to_user_ptr(get_info_args->buffer);
-> -
-> -	if (copy_to_user(buf, tmp, sizeof(*tmp)))
-> +	tmp->pasid = hwctx->client->pasid;
-> +	tmp->priority = hwctx->qos.priority;
-> +	tmp->gops = hwctx->qos.gops;
-> +	tmp->fps = hwctx->qos.fps;
-> +	tmp->dma_bandwidth = hwctx->qos.dma_bandwidth;
-> +	tmp->latency = hwctx->qos.latency;
-> +	tmp->frame_exec_time = hwctx->qos.frame_exec_time;
-> +	tmp->state = AMDXDNA_HWCTX_STATE_ACTIVE;
-> +
-> +	buf = u64_to_user_ptr(array_args->buffer);
-> +	size = min(sizeof(*tmp), array_args->element_size);
-> +
-> +	if (copy_to_user(buf, tmp, size))
->   		return -EFAULT;
->   
-> -	get_info_args->buffer += sizeof(*tmp);
-> -	get_info_args->buffer_size -= sizeof(*tmp);
-> +	array_args->buffer += size;
-> +	array_args->num_element--;
->   
->   	return 0;
->   }
-> @@ -817,23 +827,24 @@ static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
->   static int aie2_get_hwctx_status(struct amdxdna_client *client,
->   				 struct amdxdna_drm_get_info *args)
->   {
-> +	struct amdxdna_drm_get_array array_args;
->   	struct amdxdna_dev *xdna = client->xdna;
-> -	struct amdxdna_drm_get_info info_args;
->   	struct amdxdna_client *tmp_client;
->   	int ret;
->   
->   	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
->   
-> -	info_args.buffer = args->buffer;
-> -	info_args.buffer_size = args->buffer_size;
-> -
-> +	array_args.element_size = sizeof(struct amdxdna_drm_query_hwctx);
-> +	array_args.buffer = args->buffer;
-> +	array_args.num_element = args->buffer_size / array_args.element_size;
->   	list_for_each_entry(tmp_client, &xdna->client_list, node) {
-> -		ret = amdxdna_hwctx_walk(tmp_client, &info_args, aie2_hwctx_status_cb);
-> +		ret = amdxdna_hwctx_walk(tmp_client, &array_args,
-> +					 aie2_hwctx_status_cb);
->   		if (ret)
->   			break;
->   	}
->   
-> -	args->buffer_size = (u32)(info_args.buffer - args->buffer);
-> +	args->buffer_size -= (u32)(array_args.buffer - args->buffer);
->   	return ret;
+>   	mas_destroy(&mas);
+> +	mas_unlock(&mas);
 >   }
 >   
-> @@ -877,6 +888,58 @@ static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_i
->   	return ret;
->   }
->   
-> +static int aie2_query_ctx_status_array(struct amdxdna_client *client,
-> +				       struct amdxdna_drm_get_array *args)
-> +{
-> +	struct amdxdna_drm_get_array array_args;
-> +	struct amdxdna_dev *xdna = client->xdna;
-> +	struct amdxdna_client *tmp_client;
-> +	int ret;
-> +
-> +	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> +
-> +	array_args.element_size = min(args->element_size,
-> +				      sizeof(struct amdxdna_drm_hwctx_entry));
-> +	array_args.buffer = args->buffer;
-> +	array_args.num_element = args->num_element * args->element_size /
-> +				array_args.element_size;
-> +	list_for_each_entry(tmp_client, &xdna->client_list, node) {
-> +		ret = amdxdna_hwctx_walk(tmp_client, &array_args,
-> +					 aie2_hwctx_status_cb);
-> +		if (ret)
-> +			break;
-> +	}
-> +
-> +	args->element_size = array_args.element_size;
-> +	args->num_element = (u32)((array_args.buffer - args->buffer) /
-> +				  args->element_size);
-> +
-> +	return ret;
-> +}
-> +
-> +static int aie2_get_array(struct amdxdna_client *client,
-> +			  struct amdxdna_drm_get_array *args)
-> +{
-> +	struct amdxdna_dev *xdna = client->xdna;
-> +	int ret, idx;
-> +
-> +	if (!drm_dev_enter(&xdna->ddev, &idx))
-> +		return -ENODEV;
-> +
-> +	switch (args->param) {
-> +	case DRM_AMDXDNA_HW_CONTEXT_ALL:
-> +		ret = aie2_query_ctx_status_array(client, args);
-> +		break;
-> +	default:
-> +		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
-> +		ret = -EOPNOTSUPP;
-> +	}
-> +	XDNA_DBG(xdna, "Got param %d", args->param);
-> +
-> +	drm_dev_exit(idx);
-> +	return ret;
-> +}
-> +
->   static int aie2_set_power_mode(struct amdxdna_client *client,
->   			       struct amdxdna_drm_set_state *args)
->   {
-> @@ -926,15 +989,16 @@ static int aie2_set_state(struct amdxdna_client *client,
->   }
->   
->   const struct amdxdna_dev_ops aie2_ops = {
-> -	.init           = aie2_init,
-> -	.fini           = aie2_fini,
-> -	.resume         = aie2_hw_resume,
-> -	.suspend        = aie2_hw_suspend,
-> -	.get_aie_info   = aie2_get_info,
-> -	.set_aie_state	= aie2_set_state,
-> -	.hwctx_init     = aie2_hwctx_init,
-> -	.hwctx_fini     = aie2_hwctx_fini,
-> -	.hwctx_config   = aie2_hwctx_config,
-> -	.cmd_submit     = aie2_cmd_submit,
-> +	.init = aie2_init,
-> +	.fini = aie2_fini,
-> +	.resume = aie2_hw_resume,
-> +	.suspend = aie2_hw_suspend,
-> +	.get_aie_info = aie2_get_info,
-> +	.set_aie_state = aie2_set_state,
-> +	.hwctx_init = aie2_hwctx_init,
-> +	.hwctx_fini = aie2_hwctx_fini,
-> +	.hwctx_config = aie2_hwctx_config,
-> +	.cmd_submit = aie2_cmd_submit,
->   	.hmm_invalidate = aie2_hmm_invalidate,
-> +	.get_array = aie2_get_array,
->   };
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> index 8ef5e4f27f5e..0a1fd55e745e 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> @@ -26,6 +26,13 @@ MODULE_FIRMWARE("amdnpu/17f0_10/npu.sbin");
->   MODULE_FIRMWARE("amdnpu/17f0_11/npu.sbin");
->   MODULE_FIRMWARE("amdnpu/17f0_20/npu.sbin");
->   
-> +/*
-> + * 0.0: Initial version
-> + * 0.1: Support getting all hardware contexts by DRM_IOCTL_AMDXDNA_GET_ARRAY
-> + */
-> +#define AMDXDNA_DRIVER_MAJOR		0
-> +#define AMDXDNA_DRIVER_MINOR		1
-> +
->   /*
->    * Bind the driver base on (vendor_id, device_id) pair and later use the
->    * (device_id, rev_id) pair as a key to select the devices. The devices with
-> @@ -164,6 +171,26 @@ static int amdxdna_drm_get_info_ioctl(struct drm_device *dev, void *data, struct
->   	return ret;
->   }
->   
-> +static int amdxdna_drm_get_array_ioctl(struct drm_device *dev, void *data,
-> +				       struct drm_file *filp)
-> +{
-> +	struct amdxdna_client *client = filp->driver_priv;
-> +	struct amdxdna_dev *xdna = to_xdna_dev(dev);
-> +	struct amdxdna_drm_get_array *args = data;
-> +	int ret;
-> +
-> +	if (!xdna->dev_info->ops->get_array)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (args->pad || !args->num_element || !args->element_size)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&xdna->dev_lock);
-> +	ret = xdna->dev_info->ops->get_array(client, args);
-> +	mutex_unlock(&xdna->dev_lock);
-
-This could be a
-
-guard(mutex)(&xdna->dev_lock);
-
-return xdna->dev_info->ops->get_array(client, args);
-
-Which lets you drop the ret variable.
-
-> +	return ret;
-> +}
-> +
->   static int amdxdna_drm_set_state_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
->   {
->   	struct amdxdna_client *client = filp->driver_priv;
-> @@ -195,6 +222,7 @@ static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
->   	DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, amdxdna_drm_submit_cmd_ioctl, 0),
->   	/* AIE hardware */
->   	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 0),
-> +	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_ARRAY, amdxdna_drm_get_array_ioctl, 0),
->   	DRM_IOCTL_DEF_DRV(AMDXDNA_SET_STATE, amdxdna_drm_set_state_ioctl, DRM_ROOT_ONLY),
->   };
->   
-> @@ -218,6 +246,8 @@ const struct drm_driver amdxdna_drm_drv = {
->   	.fops = &amdxdna_fops,
->   	.name = "amdxdna_accel_driver",
->   	.desc = "AMD XDNA DRM implementation",
-> +	.major = AMDXDNA_DRIVER_MAJOR,
-> +	.minor = AMDXDNA_DRIVER_MINOR,
->   	.open = amdxdna_drm_open,
->   	.postclose = amdxdna_drm_close,
->   	.ioctls = amdxdna_drm_ioctls,
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> index b6b3b424d1d5..72d6696d49da 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> @@ -58,6 +58,7 @@ struct amdxdna_dev_ops {
->   	int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
->   	int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
->   	int (*set_aie_state)(struct amdxdna_client *client, struct amdxdna_drm_set_state *args);
-> +	int (*get_array)(struct amdxdna_client *client, struct amdxdna_drm_get_array *args);
->   };
->   
->   /*
-> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-> index ce523e9ccc52..a1fb9785db77 100644
-> --- a/include/uapi/drm/amdxdna_accel.h
-> +++ b/include/uapi/drm/amdxdna_accel.h
-> @@ -34,6 +34,7 @@ enum amdxdna_drm_ioctl_id {
->   	DRM_AMDXDNA_EXEC_CMD,
->   	DRM_AMDXDNA_GET_INFO,
->   	DRM_AMDXDNA_SET_STATE,
-> +	DRM_AMDXDNA_GET_ARRAY = 10,
->   };
->   
->   /**
-> @@ -455,6 +456,112 @@ struct amdxdna_drm_get_info {
->   	__u64 buffer; /* in/out */
->   };
->   
-> +#define AMDXDNA_HWCTX_STATE_IDLE	0
-> +#define AMDXDNA_HWCTX_STATE_ACTIVE	1
-> +
-> +/**
-> + * struct amdxdna_drm_hwctx_entry - The hardware context array entry
-> + */
-> +struct amdxdna_drm_hwctx_entry {
-> +	/** @context_id: Context ID. */
-> +	__u32 context_id;
-> +	/** @start_col: Start AIE array column assigned to context. */
-> +	__u32 start_col;
-> +	/** @num_col: Number of AIE array columns assigned to context. */
-> +	__u32 num_col;
-> +	/** @hwctx_id: The real hardware context id. */
-> +	__u32 hwctx_id;
-> +	/** @pid: ID of process which created this context. */
-> +	__s64 pid;
-> +	/** @command_submissions: Number of commands submitted. */
-> +	__u64 command_submissions;
-> +	/** @command_completions: Number of commands completed. */
-> +	__u64 command_completions;
-> +	/** @migrations: Number of times been migrated. */
-> +	__u64 migrations;
-> +	/** @preemptions: Number of times been preempted. */
-> +	__u64 preemptions;
-> +	/** @errors: Number of errors happened. */
-> +	__u64 errors;
-> +	/** @priority: Context priority. */
-> +	__u64 priority;
-> +	/** @heap_usage: Usage of device heap buffer. */
-> +	__u64 heap_usage;
-> +	/** @suspensions: Number of times been suspended. */
-> +	__u64 suspensions;
-> +	/**
-> +	 * @state: Context state.
-> +	 * %AMDXDNA_HWCTX_STATE_IDLE
-> +	 * %AMDXDNA_HWCTX_STATE_ACTIVE
-> +	 */
-> +	__u32 state;
-> +	/** @pasid: PASID been bound. */
-> +	__u32 pasid;
-> +	/** @gops: Giga operations per second. */
-> +	__u32 gops;
-> +	/** @fps: Frames per second. */
-> +	__u32 fps;
-> +	/** @dma_bandwidth: DMA bandwidth. */
-> +	__u32 dma_bandwidth;
-> +	/** @latency: Frame response latency. */
-> +	__u32 latency;
-> +	/** @frame_exec_time: Frame execution time. */
-> +	__u32 frame_exec_time;
-> +	/** @txn_op_idx: Index of last control code executed. */
-> +	__u32 txn_op_idx;
-> +	/** @ctx_pc: Program counter. */
-> +	__u32 ctx_pc;
-> +	/** @fatal_error_type: Fatal error type if context crashes. */
-> +	__u32 fatal_error_type;
-> +	/** @fatal_error_exception_type: Firmware exception type. */
-> +	__u32 fatal_error_exception_type;
-> +	/** @fatal_error_exception_pc: Firmware exception program counter. */
-> +	__u32 fatal_error_exception_pc;
-> +	/** @fatal_error_app_module: Exception module name. */
-> +	__u32 fatal_error_app_module;
-> +	/** @pad: Structure pad. */
-> +	__u32 pad;
-> +};
-> +
-> +#define DRM_AMDXDNA_HW_CONTEXT_ALL	0
-> +
-> +/**
-> + * struct amdxdna_drm_get_array - Get information array.
-> + */
-> +struct amdxdna_drm_get_array {
-> +	/**
-> +	 * @param:
-> +	 *
-> +	 * Supported params:
-> +	 *
-> +	 * %DRM_AMDXDNA_HW_CONTEXT_ALL:
-> +	 * Returns all created hardware contexts.
-> +	 */
-> +	__u32 param;
-> +	/**
-> +	 * @element_size:
-> +	 *
-> +	 * Specifies maximum element size and returns the actual element size.
-> +	 */
-> +	__u32 element_size;
-> +	/**
-> +	 * @num_element:
-> +	 *
-> +	 * Specifies maximum number of elements and returns the actual number
-> +	 * of elements.
-> +	 */
-> +	__u32 num_element; /* in/out */
-> +	/** @pad: MBZ */
-> +	__u32 pad;
-> +	/**
-> +	 * @buffer:
-> +	 *
-> +	 * Specifies the match conditions and returns the matched information
-> +	 * array.
-> +	 */
-> +	__u64 buffer;
-> +};
-> +
->   enum amdxdna_drm_set_param {
->   	DRM_AMDXDNA_SET_POWER_MODE,
->   	DRM_AMDXDNA_WRITE_AIE_MEM,
-> @@ -519,6 +626,10 @@ struct amdxdna_drm_set_power_mode {
->   	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SET_STATE, \
->   		 struct amdxdna_drm_set_state)
->   
-> +#define DRM_IOCTL_AMDXDNA_GET_ARRAY \
-> +	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_ARRAY, \
-> +		 struct amdxdna_drm_get_array)
-> +
->   #if defined(__cplusplus)
->   } /* extern c end */
->   #endif
+>   void farmer_tests(void)
+> 
 
 
