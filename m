@@ -1,197 +1,302 @@
-Return-Path: <linux-kernel+bounces-796873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DE7B408AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:15:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E78B408B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D2424E40A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA2217E9D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C12315767;
-	Tue,  2 Sep 2025 15:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3A027380A;
+	Tue,  2 Sep 2025 15:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T5j3VJvJ"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCG4c3MY"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8F93128D6
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6EA2DE6F3;
+	Tue,  2 Sep 2025 15:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826097; cv=none; b=evmz1tthXuIuqXsAI1iPXYF6ZkndYkcVEezRS86HzhUeJMgeQYhgJQH6G6Apu+h75GUYSTNo+0bsy06K3734jCYmDZuXiCUi/mpQrKs1sAwuklH+R/EGEgKwOV5C02pIcEnPTUuC9nMuL5UH98dyE3vtw4AQWBj7OGWUKDI5ync=
+	t=1756826130; cv=none; b=Koq1E4UyHoQXQ3A7nLZeIgI3sQLPDUhZQAhX+VP8yF/DTU0iMLffYUwi5ARRnPzjGTopZZjNeh0fuppqV69pPsjl+zhKOXefd42JxsfzhMwTZn82kEl0+fT7cDvVuBDREI6xem0PTRl91YB9BjEZyAPqTpbM1o+y70iafPrEDkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826097; c=relaxed/simple;
-	bh=k+/O35OLEaFLE720FQq2xXfg7gWF2UlM2xi61rk76LY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mQUL2+IcoLr5VXSYvgBYFCqTK1+1g9lUEipC8cNsqHdNZGlHkkSQdOvKFvnaLcG2nFqZHvF+hfTXoscVVYWNRe/MsEXFY5AXaiMHkI72Ty3iPBCWCsVNmsrAxZGW+B9HleIrUgPlCJtO0/xytj6f42k7QXxzStjAPl7bY0MaqdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T5j3VJvJ; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3158b868797so2709012fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:14:54 -0700 (PDT)
+	s=arc-20240116; t=1756826130; c=relaxed/simple;
+	bh=CKRJGACJWHK8Hlud48RR8jl/VtJ79lLFYLx1AJc/+NA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rZG7OVd9KYL71W7qGjQjQGHIb/xpuYxNxZj4bwEPSHFYfJs1V2aI5i6T1nwOBBtfX50UCsV7uSWeV+At4zqm8oH4kqgL/cNb3zyKJTuTTJjEAutAO6xJFcnSgNBvQzOidB3iRxZw6TIQBfsAork77mt3/6dYbRowCfjVByDXGCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCG4c3MY; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-771fa8e4190so3670761b3a.1;
+        Tue, 02 Sep 2025 08:15:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756826094; x=1757430894; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8Xgg2pm+dNGmJi2dTat3GmYq1nuu4RhGRKW9DE9wgjY=;
-        b=T5j3VJvJIq9vtmRuHplfbLq17cSvaZ8NsM6NXDEyqGZaSYFQoNOrKJT9H+6g2aeWqF
-         BDAIJvaqu6Gue/f856kqrhHAVJ8E52RUFuzOb4evK16ovwdgN7PPkcbKj0Z3m7IsjTb/
-         QQVCnXvIE0MKckdi7hpz7uWuR4gMcZ7rS2zOVcMNFiERJ5e5QvgDXzPWYIOVNKKBFJVc
-         Lb+858XYCrodocSVNPsh68YQwFTaj1xw8S17ru1ObzVrNQGC6W2202jSSeTK1EYdYFQT
-         8Zj/lmj+Klitp8db7WBDRs2o6lGVXwyoO3qt526lKM3x6NSC/C371n8N7HGoGVtcLxZ3
-         wJ5Q==
+        d=gmail.com; s=20230601; t=1756826127; x=1757430927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ISvkKKWDIq4+oW79gR956cg3AZDUxj8RaDon4KWZSA4=;
+        b=BCG4c3MYRAK+Na++owkth3+rgNG+Xyi/aUfWVo22pZYhwQp7PSuwLOWyiksZ6zEIrs
+         Pz9cC4PBxguCi0LtGkq6/4qVwS7r78+eGd3bItYdEWyNEfA7KRFV/yeL2XeqG1az3NdF
+         bkEvIc/I7mUbNUcPtMV4vn/li7bUTbsMzKZd0v61KRrTiMMTk7iSWjI5xpqlQnGf4yJE
+         PHBsWfH4Zwe3XBWKkBfxyUPqWFflFo+fm/LWchw86pcV6AqEMjZSE4IT/FJXCap9YlmJ
+         whEl60mBN7wMzCVPEuZGyyeUNGq7EM27IesEsJYZ3sBiTYe3Su7UXhYB1lIjIkq16IU7
+         hCGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756826094; x=1757430894;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Xgg2pm+dNGmJi2dTat3GmYq1nuu4RhGRKW9DE9wgjY=;
-        b=AU1AfveHJk5WndpiVZz5Xt42TH2BON/jjser2W1qtzSba7EFNaDkY4BIxJIz1RAEVi
-         t5Hp1Mo0rBwR6LCZhJEUHK2Fd0RbPvhCElco/YjXq5AFAz4ffWGNAJvHIRJSuEeiIfET
-         EvrQc5GcT/jNklEpJujuDDg73QrEO3EokRj76mM5IQRcWV5NAY403XcwxF+q16efupvx
-         wzXopLr+9UmscOIdboBOAZhUsWv1BQVh05+VlwZLJzdpWUeHOkRtdSTs9AkeVAkqgl6D
-         VaPpPNDJIBNTAzKQOpabqVrEHuT5MvDzpLhdTl/jfUqBNi+L2i6SEnD6VgkBLL0Exzcv
-         TcLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBtocphNwA8alHPA/KfLDcCRabIDw/lMJqaRtFJeJp2jSk4cFspVRqYOWTCqoTxd+X2cH9o+/ZO526+KQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Gc5hrffnftSDOtgcB8IQzZue0HrP0NcHzb/0KeaxSpUtlfD6
-	D+jQRKb+thObTt2MxOeplBq44KcT61Hwa8K1hRe8kg42zHnhoZGE0vXoetVPAUAifoM=
-X-Gm-Gg: ASbGnct5fp41IHbihTdl6J0ia9fkk8XZ2wENfur5zChVhDECqyArQK7HPZk9Sb5O3ZP
-	CZQ1ciWs/owiKVR30lqXpEORm5Xl11en2w/pJpEiW0oDEia1ezAU1+lPs2yonAndv2chVLNYmW5
-	f+kGWyUIX6TwscHw3FCxDEabEIpx8XQtdMl5pQILsDGLi6pGCX9tR6YYQ6wECr0QWk/tapyYPZp
-	2tp0YLFRVmGGwPbQJznK0VcUwCH0BAKuZeDfBXgREH2IKjAeyBD43Wa+r3iDZWSFgS/9E8dXPSK
-	xbsQ4MS/vom1N7NQC+1nmzr8c1lq3F+ho85M8aMkErd4et1flY+pg/83ps21s7MYJhyCtdMqutb
-	WTv8EhBxfODUtp7UUVN8M668aT+G5gEetuSFE+vwsHDjEkBI7ZGJfjN+hC0OQ8CmdBLo36NSWR2
-	kSEab+9t0HXoRfy+fAow==
-X-Google-Smtp-Source: AGHT+IHu9ad7jn5aRdIYj1LhzznHSg+3gNWD0VD4qNGker/OFvxNVNYSGwKe3LEJOn0WHfiGEGVVDw==
-X-Received: by 2002:a05:687c:54:10b0:319:be1e:9dce with SMTP id 586e51a60fabf-319be1edb78mr949993fac.5.1756826094264;
-        Tue, 02 Sep 2025 08:14:54 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b? ([2600:8803:e7e4:1d00:8d95:114e:b6f:bf5b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-319b60b8f38sm532195fac.30.2025.09.02.08.14.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 08:14:53 -0700 (PDT)
-Message-ID: <a6ae372e-e0c9-4874-8be1-8070ee3e880f@baylibre.com>
-Date: Tue, 2 Sep 2025 10:14:52 -0500
+        d=1e100.net; s=20230601; t=1756826127; x=1757430927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ISvkKKWDIq4+oW79gR956cg3AZDUxj8RaDon4KWZSA4=;
+        b=J40qrz9RlAHNA+/LOb700QfhDcYg7ok0LGp9lysz8P1TLU1ISfA7y3yGrN59P62RoK
+         TjfGW+6sPfddUF1jkESQ11KBAo+JmnYCch6jtQ1AC6ffsZ1DdHVFUpB5otKBoBkTFpEo
+         VbrYTfi55IowUadTHV6v/LYChyZ6s2vUr3XAQynDmitH8eSsgDwFjKrcyMTUyJpXJ244
+         9eCytuc0blZ+EiuTw0ailsuWXYG8LA8zFJ3G3B2vxuTZqlTsuFYdIlqUxwVtnf3mAyJt
+         hAxMGDrYQKavVDNtWaaryQxm7eMGHkkOhgU7RWxHGh9zXQVBH/lvntkUnBWTRI5IZmY0
+         uEqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYhPFcmtjTihf8JOpFcV99pFZExt+QRUlCX9SW8JP5fx8Mya9wzK0D5P1oyR+eXFt0TQEZEj8wtSkqDhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaN0XYcp4vRTohNVRMJuX325vxq8gRwvuW97uwLHEmSZ+6qkyg
+	S67u3AqLlHCgLVoDium7cfLbdeDGPw+q0I7YTf69TavKjaXER22wFWuW
+X-Gm-Gg: ASbGncua1scIXBTpleNgTMJqc9RjDsQHPBPZ8VoHXmdqR38oM+ioBygGuZxcg7Qh4e2
+	F8zf9qZ6KnCEzrrN5MtdtllI2sY+AKZWinDOxVxo1lL+bseG4OYKrlZ01LxKhGlSMqnhT5ifQUY
+	PLg8Lpy7GyNBPBlzG8a27vglJ/pXlnFJWMTpcmp2D5pvVqOsev1ngChZswerWztVU4N+87jxFpZ
+	V8BoMQEm2GDjpNoYNkJbkHftie2B+Rp3SLXTKXXKs8yMovasv9/Erdqs9ZWg3w6mhWXJ0q6TqG1
+	L7295ii3+Gq9MuOExXgR47blInze5WKt2LegdVQzxWt+jhwChZ4ApHFOHhI3YZBac43sPY9CmML
+	Ju35I+SdgdGtJSHcX41BvHT8LIW6NpaGQrhWZVrJ8IdpDRRWNkhtv0t+5z42vwe3yHhXD55crk9
+	WOdVNJT4QPO4HhydiMKCa6MBI=
+X-Google-Smtp-Source: AGHT+IHD/kMDE3gbLZYtH72UCAc8RJvLlzXy2nNXNk5ONXs9WsZINLIRyVS84hwdbwo3Y+p6pZ64JQ==
+X-Received: by 2002:a05:6a20:394a:b0:246:458:8531 with SMTP id adf61e73a8af0-24604588bb9mr1031513637.4.1756826125731;
+        Tue, 02 Sep 2025 08:15:25 -0700 (PDT)
+Received: from nixos (ec2-18-179-42-135.ap-northeast-1.compute.amazonaws.com. [18.179.42.135])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77274171cf4sm1990505b3a.76.2025.09.02.08.15.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 08:15:24 -0700 (PDT)
+From: Thaumy Cheng <thaumy.love@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thaumy Cheng <thaumy.love@gmail.com>
+Subject: [PATCH v2 RESEND] perf/core: Fix missing read event generation on task exit
+Date: Tue,  2 Sep 2025 23:15:17 +0800
+Message-ID: <20250902151517.384635-1-thaumy.love@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Tobias Sperling <tobias.sperling@softing.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
- Hans de Goede <hansg@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <cover.1756813980.git.mazziesaccount@gmail.com>
- <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <08929460fe11dd0b749c50a72a634423f13f4104.1756813980.git.mazziesaccount@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/2/25 7:24 AM, Matti Vaittinen wrote:
-> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
-> 
-> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-> daisy-chain configuration) and maximum sampling rate is 1MSPS.
-> 
-> The IC does also support CRC but it is not implemented in the driver.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> ---
->  drivers/iio/adc/Kconfig        |  10 +
->  drivers/iio/adc/Makefile       |   1 +
->  drivers/iio/adc/rohm-bd79112.c | 542 +++++++++++++++++++++++++++++++++
->  3 files changed, 553 insertions(+)
->  create mode 100644 drivers/iio/adc/rohm-bd79112.c
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index e3d3826c3357..4b78929bb257 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -1309,6 +1309,16 @@ config RN5T618_ADC
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rn5t618-adc.
->  
-> +config ROHM_BD79112
-> +	tristate "Rohm BD79112 ADC driver"
-> +	depends on I2C && GPIOLIB
-> +	select REGMAP_I2C
+For events with inherit_stat enabled, a "read" event will be generated
+to collect per task event counts on task exit.
 
-I think you want SPI rather than I2C. :-)
+The call chain is as follows:
 
-> +	select IIO_ADC_HELPER
-> +	help
-> +	  Say yes here to build support for the ROHM BD79112 ADC. The
-> +	  ROHM BD79112 is a 12-bit, 32-channel, SAR ADC, which analog
-> +	  inputs can also be used for GPIO.
-> +
+do_exit
+  -> perf_event_exit_task
+    -> perf_event_exit_task_context
+      -> perf_event_exit_event
+        -> perf_remove_from_context
+          -> perf_child_detach
+            -> sync_child_event
+              -> perf_event_read_event
 
+However, the child event context detaches the task too early in
+perf_event_exit_task_context, which causes sync_child_event to never
+generate the read event in this case, since child_event->ctx->task is
+always set to TASK_TOMBSTONE. Fix that by moving context lock section
+backward to ensure ctx->task is not set to TASK_TOMBSTONE before
+generating the read event.
 
+Because perf_event_free_task calls perf_event_exit_task_context with
+exit = false to tear down all child events from the context, and the
+task never lived, accessing the task PID can lead to a use-after-free.
 
-> +struct bd79112_data {
-> +	struct spi_device *spi;
-> +	struct regmap *map;
-> +	struct device *dev;
-> +	struct gpio_chip gc;
-> +	unsigned long gpio_valid_mask;
-> +	unsigned int vref_mv;
-> +	struct spi_transfer read_xfer[2];
-> +	struct spi_transfer write_xfer;
-> +	struct spi_message read_msg;
-> +	struct spi_message write_msg;
-> +	/* 16-bit TX, valid data in high byte */
-> +	u8 read_tx[2] __aligned(IIO_DMA_MINALIGN);
-> +	/* 8-bit address followed by 8-bit data */
-> +	u8 reg_write_tx[2] __aligned(IIO_DMA_MINALIGN);
-> +	/* 12-bit of ADC data or 8 bit of reg data */
-> +	__be16 read_rx __aligned(IIO_DMA_MINALIGN);
+To address that, need an extra exit parameter for perf_event_exit_event
+to teach it to distinguish callers. Only the caller that needs to exit
+the task will trigger the read event, which will set the newly added
+sync_child parameter of perf_child_detach.
 
-Usually, we only need one __aligned(IIO_DMA_MINALIGN) (on the first
-field). Since these are only used for SPI messages and we can only
-send one message at a time, there isn't a way for there to be a
-problem that would require them to each need to be in their own
-cache line.
+Since now perf_event_exit_event may not carry DETACH_EXIT, rename it to
+a more appropriate name "perf_event_detach_event".
 
-> +};
-> +
+This bug can be reproduced by running "perf record -s" and attaching to
+any program that generates perf events in its child tasks. If we check
+the result with "perf report -T", the last line of the report will leave
+an empty table like "# PID  TID", which is expected to contain the
+per-task event counts by design.
 
+Fixes: ef54c1a476ae ("perf: Rework perf_event_exit_event()")
+Signed-off-by: Thaumy Cheng <thaumy.love@gmail.com>
+---
+Changes in v2:
+- Only trigger read event on task exit.
+- Rename perf_event_exit_event to perf_event_detach_event.
 
+Changes in v1:
+- Set TASK_TOMBSTONE after the read event is tirggered.
+- Link to v1: https://lore.kernel.org/all/20250720000424.12572-1-thaumy.love@gmail.com/
 
-> +static int bd79112_probe(struct spi_device *spi)
-> +{
+ kernel/events/core.c | 53 ++++++++++++++++++++++++--------------------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
 
-...
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8060c2857bb2..2e17883f2439 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -1306,7 +1306,7 @@ static void put_ctx(struct perf_event_context *ctx)
+  * perf_event_context::mutex nests and those are:
+  *
+  *  - perf_event_exit_task_context()	[ child , 0 ]
+- *      perf_event_exit_event()
++ *      perf_event_detach_event()
+  *        put_event()			[ parent, 1 ]
+  *
+  *  - perf_event_init_context()		[ parent, 0 ]
+@@ -2318,7 +2318,7 @@ static void perf_group_detach(struct perf_event *event)
 
-> +	iio_dev->channels = cs;
-> +	iio_dev->num_channels = ret;
+ static void sync_child_event(struct perf_event *child_event);
 
-This is quite far from where it is assigned. Better to have a dedicated
-local variable for this.
+-static void perf_child_detach(struct perf_event *event)
++static void perf_child_detach(struct perf_event *event, bool sync_child)
+ {
+ 	struct perf_event *parent_event = event->parent;
 
-> +	iio_dev->info = &bd79112_info;
-> +	iio_dev->name = "bd79112";
-> +	iio_dev->modes = INDIO_DIRECT_MODE;
-> +
+@@ -2336,7 +2336,9 @@ static void perf_child_detach(struct perf_event *event)
+ 	lockdep_assert_held(&parent_event->child_mutex);
+ 	 */
+
+-	sync_child_event(event);
++	if (sync_child)
++		sync_child_event(event);
++
+ 	list_del_init(&event->child_list);
+ }
+
+@@ -2507,7 +2509,7 @@ __perf_remove_from_context(struct perf_event *event,
+ 	if (flags & DETACH_GROUP)
+ 		perf_group_detach(event);
+ 	if (flags & DETACH_CHILD)
+-		perf_child_detach(event);
++		perf_child_detach(event, (flags & DETACH_EXIT) != 0);
+ 	list_del_event(event, ctx);
+
+ 	if (!pmu_ctx->nr_events) {
+@@ -2613,7 +2615,7 @@ static void __perf_event_disable(struct perf_event *event,
+  * remains valid.  This condition is satisfied when called through
+  * perf_event_for_each_child or perf_event_for_each because they
+  * hold the top-level event's child_mutex, so any descendant that
+- * goes to exit will block in perf_event_exit_event().
++ * goes to exit will block in perf_event_detach_event().
+  *
+  * When called from perf_pending_disable it's OK because event->ctx
+  * is the current context on this CPU and preemption is disabled,
+@@ -4579,9 +4581,9 @@ static void perf_event_enable_on_exec(struct perf_event_context *ctx)
+ }
+
+ static void perf_remove_from_owner(struct perf_event *event);
+-static void perf_event_exit_event(struct perf_event *event,
++static void perf_event_detach_event(struct perf_event *event,
+ 				  struct perf_event_context *ctx,
+-				  bool revoke);
++				  bool revoke, bool exit);
+
+ /*
+  * Removes all events from the current task that have been marked
+@@ -4608,7 +4610,7 @@ static void perf_event_remove_on_exec(struct perf_event_context *ctx)
+
+ 		modified = true;
+
+-		perf_event_exit_event(event, ctx, false);
++		perf_event_detach_event(event, ctx, false, true);
+ 	}
+
+ 	raw_spin_lock_irqsave(&ctx->lock, flags);
+@@ -6178,7 +6180,7 @@ EXPORT_SYMBOL_GPL(perf_event_pause);
+ /*
+  * Holding the top-level event's child_mutex means that any
+  * descendant process that has inherited this event will block
+- * in perf_event_exit_event() if it goes to exit, thus satisfying the
++ * in perf_event_detach_event() if it goes to exit, thus satisfying the
+  * task existence requirements of perf_event_enable/disable.
+  */
+ static void perf_event_for_each_child(struct perf_event *event,
+@@ -12413,7 +12415,7 @@ static void __pmu_detach_event(struct pmu *pmu, struct perf_event *event,
+ 	/*
+ 	 * De-schedule the event and mark it REVOKED.
+ 	 */
+-	perf_event_exit_event(event, ctx, true);
++	perf_event_detach_event(event, ctx, true, true);
+
+ 	/*
+ 	 * All _free_event() bits that rely on event->pmu:
+@@ -13995,13 +13997,16 @@ static void sync_child_event(struct perf_event *child_event)
+ }
+
+ static void
+-perf_event_exit_event(struct perf_event *event,
+-		      struct perf_event_context *ctx, bool revoke)
++perf_event_detach_event(struct perf_event *event,
++		      struct perf_event_context *ctx, bool revoke, bool exit)
+ {
+ 	struct perf_event *parent_event = event->parent;
+-	unsigned long detach_flags = DETACH_EXIT;
++	unsigned long detach_flags = 0;
+ 	unsigned int attach_state;
+
++	if (exit)
++		detach_flags |= DETACH_EXIT;
++
+ 	if (parent_event) {
+ 		/*
+ 		 * Do not destroy the 'original' grouping; because of the
+@@ -14077,6 +14082,17 @@ static void perf_event_exit_task_context(struct task_struct *task, bool exit)
+ 	 */
+ 	mutex_lock(&ctx->mutex);
+
++	/*
++	 * Report the task dead after unscheduling the events so that we
++	 * won't get any samples after PERF_RECORD_EXIT. We can however still
++	 * get a few PERF_RECORD_READ events.
++	 */
++	if (exit)
++		perf_event_task(task, ctx, 0);
++
++	list_for_each_entry_safe(child_event, next, &ctx->event_list, event_entry)
++		perf_event_detach_event(child_event, ctx, false, exit);
++
+ 	/*
+ 	 * In a single ctx::lock section, de-schedule the events and detach the
+ 	 * context from the task such that we cannot ever get it scheduled back
+@@ -14101,17 +14117,6 @@ static void perf_event_exit_task_context(struct task_struct *task, bool exit)
+ 	if (clone_ctx)
+ 		put_ctx(clone_ctx);
+
+-	/*
+-	 * Report the task dead after unscheduling the events so that we
+-	 * won't get any samples after PERF_RECORD_EXIT. We can however still
+-	 * get a few PERF_RECORD_READ events.
+-	 */
+-	if (exit)
+-		perf_event_task(task, ctx, 0);
+-
+-	list_for_each_entry_safe(child_event, next, &ctx->event_list, event_entry)
+-		perf_event_exit_event(child_event, ctx, false);
+-
+ 	mutex_unlock(&ctx->mutex);
+
+ 	if (!exit) {
+--
+2.50.1
+
 
