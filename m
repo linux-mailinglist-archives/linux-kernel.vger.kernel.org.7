@@ -1,138 +1,142 @@
-Return-Path: <linux-kernel+bounces-796961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B31B40A10
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428EEB40A17
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 18:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9874254518E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:02:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 199ED481591
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4F0334380;
-	Tue,  2 Sep 2025 16:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EB13376A6;
+	Tue,  2 Sep 2025 16:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F97Q3CjC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="cNBQSq6n"
+Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A6E3126DC;
-	Tue,  2 Sep 2025 16:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253B5334386;
+	Tue,  2 Sep 2025 16:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756828946; cv=none; b=OQ63ltmXqU5OMzlL+r5e7Ci4WnP5hGjia20pJ8s3Q7td/WYrcPo30o2cojzlVdmGik3yuVdBFVpG2kv6Dqm4KxBrN4eLDugdN1UPyz+zsaCb9hRpZT3n5zEd1E3zo9N0mOr7+fxjcnDb9/0f79OXGovVUhJ7i43UgkEXrKBNbiI=
+	t=1756828980; cv=none; b=avNIDnUKQLsyjtCFastchW6mhyM2fKhWoeD1QNmu0gsKCtEi6nBpjq9meeVPYhcHp3CnWLbBxfuYqGqN9Y2wrSnc9Di0CuBBHNHzmk+kUCZxvbRei7Tu8Z3Rg80+5Gkm5ogmH7CXVB3GZwse70xR7Bq8mViNJNe5p2gjUupfYQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756828946; c=relaxed/simple;
-	bh=lB5D9KsRYs7OgNcYyTVZgRLKvveUEdtkvlhi3ouxmPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Io65Du0VVoSucUu+OOPRj5qh2hkxCLoZXhFoeBYA5G2EVvpmIbSarSagnUpwPbNc4bcn1YHqxuNg8AdIRtIJqNeaja2l3JaRZH8aI79fGOJCgI6O73DpBfOPhIEQcsHtRS260sg7qShZyY96ABsxkUoaRi5o7suiObS+Ic7L7CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F97Q3CjC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C8AC4CEED;
-	Tue,  2 Sep 2025 16:02:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756828945;
-	bh=lB5D9KsRYs7OgNcYyTVZgRLKvveUEdtkvlhi3ouxmPQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F97Q3CjCNHrjLkc3GoenPkugZEIaxXX9uHGFp12FamsDGTJNfPBdu27cqKcSHxB7U
-	 cXfSZJW/NxgsyZXijUvQZ6jByb4hxmen47YCp+gg5+UAtMdkaIHfbR/spG3AiaXMvQ
-	 JVa266jJh/yU2N+ejEnVOVG++SQsmojoVwp6EteNxU32OhegVQEhzGYcmKoWhBI2Yh
-	 f8RVRersUBQSJTDHNvX/WhBl9nrrpgYvlBRLHxhEAbVBRT32rfvGHVf8DgqoiX214h
-	 yOFBc8FbBremLDrp69OfnInvpoKlWrbcwGgha5kE+rLtl4y99Zm/PJAMPVXCO2xmlS
-	 KXRSkkl8f6QsA==
-Message-ID: <4806391a-1040-4baf-b996-91f1f79fbd70@kernel.org>
-Date: Tue, 2 Sep 2025 18:02:17 +0200
+	s=arc-20240116; t=1756828980; c=relaxed/simple;
+	bh=xDxcN3H+8kSCMm4mPqy0mSov03r9E9gWpP+uHpXvlhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rqV+w8AOdgjaUL3jUoUgBORdrJVP9/3n36z43irt0/Z8vNAP6hUsuGalS3ergG3fC4Dp4aT+vSaBm7+nRYw8nPn4m3yxQKvkSNzx9KpyBmAAW6yrdXTNItH1rUliEkKF4Fb4TE3aX+JPxLwto2TO9ZgiuOMjmrX1vnvlrFcKT24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=cNBQSq6n; arc=none smtp.client-ip=172.105.74.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
+Received: from lipo (unknown [IPv6:2a02:2f0e:3503:4a00:883a:954a:4119:e1c2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.subdimension.ro (Postfix) with ESMTPSA id 2A655173BE2;
+	Tue, 02 Sep 2025 19:02:55 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
+	s=mail; t=1756828975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6ljwpzP/FnYqP0+vPjueBPIIqlGbquyGsLPb4XlMHpE=;
+	b=cNBQSq6nHCNRNdpnnHJIuMfzmOu6y5Kk+oRotZZta32pRoJcP7blIxinHeJGN9xz9xSOdq
+	nBFYWuW/tsVtQobus6BY6aw8FGHCZT7XthoS1kXEiGlLgp8Bvb4syLFugOdDs76ZH+mveU
+	4SyhxP1xCYYvF54wu9bMrgctISX1ZTDMij679ElYs7hCNq3lkp8jwMZgZ0Qp3caAC7iAM6
+	B0YSbD8eaGvpZW7NHXNyI1vVZ7R0i7Ae8NjwvtMUP96StWFBhxBWGv7cAwU9TrUo+LIE5U
+	PUF8FPONP0NOJFmxJjXrliJmjSwgRW7weE9GJSas2ydFtwa4mj5qYEkBjG0DfQ==
+Date: Tue, 2 Sep 2025 19:02:51 +0300
+From: Petre Rodan <petre.rodan@subdimension.ro>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH 01/10] dt-bindings: iio: accel: bosch,BMA220 improvements
+Message-ID: <aLcVK-YzlcqaKV_M@lipo>
+References: <20250901194742.11599-1-petre.rodan@subdimension.ro>
+ <20250901194742.11599-2-petre.rodan@subdimension.ro>
+ <9b5bb45d-75ba-4674-9c4d-b04766496447@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: dwmac: Increase 'maxItems'
- for 'interrupts' and 'interrupt-names'
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Russell King <linux@armlinux.org.uk>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>,
- Jose Abreu <joabreu@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250902001302.3823418-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250902001302.3823418-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250902-spirited-congenial-stingray-f8aff7@kuoka>
- <CA+V-a8uy++vzYh5956X2Dpv2Low5uAK+FRTONaP4Nc3FMty6Bw@mail.gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+V-a8uy++vzYh5956X2Dpv2Low5uAK+FRTONaP4Nc3FMty6Bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Z5bPr+SRghAfH+B6"
+Content-Disposition: inline
+In-Reply-To: <9b5bb45d-75ba-4674-9c4d-b04766496447@kernel.org>
 
-On 02/09/2025 17:43, Lad, Prabhakar wrote:
-> 
->> You also need to constrain other devices, because now one Renesas
->> binding gets 19 interrupts without any explanation. Please rethink how
->> you split your patches...
->>
-> I see you have already taken care of this, thank you.
 
-No, I am not talking about that. I am talking about
-renesas,rzv2h-gbeth.yaml, which with this patch gets 19 interrupts.
+--Z5bPr+SRghAfH+B6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+
+hello,
+
+On Tue, Sep 02, 2025 at 07:57:03AM +0200, Krzysztof Kozlowski wrote:
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+
+I'm using the bleeding edge togreg branch of the iio tree, git pulled yeste=
+rday.
+I indeed missed devicetree@ while manually copy-pasting from get_maintainer=
+=2Epl on the bindings patch. I wish that script would provide a valid rfc82=
+2 email header instead of it's current verbose output.
+
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time.
+
+the patch set had gone thru multiple static scans, unit tests, checkpatch.p=
+l and the dt_binding_check on my end.
+since devicetree@ is not emailed with driver code, I will still wait for an=
+y feedback to the driver part of my submission, I guess.
+
+> >  - fix title typo
+> >  - add optional watchdog setting that recovers the sensor from a stuck-=
+low
+> >  SDA condition
+> >  - set correct SPI phase and polarity
+> >  - interrupt on rising edge. the level-based interrupt that is being
+>=20
+> Cleanup and new features must never be mixed together.
+
+ok I will split up all the bindings changes in the next revision.
+
+best regards.
+peter
+
+--Z5bPr+SRghAfH+B6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE2Ap/wXYVGTXsPl+pzyaZmYROfzAFAmi3FSsACgkQzyaZmYRO
+fzCX+RAAmJ747MKAoFvhoHpuh1UnO0TMc4Pr+qAe2YQwgn51VZ/wJm/uZHWJ3Sj0
+CTglPdv9J1MlXgPhrAMNCtVJBdsX2VqD6gkZOH+BmjxP1UhJTsdbfMon9wazGwz4
+OQo4S3ige8zZ1hBjIp6MZYvnzxtGkaqT0lSBjarx3iGDVhUMxjC0IB8uHEnFHa/y
+FPujR57o6429qnXOh66dq9pLKuuS6gsXAHiDJCnopWPzO4ieKQBaeb3/Ey50THMy
+tTZDJmYaGs/wl6uQbcNUzsDTO5ic/PxVwq5ic8DWDNpi7Q/b6ohhsAJ3G8pbEO0l
+ZBBc2TdjO6cLp0Xoy+9KpYw476BlEfhFydjrZcmRa16X16JQWF0KvyioGambC4Ix
+5OdxPBOQUCyO0f0xBmxJQgghVezYm7dCkev+xrLhpKzU6zFNaX9nD7qnyjLR6msO
+0tQ9h/W65VaGjsvIL9HMhp3SRijMHT6gpp6xXQ3Gqqy5fdYt4ezNJfBMIeu8QXjl
+KRGyiI5C+lyuGhCdLZoP2DnOf2ZECr1/9YFHAHlEsHtGNgr0FSoaSKASv3CV6B3g
+Ur5jwbyfLbL+Zc7l4tfBFSGN0jQPQ6xWJbNCD9lpGUh05xR78y6xln4eje6Gs43z
+ClBZcT0Iplwclx3F/wkXbBNS1KDFwyokJ3OBW4c1kERNBCRXcpU=
+=DaY4
+-----END PGP SIGNATURE-----
+
+--Z5bPr+SRghAfH+B6--
 
