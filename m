@@ -1,175 +1,152 @@
-Return-Path: <linux-kernel+bounces-796445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5585FB400D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:38:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F584B400E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC093BC52E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:38:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F56C17D68B
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5523F2877C3;
-	Tue,  2 Sep 2025 12:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2B728FFFB;
+	Tue,  2 Sep 2025 12:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="O2alQQC5"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p7IjiLZJ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052CF28642C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CAE28D82F;
+	Tue,  2 Sep 2025 12:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816689; cv=none; b=Lofd1Ie222K79Yz9xxNAPD4IH3ZP+Yz0WIJJ2bzFq6JuF7i9YAG7jbcDTPZUS6aln+/YKbCbfQF9+SFavPulJsltKmRfwrUKzwiwi3jT8pDSdeD27YFt4UmUKhFpWPqSUK8pbch/jJ3aJ96cmTJHUHe4kj7UQcJOk8KyJsVSCJg=
+	t=1756816709; cv=none; b=c24xv+MCJoAZQ6pAlZOII/sjixD61zDuGxKc5gWe2YwtloaDNZMJzAMho7UafpCbLZ4lDGpkF0uheNTc58PzAw6e43PkRk3JZFx+3geZnRXFTCW2M7ErLMpLXk7O4jqTIQcz9RfEuojoCKF2GDffPmsIh0dO6QX2R4UPJ9Ow43s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816689; c=relaxed/simple;
-	bh=m9kwu89J1pc0NpjS5g2L6XMPeIhbKDj/KyiBWWWGE4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sKa1nM0Auq8Za4ZRRVdDKGLw+EjuNo+j3AVApb8k8yY3Qh/JiRWI69tP67LJeoncK9+pW8gOC4ZRU/whDyZiLna77m+SXBYZ30Q+12X6BWXnQHU6sN2t1+y1HKeCXH6CM6kAcpeu8Bdkdg2RWoOl3q8cJpLCVJ6pjQeC88K+qTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=O2alQQC5; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5001b.ext.cloudfilter.net ([10.0.29.181])
-	by cmsmtp with ESMTPS
-	id tP2fuU6Q8SkcftQGvunlLQ; Tue, 02 Sep 2025 12:38:01 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id tQGsuZ6a9gtDgtQGtuyJ25; Tue, 02 Sep 2025 12:37:59 +0000
-X-Authority-Analysis: v=2.4 cv=NrbRc9dJ c=1 sm=1 tr=0 ts=68b6e528
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=XW3vq5T86JFyMsJaYQInbg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=_Wotqz80AAAA:8
- a=vvXS69cEl2kim63T5K4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=buJP51TR1BpY-zbLSsyS:22 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=mwylP/u0Yew4KVxFiy2Py7Is98fs5mA8roFxIyZP6YA=; b=O2alQQC567m+m1+/zLEFFKezsq
-	2g/SS+AmPnRruS+NKa1bokWKR2IoQZVAqquN4Q/2RESiQBN14SwGlHBWbjHPxAAiBs72bext2agIp
-	GA86zHfeX+adsDmbPXTWoHIsxePAHO38Lqe8G4Wr//huDmdi9sn13YuANEOxweE6maPuPEy36NREN
-	TgRcIz4c3nogGpikRQwbtZcRNzAHKDyKW6gl/cGV6g00cKBvP4/puan4VL9wGJQQby4Wa/sZ27VTC
-	h8zVEeBEjB9ru74pkFjdBxXX6b2yVXAab47Pb5mTkj5ig7W4WY1yjHCl1UZymSjD6cmbYiabLZNAr
-	XpU4TgHw==;
-Received: from d4b26982.static.ziggozakelijk.nl ([212.178.105.130]:36200 helo=[172.17.143.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1utQGr-000000034Dg-2bNH;
-	Tue, 02 Sep 2025 07:37:58 -0500
-Message-ID: <5fb74444-2fbb-476e-b1bf-3f3e279d0ced@embeddedor.com>
-Date: Tue, 2 Sep 2025 14:37:40 +0200
+	s=arc-20240116; t=1756816709; c=relaxed/simple;
+	bh=E7533lX6MAykX99kEXEDHRaSmvwJZBHmZuyZ+hSEuDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bycc9vdGS5XoAZsG9FHx+ZjP9oY6yrrq6L75WY0QOxCTkfD3DX0qY4K44/RFCmwneVZw/tsDQdqS0ITZCtOniBNCUmisDiPWWqD9qSLsBLV/ZTbFnc+IrhkF/mJhGAEHrelPqqzxrwpXBbXEhy3NzhNXxROfX4FOfAql025rFxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p7IjiLZJ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (230.215-178-91.adsl-dyn.isp.belgacom.be [91.178.215.230])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8408DC77;
+	Tue,  2 Sep 2025 14:37:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756816637;
+	bh=E7533lX6MAykX99kEXEDHRaSmvwJZBHmZuyZ+hSEuDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p7IjiLZJrdTo7odl3ewl6xeftk66e0FJE5SY4uQ5HzNOgIhoXDJm/XjCq2Zg1OB6q
+	 KN+RSD0GQiPZHE8i/VhO7eE94s6ELIMfxzEy9wwZTHVHpLdaIajy1M5A2r4FdTMSPi
+	 3m9WHxqZcQaFE7dQGw2oVw3Swfdvuca/Lj0OxX8Q=
+Date: Tue, 2 Sep 2025 14:38:05 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>, linux-media@vger.kernel.org,
+	rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm,
+	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] imx-mipi-csis: Get the number of active lanes from
+ mbus_config
+Message-ID: <20250902123805.GL13448@pendragon.ideasonboard.com>
+References: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
+ <aJ77VTtZy96JJCHE@valkosipuli.retiisi.eu>
+ <20250815103205.GJ6201@pendragon.ideasonboard.com>
+ <aJ8ZJFSn5Wxhj2Aj@valkosipuli.retiisi.eu>
+ <20250815113633.GM6201@pendragon.ideasonboard.com>
+ <aJ8pKs_6YpAiPjlq@valkosipuli.retiisi.eu>
+ <20250819024413.GJ5862@pendragon.ideasonboard.com>
+ <175681611736.1349241.9877873145029586025@isaac-ThinkPad-T16-Gen-2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] cgroup: Avoid thousands of -Wflex-array-member-not-at-end
- warnings
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-hardening@vger.kernel.org, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>, Chen Ridong <chenridong@huaweicloud.com>
-References: <b3eb050d-9451-4b60-b06c-ace7dab57497@embeddedor.com>
- <wkkrw7rot7cunlojzyga5fgik7374xgj7aptr6afiljqesd6a7@rrmmuq3o4muy>
- <d0c49dc9-c810-47d2-a3ce-d74196a39235@embeddedor.com>
- <y7nqc4bwovxmef3r6kd62t45w3xwi2ikxfmjmi2zxhkweezjbi@ytenccffmgql>
- <92912540-23d2-4b18-9002-bac962682caf@embeddedor.com>
- <tl6b6chfawtykzrxlmysn6ev7mq7gm764rnlsag7pfme7vhpof@lbwqooaybqmr>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <tl6b6chfawtykzrxlmysn6ev7mq7gm764rnlsag7pfme7vhpof@lbwqooaybqmr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 212.178.105.130
-X-Source-L: No
-X-Exim-ID: 1utQGr-000000034Dg-2bNH
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: d4b26982.static.ziggozakelijk.nl ([172.17.143.44]) [212.178.105.130]:36200
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLZI/i2AfyBNdixUo1weZzxKaaFOibYeRjjeBcFyFDo45MLSiqy3plRVsmlOfN6ySSWOehHIMxikqg2ZKbmD7/N565joJpdOAcEcGSa+kaCamTb1uahv
- 4xAlrRV8ztlSaRxc+GFIZS2u3zzV4P9Yjdw8rSGUVaaJN+9O+QWiqj8hN5iR4Uin19ErGI/5kbRCcl/78UuZzi4Y4UclCsSnJ7HnVtySXAC2K2mA8jRNfe2Q
+In-Reply-To: <175681611736.1349241.9877873145029586025@isaac-ThinkPad-T16-Gen-2>
 
-
-
-On 9/2/25 13:17, Michal Koutný wrote:
-> On Tue, Sep 02, 2025 at 09:56:34AM +0200, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
->> If the increase in size is not a problem, then something like this
->> works fine (unless there is a problem with moving those two members
->> at the end of cgroup_root?):
+On Tue, Sep 02, 2025 at 01:28:37PM +0100, Isaac Scott wrote:
+> Quoting Laurent Pinchart (2025-08-19 03:44:13)
+> <snip>
+> > > > > > That would need to parse the endpoint every time we start streaming, it
+> > > > > > doesn't sound ideal.
+> > > > > 
+> > > > > Perhaps not, but does that matter in practice? Parsing the endpoint is,
+> > > > > after all, fairly trivial. The advantage would be simplifying drivers.
+> > > > 
+> > > > It's trivial from a code point of view, but it's not a cheap operation.
+> > > > I'd like to avoid making starting streaming more expensive.
+> > > 
+> > > How cheap is "not cheap"? I'd be surprised if parsing an endpoint took more
+> > > time than e.g. an I²C register write. Of course it depends on the CPU...
+> > 
+> > Still, it's not cheap, and I think it can easily be avoided.
+> > 
+> > > > > Alternatively we could think of caching this information somewhere but I
+> > > > > don't think it's worth it.
+> > > > 
+> > > > Drivers likely need to parse endpoints for other reasons. I'd cache the
+> > > > value in drivers, like done today, and pass it to a get_active_lanes
+> > > > helper.
+> > > 
+> > > Then drivers presumably would also validate this against the endpoint
+> > > configuration, wouldn't they? That's extra code in every CSI-2 receiver
+> > > driver.
+> > 
+> > Why so ? The number of connected lanes can be passed to the helper
+> > function, which can use it to validate the number of lanes reported by
+> > the source subdev.
 > 
-> Please don't forget to tackle cgroup_root allocators. IIUC, this move
-> towards the end shifts the burden to them.
-
-I don't see how placing the TRAILING_OVERLAP() change at the end
-of cgroup_root would cause problems in cgroup_create(). I see
-this allocation for `struct cgroup *cgrp`:
-
-cgrp = kzalloc(struct_size(cgrp, ancestors, (level + 1)), GFP_KERNEL);
-
-but I don't see why struct cgroup cgrp; and struct cgroup *cgrp_ancestor_storage;
-cannot be placed at the end (as long as they're enclosed in TRAILING_OVERLAP()
-of course) of cgroup_root. In the end, it seems you're only interested in
-having cgrp->ancestors[0] overlap `cgrp_ancestor_storage` so that the latter
-points to the start of the FAM in struct cgroup.
-
+> Apologies if I'm interpreting this wrong, but it seems that the main
+> thing I'm reading is that this is not the correct place to implement
+> this, and it should be implemented at a higher level (e.g. in v4l2) that
+> lets all MIPI CSI reciever drivers use it?
 > 
-> There's only the rcu_head we care about.
+> I have noticed that similar functionality has been implemented as part
+> of __v4l2_get_link_freq_pad. Are you suggesting that I take a similar
+> approach and resubmit as a new series?
 
-Based on this commit a7fb0423c201 ("cgroup: Move rcu_head up near the
-top of cgroup_root"), as long as rcu_head is not after struct cgroup,
-all's fine.
+As far as iI understand, Sakari would like a helper function that will
+query the remote subdev for the number of data lanes it uses, and
+validates that against the number of connected data lanes as described
+by DT. I don't like the idea of parsing the endpoint properties every
+time we do so, so I think the number of connected data lanes should be
+passed by the driver to the helper instead. The helper would still query
+the remote subdev, and validate the value.
 
-However, this tells me that people were aware of the possibility of
-`cgrp.ancestors[]` growing even beyond `cgrp_ancestor_storage`, which
-is yet another reason not to have that flex array in the middle of
-cgroup_root.
+> > > > > > > The function could take struct media_pad pointer as an argument, or struct
+> > > > > > > v4l2_subdev pointer and the pad number.
+> > > > > > > 
+> > > > > > > I wonder if any other parameters could change dynamically but I can't think
+> > > > > > > of that now, so perhaps just the number of lanes is what the function
+> > > > > > > should indeed return.
+> > > > > > > 
+> > > > > > > > +
+> > > > > > > > +   return 0;
+> > > > > > > > +}
+> > > > > > > > +
+> > > > > > > >  static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> > > > > > > >  {
+> > > > > > > >     struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
+> > > > > > > > @@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
+> > > > > > > >     format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
+> > > > > > > >     csis_fmt = find_csis_format(format->code);
+> > > > > > > >  
+> > > > > > > > +   ret = mipi_csis_get_active_lanes(sd);
+> > > > > > > > +   if (ret < 0)
+> > > > > > > > +           dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
+> > > > > > > > +
+> > > > > > > >     ret = mipi_csis_calculate_params(csis, csis_fmt);
+> > > > > > > >     if (ret < 0)
+> > > > > > > >             goto err_unlock;
 
-> 
-> (You seem to be well versed with flex arrays, I was wondering if
-> something like this could be rearranged to make it work (assuming the
-> union is at the end of its containers):
-> 
-> 	union {
-> 		struct cgroup *ancestors[];
-> 		struct {
-> 			struct cgroup *_root_ancestor;
-> 			struct cgroup *_low_ancestors[];
-> 		};
-> 	};
-> )
+-- 
+Regards,
 
-Yep, that works (as long as it's always at the very end of any container
-or ends last in any nested structs, for instance in struct cgroup_root,
-it must also be at the end) for GCC-15+, but for older versions of GCC we
-have to use the DECLARE_FLEX_ARRAY() helper as below:
-
-         union {
-                 /* All ancestors including self */
-                 DECLARE_FLEX_ARRAY(struct cgroup *, ancestors);
-                 struct {
-                         struct cgroup *_root_ancestor;
-                         struct cgroup *_low_ancestors[];
-                 };
-         };
-
-Thanks
--Gustavo
+Laurent Pinchart
 
