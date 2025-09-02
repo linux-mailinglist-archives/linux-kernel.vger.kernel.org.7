@@ -1,143 +1,137 @@
-Return-Path: <linux-kernel+bounces-796883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DC5B408CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:21:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B23B408D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44CB3560BF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697DE188F31A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3278D31CA69;
-	Tue,  2 Sep 2025 15:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB831DD8D;
+	Tue,  2 Sep 2025 15:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2Rup3PT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjmqJuu1"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA5123D7C4;
-	Tue,  2 Sep 2025 15:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAD12FE068;
+	Tue,  2 Sep 2025 15:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756826452; cv=none; b=theXT/1Y9lsMbKIdUcBOFsGiK6pEhlM0YxKpcgetTiJW0Ovr/Z5G1oTiPJVLeI9cHYps+wa1KZfR1ebVgjsePoEgHOQP/Vr9JtPD5aMfvq97FfWmwVzXknAgYlvoFOLzhc1OcNYtGvY1XEghdHxe/1xacqgASQf6khNg5CexZ4U=
+	t=1756826514; cv=none; b=qS5JRRftIbDI5OK2+FyyAcVxn/NvI9O8KW7ks3Hdkj4BCHjEpRBeelITFJ1Co3JCWTACAug9hBBKRrXqmRezDWyk4EdTTRFgMOzJXFtBVEGw4fDeTOLxLxXFVDXJ6/3VOb03GDO3rdJYNGlY1H2Zswl1OJAyDKBGcEezlhxxCyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756826452; c=relaxed/simple;
-	bh=PgnpS+OJ+OH80B0RKl39e2pHarXjAdJZp7WT5DCSVcU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nKhA5fQEUm+XAEyeiy4bSVYEKewUguKiQAORaNu69+6KJW2Py7Qbgg+NKUntBvxCYPjOhLWatWPztGIJIw1p+Bm9OSx4Jjk8xawycZrLBl0S0fhuNJtBrL8cGdevB8eq7h4PJpYqBGJtQniW+8qwJZuqpTOQ/FFH+dEpF+vaAg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2Rup3PT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 991B9C4CEED;
-	Tue,  2 Sep 2025 15:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756826451;
-	bh=PgnpS+OJ+OH80B0RKl39e2pHarXjAdJZp7WT5DCSVcU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q2Rup3PTliTol+0fzWRBDpCRhts7KHhL2QASNisikZ4XIMfu3INaRFmqz2v7TwpAd
-	 e8JEhL6HcgifGBcBHa2mz8+8dj3exN59qmN9HEPNCwqojBqXBs8ZvlC+Rj0vsWi/Eg
-	 a68NQBn0ql05cXZu+ayVXgnt/twOLZDM5JHr960wRqLeDSu1wvMNn+eVBCQaz+B1wq
-	 C0MF814H1j8X/HLTzo2vBDTD1ojE0M+e4RGPCYefs9cfk77EkOwBnk25uOeNVk7u8N
-	 z6T1Jq5uFg/FAZA9p0XoFHz4DLCzPDSlWSUlCh47zJsSGOLREUIXImF3KRNsNWvBAo
-	 64uoXcVgwHAEA==
-Message-ID: <63e43445-ef5f-49b2-85c1-f85d95426d5d@kernel.org>
-Date: Tue, 2 Sep 2025 17:20:41 +0200
+	s=arc-20240116; t=1756826514; c=relaxed/simple;
+	bh=rhmHOETPUB80MeODBzKkC4z8z37xTyz2AMhtaliS4hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkH6T7tykk6dd/GbfBq2bAqOuQMHOWYH7CBluhD0OSkLc9aJYE8LDlgVhR9Vt42PTSKSNGrti8R0QtR4/qYf8L6WPs1ReUsnx/gHDfHa21fqYtkh/o1iTEQ31UVXtt4m5LV0SkuhqZ5DDhuFSd3jCuR/pbLWtGTUsCK7N9RTq4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjmqJuu1; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77238cb3cbbso3014270b3a.0;
+        Tue, 02 Sep 2025 08:21:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756826512; x=1757431312; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gw3ssi4bmma7i1rZNi65std+RGG6lQ5EditfjZ933j4=;
+        b=kjmqJuu1wnVz9SCd9faDNDyQJZrtaiMCLZ7RW71pmMRo1bvvkozcnfevaZ7xFNpBvd
+         d2bjM3YuH7Aq5mZG4zQHV8thNM9wvgaWLjqRssJJjY9accs9wlf60e6uig7/ra1q8VwN
+         gEhKfjsvvyMwxvcuNOl1E+TJo2i5QRSgAQ7EKt62r57HAWAU+dR3pAedlMPdXorx0xS6
+         gZzP60QlKfN4Z2vPJlJlf8zkaTY1lwdSLG1yU2yKHDQxeXwx0Dw3dtctoOofPALv8OIp
+         xXO7HSyOXmb273K6WQnR8AvFkVyLsnoeqIqIhskfRPM8knZMBilKyVJaMinbmzW5E+bu
+         jY0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756826513; x=1757431313;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gw3ssi4bmma7i1rZNi65std+RGG6lQ5EditfjZ933j4=;
+        b=jVAv52OVsTlA4TGoI/doR6nNXVkY3dAeZH6GCyzmpIsYDuw/f+eJAv7HusExz6RWS2
+         3dmMTJWHdI7EjldOE5xX1r/lZIaFYtyF0XFV7mbfMhEOWIeBb+7IqNcPJ6lBdjTaF2U7
+         vHS1aEMGnzQojbxHbZfmXwgOoh6vRTLMj0XvFH9K66md2Hv1nJosYt6CcCmsTC9l95Rh
+         NQRPcIZF+4mMRBe/8wRYGqj57Nu6zxOTroz5QUvqN6jLrUHV7P9IswEQZKuheJihDdN0
+         AnGlk8yKEjNXqv8iGvTbLE4qy4lsxveD/jLcEpwva3fQjp+OQcwVz1V0AQOIEybynbfX
+         O+LA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYOM3RieJ8SNAoHHEMW/EwhR4xDearMeNqMkP+y/nc0zrTYnTrpOBMtYa7uOIWxWp7aiIoqyboUbFl@vger.kernel.org, AJvYcCWWSVFxK30HqOMUOki+oXBp/F1HIV7RxndEzWz6X7StL8Uu8Cf+KS/PB+G/OXKxg5NMbNHVfw/eLzc3@vger.kernel.org, AJvYcCWhzskM8Vt4HYnrugDLPqRpHYzXg4GeAVoT5PAcrRR9N02PTPDdBHTYcwPLNTyqWQG19SUhFi01USaA@vger.kernel.org, AJvYcCWp/SCdOivxU+YRvFmUxNHeJypVgOBLpk1kCXxYdGSBjsdcFoPQMGmPfOrKFefh2pHHOFFg24iL2lkJ@vger.kernel.org, AJvYcCWwFZiHahKQ5yCZvQolsmaW6gmv/b4gtulnS9BpOWFR43YTj4Fg919mWRboKaG4jxUnfrqE4gOmibCCrQ7d@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDzPLxISE+Yr9G5k8sU38xkSpcXuMzdGyLgaN9GrJ41Gr4xQIW
+	9WqWj8A+gIJU4kvUagx2ZG0IAPrPQUNuqcWGT9VNdG9FVBrxZtde6ifp
+X-Gm-Gg: ASbGncupPEbc2f9nx0kD4aZRisxtBJmReSTJLfOWN7gujFnGzOcOznumLCVnl7HqAFD
+	8boNzY7nc1dAvF0VxDrgTEAk0/bgu0g6tXq1lhqbXjX0Sn1x3YKcmW6nYPfcFZ/MzicuWcSz4mp
+	+FNQO7b6iQ0VFvF4tI+Wy/H08Xw/s4mDxuuJzZpoabwzD4WGmYPH4OY+KVkETla8RFO4+RDjD2E
+	ssiH7irgLcRb5WPgYOiBZutY19O1LOnUmnOZlYiRmRSpuai7cRD1l+EJQwsGCEMzYeY6VVyi7eR
+	bs+0bfQMnugDqy++5UrXXVaDq5Bh8sx5pGhCvvhd/ynixaSO9H00Hv0nsb+cKXCt6G95d+LSCoE
+	1M3ayVo5xRZ+p0SWk0BzTUGGy/CkBu+E=
+X-Google-Smtp-Source: AGHT+IF/e24Rcl4OaU3SdP4MK+Vzqmqenz5g+ZRwy+5rwpsp7l+XLoGC3ieQOzGmDmipIH0UtCwd+A==
+X-Received: by 2002:a05:6a20:3d07:b0:243:c2e8:f4d1 with SMTP id adf61e73a8af0-243d6e6d928mr18303803637.26.1756826512533;
+        Tue, 02 Sep 2025 08:21:52 -0700 (PDT)
+Received: from localhost ([2804:30c:1f77:e900:8ef5:b053:b8a:9345])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b4cd073c1fasm12063938a12.15.2025.09.02.08.21.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 08:21:51 -0700 (PDT)
+Date: Tue, 2 Sep 2025 12:22:23 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	jic23@kernel.org, Michael.Hennerich@analog.com, nuno.sa@analog.com,
+	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
+	corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, broonie@kernel.org,
+	Jonathan.Cameron@huawei.com, andriy.shevchenko@linux.intel.com,
+	ahaslam@baylibre.com
+Subject: Re: [PATCH 15/15] iio: adc: ad4030: Add support for ADAQ4216 and
+ ADAQ4224
+Message-ID: <aLcLr8H3QbL_A565@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1756511030.git.marcelo.schmitt@analog.com>
+ <006ac88a667ce0d2c751946b562af83d0f27a44f.1756511030.git.marcelo.schmitt@analog.com>
+ <CAHp75VdeSqwVecJHx+jXn9++zgN+CBH56OGUYX5kBbdc0AFKSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v2] dt-bindings: mfd: Move embedded controllers
- to own directory
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Benson Leung <bleung@chromium.org>,
- Guenter Roeck <groeck@chromium.org>, Tim Harvey <tharvey@gateworks.com>,
- Michael Walle <mwalle@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Jean Delvare <jdelvare@suse.com>,
- Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Cheng-Yi Chiang <cychiang@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Tinghan Shen <tinghan.shen@mediatek.com>, devicetree@vger.kernel.org,
- chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-sound@vger.kernel.org, linux-watchdog@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Mathew McBride <matt@traverse.com.au>
-References: <20250822075712.27314-2-krzysztof.kozlowski@linaro.org>
- <175682479961.2401991.17056649550187344851.b4-ty@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <175682479961.2401991.17056649550187344851.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VdeSqwVecJHx+jXn9++zgN+CBH56OGUYX5kBbdc0AFKSA@mail.gmail.com>
 
-On 02/09/2025 16:53, Lee Jones wrote:
->> [...]
+Hi Andy, thank you for your review.
+
+On 08/30, Andy Shevchenko wrote:
+> On Sat, Aug 30, 2025 at 3:46 AM Marcelo Schmitt
+> <marcelo.schmitt@analog.com> wrote:
+> >
+> > ADAQ4216 and ADAQ4224 are similar to AD4030, but feature a PGA circuitry
+> > that scales the analog input signal prior to it reaching the ADC. The PGA
+> > is controlled through a pair of pins (A0 and A1) whose state define the
+> > gain that is applied to the input signal.
+> >
+> > Add support for ADAQ4216 and ADAQ4224. Provide a list of PGA options
+> > through the IIO device channel scale available interface and enable control
+> > of the PGA through the channel scale interface.
 > 
-> Applied, thanks!
+...
 > 
-> [1/1] dt-bindings: mfd: Move embedded controllers to own directory
->       commit: 152afab28f7659a4292c9f7d3324eaeb49a55b8b
+> > +/* HARDWARE_GAIN */
+> > +#define ADAQ4616_PGA_PINS              2
+> > +#define ADAQ4616_GAIN_MAX_NANO         6666666667
+> 
+> Can we use calculus instead (people can't count properly after 3 :-)?
+> Something like this
+> 
+> (NANO * 2 / 3) // whoever in the above it's 20 and this puzzles me how
+> something with _NANO can be so big :-)
+> 
+Yeah, the max gain could be expressed in MILLI, but maybe I'll just do 20000 / 9
+(or equivalent) as you suggested below and drop ADAQ4616_GAIN_MAX_NANO.
+I'll also comply with your suggestions to this and other patches.  
 
-
-There was a v3 here:
-
-https://lore.kernel.org/r/20250825081201.9775-2-krzysztof.kozlowski@linaro.org/
-
-Best regards,
-Krzysztof
+Thanks,
+Marcelo
 
