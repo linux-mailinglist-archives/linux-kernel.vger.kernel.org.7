@@ -1,216 +1,230 @@
-Return-Path: <linux-kernel+bounces-796553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0EDB40274
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:17:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739DCB4027C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E123A1611C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5583B4F43
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11E02FD7CA;
-	Tue,  2 Sep 2025 13:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7773019C2;
+	Tue,  2 Sep 2025 13:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Mpe+2yPZ"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010049.outbound.protection.outlook.com [52.101.229.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdBMgLtI"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FD23043CD;
-	Tue,  2 Sep 2025 13:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818926; cv=fail; b=f98mAajFiKKpjHpwCbBPIgLgJ+rxwJi/C/u4siA7L2180LHOUjlv2ROgJmpkjJR6pmY+iBB+o2/O3qK8O1tRaxxerSCx9rMnrHC6kCCorv/t6PtklBejsE5myXCYoKrZN9cvfwry58eOp5l6hP/WA7jcKTEt6ThY9vNFcIcQGAg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818926; c=relaxed/simple;
-	bh=+WexAm3pxxrXEXcVLDETWMto4oTP7Al+mshjd1EMAVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=a34F66X0bo96GOkJyv0eV/b2KNlAQTIraoExvMRH9ymewFPHqeCUheSBOJTI6Beq+HocnkilquhCle3HMyp2PYJctTCHN6ED9HHijSVmc0edVmVpRECIKWmphANZtjV8mJHu0fsxMecCMiWt00Rpx5unxp1MNvKtW05BoTV7kfs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Mpe+2yPZ; arc=fail smtp.client-ip=52.101.229.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XeQhP/bQrtRDD2qcH8EfTlLdB9CwO4uiNoFvpGQemmP/AOPsgiWkV3gONaZqw1Bmeu59W0XS/g9SdpZ8tBfcWAnvJIHQkR3dke0b/NcnwKgfYMUcQ7IbPwEzYVled2KCTzQjb/pp1U1RXpIOqVwGg7PesxvANTNF+7x5dHH+Pjcf4tdu17xGAhznuRBbxO/lNrb0c5cF1rWDIB3pkQTbURTd1JK9n6syHhDvypq9FE9VxTlMV9Lo6BuRAXDOiUjEQ4JW/47wU/G85q6B3IBo0AgfAZ/gkLGxoN18dC/j7qOW2+IhIlGST4wQiLJDqXzKOznzzAMCI0nGAKgTl2eWFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zfxSBd+8crA5WjgorxZokcUAUkdCvoaLwNOT3hUfMRU=;
- b=ZBrLEs+QwNFhOBQp+UZwPOtEZ0yCBMC41pmdpfsuKe0o2K3HpZGlcxiZ5nZzW+X1eB5rNe8U75rk5tTWI/wYnTzLvprbb59EEYRinRgerb03mTVXwI2rsF5X5bJwLFIn5U9GQ4IYV72BFYNGB6RO6kpGyz0hwH9G1/aUKZa/ZwK9nkr6SXflyNO/pJaV5crae1H+ezFqhwo6sKdJxfOtw/t9wQqyySmA5wScvF818hD6sQJ3lK9dqPNqr1tLBYIWWz5cx2M7qU3APBMgtELGWWAUEfz5mr2VDZWbAbnOmAKsZrOFCkky3eRM57+EV92QJc5LyWtiq4OGgBjdd4le6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zfxSBd+8crA5WjgorxZokcUAUkdCvoaLwNOT3hUfMRU=;
- b=Mpe+2yPZtWvyB+8nPnwttLnq2nrUVENXYSzJQuqLMS/pelVdOD+aMacLMgvrdSAjKl9+CWIpnQRXTSeN/fIHfpwDdUXtvTkbNTzdroiFN1RWqbM3kzZFdGHUORMkoe/qu8lGrjeN8efkM5XWZXM4OMdV4xiDmdCVE6v5iebcoHo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
- by TYRPR01MB12476.jpnprd01.prod.outlook.com (2603:1096:405:1a8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 13:15:19 +0000
-Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
- ([fe80::63d8:fff3:8390:8d31]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
- ([fe80::63d8:fff3:8390:8d31%5]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 13:15:19 +0000
-Date: Tue, 2 Sep 2025 15:15:06 +0200
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] clk: renesas: rzg2l: Simplify rzg2l_cpg_assert() and
- rzg2l_cpg_deassert()
-Message-ID: <aLbt2qI1VQT1JSaz@tom-desktop>
-References: <20250820100428.233913-1-tommaso.merciai.xr@bp.renesas.com>
- <20250820100428.233913-2-tommaso.merciai.xr@bp.renesas.com>
- <CAMuHMdX3xesNr7VXjH75jfaQ=aXrzNhAhpPkdN6LiC3wY8sX3Q@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX3xesNr7VXjH75jfaQ=aXrzNhAhpPkdN6LiC3wY8sX3Q@mail.gmail.com>
-X-ClientProxiedBy: FR0P281CA0238.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b2::13) To TYCPR01MB11947.jpnprd01.prod.outlook.com
- (2603:1096:400:3e1::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A382459C5;
+	Tue,  2 Sep 2025 13:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756818966; cv=none; b=WWKhd61ZHQdbFGpr0yfU0vMueSUMIPJ2veY7bBR4zv9Gjg4X0t/vbUZZRpXGp3UHkt63UdV5uqt+2g9aTqYBFxijC6pVypGTuRnVVeWb37sH6XQ3LIwt9mIDHBXf9evgBrib8OtYwn3Ylllqn+F07FnxaTkSrC+aWVsODowcgYY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756818966; c=relaxed/simple;
+	bh=DBvPRxc2Xdaxj0STd4exIV8m+LZrWMLAupmTxberStU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hGCaoCoyAQ3IK7SRUe/6kr2OGlabmk2s/AECRPZVkl87BWvdNndhRa+6+qzbKt4xMg7uQHXjF8xUoIuEHThYwitdtnEjc5fTWxQN0mP3pXtT0dA/T+zvZhGd/DjbpahLsHJiC6SAt7LL4K9v1sIxoZY+tJ9+mTagakuibG0S/Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdBMgLtI; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7722c8d2694so3270282b3a.3;
+        Tue, 02 Sep 2025 06:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756818964; x=1757423764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4NjRh+7eenrUTcgc8k/UXnVYX2oM7XtqJi06sxrEvrg=;
+        b=FdBMgLtIqSd3JuZtKEW6emYwhSGoUHiYQ/cuNNh6Boq7I68dRcW8+mTc1JMR4zEo3v
+         oPj8y/JlS+xiejW7IXmBGuYAIBZKnpipowy/eR7Dv51J2WhgQFd3vbC8SLmV9ChhsYlg
+         s9rVP+CIyJp4rbPd7FOG93a7LcrSSWVzmWxlZ4rgVEhH6E324Fk2XoPRscpheyAYPece
+         j4bMEJ8gS/dkxscAPDB7qGN7kili0J8uwJFWCUf13c+buuD5FdMekDXK0ZuDtoiZNwJ1
+         Rdvnvmg1hnwTN6aVfVGPc3dvQE13hJppCUMC/iwwrb1LKF2BcO4bzu5PGhMHQw7sqbn7
+         E6SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756818964; x=1757423764;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4NjRh+7eenrUTcgc8k/UXnVYX2oM7XtqJi06sxrEvrg=;
+        b=Gz5bzVrRVR6TVGZgiFeQwHaR+rRqjJpztocsVnRi6q4LkaG0gg8D1PbBoLMh8NcRt+
+         CREcXzPEf9vYJemoukuKSoICV2kcrgwoQRd8GRYutDyRxKBtO/EEr6skNST7pvQ5k3Qu
+         ASzCBtPh+47J2c3OFMLE0UJnjlNOQQz/YUXS0GqpUMB7h4IDZ7/2uqPhBjshPx6jIsP+
+         9+1uXjHhCUa6WrEiDghdU7bCEekwce+WN9HJKlo+gGLRZDwS2FwDxZ+ACCR7qjHo1k2d
+         bNScS37lMy2HtjWQsEdCYfowc+lqqdsfw+Ogz2V4EFkYX1fVK6CiEg6qwGb3/MagTqcs
+         t5yA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO1ch3qmZTGPiFyYyQ+JMEltLEoJIY+VdrNv1EPCaVKEk0zRjVF9vhp7GnzGBXhycPx1UU0BpEtB6PmXKU@vger.kernel.org, AJvYcCX0DRygw7hOFJm9LOQNkAg7YQ03s2RuNa/d/KAEzDjPYjM+8vvl+87R5oxbUKGaHH/EhSmqBK8TPlDT@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNskHGTGRPDp8rTpkrLc8GHwfGEcXNEqUGnm68G3nJpyQvUMBS
+	1u8PMZ+u5ldszLowybkwnQv/ZsUjWT1UU0pvU2JS1zS3VCkk2XyV9WNbe60D1jX92jFyyA==
+X-Gm-Gg: ASbGncvi5Gp1CnpeRkqzkNhqH+4SVUVUxbCHvuH7AjaNo3hTSwk2LFUnpoTg5pzMxCA
+	EwmuORB2W+l8i3nrmGu/N/1yTczdWV/WL9VuEoj3Xa6KJ92ATWmEgnTBVk1U5HsuOxbesK1Ln24
+	5Sf40Qb3fhdQ1peKsn1+pvOa5S//xSZQM505czbY043GwkjjW1mkHJBNXUmRf5nFRaG6nUpqIq1
+	L5dVlDSZODBSq/zHVwiQPSXqimxH5L9z+NQhYPKHtmEh5gi7tn9h5aDg07gemQiXRGtWJNdjXPY
+	CAC7ra59WUmLbL2VLRbcgdcgzYCUxQ3IZND8gCRGe0yRwM59d0UVKS2Sx7Nc1nyatNgmPFn9TYY
+	mtSGvO8Szm0+uUg++QTKCjdKCxSTYyfDovQX4KjCETi0Cz/KOsozBqiA=
+X-Google-Smtp-Source: AGHT+IEqd3Jxg+9ymxmYTVcFgyNiljiZrKX6eeI7Aka8qMn9PZlPMi0JQ5hZqhLCVC2RZOIdj3QSDg==
+X-Received: by 2002:a05:6a00:811:b0:772:49c2:b5e3 with SMTP id d2e1a72fcca58-77249c2b91cmr10376206b3a.5.1756818963583;
+        Tue, 02 Sep 2025 06:16:03 -0700 (PDT)
+Received: from localhost.localdomain ([2804:7f5:b08b:bc66:1b1c:d88:2aac:2997])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77267a225e6sm3712122b3a.94.2025.09.02.06.15.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:16:03 -0700 (PDT)
+From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: [PATCH v10 1/2] dt-bindings: iio: adc: add max14001
+Date: Tue,  2 Sep 2025 10:15:50 -0300
+Message-Id: <34b7cc7226e789acdc884d35927269aa5a0d5e14.1756816682.git.marilene.agarcia@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1756816682.git.marilene.agarcia@gmail.com>
+References: <cover.1756816682.git.marilene.agarcia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYRPR01MB12476:EE_
-X-MS-Office365-Filtering-Correlation-Id: e75df425-777e-4df9-24d0-08ddea22c3d2
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vPpRllLZ6nYAzTQWTh1x+58o8/Q/t3ByurKx/YlfcAA5MUiG2WpEkomuaxik?=
- =?us-ascii?Q?MnekQ0cFgunTWEoQffYqAe+53Ysm+16eo0U6B6ao5TO+RBcDXJdChxPt5DnW?=
- =?us-ascii?Q?D9/87swUmZFFNpkO+zoc2RfY3liXGaz2ZqqqVEmS6U6i6yxTglCBiQnlyBii?=
- =?us-ascii?Q?byTHrak82701xm/MA3JEIEIsUvaPtp4G31obiXyQ8ENyDF5obp0VfgeAKzPU?=
- =?us-ascii?Q?1LI37DHP77vTkgV4w5F6cn36tpCscQoRP7Q2ccRe4xHPJumHtezlKn+xcPa9?=
- =?us-ascii?Q?AlXa5KLP3ew39DhqVD6Nb0Nw+IYQblzX1o6DRA84S7TmZJVEiCA+vmaP7c6L?=
- =?us-ascii?Q?Q2Py2XBrX0r6IvlK7rI41z5fAca9mCJMzJUW+mXugAzn/GLuihNBQ9OdNaTz?=
- =?us-ascii?Q?9XIOuvC+nK8Y5Z+px83JD6WcCw3pXHDdmZeIHe5PKM5u7N7YAT6cZeUJPDMv?=
- =?us-ascii?Q?9fjKxlF7mu5RGDQ4WdJKn37zLJktE+voNd0CUJ5hGW94DpXuXZuvU/vEo3gR?=
- =?us-ascii?Q?C6nqx5olxLA+//VvqDD6AvDlzwKfk3zTcjZgzCNoZmP5Da8hqvkz/ZcGrgbm?=
- =?us-ascii?Q?dCtfqFIQ3Fk64EBvLVlm5tRnYCWqIx7OVaQq2w0OIHFJjt2SFAz7aNdMRVFc?=
- =?us-ascii?Q?uMa2vcdL6h2jotRO3Mh2lCQh9MmghkUxSirQT6ozkS/1gJ1FBOx2jXxCLZY2?=
- =?us-ascii?Q?IeC2ca/HCgtPg2HLTE+sTbkIaxvj+BEDpYZ5DdnhpYnvBvrLfRPM1YtuMR7/?=
- =?us-ascii?Q?AeXkQb/yS8478nj6HY9TUuTLR3LbRO54zDZZSsRq+yLO9/EigusslfhTdqI9?=
- =?us-ascii?Q?ttWUgUw1LlmBXbgRcCZY6HDdYbttY5ojE32ANP/xFivfzacZR7cPnSY5J14w?=
- =?us-ascii?Q?g0NTVzibxQbPgullNWi3iKdIiiLok9ekZfEtcv1z+I/gis0asTsxU1rfxCEw?=
- =?us-ascii?Q?/0+oLoCg/NVZqX0/pr52n9VzW2Mj4i4MR6mQDMkwCzP9LJ66uawUGq9NkXNf?=
- =?us-ascii?Q?TmgMyFolQ2hgdkqWUda+F41N/RSrW9fInkJMtoCVeAJnVWpzGqL4D6WikLV4?=
- =?us-ascii?Q?zTLbgCTQdU94oECLNq+U7pKJPI0DpNLiFeRRdLZyRFOqD6DXPrp83z8FYSxJ?=
- =?us-ascii?Q?t1ejRlcL5G0WokaPrFMGPbagThwkWvkAO4jwQ483jznh7xOMMncrkm2/DGfI?=
- =?us-ascii?Q?lmbehdl4aa/ZZnqDH1V/9Y0MnlxYza8x1GNmNWGIFS1/liV85Uz4EylZ8ETr?=
- =?us-ascii?Q?+gxzsN++jcDU/TfgU+oEjLzE+n+TOowq032HCKaUabDKXxfLGAarHjWB1DhN?=
- =?us-ascii?Q?Qwo2cQ2JVDdxPUAxHNitx6gbpqiPlMVZb8m4HLKiZqOZazReN/0O1lc8NVZd?=
- =?us-ascii?Q?3Qg9TbiLVWfNFHChCrHqlEda4laUKWhSgzFWNthDOWfIvAQLG/+E23OuEaH7?=
- =?us-ascii?Q?4EaJW8dYwnucIf2JdjWQhkozxIjKlabXpFL47VwJNhuLkENiuRLStg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BwsHC+50gE/FWT5D1z/7+LsmPISqZbJGSttFh7CBszBpgoXpS4bUSjoB0VmQ?=
- =?us-ascii?Q?3jYCC7peXKF2EeA/qiSZ/C5i3MfbgA+HC590zlKF4g7w0DidVysdQlBnxlk2?=
- =?us-ascii?Q?PD96uIHCmW6JHn4n6LZPwLOkQ5jRLAR1rPHMsvYuIQ+RXJJff+fa6IQIhRzQ?=
- =?us-ascii?Q?LnCakQC9CqLaHz7bkHJi8TTmT/7/Uc9sc6vkxuIFRBx/R77ZrXwazc/EdjRJ?=
- =?us-ascii?Q?wUNk5JnwzVUbqOgpz2A0N2TsBt/oOI5S1t0JjkMFRfIubVqn2sPjYLPIHUFe?=
- =?us-ascii?Q?skCRMTRmHW6xYZEOMENro674jLB8d+Zjul07GNPuUDWsTMtaVRW4XFa2B3gh?=
- =?us-ascii?Q?2m0/4WGqvfzX44PA58xqdZO790w1reOMLyX+jczjbYnPSXJk/VSH3tFtWANa?=
- =?us-ascii?Q?XJRlze2HJXXafEoClJ1FV8wsixS3aj5dgaMjJ8dGGrdadql7HnfFP016E56p?=
- =?us-ascii?Q?w+rRn9DjumQS1silFBGSMuWv0ESsDlBjZJvinqcXUof4nO9MZf6gNoDCedj7?=
- =?us-ascii?Q?dFNSjVNVmHcyjW3x/WX2BpVW6t8Vwy7xS+RhPdL+s+molc3uFv+ajLVkFYvm?=
- =?us-ascii?Q?yY/taL4TzROBMys8+gQDvpsWVbP1bejCwmjL0g2D28WzicHZJHvx5l4xCeUq?=
- =?us-ascii?Q?8VUZH+vMIp7fZiVyxmMWJyt5Y/4eASYJK9D7VJZn4CBeBivRpxda368kwOc6?=
- =?us-ascii?Q?IkGcD1Lx8RDJAClziwpgj6Xe6UVZxZcyE4w7jfdZqy9iGAWOV7lOLQmTF4q1?=
- =?us-ascii?Q?i7ACXl2+mSgFKNS0rUUvBwFQgco29yMTl1oZJva3buEzeKO0FAEOf2w59sUS?=
- =?us-ascii?Q?szwUHqXfNTpUdjl3qHhlKP2apL7IlwzIR+6zFeapnoRSc18Bkw0gHSnMiOe6?=
- =?us-ascii?Q?146H6I9uyoMBCyUWVy/sTOngj45/h6SzY7ldYtfhN/HNLUkYOfUj5zxrCqYU?=
- =?us-ascii?Q?H8fM7IF3jNujDa/SD/rnjSvZ3kD5IOjp6nmwq13iLRG06g2wMHcMwRkLZpVp?=
- =?us-ascii?Q?hiL78kyAPnkuZofxiIdaeDFoeZGQBjDzBq9qyNEvebmowwO2TyW09QVKE89U?=
- =?us-ascii?Q?OWU+XNWbQP7DHKFdyACwDbRx0fvIq6iMWhhl62N5YcS431dRw0C8WozpgHan?=
- =?us-ascii?Q?R5ct6TuUpUV2JVRvVJ0rFXExxLYEwyZQm333bRioM4DcA2inYW1MqZvM11TZ?=
- =?us-ascii?Q?WPCLfKNeNKhBKYVaiNwK2utCQyYtUIzFbfTm3lpmaLNXZZ+olxOKsL85rA64?=
- =?us-ascii?Q?MnmLbps1MHFOWiuzDa+qE08vr807H0XAbZUsMKcd2A0ZL5Mxu3boNdDNib3j?=
- =?us-ascii?Q?bX61Wr+Sr67Svhu8Pfy93nmzAgryroq8Id/nTfrzFkUl/daPYo9z7B8l6JUH?=
- =?us-ascii?Q?Yn+4NBuR9S7NBi0OF33DM0ETCenlxT+OS0IIhBN21LUNcW65/cE7CtKSydcQ?=
- =?us-ascii?Q?d0RcA8oRZw3/6OBcu1cDAg7LVZEPOyQJshPOaRW2SblUW7k1Q7R4RS4ZiUeM?=
- =?us-ascii?Q?IdzYyDAoCCvU9teXJ1iS6O6VKaJpxu2dOgGa5q2D4UVV9f+FZfpI2KXXd3YN?=
- =?us-ascii?Q?tJrZbMiDPzeb87p6c82J+fMkxQ3sMw+txrjM+2cMW19yjrSeZ00NKv2Im+En?=
- =?us-ascii?Q?khNwf1gYgdZofjjTzrNsh4s=3D?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e75df425-777e-4df9-24d0-08ddea22c3d2
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 13:15:19.6146
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HpeoF4UOfAHz8SIPsRVEGyFqsI/qixg20doTQ0oS5R4XKGvSEtincVhmA1t5461gnrodlVKgYZl9/ZhQVK33laIlciXHmnVluIOem6trZ16XAC35yBi93W2/GSbt3ll0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12476
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
-Thanks for your review!
+Add device-tree documentation for MAX14001/MAX14002 ADCs.
+The MAX14001/MAX14002 are isolated, single-channel analog-to-digital
+converters with programmable voltage comparators and inrush current
+control optimized for configurable binary input applications.
 
-On Tue, Sep 02, 2025 at 02:12:50PM +0200, Geert Uytterhoeven wrote:
-> Hi Tommaso,
-> 
-> On Wed, 20 Aug 2025 at 12:05, Tommaso Merciai
-> <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > Combine common code from rzg2l_cpg_assert() and rzg2l_cpg_deassert() into a
-> > new __rzg2l_cpg_assert() helper to avoid code duplication. This reduces
-> > maintenance effort and improves code clarity.
-> >
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
-> > --- a/drivers/clk/renesas/rzg2l-cpg.c
-> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> 
-> > @@ -1664,37 +1668,20 @@ static int rzg2l_cpg_assert(struct reset_controller_dev *rcdev,
-> >         }
-> >
-> >         return readl_poll_timeout_atomic(priv->base + reg, value,
-> > -                                        value & mask, 10, 200);
-> > +                                        assert ? (value & mask) : !(value & mask),
-> 
-> This can be simplified to "assert == !!(value & mask)".
-> Do you like that?
+Co-developed-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+---
+ .../bindings/iio/adc/adi,max14001.yaml        | 79 +++++++++++++++++++
+ MAINTAINERS                                   |  8 ++
+ 2 files changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
 
-Yes, thanks.
-Looks good to me.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+new file mode 100644
+index 000000000000..ff9a41f04300
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
+@@ -0,0 +1,79 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright 2023-2025 Analog Devices Inc.
++# Copyright 2023 Kim Seer Paller
++# Copyright 2025 Marilene Andrade Garcia
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/adi,max14001.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices MAX14001-MAX14002 ADC
++
++maintainers:
++  - Kim Seer Paller <kimseer.paller@analog.com>
++  - Marilene Andrade Garcia <marilene.agarcia@gmail.com>
++
++description: |
++    Single channel 10 bit ADC with SPI interface.
++    Datasheet can be found here
++      https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
++
++$ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    enum:
++      - adi,max14001
++      - adi,max14002
++
++  reg:
++    maxItems: 1
++
++  spi-max-frequency:
++    maximum: 5000000
++
++  vdd-supply:
++    description:
++      Isolated DC-DC power supply input voltage.
++
++  vddl-supply:
++    description:
++      Logic power supply.
++
++  vrefin-supply:
++    description:
++      ADC voltage reference supply.
++
++  interrupts:
++    items:
++      - description: |
++          Interrupt for signaling when conversion results exceed the configured
++          upper threshold for ADC readings or fall below the lower threshold for
++          them. Interrupt source must be attached to COUT pin.
++      - description: |
++          Alert output that asserts low during a number of different error
++          conditions. The interrupt source must be attached to FAULT pin.
++
++required:
++  - compatible
++  - reg
++  - vdd-supply
++  - vddl-supply
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    spi {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      max14001: adc@0 {
++        compatible = "adi,max14001";
++        reg = <0>;
++        spi-max-frequency = <5000000>;
++        vdd-supply = <&vdd>;
++        vddl-supply = <&vddl>;
++      };
++    };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index af1c8d2bfb3d..f145f0204407 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14969,6 +14969,14 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/max9860.txt
+ F:	sound/soc/codecs/max9860.*
+ 
++MAX14001/MAX14002 IIO ADC DRIVER
++M:	Kim Seer Paller <kimseer.paller@analog.com>
++M:	Marilene Andrade Garcia <marilene.agarcia@gmail.com>
++L:	linux-iio@vger.kernel.org
++S:	Maintained
++W:	https://ez.analog.com/linux-software-drivers
++F:	Documentation/devicetree/bindings/iio/adc/adi,max14001.yaml
++
+ MAXBOTIX ULTRASONIC RANGER IIO DRIVER
+ M:	Andreas Klinger <ak@it-klinger.de>
+ L:	linux-iio@vger.kernel.org
+-- 
+2.34.1
 
-Thanks & Regards,
-Tommaso
-
-> 
-> > +                                        10, 200);
-> > +}
-> 
-> The rest LGTM, so
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
 
