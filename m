@@ -1,210 +1,491 @@
-Return-Path: <linux-kernel+bounces-795761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7380BB3F77E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:04:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4655BB3F776
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28D6200EF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3573A1B20346
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4232E92B7;
-	Tue,  2 Sep 2025 08:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21992E8B64;
+	Tue,  2 Sep 2025 08:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OxoGM2Lj"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010060.outbound.protection.outlook.com [52.101.69.60])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iP9v70Az"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E38D2E8E0C;
-	Tue,  2 Sep 2025 08:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756800193; cv=fail; b=XKgxFqHN5vNbW8Nhd2qyhm3OeBPrIcpfxJe3LKr8XnPI7MceTfiWHJ+mW5ZYSwQ2pZQAFg7rKOifrFYClO8EZcpU5YVqqUgx5m3mDOnPgC5ddcofKYT9kAL8SevjuPzed6N8YDZ0McluYmvw4paqck08ezCZo2JgGmOXTLIve1k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756800193; c=relaxed/simple;
-	bh=acCelFb2tf3AUTxLDqa//aA0kgZctIn57T/AClq20sw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=a22vVhvOt4xgko+7FBT4WfiO/fhNk5qbJYzK7qNZhNTgQsb1DM1m3+FeKh+kEk7Jdv+3dI3g/pHqaNJJQTvAuGx4/wfgw49Ha/I0FohpjvZMN8tuEOZ+AjbrB0LqMFtNZi9CQLDgNHKxIQSb3mpIJ7A4W8n5MrJy7CXTlErg6i4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OxoGM2Lj; arc=fail smtp.client-ip=52.101.69.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AF10RJCXhJno5AQaLZtk/7Q3BO2uDsbk6gUZUYkSw9jzKNelnkuqTvO4OgXB/FBW5rQuW8siCt7/YQ6sAdCKzVmuvoyDbU+keknOAMWsDDbvzhGvS+4tio8Qge+ZspyMPA4X4fJY6YEv2mVynJZAEtZGh2TOUCSiRyVCnCdio6C2MpkAFGOBxyqKqniB9mZkSYNYcTS049dTmSiUpOZwrKDsha1fEDBNuSycJgNgv3loTN+qZXIFtljmFn+tSDvBWNvHwOtZhyMWEbNmpTU5r9a9G/oEobDxbUV1zk622NVQRQViUzAuuQCoDZasidXZdcKQGtlgMfWU8DruzjA+DQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5TEveY2keKMel3uEDO41NRqO21YKgEQFKeKNu+ATs2w=;
- b=V8i+9Xo8fxtcg/cTK7pvQqs0sZZACvknz6oSBBjJWIm6SdYavxV7DcieUeRuNljq3TrbixDtKKE1Jkl9RkP87E9EzLWTymbTsYiayBmTgLsO6/i+ytMfx6SaOPkJYy56pMZqoPmGMwAfnGKvMBf+iOszhNLgopIpDJ5V4zB0xWOgO8EIz4VRMOP5UwkeUyYgGeEGLi8D0FaWgpkvbwJmfENliw/8XzrcTqlC/7/rGQtKiJXAlAqvN4LJytDF6jH2fUl7WDT603MtVgq8Txu+X9b5Ld13+ziB/uWPVGKgKX3www+uPcopiY7IEMXMhZ8P1u2dX2iBL86xkGt7//DzEg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5TEveY2keKMel3uEDO41NRqO21YKgEQFKeKNu+ATs2w=;
- b=OxoGM2LjkB0tCJZ+gClAPEKv2aTuWYXBBekKgZDP0k4yOs1XJ6TS1UQSrCUECw1AQPK6M+v/IDE+zY1GSfvOgPZgNLfn0b0rLYLTDb/Fh1WivwS8fcHbt9tzu2ogwQMR8iFm+LUU3lSNnC6Rep6zAszEQuwdRQutH6XseRhJI5h/mRJugaFmSg/jwIZEGOebgJYG9udJ4C4bC2JjUAJ6Z1FrTXAMFM1+dlgYTI4Lp9od3vrxquJY49TZWtVQKAHeOWTJxCJYvRz2p9q7AA6wtveCDpr+trVviqgKhiuvm1jvLoRSDjyY0ODOe4xUnPAXaHR2n1GSDc5dESunSGYGHA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8833.eurprd04.prod.outlook.com (2603:10a6:20b:42c::19)
- by DB9PR04MB8265.eurprd04.prod.outlook.com (2603:10a6:10:24f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.14; Tue, 2 Sep
- 2025 08:03:05 +0000
-Received: from AS8PR04MB8833.eurprd04.prod.outlook.com
- ([fe80::209c:44e4:a205:8e86]) by AS8PR04MB8833.eurprd04.prod.outlook.com
- ([fe80::209c:44e4:a205:8e86%4]) with mapi id 15.20.9094.015; Tue, 2 Sep 2025
- 08:03:05 +0000
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: frank.li@nxp.com,
-	jingoohan1@gmail.com,
-	l.stach@pengutronix.de,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v5 6/6] PCI: dwc: Don't return error when wait for link up in dw_pcie_resume_noirq()
-Date: Tue,  2 Sep 2025 16:01:51 +0800
-Message-Id: <20250902080151.3748965-7-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20250902080151.3748965-1-hongxing.zhu@nxp.com>
-References: <20250902080151.3748965-1-hongxing.zhu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0087.apcprd03.prod.outlook.com
- (2603:1096:4:7c::15) To AS8PR04MB8833.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E9A2E8892
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756800169; cv=none; b=urnZW/gn8YhZ23Oc8ieU1GRPdf0pcghf04MjzREucJrRDK6DYx/+cpwysfnLwrzvTcgQ/75seI2+B+aalVsCBfsbhbZn7jsFVHepkiL8EhgAAbDbnSOVHGdxg9WV8E3HVH0xAuoo/NmFErrxZg0lmFI1zrkRCOHfvpiaRtMBevk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756800169; c=relaxed/simple;
+	bh=HxK1gbwi2CbGjb65q+s85dRWGBE8CixJNPvAdpG2zbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NB+2ak7kyZXtKSi1/A6dZsinrQFUJ3lHN0Pp8ZWlGGS0hxwqeTH4lk+HzZxKsJR4HvXt7drzOd5gF/1YeYk9NzifzcJpfOEDumPGhH5T3921JzyM4Txw+7LxeaSyUW6LowEW0ejnV8tBy9GJ7sPdHfhsJVqkIrdskgHuE2HSwq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iP9v70Az; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756800166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HXaSXI416tBr9Xt7SlviNqC21fFgH6dQWHigCHdg9IQ=;
+	b=iP9v70AzvpCtp0c7paJfiXupLY/q2ZnLBwarmNMExN+1kOGv7aRBT00GDHHxhcpz5iYdMW
+	2+TQjHg5EGrRjMBNEZdwFfxjMpje9YviHbWOk944gDtnSVpVqwAncAOv6hUlLZCpJ7f8wA
+	SlW93scbYqAIt6EH9x8XZmT8ET8yGiI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-pCD0YaEBMs6u0caM58a3zw-1; Tue, 02 Sep 2025 04:02:44 -0400
+X-MC-Unique: pCD0YaEBMs6u0caM58a3zw-1
+X-Mimecast-MFC-AGG-ID: pCD0YaEBMs6u0caM58a3zw_1756800163
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b8b7d66adso9460535e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 01:02:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756800163; x=1757404963;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HXaSXI416tBr9Xt7SlviNqC21fFgH6dQWHigCHdg9IQ=;
+        b=dWtipVqSeakv3d32AiDKhkW2IxG/IxhhIoa/LtBXTIHYAjntjZyPFW2OxPL2oD3MfI
+         17E9L40hMEjXoMUnEqCZ7rn8QkBbJV2ltfAYoKY/6EYD4uXORi/HHngUJI2SwyJQjo0b
+         oaNId1cQPLmSCvjI+aiJ0s8hrvSt5Q+7jY0UrlRujrkDWffGPrfd8/XWTTlwrDaN5hCA
+         yvbgXgiHle4PqEyDcUu7bLX7AW0lUmq8BN0TcnfVIEc/TvO23BrGnp977aWSNQSgefTA
+         8ymVDNdR14hBVFqtiswhtbDUym1dSvHK2hcP0T7UaGoJv8uVTsR4cZ+856kBUeLDHydR
+         0j8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbeiwMghUtnhcj+NFa/eS6ocJPZdpxrJBMesX5K8TrqKbbiOWkuFll7DwNOLZMoS5eyE5Nr61C1Hr4SZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLrM2LX+xw5tqV8jq/VUcbv4kHQHEzCASkCFWUoF3FsZYsK83c
+	KG+YiBTAMmG4sTTuNdB5LzgDQ1nCuQFD3YlKZ08Csvz8ZWglOB+kfrKhYv6SilmhqQRpoGEE8+X
+	h4osHua6rowCj3Wc+DwjTEoTuituM7RK9xZUbXN+ct2Zpaiz05B860F64V7boycyuRQ==
+X-Gm-Gg: ASbGnct2u/J6XXrLpJjQ9BlcncFykl5QpJRVQiVQ8rtMt1zzXpNDWMx3ZeO18p3B/RY
+	ixndRvu0bgbMmowfGKuM7tDRETSPWyioV89UI8o3+iQEqZtCxyW4lC+2oXaJEXFPeOhxztRe1hO
+	m46f5v4XTTEQIeW6i9j7D8kExmWtJrjzTLnn9QnTR2K2teJS/hTH5n8O1GeZB0h1Z36mHXq8uJ8
+	PkS9DuycbvxUffCEziT76PnS0FrXNP18yf8rZWgeHgUlu9DAlH4yoHP+u3Ah3rfdPBN/ob5ZHAL
+	NgwMjgD9RWvfj8hMetdpGm+7FFxdAi7JyrEDgv4h9WvmUMUTjZUVS+VAOwZ07wQN8IKLvTyUU9t
+	vHb8=
+X-Received: by 2002:a05:600c:1c15:b0:456:1514:5b04 with SMTP id 5b1f17b1804b1-45b9353e825mr19998505e9.21.1756800162759;
+        Tue, 02 Sep 2025 01:02:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHU4ehjBdhj/JptIUXUiuh2hVBGm3VR2ta7Nmb28ZEQjgQYesv86/linYfTv/nHm/XXIlNODg==
+X-Received: by 2002:a05:600c:1c15:b0:456:1514:5b04 with SMTP id 5b1f17b1804b1-45b9353e825mr19998105e9.21.1756800162234;
+        Tue, 02 Sep 2025 01:02:42 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33add294sm19732844f8f.29.2025.09.02.01.02.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 01:02:41 -0700 (PDT)
+Message-ID: <0439749a-ed43-4dc8-8025-f7aa1eec10b7@redhat.com>
+Date: Tue, 2 Sep 2025 10:02:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8833:EE_|DB9PR04MB8265:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3694f74b-f3fe-4a98-445e-08dde9f725a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|19092799006|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?e3EXTBHAkn0WNvy2dKZ3GOwtCiGAJ10sq1/dOWxS2L54TGk9eWRzO2xOh7WW?=
- =?us-ascii?Q?a8/Bn0oWdzdJe1IqDoaB+w28CteWzCIMZHYN8S/YxpszEZj/tP8F7A+aVGsz?=
- =?us-ascii?Q?I4InofDaXHtHaiGyw9wBseKSweaQfPFAyKfZ/LaCOE1J18j0+L9KS0c5vYAw?=
- =?us-ascii?Q?fOPSpj/4VrBEEByIqU2GSq4xGDPK4V5T5k56aIsvAEFeMaO1URN3rhFA+Ck6?=
- =?us-ascii?Q?XHT5FtISF4WwUD5tP3nAvGeP67NIJM2Yctw8q+DO4PBM9F7ATYaB4RxeC/lP?=
- =?us-ascii?Q?Jr1jcOB0hBc65bNVGai9vsGRu4dZmua5FgO+SVfMwyqK/U3C20Zaz08tuquE?=
- =?us-ascii?Q?DYovvNVtwoY0IIP+66AqJBZrJagZRV3yjsCUc4knw3Wc8JS3QKWiw/7gLtqk?=
- =?us-ascii?Q?HQofOmRACv1Lu02AEFE0HGl+SeOcVHLtHfLh+jMlBkXNuPekRCEysP88alJV?=
- =?us-ascii?Q?0w+pNUB93dJU6kNmm/YQj/oineCIunDS5tuWhtbCfGVdts8UAHk/MikCf27f?=
- =?us-ascii?Q?VGkhPNcjjAJaZo1AEwOhBro8xFESfJ2h04RKnRBKEKHRjeoRmKgUB+UsAlbF?=
- =?us-ascii?Q?3bAGFgxx29vju/BPsygCiwZGVqsTIQ16i9hy9qrkiFF+lTSOG6zE6Utyx5cl?=
- =?us-ascii?Q?BSQ3c0MfrPha3yjzLcVeClAiuxlOFD889jmOMowR2HW2PhoiYPoVXAzvWnb/?=
- =?us-ascii?Q?gmqGobUMMYHmBFzQn3JuzZWsmWrVteKTbYoGiR6t1SLIGvPUKFxEcf71QvPX?=
- =?us-ascii?Q?GtNq8+frVFPMfy6XDn0MII3qTsRVITL+1t8MFia3rVK1Ezlx2SQ4tSDkYUy1?=
- =?us-ascii?Q?kd2po5q9yJr4Bs7wBVY0Saa0EIBA9A181EtypPnKi5MBO9xHzMh4mVUZKvdr?=
- =?us-ascii?Q?Vw0+6eoYgcO9V8caftmJBo8v9+o2TiEVFpuKpQ0qEwZPKPzgePQKZfSfpEjN?=
- =?us-ascii?Q?AOQprhN7PGV5iZZiAnPakPuq0ZL52AmGE277ZAtsJlaGn1trTjVVfGp0RLmd?=
- =?us-ascii?Q?YYZ5eQvz+o9SGyjhbB4ARok45yQBVkH1j+kWnUS9qSibXu0bpCk10J6hSXvW?=
- =?us-ascii?Q?rW4oBxSWINSHLx9TaXnRS0Nk+y3sSz3n/JHlUZfFr3NeTu2jM3bH/zH+JX2Y?=
- =?us-ascii?Q?riXCFoNZMfnHNZWbLG7FADp3CtZVJzA/cjKxlojAFOrkZ1BSrE3wj1phMOuM?=
- =?us-ascii?Q?2tAVc+mTh6jP/G2L8XPfvPFjbZbJqAdeyqqun+IixfJdr9ZtEaZWUXGlXBbw?=
- =?us-ascii?Q?z08l07Wr32bUTKxHTzg4j7F4+xaNW5mvKQuN9eCfvc78Af7Ft1PkwsnYpg6s?=
- =?us-ascii?Q?W5bWsejYozdKdilPbWOcxgMkI9rnWAltN6nQ82ksKpbJC2Xr3Dp5nCPql1lz?=
- =?us-ascii?Q?Mf0/uXVjAB2WhsyT+WNDG7dyWfQblLbpHmhT1q2K8m2tP4kPN+Zrxx9UiLVJ?=
- =?us-ascii?Q?xWDHJT+KRlpRnWDMDVjTacCZkvPtig7cM9uDgBjXZGkRIgR2xUm4n9wRIJMQ?=
- =?us-ascii?Q?S6EvTmdcBMQYCt4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8833.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FOfiznsvuxo7oYwzGJ/cgzWgcrz1YwVp2FSkZZdczQst2+zg1RIzz8gKhvsx?=
- =?us-ascii?Q?ELgwyFugXuPuy3CitELQTKoCfcJY/EU/U9Tvgi1lWCoO2Tia2jMMONbFXKNd?=
- =?us-ascii?Q?YP25W8jBIxyRomzfL0Mgxzkr6M9NgRq/jYmYNR0eTB3sF+kE2gqtykZCOgEi?=
- =?us-ascii?Q?o9AsuNMSsOjmvmT0jDmGoFE7MlakNAxsmtVOYC72RbcNVjtfcqSA/d/tjjOc?=
- =?us-ascii?Q?ZMQjz/q7fwoMV4uxilDwrvYQC7yGVZ49stKBw+7SUppz64SWusWGb7d5GOKF?=
- =?us-ascii?Q?ukzBn1UyEW95cDdI39hQkkZhZjFi3MTF3PlQungXL7RRyXcG00+KrJRXouhC?=
- =?us-ascii?Q?SE2j1nLBuWaFCLNLZyXoPF+IsrxVBsWdV0S6JT5umP4Cr5t5hjqDlbi7yOHy?=
- =?us-ascii?Q?TJxbCHyxO4lHW6io106BXb0he49tZzvIEJojkZzi2Ac1Is9UQWeFctMmZlPD?=
- =?us-ascii?Q?nyMWDFWOoNIMdmGHS+tB+IBsB8kjY2v2P/Y9eUAkmMXuX17J5YY8elu6DFCt?=
- =?us-ascii?Q?vOrwXptAoXdI5Ofd8kjxDTftiuZyuWCRSWS5yi9NSJ9L/lq18uWmZJUIyH99?=
- =?us-ascii?Q?evFwGlUsikODjzI/3DOsgVZiBnIWm8WUDI8MLB6vZx585Fj+J51Ut5l43c7n?=
- =?us-ascii?Q?C29QHKnjC/Z/b+YcsclFHgQo5oXpfFwnCxkqIAJ8Oi1mftCodvOHJ5VrBRBG?=
- =?us-ascii?Q?AxemJ2If4YyeWUyzkt3o9pzKOew7SyJWCJdWDoJ/duMsC31gELJcwjUciae5?=
- =?us-ascii?Q?9PDm91vL7qC16tho3vCH42MuQZ5OqLBVQnwPkbhjktz7ZwBaJ6vVyMGW+2sV?=
- =?us-ascii?Q?ecF1sdL6uizOVDGFNJ5iOsXKIFQWEmLgs6KpJj4QJY5wNu2thZykvPjocT1g?=
- =?us-ascii?Q?Hi7jS54B7/vXwbuZzQPFUXuv/tHs+d2sunT6yBSrSGzesNuEvvNcC1D55JiY?=
- =?us-ascii?Q?mp7KkHuSdZnrCcYH8Pelg526uACmsmrqQBrtGtqy9J+wZ46yGZA6Xn8tKd/8?=
- =?us-ascii?Q?pwo06KEhBArTo7iB5Txd4GVe/H7l7P8UzIoKjcSn8A8SLVwSsqv/duqeColI?=
- =?us-ascii?Q?EmArwgxqv5Xmy3fHnhhNi3Uflg3URqLzAuekKUKdGoSRpKDMB8b+R9e8Ooe0?=
- =?us-ascii?Q?7kKsceG6hEsF3bo3YTdtg5D1kOyrArqDq9GWdQgDE+1yH9ZTNEthyXWs/S9b?=
- =?us-ascii?Q?vPg3H6hZCU1CHBaPqV6tknt1qKykWn3SGk52KhEp6vbpdjlC0DfPBhBehCyy?=
- =?us-ascii?Q?jA/G2M8/NrN7pmdepfozrezlqRgf7Pe+6EpPFBbZq8tJoVBscGlDe+GPsKKe?=
- =?us-ascii?Q?jOVeSC/9nedOgF5wpn/aqNdASrZt/OpuU3W7YEPwZu8R9Ruzwu6BHHvouwy9?=
- =?us-ascii?Q?zAXtOmuOoY/LTcstk5GpjboKZGQWqjhs95eVJwyYfrVmbDvv85AEipzAo3OQ?=
- =?us-ascii?Q?BZxdc4KQWndcAVSxbY/lemjVrErZ+Qgqm5bEuiC4tY4iIub7I+Q4zbpuCOcS?=
- =?us-ascii?Q?ufujfVylAlZu0eIhn3YrkfJgqmv33QFzwui9f0mDDK+lFhSOKMuEsxqBAQU3?=
- =?us-ascii?Q?SUgxsrBrYXfPXNGeCvQRWB3N9t2jdkyj/bnmvtNc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3694f74b-f3fe-4a98-445e-08dde9f725a4
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8833.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 08:03:05.8116
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: brx3MCapRPYGHogr6w98vA+tZ9cTp+iOAXhGXj07iMkMfMoxT/b3jL3cM8P0yyqPq/fZ3WQjL+mz82aNqVRKuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8265
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH drm-misc-next 1/1] drm/vmwgfx: add drm_panic support for
+ stdu
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>, zack.rusin@broadcom.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250901083701.32365-1-ryasuoka@redhat.com>
+ <20250901083701.32365-2-ryasuoka@redhat.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20250901083701.32365-2-ryasuoka@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When waiting for the PCIe link to come up, both link up and link down
-are valid results depending on the device state.
+On 01/09/2025 10:36, Ryosuke Yasuoka wrote:
+> Add drm_panic module for vmwgfx stdu so that panic screen can be
+> displayed on panic.
 
-Since the link may come up later and to get rid of the following
-mis-reported PM errors. Do not return an -ETIMEDOUT error, as the
-outcome has already been reported in dw_pcie_wait_for_link().
+Thanks for this work.
 
-PM error logs introduced by the -ETIMEDOUT error return.
-imx6q-pcie 33800000.pcie: Phy link never came up
-imx6q-pcie 33800000.pcie: PM: dpm_run_callback(): genpd_resume_noirq returns -110
-imx6q-pcie 33800000.pcie: PM: failed to resume noirq: error -110
+If I understand correctly, this will draw the panic screen to the vfbo 
+buffer, and then in the panic_flush() function, use 
+vmw_panic_bo_cpu_blit() to copy that to the guest_memory_bo.
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
- drivers/pci/controller/dwc/pcie-designware-host.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+I think it should be easier to directly write the panic screen to the 
+guest_memory_bo.
+To write to the guest_memory_bo, you can do something similar as 
+vmw_bo_cpu_blit_line(), but using kmap_local_page_try_from_panic() 
+instead of kmap_atomic_prot().
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index b303a74b0fd7..c4386be38a07 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -1084,10 +1084,9 @@ int dw_pcie_resume_noirq(struct dw_pcie *pci)
- 	if (ret)
- 		return ret;
- 
--	ret = dw_pcie_wait_for_link(pci);
--	if (ret)
--		return ret;
-+	/* Ignore errors, the link may come up later */
-+	dw_pcie_wait_for_link(pci);
- 
--	return ret;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(dw_pcie_resume_noirq);
+You will probably need a custom set_pixel() function, like what I've 
+done for i915
+https://elixir.bootlin.com/linux/v6.17-rc4/source/drivers/gpu/drm/xe/display/intel_bo.c#L98
+
+Best regards,
+
 -- 
-2.37.1
+
+Jocelyn
+
+> 
+> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> ---
+>   drivers/gpu/drm/vmwgfx/vmwgfx_blit.c   |  43 ++++++++
+>   drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c |  11 ++
+>   drivers/gpu/drm/vmwgfx/vmwgfx_drv.h    |   4 +
+>   drivers/gpu/drm/vmwgfx/vmwgfx_kms.c    |  48 +++++++++
+>   drivers/gpu/drm/vmwgfx/vmwgfx_kms.h    |   1 +
+>   drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c   | 139 +++++++++++++++++++++++++
+>   6 files changed, 246 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
+> index fa5841fda659..d7ed04531249 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
+> @@ -514,6 +514,49 @@ static int vmw_external_bo_copy(struct vmw_bo *dst, u32 dst_offset,
+>   	return ret;
+>   }
+>   
+> +/* For drm_panic */
+> +void vmw_panic_bo_cpu_blit(struct vmw_bo *vmw_dst, u32 dst_stride,
+> +			   struct vmw_bo *vmw_src, u32 src_stride,
+> +			   u32 w, u32 h, struct vmw_diff_cpy *diff)
+> +{
+> +	struct ttm_buffer_object *src = &vmw_src->tbo;
+> +	struct ttm_buffer_object *dst = &vmw_dst->tbo;
+> +	u32 j;
+> +	u32 initial_line = 0;
+> +	u32 dst_offset = 0;
+> +	u32 src_offset = 0;
+> +	int ret = 0;
+> +	struct vmw_bo_blit_line_data d = {
+> +		.mapped_dst = 0,
+> +		.mapped_src = 0,
+> +		.dst_addr = NULL,
+> +		.src_addr = NULL,
+> +		.dst_pages = dst->ttm->pages,
+> +		.src_pages = src->ttm->pages,
+> +		.dst_num_pages = PFN_UP(dst->resource->size),
+> +		.src_num_pages = PFN_UP(src->resource->size),
+> +		.dst_prot = ttm_io_prot(dst, dst->resource, PAGE_KERNEL),
+> +		.src_prot = ttm_io_prot(src, src->resource, PAGE_KERNEL),
+> +		.diff = diff,
+> +	};
+> +
+> +	for (j = 0; j < h; ++j) {
+> +		diff->line = j + initial_line;
+> +		diff->line_offset = dst_offset % dst_stride;
+> +		ret = vmw_bo_cpu_blit_line(&d, dst_offset, src_offset, w);
+> +		if (ret)
+> +			goto out;
+> +
+> +		dst_offset += dst_stride;
+> +		src_offset += src_stride;
+> +	}
+> +out:
+> +	if (d.src_addr)
+> +		kunmap_atomic(d.src_addr);
+> +	if (d.dst_addr)
+> +		kunmap_atomic(d.dst_addr);
+> +}
+> +
+>   /**
+>    * vmw_bo_cpu_blit - in-kernel cpu blit.
+>    *
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
+> index 94e8982f5616..e39cc2f214be 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
+> @@ -983,6 +983,17 @@ void *vmw_cmdbuf_alloc(struct vmw_cmdbuf_man *man,
+>   	return header->cmd;
+>   }
+>   
+> +/* For drm_panic */
+> +char *vmw_panic_cmdbuf_reserve_cur(struct vmw_cmdbuf_man *man, size_t size)
+> +{
+> +	/* Refer to cur without cur_mutex since this func is called in panic handler */
+> +	struct vmw_cmdbuf_header *cur = man->cur;
+> +
+> +	cur->reserved = size;
+> +
+> +	return (char *) (man->cur->cmd + man->cur_pos);
+> +}
+> +
+>   /**
+>    * vmw_cmdbuf_reserve_cur - Reserve space for commands in the current
+>    * command buffer.
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+> index eda5b6f8f4c4..c71ce975bf52 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+> @@ -1271,6 +1271,7 @@ extern int vmw_cmdbuf_idle(struct vmw_cmdbuf_man *man, bool interruptible,
+>   extern void *vmw_cmdbuf_reserve(struct vmw_cmdbuf_man *man, size_t size,
+>   				int ctx_id, bool interruptible,
+>   				struct vmw_cmdbuf_header *header);
+> +extern char *vmw_panic_cmdbuf_reserve_cur(struct vmw_cmdbuf_man *man, size_t size);
+>   extern void vmw_cmdbuf_commit(struct vmw_cmdbuf_man *man, size_t size,
+>   			      struct vmw_cmdbuf_header *header,
+>   			      bool flush);
+> @@ -1329,6 +1330,9 @@ int vmw_bo_cpu_blit(struct vmw_bo *dst,
+>   		    u32 src_offset, u32 src_stride,
+>   		    u32 w, u32 h,
+>   		    struct vmw_diff_cpy *diff);
+> +void vmw_panic_bo_cpu_blit(struct vmw_bo *dst, u32 dst_stride,
+> +			   struct vmw_bo *src, u32 src_stride,
+> +			   u32 w, u32 h, struct vmw_diff_cpy *diff);
+>   
+>   /* Host messaging -vmwgfx_msg.c: */
+>   void vmw_disable_backdoor(void);
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+> index 54ea1b513950..160a4efbf342 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+> @@ -1717,6 +1717,54 @@ void vmw_kms_lost_device(struct drm_device *dev)
+>   	drm_atomic_helper_shutdown(dev);
+>   }
+>   
+> +/* For drm_panic */
+> +int vmw_du_panic_helper_plane_update(struct vmw_du_update_plane *update)
+> +{
+> +	struct drm_plane_state *state = update->plane->state;
+> +	struct vmw_framebuffer_bo *vfbbo =
+> +		container_of(update->vfb, typeof(*vfbbo), base);
+> +	struct drm_rect src = drm_plane_state_src(state);
+> +	struct drm_rect clip = {
+> +		.x1 = 0,
+> +		.y1 = 0,
+> +		.x2 = (src.x2 >> 16) + !!(src.x2 & 0xFFFF),
+> +		.y2 = (src.y2 >> 16) + !!(src.y2 & 0xFFFF),
+> +	};
+> +	DECLARE_VAL_CONTEXT(val_ctx, NULL, 0);
+> +	uint32_t reserved_size = 0;
+> +	uint32_t submit_size = 0;
+> +	char *cmd;
+> +	int ret;
+> +
+> +	vmw_bo_placement_set(vfbbo->buffer,
+> +			     VMW_BO_DOMAIN_SYS | VMW_BO_DOMAIN_MOB | VMW_BO_DOMAIN_GMR,
+> +			     VMW_BO_DOMAIN_SYS | VMW_BO_DOMAIN_MOB | VMW_BO_DOMAIN_GMR);
+> +
+> +	ret = vmw_validation_add_bo(&val_ctx, vfbbo->buffer);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = vmw_validation_prepare(&val_ctx, NULL, false);
+> +	if (ret)
+> +		return ret;
+> +
+> +	reserved_size = update->calc_fifo_size(update, 1);
+> +	cmd = vmw_panic_cmdbuf_reserve_cur(update->dev_priv->cman, reserved_size);
+> +	if (!cmd)
+> +		return -ENOMEM;
+> +
+> +	vmw_du_translate_to_crtc(state, &clip);
+> +
+> +	update->clip(update, cmd, &clip, 0, 0);
+> +	submit_size = update->post_clip(update, cmd, &clip);
+> +
+> +	vmw_cmd_commit(update->dev_priv, submit_size);
+> +
+> +	vmw_kms_helper_validation_finish(update->dev_priv, NULL, &val_ctx,
+> +					 NULL, NULL);
+> +	return ret;
+> +}
+> +
+>   /**
+>    * vmw_du_helper_plane_update - Helper to do plane update on a display unit.
+>    * @update: The closure structure.
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h
+> index 445471fe9be6..e6299390ffea 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.h
+> @@ -499,6 +499,7 @@ int vmw_kms_stdu_readback(struct vmw_private *dev_priv,
+>   			  struct drm_crtc *crtc);
+>   
+>   int vmw_du_helper_plane_update(struct vmw_du_update_plane *update);
+> +int vmw_du_panic_helper_plane_update(struct vmw_du_update_plane *update);
+>   
+>   /**
+>    * vmw_du_translate_to_crtc - Translate a rect from framebuffer to crtc
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c b/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
+> index 20aab725e53a..65b41338c620 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c
+> @@ -36,6 +36,7 @@
+>   #include <drm/drm_atomic_helper.h>
+>   #include <drm/drm_damage_helper.h>
+>   #include <drm/drm_fourcc.h>
+> +#include <drm/drm_panic.h>
+>   #include <drm/drm_vblank.h>
+>   
+>   #define vmw_crtc_to_stdu(x) \
+> @@ -1164,6 +1165,66 @@ static uint32_t vmw_stdu_bo_clip_cpu(struct vmw_du_update_plane  *update,
+>   	return 0;
+>   }
+>   
+> +/* For drm_panic */
+> +static uint32_t
+> +vmw_stdu_panic_bo_populate_update_cpu(struct vmw_du_update_plane  *update, void *cmd,
+> +				      struct drm_rect *bb)
+> +{
+> +	struct vmw_du_update_plane_buffer *bo_update;
+> +	struct vmw_screen_target_display_unit *stdu;
+> +	struct vmw_framebuffer_bo *vfbbo;
+> +	struct vmw_diff_cpy diff = VMW_CPU_BLIT_DIFF_INITIALIZER(0);
+> +	struct vmw_stdu_update_gb_image *cmd_img = cmd;
+> +	struct vmw_stdu_update *cmd_update;
+> +	struct vmw_bo *src_bo, *dst_bo;
+> +	s32 src_pitch, dst_pitch;
+> +	s32 width, height;
+> +
+> +	bo_update = container_of(update, typeof(*bo_update), base);
+> +	stdu = container_of(update->du, typeof(*stdu), base);
+> +	vfbbo = container_of(update->vfb, typeof(*vfbbo), base);
+> +
+> +	width = bb->x2;
+> +	height = bb->y2;
+> +
+> +	diff.cpp = stdu->cpp;
+> +
+> +	dst_bo = stdu->display_srf->res.guest_memory_bo;
+> +	dst_pitch = stdu->display_srf->metadata.base_size.width * stdu->cpp;
+> +
+> +	src_bo = vfbbo->buffer;
+> +	src_pitch = update->vfb->base.pitches[0];
+> +
+> +	vmw_panic_bo_cpu_blit(dst_bo, dst_pitch, src_bo, src_pitch,
+> +			      width * stdu->cpp, height, &diff);
+> +
+> +	if (drm_rect_visible(&diff.rect)) {
+> +		SVGA3dBox *box = &cmd_img->body.box;
+> +
+> +		cmd_img->header.id = SVGA_3D_CMD_UPDATE_GB_IMAGE;
+> +		cmd_img->header.size = sizeof(cmd_img->body);
+> +		cmd_img->body.image.sid = stdu->display_srf->res.id;
+> +		cmd_img->body.image.face = 0;
+> +		cmd_img->body.image.mipmap = 0;
+> +
+> +		box->x = diff.rect.x1;
+> +		box->y = diff.rect.y1;
+> +		box->z = 0;
+> +		box->w = drm_rect_width(&diff.rect);
+> +		box->h = drm_rect_height(&diff.rect);
+> +		box->d = 1;
+> +
+> +		cmd_update = (struct vmw_stdu_update *)&cmd_img[1];
+> +		vmw_stdu_populate_update(cmd_update, stdu->base.unit,
+> +					 diff.rect.x1, diff.rect.x2,
+> +					 diff.rect.y1, diff.rect.y2);
+> +
+> +		return sizeof(*cmd_img) + sizeof(*cmd_update);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static uint32_t
+>   vmw_stdu_bo_populate_update_cpu(struct vmw_du_update_plane  *update, void *cmd,
+>   				struct drm_rect *bb)
+> @@ -1228,6 +1289,28 @@ vmw_stdu_bo_populate_update_cpu(struct vmw_du_update_plane  *update, void *cmd,
+>   	return 0;
+>   }
+>   
+> +/* For drm_panic */
+> +static int vmw_stdu_panic_plane_update_bo(struct vmw_private *dev_priv,
+> +					  struct drm_plane *plane,
+> +					  struct vmw_framebuffer *vfb)
+> +{
+> +	struct vmw_du_update_plane_buffer bo_update;
+> +
+> +	memset(&bo_update, 0, sizeof(struct vmw_du_update_plane_buffer));
+> +	bo_update.base.plane = plane;
+> +	bo_update.base.old_state = plane->state;
+> +	bo_update.base.dev_priv = dev_priv;
+> +	bo_update.base.du = vmw_crtc_to_du(plane->state->crtc);
+> +	bo_update.base.vfb = vfb;
+> +
+> +	bo_update.base.calc_fifo_size = vmw_stdu_bo_fifo_size_cpu;
+> +	bo_update.base.pre_clip = vmw_stdu_bo_pre_clip_cpu;
+> +	bo_update.base.clip = vmw_stdu_bo_clip_cpu;
+> +	bo_update.base.post_clip = vmw_stdu_panic_bo_populate_update_cpu;
+> +
+> +	return vmw_du_panic_helper_plane_update(&bo_update.base);
+> +}
+> +
+>   /**
+>    * vmw_stdu_plane_update_bo - Update display unit for bo backed fb.
+>    * @dev_priv: device private.
+> @@ -1458,6 +1541,60 @@ vmw_stdu_primary_plane_atomic_update(struct drm_plane *plane,
+>   		vmw_fence_obj_unreference(&fence);
+>   }
+>   
+> +static int
+> +vmw_stdu_primary_plane_get_scanout_buffer(struct drm_plane *plane,
+> +					  struct drm_scanout_buffer *sb)
+> +{
+> +	struct vmw_framebuffer *vfb;
+> +	struct vmw_framebuffer_bo *vfbbo;
+> +	void *virtual;
+> +
+> +	if (!plane->state || !plane->state->fb || !plane->state->visible)
+> +		return -ENODEV;
+> +
+> +	vfb = vmw_framebuffer_to_vfb(plane->state->fb);
+> +
+> +	if (!vfb->bo)
+> +		return -ENODEV;
+> +
+> +	vfbbo = container_of(vfb, typeof(*vfbbo), base);
+> +	virtual = vmw_bo_map_and_cache(vfbbo->buffer);
+> +	if (!virtual)
+> +		return -ENODEV;
+> +	iosys_map_set_vaddr(&sb->map[0], virtual);
+> +
+> +	sb->format = plane->state->fb->format;
+> +	sb->width = plane->state->fb->width;
+> +	sb->height = plane->state->fb->height;
+> +	sb->pitch[0] = plane->state->fb->pitches[0];
+> +
+> +	return 0;
+> +}
+> +
+> +static void vmw_stdu_primary_plane_panic_flush(struct drm_plane *plane)
+> +{
+> +	struct drm_plane_state *state = plane->state;
+> +	struct vmw_plane_state *vps = vmw_plane_state_to_vps(state);
+> +	struct drm_crtc *crtc = state->crtc;
+> +	struct vmw_private *dev_priv = vmw_priv(crtc->dev);
+> +	struct vmw_framebuffer *vfb = vmw_framebuffer_to_vfb(state->fb);
+> +	struct vmw_screen_target_display_unit *stdu = vmw_crtc_to_stdu(crtc);
+> +	int ret;
+> +
+> +	stdu->display_srf = vmw_user_object_surface(&vps->uo);
+> +	stdu->content_fb_type = vps->content_fb_type;
+> +	stdu->cpp = vps->cpp;
+> +
+> +	ret = vmw_stdu_bind_st(dev_priv, stdu, &stdu->display_srf->res);
+> +	if (ret)
+> +		DRM_ERROR("Failed to bind surface to STDU.\n");
+> +
+> +	if (vfb->bo)
+> +		ret = vmw_stdu_panic_plane_update_bo(dev_priv, plane, vfb);
+> +	if (ret)
+> +		DRM_ERROR("Failed to update STDU.\n");
+> +}
+> +
+>   static void
+>   vmw_stdu_crtc_atomic_flush(struct drm_crtc *crtc,
+>   			   struct drm_atomic_state *state)
+> @@ -1506,6 +1643,8 @@ drm_plane_helper_funcs vmw_stdu_primary_plane_helper_funcs = {
+>   	.atomic_update = vmw_stdu_primary_plane_atomic_update,
+>   	.prepare_fb = vmw_stdu_primary_plane_prepare_fb,
+>   	.cleanup_fb = vmw_stdu_primary_plane_cleanup_fb,
+> +	.get_scanout_buffer = vmw_stdu_primary_plane_get_scanout_buffer,
+> +	.panic_flush = vmw_stdu_primary_plane_panic_flush,
+>   };
+>   
+>   static const struct drm_crtc_helper_funcs vmw_stdu_crtc_helper_funcs = {
 
 
