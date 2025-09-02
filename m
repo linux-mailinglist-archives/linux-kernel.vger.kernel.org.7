@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-796110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CAAB3FC0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:19:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D74B3FC12
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A5148397D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:18:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 602852C19CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D717127EFE3;
-	Tue,  2 Sep 2025 10:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D1B27F18B;
+	Tue,  2 Sep 2025 10:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A9f/thgV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iJa1aZtN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5512836A3
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED7227F75C
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 10:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756808316; cv=none; b=BrA3lcsArbh9Hfcu4ykXb49qzojsxxhfZTkM1dXUSYyzzKw5FgZg/V1wu/k1wWKESYsTMAuDvjh3h7p1BaqdhX3cY2JP0RQGud7DJqMVnfdn5yQ1Xp2SyV7nwhseKslr3A0jm3uBanY9KdzWXpDLTApBepJf6JwccLmY5bZ1LF4=
+	t=1756808361; cv=none; b=kiuGImcpqimbB2nLVC+U1fIeKKnY2rVcYOJMTNBb9bQAFRQP8yv+KQG5hLfrW6iuGXJHGaODJVHyZTfpb5e5mTHgmJCsvzQRVsOJZcNIF7/7UgCsQA8OiDD3/hzaed8EJ5LH2O1hG1DSlSL+SBizHc5ee9s5YjvPwtuSq9gUxII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756808316; c=relaxed/simple;
-	bh=wz/yk7VaKLnUdFZXtSAi4e+vOS1hn3IxE69YK9vN2+E=;
+	s=arc-20240116; t=1756808361; c=relaxed/simple;
+	bh=FSegoTi0JyiRxfOzc/dPsCA4YdptcJJvDsAwo9nEghg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t5yBtIRO8QL5d9dugp8k5hYfz3/qpanq2/L/ZCcB1i/ABhyXNUJRiw+BWVgimuv0crT7JrTBa38x0IvCA04ES443p6kXouAQt+8kJMUmPgoLuwbvJ8+HJjJSbhnwYyRnjrJrFo0CnDX/GWSRS7zQTb15zVzwj7jX/t7DFq0Bxa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A9f/thgV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756808313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XfPQDWh+blhS1iVGJAFgii1Xqa8zns+gAsDev0OCaLA=;
-	b=A9f/thgVCdWLSTsHCM4igR7WqrT7PJqUpt3hvYL0Bj5NXvC/YyXo6r6JRUlXBFGzEEmtpr
-	0FKtckDxrJEYNts4PloM4xa65m1Vy/ecgjCjUTlM+6yWScIxx5XQCTNcJ+FyNJVrxl+02z
-	tGk9m4gner9dkmFwom+5j9QWHfNQNZg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-582-O2jqi9PSO6qck5sJK62org-1; Tue, 02 Sep 2025 06:18:32 -0400
-X-MC-Unique: O2jqi9PSO6qck5sJK62org-1
-X-Mimecast-MFC-AGG-ID: O2jqi9PSO6qck5sJK62org_1756808311
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b9ca27a11so775885e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:18:32 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=uQGkCKNxWv1W2O8vYCtwmapc0VPMfvgkCvRfVYq/vNOQQGFprkAL8h8yhkuxhJIGrr4emA0ZIXUVKtTEpNXr0onlNhE1cD+xKPOFeIPPZ/YlaRqzYnumJzIItsY+KcIfX2gdjqHMlVh5oU1PEVZ8KNk77psMbuaNea7tsF5HlA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iJa1aZtN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822RngB029949
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 10:19:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	br24zZfPUMh2y5hphW6eSZrx2KUZEQPgg53oVJYo2X8=; b=iJa1aZtNGpYUsLtH
+	m1ASUdi9WGVZUi0Z49LkP+EvwspangHxNaWLIMdnNHvetGnlp4ED/YlZPhZRziSE
+	ZwHP2SWGpvO5791IK5bvAGBDV2yr6OPvPIiFQ+mTOaBT7xDmhxLEryuErswaUDGr
+	BcZ/QGtbAu8UnRYzUZqwJ71NT66l682265rzx9lPYlkC9aOUvX39Geexba7Z0l/L
+	GhzZy02uYiaqenl8frn7LcCDeflWRQtQR602svxMh/JV1ASRE3rNaixMVqsDg4SR
+	C6d0yZqMpy2R3wrQXQFyiCcxwYJMZDjP+4BjoTnAmtNhp6Vtye8PaAque6jQ63v3
+	xVTv5A==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ush2yb5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 10:19:19 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-24ab0409d3eso41724585ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 03:19:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756808311; x=1757413111;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XfPQDWh+blhS1iVGJAFgii1Xqa8zns+gAsDev0OCaLA=;
-        b=hZI7X69SRwdewPGWSifTn8UuEUcQuTJRR5hzUh94eyrkmqfdcEyOcWt072PIVtDAOj
-         qElOqiO4+7Yl5+vK2LEUF83NzaoQAuusI5qoj2TD6Qm+8rUUxPqje8ovQHZhT1DD9Vi1
-         QSx+VGKXmfyI/cZBgn1prWtQYHrGVuTer76czpBLZV2iB2Ufp1KS/0fvduKTtnLgVGdD
-         qvPwNwjrrIbm2bIo3XftrMFuPN9oIeIgxIEW/cCERDdYmdB1sd/kwnZd6V9GoZeM6Y8P
-         y0y08fGE4hU2gnMo34hcTFWSX9qDBDQi2sisiW2vWI2vftZUOsa7LXkM3zFGjoca1+cs
-         S+2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIDDA1CF/IawM/ma+gdTgnXEuDS3oQKe/T5/Z0gHg6iVLCKgK/RmirXN4jwxsqSaarTbiydAa9QtSKg6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLG0JsZFJoWg9vonDhDJi6rpqr2yWL61Jf/SG82ChKUMw7qVbq
-	Ro1Uj6euGCrdS5thEHECtpBTkjUW62T8G1MZc0LNnaR/jyBrRHFcyQ0UkNXSXd1RW7ddHa377fu
-	IrQeV7ISgUZqcGknBLXSZJsIESYV+cwG5LBakGvcw7v2vj6p6OzRF+k+Ey8I9ISy7Iw==
-X-Gm-Gg: ASbGncubh+V0YteD/9Q62nbd0gmNSm1tatCpAdK6cFy1pBcHewDaSoB1LuYxwiTxd2M
-	vZOdbY4vneGXULUlLQkipjTh8T0crVsm8l1pxVKmc6TR494vsBH/A23vO6qxxA32MdtJzYVjBnD
-	3Q5gV/9Xsc2FwvV4knTQCmSFUnSAWjuf47ZJQRBqth+cNIIMGk4NYVaGfChRCKQ7OjcONDDMQhC
-	y8PfQpGltx1fY+DUJo3ED7hMYLDPKh5Co67XFQF6TK+A0a6kcgIHZXuM1KkgvY7NPyCVccH2kjE
-	tebntSEqsuN4voxSHVPaB8LBRbm1/J7WNAtSRqBv0uh8L8vI/45S6lU8xuVRFZFdZo1Caahqefz
-	BlcJdXX/EC6j3O26hJP7RCLqSJhoELw/CafX4j+vv53JT63hPXw18w32iFUpTbsFzbOU=
-X-Received: by 2002:a05:600c:4754:b0:458:b8b0:6338 with SMTP id 5b1f17b1804b1-45b8554e53amr108058045e9.6.1756808310848;
-        Tue, 02 Sep 2025 03:18:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEJ+ztZI1y4AVzKBKNuPojd6cp+oaGeLPMegv91kQPUznpJCNgOTUu1ktEdtczx4Xk1VYZ6YQ==
-X-Received: by 2002:a05:600c:4754:b0:458:b8b0:6338 with SMTP id 5b1f17b1804b1-45b8554e53amr108057835e9.6.1756808310345;
-        Tue, 02 Sep 2025 03:18:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1f:3f00:731a:f5e5:774e:d40c? (p200300d82f1f3f00731af5e5774ed40c.dip0.t-ipconnect.de. [2003:d8:2f1f:3f00:731a:f5e5:774e:d40c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b66bbcf19sm164087935e9.4.2025.09.02.03.18.28
+        d=1e100.net; s=20230601; t=1756808358; x=1757413158;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=br24zZfPUMh2y5hphW6eSZrx2KUZEQPgg53oVJYo2X8=;
+        b=S440DIUYdxqDnLeHSCHQ9JWm7x7itoSmyOBaYyzP42VXDvGl5+z+vtxJeqemDPUuRt
+         K+pKr7kJuVEpt4/jdhhQbXgphnaJbkgbHM5tpnNUbd5Fwo2Dic5iJXRqikFR7nAATkgl
+         g+WK4DeEzDNcjvL89sxw3IZS3YzIYB4R4Q/Uipfj1zZ4LAsD+dxhV7tr3D1XBGWxQQpk
+         EOMMXziiaZ2kBmOchbLKzui4f+U2OHddZ4a7YPhh++WaclgQRe9Bh5AFZd2yKKtj/Ks2
+         T8DWTQWCsR2bxZKpxZMDOv0vE6U47mTe5RpUeSV95bn0QxbOblr4QL7xwm0hAKlTshnN
+         OxrA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3ndwEullagqqsJSiioUj389mZpdfcLbgb6SSWfj77xju6dGCU2Kuxu4qj0oyPurTi+vTqwEo521gvKo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSek76hcO+JZPAN7NsDgzhh5nNezMIT5TQ74Y1YiR/ZO1RogTX
+	dPNM94s9nfUiBBnWu67ZyYIGmodfJriH6XC5PBmG7PPXSATJqzqlcIqEYWTENcUsp8cjQv/AX4E
+	V2x6VJ2J36lvnQFbMHDYs2ZF3njeSsVjo10Hs6qEVje1xI7c79AG7K3co3UWV7ntdiRE=
+X-Gm-Gg: ASbGncvoIlrC1yyNmUCm+GS20q7hX/Lw9BMDV5MIpjulqek7edwIPU7r2K3ny9qLYII
+	mTrLBaHUc0k4ijO2vaEOEPpVm63ZyHno/PKQFcipS1d7DVMRMjv7CN/v3cOUpvUi/eECHUlGn1u
+	krOK77REWUgLW3Hg1/nXnZGVgwNwtIVTYMkE0QXtkDQ7fgSkW2enVm2Ne30tgx+KBe6056xrxeM
+	cpkVnUMNTjKn2kFMFgGM0pqoASXDU9XJ++LgiWyovuMRv5F/YuLCd78M/tOqZIgh/+r2d/L4hXQ
+	uyita2DwxO5d/u6vsuXx2Ydbh6NU0LsLFlwfiCGmfFqKRpC2TA2abRFRIoGnlWrGNZewhe1MuNM
+	eUiMvtHFJUzAzQk3bEiF8HfpWTWxoeA==
+X-Received: by 2002:a17:903:2ca:b0:246:2afa:4cc with SMTP id d9443c01a7336-24944accdccmr125619005ad.42.1756808357947;
+        Tue, 02 Sep 2025 03:19:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExZaQpujI+DBeEgb+OY+oIAOGhyp2Ov4L53Do99REhENCXH8YvVx3wL9zFdzC8VQf9tej07A==
+X-Received: by 2002:a17:903:2ca:b0:246:2afa:4cc with SMTP id d9443c01a7336-24944accdccmr125618675ad.42.1756808357534;
+        Tue, 02 Sep 2025 03:19:17 -0700 (PDT)
+Received: from [10.133.33.25] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249065899f3sm125975505ad.113.2025.09.02.03.19.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Sep 2025 03:18:28 -0700 (PDT)
-Message-ID: <911dc3b4-c511-4ef2-a159-091780987965@redhat.com>
-Date: Tue, 2 Sep 2025 12:18:27 +0200
+        Tue, 02 Sep 2025 03:19:17 -0700 (PDT)
+Message-ID: <d7141b57-fa3c-49ce-9830-8310a58b9581@oss.qualcomm.com>
+Date: Tue, 2 Sep 2025 18:19:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,145 +89,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] mm, swap: always lock and check the swap cache folio
- before use
-To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
- Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
- Kemeng Shi <shikemeng@huaweicloud.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org
-References: <20250822192023.13477-1-ryncsn@gmail.com>
- <20250822192023.13477-3-ryncsn@gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v3 01/38] drm/msm/dp: remove cached drm_edid from panel
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250825-msm-dp-mst-v3-0-01faacfcdedd@oss.qualcomm.com>
+ <20250825-msm-dp-mst-v3-1-01faacfcdedd@oss.qualcomm.com>
+ <otmy4kttxflsxkvacwdsqynck4nqeww7jsxaq2xwjtlooxnhvx@gmpezdliskck>
+ <5b142910-81e7-462d-8933-70705334ef0a@oss.qualcomm.com>
+ <yarnaujunszlfrbduakodv7n63wjgh6og3t4qowhu3n6tz6fmn@4kb4crd5rqq7>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250822192023.13477-3-ryncsn@gmail.com>
+From: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+In-Reply-To: <yarnaujunszlfrbduakodv7n63wjgh6og3t4qowhu3n6tz6fmn@4kb4crd5rqq7>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfX8aVC/9tpWHUf
+ tju+W34as7ck2uWFzBlwuR3SxpXGRJSeQ1IiJRBIlfdquWd30IM8fKEtUts5dK7hLUlQwGqY/jd
+ a5rPkrhLK332qYa/XYQ2CnaNLtWbBsIm0UfJVwaXibO7bpl11K4y/WHFQgN6PTC7Y4QdKgWVxbf
+ IWNGWU8uJPl5QBQ7n0BJKfOKl2/tF04GAEwTQU4fsVLAz4vm3Kc2TgMMSAeShOtQZv6ZHGVqIU8
+ RwKlnrWH9W/LJE6nbLck9Bgmxr6zjefNz3ySsh1952B/FZxwgVn2QBnguuXp99auawWXjj3/chk
+ cNPDCNw1I+11KwWdKaak7mwPPx6IKGHiDVyLW8I8w1/VbQgn+VAva7KQ9LHZNU5nO3NE25a47R5
+ BRXr7XSx
+X-Proofpoint-ORIG-GUID: pDQb17qIwZefRDbyYWqMVVmlVKXMQNok
+X-Proofpoint-GUID: pDQb17qIwZefRDbyYWqMVVmlVKXMQNok
+X-Authority-Analysis: v=2.4 cv=M9NNKzws c=1 sm=1 tr=0 ts=68b6c4a7 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=PD6ve5_SbK8zx8cgC-cA:9
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 suspectscore=0 phishscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300032
 
-On 22.08.25 21:20, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
+
+
+On 9/2/2025 5:36 PM, Dmitry Baryshkov wrote:
+> On Tue, Sep 02, 2025 at 04:42:18PM +0800, Yongxing Mou wrote:
+>>
+>>
+>> On 8/26/2025 12:41 AM, Dmitry Baryshkov wrote:
+>>> On Mon, Aug 25, 2025 at 10:15:47PM +0800, Yongxing Mou wrote:
+>>>> The cached drm_edid in msm_dp_panel was redundant and led to unnecessary
+>>>> state management complexity. This change removes the drm_edid member from
+>>>
+>>> Please see Documentation/process/submitting-patches.rst on how to write
+>>> commit messages. Please use imperative language instead of describing
+>>> the changes.
+>>>
+>>> THe patch LGTM.
+>>>
+>> Thanks, will update it in next version. Since the HPD refactor series are
+>> unlikely to be merged soon. Can I separate out some patches from the MST
+>> series that don't have dependencies and send them individually to make it
+>> get applied? This would help reduce the number of the MST series.
 > 
-> Swap cache lookup is lockless, it only increases the reference count
-> of the returned folio. That's not enough to ensure a folio is stable in
-> the swap cache, so the folio could be removed from the swap cache at any
-> time. The caller always has to lock and check the folio before use.
+> Yes, of course. Please keep version number monothonic for those patches
+> (e.g. by telling b4 that it should start from v4).
 > 
-> Document this as a comment, and introduce a helper for swap cache folio
-> verification with proper sanity checks.
+Sure. Thanks,  I want to confirm whether the patches should be sent 
+individually or grouped into a series? They seem to be logically 
+unrelated. I was originally planning to send each one separately.>>
+>>>> the panel structure and refactors related functions to use locally read
+>>>> EDID data instead.
+>>>>
+>>>> - Replaces msm_dp_panel_read_sink_caps() with msm_dp_panel_read_link_caps()
+>>>> - Updates msm_dp_panel_handle_sink_request() to accept drm_edid as input
+>>>> - Removes msm_dp_panel_get_modes() and drm_edid caching logic
+>>>> - Cleans up unused drm_edid_free() calls
+>>>>
+>>>> This simplifies EDID handling and avoids stale data issues.
+>>>>
+>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+>>>> ---
+>>>>    drivers/gpu/drm/msm/dp/dp_display.c | 28 +++++++++++++++-------
+>>>>    drivers/gpu/drm/msm/dp/dp_panel.c   | 47 ++++---------------------------------
+>>>>    drivers/gpu/drm/msm/dp/dp_panel.h   |  9 +++----
+>>>>    3 files changed, 26 insertions(+), 58 deletions(-)
+>>>>
+>>>
+>>
+>>
 > 
-> Also, sanitize all current users to use this convention, and use the new
-> helper when possible for easier debugging. Some existing callers won't
-> cause any major problem right now, only trivial issues like incorrect
-> readahead statistic (swapin) or wasted loop (swapoff). It's better to
-> always follow this convention to make things robust.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
-
-[...]
-
-> +/**
-> + * folio_contains_swap - Does this folio contain this swap entry?
-> + * @folio: The folio.
-> + * @entry: The swap entry to check against.
-> + *
-> + * Swap version of folio_contains()
-> + *
-> + * Context: The caller should have the folio locked to ensure
-> + * nothing will move it out of the swap cache.
-> + * Return: true or false.
-> + */
-
-I appreciate the kerneldoc.
-
-Intuitively, this should be called "..._swap_entry".
-
-But I wonder if "contains" is really the right term to use here. It's 
-more like that a swap entry "belongs to" (was assigned to) a folio, right?
-
-Sure, we store the information in the folio, but the "contains" is a bit 
-weird.
-
-folio_matches_swp_entry() maybe?
-
-
-> +static inline bool folio_contains_swap(struct folio *folio, swp_entry_t entry)
-> +{
-
-const struct folio *
-
-
-> +	pgoff_t offset = swp_offset(entry);
-> +
-> +	VM_WARN_ON_ONCE(!folio_test_locked(folio));
-> +	if (unlikely(!folio_test_swapcache(folio)))
-> +		return false;
-> +	if (unlikely(swp_type(entry) != swp_type(folio->swap)))
-> +		return false;
-> +	return offset - swp_offset(folio->swap) < folio_nr_pages(folio);
-> +}
-> +
->   void show_swap_cache_info(void);
->   void *get_shadow_from_swap_cache(swp_entry_t entry);
->   int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
-> @@ -144,6 +167,11 @@ static inline pgoff_t swap_cache_index(swp_entry_t entry)
->   	return 0;
->   }
->   
-
--- 
-Cheers
-
-David / dhildenb
 
 
