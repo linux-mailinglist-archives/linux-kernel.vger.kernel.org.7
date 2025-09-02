@@ -1,125 +1,187 @@
-Return-Path: <linux-kernel+bounces-795988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE26DB3FA5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:29:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 606D0B3FA61
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E3E188CDB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2F211893DD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F002EAB8E;
-	Tue,  2 Sep 2025 09:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F4C2EAD18;
+	Tue,  2 Sep 2025 09:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="k34K1Z/m"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+YP0LKc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15D32EAB73
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 09:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9ACF2EA752;
+	Tue,  2 Sep 2025 09:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756805345; cv=none; b=OMoQ9gstBYkgaQGuEVWB4iscdfKZXQtbgL9QVC323yXIgETQWqkqfiyVVHPLRnVI5/HlxcS8o8U4LJKYcpCH46Qadf9xwa1lIXVzsMCJGbcyiNhFADeRYh5cEcTPhILs+ASVageqp6giLV3XuSNdb0/VlOWzkFkXYBKOC78wCOM=
+	t=1756805368; cv=none; b=Q6WMOEeD6y+arGDVORm7WMLYL4ENPKCgrYPOzabU+hWv+b9NCHGJYKCJw3QOFYdW1oQg18GWKQ3dkPLUzOiInyuCQGKaRqK/yK99ksG4FJc6COd7tNCMl2DJt2iWd8mB4fvVXp5u4wdUxYDFwdg7bMdnAAXnwTZYmGfgfzlcQFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756805345; c=relaxed/simple;
-	bh=//HUxWX8DeQeqsCEd7QC8ijoCC/MOXp9FJU6m8p+/e4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gwtOpzSAT1e9Q2LvgfiMrFW4kgM+/ZxIvjsKPrh8Y0o/IMjPLFs3N89+RiyPco17xe/A4kRBpM+0MQNPUbw4BTOagMpAv6ahkOsS15g9mIbLOh6ypxQaNMLe7AEdcdf3ZpKwJ7J2G73qmE1jpkIRpst15z44YN1ZoNA/DMgQA88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=k34K1Z/m; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f691c9febso4023824e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 02:29:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756805341; x=1757410141; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sgn/vJYsBdxnr7Nj+togafj+OMxwmvaU1XUkgIJUYhQ=;
-        b=k34K1Z/meQJ4VwbmjIRA5E7E1EAZQSmf4hhxBKjJvEUxPYANVxFPc0MuXLkiH78xaN
-         zZBqLDyqSZhOcX1UOxWr3//0S2O/R1o4V1Y8co1WX4XnIYjGfqqjrC471Vvy1rzVoc6d
-         zrYeJ9vSg7Qvy76HW1ROt8PNYG2c60YolX4/Geyn81v0bNfoGWsyGlRuoSZJ2dTiDeQI
-         oZ7R0VMNFnC9EcUf+tyBgfQN88Pq6Xby2o+4v6N/EZNonhrIMGRNiVJgylr7vJvfpkSr
-         t8qPkqXByTYlZNhSs64A8kcLoIknaJqJxTNRROoVapQ5j48nfioGZ8Iep5/JQIYX65Hq
-         ZiJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756805341; x=1757410141;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sgn/vJYsBdxnr7Nj+togafj+OMxwmvaU1XUkgIJUYhQ=;
-        b=l5GnWJe7sjUvLoG0Tp1Bxe66OWUa9SX7i3m9rERWW4O3fdvziidH3Pc0zPLS696Apn
-         QobB9/STu5cguOxCBvjcB7GIixCoLMQ6F+1e38f975p6SsMBWZ3+gpdZDNJUeYdvesQ8
-         GtnFHTn4rk9V/3Z/HCxapSgs0eV8uu80+z86Yz7ktCZoSBqjmr9a066nl9mCcl8tDYDL
-         uT0q8kh51X1GAO5iaNqco3rnoxGa3QRRrgZo6W+34T8dwGSrYZ20vveMNzdc1UeKQ/A8
-         qAqbeGOleB5wRoz7/B0GzuMrVklOHxzXFq69mF1PyDZnwqDdA3ZQ8JmxMSVVi9BcY+Ot
-         9ngQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgbAf3w8RG8jhMYVN5wL8uy45zIvWh1C7Udb4Ohfp0ukiVgMSIzCNTBW+a/Yt6WC5FoB9GfAkgNfOo09Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCA/72fc/BEn38552l+wS46pCdeWqwL+Xrv/SCyGf99QIuvtBR
-	ulZ6F+7gbAa2wTJgjrWuhsDRH/q6QAXsdXv/UVhWfxaclcxFEaMgc50L9jzzHOlcrQrVK+/dUSW
-	U4TXHSs99/2IrHem4RSRqrA4ri4sl5w5ti5gMXz81ZA==
-X-Gm-Gg: ASbGncubeQpS+0PfAhfi1Vz51LY8s215Q6T42PQ/XSxf34fGMnMJdnuyLUZYoiVlfR3
-	MYqNo+yE+7J8d/1bfb0YB0unmmqYGxjDo4YvsIvgd8GIiik6v9WMpErwaWcm0lxd+NMJuXf4LQq
-	vaAj94ajrqZJFB/EXv7YGaBiNxns6q2kNspwqwoxO98FfxhIUBI/Lkvu9VIeyGt6+5dTBGPGz3I
-	f1Cf0DyRHpD4OK5vRcliO0fG9H7uWai0i+xWE6g1As49NK3nA==
-X-Google-Smtp-Source: AGHT+IEbZleDaAu1wkbBHOjnlGL8C0lL2XvTBcBG1o0Yu7ShYVTEpic0xTaWFK07gn8fwR7JGIFClShl9m8jNgG1o5M=
-X-Received: by 2002:a05:6512:680b:b0:55f:4e62:f0ca with SMTP id
- 2adb3069b0e04-55f708db56bmr2636846e87.29.1756805340472; Tue, 02 Sep 2025
- 02:29:00 -0700 (PDT)
+	s=arc-20240116; t=1756805368; c=relaxed/simple;
+	bh=DnDVES5Jg8WrIGoMPMfvxV9Wox20mcRcpnotwmcTmTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cl/RiZ9ijahTcajwKGCIZfExpXV6TvnYLlwdzy4BJpce8I/yT5OxmTF3NeOPt06VK0lZO6PuJtKnMPKHPiYlWvgD5sAXfQjmPFApplRXhssy5UVP6mmdlSGzltoP8qN8crLO00QrukyGw9gbcXLX5Z12qVJWk9fwb+Ll9Ffurnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+YP0LKc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793FEC4CEED;
+	Tue,  2 Sep 2025 09:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756805367;
+	bh=DnDVES5Jg8WrIGoMPMfvxV9Wox20mcRcpnotwmcTmTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u+YP0LKc7Ca9KSEGyhHI9LWKXOpYxDkmlx+xi/d94i28PXwnbkADYdG/kMj0eiK5B
+	 zd/GooYAccyXKqdo2LtN0swNMmhiizGQIgjHrkSZ2IAXK/1jBPSRk3StbcZycbdrVP
+	 g5quZtmGQMVEWVOV9clnOLPmMIcFNqak1dVeFhnzWaY1VIAyIlM9TCnw1bUSOb10fT
+	 eYPBFQEGyOkOZzS7K5YPtS3dmkawe2LLvJU33SWPAwVjDdMQDDLsS8LD6Qfe4rZdHI
+	 wki/IP/V+av0oWZTHcazqMPHDSPlXAIhw9qhWxKa10uhggFEbKZZEF+GYaHO+zcGYb
+	 634HFrNZvr1dg==
+Date: Tue, 2 Sep 2025 12:29:20 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v4 00/16] dma-mapping: migrate to physical address-based
+ API
+Message-ID: <20250902092920.GE10073@unreal>
+References: <cover.1755624249.git.leon@kernel.org>
+ <CGME20250828115738eucas1p24f3c17326b318c95a5569a2c9651ff92@eucas1p2.samsung.com>
+ <20250828115729.GA10073@unreal>
+ <26bd901a-0812-492d-9736-4a7bb2e6d6b4@samsung.com>
+ <20250901222302.GA186519@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-gpio-mmio-mfd-conv-v1-0-68c5c958cf80@linaro.org>
-In-Reply-To: <20250811-gpio-mmio-mfd-conv-v1-0-68c5c958cf80@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 2 Sep 2025 11:28:49 +0200
-X-Gm-Features: Ac12FXwyTg5R9QK3KWUxLTr3m9eLRisbXrlkPr4WlpAVjY7_RF2FsWzkYU59lb4
-Message-ID: <CAMRc=Md+2_3w5kdaUF9-nGdHv9C+tGRfN9TTu6E4+hSdFbwGBQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mfd: vexpress: convert the driver to using the new
- generic GPIO chip API
-To: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Pawel Moll <pawel.moll@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250901222302.GA186519@nvidia.com>
 
-On Mon, Aug 11, 2025 at 3:36=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> This converts the vexpress-sysreg MFD driver to using the new generic
-> GPIO interface but first fixes an issue with an unchecked return value
-> of devm_gpiochio_add_data().
->
-> Lee: Please, create an immutable branch containing these commits after
-> you pick them up, as I'd like to merge it into the GPIO tree and remove
-> the legacy interface in this cycle.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Bartosz Golaszewski (2):
->       mfd: vexpress-sysreg: check the return value of devm_gpiochip_add_d=
-ata()
->       mfd: vexpress-sysreg: use new generic GPIO chip API
->
->  drivers/mfd/vexpress-sysreg.c | 25 ++++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250728-gpio-mmio-mfd-conv-d27c2cfbccfe
->
-> Best regards,
-> --
-> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
+On Mon, Sep 01, 2025 at 07:23:02PM -0300, Jason Gunthorpe wrote:
+> On Mon, Sep 01, 2025 at 11:47:59PM +0200, Marek Szyprowski wrote:
+> > I would like to give those patches a try in linux-next, but in meantime 
+> > I tested it on my test farm and found a regression in dma_map_resource() 
+> > handling. Namely the dma_map_resource() is no longer possible with size 
+> > not aligned to kmalloc()'ed buffer, as dma_direct_map_phys() calls 
+> > dma_kmalloc_needs_bounce(),
+> 
+> Hmm, it's this bit:
+> 
+> 	capable = dma_capable(dev, dma_addr, size, !(attrs & DMA_ATTR_MMIO));
+> 	if (unlikely(!capable) || dma_kmalloc_needs_bounce(dev, size, dir)) {
+> 		if (is_swiotlb_active(dev) && !(attrs & DMA_ATTR_MMIO))
+> 			return swiotlb_map(dev, phys, size, dir, attrs);
+> 
+> 		goto err_overflow;
+> 	}
+> 
+> We shouldn't be checking dma_kmalloc_needs_bounce() on mmio as there
+> is no cache flushing so the "dma safe alignment" for non-coherent DMA
+> does not apply.
+> 
+> Like you say looks good to me, and more of the surrouding code can be
+> pulled in too, no sense in repeating the boolean logic:
+> 
+> 	if (attrs & DMA_ATTR_MMIO) {
+> 		dma_addr = phys;
+> 		if (unlikely(!dma_capable(dev, dma_addr, size, false)))
+> 			goto err_overflow;
+> 	} else {
+> 		dma_addr = phys_to_dma(dev, phys);
+> 		if (unlikely(!dma_capable(dev, dma_addr, size, true)) ||
 
-It's been almost a month, so gentle ping.
+I tried to reuse same code as much as possible :(
 
-Bart
+> 		    dma_kmalloc_needs_bounce(dev, size, dir)) {
+> 			if (is_swiotlb_active(dev))
+> 				return swiotlb_map(dev, phys, size, dir, attrs);
+> 
+> 			goto err_overflow;
+> 		}
+> 		if (!dev_is_dma_coherent(dev) &&
+> 		    !(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+> 			arch_sync_dma_for_device(phys, size, dir);
+> 	}
+
+Like Jason wrote, but in diff format:
+
+diff --git a/kernel/dma/direct.h b/kernel/dma/direct.h
+index 92dbadcd3b2f..3f4792910604 100644
+--- a/kernel/dma/direct.h
++++ b/kernel/dma/direct.h
+@@ -85,7 +85,6 @@ static inline dma_addr_t dma_direct_map_phys(struct device *dev,
+                unsigned long attrs)
+ {
+        dma_addr_t dma_addr;
+-       bool capable;
+
+        if (is_swiotlb_force_bounce(dev)) {
+                if (attrs & DMA_ATTR_MMIO)
+@@ -94,17 +93,19 @@ static inline dma_addr_t dma_direct_map_phys(struct device *dev,
+                return swiotlb_map(dev, phys, size, dir, attrs);
+        }
+
+-       if (attrs & DMA_ATTR_MMIO)
++       if (attrs & DMA_ATTR_MMIO) {
+                dma_addr = phys;
+-       else
++               if (unlikely(dma_capable(dev, dma_addr, size, false)))
++                       goto err_overflow;
++       } else {
+                dma_addr = phys_to_dma(dev, phys);
++               if (unlikely(!dma_capable(dev, dma_addr, size, true)) ||
++                   dma_kmalloc_needs_bounce(dev, size, dir)) {
++                       if (is_swiotlb_active(dev))
++                               return swiotlb_map(dev, phys, size, dir, attrs);
+
+-       capable = dma_capable(dev, dma_addr, size, !(attrs & DMA_ATTR_MMIO));
+-       if (unlikely(!capable) || dma_kmalloc_needs_bounce(dev, size, dir)) {
+-               if (is_swiotlb_active(dev) && !(attrs & DMA_ATTR_MMIO))
+-                       return swiotlb_map(dev, phys, size, dir, attrs);
+-
+-               goto err_overflow;
++                       goto err_overflow;
++               }
+        }
+
+        if (!dev_is_dma_coherent(dev) &&
+
+
+I created new tag with fixed code.
+https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git/tag/?h=dma-phys-Sep-2
+
+Thanks
+
+> 
+> Jason
 
