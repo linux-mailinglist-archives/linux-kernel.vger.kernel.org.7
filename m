@@ -1,146 +1,137 @@
-Return-Path: <linux-kernel+bounces-796526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C74DB40211
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F47BB4020A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50A85442E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:03:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0769E166556
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE792D9EEC;
-	Tue,  2 Sep 2025 13:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="LdjTe6eQ"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD2C2DAFC6;
+	Tue,  2 Sep 2025 13:02:58 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59AB2D2493
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2497238FA6;
+	Tue,  2 Sep 2025 13:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756818161; cv=none; b=FWvwesPXtmTeSwGW3LLbUYZ5kSIpCSu2A7wQWYnRaIdi1sTrobIsraKOkP+Lcb+c8Bg3fGw4PvRR63AAyBVEl/okRsxxp8mEXdukoq5szqwihXNgiu0Ys2ykfZCmdR6iNieHh7/Ab4m3YJCnKr+lamHzViWc3SdbAxsqLOrkH8U=
+	t=1756818177; cv=none; b=X5IxC9NtNkf10D0c2kO5oPIbuIuIkYfpXT5YVmBUtuf4RucpA0LPJoJrmfMMzt/xWLrgAndPtCP9m/Kz8bY1BQx7S+pOU61WQSZaRdqr5jRMZ5S9O7GTptW8flPbH9HADv7cSeo7uttkZIp5fcUHMP9YQ78cjLB3QMblx94ZFH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756818161; c=relaxed/simple;
-	bh=FjwqKpEpIWy7Qc4Lc40FJA8QF2k2WKD68fXOWMSkVIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SbE8/dSRKxcrijqg7q9nq4BUP2dSG8En6ZBLSe+POzUJoYEss9KAummNtG6RXOXRzz3lBB7cEay0CyE8yfGP7fOuBt9UyodS3f8sfqLjbe+ujRj9whsCvD6Fq4lrL1nu1ihVmw9pzpwS88WNx+RDtry9znwUUFzHT1j4MZnpz/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=LdjTe6eQ; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cGQrQ2xXhz9srN;
-	Tue,  2 Sep 2025 15:02:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1756818150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wFPOiy5SLaPexjP9wqrJNssj3bczB/SHav2Qw3Gd9Hc=;
-	b=LdjTe6eQ/u+OEbOVF2aqH1cKrwUrAA+xgHssRPvaT+dh79FXdjoHji5UbdnAVZPSVPRZpZ
-	ErlmF/YLUSmclpw58SsKbH5lWamMhVsALOWeAbMMzXyy3jTRfaLEqj9Qaax06kfyo3IXwd
-	ibQ0Kq9VtqPWVptBVb+/IziMhlMhtADe4eYv0T8vWJ2CLvhyFYYZn6kOpxHiz1NT7/m5Ex
-	JfHVPUPlRxWD99Jl0OliufXS+hW99o7Rprmmga93tOQg14SbS4fQ+l3jXjUopzuiU3b3HO
-	p2aPac5RnXGsCw6rO8rAHYy8y+R39jVP5ylxCi56vqaPE2yM0lWYF23nhzS3KQ==
-Message-ID: <519df8fd-b02d-4b4b-bf47-79070e3d2c9e@pankajraghav.com>
-Date: Tue, 2 Sep 2025 15:02:23 +0200
+	s=arc-20240116; t=1756818177; c=relaxed/simple;
+	bh=MuBxV9sKtB/8vb8uYwlVydDSgGxeEPQ1TwxOMOMQf8E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qgVvzqgBiGt+IQW3k3zCFsaXRc21qdl6iFn6wGnpAbHDHLibps8zUyXNUtoN8HgaJWlhWk33gb53Xp/X/HM62qkyLchzTLj+shj29LGkma2RrrPBSpqYkHaYmVYz2+vKLPYUsRpG2wljGQ0w5hH0cP2gt0pF670q/1LL9dOY1mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5330fdb9723so36884137.0;
+        Tue, 02 Sep 2025 06:02:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756818175; x=1757422975;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6X0paR8Rp+yYuxy0aU4aiHawkab2fveX+z4P4W+un3k=;
+        b=b1Fy/uGJRpnb8qJoAjqtnAnFLrVqePK1sq9fltJ3RuDQVGXpABcziL16yl+tY658D5
+         S8H7TYm28G0SSIk0PrzmoHooFtQGfkEie02qhkH1CK14MwtflGGOSsvHJ6e+Ek63zniJ
+         j7J/CQH19ulg4o/IOhBD1xzS51+V1cp+D4f/C++kIqNSyzQwmihGSPxmlB82QamhTUzR
+         GimKU3alq29yHzTPQ45f1pgxwkW+xL9xviYVHbTTfkKCoQQUHVMRcUQnbmkCr4POI/T+
+         ARC/Lh8ehSoV05/hQXIYLp/Oi8WgT/V0Rir4pL+uML94MC5eoF2K6tJUcJ4UAuqWXeKQ
+         mQ6A==
+X-Forwarded-Encrypted: i=1; AJvYcCV4lXYZ/TqxbmTF9/XnZlJ727ogDTWJ0v1WrXLJDjAxBOeT260TKfVIJWd+aGsz3qr+8xOGaFl1YGx8kNEL@vger.kernel.org, AJvYcCWWJVy2UmeT2FvrfZP2G1/ToEUlPxu7JMHiIGl+CQvHWsxJsB0/0fs6Bc2bzSpMi+LNGFjKBom+94Uw@vger.kernel.org, AJvYcCWtX6gUimaXXA4u28fqL5A7l9T2/NRlIi1Si7ktfZHcB74/m1FRK6yDBQxctdYQH5IZ1/ABcAhie23yNUYnpL3zub0=@vger.kernel.org, AJvYcCX5MGGakK3O1mf5Oz/92WKBuJzJfqcltTZX+yk7nrd+Q1iORQNthl0ocRAShOST6Ar31czg/PtERDan@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhBdT4874zADwHRnfaD80w/fAfOqOADCDuGiwSFsADRZVv5xnd
+	/p4UpeUZ9cWHgbGCDsdP3PsU+k9oss+Jyfw8Oj4a2py96OUrlr+jyrN/A35FnrzW
+X-Gm-Gg: ASbGncuuy4oruyIS/Z34bzpsbApcxP1MC3Rd5ReRmIYBXYoXGNw93JWSVv1AaJfOG4q
+	wE925Zl+d4G+8RMugkip5WWbyO5ygddliIksoxumvy37kOOdzF3CjAtm526NPFUXL7ZwtJ4QcgI
+	ZVnbLEaGVgSyIRDkSrnsKXr33xFMDQDDL8E/HfHxKTizYeftHB5vM0BlNA24TQ6HwGpSlm/fWuv
+	sbQN8ld1237j4A8IVamntDVE53ZZmC6LuL+30IbHunk/IADxtK2E6GO6NqMIGXgrFSox/T/sDw+
+	ykCp56PGq61PHeuXnxphzTssgpEZatBr1xRmFPpoSM1kyltZRNFgjvRP60Hc6K2aKSQ5XPwhO5Q
+	oZPky3UEhTzlee1xLD7JRdJ6yFBkOx6jEs92u7/Wz6xzPe1DqhmveivurXvw8
+X-Google-Smtp-Source: AGHT+IHeFMlXSx46kgj2mGmm2s+FVZdUv75gpdRiI0G2qUg1TRfKpYHwTU1r8OpfxsBvl4z+bJ2c3A==
+X-Received: by 2002:a05:6102:6897:b0:521:b9f2:a5dc with SMTP id ada2fe7eead31-52b1bd27db7mr4067499137.25.1756818173284;
+        Tue, 02 Sep 2025 06:02:53 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-52af19156ecsm4330939137.12.2025.09.02.06.02.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Sep 2025 06:02:52 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-89948e581d5so370068241.3;
+        Tue, 02 Sep 2025 06:02:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcOuV4O+2j6E+Ji6deJa4YdV3OD5bwJfTb9oNHCW8In2PIBsV/hbch62LzXczOhrmhQqAz67P4ghZW@vger.kernel.org, AJvYcCUyTqxSF2jHHXqt7MZlYRkYVcR9yLz9zka12T/E3uCtrh+GXjXFcPunmtGyJz6L1xqheVoI5kI4JjVG4Cf/@vger.kernel.org, AJvYcCWh7sYoC1GK3+jrVfeWgDfwl0rIqjnQ45QpWF8Bo4BFXQr3jgIQkOg9KxYkjQzRmYUKsEuWjYzdgw65XcR4AdnEIIU=@vger.kernel.org, AJvYcCWrq3NjG8EN3Jf4/2ov73ajSEffx0/5PsrQSUsJLiJ/JE4zHzHzuGA7EGenrBAYsvdNINWhCJXLlo8E@vger.kernel.org
+X-Received: by 2002:a05:6102:41a6:b0:524:4800:77a8 with SMTP id
+ ada2fe7eead31-52b1974d764mr3460088137.5.1756818170746; Tue, 02 Sep 2025
+ 06:02:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] huge_memory: return -EINVAL in folio split functions when
- THP is disabled
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: David Hildenbrand <david@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, mcgrof@kernel.org,
- gost.dev@samsung.com, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250902084036.208921-1-kernel@pankajraghav.com>
- <qh7s3j26aac3hyzgnr2ee6byjenstxhjnlwn4qxbvz2l32ohqc@qbhdxvpnuhtp>
- <90cd5be7-cbe6-42c5-b0eb-bf9613047097@pankajraghav.com>
- <6l6f5idkqebpai6qn6n3phbnydz55typdwmvp3eexwnhk4qr54@otcgssegyqke>
-Content-Language: en-US
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <6l6f5idkqebpai6qn6n3phbnydz55typdwmvp3eexwnhk4qr54@otcgssegyqke>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250901183000.1357758-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250901183000.1357758-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250901183000.1357758-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 Sep 2025 15:02:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV+-WK3KQNfwrN30LFCGaWgRuRH4QOpMMC_6cko1bz3uQ@mail.gmail.com>
+X-Gm-Features: Ac12FXz5m2aZjbNWA9iFlD5vRjuo_z4r9CPeIEsqREYEwOuiZsjA8GsB3kDnOYk
+Message-ID: <CAMuHMdV+-WK3KQNfwrN30LFCGaWgRuRH4QOpMMC_6cko1bz3uQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: renesas,r9a09g077/87: Add
+ Ethernet and GMAC clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
->> I was hitting a weird stale content read error and finally ended up with this fix.
->>
->> I thought this is a self-contained patch that can already be upstream. My argument is not that this
->> should not be reachable, but returning -EINVAL will do the right thing instead of returning 0, which
->> means success.
-> 
-> Okay, makes sense.
-> 
-> In THP=y case, __folio_split() also returns -EINVAL for !large folios,
-> but it is not very explicit:
-> 
-> 	if (new_order >= folio_order(folio))
-> 		return -EINVAL;
-> 
-> In THP=y, we also issue warning:
-> 
-> 	VM_WARN_ON_ONCE_FOLIO(!folio_test_locked(folio), folio);
-> 
-You mean:
+Hi Prabhakar,
 
-VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
+On Mon, 1 Sept 2025 at 20:30, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add clock definitions for Ethernet (ETCLK A-E) and GMAC (GMAC0-2)
+> peripherals to both R9A09G077 and R9A09G087 SoCs. These definitions
+> are required for describing Ethernet and GMAC devices in device trees.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> Makes sense to do the same here for THP=n. It might help to catch cases
-> we do not see with THP=y, like getting non-THP large folios here.
-> 
+Thanks for your patch!
 
-Yeah, I think that is a good idea. Something like this:
+> --- a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+> +++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+> @@ -26,5 +26,14 @@
+>  #define R9A09G077_CLK_PCLKL            14
+>  #define R9A09G077_SDHI_CLKHS           15
+>  #define R9A09G077_USB_CLK              16
+> +#define R9A09G077_ETCLKA               17
+> +#define R9A09G077_ETCLKB               18
+> +#define R9A09G077_ETCLKC               19
+> +#define R9A09G077_ETCLKD               20
+> +#define R9A09G077_ETCLKE               21
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 48c4f91c5b13..4ddf9e87db91 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -588,21 +588,29 @@ static inline int
- split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-                unsigned int new_order)
- {
-+       struct folio *folio = page_folio(page);
-+
-+       VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
-        return -EINVAL;
- }
- static inline int split_huge_page(struct page *page)
- {
-+       struct folio *folio = page_folio(page);
-+
-+       VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
-        return -EINVAL;
- }
+These five LGTM.
 
- static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
- {
-+       VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
-        return -EINVAL;
- }
+> +#define R9A09G077_GMAC0_PCLKH          22
+> +#define R9A09G077_GMAC1_PCLKAH         23
+> +#define R9A09G077_GMAC2_PCLKAH         24
 
- static inline int try_folio_split(struct folio *folio, struct page *page,
-                struct list_head *list)
- {
-+       VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
-        return -EINVAL;
- }
+I doubt you really need these, cfr. my comments on [PATCH v2 2/2].
 
---
-Pankaj
+Gr{oetje,eeting}s,
 
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
