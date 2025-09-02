@@ -1,516 +1,335 @@
-Return-Path: <linux-kernel+bounces-796861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FD4B40886
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:07:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D6EB4089C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7315A3BF543
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 908E83A2F23
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCD8313558;
-	Tue,  2 Sep 2025 15:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB863148D5;
+	Tue,  2 Sep 2025 15:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RSrCckvO";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="bGBqIT0m"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CZLZkkIw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2AC30FC33;
-	Tue,  2 Sep 2025 15:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756825596; cv=fail; b=hdaAyQoYoYdT8qacAtUg+bpskYcD5ffoW1MWpzVn8llKqEJJPP03eThq3FpaRFDgq/VRAHG0nNL7FwoOL7sc2a7FYQ5myRHGIG10dVtDuXm05xiy/zvn/Yy6K9yD8lHZ+BNWYJ3HarLmK69UpCOGeQQ2b3A+O3WiVFR0dyv37js=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756825596; c=relaxed/simple;
-	bh=gDw59PXZpH//+tx6q3zuyaB3SFKKvOxlKMWKfLmNbJw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gn/uDYesTRmpB4PZzP6A707ThiNlSVxmMC7N1lC9VJCsQ5mH1kEb5EJ3YzqndEwWbuRCPYe+rVrLEzsIJ8l0+4+cG6b91ZcRgi7urfFJu1VO0vGZ0Tbj/hnv3XkpM4oHb7DO3arwnO8t+n2Sb1NNz4y4e1x58r582ludePYytU4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RSrCckvO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=bGBqIT0m; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582Dg21a013156;
-	Tue, 2 Sep 2025 15:06:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=1LtrNSb2afAr7JJUPnqn8kVVwlJdNDcJUw26P80Hcc4=; b=
-	RSrCckvOj1sF01hdV7gNEgNhOldlihVwD0WmD+XLIpwN576HV/iGHl0lzbsZmBfT
-	jD+5A1lPmuBQ6jVcv7MIrP6fxwdafU/DqxpN1Ynfayvm+YTN6EDZF5zRpv4mLmyc
-	68OfFc5Eu96e91gutChFo/34kNFdB50NMKE9cM/NYtsWJOeknmdWG9Onj0vhnSQW
-	38OyzsykozWRQpxZjHF7mh754W1p/w412aC4zOFlLSXK8PuKyedysaw/256WgVP5
-	0RSvtWYjYSigd5akveC14e3ZvQ03GJtN73jbG14WwwyB6U0fmryVnTbQXoKKwpAm
-	S6dJNWh41l1/G86rrTTb5g==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48usmncahr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 02 Sep 2025 15:06:23 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 582F5aj3032616;
-	Tue, 2 Sep 2025 15:06:21 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2061.outbound.protection.outlook.com [40.107.244.61])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48uqrfhfse-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 02 Sep 2025 15:06:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uDJ40fWLVvdTD60yZEPbxcj3TcuvhOY8JUwoceDv6CYVIoJUiDgSHZXh3uyDhnSPsbl8iLbOgCVIkiTNicLZo+B9T9gxNZ9aYpfMC5GKPcOPeP3cfLZJOXNT2FyoEQjVCDvjXWPHNEjO7eXtIKyKqJN+JYMe8zzOAGlWRLedrzKxRrHqBuL8iTOQtxpOAUf8CY9iPIKIfZE0oGgNBHdCi0NwSX2GvhVrlshgAetpRl8gxpDbIDiuy5IzcqtNo7T1DzSjQCrnGo+sARsZoNJn2ARrLtG1eShfKtfsaTiSDtXzv6Nlzr2S3lmBf4gYPI/tfOQkh0YdVXSI7nnBME5dLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1LtrNSb2afAr7JJUPnqn8kVVwlJdNDcJUw26P80Hcc4=;
- b=c24Z2uN1Q1Q6q0FcFUTUwYFF0Zp6lsDWjZ+dGufcbx6wjo5z3tKjEye0LfENJDH/URLkC2Nrovbj1ibiXfOxkC7i2YsoCPu/NzO0SzYwnE8/DeczpvE98fnP5FPjlGMYKMStQnGzRyHdMzgFpKlWl54WK9sMExsHsVdm134rfxt8dY/VsO5UBO5GWr5PL/UHJ5R0TXbXvn5ESiNiQTT7BLMOhwA9M0UlJHZi37GR2S7qdImrJg2g6URVFJ7ZeRAD0S9RPJL+tHsh7PGfm9JA0hlyDVXWWVbP/lIgmEy+cirkI9BijrUKpXSp6o8kMQecf7EHleEcOuo20BJFwwH16Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1LtrNSb2afAr7JJUPnqn8kVVwlJdNDcJUw26P80Hcc4=;
- b=bGBqIT0mN2eDNL0GSrkxHiaLbU61BeS4Lr5P/lWAe7cAml3EbBo/tqTb2almtt2VbsaCFr9nOTXuRUi6dXRMOJoo8D48Rw9/UbduRcYqw7G5NwLzRgcbAy3Oi+J43dZU0ChhAtNlR2FXCb5W92cF2ruurwGXd8mNIOQkZi5V8UE=
-Received: from MN2PR10MB4320.namprd10.prod.outlook.com (2603:10b6:208:1d5::16)
- by IA3PR10MB8274.namprd10.prod.outlook.com (2603:10b6:208:570::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 2 Sep
- 2025 15:06:17 +0000
-Received: from MN2PR10MB4320.namprd10.prod.outlook.com
- ([fe80::42ec:1d58:8ba8:800c]) by MN2PR10MB4320.namprd10.prod.outlook.com
- ([fe80::42ec:1d58:8ba8:800c%7]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 15:06:14 +0000
-Message-ID: <e2892851-5426-43d3-a25e-be9d9c7f860a@oracle.com>
-Date: Tue, 2 Sep 2025 16:06:08 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/12] ltp/fsx.c: Add atomic writes support to fsx
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Zorro Lang <zlang@redhat.com>,
-        fstests@vger.kernel.org
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org, tytso@mit.edu,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-References: <cover.1755849134.git.ojaswin@linux.ibm.com>
- <8b7e007fd87918a0c3976ca7d06c089ed9b0070c.1755849134.git.ojaswin@linux.ibm.com>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <8b7e007fd87918a0c3976ca7d06c089ed9b0070c.1755849134.git.ojaswin@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO3P265CA0027.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:387::17) To MN2PR10MB4320.namprd10.prod.outlook.com
- (2603:10b6:208:1d5::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFDC1DE2A0
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756825873; cv=none; b=PrmAPTvx2U4eLYcrGBjV79leKKSiPlbVhErkphkTFzM/bRDF+aOfiLclHW6gCYal97f3bHhEEYuGAcOltSasKWhKh+UK9HU+sy+CL2PPjGNauyAiPnQQH8vRw1FBZuuAVI+oFSVZhCorbzJBNyDMjZUsUBkovdX7qPVJC4tg2rs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756825873; c=relaxed/simple;
+	bh=NL5vg2Ct2KpPZ/ri46uVADCZBobDIbxVryPwb0KjzlM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=aAL1xEqf0GUjHDdmBZzuxOtAX8GbeUph1ynOZinMSbMRoOTHbdprVYqG6iiWhTxpnM5UXYk4DInye35ds6+m3pMWABso6BXrMVrywG75XxzqO02kZ6AWN4tveMJD6Jc28Y1zqC+OvCayEfZkNnDncN8VqGIf3ZD/buewjcASncE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CZLZkkIw; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756825872; x=1788361872;
+  h=date:from:to:cc:subject:message-id;
+  bh=NL5vg2Ct2KpPZ/ri46uVADCZBobDIbxVryPwb0KjzlM=;
+  b=CZLZkkIwC1Yx6/FMmDEvAdLrCIsdc1UDkXuYoC3zAOo54ySQxLhmmvi3
+   aexi3TwQuvRxKHbmDyFfO12ct3Up/vMgzJYLXAcS/7yJLzCaBxytsc4vK
+   aVuHbZWXX/R35BRKeDftay2JBNCPFU7AIqVKOczpK7ifG0PDbrNFB634t
+   L4tdL5R7QBEoCow+Lz5badhvqn/zpJW+/CbVKIZmu95A0dfXZP+i0i4UC
+   9SoCvhBsPMV51OFszC/0dSFicaBwx5m2wbAvLKFB07YWAWArXuyHg8knJ
+   S0joV7z+iqZiSf/BEE2h9x7RU5rWs3Qu2Zh2eR3pDHtIX7TXL1jNtaQwT
+   A==;
+X-CSE-ConnectionGUID: rShW0kvNQAmwRmBUpTzjxg==
+X-CSE-MsgGUID: JSLcUnyJSyebju9wpZvFuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59173262"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59173262"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 08:11:12 -0700
+X-CSE-ConnectionGUID: 7/WRpHgQQdW7fJqxtpwDNw==
+X-CSE-MsgGUID: voEcdsRpR8yBlNwZvHQlpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,230,1751266800"; 
+   d="scan'208";a="175669729"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 02 Sep 2025 08:11:10 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1utSf5-0002fS-2Y;
+	Tue, 02 Sep 2025 15:11:07 +0000
+Date: Tue, 02 Sep 2025 23:07:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:locking/futex] BUILD SUCCESS
+ 237bfb76c90b184f57bb18fe35ff366c19393dc8
+Message-ID: <202509022305.zcSvh9qB-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4320:EE_|IA3PR10MB8274:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22d979b3-9d55-4d93-8aad-08ddea324226
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cU5uSTdyUXJIdWlZRHdzTWwvUUpBSXRsck1BL3hHUEtyYTBZQWEzMU10NzBN?=
- =?utf-8?B?QXF4THJGS3QrU0RqdlV0SHdBRFpYY3NGUXp3c3NLVE1teUJOZ0ZHM2l1c3NV?=
- =?utf-8?B?SDA2Zmg5ZG9nU21XY1RSeldvd0dEbDIxL2Y4U293aDYwQTNHdWRqRWZtVC9B?=
- =?utf-8?B?c3kzdmN2cVNpQmlZSmJidjZ2REt2VzVRSjRTQ0RKdzNOVW5pT0R6V1c1NmNh?=
- =?utf-8?B?Q3Q2U2E3ZzJvMjBDVjNadnYwZTU1TEQwWTV4ckc5MmFuZk55OFhmaVk3ZjI1?=
- =?utf-8?B?SzlTNFN6MFFxc0JmcHhLL1YwM2NVK1RXUkgwbmhkaGxwaGlNMjdOeFhCaXlq?=
- =?utf-8?B?cExYaEppbGttVzluMmN4VGRZVU16eERwT1p0U2N2NEsrekRhNUY2UHpVSUhs?=
- =?utf-8?B?ZlVla3JCUWRFYmhlWEIyOTVtT2lsdW1UelRDYndkUkRQbExic05tUTNzNlhL?=
- =?utf-8?B?aHpwNUZZaEZ3bXZvcC9mZHF1K3VaeTdXdDE2L21ROEhEYWtlL3EyRlBXYUU5?=
- =?utf-8?B?aTNGSTVZVDZtNDJpS0UzVEVJelpST2l0T2NjUFZGZG9tNXh2TXgvYXVOTjhW?=
- =?utf-8?B?Q2J0OTVLU1pqMHE2djRYdGdMUkNOL05ReTBDZGdVZFg2bTVybUxPYnJDOUM4?=
- =?utf-8?B?UGQxc1ZyVU0rREhORnFTNXpBTy9RaXZaU3V0bGJHMUljTzFPOWdnL2tEekhI?=
- =?utf-8?B?N2h6ZXdodFZzK0RBNmpIWjFEc0pxZDkzbGJ2WERYWXVBL1hUMm92dzNxRE95?=
- =?utf-8?B?RUgwQi9BbzdNcW5BSmNuWHJDazl0djFXMHAvUTViZVJuNUZkaVRDQzRRMjVJ?=
- =?utf-8?B?cDVBT2VBUUJmUTBPUlJ2akpjR2M0SlVIT2RqT1FYRlE4Kzg1UjZ0TndteEUw?=
- =?utf-8?B?N2RJc3N4SGk3QWxnQzU2RWN5Q3pvQ3hKRU9yekJKOExxMFBNbkIvY0VOK0dL?=
- =?utf-8?B?ZHlvR2dGeHNKY2F4VUNZUDk4V1MyMzJkeEVnbDFGRHVmWW5Jakt1bDgxVFFW?=
- =?utf-8?B?MExoN0tuNnppVWNLZGlDS0lvd1VxaWxTdGcxSnh6WUY1YkZ4UWpLMXBuOGU2?=
- =?utf-8?B?cHdSSTl6eURQM1VVd1kzLzNMY2p0Y2o5d2c0S3BVSjdNZ1JkYUEwQ3F6aWZo?=
- =?utf-8?B?eXpaR0VmY2N4dDlJckF4bmhNMnc2Y3ZPR0NCN2ZsNXpaemY5UXNFZndEK1Rr?=
- =?utf-8?B?QkxJVVY1WEpIWlhhVmVWdS9NM3BLcFZKd2tja2JYbWIrUzF2VGVTNjRRaVlt?=
- =?utf-8?B?c0hISndrNUI5MHI2aWhleW1LaXVIZ2FkZVl1RjlnRVZ4eDlTTlUyZ1VnT3g2?=
- =?utf-8?B?L3NEc2N5Ti9HcEhLQ3hBdXVLYVRraG94aTdyM25DYWFldkVmWUdQQUppQmZw?=
- =?utf-8?B?dHhmdVBVd29wQkNUYTluOExDaCtVaFRiYkxJeU9oZW1qTzQ5emg2ekMxd1dW?=
- =?utf-8?B?UW1QTSt0dDA1QmxpRTFFcjZBbVZuL29VTkN3bFVpSEVTcHdSa3V3OW5Jall3?=
- =?utf-8?B?KzJJRVNIR3lUdUY3Yi9UcEV5TWYvS25FOE9MOFVJQ3YwVU51bWhNUnhQTVNr?=
- =?utf-8?B?TmE1cVNkR011NnUwR1FwT3EvM090S29zNVYrcDdnRVFSOXlEZjMzNHh3S3Ju?=
- =?utf-8?B?azhZWDMwdTRRRHJZdVFtRVhEYzlTYWQwWHE4TGFPMko5ck4wYVVqT3JRQXJO?=
- =?utf-8?B?YWtuc1ZJOHl6WE42MWJRTmt3VkxrVHhYMXQwWmtwVHZxZmx5djZHc3BmcEpC?=
- =?utf-8?B?WmptYi92aGdLblg5TmJydWRDQ3hMVFNRWWIydklVck1YSTdNbzk3elNIUUVN?=
- =?utf-8?B?UXZteGVqT3hGa0dVREp4SnhHY1loSG9JT2JLSXpTamx5cU1PVVBoeDlUekRi?=
- =?utf-8?B?SCsxMDdUUW04L1dRd3VrdFk4bGVtWTlNRTZMSk9mZnNOT3Z0Tm9WejVzY1dL?=
- =?utf-8?Q?jmFJsdDHOC4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4320.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NFc4aWJ3QWRrWE10TGc2d1h2cW9GcnhpUy9VdWR5b2U5SCt3T2t4YlFsVWlt?=
- =?utf-8?B?bThsSEpaMVRBN1cwaUo3SDBpQld5d0hoMFpKekV0Rkg1TWZ3TURLVmtMZ2dR?=
- =?utf-8?B?c1g5TUhvTHhjbzFyTUFHaDJYSGk3UHp1U2FyUmlEWnpocXpRWnEzSnZ3LzhJ?=
- =?utf-8?B?U2VENHFsWXdQZHI1THRxNHEySlVkdmFET014OEs5THJoNWlBcmtLa2srcDdQ?=
- =?utf-8?B?L2p5aTdEbGFlZzUxSGFOMUZMWnJ0V3FvMU1nTjZjLzk4MFR2SXBkU3E3Vzhv?=
- =?utf-8?B?M01PdmVMaDBTU1NDUUQrUllPMURZVWJOT0JUSW90KzlVdXFCbFhSKzhxZnJI?=
- =?utf-8?B?a3FuU1I4VkQyZFQ2bTkvWkdYL2JBMzBMVldIYUp2RlRBL1A1WmhQdHdGTzE2?=
- =?utf-8?B?U0RQZTF5Z1hCTkZEK1pxMjZuZTh3RHc0VHB4dDZCQVlBUnNBTVpYbWR4RVlu?=
- =?utf-8?B?emIrbGUvQVVKMmxMRDMvR1ROMDdBbklMb0lkcEt3MXRZWktmYldYSElCUzgw?=
- =?utf-8?B?TE1RVGNtL2RrYkxTdktsdUtsQkNhdWZFelNkRWg4UVFDcWN3cWQxNm1lWThO?=
- =?utf-8?B?NmxmbDZnWGJMMWRLcW5nVU15c0srMEhvU3IrVklTazN5bWlXYmN4VXVGc1ps?=
- =?utf-8?B?N2s3elhtNi95eFQzSTBGbkp4YUxjV011bzJpQXRnZnczWXluMDZHaUE2ZTZj?=
- =?utf-8?B?MUY4STM2Ykxad3FKMFVhOTZnL2RWSCt0WVpsdG1LM0NwRmZqb1ljREhyQzFB?=
- =?utf-8?B?U1IwRlhuZXFMM21hTTdrU0N2ZUdIQW8zZys1ZjV0b2hVUEo2bVZFQjNBUEJR?=
- =?utf-8?B?L0MzTUVpRk5manBHS0VaaCtvWGRMT1d4dS9ieUp6amwwMmFEMkdhankraE1E?=
- =?utf-8?B?ZStBemlESFFubWZxRFpKR3JwaUFEZXZva0tGaEtvSVlNbjVBNmFpU1M2Sy9I?=
- =?utf-8?B?RGVLME8wNnIxb3NxUHEranEzMTRkZXZyZ3ZQSHpXSFQ0dXptSDJSRUUzK1B3?=
- =?utf-8?B?RjlhT3oybFphaytWVXF0dXIxUHMzbkI5dGFQQkdOaUZpTnpXLzBZV2VZeEpQ?=
- =?utf-8?B?bTNEc2hTMi9zdHlRNjM5V1BEOERQWmh1bGRMNXdWcFRqYXNjOWpoSWF3OTNY?=
- =?utf-8?B?VCt6Rk9oMEEydE1mL3pqVCtDTkM2UzJ0TlJyVFdIMFVMVFRzVktYSGhxZ3RH?=
- =?utf-8?B?a0E3dHU1MzFGaG1CN1BNNy9VSTRRajFYMi9KY3dvQ09vQVlNYXlmQXVvbjF3?=
- =?utf-8?B?Z25lbWg3VzhkSDg2dGpDVFBlczhuUmJuYmIxY0RXWDNubUZiWkxlcGZjZWpN?=
- =?utf-8?B?Lzh5WXZhU3lPQWhTU3hLNTRDaVpBVklTL0wzVE1LVWw4S2g0WlUvTlFzM0Jh?=
- =?utf-8?B?SlQ3U1FBRW12S3JyOHRPbkRJcERLb2krYURJbDJVQkpnNDlyZ0crMGExaU5F?=
- =?utf-8?B?TXpIbGhCbk5RaDdnMEx1TE9DVDVwc2dqR2ZWTnVNampsem5FclJnVGZ5Y29X?=
- =?utf-8?B?NHdRMGlRdXRRL0I0d1pYSnRTR0lDSk85MHRtTEhrTm5Iay9yejJSVGtrTzd5?=
- =?utf-8?B?aHkveFpOSTZIUGdVaW9BOVZmRFU3UmRFUm1mWndSd1NWRjZjczYvU3NzR2or?=
- =?utf-8?B?RFJHb2NDb0kyelhDNHBQQTZ4blUwODVGWnBWdFlYTVBGRm0vS3BiWUJ2Y0E0?=
- =?utf-8?B?LzdSejhtYldIQnpKcTBha3FBSFlNQkJrMkVVSUJHOExQQ0QyeExwdlNFZ2x5?=
- =?utf-8?B?VENMYzdhRVU1cGtZUVVTUFU2YW9NQ3NYd0k4NS9mOTBzSTBrZldiR1g0VXlS?=
- =?utf-8?B?RE1tRDlKKzhId0N0RFRHOU9aK2JPanpFOFloRFdLbWxQeEk4Nkw5MHZ4TzVt?=
- =?utf-8?B?ZTN1a3hiTDJJVldXYmFyb2IrSkFwTGpydnZQQ1d5cGlXQ1ZTNlNEQmxyZ1h0?=
- =?utf-8?B?dlVBRHZVdlZZZ2MrS0Rsc3UzRzRpeXhCV2dHNkV6aHErWGJlSVBIT1RDZlJ2?=
- =?utf-8?B?UHlhZWRDVUJFNVVyU0RQRWhSZkdWWlRWcmtGQjIxeFNJbklMY0RXVVhLNXBL?=
- =?utf-8?B?cmpNZy9aWWIvMGVKb0k3NzNRbHZkZlFPeFptOWJuaHp1RFN0YkMyTm81ZHF2?=
- =?utf-8?B?TE1SNy8wL3hTM01DRm1sSzk0R1lpODhlVXJaUTB4b09na3I5R05iUlpXTTlr?=
- =?utf-8?B?aUE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	sW70P9w+JprhMNwcDKgeYn9IUAHZJvgmtLAdQwUnNryfhV9Q49euzCy9u/Ppl8WOILAEdryxQNYj+C3rgUHcfEqT8Y3/od/CnOIW+zHMul0XDxqSpcSNUUi5Hh2KmLhOa58+lrI4wKG98UAh84z4eP75BseegCM3jEUU8opSBjZLGcJtK0+u36Y3K+ZFBxqWkw2xymQSg0cMUqjVbW3+INaKBm/6z2FlAym1gW3KtXSzWmPV56qrmAWUp3ftToh6N7C0Qulhok9H7reoyXbMdHl0WlSJlnC5uSt518my0NozpQehtbMlZ1fFb5GZeu73vXCamF4FfINxs1QBmLNzmZe8oVo+wxlTgYzznqXP4QHE4aYooeDtfVw0FWUECgIxKVM4giSrP6LySTlUICfOt+mrMiE14j5GJQ9rgRpIgSXnFYGYs2aBatVswsjiSGXSofV01str7wGpWXCjz3cJd+ZIKHeaxJjJPdJ8U9dViuTo71F1cbG0gXo4fUOaWAFo+fjYmong0SmSJSNyaxJ61c5gtJOiyZHoGU7jxr218hr/PF7QYrgVTPq/w5lj0LQNYID7Kwp3ZQvubLnGPnk6sg5zG8vA/FCFrg8/6lACS5o=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22d979b3-9d55-4d93-8aad-08ddea324226
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4320.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 15:06:14.1803
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7QK2AJUSKCoWQcIqCpc50fpHaG7tSZtw+u+caP/qc4mORPTUbUuwByq8kElkMBXAAS6qiuQV1jKOyAQTTMj2Wg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8274
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-02_05,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- suspectscore=0 malwarescore=0 spamscore=0 mlxscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509020149
-X-Proofpoint-GUID: BBEGRt-9iuOiDpMiElfH8LH6TwxHBWI_
-X-Proofpoint-ORIG-GUID: BBEGRt-9iuOiDpMiElfH8LH6TwxHBWI_
-X-Authority-Analysis: v=2.4 cv=Of2YDgTY c=1 sm=1 tr=0 ts=68b707ef b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8 a=x80sg5X6LzuwJujQC_oA:9 a=QEXdDO2ut3YA:10
- cc=ntf awl=host:12069
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzMiBTYWx0ZWRfXxPNUm0scknQu
- XmJNBHpt+chuO5xshOkGz74Zcjrgu0mnPpems1TgQ+805hnogwGJLP2bDHoryS1SCY/MEKp0d6A
- H6EAnFsyS175nhq1Vses6iuZHPPYdDCjPP88vAD9LPu6m+exwrKS9d5axPpzUKGf/H8pIxSFhBx
- 7B9nBIYb102ObFh8hBnMN2qNUXMyKTizkpgwUSrTExOQOHqOHxYrZbfS2EcCIot6nxpXD/LOn53
- qJUxDKstStd0L0PthB1O3I9zFDDv98YBMOBAIIYdadu+NFBATljdsiKZ7RbXpkCFnB2+681leeQ
- cdbu1BB7fh9T6UWCyso67M6jyJ9PJYZzGMtzP8Nl1bBXJR5D9XofSTn70HE3Cdo1/srO+uCYvBP
- Qx3cAnI3B/W7lc1l0izlOwFuDH+9HQ==
 
-On 22/08/2025 09:02, Ojaswin Mujoo wrote:
-> Implement atomic write support to help fuzz atomic writes
-> with fsx.
-> 
-> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/futex
+branch HEAD: 237bfb76c90b184f57bb18fe35ff366c19393dc8  selftests/futex: Fix futex_wait() for 32bit ARM
 
-Generally this looks ok, but I do have some comments, so please check them:
+elapsed time: 1463m
 
-Reviewed-by: John Garry <john.g.garry@oracle.com>
+configs tested: 243
+configs skipped: 6
 
-> ---
->   ltp/fsx.c | 115 +++++++++++++++++++++++++++++++++++++++++++++++++++---
->   1 file changed, 110 insertions(+), 5 deletions(-)
-> 
-> diff --git a/ltp/fsx.c b/ltp/fsx.c
-> index 163b9453..1582f6d1 100644
-> --- a/ltp/fsx.c
-> +++ b/ltp/fsx.c
-> @@ -40,6 +40,7 @@
->   #include <liburing.h>
->   #endif
->   #include <sys/syscall.h>
-> +#include "statx.h"
->   
->   #ifndef MAP_FILE
->   # define MAP_FILE 0
-> @@ -49,6 +50,10 @@
->   #define RWF_DONTCACHE	0x80
->   #endif
->   
-> +#ifndef RWF_ATOMIC
-> +#define RWF_ATOMIC	0x40
-> +#endif
-> +
->   #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
->   
->   /* Operation flags (bitmask) */
-> @@ -110,6 +115,7 @@ enum {
->   	OP_READ_DONTCACHE,
->   	OP_WRITE,
->   	OP_WRITE_DONTCACHE,
-> +	OP_WRITE_ATOMIC,
->   	OP_MAPREAD,
->   	OP_MAPWRITE,
->   	OP_MAX_LITE,
-> @@ -200,6 +206,11 @@ int	uring = 0;
->   int	mark_nr = 0;
->   int	dontcache_io = 1;
->   int	hugepages = 0;                  /* -h flag */
-> +int	do_atomic_writes = 1;		/* -a flag disables */
-> +
-> +/* User for atomic writes */
-> +int awu_min = 0;
-> +int awu_max = 0;
->   
->   /* Stores info needed to periodically collapse hugepages */
->   struct hugepages_collapse_info {
-> @@ -288,6 +299,7 @@ static const char *op_names[] = {
->   	[OP_READ_DONTCACHE] = "read_dontcache",
->   	[OP_WRITE] = "write",
->   	[OP_WRITE_DONTCACHE] = "write_dontcache",
-> +	[OP_WRITE_ATOMIC] = "write_atomic",
->   	[OP_MAPREAD] = "mapread",
->   	[OP_MAPWRITE] = "mapwrite",
->   	[OP_TRUNCATE] = "truncate",
-> @@ -422,6 +434,7 @@ logdump(void)
->   				prt("\t***RRRR***");
->   			break;
->   		case OP_WRITE_DONTCACHE:
-> +		case OP_WRITE_ATOMIC:
->   		case OP_WRITE:
->   			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
->   			    lp->args[0], lp->args[0] + lp->args[1] - 1,
-> @@ -1073,6 +1086,25 @@ update_file_size(unsigned offset, unsigned size)
->   	file_size = offset + size;
->   }
->   
-> +static int is_power_of_2(unsigned n) {
-> +	return ((n & (n - 1)) == 0);
-> +}
-> +
-> +/*
-> + * Round down n to nearest power of 2.
-> + * If n is already a power of 2, return n;
-> + */
-> +static int rounddown_pow_of_2(int n) {
-> +	int i = 0;
-> +
-> +	if (is_power_of_2(n))
-> +		return n;
-> +
-> +	for (; (1 << i) < n; i++);
-> +
-> +	return 1 << (i - 1);
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Is this the neatest way to do this?
+tested configs:
+alpha                             allnoconfig    clang-22
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    clang-19
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    clang-19
+arc                              allmodconfig    clang-19
+arc                               allnoconfig    clang-22
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    clang-19
+arc                          axs103_defconfig    clang-22
+arc                                 defconfig    clang-19
+arc                        nsimosci_defconfig    clang-22
+arc                 nsimosci_hs_smp_defconfig    clang-22
+arc                   randconfig-001-20250902    gcc-11.5.0
+arc                   randconfig-001-20250902    gcc-8.5.0
+arc                   randconfig-002-20250902    gcc-8.5.0
+arc                   randconfig-002-20250902    gcc-9.5.0
+arc                           tb10x_defconfig    clang-22
+arm                              allmodconfig    clang-19
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    clang-19
+arm                     davinci_all_defconfig    clang-22
+arm                                 defconfig    clang-19
+arm                            hisi_defconfig    clang-22
+arm                          ixp4xx_defconfig    clang-22
+arm                      jornada720_defconfig    clang-22
+arm                        multi_v7_defconfig    clang-22
+arm                        neponset_defconfig    gcc-15.1.0
+arm                   randconfig-001-20250902    gcc-15.1.0
+arm                   randconfig-001-20250902    gcc-8.5.0
+arm                   randconfig-002-20250902    gcc-8.5.0
+arm                   randconfig-003-20250902    clang-22
+arm                   randconfig-003-20250902    gcc-8.5.0
+arm                   randconfig-004-20250902    clang-22
+arm                   randconfig-004-20250902    gcc-8.5.0
+arm                           stm32_defconfig    gcc-15.1.0
+arm                    vt8500_v6_v7_defconfig    gcc-15.1.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    clang-22
+arm64                             allnoconfig    gcc-15.1.0
+arm64                               defconfig    clang-19
+arm64                 randconfig-001-20250902    gcc-8.5.0
+arm64                 randconfig-002-20250902    clang-22
+arm64                 randconfig-002-20250902    gcc-8.5.0
+arm64                 randconfig-003-20250902    gcc-12.5.0
+arm64                 randconfig-003-20250902    gcc-8.5.0
+arm64                 randconfig-004-20250902    clang-22
+arm64                 randconfig-004-20250902    gcc-8.5.0
+csky                              allnoconfig    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    clang-19
+csky                  randconfig-001-20250902    gcc-11.5.0
+csky                  randconfig-001-20250902    gcc-14.3.0
+csky                  randconfig-002-20250902    gcc-11.5.0
+csky                  randconfig-002-20250902    gcc-12.5.0
+hexagon                          allmodconfig    clang-17
+hexagon                          allmodconfig    clang-19
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-19
+hexagon                          allyesconfig    clang-22
+hexagon                             defconfig    clang-19
+hexagon               randconfig-001-20250902    clang-18
+hexagon               randconfig-001-20250902    gcc-11.5.0
+hexagon               randconfig-002-20250902    clang-22
+hexagon               randconfig-002-20250902    gcc-11.5.0
+i386                             allmodconfig    clang-20
+i386                              allnoconfig    clang-20
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20250902    clang-20
+i386        buildonly-randconfig-001-20250902    gcc-12
+i386        buildonly-randconfig-002-20250902    clang-20
+i386        buildonly-randconfig-002-20250902    gcc-12
+i386        buildonly-randconfig-003-20250902    gcc-12
+i386        buildonly-randconfig-004-20250902    clang-20
+i386        buildonly-randconfig-004-20250902    gcc-12
+i386        buildonly-randconfig-005-20250902    gcc-12
+i386        buildonly-randconfig-006-20250902    clang-20
+i386        buildonly-randconfig-006-20250902    gcc-12
+i386                                defconfig    clang-20
+i386                  randconfig-001-20250902    gcc-12
+i386                  randconfig-002-20250902    gcc-12
+i386                  randconfig-003-20250902    gcc-12
+i386                  randconfig-004-20250902    gcc-12
+i386                  randconfig-005-20250902    gcc-12
+i386                  randconfig-006-20250902    gcc-12
+i386                  randconfig-007-20250902    gcc-12
+i386                  randconfig-011-20250902    gcc-12
+i386                  randconfig-012-20250902    gcc-12
+i386                  randconfig-013-20250902    gcc-12
+i386                  randconfig-014-20250902    gcc-12
+i386                  randconfig-015-20250902    gcc-12
+i386                  randconfig-016-20250902    gcc-12
+i386                  randconfig-017-20250902    gcc-12
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20250902    clang-22
+loongarch             randconfig-001-20250902    gcc-11.5.0
+loongarch             randconfig-002-20250902    clang-22
+loongarch             randconfig-002-20250902    gcc-11.5.0
+m68k                             allmodconfig    clang-19
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    clang-19
+m68k                             allyesconfig    gcc-15.1.0
+m68k                                defconfig    clang-19
+m68k                            mac_defconfig    clang-22
+m68k                        mvme147_defconfig    gcc-15.1.0
+microblaze                       allmodconfig    clang-19
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    clang-19
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                        bcm63xx_defconfig    gcc-15.1.0
+mips                      maltaaprp_defconfig    clang-22
+nios2                             allnoconfig    gcc-11.5.0
+nios2                             allnoconfig    gcc-15.1.0
+nios2                               defconfig    gcc-15.1.0
+nios2                 randconfig-001-20250902    gcc-11.5.0
+nios2                 randconfig-001-20250902    gcc-9.5.0
+nios2                 randconfig-002-20250902    gcc-11.5.0
+openrisc                          allnoconfig    clang-22
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    clang-22
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250902    gcc-11.5.0
+parisc                randconfig-001-20250902    gcc-8.5.0
+parisc                randconfig-002-20250902    gcc-11.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    clang-22
+powerpc                          allyesconfig    clang-22
+powerpc                          allyesconfig    gcc-15.1.0
+powerpc                     kmeter1_defconfig    clang-22
+powerpc               randconfig-001-20250902    gcc-11.5.0
+powerpc               randconfig-001-20250902    gcc-9.5.0
+powerpc               randconfig-002-20250902    gcc-11.5.0
+powerpc               randconfig-002-20250902    gcc-8.5.0
+powerpc               randconfig-003-20250902    gcc-11.5.0
+powerpc                     tqm8548_defconfig    clang-22
+powerpc                        warp_defconfig    gcc-15.1.0
+powerpc64             randconfig-001-20250902    gcc-11.5.0
+powerpc64             randconfig-001-20250902    gcc-12.5.0
+powerpc64             randconfig-002-20250902    clang-22
+powerpc64             randconfig-002-20250902    gcc-11.5.0
+powerpc64             randconfig-003-20250902    clang-22
+powerpc64             randconfig-003-20250902    gcc-11.5.0
+riscv                            allmodconfig    clang-22
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    clang-22
+riscv                            allyesconfig    gcc-15.1.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20250902    gcc-12.5.0
+riscv                 randconfig-001-20250902    gcc-13.4.0
+riscv                 randconfig-002-20250902    clang-22
+riscv                 randconfig-002-20250902    gcc-12.5.0
+s390                             allmodconfig    clang-18
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20250902    clang-22
+s390                  randconfig-001-20250902    gcc-12.5.0
+s390                  randconfig-002-20250902    gcc-10.5.0
+s390                  randconfig-002-20250902    gcc-12.5.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-12
+sh                          polaris_defconfig    clang-22
+sh                    randconfig-001-20250902    gcc-12.5.0
+sh                    randconfig-002-20250902    gcc-12.5.0
+sh                           se7343_defconfig    clang-22
+sh                        sh7757lcr_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250902    gcc-12.5.0
+sparc                 randconfig-001-20250902    gcc-14.3.0
+sparc                 randconfig-002-20250902    gcc-12.5.0
+sparc                 randconfig-002-20250902    gcc-8.5.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20250902    clang-20
+sparc64               randconfig-001-20250902    gcc-12.5.0
+sparc64               randconfig-002-20250902    gcc-12.5.0
+sparc64               randconfig-002-20250902    gcc-9.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    clang-19
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250902    gcc-12
+um                    randconfig-001-20250902    gcc-12.5.0
+um                    randconfig-002-20250902    gcc-12
+um                    randconfig-002-20250902    gcc-12.5.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250902    clang-20
+x86_64      buildonly-randconfig-002-20250902    clang-20
+x86_64      buildonly-randconfig-003-20250902    clang-20
+x86_64      buildonly-randconfig-004-20250902    clang-20
+x86_64      buildonly-randconfig-004-20250902    gcc-12
+x86_64      buildonly-randconfig-005-20250902    clang-20
+x86_64      buildonly-randconfig-005-20250902    gcc-12
+x86_64      buildonly-randconfig-006-20250902    clang-20
+x86_64      buildonly-randconfig-006-20250902    gcc-12
+x86_64                              defconfig    clang-20
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20250902    clang-20
+x86_64                randconfig-002-20250902    clang-20
+x86_64                randconfig-003-20250902    clang-20
+x86_64                randconfig-004-20250902    clang-20
+x86_64                randconfig-005-20250902    clang-20
+x86_64                randconfig-006-20250902    clang-20
+x86_64                randconfig-007-20250902    clang-20
+x86_64                randconfig-008-20250902    clang-20
+x86_64                randconfig-071-20250902    clang-20
+x86_64                randconfig-072-20250902    clang-20
+x86_64                randconfig-073-20250902    clang-20
+x86_64                randconfig-074-20250902    clang-20
+x86_64                randconfig-075-20250902    clang-20
+x86_64                randconfig-076-20250902    clang-20
+x86_64                randconfig-077-20250902    clang-20
+x86_64                randconfig-078-20250902    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-12
+x86_64                          rhel-9.4-func    clang-20
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                         rhel-9.4-kunit    gcc-12
+x86_64                           rhel-9.4-ltp    gcc-12
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250902    gcc-12.5.0
+xtensa                randconfig-001-20250902    gcc-9.5.0
+xtensa                randconfig-002-20250902    gcc-10.5.0
+xtensa                randconfig-002-20250902    gcc-12.5.0
 
-> +}
-> +
->   void
->   dowrite(unsigned offset, unsigned size, int flags)
->   {
-> @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
->   	offset -= offset % writebdy;
->   	if (o_direct)
->   		size -= size % writebdy;
-> +	if (flags & RWF_ATOMIC) {
-> +		/* atomic write len must be inbetween awu_min and awu_max */
-
-in between
-
-> +		if (size < awu_min)
-> +			size = awu_min;
-> +		if (size > awu_max)
-> +			size = awu_max;
-> +
-> +		/* atomic writes need power-of-2 sizes */
-> +		size = rounddown_pow_of_2(size);
-
-you could have:
-
-if (size < awu_min)
-	size = awu_min;
-else if (size > awu_max)
-	size = awu_max;
-else
-	size = rounddown_pow_of_2(size);
-
-> +
-> +		/* atomic writes need naturally aligned offsets */
-> +		offset -= offset % size;
-> +
-> +		/* Skip the write if we are crossing max filesize */
-> +		if ((offset + size) > maxfilelen) {
-> +			if (!quiet && testcalls > simulatedopcount)
-> +				prt("skipping atomic write past maxfilelen\n");
-> +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> +			return;
-> +		}
-> +	}
->   	if (size == 0) {
->   		if (!quiet && testcalls > simulatedopcount && !o_direct)
->   			prt("skipping zero size write\n");
-> @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
->   		return;
->   	}
->   
-> -	log4(OP_WRITE, offset, size, FL_NONE);
-> +	if (flags & RWF_ATOMIC)
-> +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
-> +	else
-> +		log4(OP_WRITE, offset, size, FL_NONE);
->   
->   	gendata(original_buf, good_buf, offset, size);
->   	if (offset + size > file_size) {
-> @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
->   		       (monitorstart == -1 ||
->   			(offset + size > monitorstart &&
->   			(monitorend == -1 || offset <= monitorend))))))
-> -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
-> -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
-> +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
-> +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
-> +		    (flags & RWF_ATOMIC) != 0);
-
-nit:
-
-	!!(flags & RWF_ATOMIC)
-
-I find that a bit neater, but I suppose you are following the example 
-for RWF_DONTCACHE
-
->   	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
->   	if (iret != size) {
->   		if (iret == -1)
-> @@ -1785,6 +1842,36 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
->   }
->   #endif
->   
-> +int test_atomic_writes(void) {
-> +	int ret;
-> +	struct statx stx;
-> +
-> +	if (o_direct != O_DIRECT) {
-> +		fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
-> +				"disabling!\n");
-> +		return 0;
-> +	}
-> +
-> +	ret = xfstests_statx(AT_FDCWD, fname, 0, STATX_WRITE_ATOMIC, &stx);
-> +	if (ret < 0) {
-> +		fprintf(stderr, "main: Statx failed with %d."
-> +			" Failed to determine atomic write limits, "
-> +			" disabling!\n", ret);
-> +		return 0;
-> +	}
-> +
-> +	if (stx.stx_attributes & STATX_ATTR_WRITE_ATOMIC &&
-> +	    stx.stx_atomic_write_unit_min > 0) {
-> +		awu_min = stx.stx_atomic_write_unit_min;
-> +		awu_max = stx.stx_atomic_write_unit_max;
-> +		return 1;
-> +	}
-> +
-> +	fprintf(stderr, "main: IO Stack does not support "
-> +			"atomic writes, disabling!\n");
-
-Do we really need to spread this over multiple lines?
-
-Maybe that is the coding standard - I don't know.
-
-> +	return 0;
-> +}
-> +
->   #ifdef HAVE_COPY_FILE_RANGE
->   int
->   test_copy_range(void)
-> @@ -2356,6 +2443,12 @@ have_op:
->   			goto out;
->   		}
->   		break;
-> +	case OP_WRITE_ATOMIC:
-> +		if (!do_atomic_writes) {
-> +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> +			goto out;
-> +		}
-> +		break;
->   	}
->   
->   	switch (op) {
-> @@ -2385,6 +2478,11 @@ have_op:
->   			dowrite(offset, size, 0);
->   		break;
->   
-> +	case OP_WRITE_ATOMIC:
-> +		TRIM_OFF_LEN(offset, size, maxfilelen);
-> +		dowrite(offset, size, RWF_ATOMIC);
-> +		break;
-> +
->   	case OP_MAPREAD:
->   		TRIM_OFF_LEN(offset, size, file_size);
->   		domapread(offset, size);
-> @@ -2511,13 +2609,14 @@ void
->   usage(void)
->   {
->   	fprintf(stdout, "usage: %s",
-> -		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
-> +		"fsx [-adfhknqxyzBEFHIJKLORWXZ0]\n\
->   	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
->   	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
->   	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
->   	   [-A|-U] [-D startingop] [-N numops] [-P dirpath] [-S seed]\n\
->   	   [--replay-ops=opsfile] [--record-ops[=opsfile]] [--duration=seconds]\n\
->   	   ... fname\n\
-> +	-a: disable atomic writes\n\
->   	-b opnum: beginning operation number (default 1)\n\
->   	-c P: 1 in P chance of file close+open at each op (default infinity)\n\
->   	-d: debug output for all operations\n\
-> @@ -3059,9 +3158,13 @@ main(int argc, char **argv)
->   	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
->   
->   	while ((ch = getopt_long(argc, argv,
-> -				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
-> +				 "0ab:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
->   				 longopts, NULL)) != EOF)
->   		switch (ch) {
-> +		case 'a':
-> +			prt("main(): Atomic writes disabled\n");
-> +			do_atomic_writes = 0;
-
-why an opt-out (and not opt-in)?
-
-> +			break;
->   		case 'b':
->   			simulatedopcount = getnum(optarg, &endp);
->   			if (!quiet)
-> @@ -3475,6 +3578,8 @@ main(int argc, char **argv)
->   		exchange_range_calls = test_exchange_range();
->   	if (dontcache_io)
->   		dontcache_io = test_dontcache_io();
-> +	if (do_atomic_writes)
-> +		do_atomic_writes = test_atomic_writes();
->   
->   	while (keep_running())
->   		if (!test())
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
