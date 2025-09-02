@@ -1,153 +1,168 @@
-Return-Path: <linux-kernel+bounces-796586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3006B402DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:25:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623FAB402C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0267E1625DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:24:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99144175073
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196473090EF;
-	Tue,  2 Sep 2025 13:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1543054E7;
+	Tue,  2 Sep 2025 13:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iyc8CGur"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="krjuJKed";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kv7tc5Zl"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90A2307AD9;
-	Tue,  2 Sep 2025 13:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9527B305057
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756819382; cv=none; b=fbakiIRQfSTb6Qs2kps0NJIfxrYeyFByx7yq8qesydsOXE+oQN+q4hBvVuLeWRChtcU6DQhKL6qDudy7Y6X4ksVIXahWDLioQLAkkdgR69FHMdQZbwTIVvMSTVZdHf1C44loroRYvxgB+87ePd9A4tV3j7/TSHQcYW2bz34jkhs=
+	t=1756819296; cv=none; b=e4LQCgpycFpgwkBQJP4t0dr9IOnUUlKXWUrZfxMzmRyuU27o+gvdbwR3VBDG4MqVdcEW2SV0Yunqdh9h8N+ktJN/UYNfwlO2e1+b11+BvX7we/8GHm493snBawJeDhUOo/bQWmUfQXxFttWh9xJqreQFmAvXjn3efNMu+GVjX2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756819382; c=relaxed/simple;
-	bh=bsrtN/UNG9iIkOTFtbf/aBs98lsRgQ3mXT6PfL4G5aE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rOvW11vfMprElTNdPf7g0/pH1RzXm4NfZAga3s/juyVToghn3mqOfbTQ5R68A0h0JugbLnjbYgQMRT92DmZ8XNts+aIcPhEe27jE2kGqEUlUINkeKZ9NCou36PosLD2sit7u8SoDplsqy5fVCmecAXgf21A0CR+uspL9wdoSZ2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iyc8CGur; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b9853e630so6923235e9.0;
-        Tue, 02 Sep 2025 06:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756819379; x=1757424179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9SQo1VWDa8L0gOXuwTFV8cUa7G4/T2C+1QUOVeEgYOo=;
-        b=Iyc8CGuroWsrMSaMLQhZ5TaIC7kdOWeM1BzXtA0KMuXkgWknQuUMJ3Ot9tFnMEbhje
-         ifDT5yh2jcC/rhboUSdZDKkFocyEtH5/P6Ra0Ok2xiZAR1lnadPdnlg6YaXD1V6eQiXE
-         hFpNxYf5Lf64cvDKwKXKOzLDPu0K5jPSOlaX3XrQfwGPr4yduORaHGGlzmhXx2e285ip
-         Rle9bfiM/lKHNpoBOr0ljNsV0AlMinUCVvJYGCwZC+/9ZC3UJV23Avhapt+wkNkjqXCH
-         Cu1JGd3NUtMFz6V01PvZuhGGeBVsox5LO4Tc+wlR6Zv7A+18HyaZkgwtcF87sXf6fx4/
-         4jLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756819379; x=1757424179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9SQo1VWDa8L0gOXuwTFV8cUa7G4/T2C+1QUOVeEgYOo=;
-        b=tkeEcwPBtlV0y9PzEIk5lgZi51D+zqisBxgA938ZCvb4NazzLY2nC30TG/K8/687Iq
-         cK7byAdJzLeqkFRVMBfHckGuonhsChvcIKYWpJoylauyFjrvGxwQfBsnJE1qOpXChG7+
-         fAhU3q2f1PNK7+hzUkiKtN49JMeOOiiw+ScPoakNqY2WY7aVgx5GsTgldLathFVCPqN0
-         9+/iAXMTxnxKG99wLA7Uw7MGERw1NoVGxAYXLUx9ukXIJuxQuu+Qz2lJvr0GWlt9idlP
-         IyZHk5K/B356bd2w6wTBszdl4aUisQj9ghqoeJrfDwHaUCLKKkX10JnidqUHeD8QAiJk
-         zLnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmZgYFqXVNYFdtgyzm7iTQHU60f3XecY5qG1cgP0U2wFIOqkXdi94n7rjc+pH7TZPdiQ9Jy6+BvHkVOM8=@vger.kernel.org, AJvYcCXcnMTlBgkhnelRJeQP6JE/v3DXcOkFNPmbs9t82rXcUmaDhk88fIcxxa92Y1SHuKQsxEkrA4ZAbrn8QCqd@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB/dB+mhjFLKhr9CKjK+LvQHYWk+nbiosPlc/WvO3plxRsCpow
-	ZyzsH+PrjFQKDemr7710aCWRa/++ClXrXXm53y3h+WEDSivQaGxRQRGM
-X-Gm-Gg: ASbGncuw6FXx9Dl8N+DnFE6KnevBl8lRhe0ufyLlNJD+17V1n8ValND2b2Dm2KhBOy2
-	f8scMfI3BKNBUjDzzd5377jzVTZgL3ryRONMnf9cJzp43hfpncp8KMCGN3sXO9GF3ZzZvUHDEno
-	kBgPgDuiGWH/qTV893NLQqTPL9mp535UP8ePmXmxd+BArLKPg9TLWSy8aKqcbU/g/JpOLRppDX5
-	iAEWmRsHdLzwNA3S0q0RxE/A5owUhVu1jL10XUhy+fHwhZ6b4MkquWW/8ADXIvpqb/o15BDj6CG
-	dy9DZsld9UsCbUdugVhCHnyGlnCnRI801/9lEKy2AJnQt7bCMGqKBW4hFgP4l9KCp9RgrTt7ls8
-	5sp0BUyLJ2e3OCwSqM7hoO8zLvDOQzRCBUw==
-X-Google-Smtp-Source: AGHT+IFCIE32gRqXCK2cxP5jJ0umVullIbqtBAeMOiAN/1dBA/vOuBTNpHuGFamrKvDjEfmo1r30gg==
-X-Received: by 2002:a05:600c:1e87:b0:45b:47e1:f5fe with SMTP id 5b1f17b1804b1-45b855c0d3dmr80790615e9.34.1756819378791;
-        Tue, 02 Sep 2025 06:22:58 -0700 (PDT)
-Received: from ws-linux01 ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b945332adsm44452155e9.4.2025.09.02.06.22.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 06:22:58 -0700 (PDT)
-From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-To: clabbe.montjoie@gmail.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	linux-crypto@vger.kernel.org
-Cc: wens@csie.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Subject: [PATCH v3 3/9] crypto: sun8i-ce - remove unnecessary __maybe_unused annotations
-Date: Tue,  2 Sep 2025 16:21:28 +0300
-Message-ID: <20250902132134.3287515-4-ovidiu.panait.oss@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250902132134.3287515-1-ovidiu.panait.oss@gmail.com>
-References: <20250902132134.3287515-1-ovidiu.panait.oss@gmail.com>
+	s=arc-20240116; t=1756819296; c=relaxed/simple;
+	bh=4/Fjff2cjH92o3ZuNQmlWkEvWmmi75J/xPgut/CQq2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZT+82qn35ULYYzsbCszW2vk/h05fJidtipblp8paJOdgGP771LUo+4P8/oC1Fqp7vLJmW4hSvQ0aWNpkaUwPOseqCNuI8SpnA0o5umCmBARzg+RjNdKi4qVIUpJtoEk0YIFtFaMfabNkHB8+9M3rLQET8YoB8l1uNk5FPel7Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=krjuJKed; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kv7tc5Zl; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id BD37DEC0462;
+	Tue,  2 Sep 2025 09:21:33 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 02 Sep 2025 09:21:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1756819293; x=
+	1756905693; bh=nJeUVlALNdS28seLiy00VvLxk+MhX14VjWVeCWs5TeE=; b=k
+	rjuJKedvnaeNqhn4Kmqjwnwtd96NVNwXtHdov0Udh6nASk5Jgy9g6owJbgMkKp5x
+	AGGDn4PwvzvHoVLJg8pJHAN/zSk9MSodwJAAlXxzZTG5UnagoG7ByvAU8h8TFZFf
+	KM3UuKhT0K2nmd9XdRA5p0Tee68WromgZ5rwdoo89/FIYBfJBT4OqEDq2pK91xon
+	nG5BZW+w+LVEnEtlf8rcwPFag2rgAW6tAwCHKGJKfEOfM3EH17AsIP7wCvBgwtQO
+	qfJ1iXLD35HEqSPNd9fbcXY1pmmb02NBk2usBmIycT1dnS1W8r7CjMDGgKP8DM29
+	5n1oN16Y2gao3NxjEQw6g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756819293; x=1756905693; bh=nJeUVlALNdS28seLiy00VvLxk+MhX14VjWV
+	eCWs5TeE=; b=Kv7tc5ZlsT/vS4+f+LAOEtlMomwc8TPylM+i36u17BukeMBjM5i
+	fu6gg/A8n6qzwQm3kpaRbr6xTqAZE4jlifNYV81wwkkeI9Bn1M7fGIadUUAxuWgi
+	mi8aonUx2qSLldmeFaPQ5lsF0WKBy5n1hNCOOd71Scn2GXfFgymo4dyOkv4bMfZw
+	zkHnwYWX/ZzSmRWvcsSViXc9M5I9Zv08ZGLEAw/OlxQP972FH0FNB73U9X57fgBC
+	a7BlbtY4CuFIiZoKu6Y3OuFx0GiQi6ETThh9wlxboSNjI5cFNMpaC9NcD04GCtZa
+	gyqF6mvxswKx4db4dYkcuNsSZ89dW/6hHLA==
+X-ME-Sender: <xms:XO-2aCNU_Fxda-TrRptuSpIMIbgBIKL-6zZKdfcTpAXtjor3TmTHqg>
+    <xme:XO-2aLzWgwRfCZiqhXddAp2QhyfYd58usf-F2KQTXWVDIqWUPWl3_Fym2ffbKDJzS
+    LdTk-M2YQiB1WIFZm0>
+X-ME-Received: <xmr:XO-2aHgihy4R2mKQig-rV6-mdWuixFAXgmpq4FuxN6jIzf1ECN5TEwh0T3xH>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
+    ohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpe
+    ffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfuhhhu
+    thhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrg
+    htthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtleduhfef
+    feffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeegpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehkvghrnhgvlhesphgrnhhkrghjrhgrgh
+    hhrghvrdgtohhmpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghp
+    thhtoheprhihrghnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtoheplhhorh
+    gvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepsggrohhl
+    ihhnrdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopeguvg
+    hvrdhjrghinhesrghrmhdrtghomhdprhgtphhtthhopegsrghohhhurgeskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdroh
+    hrghdprhgtphhtthhopehnphgrtghhvgesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:XO-2aCQ1CRmyNf7IJSOz8SfvlJfJ4glq7nMIEC-QhiFbIPEHofWZoA>
+    <xmx:XO-2aEN5aQdKvgQj8sPeSophDhTeyzKBO5bQf6mt0yxgxw9iyyGIjA>
+    <xmx:XO-2aHEefdlTziFsvPcBkhW9aW1UZNL-xh-p1gLTICBAW4--s3_ciw>
+    <xmx:XO-2aEiYIM_kwTObNz8DEqQWcG7Yxbh8JfrWB603WzF5K63b1xYUcA>
+    <xmx:Xe-2aFqkMbENbYRl7810LXgoMO-OJERlGvRYplzs4Y2Af-4uOtPuv87J>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 2 Sep 2025 09:21:31 -0400 (EDT)
+Date: Tue, 2 Sep 2025 14:21:28 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Pankaj Raghav <kernel@pankajraghav.com>
+Cc: David Hildenbrand <david@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, mcgrof@kernel.org, gost.dev@samsung.com, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH] huge_memory: return -EINVAL in folio split functions
+ when THP is disabled
+Message-ID: <h7pqst5vvkahposrvf2iy5qz53t4crrujold2ky4ssrpawaefv@yaqaj3so2hxi>
+References: <20250902084036.208921-1-kernel@pankajraghav.com>
+ <qh7s3j26aac3hyzgnr2ee6byjenstxhjnlwn4qxbvz2l32ohqc@qbhdxvpnuhtp>
+ <90cd5be7-cbe6-42c5-b0eb-bf9613047097@pankajraghav.com>
+ <6l6f5idkqebpai6qn6n3phbnydz55typdwmvp3eexwnhk4qr54@otcgssegyqke>
+ <519df8fd-b02d-4b4b-bf47-79070e3d2c9e@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <519df8fd-b02d-4b4b-bf47-79070e3d2c9e@pankajraghav.com>
 
-There are 3 instances of '__maybe_unused' annotations that are not needed,
-as the variables are always used, so remove them.
+On Tue, Sep 02, 2025 at 03:02:23PM +0200, Pankaj Raghav wrote:
+> >> I was hitting a weird stale content read error and finally ended up with this fix.
+> >>
+> >> I thought this is a self-contained patch that can already be upstream. My argument is not that this
+> >> should not be reachable, but returning -EINVAL will do the right thing instead of returning 0, which
+> >> means success.
+> > 
+> > Okay, makes sense.
+> > 
+> > In THP=y case, __folio_split() also returns -EINVAL for !large folios,
+> > but it is not very explicit:
+> > 
+> > 	if (new_order >= folio_order(folio))
+> > 		return -EINVAL;
+> > 
+> > In THP=y, we also issue warning:
+> > 
+> > 	VM_WARN_ON_ONCE_FOLIO(!folio_test_locked(folio), folio);
+> > 
+> You mean:
+> 
+> VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
----
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c | 2 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c   | 2 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c   | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Yeah, copied wrong line.
 
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-index 113a1100f2ae..c57c64a1a388 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c
-@@ -111,7 +111,7 @@ static int sun8i_ce_cipher_fallback(struct skcipher_request *areq)
- 
- 	if (IS_ENABLED(CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG)) {
- 		struct skcipher_alg *alg = crypto_skcipher_alg(tfm);
--		struct sun8i_ce_alg_template *algt __maybe_unused;
-+		struct sun8i_ce_alg_template *algt;
- 
- 		algt = container_of(alg, struct sun8i_ce_alg_template,
- 				    alg.skcipher.base);
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-index 79ec172e5c99..ba30859e749c 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c
-@@ -1062,7 +1062,7 @@ static int sun8i_ce_probe(struct platform_device *pdev)
- 	pm_runtime_put_sync(ce->dev);
- 
- 	if (IS_ENABLED(CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG)) {
--		struct dentry *dbgfs_dir __maybe_unused;
-+		struct dentry *dbgfs_dir;
- 		struct dentry *dbgfs_stats __maybe_unused;
- 
- 		/* Ignore error of debugfs */
-diff --git a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
-index 61e8d968fdcc..df2acef9c679 100644
---- a/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
-+++ b/drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c
-@@ -26,7 +26,7 @@
- static void sun8i_ce_hash_stat_fb_inc(struct crypto_ahash *tfm)
- {
- 	if (IS_ENABLED(CONFIG_CRYPTO_DEV_SUN8I_CE_DEBUG)) {
--		struct sun8i_ce_alg_template *algt __maybe_unused;
-+		struct sun8i_ce_alg_template *algt;
- 		struct ahash_alg *alg = crypto_ahash_alg(tfm);
- 
- 		algt = container_of(alg, struct sun8i_ce_alg_template,
+> > Makes sense to do the same here for THP=n. It might help to catch cases
+> > we do not see with THP=y, like getting non-THP large folios here.
+> > 
+> 
+> Yeah, I think that is a good idea. Something like this:
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 48c4f91c5b13..4ddf9e87db91 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -588,21 +588,29 @@ static inline int
+>  split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>                 unsigned int new_order)
+>  {
+> +       struct folio *folio = page_folio(page);
+> +
+> +       VM_WARN_ON_ONCE_FOLIO(!folio_test_large(folio), folio);
+
+No. Make it unconditional. The point is we don't expect to see any
+splitable folios, so no reason to get here at all.
+
+You can try to use BUILD_BUG(), but it can be too messy.
+
 -- 
-2.50.0
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
