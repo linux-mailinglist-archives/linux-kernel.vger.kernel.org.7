@@ -1,172 +1,255 @@
-Return-Path: <linux-kernel+bounces-796819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FADB407AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:49:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17EACB407E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 310857B5068
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139E0565CD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45A031158C;
-	Tue,  2 Sep 2025 14:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221EF314B61;
+	Tue,  2 Sep 2025 14:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HvFR6Jxf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4z/viMp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EED84414;
-	Tue,  2 Sep 2025 14:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB3F3128AF;
+	Tue,  2 Sep 2025 14:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756824476; cv=none; b=QR7Q+nwgmF27RP5r5KIyd3pCCHCoBAC7szH5F56VYycVlBccu99A8Sj5lIEQxqFFG3MupF4ODxLSkyhb3bAJk/SyL16kXAaVTLaLJ6YI8YpAQmaxUUM90Tp/VO3Pm2w/gFJmVWTvEbj8miy3LGhmEhCfdW+mIJlN9o5WpN8pM40=
+	t=1756824546; cv=none; b=fQgEcuQJbSEuDQuQITINCvjXxlpqgLWH0EWRvBzZEp4jllqyhu8mGlGh3cOPmmaguNycGjetiQpDzCTfn6qQ6bXK9jnlXW9fYPC95T6Vv0qYm6nTIt2ClbzOOhrZPWED7Tp6mUIhqDW4i7psovIouwXOsTzP6uhOTkpJd8WRKVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756824476; c=relaxed/simple;
-	bh=1/NqJEzfCoxj8NArs4pfMLC+ZS6/N/BXOUx2E94UzTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dL1HKrN+vwRVCaaNRYfBu3OVeKKBoJR16cRfu3u5m9+O/0GYgX/nunrkeE13Dg4iXDQfot9TJ5c9p2JAneP8lWNbKHcSWCv9Ztl+zHIIjDM7eXFnLfy/ldaQBW7YqUvZ9DcMOBlqFVxxAD+84oFn3BtKtVtqeA50IGF1ta7iF+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HvFR6Jxf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E5F6C4CEF5;
-	Tue,  2 Sep 2025 14:47:54 +0000 (UTC)
+	s=arc-20240116; t=1756824546; c=relaxed/simple;
+	bh=3SAFSguWc3mEh+7tLjgls851bpgvCDXeoOLUKYRDCQw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P21r7udrV+bktR1WwV5X4xw3l2CQfzrG9/RWvfurLGBUqePleqQVV8IJa7okPbQhwiUV0ABqgebVRe4S76vVFIzikz5v27RWTX1dVjioKaEgrsW6sINd/S715l5YaExyAkVYNpbdRQVpGHB0TjTyrTMSnR9gQrYHzLR4OvG+O5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4z/viMp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACFA9C4CEED;
+	Tue,  2 Sep 2025 14:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756824475;
-	bh=1/NqJEzfCoxj8NArs4pfMLC+ZS6/N/BXOUx2E94UzTU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HvFR6JxftzO8TgWPnGeuO7iiMxXCA7/nFkI0cpgLdHtSfKbxCBeUNHQ+J9iK+yX1Z
-	 IiC3PGmM4Rke4+vBwJmOmlaJ3W3G9tapUWnO8940j0n7jVrrQmjS8fD2/NpZFxlI/0
-	 q0wJFu5K9vFR9ObEFiUCH9DbBjryeV8sLKJASzgFI7JfBvg1aKYof/SgU52AbOhFTn
-	 aI0WcJt1T2x/+nnHSnd6komGBsMEmhzVN4yUUR34kVT5KQQk/lkubK7p4O8zVrk4Z9
-	 EdtWXghdx85Lw9oUQCAuRohQlWK3QPPkDBXfL62ocxgbM/ABuNXUfjVALHmbVEbSn8
-	 jWcPbHsgH498g==
-Date: Tue, 2 Sep 2025 09:47:52 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, kernel@oss.qualcomm.com, 
-	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v8 5/9] arm64: dts: qcom: qcs6490-audioreach: Modify
- LPASS macros clock settings for audioreach
-Message-ID: <fcdjq6mevt2d2oz2o43ityogugv5ahrwedkweyqe6qoxqmrfnv@y56wqkllssqu>
-References: <20250821044914.710044-1-quic_pkumpatl@quicinc.com>
- <20250821044914.710044-6-quic_pkumpatl@quicinc.com>
+	s=k20201202; t=1756824545;
+	bh=3SAFSguWc3mEh+7tLjgls851bpgvCDXeoOLUKYRDCQw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=T4z/viMpK/6nZf/nQZOIsRAAm3EHCx98H3vJy/7M+HoAOU06u4ge/kUryG+aCfwUr
+	 EPLJmc0enqvgMLu/ql+aqcT5Fj2w9kmxR9H/m3pCJndhGClrY92+csP8H8rqa+M2F0
+	 +/tg51ze5lLUyJvb9GuRMyJ6Mnz6YmTZuEbkE8BZXJxNc0WBeGGkH6nfvvoKcKyT7D
+	 72RQkLhAK72Yfulrr+BomhHq1M5YBXZDuDEbusIH/tJezD3AHPAbYmPt0An2e0azvi
+	 DpDSFe11OrTeaTIEkB3Rx5xhIiAEjLUzU+nXQYo+9uCB+p85bgbRHkcFyUX4QjIfNW
+	 +sNnsW+E+uHqg==
+From: Leon Romanovsky <leon@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	iommu@lists.linux.dev,
+	Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com,
+	Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev,
+	Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH v5 00/16] dma-mapping: migrate to physical address-based API
+Date: Tue,  2 Sep 2025 17:48:37 +0300
+Message-ID: <cover.1756822782.git.leon@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821044914.710044-6-quic_pkumpatl@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 21, 2025 at 10:19:10AM +0530, Prasad Kumpatla wrote:
-> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> 
-> Modify and enable WSA, VA, RX and TX lpass macros and lpass_tlmm clock
-> settings. For audioreach solution mclk, npl and fsgen clocks are enabled
-> through the q6prm clock driver.
-> 
-> For qcs6490 RX drives clk from TX CORE which is mandated from DSP side,
-> Unlike dedicated core clocks. Core TX clk is used for both RX and
-> WSA as per DSP recommendations.
-> 
+Marek,
 
-This differs from all other platforms, so please make sure the commit
-message explains why.
+Please pay attention that I'm resending all patches which includes
+nvme/blk conversion too. The code is based on clean -rc3, but NVMe
+tree got patch in this cycle which removes one of their REQ_* bits,
+on which I'm relying.
 
-As with patch 1, is this specific to qcs6490?
+This is the patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-6.18/block&id=7092639031a1bd5320ab827e8f665350f332b7ce
+and this is Keith's attempt to restore it:
+https://lore.kernel.org/linux-block/20250829142307.3769873-3-kbusch@meta.com/
 
-Regards,
-Bjorn
+So there are two possible options:
+1. Apply only first 13 patches and I'll resend nvme/blk patches in next
+cycle with the hope that REQ_* bits issue is sorted.
+2. Apply whole series and deal with merge conflicts by sending PR to
+Jens and ask him to merge this DMA series.
 
-> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  .../boot/dts/qcom/qcs6490-audioreach.dtsi     | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> index 282938c042f7..6d3a9e171066 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-audioreach.dtsi
-> @@ -12,6 +12,67 @@
->  #include <dt-bindings/sound/qcom,q6afe.h>
->  #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
->  
-> +&lpass_rx_macro {
-> +	/delete-property/ power-domains;
-> +	/delete-property/ power-domain-names;
-> +	clocks = <&q6prmcc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_CLK_ID_TX_CORE_NPL_MCLK  LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&lpass_va_macro>;
-> +	clock-names = "mclk",
-> +		      "npl",
-> +		      "macro",
-> +		      "dcodec",
-> +		      "fsgen";
-> +};
-> +
-> +&lpass_tlmm {
-> +	clocks = <&q6prmcc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-> +	clock-names = "core",
-> +		      "audio";
-> +};
-> +
-> +&lpass_tx_macro {
-> +	/delete-property/ power-domains;
-> +	/delete-property/ power-domain-names;
-> +	clocks = <&q6prmcc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_CLK_ID_TX_CORE_NPL_MCLK  LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&lpass_va_macro>;
-> +	clock-names = "mclk",
-> +		      "npl",
-> +		      "macro",
-> +		      "dcodec",
-> +		      "fsgen";
-> +};
-> +
-> +&lpass_va_macro {
-> +	/delete-property/ power-domains;
-> +	/delete-property/ power-domain-names;
-> +	clocks = <&q6prmcc LPASS_CLK_ID_VA_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-> +	clock-names = "mclk",
-> +		      "macro",
-> +		      "dcodec";
-> +};
-> +
-> +&lpass_wsa_macro {
-> +	clocks = <&q6prmcc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_CLK_ID_TX_CORE_NPL_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_MACRO_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
-> +		 <&lpass_va_macro>;
-> +	clock-names = "mclk",
-> +		      "npl",
-> +		      "macro",
-> +		      "dcodec",
-> +		      "fsgen";
-> +};
-> +
->  &remoteproc_adsp_glink {
->  	/delete-node/ apr;
->  
-> -- 
-> 2.34.1
-> 
+Thanks
+
+------------------------------------------------------------------------
+Changelog:
+v5:
+ * Added Jason's and Keith's Reviewed-by tags
+ * Fixed DMA_ATTR_MMIO check in dma_direct_map_phys
+ * Jason's cleanup suggestions
+v4: https://lore.kernel.org/all/cover.1755624249.git.leon@kernel.org/
+ * Fixed kbuild error with mismatch in kmsan function declaration due to
+   rebase error.
+v3: https://lore.kernel.org/all/cover.1755193625.git.leon@kernel.org
+ * Fixed typo in "cacheable" word
+ * Simplified kmsan patch a lot to be simple argument refactoring
+v2: https://lore.kernel.org/all/cover.1755153054.git.leon@kernel.org
+ * Used commit messages and cover letter from Jason
+ * Moved setting IOMMU_MMIO flag to dma_info_to_prot function
+ * Micro-optimized the code
+ * Rebased code on v6.17-rc1
+v1: https://lore.kernel.org/all/cover.1754292567.git.leon@kernel.org
+ * Added new DMA_ATTR_MMIO attribute to indicate
+   PCI_P2PDMA_MAP_THRU_HOST_BRIDGE path.
+ * Rewrote dma_map_* functions to use thus new attribute
+v0: https://lore.kernel.org/all/cover.1750854543.git.leon@kernel.org/
+------------------------------------------------------------------------
+
+This series refactors the DMA mapping to use physical addresses
+as the primary interface instead of page+offset parameters. This
+change aligns the DMA API with the underlying hardware reality where
+DMA operations work with physical addresses, not page structures.
+
+The series maintains export symbol backward compatibility by keeping
+the old page-based API as wrapper functions around the new physical
+address-based implementations.
+
+This series refactors the DMA mapping API to provide a phys_addr_t
+based, and struct-page free, external API that can handle all the
+mapping cases we want in modern systems:
+
+ - struct page based cacheable DRAM
+ - struct page MEMORY_DEVICE_PCI_P2PDMA PCI peer to peer non-cacheable
+   MMIO
+ - struct page-less PCI peer to peer non-cacheable MMIO
+ - struct page-less "resource" MMIO
+
+Overall this gets much closer to Matthew's long term wish for
+struct-pageless IO to cacheable DRAM. The remaining primary work would
+be in the mm side to allow kmap_local_pfn()/phys_to_virt() to work on
+phys_addr_t without a struct page.
+
+The general design is to remove struct page usage entirely from the
+DMA API inner layers. For flows that need to have a KVA for the
+physical address they can use kmap_local_pfn() or phys_to_virt(). This
+isolates the struct page requirements to MM code only. Long term all
+removals of struct page usage are supporting Matthew's memdesc
+project which seeks to substantially transform how struct page works.
+
+Instead make the DMA API internals work on phys_addr_t. Internally
+there are still dedicated 'page' and 'resource' flows, except they are
+now distinguished by a new DMA_ATTR_MMIO instead of by callchain. Both
+flows use the same phys_addr_t.
+
+When DMA_ATTR_MMIO is specified things work similar to the existing
+'resource' flow. kmap_local_pfn(), phys_to_virt(), phys_to_page(),
+pfn_valid(), etc are never called on the phys_addr_t. This requires
+rejecting any configuration that would need swiotlb. CPU cache
+flushing is not required, and avoided, as ATTR_MMIO also indicates the
+address have no cacheable mappings. This effectively removes any
+DMA API side requirement to have struct page when DMA_ATTR_MMIO is
+used.
+
+In the !DMA_ATTR_MMIO mode things work similarly to the 'page' flow,
+except on the common path of no cache flush, no swiotlb it never
+touches a struct page. When cache flushing or swiotlb copying
+kmap_local_pfn()/phys_to_virt() are used to get a KVA for CPU
+usage. This was already the case on the unmap side, now the map side
+is symmetric.
+
+Callers are adjusted to set DMA_ATTR_MMIO. Existing 'resource' users
+must set it. The existing struct page based MEMORY_DEVICE_PCI_P2PDMA
+path must also set it. This corrects some existing bugs where iommu
+mappings for P2P MMIO were improperly marked IOMMU_CACHE.
+
+Since ATTR_MMIO is made to work with all the existing DMA map entry
+points, particularly dma_iova_link(), this finally allows a way to use
+the new DMA API to map PCI P2P MMIO without creating struct page. The
+VFIO DMABUF series demonstrates how this works. This is intended to
+replace the incorrect driver use of dma_map_resource() on PCI BAR
+addresses.
+
+This series does the core code and modern flows. A followup series
+will give the same treatment to the legacy dma_ops implementation.
+
+Thanks
+
+Leon Romanovsky (16):
+  dma-mapping: introduce new DMA attribute to indicate MMIO memory
+  iommu/dma: implement DMA_ATTR_MMIO for dma_iova_link().
+  dma-debug: refactor to use physical addresses for page mapping
+  dma-mapping: rename trace_dma_*map_page to trace_dma_*map_phys
+  iommu/dma: rename iommu_dma_*map_page to iommu_dma_*map_phys
+  iommu/dma: implement DMA_ATTR_MMIO for iommu_dma_(un)map_phys()
+  dma-mapping: convert dma_direct_*map_page to be phys_addr_t based
+  kmsan: convert kmsan_handle_dma to use physical addresses
+  dma-mapping: implement DMA_ATTR_MMIO for dma_(un)map_page_attrs()
+  xen: swiotlb: Open code map_resource callback
+  dma-mapping: export new dma_*map_phys() interface
+  mm/hmm: migrate to physical address-based DMA mapping API
+  mm/hmm: properly take MMIO path
+  block-dma: migrate to dma_map_phys instead of map_page
+  block-dma: properly take MMIO path
+  nvme-pci: unmap MMIO pages with appropriate interface
+
+ Documentation/core-api/dma-api.rst        |   4 +-
+ Documentation/core-api/dma-attributes.rst |  18 ++++
+ arch/powerpc/kernel/dma-iommu.c           |   4 +-
+ block/blk-mq-dma.c                        |  15 ++-
+ drivers/iommu/dma-iommu.c                 |  61 +++++------
+ drivers/nvme/host/pci.c                   |  18 +++-
+ drivers/virtio/virtio_ring.c              |   4 +-
+ drivers/xen/swiotlb-xen.c                 |  21 +++-
+ include/linux/blk-mq-dma.h                |   6 +-
+ include/linux/blk_types.h                 |   2 +
+ include/linux/dma-direct.h                |   2 -
+ include/linux/dma-map-ops.h               |   8 +-
+ include/linux/dma-mapping.h               |  33 ++++++
+ include/linux/iommu-dma.h                 |  11 +-
+ include/linux/kmsan.h                     |   9 +-
+ include/linux/page-flags.h                |   1 +
+ include/trace/events/dma.h                |   9 +-
+ kernel/dma/debug.c                        |  81 ++++-----------
+ kernel/dma/debug.h                        |  37 ++-----
+ kernel/dma/direct.c                       |  22 +---
+ kernel/dma/direct.h                       |  57 +++++++----
+ kernel/dma/mapping.c                      | 117 +++++++++++++---------
+ kernel/dma/ops_helpers.c                  |   6 +-
+ mm/hmm.c                                  |  19 ++--
+ mm/kmsan/hooks.c                          |   8 +-
+ rust/kernel/dma.rs                        |   3 +
+ tools/virtio/linux/kmsan.h                |   2 +-
+ 27 files changed, 315 insertions(+), 263 deletions(-)
+
+-- 
+2.50.1
+
 
