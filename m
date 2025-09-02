@@ -1,248 +1,409 @@
-Return-Path: <linux-kernel+bounces-795881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DA1B3F8ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:44:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84979B3F8EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 10:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C5D1B22010
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:44:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5689B2028AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46B02E8DF5;
-	Tue,  2 Sep 2025 08:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Eci+vruD"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E562E8E03;
+	Tue,  2 Sep 2025 08:42:24 +0000 (UTC)
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC88F2DF144
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3DA20311;
+	Tue,  2 Sep 2025 08:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756802493; cv=none; b=HHo3Z0f4aDt8UJdzI9innA5VYu7oUmf3fbB+0JuSxeD+BtEywG488d+VbQR4fbRDH/7rWBkjpG7dgjvGsnb6K4mntxEbUDwpeQia8EwDSVB4wtWPTrJDZ2hfiACvoQ9Ol+Bx32GByFveHn0t0yd5dOoB+6DK1Prvh014vnHpOcg=
+	t=1756802544; cv=none; b=uilMOnIN6/DHrjqzDJi2+5+KoCLkGlbVThiGZA+ATc35UyNBCG0XBA2CsPp+3r7uzX05rnH+Sl+ngNKRNhD5KfHMD2Vxa5kNKqYKU/veQVvu8Hp/KIbL9nSA/OgD+FwV3QP64uXSrHLIVMJCb9GMNwtgSYb3nLLF7O6AgsH+/uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756802493; c=relaxed/simple;
-	bh=siwxqdvmc2cGsQ7i4gMzL7n/eO5qT7+mvM9ee17l5tM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=K8njaVNRwMth5SCpXstQ+RflP1ENqTudT3K1PWXkWJeL2vGAmH/uPvXsLG/LvmMPBUEfOcViCt14I76nclgCVLjpZWQjPtOQTZpQxK49ACPQ99ZKykospoDMvdWTvNcEixMrOqwjPCF6e/zJTshnBRrT3vGHnSWkgNmdB/Kcm3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Eci+vruD; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250902084128euoutp022f26349e16898a7d606b57019a1bfa63~hao5I2MZ70257402574euoutp02X
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 08:41:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250902084128euoutp022f26349e16898a7d606b57019a1bfa63~hao5I2MZ70257402574euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756802489;
-	bh=2rFlZSvDXJ6UB5LFmsBy2n4fbjL45t5bwREA8keC6AM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Eci+vruDS9b6+2c4o/Ij4S7tSXyFK8b/dG3rEiFaSQRuPxHLeJDIOJueGmU1wD+u7
-	 nZ5+Tk6H0eEP/gDXMTpU3l+jaANBRIADTWA6cd4uLhmpKG4NiRbW/Z+U7YgM0hUzj2
-	 fnpxeWSTrtPrgueG/LBFfs65iJ3fq169zlNfXvvQ=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250902084128eucas1p1c7d199644e80fa6acb97b6a38ac0436a~hao46LE432028120281eucas1p1T;
-	Tue,  2 Sep 2025 08:41:28 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250902084128eusmtip232ee9d590d90df9cf1673840c53f0d18~hao4RzhK_2319223192eusmtip2R;
-	Tue,  2 Sep 2025 08:41:27 +0000 (GMT)
-Message-ID: <3d756d9a-38fa-4e50-8999-cc7232dd595e@samsung.com>
-Date: Tue, 2 Sep 2025 10:41:27 +0200
+	s=arc-20240116; t=1756802544; c=relaxed/simple;
+	bh=UxgH5Q1a3ujMphpzRs6al8GtHk5TJXhyY9m6VXNKMxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T6iUGBWocmP1yR5W62lYlyCc1n9fIzuJtYtC/5DAemZk0vWGOXCRGoC9dGnckjmWXm+kPVDRN6578451aPbv9osD1tKmKBar0IqhbGuksfjjhjyOZeH3/TK1nCtjws5rwn1vVOSb4iyJ8RTdC623EIqODPPpK0LuM7MrXMKQITU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cGK420rw3z9t5k;
+	Tue,  2 Sep 2025 10:42:10 +0200 (CEST)
+Message-ID: <886ea017-7b40-43e8-a366-9e890b10c0f8@timmermann.space>
+Date: Tue, 2 Sep 2025 10:42:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH] dma-debug: don't enforce dma mapping check on
- noncoherent allocations
-To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>, Robin Murphy
-	<robin.murphy@arm.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250828-dma-debug-fix-noncoherent-dma-check-v1-1-76e9be0dd7fc@oss.qualcomm.com>
+Subject: Re: [PATCH v8 2/2] leds: as3668: Driver for the ams Osram 4-channel
+ i2c LED driver
+To: Lee Jones <lee@kernel.org>
+Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250808213143.146732-1-linux@timmermann.space>
+ <20250808213143.146732-3-linux@timmermann.space>
+ <20250902075037.GA2163762@google.com>
+Content-Language: en-US, de-DE
+From: Lukas Timmermann <linux@timmermann.space>
+In-Reply-To: <20250902075037.GA2163762@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250902084128eucas1p1c7d199644e80fa6acb97b6a38ac0436a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250828081745eucas1p17e199b6fb90348d6a2187e4a5c6da692
-X-EPHeader: CA
-X-CMS-RootMailID: 20250828081745eucas1p17e199b6fb90348d6a2187e4a5c6da692
-References: <CGME20250828081745eucas1p17e199b6fb90348d6a2187e4a5c6da692@eucas1p1.samsung.com>
-	<20250828-dma-debug-fix-noncoherent-dma-check-v1-1-76e9be0dd7fc@oss.qualcomm.com>
 
-On 28.08.2025 10:17, Baochen Qiang wrote:
-> As discussed in [1], there is no need to enforce dma mapping check on
-> noncoherent allocations, a simple test on the returned CPU address is
-> good enough.
->
-> Add a new pair of debug helpers and use them for noncoherent alloc/free
-> to fix this issue.
->
-> Fixes: efa70f2fdc84 ("dma-mapping: add a new dma_alloc_pages API")
-> Link: https://lore.kernel.org/all/ff6c1fe6-820f-4e58-8395-df06aa91706c@oss.qualcomm.com # 1
-> Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Thanks, applied to dma-mapping-fixes branch.
-> ---
->   kernel/dma/debug.c   | 48 +++++++++++++++++++++++++++++++++++++++++++++++-
->   kernel/dma/debug.h   | 20 ++++++++++++++++++++
->   kernel/dma/mapping.c |  4 ++--
->   3 files changed, 69 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-> index e43c6de2bce4e7d3e58f8d9601a7637d8f6da767..b82399437db03116a396c7d1cebd16b2e1af98c3 100644
-> --- a/kernel/dma/debug.c
-> +++ b/kernel/dma/debug.c
-> @@ -39,6 +39,7 @@ enum {
->   	dma_debug_sg,
->   	dma_debug_coherent,
->   	dma_debug_resource,
-> +	dma_debug_noncoherent,
->   };
->   
->   enum map_err_types {
-> @@ -141,6 +142,7 @@ static const char *type2name[] = {
->   	[dma_debug_sg] = "scatter-gather",
->   	[dma_debug_coherent] = "coherent",
->   	[dma_debug_resource] = "resource",
-> +	[dma_debug_noncoherent] = "noncoherent",
->   };
->   
->   static const char *dir2name[] = {
-> @@ -993,7 +995,8 @@ static void check_unmap(struct dma_debug_entry *ref)
->   			   "[mapped as %s] [unmapped as %s]\n",
->   			   ref->dev_addr, ref->size,
->   			   type2name[entry->type], type2name[ref->type]);
-> -	} else if (entry->type == dma_debug_coherent &&
-> +	} else if ((entry->type == dma_debug_coherent ||
-> +		    entry->type == dma_debug_noncoherent) &&
->   		   ref->paddr != entry->paddr) {
->   		err_printk(ref->dev, entry, "device driver frees "
->   			   "DMA memory with different CPU address "
-> @@ -1581,6 +1584,49 @@ void debug_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
->   	}
->   }
->   
-> +void debug_dma_alloc_pages(struct device *dev, struct page *page,
-> +			   size_t size, int direction,
-> +			   dma_addr_t dma_addr,
-> +			   unsigned long attrs)
-> +{
-> +	struct dma_debug_entry *entry;
-> +
-> +	if (unlikely(dma_debug_disabled()))
-> +		return;
-> +
-> +	entry = dma_entry_alloc();
-> +	if (!entry)
-> +		return;
-> +
-> +	entry->type      = dma_debug_noncoherent;
-> +	entry->dev       = dev;
-> +	entry->paddr	 = page_to_phys(page);
-> +	entry->size      = size;
-> +	entry->dev_addr  = dma_addr;
-> +	entry->direction = direction;
-> +
-> +	add_dma_entry(entry, attrs);
-> +}
-> +
-> +void debug_dma_free_pages(struct device *dev, struct page *page,
-> +			  size_t size, int direction,
-> +			  dma_addr_t dma_addr)
-> +{
-> +	struct dma_debug_entry ref = {
-> +		.type           = dma_debug_noncoherent,
-> +		.dev            = dev,
-> +		.paddr		= page_to_phys(page),
-> +		.dev_addr       = dma_addr,
-> +		.size           = size,
-> +		.direction      = direction,
-> +	};
-> +
-> +	if (unlikely(dma_debug_disabled()))
-> +		return;
-> +
-> +	check_unmap(&ref);
-> +}
-> +
->   static int __init dma_debug_driver_setup(char *str)
->   {
->   	int i;
-> diff --git a/kernel/dma/debug.h b/kernel/dma/debug.h
-> index f525197d3cae605aa7e0499eb2ca6f1ae134ec93..48757ca13f31403f58090e1015de828893b8f94f 100644
-> --- a/kernel/dma/debug.h
-> +++ b/kernel/dma/debug.h
-> @@ -54,6 +54,13 @@ extern void debug_dma_sync_sg_for_cpu(struct device *dev,
->   extern void debug_dma_sync_sg_for_device(struct device *dev,
->   					 struct scatterlist *sg,
->   					 int nelems, int direction);
-> +extern void debug_dma_alloc_pages(struct device *dev, struct page *page,
-> +				  size_t size, int direction,
-> +				  dma_addr_t dma_addr,
-> +				  unsigned long attrs);
-> +extern void debug_dma_free_pages(struct device *dev, struct page *page,
-> +				 size_t size, int direction,
-> +				 dma_addr_t dma_addr);
->   #else /* CONFIG_DMA_API_DEBUG */
->   static inline void debug_dma_map_page(struct device *dev, struct page *page,
->   				      size_t offset, size_t size,
-> @@ -126,5 +133,18 @@ static inline void debug_dma_sync_sg_for_device(struct device *dev,
->   						int nelems, int direction)
->   {
->   }
-> +
-> +static inline void debug_dma_alloc_pages(struct device *dev, struct page *page,
-> +					 size_t size, int direction,
-> +					 dma_addr_t dma_addr,
-> +					 unsigned long attrs)
-> +{
-> +}
-> +
-> +static inline void debug_dma_free_pages(struct device *dev, struct page *page,
-> +					size_t size, int direction,
-> +					dma_addr_t dma_addr)
-> +{
-> +}
->   #endif /* CONFIG_DMA_API_DEBUG */
->   #endif /* _KERNEL_DMA_DEBUG_H */
-> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> index 107e4a4d251df65fb86a1d7302261c31138061b7..56de28a3b1799f7c18f7e3f8e5ecd438c5748677 100644
-> --- a/kernel/dma/mapping.c
-> +++ b/kernel/dma/mapping.c
-> @@ -712,7 +712,7 @@ struct page *dma_alloc_pages(struct device *dev, size_t size,
->   	if (page) {
->   		trace_dma_alloc_pages(dev, page_to_virt(page), *dma_handle,
->   				      size, dir, gfp, 0);
-> -		debug_dma_map_page(dev, page, 0, size, dir, *dma_handle, 0);
-> +		debug_dma_alloc_pages(dev, page, size, dir, *dma_handle, 0);
->   	} else {
->   		trace_dma_alloc_pages(dev, NULL, 0, size, dir, gfp, 0);
->   	}
-> @@ -738,7 +738,7 @@ void dma_free_pages(struct device *dev, size_t size, struct page *page,
->   		dma_addr_t dma_handle, enum dma_data_direction dir)
->   {
->   	trace_dma_free_pages(dev, page_to_virt(page), dma_handle, size, dir, 0);
-> -	debug_dma_unmap_page(dev, dma_handle, size, dir);
-> +	debug_dma_free_pages(dev, page, size, dir, dma_handle);
->   	__dma_free_pages(dev, size, page, dma_handle, dir);
->   }
->   EXPORT_SYMBOL_GPL(dma_free_pages);
->
-> ---
-> base-commit: 95bf875b89b48a95a82aca922eeaf19d52543028
-> change-id: 20250828-dma-debug-fix-noncoherent-dma-check-8e6915d58494
->
-> Best regards,
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+On Tue, 02 Sep 2025, Lee Jones wrote:> On Fri, 08 Aug 2025, Lukas 
+Timmermann wrote:
+> 
+>> Since there were no existing drivers for the AS3668 or related devices,
+>> a new driver was introduced in a separate file. Similar devices were
+>> reviewed, but none shared enough characteristics to justify code reuse.
+>> As a result, this driver is written specifically for the AS3668.
+>>
+>> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+>> ---
+>>   MAINTAINERS                |   1 +
+>>   drivers/leds/Kconfig       |  13 +++
+>>   drivers/leds/Makefile      |   1 +
+>>   drivers/leds/leds-as3668.c | 202 +++++++++++++++++++++++++++++++++++++
+>>   4 files changed, 217 insertions(+)
+>>   create mode 100644 drivers/leds/leds-as3668.c
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 091206c54c63..945d78fef380 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -3511,6 +3511,7 @@ M:	Lukas Timmermann <linux@timmermann.space>
+>>   L:	linux-leds@vger.kernel.org
+>>   S:	Maintained
+>>   F:	Documentation/devicetree/bindings/leds/ams,as3668.yaml
+>> +F:	drivers/leds/leds-as3668.c
+>>   
+>>   ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
+>>   M:	Tianshu Qiu <tian.shu.qiu@intel.com>
+>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>> index a104cbb0a001..8cfb423ddf82 100644
+>> --- a/drivers/leds/Kconfig
+>> +++ b/drivers/leds/Kconfig
+>> @@ -100,6 +100,19 @@ config LEDS_ARIEL
+>>   
+>>   	  Say Y to if your machine is a Dell Wyse 3020 thin client.
+>>   
+>> +config LEDS_AS3668
+>> +	tristate "LED support for AMS AS3668"
+>> +	depends on LEDS_CLASS
+>> +	depends on I2C
+>> +	help
+>> +	  This option enables support for the AMS AS3668 LED controller.
+>> +	  The AS3668 provides up to four LED channels and is controlled via
+>> +	  the I2C bus. This driver offers basic brightness control for each
+>> +	  channel, without support for blinking or other advanced features.
+>> +
+>> +	  To compile this driver as a module, choose M here: the module
+>> +	  will be called leds-as3668.
+>> +
+>>   config LEDS_AW200XX
+>>   	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
+>>   	depends on LEDS_CLASS
+>> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+>> index 2f170d69dcbf..983811384fec 100644
+>> --- a/drivers/leds/Makefile
+>> +++ b/drivers/leds/Makefile
+>> @@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
+>>   obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
+>>   obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
+>>   obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
+>> +obj-$(CONFIG_LEDS_AS3668)		+= leds-as3668.o
+>>   obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
+>>   obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
+>>   obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
+>> diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
+>> new file mode 100644
+>> index 000000000000..0cfd3b68f90c
+>> --- /dev/null
+>> +++ b/drivers/leds/leds-as3668.c
+>> @@ -0,0 +1,202 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + *  Osram AMS AS3668 LED Driver IC
+>> + *
+>> + *  Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
+>> + */
+>> +
+>> +#include <linux/bitfield.h>
+>> +#include <linux/i2c.h>
+>> +#include <linux/leds.h>
+>> +#include <linux/module.h>
+>> +#include <linux/uleds.h>
+>> +
+>> +#define AS3668_MAX_LEDS 4
+>> +#define AS3668_EXPECTED_I2C_ADDR 0x42
+>> +
+>> +/* Chip Ident */
+>> +
+>> +#define AS3668_CHIP_ID1_REG 0x3e
+> 
+> Can you tab out all of the values please.
+> 
+>> +#define AS3668_CHIP_ID2_REG 0x3f
+>> +#define AS3668_CHIP_ID1_EXPECTED_IDENTIFIER 0xa5
+> 
+> This is odd.  What do you mean by expected?
+> 
+> What kind of ID is this?  Board ID, platform ID, Chip ID?
+> 
+> Call it that instead.
+Calling it just AS3668_CHIP_ID1 then?
+It's the identifier of the chip model burned into silicon in the 
+CHIP_ID1 register. Checking it isn't critical in the first place.
+It catches errors made in DT files but nothing else. You haven't 
+commented about that so i guess it's okay. Are drivers in the led 
+subsystem supposed to check that?>
+>> +#define AS3668_CHIP_ID2_SERIAL_MASK GENMASK(7, 4)
+>> +#define AS3668_CHIP_ID2_REV_MASK GENMASK(3, 0)
+>> +
+>> +/* Current Control */
+>> +
+> 
+> The X thing (below) is weirding me out.
+> 
+>> +#define AS3668_CURRX_CONTROL_REG 0x01
+> 
+> Drop the X.
+The datasheet explictly calls this "CurrX control". It configures the 
+outputs for different modes like off/on and pwm or pattern generation 
+for all four channels simultaneously.
+I could imagine AS3668_MODE_REG being more descriptive but we would 
+diverge from the datasheet. Is that acceptable?>
+>> +#define AS3668_CURR1_REG 0x02
+>> +#define AS3668_CURR2_REG 0x03
+>> +#define AS3668_CURR3_REG 0x04
+>> +#define AS3668_CURR4_REG 0x05
+> 
+> Are these not also a 'CONTROL' regs?
+> 
+> If not, what kind of regs are they?
+> 
+>> +#define AS3668_CURRX_MODE_ON 0x1
+>> +#define AS3668_CURRX_CURR1_MASK GENMASK(1, 0)
+>> +#define AS3668_CURRX_CURR2_MASK GENMASK(3, 2)
+>> +#define AS3668_CURRX_CURR3_MASK GENMASK(5, 4)
+>> +#define AS3668_CURRX_CURR4_MASK GENMASK(7, 6)
+> 
+> Drop the CURRX from each of these?
+Makes it more descriptive, I agree.
+Wouldn't AS3668_MODE_CH1_MASK be even better?
+But the datasheet calls this "curr1_mode" and so on.
+As stated above, we would diverge from the datasheet.>
+>> +
+>> +struct as3668_led {
+>> +	struct led_classdev cdev;
+>> +	struct as3668 *chip;
+>> +	struct fwnode_handle *fwnode;
+>> +
+> 
+> The new line seems unnecessary.
+> 
+>> +	int led_id;
+>> +};
+>> +
+>> +struct as3668 {
+>> +	struct i2c_client *client;
+>> +	struct as3668_led leds[AS3668_MAX_LEDS];
+>> +};
+>> +
+>> +static enum led_brightness as3668_brightness_get(struct led_classdev *cdev)
+>> +{
+>> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
+>> +
+>> +	return i2c_smbus_read_byte_data(led->chip->client, AS3668_CURR1_REG + led->led_id);
+>> +}
+>> +
+>> +static void as3668_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
+>> +{
+>> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
+>> +
+>> +	int err = i2c_smbus_write_byte_data(led->chip->client,
+>> +					    AS3668_CURR1_REG + led->led_id,
+>> +					    brightness);
+>> +
+>> +	if (err)
+>> +		dev_err(&led->chip->client->dev, "error writing to reg 0x%02x, returned %d\n",
+>> +			AS3668_CURR1_REG + led->led_id, err);
+>> +}
+>> +
+>> +static int as3668_dt_init(struct as3668 *as3668)
+>> +{
+>> +	struct device *dev = &as3668->client->dev;
+>> +	struct as3668_led *led;
+>> +	struct led_init_data init_data = {};
+>> +	int err;
+>> +	u32 reg;
+>> +
+>> +	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
+>> +		err = of_property_read_u32(child, "reg", &reg);
+>> +		if (err)
+>> +			return dev_err_probe(dev, err, "'reg' property missing from %s\n",
+>> +					     child->name);
+>> +
+>> +		if (reg < 0 || reg > AS3668_MAX_LEDS)
+>> +			return dev_err_probe(dev, -EOPNOTSUPP,
+>> +					     "'reg' property in %s is out of scope: %d\n",
+>> +					     child->name, reg);
+>> +
+>> +		led = &as3668->leds[reg];
+>> +		led->fwnode = of_fwnode_handle(child);
+>> +
+>> +		led->led_id = reg;
+>> +		led->chip = as3668;
+>> +
+>> +		led->cdev.max_brightness = U8_MAX;
+>> +		led->cdev.brightness_get = as3668_brightness_get;
+>> +		led->cdev.brightness_set = as3668_brightness_set;
+>> +
+>> +		init_data.fwnode = led->fwnode;
+>> +		init_data.default_label = ":";
+>> +
+>> +		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
+>> +		if (err)
+>> +			return dev_err_probe(dev, err, "failed to register LED %d\n", reg);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int as3668_probe(struct i2c_client *client)
+>> +{
+>> +	struct as3668 *as3668;
+>> +	int err;
+>> +	u8 chip_ident, chip_subident, chip_serial, chip_rev;
+>> +
+>> +	/* Check for sensible i2c address */
+> 
+> I2C
+> 
+> "sensible" probably isn't the correct term here.
+> 
+> Actually, do we really need this comment?  What does it add?
+> 
+>> +	if (client->addr != AS3668_EXPECTED_I2C_ADDR)
+>> +		return dev_err_probe(&client->dev, -EFAULT,
+>> +				     "expected i2c address 0x%02x, got 0x%02x\n",
+> 
+> I2C
+> 
+> If we already know the I2C address - why is it being set elsewhere?
+> 
+>> +				     AS3668_EXPECTED_I2C_ADDR, client->addr);
+>> +
+>> +	/* Read identifier from chip */
+>> +	chip_ident = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID1_REG);
+>> +
+>> +	if (chip_ident != AS3668_CHIP_ID1_EXPECTED_IDENTIFIER)
+>> +		return dev_err_probe(&client->dev, -ENODEV,
+>> +				     "expected chip identifier 0x%02x, got 0x%02x\n",
+>> +				     AS3668_CHIP_ID1_EXPECTED_IDENTIFIER, chip_ident);
+>> +
+>> +	chip_subident = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID2_REG);
+>> +	chip_serial = FIELD_GET(AS3668_CHIP_ID2_SERIAL_MASK, chip_subident);
+>> +	chip_rev = FIELD_GET(AS3668_CHIP_ID2_REV_MASK, chip_subident);
+>> +
+>> +	/* Print out information about the chip */
+> 
+> This is definitely superfluous.
+> 
+>> +	dev_dbg(&client->dev,
+>> +		"chip_ident: 0x%02x | chip_subident: 0x%02x | chip_serial: 0x%02x | chip_rev: 0x%02x\n",
+>> +		chip_ident, chip_subident, chip_serial, chip_rev);
+> 
+> Does this have a role now that development is over?
+> 
+> Is the user going to care about all this stuff?
+> 
+>> +
+>> +	as3668 = devm_kzalloc(&client->dev, sizeof(*as3668), GFP_KERNEL);
+>> +	if (!as3668)
+>> +		return -ENOMEM;
+>> +
+>> +	as3668->client = client;
+>> +
+>> +	err = as3668_dt_init(as3668);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	/* Set all four channel modes to 'on' */
+>> +	err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG,
+>> +					FIELD_PREP(AS3668_CURRX_CURR1_MASK, AS3668_CURRX_MODE_ON) |
+>> +					FIELD_PREP(AS3668_CURRX_CURR2_MASK, AS3668_CURRX_MODE_ON) |
+>> +					FIELD_PREP(AS3668_CURRX_CURR3_MASK, AS3668_CURRX_MODE_ON) |
+>> +					FIELD_PREP(AS3668_CURRX_CURR4_MASK, AS3668_CURRX_MODE_ON));
+>> +
+>> +	/* Set initial currents to 0mA */
+>> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR1_REG, 0);
+>> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR2_REG, 0);
+>> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR3_REG, 0);
+>> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR4_REG, 0);
+>> +
+>> +	if (err)
+>> +		return dev_err_probe(&client->dev, -EIO, "error during hardware initialization\n");
+> 
+> "Failed to write to the device"?
+> 
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void as3668_remove(struct i2c_client *client)
+>> +{
+>> +	int err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG, 0);
+> 
+> Do this after declaration please.
+> 
+>> +
+>> +	if (err)
+>> +		dev_err(&client->dev, "couldn't deinit device\n");
+> 
+> "deinit" is not a word.
+> 
+> Please expand slang and shortened words in comments and user-facing messages.
+> 
+>> +}
+>> +
+>> +static const struct i2c_device_id as3668_idtable[] = {
+>> +	{ "as3668" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, as3668_idtable);
+>> +
+>> +static const struct of_device_id as3668_match_table[] = {
+>> +	{ .compatible = "ams,as3668" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, as3668_match_table);
+>> +
+>> +static struct i2c_driver as3668_driver = {
+>> +	.driver = {
+>> +		.name = "leds_as3668",
+>> +		.of_match_table = as3668_match_table,
+>> +	},
+>> +	.probe = as3668_probe,
+>> +	.remove = as3668_remove,
+>> +	.id_table = as3668_idtable,
+>> +};
+>> +module_i2c_driver(as3668_driver);
+>> +
+>> +MODULE_AUTHOR("Lukas Timmermann <linux@timmermann.space>");
+>> +MODULE_DESCRIPTION("AS3668 LED driver");
+>> +MODULE_LICENSE("GPL");
+>> -- 
+>> 2.50.1
+>>
+>>
+> 
 
 
