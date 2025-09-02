@@ -1,178 +1,247 @@
-Return-Path: <linux-kernel+bounces-796693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8BEB405F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:03:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7D3B405FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 16:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECD741BA1C71
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 115074843CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 13:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C4E303C97;
-	Tue,  2 Sep 2025 13:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1E92D4818;
+	Tue,  2 Sep 2025 13:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h2RQdsy1"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2047.outbound.protection.outlook.com [40.107.223.47])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W8+Qiaxn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B687B20B1F5;
-	Tue,  2 Sep 2025 13:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756821398; cv=fail; b=hyzdzV3tVsCiH3m68N5XjkbL1bWk5f5pcPqrvfms1D7I4Rak3AzehSalK0nVy5JIoQAHdM7lzQkMhIZvMFh0NUtegMGS066eCDE65XZaOfNuf4Eq6DIbH7vQKo7KaDGxES3/dV+XYFs914gRurRfWtTDSwJSGSn/KUHGqt+Jj3I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756821398; c=relaxed/simple;
-	bh=481xXnogg0xI0PAS/zL/3jWgbEyUdLEpcNYBWqP2Zms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AwZJXI8l35bMZXWUCYPYcIsu4m4fb2Qap9gx8NHjPwjCMIdq/v7aj8Xc67e2bwd9fjWrXBhIOQQtJp9BnDsoxSp3EHDMdXnYHO5bFTvRjk3OeeLFbywm49e+PkRJMb0IiSOJ8cROjMUaM5IUtnVEnwvNw87qzj1xbzsWvDvS8ws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h2RQdsy1; arc=fail smtp.client-ip=40.107.223.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z9wkQzKNpKNr7YoCp9//JEqULMOJ7odEhgk2Q3DQpgSd2nuzng1aSAqiUBpjnvdHdSnIov3RJfI3FRYCR/YZOLaC2zih3AhJb5OnSiUFBO9CwtnsWk/R4jtQ9BjpNRFYdAGoQWgF3iqHMHY46dul5VAkRHI2Fz6l5k6dskw/xQR5qfCm1pPoVUMPDXgf/z+IOJ9xAUrcaHTvNvSbeypVEuRLAC/USRXG8jrnYUj3YPKp6naaaXT+CZVJ8H1xeHdlDLa1e4oeKwFN414RXPmBwYWA9FJ6+zEu4Z/2vORzdiudC007FOB0mErqEAP5ZkFh9C/ZSQB8D2n9eIZMfsZlJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5+Qow4qRuSHkcAHpAqvc2yW+215D1SRosVDTop+mBdk=;
- b=qWZBemB2gV3yio0hLJ8w9nO8FxwiIjpcCS8WerE7rtKcZqGk5GfvXwSPl4HKvL1KtgbEaQGVaPWYDGAGO7vZEhsWSBDDskIE7dDju/3dwSB831WMQQcNSIIBA4+QvRj0qsszTF6eQF4v3mKHi6/Ex0o0gz4ycBK62YHnM2zQGtnhHx44MMtoy+FxJnm5tMwAynlftV7GwV4ZU5uPf663/PqbbGNikJu2zhh4b5g1/00SfPiQfAmqc9VjF/Rkven2vNgG21LGrpuVSK1z6l3SndgbnVJTyYMZ0F/2nEMFctEkNm44RIctPlWgKWbY3GD8VVBrTNKPMeOvkcfhxyjizQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5+Qow4qRuSHkcAHpAqvc2yW+215D1SRosVDTop+mBdk=;
- b=h2RQdsy1a/3M8R8fSG9IhMHEpb66qBDbCk1XuW1YTXmV0nG15UDiPtBHwMDBRBRNP1IaqeLY6XPeesMzlxKxrM7ZZDSV0pBG1xX/bCYCoHc8GH8+CKaExn0ARovGZuG6PnohDbSm/aOZihOusSIa2ZDHlw2i9ckV+V6HpjGVaEu9Zoh0r9uyX8mPy4mKA7UrgS3d6gR5EKEZxr/JSRyn13zKBJY2Tg4TgFKByX9c0Cr7CNtQoq+0IPnErW2BQ9RnLG5FoQDbDuBrbYSmYDrenmQe+726XlI9zbp8nNyUXy4zTIHsXMUMoO2oiOMxDkQ3vrwDYQUR8jXIHk9sLb1cZA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MW4PR12MB5627.namprd12.prod.outlook.com (2603:10b6:303:16a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Tue, 2 Sep
- 2025 13:56:32 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 13:56:32 +0000
-Date: Tue, 2 Sep 2025 10:56:31 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Abhijit Gangurde <abhijit.gangurde@amd.com>
-Cc: kuba@kernel.org, brett.creeley@amd.com, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, corbet@lwn.net,
-	leon@kernel.org, andrew+netdev@lunn.ch, sln@onemain.com,
-	allen.hubbe@amd.com, nikhil.agarwal@amd.com,
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/14] Introduce AMD Pensando RDMA driver
-Message-ID: <20250902135631.GO186519@nvidia.com>
-References: <20250814053900.1452408-1-abhijit.gangurde@amd.com>
- <20250826155226.GB2134666@nvidia.com>
- <d829c4ee-f16c-6cfa-afdc-05f4b981ac02@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d829c4ee-f16c-6cfa-afdc-05f4b981ac02@amd.com>
-X-ClientProxiedBy: YT3PR01CA0018.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:86::22) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57042BEFEB
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 13:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756821427; cv=none; b=X9+DLK69yPBGy+2ZdPTC5urSvqTuh06Wy6vnF2AdX9VZXtB2UxUrmN0tQYtc4LJ0ATVoQoAHddcUgFr7xh/DYlmh4gA99mzctgu1b5EPtZC68kF9mcsCBYB8OaB56S60qyaSA8GeAtkUP2h5K0i0zij9zhhDQE4qi1VoY8rx4XI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756821427; c=relaxed/simple;
+	bh=i8gMl+5Zo8IBQQU13R4ufjXD/5DH8zsbKiwINcSlPGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p0dTtBa7csLmyDtCVHEE1HujRqt7oI4svCvRo6KhpzCZU4R8UowKhf/BXl19hGsDgp2GpVEyH2J15G4AUV5UjtladNA15hGHOwxU1BggAhBXLiuhjN/nSFzjVaXhnVW42kmv9N/cs7F8a9dpkWadcqjawMpVfcx0yd9VEm/QS4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W8+Qiaxn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582AeNcI012447
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 13:57:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BPHD8lUIkal642+fuDhhX575
+	g4A9kkT8Ilr18hcq5sQ=; b=W8+Qiaxn+1t+yYH6+Z+XlX2PzqOv3z9jmTv5hgNb
+	LoMe8Q1U/da9TXa1e8e9DD/k13A2g2170YLLkwNc6OCwlzBd2ICyATMm7liJs75l
+	4o7+UxZnMzYMMlnZAeGV5FfxST8HjQGbpU76fNBD59wn8K55RseYcw7WMZ9zxoms
+	J6R9zsN4d2ewehMupht/sLaCDMizvlYDAI09T3SClJRjc6hBmIm2+Cr/Png932sr
+	eC1u02DO/EdxOV3hn4xl/JsCQXuLFmqiIVthu6gCECKxo3Oam0CnnPBNvwlyunoU
+	PR/k8QnCfCvnlSPoaTgXGDOQooZwIkItvdBakAF/GNFYpg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ut2ffwrf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 13:57:04 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b32d323297so45968821cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 06:57:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756821423; x=1757426223;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BPHD8lUIkal642+fuDhhX575g4A9kkT8Ilr18hcq5sQ=;
+        b=hqEYNkXNMspylr+J0rwXbA/kc8i8LpWge5I6Z5JWLVTV9KsTTQCjT6xAvznVEHZuQU
+         eSmsuBK59JuZwsD8hy+IzvgQtZcoJ12lkfGOWkpmIytrTcxz7w/YcuYCXjVzrZCFyiLC
+         /44iJfUThbSsF/TmZ+fVC76YVC+UlNemYR2HJRiY1icVRki5+NzRZ9SaYRlmZFELg8GA
+         Ov4PNRGD4IAxI8CR1MU1nKwoReiTuxuX0b14GpqpcU2AlAwLfRDwy0xjgDpsSmNu1KQ9
+         fCAIP0i+fSH9z25njr5wLoJOi09qMs3NCSP+I0bfUHGZ27oFmz4bQWUldE0xQSnuqyL9
+         FLMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJLw+zdwxOoNr4gQPh2tpVGvIJSfHaWfnbvoYVjH5h/H94K7rtevyHZbO5sV69D7qMD/cc/4z7Ita7new=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGg+qPas9bUDCbYx62SIZ6kRaTZA2Y8V1Mtblgp1rUsBtgOaob
+	Lk03qRLouGEvsjkh+rSh27xOtBSiDDLRpi7/vXANGTdnfGIlx50dbly3DUdPU4iJ5ukYUhNaQ16
+	xcjDevZeMIxyEAJyMllT+SUvZbDbM5efC6+t1KyihF8S5NbC8uBVGvShSC2JzyXuicJI=
+X-Gm-Gg: ASbGnctbI2FRjbuqd7iQk1iWB543FVaaI3xLZ1F8XcQ5uM6lN/cWT4LH0xorFh071Qm
+	KUcMUWIHa9XswMgffExf+NdvyFOjjw6/VEvBf0PRmLq7NYcvfeNEQHqoz2R9vCoe/pZN++790qR
+	NVK1PE4WQm9TgrtUEL8NrfEGnlLcrJ8yFEB/WQI7KydWjrkSZP+yOzhm1YaQ6sVKKhHquIE9w9d
+	/rEr7YsPqHWluu91yj2zbJESCRSnaEkHfuPo84G/tVwNo7gy9sx+pnYXyVobkQzVimp61seBdJ2
+	lUe7RdoOyYytkFcizvcD1OcVzKlHwX/FzLcPeU0t8eacgnGMcld7m9gokVRaQst1NgfZ90s5clX
+	6ctZ0MaVborHSo1qs3DUo4yznI6UeLQGEJq47Atcs8aDhaW64Q7UM
+X-Received: by 2002:a05:622a:1988:b0:4b0:da90:d7d with SMTP id d75a77b69052e-4b31d80c426mr108586941cf.3.1756821422386;
+        Tue, 02 Sep 2025 06:57:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHpi+TOsmeZPp1TyNmYwpP7dN2aNcjDoev+g6God6GUdqt7HarlIFe5mWfReJxqsxVJ5cHpMA==
+X-Received: by 2002:a05:622a:1988:b0:4b0:da90:d7d with SMTP id d75a77b69052e-4b31d80c426mr108586461cf.3.1756821421621;
+        Tue, 02 Sep 2025 06:57:01 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-560827906cbsm721574e87.95.2025.09.02.06.56.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 06:56:59 -0700 (PDT)
+Date: Tue, 2 Sep 2025 16:56:57 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Fange Zhang <fange.zhang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xiangxu.yin@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Li Liu <li.liu@oss.qualcomm.com>
+Subject: Re: [PATCH v7 2/2] arm64: dts: qcom: Add display support for QCS615
+ RIDE board
+Message-ID: <7sd3rvvwnte7dub6vuywi6np7rig547ugfpu626ruufx7psrds@igqdchhianju>
+References: <20250827-add-display-support-for-qcs615-platform-v7-0-917c3de8f9ca@oss.qualcomm.com>
+ <20250827-add-display-support-for-qcs615-platform-v7-2-917c3de8f9ca@oss.qualcomm.com>
+ <yutyrfb73wbxlweoq3mc6ezyqr56snzmznw3k6mcbc56fpfayg@3h5jwymlo3ol>
+ <0c2a4877-d63b-4650-b7d4-a06a2730c73c@oss.qualcomm.com>
+ <zoogyjua4l6e2bgsvxx7w26n6v2hwnp2pvkizzzsds3c6cgaag@2bvqdl2z5ds6>
+ <4913e937-3892-42ac-8145-cc9c2364242c@oss.qualcomm.com>
+ <snery6acisgvxtofsrbbqtpoirh5ffyha64lz4zekg3kvwrsyv@tfyydedc7ddm>
+ <ae4ef090-7edc-49f8-a964-090bb94ff097@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW4PR12MB5627:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01a9de13-d6bc-4dfb-b4dd-08ddea2885c9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eV3hKjKp/Rg30rjUr8mVloj0MYzsc2v+0BegLw3+ff7Uj9r+pYs5rk9Z+6Ph?=
- =?us-ascii?Q?P/AEEsfNThv3f1/SgYHIp0JLgrZ6TAPrldc9LaVSaG+OBHSuArmQz+s39efK?=
- =?us-ascii?Q?gd4oqfBknTE9zkCny0MlRxwAYGSw+zJR+HtCzFJ2EBpCugOXLU49CX7o6ODj?=
- =?us-ascii?Q?JCEUJMB00+ZqSHRaXt6lJTdpbsebg1dy2AdsUR0aP9ZIGdPb9Q9EpfykY9Oj?=
- =?us-ascii?Q?oiXlxGfSxwPC11RH79zv6btig3ainCi8e4CYlbyPqhmBKDxt02W/tcX6c702?=
- =?us-ascii?Q?sFnlCr8hre+nrLUMlAOpIbeIASko0qzpkuNFIFg/cc9JD8fCKfO6tW3ZqPcL?=
- =?us-ascii?Q?QqdohyqakJ7K4WjE7+LKjlp4pIrN4/LWA3+3ATM2dgsyvvrxo5rgBiibqwbo?=
- =?us-ascii?Q?OkI8lVrdlTDMIZhANives4TF1BEt9BxmvhVFf6N/mSP9yr6DbO9b0DPPbk76?=
- =?us-ascii?Q?w5IgIZ0UnbEkeF6HjDfvwNtEm2kcWw8WbpitPPULKfqXNUqY8z7qPZbYdLx4?=
- =?us-ascii?Q?UK2FnAD5PBOYcqPMPZhh/Pb66QwGXQGx2majWkvZ/xBisWcKBxBzBgALw/Jf?=
- =?us-ascii?Q?BnPGA7m7D7kQn3HsyhFiQRucr7wWZi50b4QUj/y3mP2E6s6HzYTmiI/4lB16?=
- =?us-ascii?Q?xD2p94Rmlx7DKJhZrSdsvA2GP05oXH9DPNJw+zI8e9RxL53lA5ZKtCXm7xj+?=
- =?us-ascii?Q?TG/GWw3nRSixnei7F6nqQNkj/jctfiJyz60l/pdei6AlMOb/Urf6K6OLfx/X?=
- =?us-ascii?Q?2jgcovMz58R/SC2JAlqYfqXWGOtOBwncXydQ2grwgLHBmbxnNKA+7zO0P60I?=
- =?us-ascii?Q?dgeAIUnCuKr69B+bR6qGXpuweG1YKx3P6DX2LiVMvsIltkR3TJs1aCvqeGUw?=
- =?us-ascii?Q?tqCLa6rzajYWhWcRsGWV7+QE9FhER06Qt6L/0eYvtspKhGsNA/EBgVNIMlrn?=
- =?us-ascii?Q?uP0gSMtAQGuUTTtVb8wOtuvZjsT32DcbFm8dfvEeStNX31K/t9vTdgzho1iy?=
- =?us-ascii?Q?euCDgW5NqImrwXP7bGfvAtdiPMkgPzGZvELJrc/PzXxviXvzl/alkzMC69He?=
- =?us-ascii?Q?dnlwj0FRP4gYiJxKhNYMtua7EwnJy5WoLX0mp58kzqwPWkJOzFOan3/6L3ga?=
- =?us-ascii?Q?NJ3mFGsVJm9SCu63dW5GUvKNZW6YsiPAtcHOjxN/Bu3rUKPYJE3SUQnDk+nZ?=
- =?us-ascii?Q?jCUa7VE6v/QbjD1jKEojiVzAjbl4uHL6kQ9sQeuY0zG9dopW4LHbT4gTBl9/?=
- =?us-ascii?Q?UIsT2zGDc/rQiouIan+CurghmF/GTaBwYlLQxKHHd3OuQt/S4K7+BBo02TiP?=
- =?us-ascii?Q?dyz/0ChUDK9SxGAFWXNy2f7qH0QsmAtlspTR7UG9gPsjwYBm2YJQ8WGpHXKT?=
- =?us-ascii?Q?3cPjXIYRcRYHT/V1A4RAI24ZjQBmwj3UP4enNXLJDiOrLsa40w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?peUbMq4RiF06Tr0CiPGxw1qCYAZ4JE4Rip2592JVbXisEQIHVUtsZfYY0O3g?=
- =?us-ascii?Q?Nbi8t1rHXYlFcrzYHAb/+lgqJQdjnz4XSBhfjIcLC7flNvQvJfSGo4LukAUJ?=
- =?us-ascii?Q?WXXZ8BB3T0KNfz0SJHeqN160YptFmDGx05conyakPRAwI8YiiBH+e0S1RtWp?=
- =?us-ascii?Q?0YJLBCWvCGQTzY15gYb/0k8vMdiJgC8Chtu3usWLPahgmdNUfj3r5TsW3S7s?=
- =?us-ascii?Q?TMmi/F9f317qizd6OTNAMLuqXdv4QAr0I1WjrVeVPg8BXuqJLMYSd/k0DKXC?=
- =?us-ascii?Q?wK6sOvTkLQU3z+SO72z9b6BCcMmWjwzYFyUcah0q2NF9GhX0GzMU/qGFX3Qw?=
- =?us-ascii?Q?KXrl7XfOlhlNWyjOCLXQWoeTbnuYw+kTbzc/U4JUZLjvjdGx3OkbVyH0o2gd?=
- =?us-ascii?Q?KeOmY7ioIBkTZIDduU2A4MB8rNCJQsZVZreaXl91w761iUwPiA8bko8ih62F?=
- =?us-ascii?Q?phPKZbQfmanLr82YeAElwKgqM/MFmtDmYBnYtLQ61BiGuafVJtxX3YRaGmiu?=
- =?us-ascii?Q?vKu2zXoYur2FTI3EC+JH9OYbpESDqfAxacam/BtUtNXOgXlqOHG6T2AM0aqk?=
- =?us-ascii?Q?nNwigfR0RVZkQZrLr7wHJ0QBbzhf6BpG0+4XH0rGC5VBVY/vIdGVl8ShtxkZ?=
- =?us-ascii?Q?Xvn+f0wUgItryCPtH++qGb8Kidkm2UDKT/pFGh/cbF5QPyhlX55kQTao+zJQ?=
- =?us-ascii?Q?Q40ICKEOo8kFc+uDJdG1ls2XlKP3RZQYoxr5aykhmsc3e9u/HYPcgIPTPhfd?=
- =?us-ascii?Q?p5v04+9+BIntGqRM5RP+5Ydz4mu6eDP5RV9/tp3+OEgU0/7Bw4vEWW5OgnZ+?=
- =?us-ascii?Q?NwsHxubrozxqtXSntC+GWhVCr3SnG45Ox46shPaw2qknhIxH/H5uN/Y/shJ1?=
- =?us-ascii?Q?5rlQUfSnl/1615HHa+j7PE6S+FeKvofTeb2g+SKlsBmtvGh6AQhDJuAbJYid?=
- =?us-ascii?Q?e1mpDwziwu8gCDtYcuPlF+cFgK0v2WI7j6DK9M4B7f3mRtPjKYkUI/NpPyoP?=
- =?us-ascii?Q?0TcAe6sOjOMlwBPDBB4FjyqmCS4myaXjCSgU8xCOoULvJdOyZTova61xqxzv?=
- =?us-ascii?Q?ONPp/bcW/rJCcm2l0ROiYvmE0PyoDeYH2E+iXqGOvqOQ1KlsIbRUHoDVEXAb?=
- =?us-ascii?Q?25TkUQvcSZ0QzZj4fIUV1npwGCy5ry2+z20M3RbqFxCaBeS3uqFHm4huJ+yR?=
- =?us-ascii?Q?WN5L7dnYXtdca9TF5L+TSTQnb2qy/DgrxRJrH+PozLXsXdzF2YTVLXwNi1Ia?=
- =?us-ascii?Q?T132sY3E5B6GVgt0iRzFiZDC7oobBHM2qM6tGcFu877vwUfmxeAci5MyX79J?=
- =?us-ascii?Q?yrLlpMmtMomskHe59OxzDY+1mDAsKq2l6WLiVLBKMGzLPsZOBTGoBOId7qGO?=
- =?us-ascii?Q?QkZ6c2cC7N6f3jsS1KS0mqLAjQCV34UIiC5TkmuApDfsMjOJZbaEfk3qAcxB?=
- =?us-ascii?Q?TpVYUyKqhc9n/cJ6W3poQYILuXJAKPHBzvnpC/hMfXCALWsZrHLp8IKVYikI?=
- =?us-ascii?Q?jv6jJbNJZ+X2qmm/nZo/vgaltszEMVFtGGYkLWOD74Fm++IHqJ+UMsa1S79A?=
- =?us-ascii?Q?346HZRtvLgV/CGqLcrw=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01a9de13-d6bc-4dfb-b4dd-08ddea2885c9
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 13:56:32.2892
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: klOm1aGan93SlRl9aKgxg5c6OASPI3rGOU5yAH8eIcyafXPbq9a0oo+W6fIHZTL+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5627
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae4ef090-7edc-49f8-a964-090bb94ff097@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAzOCBTYWx0ZWRfX01IUocxeFPsq
+ HaeVItNp2fwZNoNvCDK0jN9oXvoElom6iWaaZYmofC3Dp2LKGu5fQO5SdK3CsNXzf8/53C0WKJi
+ AEgqIatIIyYaxFzlg6AKw7QgWEdUmZrmm/Iku9g+V6OuCPHD6sJpOMnunov2PNehivHoIBZgiYP
+ IzSCVwIvIGkhZnd7iiNxiTSJWy9QcAvqfwMjBx3L9I19o9WBX3HMGfow2QSPVZDgRTxe2o2oBfQ
+ Ih8bcFga/iVAmtKoYexZYrW8eY85kGQ5j/JJ9txw4xeKVGaGwcjVVQ13Kyn4bJSXLE+Atm0AM5k
+ JWjB8g2tuEXlUIRSaC7CjRjd5N63PcRzSWE+vbt48NHI7pC9NvJmqCvQYPXw4RgWfsCFUsyFbeR
+ RZF30tbe
+X-Proofpoint-ORIG-GUID: aC8V7pIWEB1EbYA7jvlQKoq1Ghda4nA-
+X-Proofpoint-GUID: aC8V7pIWEB1EbYA7jvlQKoq1Ghda4nA-
+X-Authority-Analysis: v=2.4 cv=U7iSDfru c=1 sm=1 tr=0 ts=68b6f7b0 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=PxzxOCqAw92IUcKJUaMA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1015 impostorscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300038
 
-On Mon, Sep 01, 2025 at 11:57:21AM +0530, Abhijit Gangurde wrote:
+On Mon, Sep 01, 2025 at 11:23:28AM +0800, Fange Zhang wrote:
 > 
-> On 8/26/25 21:22, Jason Gunthorpe wrote:
-> > On Thu, Aug 14, 2025 at 11:08:46AM +0530, Abhijit Gangurde wrote:
-> > > This patchset introduces an RDMA driver for the AMD Pensando adapter.
-> > > An AMD Pensando Ethernet device with RDMA capabilities extends its
-> > > functionality through an auxiliary device.
-> > It looks in pretty good enough shape now, what is your plan for
-> > merging this?  Will you do a shared branch or do you just want to have
-> > it all go through rdma? Is the netdev side ack'd?
+> 
+> On 8/28/2025 7:02 PM, Dmitry Baryshkov wrote:
+> > On Thu, Aug 28, 2025 at 01:12:14PM +0800, Fange Zhang wrote:
+> > > 
+> > > 
+> > > On 8/28/2025 12:41 PM, Dmitry Baryshkov wrote:
+> > > > On Thu, Aug 28, 2025 at 10:57:41AM +0800, Fange Zhang wrote:
+> > > > > 
+> > > > > 
+> > > > > On 8/28/2025 4:01 AM, Dmitry Baryshkov wrote:
+> > > > > > On Wed, Aug 27, 2025 at 09:08:39PM +0800, Fange Zhang wrote:
+> > > > > > > From: Li Liu <li.liu@oss.qualcomm.com>
+> > > > > > > 
+> > > > > > > Add display MDSS and DSI configuration for QCS615 RIDE board.
+> > > > > > > QCS615 has a DP port, and DP support will be added in a later patch.
+> > > > > > > 
+> > > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > > > > > > Signed-off-by: Li Liu <li.liu@oss.qualcomm.com>
+> > > > > > > Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
+> > > > > > > ---
+> > > > > > >     arch/arm64/boot/dts/qcom/qcs615-ride.dts | 150 +++++++++++++++++++++++++++++++
+> > > > > > >     1 file changed, 150 insertions(+)
+> > > > > > > 
+> > > > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > > > > > index e663343df75d59481786192cde647017a83c4191..f6e0c82cf85459d8989332497ded8b6ea3670c76 100644
+> > > > > > > --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > > > > > +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > > > > > @@ -39,6 +39,76 @@ xo_board_clk: xo-board-clk {
+> > > > > > >     		};
+> > > > > > >     	};
+> > > > > > > +	dp-dsi0-connector {
+> > > > > > > +		compatible = "dp-connector";
+> > > > > > > +		label = "DSI0";
+> > > > > > > +		type = "mini";
+> > > > > > > +
+> > > > > > > +		port {
+> > > > > > > +			dp_dsi0_connector_in: endpoint {
+> > > > > > > +				remote-endpoint = <&dsi2dp_bridge_out>;
+> > > > > > > +			};
+> > > > > > > +		};
+> > > > > > > +	};
+> > > > > > > +
+> > > > > > > +	vreg_12p0: vreg-12p0-regulator {
+> > > > > > 
+> > > > > > I should be more carefull when doing reviews. I thought that it was
+> > > > > > pointed out already and didn't some of the obvious things...
+> > > > > > 
+> > > > > > First of all, the nodes are sorted. By the name, not by the label.
+> > > > > > Second, there are already regulators in this file. Why are the new nodes
+> > > > > > not following the existing pattern and why are they not placed at a
+> > > > > > proper place?
+> > > > > 
+> > > > > Initially, we referred to https://patchwork.kernel.org/project/linux-arm-msm/patch/20250604071851.1438612-3-quic_amakhija@quicinc.com/
+> > > > > as a reference, but its node ordering seems a bit unconventional.
+> > > > > 
+> > > > > Would this revised ordering be acceptable?
+> > > > > 
+> > > > > ...
+> > > > > + dp-dsi0-connector
+> > > > > 
+> > > > > vreg_conn_1p8: regulator-conn-1p8
+> > > > > vreg_conn_pa: regulator-conn-pa
+> > > > > regulator-usb2-vbus
+> > > > 
+> > > > So... Existing regulator nodes have the name of 'regulator-foo-bar'.
+> > > > 
+> > > > > 
+> > > > > + vreg_12p0: vreg-12p0-regulator
+> > > > > + vreg_1p0: vreg-1p0-regulator
+> > > > > + vreg_1p8: vreg-1p8-regulator
+> > > > > + vreg_3p0: vreg-3p0-regulator
+> > > > > + vreg_5p0: vreg-5p0-regulator
+> > > > 
+> > > > While yours use 'vreg-baz-regulator'. Why? Don't blindly c&p data from
+> > > > other platforms.
+> > > 
+> > > Got it, The revised format will be:
+> > > 
+> > > + vreg_12p0: regulator-vreg-12p0
+> > > + vreg_1p0: regulator-vreg-1p0
+> > > + vreg_1p8: regulator-vreg-1p8
+> > > + vreg_3p0: regulator-vreg-3p0
+> > > + vreg_5p0: regulator-vreg-5p0
+> > > 
+> > > Let me know if you have any further suggestions.
 > > 
-> > Jason
+> > What's the name of power rail in the schematics? vreg-Np0?
 > 
-> I'm happy for the patches to go through the RDMA tree.
+> I reviewed the Ride board schematics and found the following power rail
+> mappings:
+> 
+> VREG_1P0 -> DSI0_DVDD10 / DSI0_AVDD10 -> ANX7625 AVDD10 / DVDD10
+> VREG_1P8 -> DSI0_AVDD18 -> ANX7625 AVDD18
+> VREG_S4A_1P8 -> DSI0_DVDD18 -> ANX7625 DVDD18
+> VIDEO_OUT_VREG_3P3 -> DSI0_AVDD30 -> ANX7625 AVDD30
 
-You will respin it with the little changes then?
+Then it looks like regulator-vreg-NpM is okay
 
-Thanks,
-Jason
+> 
+> would the current approach also be acceptable?
+> or we need configure the power supplies strictly according to this mapping.
+> Appreciate your guidance.
+> 
+> > 
+> > 
+> 
+
+-- 
+With best wishes
+Dmitry
 
