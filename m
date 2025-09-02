@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-797328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863A8B40EE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:53:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 907BEB40EE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453203ABDFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:53:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2733B1330
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 20:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1079C2E8B81;
-	Tue,  2 Sep 2025 20:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624F4311C13;
+	Tue,  2 Sep 2025 20:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8X7ewLS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfKm6oEW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6FB2E3B07;
-	Tue,  2 Sep 2025 20:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD962E7F0E;
+	Tue,  2 Sep 2025 20:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756846379; cv=none; b=JB1/nbaBOgNdzUtzTbr+QVH2GkeM6ivHf8f25xLOMlsX4YE0jUpE8W08RL77vfrUngCpp1TUtGljhK9VLq5vInnFkWAh2Eyj4NuD3v3LFdLUjhJPf+HJOmBJuddP4JyOzDGzjzAkxO0vyZyGwspUd5A5y+OapTe/HlUXFnBYr00=
+	t=1756846413; cv=none; b=m4i4t93Uhji0ND4CpJidmg7lTbxZMAegBgMGILhSZUacHAqG1IGVbsIhazSReISE7eH/LhTpWNn4ffHDaQGoGHX44XOGLfYQUBXP83/TzkYceyxegYVLdXOKw3kkt/EfffzmDuLQf3vWOAD+XoIq6ovnAMXF2wezaPqCMgR6+lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756846379; c=relaxed/simple;
-	bh=jECdS4CzQRUdpw1q8UvY0XbAJXPo1RSL3BkjoizI0Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UaZoKxjylkpLFedXFrdmKh8dM1fjuEe0+4v38lh3IXHjRA37sGanAja4cIdmFPyKfzQfp3WaDgVvMzO8SzYDhLKjHYN6RxP/fO1sDAuAJ/dp9XxHHiwF+14E45dL4w2QcGFK9NwijLFTS+3WjrSNSb22U7dmhEn0iulzaVYnc70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8X7ewLS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD889C4CEED;
-	Tue,  2 Sep 2025 20:52:58 +0000 (UTC)
+	s=arc-20240116; t=1756846413; c=relaxed/simple;
+	bh=IrPhSE9h61rfAhoaa4jcXqgfXSLJUuueyFXosJ5+D94=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KD87sQA3ARMJHDd4WqZwHj7SBmJhX0iZ9+m98lbI8zzIUWf8gihXxRLgs9p/MWSz+HstLB9Pj6gAXZYSk10J4h6D0XO9Pfe++tz/SFi0iF20DP8oVFbEf01oYH2abrIlnt/Znv0RNzeZIE3zsaso+gCcAewd4lRYyMnpf5e7PZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfKm6oEW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 627A8C4CEED;
+	Tue,  2 Sep 2025 20:53:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756846379;
-	bh=jECdS4CzQRUdpw1q8UvY0XbAJXPo1RSL3BkjoizI0Hw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O8X7ewLSTUxPVmrMSli6DcTVJqsbuOAtwGSFGZd1/mMohM2fuq99V5CqsrCG9oAJK
-	 ZCQZ94fVa4tZPWGiEEW9VY/JiCZnnbc+cevBe32S59461UCGzTZYXkuj8/IzQ3bEVZ
-	 ZDkLDoe0636QrDMy4RqA7DwvK3ON0gW9q9GFciYm2XsX/rff5YqS8nyts78B2hGO+f
-	 R8W90Z+nF6iV8gm1aoKS5mtxJ6RdvMkHU6EobolgQG6X2nlhoFbqNdl2Mo9WMWyUwv
-	 EqIXVqTbNfzSS3cKyH1wakZ/B/6Yj5Rdv6JpJWZb6It9NI4KPFZZTzGMim+RgUbDur
-	 tID0QvxDZsK+g==
-Date: Tue, 2 Sep 2025 15:52:58 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: chinkaiting@google.com, conor+dt@kernel.org, jim.shil@goertek.com,
-	jesse-ji@ti.com, lgirdwood@gmail.com, shenghao-ding@ti.com,
-	tiwai@suse.de, broonie@kernel.org, will-wang@ti.com, k-yi@ti.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	robinchen@ti.com, linux-sound@vger.kernel.org, krzk+dt@kernel.org,
-	toastcheng@google.com, alsa-devel@alsa-project.org,
-	andriy.shevchenko@linux.intel.com, henry.lo@ti.com,
-	13916275206@139.com
-Subject: Re: [PATCH v4 2/2] ASoC: tas2781: Add tas2118, tas2x20, tas5825
- support
-Message-ID: <175684637733.1163682.7826171092384451555.robh@kernel.org>
-References: <20250830061459.24371-1-baojun.xu@ti.com>
- <20250830061459.24371-2-baojun.xu@ti.com>
+	s=k20201202; t=1756846413;
+	bh=IrPhSE9h61rfAhoaa4jcXqgfXSLJUuueyFXosJ5+D94=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZfKm6oEWOhoN1/6UMcvCf+L85870XH0oJODqeZDCtIXFINTBc+ULveIa/rbMqXfEy
+	 1c0SYXiM9dzQWS1YKNgeLKnm12S00ctoNgikhFLmksvD70MWIzDvnsbqC33w9czQQa
+	 lije3/wQ7eZZMJQxMXUTIAtDQEa5653r6Mvc7+nmLQIpp3QqZi/lXJrtsvCU8P/Lvu
+	 aUw83nuR5ylMor7sXVaEifeU9bLPgS0nxc/C08/wVB2nONA/n0Yxi3W/x846h4F9Ng
+	 ZnKH/3z8K/Ep/DJfdBw/wiu3XdoMHSRcy554ZGoW9msVLVEcCJWdn/zS04PGVID9LH
+	 6H77i8f1y09XQ==
+Date: Tue, 2 Sep 2025 13:53:31 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, Geliang
+ Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
+ <shuah@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, Eric Biggers
+ <ebiggers@kernel.org>, Christoph Paasch <cpaasch@openai.com>, Gang Yan
+ <yangang@kylinos.cn>
+Subject: Re: [PATCH net-next 0/6] mptcp: misc. features for v6.18
+Message-ID: <20250902135331.5ae29d1b@kernel.org>
+In-Reply-To: <83d76f61-e8ad-4c8d-b38b-d197cefe4088@kernel.org>
+References: <20250901-net-next-mptcp-misc-feat-6-18-v1-0-80ae80d2b903@kernel.org>
+	<d5397026-92eb-4a43-9534-954b43ab9305@kernel.org>
+	<20250902120933.5dbd61cf@kernel.org>
+	<83d76f61-e8ad-4c8d-b38b-d197cefe4088@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250830061459.24371-2-baojun.xu@ti.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-
-On Sat, 30 Aug 2025 14:14:59 +0800, Baojun Xu wrote:
-> Update ti,tas2781.yaml for adding tas2118, tas2x20, tas257x and tas582x.
+On Tue, 2 Sep 2025 21:25:33 +0200 (GMT+02:00) Matthieu Baerts wrote:
+> >> I just noticed that NIPA reported some issues due to these 2 patches. In
+> >> short, some packets (MPTCP ADD_ADDR notifications) can now be
+> >> retransmitted quicker, but some tests check MIB counters and don't
+> >> expect retransmissions. If the environment is a bit slow, it is possible
+> >> to have more retransmissions. We should adapt the tests to avoid false
+> >> positives.
+> >>
+> >> Is it possible to drop just these two patches? Or do you prefer to mark
+> >> the whole series as "Changes requested"?  
+> >
+> > Your call, we can also apply as is. mptcp-join is ignored, anyway.  
 > 
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> I realised patch 3/6 is going to cause issues when running on older
+> kernels, so we would need to revert it if we want to apply all patches.
 > 
-> ---
-> v4:
->  - Change description for adding tas257x and tas5827
->  - Added descriptions for tas2570, tas2572 and tas5827
->  - Remove unnecessary description for I2C register
-> v3:
->  - Remove unnecessary minItems.
->  - Remove unnecessary description for tas5825.
-> v2:
->  - Update the mail list for maintainers of yaml file
-> ---
->  .../devicetree/bindings/sound/ti,tas2781.yaml | 96 ++++++++++++++++++-
->  1 file changed, 95 insertions(+), 1 deletion(-)
-> 
+> But if you prefer a v2 for the whole series instead of applying 1,4-6,
+> I can also do that :)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+Alright, please send a v2, then. Sorry for the flip-flop.
+-- 
+pw-bot: cr
 
