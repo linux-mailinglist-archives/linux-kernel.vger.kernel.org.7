@@ -1,114 +1,156 @@
-Return-Path: <linux-kernel+bounces-795458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2576B3F246
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:26:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F399B3F249
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 04:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 152D33AC0DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:26:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29C547A11F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 02:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65682BEFF6;
-	Tue,  2 Sep 2025 02:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5DA2DF14A;
+	Tue,  2 Sep 2025 02:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Z+tRIZqm"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA104207A;
-	Tue,  2 Sep 2025 02:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Kbq59YfF"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD01B18C933;
+	Tue,  2 Sep 2025 02:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756779955; cv=none; b=hFeJuvgCoH+vkh5M2z4DzNNdQPXsxvzuZxceYb/uBjRlhlFnDxaiAnbEGvCmNbtSbgbj7eQ3mAnPacH3lAyLVuYGFi0YFO2c57P5sF6p4Fb27kBF829M0maIHT5FmSXM1VIpIMc+HLHevQ4jnNlvJuF03p80S2CDkiiSNcRMyVw=
+	t=1756780111; cv=none; b=Thbkk6zO/eYt44wq24LMPjhlR6fY9dhK448wdvOa3HfsUidrZYfdbFUgspUrYNGPHvF33hVbukeahDT7h28ZBjlLOeZ0udYHKycjYQQY714/0n5H+NEWu1Cq7EBlSWnm2q3CSLGhMoHYlBtnVMsqG98RwuOmLq+1qWKaRlEb6Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756779955; c=relaxed/simple;
-	bh=bIpocEP2jvz2mpj+XkMmbRl/rKIkIAkUnbr7f3S3hCE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U4NwTAgTEXzDTAoVuk2HmmrD2Lo7NJa/psktJDXMwccWn0xefWmCVtihGPXNi83RCG9w7ZwezdO1Luhg5RLMhxLdfx/lIlu1g28458AhG+OlaH8bMNsH9tLzbKS3R2JEP1sdI8eKI16GtKwNg0PTGMBEvKX8UWIexOVIOaXphgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Z+tRIZqm; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Z5
-	A3QhlnIE64G/fcY6zdZwscP+D2WRRJ4z1gGYC+++4=; b=Z+tRIZqmatAZtP61T0
-	B6AfEc+p0d0y4afhoywzcnTzz6Q576h1cpXdix81z7lgNRoQ2/byCvwkDQLOCjAW
-	RHbPpzDCYeTLlqYC9QFK6rgrHRbYVfOJtKugE9L7KnFPb5asNu+WlcAePO357+4U
-	eSISzxydVcAOyrh9DnehGgpqs=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCnDyebVbZo1fOsFw--.500S2;
-	Tue, 02 Sep 2025 10:25:32 +0800 (CST)
-From: mysteryli <m13940358460@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	aleksander.lobakin@intel.com,
-	andrew@lunn.ch
-Cc: kuba@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mystery <m13940358460@163.com>
-Subject: [PATCH v5] net/core: Replace offensive comment in skbuff.c
-Date: Tue,  2 Sep 2025 10:25:29 +0800
-Message-Id: <20250902022529.1403405-1-m13940358460@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756780111; c=relaxed/simple;
+	bh=2g9YOUmV6qRtVY8H9r9NTwL2f/S147r7pTuKS6omoZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vGwEqRk0VSB4VCf9tDX80IKvoMfT7SbffM8XvmfTOcZC7Qf0M7rcTGflKNK3BGhpsNP/qDf04PwADC8giVqxPOhgYig5Dp53hxM48gRiPqa+yv+5223bzERLvq9QIhXDBQLz/BJfnpFr3V0Hmf327OV3MK3Zs3PHIOMJJoz2Mos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Kbq59YfF; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756780099; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=6NbI4kzFCdnbgFqsQU3j3woE9OiOn/2nBz2NzNgD994=;
+	b=Kbq59YfFR+jJHrcPBSBT+lcut0VxAY9rNdNuIN2bnHEGGULfm/P6t3xUo3tcb4umVXMY8GrSZzjiw9/BAbcExgsZwtAokRgGPgZeuBg3jeB5cXlqD6BINLF4/iBdur6Cnly9LO2VOFsIlT1FDdSBu1NJ4J7gGn/NH1mhOdcYbWI=
+Received: from 30.74.144.117(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wn5svZT_1756780095 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 02 Sep 2025 10:28:16 +0800
+Message-ID: <eb02c281-6d41-44af-8eaf-8ffc29153a3a@linux.alibaba.com>
+Date: Tue, 2 Sep 2025 10:28:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+To: David Hildenbrand <david@redhat.com>, Dev Jain <dev.jain@arm.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+ sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <20250819134205.622806-1-npache@redhat.com>
+ <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
+ <38b37195-28c8-4471-bd06-951083118efd@arm.com>
+ <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
+ <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
+ <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
+ <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
+ <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
+ <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
+ <95012dfc-d82d-4ae2-b4cd-1e8dcf15e44b@redhat.com>
+ <bdbb5168-7657-4f11-a42d-b75cce7e0bca@lucifer.local>
+ <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
+ <db2320ee-6bd4-49c1-8fce-0468f48e1842@linux.alibaba.com>
+ <c8c5e818-536a-4d72-b8dc-36aeb1b61800@arm.com>
+ <2a141eef-46e2-46e1-9b0f-066ec537600d@linux.alibaba.com>
+ <f34b5fcb-6a97-4d97-86a8-906083b53be6@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <f34b5fcb-6a97-4d97-86a8-906083b53be6@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCnDyebVbZo1fOsFw--.500S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJr4kGr1kXF48tF18ZrWrXwb_yoW8CF4kpa
-	97G345Cr1Dur17Cw4kC3WIvF45tan5JFWj9w4ag34rJwnxWrs2kFZxKrZ0vFWYvrW7trWj
-	qrsI9rs0gFWjy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_yCJUUUUUU=
-X-CM-SenderInfo: jprtmkaqtvmkiwq6il2tof0z/xtbBNRK8Omi2TAbsOwABsj
 
-From: Mystery <m13940358460@163.com>
 
-The original comment contained profanity to express the frustration of
-dealing with a complex and resource-constrained code path. While the
-sentiment is understandable, the language is unprofessional and
-unnecessary.
-Replace it with a more neutral and descriptive comment that maintains
-the original technical context and conveys the difficulty of the
-situation without the use of offensive language.
-Indeed, I do not believe this will offend any particular individual or group.
-Nonetheless, it is advisable to revise any commit that appears overly emotional or rude.
 
-v5:
+On 2025/9/2 00:46, David Hildenbrand wrote:
+> On 29.08.25 03:55, Baolin Wang wrote:
+>>
+>>
+>> On 2025/8/28 18:48, Dev Jain wrote:
+>>>
+>>> On 28/08/25 3:16 pm, Baolin Wang wrote:
+>>>> (Sorry for chiming in late)
+>>>>
+>>>> On 2025/8/22 22:10, David Hildenbrand wrote:
+>>>>>>> Once could also easily support the value 255 (HPAGE_PMD_NR / 2- 1),
+>>>>>>> but not sure
+>>>>>>> if we have to add that for now.
+>>>>>>
+>>>>>> Yeah not so sure about this, this is a 'just have to know' too, and
+>>>>>> yes you
+>>>>>> might add it to the docs, but people are going to be mightily
+>>>>>> confused, esp if
+>>>>>> it's a calculated value.
+>>>>>>
+>>>>>> I don't see any other way around having a separate tunable if we
+>>>>>> don't just have
+>>>>>> something VERY simple like on/off.
+>>>>>
+>>>>> Yeah, not advocating that we add support for other values than 0/511,
+>>>>> really.
+>>>>>
+>>>>>>
+>>>>>> Also the mentioned issue sounds like something that needs to be
+>>>>>> fixed elsewhere
+>>>>>> honestly in the algorithm used to figure out mTHP ranges (I may be
+>>>>>> wrong - and
+>>>>>> happy to stand corrected if this is somehow inherent, but reallly
+>>>>>> feels that
+>>>>>> way).
+>>>>>
+>>>>> I think the creep is unavoidable for certain values.
+>>>>>
+>>>>> If you have the first two pages of a PMD area populated, and you
+>>>>> allow for at least half of the #PTEs to be non/zero, you'd collapse
+>>>>> first a
+>>>>> order-2 folio, then and order-3 ... until you reached PMD order.
+>>>>>
+>>>>> So for now we really should just support 0 / 511 to say "don't
+>>>>> collapse if there are holes" vs. "always collapse if there is at
+>>>>> least one pte used".
+>>>>
+>>>> If we only allow setting 0 or 511, as Nico mentioned before, "At 511,
+>>>> no mTHP collapses would ever occur anyway, unless you have 2MB
+>>>> disabled and other mTHP sizes enabled. Technically, at 511, only the
+>>>> highest enabled order would ever be collapsed."
+>>> I didn't understand this statement. At 511, mTHP collapses will occur if
+>>> khugepaged cannot get a PMD folio. Our goal is to collapse to the
+>>> highest order folio.
+>>
+>> Yes, I’m not saying that it’s incorrect behavior when set to 511. What I
+>> mean is, as in the example I gave below, users may only want to allow a
+>> large order collapse when the number of present PTEs reaches half of the
+>> large folio, in order to avoid RSS bloat.
+> 
+> How do these users control allocation at fault time where this parameter 
+> is completely ignored?
 
-- Added this detailed changelog section
-
-v4:https://lore.kernel.org/netdev/20250901060635.735038-1-m13940358460@163.com/
-- Fixed incorrect Signed-off-by format (removed quotes) as requested by Andrew Lunn
-- Consolidated multiple versions (v1/v2) into a single version history
-
-v3:Due to some local reasons in my area, this is a lost version. I'm truly sorry
-
-v2:https://lore.kernel.org/netdev/20250901055802.727743-1-m13940358460@163.com/
-- Initial version addressing feedback
-
-v1:https://lore.kernel.org/netdev/20250828084253.1719646-1-m13940358460@163.com/
-- First submission
-
-Signed-off-by: Mystery Li <m13940358460@163.com>
----
- net/core/skbuff.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index ee0274417948..202c25a01f22 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -5333,7 +5333,7 @@ int skb_cow_data(struct sk_buff *skb, int tailbits, struct sk_buff **trailer)
- 		    skb_has_frag_list(skb1)) {
- 			struct sk_buff *skb2;
- 
--			/* Fuck, we are miserable poor guys... */
-+			/* This is a painfully difficult situation with limited resources... */
- 			if (ntail == 0)
- 				skb2 = skb_copy(skb1, GFP_ATOMIC);
- 			else
--- 
-2.25.1
-
+Sorry, I did not get your point. Why does the 'max_pte_none' need to 
+control allocation at fault time? Could you be more specific? Thanks.
 
