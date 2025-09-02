@@ -1,188 +1,249 @@
-Return-Path: <linux-kernel+bounces-796346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67584B3FF41
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:09:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34603B3FF14
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660CC5408A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C17188485E
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D81303C93;
-	Tue,  2 Sep 2025 11:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B4726A0E7;
+	Tue,  2 Sep 2025 11:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AnaT/se7"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2084.outbound.protection.outlook.com [40.107.220.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9yZ3azo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7BC302CB7
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 11:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756814339; cv=fail; b=ul3kRLEUiYtaPFaFZ/JCuj8zRWHKdOja8EkFsyk6+UJd9eJetrZ4BzP7LYaSjX8kgs3YbQMi1Zddgy14e44BKycXVNaF8yOaBEVGLokbS9776o7bJ/oABYQtd8TGZqaoFcmJPwaM4fZaqPVyXSe3QlhGtEb4jJNt/jKxHkQ2rmo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756814339; c=relaxed/simple;
-	bh=KT/BdS5cldmtqw+rd0gJG6cchxW/oxgiqD+wfYNc++w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eJDfR+N4v6Zpel2RXmGGYixOsqHqPES4MQvt9Avq/xLROFaKqOixnDocfP7cu4FVv6GGZDdC/Z7r/jUHYgjf1ehWWwARUi+cDrWqCnMRt+MgbB7rQ3rK1jD8y4zSv9ylinyqF+E9itMXbLHeOkECXqwT9QsrR/cm7fiogd4Cd9A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AnaT/se7; arc=fail smtp.client-ip=40.107.220.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xoTr0n0aOrJXAvQNN38zlY5cnMx+Drkmm0dFhaUceqGyzJt0yT3iUdpPbsYAcZk4oN3gyDeI0doxURegcBN75n3Rh+D5O9oRsrDSWISaXmDbCO2/b8ske5YWVh3HL1+iWu1ICR8F32CTIpFCrByGfkYGZxKWbpIkt63ncfNMRVJcrkF6TmjEX0dZJEfBnRr78C9fseVw4p4YtC6KJm4LL9w1Du7+4dnWmD9Xa5UtDnDCoI/80NfoO+a3c0fZFZe/fBfE6P03bgLn/xAMLlTZCgIL+jeoQaS8JEmNiJfghn0cuKxmenwr4La3Faj4wqA7jyuUynXOY6WY2JpzuekyPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6gcbtCvCHQyO0mme+to3pBgypf7rmUsnu2G4bFkRPMc=;
- b=srFolcxJEUcRLN7xQjFQ/HDm0Q/m+GJJyKr5yimceIjmLlcJEFKJi4eSS59sIVeyHrgV+K16GHYnnf2p8kE//gD2umOPYa8mD+s1kFtS+FvbPaH/CM67HBnW2v3tZIg0ZtvL6VyIQS7H0gCVqsuw7EKGLX1k8UcXOtaJa9BquUJZEq+tC2OThD0TbZO1tV7j7YHg/UNQIvUgq+F4TDnq2xT1RQsMTZu+GKv4iLUbAHUWyvi+x8soRetr4W3B0325x2Z+pVobVXApROirf37134xR3ZQNqWjAD+qGRyBT/tuSATKHePrx43kjhrjky8RmTl6O5kpeyGU66v+eV5sQ0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6gcbtCvCHQyO0mme+to3pBgypf7rmUsnu2G4bFkRPMc=;
- b=AnaT/se7ddP/WFoivfVmn7rkH6N/AjY49jqDtfJDJfAoPP/Kiv5jQARb50HgAW4nBTh3mJbodeDkyMvu7KhDRco6BJxTCVYYs7z7Qsj8q5RAPDMUfV8CYj+Gkk5P3QWi+GWLporqRP6K7RNGQyo7ibU0YllIQYIryP6/k8Dennr7C6ngJ1lG/CYg5L1rEfthdYr6qs2eaSVwJ4C8T7W8cSVCH0XsMSAKDs9i5VsGcx1aMlNeYpfZrfLEHtAKclUm8KU7RDpSqcFOnSDw4X9DCD5vKBdt8lSLCkQi5KXrIdNHeSkaraLbuIvr/uwY7A/wdfih+ihv+aRxRL4t/xyMHQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by MW4PR12MB7015.namprd12.prod.outlook.com (2603:10b6:303:218::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 11:58:55 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9073.026; Tue, 2 Sep 2025
- 11:58:55 +0000
-Date: Tue, 2 Sep 2025 13:58:46 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
-	mingo@redhat.com, peterz@infradead.org, jake@hillion.co.uk
-Subject: Re: [PATCH v6 0/3] sched_ext: Harden scx_bpf_cpu_rq()
-Message-ID: <aLbb9ljZvAvghZa8@gpd4>
-References: <20250902111143.2667154-1-christian.loehle@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902111143.2667154-1-christian.loehle@arm.com>
-X-ClientProxiedBy: ZR0P278CA0168.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:45::23) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E7F283138;
+	Tue,  2 Sep 2025 11:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756814337; cv=none; b=JMN3GjhudfMIeYYBvRAB3Gh9E31pLfgAWGEhMukZfTVCqtQxMlGFsx2zyISxhsx2/gc4N6/5UFZKiy42vV9hz9f2EEP4rNYNTR0xxlS1nb2WJf6D33JxLogDWRLq1hf4ScFU52k/Eo9Uo7o2bVUwdxAEbjI0mJsUxl8HA1889X0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756814337; c=relaxed/simple;
+	bh=dqyFXXyzhiyh/gyk8t682VcCl6KLwKRKKVK06zfUt9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ol6rf8WNchTuVo6N/vWQig0eEmkFbsnmrUZ4G88+/9qd3afI5j6RoTJUMcTRmya+VGfBiNUw8Big0m4oIM5jGFoXAPUqiPcLcPgrYYA7A1r+ucSzXjBHogRhNCNJmDjiIgoiq0XPWngG4nGjwevZwyE4VfxmquGQGdbWYtDYdIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9yZ3azo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7318EC4CEF5;
+	Tue,  2 Sep 2025 11:58:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756814337;
+	bh=dqyFXXyzhiyh/gyk8t682VcCl6KLwKRKKVK06zfUt9s=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=g9yZ3azolm9sIH0U2tWY5itVXElHQ8kdHl6DiWU7snmIoSdN+p5sK3ZEue7Is3KYS
+	 V6Hp/5b7xJJgWYexANKnp4cd7rfxABPbON2hH7dKBaU2/7Ulgg9udR6iXllw1MOOMK
+	 tnjFm4ncR6Ef62eh+4QRrCumH+6mNGpoyb6rBdI3uw+UlZ5KTZc4ueUe3kTfHqnpYX
+	 yYTBQXWNGjp9pmmF0BdeP/pTt8T31Tfyhhe5THElTcZA9Qj6AYyb+G3lndiQuGhaJe
+	 pRpUlrZpM6DIGGQASodEFIYQAdlvry4dmS6pcxPeMVUUOXiGiEqlDXZ++mZv4qYLpL
+	 jETYtVSqv2SGQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 091F7CE0E40; Tue,  2 Sep 2025 04:58:57 -0700 (PDT)
+Date: Tue, 2 Sep 2025 04:58:57 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Menglong Dong <dongml2@chinatelecom.cn>,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	kernel test robot <oliver.sang@intel.com>, tgraf@suug.ch,
+	herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
+Message-ID: <215e01cf-8c00-4c71-bab3-9f7e596185e8@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
+ <20250828222357.55fab4c2@batman.local.home>
+ <d1da3939-62e6-4ad1-afcc-5710ce3f6cbd@paulmck-laptop>
+ <20250901170655.0757884ad7c2afb63ced3230@kernel.org>
+ <615da75d-cb2f-4e7e-9e11-6b19f03fea6c@paulmck-laptop>
+ <20250902155953.048dc8eab1f7f07e4bf35aab@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|MW4PR12MB7015:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33b8d3e5-3000-4b14-0d20-08ddea181796
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ndo9UXsCG4VWhh+A/F+2OjxWtZ0r+DVayvUWFkMUob24tIyxrl6hol85U5DB?=
- =?us-ascii?Q?UJzfLk5Srobz4lmyZ2xawbUx3G7dxO1bbT9v4Sw6mzC6rOO+BuyEFIVXRg3R?=
- =?us-ascii?Q?kmuCd285wKAiprT6Kxt5y5lpb/NJRMkWmBwrn/gaAKq6XJsIRu+gBxfpLiVl?=
- =?us-ascii?Q?0v6HYoNOF4lLtWM3Szhqxo5pEUeCuz7nzXn1VgDnW1Rrnaa+NUtWfaBU3UO9?=
- =?us-ascii?Q?NbzgW+NCEDK5Eer7yej5wtN4iCyM3dPRL6UqHG4GozAN4eFx7SwxYEzl+Vji?=
- =?us-ascii?Q?Yu/N4XPPqrJdANEIhlUglHX9RG5ejy69yjToUBT9nzdyCbXVokTXs0TmJCmo?=
- =?us-ascii?Q?rWywIyc7xjkYVA5jFloM7wU4BydoQLMZ96Nza/+Pc1pXM7fMN/M7hYSlkLjw?=
- =?us-ascii?Q?F7Ow5J7dMhtQifESRgq9gYl7HZt6sI0dp9YxMnZaJN4wRYfPA9tmyXyzjmMv?=
- =?us-ascii?Q?RdbcR/Dr1p6hHPSCajFA2PrnxRqy8IDLQuGDwU7iVXcV+rcX46WP9kVvJNlO?=
- =?us-ascii?Q?JL+8r6/iV2SKp2QCYG8or3lY6zffrynhcu1idAaMZyMdNHsjHdTQcmkWS2xp?=
- =?us-ascii?Q?LMMZnucT69yPucOMXEty5/h48K0l+ayU/7oh30wQqVX7hZYL33EbThEs7fSf?=
- =?us-ascii?Q?AcUwEvQDcuPok4xJScCgRS/axIpYqmhvDkyQZo51A5J2Enpu02NWiyimCiia?=
- =?us-ascii?Q?eF4grWSz6Te4GYm4/gnbVRevmQD3qgQeteWGGnP3m+1f0f21Y2e/xj4tsnBi?=
- =?us-ascii?Q?aNhWbOT37Ij9TLLQCnDgsAxqIUGpf5a0r1MNS8Y+d6sd60+sC1JyY6XJYPWa?=
- =?us-ascii?Q?1H46V9nL2GC6HKRyKhlO1GBmdiBrvagc8icuQEEhnI83eZhA9frtRd1AE1XG?=
- =?us-ascii?Q?h9P4+vrH54xEdxFvasDVIBm1OW376CeH23aYnM2CT0cr2iy7eCCYlnTr4kC6?=
- =?us-ascii?Q?tfrGXOC0USx0+ArHzEoPCzWKqKnkwhmUQ/d36OPPcpPWKTcBuVnQdk1TVBT6?=
- =?us-ascii?Q?ZzyvVqufxdfsj6oRAxFgRUaL/F7ou7jVBinnl9e+8pvuC2wFlhpYP5Nl0kej?=
- =?us-ascii?Q?tSHzikPEvLrInqmaesa3olvOpeFUZDML6E1h3473m5W54aCyZ5imgyvKnSGv?=
- =?us-ascii?Q?x+RcX2K18oiXoM9bp5p3XPQfqsJN5bmxAEZSbsN5FnDxEcnzt1H2XMSxXwg7?=
- =?us-ascii?Q?dM0a68PCPkx2gFW0AzrZ4X9bjhBgR96k5uY6mQ1Q5ILp/gT6WCwFHAxKvpO6?=
- =?us-ascii?Q?CIT0nrzf10DDuRoM/PcA4WlgS572JrfT1l9hexhV2U3BsZ73PTrktJkknI+H?=
- =?us-ascii?Q?b33JK6oUl2uKPbveDJc8gw6X3iGLRPZwrSZ1Z+LFNum0I6M2fCss8oUEkfAp?=
- =?us-ascii?Q?nXCr9HgPrPRFeBLDkDGoECXlekPtW7Z0JrZ6MbtCmcrGXdSmuMSyS6TxL2Sj?=
- =?us-ascii?Q?xMsooTydEK4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?C6SoX1Ho+SpA+gzhjFFcEYlCJj7e3OcNTdJGxGSk11V9lD3MWxl5SXnU8nlh?=
- =?us-ascii?Q?irniy/Wr94TU++OvnawEVw2D+d++UkWx/wJTgsmwjAQh48+O0SXsFXuo0RYY?=
- =?us-ascii?Q?E89zy5GhoQJdQOy6HleQ1/wCR5gBkdz9eb8FXJmyfjTTzJl/fbd4hQzvHwgO?=
- =?us-ascii?Q?Img0M7Zieb/U0H/SwlDmeUJoHQwMRcwkMJX/eReOC4hTrZbu79lfhdlFbjvw?=
- =?us-ascii?Q?vgkr2CayaN7V/WUVXr/pirYaC9VW5ZMTxjxk6HjDWqmHkIm1efLijcgvkYid?=
- =?us-ascii?Q?JATwMCoZ5nHo+NnJ/2VGmlZoCL3ZIg1/6eptM9on7UprZ5RQJ42GB+Rsyfa+?=
- =?us-ascii?Q?F3ysZHvkJkkYLZQ/thKo3C5bZjXNfKrUpifD/tbvHSVT/Mov6WgkwKUQ1Aoj?=
- =?us-ascii?Q?h9YIbXIF5LMvF1e5+sS0KMwEt8UUA9Go7Qm0cbq6CjirRcQjf3ij0RRpadEl?=
- =?us-ascii?Q?gZF6oEfTSNqTLBvAmLSt/W1UHg3GCE7rM5BoRbzCRd0z0KHWIliOY2uvQIhO?=
- =?us-ascii?Q?WVBzsO+Rw7DZbLyIEPdx1d/BtU5nC5l0rHImp+x/+tgxJMJIx12I+PNCwJ30?=
- =?us-ascii?Q?WHTZY169EP6VdiH3IF0KeK0CFmT5/KnVWWpoOTRw3x7NC3iNwDY868bA3Coy?=
- =?us-ascii?Q?9yj0lsYJQBjp/bXPujTyAVVSqCieIBMf2yuNrGB2GcghXDz8TSvrWH/JoPBP?=
- =?us-ascii?Q?dJM8lE361LFVbdRfw0FveabQ+kDAXi/GktP6SMepscyP0+mNccVV91Ern+K6?=
- =?us-ascii?Q?h/BDN3if+pquqGtlVG9AcCUzTZdn0NDcwRsLKDhupcG823O8Vo0VOKwvqkG/?=
- =?us-ascii?Q?o9OJVBwTUw6ch5rSGpQJhohger8CyK/QodyXLtGITVYLujN2JpYoqMl5qFzX?=
- =?us-ascii?Q?dDqdpxZw2B+ifmoL0OtRiWWj6XuX9zWSyBVEreWJEPz2M0shoDGfh+bzt98w?=
- =?us-ascii?Q?4Vrv94Us+iEXO/vF1/HceTiOLXvJoZjGP27cEmRjmStkusNAV1TJXgVX7yPP?=
- =?us-ascii?Q?JQajugLAP6nkCQ2pmkfR57ZPz+I8reDxAafuZVLrWbR6sCf3O8pUs2S7LGC2?=
- =?us-ascii?Q?lKXeF/TIY6dyyeygMSHWQnNXNFYjtKQGFgeeVnYjdlEf868kTOSFxgCNmkRm?=
- =?us-ascii?Q?zEoQIWTuH87T3w6IBCa51cNNY0AWBcaPuKiQhOU+ZvZ47WDwjnFaVaLLn9Ci?=
- =?us-ascii?Q?RKiaxni1U8PlCskXCB2Coht9vuBQxSMKjUsOtSWNN9j6YqJqFxeMJPTBzgB/?=
- =?us-ascii?Q?nypqT9EfBmhrHTDt2lxYbZGOsx0t8uKN3L75s6ORb+stNS9VmcZ1XZEeNa/b?=
- =?us-ascii?Q?WZqu5MkDwrYq5opgcDALDOwdN3ltuxjZ1Q8PzIaP5qFRRCAS9++3lhV5pMkB?=
- =?us-ascii?Q?HYwkbOdktDHu8EzjvUmB1lWNLK6YCrBsNwE0Ebybt+ihHaVO4p3sznAVMGd0?=
- =?us-ascii?Q?Z+/Yhirb3dK6x6R7H08F0Dv4XJot5/05RVynt6EWGubQg6XccLveOKguj46r?=
- =?us-ascii?Q?GQkJ8l5Ry75JCLqKxpmTlxiF8NmbBfK13+WV34dqD85S0mkZIdY0znpIw/YE?=
- =?us-ascii?Q?ZF3Y/aCWXxZEt2HomKhHM9vDyl1aa7sHiGWNNV8G?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33b8d3e5-3000-4b14-0d20-08ddea181796
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 11:58:55.3651
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LMyBoei6NFrfGVvzw87q0ywP4mtSUA3IUvXGC1s4L+Yqx5BQB/hozEEKPc+uFOwKQM/MmwDUMMBcx8r5Gh/Fng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7015
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902155953.048dc8eab1f7f07e4bf35aab@kernel.org>
 
-On Tue, Sep 02, 2025 at 12:11:40PM +0100, Christian Loehle wrote:
-> scx_bpf_cpu_rq() currently allows accessing struct rq fields without
-> holding the associated rq.
-> It is being used by scx_cosmos, scx_flash, scx_lavd, scx_layered, and
-> scx_tickless. Fortunately it is only ever used to fetch rq->curr.
-> So provide an alternative scx_bpf_remote_curr() that doesn't expose struct rq
-> and provide a hardened scx_bpf_cpu_rq_locked() by ensuring we hold the rq lock.
-> Add a deprecation warning to scx_bpf_cpu_rq() that mentions the two alternatives.
+On Tue, Sep 02, 2025 at 03:59:53PM +0900, Masami Hiramatsu wrote:
+> On Mon, 1 Sep 2025 08:00:15 -0700
+> "Paul E. McKenney" <paulmck@kernel.org> wrote:
 > 
-> This also simplifies scx code from:
+> > On Mon, Sep 01, 2025 at 05:06:55PM +0900, Masami Hiramatsu wrote:
+> > > On Fri, 29 Aug 2025 04:11:02 -0700
+> > > "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> > > 
+> > > > On Thu, Aug 28, 2025 at 10:23:57PM -0400, Steven Rostedt wrote:
+> > > > > On Fri, 29 Aug 2025 10:14:36 +0800
+> > > > > Menglong Dong <dongml2@chinatelecom.cn> wrote:
+> > > > > 
+> > > > > > rcu_read_lock() is not needed in fprobe_entry, but rcu_dereference_check()
+> > > > > > is used in rhltable_lookup(), which causes suspicious RCU usage warning:
+> > > > > > 
+> > > > > >   WARNING: suspicious RCU usage
+> > > > > >   6.17.0-rc1-00001-gdfe0d675df82 #1 Tainted: G S
+> > > > > >   -----------------------------
+> > > > > >   include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
+> > > > > >   ......
+> > > > > >   stack backtrace:
+> > > > > >   CPU: 1 UID: 0 PID: 4652 Comm: ftracetest Tainted: G S
+> > > > > >   Tainted: [S]=CPU_OUT_OF_SPEC, [I]=FIRMWARE_WORKAROUND
+> > > > > >   Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
+> > > > > >   Call Trace:
+> > > > > >    <TASK>
+> > > > > >    dump_stack_lvl+0x7c/0x90
+> > > > > >    lockdep_rcu_suspicious+0x14f/0x1c0
+> > > > > >    __rhashtable_lookup+0x1e0/0x260
+> > > > > >    ? __pfx_kernel_clone+0x10/0x10
+> > > > > >    fprobe_entry+0x9a/0x450
+> > > > > >    ? __lock_acquire+0x6b0/0xca0
+> > > > > >    ? find_held_lock+0x2b/0x80
+> > > > > >    ? __pfx_fprobe_entry+0x10/0x10
+> > > > > >    ? __pfx_kernel_clone+0x10/0x10
+> > > > > >    ? lock_acquire+0x14c/0x2d0
+> > > > > >    ? __might_fault+0x74/0xc0
+> > > > > >    function_graph_enter_regs+0x2a0/0x550
+> > > > > >    ? __do_sys_clone+0xb5/0x100
+> > > > > >    ? __pfx_function_graph_enter_regs+0x10/0x10
+> > > > > >    ? _copy_to_user+0x58/0x70
+> > > > > >    ? __pfx_kernel_clone+0x10/0x10
+> > > > > >    ? __x64_sys_rt_sigprocmask+0x114/0x180
+> > > > > >    ? __pfx___x64_sys_rt_sigprocmask+0x10/0x10
+> > > > > >    ? __pfx_kernel_clone+0x10/0x10
+> > > > > >    ftrace_graph_func+0x87/0xb0
+> > > > > > 
+> > > > > > Fix this by using rcu_read_lock() for rhltable_lookup(). Alternatively, we
+> > > > > > can use rcu_lock_acquire(&rcu_lock_map) here to obtain better performance.
+> > > > > > However, it's not a common usage :/
+> > > > > 
+> > > > > So this is needed even though it's called under preempt_disable().
+> > > > > 
+> > > > > Paul, do we need to add an rcu_read_lock() because the code in rht
+> > > > > (rhashtable) requires RCU read lock?
+> > > > > 
+> > > > > I thought that rcu_read_lock() and preempt_disable() have been merged?
+> > > > 
+> > > > Yes, preempt_disable() does indeed start an RCU read-side critical section,
+> > > > just as surely as rcu_read_lock() does.
+> > > > 
+> > > > However, this is a lockdep check inside of __rhashtable_lookup():
+> > > > 
+> > > > 	rht_dereference_rcu(ht->tbl, ht)
+> > > > 
+> > > > Which is defined as:
+> > > > 
+> > > > 	rcu_dereference_check(p, lockdep_rht_mutex_is_held(ht));
+> > > > 
+> > > > This is explicitly telling lockdep that rcu_read_lock() is OK and
+> > > > holding ht->mutex is OK, but nothing else is.
+> > > 
+> > > That is similar to the kprobes, which also allows accessing in
+> > > rcu critical section or under mutex.
+> > > 
+> > > > So an alternative way to fix this is to declare it to be a false positive,
+> > > > and then avoid that false positive by adding a check that preemption
+> > > > is disabled.  Adding the rhashtable maintainers for their perspective.
+> > > 
+> > > What about changing it alloing it with preempt disabled flag?
+> > 
+> > I am not sure that "it" that you are proposing changing.  ;-)
 > 
-> rq = scx_bpf_cpu_rq(cpu);
-> if (!rq)
-> 	return;
-> p = rq->curr
-> /* ... Do something with p */
+> Sorry, Ii meant the rcu_dereference_check().
 > 
-> into:
+> > 
+> > However, another option for the the above rcu_dereference_check() to
+> > become something like this:
+> > 
+> > 	rcu_dereference_check(p, lockdep_rht_mutex_is_held(ht) ||
+> > 				 rcu_read_lock_any_held());
+> > 
+> > This would be happy with any RCU reader, including rcu_read_lock(),
+> > preempt_disable(), local_irq_disable(), local_bh_disable(), and various
+> > handler contexts.  One downside is that this would *always* be happy in
+> > a kernel built with CONFIG_PREEMPT_{NONE,VOLUNTARY}=y.
 > 
-> p = scx_bpf_remote_curr(cpu);
-> /* ... Do something with p */
+> Ah, indeed. This means that we lose the ability to explicitly check
+> whether the rcu pointer is in a critical section on that kernel.
 
-This looks good to me.
+It is a usability/bug-detection design tradeoff, and as such, the RCU
+user's choice.  RCU is simply an arms supplier on this one.  ;-)
 
-We should probably add a __COMPAT_scx_bpf_remote_curr() macro, so that the
-BPF schedulers can be updated to use this new kfunc without breaking the
-compatibility with older kernels, but we can do this later, I'll send a
-follow-up patch. For now:
+> > If this is happening often enough, it would be easy for me to create an
+> > rcu_dereference_all_check() that allows all forms of vanilla RCU readers
+> > (but not, for example, SRCU readers), but with only two use cases,
+> > it is not clear to me that this is an overall win.
+> 
+> OK, I think this discussion is important for the patch from Menglong [1]
+> 
+> [1] https://lore.kernel.org/all/20250829021436.19982-1-dongml2@chinatelecom.cn/
+> 
+> because this does not make an rcu critical section while using `head`
+> but it works because fprobe_entry() runs under preempt_disable().
 
-Acked-by: Andrea Righi <arighi@nvidia.com>
+Agreed, and that appears to be what initiated this dicussion.
 
-Thanks,
--Andrea
+> Is it better to use `guard(rcu)()` instead of rcu_read_lock() so that
+> it explicitly secure the `head` usage? I just wonder if there is any
+> downside to extend rcu_read_lock() area (still in the same
+> preempt_disable section).
+
+Another option is `scoped_guard(rcu)`, for example, as used in
+ftrace_find_callable_addr() in arch/loongarch/kernel/ftrace_dyn.c.
+That way you keep the RAII usability while keeping the RCU read-side
+critical section small.
+
+							Thanx, Paul
+
+> Thank you,
+> 
+> > 
+> > Or am I missing a turn in here somewhere?
+> > 
+> > 							Thanx, Paul
+> > 
+> > > Thank you,
+> > > 
+> > > > 
+> > > > 							Thanx, Paul
+> > > > 
+> > > > > -- Steve
+> > > > > 
+> > > > > 
+> > > > > > 
+> > > > > > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > > > > > Closes: https://lore.kernel.org/oe-lkp/202508281655.54c87330-lkp@intel.com
+> > > > > > Fixes: dfe0d675df82 ("tracing: fprobe: use rhltable for fprobe_ip_table")
+> > > > > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > > > > > ---
+> > > > > >  kernel/trace/fprobe.c | 2 ++
+> > > > > >  1 file changed, 2 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> > > > > > index fb127fa95f21..fece0f849c1c 100644
+> > > > > > --- a/kernel/trace/fprobe.c
+> > > > > > +++ b/kernel/trace/fprobe.c
+> > > > > > @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> > > > > >  	if (WARN_ON_ONCE(!fregs))
+> > > > > >  		return 0;
+> > > > > >  
+> > > > > > +	rcu_read_lock();
+> > > > > >  	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
+> > > > > > +	rcu_read_unlock();
+> > > > > >  	reserved_words = 0;
+> > > > > >  	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> > > > > >  		if (node->addr != func)
+> > > > > 
+> > > 
+> > > 
+> > > -- 
+> > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
