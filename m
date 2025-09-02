@@ -1,37 +1,62 @@
-Return-Path: <linux-kernel+bounces-795659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8AB3B3F605
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:55:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCA1B3F60A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 08:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E3F1484766
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:55:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60B967AFCDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 06:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352F1C8FE;
-	Tue,  2 Sep 2025 06:55:42 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149AD2E5B10;
+	Tue,  2 Sep 2025 06:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L1b8lsXi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F702AF1B
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 06:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFCC279787;
+	Tue,  2 Sep 2025 06:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756796141; cv=none; b=XOSpozSDOBCvr3GbSZi59V1fRjy80MKOiLCZz3STX9J/R/FXV+ctPPDOdENb8N3xF1HtbnSZFTlRrO9sMzXWj1J6BEe4LjhHNac1c8ZjDfN3UXiBP/p/t9gDaQpI+8KJhqHcUphdlcTfjhkAOttixnUE6FfkXrlYrwVF31T6X8U=
+	t=1756796209; cv=none; b=XwddEcg3K4lX4bAqiAFJtSeQa96DHZgKAibg8UOyU0WrIJS9O9TifJglSENwaW3nsYLCPx72RUt4Lp7xBIdaWhYIoovmBkubWGr5raOahskMRLibpzxtGnEWhjkvj5Ev+8EL1rX7kGfWB3FVU8PxQkKm6kHFcV1AhOQL8PSGk6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756796141; c=relaxed/simple;
-	bh=a2TX6V7qR4EZB6IwDc8aeRHzVD7f96/pD1jgYNgiAcE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rNmqXgtVcQcxV/m9JdPvl7wPMYY4dSSTGFhmM2Xk4lgJJHvhOE2JZQuNmdYXQGVsJTrKSZLDSlPe8jbfZ4k65sypviV7SqQFMZHlIeR6ozfzPG0mAyP9OG5SXOY3TF3pjqfTGnm2AWQ48aaI4vgC97Xa/5HM/p52xtEHIdftZnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4AA281F74D;
-	Tue,  2 Sep 2025 06:55:26 +0000 (UTC)
-Message-ID: <aad3213b-1dcd-4619-9719-fa4585012cc8@ghiti.fr>
-Date: Tue, 2 Sep 2025 08:55:24 +0200
+	s=arc-20240116; t=1756796209; c=relaxed/simple;
+	bh=O105z+/vSYQ4Yom7FKHQLBcP9B5uEpS3iwV1DeqMvDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jt5VQtBo0fqxFylUkVWGxZAqtVUAHiVFehL/nTvKy6e50BVg9sbAjGcXf7dSNNr2zsWtUyMcLU3iOcaDgNNK5gOR57S9RIICdzjhNcs5rbbXwaeT1g5fxCxxNhBjDuP0aXY/WbPfxcHKjqwMgUgz8o0RZhetkwey6IlPVQuCEDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L1b8lsXi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5822SBXm010468;
+	Tue, 2 Sep 2025 06:56:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vYAsRdegq6abFlkAkg7pkXMF0w9WuWL6qVlwMcypxDM=; b=L1b8lsXiDdI0W2z3
+	Hu+1g+E+5i3f4TA6XOnMO34e3kt9dSXC4BLCdaOZpBesMXLrBbRTBw47SpK07JWV
+	1aZ2NydZ1em63TwyxcZAFN7UNApJfIfjiAyqqKmOCTtAjS3hoNbO7fpVsJNY+9tw
+	kxD1HK8Q64Q2nf4c3OBi8dDcSC/wYaSOeFFG1OizbZZNaz4MkFYTU9PtCnxzSPBD
+	C0DgGvtBHIMtbmbf7eQNJYrVDrKNwecUxfm5FOOSJCD71ZrW5pD7DDeeXHdhqOG/
+	xJlX40YB/3UQGSHiOPf+mUeaHVXDqpyUtR+icHnQnvcNh4GTH/svpmzBgXIiwkbp
+	17RvIA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjeu9t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Sep 2025 06:56:43 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5826ugG8010913
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Sep 2025 06:56:42 GMT
+Received: from [10.231.195.155] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 1 Sep
+ 2025 23:56:39 -0700
+Message-ID: <23d10901-6b8a-41fb-8cb2-e8e361093561@quicinc.com>
+Date: Tue, 2 Sep 2025 14:56:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,409 +64,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: cacheinfo: init cache levels via fetch_cache_info
- when SMP disabled
-From: Alexandre Ghiti <alex@ghiti.fr>
-To: liu.xuemei1@zte.com.cn, paul.walmsley@sifive.com
-Cc: palmer@dabbelt.com, aou@eecs.berkeley.edu, spersvold@gmail.com,
- sudeep.holla@arm.com, mikisabate@gmail.com, robh@kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250814092936030rQLylo3a7HXUWKIniqFy1@zte.com.cn>
- <91570387-4da1-4b26-a274-bed1c59ef12f@ghiti.fr>
-Content-Language: en-US
-In-Reply-To: <91570387-4da1-4b26-a274-bed1c59ef12f@ghiti.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduleegfeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepledtffekgeffleehkedvgfelleefffetjeegueffgeeilefgvdfhteetueejgeeknecuffhomhgrihhnpehinhhfrhgruggvrggurdhorhhgnecukfhppedukeehrddvudefrdduheegrddugeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudekhedrvddufedrudehgedrudegiedphhgvlhhopegluddtrddugedrtddrvdgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheplhhiuhdrgihuvghmvghiudesiihtvgdrtghomhdrtghnpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehsphgvrhhsvhholhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhuuggvvghprdhhohhll
- hgrsegrrhhmrdgtohhmpdhrtghpthhtohepmhhikhhishgrsggrthgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
-
-Hi Jessica,
-
-On 8/14/25 10:16, Alexandre Ghiti wrote:
-> Hi Jessica,
->
-> On 8/14/25 03:29, liu.xuemei1@zte.com.cn wrote:
->>
->> Hi Alex,
->>
->>
->> >> Hi Jessica,
->>
->> >>
->>
->> >> On 8/1/25 03:32, liu.xuemei1@zte.com.cn wrote:
->>
->> >>>
->>
->> >>> On 7/31/25 21:29, alex@ghiti.fr wrote:
->>
->> >>>
->>
->> >>> > > From: Jessica Liu <liu.xuemei1@zte.com.cn>
->>
->> >>>
->>
->> >>> > >
->>
->> >>>
->>
->> >>> > > As described in commit 1845d381f280 ("riscv: cacheinfo: Add back
->>
->> >>>
->>
->> >>> > > init_cache_level() function"), when CONFIG_SMP is undefined, the
->>
->> >>> cache
->>
->> >>>
->>
->> >>> > > hierarchy detection needs to be performed through the
->>
->> >>> init_cache_level(),
->>
->> >>>
->>
->> >>> > > whereas when CONFIG_SMP is defined, this detection is handled
->>
->> >>> during the
->>
->> >>>
->>
->> >>> > > init_cpu_topology() process.
->>
->> >>>
->>
->> >>> > >
->>
->> >>>
->>
->> >>> > > Furthermore, while commit 66381d36771e ("RISC-V: Select ACPI 
->> PPTT
->>
->> >>> drivers")
->>
->> >>>
->>
->> >>> > > enables cache information retrieval through the ACPI PPTT 
->> table, the
->>
->> >>>
->>
->> >>> > > init_of_cache_level() called within init_cache_level() cannot
->>
->> >>> support cache
->>
->> >>>
->>
->> >>> > > hierarchy detection through ACPI PPTT. Therefore, when 
->> CONFIG_SMP is
->>
->> >>>
->>
->> >>> > > undefined, we directly invoke the fetch_cache_info function to
->>
->> >>> initialize
->>
->> >>>
->>
->> >>> > > the cache levels.
->>
->> >>>
->>
->> >>> > >
->>
->> >>>
->>
->> >>> > > Signed-off-by: Jessica Liu <liu.xuemei1@zte.com.cn>
->>
->> >>>
->>
->> >>> > > ---
->>
->> >>>
->>
->> >>> > >   arch/riscv/kernel/cacheinfo.c | 6 +++++-
->>
->> >>>
->>
->> >>> > >   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> >>>
->>
->> >>> > >
->>
->> >>>
->>
->> >>> > > diff --git a/arch/riscv/kernel/cacheinfo.c
->>
->> >>> b/arch/riscv/kernel/cacheinfo.c
->>
->> >>>
->>
->> >>> > > index 26b085dbdd07..f81ca963d177 100644
->>
->> >>>
->>
->> >>> > > --- a/arch/riscv/kernel/cacheinfo.c
->>
->> >>>
->>
->> >>> > > +++ b/arch/riscv/kernel/cacheinfo.c
->>
->> >>>
->>
->> >>> > > @@ -73,7 +73,11 @@ static void ci_leaf_init(struct cacheinfo
->>
->> >>> *this_leaf,
->>
->> >>>
->>
->> >>> > >
->>
->> >>>
->>
->> >>> > >   int init_cache_level(unsigned int cpu)
->>
->> >>>
->>
->> >>> > >   {
->>
->> >>>
->>
->> >>> > > -    return init_of_cache_level(cpu);
->>
->> >>>
->>
->> >>> > > +#ifdef CONFIG_SMP
->>
->> >>>
->>
->> >>> > > +    return 0;
->>
->> >>>
->>
->> >>> > > +#endif
->>
->> >>>
->>
->> >>> > > +
->>
->> >>>
->>
->> >>> > > +    return fetch_cache_info(cpu);
->>
->> >>>
->>
->> >>> > >   }
->>
->> >>>
->>
->> >>> > >
->>
->> >>>
->>
->> >>> > >   int populate_cache_leaves(unsigned int cpu)
->>
->> >>>
->>
->> >>> >
->>
->> >>>
->>
->> >>> >
->>
->> >>>
->>
->> >>> > Is the current behaviour wrong or just redundant? If wrong, 
->> I'll add a
->>
->> >>>
->>
->> >>> > Fixes tag to backport, otherwise I won't.
->>
->> >>>
->>
->> >>> >
->>
->> >>>
->>
->> >>> > Thanks,
->>
->> >>>
->>
->> >>> >
->>
->> >>>
->>
->> >>> > Alex
->>
->> >>>
->>
->> >>>
->>
->> >>> Hi Alex,
->>
->> >>>
->>
->> >>>
->>
->> >>> The current behavior is actually wrong when using ACPI on 
->> !CONFIG_SMP
->>
->> >>>
->>
->> >>> systems. The original init_of_cache_level() cannot detect cache
->>
->> >>> hierarchy
->>
->> >>>
->>
->> >>> through ACPI PPTT table, which means cache information would be 
->> missing
->>
->> >>>
->>
->> >>> in this configuration.
->>
->> >>>
->>
->> >>>
->>
->> >>> The patch fixes this by directly calling fetch_cache_info() when
->>
->> >>>
->>
->> >>> CONFIG_SMP is undefined, which properly handles both DT and ACPI 
->> cases..
->>
->> >>>
->>
->> >>>
->>
->> >>> So yes, it would be appropriate to add a Fixes tag. The commit being
->>
->> >>>
->>
->> >>> fixed is 1845d381f280 ("riscv: cacheinfo: Add back 
->> init_cache_level()
->>
->> >>> function").
->>
->> >>>
->>
->> >>>
->>
->> >>> Please let me know if you need any additional information.
->>
->> >>>
->>
->> >>
->>
->> >> I'm about to send my first PR for 6.17 so I'll delay merging this one
->>
->> >> for the first rc.
->>
->> >
->>
->> >
->>
->> >So I took the time this morning to look into this, and I don't really
->>
->> >like the different treatment for smp, can't we just move
->>
->> >init_cpu_topology() call to setup_arch() (or else) for both !smp and 
->> smp?
->>
->> >
->>
->> >Thanks,
->>
->> >
->>
->> >Alex
->>
->>
->> Thank you for your feedback and suggestion. I understand your desire
->>
->> to have a unified approach for both SMP and !SMP. However, after
->>
->> careful consideration, I still believe that handling them separately
->>
->> is the more appropriate solution.
->>
->>
->> The current method of obtaining cache information in
->>
->> `init_cpu_topology()` is specific to RISC-V and ARM64. If we move
->>
->> `init_cpu_topology()` to cover both SMP and !SMP, it may require
->>
->> modifying the generic boot sequence. This could inadvertently affect
->>
->> other architectures that do not rely on `init_cpu_topology()` for
->>
->> cache initialization, leading to potential regressions and maintenance
->>
->> issues.
->>
->>
->> The `setup_arch()` function is called early in the boot process,
->>
->> and at this stage, the ACPI subsystem has not been fully initialized.
->>
->> Specifically, the ACPI tables (including PPTT) are not yet parsed.
->>
->> Therefore, if we call `init_cpu_topology()` from `setup_arch()`, it
->>
->> would not be able to retrieve cache information from the ACPI PPTT 
->> table.
->>
->>
->> I hope this clarifies my train of thought. I'm open to further 
->> discussion and
->>
->> alternative suggestions that can address the issue properly.
->>
->
-> To me it does not make sense to retrieve the cache info at 2 different 
-> points in time if the system is smp or not. I still think we should 
-> find a common place where init_cpu_topology() can be called for both 
-> smp and up, setup_arch() could not be the right place for the reasons 
-> you gave, but we just need to find the right one :)
->
-> Thanks for working on this,
+Subject: Re: [PATCH v8 3/3] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Yijie Yang <yijie.yang@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yingying Tang
+	<yintang@qti.qualcomm.com>,
+        <miaoqing.pan@oss.qualcomm.com>,
+        "stone Zhang
+ (Stone)" <stonez@qti.qualcomm.com>,
+        <zhichen@qti.qualcomm.com>
+References: <20250828-hamoa_initial-v8-0-c9d173072a5c@oss.qualcomm.com>
+ <20250828-hamoa_initial-v8-3-c9d173072a5c@oss.qualcomm.com>
+ <qgirqibqvsld7n2ac4cvuvtqknhqkq535jkxnxjjqvss5wpm36@i3mbp7qgqxju>
+ <1600b292-df57-4328-baa6-db6467e00096@quicinc.com>
+ <wxnyux7a5raz5ltz7hpd5dp5euuwwjts2qvhvr4ksdgoye6pm5@2jxthgfwgpuf>
+From: Yingying Tang <quic_yintang@quicinc.com>
+In-Reply-To: <wxnyux7a5raz5ltz7hpd5dp5euuwwjts2qvhvr4ksdgoye6pm5@2jxthgfwgpuf>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b6952b cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=dcTC8DFeqv3NktzYkXkA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: WhVqAYS55w6TRWXZlZp-fjudE-LB3xdx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfXwpglC3Nfa4uj
+ i8nY5m2x1OXDPjQVh+Ba+b+I5p74nyonRF4WCwRTy5kojPsK+lQWiFHcDPMqn+UDBQoe6bZDjCu
+ sGivHReCpyCq4zeYUJ1oW+icgoleXFubRx5UTuaubVhh8URdfeoT21KlqyruCpkiaIZyyQyNoVD
+ aRKiXYemMFe971MmpAjc2CwAEBU1zC548piJqVbxFA4M9ls4xdqv+2g7dqVNxnAWNG+/ZG+nnJZ
+ 7j07StlU+dG5lonsm2LpgINtVb4XjQ72DJrI/5m7v5J2Fcgw8BjHoAoAXQ7AidpySxJkD6MW20+
+ wpSVV53Qo4wCxP8uerE++mCbOg4Nmbeua9oJfysTFbuprMM0dVI57Vdj/aEHWXiPFlE4meegG6N
+ /uwFlLh5
+X-Proofpoint-ORIG-GUID: WhVqAYS55w6TRWXZlZp-fjudE-LB3xdx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_01,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
 
 
-I don't mean to pressure you, I know it's the end of summer and people 
-are still on vacations or just back from vacation.
 
-I just wanted to know if you had time to look into what I asked above?
+On 9/2/2025 10:37 AM, Dmitry Baryshkov wrote:
+> On Mon, Sep 01, 2025 at 11:02:24AM +0800, Yingying Tang wrote:
+>>
+>>
+>> On 8/28/2025 7:18 PM, Dmitry Baryshkov wrote:
+>>> On Thu, Aug 28, 2025 at 12:48:47PM +0800, Yijie Yang wrote:
+>>>> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
+>>>> the Hamoa IoT SoM and a carrier board. Together, they form a complete
+>>>> embedded system capable of booting to UART.
+>>>>
+>>>> This change enables the following peripherals on the carrier board:
+>>>> - UART
+>>>> - On-board regulators
+>>>> - USB Type-C mux
+>>>> - Pinctrl
+>>>> - Embedded USB (EUSB) repeaters
+>>>> - NVMe
+>>>> - pmic-glink
+>>>> - USB DisplayPorts
+>>>> - Bluetooth
+>>>> - Graphic
+>>>> - Audio
+>>>>
+>>>> Written in collaboration with Quill Qi (Audio) <le.qi@oss.qualcomm.com>,
+>>>> Jie Zhang (Graphics) <quic_jiezh@quicinc.com>, Shuai Zhang (Bluetooth)
+>>>> <quic_shuaz@quicinc.com>, and Yongxing Mou (USB DisplayPorts)
+>>>> <quic_yongmou@quicinc.com>.
+>>>>
+>>>> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+>>>> ---
+>>>>  arch/arm64/boot/dts/qcom/Makefile          |    1 +
+>>>>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 1247 ++++++++++++++++++++++++++++
+>>>>  2 files changed, 1248 insertions(+)
+>>>>
+>>>> +
+>>>> +	wcd938x: audio-codec {
+>>>> +		compatible = "qcom,wcd9385-codec";
+>>>> +
+>>>> +		pinctrl-0 = <&wcd_default>;
+>>>> +		pinctrl-names = "default";
+>>>> +
+>>>> +		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
+>>>> +
+>>>> +		qcom,micbias1-microvolt = <1800000>;
+>>>> +		qcom,micbias2-microvolt = <1800000>;
+>>>> +		qcom,micbias3-microvolt = <1800000>;
+>>>> +		qcom,micbias4-microvolt = <1800000>;
+>>>> +		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000
+>>>> +		500000 500000 500000 500000>;
+>>>
+>>> Other platforms use a single line here. If you don't want to do it,
+>>> align data to start from the same column rather than restarting from the
+>>> column 1.
+>>>
+>>>> +		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
+>>>> +		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
+>>>> +		qcom,rx-device = <&wcd_rx>;
+>>>> +		qcom,tx-device = <&wcd_tx>;
+>>>> +
+>>>> +		vdd-buck-supply = <&vreg_l15b_1p8>;
+>>>> +		vdd-rxtx-supply = <&vreg_l15b_1p8>;
+>>>> +		vdd-io-supply = <&vreg_l15b_1p8>;
+>>>> +		vdd-mic-bias-supply = <&vreg_bob1>;
+>>>> +
+>>>> +		#sound-dai-cells = <1>;
+>>>> +	};
+>>>> +
+>>>> +	wcn7850-pmu {
+>>>> +		compatible = "qcom,wcn7850-pmu";
+>>>> +
+>>>> +		vdd-supply = <&vreg_wcn_0p95>;
+>>>> +		vddio-supply = <&vreg_l15b_1p8>;
+>>>> +		vddaon-supply = <&vreg_wcn_0p95>;
+>>>> +		vdddig-supply = <&vreg_wcn_0p95>;
+>>>> +		vddrfa1p2-supply = <&vreg_wcn_1p9>;
+>>>> +		vddrfa1p8-supply = <&vreg_wcn_1p9>;
+>>>> +
+>>>> +		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
+>>>
+>>> Okay, so how is WiFi controlled? Is there a GPIO? The DT should be
+>>> describing the hardware, not the UEFI behaviour.
+>>>
+>> Hi Dmitry, as I described in previous mail, On hamoa platfrom whole wifi module's power supply and enable gpio are voted in UEFI.
+>> Hamoa is PC platform, so BIOS/UEFI behavior is compatible with Windows/ACPI architecture. UEFI is responsible for enabling power supply 
+>> for all devices which may be used in boot phase (such as WLAN may be used to boot from network).
+> 
+> This is not completely relevant. You are describing driver / Linux /
+> bootloader behaviour. I asked if there is a GPIO in the hardware. If
+> there is one, please add it here.
 
-Thanks,
+Hi Dimitry,
 
-Alex
+During the UEFI boot phase, the WLAN enable GPIO has already been asserted, and the WLAN chip is functioning normally. 
+If we include this GPIO in the kernel device tree, when the kernel configures this GPIO, its voltage level may experience a brief glitch, which could cause the WLAN chip to reset and result in a PCIe link down.
+
+So I didn't add wlan-en-gpio in this hamoa's device tree.
 
 
->
-> Alex
->
->
+
+> 
 >>
->> Best regards,
+>> So we need not Wifi chip's power and control GPIO in kernel side, thanks 
+> 
+> What if someone requests this GPIO from userspace and pulls it down?
+> 
+>>>> +
+>>>> +		pinctrl-0 = <&wcn_bt_en>;
+>>>> +		pinctrl-names = "default";
+>>>> +
+>>>
 >>
->> Jessica
->>
->>
->>
->>
->>
->>
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
+
 
