@@ -1,147 +1,155 @@
-Return-Path: <linux-kernel+bounces-796955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A28EB409EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:58:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3969FB409F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF56754366E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B056F5E2EE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 15:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B33C338F35;
-	Tue,  2 Sep 2025 15:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F009334380;
+	Tue,  2 Sep 2025 15:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nnjJfQZ7"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/fJnIUe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA6A32ED54
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 15:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E6632A825;
+	Tue,  2 Sep 2025 15:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756828678; cv=none; b=Zxgyu3qmb6Y9sdjuCqm7jc+Xu1rosUbeWyLRd9bgEL2EPx0pjjoXnx7Wy1BKcpx3jaYDgJ+5bCjczWH2NBwRxJedy7/1Gi9sGBJTuqMkoeMAAxo8N9Jw3cgy/pqEEIWeRrV5F52CxVy4CMS4qMgFhBdrqJrjSfwbD6Tel5vVKLM=
+	t=1756828705; cv=none; b=ND2hA/HYF1eWzKIz9lT63yRAaC4ElkfE9AZYUUcZ8pwoF2cEbAufda52ICRTauYJ+WLLeRwdHf0q1YHX9gUJ2GzZ1ElYlo+6gwTdXCdE5UR7BB4GzThEprw4lklSkC7q9raeCUI+eY4DDv7GkeFq/4pBanxEB0y5ZnKNdcfpSqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756828678; c=relaxed/simple;
-	bh=mPMWDz+8h3MDqxJqY4ZbFAjRY2qvbs6Q/t61BwH0aSs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qLUhiStYZjWcjaK7AebTAgBXD5K93jpXSjyZ/ljWyKFSpTvupj6Y5dg+77j2IwAE1uXExziJwEyEhmcQOWj9VtkRTAv3nTAOhRctogLrJbYAq61i0hqFZN3VGdXOshMGpVmRPfPBc5CLbIuwV5jmkMdVEbtNhBtrj49R5n3/j4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nnjJfQZ7; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so38468475e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 08:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756828675; x=1757433475; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y6y56X8OUTmSoo3VKz8VzAATzZ9BTMxyuZT6xksXOKo=;
-        b=nnjJfQZ7LFv8ENIBnbdD5M/HUw3rNFm82wrf3kFPfpRaIRZEdy19QOnOLGrt+Hoo16
-         KF4ooNT3DmCRy6CFREQFANLafJiuNJ/5wp78olqBy7pBsG4t2mwJdyKLhrUDGzM6LsRM
-         DV6tkI5PxM0rFP3+UevwWVa3i9AxbZh5Oicn3cSXyJAxG2wdKa+LwGokCVTdFNVNIeyQ
-         2ew/XxdeeU9OIy3kCpSJOuTzg7AWrzyNvn7uEmxOOMBBYQUJgvsAA2sJHE5H2lALjg/P
-         fjwZIQ/DiDhYx4HqPnQwAUH9EmsArICtrlPaXvJSR+QcOw1M80wNwoN8eXn5qezFU8ls
-         WlwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756828675; x=1757433475;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y6y56X8OUTmSoo3VKz8VzAATzZ9BTMxyuZT6xksXOKo=;
-        b=j55dZJo6iJxnG0fy5CbOz+7vJM0YYDguWrizbd6QuWQKqrcnOJ/XzSdOrgDeD7Al57
-         nmwf8QxgOanlzHWQs1oQHrPpb3ph0LSbiYp2uTCijiyiPpsmk61lVdz88vHudiPp6r9m
-         M7LysWo5YxiFZAbAxDS7Ene6WvmmFPd/Wqb97btZfA6OJfZ1A4SBLMZNW7rneaQ5bXJG
-         +YMs/SLiczUQXzfDt+viGWhHsmsK2z9fxfBS3Hf+8Z12yZ22W3YqWFno1Y++sb30Bdbq
-         +H+sKkTUQ8t0/p49PZkIJmDpir0s+YDTdoozcDYU5Efar9M5uCxnE23fjRl4GBZrEk7D
-         Jwsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOwG5xxCpLvRrAv5XSX8wvPQ1ljnD1NWu2zEk2uyhXylkNroAVhHVCXSusvvvZqSpslZr+8KD/Rgn/iWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9ywcUKiWC0Hjb+bOUW2yyZOZmgaOjZazY87Yo2FZpEm2mn2aU
-	HK2hkREEpR9LqrjXYeiriLAhYvvmpedIUH4SQSLiYfYIShGgP5y5qC9q
-X-Gm-Gg: ASbGncupZ7+FZtCu4y1Ng9PKzXV4IvQllqtLl/123y/WYkEdkGA9E/yuceD43py0UYU
-	Sl9TF33yTwaQJ99v35OfLhZWwoAcH++XugV9rpxlcCU+x0iU/ARuVEqwWg+kQAOvxLxglkZnJqt
-	OmYw7j1G5klmtydCEB+GKCU8Mzz9wtWN1GZmf0Jbn5RY4gayjx76Rjc4oExiuUlai+ReESzqrjk
-	8E0JVwlUAnQN4nnWhvwoQBJSo5KFpphKhMn0EUX1gJT/aAaRfKBsGWrSD3cX+E+HlEru8wDzAhx
-	ZjtBATMUx44p+6p+yxr1x+vY5d31lBHIeUJZ0Jw3wRpV3rVGDmZrAzmwmJMqfp3R8QH7/kEYQwK
-	mwhmyLuLv/FOvepKMczKF956GTA==
-X-Google-Smtp-Source: AGHT+IHdPfNYaH9+9Q+ni6q5vuGRLRXreFcdRGX5aH2suTfhR9z0SYDmT0xWmddLPp0M60fE9SBktA==
-X-Received: by 2002:a05:6000:2283:b0:3c8:e9d3:c392 with SMTP id ffacd0b85a97d-3d1de3bc74dmr8652135f8f.19.1756828675091;
-        Tue, 02 Sep 2025 08:57:55 -0700 (PDT)
-Received: from localhost ([2a03:2880:31ff:71::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf34491a7fsm19642743f8f.57.2025.09.02.08.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 08:57:54 -0700 (PDT)
-From: Yueyang Pan <pyyjason@gmail.com>
-To: Suren Baghdasaryan <surenb@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Vishal Moola <vishal.moola@gmail.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Usama Arif <usamaarif642@gmail.com>
-Cc: linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mm/show_mem: Add trylock while printing alloc info
-Date: Tue,  2 Sep 2025 08:57:51 -0700
-Message-ID: <1491df0ac12a7626b7c9b00e26a6e10adb8c9045.1756827906.git.pyyjason@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1756827906.git.pyyjason@gmail.com>
-References: <cover.1756827906.git.pyyjason@gmail.com>
+	s=arc-20240116; t=1756828705; c=relaxed/simple;
+	bh=p9LX1J8OB47eGZSBufCQ0NCMRaLyzY7dyM6OvdV2fn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hhJeQb5y3Ngruw/UIMKw0PSgeKBqXTzOs+qnXAPnvEqhODX446clcjkmhi/Eo27PsDU4CkAFrbFgeTiyTjx5hiR0IGsAsT3jNwmvTHCVJBxamIoTtB2Yu8RbBKA8I3Vz4w5HUx63havGLToQldGscKKfCcpMU7x6Sfi8xYF9/qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/fJnIUe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0060C4CEED;
+	Tue,  2 Sep 2025 15:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756828704;
+	bh=p9LX1J8OB47eGZSBufCQ0NCMRaLyzY7dyM6OvdV2fn4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q/fJnIUePrEmtB3jGxs5sXxTiOpjkneVTfCS8aGXxrge+I7eRhoUp/VrWKw0Hp5Av
+	 7/yMMMoDY3uf4zbOr1qrCvQbUQdfF0rxH+L8odYDJGkEzL497fxrw04Ay5tgx5lKow
+	 2mJtK9hw1iTs3p7Nqm8rh+7jqov/ffrQu48zZ3jqGVJUgN/tlYOWCZu/pxnHyUHt8q
+	 rx60Oi0rBmJckMYvBhCX09gIsGWqa1rEdd40SEyfV5zBcUmJAcbkXfU6nC8L3Bn5Xx
+	 kKZSJDcxk0NBwX11+/u16ApogOs6MSqP278oWv9WSTWa3EtFMXF37agP5A/MeoJdgW
+	 fh/6kw64NW2Lw==
+Message-ID: <ff165a2e-cd63-462f-b2ea-cb27cb514ef9@kernel.org>
+Date: Tue, 2 Sep 2025 17:58:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/12] cpufreq: longhaul: Use scope-based cleanup
+ helper
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>,
+ "Rafael J . wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Thierry Reding <thierry.reding@gmail.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>
+Cc: Ben Horgan <ben.horgan@arm.com>, zhenglifeng <zhenglifeng1@huawei.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250901085748.36795-1-zhangzihuan@kylinos.cn>
+ <20250901085748.36795-5-zhangzihuan@kylinos.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250901085748.36795-5-zhangzihuan@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In production, show_mem() can be called concurrently from two
-different entities, for example one from oom_kill_process()
-another from __alloc_pages_slowpath from another kthread. This
-patch adds a spinlock and invokes trylock before printing out the
-kernel alloc info in show_mem(). This way two alloc info won't
-interleave with each other, which then makes parsing easier.
+On 01/09/2025 10:57, Zihuan Zhang wrote:
+>  static void __exit longhaul_exit(void)
+>  {
+> -	struct cpufreq_policy *policy = cpufreq_cpu_get(0);
+> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(0);
+>  	int i;
+>  
+>  	for (i = 0; i < numscales; i++) {
+> @@ -968,7 +968,6 @@ static void __exit longhaul_exit(void)
+>  		}
+>  	}
+>  
+> -	cpufreq_cpu_put(policy);
 
-Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
----
- mm/show_mem.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+You are not improving any code here.
 
-diff --git a/mm/show_mem.c b/mm/show_mem.c
-index 51892ce2efc4..4c876ea2b66f 100644
---- a/mm/show_mem.c
-+++ b/mm/show_mem.c
-@@ -396,6 +396,7 @@ static void show_free_areas(unsigned int filter, nodemask_t *nodemask, int max_z
- 
- void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
- {
-+	static DEFINE_SPINLOCK(mem_alloc_profiling_spinlock);
- 	unsigned long total = 0, reserved = 0, highmem = 0;
- 	struct zone *zone;
- 
-@@ -421,7 +422,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
- 	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
- #endif
- #ifdef CONFIG_MEM_ALLOC_PROFILING
--	{
-+	if (spin_trylock(&mem_alloc_profiling_spinlock)) {
- 		struct codetag_bytes tags[10];
- 		size_t i, nr;
- 
-@@ -449,6 +450,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
- 						  ct->lineno, ct->function);
- 			}
- 		}
-+		spin_unlock(&mem_alloc_profiling_spinlock);
- 	}
- #endif
- }
--- 
-2.47.3
+
+Best regards,
+Krzysztof
 
 
