@@ -1,121 +1,137 @@
-Return-Path: <linux-kernel+bounces-797401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0754B41002
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2A1B41004
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620BA70301F
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C433A801A
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 22:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA082765FF;
-	Tue,  2 Sep 2025 22:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA9F2773CB;
+	Tue,  2 Sep 2025 22:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWF/oUsH"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="PGHMFI+O"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374CC223DFD
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 22:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6978D23BCEE
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 22:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756851838; cv=none; b=Cm2otzpcfjV/YAvLpG7R8hxuDfXEV9CCU33iExHQLIwI/JBYQAzxXrg+WPHRHtdrtxKNY7XaOgarHUInQmQPZTNotDUR+C0Sh1ropIbLkoBDIdrb4nCePfkH5dqPiO2fzNQZsqdPnGyNvNEH8trPvBS8p+hhJtXkDa1FkGou1jg=
+	t=1756851905; cv=none; b=FiFr3IgBPijadwHdu31Gu9zQ99nQbz9DC5u4sN9SpOX+HC8ZWbDmqmuZ71y9svIuDNyYp5LNx5p9nKfr4I4PPrTWc3UmX3stM+GayeBCDDel99PnPFNcuMC9pQS7Af6TceQd47kHd1qxkOfIWcpxZ4NeqDlZb1UGJ6y9SQGhOIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756851838; c=relaxed/simple;
-	bh=lrrGq05uBqDUnENPp27Ejo8lITvAmMR+nAFQ9QTzujQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PtMLe6L/+9/yPkTn8PenExnjqPD+mWa7oll60JibfRWU9l2b1uL7togHrvWuM9CeOEu3JcnsY6iKJAZ1Z5LbOXG4sv4A5/kIrMf/EsT15u/ZQj9HOdx/jwKw/mPwN95cdRsUw1AFsVRlrSzJoMV9iQ4s6max/42CQ966V+eWMuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BWF/oUsH; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3da9ad0c1f4so877272f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 15:23:56 -0700 (PDT)
+	s=arc-20240116; t=1756851905; c=relaxed/simple;
+	bh=1iy1UuTw6lEJ2NwgCGNoKYrNukFmN3deNRw2dmxMW9k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LL86e7HlrmVQrxu7qVxb08vrupXw4RMUmB6N4G7cFWOgej1uxcupbLRr5qBEe0yL7bR6gPGby/c/r7lE8rKkrtGvMJQrNHQiX+tvh2fBScnjeBBP/Xz/Y0CsLFo0jTqQftR2pQPc2iRwqoHxMNkTNPyf7P1VKCrpnAQPEu6bvHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=PGHMFI+O; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24456ce0b96so4509645ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 15:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756851835; x=1757456635; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zPCllzbZKVVF2KM92LpxrwyKTATB9gAdtcbS8pQ8SHQ=;
-        b=BWF/oUsHJ193ILznFsu9BBTZQUAhEfNpE0HvW6TrZVU9RGeHp23IvVnr6ePKo14Bnx
-         rb2wIkveMf6K53g1mTQ7F8lACZph5vjQyJgkrL04RlEkEy5dkv25KAJyXBJSZcM64G96
-         xZ4N1dXVfTRiCVNQO8+zDhYMMb46Wa8ut8HowDqoWXEBwJ0sxDh1T948aJorKCOoKpbO
-         CGpJluHCupJRMLCZoxKUAx/VkZbZTKOkQ1GV0Qdg/HLC9E1gt1lFQvlNN5R53WZ0WclU
-         tMSx5RrOTNdG+++nV7UMmVJpoj856r7CpcnoU0qdde8mq70YvgHWT05/BktFenzKQAoa
-         LlWA==
+        d=futuring-girl.com; s=google; t=1756851902; x=1757456702; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=goWE8+4wadNs8Lr3ZlBGwSTIYXLGfMy0Q3cAuxNQchA=;
+        b=PGHMFI+OwD3E5L6bsg/XMFZSY7VzSlgQFcAewJ8d/S0bVALIbgmNmBs6VUd6r3XQIR
+         ZU7sX7oYTtD/DTXwJkFfjKjxJrq0+GhFVZ5vPu0p0wnr+qyyBIe8QLXGUGowf06yMcDA
+         4SzSNRs69atYPJ2BybvP/pbCOpPSYMdlPDTcYOO/uJPYVHClstsY+9PdBMjXYbvNjVs3
+         5h8/5/rhlsgHjWCZa0lu6N5UEEHAXXlQkN/2iRm3jQPgCcL8ebF61FhVY1vkkEwYzwp2
+         QMDaSeR1K0NO6uqhoSlamr9Cc1J0Twr2yOXO//VbuUhAL/1vc9djk0IoxoU+imkpDSyA
+         lbUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756851835; x=1757456635;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zPCllzbZKVVF2KM92LpxrwyKTATB9gAdtcbS8pQ8SHQ=;
-        b=dCKqyHjc2e8ryHEw3WeD61zxtVFwnYOpzfo7IVMZJ9IXcAkmIp07U8yZE3FeDleN2w
-         THkf28tGUqkenhvhNMFhe1FtE1X/1TLQZhrZ4SM4IteIAfBaGtdGWAZ3T//ZNdk7Wkcb
-         oSZaMraHffrIsLGB6TvnqL2VrveKcQoNU+sagpqf/i5+SP+3MAJNpG0VxCGcymntL8gG
-         BzTPNu4v/wGOT1x+MLx+dsKmhTEp5eIPo8378utA/Yj5KoZAxpg3wW/tBijULokJYEJe
-         tE0VLkeSWz3CDKiN139FVylZuxAPHYvE/onbCHxNjfJSDahRTX0aOXRWVC53wFlb9FFn
-         K4LA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8tW9tlJU09+jVH2CzSVPVs/aA+WcIqe/lOCMBSZ4/AQ08oZvxSstJSMxUyParasUcts22NDv04TH9IkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1mCGdD8ZV8s29dVVGP08nLsDgTHqfMfu0mb9XtX8w9EFG/MtO
-	mB9f0CBNNsXp4abU6DlYuNSSmUZHGPuvw6hvb5HHDVVnL8ZoPi6B5ug=
-X-Gm-Gg: ASbGncsP98xRFPbyygpQzajzpdU/s2ieqZmGG6wHVER5UtuH0TvlG48vjl3+W4oD9K2
-	aWA+mpx2T7U/DvftBC9wQ9NKXzuO0bjClE6/s6aC8XN8tInpZXRP+83mxgVrerqiClEjX/7oPQx
-	KlZVLgcOhCBZvtmHA5xM59iqTPR1PeNpScKXLsC39moTW0GX1SyBGwoxvNyrwN+2/5c5Tb68bPh
-	MiAoXPx/f6KJ34Q3oU0yqvDlaalvh1Jp5SSOWYSk66bwkTIuNl/49OjHWataxL++dPta/waAEgk
-	kFz1WljPVsa0FNU6/D34N2CapG4r/m9Nk9Qodl6+jX80sn9Rm+p0eh/ncTYmEuhf0lMmlfTRzgT
-	ELqru08XxcLTmNq8x9Ibe3zco1aIRqAdnZxzdptvg1h2JrsN58XVMJ88/x69CZw==
-X-Google-Smtp-Source: AGHT+IEfJgab8GfiryC5WdSKmZQ9zpYxvPj9Lr1/MRPjNVZKqe+HOaH7VF4ZsQDNtz9cSknuX0R6/A==
-X-Received: by 2002:a05:6000:1ace:b0:3cf:a44b:26fd with SMTP id ffacd0b85a97d-3d1dd81c504mr6508443f8f.8.1756851835387;
-        Tue, 02 Sep 2025 15:23:55 -0700 (PDT)
-Received: from localhost.localdomain ([2a0d:e487:224f:7287:75b3:5214:63cf:2c39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf8a64fce8sm20833683f8f.34.2025.09.02.15.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 15:23:54 -0700 (PDT)
-From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-To: linux@armlinux.org.uk
-Cc: linus.walleij@linaro.org,
-	arnd@arndb.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	jihed.chaibi.dev@gmail.com
-Subject: [PATCH] ARM: configs: u8500: Set NFC_SHDLC as built-in
-Date: Wed,  3 Sep 2025 00:23:34 +0200
-Message-Id: <20250902222334.105236-1-jihed.chaibi.dev@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1756851902; x=1757456702;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=goWE8+4wadNs8Lr3ZlBGwSTIYXLGfMy0Q3cAuxNQchA=;
+        b=Lqh+i+Njq6QrBJPvOLu513prvYLRm/t0rd73u6ALolqXuFevlvBhFHcK36jNdZxx5S
+         tc9L8IQoZPrFGmyeXXf7mFa0QPx9xRdmAse+V4Yr31NCo0KguMXzn3hj5OLg70nIKstD
+         EX8vRBFtPYrRT/wrJIdoVgBBbI+JLWMCcUjKCh9fk4pfCcf5R++GE1uTQiKVQBLFgPX+
+         dxyXdxpzLnrA4hgWAz6a+RXU7jYnckL+oLcew+KqsCLksiQknX/f1fJ4ZFFI8XU3CN2q
+         3T9OnEPGt+16EiEKylY+PSTtqB1TtDiVUBEEDQhESYtVONOyusMBx8UZro9u91l4/5/7
+         mudA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjJAbVwVFG3gGG2ldRxQrgqJXIZxHsGYTmgUw9SpsL19O854s3kvcTApgdnW+bOqL45k8dgtIHRrG/8Wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEyCChpwT0ynx7/r1UZLoaZqfuUUZtZBg5IeDxpS/XgmKhz2u1
+	+OkBj8opg7IYIbdtJODekEu/mmCzkx3UqAQ1j5y/hosHRqWkqEuqL0iUVfYFQjSajsnplEzAkL7
+	FFAFcOGloc9ASX4YSUAJwRpYXpWNOs88Rp9fMQ8VGag==
+X-Gm-Gg: ASbGnct0oRPAx++tBSDhjoVB61XSj0gJcZJLKoAMqBEI4wcFjzWs18/fmL3EbcXWMfm
+	Z7pMeBHHtGejGIW6rlSY+NofpvZm6sV6R8MTzKC4UAKXbt/0xQhs7/2yHsW12n5rvN+1PyFsoLm
+	Fug7CoSY6rWtVQhJI9HacoyxVXMybgrRKfFx8585x1J9tKGfE0kaaGS1SvFhTrMHOaIPFbp122M
+	VP+BcesVv0+VZxCXQ==
+X-Google-Smtp-Source: AGHT+IE+GuPuwIi0HALNRYE7COclZsdxu+LtC3uR80YuYT0Ap6u7TRJrOcZjbn/+xL05gLgJGPzhKrW2ZZxS44wSvgk=
+X-Received: by 2002:a17:902:fc8f:b0:24a:4560:49be with SMTP id
+ d9443c01a7336-24a45604eeamr165939475ad.28.1756851901619; Tue, 02 Sep 2025
+ 15:25:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250902131948.154194162@linuxfoundation.org>
+In-Reply-To: <20250902131948.154194162@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Wed, 3 Sep 2025 07:24:45 +0900
+X-Gm-Features: Ac12FXwiesQX507YxRyjZkNgjnZMjLVD0vNTuMmrfDECGQRtT0AQVZvnJkRsc7k
+Message-ID: <CAKL4bV5ZuM9J9-6oy27WVMrmA-sX384NowBacG57x+t+Ydt60w@mail.gmail.com>
+Subject: Re: [PATCH 6.16 000/142] 6.16.5-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The CONFIG_NFC_SHDLC=m setting in u8500_defconfig causes a Kconfig
-warning because the NFC_SHDLC symbol does not support being built
-as a module.
+Hi Greg
 
-Change the selection from 'm' to 'y' to build the driver in-kernel.
+On Tue, Sep 2, 2025 at 10:27=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.5 release.
+> There are 142 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 04 Sep 2025 13:19:14 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.16.5-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Fixes: 344cad0660ea0 ("ARM: configs: Update U8500 defconfig")
-Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
----
- arch/arm/configs/u8500_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+6.16.5-rc1 tested.
 
-diff --git a/arch/arm/configs/u8500_defconfig b/arch/arm/configs/u8500_defconfig
-index 0f55815eecb..9c8dc6dd5fe 100644
---- a/arch/arm/configs/u8500_defconfig
-+++ b/arch/arm/configs/u8500_defconfig
-@@ -40,7 +40,7 @@ CONFIG_MAC80211_LEDS=y
- CONFIG_CAIF=y
- CONFIG_NFC=m
- CONFIG_NFC_HCI=m
--CONFIG_NFC_SHDLC=m
-+CONFIG_NFC_SHDLC=y
- CONFIG_NFC_PN544_I2C=m
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
--- 
-2.39.5
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+
+[    0.000000] Linux version 6.16.5-rc1rv-g6a02da415966
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.2.1 20250813, GNU ld (GNU
+Binutils) 2.45.0) #1 SMP PREEMPT_DYNAMIC Wed Sep  3 06:18:52 JST 2025
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
