@@ -1,119 +1,272 @@
-Return-Path: <linux-kernel+bounces-797106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359CBB40BE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:21:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E78B40BE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 19:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 401BB487B57
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C858C207D22
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 17:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF28340DBD;
-	Tue,  2 Sep 2025 17:21:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2462FC03C
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 17:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABA5342CB6;
+	Tue,  2 Sep 2025 17:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNlDoo4a"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF9F4C9D;
+	Tue,  2 Sep 2025 17:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756833660; cv=none; b=U74S6VXFgfxKtErCYMgq6mjNtzP75UGQBzKRctCejTkwVLeKWFMxmHcuEl8MdLAthYU1Mhg73XxmTdGTyWPmjQBqAQG6pFxou1mBh8gd4ZH4uYl2xeccfP7/yiHhSxd/zjV7wmKm6KxClKDCUeYbL3u1h12hw09za+ZDpiNCoD0=
+	t=1756833725; cv=none; b=PEmGPTIzqDYxJAt6QpfJ3nY3ovE4Rz3xbk7ebFwrCWxZqCCFvBnFGKay3/pRuH5+3iF/MREsUzG9bDJcWgtlx9/+r87TIqEH0e1Vtl/BUbhqrVK9CEPUn4qFp8ZtMLi9QysW8TrXqwGFV9EH5eVc+4ANfBmsMLXE/4rxF/+9xmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756833660; c=relaxed/simple;
-	bh=nyVNSDKGds0U6EyNYp4/CfE4iaqo0jw2jvkX51ycseo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qBwDUCFoNGgx/TeEUK8ipS7+ukW8nRFek8qo+mZzTSImcDudkVfQuRLfnXZ+DeVnekYGwj7hlgt479lEGtrNiCNyTBi/0rFbUb9qjoSyIGapLpZEwoZxGHMpZoQvnCbxP2+OkDxfEaN8vP2sO9wR/iXwv4IpqxPs1ics2vaAjvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE81A2720;
-	Tue,  2 Sep 2025 10:20:49 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.33.8.67])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32B4B3F694;
-	Tue,  2 Sep 2025 10:20:57 -0700 (PDT)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Cc: Paul Benoit <paul@os.amperecomputing.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware: smccc: Fix Arm SMCCC SOC_ID name call
-Date: Tue,  2 Sep 2025 18:20:53 +0100
-Message-Id: <20250902172053.304911-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756833725; c=relaxed/simple;
+	bh=B6M7C6RAvQGIo2fAq8KjeI0slfKrcN2+BChM7Fx5Yek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CrK0IEDCRusCHGNZzFJ5A8sH44LqTBKKXNMSBM4yVkhUSc1D3hnja/GPgLSiVq+b5+oAaTYQmwOj8IzEjDWYJc2UIP++nByYZuMifLwx5zNRMvKIvhyUz6LW3PfPCUoLYv4jx8PgDzaV2v+4Deupxem5Ux5CkX98CIJFggRtVzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNlDoo4a; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f74c6d316so3070315e87.0;
+        Tue, 02 Sep 2025 10:22:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756833721; x=1757438521; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UHL/9iHScP0f81WBDBOizsme4Dv5vS87EI96jZlcSN0=;
+        b=VNlDoo4aabpzvnbp+UD/sxN7uinL2Th/IL3DVcU9Gpki4+6sxp2sVDtAARO2GhoZdQ
+         3Cw5XKrTM7wub1dUyLuSEr43ZP69TrKyY68pvUguQf4CjO3RbL64NGsJfy+eZrnd46Bm
+         oSh7kHDgZFAWsIs8DHTJaTVMFnOT/4wwNiwk5aINdSVx3kznQ/bAWMiXtoSklJIGRrdf
+         p3tt3LgpBiM0H0DUWJephh0rRd68wruoHTkURT+SEsR4chhGTFguej4JWpvTWHaBTAsW
+         qRIsyox1WSGhJ9y5bMILn9e3KUEkSz4jXYdjAML1q9AFW5i8Q9D1ud37n/aaDjKPNYUx
+         7YZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756833721; x=1757438521;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UHL/9iHScP0f81WBDBOizsme4Dv5vS87EI96jZlcSN0=;
+        b=g79gPu7YLF0TsmSZWA1PSa0db4TTNbSHNK1rd4Xm8VCZPRKOwVeG6Uzogml+7MI/UF
+         tQrWho/qF7ecvK89WR7uK/su3LdE99mIPTXM/1+GmzG1bFja0dmdwc5BzwXOq7BTjfqF
+         Kj6+mjKLnNOO7o1poNSBCi/6nHZyx+PfFQ5n/uA0BzDT4nwxWNaWpd/KwphD54i7bSmD
+         /qrRegUxUtTg6bt0Cknw+Evqn2wRjZ1RTPsSwYuQAwfpk5NAdyi1ORKX/HJAhwetpaIi
+         2jvVfSodyyJCQcD/wBlVSph24ucJkDqDk0li59Pzh3GuyhDYKjBNiw+eDEXuUWt0Wzgq
+         rkMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUC+DyHkKepa4K/jpZdlgYGA+vIxWI513Im26ziCtjuyFz+lLO7DwvK7wWsyr/OFj+35/LVkhtDHXOEOAM=@vger.kernel.org, AJvYcCUFXJsNtGZs3YJbOTU0dHFlf5AAa39t7ihWgliANvOM5RdkxxkQxnCFp85EMpNx7TjviP/6PeMDzShInzAY@vger.kernel.org, AJvYcCVVr5Tm6Ttx9rneoZexUZW+or/kQsQCwiOUGtY22H8gO4cAqIO9IEKbNapV77CBpGNzyPOjyDsCSknu@vger.kernel.org, AJvYcCW0w4zVmTbvOFXLrraYAz3QV3t4HpoQUosbD9pot3Rahlh/BegTTKV0X7sL46P8YfqzEx9soDgphWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJhA1bACAwP99VB6aJ/qmURmn3vVnUFAd+MZCgOXGuwy8LHN01
+	ByMpAl1S+4l+USC4500G/AU0x6ACnjXhnWFr6uzvshb5AiJPRY534Rns3cDC39ZGGzdinjTcTv9
+	rUef/h6Z1YvXyRphpxqqzLMyrzc0/Lh4=
+X-Gm-Gg: ASbGncusWsZhIbDHxiv4o1I4rcm++zwToBS4wlFXfVJx3s46XIkY4u3F9AhBzjsLRWY
+	dXXS8b37zaE7KJL81UnH1CnSxJr7to0ayunv233pvjF6rvMQMCBmDoLmOuJ667IfpGV478xMjQU
+	hOsYn8lbpd8OXPJWmVmMaU51+GkPToB3C5DqkLMIIL9a7GFBWVJiPKATnTDFkbJqgcq2RAYtB6r
+	+QB0nzfv8z1ijutAQ==
+X-Google-Smtp-Source: AGHT+IE8oTTq+xEDbODxk6NkVp632kFnXlauLi5KyQdm1eD41EnADMVC5Pj54/S9hW5DBLjU9xVeRCbpJzdGAY5g6ME=
+X-Received: by 2002:a05:6512:6812:b0:55f:44b8:1eda with SMTP id
+ 2adb3069b0e04-55f709c5066mr3203274e87.57.1756833720986; Tue, 02 Sep 2025
+ 10:22:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250831-tegra186-icc-v1-0-607ddc53b507@gmail.com>
+ <20250831-tegra186-icc-v1-3-607ddc53b507@gmail.com> <20250901055322.eorgaa3sycydjrrj@vireshk-i7>
+In-Reply-To: <20250901055322.eorgaa3sycydjrrj@vireshk-i7>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 2 Sep 2025 12:21:48 -0500
+X-Gm-Features: Ac12FXwAMFX1p_PsOnmUDjM6sbNKJYvGiQz3wZmgcPdZm7OguorJSHmUZJm_-T4
+Message-ID: <CALHNRZ_EbtHSXaDQ+1gGf3HjdyW5Q54EDN901-r8A_aXLbDJkw@mail.gmail.com>
+Subject: Re: [PATCH 3/8] cpufreq: tegra186: add OPP support and set bandwidth
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 5f9c23abc477 ("firmware: smccc: Support optional Arm SMCCC SOC_ID
-name") introduced the SOC_ID name string call, which reports a human
-readable string describing the SoC, as returned by firmware.
-The SMCCC spec v1.6 describes this feature as AArch64 only, since we rely
-on 8 characters to be transmitted per register. Consequently the SMCCC
-call must use the AArch64 calling convention, which requires bit 30 of
-the FID to be set. The spec is a bit confusing here, since it mentions
-that in the parameter description ("2: SoC name (optionally implemented for
-SMC64 calls, ..."), but still prints the FID explicitly as 0x80000002.
-But as this FID is using the SMC32 calling convention (correct for the
-other two calls), it will not match what mainline TF-A is expecting, so
-any call would return NOT_SUPPORTED.
+On Mon, Sep 1, 2025 at 12:53=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> On 31-08-25, 22:33, Aaron Kling via B4 Relay wrote:
+> > diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra=
+186-cpufreq.c
+> > index bd94beebc4cc2fe6870e13ca55343cedb9729e99..f0abb44e2ed00a301161565=
+e4c4f62cfed4a5814 100644
+> > --- a/drivers/cpufreq/tegra186-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra186-cpufreq.c
+> > @@ -18,6 +18,7 @@
+> >  #define EDVD_CORE_VOLT_FREQ_F_SHIFT  0
+> >  #define EDVD_CORE_VOLT_FREQ_F_MASK   0xffff
+> >  #define EDVD_CORE_VOLT_FREQ_V_SHIFT  16
+> > +#define KHZ                          1000
+>
+> Can reuse:
+>
+> include/linux/units.h:#define HZ_PER_KHZ                1000UL
 
-Add a 64-bit version of the ARCH_SOC_ID FID macro, and use that for the
-SoC name version of the call.
+Will do.
 
-Fixes: 5f9c23abc477 ("firmware: smccc: Support optional Arm SMCCC SOC_ID name")
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
-Hi,
+>
+> > +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigne=
+d long freq_khz)
+> > +{
+> > +     struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
+> > +     struct dev_pm_opp *opp;
+> > +     struct device *dev;
+> > +     int ret;
+> > +
+> > +     dev =3D get_cpu_device(policy->cpu);
+> > +     if (!dev)
+> > +             return -ENODEV;
+> > +
+> > +     opp =3D dev_pm_opp_find_freq_exact(dev, freq_khz * KHZ, true);
+> > +     if (IS_ERR(opp))
+> > +             return PTR_ERR(opp);
+> > +
+> > +     ret =3D dev_pm_opp_set_opp(dev, opp);
+>
+> Won't it be easier to use dev_pm_opp_set_rate() instead ?
 
-as somewhat expected, this now fails on an Ampere machine, which
-reported a string in /sys/devices/soc0/machine before, but is now missing
-this file.
-Any idea what's the best way to handle this? Let the code try the 32-bit
-FID, when the 64-bit one fails? Or handle this as some kind of erratum?
+I'm not very familiar with the opp system. If I read correctly,
+dev_pm_opp_set_rate() will round to the closest rate while this code
+will fail if the exact rate isn't found. This code is based on the
+existing tegra194-cpufreq driver. And I'm unsure if this was done for
+a reason. I have seen unexpected rates returned from clk_round_rate in
+the development of this topic, so that could be related.
 
-Cheers,
-Andre
+>
+> > +     if (ret)
+> > +             data->icc_dram_bw_scaling =3D false;
+> > +
+> > +     dev_pm_opp_put(opp);
+>
+> The OPP core supports scope based cleanup helpers now, maybe use them
+> to remove all these put calls.
 
- drivers/firmware/smccc/soc_id.c | 2 +-
- include/linux/arm-smccc.h       | 5 +++++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+I will look into this.
 
-diff --git a/drivers/firmware/smccc/soc_id.c b/drivers/firmware/smccc/soc_id.c
-index c24b3fca1cfe3..8f556df34fc42 100644
---- a/drivers/firmware/smccc/soc_id.c
-+++ b/drivers/firmware/smccc/soc_id.c
-@@ -60,7 +60,7 @@ static char __init *smccc_soc_name_init(void)
- 	 * to the ARM_SMCCC_ARCH_SOC_ID function.  Fetch it if
- 	 * available.
- 	 */
--	args.a0 = ARM_SMCCC_ARCH_SOC_ID;
-+	args.a0 = ARM_SMCCC_ARCH_SOC_ID64;
- 	args.a1 = 2;    /* SOC_ID name */
- 	arm_smccc_1_2_invoke(&args, &res);
- 
-diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-index 50b47eba7d015..976c5f8001ff2 100644
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -90,6 +90,11 @@
- 			   ARM_SMCCC_SMC_32,				\
- 			   0, 2)
- 
-+#define ARM_SMCCC_ARCH_SOC_ID64						\
-+	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
-+			   ARM_SMCCC_SMC_64,				\
-+			   0, 2)
-+
- #define ARM_SMCCC_ARCH_WORKAROUND_1					\
- 	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
- 			   ARM_SMCCC_SMC_32,				\
--- 
-2.25.1
+>
+> > +     return ret;
+> > +}
+> > +
+> > +static int tegra_cpufreq_init_cpufreq_table(struct cpufreq_policy *pol=
+icy,
+> > +                                         struct cpufreq_frequency_tabl=
+e *bpmp_lut,
+> > +                                         struct cpufreq_frequency_tabl=
+e **opp_table)
+> > +{
+> > +     struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
+> > +     struct cpufreq_frequency_table *freq_table =3D NULL;
+> > +     struct cpufreq_frequency_table *pos;
+> > +     struct device *cpu_dev;
+> > +     struct dev_pm_opp *opp;
+> > +     unsigned long rate;
+> > +     int ret, max_opps;
+> > +     int j =3D 0;
+> > +
+> > +     cpu_dev =3D get_cpu_device(policy->cpu);
+> > +     if (!cpu_dev) {
+> > +             pr_err("%s: failed to get cpu%d device\n", __func__, poli=
+cy->cpu);
+> > +             return -ENODEV;
+> > +     }
+> > +
+> > +     /* Initialize OPP table mentioned in operating-points-v2 property=
+ in DT */
+> > +     ret =3D dev_pm_opp_of_add_table_indexed(cpu_dev, 0);
+> > +     if (!ret) {
+>
+> If you handle the error case here, then the below can move out of the
+> if/else block.
 
+I'd prefer not to deviate too much from the tegra194-cpufreq code this
+is based on, so the drivers can be more easily kept in parity to each
+other. But I will look at making this a bit cleaner as per this and
+the next comment.
+
+>
+> > +             max_opps =3D dev_pm_opp_get_opp_count(cpu_dev);
+> > +             if (max_opps <=3D 0) {
+> > +                     dev_err(cpu_dev, "Failed to add OPPs\n");
+> > +                     return max_opps;
+> > +             }
+> > +
+> > +             /* Disable all opps and cross-validate against LUT later =
+*/
+> > +             for (rate =3D 0; ; rate++) {
+>
+> Maybe using while(1) would be more readable ?
+>
+> > +                     opp =3D dev_pm_opp_find_freq_ceil(cpu_dev, &rate)=
+;
+> > +                     if (IS_ERR(opp))
+> > +                             break;
+> > +
+> > +                     dev_pm_opp_put(opp);
+> > +                     dev_pm_opp_disable(cpu_dev, rate);
+> > +             }
+> > +     } else {
+> > +             dev_err(cpu_dev, "Invalid or empty opp table in device tr=
+ee\n");
+> > +             data->icc_dram_bw_scaling =3D false;
+> > +             return ret;
+> > +     }
+> > +
+> > +     freq_table =3D kcalloc((max_opps + 1), sizeof(*freq_table), GFP_K=
+ERNEL);
+> > +     if (!freq_table)
+> > +             return -ENOMEM;
+> > +
+> > +     /*
+> > +      * Cross check the frequencies from BPMP-FW LUT against the OPP's=
+ present in DT.
+> > +      * Enable only those DT OPP's which are present in LUT also.
+> > +      */
+> > +     cpufreq_for_each_valid_entry(pos, bpmp_lut) {
+> > +             opp =3D dev_pm_opp_find_freq_exact(cpu_dev, pos->frequenc=
+y * KHZ, false);
+> > +             if (IS_ERR(opp))
+> > +                     continue;
+> > +
+> > +             dev_pm_opp_put(opp);
+> > +
+> > +             ret =3D dev_pm_opp_enable(cpu_dev, pos->frequency * KHZ);
+> > +             if (ret < 0)
+> > +                     return ret;
+> > +
+> > +             freq_table[j].driver_data =3D pos->driver_data;
+> > +             freq_table[j].frequency =3D pos->frequency;
+> > +             j++;
+> > +     }
+> > +
+> > +     freq_table[j].driver_data =3D pos->driver_data;
+> > +     freq_table[j].frequency =3D CPUFREQ_TABLE_END;
+> > +
+> > +     *opp_table =3D &freq_table[0];
+> > +
+> > +     dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
+> > +
+> > +     tegra_cpufreq_set_bw(policy, freq_table[j - 1].frequency);
+>
+> Maybe a comment on why exactly you are changing the freq here ?
+
+To my knowledge, this does not change any clocks. The intent here is
+to prime the interconnect data. In the pre-req series, there's a
+change that sets all clocks to max frequency during probe. Then my use
+case involves setting performance governor by default on some boots.
+During testing, I noticed that the interconnect data provided by this
+driver was all zeroes. Which led me to notice that set_bw is only
+called when the target frequency changes. Which wasn't happening
+because clocks were already set to max. If my understanding here is
+wrong or there's a better way to handle this, I will fix it.
+
+Aaron
 
