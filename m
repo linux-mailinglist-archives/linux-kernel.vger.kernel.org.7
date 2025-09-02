@@ -1,94 +1,222 @@
-Return-Path: <linux-kernel+bounces-797375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC23B40F93
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:42:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDF3B40F96
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91DC616D245
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA491B61C7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5E035AAC6;
-	Tue,  2 Sep 2025 21:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0172E8E0B;
+	Tue,  2 Sep 2025 21:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EoJlG6Jb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KU9FxQr0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B51258EF0;
-	Tue,  2 Sep 2025 21:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6CD1E51D
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756849365; cv=none; b=Pj1rpCaSUdySxa2z4mbeMX9CyL9X1KSdn5OVC8rsGXDAGrAzOOPkQZ97SrhisC8e75kKTPEvchHgHPkya6mxmlz06XsSeE6gDixX6Rp69tDNjmCwMDgy2XEbvYhttxYkXNOr6J28mgk5eAZzUEZ89r/Kb5qIoH8OJ6xXzVkhTzU=
+	t=1756849550; cv=none; b=gD8GpJh/QqmpcMFyiLeJLXZOzd8jBcpbMWOYR7pLCsa0V1hw91m1VsZn13LcphZFV1rzV1dWQ/fgrAum4oR67Mxidt5PFda6HCIBMKifNw5d90A1EBVOL4ew2eNzvVs3DFLwECcYyteNLcWzQJiMbWk6Z4//YDKP7zyvKeggzG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756849365; c=relaxed/simple;
-	bh=RjK40O1erbbu/Aaqtcd7wtn/XHEa2oLzQ1L+Jw/nrP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QkVjNL07X3kto/cGBzSuWDAc2ljFA4sXjYB6WLhQ7CM9DYIDPEFXLNJlzrG4N+isY0B+1/fEW/ldfzT6yo2FuJzLLE0/UUaZMv7sFbzat6+ozgmvi3jkMljhtcjVSLhmxE4yr4hVsNT32CGdnc8Ps7FQlY8H7U0PDSR8P7G05xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EoJlG6Jb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7949DC4CEED;
-	Tue,  2 Sep 2025 21:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756849364;
-	bh=RjK40O1erbbu/Aaqtcd7wtn/XHEa2oLzQ1L+Jw/nrP8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EoJlG6JbZMLwZp+m1BZbhMawCR/5RmCUTGA8njxZFmehPeIWW7JFgU3N3x+hw4LpG
-	 OFd8vAkhr0x8OLlVta9zD5wf8H3Ubjf8Jf3f1vtYzyRuprlUcFKOyEkPVbYKb5VeQH
-	 qbEXmxnF+sqcJQC3mdXguj0PYnkR+jPTfa6NbuU+/yBmjaAHHAcPZZ7CukyR/+/PNj
-	 olac12OyMTg+qwOCnlM7HvFzIAr3zGA6X6dx/l8Y7JVYdwCIROCjFl6dtK+RjNo3el
-	 bCQmg/ubnFasfzVUqGzpA8ydpEV513sGZfHTIC8E+3Ud0Tvou/MlqMu9K7CGaWuID9
-	 XQKE8ByoWqfEA==
-Date: Tue, 2 Sep 2025 16:42:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Mao Jinlong <jinlong.mao@oss.qualcomm.com>,
-	Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
-	James Clark <james.clark@linaro.org>,
-	Tao Zhang <tao.zhang@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
-	devicetree@vger.kernel.org,
-	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>
-Subject: Re: [PATCH v1] dt-binding: Update oss email address for Coresight
- documents
-Message-ID: <175684936304.1217220.3167248149687349464.robh@kernel.org>
-References: <20250902042143.1010-1-jie.gan@oss.qualcomm.com>
+	s=arc-20240116; t=1756849550; c=relaxed/simple;
+	bh=qYbjt0FRDxWppmSPNceU5fkD9FJzBHfBeD7f4c9by6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h8aDNUJXAgFE67emiKsE13pt0Mo89Y6VMVE4Fh4dVn2pGCMadz3razcBIOKeJonoiiOWXzcK0i8mDfjEEDEyiVnuNvMbspEWIy4V5UxJm9dbdvgxsM6GbwYwHLFiCfCTDtyHCVw6K23wszxsHsCRghNropTIvdUWAP4T8w0XoVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KU9FxQr0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 582EqCKI019600
+	for <linux-kernel@vger.kernel.org>; Tue, 2 Sep 2025 21:45:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=uQQZgphG6OFoqGrYvnuOA6GQYJfzJK/1Em6
+	trqgSBFU=; b=KU9FxQr0S1hM6aTfaGQbAlJPr3sO7X01UNOj4kS1uM/qD00TI9Q
+	pL/ZRMbwspj0ys6TIt9MP9pQEFPdKu6L2qTJa2tAqZGHj/Y+bP2Z14FY09FU5JYW
+	05L8OnT17p4EgTSUpU4VnBuy8YMK4hhmrvXX9T1GQFFXaLUvbmw/ArhEyN5HtNFb
+	hnZfSEVB0H2WpjmlYX2vIukGRtfbFjx6moY/OhcdVyN1ts/OZZEOZ8ZEVMTizxH4
+	tW9bhBTHWbNJFTC/tZprCDbkltAIBKhdXBweT52D5pHWpYZk5GddlHVH8vRPElRC
+	bX7We2C2OD1ox56+pwGTcRWawkjvLjZXWnQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urw01btu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 21:45:47 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-244581953b8so63995855ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 14:45:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756849546; x=1757454346;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uQQZgphG6OFoqGrYvnuOA6GQYJfzJK/1Em6trqgSBFU=;
+        b=oi87j5fdbqCudq8/NU0G3KHdXcAsnHA2UWaXSh0A3+QSbRGL7LlQIFS2Pzyrcl+rpv
+         1qZpS16GtXz+yZwzV0xvadcYCRLeC1jbrFWdPru4JS3qlnAEdRae+zhUpCbQYsyer/wD
+         nfyX2lc4aVyIq8dQdpeN52XTqfEtOJ1rMOGtiETfXTQsfE3SRw4uGMnlLffjZqROwhjU
+         0m6guNPvkeYkT/KQLVKOIN3V2BLK2DobgTfVaRvblSDFUpihK1QV9t6SzIoIH21jzvqL
+         RlzxoS24xqD/ULwOjkg+VJoCMBshD+k1ASUYE8jL8Kve5ULJgt0BqaKgxkccd68nCjHg
+         XmZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJGXF1yshaZvHT3MytYOalAuaXL1PL6bjMvxaMyx2qx1fZ/0rCaEbyBSjQ8d2Gg/6c6qj6Gdy4e8fKYyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaP0UN8F9SsIHa+YGAY9xD+W5iiWs+iom5krZdawYIjTNr09w8
+	O6Chcyj1rzphRlVAsZDrqM9wU6tQkmwCDgONpUgnBvZMFqT57NmtNjGBW8U4zHd5YIwrMrPZqPP
+	3NRUz22Laqeke+OeeumHdqnBnZkWQcF0BcW4kFmReMhqzKvjKrx1sWLYvlPXaZ0loYBg9XJxU2k
+	Q=
+X-Gm-Gg: ASbGncszMpSXsZCCiaqB/RaDysJXoexJA5xELhLctRGiX8XaR5zjuUwZlx8IcaQcbET
+	f1bFY8DM0mwFVM8RFYQ77i3OgTc7ewDejYgjC8H0KYNx15mOWrCJGoBHia9muFkxpXdtEqzkbgG
+	hRxGbqlfDGDQRbew29qczTmIvLqjxsyO+4+vOdyItYVmeIfMdY0cgRAh6zvYoPtaEG63WztiNth
+	yYCXGGbn9kOB4vyUe2I4EhB4uClkc+mOs7hfDJEtriWR9XELEP4WD/3rjuT2DAlgcsyAPzxeNjP
+	3AVp3TYb2m8VRbtnECUne083g0tcen/Pzd+mfa2nHEbmzfeFBXy6gD9LTqC8wX9ABqnJd9E5jUk
+	PjFbxvB0G0jzJYZQgoUmO8AquBII=
+X-Received: by 2002:a17:902:e747:b0:24a:8ed6:fa0 with SMTP id d9443c01a7336-24a8ed61300mr149952525ad.54.1756849546254;
+        Tue, 02 Sep 2025 14:45:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvIOhICh15uD16Xcr9z8S+z0F+ibedqbckSK2cFUoHumlbYdDSIxPBy7TIzVczTgcnxsaRRw==
+X-Received: by 2002:a17:902:e747:b0:24a:8ed6:fa0 with SMTP id d9443c01a7336-24a8ed61300mr149952285ad.54.1756849545811;
+        Tue, 02 Sep 2025 14:45:45 -0700 (PDT)
+Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-329cb6a2ec2sm4746324a91.21.2025.09.02.14.45.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 14:45:45 -0700 (PDT)
+From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: qcom: pmic_glink: Add support for SOCCP remoteproc channels
+Date: Tue,  2 Sep 2025 14:45:44 -0700
+Message-Id: <20250902214544.543038-1-anjelique.melendez@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902042143.1010-1-jie.gan@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: IWOJ7cLslOqM1xMAIYIYQsqN0ZDEtdaL
+X-Proofpoint-ORIG-GUID: IWOJ7cLslOqM1xMAIYIYQsqN0ZDEtdaL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNyBTYWx0ZWRfX66g+M06zYDyi
+ cAhmYOdVv6ale/V5vIlntaG/sjZGAwh9YZsaCqfFArkYAWMyZTMUCsGPBB9a/8jM178iKjalt/y
+ 6+BKfLxLEfnPmPsMIjOgNT0uYjW6UDaQFV8HbW4ggSuew59O5THMwp4gBSruz2CWIAAVDQX0Xr9
+ R7YRRGvV1qAdmxFIR5BFeAduXHq8w0sBA0vpVeEnKRDDUCBsVjDIpWFVkPQgfGDGDMUohAczAjh
+ mNHMDyuETLlwHVWmI1Bsp6RiMk1CMsZhb2wFtda4SwOk7V+a9ER9eUPDh7bpmiUbLT6Nb1bubkP
+ P/PpBJdwbA09GoyrqGICD+olbWTyUiZWYsUcmn4wmZgXOA0tpsN5rtMNR1E8vyfj28uDbU/1wnu
+ XJtEO9ZX
+X-Authority-Analysis: v=2.4 cv=NrDRc9dJ c=1 sm=1 tr=0 ts=68b7658b cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=XlvkYG1BLVWRrT8hbnoA:9
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-02_08,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508300027
 
+Add support for charger FW running on SOCCP by adding the
+"PMIC_RTR_SOCCP_APPS" channel name to the rpmsg_match list and
+updating notify_clients logic.
 
-On Tue, 02 Sep 2025 12:21:43 +0800, Jie Gan wrote:
-> Update the OSS email addresses across all Coresight documents, as the
-> previous addresses have been deprecated.
-> 
-> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
-> ---
->  .../sysfs-bus-coresight-devices-dummy-source  |  4 +-
->  .../testing/sysfs-bus-coresight-devices-tpdm  | 56 +++++++++----------
->  .../arm/arm,coresight-dummy-sink.yaml         |  2 +-
->  .../arm/arm,coresight-dummy-source.yaml       |  2 +-
->  .../bindings/arm/qcom,coresight-ctcu.yaml     |  6 +-
->  .../arm/qcom,coresight-remote-etm.yaml        |  4 +-
->  .../bindings/arm/qcom,coresight-tnoc.yaml     |  2 +-
->  .../bindings/arm/qcom,coresight-tpda.yaml     |  4 +-
->  .../bindings/arm/qcom,coresight-tpdm.yaml     |  4 +-
->  9 files changed, 42 insertions(+), 42 deletions(-)
-> 
+SOCCP does not have multiple PDs and hence PDR is not supported. So, if
+the subsystem comes up/down, rpmsg driver would be probed or removed.
+Use that for notifiying clients of pmic_glink for PDR events.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+---
+ drivers/soc/qcom/pmic_glink.c | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
+index c0a4be5df926..bcd17fc05544 100644
+--- a/drivers/soc/qcom/pmic_glink.c
++++ b/drivers/soc/qcom/pmic_glink.c
+@@ -17,6 +17,11 @@
+ 
+ #define PMIC_GLINK_SEND_TIMEOUT (5 * HZ)
+ 
++enum {
++	PMIC_GLINK_PDR_UNAVAIL = 0,
++	PMIC_GLINK_PDR_AVAIL,
++};
++
+ enum {
+ 	PMIC_GLINK_CLIENT_BATT = 0,
+ 	PMIC_GLINK_CLIENT_ALTMODE,
+@@ -39,6 +44,7 @@ struct pmic_glink {
+ 	struct mutex state_lock;
+ 	unsigned int client_state;
+ 	unsigned int pdr_state;
++	bool pdr_available;
+ 
+ 	/* serializing clients list updates */
+ 	spinlock_t client_lock;
+@@ -203,17 +209,17 @@ static void pmic_glink_del_aux_device(struct pmic_glink *pg,
+ 	auxiliary_device_uninit(aux);
+ }
+ 
+-static void pmic_glink_state_notify_clients(struct pmic_glink *pg)
++static void pmic_glink_state_notify_clients(struct pmic_glink *pg, unsigned int state)
+ {
+ 	struct pmic_glink_client *client;
+ 	unsigned int new_state = pg->client_state;
+ 	unsigned long flags;
+ 
+ 	if (pg->client_state != SERVREG_SERVICE_STATE_UP) {
+-		if (pg->pdr_state == SERVREG_SERVICE_STATE_UP && pg->ept)
++		if (state == SERVREG_SERVICE_STATE_UP && pg->ept)
+ 			new_state = SERVREG_SERVICE_STATE_UP;
+ 	} else {
+-		if (pg->pdr_state == SERVREG_SERVICE_STATE_DOWN || !pg->ept)
++		if (state == SERVREG_SERVICE_STATE_DOWN || !pg->ept)
+ 			new_state = SERVREG_SERVICE_STATE_DOWN;
+ 	}
+ 
+@@ -233,7 +239,7 @@ static void pmic_glink_pdr_callback(int state, char *svc_path, void *priv)
+ 	guard(mutex)(&pg->state_lock);
+ 	pg->pdr_state = state;
+ 
+-	pmic_glink_state_notify_clients(pg);
++	pmic_glink_state_notify_clients(pg, state);
+ }
+ 
+ static int pmic_glink_rpmsg_probe(struct rpmsg_device *rpdev)
+@@ -246,10 +252,14 @@ static int pmic_glink_rpmsg_probe(struct rpmsg_device *rpdev)
+ 		return dev_err_probe(&rpdev->dev, -ENODEV, "no pmic_glink device to attach to\n");
+ 
+ 	dev_set_drvdata(&rpdev->dev, pg);
++	pg->pdr_available = rpdev->id.driver_data;
+ 
+ 	guard(mutex)(&pg->state_lock);
+ 	pg->ept = rpdev->ept;
+-	pmic_glink_state_notify_clients(pg);
++	if (pg->pdr_available)
++		pmic_glink_state_notify_clients(pg, pg->pdr_state);
++	else
++		pmic_glink_state_notify_clients(pg, SERVREG_SERVICE_STATE_UP);
+ 
+ 	return 0;
+ }
+@@ -265,11 +275,15 @@ static void pmic_glink_rpmsg_remove(struct rpmsg_device *rpdev)
+ 
+ 	guard(mutex)(&pg->state_lock);
+ 	pg->ept = NULL;
+-	pmic_glink_state_notify_clients(pg);
++	if (pg->pdr_available)
++		pmic_glink_state_notify_clients(pg, pg->pdr_state);
++	else
++		pmic_glink_state_notify_clients(pg, SERVREG_SERVICE_STATE_DOWN);
+ }
+ 
+ static const struct rpmsg_device_id pmic_glink_rpmsg_id_match[] = {
+-	{ "PMIC_RTR_ADSP_APPS" },
++	{.name = "PMIC_RTR_ADSP_APPS", .driver_data = PMIC_GLINK_PDR_AVAIL },
++	{.name = "PMIC_RTR_SOCCP_APPS", .driver_data = PMIC_GLINK_PDR_UNAVAIL },
+ 	{}
+ };
+ 
+-- 
+2.34.1
 
 
