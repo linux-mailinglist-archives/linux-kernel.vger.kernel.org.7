@@ -1,119 +1,84 @@
-Return-Path: <linux-kernel+bounces-796033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A61B3FB2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE73B3FB1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 11:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF472076F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CFC6164549
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 09:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7389B2F1FD2;
-	Tue,  2 Sep 2025 09:49:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15892ED873;
-	Tue,  2 Sep 2025 09:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03AE280025;
+	Tue,  2 Sep 2025 09:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nc6Iu47/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FB127D771;
+	Tue,  2 Sep 2025 09:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756806597; cv=none; b=b5E5/lPth+AYxvxITQW0QdYBQkCElmawE70jE751DUgJkhQ4v/mzV2sa93vqNSQuQZINRCUK2B7rvR8a4zKHnk70OAka9OGXC5WrrGOKavURRsHWo6r2r98M9zuTnKwNJDxJTWHvviwv3HRD/XXd6biaj2/4+b0ejDc5/gz0a8g=
+	t=1756806589; cv=none; b=sxo8kzbO1s9udpIaIIsKgDrlrKAWu6sfyXr6XOxXsklfdpDRBjRUaUBiBpbWGnW3bTS4uBqgrlpEcDUL35fJHyyaTYssNLIxQZfJnjNcYY5S4oOOhLan88S15jLKvJEkEd5QZJe3GY6bGgYVAnXuOIrX3FM/gOblMmSndJq+Zxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756806597; c=relaxed/simple;
-	bh=jU2kKvv1bsjj7G0pE+AMVSwzWTYXe7YdVfO5VFVkDwk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T/Aa3nO4hCgO7BTswOCjCvcmaAG+Jb15O/vtpMO2ugkg2oqDA85q0E7UPSMLNZtCU+/CgqJEUELnbUsxI8ERQuHX1vhwc5gAKPik8ezTyosSgLT5BhOq09iB/gWHKmv7IScvDD8HibgqITOAdNTa+L6n1p1DcjIUweBvrNKKseI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8BxH9O7vbZob7wFAA--.11699S3;
-	Tue, 02 Sep 2025 17:49:47 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJDx_8O5vbZoyLF4AA--.52017S6;
-	Tue, 02 Sep 2025 17:49:47 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Xianglai Li <lixianglai@loongson.cn>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] LoongArch: KVM: Avoid use copy_from_user with lock hold in kvm_pch_pic_regs_access
-Date: Tue,  2 Sep 2025 17:49:45 +0800
-Message-Id: <20250902094945.2957566-5-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20250902094945.2957566-1-maobibo@loongson.cn>
-References: <20250902094945.2957566-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1756806589; c=relaxed/simple;
+	bh=1jKS4By1zFbt5/DIzV37GtLpDQJq1JTL65v6wrQGxmM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=aOUdSuggychUUaXXkxPqnu/JYS4p/nVfuuCAQ+zdLxY+4lV+/iI8D0Ht1KRjad2WKHx89UMdVvoPbTb9Z/EuCfRElIUY1NntHxhsqpMDNfo60hPHNdsyHTUbp/Nq/Z8ARbZRPFNwDlOQ7piINGvf7G9blbOkCkJE2dvYsrOJpOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nc6Iu47/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58E7BC4CEF5;
+	Tue,  2 Sep 2025 09:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756806588;
+	bh=1jKS4By1zFbt5/DIzV37GtLpDQJq1JTL65v6wrQGxmM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=nc6Iu47/2T+qc5ni+jI5hCGAh4Gh8xiGD4qHHU5j+U+rHScxFKJp3/kfvaCS/xco9
+	 K23fa02u4HYziUuXCks5FlPCzyBZn1pgOtgHrrE2oRO5pAt/DDhNxJAXnfzeOFHEoH
+	 uNU7YoOvwovwZPlMIffaXru2QcastKhUvRoHoXp+lzCPvqy5lvjJXfcdmT7k0+xi7m
+	 HtYBgrCP7y12g1L+J2iVmKKuwatm7GK1o8rPkFvOc5mm1eJtZxhgPX7VK1H1NK2PFT
+	 USttPylK9BPGI3DplR7GysPkigNcJJOuHOlyAfAppBnHRJgHZYERSR+d5UUAMa134G
+	 7vBHwAc03wjTQ==
+From: Vinod Koul <vkoul@kernel.org>
+To: Thomas Andreatta <thomasandreatta2000@gmail.com>
+Cc: linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, 
+ Thomas Andreatta <thomas.andreatta2000@gmail.com>
+In-Reply-To: <20250827152442.90962-1-thomas.andreatta2000@gmail.com>
+References: <20250827152442.90962-1-thomas.andreatta2000@gmail.com>
+Subject: Re: [PATCH] drivers: dma: sh: setup_xref error handling
+Message-Id: <175680658687.246694.2120128103746772483.b4-ty@kernel.org>
+Date: Tue, 02 Sep 2025 15:19:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDx_8O5vbZoyLF4AA--.52017S6
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Function copy_from_user() and copy_to_user() may sleep because of page
-fault, and they cannot be called in spin_lock hold context. Here move
-function calling with copy_from_user() and copy_to_user() out of spinlock
-context in function kvm_pch_pic_regs_access().
 
-Fixes: d206d95148732 ("LoongArch: KVM: Add PCHPIC user mode read and write functions")
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/kvm/intc/pch_pic.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+On Wed, 27 Aug 2025 17:24:43 +0200, Thomas Andreatta wrote:
+> This patch modifies the type of setup_xref from void to int and handles
+> errors since the function can fail.
+> 
+> `setup_xref` now returns the (eventual) error from
+> `dmae_set_dmars`|`dmae_set_chcr`, while `shdma_tx_submit` handles the
+> result, removing the chunks from the queue and marking PM as idle in
+> case of an error.
+> 
+> [...]
 
-diff --git a/arch/loongarch/kvm/intc/pch_pic.c b/arch/loongarch/kvm/intc/pch_pic.c
-index 119290bcea79..71706e24a1c5 100644
---- a/arch/loongarch/kvm/intc/pch_pic.c
-+++ b/arch/loongarch/kvm/intc/pch_pic.c
-@@ -352,6 +352,7 @@ static int kvm_pch_pic_regs_access(struct kvm_device *dev,
- 	void __user *data;
- 	void *p = NULL;
- 	struct loongarch_pch_pic *s;
-+	char buf[8];
- 
- 	s = dev->kvm->arch.pch_pic;
- 	addr = attr->attr;
-@@ -397,17 +398,24 @@ static int kvm_pch_pic_regs_access(struct kvm_device *dev,
- 		return -EINVAL;
- 	}
- 
--	spin_lock(&s->lock);
--	/* write or read value according to is_write */
- 	if (is_write) {
--		if (copy_from_user(p, data, len))
--			ret = -EFAULT;
--	} else {
--		if (copy_to_user(data, p, len))
--			ret = -EFAULT;
-+		if (copy_from_user(buf, data, len))
-+			return -EFAULT;
- 	}
-+
-+	spin_lock(&s->lock);
-+	/* write or read value according to is_write */
-+	if (is_write)
-+		memcpy(p, buf, len);
-+	else
-+		memcpy(buf, p, len);
- 	spin_unlock(&s->lock);
- 
-+	if (!is_write) {
-+		if (copy_to_user(data, buf, len))
-+			return -EFAULT;
-+	}
-+
- 	return ret;
- }
- 
+Applied, thanks!
+
+[1/1] drivers: dma: sh: setup_xref error handling
+      commit: d9a3e9929452780df16f3414f0d59b5f69d058cf
+
+Best regards,
 -- 
-2.39.3
+~Vinod
+
 
 
