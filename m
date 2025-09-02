@@ -1,240 +1,173 @@
-Return-Path: <linux-kernel+bounces-796432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-796433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599A5B4009D
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D15B400BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 14:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7381B23B31
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72C93AFE21
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 12:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC67C1FFC48;
-	Tue,  2 Sep 2025 12:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE7B21FF44;
+	Tue,  2 Sep 2025 12:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inadvantage.onmicrosoft.com header.i=@inadvantage.onmicrosoft.com header.b="UzyhUhNZ"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2127.outbound.protection.outlook.com [40.107.93.127])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="gDjAI6uy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A9R1ALHL"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D32F215055;
-	Tue,  2 Sep 2025 12:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.127
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756816284; cv=fail; b=By6figEGJvXYMC4w1Jvev78sBgZW6e62rxwnw/P8r2FNeju1KXmYWafbM2iSqQQPd98ZrMp2TDJHB5BFz2KsWSHzZO7Dpdh2REaA+o3yN8HNrxY6uMBupt0bDVH7Ig4vsabquJ9etkBd9S4IB5qechQwGnfQljGaLL5wmAH/HmA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756816284; c=relaxed/simple;
-	bh=AY2xzY/DdWIjapmpj4oQXo7QsSk5RF6fkS/oExxMwXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KYVr/IbKWLm1IRSjBjdQRLehRJZ9HKCvqosyb5LeDGOXTJHAsx1xswgQRbRm6QZXnxvKq9h94siT3F5qed2LkKAirzAp62HBRBbwjfxODJ3zRqPMDlTpuEQAxymspUdOMnvJ9fx+TRNlHY79EJGL4wgCZN2HWKCW1GD9nPioGvg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=in-advantage.com; spf=pass smtp.mailfrom=in-advantage.com; dkim=pass (1024-bit key) header.d=inadvantage.onmicrosoft.com header.i=@inadvantage.onmicrosoft.com header.b=UzyhUhNZ; arc=fail smtp.client-ip=40.107.93.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=in-advantage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in-advantage.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ERb25x0Y4uBzy9dL/VqeOOdRh6Qrlnt1QgtmCddI1/H/V5XQdkKWzjvxJUtW02Jj5ElVo9LAjWh/5ukc+d+rcHTdY8n6IXYBiZGYqr1iHB+3vSWfvEx7zi+QhiD0uopQiGWDj3UvZuJ7l0EYvuSCArNyN4vxspa+ITn7HpnG1VRcBRj4Iqfpmk/Coy3bXzPwegVAGOrTAEBxMo7mkJPjybvgnSC7BhpGcuOZbwAiNdIiXQq4VUzmzq4ZtpD94DslR3aPgPi2c0dL+zGSVc/W5UWZ26tpFp5UP29AhUUtH3BA4HmtsYMQZytoNdaxivTVOStNASpDVSPzt2QkJWRcWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N+Y1jqHsuMuUA6aXxlprcXtAkZW+HzrPuAkH5OjPX4I=;
- b=t+vwHZYf7knKR2l8Zhhmc7g3MkR0K7zWbXwu0O1x1oRbRrBpLy7pPdqoa6sc7/wph5jsvdb86eWqesoD9k48OxQdi28HF0YSAVzOCSO7hWL51QcBUeiiNI0hrCC768S9pb6jLYRBKinBIedH1CaT6/kWvI6F+hPLFNhP/E3OZ4O3CuYGq5wLp2qcaHeFLkLbei7257O0w75LUk3KD0V7CCMXUtGKpv4ri87KpR7dwavAZ63LRRyMDe9iOz3smiGJMn5qHEznnmrPVhoZByGLDK5v889KbQcP7ihtrGz2cCWEiNu7lidOF0aPV7mmgMbVXVYHOKt509WjDUiK4W9yAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=in-advantage.com; dmarc=pass action=none
- header.from=in-advantage.com; dkim=pass header.d=in-advantage.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=inadvantage.onmicrosoft.com; s=selector2-inadvantage-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N+Y1jqHsuMuUA6aXxlprcXtAkZW+HzrPuAkH5OjPX4I=;
- b=UzyhUhNZgz3brJaB4WcEtN0nuwBA3MMbfKdzjguyMh+CU5tPvSA5e5jPO1j4uF1tfkmPE7840kZNLhKk9PZgg54diMJ8QHCW0BtQkCpWzTcpahenx3g9GpzKvd5tToUe4rVZCg1GWpDGnQrm5YHjRZzp6uJhFu4tFyaH1a7cLg4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=in-advantage.com;
-Received: from DS4PPF3984739DB.namprd10.prod.outlook.com
- (2603:10b6:f:fc00::d15) by BN0PR10MB4903.namprd10.prod.outlook.com
- (2603:10b6:408:122::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Tue, 2 Sep
- 2025 12:31:17 +0000
-Received: from DS4PPF3984739DB.namprd10.prod.outlook.com
- ([fe80::ba61:8a1f:3eb5:a710]) by DS4PPF3984739DB.namprd10.prod.outlook.com
- ([fe80::ba61:8a1f:3eb5:a710%5]) with mapi id 15.20.9094.016; Tue, 2 Sep 2025
- 12:31:17 +0000
-Date: Tue, 2 Sep 2025 07:31:13 -0500
-From: Colin Foster <colin.foster@in-advantage.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Steve Glendinning <steve.glendinning@shawell.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v1] smsc911x: add second read of EEPROM mac when possible
- corruption seen
-Message-ID: <aLbjkQF8mA5HGDfx@colin-ia-desktop>
-References: <20250828214452.11683-1-colin.foster@in-advantage.com>
- <20250901135712.272f72a9@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901135712.272f72a9@kernel.org>
-X-ClientProxiedBy: BL1PR13CA0265.namprd13.prod.outlook.com
- (2603:10b6:208:2ba::30) To DS4PPF3984739DB.namprd10.prod.outlook.com
- (2603:10b6:f:fc00::d15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC2721B905
+	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 12:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756816362; cv=none; b=b38Ia3KAYQqh0ZO371owXgzlSBCZxSErMwiq0L9yJ8E6g+HtVWwggm6oqBvF1HPlHd93tHOtZga+VXuQr+pMYOVoWHsD+jWujPT5kmczuEpZF1lCSKyfpJ8yre2pnRrjW6etD1YKiU7teiqTA0IBR/+JCgUGGKd27B/sAPCzJ44=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756816362; c=relaxed/simple;
+	bh=qPFXZMmmHXzxjNaWtNUzPAOpCImIBk49qd5iQpJ5ytc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZeIsK9mDvRuNtUGFmRML+J6kYxoTp0jeoVmSaCCkzMgeHYf+Ur8F+0rxyoJ005mfOSxr/p2eEM27EygVhOKu32Cpu55SGY3vvWIsKTI5DQow+W5tga6tz5C4mKsacUMgOJpMTnHXvzlaVRzwXUI4Qahucg/XEJhU12kxcFalkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=gDjAI6uy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A9R1ALHL; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 15A6E14001E3;
+	Tue,  2 Sep 2025 08:32:39 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 02 Sep 2025 08:32:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1756816359; x=
+	1756902759; bh=+FtZglCWUX4HE6q7QPlc7pf6zeTQT7t5TN4Mt+TpGxQ=; b=g
+	DjAI6uy4tOZAnFg6ywGVrNbZtovdWrTb9GA/kYsSmyTuKMx4O72CJPJGG4WUD1Gh
+	v+E+2DIqAOp9k1AEseg0pMP9ItMBtzc7zt+LUdng06++4CeIguUfZAI6H5F8LQnn
+	YjwV5NieZtzPvUFjhW5mxDBKhrpqMqqFRmgnYBTg7QnGXrsmAV8+egtYg9P7EFgE
+	vzPbzd76HwmBHP7fDdrM4AhYx1AuRYObtJxQCrwCCkaQDVZHH6j95CIOcfV9EbCx
+	SVqtLkujYnCjbBJqQMAlfqPY7l8cG4GfInkeIZtYb+GGWIdwvzBdvggF1LfkQm5i
+	5C990IapVvjBWFst8xB0g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756816359; x=1756902759; bh=+FtZglCWUX4HE6q7QPlc7pf6zeTQT7t5TN4
+	Mt+TpGxQ=; b=A9R1ALHLw5BMAc22+yvrl1UsjkuHI0XttiKSsVNSWHgiCvKWcdd
+	CMM9P1vFA6OfXbG1SHjq3pnDytLxoeSKdlqB0ago1TW8LPRbojRLwNInJ4g5+e10
+	lv4qJsM3+pcD34kA76YMe1dyAT1fJbotsZfTnF71FmN55nFd5ne4Frf4AJp1Xf6e
+	xW67Mh7yW2/ekIwihKDdzYbnAh4OLKUyzfV8yddGXESbXhipO6cctoCn5u/ntW2E
+	JhgOgqUs1EQ6HPyx6quuvxSTbnu80ZP9HndaY3KqHYu+UmJcSaRjnT51vT25hOvZ
+	bvRQatEsW/Fpez3gZMOfsdWXNxXeBw8fLVA==
+X-ME-Sender: <xms:5eO2aAx-bc5MVSpEeiZs0d8m01MOh8DtWGc2IWPYIghd9EHZ69kxPA>
+    <xme:5eO2aPEEJq5xbYbjB98iOSvOnK-xKRKkQLA_7SZXV1hDw2ciaIu3-5uQZomTxZWrm
+    t4lJx463DGCpE6YrCg>
+X-ME-Received: <xmr:5eO2aAlt9Kx0YB2yyn7TRJzwIV4oDxhV_m6SsHS1iPO4-0ewiEDwtaU806DH>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
+    ohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpe
+    ffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfuhhhu
+    thhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrg
+    htthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtleduhfef
+    feffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeegpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehkvghrnhgvlhesphgrnhhkrghjrhgrgh
+    hhrghvrdgtohhmpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghp
+    thhtoheprhihrghnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthhtoheplhhorh
+    gvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepsggrohhl
+    ihhnrdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopeguvg
+    hvrdhjrghinhesrghrmhdrtghomhdprhgtphhtthhopegsrghohhhurgeskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdroh
+    hrghdprhgtphhtthhopehnphgrtghhvgesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:5eO2aOE6PJp4_Bc5G-nV6nFNA_UDXPzOgRuu07cAZCWMx2x9qMh5pQ>
+    <xmx:5eO2aLy4hhF5Ut-29bvuurfp2q6EjmhZUsBMvvwQxd50CdcNHGoowA>
+    <xmx:5eO2aPbag-AFmTw9IEC9R8mmnD6gwOZGDBYlImOqrQp4HK90Hd-oCQ>
+    <xmx:5eO2aOla-vqKICj0ACORsiltZ_3PKgjqQSIBzy-2f8lxng6Nti5BFA>
+    <xmx:5-O2aHW3cAmiLoOPv2T5qnWuUzxLYlWfKI6oEKs3cOg6Jsdi3yfmR50g>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 2 Sep 2025 08:32:37 -0400 (EDT)
+Date: Tue, 2 Sep 2025 13:32:34 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Pankaj Raghav <kernel@pankajraghav.com>
+Cc: David Hildenbrand <david@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Nico Pache <npache@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, mcgrof@kernel.org, gost.dev@samsung.com, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH] huge_memory: return -EINVAL in folio split functions
+ when THP is disabled
+Message-ID: <6l6f5idkqebpai6qn6n3phbnydz55typdwmvp3eexwnhk4qr54@otcgssegyqke>
+References: <20250902084036.208921-1-kernel@pankajraghav.com>
+ <qh7s3j26aac3hyzgnr2ee6byjenstxhjnlwn4qxbvz2l32ohqc@qbhdxvpnuhtp>
+ <90cd5be7-cbe6-42c5-b0eb-bf9613047097@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS4PPF3984739DB:EE_|BN0PR10MB4903:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7018330a-5cfb-4c06-7d93-08ddea1c9c9b
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?H2Q9Q3/+MLMjqGRyw/s9qIsE6Iyoe1Z6aSIm4pwYIgh1EqypLH6FjqYyZtMH?=
- =?us-ascii?Q?aoca3xYcFNz/KhhsA4YFO4z5ju/NF3MOkcdXwZ4YzgGvWu3P+8ucZ7wTngNY?=
- =?us-ascii?Q?oHkjUTmlg1xiqFBUegNDqK0LDHWfa8KnmKrnfEJjIMrAyL/W1kQQLuN6HqaY?=
- =?us-ascii?Q?FEpcrH5xULGDbTYfZhyodWM+PLXGod6U5qcezkgn65GIOEUaKzZC+4bQjw+H?=
- =?us-ascii?Q?JdEIRpkqDtml/b9TmoG3MUHu8Zj98YmB2OhWK64UvtKXvu5vhs4QKiouEQL4?=
- =?us-ascii?Q?sriygFMLJrN7jDjIDYY5WZwZ5OaS+CfHqPCf7KKkTjLNOO0/E14fe7uHWG29?=
- =?us-ascii?Q?vxKItuqoKgW/4BQ399vL8vaSk3Igq1TAfa3TVLnTOamI8P6u7JBu98jJ1FXv?=
- =?us-ascii?Q?CGdeRAVxPfItotG4a7hA+PdRzEVSbl7+R16kUPCOZc907g4Ml/LzYwTDOip5?=
- =?us-ascii?Q?s/wTwJVSWBvcHnA0otfgMAe0aCxoZu4Yr+eXTKs4slJe9+P/WJUcKXc480vz?=
- =?us-ascii?Q?SJaGgn6NKEJGSkMPyK248kv1KAC3/dpj6Y+3qXW1asOJNap79BJUIJnhk332?=
- =?us-ascii?Q?2z0Wh/KjrbVBrqTanDNo4lEAm73OZ4CtsEy50RdKBfN9MiZiqT6P0wRil765?=
- =?us-ascii?Q?1k1yQ+caxwF7YOMijvixuBvbtnoe52YLXIPvfJLWJrV8ZI3jp7wL5r2eBRfo?=
- =?us-ascii?Q?y8AV/DC/V6W3DivPhVKLgys/D9A7skr2cBW6ZBm+m0XaiS6rpBsm2qaz3Dq7?=
- =?us-ascii?Q?61H545ffXu9yChgi5y/VhARpq6ntg6rteUlFhnXyv0hN39AY53hhz/RWX7ZN?=
- =?us-ascii?Q?l73fq1a/EaDjjp5FBrL7hOnhSIxVn/Bi7sFItIzO3G2FspIrvZ6+nxpDteeI?=
- =?us-ascii?Q?0ZQvzdrKZgo/ecO0/172U6hGZoEmhWW4lDqFOstVtTNhzKcUimCCP+0oW4p4?=
- =?us-ascii?Q?jGKUmSIKTCWenDDzOWn4+qcb5Hiu6ayuDjmVFAOqd5PEXX2GtKKmIK8azX/a?=
- =?us-ascii?Q?J1qvIpf1zC4XJivBBuRnCO339D0EJq2oqBIjJIIS9v+CFl6JjpLjAFBzz2Tr?=
- =?us-ascii?Q?0nSsH2YSfLAe7P7WI6T6v89+yxXTP8Bw8xxpSrFSFtH+NpVM8wvbhWZWsDtF?=
- =?us-ascii?Q?tcwTvoQ+thUaNE+Bov2I8ofHWoYOSMAusbfbhJhf3VjiRML6zcI4ZXcOZBWe?=
- =?us-ascii?Q?INDODyTetH9HfDYjfgzg4dNEiEQhMZCEvPaxxkBS9UIcy2/4rNa0ya8FH6Xs?=
- =?us-ascii?Q?ARO0x4fELj6a29l+cz6VsBvQ5PWKi+p6HwzBwPY3P/aCP3EJZcTltniWd7zx?=
- =?us-ascii?Q?FNwhPsVUEB9hGv4tdSZV5X7wC4p14abD1a7w9mqzLDm7u5pCF8TCCEC3sP05?=
- =?us-ascii?Q?ZUfqADdJNqnlTPkHQLWXRaO06N+6lvabnDxT1YkHKPf8VExMeEInqYu88lVP?=
- =?us-ascii?Q?VIO4jasTu+w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPF3984739DB.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YzhU69WHBShlvz/kZI/LhdBiJpsOgJlnRCIIcpvhlYe75E31RRFJ92pEFy4f?=
- =?us-ascii?Q?xtTs4hV+cqDn5rBBBK+o7LocTAkeJuzqiNe40aNjJ9TKT/9XqDcbumCixeM1?=
- =?us-ascii?Q?3PGDkZez/+cvw4rt/51LlbPs2MNDd7uCTx+1NyKKoKFY29sir9LlGfdRYtjL?=
- =?us-ascii?Q?/+x87fNnMAM76iMzViyKa3W1fT5nCJUQnJIpIUI5jFlC58tSDLMLxOx9s0Hm?=
- =?us-ascii?Q?zFaqC61k4/pjvOIV7Q1WNkXw7RoxG4m5oMEqERa32VXdai3z/WrU5pHLep9y?=
- =?us-ascii?Q?Shjk6l6lG+khpkARiZIgN0e1WXBEUW8e92BuNAm16By1pDqM5rngKVl5sxuR?=
- =?us-ascii?Q?EB+TW+SdpUfuaoliAx0neUO7pABJOumt+Gq8WRhmld6z+znfh0EuVaZuUa8S?=
- =?us-ascii?Q?s9jX6lj4djoChY9aGaiOscqtdbUZmVOqBhTCfBsog0uiA/tFRPggS35zqlwm?=
- =?us-ascii?Q?VJA0SdbFTlGFsZq6uByMwXwRYcrS1dJT+hjt3EcnGTlIcJV/6uZ4kr+T4UkD?=
- =?us-ascii?Q?VmJz6oATqCIe7/vEcWmky6stn++aOoTF80tEZfWUFpruL1tXG9vnUGECoiN9?=
- =?us-ascii?Q?gyNgDUdDOj3g6eE4Ev1ZiZHaF9ACsLwJ0UlyAwmPPiSgjC4KGXf/g7QicRKE?=
- =?us-ascii?Q?WsYvKnzpyhkuwZly9yARGPQYs15LewuGyM0p5Fs56zLv/xV2W9NyY43sjnIN?=
- =?us-ascii?Q?VDoppDwhW8lU+zIHRhoLgosyyEWK/ZBg08C7D1HR4jUP8r36kBvifdGpcJfv?=
- =?us-ascii?Q?Czj+KfiDwfrJPAZ++LdUWYY6lULrhGdRAuJRYR2UJlHy18dx1fgJqoSNFao9?=
- =?us-ascii?Q?QS+3ClGluYPUqWFglPbmCj+aygMpHroh2mEAlnrusefg/BwAKg4IWf1ihFG4?=
- =?us-ascii?Q?64tQkMZRhmAm/ZPiVnUef8uOBjugEEaZGBfodNW820v7tcrVnyc9kTY8UL8B?=
- =?us-ascii?Q?M1xU3A24VICfCZSxTPDl9UrgGidfbF6tAcuAHYuGk2lv+AUb1y9S2U44TOOi?=
- =?us-ascii?Q?VVKX8WZo5L/2Y2OVXo7xUBR8XeWcGM6d0A/HETGJuWBQYO3lNRDtSQ0RbzkV?=
- =?us-ascii?Q?9nGSWWmfludkRYZekzgXhEKJrm0VxIx+Ryituvku45cPGznfuMugJNkKH5aN?=
- =?us-ascii?Q?JbVTl6pp9BKE2EDLdYuKXxTVjkEvqKtcoc2Xjj7O6UvMqRbUU9d/qTbCxq9B?=
- =?us-ascii?Q?1kUrllgdlF1EmghTcUhDCxYAEZPwLypwBy/EmDJ385G+VbQXfxxVT5bA4Bcv?=
- =?us-ascii?Q?2XURYdMLfPX/TK8RC5rxy4QxJ1n8Am9O33/+bsYRcABWMf7eKgGWE+KmzKdD?=
- =?us-ascii?Q?hi4MTCXQYps3GOxqBoLBObkeqeHNhZ3MaWzjXY2URAKqQI1AGLR6YQZnnC2+?=
- =?us-ascii?Q?/OIFgU2bTSUls57bA5Wt3JiUmtmf+2gtZG/+tiYXyWY92IiDwVQN0OAqzcTf?=
- =?us-ascii?Q?OFIggT/IFlRTqfflBgGuOsqZMzcVvJqyAwkjIL64KlGwMjoEnGow6ChjneSd?=
- =?us-ascii?Q?AYySV0k6Es6BS2QmGrv27P/z1ddwh2ijD9cZ3pJjkTIzYx2SamEBCNQhJJT4?=
- =?us-ascii?Q?GWKE/BLR+g7ZPP5pdnHYNCC3qDbmDax/2zj52N5WQytMx+A0y5Thz4lT8CoV?=
- =?us-ascii?Q?Da2Cpr+/8fR6hrlVKbWK8VE=3D?=
-X-OriginatorOrg: in-advantage.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7018330a-5cfb-4c06-7d93-08ddea1c9c9b
-X-MS-Exchange-CrossTenant-AuthSource: DS4PPF3984739DB.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2025 12:31:17.0046
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 48e842ca-fbd8-4633-a79d-0c955a7d3aae
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gK+DnzZcVnc042+6hf86r4ypYJBq98+hpYnbIQaCBnoMVRe1d3A1EE0DCP5xlD9VCs94oRNCrtmcB3afRmrqmYZ59J43tuDUI/W1Udbnquw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4903
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90cd5be7-cbe6-42c5-b0eb-bf9613047097@pankajraghav.com>
 
-Hi Jakub,
-
-On Mon, Sep 01, 2025 at 01:57:12PM -0700, Jakub Kicinski wrote:
-> On Thu, 28 Aug 2025 16:44:52 -0500 Colin Foster wrote:
-> > When the EEPROM MAC is read by way of ADDRH, it can return all 0s the
-> > first time. Subsequent reads succeed.
+On Tue, Sep 02, 2025 at 02:15:42PM +0200, Pankaj Raghav wrote:
+> 
+> On 9/2/25 13:22, Kiryl Shutsemau wrote:
+> > On Tue, Sep 02, 2025 at 10:40:36AM +0200, Pankaj Raghav (Samsung) wrote:
+> >> From: Pankaj Raghav <p.raghav@samsung.com>
+> >>
+> >> split_huge_page_to_list_[to_order](), split_huge_page() and
+> >> try_folio_split() return 0 on success and error codes on failure.
+> >>
+> >> When THP is disabled, these functions return 0 indicating success even
+> >> though an error code should be returned as it is not possible to split a
+> >> folio when THP is disabled.
 > > 
-> > Re-read the ADDRH when this behaviour is observed, in an attempt to
-> > correctly apply the EEPROM MAC address.
-> 
-> Please name the device, and FW version if applicable, on which you
-> observe the issue.
-
-I'll add that to the commit message. FWIW it is the Phytec PCM049 SOM.
-
-> 
-> > Signed-off-by: Colin Foster <colin.foster@in-advantage.com>
-> > ---
-> >  drivers/net/ethernet/smsc/smsc911x.c | 16 ++++++++++++++--
-> >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > Other view is that the page is already split therefore nop.
 > > 
-> > diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
-> > index a2e511912e6a9..63ed221edc00a 100644
-> > --- a/drivers/net/ethernet/smsc/smsc911x.c
-> > +++ b/drivers/net/ethernet/smsc/smsc911x.c
-> > @@ -2162,8 +2162,20 @@ static const struct net_device_ops smsc911x_netdev_ops = {
-> >  static void smsc911x_read_mac_address(struct net_device *dev)
-> >  {
-> >  	struct smsc911x_data *pdata = netdev_priv(dev);
-> > -	u32 mac_high16 = smsc911x_mac_read(pdata, ADDRH);
-> > -	u32 mac_low32 = smsc911x_mac_read(pdata, ADDRL);
-> > +	u32 mac_high16, mac_low32;
-> > +
-> > +	mac_high16 = smsc911x_mac_read(pdata, ADDRH);
-> > +	mac_low32 = smsc911x_mac_read(pdata, ADDRL);
-> > +
-> > +	/*
+> >> Make all these functions return -EINVAL to indicate failure instead of
+> >> 0.
+> >>
+> >> This issue was discovered while experimenting enabling large folios
+> >> without THP and found that returning 0 in these functions is resulting in
+> >> undefined behavior in truncate operations. This change fixes the issue.
+> > 
+> > Could you elaborate on the undefined behaviour? I don't see it.
+> > 
+> > If you argue that this code should not be reachable on !THP config, add
+> > WARN() there. But I don't see a value.
 > 
-> nit: netdev multi-line comment style doesn't place /* on a separate
-> line:
-
-Apologies - that shouldn't have slipped through.
-
-> 	
+> Little bit of context:
 > 
-> > +	 * The first mac_read always returns 0. Re-read it to get the
-> > +	 * full MAC
+> I started investigating what it takes to remove large folio dependency on THP[1][2]
 > 
-> Always? Strange, why did nobody notice until now?
-
-For me it is 100% reproduceable. The first read is always 0. I've added
-delays in case timing was the issue. I've swapped ADDRH and ADDRL and
-the opposite effect happened (where the first four MAC octets were
-zero). Re-reads always succeed.
-
-Without the patch, the last two MAC octets are always zero.
-
-We didn't notice it until we started hooking multiple devices on the
-same network.
-
-If there is anyone else running this hardware, I'd love verification.
-Its an SMSC9221.
-
-That's a long way of saying "I don't know" unfortunately.
-
+> I have some non-upstream changes which enables Large block size (therefore it uses large folios) on
+> systems with !CONFIG_THP.
 > 
-> > +	 */
-> > +	if (mac_high16 == 0) {
-> > +		SMSC_TRACE(pdata, probe, "Re-read MAC ADDRH\n");
-> > +		mac_high16 = smsc911x_mac_read(pdata, ADDRH);
-> > +	}
+> I was hitting a weird stale content read error and finally ended up with this fix.
 > 
-> > 	u8 addr[ETH_ALEN];
-> 
-> Please don't add code in the middle of variable declarations
+> I thought this is a self-contained patch that can already be upstream. My argument is not that this
+> should not be reachable, but returning -EINVAL will do the right thing instead of returning 0, which
+> means success.
 
-Ack.
+Okay, makes sense.
 
-> -- 
-> pw-bot: cr
+In THP=y case, __folio_split() also returns -EINVAL for !large folios,
+but it is not very explicit:
+
+	if (new_order >= folio_order(folio))
+		return -EINVAL;
+
+In THP=y, we also issue warning:
+
+	VM_WARN_ON_ONCE_FOLIO(!folio_test_locked(folio), folio);
+
+Makes sense to do the same here for THP=n. It might help to catch cases
+we do not see with THP=y, like getting non-THP large folios here.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
