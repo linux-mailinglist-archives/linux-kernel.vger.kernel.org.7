@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-797379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A6A4B40F9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:51:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DED9B40FA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 23:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BC8162EE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:51:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964FA1B626BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 21:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6284335AAC9;
-	Tue,  2 Sep 2025 21:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1481D35E4C8;
+	Tue,  2 Sep 2025 21:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="W8xA81rq"
-Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b="Apl2u/dy"
+Received: from exactco.de (exactco.de [176.9.10.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F132B1E51D
-	for <linux-kernel@vger.kernel.org>; Tue,  2 Sep 2025 21:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556092550A3;
+	Tue,  2 Sep 2025 21:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.10.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756849873; cv=none; b=VbYZ2zQkDYr8YsxtAl5KBPBYlmMOPuodD01Mx/GjgxBNEum9Qy2mLUBOzMOndIvG9eRqN/3K2shrQOfMTpWqi6iPaft96QY9fYBwf1GLURs8g8wp4domG6wxH4Gza6dvFsfMAqF5DXaLpXi7Vh3PRElbCweuLBdTZATn/XLwNLo=
+	t=1756849912; cv=none; b=XhpZHeCZkKJHdSj2AegMu1kymtn8OZjP4zkqW5ziF6QQ2hn50aOOSjvU3yVIkTc6SrVHbpSDoy1bKfSdN6DDlE0VqQdwjQL2qD0DZZb5iM/UTWHYJe8Y9Fx0OUgFdZdJkrI6+ziTq4z729EJptcHmEwhQusGcwhhJpajD9TLmvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756849873; c=relaxed/simple;
-	bh=PhgyBskIEFQnUD0P3UgbIXJw3q35eVbCgAjfy2fV/MY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IOmCfgz0pMnoWqeuz4M2cL/0G0CvFszkl+2uGjdKNoWeEXIKsh82/zwu0JWOfioqSSxIcj71yTW9lsA6AFrVCLzTAQY+EG28y+odnkMy5apB9TNetFJ6l+/WFepNns8d+Dq7xcKNYP2EIQWiKd7a5DXXVhAeZBB/bwt6hE03awY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=W8xA81rq; arc=none smtp.client-ip=209.85.166.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-3f65df713fbso656085ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 14:51:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1756849870; x=1757454670; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BwJP/IZ7edcBdODnSS+hYoNQBKWq1HVWg/WApUUDlnU=;
-        b=W8xA81rqhHuqcdr82ohvZKkoxv5DpLIUyrIEu7XE17G5CcZMrO7m/dN0+zDR9XPeCS
-         l0vOGQkD6bn8GD8hGIs2VrvCj8iM67zvCpsZ4a9WJBH2CKjHhBjxPghPsgIxt/fH3387
-         RlJJ171iRGzJJL+NWMXCWGsG1IjkjCDaLzuVM+xiGJC1hMLmRLLPQZOZGr2axv4X7EPQ
-         her/lUa8QWxxj6NrrvOveyU5GXdStfJbQQM6AUwHZj3SMp5sUnSvLmeOq0n8In/nkk3s
-         j/ovH1dgJP3FzbL18mqq5HxSLulrF6ut4gvwHtOfv8eFw2IbagfJrz0+aDvz3dv4einX
-         U7XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756849870; x=1757454670;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BwJP/IZ7edcBdODnSS+hYoNQBKWq1HVWg/WApUUDlnU=;
-        b=nOq3E2FR4A5zjn7uVDzCmfv0cNBQB/jZU3vdVE+u7cCWzn/6QzLckO8d6TWyMfIOHI
-         3tKCs8I2bXWINjQhVwXHt7njtdq49QAfA25N58oYs91+W/0H6mFwQ0fuaibhwV7seOkD
-         /z8iudhiUh4uU8Y98Jxp0A81EUD+Pv27tSLpmQDzqgojXwsqWJtEIT1VL6yPECwUU9D1
-         Y/mfNVWXSwZ+xGn+NXvd/41V1atJ2G7BdaaSz1Qc50cHsl9r64bhzHvV7IuCODn62er3
-         POQWoU4IvRLP9UBbWjOV1Ia1h7J5KUtElGuLIS2KcRwV4L092p/hzAZHLUpyWeGHxa+4
-         1O+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUcsrJCh8hzXW3XyRyf+hZEbkTcHtE3NMkMWxQBrGxIp3fk3D8CNWQg/xyuqlk197grosPV0PFzX3eIOaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4obmPKonO7xfKVaaDVbtQds5/sBONjMcwZw7N6r1gYCxsoIUC
-	WYwlTKctycb4SKYDGuPzELBcHnYoQXSxGK2UoLrVy5t+X9sGO6nj/a/KhjbH102rsWdeMbKMYSo
-	7/HyYQuqZd5AUUak64sxIB7S8P2UHEI3LriZ4BWr26RvIoQl7Bmvw
-X-Gm-Gg: ASbGncsdal/A9hc86L/QQgRL/mW8xmQht9ntQXOhIDsVJSYgmOV6mQSf+DPIqFdHcPx
-	R6sLApLKOluH9pqiU9HvcNyZw1mr4Fhn/nroAXziAHtzvD5Tp2WGiy4WUTIcwZhQnXVHrAtk6iL
-	1QMZZT7H2yAaRYGt/yltcU8Qz2pJw7bJpZJ3ssdGijRIRkzfDp28VXYplSiIzIYKHVbT+LkPTof
-	qt96VDWRIwjPy6GRTtCu02RZ1HEOCQtW2wdoWfSrTC7nBohAbyJ4lZV8EWp8Md9yUHRX6AtUV8J
-	uDVqxS1CI7Veb+nc0IXLV3KLEzCaXqjD/2aXmgSkGAWIyHDIl/u40OnfLg==
-X-Google-Smtp-Source: AGHT+IGXGrDVgLYEPY3DWvVTQ6mI3JQb1xGTMbKSTJm7SLS6h82Apglk08N9OZ2x3i9SZUj1csjceovMtfQz
-X-Received: by 2002:a05:6e02:1d8c:b0:3f1:a5b9:4a3a with SMTP id e9e14a558f8ab-3f3221b05c1mr95335085ab.1.1756849869879;
-        Tue, 02 Sep 2025 14:51:09 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3f3deddbabdsm8385005ab.23.2025.09.02.14.51.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 14:51:09 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 5802D340328;
-	Tue,  2 Sep 2025 15:51:09 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 4FBB1E4159F; Tue,  2 Sep 2025 15:51:09 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring/register: drop redundant submitter_task check
-Date: Tue,  2 Sep 2025 15:51:07 -0600
-Message-ID: <20250902215108.1925105-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1756849912; c=relaxed/simple;
+	bh=kghvhoMMhFMeo39SoLVZhsFTd8dV2oMqT8bh6D7T550=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=taziRyvlehRJP9GaI4PUVBRieR0mpQpIGHytdupX6NTcWdcIKSRzirOkpR4m3dDvVNJlXRlr96ajPLKRjtZ/0+nzml5Y1Yes+nxReYAkLzJ/tKYb437p+VUTFwm0HZqTL1Gvjk7TEVmvmLF2YiOKVkrFiKxr0voUo5jbP+DhL1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.de; spf=pass smtp.mailfrom=exactco.de; dkim=pass (2048-bit key) header.d=exactco.de header.i=@exactco.de header.b=Apl2u/dy; arc=none smtp.client-ip=176.9.10.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exactcode.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exactco.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=exactco.de;
+	s=x; h=Sender:To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:
+	In-Reply-To:From:Subject:Mime-Version:Content-Type:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=4xd3P4pw+1BW58hmfRx8jNfpIWEnDFB/PXNkDo4ENyw=; b=Apl2u/dyl4bcoQS+4RGOaQ8BsP
+	xoSSkZ/P/WKiq4VRLUxXvpl1zUg8oBRX4MIZulHF16tW/NH5TteLWSLMc+FaPLYfvyr+fePkplLtw
+	TR+EWJ9865xzcc2D2Gg9a9Zg6CjP1fQJ2vKEEoZeumT/FXa2yavBj+muQK3vG2905updK2RkqIwxt
+	3IeAN8v9mfC6WSutNsNLjQx8B5BJSfQak1BQGl9Km6DZteasht497GojZnOXOcMPyd19Tmk/8TRMA
+	UKZ2Igiq/A7Gs00VGnHR/o0R5PipcvH/uJv+0KOXRe5FR3UDakwIxP/UyPOOtPmdCh7m0WfVFaLBZ
+	UGjY+u+w==;
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH 3/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for Niagara
+From: =?utf-8?Q?Ren=C3=A9_Rebe?= <rene@exactcode.de>
+In-Reply-To: <1d32418278ac11e4a2f65c8b6bcd4c90143a1451.camel@physik.fu-berlin.de>
+Date: Tue, 2 Sep 2025 23:51:40 +0200
+Cc: Rene Rebe <rene@exactcode.com>,
+ kernel@mkarcher.dialup.fu-berlin.de,
+ linux-kernel@vger.kernel.org,
+ sparclinux@vger.kernel.org,
+ andreas@gaisler.com,
+ anthony.yznaga@oracle.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A7C1772C-FBB1-49B0-B942-5D4D6F3376D8@exactcode.de>
+References: <20250826160312.2070-4-kernel@mkarcher.dialup.fu-berlin.de>
+ <20250902.184011.440504961051160142.rene@exactcode.com>
+ <cf4e16f7846a3324521828e71c0676b9c524ebbf.camel@physik.fu-berlin.de>
+ <20250902.185101.101005511917098882.rene@exactcode.com>
+ <1d32418278ac11e4a2f65c8b6bcd4c90143a1451.camel@physik.fu-berlin.de>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+Sender: rene@exactco.de
 
-For IORING_SETUP_SINGLE_ISSUER io_ring_ctx's, io_register_resize_rings()
-checks that the current task is the ctx's submitter_task. However, its
-caller __io_uring_register() already checks this. Drop the redundant
-check in io_register_resize_rings().
+Hi,
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- io_uring/register.c | 4 ----
- 1 file changed, 4 deletions(-)
+> On 2. Sep 2025, at 18:53, John Paul Adrian Glaubitz =
+<glaubitz@physik.fu-berlin.de> wrote:
+>=20
+> On Tue, 2025-09-02 at 18:51 +0200, Rene Rebe wrote:
+>> From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+>>=20
+>>> Hi Rene,
+>>>=20
+>>> On Tue, 2025-09-02 at 18:40 +0200, Rene Rebe wrote:
+>>>> Hi,
+>>>>=20
+>>>> From: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+>>>>=20
+>>>>> Fixes: 7ae3aaf53f16 ("sparc64: Convert NGcopy_{from,to}_user to =
+accurate exception reporting.")
+>>>>> Signed-off-by: Michael Karcher =
+<kernel@mkarcher.dialup.fu-berlin.de>
+>>>>=20
+>>>> Tested-by: Ren=C3=A9 Rebe <rene@exactcode.com> # UltraSparc T4 =
+SPARC T4-1 Server
+>>>=20
+>>> Thanks for the testing! However, this actually needs to be tested on =
+a SPARC T1
+>>> as both T2 and T4 have their own implementation that is being used. =
+Testing on a
+>>> T4 will therefore not invoke this particular code unless you modify =
+the kernel in
+>>> head_64.S to employ the Niagara 1 code on Niagara 4.
+>>=20
+>> Ah right, sorry, IIRC you wrote that :-/
+>>=20
+>>> Do you happen to have a SPARC T1?
+>>=20
+>> Unfortuantely not. A T2 user might have one, but I could also modify
+>> the kernel and use the less optimized T1 code if that helps, ...
+>=20
+> I have done that already to test the Niagara 1 code on Niagara 4.
+>=20
+> However, it would be nice to test on a real T1. Unfortunately, I =
+haven't found
+> anyone yet who got one. If you could ask your users, that would be =
+great.
+>=20
+> Otherwise, we will have to go with the current level of testing.
 
-diff --git a/io_uring/register.c b/io_uring/register.c
-index a1a9b2884eae..aa5f56ad8358 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -406,14 +406,10 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	size_t size, sq_array_offset;
- 	unsigned i, tail, old_head;
- 	struct io_uring_params p;
- 	int ret;
- 
--	/* for single issuer, must be owner resizing */
--	if (ctx->flags & IORING_SETUP_SINGLE_ISSUER &&
--	    current != ctx->submitter_task)
--		return -EEXIST;
- 	/* limited to DEFER_TASKRUN for now */
- 	if (!(ctx->flags & IORING_SETUP_DEFER_TASKRUN))
- 		return -EINVAL;
- 	if (copy_from_user(&p, arg, sizeof(p)))
- 		return -EFAULT;
--- 
-2.45.2
+In case someone has a T1 or M8 in their basement -or otherwise likes to =
+test new things-
+here is the current WIP pre-release build with basically everything as =
+up-to-date as possible=20
+and the patches included:
+
+	=
+https://dl.t2sde.org/binary/2025/incoming/t2-25.9-sparc64-base-wayland-gli=
+bc-gcc-ultrasparc3.iso
+
+the .d directory has the content for cherry picking. Even latest Firefox =
+142 works (at least it did last
+week when I patched and tested it ;-)
+
+	Ren=C3=A9
+
+> Adrian
+>=20
+> --=20
+> .''`.  John Paul Adrian Glaubitz
+> : :' :  Debian Developer
+> `. `'   Physicist
+>  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+
+--=20
+https://exactco.de - https://t2linux.com - https://rene.rebe.de
 
 
