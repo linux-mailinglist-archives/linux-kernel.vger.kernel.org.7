@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-795435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-795436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CDBB3F204
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB433B3F207
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 03:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79437B0448
-	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:49:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 707D97A2C20
+	for <lists+linux-kernel@lfdr.de>; Tue,  2 Sep 2025 01:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC852E0407;
-	Tue,  2 Sep 2025 01:51:05 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C071E47CA;
-	Tue,  2 Sep 2025 01:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6452DECD3;
+	Tue,  2 Sep 2025 01:54:01 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36951E47CA;
+	Tue,  2 Sep 2025 01:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756777864; cv=none; b=OWL3klHRSUBdp3Om2FB9s8TpT+Oc+WSD/AOMcsF6MdiMy1QK01fQkEoKtkAEkBm0HE18GfcOjOf15r+QWCcCzR4HJEpZFQyoHmsZR136iAeG2IkyREQ3l214o/ibN7P7J9XXqhtGGmqlBEUOBZe/hv/dqWJi1bqsOER1QOmxSF4=
+	t=1756778040; cv=none; b=Ebk/WUXc/FXag8uNFWcjfdIJwBQcEZaNmVi8UMD80M3eSY4PMlv6IvtdULidQ72YTiYY8/jdkAYpT8He2nQkdLyOgqQrxnyo/vMFz4heOH4c2ZQXTsvxJUbkX4/7I+C43LvmmNHOWlVr79sljQjCFyXpj84XeRGBXLS6hPZ/pYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756777864; c=relaxed/simple;
-	bh=eZHqbM0sZ45R7Sy9LTRYFYVLH5mQq+QL7Px/R1t57XQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=eRFslI4CrsU0PvaFiDPtYIPeK13Qv/fvuVZ5gB6nvpDHl3SqL7theoiKXNBj5NPAFbj3bItlqRV6KmorObHB7ynwJSo7Wti0Lub844wQGF/Md8wz/SxX3RWQTvPVJrWnJPp3McS6fwuPlk3/vyRvC3cZFu9Q+JkpjB20StHYZsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cG7xX5VrVzYQvJ1;
-	Tue,  2 Sep 2025 09:50:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 434AA1A0ADF;
-	Tue,  2 Sep 2025 09:50:55 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8Y16TbZoqjtfBA--.16323S3;
-	Tue, 02 Sep 2025 09:50:52 +0800 (CST)
-Subject: Re: [PATCH RFC v3 00/15] block: fix disordered IO in the case
- recursive split
-To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- hch@infradead.org, colyli@kernel.org, hare@suse.de, dlemoal@kernel.org,
- tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
- song@kernel.org, kmo@daterainc.com, satyat@google.com, ebiggers@google.com,
- neil@brown.name, akpm@linux-foundation.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
- <5b3a5bed-939f-4402-aafd-f7381cd46975@acm.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <130482e9-8363-6051-5fc6-549cf9aad57b@huaweicloud.com>
-Date: Tue, 2 Sep 2025 09:50:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756778040; c=relaxed/simple;
+	bh=gGEDpj6HPGF0l1sbEdpfZZM84prvLrTBZm/HP3/S58Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kktqwYcaO3tCP/KX5sd17JhH0I22GzFCgnfllpzEKuIZS1qEGuBvJlEdkbU0xoA5S8eO0qRu93fK8FuQbeTG+X5khsFb3afZR/eUIi4wCjRl9z1qsLdPWZygB7J33OBQvNN0Yn7zxzrTCbzJopyZGVzaKkaMaz9vqVyWD3K/dQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=4.193.249.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [106.117.98.8])
+	by mtasvr (Coremail) with SMTP id _____wAnxUEnTrZor3fHAQ--.12749S3;
+	Tue, 02 Sep 2025 09:53:44 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [106.117.98.8])
+	by mail-app4 (Coremail) with SMTP id zi_KCgCnX4YjTrZoq5OQAQ--.63161S2;
+	Tue, 02 Sep 2025 09:53:42 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	mchehab@kernel.org,
+	hverkuil@kernel.org,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH] media: i2c: ADV7604: Remove redundant cancel_delayed_work in probe
+Date: Tue,  2 Sep 2025 09:53:37 +0800
+Message-Id: <20250902015337.9859-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5b3a5bed-939f-4402-aafd-f7381cd46975@acm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8Y16TbZoqjtfBA--.16323S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruFyrKF1fKFWrtryxWr1UAwb_yoWfXwb_Cw
-	s8Aa4DtrWxJanaka1xCF1rArWrKFy5Xr4jq34Utr1xWw13JF90qa18ursay3W3GFyxCrnx
-	X3y7u39Yy3yIqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CM-TRANSID:zi_KCgCnX4YjTrZoq5OQAQ--.63161S2
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwYRAWi19vkBWgALsX
+X-CM-DELIVERINFO: =?B?xMDjrQXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR19Wu3Q25TIbbUMQ/9pZDEnIrPP8aAAJ4kuICFgKPi+roAoasCVCw+AxjFHzeievyJFTu
+	wR6DnTMlXT12UQqCyG6iTNmIpu95OLp9IERyT45jDwY56RGLUPGhweUz95T4gg==
+X-Coremail-Antispam: 1Uk129KBj93XoW7tF4DXF13JryDtFW7uFyDArc_yoW8XF13pF
+	Zxur9Y93yUJ3WUZa9Fq3W2gF95Cwsrt3yUCFZ0qayxXrnYyFy29F1rKFW8tFs7ArWUA3W2
+	vr4jqa9rWFZ8CFcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
+	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
+	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
+	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
+	WUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
+	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
+	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
+	vjxU26pBDUUUU
 
-Hi,
+The delayed_work delayed_work_enable_hotplug is initialized with
+INIT_DELAYED_WORK() in adv76xx_probe(), but it is never scheduled
+anywhere in the probe function.
 
-在 2025/09/01 22:09, Bart Van Assche 写道:
-> On 8/31/25 8:32 PM, Yu Kuai wrote:
->> This set is just test for raid5 for now, see details in patch 9;
-> 
-> Does this mean that this patch series doesn't fix reordering caused by
-> recursive splitting for zoned block devices? A test case that triggers
-> an I/O error is available here:
-> https://lore.kernel.org/linux-block/a8a714c7-de3d-4cc9-8c23-38b8dc06f5bb@acm.org/ 
-> 
-I'll try this test.
+Calling cancel_delayed_work() on a work that has never been
+scheduled is redundant and unnecessary, as there is no pending
+work to cancel.
 
-zoned block device is bypassed in patch 14 by:
+Remove the redundant cancel_delayed_work() from error handling
+path and adjust the goto label accordingly to simplify the code
+and avoid potential confusion.
 
-+		if (split && !bdev_is_zoned(bio->bi_bdev))
-+			bio_list_add_head(&current->bio_list[0], bio);
+Fixes: 54450f591c99 ("[media] adv7604: driver for the Analog Devices ADV7604 video decoder")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+---
+ drivers/media/i2c/adv7604.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-If I can find a reporducer for zoned block, and verify that recursive
-split can be fixed as well, I can remove the checking for zoned devices
-in the next verison.
-
-Thanks,
-Kuai
-
-> 
-> I have not yet had the time to review this patch series but plan to take
-> a look soon.
-> 
-> Thanks,
-> 
-> Bart.
-> .
-> 
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index afed38596362..522f8181d23d 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -3670,7 +3670,7 @@ static int adv76xx_probe(struct i2c_client *client)
+ 	err = media_entity_pads_init(&sd->entity, state->source_pad + 1,
+ 				state->pads);
+ 	if (err)
+-		goto err_work_queues;
++		goto err_i2c;
+ 
+ 	/* Configure regmaps */
+ 	err = configure_regmaps(state);
+@@ -3711,8 +3711,6 @@ static int adv76xx_probe(struct i2c_client *client)
+ 
+ err_entity:
+ 	media_entity_cleanup(&sd->entity);
+-err_work_queues:
+-	cancel_delayed_work(&state->delayed_work_enable_hotplug);
+ err_i2c:
+ 	adv76xx_unregister_clients(state);
+ err_hdl:
+-- 
+2.34.1
 
 
