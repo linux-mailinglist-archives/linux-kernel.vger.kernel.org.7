@@ -1,630 +1,234 @@
-Return-Path: <linux-kernel+bounces-798574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98D7B42004
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EC8B41F99
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F255E41B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:52:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8F3D178C4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE6F30DEB9;
-	Wed,  3 Sep 2025 12:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72840194C96;
+	Wed,  3 Sep 2025 12:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KDCHjsqz"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Idrf0T4V";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WAZz2a5e";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Idrf0T4V";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WAZz2a5e"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66AD30DD34;
-	Wed,  3 Sep 2025 12:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BE52FE56B
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756903698; cv=none; b=P8RkXi0lX4D/qDSWRC3VT8mp5HLeIiph8ezzEQ4blu6GV9UAtbf3F0AgBIZXJOolpNRMkczJk2g7eTptLBruTcudz/bAj0nPzTZRfTsMGxWnl2PXrO6bfP5qh3+UirsOLbin+3TC0x+j4Egxx6j1zj9Ig7CoJMtKlJnKzSnzJCM=
+	t=1756903652; cv=none; b=jCxCqGPlf8MW/8gtS8zUADVcrQDc9PULanbJUWygxybzdtdsmDvNSFYZ1Dvk0kKgOgLR/ORb0+Wx5b2XKb22DO9lzTK0l92DPpzG8qRjLqB5osprwcvGVz2YFp7ujn+B6ZCXpL1JlONojldeyk7qecOa0GjhZ0+Bo12ERCTWGwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756903698; c=relaxed/simple;
-	bh=cqH0VxNb5n7kxL+3crRI7+cRuPrafE9H8Exy5gWNGZI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q9bO97k0y1mYbP48O4H0icusEvemG0R4T2zK7zthYbQI8px9qMIZD2euiNZIge+LmvWuiqVzEDZq3qyFdH6Hfn6YpN/DL28MaMboiZscAekERvJ1zH1UeXuGfSrMD1wHdF+nRFHaGivbbh2e/qAlkkMNe1Apc7P2agK6vGvRf/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KDCHjsqz; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 37A474E40C0A;
-	Wed,  3 Sep 2025 12:48:14 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 10C8F606C3;
-	Wed,  3 Sep 2025 12:48:14 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E61C01C22D6E3;
-	Wed,  3 Sep 2025 14:48:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756903693; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9DyI7fqJU5vfPrO1NrCHiyZ+Zl33oMOjd4I66nyHHWA=;
-	b=KDCHjsqzqlPsp8N0CZmjWjfBpxCLf8bVRqKDtAYxdKIClcvSyoe/mcLiuAT7o/608D4KCi
-	DxW/ukwX+Rc7ULCN4dtltj67anmHkFeAh9SzXJ7f/FhfyEqQBgozrAIHJoWwsDKYHIL2ma
-	wE4e/TdR+nBOtXuIAXgPj3qzr5D6Hxdv+6hKqzMCZPW7Ch8Qs5Ke96Hz+oQ8jVNoz3LqVA
-	Esc7UOCryEXzYT8owFvIYslIRRh0pTiErPgFW73N8TnnHN0irtX+yt3XEszWel15spGZ3Y
-	NoBsZFkxI9GG6SotXNiD/P4g8Ba8ILWcgrtuYT/d7c0ikYlFmXYWK/acuSnMRg==
-From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-Date: Wed, 03 Sep 2025 14:47:26 +0200
-Subject: [PATCH 19/19] clk: eyeq: add eyeQ7H compatibles
+	s=arc-20240116; t=1756903652; c=relaxed/simple;
+	bh=qcKnv+9lkAyhQqiR+z4bsHp2+IqBg0nN5rZnQ4atnWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hi4F+mj92u17J8oeZywdo5kc+dxprEM206usYt5mzJCq7bz9UgXHl74nKgvCIMBUpUmhIUrP7L1MAxr5f+KvdwNdXBalUuSb3gKa9rpsWWREf5vfFSwK4v+qIr2sFT09Rkn16xJK7VC6Dk5urO3SZ/nNdAylb+7J0wj/v+VMSyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Idrf0T4V; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WAZz2a5e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Idrf0T4V; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WAZz2a5e; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BD56D211A7;
+	Wed,  3 Sep 2025 12:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756903648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OKDLo2U6wbZmGQq3JLrc2as1Kfyo9X875klaxHPtp1I=;
+	b=Idrf0T4VqKTntXRozIlmr4GI3JLoXycvFaV2uWpOTnXDCMsVmlLl/W2ZqYYVj6Ui7JvG4e
+	6GWqt1HM2Yi3wVuhrkd2xMV2uX9lSGk6dosLytSqNiyBoNzPG2abm5outxoihR2b7JuWoU
+	EZ+Vp/30/MGRd5xoehmVoKPuOZCxcgg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756903648;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OKDLo2U6wbZmGQq3JLrc2as1Kfyo9X875klaxHPtp1I=;
+	b=WAZz2a5eznf/jwAWDExdbBvi3kfFLd/PXdRK137e98aTHgqvQAQ0cyNzf3ohDvoei0lHK0
+	PyT0PtWqslJ8bdAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Idrf0T4V;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WAZz2a5e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756903648; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OKDLo2U6wbZmGQq3JLrc2as1Kfyo9X875klaxHPtp1I=;
+	b=Idrf0T4VqKTntXRozIlmr4GI3JLoXycvFaV2uWpOTnXDCMsVmlLl/W2ZqYYVj6Ui7JvG4e
+	6GWqt1HM2Yi3wVuhrkd2xMV2uX9lSGk6dosLytSqNiyBoNzPG2abm5outxoihR2b7JuWoU
+	EZ+Vp/30/MGRd5xoehmVoKPuOZCxcgg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756903648;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OKDLo2U6wbZmGQq3JLrc2as1Kfyo9X875klaxHPtp1I=;
+	b=WAZz2a5eznf/jwAWDExdbBvi3kfFLd/PXdRK137e98aTHgqvQAQ0cyNzf3ohDvoei0lHK0
+	PyT0PtWqslJ8bdAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A69AA13888;
+	Wed,  3 Sep 2025 12:47:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jS1YKOA4uGhdNAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 03 Sep 2025 12:47:28 +0000
+Message-ID: <814c7054-3a43-4190-893f-22e074dc93cd@suse.cz>
+Date: Wed, 3 Sep 2025 14:47:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250903-clk-eyeq7-v1-19-3f5024b5d6e2@bootlin.com>
-References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
-In-Reply-To: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Sari Khoury <sari.khoury@mobileye.com>, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 08/10] mm, vma: use percpu sheaves for vm_area_struct
+ cache
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
+ <20250827-slub-percpu-caches-v6-8-f0f775a3f73f@suse.cz>
+ <195d00ab-5429-48ff-b5dd-a45b26cd9ea9@lucifer.local>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <195d00ab-5429-48ff-b5dd-a45b26cd9ea9@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,oracle.com,gentwo.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: BD56D211A7
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-Add the entries for the 14 Other Logic Blocks found in the eyeQ7H SoC. The
-clock tree is more complex than the previous generation of SoC, as some
-OLB depend on the clock output of other OLB instead of all referring to
-the main oscillator.
+On 9/2/25 13:13, Lorenzo Stoakes wrote:
+> On Wed, Aug 27, 2025 at 10:26:40AM +0200, Vlastimil Babka wrote:
+>> Create the vm_area_struct cache with percpu sheaves of size 32 to
+>> improve its performance.
+>>
+>> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>>  mm/vma_init.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/mm/vma_init.c b/mm/vma_init.c
+>> index 8e53c7943561e7324e7992946b4065dec1149b82..52c6b55fac4519e0da39ca75ad018e14449d1d95 100644
+>> --- a/mm/vma_init.c
+>> +++ b/mm/vma_init.c
+>> @@ -16,6 +16,7 @@ void __init vma_state_init(void)
+>>  	struct kmem_cache_args args = {
+>>  		.use_freeptr_offset = true,
+>>  		.freeptr_offset = offsetof(struct vm_area_struct, vm_freeptr),
+>> +		.sheaf_capacity = 32,
+> 
+> This breaks the VMA tests.
+> 
+> Please also update tools/testing/vma/vma_internal.h to add this field
+> (probably actually at the commit that adds the field in mainline :P)
 
-The OLB south, east and west generate those reference clocks used by
-other blocks. They also use the reference clock internally. To avoid
-creating a reference loop, we register those reference clocks early then
-refer to them at probe time. This is the same approach that is used for
-the clocks of the eyeQ5 OLB. The reference clock provided by OLB south
-is named "ref_100p0", "ref_106p6_e" by OLB east and "ref_106p6_w" by
-OLB west.
+Thanks, one of Liam's patches to support maple tree tests with sheaves does
+that, we somehow missed that the vma test also needs it so will reorder
+accordingly.
+> I do wish we could have these tests be run by a bot :/ seems today I am
+> that bot :)
+Sorry :)
 
-For the OLB with a single parent clock, We use the same logic as the
-blocks found in previous SoC and refer to it with the implied name
-"ref".
-
-The OLB with two parent clocks use the reference clock names provided
-by the OLB south, east and west and the main oscillator as "ref".
-
-The reset controllers found is 11 of the OLB are declared as auxiliary
-device attached to the clock device.
-
-Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
----
- drivers/clk/clk-eyeq.c | 495 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 495 insertions(+)
-
-diff --git a/drivers/clk/clk-eyeq.c b/drivers/clk/clk-eyeq.c
-index 8d5e194215e9d3d13b334a5ebf004499050e84b9..b9437003024fd0766fb1bd5d3e4916263f9cc854 100644
---- a/drivers/clk/clk-eyeq.c
-+++ b/drivers/clk/clk-eyeq.c
-@@ -824,6 +824,464 @@ static const struct eqc_match_data eqc_eyeq6h_acc_match_data = {
- 	.reset_auxdev_name = "reset_acc",
- };
- 
-+/* Required early as reference for other PLL in OLB south */
-+static const struct eqc_pll eqc_eyeq7h_south_early_plls[] = {
-+	{ EQ7HC_SOUTH_PLL_100P0, "pll-100p0", 0x40, EQC_PLL_JFRACR },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_south_early_fixed_factors[] = {
-+	{ EQ7HC_SOUTH_DIV_REF_100P0, "ref_100p0", 1, 48, EQ7HC_SOUTH_PLL_100P0 },
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_south_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_SOUTH_PLL_XSPI, "pll-xspi",  0x10, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_SOUTH_PLL_VDIO, "pll-vdio",  0x18, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_SOUTH_PLL_PER,  "pll-per-s", 0x20, EQC_PLL_AINTP, "ref_100p0" },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_south_fixed_factors[] = {
-+	{ EQ7HC_SOUTH_DIV_VDO_DSI_SYS,    "vdo_dsi_sys",      1, 9,   EQ7HC_SOUTH_PLL_100P0,
-+	  "pll-100p0" },
-+	{ EQ7HC_SOUTH_DIV_PMA_CMN_REF,    "pma_cmn_ref",      1, 48,  EQ7HC_SOUTH_PLL_100P0,
-+	  "pll-100p0" },
-+	{ EQ7HC_SOUTH_DIV_REF_UFS,        "ref_ufs",          1, 250, EQ7HC_SOUTH_PLL_100P0,
-+	  "pll-100p0" },
-+	{ EQ7HC_SOUTH_DIV_XSPI_SYS,       "xspi_sys",         1, 8,   EQ7HC_SOUTH_PLL_XSPI },
-+	{ EQ7HC_SOUTH_DIV_XSPI_MBITS,     "xspi_mbits",       1, 8,   EQ7HC_SOUTH_PLL_XSPI },
-+	{ EQ7HC_SOUTH_DIV_NOC_S,          "noc_s",            1, 2,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_PCIE_SYS,       "pcie_sys",         1, 4,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_PCIE_SYS_MBITS, "pcie_sys_mbits",   1, 4,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_PCIE_GBE_PHY,   "pcie_gbe_phy_apb", 1, 16,  EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_UFS_CORE,       "ufs_core",         1, 8,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_UFS_SMS,        "ufs_sms",          1, 5,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_UFS_ROM_SMS,    "ufs_rom_sms",      1, 5,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_ETH_SYS,        "eth_sys",          1, 8,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_ETH_MBITS,      "eth_mbits",        1, 8,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_CFG_S,          "cfg_s",            1, 8,   EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_TSU,            "tsu",              1, 64,  EQ7HC_SOUTH_PLL_PER },
-+	{ EQ7HC_SOUTH_DIV_VDIO,           "vdio",             1, 4,   EQ7HC_SOUTH_PLL_VDIO },
-+	{ EQ7HC_SOUTH_DIV_VDIO_CORE,      "vdio_core",        1, 4,   EQ7HC_SOUTH_PLL_VDIO },
-+	{ EQ7HC_SOUTH_DIV_VDIO_CORE_MBIT, "vdio_core_mbit",   1, 4,   EQ7HC_SOUTH_PLL_VDIO },
-+	{ EQ7HC_SOUTH_DIV_VDO_CORE_MBITS, "vdo_core_mbits",   1, 4,   EQ7HC_SOUTH_PLL_VDIO },
-+	{ EQ7HC_SOUTH_DIV_VDO_P,          "vdo_p",            1, 40,  EQ7HC_SOUTH_PLL_VDIO },
-+	{ EQ7HC_SOUTH_DIV_VDIO_CFG,       "vdio_cfg",         1, 150, EQ7HC_SOUTH_PLL_VDIO },
-+	{ EQ7HC_SOUTH_DIV_VDIO_TXCLKESC,  "vdio_txclkesc",    1, 8,   EQ7HC_SOUTH_PLL_VDIO },
-+};
-+
-+static const struct eqc_early_match_data eqc_eyeq7h_south_early_match_data __initconst = {
-+	.early_pll_count	= ARRAY_SIZE(eqc_eyeq7h_south_early_plls),
-+	.early_plls		= eqc_eyeq7h_south_early_plls,
-+
-+	.early_fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_south_early_fixed_factors),
-+	.early_fixed_factors		= eqc_eyeq7h_south_early_fixed_factors,
-+
-+	.late_clk_count		= ARRAY_SIZE(eqc_eyeq7h_south_plls) +
-+				  ARRAY_SIZE(eqc_eyeq7h_south_fixed_factors),
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_south_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_south_plls),
-+	.plls		= eqc_eyeq7h_south_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_south_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_south_fixed_factors,
-+
-+	.reset_auxdev_name = "reset_south",
-+
-+	.early_clk_count = ARRAY_SIZE(eqc_eyeq7h_south_early_plls) +
-+			   ARRAY_SIZE(eqc_eyeq7h_south_early_fixed_factors),
-+};
-+
-+/* Required early as reference for other PLL in OLB east */
-+static const struct eqc_pll eqc_eyeq7h_east_early_plls[] = {
-+	{ EQ7HC_EAST_PLL_106P6, "pll-106p6-e", 0x0, EQC_PLL_JFRACR },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_east_early_fixed_factors[] = {
-+	{ EQ7HC_EAST_DIV_REF_106P6, "ref_106p6_e", 1, 40, EQ7HC_EAST_PLL_106P6 },
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_east_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_EAST_PLL_NOC, "pll-noc-e", 0x30, EQC_PLL_AINTP, "ref_106p6_e" },
-+	{ EQ7HC_EAST_PLL_ISP, "pll-isp",   0x38, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_EAST_PLL_VEU, "pll-veu",   0x40, EQC_PLL_AINTP, "ref_100p0" },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_east_fixed_factors[] = {
-+	{ EQ7HC_EAST_DIV_REF_DDR_PHY, "ref_ddr_phy_e", 1, 2,  EQ7HC_EAST_PLL_106P6, "pll-106p6-e" },
-+	{ EQ7HC_EAST_DIV_CORE,        "core_e",        1, 2,  EQ7HC_EAST_PLL_NOC },
-+	{ EQ7HC_EAST_DIV_CORE_MBITS,  "core_mbits_e",  1, 2,  EQ7HC_EAST_PLL_NOC },
-+	{ EQ7HC_EAST_DIV_ISRAM_MBITS, "isram_mbits_e", 1, 2,  EQ7HC_EAST_PLL_NOC },
-+	{ EQ7HC_EAST_DIV_CFG,         "cfg_e",         1, 4,  EQ7HC_EAST_PLL_NOC },
-+	{ EQ7HC_EAST_DIV_VEU_CORE,    "veu_core",      1, 4,  EQ7HC_EAST_PLL_VEU },
-+	{ EQ7HC_EAST_DIV_VEU_MBITS,   "veu_mbits",     1, 4,  EQ7HC_EAST_PLL_VEU },
-+	{ EQ7HC_EAST_DIV_VEU_OCP,     "veu_ocp",       1, 16, EQ7HC_EAST_PLL_VEU },
-+	{ EQ7HC_EAST_DIV_LBITS,       "lbits_e",       1, 48, EQ7HC_EAST_PLL_ISP },
-+	{ EQ7HC_EAST_DIV_ISP0_CORE,   "isp0_core",     1, 2,  EQ7HC_EAST_PLL_ISP },
-+};
-+
-+static const struct eqc_early_match_data eqc_eyeq7h_east_early_match_data __initconst = {
-+	.early_pll_count	= ARRAY_SIZE(eqc_eyeq7h_east_early_plls),
-+	.early_plls		= eqc_eyeq7h_east_early_plls,
-+
-+	.early_fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_east_early_fixed_factors),
-+	.early_fixed_factors		= eqc_eyeq7h_east_early_fixed_factors,
-+
-+	.late_clk_count		= ARRAY_SIZE(eqc_eyeq7h_east_plls) +
-+	ARRAY_SIZE(eqc_eyeq7h_east_fixed_factors),
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_east_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_east_plls),
-+	.plls		= eqc_eyeq7h_east_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_east_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_east_fixed_factors,
-+
-+	.reset_auxdev_name = "reset_east",
-+
-+	.early_clk_count = ARRAY_SIZE(eqc_eyeq7h_east_early_plls) +
-+	ARRAY_SIZE(eqc_eyeq7h_east_early_fixed_factors),
-+};
-+
-+/* Required early as reference for other PLL in OLB west */
-+static const struct eqc_pll eqc_eyeq7h_west_early_plls[] = {
-+	{ EQ7HC_WEST_PLL_106P6, "pll-106p6-w", 0x0, EQC_PLL_JFRACR },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_west_early_fixed_factors[] = {
-+	{ EQ7HC_WEST_DIV_REF_106P6, "ref_106p6_w", 1, 40, EQ7HC_WEST_PLL_106P6 },
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_west_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_WEST_PLL_NOC, "pll-noc-w", 0x30, EQC_PLL_AINTP, "ref_106p6_w" },
-+	{ EQ7HC_WEST_PLL_GPU, "pll-gpu",   0x38, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_WEST_PLL_SSI, "pll-ssi",   0x40, EQC_PLL_AINTP, "ref_100p0" },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_west_fixed_factors[] = {
-+	{ EQ7HC_WEST_DIV_GPU,            "gpu",            1, 2,  EQ7HC_WEST_PLL_GPU },
-+	{ EQ7HC_WEST_DIV_GPU_MBITS,      "gpu_mbits",      1, 2,  EQ7HC_WEST_PLL_GPU },
-+	{ EQ7HC_WEST_DIV_LBITS,          "lbits_w",        1, 40, EQ7HC_WEST_PLL_GPU },
-+	{ EQ7HC_WEST_DIV_MIPS_TIMER,     "mips_timer",     1, 24, EQ7HC_WEST_PLL_SSI },
-+	{ EQ7HC_WEST_DIV_SSI_CORE,       "ssi_core",       1, 2,  EQ7HC_WEST_PLL_SSI },
-+	{ EQ7HC_WEST_DIV_SSI_CORE_MBITS, "ssi_core_mbits", 1, 2,  EQ7HC_WEST_PLL_SSI },
-+	{ EQ7HC_WEST_DIV_SSI_ROM,        "ssi_rom",        1, 8,  EQ7HC_WEST_PLL_SSI },
-+	{ EQ7HC_WEST_DIV_SSI_ROM_MBITS,  "ssi_rom_mbits",  1, 8,  EQ7HC_WEST_PLL_SSI },
-+	{ EQ7HC_WEST_DIV_REF_DDR_PHY,    "ref_ddr_phy_w",  1, 2,  EQ7HC_WEST_PLL_106P6,
-+	  "pll-106p6-w" },
-+	{ EQ7HC_WEST_DIV_CORE,           "core_w",         1, 2,  EQ7HC_WEST_PLL_NOC },
-+	{ EQ7HC_WEST_DIV_CORE_MBIT,      "core_mbit_w",    1, 2,  EQ7HC_WEST_PLL_NOC },
-+	{ EQ7HC_WEST_DIV_CFG,            "cfg_w",          1, 4,  EQ7HC_WEST_PLL_NOC },
-+	{ EQ7HC_WEST_DIV_CAU,            "cau_w",          1, 8,  EQ7HC_WEST_PLL_NOC },
-+	{ EQ7HC_WEST_DIV_CAU_MBITS,      "cau_mbits_w",    1, 8,  EQ7HC_WEST_PLL_NOC },
-+};
-+
-+static const struct eqc_early_match_data eqc_eyeq7h_west_early_match_data __initconst = {
-+	.early_pll_count	= ARRAY_SIZE(eqc_eyeq7h_west_early_plls),
-+	.early_plls		= eqc_eyeq7h_west_early_plls,
-+
-+	.early_fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_west_early_fixed_factors),
-+	.early_fixed_factors		= eqc_eyeq7h_west_early_fixed_factors,
-+
-+	.late_clk_count		= ARRAY_SIZE(eqc_eyeq7h_west_plls) +
-+				  ARRAY_SIZE(eqc_eyeq7h_west_fixed_factors),
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_west_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_west_plls),
-+	.plls		= eqc_eyeq7h_west_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_west_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_west_fixed_factors,
-+
-+	.reset_auxdev_name = "reset_west",
-+
-+	.early_clk_count = ARRAY_SIZE(eqc_eyeq7h_west_early_plls) +
-+			   ARRAY_SIZE(eqc_eyeq7h_west_early_fixed_factors),
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_periph_east_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_PERIPH_EAST_PLL_PER, "pll-periph_east_per", 0x0, EQC_PLL_AINTP },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_periph_east_fixed_factors[] = {
-+	{ EQ7HC_PERIPH_EAST_DIV_PER, "periph_e", 1, 10, EQ7HC_PERIPH_EAST_PLL_PER },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_periph_east_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_periph_east_plls),
-+	.plls		= eqc_eyeq7h_periph_east_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_periph_east_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_periph_east_fixed_factors,
-+
-+	.reset_auxdev_name = "reset_periph_east",
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_periph_west_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_PERIPH_WEST_PLL_PER, "pll-periph_west_per", 0x0, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_PERIPH_WEST_PLL_I2S, "pll-periph_west_i2s", 0x4, EQC_PLL_AINTP, "ref_106p6_w" },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_periph_west_fixed_factors[] = {
-+	{ EQ7HC_PERIPH_WEST_DIV_PER, "periph_w",         1, 10, EQ7HC_PERIPH_WEST_PLL_PER },
-+	{ EQ7HC_PERIPH_WEST_DIV_I2S, "periph_i2s_ser_w", 1, 100, EQ7HC_PERIPH_WEST_PLL_I2S },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_periph_west_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_periph_west_plls),
-+	.plls		= eqc_eyeq7h_periph_west_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_periph_west_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_periph_west_fixed_factors,
-+
-+	.reset_auxdev_name = "reset_periph_west",
-+};
-+
-+static const struct clk_div_table eqc_eyeq7h_ddr_apb_div_table[] = {
-+	{ .val = 0, .div = 8 },
-+	{ .val = 1, .div = 128 },
-+	{ .val = 0, .div = 0 },
-+};
-+
-+static const struct clk_div_table eqc_eyeq7h_ddr_ref_div_table[] = {
-+	{ .val = 0, .div = 2 },
-+	{ .val = 1, .div = 8 },
-+	{ .val = 0, .div = 0 },
-+};
-+
-+static const struct clk_div_table eqc_eyeq7h_ddr_dfi_div_table[] = {
-+	{ .val = 0, .div = 2 },
-+	{ .val = 1, .div = 32 },
-+	{ .val = 0, .div = 0 },
-+};
-+
-+static const struct eqc_div eqc_eyeq7h_ddr0_divs[] = {
-+	{
-+		.index = EQ7HC_DDR_DIV_APB,
-+		.name = "div-ddr0_apb",
-+		.parent_idx = EQ7HC_DDR_PLL,
-+		.reg = 0x08,
-+		.shift = 10,
-+		.width = 1,
-+		.table = eqc_eyeq7h_ddr_apb_div_table,
-+	},
-+	{
-+		.index = EQ7HC_DDR_DIV_PLLREF,
-+		.name = "div-ddr0_pllref",
-+		.parent_idx = EQ7HC_DDR_PLL,
-+		.reg = 0x08,
-+		.shift = 10,
-+		.width = 1,
-+		.table = eqc_eyeq7h_ddr_ref_div_table,
-+	},
-+	{
-+		.index = EQ7HC_DDR_DIV_DFI,
-+		.name = "div-ddr0-dfi",
-+		.parent_idx = EQ7HC_DDR_PLL,
-+		.reg = 0x08,
-+		.shift = 10,
-+		.width = 1,
-+		.table = eqc_eyeq7h_ddr_dfi_div_table,
-+	},
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_ddr0_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_DDR_PLL, "pll-ddr0", 0x0, EQC_PLL_AINTP },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_ddr0_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_ddr0_plls),
-+	.plls		= eqc_eyeq7h_ddr0_plls,
-+
-+	.div_count	= ARRAY_SIZE(eqc_eyeq7h_ddr0_divs),
-+	.divs		= eqc_eyeq7h_ddr0_divs,
-+
-+	.reset_auxdev_name = "reset_ddr0",
-+};
-+
-+static const struct eqc_div eqc_eyeq7h_ddr1_divs[] = {
-+	{
-+		.index = EQ7HC_DDR_DIV_APB,
-+		.name = "div-ddr1_apb",
-+		.parent_idx = EQ7HC_DDR_PLL,
-+		.reg = 0x08,
-+		.shift = 10,
-+		.width = 1,
-+		.table = eqc_eyeq7h_ddr_apb_div_table,
-+	},
-+	{
-+		.index = EQ7HC_DDR_DIV_PLLREF,
-+		.name = "div-ddr1_pllref",
-+		.parent_idx = EQ7HC_DDR_PLL,
-+		.reg = 0x08,
-+		.shift = 10,
-+		.width = 1,
-+		.table = eqc_eyeq7h_ddr_ref_div_table,
-+	},
-+	{
-+		.index = EQ7HC_DDR_DIV_DFI,
-+		.name = "div-ddr1-dfi",
-+		.parent_idx = EQ7HC_DDR_PLL,
-+		.reg = 0x08,
-+		.shift = 10,
-+		.width = 1,
-+		.table = eqc_eyeq7h_ddr_dfi_div_table,
-+	},
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_ddr1_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_DDR_PLL, "pll-ddr1", 0x0, EQC_PLL_AINTP },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_ddr1_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_ddr1_plls),
-+	.plls		= eqc_eyeq7h_ddr1_plls,
-+
-+	.div_count	= ARRAY_SIZE(eqc_eyeq7h_ddr1_divs),
-+	.divs		= eqc_eyeq7h_ddr1_divs,
-+
-+	.reset_auxdev_name = "reset_ddr1",
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_mips0_plls[] = {
-+	{ EQ7HC_MIPS_PLL_CPU, "pll-cpu0", 0x0, EQC_PLL_AINTP },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_mips0_fixed_factors[] = {
-+	{ EQ7HC_MIPS_DIV_CM, "mips0_cm", 1, 2, EQ7HC_MIPS_PLL_CPU },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_mips0_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_mips0_plls),
-+	.plls		= eqc_eyeq7h_mips0_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_mips0_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_mips0_fixed_factors,
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_mips1_plls[] = {
-+	{ EQ7HC_MIPS_PLL_CPU, "pll-cpu1", 0x0, EQC_PLL_AINTP },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_mips1_fixed_factors[] = {
-+	{ EQ7HC_MIPS_DIV_CM, "mips1_cm", 1, 2, EQ7HC_MIPS_PLL_CPU },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_mips1_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_mips1_plls),
-+	.plls		= eqc_eyeq7h_mips1_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_mips1_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_mips1_fixed_factors,
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_mips2_plls[] = {
-+	{ EQ7HC_MIPS_PLL_CPU, "pll-cpu2", 0x0, EQC_PLL_AINTP },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_mips2_fixed_factors[] = {
-+	{ EQ7HC_MIPS_DIV_CM, "mips2_cm", 1, 2, EQ7HC_MIPS_PLL_CPU },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_mips2_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_mips2_plls),
-+	.plls		= eqc_eyeq7h_mips2_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_mips2_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_mips2_fixed_factors,
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_acc0_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_ACC_PLL_VMP, "pll-acc0-vmp",     0x400, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_ACC_PLL_MPC, "pll-acc0-mpc",     0x404, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_ACC_PLL_PMA, "pll-acc0-pma",     0x408, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_ACC_PLL_NOC, "pll-acc0-noc-acc", 0x40c, EQC_PLL_AINTP, "ref_106p6_e" },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_acc0_fixed_factors[] = {
-+	{ EQ7HC_ACC_DIV_PMA,   "acc0_pma",   1, 2, EQ7HC_ACC_PLL_PMA },
-+	{ EQ7HC_ACC_DIV_NCORE, "acc0_ncore", 1, 2, EQ7HC_ACC_PLL_NOC },
-+	{ EQ7HC_ACC_DIV_CFG,   "acc0_cfg",   1, 8, EQ7HC_ACC_PLL_NOC },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_acc0_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_acc0_plls),
-+	.plls		= eqc_eyeq7h_acc0_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_acc0_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_acc0_fixed_factors,
-+
-+	.reset_auxdev_name = "reset_acc0",
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_acc1_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_ACC_PLL_VMP, "pll-acc1-vmp",     0x400, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_ACC_PLL_MPC, "pll-acc1-mpc",     0x404, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_ACC_PLL_PMA, "pll-acc1-pma",     0x408, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_ACC_PLL_NOC, "pll-acc1-noc-acc", 0x40c, EQC_PLL_AINTP, "ref_106p6_e" },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_acc1_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_acc1_plls),
-+	.plls		= eqc_eyeq7h_acc1_plls,
-+
-+	.reset_auxdev_name = "reset_acc1",
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_xnn0_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_XNN_PLL_XNN0,  "pll-xnn0-0",     0x400, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_XNN_PLL_XNN1,  "pll-xnn0-1",     0x404, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_XNN_PLL_XNN2,  "pll-xnn0-2",     0x408, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_XNN_PLL_CLSTR, "pll-xnn0-clstr", 0x410, EQC_PLL_AINTP, "ref_106p6_e" },
-+};
-+
-+static const struct eqc_fixed_factor eqc_eyeq7h_xnn0_fixed_factors[] = {
-+	{ EQ7HC_XNN_DIV_XNN0,   "xnn0",        1, 2, EQ7HC_XNN_PLL_XNN0 },
-+	{ EQ7HC_XNN_DIV_XNN1,   "xnn1",        1, 2, EQ7HC_XNN_PLL_XNN1 },
-+	{ EQ7HC_XNN_DIV_XNN2,   "xnn2",        1, 2, EQ7HC_XNN_PLL_XNN2 },
-+	{ EQ7HC_XNN_DIV_CLSTR,  "xnn0_clstr",  1, 2, EQ7HC_XNN_PLL_CLSTR },
-+	{ EQ7HC_XNN_DIV_I2,     "xnn0_i2",     1, 4, EQ7HC_XNN_PLL_CLSTR },
-+	{ EQ7HC_XNN_DIV_I2_SMS, "xnn0_i2_sms", 1, 4, EQ7HC_XNN_PLL_CLSTR },
-+	{ EQ7HC_XNN_DIV_CFG,    "xnn0_cfg",    1, 8, EQ7HC_XNN_PLL_CLSTR },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_xnn0_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_xnn0_plls),
-+	.plls		= eqc_eyeq7h_xnn0_plls,
-+
-+	.fixed_factor_count	= ARRAY_SIZE(eqc_eyeq7h_xnn0_fixed_factors),
-+	.fixed_factors		= eqc_eyeq7h_xnn0_fixed_factors,
-+
-+	.reset_auxdev_name = "reset_xnn0",
-+};
-+
-+static const struct eqc_pll eqc_eyeq7h_xnn1_plls[] = {
-+	//{index, name, reg, type, parent}
-+	{ EQ7HC_XNN_PLL_XNN0,  "pll-xnn1-0",     0x400, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_XNN_PLL_XNN1,  "pll-xnn1-1",     0x404, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_XNN_PLL_XNN2,  "pll-xnn1-2",     0x408, EQC_PLL_AINTP, "ref_100p0" },
-+	{ EQ7HC_XNN_PLL_CLSTR, "pll-xnn1-clstr", 0x410, EQC_PLL_AINTP, "ref_106p6_e" },
-+};
-+
-+static const struct eqc_match_data eqc_eyeq7h_xnn1_match_data = {
-+	.pll_count	= ARRAY_SIZE(eqc_eyeq7h_xnn1_plls),
-+	.plls		= eqc_eyeq7h_xnn1_plls,
-+
-+	.reset_auxdev_name = "reset_xnn1",
-+};
-+
- static const struct of_device_id eqc_match_table[] = {
- 	{ .compatible = "mobileye,eyeq5-olb", .data = &eqc_eyeq5_match_data },
- 	{ .compatible = "mobileye,eyeq6l-olb", .data = &eqc_eyeq6l_match_data },
-@@ -833,6 +1291,22 @@ static const struct of_device_id eqc_match_table[] = {
- 	{ .compatible = "mobileye,eyeq6h-ddr0-olb", .data = &eqc_eyeq6h_ddr0_match_data },
- 	{ .compatible = "mobileye,eyeq6h-ddr1-olb", .data = &eqc_eyeq6h_ddr1_match_data },
- 	{ .compatible = "mobileye,eyeq6h-acc-olb", .data = &eqc_eyeq6h_acc_match_data },
-+	{ .compatible = "mobileye,eyeq7h-periph-west-olb",
-+	  .data = &eqc_eyeq7h_periph_west_match_data },
-+	{ .compatible = "mobileye,eyeq7h-periph-east-olb",
-+	  .data = &eqc_eyeq7h_periph_east_match_data },
-+	{ .compatible = "mobileye,eyeq7h-west-olb", .data = &eqc_eyeq7h_west_match_data },
-+	{ .compatible = "mobileye,eyeq7h-east-olb", .data = &eqc_eyeq7h_east_match_data },
-+	{ .compatible = "mobileye,eyeq7h-south-olb", .data = &eqc_eyeq7h_south_match_data },
-+	{ .compatible = "mobileye,eyeq7h-mips0-olb", .data = &eqc_eyeq7h_mips0_match_data },
-+	{ .compatible = "mobileye,eyeq7h-mips1-olb", .data = &eqc_eyeq7h_mips1_match_data },
-+	{ .compatible = "mobileye,eyeq7h-mips2-olb", .data = &eqc_eyeq7h_mips2_match_data },
-+	{ .compatible = "mobileye,eyeq7h-ddr0-olb", .data = &eqc_eyeq7h_ddr0_match_data },
-+	{ .compatible = "mobileye,eyeq7h-ddr1-olb", .data = &eqc_eyeq7h_ddr1_match_data },
-+	{ .compatible = "mobileye,eyeq7h-acc0-olb", .data = &eqc_eyeq7h_acc0_match_data },
-+	{ .compatible = "mobileye,eyeq7h-acc1-olb", .data = &eqc_eyeq7h_acc1_match_data },
-+	{ .compatible = "mobileye,eyeq7h-xnn0-olb", .data = &eqc_eyeq7h_xnn0_match_data },
-+	{ .compatible = "mobileye,eyeq7h-xnn1-olb", .data = &eqc_eyeq7h_xnn1_match_data },
- 	{}
- };
- 
-@@ -1004,3 +1478,24 @@ static void __init eqc_eyeq6h_west_early_init(struct device_node *np)
- }
- CLK_OF_DECLARE_DRIVER(eqc_eyeq6h_west, "mobileye,eyeq6h-west-olb",
- 		      eqc_eyeq6h_west_early_init);
-+
-+static void __init eqc_eyeq7h_south_early_init(struct device_node *np)
-+{
-+	eqc_early_init(np, &eqc_eyeq7h_south_early_match_data);
-+}
-+CLK_OF_DECLARE_DRIVER(eqc_eyeq7h_south, "mobileye,eyeq7h-south-olb",
-+		      eqc_eyeq7h_south_early_init);
-+
-+static void __init eqc_eyeq7h_east_early_init(struct device_node *np)
-+{
-+	eqc_early_init(np, &eqc_eyeq7h_east_early_match_data);
-+}
-+CLK_OF_DECLARE_DRIVER(eqc_eyeq7h_east, "mobileye,eyeq7h-east-olb",
-+		      eqc_eyeq7h_east_early_init);
-+
-+static void __init eqc_eyeq7h_west_early_init(struct device_node *np)
-+{
-+	eqc_early_init(np, &eqc_eyeq7h_west_early_match_data);
-+}
-+CLK_OF_DECLARE_DRIVER(eqc_eyeq7h_west, "mobileye,eyeq7h-west-olb",
-+		      eqc_eyeq7h_west_early_init);
-
--- 
-2.51.0
+>>  	};
+>>
+>>  	vm_area_cachep = kmem_cache_create("vm_area_struct",
+>>
+>> --
+>> 2.51.0
+>>
+>>
+>>
 
 
