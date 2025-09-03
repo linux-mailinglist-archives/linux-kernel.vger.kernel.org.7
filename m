@@ -1,297 +1,114 @@
-Return-Path: <linux-kernel+bounces-798289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6997B41BE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:31:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80234B41BE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B009E4E4B70
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC5E5411FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608582D6E58;
-	Wed,  3 Sep 2025 10:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AC42DCF73;
+	Wed,  3 Sep 2025 10:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AlUQRrZX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hW3aGszi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3712417F2
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0157138FA3;
+	Wed,  3 Sep 2025 10:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756895466; cv=none; b=DeGnvHLhQMrumiWvynUGdm6zYcBUFgmy1aDGx1hIWLTO3fOqPuUaNQpTHg87LV9qbevBFsQ+EaV8tLravMnzkEK4V3cyWLNYz5V6M+YeDIrlY6KPzKbyCfDJ/9ibJds8GNNBqrpatPWgdu5f8zQ9OjyPtvCSsrpDYz+25juSAeI=
+	t=1756895455; cv=none; b=ODjNweohuKTd/eFASS8K8moBom5r4GOUvC75Qj8WqYMfGyYY4nrQR9bygl85MxXEFG8NB8ysk1F5mmCvUPl1WzelRvMEKocLOJz4bdnkevpwkTm1Z3q17gNNQz1BCYn0YD7UqX/fOPU/B9hBA3HHv6hfOvD+OgjfJKMtQTj4YxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756895466; c=relaxed/simple;
-	bh=IsuuiCOQW6pAhmbbZCIZ+Wm7t2WtLltTUDeVFIkXfYM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cCz5muCzgDZlT2PHsWoLRTrofXgGA/wj/9/ndOk+04XtHRu2mbO+1F8WP38QzO0IuVriiuvmrPQCWhlfg5gQFEarpLkSZPpWvfniBJaUAerpjBVw6AER0JB81Tz+vrrlxs5Q6ziWx8eOqpCUblYcvdumlz78SfVzr+ieFG19bKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AlUQRrZX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756895462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7qOsf15T960mtb9sS5UAjuBpUtscmR9jTiZsmS/xmDw=;
-	b=AlUQRrZXB+5CEzPm0Zc8eaWN2wc4oZxUUl7iP7dzKofdxGcUqVWVn7WyEnWUmHbmM+s4cl
-	6GTJ0aaMyC6BC6360xf9AOgV5bRR6KuMnYk/YLX1g9RN+8Ax1y+uVMsvi9Fte+BkYtQLld
-	MQ6FYqJxVYyi66dawG7KGavsbU8mDjk=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-197-LW0wSVkWOQigVnepV8XXlw-1; Wed, 03 Sep 2025 06:31:01 -0400
-X-MC-Unique: LW0wSVkWOQigVnepV8XXlw-1
-X-Mimecast-MFC-AGG-ID: LW0wSVkWOQigVnepV8XXlw_1756895460
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32972a6db98so5019933a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:31:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756895460; x=1757500260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7qOsf15T960mtb9sS5UAjuBpUtscmR9jTiZsmS/xmDw=;
-        b=ZIruymQ/JdMO1QKE1Jl7sgQyz13CMwi25YwI0k3yrQb1BTljvRuWyKGm7ziVugNH0x
-         lO0JGhCS6JlK2sYWd6JlV617MG2uarF0bsEddhBHyIIBG6Eklts0JsKr/aVxIA2qMwjX
-         TcJOLJOdbo160OY5FASPkCy6Zqlp2Lj6VptmRREe142dTX51EnpWc4jtzDA2Fi8JCGfv
-         lZgktpfSQLr43yGgnt1oWNV4U2E2+FEGjgtODNczeFtvPeRNluBa7pbvZA9bWRc85vSC
-         jf2LNoEc0bS6qi0+Ru81vy0OPwkCganxcXdBc+DZbbe3kcIh+vPSTD/f31qPDp6Lac9K
-         JPqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ55xIuiN233Ybyfq72FhMgBvkJjyJ3wBqiP2UzGpe/8/0K9kIEKhXZrgMSP6hCBzhiSGtgjdqTxGQV4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz95NoMnZlBtvespkvApTq28pOjlpxoElbBJavHEUtGdxlJ0Z+K
-	gChq4wAImaYxEmr2KImtBD8+ZJmwgV88AAbrjjYvIvL0DseTprBWYcg5cDGFjYyT+xY1kB02e+y
-	bjKjAoNrMynvNuqjC3IuFDnSCbBfyy2KTMJ/SAv4bzVnhu/4eokUCBqdetdTx6MZrlbufLkzC+2
-	KfT76Ilp6qR2dOZAIut1JmPz39kFuhpN/IoEousyuO
-X-Gm-Gg: ASbGnct0FXWm6d/2fK4M5iyBqBYjiLElwO7HUtjlHI82bpuSJpXGWYn2OGUWmtUZIla
-	A4VSLWnusgmXCPusG4/T6n++vNIi8A6H5KLqIJwpVcySvmq2tEhGpoBXLa2Pt9WQd6SkCH4b2YG
-	TBKKm4BhARYm5FEkwR4l6PoA==
-X-Received: by 2002:a17:90b:4d06:b0:327:dc81:b39e with SMTP id 98e67ed59e1d1-32815452f34mr16840652a91.13.1756895459908;
-        Wed, 03 Sep 2025 03:30:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENP9nmb5WCwP8PtA5pBQnIUN1yc0WNZA+WYg3GqoWssXzlUN9eByNc1YtWgslytrfrBNmIaV4iioNjmPdJcgY=
-X-Received: by 2002:a17:90b:4d06:b0:327:dc81:b39e with SMTP id
- 98e67ed59e1d1-32815452f34mr16840617a91.13.1756895459516; Wed, 03 Sep 2025
- 03:30:59 -0700 (PDT)
+	s=arc-20240116; t=1756895455; c=relaxed/simple;
+	bh=ClOTmE55Wwsm0LpC9z5gh1a0PSmL2dFavPpmP8ftZUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nczy2tdfwjhZopfxJVsGBbsqnHACghQYtLhExwcWBUgwVXd8l1nFeS8Iw2psXykyaGMOKNlKbYjiA6stEX6wVN0mTmLRnYE6y5tRMkVqZhNUh8ZVudzzd5mwmyw1l7vhDVWrz9ji7xevjNb5I8zZJ0ApSTWbCs4Yj1N6Unp6dVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hW3aGszi; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756895454; x=1788431454;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ClOTmE55Wwsm0LpC9z5gh1a0PSmL2dFavPpmP8ftZUg=;
+  b=hW3aGsziGo1W7a+4X+VmKZeJV3ZGggh/3lVecDrIc2G162Brj5UQ+/Fc
+   WMu6cfV5dDmeaQ41LQ8oYG30lF761hgdj4QuD4aYXM1A2ZKHv5LqxyXnE
+   sRGxYNmZPq4XaMiTojmQ0zBlxA5rsyMvwM+FsT08K/diccceIGx3Uoa/B
+   EZsJxbFS0iq9QHHZdk3ZwHxpxHfGCPWEZ6nvwBiTTeydHCC56cJFPR33k
+   927Evy/FzhdGZlrXzlUGBdYUbJYm9QguhlcMvkUO76xgmLGCEBnXMdL3d
+   bBVhjuUeEvDwFZFr3ldlly2brK3F4tuH0tloUvTnUOO0uZpmmkNneoWq2
+   g==;
+X-CSE-ConnectionGUID: Fx3DPs1QSwaXLucj7L6AkQ==
+X-CSE-MsgGUID: iA3ecWsUSiyYSG5rJFUr/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59272082"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59272082"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:30:54 -0700
+X-CSE-ConnectionGUID: X8Li4sRYRLGLm/jr2tJJcQ==
+X-CSE-MsgGUID: 3beLwcruROehcl7/JRvuZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="176803032"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 03:30:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1utklL-0000000AxNd-4BeF;
+	Wed, 03 Sep 2025 13:30:48 +0300
+Date: Wed, 3 Sep 2025 13:30:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] device property: Add scoped fwnode child node
+ iterators
+Message-ID: <aLgY1z-MvQbDBx2_@smile.fi.intel.com>
+References: <20250902190443.3252-1-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.1051172-3-eperezma@redhat.com>
- <CACGkMEvd9w_ijpf=+re8oUxUWfq6Q_0HaDM==_e65df3439k7w@mail.gmail.com>
- <CAJaqyWeHLw9CUEkH1KF8np2zJMC-zMRU6AFRJEhczzuF7MNU8A@mail.gmail.com>
- <CACGkMEsUjfPadVi8Qr8L723mbQ_21WG7e07mDd79KDHFNn_AFw@mail.gmail.com>
- <CAJaqyWejgnBngjrnuzefTVAhdjRcDOzAJfe5b0aE65uxON=G5w@mail.gmail.com> <CACGkMEtsCF5d_fdbkb9oPWQOscR=UgW3xq3ghQKXoWv1Be55Ag@mail.gmail.com>
-In-Reply-To: <CACGkMEtsCF5d_fdbkb9oPWQOscR=UgW3xq3ghQKXoWv1Be55Ag@mail.gmail.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 3 Sep 2025 12:30:22 +0200
-X-Gm-Features: Ac12FXyu0knImzGvvLa58v0X2WkieIda6A4AeG8uSRmXTSAwzO7KVryCu8N8Hb8
-Message-ID: <CAJaqyWcAptQjRktZ7WcyDHADFqR0ZjGZ_D+gvKyq4JGSb7yFaQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] vduse: add vq group support
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Yongji Xie <xieyongji@bytedance.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250902190443.3252-1-jefflessard3@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Sep 3, 2025 at 9:40=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
-te:
->
-> On Wed, Sep 3, 2025 at 2:29=E2=80=AFPM Eugenio Perez Martin <eperezma@red=
-hat.com> wrote:
-> >
-> > On Wed, Sep 3, 2025 at 5:58=E2=80=AFAM Jason Wang <jasowang@redhat.com>=
- wrote:
-> > >
-> > > On Mon, Sep 1, 2025 at 4:40=E2=80=AFPM Eugenio Perez Martin <eperezma=
-@redhat.com> wrote:
-> > > >
-> > > > On Mon, Sep 1, 2025 at 3:59=E2=80=AFAM Jason Wang <jasowang@redhat.=
-com> wrote:
-> > > > >
-> > > > > On Tue, Aug 26, 2025 at 7:27=E2=80=AFPM Eugenio P=C3=A9rez <epere=
-zma@redhat.com> wrote:
-> > > > > >
-> > > > > > This allows sepparate the different virtqueues in groups that s=
-hares the
-> > > > > > same address space.  Asking the VDUSE device for the groups of =
-the vq at
-> > > > > > the beginning as they're needed for the DMA API.
-> > > > > >
-> > > > > > Allocating 3 vq groups as net is the device that need the most =
-groups:
-> > > > > > * Dataplane (guest passthrough)
-> > > > > > * CVQ
-> > > > > > * Shadowed vrings.
-> > > > > >
-> > > > > > Future versions of the series can include dynamic allocation of=
- the
-> > > > > > groups array so VDUSE can declare more groups.
-> > > > > >
-> > > > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > > > > > ---
-> > > > > > v1: Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit =
-(Maxime)
-> > > > > >
-> > > > > > RFC v3:
-> > > > > > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to=
- a lower
-> > > > > >   value to reduce memory consumption, but vqs are already limit=
-ed to
-> > > > > >   that value and userspace VDUSE is able to allocate that many =
-vqs.
-> > > > > > * Remove the descs vq group capability as it will not be used a=
-nd we can
-> > > > > >   add it on top.
-> > > > > > * Do not ask for vq groups in number of vq groups < 2.
-> > > > > > * Move the valid vq groups range check to vduse_validate_config=
-.
-> > > > > >
-> > > > > > RFC v2:
-> > > > > > * Cache group information in kernel, as we need to provide the =
-vq map
-> > > > > >   tokens properly.
-> > > > > > * Add descs vq group to optimize SVQ forwarding and support ind=
-irect
-> > > > > >   descriptors out of the box.
-> > > > > > ---
-> > > > > >  drivers/vdpa/vdpa_user/vduse_dev.c | 51 ++++++++++++++++++++++=
-++++++--
-> > > > > >  include/uapi/linux/vduse.h         | 21 +++++++++++-
-> > > > > >  2 files changed, 68 insertions(+), 4 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/=
-vdpa_user/vduse_dev.c
-> > > > > > index e7bced0b5542..0f4e36dd167e 100644
-> > > > > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > > > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > > > > @@ -58,6 +58,7 @@ struct vduse_virtqueue {
-> > > > > >         struct vdpa_vq_state state;
-> > > > > >         bool ready;
-> > > > > >         bool kicked;
-> > > > > > +       u32 vq_group;
-> > > > > >         spinlock_t kick_lock;
-> > > > > >         spinlock_t irq_lock;
-> > > > > >         struct eventfd_ctx *kickfd;
-> > > > > > @@ -114,6 +115,7 @@ struct vduse_dev {
-> > > > > >         u8 status;
-> > > > > >         u32 vq_num;
-> > > > > >         u32 vq_align;
-> > > > > > +       u32 ngroups;
-> > > > > >         struct vduse_umem *umem;
-> > > > > >         struct mutex mem_lock;
-> > > > > >         unsigned int bounce_size;
-> > > > > > @@ -592,6 +594,13 @@ static int vduse_vdpa_set_vq_state(struct =
-vdpa_device *vdpa, u16 idx,
-> > > > > >         return 0;
-> > > > > >  }
-> > > > > >
-> > > > > > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 id=
-x)
-> > > > > > +{
-> > > > > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > > > > > +
-> > > > > > +       return dev->vqs[idx]->vq_group;
-> > > > > > +}
-> > > > > > +
-> > > > > >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u=
-16 idx,
-> > > > > >                                 struct vdpa_vq_state *state)
-> > > > > >  {
-> > > > > > @@ -678,6 +687,28 @@ static u8 vduse_vdpa_get_status(struct vdp=
-a_device *vdpa)
-> > > > > >         return dev->status;
-> > > > > >  }
-> > > > > >
-> > > > > > +static int vduse_fill_vq_groups(struct vduse_dev *dev)
-> > > > > > +{
-> > > > > > +       /* All vqs and descs must be in vq group 0 if ngroups <=
- 2 */
-> > > > > > +       if (dev->ngroups < 2)
-> > > > > > +               return 0;
-> > > > > > +
-> > > > > > +       for (int i =3D 0; i < dev->vdev->vdpa.nvqs; ++i) {
-> > > > > > +               struct vduse_dev_msg msg =3D { 0 };
-> > > > > > +               int ret;
-> > > > > > +
-> > > > > > +               msg.req.type =3D VDUSE_GET_VQ_GROUP;
-> > > > > > +               msg.req.vq_group.index =3D i;
-> > > > > > +               ret =3D vduse_dev_msg_sync(dev, &msg);
-> > > > > > +               if (ret)
-> > > > > > +                       return ret;
-> > > > > > +
-> > > > > > +               dev->vqs[i]->vq_group =3D msg.resp.vq_group.gro=
-up;
-> > > > > > +       }
-> > > > > > +
-> > > > > > +       return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > >  static void vduse_vdpa_set_status(struct vdpa_device *vdpa, u8=
- status)
-> > > > > >  {
-> > > > > >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > > > > > @@ -685,6 +716,11 @@ static void vduse_vdpa_set_status(struct v=
-dpa_device *vdpa, u8 status)
-> > > > > >         if (vduse_dev_set_status(dev, status))
-> > > > > >                 return;
-> > > > > >
-> > > > > > +       if (((dev->status ^ status) & VIRTIO_CONFIG_S_FEATURES_=
-OK) &&
-> > > > > > +           (status & VIRTIO_CONFIG_S_FEATURES_OK))
-> > > > > > +               if (vduse_fill_vq_groups(dev))
-> > > > > > +                       return;
-> > > > >
-> > > > > I may lose some context but I think we've agreed that we need to
-> > > > > extend the status response for this instead of having multiple
-> > > > > indepdent response.
-> > > > >
-> > > >
-> > > > My understanding was it is ok to start with this version by [1]. We
-> > > > can even make it asynchronous on top if we find this is a bottlenec=
-k
-> > > > and the VDUSE device would need no change, would that work?
-> > >
-> > > I think I need to understand why we can not defer this to get_group_a=
-sid() call.
-> > >
-> >
-> > Because we need to know the vq_groups->asid mapping in other calls
-> > like set_group_asid or get_vq_group.
->
-> I think we don't need the mapping of those, or anything I miss?
->
+On Tue, Sep 02, 2025 at 03:04:38PM -0400, Jean-François Lessard wrote:
+> This series adds scoped versions of fwnode iterator macros and converts
+> existing manual implementation to use them.
+> 
+> The first patch adds the infrastructure macros following existing patterns
+> for scoped iterators in the kernel. The second patch demonstrates
+> fwnode_for_each_child_node_scoped() usage by converting existing manual
+> __free() usage in i2c-core-slave.c.
+> 
+> This series introduces infrastructure for the TM16XX driver series,
+> being the first user of fwnode_for_each_available_child_node_scoped().
+> See the related patch series:
+>   auxdisplay: Add TM16xx 7-segment LED matrix display controllers driver
 
-If the kernel module does not ask the userland device for the actual
-vq group of a virtqueue, what should it return in vduse_get_vq_group?
-0 for all vqs, even if the CVQ is in vq group 1?
+It might be good to have an immutable branch for me from i2c core.
+Wolfram, can you provide a such if no objections?
 
-That's also valid for vduse_get_vq_map, which return is assumed not to
-change in all the life of the device as it is not protected by a
-mutex.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> And the vq to group mappings could be piggy backed by the device
-> creation request.
->
-
-I'm not sure, I think it involves a vduse request per asid or vq group
-operation. Even get_vq_map. But I'm open to explore this possibility
-for sure.
-
-> >
-> > We could add a boolean on each virtqueue to track if we know its
-> > virtqueue group and then only ask VDUSE device it if needed, would
-> > that work?
->
-> Thanks
->
-> >
->
 
 
