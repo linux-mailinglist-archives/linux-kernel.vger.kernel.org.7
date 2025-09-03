@@ -1,146 +1,148 @@
-Return-Path: <linux-kernel+bounces-797694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C15B413B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:52:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114C1B413B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9D3A5E52AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DF94548207
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DCB2D4B57;
-	Wed,  3 Sep 2025 04:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F56A2D481F;
+	Wed,  3 Sep 2025 04:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOCEQaR1"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="seAx/fyD"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DD02D4813;
-	Wed,  3 Sep 2025 04:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C82228726D
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875170; cv=none; b=uY8dBf2Jslq6/7oMRCRzu0yHrdqqvlUVa+6CMUbjcyyGP9Xd+GBa91ZkLyEgEOxDf2T2RVh0cEEGyIKhzcrz9v2wRys2ecoY4o8JS4jWBMw2OXFUm2kv2uI3KHy8hBalGVQOnmepsIRvPqRLDleM9nA83cnzTzLZW2W9Y2kiXXo=
+	t=1756875213; cv=none; b=c27cvegkgSX3gro34mugN11AOI/4o2tu/pKFFDLy7u5d3v7dadWEjTcY0qU+zxvfH4CyM9c0l0PeJLDQDhbFXordcWfAhTDbl+Rn+kJkjzSBisIjbyrKFg69GvV4HtxBMpHEgUVSE1xOtXrw76t+64LRTeOim450t6hO/7sTZlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756875170; c=relaxed/simple;
-	bh=KyAtw1ROkQzmskX697stOWX20DsHTRWeC52X8SmVBqs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VTjsO1WTDUpIayHxbEdsllqnkn7HVpNvqlRgry3TyoGFS1YzcERaCmHY7helbYaiXTTKJTQl0N7IqOnhqT0AwBIkgzpgMDefwIjgwfzwVFhBKHnzidtHNIeAStsyPykdLIeVB/1W0c707emgN+2us5D2MpViO15J1WVdjelFap8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOCEQaR1; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b49cf21320aso6558609a12.1;
-        Tue, 02 Sep 2025 21:52:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756875168; x=1757479968; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q7R3UA6dJinJ0I/6N9AH4Q+v9BW5iCYGVoJtMMc/Y28=;
-        b=cOCEQaR1NYJ1es1otQDAm5E4s6zSRbFd3BRNINSWJne7RTWm7ZnNnvsoboDk5ox0+G
-         UjwnwB6G8W8WiYFB/YySla9kZm7Uyesz88uLQhDAXw80Qwc8T5JvkJBkt6BOAJTzzeTQ
-         KPICARgW7Qa0WnTHqevdz+ZxpCO44LfU4ljr0uuw+81yMss9N/2dnNT3Uz/oi85D43kW
-         g4KgzVDv8XAkw/BlDDqrMxsrU6d1Brv28g+5mf4NObwQS7hTfKcKQKHXyFjl9WOkivFe
-         lTv/+ImZAwDEt5CMwi/8pGBltc+DCipMEBTw5OmNbxUpbeVHPP4tJi+MES85gu3lgmvi
-         G2RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756875168; x=1757479968;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q7R3UA6dJinJ0I/6N9AH4Q+v9BW5iCYGVoJtMMc/Y28=;
-        b=WUmT2/lX0dUg3tQQ1zkM0onfT9eyDRUTh5FSrmNIFrJ2Kh5adKG8/2QwhWEeLH1tPg
-         bmoV6UUrZ41Zv8MwJX0FIyK4V9sn5w6TB+LSzPMl2gqTIUbsEO7CEq1K23hC5w3QVEe+
-         dNrribcoSLu9/rRSXFHEK+eFnWd4drmGQRdsLcwOb5x1R87Qo1S1ZXbLHslTrKsxKQf7
-         KpPnHVM4KGcM8BZU3fY90wJTMaSRQ2to3CxLVxHurx5lA4/7sQQVkkPoHIYvoV3vF1C4
-         oESfU4GJTeKLWbQrT99WVbzPCbpnn0ro3iDsveKl5gkSiLBTFQOPDfxvzdfsIJCXhzbh
-         TFDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeG1Tws8zxvt54BkUqwmeppWyKvSfVdQDN9wUUrAl/JX+TRbvNZRs0CQw4Ahgd3hpXKsydmhzpSn7b5So=@vger.kernel.org, AJvYcCVEUnCeBYYG5TyLFBbaZ45vgy0rZwOjmBUXMO9MQ5zcL4sOttnvlweEkxhW2l8/rQTj162fAty+@vger.kernel.org, AJvYcCXW1lqFrI/6fswX7uoSGFgO/G6CIGFV3m/bEgc+z6sr7ZnZBddixQSVjo+OsSk/sPTiXHcyemU2Mn/nBpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8n+fgUCs1r/KLa6ErjQeCQFcpECbxo/hKLc51aTjsaoToHmdA
-	OmlqmLn2+NGK6A4qWeZ0V4YvTcv6sgXp5aQ/v9OYCs/rw2Lo8m8tzSx3
-X-Gm-Gg: ASbGnctRx5NEcNujZngH3a86D/oH+ibgT/58bCbr6Plinr8xgVJ3VhMgDSwj0K38VKN
-	ul9IHgNSas2vRgdZgi1NMGB9GwhKW5wqZxc2qfaqVy98iIKsjwdEOfltSbqXsx6SZjGr7bguwWn
-	is/oiPq0W4wBCFTeRBkEwctTQCjSvPabQkVgNlkiLHA4LsanhePHgiDvhPjW6cYvqCtupTknsiK
-	s/iydqFyXUZaEmapqZkmr0om9QYCVX2qlWJeJ5GzQO2UQPOutr3DYdKm2bESQrv7wBli29HrWW3
-	lV8uHxw35U9PeYpR/gNTc9bWgj/BzV+6WLr9ib76C7FJY4N2yjHvJOIb+xDwPapIyXc2TIJgLcE
-	hr+vJUgKnq7XprDW8ga6Qv1SYBSbIjqd2Dt4dmrd6nykMwEASWRA4hiLnNZPfN8Ot8G9FLDbF11
-	JxKuiva/Of65o+rSMZ1s3lVcCPlcvKb2CIjx5Tx6T8fP+VhtEgtI+iIKWy
-X-Google-Smtp-Source: AGHT+IG/noxDbJ2ua4C+CLSewBamCxkllBE3NpGs19mktDiXa50Eu+evBczxnqDV+nDB2Up/ZpTxbA==
-X-Received: by 2002:a17:90b:2751:b0:312:e731:5a66 with SMTP id 98e67ed59e1d1-32815412c9emr18183834a91.3.1756875167828;
-        Tue, 02 Sep 2025 21:52:47 -0700 (PDT)
-Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.116.239.34])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3276fce1160sm21537553a91.22.2025.09.02.21.52.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 21:52:47 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: JC Kuo <jckuo@nvidia.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-phy@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] phy: tegra: xusb-tegra210: Fix reference leaks in tegra210_xusb_padctl_probe
-Date: Wed,  3 Sep 2025 12:52:40 +0800
-Message-Id: <20250903045241.2489993-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.35.1
+	s=arc-20240116; t=1756875213; c=relaxed/simple;
+	bh=R3DhZ6mfg1h+sJtmD78zCTphaI6OPacxMmjj6u3H1Es=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=g8ihkHsT53yxwTsjHDAXiRTbfjlGIbIOB29OxgSqNZaegX0pGCWio7LfBkEHlqsCP87tyx+UeY39QRW5hcBJGxmx92UIeMAeSEPvlpDO260fy2jnQlc8BUNfaN/3iOiirGCsEXXoYNRIPm2kh3QSLNf0y6i//tNq2cOCuUzVmig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=seAx/fyD; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250903045329epoutp01f924a0685a481c09506e23b00a74b342~hrLHgG9dY1282812828epoutp01z
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:53:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250903045329epoutp01f924a0685a481c09506e23b00a74b342~hrLHgG9dY1282812828epoutp01z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756875209;
+	bh=21B5w+1lssADMm+k2ZLitCCdTF49rGjLr51Zj+pcqQk=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=seAx/fyDbNrkUWlz3g3+ruYtmPX95TLZkHbTtU6AlDU8zT4ftLtFP1g4kQFeM51St
+	 8t3s4tXz80u0mz6v/8qHzPJe6y8mhni0Tfg3JN69oQWnh9FXxVKR91a129QsmewQ42
+	 etTGIkI9e0vQBMXARDTvQkdy27DMf9wumAZpW4tU=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250903045329epcas5p4d0f89b732ea8235d08c55b5a2b041fe0~hrLHJawFo2982929829epcas5p4v;
+	Wed,  3 Sep 2025 04:53:29 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cGqxh3glKz6B9mH; Wed,  3 Sep
+	2025 04:53:28 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250903045327epcas5p2a97e15cae1c6a759a59a6756e4891e92~hrLF9ypcc2711927119epcas5p2y;
+	Wed,  3 Sep 2025 04:53:27 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250903045326epsmtip122cca7fe6eb21dabe242b0fd7239af86~hrLEWBRlQ1713217132epsmtip1K;
+	Wed,  3 Sep 2025 04:53:26 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Ram Kumar Dwivedi'" <quic_rdwivedi@quicinc.com>,
+	<avri.altman@wdc.com>, <bvanassche@acm.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mani@kernel.org>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+Cc: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+In-Reply-To: <20250902164900.21685-3-quic_rdwivedi@quicinc.com>
+Subject: RE: [PATCH V5 2/4] ufs: ufs-qcom: Remove redundant re-assignment to
+ hs_rate
+Date: Wed, 3 Sep 2025 10:23:25 +0530
+Message-ID: <3a9201dc1c8e$affa1c10$0fee5430$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQDbtq+ZX022GZqTIcIYj1g81c9NHgHu7PnKAbEBfqC2ZK+0sA==
+Content-Language: en-us
+X-CMS-MailID: 20250903045327epcas5p2a97e15cae1c6a759a59a6756e4891e92
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250902164935epcas5p14139d20b5d385b99edfc0da60865dd98
+References: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
+	<CGME20250902164935epcas5p14139d20b5d385b99edfc0da60865dd98@epcas5p1.samsung.com>
+	<20250902164900.21685-3-quic_rdwivedi@quicinc.com>
 
-Add missing of_node_put() and put_device() calls to release references.
 
-The function calls of_parse_phandle() and of_find_device_by_node()
-but fails to release the references.
-Both functions' documentation mentions that
-the returned references must be dropped after use.
 
-Found through static analysis by reviewing the documentation and
-cross-checking their usage patterns.
+> -----Original Message-----
+> From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> Sent: Tuesday, September 2, 2025 10:19 PM
+> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
+> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; mani@kernel.org;
+> James.Bottomley@HansenPartnership.com; martin.petersen@oracle.com
+> Cc: linux-scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org
+> Subject: [PATCH V5 2/4] ufs: ufs-qcom: Remove redundant re-assignment to
+> hs_rate
+> 
+> Remove the redundant else block that assigns PA_HS_MODE_B to hs_rate,
+> as it is already assigned in ufshcd_init_host_params(). This avoids
+> unnecessary reassignment and prevents overwriting hs_rate when it is
+> explicitly set to a different value.
+> 
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> ---
+Better to send non-dependent patches separately.
 
-Fixes: 2d1021487273 ("phy: tegra: xusb: Add wake/sleepwalk for Tegra210")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/phy/tegra/xusb-tegra210.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Feel free to add:
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>  
 
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index ebc8a7e21a31..cbfca51a53bc 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -3164,18 +3164,23 @@ tegra210_xusb_padctl_probe(struct device *dev,
- 	}
- 
- 	pdev = of_find_device_by_node(np);
-+	of_node_put(np);
- 	if (!pdev) {
- 		dev_warn(dev, "PMC device is not available\n");
- 		goto out;
- 	}
- 
--	if (!platform_get_drvdata(pdev))
-+	if (!platform_get_drvdata(pdev)) {
-+		put_device(&pdev->dev);
- 		return ERR_PTR(-EPROBE_DEFER);
-+	}
- 
- 	padctl->regmap = dev_get_regmap(&pdev->dev, "usb_sleepwalk");
- 	if (!padctl->regmap)
- 		dev_info(dev, "failed to find PMC regmap\n");
- 
-+	put_device(&pdev->dev);
-+
- out:
- 	return &padctl->base;
- }
--- 
-2.35.1
+>  drivers/ufs/host/ufs-qcom.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index
+> 9574fdc2bb0f..1a93351fb70e 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct
+> ufs_hba *hba)
+>  	 * If the HS-G5 PHY gear is used, update host_params->hs_rate to
+> Rate-A,
+>  	 * so that the subsequent power mode change shall stick to Rate-A.
+>  	 */
+> -	if (host->hw_ver.major == 0x5) {
+> -		if (host->phy_gear == UFS_HS_G5)
+> -			host_params->hs_rate = PA_HS_MODE_A;
+> -		else
+> -			host_params->hs_rate = PA_HS_MODE_B;
+> -	}
+> +	if (host->hw_ver.major == 0x5 && host->phy_gear == UFS_HS_G5)
+> +		host_params->hs_rate = PA_HS_MODE_A;
+> 
+>  	mode = host_params->hs_rate == PA_HS_MODE_B ?
+> PHY_MODE_UFS_HS_B : PHY_MODE_UFS_HS_A;
+> 
+> --
+> 2.50.1
+
 
 
