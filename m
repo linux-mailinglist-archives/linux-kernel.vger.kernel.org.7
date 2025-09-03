@@ -1,123 +1,157 @@
-Return-Path: <linux-kernel+bounces-797857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE28DB41652
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:22:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7786EB41654
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03821BA0509
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702B3680A0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 07:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB892DAFDB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539112D9EE2;
 	Wed,  3 Sep 2025 07:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJBJ0wnC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E8fWR7Wc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lsMUQ4zU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E8fWR7Wc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lsMUQ4zU"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CC92D97BE;
-	Wed,  3 Sep 2025 07:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C740E27FB2A
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 07:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756884083; cv=none; b=kO7r6FcVC73HbZzLbQi2lsPiaxVj0DWFdQqeVpTxnkGXWcBNDBLv11sRL9B0t056amZH2sazkUHGhKVprp2wX60FUweI8I3KG/ipX8AKrBcTFN+3Y7hlkkNxuDCYc6/X2O5POitN3TJwpVGgC6q+PKRZNLYNOwZ4vvI4JO7mcPM=
+	t=1756884082; cv=none; b=ZIEslbrJgXNJRqRfjy+DSaJQTA5GxoebtoExyXBuIvKcoulxpnzBBiegO1QXgW069tFxYYuVOTNlYplRqowQD5DPiweiSadlsbuIMiOAOVqCep1gcZvxDcQXw1X0n4VuKipnh3/PtHOBD6sVhWOEC2zRuCHVwj+Qp+CNPXThE6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756884083; c=relaxed/simple;
-	bh=aE2wSHWhtqpiMKHN7D3PfY7xel2VdPYw5MsWLRepx7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BA27WSXRIZakLiUUNktmn0Ap7f4slFeYpE9PSTbbgOuYf78IkWOXZfjFgJ/UIVdRZueETXgkbGjiV4vC3Iojy7tgCjnVfnfr4F9/wc2QAzDzjv12wppvV/PqFyFXY0QaXUWumdl4Q1xfMEdZIAvjjdCyhVqm/dbtks4n048vAW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJBJ0wnC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB26EC4CEF1;
-	Wed,  3 Sep 2025 07:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756884082;
-	bh=aE2wSHWhtqpiMKHN7D3PfY7xel2VdPYw5MsWLRepx7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cJBJ0wnCkJ1bai4763J4Y9QBfj8wXwSGJY+gHPqNW3l/BcjWmpT/KdbNwOVh2P+uY
-	 8Wsw+b/URVuxPr4VH6ak4gHXuYNmZwgy2c5lHjASKjt4OiUSUykSbIo1i/JaE1LC3p
-	 HDV1L/b2Wgw+BPwU4RqakGu5lNpkmfSOsJCAY7AL/jh8I1qN6rSZMBqIUdfJtEt/gC
-	 MVP4jCj9RMgo0XWs0DjJZSCPWO8ZEhHRyyaQ+pHqmyICGm9/LFGKmbIHTbHAybqKzU
-	 5YaZm9MYrtURfao8cI2299LvtUG34wLHV+u0VmKVoo2DqEXAgj43KiJnCZWKrvQjAl
-	 xIOCjRs6V/APg==
-Date: Wed, 3 Sep 2025 08:21:17 +0100
-From: Lee Jones <lee@kernel.org>
-To: Marcos Del Sol Vives <marcos@orca.pet>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Michael Walle <mwalle@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
- southbridges
-Message-ID: <20250903072117.GY2163762@google.com>
-References: <20250822135816.739582-1-marcos@orca.pet>
- <20250822135816.739582-4-marcos@orca.pet>
- <20250902151828.GU2163762@google.com>
- <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
+	s=arc-20240116; t=1756884082; c=relaxed/simple;
+	bh=XCJju57bq6ayw2SMfc0th7t/lqfRHBQUgw2HTfEIB8Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KClHjQH++ZmhGfTZVr6wU9UMdCrujA/dCh5Smy/a54z15gxkxBgi4P0yD6SFIeR54Zq2uY3+YT6iBf0tBI8S1miabenJu8vGBZZ3bQZK5Kf1FfOWBIHlvo02q44pxzY6SZFO71HEU+wzpXnh9zajS+fXAQMsv66coz2qBl3ctWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E8fWR7Wc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lsMUQ4zU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E8fWR7Wc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lsMUQ4zU; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C76FC21293;
+	Wed,  3 Sep 2025 07:21:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756884078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QFBc6RWh8ZSGiW9y51f3aVlmvJZi/JtU2Up3L8KsEe4=;
+	b=E8fWR7WcOowR+xEjSfF3rWjyV27IgfjBAmDlloPDhS+uE+GuOl0XGPDbPzM2zzLgX7OR0d
+	UVtC5kMyyphu0WzTwSKu0yrNzJOo9kYK71TJKSWjtJoFqDjg1HrCyxOf5Z3Uy+lImArck+
+	lVlxDZhX4fudPxx5r4mgXuqEt1fW8Pg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756884078;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QFBc6RWh8ZSGiW9y51f3aVlmvJZi/JtU2Up3L8KsEe4=;
+	b=lsMUQ4zUFGEIUwfgxfyVLgbox+FgoinwYG4YadgXwFrYGtqQ0n8bjtv2Y2gEt90/avqR2c
+	XjrJQr0j0zHQSkDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756884078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QFBc6RWh8ZSGiW9y51f3aVlmvJZi/JtU2Up3L8KsEe4=;
+	b=E8fWR7WcOowR+xEjSfF3rWjyV27IgfjBAmDlloPDhS+uE+GuOl0XGPDbPzM2zzLgX7OR0d
+	UVtC5kMyyphu0WzTwSKu0yrNzJOo9kYK71TJKSWjtJoFqDjg1HrCyxOf5Z3Uy+lImArck+
+	lVlxDZhX4fudPxx5r4mgXuqEt1fW8Pg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756884078;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QFBc6RWh8ZSGiW9y51f3aVlmvJZi/JtU2Up3L8KsEe4=;
+	b=lsMUQ4zUFGEIUwfgxfyVLgbox+FgoinwYG4YadgXwFrYGtqQ0n8bjtv2Y2gEt90/avqR2c
+	XjrJQr0j0zHQSkDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8129413888;
+	Wed,  3 Sep 2025 07:21:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LhfzHW7st2hePQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 03 Sep 2025 07:21:18 +0000
+Date: Wed, 03 Sep 2025 09:21:18 +0200
+Message-ID: <87cy88vw5t.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<13564923607@139.com>,
+	<13916275206@139.com>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<baojun.xu@ti.com>,
+	<Baojun.Xu@fpt.com>
+Subject: Re: [PATCH v2] ALSA: hda/tas2781: Fix the order of TAS2781 calibrated-data
+In-Reply-To: <20250903041351.143-1-shenghao-ding@ti.com>
+References: <20250903041351.143-1-shenghao-ding@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[139.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,ti.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-On Tue, 02 Sep 2025, Marcos Del Sol Vives wrote:
-
-> El 02/09/2025 a las 17:18, Lee Jones escribió:
-> >> +
-> >> +struct vortex_southbridge {
-> >> +	const struct mfd_cell *cells;
-> >> +	int n_cells;
-> >> +};
-> > 
-> > Why is this needed?
-> > 
+On Wed, 03 Sep 2025 06:13:51 +0200,
+Shenghao Ding wrote:
 > 
-> To have a variable amount of cells. Currently I am only implementing the
-> GPIO device because it's the most critical (required for device shutdown),
-> but I plan on implementing once this gets merged at least also the watchdog,
-> which is provided by the same southbridge.
+> A bug reported by one of my customers that the order of TAS2781
+> calibrated-data is incorrect, the correct way is to move R0_Low
+> and insert it between R0 and InvR0.
 > 
-> Adding support for this is should make adding that simpler.
-
-You don't need it.  Please find another way to achieve your goal.
-
-> >> +static const struct mfd_cell vortex_dx_sb_cells[] = {
-> >> +	{
-> >> +		.name		= "vortex-gpio",
-> >> +		.resources	= vortex_dx_gpio_resources,
-> >> +		.num_resources	= ARRAY_SIZE(vortex_dx_gpio_resources),
-> >> +	},
-> >> +};
-> > 
-> > It's not an MFD until you have more than one device.
+> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
+> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 > 
-> Same as above.
+> ---
+> v2:
+>  - Submit to sound branch maintianed by Tiwai instead of linux-next branch
+>  - drop other fix
 
-It will not be accepted with only a single device (SFD?).
+You haven't answered to my previous question at all.
 
-> >> +static const struct pci_device_id vortex_sb_table[] = {
-> >> +	/* Vortex86DX */
-> >> +	{ PCI_DEVICE_DATA(RDC, R6031, &vortex_dx_sb) },
-> > 
-> > We're not passing one initialisation API's data (MFD) through another (PCI).
-> 
-> Unless I understood you incorrectly, you mean I should not pass MFD cells/
-> data as private data?
+Is the issue you're trying to fix something different from what Gergo
+already fixed in commit d5f8458e34a331e5b228de142145e62ac5bfda34
+(which was already merged to Linus tree).
 
-Right.
 
-> vortex_dx_sb are "struct vortex_southbridge" type, not raw MFD API data.
-
-I like your style, but nope!
-
-vortex_southbridge contains MFD data and shouldn't exist anyway.
-
--- 
-Lee Jones [李琼斯]
+Takashi
 
