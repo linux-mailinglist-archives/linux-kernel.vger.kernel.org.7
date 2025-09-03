@@ -1,90 +1,202 @@
-Return-Path: <linux-kernel+bounces-797685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8C8B4137E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:24:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBB0B4138E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18E055416C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989E31B20B56
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A80828689C;
-	Wed,  3 Sep 2025 04:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76862D3A97;
+	Wed,  3 Sep 2025 04:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="rkHbc0bj"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dBqIbFBp"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15DCC2FB;
-	Wed,  3 Sep 2025 04:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4432B2AF00
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756873440; cv=none; b=rATNGFR8vmY2YaZVK0MgbQa2XNi9kq5SvSVK/k4nIsF8b8dS5oJQHaNfDVjWB2Vixjv1H9GscGvXUVqSsqsjt0NomREHmLsY2vkNGgQ78PxtbiGUWmDIBColh2Zdub6iOnnttZqTmywQbId6Aovjh128gPDi08JKvSA08MsO/tE=
+	t=1756873713; cv=none; b=lGIGMMe/fTqfhuyGaYU3wjRqiT5OpQALd5enweKfxXiQdGVfpz9Cd2CyrsXXe/qd+XdyGIRvIGMbwjaoWroUZCAnjsV6ORUQsSakHYayQnMZYe46VBGxXkEuQ3nEMLLOoQlUUDVx2z1G5ZfvbPIFMX+ilAqe/62u+SllpR6iCsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756873440; c=relaxed/simple;
-	bh=svNKh6v9xSbreRbIN5AHavHDnFJA4RcUXkK5blEmANo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VAgzzEBETtrJhYAE7PiReG/Dtq3My4V91SVD5kISwYh5xKj8I8GRFzelI463Cqq/M7pVf1sFWzCYta69TjJ5tvTqdBNmsjwT9kmznh1Cv0TNMWq3zDL2el8X36JnicOJ8uYQHo0/whe38XuOXJZKmdwf5jWhQJOYLATNs9ofrLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=rkHbc0bj; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pp1cKx0IjF5K66uP8QvoXn/uM1IyZZrNOlgAlK7jAEg=; b=rkHbc0bjzoSGPLg8QowyCMDRa2
-	mDiMogQN8ftzE/WLFgxcQ5Npq8Fy1+YXuO+LOTraNb/8WwS2xIuS4dVTl99kK9fI4V6k25n2ZUV8N
-	C+MK5H2GALbw5e6ku9TGmYbINza7l9Va0foMrr37d41gdte2weocoxDSuXagfZdLpYz/6q6qMlxka
-	XX1I0m6MP+908gmfdxj7RYUBoBoBQMQRWjHEelmKv5cWuYx4jbbKkFy837JbsJ5hHCKpRhZehhFtj
-	IRDhREp0+vEn1TWLbxnPqg/F1kl1VOypqBo84EG7eiePL2Lmiww4uPKkzSNasH2difB74s8n1gCqg
-	UftTNCQQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1utemj-002CsD-2t;
-	Wed, 03 Sep 2025 12:23:47 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 03 Sep 2025 12:23:46 +0800
-Date: Wed, 3 Sep 2025 12:23:46 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Menglong Dong <dongml2@chinatelecom.cn>, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, oliver.sang@intel.com
-Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
-Message-ID: <aLfC0gZS_F3_srMT@gondor.apana.org.au>
-References: <20250829021436.19982-1-dongml2@chinatelecom.cn>
- <aLa2D4It1Zxc7bs0@gondor.apana.org.au>
- <20250902105757.16a78aea@batman.local.home>
+	s=arc-20240116; t=1756873713; c=relaxed/simple;
+	bh=rzQOIiOOgo8Bl7ImQyPmenuJvoK1gvj5EgcM1s5npLY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=cjjTBKB7uPKJG1w23RgqixrxH8QsGp3LK27laQdjyjCcNa1KqftIJe2+WnCqHWMT5yVE/9D1IHcLWFpulACpqk+08omNvACwoXmSdi8gg5CMOiaDZHZp0HC5tCv7d8rkBNkKVYRXVgMg+V/RBfHQxwEMnGR9vNqJo/W647Iw0oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dBqIbFBp; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250903042823epoutp048e707dee662714bac1f8ca70242aa7cf~hq1MeMOLm0888808888epoutp04H
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:28:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250903042823epoutp048e707dee662714bac1f8ca70242aa7cf~hq1MeMOLm0888808888epoutp04H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756873703;
+	bh=4z/3Wi1eUiYqGMgmAAnBBhtwdX8IJWlmAPv7y2AI0zY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=dBqIbFBpomLu+s0zM90unBBR3MaFPNORAEP361BccKz6lrWpPzv7Xwe7sDlkyFNha
+	 xRW8G/YWYdspAeAyz0hNRRxD6CV0DohNstOPCrb/5ElseQcNmi84ZLDI85oNJv9nQ5
+	 ps+uPRf/e1wyPqbqS/GbruHjJFXlwwkb11foZfSU=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250903042822epcas5p41e705b5815d3ca3fc53e39b4eb58a097~hq1MJKBRg0277702777epcas5p4E;
+	Wed,  3 Sep 2025 04:28:22 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4cGqNj2Ss4z3hhT4; Wed,  3 Sep
+	2025 04:28:21 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250903042820epcas5p2811be3432a678c59f99a118e28a9f820~hq1Jmde3W0253402534epcas5p2J;
+	Wed,  3 Sep 2025 04:28:20 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250903042818epsmtip1fdc1da40fbc789005c33ac7a6322b930~hq1H2bREI0216802168epsmtip1O;
+	Wed,  3 Sep 2025 04:28:18 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Ram Kumar Dwivedi'" <quic_rdwivedi@quicinc.com>,
+	<avri.altman@wdc.com>, <bvanassche@acm.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mani@kernel.org>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+Cc: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "'Nitin
+ Rawat'" <quic_nitirawa@quicinc.com>
+In-Reply-To: <20250902164900.21685-4-quic_rdwivedi@quicinc.com>
+Subject: RE: [PATCH V5 3/4] ufs: pltfrm: Allow limiting HS gear and rate via
+ DT
+Date: Wed, 3 Sep 2025 09:58:16 +0530
+Message-ID: <3a9001dc1c8b$2d303c40$8790b4c0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902105757.16a78aea@batman.local.home>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQDbtq+ZX022GZqTIcIYj1g81c9NHgJq+hI3AQZfT0q2ZhhPUA==
+Content-Language: en-us
+X-CMS-MailID: 20250903042820epcas5p2811be3432a678c59f99a118e28a9f820
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250902164940epcas5p47c93faf63a98377e97f3f6d06fe23f96
+References: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
+	<CGME20250902164940epcas5p47c93faf63a98377e97f3f6d06fe23f96@epcas5p4.samsung.com>
+	<20250902164900.21685-4-quic_rdwivedi@quicinc.com>
 
-On Tue, Sep 02, 2025 at 10:57:57AM -0400, Steven Rostedt wrote:
->
-> And then have:
+
+
+> -----Original Message-----
+> From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> Sent: Tuesday, September 2, 2025 10:19 PM
+> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
+> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; mani@kernel.org;
+> James.Bottomley@HansenPartnership.com; martin.petersen@oracle.com
+> Cc: linux-scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org; Nitin Rawat
+> <quic_nitirawa@quicinc.com>
+> Subject: [PATCH V5 3/4] ufs: pltfrm: Allow limiting HS gear and rate via
+DT
 > 
->        quiet_rcu_read_lock_check();
->        head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
->        quiet_rcu_read_unlock_check();
+> Add support for parsing 'limit-hs-gear' and 'limit-rate' device tree
+properties
+> to restrict high-speed gear and rate during initialization.
+> 
+> This is useful in cases where the customer board may have signal
+integrity,
+> clock configuration or layout issues that prevent reliable operation at
+higher
+> gears. Such limitations are especially critical in those platforms, where
+> stability is prioritized over peak performance.
+> 
+> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> ---
+>  drivers/ufs/host/ufshcd-pltfrm.c | 36
+> ++++++++++++++++++++++++++++++++  drivers/ufs/host/ufshcd-pltfrm.h
+> |  1 +
+>  2 files changed, 37 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-
+> pltfrm.c
+> index ffe5d1d2b215..4df6885f0dc0 100644
+> --- a/drivers/ufs/host/ufshcd-pltfrm.c
+> +++ b/drivers/ufs/host/ufshcd-pltfrm.c
+> @@ -430,6 +430,42 @@ int ufshcd_negotiate_pwr_params(const struct
+> ufs_host_params *host_params,  }
+> EXPORT_SYMBOL_GPL(ufshcd_negotiate_pwr_params);
+> 
+> +/**
+> + * ufshcd_parse_limits - Parse DT-based gear and rate limits for UFS
+> + * @hba: Pointer to UFS host bus adapter instance
+> + * @host_params: Pointer to UFS host parameters structure to be updated
+> + *
+> + * This function reads optional device tree properties to apply
+> + * platform-specific constraints.
+> + *
+> + * "limit-hs-gear": Specifies the max HS gear.
+> + * "limit-rate": Specifies the max High-Speed rate.
+> + */
+> +void ufshcd_parse_limits(struct ufs_hba *hba, struct ufs_host_params
 
-The thing is that rhl_for_each_entry_rcu which is called right after
-your unlock above should have created the same warning as
-rhltable_lookup.  The fact that it doesn't appears to be a bug:
-it's using rcu_dereference_raw and I don't see why that's safe
-at all.
+May be s/ufshcd_parse_limits/ ufshcd_parse_gear_limits()
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+"Limits" is very generic and also not aligning with the property names.
+Also suggest to change limit-rate to limit-gear-rate.
+
+> +*host_params) {
+> +	struct device_node *np = hba->dev->of_node;
+> +	u32 hs_gear;
+> +	const char *hs_rate;
+> +
+> +	if (!np)
+> +		return;
+Probably a overkill here, please check if this will ever hit? 
+
+> +
+> +	if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
+> +		host_params->hs_tx_gear = hs_gear;
+> +		host_params->hs_rx_gear = hs_gear;
+> +	}
+> +
+> +	if (!of_property_read_string(np, "limit-rate", &hs_rate)) {
+> +		if (!strcmp(hs_rate, "rate-a"))
+> +			host_params->hs_rate = PA_HS_MODE_A;
+> +		else if (!strcmp(hs_rate, "rate-b"))
+> +			host_params->hs_rate = PA_HS_MODE_B;
+> +		else
+> +			dev_warn(hba->dev, "Invalid limit-rate: %s\n",
+> hs_rate);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_parse_limits);
+> +
+>  void ufshcd_init_host_params(struct ufs_host_params *host_params)  {
+>  	*host_params = (struct ufs_host_params){ diff --git
+> a/drivers/ufs/host/ufshcd-pltfrm.h b/drivers/ufs/host/ufshcd-pltfrm.h
+> index 3017f8e8f93c..1617f2541273 100644
+> --- a/drivers/ufs/host/ufshcd-pltfrm.h
+> +++ b/drivers/ufs/host/ufshcd-pltfrm.h
+> @@ -29,6 +29,7 @@ int ufshcd_negotiate_pwr_params(const struct
+> ufs_host_params *host_params,
+>  				const struct ufs_pa_layer_attr *dev_max,
+>  				struct ufs_pa_layer_attr *agreed_pwr);  void
+> ufshcd_init_host_params(struct ufs_host_params *host_params);
+> +void ufshcd_parse_limits(struct ufs_hba *hba, struct ufs_host_params
+> +*host_params);
+>  int ufshcd_pltfrm_init(struct platform_device *pdev,
+>  		       const struct ufs_hba_variant_ops *vops);  void
+> ufshcd_pltfrm_remove(struct platform_device *pdev);
+> --
+> 2.50.1
+
+
 
