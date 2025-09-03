@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-799025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FD8B425FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:53:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FF5B42602
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357021610D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:53:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B99633B0639
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01ECF28A72B;
-	Wed,  3 Sep 2025 15:53:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121C28980E
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0096328DB56;
+	Wed,  3 Sep 2025 15:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKhXp5jZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573A2286D7B;
+	Wed,  3 Sep 2025 15:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756914786; cv=none; b=O4vTtaTFhK3U2Rs8o4TyuVAy0iYsqYVkxUNBvlpScc7rVpGaNChoeQOToJUWjgwnFZ0KQ+sXHr4R+s9w+5GaVixge+8b84UC/r2DMQLiZBi07hwloDtzEXa1x9OYKzOs8haTkKDoO8jcO38hXlPYqJjVOaCp/NfxYna1SSfFwlk=
+	t=1756914889; cv=none; b=PcaRWyUL/D6yV1EePfxB9fJf8amGihZCCg2TmTDz5CUpTRetixTPMowdU5l/K0prrhJoTui/SLX8qp0zEKzGt3OXmMSPjJIWg6c76rWT/hfBa10oNgEWLvVzmegUGy+7QmQ9m5Zs8BPyjXXkQN1/q2yVWgqTrUKBLc1Q6iBATbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756914786; c=relaxed/simple;
-	bh=LSfa6DzbqGFUD28nz8DdDe1ftCjoEodE6uzNdLpv65E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kSS+SZ6vkRjc0bf0i9NHmKLM/h/Z2KcoXVc3dbBLX1/j9KKIoIrvxs37Dw5YGt8B7fWt397KMMo4JeeZrvGOj0x1aeRvljh6nxbRY4bWFckH2WvriuAJdSbzJTf9gNaw4oCQ2HxkgCgdJZrshOEmJ2vsgRQO8bSfN9RYcQd91KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CBFA113E;
-	Wed,  3 Sep 2025 08:52:55 -0700 (PDT)
-Received: from [10.1.28.62] (e127648.arm.com [10.1.28.62])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F003B3F6A8;
-	Wed,  3 Sep 2025 08:53:02 -0700 (PDT)
-Message-ID: <9037ef51-441c-4868-932a-8b618382a4d5@arm.com>
-Date: Wed, 3 Sep 2025 16:53:01 +0100
+	s=arc-20240116; t=1756914889; c=relaxed/simple;
+	bh=AJEEDVCChpHoUUnjffZQKyPoyFals8oBhyMIl/tiyRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHanM2ExzKck/LLg/RBV45PnhMqlLuC6yY77a0HGE9rV4hvxO5KWInZifiHEYiqHqBJ16vjhy2O5TKcQI0c0ZXTvsSV7IEHuXgoaNBaAAsQxKLnOOPRyQURrlaTm60hpxuB0mrPKoHwiPeyZk0bNj0ZkjBOOCtUoKJJlPuEg8NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKhXp5jZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA81CC4CEE7;
+	Wed,  3 Sep 2025 15:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756914888;
+	bh=AJEEDVCChpHoUUnjffZQKyPoyFals8oBhyMIl/tiyRs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qKhXp5jZHMZGISjz3llpNgEfmyavmyOiKXCBIGJCQ5pjPczhensTPGT35LqKzAmW5
+	 Y/Yr22uFARzimyeWgP6j5/6MWBG9gAOrDiFIIO2aUpwxogfc3gqG6HsV/vJNdlIw4j
+	 GJViiyTdzYxT1gZb6F95So5SkbeNNaZUpTZ3UsjUC6FXfqXOaLjF128xTVXjPHAsgm
+	 1TIt1U6kcWYewSNH6PdmsarbIJA2kgo4j5HZtAsWNYm5MA0Ll31Wiow+1qsyBBEErz
+	 NkULMf8Miy5CW6x0lvy9nhcTxOXVTaPFx+/mHVwp783/lyAxbAdDq8oLfccPDpTDZd
+	 ofDRHaxHhLa3w==
+Date: Wed, 3 Sep 2025 05:54:47 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: arighi@nvidia.com, void@manifault.com, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
+	mingo@redhat.com, peterz@infradead.org, jake@hillion.co.uk
+Subject: Re: [PATCH v5 1/3] sched_ext: Introduce scx_bpf_cpu_rq_locked()
+Message-ID: <aLhkx1cB0nRttAuT@slm.duckdns.org>
+References: <20250901132605.2282650-1-christian.loehle@arm.com>
+ <20250901132605.2282650-3-christian.loehle@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smp: Fix smp_call_function_any() if no CPU online
-From: Christian Loehle <christian.loehle@arm.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- yury.norov@gmail.com
-Cc: Rik van Riel <riel@surriel.com>
-References: <e381fd4b-fb90-41ae-a480-0dad1ce2aa9f@arm.com>
-Content-Language: en-US
-In-Reply-To: <e381fd4b-fb90-41ae-a480-0dad1ce2aa9f@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250901132605.2282650-3-christian.loehle@arm.com>
 
-On 8/28/25 23:40, Christian Loehle wrote:
-> smp_call_function_any() used to handle a mask without any online
-> CPUs just fine, but when switching to use sched_numa_find_nth_cpu()
-> a previous check for online CPUs was removed.
-> smp_call_function_single() handles invalid CPUs just fine, so
-> just add the check back before calling sched_numa_find_nth_cpu().
+On Mon, Sep 01, 2025 at 02:26:02PM +0100, Christian Loehle wrote:
+> Most fields in scx_bpf_cpu_rq() assume that its rq_lock is held.
+> Furthermore they become meaningless without rq lock, too.
+> Make a safer version of scx_bpf_cpu_rq() that only returns a rq
+> if we hold rq lock of that rq.
 > 
-> An observed issue was when initializing PMUs on HMP if all CPUs
-> were offline (e.g. by booting with maxcpus):
+> Also mark the new scx_bpf_cpu_rq_locked() as returning NULL.
 > 
-> [    1.192642] Call trace:
-> [    1.192868]  sched_numa_find_nth_cpu+0xc0/0x170 (P)
-> [    1.193323]  smp_call_function_any+0xc8/0xd0
-> [    1.193724]  armv8_pmu_init+0x58/0x27c
-> [    1.194079]  armv8_cortex_a72_pmu_init+0x20/0x2c
-> [    1.194507]  arm_pmu_device_probe+0x1e4/0x5e8
-> [    1.194911]  armv8_pmu_device_probe+0x1c/0x28
-> [    1.195316]  platform_probe+0x5c/0xac
-> [    1.195658]  really_probe+0xbc/0x298
-> [    1.195995]  __driver_probe_device+0x78/0x12c
-> [    1.196399]  driver_probe_device+0xdc/0x160
-> [    1.196787]  __driver_attach+0x94/0x19c
-> [    1.197146]  bus_for_each_dev+0x74/0xd4
-> [    1.197503]  driver_attach+0x24/0x30
-> [    1.197838]  bus_add_driver+0xe4/0x208
-> [    1.198187]  driver_register+0x60/0x128
-> [    1.198546]  __platform_driver_register+0x24/0x30
-> [    1.198974]  armv8_pmu_driver_init+0x28/0x4c
-> [    1.199372]  do_one_initcall+0x44/0x25c
-> [    1.199729]  kernel_init_freeable+0x1dc/0x3bc
-> [    1.200134]  kernel_init+0x20/0x1d8
-> [    1.200466]  ret_from_fork+0x10/0x20
-> [    1.200809] Code: 4b020264 eb04007f 54000129 51000402 (f860d825)
-> [    1.201355] ---[ end trace 0000000000000000 ]---
-> 
-> Fixes: 5f295519b42f ("smp: Improve locality in smp_call_function_any()")
-> Cc: stable@vger.kernel.org
 > Signed-off-by: Christian Loehle <christian.loehle@arm.com>
 > ---
->  kernel/smp.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  kernel/sched/ext.c                       | 23 +++++++++++++++++++++++
+>  tools/sched_ext/include/scx/common.bpf.h |  1 +
+>  2 files changed, 24 insertions(+)
 > 
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index 56f83aa58ec8..cbce9699ced6 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -759,7 +759,9 @@ int smp_call_function_any(const struct cpumask *mask,
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 4ae32ef179dd..9fcc310d85d5 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -7430,6 +7430,28 @@ __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
+>  	return cpu_rq(cpu);
+>  }
 >  
->  	/* Try for same CPU (cheapest) */
->  	cpu = get_cpu();
-> -	if (!cpumask_test_cpu(cpu, mask))
-> +	if (!cpumask_intersects(mask, cpu_online_mask))
-> +		cpu = nr_cpu_ids;
-> +	else if (!cpumask_test_cpu(cpu, mask))
->  		cpu = sched_numa_find_nth_cpu(mask, 0, cpu_to_node(cpu));
->  
->  	ret = smp_call_function_single(cpu, func, info, wait);
+> +/**
+> + * scx_bpf_cpu_rq_locked - Return the rq currently locked by SCX
+> + *
+> + * Returns the rq if a rq lock is currently held by SCX.
+> + * Otherwise emits an error and returns NULL.
+> + */
+> +__bpf_kfunc struct rq *scx_bpf_cpu_rq_locked(void)
 
-Please disregard in favor of
-https://lore.kernel.org/lkml/1ae868cf-470b-44d8-bda3-20a64dedd8b8@arm.com/
-as sched_numa_find_nth_cpu() should've handled this case.
+How about naming it scx_bpf_locked_rq()? That reads a lot easier to me and
+given that it doesn't take @cpu anymore, the _cpu_ part of the name isn't
+necessary.
+
+Thanks.
+
+-- 
+tejun
 
