@@ -1,259 +1,117 @@
-Return-Path: <linux-kernel+bounces-798084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB13B41958
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:57:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368E8B419E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E7843BE0C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B471890A7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25FC2FB621;
-	Wed,  3 Sep 2025 08:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5322A2F290E;
+	Wed,  3 Sep 2025 09:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ekjgf4hi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9pufOPj"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAF92FAC1E;
-	Wed,  3 Sep 2025 08:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CF62F1FC0;
+	Wed,  3 Sep 2025 09:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756889553; cv=none; b=OlnybEu6ZSMKa3N86kku5cGbuJ+GK2PNE5yO1GlUcfIe8Xe2hKMq0c2aZSeeJQv3frCFm6mndMO2CbLI1vKAGCDvjfRTiMKkn4auZXaIWWfgpxQJTqnY4M/JY61kQbH+REPJpoVqHpiGHV6KaklaxbyYvaZ8/hGc18Gth+Xtt7o=
+	t=1756891561; cv=none; b=u3kRKoABpG/Hw7F8K+xH3KX/AuHAgCtD4txs5KfY5YjR7CR3vAic+OmeayPLUEgC4Ndqm9gtxGjCF6DDGTKZgoUu3rPNIsGg2COCCqjAr+udtiHv819rl75Cx+p5ipcTe/1WAQObrrW45UsVdfWvLta1nGpxmX97mTc0jYeCb44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756889553; c=relaxed/simple;
-	bh=+0t4xaF4YQWKUKq5oT/NXwwt6M4dMUzezfpU6070hs0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZpBslYEnEgdZ+QJAQ47dNAcH0cNXFRVeax7ggqTb+Pdgh+90ZB2nLb1lHtvgbCdNF0OC1FMdSxIsDAoM0zB4JC57ctuKmvnQWqK9My9+Cv0FQQ70H8TJLA+JUPMRjazGDXZu50btuk/kgh+TqA7AINRRtt7/NMFGUd8OEnbtKFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ekjgf4hi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 758ABC4CEF5;
-	Wed,  3 Sep 2025 08:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756889552;
-	bh=+0t4xaF4YQWKUKq5oT/NXwwt6M4dMUzezfpU6070hs0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Ekjgf4hiIitzsM8p8Y3R8SGF+e4hpG+ZFwa5b3TGSYgJuHJFVCKLOhkdVvaOtrs4V
-	 RXc9Dem0zcblgutxa+K/8brJvVRafKM/7DqambCp6jXCex/xhXSRFCHWmdK+Yr0nQz
-	 kWYhEIVf74+bfOD5J84kICPj3I9sJX84gp/glm5eT5M1IhljYJLLRlYunCuoaP3w5Y
-	 c7pbs9AvPZ4mfoxO0+rPh32O6t8LevH6tGd3GIZhYR0og49rohc/djZgdj+JG5WhJA
-	 1eqSaNvOdqrGlFyS0MnqsMorEdF5JCAYI0Cik6ktJ4gi5M1KycZrnueLUF4/YZbrZO
-	 6U0kwaROMfnmw==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Wed, 03 Sep 2025 17:50:20 +0900
-Subject: [PATCH 21/21] can: netlink: add userland error messages
+	s=arc-20240116; t=1756891561; c=relaxed/simple;
+	bh=59iraut11ydwf19KgWFacNPvjuTlEHsS6RhQ76in5nc=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=JlPIWZmSnA6BYsCuFaJk7gUyu4nRv0rCa9/Q5n9+2RDRANd5+1rJI+fXqQndO8W6oBplA9V5ZD0QjavarkLuAh1Hsw+UDZS/zQBKLinzIY5XSn1JlFVCO1rxOXNkMo3vYmWfEdPbUaddnJ8VB0/P8LL9+9MWTQIY/Jen5j5EOnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9pufOPj; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b883aa3c9so23237555e9.2;
+        Wed, 03 Sep 2025 02:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756891558; x=1757496358; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=59iraut11ydwf19KgWFacNPvjuTlEHsS6RhQ76in5nc=;
+        b=J9pufOPjj0ty5QDtiENqVkDOV2/86JyUQllY1nPFrRvHASdiY2OFfsl1fGNSl5ewIw
+         utmza6cyZ3xEopp06q9YHoUZmZe89iZmk+Wh4r/jUEg6I4dGuTJcbs64xqC0qrwzfNq5
+         gtROXgZ3t5Tv9g5r3kPQ2rN05BwFooA56AypgeNqzhH9j66YpeJA7sbrhG1/htrZbgqG
+         Gd78grNNhuqmCkFG42GiunD1wnvESJZWa8HaaxL+muokhtWG/7cTKdRFo38tUUs/Egw4
+         oz0ODehzPWK2NuFe4Zxscc1B4LBgdRy6zw2yoCJiaa1Lzrup6tOX0iC2F8geIqj/pWce
+         jtwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756891558; x=1757496358;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=59iraut11ydwf19KgWFacNPvjuTlEHsS6RhQ76in5nc=;
+        b=jGk8J5ZfqOjRr+bxUtK6hZEgBFiOuT3kWU2/WK4VY0MvUrd84yUMxjXg1N0r5UjLWr
+         jFwhpXXeE98j+mRz2Lje/PRPM9rCQHf3HzPmBD4SC3ik0qZOoMnMTIotMoCt+pPdg6lG
+         SbOSqqFe1ZlbglV68iXUH4RvmcT/sgAmKyVI5kQd/8dUJLXxu+dsSsJkqTfniOFiwAHB
+         63cB6LEjALSTVA8qEZXaRunQLoG69T7243XYIYMEVTqyjU2PBoBrg9P5BdrmcEyVx8y8
+         LFnh4LU2RUKxgjQSzQPB/pU/zQ5QLhSLlcuzzSWxT/f4s9N+SuVfEzsB0A3DSVHWFejH
+         0DpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEXHrPhdCkRC/wz7ZfgwMfQEWXC3DOK3hAt/GJNQILhueMIukAnRZ+BKU1HimA0ezlNnEGe/7Ka850T0M=@vger.kernel.org, AJvYcCW0N3gs6/wX0LFgN4CcmCO1Hslaz5ITFR/e1W+ipSvrgHnasLREbHcRYtA6cOXYus59PhEWc/51@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXdh8EUS9tO5ZIhmvno6YQtV5dxuZcPeYgICT/9o5iVtgi1qKX
+	AAMHaAiNRKOPb8HtqwisHpObuH1r4VCOnh0t8XpNExFeccQsPKJQde+Tp4bOb5UC
+X-Gm-Gg: ASbGncvu0WLcTcUHLjznAzVnlAz5aXU8kdl0puAH8cUJby4IkzwnUy9VORFM8cKUjDE
+	CIIY3d8vl8EkHum3i4WBrpIxuHWp5JGKzpvoRmLlXtIMRO6VmYU6wWQVAFg5RSuWSvCDI+Ie/cS
+	qvQv4H3ItOtGe+cIP16cwqu8GZ8cS92j1vT4ifIDf/BLsq3m0RJzBSjimV+fecWQvZAbW9jSOEj
+	Rb5/CrvyaZ9dEQGVYygdYfnO5YVew3cIDMhN+JdVFuFE5xMwBGfByfOfuU3ScS4bqKqyUVoHgTH
+	rD7WWTmAvcUVR6JhZjpgT0Cb4LMegc3X4/Vakj2x5V19AhPO4TROlVi1eTHQWqNPDer0Z7dVzDz
+	WrgPpFhLULXKTpkFirKEOrZUp0pW3eFaRyWjDhFBEwUcnR+fsrqA=
+X-Google-Smtp-Source: AGHT+IGB8DmohHMW6msrYhaVF5l2NP3sJ9vRQEvj8ccMXD12u2Tcvi9xVFV6fZ6eicZPf1I2e8+k4g==
+X-Received: by 2002:a5d:5d86:0:b0:3de:8806:ed17 with SMTP id ffacd0b85a97d-3de8806f363mr1024675f8f.25.1756891557690;
+        Wed, 03 Sep 2025 02:25:57 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:599c:af76:2d34:5ced])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c6db6sm335743485e9.2.2025.09.03.02.25.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 02:25:57 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
+ <ast@fiberby.net>
+Cc: "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,  Jacob Keller
+ <jacob.e.keller@intel.com>,  "Matthieu Baerts (NGI0)"
+ <matttbe@kernel.org>,  David Ahern <dsahern@kernel.org>,  Chuck Lever
+ <chuck.lever@oracle.com>,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/3] tools: ynl-gen: use macro for binary
+ min-len check
+In-Reply-To: <20250902154640.759815-3-ast@fiberby.net>
+Date: Wed, 03 Sep 2025 09:52:11 +0100
+Message-ID: <m21pon2a10.fsf@gmail.com>
+References: <20250902154640.759815-1-ast@fiberby.net>
+	<20250902154640.759815-3-ast@fiberby.net>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-canxl-netlink-prep-v1-21-904bd6037cd9@kernel.org>
-References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
-In-Reply-To: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: Vincent Mailhol <mailhol@kernel.org>, 
- =?utf-8?q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>, 
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>, 
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6019; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=+0t4xaF4YQWKUKq5oT/NXwwt6M4dMUzezfpU6070hs0=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBk7GFdbfbwi9MHBy6Fc4brlibdPZJs7vy85GBNX3MjJ4
- +kY1WrXUcrCIMbFICumyLKsnJNboaPQO+zQX0uYOaxMIEMYuDgFYCIBhQz/IzvYuWUNPz/kT1ub
- k1h7YV/UdMXFl8Ufd9ssXOVgkJPAxcgw4fTCVDaFbLG/6+3f/jjbNeMcc3NG/poOyyMdbJsZcmu
- YAQ==
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Use NL_SET_ERR_MSG() and NL_SET_ERR_MSG_FMT() to return meaningful
-error messages to the userland whenever a -EOPNOTSUPP error is
-returned due to a failed validation of the CAN netlink arguments.
+Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
 
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
----
- drivers/net/can/dev/netlink.c | 82 ++++++++++++++++++++++++++++++++-----------
- 1 file changed, 62 insertions(+), 20 deletions(-)
+> This patch changes the generated min-len check for binary
+> attributes to use the NLA_POLICY_MIN_LEN() macro, thereby the
+> generated code supports strict policy validation.
+>
+> With this change TypeBinary will always generate a NLA_BINARY
+> attribute policy.
+>
+> This doesn't change any currently generated code, as it isn't
+> used in any specs currently used for generating code.
+>
+> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
 
-diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
-index d1c54c7dd333d229f03fc653d61a21a48f8c8865..f39f6310312aa404e025fb7ff11e483a3d9f9f20 100644
---- a/drivers/net/can/dev/netlink.c
-+++ b/drivers/net/can/dev/netlink.c
-@@ -63,15 +63,23 @@ static int can_validate_tdc(struct nlattr *data_tdc,
- 	bool tdc_auto = tdc_flags & CAN_CTRLMODE_TDC_AUTO_MASK;
- 	int err;
- 
--	/* CAN_CTRLMODE_TDC_{AUTO,MANUAL} are mutually exclusive */
--	if (tdc_auto && tdc_manual)
-+	if (tdc_auto && tdc_manual) {
-+		NL_SET_ERR_MSG(extack,
-+			       "TDC manual and auto modes are mutually exclusive");
- 		return -EOPNOTSUPP;
-+	}
- 
- 	/* If one of the CAN_CTRLMODE_TDC_* flag is set then TDC
- 	 * must be set and vice-versa
- 	 */
--	if ((tdc_auto || tdc_manual) != !!data_tdc)
-+	if ((tdc_auto || tdc_manual) && !data_tdc) {
-+		NL_SET_ERR_MSG(extack, "TDC parameters are missing");
- 		return -EOPNOTSUPP;
-+	}
-+	if (!(tdc_auto || tdc_manual) && data_tdc) {
-+		NL_SET_ERR_MSG(extack, "TDC mode (auto or manual) is missing");
-+		return -EOPNOTSUPP;
-+	}
- 
- 	/* If providing TDC parameters, at least TDCO is needed. TDCV
- 	 * is needed if and only if CAN_CTRLMODE_TDC_MANUAL is set
-@@ -85,15 +93,23 @@ static int can_validate_tdc(struct nlattr *data_tdc,
- 			return err;
- 
- 		if (tb_tdc[IFLA_CAN_TDC_TDCV]) {
--			if (tdc_auto)
-+			if (tdc_auto) {
-+				NL_SET_ERR_MSG(extack,
-+					       "TDCV is incompatible with TDC auto mode");
- 				return -EOPNOTSUPP;
-+			}
- 		} else {
--			if (tdc_manual)
-+			if (tdc_manual) {
-+				NL_SET_ERR_MSG(extack,
-+					       "TDC manual mode requires TDCV");
- 				return -EOPNOTSUPP;
-+			}
- 		}
- 
--		if (!tb_tdc[IFLA_CAN_TDC_TDCO])
-+		if (!tb_tdc[IFLA_CAN_TDC_TDCO]) {
-+			NL_SET_ERR_MSG(extack, "TDCO is missing");
- 			return -EOPNOTSUPP;
-+		}
- 	}
- 
- 	return 0;
-@@ -104,6 +120,7 @@ static int can_validate_databittiming(struct nlattr *data[],
- 				      int ifla_can_data_bittiming, u32 flags)
- {
- 	struct nlattr *data_tdc;
-+	const char *type;
- 	u32 tdc_flags;
- 	bool is_on;
- 	int err;
-@@ -112,18 +129,31 @@ static int can_validate_databittiming(struct nlattr *data[],
- 		data_tdc = data[IFLA_CAN_TDC];
- 		tdc_flags = flags & CAN_CTRLMODE_FD_TDC_MASK;
- 		is_on = flags & CAN_CTRLMODE_FD;
-+		type = "FD";
- 	} else {
- 		WARN_ON(1); /* Place holder for CAN XL */
- 	}
- 
- 	if (is_on) {
--		if (!data[IFLA_CAN_BITTIMING] || !data[ifla_can_data_bittiming])
-+		if (!data[IFLA_CAN_BITTIMING] || !data[ifla_can_data_bittiming]) {
-+			NL_SET_ERR_MSG_FMT(extack,
-+					   "Provide both nominal and %s data bittiming",
-+					   type);
- 			return -EOPNOTSUPP;
--	}
--
--	if (data[ifla_can_data_bittiming] || data_tdc) {
--		if (!is_on)
-+		}
-+	} else {
-+		if (data[ifla_can_data_bittiming]) {
-+			NL_SET_ERR_MSG_FMT(extack,
-+					   "%s data bittiming requires CAN %s",
-+					   type, type);
- 			return -EOPNOTSUPP;
-+		}
-+		if (data_tdc) {
-+			NL_SET_ERR_MSG_FMT(extack,
-+					   "%s TDC requires CAN %s",
-+					   type, type);
-+			return -EOPNOTSUPP;
-+		}
- 	}
- 
- 	err = can_validate_bittiming(data, extack, ifla_can_data_bittiming);
-@@ -170,8 +200,7 @@ static int can_ctrlmode_changelink(struct net_device *dev,
- {
- 	struct can_priv *priv = netdev_priv(dev);
- 	struct can_ctrlmode *cm;
--	u32 maskedflags;
--	u32 ctrlstatic;
-+	u32 ctrlstatic, maskedflags, notsupp, ctrlstatic_missing;
- 
- 	if (!data[IFLA_CAN_CTRLMODE])
- 		return 0;
-@@ -181,20 +210,28 @@ static int can_ctrlmode_changelink(struct net_device *dev,
- 		return -EBUSY;
- 
- 	cm = nla_data(data[IFLA_CAN_CTRLMODE]);
--	maskedflags = cm->flags & cm->mask;
- 	ctrlstatic = can_get_static_ctrlmode(priv);
-+	maskedflags = cm->flags & cm->mask;
-+	notsupp = maskedflags & ~(priv->ctrlmode_supported | ctrlstatic);
-+	ctrlstatic_missing = (maskedflags & ctrlstatic) ^ ctrlstatic;
- 
--	/* check whether provided bits are allowed to be passed */
--	if (maskedflags & ~(priv->ctrlmode_supported | ctrlstatic))
-+	if (notsupp) {
-+		NL_SET_ERR_MSG_FMT(extack,
-+				   "requested control mode %s not supported",
-+				   can_get_ctrlmode_str(notsupp));
- 		return -EOPNOTSUPP;
-+	}
- 
- 	/* do not check for static fd-non-iso if 'fd' is disabled */
- 	if (!(maskedflags & CAN_CTRLMODE_FD))
- 		ctrlstatic &= ~CAN_CTRLMODE_FD_NON_ISO;
- 
--	/* make sure static options are provided by configuration */
--	if ((maskedflags & ctrlstatic) != ctrlstatic)
-+	if (ctrlstatic_missing) {
-+		NL_SET_ERR_MSG_FMT(extack,
-+				   "missing required %s static control mode",
-+				   can_get_ctrlmode_str(ctrlstatic_missing));
- 		return -EOPNOTSUPP;
-+	}
- 
- 	/* If a top dependency flag is provided, reset all its dependencies */
- 	if (cm->mask & CAN_CTRLMODE_FD)
-@@ -227,8 +264,10 @@ static int can_tdc_changelink(struct data_bittiming_params *dbt_params,
- 	const struct can_tdc_const *tdc_const = dbt_params->tdc_const;
- 	int err;
- 
--	if (!tdc_const)
-+	if (!tdc_const) {
-+		NL_SET_ERR_MSG(extack, "The device does not support TDC");
- 		return -EOPNOTSUPP;
-+	}
- 
- 	err = nla_parse_nested(tb_tdc, IFLA_CAN_TDC_MAX, nla,
- 			       can_tdc_policy, extack);
-@@ -443,8 +482,11 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
- 		const unsigned int num_term = priv->termination_const_cnt;
- 		unsigned int i;
- 
--		if (!priv->do_set_termination)
-+		if (!priv->do_set_termination) {
-+			NL_SET_ERR_MSG(extack,
-+				       "Termination is not configurable on this device");
- 			return -EOPNOTSUPP;
-+		}
- 
- 		/* check whether given value is supported by the interface */
- 		for (i = 0; i < num_term; i++) {
-
--- 
-2.49.1
-
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
