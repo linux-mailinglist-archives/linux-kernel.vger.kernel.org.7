@@ -1,250 +1,150 @@
-Return-Path: <linux-kernel+bounces-798811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA88B42342
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:13:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB086B42343
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0351B26762
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:13:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E18F1BA2480
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE97310654;
-	Wed,  3 Sep 2025 14:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5069730EF6B;
+	Wed,  3 Sep 2025 14:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bKIg3FLB"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u+5gInAT"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D77130EF6B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086DA2E92C3
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908805; cv=none; b=gIbnPaSiVSX/j/XMK/53wff6QNLptvahM9dP40DgxU4pKMroGWOXkc6N/ixZN3WESbLxykH9v6M4iTA6Sb1d0RslwYnGBPCRYuXufz93OWj42UMAgeBhntquCO2TWO5nMbnun5wSliSHO0uLXCUTO7emRmZrBh719tWmaVcXA3o=
+	t=1756908861; cv=none; b=ExDFpBgQMni3VQM5D7/ig8XZ7TQrm/vIH/kYfWuOGwoE7jvM3wsT3EJLB5h9sqaGZHDNMqdiVqVXE9g1o5dVYm2czlePn3KqOJf9aRaCZdcWNhnp4J0XClHRdlOSaRIxK4CZBJrEefuwP4pu/2PmjCOx0VquWCns9kQaKpOlXuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908805; c=relaxed/simple;
-	bh=jChr6ji3pFwXeMcSXw5YGcuHU7gFFFGKRuwiRoe9HFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rEimxc4XFb7OHEslVo9Wg7PT4iiu8ATjz0VS76ZTfr8w0o5E/YQGdFCZ9k4Zvq0xg/4zj1YgjZMJ0Gu1iwVb/wm1VLggL/cMh/5Yq4K4fw5HUUTBGnR1BMfEVzHQWiuaQ5ihOpkVGb1ZTpnrcK6FHvK5z/PwxDxkZPLUHDqqbZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bKIg3FLB; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1756908861; c=relaxed/simple;
+	bh=QgpiepA17U/qu04cU/NufFpWBkWLkfEGGfvsson17Rk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mNwpJGX8lAjlggM10Pnev1m8pygcGzg49o7i78XAqdCUTW3kiAiXA8ZAfsdnAWr92u/cAYQDJxwOr+uwbedK4BoBG7EIPvIKkJZ3mqbdKjzzy09Nd3DYqwbWy5osKynRFlFLoK6GMGFHcM4cWcyK/MxnG2mNDhR8/Qd3UdbDOAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u+5gInAT; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b9853e630so17948975e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:13:23 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aff0775410eso86280466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:14:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756908802; x=1757513602; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yBIcNf631ef2opWTzbk1POiusCMrfVUtghAbvI2Xsvg=;
-        b=bKIg3FLBvw/BtI9Me+i/2aZgCKhsJX+6gxBthc2f0F/DR+ulRLZh5JPcQTHtH7FkVJ
-         7FsTWhZMlMM1RIVGPuES7OPWgKvz2A3sojgigdFuUhqXZYtGUnWd1NXG8wGWIVgoxJYG
-         bJ4LObn6LZsfyYZMBueMMLktjUXIPiaOFQ2u1Bxu2Rl9CJsMCOra9z87zZC9/Yd3bTXU
-         kA6/sVo+bl2g5RBieqssXSTd9LjreaHmVuoCM6mb4EUb2wFyHWwWFOHUb3DMOeqQaLv3
-         P/8kUxOd1sUr9iYMKj62EOI3YX48r55bSP0aOFGZgt+to+RptngC2fxJKRt3jpxTtpve
-         K8Kw==
+        d=linaro.org; s=google; t=1756908857; x=1757513657; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Sy4dBfHIaBfhYtqP0F27/527JigtHi7rtrySuW1Mpg=;
+        b=u+5gInATMekOWdi9wiSKSc/3ESlXxeYwqJs9dSCifxiM9pULf7r7XGNLZQR4cMZGsN
+         tsQwZaHbeyPFfTOcYfNMWf7pi0CFoGzNCX1MrvFsYrBhii7jhVRnUrJ7ZlFL1qoGACJN
+         PhJ7sEK3NXAacrDOnKxJvgE332HwrhEgilRzMXVr+yWDLm3e28PwzMQIa5++GAFUNpnL
+         T/q6g9GcSzQY//KWiCOTKIZZgpZIN93nCtCrPOCGIx8th+HbZAMzBckoaWp2MnECy76W
+         eRXHxN4OvepR4Tgf3OYjJqg2qtueBN1Tj/u3H6ekTE6uykazZs2QJl5n4pGae5geA1No
+         rGcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908802; x=1757513602;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yBIcNf631ef2opWTzbk1POiusCMrfVUtghAbvI2Xsvg=;
-        b=hN9AGL+3vBDkoKRsRUhANlAdea7Q6lE0fEfQiIv6C6PQNsYMmihXjR/FFz1ZNALsUS
-         127X+9f0bADMpkTnCJC3nfG6QhSd2SgroagSklvdR7kYDjtycZ9fk8yeggS1lcgrsDUA
-         ELvgTgdZM6wF3YxAKAYjT11DRli46XfDNiIcdaUdy8RATcLf7iF9FEnh2Rd0JIJi1PqX
-         sb9Vr0Zv+nyPJELEsHy2TyVHwraAZVlmmmb0xOs8YeIMyZp0fjCEDRdnnX1gLgk8Zn8Q
-         Wjno3aIbhXxyaz8LYa9PIN0KouI9SATM4iv8yPVffpr4E99Xxok4g8Pq+tBA72QlExnE
-         pThA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2PdEyr85T+2QmomCksGGAudLLDq8MVGv2vrFuuEKxlymaRYltZYn/O6nOrSs2G/1R9n6hlywMv9v0OAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1aolf6eWc+G8RsIbU8l2V/INYEp/Mll+bgQYXBvqPrM8sEmzw
-	e4qDKwa5uGgC2j/T/W82YRvNkAN/7m9GJabV5az0rab7b8ZCVSk/cQxVMwb7tkLOne8=
-X-Gm-Gg: ASbGnct39Izh+Fsgcks2heLisdT3r3vRWYojJuxSs4lOWPThwm1k2wB5qBlx3z+XJSe
-	Ec27nBmgX5c7JEpZo5EAnH3JdnHMDYnf5afNT8Y5d4bSIVWeea+qXYC2ldq2+ohWJr42sJl4niv
-	lu7zOwQ6k1ezN42IOiDSZ3xBpKz4mggAW2hZzgKS6LoZxA9Ux1L9xxPieB9IOW3BYj76x/vSEWf
-	vrpOUpBnjaEu+xR0t+HRSVKAleERgvOzTPiMt2YOFfkH70u+3XOHIc9cXwjXBvXwymuwogKZ1Gh
-	fJNXMmN3rvIXvBE9+mjbLhH4hG92W0YkdCSJTAyMPdehUm87ek/SOVMOBEg/ENr2132xz9LYIMz
-	aus+uajW8BAJoKU175NarTA28+y8GhgEd4ZigbyiXqrtp97PCy6L12E214fxw//ItPiRdUVTlmJ
-	fjJtvR8DnlZk6wEbP9Li4YuT9umwgrww==
-X-Google-Smtp-Source: AGHT+IGfAZzD09cWF5IbzY4R9+9G/lHAa3/pRj3XH1WFBEX6L966x/N8b0asy8I8FFb5vuyrdLwPlw==
-X-Received: by 2002:a05:600c:314d:b0:45b:8a92:6b14 with SMTP id 5b1f17b1804b1-45b8a926f9amr120090275e9.37.1756908801569;
-        Wed, 03 Sep 2025 07:13:21 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d95df59e50sm8541982f8f.23.2025.09.03.07.13.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 07:13:21 -0700 (PDT)
-Message-ID: <7a7c122f-50e1-476a-939e-9d76e34b1d6a@linaro.org>
-Date: Wed, 3 Sep 2025 15:13:18 +0100
+        d=1e100.net; s=20230601; t=1756908857; x=1757513657;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3Sy4dBfHIaBfhYtqP0F27/527JigtHi7rtrySuW1Mpg=;
+        b=v9i2BDxE8KeFT0r5HrW7ywgwGyUljAkLlaLCMZp7crDeESU1Zk/NGOA2U7FfxVlbnV
+         tXtx8nCYN1ZFAi1CRjuTJmk7zTlCvoKcbJB1+fI2lnd5veh80S7tn4hP9QvbqfAGSZt4
+         1SpXZ9fsudv3m1OHoOOMG/hxoWAaoW14IcMazCJVu0qzQU4WMdfteUR6tIq9IjQ1LJ0g
+         EooUc6qMRi5RVsJQ85xiqx2cS966ldC7tKnATC02v14oc+n4SVJlUymtAsU8PZNEgLVW
+         Hv9r6HNR72lGB3OgzjL2v64l50fuXmfz9NhMEh2/7jDa299ENoNctRJnP5esMNejMgEg
+         RWrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJp8Sszm/vwnOD2fimG2SbkeJPXUu9f8mXT/z+w0aKJqqM51RE0SweB6r8m2uadkDqexK+PFDBNePfRIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC4yAqdJDn5jdt/RPKLQA7zGOO4diVcHOMoIJIZk19HbwqGS8/
+	xjSUUuTCxZMUqMWQMb1BSixLZ/XfU5Ox44nZ3Z/P6H9UwDToxmcjWoQQ1hGZGlobiKGF+8B2WlJ
+	94U14+oMuN8HN3+5CBvtl9SdgB3/azGD0Xbsgrq/8UA==
+X-Gm-Gg: ASbGnctCVLKDkD8ezy1YeJW49oJfdtzeWruaKnNQQ8xqR7zaDihZ0WeO296tdR9xlzM
+	5HYG03iIEU+K/8qiLAtITgRv1PL/ceAGCJaCPntbcBgRcxrPpfGcubiYH6rx2dDmyalIZZGQ6Gz
+	+ysLwNN8erE1XgQNIP3HvN5C/KTrc93ATFitZsBAn0Phucw2F1GfQ8ZiD+ur0ZLmDE5lysbakfk
+	gcT2MXgMTfDwGN0crOQdvFrK1aLNkU9gKWN
+X-Google-Smtp-Source: AGHT+IHnoZB35rTBnlm1Z5y4wBU+VqaQbhFz3flsgBehfjRcUpSLK1lDtAUrn9eqGfYuRe3rA3e2YmEuMcm2s3ic40Q=
+X-Received: by 2002:a17:907:3f1a:b0:b04:1cb0:baa3 with SMTP id
+ a640c23a62f3a-b041cb0bd49mr1267467166b.26.1756908857191; Wed, 03 Sep 2025
+ 07:14:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <660c2594-9a93-450e-9a2e-17ef6b4c696d@linaro.org>
- <20250820112242.usd4sdd3avxdlcas@hu-mojha-hyd.qualcomm.com>
- <f5582304-8f55-4c3b-b752-9cefa1e4df96@oss.qualcomm.com>
- <b5a0ad0d-ceba-40d3-a111-0831c4538cea@linaro.org>
- <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <2g3iwc2en6wh2ucrsth5ontzdwqr7tr6oplxjnfdjsy3lwyyfe@l76frwiadgru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250819025720.14794-1-adamli@os.amperecomputing.com>
+ <xhsmhtt23h0nw.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <7438bb3a-96d6-485a-9ecc-63829db74b39@os.amperecomputing.com>
+ <xhsmho6sagz7p.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <d421a5ba-95cb-42fb-a376-1e04c9d6a1ac@os.amperecomputing.com>
+ <xhsmhldnegqq4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <1db2d6df-16ff-4521-ada5-da585b87b06f@os.amperecomputing.com>
+ <xhsmhfrdblnp3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <916176fe-ad43-9dd2-ed1c-6f05f838d491@gentwo.org> <xhsmh4itjlnnt.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+In-Reply-To: <xhsmh4itjlnnt.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 3 Sep 2025 16:14:04 +0200
+X-Gm-Features: Ac12FXwzS2goNSwNbZWrHsd-vrKf-nlV0ORWmO68Buu_r5foNM5s8K1OQckGNt0
+Message-ID: <CAKfTPtCtR7Q6PxRRXGxfKnhyPTODBGs5cFRVL6A0nHx_GnpA9w@mail.gmail.com>
+Subject: Re: [PATCH] sched/nohz: Fix NOHZ imbalance by adding options for ILB CPU
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, Adam Li <adamli@os.amperecomputing.com>, mingo@redhat.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, frederic@kernel.org, 
+	linux-kernel@vger.kernel.org, patches@amperecomputing.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/09/2025 15:02, Dmitry Baryshkov wrote:
-> On Wed, Sep 03, 2025 at 02:31:55PM +0100, Bryan O'Donoghue wrote:
->> On 03/09/2025 12:56, Konrad Dybcio wrote:
->>>> Can you try with this next-20250814 tag ?
->>> You sent it on the 19th, so it's in your best interest to run a quick
->>>
->>> git rebase --onto linux-next/master $(git describe --abbrev=0)
->>>
->>> and giving the series a prompt re-test before sending, because there might have
->>> been incompatible changes, whether ones that would prevent applying, or break
->>> things functionally
->>
->> I can't even find that tag next-20250814 closets thing is
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tag/?h=next-20250814
-> 
->>
->> | * \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \   00062ea01d35e - Merge tag
->> 'drm-xe-fixes-2025-08-14' of https://gitlab.freedesktop.org/drm/xe/kernel
->> into drm-fixes (3 weeks ago)
->>
->> but patch #9 in this series stubbornly won't apply to any SHA I've tried.
->>
->> meh
->>
->> ---
->> bod
-> 
+On Wed, 3 Sept 2025 at 14:35, Valentin Schneider <vschneid@redhat.com> wrote:
+>
+> On 28/08/25 08:44, Christoph Lameter (Ampere) wrote:
+> > On Thu, 28 Aug 2025, Valentin Schneider wrote:
+> >
+> >> > Yes, binding the threads to CPU can work around the performance
+> >> > issue caused by load imbalance. Should we document that 'nohz_full' may cause
+> >> > the scheduler load balancing not working well and CPU affinity is preferred?
+> >> >
+> >>
+> >> Yeah I guess we could highlight that.
+> >
+> > We need to make sure that the idle cpus are used when available and
+> > needed. Otherwise the scheduler is buggy.
+> >
+> > Such a load balancing action means that there is a cpu that is running
+> > multiple processes. Therefore the timer interrrupt and the scheduler
+> > processing is active on at least one cpu. We can therefore do something
+> > about the situation.
+> >
+> > The scheduler needs to move one of the processes onto the idle cpu.
+>
+> AFAICT we have (at least) two options:
+> 1) Trigger NOHZ balancing on a busy housekeeping CPU (what this patch does)
+>
+>    This is somewhat against idle load balancing rules (only spend CPU time
+>    on that if there is no "genuine" work to run), but I guess from a CPU
+>    isolation PoV this can be tallied as just another housekeeping activity
 
-Unfortunately that's not the right SHA though
+In this case, this should only be done for full nohz case and not for
+other cases because the ILB overhead is not negligible on a busy cpu
+and I don't see anything that enable 1) only for full no hz
 
-git checkout -b next-20250814-test next-20250814 
+>
+> 2) Trigger NOHZ balancing on an idle NOHZ_FULL CPU
 
-Switched to a new branch 'next-20250814-test'
+this patch also does 2) for no smt case
 
-b4 shazam 
-20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com
-Grabbing thread from 
-lore.kernel.org/all/20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-   Added from v8: 12 patches
-   Added from v9: 12 patches
-Analyzing 60 messages in the thread
-Analyzing 163 code-review messages
-Will use the latest revision: v9
-You can pick other revisions using the -vN flag
-Checking attestation on all messages, may take a moment...
----
-   ✓ [PATCH v9 1/11] tee: allow a driver to allocate a tee_device 
-without a pool
-   ✓ [PATCH v9 2/11] tee: add close_context to TEE driver operation
-   ✓ [PATCH v9 3/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
-   ✓ [PATCH v9 4/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
-   ✓ [PATCH v9 5/11] tee: increase TEE_MAX_ARG_SIZE to 4096
-   ✓ [PATCH v9 6/11] firmware: qcom: scm: add support for object invocation
-   ✓ [PATCH v9 7/11] firmware: qcom: tzmem: export shm_bridge create/delete
-   ✓ [PATCH v9 8/11] tee: add Qualcomm TEE driver
-   ✓ [PATCH v9 9/11] tee: qcom: add primordial object
-   ✓ [PATCH v9 10/11] tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
-   ✓ [PATCH v9 11/11] Documentation: tee: Add Qualcomm TEE driver
-   ---
-   ✓ Signed: DKIM/qualcomm.com (From: amirreza.zarrabi@oss.qualcomm.com)
----
-Total patches: 11
----
-  Base: using specified base-commit 33bcf93b9a6b028758105680f8b538a31bc563cf
-Applying: tee: allow a driver to allocate a tee_device without a pool
-Applying: tee: add close_context to TEE driver operation
-Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
-Applying: tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
-Applying: tee: increase TEE_MAX_ARG_SIZE to 4096
-Applying: firmware: qcom: scm: add support for object invocation
-Applying: firmware: qcom: tzmem: export shm_bridge create/delete
-Applying: tee: add Qualcomm TEE driver
-Applying: tee: qcom: add primordial object
-Applying: tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
-Applying: Documentation: tee: Add Qualcomm TEE driver
+I wonder why this happens only for no smt case ?   If the sibling is
+used by another thread with full nohz, it already interferes with this
+one
 
-b4 shazam 20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com
-Grabbing thread from 
-lore.kernel.org/all/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 70 messages in the thread
-Looking for additional code-review trailers on lore.kernel.org
-Analyzing 0 code-review messages
-Checking attestation on all messages, may take a moment...
----
-   ✓ [PATCH v2 1/11] firmware: qcom_scm: Introduce PAS context 
-initialization helper
-   ✓ [PATCH v2 2/11] soc: qcom: mdtloader: Add context aware 
-qcom_mdt_pas_load() helper
-   ✓ [PATCH v2 3/11] firmware: qcom_scm: Add a prep version of 
-auth_and_reset function
-   ✓ [PATCH v2 4/11] firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
-     + Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> (✗ 
-DKIM/linaro.org)
-   ✓ [PATCH v2 5/11] firmware: qcom_scm: Add shmbridge support to 
-pas_init/release function
-   ✓ [PATCH v2 6/11] remoteproc: Move resource table data structure to 
-its own header
-   ✓ [PATCH v2 7/11] firmware: qcom_scm: Add 
-qcom_scm_pas_get_rsc_table() to get resource table
-   ✓ [PATCH v2 8/11] soc: qcom: mdt_loader: Add helper functions to map 
-and unmap resources
-   ✓ [PATCH v2 9/11] remoteproc: pas: Extend parse_fw callback to parse 
-resource table
-   ✓ [PATCH v2 10/11] remoteproc: qcom: pas: Enable Secure PAS support 
-with IOMMU managed by Linux
-   ✓ [PATCH v2 11/11] media: iris: Enable Secure PAS support with IOMMU 
-managed by Linux
-   ---
-   ✓ Signed: DKIM/qualcomm.com (From: mukesh.ojha@oss.qualcomm.com)
----
-Total patches: 11
----
-Applying: firmware: qcom_scm: Introduce PAS context initialization helper
-Applying: soc: qcom: mdtloader: Add context aware qcom_mdt_pas_load() helper
-Applying: firmware: qcom_scm: Add a prep version of auth_and_reset function
-Applying: firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
-Applying: firmware: qcom_scm: Add shmbridge support to pas_init/release 
-function
-Applying: remoteproc: Move resource table data structure to its own header
-Applying: firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get 
-resource table
-Applying: soc: qcom: mdt_loader: Add helper functions to map and unmap 
-resources
-Applying: remoteproc: pas: Extend parse_fw callback to parse resource table
-Patch failed at 0009 remoteproc: pas: Extend parse_fw callback to parse 
-resource table
-error: patch failed: drivers/soc/qcom/mdt_loader.c:22
-error: drivers/soc/qcom/mdt_loader.c: patch does not apply
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-hint: When you have resolved this problem, run "git am --continue".
-hint: If you prefer to skip this patch, run "git am --skip" instead.
-hint: To restore the original branch and stop patching, run "git am 
---abort".
-hint: Disable this message with "git config set advice.mergeConflict false"
+But we might want to do is_core_idle() instead
 
+>
+>    That doesn't steal useful CPU time, but that also potentially causes
+>    interference, albeit only if racing with the NOHZ_FULL workload spawning
+>    (which shouldn't be the steady state).
+>
+> The more I think about it the more I'm leaning towards 1), but I'd like
+> other folks' opinion.
+>
 
