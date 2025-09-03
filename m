@@ -1,148 +1,158 @@
-Return-Path: <linux-kernel+bounces-798861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37B1B423FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:47:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485D9B42400
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2153BDEAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:47:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2790A174483
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE831EA7E4;
-	Wed,  3 Sep 2025 14:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244942E92D1;
+	Wed,  3 Sep 2025 14:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RpoJeYYf"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b="VcLFIlxF"
+Received: from smtpout6.mo534.mail-out.ovh.net (smtpout6.mo534.mail-out.ovh.net [54.36.140.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1CF4D8D1;
-	Wed,  3 Sep 2025 14:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD3D285CB6
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.36.140.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756910863; cv=none; b=XDUsxj6biAZeACXuhFS1UmJ15SVtBMBso+6aaBpqP49VRSozAzne4A1jmwjYiEUN6T5A/lkhLOZZB/TG5TqWibggTXw+9Fb4xXUyjLrK2l/+OF/K3ABbwH1vQJgfdOGAddTZm0SzTpsusj/ozcDbRemQAdgdz7nINP/2SzmNZRg=
+	t=1756910907; cv=none; b=ZS9xE6RbFPRa6EFYiSGWDXLXLaEP7AOXy4Az+vkY1hfSxdGgh5hy1ientwOW+KewEn2t9yvQ49GJSduDZ+iWeBtePYRkf/NP+2qmYxVacFUBNFJac4z+n40YdgpgofjU4jXue/PxyPmA6hn8td+On4n000pfdULyceg0JbOsYP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756910863; c=relaxed/simple;
-	bh=uIiHVfgXcBHll4tp5RO1iUvvwxGAS287ADmVmicJIzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHhn27Jjjl88uaYJNEeH4C9hUgcySQYWcwIsBRIQFY8OV1RcBWVVwjJKhaghbqa0Sw9GndFurS1xsSBSL8I3B9OAnXaUHJfUoLJwlPaQ2uS/jdNu2trF2PPygZzgm3P/qIeK2rBZR1f8wCtmP0mLcvKhHcsYsn38W36Fpm/3u1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RpoJeYYf; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 6F08FC8EC77;
-	Wed,  3 Sep 2025 14:47:21 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 80808606C3;
-	Wed,  3 Sep 2025 14:47:36 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1BC6A1C22D933;
-	Wed,  3 Sep 2025 16:47:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756910855; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=ujR0yYZ5vFQl06mtsamsbnkJePIHaLtqM3Tp5y6BL2U=;
-	b=RpoJeYYf/ZHQRw1WFqCDTpBR6Tqg5/1v1LPVh9t0KkpFMj6ZUT+1o1EB987g4ZG6jaF5NZ
-	Dm0I6Cdw8RRBspPKZ+ihoaeGMqbkoLI26dcFg6h9Y+3IAMpgrMUPipQnHNPRy+qfKbf42O
-	wksiz8pIqvPkYuIz67rDkTvvUZMqu62Drro8GVFdbJhSo8DasJhqHsWE+DQ68I8pFNT6zT
-	HbSjAJqnVcpPP5MMY5rLxU8dm+GBQewjQ2ClnRzN8B8NxkYNdjyT3XjoONXIS2d3TyyN8z
-	cq3jekRx+zTS95mLK+Y8UY5pk4/XqCSXhRhZuhOqLiH5Yd1+/cG/tILaT4om7Q==
-Date: Wed, 3 Sep 2025 16:47:23 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Cc: krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 5/7] rtc: m41t93: fix device connection/detection logic
- during probe
-Message-ID: <2025090314472377b79cdf@mail.local>
-References: <cover.1756908788.git.akhilesh@ee.iitb.ac.in>
- <c3deec9e679cd4e4a49a2cc1cba340c552faefdc.1756908788.git.akhilesh@ee.iitb.ac.in>
+	s=arc-20240116; t=1756910907; c=relaxed/simple;
+	bh=K+tD++mGpOfZH6uzOxNKEeJrECtR+CMAyvWWXnMxo8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qrNa15Cguzh0t83kkV4oU+qm//zbHgzON/V7qYngHx6DWpARnTzlV3PWPGAu+beC9TDTM/ctx8bi9qfrVEtcJdfaPfQAhnUz6OXuVZN2+wrstinZvDb5Qlby4sbJSFpatd+7TMvHUYTGYMpvJCOWCsRxZ+ywyzMHuxGlSKWBya4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet; spf=pass smtp.mailfrom=orca.pet; dkim=pass (2048-bit key) header.d=orca.pet header.i=@orca.pet header.b=VcLFIlxF; arc=none smtp.client-ip=54.36.140.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orca.pet
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=orca.pet
+Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net [152.228.215.222])
+	by mo534.mail-out.ovh.net (Postfix) with ESMTPS id 4cH5800ZP4z6Bwl;
+	Wed,  3 Sep 2025 14:48:16 +0000 (UTC)
+Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net. [127.0.0.1])
+        by director3.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <brgl@bgdev.pl>; Wed,  3 Sep 2025 14:48:15 +0000 (UTC)
+Received: from mta2.priv.ovhmail-u1.ea.mail.ovh.net (unknown [10.110.168.184])
+	by director3.derp.mail-out.ovh.net (Postfix) with ESMTPS id 4cH57z6Kqyz5wFW;
+	Wed,  3 Sep 2025 14:48:15 +0000 (UTC)
+Received: from orca.pet (unknown [10.1.6.9])
+	by mta2.priv.ovhmail-u1.ea.mail.ovh.net (Postfix) with ESMTPSA id C27273E3352;
+	Wed,  3 Sep 2025 14:48:14 +0000 (UTC)
+Authentication-Results:garm.ovh; auth=pass (GARM-95G001fd61621b-61d5-4f72-a2e6-6405b16da93f,
+                    FA25AB0AA1A9BF3DCBEBCC83EEB30DB7881EF5C4) smtp.auth=marcos@orca.pet
+X-OVh-ClientIp:79.117.41.176
+Message-ID: <b11dcd50-a87e-47ff-b406-776e432f07bd@orca.pet>
+Date: Wed, 3 Sep 2025 16:48:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3deec9e679cd4e4a49a2cc1cba340c552faefdc.1756908788.git.akhilesh@ee.iitb.ac.in>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
+ southbridges
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Michael Walle <mwalle@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
+ linux-pci@vger.kernel.org
+References: <20250822135816.739582-1-marcos@orca.pet>
+ <20250822135816.739582-4-marcos@orca.pet>
+ <20250902151828.GU2163762@google.com>
+ <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
+ <20250903072117.GY2163762@google.com>
+ <1d4352b6-c27e-4946-be36-87765f3fb7c3@orca.pet>
+ <20250903140115.GC2764654@google.com>
+Content-Language: es-ES
+From: Marcos Del Sol Vives <marcos@orca.pet>
+In-Reply-To: <20250903140115.GC2764654@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 6138124817232582246
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeforghrtghoshcuffgvlhcuufholhcugghivhgvshcuoehmrghrtghoshesohhrtggrrdhpvghtqeenucggtffrrghtthgvrhhnpedtgedugfeiudfgkeduhfelgfejgfeuvdejffeiveegteejvddviefhiedujedvheenucfkphepuddvjedrtddrtddruddpjeelrdduudejrdeguddrudejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomhepmhgrrhgtohhssehorhgtrgdrphgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
+ hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtihesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheefgegmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=hUaRlYoluP1SLEjFJzymDSSwfKaLIPXTBwU8vyuHXIU=;
+ c=relaxed/relaxed; d=orca.pet; h=From; s=ovhmo-selector-1; t=1756910896;
+ v=1;
+ b=VcLFIlxFp2tMBzDjpw4X+0YZl/XD0X2f0k7u7W1oJX0b5WDR14uL4noiMAnfxBr9rKj3fKOG
+ kYa0rABI2W9jJAqDJnR5KLUV6xM4ml0yVRLA+1YnCdr2wXbsPAFYIAuspK1Ob8OsnqfN91kZxwN
+ CiH2xeLaooKA7YgPJdqI4IgmQ/UKKoRBbOGT6lw/XevtaBGGE8tI1LVwDgbpkQiA2CxJLdr9P9C
+ zew81B5t28KJYDs8p6WMejKIZeLGPgtA4ZGQw+xDd2353DRAIJGHbfqV06J+pihoa5iQCkg+PBM
+ +FulApsJtss2dU9mTRkhXzwNoYLGhFfbIbYYpn7S7b+Mw==
 
-On 03/09/2025 19:57:21+0530, Akhilesh Patil wrote:
-> Fix the incorrect assumption about WDAY register (0x4) bits 3 to 7
-> being 0 after initial power-on to test response from device during probe
+El 03/09/2025 a las 16:01, Lee Jones escribió:
+>> patch series and thus make it a proper MFD (at the cost of delaying
+>> even further the GPIO inclusion), or keep the struct mfd_cell array
+>> as a single-element array and implement the watchdog later on another
+>> merge request, using that very same array.
+>>
+>> I am however not okay with wasting my time rewriting that to bypass
+>> the MFD API for this, so I can waste even more time later
+>> implementing again the MFD API, just because linguistically
+>> one (right now) is technically not "multi".
 > 
-> Do not expect these bits to be 0 after power on as datasheet does not
-> explicitly mention these power on defaults but recommends software to
-> clear these bits during operation. Refer section 3.15 for initial
-> power-on default bits.
+> I don't get this.  If you implement the WDT now, you will be "multi", so
+> what are you protesting against?
+
+That GPIO is something required to perform the poweroff sequence, a must
+for any machine, while WDT is just a "nice to have".
+
+Implementing now the WDT just because of a linguistic preference means
+delaying something more important in favour of a "nice to have".
+
+>> That seems very unreasonable, specially when it wouldn't be a first
+>> since at least these other devices are also using MFD with a single
+>> device:
+>>
+>>   - 88pm80
 > 
-> Fix the random probe failures after power on by removing this condition
-> check. Add alternate response check logic which performs write, read,
-> compare check on device SRAM register to check device connection.
+> % grep name drivers/mfd/88pm800.c
+> 	.name = "88pm80x-rtc",
+> 	.name = "88pm80x-onkey",
+> 	.name = "88pm80x-regulator",
+> 	.name = "88pm800",
+
+If you open the file, you'll see it uses five single-element arrays.
+
+>>   - 88pm805
 > 
-> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> ---
->  drivers/rtc/rtc-m41t93.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-m41t93.c b/drivers/rtc/rtc-m41t93.c
-> index 8cc179e08a4a..902797070246 100644
-> --- a/drivers/rtc/rtc-m41t93.c
-> +++ b/drivers/rtc/rtc-m41t93.c
-> @@ -30,6 +30,7 @@
->  #define M41T93_BIT_A1IE                 BIT(7)
->  #define M41T93_BIT_ABE			BIT(5)
->  #define M41T93_FLAG_AF1                 BIT(6)
-> +#define M41T93_SRAM_BASE		0x19
->  
->  
->  #define M41T93_REG_ALM_HOUR_HT		0xc
-> @@ -290,17 +291,25 @@ static int m41t93_probe(struct spi_device *spi)
->  		return PTR_ERR(m41t93->regmap);
->  	}
->  
-> -	ret = regmap_read(m41t93->regmap, M41T93_REG_WDAY, &res);
-> -	if (ret < 0) {
-> +	ret = regmap_write(m41t93->regmap, M41T93_SRAM_BASE, 0xA5);
-
-Nope, probe is not called at RTC power on but when linux starts. The
-whole point of the RTC is to survive Linux. Writing to this register is
-breaking functionnality.
-
-> +	if (ret) {
->  		dev_err(&spi->dev, "IO error\n");
->  		return -EIO;
->  	}
->  
-> -	if (res < 0 || (res & 0xf8) != 0) {
-> -		dev_err(&spi->dev, "not found 0x%x.\n", res);
-> +	ret = regmap_read(m41t93->regmap, M41T93_SRAM_BASE, &res);
-> +	if (ret) {
-> +		dev_err(&spi->dev, "IO error\n");
-> +		return -EIO;
-> +	}
-> +
-> +	if (res != 0xA5) {
-> +		dev_err(&spi->dev, "No valid response from device 0x%x.\n", res);
->  		return -ENODEV;
->  	}
->  
-> +	dev_notice(&spi->dev, "m41t93 device response success\n");
-> +
-
-This is too verbose.
-
->  	spi_set_drvdata(spi, m41t93);
->  
->  	m41t93->rtc = devm_rtc_device_register(&spi->dev, m41t93_driver.driver.name,
-> -- 
-> 2.34.1
+> % grep name drivers/mfd/88pm805.c       
+> 	.name = "88pm80x-codec",
+> 	.name = "88pm805",
 > 
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Same as above.
+
+>>   - at91-usart
+> 
+> % grep NAME drivers/mfd/at91-usart.c
+> 	MFD_CELL_NAME("at91_usart_spi");
+> 	MFD_CELL_NAME("atmel_usart_serial");
+
+Has two single-element arrays. It registers one or the other, never both
+(just like my patch does!)
+
+>>   - stw481x
+> 
+> * Copyright (C) 2013 ST-Ericsson SA
+> 
+>>   - vx855
+> 
+> * Copyright (C) 2009 VIA Technologies, Inc.
+> 
+>>   - wm8400
+> 
+> * Copyright 2008 Wolfson Microelectronics PLC.
+> 
+
+To my knowledge the definition of "multi" has not been changed
+since any of those years.
+
 
