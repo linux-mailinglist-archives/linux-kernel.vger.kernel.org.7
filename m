@@ -1,121 +1,224 @@
-Return-Path: <linux-kernel+bounces-798044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF01B418CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:40:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEC9B418E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BA637A6191
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2B9681920
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F1A2EC0AE;
-	Wed,  3 Sep 2025 08:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A772EC0B4;
+	Wed,  3 Sep 2025 08:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e1x93UW+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PTw9nrho"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xs6JibLe"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3F32EBDC0;
-	Wed,  3 Sep 2025 08:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841052EC0AE
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 08:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756888817; cv=none; b=hJTWKheyMUIbBT+0nlO2s6b+b7N3QzWjeTu6Yl8GwxrHtlm2aDFSFK6TMHFydMFT5cCGRf9aMeEu6N0ltGhvDbjfqDgKlTTZWlGgx85EMf2+mye0VMmAMU+A5oIxO+IC65m54WyTXLvGrTKJIjbb4l3sGAd01XAL/68OMjms3NQ=
+	t=1756888895; cv=none; b=a8T08owGHW4gDy2LoGA5Y/4vGB+602cWc930iSn2vJLrqJrvOQfAjBhogf809Z8UVARqknKEATFmgfyzKzX0kb15pvSIWo/drsWmQd3e6NJ8Qbq2swMniubrYB5JckDgYqrQVXMq7ukZd06hoRF26JqyS6QozWJia1/i4XVXtmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756888817; c=relaxed/simple;
-	bh=KRqFvSzAOzh6xpHpW2TgXgZ9cEUGzyrAE8yaUm6zFIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZmtaXDAZqRw243WXcv7ad3cqRhqEL5Pl5ikVixNZf4n8pBdWmXhcm6JmPzf3OU8kj9ofKLu24q3BcjwvzRVUoEzN1o9JM8R7xBQ83IrtQbofsTjx/MMTDc+KyH8v4AUCIzAZuUIici+WsUri4WGyKDoldjIrRDJBamUmfe/J5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e1x93UW+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PTw9nrho; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 3 Sep 2025 10:40:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756888813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wogFgenDG1/W+A7VwzKgS47uNOS4th3XGCCabqsEsFs=;
-	b=e1x93UW+fXGbE9x+mkaYFYIGSaEwWnxr/aKUHww/6pu62fMhH9Idy84PE1HnY+D8LeZJxu
-	AuRNMSSRvijvRpvH4l+gMcMVAebcwKjwN1vbR21eDqkuIXVVLZ6mTMOKPNegWKcm11+Zmd
-	8YabgGHMgeBm9+6XuJQCZzl9X9/lj2NkenpzLovfhMsNW9alRox0YCTlDnsmGnmo1i4V7y
-	+6yvMx0awJudcX/KHVMLB9a91DB1Izpd2wryS5Ip3uKGBMA0Ex8z1lp+rJHEpqutNo1UBe
-	VFJKWzyFeGqdxHfHrJVEFHLW6XRK3r/V0EyVM1wmO3x5xLAlS4vWQhaqmekfkw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756888813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wogFgenDG1/W+A7VwzKgS47uNOS4th3XGCCabqsEsFs=;
-	b=PTw9nrho0V342O0vBLEtKLxur6/CvaXZQdDl3QDB91D/RjkoovOULkypqUBuixvsCHYrv0
-	05+HFNt7BQbC7SDg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Nam Cao <namcao@linutronix.de>, Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	John Ogness <john.ogness@linutronix.de>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/1] eventpoll: Replace rwlock with spinlock
-Message-ID: <20250903084012.A8dd-A5z@linutronix.de>
-References: <cover.1752581388.git.namcao@linutronix.de>
- <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
- <20250826084320.XeTd6XAK@linutronix.de>
+	s=arc-20240116; t=1756888895; c=relaxed/simple;
+	bh=ORH9/GodysTSwJ1DXX9s07Oow+2mZpM8t/zerT4S4KU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IgwkqCYN+Npp7c4ChYhs+jxGZHaZ4tivF7wT12wA+cz1VBplytkaaDyvkpFOPb7faJeBJMzqIa6jnu3/TYG2QOYnxc56uzKVXm6+mNyNtNZ0KD8qnkM8iNyNf6l1BAq60ihbaiXKboGSvF6E9b1Zbq/15GUvP7IeLXFI6aSNfao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xs6JibLe; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-72238e9f8ffso8338516d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 01:41:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756888892; x=1757493692; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/+sjUPKzzeyDNJhhYPMVRz16X6YZ4H6NdmqB+0gdRo=;
+        b=Xs6JibLepB6jyzefFGsOpuwB9+rTysDSVZ4Qe13IYjU/R7DlAaV30VKWzMHvvnJrQW
+         Pq0bO0iIOXMmNfLzHgRjK8ldzMBWm9bqKJwOoKYQBryVmgYq+1YupsQd8eGogs590dlt
+         2j70iA2U5t4Ac3Ilmy22ueciBy8wkxwGAs7bnAL/AZIOdCgf/05jMQQ+X57cmmHJuQd7
+         XkqC81txgimLebj0qYYIPibh2nQ+Cg5xDtLDrtH7HsO42ctoE9pGgenQg3yTCy/+BcIF
+         P528guhJ1kAWM0mQ/EGtU309GS5yMIrVWp/JQkSfbLyGMEasuxzvcNDh45Zcc3sSatcS
+         7uDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756888892; x=1757493692;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q/+sjUPKzzeyDNJhhYPMVRz16X6YZ4H6NdmqB+0gdRo=;
+        b=jVVdtWjAgK2YJQXezO2NxRy2W2ijrBcq+ug1cG69WuTI6mb3K9P5tkkO/5Y/HWkE+u
+         qlmM5nwYMQTrgr9jvk0493lrX5EM1pxRdMhEM32tmNfdXsftteJ1cA5oKtWLQzueT+uk
+         vz4ndTMtXSlu09SzGmAdG55yKOcatiR1LEWRwec1w1GcXAGUmNCJ3Bkk1GJrCMUKUXhc
+         5RRFd3mhjXjx3KcBJNXiFbDkBX+EXTUzgl5h5X4chq0uNrom9rn+tlzPLk6jIRLYACgX
+         PVc3xYxyKg7Wf56ZoGkpgnWeJZKCSjs5jWIZWsDjWpr7fsNbSigx1KEX4t8FiTzb6syO
+         n2pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuj4uYMCWWDld2tGkTuZWRLAsoaeGZlpr+9P5YuFR8UPBesPhZBbM6e65gXMKrhXepZL1Ew2uDm6UNuC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjxhCMLzcFrsV6zy7tMWlvDdBpO9AMBq+0NRkCOJM8ul1uz+hU
+	c5TsBShNI8pOLIFBUMry6aKw2YwS5GpY14IXLu+hlaiyRCrb3AlHY9oq0NstU02xqPwe6lEuEmJ
+	sA1/9Ccja3cIhLZHBySaKlR9RlYwkolu7ZNwm9tkI
+X-Gm-Gg: ASbGncs9rS3s/o6tzST/JHCavGm9Khr92HvERTGk2sUEpmi1Mrwgu7jDth9Q3lyA7OJ
+	2d89P9asSwBbplZp6yZkMpt/RGl74+F8GPeyur0yygV8eCAsvvqYhUkGNJdMWImEh6Jghn0n+e4
+	SHLjLYL7GSNYcq/xd10fXBCm3ifnOKFjPYQ4xQ6ief6Vi02Apg0S4d9/Dj+HUcY/ZWOZf3caei1
+	Ttbx3p74smkqgtqHkbGL+7DydVOcza4BBkEXij80O0=
+X-Google-Smtp-Source: AGHT+IF4vmfJfHqBQxZcNttdrfTYxkvTiSAKs+ul8tcs9Dnds2dX1cmh7ADC/k+xZJ11x/E266a48LBXxeBGRHRjSoc=
+X-Received: by 2002:a05:6214:400c:b0:70d:fd01:992d with SMTP id
+ 6a1803df08f44-70fac73d452mr164331216d6.16.1756888891694; Wed, 03 Sep 2025
+ 01:41:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250826084320.XeTd6XAK@linutronix.de>
+References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com> <20250901164212.460229-3-ethan.w.s.graham@gmail.com>
+In-Reply-To: <20250901164212.460229-3-ethan.w.s.graham@gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 3 Sep 2025 10:40:55 +0200
+X-Gm-Features: Ac12FXwvjV2R_1nfj-fpPxtTM3Ef-lrf13TD6fJR0T0JxJ4IOXBIbC7rd81mwII
+Message-ID: <CAG_fn=XWr1_Qvzqq3_dUm-3DjpCFxBz7SbYaW8OMZ1BohjVYDA@mail.gmail.com>
+Subject: Re: [PATCH v2 RFC 2/7] kfuzztest: add user-facing API and data structures
+To: Ethan Graham <ethan.w.s.graham@gmail.com>
+Cc: ethangraham@google.com, andreyknvl@gmail.com, brendan.higgins@linux.dev, 
+	davidgow@google.com, dvyukov@google.com, jannh@google.com, elver@google.com, 
+	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com, 
+	kasan-dev@googlegroups.com, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, dhowells@redhat.com, 
+	lukas@wunner.de, ignat@cloudflare.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-08-26 10:43:20 [+0200], Nam Cao wrote:
-> On Tue, Jul 15, 2025 at 02:46:34PM +0200, Nam Cao wrote:
-> > The ready event list of an epoll object is protected by read-write
-> > semaphore:
-> > 
-> >   - The consumer (waiter) acquires the write lock and takes items.
-> >   - the producer (waker) takes the read lock and adds items.
-> > 
-> > The point of this design is enabling epoll to scale well with large number
-> > of producers, as multiple producers can hold the read lock at the same
-> > time.
-> > 
-> > Unfortunately, this implementation may cause scheduling priority inversion
-> > problem. Suppose the consumer has higher scheduling priority than the
-> > producer. The consumer needs to acquire the write lock, but may be blocked
-> > by the producer holding the read lock. Since read-write semaphore does not
-> > support priority-boosting for the readers (even with CONFIG_PREEMPT_RT=y),
-> > we have a case of priority inversion: a higher priority consumer is blocked
-> > by a lower priority producer. This problem was reported in [1].
-> > 
-> > Furthermore, this could also cause stall problem, as described in [2].
-> > 
-> > Fix this problem by replacing rwlock with spinlock.
-> 
-> Hi Christian,
-> 
-> May I know your plan with this patch? Are you still waiting for something?
-> 
-> You may still understandably be paranoid about epoll due to the last
-> regression. But it's been weeks, and this patch is quite simple, so I start
-> to wonder if it is forgotten.
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -112,6 +112,26 @@ ASSERT(__relocate_kernel_end - __relocate_kernel_start <= KEXEC_CONTROL_CODE_MAX
+>  #else
+>  #define KEXEC_RELOCATE_KERNEL
+>  #endif
+> +
+> +#ifdef CONFIG_KFUZZTEST
+> +#define KFUZZTEST_TABLE                                                        \
+> +       . = ALIGN(PAGE_SIZE);                                           \
+> +       __kfuzztest_targets_start = .;                                  \
+> +       KEEP(*(.kfuzztest_target));                                     \
+> +       __kfuzztest_targets_end = .;                                    \
+> +       . = ALIGN(PAGE_SIZE);                                           \
+> +       __kfuzztest_constraints_start = .;                              \
+> +       KEEP(*(.kfuzztest_constraint));                                 \
+> +       __kfuzztest_constraints_end = .;                                \
+> +       . = ALIGN(PAGE_SIZE);                                           \
+> +       __kfuzztest_annotations_start = .;                              \
+> +       KEEP(*(.kfuzztest_annotation));                                 \
+> +       __kfuzztest_annotations_end = .;
+> +
+> +#else /* CONFIG_KFUZZTEST */
+> +#define KFUZZTEST_TABLE
+> +#endif /* CONFIG_KFUZZTEST */
 
-A friendly reminder.
+I think the definition of KFUZZTEST_TABLE should better be in
+include/asm-generic/vmlinux.lds.h, so that it can be used by other
+architectures.
 
-> Nam
+> + * KFuzzTest receives its input from userspace as a single binary blob. This
+> + * format allows for the serialization of complex, pointer-rich C structures
+> + * into a flat buffer that can be safely passed into the kernel. This format
+> + * requires only a single copy from userspace into a kenrel buffer, and no
 
-Sebastian
+Nit: kernel
+
+> + * further kernel allocations. Pointers are patched internally using a "region"
+> + * system where each region corresponds to some pointed-to data.
+> + *
+> + * Regions should be padded to respect alignment constraints of their underlying
+> + * types, and should be followed by at least 8 bytes of padding. These padded
+> + * regions are poisoned by KFuzzTest to ensure that KASAN catches OOB accesses.
+> + *
+> + * The format consists of a prefix and three main components:
+
+Nit: s/prefix/header?
+
+> + * 1. An 8-byte header: Contains KFUZZTEST_MAGIC in the first 4 bytes, and the
+> + *     version number in the subsequent 4 bytes. This ensures backwards
+> + *     compatibility in the event of future format changes.
+> + * 2. A reloc_region_array: Defines the memory layout of the target structure
+> + *     by partitioning the payload into logical regions. Each logical region
+> + *     should contain the byte representation of the type that it represents,
+> + *     including any necessary padding. The region descriptors should be
+> + *     ordered by offset ascending.
+> + * 3. A reloc_table: Provides "linking" instructions that tell the kernel how
+> + *     to patch pointer fields to point to the correct regions. By design,
+> + *     the first region (index 0) is passed as input into a FUZZ_TEST.
+> + * 4. A Payload: The raw binary data for the structure and its associated
+> + *     buffers. This should be aligned to the maximum alignment of all
+> + *     regions to satisfy alignment requirements of the input types, but this
+> + *     isn't checked by the parser.
+
+Maybe also call it "target structure" here?
+
+> + * For a detailed specification of the binary layout see the full documentation
+> + * at: Documentation/dev-tools/kfuzztest.rst
+> + */
+> +
+> +/**
+> + * struct reloc_region - single contiguous memory region in the payload
+> + *
+> + * @offset: The byte offset of this region from the start of the payload, which
+> + *     should be aligned to the alignment requirements of the region's
+> + *     underlying type.
+> + * @size: The size of this region in bytes.
+> + */
+> +struct reloc_region {
+> +       uint32_t offset;
+> +       uint32_t size;
+> +};
+> +
+> +/**
+> + * struct reloc_region_array - array of regions in an input
+
+Nit: newline here for consistency.
+
+
+> +#define __KFUZZTEST_DEFINE_CONSTRAINT(arg_type, field, val1, val2, tpe)                                         \
+> +       static struct kfuzztest_constraint __constraint_##arg_type##_##field __section(".kfuzztest_constraint") \
+> +               __used = {                                                                                      \
+> +                       .input_type = "struct " #arg_type,                                                      \
+> +                       .field_name = #field,                                                                   \
+> +                       .value1 = (uintptr_t)val1,                                                              \
+> +                       .value2 = (uintptr_t)val2,                                                              \
+> +                       .type = tpe,                                                                            \
+> +               }
+> +
+> +/**
+> + * KFUZZTEST_EXPECT_EQ - constrain a field to be equal to a value
+> + *
+> + * @arg_type: name of the input structure, without the leading "struct ".
+> + * @field: some field that is comparable
+> + * @val: a value of the same type as @arg_type.@field
+> + */
+> +#define KFUZZTEST_EXPECT_EQ(arg_type, field, val)                                    \
+> +       do {                                                                         \
+> +               if (arg->field != val)                                               \
+> +                       return;                                                      \
+> +               __KFUZZTEST_DEFINE_CONSTRAINT(arg_type, field, val, 0x0, EXPECT_EQ); \
+
+Doesn't the compiler complain about defining __used in the middle of the block?
+Maybe move it before the if statement?
+
+> + * KFUZZTEST_EXPECT_NE - constrain a field to be not equal to a value
+
+Nit: you could probably save some space and extract the boilerplate
+from KFUZZTEST_EXPECT_XX into a helper macro.
+
+> +config KFUZZTEST
+> +       bool "KFuzzTest - enable support for internal fuzz targets"
+> +       depends on DEBUG_FS && DEBUG_KERNEL
+
+Given that you only have the sections defined for x86, you should
+probably put something like "depends on X86_64" here.
+If you go for it, please mention somewhere that the framework is only
+available for x86_64, and add "x86:" to the patch title.
+
+An alternative would be to add KFUZZTEST_TABLE to vmlinux.lds.S for
+every architecture.
 
