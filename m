@@ -1,227 +1,112 @@
-Return-Path: <linux-kernel+bounces-797977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F5EB417FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:07:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B0AB417F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B815E3122
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:06:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA365188FF10
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B070C2EBBA1;
-	Wed,  3 Sep 2025 08:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0702E62C3;
+	Wed,  3 Sep 2025 08:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yYhhpIlf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5KjdlbL2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRbxBhfV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD3C2EA177;
-	Wed,  3 Sep 2025 08:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804C332F759;
+	Wed,  3 Sep 2025 08:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756886720; cv=none; b=Rku/uuzEwAS2k+aoXyk29tKJtSOUhj1Sxs+HpMYEubmysixj1c2GeUwconigwCtNKMmffMnlCXSLcMbu/F7+cGZeomKiKXbLISmKZg5vCNK65k9y0ik9ZU6pEHvBkYbg8gU0Uqj939fIxxvWFTNWnGAYOqkl+HRmOjU1lJ7r3n0=
+	t=1756886764; cv=none; b=Uvx3j+0WQOI7+qXtOSBoAcN7FfdjhaYhgzmKO9utxX4IYK/LMWG3dQdPoXkANiE4nL+qgdD31T0Wc+VQen61U+32MCD3+5hz9uyaDyQNXQ6Xzs1G+bWU/NOJ4iV6yO3A0b3pNToEEf+8xTEgD0ETCLatQI7Tjh96G4Ag8URcW7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756886720; c=relaxed/simple;
-	bh=vAKMzthvTmNzP83D+Oo4xnVUd1DxYI3MOi0i/ReSx+U=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=k08fkBy0nmiJe9viJygqIOyeB0G6iWJcztxHWX+MRM4ydIGUWAcZMJQI/kTfClSpOUDqVdOXmFwRCEVUVbS5+hmBoUAcfyGJJp/O3p7P3mY592/F8M6cDcl/qZaQZfDBmgzKcqrq1Rfn/4FUR4CxTxXigMoWTKICDMzhhIxyRhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yYhhpIlf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5KjdlbL2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 03 Sep 2025 08:05:15 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756886716;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9rdgIMEA4RB3bTpHF1svAS5TamVoQVCAqRA+g/XO6+8=;
-	b=yYhhpIlfadJAhHkOM9LsfNIAdAZki8fbXWzfeUqYRfuLPjzg/LK2NaEC3fA9LAi2k4HZe2
-	73nFOmdxHIrNRyKP6Ci84XACF8zHRO0DdbNIBXXeqABoYw40mPPaa7bVjlNsGPmMXITCHR
-	8E4g95/VkWu3Ilalqm8oHQPjxb2TBfL6unsZuMhw2mDFuYCiAMzyPxw+krELHmJbkmjTsx
-	CsD5N16uV2lTjk9pU0FYxmKXBB6bezC4vUesHADqQClpjbX/V7RmknoA+EtEW9LK6e20Ur
-	D6PdNMtg+mtEgmsjR2syQeD99ciEyjRt3QhPNUTJaD6pk1cuoPLR5lxzShq31g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756886716;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9rdgIMEA4RB3bTpHF1svAS5TamVoQVCAqRA+g/XO6+8=;
-	b=5KjdlbL2nSbuoUUknNPcN/TTks05HIzqhVYYHIPCE+J1eVh0wVldYSkosAybDFc97uGJRq
-	14M5Gs5NhTbgGlAA==
-From: "tip-bot2 for Harshit Agarwal" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/deadline: Fix race in push_dl_task()
-Cc: Harshit Agarwal <harshit@nutanix.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250408045021.3283624-1-harshit@nutanix.com>
-References: <20250408045021.3283624-1-harshit@nutanix.com>
+	s=arc-20240116; t=1756886764; c=relaxed/simple;
+	bh=wDnvBLehK7IJqRY8ivJ2SBG6bvf3CzMsEAz5fK3TvCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uUsM75jcYzUWLau449KiPQ/cu7Mf2iAtox2vCIAdowRqZxywhLT4ewWA4wdJE1P3ypcSa6p3dtRi3kkZzW/NpTzIwmNymSxg+IlDmyXOAmxHSdoaGSKGucTZ40tOTGoUMriryts7uJRryjROpU2q5bDrfYBkurSaZ+9nwbLPqa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRbxBhfV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67B5CC4CEF0;
+	Wed,  3 Sep 2025 08:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756886764;
+	bh=wDnvBLehK7IJqRY8ivJ2SBG6bvf3CzMsEAz5fK3TvCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hRbxBhfVISQ3oCC/dXePYzlkZqd3oAjksWMD/mJydWudE21uxv2qnSBB6OsHrlyLe
+	 C6pqEo68ozPGxUTLDgQCNldksyjBEh0tSdhUqtGqzDKNtPTwfHsarHuv5GASJx35jc
+	 6X/0mcFTVo71PfsgPIZAnCqebaIrKMShfENt7+A3kSKkHB4BVvkNuJJZu3KPNmYzRZ
+	 +6MrCLxauIdcB/ibHmnwcUpfVLYyZyG2+q/NMt29xXg5BDZqFewZVRd3fmsfkdIYpG
+	 uq8faRq3Oyq7ma1FcCAUhgNfQ9F39E/AO9DHJMSVOocjnJO8cT8ueBjougrgkQs6zx
+	 6KLtXgUlX0Irw==
+Date: Wed, 3 Sep 2025 09:05:58 +0100
+From: Lee Jones <lee@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Jiri Slaby <jirislaby@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH 12/21] mfd: arizona: make legacy gpiolib interface
+ optional
+Message-ID: <20250903080558.GC2163762@google.com>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-13-arnd@kernel.org>
+ <20250902124427.GM2163762@google.com>
+ <5a683d99-b323-4ab7-bf0a-e91436ffd301@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175688671542.1920.13477788815006763572.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5a683d99-b323-4ab7-bf0a-e91436ffd301@app.fastmail.com>
 
-The following commit has been merged into the sched/core branch of tip:
+On Tue, 02 Sep 2025, Arnd Bergmann wrote:
 
-Commit-ID:     8fd5485fb4f3d9da3977fd783fcb8e5452463420
-Gitweb:        https://git.kernel.org/tip/8fd5485fb4f3d9da3977fd783fcb8e54524=
-63420
-Author:        Harshit Agarwal <harshit@nutanix.com>
-AuthorDate:    Tue, 08 Apr 2025 04:50:21=20
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 03 Sep 2025 10:03:12 +02:00
+> On Tue, Sep 2, 2025, at 14:44, Lee Jones wrote:
+> > On Fri, 08 Aug 2025, Arnd Bergmann wrote:
+> >
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >> 
+> >> The only machine that still uses the old gpio number based interface
+> >> is the wlf_cragg_6410 board file. In order to remove the dependency
+> >> on the interfaces, add #ifdef blocks here.
+> >> 
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >> ---
+> >>  drivers/mfd/arizona-irq.c         |  5 ++++-
+> >>  include/linux/mfd/arizona/pdata.h |  6 ++++++
+> >>  sound/soc/codecs/arizona-jack.c   | 17 ++++++++++++++++-
+> >>  3 files changed, 26 insertions(+), 2 deletions(-)
+> >
+> > Just FTR, I hate this!   =:-D
+> 
+> Any alternative suggestions?
+> 
+> Would you be happier with a hard "depends on GPIOLIB_LEGACY"?
+> 
+> I see only two in-tree users other than the old 6410 board
+> that use the modern path: exynos5433-tm2-common.dtsi
+> and drivers/platform/x86/x86-android-tablets/lenovo.c.
+> 
+> Making those platforms 'select GPIOLIB_LEGACY' is technically
+> incorrect since they don't need the legayc interfaces, but it
+> would be a temporary workaround until wlf_cragg_6410 is
+> gone.
 
-sched/deadline: Fix race in push_dl_task()
+I've applied the patches for now in the hope that these can get cleaned
+away at one point.
 
-When a CPU chooses to call push_dl_task and picks a task to push to
-another CPU's runqueue then it will call find_lock_later_rq method
-which would take a double lock on both CPUs' runqueues. If one of the
-locks aren't readily available, it may lead to dropping the current
-runqueue lock and reacquiring both the locks at once. During this window
-it is possible that the task is already migrated and is running on some
-other CPU. These cases are already handled. However, if the task is
-migrated and has already been executed and another CPU is now trying to
-wake it up (ttwu) such that it is queued again on the runqeue
-(on_rq is 1) and also if the task was run by the same CPU, then the
-current checks will pass even though the task was migrated out and is no
-longer in the pushable tasks list.
-Please go through the original rt change for more details on the issue.
-
-To fix this, after the lock is obtained inside the find_lock_later_rq,
-it ensures that the task is still at the head of pushable tasks list.
-Also removed some checks that are no longer needed with the addition of
-this new check.
-However, the new check of pushable tasks list only applies when
-find_lock_later_rq is called by push_dl_task. For the other caller i.e.
-dl_task_offline_migration, existing checks are used.
-
-Signed-off-by: Harshit Agarwal <harshit@nutanix.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250408045021.3283624-1-harshit@nutanix.com
----
- kernel/sched/deadline.c | 73 ++++++++++++++++++++++++++--------------
- 1 file changed, 49 insertions(+), 24 deletions(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index f253012..5b64bc6 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2580,6 +2580,25 @@ static int find_later_rq(struct task_struct *task)
- 	return -1;
- }
-=20
-+static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
-+{
-+	struct task_struct *p;
-+
-+	if (!has_pushable_dl_tasks(rq))
-+		return NULL;
-+
-+	p =3D __node_2_pdl(rb_first_cached(&rq->dl.pushable_dl_tasks_root));
-+
-+	WARN_ON_ONCE(rq->cpu !=3D task_cpu(p));
-+	WARN_ON_ONCE(task_current(rq, p));
-+	WARN_ON_ONCE(p->nr_cpus_allowed <=3D 1);
-+
-+	WARN_ON_ONCE(!task_on_rq_queued(p));
-+	WARN_ON_ONCE(!dl_task(p));
-+
-+	return p;
-+}
-+
- /* Locks the rq it finds */
- static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
- {
-@@ -2607,12 +2626,37 @@ static struct rq *find_lock_later_rq(struct task_stru=
-ct *task, struct rq *rq)
-=20
- 		/* Retry if something changed. */
- 		if (double_lock_balance(rq, later_rq)) {
--			if (unlikely(task_rq(task) !=3D rq ||
-+			/*
-+			 * double_lock_balance had to release rq->lock, in the
-+			 * meantime, task may no longer be fit to be migrated.
-+			 * Check the following to ensure that the task is
-+			 * still suitable for migration:
-+			 * 1. It is possible the task was scheduled,
-+			 *    migrate_disabled was set and then got preempted,
-+			 *    so we must check the task migration disable
-+			 *    flag.
-+			 * 2. The CPU picked is in the task's affinity.
-+			 * 3. For throttled task (dl_task_offline_migration),
-+			 *    check the following:
-+			 *    - the task is not on the rq anymore (it was
-+			 *      migrated)
-+			 *    - the task is not on CPU anymore
-+			 *    - the task is still a dl task
-+			 *    - the task is not queued on the rq anymore
-+			 * 4. For the non-throttled task (push_dl_task), the
-+			 *    check to ensure that this task is still at the
-+			 *    head of the pushable tasks list is enough.
-+			 */
-+			if (unlikely(is_migration_disabled(task) ||
- 				     !cpumask_test_cpu(later_rq->cpu, &task->cpus_mask) ||
--				     task_on_cpu(rq, task) ||
--				     !dl_task(task) ||
--				     is_migration_disabled(task) ||
--				     !task_on_rq_queued(task))) {
-+				     (task->dl.dl_throttled &&
-+				      (task_rq(task) !=3D rq ||
-+				       task_on_cpu(rq, task) ||
-+				       !dl_task(task) ||
-+				       !task_on_rq_queued(task))) ||
-+				     (!task->dl.dl_throttled &&
-+				      task !=3D pick_next_pushable_dl_task(rq)))) {
-+
- 				double_unlock_balance(rq, later_rq);
- 				later_rq =3D NULL;
- 				break;
-@@ -2635,25 +2679,6 @@ static struct rq *find_lock_later_rq(struct task_struc=
-t *task, struct rq *rq)
- 	return later_rq;
- }
-=20
--static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
--{
--	struct task_struct *p;
--
--	if (!has_pushable_dl_tasks(rq))
--		return NULL;
--
--	p =3D __node_2_pdl(rb_first_cached(&rq->dl.pushable_dl_tasks_root));
--
--	WARN_ON_ONCE(rq->cpu !=3D task_cpu(p));
--	WARN_ON_ONCE(task_current(rq, p));
--	WARN_ON_ONCE(p->nr_cpus_allowed <=3D 1);
--
--	WARN_ON_ONCE(!task_on_rq_queued(p));
--	WARN_ON_ONCE(!dl_task(p));
--
--	return p;
--}
--
- /*
-  * See if the non running -deadline tasks on this rq
-  * can be sent to some other CPU where they can preempt
+-- 
+Lee Jones [李琼斯]
 
