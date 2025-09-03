@@ -1,146 +1,180 @@
-Return-Path: <linux-kernel+bounces-797966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C18B417CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:05:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B044B417D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B997C3A1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:04:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5B824E4A4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 08:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057842E9755;
-	Wed,  3 Sep 2025 08:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20E42E92D6;
+	Wed,  3 Sep 2025 08:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JKeV1l81"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E1BhnFtX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HmnOphLz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCF32E7BC9;
-	Wed,  3 Sep 2025 08:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74082E0407;
+	Wed,  3 Sep 2025 08:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756886666; cv=none; b=TGadPocjxD5dsAJKGhFZkaJc8aIVRGX+CQ1ZQVnUs1aDEdVLUe5wMNUOGIShvMuNDFYhnzvR5kUp2n/x9gduHs5btpcy8n92bv2hYZymMnS+g2Y5WhruIV4TMNr9t2UY4IQtbue+1NYAk55S+n4w/PLEIXtOtFiePQuTqE9vVwc=
+	t=1756886717; cv=none; b=mnGvH0xSdeT05RoCQL7FNeHdcy11aEMnC00AhIaIe7/WF5bmKSaBUe91CGGKJt2OqiRvXSozWh+XIktnvHqhy0L0W+4pbUr2PdU/XXsWxSp7ItJ+YJdGkL72kJsI0khW4pYBgcUopX86xCy7gUwyn5ZjAX8gCk4H3TIrsRNUw3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756886666; c=relaxed/simple;
-	bh=9EvTWyqdXl4dZ4JO59oCSc+uHvtFSs8LF2Lk+iP3C2k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TKGG4b+DhYCSBjR00ocIyZ2QT22yMlyHFw7agH3kEAQ7kMf/VlJxXGv3CboZOlGg/1ro+dm2N8fymSfGQSUq03f75d+WyV4TrL6FImXTBXe0f7cGbr5e3LNDjzSuLKJGh4NiDR7KoEVcdW1+4oOVcgHP0RmoaVcZ06rqy64H2+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JKeV1l81; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832M5Ph018242;
-	Wed, 3 Sep 2025 08:04:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=+JoCm/VDAdv
-	WfkngJd6WsSR/BeVdMNl7FsaHZEdFJ80=; b=JKeV1l81PUj4GKnSApKEchSK+kb
-	IeboSLCh1RZE0tYtjMcVIWKHay8uX+aKxqhD0n4l2uXfgsHBS+wUjILLv4VWKbtS
-	35yVPzSZ2cBiiAvEtqIanfANsuBIVVnnaNHd4vubYIeTssfI1mX0g7XNpezcEiCs
-	Rrks0pdtq6gg5u/kVO3u6852nmcbDLrA+IsftulCYTRdFXkIIcAbuHWHRDXJMpBj
-	PYb1a1ngbMEUXQ5jBkj1iRpumFiRC3O84SB7HVpmoinAkeIVMjvenL3JD+2cD98a
-	ECGGj7ZiARPW8KQL8y0wT1POb2W52XgQbZjCBRxrioL5DecUnaZrkHwu0Jg==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48wqvwcf43-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 08:04:21 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58384Hve011568;
-	Wed, 3 Sep 2025 08:04:17 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48utcm1wch-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 08:04:17 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58384HTc011550;
-	Wed, 3 Sep 2025 08:04:17 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-sartgarg-hyd.qualcomm.com [10.147.242.251])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 58384F09011512
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 08:04:17 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2339771)
-	id 2D3205CD; Wed,  3 Sep 2025 13:34:15 +0530 (+0530)
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
-        quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
-        quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
-        kernel@oss.qualcomm.com, Sarthak Garg <quic_sartgarg@quicinc.com>
-Subject: [PATCH V5 4/4] arm64: dts: qcom: sm8550: Add max-sd-hs-hz property
-Date: Wed,  3 Sep 2025 13:34:04 +0530
-Message-Id: <20250903080404.3260135-5-quic_sartgarg@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250903080404.3260135-1-quic_sartgarg@quicinc.com>
-References: <20250903080404.3260135-1-quic_sartgarg@quicinc.com>
+	s=arc-20240116; t=1756886717; c=relaxed/simple;
+	bh=CAdrY36u6oUqgWFPf+Lldfz/vOz2ziDo5y3fzJed8yc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=jnNQ2OWsJVD2oPu//jtLkvKaF4XiOuxsJlZbKgqX8hlasDSsFvVnXhwVviTdculV9B002BtCsw5Acuq+U8Q5dhUR2nrJ7UQ1wocMIzZ363cqXCIM+7Uq1txUOn3N0vJgmR5dLex866kDg8exKmGrflMnbloR7JVQo2mN9kXlqhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E1BhnFtX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HmnOphLz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 03 Sep 2025 08:05:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756886707;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=znFhPa+MHCPCr+lu455RGDFuF46kSFi9qq1xgPyf9yM=;
+	b=E1BhnFtXAx0UuLPn8b3SIhWqQeC0BnDJybrrQ9E7fXDtGc4z5Tcuyzuw4l+lWykrQkP3VP
+	nV32ytknXVyWNQRWu7aonnb7V3QKZZcGSbg50XezbZWTBP0vzE1VaBcgJUqGVG2W/fkqkx
+	w5ivnNRTqU6NcLVVnesQJZJHHYePgNKj/kV2TbSRBlarH8PyENt62lunx8hXYY3QaSTtmY
+	JjcQNwLs/nlbCE1GAtWN/f13TGFroZ7/5zi42nxDMD+1LUJsONzngmANWV/p4P/lnncKpJ
+	5IV/xfU8j1cSKyktXLUy4UNL1gnmefPGtv+uPPrexs2HX0yf8eFPsgWNufi9zA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756886707;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=znFhPa+MHCPCr+lu455RGDFuF46kSFi9qq1xgPyf9yM=;
+	b=HmnOphLzXDgzY5JshlFM5ipXH37t9kl4cGBfEft92doQumzq6QK8A308+6RJnyX0Kqp3aG
+	S0AbLJIx+Qu/DgDw==
+From: "tip-bot2 for Aaron Lu" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/fair: Get rid of throttled_lb_pair()
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+ Aaron Lu <ziqianlu@bytedance.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Matteo Martelli <matteo.martelli@codethink.co.uk>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250829081120.806-6-ziqianlu@bytedance.com>
+References: <20250829081120.806-6-ziqianlu@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDAyNCBTYWx0ZWRfX6gjHgI/uhNIh
- wwspbmNQLvrvQ4AE1dVBzeioskBtJOVoGzc5zQeaI6unghbyFLRydgWG5fRqAb53RqCoOzcHbfl
- lQAOrvTsAsMty4CO7ArsFSH+WdOzvXduL3eJSU70fLCL2QK6WR0Fh2YPr7jpsd6jJEVXAcstygP
- RL95Slcp3XitS4Vbr40xU8QTl2bY0pK6S0NVyceqBIEccngmx9lfvqBYN0pp6eJeJYkk+RMQMbQ
- 24mgdeDuvC3x6QO2np213FnDU6QFqJkTGW14pdGLtuanB9elyxVksvzv7r9xtCp4jf6e8a7woK9
- T+5igb4dCeI1vDQICZFSxqj4x0678lAwMEf1F0huM48Ouv+9hkoIMswpcBBfD8JEdb6s0HJI3Nu
- QnWiIk9x
-X-Authority-Analysis: v=2.4 cv=WKh/XmsR c=1 sm=1 tr=0 ts=68b7f685 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=1rLooUvu2jBaxAzt8oUA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 6McarRju3jBQbH0CvX8ieBSFIZW-8776
-X-Proofpoint-ORIG-GUID: 6McarRju3jBQbH0CvX8ieBSFIZW-8776
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_04,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
- spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020024
+Message-ID: <175688670583.1920.14676738682642599307.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Due to board-specific hardware constraints particularly related
-to level shifter in this case the maximum frequency for SD High-Speed
-(HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
-card in HS mode.
+The following commit has been merged into the sched/core branch of tip:
 
-This is achieved by introducing the `max-sd-hs-hz` property in the
-device tree, allowing the controller to operate within safe frequency
-limits for HS mode.
+Commit-ID:     5b726e9bf9544a349090879a513a5e00da486c14
+Gitweb:        https://git.kernel.org/tip/5b726e9bf9544a349090879a513a5e00da4=
+86c14
+Author:        Aaron Lu <ziqianlu@bytedance.com>
+AuthorDate:    Fri, 29 Aug 2025 16:11:20 +08:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 03 Sep 2025 10:03:14 +02:00
 
-Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+sched/fair: Get rid of throttled_lb_pair()
+
+Now that throttled tasks are dequeued and can not stay on rq's cfs_tasks
+list, there is no need to take special care of these throttled tasks
+anymore in load balance.
+
+Suggested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: Valentin Schneider <vschneid@redhat.com>
+Tested-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Link: https://lore.kernel.org/r/20250829081120.806-6-ziqianlu@bytedance.com
 ---
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/sched/fair.c | 35 ++++-------------------------------
+ 1 file changed, 4 insertions(+), 31 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index 82cabf777cd2..3692a3a49634 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -3189,6 +3189,7 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 					 &config_noc SLAVE_SDCC_2 QCOM_ICC_TAG_ACTIVE_ONLY>;
- 			interconnect-names = "sdhc-ddr", "cpu-sdhc";
- 			bus-width = <4>;
-+			max-sd-hs-hz = <37500000>;
- 			dma-coherent;
- 
- 			/* Forbid SDR104/SDR50 - broken hw! */
--- 
-2.34.1
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index bdc9bfa..df8dc38 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5735,23 +5735,6 @@ static inline int throttled_hierarchy(struct cfs_rq *c=
+fs_rq)
+ 	return cfs_bandwidth_used() && cfs_rq->throttle_count;
+ }
+=20
+-/*
+- * Ensure that neither of the group entities corresponding to src_cpu or
+- * dest_cpu are members of a throttled hierarchy when performing group
+- * load-balance operations.
+- */
+-static inline int throttled_lb_pair(struct task_group *tg,
+-				    int src_cpu, int dest_cpu)
+-{
+-	struct cfs_rq *src_cfs_rq, *dest_cfs_rq;
+-
+-	src_cfs_rq =3D tg->cfs_rq[src_cpu];
+-	dest_cfs_rq =3D tg->cfs_rq[dest_cpu];
+-
+-	return throttled_hierarchy(src_cfs_rq) ||
+-	       throttled_hierarchy(dest_cfs_rq);
+-}
+-
+ static inline bool task_is_throttled(struct task_struct *p)
+ {
+ 	return cfs_bandwidth_used() && p->throttled;
+@@ -6743,12 +6726,6 @@ static inline int throttled_hierarchy(struct cfs_rq *c=
+fs_rq)
+ 	return 0;
+ }
+=20
+-static inline int throttled_lb_pair(struct task_group *tg,
+-				    int src_cpu, int dest_cpu)
+-{
+-	return 0;
+-}
+-
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *p=
+arent) {}
+ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
+@@ -9385,18 +9362,14 @@ int can_migrate_task(struct task_struct *p, struct lb=
+_env *env)
+ 	/*
+ 	 * We do not migrate tasks that are:
+ 	 * 1) delayed dequeued unless we migrate load, or
+-	 * 2) throttled_lb_pair, or
+-	 * 3) cannot be migrated to this CPU due to cpus_ptr, or
+-	 * 4) running (obviously), or
+-	 * 5) are cache-hot on their current CPU, or
+-	 * 6) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
++	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
++	 * 3) running (obviously), or
++	 * 4) are cache-hot on their current CPU, or
++	 * 5) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
+ 	 */
+ 	if ((p->se.sched_delayed) && (env->migration_type !=3D migrate_load))
+ 		return 0;
+=20
+-	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
+-		return 0;
+-
+ 	/*
+ 	 * We want to prioritize the migration of eligible tasks.
+ 	 * For ineligible tasks we soft-limit them and only allow
 
