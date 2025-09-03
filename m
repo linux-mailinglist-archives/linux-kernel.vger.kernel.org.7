@@ -1,84 +1,187 @@
-Return-Path: <linux-kernel+bounces-799572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694ADB42DB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:55:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F8CB42DBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 01:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 226A31C232A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:56:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5CDF3BF7C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E4B3115AF;
-	Wed,  3 Sep 2025 23:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DF62FC01C;
+	Wed,  3 Sep 2025 23:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUNt+DuR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="gXZ+AP05"
+Received: from mail-244108.protonmail.ch (mail-244108.protonmail.ch [109.224.244.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343952ED853;
-	Wed,  3 Sep 2025 23:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C752D7DC2;
+	Wed,  3 Sep 2025 23:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756943742; cv=none; b=m1T+Q4HRQgF90TdbVZOK5zR4c3QI0wU8rDGXKS/hmM+C+YKvoGx6s3DbCCXCKBdLrlB6z5DaehDgl+HJZOerDDSJJRpB5YExRdZt85xHlk9dEbbg4AWseBvBiAkLg1yjq8ogweTD6arpUvsDXeTM6eKzCjqxnaIyQ/tKfw6TsOA=
+	t=1756943791; cv=none; b=W+VYqp4u6He55PQ/fPdlteQoyN5bYwiyQ5+aj17nL1Gb9bHEzNnVSrm4Eo5AGmVeqmxTU4SBpBqsdMyvsYauvkuKCu2MkKwNwrNw5IfMhBxpxbxUY2+XjDieMQMHb9eLmmF6KNNNgH7iWpUXQP0rqoaXU70eyjBOV/n314A0sDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756943742; c=relaxed/simple;
-	bh=8kxYmCy2W3BG7qmjwXSxbz7FDy7Ft4ohCF2gD1MejEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SbWe8vmEFB5rx5uMS67UZO53Ls6QGc6BVIBwkNYERLWQjZBC5zUk+0ZKl3WKMDROQAE58KToBjuLIt5JealSbBv7wywLeWu2pa8FTsCImGSuFYMESj+UG0s7siXsDf4uxVqfXqCg1c2xVPlaGAngrFZY6QtHMi9UxeOy91MyIL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUNt+DuR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2CC4C4CEE7;
-	Wed,  3 Sep 2025 23:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756943742;
-	bh=8kxYmCy2W3BG7qmjwXSxbz7FDy7Ft4ohCF2gD1MejEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hUNt+DuRR+RL9lYjAOzu7Enhq/s6rWp6VIQwIf4Jb+y2x42iRsacjps3g48Mtb8NA
-	 +8Ns8Xy5590gH5uzg+k3qM3ENQ5LpEfbNZlrW5okJTvGY/ErmC44aMvoN2xAxOvAZK
-	 /kutcb38viDLOg4564iTKW4c8tav9u3JdNtPXylXGVD1ngSE2ADk2w5oJNfmlphsPG
-	 FEG9/OFCIL5iIY5EeSt/eZvvCDTRqbuLkOQy/RN1gBdddh8zFMVX4F1aIUuq18womL
-	 wmRDjpTL5N123sdrFrdYRqca46DcvW0EJBNgq1T9NGUsLewIyEIRA5aJwJEjhPl3eM
-	 Uqdx7/A5n8i7A==
-Date: Wed, 3 Sep 2025 18:55:40 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-Cc: linux-kernel@vger.kernel.org, conor+dt@kernel.org,
-	patches@opensource.cirrus.com, matteomartelli3@gmail.com,
-	broonie@kernel.org, shuah@kernel.org, zhoubinbin@loongson.cn,
-	krzk+dt@kernel.org, devicetree@vger.kernel.org, KCHSU0@nuvoton.com,
-	linux-sound@vger.kernel.org, katsuhiro@katsuster.net,
-	lgirdwood@gmail.com, drake@endlessm.com
-Subject: Re: [PATCH v2 3/3] ASoC: dt-bindings: wlf,wm8960: Document routing
- strings (pin names)
-Message-ID: <175694373992.3390745.12577037587339202310.robh@kernel.org>
-References: <20250903160119.83625-1-jihed.chaibi.dev@gmail.com>
- <20250903160119.83625-4-jihed.chaibi.dev@gmail.com>
+	s=arc-20240116; t=1756943791; c=relaxed/simple;
+	bh=D/mDCChrYqtDDtdXfScMQpY0yIpDjNoZE3g/ZJ+d2UA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HGPgSL/idoqNQXlnKz1V1ZgCBcVfbLzh36x3404Hqbt334leVbItsSb8oVmi8G8AN9eAqZUto9zWg4NcOlBOq5Myf9526qTg+bB3uFSfgcq1zmswdzNPHEtAlueoJoOhylG2tES9DKkw8AyYmytGbjq14OzuRY0tP1pNoYlr+jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=gXZ+AP05; arc=none smtp.client-ip=109.224.244.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
+	s=protonmail; t=1756943779; x=1757202979;
+	bh=ntDpt7+HVnRWmi4X9YIRcXQEYGfUYQYmSHg1m3hbxyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=gXZ+AP05Uflj/zoh/w6+7gVcu4keyIqogk4lcyVZiv+7gQZLpcFzApxG/KFVQL3xj
+	 0urH8vRyzizckl3uDX8jJzPmF8R1sVaneg++vEiiNyj/+OqgNmQcmJ9Mzv2Lto8uit
+	 Rh+vSFYEfKfOgKecClHigeXj9cuU5NbfxphXjxM8rjjNPy7+pRwmQsxlNNQL6o+rqh
+	 cjWWgRNLmKdjEQuY/fvo9chwvp/3uMNw4252TGZ0WeYv2TCn0a9XvsUomfwDnwZxS9
+	 HdSZVOc0TvlTMCS7gijOaoPmj867F/YvzRBeN0UF5jlRn/BWV7xog/chUosrGyUPNh
+	 mnWxrZw0MY2Pw==
+X-Pm-Submission-Id: 4cHKJK54ppz2ScCs
+From: Aleksandrs Vinarskis <alex@vinarskis.com>
+To: robh@kernel.org,
+	Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: bryan.odonoghue@linaro.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	hansg@kernel.org,
+	krzk+dt@kernel.org,
+	lee@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	pavel@kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: leds: add generic LED consumer documentation
+Date: Thu,  4 Sep 2025 01:56:15 +0200
+Message-ID: <20250903235615.134520-1-alex@vinarskis.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250902182114.GA965402-robh@kernel.org>
+References: <20250902182114.GA965402-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903160119.83625-4-jihed.chaibi.dev@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-
-On Wed, 03 Sep 2025 18:01:19 +0200, Jihed Chaibi wrote:
-> Add a list of the wm8960 pin names to the binding's description to make
-> it self-contained and improve the user experience for board developers.
+> On Tue, Sep 02, 2025 at 11:10:51AM +0000, Aleksandrs Vinarskis wrote:
+> > Currently supports passing 'led-names' used to map LED devices to their
+> > respective functions.
+> > 
+> > Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+> > ---
+> >  .../devicetree/bindings/leds/leds-consumer.yaml    | 69 ++++++++++++++++++++++
+> >  1 file changed, 69 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..a63e78417df84609e279835f7dae62e3ad2f0bf5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
+> > @@ -0,0 +1,69 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Common leds consumer
+> > +
+> > +maintainers:
+> > +  - Aleksandrs Vinarskis <alex@vinarskis.com>
+> > +
+> > +description:
+> > +  Some LED defined in DT are required by other DT consumers, for example
+> > +  v4l2 subnode may require privacy or flash LED.
+> > +
+> > +  Document LED properties that its consumers may define.
 > 
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
-> 
-> ---
-> Changes in v2:
->  - No changes, this file is already refering to device pins.
-> ---
->  .../devicetree/bindings/sound/wlf,wm8960.yaml | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
+> We already have the trigger-source binding for "attaching" LEDs to 
+> devices. Why does that not work here?
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+I have not actually considered this, as the existing privacy-led solution
+from the original series is not trigger based. At least one of the reasons
+for that is that trigger source can be rather easily altered from user
+space, which would've been bad for this use case. If v4l2 acquires control
+over the LED it actually removes triggers and disables sysfs on that LED.
 
+Regarding DT check that is failing because 'ovti,ov02e10.yaml' does not
+allow for additional properties - the same issue would apply to basically
+any camera, I missed it. So would need to either include this new binding
+in 'video-interface-devices.yaml', or drop new binding and directly include
+these new generic LED related properties in the video one. However, in this
+case it gets a bit ugly, as the latter already contains 'flash-leds' for
+flash specifically, and we would be adding a more generic way only used for
+privacy LED, at least for now... not too sure whats the best way here,
+leaning towards 1st option.
+
+Let me know what you think,
+
+Alex
+
+
+> 
+> Rob
+> 
+> > +
+> > +properties:
+> > +  leds:
+> > +    description:
+> > +      Phandle to LED device(s) required by particular consumer.
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +  led-names:
+> > +    description:
+> > +      List of device name(s). Used to map LED devices to their respective
+> > +      functions, when consumer requires more than one LED.
+> > +
+> > +additionalProperties: true
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +    #include <dt-bindings/leds/common.h>
+> > +
+> > +    i2c {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <0>;
+> > +
+> > +      camera@36 {
+> > +        compatible = "ovti,ov02c10";
+> > +        reg = <0x36>;
+> > +
+> > +        reset-gpios = <&tlmm 237 GPIO_ACTIVE_LOW>;
+> > +        pinctrl-names = "default";
+> > +        pinctrl-0 = <&cam_rgb_default>;
+> > +
+> > +        led-names = "privacy-led";
+> > +        leds = <&privacy_led>;
+> > +
+> > +        clocks = <&ov02e10_clk>;
+> > +
+> > +        assigned-clocks = <&ov02e10_clk>;
+> > +        assigned-clock-rates = <19200000>;
+> > +
+> > +        avdd-supply = <&vreg_l7b_2p8>;
+> > +        dvdd-supply = <&vreg_l7b_2p8>;
+> > +        dovdd-supply = <&vreg_cam_1p8>;
+> > +
+> > +        port {
+> > +          ov02e10_ep: endpoint {
+> > +            data-lanes = <1 2>;
+> > +            link-frequencies = /bits/ 64 <400000000>;
+> > +            remote-endpoint = <&csiphy4_ep>;
+> > +          };
+> > +        };
+> > +      };
+> > +    };
+> > +
+> > +...
+> > 
+> > -- 
+> > 2.48.1
+> > 
 
