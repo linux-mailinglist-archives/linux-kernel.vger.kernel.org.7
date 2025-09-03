@@ -1,139 +1,186 @@
-Return-Path: <linux-kernel+bounces-799000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56341B425B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D714EB4260E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D11E17A193C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:38:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C8F77A671B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47AD283CA7;
-	Wed,  3 Sep 2025 15:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="V0fsfZg9"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFF3299AAA;
+	Wed,  3 Sep 2025 15:57:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E898527FD78;
-	Wed,  3 Sep 2025 15:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31351288C34;
+	Wed,  3 Sep 2025 15:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756913997; cv=none; b=rz2NXSxp+yKowf1ksjzQNOsJSnEBfrpDQVijVrfWNaiGTr8FzJ3lhTUDq16H21nXPCH7+eKQmXxQGE+eqwuBC/j5YQT6YJR2+g86zS/ULC2Q16231h0Nuc50q4VyzGkqSsQGdla8e1LJP+DOI/rHgGsab48oQEAJEOBuOOqCGi0=
+	t=1756915024; cv=none; b=gVK47UgM3eYK/3xlBljLM9o9mcn2mA8jkJnhGGgCRJjgfeX69g2Nl73H7cK+5bwlPvcKGEDKlmjscfKsECX+wV8d1UiNBTvBAuapn7ez8Xosf8Yo886mUkw/rmDCd8vPJtnKAfb73V6eZlGPbRn2PnMuhVrlGXkj5swH6Rca9sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756913997; c=relaxed/simple;
-	bh=yEra3lMBgmntkeYUtl49sYAEYjq84wZRgNOZiqJ9768=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UvxnmS+yh7QJVwx0k3WURSr7Pvt44pon3oZ+0MfBoof5sDDkbTQPPNIhgbQdMoDvfi2KU2wpIG9ORgxGMRMK/hkwhgRqIFAvtQ4Ph1VgR7yQeiHIld3cRAU4gWAn5sKMOk45lUNQjPY0vNt2EqhM/z5IgDgsClhlRlljL1gW92I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=V0fsfZg9; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 776F940E016E;
-	Wed,  3 Sep 2025 15:39:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id IFeAcDB9JgAz; Wed,  3 Sep 2025 15:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756913972; bh=gZt5S953FuMmLNd9xFknMXERSFx/tD6LVwgV8tqL03A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V0fsfZg9Rq1IOx868l07KxQeyuox7KJK6b3pVNfQHznEIsGmw2Qp9CstZMV4bc34G
-	 5PvMuKPidFkWXp+2ZApGgZHKfaTzjmYswHBSRMDzS44Q2QBa+CJi6n+EdB8cfFZIws
-	 ov+u03D6WoD5drG4GjKuhnHeks6Xrj18gStgMXV+E76Y7j2E1k2ww18qeF+K/gJThX
-	 zH3SzcMvfcEwPQNElPzMnUYK1+DPmTejy/+I78THP22ZJgTq0yLrT9AaBhQqFiWkQC
-	 oUe+CLSVwEV620vpJTUuyJMd6ZySIQgVkhHeiqN+Lm2GK9xLJdNmtPjqCsqW3xyu9l
-	 lI7uX5lCPBEi7TRyBCa/DFePnBCEEHh+Mv4dvM4jLKK0TEFPK1WdW7Jsx/P8KflY2u
-	 9M1NtnQguansyJZ0AZh8MKHk5rz+4u5jPt+i37BfB4oLxCJcETsotrXeSzt3ZvIaRP
-	 /UHaSKvlNFIVaftxJEGZQHbxm/rrwtwfN3AeuBUZZNgLjwylVEmxEXWt6Fx0BtfC/R
-	 kC66Pe2hb7Jxbvkczp/A6xLnNv9rbz5wQCP8CzG/ffalkBgQixmp81UZKhzBHDsi+v
-	 nA/HtfxYKXzpyogiCA+6QYoRu1oG0fvzo6kxHwL4l7b+c7PgbqbzF1oikW28p+kJJn
-	 5faB4IUAVCH47Q/9cavJF++U=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6282440E00DE;
-	Wed,  3 Sep 2025 15:39:22 +0000 (UTC)
-Date: Wed, 3 Sep 2025 17:39:16 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v5 15/20] x86/mce/amd: Enable interrupt vectors once
- per-CPU on SMCA systems
-Message-ID: <20250903153916.GCaLhhJHHK7oY-PTqz@fat_crate.local>
-References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
- <20250825-wip-mca-updates-v5-15-865768a2eef8@amd.com>
- <20250903100317.GHaLgSZTPMDHrKbO7Q@fat_crate.local>
- <20250903140022.GA835@yaz-khff2.amd.com>
+	s=arc-20240116; t=1756915024; c=relaxed/simple;
+	bh=xgruJY70XCMa147iGgxAQGJXOf5yGwR93Wdz3hxbdi8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=thWlXeZM+uc61SyzZ/yW4E4+QbsOsvihvyA7Otc3b5iW4Ck+8aYibkpBYrFgClfxCzlNRbcaPNZs5WmN/eckM3ONaMakGrIgDG5p0Sx2Y2dI9UnWWohT4Rhs2+mUZwHfQNB34jcEB0l9yAnn1rLhy4sYpp4qHwatL3vhNvNzhDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cH6J52WPsz6HJbP;
+	Wed,  3 Sep 2025 23:40:21 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id B9D87140275;
+	Wed,  3 Sep 2025 23:41:14 +0800 (CST)
+Received: from localhost (10.202.227.251) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 3 Sep
+ 2025 17:41:13 +0200
+Date: Wed, 3 Sep 2025 16:41:11 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>, <jic23@kernel.org>,
+	<dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+	<robh@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
+	<linux-iio@vger.kernel.org>, <s32@nxp.com>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <chester62515@gmail.com>, <mbrugger@suse.com>,
+	<ghennadi.procopciuc@oss.nxp.com>
+Subject: Re: [PATCH v1 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+Message-ID: <20250903164111.00004bc6@huawei.com>
+In-Reply-To: <eedbfbfd1ba625b6750eb3ae20a69301b8bc3ef9.camel@gmail.com>
+References: <20250903102756.1748596-1-daniel.lezcano@linaro.org>
+	<20250903102756.1748596-3-daniel.lezcano@linaro.org>
+	<eedbfbfd1ba625b6750eb3ae20a69301b8bc3ef9.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250903140022.GA835@yaz-khff2.amd.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Sep 03, 2025 at 10:00:22AM -0400, Yazen Ghannam wrote:
-> But any reason to use u32? Why not u8? Alignment or something?
+On Wed, 03 Sep 2025 12:20:39 +0100
+Nuno S=E1 <noname.nuno@gmail.com> wrote:
 
-Struct padding:
+> On Wed, 2025-09-03 at 12:27 +0200, Daniel Lezcano wrote:
+> > From: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+> >=20
+> > The NXP S32G2 and S32G3 platforms integrate a successive approximation
+> > register (SAR) ADC. Two instances are available, each providing 8
+> > multiplexed input channels with 12-bit resolution. The conversion rate
+> > is up to 1 Msps depending on the configuration and sampling window.
+> >=20
+> > The SAR ADC supports raw, buffer, and trigger modes. It can operate
+> > in both single-shot and continuous conversion modes, with optional
+> > hardware triggering through the cross-trigger unit (CTU) or external
+> > events. An internal prescaler allows adjusting the sampling clock,
+> > while per-channel programmable sampling times provide fine-grained
+> > trade-offs between accuracy and latency. Automatic calibration is
+> > performed at probe time to minimize offset and gain errors.
+> >=20
+> > The driver is derived from the BSP implementation and has been partly
+> > rewritten to comply with upstream requirements. For this reason, all
+> > contributors are listed as co-developers, while the author refers to
+> > the initial BSP driver file creator.
+> >=20
+> > All modes have been validated on the S32G274-RDB2 platform using an
+> > externally generated square wave captured by the ADC. Tests covered
+> > buffered streaming via IIO, trigger synchronization, and accuracy
+> > verification against a precision laboratory signal source.
+> >=20
+> > Co-developed-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp=
+.com>
+> > Signed-off-by: Alexandru-Catalin Ionita <alexandru-catalin.ionita@nxp.c=
+om>
+> > Co-developed-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> > Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
+> > Co-developed-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
+> > Signed-off-by: Radu Pirea (NXP OSS) <radu-nicolae.pirea@oss.nxp.com>
+> > Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+> > Co-developed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > --- =20
+>=20
+> Hi David,
+>=20
+> Just some minor review for now...
+A couple of follow ups (ignoring the DMA buf as others are better
+than I am to comment on that!)
 
-$ pahole --header elf64_hdr vmlinux
+> > +/*
+> > + * The documentation describes the reset values for the
+> > + * registers. However some registers do not have these values after a
+> > + * reset. It is a not desirable situation. In some other SoC family
+> > + * documentation NXP recommend to not assume the default values are
+> > + * set and to initialize the registers conforming to the documentation
+> > + * reset information to prevent this situation. Assume the same rule
+> > + * applies here as there is a discrepancy between what is read from
+> > + * the registers at reset time and the documentation.
+> > + */
+> > +static void nxp_sar_adc_set_default_values(struct nxp_sar_adc *info)
+> > +{
+> > +	const u32 mcr_default	=3D 0x00003901;
+> > +	const u32 msr_default	=3D 0x00000001;
+> > +	const u32 ctr_default	=3D 0x00000014;
+> > +	const u32 cimr_default	=3D 0x00000000;
+> > +	const u32 ncmr_default	=3D 0x00000000;
+> > + =20
+>=20
+> const does not really bring much here. I would rather have them as #defin=
+es.
 
-...
+Unless they can be broken down into meaningful fields I'd
+not bother with defines. Just put the values in the writel()
+as their meaning is clear from what is being registered.
 
-struct mce_amd_cpu_data {
-        mce_banks_t                thr_intr_banks;       /*     0     8 */
-        mce_banks_t                dfr_intr_banks;       /*     8     8 */
-        u8                         thr_intr_en:1;        /*    16: 0  1 */
-        u8                         dfr_intr_en:1;        /*    16: 1  1 */
-        u8                         __resv:6;             /*    16: 2  1 */
- 
-        /* size: 24, cachelines: 1, members: 5 */
-        /* padding: 7 */
-	^^^^^^^^^^^
+>=20
+> > +	writel(mcr_default, REG_ADC_MCR(info->regs));
+> > +	writel(msr_default, REG_ADC_MSR(info->regs));
+> > +	writel(ctr_default, REG_ADC_CTR0(info->regs));
+> > +	writel(ctr_default, REG_ADC_CTR1(info->regs));
+> > +	writel(cimr_default, REG_ADC_CIMR0(info->regs));
+> > +	writel(cimr_default, REG_ADC_CIMR1(info->regs));
+> > +	writel(ncmr_default, REG_ADC_NCMR0(info->regs));
+> > +	writel(ncmr_default, REG_ADC_NCMR1(info->regs));
+> > +}
 
-        /* last cacheline: 24 bytes */
-};
+> > +};
+> > +MODULE_DEVICE_TABLE(of, nxp_sar_adc_match);
+> > +
+> > +static struct platform_driver nxp_sar_adc_driver =3D {
+> > +	.probe=A0=A0=A0=A0=A0=A0=A0=A0=A0 =3D nxp_sar_adc_probe,
+> > +	.remove=A0=A0=A0=A0=A0=A0=A0=A0 =3D nxp_sar_adc_remove,
+> > +	.driver=A0=A0=A0=A0=A0=A0=A0=A0 =3D {
+> > +		.name=A0=A0 =3D DRIVER_NAME,
+> > +		.of_match_table =3D nxp_sar_adc_match,
+> > +#ifdef CONFIG_PM_SLEEP =20
+>=20
+> You should not need the above. Look at pm_ptr() and friends.
 
-vs
+Further to that, DEFINE_SIMPLE_DEV_PM_OPS() and drop the guards
+around the functions.  The trick here is that it exposes
+the functions to the compiler but lets it figure out they aren't
+actually used and drop them.  All with out ifdef or __maybe_unused
+etc.
 
-struct mce_amd_cpu_data {
-        mce_banks_t                thr_intr_banks;       /*     0     8 */
-        mce_banks_t                dfr_intr_banks;       /*     8     8 */
-        u32                        thr_intr_en:1;        /*    16: 0  4 */
-        u32                        dfr_intr_en:1;        /*    16: 1  4 */
-        u32                        __resv:30;            /*    16: 2  4 */
- 
-        /* size: 24, cachelines: 1, members: 5 */
-        /* padding: 4 */
-	^^^^^^^^^^
+>=20
+> > +		.pm=A0=A0=A0=A0 =3D &nxp_sar_adc_pm_ops,
+> > +#endif
+> > +	},
+> > +};
+> > +
+> > +module_platform_driver(nxp_sar_adc_driver);
+> > +
+> > +MODULE_AUTHOR("NXP");
+> > +MODULE_DESCRIPTION("NXP SAR-ADC driver");
+> > +MODULE_LICENSE("GPL"); =20
+>=20
 
-        /* last cacheline: 24 bytes */
-};
-
-The end result is the same unless your do __packed.
-
-But you might as well use the u32 in the distant case you need more flags
-- you never know with our RAS folks.
-
-:-P
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
