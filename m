@@ -1,91 +1,91 @@
-Return-Path: <linux-kernel+bounces-797646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84418B412E2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D29B412E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FDDD5E6421
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9541B24428
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EC92C3774;
-	Wed,  3 Sep 2025 03:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154B82D060C;
+	Wed,  3 Sep 2025 03:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SfJ3DUc4"
-Received: from mail-vs1-f100.google.com (mail-vs1-f100.google.com [209.85.217.100])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="LuGX1/Pn"
+Received: from mail-io1-f98.google.com (mail-io1-f98.google.com [209.85.166.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF0F2C21EC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504232C2361
 	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.100
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756870021; cv=none; b=aXWS6nSBUGTG/2d0kdWqhnesxEbys9rviAfBt32p1Ox13AU+yUY3P804XFbHburB3Ose9d/Mk0jrh6L1iw57Zw/LNnRNmoyCcSPObiNK1NnomHXjTq3FaGlv1M0Y3hW4WJ0rBOtkBpH06zMDjt6IFu2bpqK4UG+mNbLugJ+pDNI=
+	t=1756870022; cv=none; b=WrZDFXpkraXA0q40YWVb7bh0T69FQRz/SJUdFdOnRqJbObAD6DfmzfjmPhthJv6k7+GEugEfDmhLmWzGKE1t6Xt4XbVCrTkGwDYSfdmwVKfhwcI6wvXS0TSX5BGCQpG6VYaGfN4IkGCMsJaQa/60oqRcS7YwGNyucml/hLw1ZTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756870021; c=relaxed/simple;
-	bh=hFmR3pVdhT7xfVLKpbhJFsgBB3+5r+/8jlK7QV+iOBQ=;
+	s=arc-20240116; t=1756870022; c=relaxed/simple;
+	bh=vT37VwGjZOyCl9u5Iz9sHTvtTUWCCe6Xb+1IziJLUvo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QgocCI38IjfAsiWQgfmsPSEwf5IDrC06jRzJzDdm5A/g+8RmQ0LHWRAUQ1uJwFLt7Udol2xde96I2AnvpWp57zTsJlXDWu6QcCrbBF2BrRyll385MQ07tuA5I3wTUAZnJEp3UgAls4nqggnCQX7SWA6rjvlWigjXCmXMeD10kI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SfJ3DUc4; arc=none smtp.client-ip=209.85.217.100
+	 MIME-Version; b=fBv/5bQMF+GScTCouDX2jgqcTkMtUQ9CY1PGT40LeiZt6Cyav84A/KqOiAfdUF50m/p0gxKTPbR/rO56FOHhqFyzYV6wZYDKLDJq4LYzSVTzntnbMkfLH94qarv86Vx+R0zOyseHBgrJH8QXZy7iXwWMg8S4QvzOrCjE5JFUCYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=LuGX1/Pn; arc=none smtp.client-ip=209.85.166.98
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-vs1-f100.google.com with SMTP id ada2fe7eead31-52e6ff36cddso56316137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:26:59 -0700 (PDT)
+Received: by mail-io1-f98.google.com with SMTP id ca18e2360f4ac-88470af157bso5874739f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:27:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=purestorage.com; s=google2022; t=1756870019; x=1757474819; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eSqF8u89jLv/Gbai9ll4AlOnIZ8yRMDq0tMj1xwV5eA=;
-        b=SfJ3DUc4R1HrK6TWTCyLUp4c1a0p5ZuQ278IqlaKPnWsvH4kBgPGyOGYRcJpXgzYZc
-         DcGwjuJLsmQ0GE7KO1TwkCxcWIHB8NxlZ4Z5A+3Y4jigS9fzz8UqtWYlYUQw08n0xtT1
-         DN+UbIBtZHOA/2DmKFWMVzKzeVI0O0RBXiIIphtO8kphteGOB96hhRGYxChQeQSj9L9U
-         10o/b+BUetE/9AD0TJzoFsLTmBtaQcYxFa8+skdkrA1Ki/kMswnJFRceAVj4eoxyrGV9
-         b81QTO86gAcAjHybeaODw4PcyWPtE/+OKYC9RHdYeIpVc40l+EbuMI0U0gTZditNSP7b
-         UY2A==
+        bh=o/lOOvLhOLy/sorN2ba6lIemJd4kQXZprLIftfp53Us=;
+        b=LuGX1/PnYywp65OygFqFuKoe8cbMSZnDmR/5RYZdkgbivLBbyGQrG3uovIEpVhQupT
+         5s7PqJ2HZDKG8odigdx7qF7ibegml1gAL7OhI6nRWYHjaRVIBoBo+Hwe0U+qiHWoscyo
+         5WbIbUm13RJgiP3ZCjLl/ZEuErIozFlFHo9/JPl/I4waI3gZqF7xdMXpLKFp+m4Gg3nc
+         +9DqR6yroOxuNM1KaFmrD/vOyzEzjqy/CIdB11GqtPeJo9J+f8Dw0muIMycfP7QdSOG9
+         Rxkq4jK3TKJX2HwQ+oTkAJAupkBN+p0Bfzg95RhDuiteKIa/xPuGhW18edKA9ty1skMt
+         THcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1756870019; x=1757474819;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eSqF8u89jLv/Gbai9ll4AlOnIZ8yRMDq0tMj1xwV5eA=;
-        b=pKiZgFIJ/dUOkiRD6/qeMreSXI3XI/nXC4JbSViDntq3J31YXqDqBpF0VW+jhO7/wb
-         CFDthhdD+ne3fhFAHoc74tG5cInHsIDrirOZOI/4mEsMlIvmDe+8ykcxhez57M6zYX2X
-         1VY8UfEhVju73FqKJ9cqHR7oqMjoVVyF5SRsj6mJmRGJlmV3JMBJUoozzKcE28dqbPXY
-         AyVO+Rd6iRk7kKDHXhJY6I86cUOq3PojsmfWRI8X8KgB7cmUEhoWhEyzEW4AIypOZQaF
-         ZBoeKAmkSC4jX7/an9suhgr6mPQDf6mN0YfDEnZ7vL2lX8lPhxd3jUTh/IRegKH/dWQs
-         XNCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmM/WX+ieGuKt71qqES9lfVOx6NZrYF9vUyiGSJ087QQZ0J87PcYZkmA+joUr+Bg49Q7iEiD1L8mREOmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTPAry04jmq5Y80ybJ0n5Do22uSYahJtlKY2HxQK0xMMl5q2c1
-	1IpYkSddjlMobNRe/fPPgI1GV0UiXQLj9e15Kg7wlHkzucvL7kfsCAER/N6uz7hY+p1k4KMUVNp
-	gFMlATzOWnxWrcpl/UQ3FF/bRYx9DDpn/4c7jsXjxyq8Cmy84U0Rs
-X-Gm-Gg: ASbGncsQxLFRCJDmcJNX1Jcn2JuIvWHPAKKQRo0/oKT3H/w4fPhk+hGWuWp557CU70g
-	lCPyxsuF55e+IbF6/id8ItZEkByUn1TpLFaIevcpUBt1Qwldge/Sj3+TqzDhMNvJ5SK5BEZd/XY
-	0V4h37RWkUCqyu7jyVgaSi2/3DQdiLgpnTRxfHi03Kzdut/DwteeYLrFB9ZqwPchDXPjyZNqsRS
-	1tuZevAwyETFHuubrs7SHU9dPeHZsE1cmPTQrFRtbxyVV9d/Y8VeHcsyqgS3HCyvVMBtZbs9qLb
-	mc2WL+nq6FO6cdB/Jsyj5nTDbmjHMLm4E1I3Lp0zXG7facBbVyMwEth0kA==
-X-Google-Smtp-Source: AGHT+IFehSnrrzLkenHFKrvF2fQBZ/Hq0de+LCBKeNQJKzQhedbF9DLqRHrw6Abi/Dp8WwHLWwZOnSYtgIX2
-X-Received: by 2002:a05:6102:149d:b0:525:df9e:936e with SMTP id ada2fe7eead31-52a343e4a6cmr1745805137.7.1756870019067;
+        bh=o/lOOvLhOLy/sorN2ba6lIemJd4kQXZprLIftfp53Us=;
+        b=dyqckRDDjmNzCbjshmShNAMmaheB2iNzuJ1szR7wsGmSQMUgY7B4hpu/HWIzBO+nt+
+         4ijs1k5eRyvjdFrLijhKLpzrqdhvadLA7BPC27/NgRIJrp+ZFMg0DuyHYnDZFbPspkKb
+         bxRGT6U6gatEjSyrQW8gjnEcEugci7Lv81UvgsJtBMgyI9tvDtw+06txb/E/zK2BCYmN
+         1EfIYWuisd7/Je4DbvfH1UJ4wlLkdtbyN/FdepUI/bNRiyUMfTi1QhkmUddaS5CEdeRK
+         B43LrP45/FTX2eI6Zo3g5QAlHDtY8jFg000Dqw/hDfEzoxtvBVuEKbZsHFraawuEPj5s
+         08zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh/wSySblCsN9vNPxShHJSGyQbPiuIjhI20J6hzQ8RqAgpJpo9jJQXdXeZWBhMRR9EGI7tsqXhd0LinUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn9mBxJV3n/NQSDKzbm31c+1R2PSfi+c+js9k+XKp6UETWT4xO
+	r54ipz/wQaDHvUhFCkYVDRrOKxnG3RkgISjt0cgVBrRY5Ojr+h9eXlZtJJch/MiIQ8POTBnPczk
+	luel/7EugSixdMUdm5c+aQ4XaklkOQl0SYwqyhWP81jrrJmbk0sbA
+X-Gm-Gg: ASbGncsCqK3kNltSgj+IYUKzfHkzH/rrWxD9Z5fhA1GaTWBqyhW5peok0e/HKZL6vQx
+	I15HZ/P5IkqwxU/QhWu3k5Iia9YSiECrPgKyW7EZL/d+qKV/35RrFuhW9jen5duxNXvdo/YyPZH
+	3867atSVEWfeOxCN/sjk2Zw+dulPvRGq4GZM/9sARbvjOTIYmA7gkAcBiiE5IzP48v3SlDBJPbt
+	/g98Rd1col3eXa8cby8lnaX6XSGUxN4Y8QSb8BqiatzlN+b3gQi9OvmvMyLhhquycDRfrp92IGv
+	/izY2Gn/BvTGyr77jOGardb5Xa9Pf336hgJWl0rg6Jyqvu1VOfycIPBj3Q==
+X-Google-Smtp-Source: AGHT+IG6TC1qm4eO2jp6q81u7BtA9gndoChMx4n9tAGaldjwUIcSFnLmfQ16RVQQVkcE5oHUy/Sqof2Cdqst
+X-Received: by 2002:a05:6e02:1fc5:b0:3ef:beb7:dba4 with SMTP id e9e14a558f8ab-3f321afda65mr110085785ab.2.1756870019411;
         Tue, 02 Sep 2025 20:26:59 -0700 (PDT)
 Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id ada2fe7eead31-52af1212c63sm1232773137.3.2025.09.02.20.26.58
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-50d8f31b06bsm723181173.48.2025.09.02.20.26.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 02 Sep 2025 20:26:59 -0700 (PDT)
 X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (unknown [IPv6:2620:125:9007:640:ffff::1199])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id D1CD2340344;
-	Tue,  2 Sep 2025 21:26:57 -0600 (MDT)
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id C06EF34029E;
+	Tue,  2 Sep 2025 21:26:58 -0600 (MDT)
 Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id CF728E41964; Tue,  2 Sep 2025 21:26:57 -0600 (MDT)
+	id BD418E41964; Tue,  2 Sep 2025 21:26:58 -0600 (MDT)
 From: Caleb Sander Mateos <csander@purestorage.com>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Caleb Sander Mateos <csander@purestorage.com>
-Subject: [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
-Date: Tue,  2 Sep 2025 21:26:53 -0600
-Message-ID: <20250903032656.2012337-2-csander@purestorage.com>
+Subject: [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
+Date: Tue,  2 Sep 2025 21:26:54 -0600
+Message-ID: <20250903032656.2012337-3-csander@purestorage.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250903032656.2012337-1-csander@purestorage.com>
 References: <20250903032656.2012337-1-csander@purestorage.com>
@@ -97,186 +97,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-io_uring/io_uring.h doesn't use anything declared in
-io_uring/filetable.h, so drop the unnecessary #include. Add filetable.h
-includes in .c files previously relying on the transitive include from
-io_uring.h.
+io_ring_ctx's enabled with IORING_SETUP_SINGLE_ISSUER are only allowed
+a single task submitting to the ctx. Although the documentation only
+mentions this restriction applying to io_uring_enter() syscalls,
+commit d7cce96c449e ("io_uring: limit registration w/ SINGLE_ISSUER")
+extends it to io_uring_register(). Ensuring only one task interacts
+with the io_ring_ctx will be important to allow this task to avoid
+taking the uring_lock.
+There is, however, one gap in these checks: io_register_clone_buffers()
+may take the uring_lock on a second (source) io_ring_ctx, but
+__io_uring_register() only checks the current thread against the
+*destination* io_ring_ctx's submitter_task. Fail the
+IORING_REGISTER_CLONE_BUFFERS with -EEXIST if the source io_ring_ctx has
+a registered submitter_task other than the current task.
 
 Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- io_uring/cancel.c    | 1 +
- io_uring/fdinfo.c    | 2 +-
- io_uring/io_uring.c  | 1 +
- io_uring/io_uring.h  | 1 -
- io_uring/net.c       | 1 +
- io_uring/openclose.c | 1 +
- io_uring/register.c  | 1 +
- io_uring/rsrc.c      | 1 +
- io_uring/rw.c        | 1 +
- io_uring/splice.c    | 1 +
- 10 files changed, 9 insertions(+), 2 deletions(-)
+ io_uring/rsrc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index 6d57602304df..64b51e82baa2 100644
---- a/io_uring/cancel.c
-+++ b/io_uring/cancel.c
-@@ -9,10 +9,11 @@
- #include <linux/nospec.h>
- #include <linux/io_uring.h>
- 
- #include <uapi/linux/io_uring.h>
- 
-+#include "filetable.h"
- #include "io_uring.h"
- #include "tctx.h"
- #include "poll.h"
- #include "timeout.h"
- #include "waitid.h"
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index 5c7339838769..ff3364531c77 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -7,11 +7,11 @@
- #include <linux/seq_file.h>
- #include <linux/io_uring.h>
- 
- #include <uapi/linux/io_uring.h>
- 
--#include "io_uring.h"
-+#include "filetable.h"
- #include "sqpoll.h"
- #include "fdinfo.h"
- #include "cancel.h"
- #include "rsrc.h"
- 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 545a7d5eefec..9c1190b19adf 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -77,10 +77,11 @@
- 
- #include <uapi/linux/io_uring.h>
- 
- #include "io-wq.h"
- 
-+#include "filetable.h"
- #include "io_uring.h"
- #include "opdef.h"
- #include "refs.h"
- #include "tctx.h"
- #include "register.h"
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index fa8a66b34d4e..d62b7d9fafed 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -9,11 +9,10 @@
- #include <linux/io_uring_types.h>
- #include <uapi/linux/eventpoll.h>
- #include "alloc_cache.h"
- #include "io-wq.h"
- #include "slist.h"
--#include "filetable.h"
- #include "opdef.h"
- 
- #ifndef CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
- #endif
-diff --git a/io_uring/net.c b/io_uring/net.c
-index d2ca49ceb79d..cf4bf4a2264b 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -8,10 +8,11 @@
- #include <net/compat.h>
- #include <linux/io_uring.h>
- 
- #include <uapi/linux/io_uring.h>
- 
-+#include "filetable.h"
- #include "io_uring.h"
- #include "kbuf.h"
- #include "alloc_cache.h"
- #include "net.h"
- #include "notif.h"
-diff --git a/io_uring/openclose.c b/io_uring/openclose.c
-index d70700e5cef8..bfeb91b31bba 100644
---- a/io_uring/openclose.c
-+++ b/io_uring/openclose.c
-@@ -12,10 +12,11 @@
- 
- #include <uapi/linux/io_uring.h>
- 
- #include "../fs/internal.h"
- 
-+#include "filetable.h"
- #include "io_uring.h"
- #include "rsrc.h"
- #include "openclose.h"
- 
- struct io_open {
-diff --git a/io_uring/register.c b/io_uring/register.c
-index aa5f56ad8358..5e493917a1a8 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -16,10 +16,11 @@
- #include <linux/nospec.h>
- #include <linux/compat.h>
- #include <linux/io_uring.h>
- #include <linux/io_uring_types.h>
- 
-+#include "filetable.h"
- #include "io_uring.h"
- #include "opdef.h"
- #include "tctx.h"
- #include "rsrc.h"
- #include "sqpoll.h"
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index f75f5e43fa4a..2d15b8785a95 100644
+index 2d15b8785a95..1e5b7833076a 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -11,10 +11,11 @@
- #include <linux/io_uring.h>
- #include <linux/io_uring/cmd.h>
+@@ -1298,14 +1298,21 @@ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)
  
- #include <uapi/linux/io_uring.h>
+ 	src_ctx = file->private_data;
+ 	if (src_ctx != ctx) {
+ 		mutex_unlock(&ctx->uring_lock);
+ 		lock_two_rings(ctx, src_ctx);
++
++		if (src_ctx->submitter_task && 
++		    src_ctx->submitter_task != current) {
++			ret = -EEXIST;
++			goto out;
++		}
+ 	}
  
-+#include "filetable.h"
- #include "io_uring.h"
- #include "openclose.h"
- #include "rsrc.h"
- #include "memmap.h"
- #include "register.h"
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index dcde5bb7421a..ab6b4afccec3 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -13,10 +13,11 @@
- #include <linux/io_uring/cmd.h>
- #include <linux/indirect_call_wrapper.h>
+ 	ret = io_clone_buffers(ctx, src_ctx, &buf);
  
- #include <uapi/linux/io_uring.h>
++out:
+ 	if (src_ctx != ctx)
+ 		mutex_unlock(&src_ctx->uring_lock);
  
-+#include "filetable.h"
- #include "io_uring.h"
- #include "opdef.h"
- #include "kbuf.h"
- #include "alloc_cache.h"
- #include "rsrc.h"
-diff --git a/io_uring/splice.c b/io_uring/splice.c
-index 35ce4e60b495..e81ebbb91925 100644
---- a/io_uring/splice.c
-+++ b/io_uring/splice.c
-@@ -9,10 +9,11 @@
- #include <linux/io_uring.h>
- #include <linux/splice.h>
- 
- #include <uapi/linux/io_uring.h>
- 
-+#include "filetable.h"
- #include "io_uring.h"
- #include "splice.h"
- 
- struct io_splice {
- 	struct file			*file_out;
+ 	fput(file);
+ 	return ret;
 -- 
 2.45.2
 
