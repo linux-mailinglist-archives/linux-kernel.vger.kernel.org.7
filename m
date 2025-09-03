@@ -1,78 +1,135 @@
-Return-Path: <linux-kernel+bounces-797529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C58B411A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF048B411A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A14164589
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A451171932
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 01:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693721D63CD;
-	Wed,  3 Sep 2025 01:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F79E1D54E3;
+	Wed,  3 Sep 2025 01:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEbwCBSp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CEBUmV9h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAA93597B;
-	Wed,  3 Sep 2025 01:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2818F40;
+	Wed,  3 Sep 2025 01:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756861586; cv=none; b=TUBMY8VIUraRAyuiL8vg5WGffh+syI+bScx+hYbnwgxMubjX4Or/hlqC0Vr0JmnUEEAgXmU/IRF/5aJAp/8lKnr9UJJKdU8bNqfidU66Y2Bi11+/CFKwTtpWNyoWubNSWBW/9UCIs21YyUZgLS9Tgj8K/67WQS1p4PhOOf1UERU=
+	t=1756861687; cv=none; b=juxLKWQy2rujoLyXOgfC2dF58UVofWP4Olyyg6n6wWwlSOXClsbCyic27pJ4TH8Uu/tZQnbR2J5veCitMFz+5KtXSER3eXI6x1nc+rYHvvo40DxJ9TvLdqNOu+ONSogY7o0ww+b70DuZcRL6vlyNJNZyRQm/Vsr4cYolgrzzukY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756861586; c=relaxed/simple;
-	bh=GR1To0WoOOdlYT1PhZY62bBLb1zMmRyOO0N/UeGsO6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k6EaH2zpxZ08+3zMVVuCLWkjJt4MeXoYlS9NQ1Q150FKhW9tRex20VjadT/vEEBWkECLdgkdOSoXnkgFQqLf0OvHGhq2hCZrgh1xNpRceDQKM1Wu3MggzH2vHiaMBaFTTDLqwJjTOVt+l3yKGHF64NGHS09GRsqGk8gVJW1tYSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEbwCBSp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AD99C4CEF5;
-	Wed,  3 Sep 2025 01:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756861586;
-	bh=GR1To0WoOOdlYT1PhZY62bBLb1zMmRyOO0N/UeGsO6U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UEbwCBSpQqGmw1E1JvTFRWfeZD1X+YfcFQlt5parKkhvCiaXRYs+cxxyBytft3F/H
-	 PbS/B6kIGAVY5sFlVF8LvIfaYci1IH7wKnrU7aaDqjSbWl9B0uyh+VSQIaxunmW2nL
-	 uk4RLyBqCAQbkKHY+shoWPIJ0IBfJWSZbg3aT5eOjFZMUNZwVhoOm2nTj6169TLJlq
-	 wL3Sxns/P+G/65wIvXGnmtDIt2R9Bodulb9TFO/OKBQokce/8CVQ5BqKyYf6dp6gp4
-	 LKc7UJREtp9lXgD7tIprXhKaqgVaT4r+/LHu5aWuOQcXYhaFK+j7nkz2+CH6SW5uOs
-	 6+fniTxCcK/vw==
-Date: Tue, 2 Sep 2025 18:06:24 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Fan Gong <gongfan1@huawei.com>
-Cc: Zhu Yikai <zhuyikai1@h-partners.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn
- Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
- <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
- <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
- <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>, Michael Ellerman
- <mpe@ellerman.id.au>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman
- Ghosh <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Joe Damato <jdamato@fastly.com>, Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH net-next v03 02/14] hinic3: HW management interfaces
-Message-ID: <20250902180624.4dd37159@kernel.org>
-In-Reply-To: <07e099c1395b725d880900550eaceb44a189d901.1756524443.git.zhuyikai1@h-partners.com>
-References: <cover.1756524443.git.zhuyikai1@h-partners.com>
-	<07e099c1395b725d880900550eaceb44a189d901.1756524443.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1756861687; c=relaxed/simple;
+	bh=eFwtTOp488H2WYY50S1vuvKjFHgMVxD7w3AAU+mpx2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fyVaMMYpeUiMZmn1OfL7020oDY5sUFglNaLzgfxLlWBoQs0Wvkgt6hcdd5vkJAi1PW+G3mDqYaqjJm1nhZc5hZNu9TLiEDwJv1Gp0IONxEXeQuOJnVehMCduKepJXQpgCkS1podUlEqAL8whOL8hU/Pt5l8s25hcz9NWrVcWz8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CEBUmV9h; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756861686; x=1788397686;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eFwtTOp488H2WYY50S1vuvKjFHgMVxD7w3AAU+mpx2o=;
+  b=CEBUmV9hFyHIFSkbBc+CXhpJtBHZrMuSJR6p6OrN4qSb3KXj1ljGQbq9
+   rKeuIEfpWEcuyJFqvrgmCG15ancwaEcdUfFYIF5neFJLTsfMGihXene0V
+   OEmTJcJU0VxXCKe9Blok8MTSAnmF4i+juJd6yqWALO5gvyPSUoRgO5901
+   u32y7K8x3f180SWWYDs5OMqgN+tsTuvg0hfzn5f2kngoFao4acFmGYX2C
+   IbffK7vSrpItPJYwa/Z2eUUqcO5O/NyuDIfwdcLIjR+ZQdYXGqV/Jm+h1
+   kKjflOQvjFpkkJx+pv9ZgyS0inefuYkncuWFzZEoz78DwCDg9tlnBv37R
+   A==;
+X-CSE-ConnectionGUID: Fjyj9cSpQpC1RJQ2kBUxYA==
+X-CSE-MsgGUID: XECOiO2hQWW8sQgzJPsIAg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="58860694"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="58860694"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 18:08:05 -0700
+X-CSE-ConnectionGUID: ClgcoAYWQ2WAA3Y7LiceAw==
+X-CSE-MsgGUID: wD1frc0nRta6PPFFK9ba6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="170994387"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 18:08:00 -0700
+Message-ID: <23effdc0-1fbe-430d-b570-bc927b10fcf2@linux.intel.com>
+Date: Wed, 3 Sep 2025 09:07:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 18/19] KVM: selftests: Add ucall support for TDX
+To: Sean Christopherson <seanjc@google.com>
+Cc: Sagi Shahar <sagis@google.com>, linux-kselftest@vger.kernel.org,
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20250821042915.3712925-1-sagis@google.com>
+ <20250821042915.3712925-19-sagis@google.com>
+ <18bf858c-e135-4a9b-bda8-a70be3b3720e@linux.intel.com>
+ <aLcRIn8ryB2kXWcD@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aLcRIn8ryB2kXWcD@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sat, 30 Aug 2025 16:08:41 +0800 Fan Gong wrote:
-> +	actual_irq = pci_enable_msix_range(pdev, msix_entries, 2, nreq);
 
-I believe that new code should use pci_alloc_irq_vectors()
+
+On 9/2/2025 11:45 PM, Sean Christopherson wrote:
+> On Wed, Aug 27, 2025, Binbin Wu wrote:
+>> On 8/21/2025 12:29 PM, Sagi Shahar wrote:
+>>> @@ -46,11 +69,23 @@ void *ucall_arch_get_ucall(struct kvm_vcpu *vcpu)
+>>>    {
+>>>    	struct kvm_run *run = vcpu->run;
+>>> -	if (run->exit_reason == KVM_EXIT_IO && run->io.port == UCALL_PIO_PORT) {
+>>> -		struct kvm_regs regs;
+>>> +	switch (vm_type) {
+>>> +	case KVM_X86_TDX_VM:
+>>> +		if (vcpu->run->exit_reason == KVM_EXIT_MMIO &&
+>>> +		    vcpu->run->mmio.phys_addr == host_ucall_mmio_gpa &&
+>>> +		    vcpu->run->mmio.len == 8 && vcpu->run->mmio.is_write) {
+>>> +			uint64_t data = *(uint64_t *)vcpu->run->mmio.data;
+>>> +
+>>> +			return (void *)data;
+>>> +		}
+>>> +		return NULL;
+>> My first thought was how did SEV_ES or SNP work for this since they are not
+>> able to get RDI neither.
+>> Then I had a check in sev_smoke_test.c, both guest_sev_es_code() and
+>> guest_snp_code() call GUEST_ASSERT(), which finally calls ucall_assert(), but
+>> in test_sev(), the code doesn't handle ucall for SEV_ES or SNP.
+>> Does it mean GUEST_ASSERT() is currently not working and ignored for SEV_ES
+>> and SNP? Or did I miss anything?
+> GUEST_ASSERT() "works" for -ES and -SNP in the sense that it generates as test
+> failure due to the #VC not being handled (leads to SHUTDOWN).  But you're correct
+> that ucall isn't functional yet.  x86/sev_smoke_test.c fudges around lack of ucall
+> by using the GHCB MSR protocol to signal "done".
+>
+>          /*
+>           * TODO: Add GHCB and ucall support for SEV-ES guests.  For now, simply
+>           * force "termination" to signal "done" via the GHCB MSR protocol.
+>           */
+>          wrmsr(MSR_AMD64_SEV_ES_GHCB, GHCB_MSR_TERM_REQ);
+>          vmgexit();
+>
+OK, thanks for the explanation!
+
 
