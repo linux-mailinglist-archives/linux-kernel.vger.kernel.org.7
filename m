@@ -1,114 +1,89 @@
-Return-Path: <linux-kernel+bounces-798432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67659B41DDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:58:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3947BB41D24
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA201BA7E07
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:57:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06818167ECF
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DBF2FCBE5;
-	Wed,  3 Sep 2025 11:57:02 +0000 (UTC)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92D52F90D4;
+	Wed,  3 Sep 2025 11:35:05 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6AB2FC019;
-	Wed,  3 Sep 2025 11:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32231DB375;
+	Wed,  3 Sep 2025 11:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756900621; cv=none; b=MyAJCKWBnuzk+7wFfZSNxMWzRltQZpVEeLsiVPxDkqa2CwQ8XbMmnNebzluvT35xoXu3zkTQdp+DxAtUnbC8EZVaoAr5zqeLXNokhcTldy6CowODrxvAr6PifQfChg0yYS5PVOW19P7EIYaLJiFfY9cyo8xOUjOJ2plB92UovV4=
+	t=1756899305; cv=none; b=Is0OkGf7PWlinTEeGYjr6LnCjqW6Zt9W+0HxLaVflBbiYVmiWApn3+Ih1fGfU42zq+YIxmwXF1RamRf+L7maWvwzKEl9uSsbwe9Yd+g5dcxLfqc1Rlm5a/uwG3pBQpNpRa7zSDEFVXxSqFBr8W4RftGJDTgTaXVce66xeNQhGy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756900621; c=relaxed/simple;
-	bh=JVZN7Thk57ubkHL8Lh98PDhOuxGLBmjYHulFrZ/HEBo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mc7ASMcnAxjGGskrH5k5iRyFwVqY/lmqlKC5Tbc35VoSinIWxsACgWgLR1EO8/iPX9bGbvsKDa+/2dUnCrEhs87W+g8K6H8oWB8O9kjBzg9kjzwYhPv8rl92JcPDaeHb+Jf7JtA4XNz9LQiXj6cJzU4T1K4wWiXIT1EUjRqBt8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-544a6597c82so1802156e0c.1;
-        Wed, 03 Sep 2025 04:57:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756900619; x=1757505419;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nWlQz62fgHWX4uCU0ljXuo6BVv6lTkeHam21GWLhzFs=;
-        b=BGt3n+sqrAOhpaqOku0QovHO6hIADsoxWOvlSxH/FAfO77jCAhb32KIW1cxSMOMf73
-         UCPYRgIw2y1PPd50E6VDWYbgDU4oUowkgx+h1HDcUaHMlRr6jCbvAL03HIhb994Z5IiW
-         hg6iky3bVNy+JhaEGGDQ3y1vVQxBHxHE84sm0ockXy1DIncdJeN/mWALT1pPMIlLIH2e
-         4HRw2IoN2qtRisRdn8aqdqgm95ye/dQR350JwyRNJlaSVr64tDwdyUfqGEIXyfUZzidB
-         KCPavJn1Ovvn+xxLn9gO7Y/u2BjxqK0Okz8bQoOqWZR10bQyDQEURaMQJc8RQ/y9uZNT
-         WWcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUkXs5t+ZhrI7BLtqf9CNsu9s4h2tCDvM+FKrANVh7na8+GlpP8h3YA5jwTm1pjlvqoNIG68QBmswc5Z1v@vger.kernel.org, AJvYcCX0f3J1v7BEJYuEAx6g7N/3yARGlttTwDnnWIrY7ehvORCQJbftHp2a4WM2zbjolVh/UyHH8Qd1NiQ=@vger.kernel.org, AJvYcCXkVuR6GhIyQjgvPdZ7C0BWyrHH7gl6epJf+DmNx1CI/t5Gk1NwThO5cmVCl6N2GBFKOgvmENk6eym+C12fNPambq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcVFvXZS9xCuOa10cVwNyMkRXsOsKZIM4y/oxohvP5pHuKjHrz
-	g0SYz+jgmDKeWoV1HOjMIi9BqlW49RJnUFPzQkwWhsJrQj7yWjZcy2IpdZXXurlt
-X-Gm-Gg: ASbGnctNx+nEqtgHrQt6qLOTMLsw9n14o2vwuTLjsqOMk/jIpkT3IruQlNkAbSCY7KC
-	UC+UP45Q3kbFOHirARj3a+RA09iVZSWXfZD8Vt1zdgvr2dbpNybvTH8n4hb8fp2wYx1wmS6ncdn
-	yKBdaqbb/UX6E3hRLY5LkmTpkatcX6T6e4KlcdRDHf+J2llKsOQwb4uyKkQs88RRzJRIhLcPYcC
-	XTY7C2eHGiXpt1YEk7+rnGt+IC84feRT3v1fdRpCjPp8YOPkjfis4TYEDpRRokFBf2V6Nrz+BSj
-	0Ta2USC1bHuDl2+K2LckjEVARMdAi1bcLsZ4Fvfa2rnPbsZe7biLk5HoF/E5S22qISRvUxwrQEi
-	miq0TamhItc49EjJNoF4A9yedLwKKb2My/frvBMmH4DDgqjdujNXj+yBofzeF47KO3X/IPtM=
-X-Google-Smtp-Source: AGHT+IHnzaIG1c9I71bnd834oCpW61fUrl7Kctani+zmXNklm9M97r1H47HWpHguXTdc5PwKrE1jrQ==
-X-Received: by 2002:a05:6122:218f:b0:530:6bcb:c97f with SMTP id 71dfb90a1353d-544a0226a4bmr4683344e0c.8.1756900618978;
-        Wed, 03 Sep 2025 04:56:58 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544ad6f8047sm4159169e0c.25.2025.09.03.04.56.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 04:56:58 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8961144a9f8so710543241.0;
-        Wed, 03 Sep 2025 04:56:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWLwE7VBVMzSXYonZMGbiNPPXVV8fWX9tSDUGagxFOkEOMoLysp3q1HW5sOhkaGin15xhA8m1h/c4eKbUZ3XjP1xsw=@vger.kernel.org, AJvYcCWXn+H4f4WhKbqsuU51IvJIN++3GVYRAmYLAF3OMCkdEr5cXyF2H+zjYgP/4CIYjoZwb03IpyoGP+u7BfrA@vger.kernel.org, AJvYcCXmbvOlrog1gI2qeY4HG1m/n9c2NTkux6X2BlZbfqkSv3jSDF9LEqLi0Y6XhPh1lDR0HMuQQfM7gMY=@vger.kernel.org
-X-Received: by 2002:a67:e707:0:b0:523:45ec:c51f with SMTP id
- ada2fe7eead31-52b1b6fbbdemr5088271137.20.1756900618564; Wed, 03 Sep 2025
- 04:56:58 -0700 (PDT)
+	s=arc-20240116; t=1756899305; c=relaxed/simple;
+	bh=wvOtzFNmrvA+dobfEt6VB5+4BjHGZ2We8q8u1yIqpLo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AVVCAurkLwG2v9tGlO6IZrzvcvjsnC4tGiXF4UK8lX7gkmn8DD0kzIZHg2SF9WDcgLrqKhZCqWOOMQsdhaAz7VzjJ4fmopX3Vp/WxIErwMbCSdwR8Od5ly2lVu6HEGheo4hBd7tuAs/9asibQdvqGy/ETqiVQytwHtDNLTznAYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cH0tH5tWLz2wB7b;
+	Wed,  3 Sep 2025 19:36:07 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id EAF6B1A0188;
+	Wed,  3 Sep 2025 19:34:59 +0800 (CST)
+Received: from huawei.com (10.50.159.234) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 3 Sep
+ 2025 19:34:59 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH v2 net-next] ipv6: Add sanity checks on ipv6_devconf.seg6_enabled
+Date: Wed, 3 Sep 2025 19:56:48 +0800
+Message-ID: <20250903115648.3126719-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250903082757.115778-1-tommaso.merciai.xr@bp.renesas.com> <20250903082757.115778-3-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250903082757.115778-3-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 3 Sep 2025 13:56:47 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU2dvTC1_mQZbSO-cZK3uKdQqe-ZWpK3cjTFhwopMpqHg@mail.gmail.com>
-X-Gm-Features: Ac12FXweDvlSgcPQKXoKLUTDe77flpLLVoKpJclGQMvyXnBRhhMqERFJ6l82_G4
-Message-ID: <CAMuHMdU2dvTC1_mQZbSO-cZK3uKdQqe-ZWpK3cjTFhwopMpqHg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] clk: renesas: rzg2l: Re-assert reset on deassert timeout
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Wed, 3 Sept 2025 at 10:28, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Prevent issues during reset deassertion by re-asserting the reset if a
-> timeout occurs when trying to deassert. This ensures the reset line is in a
-> known state and improves reliability for hardware that may not immediately
-> clear the reset monitor bit.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
-> v1->v2:
->  - Collected GUytterhoeven tag
->  - Removed dev_warn() in __rzg2l_cpg_assert()
+In ipv6_srh_rcv() we use min(net->ipv6.devconf_all->seg6_enabled,
+idev->cnf.seg6_enabled) is intended to return 0 when either value is zero,
+but if one of the values is negative it will in fact return non-zero.
 
-Thanks, will queue in renesas-clk for v6.18.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+v2: use proc_dointvec_minmax()
+---
+ net/ipv6/addrconf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 40e9c336f6c5..69ec9cb6031e 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -7192,7 +7192,9 @@ static const struct ctl_table addrconf_sysctl[] = {
+ 		.data		= &ipv6_devconf.seg6_enabled,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
+ 	},
+ #ifdef CONFIG_IPV6_SEG6_HMAC
+ 	{
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
