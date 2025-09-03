@@ -1,267 +1,240 @@
-Return-Path: <linux-kernel+bounces-799207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5704B42870
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC79FB42887
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395F81BC4584
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A82F1BC3B0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BA7352FEA;
-	Wed,  3 Sep 2025 17:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A182362086;
+	Wed,  3 Sep 2025 18:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpko1JoG"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="krB/sn/0";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vXSH8azg"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B651D352070;
-	Wed,  3 Sep 2025 17:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756922333; cv=none; b=myVcFZBKVjvis7hyGZvitAQfPvoP+ER+WyKTB5dm+jJFgjzbYO1uMUWoDm+i0rjUTkyx1AlZfQni1zEGxs6WPe3emVfLb3MA2qZU1syuZRyRDmxwUbNRs+Q970BfQoKjw8QD5VK5jXLLguMyFwA6iXCQq2biLVU4vLYYH8i4TkM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756922333; c=relaxed/simple;
-	bh=UAX1cLpaImr1uy1YbnrgbQgI0OtkJI1dLQtU22RnnmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hN9HfhzSFz3jpQEm/M8Wc05X9XV0A5R7Kcug5z5M36Yf6t/PDwrgOWL2haxU2MxTA53vgvY4VN+jadNkx/wkOPdaPW/2UXe9nFCxlW+YbpytZhhfEd18iDIM06iBCJlMFT7q5RnVTZDH0jVoHmY0msiz69ygsyYrlinPIMiSulo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpko1JoG; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-722e079fa1aso977146d6.3;
-        Wed, 03 Sep 2025 10:58:51 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFB42D77E7;
+	Wed,  3 Sep 2025 18:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756923125; cv=fail; b=K3gNT8rlcsanrKYgbMzS49l0Vj+oUs9vWQBkobkHLVvELPi4uWzzpIaWnjxkHbyJaPWHIbESUbdC8Y23bTeFBS2NpNlMLBCx57fHn9IatY5sxhz3Ilb+ByQmKFcKgm2SCnFggHxFRv2qzXE5Nxpy5gp5aR4WSKxt6bEfXflD67Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756923125; c=relaxed/simple;
+	bh=UEwD1ZWw56npkxhWFFkB8ej9LrTpkgfzalWbCuFDLaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dUyrhh8/IDRcdVGR/arXNAXIuoNA2Z1RpvAKZ+ua/OKLmzSFkCZ8Tas7mxpzMLsGDuDDZIKgQSm6mkHPnBOFlNURrFsek4I3AQtLCuBnOabuPGStJZX+XwGehn4iJZdvdIYm91PT8Ejb1LkVwkamY5Yp8mSC0tNRjAOjnSdZupc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=krB/sn/0; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vXSH8azg; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583I01BK029384;
+	Wed, 3 Sep 2025 18:11:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=vJsAJdldDUc8pIypUi
+	EYGTX3PnSRfOaVVusJSG9MNxM=; b=krB/sn/0/Cy2vsSb7yShBL6wpvloBiknwS
+	sAQDgYpdfgK2pjlDFC4bXhbElXMndFcCJzkP03JhyH8n9s60OlWOqYy+aYMKrZtx
+	3UjPgPtOflOypG371UtvRrXd7DDpS7hDEYuoxLec9zt4LOTYyLUuupo+Q+ip3tiE
+	8yN/LRO897oRGPgTMdu0+l9gzzHV/lk48ba/fhg07V/SV5dSs7Qo6GikV00YkscI
+	bB6691fOJlNqdmxA+EcAAdC52HnLwwmMQWq/XibscTu312CggR0BcP1t931gENof
+	lNGgx4Hw6jr9okoLuJtjv7NyqYGPRShsKmrEItCe3BrFRz1Nt3xw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48xtjeg0xg-5
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 03 Sep 2025 18:11:56 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 583H5VFO036265;
+	Wed, 3 Sep 2025 18:00:34 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48uqramewb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 03 Sep 2025 18:00:34 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PSbGa7t8H4KwYAUltaJiE/JleiuGDqJZ5OCbiaBCJqpLFU9RyAvMZvL7qEq+K8GhYTfnaeEJwpcc8hnJ0L+oClzvtb6jN3lmPvHIHdrgtEs6j0BL09lZhPlV/tKWdod7FJoYNp/YfyLOLLVrzYL2TppkokK+YWMg4yrhIMx4/ht+ib4NMXDAEGvz+VrJDlC0tT0YiDKW/iKj8L5E8I+mGNza62VjcZgozQqNdYJRSX1ElYeR3pKPT4vMm81Ajc5pfE5oQ57Ql8WclSjuGvjQwlc+k76qfLkyuFtnkmAqhYOYOyc7q0rYelYDwdSXhCnUF+9OfXzFJ1FTrjXYieKNkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vJsAJdldDUc8pIypUiEYGTX3PnSRfOaVVusJSG9MNxM=;
+ b=Ac8hwA3AlH172DgF3YuqdqkJ51eTWInmUD/mpRUw0X+LlWhWJ/HxLlRnlbn2SPH+1bMLhR3u9bJAL8WXfVut0gYZq7jKGS/fdQWfdDVtDuxN7jCJoGaTCg7TWOkukoJ7ZHG2gIVrXOkrd7JFi+UKT3K6D62KMRc5LiuPF0vyjkwY53SYZa0x5WEN3ZN2qTSF/KBZeWfMKcMB1/qtYrmVfnvwrU6+B1Z7YkYb89uV1iFkkN4JlIPC1pEvQTpHl0C89xHXllfdWJXC7PMs5F/m5YBgzNkIzpLA+jFGOGIPv6/fJy9oJLYo7e0hV62Jo1f6+BLcmvgayeM/BcLAVDbiYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756922330; x=1757527130; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ioh66qKVDtuMqcRVUHX1/ejUzhAKwFsew10JUTDXeI0=;
-        b=hpko1JoGwcvxkY9H8mkCBW5ZvFoTxoEbJvsIVivx/TL360w72Hgsj0WCA0W/RfQnml
-         G6By6pplXw6AKgC+rbNryEbV1WP5Cz5DgRMWp3jw7b5g9JsmP4N9SIE0q6SSKTQRQ4ab
-         gjJ/Kp7uIl2scxXcQwlk9uUuBkg3CPUu9vpEniFUKdVIUS9OBfE0rned68JqnBFxXP+H
-         CK/NURyh2LJPZU6Ov8gU7UWnGOegrLuWuzrBIYuPTrO4n3G7qY9cgSo5nSZf0NEPzjmq
-         pmn31xSMMlk1/KTJkLe7+0LSZqjF2Btirw/Cy6vrlt77zAdvXC+XIQZjhUoEymVcYrzZ
-         UqsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756922330; x=1757527130;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ioh66qKVDtuMqcRVUHX1/ejUzhAKwFsew10JUTDXeI0=;
-        b=eV8VQeih/sNgojh5AjZsYLuk0h0tB2rhb6o/IF4zSbUM+PwU8w09VA7DJ8tfu+hz9n
-         gBfzDsmmYePaoMIveFNCPcsZgzt4mNFd/93Piuk3gOOmllaouQxukXSQNbmql33kRdtT
-         UBtfmmopkAK5PGWDRFMNG7r9zNsziaZcDvSoEriDYx4wIFta/uNzsWtNDyywoP+JeplV
-         w18HBnWDmyQLwT52j1FO7UKFt1ep8t0xv/UgdnDg8qjKVETwYE0wYBl0FYp0vWI9lCsz
-         pXDKtC66BouXXFoSE5a3mbqQF3P1Gpg/AQmsYt+VmObn4F9atIESTZD2sNogwJMG98Pf
-         BYKg==
-X-Gm-Message-State: AOJu0YxOxUB4SUBddmmBEdjk2KlrPjizOyan+glOLz1Y8XZGxh77gtL0
-	U5xroeTteD+uNtJ4mmwpAr1au8GGdWP8N9eaTZTuKYAGg11G1imqLcztznGLE55bH20=
-X-Gm-Gg: ASbGnctJrHXYH9t8bM6U+vADhTqLA9io+r8l+E6uxwszg+sIcoH0aeYB0ZLuRGUfky9
-	4ysmTmjx8L20PVae8efkP9iLJHPrtLDHHUYDpni+o43NVhrX5nvpbfvEL2STh9nAy34pr0aqLbI
-	jJEfB2FQv/8x18wUnr3/+tT/8DjxajTBlcw28e1hKOzLOE/iemPk1CzAx9QNHUTZf+c+p25lY8Q
-	TYN2DUCfVDdyh9cwn7SSoVPaOHpDnqZAVedhl5rI2YUZPPOz23Y55Q5hAKY+/zs4AH6OFxo243w
-	Rge/tF3oz5tPn/6EAjf0tvfuXotWMiQhHur6TvNF61oxK3Xq4aFezLRPalIpa2wuzz14fsCavK0
-	uZmO+tLmztKZgCEJMWzryZivgcq1D7Yn442a1lvsgIpyKAlW8T7lLllZUVo0nHQy1pk00/yF9kL
-	2gOt+XhDTDa9znqT72
-X-Google-Smtp-Source: AGHT+IEUrKHDZassl3qYGyQQUwzgxnLDBbvZg/N2L8dUUSy//BC2dcp5e4uJGTck6b1pUjUoNpxH/Q==
-X-Received: by 2002:ad4:5c6e:0:b0:70d:6df4:1afe with SMTP id 6a1803df08f44-70fac9455c1mr221912296d6.60.1756922330296;
-        Wed, 03 Sep 2025 10:58:50 -0700 (PDT)
-Received: from kerndev.lan (pool-100-15-227-251.washdc.fios.verizon.net. [100.15.227.251])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-720b4665fdasm31955546d6.40.2025.09.03.10.58.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 10:58:50 -0700 (PDT)
-From: David Windsor <dwindsor@gmail.com>
-To: bpf@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	dwindsor@gmail.com
-Subject: [PATCH 2/2] selftests/bpf: Add cred local storage tests
-Date: Wed,  3 Sep 2025 13:58:41 -0400
-Message-ID: <20250903175841.232537-2-dwindsor@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250903175841.232537-1-dwindsor@gmail.com>
-References: <20250903175841.232537-1-dwindsor@gmail.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vJsAJdldDUc8pIypUiEYGTX3PnSRfOaVVusJSG9MNxM=;
+ b=vXSH8azgmH9fKEfAO4XaGKcXdIn426CStPrbsw5d4MthGSOvDz0cT5s8tTxdiOAN/Fb9Ad3ZDGRIHteex7qsP/znDrcwbAM03SKnKmVhFoCPTFv4GKb3H07y07rfQNU8okknUNdRt+gJhV1Lhnb8/l+Q0Vhuh3yJAIMbdsCHuXw=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by IA0PR10MB7326.namprd10.prod.outlook.com (2603:10b6:208:40d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
+ 2025 18:00:24 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9094.016; Wed, 3 Sep 2025
+ 18:00:24 +0000
+Date: Wed, 3 Sep 2025 19:00:22 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Christian Brauner <christian@brauner.io>, oe-kbuild-all@lists.linux.dev,
+        Andreas Gruenbacher <agruenba@redhat.com>, Jan Kara <jack@suse.com>,
+        gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gfs2, udf: update to use mmap_prepare
+Message-ID: <b0c0d2ae-615b-4991-844e-c000e6fae4a1@lucifer.local>
+References: <20250902115341.292100-1-lorenzo.stoakes@oracle.com>
+ <202509031109.QugeBzTq-lkp@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202509031109.QugeBzTq-lkp@intel.com>
+X-ClientProxiedBy: LO2P265CA0336.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a4::36) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA0PR10MB7326:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d46d371-6945-4996-fe02-08ddeb13c1ff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QWXk2v1TOOyZalfWVqMGm2HSRC3j+S1VdhmUjqv/RRUdruW5DgS+IQXg8H3R?=
+ =?us-ascii?Q?68UQx1QSdLV2BSMMWjchdAI9D+u8mRIXI1gx8gBIhzhC5S2IgafKOz85ddg/?=
+ =?us-ascii?Q?xWWd2Qya+67vVY2d9d1nKtGv8YmGQOBn+Yesc+TKaN9IxY3qFkQWZGP2gIff?=
+ =?us-ascii?Q?S4B3pQVLqTfuHBh5e7/cr3bwlq4APff1q6Cl9LMrlsqyaTl+pQO8io7fD6c6?=
+ =?us-ascii?Q?8IKFgLhpycgjHmcDIsoao5i1t0gnZ1DZ6yaZUtkiUYkmIkLXAYrOcAI9wqLF?=
+ =?us-ascii?Q?6I1NjnqMCptT36d26m+ZJ6JGz84h9AlHiXQmwq57ar/P6Im4Sdni84gTozsf?=
+ =?us-ascii?Q?PMVqI4zUdvxB9ftvngoCQpzqYbX+6ZXkI2JY4yAuGgznjHJdRpheoz++NviS?=
+ =?us-ascii?Q?eQ5MBH8TfQregSGnvB2HbtJsl8ccojnSytljPKZr3AVWu6XIhr1esRYdwmKo?=
+ =?us-ascii?Q?B8LcmD5GpjRjxw39xkxhGAwWbKCRKEO6kwrDrQZAk5Iala4f93VPthmTmkYj?=
+ =?us-ascii?Q?9lrxomNT6CRt42es3tMFDCiekjIUtmzPyVkMO2z5YlKOyI+qGX2HDhTkA/Vz?=
+ =?us-ascii?Q?1LbtMqkprhDODq9PM4Iw7EiIWAzS8qh5e8AxPl7YJ9psW9yiNjnlyLeCiNGe?=
+ =?us-ascii?Q?Qe+ZR0IOHdYeJJcfLp0HRnat2LcaM+ahADnwScetf8vvMFdWVZiyhrr22pkG?=
+ =?us-ascii?Q?O0quEp4Qj1jFWYVr73EjuMrrkUObvJRHCXkTjavtADuE6vlZC/K38ErkHpHC?=
+ =?us-ascii?Q?hghXaXDTcdWiTj1rLvPM+BubLvzDHN480TJcnlSo/quH0sU8PC1nKqMAGz+u?=
+ =?us-ascii?Q?EwSM1GIF3BpvyWYfUWAenhiy3sztjt7ergxe1uLNysjShBJ3UYuT11l8bXNb?=
+ =?us-ascii?Q?hozypt2ZOiAvWZQ373SFfeUBxdPH9xNkMgh1OmR9UETNmt0bA01Y58rDVt5p?=
+ =?us-ascii?Q?pDB+VFywiY+CRJ7Imkg3L0GgkW5p+b0hUIrVCaaCgx242h5aArjvePcFF9NK?=
+ =?us-ascii?Q?Ya23hJJqamVQ8mBKV8Z+Tqk8mhm2kK/+341pLY+yK+mik31KBqhz6ywSOh/g?=
+ =?us-ascii?Q?Jpv7ZWmAFmf1ooftVyZmj9IPf5GCGb44zop6Srl31C1oBYQRHjbsBhIaVhym?=
+ =?us-ascii?Q?fSjGLPOZDR9vl4LadT/F5w7/A7f701SCLSoWW5HAQBevR315eKfgOXSqSY4K?=
+ =?us-ascii?Q?5TIMHpYtdZ0Nd1HRpeIhSd0VbAWqJ3MBV9mwnIee0SkyXBLnHZRiyhkhYobx?=
+ =?us-ascii?Q?Y2O3Rr4DqjQXnGSsofxzMQYvusfMLBvfE2HQjtwXW3R6rtCZMfk7PbUCgK3v?=
+ =?us-ascii?Q?hlchSmt/tSQxtzBQM9cAvNWuUq7bp2VlzueKTNnYnATLGXf7Cg3dWpgr8SIE?=
+ =?us-ascii?Q?cidhUm6r25zod8dRoYM8/8V7Pn2S?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Qta1d763BT4eUnwFg+SxYAYGtx57xXGxDnfEXGYT+2aHPI2teDFJXbcI/YC6?=
+ =?us-ascii?Q?TjfV8/kKUfeSPhthCCZNPjRHkOcQTvuIWQXQR5M1Mg8C+0lCOjUyf2yU/Qth?=
+ =?us-ascii?Q?eC7aL7ZVPFHtSMFH37rHwvjfQVKHxdnG8ZGnOxmQcnujmslTUgVPk2AHYbnL?=
+ =?us-ascii?Q?EX6cs7UfaNcceChH1Ph65u8Smat2ARwQ9ZwYiWq+q8moa4u5bZYztq0Q95sl?=
+ =?us-ascii?Q?56F0ykzxv68TUBag9oLywE+2Y+pe67gJQNkCF2lwOS9l/zan1zqSyeB3RbDj?=
+ =?us-ascii?Q?my0Jex6PwGJBhq3d6qhhftyVU7TnlWXNPOMtiUeNFAuUEsseNlI/QB7pZXoi?=
+ =?us-ascii?Q?ssWgPVeqccHTke3ZEbCdMJA0rbg1Q4D8QnJJmZq2GKUPaDcndUmUqRqki/R/?=
+ =?us-ascii?Q?9XYxdQfsMagwS69ahxFKCwecxwPAORhuIwzHGZ/PetoYcGDzC7PpQIXdNsc1?=
+ =?us-ascii?Q?RfYdBFF3YduZvV8ojJQsVW+nJzPNjpXykX9QGzvaTPWHXyQ4eCYzjOiyiPpx?=
+ =?us-ascii?Q?0KwJmyX3lGLQjK49V8cffvF5kljm2T1r3ExCSR4ShIuctBqTwXxDbNmL/S1d?=
+ =?us-ascii?Q?TO59hrxcD6GEVhYPc/hkODhZUHZEKePI39ZqLTnmX87CKR1h7SgEvEHl4yFz?=
+ =?us-ascii?Q?4E2vEIfMJ6cNROXWKtzIsYMkiG6ASjzuphrS6axshecHTgYFPEIPON4RDF82?=
+ =?us-ascii?Q?AFFT0knY6NL2PcXY/wS5DYh3Wndm7I4Jwrr4aQnaVcrFYyOqf+U+30e7WL2q?=
+ =?us-ascii?Q?9LWBIgFza9p/oIlQpshnK1TzA76cSmqFj8Izdgvq2yF3sqCa6PAN/pPbd/95?=
+ =?us-ascii?Q?LNmuoq+5+a7Fgk0TbYTLFQruwemX+gUgOnKuvAkJSbYtAeXhQCFYgMfHISIO?=
+ =?us-ascii?Q?VNABXm5WqtVrOTKXDbEl38vF7gCR1lKzwlwTE4hvGeoVKRV/RJCu3OV8Kmd6?=
+ =?us-ascii?Q?OAktbuqKv8hvQzVSHfZvcw1PRR8qSykvoY82/Wx0oGQ4UvmG7PGq+VhgYiDB?=
+ =?us-ascii?Q?6wwL4zylztOjl4mQ4y+DjJFuCSqZ1cxBlG8wsRyuj5MOBH45mIE5gfJt4sFo?=
+ =?us-ascii?Q?m7coZf6kNC2TTo6G93XXOwCgOhy2FmOi+wlkZJ6AP2dbBXtInn9ZiqMUYXUO?=
+ =?us-ascii?Q?uNoAWfTpuhguMarl/bOwCJUuFimcvLQyC/jI4c/VhCgfLr+/hIZFyKtSDw81?=
+ =?us-ascii?Q?QsN2p02pNKyfzGYmbzUQXECtm8ci9C2+8NN44M/w2Boh4cKZD2lLaW2+kZFz?=
+ =?us-ascii?Q?FajfWm0XIEhU0/rW2BTgTMKr2X5n7QpBq95FxJY/AZR8munk+vl1YmaSdOoQ?=
+ =?us-ascii?Q?64mi4rSWcc6xX3mab1TFuqPw5BGIX4+PboAClBGG3jXE6PXjFnBhr2ftTv1Y?=
+ =?us-ascii?Q?ZNt9hCL+rvpGLif0ZNe1c68yrp0FXWmck06YXB9ipLMrSxTF1bqjQvaX6mEw?=
+ =?us-ascii?Q?r/Is5beelPP8I/pv24oxjz7Gw8hVxlv4sMZ18KsP8QDW38Blhc+kSaF75JQc?=
+ =?us-ascii?Q?29gPPHMBEjhuoIXZ/fapH5Vlo1B+Cb+WlbGppRHMV0fuOnCwls+9SttKYwPh?=
+ =?us-ascii?Q?2Mj6gp4DInk1aecnSqPlJzglzK4JiXyx7XAtTPLF7pcz3NZDVlW6K9aHT8ZT?=
+ =?us-ascii?Q?jw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	su5/Qzs5qFVhM4nBAr3ngsu3qxo6Kdhxuu02XrgRTWfVz3ED8vZ0LR0etpqFzF5fG9rLzrSwG/tFB8HYEMDVdmW5HWVUjz2a+pQqFMaBOXyVe42V1XggHERjFDS/jmonSolyOSrQwieEqL0nQKzFXSFVyorkfIYF0MDMnkPYPJISZPvdm+HO4kHuZKo4WSpHBGTU4GwdicmycHOSlX1mXAc84WlE3+p+X6lt72bV40i04htTQPVlZviEIabtIfvpmUOJnqpTaXvG+2VS+6NgGxvvKuKoDpv7gBYRdOROG/oyflseUAyUo+h4lHexHlzT8dpz9mQGVmK2ffhfHmdOK1OIFwHPx6m/QAk7A89Zxyr/XAiFQ/Kk7cBXUDkvDWvAsPqb8aUYudwcbOg20f+CnUHmRagHe2ioM4zzi4asIsS48sMW0XeygHpUSztzZKG6ygxhirwON2Px20hiUGAQEHjUdIAF9XLn4afooQjLEEXmnmhSvZFVpH8sU2SU8yT8glcZrTA1DnMkLjnY9AIOv5BRyOdG3BAAqXbBYIEmiHxY201bTDsjse1PZHbJia4MS8G0YLkoOH25MZEqC6bnCZkO5ToUYTKAQSh68NnCs+c=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d46d371-6945-4996-fe02-08ddeb13c1ff
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 18:00:24.8816
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7eGGmIpQI435EK4W9b2+fvIQDXEX4daojXp3QEQ8jaoagpnyfVDsb8lY2/mD/P06tKRqGN1onFEr5KXFFcZ12WIzxmDHEpVYvSTCb0VwR2w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7326
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_09,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509030180
+X-Proofpoint-ORIG-GUID: jPz1rfBH8k2owH4ueYU2731-ZkB4vyFE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAzMDE4MSBTYWx0ZWRfX3no8pGeXq8y3
+ 7cT6vZtuXfDKWIe1ozTXD+N0/3dUC6U9XZEnrXABpsQeHGUoT+6n4cnZO60OC5Nr0r4Q8ymNX+X
+ 01dZRgSzhT2s2Z/zB+L5YD+zohW/V/SOcObFfF72kxzz5USfjW7DG6PJIB3eHGShMmRC9n4AQ/R
+ QC9wQYmscD0gZTfU6nFDKuaLgnZ5QiS3bNZyDngNkmPBJb3SQwsicjr6mIpLbr2KVNNPfW5Sc8l
+ 1g0XSaNl2UlcSBSf0/5T7DV95AR05m6cLcdXMd/IcGuRYLWNIjj+YzF2pqmC2IARvpzceglIhMk
+ zBEfdgdM+3dJa655qrLD5YiZbs0qtFefFpvzkwWWvAt3q82RxWgjYzYcC7kF+DfSPR+Cv2yPoPA
+ +vJZdSEO
+X-Authority-Analysis: v=2.4 cv=NYLm13D4 c=1 sm=1 tr=0 ts=68b884ec b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=anyJmfQTAAAA:8 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8
+ a=I9TJKNqSxyxf3YJhUcQA:9 a=CjuIK1q_8ugA:10 a=mmqRlSCDY2ywfjPLJ4af:22
+X-Proofpoint-GUID: jPz1rfBH8k2owH4ueYU2731-ZkB4vyFE
 
-Signed-off-by: David Windsor <dwindsor@gmail.com>
----
- .../selftests/bpf/prog_tests/cred_storage.c   | 52 +++++++++++
- .../selftests/bpf/progs/cred_storage.c        | 87 +++++++++++++++++++
- 2 files changed, 139 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/cred_storage.c
- create mode 100644 tools/testing/selftests/bpf/progs/cred_storage.c
+On Wed, Sep 03, 2025 at 11:43:13AM +0800, kernel test robot wrote:
+> Hi Lorenzo,
+>
+> kernel test robot noticed the following build warnings:
+>
+> [auto build test WARNING on brauner-vfs/vfs.all]
+> [also build test WARNING on gfs2/for-next linus/master v6.17-rc4 next-20250902]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Lorenzo-Stoakes/gfs2-udf-update-to-use-mmap_prepare/20250902-200024
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+> patch link:    https://lore.kernel.org/r/20250902115341.292100-1-lorenzo.stoakes%40oracle.com
+> patch subject: [PATCH] gfs2, udf: update to use mmap_prepare
+> config: x86_64-randconfig-004-20250903 (https://download.01.org/0day-ci/archive/20250903/202509031109.QugeBzTq-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509031109.QugeBzTq-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509031109.QugeBzTq-lkp@intel.com/
+>
+> All warnings (new ones prefixed by >>):
+>
+> >> Warning: fs/gfs2/file.c:591 function parameter 'desc' not described in 'gfs2_mmap_prepare'
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/cred_storage.c b/tools/testing/selftests/bpf/prog_tests/cred_storage.c
-new file mode 100644
-index 000000000000..1a99f6453a0f
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/cred_storage.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <test_progs.h>
-+#include <unistd.h>
-+#include <sys/wait.h>
-+
-+#include "cred_storage.skel.h"
-+
-+static void test_cred_lifecycle(void)
-+{
-+	struct cred_storage *skel;
-+	pid_t child;
-+	int status, err;
-+
-+	skel = cred_storage__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_load"))
-+		return;
-+
-+	err = cred_storage__attach(skel);
-+	if (!ASSERT_OK(err, "attach"))
-+		goto cleanup;
-+
-+	skel->data->cred_storage_result = -1;
-+
-+	skel->bss->monitored_pid = getpid();
-+
-+	child = fork();
-+	if (child == 0) {
-+		/* forces cred_prepare with new credentials */
-+		exit(0);
-+	} else if (child > 0) {
-+		waitpid(child, &status, 0);
-+
-+		/* give time for cred_free hook to run */
-+		usleep(10000);
-+
-+		/* verify that the dummy value was stored and persisted */
-+		ASSERT_EQ(skel->data->cred_storage_result, 0,
-+			  "cred_storage_dummy_value");
-+	} else {
-+		ASSERT_TRUE(false, "fork failed");
-+	}
-+
-+cleanup:
-+	cred_storage__destroy(skel);
-+}
-+
-+void test_cred_storage(void)
-+{
-+	if (test__start_subtest("lifecycle"))
-+		test_cred_lifecycle();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/cred_storage.c b/tools/testing/selftests/bpf/progs/cred_storage.c
-new file mode 100644
-index 000000000000..ae66d3b00d2e
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/cred_storage.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2025 David Windsor.
-+ */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define DUMMY_STORAGE_VALUE 0xdeadbeef
-+
-+extern struct bpf_local_storage_data *bpf_cred_storage_get(struct bpf_map *map,
-+							   struct cred *cred,
-+							   void *init, int init__sz, __u64 flags) __ksym;
-+
-+__u32 monitored_pid = 0;
-+int cred_storage_result = -1;
-+
-+struct cred_storage {
-+	__u32 value;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_CRED_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, struct cred_storage);
-+} cred_storage_map SEC(".maps");
-+
-+SEC("lsm/cred_prepare")
-+int BPF_PROG(cred_prepare, struct cred *new, const struct cred *old, gfp_t gfp)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct cred_storage init_storage = {
-+		.value = DUMMY_STORAGE_VALUE,
-+	};
-+	struct bpf_local_storage_data *sdata;
-+	struct cred_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	sdata = bpf_cred_storage_get((struct bpf_map *)&cred_storage_map, new, &init_storage,
-+				     sizeof(init_storage), BPF_LOCAL_STORAGE_GET_F_CREATE);
-+	if (!sdata)
-+		return 0;
-+
-+	storage = (struct cred_storage *)sdata->data;
-+	if (!storage)
-+		return 0;
-+
-+	/* Verify the storage was initialized correctly */
-+	if (storage->value == DUMMY_STORAGE_VALUE)
-+		cred_storage_result = 0;
-+
-+	return 0;
-+}
-+
-+SEC("lsm/cred_free")
-+int BPF_PROG(cred_free, struct cred *cred)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct bpf_local_storage_data *sdata;
-+	struct cred_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	/* Try to retrieve the storage that should have been created in prepare */
-+	sdata = bpf_cred_storage_get((struct bpf_map *)&cred_storage_map, cred,
-+				     NULL, 0, 0);
-+	if (!sdata)
-+		return 0;
-+
-+	storage = (struct cred_storage *)sdata->data;
-+	if (!storage)
-+		return 0;
-+
-+	/* Verify the dummy value is still there during free */
-+	if (storage->value == DUMMY_STORAGE_VALUE)
-+		cred_storage_result = 0;
-+
-+	return 0;
-+}
--- 
-2.43.0
+Fixing in respin.
 
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
