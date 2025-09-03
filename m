@@ -1,132 +1,140 @@
-Return-Path: <linux-kernel+bounces-798354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC8EB41CCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:13:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D8AB41CD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5106B4E4BF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96AD3A9FB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C542F7441;
-	Wed,  3 Sep 2025 11:13:07 +0000 (UTC)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584652F7449;
+	Wed,  3 Sep 2025 11:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dhBY9DyT"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1875A2F3C30;
-	Wed,  3 Sep 2025 11:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5826BB5B;
+	Wed,  3 Sep 2025 11:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756897987; cv=none; b=gvLP9bmHgCtMRPYCKtp6OISt8FbbHqSLkpaiFcAixUNdFzVr9kI0TUu5q5kUF144IasGo9b3l0+rRrHvCiBnyQl4rfmR9qfI+ZpyNAz/bgg5OdR75tLHOHXcRvdk/JFCBwYtUl8uCU3QpO12SLNXtJI2pLKhiGrQTCS8sLr3ZSo=
+	t=1756898065; cv=none; b=hU3A98heDQb2BxRyhY4t/iwLm2+g0uxn+pqWuPN2wYxVkmxU0ckoLAwB1deS4lghZcRCpBBbuufFr/deAkDmYIiKerRxWaxM9jD6h3ibAWHzdmF+uDufA7dTckFQwSmXrg632q2GJzNzY4ZaZwnM001d9HyUEfSjo+6/twf7u9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756897987; c=relaxed/simple;
-	bh=N0yivW7jn5Z1mSvRMYL2rfNdR6UowqDDRKNUcCxzqDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJovjDfe7K2GQrvEADUtmwU2hAGVr2fvSRM8m9+GF7/wMD4yqPZpn56l+UlHIjW4jkGkIn5WvKAJmMUFOTK9ifnSFDm5dYrMCQIlHwqQcoOO59ji2P+DsUBx1drAMrluSl4G0m2h6EEDhwYXJYuM6yqXpqBHQO9pPsscW95ZVXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz9t1756897959t4e03ebef
-X-QQ-Originating-IP: VAJd5pQQJ95oN8rLwlsllTxtAVzAMd0qsfyejqsVvQM=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 03 Sep 2025 19:12:37 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7229933252128610487
-Date: Wed, 3 Sep 2025 19:12:37 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v10 3/5] net: rnpgbe: Add basic mbx ops support
-Message-ID: <9156A3C8F1EFA452+20250903111237.GA967815@nic-Precision-5820-Tower>
-References: <20250903025430.864836-1-dong100@mucse.com>
- <20250903025430.864836-4-dong100@mucse.com>
- <be2b4af0-838e-4c7c-bae1-e74c027ad8fe@linux.dev>
+	s=arc-20240116; t=1756898065; c=relaxed/simple;
+	bh=/JnVshjfD/hm1qjMxPk4eO6Z1pJaz2wr4gwuAtq+4wE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WqfHGYIVKPWpbbGqbAh68X/3MAhyoa7SrIW3uMkk1qD0YUJm2c1OfmxHyHCcl9XswkhVcAL2EpPnzWcLfRmHdG0IYV6tSgGkmRf/XcNNf4jvznoyvoywbm698i56MrfoA1oVSOzlMG7CzXphTDsr3KYAF5Mq0pahGcBfVoYi2Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dhBY9DyT; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 583BE5lZ3249218;
+	Wed, 3 Sep 2025 06:14:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756898045;
+	bh=aHm3aYjpyUFgme/9RyuS+gz8NLLZ/nrUTI2JrfysM4k=;
+	h=From:To:CC:Subject:Date;
+	b=dhBY9DyT4A4HV1nmSax3VKtjXMchoLImzqsSqyl8+q1TvLWlr22ElAaE++VXuL+in
+	 +HMETu6FbOoV+/AgjBZf+T6jf6iiarImF49I4oZhdyOD1hY/G4B01sTtr1wQawgIJ7
+	 np4WuhD7ssYFktkMLaWVef9PWkrj2IrCABQ+4+C4=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 583BE4AB037808
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 3 Sep 2025 06:14:04 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 3
+ Sep 2025 06:14:04 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 3 Sep 2025 06:14:04 -0500
+Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 583BDviP1187822;
+	Wed, 3 Sep 2025 06:13:58 -0500
+From: Harikrishna Shenoy <h-shenoy@ti.com>
+To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@gmail.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <sjakhade@cadence.com>, <yamonkar@cadence.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devarsht@ti.com>, <u-kumar1@ti.com>,
+        <s-jain1@ti.com>
+CC: <h-shenoy@ti.com>
+Subject: [PATCH v2] dt-bindings: drm/bridge: MHDP8546 bridge binding changes for DSC
+Date: Wed, 3 Sep 2025 16:43:57 +0530
+Message-ID: <20250903111357.2605199-1-h-shenoy@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be2b4af0-838e-4c7c-bae1-e74c027ad8fe@linux.dev>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NyqG2qnv0b2dYadHGYP9NPa/HLNq7YepKwQplj7J45c74QKUcuy2o97F
-	j+w03XTV42K6QaDjmtixLFOmHTtzBTo12Wxjz3RhFAogP7IqO2rVCLz1+WK5bkc2IzJ8n8W
-	5rKtWxnVvLSLdTpmZCM2PVi2iFxpKaPREh4kQr9qh6wlpiRm15J4s06YeYW/4pm+DsFV8iH
-	EnSmMxyWdpJFtOKo/dbw9bVKP6OFUXp8ZuuYHsOzbiKgDq+a48eZmoxVXZPLhRylUyufD/i
-	QKcXDRnZwYCCnwPQl1k9u/qNNa4pIAE8Q9T5lczEeXJieyggkQ4glaBo/FRA3iHtqEzDFfy
-	4xD/LWFvKkITp+nUYaTAr7R2iBabueU7YzmVMZu6Ghh77hFRBFm3cfV9kke1SE13gFlvAh1
-	bgCuru6gr9lNT6pgCb6eU9dv8i/zzScFsjmsW82g3BRQZVVNJdMDoySK22n5HxEV4hbxbKM
-	qcf3kVOMNRPNBLUIMfpZCTZlpJjdMAIbu6713pCdIUWDKCkzLlV4joWgSj6Hm6wlw38uVnk
-	Jv0bBiIquzja0fJ6Eaa0Eb4unKGpwu66u2oFhs7LoHf3n3UccAsPon2dYCtmYLg65+0bagR
-	rLuRKQz7vFcp/2GW75xVgCS7quNruMuAppalqY85C+d70TBxF4DswSqiJqNBRq4JbK9aLUp
-	y40a1qpe+Op2YDUyMZPDPNNF+Kp7H8/worV6eLiyuwiImAtTZg7W4MYhxuNkPi4LD87HC2B
-	FJGKIZdHtaEdlGZzeumeXN677376+0VQHAUrPkLWTBDR6h4vR6nY/fKVjybxdGHNFv60tam
-	WWB5sojP+8IgA+9rHULk2V15z9Q2Ai8cIBwoEGpqQZ3fNvnF0DhzuPzmc2Edjhcu1L0uNhy
-	8YwMm3DZCRkYCcPJiq/+72I2ldtBfsgrN+VDJ1By1VkrNma2vDaZrfUXwSorUugEymecC8Y
-	1k6aN9lqpb3S1DV8Esrun1Wg4wSrdso5HlnjaXoEtGUPtcXjw0nvYxaQzS3+aOBOB5bnUg+
-	kAHK3G5w==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Sep 03, 2025 at 11:53:17AM +0100, Vadim Fedorenko wrote:
-> On 03/09/2025 03:54, Dong Yibo wrote:
-> > Initialize basic mbx function.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > ---
-> >   drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
-> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  16 +
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |   3 +
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    | 393 ++++++++++++++++++
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |  25 ++
-> >   5 files changed, 439 insertions(+), 1 deletion(-)
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
-> > 
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > index 179621ea09f3..f38daef752a3 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > @@ -1,8 +1,11 @@
-> >   // SPDX-License-Identifier: GPL-2.0
-> >   /* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> > +#include <linux/string.h>
-> 
-> I don't see a reason to have string.h included into rnpgbe_chip.c
-> 
+From: Swapnil Jakhade <sjakhade@cadence.com>
 
-You are right, I should add it when it is used.
+Add binding changes for DSC(Display Stream Compression) in the MHDP8546
+DPI/DP bridge.
 
-> > +
-> >   #include "rnpgbe.h"
-> >   #include "rnpgbe_hw.h"
-> > +#include "rnpgbe_mbx.h"
-> 
-> I believe this part has to be done in the previous patch.
-> Please, be sure that the code can compile after every patch in the
-> patchset.
-> 
+Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
+Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+---
+ .../bindings/display/bridge/cdns,mhdp8546.yaml        | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-You mean 'include "rnpgbe_mbx.h"'? But 'rnpgbe_mbx.h' is added in this patch.
-I had compiled every patch before submission for this series. And as you
-remind, I will keep check this in the future.
-
-Thanks for your feedback.
+diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+index c2b369456e4e..6e749c002669 100644
+--- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
+@@ -27,6 +27,8 @@ properties:
+           Register block for DSS_EDP0_INTG_CFG_VP registers in case of TI J7 SoCs.
+       - description:
+           Register block of mhdptx sapb registers.
++      - description:
++          Register block for mhdptx DSC encoder registers.
+ 
+   reg-names:
+     minItems: 1
+@@ -34,6 +36,7 @@ properties:
+       - const: mhdptx
+       - const: j721e-intg
+       - const: mhdptx-sapb
++      - const: mhdptx-dsc
+ 
+   clocks:
+     maxItems: 1
+@@ -100,18 +103,18 @@ allOf:
+       properties:
+         reg:
+           minItems: 2
+-          maxItems: 3
++          maxItems: 4
+         reg-names:
+           minItems: 2
+-          maxItems: 3
++          maxItems: 4
+     else:
+       properties:
+         reg:
+           minItems: 1
+-          maxItems: 2
++          maxItems: 3
+         reg-names:
+           minItems: 1
+-          maxItems: 2
++          maxItems: 3
+ 
+ required:
+   - compatible
+-- 
+2.34.1
 
 
