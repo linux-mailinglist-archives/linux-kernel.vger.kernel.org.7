@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-798900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C73CB42470
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4825B4246E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06915163FF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:08:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C08163A0F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B31A31A57D;
-	Wed,  3 Sep 2025 15:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAC731353E;
+	Wed,  3 Sep 2025 15:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="le96U6k7"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rc8oL8WI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34FA314A8B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7AB312830;
+	Wed,  3 Sep 2025 15:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912109; cv=none; b=IL5ko4yMFLVmZUP8SNkUxycZdqqrWZb2Vqo6uKqrL048z2Ra14H8zFkm3wt56XZJNgmrbbN1LG1dZ31C1DYIvBpKNxTalWAhZt251NzyWTxab/M94/CL2Oj76ie/8zcsmfRBcpd7AR5d1Vf0rp191/ZtBwNzh6zN3NaickIk5Sg=
+	t=1756912106; cv=none; b=gWOBVt0tHsdWJrq7GweWdPqPTfpBrpLhpddG3XSmlyFRHW7l2UddYvkVVFlVJdgFrCeiFuQdZwsWjSONkN+v55SrzAqeTarup1Y7hpKnqy1i35x/NwrAWN4Kl8CeMhVUyTj+XLKohTX8Qg5w5IWaNXpJ+ZKKbxSAIWhKRGu284I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912109; c=relaxed/simple;
-	bh=96YaeCpb+HKVPG3JA2d5NfvcGaCRpyQaoylvRtxb4uc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hGrCjQoryGGzM0Yh5p+NFEXOhcgKIh4s9go8czwMxN2k3NP6I/wwSuzx6FQdcJTRvcAw6X9mMITV0S/4RjS4Th3iyU9YVZaS+oz8LkV0Qv5ycWHfUIYGsJpcG/S6ly9L+02TU593RW3TOgNcMBwMTf91ogR2tdbHANvDZVE3Zbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=le96U6k7; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61e8fdfd9b4so2272759a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 08:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756912106; x=1757516906; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=96YaeCpb+HKVPG3JA2d5NfvcGaCRpyQaoylvRtxb4uc=;
-        b=le96U6k79NkgVQa7/QcjlCjZi80ce7VQIrSBEgDupAk69tWX3uUW27C6NRN833BmM+
-         q2XrP5cfRzC3Hw5RZoKwOK0Nfp982sdXyaaAQx4EEfyWPHgKbSyxQmWB7ydRRbhnLqGR
-         7R52k6Jurt8hBO13HrFDPqiZY1+PNoKcwYxigAJuiKE9jeyWD9Rqj7RJMLtrfJLqwlud
-         aBqVzh7fiPivYo0iVSVnNZlFu8AEnnL+cwuDHUIYS7lF6OMVSaW7t3wM9H9AXXNqi82X
-         x4n0wRbl3lIaNUU+vAm+yUlNl7zGr5Y4ECSaSru3M9qT3H1VPh3q8CKUs8tdBCztDTLq
-         mOAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756912106; x=1757516906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=96YaeCpb+HKVPG3JA2d5NfvcGaCRpyQaoylvRtxb4uc=;
-        b=UbF112Vri1Iys/rKSDR+f7gCKuYOQCQORU8L+hqw7QeUufcC5qmyFSYqDWLYPxVzNB
-         Mdwx6aQgDY3f9JFSxY+62BnXeyqGJqvQlf7BD3S6tZrijVf0iG4jE87wpmf4g4PwyjgB
-         GwB7uQjF1vRNk5eyGI8q2nao8TIdihg0kLbEZLJIsYblH2QFvbiICocfNQRKCRvJ0nr+
-         1NnqegC3DpnakShjbsKKJP9AxT/yB9nbaxK6T01vI6Dj9WhTjtEsvEO1h+vcJ/6hiMpL
-         g7mS6+LMnWJAn1T+weHN9JdiGvJ+7OtqpFKy85ZpDdIN2VkUgrTQxmKNa2yz9XMonu0Y
-         ExfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+wf2XsM8JaouQtmGDNnOcnCMuY3l8udOiBfMrVLFrexyqZ+jjEi7oYOG3eKmhNv+8FIzdRmVRRrxTdmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/qrK9AtBWEcTrG3XYbHmsd3verL9e7iTabZvwppomn+XkhfwB
-	nxluaykUtOw5llqBZ5226r43pXp1UAPp6gAQaxoTrmy6AYxK5qbrndvr3QANqrTYv6xtDBV3V/m
-	L1G9wtWayzvx8ofEfFJ1dyk5Gm1crfoKL+/oY1Yh0iQ==
-X-Gm-Gg: ASbGncu4Q3PiNsCqb2fufU9Xgfec591kaQ4hoYFO4VoCNacsZA8paO2HoXzgAnvh68N
-	Pvte+9RlF4EKwqotn7aFz7VLtJvdcLVEC5AcxOuSfcySk4vJk3aIMhXWppeY1/x9JLSEV0Rlh/4
-	6iwbGGS2Zz+ErToE4VUYBqVhxxzxs+Qm7tF1p4XihdXsUlWG4r0/N1TioqQXhFLXzsGxSkdaH9t
-	h1OIuVhbtIRjrzs2zqXcoX8benWa5k1owJ84IVv/mO8VmrD8Z00uUiV1Bd4cYnutJi+swZU1ct4
-	vOXWIq1+IFJzud6X
-X-Google-Smtp-Source: AGHT+IFn7BWyhxyqlF2KcZUxCc0qBvV63/yqKBt2qJWo0WsCdrH2xfKlcteVT3gnPfYsWlvKxJ4MQhTpAo8e8ENe2Tc=
-X-Received: by 2002:a05:6402:504b:b0:618:3521:6842 with SMTP id
- 4fb4d7f45d1cf-61d26d9c52dmr14417866a12.16.1756912106252; Wed, 03 Sep 2025
- 08:08:26 -0700 (PDT)
+	s=arc-20240116; t=1756912106; c=relaxed/simple;
+	bh=4OGMjsPefYUiz5Eg4nhv/X6kX9TsR0TDPzAxkLnV3wo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cIn3JAh4aYDZcac8IY/y3PM/vBtUvLe4aEBdjFQ0MBBN38plQqQLkPj0CW5lgwvM7Ykflr9Am1HtaXubssZBMp10pskQbfksVBkwc3KBqH3fYIilYVnEGtsFB+B8NXNx9kVVh+Gz+ReGP+YvEe3oo83NRLl0J4kGLp/8mk+aTdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rc8oL8WI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E889DC4CEF0;
+	Wed,  3 Sep 2025 15:08:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756912106;
+	bh=4OGMjsPefYUiz5Eg4nhv/X6kX9TsR0TDPzAxkLnV3wo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Rc8oL8WI10Z2IK54JvcGKmhDxZOeVJ1FpJ9Gw8VtFPu4qwdqZq4Y2ldfFEICy2X/3
+	 ZFUra86pmW7xvwMn3EweJ3D+XxXpBCPbE5CsNF9C9OnPon3CceSK6ia/Ec5TLvNHgn
+	 Y6KEoM2mXVXLiyWgYQtg7xlV0aegBjX0uapBnRo6527dZjG8smrN+HI2WHG86fr2yp
+	 2P5ZJ1yp4GZZwOQ5iANYqiHs21OcpYPt/UM2Y+hxEaD8mMCCB+p/vdLOttxpclPkJG
+	 +jed467QYTUODHDTzIhYST/UsqF88O7+EyWY3K0E5gGGqjBJ3td2sO3rVNRO8QY3vv
+	 Uk3uqZRemmKYw==
+Message-ID: <cd671c41-2f52-4be9-b2ad-f547daff5a3a@kernel.org>
+Date: Wed, 3 Sep 2025 17:08:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821-imx95-rproc-1-v5-0-e93191dfac51@nxp.com>
- <20250821-imx95-rproc-1-v5-2-e93191dfac51@nxp.com> <aLHOhKpAQbVCC76-@p14s>
- <20250830125208.GA22718@nxa18884-linux.ap.freescale.net> <aLcdmY-gqd5cFOYc@p14s>
- <20250903045611.GA8860@nxa18884-linux.ap.freescale.net> <20250903063915.GA18615@nxa18884-linux.ap.freescale.net>
- <CAEnQRZBCxp4rT=es3fDh2w1Ut=i4u3GCnyoOFjqJEMj3CLWPWA@mail.gmail.com>
-In-Reply-To: <CAEnQRZBCxp4rT=es3fDh2w1Ut=i4u3GCnyoOFjqJEMj3CLWPWA@mail.gmail.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 3 Sep 2025 09:08:14 -0600
-X-Gm-Features: Ac12FXyQRSgi-B9_MD_FBGgX_7saidUAIRI9AwJxOjtr7PuEWmGlg5OZDn0enLY
-Message-ID: <CANLsYkwE+6B_CgCJQdYF_n-XOH7AkDF_e2KTJnK4EtNtHRX__w@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] remoteproc: imx_rproc: Add support for System
- Manager API
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Peng Fan <peng.fan@oss.nxp.com>, Peng Fan <peng.fan@nxp.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cpufreq: core: Rearrange variable declarations
+ involving __free()
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Zihuan Zhang <zhangzihuan@kylinos.cn>
+References: <4691667.LvFx2qVVIh@rafael.j.wysocki>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <4691667.LvFx2qVVIh@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 3 Sept 2025 at 01:20, Daniel Baluta <daniel.baluta@gmail.com> wrote=
-:
->
-> <snip>
->
-> > >Please give detailed suggestions, but not a general comment.
-> >
-> >
-> > @Daniel, @Frank =E2=80=94 since you've reviewed and R-b'd this patchset=
-, do you
-> > have thoughts on the latest feedback from Mathieu? Would you agree that
-> > further simplification is needed, or is the current structure acceptabl=
-e?=E2=80=9D
->
-> Peng, please trim the message when replying so that you keep only
-> relevant part of the text.
->
-> I think you are both right here. I understand your frustration :)
-> but also Mathieu's point of view is reasonable.
->
-> For a person who doesn't know the internals of IMX remoteproc the code
-> is a little
-> bit hard to understand. Peng I've given you my R-b because even if the
-> feels like
-> it is getting complicated it is still manageable and you are the
-> maintainer for it.
->
-> Allow me a few days to see if we can simplify the logic.
->
+On 03/09/2025 16:56, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Follow cleanup.h recommendations and always define and assign variables
+> in one statement when __free() is used.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
 
-Excellent.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> thanks,
-> Daniel.
+Best regards,
+Krzysztof
 
