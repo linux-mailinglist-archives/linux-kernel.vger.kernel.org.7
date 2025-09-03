@@ -1,96 +1,189 @@
-Return-Path: <linux-kernel+bounces-799236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A43B428C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:35:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91837B428C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 20:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 481137B75F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:34:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A4037B7992
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5BD3680A8;
-	Wed,  3 Sep 2025 18:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF1E3680A7;
+	Wed,  3 Sep 2025 18:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5WdzNSb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="S/nI+8UA"
+Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1748B368089;
-	Wed,  3 Sep 2025 18:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9453629B8;
+	Wed,  3 Sep 2025 18:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756924538; cv=none; b=gFXm0laE1LQj82TpA6vnt3YN9SdsMBN438QjAUvk4fGAHejlkR9zYk4eS27PDUEUTfNGFUHCRwaGVzJmugYy/bEZXXe8FwvT0baGXZ/ZjPj97rE2Cv1AH7LeBhluu5Lw8P52FgsSdiWt6pPM/EPVtumq8LFYhxUqS66nvwywADc=
+	t=1756924553; cv=none; b=ORE/TU7Hvlpfib3M3JfSzbQutI0Twy1Zyd8C8ttNclObkKZal54SOuBjoABhQk9xh+8yw6jG7yqLKXFJjWm5oBKdxzmFjPycRkB/dvTggjrCTY1lnCUOXUC2mcIE7SvmSVeaGPmuFCpCoMbCqQQgKEAtb9OzTrwf7BNXq2B+dhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756924538; c=relaxed/simple;
-	bh=IjPPP+c6tWyLw6wQQKtlKQ3iXM7IyODWQ7haY+XqloY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Her39NRRieTUBGfBomLVFHe5pYZwy5htyduYNsaj9P4PwjiYagaSF2UM+y0rRzmE6bITOTcsaAaiI5mAun3uF/IOFIpjO0rNf555pm4FDsjpcqln5LiLnxmobE6WhbH/05q4Vsabq8r336LLuvXLOuSeWhqKdCxY8BcVcmUA5MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5WdzNSb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C37C4CEF1;
-	Wed,  3 Sep 2025 18:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756924537;
-	bh=IjPPP+c6tWyLw6wQQKtlKQ3iXM7IyODWQ7haY+XqloY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=n5WdzNSbHmmq7r5KO5WzrhQtOX4SKxXEiDyToULyQ/idA87ldhACFIRjunPs8P9Tu
-	 2i8adrGV7aGhK/CleFVZbP7qPgW96qMviLZBaYHDo2gwOwD7xzGH6+5d13s4fSeCQc
-	 Q97QnyiggxNIZ/5y6CzW5+FM2eQ3oyzXWkudWmaSmYaU2sXi88wvQrTgvxsXuiAncS
-	 J/f4C8SGnnKmHZ51PzODl71/5v9Sm5mvboU4RHYwZQZ2dpytqE1hNDwuaG4itZfoxc
-	 IdfsiVh4AVV5hXtPJ3VDb68HexXyFyPBGst5sS8OkiJ6tH1ivECmuhO2jTsOHNMS0L
-	 j9/HakQxfZReQ==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-61e4f5f46cfso80018eaf.0;
-        Wed, 03 Sep 2025 11:35:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzkvhaqApp5sPRax/EyPwOGT4Hrpnzsu6ESNhsUmLBS3RmdbAumJDGYFw1QLQ387GD2gTaWVLT9to=@vger.kernel.org, AJvYcCWBreSZYckkw1/0nIdTH3uDOWI9Dahxsd/o3TJh7C6O3Fm5FA9ZaehQ2BBeoBNfjUV9cbYyZP6EO+rvgbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjtS2QS5faHcchY7vyHEbCia98UR75w5/Gd7clS/xkeEz9ZLXX
-	InYk4SMnrAAahzF6FYPE/Ma4KdCGiPbtQepuB0LuAzEsVjIeTNMVoln4lHJQWN7M/ozerfBomxa
-	kA5v7X5X2CdIvCmi2DTHJwYofpCbYVGA=
-X-Google-Smtp-Source: AGHT+IHcVyuPueHYutqfiO2a11D7xs+rkydQE1nQYBQhq3NtxHJnOTF/VqrCirG3hX67b+AveDMKHFO/KrEnzLGNees=
-X-Received: by 2002:a05:6820:1c83:b0:61d:b236:a864 with SMTP id
- 006d021491bc7-61e336f524fmr8229208eaf.3.1756924536872; Wed, 03 Sep 2025
- 11:35:36 -0700 (PDT)
+	s=arc-20240116; t=1756924553; c=relaxed/simple;
+	bh=7CxDRWpb5torW5UwqUmMDtS55zZkyHgBohxIpCgTqH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jFam6WtgK50ej1ufskwBx2s9BiFgskeec4ZGnzthxxwsLgMIy3VnYFTbLSWJbX4E3LM/u/7gUyvWt9Ti6WQ40RoV1xh1mKkv9X2r8ZXfaMojsKsrZJwCb1Jpoo9oxgDg8C2vV0361CzNcgabjshtmCP6yXvo3CBEkCpoLa2qUh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=S/nI+8UA; arc=none smtp.client-ip=129.217.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
+Received: from [192.168.178.143] (pd9eaae6b.dip0.t-ipconnect.de [217.234.174.107])
+	(authenticated bits=0)
+	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 583IZkXr011583
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 3 Sep 2025 20:35:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
+	s=unimail; t=1756924547;
+	bh=7CxDRWpb5torW5UwqUmMDtS55zZkyHgBohxIpCgTqH8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=S/nI+8UAvrumliQ5UoNRW8b94SZ+X+lBBoXjP9w2hemiKDS+T2mv912n7FT2vfKIq
+	 aNky0170uSg/V3lWjA8wW213dVmUg9jL7M9IE01of1JLsfchOKPIm6lFaiZ2sMlKKr
+	 8MtTgL7RS42MHmwz8v5P4RGwABvB71Bm9cndRduk=
+Message-ID: <40916cac-1237-4b7a-976d-3b62c85c895b@tu-dortmund.de>
+Date: Wed, 3 Sep 2025 20:35:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <CAJZ5v0ik7fRKwH3CnXysvBJkkdJbWP-6iL=zBF0o92rR+nHTKg@mail.gmail.com>
- <4f340f1e-1cbf-4b50-ae23-a0e50170146c@intel.com> <CAJZ5v0hQEecBFfZkefbipXPV6HVupz67q5RYR=heC=ZUpOY+bQ@mail.gmail.com>
- <c65c1b18-be70-493f-ab1f-07af55902772@intel.com>
-In-Reply-To: <c65c1b18-be70-493f-ab1f-07af55902772@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 3 Sep 2025 20:35:24 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jqUkBHarZkViyy1j-UUL3fgF7cp7AeU+X2Nyj1BCfBcg@mail.gmail.com>
-X-Gm-Features: Ac12FXxpQI-jp1kKgxBfIC5TqYnqhSzY-gRax2CKo1TF1r7DqfzLIOhPZuui6qA
-Message-ID: <CAJZ5v0jqUkBHarZkViyy1j-UUL3fgF7cp7AeU+X2Nyj1BCfBcg@mail.gmail.com>
-Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Christian Loehle <christian.loehle@arm.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 2/4] netdev queue flow control for TUN
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, jasowang@redhat.com,
+        mst@redhat.com, eperezma@redhat.com, stephen@networkplumber.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux.dev, kvm@vger.kernel.org
+Cc: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+References: <20250902080957.47265-1-simon.schippers@tu-dortmund.de>
+ <20250902080957.47265-3-simon.schippers@tu-dortmund.de>
+ <willemdebruijn.kernel.243baccfedc16@gmail.com>
+Content-Language: en-US
+From: Simon Schippers <simon.schippers@tu-dortmund.de>
+In-Reply-To: <willemdebruijn.kernel.243baccfedc16@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 3, 2025 at 8:00=E2=80=AFPM Dave Hansen <dave.hansen@intel.com> =
-wrote:
+Willem de Bruijn wrote:
+> Simon Schippers wrote:
+>> The netdev queue is stopped in tun_net_xmit after inserting an SKB into
+>> the ring buffer if the ring buffer became full because of that. If the
+>> insertion into the ptr_ring fails, the netdev queue is also stopped and
+>> the SKB is dropped. However, this never happened in my testing.
+> 
+> Indeed, since the last successful insertion will always pause the
+> queue before this can happen. Since this cannot be reached, no need
+> to add the code defensively. If in doubt, maybe add a
+> NET_DEBUG_WARN_ON_ONCE.
+> 
+>> To ensure
+>> that the ptr_ring change is available to the consumer before the netdev
+>> queue stop, an smp_wmb() is used.
+>>
+>> Then in tun_ring_recv, the new helper wake_netdev_queue is called in the
+>> blocking wait queue and after consuming an SKB from the ptr_ring. This
+>> helper first checks if the netdev queue has stopped. Then with the paired
+>> smp_rmb() it is known that tun_net_xmit will not produce SKBs anymore.
+>> With that knowledge, the helper can then wake the netdev queue if there is
+>> at least a single spare slot in the ptr_ring by calling ptr_ring_spare
+>> with cnt=1.
+>>
+>> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+>> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+>> ---
+>>  drivers/net/tun.c | 33 ++++++++++++++++++++++++++++++---
+>>  1 file changed, 30 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+>> index cc6c50180663..735498e221d8 100644
+>> --- a/drivers/net/tun.c
+>> +++ b/drivers/net/tun.c
+>> @@ -1060,13 +1060,21 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
+>>  
+>>  	nf_reset_ct(skb);
+>>  
+>> -	if (ptr_ring_produce(&tfile->tx_ring, skb)) {
+>> +	queue = netdev_get_tx_queue(dev, txq);
+>> +	if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
+>> +		/* Paired with smp_rmb() in wake_netdev_queue. */
+>> +		smp_wmb();
+>> +		netif_tx_stop_queue(queue);
+>>  		drop_reason = SKB_DROP_REASON_FULL_RING;
+>>  		goto drop;
+>>  	}
+>> +	if (ptr_ring_full(&tfile->tx_ring)) {
+>> +		/* Paired with smp_rmb() in wake_netdev_queue. */
+>> +		smp_wmb();
+>> +		netif_tx_stop_queue(queue);
+>> +	}
+>>  
+>>  	/* dev->lltx requires to do our own update of trans_start */
+>> -	queue = netdev_get_tx_queue(dev, txq);
+>>  	txq_trans_cond_update(queue);
+>>  
+>>  	/* Notify and wake up reader process */
+>> @@ -2110,6 +2118,24 @@ static ssize_t tun_put_user(struct tun_struct *tun,
+>>  	return total;
+>>  }
+>>  
+>> +static inline void wake_netdev_queue(struct tun_file *tfile)
+>> +{
+>> +	struct netdev_queue *txq;
+>> +	struct net_device *dev;
+>> +
+>> +	rcu_read_lock();
+>> +	dev = rcu_dereference(tfile->tun)->dev;
+>> +	txq = netdev_get_tx_queue(dev, tfile->queue_index);
+>> +
+>> +	if (netif_tx_queue_stopped(txq)) {
+>> +		/* Paired with smp_wmb() in tun_net_xmit. */
+>> +		smp_rmb();
+>> +		if (ptr_ring_spare(&tfile->tx_ring, 1))
+>> +			netif_tx_wake_queue(txq);
+>> +	}
+>> +	rcu_read_unlock();
+>> +}
+>> +
+>>  static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
+>>  {
+>>  	DECLARE_WAITQUEUE(wait, current);
+>> @@ -2139,7 +2165,7 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
+>>  			error = -EFAULT;
+>>  			break;
+>>  		}
+>> -
+>> +		wake_netdev_queue(tfile);
+> 
+> Why wake when no entry was consumed?
+
+I do it because the queue may not have been woken the last time after
+consuming an SKB. However, I am not sure if it is still absolutely
+necessary after all the changes in the code. Still, I think it is wise to
+do it to avoid being stuck in the wait queue under any circumstances.
+
+> 
+> Also keep the empty line.
 >
-> I munged the changelog up a bit:
->
-> > https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git/commit/=
-?h=3Dtestme&id=3D13f107f882bb5
->
-> I hope that looks better to everyone.
 
-It does to me, thanks!
+Okay :)
 
-> I also went looking at this assuming that it was x86-specific. I'd
-> appreciate a quick head nod from Thomas or Peter on this before I push
-> it anywhere, though.
-
-Sure.
-
-Thank you!
+>>  		schedule();
+>>  	}
+>>  
+>> @@ -2147,6 +2173,7 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
+>>  	remove_wait_queue(&tfile->socket.wq.wait, &wait);
+>>  
+>>  out:
+>> +	wake_netdev_queue(tfile);
+>>  	*err = error;
+>>  	return ptr;
+>>  }
+>> -- 
+>> 2.43.0
+>>
+> 
+> 
 
