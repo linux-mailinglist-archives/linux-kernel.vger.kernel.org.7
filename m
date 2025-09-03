@@ -1,135 +1,156 @@
-Return-Path: <linux-kernel+bounces-798788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60519B422FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28BCB422F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141607C5493
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE22201268
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3264311C1E;
-	Wed,  3 Sep 2025 14:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8983148BF;
+	Wed,  3 Sep 2025 14:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kuddoeeB"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o18GiFqt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26102F7441;
-	Wed,  3 Sep 2025 14:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6517A30EF77;
+	Wed,  3 Sep 2025 14:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908177; cv=none; b=GhvhDcUwulzJqXbV3X54YusDQZYCKq976Z8B2p0MNfKb2w5uscWW3WKkgtfbLbfqoXM6kAjSq7H8RVjoCKjU0Sla++Y6f4rCpPDtDwnueqpABI4afBuIBzWr6bfJMsznxPUskDG7DT7BkMouHAMc6CTbMTRVykrTFLOPYX0Wz6c=
+	t=1756908080; cv=none; b=kpT2wq6DSJ837S2W6umIr14pjHV5RLKIKVW6ildVbkjaT6jcfCzhymEe1khXQoq2jo2Kv1MCS5jBgFYG5sGP42cHtvwWjJ87I1HlqcZUFx6zAzK9uQnNi1rc17Uuf/rg2QcrlE9tQA30by/KbZuE5fJojJMq4mpuC7JAdI1dh7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908177; c=relaxed/simple;
-	bh=+Ou7/TJXaHnviKBEr5ILfWD+oVZwfeeOf3QKT9caAkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MEM9EDYXLAK0MnHSXz1I/pArB1ui+oN1N8UXJBSnZIr89BDUHpugwpc8pY7+JDK+qWnUUULCwyFeeL3w4xbSNRDqhBCGGsiK5GBOU7x4mmesIxFLMxyh+QW9A1sMk8l22V4XFcuvVLoktPmafLH1FQjntlP5dgJ6pgdg9UIcTHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kuddoeeB; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756908175; x=1788444175;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=+Ou7/TJXaHnviKBEr5ILfWD+oVZwfeeOf3QKT9caAkE=;
-  b=kuddoeeB7GToGKL1LyvBq/d4T/ZZAafpK8vfzgitgpd5zSsvaDnqWlNC
-   /oYEQuLQwVqp6pMkko5Fc7XMJiDBWwijHcljKRowRNe+w4RJ/gyD3GOCV
-   veXb6sgqF3gSAgl5NTS7QC/sFdh7vBgzuxkw7ZQGj4NlQKmpq1tlIHHa1
-   PcFgQq4fLz+WkeMJkJoTG6L01uIwFwkZj7K4FojdaDeYgMG49yZlneMGI
-   rZrCLf4BmswAFtxUH/WMj4dkbcrTXjgL7lbLg9wHKTwrUW0zMpoSAZyfa
-   Ln+K5zuvEUllL9KkUPvV1B1/UjrCTE116DpdFcld6y5xFa0s725N8DkRI
-   w==;
-X-CSE-ConnectionGUID: v8Jh6wOIR5q2UVBlaHd94g==
-X-CSE-MsgGUID: Ky7Vg2BiRuyQ5qmJAKasTw==
-X-IronPort-AV: E=Sophos;i="6.18,235,1751266800"; 
-   d="scan'208";a="46572767"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Sep 2025 07:01:44 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 3 Sep 2025 07:01:14 -0700
-Received: from [10.150.206.75] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Wed, 3 Sep 2025 07:01:09 -0700
-Message-ID: <50ca5062-5bbd-4c72-83c6-1d9abc6bde2e@microchip.com>
-Date: Wed, 3 Sep 2025 16:01:08 +0200
+	s=arc-20240116; t=1756908080; c=relaxed/simple;
+	bh=FJMDSqDO90aLIKIzXSm53PkCGpKkl5adjRT6pwHdadA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SGJZavCHps6Kk6130iHUfUjjGGRKEJ/o/YdZ/Xg5Qv9Io5dLebHN1e38U6ez67HYHegLsstZyyLg4oSMPrdkBWMApo4Dy0/FbSO4EsWB/q/JMQ6MUFAyo+Wh8CoAmW1k9nQxY84CKUVF6l4B2QjrAkEoqeaxowooBSGmZPqYPas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o18GiFqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60995C4CEE7;
+	Wed,  3 Sep 2025 14:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756908080;
+	bh=FJMDSqDO90aLIKIzXSm53PkCGpKkl5adjRT6pwHdadA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o18GiFqtSeWmLFwd/cxl+YhcnawUyAxOTOzwIhtPdrbqk0JeezZw2d2movH9K48K4
+	 okPOzMhPFeS9zjBwvb1MazkSnx7z9K/8fi13QiA8cklD6i2PuCLQP3/kbjxNdKfD01
+	 rSbGdrTB4FFTE5QvB/e06ciiXp7qIvPbhj++iOKzrB8J5gBpnRkaLxvhaG+wSIHfIF
+	 2SHxkcs4C5SFuXhvji1ZE2ZR+YHBlPnnfZAy+FARYP/mbuRqVRYr5k5pW4QYHoxQm1
+	 G446Jt7eLfJNhgoJ/6mA5WfgOB+VQvN8OZg2NyUkhzm0SIGChxw9EVIucYIzPC0SqJ
+	 sCmZDr3ptGiug==
+Date: Wed, 3 Sep 2025 15:01:15 +0100
+From: Lee Jones <lee@kernel.org>
+To: Marcos Del Sol Vives <marcos@orca.pet>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Walle <mwalle@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] mfd: vortex: implement new driver for Vortex
+ southbridges
+Message-ID: <20250903140115.GC2764654@google.com>
+References: <20250822135816.739582-1-marcos@orca.pet>
+ <20250822135816.739582-4-marcos@orca.pet>
+ <20250902151828.GU2163762@google.com>
+ <45b84c38-4046-4fb0-89af-6a2cc4de99cf@orca.pet>
+ <20250903072117.GY2163762@google.com>
+ <1d4352b6-c27e-4946-be36-87765f3fb7c3@orca.pet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v8 00/10] arm64: lan969x: Add support for
- Microchip LAN969x SoC
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Vinod Koul <vkoul@kernel.org>,
-	<linux@armlinux.org.uk>, <alexandre.belloni@bootlin.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <olivia@selenic.com>,
-	<herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-	<andi.shyti@kernel.org>, <lee@kernel.org>, <broonie@kernel.org>,
-	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>, <arnd@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, <o.rempel@pengutronix.de>,
-	<daniel.machon@microchip.com>, Robert Marko <robert.marko@sartura.hr>,
-	<luka.perkov@sartura.hr>, Vinod Koul <vinod.koul@intel.com>
-References: <20250702183856.1727275-1-robert.marko@sartura.hr>
- <175327377884.189941.15214972441246653208.b4-ty@kernel.org>
- <bac5390f-725a-43db-a2b6-17a68d0d733c@tuxon.dev>
- <20250903-gratify-sustained-9acc011bc3c9@thorsis.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250903-gratify-sustained-9acc011bc3c9@thorsis.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1d4352b6-c27e-4946-be36-87765f3fb7c3@orca.pet>
 
-On 03/09/2025 at 15:16, Alexander Dahl wrote:
-> Hello,
+On Wed, 03 Sep 2025, Marcos Del Sol Vives wrote:
+
+> El 03/09/2025 a las 9:21, Lee Jones escribió:
+> >>>> +static const struct mfd_cell vortex_dx_sb_cells[] = {
+> >>>> +	{
+> >>>> +		.name		= "vortex-gpio",
+> >>>> +		.resources	= vortex_dx_gpio_resources,
+> >>>> +		.num_resources	= ARRAY_SIZE(vortex_dx_gpio_resources),
+> >>>> +	},
+> >>>> +};
+> >>>
+> >>> It's not an MFD until you have more than one device.
+> >>
+> >> Same as above.
+> > 
+> > It will not be accepted with only a single device (SFD?).
+> > 
 > 
-> Am Thu, Jul 31, 2025 at 11:05:07AM +0300 schrieb Claudiu Beznea:
->> Hi, Vinod,
->>
->> On 23.07.2025 15:29, Vinod Koul wrote:
->>>
->>> On Wed, 02 Jul 2025 20:35:58 +0200, Robert Marko wrote:
->>>> This patch series adds basic support for Microchip LAN969x SoC.
->>>>
->>>> It introduces the SoC ARCH symbol itself under the ARCH_MICROCHIP symbol
->>>> which allows to avoid the need to change dependencies of the drivers that
->>>> are shared for Microchip SoC-s in the future.
->>>>
->>>> DTS and further driver will be added in follow-up series.
->>>>
->>>> [...]
->>>
->>> Applied, thanks!
->>>
->>> [08/10] dma: xdmac: make it selectable for ARCH_MICROCHIP
->>>          commit: e56982021f5303b2523ac247e3c79b063459d012
->>
->> As this one depends, as well, on the first 3 patches in the series (Robert,
->> please correct me if I'm wrong), and there are still discussions ongoing,
->> can you please drop it until all is clear on the first 3 patches?
->>
->> Otherwise, applying only this patch will lead to AT91 XDMAC driver not
->> being built for SAMA5{D2, D3, D4}, SAMA7{G5, D65} SoCs. Linux is not
->> booting on SAMA7G5 SoC only with this patch applied.
+> I've been working on making all the changes, except this one.
 > 
-> Second that.  Just tested v6.17-rc4 on sam9x60 and DMA is not working
-> at all because this driver can not be selected anymore.  This must be
-> fixed before v6.17 release please!
+> If you prefer, I can either implement the watchdog now, add it on this
 
-Yep, I'll try to fast forward patch 02 of this series before 6.17-final 
-(this instead of reverting XDMA patch).
+Yes, please implement the WDT now.
 
-Regards,
-   Nicolas
+> patch series and thus make it a proper MFD (at the cost of delaying
+> even further the GPIO inclusion), or keep the struct mfd_cell array
+> as a single-element array and implement the watchdog later on another
+> merge request, using that very same array.
+> 
+> I am however not okay with wasting my time rewriting that to bypass
+> the MFD API for this, so I can waste even more time later
+> implementing again the MFD API, just because linguistically
+> one (right now) is technically not "multi".
+
+I don't get this.  If you implement the WDT now, you will be "multi", so
+what are you protesting against?
+
+> That seems very unreasonable, specially when it wouldn't be a first
+> since at least these other devices are also using MFD with a single
+> device:
+> 
+>   - 88pm80
+
+% grep name drivers/mfd/88pm800.c
+	.name = "88pm80x-rtc",
+	.name = "88pm80x-onkey",
+	.name = "88pm80x-regulator",
+	.name = "88pm800",
+
+>   - 88pm805
+
+% grep name drivers/mfd/88pm805.c       
+	.name = "88pm80x-codec",
+	.name = "88pm805",
+
+>   - at91-usart
+
+% grep NAME drivers/mfd/at91-usart.c
+	MFD_CELL_NAME("at91_usart_spi");
+	MFD_CELL_NAME("atmel_usart_serial");
+
+>   - stw481x
+
+* Copyright (C) 2013 ST-Ericsson SA
+
+>   - vx855
+
+* Copyright (C) 2009 VIA Technologies, Inc.
+
+>   - wm8400
+
+* Copyright 2008 Wolfson Microelectronics PLC.
+
+>   - zynqmp (last changed in 2024, so certainly not legacy!)
+
+This should _not_ be using the MFD API at all!
+
+> And probably others since I did not look too deep into it.
+> 
+> Greetings,
+> Marcos
+> 
+
+-- 
+Lee Jones [李琼斯]
 
