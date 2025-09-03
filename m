@@ -1,107 +1,88 @@
-Return-Path: <linux-kernel+bounces-798695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2CE2B421A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:31:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 231CBB421A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43F4540300
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:28:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0C9546C95
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E07303CB4;
-	Wed,  3 Sep 2025 13:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F393054EF;
+	Wed,  3 Sep 2025 13:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8ibBCI/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aczt94Os"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FDD301031;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC462FB63C;
 	Wed,  3 Sep 2025 13:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756906093; cv=none; b=XvXmHBUVsOhNjAmj8bBASVxlHpVNrRJOlueeTc0GrVcHXVZu4XpIRSS0peKGLuWNi5Bk555JrBiZnoHHMbwQUmv5LkbfQQ9GCn3eTVk5arbfCPsj8voXNt8uvbdzcep+J5iOtHZEvmq6qCQcsQWhYxprO/pYDobMa6TMORSyUvI=
+	t=1756906094; cv=none; b=hWocX98+5oqDARGyeaPLDIQfmIAPUMWhal8u5hNS1IMQTdSHNE6HSyIv/qKj+TsOLgL45lPJw7jQ+XU3dZevls3PP6FGq9O9/jSzaKR6uJh5vHDFTj90QlXrQB3xhQtEdtB8KLmnusjiGC/5rdbvPIUazbxO9kMme0WdO1oWQ3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756906093; c=relaxed/simple;
-	bh=aXS7u9zDg1qPgO7wVuVYj2EMtRmtwS0TA/MuDvCgfKE=;
+	s=arc-20240116; t=1756906094; c=relaxed/simple;
+	bh=RBK2lbKDfAWbVbDolbg9YMtcwelhYZra3i9LJAFg2pw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNWf6bYTG7h+St02UnxX+aQBhgcVSvC8DY58p99IanUmx6GlpQurKAHyTretKx3sBIchQT4+11qXuNFCGay7rRy1NQOQQLfQzXqjLLUhYR+qk0NWNh/5+aLWXlfohCQiIQvkim21ZvrRvqSqL9URNaumQhtwZeTgOAIn/TGUNY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8ibBCI/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DF86C4CEF0;
-	Wed,  3 Sep 2025 13:28:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756906093;
-	bh=aXS7u9zDg1qPgO7wVuVYj2EMtRmtwS0TA/MuDvCgfKE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l8ibBCI/s9pdz130Z7x27NT6GABCl8/8TkGAfAkLjLw6gPb2IHuiEzs2ycM69dhrj
-	 KUpfgIoND179IaGhsGRQrtA+n8Awy69rEgpYHjmnLzEFLd9wlB5z9EiOqMbc9O/6zq
-	 A5eXVIuYdjklw1HjPPEBbTVfLl09GlBLiPZs15hwtA/vR+GVsgWamtcv282KYCItbA
-	 z2kJ5IeM/4OX3c6ZV88fB6i0dyiF8L3vWeysW+zUBPU6Uy2OnpR5VaWETbEXFePE1Q
-	 kDPWEVsqfaOHTnksJTC0UqzJHsI92swUBl1Y8GgT7WiKf2O+ZMl42OiUW9K9bKRu9r
-	 4AQOq0dhmJVSg==
-Date: Wed, 3 Sep 2025 18:58:04 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V3 3/5] scsi: ufs: core: Remove unused ufshcd_res_info
- structure
-Message-ID: <jzxvodlzamuta5cgupp7upkh2wjmi4n6gdvj5vceawhvw2kquc@hm4kz2qt5u2k>
-References: <20250821112403.12078-1-quic_rdwivedi@quicinc.com>
- <20250821112403.12078-4-quic_rdwivedi@quicinc.com>
- <1ccecf69-0bd8-4156-945d-e5876b6dea01@kernel.org>
- <1efa429d-7576-49da-a769-b1eba9345958@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zsk65rfvh4UN8fTLAxnMRLpkEZcT1EIGidKUNuz5k9qbdUBaOzebvFRM0WcNe0d/8gGOpFvWeGAUA3VpTs+xfn+3333jeQtaboPiNMSPqh2sizXUfaQxzsxGSSINEo6b7xFwhcAikh0pdW3s4s9wKSXN9zKzZOC5MpHs/g1TEqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aczt94Os; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XduuBtwRZyd6KyykVg7ZdLjFnZ4Ef5ygHTAhg0h2OSQ=; b=aczt94OsPd1gIOeQbZp36PgKNH
+	lf4lg9DOl8f04M0MaXXZ+m6ENQUcVD17ZmmNIk02M9RtZEFwSKbJTly8lpNCgCpOjtESQE4dkYfOJ
+	p8sFyHmWCxP2XD60fYsARjpR0VokwjWq8P4ySJhmZ4sRXAR6AJlHseMQcNmBM2MZ53K7F1byGfNB/
+	mqoLXQm+UXu4MteT8AImlm1clzb/gVg86gaahvC9/fJqTRIxBgvX4IJmZmpBN5NSnqHWkjxlnwR0e
+	PYun6EDZBwGmNzwAwyjCbiSjvquI+PJrrGGVCyeA806goDZTxbfwUG1n5HPGaZphdfDjUoLxsCz+F
+	O1h4B+og==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1utnWy-00000006awC-2m0H;
+	Wed, 03 Sep 2025 13:28:08 +0000
+Date: Wed, 3 Sep 2025 06:28:08 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, colyli@kernel.org,
+	hare@suse.de, dlemoal@kernel.org, tieren@fnnas.com, axboe@kernel.dk,
+	tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+	kmo@daterainc.com, satyat@google.com, ebiggers@google.com,
+	neil@brown.name, akpm@linux-foundation.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-raid@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: Re: [PATCH RFC v3 05/15] block: factor out a helper
+ bio_submit_split_bioset()
+Message-ID: <aLhCaMTsQ5uuLB4m@infradead.org>
+References: <20250901033220.42982-1-yukuai1@huaweicloud.com>
+ <20250901033220.42982-6-yukuai1@huaweicloud.com>
+ <4f54d81a-d330-44b2-b667-3b13d516c576@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1efa429d-7576-49da-a769-b1eba9345958@quicinc.com>
+In-Reply-To: <4f54d81a-d330-44b2-b667-3b13d516c576@acm.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Sep 01, 2025 at 09:38:25PM GMT, Nitin Rawat wrote:
+On Tue, Sep 02, 2025 at 10:12:23AM -0700, Bart Van Assche wrote:
+> This is a good opportunity to reduce the indentation level in this
+> function by adding something like this above the
+> bio_submit_split_bioset() call:
 > 
-> 
-> On 8/21/2025 5:18 PM, Krzysztof Kozlowski wrote:
-> > On 21/08/2025 13:24, Ram Kumar Dwivedi wrote:
-> > > From: Nitin Rawat <quic_nitirawa@quicinc.com>
-> > > 
-> > > Remove the ufshcd_res_info structure and associated enum ufshcd_res
-> > > definitions from the UFS host controller header. These were previously
-> > > used for MCQ resource mapping but are no longer needed following recent
-> > > refactoring to use direct base addresses instead of multiple separate
-> > > resource regions
-> > > 
-> > > Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> > 
-> > Incomplete SoB chain.
-> > 
-> > But anyway this makes no sense as independent patch. First you remove
-> > users of it making it redundant... and then you remove it? No.
-> 
-> Hi Krzysztof,
-> 
-> The driver changes are in the UFS Qualcomm platform driver, which uses the
-> definitions, while ufshcd.h is part of the UFS core driver. Hence kept in 2
-> separate patch.
-> 
+> if (unlikely(split_sectors == 0))
+> 	return bio;
 
-No, that is not a logical split. When the users are removed, the unused
-definitions also have to be removed even if the definitions are in a different
-file.
-
-So I believe you need to remove 'ufshcd_res_info' in patch 1 and 'ufshcd_res' in
-patch 2.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+I asked Kuan not to mix functionality changes and reformatting for
+the initial version.  With the new helper it doesn't matter too
+much, but to be honest I also think the current flow is more readable
+with the new helper anyway and it's not like there is a lot of
+indentation.
 
