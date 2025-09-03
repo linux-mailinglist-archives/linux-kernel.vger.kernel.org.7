@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-798648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18F9B420B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C741CB42143
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A807D5E401C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:15:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97DED1BC2B26
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195A23009E4;
-	Wed,  3 Sep 2025 13:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FE126CE3A;
+	Wed,  3 Sep 2025 13:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="gdFb9T+g"
-Received: from forward206a.mail.yandex.net (forward206a.mail.yandex.net [178.154.239.87])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="INEbLN0+"
+Received: from forward200a.mail.yandex.net (forward200a.mail.yandex.net [178.154.239.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43D32ED84F;
-	Wed,  3 Sep 2025 13:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC8C302776;
+	Wed,  3 Sep 2025 13:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756905243; cv=none; b=O0egUAcNxb054Arapa5jaKekUPMgLPduKjjb39WPNaOpc3RC6RMa8sEPTBMaai83UbOldeTxpQ3LR+6p3xuu7wy8T6/0cVH29WoGWuOHQFsMMMODTHnStUB8EHVk9E/gbmj0F0oGz8Vc/oJ7kVfzTg1tjoAxICOOK+bVv9Mw1SY=
+	t=1756905714; cv=none; b=rmqTEeWx2+0DyAMXaZrAVD77YGvv93IIWy/rcnUdrZQ3CdxVBZwgTYD3ZNeMgEgtUQIYsTwP8QJffmz+qnYkTRSVmQvSo//p3YOnLKk2aoSp3o97zh+v8vKyv4L/yZwQrxML644KvOiAibEZBNsPs74qiEItKsRwNOCnIJUIHWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756905243; c=relaxed/simple;
-	bh=roSDQADUv3RkSm0N6OGbYxrmyfPumK04X12VD6UR6xs=;
+	s=arc-20240116; t=1756905714; c=relaxed/simple;
+	bh=241EcV2ADYh/RMMNn/20PxWBFaGYRKkSQEUt0Gl0+Jo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pYdTcR6DnebB7PWrhASjxjKhqyW7EEhQir+7RhyJfOWVDxVZAI4ZoQHjBiK0VUsCpvLPV1Iz9xTgQ7lhWWBTr2tlwJzuSn/oR8drxAaqD1aRKJAuuHK14Yng+PCai6u8DTXTu7d8IwFBrbjrfcdrTjVOV8oyyCerG75d+RfU7SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=gdFb9T+g; arc=none smtp.client-ip=178.154.239.87
+	 MIME-Version:Content-Type; b=VOoiX4ehLXXaO7juygrlxiN5Lx2OT4Iy4/whc0yTD0pEoQOJAwHuvSWjvSLyFoHnEz1w8xPuq1KW8LmiJhUZ4ht4LD4Iw016veia1Zy698mDmRbGYKpoQsw+AYbbpLp/E7Zv1FD6eolXrQbFfklt/LL+aaTZ6SLalkNzC4wyhFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=INEbLN0+; arc=none smtp.client-ip=178.154.239.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
 Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [IPv6:2a02:6b8:c0e:500:1:45:d181:d101])
-	by forward206a.mail.yandex.net (Yandex) with ESMTPS id AC46F81418;
-	Wed, 03 Sep 2025 16:13:58 +0300 (MSK)
+	by forward200a.mail.yandex.net (Yandex) with ESMTPS id 069AF87274;
+	Wed, 03 Sep 2025 16:14:04 +0300 (MSK)
 Received: from mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:3e17:0:640:f9aa:0])
-	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 5F97280CBD;
-	Wed, 03 Sep 2025 16:13:51 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id GDgKkBDMquQ0-qWxoUOlp;
-	Wed, 03 Sep 2025 16:13:50 +0300
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 1AAE980CE4;
+	Wed, 03 Sep 2025 16:13:56 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id GDgKkBDMquQ0-nq4gd7wA;
+	Wed, 03 Sep 2025 16:13:55 +0300
 X-Yandex-Fwd: 1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1756905230;
-	bh=Hia1mfGHTnbizHC76TE+aNhM8CV8JljuaRKoDPy92gY=;
+	s=mail; t=1756905235;
+	bh=3cG9UNuKFe5wpsh/oW1uFyaeMYCPP67dHmjUcqImnK0=;
 	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
-	b=gdFb9T+gfHkHybRLuFgIyx+F3Ea1fFRNx6lL6SOykb0joH3XUWzkjHzoiokt22mWJ
-	 tpeG+OQ+TGpUP0KgM/3jzC1b+1XoHJThpzmMfmjYh9GWYKbLkftA04rMe78534XaCF
-	 QDGXl2vyB5PaXLNeBg2bmNySYjsqZE7u4jDs1oAU=
+	b=INEbLN0+31LQnfKTu6qCQA0bkNM1JObFtzmusCrZW6oKSVFLrimrWbzmKX4E7p73i
+	 uMZY53x+NyTt4F6JpBNEQPBcW5UuHuxVpvH+FIdea6Isf1Ru4sC7O24SZXUxQd4qqY
+	 QhjTt+KRLPruxeegaFOC+Er4xEr23AUgSz1FlXVc=
 Authentication-Results: mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
 From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
 To: rust-for-linux@vger.kernel.org
@@ -69,9 +69,9 @@ Cc: linux-kernel@vger.kernel.org,
 	bjorn3_gh@protonmail.com,
 	daniel.almeida@collabora.com,
 	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH v6 4/7] add KUnit coverage on Rust ww_mutex implementation
-Date: Wed,  3 Sep 2025 16:13:10 +0300
-Message-ID: <20250903131313.4365-5-work@onurozkan.dev>
+Subject: [PATCH v6 5/7] rust: ww_mutex: add context-free locking functions
+Date: Wed,  3 Sep 2025 16:13:11 +0300
+Message-ID: <20250903131313.4365-6-work@onurozkan.dev>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250903131313.4365-1-work@onurozkan.dev>
 References: <20250903131313.4365-1-work@onurozkan.dev>
@@ -84,148 +84,240 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Adds coverage around the core `ww_mutex` functionality
+Adds new `WwMutex` functions (`lock`, `lock_interruptible`,
+`lock_slow`, `lock_slow_interruptible` and `try_lock`) that
+can be used without `WwAcquireCtx`. This provides simpler API
+when deadlock avoidance grouping is not needed.
 
 Signed-off-by: Onur Özkan <work@onurozkan.dev>
 ---
- rust/kernel/sync/lock/ww_mutex.rs | 127 ++++++++++++++++++++++++++++++
- 1 file changed, 127 insertions(+)
+ rust/kernel/sync/lock/ww_mutex.rs | 162 ++++++++++++++++++++++--------
+ 1 file changed, 122 insertions(+), 40 deletions(-)
 
 diff --git a/rust/kernel/sync/lock/ww_mutex.rs b/rust/kernel/sync/lock/ww_mutex.rs
-index 314360632953..d289718d2c98 100644
+index d289718d2c98..b415d6deae9b 100644
 --- a/rust/kernel/sync/lock/ww_mutex.rs
 +++ b/rust/kernel/sync/lock/ww_mutex.rs
-@@ -421,3 +421,130 @@ fn drop(&mut self) {
-         unsafe { bindings::ww_mutex_unlock(self.mutex.as_ptr()) };
+@@ -138,6 +138,75 @@ pub fn new_wound_wait(name: &'static CStr) -> impl PinInit<Self> {
      }
  }
+
++/// Locking kinds used by [`lock_common`] to unify internal FFI locking logic.
++#[derive(Copy, Clone, Debug)]
++enum LockKind {
++    /// Blocks until lock is acquired.
++    Regular,
++    /// Blocks but can be interrupted by signals.
++    Interruptible,
++    /// Used in slow path after deadlock detection.
++    Slow,
++    /// Slow path but interruptible.
++    SlowInterruptible,
++    /// Does not block, returns immediately if busy.
++    Try,
++}
 +
-+#[kunit_tests(rust_kernel_ww_mutex)]
-+mod tests {
-+    use crate::c_str;
-+    use crate::prelude::*;
-+    use crate::sync::Arc;
-+    use pin_init::stack_pin_init;
++/// Internal helper that unifies the different locking kinds.
++fn lock_common<'a, T: ?Sized>(
++    ww_mutex: &'a WwMutex<'a, T>,
++    ctx: Option<&WwAcquireCtx<'_>>,
++    kind: LockKind,
++) -> Result<WwMutexGuard<'a, T>> {
++    let ctx_ptr = ctx.map_or(core::ptr::null_mut(), |c| c.inner.get());
 +
-+    use super::*;
++    match kind {
++        LockKind::Regular => {
++            // SAFETY: `WwMutex` is always pinned. If `WwAcquireCtx` is `Some`, it is pinned,
++            // if `None`, it is set to `core::ptr::null_mut()`. Both cases are safe.
++            let ret = unsafe { bindings::ww_mutex_lock(ww_mutex.mutex.get(), ctx_ptr) };
 +
-+    // A simple coverage on `define_ww_class` macro.
-+    define_ww_class!(TEST_WOUND_WAIT_CLASS, wound_wait, c_str!("test_wound_wait"));
-+    define_ww_class!(TEST_WAIT_DIE_CLASS, wait_die, c_str!("test_wait_die"));
++            to_result(ret)?;
++        }
++        LockKind::Interruptible => {
++            // SAFETY: `WwMutex` is always pinned. If `WwAcquireCtx` is `Some`, it is pinned,
++            // if `None`, it is set to `core::ptr::null_mut()`. Both cases are safe.
++            let ret =
++                unsafe { bindings::ww_mutex_lock_interruptible(ww_mutex.mutex.get(), ctx_ptr) };
++
++            to_result(ret)?;
++        }
++        LockKind::Slow => {
++            // SAFETY: `WwMutex` is always pinned. If `WwAcquireCtx` is `Some`, it is pinned,
++            // if `None`, it is set to `core::ptr::null_mut()`. Both cases are safe.
++            unsafe { bindings::ww_mutex_lock_slow(ww_mutex.mutex.get(), ctx_ptr) };
++        }
++        LockKind::SlowInterruptible => {
++            // SAFETY: `WwMutex` is always pinned. If `WwAcquireCtx` is `Some`, it is pinned,
++            // if `None`, it is set to `core::ptr::null_mut()`. Both cases are safe.
++            let ret = unsafe {
++                bindings::ww_mutex_lock_slow_interruptible(ww_mutex.mutex.get(), ctx_ptr)
++            };
++
++            to_result(ret)?;
++        }
++        LockKind::Try => {
++            // SAFETY: `WwMutex` is always pinned. If `WwAcquireCtx` is `Some`, it is pinned,
++            // if `None`, it is set to `core::ptr::null_mut()`. Both cases are safe.
++            let ret = unsafe { bindings::ww_mutex_trylock(ww_mutex.mutex.get(), ctx_ptr) };
++
++            if ret == 0 {
++                return Err(EBUSY);
++            } else {
++                to_result(ret)?;
++            }
++        }
++    };
++
++    Ok(WwMutexGuard::new(ww_mutex))
++}
++
+ /// Groups multiple mutex acquisitions together for deadlock avoidance.
+ ///
+ /// Must be used when acquiring multiple mutexes of the same class.
+@@ -196,14 +265,9 @@ pub fn done(&self) {
+         unsafe { bindings::ww_acquire_done(self.inner.get()) };
+     }
+
+-    /// Locks the given mutex.
++    /// Locks the given mutex on this acquire context ([`WwAcquireCtx`]).
+     pub fn lock<'a, T>(&'a self, ww_mutex: &'a WwMutex<'a, T>) -> Result<WwMutexGuard<'a, T>> {
+-        // SAFETY: The mutex is pinned and valid.
+-        let ret = unsafe { bindings::ww_mutex_lock(ww_mutex.mutex.get(), self.inner.get()) };
+-
+-        to_result(ret)?;
+-
+-        Ok(WwMutexGuard::new(ww_mutex))
++        lock_common(ww_mutex, Some(self), LockKind::Regular)
+     }
+
+     /// Similar to `lock`, but can be interrupted by signals.
+@@ -211,24 +275,14 @@ pub fn lock_interruptible<'a, T>(
+         &'a self,
+         ww_mutex: &'a WwMutex<'a, T>,
+     ) -> Result<WwMutexGuard<'a, T>> {
+-        // SAFETY: The mutex is pinned and valid.
+-        let ret = unsafe {
+-            bindings::ww_mutex_lock_interruptible(ww_mutex.mutex.get(), self.inner.get())
+-        };
+-
+-        to_result(ret)?;
+-
+-        Ok(WwMutexGuard::new(ww_mutex))
++        lock_common(ww_mutex, Some(self), LockKind::Interruptible)
+     }
+
+-    /// Locks the given mutex using the slow path.
++    /// Locks the given mutex on this acquire context ([`WwAcquireCtx`]) using the slow path.
+     ///
+     /// This function should be used when `lock` fails (typically due to a potential deadlock).
+     pub fn lock_slow<'a, T>(&'a self, ww_mutex: &'a WwMutex<'a, T>) -> Result<WwMutexGuard<'a, T>> {
+-        // SAFETY: The mutex is pinned and valid, and we're in the slow path.
+-        unsafe { bindings::ww_mutex_lock_slow(ww_mutex.mutex.get(), self.inner.get()) };
+-
+-        Ok(WwMutexGuard::new(ww_mutex))
++        lock_common(ww_mutex, Some(self), LockKind::Slow)
+     }
+
+     /// Similar to `lock_slow`, but can be interrupted by signals.
+@@ -236,30 +290,14 @@ pub fn lock_slow_interruptible<'a, T>(
+         &'a self,
+         ww_mutex: &'a WwMutex<'a, T>,
+     ) -> Result<WwMutexGuard<'a, T>> {
+-        // SAFETY: The mutex is pinned and valid, and we are in the slow path.
+-        let ret = unsafe {
+-            bindings::ww_mutex_lock_slow_interruptible(ww_mutex.mutex.get(), self.inner.get())
+-        };
+-
+-        to_result(ret)?;
+-
+-        Ok(WwMutexGuard::new(ww_mutex))
++        lock_common(ww_mutex, Some(self), LockKind::SlowInterruptible)
+     }
+
+-    /// Tries to lock the mutex without blocking.
++    /// Tries to lock the mutex on this acquire context ([`WwAcquireCtx`]) without blocking.
+     ///
+     /// Unlike `lock`, no deadlock handling is performed.
+     pub fn try_lock<'a, T>(&'a self, ww_mutex: &'a WwMutex<'a, T>) -> Result<WwMutexGuard<'a, T>> {
+-        // SAFETY: The mutex is pinned and valid.
+-        let ret = unsafe { bindings::ww_mutex_trylock(ww_mutex.mutex.get(), self.inner.get()) };
+-
+-        if ret == 0 {
+-            return Err(EBUSY);
+-        } else {
+-            to_result(ret)?;
+-        }
+-
+-        Ok(WwMutexGuard::new(ww_mutex))
++        lock_common(ww_mutex, Some(self), LockKind::Try)
+     }
+ }
+
+@@ -355,7 +393,7 @@ pub fn new(t: T, ww_class: &'ww_class WwClass) -> impl PinInit<Self> {
+     }
+ }
+
+-impl<T: ?Sized> WwMutex<'_, T> {
++impl<'ww_class, T: ?Sized> WwMutex<'ww_class, T> {
+     /// Returns a raw pointer to the inner mutex.
+     fn as_ptr(&self) -> *mut bindings::ww_mutex {
+         self.mutex.get()
+@@ -370,6 +408,35 @@ fn is_locked(&self) -> bool {
+         // SAFETY: The mutex is pinned and valid.
+         unsafe { bindings::ww_mutex_is_locked(self.mutex.get()) }
+     }
++
++    /// Locks the given mutex without acquire context ([`WwAcquireCtx`]).
++    pub fn lock<'a>(&'a self) -> Result<WwMutexGuard<'a, T>> {
++        lock_common(self, None, LockKind::Regular)
++    }
++
++    /// Similar to `lock`, but can be interrupted by signals.
++    pub fn lock_interruptible<'a>(&'a self) -> Result<WwMutexGuard<'a, T>> {
++        lock_common(self, None, LockKind::Interruptible)
++    }
++
++    /// Locks the given mutex without acquire context ([`WwAcquireCtx`]) using the slow path.
++    ///
++    /// This function should be used when `lock` fails (typically due to a potential deadlock).
++    pub fn lock_slow<'a>(&'a self) -> Result<WwMutexGuard<'a, T>> {
++        lock_common(self, None, LockKind::Slow)
++    }
++
++    /// Similar to `lock_slow`, but can be interrupted by signals.
++    pub fn lock_slow_interruptible<'a>(&'a self) -> Result<WwMutexGuard<'a, T>> {
++        lock_common(self, None, LockKind::SlowInterruptible)
++    }
++
++    /// Tries to lock the mutex without acquire context ([`WwAcquireCtx`]) and without blocking.
++    ///
++    /// Unlike `lock`, no deadlock handling is performed.
++    pub fn try_lock<'a>(&'a self) -> Result<WwMutexGuard<'a, T>> {
++        lock_common(self, None, LockKind::Try)
++    }
+ }
+
+ /// A guard that provides exclusive access to the data protected
+@@ -547,4 +614,19 @@ fn test_with_global_classes() -> Result {
+
+         Ok(())
+     }
 +
 +    #[test]
-+    fn test_ww_mutex_basic_lock_unlock() -> Result {
-+        stack_pin_init!(let class = WwClass::new_wound_wait(c_str!("test_mutex_class")));
++    fn test_mutex_without_ctx() -> Result {
++        let mutex = Arc::pin_init(WwMutex::new(100, &TEST_WOUND_WAIT_CLASS), GFP_KERNEL)?;
++        let guard = mutex.lock()?;
 +
-+        let mutex = Arc::pin_init(WwMutex::new(42, &class), GFP_KERNEL)?;
-+
-+        let ctx = KBox::pin_init(WwAcquireCtx::new(&class), GFP_KERNEL)?;
-+
-+        // Lock.
-+        let guard = ctx.lock(&mutex)?;
-+        assert_eq!(*guard, 42);
-+
-+        // Drop the lock.
-+        drop(guard);
-+
-+        // Lock it again.
-+        let mut guard = ctx.lock(&mutex)?;
-+        *guard = 100;
 +        assert_eq!(*guard, 100);
-+
-+        Ok(())
-+    }
-+
-+    #[test]
-+    fn test_ww_mutex_trylock() -> Result {
-+        stack_pin_init!(let class = WwClass::new_wound_wait(c_str!("trylock_class")));
-+
-+        let mutex = Arc::pin_init(WwMutex::new(123, &class), GFP_KERNEL)?;
-+
-+        let ctx = KBox::pin_init(WwAcquireCtx::new(&class), GFP_KERNEL)?;
-+
-+        // `try_lock` on unlocked mutex should succeed.
-+        let guard = ctx.try_lock(&mutex)?;
-+        assert_eq!(*guard, 123);
-+
-+        // Now it should fail immediately as it's already locked.
-+        assert!(ctx.try_lock(&mutex).is_err());
-+
-+        Ok(())
-+    }
-+
-+    #[test]
-+    fn test_ww_mutex_is_locked() -> Result {
-+        stack_pin_init!(let class = WwClass::new_wait_die(c_str!("locked_check_class")));
-+
-+        let mutex = Arc::pin_init(WwMutex::new("hello", &class), GFP_KERNEL)?;
-+
-+        let ctx = KBox::pin_init(WwAcquireCtx::new(&class), GFP_KERNEL)?;
-+
-+        // Should not be locked initially.
-+        assert!(!mutex.is_locked());
-+
-+        let guard = ctx.lock(&mutex)?;
 +        assert!(mutex.is_locked());
 +
 +        drop(guard);
++
 +        assert!(!mutex.is_locked());
 +
 +        Ok(())
 +    }
-+
-+    #[test]
-+    fn test_ww_acquire_context() -> Result {
-+        stack_pin_init!(let class = WwClass::new_wound_wait(c_str!("ctx_class")));
-+
-+        let mutex1 = Arc::pin_init(WwMutex::new(1, &class), GFP_KERNEL)?;
-+        let mutex2 = Arc::pin_init(WwMutex::new(2, &class), GFP_KERNEL)?;
-+
-+        let ctx = KBox::pin_init(WwAcquireCtx::new(&class), GFP_KERNEL)?;
-+
-+        // Acquire multiple mutexes with the same context.
-+        let guard1 = ctx.lock(&mutex1)?;
-+        let guard2 = ctx.lock(&mutex2)?;
-+
-+        assert_eq!(*guard1, 1);
-+        assert_eq!(*guard2, 2);
-+
-+        ctx.done();
-+
-+        // We shouldn't be able to lock once it's `done`.
-+        assert!(ctx.lock(&mutex1).is_err());
-+        assert!(ctx.lock(&mutex2).is_err());
-+
-+        Ok(())
-+    }
-+
-+    #[test]
-+    fn test_with_global_classes() -> Result {
-+        let wound_wait_mutex =
-+            Arc::pin_init(WwMutex::new(100, &TEST_WOUND_WAIT_CLASS), GFP_KERNEL)?;
-+        let wait_die_mutex = Arc::pin_init(WwMutex::new(200, &TEST_WAIT_DIE_CLASS), GFP_KERNEL)?;
-+
-+        let ww_ctx = KBox::pin_init(WwAcquireCtx::new(&TEST_WOUND_WAIT_CLASS), GFP_KERNEL)?;
-+        let wd_ctx = KBox::pin_init(WwAcquireCtx::new(&TEST_WAIT_DIE_CLASS), GFP_KERNEL)?;
-+
-+        let ww_guard = ww_ctx.lock(&wound_wait_mutex)?;
-+        let wd_guard = wd_ctx.lock(&wait_die_mutex)?;
-+
-+        assert_eq!(*ww_guard, 100);
-+        assert_eq!(*wd_guard, 200);
-+
-+        assert!(wound_wait_mutex.is_locked());
-+        assert!(wait_die_mutex.is_locked());
-+
-+        drop(ww_guard);
-+        drop(wd_guard);
-+
-+        assert!(!wound_wait_mutex.is_locked());
-+        assert!(!wait_die_mutex.is_locked());
-+
-+        Ok(())
-+    }
-+}
+ }
 --
 2.50.0
 
