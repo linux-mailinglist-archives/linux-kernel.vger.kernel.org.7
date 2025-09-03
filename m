@@ -1,134 +1,194 @@
-Return-Path: <linux-kernel+bounces-799477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D44CB42C44
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3415B42C49
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B37381604FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:56:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D1916E3E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661582EE285;
-	Wed,  3 Sep 2025 21:55:46 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D732BDC1D;
+	Wed,  3 Sep 2025 21:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OToqYEVE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1502EDD74
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC1E2857F2;
+	Wed,  3 Sep 2025 21:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756936545; cv=none; b=n0EFR8sC2pTJcBryHTb5izcO+cqyWLyM5LKV5mkdwsNclYNboX73dLjjU9Mnc4s0t+5+4rWAtTv0wuT0Rr/NILUHW5bFIe69PpF3JA1QzyYbCHzyZvSvSxDiZ0Of1P7ilQ2fE53zuZHOagO9DtBBhA7UNL4kivhaMUhyU5FUjJw=
+	t=1756936591; cv=none; b=NBn6qIkfptw2RbzugMPfofYUY7QQ7iIHzB+ARtizyXCD0/fSxtCvnsNA9yyDdSArbxFbH881EeuOxHkn3H9/l7fNd9g8ljcepxznGJcmMOukkErO4udPLvJLQlX2DzaddZMvNOYuxgLlKLvLgkgtKM6GQE4dXbJzUa4H69TgNMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756936545; c=relaxed/simple;
-	bh=2ndQEDCzUXx9yYy/WcdNCG32Pe+5P+tfbouij3eudSw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=mGw7rKtuJkKMhRyvDYVAXAV7wo+JuwGM4adN5wPr4u8dTG1VxMU3Lz6tW5M5A9BRT2lWfsJvoGGyo2IunxIm6VgzOqLGcp/pgrv38emINK0D6vmCar11qO6iTSA0De+T7zhzWRMcRcFH2l8JHD6Q7n3oZpfTRTRIfSQA4T9Ek6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ed0ba44c87so4648565ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 14:55:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756936543; x=1757541343;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s6wN9KeqqiOqxe44BHCxn1omR+bJwqOjbtDhTcJ5oPM=;
-        b=rQHBKtSDkKQuFJLQAvbBc1i91vnrEbUlTs5WpSpOkJc8oK9ZXopfTKFIXmpyDhg6yN
-         P0yA7GzD3eRKge2CgKwkWYp1sC6zbHJN4nTEUXaImpTh+WS+GkEn35uQ28pFXiZxxZZA
-         Oy6jlTIgJN9Z2V+UNZKchCnegUgYwCmx4L8F+3OQZ+ShuAYmFkY/WOeiWet/CESYTlFQ
-         MHKWTfFX2/u5PoGXN8hohPycu5xfyFcc/kPPK7/agForfNgNQfG5DfctYfFkT2dgALCi
-         YKPKTkkH6AEL081bzB9lsT4GQtgkIq6dy3xg0nGk8prjCUi7EdsEZBGFnn0cwKY0/54s
-         9lXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSRdgMAtVfn14e+ZqLmbDxTskWVSOCALeKOYIpzxAMTkKQhZb0UGj7tFmlfwM+NsGZPZO04I6vE5E6GjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz67zHZvc/+tQ7xhNBszZaDT2nPfvgGNtHEOJs0K81ZmBRaE3g
-	JHtZJqpW16y6njE0Rr2XpNrClPCtStTxrK40q6VUdNwWQEAFlB1KVYyLl0juW9RIDIfN8EmiDV7
-	Ru8DyIOszZnClorHSnW3xzikIEYFxw9QllZnDDMwhnhcXTmxIEF+ssHOHyZg=
-X-Google-Smtp-Source: AGHT+IGqRzrQxb2/qo9cxluGeSGc3ffRrYxJVeTFxOu68NAdqGwCBo9zqMCIguUWepMEvwLW5F+vKpL5rGv8Q98Bv/zrUKyvbg1L
+	s=arc-20240116; t=1756936591; c=relaxed/simple;
+	bh=ctT6dZnRlylbYGiSVZ9XDl+N3XogyE0QpPviVyqaMg8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Ma7PS3dCI3bOc5o3jKsAIkB0Cc7NMP8OuEm2Xn76vQUmWAMWz9ZNyNFFSkZYpallLbNFuM0K3DEd9MLJVlsvS/mY1id3rOIw2oJ1d8+FpIj94UIEt0ux0LJdgsBUt7cknd9+7sh0lRmkwz6yejyJdgXOlIp5Y66tn6LIdY6/I00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OToqYEVE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 086A3C4CEE7;
+	Wed,  3 Sep 2025 21:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756936591;
+	bh=ctT6dZnRlylbYGiSVZ9XDl+N3XogyE0QpPviVyqaMg8=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=OToqYEVE/2RbdOcvWmobmoZ4UP1zI5juDphhRy2oDxOmAno4pZdS3vgydx7UQVfZp
+	 JlsdVIx32EjO2AMllDXZHJt8ksl/XQH0R/G3UVZJWmzHWynFCOvPHM4Xjuoi55CAtW
+	 8+4G1rSmRVS3SGDwoM+2JqHoAsaX8sj5Yp9+LZExghQ6aKWbJoSsV8ioOY3uD0U8gx
+	 Rd2aF7H381epW7/xYttsRlwho8Ovj5wP2Ei1ahlnfgnZz18OScypc8hz57UkhoGIjg
+	 +wuVZPZavG9EN1sWzEvpCdS1rMIkiUQCB0PUPZP+RDAofxQsYtIR+ocEo5uz3/oAvA
+	 3oyJOVwfvEq/A==
+Date: Wed, 03 Sep 2025 16:56:28 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4c:0:b0:3f6:5d61:e6e7 with SMTP id
- e9e14a558f8ab-3f65d61e8d5mr80856405ab.5.1756936543683; Wed, 03 Sep 2025
- 14:55:43 -0700 (PDT)
-Date: Wed, 03 Sep 2025 14:55:43 -0700
-In-Reply-To: <20250903032656.2012337-1-csander@purestorage.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b8b95f.050a0220.3db4df.0206.GAE@google.com>
-Subject: [syzbot ci] Re: io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-From: syzbot ci <syzbot+cibd93ea08a14d0e1c@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, csander@purestorage.com, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot ci has tested the following series
-
-[v1] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-https://lore.kernel.org/all/20250903032656.2012337-1-csander@purestorage.com
-* [PATCH 1/4] io_uring: don't include filetable.h in io_uring.h
-* [PATCH 2/4] io_uring/rsrc: respect submitter_task in io_register_clone_buffers()
-* [PATCH 3/4] io_uring: factor out uring_lock helpers
-* [PATCH 4/4] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-
-and found the following issue:
-WARNING in io_handle_tw_list
-
-Full report is available here:
-https://ci.syzbot.org/series/54ae0eae-5e47-4cfe-9ae7-9eaaf959b5ae
-
-***
-
-WARNING in io_handle_tw_list
-
-tree:      linux-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next
-base:      5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
-arch:      amd64
-compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-config:    https://ci.syzbot.org/builds/1de646dd-4ee2-418d-9c62-617d88ed4fd2/config
-syz repro: https://ci.syzbot.org/findings/e229a878-375f-4286-89fe-b6724c23addd/syz_repro
-
-------------[ cut here ]------------
-WARNING: io_uring/io_uring.h:127 at io_ring_ctx_lock io_uring/io_uring.h:127 [inline], CPU#1: iou-sqp-6294/6297
-WARNING: io_uring/io_uring.h:127 at io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155, CPU#1: iou-sqp-6294/6297
-Modules linked in:
-CPU: 1 UID: 0 PID: 6297 Comm: iou-sqp-6294 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:io_ring_ctx_lock io_uring/io_uring.h:127 [inline]
-RIP: 0010:io_handle_tw_list+0x234/0x2e0 io_uring/io_uring.c:1155
-Code: 00 00 48 c7 c7 e0 90 02 8c be 8e 04 00 00 31 d2 e8 01 e5 d2 fc 2e 2e 2e 31 c0 45 31 e4 4d 85 ff 75 89 eb 7c e8 ad fb 00 fd 90 <0f> 0b 90 e9 cf fe ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 22 ff
-RSP: 0018:ffffc900032cf938 EFLAGS: 00010293
-RAX: ffffffff84bfcba3 RBX: dffffc0000000000 RCX: ffff888107f61cc0
-RDX: 0000000000000000 RSI: 0000000000001000 RDI: 0000000000000000
-RBP: ffff8881119a8008 R08: ffff888110bb69c7 R09: 1ffff11022176d38
-R10: dffffc0000000000 R11: ffffed1022176d39 R12: ffff8881119a8000
-R13: ffff888108441e90 R14: ffff888107f61cc0 R15: 0000000000000000
-FS:  00007f81f25716c0(0000) GS:ffff8881a39f5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b31b63fff CR3: 000000010f24c000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- tctx_task_work_run+0x99/0x370 io_uring/io_uring.c:1223
- io_sq_tw io_uring/sqpoll.c:244 [inline]
- io_sq_thread+0xed1/0x1e50 io_uring/sqpoll.c:327
- ret_from_fork+0x47f/0x820 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-mmc@vger.kernel.org, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
+ linux-kernel@vger.kernel.org, Monish Chunara <quic_mchunara@quicinc.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, kernel@oss.qualcomm.com, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>, 
+ Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>, devicetree@vger.kernel.org, 
+ Sushrut Shree Trivedi <quic_sushruts@quicinc.com>, 
+ Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>, netdev@vger.kernel.org, 
+ Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+In-Reply-To: <20250903-lemans-evk-bu-v2-0-bfa381bf8ba2@oss.qualcomm.com>
+References: <20250903-lemans-evk-bu-v2-0-bfa381bf8ba2@oss.qualcomm.com>
+Message-Id: <175693646048.2905776.13490150333871403109.robh@kernel.org>
+Subject: Re: [PATCH v2 00/13] arm64: dts: qcom: lemans-evk: Extend board
+ support for additional peripherals
 
 
-***
+On Wed, 03 Sep 2025 17:17:01 +0530, Wasim Nazir wrote:
+> This series extend support for additional peripherals on the Qualcomm
+> Lemans EVK board to enhance overall hardware functionality.
+> 
+> It includes:
+>   - New peripherals like:
+>     - I2C based devices like GPIO I/O expander and EEPROM.
+>     - GPI (Generic Peripheral Interface) DMA controllers and QUPv3 controllers
+>       for peripheral communication.
+>     - PCIe HW with required regulators and PHYs.
+>     - Remoteproc subsystems for supported DSPs.
+>     - Iris video codec.
+>     - First USB controller in device mode.
+>     - SD card support on SDHC v5.
+>     - Qca8081 2.5G Ethernet PHY.
+>   - Audio change [1] to support capture and playback on I2S.
+> 
+> Dependency:
+>   - The ethernet PHY QCA8081 depends on CONFIG_QCA808X_PHY, without
+>     which ethernet will not work.
+> 
+> [1] https://lore.kernel.org/linux-arm-msm/20250822131902.1848802-1-mohammad.rafi.shaik@oss.qualcomm.com/
+> 
+> ---
+> Changes in v2:
+> - Split the patch 3/5 in v1 into separate patch per author - Bjorn.
+> - Use generic node names for expander - Krzysztof.
+> - Change video firmware to 16MB comapatible - Dmitry.
+> - SDHC:
+>     - Arrange SDHCI-compatible alphanumerically - Dmitry.
+>     - Move OPP table and power-domains to lemans.dtsi as these are
+>       part of SoC.
+>     - Move bus-width to board file - Dmitry.
+>     - Change 'states' property to array in vreg_sdc and also re-arrange
+>       the other properties.
+> - Remove the redundant snps,ps-speed property from the ethernet node as
+>   the MAC is actually relying on PCS auto-negotiation to set its speed
+>   (via ethqos_configure_sgmii called as part of mac_link_up).
+> - Refine commit text for audio patch - Bjorn.
+> - Link to v1: https://lore.kernel.org/r/20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com
+> 
+> ---
+> Krishna Kurapati (1):
+>       arm64: dts: qcom: lemans-evk: Enable first USB controller in device mode
+> 
+> Mohammad Rafi Shaik (2):
+>       arm64: dts: qcom: lemans: Add gpr node
+>       arm64: dts: qcom: lemans-evk: Add sound card
+> 
+> Mohd Ayaan Anwar (1):
+>       arm64: dts: qcom: lemans-evk: Enable 2.5G Ethernet interface
+> 
+> Monish Chunara (4):
+>       dt-bindings: mmc: sdhci-msm: Document the Lemans compatible
+>       arm64: dts: qcom: lemans: Add SDHC controller and SDC pin configuration
+>       arm64: dts: qcom: lemans-evk: Add nvmem-layout for EEPROM
+>       arm64: dts: qcom: lemans-evk: Enable SDHCI for SD Card
+> 
+> Nirmesh Kumar Singh (1):
+>       arm64: dts: qcom: lemans-evk: Add TCA9534 I/O expander
+> 
+> Sushrut Shree Trivedi (1):
+>       arm64: dts: qcom: lemans-evk: Enable PCIe support
+> 
+> Vikash Garodia (1):
+>       arm64: dts: qcom: lemans-evk: Enable Iris video codec support
+> 
+> Viken Dadhaniya (1):
+>       arm64: dts: qcom: lemans-evk: Enable GPI DMA and QUPv3 controllers
+> 
+> Wasim Nazir (1):
+>       arm64: dts: qcom: lemans-evk: Enable remoteproc subsystems
+> 
+>  .../devicetree/bindings/mmc/sdhci-msm.yaml         |   1 +
+>  arch/arm64/boot/dts/qcom/lemans-evk.dts            | 415 +++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/lemans.dtsi               | 145 +++++++
+>  3 files changed, 561 insertions(+)
+> ---
+> base-commit: 33bcf93b9a6b028758105680f8b538a31bc563cf
+> change-id: 20250814-lemans-evk-bu-ec015ce4080e
+> 
+> Best regards,
+> --
+> Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> 
+> 
+> 
 
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
 
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 33bcf93b9a6b028758105680f8b538a31bc563cf
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250903-lemans-evk-bu-v2-0-bfa381bf8ba2@oss.qualcomm.com:
+
+arch/arm64/boot/dts/qcom/lemans-evk.dtb: ethernet@23040000 (qcom,sa8775p-ethqos): Unevaluated properties are not allowed ('interconnect-names', 'interconnects' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+
+
+
+
+
 
