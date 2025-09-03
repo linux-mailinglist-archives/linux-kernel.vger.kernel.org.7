@@ -1,168 +1,228 @@
-Return-Path: <linux-kernel+bounces-798818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F0DB42365
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:18:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701A6B4236D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FAF01644CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3193AC4AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9DC3093C4;
-	Wed,  3 Sep 2025 14:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BDA30F52D;
+	Wed,  3 Sep 2025 14:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5aiZRvn"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTYnTc4y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67205309DD8
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174D01F4CB2;
+	Wed,  3 Sep 2025 14:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756909127; cv=none; b=H/o6g3sfie3LAqE/E1GXcO2c5Uh7Wi9YPmqxiXtoP02IIL4ETV0UWBwRUDU/NSx8Czlhc+U4SWG2o3ZPRZ/2HkH0daq4yZG8ZTL9xTFnjFnN7yE3A7aKlBeQZFt+ed0REJTcP3FfgDwUZZheQjyQOWH25kBXQVLPODZvbBN3KG8=
+	t=1756909200; cv=none; b=VHPAeBmO++ctuquBN6NBgsmYMLe9pa+DS1/T2N+6DSIPKJEPxmT4zftQuqt9jwMTa1hjypaiwdRIjWa5xNNlxbcv+WGW+KfJbirE3NVE4hwbZWm+BpIz3suCKqRMZ3H3Cub2K7JHS+/eZXTkMinAwrtYkWvFrJL+SX45EfLBfBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756909127; c=relaxed/simple;
-	bh=5EKM1P4x06LwVEjOAy6ALEdD4PBI8WGaUOZa39K0e0M=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ski139Ms+XDJK1DWcxpm7uXXFfW8YZmPdnUR+v5Yh3qaCJS0b2s+GJr5AgLcdU9kFl76nki2e5lZAw6kLXtuP3e0bwRlVFgrFjd5oCFrnnbYfsfnv81gMVxe7st8fx5mgb0LxJjhZFgwvJE6k4feV0v9W+6eOLI+q6xsuGWFzbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5aiZRvn; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b7722ea37so6083955e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:18:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756909124; x=1757513924; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p1tH95Juuh1rXl0JBiJjZ+pvaXEYbkUC7vChoclECFQ=;
-        b=B5aiZRvnJlEOQ5pAMVo75eYHMWTSo6g9n/8BwxgHntMWyA6lRVqMLXExTTNdUPLnc/
-         Ejl47FPP9IAKMnqGWvuskW1qBV88oAfJsp3OPhLe0BP4BRhpwBPoiMGeCzFkJUEmWps1
-         ZjFfARAvaKtAO1shy9SOqgSjGL4WlN0nN9C+KiuBLBZ25IsHvj0MyR/Gu9f1Ia4O4m9A
-         42dv/jt/aEXW1CI1fPmA4Ws1r7wSp8fuQbLhT5PWUSJg0esDC6UF/sylhGACKUVfqeeU
-         PJJSQD/UiqPBddZ4Ds/Mg3M5xQA8UvFF428cTkxVUBEhHibRLFCGyOYxX6VrvXJAJbkx
-         BRsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756909124; x=1757513924;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p1tH95Juuh1rXl0JBiJjZ+pvaXEYbkUC7vChoclECFQ=;
-        b=S+QfaDHHeVPUUGd7mGRbioGUK+nXK1aXNFOuBXx/Tex5TSGGHLybSo6lGfrdMkbcuk
-         5GwE97sm0iASPv7CDxdM0xo3xrm3zX/EvZ3OY2vE+yNxTMw56qN3Koam+HC4YhItXiK6
-         o2Yf/PSpoBpYwgKIm/GwQeZIaV4dZgmc31grEpDB/FMUqC3g5aPONmxfjV2Ls/n/vRoZ
-         Z58qpzy0FppVaOrpAlG47YMXIEniS38ZExvh+KYi1thfo6FJGbuwvwCf29zEwYRXiiCA
-         U+60cZ27aDzBXm92RoJJzfksgl0uBg0+NvfmCLrGw2e1w4pIiwcmPDE/LAd/jb6WHiqq
-         P68g==
-X-Forwarded-Encrypted: i=1; AJvYcCXiO5ubXs515+9MX8dKH19mjuM0zcekb7Vf5tFVUuxaly6NMeirGU6H9a8F8UFGqqrq1KBMCgw3fe5QIrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxid8u2SeN2CJIU02PzgfDkdg2OqR2y/2pcWvTc/Mw+rU8J7lss
-	CSjihyzRhk6SHDWpp7o8oHx/N3ASfAlQ0CWkL1jjKbMb/WNHHZtYyzMB
-X-Gm-Gg: ASbGncsNnbJ9MJ6wcce/WRthKniTyJZsjY4+7R/rzqNXlhzoUN+QtCzVv5ytJSzexun
-	61efpSuoradg75MZmKoNbuFSmDUCDtgZIPjuK+HwfOmSiyRQx5b7eiAb0FpNVwUxOOMuCncL/sp
-	GpL24wO1pDfqHOdcui4IaJ3Ih8dCj+2tS1dDxlOn0iPtKoZqEvywuqiNV8LJ2Ek0U8t5jc62EcJ
-	guuJqKjmto0Kt2lHNxXQj1NHcY2DmTQMD6mORigcdTW81CobuJxEwZN3JulxWe6d3jYdfN7Ly6P
-	pl6f2Uei+QSgHRl0+ZiyLuiCnChlTNJzp+06WCyLV7ekZJhUhkkiNr19BGTGBY7CMkaYpQk9B+H
-	D+GiXAG93KP4BIvIiHI7VpnOH5h3Nk0PBCvFhjg==
-X-Google-Smtp-Source: AGHT+IGxeY1z+y0/N2JQWJRsW96745IalLmq/FAayUobFdSig7XcZQ3JpsZDzaXf8TTCBRgdaspBrQ==
-X-Received: by 2002:a05:600c:c105:b0:45b:9c79:6612 with SMTP id 5b1f17b1804b1-45b9c796832mr35338115e9.1.1756909123431;
-        Wed, 03 Sep 2025 07:18:43 -0700 (PDT)
-Received: from smtpclient.apple ([132.68.46.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d701622b92sm12542740f8f.58.2025.09.03.07.18.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Sep 2025 07:18:42 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1756909200; c=relaxed/simple;
+	bh=82KpDV1PvR2wNvrkgtAIHeyUyj1MQlrsKRL99mRDZBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pguEp815ZRVo2E6uegME22gSfWv+L9E8edWJjSLub2qbt/rifWUHAJgMzs5ZRHgYpN3KigUi+23mjLur9nmJzTXC5Te/ilB/r9UTjntORm6Hu80jzCNWWZ+TjHs7sjwEtlSbmgU51z/Flwm5Zx3tdCPQtLwRdpCUZpRuue02Tpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTYnTc4y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64960C4CEE7;
+	Wed,  3 Sep 2025 14:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756909199;
+	bh=82KpDV1PvR2wNvrkgtAIHeyUyj1MQlrsKRL99mRDZBs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rTYnTc4yE0MczD5gf388EJftHMhVDIb7K97+qI8yphSe8s6QtmkejjXb+d8GJTmt6
+	 9cVe0Rd0ingn3ucmy/fba5ChlZuxw9VxgICeBrk5+T3byxSscBwtdzB3u5q1POsB2/
+	 S7NhFIhw+aFBixFRCPZO37J1227jFcN2bkuENiD1TUGY5QON21fQiVbReovZ3gdvBw
+	 7JYD7den7jFxsrR8ltXDV74H9mCTmUO0+k3QPTpOatu9YLcWf6Moteg33kohNt9njG
+	 /6YYhB6XJqT+ahKXXzEdAEURKMgct0Kpx9tSUFNwlxcro0ThpySo5hqiIIDmIoNHje
+	 T7aUset+eHlzA==
+Message-ID: <ea75a30b-01f4-4c2d-b3ab-0a9ab0d9de80@kernel.org>
+Date: Wed, 3 Sep 2025 16:19:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [BUG] x86/mm: regression after 4a02ed8e1cc3
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CAG48ez1q_Sgk5nr7Bngyt0UB3FkYb6e0cHv18wqD=sLEdrZkmw@mail.gmail.com>
-Date: Wed, 3 Sep 2025 17:18:29 +0300
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Rik van Riel <riel@surriel.com>,
- the arch/x86 maintainers <x86@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Borislav Petkov <bp@alien8.de>,
- peterz@infradead.org,
- Dave Hansen <dave.hansen@linux.intel.com>,
- zhengqi.arch@bytedance.com,
- thomas.lendacky@amd.com,
- kernel-team@meta.com,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- jackmanb@google.com,
- mhklinux@outlook.com,
- andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com,
- Ingo Molnar <mingo@kernel.org>,
- Dave Hansen <dave.hansen@intel.com>,
- baolu.lu@intel.com,
- david.guckian@intel.com,
- damian.muszynski@intel.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <920DC212-880C-4688-A577-2589CABEED75@gmail.com>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-2-riel@surriel.com>
- <aLcQ3UCXXNcByW1O@gcabiddu-mobl.ger.corp.intel.com>
- <CAG48ez1q_Sgk5nr7Bngyt0UB3FkYb6e0cHv18wqD=sLEdrZkmw@mail.gmail.com>
-To: Jann Horn <jannh@google.com>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/8] dt-bindings: remoteproc: k3-r5f: Add
+ rpmsg-eth subnode
+To: "Anwar, Md Danish" <a0501179@ti.com>, MD Danish Anwar <danishanwar@ti.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Simon Horman
+ <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Mengyuan Lou <mengyuanlou@net-swift.com>, Xin Guo <guoxin09@huawei.com>,
+ Lei Wei <quic_leiwei@quicinc.com>, Lee Trager <lee@trager.us>,
+ Michael Ellerman <mpe@ellerman.id.au>, Fan Gong <gongfan1@huawei.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+ Suman Anna <s-anna@ti.com>, Tero Kristo <kristo@kernel.org>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Roger Quadros <rogerq@kernel.org>
+References: <20250902090746.3221225-1-danishanwar@ti.com>
+ <20250902090746.3221225-3-danishanwar@ti.com>
+ <20250903-peculiar-hot-monkey-4e7c36@kuoka>
+ <d994594f-7055-47c8-842f-938cf862ffb0@ti.com>
+ <f2550076-57b5-46f2-a90a-414e5f2cb8d7@kernel.org>
+ <38c054a3-1835-4f91-9f89-fbe90ddba4a9@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <38c054a3-1835-4f91-9f89-fbe90ddba4a9@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-I just noticed few things need clarification
+On 03/09/2025 15:32, Anwar, Md Danish wrote:
+> 
+> 
+> On 9/3/2025 6:24 PM, Krzysztof Kozlowski wrote:
+>> On 03/09/2025 09:57, MD Danish Anwar wrote:
+>>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>>>> ---
+>>>>>  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml     | 6 ++++++
+>>>>>  1 file changed, 6 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>>> index a492f74a8608..4dbd708ec8ee 100644
+>>>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>>> @@ -210,6 +210,12 @@ patternProperties:
+>>>>>            should be defined as per the generic bindings in,
+>>>>>            Documentation/devicetree/bindings/sram/sram.yaml
+>>>>>  
+>>>>> +      rpmsg-eth:
+>>>>> +        $ref: /schemas/net/ti,rpmsg-eth.yaml
+>>>>
+>>>> No, not a separate device. Please read slides from my DT for beginners
+>>>
+>>> I had synced with Andrew and we came to the conclusion that including
+>>> rpmsg-eth this way will follow the DT guidelines and should be okay.
+>>
+>> ... and did you check the guidelines? Instead of repeating something not
+>> related to my comment rather bring argument matching the comment.
+>>
+>>
+>> ...
+>>
+>>> @@ -768,6 +774,7 @@ &main_r5fss0_core0 {
+>>>  	mboxes = <&mailbox0_cluster2 &mbox_main_r5fss0_core0>;
+>>>  	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+>>>  			<&main_r5fss0_core0_memory_region>;
+>>> +	rpmsg-eth-region = <&main_r5fss0_core0_memory_region_shm>;
+>>
+>> You already have here memory-region, so use that one.
+>>
+> 
+> There is a problem with using memory-region. If I add
+> `main_r5fss0_core0_memory_region_shm` to memory region, to get this
+> phandle from driver I would have to use
+> 	
+> 	of_parse_phandle(np, "memory-region", 2)
+> 
+> Where 2 is the index for this region. But the problem is how would the
+> driver know this index. This index can vary for different vendors and
+> their rproc device.
 
-> On 2 Sep 2025, at 19:05, Jann Horn <jannh@google.com> wrote:
->=20
-> On Tue, Sep 2, 2025 at 5:44=E2=80=AFPM Giovanni Cabiddu
-> <giovanni.cabiddu@intel.com> wrote:
->>=20
+Index is fixed, cannot be anything else. Cannot vary.
 
-[snip]
 
->> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
->> index 39f80111e6f1..e66c7662c254 100644
->> --- a/arch/x86/mm/tlb.c
->> +++ b/arch/x86/mm/tlb.c
->> @@ -1459,7 +1459,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, =
-unsigned long start,
->>=20
->>        put_flush_tlb_info();
->>        put_cpu();
->> -       mmu_notifier_arch_invalidate_secondary_tlbs(mm, start, end);
->> +       mmu_notifier_arch_invalidate_secondary_tlbs(mm, info->start, =
-info->end);
->> }
->=20
-> I don't see why the IOMMU flush should be broadened just because the
-> CPU flush got broadened.
+> 
+> If some other vendor tries to use this driver but their memory-region
+> has 3 existing entries. so this this entry will be the 4th one.
 
-Agreed (as Rik also indicated now)
+None of these are reasons to add completely new node in DT. You use
+arguments of drivers in hardware description. Really, can you read the
+slides I asked for already?
 
->=20
-> On x86, IOMMU flushes happen from arch_tlbbatch_add_pending() and
-> flush_tlb_mm_range(); the IOMMU folks might know better, but as far as
-> I know, there is nothing that elides IOMMU flushes depending on the
-> state of X86-internal flush generation tracking or such.
->=20
-> To me this looks like a change that is correct but makes it easier to
-> hit IOMMU flushing issues in other places.
+> 
+> But the driver code won't work for this. We need to have a way to know
 
-This change is not correct. Do not reference info after calling
-put_flush_tlb_info().
+Driver code can easily work with this. Multiple choices from using names
+up to having driver match data with index.
 
->=20
-> Are you encountering these issues on an Intel system or an AMD system?
+> which index to look for in existing memory-region which can defer from
+> vendor to vendor.
+> 
+> So to avoid this, I thought of using a new memory region. Which will
+> have only 1 entry specifically for this case, and the driver can always
+> 
+> 	of_parse_phandle(np, "rpmsg-eth-region", 0)
+> 
+> to get the memory region.
 
-I would note that on AMD IOMMUs there is some masking functionality
-that allows to make large yet selective flushes.
+Please don't drag the discussion. Look:
 
-This means both that we should not force IOMMU flush range to be large
-just because we decided to do so for the CPU (as you correctly said)
-and that there might be an unrelated bug, like in the mask computation.
+Q: I need a child node for my device to instantiate Linux driver"
+A: NO
 
+Q: I need new “vendor,foo-prop” property
+A: Please look at existing common properties from common schemas or
+devices representing similar class
+
+Or actually let's start with most important:
+
+"What Could You Put into DTS?"
+Answers:
+1. "Not the Linux Device Driver model"
+2. "No Linux driver choices"
+
+And that's exactly what you do and how you argue.
+
+Best regards,
+Krzysztof
 
