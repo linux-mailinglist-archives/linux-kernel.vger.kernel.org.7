@@ -1,564 +1,124 @@
-Return-Path: <linux-kernel+bounces-798849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897F6B423DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:37:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548E0B423DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A1951BC2EE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:37:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072011BC308D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BCB202F71;
-	Wed,  3 Sep 2025 14:37:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74287202960
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76973212569;
+	Wed,  3 Sep 2025 14:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="l+UI9flE"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CAA20A5DD;
+	Wed,  3 Sep 2025 14:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756910236; cv=none; b=hbN6YMr6r7OBaWUytpvYsZX50Z6juwbHAsGUkMDx5gdaKnbQ36qqK3BmCGGzkH61dwI1vNvgUc4jCOz0ek0+jc/r3KIJ/6zKHyVoyfBFtzB68JZQ1MEIqxinX2mGxR3B63y8zUsfRY7yZXgNcG9hArwO9eoF2Sghp56hHdSdIq0=
+	t=1756910251; cv=none; b=NMI2DfNzzIjJ24geSJMPWcameRxq4T0Pi2B3SzM2Rx3tR6DFR4KdPoCtTl9Dy6EL+qjb6eZ0hr2+VigVD8EPI2ExoeRAf2yO/9PsRR51Jl1IEBIFtPvhawGKGeGNWS64zbJI+wNHLv9gV1YcpHMoTncmlP6Ht2tL9pn15c7zg5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756910236; c=relaxed/simple;
-	bh=PcOjhdY+ZMXUBSxoY4BtwPLxiuiXz2lgAGnUSqNddSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vCjSfU9OsfQaCcoEiUxz0bsYJ0diTJfeCcCpwPspUfJSiSqSiBHHphe/8TGZyGT7WTQIyYVID1XO/6cKDhwMKVPaywY15GeWc1cJbzwNfNw8S6sIQ67Zojb21fVLzGRO7Pm97zPrQ/Y8qoikRPgTkdAoJIMs9wuAG61vATsBB1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18B601688;
-	Wed,  3 Sep 2025 07:37:05 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2A2EB3F6A8;
-	Wed,  3 Sep 2025 07:37:12 -0700 (PDT)
-Date: Wed, 3 Sep 2025 15:37:09 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Erick Karanja <karanja99erick@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, tony.luck@intel.com,
-	reinette.chatre@intel.com, julia.lawall@inria.fr,
-	james.morse@arm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl: Convert lock to guard
-Message-ID: <aLhSlXbj+GNQzpJU@e133380.arm.com>
-References: <20250903122017.1331877-1-karanja99erick@gmail.com>
+	s=arc-20240116; t=1756910251; c=relaxed/simple;
+	bh=Aq4SHoJGJIP8AYS0ZnZjQsp63YrAalqNoxFoARZaKqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lkuOHvCeqDl2uHdK3ipSVcvHBBxUvmAyB6UfXVVDG9aJVu3Wg+mQV9qDso+TOisloo3kNgPxyXIFBUUap6/trWCsMAl0Kn0IdOT43RCz3YfV6wZwLqlL+kLJlrws00a7TrD5RtHKjxh7sB3+7bRLO4EigNIFzCCgTpoEBFU10no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=l+UI9flE; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3df2f4aedc7so455797f8f.2;
+        Wed, 03 Sep 2025 07:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1756910249; x=1757515049; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M3zaWeppSnK/pHW8BPkcRdM3L21v1uIAD/evE300Qt4=;
+        b=l+UI9flEEzwiw8P6iwlL0gNncKJndBlfSUuNInniFDQXz42x+zbh+xZPjCYP+DRUCU
+         P7GG2AaJfc4vjWKDAAzDLh35FTeiLmXFLMamgF05ZA3JfWg/Wf2CKGKZi2wFoxm6MFzw
+         jh0LmhmBZqVwBYubXPrPPTZZHQ0Pz2lRjpVRGeVqo2Xsg7qkrukHsS371s0f+l8gnp6L
+         INMI7pzDZJ0BvQ3VkbYpTJC3fcDr2Z+1/Q7iAzeQ0QqLwf6V7LwpsKjCIlXLdlb1uuDZ
+         xOE7jvIy+rSM1DjtRwcN15oHerc42VzhP1EkFhf6Ou3cZ+GIhnrKBwDUUwtuhhm8juH1
+         7R1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756910249; x=1757515049;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M3zaWeppSnK/pHW8BPkcRdM3L21v1uIAD/evE300Qt4=;
+        b=I+VN5q25Phov31DxvJBN1aafrABl9lufdJrw/TAQLSlgOTklkXp0RzSU8o5zN3GGqJ
+         3lSZlyd/Mpkh8SBThRx5VchHyk/FaCUTBOGyMq+tHzzbgDwVnuT+4yfgOJZ7jawnLUOg
+         VepMHvujbA+6bICrHGDYX0kE+Hf0F7qvkswqmgfBA7tnY+mQwzqSkDObMT2bPwtbxZqu
+         vXAwdUfv5LD1zBdFAK1p5bG1ReI0NruZXRG/QkCflJHG4/3LSAmSTnJ5jNmtJaIBNiJP
+         XH9GlngPtm9CMpza2lu7j5z7HETONos7uNi3V1p1bTTCP6O84BY9EjnQEv+epo4KL8ZP
+         0rVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzHYdRXwttOFqLSrpg235KKRUTFJUE95wujNhozA0zJYrcJ7bEbNa+OgaAOkqwz8Ll+lbjvcikmAzjKPg=@vger.kernel.org, AJvYcCWNtJ86Avscdk2mIWF5IbGU8Km4UMA17cF0J5ckX/+r7WMvqbdB6jpoageQTZ42IzSqu0W9zxbJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq3y1Yv4h3e4n1mfpgx+qt4OMgpKl/1b+w2avJhN6ZXqVQWF6C
+	cCFai9I6QdnaxTOHyPlp3yNTu49XJz/bANLXf3PA3xhtWXRRopz4/hY=
+X-Gm-Gg: ASbGncuhMtBTRIUUu6KvOkhqHQC05XkSotj6nlZF4FzsTuZP/CGajlsQJHtPh1puL84
+	uDj4/f9VDGainJ2Dvf1HxIF3hw3Qwe4RXMJOk5/P1tklTY6QE6CuLnEzwcAiEMDRd2k1zLY/nn2
+	NrHaBpkrRYvfw7o+tLLVY4eO794YOASUz1CmCop13X9GzO7e79uvF2OBHTzX8O+qJX0L60GAcZx
+	QhWzSe60Nz2Zh9hyD9J3yNcm9ltiDAgKHYFhVVqCF7clfe8NU4cjnIut7FQgCpJwRZwpQfS+d8h
+	hu0Ne0gmXPausERU5j8oD9Og+UCKAWgbbJh77gqwRTlXo6STwjjzN65hUMLUo3aedzqtYjBcVZQ
+	XjSv/qP88HrMsfGiVn7mGoxkhNJMyq9L23+lc8dSfmXka5Jx0MdzQcBqRU80M5vXPLaqGU6g1EA
+	==
+X-Google-Smtp-Source: AGHT+IG7hE9bsPPkY8ZAxJMMDGP6woK6Gl560RIJ7jfmU8rmZwkXeHrmtsXRvMw2WB9rBjTmU/0piw==
+X-Received: by 2002:a05:6000:2c06:b0:3d6:b35b:1539 with SMTP id ffacd0b85a97d-3d6b35b2241mr7954168f8f.6.1756910248434;
+        Wed, 03 Sep 2025 07:37:28 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4f3e.dip0.t-ipconnect.de. [91.43.79.62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b8525a94bsm197021425e9.15.2025.09.03.07.37.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Sep 2025 07:37:28 -0700 (PDT)
+Message-ID: <c861af96-9d44-49cb-9cee-741f133de504@googlemail.com>
+Date: Wed, 3 Sep 2025 16:37:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903122017.1331877-1-karanja99erick@gmail.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.16 000/142] 6.16.5-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250902131948.154194162@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250902131948.154194162@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Am 02.09.2025 um 15:18 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.16.5 release.
+> There are 142 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-You seem already to have been told that patches of this sort are
-unlikely to be helpful.  Greg summed it up pretty well, e.g. [1], [2].
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-
-With regard to this specific patch:
-
-On Wed, Sep 03, 2025 at 03:20:15PM +0300, Erick Karanja wrote:
-> Convert manual lock/unlock calls to guard and tidy up the code.
-
-The very first sentence under "Describe your changes"
-in submitting-patches.rst is: "Describe your problem."
-
-So, what problem is being addressed by this patch?
-
-> Generated-by: Coccinelle SmPL
-> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-
-Coccinelle is a powerful tool, but ultimately somebody has to take
-responsibility for the correctness of the output.  How have you
-verified that the result is correct?
-
-Also, this is a lot of diffstat for what is really just a change of
-coding style that fixes nothing (or at least, you don't claim that it
-fixes anything).
-
-While all contributions are welcome, they do need to deliver a net
-benefit.
-
-I can't speak for the maintainers, but given the pain that they would
-likely have fixing up all the merge conflicts that this patch would
-cause, I think that the benefit would need to be substantial.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
 
-If you found actual bugs as part of this process, then that would
-definitely be worth looking at (?)
+Beste Grüße,
+Peter Schneider
 
-Cheers
----Dave
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-[1] Re: [PATCH 0/2] staging: rtl8723bs: Use scoped_guard for mutex handling
-https://lore.kernel.org/lkml/2025042511-dose-rage-4c72@gregkh/
-
-[2] Re: [PATCH] staging: rtl8723bs: Replace manual mutex handling with scoped_guard()
-https://lore.kernel.org/lkml/2025042905-enunciate-sixfold-bd3f@gregkh/
-
-
-> ---
->  fs/resctrl/rdtgroup.c | 249 +++++++++++++++++++-----------------------
->  1 file changed, 113 insertions(+), 136 deletions(-)
-> 
-> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-> index 77d08229d855..3c81f1535dbb 100644
-> --- a/fs/resctrl/rdtgroup.c
-> +++ b/fs/resctrl/rdtgroup.c
-> @@ -916,14 +916,13 @@ int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
->  		      struct pid *pid, struct task_struct *tsk)
->  {
->  	struct rdtgroup *rdtg;
-> -	int ret = 0;
->  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  
->  	/* Return empty if resctrl has not been mounted. */
->  	if (!resctrl_mounted) {
->  		seq_puts(s, "res:\nmon:\n");
-> -		goto unlock;
-> +		return 0;
->  	}
->  
->  	list_for_each_entry(rdtg, &rdt_all_groups, rdtgroup_list) {
-> @@ -952,17 +951,13 @@ int proc_resctrl_show(struct seq_file *s, struct pid_namespace *ns,
->  			break;
->  		}
->  		seq_putc(s, '\n');
-> -		goto unlock;
-> +		return 0;
->  	}
->  	/*
->  	 * The above search should succeed. Otherwise return
->  	 * with an error.
->  	 */
-> -	ret = -ENOENT;
-> -unlock:
-> -	mutex_unlock(&rdtgroup_mutex);
-> -
-> -	return ret;
-> +	return -ENOENT;
->  }
->  #endif
->  
-> @@ -971,13 +966,12 @@ static int rdt_last_cmd_status_show(struct kernfs_open_file *of,
->  {
->  	int len;
->  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  	len = seq_buf_used(&last_cmd_status);
->  	if (len)
->  		seq_printf(seq, "%.*s", len, last_cmd_status_buf);
->  	else
->  		seq_puts(seq, "ok\n");
-> -	mutex_unlock(&rdtgroup_mutex);
->  	return 0;
->  }
->  
-> @@ -1062,66 +1056,66 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
->  	u32 ctrl_val;
->  
->  	cpus_read_lock();
-> -	mutex_lock(&rdtgroup_mutex);
-> -	hw_shareable = r->cache.shareable_bits;
-> -	list_for_each_entry(dom, &r->ctrl_domains, hdr.list) {
-> -		if (sep)
-> -			seq_putc(seq, ';');
-> -		sw_shareable = 0;
-> -		exclusive = 0;
-> -		seq_printf(seq, "%d=", dom->hdr.id);
-> -		for (i = 0; i < closids_supported(); i++) {
-> -			if (!closid_allocated(i))
-> -				continue;
-> -			ctrl_val = resctrl_arch_get_config(r, dom, i,
-> -							   s->conf_type);
-> -			mode = rdtgroup_mode_by_closid(i);
-> -			switch (mode) {
-> -			case RDT_MODE_SHAREABLE:
-> -				sw_shareable |= ctrl_val;
-> -				break;
-> -			case RDT_MODE_EXCLUSIVE:
-> -				exclusive |= ctrl_val;
-> -				break;
-> -			case RDT_MODE_PSEUDO_LOCKSETUP:
-> -			/*
-> -			 * RDT_MODE_PSEUDO_LOCKSETUP is possible
-> -			 * here but not included since the CBM
-> -			 * associated with this CLOSID in this mode
-> -			 * is not initialized and no task or cpu can be
-> -			 * assigned this CLOSID.
-> -			 */
-> -				break;
-> -			case RDT_MODE_PSEUDO_LOCKED:
-> -			case RDT_NUM_MODES:
-> -				WARN(1,
-> -				     "invalid mode for closid %d\n", i);
-> -				break;
-> +	scoped_guard (mutex, &rdtgroup_mutex) {
-> +		hw_shareable = r->cache.shareable_bits;
-> +		list_for_each_entry(dom, &r->ctrl_domains, hdr.list) {
-> +			if (sep)
-> +				seq_putc(seq, ';');
-> +			sw_shareable = 0;
-> +			exclusive = 0;
-> +			seq_printf(seq, "%d=", dom->hdr.id);
-> +			for (i = 0; i < closids_supported(); i++) {
-> +				if (!closid_allocated(i))
-> +					continue;
-> +				ctrl_val = resctrl_arch_get_config(r, dom, i,
-> +								   s->conf_type);
-> +				mode = rdtgroup_mode_by_closid(i);
-> +				switch (mode) {
-> +				case RDT_MODE_SHAREABLE:
-> +					sw_shareable |= ctrl_val;
-> +					break;
-> +				case RDT_MODE_EXCLUSIVE:
-> +					exclusive |= ctrl_val;
-> +					break;
-> +				case RDT_MODE_PSEUDO_LOCKSETUP:
-> +				/*
-> +				 * RDT_MODE_PSEUDO_LOCKSETUP is possible
-> +				 * here but not included since the CBM
-> +				 * associated with this CLOSID in this mode
-> +				 * is not initialized and no task or cpu can be
-> +				 * assigned this CLOSID.
-> +				 */
-> +					break;
-> +				case RDT_MODE_PSEUDO_LOCKED:
-> +				case RDT_NUM_MODES:
-> +					WARN(1,
-> +					     "invalid mode for closid %d\n", i);
-> +					break;
-> +				}
->  			}
-> +			for (i = r->cache.cbm_len - 1; i >= 0; i--) {
-> +				pseudo_locked = dom->plr ? dom->plr->cbm : 0;
-> +				hwb = test_bit(i, &hw_shareable);
-> +				swb = test_bit(i, &sw_shareable);
-> +				excl = test_bit(i, &exclusive);
-> +				psl = test_bit(i, &pseudo_locked);
-> +				if (hwb && swb)
-> +					seq_putc(seq, 'X');
-> +				else if (hwb && !swb)
-> +					seq_putc(seq, 'H');
-> +				else if (!hwb && swb)
-> +					seq_putc(seq, 'S');
-> +				else if (excl)
-> +					seq_putc(seq, 'E');
-> +				else if (psl)
-> +					seq_putc(seq, 'P');
-> +				else /* Unused bits remain */
-> +					seq_putc(seq, '0');
-> +				}
-> +				sep = true;
->  		}
-> -		for (i = r->cache.cbm_len - 1; i >= 0; i--) {
-> -			pseudo_locked = dom->plr ? dom->plr->cbm : 0;
-> -			hwb = test_bit(i, &hw_shareable);
-> -			swb = test_bit(i, &sw_shareable);
-> -			excl = test_bit(i, &exclusive);
-> -			psl = test_bit(i, &pseudo_locked);
-> -			if (hwb && swb)
-> -				seq_putc(seq, 'X');
-> -			else if (hwb && !swb)
-> -				seq_putc(seq, 'H');
-> -			else if (!hwb && swb)
-> -				seq_putc(seq, 'S');
-> -			else if (excl)
-> -				seq_putc(seq, 'E');
-> -			else if (psl)
-> -				seq_putc(seq, 'P');
-> -			else /* Unused bits remain */
-> -				seq_putc(seq, '0');
-> -		}
-> -		sep = true;
-> +		seq_putc(seq, '\n');
->  	}
-> -	seq_putc(seq, '\n');
-> -	mutex_unlock(&rdtgroup_mutex);
->  	cpus_read_unlock();
->  	return 0;
->  }
-> @@ -1625,24 +1619,24 @@ static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid
->  	bool sep = false;
->  
->  	cpus_read_lock();
-> -	mutex_lock(&rdtgroup_mutex);
-> +	scoped_guard (mutex, &rdtgroup_mutex) {
->  
-> -	list_for_each_entry(dom, &r->mon_domains, hdr.list) {
-> -		if (sep)
-> -			seq_puts(s, ";");
-> +		list_for_each_entry(dom, &r->mon_domains, hdr.list) {
-> +			if (sep)
-> +				seq_puts(s, ";");
->  
-> -		memset(&mon_info, 0, sizeof(struct resctrl_mon_config_info));
-> -		mon_info.r = r;
-> -		mon_info.d = dom;
-> -		mon_info.evtid = evtid;
-> -		mondata_config_read(&mon_info);
-> +			memset(&mon_info, 0, sizeof(struct resctrl_mon_config_info));
-> +			mon_info.r = r;
-> +			mon_info.d = dom;
-> +			mon_info.evtid = evtid;
-> +			mondata_config_read(&mon_info);
->  
-> -		seq_printf(s, "%d=0x%02x", dom->hdr.id, mon_info.mon_config);
-> -		sep = true;
-> -	}
-> -	seq_puts(s, "\n");
-> +			seq_printf(s, "%d=0x%02x", dom->hdr.id, mon_info.mon_config);
-> +			sep = true;
-> +		}
-> +		seq_puts(s, "\n");
->  
-> -	mutex_unlock(&rdtgroup_mutex);
-> +	}
->  	cpus_read_unlock();
->  
->  	return 0;
-> @@ -1763,15 +1757,15 @@ static ssize_t mbm_total_bytes_config_write(struct kernfs_open_file *of,
->  		return -EINVAL;
->  
->  	cpus_read_lock();
-> -	mutex_lock(&rdtgroup_mutex);
-> +	scoped_guard (mutex, &rdtgroup_mutex) {
->  
-> -	rdt_last_cmd_clear();
-> +		rdt_last_cmd_clear();
->  
-> -	buf[nbytes - 1] = '\0';
-> +		buf[nbytes - 1] = '\0';
->  
-> -	ret = mon_config_write(r, buf, QOS_L3_MBM_TOTAL_EVENT_ID);
-> +		ret = mon_config_write(r, buf, QOS_L3_MBM_TOTAL_EVENT_ID);
->  
-> -	mutex_unlock(&rdtgroup_mutex);
-> +	}
->  	cpus_read_unlock();
->  
->  	return ret ?: nbytes;
-> @@ -1789,15 +1783,15 @@ static ssize_t mbm_local_bytes_config_write(struct kernfs_open_file *of,
->  		return -EINVAL;
->  
->  	cpus_read_lock();
-> -	mutex_lock(&rdtgroup_mutex);
-> +	scoped_guard (mutex, &rdtgroup_mutex) {
->  
-> -	rdt_last_cmd_clear();
-> +		rdt_last_cmd_clear();
->  
-> -	buf[nbytes - 1] = '\0';
-> +		buf[nbytes - 1] = '\0';
->  
-> -	ret = mon_config_write(r, buf, QOS_L3_MBM_LOCAL_EVENT_ID);
-> +		ret = mon_config_write(r, buf, QOS_L3_MBM_LOCAL_EVENT_ID);
->  
-> -	mutex_unlock(&rdtgroup_mutex);
-> +	}
->  	cpus_read_unlock();
->  
->  	return ret ?: nbytes;
-> @@ -2786,7 +2780,7 @@ static void rdt_move_group_tasks(struct rdtgroup *from, struct rdtgroup *to,
->  {
->  	struct task_struct *p, *t;
->  
-> -	read_lock(&tasklist_lock);
-> +	guard(read_lock)(&tasklist_lock);
->  	for_each_process_thread(p, t) {
->  		if (!from || is_closid_match(t, from) ||
->  		    is_rmid_match(t, from)) {
-> @@ -2812,7 +2806,6 @@ static void rdt_move_group_tasks(struct rdtgroup *from, struct rdtgroup *to,
->  				cpumask_set_cpu(task_cpu(t), mask);
->  		}
->  	}
-> -	read_unlock(&tasklist_lock);
->  }
->  
->  static void free_all_child_rdtgrp(struct rdtgroup *rdtgrp)
-> @@ -2959,22 +2952,22 @@ static void rdt_kill_sb(struct super_block *sb)
->  	struct rdt_resource *r;
->  
->  	cpus_read_lock();
-> -	mutex_lock(&rdtgroup_mutex);
-> +	scoped_guard (mutex, &rdtgroup_mutex) {
->  
-> -	rdt_disable_ctx();
-> +		rdt_disable_ctx();
->  
-> -	/* Put everything back to default values. */
-> -	for_each_alloc_capable_rdt_resource(r)
-> -		resctrl_arch_reset_all_ctrls(r);
-> +		/* Put everything back to default values. */
-> +		for_each_alloc_capable_rdt_resource(r)
-> +			resctrl_arch_reset_all_ctrls(r);
->  
-> -	resctrl_fs_teardown();
-> -	if (resctrl_arch_alloc_capable())
-> -		resctrl_arch_disable_alloc();
-> -	if (resctrl_arch_mon_capable())
-> -		resctrl_arch_disable_mon();
-> -	resctrl_mounted = false;
-> -	kernfs_kill_sb(sb);
-> -	mutex_unlock(&rdtgroup_mutex);
-> +		resctrl_fs_teardown();
-> +		if (resctrl_arch_alloc_capable())
-> +			resctrl_arch_disable_alloc();
-> +		if (resctrl_arch_mon_capable())
-> +			resctrl_arch_disable_mon();
-> +		resctrl_mounted = false;
-> +		kernfs_kill_sb(sb);
-> +	}
->  	cpus_read_unlock();
->  }
->  
-> @@ -4008,7 +4001,7 @@ static void rdtgroup_destroy_root(void)
->  
->  static void rdtgroup_setup_default(void)
->  {
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  
->  	rdtgroup_default.closid = RESCTRL_RESERVED_CLOSID;
->  	rdtgroup_default.mon.rmid = RESCTRL_RESERVED_RMID;
-> @@ -4016,8 +4009,6 @@ static void rdtgroup_setup_default(void)
->  	INIT_LIST_HEAD(&rdtgroup_default.mon.crdtgrp_list);
->  
->  	list_add(&rdtgroup_default.rdtgroup_list, &rdt_all_groups);
-> -
-> -	mutex_unlock(&rdtgroup_mutex);
->  }
->  
->  static void domain_destroy_mon_state(struct rdt_mon_domain *d)
-> @@ -4029,17 +4020,15 @@ static void domain_destroy_mon_state(struct rdt_mon_domain *d)
->  
->  void resctrl_offline_ctrl_domain(struct rdt_resource *r, struct rdt_ctrl_domain *d)
->  {
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  
->  	if (supports_mba_mbps() && r->rid == RDT_RESOURCE_MBA)
->  		mba_sc_domain_destroy(r, d);
-> -
-> -	mutex_unlock(&rdtgroup_mutex);
->  }
->  
->  void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
->  {
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  
->  	/*
->  	 * If resctrl is mounted, remove all the
-> @@ -4064,8 +4053,6 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d
->  	}
->  
->  	domain_destroy_mon_state(d);
-> -
-> -	mutex_unlock(&rdtgroup_mutex);
->  }
->  
->  /**
-> @@ -4116,15 +4103,13 @@ int resctrl_online_ctrl_domain(struct rdt_resource *r, struct rdt_ctrl_domain *d
->  {
->  	int err = 0;
->  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  
->  	if (supports_mba_mbps() && r->rid == RDT_RESOURCE_MBA) {
->  		/* RDT_RESOURCE_MBA is never mon_capable */
->  		err = mba_sc_domain_allocate(r, d);
->  	}
->  
-> -	mutex_unlock(&rdtgroup_mutex);
-> -
->  	return err;
->  }
->  
-> @@ -4132,11 +4117,11 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
->  {
->  	int err;
->  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  
->  	err = domain_setup_mon_state(r, d);
->  	if (err)
-> -		goto out_unlock;
-> +		return err;
->  
->  	if (resctrl_is_mbm_enabled()) {
->  		INIT_DELAYED_WORK(&d->mbm_over, mbm_handle_overflow);
-> @@ -4156,18 +4141,14 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d)
->  	if (resctrl_mounted && resctrl_arch_mon_capable())
->  		mkdir_mondata_subdir_allrdtgrp(r, d);
->  
-> -out_unlock:
-> -	mutex_unlock(&rdtgroup_mutex);
-> -
->  	return err;
->  }
->  
->  void resctrl_online_cpu(unsigned int cpu)
->  {
-> -	mutex_lock(&rdtgroup_mutex);
-> -	/* The CPU is set in default rdtgroup after online. */
-> -	cpumask_set_cpu(cpu, &rdtgroup_default.cpu_mask);
-> -	mutex_unlock(&rdtgroup_mutex);
-> +	scoped_guard (mutex, &rdtgroup_mutex)
-> +		/* The CPU is set in default rdtgroup after online. */
-> +		cpumask_set_cpu(cpu, &rdtgroup_default.cpu_mask);
->  }
->  
->  static void clear_childcpus(struct rdtgroup *r, unsigned int cpu)
-> @@ -4202,7 +4183,7 @@ void resctrl_offline_cpu(unsigned int cpu)
->  	struct rdt_mon_domain *d;
->  	struct rdtgroup *rdtgrp;
->  
-> -	mutex_lock(&rdtgroup_mutex);
-> +	guard(mutex)(&rdtgroup_mutex);
->  	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
->  		if (cpumask_test_and_clear_cpu(cpu, &rdtgrp->cpu_mask)) {
->  			clear_childcpus(rdtgrp, cpu);
-> @@ -4211,7 +4192,7 @@ void resctrl_offline_cpu(unsigned int cpu)
->  	}
->  
->  	if (!l3->mon_capable)
-> -		goto out_unlock;
-> +		return;
->  
->  	d = get_mon_domain_from_cpu(cpu, l3);
->  	if (d) {
-> @@ -4225,9 +4206,6 @@ void resctrl_offline_cpu(unsigned int cpu)
->  			cqm_setup_limbo_handler(d, 0, cpu);
->  		}
->  	}
-> -
-> -out_unlock:
-> -	mutex_unlock(&rdtgroup_mutex);
->  }
->  
->  /*
-> @@ -4338,9 +4316,8 @@ void resctrl_exit(void)
->  	cpus_read_lock();
->  	WARN_ON_ONCE(resctrl_online_domains_exist());
->  
-> -	mutex_lock(&rdtgroup_mutex);
-> -	resctrl_fs_teardown();
-> -	mutex_unlock(&rdtgroup_mutex);
-> +	scoped_guard (mutex, &rdtgroup_mutex)
-> +		resctrl_fs_teardown();
->  
->  	cpus_read_unlock();
->  
-> -- 
-> 2.43.0
-> 
-> 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
