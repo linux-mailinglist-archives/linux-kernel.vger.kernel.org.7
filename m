@@ -1,147 +1,172 @@
-Return-Path: <linux-kernel+bounces-798303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB7BCB41C0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:41:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73199B41C11
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C6286849AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:41:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8C15E435B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6F42F1FE2;
-	Wed,  3 Sep 2025 10:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3617B2F1FE1;
+	Wed,  3 Sep 2025 10:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JSr4pE4D"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="BV4WoCeR"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE061E5206;
-	Wed,  3 Sep 2025 10:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDC62F28F0
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896081; cv=none; b=kLyI54iC1tyJE3p+z+NgoEKNyplZeCSKRBsl8PLmrOSTqBJ57cca20/CCoCmWI/xeMMphcpVswmxqZKEXLOe+goYzcpV6F/jAL7UvU0yiZUqSwj3oRctO/w026afx/dHG/VRjv/aTy++7nr6Va7IsS2Qy66i6iysTq5yngVnho4=
+	t=1756896123; cv=none; b=HNOhqW9/SgsYWyzqWmzDrmp0eCUejbM+HtiJLgGL+PDxMzrTMElOtsZxI6pyu5MjCKMGVJrcjALlhYvbUAG/drGAQoUsfYsFNFUcZa5tcig8ytfxdRHERQpRfxoM+iVWbPSeY9OpqQshNZ0xePbM1VPSUbB9VFRtJnVkbrSEUjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896081; c=relaxed/simple;
-	bh=cQ5AxTNObd/Ros3LgbI1d2H9KbaWvkEuSSK99ckKyZU=;
+	s=arc-20240116; t=1756896123; c=relaxed/simple;
+	bh=+DICLpeLEk5QfxI0uLHQeTK/2wiRnzmCNbLnrX8FqT8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=di2BFh681IjW7tqvQatHWlmizsxErX1ZsK1GgBrHYS6OxFtKxOnHh+adne22kuhDxiE9gvQ4bGzc4QMCoTggnU7+buhSRIbHi/corX5Hy2XgnPJAXYg8XmH8+6aOMrQkcDc66hBONM67GhaUFMEt1NHBVjp/u9z/R4tq3gJyXrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JSr4pE4D; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24456ce0b96so9676385ad.0;
-        Wed, 03 Sep 2025 03:41:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=V7S7xBEDBbiKqZ36e2aeAmeP3IWrfC2L8kEZOr8dqejHSRxSfjhTMN9xoEWH9YDvEmjbWMHD2ZqzAybqVNFWNTKs+jtgbw/qU46ntSSL0aCJB0p9zS/8BXCawmIhapIA5l77FKM/yed5xTKFEY2MfvExfHX88X/+y55jdud8rm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=BV4WoCeR; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f76454f69so3366713e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:42:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756896079; x=1757500879; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756896120; x=1757500920; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M0EPRZe8YJObgeqfHix/soVRNAxr+rVxG0fDuUG583s=;
-        b=JSr4pE4DJAelgsOFQLCl9PTMAmOEWjINBaA0MxebU4uBde2i91d3UO/11Jj9V7rJMN
-         tZLVqgkiFUauJNzyX9ZGJNMETg1lwWNj4oVuy25OzpkcYvB/rbADohz7vWRi1eSse6In
-         +7WfA+kVcZrBHwKLPQ+Sn3OiKKzRdgt+XuF0WO/jAgPyYCuElbXMhFW/2GM4YGcO7Rv8
-         Q6FgMeDo9OJyn3UWXK/NFbcCJ3yX5umwiNBdmodXv6Vj6sVBH9h7tY+59KetT/oVq7Pq
-         lStxiL4X910lIPgwYoDXSMGBDjt2iQ7vkN6kBR60m0S0X6L2yl5DLsB6gEqH5PeFDrcR
-         7TLQ==
+        bh=+DICLpeLEk5QfxI0uLHQeTK/2wiRnzmCNbLnrX8FqT8=;
+        b=BV4WoCeROYKdQuKpCa1r003pTpktSC1V7lni02NcoYC3rvp7k1FdIKQBLijhH2IQuh
+         qvvGsA1EsEDAAeLSXGiZMg4VN6RZXSyh7ZlaZOhggAD6Kr0uJBZwQx7ze3VX7CJJajlT
+         /eq4ENgdMjESRfpjuHNyhjYoTQn7viq5zjxrYvB2UmH8XItqzOGkS6HkGJRPFfNBYkE+
+         XgV2DHgGjYdPvGcYGR+RVH6mRuJkld86DDgsKM2t9QySyPijh7RLkjLDz+jY85wn3MI3
+         1oUOR39r8F6T84x2z2f8RHXLSC+G92S8xXgb3AQVaGaF8TqCAjuuzUy8lrO+7fN1jdHe
+         SS8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756896079; x=1757500879;
+        d=1e100.net; s=20230601; t=1756896120; x=1757500920;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M0EPRZe8YJObgeqfHix/soVRNAxr+rVxG0fDuUG583s=;
-        b=JFrbPQcEYiqIVallhg2SKaRY/glbyLqvmUrzG/IJUOCdhLorv7e+MRavrBstr/+O9D
-         JCvO4coTWBjWpmitH0o0outBE6pt3c48gNQstMUViRvNAR/lOeRDjnp+JvrwtTPdNR1h
-         Tg5YDjeiGEWXHdvtJm9vaper4tFN/hVU5HaiXauZrq3CyC95LNmXN5qQ0s9IFPrel4sQ
-         ABFa93QB7/lkxN66Y3Pc0I0qLf+NJto0c7CYYMiZQPH1tTSAxTUwNfd/4uNhsf3K32uA
-         J0cIoBQ4ezAG8qlZqfF9oUd2APE6R19fhCuVL0fFtl5jBjx+VWg/eTvcTMJ/k0gyKvpP
-         AX7w==
-X-Forwarded-Encrypted: i=1; AJvYcCV8kp2iLbqc8JgmXdI0932avydv0+RMGcH8YCIbbfYuSXVzzIMsIaMm81tH/zY4y+J9tcQ76Yd1kUYlPHMc@vger.kernel.org, AJvYcCVk9JfyDD2Qhy3C/dyJ510qCBk9LL+7CcItgkiSxTxPmMT3JJHBh8My35NWEsF7pp/JgGBIWoyOXHCG6QA=@vger.kernel.org, AJvYcCXQiB1xldv9JmKjQ8Mq0Cp/Cc5eHsoYX9/KRNEC7OopVs31pXGuOUNMaQTWc0DBBcNu8m5WhVaE2Ci8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqY+PJPUmEtftUTowvUP9jDA2OXxJ0eIH9PM1ozzh4dqmnkQgJ
-	j0REJb1D7vAR9Qz17ciVybaRCNE/lSJGWBVnCGFcDBhFJCq71wq2IBwOMscxTkItMmdmR1+RLf8
-	bkGLZI3zUfiCUQ8AK6KWTfLLW8hMPZ0M=
-X-Gm-Gg: ASbGncudKiBjQhNG10u7P0nytkzKSPZhGfdAdUrBKPfFsStS6gTMXKNkmKbRbXGhMNF
-	emG12IbMFNFFpOtDhi6nSoMRGx2C/aTXQah+wn9oQEuXzUUkaPGRYsXT/125MSpdAYVE7hXipMK
-	O2s1Vtc+zVguKL2mFfgKnqWGjV3g5YSgyZc0sIuCE9lyUE9X+3yMgii9g3WrWcjVxrT0Uh7ogNi
-	cpPf5U=
-X-Google-Smtp-Source: AGHT+IFBlgHU9/9J/ynH5B/Y0lYKvN7CIRjLzFRFLjCUSdV7/phYhX05by3bq36srAY3SNogU76UhQZ1T1/Qk7whF0E=
-X-Received: by 2002:a17:902:e891:b0:246:2da9:73a2 with SMTP id
- d9443c01a7336-2493eff73d7mr197893025ad.27.1756896079484; Wed, 03 Sep 2025
- 03:41:19 -0700 (PDT)
+        bh=+DICLpeLEk5QfxI0uLHQeTK/2wiRnzmCNbLnrX8FqT8=;
+        b=ajearPQHTQ8azLLc5lAYGSjlF75pOqEVVC6lwZrMvo9CGNQq4AX0UZsxR22sNeAC4n
+         pOpZvTM3U4x9PdJdKuCGiBLPomphYQb6qz99MYfT7whsw9Ver+8rse4v71mLEWMvTcnl
+         5X1lcR1bd8Un0HmmIqxMaleRMOlr+OlgjOTJ9Ok/vk07cDBM7VqGVzXhsZ4+lcY8LLBo
+         ROjn7FsUdjyRego8jY+BwrDTvO/qoGwfrvGEWkiTAFhdYJOsPQhwha5xqa9Mpz3njJuv
+         j4E4CpvwJFpSMqy31911JjkRFFZYK4D1+n/AhjR7lWD9FrjTK5ZKyEhSDcgXlvZaD+We
+         Z2Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWc0YcyOjpzexxWhnWvLjEs5Krn704TWQTYwFyVTZzpZqbMP/8FX3fU42PrdlXZFjHBArua9/Uvs8E10Ek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7bMP9Gs03Y1kwsr0AfgFwKiajFzDofC0iCo/crWw8GHILzEce
+	2X4XDq0CTGqd/OQRIQgmJJtT2JrlkRg3XggYN0Wjo8D8mhMa5tvDoJKPKGbHmHuISzSbWmXGVD7
+	Ao8ij6dSwkPOWRgPPjDp7yFXW3ZdI/yAKWL/XBLLF7A==
+X-Gm-Gg: ASbGncttSheuJhHO1kKerxWcrVHYwXCHQNFoongbRM3/IPL7+u2AzU6+hvnkzLejt5O
+	7frSYlHCfsgpRca6RE2QB1rZt+P7u6hGJlYevGIzCP8DrHkDzNrSs/XQ/NcpUfuKLzQFzpJYL9j
+	pgDhTtL1qQGBYlknMCrB11NHHUnmku5ZT/I8wcMvYbWBpI4CkHqQZIhmAajlDIjYzc4SpHrvFfU
+	NPvGkA5WV4OzgXkfufKsW9D7Sgea6OcQ/e/f+c=
+X-Google-Smtp-Source: AGHT+IG+m7ivvcbSy5vEIztmUhS+t7hNv39lHZt0A7pC6ogTKWUtHExG+a5EtFY7oJjunqJek5PQQ93pvgc0Giy7D2Q=
+X-Received: by 2002:a05:6512:2447:b0:55f:6adb:b847 with SMTP id
+ 2adb3069b0e04-55f708b1b9cmr3479644e87.13.1756896119817; Wed, 03 Sep 2025
+ 03:41:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821073131.2550798-1-shengjiu.wang@nxp.com>
- <20250821073131.2550798-5-shengjiu.wang@nxp.com> <20250901185208.394cd162@booty>
-In-Reply-To: <20250901185208.394cd162@booty>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Wed, 3 Sep 2025 18:41:05 +0800
-X-Gm-Features: Ac12FXx8o6RDyP5im-Wa5RK1y5nzjHR2o5AyrKxsM3tEIkvqqNNrZcDYhIoBDY8
-Message-ID: <CAA+D8AOCTqb5jLeRapYk4wRGZrsrPiuAR=ow3OA1B0+M9X4k7w@mail.gmail.com>
-Subject: Re: [PATCH v5 4/7] drm/bridge: dw-hdmi: Add API dw_hdmi_set_sample_iec958()
- for iec958 format
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
-	cristian.ciocaltea@collabora.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, victor.liu@nxp.com, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
-	devicetree@vger.kernel.org, l.stach@pengutronix.de, perex@perex.cz, 
-	tiwai@suse.com, linux-sound@vger.kernel.org
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-16-bb091daedc52@linaro.org>
+ <aLcBcjvMbrxoDYoC@smile.fi.intel.com> <CAMRc=MfcFMgkNqWNZV5o0NxkAvxBTjC3vv56Cr98n0R2CkxuPw@mail.gmail.com>
+ <CAHp75VcgaqnDrPH27wxfgyK6zz4RAKJQB0r7G2vbTONTxkEzTw@mail.gmail.com>
+ <CAMRc=MfhhX2NJ0fhhX8u+7=sdyUy0G27n7caGf9=TpHxUDJVxg@mail.gmail.com>
+ <aLgW7J-j4nn0u8uo@smile.fi.intel.com> <CAMRc=MdA21fwnamymG6YhqBjKDso_nJs_4xefPNONQNfEcPHXA@mail.gmail.com>
+ <aLgaoivmBUgoeO6B@smile.fi.intel.com>
+In-Reply-To: <aLgaoivmBUgoeO6B@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 3 Sep 2025 12:41:48 +0200
+X-Gm-Features: Ac12FXzqWEtt2S2TE9mSxpi98I-TDCIBZvSibEo9i2pyKL48Vs1B0BzDGCeR2o4
+Message-ID: <CAMRc=Me84OX=UEmAXxmwE8oOH=1UBsyHe-7XmU0c8a2gG9JnCA@mail.gmail.com>
+Subject: Re: [PATCH v7 16/16] pinctrl: qcom: make the pinmuxing strict
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 2, 2025 at 12:52=E2=80=AFAM Luca Ceresoli <luca.ceresoli@bootli=
-n.com> wrote:
+On Wed, Sep 3, 2025 at 12:38=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
-> Hello Shengjiu,
+> On Wed, Sep 03, 2025 at 12:34:00PM +0200, Bartosz Golaszewski wrote:
+> > On Wed, Sep 3, 2025 at 12:22=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@intel.com> wrote:
+> > > On Wed, Sep 03, 2025 at 09:33:34AM +0200, Bartosz Golaszewski wrote:
+> > > > On Tue, Sep 2, 2025 at 10:46=E2=80=AFPM Andy Shevchenko
+> > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > On Tue, Sep 2, 2025 at 8:42=E2=80=AFPM Bartosz Golaszewski <brgl@=
+bgdev.pl> wrote:
+> > > > > > On Tue, Sep 2, 2025 at 4:38=E2=80=AFPM Andy Shevchenko
+> > > > > > <andriy.shevchenko@intel.com> wrote:
+> > > > > > > On Tue, Sep 02, 2025 at 01:59:25PM +0200, Bartosz Golaszewski=
+ wrote:
 >
-> On Thu, 21 Aug 2025 15:31:28 +0800
-> Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
+> ...
 >
-> > Add API dw_hdmi_set_sample_iec958() for IEC958 format because audio dev=
-ice
-> > driver needs IEC958 information to configure this specific setting.
+> > > > > > > > The strict flag in struct pinmux_ops disallows the usage of=
+ the same pin
+> > > > > > > > as a GPIO and for another function. Without it, a rouge use=
+r-space
+> > > > > > > > process with enough privileges (or even a buggy driver) can=
+ request a
+> > > > > > > > used pin as GPIO and drive it, potentially confusing device=
+s or even
+> > > > > > > > crashing the system. Set it globally for all pinctrl-msm us=
+ers.
+> > > > > > >
+> > > > > > > How does this keep (or allow) I=C2=B2C generic recovery mecha=
+nism to work?
+> > > >
+> > > > Anyway, what is your point? I don't think it has any impact on this=
+.
+> > >
+> > > If we have a group of pins that are marked as I=C2=B2C, and we want t=
+o use recovery
+> > > via GPIOs, would it be still possible to request as GPIO when control=
+ler driver
+> > > is in the strict mode?
 > >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > Acked-by: Liu Ying <victor.liu@nxp.com>
+> > Yes, if you mark that function as a "GPIO" function in the pin
+> > controller driver.
 >
-> [...]
+> How would it prevent from requesting from user space?
 >
-> > +void dw_hdmi_set_sample_iec958(struct dw_hdmi *hdmi, unsigned int iec9=
-58)
-> > +{
-> > +     mutex_lock(&hdmi->audio_mutex);
-> > +     hdmi->sample_iec958 =3D iec958;
-> > +     mutex_unlock(&hdmi->audio_mutex);
-> > +}
->
-> Apologies for jumping in the discussion as late as in v5, but I noticed
-> this patch and I was wondering whether this mutex_lock/unlock() is
-> really needed, as you're copying an int.
 
-Thanks for your comments.
+It wouldn't, we don't discriminate between user-space and in-kernel
+GPIO users. A function either is a GPIO or isn't. Can you point me to
+the driver you're thinking about or is this a purely speculative
+question?
 
-Seems it is not necessary to add mutex here. I just follow the code as
-other similar functions.  I will send a new version to update it.
-
-Best regards
-Shengjiu Wang
-
-Shengjiu Wang
->
-> Luca
->
-> --
-> Luca Ceresoli, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+Bartosz
 
