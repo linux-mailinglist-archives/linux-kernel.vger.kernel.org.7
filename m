@@ -1,115 +1,156 @@
-Return-Path: <linux-kernel+bounces-798321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11831B41C4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:53:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69ED7B41C38
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3801A870B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E429E1A860D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126F82F3604;
-	Wed,  3 Sep 2025 10:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20312F291A;
+	Wed,  3 Sep 2025 10:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="kLQwdTEy"
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FxxVHlrK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R+CWmoV/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i6wy4Yi7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7c7skgWG"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487A52EA14A;
-	Wed,  3 Sep 2025 10:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FF82D7DDE
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756896722; cv=none; b=CbZicAh34IWdPkRa0JLpoTcJFQQsrvOv1ZhPkDlIUxxkU66lEPIFGshqfr+16oGx+v1EY+5LJnk6WmS/F4xtqyCHmd/7DVEzKH57gTY1vhafKojfLuPOIfZB2WDdiKKbvD74vEiz1FejWHrSH65mQcTyvqA+J69k47b6RPpTGcg=
+	t=1756896711; cv=none; b=M6YAa2nTkQrrPyTPMFc3twop1wmmr6XMgtU7kHYPGGaLNSBbog6LkkQ+KX/dg+e2lmo8y1CJ8vnODcCIyavjKxwT2ioLHCN0j9xSxr36AP5IFpjwxpDXNEzoeysXt41EFSxUJ92E5bbS1VpuaKKhWQhvsfpAor0mDQOkBFtw4XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756896722; c=relaxed/simple;
-	bh=hWym8Ap263GZ8e4z0xKA+SGAt1iKVrfDxtT/njgoYg4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sT874OCKp/2g24hkoCfWUJKTny8jf7ahCuyWLUyD103XlxreJ1iS9ecYoklfVN1LYvJ2r4VIwhvZaA88VA/Frrl7Kn39YgHgEh0gslkW4gd9+2KLvLRydkA43HEV5dyXWOIHjZfd5ovHDB8qaz8ZvswrXDz+fMYRFt+xush8iu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=kLQwdTEy; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=0on4xOX2K5ILgOCUPYmbuMMVUeGL2/VT+pvfoCLeTuY=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1756896703; v=1; x=1757328703;
- b=kLQwdTEyesW782KMERVIzGVpibhXskQDqr1DqcwdF3qPHeieHaOYlzYO6CR6n5KGO7XaVAf8
- 1DgaqvDacuZ6DTZ1H/GzbCjZBy4+CXf7agbg1LQhYJ+3LZ4gnoRBNgSre9opJ6gRHhN5pNRbPzG
- 1BJcmp+CLMEG/4vQhdr5K5ryOKCYlvAxGxlpXXGFNnfSNjs/+/NpnIH2IvJXmf8eN4sMw4dW4NR
- uuRWgx/QKy5pJ2ZuZ4JT9De8RbYb3Ccmd/ZQx9veJ+JDKi5bhkbQCApko0GdPn2ihwbksY/+2q/
- c+LczYLubpdxxNeKyd+5EMZn7xUK2beyyuff+wuuo7vhw==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 270f79bd; Wed, 03 Sep 2025 12:51:43 +0200
-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Date: Wed, 03 Sep 2025 12:51:39 +0200
-Subject: [PATCH] dt-bindings: mmc: sdhci-pxa: Add minItems to pinctrl-names
+	s=arc-20240116; t=1756896711; c=relaxed/simple;
+	bh=aDu2IoAqXsCBkkLAkO2BkPoEt6t3Dl/DmFS2ucwu09Q=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aOrQlCfvGvak+JfsAOyAY9l8ygOy/w4nEITMxeT4mIekxt5tnN9NbdJZdn9yxhttBgmRaCHII/f7WcwHgw3EmGZfhyPMLu5P7VtE4LOh8/w9yUzwOZWciwXbQOWI/nr+4w/C6/iHAjILMo/9hHmLM1J45yFTt7VjYKf7SNLKupQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FxxVHlrK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R+CWmoV/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i6wy4Yi7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7c7skgWG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 270511F456;
+	Wed,  3 Sep 2025 10:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756896707; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYrV8AjA+LCz9LdUSb4XPBwf7Xj00OMvE/sE0GVZ9fA=;
+	b=FxxVHlrKBmogHQG3VJD+VIjwMx+qn26GDpqXzZPprHPwHoBPrkzbsJcusyh1Q2GM+k3i56
+	g4/bpPDOZ+hh+KECmt8Buz3Rz0oHAq7ldE4/GRjRaU5mWP1O+Kdg5yuyY1UDpHuBtxL8iS
+	hRZNp7LXq3Q1x4Xy3bxhr02lvz3o23Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756896707;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYrV8AjA+LCz9LdUSb4XPBwf7Xj00OMvE/sE0GVZ9fA=;
+	b=R+CWmoV/UeUxHx41gCQl7AkS9ELil8fsg8OGSoIBbC4zlMlPVWLc/axFoqL6JkRXunU0hN
+	nVSPtJCa/x0lsbDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=i6wy4Yi7;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=7c7skgWG
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756896706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYrV8AjA+LCz9LdUSb4XPBwf7Xj00OMvE/sE0GVZ9fA=;
+	b=i6wy4Yi7rLehZjMFYvEkZxOkN8ohhJtMFLTw3q3Rt3H5kXvnxM9EE4+HfiAs5zCy+9W2Uq
+	PL1oDrBB+t+NtzRcpR++Vs/vGbQgshck7ftae5y1M9dO644JxzM64FSDa6bujZJZmjkJUI
+	NERQ4plxj/5JQW1II5H4Otrmly2KgPg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756896706;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYrV8AjA+LCz9LdUSb4XPBwf7Xj00OMvE/sE0GVZ9fA=;
+	b=7c7skgWGloQl/dCJEIjdnhKqqaGPAkyM5lyraFrQWMBWWw7i5j/bIrCZlSFNhDbOyt81Yg
+	FsU4n4vgcakZ40Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BFAA913888;
+	Wed,  3 Sep 2025 10:51:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pXslLcEduGjrDQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 03 Sep 2025 10:51:45 +0000
+Date: Wed, 03 Sep 2025 12:51:45 +0200
+Message-ID: <87seh3vmf2.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Jaroslav Kysela <perex@perex.cz>,	Takashi Iwai <tiwai@suse.com>,	Vasiliy
+ Kovalev <kovalev@altlinux.org>,	John Veness <john-linux@pelago.org.uk>,	bo
+ liu <bo.liu@senarytech.com>,	Jackie Dong <xy-jackie@139.com>,	Takashi Iwai
+ <tiwai@suse.de>,	Richard Fitzgerald <rf@opensource.cirrus.com>,	Oldherl Oh
+ <me@oldherl.one>,	=?ISO-8859-2?Q?Jaros=B3aw?= Janik
+ <jaroslaw.janik@gmail.com>,	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/conexant: Fix typos in comments
+In-Reply-To: <20250902154858.86102-2-thorsten.blum@linux.dev>
+References: <20250902154858.86102-2-thorsten.blum@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250903-pxav3-uhs-fix-v1-1-9f56b0b54749@dujemihanovic.xyz>
-X-B4-Tracking: v=1; b=H4sIALoduGgC/x2MMQqAMAwAvyKZDaQVB/2KONQaNYuWFkuh9O8Gx
- zu4q5A4CieYuwqRsyR5bgXTd+Avd5+MsiuDJTvSRAOG4vKA75XwkIKT3/yxW/a0GdAmRFb9/5a
- 1tQ9jkY0MXwAAAA==
-X-Change-ID: 20250903-pxav3-uhs-fix-9cbcfd2ec0b1
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1295;
- i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=hWym8Ap263GZ8e4z0xKA+SGAt1iKVrfDxtT/njgoYg4=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBk7ZPevvnu7dHJb+9IN4ROVNqUdkxBay362+iL//Znzp
- /mpXJx1pqOUhUGMi0FWTJEl97/jNd7PIlu3Zy8zgJnDygQyhIGLUwAm8vIbI8OaO0pXX85JDd/+
- cfdB07mT83Y+f/NjGmM5T4W49YGAhfvyGf6HCzTabUz8b39rx46fpst+X7VVtHKed24W1621LWt
- je7ZxAwA=
-X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 270511F456
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,altlinux.org,pelago.org.uk,senarytech.com,139.com,suse.de,opensource.cirrus.com,oldherl.one,gmail.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.01
 
-Some older boards only require a default pinctrl. Add a minItems
-property so these don't cause dt-validate warnings.
+On Tue, 02 Sep 2025 17:48:41 +0200,
+Thorsten Blum wrote:
+> 
+> s/OPLC/OLPC/
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202509030625.PBgLIAwG-lkp@intel.com/
-Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
----
- Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Applied now.  Thanks.
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
-index fba1cc50fdf07cc25d42f45512c385a9b8207b9b..186ce8ff4626a1eb07633e08aeb6322ae2eb25a8 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
-@@ -44,6 +44,7 @@ allOf:
-           items:
-             - const: default
-             - const: state_cmd_gpio
-+          minItems: 1
- 
-         pinctrl-1:
-           description:
-@@ -61,6 +62,7 @@ allOf:
-           items:
-             - const: default
-             - const: state_uhs
-+          minItems: 1
- 
-         pinctrl-1:
-           description:
 
----
-base-commit: 5d50cf9f7cf20a17ac469c20a2e07c29c1f6aab7
-change-id: 20250903-pxav3-uhs-fix-9cbcfd2ec0b1
-
-Best regards,
--- 
-Duje Mihanović <duje@dujemihanovic.xyz>
-
+Takashi
 
