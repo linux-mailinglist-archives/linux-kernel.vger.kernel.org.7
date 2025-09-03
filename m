@@ -1,249 +1,141 @@
-Return-Path: <linux-kernel+bounces-798499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4DCB41ED7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:23:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80BCB41EDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495281892F0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:23:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D57A7B0E5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E972FD1D5;
-	Wed,  3 Sep 2025 12:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AFC2FB99F;
+	Wed,  3 Sep 2025 12:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqpedU9I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ME4IxtqY"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1953B23A98E;
-	Wed,  3 Sep 2025 12:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925A52E7F20;
+	Wed,  3 Sep 2025 12:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756902196; cv=none; b=ttg8DyYDs10bx5gAD2xQqrRM9pOKGG7krnNBUJWrOdOZT+Mxu2h+e3gOi7quJmjDsmdkf53Vik5iy2XcMWM7gvIcXxIxuIao0060mAiAU1L6XWB6CdFral5fg/BP6pfbdaokmbTXHA6rP08GuvM5lgkRJMKL8g/YozAAOWzzRes=
+	t=1756902240; cv=none; b=iTJUt3EJ7n9p2gUxB0B/UkiFxrXFPsZSL3PRDMc6+KQPgLnjXnKq/gx07w2uA4dxAzELHgxrN3k49oEe/e+/ihb2NAY0+LUQbAFjM+oIoPgbDBw5qYkY/PTnarXZLE+Zx1Wq/nT2GrjPpeitY7qnkECJUmeICB1WpqcLBkBXJfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756902196; c=relaxed/simple;
-	bh=Z98dAcPclodrALxdxpImMnPWgr4ksADUiqpJIuMidFQ=;
+	s=arc-20240116; t=1756902240; c=relaxed/simple;
+	bh=IOTbcYwoFyQaIRv47aJvA/ATOIBrIIjZbIeEHBJYZgs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzwxCJvCaHCcPSHDrhCRt8+1eZCE0hU0/GwHrVthGvQ4Ri5xm1SistS5OQM5eS2wyWbDjI5FDszs+xwD0hejlQVT+Wq8rkdQfzS91Q8Nc6sD6WEkxf3qGVc0yYMZhBtmMq014mhjzi9rdzvh5qlw5+RmwvtPigbRl5LfRYKkX8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqpedU9I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C48C4CEF0;
-	Wed,  3 Sep 2025 12:23:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756902195;
-	bh=Z98dAcPclodrALxdxpImMnPWgr4ksADUiqpJIuMidFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DqpedU9Ir/TmRShQjnGo6Ne0Erq5RKMe3RvTPklIBVCvawxYoVT2RY2hqhIFbQPmC
-	 gtZFu2JQm2nftX8w5CcwYxUQ3spBzotdiy9e5zFoc7Q08xIH5AvEg1SP0vctv5NHGq
-	 VB0TXBPDxbrU8AIkwtyeN+T29YQ/gUhWB1ZaZdTfMH+n5Ue/sJhSaIbWPUfqfsHzAH
-	 iYxggocFHQeJ3RgJC0qzvLjA1w0uYtZIqqMqQDvEF0dRC6olYWSOo7RvKL3FSBx/Tr
-	 zxD3aW8hHMO7v4c6B5YgLYhj5PS33m3OZGyOUaaaD30WdpD7S9rf+Sg3M8vEWclLye
-	 Wo2/XbK8ZlvUQ==
-Date: Wed, 3 Sep 2025 13:23:11 +0100
-From: Lee Jones <lee@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/3] mfd: bd71828, bd71815 prepare for power-supply
- support
-Message-ID: <20250903122311.GN2163762@google.com>
-References: <20250821-bd71828-charger-v3-0-cc74ac4e0fb9@kemnade.info>
- <20250821-bd71828-charger-v3-1-cc74ac4e0fb9@kemnade.info>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kpYA99pRt1kJ/GXnLwTWV+8SUez9tRoy1kkWDu4Zo6UACldhbXDS7jXn3SutmrN/0VBbw7BQuvNCCU/kczraT68vCM4WlSm5sb/ldECeCwNsbZSaLkLJaZYfKkFA+YNzIJRZgSnrf5xBgWolFEEcyrE/q+3+TQ1JO9769SnZH98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ME4IxtqY; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 9F0BB1A0DB2;
+	Wed,  3 Sep 2025 12:23:49 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6CEA1606C3;
+	Wed,  3 Sep 2025 12:23:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 353941C228A5D;
+	Wed,  3 Sep 2025 14:23:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756902228; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=YumEJQKSlit0DjdeGbyizHywaHYlUT5ic7rTLQ6f/ZI=;
+	b=ME4IxtqY4zsA7nARb5WTtl/57ejoK707NoScjwGP8BjdNjLqBWTBbcsJnGgGTD2/QLqllY
+	IpuLP+RCXQuA+980APJpCicHcygVXaOazGdR+v5ZcGezBekFDLkpIwHiQccijqFiRLztNb
+	j+AjWQ3s7X7WWpaCKf2kX8BP2IJS/LknssX+FhDjckW1emX/HRQp9OYQkpAeT6Xh6fMWHX
+	VOht6KPTL7XQMwWerrED25vhQVSewbM++XggxIxlodm9CCsalY7B9dpMn3+VcbltBy0K6x
+	HhgsW0OTFAx0BkHuQSQoTaalcCKYJD4fzQc0N1ltyu21zUXnU0k0JgfsGWyZcw==
+Date: Wed, 3 Sep 2025 14:23:42 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Devang Tailor <dev.tailor@samsung.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, faraz.ata@samsung.com
+Subject: Re: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+Message-ID: <20250903122342a2996825@mail.local>
+References: <CGME20250710082533epcas5p111be26bea2ccc08718eebcb12929bbbf@epcas5p1.samsung.com>
+ <20250710083434.1821671-1-dev.tailor@samsung.com>
+ <000001dc1cc7$6bfee9d0$43fcbd70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821-bd71828-charger-v3-1-cc74ac4e0fb9@kemnade.info>
+In-Reply-To: <000001dc1cc7$6bfee9d0$43fcbd70$@samsung.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 21 Aug 2025, Andreas Kemnade wrote:
-
-> From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+On 03/09/2025 17:09:32+0530, Devang Tailor wrote:
 > 
-> Add core support for ROHM BD718(15/28/78) PMIC's charger blocks.
+> Hi,
 > 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  drivers/mfd/rohm-bd71828.c       | 44 ++++++++++++++++++++++------
->  include/linux/mfd/rohm-bd71828.h | 63 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 98 insertions(+), 9 deletions(-)
-
-Looks okay.
-
-I'm guessing the Power patch depends on this one?
-
-Would this break anything if taken on its own?
-
-> diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
-> index a14b7aa69c3c6..84a64c3b9c9f5 100644
-> --- a/drivers/mfd/rohm-bd71828.c
-> +++ b/drivers/mfd/rohm-bd71828.c
-> @@ -45,8 +45,8 @@ static const struct resource bd71828_rtc_irqs[] = {
->  
->  static const struct resource bd71815_power_irqs[] = {
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_RMV, "bd71815-dcin-rmv"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_OUT, "bd71815-clps-out"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_IN, "bd71815-clps-in"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_OUT, "bd71815-dcin-clps-out"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_IN, "bd71815-dcin-clps-in"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_RES, "bd71815-dcin-ovp-res"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_OVP_DET, "bd71815-dcin-ovp-det"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_MON_RES, "bd71815-dcin-mon-res"),
-> @@ -56,7 +56,7 @@ static const struct resource bd71815_power_irqs[] = {
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_RES, "bd71815-vsys-low-res"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_LOW_DET, "bd71815-vsys-low-det"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-mon-res"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_RES, "bd71815-vsys-mon-det"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_VSYS_MON_DET, "bd71815-vsys-mon-det"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TEMP, "bd71815-chg-wdg-temp"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_WDG_TIME, "bd71815-chg-wdg"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_CHG_RECHARGE_RES, "bd71815-rechg-res"),
-> @@ -87,10 +87,10 @@ static const struct resource bd71815_power_irqs[] = {
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_2_DET, "bd71815-bat-oc2-det"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_3_RES, "bd71815-bat-oc3-res"),
->  	DEFINE_RES_IRQ_NAMED(BD71815_INT_BAT_OVER_CURR_3_DET, "bd71815-bat-oc3-det"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_RES, "bd71815-bat-low-res"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_DET, "bd71815-bat-low-det"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_RES, "bd71815-bat-hi-res"),
-> -	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_DET, "bd71815-bat-hi-det"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_RES, "bd71815-temp-bat-low-res"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_LOW_DET, "bd71815-temp-bat-low-det"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_RES, "bd71815-temp-bat-hi-res"),
-> +	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_DET, "bd71815-temp-bat-hi-det"),
->  };
->  
->  static const struct mfd_cell bd71815_mfd_cells[] = {
-> @@ -109,7 +109,30 @@ static const struct mfd_cell bd71815_mfd_cells[] = {
->  	},
->  };
->  
-> -static const struct mfd_cell bd71828_mfd_cells[] = {
-> +static const struct resource bd71828_power_irqs[] = {
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_CHG_TOPOFF_TO_DONE,
-> +			     "bd71828-chg-done"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_DCIN_DET, "bd71828-pwr-dcin-in"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_DCIN_RMV, "bd71828-pwr-dcin-out"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_BAT_LOW_VOLT_RES,
-> +			     "bd71828-vbat-normal"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_BAT_LOW_VOLT_DET, "bd71828-vbat-low"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_BAT_HI_DET, "bd71828-btemp-hi"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_BAT_HI_RES, "bd71828-btemp-cool"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_BAT_LOW_DET, "bd71828-btemp-lo"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_BAT_LOW_RES,
-> +			     "bd71828-btemp-warm"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_CHIP_OVER_VF_DET,
-> +			     "bd71828-temp-hi"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_CHIP_OVER_VF_RES,
-> +			     "bd71828-temp-norm"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_CHIP_OVER_125_DET,
-> +			     "bd71828-temp-125-over"),
-> +	DEFINE_RES_IRQ_NAMED(BD71828_INT_TEMP_CHIP_OVER_125_RES,
-> +			     "bd71828-temp-125-under"),
-> +};
-> +
-> +static struct mfd_cell bd71828_mfd_cells[] = {
->  	{ .name = "bd71828-pmic", },
->  	{ .name = "bd71828-gpio", },
->  	{ .name = "bd71828-led", .of_compatible = "rohm,bd71828-leds" },
-> @@ -118,8 +141,11 @@ static const struct mfd_cell bd71828_mfd_cells[] = {
->  	 * BD70528 clock gate are the register address and mask.
->  	 */
->  	{ .name = "bd71828-clk", },
-> -	{ .name = "bd71827-power", },
->  	{
-> +		.name = "bd71828-power",
-> +		.resources = bd71828_power_irqs,
-> +		.num_resources = ARRAY_SIZE(bd71828_power_irqs),
-> +	}, {
->  		.name = "bd71828-rtc",
->  		.resources = bd71828_rtc_irqs,
->  		.num_resources = ARRAY_SIZE(bd71828_rtc_irqs),
-> diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
-> index ce786c96404a3..73a71ef691525 100644
-> --- a/include/linux/mfd/rohm-bd71828.h
-> +++ b/include/linux/mfd/rohm-bd71828.h
-> @@ -189,6 +189,69 @@ enum {
->  /* Charger/Battey */
->  #define BD71828_REG_CHG_STATE		0x65
->  #define BD71828_REG_CHG_FULL		0xd2
-> +#define BD71828_REG_CHG_EN		0x6F
-> +#define BD71828_REG_DCIN_STAT		0x68
-> +#define BD71828_MASK_DCIN_DET		0x01
-> +#define BD71828_REG_VDCIN_U		0x9c
-> +#define BD71828_MASK_CHG_EN		0x01
-> +#define BD71828_CHG_MASK_DCIN_U		0x0f
-> +#define BD71828_REG_BAT_STAT		0x67
-> +#define BD71828_REG_BAT_TEMP		0x6c
-> +#define BD71828_MASK_BAT_TEMP		0x07
-> +#define BD71828_BAT_TEMP_OPEN		0x07
-> +#define BD71828_MASK_BAT_DET		0x20
-> +#define BD71828_MASK_BAT_DET_DONE	0x10
-> +#define BD71828_REG_CHG_STATE		0x65
-> +#define BD71828_REG_VBAT_U		0x8c
-> +#define BD71828_MASK_VBAT_U		0x0f
-> +#define BD71828_REG_VBAT_REX_AVG_U	0x92
-> +
-> +#define BD71828_REG_OCV_PWRON_U		0x8A
-> +
-> +#define BD71828_REG_VBAT_MIN_AVG_U	0x8e
-> +#define BD71828_REG_VBAT_MIN_AVG_L	0x8f
-> +
-> +#define BD71828_REG_CC_CNT3		0xb5
-> +#define BD71828_REG_CC_CNT2		0xb6
-> +#define BD71828_REG_CC_CNT1		0xb7
-> +#define BD71828_REG_CC_CNT0		0xb8
-> +#define BD71828_REG_CC_CURCD_AVG_U	0xb2
-> +#define BD71828_MASK_CC_CURCD_AVG_U	0x3f
-> +#define BD71828_MASK_CC_CUR_DIR		0x80
-> +#define BD71828_REG_VM_BTMP_U		0xa1
-> +#define BD71828_REG_VM_BTMP_L		0xa2
-> +#define BD71828_MASK_VM_BTMP_U		0x0f
-> +#define BD71828_REG_COULOMB_CTRL	0xc4
-> +#define BD71828_REG_COULOMB_CTRL2	0xd2
-> +#define BD71828_MASK_REX_CC_CLR		0x01
-> +#define BD71828_MASK_FULL_CC_CLR	0x10
-> +#define BD71828_REG_CC_CNT_FULL3	0xbd
-> +#define BD71828_REG_CC_CNT_CHG3		0xc1
-> +
-> +#define BD71828_REG_VBAT_INITIAL1_U	0x86
-> +#define BD71828_REG_VBAT_INITIAL1_L	0x87
-> +
-> +#define BD71828_REG_VBAT_INITIAL2_U	0x88
-> +#define BD71828_REG_VBAT_INITIAL2_L	0x89
-> +
-> +#define BD71828_REG_IBAT_U		0xb0
-> +#define BD71828_REG_IBAT_L		0xb1
-> +
-> +#define BD71828_REG_IBAT_AVG_U		0xb2
-> +#define BD71828_REG_IBAT_AVG_L		0xb3
-> +
-> +#define BD71828_REG_VSYS_AVG_U		0x96
-> +#define BD71828_REG_VSYS_AVG_L		0x97
-> +#define BD71828_REG_VSYS_MIN_AVG_U	0x98
-> +#define BD71828_REG_VSYS_MIN_AVG_L	0x99
-> +#define BD71828_REG_CHG_SET1		0x75
-> +#define BD71828_REG_ALM_VBAT_LIMIT_U	0xaa
-> +#define BD71828_REG_BATCAP_MON_LIMIT_U	0xcc
-> +#define BD71828_REG_CONF		0x64
-> +
-> +#define BD71828_REG_DCIN_CLPS		0x71
-> +
-> +#define BD71828_REG_MEAS_CLEAR		0xaf
->  
->  /* LEDs */
->  #define BD71828_REG_LED_CTRL		0x4A
 > 
-> -- 
-> 2.39.5
+> > -----Original Message-----
+> > From: Devang Tailor <dev.tailor@samsung.com>
+> > Sent: 10 July 2025 14:05
+> > To: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> > alim.akhtar@samsung.com; alexandre.belloni@bootlin.com;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > rtc@vger.kernel.org; faraz.ata@samsung.com
+> > Cc: Devang Tailor <dev.tailor@samsung.com>
+> > Subject: [PATCH v2 0/3] On-chip RTC support for ExynosAutov9
+> > 
+> > Enable on-chip RTC support. The on-chip RTC of this SoC is similar to the
+> > previous versions of Samsung SoC. So re-use the existing RTC driver with
+> > applicable call-backs for initialization and IRQ handling.
+> > Add a separate call-back for disabling RTC since existing '.disable'
+> > call-backs updates additional bit not valid for RTC of ExynosAutov9.
+> > 
+> > Setting and getting hardware clock has been tested using 'hwclock'
+> > and 'date' utilities.
+> > 
+> > Alarm interrupt has been checked with incrementing interrupt count via "cat
+> > /proc/interrupts | grep rtc" for 10sec wakeup time via "echo +10 >
+> > /sys/class/rtc/rtc0/wakealarm"
+> > 
+> > changelog
+> > ---
+> > Changes in v2:
+> > - Fixed the review comment of v1 for mis-aligmnent & asymmetry bit logic.
+> > - link for v1 : https://lore.kernel.org/linux-rtc/20250702052426.2404256-1-
+> > dev.tailor@samsung.com/
+> > 
+> 
+> Reminder!
+> Can you please help to identify if anything is pending in this patch series ? I see all three patches are reviewed.
+> 
+
+You have actions after those reviews:
+
+https://lore.kernel.org/all/20250711-shapeless-adorable-lobster-d2efbf@krzk-bin/
+
+> > 
+> > Devang Tailor (3):
+> >   dt-bindings: rtc: s3c-rtc: add compatible for exynosautov9
+> >   rtc: s3c: support for exynosautov9 on-chip RTC
+> >   arm64: dts: exynosautov9: add RTC DT node
+> > 
+> >  .../devicetree/bindings/rtc/s3c-rtc.yaml       |  1 +
+> >  .../boot/dts/exynos/exynosautov9-sadk.dts      |  4 ++++
+> >  arch/arm64/boot/dts/exynos/exynosautov9.dtsi   | 10 ++++++++++
+> >  drivers/rtc/rtc-s3c.c                          | 18 ++++++++++++++++++
+> >  4 files changed, 33 insertions(+)
+> > 
+> > 
+> > base-commit: 58ba80c4740212c29a1cf9b48f588e60a7612209
+> > --
+> > 2.34.1
+> 
 > 
 
 -- 
-Lee Jones [李琼斯]
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
