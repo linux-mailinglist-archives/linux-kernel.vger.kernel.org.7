@@ -1,80 +1,95 @@
-Return-Path: <linux-kernel+bounces-798263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED74DB41B6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:12:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55547B41B71
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D98683556
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:12:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B19056094F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0602ECD35;
-	Wed,  3 Sep 2025 10:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC042E8B9C;
+	Wed,  3 Sep 2025 10:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b="HgaM7Alm"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ka8DlS8J";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IFyZVI5p";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TSk2r2yf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6QCIR5q4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47AD2D7D2F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BD01A256E
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756894316; cv=none; b=G7X/A7uZKwjcIJyCbDtbxktwG4P6SI2wzoxvDDb9tjW83gILICWRG433IAM6TXxp5IGJe99BiAtcm+2m6mqHEbMSuxAgfLkr3He7LwOG3daiGdxlbzCrp7/Btnq2gHvqny/unTBIWmVSn60U5ys+q0zp8xswdLVTRUilxwn3UYE=
+	t=1756894349; cv=none; b=V5CGcgUL95KjAbI9KgimS8d3Tabv+acNslF94HSghhQ5ohxfjZ5ryQcNxWxrv1foXn9s3gJe1hrRIPw9oNgmYBfo6LGRryiExrA0K2T8DKgDtHulaEfh/8wELbi09/JNCxChxGmBS0GnInakt5JRLFfMGWq6oYBQ9tHqbJOcpQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756894316; c=relaxed/simple;
-	bh=ZWM+I7gOKWzcFzvY+hdqKvup4xsslWjbk9vdkN+t2Lg=;
+	s=arc-20240116; t=1756894349; c=relaxed/simple;
+	bh=6yKZ4/92id+e4ufSMFTEN0uz3bkqxtN/V24a2vRd9sU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XUBq3tKFLkcpJXIWWEZuccHXiHt5ZeIJBn5iRRZrEOkE317bfZy34fGB16ZiZd582NEftGUXek6C1pISG/apJeZVKRtJYnFKGox1KGCgOWjcT/cyBCK7XVb4uWa9W72zmw5bhLV2LSVWATon1zHMgx8lg394veApTMLFuC1yFgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b=HgaM7Alm; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5607a240c75so3067786e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:11:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall.org; s=google; t=1756894313; x=1757499113; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uaEC72YkdU0dzg1YAuuKkN3WkhmBtHuuoh/1oBPlyDY=;
-        b=HgaM7Almdmo4mR9m242m2BYDdG43c6Sn8rx9i+d4c1S4cjKxQBPP9rx2rzDrwyQwZ5
-         WElEHiNbGkSlpxTuh2yuj8/8AIkp+V2jUj4hEXIMHrHO7AqaPTzE/LRRbvK9TQEXUiI1
-         MYnqldIva2B6znGqZHOOHcdX5d+Mg/D2OS2RJiBvWR8O2HpeC3nim6PziF6ZTXl4yN6h
-         pNdJheX6ym19bGjLb251tiVYKUFTDDUwHxXYtPru/U3o4JgHofNhHC8JLFNZTIvPgTnn
-         GK+9h2NyvXq6G96Xgb6z9tC+qBxFgRfGEZ7OuGy4N/JuPOj3MM6+Ncpwzz8t5NshCC2u
-         +6jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756894313; x=1757499113;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uaEC72YkdU0dzg1YAuuKkN3WkhmBtHuuoh/1oBPlyDY=;
-        b=q4f3RzbQMqvs/wZVORyz+KB2tmllyg/vjizl2NzCLvwr7utBvXsBGYPg7XE3c8Cx3Q
-         Ob+H2/3xj+RyDL9E4gi2M/U90kPWfAPnxJOOQZvpi6n7JHVai8FJQdAJRQxzseALmuty
-         BQK+4AvybOvX7P9fNZI1wsw7xGW47cxVnx/a363EjvpNtR66+evkM490OmK5eY3Ulz2w
-         75IarsBCBXLjhzVg08IahJs4DsHtX/aHzROzQ7Y+/qSZe569sUs9pApA0A4PfuB9E6Gm
-         6roeVb0mHSSYNaqR6Sn3/uSmAIRTV89FT54B0M8g/d/RerZxK/8qAiLQb/+YgpIuig72
-         DqrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPlRil0RiEgGhMn582Fn8bJw4289WcF2ShpRjfVp9EuKbIiKJ+WWm/kU/v8qaXOqUhNkgflBOT5pzxtSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2ZV8ecSBXQqc+jowyC0INBIGCSf/ew2x45P2gSP84mPEMipLl
-	/11XIGrlTPdoM9kq6L7v7giZcxYbB7jAJSdPAxjiYmb+DS3aHaNB+U2caR+ovKLtFc0=
-X-Gm-Gg: ASbGncs5AOJ1DGcEGtpeVWRmtfqOn8Um7MODHB5tA1caENV43bsK5K2Urv8bi+pTphd
-	zoZQlSXGnk5uH0H47yO5KFTmZNxe1X5tRf8bpPMpr2KerPatlUB3oZ6Fms3tcdQhqziGDKPEi8q
-	Ug+M9TRh9LhYGwTId6WIuGmaLgZ101Xsf6zzDw1NtjAwuo8gXSAIXmIUSSuT5PCOog91twMql1I
-	PYrxryO+xwcgdD2adVD2KG+6A+EfyJ9IKt5J4y9tBLgi5vV9GgbIpLiLVfcMghwE+rW7rvrywe3
-	U5rGtHzFFBUwJNQl1O+yD4Nchaf8tkkK9x9vu8ST35qfIeko251RPsStfhenDtkmN/ArQvcMe7/
-	Xu/C/svEQdDNKtb+getDyskxv04FeHvxzs3LwQ3GJGe0zlcdKGWn3rE2diioYq5Zdi6JAgbWsg3
-	MUPppINDrC1R4S
-X-Google-Smtp-Source: AGHT+IHqbWry8xvL9J/n0nJMx7Sm8XKZqsiZtmb0vZ5EuUF59SiOy4XjuOBRm6SxlSbxf5fnxVNO0Q==
-X-Received: by 2002:a05:6512:3b0d:b0:55f:5685:b5e9 with SMTP id 2adb3069b0e04-55f708b3332mr4752512e87.8.1756894312876;
-        Wed, 03 Sep 2025 03:11:52 -0700 (PDT)
-Received: from [100.115.92.205] (176.111.185.210.kyiv.nat.volia.net. [176.111.185.210])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5608acea03csm417484e87.90.2025.09.03.03.11.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 03:11:52 -0700 (PDT)
-Message-ID: <fb8b827e-9aee-4aea-8291-30e5e4c539dc@blackwall.org>
-Date: Wed, 3 Sep 2025 13:11:50 +0300
+	 In-Reply-To:Content-Type; b=Tvgzzu6WRpKejUj8/jgN7YwI2VOhmEH5HkJt5pdlyDhulPbgliJwDcAx9g6hUua05GAEaZedA6YM4oFCuxyt/XF5qMnoS3khQSpWMuYfF5Hrbgwk2anBhXJlWFJT/Tt7eQCD1rimmhimRoB/5b1MtBEdWPPc41SpHGN82PnvLIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ka8DlS8J; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IFyZVI5p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TSk2r2yf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6QCIR5q4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CF6C31F745;
+	Wed,  3 Sep 2025 10:12:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756894345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JX2P414we82oQn/fjI5R8Qh1x2tILT3GyyIhOHEW2yQ=;
+	b=Ka8DlS8J2iPhlxAyx45NPpVpQ4fI6CQAwzYiObY8zfH2s7bzh+I3tnvedfzh61Zv2snPq6
+	CXy9q8oPCey8gOjS5c0JJpt+va02kHKjTBkVC3QMZjAJsXCbWPeMSWIQd694t620IiYyBs
+	xSJ/p+FJYEsLPCUoQlexBlOpncnOBhs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756894345;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JX2P414we82oQn/fjI5R8Qh1x2tILT3GyyIhOHEW2yQ=;
+	b=IFyZVI5pSZnAun+of2BkxaL1iZ0EaCDy7s7xEg5gUS0HIv3/tNnq2YJPm60ljOrnMJywFG
+	Fo84HHIjbsJ2y2Dw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TSk2r2yf;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6QCIR5q4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756894344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JX2P414we82oQn/fjI5R8Qh1x2tILT3GyyIhOHEW2yQ=;
+	b=TSk2r2yf2nSQC7psvlaWPLjN8MSRQA86aaX1iPIH6qws0jz8urAjQw2QEmiHEwJnc+N0j3
+	Nke0KyQMnhhIG5gXcZ6JPReGjOPMiR5b5xQh0TjdSq6GBKXl61TBywyCU1BH96fKvlZ7zN
+	qEL3ekZ+LvdYL6qBc00fEDZ6VbdIUBk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756894344;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JX2P414we82oQn/fjI5R8Qh1x2tILT3GyyIhOHEW2yQ=;
+	b=6QCIR5q47hG9OxuUw1nTe+Jbk13Pw7hTwC+HRE8yGfu0GGwaiwS40gO28ncd3UZ+AnlXvE
+	C8ue/6RxqF8MZMDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B69A913A31;
+	Wed,  3 Sep 2025 10:12:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1o9BLIgUuGjcfwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 03 Sep 2025 10:12:24 +0000
+Message-ID: <1e153ab8-57c3-466c-b56d-2c3967aee038@suse.cz>
+Date: Wed, 3 Sep 2025 12:12:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,49 +97,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] net: bridge: reduce multicast checks in fast path
-To: =?UTF-8?Q?Linus_L=C3=BCssing?= <linus.luessing@c0d3.blue>
-Cc: Jakub Kicinski <kuba@kernel.org>, bridge@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ido Schimmel <idosch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Eric Dumazet <edumazet@google.com>, "David S . Miller"
- <davem@davemloft.net>, Kuniyuki Iwashima <kuniyu@google.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Xiao Liang <shaw.leon@gmail.com>
-References: <20250829085724.24230-1-linus.luessing@c0d3.blue>
- <20250829084747.55c6386f@kernel.org>
- <bfb11627-64d5-42a0-911e-8be99e222396@blackwall.org>
- <aLdQhJoViBzxcWYE@sellars> <aLd2_um-oWhS23Md@sellars>
+Subject: Re: [PATCH v2 1/2] mm/show_mem: Dump the status of the mem alloc
+ profiling before printing
 Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <aLd2_um-oWhS23Md@sellars>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Yueyang Pan <pyyjason@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Zi Yan <ziy@nvidia.com>, Vishal Moola <vishal.moola@gmail.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Usama Arif <usamaarif642@gmail.com>,
+ linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
+References: <cover.1756827906.git.pyyjason@gmail.com>
+ <8dc71d31de53afa4c0bb25234807b1e6ead5ba55.1756827906.git.pyyjason@gmail.com>
+ <ef1b79ab-15cb-4720-ab05-d77617143a26@suse.cz>
+ <aLgLoal9q7Zx7Yto@devbig569.cln6.facebook.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aLgLoal9q7Zx7Yto@devbig569.cln6.facebook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[google.com,linux-foundation.org,suse.com,cmpxchg.org,nvidia.com,gmail.com,linux.dev,kvack.org,meta.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: CF6C31F745
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On 9/3/25 02:00, Linus Lüssing wrote:
-> On Tue, Sep 02, 2025 at 10:16:04PM +0200, Linus Lüssing wrote:
->> On the other hand, moving the spinlock out of / around
->> __br_multicast_stop() would lead to a sleeping-while-atomic bug
->> when calling timer_delete_sync() in there. And if I were to change
->> these to a timer_delete() I guess there is no way to do the sync
->> part after unlocking? There is no equivalent to something like the
->> flush_workqueue() / drain_workqueue() for workqueues, but for
->> simple timers instead, right?
+On 9/3/25 11:34, Yueyang Pan wrote:
+> On Wed, Sep 03, 2025 at 11:26:01AM +0200, Vlastimil Babka wrote:
+>> On 9/2/25 17:57, Yueyang Pan wrote:
+>> > This patch prints the status of the memory allocation profiling
+>> > before __show_mem actually prints the detailed allocation info.
+>> > This way will let us know the `0B` we saw in allocation info is
+>> > because the profiling is disabled or the allocation is actually
+>> > 0B.
+>> > 
+>> > Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
+>> > ---
+>> >  mm/show_mem.c | 2 ++
+>> >  1 file changed, 2 insertions(+)
+>> > 
+>> > diff --git a/mm/show_mem.c b/mm/show_mem.c
+>> > index ecf20a93ea54..51892ce2efc4 100644
+>> > --- a/mm/show_mem.c
+>> > +++ b/mm/show_mem.c
+>> > @@ -427,6 +427,8 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+>> >  
+>> >  		nr = alloc_tag_top_users(tags, ARRAY_SIZE(tags), false);
+>> >  		if (nr) {
+>> > +			pr_notice("Memory alloction profiling is turned %s\n",
+>> 
+>> There's a typo "alloction".
 > 
-> I'm wondering if it would be sufficient to use timer_del() on
-> .ndo_stop->br_dev_stop()->br_multicast_stop().
+> Nice catch. Thanks!
 > 
-> And use timer_del_sync() only on
-> .ndo_uninit->br_dev_uninit()-> br_multicast_dev_del()->
-> br_multicast_ctx_deinit() and
-> br_vlan_put_master()->br_multicast_ctx_deinit().
+>> 
+>> > +				mem_alloc_profiling_enabled() ? "on" : "off");
+>> >  			pr_notice("Memory allocations:\n");
+>> 
+>> But I think the message would be more obvious if it said e.g.:
+>> 
+>> "Memory allocations (profiling is currently [on/off]):"
 > 
-> 
-> So basically only sync / wait for timer callbacks to finish if
-> their context is about to be free'd, on bridge or VLAN destruction?
+> I can change it in the next version. I saw Andrew gave approval. In this case, shall 
+> I send v3 or create a new patch?
 
-You should make sure the state is sane if the callbacks can be executed after
-br_multicast_stop(). There are many timers that can affect different aspects,
-it might be doable but needs careful inspection and code ordering.
+You can send v3 (given patch 2/2 needs warning fix too) and Andrew can
+replace or convert to fixups.
+
+>> 
+>> >  			for (i = 0; i < nr; i++) {
+>> >  				struct codetag *ct = tags[i].ct;
+>> 
+> 
+> Thanks
+> Pan
 
 
