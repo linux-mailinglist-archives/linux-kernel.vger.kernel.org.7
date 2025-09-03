@@ -1,124 +1,229 @@
-Return-Path: <linux-kernel+bounces-797665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD1AB4131A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:46:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C68B4131E
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2DB91B2803C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:47:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA65165EE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2765C2459F7;
-	Wed,  3 Sep 2025 03:46:44 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF262D0628;
+	Wed,  3 Sep 2025 03:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IFetC7Ft"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A5ABA4A;
-	Wed,  3 Sep 2025 03:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756871203; cv=none; b=PJrIyEAU6Ry0J66bG+lKnrQFTvVRhfnps/JizhaD6SGEW0DT6hZALseEhIPEjr4HgGP6IBwUwWBxpQjNB+GTYh6UEmToyuDInnl22nqFOuBZH1xdGxPwgnKD+ncrX7WbzJmtkel+W3dT2u5/sQuBYQEnvB2e/44epmgo1tis1RQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756871203; c=relaxed/simple;
-	bh=uYcpWWqYubMdfXkt3CQc3hGe1T0wSHS1XLaVk5l4aQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sLq6h/4BbZNNRAfCZgzV555TlaRfVWhtc+gloAPhg6n61WGpPvUR+c/vUXAXc71Iz1s8PSCekncKtAwyx/6EuBWL1frJheKbRyaF9GU/d9cTDBdb+KIm0EfW3h23NkFftFCEC9CWShUmBCQZzFiNXfpKnrJlP8Z1iAJO9+ypO+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cGpN660v3z13N05;
-	Wed,  3 Sep 2025 11:42:46 +0800 (CST)
-Received: from kwepemp200004.china.huawei.com (unknown [7.202.195.99])
-	by mail.maildlp.com (Postfix) with ESMTPS id D5806140159;
-	Wed,  3 Sep 2025 11:46:37 +0800 (CST)
-Received: from [10.174.186.66] (10.174.186.66) by
- kwepemp200004.china.huawei.com (7.202.195.99) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC252C21D6;
+	Wed,  3 Sep 2025 03:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756871443; cv=fail; b=IOIf23A4fn+xVvBAuL71adRTwVT9sjvPoUMuZPLhTltEje2x/tbcwtvQFZO5V23++MolCZ8ZKu8BliYeskV2awrPmvRPGrzgM/uhrOrsV5sMuPLL/vmJ1GnE0BZ/i3K3IyOeeDgVYrxwf+o8qTCmRHmDFUCztwdUIc+QKP6yvmQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756871443; c=relaxed/simple;
+	bh=w+LfILCVVH9Xnfn8T3xwsBodW/eS5lJz4Wgxl6UFYhU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iE68hjAVRIM5bZuSKuLhCLLAAOGjabJnDB2hsvt77wnstdp72Pm8B5XljhkU746oT3ejFLB1QYkpyOK0NaG5VY+ham5Sx+ou7L/6X1EsXI/GZtO/dT7Kw3lTj0tFHQcMUrOnKDbOhfwIk1Wu3bwNjN2dTOk6A/H5tkrmokCL0gA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IFetC7Ft; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756871441; x=1788407441;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=w+LfILCVVH9Xnfn8T3xwsBodW/eS5lJz4Wgxl6UFYhU=;
+  b=IFetC7FtQDa34GhGm0Ca36Djq/VOa6mWBMNXSq7u/lo6OyBUujlxPmH5
+   GpSdM9Ca0uB689HNWmN05hehIT6531WTA/gWOoKGky1K1+sMn7eV3MmlW
+   SCMfKLZImvW2JWdhoGwnq443LkgZrrccn7GvRY/bhkxh2R7tO/Xo1uB9s
+   y9vAvh1G6sy14VnMj0H+0hwSMGHGgnJk/3yTgTb6o1eezJRGXJi0T8tqu
+   1KlPNyFUDCNa012uQ8VQt+uIrceHdlKZwSwZQBskofGHCif8pzNw8Lisl
+   swymITm6aV5F6EWecTa1yGSIGZseyjQyv8I3cqU5RQk3/ueGOi1yiz2FP
+   Q==;
+X-CSE-ConnectionGUID: 7cRqDn1YQXevutAfk+1LOw==
+X-CSE-MsgGUID: vfmG7MABScie2gtIlrwCCQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="59111347"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="59111347"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 20:50:40 -0700
+X-CSE-ConnectionGUID: vJBUO0UnRLqdY8IyIEzsDA==
+X-CSE-MsgGUID: YMGGc+VwTn2ZQvnjKKPi+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="195108770"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 20:50:40 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 3 Sep 2025 11:46:36 +0800
-Message-ID: <7bf4275d-a7a0-4dab-8e5f-eb7b6e965377@huawei.com>
-Date: Wed, 3 Sep 2025 11:46:36 +0800
+ 15.2.2562.17; Tue, 2 Sep 2025 20:50:39 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 2 Sep 2025 20:50:39 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.64)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 2 Sep 2025 20:50:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WWx8Od6dkhgkO8/iQqj9rxS+yYruOOFInxevok8PTFad7PnlDrWN3TS/YunadUjDffLi9+iBDyumsda9FVXdq2Gm2yJMWe+VjxRbhlwnJglX8JW0gSWUMxIWMoAQ2zAxgIJYgt8K5hwHWi2RIGubs0MacAPb3OCK+V5gaiXaCW3fTfL2gyyPyqOda4xg9cjYWOb1v43O277niAKoTGKQkg9on+G/hTNZKCMBNnymDdEK7OA2SAqqa/FxcNx0xFoovAznIt7uU8f9bOMg6FyH+nF/dLO3QmEHt9HtymBLjCkMQOiSPwa6J+GssYS25UjToEtpHbqfC0Ww0IoWUgUWpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=w+LfILCVVH9Xnfn8T3xwsBodW/eS5lJz4Wgxl6UFYhU=;
+ b=Z4d2ZGy2Hi/MXJfE1VVx3+P5RaeDu5vTMFtnu9eICISOFMpoHf/nBneCqTRMUseG6H3oKsTKbgXB7w1MfeYLVxT/1dnSrVT4dhJTXuKgn9LknLMN1sdLuYqqDBHbpp7jfWhds7PuDtdIVzmYhrGyBIn++rxnxVmtKcmwrxFHHT+ohm3PxgSrQOCQy5IBRfdT/qgD/aSHtZM8gxjpQm34LUmmE805vHJ51X9dlWyUvwenrmYn7zy2X7dzTV+NbpoR5gHyPvoyTUtbxANMnmfpH91lI+rVhRc2qSW7ZlAbZiM3sDwPV2Hb3VOux1ruPDG4jh9yzCbJmSnabRmsNNCmsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA1PR11MB6241.namprd11.prod.outlook.com (2603:10b6:208:3e9::5)
+ by LV3PR11MB8579.namprd11.prod.outlook.com (2603:10b6:408:1b6::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
+ 2025 03:50:35 +0000
+Received: from IA1PR11MB6241.namprd11.prod.outlook.com
+ ([fe80::7ac8:884c:5d56:9919]) by IA1PR11MB6241.namprd11.prod.outlook.com
+ ([fe80::7ac8:884c:5d56:9919%4]) with mapi id 15.20.9094.016; Wed, 3 Sep 2025
+ 03:50:35 +0000
+From: "Rinitha, SX" <sx.rinitha@intel.com>
+To: Tianyu Xu <xtydtc@gmail.com>, "Nguyen, Anthony L"
+	<anthony.l.nguyen@intel.com>
+CC: "Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Tianyu Xu <tianyxu@cisco.com>, "Loktionov,
+ Aleksandr" <aleksandr.loktionov@intel.com>, Joe Damato <joe@dama.to>
+Subject: RE: [Intel-wired-lan] [PATCH v2] igb: Fix NULL pointer dereference in
+ ethtool loopback test
+Thread-Topic: [Intel-wired-lan] [PATCH v2] igb: Fix NULL pointer dereference
+ in ethtool loopback test
+Thread-Index: AQHcC4qc8S4LCV3m9kieciGx7WJ1C7SA8zcg
+Date: Wed, 3 Sep 2025 03:50:35 +0000
+Message-ID: <IA1PR11MB62417A30F7E247B971E917958B01A@IA1PR11MB6241.namprd11.prod.outlook.com>
+References: <20250812131056.93963-1-tianyxu@cisco.com>
+In-Reply-To: <20250812131056.93963-1-tianyxu@cisco.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA1PR11MB6241:EE_|LV3PR11MB8579:EE_
+x-ms-office365-filtering-correlation-id: 01599082-9f84-47ce-1716-08ddea9d09f5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?z+8WI3KTqu4hKdQdQj10wR/kv7lLkS2zQZxZWZTZ5y2oyjB0cEk9Vbl91nu5?=
+ =?us-ascii?Q?oGY0PUe99UDblKRx6tJRbmTHar28G03L7jOCQxUCPZ6zsA7f/zAHHza0/Xl+?=
+ =?us-ascii?Q?WS0UFxdO/rzQWZcwE5Y6wfHdxw8hc16t9+YsAJ5fEUU5zg4wYlKF9JWLg5pY?=
+ =?us-ascii?Q?syrjM5RWUTtiQKP/eCYFm2mc7Hj+989+rcL7TMp4ciNgcp7VMihJLMfjer2R?=
+ =?us-ascii?Q?14phMI58Ydj/pDZG7sFyds8lrvyy4x+5QYJrprUppFayKPuv5XJ90Cv+p34r?=
+ =?us-ascii?Q?nrlVjCIG0V4oNxR4FXxveu26NjrGDO+UNa7Iyenestx12PFc+8XPiWlAhwuU?=
+ =?us-ascii?Q?w20X397+7kjpYpZefvnpo7a+/PG+R2asQiZFGzvz5yoERfXmtD2Un9r8/fKr?=
+ =?us-ascii?Q?g6n8j4fKdIHncxZ7VC5O8ssvBBgmW6maL0R7ec7Zduz/YHnQO5jTkf+u5POp?=
+ =?us-ascii?Q?ZmhZ4dmjXcBeZpJumTxA6R8lcaRk6+hJPwpoRPngH3/wl+kMAu/SJ8iQjys0?=
+ =?us-ascii?Q?vR+PXRq+aTJ7GILZqPknTkT4uYM/lBy8Z1cph/YhaE++znRYWe6IvfCKQjdq?=
+ =?us-ascii?Q?JxjbD/CJGKCwvO6mzffh67z9MN6HsD5EsEVdnpDcV1pbThD6AFLRltwh2wS1?=
+ =?us-ascii?Q?HV9+tyZesm1bkcHS7N4QsKluOka8v/rfDyc/kxW3vGYkTqN4Y2PAwkjJOMkc?=
+ =?us-ascii?Q?h+HtDae/HM6cQzOCS5CIyIOtzHQwa1wOgTqFf9TaCF+MxozQs0YpMQFJRTiP?=
+ =?us-ascii?Q?DRUAHkkgGkjKQRO/bD389yc1h2pi/VlcM/4xw+6nfaGh+rwuEt5JyyhC5mvR?=
+ =?us-ascii?Q?T57zcCtg1bEKtQP6o+aQSPJZA19GIbh6S0KvOogTYE4x3OXX3dwZrAg/nukd?=
+ =?us-ascii?Q?sKnWz3w8Ud5hGmfsqITV0hmUtxS6VQxnKPbVumX/A8jBQBcpC2WmgliLvGEh?=
+ =?us-ascii?Q?gjqlojw1e35Z+6ee6JrhM1mJwjx2yIyc5BrzN4MzSTSiTAT6WVoof2A9NsWH?=
+ =?us-ascii?Q?MLib7lrpTYH2QMlY6hLjwDZLGtpbbNI6qkjXAo/Mi7yGR95ExNh/7ampzj54?=
+ =?us-ascii?Q?CtLtC6VLCbGY5zhB4tAHl0ve4Y1n+RfSx1/GWrAnuiIccZlpRWh9s9nnR/dc?=
+ =?us-ascii?Q?ZQUjIhKudzcKZH8zqGdsueOpGP68JV1SNK+dKicNgJMpq47h1cY54lCwQ+kp?=
+ =?us-ascii?Q?4xtmmLWxyjBeAnXXM/n9M6fmxRBxtvwzoQWPoIngcqNvdaJ4Oo0C/8fFZiSj?=
+ =?us-ascii?Q?WC14PVMLDHSKfxU3rRGiSKS1VOIYmwSVa6ysf7UlBJGr5DM5cr3AOXehvhuA?=
+ =?us-ascii?Q?fJ94ocZfoC3FGVq65U5++XDMbNyZcLyh+CMeoAtyrr2Asx/M0wdBWOw66RGD?=
+ =?us-ascii?Q?EcSziIZ8gUsE83pimrhNCrJCQ+wWlsUU4I5pYnPQ5l5o5XjwmlHKSOMBwPPl?=
+ =?us-ascii?Q?kLgBiaXF45jDgdWfm9UZbEsZtoYF8DRAFvLXO/JAkFPOSqzAeY7FCA=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB6241.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?xpUAcY80OIbbR6CmB9SHkT5qURng6H+LoExTJQS8UUJJzEOXBnkJh3yLb7L+?=
+ =?us-ascii?Q?LNbhrEjcZhzTIVJEbaLyQiodPYgoPFy9gamh7cGIoxVY3IMZ5FXrYgDbiDBV?=
+ =?us-ascii?Q?1/92aDPAleg4Trxg7qml1ntf0svklAF7fvUgzmoJ90tVQfvpxtvC4RU9Lnli?=
+ =?us-ascii?Q?yZVNn4/C1yB5WsMpjjpewim/23LU3Vi7THlNW4my+a+puqS5tCSYuiHKZbRR?=
+ =?us-ascii?Q?P1PGXu998q/iMmQZqVlLtdZnaT6AfLlbtCK3eyI+EAJpfvgfSIIVLXmHmq8K?=
+ =?us-ascii?Q?zwJ53OFSlBMUb+NNpIwA+v67nBCJ5t/FSYwZ0Fyb8hxZG+I7jGkkLP19Ucsi?=
+ =?us-ascii?Q?irHMSWIYpr4U7oPuFs/HcpYie5YiveOsX473k1s5A0iRe0uZJChP6sbOM09U?=
+ =?us-ascii?Q?18GO0DDv9ODBf1Uvx5oSBFx1EghMQuPUWVeHpmDaGashtrPOzX57naBcSSlX?=
+ =?us-ascii?Q?2DQehaICrC5i2COCmmwhf1BBaCADU6Dx6JDODDrf2Z9WE42ydlwW0uWwxMVx?=
+ =?us-ascii?Q?qgq6kiXLrfpVdbyT1l2wg3+Fpb/j19tptGMicwmiD54WdvMpTELFhltOqBBx?=
+ =?us-ascii?Q?JHM5D2kC+OIUqoDFdKVTBjTIhlqIewpbik8agFg6zg8ZjEEJvQWnSzg+bXAa?=
+ =?us-ascii?Q?uSndxS4w4VA9bXYycG0z0Y4Hdx4Bfa+pH6jhao1TGx6LzuftGCxj+iqzTvBW?=
+ =?us-ascii?Q?17rdpr35a3xd4o6JhpQM45oP7rRSiZwW90zHUARlTzL6cOf54hNpCN8feWVH?=
+ =?us-ascii?Q?RqGKSF4Tg1iv7xKLdcgkqbsw4tCXFJTLoOHS0KYDB8x5I8L9wztUaKiHGquC?=
+ =?us-ascii?Q?1MFtetEpzQe5WDyHc7TaWgbdXAlQBhsLJlCHVe/CPf4x3N7AvqZ/DJRIij4Q?=
+ =?us-ascii?Q?tw1N1bfAFxL2UanyTF17/ZUUjhDZrNQtCG5S1vqZYj/Uh2Mp51iZJYwPD+LS?=
+ =?us-ascii?Q?aB4yUU5+jqTzfVR6YiSCD9OfQfaR5x3g3QJhQPfy8jByLHZxOcBKM7vxF7Yl?=
+ =?us-ascii?Q?KkNidGcotAgwxgFtduWRGad2naiDAjOw8RMeVMU8Uw0xdFVhYTxc8brr9kGY?=
+ =?us-ascii?Q?+GAELY0huhsp01vgb/9OWIhTRl71CcvuAMwr6/9geIm3dd5hpb6TScJ1DNmu?=
+ =?us-ascii?Q?95vlMnL7L1vVoIgiB+0y0V7OQ9X8YtdridRtLbn8zqYF1dbXjTnpdxHp3EKW?=
+ =?us-ascii?Q?uV89XW5UozFvF0Fa9XTeoGQuj+2Hg7GEqfHAf9sIIUkHcXsttbwU0kaSoZiD?=
+ =?us-ascii?Q?gTrJkGWGVxsBOYrzUi2l0iTgmhCq1bmXqqg+y31epYlWctj/y8FZDls71EOt?=
+ =?us-ascii?Q?lwALLuGdY0KCiOvF/KOu2Z5iTcuMWI77LUGm/V8wZGmgKyGHXP/ZEfPT5RgG?=
+ =?us-ascii?Q?H/Ep/KIcRSLXfxavp4soz21DTtdc+L2pXP1muifzqqp7FiZgtF9BnHmTrLgC?=
+ =?us-ascii?Q?dnUoNjp5tK+NT/fpaHl+CR768ikQO9Q2AT8vwCSWg0Z/buYxqUKxi4zuYWxN?=
+ =?us-ascii?Q?GasiX3O775DE2aFq0l1jTGwGHPkvqPDNlUwrciFbhkac43bKOgo7mnpZSFwy?=
+ =?us-ascii?Q?nuuSd+pYb7GcFkoEBH26VOQZ+htLYpx1LuR8XmME?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nfsd: remove long-standing revoked delegations by force
-To: Benjamin Coddington <bcodding@redhat.com>, Li Lingfeng
-	<lilingfeng3@huawei.com>
-CC: Jeff Layton <jlayton@kernel.org>, <chuck.lever@oracle.com>,
-	<neil@brown.name>, <okorniev@redhat.com>, <Dai.Ngo@oracle.com>,
-	<tom@talpey.com>, <linux-nfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yukuai1@huaweicloud.com>,
-	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
-	<lilingfeng@huaweicloud.com>
-References: <20250902022237.1488709-1-lilingfeng3@huawei.com>
- <a103653bc0dd231b897ffcd074c1f15151562502.camel@kernel.org>
- <1ece2978-239c-4939-bb16-0c7c64614c66@huawei.com>
- <BF48C6D1-ED2E-4B9C-A833-FF48D9ACC044@redhat.com>
-From: "zhangjian (CG)" <zhangjian496@huawei.com>
-In-Reply-To: <BF48C6D1-ED2E-4B9C-A833-FF48D9ACC044@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemp200004.china.huawei.com (7.202.195.99)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB6241.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01599082-9f84-47ce-1716-08ddea9d09f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2025 03:50:35.4163
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kmP0Dn58XEwr7dIRlck1anLptZeOVVXwfMk7apDyTB3Dbtm2iyfz1UUNNYEngJ834dR5RBe5Oj3VF8UooYMYMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8579
+X-OriginatorOrg: intel.com
 
-Hello every experts.
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of T=
+ianyu Xu
+> Sent: 12 August 2025 18:41
+> To: Nguyen, Anthony L <anthony.l.nguyen@intel.com>
+> Cc: Kitszel, Przemyslaw <przemyslaw.kitszel@intel.com>; kuba@kernel.org; =
+intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-kernel@vger=
+.kernel.org; Tianyu Xu <tianyxu@cisco.com>; Loktionov, Aleksandr <aleksandr=
+.loktionov@intel.com>; Joe Damato <joe@dama.to>
+> Subject: [Intel-wired-lan] [PATCH v2] igb: Fix NULL pointer dereference i=
+n ethtool loopback test
+>
+> The igb driver currently causes a NULL pointer dereference when executing=
+ the ethtool loopback test. This occurs because there is no associated q_ve=
+ctor for the test ring when it is set up, as interrupts are typically not a=
+dded to the test rings.
+>
+> Since commit 5ef44b3cb43b removed the napi_id assignment in __xdp_rxq_inf=
+o_reg(), there is no longer a need to pass a napi_id to it.
+> Therefore, simply use 0 as the last parameter.
+>
+> Fixes: 2c6196013f84 ("igb: Add AF_XDP zero-copy Rx support")
+> Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+> Reviewed-by: Joe Damato <joe@dama.to>
+> Signed-off-by: Tianyu Xu <tianyxu@cisco.com>
+> ---
+> Thanks to Aleksandr and Joe for your feedback. I have added the Fixes tag=
+ and formatted the lines to 75 characters based on your comments.
+>
+> drivers/net/ethernet/intel/igb/igb_main.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>
 
-If we can see all delegations on hard-mounted nfs client, which are also
-on server cl_revoked list, changed from
-NFS_DELEGATION_RETURN_IF_CLOSED|NFS_DELEGATION_REVOKED|NFS_DELEGATION_TEST_EXPIRED
-to NFS_DELEGATION_RETURN_IF_CLOSED|NFS_DELEGATION_REVOKED, can we give
-some hypothesis on this problem ?
-
-By the way, this problem can be cover over by decreasing file count on
-server.
-
-Thanks,
-zhangjian
-
-On 2025/9/2 20:43, Benjamin Coddington wrote:
-> On 2 Sep 2025, at 8:10, Li Lingfeng wrote:
-> 
->> Our expected outcome was that the client would release the abnormal
->> delegation via TEST_STATEID/FREE_STATEID upon detecting its invalidity.
->> However, this problematic delegation is no longer present in the
->> client's server->delegations list—whether due to client-side timeouts or
->> the server-side bug [1].
-> 
-> How does the client timeout TEST_STATEID - are you mounting with 'soft'?
-> 
-> We should find the server-side bug and fix it rather than write code to
-> paper over it.  I do think the synchronization of state here is a bit
-> fragile and wish the protocol had a generation, sequence, or marker for
-> setting SEQ4_STATUS_ bits..
-> 
->>>
->>> Should we instead just administratively evict the client since it's
->>> clearly not behaving right in this case?
->> Thanks for the suggestion. While administratively evicting the client would
->> certainly resolve the immediate delegation issue, I'm concerned that approach
->> might be a bit heavy-handed.
->> The problematic behavior seems isolated to a single delegation. Meanwhile,
->> the client itself likely has numerous other open files and active state on
->> the server. Forcing a complete client reconnect would tear down all that
->> state, which could cause significant application disruption and be perceived
->> as a service outage from the client's perspective.
->>
->> [1] https://lore.kernel.org/all/de669327-c93a-49e5-a53b-bda9e67d34a2@huawei.com/
-> 
-> ^^ in this thread you reference v5.10 - there was a knfsd fix for a
-> cl_revoked leak "3b816601e279", and there have been 3 or 4 fixes to fix
-> problems and optimize the client walk of delegations since then.  Jeff
-> pointed out that there have been fixes in these areas.  Are you finding this
-> problem still with all those fixes included?
-> 
-> Ben
-> 
-> 
-
+Tested-by: Rinitha S <sx.rinitha@intel.com> (A Contingent worker at Intel)
 
