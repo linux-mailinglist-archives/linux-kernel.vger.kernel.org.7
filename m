@@ -1,125 +1,141 @@
-Return-Path: <linux-kernel+bounces-797654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF5CB412F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:31:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9925B41301
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ABF61B6382E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:32:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6B2561255
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBE323817C;
-	Wed,  3 Sep 2025 03:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13242C3757;
+	Wed,  3 Sep 2025 03:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Icy85zbs"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gMWVH2qo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EB542048;
-	Wed,  3 Sep 2025 03:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF7E2C187;
+	Wed,  3 Sep 2025 03:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756870295; cv=none; b=TCIG0brfgCUdjW5MaQ+QTySEX3C0QmsF4VQDgPHsnCuVtcNWshQYpMlAHlv0R8HZzr9wR9YQBEctkprfOOW7AuIapEhzNdpG17k1w4i7lz1KR+eDWCRDrGuMj2RPNlbIEEwvuEtmngFSJHwl/UQ6ms6PjZRnWRcnaNq7W121d2c=
+	t=1756870419; cv=none; b=So7cXJnODXt34FUwLTGH4TjMCyv05po6QoYTArecn/oRwlHrS95SmaW9RPqbNZEkpNLw2QCWB1cJDByllT2Zme+pM8uquC5UCzEByWLclXM79zTP6ZsQEDBBqVRq7mnkUtwP/2apIA8EoXAObO3X9c/c5tvTMSQPI+qKkeZMzV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756870295; c=relaxed/simple;
-	bh=4d9mLeW3Q+EUZn/A4+IBvHiKSklhOVboTTlUHZHeDG4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RnoyzgZeyM1l/5vAtILTB9dWkBU+kjVxh9I15hz8ZpG3uttoRgvmLwwQte5oRsPD3/7919CUQYFzXqsvzRN4vaw7ZJ+kK9SMcISQqkPRGVoY6JanbBl9QDGX0Vc+syk8Hz8q1mSyeRi/ku/Z1SI6HRxNCYr9DWiEOMCvNPenln8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Icy85zbs; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1756870291;
-	bh=oVaQkSdSvcCdDKN3m7ueTdePXOwfRyJ398Y5h6mLEpo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=Icy85zbsNn3V5cPMdb3x6rJpqF01YsmfFsDV6WhLKau5qsl1F1JaifyKC76k8RIEV
-	 /XxZWidYP/y2VL6QnstbUHHUr6H4ZEye8i3NEEDgntM4cK/CUtyMgaUQVMx1GicytA
-	 Q1KyjQdHFeZhtVBZa2MORbonGYMgO9bLl+2aLRlrsSPIcRZUOvS+EUaI8x93z96VQ9
-	 UTEAVypj2gBJCNkvr15zILIyalt/ODyKP7jpnoL/1eUiKew+xhj/hTRbU8Tlf2RZAJ
-	 HcEbPLgC73WbsW61Aoo406ccvX6glLnTHBFxjhCTfM8h5OAJaZ1AHCQcuVyKdklrca
-	 rTAyArEe7ZHTQ==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 5930369374;
-	Wed,  3 Sep 2025 11:31:30 +0800 (AWST)
-Message-ID: <a0be916bc2e1736279362b91dbda932f60ac378c.camel@codeconstruct.com.au>
-Subject: Re: [PATCH net-next v27 1/1] mctp pcc: Implement MCTP over PCC
- Transport
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>, Adam Young
- <admiyo@os.amperecomputing.com>, Matt Johnston <matt@codeconstruct.com.au>,
-  Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
-	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Huisong Li <lihuisong@huawei.com>
-Date: Wed, 03 Sep 2025 11:31:30 +0800
-In-Reply-To: <958f555a-1187-44ef-95df-c93474888208@amperemail.onmicrosoft.com>
-References: <20250828043331.247636-1-admiyo@os.amperecomputing.com>
-	 <20250828043331.247636-2-admiyo@os.amperecomputing.com>
-	 <eb156195ce9a0f9c0f2c6bc46c7dcdaf6e83c96d.camel@codeconstruct.com.au>
-	 <e28eeb4f-98a4-4db6-af96-c576019d3af1@amperemail.onmicrosoft.com>
-	 <c22e5f4dc6d496cec2c5645eac5f43aa448d0c48.camel@codeconstruct.com.au>
-	 <3d30c216-e49e-4d85-8f1b-581306033909@amperemail.onmicrosoft.com>
-	 <958f555a-1187-44ef-95df-c93474888208@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1756870419; c=relaxed/simple;
+	bh=KjJPPPnlF/4cG0K1w0Hbt1M1HCy1yQFWLgfhATomQTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEiSzjwJJwyuaUCTPPW+nZ2l850bu1rAEy6bcFiIdf2vZ9YpElFJQzkCAw6KHlX06Vgz1ZqIhHJ5NJmc22JaZBgCqF9LJO7yjDPyoQ+tSiLKicmaOwM2eH0srHwf31ZzJyU7GudW+qp9Qch7YC9arqbAO0plIR14NsGrK4x9G9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gMWVH2qo; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756870417; x=1788406417;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KjJPPPnlF/4cG0K1w0Hbt1M1HCy1yQFWLgfhATomQTM=;
+  b=gMWVH2qoWptkjPEppMMfZi4GTasfX8odRAj61mIeEGIgHa4vrVI4Z4yN
+   FuWDtNZCM+ub7A4gEn/Uo+ll/edAkxbkDwSCXMFo4ktltLXWz1rSU/mGQ
+   wtPZW4M6NytDFSJ6IUw7pjcY9MaWC1wUjd4zx0fqlLh6LbxpsbLw1Lj05
+   gEdviNAeyEYW7MVOVvwRqCy1hznovE95VKB9Rt25KQNfvACy1Qy1UMGlC
+   CwtWzMwA0oG9moez4vPUkAz+bWyuAFsUVjLInc8+cI1xNFc8OqT7d6d6q
+   j6KYHGrbE0SqO2Ifqkq2zZZ18ayQt2eEIdyivjAO3aanes84Ay9/ZEcna
+   g==;
+X-CSE-ConnectionGUID: rJbzoJSGR1yoKLECuMZ6tw==
+X-CSE-MsgGUID: YIT2tT4xSxa790QpIu3KQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="76615094"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="76615094"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 20:33:37 -0700
+X-CSE-ConnectionGUID: jHvz5aTbTnqG+7nKH56bjQ==
+X-CSE-MsgGUID: FdCLDxpbQbKRygIawc8dcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="176720839"
+Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 02 Sep 2025 20:33:32 -0700
+Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uteEZ-0003Jb-1x;
+	Wed, 03 Sep 2025 03:32:53 +0000
+Date: Wed, 3 Sep 2025 11:31:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aleksandrs Vinarskis <alex@vinarskis.com>,
+	Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Aleksandrs Vinarskis <alex@vinarskis.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] leds: led-class: Add devicetree support to led_get()
+Message-ID: <202509031142.WBnVOXZW-lkp@intel.com>
+References: <010201990a1f6559-9e836a40-f534-4535-bd59-5e967d80559a-000000@eu-west-1.amazonses.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <010201990a1f6559-9e836a40-f534-4535-bd59-5e967d80559a-000000@eu-west-1.amazonses.com>
 
-Hi Adam,
+Hi Aleksandrs,
 
-> Without the wrapping I get:
-> WARNING: Violation(s) in mctp-pcc.c
-> Line 275
-> =C2=A0=C2=A0=C2=A0=C2=A0 struct mctp_pcc_ndev *mctp_pcc_ndev =3D netdev_p=
-riv(ndev);
-> =C2=A0=C2=A0=C2=A0=C2=A0 struct mctp_pcc_mailbox *outbox =3D &mctp_pcc_nd=
-ev->outbox;
->=20
-> I could move the initialization of outbox, but that seems wrong. The=20
-> wrapping is the least bad option here.
+kernel test robot noticed the following build warnings:
 
-You're kind-of tricking your RCT checker there, by introducing this
-unnecessary wrap - and the results are not RCT. I wouldn't call that the
-best option.
+[auto build test WARNING on lee-leds/for-leds-next]
+[also build test WARNING on linus/master v6.17-rc4 next-20250902]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The netdev docs say this:
+url:    https://github.com/intel-lab-lkp/linux/commits/Aleksandrs-Vinarskis/leds-led-class-Add-devicetree-support-to-led_get/20250902-191342
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/010201990a1f6559-9e836a40-f534-4535-bd59-5e967d80559a-000000%40eu-west-1.amazonses.com
+patch subject: [PATCH 2/2] leds: led-class: Add devicetree support to led_get()
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250903/202509031142.WBnVOXZW-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250903/202509031142.WBnVOXZW-lkp@intel.com/reproduce)
 
-    If there are dependencies between the variables preventing the ordering
-    move the initialization out of line.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509031142.WBnVOXZW-lkp@intel.com/
 
-But I think this is a fairly legitimate case of breaking RCT for better
-readability, and preserving variable-initiness. We have exactly this,
-intentionally, in existing code, eg.:
+All warnings (new ones prefixed by >>):
 
-    static void mctp_usb_out_complete(struct urb *urb)
-    {
-            struct sk_buff *skb =3D urb->context;
-            struct net_device *netdev =3D skb->dev;
-            int status;
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/net/mctp/mctp-usb.c#n38
-
-- which triggers no checkpatch/NIPA warnings.
-
-The wrapping in the middle of declarations seem odd for a non-80-col
-line.
-
-I would suggest either out-of-line, or slightly-broken RCT, over the
-checker-workaround format. However, I would not reject a patch on this
-choice of style alone :D
-
-Cheers,
+>> drivers/leds/led-class.c:281:22: warning: no previous prototype for 'of_led_get' [-Wmissing-prototypes]
+     281 | struct led_classdev *of_led_get(struct device_node *np, int index)
+         |                      ^~~~~~~~~~
 
 
-Jeremy
+vim +/of_led_get +281 drivers/leds/led-class.c
+
+   272	
+   273	/**
+   274	 * of_led_get() - request a LED device via the LED framework
+   275	 * @np: device node to get the LED device from
+   276	 * @index: the index of the LED
+   277	 *
+   278	 * Returns the LED device parsed from the phandle specified in the "leds"
+   279	 * property of a device tree node or a negative error-code on failure.
+   280	 */
+ > 281	struct led_classdev *of_led_get(struct device_node *np, int index)
+   282	{
+   283		return __of_led_get(np, index, NULL);
+   284	}
+   285	EXPORT_SYMBOL_GPL(of_led_get);
+   286	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
