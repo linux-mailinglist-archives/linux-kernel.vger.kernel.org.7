@@ -1,109 +1,201 @@
-Return-Path: <linux-kernel+bounces-798106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAE7B4198C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:04:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBFDB4198F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7F3485218
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4265B1A82FF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CC62EC57C;
-	Wed,  3 Sep 2025 09:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDBE2EC540;
+	Wed,  3 Sep 2025 09:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e0E694f7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F5S+mAiT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1C32E1EF4
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 09:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E80E279DA3;
+	Wed,  3 Sep 2025 09:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756890274; cv=none; b=nXjzJ7JektpNXVrkdVvXSo0HPH0Bw7n7d/42Gr0fvM9TR6QHQ3kIooXzQpkDA27vfuEuWrIttMUdWtkkc4TcZN8fCAr99iFxlvWATz1a6/KIk/uej9t/LrUfHpIcW1/L5zb/M2kVb7r4AU8qNelRE4C8+uMKuNb4QOkIVEPUdCE=
+	t=1756890308; cv=none; b=a2aJECHDzM4XWrGwdxvaKhniPtap3ySSJJPDvyq73A4SLuwhS6SeVC6c5XVBOjpWH0NnEG8BxCwUDgaWFPs/YyrX7V7fcHfqwTMQIL3/EbyT+V+MMDgPJmoAXDViFGXZ8/i2RBcP4RFfogT66YceF8EkjyMdaowo0CvD4n8z1rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756890274; c=relaxed/simple;
-	bh=37WFRxGfXkvYg6/QkLtmsLkCn5i8jVOdpZKNuE4LReM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWeelGy0UUTYdPvyqExRLPU7H2VoMHaoLVnX+bkmCkH4IqTq68jOv6evB4IEAluacrDyDpHQHk8tf3oKCvKxe083Qq6/ulKywVEgGhMDqbGAaSy4WJbtPRFZSbVtBixLYEfP/K6uM+sEFlUBHc2uFMt42L32p40bFc+nzrj1LQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e0E694f7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32ECC4CEF7;
-	Wed,  3 Sep 2025 09:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756890274;
-	bh=37WFRxGfXkvYg6/QkLtmsLkCn5i8jVOdpZKNuE4LReM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e0E694f7NF6psG08prlAXYkJM98ksYMAzA82Log9c6VLMD85VmJRoln3rdaN2b1Ma
-	 q7wUai2E//Qxiclk/Kcy4s24oUPizqTrFPJ/Eni99/pUIYeK+EPam7Q/r52U6feCmD
-	 fPmYsEclOvQ4dK2txi9QwMG1uqyXwEAmkNCml0Ra9crbI6Amjje1a79j66rqxSrIcq
-	 /kA/XJAtGjcIxiIxo7Sgr6gLr47nN7FRMd6Bwv+F1l1/dE2lDaM98lHc+7ttxwsUE+
-	 eD03qFDOu303HREiMTr7kh/9fxCHdtG2+WIv7JgVMgTOb/Ud17SwEUpPjJVjdjkVZA
-	 BmdAdCIqqngZg==
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 40380F40066;
-	Wed,  3 Sep 2025 05:04:33 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Wed, 03 Sep 2025 05:04:33 -0400
-X-ME-Sender: <xms:oQS4aGrF9vs-2BwMTumtKSltb0rILaPsEXbce7Wc1-YEG9GJBifGMA>
-    <xme:oQS4aJxgy3Al5sAK_I4Uy-LGL-XRv_sTvAmjAadm73AAi8obrSb-6e0ioy7C9eVZJ
-    89Sg8jDANulBBj0Pvc>
-X-ME-Received: <xmr:oQS4aCdU5WbE-g2PgcM-Nskn78h4kC2aNosrj6BlOsDfr-wtRHoqFL_QiI39>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcuufhh
-    uhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvghrnh
-    epheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffegnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilh
-    hlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheehqddv
-    keeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrdhnrg
-    hmvgdpnhgspghrtghpthhtohepvdekpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
-    peguvghvrdhjrghinhesrghrmhdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugi
-    dqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrght
-    rdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtph
-    htthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeiiihihsehnvhhi
-    ughirgdrtghomhdprhgtphhtthhopegsrgholhhinhdrfigrnhhgsehlihhnuhigrdgrlh
-    hisggrsggrrdgtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrshhtohgrkhgvshesohhr
-    rggtlhgvrdgtohhmpdhrtghpthhtoheplhhirghmrdhhohiflhgvthhtsehorhgrtghlvg
-    drtghomh
-X-ME-Proxy: <xmx:oQS4aNe_4TyZ4DWV26viDhAmFw2Q504W-pBhL-14PpQeZk3IidcWPg>
-    <xmx:oQS4aMYr0UdkDBd3JpAVNTmiZyEx5p6Lbu6S2tU13dFaxfhMfcTYMQ>
-    <xmx:oQS4aG9xpnRm-JrdcAN830fWxhA-LfJuvkBPcYb8DLSsBy2gEabqPA>
-    <xmx:oQS4aAWKZ4XvrAQrmLWs84zHRXbsKuVa6bwuN12vs64yK5OOGuqXGQ>
-    <xmx:oQS4aPepF5KBAJNj-t6vIUoYQGWZwb_GJcMKdgXOsoWI2UHmflYF4Ep8>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Sep 2025 05:04:32 -0400 (EDT)
-Date: Wed, 3 Sep 2025 10:04:30 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org, 
-	hughd@google.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
-	baohua@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm: Drop all references of writable and SCAN_PAGE_RO
-Message-ID: <5mqa4xqrwfeot7q6id5garayr5shflnr6fqkvpao476eg6gk3e@gnpvdttydzs5>
-References: <20250903054635.19949-1-dev.jain@arm.com>
- <20250903054635.19949-2-dev.jain@arm.com>
+	s=arc-20240116; t=1756890308; c=relaxed/simple;
+	bh=/gl1pC0ant5pqVySdCbuGf8+Zrlw2CgAa4mXi19kCCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Rnya4RzttA7TjXZSb18vbALB+pyBeAeFY+wQh9ARJlEWQiRJydX/tbbF8bTnSheSLuMYIu90SLGJC1v1Ziar/sWGmkpAM1Jh1PHBw9e/MsqJpCCErs2sMCndHtxc8ZN0BwS/OiDh6wZRdjVxoTq+sfYCZ9PtwrU5Bk9pKZGOp7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F5S+mAiT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832AIYO018247;
+	Wed, 3 Sep 2025 09:04:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gmRmEkgcNzLuKUfrQpEH/3+Ar2RdGFpAR8GYLm9tkWI=; b=F5S+mAiTDUJI3yg0
+	gJtUZqnSxZIIUZD9dkzRl6f8IpO3wlr+EXSzLePQuDlOBAR+TRNyZAxHCgkBW4Y0
+	f9KqouTLU1zfBUlIK/bBLCwL4y4BRKV28t2scMsGXv5qIvEj64TpgDPkVc9Nd78h
+	pMm+6zGkJbpmi3TKDs57srC/gEdP47qFSq9TcZYR1codQg1OS1Q/Z91Dj/QbowrW
+	K7QNRVdQdfItIspqgNI2iyxLA+bfUbqH3eCU/5hbado9dEZXDkzc3THtUSvMSVCq
+	jYufYGDCo7J5CaFaeTrIKeXlI2j9NjirrEj0j9aXdALZoLg5IViiYl5uaTQ9e8N+
+	N3x8lw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48wqvwcnhk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Sep 2025 09:04:54 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58394rvG006086
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 3 Sep 2025 09:04:53 GMT
+Received: from [10.239.105.140] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 3 Sep
+ 2025 02:04:49 -0700
+Message-ID: <5dcabe90-c25b-4af5-b51f-5cda7113b5f4@quicinc.com>
+Date: Wed, 3 Sep 2025 17:04:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903054635.19949-2-dev.jain@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/3] SPI: Add virtio SPI driver
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+CC: <harald.mommer@oss.qualcomm.com>, <quic_msavaliy@quicinc.com>,
+        <broonie@kernel.org>, <virtio-dev@lists.linux.dev>,
+        <viresh.kumar@linaro.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <hdanton@sina.com>,
+        <qiang4.zhang@linux.intel.com>, <alex.bennee@linaro.org>,
+        <quic_ztu@quicinc.com>, <virtualization@lists.linux-foundation.org>
+References: <20250828093451.2401448-1-quic_haixcui@quicinc.com>
+ <20250828093451.2401448-4-quic_haixcui@quicinc.com>
+ <aLWMZH3NTfM8qOUy@smile.fi.intel.com>
+Content-Language: en-US
+From: Haixu Cui <quic_haixcui@quicinc.com>
+In-Reply-To: <aLWMZH3NTfM8qOUy@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAyMDAyNCBTYWx0ZWRfX/V0t6H98yX/B
+ GKjOY/4ryhNwz5m1gDWXb0Jpxb4yQPOljmrTsqj5dwV7+Baxk7g+bpkaURkg3n0ycfHMpwJPHy2
+ mjmDJaYtm42Ps+9SqLeHxc5yjXZD5B6jl0Yg1Y/iioMrv68Zp8ll+2T1TiGrubPAB2M1Sip2a9K
+ a3t6ZYKTd/BHiuVq8x+x+W0jx8Kle2WO5gac6CjkVJCTp2yCFrQITy6UJMYfWzblsDQ+OGTpmhJ
+ DWM2TBQXYpf6qcd/JbiZpYTIwAklzDtsV81iudHrkBHpRrizswutMCTRoyD1VtcXPkQzlizFupJ
+ xyb9dJHrnHrz3rjGO3vMNj3XDHn9iBo0NQoz3t9gLL5yFWWoA0d0sUFz5Wr7m6JSVymJx1ceanc
+ +lKTdluZ
+X-Authority-Analysis: v=2.4 cv=WKh/XmsR c=1 sm=1 tr=0 ts=68b804b6 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
+ a=t5LXkfIdq2p3eZCY7hcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: K2QkfUzmOwVrHfZYiRY392QYy3McBx61
+X-Proofpoint-ORIG-GUID: K2QkfUzmOwVrHfZYiRY392QYy3McBx61
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_05,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
+ spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509020024
 
-On Wed, Sep 03, 2025 at 11:16:35AM +0530, Dev Jain wrote:
-> Now that all actionable outcomes from checking pte_write() are gone,
-> drop the related references.
+Hi Andy,
+
+On 9/1/2025 8:07 PM, Andy Shevchenko wrote:
+> On Thu, Aug 28, 2025 at 05:34:51PM +0800, Haixu Cui wrote:
+>> This is the virtio SPI Linux kernel driver.
 > 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ...
+> 
+>> +#include <linux/completion.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/module.h>
+>> +#include <linux/spi/spi.h>
+>> +#include <linux/stddef.h>
+> 
+> A lot of headers are still missing. See below.
+> 
+> ...
+> 
 
-Reviewed-by: Kiryl Shutsemau <kas@kernel.org>
+This driver compiles successfully, and I believe all required 
+definitions are resolved through indirect inclusion. For example, since 
+I included virtio.h, there is no need to explicitly include device.h, 
+scatterlist.h or types.h.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+I avoided redundant #includes to keep the code clean and minimal.
+
+If there are any essential headers I’ve overlooked, please feel free to 
+highlight them—I’ll gladly include them in the next revision.
+
+
+
+> 
+>> +static int virtio_spi_transfer_one(struct spi_controller *ctrl,
+>> +				   struct spi_device *spi,
+>> +				   struct spi_transfer *xfer)
+>> +{
+>> +	struct virtio_spi_priv *priv = spi_controller_get_devdata(ctrl);
+> 
+>> +	struct virtio_spi_req *spi_req __free(kfree);
+> 
+> This is incorrect template. It's one of the exceptions when we mix code and
+> definitions...
+>> +	spi_req = kzalloc(sizeof(*spi_req), GFP_KERNEL);
+> 
+> ...so this should be
+> 
+> 	struct virtio_spi_req *spi_req __free(kfree) =
+> 		kzalloc(sizeof(*spi_req), GFP_KERNEL);
+> 
+> (or on one line if you are okay with a 100 limit).
+> 
+
+I plan to update the code as follows:
+
+struct virtio_spi_req *spi_req __free(kfree) = NULL;
+spi_req = kzalloc(sizeof(*spi_req), GFP_KERNEL);
+if(!spi_req)
+     return -ENOMEM;
+
+This follows the pattern used in 
+virtio_net(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/virtio_net.c?h=v6.17-rc4#n3746)
+
+I'd like to check if this style is acceptable here, thanks.
+
+
+
+> 
+>> +	if (ret || bus_num > S16_MAX)
+> 
+> + limits.h
+> 
+>> +		ctrl->bus_num = -1;
+>> +	else
+>> +		ctrl->bus_num = bus_num;
+> 
+> But why do we need this property at all? And where is it documented in the
+> device tree bindings?
+
+I’ve reviewed other SPI drivers in the kernel, and it seems that bus_num 
+is not a required property in most cases. I’ll remove the related code 
+in the next revision.
+
+Thanks again.
+
+BR
+Haixu Cui
+
+
+
+
+
 
