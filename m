@@ -1,160 +1,233 @@
-Return-Path: <linux-kernel+bounces-797641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4223AB412D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:18:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CC7B412DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0BE206160
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:18:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8395E6971
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E6D2C2348;
-	Wed,  3 Sep 2025 03:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5EC2C2AA5;
+	Wed,  3 Sep 2025 03:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ewsting.com header.i=@ewsting.com header.b="AFF7ctD5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K26D5+i1"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="43Ic03p3"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2067.outbound.protection.outlook.com [40.107.101.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0181853;
-	Wed,  3 Sep 2025 03:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756869515; cv=none; b=fXV9CHdhObYwXLc6hX2VjbYP7VgC+18y8JLoGGGiAuHApSlTzPaj/eIlVWWbQf0f0kL3gzJaX9249mLm2cEIsGYvyY5Pq6F7eZ4zSOkcCuN4/sO9A0XOZGIzvt5IxlkJuu9gNIOcnK3/Uh7T8MLGg86bsMisAnOtkGDyzfeLxxI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756869515; c=relaxed/simple;
-	bh=+XAiQdwEKKjx4kZCat6VJkTBDxQ1h6cQE5wcr39BkfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cywZu9EIlOxQXbMf17jMlZDDg0ssIfQimVKLYqswkHu9+hg7vJIOPDEFraDYBgurFPFW3taprSlWfUc/XSYXMY6XrqYrS8LWEnQQiPNqNENpbAxcMBz6l2h0VzmV6V+TKJL0kIBSjR/31mjbSbycjMaeR92IzFPXWiu53H3jIgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ewsting.com; spf=pass smtp.mailfrom=ewsting.com; dkim=pass (2048-bit key) header.d=ewsting.com header.i=@ewsting.com header.b=AFF7ctD5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=K26D5+i1; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ewsting.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ewsting.com
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id C3066EC02EF;
-	Tue,  2 Sep 2025 23:18:31 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 02 Sep 2025 23:18:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ewsting.com; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm1; t=1756869511; x=1756955911; bh=C2NgMjoLg+HfZOV56VM3Z
-	r6kcsvwgGg0k3kMWY7pzMw=; b=AFF7ctD5PCnm+ljeAIzg/xqoA4u/sHOl79ee7
-	9d2RDCOaSSbOd4XE3+lOzq8E3yeg1g78hwr0AaoQf/YPwSAoRlJMX0brYsXxTPyi
-	ACSbMSxR8U1q9DOHbHn3TE20GevMVholhOtpy8BHUeLFe9NT/RerUtYurZuwQiC2
-	yG4SZ97nXRSUs/aeKNf65V8ohtmyEboc8mMZdvjirzIPUOiSMeoYEZC7RSNsrn8J
-	YRFfm98Gw6Ys4VBKhu4FMaStu7boprmmPhHJWKpshozDIlrrp3YVov0+ds+fabga
-	r+3kpPg4Ljn05kDjdlSL7w7cXzfBUMk9ObmBPPUfZzJzshyuA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756869511; x=1756955911; bh=C2NgMjoLg+HfZOV56VM3Zr6kcsvwgGg0k3k
-	MWY7pzMw=; b=K26D5+i1pU0f+e2frNHPOhimUvqNAm/eHrhO88wOpsbfkczP6hy
-	2MWdDmlSEkIsseSTHbUDXQ6yx931MnSIiaZ3JWd6srmGmAzIWwZztS3ch/0evdqL
-	lYf24i2f7X3LBqCSAUUyj3v9lSLYfQeB/N4LfzUTne4hpjqB0ZiI9AFxcsKpe88x
-	BPyGmizRA9v4SN7nkMrjofENM9ERnTKbf1VoZUswyZXdW5dT49G9ORcmMHUKr6Nx
-	s1FZavnShdHBv/mbXyJOcrwwuD/gsxs48dvmT9MAtfnNjDniq8GLgUBNLRTvA3H8
-	hZUyLwqa8DQV27/v3m2EUo+J3YlsrYNeQHg==
-X-ME-Sender: <xms:h7O3aNuaBpMWExUj-JHEOJhB00Z1I_d5uypj87wx8oA-rrw20oLOvA>
-    <xme:h7O3aOEMr6iWCDJ7eOgs5SfPgXv8yGGr3QqPXxoSn8NcQiORgJdgNEM88rtqKytxb
-    AKpXtX5z8ls8P4sQ9M>
-X-ME-Received: <xmr:h7O3aOac76Ndc3xOVUDWsaPiC18iXmgwzuvx4AjIxptYog67Eds4wBf1oSpziKXh9bxgiCN1OP2f>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoteeftd
-    duqddtudculdduhedmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
-    rhhomhepvfhomhcukfhnghhlvggshicuoehtohhmsegvfihsthhinhhgrdgtohhmqeenuc
-    ggtffrrghtthgvrhhnpedutdetffdvgfffgedvieefffetjeffudduueetueeigfevteff
-    udehtdekleetleenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthhomhesvgifshhtihhnghdr
-    tghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epthhomhesvgifshhtihhnghdrtghomhdprhgtphhtthhopehlihhnuhigsehrohgvtghk
-    qdhushdrnhgvthdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtth
-    hopegvuhhgvghnvgdrshhhrghlhihgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    lhhinhhugidqhhifmhhonhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
-    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:h7O3aOUvkb9bHNQfz0lLO3_raALnNNYUsF0w6U9qetdCR_jMASxmjg>
-    <xmx:h7O3aElA3jPhWaSMI3Z4UTSX9uih4fYHro5Qy1XhwBuIYjeNDBJrfQ>
-    <xmx:h7O3aJCD7XyztpDP-Lw6AvUakUXFRBdd2sRaP4h6dUfXHE3jfLFhCQ>
-    <xmx:h7O3aDhizJ7b_4nJYjcrPgc-KOn84oCLev29K2KYswNcoUVkbxIVLA>
-    <xmx:h7O3aI3FnqJJgVx7YVmkkRc-cePg7nXMNiDl6QZ_EacQ6A6bTpsuiq_w>
-Feedback-ID: ie4e64890:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 2 Sep 2025 23:18:30 -0400 (EDT)
-From: Tom Ingleby <tom@ewsting.com>
-To: tom@ewsting.com
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Eugene Shalygin <eugene.shalygin@gmail.com>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] hwmon: (asus-ec-sensors) add ROG STRIX Z690-E GAMING WIFI
-Date: Tue,  2 Sep 2025 20:17:56 -0700
-Message-ID: <20250903031800.4173-1-tom@ewsting.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A962F2C187;
+	Wed,  3 Sep 2025 03:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756869761; cv=fail; b=VRvQ90H99w9Wk7RqJuBmie8IPgK0zqTiA16n+1XA9o55+ecP2qWfr/gG+gg01j6qWvOz3LuuthI11KyUuWbPTOgD+fTYrXQm0UwUP8pTAxISGUpj2XDOAUJ6jAm5H4bBZJqwvP548Uooj1mbm9Py+5DKMI1t75Uv8KXW4eL5bFk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756869761; c=relaxed/simple;
+	bh=3eTc8xmKRCNcAcU/qGYj63DPOW8H9DfgHEyz80x4h5M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dKHtxoTD8+Eb0aLeIKhkF1e9fS+nrHRYmLwbclhzmWgKcuJ7hjrVvt4bEEH3l26cdBfvtXjGWfXvLMbcl6/9q1whhP/uEVnO7rU8Oq05gO7v1BBbC8Budt6WWYrm/EAJo2l18xUOWiGy/Xg03xZjbkPzJsZxH1XhMuvbbJF8uEU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=43Ic03p3; arc=fail smtp.client-ip=40.107.101.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k179wubqOoSGqDhvQ0GxfP4AWKgqW29emIPVFk7sAr1Cw/wCOPaufQ9pX4qan93v4dEYDxDzuCN94HfcHBgWHy6EnQo9BcNsSIbybkmceEYO1i7GMSVVecJnvNyZOUsx3YzB6Qqp7E4NocQar95Sr3hJbavMSGQSXAouZ7xfHpxBu/o7LlmjUT4yRrL08SRIezi7yC7aY+MsjrmYVcyzDvR9vJxcf3tTOHROerpiZCXrcmrpFmDvYLJUkfhGVRwu7km7q8gw4Wu9ZnVwENm9/zt50NAcy8DrBJvQFGs5sufAoBMefF8GBeyGZkkdqBKl61EviavmBGAExyYDx+Ry7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S05ZxbBNCOBH1saTQ4LZB6fpLbWTVaN4gYPfuE7Jadk=;
+ b=J5IggB5kZWPUGDoByRPw4bo+YQk5J3FUyiQXvqtsvB9TTTdH9STE0rxkmVuSRJFLK9xiFAaWloRTayfXWBL7YTiNwfuFT0c1XMXGRM9uhNd5nfBH7RQkdcS/ojL65nLjfMdIph0LG+ILZbpRvfsUDSKLBhzNVTBpJ9DZ9bqxgeXDE90VXmje+qTs6Sn8XhphHr8tIWkk3zyn06Mu76Epr/XAeiUeVy63lxl1s1C9b4f96UmkJY4LdARb9R86gtWWks5S+hxw8PJq9HLaMtn8FrkkBss+tQ984G7On3ffbuSwQGXZuitkAFKfU/Sx+ztNuo3CM0t34dKD57ZnPM+vFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S05ZxbBNCOBH1saTQ4LZB6fpLbWTVaN4gYPfuE7Jadk=;
+ b=43Ic03p3HJ3YpJlR2cmNnIJRUBkSjjvV5Bs5lB1DsMFpPJBrG9jdUluKVCa3siSvGvqoLoC5GH8ajzmURik0eFRDCompdsE9pBzcJgCyfM71Vdr90KY78Hvt2Hr8vBBu97gHZEXOmPWNXJD1QHPvn38HPwke0CtZvetmu0jfV1Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
+ by SN7PR12MB7786.namprd12.prod.outlook.com (2603:10b6:806:349::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
+ 2025 03:22:37 +0000
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
+ 03:22:37 +0000
+Message-ID: <2464e531-6ef3-4d27-8053-5e4874a15b8c@amd.com>
+Date: Wed, 3 Sep 2025 11:22:27 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] media: platform: amd: Introduce amd isp4 capture
+ driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
+ sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ sultan@kerneltoast.com, pratap.nirujogi@amd.com, benjamin.chan@amd.com,
+ king.li@amd.com, gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
+ Dominic.Antony@amd.com, mario.limonciello@amd.com, richard.gong@amd.com,
+ anson.tsao@amd.com, Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+References: <20250828100811.95722-1-Bin.Du@amd.com>
+ <20250902124932.GN13448@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: "Du, Bin" <bin.du@amd.com>
+In-Reply-To: <20250902124932.GN13448@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: KL1PR02CA0007.apcprd02.prod.outlook.com
+ (2603:1096:820:c::12) To PH8PR12MB7446.namprd12.prod.outlook.com
+ (2603:10b6:510:216::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|SN7PR12MB7786:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cb4a9ed-c632-44a5-eee9-08ddea992147
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?anF1OC9MZkNCTk4raUhmNjlpTXdFeGRaM0JhTXBGUnk3NEhBWUZmSXo5NW5p?=
+ =?utf-8?B?ZWM2TnZnZkN1SXBOSDJwZzBQd2dJVGNoZWQxL21LOVl0TVdKc0dpZjgrYUxK?=
+ =?utf-8?B?SDRPOXNwWU5PcmgrSERBTmhJUHUxdWtjVy9GbXBkQ1FwSDlVaVpyRm9pVllW?=
+ =?utf-8?B?WGpMN3ZhWGhCZkNmU1YyREs4M2xqanZVVnhrT01qN20ydHQvM3J2dkRTVTNi?=
+ =?utf-8?B?bFhsMS91K1BoOXloNmhyVGJPUUlsS2NNSkUxMlRSUlNNb2ZSakk4a3Nub0dV?=
+ =?utf-8?B?eDJyR2t3Q28xMk10eEZxMFRWQ1RUTHhoTVpjckhXaWhmQzQ4MlFKMVFjcWdu?=
+ =?utf-8?B?NEVaVjhhdldHamZVa1VXb292ZFFic3VJSXFlVzFHL1I0a1p5dmdldmI3YVhm?=
+ =?utf-8?B?SHhPWm1JWXlsUjdDdnZjWDc4WmxCSUx1N2gveWRhTENwVnA3eGl3dUpJclFX?=
+ =?utf-8?B?d1k4cEVWNzdkeWh2R1Q4L3dtOURuWmtQQjBabUN2dXY1WFdQN0U4YXJLS0dC?=
+ =?utf-8?B?Q3JBWXh3WHNhdGdLYTMwMHJwbGNXSGcybUlLNnV5UnRUWlpoeTE4eUp3VW9B?=
+ =?utf-8?B?M1hkZklFRFpZZ2I1Uk85TmdtRCtGZGdLeUNXSjcxVHoyajBsRDd5enNPWXFR?=
+ =?utf-8?B?MHJmSis4eG1wSDRPdzY0OU1yK1k2N0l2ejV2NTJLanVFQjROdzlNa1FJT3pY?=
+ =?utf-8?B?dkNhT2lMQVFUN1JwYUIvTDBGbThhTVA5NTQ2aElwaVhUZStNMXhMb3R5UGZl?=
+ =?utf-8?B?d1FhMlFUUzg5VE0xQjVXczVnOURVS3RidGF1WlZBYlUyb1Baa2ZyRmxsK1Bk?=
+ =?utf-8?B?ZnppVVB3WEZLMW5uSEYvaFVPU3VFaUFnVWt6NmZRN1lJZFZmcmRUQlYxVnJE?=
+ =?utf-8?B?ZUFpNVRMamtXL3ZJOTJDdlRKdEoxb2RqZVlNVStMcE94a0NNMDA4R2lLT0Na?=
+ =?utf-8?B?ckhkZHFaMjBLYkJJem1RSjlSQkhaRlJsYnhzSUg0TUZVTGY2VTZnWUdqNkFU?=
+ =?utf-8?B?eVpWSW9DdEJYMWJzU0I2eHBjVFZxNUdlVStkMkFBcTl5Y2dzUHhISW1tZDM2?=
+ =?utf-8?B?WmVETjlVZW50QjBOTEZmYnhwcStFY1l1dURKVk9hZnk4b29KQnAzcTdWSldj?=
+ =?utf-8?B?d1Zrd3VjdWtOdy9iZ09yMGR0dVFMR1ZXL01hYzBpYlhSNGZ1WElQWnp6Ynp5?=
+ =?utf-8?B?cVl4L2hFQ1V6ZVY0YWxJaEpXUGJoRVJmdzh3Q0Z2MUJ0bVFvSmo5T0tLNkNG?=
+ =?utf-8?B?U1lDc3NmMmwwakowQXd5dXV4V20yZS93d2pkUHNlWlBQOGVrSXZ2NXhsS2M3?=
+ =?utf-8?B?K0xJT0FkNnR5bnMzdkJVeWg3TnJKN09STUlQOXVldE9hamNVa0NOSHlzNlBk?=
+ =?utf-8?B?NUhVTHZJUG5KbTIrdVlSalNEVnloQnN0b2Z5V1crT3hUWVRYYzdPbVR2MXlE?=
+ =?utf-8?B?eUM1RUYyS2pPc1dPbHlQQzc5ZGQyR2M1emRlWk1lNVRSSTdqMVkvd2J4bHZN?=
+ =?utf-8?B?dEtENVNtWFFoMEpVMnpGSFMyWk9rMFhZUVVsRWd1YTdSakJvUCtEbCtTd1B6?=
+ =?utf-8?B?YWFrNlJTSkZ1T0lNYUZLZTRIaGJ4VnZLRmlmRW9iQVcyY08yK1M3K3BKWDEw?=
+ =?utf-8?B?QnJjeVlhZm1UVXZMcy9zV0x3d0ZzUno3MjhZeTRPM2ZoYy9HT3FGVTRFVytx?=
+ =?utf-8?B?dXRuT0FsQ2R6bHJkVkdLejNRdUNSVmJiWHV1Z1AvODM4RVVsdGZOWGE2TGQv?=
+ =?utf-8?B?RW4weTlWbHhvWHFvcHBLcDYyRElFOStFZGtxVXdZM0Zpck9Md0JGVFI5VVlx?=
+ =?utf-8?B?cXYzTHY0eDlIUXpXcXk3cG8zNTR0dnJXVkppKy84bW9WVXpJWlRtUEVyWUxL?=
+ =?utf-8?B?U1Bya3QxS0c3ZFg1ajFTRXVuNFhoSmpEeE9EY2UxT2YxUGxueGMrSWxvUlNj?=
+ =?utf-8?Q?1U+zFYL454Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RzlRY0JlQmRjTm5VOTJBd2daamNqeFBrUEkwcS9wTzZQbURTR3NmRzBRWGZY?=
+ =?utf-8?B?Tmc4U3RUNi9CUk5SMDlQemJvYWsxb1RxZ0luMnRZai9UeHhUSlZBcmNrVlor?=
+ =?utf-8?B?UHZGSGRqeGF1MzFaSDJPeXFKRXFlRXhPY25NckRDMTlySmoyblROc1I3VktR?=
+ =?utf-8?B?SFVHZno1c0c1QW5QVUorNDFOdk9Cci8waWVJcWZUcU9mOCtXNnE0MC9oc2Vj?=
+ =?utf-8?B?ZEExbDFKbXZGR2JlZkdjNXFvRXYwcE93dDg2TnF4aVZYTXh5aS9pdndGQzAx?=
+ =?utf-8?B?dFFhRzJldUZnWWN5M3NWR1NWak4vVUs0V2U4ZFVZNTZIMVVuOHlxMllyZ2F0?=
+ =?utf-8?B?T3M5SDh1eGFzWnZRZG42aWtxa3pnRVZDWDRLNDQ0ejAyaDFxRU4vNUNzcWtU?=
+ =?utf-8?B?NnZzQTIzNkVKQzFRdll1dDdYbWxUQzVjVHExRi9wS1BERlFlMnY1NmJxZE9r?=
+ =?utf-8?B?WGkwSVZuSmo0WUsrWWZzZEFGZ29RYkx2aTlhTGNYZlNhMktIT2JqVXova0ha?=
+ =?utf-8?B?Yy92QVpRbVZYelNaTWZ2dHZYakRKV2N4MjN3RUpPOE5GYnkvNlE3NkI0S3dV?=
+ =?utf-8?B?aGY0R2ZIT2I5Ujh4WldvZDAxMXpYUERsS01uSmtHbmlldG9JV3dDc2JYckNi?=
+ =?utf-8?B?RTlDSlpwT0RQcVN0LzQxdGxwNTZqL2UrbTAvY1BQUXcxRXRzU0dJRHBHemlT?=
+ =?utf-8?B?b0RRNkdQQys1RThEa1IzRGxNQ1RHZFczc0pEbVpSRFVSMUl4TFQvTEMwMjhm?=
+ =?utf-8?B?QUJ1NHptUWtLaUExVmEvS204Uk9XMTZVaHhTN2NnS2tHcWxIMUVRakZYa1VB?=
+ =?utf-8?B?ZnM5V21yT1NQdWxHd1AvL0c4VnZCVnE5alNsZ3o4T1JzK2doMHFKUUN6ODJM?=
+ =?utf-8?B?VmlBRW0xMCtJSlpJRWxid05QNGE2TGpzV2JtNHg4a21PeXk5U0c1ZXZONTNN?=
+ =?utf-8?B?ZTRvajVJZFJlL05LTGNSdE8zWFBDa0lDbzNiR0Q0ajVYK2F1MkNsaTR2M2M3?=
+ =?utf-8?B?eVFGNlpMclN3cmlxSXhOSDJlTTlxWjFaK2tLSWpnUVY4a0k1bEFXNWJxSjNo?=
+ =?utf-8?B?aDk0TmRFQzNLc1Y3Z2ltUmlnT3JRSURVWGZkMEtuZ2J5OUlydkhMb1gzaWNN?=
+ =?utf-8?B?cDJ0M3JlRmcyM1VwWG0rQ21zTDRvdXlFTitiWkdCUTJvSWU3dExBSEQzVHhw?=
+ =?utf-8?B?eUVxTFdWaFFwV1RxWG9uYlpyQ2ExWlpmN2xQQm12aTRSVXRTQ3NJL1I1RmRh?=
+ =?utf-8?B?QjE0Ukd5LzZxK0pCdWl1NTZyYXNVVG1VNkVwNndiZW5IWWxLbkJBRnNWbFV4?=
+ =?utf-8?B?UjBVdFNBd2hhQ1lSL3RQNVZSL0Nnbm9EZ2hnM3BkNEY2MXdnRktyVTVzUHFJ?=
+ =?utf-8?B?MEZRQ3V3TDNGN09uK2V0dnZBbjVsbFpudnpxNzhMRHkxSEMxMStXM2pWdHNB?=
+ =?utf-8?B?MElrT3ROTkxBREdtZTlwSGorYTBycmFZL3o3T0p2WDh3WW5UeURIVEZLaEN3?=
+ =?utf-8?B?RVJLNjVKSk4wN3dCWUhJRzhrUGgwN000T25tZGRYMDhidGpOem00VnNiSE5V?=
+ =?utf-8?B?a1NHS0FuMU9uKzc1WU05d0lFK3FUOFFXSlBlbkVma2NhajY3Sm5SdGFWcmVz?=
+ =?utf-8?B?NGJTZXFhWFVBUE9KOUlZQW1XSnZKNG9QOXpkRTFDUkNMYUlEWHYwWkRBR0xG?=
+ =?utf-8?B?Zm5hbTNyVWVmTXVueU1KeFZjV0U4dTJtaHRZcDRxR0JjNDJyZGlKYkdINTha?=
+ =?utf-8?B?a1RtQk5lcGZjbVkyckVtRTNNNFl6STJRMHZZZXk3WVJXQTk1Wi9IOHhwQU5j?=
+ =?utf-8?B?WTVQbWp4aGJzUnpmWW9vVDhOczJYVEF3WGlIUUNJUFkrNzB0eHdQK2xEeW85?=
+ =?utf-8?B?ZGdDMysyRW8wMmtubHZrditRUlh3dFlPRU1XKzVkVUFXSVJncWFwVFFKd3Yx?=
+ =?utf-8?B?VWtYdkxjaEdUR2Q0UzZWZlJRYjRGVFcvbGFEZ0JEWGp2a1hXdUZXYWFIY3RG?=
+ =?utf-8?B?cXkwbndBZmZNMFl3cWczZVY2d0FPYVNTMXBhNnRHT2xoUk1OYm45L0JTcHVX?=
+ =?utf-8?B?R01qUmorRU9zUmloUWdadjhxK29RbysrUVdpc284ak5MOGhXYTVrVldlcHBY?=
+ =?utf-8?Q?h4AY=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cb4a9ed-c632-44a5-eee9-08ddea992147
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 03:22:36.9666
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lP7oQyCldBNlg99Z95NZxqWlZnFAFU+fLOA9zk1OckFBCKXshf9uai9nnEBLayDZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7786
 
-Add support for the ASUS ROG STRIX Z690-E GAMING WIFI
+Thanks Laurent Pinchart
 
-Signed-off-by: Tom Ingleby <tom@ewsting.com>
----
-v2:
- - Rebased onto hwmon-next
- - Link to v1: https://lore.kernel.org/linux-hwmon/20250902051603.35633-1-tom@ewsting.com/
----
- Documentation/hwmon/asus_ec_sensors.rst | 1 +
- drivers/hwmon/asus-ec-sensors.c         | 8 ++++++++
- 2 files changed, 9 insertions(+)
+On 9/2/2025 8:49 PM, Laurent Pinchart wrote:
+> Hi Bin,
+> 
+> Could you please provide the v4l2-compliance report (please use the
+> very latest version of v4l2-compliance), as well as the output of
+> `media-ctl -p -d /dev/media0` (replacing media0 with the appropriate
+> device) ?
+> 
+> Generally speaking, you should include a cover letter in patch series,
+> and that information can be included in the cover letter.
+> 
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index 12c6b5b266bb..e5052159ffa0 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -36,6 +36,7 @@ Supported boards:
-  * ROG STRIX Z390-F GAMING
-  * ROG STRIX Z490-F GAMING
-  * ROG STRIX Z690-A GAMING WIFI D4
-+ * ROG STRIX Z690-E GAMING WIFI
-  * ROG STRIX Z790-E GAMING WIFI II
-  * ROG STRIX Z790-I GAMING WIFI
-  * ROG ZENITH II EXTREME
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index 09a751b44ee2..728e21fddae8 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -625,6 +625,12 @@ static const struct ec_board_info board_info_strix_z690_a_gaming_wifi_d4 = {
- 	.family = family_intel_600_series,
- };
- 
-+static const struct ec_board_info board_info_strix_z690_e_gaming_wifi = {
-+	.sensors = SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM,
-+	.mutex_path = ASUS_HW_ACCESS_MUTEX_RMTW_ASMX,
-+	.family = family_intel_600_series,
-+};
-+
- static const struct ec_board_info board_info_strix_z790_e_gaming_wifi_ii = {
- 	.sensors = SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
- 		SENSOR_FAN_CPU_OPT,
-@@ -735,6 +741,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_strix_z490_f_gaming),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z690-A GAMING WIFI D4",
- 					&board_info_strix_z690_a_gaming_wifi_d4),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z690-E GAMING WIFI",
-+					&board_info_strix_z690_e_gaming_wifi),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z790-E GAMING WIFI II",
- 					&board_info_strix_z790_e_gaming_wifi_ii),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z790-I GAMING WIFI",
+Yes, there is a cover letter for the patch series 
+https://lore.kernel.org/linux-media/20250828084507.94552-1-Bin.Du@amd.com/, 
+because of some server issue, the cover letter and left patches are sent 
+separately, really sorry for the confusing. It does contain 
+v4l2-compliance report, but the media-ctl output is missing, many thanks 
+for the guide, will include it either in the next patch
+
+> On Thu, Aug 28, 2025 at 06:08:05PM +0800, Bin Du wrote:
+>> AMD isp4 capture is a v4l2 media device which implements media controller
+>> interface. It has one sub-device (AMD ISP4 sub-device) endpoint which can
+>> be connected to a remote CSI2 TX endpoint. It supports only one physical
+>> interface for now. Also add ISP4 driver related entry info into the
+>> MAINTAINERS file
+>>
+>> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+>> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+>> Signed-off-by: Bin Du <Bin.Du@amd.com>
+>> ---
+>>   MAINTAINERS                              |  13 +++
+>>   drivers/media/platform/Kconfig           |   1 +
+>>   drivers/media/platform/Makefile          |   1 +
+>>   drivers/media/platform/amd/Kconfig       |   3 +
+>>   drivers/media/platform/amd/Makefile      |   3 +
+>>   drivers/media/platform/amd/isp4/Kconfig  |  13 +++
+>>   drivers/media/platform/amd/isp4/Makefile |   6 ++
+>>   drivers/media/platform/amd/isp4/isp4.c   | 121 +++++++++++++++++++++++
+>>   drivers/media/platform/amd/isp4/isp4.h   |  24 +++++
+>>   9 files changed, 185 insertions(+)
+>>   create mode 100644 drivers/media/platform/amd/Kconfig
+>>   create mode 100644 drivers/media/platform/amd/Makefile
+>>   create mode 100644 drivers/media/platform/amd/isp4/Kconfig
+>>   create mode 100644 drivers/media/platform/amd/isp4/Makefile
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4.c
+>>   create mode 100644 drivers/media/platform/amd/isp4/isp4.h
+> 
+
 -- 
-2.51.0
+Regards,
+Bin
 
 
