@@ -1,141 +1,108 @@
-Return-Path: <linux-kernel+bounces-798140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA4CB41A06
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB5CB419ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 11:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F8C683AC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7B1564627
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 09:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF3B2F291B;
-	Wed,  3 Sep 2025 09:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8E02F0666;
+	Wed,  3 Sep 2025 09:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ApFFuVFa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FThJAawm"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rm/kZVDI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA502E552;
-	Wed,  3 Sep 2025 09:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D50E552;
+	Wed,  3 Sep 2025 09:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756891644; cv=none; b=GgP0jB/UKE2pYSN8Uu4oC23t4IKXJJ++RrrGoj0qIUPVSJbUtxdJFj97KMRgbU6JN4cNOydE7BHW1B3AIY1e0oul2U8xCNvRxZ6xaYDVOc5Wa3HQb3uItLmGgcoGbRnCOnnwVStcqBkAPXhKiR+bxCSvXCEI49JTU/kzk1uGhE4=
+	t=1756891622; cv=none; b=WhXoegmxQ4P34lV8XbrayJGkAo6Wlr1SxCEskUzylNJHDNCdMhezsTcRmaUaTKHNdZ94PKLFKPkPE6sitXjGI/C2GFWuw/a4FVJEwZNqqBkzRWqKtnc0EgT6znBXK4OgYTvVa4JtC6I26iLBceAStfD2eS27hX8Bf6NIFomOEgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756891644; c=relaxed/simple;
-	bh=QhEhXimFtFfBngVFm910ugOUVk1s9S7/j+4YGhy4XpI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=sbSmcH3RjFRZZcQHt4iAVL68H1fc/dKlP5weAjD65Jimg7OY5+cCABqdmVTSPL8IsHkBREF3sw47OFROr6mAU9H+ODrFsEPKd8qtrzL+hT+Ve64nTeVBaIXxoq50xuE3pa2Fn4PY6tAHg4ugB7L7UTbBEyNTICAyxtQHY2I7Rg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ApFFuVFa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FThJAawm; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 96F131400384;
-	Wed,  3 Sep 2025 05:27:20 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 03 Sep 2025 05:27:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1756891640;
-	 x=1756978040; bh=lyiEjpYfQmC6T9sK1MM5ZWu/jRhXLNqX0wlj6OYgL/Y=; b=
-	ApFFuVFaDmKE2unCWpPSKFoz/3ftN87RwmlMCIHg35X9Zay201nU35beNVkzmL1S
-	Rpf96vBFPrvI/ALLObVA38V3oM2VtNKJHi9nHyc+S8qW33k6E0GKOJX+BawG9ZFy
-	xK1rhsWH6zU7M6nPwy6iCSjBZQ9fpeLb7kNvXPoguGc8+DPPbxkGbSoCZYDIASik
-	j7e2I/Xtf7YfWTSP7iFJYL1QUbO/d8hXi1SpU36k22Dr+FRLyb+MwXXXmX0KlDKd
-	5IaAFv+7JoTVru3PnmrOQqsVHBSU6xO3HZ7Gs+tzheo9+hG3wh65emFannsOiVD6
-	/4zpCXnVzLdcWYps/YuKIw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756891640; x=
-	1756978040; bh=lyiEjpYfQmC6T9sK1MM5ZWu/jRhXLNqX0wlj6OYgL/Y=; b=F
-	ThJAawm1zxT7beyvO7o6OJlv00V2KF2tVgjBeL77+ymv7o21Apzi6YmNQO7hbsDB
-	1qTznuHRgYhjy+1Nu87KAnFR07MGuz+3P058+znfgH53NxqXNbaM8CzF0QaI835V
-	HNwjWZW+xFBVigp+yBD4YtBM2CAwoHw9btDbgGfDVQ8x1Bmy3yd04iAgyUSswBjl
-	lLtkvU0KbeABMGSHzykrhjFD0EpDLxptf8GvbvbGv+rJRD0EUw5EQ0akeFsiM8cA
-	c6bEtSOTWdVRsBBYwxL6XHzs/ao9rmiRBt6B+gxQ/6/y9Squi3J5TnbicAQ3SiQt
-	SFC9Byp6gOnQV2oy4w7pA==
-X-ME-Sender: <xms:9wm4aM0X7yVVL2DN_3bOtvd1CdIAJ19UrnNlYfbtzzQb1Dnk_np6pg>
-    <xme:9wm4aHFsIfUO_ZPUagqhs4wz4tUUJf2hHlpyRXI5jdO8c4rqMFbQ9G_YoGvFSPCM5
-    2iRNHwaVKkfdvaZZbA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvjeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
-    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
-    ephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdeinecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguse
-    grrhhnuggsrdguvgdpnhgspghrtghpthhtohepudehpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheplhhgihhrugifoh
-    hougesghhmrghilhdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjh
-    hirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhord
-    horhhgpdhrtghpthhtohepshgrkhgrrhhirdgrihhluhhssehlihhnuhigrdhinhhtvghl
-    rdgtohhmpdhrtghpthhtoheptghkvggvphgrgiesohhpvghnshhouhhrtggvrdgtihhrrh
-    hushdrtghomh
-X-ME-Proxy: <xmx:9wm4aEeHBhKf_WDMTuJwu4E9oDIBPSNkHvFbznRkQKtN_unUFZaDQw>
-    <xmx:9wm4aBF_wUcRz-KNlaq-ebFMGtUrKuSDGe8QEaXmO1NEGXuisoxzHg>
-    <xmx:9wm4aPurnhj74Msi-V9zeKJjUUEeDtujynbZeOyznefAMQYfduOURg>
-    <xmx:9wm4aLr5dQ9GvURRobTeEWpWqR5nlwI92RGS95gLKY5s_nyi1PoK2w>
-    <xmx:-Am4aNCDOtCfl0s0Kwkzqg_g4G4iwXzeDoAsM4lK1pvJmVrLYnuf_hUm>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D106F700065; Wed,  3 Sep 2025 05:27:19 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1756891622; c=relaxed/simple;
+	bh=jsAVCFDPQiOFXQdLKLJ0b6ZuvBazzsZ9wja7azPBYUg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hrvCT8/tgpsG9wjr69iYMamVwj3jOOKyWQywxlsDmW2X7fnPUXQzx1hcUV0VFH/QAVBHCfu4TmaLna5PYKsFiX/7FLK1V8FhBjP1qVvWOfzB44OawKucKTXpah0fsUxRpWn6qTqCMN6itZPsP5eWhvKT72yg5LdSiXDfgvCjfW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rm/kZVDI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC6DDC4CEF0;
+	Wed,  3 Sep 2025 09:27:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756891621;
+	bh=jsAVCFDPQiOFXQdLKLJ0b6ZuvBazzsZ9wja7azPBYUg=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=Rm/kZVDIm43Wmmq/h2Wnwfa90hdFC8eLLLENR0qRZohabn2LUkA2Jn3LggXeZkbGa
+	 YS43TKeg0UIwRyf7HX38RmHcU7Yisu+EknpuYKQz+I0EfHAqshUwMd91etsLJ5qFGD
+	 xIe75uFP7TV29fOSOXqNztluRIWrGW+K5ZZZUTMPl8+TpX/GnuFo22jx4CrMpeNk7r
+	 XG+QVXCJCdJfWrXEIiR6ZmYoYbmphk5X0Ey3kmaJ3JUF4ZNN6ZnUS87nJ+UKyTNPY4
+	 dTR8EjththvFC+B5OGqlJmXMj04JnPdvR9aYSzZ7FPMlPVyX+QxSoKjVmqkc0iIT9Z
+	 q4AE3JpSb9nOA==
+Message-ID: <6e4dcab9-d3d7-4c8b-99c1-f472bb7caa07@kernel.org>
+Date: Wed, 3 Sep 2025 18:26:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AXipOkXRca9w
-Date: Wed, 03 Sep 2025 11:26:59 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lee Jones" <lee@kernel.org>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- "Jiri Slaby" <jirislaby@kernel.org>,
- "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "Charles Keepax" <ckeepax@opensource.cirrus.com>,
- patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org
-Message-Id: <6ba87b48-4fa5-4a32-9b73-dac6a5e8128f@app.fastmail.com>
-In-Reply-To: <20250903080558.GC2163762@google.com>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-13-arnd@kernel.org>
- <20250902124427.GM2163762@google.com>
- <5a683d99-b323-4ab7-bf0a-e91436ffd301@app.fastmail.com>
- <20250903080558.GC2163762@google.com>
-Subject: Re: [PATCH 12/21] mfd: arizona: make legacy gpiolib interface optional
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+From: Vincent Mailhol <mailhol@kernel.org>
+Subject: Re: [PATCH 00/21] can: netlink: preparation before introduction of
+ CAN XL step 2/2
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+ Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
+ Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250903-canxl-netlink-prep-v1-0-904bd6037cd9@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 3, 2025, at 10:05, Lee Jones wrote:
-> On Tue, 02 Sep 2025, Arnd Bergmann wrote:
+On 03/09/2025 à 17:49, Vincent Mailhol wrote:
 
->> Making those platforms 'select GPIOLIB_LEGACY' is technically
->> incorrect since they don't need the legayc interfaces, but it
->> would be a temporary workaround until wlf_cragg_6410 is
->> gone.
->
-> I've applied the patches for now in the hope that these can get cleaned
-> away at one point.
+(...)
 
-Thanks a lot!
+> The follow up series which introduces CAN XL is nearly completed but
+> will be sent only once this one is approved: one thing at a time, I do
+> not want to overwhelm people (including myself).
 
-Cleaning these up eventually is definition the idea here, hiding
-the interfaces in an #ifdef block should both help catch any
-remaining accidental users, and make it trivial to remove the
-remnants when they are no longer needed.
+If you want a preview of the full CAN XL, you can have a look at my work in
+progress here:
 
-     Arnd
+https://git.kernel.org/pub/scm/linux/kernel/git/mailhol/linux.git/
+log/?h=b4/canxl-netlink
+https://git.kernel.org/pub/scm/linux/kernel/git/mailhol/iproute2-next.git/log/?h=canxl-netlink
+
+The kernel part is nearly completed, but I am still playing some whack-a-mole to
+find potential gaps in the configuration validation. I also need to rewrite or
+fine tune the commit description.
+
+The iproute2 part is still under development. It has the PWM interface but I
+have not added all the control modes yet.
+
+Regardless, the two links above are just an FYI. Beware that there will be some
+random force pushes without any notice. You can play with it but it is
+*not* opened for comments until the preparation series is approved.
+
+Looking forward for your comments on this CAN XL preparation series, it took me
+a fair amount of effort :)
+
+
+Yours sincerely,
+Vincent Mailhol
 
