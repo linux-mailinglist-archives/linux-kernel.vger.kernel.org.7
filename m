@@ -1,148 +1,118 @@
-Return-Path: <linux-kernel+bounces-797695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114C1B413B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD7EB413BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 06:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DF94548207
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D514C5E6735
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 04:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F56A2D481F;
-	Wed,  3 Sep 2025 04:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29302D4B57;
+	Wed,  3 Sep 2025 04:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="seAx/fyD"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFzhnF/g"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C82228726D
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7770028726D;
+	Wed,  3 Sep 2025 04:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756875213; cv=none; b=c27cvegkgSX3gro34mugN11AOI/4o2tu/pKFFDLy7u5d3v7dadWEjTcY0qU+zxvfH4CyM9c0l0PeJLDQDhbFXordcWfAhTDbl+Rn+kJkjzSBisIjbyrKFg69GvV4HtxBMpHEgUVSE1xOtXrw76t+64LRTeOim450t6hO/7sTZlE=
+	t=1756875254; cv=none; b=t/8X2nqDfCJgnfrZyt7EJfN/euw7i/AAmxwk+kEjjTfiRUyw4FVZwRY/oUuHdiNQqRsP4CD1omLvaXuRAkNlelMjY6CuVZzE9f/SbHRifYZE7pqAlxElX+aAHxLKAZoO0UDZjxfpVrJcfRjURfZbvyb8tddxnNJ+SouupJbahZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756875213; c=relaxed/simple;
-	bh=R3DhZ6mfg1h+sJtmD78zCTphaI6OPacxMmjj6u3H1Es=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=g8ihkHsT53yxwTsjHDAXiRTbfjlGIbIOB29OxgSqNZaegX0pGCWio7LfBkEHlqsCP87tyx+UeY39QRW5hcBJGxmx92UIeMAeSEPvlpDO260fy2jnQlc8BUNfaN/3iOiirGCsEXXoYNRIPm2kh3QSLNf0y6i//tNq2cOCuUzVmig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=seAx/fyD; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250903045329epoutp01f924a0685a481c09506e23b00a74b342~hrLHgG9dY1282812828epoutp01z
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 04:53:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250903045329epoutp01f924a0685a481c09506e23b00a74b342~hrLHgG9dY1282812828epoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756875209;
-	bh=21B5w+1lssADMm+k2ZLitCCdTF49rGjLr51Zj+pcqQk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=seAx/fyDbNrkUWlz3g3+ruYtmPX95TLZkHbTtU6AlDU8zT4ftLtFP1g4kQFeM51St
-	 8t3s4tXz80u0mz6v/8qHzPJe6y8mhni0Tfg3JN69oQWnh9FXxVKR91a129QsmewQ42
-	 etTGIkI9e0vQBMXARDTvQkdy27DMf9wumAZpW4tU=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250903045329epcas5p4d0f89b732ea8235d08c55b5a2b041fe0~hrLHJawFo2982929829epcas5p4v;
-	Wed,  3 Sep 2025 04:53:29 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cGqxh3glKz6B9mH; Wed,  3 Sep
-	2025 04:53:28 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250903045327epcas5p2a97e15cae1c6a759a59a6756e4891e92~hrLF9ypcc2711927119epcas5p2y;
-	Wed,  3 Sep 2025 04:53:27 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250903045326epsmtip122cca7fe6eb21dabe242b0fd7239af86~hrLEWBRlQ1713217132epsmtip1K;
-	Wed,  3 Sep 2025 04:53:26 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Ram Kumar Dwivedi'" <quic_rdwivedi@quicinc.com>,
-	<avri.altman@wdc.com>, <bvanassche@acm.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mani@kernel.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-Cc: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-In-Reply-To: <20250902164900.21685-3-quic_rdwivedi@quicinc.com>
-Subject: RE: [PATCH V5 2/4] ufs: ufs-qcom: Remove redundant re-assignment to
- hs_rate
-Date: Wed, 3 Sep 2025 10:23:25 +0530
-Message-ID: <3a9201dc1c8e$affa1c10$0fee5430$@samsung.com>
+	s=arc-20240116; t=1756875254; c=relaxed/simple;
+	bh=Swv/4TkZXPbhwRzMi7ryS+1KbC7OMYHKl+Yq1l5G9Ts=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dnIbjODvBgEMduIKJs6nwAIoegmPJm0F/f/2P2L34y/xDvB1Ga0yRaPJs8WcXLv9784iU11WaS38TfqzpjZ7Y5se7mIfnA7WT2vCPt5AKX5uT6iMBxoNkJ2ECL7FYLLgrWKfYE4FBODJWD8ErS/dEfTb+XSbQ906exNcEBBxjPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFzhnF/g; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f7ab2a84eso2942288e87.1;
+        Tue, 02 Sep 2025 21:54:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756875251; x=1757480051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6rhZh6NZAvU3E4oAEUrNh3pZpIczRmILAh+nP8L+lBY=;
+        b=bFzhnF/gUcYqn7luCvA31cT10+Am1foAWvwj6ZAhgqmD11NaKMZ3YDgNVJFAqhYiEy
+         98cITfi04h6HeHjHXm/S8noqwdde0Ntu2j5JqianYUJj8csjYtfLggTQjnNiJyzovCqe
+         JaTUSUiKckQoe88G7aeCtfoJu2z8NKeJSi25O7a7BZhfgMy2xfc4kin5Qf4v4FTOGbWM
+         k1hHOPxZDzshQtx9c5fIahQvmtw3u3B2iiBVxgMSwvL7XidNSNyHB7M2i4B5DHEmOkJm
+         epr8MBV51VJ7rWKGfBUq/rrpTo3I2gsDd+VdA/YnfLsyH5RPcT9OPJ5PSyxPLJTvoGSI
+         ksRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756875251; x=1757480051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6rhZh6NZAvU3E4oAEUrNh3pZpIczRmILAh+nP8L+lBY=;
+        b=tygdjy+oQD0f7rnEvazzj3vp/I06ouaKXfEQuN8t+PFdnmfiSa70TA7miobwL1rS4U
+         VXh9aUHflnvv8rIuRvI8XkfRKjF7Cgi7V7N9otVWT30nGowok9khHvCNVlmjm0Tv6LJY
+         BcmzEOm8+8OdVIg4PVBPeQSfQrytNAV7LfQwzCm8clm0Vd1NgRNK6mTVUi3j7cgkIWq2
+         fT15/rWooKVttnEfdgj+UBgdhe/+eyKuVXqEWYNoNoiIUPODQbSWxSqYcYjCK2P5xY0G
+         JeucsomUcXrc4PNWCDKWgjXPt3h7CKxvsQyj+C71ExYnCPRCy9UEBp9E4/gFmSENSANG
+         lf0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUNlpRJLiFi5ezPqt+yOWmseZC88cmGL90ML6zi+WR9p5r/yEm571hFUrEieR1l0Cdk6zWbnZpEORyjzw==@vger.kernel.org, AJvYcCUxnW7XSAaMnpPymDGklCOqylZvVVSzHz2NeVHvOzeWJEzFS5ANN4t+W8msTrFHaF7cMqK/2OWgyagg@vger.kernel.org, AJvYcCWn1LTNmw0jb11cDmZ0mI3qh+pyveSyeM5kTrNls5mMKtjox8KR1DarGxoxqvTzto+En633LKI/HLW6O3Eg@vger.kernel.org, AJvYcCWnPTa2hjenE/2lQ+WKzhbpBVVBPensWS2XohCnIR1DfkDIL1SBYotsFrVo9j/VvsaelL3FJ0Tx1s2PCuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvICwLV4+oi5UvI2VUc+uEVvH8xQKHGnm8/joLBvEALXtVT9iq
+	EO8yeSzOIbeBrallYc4rKCLUVRv4Gikq+Pclty/TSuwtnh9Pnvj47kOJLTT9b0pTauyRrpPe3WH
+	29jguTGBJ6rUilyi/roXdAF0tgu5ANus=
+X-Gm-Gg: ASbGncuvHd30EsJlCZ13MenE3ISaauAlH093UlD4Y2N3zDILEwrzgRO1UZVcwe5l7rI
+	iKyBooTDI+lBHEnk81gEj24+gqk3e8kXTXjLaSMsEKw/oQSRCRqECQtimJW86v33oGz8OSfifLn
+	PDosRMkgPUnljW8gI0DS8iUIV8RONNTy0MQBlca3QoKyhaFYDK46rLzZIoQS4Y7HJXHXNTE5HZW
+	1yapA4=
+X-Google-Smtp-Source: AGHT+IEGi+kkNh8GNcjYgR3eKvrJztZkclYUkTZN+8nVDpBeXYf6B0Sso2W51gibGl7augusIWcOVjrQ23sZLefLwIs=
+X-Received: by 2002:a05:6512:eaa:b0:55f:69e2:9ba4 with SMTP id
+ 2adb3069b0e04-55f708ec3afmr4714530e87.31.1756875250354; Tue, 02 Sep 2025
+ 21:54:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQDbtq+ZX022GZqTIcIYj1g81c9NHgHu7PnKAbEBfqC2ZK+0sA==
-Content-Language: en-us
-X-CMS-MailID: 20250903045327epcas5p2a97e15cae1c6a759a59a6756e4891e92
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250902164935epcas5p14139d20b5d385b99edfc0da60865dd98
-References: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
-	<CGME20250902164935epcas5p14139d20b5d385b99edfc0da60865dd98@epcas5p1.samsung.com>
-	<20250902164900.21685-3-quic_rdwivedi@quicinc.com>
+References: <20250812-tegra186-pinctrl-v3-0-115714eeecb1@gmail.com> <CACRpkdb=U=h5OguMuy9G6avCCN6Aem=2_60C+_uBsrY+UvD5ng@mail.gmail.com>
+In-Reply-To: <CACRpkdb=U=h5OguMuy9G6avCCN6Aem=2_60C+_uBsrY+UvD5ng@mail.gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 2 Sep 2025 23:53:59 -0500
+X-Gm-Features: Ac12FXxU2zLX4HVsYIqbcHwIc5qaZuk3xhpWZCE1G7odzshIlHjjs_yRItBNw3Q
+Message-ID: <CALHNRZ-dRvaN_SyHRfAsq2MO-ec8rzkeCy6CtJpYdWTobf1-Wg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] pinctrl: tegra: Add Tegra186 pinmux driver
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 19, 2025 at 6:30=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+>
+> On Tue, Aug 12, 2025 at 11:24=E2=80=AFPM Aaron Kling via B4 Relay
+> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+>
+> > This series adds support for Tegra186 pin control, based on a downstrea=
+m
+> > driver, updated to match the existing Tegra194 driver.
+> >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> (...)
+> > Aaron Kling (3):
+> >       dt-bindings: pinctrl: Document Tegra186 pin controllers
+> >       pinctrl: tegra: Add Tegra186 pinmux driver
+>
+> These two applied to the pin control git tree.
 
+On patch 3, Mikko noted that I accidentally amended the formatting
+changes intended for patch 2 into patch 3. Linus, since you've already
+picked this up to your tree, is it too late to fix this properly in a
+new revision? It doesn't appear to have made it to the main tree yet.
+Or do I need to send in a fixup?
 
-> -----Original Message-----
-> From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> Sent: Tuesday, September 2, 2025 10:19 PM
-> To: alim.akhtar@samsung.com; avri.altman@wdc.com;
-> bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
-> conor+dt@kernel.org; mani@kernel.org;
-> James.Bottomley@HansenPartnership.com; martin.petersen@oracle.com
-> Cc: linux-scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org
-> Subject: [PATCH V5 2/4] ufs: ufs-qcom: Remove redundant re-assignment to
-> hs_rate
-> 
-> Remove the redundant else block that assigns PA_HS_MODE_B to hs_rate,
-> as it is already assigned in ufshcd_init_host_params(). This avoids
-> unnecessary reassignment and prevents overwriting hs_rate when it is
-> explicitly set to a different value.
-> 
-> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> ---
-Better to send non-dependent patches separately.
-
-Feel free to add:
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>  
-
->  drivers/ufs/host/ufs-qcom.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index
-> 9574fdc2bb0f..1a93351fb70e 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct
-> ufs_hba *hba)
->  	 * If the HS-G5 PHY gear is used, update host_params->hs_rate to
-> Rate-A,
->  	 * so that the subsequent power mode change shall stick to Rate-A.
->  	 */
-> -	if (host->hw_ver.major == 0x5) {
-> -		if (host->phy_gear == UFS_HS_G5)
-> -			host_params->hs_rate = PA_HS_MODE_A;
-> -		else
-> -			host_params->hs_rate = PA_HS_MODE_B;
-> -	}
-> +	if (host->hw_ver.major == 0x5 && host->phy_gear == UFS_HS_G5)
-> +		host_params->hs_rate = PA_HS_MODE_A;
-> 
->  	mode = host_params->hs_rate == PA_HS_MODE_B ?
-> PHY_MODE_UFS_HS_B : PHY_MODE_UFS_HS_A;
-> 
-> --
-> 2.50.1
-
-
+Aaron
 
