@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-798625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3820AB4207B
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:08:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3804B42077
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 196504E3A7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C63B0566607
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A183074A7;
-	Wed,  3 Sep 2025 13:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEE0306D5E;
+	Wed,  3 Sep 2025 13:06:28 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E24D304BB6
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DFB30499A
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904788; cv=none; b=YVx43RvowYv4ciw3VG5iISad9TEWux02iNNaZauk9G0m/1JzUPMQt9hC0SnfnjMY1Z32p+WoTgJU/boGmmiSptOVFX+8dcRrA2IL2bBd5AKJ1IuaOi/NmwziaA7ysXtYUOLq0wgPTurQxvActZKKIUz5BNyrX5mfW8Pw7qVlUcI=
+	t=1756904788; cv=none; b=QlXL4DJeGdULL+9vXm2R9aYW0uvA1LVYdbjVHOf2s5hTUJ+0hga6UgBWDUik2rlZ3DGgbtwt4N5pHMvWo0cga4ALMftaO2/vGeJkxRyfLTw5dZJnAL/xvYMcaugfhn9H3jEZVpPSTOaiXsOxDv4gQC/S+zPq7qJne/JaKBzPn/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756904788; c=relaxed/simple;
-	bh=R4rQ0QjdqK60jUB9CHycckkXdaZ+8SOys9bWYtlGlY0=;
+	bh=KdPXw4hyYoeQOfh7XWD/Ki07ADOS8erkRPk2SJ7dy+4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NfO6sbjYXyZQm6u7iPko74tpoasT1djFfeVO2k2TBkaZ/C5tjbz8x9z/AfBoEKInbfGRWbfGcTGjp91KBk98k4Sfkh0ETfqTw2Sz+f7H2NNyv8UsaPLy6YnZgpFyOk0Av7vltduzz3SBoylpt9ExB+yB84ruvfYba5vr/LdaafE=
+	 In-Reply-To:To:Cc; b=jBGTd3SsMacGJLsgvIO+k6HTI7Exzu+bta9G/tVO7o8CMJ7mfUQZ3Iws7E4HBL6EpHE1gp1GWqb0KEqf1jxaQApIdZdPmFemPKiIOil0wsidcwD2aCOYi/NxFaRgRF3RSje5KVkiork2LkzxMTIryz0gAWD1Ecpj4/B1oySaNrw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <m.felsch@pengutronix.de>)
-	id 1utnBl-00006Z-Ns; Wed, 03 Sep 2025 15:06:13 +0200
+	id 1utnBl-00006Z-PY; Wed, 03 Sep 2025 15:06:13 +0200
 From: Marco Felsch <m.felsch@pengutronix.de>
-Date: Wed, 03 Sep 2025 15:06:12 +0200
-Subject: [PATCH 04/11] dmaengine: imx-sdma: make use of devm_kzalloc for
- script_addrs
+Date: Wed, 03 Sep 2025 15:06:13 +0200
+Subject: [PATCH 05/11] dmaengine: imx-sdma: make use of
+ devm_clk_get_prepared()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-v6-16-topic-sdma-v1-4-ac7bab629e8b@pengutronix.de>
+Message-Id: <20250903-v6-16-topic-sdma-v1-5-ac7bab629e8b@pengutronix.de>
 References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
 In-Reply-To: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
 To: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
@@ -60,82 +60,92 @@ X-SA-Exim-Mail-From: m.felsch@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Shuffle the allocation of script_addrs and make use of devm_kzalloc() to
-drop the local error handling as well as the kfree() during the remove.
+Make use of the devm_clk_get_prepared() to cleanup the error handling
+during probe() and to automatically unprepare the clock during remove.
 
 Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 ---
- drivers/dma/imx-sdma.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ drivers/dma/imx-sdma.c | 27 +++++++--------------------
+ 1 file changed, 7 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index a85739d279f51fdb517fce90b3dc67673cf2b56c..b6e649fda71dbce12a2106c94887f90d0aaaf600 100644
+index b6e649fda71dbce12a2106c94887f90d0aaaf600..5a571d3f33158813e0c56484600a49b19a6a72e2 100644
 --- a/drivers/dma/imx-sdma.c
 +++ b/drivers/dma/imx-sdma.c
-@@ -2253,6 +2253,10 @@ static int sdma_probe(struct platform_device *pdev)
- 	if (!sdma)
- 		return -ENOMEM;
+@@ -2270,26 +2270,18 @@ static int sdma_probe(struct platform_device *pdev)
+ 	if (IS_ERR(sdma->regs))
+ 		return PTR_ERR(sdma->regs);
  
-+	sdma->script_addrs = devm_kzalloc(dev, sizeof(*sdma->script_addrs), GFP_KERNEL);
-+	if (!sdma->script_addrs)
-+		return -ENOMEM;
-+
- 	spin_lock_init(&sdma->channel_0_lock);
+-	sdma->clk_ipg = devm_clk_get(dev, "ipg");
++	sdma->clk_ipg = devm_clk_get_prepared(dev, "ipg");
+ 	if (IS_ERR(sdma->clk_ipg))
+ 		return PTR_ERR(sdma->clk_ipg);
  
- 	sdma->dev = dev;
-@@ -2289,12 +2293,6 @@ static int sdma_probe(struct platform_device *pdev)
+-	sdma->clk_ahb = devm_clk_get(dev, "ahb");
++	sdma->clk_ahb = devm_clk_get_prepared(dev, "ahb");
+ 	if (IS_ERR(sdma->clk_ahb))
+ 		return PTR_ERR(sdma->clk_ahb);
+ 
+-	ret = clk_prepare(sdma->clk_ipg);
+-	if (ret)
+-		return ret;
+-
+-	ret = clk_prepare(sdma->clk_ahb);
+-	if (ret)
+-		goto err_clk;
+-
+ 	ret = devm_request_irq(dev, irq, sdma_int_handler, 0,
+ 			       dev_name(dev), sdma);
+ 	if (ret)
+-		goto err_irq;
++		return ret;
  
  	sdma->irq = irq;
  
--	sdma->script_addrs = kzalloc(sizeof(*sdma->script_addrs), GFP_KERNEL);
--	if (!sdma->script_addrs) {
--		ret = -ENOMEM;
--		goto err_irq;
--	}
--
- 	/* initially no scripts available */
- 	saddr_arr = (s32 *)sdma->script_addrs;
- 	for (i = 0; i < sizeof(*sdma->script_addrs) / sizeof(s32); i++)
-@@ -2332,11 +2330,11 @@ static int sdma_probe(struct platform_device *pdev)
+@@ -2330,11 +2322,11 @@ static int sdma_probe(struct platform_device *pdev)
  
  	ret = sdma_init(sdma);
  	if (ret)
--		goto err_init;
-+		goto err_irq;
+-		goto err_irq;
++		return ret;
  
  	ret = sdma_event_remap(sdma);
  	if (ret)
--		goto err_init;
-+		goto err_irq;
+-		goto err_irq;
++		return ret;
  
  	if (sdma->drvdata->script_addrs)
  		sdma_add_scripts(sdma, sdma->drvdata->script_addrs);
-@@ -2365,7 +2363,7 @@ static int sdma_probe(struct platform_device *pdev)
+@@ -2363,7 +2355,7 @@ static int sdma_probe(struct platform_device *pdev)
  	ret = dma_async_device_register(&sdma->dma_device);
  	if (ret) {
  		dev_err(dev, "unable to register\n");
--		goto err_init;
-+		goto err_irq;
+-		goto err_irq;
++		return ret;
  	}
  
  	ret = of_dma_controller_register(np, sdma_xlate, sdma);
-@@ -2401,8 +2399,6 @@ static int sdma_probe(struct platform_device *pdev)
+@@ -2399,10 +2391,7 @@ static int sdma_probe(struct platform_device *pdev)
  
  err_register:
  	dma_async_device_unregister(&sdma->dma_device);
--err_init:
--	kfree(sdma->script_addrs);
- err_irq:
- 	clk_unprepare(sdma->clk_ahb);
- err_clk:
-@@ -2417,7 +2413,6 @@ static void sdma_remove(struct platform_device *pdev)
+-err_irq:
+-	clk_unprepare(sdma->clk_ahb);
+-err_clk:
+-	clk_unprepare(sdma->clk_ipg);
++
+ 	return ret;
+ }
+ 
+@@ -2413,8 +2402,6 @@ static void sdma_remove(struct platform_device *pdev)
  
  	devm_free_irq(&pdev->dev, sdma->irq, sdma);
  	dma_async_device_unregister(&sdma->dma_device);
--	kfree(sdma->script_addrs);
- 	clk_unprepare(sdma->clk_ahb);
- 	clk_unprepare(sdma->clk_ipg);
+-	clk_unprepare(sdma->clk_ahb);
+-	clk_unprepare(sdma->clk_ipg);
  	/* Kill the tasklet */
+ 	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
+ 		struct sdma_channel *sdmac = &sdma->channel[i];
 
 -- 
 2.47.2
