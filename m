@@ -1,94 +1,87 @@
-Return-Path: <linux-kernel+bounces-799448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCECAB42BE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:27:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6415B42BF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 23:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4C7170004
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:27:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8963F582691
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4343E2EB5DC;
-	Wed,  3 Sep 2025 21:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FE02DE1E0;
+	Wed,  3 Sep 2025 21:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIm/iPg6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="pf5rt/2G"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9944A2EB5B7
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 21:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D0E2BE64D;
+	Wed,  3 Sep 2025 21:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756934861; cv=none; b=sOYSsTnXpvnCbfJk8ifdbXdyWvVUMWa3OZg5PNi4XxBNIhYrvMvaSCLvy/52njKK/KSvCllnHPXhhKD2uRGDmjYAF0JI/ayWtkswCJCEJYpG/Dt0dPh6AjxKzDevN6zwJ/GbqGUJ04ocSu1DThhitjVtCNWnrnfJ7pOcH807W90=
+	t=1756935169; cv=none; b=g/XJ6pu8RfWfvYctxFX/9M+7ynKENa1J4OAFpwc6NRAniVDEBlQFuTWaKbfj9cSSMn72NW0gyG7QTAfDP3ygHsFC7N4mAquA0piAhlUt8IkQFc99DLPzqFAGcVn+SCw7UXk5sfTy9bS2M28vGAVzcBUr515tZZnrMkm5cTqwCO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756934861; c=relaxed/simple;
-	bh=LDEavBgpdf6sYM/MgH8ENkdlyZyknViZWzX3GHBJMuc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=nxubSTPu/ThKFIjIumyNRp0ypE9Jz8ioYNOW/1rgsADu6rNzBxb3dAXIJhMoaPAUDQvweDhrIRExNIqJqmYwfu+INY3rHg+kjFHOja+oViD9GNzvw+rHJzfdARFXJxCS0PCS23dhMjEacu4zDvJngaE/LOLESo1ssBp7pPkLAm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIm/iPg6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544CDC4CEE7;
-	Wed,  3 Sep 2025 21:27:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756934861;
-	bh=LDEavBgpdf6sYM/MgH8ENkdlyZyknViZWzX3GHBJMuc=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=KIm/iPg6kx16gIafv7f0CtiOtExR8gU89IBmCE0vnx0Xvs0u3xOEPCjGOrdE6+ahW
-	 3lR/UkRwtu8eEAFVhXHvWkOFeHGw1hWmRJ1oNr6bkdyIgX9avxrPIbaKp2lw1hs+6e
-	 1tY4zESTXlnp78HD0gJmNPgwua6kuwREysr0H98J5/DWOpsof2Rjoyu9kfXgVPZ0y1
-	 rUI3sZkmeC0EUFvHxqpU9zj4QCgLQmYRFjKqDE3soOJe7C+N2x5eDxkn5cC4SBs3Fh
-	 0dt1yvFaIY3jN493HvP8hhxJJqhCHgYvZ7UkzmsSTVzcBUdzxC0e9pajfv7tXdKUkV
-	 SQLF1h/RVIcuw==
+	s=arc-20240116; t=1756935169; c=relaxed/simple;
+	bh=PdLCzF0DByByZ8PGBP+flHVIYL/dRMgBFPRsO0VGpdQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XykLGMKzGLI220g/QZUrL/tM8CWQQcaGPGYOurlZMP7y8UjGDR7uTXTg+dVI3eVvpVG8imOxsamGfQsOM3gX6mcBCdOyj0QbsZZUXLWyxeyQAFE3EvtPXN3r6yS2UFU4muXq9eEjHLGnUhzq1UwJS3rLxZ4OrWpg53HGj7V8ssc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=pf5rt/2G; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2FAF140AE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1756935165; bh=vzyLqfwbWFvCCDvBIM5lXqYLIe2UqeBnDeGY9vGSBjU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=pf5rt/2G1Z1dDdzhLsTe9z+/sU50EdcT9l1PwoOmQzixKmwlEVUXpBApS+xE0qSY9
+	 8VbjujxJwzeBhhGefswI6FiNftVQxm3OE3Xo8/vGddYqwnCO+rjGuvgkXURA/ylQja
+	 sZfXEL5BUgByOYC78fE2NS3gSe1Skkqh8vu97IXyEULAd254qyovCvvLN8PtVtwUkH
+	 ydud0cqlca4Tubvb5jXKyQnlzqLjX7STWYjlhAXf3TqlUuwp7C9aAthaXQkxLEuBLe
+	 VJSKWT58JsxYM9Z0z0FAi37OE+2dYJETzIsBiPanUrV0q2SwvcKa9YfNSekcl0iK8b
+	 XIzYUbSaeTpWg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 2FAF140AE3;
+	Wed,  3 Sep 2025 21:32:45 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Steven Rostedt <rostedt@goodmis.org>, Ryan Chung
+ <seokwoo.chung130@gmail.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/2] trace: minor documentation fixes for clarity and
+In-Reply-To: <20250903155209.058e22d4@batman.local.home>
+References: <20250831101736.11519-1-seokwoo.chung130@gmail.com>
+ <20250902102831.134a26c1@batman.local.home> <aLiH_zWPOsjMRs9V@gmail.com>
+ <20250903155209.058e22d4@batman.local.home>
+Date: Wed, 03 Sep 2025 15:32:44 -0600
+Message-ID: <875xdzql1f.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Sep 2025 23:27:37 +0200
-Message-Id: <DCJHFF0AEDB6.6JMTQPQA5800@kernel.org>
-Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
- teardown"
-Cc: "Lyude Paul" <lyude@redhat.com>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Sumit Semwal"
- <sumit.semwal@linaro.org>, =?utf-8?q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, <dri-devel@lists.freedesktop.org>,
- <nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-To: "Philipp Stanner" <phasta@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250901083107.10206-2-phasta@kernel.org>
-In-Reply-To: <20250901083107.10206-2-phasta@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Mon Sep 1, 2025 at 10:31 AM CEST, Philipp Stanner wrote:
-> This reverts:
->
-> commit bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
-> commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler teardow=
-n")
->
-> from the drm/sched teardown leak fix series:
->
-> https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@kernel.o=
-rg/
->
-> The aforementioned series removed a blocking waitqueue from
-> nouveau_sched_fini(). It was mistakenly assumed that this waitqueue only
-> prevents jobs from leaking, which the series fixed.
->
-> The waitqueue, however, also guarantees that all VM_BIND related jobs
-> are finished in order, cleaning up mappings in the GPU's MMU. These jobs
-> must be executed sequentially. Without the waitqueue, this is no longer
-> guaranteed, because entity and scheduler teardown can race with each
-> other.
->
-> Revert all patches related to the waitqueue removal.
->
-> Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
-> Suggested-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Steven Rostedt <rostedt@goodmis.org> writes:
 
-Applied to drm-misc-fixes, thanks!
+> On Thu, 4 Sep 2025 03:25:03 +0900
+> Ryan Chung <seokwoo.chung130@gmail.com> wrote:
+>
+>> Hi. Thank you for your comment. 
+>> I will make sure to add the change log next time.
+>> Please let me know if I should do it and make a v2. 
+>
+> I already gave an ack. I'll let Jon decided if there should be a v2 or
+> not.
+
+No need - I applied them and applied the tweak directly.
+
+Thanks,
+
+jon
 
