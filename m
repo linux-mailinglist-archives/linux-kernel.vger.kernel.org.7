@@ -1,196 +1,281 @@
-Return-Path: <linux-kernel+bounces-799501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D53B42CC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:29:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D67B42CC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  4 Sep 2025 00:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C10793B77C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:29:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D325F1BC208B
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 22:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8F42EDD69;
-	Wed,  3 Sep 2025 22:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB78F2E8DFC;
+	Wed,  3 Sep 2025 22:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e8MsM39I"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HdofzlLm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A1C2EDD64;
-	Wed,  3 Sep 2025 22:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EA833E7;
+	Wed,  3 Sep 2025 22:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756938589; cv=none; b=XIdFcia1qK9LpNH7u7BJY1q57AjVifUcPVKPc6hxV+MW5EZ+m8yZKohbOHaRLAUqX1z6I9k77MKLRe7XSuK/wtIkehi2poozbQGbT7GBfmacFj8DqgV6siUuRLL39UaAhZOMYeRWz6QKcZZ7Q7f9PcSW01b2xgGgZUJO1ER9kh4=
+	t=1756938646; cv=none; b=Kf0tRCjwmPDbpKMR7gKoGaMRgdzWX+I/+NkCMSI4i24uPuVqxZC3VjI68BQspjwf+VxfITvmOxRx0r8VH2BqEVStqRuOZfdyPhFdUJzUOYmVHSYyIvJPvB5zZFm9eK5CyyPMopSOnZ3fmLnTY3qV9Exon/JywOvfT79S82hRaJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756938589; c=relaxed/simple;
-	bh=PSEVuZUNWlueqS+Ui8pc2fm3qOdMiz+R5imI8e5EXAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ix1Vxbw5ALQbdayYfJ/RbM3iNaiuEAOsfRt+j7qKqjwEPKyeNYpNLM9b6SgtQe68v+3lTgmdvTJapaFCvViuDqoI22PouJxCwvQ6ZGoAjkdwiswtoRSR4FGiELGaq3ijFutcUAwa0otJQ6WJXu4gJ9xVRkdhjUftdhPfNtrRtIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e8MsM39I; arc=none smtp.client-ip=192.198.163.15
+	s=arc-20240116; t=1756938646; c=relaxed/simple;
+	bh=wT0acTdXG8ar1RP1Irfs6y+vc9K+qRE+pEMd+EneUPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oUjX9GtcHcj8Z6FGr054XMEBoAbTbysL04t7j2y2o9rLaNS4m3Ml5yEmf6NRcoYa6XKTgC/rhRKS5wWI/weSz+4r7x7iLBWA9K7jbxzEtCYzhGAXTGZdZXQk25VDT8PRdSNi3wg9vDkiza9mmdyPsA+KsTfRMpgB8zWH7fgncQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HdofzlLm; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756938588; x=1788474588;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PSEVuZUNWlueqS+Ui8pc2fm3qOdMiz+R5imI8e5EXAw=;
-  b=e8MsM39ITKnyhH7t9WtSxSpg+qD7sH6h/RlV+cn406O8eHFBmqRbN/p/
-   9AS7e7rriVKgifKOE0BdplgG7Xfo/DrkCwslTLjcvr8hrKIir32WLOL6J
-   +oJuRlUcq8xKsISbcfc87SY2R5hZrbLl8hcVMqV26ZDlz059/sQWmucB7
-   ghPnd2EMKIsk+PPhME2La3WWjxZ4+g9hZrdrSasHCzBAtFRMJE9p6tDtN
-   apGxnzl8FTybkfYwMT8aEW0dRrV5de0fVJo9J9+MfRKx2YSMnv4AGXkbO
-   gokN2UAEQ3Sj0x36DzhBXA6+AB+jftVTIvivfBxeGJzqg5tBBlB1HV+m0
+  t=1756938644; x=1788474644;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wT0acTdXG8ar1RP1Irfs6y+vc9K+qRE+pEMd+EneUPw=;
+  b=HdofzlLmMixhoV+TOGSVhTrWu7aG2lY6iMf1/kXiVFdaCa+YLp3yKzIw
+   ZFDN35xJZay/y7QNJVQeRQtl3f47I30hJh85PAzo0J/BuqcLaGTG3nX9T
+   +ZJUBzeifAvpPm5pO0H1Q9eQhjetaE1pQsFT/Iw2ewMeZSmfEc7Rqu7S7
+   h1zIhNCcphz/47QvXMYDvS9EVBRaqsTYj1SkdoAR0HsW+lhRdQAyOvW75
+   bALuzJg2r7feXXqtMwZtqtdEkPeRtL3lEZ/f+tNAmknRVALxQX5+6F9WF
+   C8LdiVr95TruvEFSFXAYmXSiCHaRUGXNkikZqspMZouH19f2CsGd8keF3
    Q==;
-X-CSE-ConnectionGUID: ugixRcPGQwehC63L/m7Dlw==
-X-CSE-MsgGUID: WAlhLn7YRmaYYhqKSg/FeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="59378141"
+X-CSE-ConnectionGUID: XWZBUw16RSW8r37khmPYLQ==
+X-CSE-MsgGUID: t5zW2NQ/THO8ywtWb78oGw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="58300567"
 X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
-   d="scan'208";a="59378141"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 15:29:47 -0700
-X-CSE-ConnectionGUID: 40QyShBNR7CMykOLW2VH5Q==
-X-CSE-MsgGUID: mfOXVpV6SzGI80goFY9hpg==
+   d="scan'208";a="58300567"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 15:30:43 -0700
+X-CSE-ConnectionGUID: 431Tpw+jRP6myCs40tbZ5A==
+X-CSE-MsgGUID: s/H2LROrSJWGSbBQlZxG9w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; 
-   d="scan'208";a="172161049"
-Received: from lkp-server02.sh.intel.com (HELO 06ba48ef64e9) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 03 Sep 2025 15:29:43 -0700
-Received: from kbuild by 06ba48ef64e9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1utvyk-0004Tz-1o;
-	Wed, 03 Sep 2025 22:29:33 +0000
-Date: Thu, 4 Sep 2025 06:28:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	Ceclan Dumitru <dumitru.ceclan@analog.com>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: Re: [PATCH v10 2/2] iio: adc: max14001: New driver
-Message-ID: <202509040617.gcAKQNlG-lkp@intel.com>
-References: <f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia@gmail.com>
+   d="scan'208";a="175854278"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.251]) ([10.125.109.251])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2025 15:30:41 -0700
+Message-ID: <7a59101b-4ccd-4d86-b97b-21602ebcd1a5@intel.com>
+Date: Wed, 3 Sep 2025 15:30:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 21/23] CXL/PCI: Introduce CXL uncorrectable protocol
+ error recovery
+To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-22-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250827013539.903682-22-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Marilene,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on d1487b0b78720b86ec2a2ac7acc683ec90627e5b]
+On 8/26/25 6:35 PM, Terry Bowman wrote:
+> Populate the cxl_do_recovery() function with uncorrectable protocol error (UCE)
+> handling. Follow similar design as found in PCIe error driver,
+> pcie_do_recovery(). One difference is cxl_do_recovery() will treat all UCEs
+> as fatal with a kernel panic. This is to prevent corruption on CXL memory.
+> 
+> Introduce cxl_walk_port(). Make this analogous to pci_walk_bridge() but walking
+> CXL ports instead. This will iterate through the CXL topology from the
+> erroring device through the downstream CXL Ports and Endpoints.
+> 
+> Export pci_aer_clear_fatal_status() for CXL to use if a UCE is not found.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> 
+> ---
+> Changes in v10->v11:
+> - pci_ers_merge_results() - Move to earlier patch
+> ---
+>  drivers/cxl/core/port.c |  1 +
+>  drivers/cxl/core/ras.c  | 94 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/pci/pci.h       |  2 -
+>  include/linux/aer.h     |  2 +
+>  4 files changed, 97 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 758fb73374c1..085c8620a797 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -1347,6 +1347,7 @@ struct cxl_port *find_cxl_port(struct device *dport_dev,
+>  	port = __find_cxl_port(&ctx);
+>  	return port;
+>  }
+> +EXPORT_SYMBOL_NS_GPL(find_cxl_port, "CXL");
+>  
+>  static struct cxl_port *find_cxl_port_at(struct cxl_port *parent_port,
+>  					 struct device *dport_dev,
+> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> index 536ca9c815ce..3da675f72616 100644
+> --- a/drivers/cxl/core/ras.c
+> +++ b/drivers/cxl/core/ras.c
+> @@ -6,6 +6,7 @@
+>  #include <cxl/event.h>
+>  #include <cxlmem.h>
+>  #include <cxlpci.h>
+> +#include <cxl.h>
+>  #include "trace.h"
+>  
+>  static void cxl_cper_trace_corr_port_prot_err(struct pci_dev *pdev,
+> @@ -468,8 +469,101 @@ void cxl_endpoint_port_init_ras(struct cxl_port *ep)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
+>  
+> +static int cxl_report_error_detected(struct device *dev, void *data)
+> +{
+> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +	pci_ers_result_t vote, *result = data;
+> +
+> +	guard(device)(dev);
+> +
+> +	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_ENDPOINT)
+> +		vote = cxl_error_detected(dev);
+> +	else
+> +		vote = cxl_port_error_detected(dev);
+> +
+> +	vote = cxl_error_detected(dev);
+> +	*result = pci_ers_merge_result(*result, vote);
+> +
+> +	return 0;
+> +}
+> +
+> +static int match_port_by_parent_dport(struct device *dev, const void *dport_dev)
+> +{
+> +	struct cxl_port *port;
+> +
+> +	if (!is_cxl_port(dev))
+> +		return 0;
+> +
+> +	port = to_cxl_port(dev);
+> +
+> +	return port->parent_dport->dport_dev == dport_dev;
+> +}
+> +
+> +static void cxl_walk_port(struct device *port_dev,
+> +			  int (*cb)(struct device *, void *),
+> +			  void *userdata)
+> +{
+> +	struct cxl_dport *dport = NULL;
+> +	struct cxl_port *port;
+> +	unsigned long index;
+> +
+> +	if (!port_dev)
+> +		return;
+> +
+> +	port = to_cxl_port(port_dev);
+> +	if (port->uport_dev && dev_is_pci(port->uport_dev))
+> +		cb(port->uport_dev, userdata);
+> +
+> +	xa_for_each(&port->dports, index, dport)
+> +	{
+> +		struct device *child_port_dev __free(put_device) =
+> +			bus_find_device(&cxl_bus_type, &port->dev, dport,
+> +					match_port_by_parent_dport);
+> +
+> +		cb(dport->dport_dev, userdata);
+> +
+> +		cxl_walk_port(child_port_dev, cxl_report_error_detected, userdata);
+> +	}
+> +
+> +	if (is_cxl_endpoint(port))
+> +		cb(port->uport_dev->parent, userdata);
+> +}
+> +
+>  static void cxl_do_recovery(struct device *dev)
+>  {
+> +	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +	struct cxl_dport *dport;
+> +	struct cxl_port *port;
+> +
+> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
+> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM)) {
+> +		port = find_cxl_port(&pdev->dev, &dport);
+> +	} else	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM) {
+> +		struct device *port_dev = bus_find_device(&cxl_bus_type, NULL,
+> +							  &pdev->dev, match_uport);
+> +		port = to_cxl_port(port_dev);
+> +	}
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marilene-Andrade-Garcia/dt-bindings-iio-adc-add-max14001/20250902-212046
-base:   d1487b0b78720b86ec2a2ac7acc683ec90627e5b
-patch link:    https://lore.kernel.org/r/f3ea9c127b7836cc978def5d906740c6da1cfb1e.1756816682.git.marilene.agarcia%40gmail.com
-patch subject: [PATCH v10 2/2] iio: adc: max14001: New driver
-config: hexagon-randconfig-r113-20250904 (https://download.01.org/0day-ci/archive/20250904/202509040617.gcAKQNlG-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 2e122990391b2ba062e6308a12cfedf7206270ba)
-reproduce: (https://download.01.org/0day-ci/archive/20250904/202509040617.gcAKQNlG-lkp@intel.com/reproduce)
+Do we not attempt recovery if the device is an endpoint? Is it because it is handled directly by AER callback of the cxl_pci driver? Should endpoint error just not be forwarded from the AER kfifo producer instead of being checked on the consumer end after going through the kfifo mechanism?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509040617.gcAKQNlG-lkp@intel.com/
+DJ
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iio/adc/max14001.c:109:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_tx_buffer @@     got unsigned long @@
-   drivers/iio/adc/max14001.c:109:27: sparse:     expected restricted __be16 [usertype] spi_tx_buffer
-   drivers/iio/adc/max14001.c:109:27: sparse:     got unsigned long
->> drivers/iio/adc/max14001.c:110:29: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned short [usertype] val @@     got restricted __be16 [usertype] spi_tx_buffer @@
-   drivers/iio/adc/max14001.c:110:29: sparse:     expected unsigned short [usertype] val
-   drivers/iio/adc/max14001.c:110:29: sparse:     got restricted __be16 [usertype] spi_tx_buffer
->> drivers/iio/adc/max14001.c:110:29: sparse: sparse: cast from restricted __be16
->> drivers/iio/adc/max14001.c:110:29: sparse: sparse: cast from restricted __be16
->> drivers/iio/adc/max14001.c:110:29: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned short [usertype] __x @@     got restricted __be16 [usertype] @@
-   drivers/iio/adc/max14001.c:110:29: sparse:     expected unsigned short [usertype] __x
-   drivers/iio/adc/max14001.c:110:29: sparse:     got restricted __be16 [usertype]
->> drivers/iio/adc/max14001.c:110:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_tx_buffer @@     got int @@
-   drivers/iio/adc/max14001.c:110:27: sparse:     expected restricted __be16 [usertype] spi_tx_buffer
-   drivers/iio/adc/max14001.c:110:27: sparse:     got int
->> drivers/iio/adc/max14001.c:120:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_rx_buffer @@     got int @@
-   drivers/iio/adc/max14001.c:120:27: sparse:     expected restricted __be16 [usertype] spi_rx_buffer
-   drivers/iio/adc/max14001.c:120:27: sparse:     got int
->> drivers/iio/adc/max14001.c:121:21: sparse: sparse: cast to restricted __be16
->> drivers/iio/adc/max14001.c:121:21: sparse: sparse: restricted __be16 degrades to integer
->> drivers/iio/adc/max14001.c:121:21: sparse: sparse: restricted __be16 degrades to integer
-   drivers/iio/adc/max14001.c:133:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_tx_buffer @@     got unsigned long @@
-   drivers/iio/adc/max14001.c:133:27: sparse:     expected restricted __be16 [usertype] spi_tx_buffer
-   drivers/iio/adc/max14001.c:133:27: sparse:     got unsigned long
-   drivers/iio/adc/max14001.c:136:29: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned short [usertype] val @@     got restricted __be16 [usertype] spi_tx_buffer @@
-   drivers/iio/adc/max14001.c:136:29: sparse:     expected unsigned short [usertype] val
-   drivers/iio/adc/max14001.c:136:29: sparse:     got restricted __be16 [usertype] spi_tx_buffer
-   drivers/iio/adc/max14001.c:136:29: sparse: sparse: cast from restricted __be16
-   drivers/iio/adc/max14001.c:136:29: sparse: sparse: cast from restricted __be16
-   drivers/iio/adc/max14001.c:136:29: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned short [usertype] __x @@     got restricted __be16 [usertype] @@
-   drivers/iio/adc/max14001.c:136:29: sparse:     expected unsigned short [usertype] __x
-   drivers/iio/adc/max14001.c:136:29: sparse:     got restricted __be16 [usertype]
-   drivers/iio/adc/max14001.c:136:27: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] spi_tx_buffer @@     got int @@
-   drivers/iio/adc/max14001.c:136:27: sparse:     expected restricted __be16 [usertype] spi_tx_buffer
-   drivers/iio/adc/max14001.c:136:27: sparse:     got int
+> +
+> +	if (!port)
+> +		return;
+> +
+> +	cxl_walk_port(&port->dev, cxl_report_error_detected, &status);
+> +	if (status == PCI_ERS_RESULT_PANIC)
+> +		panic("CXL cachemem error.");
+> +
+> +	/*
+> +	 * If we have native control of AER, clear error status in the device
+> +	 * that detected the error.  If the platform retained control of AER,
+> +	 * it is responsible for clearing this status.  In that case, the
+> +	 * signaling device may not even be visible to the OS.
+> +	 */
+> +	if (cxl_error_is_native(pdev)) {
+> +		pcie_clear_device_status(pdev);
+> +		pci_aer_clear_nonfatal_status(pdev);
+> +		pci_aer_clear_fatal_status(pdev);
+> +	}
+> +	put_device(&port->dev);
+>  }
+>  
+>  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 69ff7c2d214f..0c4f73dd645f 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -1170,13 +1170,11 @@ static inline void cxl_rch_enable_rcec(struct pci_dev *rcec) { }
+>  
+>  #ifdef CONFIG_CXL_RAS
+>  void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+> -bool cxl_error_is_native(struct pci_dev *dev);
+>  bool is_internal_error(struct aer_err_info *info);
+>  bool is_cxl_error(struct pci_dev *pdev, struct aer_err_info *info);
+>  void cxl_forward_error(struct pci_dev *pdev, struct aer_err_info *info);
+>  #else
+>  static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
+> -static inline bool cxl_error_is_native(struct pci_dev *dev) { return false; }
+>  static inline bool is_internal_error(struct aer_err_info *info) { return false; }
+>  static inline bool is_cxl_error(struct pci_dev *pdev, struct aer_err_info *info) { return false; }
+>  static inline void cxl_forward_error(struct pci_dev *pdev, struct aer_err_info *info) { }
+> diff --git a/include/linux/aer.h b/include/linux/aer.h
+> index 1f79f0be4bf7..751a026fea73 100644
+> --- a/include/linux/aer.h
+> +++ b/include/linux/aer.h
+> @@ -81,10 +81,12 @@ static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
+>  int cxl_proto_err_kfifo_get(struct cxl_proto_err_work_data *wd);
+>  void cxl_register_proto_err_work(struct work_struct *work);
+>  void cxl_unregister_proto_err_work(void);
+> +bool cxl_error_is_native(struct pci_dev *dev);
+>  #else
+>  static inline int cxl_proto_err_kfifo_get(struct cxl_proto_err_work_data *wd) { return 0; }
+>  static inline void cxl_register_proto_err_work(struct work_struct *work) { }
+>  static inline void cxl_unregister_proto_err_work(void) { }
+> +static inline bool cxl_error_is_native(struct pci_dev *dev) { return false; }
+>  #endif
+>  
+>  void pci_print_aer(struct pci_dev *dev, int aer_severity,
 
-vim +109 drivers/iio/adc/max14001.c
-
-    89	
-    90	static int max14001_read(struct max14001_state *st, u16 reg_addr, u16 *reg_data)
-    91	{
-    92		struct spi_transfer xfers[] = {
-    93			{
-    94				.tx_buf = &st->spi_tx_buffer,
-    95				.len = sizeof(st->spi_tx_buffer),
-    96				.cs_change = 1,
-    97			}, {
-    98				.rx_buf = &st->spi_rx_buffer,
-    99				.len = sizeof(st->spi_rx_buffer),
-   100			},
-   101		};
-   102		int ret;
-   103	
-   104		/*
-   105		 * Prepare SPI transmit buffer 16 bit-value big-endian format and
-   106		 * reverses bit order to align with the LSB-first input on SDI port
-   107		 * in order to meet the device communication requirements.
-   108		 */
- > 109		st->spi_tx_buffer = FIELD_PREP(MAX14001_MASK_ADDR, reg_addr);
- > 110		st->spi_tx_buffer = bitrev16(cpu_to_be16(st->spi_tx_buffer));
-   111	
-   112		ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
-   113		if (ret)
-   114			return ret;
-   115	
-   116		/*
-   117		 * Convert received 16-bit value from big-endian to cpu-endian format
-   118		 * and reverses bit order.
-   119		 */
- > 120		st->spi_rx_buffer = bitrev16(be16_to_cpu(st->spi_rx_buffer));
- > 121		*reg_data = FIELD_GET(MAX14001_MASK_DATA, st->spi_rx_buffer);
-   122	
-   123		return 0;
-   124	}
-   125	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
