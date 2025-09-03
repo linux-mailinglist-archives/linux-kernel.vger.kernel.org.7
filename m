@@ -1,186 +1,126 @@
-Return-Path: <linux-kernel+bounces-799071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3051AB4269F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 18:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CE3B425AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE46580BC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35CE567A5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B937B2C08B2;
-	Wed,  3 Sep 2025 16:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA39027FD78;
+	Wed,  3 Sep 2025 15:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="eS31jYrk"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0HiDuSB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE0B2BD015;
-	Wed,  3 Sep 2025 16:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F47F24679F
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756916365; cv=none; b=oKW8geNGv+AADKSMnwds0zV4s4WPswqavGefgdog0AGeuymY7QXFxX3wcQOOX9ar0HMKMnsJQfDWm1SGvH6bHBP19XUFpLis5Ap8dGBDze5fltJ7RvumDf0la3FfkdkDS5bAn3a5n2sjVylePrWbIVBquw3g51ZKHntBSrmGj0U=
+	t=1756913889; cv=none; b=ApN7X3K1CYCiZgH6t/pHDT7NNPfnpyWzMDKA4IsRtyK1iP3K+uE60SBPnzmaiNu8jWq+p2XMo1/qo7omSlJJFw3BhsnOzt4M9jUpjq4+s9bBCBtuMtwJ4ZsXZyCPXA8gH1l5BCvwBzSgvO4ky8mv+QVxEwz6+aj+hYI1DtWVses=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756916365; c=relaxed/simple;
-	bh=nJLUtoBhFMwhPe7EM+OsdriyrpDoWVFsUNUD8cBC0Ec=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=Bv3bMZPQbwBtfStdN3v0Oah+R7jsBtqyqzClSRTojOaD2Wd+sJIT4SwNjspAWsqwVUhGhYu840zMMWs1Yjr5hDBhgvXzup6TbXz4EDRESMMHTxz+wHUCdqx8nBJkPYmhFJs9SO8zh5Lj7oPoCzarEnQyq1pynoq/FONnhWv/99Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=eS31jYrk; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=AjeNXlDXHIZuFoDWq8mczdVnxoiHEn6n2ReMUKbxEmI=; b=eS31jYrkCqgk2rvfzA+7Zspq5o
-	JWlDn286LoZzyCNB+IMD8OnV/QvCcTiYaItQOfsBKqnTA4Fheo0RaiP496aNPZ6/GFVgn1xr5NP5p
-	YE0CaULC6D81mTRV3jxEyUkqRcANHw3z5BXV45Fm4jDQUVTQqLwTLWIc+gZoYZGhycrI=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:57240 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1utpYC-0008U6-JZ; Wed, 03 Sep 2025 11:37:33 -0400
-Date: Wed, 3 Sep 2025 11:37:31 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Tapio Reijonen <tapio.reijonen@vaisala.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, Hugo
- Villeneuve <hvilleneuve@dimonoff.com>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Message-Id: <20250903113731.24f5ac2499e92246bc0c93eb@hugovil.com>
-In-Reply-To: <20250903-master-max310x-improve-interrupt-handling-v1-1-bfb44829e760@vaisala.com>
-References: <20250903-master-max310x-improve-interrupt-handling-v1-1-bfb44829e760@vaisala.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756913889; c=relaxed/simple;
+	bh=kPZ/HOC3SKupxm3BQU2AcDhJjHorr5M7H7D+uIJksLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6cSXxcc/LBVkocvHWzapmndxCYnfQGQ8018wo4zOPIM2UM8w1VVVDq2sK9MmMo3aLZQ++AKK052sOpGcgc96ZTtgk+q33eValGOYgQb3EsHH4o8QdLJsFOs/OmZAzPPPkgTlfx1l6SH6Zu9AbICZ3P+B9YDtouQMD2GZtnOJi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0HiDuSB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73FDC4CEE7;
+	Wed,  3 Sep 2025 15:38:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756913888;
+	bh=kPZ/HOC3SKupxm3BQU2AcDhJjHorr5M7H7D+uIJksLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B0HiDuSBWD6RKvzMmsTgK0+L/QNoNUgURaef943FSpHKL181/qC/AAadQ1B+rFsgs
+	 bwFMu4c8jwYCeyd+Fe+h2ZSm0HaPkWxMk850oIpz+Tn44thrU730jQE7Xup+QiRPXc
+	 omi5lR254h3+m2tM/5haS2LtmkQi8QxwD+6XKlU81wmasOw6Gz7U6QCsG35fqnPCEA
+	 FnH4Eqwg5SHGWjtKVULPk5EwlN0utT1jiOOKyQURj0czHTrIGS+iuhH+A4zeOB8tCl
+	 rEwfZ1D3rZymmU/+l5QGmboLmcPDfdrmcafF6vaDmvA/bsnItmFaGjM7jVHmnRRObD
+	 7J1vbX8rxRI9g==
+Date: Wed, 3 Sep 2025 18:38:00 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
+	Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>, kexec@lists.infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] kho: add support for preserving vmalloc allocations
+Message-ID: <aLhg2Jli0KUe-CXC@kernel.org>
+References: <20250903063018.3346652-1-rppt@kernel.org>
+ <20250903063018.3346652-2-rppt@kernel.org>
+ <20250903125620.GG470103@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -1.6 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH] serial: max310x: improve interrupt handling
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250903125620.GG470103@nvidia.com>
 
-Hi,
-
-On Wed, 03 Sep 2025 09:23:04 +0000
-Tapio Reijonen <tapio.reijonen@vaisala.com> wrote:
-
-> When there is a heavy load of receiving characters to all
-> four UART's, the warning 'Hardware RX FIFO overrun' is
-> sometimes detected.
-> The current implementation always service first UART3 until
-> no more interrupt and then service another UARTs.
-
-To improve clarity and reduce confusion, maybe change to
-something like:
-
-... always service first the highest UART until
-no more interrupt and then service another UART (ex: UART3 will be
-serviced for as long as there are interrupts for it, then UART2, etc).
-
-
+On Wed, Sep 03, 2025 at 09:56:20AM -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 03, 2025 at 09:30:17AM +0300, Mike Rapoport wrote:
+> > +int kho_preserve_vmalloc(void *ptr, phys_addr_t *preservation)
+> > +{
+> > +	struct kho_vmalloc_chunk *chunk, *first_chunk;
+> > +	struct vm_struct *vm = find_vm_area(ptr);
+> > +	int err;
+> > +
+> > +	if (!vm)
+> > +		return -EINVAL;
+> > +
+> > +	/* we don't support HUGE_VMAP yet */
+> > +	if (get_vm_area_page_order(vm))
+> > +		return -EOPNOTSUPP;
 > 
-> This commit improve interrupt service routine to handle all
-> interrupt sources, e.g. UARTs when a global IRQ is detected.
+> This is a compatability problem.. Should have some way to indicate
+> that future kernels have an incompatible serialization so restore can
+> fail..
 
-The current code already handle all interrupt sources. What you
-maybe could be saying is that you handle all individual interrupt
-sources before reading the global IRQ register again?
+We can add version or flags to kho_vmalloc_chunk, e.g. make it
 
-You could also add in your commit message that your modification has the
-nice side-effect of improving the efficiency of the driver by reducing
-the number of reads of the global IRQ register.
+struct kho_vmalloc_hdr {
+	DECLARE_KHOSER_PTR(next, struct kho_vmalloc_chunk *);
+	unsigned int total_pages;	/* only valid in the first chunk */
+	unsigned short version;		/* only valid in the first chunk */
+	unsigned short num_elms;
+};
 
+I'm thinking about actually adding support for HUGE_VMAP for the next
+resping, but version/flags seems useful anyway.
 
+> > +	chunk = new_vmalloc_chunk(NULL);
+> > +	if (!chunk)
+> > +		return -ENOMEM;
+> > +	first_chunk = chunk;
+> > +	first_chunk->hdr.total_pages = vm->nr_pages;
+> > +
+> > +	for (int i = 0; i < vm->nr_pages; i++) {
+> > +		phys_addr_t phys = page_to_phys(vm->pages[i]);
+> > +
+> > +		err = kho_preserve_phys(phys, PAGE_SIZE);
 > 
-> Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
-> ---
->  drivers/tty/serial/max310x.c | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-> index ce260e9949c3c268e706b2615d6fc01adc21e49b..3234ed7c688ff423d25a007ed8b938b249ae0b82 100644
-> --- a/drivers/tty/serial/max310x.c
-> +++ b/drivers/tty/serial/max310x.c
-> @@ -824,15 +824,26 @@ static irqreturn_t max310x_ist(int irq, void *dev_id)
->  
->  	if (s->devtype->nr > 1) {
->  		do {
-> -			unsigned int val = ~0;
-> +			unsigned int val;
-> +			unsigned int global_irq = ~0;
-> +			int port;
->  
->  			WARN_ON_ONCE(regmap_read(s->regmap,
-> -						 MAX310X_GLOBALIRQ_REG, &val));
-> -			val = ((1 << s->devtype->nr) - 1) & ~val;
-> +				MAX310X_GLOBALIRQ_REG, &global_irq));
+> Don't call kho_preserve_phy if you already have a page!
 
-You changed the indentation here...
+Ok, I'll add kho_preserve_page() ;-P.
 
-> +
-> +			val = ((1 << s->devtype->nr) - 1) & ~global_irq;
-> +
->  			if (!val)
->  				break;
-> -			if (max310x_port_irq(s, fls(val) - 1) == IRQ_HANDLED)
-> -				handled = true;
-> +
-> +			do {
-> +				port = fls(val) - 1;
-> +				if (max310x_port_irq(s, port) == IRQ_HANDLED)
-> +					handled = true;
-> +
-> +				global_irq |= 1 << port;
-> +				val = ((1 << s->devtype->nr) - 1) & ~global_irq;
-> +			} while (val);
->  		} while (1);
->  	} else {
->  		if (max310x_port_irq(s, 0) == IRQ_HANDLED)
+Now seriously, by no means this is a folio, so it's either
+kho_preserve_phys() or __kho_preserve_order(). I don't mind switching to
+latter, but I really see no point doing it.
 
-Maybe you could simplify (and improve readability) with this instead:
+> We should be getting rid of kho_preserve_phys() :(
 
----
-                        val = ((1 << s->devtype->nr) - 1) & ~val;
-                        if (!val)
-                                break;
+How do you suggest to preserve memblock?
 
--                       if (max310x_port_irq(s, fls(val) - 1) == IRQ_HANDLED)
--                               handled = true;
-+
-+                       do {
-+                               unsigned int channel;
-+
-+                               channel = fls(val) - 1;
-+
-+                               if (max310x_port_irq(s, channel) == IRQ_HANDLED)
-+                                       handled = true;
-+
-+                               val &= ~(1 << channel);
-+                       } while (val);
----
-
-> 
-> ---
-> base-commit: c8bc81a52d5a2ac2e4b257ae123677cf94112755
-> change-id: 20250903-master-max310x-improve-interrupt-handling-aa22b7ba1c1d
-> 
-> Best regards,
-> -- 
-> Tapio Reijonen <tapio.reijonen@vaisala.com>
-> 
-> 
-> 
+> Jason
 
 -- 
-Hugo Villeneuve
+Sincerely yours,
+Mike.
 
