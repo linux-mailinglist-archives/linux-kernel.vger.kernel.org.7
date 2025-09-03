@@ -1,171 +1,158 @@
-Return-Path: <linux-kernel+bounces-798294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68741B41BED
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:34:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C83C6B41BF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013D0682E4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E781C541808
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 10:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44DB2EB5AF;
-	Wed,  3 Sep 2025 10:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB032F1FCF;
+	Wed,  3 Sep 2025 10:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pNsa3txk"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="S4+HAp7P"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6E727702B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56A02EA483
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 10:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756895645; cv=none; b=PkuQXW0QPthq4hNHwRIm5Isck3cSHAJ6Gs/4LGPP1rHxqBWn4w1K5Sn1T5BMDONDBpqC9ghswFUI2BFdZsONIHCXbLYoDCeRVNxLChG3uCXqctl/0ipMS6D5mr1q/CfSKGG3gQYN2xO0k61JB5x+HNW7UeIgFepn+QmX0G+4iUQ=
+	t=1756895655; cv=none; b=VyC07ZSiLJQy2WUL8M4buEihjwWEOVkJcJJS6b7SQsj/Ktx2FDscxNHx45A4LXQzjNN7WVO1BwGIScEGKw0zjSNR7+Drdu+iCDWSPeBGDiwc5tAGhzHQ0xLkhJeWre1hvVBFL52bfJgQ7Xd9T4y6geJXtC4PLzgb35vqYQNhTjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756895645; c=relaxed/simple;
-	bh=HlSQD/VcE7uTwqqaKdqNmC0YhBGljeq3jMyA/8WahEc=;
+	s=arc-20240116; t=1756895655; c=relaxed/simple;
+	bh=AVAB3SPxcLA6cClsIyttHLnupSB+I6SCJnu7WODswL8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EtHNV5dMqydfl2yPTHGLaTibvwPTWXqLJgpWH2Rqf6OCH2BoZDn2E2c4a4PNTUvMLO4xmr2Gnew+l4hzWOZOqoXezwxTVLkZdezHysaoHOfT70ztmtOlKvWyMfNNOxHy52C5CvOp+Q5aXyolT6QUXANIUyLnHLtbaL/gDx9BQk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pNsa3txk; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-723ae0bb4e4so16669667b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:34:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=L93Suj3KMePXhwbKJzbdTHPhBmrCg/01j9heYFALnQ4E00rWap0XbZHWmlSyNUmkTFIrIfQk6NUVDcwzhQJMXb2o52VV1hvrx9vYLRSGbp12nXnZvluBJjFyHUQTJZTtfZojyUW3fFwHG5fHzVQG8x6caY+iFxTZ2BDPZmrvfQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=S4+HAp7P; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-336cee72f40so33862271fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:34:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756895642; x=1757500442; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z0EtKdPy1PWYpoHwEbU4TADx/7jEVJjgADRxCA2SS1U=;
-        b=pNsa3txkMPk0JmkBQ6ost49GtUPwfNYEMlQLerpJLPJJuCY/OBJDQWrclT4nskjZKJ
-         /GRSZPSVi067JuT9kt7hyNPv9AnHATRcVhY82Q7MV/30LnpSzWRbRjf/eEyOvz9Rc3vF
-         QV707A1f1fZQ1H9CVIMXq90GDOLk3Z/xkI4GM6UHooTLGrG3RtVY4krgqoVQ0Q6nHdRg
-         kQne6po2Vmg4Sjt9dYg82OByagYfX3fvTx5vOpohjri1dw9cE4rf3ZKtA3tAlM98WzAA
-         rvXfGictDga7SPLbdJ1rn+kWlwkhFSKjBAYQq9sgsQinC4r7xAARoY6JtibDsXqAlRA2
-         2wWA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756895652; x=1757500452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AVAB3SPxcLA6cClsIyttHLnupSB+I6SCJnu7WODswL8=;
+        b=S4+HAp7PfnL+7xT3FUacCfdWe4tC9q7HLKsUbv5UGPDfDaAYUtVsjTDSx3VCkMGHdx
+         gn5lEhOcgYEjdftLOzcobBZzTHfb1cq/4Fj6sSHClvRBh0lEB/NHSCOjsWwlCgD932dz
+         gxNGvfqPGarlOwH8J/5fZdSoyaLy7C7OTULWZbdXui9IMOM+PRiXLCLngjMmQCQ6x2Zp
+         WBEjHaf5unGtOE0boSEf2Na5o8rP2ZvithVHAlnQ6WOIrndRC+2L8IWJ/DemcHWBkDRI
+         pVYV9JNhY8gb/3Tzeuljoteyy/ZR03rTke7wP+AdAgOxK8ZmtkrAu04ZH5dj01swXs4o
+         7GDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756895642; x=1757500442;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z0EtKdPy1PWYpoHwEbU4TADx/7jEVJjgADRxCA2SS1U=;
-        b=Lc9YdLb9vybZS1o3ljqaXLxojh4hschtRd/ecrGx/yMEVZgvgd0HR41j1PbG84S9GA
-         qq5YTpIrjEIsq/M1yrDJ7qmP/cbAF9PXHGvcG45YerrA/UUzS62Y9avlP1xJb7iedkkc
-         sG8ChfDQbSZnyTcVFhLKNKaO2puFn5oQF0TZOg/Qn81VTFP6uAxaggwIJ/dwrFDnmJpx
-         IEFUn1rpS1vKBU41LPlSrWgy0lf6RYVRI3U3cV+h7vjDQG9QI78ReO+Ld4GPkH3qEkpp
-         AS3cwGD2XV3OFtk8SHHdygrNyXy8GuxrhFyFgXJQL5ZUYZlChvM1ALx3aBPhdzxDnYyu
-         mAKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnghupJ495R/DYjGH5Z+8PY9I15myltbfKQdmz8rTHDIVfZKoDMYd2z09Fs/rY/LEyzAp1/jg14NGOq0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOG78E+/vGCyAR66vGudaIZbJ577HxuyRYzPGpNKl4JFi1P86G
-	5CQjJOcMr957smW14Xp8OzWAwVdyvTi4lW1z7NNlVir8IMnkSoTXaJyOYc87Sv3wttSvn1iW6Ly
-	xUrh6sTo/x1nb00lQxfwLOKrFM2irRZ3Ja5tgderw+w==
-X-Gm-Gg: ASbGncu+5benKelzeZNJTTEakQdoXdAsW2KWQ8fbSNBLWV1DRbeH2+tVTXQlF4GEkY7
-	74gknrQ+JTKdEDXBkxSqcdhlsUvwnDgbap4e1unrqcyZKf89WCB3froNl2QUB6Xj6HxaiPeQ1u3
-	99/uUAjGD5Lzanuqd15oleg8yymsFkTEpZ7AEQvtth7lSWf/AcyFfnJnwtNCJoR2YELKlWhIHfo
-	Hq1cq1VOATiiWQN7Yk=
-X-Google-Smtp-Source: AGHT+IFfKLxV9tyzOQnEikdZaazb4yoGYzUJMKmsuTzVmQ83iHm/xqY/KhFL0iCqSoFlmWwQqKTl/pZIy8pjx3bEoRs=
-X-Received: by 2002:a05:690c:9992:b0:71f:b944:1015 with SMTP id
- 00721157ae682-7227656cde8mr166303267b3.48.1756895642243; Wed, 03 Sep 2025
- 03:34:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756895652; x=1757500452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AVAB3SPxcLA6cClsIyttHLnupSB+I6SCJnu7WODswL8=;
+        b=Bxvuuf8ae3U1OidkwL60oqzfDQ4LBL7yQRWYDsnlSgJUooMKmBH+QFu25OIVYwoVtr
+         aL/+58aJIqXoif6AU8NkZo44x2ZIAUPlxTGjgcpsyJI3Rjv2Kcap0sPsmQIesH8wnAp9
+         XcP2/so7XlfNyiH39Hvs9oFgxg4kzgOy+HmIVN5yi34skHxKSZEjLRKvFmOeX3QcwtFz
+         Kb0Qa3dYiL5E9WFvn71hhFMe4uKiLZNHVqIY8xrv++xoP/QP+Z/fXC7/ZnOTNNF+REkS
+         MullrtoB0OzDrMj6fHUDx9LBBLNXTvLeWNFeEKY+A19JNQNc7XX7DM0EWA7ibwWLlSvh
+         XCcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGhvwmhpe7b1GBe8EEDHk9XGHm3W6EFWrSdwpVTnac6p6kaUzQaImF+wLptkNIjM1xTsNHTviwR3KtyhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKOM9mDvjXo+DpHbOSjk1Ese49zRo/ZMGUIWJ02Jo6cwNBo6j/
+	/QKRi0jimUNuBhbkZL15oc2j6NcFqRoVKwNPnqarkXXwAQhKbqIew2Hkr6OqeVY9VqJgYVQfrKe
+	tH3o3FwO4fQo3wzJO+1Ju2LdxiyLXClmNgFyKWv+3tg==
+X-Gm-Gg: ASbGnct1cbQuzE1RclIdK8OrTfgTZmPI0nSLcEsIqQ3Ni7uvb+nTBvVTd0b4G8Po4nn
+	unY3Vd0bqo72OMkGHWomrlWaJ5KYHMWynbXKUeROerPzxu0ugQ2XwPE+nipJ86x+iqGZ7/Aa6Be
+	Kpl1+AnZa/6uxDz/2dZr2UISZqGhRpEI5C5KlR391DmMmO2KBU6uv9U/ZuFdCgiAUFHXg/Tv5Fk
+	zvfgqAKhDJyqfoyjCAf3EIEyOR2QZBgPSKPXYwXibgAfPhgdg==
+X-Google-Smtp-Source: AGHT+IGoaflavucoSX1WEgopzKKcdrinu9KA/FkcvAd1RueKhs+WVyWiixXNe2xfLOG4W6BWq8swdn67NOOrJeNUBug=
+X-Received: by 2002:a05:651c:40d5:b0:336:8fa8:e03c with SMTP id
+ 38308e7fff4ca-336caf36f96mr24077381fa.31.1756895651781; Wed, 03 Sep 2025
+ 03:34:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org> <97231ac9-5cde-49bf-931b-d5baf6d2d2d1@ti.com>
-In-Reply-To: <97231ac9-5cde-49bf-931b-d5baf6d2d2d1@ti.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 3 Sep 2025 12:33:25 +0200
-X-Gm-Features: Ac12FXxVFiRwM0u9ulXeQmiXI7_oecrVOWSFM0H3YtDXDfcwWKQ-S2uZTHsACkk
-Message-ID: <CAPDyKFr8AYuS2aEVs8X2As1NzXnbea4rPLKiF5=fKjq=PAeZgg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
-To: Sebin Francis <sebin.francis@ti.com>, Saravana Kannan <saravanak@google.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <20250902-pinctrl-gpio-pinfuncs-v7-0-bb091daedc52@linaro.org>
+ <20250902-pinctrl-gpio-pinfuncs-v7-16-bb091daedc52@linaro.org>
+ <aLcBcjvMbrxoDYoC@smile.fi.intel.com> <CAMRc=MfcFMgkNqWNZV5o0NxkAvxBTjC3vv56Cr98n0R2CkxuPw@mail.gmail.com>
+ <CAHp75VcgaqnDrPH27wxfgyK6zz4RAKJQB0r7G2vbTONTxkEzTw@mail.gmail.com>
+ <CAMRc=MfhhX2NJ0fhhX8u+7=sdyUy0G27n7caGf9=TpHxUDJVxg@mail.gmail.com> <aLgW7J-j4nn0u8uo@smile.fi.intel.com>
+In-Reply-To: <aLgW7J-j4nn0u8uo@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 3 Sep 2025 12:34:00 +0200
+X-Gm-Features: Ac12FXzivaaUXd08fTdsNp_v1t2v6QHg93m25vorvolXWMo4UMb6c0rxngkBDGg
+Message-ID: <CAMRc=MdA21fwnamymG6YhqBjKDso_nJs_4xefPNONQNfEcPHXA@mail.gmail.com>
+Subject: Re: [PATCH v7 16/16] pinctrl: qcom: make the pinmuxing strict
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mips@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 3 Sept 2025 at 09:39, Sebin Francis <sebin.francis@ti.com> wrote:
+On Wed, Sep 3, 2025 at 12:22=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
-> Hi Ulf,
+> On Wed, Sep 03, 2025 at 09:33:34AM +0200, Bartosz Golaszewski wrote:
+> > On Tue, Sep 2, 2025 at 10:46=E2=80=AFPM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Tue, Sep 2, 2025 at 8:42=E2=80=AFPM Bartosz Golaszewski <brgl@bgde=
+v.pl> wrote:
+> > > > On Tue, Sep 2, 2025 at 4:38=E2=80=AFPM Andy Shevchenko
+> > > > <andriy.shevchenko@intel.com> wrote:
+> > > > > On Tue, Sep 02, 2025 at 01:59:25PM +0200, Bartosz Golaszewski wro=
+te:
 >
-> On 01/07/25 17:17, Ulf Hansson wrote:
-> > Changes in v3:
-> >       - Added a couple of patches to adress problems on some Renesas
-> >       platforms. Thanks Geert and Tomi for helping out!
-> >       - Adressed a few comments from Saravanna and Konrad.
-> >       - Added some tested-by tags.
+> ...
+>
+> > > > > > The strict flag in struct pinmux_ops disallows the usage of the=
+ same pin
+> > > > > > as a GPIO and for another function. Without it, a rouge user-sp=
+ace
+> > > > > > process with enough privileges (or even a buggy driver) can req=
+uest a
+> > > > > > used pin as GPIO and drive it, potentially confusing devices or=
+ even
+> > > > > > crashing the system. Set it globally for all pinctrl-msm users.
+> > > > >
+> > > > > How does this keep (or allow) I=C2=B2C generic recovery mechanism=
+ to work?
 > >
-> > Changes in v2:
-> >       - Well, quite a lot as I discovered various problems when doing
-> >       additional testing of corner-case. I suggest re-review from scratch,
-> >       even if I decided to keep some reviewed-by tags.
-> >       - Added patches to allow some drivers that needs to align or opt-out
-> >       from the new common behaviour in genpd.
-> >
-> > If a PM domain (genpd) is powered-on during boot, there is probably a good
-> > reason for it. Therefore it's known to be a bad idea to allow such genpd to be
-> > powered-off before all of its consumer devices have been probed. This series
-> > intends to fix this problem.
-> >
-> > We have been discussing these issues at LKML and at various Linux-conferences
-> > in the past. I have therefore tried to include the people I can recall being
-> > involved, but I may have forgotten some (my apologies), feel free to loop them
-> > in.
-> > > I have tested this with QEMU with a bunch of local test-drivers and
-> DT nodes.
-> > Let me know if you want me to share this code too.
-> >
-> > Please help review and test!
+> > Anyway, what is your point? I don't think it has any impact on this.
 >
-> During testing on a TI platform, I observed new kernel warnings after
-> applying this patch series:
+> If we have a group of pins that are marked as I=C2=B2C, and we want to us=
+e recovery
+> via GPIOs, would it be still possible to request as GPIO when controller =
+driver
+> is in the strict mode?
 >
-> ti_sci_pm_domains 44043000.system-controller:power-controller:
-> sync_state() pending due to fd00000.gpu
->
-> These warnings occur when a device (in this case, the GPU) has no driver
-> bound to it. The fw_devlink_dev_sync_state[0] in the core has a check
-> before printing this warning. It checks whether the device driver has a
-> sync_state handler OR the device bus has a sync_state handler in the
-> dev_has_sync_state[1]. If both conditions are false,
-> fw_devlink_dev_sync_state[0] performs an early return before printing
-> the warning.
->
-> Before this patch series, both handlers were absent for device driver
-> ti_sci_pm_domains and the device bus, so both conditions failed and no
-> warnings were printed.
->
-> This patch series adds a sync_state handler for the bus, which now
-> satisfies the second condition. So it doesn't do an early return and
-> proceeds to print the warning.
 
-Thanks for the report and testing!
+Yes, if you mark that function as a "GPIO" function in the pin
+controller driver.
 
-Indeed this is the new and expected behaviour. I agree that it's
-certainly questionable if those prints should be at the warning level.
-
-We should probably downgrade those to dev_info(), at least. Let me
-send a patch to see what Saravana and others are thinking about it!
-
->
-> [0]: https://elixir.bootlin.com/linux/v6.16/source/drivers/base/core.c#L1777
-> [1]:
-> https://elixir.bootlin.com/linux/v6.16/source/include/linux/device.h#L909
->
-> Thanks
-> Sebin
-
-[...]
-
-Kind regards
-Uffe
+Bartosz
 
