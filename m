@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-797511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF56B41165
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:39:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1320CB4116A
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EA648862C
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03F61A81FD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F291A9F82;
-	Wed,  3 Sep 2025 00:39:28 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946091BD9D0;
+	Wed,  3 Sep 2025 00:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="eT+h1A1D"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854A5632;
-	Wed,  3 Sep 2025 00:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8397115C0;
+	Wed,  3 Sep 2025 00:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756859968; cv=none; b=XtHnYe97XeWOK2Z5i8f1u53NeXQfvZlH/oqMFNvq9N/GgLK53Q8MTvLRxwQueLr4lP3XJf/CBsEECGCqCihREAxTYiTLaGn/xoqBHsVg6XTvaz/qsR5m0RJgu5jyC+Ao0KgBcuiPhpWVt/y9Otq+PFoenpDtes0hn+SLfDQbHhs=
+	t=1756860152; cv=none; b=tf4/YC0C+iK7sxGgwfx50ErwlxX+EztRendbrWSYxeoc8sFQT+EvqT9Ptw6e79IcvtwjD+P1Pw6VfKpmgfKbTd7FhPFeP3Jtd6wfIP1cqRyKmWFUCxj4neb/1D1q6VZypkHWB1bFHc0r9Rx+n9ODRAhnRGKvxF7S5QcFywSoLqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756859968; c=relaxed/simple;
-	bh=Je2/yHkVTISW+1lChsj19DBet6v4DsTYIUqyQFCH3tI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UvyKtSG4h/yt9R63+09ZoONgXJl8wI7fleA1iPJoSsealXopyIkRSGjYDZDPKcGtupdhT6v/3KxF06HDTlRKVdFc+cAK5/eysWWeX3w/5eYNFMa5aYKH8C+sANXo6SKhWG95obagTCUXAck26wvo8qVMl3wrUtf7XtlDfjcDrXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cGkJW0dbKzKHLws;
-	Wed,  3 Sep 2025 08:39:23 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id F0A391A0DDD;
-	Wed,  3 Sep 2025 08:39:22 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgAnwmk3jrdo3zS3BA--.42353S2;
-	Wed, 03 Sep 2025 08:39:20 +0800 (CST)
-Message-ID: <3c51992e-a61a-4644-b7ac-1daa8ed0e06d@huaweicloud.com>
-Date: Wed, 3 Sep 2025 08:39:18 +0800
+	s=arc-20240116; t=1756860152; c=relaxed/simple;
+	bh=FD3rVftaBGV2mQ+n+/bkbUpgs1u88xX5yE3RgbMNAtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QjdEMQkgZQ8n/+LA+VJocUuHy4k9+ibSTZ1r/kNGviHTRDzp4WPN48xfMqd+j5ftnDaUA0WYuZPFw3UhH8ZOUIBeftZUroPk0WmpFcXBLtlAEtaDBp+HPWaKZzAs4tRGrRCtftSgm4EZivW7Z8gdWMDJHcrnuWAr2VXoHLnH7WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=eT+h1A1D; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id B093725DB0;
+	Wed,  3 Sep 2025 02:42:20 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id IHYT6eTry66f; Wed,  3 Sep 2025 02:42:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1756860139; bh=FD3rVftaBGV2mQ+n+/bkbUpgs1u88xX5yE3RgbMNAtc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eT+h1A1DHmwt2J7b+cv2FaP5H+FE9UbE0BAKODxKF+YU8YtK+BNqz3bLbfFZcAJ3t
+	 XH92wBTThN35ERFKFS7NcCGzVbvBr+HX9DyQuOyu9fw7ZqZabkXwmDnevU5W/znfig
+	 vohxwjPgdmaPkeK3kRO++iNCBHMsI8lYAtNzi6/q7Pa34MD1p50MQnSnw5phz56XYq
+	 io2EJXu2vJMIQmO163jRG6l/bts3K5rPwblQEErpULIK75dEhEd1fWo1JkZSn2r59S
+	 1BH3x/Ng9hbDY1wkevrIhSV27kV1rjzK160Bdkk+dZ1/wenjXbcPdTKnncYgK+1N4g
+	 Bwk2sW3ABM3Qg==
+Date: Wed, 3 Sep 2025 00:41:57 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>,
+	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
+Subject: Re: [PATCH 1/4] dt-bindings: reset: thead,th1520-reset: Add
+ controllers for more subsys
+Message-ID: <aLeO1T1YM8_UorEr@pie>
+References: <20250901042320.22865-1-ziyao@disroot.org>
+ <20250901042320.22865-2-ziyao@disroot.org>
+ <8de5763d7104a552f32196f04363d071548b7bba.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup/cpuset: Prevent NULL pointer access in
- free_tmpmasks()
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ashay Jaiswal <quic_ashayj@quicinc.com>, Chen Ridong <chenridong@huawei.com>
-References: <20250902181537.833102-1-longman@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20250902181537.833102-1-longman@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgAnwmk3jrdo3zS3BA--.42353S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw1fXr1UZw1fArWkuryDZFb_yoW8Wr43pF
-	WYkFyj93y5GFy8K34qqa1xWr1SkaykJF90kwnxJw18AFya9F10vF15ur98Xw40kanIkF1f
-	tFy5ZF4jgr1DtF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8de5763d7104a552f32196f04363d071548b7bba.camel@pengutronix.de>
 
-
-
-On 2025/9/3 2:15, Waiman Long wrote:
-> Commit 5806b3d05165 ("cpuset: decouple tmpmasks and cpumasks freeing in
-> cgroup") separates out the freeing of tmpmasks into a new free_tmpmask()
-> helper but removes the NULL pointer check in the process. Unfortunately a
-> NULL pointer can be passed to free_tmpmasks() in cpuset_handle_hotplug()
-> if cpuset v1 is active. This can cause segmentation fault and crash
-> the kernel.
+On Tue, Sep 02, 2025 at 03:57:07PM +0200, Philipp Zabel wrote:
+> On Mo, 2025-09-01 at 04:23 +0000, Yao Zi wrote:
+> > TH1520 SoC is divided into several subsystems, most of them have
+> > distinct reset controllers. Let's document reset controllers other than
+> > the one for VO subsystem and IDs for their reset signals.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  .../bindings/reset/thead,th1520-reset.yaml    |   8 +-
+> >  .../dt-bindings/reset/thead,th1520-reset.h    | 219 +++++++++++++++++-
+> >  2 files changed, 223 insertions(+), 4 deletions(-)
+> > 
+> [...]
+> > diff --git a/include/dt-bindings/reset/thead,th1520-reset.h b/include/dt-bindings/reset/thead,th1520-reset.h
+> > index ee799286c175..927e251edfab 100644
+> > --- a/include/dt-bindings/reset/thead,th1520-reset.h
+> > +++ b/include/dt-bindings/reset/thead,th1520-reset.h
+> > @@ -7,11 +7,186 @@
+> [...]
+> > +/* AP Subsystem */
+> [...]
+> > +#define TH1520_RESET_ID_C910_C0			5
+> > +#define TH1520_RESET_ID_C910_C1			5
+> > +#define TH1520_RESET_ID_C910_C2			5
+> > +#define TH1520_RESET_ID_C910_C3			5
 > 
-> Fix that by adding the NULL pointer check to free_tmpmasks().
-> 
-> Fixes: 5806b3d05165 ("cpuset: decouple tmpmasks and cpumasks freeing in cgroup")
-> Reported-by: Ashay Jaiswal <quic_ashayj@quicinc.com>
-> Closes: https://lore.kernel.org/lkml/20250902-cpuset-free-on-condition-v1-1-f46ffab53eac@quicinc.com/
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/cgroup/cpuset.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index a78ccd11ce9b..c0c281a8860d 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -484,6 +484,9 @@ static inline int alloc_tmpmasks(struct tmpmasks *tmp)
->   */
->  static inline void free_tmpmasks(struct tmpmasks *tmp)
->  {
-> +	if (!tmp)
-> +		return;
-> +
->  	free_cpumask_var(tmp->new_cpus);
->  	free_cpumask_var(tmp->addmask);
->  	free_cpumask_var(tmp->delmask);
+> As the kernel test robot already noticed, this doesn't seem right.
 
-Thank you, Longman and Ashay.
+Yes, this is a copy-paste error. I'll fix it and run static check before
+sending v2. Thanks.
 
-My apologies for missing the NULL pointer check, which led to this issue.
-I have double-checked the free_cpuset function, and it does not receive a NULL pointer as input.
+> regards
+> Philipp
 
--- 
 Best regards,
-Ridong
-
+Yao Zi
 
