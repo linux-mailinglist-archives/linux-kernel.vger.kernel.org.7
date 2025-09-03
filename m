@@ -1,102 +1,158 @@
-Return-Path: <linux-kernel+bounces-797636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E95B412C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:12:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D70EB412D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 05:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081897003BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:12:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E660B1B23F1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 03:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DB82C21DF;
-	Wed,  3 Sep 2025 03:12:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0A22C3272;
+	Wed,  3 Sep 2025 03:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bvorOExb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472511853
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973AA2C21DF
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 03:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756869125; cv=none; b=WXgN2RSCkSGMvOIeQYbdPRgDvXh46rtsmwImQIeo2t3ihhrMPOv5dLMEvgvyP27KC/puPw/pvjVn1wO7n8EvT6OCK7ezxhNeYAlhGqn8bHsh0+YetGdh9kxta0lZj+B97hv9MyMxJZzhJbxMSMEk42tJvsSxDiFFzLMyxd3ICuw=
+	t=1756869207; cv=none; b=DGUhG2MJJiEEnzhi5ijpd9zIsUaVIHj2rmeD8VmYpIJHfjJHv7BZpQA8U1g4hzA7IZGhHW198gb3RvcvItombgcviivnXcZh9mHuglCp22XUZ7UYC9ax5AApEiJcFwBx0f5CjaUaQPLE4ja56N1BfN/J7oTZp3/bEWOrx+A0lKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756869125; c=relaxed/simple;
-	bh=gtxfPgdfCcDqfNt0Kq2nSCJXZnm3SosKEAP1U/WHuVk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=M7+Oy5dyOPaE8NEuBwIuvRVjDlLUscmMg3eRHJi51Ee/zuz5NYY09a7YeADiD9GPbYQuSmquW151ahhkNPOkn3hh0Ff2E/VH/pYM2GxnUe4B73NSXhkTEHmkYFhQraVcRiQHT+9yYtI9DaLgTqHeFcDN7z8/NmoZOQ4LIJhIe4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88731310ba4so517304239f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:12:03 -0700 (PDT)
+	s=arc-20240116; t=1756869207; c=relaxed/simple;
+	bh=Hi3MYKU9XwQ73CdlHU3y5LnCsyr0aAH+phzG3kS5xVY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=E68FwdCFRAySdUUfuUrOhuE2C329+BNYgFsj/XFkABkO9sbfctA4w++APTKoh46rm8XjWm5e7Iu1inOT0iFjYrMjyvPCOuMMobS1vzNYJOAn6oPOGVEkwZ5192uq1bitqxixqn+s0xqGW2ikyrBfhvmJ/maXyZRmGh5phLtkVDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bvorOExb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5832CMl9032378
+	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 03:13:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=MWeAl6vczD5ydCI8AKopjR
+	HLRBQzPmVJvBwaxT17MyQ=; b=bvorOExbae+0JLZrrbpi5CO0W59eRoQeNSlxmH
+	OcZodtPRFVvo8OTQb/VlCp/G9s5ogkvWTkVTYW+mNB1Eo26pKoNt6NxDNuhcW2nH
+	eLYgeItqT7uArIJ+g29WvdHg/k16ScJbMciaKkSh2A+xL+CWCz/V+mK/peu+yjST
+	i8NEJQ7hCxe53ClCpK/HTHAM6xlhN9Ohll70DwTEwRIiDdFI7555ph3u+cQLCY8a
+	2QsdbWHm6Wquw+U7wfGdYrxgng4bt1iKhDKGQfxPyddE/4NJRBJisig/3NApbJzq
+	qZXhEh5BCYPAyTADRiJiCcwfgXp+glBONfe1Jdd6ttyryxWQ==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8syf7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 03:13:24 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77250c660d3so2979410b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 02 Sep 2025 20:13:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756869123; x=1757473923;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hm2aJaDhNN5sGIQhrQ224nx++sFWDSMjycRjNz9pSJc=;
-        b=vnrDqVw52Bo++aXAwk8EMlIyYDhJv1mFXykD0uNqGV0eqNU+n2+sQtzFiI015WWD+H
-         qHXnAWcpmaVcppR0Vr22lwgBHMFVzZ6C0+C3w9em5G8R0ZON8oaw+QsTkmisXo8nXVmx
-         J/TUHh1Dxl5X2g4xkCfQwcQa8T5k/gJTQO6pmWjnjDWjSEr0O5wl50NVvaWC/m+YN5u0
-         558hBogKl5vOG73oX94Jmdgb/jV1Emca2BgJEpEhVj1YYZYsT4SZ9JiVAeFg5Ixz4fcn
-         DFr8wkvM/EJffYLmu953Nqt6PvKelhI+wajnsjGC5rHLo/+qFbreLC/2sgXwNqXrgcRb
-         IwjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJaM1owAO0Bfrv/ihY3J0WXlnA96whODtrJF7ZG76WWJ3FlAhxKLaY0YJCL45UhAbwtsbblAABb0pVQBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRkYn0aZcEQzWe4uAzeAh4gaa6lqrSE7TKFp4Gxp3RIJIGZXq3
-	l2/f5CLPz0F4tTcn4Id8EVUWIAD6quZ9UBTlN6qLTSdhA7Kxs2zfnnlqf8wQcTN6ViV1Xj9mXUY
-	AdPvwkcd6AnJJvyeO4Wfa3NESL8A3Jy6fjfw/KWFIE8gfELlHF/Mym5/SD70=
-X-Google-Smtp-Source: AGHT+IEVsrZE15aNeOVQXXUA0qrctLufM/J9xZFzOsUMcbMkY8wW6aJYnqe1onAQKO1ozPr/BKc+k6QYQGRtaf8PlHKZWwOg1l1X
+        d=1e100.net; s=20230601; t=1756869203; x=1757474003;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MWeAl6vczD5ydCI8AKopjRHLRBQzPmVJvBwaxT17MyQ=;
+        b=p6Zu3vGdXPGkCZS5GcgQv1jeXem27rbRPCU0BlhCpTf4UeGNRinAWSs/lUeqker/qC
+         p+6iExnjTbCVgSt1IvGL/lofukC05IAfawp1PS0KcnTFAs0uIp3rTjoSzfQ8oCE0nDV/
+         AYH/uv/Wwh++YFtnxx04IFudgxCthrNhfa5kHBzdkBLFz77I7+fyx7fPsDBVKvyP9GnT
+         un0VCRaHyiiMxNtHQbeasa4wgJliYVN/Xm5pRtgDTKmD2rFc3/XdqRNwsK03uHoGyJd0
+         mEldkFxpvMWLjsv6+hhxG69EgDGRrl1hlXV9lhzL2eOClC7ZV3BSLij9DMmFxRf43IDH
+         6Ivw==
+X-Gm-Message-State: AOJu0Yz802Xir8fAULvfQQzo2QKBSZ60VV6fKkuPf3zsP6KowfOATG2X
+	1NiQocGZenxsCZc0Lzq2t8YXVIXrCiHx7kHQvNzNdBp1LC4d6ZwGCBX1caI61fo6tc0qJdceUBq
+	64JuT/A2nG0ky/AWifc3MWWn46PUNHkNdy+u29eCI33j5XYhvamuiDNGRQSMPaaSBHbldUWXmUr
+	J9fQ==
+X-Gm-Gg: ASbGncuZkMJz6Lzc/0xjM/sijH05DgeXoXpuu7H2T2G36Ks8Lm7+0kgasdMJkeX/RrY
+	wrMRBVcT7wYVc7a9V4xShq3WDgpfzEMPc+OcsFTCSGlWJEYI7ZKC0CgNEyPG4wLMzFAiMUV2Ngy
+	Udv0LR97VCqqaMnsjHO7kDA96w6LNumJ5OWHGkYuFySkxF28/f6m10ycT42uHz+YOMaMHM75ld5
+	3mXVh4BOSktFXHYxQRtFGu7LD4lgwj4QbrPeRuF0i7aLwE5d0D4Zc0oM1JEkfCxC81xFEeVUrI7
+	D8AxtC3qynrrVrFb/z8sPDk221xIO1jHb8l9k+90JqHlZ9D73rdky6DPGQ==
+X-Received: by 2002:a05:6a00:4fd2:b0:772:736e:6574 with SMTP id d2e1a72fcca58-772736e6732mr4534321b3a.1.1756869202943;
+        Tue, 02 Sep 2025 20:13:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHy698QMLSb5QYBAyCkNDtpt7tfz0dgNJX53eZVWncTA9+2ypRg3zNlOyb/gePSJtX91VUrzw==
+X-Received: by 2002:a05:6a00:4fd2:b0:772:736e:6574 with SMTP id d2e1a72fcca58-772736e6732mr4534300b3a.1.1756869202416;
+        Tue, 02 Sep 2025 20:13:22 -0700 (PDT)
+Received: from luoj-gv.ap.qualcomm.com ([114.94.8.21])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26adf7sm15064598b3a.15.2025.09.02.20.13.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Sep 2025 20:13:22 -0700 (PDT)
+From: Luo Jie <jie.luo@oss.qualcomm.com>
+Date: Wed, 03 Sep 2025 11:12:55 +0800
+Subject: [PATCH] MAINTAINERS: Update Luo Jie's email address
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1486:b0:3ef:d092:c07d with SMTP id
- e9e14a558f8ab-3f401be28abmr248105625ab.16.1756869123406; Tue, 02 Sep 2025
- 20:12:03 -0700 (PDT)
-Date: Tue, 02 Sep 2025 20:12:03 -0700
-In-Reply-To: <20250903023326.6389-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b7b203.050a0220.3db4df.01e4.GAE@google.com>
-Subject: Re: [syzbot] [block?] [mm?] INFO: rcu detected stall in wb_workfn (4)
-From: syzbot <syzbot+5b4f4f81240931b16844@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250903-maintainer_update-v1-1-2183fd2a3c44@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIADayt2gC/x2MQQqAIBAAvxJ7TlAh0r4SEUtutYdM1CKQ/p50m
+ MMcZgokikwJhqZApJsTn76KahtYdvQbCXbVQUvdSSuVOJB9rlCcr+AwkzDW0NKjdD0qqF2ItPL
+ zP8fpfT87uSA4YwAAAA==
+To: linux-kernel@vger.kernel.org
+Cc: Luo Jie <jie.luo@oss.qualcomm.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756869200; l=905;
+ i=jie.luo@oss.qualcomm.com; s=20250209; h=from:subject:message-id;
+ bh=Hi3MYKU9XwQ73CdlHU3y5LnCsyr0aAH+phzG3kS5xVY=;
+ b=2Ls/TlECoUu+XaSCuu94yQYgmRw4LPh9pjdqhl2ethbyuwzO3nFWsBkrM9kPVJ+phFB4VziaB
+ vl8I+fShonFAz1YR/F4Jy4pulWckFag7rBJ2nbYmp+aGGlJHWQdhbmH
+X-Developer-Key: i=jie.luo@oss.qualcomm.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-Proofpoint-ORIG-GUID: jdSAVfYfYPysW_mdrB3NPGrwox-n4Gxt
+X-Proofpoint-GUID: jdSAVfYfYPysW_mdrB3NPGrwox-n4Gxt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfXxMCzgcf0ZDCV
+ Ygw3dDgG6vsQTsDCUym8xEn7sghRe48ckLQ8nDzCrJc0+cx5oAS4NzzJytHr5UDQoae59kMfx33
+ 3j3FRY3ZZuM5X2uelGMh9zAfHcKROJdXn+kFhLYjhO17/rERNTGxP0rjB4YWcLe83LhDDwFGAc1
+ ijFTM9PBgbMhvjAUp1/dbj/n4knt60wY5c8Xm7yInHs9fHxYQlFmw7fuC2UgcJeyf8AtLTj8eue
+ QlpnSL9oJJldXWd5HaTUMfmVh3j2CfcCdOP0ur1ryw5W1qp+dbB2vNMzTjWDN1s2EktjLSYc9EU
+ YxTdUYjNIjilnMf7p+l3GoSz01c+YGtqj0M5vpn+Pc+9VbsKML6mIu11vWSSF/YOBvQ0P2I1pMb
+ W/8wn+G0
+X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b7b254 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=VwQbUJbxAAAA:8 a=Nua0MkNpqm9SeqlRuHIA:9 a=QEXdDO2ut3YA:10
+ a=IoOABgeZipijB_acs4fv:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-03_01,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1011 adultscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
 
-Hello,
+Use jie.luo@oss.qualcomm.com as my primary email address for kernel-related
+work, as quic_luoj@quicinc.com will be discontinued soon.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in linkwatch_event
+Signed-off-by: Luo Jie <jie.luo@oss.qualcomm.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-INFO: task kworker/u8:0:12 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:0    state:D stack:24856 pid:12    tgid:12    ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: events_unbound linkwatch_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x81b/0x1060 kernel/locking/mutex.c:760
- linkwatch_event+0x51/0xc0 net/core/link_watch.c:303
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 27811a24573f..296c44931ec0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20952,7 +20952,7 @@ F:	Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
+ F:	drivers/power/supply/qcom_smbx.c
+ 
+ QUALCOMM PPE DRIVER
+-M:	Luo Jie <quic_luoj@quicinc.com>
++M:	Luo Jie <jie.luo@oss.qualcomm.com>
+ L:	netdev@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/net/qcom,ipq9574-ppe.yaml
 
+---
+base-commit: 33bcf93b9a6b028758105680f8b538a31bc563cf
+change-id: 20250901-maintainer_update-898ec7a0d7a1
 
-Tested on:
-
-commit:         e6b9dce0 Merge tag 'sound-6.17-rc5' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13236e62580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b4f4f81240931b16844
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15af4312580000
+Best regards,
+-- 
+Luo Jie <jie.luo@oss.qualcomm.com>
 
 
