@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-798910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F16B42494
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:12:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F391B42499
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E41E9681038
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6600D1890BC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339D7315761;
-	Wed,  3 Sep 2025 15:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F09C3148D4;
+	Wed,  3 Sep 2025 15:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pomIhLVH"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bVpcKvfL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="URXL0YCt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468661F7575;
-	Wed,  3 Sep 2025 15:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D343126B3;
+	Wed,  3 Sep 2025 15:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756912321; cv=none; b=cMH+OUKRLKxLCTtEjnPGdGUFWUjEf5isi1zaBePQitaUZ/8qKR8lqovMiYWLRFfgIr1YgopXNdNC1dAWx9MqLNwoZBVJyv4XWfSl7DURazeUS9ByzdoQVkzdXSNJyn0Y4vesgECq0xuqtBhgRI4ItjEETvtGMYQqR+qVNejPMqk=
+	t=1756912352; cv=none; b=uAbNlCte+PnxfcUnLHWzqI08tlK3Pvh4UqeKvfxi0R+VxDDlHX+A7lzEqg/13NZsi2pCCibG08k5IvNHJTaPfTxiO5Xq0MF0yLthTZssWQEf8VzzxqSJGvbSrXlHyptCGqJOqRgebvXm+kNCKf0EKmWaA6Hi5NEs+YYkwEX21zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756912321; c=relaxed/simple;
-	bh=fuzzdqflWKxJG/2KMhMC5oLTglkqDdupgl8/Aw9toTA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=plIj5bLt/4NOuW20jekEKHU2A/CCA/cL9OdZ7nkXDk6fB3N9ixk26i1bU4vjyJ1DJGaTvBCcqipyJXpTdJFMeBktpwhQ0B1anYhoFIDqNS+5/rUC1LtA8VuQI5FfZl101C3Q9YIhzmUiVUhu36PYzHF5TUTshfayGEXeoDA+lVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pomIhLVH; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1756912313; x=1757517113; i=markus.elfring@web.de;
-	bh=fuzzdqflWKxJG/2KMhMC5oLTglkqDdupgl8/Aw9toTA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pomIhLVH9JpLeqymo/d6RPIY+zdP+2nKSmCeyVnbvLEg4q1/gsmMg/guDps1k41B
-	 +1MG5242Xe1kxgnvY2XMqi/zP4ewofH8eLUTZ6ikkiouSW2bq+WMSZUZSDNgvliHR
-	 sujKAllYvopJCy6rZjj/I5hH2jyUdrnARm7njF0LHZ8+rTWBabtvbXf4hAv2bisa4
-	 5IR2idZTifeY39ZhbTGgW4QtlURq9vc193j7aE7evXZG7knJyhrTWQSkUdb1F+wrp
-	 SQSUVLTcUZwkNZh9qWQT/gKlYh4bfBJzGbb0nZOzPjg+pyViTNM56UZjVv1Xreivb
-	 R9WBQp/p6cAnIhD3Pg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.225]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mc1VL-1uKTzy0p7H-00ed5L; Wed, 03
- Sep 2025 17:11:53 +0200
-Message-ID: <a111df8d-0e1a-49d0-8bd4-9b41c60151d6@web.de>
-Date: Wed, 3 Sep 2025 17:11:51 +0200
+	s=arc-20240116; t=1756912352; c=relaxed/simple;
+	bh=nO+/TO+snez19z+L/apEGT2c2lVn/5o/qQFdvxgjUuk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=eqB8hqtKayM9NNCYwnllXvmJiosJ6PQxgeYyoBQgDha7rYzNEC785DAZOAB0MVnAKwR8Torh3th4GPPKueV1cSF5nOfJfPyIQF/m7PJwnChItStCHmMm0bA4amCEc9J02raO8yPNFBvS/aa3Ya+dBCB7XGv5MeeuWrHi13Tq/Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bVpcKvfL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=URXL0YCt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 03 Sep 2025 15:12:26 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756912348;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DzAa6mbHaKP8EFSv69vSDhUvmVsuzIj7roDOMg3vhEk=;
+	b=bVpcKvfL8ElaPT+A5Uun5aqIFIivlCmWC9UIziIbhVY97106tCdO9l7OL6UtpwpCgad6y+
+	rJqbGPWJqmYHFAxp5IJXJC/lxcE3V/ThCmt5dzI/9miOdewB/xrNpWQXaLhSP9GX54ZlEL
+	zi733EZNqTSj2HMSE+vLAhsd1VQGekym4WBmEC8hzdoAQ54eAgVErpSFWycuOyOFI2IrOh
+	L7FDVNvfAG8xejZ4zeFusYlkq54LDWscXRzRMUyxoAa1DPnVT3Fz1Wxc316PJr+Uc9scgI
+	U0ta0qeHVPDwg0Q9tpwLYypqlVNQHKeIqYw5O9VnbagxKYxLVkzb8ppXQ55SRA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756912348;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DzAa6mbHaKP8EFSv69vSDhUvmVsuzIj7roDOMg3vhEk=;
+	b=URXL0YCtLIW/FyRNLvFPLXoB3y8emiER+IBjtMLNpYB80hrvFdBp36Q8zzLiyK3OD3qBKm
+	83xVBM622AQEf3Cw==
+From: "tip-bot2 for Brian Norris" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] genirq/test: Ensure CPU 1 is online for hotplug test
+Cc: Guenter Roeck <linux@roeck-us.net>,
+ Brian Norris <briannorris@chromium.org>, Thomas Gleixner <tglx@linutronix.de>,
+ David Gow <davidgow@google.com>, x86@kernel.org, linux-kernel@vger.kernel.org,
+ maz@kernel.org
+In-Reply-To: <20250822190140.2154646-7-briannorris@chromium.org>
+References: <20250822190140.2154646-7-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Miaoqian Lin <linmq006@gmail.com>, linux-tegra@vger.kernel.org,
- linux-phy@lists.infradead.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- JC Kuo <jckuo@nvidia.com>, Johan Hovold <johan@kernel.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>
-References: <20250903045241.2489993-1-linmq006@gmail.com>
-Subject: Re: [PATCH] phy: tegra: xusb-tegra210: Fix reference leaks in
- tegra210_xusb_padctl_probe
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250903045241.2489993-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Vto5T7HMuhv4kLXfZikyR3WNBfDL8qO34gg6b1ELJlzDUv8vfLa
- MukUXfM+HWys/C+U+aQZX/H8YkvmBGqLW7DhJ7ZDnvTs2iv0Bknv4wBFyW6END5Qwhu/9AP
- 208f+MuTguFgnN3u/q1uQVd0qOz68xngXnz63F2ESBouG3iBoKhB1xF3SE7rA0j3QiC/761
- Fofy/dGCA9Dy6s/USFqhQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:34rJf0QV/6o=;z/hqGl9fupoaEARWp5RfPr3rCkc
- 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
+Message-ID: <175691234688.1920.17485143048251122696.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Add missing of_node_put() and put_device() calls to release references.
+The following commit has been merged into the irq/core branch of tip:
 
-See also the commit bca065733afd1e3a89a02f05ffe14e966cd5f78e ("phy: tegra: xusb:
-fix device and OF node leak at probe") by Johan Hovold.
+Commit-ID:     8ad25ebfa70e86860559b306bbc923c7db4fcac6
+Gitweb:        https://git.kernel.org/tip/8ad25ebfa70e86860559b306bbc923c7db4=
+fcac6
+Author:        Brian Norris <briannorris@chromium.org>
+AuthorDate:    Fri, 22 Aug 2025 11:59:07 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 03 Sep 2025 17:04:52 +02:00
 
-Regards,
-Markus
+genirq/test: Ensure CPU 1 is online for hotplug test
+
+It's possible to run these tests on platforms that think they have a
+hotpluggable CPU1, but for whatever reason, CPU1 is not online and can't be
+brought online:
+
+    # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:210
+    Expected remove_cpu(1) =3D=3D 0, but
+        remove_cpu(1) =3D=3D 1 (0x1)
+CPU1: failed to boot: -38
+    # irq_cpuhotplug_test: EXPECTATION FAILED at kernel/irq/irq_test.c:214
+    Expected add_cpu(1) =3D=3D 0, but
+        add_cpu(1) =3D=3D -38 (0xffffffffffffffda)
+
+Check that CPU1 is actually online before trying to run the test.
+
+Fixes: 66067c3c8a1e ("genirq: Add kunit tests for depth counts")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: David Gow <davidgow@google.com>
+Link: https://lore.kernel.org/all/20250822190140.2154646-7-briannorris@chromi=
+um.org
+
+---
+ kernel/irq/irq_test.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/irq/irq_test.c b/kernel/irq/irq_test.c
+index bbb89a3..e2d3191 100644
+--- a/kernel/irq/irq_test.c
++++ b/kernel/irq/irq_test.c
+@@ -179,6 +179,8 @@ static void irq_cpuhotplug_test(struct kunit *test)
+ 		kunit_skip(test, "requires more than 1 CPU for CPU hotplug");
+ 	if (!cpu_is_hotpluggable(1))
+ 		kunit_skip(test, "CPU 1 must be hotpluggable");
++	if (!cpu_online(1))
++		kunit_skip(test, "CPU 1 must be online");
+=20
+ 	cpumask_copy(&affinity.mask, cpumask_of(1));
+=20
 
