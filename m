@@ -1,879 +1,295 @@
-Return-Path: <linux-kernel+bounces-797504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-797505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C1EB41140
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:18:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8D9B41143
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 02:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034F82072D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:18:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A0D87B2CE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 00:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6940742AA6;
-	Wed,  3 Sep 2025 00:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D259145B27;
+	Wed,  3 Sep 2025 00:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuzvoBjl"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GhI5Cijt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E50134BD;
-	Wed,  3 Sep 2025 00:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756858682; cv=none; b=Eb2wdmjWl2W4wfIp9quUup/UEw4I6/BWlo7EVeBwiSb+Q8zrm28966RmC1i+ni8/RJG2WhEzrPz8EizpXqH/OltlEB5xKHwe+Ng5wyrcWHQ9CiIQrlj9n6QfNawB1ZPar43QV3El6aK5qVFggoR3OueXRhKsRevyYxXmv5y0N3g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756858682; c=relaxed/simple;
-	bh=5DsJBMp3wAX9AEWlY0wpjQ9N36iw1OYQPdCuD1Na+CM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B6BsXtEoMKPxylzW+MhJ21y81DMATAdXxfKpgl7rfEervWzqppNZMPoCZPfI31hxYsgj9KE73b9D2koTvH3HV4wELMpnnhsIJ2FmqqfxYqImHtSrWBOkCmEnjw05hsFcC2SJ10WYSzFjRCFFm6QY0afVgRn/EsaL+IeuUJ+YZLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BuzvoBjl; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4717543ed9so3799443a12.3;
-        Tue, 02 Sep 2025 17:18:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756858680; x=1757463480; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KYIRRUAh/Fowgng+KZ9bkO/wfTtQF6OUBOshwbubYKs=;
-        b=BuzvoBjldjQG1EqlWVTiaSvwfw4GtJWoa3p5LrGp/K8belap7EzXB81tgeccXN3++O
-         AjgTzUxmmnUIDzIkGyGCpFu0UTE+ldpJiLtiKCVz84NUEaZ7hxgrzvaYwyLLUNgXMYgw
-         Q2bPDf1C2r62oJuvHsoXe5df0PWOyacCdNTGIIng3SCzBq9Ndjr7bn8Wl3nEvy4SFxdQ
-         RnGbdV7qNxOsrwpZwIeKfLjTVfEjabVrZGW+L+GIojKd0YYu1xsVfFL4lo8I29rVqXs6
-         VpbrfGwcGOUyLOwlHaBjPLbVLpBxMi+V4QxlZbGj3utzTW6+R4AxJUOWJfDpNya3U4zg
-         p9UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756858680; x=1757463480;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KYIRRUAh/Fowgng+KZ9bkO/wfTtQF6OUBOshwbubYKs=;
-        b=SQ+qD0GTSPILUusHJxFIL24PmfgM75FLlS13ZudJ5pvtMDA7Ca7cOfIh/4t/FdUkeB
-         RIgDchLJ/uXHdX8ZhpcNQ1iRk1HrSZIx/PnMb9Y2//arPNXXng/qrepM0J5n9Og5j1Pi
-         OVrs7UZ9G/VjjR88onsctYjoPz8wkhlhuuWlrk6SEtxsQIMJF81jAm9gsCSPXa59PYF8
-         hj1fALhaF/I6g2v9OQzZYsV/XlhBXvowA7ITo00qqZ6fontk6tHcHFWcyHe+RjU9zZsv
-         5R0Uuv94h4CrDnYz7nYqj/H8bot8lEDD592sl2QS3S6jYlw6CkoKqmRmx8EH5Z4Lw/aQ
-         5gZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUhOC1Jm2+iF/jpi+Bx8ULXKu/fD2gt1ZInMhcIMWsI9/EWTYDwgjIdiZS6Z4d2TVYqtl5tB6ny3OiY9FuIyo=@vger.kernel.org, AJvYcCWTEZdE+Df20VGpkBIYg5ia9gs0bJ3UHLkM5NECK7OvDgA1ZVYGIbvDG0odftHyLtEnSUEjYujXamcJJCb+NPVk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTUsveb7NZe2WtbdknHjbF9Sn4Fz77NBRXDcg9kNHrKrw5K8Gw
-	fp2HyrafZIsCoZSrFRXCLkTvQivbu3EVQB2ljaAuUXHv6oPUaBsYEWGLicPj9Col
-X-Gm-Gg: ASbGncuABYThn6fuHqtfxqYpup+yLEZI4YkK3lHuAKJ2nU0MzoZ1Khbtmxq/j1eDR/e
-	2QbVBVcoXmXd0VHezMFOJLVDuept1YJSOdTcbwmUEkxbHhF7JTAjgkVttB1aTxTAAVUK2sF+dyY
-	3ZaTOLfVO6ebLWpKdIYNGKaUdneMheC6koda+Iybm51nHyh4J0hCIbIdJ9nAwCerjyA2w/0USAr
-	jcQy6+aVzZxxR5A/c7wNjJ07W297Z0rl4E28IS2ELPSJm5qPWOXvPyAD+UhgZ0b9jZJr4/KCJxL
-	+69xuxOJnAanQ+ewhMrTjz5DjNQkCkeF6DH29AUV9rFr0mYTSSGEzh4DZjkS9xaPBD2N7e3ufgg
-	CEEbB6PdzYuhOYsDgIk1NBpgDxrfY3jk=
-X-Google-Smtp-Source: AGHT+IGA3OO0i3AxIO79wtYpY3nRkQZcFDuEQrkQn6DbfbsdC1DCfRG3BW53rbTOmdL/sWIE6ZEN6g==
-X-Received: by 2002:a17:902:cf08:b0:249:2d84:f406 with SMTP id d9443c01a7336-24944870965mr204024705ad.3.1756858679669;
-        Tue, 02 Sep 2025 17:17:59 -0700 (PDT)
-Received: from [0.0.5.57] ([136.159.213.138])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249067de9f1sm141877305ad.151.2025.09.02.17.17.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Sep 2025 17:17:58 -0700 (PDT)
-From: Abhinav Saxena <xandfury@gmail.com>
-Date: Tue, 02 Sep 2025 18:17:56 -0600
-Subject: [PATCH v4] selftests/tty: add TIOCSTI test suite
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1236128373;
+	Wed,  3 Sep 2025 00:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756858700; cv=fail; b=oEZC1tTGyUnxyqbZqLEkeWRKFODttgfyJFDLSHehZ3KyTZ2DJzLldKuPbKEI9osk1iyIe1s/FxeiZ8X02msjKgK8rZcv9WcTSOLgLE5ymwcZR3yaY48bez/dwIzqrYIiRT4rnARS/mTUUJ9Y+KoqKmxJzioPmqRp//8Vf7yUUUI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756858700; c=relaxed/simple;
+	bh=pXT/YWSmSNU9HvXwckWbdR9A6mHjSA0CvGLlFTnX57I=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CpQ5+5buWVQJdXNcKFwUEaH9VXpIFY1h0HmLeUfR6JGW9yFPJOtj/tcBMLHpe+z9Y3jc4gnUJ8g6ysRTKMtxDLpqzBZjMWVuvll2xdXV0p510m5ud9qVpuTc4vc2XjX0QBCXmt5mEWTkLE9vLg2X4z78h+KyBMu8m+usGGRATuo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GhI5Cijt; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756858698; x=1788394698;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=pXT/YWSmSNU9HvXwckWbdR9A6mHjSA0CvGLlFTnX57I=;
+  b=GhI5CijtMBH4ZfGJqiOmfqH2vPgUErqoOaY4gZzV4K8jQ8yNsIEW0Fvx
+   4LlpcTJAWjg4BNlNrAhIqgtzaGPZVmaiXe0W7y+tcO4paiTqbG/dgYAsB
+   TpCKrewmdSyvSNzFbzGtr0bJqedZgbGmEtqxlk+xznW+PQ0B9WycQ11My
+   J3Hv8GuHEiQz917q8YxBScm5B9dgm916b72P05Wr+VAyYQ4WRqjVh/Zva
+   6qK7LPBwLplG/+7ww+r91suqibAE4Qs7xStBo8gOiaKfp3wbUWo1YBZAA
+   6ni/s/VAKNa12gNWw2xk32vs3ngYqDyCFSTKQnYoyGYeFfAx2dK3GGgkv
+   w==;
+X-CSE-ConnectionGUID: UdB12tAoS5yi6lseUMxHcg==
+X-CSE-MsgGUID: J/or+Z3LQ1ugd1f9xAC6ZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69770843"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="69770843"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 17:18:18 -0700
+X-CSE-ConnectionGUID: rKfK7PgsQ9eN0erHfLkybA==
+X-CSE-MsgGUID: JY5wzfJcTgOX4KL1OLwaEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; 
+   d="scan'208";a="202385285"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2025 17:18:17 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 2 Sep 2025 17:18:16 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 2 Sep 2025 17:18:16 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.80) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 2 Sep 2025 17:18:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EitLLj+9qge0e8CivwShZZWAWsf68StMFf8a8TlqVO/GXzyNeGZF/TGNAYBp4/yo0lV+numv4pU2pSFW6iI4PszaqLpHkN2nZUEfzb3I+4og02lxlxPkKo+5l45zAd8e8Q0PMY4WxYoo3B/8bvghkLQ2AFt6JN9a65FbIO2ijo+MckmerGfpQXOcSV6AoIWThSg5bojGAPpwKkd/z5nuUkotWYA4NFsDhCTaEm1VgfutmhrS59RWJH5JGaoxdlV+88o/JTsgh6SLMU+1oN5oLUxcAZPf1f9snLJpPy129tF5pbRZmWB6XqHvp4xuMZtJiXqMlBzfA2dNWzVIGUz2Cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pXT/YWSmSNU9HvXwckWbdR9A6mHjSA0CvGLlFTnX57I=;
+ b=QLhwn7PCyDtSPg0MSiVilrhhvs9tMs6pG0owQAaeD7quQzNFRXgo5qdoLMQNb/5VC2EUQ7+R6NtsaLet0w2vr+ifeQJGEE5xXrXiyw3n0B9dQt0St3dfqwisXxzI+ZNnDoLqRvZjseevZeS7xzVPCAqvPxs3ILOQvgtpbGgBNM5EtdOd15ZJZB/u/hNq0slN2cueNnT8GDzShVqS7oMUg28H49tVBjnQ5eMY6J9JATMPx89IHBRoly9CsYYT6Q/VVjrcRW+uprRrP/bpUY8r2FNZV9B3lTB3pBDxZdMXULod0JRINNcA7+yoeBR0FZperQ3H05YRLHjPniUJRPghPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by SA3PR11MB7486.namprd11.prod.outlook.com (2603:10b6:806:314::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.27; Wed, 3 Sep
+ 2025 00:18:11 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9094.015; Wed, 3 Sep 2025
+ 00:18:11 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "seanjc@google.com" <seanjc@google.com>, "Zhao, Yan Y"
+	<yan.y.zhao@intel.com>
+CC: "Huang, Kai" <kai.huang@intel.com>, "ackerleytng@google.com"
+	<ackerleytng@google.com>, "Annapurve, Vishal" <vannapurve@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Weiny, Ira"
+	<ira.weiny@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"michael.roth@amd.com" <michael.roth@amd.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 12/18] KVM: TDX: Bug the VM if extended the initial
+ measurement fails
+Thread-Topic: [RFC PATCH v2 12/18] KVM: TDX: Bug the VM if extended the
+ initial measurement fails
+Thread-Index: AQHcGHjSRjNmRiPKf0OfM3rq5B2s2rR5SfIAgACnMICAACApgIAFlJ+AgACAeACAAHkhAA==
+Date: Wed, 3 Sep 2025 00:18:10 +0000
+Message-ID: <77cd1034c59b23bae2bbf3693bf6a740d283d787.camel@intel.com>
+References: <20250829000618.351013-1-seanjc@google.com>
+	 <20250829000618.351013-13-seanjc@google.com>
+	 <aLFiPq1smdzN3Ary@yzhao56-desk.sh.intel.com>
+	 <8445ac8c96706ba1f079f4012584ef7631c60c8b.camel@intel.com>
+	 <aLIJd7xpNfJvdMeT@google.com> <aLa34QCJCXGLk/fl@yzhao56-desk.sh.intel.com>
+	 <aLcjppW1eiCrxJPC@google.com>
+In-Reply-To: <aLcjppW1eiCrxJPC@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SA3PR11MB7486:EE_
+x-ms-office365-filtering-correlation-id: 081a6d6f-68c8-4006-8714-08ddea7f5dd6
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?dUFiYm82eTZDdTQ5eEE2NXlSSlYzUXdyS2hacGZOd0c5bUowYW9JamNMazlS?=
+ =?utf-8?B?Y1AyWldtb1lWUFNKeVZ0NkNmaGh4d0UrM0w5ME9uOHhIRGpsb3ZNblhETkdp?=
+ =?utf-8?B?U05vZTAzOU1TeG1ZSWZGSDNZVTM0bnF5NkRIUFFoU3NaN0ZqTTZuU2VhZGxu?=
+ =?utf-8?B?RG96NStYUmg4NUhKaEc2cjNNOWpKWDJMcGdrd3ROWnBhS3ZKZ3k3WHM3TlB2?=
+ =?utf-8?B?c2FiQWc1MkNTUTFNOFY1MDA3d2s4U2Vyc09mRXYwcmVHRHp6RzJlMXVQa0xq?=
+ =?utf-8?B?ZTgxc3ZFek1Vc0JWa0dVc3hySUpJQlFoY1VGT3VpMVQ0alFwRnZjeG9tVXVa?=
+ =?utf-8?B?YWR4YTB6VjZQVnI3STZKMkNqV2V1aFRXaXRyV1dvL2dFNWwyeUhvMTdBVmds?=
+ =?utf-8?B?L2l0MU9GVlVIeTRDVXJ2TGFhdnBxenpXYkN2VWhMMERtSHo4ZVdXY1FIVGU3?=
+ =?utf-8?B?NGRGV2dicmgxcDVZYkQyYUh6Q2FnWkd4em1qNkczVnl2RHBaSERYN2pSL0g3?=
+ =?utf-8?B?TzZIYzVBdGJtY3ZaQjlRckVGTVFKb2RBOWpPajIycUZ4cFFxVVB6NkdMUnZG?=
+ =?utf-8?B?eTkyQTJ1SjV0WG1BNXFKdkZxRnlVZ3o2eXhKbTBDanVGTnVQKzBSYXhUVFNS?=
+ =?utf-8?B?QnpoM3krSlVHcEFFVVFXaVgyRldPNyt4c2VyRm85NFJ1cGE0SW9ibmZSMXJi?=
+ =?utf-8?B?TXREcGx2cy9WZVA4Y1RlQTBoWkNuQnpETE0vT2VKTGhQSll6OVRHazdmOFpx?=
+ =?utf-8?B?QUFxNzhaQzJzbDgvbDkvLzdrMVlITm1IU1ZiYzNrejBuQ0lBNG9sZDdvRWxm?=
+ =?utf-8?B?eUk4SjRQYno2a0tUV09OUUNGNzMvaG5XTXdCb0UvSVA5ekhYZk1PQ0FiTURF?=
+ =?utf-8?B?QTBBeUs4NVF6SFZoaTcrZ1daZWxLTEVXa2hQVkRqak82b1k5aVF2c2dSTkhz?=
+ =?utf-8?B?MFlrZTNmdWRaR1VGUWFiMFJKNzVaMWFRWnQ4SWppMk1ma2RXSWZXOXBVT0V5?=
+ =?utf-8?B?YWRUUTlLakJtS3c1TTZDNC9UL2svL2p0YWxlWHJXTENydUpsaVA2dEZjcVYr?=
+ =?utf-8?B?VmxPZXdoOWRabGlMYmU0YWV6cVRQWEFOc3VQOTNZT2xuK2ZsN3EzTDJZSk1w?=
+ =?utf-8?B?NXRlT0N0YU02WlVlQlVOWlpqS3pRVjdGN3RvRktndjlac0M4SWF3Q0c0cFpk?=
+ =?utf-8?B?UG5CdkRlQ1AvanhEaEFJSmFNTU90Snk5Z2NITmhSZHppS3ppKzhOSm5GVUE1?=
+ =?utf-8?B?OThHejdhdXhwZ0hkaU9aeE9XeVl1TFpnQXhrdzNXVTBhT0kwcW00RmFwZlE0?=
+ =?utf-8?B?L3FMYWNPTW5iN1F1TEl1eFdQWWVSS3grSEdOLzloK3hyQXJNWjNOeWNlU0hk?=
+ =?utf-8?B?VDdaZ3U2bkRFWGpBWk90bDhOcm12TFU0Y0ViRDBlNjlxQ0VsdDEyNU1ZVloy?=
+ =?utf-8?B?WGRGMmZWNjR5dy81TGZHYkJhSG9DTTJKSHdhYzU4aTlsVFN6OFZvUHFqL3BL?=
+ =?utf-8?B?d28vSldFYStKbU1hakc4VnlLY3ZXTnpXdDVvTU0wZ3E5SEZFTG45bU5iRWtY?=
+ =?utf-8?B?OWh1ZisrRGRWWjBybFNJN0hhSCs2cm56QVFkTmJaK01jZjAwcE9Oa0x6bjZi?=
+ =?utf-8?B?TU5vYjFPbkg2b0h0VHBqQytaUEV1UnBBRGZVWkcwK2dndDBYUnhRdHBaVnFF?=
+ =?utf-8?B?SmFsdEJybmd0eXpCUGFWUnl6RTB3aVlpQVdzbElJYU43UkZZM2JJYzFockZT?=
+ =?utf-8?B?TDQ0SktZbDNVNWFrTjZqVzNUMnNuN01PeHZOK2dMbllmQzVIbEV5RUVUVFlj?=
+ =?utf-8?B?VW9FbXlNNjN4aDMzTDNpcGdpWGN0VGFMUkhKV1FDaXV1KzFOS3JTaHdta1J1?=
+ =?utf-8?B?MGVHZVRhWDA0R0YxeERMWXFTL3JnekdMM0tybzRHV1AyU1pRUVVNSWZweEZv?=
+ =?utf-8?Q?IoCGKP5BOkY=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ekR2dW1CYXk4SVZ5NHFKWjZmb3BHcmpNMTI0OTN5VVVtdzNTbEt6ZFVGK0ho?=
+ =?utf-8?B?OFhkUFI3Q1cyenR2ekZKMU9iajQ1WTY1c0VKSTFXNmsyQXVzb1U1NEhMaDlB?=
+ =?utf-8?B?N0ZpKzA4OVZnUC9vU21wdUx0Tll2SjhCTDFDZVZubXUxdCsrdy9ZVmtIRnhQ?=
+ =?utf-8?B?S0xvZ0wwTUF4aExzRmlaaEJZeHl4bk9EeVNmbmxxVkQ5dlE3dkExS3pNZnlw?=
+ =?utf-8?B?MWE0RUtweEJ2U1ZiVzZ1ZTl4S3RDTjJGb3F6TnZlMng1WG5zYkpuYVJWQTZv?=
+ =?utf-8?B?dHFhdXhzZm5zSzlFVmpSdEMzRGtpdEFqazRYSGNZaUJFb3ZSMkRtTkRUL0li?=
+ =?utf-8?B?bnBDeEM2NTlnTXR6dldpZWtrTjQ5TU8zMWtDdG9JUXJESDQ5ZFA4Qlkvb3hj?=
+ =?utf-8?B?SVhZRGttWGk0QjRleEdueGgzQjIyQTZ3bm95Z2xBNHNtQnBhR3hMNXF1VkZ3?=
+ =?utf-8?B?R2MyQkQzOTFSejBjaHJnejVXQUcvZjdvVG5rRGxoenR6ZmhaRm9NcExwbFdW?=
+ =?utf-8?B?Z1dXUW81WTZXSGZYakVjbEhJWEFiMmloNXpVZXpWUURsQjdBNUlNb05waU9x?=
+ =?utf-8?B?alFWbitOeTI1bVZuUk9PclViOTZwMndsZWNIdkJWU2c3SnY1bERscGlVQmsv?=
+ =?utf-8?B?bWdvL2o3NEl4YmZramZ5NVNmWmJKYm92Q0dXTG1KYXE3WU1zNlp2WVlOYjh1?=
+ =?utf-8?B?ZFFUYUNBekcxMFMvN0ZNMkFYWUsrODg3NEdRRzN6QzVvTHRLUUxKY3YvZFJB?=
+ =?utf-8?B?QWswbDFzemJyT1lkWEZ1cDNTaVQ5c3NQa1hmMVpjb2J2SUllVUZCTldZM3NX?=
+ =?utf-8?B?VFI5cGZxMlRlS05kRlVyUkxtWWVnWkVtaWkwaFQ0MkgwRkYrVDNiOGZIYUlx?=
+ =?utf-8?B?UWNVdmdDZ0l4OXBLT2lJenNZRXZXbHE2UjRYY3pDTlM4akhvbDNmMk9uWjRV?=
+ =?utf-8?B?bnYvb29CaGRpM3BBbUliQXN1T1FGUC9LWFZUNUtEYjI0SE5JQlhJMDIrV1JV?=
+ =?utf-8?B?ci95a1YyYURRUU5VV2drbStaZVNIM3Z5SUxjWjEvSmxPVy8wOHA0ZHBZTXdM?=
+ =?utf-8?B?S1QxNWQwTFRBemtzbVlXWGorU2JoaHd1aVdCQm82NXlvTjlYRFo2dDk0cUxV?=
+ =?utf-8?B?c0YwT2czakVraXlhb0NBbGZrakxvTUtkOUtxemI1S2x0N2txRlpDZHp2d0dC?=
+ =?utf-8?B?NTMyeis0dXhDSElnVGVhQ1RhNncySzBtRmZ1S25aZWd6RnJISThUaW9ubVo2?=
+ =?utf-8?B?VTYvVlZBdGVLcHQvYmRBeHZIdUZsWVc0QkNXT2lWY2lxSkRpRkVuVjlmUHRH?=
+ =?utf-8?B?UWZrUWtaZHRQWk9HaEx3UENaR0VpSDNETEswOFlqdXBONUI5eHhtMnI3N1g0?=
+ =?utf-8?B?NDU1K2Y4UlZDd3k2RUl4MG1OT1Q3cGM0SEl2S1A5WGFEalpQNEpDNHIvd3VZ?=
+ =?utf-8?B?V2tlNmt3blpoaHBneVJha2VkeS9ncjFwUFY4dXV6d3NyK3JTUm1MYURnRFY0?=
+ =?utf-8?B?UW1rd1dHR1pqTkRQb1ZPZ0hXUmZyekRaaUlGZ0czV01rR0FsUDd1REsvYmUv?=
+ =?utf-8?B?UjNkaXZwOElvTmw3TzlNTEd0YzRFUnBGZ1B0N214c2VWekVicjVIeHVqMW1r?=
+ =?utf-8?B?V3Y2QUk3alkyQ3htdjdYNFhzdVg4eVpvd0d6Tk1CM21vcEdFdEpSb3JRSzNr?=
+ =?utf-8?B?RTQvai9yNmlMV29uenpSWFp0c2p1WHNNTkJLcXpOKzIwaE5kZjdEQjNhNlA2?=
+ =?utf-8?B?VDJjQWJ2eFRpRFlBcEdZTUhsNEpBZldERlJUS2dmTENFcnFQTXVjb2xSWFNw?=
+ =?utf-8?B?TUoxOTBYc1V3SFZQNjZRbFNyanBUL3lmemNnVytSMUZHMXo2ZkFvc3N4ekIr?=
+ =?utf-8?B?NzEzMVdFbW95QmZxWEdubFFTNk9LdERrcjZvaXJ2VW0vZjJSQ0R6MWZKOGtk?=
+ =?utf-8?B?aEZyK1RjQWxqcTBpYW16ZDIwNVFaQ1F5QWRrL05wbGJublZFMWdhbzlnZ2cz?=
+ =?utf-8?B?dkRUbWZpeEdaVWdmYitCOC95NEFqWS94b3ZoMVJ0ZUtpWkVhQnE5ZkVNNjJq?=
+ =?utf-8?B?ck84T3NWSk5JcHU4RTJYcS8rS21FdXZ5djRlTU1OV2NjZEthNkh2MVd4RXo0?=
+ =?utf-8?B?R1FoYWZpbDRWdThxWnNsQ29hTVVPLzVVZ0xRSHJya0dzUWVzdG82TmNIQUpI?=
+ =?utf-8?B?dGc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <17CD898BFE7CE44FA651A8835570696C@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250902-toicsti-bug-v4-1-e5c960e0b3d6@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADOJt2gC/2XNTWrDMBCG4asErasgzdgduavcI3Shn7Ez0MTFc
- kxK8N0rp4Ta7fIbeN65q8yDcFZvu7saeJIs/aWM6mWn4slfOtaSylZgoDav1umxl5hH0eHaaXI
- AwXFTeQRVxOfArdweteN72SfJYz98PeKTXa7PTrPpTFYbzQYioa/rENOhO3v52Mf+vGR/DMB/0
- yJVSBhMFWBllt8T/P4ji1sL2upgHZIjZg/NX4sri2ZrsdiUIPnYUAvk13ae528YRZKdUgEAAA=
- =
-X-Change-ID: 20250618-toicsti-bug-7822b8e94a32
-To: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Paul Moore <paul@paul-moore.com>, Kees Cook <kees@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
- Abhinav Saxena <xandfury@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756858678; l=24236;
- i=xandfury@gmail.com; s=20250614; h=from:subject:message-id;
- bh=5DsJBMp3wAX9AEWlY0wpjQ9N36iw1OYQPdCuD1Na+CM=;
- b=JTrE3oZ/yNhRlTIq0fNwqxsaJzKDtwCx3BJxMmNpaM+TAXFGXj5OUfcMfZ3/Rr0k9BvMF5vL/
- Kg1yKiRbALxCeSTWw73J8LGp4EFxa+uF791s/9cVnBO6nU9LbJFgT4T
-X-Developer-Key: i=xandfury@gmail.com; a=ed25519;
- pk=YN6w7WNet8skqvMWxhG5BlAmtd1SQmo8If6Mofh4k44=
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 081a6d6f-68c8-4006-8714-08ddea7f5dd6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2025 00:18:11.2390
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EM0eDQXb0mWcT9qWrFexeqPul84Im8gla7IWrmZBh83OhE3cZuFauVJwMc3fpFHo3KlW2bITeC+5RXk4SKAMPyH7VlaX/TXJ67VSGvBUQOg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7486
+X-OriginatorOrg: intel.com
 
-TIOCSTI is a TTY ioctl command that allows inserting characters into
-the terminal input queue, making it appear as if the user typed those
-characters. This functionality has behavior that varies based on system
-configuration and process credentials.
-
-The dev.tty.legacy_tiocsti sysctl introduced in commit 83efeeeb3d04
-("tty: Allow TIOCSTI to be disabled") controls TIOCSTI usage. When
-disabled, TIOCSTI requires CAP_SYS_ADMIN capability.
-
-The current implementation checks the current process's credentials via
-capable(CAP_SYS_ADMIN), but does not validate against the file opener's
-credentials stored in file->f_cred. This creates different behavior when
-file descriptors are passed between processes via SCM_RIGHTS.
-
-Add a test suite with 16 test variants using fixture variants to verify
-TIOCSTI behavior when dev.tty.legacy_tiocsti is enabled/disabled:
-
-- Basic TIOCSTI tests (8 variants): Direct testing with different
-  capability and controlling terminal combinations
-- FD passing tests (8 variants): Test behavior when file descriptors
-  are passed between processes with different capabilities
-
-The FD passing tests document this behavior - some tests show different
-results than expected based on file opener credentials, demonstrating
-that TIOCSTI uses current process credentials rather than file opener
-credentials.
-
-The tests validate proper enforcement of the legacy_tiocsti sysctl. Test
-implementation uses openpty(3) with TIOCSCTTY for isolated PTY
-environments. See tty_ioctl(4) for details on TIOCSTI behavior and
-security requirements.
-
-Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
----
-Changes in v4:
-- Moved skip conditions and sysctl setup from TEST_F to FIXTURE_SETUP (Kees Cook)
-- Fixed fclose() error handling in set_legacy_tiocsti_setting (Kees Cook)
-- Extracted run_basic_tiocsti_test() and run_fdpass_tiocsti_test functions (Kees Cook)
-- Removed redundant sysctl restore logic from TEST_F (Kees Cook)
-- Simplified FIXTURE_TEARDOWN (Kees Cook)
-- Replace drop_to_nobody() to drop_all_privs() which should be more portable (Justin Stitt)
-- Link to v3: https://lore.kernel.org/r/20250730-toicsti-bug-v3-1-dd2dac97f27a@gmail.com
-
-Add selftests for TIOCSTI ioctl
-
-To run all tests:
-$ sudo ./tools/testing/selftests/tty/tty_tiocsti_test
-
-Test Results:
-- PASSED: 13/16 tests
-- Different behavior: 3/16 tests (documenting credential checking behavior)
-
-All tests validated using:
-- scripts/checkpatch.pl --strict (clean output)
-- Functional testing on kernel v6.16-rc2
-
-Changes in v3:
-- Replaced all printf() calls with TH_LOG() for proper test logging (Kees Cook)
-- Added struct __test_metadata parameter to helper functions
-- Moved common legacy_tiocsti availability check to FIXTURE_SETUP()
-- Implemented sysctl modification/restoration in FIXTURE_SETUP/TEARDOWN
-- Used openpty() with TIOCSCTTY for reliable PTY testing environment
-- Fixed child/parent synchronization in FD passing tests
-- Replaced manual _exit(1) handling with proper ASSERT statements
-- Switched // comments to /* */ format throughout
-- Expanded to 16 test variants using fixture variants
-- Enhanced error handling and test reliability
-- Link to v2: https://lore.kernel.org/r/20250713-toicsti-bug-v2-1-b183787eea29@gmail.com
-- Link to v1: https://lore.kernel.org/r/20250622-toicsti-bug-v1-0-f374373b04b2@gmail.com
-
-References:
-- tty_ioctl(4) - documents TIOCSTI ioctl and capability requirements
-- openpty(3) - pseudo-terminal creation and management
-- commit 83efeeeb3d04 ("tty: Allow TIOCSTI to be disabled")
-- Documentation/security/credentials.rst
-- https://github.com/KSPP/linux/issues/156
-- https://lore.kernel.org/linux-hardening/Y0m9l52AKmw6Yxi1@hostpad/
-- drivers/tty/Kconfig
-- Documentation/driver-api/tty/
----
- tools/testing/selftests/tty/Makefile           |   6 +-
- tools/testing/selftests/tty/config             |   1 +
- tools/testing/selftests/tty/tty_tiocsti_test.c | 650 +++++++++++++++++++++++++
- 3 files changed, 656 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/tty/Makefile b/tools/testing/selftests/tty/Makefile
-index 50d7027b2ae3fb495dd1c0684363fa8f426be42c..7f6fbe5a0cd5663310e334d9d068b21dab9136ec 100644
---- a/tools/testing/selftests/tty/Makefile
-+++ b/tools/testing/selftests/tty/Makefile
-@@ -1,5 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- CFLAGS = -O2 -Wall
--TEST_GEN_PROGS := tty_tstamp_update
-+TEST_GEN_PROGS := tty_tstamp_update tty_tiocsti_test
-+LDLIBS += -lcap
- 
- include ../lib.mk
-+
-+# Add libcap for TIOCSTI test
-+$(OUTPUT)/tty_tiocsti_test: LDLIBS += -lcap
-diff --git a/tools/testing/selftests/tty/config b/tools/testing/selftests/tty/config
-new file mode 100644
-index 0000000000000000000000000000000000000000..c6373aba66366c82435bb26c019eb360eb6310eb
---- /dev/null
-+++ b/tools/testing/selftests/tty/config
-@@ -0,0 +1 @@
-+CONFIG_LEGACY_TIOCSTI=y
-diff --git a/tools/testing/selftests/tty/tty_tiocsti_test.c b/tools/testing/selftests/tty/tty_tiocsti_test.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..5e767e6cb3ef8f05c5430eb0fcc792064c446c03
---- /dev/null
-+++ b/tools/testing/selftests/tty/tty_tiocsti_test.c
-@@ -0,0 +1,650 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * TTY Tests - TIOCSTI
-+ *
-+ * Copyright © 2025 Abhinav Saxena <xandfury@gmail.com>
-+ */
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <fcntl.h>
-+#include <sys/ioctl.h>
-+#include <errno.h>
-+#include <stdbool.h>
-+#include <string.h>
-+#include <sys/socket.h>
-+#include <sys/wait.h>
-+#include <pwd.h>
-+#include <termios.h>
-+#include <grp.h>
-+#include <sys/capability.h>
-+#include <sys/prctl.h>
-+#include <pty.h>
-+#include <utmp.h>
-+
-+#include "../kselftest_harness.h"
-+
-+enum test_type {
-+	TEST_PTY_TIOCSTI_BASIC,
-+	TEST_PTY_TIOCSTI_FD_PASSING,
-+	/* other tests cases such as serial may be added. */
-+};
-+
-+/*
-+ * Test Strategy:
-+ * - Basic tests: Use PTY with/without TIOCSCTTY (controlling terminal for
-+ *   current process)
-+ * - FD passing tests: Child creates PTY, parent receives FD (demonstrates
-+ *   security issue)
-+ *
-+ * SECURITY VULNERABILITY DEMONSTRATION:
-+ * FD passing tests show that TIOCSTI uses CURRENT process credentials, not
-+ * opener credentials. This means privileged processes can be given FDs from
-+ * unprivileged processes and successfully perform TIOCSTI operations that the
-+ * unprivileged process couldn't do directly.
-+ *
-+ * Attack scenario:
-+ * 1. Unprivileged process opens TTY (direct TIOCSTI fails due to lack of
-+ *    privileges)
-+ * 2. Unprivileged process passes FD to privileged process via SCM_RIGHTS
-+ * 3. Privileged process can use TIOCSTI on the FD (succeeds due to its
-+ *    privileges)
-+ * 4. Result: Effective privilege escalation via file descriptor passing
-+ *
-+ * This matches the kernel logic in tiocsti():
-+ * 1. if (!tty_legacy_tiocsti && !capable(CAP_SYS_ADMIN)) return -EIO;
-+ * 2. if ((current->signal->tty != tty) && !capable(CAP_SYS_ADMIN))
-+ *        return -EPERM;
-+ * Note: Both checks use capable() on CURRENT process, not FD opener!
-+ *
-+ * If the file credentials were also checked along with the capable() checks
-+ * then the results for FD pass tests would be consistent with the basic tests.
-+ */
-+
-+FIXTURE(tiocsti)
-+{
-+	int pty_master_fd; /* PTY - for basic tests */
-+	int pty_slave_fd;
-+	bool has_pty;
-+	bool initial_cap_sys_admin;
-+	int original_legacy_tiocsti_setting;
-+	bool can_modify_sysctl;
-+};
-+
-+FIXTURE_VARIANT(tiocsti)
-+{
-+	const enum test_type test_type;
-+	const bool controlling_tty; /* true=current->signal->tty == tty */
-+	const int legacy_tiocsti; /* 0=restricted, 1=permissive */
-+	const bool requires_cap; /* true=with CAP_SYS_ADMIN, false=without */
-+	const int expected_success; /* 0=success, -EIO/-EPERM=specific error */
-+};
-+
-+/*
-+ * Tests Controlling Terminal Variants (current->signal->tty == tty)
-+ *
-+ * TIOCSTI Test Matrix:
-+ *
-+ * | legacy_tiocsti | CAP_SYS_ADMIN | Expected Result | Error |
-+ * |----------------|---------------|-----------------|-------|
-+ * | 1 (permissive) | true          | SUCCESS         | -     |
-+ * | 1 (permissive) | false         | SUCCESS         | -     |
-+ * | 0 (restricted) | true          | SUCCESS         | -     |
-+ * | 0 (restricted) | false         | FAILURE         | -EIO  |
-+ */
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(tiocsti, basic_pty_permissive_withcap) {
-+	.test_type = TEST_PTY_TIOCSTI_BASIC,
-+	.controlling_tty = true,
-+	.legacy_tiocsti = 1,
-+	.requires_cap = true,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, basic_pty_permissive_nocap) {
-+	.test_type = TEST_PTY_TIOCSTI_BASIC,
-+	.controlling_tty = true,
-+	.legacy_tiocsti = 1,
-+	.requires_cap = false,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, basic_pty_restricted_withcap) {
-+	.test_type = TEST_PTY_TIOCSTI_BASIC,
-+	.controlling_tty = true,
-+	.legacy_tiocsti = 0,
-+	.requires_cap = true,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, basic_pty_restricted_nocap) {
-+	.test_type = TEST_PTY_TIOCSTI_BASIC,
-+	.controlling_tty = true,
-+	.legacy_tiocsti = 0,
-+	.requires_cap = false,
-+	.expected_success = -EIO, /* FAILURE: legacy restriction */
-+}; /* clang-format on */
-+
-+/*
-+ * Note for FD Passing Test Variants
-+ * Since we're testing the scenario where an unprivileged process pass an FD
-+ * to a privileged one, .requires_cap here means the caps of the child process.
-+ * Not the parent; parent would always be privileged.
-+ */
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_permissive_withcap) {
-+	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-+	.controlling_tty = true,
-+	.legacy_tiocsti = 1,
-+	.requires_cap = true,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_permissive_nocap) {
-+	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-+	.controlling_tty = true,
-+	.legacy_tiocsti = 1,
-+	.requires_cap = false,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_restricted_withcap) {
-+	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-+	.controlling_tty = true,
-+	.legacy_tiocsti = 0,
-+	.requires_cap = true,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_restricted_nocap) {
-+	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-+	.controlling_tty = true,
-+	.legacy_tiocsti = 0,
-+	.requires_cap = false,
-+	.expected_success = -EIO,
-+}; /* clang-format on */
-+
-+/*
-+ * Non-Controlling Terminal Variants (current->signal->tty != tty)
-+ *
-+ * TIOCSTI Test Matrix:
-+ *
-+ * | legacy_tiocsti | CAP_SYS_ADMIN | Expected Result | Error |
-+ * |----------------|---------------|-----------------|-------|
-+ * | 1 (permissive) | true          | SUCCESS         | -     |
-+ * | 1 (permissive) | false         | FAILURE         | -EPERM|
-+ * | 0 (restricted) | true          | SUCCESS         | -     |
-+ * | 0 (restricted) | false         | FAILURE         | -EIO  |
-+ */
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_permissive_withcap) {
-+	.test_type = TEST_PTY_TIOCSTI_BASIC,
-+	.controlling_tty = false,
-+	.legacy_tiocsti = 1,
-+	.requires_cap = true,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_permissive_nocap) {
-+	.test_type = TEST_PTY_TIOCSTI_BASIC,
-+	.controlling_tty = false,
-+	.legacy_tiocsti = 1,
-+	.requires_cap = false,
-+	.expected_success = -EPERM,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_restricted_withcap) {
-+	.test_type = TEST_PTY_TIOCSTI_BASIC,
-+	.controlling_tty = false,
-+	.legacy_tiocsti = 0,
-+	.requires_cap = true,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_restricted_nocap) {
-+	.test_type = TEST_PTY_TIOCSTI_BASIC,
-+	.controlling_tty = false,
-+	.legacy_tiocsti = 0,
-+	.requires_cap = false,
-+	.expected_success = -EIO,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_permissive_withcap) {
-+	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-+	.controlling_tty = false,
-+	.legacy_tiocsti = 1,
-+	.requires_cap = true,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_permissive_nocap) {
-+	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-+	.controlling_tty = false,
-+	.legacy_tiocsti = 1,
-+	.requires_cap = false,
-+	.expected_success = -EPERM,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_restricted_withcap) {
-+	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-+	.controlling_tty = false,
-+	.legacy_tiocsti = 0,
-+	.requires_cap = true,
-+	.expected_success = 0,
-+};
-+
-+FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_restricted_nocap) {
-+	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-+	.controlling_tty = false,
-+	.legacy_tiocsti = 0,
-+	.requires_cap = false,
-+	.expected_success = -EIO,
-+}; /* clang-format on */
-+
-+/* Helper function to send FD via SCM_RIGHTS */
-+static int send_fd_via_socket(int socket_fd, int fd_to_send)
-+{
-+	struct msghdr msg = { 0 };
-+	struct cmsghdr *cmsg;
-+	char cmsg_buf[CMSG_SPACE(sizeof(int))];
-+	char dummy_data = 'F';
-+	struct iovec iov = { .iov_base = &dummy_data, .iov_len = 1 };
-+
-+	msg.msg_iov = &iov;
-+	msg.msg_iovlen = 1;
-+	msg.msg_control = cmsg_buf;
-+	msg.msg_controllen = sizeof(cmsg_buf);
-+
-+	cmsg = CMSG_FIRSTHDR(&msg);
-+	cmsg->cmsg_level = SOL_SOCKET;
-+	cmsg->cmsg_type = SCM_RIGHTS;
-+	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-+
-+	memcpy(CMSG_DATA(cmsg), &fd_to_send, sizeof(int));
-+
-+	return sendmsg(socket_fd, &msg, 0) < 0 ? -1 : 0;
-+}
-+
-+/* Helper function to receive FD via SCM_RIGHTS */
-+static int recv_fd_via_socket(int socket_fd)
-+{
-+	struct msghdr msg = { 0 };
-+	struct cmsghdr *cmsg;
-+	char cmsg_buf[CMSG_SPACE(sizeof(int))];
-+	char dummy_data;
-+	struct iovec iov = { .iov_base = &dummy_data, .iov_len = 1 };
-+	int received_fd = -1;
-+
-+	msg.msg_iov = &iov;
-+	msg.msg_iovlen = 1;
-+	msg.msg_control = cmsg_buf;
-+	msg.msg_controllen = sizeof(cmsg_buf);
-+
-+	if (recvmsg(socket_fd, &msg, 0) < 0)
-+		return -1;
-+
-+	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
-+		if (cmsg->cmsg_level == SOL_SOCKET &&
-+		    cmsg->cmsg_type == SCM_RIGHTS) {
-+			memcpy(&received_fd, CMSG_DATA(cmsg), sizeof(int));
-+			break;
-+		}
-+	}
-+
-+	return received_fd;
-+}
-+
-+static inline bool has_cap_sys_admin(void)
-+{
-+	cap_t caps = cap_get_proc();
-+
-+	if (!caps)
-+		return false;
-+
-+	cap_flag_value_t cap_val;
-+	bool has_cap = (cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE,
-+				     &cap_val) == 0) &&
-+		       (cap_val == CAP_SET);
-+
-+	cap_free(caps);
-+	return has_cap;
-+}
-+
-+/*
-+ * Switch to non-root user and clear all capabilities
-+ */
-+static inline bool drop_all_privs(struct __test_metadata *_metadata)
-+{
-+	/* Drop supplementary groups */
-+	ASSERT_EQ(setgroups(0, NULL), 0);
-+
-+	/* Switch to non-root user */
-+	ASSERT_EQ(setgid(1000), 0);
-+	ASSERT_EQ(setuid(1000), 0);
-+
-+	/* Clear all capabilities */
-+	cap_t empty = cap_init();
-+
-+	ASSERT_NE(empty, NULL);
-+	ASSERT_EQ(cap_set_proc(empty), 0);
-+	cap_free(empty);
-+
-+	/* Prevent privilege regain */
-+	ASSERT_EQ(prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0), 0);
-+
-+	/* Verify privilege drop */
-+	ASSERT_FALSE(has_cap_sys_admin());
-+	return true;
-+}
-+
-+static inline int get_legacy_tiocsti_setting(struct __test_metadata *_metadata)
-+{
-+	FILE *fp;
-+	int value = -1;
-+
-+	fp = fopen("/proc/sys/dev/tty/legacy_tiocsti", "r");
-+	if (!fp) {
-+		/* legacy_tiocsti sysctl not available (kernel < 6.2) */
-+		return -1;
-+	}
-+
-+	if (fscanf(fp, "%d", &value) == 1 && fclose(fp) == 0) {
-+		if (value < 0 || value > 1)
-+			value = -1; /* Invalid value */
-+	} else {
-+		value = -1; /* Failed to parse */
-+	}
-+
-+	return value;
-+}
-+
-+static inline bool set_legacy_tiocsti_setting(struct __test_metadata *_metadata,
-+					      int value)
-+{
-+	FILE *fp;
-+	bool success = false;
-+
-+	/* Sanity-check the value */
-+	ASSERT_GE(value, 0);
-+	ASSERT_LE(value, 1);
-+
-+	/*
-+	 * Try to open for writing; if we lack permission, return false so
-+	 * the test harness will skip variants that need to change it
-+	 */
-+	fp = fopen("/proc/sys/dev/tty/legacy_tiocsti", "w");
-+	if (!fp)
-+		return false;
-+
-+	/* Write the new setting */
-+	if (fprintf(fp, "%d\n", value) > 0 && fclose(fp) == 0)
-+		success = true;
-+	else
-+		TH_LOG("Failed to write legacy_tiocsti: %s", strerror(errno));
-+
-+	return success;
-+}
-+
-+/*
-+ * TIOCSTI injection test function
-+ * @tty_fd: TTY slave file descriptor to test TIOCSTI on
-+ * Returns: 0 on success, -errno on failure
-+ */
-+static inline int test_tiocsti_injection(struct __test_metadata *_metadata,
-+					 int tty_fd)
-+{
-+	int ret;
-+	char inject_char = 'V';
-+
-+	errno = 0;
-+	ret = ioctl(tty_fd, TIOCSTI, &inject_char);
-+	return ret == 0 ? 0 : -errno;
-+}
-+
-+/*
-+ * Child process: test TIOCSTI directly with capability/controlling
-+ * terminal setup
-+ */
-+static void run_basic_tiocsti_test(struct __test_metadata *_metadata,
-+				   FIXTURE_DATA(tiocsti) * self,
-+				   const FIXTURE_VARIANT(tiocsti) * variant)
-+{
-+	/* Handle capability requirements */
-+	if (self->initial_cap_sys_admin && !variant->requires_cap)
-+		ASSERT_TRUE(drop_all_privs(_metadata));
-+
-+	if (variant->controlling_tty) {
-+		/*
-+		 * Create new session and set PTY as
-+		 * controlling terminal
-+		 */
-+		pid_t sid = setsid();
-+
-+		ASSERT_GE(sid, 0);
-+		ASSERT_EQ(ioctl(self->pty_slave_fd, TIOCSCTTY, 0), 0);
-+	}
-+
-+	/*
-+	 * Validate test environment setup and verify final
-+	 * capability state matches expectation
-+	 * after potential drop.
-+	 */
-+	ASSERT_TRUE(self->has_pty);
-+	ASSERT_EQ(has_cap_sys_admin(), variant->requires_cap);
-+
-+	/* Test TIOCSTI and validate result */
-+	int result = test_tiocsti_injection(_metadata, self->pty_slave_fd);
-+
-+	/* Check against expected result from variant */
-+	EXPECT_EQ(result, variant->expected_success);
-+	_exit(0);
-+}
-+
-+/*
-+ * Child process: create PTY and then pass FD to parent via SCM_RIGHTS
-+ */
-+static void run_fdpass_tiocsti_test(struct __test_metadata *_metadata,
-+				    const FIXTURE_VARIANT(tiocsti) * variant,
-+				    int sockfd)
-+{
-+	signal(SIGHUP, SIG_IGN);
-+
-+	/* Handle privilege dropping */
-+	if (!variant->requires_cap && has_cap_sys_admin())
-+		ASSERT_TRUE(drop_all_privs(_metadata));
-+
-+	/* Create child's PTY */
-+	int child_master_fd, child_slave_fd;
-+
-+	ASSERT_EQ(openpty(&child_master_fd, &child_slave_fd, NULL, NULL, NULL),
-+		  0);
-+
-+	if (variant->controlling_tty) {
-+		pid_t sid = setsid();
-+
-+		ASSERT_GE(sid, 0);
-+		ASSERT_EQ(ioctl(child_slave_fd, TIOCSCTTY, 0), 0);
-+	}
-+
-+	/* Test child's direct TIOCSTI for reference */
-+	int direct_result = test_tiocsti_injection(_metadata, child_slave_fd);
-+
-+	EXPECT_EQ(direct_result, variant->expected_success);
-+
-+	/* Send FD to parent */
-+	ASSERT_EQ(send_fd_via_socket(sockfd, child_slave_fd), 0);
-+
-+	/* Wait for parent completion signal */
-+	char sync_byte;
-+	ssize_t bytes_read = read(sockfd, &sync_byte, 1);
-+
-+	ASSERT_EQ(bytes_read, 1);
-+
-+	close(child_master_fd);
-+	close(child_slave_fd);
-+	close(sockfd);
-+	_exit(0);
-+}
-+
-+FIXTURE_SETUP(tiocsti)
-+{
-+	/* Create PTY pair for basic tests */
-+	self->has_pty = (openpty(&self->pty_master_fd, &self->pty_slave_fd,
-+				 NULL, NULL, NULL) == 0);
-+	if (!self->has_pty) {
-+		self->pty_master_fd = -1;
-+		self->pty_slave_fd = -1;
-+	}
-+
-+	self->initial_cap_sys_admin = has_cap_sys_admin();
-+	self->original_legacy_tiocsti_setting =
-+		get_legacy_tiocsti_setting(_metadata);
-+
-+	if (self->original_legacy_tiocsti_setting < 0)
-+		SKIP(return,
-+			   "legacy_tiocsti sysctl not available (kernel < 6.2)");
-+
-+	/* Common skip conditions */
-+	if (variant->test_type == TEST_PTY_TIOCSTI_BASIC && !self->has_pty)
-+		SKIP(return, "PTY not available for controlling terminal test");
-+
-+	if (variant->test_type == TEST_PTY_TIOCSTI_FD_PASSING &&
-+	    !self->initial_cap_sys_admin)
-+		SKIP(return, "FD Pass tests require CAP_SYS_ADMIN");
-+
-+	if (variant->requires_cap && !self->initial_cap_sys_admin)
-+		SKIP(return, "Test requires initial CAP_SYS_ADMIN");
-+
-+	/* Test if we can modify the sysctl (requires appropriate privileges) */
-+	self->can_modify_sysctl = set_legacy_tiocsti_setting(
-+		_metadata, self->original_legacy_tiocsti_setting);
-+
-+	/* Sysctl setup based on variant */
-+	if (self->can_modify_sysctl &&
-+	    self->original_legacy_tiocsti_setting != variant->legacy_tiocsti) {
-+		if (!set_legacy_tiocsti_setting(_metadata,
-+						variant->legacy_tiocsti))
-+			SKIP(return, "Failed to set legacy_tiocsti sysctl");
-+
-+	} else if (!self->can_modify_sysctl &&
-+		   self->original_legacy_tiocsti_setting !=
-+			   variant->legacy_tiocsti)
-+		SKIP(return, "legacy_tiocsti setting mismatch");
-+}
-+
-+FIXTURE_TEARDOWN(tiocsti)
-+{
-+	/*
-+	 * Backup restoration -
-+	 * each test should restore its own sysctl changes
-+	 */
-+	if (self->can_modify_sysctl) {
-+		int current_value = get_legacy_tiocsti_setting(_metadata);
-+
-+		if (current_value != self->original_legacy_tiocsti_setting) {
-+			TH_LOG("Backup: Restoring legacy_tiocsti from %d to %d",
-+			       current_value,
-+			       self->original_legacy_tiocsti_setting);
-+			set_legacy_tiocsti_setting(
-+				_metadata,
-+				self->original_legacy_tiocsti_setting);
-+		}
-+	}
-+
-+	if (self->has_pty) {
-+		if (self->pty_master_fd >= 0)
-+			close(self->pty_master_fd);
-+		if (self->pty_slave_fd >= 0)
-+			close(self->pty_slave_fd);
-+	}
-+}
-+
-+TEST_F(tiocsti, test)
-+{
-+	int status;
-+	pid_t child_pid;
-+
-+	if (variant->test_type == TEST_PTY_TIOCSTI_BASIC) {
-+		/* ===== BASIC TIOCSTI TEST ===== */
-+		child_pid = fork();
-+		ASSERT_GE(child_pid, 0);
-+
-+		/* Perform the actual test in the child process */
-+		if (child_pid == 0)
-+			run_basic_tiocsti_test(_metadata, self, variant);
-+
-+	} else {
-+		/* ===== FD PASSING SECURITY TEST ===== */
-+		int sockpair[2];
-+
-+		ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sockpair), 0);
-+
-+		child_pid = fork();
-+		ASSERT_GE(child_pid, 0);
-+
-+		if (child_pid == 0) {
-+			/* Child process - create PTY and send FD */
-+			close(sockpair[0]);
-+			run_fdpass_tiocsti_test(_metadata, variant,
-+						sockpair[1]);
-+		}
-+
-+		/* Parent process - receive FD and test TIOCSTI */
-+		close(sockpair[1]);
-+
-+		int received_fd = recv_fd_via_socket(sockpair[0]);
-+
-+		ASSERT_GE(received_fd, 0);
-+
-+		bool parent_has_cap = self->initial_cap_sys_admin;
-+
-+		TH_LOG("=== TIOCSTI FD Passing Test Context ===");
-+		TH_LOG("legacy_tiocsti: %d, Parent CAP_SYS_ADMIN: %s, Child: %s",
-+		       variant->legacy_tiocsti, parent_has_cap ? "yes" : "no",
-+		       variant->requires_cap ? "kept" : "dropped");
-+
-+		/* SECURITY TEST: Try TIOCSTI with FD opened by child */
-+		int result = test_tiocsti_injection(_metadata, received_fd);
-+
-+		/* Log security concern if demonstrated */
-+		if (result == 0 && !variant->requires_cap) {
-+			TH_LOG("*** SECURITY CONCERN DEMONSTRATED ***");
-+			TH_LOG("Privileged parent can use TIOCSTI on FD from unprivileged child");
-+			TH_LOG("This shows current process credentials are used, not opener credentials");
-+		}
-+
-+		EXPECT_EQ(result, variant->expected_success)
-+		{
-+			TH_LOG("FD passing: expected error %d, got %d",
-+			       variant->expected_success, result);
-+		}
-+
-+		/* Signal child completion */
-+		char sync_byte = 'D';
-+		ssize_t bytes_written = write(sockpair[0], &sync_byte, 1);
-+
-+		ASSERT_EQ(bytes_written, 1);
-+
-+		close(received_fd);
-+		close(sockpair[0]);
-+	}
-+
-+	/* Common child process cleanup for both test types */
-+	ASSERT_EQ(waitpid(child_pid, &status, 0), child_pid);
-+
-+	if (WIFSIGNALED(status)) {
-+		TH_LOG("Child terminated by signal %d", WTERMSIG(status));
-+		ASSERT_FALSE(WIFSIGNALED(status))
-+		{
-+			TH_LOG("Child process failed assertion");
-+		}
-+	} else {
-+		EXPECT_EQ(WEXITSTATUS(status), 0);
-+	}
-+}
-+
-+TEST_HARNESS_MAIN
-
----
-base-commit: e6b9dce0aeeb91dfc0974ab87f02454e24566182
-change-id: 20250618-toicsti-bug-7822b8e94a32
-
-Best regards,
--- 
-Abhinav Saxena <xandfury@gmail.com>
-
+T24gVHVlLCAyMDI1LTA5LTAyIGF0IDEwOjA0IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KPiBPbiBUdWUsIFNlcCAwMiwgMjAyNSwgWWFuIFpoYW8gd3JvdGU6DQo+ID4gQnV0IGR1
+cmluZyB3cml0aW5nIGFub3RoZXIgY29uY3VycmVuY3kgdGVzdCwgSSBmb3VuZCBhIHNhZCBuZXdz
+IDoNCj4gPiANCj4gPiBTRUFNQ0FMTCBUREhfVlBfSU5JVCByZXF1aXJlcyB0byBob2xkIGV4Y2x1
+c2l2ZSBsb2NrIGZvciByZXNvdXJjZSBURFIgd2hlbiBpdHMNCj4gPiBsZWFmX29wY29kZS52ZXJz
+aW9uID4gMC4gU28sIHdoZW4gSSB1c2UgdjEgKHdoaWNoIGlzIHRoZSBjdXJyZW50IHZhbHVlIGlu
+DQo+ID4gdXBzdHJlYW0sIGZvciB4MmFwaWM/KSB0byB0ZXN0IGV4ZWN1dGluZyBpb2N0bCBLVk1f
+VERYX0lOSVRfVkNQVSBvbiBkaWZmZXJlbnQNCj4gPiB2Q1BVcyBjb25jdXJyZW50bHksIHRoZSBU
+RFhfQlVHX09OKCkgZm9sbG93aW5nIHRkaF92cF9pbml0KCkgd2lsbCBwcmludCBlcnJvcg0KPiA+
+ICJTRUFNQ0FMTCBUREhfVlBfSU5JVCBmYWlsZWQ6IDB4ODAwMDAyMDAwMDAwMDA4MCIuDQo+ID4g
+DQo+ID4gSWYgSSBzd2l0Y2ggdG8gdXNpbmcgdjAgdmVyc2lvbiBvZiBUREhfVlBfSU5JVCwgdGhl
+IGNvbnRlbnRpb24gd2lsbCBiZSBnb25lLg0KPiANCj4gVWgsIHNvIHRoYXQncyBleGFjdGx5IHRo
+ZSB0eXBlIG9mIGJyZWFraW5nIEFCSSBjaGFuZ2UgdGhhdCBpc24ndCBhY2NlcHRhYmxlLiAgSWYN
+Cj4gaXQncyByZWFsbHkgdHJ1bHkgbmVjZXNzYXJ5LCB0aGVuIHdlIGNhbiBjYW4gcHJvYmFibHkg
+aGFuZGxlIHRoZSBjaGFuZ2UgaW4gS1ZNDQo+IHNpbmNlIFREWCBpcyBzbyBuZXcsIGJ1dCBnZW5l
+cmFsbHkgc3BlYWtpbmcgc3VjaCBjaGFuZ2VzIHNpbXBseSBtdXN0IG5vdCBoYXBwZW4uDQo+IA0K
+PiA+IE5vdGU6IHRoaXMgYWNxdWlyaW5nIG9mIGV4Y2x1c2l2ZSBsb2NrIHdhcyBub3QgcHJldmlv
+dXNseSBwcmVzZW50IGluIHRoZSBwdWJsaWMNCj4gPiByZXBvIGh0dHBzOi8vZ2l0aHViLmNvbS9p
+bnRlbC90ZHgtbW9kdWxlLmdpdCwgYnJhbmNoIHRkeF8xLjUuDQo+ID4gKFRoZSBicmFuY2ggaGFz
+IGJlZW4gZm9yY2UtdXBkYXRlZCB0byBuZXcgaW1wbGVtZW50YXRpb24gbm93KS4NCj4gDQo+IExv
+dmVseS4NCg0KSG1tLCB0aGlzIGV4YWN0bHkgdGhlIGtpbmQgb2YgVERYIG1vZHVsZSBjaGFuZ2Ug
+d2Ugd2VyZSBqdXN0IGRpc2N1c3NpbmcNCnJlcG9ydGluZyBhcyBhIGJ1Zy4gTm90IGNsZWFyIG9u
+IHRoZSB0aW1pbmcgb2YgdGhlIGNoYW5nZSBhcyBmYXIgYXMgdGhlIGxhbmRpbmcNCnVwc3RyZWFt
+LiBXZSBjb3VsZCBpbnZlc3RpZ2F0ZSB3aGV0aGVyIHdoZXRoZXIgd2UgY291bGQgZml4IGl0IGlu
+IHRoZSBURFgNCm1vZHVsZS4gVGhpcyBwcm9iYWJseSBmYWxscyBpbnRvIHRoZSBjYXRlZ29yeSBv
+ZiBub3QgYWN0dWFsbHkgcmVncmVzc2luZyBhbnkNCnVzZXJzcGFjZS4gQnV0IGl0IGRvZXMgdHJp
+Z2dlciBhIGtlcm5lbCB3YXJuaW5nLCBzbyB3YXJyYW50IGEgZml4LCBobW0uDQoNCj4gDQo+ID4g
+PiBBY3F1aXJlIGt2bS0+bG9jayB0byBwcmV2ZW50IFZNLXdpZGUgdGhpbmdzIGZyb20gaGFwcGVu
+aW5nLCBzbG90c19sb2NrIHRvIHByZXZlbnQNCj4gPiA+IGt2bV9tbXVfemFwX2FsbF9mYXN0KCks
+IGFuZCBfYWxsXyB2Q1BVIG11dGV4ZXMgdG8gcHJldmVudCB2Q1BVcyBmcm9tIGludGVyZWZlcmlu
+Zy4NCj4gPiBOaXQ6IHdlIHNob3VsZCBoYXZlIG5vIHdvcnJ5IHRvIGt2bV9tbXVfemFwX2FsbF9m
+YXN0KCksIHNpbmNlIGl0IG9ubHkgemFwcw0KPiA+ICFtaXJyb3Igcm9vdHMuIFRoZSBzbG90c19s
+b2NrIHNob3VsZCBiZSBmb3Igc2xvdHMgZGVsZXRpb24uDQo+IA0KPiBPb2YsIEkgbWlzc2VkIHRo
+YXQuICBXZSBzaG91bGQgaGF2ZSByZXF1aXJlZCBueF9odWdlX3BhZ2VzPW5ldmVyIGZvciB0ZHg9
+MS4NCj4gUHJvYmFibHkgdG9vIGxhdGUgZm9yIHRoYXQgbm93IHRob3VnaCA6LS8NCj4gDQo+ID4g
+PiBEb2luZyB0aGF0IGZvciBhIHZDUFUgaW9jdGwgaXMgYSBiaXQgYXdrd2FyZCwgYnV0IG5vdCBh
+d2Z1bC4gIEUuZy4gd2UgY2FuIGFidXNlDQo+ID4gPiBrdm1fYXJjaF92Y3B1X2FzeW5jX2lvY3Rs
+KCkuICBJbiBoaW5kc2lnaHQsIGEgbW9yZSBjbGV2ZXIgYXBwcm9hY2ggd291bGQgaGF2ZQ0KPiA+
+ID4gYmVlbiB0byBtYWtlIEtWTV9URFhfSU5JVF9NRU1fUkVHSU9OIGEgVk0tc2NvcGVkIGlvY3Rs
+IHRoYXQgdGFrZXMgYSB2Q1BVIGZkLiAgT2gNCj4gPiA+IHdlbGwuDQo+ID4gPiANCj4gPiA+IEFu
+eXdheXMsIEkgdGhpbmsgd2UgbmVlZCB0byBhdm9pZCB0aGUgInN5bmNocm9ub3VzIiBpb2N0bCBw
+YXRoIGFueXdheXMsIGJlY2F1c2UNCj4gPiA+IHRha2luZyBrdm0tPnNsb3RzX2xvY2sgaW5zaWRl
+IHZjcHUtPm11dGV4IGlzIGdyb3NzLiAgQUZBSUNUIGl0J3Mgbm90IGFjdGl2ZWx5DQo+ID4gPiBw
+cm9ibGVtYXRpYyB0b2RheSwgYnV0IGl0IGZlZWxzIGxpa2UgYSBkZWFkbG9jayB3YWl0aW5nIHRv
+IGhhcHBlbi4NCj4gPiBOb3RlOiBMb29rcyBrdm1faW5oaWJpdF9hcGljX2FjY2Vzc19wYWdlKCkg
+YWxzbyB0YWtlcyBrdm0tPnNsb3RzX2xvY2sgaW5zaWRlDQo+ID4gdmNwdS0+bXV0ZXguDQo+IA0K
+PiBZaWtlcy4gIEFzIGRvZXMga3ZtX2FsbG9jX2FwaWNfYWNjZXNzX3BhZ2UoKSwgd2hpY2ggaXMg
+bGlrZWx5IHdoeSBJIHRob3VnaHQgaXQNCj4gd2FzIG9rIHRvIHRha2Ugc2xvdHNfbG9jay4gIEJ1
+dCB3aGlsZSBrdm1fYWxsb2NfYXBpY19hY2Nlc3NfcGFnZSgpIGFwcGVhcnMgdG8gYmUNCj4gY2Fs
+bGVkIHdpdGggdkNQVSBzY29wZSwgaXQncyBhY3R1YWxseSBjYWxsZWQgZnJvbSBWTSBzY29wZSBk
+dXJpbmcgdkNQVSBjcmVhdGlvbi4NCj4gDQo+IEknbGwgY2hldyBvbiB0aGlzLCB0aG91Z2ggaWYg
+c29tZW9uZSBoYXMgYW55IGlkZWFzLi4uDQo+IA0KPiA+IFNvLCBkbyB3ZSBuZWVkIHRvIG1vdmUg
+S1ZNX1REWF9JTklUX1ZDUFUgdG8gdGR4X3ZjcHVfYXN5bmNfaW9jdGwoKSBhcyB3ZWxsPw0KPiAN
+Cj4gSWYgaXQncyBfanVzdF8gSU5JVF9WQ1BVIHRoYXQgY2FuIHJhY2UgKGFzc3VtaW5nIHRoZSBW
+TS1zY29wZWQgc3RhdGUgdHJhbnN0aXRpb25zDQo+IHRha2UgYWxsIHZjcHUtPm11dGV4IGxvY2tz
+LCBhcyBwcm9wb3NlZCksIHRoZW4gYSBkZWRpY2F0ZWQgbXV0ZXggKHNwaW5sb2NrPykgd291bGQN
+Cj4gc3VmZmljZSwgYW5kIHByb2JhYmx5IHdvdWxkIGJlIHByZWZlcmFibGUuICBJZiBJTklUX1ZD
+UFUgbmVlZHMgdG8gdGFrZSBrdm0tPmxvY2sNCj4gdG8gcHJvdGVjdCBhZ2FpbnN0IG90aGVyIHJh
+Y2VzLCB0aGVuIEkgZ3Vlc3MgdGhlIGJpZyBoYW1tZXIgYXBwcm9hY2ggY291bGQgd29yaz8NCg0K
+QSBkdXBsaWNhdGUgVERSIGxvY2sgaW5zaWRlIEtWTSBvciBtYXliZSBldmVuIHRoZSBhcmNoL3g4
+NiBzaWRlIHdvdWxkIG1ha2UgdGhlDQpyZWFzb25pbmcgZWFzaWVyIHRvIGZvbGxvdy4gTGlrZSwg
+eW91IGRvbid0IG5lZWQgdG8gcmVtZW1iZXIgIndlIHRha2UNCnNsb3RzX2xvY2sva3ZtX2xvY2sg
+YmVjYXVzZSBvZiBURFIgbG9jayIsIGl0J3MganVzdCAxOjEuIEkgaGF0ZSB0aGUgaWRlYSBvZg0K
+YWRkaW5nIG1vcmUgbG9ja3MsIGFuZCBoYXZlIGFyZ3VlZCBhZ2FpbnN0IGl0IGluIHRoZSBwYXN0
+LiBCdXQgYXJlIHdlIGp1c3QNCmZvb2xpbmcgb3Vyc2VsdmVzIHRob3VnaD8gVGhlcmUgYXJlIGFs
+cmVhZHkgbW9yZSBsb2Nrcy4NCg0KQW5vdGhlciByZWFzb24gdG8gZHVwbGljYXRlIChzb21lKSBs
+b2NrcyBpcyB0aGF0IGlmIGl0IGdpdmVzIHRoZSBzY2hlZHVsZXIgbW9yZQ0KaGludHMgYXMgZmFy
+IGFzIHdha2luZyB1cCB3YWl0ZXJzLCBldGMuIFRoZSBURFggbW9kdWxlIG5lZWRzIHRoZXNlIGxv
+Y2tzIHRvDQpwcm90ZWN0IGl0c2VsZiwgc28gdGhvc2UgYXJlIHJlcXVpcmVkLiBCdXQgd2hlbiB3
+ZSBqdXN0IGRvIHJldHJ5IGxvb3BzIChvciBsZXQNCnVzZXJzcGFjZSBkbyB0aGlzKSwgdGhlbiB3
+ZSBsb3NlIG91dCBvbiBhbGwgb2YgdGhlIGxvY2tpbmcgZ29vZG5lc3MgaW4gdGhlDQprZXJuZWwu
+DQoNCkFueXdheSwganVzdCBhIHN0cmF3bWFuLiBJIGRvbid0IGhhdmUgYW55IGdyZWF0IGlkZWFz
+Lg0K
 
