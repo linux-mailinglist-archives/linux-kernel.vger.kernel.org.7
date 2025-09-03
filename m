@@ -1,114 +1,200 @@
-Return-Path: <linux-kernel+bounces-798575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33C4B41FFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:52:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC7FB41FA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B147B17BFBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:52:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 735677B0772
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2375301017;
-	Wed,  3 Sep 2025 12:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB4830101D;
+	Wed,  3 Sep 2025 12:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="GDUw3m80"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fo/8eOf/"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FCC3002BF;
-	Wed,  3 Sep 2025 12:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC76A3002C6;
+	Wed,  3 Sep 2025 12:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756903725; cv=none; b=WEHEyMS5VmlDxD+UdNpl1OuOTrIMkmn0OQP3ljHhipEnHq8i/33MgJCt1pm5+gG+T/XiqNT7ORYaJ8OznMJS7Xrr6jsTT1BjI0N3k6lb31gtxT1spi3dSk4oSF2ki3BkiYitLwEtToDvTXqoN/+Kprcoaq57Eydu/eBqWIgnXv0=
+	t=1756903659; cv=none; b=jgzKDoH4/EJDTLtxBTwMh2DosGHIam9mcUofxoCVBNq0j9y93P6oeneHUq/IvnGeA1hnM7dCc6LwArUDOtnc3C+mIDhfzafQSorxC4ETiU5pREQ1Au8owE4/nMKb7u/jmbcviDV+PueahZhyOFCa9JbjTlFTS/OF9SeibhgEptg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756903725; c=relaxed/simple;
-	bh=neQ/YLtT3KymbxD614CLFkfz0ZDYTTCDAzEsAWDbROE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bFLLFXverag7GPkJN8E+RjeehDCIsZUbUtxVZwG1f1yyphjk79uwyB/srWTQQryY29nLphe3k40eOQSkTlbSfjluVn8R+TA3I4B9c03X9nKsiHFQgUdj7QSv8MYbnfkxzLiwyIG6Gbf9F1s1f/MdFHXsM/7r93Gy2mpY1H0RfA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=GDUw3m80; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583CHub7021895;
-	Wed, 3 Sep 2025 14:48:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	pR/cYTMw3jgl+YXiMt8OJ3yKr+qlutsK3voWnGrYc7M=; b=GDUw3m80Tdt3GIPv
-	3e7yfOHZMxy6xuwAfJxoGFaJVQx4jWE6yi+nojXsxJFTZe1pqz4CUNF6PpN/avDN
-	m3AYpAlSjNuGJt1x5m5dZwZT5OcgWOOVfaGEUsOxaNtgo19etY6M+YxVEUr2tKKT
-	KP96+dMgyO+6Ar+U405fJGFYAje9q3Xu8paz/EFQa8LVzWrY64BgfZ02GABhV/iO
-	lpJStkAC9IFR1+zXSaN7Fx35r+bAW53rj/MfnFo7nBllDMTaJ89HG9Sf/5lUNisA
-	cXcFDDhsVl49uMSPj+UDYCb1o1SMr1Rll/LHM4AjOJfyCDJf6/MaHvDRzVzCiTPi
-	4XipYw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48vav2psd4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Sep 2025 14:48:32 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5FB3B4004A;
-	Wed,  3 Sep 2025 14:47:35 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0437A2B4D47;
-	Wed,  3 Sep 2025 14:46:25 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 3 Sep
- 2025 14:46:24 +0200
-Message-ID: <dca0faa3-2d87-4a93-bc67-7028a7846647@foss.st.com>
-Date: Wed, 3 Sep 2025 14:46:27 +0200
+	s=arc-20240116; t=1756903659; c=relaxed/simple;
+	bh=cNRFisRXLFpNEwr6KqKWti7XX70NsMlUMR05LP253yI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BObf9FvoqigJYKcAKdPqFwzOhFHx1dey4LW3pEBiwSvi5yTlUFkM75R+m6KTGWPx6B7/F2xTy8iQjucinqh7WK5NAZqBqo41pWQet1k/03LhJNW2HF70fv1i50cG4xMWlzmkoYyuWUwBzVA5TXYDuL37MNa49Vjocnpdss1ehGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fo/8eOf/; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 3274E1A08CE;
+	Wed,  3 Sep 2025 12:47:35 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id EBF2C606C3;
+	Wed,  3 Sep 2025 12:47:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 103D41C22A4EA;
+	Wed,  3 Sep 2025 14:47:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756903653; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=rHZeM7R9CCkA2R4gaMHWa0k676D0il171o0vPPyB7Z8=;
+	b=Fo/8eOf/0cWEkBjA0qSUbhVxlg7jVKPlRWcVOQSlsQb+MmCRXTTdHD2KKJu8Yb31livi6Y
+	Hy+1o13RKmNpQjcf1rMl3WLIwr0a4kBMemtJPwEMCrG251zFZxb/+93pUjZlje3Q6blzNU
+	eTbAqc014QkBS51t75bA04KTRBFV7lT1vqkt1MWY/9pAvLXSBp4KxrQNk/6wA1JkZ6ZTIv
+	nBbYI0Pg2yqtXL7d0oz99EzzAchIGyvl4duifTkgY1azpGLY4uWyrNWyjBXRFev/BfVICO
+	hIaY8Mlh9Ns/Xqn+9F8OQ2eLkxYM9JpV96v+dVUeW1hgrdGFnkd/VwDwXT+tEQ==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Subject: [PATCH 00/19] Add clock and reset support for Mobileye eyeQ7H
+Date: Wed, 03 Sep 2025 14:47:07 +0200
+Message-Id: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: st: enable ethernet1 controller on
- stm32mp257f-ev1
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250903-mp2_ethernet-v1-0-4105b0ad2344@foss.st.com>
- <20250903-mp2_ethernet-v1-3-4105b0ad2344@foss.st.com>
- <faa673a3-d68c-4b7f-a2b6-1f5bf40aabfb@lunn.ch>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <faa673a3-d68c-4b7f-a2b6-1f5bf40aabfb@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_06,2025-08-28_01,2025-03-28_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMs4uGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCwNz3eScbN3UytRCc900y2Sz1EQT4xRDYwsloPqCotS0zAqwWdGxtbU
+ A62g8/VsAAAA=
+X-Change-ID: 20250807-clk-eyeq7-f9c6ea43d138
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Sari Khoury <sari.khoury@mobileye.com>, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
+This patchset brings the support of the OLB found in the new Mobileye SoC,
+the eyeQ7H. Those Other Logic Blocks provide clock and reset functions
+to the controllers of the chip. This series also contains changes to the
+clock driver and its device tree binding to better match the hardware
+found in the eyeQ chips.
 
+In details, patches 1 and 2 rename the dt-binding yaml and header to
+eyeq-olb.yaml and eyeq-clk.h. We drop the "5" from the filename since
+the binding also applies to other eyeQ SoC (eyeQ6L, eyeQ6H and eyeQ7H).
 
-On 9/3/25 14:24, Andrew Lunn wrote:
->> +		phy1_eth1: ethernet-phy@4 {
->> +			compatible = "ethernet-phy-id001c.c916";
->> +			reset-gpios =  <&gpioj 9 GPIO_ACTIVE_LOW>;
->> +			reset-assert-us = <10000>;
->> +			reset-deassert-us = <80000>;
->> +			reg = <4>;
-> 
-> The DT coding style would suggest reg comes after compatible.
-> 
-> 	Andrew
+Patches 3 and 4 add the compatibles entries and the clock indexes to
+the dt-binding for the eyeQ7H.
 
-Hi Andrew,
+Patch 5 introduces a dt-binding header for the reset indexes of the
+eyeQ7H, similar to the header of the clock indexes.
 
-Right, I will fix that for V2!
+Patch 6 adds the compatible entries to the reset-eyeq driver, and the
+needed changes for the reset domain found in the eyeQ7H.
+
+Patch 7 adds clk_hw_register_fixed_factor_with_accuracy to
+clk-fixed-factor.c. This function allows registering a fixed factor with
+both a parent clock and a known accuracy. This will be used to register
+clocks referring to a parent clock registered in early init.
+
+Patch 8 and 9 add validity checks to clk-divider.c. The first ensure that
+the divider is even if the flag CLK_DIVIDER_EVEN_INTEGERS is set. The
+second rejects the registration of clock with both a table and a flag set
+if the flag leads to the table being ignored when computing the divider.
+
+Patch 10 removes the post-divisor in the computation of the PLL frequency
+in clk-eyeq.c. This change reflects how the clock signal is routed in
+the OLB of all eyeQ SoC.
+
+Patch 11 and 12 allow referencing to a parent clock by name for divider
+and fixed fixed factor in clk-eyeq.c. This is needed by the eyeQ5 to
+refer to clock registered in early init during probe.
+
+Patch 13 to 15 prepare the introduction of new PLL types present in
+the eyeQ7H OLB, by prefixing the PLL defines with the PLL type found in
+eyeQ5 and eyeQ6 OLB, renaming the reg64 field and adding a type field
+in eqc_pll.
+
+Patch 16 adds the two PLL types found in the eyeQ7H to the clk-eyeq
+driver.
+
+Patch 17 adds a parent_name field to the eqc_pll structure. This will
+be used to refer to other parent clock for the PLL found in the OLB of
+the eyeQ7H.
+
+Patch 18 adds an optional clk_div_table to divider in the clk-eyeq driver.
+
+Finally, patch 19 declares all the compatible entries for the OLB of the
+eyeQ7H in the clk-eyeq driver, making use of the changes introduced in
+the previous patches.
+
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Théo Lebrun <theo.lebrun@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Cc: Sari Khoury <sari.khoury@mobileye.com>
+Cc: linux-mips@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+Benoît Monin (19):
+      dt-bindings: soc: mobileye: rename to eyeq-olb.yaml
+      dt-bindings: clock: mobileye: rename to eyeq-clk.h
+      dt-bindings: soc: mobileye: add eyeQ7H compatibles
+      dt-bindings: clock: mobileye: add eyeQ7H clock indexes
+      dt-bindings: reset: add Mobileye eyeQ
+      reset: eyeq: add eyeQ7H compatibles
+      clk: fixed-factor: add clk_hw_register_fixed_factor_with_accuracy
+      clk: divider: check divider validity for CLK_DIVIDER_EVEN_INTEGERS
+      clk: divider: check validity of flags when a table is provided
+      clk: eyeq: skip post-divisor when computing pll divisor
+      clk: eyeq: rename the parent field to parent_idx
+      clk: eyeq: lookup parent clock by name
+      clk: eyeq: prefix the PLL registers with the PLL type
+      clk: eyeq: rename the reg64 field of eqc_pll
+      clk: eyeq: add a type for the PLL
+      clk: eyeq: add two PLL types
+      clk: eyeq: add a parent field to the pll
+      clk: eyeq: add an optional clk_div_table to divider
+      clk: eyeq: add eyeQ7H compatibles
+
+ ...ileye,eyeq5-olb.yaml => mobileye,eyeq-olb.yaml} | 137 +++-
+ MAINTAINERS                                        |   3 +-
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |   2 +-
+ arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |   2 +-
+ drivers/clk/clk-divider.c                          |   9 +
+ drivers/clk/clk-eyeq.c                             | 876 ++++++++++++++++++---
+ drivers/clk/clk-fixed-factor.c                     |  12 +
+ drivers/reset/reset-eyeq.c                         | 248 +++++-
+ include/dt-bindings/clock/mobileye,eyeq-clk.h      | 175 ++++
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  65 --
+ include/dt-bindings/reset/mobileye,eyeq-reset.h    |  75 ++
+ include/linux/clk-provider.h                       |   3 +
+ 12 files changed, 1414 insertions(+), 193 deletions(-)
+---
+base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+change-id: 20250807-clk-eyeq7-f9c6ea43d138
 
 Best regards,
-Gatien
+-- 
+Benoît Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
