@@ -1,206 +1,198 @@
-Return-Path: <linux-kernel+bounces-798806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC446B4232E
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:10:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C416B4232F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 16:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97CA8171C39
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3483A706F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B8D30F921;
-	Wed,  3 Sep 2025 14:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725E530EF6B;
+	Wed,  3 Sep 2025 14:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bwncmWqY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+S1d8QQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA1232F759
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 14:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D232F0C7A;
+	Wed,  3 Sep 2025 14:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756908582; cv=none; b=tv9Y60o7zKpMaX/impvsd3U6OhJYetHrwnxcrxS2irS512ZYSod16JJSllnQgr7P20BkzTpYCVTQhZnxOPheCNChh4YWkS95Z0yYKZ9SpzEESb20Ghicg5t/VBNftLrlYnbNn9lMjByoEbRf3kupexu2cfrDRr/A1cSrHsfmOks=
+	t=1756908647; cv=none; b=s8LsmpXKZMrtqOTh35Q7D1Vp729xYLP7BWinLNTn8sc5B0BQ2I7LlMEdxTSU80KQYXk+kFgA0s79g8AxTL8JhO45S0t9ddf89a0UDUqJndnOTkABAMiihbF+ym0LKPZzZ5ykqUyjHFER9zqKGnUpmgRkoCvUYCYrO3SSYelhOes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756908582; c=relaxed/simple;
-	bh=TvnSEky+I/hcCDfjzKx/iJPx3TmGanCVAOkD79HsY14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obLyNntKg0J6uqTn+exQpO0vB4zoxkKzao2pwin9FA/1v+kyVe2RVYOiWorh0k8xSTCCBvAei0fKLtlD1jPW/4tCkJH8DSLWkJIK1xyAVZPUajroqyWXAR91C4AYTB4ekYcw2qbmzPzhVBIT7LsfIsJFGjB6HbanZvMGxzMU+Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bwncmWqY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583Dx7Is003955
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 14:09:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=CMWxv5xRO7vQNpmuNbCUfyRE
-	hvMOz75QP9nDPESq41M=; b=bwncmWqYNQsU6rkPu7jyksrByM4wFj7kl/eOW5y9
-	jljBgfv9NvGc7ttpZ3VPkOv4HGgyG4uw6kN3KNnysY1RihGlBnIbxhLj98YLjJcW
-	S0T8l5UDgsG4rbenyYaVVTyRaEvbdnedIFqhNmK33WSOSuo2f3AubjSBH0M297iJ
-	CmYIhPY0yTeIYcroFY9BELHFDLqQsQJw2tG0M0emh7ZY2jKq6T1Mgp3O9x9OVoqk
-	PCAKRvYbDezFsaayReRfkMgQp3iVT2lQ9jVq0oOP1TWVA+WBr3tsgFnanR+l5ipU
-	FPp1uGZOrq66oPtcG7t+YjAgVnuhGeX7+eDf9XAcyZPP8Q==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ura8uv8a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 14:09:39 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77260b29516so5453939b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 07:09:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756908578; x=1757513378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CMWxv5xRO7vQNpmuNbCUfyREhvMOz75QP9nDPESq41M=;
-        b=JNQ/jcG+Mrv+oDY1NhNlKSVL5t8fl5b45BJ8AnwEsFH1yM/oWXzTLMaT33VnnrMFmN
-         PD0/aXeJtHu8al/GyRB/PctJV8DUzexFhO30gtRmpWYp02OmvN+F8P5aUcb7AH4DJXsx
-         kxxCFZnohOS2UyL/fTSw6wBRdH7DotO4T5O08FgM+mdrmPAQBvEiqdh2YL3f5vA7fft1
-         FA1ZJjL+bJ2Kg3ddgSSh2mlyni8k9dte9mBFeq5ZHrmXXK9b0UvnOTbuIuDO3aNzd2vp
-         vUB+MYQmxqteKxy06dxl5K37qlPsfhLY6rKmrjUI4NW27i3Fs/xd4knr2Cyx/d/x/kQC
-         dPQg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9H3NnntXceeqgb78Mu0K7iPOQHf7/AwN6azYLv668pe9+axMWNsSqq8zxD2JXFxJKIyWv5/M76IitJD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5qMgi92e0ZMwG2ndBwUQWApKL3RJeKnM7pWOydruVej/j/kVo
-	b/PmRZN1gzdh51LzJZSzAj78NytZMH/rzfUcSphGAFIgHwL0DJBNfvsCi+5qFJaDmH0XJKErkxT
-	gPf6vKCY7YMpbgAb8OVTSchOGU7hXsNUC8mKr+uElIrcYvbzpgeC+RJH32VT39T802U4=
-X-Gm-Gg: ASbGnctmsIpbUKckeENhimg1Yo4O+TJx2iLnDR7Y4yYZeL3K7/+BBgWJ2y1u5bTk2QE
-	C4REniPxAMSGAdUmmjlga4TsyxKSc4Pm7GoG3bgQBznYHLfsurLyfdPtevZ6OxsFCEG9IYtKTCs
-	AWhteJwYlrPPsVc0iTbmd6d/h/UQwYZRtpiASUg3guR36m93uBdQamu17NVlsFvkOdyy1erIp/Q
-	9+aJyZZIfZQzRliNo+jerUUCKODohpr9/8vWcyNKw8yeKdoZA2Q0GeaYEDmFakoNHvfQ/rMKrNr
-	28/kipbxWZgdSEzD0OJaAAA7rW9CtDZ+/HSojhMGgXqgGtV93VJZk7DgBXgkmSG9gvtn
-X-Received: by 2002:a05:6a20:394b:b0:243:15b9:765b with SMTP id adf61e73a8af0-243d6f88224mr20614963637.53.1756908578226;
-        Wed, 03 Sep 2025 07:09:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnCp+vvKKkuvuED7wTrQo1zor2bNpm9NFlssvs7m5xnjpf+qEF4sVjkIPphK8md3x/czILLg==
-X-Received: by 2002:a05:6a20:394b:b0:243:15b9:765b with SMTP id adf61e73a8af0-243d6f88224mr20614902637.53.1756908577686;
-        Wed, 03 Sep 2025 07:09:37 -0700 (PDT)
-Received: from hu-wasimn-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd2ea3a04sm14652518a12.38.2025.09.03.07.09.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 07:09:37 -0700 (PDT)
-Date: Wed, 3 Sep 2025 19:39:30 +0530
-From: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Subject: Re: [PATCH v2 05/13] arm64: dts: qcom: lemans-evk: Enable GPI DMA
- and QUPv3 controllers
-Message-ID: <aLhMGqYGzabIoyjS@hu-wasimn-hyd.qualcomm.com>
-References: <20250903-lemans-evk-bu-v2-0-bfa381bf8ba2@oss.qualcomm.com>
- <20250903-lemans-evk-bu-v2-5-bfa381bf8ba2@oss.qualcomm.com>
- <olv66qntttvpj7iinsug7accikhexxrjgtqvd5eijhxouokxgy@un3q7mkzs7yj>
+	s=arc-20240116; t=1756908647; c=relaxed/simple;
+	bh=IJP0VbHKnRlpLO/dj+/Ia2ILTC5O+iulYtBS4Wmtc7Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eff2LAuaroLEU7fUi2chULqXChKhHvhX2IU2oRihsfHCyc2qy+RBcAPLF5trfxxnAPAnWC/MNpu4SvRU8lGnoVwGyelkmqfnu4gjYx03AOah7/vmPcEIBuAWbqqkTv0XY/3c5J/h00sg4JTchEvEzhDS3Ly3LbdPI34eKr9ywbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+S1d8QQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4255EC4CEE7;
+	Wed,  3 Sep 2025 14:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756908647;
+	bh=IJP0VbHKnRlpLO/dj+/Ia2ILTC5O+iulYtBS4Wmtc7Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=R+S1d8QQ8JTOfieL00HXOZ34YoFUz7OL6PI6NmTox55mOQ5P2beuQkiHTw89xKvw3
+	 insOk7uKvWRNaeS2vTdE9Ht/CnQJzkKF7GSUV/9EH30J6MBbhwocfVgD71iA7LqCnt
+	 zqGDip6cF961mvzPUx6VluNXvCkxwekBrmumpiQS1Wblng3j0PvIFUjnebzWKb0g7R
+	 V4bkzKiUCPcrAIysTs2EMlCHah6rOsjnKvu10SpEX2QyWrKKe+3tUV7u4ej/phtqKG
+	 dYcayDouOvM9hUHm/g775ZgYpyBRWvfvMV7HVpKIckFauorE4h/2sjZVbRh4vbTHER
+	 6qYwmLFOmThTw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <20250902134846.GN186519@nvidia.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250826162019.GD2130239@nvidia.com> <mafs0bjo0yffo.fsf@kernel.org>
+	<20250828124320.GB7333@nvidia.com> <mafs0h5xmw12a.fsf@kernel.org>
+	<20250902134846.GN186519@nvidia.com>
+Date: Wed, 03 Sep 2025 16:10:37 +0200
+Message-ID: <mafs0v7lzvd7m.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <olv66qntttvpj7iinsug7accikhexxrjgtqvd5eijhxouokxgy@un3q7mkzs7yj>
-X-Proofpoint-ORIG-GUID: a122vfMQWNj3mtenPBPtVp9k7RsWFtJE
-X-Proofpoint-GUID: a122vfMQWNj3mtenPBPtVp9k7RsWFtJE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyMCBTYWx0ZWRfX7QcnQR5aBW+K
- 2X9CTBSn2J3Rravt00tygk/MkaDV5WGt4Pc8bCmwnoBbBJCiqdgsqkMc4U3G3VcpUnqd5APVKzK
- 3m1bzrZlor7q1gbmQbW61syQLOUclmb7cfzlL7ZFZs6sy9VvMARlFFB5EmA4PhAzmJduuwrGNXl
- 683xnpbPOh9Ih13ZcoTPN7ozptkXHeuBNwFUu+EOA3cfhMm7yqTV7BwdsNjY0yTU9nlx+f2ue6x
- tfjvCM4HHkBitbJYBXoCJ300v7xNxKK8ZIzqCrXJncTdfwCyR937o6t9FZU0UCJZBFLgm1T4JfI
- cffaOOIeuagoURy+QbJkuhCelhK5+drVx90PWTPQltJKYDv5QJF6Zi/E7doYhB8ASTcSV19ji8b
- IA2+Hmcn
-X-Authority-Analysis: v=2.4 cv=VNndn8PX c=1 sm=1 tr=0 ts=68b84c23 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=s9hxLQQvB0vJ1QCIATsA:9
- a=CjuIK1q_8ugA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_07,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300020
+Content-Type: text/plain
 
-On Wed, Sep 03, 2025 at 03:16:55PM +0300, Dmitry Baryshkov wrote:
-> On Wed, Sep 03, 2025 at 05:17:06PM +0530, Wasim Nazir wrote:
-> > From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> > 
-> > Enable GPI DMA controllers (gpi_dma0, gpi_dma1, gpi_dma2) and QUPv3
-> > interfaces (qupv3_id_0, qupv3_id_2) in the device tree to support
-> > DMA and peripheral communication on the Lemans EVK platform.
-> > 
-> > Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> > Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/lemans-evk.dts | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/lemans-evk.dts b/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> > index c60629c3369e..196c5ee0dd34 100644
-> > --- a/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> > +++ b/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> > @@ -277,6 +277,18 @@ vreg_l8e: ldo8 {
-> >  	};
-> >  };
-> >  
-> > +&gpi_dma0 {
-> > +	status = "okay";
-> > +};
-> > +
-> > +&gpi_dma1 {
-> > +	status = "okay";
-> > +};
-> > +
-> > +&gpi_dma2 {
-> > +	status = "okay";
-> > +};
-> > +
-> >  &i2c18 {
-> >  	status = "okay";
-> >  
-> > @@ -367,10 +379,18 @@ &mdss0_dp1_phy {
-> >  	status = "okay";
-> >  };
-> >  
-> > +&qupv3_id_0 {
-> > +	status = "okay";
-> > +};
-> > +
-> >  &qupv3_id_1 {
-> >  	status = "okay";
-> >  };
-> >  
-> > +&qupv3_id_2 {
-> > +	status = "okay";
-> > +};
-> 
-> You've added i2c18 device in patch 1, but it could not be enabled before
-> this one because it's a part of QUP2.
+Hi Jason,
 
-Thanks for pointing this, I will update it in next series.
+On Tue, Sep 02 2025, Jason Gunthorpe wrote:
 
-> 
-> > +
-> >  &sleep_clk {
-> >  	clock-frequency = <32768>;
-> >  };
-> > 
-> > -- 
-> > 2.51.0
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+> On Mon, Sep 01, 2025 at 07:10:53PM +0200, Pratyush Yadav wrote:
+>> Building kvalloc on top of this becomes trivial.
+>> 
+>> [0] https://git.kernel.org/pub/scm/linux/kernel/git/pratyush/linux.git/commit/?h=kho-array&id=cf4c04c1e9ac854e3297018ad6dada17c54a59af
+>
+> This isn't really an array, it is a non-seekable serialization of
+> key/values with some optimization for consecutive keys. IMHO it is
+
+Sure, an array is not the best name for the thing. Call it whatever,
+maybe a "sparse collection of pointers". But I hope you get the idea.
+
+> most useful if you don't know the size of the thing you want to
+> serialize in advance since it has a nice dynamic append.
+>
+> But if you do know the size, I think it makes more sense just to do a
+> preserving vmalloc and write out a linear array..
+
+I think there are two separate parts here. One is the data format and
+the other is the data builder.
+
+The format itself is quite simple. It is a linked list of discontiguous
+pages that holds a set of pointers. We use that idea already for the
+preserved pages bitmap. Mike's vmalloc preservation patches also use the
+same idea, just with a small variation.
+
+The builder part (ka_iter in my patches) is an abstraction on top to
+build the data structure. I designed it with the nice dynamic append
+property since it seemed like a nice and convenient design, but we can
+have it define the size statically as well. The underlying data format
+won't change.
+
+>
+> So, it could be useful, but I wouldn't use it for memfd, the vmalloc
+> approach is better and we shouldn't optimize for sparsness which
+> should never happen.
+
+I disagree. I think we are re-inventing the same data format with minor
+variations. I think we should define extensible fundamental data formats
+first, and then use those as the building blocks for the rest of our
+serialization logic.
+
+I think KHO array does exactly that. It provides the fundamental
+serialization for a collection of pointers, and other serialization use
+cases can then build on top of it. For example, the preservation bitmaps
+can get rid of their linked list logic and just use KHO array to hold
+and retrieve its bitmaps. It will make the serialization simpler.
+Similar argument for vmalloc preservation.
+
+I also don't get why you think sparseness "should never happen". For
+memfd for example, you say in one of your other emails that "And again
+in real systems we expect memfd to be fully populated too." Which
+systems and use cases do you have in mind? Why do you think people won't
+want a sparse memfd?
+
+And finally, from a data format perspective, the sparseness only adds a
+small bit of complexity (the startpos for each kho_array_page).
+Everything else is practically the same as a continuous array.
+
+All in all, I think KHO array is going to prove useful and will make
+serialization for subsystems easier. I think sparseness will also prove
+useful but it is not a hill I want to die on. I am fine with starting
+with a non-sparse array if people really insist. But I do think we
+should go with KHO array as a base instead of re-inventing the linked
+list of pages again and again.
+
+>
+>> > The versioning should be first class, not hidden away as some emergent
+>> > property of registering multiple serializers or something like that.
+>> 
+>> That makes sense. How about some simple changes to the LUO interfaces to
+>> make the version more prominent:
+>> 
+>> 	int (*prepare)(struct liveupdate_file_handler *handler,
+>> 		       struct file *file, u64 *data, char **compatible);
+>
+> Yeah, something more integrated with the ops is better.
+>
+> You could list the supported versions in the ops itself
+>
+>   const char **supported_deserialize_versions;
+>
+> And let the luo framework find the right versions.
+>
+> But for prepare I would expect an inbetween object:
+>
+> 	int (*prepare)(struct liveupdate_file_handler *handler,
+> 	    	       struct luo_object *obj, struct file *file);
+>
+> And then you'd do function calls on 'obj' to store 'data' per version.
+
+What do you mean by "data per version"? I think there should be only one
+version of the serialized object. Multiple versions of the same thing
+will get ugly real quick.
+
+Other than that, I think this could work well. I am guessing luo_object
+stores the version and gives us a way to query it on the other side. I
+think if we are letting LUO manage supported versions, it should be
+richer than just a list of strings. I think it should include a ops
+structure for deserializing each version. That would encapsulate the
+versioning more cleanly.
 
 -- 
 Regards,
-Wasim
+Pratyush Yadav
 
