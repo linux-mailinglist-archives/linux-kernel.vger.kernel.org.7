@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-798989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B3AB42594
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D5EB4259F
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 17:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C083A4CC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8FB61BC8041
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6070267AF6;
-	Wed,  3 Sep 2025 15:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7982749F2;
+	Wed,  3 Sep 2025 15:32:35 +0000 (UTC)
 Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CAC239562
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D446D267B02
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 15:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756913552; cv=none; b=cUBc48haH0jMoNNe7BMiU4JgiludiCnwYIw/gYmH+wJe4AZlqkUYA7aMZCpYVQNsBCyy5AsKq0FYHLG67BNpM/BkGCQOxZR6rJXBQzhGwZEyXiLi4WLxQ65cWYZM7G6s8MnBIT7KA7s565QX31vVguUj7ztFW7tZSSZNLoShypw=
+	t=1756913554; cv=none; b=cqY8ifaTJfjnq/d2M/XS+Ry7O/8T4n46HqG0Oja/Cjv/DuDal2sLQNEtHB7pmGLX+F1xxkPnJL/BswXk+zUG5vvDABp2owqHK6ZK/p2JSeMDRs6/VLnw6G2zIALyVqpiTFWdOBIiXq0kPKJ1Da27g7xrPr4qcy2xPmpW8mEDe4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756913552; c=relaxed/simple;
-	bh=cHBQ8j6RxUC9Ms6/bHBFv1Ch4/EE2YLkhPSpWOTu/Ro=;
+	s=arc-20240116; t=1756913554; c=relaxed/simple;
+	bh=+u+QW+0wdYhcYbhUyLSwresAhslX+BUZMIYAkAP3GEs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qz9pOTEfaKDIiD2bVmt1JZQAiXRCy7rxGySPmjZLD2D61nkuTrWc0Gdb0vyW9ncVHKc5s1IU2QcAxThtY3KE9xlJ6QTn0/Skz09Z9wsOLi70ZZvv+X2NwQVxwzERQarG8wOVz35kFNRck3YCJfBdYQOik2zPODcXxrKr1yOBwJ8=
+	 MIME-Version:Content-Type; b=qu5uxJy2HqyH6blOK03tNpKv5KoFm1FrAqjV411f3VtqZ275kIaQSdGNmrXHkr/rpevC4PUyv3BPmONYvICzq1Tuz1Soj1WK3RgF7IJpJ/FQEzD++JKIf5OGq9uD8xG0J1/+yjcWkhQ+4eI1T5v5HfmdsJojDsGAC4gh5yuU+4o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=carnegierobotics.com; spf=pass smtp.mailfrom=douglass.dev; arc=none smtp.client-ip=34.202.193.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=carnegierobotics.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=douglass.dev
@@ -32,7 +32,7 @@ Feedback-ID: 3578:1022:null:purelymail
 X-Pm-Original-To: linux-kernel@vger.kernel.org
 Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -360649041;
           (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Wed, 03 Sep 2025 15:31:50 +0000 (UTC)
+          Wed, 03 Sep 2025 15:31:52 +0000 (UTC)
 From: Woodrow Douglass <wdouglass@carnegierobotics.com>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -42,12 +42,12 @@ To: Liam Girdwood <lgirdwood@gmail.com>,
 	Conor Dooley <conor+dt@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v3 0/2] regulator: pf530x: NXP PF530x regulator driver
-Date: Wed,  3 Sep 2025 11:31:36 -0400
-Message-Id: <20250902-pf530x-v3-0-4242e7687761@carnegierobotics.com>
+Subject: [PATCH v3 1/2] regulator: pf530x: Add a driver for the NXP PF5300 Regulator
+Date: Wed,  3 Sep 2025 11:31:37 -0400
+Message-Id: <20250902-pf530x-v3-1-4242e7687761@carnegierobotics.com>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250902-pf530x-v2-0-f105eb073cb1@carnegierobotics.com>
-References: <20250902-pf530x-v2-0-f105eb073cb1@carnegierobotics.com>
+In-Reply-To: <20250902-pf530x-v3-0-4242e7687761@carnegierobotics.com>
+References: <20250902-pf530x-v3-0-4242e7687761@carnegierobotics.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,291 +56,441 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10306; i=wdouglass@carnegierobotics.com; h=from:subject:message-id; bh=cHBQ8j6RxUC9Ms6/bHBFv1Ch4/EE2YLkhPSpWOTu/Ro=; b=owEBbQGS/pANAwAKAewLuLlPNh4UAcsmYgBouF1WMr8aaHwci3yi+f39tl9JXpr94miUUKVaO pTbVsoAQCiJATMEAAEKAB0WIQSIUqjrbDLQw0mgxHLsC7i5TzYeFAUCaLhdVgAKCRDsC7i5TzYe FPoqB/9Wizw/HyOyX64gNzv+o+QcZl3W0qOyqyP0Y1ga0q6NuupaK4xTsk4Mib5xP35FFzS+Mcu Xfe8qNqUv4atpiwLdU2UddSocfmQbrxF2ajad68Xg+7fkZUvber2XMX7R5Wvcl7q0BMWMs46gEg iWmkcPjTupM+5+1qNkJmIbojDxNfbU+LKqGkfpGODwdThobwBUdh/dWn51Q1T4X9QSHjX72X+zn LaTXTWwl5PB9shyJeW3Vu9HYd6IXiy5S8/2N6FK3zZvKrOu4voEaE9EGrMMInSn+ySw7Y/52qc0 fr7rBLqd31LD7JPIqWMCATmGZM3awmiejvkphn2l4YaGQuvk
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12447; i=wdouglass@carnegierobotics.com; h=from:subject:message-id; bh=+u+QW+0wdYhcYbhUyLSwresAhslX+BUZMIYAkAP3GEs=; b=owEBbQGS/pANAwAKAewLuLlPNh4UAcsmYgBouF1WxVFxr6CbvfUflwSsY+JlOZzQ+PmX2A2Uh UQhF4cVvP+JATMEAAEKAB0WIQSIUqjrbDLQw0mgxHLsC7i5TzYeFAUCaLhdVgAKCRDsC7i5TzYe FGJxB/4p233AQGmG9P6h/zDcFvtLE2PLMGpqCvX1QwfihWV5x86q8/e+aHHoiWv85+5PCCpV1Lr RrcFYpE5XdWjDEwWRoq3/e0/TPiT4S6OvZRLKrMm/zUwdH8R1IeCuM0ek1LRu3tEVfcBOh/2ouN bpyEqWGvJFIl31+/46U4byN/XO1d/ui3g2frlM8hseA+33wAJK6YcL6MKBLgErBgTAm77C68qqL PbtZBpn91FFf8GM2CuA6e9ga6/3LpZWGkP+aUI0vzIhn/N2GBoaduiq15k+zad/pFomN9f6iUJu pwEIH9kkdTODdu4HKx8Xb/8QdZRSBhWJacyP2hyUmCcUx3CR
 X-Developer-Key: i=wdouglass@carnegierobotics.com; a=openpgp; fpr=8852A8EB6C32D0C349A0C472EC0BB8B94F361E14
 Content-Transfer-Encoding: 8bit
 
-All,
+This driver allows reading some regulator settings and adjusting
+output voltage. It is based on information from the datasheet
+at https://www.nxp.com/docs/en/data-sheet/PF5300.pdf
 
-Sorry for resubmitting the original patches, i thought that's what was
-wanted. I'm trying very hard not to break ettiquite here. Below are
-some responses to your earlier comments. Thank you.
-
-On 9/2/25 11:08, Mark Brown wrote:
-> On Tue, Sep 02, 2025 at 10:21:33AM -0400, Woodrow Douglass wrote:
-> 
->>  obj-$(CONFIG_REGULATOR_PALMAS) += palmas-regulator.o
->>  obj-$(CONFIG_REGULATOR_PCA9450) += pca9450-regulator.o
->>  obj-$(CONFIG_REGULATOR_PF9453) += pf9453-regulator.o
->> +obj-$(CONFIG_REGULATOR_PF530X) += pf530x-regulator.o
->>  obj-$(CONFIG_REGULATOR_PF8X00) += pf8x00-regulator.o
->>  obj-$(CONFIG_REGULATOR_PFUZE100) += pfuze100-regulator.o
->>  obj-$(CONFIG_REGULATOR_PV88060) += pv88060-regulator.o
-> 
-> I'd say please keep this sorted but there's some cleanup needed here
-> already so whatever, let's deal with that separately.
-> 
->> +static const struct regmap_config pf530x_regmap_config = {
->> +       .reg_bits = 8,
->> +       .val_bits = 8,
->> +       .max_register = PF530X_OTP_MODE,
->> +       .cache_type = REGCACHE_RBTREE,
->> +};
-> 
-> In general it's better to use _MAPLE register caches unless you've got a
-> good reason not to, the data structure is more modern.
-> 
->> +static int pf530x_is_enabled(struct regulator_dev *rdev)
->> +{
->> +	//first get mode
-> 
-> Usual comment style would have a space after the //.
->
-
-this exact comment got lost in the fallout of the regmap changes below, but
-i've fixed this issue elsewhere in the file, thanks.
-
->> +static int pf530x_get_status(struct regulator_dev *rdev)
->> +{
-> 
-> I would have expected this function to check INT_SENSE1/2 for current
-> error statuses and report those.
-
-I have added the INT_SENSE1 bits to the REGULATOR_STATUS_ERROR return value. I'm
-not sure how to properly represent the thermal bits in INT_SENSE2 here -- this
-part can safely run at high temperatures, some of those bits are just
-informational in some designs (including the board I'm working on now)
-
-> 
->> +static int pf530x_get_error_flags(struct regulator_dev *rdev, unsigned int *flags)
-> 
-> I see INT_STATUS2 has thermal warning/error interrupts in it as well.
-> Not essential but it'd be nice to also check those.  These statuses are
-> also clear on write so I'd expect a write to clear them, even though the
-> device lacks an actual interrupt line so it's all somewhat ornamantal
-> ATM :/  I suppse we ought to implement some core thing to do polling for
-> non-interrupting regulators, but that's definitely out of scope for this
-> driver.
-> 
->> +static const struct regulator_ops pf530x_regulator_ops = {
->> +	.enable = regulator_enable_regmap,
->> +	.disable = regulator_disable_regmap,
->> +	.is_enabled = pf530x_is_enabled,
-> 
-> The custom is_enabled() operation doesn't seem to line up with the
-> generic regmap enable/disable operations, and we don't seem to have
-> enable_val or disable_val in the regulator_desc which the generic ops
-> expect.  The whole connection with the modes seems a bit odd, the
-> standby voltages look like they'd more naturally map to the regulator
-> API's suspend mode but perhaps these devices are not usually integrated
-> in that way and this would be controlled separately to system suspend.
-
-I agree, I was misguided here. I've added enable_reg, enable_mask, enable_val,
-and disable_val to the regulator_desc initializer, and moved to the regmap
-function from helpers.c. I'm moving the "suspend mode" settings too here. The
-board i'm working with has the suspend pin grounded, so I can't really test
-suspend mode -- supporting that may have to wait for a future patchset.
-
-> 
->> +static int pf530x_identify(struct pf530x_chip *chip)
->> +{
-> 
->> +	dev_info(chip->dev, "%s Regulator found.\n", name);
-> 
-> It wouldn't hurt to read and log the data in REV, EMREV and PROG_ID too
-> (it can be helpful when debugging).
-
-I've added REV and PROG_ID, EMREV is listed as "Reserved for NXP Internal Use"
-on page 95 of the datasheet, and  -- I can include those bits here but i'm not
-sure they're very useful; if you'd like me to include those bits anyway i will
-
-On 9/2/25 15:19, Krzysztof Kozlowski wrote:
-> On 02/09/2025 16:21, Woodrow Douglass wrote:
->> Bindings for the pf530x series of voltage regulators
->>
->> Signed-off-by: Woodrow Douglass <wdouglass@carnegierobotics.com>
->> ---
->>  .../regulator/nxp,pf530x-regulator.yaml       | 74 +++++++++++++++++++
-> 
-> <form letter>
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC. It might happen, that command when run on an older
-> kernel, gives you outdated entries. Therefore please be sure you base
-> your patches on recent Linux kernel.
-> 
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline) or work on fork of kernel
-> (don't, instead use mainline). Just use b4 and everything should be
-> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> patches to the patchset.
-> 
-> You missed at least devicetree list (maybe more), so this won't be
-> tested by automated tooling. Performing review on untested code might be
-> a waste of time.
-> 
-> Please kindly resend and include all necessary To/Cc entries.
-> </form letter>
-> 
-> 
->>  1 file changed, 74 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml b/Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml
->> new file mode 100644
->> index 000000000000..f1065b167491
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml
-> 
-> 
-> Filename should match compatible, so nxp,pf5300.yaml.
-> 
->> @@ -0,0 +1,74 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/regulator/nxp,pf530x-regulator.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: NXP PF5300/PF5301/PF5302 PMIC regulators
->> +
->> +maintainers:
->> +  - Woodrow Douglass <wdouglass@carnegierobotics.com>
->> +
->> +description: |
->> +  The PF5300, PF5301, and PF5302 integrate high-performance buck converters, 12 A, 8 A,
->> +  and 15 A, respectively, to power high-end automotive and industrial processors. With adaptive
->> +  voltage positioning and a high-bandwidth loop, they offer transient regulation to minimize capacitor
->> +  requirements.
-> 
-> Wrap according to Linux coding style.
-> 
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - nxp,pf5300
->> +      - nxp,pf5301
->> +      - nxp,pf5302
-> 
-> Your driver clearly suggests these are compatible, so express it (see
-> example schema).
->
-
-I'm not sure I understand this comment. The difference in these parts is
-only the current limit, so the software interface is compatible -- should I
-only have a single "compatible" string (nxp,pf5300) and ignore the other
-two variants? Seems like it would limit searchability for future users of
-the driver, but maybe i'm not understanding what you're asking for here?
-I was following nxp,pf8x00-regulator.yaml as an example (I am also using
-that regulator in this design) and i guess it must be a bit dated.
-
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  regulators:
-> 
-> No need for this node.
-> 
->> +    type: object
->> +    description: |
->> +      list of regulators provided by this controller
->> +
->> +    properties:
->> +      SW1:
-> 
-> No need, drop the node.
-> 
->> +        type: object
->> +        $ref: regulator.yaml#
->> +        description:
->> +          Properties for the regulator.
->> +
->> +        properties:
->> +          regulator-name:
->> +            pattern: "^SW1$"
-> 
-> No, drop entirely regulator-name. Just embed the properties in parent node.
-> 
->> +            description:
->> +              Name of the single regulator
->> +
->> +    additionalProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - regulators
->> +
-
-I have removed the regulators node (and refactored the driver to
-not require it)
-
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    i2c1 {
-> 
-> i2c
-> 
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +
->> +        vddi_0_75@28 {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> If you cannot find a name matching your device, please check in kernel
-> sources for similar cases or you can grow the spec (via pull request to
-> DT spec repo).
-> 
-> See also DTS coding style.
-> 
->
-
-I have updated this example to be more generic.
-
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Thanks again,
-Woodrow Douglass
-
---
-2.39.5
-
+Signed-off-by: Woodrow Douglass <wdouglass@carnegierobotics.com>
 ---
-Changes in v3:
-- Replaced REGCACHE_RBTREE with REGCACHE_MAPLE
-- Replaced pf530x_is_enabled function with regulator_is_enabled_regmap
-- Added status bits from INT_SENSE1 to pf530x_get_status function
-- Added extra context to info print upon chip identification
-- Reworked devtree to not require nested "regulators" subnode
-- Some minor reformatting of comment style and long lines
-- Link to v2: https://lore.kernel.org/r/20250902-pf530x-v2-0-f105eb073cb1@carnegierobotics.com
+ MAINTAINERS                          |   6 +
+ drivers/regulator/Kconfig            |  12 ++
+ drivers/regulator/Makefile           |   1 +
+ drivers/regulator/pf530x-regulator.c | 359 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 378 insertions(+)
 
----
-Woodrow Douglass (2):
-      regulator: pf530x: Add a driver for the NXP PF5300 Regulator
-      regulator: pf530x: dt-bindings: nxp,pf530x-regulator
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6dcfbd11efef..2c2d165a40ff 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18291,6 +18291,12 @@ F:	Documentation/devicetree/bindings/clock/*imx*
+ F:	drivers/clk/imx/
+ F:	include/dt-bindings/clock/*imx*
+ 
++NXP PF5300/PF5301/PF5302 PMIC REGULATOR DEVICE DRIVER
++M:	Woodrow Douglass <wdouglass@carnegierobotics.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/regulator/nxp,pf530x-regulator.yaml
++F:	drivers/regulator/pf530x-regulator.c
++
+ NXP PF8100/PF8121A/PF8200 PMIC REGULATOR DEVICE DRIVER
+ M:	Jagan Teki <jagan@amarulasolutions.com>
+ S:	Maintained
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index eaa6df1c9f80..611356bea09d 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -1006,6 +1006,18 @@ config REGULATOR_PCAP
+ 	 This driver provides support for the voltage regulators of the
+ 	 PCAP2 PMIC.
+ 
++config REGULATOR_PF530X
++	tristate "NXP PF5300/PF5301/PF5302 regulator driver"
++	depends on I2C && OF
++	select REGMAP_I2C
++	help
++	  Say y here to support the regulators found on the NXP
++	  PF5300/PF5301/PF5302 PMIC.
++
++	  Say M here if you want to support for the regulators found
++	  on the NXP PF5300/PF5301/PF5302 PMIC. The module will be named
++	  "pf530x-regulator".
++
+ config REGULATOR_PF8X00
+ 	tristate "NXP PF8100/PF8121A/PF8200 regulator driver"
+ 	depends on I2C && OF
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index be98b29d6675..60ca55d04aef 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -125,6 +125,7 @@ obj-$(CONFIG_REGULATOR_QCOM_USB_VBUS) += qcom_usb_vbus-regulator.o
+ obj-$(CONFIG_REGULATOR_PALMAS) += palmas-regulator.o
+ obj-$(CONFIG_REGULATOR_PCA9450) += pca9450-regulator.o
+ obj-$(CONFIG_REGULATOR_PF9453) += pf9453-regulator.o
++obj-$(CONFIG_REGULATOR_PF530X) += pf530x-regulator.o
+ obj-$(CONFIG_REGULATOR_PF8X00) += pf8x00-regulator.o
+ obj-$(CONFIG_REGULATOR_PFUZE100) += pfuze100-regulator.o
+ obj-$(CONFIG_REGULATOR_PV88060) += pv88060-regulator.o
+diff --git a/drivers/regulator/pf530x-regulator.c b/drivers/regulator/pf530x-regulator.c
+new file mode 100644
+index 000000000000..e36349710d95
+--- /dev/null
++++ b/drivers/regulator/pf530x-regulator.c
+@@ -0,0 +1,359 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++// documentation of this device is available at
++// https://www.nxp.com/docs/en/data-sheet/PF5300.pdf
++
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
++#include <linux/regulator/consumer.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/of_regulator.h>
++
++/* registers */
++#define PF530X_DEVICEID			0x00
++#define PF530X_REV				0x01
++#define PF530X_EMREV			0x02
++#define PF530X_PROGID			0x03
++#define PF530X_CONFIG1			0x04
++#define PF530X_INT_STATUS1		0x05
++#define PF530X_INT_SENSE1		0x06
++#define PF530X_INT_STATUS2		0x07
++#define PF530X_INT_SENSE2		0x08
++#define PF530X_BIST_STAT1		0x09
++#define PF530X_BIST_CTRL		0x0a
++#define PF530X_STATE			0x0b
++#define PF530X_STATE_CTRL		0x0c
++#define PF530X_SW1_VOLT			0x0d
++#define PF530X_SW1_STBY_VOLT	0x0e
++#define PF530X_SW1_CTRL1		0x0f
++#define PF530X_SW1_CTRL2		0x10
++#define PF530X_CLK_CTRL			0x11
++#define PF530X_SEQ_CTRL1		0x12
++#define PF530X_SEQ_CTRL2		0x13
++#define PF530X_RANDOM_CHK		0x14
++#define PF530X_RANDOM_GEN		0x15
++#define PF530X_WD_CTRL1			0x16
++#define PF530X_WD_SEED			0x17
++#define PF530X_WD_ANSWER		0x18
++#define PF530X_FLT_CNT1			0x19
++#define PF530X_FLT_CNT2			0x1a
++#define PF530X_OTP_MODE			0x2f
++
++enum pf530x_states {
++	PF530X_STATE_POF,
++	PF530X_STATE_FUSE_LOAD,
++	PF530X_STATE_LP_OFF,
++	PF530X_STATE_SELF_TEST,
++	PF530X_STATE_POWER_UP,
++	PF530X_STATE_INIT,
++	PF530X_STATE_IO_RELEASE,
++	PF530X_STATE_RUN,
++	PF530X_STATE_STANDBY,
++	PF530X_STATE_FAULT,
++	PF530X_STATE_FAILSAFE,
++	PF530X_STATE_POWER_DOWN,
++	PF530X_STATE_2MS_SELFTEST_RETRY,
++	PF530X_STATE_OFF_DLY,
++};
++
++#define PF530_FAM			0x50
++enum pf530x_devid {
++	PF5300			= 0x3,
++	PF5301			= 0x4,
++	PF5302			= 0x5,
++};
++
++#define PF530x_FAM			0x50
++#define PF530x_DEVICE_FAM_MASK		GENMASK(7, 4)
++#define PF530x_DEVICE_ID_MASK		GENMASK(3, 0)
++
++#define PF530x_STATE_MASK		GENMASK(3, 0)
++#define PF530x_STATE_RUN		0x07
++#define PF530x_STATE_STANDBY	0x08
++#define PF530x_STATE_LP_OFF		0x02
++
++#define PF530X_OTP_STBY_MODE	GENMASK(3, 2)
++#define PF530X_OTP_RUN_MODE		GENMASK(1, 0)
++
++#define PF530X_INT_STATUS_OV	BIT(1)
++#define PF530X_INT_STATUS_UV	BIT(2)
++#define PF530X_INT_STATUS_ILIM	BIT(3)
++
++#define SW1_ILIM_S	BIT(0)
++#define VMON_UV_S	BIT(1)
++#define VMON_OV_S	BIT(2)
++#define VIN_OVLO_S	BIT(3)
++#define BG_ERR_S	BIT(6)
++
++struct pf530x_chip {
++	struct regmap *regmap;
++	struct device *dev;
++};
++
++static const struct regmap_config pf530x_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = PF530X_OTP_MODE,
++	.cache_type = REGCACHE_MAPLE,
++};
++
++static int pf530x_get_status(struct regulator_dev *rdev)
++{
++	unsigned int state;
++	int ret;
++
++	ret = regmap_read(rdev->regmap, PF530X_INT_SENSE1, &state);
++	if (ret != 0)
++		return ret;
++
++	if ((state & (BG_ERR_S | SW1_ILIM_S | VMON_UV_S | VMON_OV_S | VIN_OVLO_S)) != 0)
++		return REGULATOR_STATUS_ERROR;
++
++	// no errors, check if what non-error state we're in
++	ret = regmap_read(rdev->regmap, PF530X_STATE, &state);
++	if (ret != 0)
++		return ret;
++
++	state &= PF530x_STATE_MASK;
++
++	switch (state) {
++	case PF530x_STATE_RUN:
++		ret = REGULATOR_STATUS_NORMAL;
++		break;
++	case PF530x_STATE_STANDBY:
++		ret = REGULATOR_STATUS_STANDBY;
++		break;
++	case PF530x_STATE_LP_OFF:
++		ret = REGULATOR_STATUS_OFF;
++		break;
++	default:
++		ret = REGULATOR_STATUS_ERROR;
++		break;
++	}
++	return ret;
++}
++
++static int pf530x_get_error_flags(struct regulator_dev *rdev, unsigned int *flags)
++{
++	unsigned int status;
++	int ret;
++
++	ret = regmap_read(rdev->regmap, PF530X_INT_STATUS1, &status);
++
++	if (ret != 0)
++		return ret;
++
++	*flags = 0;
++
++	if (status & PF530X_INT_STATUS_OV)
++		*flags |= REGULATOR_ERROR_OVER_VOLTAGE_WARN;
++
++	if (status & PF530X_INT_STATUS_UV)
++		*flags |= REGULATOR_ERROR_UNDER_VOLTAGE;
++
++	if (status & PF530X_INT_STATUS_ILIM)
++		*flags |= REGULATOR_ERROR_OVER_CURRENT;
++
++	return 0;
++}
++
++static const struct regulator_ops pf530x_regulator_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.map_voltage = regulator_map_voltage_linear_range,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.get_status = pf530x_get_status,
++	.get_error_flags = pf530x_get_error_flags,
++	.set_bypass = regulator_set_bypass_regmap,
++	.get_bypass = regulator_get_bypass_regmap,
++};
++
++static struct linear_range vrange = REGULATOR_LINEAR_RANGE(500000, 0, 140, 5000);
++
++static struct regulator_desc pf530x_reg_desc = {
++	.name = "SW1",
++	.ops = &pf530x_regulator_ops,
++	.linear_ranges = &vrange,
++	.n_linear_ranges = 1,
++	.type = REGULATOR_VOLTAGE,
++	.id = 0,
++	.owner = THIS_MODULE,
++	.vsel_reg = PF530X_SW1_VOLT,
++	.vsel_mask = 0xFF,
++	.bypass_reg = PF530X_SW1_CTRL2,
++	.bypass_mask = 0x07,
++	.bypass_val_on = 0x07,
++	.bypass_val_off = 0x00,
++	.enable_reg = PF530X_SW1_CTRL1,
++	.enable_mask = GENMASK(5, 2),
++	.enable_val = GENMASK(5, 2),
++	.disable_val = 0,
++};
++
++static int pf530x_identify(struct pf530x_chip *chip)
++{
++	unsigned int value;
++	u8 dev_fam, dev_id, full_layer_rev, metal_layer_rev, prog_idh, prog_idl;
++	const char *name = NULL;
++	int ret;
++
++	ret = regmap_read(chip->regmap, PF530X_DEVICEID, &value);
++	if (ret) {
++		dev_err(chip->dev, "failed to read chip family\n");
++		return ret;
++	}
++
++	dev_fam = value & PF530x_DEVICE_FAM_MASK;
++	switch (dev_fam) {
++	case PF530x_FAM:
++		break;
++	default:
++		dev_err(chip->dev,
++			"Chip 0x%x is not from PF530X family\n", dev_fam);
++		return ret;
++	}
++
++	dev_id = value & PF530x_DEVICE_ID_MASK;
++	switch (dev_id) {
++	case PF5300:
++		name = "PF5300";
++		break;
++	case PF5301:
++		name = "PF5301";
++		break;
++	case PF5302:
++		name = "PF5302";
++		break;
++	default:
++		dev_err(chip->dev, "Unknown pf530x device id 0x%x\n", dev_id);
++		return -ENODEV;
++	}
++
++	ret = regmap_read(chip->regmap, PF530X_REV, &value);
++	if (ret) {
++		dev_err(chip->dev, "failed to read chip rev\n");
++		return ret;
++	}
++
++	full_layer_rev = ((value & 0xF0) == 0) ? '0' : ((((value & 0xF0) >> 4) - 1) + 'A');
++	metal_layer_rev = value & 0xF;
++
++	ret = regmap_read(chip->regmap, PF530X_EMREV, &value);
++	if (ret) {
++		dev_err(chip->dev, "failed to read chip emrev register\n");
++		return ret;
++	}
++
++	prog_idh = (value >> 4) + 'A';
++	// prog_idh skips 'O', per page 96 of the datasheet
++	if (prog_idh >= 'O')
++		prog_idh += 1;
++
++	ret = regmap_read(chip->regmap, PF530X_PROGID, &value);
++	if (ret) {
++		dev_err(chip->dev, "failed to read chip progid register\n");
++		return ret;
++	}
++
++	if (value >= 0x22) {
++		dev_err(chip->dev, "invalid value for progid register\n");
++		return -ENODEV;
++	} else if (value < 10) {
++		prog_idl = value + '0';
++	} else {
++		prog_idl = (value - 10) + 'A';
++		// prog_idh skips 'O', per page 97 of the datasheet
++		if (prog_idl >= 'O')
++			prog_idl += 1;
++	}
++
++	dev_info(chip->dev, "%s Regulator found (Rev %c%d ProgID %c%c).\n",
++		 name, full_layer_rev, metal_layer_rev, prog_idh, prog_idl);
++
++	return 0;
++}
++
++static int pf530x_i2c_probe(struct i2c_client *client)
++{
++	struct regulator_config config = { NULL, };
++	struct pf530x_chip *chip;
++	int ret;
++	struct regulator_dev *rdev;
++	struct regulator_init_data *init_data;
++
++	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, chip);
++	chip->dev = &client->dev;
++
++	chip->regmap = devm_regmap_init_i2c(client, &pf530x_regmap_config);
++	if (IS_ERR(chip->regmap)) {
++		ret = PTR_ERR(chip->regmap);
++		dev_err(&client->dev,
++			"regmap allocation failed with err %d\n", ret);
++		return ret;
++	}
++
++	ret = pf530x_identify(chip);
++	if (ret)
++		return ret;
++
++	init_data = of_get_regulator_init_data(chip->dev, chip->dev->of_node, &pf530x_reg_desc);
++	if (!init_data)
++		return -ENODATA;
++
++	config.dev = chip->dev;
++	config.driver_data = &pf530x_reg_desc;
++	config.of_node = chip->dev->of_node;
++	config.regmap = chip->regmap;
++	config.init_data = init_data;
++
++	// the config parameter gets copied, it's ok to pass a pointer on the stack here
++	rdev = devm_regulator_register(&client->dev, &pf530x_reg_desc, &config);
++	if (IS_ERR(rdev)) {
++		dev_err(&client->dev, "failed to register %s regulator\n", pf530x_reg_desc.name);
++		return PTR_ERR(rdev);
++	}
++
++	return 0;
++}
++
++static const struct of_device_id pf530x_dt_ids[] = {
++	{ .compatible = "nxp,pf5300",},
++	{ .compatible = "nxp,pf5301",},
++	{ .compatible = "nxp,pf5302",},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, pf530x_dt_ids);
++
++static const struct i2c_device_id pf530x_i2c_id[] = {
++	{ "pf5300", 0 },
++	{ "pf5301", 0 },
++	{ "pf5302", 0 },
++	{},
++};
++MODULE_DEVICE_TABLE(i2c, pf530x_i2c_id);
++
++static struct i2c_driver pf530x_regulator_driver = {
++	.id_table = pf530x_i2c_id,
++	.driver = {
++		.name = "pf530x",
++		.of_match_table = pf530x_dt_ids,
++	},
++	.probe = pf530x_i2c_probe,
++};
++module_i2c_driver(pf530x_regulator_driver);
++
++MODULE_AUTHOR("Woodrow Douglass <wdouglass@carnegierobotics.com>");
++MODULE_DESCRIPTION("Regulator Driver for NXP's PF5300/PF5301/PF5302 PMIC");
++MODULE_LICENSE("GPL");
 
- .../devicetree/bindings/regulator/nxp,pf5300.yaml  |  52 +++
- MAINTAINERS                                        |   6 +
- drivers/regulator/Kconfig                          |  12 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/pf530x-regulator.c               | 359 +++++++++++++++++++++
- 5 files changed, 430 insertions(+)
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250902-pf530x-6db7b921120c
-
-Best regards,
 -- 
-Woodrow Douglass <wdouglass@carnegierobotics.com>
+2.39.5
 
 
