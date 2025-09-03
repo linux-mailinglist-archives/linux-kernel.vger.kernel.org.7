@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-798609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A49B4204F
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:05:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8C6B42084
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 15:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99411683FD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:05:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 349627B3119
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 13:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F47F30100C;
-	Wed,  3 Sep 2025 13:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367183019BE;
+	Wed,  3 Sep 2025 13:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JpX1EFHl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="boqME7eI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JpX1EFHl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="boqME7eI"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOjoGn2N";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tlcfQmu9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LOjoGn2N";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tlcfQmu9"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D2530102B
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF37309DA4
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 13:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756904498; cv=none; b=i5y9uqQ2+qZh3qIEM3LBbQ3551R3BLwTxnBeOJX79pG4twCxMn7UIf8EjxoXB2kTo79jVTcnilPIgsCClqctnE5gzwJ83uGzRNhPjjuuRWSqBXYDMexVIgnVcZH7fAyJ9W9Q8ARU89K1fMy8v5gGTCAIBzcEHB1wiBSYssfwlqs=
+	t=1756904507; cv=none; b=ZGf19Oe/mctdHQV+ZfKaX1SbExQgWt+Gh/iC0Te1Xfdmwz0Hg6z7iScqiQ511LY0COf7cmNxIQtQ223i+30jY/REbswpS3tHdweDHBnW1SKLpAouXrYaqWUjsoKasaAMY8xNr5b2LKmk1vfDYa6KiqBnk2hzvr11uEvUdWa3r80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756904498; c=relaxed/simple;
-	bh=NEnPKJoh4PSRWp8CZDKpOmH3tB/16GPOtmyVTP2ZnoU=;
+	s=arc-20240116; t=1756904507; c=relaxed/simple;
+	bh=cbYZ4uYu2Ew4je+ZVdv6l5r3Tds6HvQmitLofhje3ds=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tNujRAmYNVTpsqMASF/n1FYfUdcQ5q3I4kGrmFRV1PwP+yewxqiD8iEjuxHTF6zM/cQ8hLhc/4nJlRLtT+/nYqJsM07VM5b41BeB71XgXg9rYI4zCGOlioT5ePIggP0Urhq86hJKprUgtT3Ok3KH0d+7xlzXLwauCcqki2sSx5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JpX1EFHl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=boqME7eI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JpX1EFHl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=boqME7eI; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:To:Cc; b=XvN9pfWQKgboWFZrxPPN6etVvun3eZ2sSa/IYo7/8SyB2EdMXr27R20ARjzQsqY7WZhQrI9QPg9dZTdT+Gv0EYG7CLyeH5WrX57Iii7F/H0Mvg5v/SiMR1/Ddo9t9Brd6DVzJs93OtVOLiaRWk3Hk/H5ho19+5Nqud/ucPvSxOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOjoGn2N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tlcfQmu9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LOjoGn2N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tlcfQmu9; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D808D1F749;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D8BE81F74C;
 	Wed,  3 Sep 2025 13:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1756904410; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4DoczhIJm/QIxVWZ7D37eQBiOD25npSD9wVr63TFoHc=;
-	b=JpX1EFHlgY9lv/Jg9Np6YcccAcWwOH5vSSehOAl2iCisgztVji8k/m4iZWWDfF9G4MrMdT
-	1no34TX1PZX+TkQBLMAwYVtWVMaHPFyVU8Lzoa22w0y5YHWzIoAyZhPf0NVON8mUbSGOtp
-	KivRwn6uQo+9Em2sG9jItp9gTXDpBSA=
+	bh=Orc9L8mxDfBM2P4Cd87ufTnmwdvv431SxJfeIHzvdf8=;
+	b=LOjoGn2NpQu0Skj44il6BTjGJzIstckK0pVvMsVotT3/OhaZGyHYwxQD8uT70gohtQNyAo
+	XbSbSqC2twvWHgV9hJ7n8Ibm3dpue2uZrvecX09kBgtU//+j0BWZEBf1HLGz9m0mnzx6Nl
+	1OoK9JUReCORUdrabgNQtp8gqouT0P8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1756904410;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4DoczhIJm/QIxVWZ7D37eQBiOD25npSD9wVr63TFoHc=;
-	b=boqME7eIeY8AGMTBsm7dwQZietZj8zprg+GhYZE9cE6XJPyNxjngG+iIitHglC+a4CF/48
-	pkAYS3zSHpyz4yDA==
+	bh=Orc9L8mxDfBM2P4Cd87ufTnmwdvv431SxJfeIHzvdf8=;
+	b=tlcfQmu9oBUZKp9gtiDFF3bLmdLERdTGZkoGbluYQxKKJck+WvjQZvVK/VOdD92MAqsmTv
+	Bhj3OwnoUG4h0LAA==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
@@ -64,32 +64,32 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4DoczhIJm/QIxVWZ7D37eQBiOD25npSD9wVr63TFoHc=;
-	b=JpX1EFHlgY9lv/Jg9Np6YcccAcWwOH5vSSehOAl2iCisgztVji8k/m4iZWWDfF9G4MrMdT
-	1no34TX1PZX+TkQBLMAwYVtWVMaHPFyVU8Lzoa22w0y5YHWzIoAyZhPf0NVON8mUbSGOtp
-	KivRwn6uQo+9Em2sG9jItp9gTXDpBSA=
+	bh=Orc9L8mxDfBM2P4Cd87ufTnmwdvv431SxJfeIHzvdf8=;
+	b=LOjoGn2NpQu0Skj44il6BTjGJzIstckK0pVvMsVotT3/OhaZGyHYwxQD8uT70gohtQNyAo
+	XbSbSqC2twvWHgV9hJ7n8Ibm3dpue2uZrvecX09kBgtU//+j0BWZEBf1HLGz9m0mnzx6Nl
+	1OoK9JUReCORUdrabgNQtp8gqouT0P8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1756904410;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4DoczhIJm/QIxVWZ7D37eQBiOD25npSD9wVr63TFoHc=;
-	b=boqME7eIeY8AGMTBsm7dwQZietZj8zprg+GhYZE9cE6XJPyNxjngG+iIitHglC+a4CF/48
-	pkAYS3zSHpyz4yDA==
+	bh=Orc9L8mxDfBM2P4Cd87ufTnmwdvv431SxJfeIHzvdf8=;
+	b=tlcfQmu9oBUZKp9gtiDFF3bLmdLERdTGZkoGbluYQxKKJck+WvjQZvVK/VOdD92MAqsmTv
+	Bhj3OwnoUG4h0LAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 675B913B08;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C9D313A94;
 	Wed,  3 Sep 2025 13:00:10 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sDzmGNo7uGitOAAAD6G6ig
+	id 0N8iHto7uGitOAAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 03 Sep 2025 13:00:10 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 03 Sep 2025 14:59:58 +0200
-Subject: [PATCH v7 16/21] maple_tree: Use kfree_rcu in ma_free_rcu
+Date: Wed, 03 Sep 2025 14:59:59 +0200
+Subject: [PATCH v7 17/21] maple_tree: Replace mt_free_one() with kfree()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,7 +98,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250903-slub-percpu-caches-v7-16-71c114cdefef@suse.cz>
+Message-Id: <20250903-slub-percpu-caches-v7-17-71c114cdefef@suse.cz>
 References: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
 In-Reply-To: <20250903-slub-percpu-caches-v7-0-71c114cdefef@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -111,8 +111,9 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>,
  maple-tree@lists.infradead.org, vbabka@suse.cz, 
  Pedro Falcato <pfalcato@suse.de>
 X-Mailer: b4 0.14.2
+X-Spam-Level: 
 X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	NEURAL_HAM_SHORT(-0.20)[-0.999];
 	MIME_GOOD(-0.10)[text/plain];
@@ -128,75 +129,77 @@ X-Spamd-Result: default: False [-4.30 / 50.00];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FROM_HAS_DN(0.00)[];
 	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz,suse.de];
-	R_RATELIMIT(0.00)[to(RL941jgdop1fyjkq8h4),to_ip_from(RLwn5r54y1cp81no5tmbbew5oc)];
+	R_RATELIMIT(0.00)[to_ip_from(RLwn5r54y1cp81no5tmbbew5oc),to(RL941jgdop1fyjkq8h4)];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-X-Spam-Level: 
 X-Spam-Score: -4.30
 
 From: Pedro Falcato <pfalcato@suse.de>
 
-kfree_rcu is an optimized version of call_rcu + kfree. It used to not be
-possible to call it on non-kmalloc objects, but this restriction was
-lifted ever since SLOB was dropped from the kernel, and since commit
-6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()").
-
-Thus, replace call_rcu + mt_free_rcu with kfree_rcu.
+kfree() is a little shorter and works with kmem_cache_alloc'd pointers
+too. Also lets us remove one more helper.
 
 Signed-off-by: Pedro Falcato <pfalcato@suse.de>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- lib/maple_tree.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ lib/maple_tree.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index a0db6bdc63793b8bbd544e246391d99e880dede3..d77e82362f03905040ac61630f92fe9af1e59f98 100644
+index d77e82362f03905040ac61630f92fe9af1e59f98..b361b484cfcaacd99472dd4c2b8de9260b307425 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -191,13 +191,6 @@ static inline void mt_free_bulk(size_t size, void __rcu **nodes)
- 	kmem_cache_free_bulk(maple_node_cache, size, (void **)nodes);
+@@ -181,11 +181,6 @@ static inline int mt_alloc_bulk(gfp_t gfp, size_t size, void **nodes)
+ 	return kmem_cache_alloc_bulk(maple_node_cache, gfp, size, nodes);
  }
  
--static void mt_free_rcu(struct rcu_head *head)
+-static inline void mt_free_one(struct maple_node *node)
 -{
--	struct maple_node *node = container_of(head, struct maple_node, rcu);
--
 -	kmem_cache_free(maple_node_cache, node);
 -}
 -
- /*
-  * ma_free_rcu() - Use rcu callback to free a maple node
-  * @node: The node to free
-@@ -208,7 +201,7 @@ static void mt_free_rcu(struct rcu_head *head)
- static void ma_free_rcu(struct maple_node *node)
+ static inline void mt_free_bulk(size_t size, void __rcu **nodes)
  {
- 	WARN_ON(node->parent != ma_parent_ptr(node));
--	call_rcu(&node->rcu, mt_free_rcu);
-+	kfree_rcu(node, rcu);
- }
- 
- static void mt_set_height(struct maple_tree *mt, unsigned char height)
-@@ -5281,7 +5274,7 @@ static void mt_free_walk(struct rcu_head *head)
+ 	kmem_cache_free_bulk(maple_node_cache, size, (void **)nodes);
+@@ -5274,7 +5269,7 @@ static void mt_free_walk(struct rcu_head *head)
  	mt_free_bulk(node->slot_len, slots);
  
  free_leaf:
--	mt_free_rcu(&node->rcu);
-+	mt_free_one(node);
+-	mt_free_one(node);
++	kfree(node);
  }
  
  static inline void __rcu **mte_destroy_descend(struct maple_enode **enode,
-@@ -5365,7 +5358,7 @@ static void mt_destroy_walk(struct maple_enode *enode, struct maple_tree *mt,
+@@ -5358,7 +5353,7 @@ static void mt_destroy_walk(struct maple_enode *enode, struct maple_tree *mt,
  
  free_leaf:
  	if (free)
--		mt_free_rcu(&node->rcu);
-+		mt_free_one(node);
+-		mt_free_one(node);
++		kfree(node);
  	else
  		mt_clear_meta(mt, node, node->type);
  }
+@@ -5585,7 +5580,7 @@ void mas_destroy(struct ma_state *mas)
+ 			mt_free_bulk(count, (void __rcu **)&node->slot[1]);
+ 			total -= count;
+ 		}
+-		mt_free_one(ma_mnode_ptr(node));
++		kfree(ma_mnode_ptr(node));
+ 		total--;
+ 	}
+ 
+@@ -6635,7 +6630,7 @@ static void mas_dup_free(struct ma_state *mas)
+ 	}
+ 
+ 	node = mte_to_node(mas->node);
+-	mt_free_one(node);
++	kfree(node);
+ }
+ 
+ /*
 
 -- 
 2.51.0
