@@ -1,178 +1,194 @@
-Return-Path: <linux-kernel+bounces-798536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-798537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00B9B41F75
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:43:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019ABB41F73
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 14:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BEE682AAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B1C1BA8290
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 12:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0411F2FE05B;
-	Wed,  3 Sep 2025 12:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8572FE587;
+	Wed,  3 Sep 2025 12:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KPvTAbyx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0XinekcA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rOLV+Quj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0XinekcA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rOLV+Quj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE3E2F659F
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC7684039
+	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 12:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756903329; cv=none; b=axQYKldDaC+eCaH1+TFqivQMPrQGVqAU5vV4Edki46P+I1Ec4eo4bFqIcLOi9rFKk8EjiprZcKsiFGL8OYei/6t3v03rgmmzTCPcLsqAl8gYNJbJu6EbpRJDVfKfTz5sGPDafPWQqOHnqLO+SjxcfHLOSQatB/VPqQdpmPDwp4E=
+	t=1756903338; cv=none; b=gh6lZLzgFlK6IVy9Q1CiKkPoqTvavXDB2CB1G9zOKWG2AwQfRQ8PZNMtqTGamkvU+N0c2hwU4K44foDcimV39bK5Jc6RyWsoZGIpEiHMh4CILzI0se55J2qbSUlDiJbWEAFNaPWz259W9ce72qzWlZziXPLB8IJ3rMVaz2b9HYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756903329; c=relaxed/simple;
-	bh=E1Cna2N6t9JI+222gYwxRIEMiszhSQiq7OVsmw0ymsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EagaTxhdZkDw+xR9XI63chENb/fjB2/yxQOwgzBS0KPvfoHERC5fRT5SqHiKWI5NpEFXJlKEYwuTirvYglaUBISsn/B9DzZteDy5ta0Vf/7trKZnG4LQ53HqSnwvGtl8F3vQJETLcSFbR4hTOmTkqbxkYR4Dg7Q3L28R3JqT3ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KPvTAbyx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 583BFIQr011335
-	for <linux-kernel@vger.kernel.org>; Wed, 3 Sep 2025 12:42:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UyKqXw+ysFsFYLn6dUcHiY+1la1eKIWGJlMEPy3Xe1g=; b=KPvTAbyxdOAR12ei
-	60xecrPb+TPyiRkSD0snqlxUlWPHcUjFg+H7+9e/NY+3CbtQGIYpB4SUyrivMvXD
-	mbVDZrMl/Dyq9FQvNxH/MvuLhT3y7oefheUXcplUlgiNn6ak7+EVxa/2tOlOZRXO
-	ieQTIBmI7YCIXXNP+DjYp9sEiLOjzWX1jRccygpo8I6Y4PoMLDIvfOYeaCej4V+L
-	fhudvYGhNSJsbiaQ91ibNbCx9SwT/QlKkZhgFn6YBUOtCOty1dL5FmUo7T5NWVMr
-	VOg5+1WzMxU0JhTwukeWO0CdxEM0LYz61pn0rqDY9NtNyA6oN9vdTXMlqYPnUGE1
-	wdLVhQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48urmjkm9m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 12:42:06 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b4bcb1e32dso669221cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 03 Sep 2025 05:42:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756903326; x=1757508126;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UyKqXw+ysFsFYLn6dUcHiY+1la1eKIWGJlMEPy3Xe1g=;
-        b=EkuxkthP4wUwR7lj5px+uXc72p29Tq5BuIjx0GU7Wdl996Wfq+acukOEkBmPW1ipL/
-         IliYmpkTy6UI0thFs5uRRXy12plow+yCun/nHVR1SYlpJLD6DGo2pI7PosqGqrsBNN3A
-         Xm9VspdrjOhE/etgjm2TUVSmXiA80LDNKQl6Kgq00AuLR4iG70HCkct+3mhBBnVteEcT
-         HYZM7u1uR1cEKdu1Ob2EF/K+U6JIkpqGt3UTAQY8VhD9EPvFHyeLd/Ivf/F7G4JaepjV
-         h7/fWAdnetlZ4u00NxiHR/MlPfuhNqZxd1Gi93mvzI6wXX/0UQw+/Acr6fBMWKvvsCq1
-         vlDw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0i2+Iq5Y4jdjgwqtP+9ELUpxiP61tocQGmeZA6TdQW5PzQWOD+dvQqxhA4WUlir4gKAUJU8dLjl1N9NM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVcVwHY2Vko2ZBxV7dfpuAIjGOTImn1x0vC5IqF9iXXsGChxEq
-	S1sOljgUgyHfIX/POvlTNypx2s8GEkyE0xevht5AtSoWXDA1JbyDM6vhavxARCJ2xbRZ13uNXo4
-	oMkoBWBdJFwIp2VD7+dF7caeubpePoCOPHJ0uh/36qNUtC9xplBONm9naBFJ4EkdXMFk=
-X-Gm-Gg: ASbGncsTctuM3QUem3gcYnmgsSKU660aqy1k6dwWprK0ADtVONnVzMAllEN7KfVHL+d
-	M8Tdv/zqjZhC+dUHkF5ERZ1nFecs6t9mR2T/DEWEVWwqmwk88gXViDqoY/mfvG8A/yREhEfVB0N
-	QRoHBILdT9+IPNGnyigQEpBsqEXDb5hK4OXdf2BASxmjp7fcDH9458HB1py3L0qy8llhTXoNI/O
-	en76GAfjILV1qf1fOM5cccqHW2lwWsyZAXCCQfcIx6FNSU5JNs0YNdSJHIDWioZNDJNfUw6PJGs
-	giBRGndqPK48P2QmFIQ/n2T0e3SDeWzXaCUa9nwGEOutu+TeZiUQEH5sJwX3L6N8ltsKIvDvsmV
-	Ks3rdPU6fByaq0HrVAroYyw==
-X-Received: by 2002:a05:622a:1992:b0:4ab:7633:c58e with SMTP id d75a77b69052e-4b313dd0295mr147827351cf.2.1756903325650;
-        Wed, 03 Sep 2025 05:42:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsWMsoVz20vZMifq7gvXp5WENey2TR6INKN0I9TlYR/V7hgmuniZ60zIFTZtgxCrX1f0kK6Q==
-X-Received: by 2002:a05:622a:1992:b0:4ab:7633:c58e with SMTP id d75a77b69052e-4b313dd0295mr147827041cf.2.1756903325090;
-        Wed, 03 Sep 2025 05:42:05 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b0467f47d4csm173799466b.11.2025.09.03.05.42.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Sep 2025 05:42:04 -0700 (PDT)
-Message-ID: <3c4751c3-52d5-408e-ae80-df22bcff5d8a@oss.qualcomm.com>
-Date: Wed, 3 Sep 2025 14:42:01 +0200
+	s=arc-20240116; t=1756903338; c=relaxed/simple;
+	bh=ZwD2K02kgnEXLqi6lq5OPz8a+xK0+swNo3Gv/I81cI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sdzxQH/+6jg1I87CU8nv3fvSN6aq4ARU+ss06ev5X+tf9trCZ6UVt3NcKRUywCMR4eZUKWWOvqqDoPEZfaxmA9anju6N1xL9WWRrzWwiK5UIi4fKfxjBuAjguSrcOajpuIMfLmeEX/JYE5qJOy5Ad/1kjx3c4/a/pCCjKIUCKcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0XinekcA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rOLV+Quj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0XinekcA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rOLV+Quj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 53BA31F38A;
+	Wed,  3 Sep 2025 12:42:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756903335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xIgaM36KJeIX4j/P65jhT8FLAdsH3bur2uN5IZqRt1U=;
+	b=0XinekcA5PGjWvzu5dKGsXcQT7L4bpSixC77gbR5vEAZRsXvd+prJA7H97aXMyub5lPq1S
+	KO139GLFKGqJxlCXysAdE4E7b1HzcFD7iqZVtW2AwhraSGESQKXMe8x5HEwZjaQMZiUIn5
+	SqXoizG3/7dZ1DNA5ym/bhw1xl0NlIo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756903335;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xIgaM36KJeIX4j/P65jhT8FLAdsH3bur2uN5IZqRt1U=;
+	b=rOLV+QujrozXuF7co4MMb3R3fAcYJ1LJg4LnT+5RliXi3TdvA9TjNXaSb2cU6wdFBgfD7J
+	zGLD5c6md+MZrJBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0XinekcA;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rOLV+Quj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756903335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xIgaM36KJeIX4j/P65jhT8FLAdsH3bur2uN5IZqRt1U=;
+	b=0XinekcA5PGjWvzu5dKGsXcQT7L4bpSixC77gbR5vEAZRsXvd+prJA7H97aXMyub5lPq1S
+	KO139GLFKGqJxlCXysAdE4E7b1HzcFD7iqZVtW2AwhraSGESQKXMe8x5HEwZjaQMZiUIn5
+	SqXoizG3/7dZ1DNA5ym/bhw1xl0NlIo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756903335;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xIgaM36KJeIX4j/P65jhT8FLAdsH3bur2uN5IZqRt1U=;
+	b=rOLV+QujrozXuF7co4MMb3R3fAcYJ1LJg4LnT+5RliXi3TdvA9TjNXaSb2cU6wdFBgfD7J
+	zGLD5c6md+MZrJBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42BB013A31;
+	Wed,  3 Sep 2025 12:42:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fTJHEKc3uGirMgAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Wed, 03 Sep 2025 12:42:15 +0000
+Date: Wed, 3 Sep 2025 14:42:10 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Aaron Tomlin <atomlin@atomlin.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
+	storagedev@microchip.com, virtualization@lists.linux.dev, 
+	GR-QLogic-Storage-Upstream@marvell.com
+Subject: Re: [PATCH v7 01/10] lib/group_cpus: Add group_masks_cpus_evenly()
+Message-ID: <f4ed094f-7370-4121-9df6-454411452751@flourine.local>
+References: <20250702-isolcpus-io-queues-v7-0-557aa7eacce4@kernel.org>
+ <20250702-isolcpus-io-queues-v7-1-557aa7eacce4@kernel.org>
+ <2b70fbd3-d63d-4bd3-8500-e14c41fc64b9@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: interconnect: add clocks property to
- enable QoS on sa8775p
-To: Georgi Djakov <djakov@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>,
-        Rob Herring
- <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Tipton <mike.tipton@oss.qualcomm.com>
-References: <20250808140300.14784-1-odelu.kukatla@oss.qualcomm.com>
- <20250808140300.14784-2-odelu.kukatla@oss.qualcomm.com>
- <90b51e31-3217-4483-bb5b-ec328665a723@kernel.org>
- <28b97952-1b67-411f-a7fb-ddd558739839@oss.qualcomm.com>
- <ac83c453-c24d-4c4d-83bc-9ed13f2f9d1e@kernel.org>
- <7d3e5cf7-4167-4005-ba4b-c1915c254705@oss.qualcomm.com>
- <00f50d92-e4ea-4805-b771-147fa5f5ebe4@kernel.org>
- <249f8109-31b1-4cb8-a5a4-b30c27b2e987@oss.qualcomm.com>
- <6e036d6a-f2d1-43d6-bb35-54467edd7ec9@kernel.org>
- <26e5309e-3705-4d70-a2e7-3f0e9344816b@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <26e5309e-3705-4d70-a2e7-3f0e9344816b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=OemYDgTY c=1 sm=1 tr=0 ts=68b8379e cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=XlH8FPY39J8rQsCe0dUA:9
- a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: 6maehVPWeOuNUxZo_y5tX7OKQcKsvxpo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDAyNCBTYWx0ZWRfX0KRmMMykyrVu
- 1IjNkGMHJyGDgVHvc4lFdtDksEdz5w1kElb9St+fwDXm5/yVHvh8I4yA5XhnDutxsB/cE8vWBJL
- 5wV3S232gwXaSdO+/VKmIOIHUVe1Uc0ly09JzYwt5awqNRo6pJxOCSwiejFywplajo1ArOT9yWN
- NYcTv4w02ssuoK3NDWEDx+mevgXQA6uiBZd/wZHu9Jd9PwMIES6BX7QR5r2Jh3JvFep/pcpwwV5
- 3JHrugky9FHefDfS/zQ53CVu73B3bvXrfUXzxPJMlc7sGHaUsmsDfr4Ub2Bil57rNEyESrvsmpi
- mBh+lCfDZ4Zcsy/oYOmLx8Y0LCmtz0SvTgsbQScW+jV2c3g8LlRoNUtWGrKttBTZFwBOJ8464TZ
- 2vm0Ax2U
-X-Proofpoint-ORIG-GUID: 6maehVPWeOuNUxZo_y5tX7OKQcKsvxpo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-03_06,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508300024
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b70fbd3-d63d-4bd3-8500-e14c41fc64b9@oracle.com>
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL71uuc3g3e76oxfn4mu5aogan)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 53BA31F38A
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-On 8/28/25 11:59 PM, Georgi Djakov wrote:
-> On 8/28/25 9:20 PM, Krzysztof Kozlowski wrote:
->> On 28/08/2025 20:16, Odelu Kukatla wrote:
->>>
->>>>> QoS configuration is essential for managing latency and bandwidth across
->>>>> subsystems such as CPU, GPU, and multimedia engines. Without it, the
->>>>> system may experience performance degradation, especially under
->>>>
->>>> So how was it working for the last 2 years?
->>>>
->>> The system may function normally without this feature. However, enabling
->>
->>
->> Huh? So you agree but keep continuing the discussion?
->>
->> I don't understand what we are discussing in such case, but just to
->> close the topic from my side and be explicit: based on above you cannot
->> break the ABI.
+On Fri, Jul 11, 2025 at 09:28:12AM +0100, John Garry wrote:
+> > +/**
+> > + * group_mask_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
+> > + * @numgrps: number of groups
 > 
-> To be even more specific, if we already have some DT binding without any
-> clocks and reg properties, we can't just suddenly change them from now
-> on to be "required". But they can still be "optional" and this will not
-> break the ABI, right? The old DT is still valid and the QoS will be
-> active when the new properties are present and this is handled properly
-> by the driver.
+> this comment could be a bit more useful
+> 
+> > + * @cpu_mask: CPU to consider for the grouping
+> 
+> this is a CPU mask, and not a specific CPU index, right?
 
-Correct and this very approach was used to retrofit QoS onto an even older
-sc7280 icc driver.
+Yes, I've updated the documentation to:
 
-The icc-rpmh core already ignores QoS configuration if the clocks are not
-provided.
+/**
+ * group_mask_cpus_evenly - Group all CPUs evenly per NUMA/CPU locality
+ * @numgrps: number of cpumasks to create
+ * @mask: CPUs to consider for the grouping
+ * @nummasks: number of initialized cpusmasks
+ *
+ * Return: cpumask array if successful, NULL otherwise. Only the CPUs
+ * marked in the mask will be considered for the grouping. And each
+ * element includes CPUs assigned to this group. nummasks contains the
+ * number of initialized masks which can be less than numgrps. cpu_mask
+ *
+ * Try to put close CPUs from viewpoint of CPU and NUMA locality into
+ * same group, and run two-stage grouping:
+ *	1) allocate present CPUs on these groups evenly first
+ *	2) allocate other possible CPUs on these groups evenly
+ *
+ * We guarantee in the resulted grouping that all CPUs are covered, and
+ * no same CPU is assigned to multiple groups
+ */
+struct cpumask *group_mask_cpus_evenly(unsigned int numgrps,
+				       const struct cpumask *mask,
+				       unsigned int *nummasks)
 
-Konrad
+> > +	ret = __group_cpus_evenly(0, numgrps, node_to_cpumask, cpu_mask, nmsk,
+> > +				  masks);
+> 
+> maybe it's personal taste, but I don't think that it's a good style to
+> always pass through 'fail' labels, even if we have not failed in some
+> step
+
+I'd rather leave it as it is, because it matches the existing code in
+group_cpus_evenly. And there is also alloc_node_to_cpumask which does
+the same. Consistency wins IMO.
 
