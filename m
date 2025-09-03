@@ -1,144 +1,105 @@
-Return-Path: <linux-kernel+bounces-799306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-799307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E4FB429CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:23:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E96B429D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 21:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3941BC662A
-	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D93A581787
+	for <lists+linux-kernel@lfdr.de>; Wed,  3 Sep 2025 19:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4103629B2;
-	Wed,  3 Sep 2025 19:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E27322C78;
+	Wed,  3 Sep 2025 19:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEXgy4nB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8C3Urxn"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3690A350D76
-	for <linux-kernel@vger.kernel.org>; Wed,  3 Sep 2025 19:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4FB30AAD0;
+	Wed,  3 Sep 2025 19:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756927401; cv=none; b=fo7F5cZRifoJcWMzy4TFt+Ayd6hj4Our6hoh3Dus5610W5BozLsFAgL2naWlScgiBkoK1stV1c5fg6sH/vWuZJL/mrCwp4PCsFUTO4xK7A7UKhMJ4REFk24NG1rvgj933Y4MUArMkIgV/2Y8BBGrBQ/ldvQ3Afe6pSMsgpomTzg=
+	t=1756927420; cv=none; b=ZsZJulL2LyxoRV4PJUTVrXaW65Qbu7wPKZYlakuSgVPQfI1jKqkDSQUEtx6FhJ/B2ND/8IRcEtuHo9ZK/N145lAYQvglj54U6zStv5rpawW5src6ui/Eoqdj45LriQAfqrHuLvhDk9ES7EGBQMyZOJxXCnTi5e1S4utcxT19q1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756927401; c=relaxed/simple;
-	bh=gJ/bFRAd0iDz04QupVIiAnJmwSv0PtDJEqUwWK7A5HA=;
+	s=arc-20240116; t=1756927420; c=relaxed/simple;
+	bh=4JDJTgQ3r53uYyj3HBe4zhubm/4WXNR7BVJpSU9g2CI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PofqQ2Qs+VA9w6PFd8vK0aOINST95JrOdnJC2OC9zxEhxCAMOLQhwXNUf5ZrGtYFbCngONY/soSSGt0IC727qmlw3PTLHi0/2rYW+WAuteCwmD9q8rwYqgGusD0imV1ULJSgjKrQq8w/aaA/HilmVH7TAmzWvFxSjqtCUCd0N50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEXgy4nB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290CDC4CEE7;
-	Wed,  3 Sep 2025 19:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756927400;
-	bh=gJ/bFRAd0iDz04QupVIiAnJmwSv0PtDJEqUwWK7A5HA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IEXgy4nBX0lAe9nJ3hqjpzflzzWlnRUSa49/g4YXN8Ce8qn2hI7CAL2VQIcuV3Bkb
-	 Ma3b8R2PvfmzAzRN/PG32oeFa90rxZRhxpYvXGkVa5pUCYMjSuWYRMVsclrWzN6yxD
-	 TfFAPvWl53z2YpFH6F7Fo4Lf1hzf+T3nxhQj3/RN9+7TflZAucpj2T+D9b84paXr8S
-	 PdOHkHkLsOJqI1yqVyc7bRXD59DVxk4s+GefVr+crESilXhAbLzhsJTlg1ZErg+8q/
-	 YIGOBB/AjPt3lvOAMkHIO4uTHIQHvcGhOxxN19Je83+KWZdzZ0dt4kuFCc1O6moX0W
-	 P+TlOKA259r1w==
-Date: Wed, 3 Sep 2025 12:23:18 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tengda Wu <wutengda@huaweicloud.com>
-Cc: x86@kernel.org, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Borislav Petkov <bp@alien8.de>, Dmitry Vyukov <dvyukov@google.com>, 
-	Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v3] x86/dumpstack: Prevent KASAN false positive
- warnings in __show_regs
-Message-ID: <dqpml2a3cgta6s32mkzptqldhiro7jfdmgh7qfpypwihwxdsc5@y5bfss3dlfq2>
-References: <20250830092556.3360776-1-wutengda@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MBM5erbRkvhHgMw63YpD/vBWCXet/e1iETsd606hnjC8vwa3RCUG72XKRZnxAqJKRxiB+fw2PcqHfVAHoopbsJwmYwZn8wHOpHhHcdubDRqlmt2yj7hs8J5OuSaJksLxI28ZKUf/Ii/HG2RrL2IVtZH+mqFOAjwbO+ROH5FGkoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8C3Urxn; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2445805aa2eso3170885ad.1;
+        Wed, 03 Sep 2025 12:23:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756927418; x=1757532218; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8Rz5uVzOA7H7auuSeE0duRCSB0VUtJjaNdjd61cz4Do=;
+        b=m8C3UrxnXdT0XH8tex2ossXNvl1E6jsANEJAu/0jLkRb8d+mAOb8R5lbZqAkUrom6z
+         GeKBrSQMjrg98rtcU9bvKpgjpIHtbZxqj00I4+Dl0mdAQUySAwsQKA+TxGrKnSQzDaaE
+         1tvIWjtjvYH9S7Fju3Z/saCuPCy7stsHWxaFDDSiP7AE5zChD9zX1V5QEZrEG9EVLA6X
+         N8GO3jTjkPfLk32zyv0jMsdVzvjsyAO/u6yRIGv3TsCaa+SE89v+f67uhgJ35WocjtWT
+         dFUg/xi0duSGptIH+l287GTNxl6kKXId/Ne6qzuhz8Zq1ZAk1jOf/foBC2R29loUxw0q
+         wEHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756927418; x=1757532218;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Rz5uVzOA7H7auuSeE0duRCSB0VUtJjaNdjd61cz4Do=;
+        b=ZbazGFQXFNmClRCPC392JgHdZ8EonT6JU/lpiBGWk++SO5joSg/pu+r+aMI3im54I5
+         B2JgjXOZTSwgn2PGTHBNZr6BBErLLtV1g3jA9cqTh/7XqS+4SvFPeOG6MbmukLbEudBm
+         kziZk2E2+W0bAyvWPgIjxBju2IySlEaYTo5vvLWZpK9YM8pZBbNl7K1G8yYXwnw2Ou2A
+         EhM30TTvv/n537RGW+VHIW+bNj0OCEvB4nW2QCgngHSCQHiraIyK5xTn6PTxO1QNFOZB
+         y+SuBRQhM3fYVlip/1TgOMJndpA1+Ogm7XpKzOybFQuCFHuQCCAvtCzdD1mfxvgEMOUQ
+         bsaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrJXFkF2msBm1aszD8NuS5/1SzePEXCaC9GK/56/ny8xgd8VeuYS+5gnPoaXKJ+Vo9a0LGPLIvadPWphVv@vger.kernel.org, AJvYcCV3LGLMnRG8Z2YvcIFBJZ/rKk5W3UW5T1kIeJR1yDuFU5BrSkVPhM1nthFHIRm4BSbp+Tv/Vg1LbBQ=@vger.kernel.org, AJvYcCX5I0tK8bkqb9cVfawlysJ2t5hTI1qqgQgod5YRLQ/wRGLsFcRYwShOXML/5sbXs5IsUv5/gmyVkuhPZ70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOz6XmyfCVpW8DwuutSNyy5GrYMJ9kkApsAimGDiwzIN6hkuWC
+	m3EFCSOBfiPFJ0jqm4syC9+XueQKx0NwSE0uYQZ7KaxX1lCZlmKkFDtq
+X-Gm-Gg: ASbGncvzZPapt7p0f/QWD+LXmA7BR8n8JfMgrtIMT0N9hXm6kBynzHmIIriT4i657Zo
+	f22HvbldEjTsutAQB5CqLKRWzfB8+LbI0RA2y567/7y0kIILehomdga+YfDQ/L2o+s/ivTNIqfp
+	TPnrY9UfieNRQHvzfm+lnWLI+Y+gnXp6/3vuYFMy9Uoy9dZ0GLvljsMwf16WvQfcZJefkGYsVwn
+	2Q30HExK9baKEg+g5TuSuZ045ZyvbKPuIk/UPJdum7N2zSpig+0nKq3pOw4IiCelOYNUlBETmRt
+	/xJezJvKEvoVEsVnDHtRUBu/HFXGSFMQvyr6OB45I3SkfmYrXmBpZ6/NLFZzitAi7XL0kALU+a9
+	IDv5Rqsf2FFhH2zD59THsLJM43gATMeW4CiE42pET3j8ddg==
+X-Google-Smtp-Source: AGHT+IGUTqUq93P4mmxYqAbOauXZPiq6DOgxdCVvRL0pOfr0mjA2ttsMFgSWafh2QAEcvC1EsRvFUg==
+X-Received: by 2002:a17:903:32cc:b0:24b:1692:e0bf with SMTP id d9443c01a7336-24b1692e695mr115434545ad.31.1756927417419;
+        Wed, 03 Sep 2025 12:23:37 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2490375b6d0sm169024895ad.62.2025.09.03.12.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Sep 2025 12:23:36 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 3 Sep 2025 12:23:35 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Eugene Shalygin <eugene.shalygin@gmail.com>
+Cc: Jan Philipp =?iso-8859-1?Q?Gro=DF?= <janphilippgross@mailbox.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (asus-ec-sensors) add PRIME Z270-A
+Message-ID: <848b6d49-e21f-4e75-9bd2-9e251a8d8e09@roeck-us.net>
+References: <20250903191736.14451-1-eugene.shalygin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250830092556.3360776-1-wutengda@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250903191736.14451-1-eugene.shalygin@gmail.com>
 
-On Sat, Aug 30, 2025 at 09:25:56AM +0000, Tengda Wu wrote:
-> When task A walks task B's stack without suspending it, the continuous
-> changes in task B's stack (and corresponding KASAN shadow tags) may cause
-> task A to hit KASAN redzones when accessing obsolete values on the stack,
-> resulting in false positive reports. [1][2]
+On Wed, Sep 03, 2025 at 09:17:26PM +0200, Eugene Shalygin wrote:
+> Add support for the PRIME Z270-A board.
 > 
-> The specific issue occurs as follows:
-> 
-> Task A (walk other tasks' stacks)           Task B (running)
-> 1. echo t > /proc/sysrq-trigger
-> 
-> show_trace_log_lvl
->   regs = unwind_get_entry_regs()
->   show_regs_if_on_stack(regs)
->                                             2. The stack data pointed by
->                                                `regs` keeps changing, and
->                                                so are the tags in its
->                                                KASAN shadow region.
->     __show_regs(regs)
->       regs->ax, regs->bx, ...
->         3. hit KASAN redzones, OOB
-> 
-> Fix this by detecting asynchronous stack unwinding scenarios through
-> `task != current` during unwinding, and disabling KASAN checks when this
-> scenario occurs.
-> 
-> [1] https://lore.kernel.org/all/000000000000cb8e3a05c4ed84bb@google.com/
-> [2] KASAN out-of-bounds:
-> [332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340
-> [332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
-> [332706.552562]
-> [332706.552652] CPU: 36 PID: 3977032 Comm: sysrq_t_test.sh Kdump: loaded Not tainted 6.6.0+ #20
-> [332706.552783] Hardware name: Huawei RH2288H V3/BC11HGSA0, BIOS 3.35 10/20/2016
-> [332706.552906] Call Trace:
-> [332706.552998]  <TASK>
-> [332706.553089]  dump_stack_lvl+0x32/0x50
-> [332706.553193]  print_address_description.constprop.0+0x6b/0x3d0
-> [332706.553303]  print_report+0xbe/0x280
-> [332706.553409]  ? __virt_addr_valid+0xed/0x160
-> [332706.553512]  ? __show_regs+0x4b/0x340
-> [332706.553612]  kasan_report+0xa8/0xe0
-> [332706.553716]  ? __show_regs+0x4b/0x340
-> [332706.553816]  ? asm_exc_page_fault+0x22/0x30
-> [332706.553919]  __show_regs+0x4b/0x340
-> [332706.554021]  ? asm_exc_page_fault+0x22/0x30
-> [332706.554123]  show_trace_log_lvl+0x274/0x3b0
-> [332706.554229]  ? load_elf_binary+0xf6e/0x1610
-> [332706.554330]  ? rep_stos_alternative+0x40/0x80
-> [332706.554439]  sched_show_task+0x211/0x290
-> [332706.554544]  ? __pfx_sched_show_task+0x10/0x10
-> [332706.554648]  ? _find_next_bit+0x6/0xc0
-> [332706.554749]  ? _find_next_bit+0x37/0xc0
-> [332706.554852]  show_state_filter+0x72/0x130
-> [332706.554956]  sysrq_handle_showstate+0x7/0x10
-> [332706.555062]  __handle_sysrq+0x146/0x2d0
-> [332706.555165]  write_sysrq_trigger+0x2f/0x50
-> [332706.555270]  proc_reg_write+0xdd/0x140
-> [332706.555372]  vfs_write+0x1ff/0x5f0
-> [332706.555474]  ? __pfx_vfs_write+0x10/0x10
-> [332706.555576]  ? __pfx___handle_mm_fault+0x10/0x10
-> [332706.555682]  ? __fget_light+0x99/0xf0
-> [332706.555785]  ksys_write+0xb8/0x150
-> [332706.555887]  ? __pfx_ksys_write+0x10/0x10
-> [332706.555989]  ? ktime_get_coarse_real_ts64+0x4e/0x70
-> [332706.556094]  do_syscall_64+0x55/0x100
-> [332706.556196]  entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> 
-> Fixes: 3b3fa11bc700 ("x86/dumpstack: Print any pt_regs found on the stack")
-> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
-> ---
-> v3: Address Josh comment, move kasan checks to show_trace_log_lvl, and
->     controlled by task != current.
-> v2: https://lore.kernel.org/all/20250829094744.3133324-1-wutengda@huaweicloud.com/
-> v1: https://lore.kernel.org/all/20250818130715.2904264-1-wutengda@huaweicloud.com/
+> Tested-by: Jan Philipp Groﬂ <janphilippgross@mailbox.org>
+> Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
 
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Applied.
 
--- 
-Josh
+Guenter
 
